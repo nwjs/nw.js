@@ -1,0 +1,11 @@
+* The following package is needed to build this:
+
+  nodejs-dev libwebkitnode-dev
+
+* Build:
+
+  node-waf configure build
+
+* Run sample:
+
+  node tests/helloworld.js tests/testfs.html

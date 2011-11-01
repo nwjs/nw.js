@@ -1,0 +1,13 @@
+{
+  "author": "Roger Wang <roger.wang@intel.com>",
+  "name": "node-webkit",
+  "description": "WebKit running in NodeJS",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rogerwang/node-webkit.git"
+  },
+  "main": "./lib",
+  "dependencies": {},
+  "devDependencies": {}
+}
