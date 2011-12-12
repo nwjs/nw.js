@@ -27,5 +27,10 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 #include <node.h>
+#include <webkit/webkit.h>
 
+namespace nwebkit {
+  WebKitWebView* nwebkit_view_init(const char*, int, int);
+  gchar* filename_to_url(const char* filename);
+}
 #endif

@@ -29,11 +29,19 @@
 
 #include <ev.h>
 #include <stdlib.h>
+#include <webkit/webkit.h>
+
+
+#include "context_wrap.h"
+
+#define NWEBKIT_DEF_METHOD(obj,name,func) \
+  obj->Set(v8::String::NewSymbol(name), \
+	      v8::FunctionTemplate::New(func)->GetFunction())
 
 namespace nwebkit {
 
-using namespace v8;
-
+  using namespace v8;
+  static WebKitWebView* _webview;
 struct econtext {
   GPollFD *pfd;
   ev_io *iow;
@@ -104,6 +112,9 @@ static void prepare_cb (EV_P_ ev_prepare *w, int revents) {
 
   if (timeout >= 0)
   {
+    //if (timeout == 0)
+    //  g_main_context_dispatch (ctx->gc);
+
     ev_timer_set (&ctx->tw, timeout * 1e-3, 0.);
     ev_timer_start (EV_A_ &ctx->tw);
   }
@@ -142,9 +153,6 @@ static void check_cb (EV_P_ ev_check *w, int revents) {
 }
 
 static struct econtext default_context;
-  //extern "C" {
-  void nwebkit_view_init(const char*, int, int);
-  //}
 
 // Extracts a C string from a V8 Utf8Value.
 const char* ToCString(const v8::String::Utf8Value& value) {
@@ -159,16 +167,88 @@ static Handle<Value> GtkInit (const Arguments &args) {
 
   HandleScope scope;
   v8::Local<v8::Context> entered, current;
-  Local<Object> thisObj = args.This();
   Local<Object> options = Local<Object>::Cast(args[1]);
 
-  v8::String::Utf8Value str(options->Get(v8::String::New("url")));
+  Local<Value> url = options->Get(v8::String::New("url"));
+  v8::String::Utf8Value str(url);
   const char* cstr = ToCString(str);
+  if (url->IsUndefined()) {
+    cstr = "";
+  }
   int width  = options->Get(v8::String::New("width"))->Int32Value();
   int height = options->Get(v8::String::New("height"))->Int32Value();
-  nwebkit_view_init(cstr, width, height);
-  return Undefined();
+  _webview = nwebkit_view_init(cstr, width, height);
+
+  WebKitWebSettings *settings = webkit_web_settings_new ();
+  g_object_set (G_OBJECT(settings), "enable-file-access-from-file-uris",
+		TRUE, NULL);
+
+  webkit_web_view_set_settings (WEBKIT_WEB_VIEW(_webview), settings);
+
+  return args.This();
 }
+
+static Handle<Value> Open (const Arguments &args) {
+
+  HandleScope scope;
+
+  Local<String> arg0 = args[0]->ToString();
+
+  v8::String::Utf8Value str(arg0);
+  const char* uri = ToCString(str);
+  if (arg0->IsUndefined()) {
+    uri = "";
+  }
+  gchar *url = filename_to_url(uri);
+  webkit_web_view_load_uri(_webview, url ? url : uri);
+
+  g_free(url);
+
+  return args.This();
+}
+
+  static Handle<Value> LoadString (const Arguments &args) {
+
+    HandleScope scope;
+
+    Local<String> arg0 = args[0]->ToString();
+
+    String::Utf8Value str(arg0);
+    const char* content = ToCString(str);
+    const char* mime_type = NULL;
+    const char* base_uri = "";
+    String::Utf8Value arg1(args[1]->ToString());
+    String::Utf8Value arg2(args[2]->ToString());
+
+    if (args[1]->IsString())
+      mime_type = *arg1;
+    if (args[2]->IsString())
+      base_uri = *arg2;
+
+    webkit_web_view_load_string (_webview, content, mime_type, NULL, base_uri);
+
+    return args.This();
+  }
+
+  static Handle<Value> Reload (const Arguments &args) {
+    webkit_web_view_reload (_webview);
+    return args.This();
+  }
+
+  static Handle<Value> SetViewMode (const Arguments &args) {
+
+    int mode;
+    if (args[0]->IsNumber()) {
+      mode = args[1]->Int32Value();
+    } else {
+      mode = WEBKIT_WEB_VIEW_VIEW_MODE_WINDOWED;
+    }
+
+    webkit_web_view_set_view_mode (_webview, (WebKitWebViewViewMode)mode);
+
+    return args.This();
+  }
+
 
 void init(Handle<Object> target) {
   HandleScope scope;
@@ -176,12 +256,21 @@ void init(Handle<Object> target) {
   if (!g_thread_supported())
     g_thread_init(NULL);
 
-  target->Set(v8::String::NewSymbol("_init"),
-	      v8::FunctionTemplate::New(GtkInit)->GetFunction());
+  NWEBKIT_DEF_METHOD (target, "_init", GtkInit);
+  NWEBKIT_DEF_METHOD (target, "open",  Open);
+  NWEBKIT_DEF_METHOD (target, "loadString", LoadString);
+  NWEBKIT_DEF_METHOD (target, "reload", Reload);
+  NWEBKIT_DEF_METHOD (target, "setViewMode", SetViewMode);
 
+  ContextWrap::Initialize (target);
   GMainContext *gc     = g_main_context_default();
   struct econtext *ctx = &default_context;
 
+  // ev thread need to be the owner of the context so it can be wake
+  // up properly by g_source_attach(idle source) from the i/o thread
+  // launched by webkit/libsoup
+
+  g_main_context_acquire (gc);
   ctx->gc  = g_main_context_ref(gc);
   ctx->nfd = 0;
   ctx->afd = 0;

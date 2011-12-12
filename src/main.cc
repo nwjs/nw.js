@@ -28,13 +28,26 @@
 #include <webkit/webkit.h>
 #include <ev.h>
 
+
 static void destroy_cb(GtkWidget* widget, GtkWidget* window)
 {
   ev_unref(EV_DEFAULT_UC);
 }
 
 
-static gchar* filename_to_url(const char* filename)
+static void title_change_cb (WebKitWebView* webview,
+			     GParamSpec* pspec,
+			     GtkWidget* window)
+{
+  const gchar* title = webkit_web_view_get_title (WEBKIT_WEB_VIEW (webview));
+  if (title) {
+    fprintf (stderr, "new title: %s\n", title);
+    gtk_window_set_title (GTK_WINDOW (window), title);
+  }
+}
+
+namespace nwebkit {
+gchar* filename_to_url(const char* filename)
 {
     if (!g_file_test(filename, G_FILE_TEST_EXISTS))
         return 0;
@@ -46,17 +59,7 @@ static gchar* filename_to_url(const char* filename)
     return file_url;
 }
 
-static void title_change_cb (WebKitWebView* webview,
-			     GParamSpec* pspec,
-			     GtkWidget* window)
-{
-  const gchar* title = webkit_web_view_get_title (WEBKIT_WEB_VIEW (webview));
-  if (title)
-    gtk_window_set_title (GTK_WINDOW (window), title);
-}
-
-namespace nwebkit {
-  void nwebkit_view_init(const char* uri, int width, int height)
+  WebKitWebView* nwebkit_view_init(const char* uri, int width, int height)
   {
     WebKitWebView *webview;
     gtk_init (NULL, NULL);
@@ -75,7 +78,7 @@ namespace nwebkit {
 				    GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
     gtk_container_add (GTK_CONTAINER(scrolled_win), GTK_WIDGET(webview));
-    gtk_container_add (GTK_CONTAINER (window), scrolled_win);
+    gtk_container_add (GTK_CONTAINER (window), GTK_WIDGET(scrolled_win));
 
     g_signal_connect (window, "destroy", G_CALLBACK(destroy_cb), NULL);
     g_signal_connect (webview, "notify::title",
@@ -87,6 +90,8 @@ namespace nwebkit {
     gtk_widget_grab_focus(GTK_WIDGET(webview));
     gtk_widget_show_all(window);
     ev_ref(EV_DEFAULT_UC);
+
+    return webview;
   }
 
 }
