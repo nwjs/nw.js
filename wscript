@@ -19,5 +19,6 @@ def build(bld):
   obj.source = """
                src/nwebkit.cc
 	       src/main.cc
+	       src/context_wrap.cc
                """
   obj.uselib = "GTK GLIB WEBKIT"
