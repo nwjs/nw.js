@@ -31,6 +31,8 @@
 #include <stdlib.h>
 #include <webkit/webkit.h>
 
+using v8::Persistent;
+using v8::Function;
 
 #include "context_wrap.h"
 
@@ -42,6 +44,7 @@ namespace nwebkit {
 
   using namespace v8;
   static WebKitWebView* _webview;
+  static Persistent<Function> _init_call_back;
 struct econtext {
   GPollFD *pfd;
   ev_io *iow;
@@ -163,6 +166,22 @@ static inline v8::Local<v8::Value> CompileRun(const char* source) {
   return v8::Script::Compile(v8::String::New(source))->Run();
 }
 
+static void load_status_cb(WebKitWebView* webview, GParamSpec* pspec, void* cb)
+{
+  WebKitLoadStatus status = webkit_web_view_get_load_status (webview);
+  if (status == WEBKIT_LOAD_FINISHED || status == WEBKIT_LOAD_FAILED) {
+    Persistent<Function> callback = *(Persistent<Function>*)cb;
+    int argc = 1;
+    Local<Value> argv[1];
+    if (status == WEBKIT_LOAD_FAILED) {
+      argv[0] = Exception::Error (String::New ("webpage load failed"));
+    }else{
+      argv[0] = Local<Value>::New(Null());
+    }
+    callback->Call (callback, argc, argv);
+  }
+}
+
 static Handle<Value> GtkInit (const Arguments &args) {
 
   HandleScope scope;
@@ -185,6 +204,12 @@ static Handle<Value> GtkInit (const Arguments &args) {
 
   webkit_web_view_set_settings (WEBKIT_WEB_VIEW(_webview), settings);
 
+  if (args[2]->IsFunction()) {
+    _init_call_back = Persistent<Function>::New(Handle<Function>::Cast(args[2]));
+    g_signal_connect (_webview, "notify::load-status", G_CALLBACK(load_status_cb), &_init_call_back);
+  }else{
+    _init_call_back.Clear ();
+  }
   return args.This();
 }
 
