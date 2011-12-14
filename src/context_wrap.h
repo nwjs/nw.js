@@ -13,7 +13,9 @@ class ContextWrap : node::ObjectWrap {
   static v8::Local<v8::Object> NewInstance();
   static bool InstanceOf(v8::Handle<v8::Value> value);
   static v8::Handle<v8::Value> OnContextCreationFromWebKit(const v8::Arguments& args);
- protected:
+  static v8::Handle<v8::Value> RunScript(const v8::Arguments& args);
+
+  protected:
 
   static v8::Persistent<v8::FunctionTemplate> constructor_template;
 

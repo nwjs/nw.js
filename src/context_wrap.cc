@@ -56,10 +56,16 @@ void ContextWrap::Initialize(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template,
                             "onContextCreationFromWebKit",
                             ContextWrap::OnContextCreationFromWebKit);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template,
+                            "runScript",
+                            ContextWrap::RunScript);
 
   NODE_SET_METHOD(constructor_template,
 		  "onContextCreationFromWebKit",
 		  ContextWrap::OnContextCreationFromWebKit);
+  NODE_SET_METHOD(constructor_template,
+		  "runScript",
+		  ContextWrap::RunScript);
 
   target->Set(String::NewSymbol("Context"),
               constructor_template->GetFunction());
@@ -103,10 +109,6 @@ Persistent<Context> ContextWrap::GetV8Context() {
 Handle<Value> ContextWrap::OnContextCreationFromWebKit(const Arguments& args) {
   HandleScope scope;
 
-  if (args.Length() > 0) {
-    Local<Object> sandbox = args[0]->ToObject();
-  }
-
   ContextWrap* context_wrap = ObjectWrap::Unwrap<ContextWrap> (args.Holder());
   v8::Context* p = static_cast<v8::Context*>(args.Holder()->GetPointerFromInternalField (1));
   context_wrap->context_ = p;
@@ -115,4 +117,32 @@ Handle<Value> ContextWrap::OnContextCreationFromWebKit(const Arguments& args) {
   return v8::Undefined();
 }
 
+  Handle<Value> ContextWrap::RunScript(const Arguments& args) {
+    HandleScope scope;
+
+    ContextWrap* context_wrap = ObjectWrap::Unwrap<ContextWrap> (args.Holder());
+    if (!context_wrap->context_valid) {
+      return v8::Undefined();
+    }
+
+    TryCatch try_catch;
+    Local<String> code = args[0]->ToString();
+    context_wrap->context_->Enter();
+    Handle<Script> script = Script::Compile (code, String::New("nwebkit.<anonymous>"));
+    if (script.IsEmpty()) {
+      // FIXME UGLY HACK TO DISPLAY SYNTAX ERRORS.
+      node::DisplayExceptionLine(try_catch);
+
+      // Hack because I can't get a proper stacktrace on SyntaxError
+      return try_catch.ReThrow();
+    }
+    Handle<Value> result;
+    result = script->Run();
+    context_wrap->context_->Exit();
+    if (result.IsEmpty()) {
+      return try_catch.ReThrow();
+    }
+
+    return result == args.This() ? result : scope.Close (result);
+  }
 }
