@@ -17,8 +17,7 @@ def build(bld):
   obj.cxxflags = ["-Wall", "-ansi", "-pedantic"]
   obj.target = "nwebkit"
   obj.source = """
-               src/nwebkit.cc
-	       src/main.cc
+               src/linux-gtk.cc
 	       src/context_wrap.cc
                """
   obj.uselib = "GTK GLIB WEBKIT"

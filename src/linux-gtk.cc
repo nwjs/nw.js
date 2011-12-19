@@ -36,15 +36,15 @@ using v8::Function;
 
 #include "context_wrap.h"
 
-#define NWEBKIT_DEF_METHOD(obj,name,func) \
-  obj->Set(v8::String::NewSymbol(name), \
-	      v8::FunctionTemplate::New(func)->GetFunction())
+#define NWEBKIT_DEF_METHOD(obj,name,func)			\
+  obj->Set(v8::String::NewSymbol(name),				\
+	   v8::FunctionTemplate::New(func)->GetFunction())
 
 namespace nwebkit {
 
-  using namespace v8;
-  static WebKitWebView* _webview;
-  static Persistent<Function> _init_call_back;
+using namespace v8;
+static WebKitWebView* _webview;
+static Persistent<Function> _init_call_back;
 struct econtext {
   GPollFD *pfd;
   ev_io *iow;
@@ -57,6 +57,9 @@ struct econtext {
 
   GMainContext *gc;
 };
+
+static  WebKitWebView* nwebkit_view_init(const char*, int, int);
+static  gchar* filename_to_url(const char* filename);
 
 static void timer_cb (EV_P_ ev_timer *w, int revents) {
   /* nop */
@@ -76,13 +79,11 @@ static void prepare_cb (EV_P_ ev_prepare *w, int revents) {
   g_main_context_prepare (ctx->gc, &ctx->maxpri);
 
   while (ctx->afd < (ctx->nfd = g_main_context_query  (
-          ctx->gc,
-          ctx->maxpri,
-          &timeout,
-          ctx->pfd,
-          ctx->afd))
-      )
-  {
+						       ctx->gc,
+						       ctx->maxpri,
+						       &timeout,
+						       ctx->pfd,
+						       ctx->afd))) {
     free (ctx->pfd);
     free (ctx->iow);
 
@@ -94,27 +95,25 @@ static void prepare_cb (EV_P_ ev_prepare *w, int revents) {
     ctx->iow = (ev_io*) malloc (ctx->afd * sizeof (ev_io));
   }
 
-  for (i = 0; i < ctx->nfd; ++i)
-  {
+  for (i = 0; i < ctx->nfd; ++i) {
     GPollFD *pfd = ctx->pfd + i;
     ev_io *iow = ctx->iow + i;
 
     pfd->revents = 0;
 
     ev_io_init (
-        iow,
-        io_cb,
-        pfd->fd,
-        (pfd->events & G_IO_IN ? EV_READ : 0)
-        | (pfd->events & G_IO_OUT ? EV_WRITE : 0)
-        );
+		iow,
+		io_cb,
+		pfd->fd,
+		(pfd->events & G_IO_IN ? EV_READ : 0)
+		| (pfd->events & G_IO_OUT ? EV_WRITE : 0)
+		);
     iow->data = (void *)pfd;
     ev_set_priority (iow, EV_MINPRI);
     ev_io_start (EV_A_ iow);
   }
 
-  if (timeout >= 0)
-  {
+  if (timeout >= 0) {
     //if (timeout == 0)
     //  g_main_context_dispatch (ctx->gc);
 
@@ -128,18 +127,16 @@ static void check_cb (EV_P_ ev_check *w, int revents) {
   struct econtext *ctx = (struct econtext *)(((char *)w) - offsetof (struct econtext, cw));
   int i;
 
-  for (i = 0; i < ctx->nfd; ++i)
-  {
+  for (i = 0; i < ctx->nfd; ++i) {
     ev_io *iow = ctx->iow + i;
 
-    if (ev_is_pending (iow))
-    {
+    if (ev_is_pending (iow))	{
       GPollFD *pfd = ctx->pfd + i;
       int revents = ev_clear_pending (EV_A_ iow);
 
       pfd->revents |= pfd->events &
-        ((revents & EV_READ ? G_IO_IN : 0)
-         | (revents & EV_WRITE ? G_IO_OUT : 0));
+	((revents & EV_READ ? G_IO_IN : 0)
+	 | (revents & EV_WRITE ? G_IO_OUT : 0));
     }
 
     ev_io_stop (EV_A_ iow);
@@ -232,47 +229,47 @@ static Handle<Value> Open (const Arguments &args) {
   return args.This();
 }
 
-  static Handle<Value> LoadString (const Arguments &args) {
+static Handle<Value> LoadString (const Arguments &args) {
 
-    HandleScope scope;
+  HandleScope scope;
 
-    Local<String> arg0 = args[0]->ToString();
+  Local<String> arg0 = args[0]->ToString();
 
-    String::Utf8Value str(arg0);
-    const char* content = ToCString(str);
-    const char* mime_type = NULL;
-    const char* base_uri = "";
-    String::Utf8Value arg1(args[1]->ToString());
-    String::Utf8Value arg2(args[2]->ToString());
+  String::Utf8Value str(arg0);
+  const char* content = ToCString(str);
+  const char* mime_type = NULL;
+  const char* base_uri = "";
+  String::Utf8Value arg1(args[1]->ToString());
+  String::Utf8Value arg2(args[2]->ToString());
 
-    if (args[1]->IsString())
-      mime_type = *arg1;
-    if (args[2]->IsString())
-      base_uri = *arg2;
+  if (args[1]->IsString())
+    mime_type = *arg1;
+  if (args[2]->IsString())
+    base_uri = *arg2;
 
-    webkit_web_view_load_string (_webview, content, mime_type, NULL, base_uri);
+  webkit_web_view_load_string (_webview, content, mime_type, NULL, base_uri);
 
-    return args.This();
+  return args.This();
+}
+
+static Handle<Value> Reload (const Arguments &args) {
+  webkit_web_view_reload (_webview);
+  return args.This();
+}
+
+static Handle<Value> SetViewMode (const Arguments &args) {
+
+  int mode;
+  if (args[0]->IsNumber()) {
+    mode = args[1]->Int32Value();
+  } else {
+    mode = WEBKIT_WEB_VIEW_VIEW_MODE_WINDOWED;
   }
 
-  static Handle<Value> Reload (const Arguments &args) {
-    webkit_web_view_reload (_webview);
-    return args.This();
-  }
+  webkit_web_view_set_view_mode (_webview, (WebKitWebViewViewMode)mode);
 
-  static Handle<Value> SetViewMode (const Arguments &args) {
-
-    int mode;
-    if (args[0]->IsNumber()) {
-      mode = args[1]->Int32Value();
-    } else {
-      mode = WEBKIT_WEB_VIEW_VIEW_MODE_WINDOWED;
-    }
-
-    webkit_web_view_set_view_mode (_webview, (WebKitWebViewViewMode)mode);
-
-    return args.This();
-  }
+  return args.This();
+}
 
 
 void init(Handle<Object> target) {
@@ -315,5 +312,69 @@ void init(Handle<Object> target) {
   ev_init (&ctx->tw, timer_cb);
   ev_set_priority (&ctx->tw, EV_MINPRI);
 }
-  NODE_MODULE(nwebkit, init)
+
+static void destroy_cb(GtkWidget* widget, GtkWidget* window)
+{
+  ev_unref(EV_DEFAULT_UC);
+}
+
+static void title_change_cb (WebKitWebView* webview,
+			     GParamSpec* pspec,
+			     GtkWidget* window)
+{
+  const gchar* title = webkit_web_view_get_title (WEBKIT_WEB_VIEW (webview));
+  if (title) {
+    gtk_window_set_title (GTK_WINDOW (window), title);
+  }
+}
+
+
+static gchar* filename_to_url(const char* filename)
+{
+  if (!g_file_test(filename, G_FILE_TEST_EXISTS))
+    return 0;
+
+  GFile *gfile = g_file_new_for_path(filename);
+  gchar *file_url = g_file_get_uri(gfile);
+  g_object_unref(gfile);
+
+  return file_url;
+}
+
+static WebKitWebView* nwebkit_view_init(const char* uri, int width, int height)
+{
+  WebKitWebView *webview;
+  gtk_init (NULL, NULL);
+
+  GtkWidget *window;
+  gchar *url = filename_to_url(uri);
+  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  if (!width || !height)
+    gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
+  else
+    gtk_window_set_default_size(GTK_WINDOW(window), width, height);
+
+  webview = WEBKIT_WEB_VIEW(webkit_web_view_new());
+  GtkWidget *scrolled_win = gtk_scrolled_window_new (NULL, NULL);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(scrolled_win),
+				  GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+  gtk_container_add (GTK_CONTAINER(scrolled_win), GTK_WIDGET(webview));
+  gtk_container_add (GTK_CONTAINER (window), GTK_WIDGET(scrolled_win));
+
+  g_signal_connect (window, "destroy", G_CALLBACK(destroy_cb), NULL);
+  g_signal_connect (webview, "notify::title",
+		    G_CALLBACK(title_change_cb), window);
+
+  webkit_web_view_load_uri(webview, url ? url : uri);
+  g_free(url);
+
+  gtk_widget_grab_focus(GTK_WIDGET(webview));
+  gtk_widget_show_all(window);
+  ev_ref(EV_DEFAULT_UC);
+
+  return webview;
+}
+
+NODE_MODULE(nwebkit, init)
 } // namespace nwebkit
