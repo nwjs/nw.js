@@ -45,8 +45,8 @@ where "dist" can be "unstable" for Debian sid, or "natty", "oneiric" for Ubuntu.
 The source of libwebkitnode is provided in patches directory. We hope git repo will be available soon.
 
 
-Intallation
-===========
+Installation
+============
 
 * The following package is needed to build this:
 
@@ -82,3 +82,8 @@ Our vision
 ==========
 
 We believe that the async I/O framework in NodeJS and the Javascript programming language is a perfect combination for client (mobile) side applications. By bringing WebKit to NodeJS, a new way is avaliable to write applications with web technology. We'll contintue our development and support for this runtime. More platform and applications will be enabled.
+
+License
+=======
+
+MIT License
