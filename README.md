@@ -50,7 +50,7 @@ Installation
 
 * The following package is needed to build this:
 
-    nodejs-dev libwebkitnode-dev
+    nodejs-dev libwebkitnode-dev libev-dev
 
 * Build:
 
