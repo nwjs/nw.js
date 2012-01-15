@@ -45,6 +45,7 @@ namespace nwebkit {
 using namespace v8;
 static WebKitWebView* _webview;
 static Persistent<Function> _init_call_back;
+static Persistent<Function> _onclose_callback;
 struct econtext {
   GPollFD *pfd;
   ev_io *iow;
@@ -179,6 +180,13 @@ static void load_status_cb(WebKitWebView* webview, GParamSpec* pspec, void* cb)
   }
 }
 
+static void onclose_cb(WebKitWebView* webview, void* cb)
+{
+  Persistent<Function> callback = *(Persistent<Function>*)cb;
+
+  callback->Call (callback, 0, NULL);
+}
+
 static Handle<Value> GtkInit (const Arguments &args) {
 
   HandleScope scope;
@@ -206,6 +214,15 @@ static Handle<Value> GtkInit (const Arguments &args) {
     g_signal_connect (_webview, "notify::load-status", G_CALLBACK(load_status_cb), &_init_call_back);
   }else{
     _init_call_back.Clear ();
+  }
+
+  Local<Value> onclose = options->Get(v8::String::New("onclose"));
+  if (onclose->IsFunction()) {
+    _onclose_callback = Persistent<Function>::New(Handle<Function>::Cast(onclose));
+    g_signal_connect (_webview, "unrealize",
+                      G_CALLBACK(onclose_cb), &_onclose_callback);
+  }else{
+    _onclose_callback.Clear ();
   }
   return args.This();
 }
