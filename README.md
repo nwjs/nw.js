@@ -42,6 +42,8 @@ A patched version of WebKit (libwebkitnode) is need to make this possible. Prebu
 
 where "dist" can be "unstable" for Debian sid, or "natty", "oneiric" for Ubuntu.
 
+NOTE: currently there is only 32bit binaries available.
+
 The source of libwebkitnode is provided in patches directory. We hope git repo will be available soon.
 
 
