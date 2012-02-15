@@ -2,3 +2,6 @@ these patches should be applied on commit ff6f479c98d42382e089b1bd8096f4afafa72d
 from the webkit git repository:
 
 http://trac.webkit.org/wiki/UsingGitWithWebKit
+
+The commits for the patches are available at: 
+https://github.com/rogerwang/webkit-node
