@@ -1,6 +1,6 @@
 Introduction
 ============
-This is a NodeJS module for WebKit. With this module, your Javascript code in HTML can call NodeJS functions directly. The following demo lists the current directory in the page:
+This is a NodeJS module for WebKit. With this module, your Javascript code in the DOM context can call NodeJS functions directly. The following demo lists the current directory on the page:
 
     <html><head>
     <title>testfs</title>
@@ -22,7 +22,7 @@ This is a NodeJS module for WebKit. With this module, your Javascript code in HT
     </body>
     </html>
 
-From NodeJS code, you can manipulate DOM or run Javascript in DOM context as well:
+From NodeJS code, you can manipulate the DOM or run Javascript in the DOM context as well:
 
     var nwebkit;
     nwebkit = require('nwebkit');
@@ -36,7 +36,7 @@ From NodeJS code, you can manipulate DOM or run Javascript in DOM context as wel
 Dependencies
 ============
 
-A patched version of CEF(Chromium Embedded Framework) is need to make this possible. Prebuilt binaries are available for Linux (Debian and Ubuntu), Windows and OSX.
+A patched version of CEF (Chromium Embedded Framework) is needed to make this possible. Prebuilt binaries are available for Linux (Debian and Ubuntu), Windows and OSX.
 
 The source of Chromium is at https://github.com/rogerwang/chromium
 
@@ -55,12 +55,12 @@ How it works
 
 * Chromium's (render process) main loop is merged with libev's main loop in NodeJS, so they can run in the same process.
 
-* WebKit is patched so the V8 context is merged (actually bridged) with the context from NodeJS. This makes NodeJS functions accessiable in web page.
+* WebKit is patched so that the V8 context is merged (actually bridged) with the context from NodeJS. This makes NodeJS functions accessible in a web page.
 
 Community
 =========
 
-Welcome to join the discussion in our mailing list:
+You are welcome to join the discussion on our mailing list:
 
 node-webkit@googlegroups.com
 
@@ -71,7 +71,7 @@ subscribe via node-webkit+subscribe@googlegroups.com
 Our vision
 ==========
 
-We believe that the async I/O framework in NodeJS and the Javascript programming language is a perfect combination for client (mobile) side applications. By bringing WebKit to NodeJS, a new way is avaliable to write applications with web technology. We'll contintue our development and support for this runtime. More platform and applications will be enabled.
+We believe that the async I/O framework in NodeJS and the Javascript programming language is a perfect combination for client (mobile) side applications. By bringing WebKit to NodeJS, a new way is available to write applications with web technology. We'll continue our development and support for this runtime. More platform and applications will be enabled.
 
 License
 =======
