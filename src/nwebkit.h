@@ -24,9 +24,6 @@
 #define NWEBKIT_H_
 
 #include <v8.h>
-#include <glib.h>
-#include <gtk/gtk.h>
 #include <node.h>
-#include <webkit/webkit.h>
 
 #endif

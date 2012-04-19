@@ -1,6 +1,6 @@
 Introduction
 ============
-This is a NodeJS module for WebKit. With this module, your Javascript code in HTML can call NodeJS functions directly:
+This is a NodeJS module for WebKit. With this module, your Javascript code in HTML can call NodeJS functions directly. The following demo lists the current directory in the page:
 
     <html><head>
     <title>testfs</title>
@@ -36,38 +36,26 @@ From NodeJS code, you can manipulate DOM or run Javascript in DOM context as wel
 Dependencies
 ============
 
-A patched version of WebKit (libwebkitnode) is need to make this possible. Prebuilt binaries for Debian and Ubuntu can be downloaded from:
+A patched version of CEF(Chromium Embedded Framework) is need to make this possible. Prebuilt binaries are available for Linux (Debian and Ubuntu), Windows and OSX.
 
-    deb http://libwebkitnode.s3.amazonaws.com/ dist/
+The source of Chromium is at https://github.com/rogerwang/chromium
 
-where "dist" can be "unstable" for Debian sid, or "natty", "oneiric" for Ubuntu.
+Other hacks on the dependencies are:
 
-NOTE: currently 64bit binaries are available for Ubuntu oneiric only. And we're working on Windows and OSX ports.
+https://github.com/rogerwang/node
+https://github.com/rogerwang/libuv
 
-The source of libwebkitnode is at https://github.com/rogerwang/webkit-node
 
+Build from source
+=================
 
-Installation
-============
-
-* The following package is needed to build this:
-
-    nodejs-dev libwebkitnode-dev libev-dev
-
-* Build:
-
-    node-waf configure build
-
-* Run sample:
-
-    node tests/helloworld.js tests/testfs.html
 
 How it works
 ============
 
-* WebKitGtk's (glib based) main loop is merged with libev's main loop in NodeJS (Thanks to the code from node-gtk and EV::Glib project), so they can run in the same process.
+* Chromium's (render process) main loop is merged with libev's main loop in NodeJS, so they can run in the same process.
 
-* WebKit is patched so we can switch the Javascript engine from jsc to V8, and then the V8 context is merged (actually bridged) with the context from NodeJS. This makes NodeJS functions accessiable in web page. (Thanks to Nayan Kumar for the webkit-v8 work)
+* WebKit is patched so the V8 context is merged (actually bridged) with the context from NodeJS. This makes NodeJS functions accessiable in web page.
 
 Community
 =========
@@ -78,7 +66,7 @@ node-webkit@googlegroups.com
 
 http://groups.google.com/group/node-webkit
 
-subscribe via mailto:node-webkit+subscribe@googlegroups.com
+subscribe via node-webkit+subscribe@googlegroups.com
 
 Our vision
 ==========
