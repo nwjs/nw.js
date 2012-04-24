@@ -6,6 +6,7 @@
       'dependencies': [
          '../../cef/cef.gyp:libcef',
          '../../v8/tools/gyp/v8.gyp:v8',
+         '../../build/temp_gyp/googleurl.gyp:googleurl',
          '../node/node.gyp:node',
         '../libuv/uv.gyp:uv',
       ],
