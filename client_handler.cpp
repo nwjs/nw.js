@@ -2,20 +2,22 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
-#include "nw/client_handler.h"
 #include <algorithm>
 #include <stdio.h>
 #include <sstream>
 #include <string>
+
+#include "base/values.h"
 #include "include/cef_browser.h"
 #include "include/cef_frame.h"
 #include "include/cef_path_util.h"
 #include "include/cef_process_util.h"
 #include "include/cef_runnable.h"
 #include "include/wrapper/cef_stream_resource_handler.h"
-#include "nw/nw.h"
+#include "nw/client_handler.h"
 #include "nw/client_renderer.h"
 #include "nw/client_switches.h"
+#include "nw/nw.h"
 #include "nw/resource_util.h"
 #include "nw/string_util.h"
 
@@ -46,8 +48,14 @@ ClientHandler::ClientHandler()
   CefRefPtr<CefCommandLine> command_line =
       CefCommandLine::GetGlobalCommandLine();
 
-  if (command_line->HasSwitch(nw::kUrl))
-    m_StartupURL = command_line->GetSwitchValue(nw::kUrl);
+  base::DictionaryValue* manifest = AppGetManifest();
+  if (manifest->HasKey("main")) {
+    manifest->GetString("main", &m_StartupURL);
+  } else {
+    if (command_line->HasSwitch(nw::kUrl))
+      m_StartupURL = command_line->GetSwitchValue(nw::kUrl);
+  }
+
   if (m_StartupURL.empty())
     m_StartupURL = "about:blank";
 

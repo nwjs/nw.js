@@ -2,11 +2,14 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
-#include "nw/nw.h"
-#include <stdio.h>
 #include <cstdlib>
+#include <stdio.h>
 #include <sstream>
 #include <string>
+
+#include "base/file_util.h"
+#include "base/json/json_file_value_serializer.h"
+#include "base/logging.h"
 #include "include/cef_app.h"
 #include "include/cef_browser.h"
 #include "include/cef_command_line.h"
@@ -15,6 +18,7 @@
 #include "include/cef_web_plugin.h"
 #include "nw/client_handler.h"
 #include "nw/client_switches.h"
+#include "nw/nw.h"
 #include "nw/string_util.h"
 #include "nw/util.h"
 
@@ -34,6 +38,9 @@ int GetIntValue(const CefString& str) {
 CefRefPtr<ClientHandler> g_handler;
 CefRefPtr<CefCommandLine> g_command_line;
 
+// Don't bother with its life since it's used through out the program
+base::DictionaryValue* g_manifest;
+
 CefRefPtr<CefBrowser> AppGetBrowser() {
   if (!g_handler.get())
     return NULL;
@@ -46,6 +53,67 @@ CefWindowHandle AppGetMainHwnd() {
   return g_handler->GetMainHwnd();
 }
 
+void ManifestConvertRelativePaths(
+    FilePath path,
+    base::DictionaryValue* manifest) {
+  if (manifest->HasKey("main")) {
+    std::string out;
+    if (!manifest->GetString("main", &out)) {
+      manifest->Remove("main", NULL);
+      LOG(WARNING) << "'main' field in manifest must be a string.";
+      return;
+    }
+    FilePath main_path = path.Append(out);
+    std::string url("file://");
+    g_manifest->SetString("main", url + main_path.value());
+  } else {
+    LOG(WARNING) << "'main' field in manifest should be specifed.";
+  }
+}
+
+void AppInitManifest() {
+  // Get first argument
+  CefCommandLine::ArgumentList arguments;
+  g_command_line->GetArguments(arguments);
+
+  FilePath path(arguments[0]);
+  if (!file_util::PathExists(path)) {
+    LOG(WARNING) << "Package does not exist.";
+    return;
+  }
+
+  // If it's a file then try to extract from it
+  if (!file_util::DirectoryExists(path)) {
+    DLOG(INFO) << "Extracting packaging...";
+  }
+
+  FilePath manifest_path = path.Append("package.json");
+  if (!file_util::PathExists(manifest_path)) {
+    LOG(WARNING) << "No 'package.json' in package.";
+    return;
+  }
+
+  std::string error;
+  JSONFileValueSerializer serializer(manifest_path);
+  scoped_ptr<Value> root(serializer.Deserialize(NULL, &error));
+  if (!root.get()) {
+    if (error.empty()) {
+      LOG(WARNING) << "It's not able to read the manifest file.";
+    } else {
+      LOG(WARNING) << "Parsing error: " << error;
+    }
+    return;
+  }
+
+  if (!root->IsType(Value::TYPE_DICTIONARY)) {
+    LOG(WARNING) << "Manifest file is invalid, we need a dictionary type";
+    return;
+  }
+
+  g_manifest = static_cast<DictionaryValue*>(root.release());
+  ManifestConvertRelativePaths(path, g_manifest);
+}
+
 void AppInitCommandLine(int argc, const char* const* argv) {
   g_command_line = CefCommandLine::CreateCommandLine();
 #if defined(OS_WIN)
@@ -53,11 +121,19 @@ void AppInitCommandLine(int argc, const char* const* argv) {
 #else
   g_command_line->InitFromArgv(argc, argv);
 #endif
+
+  if (g_command_line->HasArguments())
+    AppInitManifest();
 }
 
 // Returns the application command line object.
 CefRefPtr<CefCommandLine> AppGetCommandLine() {
   return g_command_line;
+}
+
+// Returns the manifest.
+base::DictionaryValue* AppGetManifest() {
+  return g_manifest;
 }
 
 // Returns the application settings based on command line arguments.
@@ -191,146 +267,4 @@ void AppGetBrowserSettings(CefBrowserSettings& settings) {
       g_command_line->HasSwitch(nw::kDeveloperToolsDisabled);
   settings.fullscreen_enabled =
       g_command_line->HasSwitch(nw::kFullscreenEnabled);
-}
-
-void RunGetSourceTest(CefRefPtr<CefBrowser> browser) {
-  class Visitor : public CefStringVisitor {
-   public:
-    explicit Visitor(CefRefPtr<CefBrowser> browser) : browser_(browser) {}
-    virtual void Visit(const CefString& string) OVERRIDE {
-      std::string source = StringReplace(string, "<", "&lt;");
-      source = StringReplace(source, ">", "&gt;");
-      std::stringstream ss;
-      ss << "<html><body>Source:<pre>" << source << "</pre></body></html>";
-      browser_->GetMainFrame()->LoadString(ss.str(), "http://tests/getsource");
-    }
-   private:
-    CefRefPtr<CefBrowser> browser_;
-    IMPLEMENT_REFCOUNTING(Visitor);
-  };
-
-  browser->GetMainFrame()->GetSource(new Visitor(browser));
-}
-
-void RunGetTextTest(CefRefPtr<CefBrowser> browser) {
-  class Visitor : public CefStringVisitor {
-   public:
-    explicit Visitor(CefRefPtr<CefBrowser> browser) : browser_(browser) {}
-    virtual void Visit(const CefString& string) OVERRIDE {
-      std::string text = StringReplace(string, "<", "&lt;");
-      text = StringReplace(text, ">", "&gt;");
-      std::stringstream ss;
-      ss << "<html><body>Text:<pre>" << text << "</pre></body></html>";
-      browser_->GetMainFrame()->LoadString(ss.str(), "http://tests/gettext");
-    }
-   private:
-    CefRefPtr<CefBrowser> browser_;
-    IMPLEMENT_REFCOUNTING(Visitor);
-  };
-
-  browser->GetMainFrame()->GetText(new Visitor(browser));
-}
-
-void RunRequestTest(CefRefPtr<CefBrowser> browser) {
-  // Create a new request
-  CefRefPtr<CefRequest> request(CefRequest::Create());
-
-  // Set the request URL
-  request->SetURL("http://tests/request");
-
-  // Add post data to the request.  The correct method and content-
-  // type headers will be set by CEF.
-  CefRefPtr<CefPostDataElement> postDataElement(CefPostDataElement::Create());
-  std::string data = "arg1=val1&arg2=val2";
-  postDataElement->SetToBytes(data.length(), data.c_str());
-  CefRefPtr<CefPostData> postData(CefPostData::Create());
-  postData->AddElement(postDataElement);
-  request->SetPostData(postData);
-
-  // Add a custom header
-  CefRequest::HeaderMap headerMap;
-  headerMap.insert(
-      std::make_pair("X-My-Header", "My Header Value"));
-  request->SetHeaderMap(headerMap);
-
-  // Load the request
-  browser->GetMainFrame()->LoadRequest(request);
-}
-
-void RunPopupTest(CefRefPtr<CefBrowser> browser) {
-  browser->GetMainFrame()->ExecuteJavaScript(
-      "window.open('http://www.google.com');", "about:blank", 0);
-}
-
-void RunDialogTest(CefRefPtr<CefBrowser> browser) {
-  browser->GetMainFrame()->LoadURL("http://tests/dialogs");
-}
-
-void RunPluginInfoTest(CefRefPtr<CefBrowser> browser) {
-  class Visitor : public CefWebPluginInfoVisitor {
-   public:
-    explicit Visitor(CefRefPtr<CefBrowser> browser)
-        : browser_(browser) {
-      html_ = "<html><head><title>Plugin Info Test</title></head><body>"
-              "\n<b>Installed plugins:</b>";
-    }
-    ~Visitor() {
-      html_ += "\n</body></html>";
-
-      // Load the html in the browser.
-      browser_->GetMainFrame()->LoadString(html_, "http://tests/plugin_info");
-    }
-
-    virtual bool Visit(CefRefPtr<CefWebPluginInfo> info, int count, int total)
-        OVERRIDE {
-      html_ +=  "\n<br/><br/>Name: " + info->GetName().ToString() +
-                "\n<br/>Description: " + info->GetDescription().ToString() +
-                "\n<br/>Version: " + info->GetVersion().ToString() +
-                "\n<br/>Path: " + info->GetPath().ToString();
-      return true;
-    }
-
-   private:
-    std::string html_;
-    CefRefPtr<CefBrowser> browser_;
-    IMPLEMENT_REFCOUNTING(Visitor);
-  };
-
-  CefVisitWebPluginInfo(new Visitor(browser));
-}
-
-void RunLocalStorageTest(CefRefPtr<CefBrowser> browser) {
-  browser->GetMainFrame()->LoadURL("http://tests/localstorage");
-}
-
-void RunAccelerated2DCanvasTest(CefRefPtr<CefBrowser> browser) {
-  browser->GetMainFrame()->LoadURL(
-      "http://mudcu.be/labs/JS1k/BreathingGalaxies.html");
-}
-
-void RunAcceleratedLayersTest(CefRefPtr<CefBrowser> browser) {
-  browser->GetMainFrame()->LoadURL(
-      "http://webkit.org/blog-files/3d-transforms/poster-circle.html");
-}
-
-void RunWebGLTest(CefRefPtr<CefBrowser> browser) {
-  browser->GetMainFrame()->LoadURL(
-      "http://webglsamples.googlecode.com/hg/field/field.html");
-}
-
-void RunHTML5VideoTest(CefRefPtr<CefBrowser> browser) {
-  browser->GetMainFrame()->LoadURL(
-      "http://www.youtube.com/watch?v=siOHh0uzcuY&html5=True");
-}
-
-void RunXMLHTTPRequestTest(CefRefPtr<CefBrowser> browser) {
-  browser->GetMainFrame()->LoadURL("http://tests/xmlhttprequest");
-}
-
-void RunDragDropTest(CefRefPtr<CefBrowser> browser) {
-  browser->GetMainFrame()->LoadURL("http://html5demos.com/drag");
-}
-
-void RunGeolocationTest(CefRefPtr<CefBrowser> browser) {
-  browser->GetMainFrame()->LoadURL("http://html5demos.com/geo");
 }

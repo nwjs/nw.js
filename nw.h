@@ -14,6 +14,10 @@ class CefApp;
 class CefBrowser;
 class CefCommandLine;
 
+namespace base {
+  class DictionaryValue;
+}
+
 // Returns the main browser window instance.
 CefRefPtr<CefBrowser> AppGetBrowser();
 
@@ -28,6 +32,9 @@ void AppInitCommandLine(int argc, const char* const* argv);
 
 // Returns the application command line object.
 CefRefPtr<CefCommandLine> AppGetCommandLine();
+
+// Returns the manifest.
+base::DictionaryValue* AppGetManifest();
 
 // Returns the application settings based on command line arguments.
 void AppGetSettings(CefSettings& settings, CefRefPtr<ClientApp> app);
