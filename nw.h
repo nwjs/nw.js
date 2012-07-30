@@ -35,6 +35,7 @@ CefRefPtr<CefCommandLine> AppGetCommandLine();
 
 // Returns the manifest.
 base::DictionaryValue* AppGetManifest();
+bool ManifestIsFeatureEnabled(const char* name, bool default_value = false);
 
 // Returns the application settings based on command line arguments.
 void AppGetSettings(CefSettings& settings, CefRefPtr<ClientApp> app);

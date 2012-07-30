@@ -49,8 +49,8 @@ ClientHandler::ClientHandler()
       CefCommandLine::GetGlobalCommandLine();
 
   base::DictionaryValue* manifest = AppGetManifest();
-  if (manifest->HasKey("main")) {
-    manifest->GetString("main", &m_StartupURL);
+  if (manifest->HasKey(nw::kmMain)) {
+    manifest->GetString(nw::kmMain, &m_StartupURL);
   } else {
     if (command_line->HasSwitch(nw::kUrl))
       m_StartupURL = command_line->GetSwitchValue(nw::kUrl);

@@ -10,6 +10,10 @@
 
 namespace nw {
 
+// Manifest settings
+extern const char kmMain[];
+extern const char kmFeatures[];
+
 extern const char kUrl[];
 extern const char kExternalDevTools[];
 
@@ -26,7 +30,7 @@ extern const char kJavascriptOpenWindowsDisallowed[];
 extern const char kJavascriptCloseWindowsDisallowed[];
 extern const char kJavascriptAccessClipboardDisallowed[];
 extern const char kDomPasteDisabled[];
-extern const char kCaretBrowsingDisabled[];
+extern const char kCaretBrowsingEnabled[];
 extern const char kJavaDisabled[];
 extern const char kPluginsDisabled[];
 extern const char kUniversalAccessFromFileUrlsAllowed[];

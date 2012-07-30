@@ -8,6 +8,9 @@
 
 namespace nw {
 
+const char kmMain[] = "main";
+const char kmFeatures[] = "features";
+
 const char kUrl[] = "url";
 const char kExternalDevTools[] = "external-devtools";
 
@@ -27,7 +30,7 @@ const char kJavascriptCloseWindowsDisallowed[] =
 const char kJavascriptAccessClipboardDisallowed[] =
     "javascript-access-clipboard-disallowed";
 const char kDomPasteDisabled[] = "dom-paste-disabled";
-const char kCaretBrowsingDisabled[] = "caret-browsing-enabled";
+const char kCaretBrowsingEnabled[] = "caret-browsing-enabled";
 const char kJavaDisabled[] = "java-disabled";
 const char kPluginsDisabled[] = "plugins-disabled";
 const char kUniversalAccessFromFileUrlsAllowed[] =
