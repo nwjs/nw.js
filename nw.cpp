@@ -221,9 +221,9 @@ void AppGetBrowserSettings(CefBrowserSettings& settings) {
 
   CefString(&settings.default_encoding) =
       g_command_line->GetSwitchValue(nw::kDefaultEncoding);
+
   settings.encoding_detector_enabled =
       ManifestIsFeatureEnabled(nw::kEncodingDetectorEnabled);
-
   settings.remote_fonts_disabled =
       ManifestIsFeatureEnabled(nw::kRemoteFontsDisabled);
   settings.caret_browsing_enabled = 
@@ -232,7 +232,6 @@ void AppGetBrowserSettings(CefBrowserSettings& settings) {
       ManifestIsFeatureEnabled(nw::kJavaDisabled);
   settings.plugins_disabled =
       ManifestIsFeatureEnabled(nw::kPluginsDisabled);
-
   settings.shrink_standalone_images_to_fit =
       ManifestIsFeatureEnabled(nw::kShrinkStandaloneImagesToFit);
   settings.site_specific_quirks_disabled =

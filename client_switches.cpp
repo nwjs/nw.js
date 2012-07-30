@@ -10,6 +10,7 @@ namespace nw {
 
 const char kmMain[] = "main";
 const char kmFeatures[] = "features";
+const char kmToolbar[] = "toolbar";
 
 const char kUrl[] = "url";
 const char kExternalDevTools[] = "external-devtools";

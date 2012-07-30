@@ -7,12 +7,14 @@
 #include <unistd.h>
 #include <string>
 
+#include "base/values.h"
 #include "include/cef_app.h"
 #include "include/cef_browser.h"
 #include "include/cef_frame.h"
 #include "include/cef_runnable.h"
 #include "nw/nw.h"
 #include "nw/client_handler.h"
+#include "nw/client_switches.h"
 #include "nw/string_util.h"
 
 char szWorkingDir[512];  // The current working directory
@@ -139,7 +141,12 @@ int main(int argc, char* argv[]) {
   gtk_tool_item_set_expand(tool_item, TRUE);
   gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);  // append
 
-  gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
+  base::DictionaryValue *manifest = AppGetManifest();
+  bool is_toolbar_open = false;
+  manifest->GetBoolean(nw::kmToolbar, &is_toolbar_open);
+
+  if (is_toolbar_open)
+    gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 
   g_signal_connect(G_OBJECT(window), "destroy",
                    G_CALLBACK(gtk_widget_destroyed), &window);
