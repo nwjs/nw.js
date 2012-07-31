@@ -10,6 +10,7 @@
 #include "base/file_util.h"
 #include "base/json/json_file_value_serializer.h"
 #include "base/logging.h"
+#include "base/scoped_temp_dir.h"
 #include "include/cef_app.h"
 #include "include/cef_browser.h"
 #include "include/cef_command_line.h"
@@ -18,19 +19,47 @@
 #include "include/cef_web_plugin.h"
 #include "nw/client_handler.h"
 #include "nw/client_switches.h"
+#include "nw/common/zip.h"
 #include "nw/nw.h"
 #include "nw/string_util.h"
 #include "nw/util.h"
 
 namespace {
 
-// Return the int representation of the specified string.
-int GetIntValue(const CefString& str) {
-  if (str.empty())
-    return 0;
+void ManifestConvertRelativePaths(
+    FilePath path,
+    base::DictionaryValue* manifest) {
+  if (manifest->HasKey(nw::kmMain)) {
+    std::string out;
+    if (!manifest->GetString(nw::kmMain, &out)) {
+      manifest->Remove(nw::kmMain, NULL);
+      LOG(WARNING) << "'main' field in manifest must be a string.";
+      return;
+    }
+    FilePath main_path = path.Append(out);
+    std::string url("file://");
+    manifest->SetString(nw::kmMain, url + main_path.value());
+  } else {
+    LOG(WARNING) << "'main' field in manifest should be specifed.";
+  }
+}
 
-  std::string stdStr = str;
-  return atoi(stdStr.c_str());
+bool ExtractPackage(const FilePath& zip_file, FilePath* where) {
+  // Auto clean our temporary directory
+  static scoped_ptr<ScopedTempDir> scoped_temp_dir;
+
+  if (!file_util::CreateNewTempDirectory("nw", where)) {
+    LOG(ERROR) << "Unable to create temporary directory.";
+    return false;
+  }
+
+  scoped_temp_dir.reset(new ScopedTempDir());
+  if (!scoped_temp_dir->Set(*where)) {
+    LOG(ERROR) << "Unable to set temporary directory.";
+    return false;
+  }
+
+  return zip::Unzip(zip_file, *where);
 }
 
 }  // namespace
@@ -54,24 +83,6 @@ CefWindowHandle AppGetMainHwnd() {
   return g_handler->GetMainHwnd();
 }
 
-void ManifestConvertRelativePaths(
-    FilePath path,
-    base::DictionaryValue* manifest) {
-  if (manifest->HasKey(nw::kmMain)) {
-    std::string out;
-    if (!manifest->GetString(nw::kmMain, &out)) {
-      manifest->Remove(nw::kmMain, NULL);
-      LOG(WARNING) << "'main' field in manifest must be a string.";
-      return;
-    }
-    FilePath main_path = path.Append(out);
-    std::string url("file://");
-    g_manifest->SetString(nw::kmMain, url + main_path.value());
-  } else {
-    LOG(WARNING) << "'main' field in manifest should be specifed.";
-  }
-}
-
 void AppInitManifest() {
   // Get first argument
   CefCommandLine::ArgumentList arguments;
@@ -86,6 +97,11 @@ void AppInitManifest() {
   // If it's a file then try to extract from it
   if (!file_util::DirectoryExists(path)) {
     DLOG(INFO) << "Extracting packaging...";
+    FilePath zip_file(path);
+    if (!ExtractPackage(zip_file, &path)) {
+      LOG(ERROR) << "Unable to extract package.";
+      return;
+    }
   }
 
   FilePath manifest_path = path.Append("package.json");
