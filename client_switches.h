@@ -17,6 +17,12 @@ extern const char kmWindow[];
 extern const char kmToolbar[];
 extern const char kmWidth[];
 extern const char kmHeight[];
+extern const char kmResizable[];
+extern const char kmPosition[];
+extern const char kmMinWidth[];
+extern const char kmMinHeight[];
+extern const char kmMaxWidth[];
+extern const char kmMaxHeight[];
 
 extern const char kUrl[];
 extern const char kExternalDevTools[];

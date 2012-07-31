@@ -103,15 +103,44 @@ int main(int argc, char* argv[]) {
   // Initialize CEF.
   CefInitialize(main_args, settings, app.get());
 
-  int width = 800;
-  int height = 600;
+  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
   if (window_manifest) {
+    int width = 800;
+    int height = 600;
     window_manifest->GetInteger(nw::kmWidth, &width);
     window_manifest->GetInteger(nw::kmHeight, &height);
-  }
+    gtk_window_set_default_size(GTK_WINDOW(window), width, height);
 
-  window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_default_size(GTK_WINDOW(window), width, height);
+    std::string desription;
+    if (window_manifest->GetString(nw::kmPosition, &desription)) {
+      if (desription == "center")
+        gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+      else if (desription == "mouse")
+        gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_MOUSE);
+    }
+
+    GdkGeometry geometry = { 0 };
+    int hints = GDK_HINT_POS;
+    int tmp = -1;
+    if (window_manifest->GetInteger(nw::kmMinWidth, &tmp)) {
+      hints |= GDK_HINT_MIN_SIZE;
+      geometry.min_width = tmp;
+    } else if (window_manifest->GetInteger(nw::kmMinHeight, &tmp)) {
+      hints |= GDK_HINT_MIN_SIZE;
+      geometry.min_height = tmp;
+    } else if (window_manifest->GetInteger(nw::kmMaxWidth, &tmp)) {
+      hints |= GDK_HINT_MAX_SIZE;
+      geometry.max_width = tmp;
+    } else if (window_manifest->GetInteger(nw::kmMaxHeight, &tmp)) {
+      hints |= GDK_HINT_MAX_SIZE;
+      geometry.max_height = tmp;
+    }
+    if (hints != GDK_HINT_POS) {
+      gtk_window_set_geometry_hints(
+          GTK_WINDOW(window), window, &geometry, (GdkWindowHints)hints);
+    }
+  }
 
   g_signal_connect(window, "focus", G_CALLBACK(&HandleFocus), NULL);
 
