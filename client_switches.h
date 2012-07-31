@@ -12,7 +12,8 @@ namespace nw {
 
 // Manifest settings
 extern const char kmMain[];
-extern const char kmFeatures[];
+extern const char kmWebkit[];
+extern const char kmWindow[];
 extern const char kmToolbar[];
 extern const char kmWidth[];
 extern const char kmHeight[];

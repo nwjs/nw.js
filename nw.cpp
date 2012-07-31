@@ -132,7 +132,7 @@ void AppInitManifest() {
   g_manifest = static_cast<DictionaryValue*>(root.release());
   ManifestConvertRelativePaths(path, g_manifest);
 
-  g_manifest->GetDictionary(nw::kmFeatures, &g_features);
+  g_manifest->GetDictionary(nw::kmWebkit, &g_features);
 }
 
 void AppInitCommandLine(int argc, const char* const* argv) {

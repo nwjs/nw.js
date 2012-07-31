@@ -8,11 +8,12 @@
 
 namespace nw {
 
-const char kmMain[]     = "main";
-const char kmFeatures[] = "features";
-const char kmToolbar[]  = "toolbar";
-const char kmWidth[]    = "width";
-const char kmHeight[]   = "height";
+const char kmMain[]    = "main";
+const char kmWindow[]  = "window";
+const char kmWebkit[]  = "webkit";
+const char kmToolbar[] = "toolbar";
+const char kmWidth[]   = "width";
+const char kmHeight[]  = "height";
 
 const char kUrl[] = "url";
 const char kExternalDevTools[] = "external-devtools";
