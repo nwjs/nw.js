@@ -97,12 +97,18 @@ int main(int argc, char* argv[]) {
 
   // Populate the settings based on command line arguments.
   AppGetSettings(settings, app);
+  base::DictionaryValue *manifest = AppGetManifest();
 
   // Initialize CEF.
   CefInitialize(main_args, settings, app.get());
 
+  int width = 800;
+  int height = 600;
+  manifest->GetInteger(nw::kmWidth, &width);
+  manifest->GetInteger(nw::kmHeight, &height);
+
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
+  gtk_window_set_default_size(GTK_WINDOW(window), width, height);
 
   g_signal_connect(window, "focus", G_CALLBACK(&HandleFocus), NULL);
 
@@ -141,7 +147,6 @@ int main(int argc, char* argv[]) {
   gtk_tool_item_set_expand(tool_item, TRUE);
   gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);  // append
 
-  base::DictionaryValue *manifest = AppGetManifest();
   bool is_toolbar_open = false;
   manifest->GetBoolean(nw::kmToolbar, &is_toolbar_open);
 

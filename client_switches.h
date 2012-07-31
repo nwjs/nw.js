@@ -14,6 +14,8 @@ namespace nw {
 extern const char kmMain[];
 extern const char kmFeatures[];
 extern const char kmToolbar[];
+extern const char kmWidth[];
+extern const char kmHeight[];
 
 extern const char kUrl[];
 extern const char kExternalDevTools[];
