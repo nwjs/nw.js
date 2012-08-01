@@ -105,13 +105,16 @@ int main(int argc, char* argv[]) {
 
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
+  int width = 800;
+  int height = 600;
   if (window_manifest) {
-    int width = 800;
-    int height = 600;
     window_manifest->GetInteger(nw::kmWidth, &width);
     window_manifest->GetInteger(nw::kmHeight, &height);
-    gtk_window_set_default_size(GTK_WINDOW(window), width, height);
+  }
 
+  gtk_window_set_default_size(GTK_WINDOW(window), width, height);
+
+  if (window_manifest) {
     std::string desription;
     if (window_manifest->GetString(nw::kmPosition, &desription)) {
       if (desription == "center")
@@ -179,7 +182,7 @@ int main(int argc, char* argv[]) {
   gtk_tool_item_set_expand(tool_item, TRUE);
   gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1);  // append
 
-  bool is_toolbar_open = false;
+  bool is_toolbar_open = true;
   if (window_manifest)
     window_manifest->GetBoolean(nw::kmToolbar, &is_toolbar_open);
 
