@@ -83,15 +83,21 @@ CefWindowHandle AppGetMainHwnd() {
   return g_handler->GetMainHwnd();
 }
 
-void AppInitManifest() {
-  // Get first argument
-  CefCommandLine::ArgumentList arguments;
-  g_command_line->GetArguments(arguments);
+bool AppInitManifest() {
+  FilePath path;
+  if (!g_command_line->HasArguments()) {
+    // See itself as a package (allowing standalone)
+    path = FilePath(g_command_line->GetProgram());
+  } else {
+    // Get first argument
+    CefCommandLine::ArgumentList arguments;
+    g_command_line->GetArguments(arguments);
+    path = FilePath(arguments[0]);
 
-  FilePath path(arguments[0]);
-  if (!file_util::PathExists(path)) {
-    LOG(WARNING) << "Package does not exist.";
-    return;
+    if (!file_util::PathExists(path)) {
+      LOG(WARNING) << "Package does not exist.";
+      return false;
+    }
   }
 
   // If it's a file then try to extract from it
@@ -100,14 +106,14 @@ void AppInitManifest() {
     FilePath zip_file(path);
     if (!ExtractPackage(zip_file, &path)) {
       LOG(ERROR) << "Unable to extract package.";
-      return;
+      return false;
     }
   }
 
   FilePath manifest_path = path.Append("package.json");
   if (!file_util::PathExists(manifest_path)) {
-    LOG(WARNING) << "No 'package.json' in package.";
-    return;
+    LOG(ERROR) << "No 'package.json' in package.";
+    return false;
   }
 
   // Parse file
@@ -116,16 +122,16 @@ void AppInitManifest() {
   scoped_ptr<Value> root(serializer.Deserialize(NULL, &error));
   if (!root.get()) {
     if (error.empty()) {
-      LOG(WARNING) << "It's not able to read the manifest file.";
+      LOG(ERROR) << "It's not able to read the manifest file.";
     } else {
-      LOG(WARNING) << "Manifest parsing error: " << error;
+      LOG(ERROR) << "Manifest parsing error: " << error;
     }
-    return;
+    return false;
   }
 
   if (!root->IsType(Value::TYPE_DICTIONARY)) {
-    LOG(WARNING) << "Manifest file is invalid, we need a dictionary type";
-    return;
+    LOG(ERROR) << "Manifest file is invalid, we need a dictionary type";
+    return false;
   }
 
   // Save result in global
@@ -133,6 +139,7 @@ void AppInitManifest() {
   ManifestConvertRelativePaths(path, g_manifest);
 
   g_manifest->GetDictionary(nw::kmWebkit, &g_features);
+  return true;
 }
 
 void AppInitCommandLine(int argc, const char* const* argv) {
@@ -143,8 +150,9 @@ void AppInitCommandLine(int argc, const char* const* argv) {
   g_command_line->InitFromArgv(argc, argv);
 #endif
 
-  if (g_command_line->HasArguments())
-    AppInitManifest();
+  if (!AppInitManifest()) {
+    // TODO show an empty page
+  }
 
   if (g_manifest == NULL)
     g_manifest = new base::DictionaryValue();
