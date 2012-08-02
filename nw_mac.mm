@@ -8,12 +8,14 @@
 #import <Cocoa/Cocoa.h>
 #include <sstream>
 
+#include "base/values.h"
 #include "include/cef_app.h"
 #import "include/cef_application_mac.h"
 #include "include/cef_browser.h"
 #include "include/cef_frame.h"
 #include "include/cef_runnable.h"
 #include "nw/client_handler.h"
+#include "nw/client_switches.h"
 #include "nw/resource_util.h"
 #include "nw/string_util.h"
 
@@ -25,10 +27,6 @@ extern CefRefPtr<ClientHandler> g_handler;
 #define BUTTON_WIDTH 72
 #define BUTTON_MARGIN 8
 #define URLBAR_HEIGHT  32
-
-// Content area size for newly created windows.
-const int kWindowWidth = 800;
-const int kWindowHeight = 600;
 
 // Memory AutoRelease pool.
 static NSAutoreleasePool* g_autopool = nil;
@@ -197,6 +195,17 @@ NSButton* MakeButton(NSRect* rect, NSString* title, NSView* parent) {
    
   // Create the delegate for control and browser window events.
   ClientWindowDelegate* delegate = [[ClientWindowDelegate alloc] init];
+
+  // Content area size for newly created windows.
+  int kWindowWidth = 800;
+  int kWindowHeight = 600;
+
+  base::DictionaryValue *window_manifest = NULL;
+  AppGetManifest()->GetDictionary(nw::kmWindow, &window_manifest);
+  if (window_manifest) {
+    window_manifest->GetInteger(nw::kmWidth, &kWindowWidth);
+    window_manifest->GetInteger(nw::kmHeight, &kWindowHeight);
+  }
   
   // Create the main application window.
   NSRect screen_rect = [[NSScreen mainScreen] visibleFrame];
