@@ -8,6 +8,7 @@
 #include <string>
 
 #include "base/values.h"
+#include "base/file_path.h"
 #include "include/cef_app.h"
 #include "include/cef_browser.h"
 #include "include/cef_frame.h"
@@ -142,6 +143,17 @@ int main(int argc, char* argv[]) {
     if (hints != GDK_HINT_POS) {
       gtk_window_set_geometry_hints(
           GTK_WINDOW(window), window, &geometry, (GdkWindowHints)hints);
+    }
+
+    std::string icon_path;
+    if (window_manifest->GetString(nw::kmIcon, &icon_path)) {
+      std::string root;
+      window_manifest->GetString(nw::kmRoot, &root);
+      FilePath path = FilePath(root).Append(icon_path);
+
+      GError *error;
+      gtk_window_set_icon_from_file(
+          GTK_WINDOW(window), path.value().c_str(), &error);
     }
   }
 

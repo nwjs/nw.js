@@ -138,6 +138,9 @@ bool AppInitManifest() {
   g_manifest = static_cast<DictionaryValue*>(root.release());
   ManifestConvertRelativePaths(path, g_manifest);
 
+  // And save the root path
+  g_manifest->SetString(nw::kmRoot, path.value());
+
   g_manifest->GetDictionary(nw::kmWebkit, &g_features);
   return true;
 }

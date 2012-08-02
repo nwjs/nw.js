@@ -9,9 +9,11 @@
 namespace nw {
 
 const char kmMain[]      = "main";
-const char kmWindow[]    = "window";
 const char kmWebkit[]    = "webkit";
+const char kmRoot[]      = "root";
+const char kmWindow[]    = "window";
 const char kmToolbar[]   = "toolbar";
+const char kmIcon[]      = "icon";
 const char kmWidth[]     = "width";
 const char kmHeight[]    = "height";
 const char kmResizable[] = "resizable";
