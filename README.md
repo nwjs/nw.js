@@ -1,173 +1,69 @@
-Introduction
-============
+# Introduction
 
 `node-webkit` is a web runtime based on `Chromium` and `node.js`. Though its
-name suggests that is's module of `node.js`, it is in fact a standalone 
-executable that runs your app written in HTML and node.js. And `node.js` is
-a part of it that provides native APIs and a module system.
+name suggests that is's a module of `node.js`, it is in fact a standalone 
+runtime that runs your app written in HTML and node.js. `node.js` is
+a part of it that provides native APIs and module system.
 
-Downloads
-=========
+# Features
 
-Binaries on all platforms will come soon.
+* Write apps in modern HTML, CSS, JS and WebGL
+* Strong network and native APIs from node.js
+* Easy packaging and distributing apps
 
-How to use
-==========
+# Downloads
 
-There're tree ways to run an app.
+Binaries built for all platforms will come soon.
 
-Run an app that is packaged:
+# Quick Start
 
-````bash
-$ nw 'path-to-package.nw'
+Make a folder `app`, and save file `index.html` under `app`:
+
+````html
+<html>
+<head>
+<title>Hello World!</title>
+</head>
+<body>
+<h1>Hello World!</h1>
+We are using node.js <script>document.write(process.version)</script>
+</body>
+</html>
 ````
 
-Run an app that resides in a directory (mainly helps developing):
+Save file `package.json` under `app`:
 
-````bash
-$ nw 'path-to-directory'
+````json
+{
+  "main": "index.html"
+}
 ````
 
-Explicitly run an url:
+Compress all files under `app` (`package.json` should be under root) into
+a zip archive, and then rename it to `app.nw`:
+
+    app.nw
+    |-- package.json
+    `-- index.html
+
+Download our `nw` binary for your platform and then use `nw` to open the
+`app.nw` file:
 
 ````bash
-$ nw 'file://path-of-index-html'
+$ ./nw app.nw
 ````
 
-How to compile
-==============
+Note: on Windows, you can drag the `app.nw` to `nw.exe` to open it.
 
-Since this project relies heavily on `Chromium`, which is a quite large one,
-our compilation will follow chromium's standard, by using `gclient` and
-`gyp`.
+For more information on how to write/package/run apps, see:
 
-Our steps will generally follow `Chromium`'s [Get the Code](http://www.chromium.org/developers/how-tos/get-the-code)
-and `CEF`'s [BranchesAndBuilding](http://code.google.com/p/chromiumembedded/wiki/BranchesAndBuilding),
-so make sure of reading them before you continue.
+* [[How to run apps]]
+* [[How to package and distribute your apps]]
+* [[Manifest format]]
+* [Node.js Manual](http://nodejs.org/api/)
 
-Prerequisite
-------------
+# For developers
 
-1. [Get the Chromium depot_tools](http://www.chromium.org/developers/how-tos/install-depot-tools).
-2. Setup building enviroment.
-   On Windows, see [Build Instructions (Windows)](http://www.chromium.org/developers/how-tos/build-instructions-windows#TOC-Build-environment).
-   On Linux, see [LinuxBuildInstructionsPrerequisites](http://code.google.com/p/chromium/wiki/LinuxBuildInstructionsPrerequisites).
-   On Mac, see [MacBuildInstructions](http://code.google.com/p/chromium/wiki/MacBuildInstructions#Prerequisites).
-
-Get Chromium's code
--------------------
-
-1. Find a place to put the code, it will take up about 14G disk place
-after compilation. Assume you store code under `node-webkit` folder, our
-final directory architecture will be like:
-
-    node-webkit/
-    |-- .gclient
-    `-- src/
-        |-- many-stuff
-        |-- ...
-        `-- cef
-
-2. Then create `.gclient` file under `node-webkit`, its content is:
-
-    solutions = [
-       { "name"        : "src",
-         "url"         : "https://github.com/zcbenz/chromium.git@dbc6308eb7",
-         "deps_file"   : ".DEPS.git",
-         "managed"     : True,
-         "custom_deps" : {
-           "src/third_party/WebKit/LayoutTests": None,
-           "src/chrome_frame/tools/test/reference_build/chrome": None,
-           "src/chrome_frame/tools/test/reference_build/chrome_win": None,
-           "src/chrome/tools/test/reference_build/chrome": None,
-           "src/chrome/tools/test/reference_build/chrome_linux": None,
-           "src/chrome/tools/test/reference_build/chrome_mac": None,
-           "src/chrome/tools/test/reference_build/chrome_win": None,
-         },
-         "safesync_url": "",
-       },
-    ]
-
-3. Execute the syncing under `node-webkit` (it would spend a few hours
-depending on your network condition):
-
-````bash
-$ gclient sync
-````
-
-Note: if you're on Linux and you get any dependency errors during gclient
-sync (like 'nss' or 'gtk+-2.0'), run ./src/build/install-build-deps.sh,
-then re-run gclient sync:
-
-    cd /path/to/node-webkit
-    # Do this to boot strap dependencies on Linux:
-    gclient sync --nohooks
-    ./src/build/install-build-deps.sh
-    gclient sync
-
-If you encountered other problems, see [UsingNewGit](http://code.google.com/p/chromium/wiki/UsingNewGit).
-
-Get CEF's code
---------------
-
-Currently our project just patches `CEF` and is independent of `Chromium`,
-so you still need to put `CEF`'s code under `node-webkit/src`:
-
-    cd /path/to/node-webkit/src
-    git clone https://github.com/zcbenz/cef.git
-
-Configure and compile
----------------------
-
-1. Run the cef_create_projects script (.bat on Windows, .sh on OS-X and 
-Linux) to generate the build files based on the GYP configuration.
-
-    cd /path/to/node-webkit/src/cef
-    ./cef_create_projects.sh
-
-2. Build node-webkit
-
-* Windows - Open the Visual Studio solution file and build. 
-* Mac OS-X - Open the Xcode project file and build. 
-* Linux - Run "make -j4 nw" from the Chromium "src" directory. 
-
-Alternately, the build_projects script (.bat on Windows, .sh on OS-X
-and Linux) can be used to build on the command line using the default
-system tools. 
-
-    cd /path/to/chromium/src/cef/tools
-    build_projects.sh Debug
-
-Run
----
-
-The binary is generated under `out/Debug` folder, you can just execute it:
-
-How node.js is integrated with Chromium
-====================================
-
-Currently `node.js` uses `libuv` as its message loop, and creates a lot of
-`V8` objects to provide standard library. So our job needs just two steps:
-
-1. Replace chromium's message loop with libuv
----------------------------------------------
-
-Thanks to chromium's clean design of `MessageLoop` class, this step is 
-relatively easy.
-
-First we create `MessageLoopForUV` subclass in `base/message_loop.h`, which
-uses `MessagePumpUV` as its message pump. Then we define `MessagePumpUV` in
-`base/message_pump_uv.h` and `message_pump_uv.cc`, which uses `libuv` as 
-its lowlevel events loop engine.
-
-(Note the message loop under Mac is done by modifying `MessagePumpMac`, 
-which would break in future)
-
-Then we change `base/message_loop.cc:179` and 
-`content/renderer/render_thread_impl.cc:195` to make `MessageLoop` actually
-use our `MessagePumpUV`.
-
-2. Initialize node.js
----------------------
-
+* [[Building node-webkit]]
+* [[How node.js is integrated with Chromium]]
 
