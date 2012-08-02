@@ -321,12 +321,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam,
       wmEvent = HIWORD(wParam);
       // Parse the menu selections:
       switch (wmId) {
-      case IDM_ABOUT:
-        DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-        return 0;
-      case IDM_EXIT:
-        DestroyWindow(hWnd);
-        return 0;
       case ID_WARN_CONSOLEMESSAGE:
         if (g_handler.get()) {
           std::wstringstream ss;
