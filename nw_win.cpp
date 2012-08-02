@@ -173,9 +173,11 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow) {
   int x = CW_USEDEFAULT;
   int y = 0;
   if (window_manifest) {
+    // window.width & window.height
     window_manifest->GetInteger(nw::kmWidth, &width);
     window_manifest->GetInteger(nw::kmHeight, &height);
 
+    // window.position
     std::string position;
     if (window_manifest->GetString(nw::kmPosition, &position)) {
       if (position == "center") {
@@ -432,6 +434,46 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam,
             rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
             SWP_NOZORDER);
           EndDeferWindowPos(hdwp);
+        }
+      }
+      break;
+
+    case WM_GETMINMAXINFO:
+      if (g_handler.get() && g_handler->GetBrowser()) {
+        CefWindowHandle hwnd =
+            g_handler->GetBrowser()->GetHost()->GetWindowHandle();
+
+        if (hwnd) {
+          MINMAXINFO* minMaxInfo = (MINMAXINFO*)message->lParam;
+
+          // Get window settings
+          base::DictionaryValue *window_manifest = NULL;
+          if (!AppGetManifest()->GetDictionary(nw::kmWindow, &window_manifest))
+            break;
+
+          bool changed = false;
+          int tmp;
+          if (window_manifest->GetInteger(nw::kmMinWidth, &tmp)) {
+            changed = true;
+            minMaxInfo->ptMinTrackSize.x = tmp;
+          }
+          if (window_manifest->GetInteger(nw::kmMinHeight, &tmp)) {
+            changed = true;
+            minMaxInfo->ptMinTrackSize.y = tmp;
+          }
+          if (window_manifest->GetInteger(nw::kmMaxWidth, &tmp)) {
+            changed = true;
+            minMaxInfo->ptMaxTrackSize.x = tmp;
+          }
+          if (window_manifest->GetInteger(nw::kmMaxHeight, &tmp)) {
+            changed = true;
+            minMaxInfo->ptMaxTrackSize.y = tmp;
+          }
+
+          if (!changed)
+            break;
+
+          return 0;
         }
       }
       break;
