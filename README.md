@@ -9,6 +9,7 @@ a part of it that provides native APIs and module system.
 
 * Write apps in modern HTML, CSS, JS and WebGL
 * Strong network and native APIs from node.js
+* Support modules written in JS and C++ 
 * Easy packaging and distributing apps
 
 # Downloads
@@ -57,13 +58,13 @@ Note: on Windows, you can drag the `app.nw` to `nw.exe` to open it.
 
 For more information on how to write/package/run apps, see:
 
-* [[How to run apps]]
-* [[How to package and distribute your apps]]
-* [[Manifest format]]
+* [How to run apps](wiki/How-to-run-apps)
+* [How to package and distribute your apps](wiki/How-to-package-and-distribute-your-apps)
+* [Manifest format](wiki/Manifest-format)
 * [Node.js Manual](http://nodejs.org/api/)
 
 # For developers
 
-* [[Building node-webkit]]
-* [[How node.js is integrated with Chromium]]
+* [Building node-webkit](wiki/Building-node-webkit)
+* [How node.js is integrated with Chromium](wiki/How-node.js-is-integrated-with-Chromium)
 
