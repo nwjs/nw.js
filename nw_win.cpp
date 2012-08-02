@@ -30,7 +30,6 @@
 HINSTANCE hInst;   // current instance
 TCHAR szTitle[MAX_LOADSTRING];  // The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];  // the main window class name
-char szWorkingDir[MAX_PATH];  // The current working directory
 
 // Forward declarations of functions included in this code module:
 ATOM MyRegisterClass(HINSTANCE hInstance);
@@ -61,10 +60,6 @@ int APIENTRY wWinMain(HINSTANCE hInstance,
   int exit_code = CefExecuteProcess(main_args, app.get());
   if (exit_code >= 0)
     return exit_code;
-
-  // Retrieve the current working directory.
-  if (_getcwd(szWorkingDir, MAX_PATH) == NULL)
-    szWorkingDir[0] = 0;
 
   // Parse command line arguments. The passed in values are ignored on Windows.
   AppInitCommandLine(0, NULL);

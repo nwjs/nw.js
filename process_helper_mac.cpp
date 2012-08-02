@@ -9,9 +9,6 @@
 #include "client_app.h"  // NOLINT(build/include)
 
 // Stub implementations.
-std::string AppGetWorkingDirectory() {
-  return std::string();
-}
 CefWindowHandle AppGetMainHwnd() {
   return NULL;
 }

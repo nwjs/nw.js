@@ -148,40 +148,6 @@ bool ClientHandler::OnConsoleMessage(CefRefPtr<CefBrowser> browser,
                                      int line) {
   REQUIRE_UI_THREAD();
 
-  bool first_message;
-  std::string logFile;
-
-  {
-    AutoLock lock_scope(this);
-
-    first_message = m_LogFile.empty();
-    if (first_message) {
-      std::stringstream ss;
-      ss << AppGetWorkingDirectory();
-#if defined(OS_WIN)
-      ss << "\\";
-#else
-      ss << "/";
-#endif
-      ss << "console.log";
-      m_LogFile = ss.str();
-    }
-    logFile = m_LogFile;
-  }
-
-  FILE* file = fopen(logFile.c_str(), "a");
-  if (file) {
-    std::stringstream ss;
-    ss << "Message: " << std::string(message) << "\r\nSource: " <<
-        std::string(source) << "\r\nLine: " << line <<
-        "\r\n-----------------------\r\n";
-    fputs(ss.str().c_str(), file);
-    fclose(file);
-
-    if (first_message)
-      SendNotification(NOTIFY_CONSOLE_MESSAGE);
-  }
-
   return false;
 }
 

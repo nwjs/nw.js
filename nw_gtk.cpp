@@ -19,8 +19,6 @@
 #include "nw/client_switches.h"
 #include "nw/string_util.h"
 
-char szWorkingDir[512];  // The current working directory
-
 // The global ClientHandler reference.
 extern CefRefPtr<ClientHandler> g_handler;
 
@@ -84,9 +82,6 @@ int main(int argc, char* argv[]) {
   int exit_code = CefExecuteProcess(main_args, app.get());
   if (exit_code >= 0)
     return exit_code;
-
-  if (!getcwd(szWorkingDir, sizeof (szWorkingDir)))
-    return -1;
 
   GtkWidget* window;
 
@@ -239,10 +234,4 @@ int main(int argc, char* argv[]) {
   CefShutdown();
 
   return 0;
-}
-
-// Global functions
-
-std::string AppGetWorkingDirectory() {
-  return szWorkingDir;
 }

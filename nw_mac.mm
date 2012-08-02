@@ -3,9 +3,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "nw/nw.h"
+
 #import <Cocoa/Cocoa.h>
 #include <sstream>
-#include "nw/nw.h"
+
 #include "include/cef_app.h"
 #import "include/cef_application_mac.h"
 #include "include/cef_browser.h"
@@ -17,8 +19,6 @@
 
 // The global ClientHandler reference.
 extern CefRefPtr<ClientHandler> g_handler;
-
-char szWorkingDir[512];   // The current working directory
 
 // Sizes for URL bar layout
 #define BUTTON_HEIGHT 22
@@ -496,9 +496,6 @@ int main(int argc, char* argv[]) {
   if (exit_code >= 0)
     return exit_code;
 
-  // Retrieve the current working directory.
-  getcwd(szWorkingDir, sizeof(szWorkingDir));
-
   // Initialize the AutoRelease pool.
   g_autopool = [[NSAutoreleasePool alloc] init];
 
@@ -526,11 +523,4 @@ int main(int argc, char* argv[]) {
 
   // Don't put anything below this line because it won't be executed.
   return 0;
-}
-
-
-// Global functions
-
-std::string AppGetWorkingDirectory() {
-  return szWorkingDir;
 }
