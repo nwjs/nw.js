@@ -36,7 +36,6 @@ char szWorkingDir[MAX_PATH];  // The current working directory
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
 
 // The global ClientHandler reference.
 extern CefRefPtr<ClientHandler> g_handler;
@@ -165,9 +164,35 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow) {
 
   hInst = hInstance;  // Store instance handle in our global variable
 
+  // Get window settings
+  base::DictionaryValue *window_manifest = NULL;
+  AppGetManifest()->GetDictionary(nw::kmWindow, &window_manifest);
+
+  int width = 800;
+  int height = 600;
+  int x = CW_USEDEFAULT;
+  int y = 0;
+  if (window_manifest) {
+    window_manifest->GetInteger(nw::kmWidth, &width);
+    window_manifest->GetInteger(nw::kmHeight, &height);
+
+    std::string position;
+    if (window_manifest->GetString(nw::kmPosition, &position)) {
+      if (position == "center") {
+        x = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
+        y = (GetSystemMetrics(SM_CYSCREEN) - height) / 2;
+      } else if (position == "mouse") {
+        LPPOINT point;
+        GetCursorPos(&point);
+        x = point.x - width / 2;
+        y = point.y - height / 2;
+      }
+    }
+  }
+
   hWnd = CreateWindow(szWindowClass, szTitle,
-                      WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN, CW_USEDEFAULT, 0,
-                      CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
+                      WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN, x, y,
+                      width, height, NULL, NULL, hInstance, NULL);
 
   if (!hWnd)
     return FALSE;
@@ -234,7 +259,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam,
 
       // Get window settings
       base::DictionaryValue *window_manifest = NULL;
-      AppGetManifest()->GetDictionary("window", &window_manifest);
+      AppGetManifest()->GetDictionary(nw::kmWindow, &window_manifest);
 
       // Create the child windows used for navigation
       RECT rect;
@@ -396,10 +421,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam,
           GetClientRect(hWnd, &rect);
           rect.top += URLBAR_HEIGHT;
 
-          int urloffset = rect.left + BUTTON_WIDTH * nb;
 
           HDWP hdwp = BeginDeferWindowPos(1);
           if (editWnd) {
+            int urloffset = rect.left + BUTTON_WIDTH * nb;
             hdwp = DeferWindowPos(hdwp, editWnd, NULL, urloffset,
               0, rect.right - urloffset, URLBAR_HEIGHT, SWP_NOZORDER);
           }
@@ -441,21 +466,4 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam,
 
     return DefWindowProc(hWnd, message, wParam, lParam);
   }
-}
-
-// Message handler for about box.
-INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
-  UNREFERENCED_PARAMETER(lParam);
-  switch (message) {
-  case WM_INITDIALOG:
-    return (INT_PTR)TRUE;
-
-  case WM_COMMAND:
-    if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) {
-      EndDialog(hDlg, LOWORD(wParam));
-      return (INT_PTR)TRUE;
-    }
-    break;
-  }
-  return (INT_PTR)FALSE;
 }

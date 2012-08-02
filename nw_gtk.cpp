@@ -100,7 +100,7 @@ int main(int argc, char* argv[]) {
   // Populate the settings based on command line arguments.
   AppGetSettings(settings, app);
   base::DictionaryValue *window_manifest = NULL;
-  AppGetManifest()->GetDictionary("window", &window_manifest);
+  AppGetManifest()->GetDictionary(nw::kmWindow, &window_manifest);
 
   // Initialize CEF.
   CefInitialize(main_args, settings, app.get());
