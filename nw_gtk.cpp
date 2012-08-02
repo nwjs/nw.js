@@ -2,6 +2,8 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
+#include "nw/nw.h"
+
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -13,7 +15,6 @@
 #include "include/cef_browser.h"
 #include "include/cef_frame.h"
 #include "include/cef_runnable.h"
-#include "nw/nw.h"
 #include "nw/client_handler.h"
 #include "nw/client_switches.h"
 #include "nw/string_util.h"
