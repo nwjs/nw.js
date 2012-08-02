@@ -26,6 +26,26 @@
 
 namespace {
 
+bool MakePathAbsolute(FilePath* file_path) {
+  DCHECK(file_path);
+
+  FilePath current_directory;
+  if (!file_util::GetCurrentDirectory(&current_directory))
+    return false;
+
+  if (file_path->IsAbsolute())
+    return true;
+
+  if (current_directory.empty())
+    return file_util::AbsolutePath(file_path);
+
+  if (!current_directory.IsAbsolute())
+    return false;
+
+  *file_path = current_directory.Append(*file_path);
+  return true;
+}
+
 void ManifestConvertRelativePaths(
     FilePath path,
     base::DictionaryValue* manifest) {
@@ -98,6 +118,11 @@ bool AppInitManifest() {
       LOG(WARNING) << "Package does not exist.";
       return false;
     }
+  }
+
+  // Convert to absoulute path
+  if (!MakePathAbsolute(&path)) {
+    DLOG(ERROR) << "Cannot make absolute path from " << path.value();
   }
 
   // If it's a file then try to extract from it
