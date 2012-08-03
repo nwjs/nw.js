@@ -24,6 +24,10 @@
 #include "nw/string_util.h"
 #include "nw/util.h"
 
+#if defined(OS_WIN)
+#include "base/string16.h"
+#endif
+
 namespace {
 
 bool MakePathAbsolute(FilePath* file_path) {
@@ -50,14 +54,23 @@ void ManifestConvertRelativePaths(
     FilePath path,
     base::DictionaryValue* manifest) {
   if (manifest->HasKey(nw::kmMain)) {
+#if defined(OS_WIN)
+    string16 out;
+#else
     std::string out;
+#endif
     if (!manifest->GetString(nw::kmMain, &out)) {
       manifest->Remove(nw::kmMain, NULL);
       LOG(WARNING) << "'main' field in manifest must be a string.";
       return;
     }
+
     FilePath main_path = path.Append(out);
+#if defined(OS_WIN)
+    string16 url(L"file://");
+#else
     std::string url("file://");
+#endif
     manifest->SetString(nw::kmMain, url + main_path.value());
   } else {
     LOG(WARNING) << "'main' field in manifest should be specifed.";

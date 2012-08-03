@@ -45,11 +45,6 @@ CefRefPtr<CefStreamReader> GetBinaryResourceReader(const char* resource_name) {
     char* name;
     int id;
   } resource_map[] = {
-    {"binding.html", IDS_BINDING},
-    {"dialogs.html", IDS_DIALOGS},
-    {"domaccess.html", IDS_DOMACCESS},
-    {"localstorage.html", IDS_LOCALSTORAGE},
-    {"xmlhttprequest.html", IDS_XMLHTTPREQUEST},
   };
 
   for (int i = 0; i < sizeof(resource_map)/sizeof(_resource_map); ++i) {

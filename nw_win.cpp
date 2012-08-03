@@ -179,7 +179,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow) {
         x = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
         y = (GetSystemMetrics(SM_CYSCREEN) - height) / 2;
       } else if (position == "mouse") {
-        LPPOINT point;
+        POINT point;
         GetCursorPos(&point);
         x = point.x - width / 2;
         y = point.y - height / 2;
