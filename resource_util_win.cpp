@@ -41,6 +41,7 @@ CefRefPtr<CefStreamReader> GetBinaryResourceReader(int binaryId) {
 
 CefRefPtr<CefStreamReader> GetBinaryResourceReader(const char* resource_name) {
   // Map of resource labels to BINARY id values.
+  /*
   static struct _resource_map {
     char* name;
     int id;
@@ -51,6 +52,7 @@ CefRefPtr<CefStreamReader> GetBinaryResourceReader(const char* resource_name) {
     if (!strcmp(resource_map[i].name, resource_name))
       return GetBinaryResourceReader(resource_map[i].id);
   }
+  */
 
   ASSERT(FALSE);  // The resource should be found.
   return NULL;

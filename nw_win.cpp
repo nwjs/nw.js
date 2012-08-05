@@ -439,7 +439,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam,
             g_handler->GetBrowser()->GetHost()->GetWindowHandle();
 
         if (hwnd) {
-          MINMAXINFO* minMaxInfo = (MINMAXINFO*)message->lParam;
+          MINMAXINFO* minMaxInfo = (MINMAXINFO*)(lParam);
 
           // Get window settings
           base::DictionaryValue *window_manifest = NULL;
