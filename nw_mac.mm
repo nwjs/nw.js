@@ -230,41 +230,47 @@ NSButton* MakeButton(NSRect* rect, NSString* title, NSView* parent) {
 
   NSView* contentView = [mainWnd contentView];
 
-  // Create the buttons.
-  NSRect button_rect = [contentView bounds];
-  button_rect.origin.y = window_rect.size.height - URLBAR_HEIGHT +
-      (URLBAR_HEIGHT - BUTTON_HEIGHT) / 2;
-  button_rect.size.height = BUTTON_HEIGHT;
-  button_rect.origin.x += BUTTON_MARGIN;
-  button_rect.size.width = BUTTON_WIDTH;
+  bool is_toolbar_open = true;
+  if (window_manifest)
+    window_manifest->GetBoolean(nw::kmToolbar, &is_toolbar_open);
 
-  NSButton* button = MakeButton(&button_rect, @"Back", contentView);
-  [button setTarget:delegate];
-  [button setAction:@selector(goBack:)];
+  if (is_toolbar_open) {
+    // Create the buttons.
+    NSRect button_rect = [contentView bounds];
+    button_rect.origin.y = window_rect.size.height - URLBAR_HEIGHT +
+        (URLBAR_HEIGHT - BUTTON_HEIGHT) / 2;
+    button_rect.size.height = BUTTON_HEIGHT;
+    button_rect.origin.x += BUTTON_MARGIN;
+    button_rect.size.width = BUTTON_WIDTH;
 
-  button = MakeButton(&button_rect, @"Forward", contentView);
-  [button setTarget:delegate];
-  [button setAction:@selector(goForward:)];
+    NSButton* button = MakeButton(&button_rect, @"Back", contentView);
+    [button setTarget:delegate];
+    [button setAction:@selector(goBack:)];
 
-  button = MakeButton(&button_rect, @"Reload", contentView);
-  [button setTarget:delegate];
-  [button setAction:@selector(reload:)];
+    button = MakeButton(&button_rect, @"Forward", contentView);
+    [button setTarget:delegate];
+    [button setAction:@selector(goForward:)];
 
-  button = MakeButton(&button_rect, @"Stop", contentView);
-  [button setTarget:delegate];
-  [button setAction:@selector(stopLoading:)];
+    button = MakeButton(&button_rect, @"Reload", contentView);
+    [button setTarget:delegate];
+    [button setAction:@selector(reload:)];
 
-  // Create the URL text field.
-  button_rect.origin.x += BUTTON_MARGIN;
-  button_rect.size.width = [contentView bounds].size.width -
-      button_rect.origin.x - BUTTON_MARGIN;
-  NSTextField* editWnd = [[NSTextField alloc] initWithFrame:button_rect];
-  [contentView addSubview:editWnd];
-  [editWnd setAutoresizingMask:(NSViewWidthSizable | NSViewMinYMargin)];
-  [editWnd setTarget:delegate];
-  [editWnd setAction:@selector(takeURLStringValueFrom:)];
-  [[editWnd cell] setWraps:NO];
-  [[editWnd cell] setScrollable:YES];
+    button = MakeButton(&button_rect, @"Stop", contentView);
+    [button setTarget:delegate];
+    [button setAction:@selector(stopLoading:)];
+
+    // Create the URL text field.
+    button_rect.origin.x += BUTTON_MARGIN;
+    button_rect.size.width = [contentView bounds].size.width -
+        button_rect.origin.x - BUTTON_MARGIN;
+    NSTextField* editWnd = [[NSTextField alloc] initWithFrame:button_rect];
+    [contentView addSubview:editWnd];
+    [editWnd setAutoresizingMask:(NSViewWidthSizable | NSViewMinYMargin)];
+    [editWnd setTarget:delegate];
+    [editWnd setAction:@selector(takeURLStringValueFrom:)];
+    [[editWnd cell] setWraps:NO];
+    [[editWnd cell] setScrollable:YES];
+  }
 
   // Create the handler.
   g_handler = new ClientHandler();
