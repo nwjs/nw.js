@@ -30,8 +30,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_CEFCLIENT           ICON                    "res\nw.ico"
-IDI_SMALL               ICON                    "res\small.ico"
+IDI_CEFCLIENT           ICON                    "res\\nw.ico"
+IDI_SMALL               ICON                    "res\\small.ico"
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
