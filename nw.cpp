@@ -81,7 +81,11 @@ bool ExtractPackage(const FilePath& zip_file, FilePath* where) {
   // Auto clean our temporary directory
   static scoped_ptr<ScopedTempDir> scoped_temp_dir;
 
+#if defined(OS_WIN)
+  if (!file_util::CreateNewTempDirectory(L"nw", where)) {
+#else
   if (!file_util::CreateNewTempDirectory("nw", where)) {
+#endif
     LOG(ERROR) << "Unable to create temporary directory.";
     return false;
   }
@@ -148,7 +152,11 @@ bool AppInitManifest() {
     }
   }
 
+#if defined(OS_WIN)
+  FilePath manifest_path = path.Append(L"package.json");
+#else
   FilePath manifest_path = path.Append("package.json");
+#endif
   if (!file_util::PathExists(manifest_path)) {
     LOG(ERROR) << "No 'package.json' in package.";
     return false;
