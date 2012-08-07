@@ -67,15 +67,15 @@ Note: on Windows, you can drag the `app.nw` to `nw.exe` to open it.
 
 For more information on how to write/package/run apps, see:
 
-* [How to run apps](node-webkit/wiki/How-to-run-apps)
-* [How to package and distribute your apps](node-webkit/wiki/How-to-package-and-distribute-your-apps)
-* [Manifest format](node-webkit/wiki/Manifest-format) - format of `package.json`
+* [How to run apps](https://github.com/rogerwang/node-webkit/wiki/How-to-run-apps)
+* [How to package and distribute your apps](https://github.com/rogerwang/node-webkit/wiki/How-to-package-and-distribute-your-apps)
+* [Manifest format](https://github.com/rogerwang/node-webkit/wiki/Manifest-format) - format of `package.json`
 * [Node.js Manual](http://nodejs.org/api/)
 
 # For developers
 
-* [Building node-webkit](node-webkit/wiki/Building-node-webkit)
-* [How node.js is integrated with Chromium](node-webkit/wiki/How-node.js-is-integrated-with-Chromium)
+* [Building node-webkit](https://github.com/rogerwang/node-webkit/wiki/Building-node-webkit)
+* [How node.js is integrated with Chromium](https://github.com/rogerwang/node-webkit/wiki/How-node.js-is-integrated-with-Chromium)
 
 # Community
 
