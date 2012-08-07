@@ -234,6 +234,7 @@ NSButton* MakeButton(NSRect* rect, NSString* title, NSView* parent) {
   if (window_manifest)
     window_manifest->GetBoolean(nw::kmToolbar, &is_toolbar_open);
 
+  NSTextField* editWnd;
   if (is_toolbar_open) {
     // Create the buttons.
     NSRect button_rect = [contentView bounds];
@@ -263,7 +264,7 @@ NSButton* MakeButton(NSRect* rect, NSString* title, NSView* parent) {
     button_rect.origin.x += BUTTON_MARGIN;
     button_rect.size.width = [contentView bounds].size.width -
         button_rect.origin.x - BUTTON_MARGIN;
-    NSTextField* editWnd = [[NSTextField alloc] initWithFrame:button_rect];
+    editWnd = [[NSTextField alloc] initWithFrame:button_rect];
     [contentView addSubview:editWnd];
     [editWnd setAutoresizingMask:(NSViewWidthSizable | NSViewMinYMargin)];
     [editWnd setTarget:delegate];
@@ -275,7 +276,9 @@ NSButton* MakeButton(NSRect* rect, NSString* title, NSView* parent) {
   // Create the handler.
   g_handler = new ClientHandler();
   g_handler->SetMainHwnd(contentView);
-  g_handler->SetEditHwnd(editWnd);
+  if (is_toolbar_open) {
+    g_handler->SetEditHwnd(editWnd);
+  }
 
   // Create the browser view.
   CefWindowInfo window_info;
