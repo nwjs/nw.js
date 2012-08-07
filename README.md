@@ -15,15 +15,13 @@ runtime that runs apps written in HTML, CSS and node.js.
 
 Prebuilt binaries:
 
-_Binaries built for all platforms will come soon._
-
-* Linux: 32bit / 64bit
-* Windows: win32
-* Mac: 32bit
+* Linux: [32bit](http://s3.amazonaws.com/node-webkit/nw_release_linux_x32.tar.gz) / [64bit](https://s3.amazonaws.com/node-webkit/nw_release_linux_x64.tar.gz)
+* Windows: [win32](http://s3.amazonaws.com/node-webkit/nw_release_win32.zip)
+* Mac: [32bit](http://s3.amazonaws.com/node-webkit/nw_release_mac.zip)
 
 Demos:
 
-* Hello World
+* [Hello World](http://s3.amazonaws.com/node-webkit/hello_world.nw)
 
 # Quick Start
 
