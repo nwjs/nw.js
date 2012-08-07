@@ -84,16 +84,14 @@ allow `node.js` code to execute in normal web pages. See the `master` branch
 of [rogerwang/node-webkit](https://github.com/rogerwang/node-webkit).
 
 Later `node-webkit` instead hacked on `Chromium` and `CEF`, and showed pages
-using `CEF`'s `cefclient`. These works were done by
-[rogerwang](https://github.com/rogerwang), see the `cef` branch
-of [rogerwang/node-webkit](https://github.com/rogerwang/node-webkit/tree/cef).
+using `CEF`'s `cefclient`, see the `cef` branch of [rogerwang/node-webkit](https://github.com/rogerwang/node-webkit/tree/cef).
+These works were done by [rogerwang](https://github.com/rogerwang),
 
-Since then `node-webkit` had slept for a while, now I have taken the
-development of `node-webkit` and will try to make it a usable web runtime.
+Since then `node-webkit` slept for a while, now I have taken the development
+of `node-webkit` and will try to make it a usable web runtime.
 
 # License
 
-Currently most of our codes are based on `Chromium` and `CEF`, and the code
-of `nw` resides under `CEF`. In future we will move `nw` out of `CEF` into
-this repository, before that all our code obeys `Chromium` and `CEF`'s 
-BSD-like license, for more see `LICENSE.txt` under `src/cef`.
+`node-webkit`'s code uses the MIT license, `Chromium` and `CEF`'s codes use
+their BSD-style licenses.
+
