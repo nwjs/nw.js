@@ -11,13 +11,19 @@ runtime that runs apps written in HTML, CSS and node.js.
 * Support modules written in JS and C++ 
 * Easy to package and distribute apps
 
-# Prebuilt binaries
+# Downloads
+
+Prebuilt binaries:
 
 _Binaries built for all platforms will come soon._
 
 * Linux: 32bit / 64bit
 * Windows: win32
 * Mac: 32bit
+
+Demos:
+
+* Hello World
 
 # Quick Start
 
@@ -74,21 +80,7 @@ For more information on how to write/package/run apps, see:
 # Community
 
 We use [node-webkit | Google Groups](groups.google.com/group/node-webkit) as
-our mailing list, subscribe via [node-webkit+subscribe@googlegroups.com](mailto:node-webkit+subscribe@googlegroups.com)
-
-# Some history
-
-The first release of `node-webkit` is a C++ module of `node.js`, it created
-a WebView as the main window, and modified the WebView's WebKit engine to
-allow `node.js` code to execute in normal web pages. See the `master` branch
-of [rogerwang/node-webkit](https://github.com/rogerwang/node-webkit).
-
-Later `node-webkit` instead hacked on `Chromium` and `CEF`, and showed pages
-using `CEF`'s `cefclient`, see the `cef` branch of [rogerwang/node-webkit](https://github.com/rogerwang/node-webkit/tree/cef).
-These works were done by [rogerwang](https://github.com/rogerwang),
-
-Since then `node-webkit` slept for a while, now I have taken the development
-of `node-webkit` and will try to make it a usable web runtime.
+our mailing list, subscribe via [node-webkit+subscribe@googlegroups.com](mailto:node-webkit+subscribe@googlegroups.com).
 
 # License
 
