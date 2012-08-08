@@ -1,0 +1,7 @@
+[submodule "chromium"]
+path = chromium
+url = https://github.com/zcbenz/chromium.git
+
+[submodule "cef"]
+path = cef
+url = https://github.com/zcbenz/cef.git
