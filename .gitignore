@@ -1,6 +1,0 @@
-build/
-*.o
-.lock-wscript
-tags
-.*.swp
-*~
