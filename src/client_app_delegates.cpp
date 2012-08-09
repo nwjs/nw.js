@@ -2,8 +2,8 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
-#include "nw/client_app.h"
-#include "nw/client_renderer.h"
+#include "client_app.h"
+#include "client_renderer.h"
 
 // static
 void ClientApp::CreateRenderDelegates(RenderDelegateSet& delegates) {

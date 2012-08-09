@@ -2,13 +2,13 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
-#include "nw/client_renderer.h"
+#include "client_renderer.h"
 
 #include <sstream>
 #include <string>
 
 #include "include/cef_dom.h"
-#include "nw/util.h"
+#include "util.h"
 
 namespace client_renderer {
 

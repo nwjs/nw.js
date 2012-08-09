@@ -2,7 +2,7 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
-#include "nw/client_handler.h"
+#include "client_handler.h"
 
 #include <string>
 #include <windows.h>
@@ -10,7 +10,7 @@
 
 #include "include/cef_browser.h"
 #include "include/cef_frame.h"
-#include "nw/resource.h"
+#include "resource.h"
 
 void ClientHandler::OnAddressChange(CefRefPtr<CefBrowser> browser,
                                     CefRefPtr<CefFrame> frame,

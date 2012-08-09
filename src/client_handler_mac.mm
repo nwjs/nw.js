@@ -4,10 +4,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-#include "nw/client_handler.h"
+#include "client_handler.h"
 #include "include/cef_browser.h"
 #include "include/cef_frame.h"
-#include "nw/nw.h"
+#include "nw.h"
 
 void ClientHandler::OnAddressChange(CefRefPtr<CefBrowser> browser,
                                     CefRefPtr<CefFrame> frame,

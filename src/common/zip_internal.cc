@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "nw/common/zip.h"
+#include "zip.h"
 
 #include "base/utf_string_conversions.h"
 #include "third_party/zlib/contrib/minizip/unzip.h"

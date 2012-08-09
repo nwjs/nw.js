@@ -2,7 +2,7 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
-#include "nw/nw.h"
+#include "nw.h"
 
 #include <windows.h>
 #include <commdlg.h>
@@ -16,10 +16,10 @@
 #include "include/cef_browser.h"
 #include "include/cef_frame.h"
 #include "include/cef_runnable.h"
-#include "nw/client_handler.h"
-#include "nw/client_switches.h"
-#include "nw/resource.h"
-#include "nw/string_util.h"
+#include "client_handler.h"
+#include "client_switches.h"
+#include "resource.h"
+#include "string_util.h"
 
 #define MAX_LOADSTRING 100
 #define MAX_URL_LENGTH  255

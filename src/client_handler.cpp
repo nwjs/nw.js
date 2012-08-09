@@ -14,12 +14,12 @@
 #include "include/cef_process_util.h"
 #include "include/cef_runnable.h"
 #include "include/wrapper/cef_stream_resource_handler.h"
-#include "nw/client_handler.h"
-#include "nw/client_renderer.h"
-#include "nw/client_switches.h"
-#include "nw/nw.h"
-#include "nw/resource_util.h"
-#include "nw/string_util.h"
+#include "client_handler.h"
+#include "client_renderer.h"
+#include "client_switches.h"
+#include "nw.h"
+#include "resource_util.h"
+#include "string_util.h"
 
 
 // Custom menu command Ids.

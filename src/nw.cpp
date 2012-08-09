@@ -17,12 +17,12 @@
 #include "include/cef_frame.h"
 #include "include/cef_runnable.h"
 #include "include/cef_web_plugin.h"
-#include "nw/client_handler.h"
-#include "nw/client_switches.h"
-#include "nw/common/zip.h"
-#include "nw/nw.h"
-#include "nw/string_util.h"
-#include "nw/util.h"
+#include "client_handler.h"
+#include "client_switches.h"
+#include "common/zip.h"
+#include "nw.h"
+#include "string_util.h"
+#include "util.h"
 
 #if defined(OS_WIN)
 #include "base/string16.h"

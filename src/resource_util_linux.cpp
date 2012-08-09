@@ -3,11 +3,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "nw/resource_util.h"
+#include "resource_util.h"
 #include <stdio.h>
 #include <string>
 #include "include/cef_stream.h"
-#include "nw/util.h"
+#include "util.h"
 
 bool GetResourceDir(std::string& dir) {
   char buff[1024];

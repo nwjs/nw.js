@@ -2,10 +2,10 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
-#include "nw/resource_util.h"
+#include "resource_util.h"
 #include "include/cef_stream.h"
 #include "include/wrapper/cef_byte_read_handler.h"
-#include "nw/util.h"
+#include "util.h"
 
 #if defined(OS_WIN)
 

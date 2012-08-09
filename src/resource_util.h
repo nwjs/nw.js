@@ -12,7 +12,7 @@ class CefStreamReader;
 
 #if defined(OS_WIN)
 
-#include "nw/resource.h"
+#include "resource.h"
 
 // Load a resource of type BINARY
 bool LoadBinaryResource(int binaryId, DWORD &dwSize, LPBYTE &pBytes);

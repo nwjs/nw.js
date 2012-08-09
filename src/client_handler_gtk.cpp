@@ -4,7 +4,7 @@
 
 #include <gtk/gtk.h>
 #include <string>
-#include "nw/client_handler.h"
+#include "client_handler.h"
 #include "include/cef_browser.h"
 #include "include/cef_frame.h"
 

@@ -6,9 +6,10 @@
 #import <Foundation/Foundation.h>
 #include <mach-o/dyld.h>
 #include <stdio.h>
-#include "nw/resource_util.h"
+
 #include "include/cef_stream.h"
-#include "nw/util.h"
+#include "util.h"
+#include "resource_util.h"
 
 namespace {
 

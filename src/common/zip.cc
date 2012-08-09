@@ -2,18 +2,18 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "nw/common/zip.h"
+#include "zip.h"
 
 #include "base/bind.h"
 #include "base/file_util.h"
 #include "base/logging.h"
 #include "base/string16.h"
 #include "base/string_util.h"
-#include "nw/common/zip_internal.h"
-#include "nw/common/zip_reader.h"
 #include "net/base/file_stream.h"
 #include "third_party/zlib/contrib/minizip/unzip.h"
 #include "third_party/zlib/contrib/minizip/zip.h"
+#include "zip_internal.h"
+#include "zip_reader.h"
 
 namespace {
 
