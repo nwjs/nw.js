@@ -297,7 +297,10 @@ NSButton* MakeButton(NSRect* rect, NSString* title, NSView* parent) {
   // Size the window.
   NSRect r = [mainWnd contentRectForFrameRect:[mainWnd frame]];
   r.size.width = kWindowWidth;
-  r.size.height = kWindowHeight + URLBAR_HEIGHT;
+  r.size.height = kWindowHeight;
+  if (is_toolbar_open) {
+    r.size.height += URLBAR_HEIGHT;
+  }
   [mainWnd setFrame:[mainWnd frameRectForContentRect:r] display:YES];
 }
 
