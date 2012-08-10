@@ -265,9 +265,6 @@ class ClientHandler : public CefClient,
   ProcessMessageDelegateSet process_message_delegates_;
   RequestDelegateSet request_delegates_;
 
-  // If true DevTools will be opened in an external browser window.
-  bool m_bExternalDevTools;
-
   // List of open DevTools URLs if not using an external browser window.
   std::set<std::string> m_OpenDevToolsURLs;
 

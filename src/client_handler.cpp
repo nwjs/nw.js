@@ -58,8 +58,6 @@ ClientHandler::ClientHandler()
 
   if (m_StartupURL.empty())
     m_StartupURL = "about:blank";
-
-  m_bExternalDevTools = command_line->HasSwitch(nw::kExternalDevTools);
 }
 
 ClientHandler::~ClientHandler() {
@@ -354,16 +352,8 @@ std::string ClientHandler::GetLastDownloadFile() {
 void ClientHandler::ShowDevTools(CefRefPtr<CefBrowser> browser) {
   std::string devtools_url = browser->GetHost()->GetDevToolsURL(true);
   if (!devtools_url.empty()) {
-    if (m_bExternalDevTools) {
-      // Open DevTools in an external browser window.
-      LaunchExternalBrowser(devtools_url);
-    } else if (m_OpenDevToolsURLs.find(devtools_url) ==
-               m_OpenDevToolsURLs.end()) {
-      // Open DevTools in a popup window.
-      m_OpenDevToolsURLs.insert(devtools_url);
-      browser->GetMainFrame()->ExecuteJavaScript(
-          "window.open('" +  devtools_url + "');", "about:blank", 0);
-    }
+    // Open DevTools in an external browser window.
+    LaunchExternalBrowser(devtools_url);
   }
 }
 

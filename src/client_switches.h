@@ -27,7 +27,6 @@ extern const char kmMaxWidth[];
 extern const char kmMaxHeight[];
 
 extern const char kUrl[];
-extern const char kExternalDevTools[];
 
 // CefSettings attributes.
 extern const char kMultiThreadedMessageLoop[];
