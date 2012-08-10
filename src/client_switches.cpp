@@ -24,6 +24,7 @@ const char kmMaxWidth[]  = "max_width";
 const char kmMaxHeight[] = "max_height";
 
 const char kUrl[] = "url";
+const char kNoToolbar[] = "no-toolbar";
 
 // CefSettings attributes.
 const char kMultiThreadedMessageLoop[] = "multi-threaded-message-loop";

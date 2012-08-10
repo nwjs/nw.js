@@ -214,8 +214,15 @@ void AppInitCommandLine(int argc, const char* const* argv) {
     // TODO show an empty page
   }
 
-  if (g_manifest == NULL)
+  if (g_manifest == NULL) {
     g_manifest = new base::DictionaryValue();
+    base::DictionaryValue* window = new base::DictionaryValue();
+    g_manifest->Set(nw::kmWindow, window);
+
+    // Hide toolbar is specifed in the command line
+    if (g_command_line->HasSwitch(nw::kNoToolbar))
+      window->SetBoolean(nw::kmToolbar, false);
+  }
 }
 
 // Returns the application command line object.

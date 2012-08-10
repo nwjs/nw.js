@@ -370,6 +370,7 @@ void ClientHandler::LaunchExternalBrowser(const std::string& url) {
         CefCommandLine::CreateCommandLine();
     command_line->SetProgram(file_exe);
     command_line->AppendSwitchWithValue(nw::kUrl, url);
+    command_line->AppendSwitch(nw::kNoToolbar);
 
     // Launch the process.
     CefLaunchProcess(command_line);
