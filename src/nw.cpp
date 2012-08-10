@@ -11,6 +11,7 @@
 #include "base/json/json_file_value_serializer.h"
 #include "base/logging.h"
 #include "base/scoped_temp_dir.h"
+#include "base/string_util.h"
 #include "include/cef_app.h"
 #include "include/cef_browser.h"
 #include "include/cef_command_line.h"
@@ -64,6 +65,16 @@ void ManifestConvertRelativePaths(
       LOG(WARNING) << "'main' field in manifest must be a string.";
       return;
     }
+
+    // Don't append path if there is already a prefix
+#if defined(OS_WIN)
+    if (MatchPattern(out, L"*://*")) {
+#else
+    if (MatchPattern(out, "*://*")) {
+#endif
+      return;
+    }
+
 
     FilePath main_path = path.Append(out);
 #if defined(OS_WIN)
