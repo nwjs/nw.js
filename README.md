@@ -4,6 +4,8 @@
 name suggests that is's a module of `node.js`, it is in fact a standalone 
 runtime that runs apps written in HTML, CSS and node.js.
 
+It's created and developed in Intel Open Source Technology Center.
+
 # Features
 
 * Write apps in modern HTML, CSS, JS and WebGL
@@ -80,6 +82,11 @@ For more information on how to write/package/run apps, see:
 
 We use [node-webkit | Google Groups](groups.google.com/group/node-webkit) as
 our mailing list, subscribe via [node-webkit+subscribe@googlegroups.com](mailto:node-webkit+subscribe@googlegroups.com).
+
+# Old version based on WebKit and GTK+
+
+`node-webkit` previously was a `node.js` module which created a GTK+ WebView
+based on a custom WebKit, see tag [webkitgtk](https://github.com/rogerwang/node-webkit/tree/webkitgtk).
 
 # License
 
