@@ -133,9 +133,11 @@ CefWindowHandle AppGetMainHwnd() {
 
 bool AppInitManifest() {
   FilePath path;
+  bool is_self_extract = false;
   if (!g_command_line->HasArguments()) {
     // See itself as a package (allowing standalone)
     path = FilePath(g_command_line->GetProgram());
+    is_self_extract = true;
   } else {
     // Get first argument
     CefCommandLine::ArgumentList arguments;
@@ -157,7 +159,7 @@ bool AppInitManifest() {
   if (!file_util::DirectoryExists(path)) {
     DLOG(INFO) << "Extracting packaging...";
     FilePath zip_file(path);
-    if (!ExtractPackage(zip_file, &path)) {
+    if (!ExtractPackage(zip_file, &path) && !is_self_extract) {
       LOG(ERROR) << "Unable to extract package.";
       return false;
     }
