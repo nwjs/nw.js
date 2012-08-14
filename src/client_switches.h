@@ -26,6 +26,7 @@ extern const char kmMinHeight[];
 extern const char kmMaxWidth[];
 extern const char kmMaxHeight[];
 
+extern const char kVersion[];
 extern const char kUrl[];
 extern const char kNoToolbar[];
 

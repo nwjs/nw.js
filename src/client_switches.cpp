@@ -23,6 +23,7 @@ const char kmMinHeight[] = "min_height";
 const char kmMaxWidth[]  = "max_width";
 const char kmMaxHeight[] = "max_height";
 
+const char kVersion[] = "version";
 const char kUrl[] = "url";
 const char kNoToolbar[] = "no-toolbar";
 

@@ -2,8 +2,8 @@
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 
-#include <cstdlib>
 #include <stdio.h>
+#include <stdlib.h>
 #include <sstream>
 #include <string>
 
@@ -23,7 +23,9 @@
 #include "common/zip.h"
 #include "nw.h"
 #include "string_util.h"
+#include "third_party/node/src/node_version.h"
 #include "util.h"
+#include "version.h"
 
 #if defined(OS_WIN)
 #include "base/string16.h"
@@ -108,6 +110,11 @@ bool ExtractPackage(const FilePath& zip_file, FilePath* where) {
   }
 
   return zip::Unzip(zip_file, *where);
+}
+
+void PrintVersionAndExit() {
+  printf("nw %s\nnode %s\n", NW_VERSION, NODE_VERSION);
+  exit(0);
 }
 
 }  // namespace
@@ -212,6 +219,10 @@ void AppInitCommandLine(int argc, const char* const* argv) {
 #else
   g_command_line->InitFromArgv(argc, argv);
 #endif
+
+  if (g_command_line->HasSwitch(nw::kVersion)) {
+    PrintVersionAndExit();
+  }
 
   if (!AppInitManifest()) {
     // TODO show an empty page
