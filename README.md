@@ -70,6 +70,7 @@ For more information on how to write/package/run apps, see:
 
 * [How to run apps](https://github.com/rogerwang/node-webkit/wiki/How-to-run-apps)
 * [How to package and distribute your apps](https://github.com/rogerwang/node-webkit/wiki/How-to-package-and-distribute-your-apps)
+* [Debugging with devtools](https://github.com/rogerwang/node-webkit/wiki/Debugging-with-devtools)
 * [Manifest format](https://github.com/rogerwang/node-webkit/wiki/Manifest-format) - format of `package.json`
 * [Node.js Manual](http://nodejs.org/api/)
 
