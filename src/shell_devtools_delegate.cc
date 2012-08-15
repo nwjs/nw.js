@@ -5,7 +5,7 @@
 #include "content/shell/shell_devtools_delegate.h"
 
 #include "content/public/browser/devtools_http_handler.h"
-#include "grit/shell_resources.h"
+#include "grit/nw_resources.h"
 #include "net/base/tcp_listen_socket.h"
 #include "net/url_request/url_request_context_getter.h"
 #include "ui/base/layout.h"

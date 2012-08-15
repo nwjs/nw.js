@@ -7,7 +7,7 @@
 #include "base/string_piece.h"
 #include "content/public/renderer/render_view.h"
 #include "content/shell/shell_messages.h"
-#include "grit/shell_resources.h"
+#include "grit/nw_resources.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebFrame.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebView.h"
 #include "ui/base/layout.h"

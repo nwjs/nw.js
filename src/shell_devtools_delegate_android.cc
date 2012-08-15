@@ -7,7 +7,7 @@
 #include "base/stringprintf.h"
 #include "content/public/browser/android/devtools_auth.h"
 #include "content/public/browser/devtools_http_handler.h"
-#include "grit/shell_resources.h"
+#include "grit/nw_resources.h"
 #include "net/base/unix_domain_socket_posix.h"
 #include "net/url_request/url_request_context_getter.h"
 #include "ui/base/layout.h"
