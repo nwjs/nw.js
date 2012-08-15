@@ -11,6 +11,7 @@ namespace switches {
 
 extern const char kCheckLayoutTestSysDeps[];
 extern const char kContentBrowserTest[];
+extern const char kDeveloper[];
 extern const char kDumpRenderTree[];
 extern const char kNoToolbar[];
 extern const char kVersion[];

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "content/shell/shell.h"
+#include "shell.h"
 
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
@@ -11,14 +11,15 @@
 #include "base/logging.h"
 #include "base/string_piece.h"
 #include "base/utf_string_conversions.h"
+#include "base/values.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/native_web_keyboard_event.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
 #include "content/public/common/renderer_preferences.h"
-#include "content/shell/shell_browser_context.h"
-#include "content/shell/shell_content_browser_client.h"
-#include "content/shell/shell_switches.h"
+#include "shell_browser_context.h"
+#include "shell_content_browser_client.h"
+#include "shell_switches.h"
 #include "third_party/skia/include/core/SkColor.h"
 
 namespace content {
@@ -96,15 +97,52 @@ void Shell::PlatformSetIsLoading(bool loading) {
 
 void Shell::PlatformCreateWindow(int width, int height) {
   window_ = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
-  gtk_window_set_title(window_, "Content Shell");
+  gtk_window_set_title(window_, "node-webkit");
+  gtk_window_set_default_size(window_, width, height);
   g_signal_connect(G_OBJECT(window_), "destroy",
                    G_CALLBACK(OnWindowDestroyedThunk), this);
+
+  if (window_manifest_) {
+    std::string desription;
+    if (window_manifest_->GetString(switches::kmPosition, &desription)) {
+      if (desription == "center")
+        gtk_window_set_position(window_, GTK_WIN_POS_CENTER);
+      else if (desription == "mouse")
+        gtk_window_set_position(window_, GTK_WIN_POS_MOUSE);
+    }
+
+    GdkGeometry geometry = { 0 };
+    int hints = GDK_HINT_POS;
+    int tmp = -1;
+    if (window_manifest_->GetInteger(switches::kmMinWidth, &tmp)) {
+      hints |= GDK_HINT_MIN_SIZE;
+      geometry.min_width = tmp;
+    }
+    if (window_manifest_->GetInteger(switches::kmMinHeight, &tmp)) {
+      hints |= GDK_HINT_MIN_SIZE;
+      geometry.min_height = tmp;
+    }
+    if (window_manifest_->GetInteger(switches::kmMaxWidth, &tmp)) {
+      hints |= GDK_HINT_MAX_SIZE;
+      geometry.max_width = tmp;
+    } 
+    if (window_manifest_->GetInteger(switches::kmMaxHeight, &tmp)) {
+      hints |= GDK_HINT_MAX_SIZE;
+      geometry.max_height = tmp;
+    }
+    if (hints != GDK_HINT_POS) {
+      gtk_window_set_geometry_hints(
+          window_, GTK_WIDGET(window_), &geometry, (GdkWindowHints)hints);
+    }
+  }
 
   vbox_ = gtk_vbox_new(FALSE, 0);
 
   // Create the menu bar.
   GtkWidget* menu_bar = CreateMenuBar(this);
-  gtk_box_pack_start(GTK_BOX(vbox_), menu_bar, FALSE, FALSE, 0);
+  if (show_devtools_) {
+    gtk_box_pack_start(GTK_BOX(vbox_), menu_bar, FALSE, FALSE, 0);
+  }
 
   // Create the object that mediates accelerators.
   GtkAccelGroup* accel_group = gtk_accel_group_new();
@@ -181,7 +219,11 @@ void Shell::PlatformCreateWindow(int width, int height) {
   gtk_container_add(GTK_CONTAINER(spinner_item_), spinner_alignment);
   gtk_toolbar_insert(GTK_TOOLBAR(toolbar), spinner_item_, -1 /* append */);
 
-  gtk_box_pack_start(GTK_BOX(vbox_), toolbar, FALSE, FALSE, 0);
+  bool is_toolbar_show = true;
+  if (window_manifest_)
+    window_manifest_->GetBoolean(switches::kmToolbar, &is_toolbar_show);
+  if (is_toolbar_show)
+    gtk_box_pack_start(GTK_BOX(vbox_), toolbar, FALSE, FALSE, 0);
 
   gtk_container_add(GTK_CONTAINER(window_), vbox_);
   gtk_widget_show_all(GTK_WIDGET(window_));

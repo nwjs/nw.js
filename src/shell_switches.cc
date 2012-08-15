@@ -12,6 +12,9 @@ const char kCheckLayoutTestSysDeps[] = "check-layout-test-sys-deps";
 // Tells Content Shell that it's running as a content_browsertest.
 const char kContentBrowserTest[] = "browser-test";
 
+// Enable developer tools
+const char kDeveloper[] = "developer";
+
 // Request pages to be dumped as text once they finished loading.
 const char kDumpRenderTree[] = "dump-render-tree";
 

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "content/shell/shell.h"
+#include "shell.h"
 
 #include <commctrl.h>
 #include <fcntl.h>
@@ -20,7 +20,7 @@
 
 namespace {
 
-const wchar_t kWindowTitle[] = L"Content Shell";
+const wchar_t kWindowTitle[] = L"node-webkit";
 const wchar_t kWindowClass[] = L"CONTENT_SHELL";
 
 const int kButtonWidth = 72;
@@ -87,48 +87,71 @@ void Shell::PlatformSetIsLoading(bool loading) {
 }
 
 void Shell::PlatformCreateWindow(int width, int height) {
+  int ox = CW_USEDEFAULT;
+  int oy = 0;
+  if (window_manifest_) {
+    // window.position
+    std::string position;
+    if (window_manifest->GetString(switches::kmPosition, &position)) {
+      if (position == "center") {
+        ox = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
+        oy = (GetSystemMetrics(SM_CYSCREEN) - height) / 2;
+      } else if (position == "mouse") {
+        POINT point;
+        GetCursorPos(&point);
+        ox = point.x - width / 2;
+        oy = point.y - height / 2;
+      }
+    }
+
+    if (window_manifest_)
+      window_manifest_->GetBoolean(switches::kmToolbar, &is_toolbar_open_);
+  }
+
   window_ = CreateWindow(kWindowClass, kWindowTitle,
                          WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
-                         CW_USEDEFAULT, 0, CW_USEDEFAULT, 0,
+                         x, y, width, height,
                          NULL, NULL, instance_handle_, NULL);
   ui::SetWindowUserData(window_, this);
 
-  HWND hwnd;
-  int x = 0;
+  if (is_toolbar_open_) {
+    HWND hwnd;
+    int x = 0;
 
-  hwnd = CreateWindow(L"BUTTON", L"Back",
-                      WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON ,
-                      x, 0, kButtonWidth, kURLBarHeight,
-                      window_, (HMENU) IDC_NAV_BACK, instance_handle_, 0);
-  x += kButtonWidth;
+    hwnd = CreateWindow(L"BUTTON", L"Back",
+                        WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON ,
+                        x, 0, kButtonWidth, kURLBarHeight,
+                        window_, (HMENU) IDC_NAV_BACK, instance_handle_, 0);
+    x += kButtonWidth;
 
-  hwnd = CreateWindow(L"BUTTON", L"Forward",
-                      WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON ,
-                      x, 0, kButtonWidth, kURLBarHeight,
-                      window_, (HMENU) IDC_NAV_FORWARD, instance_handle_, 0);
-  x += kButtonWidth;
+    hwnd = CreateWindow(L"BUTTON", L"Forward",
+                        WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON ,
+                        x, 0, kButtonWidth, kURLBarHeight,
+                        window_, (HMENU) IDC_NAV_FORWARD, instance_handle_, 0);
+    x += kButtonWidth;
 
-  hwnd = CreateWindow(L"BUTTON", L"Reload",
-                      WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON ,
-                      x, 0, kButtonWidth, kURLBarHeight,
-                      window_, (HMENU) IDC_NAV_RELOAD, instance_handle_, 0);
-  x += kButtonWidth;
+    hwnd = CreateWindow(L"BUTTON", L"Reload",
+                        WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON ,
+                        x, 0, kButtonWidth, kURLBarHeight,
+                        window_, (HMENU) IDC_NAV_RELOAD, instance_handle_, 0);
+    x += kButtonWidth;
 
-  hwnd = CreateWindow(L"BUTTON", L"Stop",
-                      WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON ,
-                      x, 0, kButtonWidth, kURLBarHeight,
-                      window_, (HMENU) IDC_NAV_STOP, instance_handle_, 0);
-  x += kButtonWidth;
+    hwnd = CreateWindow(L"BUTTON", L"Stop",
+                        WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON ,
+                        x, 0, kButtonWidth, kURLBarHeight,
+                        window_, (HMENU) IDC_NAV_STOP, instance_handle_, 0);
+    x += kButtonWidth;
 
-  // This control is positioned by PlatformResizeSubViews.
-  url_edit_view_ = CreateWindow(L"EDIT", 0,
-                                WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT |
-                                ES_AUTOVSCROLL | ES_AUTOHSCROLL,
-                                x, 0, 0, 0, window_, 0, instance_handle_, 0);
+    // This control is positioned by PlatformResizeSubViews.
+    url_edit_view_ = CreateWindow(L"EDIT", 0,
+                                  WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT |
+                                  ES_AUTOVSCROLL | ES_AUTOHSCROLL,
+                                  x, 0, 0, 0, window_, 0, instance_handle_, 0);
 
-  default_edit_wnd_proc_ = ui::SetWindowProc(url_edit_view_,
-                                             Shell::EditWndProc);
-  ui::SetWindowUserData(url_edit_view_, this);
+    default_edit_wnd_proc_ = ui::SetWindowProc(url_edit_view_,
+                                               Shell::EditWndProc);
+    ui::SetWindowUserData(url_edit_view_, this);
+  }
 
   ShowWindow(window_, SW_SHOW);
 
@@ -153,7 +176,8 @@ void Shell::SizeTo(int width, int height) {
   window_height = (window_height - client_height) + height;
 
   // Add space for the url bar.
-  window_height += kURLBarHeight;
+  if (is_toolbar_open_)
+    window_height += kURLBarHeight;
 
   if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree)) {
     SetWindowPos(window_, NULL, -window_width, -window_height,
@@ -168,11 +192,15 @@ void Shell::PlatformResizeSubViews() {
   RECT rc;
   GetClientRect(window_, &rc);
 
-  int x = kButtonWidth * 4;
-  MoveWindow(url_edit_view_, x, 0, rc.right - x, kURLBarHeight, TRUE);
+  if (is_toolbar_open_) {
+    int x = kButtonWidth * 4;
+    MoveWindow(url_edit_view_, x, 0, rc.right - x, kURLBarHeight, TRUE);
 
-  MoveWindow(GetContentView(), 0, kURLBarHeight, rc.right,
-             rc.bottom - kURLBarHeight, TRUE);
+    MoveWindow(GetContentView(), 0, kURLBarHeight, rc.right,
+               rc.bottom - kURLBarHeight, TRUE);
+  } else {
+    MoveWindow(GetContentView(), 0, 0, rc.right, rc.bottom, TRUE);
+  }
 }
 
 void Shell::Close() {
@@ -180,6 +208,11 @@ void Shell::Close() {
 }
 
 ATOM Shell::RegisterWindowClass() {
+  const char16* menu_name = NULL;
+  if (show_devtools_) {
+    menu_name = MAKEINTRESOURCE(IDC_CONTENTSHELL);
+  }
+
   WNDCLASSEX window_class;
   base::win::InitializeWindowClass(
       kWindowClass,
@@ -189,7 +222,7 @@ ATOM Shell::RegisterWindowClass() {
       0,
       LoadCursor(NULL, IDC_ARROW),
       NULL,
-      MAKEINTRESOURCE(IDC_CONTENTSHELL),
+      menu_name,
       NULL,
       NULL,
       &window_class);
@@ -253,7 +286,38 @@ LRESULT CALLBACK Shell::WndProc(HWND hwnd, UINT message, WPARAM wParam,
         SendMessage(native_view, message, wParam, lParam);
       }
       break;
-   }
+    }
+
+    case WM_GETMINMAXINFO: {
+      if (!window_manifest_)
+        break;
+
+      MINMAXINFO* minMaxInfo = (MINMAXINFO*)(lParam);
+      bool changed = false;
+      int tmp;
+      if (window_manifest->GetInteger(switches::kmMinWidth, &tmp)) {
+        changed = true;
+        minMaxInfo->ptMinTrackSize.x = tmp;
+      }
+      if (window_manifest->GetInteger(switches::kmMinHeight, &tmp)) {
+        changed = true;
+        minMaxInfo->ptMinTrackSize.y = tmp;
+      }
+      if (window_manifest->GetInteger(switches::kmMaxWidth, &tmp)) {
+        changed = true;
+        minMaxInfo->ptMaxTrackSize.x = tmp;
+      }
+      if (window_manifest->GetInteger(switches::kmMaxHeight, &tmp)) {
+        changed = true;
+        minMaxInfo->ptMaxTrackSize.y = tmp;
+      }
+
+      if (!changed)
+        break;
+
+      return 0;
+    }
+
   }
 
   return DefWindowProc(hwnd, message, wParam, lParam);

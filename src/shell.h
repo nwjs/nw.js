@@ -37,6 +37,10 @@ class StackingClient;
 }
 #endif
 
+namespace base {
+class DictionaryValue;
+}
+
 class GURL;
 namespace content {
 
@@ -67,7 +71,8 @@ class Shell : public WebContentsDelegate,
                                 const GURL& url,
                                 SiteInstance* site_instance,
                                 int routing_id,
-                                WebContents* base_web_contents);
+                                WebContents* base_web_contents,
+                                bool simple = false);
 
   // Returns the Shell object corresponding to the given RenderViewHost.
   static Shell* FromRenderViewHost(RenderViewHost* rvh);
@@ -133,7 +138,7 @@ class Shell : public WebContentsDelegate,
   explicit Shell(WebContents* web_contents);
 
   // Helper to create a new Shell given a newly created WebContents.
-  static Shell* CreateShell(WebContents* web_contents);
+  static Shell* CreateShell(WebContents* web_contents, bool simple = false);
 
   // All the methods that begin with Platform need to be implemented by the
   // platform specific Shell implementation.
@@ -160,6 +165,14 @@ class Shell : public WebContentsDelegate,
 #endif
 
   gfx::NativeView GetContentView();
+
+  void SetWindowManifest(base::DictionaryValue* wm) {
+    window_manifest_ = wm;
+  }
+
+  void SetShowDevtools(bool s) {
+    show_devtools_ = s;
+  }
 
   // NotificationObserver
   virtual void Observe(int type,
@@ -195,6 +208,10 @@ class Shell : public WebContentsDelegate,
 
   // Notification manager
   NotificationRegistrar registrar_;
+
+  base::DictionaryValue* window_manifest_;
+  bool show_devtools_;
+  bool is_toolbar_open_;
 
 #if defined(OS_WIN) && !defined(USE_AURA)
   WNDPROC default_edit_wnd_proc_;

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "content/shell/shell.h"
+#include "shell.h"
 
 #include "base/auto_reset.h"
 #include "base/command_line.h"
@@ -11,6 +11,7 @@
 #include "base/string_number_conversions.h"
 #include "base/string_util.h"
 #include "base/utf_string_conversions.h"
+#include "base/values.h"
 #include "content/public/browser/devtools_http_handler.h"
 #include "content/public/browser/navigation_entry.h"
 #include "content/public/browser/navigation_controller.h"
@@ -19,17 +20,14 @@
 #include "content/public/browser/notification_types.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
-#include "content/shell/shell_browser_main_parts.h"
-#include "content/shell/shell_content_browser_client.h"
-#include "content/shell/shell_devtools_delegate.h"
-#include "content/shell/shell_javascript_dialog_creator.h"
-#include "content/shell/shell_messages.h"
-#include "content/shell/shell_switches.h"
+#include "nw_package.h"
+#include "shell_browser_main_parts.h"
+#include "shell_content_browser_client.h"
+#include "shell_devtools_delegate.h"
+#include "shell_javascript_dialog_creator.h"
+#include "shell_messages.h"
+#include "shell_switches.h"
 #include "ui/gfx/size.h"
-
-// Content area size for newly created windows.
-static const int kTestWindowWidth = 800;
-static const int kTestWindowHeight = 600;
 
 namespace content {
 
@@ -69,9 +67,31 @@ Shell::~Shell() {
     MessageLoop::current()->PostTask(FROM_HERE, MessageLoop::QuitClosure());
 }
 
-Shell* Shell::CreateShell(WebContents* web_contents) {
+Shell* Shell::CreateShell(WebContents* web_contents, bool simple) {
+  base::DictionaryValue *window_manifest = NULL;
+  if (!simple) {
+    // Create with package's manifest
+    nw::GetManifest()->GetDictionary(switches::kmWindow, &window_manifest);
+  } else {
+    // Use our minimum set manifest
+    window_manifest = new base::DictionaryValue();
+    window_manifest->SetBoolean(switches::kmToolbar, false);
+    window_manifest->SetInteger(switches::kmWidth, 600);
+    window_manifest->SetInteger(switches::kmHeight, 500);
+  }
+
+  int width = 800;
+  int height = 600;
+  if (window_manifest) {
+    window_manifest->GetInteger(switches::kmWidth, &width);
+    window_manifest->GetInteger(switches::kmHeight, &height);
+  }
+
   Shell* shell = new Shell(web_contents);
-  shell->PlatformCreateWindow(kTestWindowWidth, kTestWindowHeight);
+  shell->SetShowDevtools(simple ? false :
+      CommandLine::ForCurrentProcess()->HasSwitch(switches::kDeveloper));
+  shell->SetWindowManifest(window_manifest);
+  shell->PlatformCreateWindow(width, height);
 
   shell->web_contents_.reset(web_contents);
   web_contents->SetDelegate(shell);
@@ -110,13 +130,14 @@ Shell* Shell::CreateNewWindow(BrowserContext* browser_context,
                               const GURL& url,
                               SiteInstance* site_instance,
                               int routing_id,
-                              WebContents* base_web_contents) {
+                              WebContents* base_web_contents,
+                              bool simple) {
   WebContents* web_contents = WebContents::Create(
       browser_context,
       site_instance,
       routing_id,
       base_web_contents);
-  Shell* shell = CreateShell(web_contents);
+  Shell* shell = CreateShell(web_contents, simple);
   if (!url.is_empty())
     shell->LoadURL(url);
   return shell;
@@ -165,7 +186,7 @@ void Shell::ShowDevTools() {
       web_contents()->GetRenderViewHost());
   CreateNewWindow(
       web_contents()->GetBrowserContext(),
-      url, NULL, MSG_ROUTING_NONE, NULL);
+      url, NULL, MSG_ROUTING_NONE, NULL, true);
 }
 
 gfx::NativeView Shell::GetContentView() {

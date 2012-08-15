@@ -9,12 +9,12 @@
 #include "base/memory/scoped_ptr.h"
 #include "base/threading/thread_restrictions.h"
 #include "content/public/browser/browser_main_runner.h"
-#include "content/shell/layout_test_controller_host.h"
-#include "content/shell/shell.h"
-#include "content/shell/shell_browser_context.h"
-#include "content/shell/shell_content_browser_client.h"
-#include "content/shell/shell_switches.h"
+#include "layout_test_controller_host.h"
 #include "nw_package.h"
+#include "shell.h"
+#include "shell_browser_context.h"
+#include "shell_content_browser_client.h"
+#include "shell_switches.h"
 #include "webkit/support/webkit_support.h"
 
 namespace {

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "content/shell/shell.h"
+#include "shell.h"
 
 #include <algorithm>
 
@@ -105,15 +105,11 @@ enum {
 
 namespace {
 
-NSString* kWindowTitle = @"Content Shell";
+NSString* kWindowTitle = @"node-webkit";
 
 // Layout constants (in view coordinates)
 const CGFloat kButtonWidth = 72;
 const CGFloat kURLBarHeight = 24;
-
-// The minimum size of the window's content (in view coordinates)
-const CGFloat kMinimumWindowWidth = 400;
-const CGFloat kMinimumWindowHeight = 300;
 
 void MakeShellButton(NSRect* rect,
                      NSString* title,
@@ -194,11 +190,31 @@ void Shell::PlatformCreateWindow(int width, int height) {
   [window_ setTitle:kWindowTitle];
   NSView* content = [window_ contentView];
 
-  // If the window is allowed to get too small, it will wreck the view bindings.
-  NSSize min_size = NSMakeSize(kMinimumWindowWidth, kMinimumWindowHeight);
-  min_size = [content convertSize:min_size toView:nil];
-  // Note that this takes window coordinates.
-  [window_ setContentMinSize:min_size];
+  if (window_manifest_) {
+    int w = width;
+    int h = height;
+    bool set = window_manifest->GetInteger(switches::kmMinWidth, &w) ||
+        window_manifest->GetInteger(switches::kmMinHeight, &h);
+
+    if (set) {
+      // If the window is allowed to get too small, it will wreck the view bindings.
+      NSSize min_size = NSMakeSize(w, h);
+      min_size = [content convertSize:min_size toView:nil];
+      // Note that this takes window coordinates.
+      [window_ setContentMinSize:min_size];
+    }
+
+    set = window_manifest->GetInteger(switches::kmMaxWidth, &w) ||
+        window_manifest->GetInteger(switches::kmMaxHeight, &h);
+
+    if (set) {
+      // If the window is allowed to get too small, it will wreck the view bindings.
+      NSSize min_size = NSMakeSize(w, h);
+      min_size = [content convertSize:min_size toView:nil];
+      // Note that this takes window coordinates.
+      [window_ setContentMaxSize:min_size];
+    }
+  }
 
   // Set the shell window to participate in Lion Fullscreen mode. Set
   // Setting this flag has no effect on Snow Leopard or earlier.
