@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "content/shell/shell_main_delegate.h"
+#include "shell_main_delegate.h"
 
 #include "base/command_line.h"
 #include "base/file_path.h"
@@ -98,6 +98,9 @@ void ShellMainDelegate::PreSandboxStartup() {
   OverrideChildProcessPath();
 #endif  // OS_MACOSX
   InitializeResourceBundle();
+
+  // Just prevent sandbox
+  CommandLine::ForCurrentProcess()->AppendSwitch(switches::kNoSandbox);
 }
 
 int ShellMainDelegate::RunProcess(

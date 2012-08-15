@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "content/shell/shell_browser_context.h"
+#include "shell_browser_context.h"
 
 #include "base/bind.h"
 #include "base/command_line.h"
@@ -11,11 +11,13 @@
 #include "base/logging.h"
 #include "base/path_service.h"
 #include "base/threading/thread.h"
+#include "base/values.h"
 #include "content/public/browser/browser_thread.h"
-#include "content/shell/shell_download_manager_delegate.h"
-#include "content/shell/shell_resource_context.h"
-#include "content/shell/shell_switches.h"
-#include "content/shell/shell_url_request_context_getter.h"
+#include "nw_package.h"
+#include "shell_download_manager_delegate.h"
+#include "shell_resource_context.h"
+#include "shell_switches.h"
+#include "shell_url_request_context_getter.h"
 
 #if defined(OS_WIN)
 #include "base/base_paths_win.h"
@@ -47,22 +49,31 @@ void ShellBrowserContext::InitWhileIOAllowed() {
     path_ = testing_path_.path();
     return;
   }
+  base::DictionaryValue *manifest = nw::GetManifest();
+  FilePath::StringType name(
+#if defined(OS_WIN)
+      L"node-webkit"
+#else
+      "node-webkit"
+#endif
+      );
+  manifest->GetString(switches::kmName, &name);
 #if defined(OS_WIN)
   CHECK(PathService::Get(base::DIR_LOCAL_APP_DATA, &path_));
-  path_ = path_.Append(std::wstring(L"content_shell"));
+  path_ = path_.Append(name);
 #elif defined(OS_LINUX)
   scoped_ptr<base::Environment> env(base::Environment::Create());
   FilePath config_dir(
       base::nix::GetXDGDirectory(env.get(),
                                  base::nix::kXdgConfigHomeEnvVar,
                                  base::nix::kDotConfigDir));
-  path_ = config_dir.Append("content_shell");
+  path_ = config_dir.Append(name);
 #elif defined(OS_MACOSX)
   CHECK(PathService::Get(base::DIR_APP_DATA, &path_));
-  path_ = path_.Append("Chromium Content Shell");
+  path_ = path_.Append(name);
 #elif defined(OS_ANDROID)
   DCHECK(PathService::Get(base::DIR_ANDROID_APP_DATA, &path_));
-  path_ = path_.Append(FILE_PATH_LITERAL("content_shell"));
+  path_ = path_.Append(name);
 #else
   NOTIMPLEMENTED();
 #endif

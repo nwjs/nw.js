@@ -14,6 +14,7 @@
 #include "content/shell/shell_browser_context.h"
 #include "content/shell/shell_content_browser_client.h"
 #include "content/shell/shell_switches.h"
+#include "nw_package.h"
 #include "webkit/support/webkit_support.h"
 
 namespace {
@@ -51,6 +52,8 @@ GURL GetURLForLayoutTest(const char* test_name,
 int ShellBrowserMain(const content::MainFunctionParams& parameters) {
   scoped_ptr<content::BrowserMainRunner> main_runner_(
       content::BrowserMainRunner::Create());
+
+  nw::InitPackageForceNoEmpty();
 
   int exit_code = main_runner_->Initialize(parameters);
 

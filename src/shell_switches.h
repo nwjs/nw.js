@@ -12,6 +12,26 @@ namespace switches {
 extern const char kCheckLayoutTestSysDeps[];
 extern const char kContentBrowserTest[];
 extern const char kDumpRenderTree[];
+extern const char kNoToolbar[];
+extern const char kVersion[];
+extern const char kUrl[];
+
+// Manifest settings
+extern const char kmMain[];
+extern const char kmName[];
+extern const char kmWebkit[];
+extern const char kmRoot[];
+extern const char kmWindow[];
+extern const char kmToolbar[];
+extern const char kmIcon[];
+extern const char kmWidth[];
+extern const char kmHeight[];
+extern const char kmResizable[];
+extern const char kmPosition[];
+extern const char kmMinWidth[];
+extern const char kmMinHeight[];
+extern const char kmMaxWidth[];
+extern const char kmMaxHeight[];
 
 }  // namespace switches
 

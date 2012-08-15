@@ -21,7 +21,7 @@ class DevToolsHttpHandler;
 
 class ShellDevToolsDelegate : public DevToolsHttpHandlerDelegate {
  public:
-  explicit ShellDevToolsDelegate(net::URLRequestContextGetter* context_getter);
+  ShellDevToolsDelegate(int port, net::URLRequestContextGetter* context_getter);
   virtual ~ShellDevToolsDelegate();
 
   // Stops http server.

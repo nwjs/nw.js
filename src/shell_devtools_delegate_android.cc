@@ -28,6 +28,7 @@ const char kFrontEndURL[] =
 namespace content {
 
 ShellDevToolsDelegate::ShellDevToolsDelegate(
+    int port,
     net::URLRequestContextGetter* context_getter)
     : context_getter_(context_getter) {
   devtools_http_handler_ = DevToolsHttpHandler::Start(

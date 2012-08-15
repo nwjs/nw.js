@@ -10,4 +10,5 @@
 
     <string name="url_hint">Type URL Here</string>
 
+    <string name="accessibility_content_view">Web View</string>
 </resources>
