@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2012 The Chromium Authors. All rights reserved.
+  Use of this source code is governed by a BSD-style license that can be
+  found in the LICENSE file.
+-->
+<project name="ContentShellTest" default="debug" basedir=".">
+
+  <description>
+    Building ContentShellTest.apk
+  </description>
+
+  <import file="../../../../build/android/ant/common.xml"/>
+  <import file="../../../../build/android/ant/sdk-targets.xml"/>
+  <property name="target.abi" value="${APP_ABI}"/>
+  <property name="out.dir" location="${PRODUCT_DIR}/content_shell_test"/>
+  <property name="resource.absolute.dir" value="../res"/>
+  <property name="gen.absolute.dir" value="${out.dir}/gen"/>
+  <path id="native.libs.gdbserver">
+    <fileset file="${toolchain.dir}/../../gdbserver"/>
+  </path>
+  <property name="native.libs.absolute.dir" location="${out.dir}/libs" />
+  <property name="asset.absolute.dir" location="${out.dir}/assets" />
+
+  <path id="out.dex.jar.input.ref">
+    <fileset dir="${PRODUCT_DIR}/content_shell/java/libs"/>
+    <fileset dir="${PRODUCT_DIR}/content_shell_test/java/libs"/>
+    <pathelement location="${PRODUCT_DIR}/content_shell/classes"/>
+  </path>
+  <property name="java.compilerargs" value="-classpath ${toString:out.dex.jar.input.ref}"/>
+
+  <!-- We expect PRODUCT_DIR to be set like the gyp var
+       (e.g. $ROOT/out/Debug) -->
+  <fail message="PRODUCT_DIR env var not set?">
+    <condition>
+      <not>
+        <isset property="PRODUCT_DIR"/>
+      </not>
+    </condition>
+  </fail>
+
+  <target name="-post-compile">
+    <!-- copy gdbserver to main libs directory if building debug.
+      TODO(jrg): for now, Chrome on Android always builds native code
+      as Release and java/ant as Debug, which means we always install
+      gdbserver.  Resolve this discrepancy, possibly by making this
+      Release Official build java/ant as Release. -->
+    <if>
+      <condition>
+        <equals arg1="${build.target}" arg2="debug" />
+      </condition>
+      <then>
+        <echo message="Copying gdbserver to the apk to enable native debugging"/>
+        <copy todir="${out.dir}/libs/${target.abi}">
+          <path refid="native.libs.gdbserver"/>
+        </copy>
+      </then>
+    </if>
+
+    <!-- We also want a .jar as well as an .apk for ContentShellTest-debug
+         so that proguard can be used to list the tests by annotation. -->
+    <jar destfile="${out.dir}/${ant.project.name}-debug.jar">
+      <fileset dir="${out.dir}/classes" includes="**/*.class"/>
+      <zipfileset
+         includes="**/*.class"
+         src="${PRODUCT_DIR}/content_shell_test/java/libs/chromium_content_javatests.jar"/>
+    </jar>
+
+  </target>
+
+  <!-- Classpath for javac -->
+  <path id="javac.custom.classpath">
+    <path refid="out.dex.jar.input.ref"/>
+  </path>
+  <import file="${sdk.dir}/tools/ant/build.xml" />
+
+</project>

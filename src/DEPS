@@ -1,0 +1,22 @@
+include_rules = [
+  "+v8/include",
+
+  # For chromeos build config
+  "+chromeos/dbus",
+
+  # The content_shell is the canonical sample embedder, so it only uses
+  # content's public API.
+  "+content/public",
+
+  # The content_shell is an embedder so it must work with resource bundles.
+  "+ui/base/l10n",
+  "+ui/base/resource",
+
+  # Shell resources
+  "+grit/net_resources.h",
+  "+grit/shell_resources.h",
+
+  # The content_shell for aura must work with the views and aura
+  "+ui/aura",
+  "+ui/views",
+]

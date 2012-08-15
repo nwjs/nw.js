@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Copyright (c) 2012 The Chromium Authors. All rights reserved.
+
+     Use of this source code is governed by a BSD-style license that can be
+     found in the LICENSE file.
+ -->
+
+<org.chromium.content_shell.Shell
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    <LinearLayout android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/progress">
+        <EditText android:id="@+id/url"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="bottom"
+            android:textSize="18sp"
+            android:autoText="true"
+            android:capitalize="sentences"
+            android:singleLine="true"
+            android:selectAllOnFocus="true"
+            android:hint="@string/url_hint"
+            android:inputType="textUri"
+            android:imeOptions="actionGo" />
+        <ImageButton android:id="@+id/prev"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:src="@android:drawable/ic_media_previous"
+            android:scaleType="center" />
+        <ImageButton android:id="@+id/next"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:src="@android:drawable/ic_media_next"
+            android:scaleType="center" />
+    </LinearLayout>
+    <FrameLayout android:id="@+id/contentview_holder"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+</org.chromium.content_shell.Shell>
