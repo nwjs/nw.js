@@ -11,12 +11,13 @@
 #import "base/memory/scoped_nsobject.h"
 #include "base/string_piece.h"
 #include "base/sys_string_conversions.h"
+#include "base/values.h"
 #include "content/public/browser/native_web_keyboard_event.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
-#include "content/shell/resource.h"
-#include "content/shell/shell_switches.h"
 #include "googleurl/src/gurl.h"
+#include "resource.h"
+#include "shell_switches.h"
 #import "ui/base/cocoa/underlay_opengl_hosting_window.h"
 
 #if !defined(MAC_OS_X_VERSION_10_7) || \
@@ -193,8 +194,8 @@ void Shell::PlatformCreateWindow(int width, int height) {
   if (window_manifest_) {
     int w = width;
     int h = height;
-    bool set = window_manifest->GetInteger(switches::kmMinWidth, &w) ||
-        window_manifest->GetInteger(switches::kmMinHeight, &h);
+    bool set = window_manifest_->GetInteger(switches::kmMinWidth, &w) ||
+        window_manifest_->GetInteger(switches::kmMinHeight, &h);
 
     if (set) {
       // If the window is allowed to get too small, it will wreck the view bindings.
@@ -204,8 +205,8 @@ void Shell::PlatformCreateWindow(int width, int height) {
       [window_ setContentMinSize:min_size];
     }
 
-    set = window_manifest->GetInteger(switches::kmMaxWidth, &w) ||
-        window_manifest->GetInteger(switches::kmMaxHeight, &h);
+    set = window_manifest_->GetInteger(switches::kmMaxWidth, &w) ||
+        window_manifest_->GetInteger(switches::kmMaxHeight, &h);
 
     if (set) {
       // If the window is allowed to get too small, it will wreck the view bindings.
