@@ -5,10 +5,11 @@
 #include "content/shell/shell_application_mac.h"
 
 #include "base/auto_reset.h"
-#include "content/shell/shell.h"
-#include "content/shell/shell_browser_context.h"
-#include "content/shell/shell_content_browser_client.h"
 #include "googleurl/src/gurl.h"
+#include "shell.h"
+#include "shell_browser_context.h"
+#include "shell_content_browser_client.h"
+#include "shell_switches.h"
 
 @implementation ShellCrApplication
 

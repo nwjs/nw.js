@@ -8,7 +8,9 @@
 
 #include "base/mac/bundle_locations.h"
 #include "base/memory/scoped_nsobject.h"
+#include "base/command_line.h"
 #include "shell_application_mac.h"
+#include "shell_switches.h"
 
 namespace content {
 
