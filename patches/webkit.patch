@@ -1,0 +1,210 @@
+diff --git a/Source/WebCore/WebCore.gyp/WebCore.gyp b/Source/WebCore/WebCore.gyp/WebCore.gyp
+index f812f78..4b96eb7 100644
+--- a/Source/WebCore/WebCore.gyp/WebCore.gyp
++++ b/Source/WebCore/WebCore.gyp/WebCore.gyp
+@@ -57,6 +57,7 @@
+     'webcore_include_dirs': [
+       '../',
+       '../..',
++      '../../../../..',
+       '../Modules/battery',
+       '../Modules/filesystem',
+       '../Modules/filesystem/chromium',
+diff --git a/Source/WebCore/bindings/generic/BindingSecurity.cpp b/Source/WebCore/bindings/generic/BindingSecurity.cpp
+index 87f4a57..4d8e7c3 100644
+--- a/Source/WebCore/bindings/generic/BindingSecurity.cpp
++++ b/Source/WebCore/bindings/generic/BindingSecurity.cpp
+@@ -47,27 +47,8 @@ static bool canAccessDocument(BindingState* state, Document* targetDocument, Sec
+     if (!targetDocument)
+         return false;
+ 
+-    DOMWindow* active = activeDOMWindow(state);
+-    if (!active)
+-        return false;
+-
+-    // If the embedder executes JavaScript synchronously during the didCreateScriptContext callback,
+-    // in some cases the active SecurityOrigin will not yet be copied to the DOMWindow. For example,
+-    // Frame::setDocument can trigger didCreateScriptContext during ScriptController::updateDocument.
+-    //
+-    // FIXME: Remove this branch once we manage to delete DOMWindow::m_securityOrigin. Ideally, we'd
+-    //        get the SecurityOrigin from the Document rather than the DOMWindow. In that case, there
+-    //        shouldn't ever be a chance to execute script before the SecurityOrigin object is created.
+-    if (!active->securityOrigin())
+-        return false;
+-
+-    if (active->securityOrigin()->canAccess(targetDocument->securityOrigin()))
+-        return true;
+-
+-    if (reportingOption == ReportSecurityError)
+-        immediatelyReportUnsafeAccessTo(state, targetDocument);
+-
+-    return false;
++    // Bypass security check
++    return true;
+ }
+ 
+ bool BindingSecurity::shouldAllowAccessToFrame(BindingState* state, Frame* target, SecurityReportingOption reportingOption)
+diff --git a/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm b/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
+index 3c3d5b6..acbd9de 100644
+--- a/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
++++ b/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
+@@ -2787,7 +2787,7 @@ END
+ 
+     my $access_check = "";
+     if ($dataNode->extendedAttributes->{"CheckSecurity"} && !($interfaceName eq "DOMWindow")) {
+-        $access_check = "instance->SetAccessCheckCallbacks(V8${interfaceName}::namedSecurityCheck, V8${interfaceName}::indexedSecurityCheck, v8::External::Wrap(&V8${interfaceName}::info));";
++        $access_check = "";
+     }
+ 
+     # For the DOMWindow interface, generate the shadow object template
+@@ -2799,7 +2799,7 @@ static v8::Persistent<v8::ObjectTemplate> ConfigureShadowObjectTemplate(v8::Pers
+     V8DOMConfiguration::batchConfigureAttributes(templ, v8::Handle<v8::ObjectTemplate>(), shadowAttrs, WTF_ARRAY_LENGTH(shadowAttrs));
+ 
+     // Install a security handler with V8.
+-    templ->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::External::Wrap(&V8DOMWindow::info));
++    // templ->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::External::Wrap(&V8DOMWindow::info));
+     templ->SetInternalFieldCount(V8DOMWindow::internalFieldCount);
+     return templ;
+ }
+@@ -2938,7 +2938,7 @@ END
+     // Set access check callbacks, but turned off initially.
+     // When a context is detached from a frame, turn on the access check.
+     // Turning on checks also invalidates inline caches of the object.
+-    instance->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::External::Wrap(&V8DOMWindow::info), false);
++    // instance->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::External::Wrap(&V8DOMWindow::info), false);
+ END
+     }
+     if ($interfaceName eq "HTMLDocument") {
+diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
+index 2e3f6cc..889f72e 100644
+--- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
++++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
+@@ -63,6 +63,9 @@
+ #include "V8Proxy.h"
+ #include "WorkerContextExecutionProxy.h"
+ 
++#include "third_party/node/src/node.h"
++#include "third_party/node/src/req_wrap.h"
++
+ #include <algorithm>
+ #include <stdio.h>
+ #include <utility>
+@@ -280,6 +283,7 @@ bool V8DOMWindowShell::initContextIfNeeded()
+ 
+     // Create a handle scope for all local handles.
+     v8::HandleScope handleScope;
++    v8::Handle<v8::Context> nodeContext = v8::Context::GetEntered();
+ 
+     // Setup the security handlers and message listener. This only has
+     // to be done once.
+@@ -341,7 +345,16 @@ bool V8DOMWindowShell::initContextIfNeeded()
+ 
+     updateDocument();
+ 
+-    setSecurityToken();
++    // Bypass default security token
++    v8Context->SetSecurityToken(nodeContext->GetSecurityToken());
++
++    // Transfer node's global symbols to webkit
++    v8::Local<v8::Object> nodeGlobal = nodeContext->Global();
++    v8::Local<v8::Array> symbols = nodeGlobal->GetPropertyNames();
++    for (unsigned i = 0; i < symbols->Length(); ++i) {
++        v8::Local<v8::Value> key = symbols->Get(i);
++        m_global->Set(key, nodeGlobal->Get(key));
++    }
+ 
+     if (m_frame->document())
+         v8Context->AllowCodeGenerationFromStrings(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));
+@@ -352,6 +365,18 @@ bool V8DOMWindowShell::initContextIfNeeded()
+     // we do isolated worlds the WebCore way.
+     m_frame->loader()->dispatchDidClearWindowObjectInWorld(0);
+ 
++    // Excute a script to make node's relative modules work
++    v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
++#if defined(OS_WIN)
++        "process.mainModule.filename = window.location.pathname.substr(1);"
++#else
++        "process.mainModule.filename = window.location.pathname;"
++#endif
++        "process.chdir(require('path').dirname(process.mainModule.filename));"
++        "process.mainModule.paths = require('module')._nodeModulePaths(process.cwd());"
++    ));
++    script->Run();
++
+     return true;
+ }
+ 
+diff --git a/Source/WebCore/loader/CrossOriginAccessControl.cpp b/Source/WebCore/loader/CrossOriginAccessControl.cpp
+index aba2ba0..ec76d5a 100644
+--- a/Source/WebCore/loader/CrossOriginAccessControl.cpp
++++ b/Source/WebCore/loader/CrossOriginAccessControl.cpp
+@@ -134,37 +134,6 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
+ 
+ bool passesAccessControlCheck(const ResourceResponse& response, StoredCredentials includeCredentials, SecurityOrigin* securityOrigin, String& errorDescription)
+ {
+-    AtomicallyInitializedStatic(AtomicString&, accessControlAllowOrigin = *new AtomicString("access-control-allow-origin"));
+-    AtomicallyInitializedStatic(AtomicString&, accessControlAllowCredentials = *new AtomicString("access-control-allow-credentials"));
+-
+-    // A wildcard Access-Control-Allow-Origin can not be used if credentials are to be sent,
+-    // even with Access-Control-Allow-Credentials set to true.
+-    const String& accessControlOriginString = response.httpHeaderField(accessControlAllowOrigin);
+-    if (accessControlOriginString == "*" && includeCredentials == DoNotAllowStoredCredentials)
+-        return true;
+-
+-    if (securityOrigin->isUnique()) {
+-        errorDescription = "Cannot make any requests from " + securityOrigin->toString() + ".";
+-        return false;
+-    }
+-
+-    // FIXME: Access-Control-Allow-Origin can contain a list of origins.
+-    if (accessControlOriginString != securityOrigin->toString()) {
+-        if (accessControlOriginString == "*")
+-            errorDescription = "Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true.";
+-        else
+-            errorDescription =  "Origin " + securityOrigin->toString() + " is not allowed by Access-Control-Allow-Origin.";
+-        return false;
+-    }
+-
+-    if (includeCredentials == AllowStoredCredentials) {
+-        const String& accessControlCredentialsString = response.httpHeaderField(accessControlAllowCredentials);
+-        if (accessControlCredentialsString != "true") {
+-            errorDescription = "Credentials flag is true, but Access-Control-Allow-Credentials is not \"true\".";
+-            return false;
+-        }
+-    }
+-
+     return true;
+ }
+ 
+diff --git a/Source/WebCore/loader/CrossOriginPreflightResultCache.cpp b/Source/WebCore/loader/CrossOriginPreflightResultCache.cpp
+index 04d5881..65e4734 100644
+--- a/Source/WebCore/loader/CrossOriginPreflightResultCache.cpp
++++ b/Source/WebCore/loader/CrossOriginPreflightResultCache.cpp
+@@ -123,13 +123,6 @@ bool CrossOriginPreflightResultCacheItem::allowsCrossOriginMethod(const String&
+ 
+ bool CrossOriginPreflightResultCacheItem::allowsCrossOriginHeaders(const HTTPHeaderMap& requestHeaders, String& errorDescription) const
+ {
+-    HTTPHeaderMap::const_iterator end = requestHeaders.end();
+-    for (HTTPHeaderMap::const_iterator it = requestHeaders.begin(); it != end; ++it) {
+-        if (!m_headers.contains(it->first) && !isOnAccessControlSimpleRequestHeaderWhitelist(it->first, it->second)) {
+-            errorDescription = "Request header field " + it->first.string() + " is not allowed by Access-Control-Allow-Headers.";
+-            return false;
+-        }
+-    }
+     return true;
+ }
+ 
+diff --git a/Source/WebKit/chromium/src/WebKit.cpp b/Source/WebKit/chromium/src/WebKit.cpp
+index 9331d05..eca2f5b 100644
+--- a/Source/WebKit/chromium/src/WebKit.cpp
++++ b/Source/WebKit/chromium/src/WebKit.cpp
+@@ -95,7 +95,8 @@ static bool generateEntropy(unsigned char* buffer, size_t length)
+ #ifndef NDEBUG
+ static void assertV8RecursionScope()
+ {
+-    ASSERT(!isMainThread() || WebCore::V8RecursionScope::properlyUsed());
++    // FIXME See why this failed when node::SetupContext
++    // ASSERT(!isMainThread() || WebCore::V8RecursionScope::properlyUsed());
+ }
+ #endif
+ 
