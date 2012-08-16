@@ -11,11 +11,12 @@
 
 #include "base/command_line.h"
 #include "base/utf_string_conversions.h"
+#include "base/values.h"
 #include "base/win/wrapped_window_proc.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
-#include "content/shell/resource.h"
-#include "content/shell/shell_switches.h"
+#include "resource.h"
+#include "shell_switches.h"
 #include "ui/base/win/hwnd_util.h"
 
 namespace {
@@ -92,7 +93,7 @@ void Shell::PlatformCreateWindow(int width, int height) {
   if (window_manifest_) {
     // window.position
     std::string position;
-    if (window_manifest->GetString(switches::kmPosition, &position)) {
+    if (window_manifest_->GetString(switches::kmPosition, &position)) {
       if (position == "center") {
         ox = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
         oy = (GetSystemMetrics(SM_CYSCREEN) - height) / 2;
@@ -110,7 +111,7 @@ void Shell::PlatformCreateWindow(int width, int height) {
 
   window_ = CreateWindow(kWindowClass, kWindowTitle,
                          WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
-                         x, y, width, height,
+                         ox, oy, width, height,
                          NULL, NULL, instance_handle_, NULL);
   ui::SetWindowUserData(window_, this);
 
@@ -209,7 +210,7 @@ void Shell::Close() {
 
 ATOM Shell::RegisterWindowClass() {
   const char16* menu_name = NULL;
-  if (show_devtools_) {
+  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDeveloper)) {
     menu_name = MAKEINTRESOURCE(IDC_CONTENTSHELL);
   }
 
@@ -289,25 +290,25 @@ LRESULT CALLBACK Shell::WndProc(HWND hwnd, UINT message, WPARAM wParam,
     }
 
     case WM_GETMINMAXINFO: {
-      if (!window_manifest_)
+      if (!shell->window_manifest_)
         break;
 
       MINMAXINFO* minMaxInfo = (MINMAXINFO*)(lParam);
       bool changed = false;
       int tmp;
-      if (window_manifest->GetInteger(switches::kmMinWidth, &tmp)) {
+      if (shell->window_manifest_->GetInteger(switches::kmMinWidth, &tmp)) {
         changed = true;
         minMaxInfo->ptMinTrackSize.x = tmp;
       }
-      if (window_manifest->GetInteger(switches::kmMinHeight, &tmp)) {
+      if (shell->window_manifest_->GetInteger(switches::kmMinHeight, &tmp)) {
         changed = true;
         minMaxInfo->ptMinTrackSize.y = tmp;
       }
-      if (window_manifest->GetInteger(switches::kmMaxWidth, &tmp)) {
+      if (shell->window_manifest_->GetInteger(switches::kmMaxWidth, &tmp)) {
         changed = true;
         minMaxInfo->ptMaxTrackSize.x = tmp;
       }
-      if (window_manifest->GetInteger(switches::kmMaxHeight, &tmp)) {
+      if (shell->window_manifest_->GetInteger(switches::kmMaxHeight, &tmp)) {
         changed = true;
         minMaxInfo->ptMaxTrackSize.y = tmp;
       }
