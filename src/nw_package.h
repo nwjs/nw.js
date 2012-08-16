@@ -1,5 +1,5 @@
-// Copyright (c) 2012 Roger Wang <roger.wang@linux.intel.com>
-//                    Zhao Cheng <zcbenz@gmail.com>
+// Copyright (c) 2012 Intel Corp
+// Copyright (c) 2012 The Chromium Authors
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy 
 // of this software and associated documentation files (the "Software"), to deal
