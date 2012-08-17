@@ -167,7 +167,7 @@ void ShellMainDelegate::InitializeResourceBundle() {
   PathService::Get(base::DIR_MODULE, &pak_dir);
 #endif
 
-  pak_file = pak_dir.Append(FILE_PATH_LITERAL("content_shell.pak"));
+  pak_file = pak_dir.Append(FILE_PATH_LITERAL("nw.pak"));
 #endif
   ui::ResourceBundle::InitSharedInstanceWithPakPath(pak_file);
 }

@@ -68,7 +68,7 @@ void OverrideChildProcessPath() {
 
 FilePath GetResourcesPakFilePath() {
   NSString* pak_path =
-      [base::mac::FrameworkBundle() pathForResource:@"content_shell"
+      [base::mac::FrameworkBundle() pathForResource:@"nw"
                                              ofType:@"pak"];
 
   return FilePath([pak_path fileSystemRepresentation]);

@@ -87,13 +87,13 @@ void ShellContentBrowserClient::GetAdditionalMappedFilesForChildProcess(
   FilePath pak_file;
   DCHECK(PathService::Get(base::DIR_ANDROID_APP_DATA, &pak_file));
   pak_file = pak_file.Append(FILE_PATH_LITERAL("paks"));
-  pak_file = pak_file.Append(FILE_PATH_LITERAL("content_shell.pak"));
+  pak_file = pak_file.Append(FILE_PATH_LITERAL("nw.pak"));
 
   base::PlatformFile f =
       base::CreatePlatformFile(pak_file, flags, NULL, NULL);
   if (f == base::kInvalidPlatformFileValue) {
     NOTREACHED() << "Failed to open file when creating renderer process: "
-                 << "content_shell.pak";
+                 << "nw.pak";
   }
   mappings->push_back(std::pair<base::GlobalDescriptors::Key, int>(
       kShellPakDescriptor, f));
