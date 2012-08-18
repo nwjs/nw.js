@@ -81,7 +81,7 @@ For more information on how to write/package/run apps, see:
 
 # Community
 
-We use [node-webkit | Google Groups](groups.google.com/group/node-webkit) as
+We use [node-webkit | Google Groups](http://groups.google.com/group/node-webkit) as
 our mailing list, subscribe via [node-webkit+subscribe@googlegroups.com](mailto:node-webkit+subscribe@googlegroups.com).
 
 # Old version based on WebKit and GTK+
