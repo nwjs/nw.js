@@ -50,7 +50,7 @@ gboolean ShowWebInspectorActivated(GtkWidget* widget, Shell* shell) {
 
 GtkWidget* AddMenuEntry(GtkWidget* menu_widget, const char* text,
                         GCallback callback, Shell* shell) {
-  GtkWidget* entry = gtk_menu_item_new_with_label(text);
+  GtkWidget* entry = gtk_menu_item_new_with_mnemonic(text);
   g_signal_connect(entry, "activate", callback, shell);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu_widget), entry);
   return entry;
@@ -67,7 +67,7 @@ GtkWidget* CreateMenu(GtkWidget* menu_bar, const char* text) {
 GtkWidget* CreateMenuBar(Shell* shell) {
   GtkWidget* menu_bar = gtk_menu_bar_new();
   GtkWidget* debug_menu = CreateMenu(menu_bar, "Debug");
-  AddMenuEntry(debug_menu, "Show web inspector...",
+  AddMenuEntry(debug_menu, "_Show Developer Tools...",
                G_CALLBACK(ShowWebInspectorActivated), shell);
   return menu_bar;
 }

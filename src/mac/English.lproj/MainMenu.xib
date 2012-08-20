@@ -690,7 +690,7 @@
                 <bool key="EncodedWithXMLCoder">YES</bool>
                 <object class="NSMenuItem" id="200102617">
                   <reference key="NSMenu" ref="299203964"/>
-                  <string key="NSTitle">Show Developer Tools</string>
+                  <string key="NSTitle">Show Developer Tools...</string>
                   <string key="NSKeyEquiv"/>
                   <int key="NSMnemonicLoc">2147483647</int>
                   <reference key="NSOnImage" ref="293900348"/>
