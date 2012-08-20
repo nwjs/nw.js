@@ -46,6 +46,7 @@ Create `package.json`:
 
 ````json
 {
+  "name": "nw-demo",
   "main": "index.html"
 }
 ````
