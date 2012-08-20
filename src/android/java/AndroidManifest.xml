@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Copyright (c) 2012 The Chromium Authors. All rights reserved.
+
+     Use of this source code is governed by a BSD-style license that can be
+     found in the LICENSE file.
+ -->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.chromium.content_shell">
+
+    <permission android:name="org.chromium.content_shell.permission.SANDBOX"
+            android:protectionLevel="signature" />
+
+    <application android:name="ContentShellApplication"
+            android:label="ContentShell"
+            android:debuggable="true">
+        <activity android:name="ContentShellActivity"
+                  android:launchMode="singleTask"
+                  android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+                  android:configChanges="orientation|keyboardHidden|keyboard|screenSize"
+                  android:hardwareAccelerated="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <!-- The following service entries exist in order to allow us to
+             start more than one sandboxed process. -->
+
+        <!-- NOTE: If you change the values of "android:process" for any of the below services,
+             you also need to update kHelperProcessExecutableName in chrome_constants.cc. -->
+        <service android:name="org.chromium.content.app.SandboxedProcessService0"
+                 android:process=":sandboxed_process0"
+                 android:permission="org.chromium.content_shell.permission.SANDBOX"
+                 android:exported="false" />
+        <service android:name="org.chromium.content.app.SandboxedProcessService1"
+                 android:process=":sandboxed_process1"
+                 android:permission="org.chromium.content_shell.permission.SANDBOX"
+                 android:exported="false" />
+        <service android:name="org.chromium.content.app.SandboxedProcessService2"
+                 android:process=":sandboxed_process2"
+                 android:permission="org.chromium.content_shell.permission.SANDBOX"
+                 android:exported="false" />
+        <service android:name="org.chromium.content.app.SandboxedProcessService3"
+                 android:process=":sandboxed_process3"
+                 android:permission="org.chromium.content_shell.permission.SANDBOX"
+                 android:exported="false" />
+        <service android:name="org.chromium.content.app.SandboxedProcessService4"
+                 android:process=":sandboxed_process4"
+                 android:permission="org.chromium.content_shell.permission.SANDBOX"
+                 android:exported="false" />
+    </application>
+
+    <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="14" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+</manifest>
