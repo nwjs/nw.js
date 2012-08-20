@@ -1,5 +1,5 @@
 diff --git a/Source/WebCore/WebCore.gyp/WebCore.gyp b/Source/WebCore/WebCore.gyp/WebCore.gyp
-index f812f78..4b96eb7 100644
+index db04f41..0061906 100644
 --- a/Source/WebCore/WebCore.gyp/WebCore.gyp
 +++ b/Source/WebCore/WebCore.gyp/WebCore.gyp
 @@ -57,6 +57,7 @@
@@ -11,10 +11,10 @@ index f812f78..4b96eb7 100644
        '../Modules/filesystem',
        '../Modules/filesystem/chromium',
 diff --git a/Source/WebCore/bindings/generic/BindingSecurity.cpp b/Source/WebCore/bindings/generic/BindingSecurity.cpp
-index 87f4a57..4d8e7c3 100644
+index 8dde685..4d8e7c3 100644
 --- a/Source/WebCore/bindings/generic/BindingSecurity.cpp
 +++ b/Source/WebCore/bindings/generic/BindingSecurity.cpp
-@@ -47,27 +47,8 @@ static bool canAccessDocument(BindingState* state, Document* targetDocument, Sec
+@@ -47,17 +47,8 @@ static bool canAccessDocument(BindingState* state, Document* targetDocument, Sec
      if (!targetDocument)
          return false;
  
@@ -22,17 +22,7 @@ index 87f4a57..4d8e7c3 100644
 -    if (!active)
 -        return false;
 -
--    // If the embedder executes JavaScript synchronously during the didCreateScriptContext callback,
--    // in some cases the active SecurityOrigin will not yet be copied to the DOMWindow. For example,
--    // Frame::setDocument can trigger didCreateScriptContext during ScriptController::updateDocument.
--    //
--    // FIXME: Remove this branch once we manage to delete DOMWindow::m_securityOrigin. Ideally, we'd
--    //        get the SecurityOrigin from the Document rather than the DOMWindow. In that case, there
--    //        shouldn't ever be a chance to execute script before the SecurityOrigin object is created.
--    if (!active->securityOrigin())
--        return false;
--
--    if (active->securityOrigin()->canAccess(targetDocument->securityOrigin()))
+-    if (active->document()->securityOrigin()->canAccess(targetDocument->securityOrigin()))
 -        return true;
 -
 -    if (reportingOption == ReportSecurityError)
@@ -45,7 +35,7 @@ index 87f4a57..4d8e7c3 100644
  
  bool BindingSecurity::shouldAllowAccessToFrame(BindingState* state, Frame* target, SecurityReportingOption reportingOption)
 diff --git a/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm b/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
-index 3c3d5b6..acbd9de 100644
+index bf63678..5de80ed 100644
 --- a/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
 +++ b/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
 @@ -2787,7 +2787,7 @@ END
@@ -76,7 +66,7 @@ index 3c3d5b6..acbd9de 100644
      }
      if ($interfaceName eq "HTMLDocument") {
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-index 2e3f6cc..889f72e 100644
+index 2224c70..b933632 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 +++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 @@ -63,6 +63,9 @@
@@ -115,12 +105,12 @@ index 2e3f6cc..889f72e 100644
  
      if (m_frame->document())
          v8Context->AllowCodeGenerationFromStrings(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));
-@@ -352,6 +365,18 @@ bool V8DOMWindowShell::initContextIfNeeded()
+@@ -352,6 +365,25 @@ bool V8DOMWindowShell::initContextIfNeeded()
      // we do isolated worlds the WebCore way.
      m_frame->loader()->dispatchDidClearWindowObjectInWorld(0);
  
-+    // Excute a script to make node's relative modules work
 +    v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
++        // Make node's relative modules work
 +#if defined(OS_WIN)
 +        "process.mainModule.filename = window.location.pathname.substr(1);"
 +#else
@@ -128,6 +118,13 @@ index 2e3f6cc..889f72e 100644
 +#endif
 +        "process.chdir(require('path').dirname(process.mainModule.filename));"
 +        "process.mainModule.paths = require('module')._nodeModulePaths(process.cwd());"
++
++        // Use WebKit's console and setTimeout globally
++        "global.console = console;"
++        "global.setTimeout = setTimeout;"
++        "global.clearTimeout = clearTimeout;"
++        "global.setInterval = setInterval;"
++        "global.clearInterval = clearInterval;"
 +    ));
 +    script->Run();
 +
