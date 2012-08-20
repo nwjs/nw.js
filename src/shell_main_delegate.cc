@@ -27,12 +27,16 @@
 #include "content/public/browser/browser_main_runner.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/url_constants.h"
-#include "content/shell/shell_browser_main.h"
-#include "content/shell/shell_content_browser_client.h"
-#include "content/shell/shell_content_renderer_client.h"
-#include "content/shell/shell_switches.h"
+#include "shell_browser_main.h"
+#include "shell_content_browser_client.h"
+#include "shell_content_renderer_client.h"
+#include "shell_switches.h"
+#include "third_party/node/src/node_version.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/base/ui_base_paths.h"
+#include "nw_version.h"
+
+#include <stdio.h>
 
 #if defined(OS_ANDROID)
 #include "base/global_descriptors_posix.h"
@@ -98,6 +102,13 @@ bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
   // Enable trace control and transport through event tracing for Windows.
   logging::LogEventProvider::Initialize(kContentShellProviderName);
 #endif
+
+  // Print version and quit
+  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kVersion)) {
+    printf("nw %s\nnode %s\n", NW_VERSION, NODE_VERSION);
+    *exit_code = 0;
+    return true;
+  }
 
   if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree)) {
     InitLogging();
