@@ -18,7 +18,7 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/shell/paths_mac.h"
+#include "paths_mac.h"
 
 #include "base/mac/bundle_locations.h"
 #include "base/mac/foundation_util.h"
@@ -52,16 +52,16 @@ FilePath GetFrameworksPath() {
 
 void OverrideFrameworkBundlePath() {
   FilePath helper_path =
-      GetFrameworksPath().Append("Content Shell Framework.framework");
+      GetFrameworksPath().Append("node-webkit Framework.framework");
 
   base::mac::SetOverrideFrameworkBundlePath(helper_path);
 }
 
 void OverrideChildProcessPath() {
-  FilePath helper_path = GetFrameworksPath().Append("Content Shell Helper.app")
+  FilePath helper_path = GetFrameworksPath().Append("node-webkit Helper.app")
                                             .Append("Contents")
                                             .Append("MacOS")
-                                            .Append("Content Shell Helper");
+                                            .Append("node-webkit Helper");
 
   PathService::Override(content::CHILD_PROCESS_EXE, helper_path);
 }

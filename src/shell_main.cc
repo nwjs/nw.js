@@ -48,13 +48,12 @@ int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE, wchar_t*, int) {
 #else
 
 int main(int argc, const char** argv) {
-  node::SetupUv(1, (char**)argv);
-
 #if defined(OS_MACOSX)
   // Do the delegate work in shell_content_main to avoid having to export the
   // delegate types.
   return ::ContentMain(argc, argv);
 #else
+  node::SetupUv(1, (char**)argv);
   content::ShellMainDelegate delegate;
   return content::ContentMain(argc, argv, &delegate);
 #endif  // OS_MACOSX
