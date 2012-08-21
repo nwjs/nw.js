@@ -170,17 +170,18 @@ void Shell::PlatformSetIsLoading(bool loading) {
 }
 
 void Shell::PlatformCreateWindow(int width, int height) {
+  is_toolbar_open_ = true;
+  if (window_manifest_)
+    window_manifest_->GetBoolean(switches::kmToolbar, &is_toolbar_open_);
+  int window_height = is_toolbar_open_ ? height + kURLBarHeight : height;
+
   NSRect initial_window_bounds =
-      NSMakeRect(0, 0, width, height + kURLBarHeight);
+      NSMakeRect(0, 0, width, window_height);
   NSRect content_rect = initial_window_bounds;
   NSUInteger style_mask = NSTitledWindowMask |
                           NSClosableWindowMask |
                           NSMiniaturizableWindowMask |
                           NSResizableWindowMask;
-  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree)) {
-    content_rect = NSOffsetRect(initial_window_bounds, -10000, -10000);
-    style_mask = NSBorderlessWindowMask;
-  }
   CrShellWindow* window =
       [[CrShellWindow alloc] initWithContentRect:content_rect
                 styleMask:style_mask
@@ -194,7 +195,7 @@ void Shell::PlatformCreateWindow(int width, int height) {
   if (window_manifest_) {
     int w = width;
     int h = height;
-    bool set = window_manifest_->GetInteger(switches::kmMinWidth, &w) ||
+    bool set = window_manifest_->GetInteger(switches::kmMinWidth, &w) |
         window_manifest_->GetInteger(switches::kmMinHeight, &h);
 
     if (set) {
@@ -205,15 +206,15 @@ void Shell::PlatformCreateWindow(int width, int height) {
       [window_ setContentMinSize:min_size];
     }
 
-    set = window_manifest_->GetInteger(switches::kmMaxWidth, &w) ||
+    set = window_manifest_->GetInteger(switches::kmMaxWidth, &w) |
         window_manifest_->GetInteger(switches::kmMaxHeight, &h);
 
     if (set) {
       // If the window is allowed to get too small, it will wreck the view bindings.
-      NSSize min_size = NSMakeSize(w, h);
-      min_size = [content convertSize:min_size toView:nil];
+      NSSize max_size = NSMakeSize(w, h);
+      max_size = [content convertSize:max_size toView:nil];
       // Note that this takes window coordinates.
-      [window_ setContentMaxSize:min_size];
+      [window_ setContentMaxSize:max_size];
     }
   }
 
@@ -235,30 +236,32 @@ void Shell::PlatformCreateWindow(int width, int height) {
       [[ContentShellWindowDelegate alloc] initWithShell:this];
   [window_ setDelegate:delegate];
 
-  NSRect button_frame =
-      NSMakeRect(0, NSMaxY(initial_window_bounds) - kURLBarHeight,
-                 kButtonWidth, kURLBarHeight);
+  if (is_toolbar_open_) {
+    NSRect button_frame =
+        NSMakeRect(0, NSMaxY(initial_window_bounds) - kURLBarHeight,
+                   kButtonWidth, kURLBarHeight);
 
-  MakeShellButton(&button_frame, @"Back", content, IDC_NAV_BACK,
-                  (NSView*)delegate, @"[", NSCommandKeyMask);
-  MakeShellButton(&button_frame, @"Forward", content, IDC_NAV_FORWARD,
-                  (NSView*)delegate, @"]", NSCommandKeyMask);
-  MakeShellButton(&button_frame, @"Reload", content, IDC_NAV_RELOAD,
-                  (NSView*)delegate, @"r", NSCommandKeyMask);
-  MakeShellButton(&button_frame, @"Stop", content, IDC_NAV_STOP,
-                  (NSView*)delegate, @".", NSCommandKeyMask);
+    MakeShellButton(&button_frame, @"Back", content, IDC_NAV_BACK,
+                    (NSView*)delegate, @"[", NSCommandKeyMask);
+    MakeShellButton(&button_frame, @"Forward", content, IDC_NAV_FORWARD,
+                    (NSView*)delegate, @"]", NSCommandKeyMask);
+    MakeShellButton(&button_frame, @"Reload", content, IDC_NAV_RELOAD,
+                    (NSView*)delegate, @"r", NSCommandKeyMask);
+    MakeShellButton(&button_frame, @"Stop", content, IDC_NAV_STOP,
+                    (NSView*)delegate, @".", NSCommandKeyMask);
 
-  button_frame.size.width =
-      NSWidth(initial_window_bounds) - NSMinX(button_frame);
-  scoped_nsobject<NSTextField> url_edit_view(
-      [[NSTextField alloc] initWithFrame:button_frame]);
-  [content addSubview:url_edit_view];
-  [url_edit_view setAutoresizingMask:(NSViewWidthSizable | NSViewMinYMargin)];
-  [url_edit_view setTarget:delegate];
-  [url_edit_view setAction:@selector(takeURLStringValueFrom:)];
-  [[url_edit_view cell] setWraps:NO];
-  [[url_edit_view cell] setScrollable:YES];
-  url_edit_view_ = url_edit_view.get();
+    button_frame.size.width =
+        NSWidth(initial_window_bounds) - NSMinX(button_frame);
+    scoped_nsobject<NSTextField> url_edit_view(
+        [[NSTextField alloc] initWithFrame:button_frame]);
+    [content addSubview:url_edit_view];
+    [url_edit_view setAutoresizingMask:(NSViewWidthSizable | NSViewMinYMargin)];
+    [url_edit_view setTarget:delegate];
+    [url_edit_view setAction:@selector(takeURLStringValueFrom:)];
+    [[url_edit_view cell] setWraps:NO];
+    [[url_edit_view cell] setScrollable:YES];
+    url_edit_view_ = url_edit_view.get();
+  }
 
   // show the window
   [window_ makeKeyAndOrderFront:nil];
@@ -270,7 +273,9 @@ void Shell::PlatformSetContents() {
   [content addSubview:web_view];
 
   NSRect frame = [content bounds];
-  frame.size.height -= kURLBarHeight;
+  if (is_toolbar_open_) {
+    frame.size.height -= kURLBarHeight;
+  }
   [web_view setFrame:frame];
   [web_view setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
   [web_view setNeedsDisplay:YES];
