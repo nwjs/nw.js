@@ -54,7 +54,8 @@ bool Shell::quit_message_loop_ = true;
 
 Shell::Shell(WebContents* web_contents)
     : window_(NULL),
-      url_edit_view_(NULL)
+      url_edit_view_(NULL),
+	  is_toolbar_open_(true)
 #if defined(OS_WIN) && !defined(USE_AURA)
       , default_edit_wnd_proc_(0)
 #endif
