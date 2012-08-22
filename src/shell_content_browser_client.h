@@ -29,6 +29,7 @@ class ShellContentBrowserClient : public ContentBrowserClient {
       RenderViewHost* render_view_host) OVERRIDE;
   virtual void AppendExtraCommandLineSwitches(CommandLine* command_line,
                                               int child_process_id) OVERRIDE;
+  virtual std::string GetApplicationLocale() OVERRIDE;
   virtual void ResourceDispatcherHostCreated() OVERRIDE;
   virtual AccessTokenStore* CreateAccessTokenStore() OVERRIDE;
   virtual std::string GetDefaultDownloadName() OVERRIDE;

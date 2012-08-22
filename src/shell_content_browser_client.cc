@@ -18,20 +18,21 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/shell/shell_content_browser_client.h"
+#include "shell_content_browser_client.h"
 
 #include "base/command_line.h"
 #include "base/file_path.h"
 #include "content/public/browser/resource_dispatcher_host.h"
-#include "content/shell/geolocation/shell_access_token_store.h"
-#include "content/shell/layout_test_controller_host.h"
-#include "content/shell/shell.h"
-#include "content/shell/shell_browser_context.h"
-#include "content/shell/shell_browser_main_parts.h"
-#include "content/shell/shell_devtools_delegate.h"
-#include "content/shell/shell_resource_dispatcher_host_delegate.h"
-#include "content/shell/shell_switches.h"
+#include "geolocation/shell_access_token_store.h"
 #include "googleurl/src/gurl.h"
+#include "layout_test_controller_host.h"
+#include "shell.h"
+#include "shell_browser_context.h"
+#include "shell_browser_main_parts.h"
+#include "shell_devtools_delegate.h"
+#include "shell_resource_dispatcher_host_delegate.h"
+#include "shell_switches.h"
+#include "ui/base/l10n/l10n_util.h"
 
 #if defined(OS_ANDROID)
 #include "base/android/path_utils.h"
@@ -66,6 +67,10 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     CommandLine* command_line, int child_process_id) {
   if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree))
     command_line->AppendSwitch(switches::kDumpRenderTree);
+}
+
+std::string ShellContentBrowserClient::GetApplicationLocale() {
+  return l10n_util::GetApplicationLocale("en-US");
 }
 
 void ShellContentBrowserClient::ResourceDispatcherHostCreated() {
