@@ -1,8 +1,8 @@
 # Introduction
 
-`node-webkit` is a web runtime based on `Chromium` and `node.js`. Though its
-name suggests that is's a module of `node.js`, it is in fact a standalone 
-runtime that runs apps written in HTML, CSS and node.js.
+`node-webkit` is a web runtime based on `Chromium` and `node.js`. It lets you
+to call Node.js modules directly from DOM and enables a new way of writing
+native applications with all Web technologies. 
 
 It's created and developed in Intel Open Source Technology Center.
 
@@ -11,6 +11,7 @@ It's created and developed in Intel Open Source Technology Center.
 * Write apps in modern HTML, CSS, JS and WebGL
 * Strong network and native APIs from node.js
 * Support modules written in JS and C++ 
+* Node and WebKit is in same thread so that the function call is very efficient.
 * Easy to package and distribute apps
 
 # Downloads
