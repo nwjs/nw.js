@@ -18,12 +18,11 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/shell/shell_render_process_observer.h"
+#include "shell_render_process_observer.h"
 
 #include "base/command_line.h"
 #include "content/public/renderer/render_thread.h"
-#include "content/shell/layout_test_controller_bindings.h"
-#include "content/shell/shell_switches.h"
+#include "shell_switches.h"
 #include "webkit/glue/webkit_glue.h"
 #include "webkit/support/gc_extension.h"
 
@@ -37,16 +36,6 @@ ShellRenderProcessObserver::~ShellRenderProcessObserver() {
 }
 
 void ShellRenderProcessObserver::WebKitInitialized() {
-  if (!CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree))
-    return;
-
-  // To implement a catch-all for not yet implemented controller properties.
-  webkit_glue::SetJavaScriptFlags(" --harmony_proxies");
-  RenderThread::Get()->RegisterExtension(new LayoutTestControllerBindings());
-
-  // We always expose GC to layout tests.
-  webkit_glue::SetJavaScriptFlags(" --expose-gc");
-  RenderThread::Get()->RegisterExtension(extensions_v8::GCExtension::Get());
 }
 
 }  // namespace content

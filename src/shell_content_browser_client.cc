@@ -25,7 +25,6 @@
 #include "content/public/browser/resource_dispatcher_host.h"
 #include "geolocation/shell_access_token_store.h"
 #include "googleurl/src/gurl.h"
-#include "layout_test_controller_host.h"
 #include "shell.h"
 #include "shell_browser_context.h"
 #include "shell_browser_main_parts.h"

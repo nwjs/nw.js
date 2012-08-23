@@ -18,14 +18,13 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/shell/shell_browser_main.h"
+#include "shell_browser_main.h"
 
 #include "base/command_line.h"
 #include "base/logging.h"
 #include "base/memory/scoped_ptr.h"
 #include "base/threading/thread_restrictions.h"
 #include "content/public/browser/browser_main_runner.h"
-#include "layout_test_controller_host.h"
 #include "nw_package.h"
 #include "shell.h"
 #include "shell_browser_context.h"
@@ -76,52 +75,7 @@ int ShellBrowserMain(const content::MainFunctionParams& parameters) {
   if (exit_code >= 0)
     return exit_code;
 
-  if (CommandLine::ForCurrentProcess()->HasSwitch(
-        switches::kCheckLayoutTestSysDeps)) {
-    return 0;
-  }
-
-  bool layout_test_mode =
-      CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree);
-
-  if (layout_test_mode) {
-    char test_string[2048];
-    content::ShellBrowserContext* browser_context =
-        static_cast<content::ShellContentBrowserClient*>(
-            content::GetContentClient()->browser())->browser_context();
-
-    while (fgets(test_string, sizeof(test_string), stdin)) {
-      char *new_line_position = strchr(test_string, '\n');
-      if (new_line_position)
-        *new_line_position = '\0';
-      if (test_string[0] == '\0')
-        continue;
-
-      // Test header.
-      printf("Content-Type: text/plain\n");
-
-      std::string pixel_hash;
-      content::Shell::CreateNewWindow(
-          browser_context,
-          GetURLForLayoutTest(test_string, &pixel_hash),
-          NULL,
-          MSG_ROUTING_NONE,
-          NULL);
-      content::LayoutTestControllerHost::Init(pixel_hash);
-
-      main_runner_->Run();
-
-      content::Shell::CloseAllWindows();
-
-      // Test footer.
-      printf("#EOF\n");
-      fflush(stdout);
-      fflush(stderr);
-    }
-    exit_code = 0;
-  } else {
-    exit_code = main_runner_->Run();
-  }
+  exit_code = main_runner_->Run();
 
   main_runner_->Shutdown();
 

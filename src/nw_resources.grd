@@ -11,7 +11,6 @@
   <release seq="1">
     <includes>
       <include name="IDR_CONTENT_SHELL_DEVTOOLS_DISCOVERY_PAGE" file="shell_devtools_discovery_page.html" type="BINDATA" />
-      <include name="IDR_CONTENT_SHELL_LAYOUT_TEST_CONTROLLER_JS" file="layout_test_controller.js" type="BINDATA" />
     </includes>
   </release>
 </grit>
