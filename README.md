@@ -16,7 +16,7 @@ It's created and developed in Intel Open Source Technology Center.
 
 # Downloads
 
-Prebuilt binaries (v0.2.1):
+Prebuilt binaries (v0.2.2):
 
 * Linux: [32bit](http://s3.amazonaws.com/node-webkit/nw_release_linux_x32.tar.gz) / [64bit](https://s3.amazonaws.com/node-webkit/nw_release_linux_x64.tar.gz)
 * Windows: [win32](http://s3.amazonaws.com/node-webkit/nw_release_win32.zip)
