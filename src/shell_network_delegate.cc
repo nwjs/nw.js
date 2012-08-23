@@ -18,7 +18,7 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/shell/shell_network_delegate.h"
+#include "shell_network_delegate.h"
 
 #include "net/base/net_errors.h"
 
@@ -113,9 +113,9 @@ int ShellNetworkDelegate::OnBeforeSocketStreamConnect(
   return net::OK;
 }
 
-void ShellNetworkDelegate::OnCacheWaitStateChange(
+void ShellNetworkDelegate::OnRequestWaitStateChange(
     const net::URLRequest& request,
-    CacheWaitState waiting) {
+    RequestWaitState waiting) {
 }
 
 }  // namespace content

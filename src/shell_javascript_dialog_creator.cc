@@ -46,20 +46,6 @@ void ShellJavaScriptDialogCreator::RunJavaScriptDialog(
     const string16& default_prompt_text,
     const DialogClosedCallback& callback,
     bool* did_suppress_message) {
-  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree)) {
-    if (javascript_message_type == JAVASCRIPT_MESSAGE_TYPE_ALERT) {
-      printf("ALERT: %s\n", UTF16ToUTF8(message_text).c_str());
-    } else if (javascript_message_type == JAVASCRIPT_MESSAGE_TYPE_CONFIRM) {
-      printf("CONFIRM: %s\n", UTF16ToUTF8(message_text).c_str());
-    } else {  // JAVASCRIPT_MESSAGE_TYPE_PROMPT
-      printf("PROMPT: %s, default text: %s\n",
-             UTF16ToUTF8(message_text).c_str(),
-             UTF16ToUTF8(default_prompt_text).c_str());
-    }
-    callback.Run(true, string16());
-    return;
-  }
-
   if (!dialog_request_callback_.is_null()) {
     dialog_request_callback_.Run();
     callback.Run(true, string16());
@@ -100,17 +86,6 @@ void ShellJavaScriptDialogCreator::RunBeforeUnloadDialog(
     const string16& message_text,
     bool is_reload,
     const DialogClosedCallback& callback) {
-  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree)) {
-    printf("CONFIRM NAVIGATION: %s\n", UTF16ToUTF8(message_text).c_str());
-    LayoutTestControllerHost* controller =
-        LayoutTestControllerHost::FromRenderViewHost(
-            web_contents->GetRenderViewHost());
-    callback.Run(
-        !controller->should_stay_on_page_after_handling_before_unload(),
-        string16());
-    return;
-  }
-
   if (!dialog_request_callback_.is_null()) {
     dialog_request_callback_.Run();
     callback.Run(true, string16());

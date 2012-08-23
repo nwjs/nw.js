@@ -57,15 +57,10 @@ BrowserMainParts* ShellContentBrowserClient::CreateBrowserMainParts(
 
 void ShellContentBrowserClient::RenderViewHostCreated(
     RenderViewHost* render_view_host) {
-  if (!CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree))
-    return;
-  new LayoutTestControllerHost(render_view_host);
 }
 
 void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     CommandLine* command_line, int child_process_id) {
-  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree))
-    command_line->AppendSwitch(switches::kDumpRenderTree);
 }
 
 std::string ShellContentBrowserClient::GetApplicationLocale() {
