@@ -11,31 +11,29 @@ index db04f41..0061906 100644
        '../Modules/filesystem',
        '../Modules/filesystem/chromium',
 diff --git a/Source/WebCore/bindings/generic/BindingSecurity.cpp b/Source/WebCore/bindings/generic/BindingSecurity.cpp
-index 8dde685..4d8e7c3 100644
+index e5144e0..4d57277 100644
 --- a/Source/WebCore/bindings/generic/BindingSecurity.cpp
 +++ b/Source/WebCore/bindings/generic/BindingSecurity.cpp
-@@ -47,17 +47,8 @@ static bool canAccessDocument(BindingState* state, Document* targetDocument, Sec
+@@ -47,6 +47,7 @@ static bool canAccessDocument(BindingState* state, Document* targetDocument, Sec
      if (!targetDocument)
          return false;
  
--    DOMWindow* active = activeDOMWindow(state);
--    if (!active)
--        return false;
--
--    if (active->document()->securityOrigin()->canAccess(targetDocument->securityOrigin()))
--        return true;
--
--    if (reportingOption == ReportSecurityError)
--        immediatelyReportUnsafeAccessTo(state, targetDocument);
--
--    return false;
-+    // Bypass security check
++#if 0
+     DOMWindow* active = activeDOMWindow(state);
+     if (!active)
+         return false;
+@@ -58,6 +59,9 @@ static bool canAccessDocument(BindingState* state, Document* targetDocument, Sec
+         printErrorMessageForFrame(targetDocument->frame(), targetDocument->domWindow()->crossDomainAccessErrorMessage(active));
+ 
+     return false;
++#endif
++
 +    return true;
  }
  
- bool BindingSecurity::shouldAllowAccessToFrame(BindingState* state, Frame* target, SecurityReportingOption reportingOption)
+ bool BindingSecurity::shouldAllowAccessToDOMWindow(BindingState* state, DOMWindow* target, SecurityReportingOption reportingOption)
 diff --git a/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm b/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
-index bf63678..5de80ed 100644
+index 784bd02..07a0378 100644
 --- a/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
 +++ b/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
 @@ -2787,7 +2787,7 @@ END
@@ -66,10 +64,10 @@ index bf63678..5de80ed 100644
      }
      if ($interfaceName eq "HTMLDocument") {
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-index 2224c70..b933632 100644
+index 8020466..d211039 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 +++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-@@ -63,6 +63,9 @@
+@@ -64,6 +64,9 @@
  #include "V8Proxy.h"
  #include "WorkerContextExecutionProxy.h"
  
@@ -79,7 +77,7 @@ index 2224c70..b933632 100644
  #include <algorithm>
  #include <stdio.h>
  #include <utility>
-@@ -280,6 +283,7 @@ bool V8DOMWindowShell::initContextIfNeeded()
+@@ -283,6 +286,7 @@ bool V8DOMWindowShell::initContextIfNeeded()
  
      // Create a handle scope for all local handles.
      v8::HandleScope handleScope;
@@ -87,7 +85,7 @@ index 2224c70..b933632 100644
  
      // Setup the security handlers and message listener. This only has
      // to be done once.
-@@ -341,7 +345,16 @@ bool V8DOMWindowShell::initContextIfNeeded()
+@@ -344,7 +348,16 @@ bool V8DOMWindowShell::initContextIfNeeded()
  
      updateDocument();
  
@@ -105,7 +103,7 @@ index 2224c70..b933632 100644
  
      if (m_frame->document())
          v8Context->AllowCodeGenerationFromStrings(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));
-@@ -352,6 +365,25 @@ bool V8DOMWindowShell::initContextIfNeeded()
+@@ -355,6 +368,25 @@ bool V8DOMWindowShell::initContextIfNeeded()
      // we do isolated worlds the WebCore way.
      m_frame->loader()->dispatchDidClearWindowObjectInWorld(0);
  
