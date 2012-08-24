@@ -64,7 +64,7 @@ index 784bd02..07a0378 100644
      }
      if ($interfaceName eq "HTMLDocument") {
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-index 8020466..d211039 100644
+index 8020466..f6966e2 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 +++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 @@ -64,6 +64,9 @@
@@ -85,7 +85,7 @@ index 8020466..d211039 100644
  
      // Setup the security handlers and message listener. This only has
      // to be done once.
-@@ -344,7 +348,16 @@ bool V8DOMWindowShell::initContextIfNeeded()
+@@ -344,7 +348,24 @@ bool V8DOMWindowShell::initContextIfNeeded()
  
      updateDocument();
  
@@ -93,38 +93,48 @@ index 8020466..d211039 100644
 +    // Bypass default security token
 +    v8Context->SetSecurityToken(nodeContext->GetSecurityToken());
 +
++    // Test if protocol is file:
++    v8::Local<v8::Script> protocol_script = v8::Script::New(v8::String::New(
++        "(function(){ return window.location.protocol == 'file:' })();"
++    ));
++    bool is_file_protocol = protocol_script->Run()->BooleanValue();
++
 +    // Transfer node's global symbols to webkit
-+    v8::Local<v8::Object> nodeGlobal = nodeContext->Global();
-+    v8::Local<v8::Array> symbols = nodeGlobal->GetPropertyNames();
-+    for (unsigned i = 0; i < symbols->Length(); ++i) {
-+        v8::Local<v8::Value> key = symbols->Get(i);
-+        m_global->Set(key, nodeGlobal->Get(key));
++    if (is_file_protocol) {
++      v8::Local<v8::Object> nodeGlobal = nodeContext->Global();
++      v8::Local<v8::Array> symbols = nodeGlobal->GetPropertyNames();
++      for (unsigned i = 0; i < symbols->Length(); ++i) {
++          v8::Local<v8::Value> key = symbols->Get(i);
++          m_global->Set(key, nodeGlobal->Get(key));
++      }
 +    }
  
      if (m_frame->document())
          v8Context->AllowCodeGenerationFromStrings(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));
-@@ -355,6 +368,25 @@ bool V8DOMWindowShell::initContextIfNeeded()
+@@ -355,6 +376,27 @@ bool V8DOMWindowShell::initContextIfNeeded()
      // we do isolated worlds the WebCore way.
      m_frame->loader()->dispatchDidClearWindowObjectInWorld(0);
  
-+    v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
-+        // Make node's relative modules work
++    if (is_file_protocol) {
++      v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
++          // Make node's relative modules work
 +#if defined(OS_WIN)
-+        "process.mainModule.filename = window.location.pathname.substr(1);"
++          "process.mainModule.filename = window.location.pathname.substr(1);"
 +#else
-+        "process.mainModule.filename = window.location.pathname;"
++          "process.mainModule.filename = window.location.pathname;"
 +#endif
-+        "process.chdir(require('path').dirname(process.mainModule.filename));"
-+        "process.mainModule.paths = require('module')._nodeModulePaths(process.cwd());"
++          "process.chdir(require('path').dirname(process.mainModule.filename));"
++          "process.mainModule.paths = require('module')._nodeModulePaths(process.cwd());"
 +
-+        // Use WebKit's console and setTimeout globally
-+        "global.console = console;"
-+        "global.setTimeout = setTimeout;"
-+        "global.clearTimeout = clearTimeout;"
-+        "global.setInterval = setInterval;"
-+        "global.clearInterval = clearInterval;"
-+    ));
-+    script->Run();
++          // Use WebKit's console and setTimeout globally
++          "global.console = console;"
++          "global.setTimeout = setTimeout;"
++          "global.clearTimeout = clearTimeout;"
++          "global.setInterval = setInterval;"
++          "global.clearInterval = clearInterval;"
++      ));
++      script->Run();
++    }
 +
      return true;
  }
