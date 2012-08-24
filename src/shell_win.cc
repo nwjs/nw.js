@@ -120,9 +120,6 @@ void Shell::PlatformCreateWindow(int width, int height) {
         oy = point.y - height / 2;
       }
     }
-
-    if (window_manifest_)
-      window_manifest_->GetBoolean(switches::kmToolbar, &is_toolbar_open_);
   }
 
   window_ = CreateWindow(kWindowClass, kWindowTitle,

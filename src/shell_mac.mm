@@ -170,11 +170,7 @@ void Shell::PlatformSetIsLoading(bool loading) {
 }
 
 void Shell::PlatformCreateWindow(int width, int height) {
-  is_toolbar_open_ = true;
-  if (window_manifest_)
-    window_manifest_->GetBoolean(switches::kmToolbar, &is_toolbar_open_);
   int window_height = is_toolbar_open_ ? height + kURLBarHeight : height;
-
   NSRect initial_window_bounds =
       NSMakeRect(0, 0, width, window_height);
   NSRect content_rect = initial_window_bounds;
@@ -210,10 +206,8 @@ void Shell::PlatformCreateWindow(int width, int height) {
         window_manifest_->GetInteger(switches::kmMaxHeight, &h);
 
     if (set) {
-      // If the window is allowed to get too small, it will wreck the view bindings.
       NSSize max_size = NSMakeSize(w, h);
       max_size = [content convertSize:max_size toView:nil];
-      // Note that this takes window coordinates.
       [window_ setContentMaxSize:max_size];
     }
   }
@@ -261,6 +255,11 @@ void Shell::PlatformCreateWindow(int width, int height) {
     [[url_edit_view cell] setWraps:NO];
     [[url_edit_view cell] setScrollable:YES];
     url_edit_view_ = url_edit_view.get();
+  }
+
+  // Replace all node-webkit stuff to app's name
+  if (!is_show_devtools_) {
+    [[NSApp mainMenu] removeItemAtIndex:3];
   }
 
   // show the window
@@ -322,7 +321,7 @@ void Shell::URLEntered(std::string url_string) {
 
 void Shell::HandleKeyboardEvent(WebContents* source,
                                 const NativeWebKeyboardEvent& event) {
-  if (event.skip_in_browser)
+  if (!is_toolbar_open_ || event.skip_in_browser)
     return;
 
   // The event handling to get this strictly right is a tangle; cheat here a bit

@@ -135,7 +135,7 @@ class Shell : public WebContentsDelegate,
     STOP_BUTTON
   };
 
-  explicit Shell(WebContents* web_contents);
+  explicit Shell(WebContents* web_contents, base::DictionaryValue* manifest);
 
   // Helper to create a new Shell given a newly created WebContents.
   static Shell* CreateShell(WebContents* web_contents, bool simple = false);
@@ -165,14 +165,6 @@ class Shell : public WebContentsDelegate,
 #endif
 
   gfx::NativeView GetContentView();
-
-  void SetWindowManifest(base::DictionaryValue* wm) {
-    window_manifest_ = wm;
-  }
-
-  void SetShowDevtools(bool s) {
-    show_devtools_ = s;
-  }
 
   // NotificationObserver
   virtual void Observe(int type,
@@ -210,7 +202,7 @@ class Shell : public WebContentsDelegate,
   NotificationRegistrar registrar_;
 
   base::DictionaryValue* window_manifest_;
-  bool show_devtools_;
+  bool is_show_devtools_;
   bool is_toolbar_open_;
 
 #if defined(OS_WIN) && !defined(USE_AURA)

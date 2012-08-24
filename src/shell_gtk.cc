@@ -156,7 +156,7 @@ void Shell::PlatformCreateWindow(int width, int height) {
 
   // Create the menu bar.
   GtkWidget* menu_bar = CreateMenuBar(this);
-  if (show_devtools_) {
+  if (is_show_devtools_) {
     gtk_box_pack_start(GTK_BOX(vbox_), menu_bar, FALSE, FALSE, 0);
   }
 
@@ -235,10 +235,7 @@ void Shell::PlatformCreateWindow(int width, int height) {
   gtk_container_add(GTK_CONTAINER(spinner_item_), spinner_alignment);
   gtk_toolbar_insert(GTK_TOOLBAR(toolbar), spinner_item_, -1 /* append */);
 
-  bool is_toolbar_show = true;
-  if (window_manifest_)
-    window_manifest_->GetBoolean(switches::kmToolbar, &is_toolbar_show);
-  if (is_toolbar_show)
+  if (is_toolbar_open_)
     gtk_box_pack_start(GTK_BOX(vbox_), toolbar, FALSE, FALSE, 0);
 
   gtk_container_add(GTK_CONTAINER(window_), vbox_);

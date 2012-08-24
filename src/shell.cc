@@ -52,14 +52,21 @@ base::Callback<void(Shell*)> Shell::shell_created_callback_;
 
 bool Shell::quit_message_loop_ = true;
 
-Shell::Shell(WebContents* web_contents)
+Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
     : window_(NULL),
       url_edit_view_(NULL),
-	  is_toolbar_open_(true)
+      window_manifest_(manifest),
+      is_show_devtools_(false),
+	    is_toolbar_open_(true)
 #if defined(OS_WIN) && !defined(USE_AURA)
       , default_edit_wnd_proc_(0)
 #endif
   {
+  if (window_manifest_) {
+    window_manifest_->GetBoolean(switches::kmToolbar, &is_toolbar_open_);
+    window_manifest_->GetBoolean(switches::kDeveloper, &is_show_devtools_);
+  }
+
   registrar_.Add(this, NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,
       Source<WebContents>(web_contents));
   windows_.push_back(this);
@@ -89,10 +96,13 @@ Shell* Shell::CreateShell(WebContents* web_contents, bool simple) {
   if (!simple) {
     // Create with package's manifest
     nw::GetManifest()->GetDictionary(switches::kmWindow, &window_manifest);
+    window_manifest->SetBoolean(switches::kDeveloper, 
+        CommandLine::ForCurrentProcess()->HasSwitch(switches::kDeveloper));
   } else {
     // Use our minimum set manifest
     window_manifest = new base::DictionaryValue();
     window_manifest->SetBoolean(switches::kmToolbar, false);
+    window_manifest->SetBoolean(switches::kDeveloper, false);
     window_manifest->SetInteger(switches::kmWidth, 600);
     window_manifest->SetInteger(switches::kmHeight, 500);
   }
@@ -104,10 +114,7 @@ Shell* Shell::CreateShell(WebContents* web_contents, bool simple) {
     window_manifest->GetInteger(switches::kmHeight, &height);
   }
 
-  Shell* shell = new Shell(web_contents);
-  shell->SetShowDevtools(simple ? false :
-      CommandLine::ForCurrentProcess()->HasSwitch(switches::kDeveloper));
-  shell->SetWindowManifest(window_manifest);
+  Shell* shell = new Shell(web_contents, window_manifest);
   shell->PlatformCreateWindow(width, height);
 
   shell->web_contents_.reset(web_contents);

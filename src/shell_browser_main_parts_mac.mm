@@ -34,12 +34,10 @@ void ShellBrowserMainParts::PreMainMessageLoopStart() {
   // Force the NSApplication subclass to be used.
   [ShellCrApplication sharedApplication];
 
-  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDeveloper)) {
-    scoped_nsobject<NSNib>
-        nib([[NSNib alloc] initWithNibNamed:@"MainMenu"
-                                     bundle:base::mac::FrameworkBundle()]);
-    [nib instantiateNibWithOwner:NSApp topLevelObjects:nil];
-  }
+  scoped_nsobject<NSNib>
+      nib([[NSNib alloc] initWithNibNamed:@"MainMenu"
+                                   bundle:base::mac::FrameworkBundle()]);
+  [nib instantiateNibWithOwner:NSApp topLevelObjects:nil];
 }
 
 }  // namespace content
