@@ -24,7 +24,7 @@ Prebuilt binaries (v0.2.2):
 
 Demos:
 
-* [Hello World](http://s3.amazonaws.com/node-webkit/hello_world.nw)
+* [Hello World](http://s3.amazonaws.com/node-webkit/hello_world2.nw)
 * [File Explorer](https://github.com/zcbenz/nw-file-explorer)
 
 # Quick Start
