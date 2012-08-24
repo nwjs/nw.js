@@ -5,6 +5,7 @@
 #include "shell.h"
 
 #include <algorithm>
+#include <string>
 
 #include "base/command_line.h"
 #include "base/logging.h"
@@ -16,6 +17,7 @@
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
 #include "googleurl/src/gurl.h"
+#include "nw_package.h"
 #include "resource.h"
 #include "shell_switches.h"
 #import "ui/base/cocoa/underlay_opengl_hosting_window.h"
@@ -257,9 +259,41 @@ void Shell::PlatformCreateWindow(int width, int height) {
     url_edit_view_ = url_edit_view.get();
   }
 
-  // Replace all node-webkit stuff to app's name
+  // Show Debug menu wish --developer
   if (!is_show_devtools_) {
-    [[NSApp mainMenu] removeItemAtIndex:3];
+    NSMenu* mainMenu = [NSApp mainMenu];
+    int index = [mainMenu indexOfItemWithTitle:@"Debug"];
+    if (index != -1)
+      [mainMenu removeItemAtIndex:index];
+  }
+
+  // Replace all node-webkit stuff to app's name
+  base::DictionaryValue* manifest = nw::GetManifest();
+  std::string name;
+  if (manifest->GetString(switches::kmName, &name) &&
+     name != "node-webkit") {
+    NSString* nsname = [NSString stringWithUTF8String:name.c_str()];
+    // Sub main menus
+    NSMenu* menu = [NSApp mainMenu];
+    int total = [menu numberOfItems];
+    for (int i = 0; i < total; ++i) {
+      NSMenuItem* item = [menu itemAtIndex:i];
+
+      if ([item hasSubmenu]) {
+        NSMenu* submenu = [item submenu];
+        // items of sub main menu
+        int total = [submenu numberOfItems];
+        for (int j = 0; j < total; ++j) {
+          NSMenuItem* item = [submenu itemAtIndex:j];
+          NSString* title = item.title;
+
+          NSRange aRange = [title rangeOfString:@"node-webkit"];
+          if (aRange.location != NSNotFound)
+            [item setTitle:[title stringByReplacingOccurrencesOfString:@"node-webkit"
+                                  withString:nsname]];
+        }
+      }
+    }
   }
 
   // show the window
