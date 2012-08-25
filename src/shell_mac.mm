@@ -355,13 +355,14 @@ void Shell::URLEntered(std::string url_string) {
 
 void Shell::HandleKeyboardEvent(WebContents* source,
                                 const NativeWebKeyboardEvent& event) {
-  if (!is_toolbar_open_ || event.skip_in_browser)
+  if (event.skip_in_browser)
     return;
 
   // The event handling to get this strictly right is a tangle; cheat here a bit
   // by just letting the menus have a chance at it.
   if ([event.os_event type] == NSKeyDown) {
-    if (([event.os_event modifierFlags] & NSCommandKeyMask) &&
+    if (is_toolbar_open_ &&
+        ([event.os_event modifierFlags] & NSCommandKeyMask) &&
         [[event.os_event characters] isEqual:@"l"]) {
       [window_ makeFirstResponder:url_edit_view_];
       return;
