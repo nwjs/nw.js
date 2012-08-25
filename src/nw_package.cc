@@ -215,14 +215,20 @@ GURL GetStartupURL() {
 #endif
 
   std::string url; 
-  base::DictionaryValue* manifest = nw::GetManifest();
-  if (manifest->HasKey(switches::kmMain)) {
-    manifest->GetString(switches::kmMain, &url);
-  } else {
-    CommandLine* command_line = CommandLine::ForCurrentProcess();
-    if (command_line->HasSwitch(switches::kUrl))
-      url = command_line->GetSwitchValueASCII(switches::kUrl);
+  // Specify URL in --url
+  CommandLine* command_line = CommandLine::ForCurrentProcess();
+  if (command_line->HasSwitch(switches::kUrl)) {
+    url = command_line->GetSwitchValueASCII(switches::kUrl);
+    GURL gurl(url);
+    if (!gurl.has_scheme())
+      return GURL(std::string("http://") + url);
+
+    return gurl;
   }
+
+  // Read from manifest
+  base::DictionaryValue* manifest = nw::GetManifest();
+  manifest->GetString(switches::kmMain, &url);
 
   if (url.empty())
     url = "about:blank";
@@ -235,9 +241,12 @@ void InitPackageForceNoEmpty() {
 
   if (g_manifest == NULL) {
     g_manifest = new base::DictionaryValue();
+    g_manifest->SetString(switches::kmName, "node-webkit");
+  }
+
+  if (!g_manifest->HasKey(switches::kmWindow)) {
     base::DictionaryValue* window = new base::DictionaryValue();
     g_manifest->Set(switches::kmWindow, window);
-    g_manifest->SetString(switches::kmName, "node-webkit");
 
     // Hide toolbar is specifed in the command line
     if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kNoToolbar))
