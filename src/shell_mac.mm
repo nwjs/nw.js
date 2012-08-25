@@ -196,21 +196,28 @@ void Shell::PlatformCreateWindow(int width, int height) {
     bool set = window_manifest_->GetInteger(switches::kmMinWidth, &w) |
         window_manifest_->GetInteger(switches::kmMinHeight, &h);
 
+    // window.min_height and window.min_width
     if (set) {
-      // If the window is allowed to get too small, it will wreck the view bindings.
       NSSize min_size = NSMakeSize(w, h);
       min_size = [content convertSize:min_size toView:nil];
-      // Note that this takes window coordinates.
       [window_ setContentMinSize:min_size];
     }
 
     set = window_manifest_->GetInteger(switches::kmMaxWidth, &w) |
         window_manifest_->GetInteger(switches::kmMaxHeight, &h);
 
+    // window.max_height and window.max_width
     if (set) {
       NSSize max_size = NSMakeSize(w, h);
       max_size = [content convertSize:max_size toView:nil];
       [window_ setContentMaxSize:max_size];
+    }
+
+    // window.position
+    std::string position_string;
+    if (window_manifest_->GetString(switches::kmPosition, &position_string) &&
+        position_string == "center") {
+      [window_ center];
     }
   }
 
