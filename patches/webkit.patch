@@ -199,6 +199,28 @@ index 04d5881..65e4734 100644
      return true;
  }
  
+diff --git a/Source/WebCore/page/SecurityOrigin.cpp b/Source/WebCore/page/SecurityOrigin.cpp
+index f5cd1c5..71cf75a 100644
+--- a/Source/WebCore/page/SecurityOrigin.cpp
++++ b/Source/WebCore/page/SecurityOrigin.cpp
+@@ -131,7 +131,7 @@ SecurityOrigin::SecurityOrigin(const KURL& url)
+     , m_host(url.host().isNull() ? "" : url.host().lower())
+     , m_port(url.port())
+     , m_isUnique(false)
+-    , m_universalAccess(false)
++    , m_universalAccess(true)
+     , m_domainWasSetInDOM(false)
+     , m_blockThirdPartyStorage(false)
+     , m_enforceFilePathSeparation(false)
+@@ -156,7 +156,7 @@ SecurityOrigin::SecurityOrigin()
+     , m_domain("")
+     , m_port(InvalidPort)
+     , m_isUnique(true)
+-    , m_universalAccess(false)
++    , m_universalAccess(true)
+     , m_domainWasSetInDOM(false)
+     , m_canLoadLocalResources(false)
+     , m_blockThirdPartyStorage(false)
 diff --git a/Source/WebKit/chromium/src/WebKit.cpp b/Source/WebKit/chromium/src/WebKit.cpp
 index 9331d05..eca2f5b 100644
 --- a/Source/WebKit/chromium/src/WebKit.cpp
