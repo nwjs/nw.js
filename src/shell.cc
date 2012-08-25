@@ -96,13 +96,13 @@ Shell* Shell::CreateShell(WebContents* web_contents, bool simple) {
   if (!simple) {
     // Create with package's manifest
     nw::GetManifest()->GetDictionary(switches::kmWindow, &window_manifest);
-    window_manifest->SetBoolean(switches::kDeveloper, 
+    window_manifest->SetBoolean(switches::kDeveloper,
         CommandLine::ForCurrentProcess()->HasSwitch(switches::kDeveloper));
   } else {
     // Use our minimum set manifest
     window_manifest = new base::DictionaryValue();
     window_manifest->SetBoolean(switches::kmToolbar, false);
-    window_manifest->SetBoolean(switches::kDeveloper, false);
+    window_manifest->SetBoolean(switches::kDeveloper, true);
     window_manifest->SetInteger(switches::kmWidth, 600);
     window_manifest->SetInteger(switches::kmHeight, 500);
   }
