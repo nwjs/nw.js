@@ -16,7 +16,7 @@ It's created and developed in Intel Open Source Technology Center.
 
 # Downloads
 
-Prebuilt binaries (v0.2.2):
+Prebuilt binaries (v0.2.3):
 
 * Linux: [32bit](http://s3.amazonaws.com/node-webkit/nw_release_linux_x32.tar.gz) / [64bit](https://s3.amazonaws.com/node-webkit/nw_release_linux_x64.tar.gz)
 * Windows: [win32](http://s3.amazonaws.com/node-webkit/nw_release_win32.zip)
@@ -70,11 +70,11 @@ Note: on Windows, you can drag the `app.nw` to `nw.exe` to open it.
 
 For more information on how to write/package/run apps, see:
 
+* [Node.js Manual](http://nodejs.org/api/)
 * [How to run apps](https://github.com/rogerwang/node-webkit/wiki/How-to-run-apps)
 * [How to package and distribute your apps](https://github.com/rogerwang/node-webkit/wiki/How-to-package-and-distribute-your-apps)
-* [Debugging with devtools](https://github.com/rogerwang/node-webkit/wiki/Debugging-with-devtools)
-* [Manifest format](https://github.com/rogerwang/node-webkit/wiki/Manifest-format) - format of `package.json`
-* [Node.js Manual](http://nodejs.org/api/)
+
+And also our [Wiki](https://github.com/rogerwang/node-webkit/wiki).
 
 # For developers
 
