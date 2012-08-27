@@ -18,28 +18,28 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/nw/src/shell_content_renderer_client.h"
+#ifndef CONTENT_NW_SRC_RENDER_PRERENDERER_CLIENT_H_
+#define CONTENT_NW_SRC_RENDER_PRERENDERER_CLIENT_H_
 
-#include "base/command_line.h"
-#include "content/nw/src/prerenderer/prerenderer_client.h"
-#include "content/nw/src/shell_render_process_observer.h"
-#include "content/nw/src/shell_switches.h"
-#include "v8/include/v8.h"
+#include "base/compiler_specific.h"
+#include "content/public/renderer/render_view_observer.h"
+#include "third_party/WebKit/Source/WebKit/chromium/public/WebPrerendererClient.h"
 
-namespace content {
+namespace prerender {
 
-ShellContentRendererClient::ShellContentRendererClient() {
-}
+class PrerendererClient : public content::RenderViewObserver,
+                          public WebKit::WebPrerendererClient {
+ public:
+  explicit PrerendererClient(content::RenderView* render_view);
 
-ShellContentRendererClient::~ShellContentRendererClient() {
-}
+ private:
+  virtual ~PrerendererClient();
 
-void ShellContentRendererClient::RenderThreadStarted() {
-  shell_observer_.reset(new ShellRenderProcessObserver());
-}
+  // Implements WebKit::WebPrerendererClient
+  virtual void willAddPrerender(WebKit::WebPrerender* prerender) OVERRIDE;
+};
 
-void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
-  new prerender::PrerendererClient(render_view);
-}
+}  // namespace prerender
 
-}  // namespace content
+#endif  // CONTENT_NW_SRC_RENDER_PRERENDERER_CLIENT_H_
+

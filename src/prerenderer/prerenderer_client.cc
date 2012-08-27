@@ -18,28 +18,27 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/nw/src/shell_content_renderer_client.h"
-
-#include "base/command_line.h"
 #include "content/nw/src/prerenderer/prerenderer_client.h"
-#include "content/nw/src/shell_render_process_observer.h"
-#include "content/nw/src/shell_switches.h"
-#include "v8/include/v8.h"
 
-namespace content {
+#include "base/logging.h"
+#include "content/public/renderer/render_view.h"
+#include "third_party/WebKit/Source/WebKit/chromium/public/WebView.h"
 
-ShellContentRendererClient::ShellContentRendererClient() {
+namespace prerender {
+
+PrerendererClient::PrerendererClient(content::RenderView* render_view)
+    : content::RenderViewObserver(render_view) {
+  DCHECK(render_view);
+  DVLOG(5) << "PrerendererClient::PrerendererClient()";
+  render_view->GetWebView()->setPrerendererClient(this);
 }
 
-ShellContentRendererClient::~ShellContentRendererClient() {
+PrerendererClient::~PrerendererClient() {
 }
 
-void ShellContentRendererClient::RenderThreadStarted() {
-  shell_observer_.reset(new ShellRenderProcessObserver());
+void PrerendererClient::willAddPrerender(
+    WebKit::WebPrerender* prerender) {
 }
 
-void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
-  new prerender::PrerendererClient(render_view);
-}
+}  // namespace prerender
 
-}  // namespace content
