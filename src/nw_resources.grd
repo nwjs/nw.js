@@ -10,7 +10,7 @@
   <translations />
   <release seq="1">
     <includes>
-      <include name="IDR_CONTENT_SHELL_DEVTOOLS_DISCOVERY_PAGE" file="shell_devtools_discovery_page.html" type="BINDATA" />
+      <include name="IDR_CONTENT_SHELL_DEVTOOLS_DISCOVERY_PAGE" file="resources/shell_devtools_discovery_page.html" type="BINDATA" />
     </includes>
   </release>
 </grit>
