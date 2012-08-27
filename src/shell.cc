@@ -259,9 +259,6 @@ bool Shell::AddMessageToConsole(WebContents* source,
                                 const string16& message,
                                 int32 line_no,
                                 const string16& source_id) {
-  if (!CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree))
-    return false;
-
   printf("CONSOLE MESSAGE: ");
   if (line_no)
     printf("line %d: ", line_no);
