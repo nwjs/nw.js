@@ -18,19 +18,20 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "shell_content_browser_client.h"
+#include "content/nw/src/shell_content_browser_client.h"
 
 #include "base/command_line.h"
 #include "base/file_path.h"
 #include "content/public/browser/resource_dispatcher_host.h"
+#include "content/nw/src/shell.h"
+#include "content/nw/src/shell_browser_context.h"
+#include "content/nw/src/shell_browser_main_parts.h"
+#include "content/nw/src/shell_devtools_delegate.h"
+#include "content/nw/src/shell_resource_dispatcher_host_delegate.h"
+#include "content/nw/src/shell_switches.h"
+#include "content/nw/src/nw_package.h"
 #include "geolocation/shell_access_token_store.h"
 #include "googleurl/src/gurl.h"
-#include "shell.h"
-#include "shell_browser_context.h"
-#include "shell_browser_main_parts.h"
-#include "shell_devtools_delegate.h"
-#include "shell_resource_dispatcher_host_delegate.h"
-#include "shell_switches.h"
 #include "ui/base/l10n/l10n_util.h"
 
 #if defined(OS_ANDROID)
@@ -61,6 +62,8 @@ void ShellContentBrowserClient::RenderViewHostCreated(
 
 void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     CommandLine* command_line, int child_process_id) {
+  if (nw::GetUseNode())
+    command_line->AppendSwitch(switches::kmNodejs);
 }
 
 std::string ShellContentBrowserClient::GetApplicationLocale() {

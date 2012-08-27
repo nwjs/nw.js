@@ -35,6 +35,9 @@ base::DictionaryValue* GetManifest();
 // Return the startup url from mainfest file or command line
 GURL GetStartupURL();
 
+// Return if we enable node.js
+bool GetUseNode();
+
 // Extract app package and initialize manifest file
 void InitPackageForceNoEmpty();
 

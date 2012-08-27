@@ -64,20 +64,22 @@ index 784bd02..07a0378 100644
      }
      if ($interfaceName eq "HTMLDocument") {
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-index 8020466..f6966e2 100644
+index 8020466..d7fc6df 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 +++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-@@ -64,6 +64,9 @@
+@@ -64,6 +64,11 @@
  #include "V8Proxy.h"
  #include "WorkerContextExecutionProxy.h"
  
++#include "base/command_line.h"
++#include "content/nw/src/shell_switches.h"
 +#include "third_party/node/src/node.h"
 +#include "third_party/node/src/req_wrap.h"
 +
  #include <algorithm>
  #include <stdio.h>
  #include <utility>
-@@ -283,6 +286,7 @@ bool V8DOMWindowShell::initContextIfNeeded()
+@@ -283,6 +288,7 @@ bool V8DOMWindowShell::initContextIfNeeded()
  
      // Create a handle scope for all local handles.
      v8::HandleScope handleScope;
@@ -85,7 +87,7 @@ index 8020466..f6966e2 100644
  
      // Setup the security handlers and message listener. This only has
      // to be done once.
-@@ -344,7 +348,24 @@ bool V8DOMWindowShell::initContextIfNeeded()
+@@ -344,7 +350,28 @@ bool V8DOMWindowShell::initContextIfNeeded()
  
      updateDocument();
  
@@ -93,14 +95,18 @@ index 8020466..f6966e2 100644
 +    // Bypass default security token
 +    v8Context->SetSecurityToken(nodeContext->GetSecurityToken());
 +
++    // Do we integrate node?
++    bool use_node = CommandLine::ForCurrentProcess()->HasSwitch(switches::kmNodejs);
++
 +    // Test if protocol is file:
 +    v8::Local<v8::Script> protocol_script = v8::Script::New(v8::String::New(
 +        "(function(){ return window.location.protocol == 'file:' })();"
 +    ));
 +    bool is_file_protocol = protocol_script->Run()->BooleanValue();
++    use_node = is_file_protocol ? use_node : false;
 +
 +    // Transfer node's global symbols to webkit
-+    if (is_file_protocol) {
++    if (use_node) {
 +      v8::Local<v8::Object> nodeGlobal = nodeContext->Global();
 +      v8::Local<v8::Array> symbols = nodeGlobal->GetPropertyNames();
 +      for (unsigned i = 0; i < symbols->Length(); ++i) {
@@ -111,11 +117,11 @@ index 8020466..f6966e2 100644
  
      if (m_frame->document())
          v8Context->AllowCodeGenerationFromStrings(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));
-@@ -355,6 +376,27 @@ bool V8DOMWindowShell::initContextIfNeeded()
+@@ -355,6 +382,27 @@ bool V8DOMWindowShell::initContextIfNeeded()
      // we do isolated worlds the WebCore way.
      m_frame->loader()->dispatchDidClearWindowObjectInWorld(0);
  
-+    if (is_file_protocol) {
++    if (use_node) {
 +      v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
 +          // Make node's relative modules work
 +#if defined(OS_WIN)

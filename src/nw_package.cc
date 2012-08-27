@@ -18,7 +18,7 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "nw_package.h"
+#include "content/nw/src/nw_package.h"
 
 #include "base/command_line.h"
 #include "base/file_util.h"
@@ -28,7 +28,7 @@
 #include "base/string_util.h"
 #include "base/values.h"
 #include "common/zip.h"
-#include "shell_switches.h"
+#include "content/nw/src/shell_switches.h"
 
 #if defined(OS_WIN)
 #include "base/string16.h"
@@ -234,6 +234,12 @@ GURL GetStartupURL() {
     url = "about:blank";
 
   return GURL(url);
+}
+
+bool GetUseNode() {
+  bool use_node = true;
+  GetManifest()->GetBoolean(switches::kmNodejs, &use_node);
+  return use_node;
 }
 
 void InitPackageForceNoEmpty() {

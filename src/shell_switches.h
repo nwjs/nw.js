@@ -4,8 +4,8 @@
 
 // Defines all the "content_shell" command-line switches.
 
-#ifndef CONTENT_SHELL_SHELL_SWITCHES_H_
-#define CONTENT_SHELL_SHELL_SWITCHES_H_
+#ifndef CONTENT_NW_SRC_SHELL_SWITCHES_H_
+#define CONTENT_NW_SRC_SHELL_SWITCHES_H_
 
 namespace switches {
 
@@ -23,6 +23,7 @@ extern const char kUrl[];
 extern const char kmMain[];
 extern const char kmName[];
 extern const char kmWebkit[];
+extern const char kmNodejs[];
 extern const char kmRoot[];
 extern const char kmWindow[];
 extern const char kmToolbar[];
@@ -38,4 +39,4 @@ extern const char kmMaxHeight[];
 
 }  // namespace switches
 
-#endif  // CONTENT_SHELL_SHELL_SWITCHES_H_
+#endif  // CONTENT_NW_SRC_SHELL_SWITCHES_H_
