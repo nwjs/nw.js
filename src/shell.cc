@@ -91,30 +91,14 @@ Shell::~Shell() {
     MessageLoop::current()->PostTask(FROM_HERE, MessageLoop::QuitClosure());
 }
 
-Shell* Shell::CreateShell(WebContents* web_contents, bool simple) {
-  base::DictionaryValue *window_manifest = NULL;
-  if (!simple) {
-    // Create with package's manifest
-    nw::GetManifest()->GetDictionary(switches::kmWindow, &window_manifest);
-    window_manifest->SetBoolean(switches::kDeveloper,
-        CommandLine::ForCurrentProcess()->HasSwitch(switches::kDeveloper));
-  } else {
-    // Use our minimum set manifest
-    window_manifest = new base::DictionaryValue();
-    window_manifest->SetBoolean(switches::kmToolbar, false);
-    window_manifest->SetBoolean(switches::kDeveloper, true);
-    window_manifest->SetInteger(switches::kmWidth, 600);
-    window_manifest->SetInteger(switches::kmHeight, 500);
-  }
-
+Shell* Shell::CreateShell(WebContents* web_contents,
+                          base::DictionaryValue* manifest) {
   int width = 800;
   int height = 600;
-  if (window_manifest) {
-    window_manifest->GetInteger(switches::kmWidth, &width);
-    window_manifest->GetInteger(switches::kmHeight, &height);
-  }
+  manifest->GetInteger(switches::kmWidth, &width);
+  manifest->GetInteger(switches::kmHeight, &height);
 
-  Shell* shell = new Shell(web_contents, window_manifest);
+  Shell* shell = new Shell(web_contents, manifest);
   shell->PlatformCreateWindow(width, height);
 
   shell->web_contents_.reset(web_contents);
@@ -154,14 +138,20 @@ Shell* Shell::CreateNewWindow(BrowserContext* browser_context,
                               const GURL& url,
                               SiteInstance* site_instance,
                               int routing_id,
-                              WebContents* base_web_contents,
-                              bool simple) {
+                              WebContents* base_web_contents) {
   WebContents* web_contents = WebContents::Create(
       browser_context,
       site_instance,
       routing_id,
       base_web_contents);
-  Shell* shell = CreateShell(web_contents, simple);
+
+  // Create with package's manifest
+  base::DictionaryValue *manifest = NULL;
+  nw::GetManifest()->GetDictionary(switches::kmWindow, &manifest);
+  manifest->SetBoolean(switches::kDeveloper,
+      CommandLine::ForCurrentProcess()->HasSwitch(switches::kDeveloper));
+
+  Shell* shell = CreateShell(web_contents, manifest);
   if (!url.is_empty())
     shell->LoadURL(url);
   return shell;
@@ -208,9 +198,19 @@ void Shell::ShowDevTools() {
       browser_client->shell_browser_main_parts()->devtools_delegate();
   GURL url = delegate->devtools_http_handler()->GetFrontendURL(
       web_contents()->GetRenderViewHost());
-  CreateNewWindow(
-      web_contents()->GetBrowserContext(),
-      url, NULL, MSG_ROUTING_NONE, NULL, true);
+
+  // Use our minimum set manifest
+  base::DictionaryValue manifest;
+  manifest.SetBoolean(switches::kmToolbar, false);
+  manifest.SetBoolean(switches::kDeveloper, true);
+  manifest.SetInteger(switches::kmWidth, 600);
+  manifest.SetInteger(switches::kmHeight, 500);
+
+  Shell* shell = CreateShell(
+      WebContents::Create(web_contents()->GetBrowserContext(),
+                          NULL, MSG_ROUTING_NONE, NULL),
+      &manifest);
+  shell->LoadURL(url);
 }
 
 gfx::NativeView Shell::GetContentView() {
@@ -241,7 +241,20 @@ void Shell::WebContentsCreated(WebContents* source_contents,
                                int64 source_frame_id,
                                const GURL& target_url,
                                WebContents* new_contents) {
-  CreateShell(new_contents);
+  // Create with package's manifest
+  base::DictionaryValue *manifest = NULL;
+  nw::GetManifest()->GetDictionary(switches::kmWindow, &manifest);
+  manifest->SetBoolean(switches::kDeveloper,
+      CommandLine::ForCurrentProcess()->HasSwitch(switches::kDeveloper));
+
+  // Get window features
+  WebKit::WebWindowFeatures features = new_contents->GetWindowFeatures();
+  if (features.widthSet)
+    manifest->SetInteger(switches::kmWidth, features.width);
+  if (features.heightSet)
+    manifest->SetInteger(switches::kmHeight, features.height);
+
+  CreateShell(new_contents, manifest);
 }
 
 void Shell::DidNavigateMainFramePostCommit(WebContents* web_contents) {

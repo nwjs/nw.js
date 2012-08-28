@@ -117,13 +117,11 @@ void ShellBrowserMainParts::PreMainMessageLoopRun() {
   devtools_delegate_ = new ShellDevToolsDelegate(
       port, browser_context_->GetRequestContext());
 
-  if (!CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree)) {
-    Shell::CreateNewWindow(browser_context_.get(),
-                           nw::GetStartupURL(),
-                           NULL,
-                           MSG_ROUTING_NONE,
-                           NULL);
-  }
+  Shell::CreateNewWindow(browser_context_.get(),
+                         nw::GetStartupURL(),
+                         NULL,
+                         MSG_ROUTING_NONE,
+                         NULL);
 
   if (parameters_.ui_task) {
     parameters_.ui_task->Run();

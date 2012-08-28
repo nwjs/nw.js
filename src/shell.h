@@ -71,8 +71,7 @@ class Shell : public WebContentsDelegate,
                                 const GURL& url,
                                 SiteInstance* site_instance,
                                 int routing_id,
-                                WebContents* base_web_contents,
-                                bool simple = false);
+                                WebContents* base_web_contents);
 
   // Returns the Shell object corresponding to the given RenderViewHost.
   static Shell* FromRenderViewHost(RenderViewHost* rvh);
@@ -138,7 +137,8 @@ class Shell : public WebContentsDelegate,
   explicit Shell(WebContents* web_contents, base::DictionaryValue* manifest);
 
   // Helper to create a new Shell given a newly created WebContents.
-  static Shell* CreateShell(WebContents* web_contents, bool simple = false);
+  static Shell* CreateShell(WebContents* web_contents,
+                            base::DictionaryValue* manifest);
 
   // All the methods that begin with Platform need to be implemented by the
   // platform specific Shell implementation.
