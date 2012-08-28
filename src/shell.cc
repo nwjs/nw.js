@@ -285,11 +285,7 @@ bool Shell::AddMessageToConsole(WebContents* source,
                                 const string16& message,
                                 int32 line_no,
                                 const string16& source_id) {
-  printf("CONSOLE MESSAGE: ");
-  if (line_no)
-    printf("line %d: ", line_no);
-  printf("%s\n", UTF16ToUTF8(message).c_str());
-  return true;
+  return false;
 }
 
 void Shell::Observe(int type,
