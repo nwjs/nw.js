@@ -30,6 +30,8 @@ extern const char kmToolbar[];
 extern const char kmIcon[];
 extern const char kmWidth[];
 extern const char kmHeight[];
+extern const char kmX[];
+extern const char kmY[];
 extern const char kmResizable[];
 extern const char kmPosition[];
 extern const char kmMinWidth[];

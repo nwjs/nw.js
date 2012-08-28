@@ -176,7 +176,7 @@ void Shell::PlatformSetContents() {
   SetParent(web_contents_->GetView()->GetNativeView(), window_);
 }
 
-void Shell::SizeTo(int width, int height) {
+void Shell::SizeTo(int width, int height, int x, int y) {
   RECT rc, rw;
   GetClientRect(window_, &rc);
   GetWindowRect(window_, &rw);
@@ -193,13 +193,11 @@ void Shell::SizeTo(int width, int height) {
   if (is_toolbar_open_)
     window_height += kURLBarHeight;
 
-  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree)) {
-    SetWindowPos(window_, NULL, -window_width, -window_height,
-                 window_width, window_height, SWP_NOZORDER);
-  } else {
-    SetWindowPos(window_, NULL, 0, 0, window_width, window_height,
-                 SWP_NOMOVE | SWP_NOZORDER);
-  }
+  UINT flag = SWP_NOZORDER;
+  if (x == -1 || y == -1)
+    flag |= SWP_NOMOVE;
+
+  SetWindowPos(window_, NULL, x, y, window_width, window_height, flag);
 }
 
 void Shell::PlatformResizeSubViews() {
@@ -219,6 +217,10 @@ void Shell::PlatformResizeSubViews() {
 
 void Shell::Close() {
   DestroyWindow(window_);
+}
+
+void Shell::Move(const gfx::Rect& pos) {
+  SizeTo(pos.width(), pos.height(), pos.x(), pos.y());
 }
 
 ATOM Shell::RegisterWindowClass() {

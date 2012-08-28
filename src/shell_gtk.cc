@@ -282,6 +282,16 @@ void Shell::Close() {
   gtk_widget_destroy(GTK_WIDGET(window_));
 }
 
+void Shell::Move(const gfx::Rect& pos) {
+  gint x = static_cast<gint>(bounds.x());
+  gint y = static_cast<gint>(bounds.y());
+  gint width = static_cast<gint>(bounds.width());
+  gint height = static_cast<gint>(bounds.height());
+
+  gtk_window_move(window_, x, y);
+  SizeTo(width, height);
+}
+
 void Shell::OnBackButtonClicked(GtkWidget* widget) {
   GoBackOrForward(-1);
 }

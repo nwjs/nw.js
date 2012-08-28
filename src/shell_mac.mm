@@ -334,6 +334,18 @@ void Shell::Close() {
   [window_ performClose:nil];
 }
 
+void Shell::Move(const gfx::Rect& pos) {
+  NSRect cocoa_bounds = NSMakeRect(pos.x(), 0,
+                                   pos.width(),
+                                   pos.height());
+  // Flip coordinates based on the primary screen.
+  NSScreen* screen = [[NSScreen screens] objectAtIndex:0];
+  cocoa_bounds.origin.y =
+      NSHeight([screen frame]) - pos.height() - pos.y();
+
+  [window_ setFrame:cocoa_bounds display:YES];
+}
+
 void Shell::ActionPerformed(int control) {
   switch (control) {
     case IDC_NAV_BACK:

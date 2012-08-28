@@ -237,6 +237,15 @@ void Shell::CloseContents(WebContents* source) {
   Close();
 }
 
+void Shell::MoveContents(WebContents* source, const gfx::Rect& pos) {
+  Move(pos);
+}
+
+bool Shell::IsPopupOrPanel(const WebContents* source) const {
+  // Treat very window as popup so we can use window operations
+  return true;
+}
+
 void Shell::WebContentsCreated(WebContents* source_contents,
                                int64 source_frame_id,
                                const GURL& target_url,
@@ -253,6 +262,10 @@ void Shell::WebContentsCreated(WebContents* source_contents,
     manifest->SetInteger(switches::kmWidth, features.width);
   if (features.heightSet)
     manifest->SetInteger(switches::kmHeight, features.height);
+  if (features.xSet)
+    manifest->SetInteger(switches::kmX, features.x);
+  if (features.ySet)
+    manifest->SetInteger(switches::kmY, features.y);
 
   CreateShell(new_contents, manifest);
 }

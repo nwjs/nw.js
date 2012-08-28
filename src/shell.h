@@ -62,6 +62,7 @@ class Shell : public WebContentsDelegate,
   void Stop();
   void UpdateNavigationControls();
   void Close();
+  void Move(const gfx::Rect& pos);
   void ShowDevTools();
 
   // Do one time initialization at application startup.
@@ -109,6 +110,8 @@ class Shell : public WebContentsDelegate,
   virtual void LoadProgressChanged(double progress) OVERRIDE;
 #endif
   virtual void CloseContents(WebContents* source) OVERRIDE;
+  virtual void MoveContents(WebContents* source, const gfx::Rect& pos) OVERRIDE;
+  virtual bool IsPopupOrPanel(const WebContents* source) const OVERRIDE;
   virtual void WebContentsCreated(WebContents* source_contents,
                                   int64 source_frame_id,
                                   const GURL& target_url,
@@ -159,9 +162,11 @@ class Shell : public WebContentsDelegate,
   // Set the title of shell window
   void PlatformSetTitle(const string16& title);
 
-#if (defined(OS_WIN) && !defined(USE_AURA)) || defined(TOOLKIT_GTK)
   // Resizes the main window to the given dimensions.
+#if defined(TOOLKIT_GTK)
   void SizeTo(int width, int height);
+#elif defined(OS_WIN)
+  void SizeTo(int width, int height, int x = -1, int y = -1);
 #endif
 
   gfx::NativeView GetContentView();
