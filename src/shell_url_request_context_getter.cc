@@ -18,7 +18,7 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "shell_url_request_context_getter.h"
+#include "content/nw/src/shell_url_request_context_getter.h"
 
 #include "base/logging.h"
 #include "base/string_split.h"
@@ -37,7 +37,7 @@
 #include "net/proxy/proxy_service.h"
 #include "net/url_request/url_request_context.h"
 #include "net/url_request/url_request_context_storage.h"
-#include "net/url_request/url_request_job_factory.h"
+#include "net/url_request/url_request_job_factory_impl.h"
 
 namespace content {
 
@@ -120,7 +120,7 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
         "" /* trusted_spdy_proxy */ );
     storage_->set_http_transaction_factory(main_cache);
 
-    storage_->set_job_factory(new net::URLRequestJobFactory);
+    storage_->set_job_factory(new net::URLRequestJobFactoryImpl);
   }
 
   return url_request_context_.get();
