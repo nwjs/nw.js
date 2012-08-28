@@ -213,11 +213,18 @@ void Shell::PlatformCreateWindow(int width, int height) {
       [window_ setContentMaxSize:max_size];
     }
 
-    // window.position
-    std::string position_string;
-    if (window_manifest_->GetString(switches::kmPosition, &position_string) &&
-        position_string == "center") {
-      [window_ center];
+    // window.x and window.y
+    int x, y;
+    if (window_manifest_->GetInteger(switches::kmX, &x) &&
+        window_manifest_->GetInteger(switches::kmY, &y)) {
+      Move(gfx::Rect(x, y, width, height));
+    } else {
+      // window.position
+      std::string position_string;
+      if (window_manifest_->GetString(switches::kmPosition, &position_string) &&
+          position_string == "center") {
+        [window_ center];
+      }
     }
   }
 

@@ -119,12 +119,20 @@ void Shell::PlatformCreateWindow(int width, int height) {
                    G_CALLBACK(OnWindowDestroyedThunk), this);
 
   if (window_manifest_) {
-    std::string desription;
-    if (window_manifest_->GetString(switches::kmPosition, &desription)) {
-      if (desription == "center")
-        gtk_window_set_position(window_, GTK_WIN_POS_CENTER);
-      else if (desription == "mouse")
-        gtk_window_set_position(window_, GTK_WIN_POS_MOUSE);
+    // window.x and window.y
+    int x, y;
+    if (window_manifest_->GetInteger(switches::kmX, &x) &&
+        window_manifest_->GetInteger(switches::kmY, &y)) {
+      gtk_window_move(window_, x, y);
+    } else {
+      // window.postion
+      std::string desription;
+      if (window_manifest_->GetString(switches::kmPosition, &desription)) {
+        if (desription == "center")
+          gtk_window_set_position(window_, GTK_WIN_POS_CENTER);
+        else if (desription == "mouse")
+          gtk_window_set_position(window_, GTK_WIN_POS_MOUSE);
+      }
     }
 
     GdkGeometry geometry = { 0 };

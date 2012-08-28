@@ -107,17 +107,23 @@ void Shell::PlatformCreateWindow(int width, int height) {
   int ox = CW_USEDEFAULT;
   int oy = 0;
   if (window_manifest_) {
-    // window.position
-    std::string position;
-    if (window_manifest_->GetString(switches::kmPosition, &position)) {
-      if (position == "center") {
-        ox = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
-        oy = (GetSystemMetrics(SM_CYSCREEN) - height) / 2;
-      } else if (position == "mouse") {
-        POINT point;
-        GetCursorPos(&point);
-        ox = point.x - width / 2;
-        oy = point.y - height / 2;
+    // window.x and window.y
+    if (window_manifest_->GetInteger(switches::kmX, &ox) &&
+        window_manifest_->GetInteger(switches::kmY, &oy)) {
+      // Do nothing, it will just be used
+    } else {
+      // window.position
+      std::string position;
+      if (window_manifest_->GetString(switches::kmPosition, &position)) {
+        if (position == "center") {
+          ox = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
+          oy = (GetSystemMetrics(SM_CYSCREEN) - height) / 2;
+        } else if (position == "mouse") {
+          POINT point;
+          GetCursorPos(&point);
+          ox = point.x - width / 2;
+          oy = point.y - height / 2;
+        }
       }
     }
   }
