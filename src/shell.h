@@ -109,9 +109,15 @@ class Shell : public WebContentsDelegate,
 #if defined(OS_ANDROID)
   virtual void LoadProgressChanged(double progress) OVERRIDE;
 #endif
+  virtual void ActivateContents(content::WebContents* contents) OVERRIDE;
+  virtual void DeactivateContents(content::WebContents* contents) OVERRIDE;
   virtual void CloseContents(WebContents* source) OVERRIDE;
   virtual void MoveContents(WebContents* source, const gfx::Rect& pos) OVERRIDE;
   virtual bool IsPopupOrPanel(const WebContents* source) const OVERRIDE;
+  virtual bool TakeFocus(WebContents* soruce,
+                         bool reverse) OVERRIDE;
+  virtual void LostCapture() OVERRIDE;
+  virtual void WebContentsFocused(WebContents* contents) OVERRIDE;
   virtual void WebContentsCreated(WebContents* source_contents,
                                   int64 source_frame_id,
                                   const GURL& target_url,

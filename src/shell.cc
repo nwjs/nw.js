@@ -233,6 +233,14 @@ void Shell::LoadingStateChanged(WebContents* source) {
   PlatformSetIsLoading(source->IsLoading());
 }
 
+void Shell::ActivateContents(content::WebContents* contents) {
+  LOG(ERROR) << "ActivateContents";
+}
+
+void Shell::DeactivateContents(content::WebContents* contents) {
+  LOG(ERROR) << "DeactivateContents";
+}
+
 void Shell::CloseContents(WebContents* source) {
   Close();
 }
@@ -244,6 +252,20 @@ void Shell::MoveContents(WebContents* source, const gfx::Rect& pos) {
 bool Shell::IsPopupOrPanel(const WebContents* source) const {
   // Treat very window as popup so we can use window operations
   return true;
+}
+
+bool Shell::TakeFocus(WebContents* soruce,
+                      bool reverse) {
+  LOG(ERROR) << "TakeFocus";
+  return true;
+}
+
+void Shell::LostCapture() {
+  LOG(ERROR) << "LostCapture";
+}
+
+void Shell::WebContentsFocused(WebContents* contents) {
+  LOG(ERROR) << "WebContentsFocused";
 }
 
 void Shell::WebContentsCreated(WebContents* source_contents,
