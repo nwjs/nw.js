@@ -1,5 +1,5 @@
 diff --git a/Source/WebCore/WebCore.gyp/WebCore.gyp b/Source/WebCore/WebCore.gyp/WebCore.gyp
-index db04f41..0061906 100644
+index 63c7f57..60a1361 100644
 --- a/Source/WebCore/WebCore.gyp/WebCore.gyp
 +++ b/Source/WebCore/WebCore.gyp/WebCore.gyp
 @@ -57,6 +57,7 @@
@@ -33,10 +33,10 @@ index e5144e0..4d57277 100644
  
  bool BindingSecurity::shouldAllowAccessToDOMWindow(BindingState* state, DOMWindow* target, SecurityReportingOption reportingOption)
 diff --git a/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm b/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
-index 784bd02..07a0378 100644
+index 23760b1..b2b73f4 100644
 --- a/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
 +++ b/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
-@@ -2787,7 +2787,7 @@ END
+@@ -2794,7 +2794,7 @@ END
  
      my $access_check = "";
      if ($dataNode->extendedAttributes->{"CheckSecurity"} && !($interfaceName eq "DOMWindow")) {
@@ -45,7 +45,7 @@ index 784bd02..07a0378 100644
      }
  
      # For the DOMWindow interface, generate the shadow object template
-@@ -2799,7 +2799,7 @@ static v8::Persistent<v8::ObjectTemplate> ConfigureShadowObjectTemplate(v8::Pers
+@@ -2806,7 +2806,7 @@ static v8::Persistent<v8::ObjectTemplate> ConfigureShadowObjectTemplate(v8::Pers
      V8DOMConfiguration::batchConfigureAttributes(templ, v8::Handle<v8::ObjectTemplate>(), shadowAttrs, WTF_ARRAY_LENGTH(shadowAttrs));
  
      // Install a security handler with V8.
@@ -54,7 +54,7 @@ index 784bd02..07a0378 100644
      templ->SetInternalFieldCount(V8DOMWindow::internalFieldCount);
      return templ;
  }
-@@ -2938,7 +2938,7 @@ END
+@@ -2945,7 +2945,7 @@ END
      // Set access check callbacks, but turned off initially.
      // When a context is detached from a frame, turn on the access check.
      // Turning on checks also invalidates inline caches of the object.
@@ -64,11 +64,11 @@ index 784bd02..07a0378 100644
      }
      if ($interfaceName eq "HTMLDocument") {
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-index 8020466..d7fc6df 100644
+index e37b829..2eb3232 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 +++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 @@ -64,6 +64,11 @@
- #include "V8Proxy.h"
+ #include "V8PerContextData.h"
  #include "WorkerContextExecutionProxy.h"
  
 +#include "base/command_line.h"
@@ -79,21 +79,21 @@ index 8020466..d7fc6df 100644
  #include <algorithm>
  #include <stdio.h>
  #include <utility>
-@@ -283,6 +288,7 @@ bool V8DOMWindowShell::initContextIfNeeded()
+@@ -297,6 +302,7 @@ bool V8DOMWindowShell::initContextIfNeeded()
+         return true;
  
-     // Create a handle scope for all local handles.
      v8::HandleScope handleScope;
 +    v8::Handle<v8::Context> nodeContext = v8::Context::GetEntered();
  
-     // Setup the security handlers and message listener. This only has
-     // to be done once.
-@@ -344,7 +350,28 @@ bool V8DOMWindowShell::initContextIfNeeded()
+     initializeV8IfNeeded();
+ 
+@@ -328,7 +334,28 @@ bool V8DOMWindowShell::initContextIfNeeded()
  
      updateDocument();
  
 -    setSecurityToken();
 +    // Bypass default security token
-+    v8Context->SetSecurityToken(nodeContext->GetSecurityToken());
++    context->SetSecurityToken(nodeContext->GetSecurityToken());
 +
 +    // Do we integrate node?
 +    bool use_node = CommandLine::ForCurrentProcess()->HasSwitch(switches::kmNodejs);
@@ -116,8 +116,8 @@ index 8020466..d7fc6df 100644
 +    }
  
      if (m_frame->document())
-         v8Context->AllowCodeGenerationFromStrings(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));
-@@ -355,6 +382,27 @@ bool V8DOMWindowShell::initContextIfNeeded()
+         context->AllowCodeGenerationFromStrings(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));
+@@ -339,6 +366,27 @@ bool V8DOMWindowShell::initContextIfNeeded()
      // we do isolated worlds the WebCore way.
      m_frame->loader()->dispatchDidClearWindowObjectInWorld(0);
  
@@ -206,10 +206,10 @@ index 04d5881..65e4734 100644
  }
  
 diff --git a/Source/WebCore/page/SecurityOrigin.cpp b/Source/WebCore/page/SecurityOrigin.cpp
-index f5cd1c5..71cf75a 100644
+index 6934717..fc949c2 100644
 --- a/Source/WebCore/page/SecurityOrigin.cpp
 +++ b/Source/WebCore/page/SecurityOrigin.cpp
-@@ -131,7 +131,7 @@ SecurityOrigin::SecurityOrigin(const KURL& url)
+@@ -120,7 +120,7 @@ SecurityOrigin::SecurityOrigin(const KURL& url)
      , m_host(url.host().isNull() ? "" : url.host().lower())
      , m_port(url.port())
      , m_isUnique(false)
@@ -218,7 +218,7 @@ index f5cd1c5..71cf75a 100644
      , m_domainWasSetInDOM(false)
      , m_blockThirdPartyStorage(false)
      , m_enforceFilePathSeparation(false)
-@@ -156,7 +156,7 @@ SecurityOrigin::SecurityOrigin()
+@@ -145,7 +145,7 @@ SecurityOrigin::SecurityOrigin()
      , m_domain("")
      , m_port(InvalidPort)
      , m_isUnique(true)
