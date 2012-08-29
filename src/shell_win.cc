@@ -255,6 +255,8 @@ ATOM Shell::RegisterWindowClass() {
 LRESULT CALLBACK Shell::WndProc(HWND hwnd, UINT message, WPARAM wParam,
                                 LPARAM lParam) {
   Shell* shell = static_cast<Shell*>(ui::GetWindowUserData(hwnd));
+  if (!shell)
+	return DefWindowProc(hwnd, message, wParam, lParam);
 
   switch (message) {
     case WM_COMMAND: {
@@ -289,6 +291,7 @@ LRESULT CALLBACK Shell::WndProc(HWND hwnd, UINT message, WPARAM wParam,
       }
       break;
     }
+
     case WM_DESTROY: {
       delete shell;
       return 0;
