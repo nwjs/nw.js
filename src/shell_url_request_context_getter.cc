@@ -24,6 +24,7 @@
 #include "base/string_split.h"
 #include "base/threading/worker_pool.h"
 #include "content/public/browser/browser_thread.h"
+#include "content/nw/src/nw_about_handler.h"
 #include "content/shell/shell_network_delegate.h"
 #include "net/base/cert_verifier.h"
 #include "net/base/default_server_bound_cert_store.h"
@@ -120,7 +121,10 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
         "" /* trusted_spdy_proxy */ );
     storage_->set_http_transaction_factory(main_cache);
 
-    storage_->set_job_factory(new net::URLRequestJobFactoryImpl);
+    net::URLRequestJobFactoryImpl* job_factory = 
+      new net::URLRequestJobFactoryImpl();
+    job_factory->SetProtocolHandler("nw", new nw::AboutProtocolHandler());
+    storage_->set_job_factory(job_factory);
   }
 
   return url_request_context_.get();
