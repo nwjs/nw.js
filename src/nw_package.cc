@@ -129,6 +129,11 @@ bool InitPackage() {
     // See itself as a package (allowing standalone)
     path = FilePath(command_line->GetProgram());
     is_self_extract = true;
+#if defined(OS_MACOSX)
+    // Find if we have node-webkit.app/Resources/app.nw
+    path = path.DirName().DirName().Append("Resources").Append("app.nw");
+    LOG(ERROR) << "path " << path.value();
+#endif
   } else {
     // Get first argument
     path = FilePath(args[0]);
