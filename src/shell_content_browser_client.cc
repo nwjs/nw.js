@@ -24,7 +24,6 @@
 #include "base/file_path.h"
 #include "content/public/browser/browser_url_handler.h"
 #include "content/public/browser/resource_dispatcher_host.h"
-#include "content/nw/src/nw_about_handler.h"
 #include "content/nw/src/shell.h"
 #include "content/nw/src/shell_browser_context.h"
 #include "content/nw/src/shell_browser_main_parts.h"

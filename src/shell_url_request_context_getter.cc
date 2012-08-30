@@ -24,7 +24,7 @@
 #include "base/string_split.h"
 #include "base/threading/worker_pool.h"
 #include "content/public/browser/browser_thread.h"
-#include "content/nw/src/nw_about_handler.h"
+#include "content/nw/src/nw_protocol_handler.h"
 #include "content/shell/shell_network_delegate.h"
 #include "net/base/cert_verifier.h"
 #include "net/base/default_server_bound_cert_store.h"
@@ -123,7 +123,7 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
 
     net::URLRequestJobFactoryImpl* job_factory = 
       new net::URLRequestJobFactoryImpl();
-    job_factory->SetProtocolHandler("nw", new nw::AboutProtocolHandler());
+    job_factory->SetProtocolHandler("nw", new nw::NwProtocolHandler());
     storage_->set_job_factory(job_factory);
   }
 

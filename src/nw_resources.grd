@@ -10,6 +10,8 @@
   <translations />
   <release seq="1">
     <includes>
+      <include name="IDR_NW_VERSION" file="resources/nw_version.html" type="BINDATA" />
+      <include name="IDR_NW_BLANK" file="resources/nw_blank.html" type="BINDATA" />
       <include name="IDR_CONTENT_SHELL_DEVTOOLS_DISCOVERY_PAGE" file="resources/shell_devtools_discovery_page.html" type="BINDATA" />
     </includes>
   </release>

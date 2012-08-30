@@ -18,33 +18,20 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#ifndef CONTENT_NW_SRC_NW_ABOUT_HANDLER_H_
-#define CONTENT_NW_SRC_NW_ABOUT_HANDLER_H_
+#include "content/nw/src/nw_protocol_handler.h"
 
-#include "base/basictypes.h"
-#include "base/compiler_specific.h"
-#include "net/url_request/url_request_job_factory.h"
-
-class GURL;
-
-namespace net {
-class URLRequestJob;
-}
+#include "content/nw/src/net/resource_request_job.h"
+#include "grit/nw_resources.h"
+#include "net/url_request/url_request.h"
 
 namespace nw {
-  
-class AboutProtocolHandler :
-    public net::URLRequestJobFactory::ProtocolHandler {
- public:
-  AboutProtocolHandler();
-  virtual net::URLRequestJob* MaybeCreateJob(
-      net::URLRequest* request,
-      net::NetworkDelegate* network_delegate) const OVERRIDE;
 
- private:
-  DISALLOW_COPY_AND_ASSIGN(AboutProtocolHandler);
-};
+NwProtocolHandler::NwProtocolHandler() {
+}
+
+net::URLRequestJob* NwProtocolHandler::MaybeCreateJob(
+    net::URLRequest* request, net::NetworkDelegate* network_delegate) const {
+  return ResourceRequestJob::Factory(request, network_delegate);
+}
 
 }  // namespace nw
-
-#endif  // CONTENT_NW_SRC_NW_ABOUT_HANDLER_H_
