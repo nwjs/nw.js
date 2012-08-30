@@ -74,7 +74,11 @@ const GUID kContentShellProviderName = {
 
 void InitLogging() {
   logging::InitLogging(
-	  FilePath(ASCIIToUTF16("debug.log")).value().c_str(),
+#if defined(OS_WIN)
+      L"debug.log",
+#else
+      "debug.log",
+#endif
       logging::LOG_ONLY_TO_SYSTEM_DEBUG_LOG,
       logging::LOCK_LOG_FILE,
       logging::DELETE_OLD_LOG_FILE,
