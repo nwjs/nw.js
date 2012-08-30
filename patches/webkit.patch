@@ -64,7 +64,7 @@ index 23760b1..b2b73f4 100644
      }
      if ($interfaceName eq "HTMLDocument") {
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-index e37b829..292a11d 100644
+index e37b829..b927dce 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 +++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 @@ -64,6 +64,11 @@
@@ -87,7 +87,7 @@ index e37b829..292a11d 100644
  
      initializeV8IfNeeded();
  
-@@ -328,7 +334,28 @@ bool V8DOMWindowShell::initContextIfNeeded()
+@@ -328,7 +334,37 @@ bool V8DOMWindowShell::initContextIfNeeded()
  
      updateDocument();
  
@@ -107,44 +107,49 @@ index e37b829..292a11d 100644
 +
 +    // Transfer node's global symbols to webkit
 +    if (use_node) {
-+      v8::Local<v8::Object> nodeGlobal = nodeContext->Global();
-+      v8::Local<v8::Array> symbols = nodeGlobal->GetPropertyNames();
-+      for (unsigned i = 0; i < symbols->Length(); ++i) {
-+          v8::Local<v8::Value> key = symbols->Get(i);
-+          m_global->Set(key, nodeGlobal->Get(key));
-+      }
++        // Don't use WebKit's timers in node
++        v8::Local<v8::Object> disableMap = v8::Object::New();
++        disableMap->Set(v8::String::New("setTimeout"), v8::Integer::New(1));
++        disableMap->Set(v8::String::New("clearTimeout"), v8::Integer::New(1));
++        disableMap->Set(v8::String::New("setInterval"), v8::Integer::New(1));
++        disableMap->Set(v8::String::New("clearInterval"), v8::Integer::New(1));
++
++        v8::Local<v8::Object> nodeGlobal = nodeContext->Global();
++        v8::Local<v8::Array> symbols = nodeGlobal->GetPropertyNames();
++        for (unsigned i = 0; i < symbols->Length(); ++i) {
++            v8::Local<v8::Value> key = symbols->Get(i);
++            if (disableMap->Has(key->ToString()))
++                continue;
++            m_global->Set(key, nodeGlobal->Get(key));
++        }
 +    }
  
      if (m_frame->document())
          context->AllowCodeGenerationFromStrings(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));
-@@ -339,6 +366,32 @@ bool V8DOMWindowShell::initContextIfNeeded()
+@@ -339,6 +375,28 @@ bool V8DOMWindowShell::initContextIfNeeded()
      // we do isolated worlds the WebCore way.
      m_frame->loader()->dispatchDidClearWindowObjectInWorld(0);
  
 +    if (use_node) {
-+      v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
-+          // Make node's relative modules work
++        v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
++            // Make node's relative modules work
 +#if defined(OS_WIN)
-+          "process.mainModule.filename = window.location.pathname.substr(1);"
++            "process.mainModule.filename = window.location.pathname.substr(1);"
 +#else
-+          "process.mainModule.filename = window.location.pathname;"
++            "process.mainModule.filename = window.location.pathname;"
 +#endif
-+          "process.chdir(require('path').dirname(process.mainModule.filename));"
-+          "process.mainModule.paths = require('module')._nodeModulePaths(process.cwd());"
++            "process.chdir(require('path').dirname(process.mainModule.filename));"
++            "process.mainModule.paths = require('module')._nodeModulePaths(process.cwd());"
 +
-+          // Use WebKit's console and setTimeout globally
-+          "global.console = console;"
-+          "global.setTimeout = setTimeout;"
-+          "global.clearTimeout = clearTimeout;"
-+          "global.setInterval = setInterval;"
-+          "global.clearInterval = clearInterval;"
++            // Use WebKit's console globally
++            "global.console = console;"
 +
-+          // Don't exit on exception
-+          "process.on('uncaughtException', function (err) {"
-+            "console.log('Caught exception from node.js: ' + err);"
-+          "});"
-+      ));
-+      script->Run();
++            // Don't exit on exception
++            "process.on('uncaughtException', function (err) {"
++              "console.log(err.stack);"
++            "});"
++        ));
++        script->Run();
 +    }
 +
      return true;
