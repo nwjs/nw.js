@@ -64,7 +64,7 @@ index 23760b1..b2b73f4 100644
      }
      if ($interfaceName eq "HTMLDocument") {
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-index e37b829..d4777c3 100644
+index e37b829..4214051 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 +++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 @@ -64,6 +64,12 @@
@@ -162,7 +162,7 @@ index e37b829..d4777c3 100644
 +            "});"
 +
 +            // Save node-webkit version
-+            "process.versions['node-webkit'] = " NW_VERSION_STRING ";"
++            "process.versions['node-webkit'] = '" NW_VERSION_STRING "';"
 +        ));
 +        script->Run();
 +    }
