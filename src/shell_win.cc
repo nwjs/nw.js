@@ -226,7 +226,8 @@ void Shell::Close() {
 }
 
 void Shell::Move(const gfx::Rect& pos) {
-  SizeTo(pos.width(), pos.height(), pos.x(), pos.y());
+  SetWindowPos(window_, NULL, pos.x(), pos.y(), pos.width(), pos.height(),
+               SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 ATOM Shell::RegisterWindowClass() {

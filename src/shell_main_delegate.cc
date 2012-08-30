@@ -18,19 +18,20 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "shell_main_delegate.h"
+#include "content/nw/src/shell_main_delegate.h"
 
 #include "base/command_line.h"
 #include "base/file_path.h"
 #include "base/logging.h"
 #include "base/path_service.h"
+#include "base/utf_string_conversions.h"
 #include "content/public/browser/browser_main_runner.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/url_constants.h"
-#include "shell_browser_main.h"
-#include "shell_content_browser_client.h"
-#include "shell_content_renderer_client.h"
-#include "shell_switches.h"
+#include "content/nw/src/shell_browser_main.h"
+#include "content/nw/src/shell_content_browser_client.h"
+#include "content/nw/src/shell_content_renderer_client.h"
+#include "content/nw/src/shell_switches.h"
 #include "third_party/node/src/node_version.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/base/ui_base_paths.h"
@@ -73,7 +74,7 @@ const GUID kContentShellProviderName = {
 
 void InitLogging() {
   logging::InitLogging(
-      "",
+	  FilePath(ASCIIToUTF16("debug.log")).value().c_str(),
       logging::LOG_ONLY_TO_SYSTEM_DEBUG_LOG,
       logging::LOCK_LOG_FILE,
       logging::DELETE_OLD_LOG_FILE,
