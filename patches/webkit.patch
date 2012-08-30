@@ -64,7 +64,7 @@ index 23760b1..b2b73f4 100644
      }
      if ($interfaceName eq "HTMLDocument") {
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-index e37b829..2eb3232 100644
+index e37b829..292a11d 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 +++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 @@ -64,6 +64,11 @@
@@ -117,7 +117,7 @@ index e37b829..2eb3232 100644
  
      if (m_frame->document())
          context->AllowCodeGenerationFromStrings(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));
-@@ -339,6 +366,27 @@ bool V8DOMWindowShell::initContextIfNeeded()
+@@ -339,6 +366,32 @@ bool V8DOMWindowShell::initContextIfNeeded()
      // we do isolated worlds the WebCore way.
      m_frame->loader()->dispatchDidClearWindowObjectInWorld(0);
  
@@ -138,6 +138,11 @@ index e37b829..2eb3232 100644
 +          "global.clearTimeout = clearTimeout;"
 +          "global.setInterval = setInterval;"
 +          "global.clearInterval = clearInterval;"
++
++          // Don't exit on exception
++          "process.on('uncaughtException', function (err) {"
++            "console.log('Caught exception from node.js: ' + err);"
++          "});"
 +      ));
 +      script->Run();
 +    }
