@@ -64,22 +64,23 @@ index 23760b1..b2b73f4 100644
      }
      if ($interfaceName eq "HTMLDocument") {
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-index e37b829..aeca32f 100644
+index e37b829..d4777c3 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 +++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-@@ -64,6 +64,11 @@
+@@ -64,6 +64,12 @@
  #include "V8PerContextData.h"
  #include "WorkerContextExecutionProxy.h"
  
 +#include "base/command_line.h"
 +#include "content/nw/src/shell_switches.h"
++#include "content/nw/src/nw_version.h"
 +#include "third_party/node/src/node.h"
 +#include "third_party/node/src/req_wrap.h"
 +
  #include <algorithm>
  #include <stdio.h>
  #include <utility>
-@@ -297,6 +302,7 @@ bool V8DOMWindowShell::initContextIfNeeded()
+@@ -297,6 +303,7 @@ bool V8DOMWindowShell::initContextIfNeeded()
          return true;
  
      v8::HandleScope handleScope;
@@ -87,7 +88,7 @@ index e37b829..aeca32f 100644
  
      initializeV8IfNeeded();
  
-@@ -328,7 +334,43 @@ bool V8DOMWindowShell::initContextIfNeeded()
+@@ -328,7 +335,43 @@ bool V8DOMWindowShell::initContextIfNeeded()
  
      updateDocument();
  
@@ -132,7 +133,7 @@ index e37b829..aeca32f 100644
  
      if (m_frame->document())
          context->AllowCodeGenerationFromStrings(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));
-@@ -339,6 +381,28 @@ bool V8DOMWindowShell::initContextIfNeeded()
+@@ -339,6 +382,36 @@ bool V8DOMWindowShell::initContextIfNeeded()
      // we do isolated worlds the WebCore way.
      m_frame->loader()->dispatchDidClearWindowObjectInWorld(0);
  
@@ -146,7 +147,12 @@ index e37b829..aeca32f 100644
 +#endif
 +            "process.chdir(require('path').dirname(process.mainModule.filename));"
 +            "process.mainModule.paths = require('module')._nodeModulePaths(process.cwd());"
++        ));
++        script->Run();
++    }
 +
++    if (use_node || is_nw_protocol) {
++        v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
 +            // Use WebKit's console globally
 +            "global.console = console;"
 +
@@ -154,6 +160,9 @@ index e37b829..aeca32f 100644
 +            "process.on('uncaughtException', function (err) {"
 +              "console.log(err.stack);"
 +            "});"
++
++            // Save node-webkit version
++            "process.versions['node-webkit'] = " NW_VERSION_STRING ";"
 +        ));
 +        script->Run();
 +    }
