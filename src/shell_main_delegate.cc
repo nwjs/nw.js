@@ -72,16 +72,13 @@ const GUID kContentShellProviderName = {
 #endif
 
 void InitLogging() {
-  FilePath log_filename;
-  PathService::Get(base::DIR_EXE, &log_filename);
-  log_filename = log_filename.AppendASCII("content_shell.log");
   logging::InitLogging(
-      log_filename.value().c_str(),
-      logging::LOG_ONLY_TO_FILE,
+      "",
+      logging::LOG_ONLY_TO_SYSTEM_DEBUG_LOG,
       logging::LOCK_LOG_FILE,
       logging::DELETE_OLD_LOG_FILE,
       logging::DISABLE_DCHECK_FOR_NON_OFFICIAL_RELEASE_BUILDS);
-  logging::SetLogItems(true, true, true, true);
+  logging::SetLogItems(true, false, true, false);
 }
 
 }  // namespace
@@ -110,11 +107,8 @@ bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
     return true;
   }
 
-  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree)) {
-    InitLogging();
-    CommandLine::ForCurrentProcess()->AppendSwitch(
-        switches::kAllowFileAccessFromFiles);
-  }
+  InitLogging();
+
   SetContentClient(&content_client_);
   return false;
 }
