@@ -64,7 +64,7 @@ index 23760b1..b2b73f4 100644
      }
      if ($interfaceName eq "HTMLDocument") {
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-index e37b829..b927dce 100644
+index e37b829..aeca32f 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 +++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 @@ -64,6 +64,11 @@
@@ -87,7 +87,7 @@ index e37b829..b927dce 100644
  
      initializeV8IfNeeded();
  
-@@ -328,7 +334,37 @@ bool V8DOMWindowShell::initContextIfNeeded()
+@@ -328,7 +334,43 @@ bool V8DOMWindowShell::initContextIfNeeded()
  
      updateDocument();
  
@@ -105,8 +105,14 @@ index e37b829..b927dce 100644
 +    bool is_file_protocol = protocol_script->Run()->BooleanValue();
 +    use_node = is_file_protocol ? use_node : false;
 +
++    // Test if protocol is nw:
++    protocol_script = v8::Script::New(v8::String::New(
++        "(function(){ return window.location.protocol == 'nw:' })();"
++    ));
++    bool is_nw_protocol = protocol_script->Run()->BooleanValue();
++
 +    // Transfer node's global symbols to webkit
-+    if (use_node) {
++    if (use_node || is_nw_protocol) {
 +        // Don't use WebKit's timers in node
 +        v8::Local<v8::Object> disableMap = v8::Object::New();
 +        disableMap->Set(v8::String::New("setTimeout"), v8::Integer::New(1));
@@ -126,7 +132,7 @@ index e37b829..b927dce 100644
  
      if (m_frame->document())
          context->AllowCodeGenerationFromStrings(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));
-@@ -339,6 +375,28 @@ bool V8DOMWindowShell::initContextIfNeeded()
+@@ -339,6 +381,28 @@ bool V8DOMWindowShell::initContextIfNeeded()
      // we do isolated worlds the WebCore way.
      m_frame->loader()->dispatchDidClearWindowObjectInWorld(0);
  
