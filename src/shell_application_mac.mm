@@ -31,7 +31,7 @@
       static_cast<content::ShellContentBrowserClient*>(
         content::GetContentClient()->browser())->browser_context();
   content::Shell::CreateNewWindow(browserContext,
-                                  GURL("about:blank"),
+                                  GURL("nw:blank"),
                                   NULL,
                                   MSG_ROUTING_NONE,
                                   NULL);

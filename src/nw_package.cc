@@ -235,7 +235,7 @@ GURL GetStartupURL() {
   manifest->GetString(switches::kmMain, &url);
 
   if (url.empty())
-    url = "about:blank";
+    url = "nw:blank";
 
   return GURL(url);
 }

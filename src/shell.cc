@@ -18,7 +18,7 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "shell.h"
+#include "content/nw/src/shell.h"
 
 #include "base/auto_reset.h"
 #include "base/command_line.h"
@@ -36,13 +36,14 @@
 #include "content/public/browser/notification_types.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
-#include "nw_package.h"
-#include "shell_browser_main_parts.h"
-#include "shell_content_browser_client.h"
-#include "shell_devtools_delegate.h"
-#include "shell_javascript_dialog_creator.h"
-#include "shell_messages.h"
-#include "shell_switches.h"
+#include "content/nw/src/media/media_stream_devices_controller.h"
+#include "content/nw/src/nw_package.h"
+#include "content/nw/src/shell_browser_main_parts.h"
+#include "content/nw/src/shell_content_browser_client.h"
+#include "content/nw/src/shell_devtools_delegate.h"
+#include "content/nw/src/shell_javascript_dialog_creator.h"
+#include "content/nw/src/shell_messages.h"
+#include "content/nw/src/shell_switches.h"
 #include "ui/gfx/size.h"
 
 namespace content {
@@ -308,6 +309,17 @@ bool Shell::AddMessageToConsole(WebContents* source,
                                 int32 line_no,
                                 const string16& source_id) {
   return false;
+}
+
+
+void Shell::RequestMediaAccessPermission(
+      content::WebContents* web_contents,
+      const content::MediaStreamRequest* request,
+      const content::MediaResponseCallback& callback) {
+  scoped_ptr<MediaStreamDevicesController>
+      controller(new MediaStreamDevicesController(request,
+                                                  callback));
+  controller->DismissInfoBarAndTakeActionOnSettings();
 }
 
 void Shell::Observe(int type,

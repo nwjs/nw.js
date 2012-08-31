@@ -135,6 +135,10 @@ class Shell : public WebContentsDelegate,
                                    const string16& message,
                                    int32 line_no,
                                    const string16& source_id) OVERRIDE;
+  virtual void RequestMediaAccessPermission(
+      content::WebContents* web_contents,
+      const content::MediaStreamRequest* request,
+      const content::MediaResponseCallback& callback) OVERRIDE;
 
  private:
   enum UIControl {

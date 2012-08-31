@@ -24,6 +24,7 @@
 #include "base/file_path.h"
 #include "content/public/browser/browser_url_handler.h"
 #include "content/public/browser/resource_dispatcher_host.h"
+#include "content/nw/src/media/media_internals.h"
 #include "content/nw/src/shell.h"
 #include "content/nw/src/shell_browser_context.h"
 #include "content/nw/src/shell_browser_main_parts.h"
@@ -80,6 +81,10 @@ void ShellContentBrowserClient::ResourceDispatcherHostCreated() {
 
 std::string ShellContentBrowserClient::GetDefaultDownloadName() {
   return "download";
+}
+
+MediaObserver* ShellContentBrowserClient::GetMediaObserver() {
+  return MediaInternals::GetInstance();
 }
 
 void ShellContentBrowserClient::BrowserURLHandlerCreated(
