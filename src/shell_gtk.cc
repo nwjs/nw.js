@@ -113,7 +113,6 @@ void Shell::PlatformSetIsLoading(bool loading) {
 
 void Shell::PlatformCreateWindow(int width, int height) {
   window_ = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
-  gtk_window_set_title(window_, "node-webkit");
   gtk_window_set_default_size(window_, width, height);
   g_signal_connect(G_OBJECT(window_), "destroy",
                    G_CALLBACK(OnWindowDestroyedThunk), this);
@@ -158,7 +157,12 @@ void Shell::PlatformCreateWindow(int width, int height) {
       gtk_window_set_geometry_hints(
           window_, GTK_WIDGET(window_), &geometry, (GdkWindowHints)hints);
     }
+
+    // window.title
+    window_manifest_->GetString(switches::kmTitle, &title);
   }
+
+  gtk_window_set_title(window_, title.c_str());
 
   vbox_ = gtk_vbox_new(FALSE, 0);
 

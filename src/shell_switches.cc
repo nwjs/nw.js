@@ -55,6 +55,7 @@ const char kmWebkit[]    = "webkit";
 const char kmNodejs[]    = "nodejs";
 const char kmRoot[]      = "root";
 const char kmWindow[]    = "window";
+const char kmTitle[]     = "title";
 const char kmToolbar[]   = "toolbar";
 const char kmIcon[]      = "icon";
 const char kmWidth[]     = "width";

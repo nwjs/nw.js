@@ -108,8 +108,6 @@ enum {
 
 namespace {
 
-NSString* kWindowTitle = @"node-webkit";
-
 // Layout constants (in view coordinates)
 const CGFloat kButtonWidth = 72;
 const CGFloat kURLBarHeight = 24;
@@ -180,16 +178,14 @@ void Shell::PlatformCreateWindow(int width, int height) {
                           NSClosableWindowMask |
                           NSMiniaturizableWindowMask |
                           NSResizableWindowMask;
-  CrShellWindow* window =
-      [[CrShellWindow alloc] initWithContentRect:content_rect
-                styleMask:style_mask
-                  backing:NSBackingStoreBuffered
-                    defer:NO];
-  window_ = window;
-  [window setShell:this];
-  [window_ setTitle:kWindowTitle];
+  window_ = [[CrShellWindow alloc] initWithContentRect:content_rect
+                                             styleMask:style_mask
+                                               backing:NSBackingStoreBuffered
+                                                 defer:NO];
+  [window_ setShell:this];
   NSView* content = [window_ contentView];
 
+  std::string title = "node-webkit";
   if (window_manifest_) {
     int w = width;
     int h = height;
@@ -226,7 +222,12 @@ void Shell::PlatformCreateWindow(int width, int height) {
         [window_ center];
       }
     }
+
+    // window.title
+    window_manifest_->GetString(switches::kmTitle, &title);
   }
+
+  [window_ setTitle:[[NSString alloc] initWithUTF8String:title.c_str()]];
 
   // Set the shell window to participate in Lion Fullscreen mode. Set
   // Setting this flag has no effect on Snow Leopard or earlier.

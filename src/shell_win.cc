@@ -106,6 +106,7 @@ void Shell::PlatformSetIsLoading(bool loading) {
 void Shell::PlatformCreateWindow(int width, int height) {
   int ox = CW_USEDEFAULT;
   int oy = 0;
+  std::string title = "node-webkit";
   if (window_manifest_) {
     // window.x and window.y
     if (window_manifest_->GetInteger(switches::kmX, &ox) &&
@@ -126,9 +127,12 @@ void Shell::PlatformCreateWindow(int width, int height) {
         }
       }
     }
+
+    // window.title
+    window_manifest_->GetString(switches::kmTitle, &title);
   }
 
-  window_ = CreateWindow(kWindowClass, kWindowTitle,
+  window_ = CreateWindow(kWindowClass, title.c_str(),
                          WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
                          ox, oy, width, height,
                          NULL, NULL, instance_handle_, NULL);
