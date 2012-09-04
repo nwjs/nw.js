@@ -117,6 +117,7 @@ void Shell::PlatformCreateWindow(int width, int height) {
   g_signal_connect(G_OBJECT(window_), "destroy",
                    G_CALLBACK(OnWindowDestroyedThunk), this);
 
+  std::string title = "node-webkit";
   if (window_manifest_) {
     // window.x and window.y
     int x, y;

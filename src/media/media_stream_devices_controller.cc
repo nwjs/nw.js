@@ -23,6 +23,8 @@
 #include "base/logging.h"
 #include "base/values.h"
 
+#include <algorithm>
+
 namespace {
 
 // A predicate that checks if a StreamDeviceInfo object has the same ID as the
