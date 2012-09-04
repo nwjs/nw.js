@@ -18,7 +18,7 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "shell.h"
+#include "content/nw/src/shell.h"
 
 #include <commctrl.h>
 #include <fcntl.h>
@@ -31,8 +31,8 @@
 #include "base/win/wrapped_window_proc.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
-#include "resource.h"
-#include "shell_switches.h"
+#include "content/nw/src/resource.h"
+#include "content/nw/src/shell_switches.h"
 #include "ui/base/win/hwnd_util.h"
 
 namespace {
@@ -106,7 +106,7 @@ void Shell::PlatformSetIsLoading(bool loading) {
 void Shell::PlatformCreateWindow(int width, int height) {
   int ox = CW_USEDEFAULT;
   int oy = 0;
-  std::string title = "node-webkit";
+  std::wstring title = L"node-webkit";
   if (window_manifest_) {
     // window.x and window.y
     if (window_manifest_->GetInteger(switches::kmX, &ox) &&
