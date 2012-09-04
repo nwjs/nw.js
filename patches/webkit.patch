@@ -1,5 +1,5 @@
 diff --git a/Source/WebCore/WebCore.gyp/WebCore.gyp b/Source/WebCore/WebCore.gyp/WebCore.gyp
-index 63c7f57..60a1361 100644
+index fc0f6dc..a5ac8a8 100644
 --- a/Source/WebCore/WebCore.gyp/WebCore.gyp
 +++ b/Source/WebCore/WebCore.gyp/WebCore.gyp
 @@ -57,6 +57,7 @@
@@ -33,7 +33,7 @@ index e5144e0..4d57277 100644
  
  bool BindingSecurity::shouldAllowAccessToDOMWindow(BindingState* state, DOMWindow* target, SecurityReportingOption reportingOption)
 diff --git a/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm b/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
-index 23760b1..b2b73f4 100644
+index 4ebe654..3905511 100644
 --- a/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
 +++ b/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
 @@ -2794,7 +2794,7 @@ END
@@ -64,13 +64,14 @@ index 23760b1..b2b73f4 100644
      }
      if ($interfaceName eq "HTMLDocument") {
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-index e37b829..4214051 100644
+index 4dfce70..2ef1042 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 +++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-@@ -64,6 +64,12 @@
+@@ -63,6 +63,13 @@
+ #include "V8ObjectConstructor.h"
  #include "V8PerContextData.h"
  #include "WorkerContextExecutionProxy.h"
- 
++
 +#include "base/command_line.h"
 +#include "content/nw/src/shell_switches.h"
 +#include "content/nw/src/nw_version.h"
@@ -80,7 +81,7 @@ index e37b829..4214051 100644
  #include <algorithm>
  #include <stdio.h>
  #include <utility>
-@@ -297,6 +303,7 @@ bool V8DOMWindowShell::initContextIfNeeded()
+@@ -286,6 +293,7 @@ bool V8DOMWindowShell::initializeIfNeeded()
          return true;
  
      v8::HandleScope handleScope;
@@ -88,7 +89,7 @@ index e37b829..4214051 100644
  
      initializeV8IfNeeded();
  
-@@ -328,7 +335,43 @@ bool V8DOMWindowShell::initContextIfNeeded()
+@@ -317,7 +325,43 @@ bool V8DOMWindowShell::initializeIfNeeded()
  
      updateDocument();
  
@@ -133,7 +134,7 @@ index e37b829..4214051 100644
  
      if (m_frame->document())
          context->AllowCodeGenerationFromStrings(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));
-@@ -339,6 +382,36 @@ bool V8DOMWindowShell::initContextIfNeeded()
+@@ -328,6 +372,36 @@ bool V8DOMWindowShell::initializeIfNeeded()
      // we do isolated worlds the WebCore way.
      m_frame->loader()->dispatchDidClearWindowObjectInWorld(0);
  
