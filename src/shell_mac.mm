@@ -178,11 +178,13 @@ void Shell::PlatformCreateWindow(int width, int height) {
                           NSClosableWindowMask |
                           NSMiniaturizableWindowMask |
                           NSResizableWindowMask;
-  window_ = [[CrShellWindow alloc] initWithContentRect:content_rect
-                                             styleMask:style_mask
-                                               backing:NSBackingStoreBuffered
-                                                 defer:NO];
-  [window_ setShell:this];
+  CrShellWindow* window =
+      [[CrShellWindow alloc] initWithContentRect:content_rect
+                                       styleMask:style_mask
+                                         backing:NSBackingStoreBuffered
+                                           defer:NO];
+  [window setShell:this];
+  window_ = window;
   NSView* content = [window_ contentView];
 
   std::string title = "node-webkit";
