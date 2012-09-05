@@ -94,8 +94,8 @@ Shell::~Shell() {
 
 Shell* Shell::CreateShell(WebContents* web_contents,
                           base::DictionaryValue* manifest) {
-  int width = 800;
-  int height = 600;
+  int width = 700;
+  int height = 450;
   manifest->GetInteger(switches::kmWidth, &width);
   manifest->GetInteger(switches::kmHeight, &height);
 
@@ -151,6 +151,10 @@ Shell* Shell::CreateNewWindow(BrowserContext* browser_context,
   nw::GetManifest()->GetDictionary(switches::kmWindow, &manifest);
   manifest->SetBoolean(switches::kDeveloper,
       CommandLine::ForCurrentProcess()->HasSwitch(switches::kDeveloper));
+
+  // Center window by default
+  if (!manifest->HasKey(switches::kmPosition))
+    manifest->SetString(switches::kmPosition, "center");
 
   Shell* shell = CreateShell(web_contents, manifest);
   if (!url.is_empty())
