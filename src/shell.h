@@ -216,9 +216,14 @@ class Shell : public WebContentsDelegate,
   // Notification manager
   NotificationRegistrar registrar_;
 
+  // Window manifest
   base::DictionaryValue* window_manifest_;
   bool is_show_devtools_;
   bool is_toolbar_open_;
+  int max_height_;
+  int max_width_;
+  int min_height_;
+  int min_width_;
 
 #if defined(OS_WIN) && !defined(USE_AURA)
   WNDPROC default_edit_wnd_proc_;

@@ -58,7 +58,11 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
       url_edit_view_(NULL),
       window_manifest_(manifest),
       is_show_devtools_(false),
-	    is_toolbar_open_(true)
+      is_toolbar_open_(true),
+      max_height_(-1),
+      max_width_(-1),
+      min_height_(-1),
+      min_width_(-1)
 #if defined(OS_WIN) && !defined(USE_AURA)
       , default_edit_wnd_proc_(0)
 #endif
@@ -66,6 +70,10 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   if (window_manifest_) {
     window_manifest_->GetBoolean(switches::kmToolbar, &is_toolbar_open_);
     window_manifest_->GetBoolean(switches::kDeveloper, &is_show_devtools_);
+    window_manifest_->GetInteger(switches::kmMaxHeight, &max_height_);
+    window_manifest_->GetInteger(switches::kmMaxWidth, &max_width_);
+    window_manifest_->GetInteger(switches::kmMinHeight, &min_height_);
+    window_manifest_->GetInteger(switches::kmMinWidth, &min_width_);
   }
 
   registrar_.Add(this, NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,

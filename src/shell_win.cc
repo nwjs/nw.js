@@ -261,7 +261,7 @@ LRESULT CALLBACK Shell::WndProc(HWND hwnd, UINT message, WPARAM wParam,
                                 LPARAM lParam) {
   Shell* shell = static_cast<Shell*>(ui::GetWindowUserData(hwnd));
   if (!shell)
-	return DefWindowProc(hwnd, message, wParam, lParam);
+    return DefWindowProc(hwnd, message, wParam, lParam);
 
   switch (message) {
     case WM_COMMAND: {
@@ -319,27 +319,23 @@ LRESULT CALLBACK Shell::WndProc(HWND hwnd, UINT message, WPARAM wParam,
     }
 
     case WM_GETMINMAXINFO: {
-      if (!shell->window_manifest_)
-        break;
-
       MINMAXINFO* minMaxInfo = (MINMAXINFO*)(lParam);
       bool changed = false;
-      int tmp;
-      if (shell->window_manifest_->GetInteger(switches::kmMinWidth, &tmp)) {
+      if (shell->min_width_ > 0) {
         changed = true;
-        minMaxInfo->ptMinTrackSize.x = tmp;
+        minMaxInfo->ptMinTrackSize.x = shell->min_width_;
       }
-      if (shell->window_manifest_->GetInteger(switches::kmMinHeight, &tmp)) {
+      if (shell->min_height_ > 0) {
         changed = true;
-        minMaxInfo->ptMinTrackSize.y = tmp;
+        minMaxInfo->ptMinTrackSize.y = shell->min_height_;
       }
-      if (shell->window_manifest_->GetInteger(switches::kmMaxWidth, &tmp)) {
+      if (shell->max_width_ > 0) {
         changed = true;
-        minMaxInfo->ptMaxTrackSize.x = tmp;
+        minMaxInfo->ptMaxTrackSize.x = shell->max_width_;
       }
-      if (shell->window_manifest_->GetInteger(switches::kmMaxHeight, &tmp)) {
+      if (shell->max_height_ > 0) {
         changed = true;
-        minMaxInfo->ptMaxTrackSize.y = tmp;
+        minMaxInfo->ptMaxTrackSize.y = shell->max_height_;
       }
 
       if (!changed)
@@ -347,7 +343,6 @@ LRESULT CALLBACK Shell::WndProc(HWND hwnd, UINT message, WPARAM wParam,
 
       return 0;
     }
-
   }
 
   return DefWindowProc(hwnd, message, wParam, lParam);
