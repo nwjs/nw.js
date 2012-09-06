@@ -137,22 +137,21 @@ void Shell::PlatformCreateWindow(int width, int height) {
 
     GdkGeometry geometry = { 0 };
     int hints = GDK_HINT_POS;
-    int tmp = -1;
-    if (window_manifest_->GetInteger(switches::kmMinWidth, &tmp)) {
+    if (min_width_ > 0) {
       hints |= GDK_HINT_MIN_SIZE;
-      geometry.min_width = tmp;
+      geometry.min_width = min_width_;
     }
-    if (window_manifest_->GetInteger(switches::kmMinHeight, &tmp)) {
+    if (min_height_ > 0) {
       hints |= GDK_HINT_MIN_SIZE;
-      geometry.min_height = tmp;
+      geometry.min_height = min_height_;
     }
-    if (window_manifest_->GetInteger(switches::kmMaxWidth, &tmp)) {
+    if (max_width_ > 0) {
       hints |= GDK_HINT_MAX_SIZE;
-      geometry.max_width = tmp;
+      geometry.max_width = max_width_;
     } 
-    if (window_manifest_->GetInteger(switches::kmMaxHeight, &tmp)) {
+    if (max_height_ > 0) {
       hints |= GDK_HINT_MAX_SIZE;
-      geometry.max_height = tmp;
+      geometry.max_height = max_height_;
     }
     if (hints != GDK_HINT_POS) {
       gtk_window_set_geometry_hints(

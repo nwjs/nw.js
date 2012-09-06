@@ -37,7 +37,6 @@
 
 namespace {
 
-const wchar_t kWindowTitle[] = L"node-webkit";
 const wchar_t kWindowClass[] = L"CONTENT_SHELL";
 
 const int kButtonWidth = 72;

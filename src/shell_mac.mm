@@ -189,26 +189,22 @@ void Shell::PlatformCreateWindow(int width, int height) {
 
   std::string title = "node-webkit";
   if (window_manifest_) {
-    int w = width;
-    int h = height;
-    bool set = window_manifest_->GetInteger(switches::kmMinWidth, &w) |
-        window_manifest_->GetInteger(switches::kmMinHeight, &h);
-
     // window.min_height and window.min_width
-    if (set) {
-      NSSize min_size = NSMakeSize(w, h);
-      min_size = [content convertSize:min_size toView:nil];
-      [window_ setContentMinSize:min_size];
+    if (min_height_ > 0 || min_width_ > 0) {
+      min_height_ = min_height_ > 0 ? min_height_ : height;
+      min_width_ = min_width_ > 0 ? min_width_ : width;
+
+      NSSize min_size = NSMakeSize(min_width_, min_height_);
+      [window_ setContentMinSize:[content convertSize:min_size toView:nil]];
     }
 
-    set = window_manifest_->GetInteger(switches::kmMaxWidth, &w) |
-        window_manifest_->GetInteger(switches::kmMaxHeight, &h);
-
     // window.max_height and window.max_width
-    if (set) {
-      NSSize max_size = NSMakeSize(w, h);
-      max_size = [content convertSize:max_size toView:nil];
-      [window_ setContentMaxSize:max_size];
+    if (max_height_ > 0 || max_width_ > 0) {
+      max_height_ = max_height_ > 0 ? max_height_ : height;
+      max_width_ = max_width_ > 0 ? max_width_ : width;
+
+      NSSize max_size = NSMakeSize(max_width_, max_height_);
+      [window_ setContentMaxSize:[content convertSize:max_size toView:nil]];
     }
 
     // window.x and window.y
