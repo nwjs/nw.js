@@ -64,7 +64,7 @@ index 4ebe654..3905511 100644
      }
      if ($interfaceName eq "HTMLDocument") {
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-index 4dfce70..dcd22d8 100644
+index 4dfce70..455f7d2 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 +++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 @@ -63,6 +63,13 @@
@@ -93,7 +93,7 @@ index 4dfce70..dcd22d8 100644
  static void reportFatalError(const char* location, const char* message)
  {
      int memoryUsageMB = MemoryUsageSupport::actualMemoryUsageMB();
-@@ -319,6 +331,52 @@ bool V8DOMWindowShell::initializeIfNeeded()
+@@ -319,6 +331,59 @@ bool V8DOMWindowShell::initializeIfNeeded()
  
      setSecurityToken();
  
@@ -107,9 +107,10 @@ index 4dfce70..dcd22d8 100644
 +    bool is_file_protocol = protocol_script->Run()->BooleanValue();
 +    use_node = is_file_protocol ? use_node : false;
 +
-+    // Test if protocol is nw:
++    // Test if protocol is 'nw:'
++    // test for 'about:blank' is also here becuase window.open would open 'about:blank' first
 +    protocol_script = v8::Script::New(v8::String::New(
-+        "(function(){ return window.location.protocol == 'nw:' })();"
++        "(function(){ return window.location.protocol == 'nw:' || window.location == 'about:blank'; })();"
 +    ));
 +    bool is_nw_protocol = protocol_script->Run()->BooleanValue();
 +
@@ -125,6 +126,12 @@ index 4dfce70..dcd22d8 100644
 +            "process.mainModule.paths = require('module')._nodeModulePaths(process.cwd());"
 +        ));
 +        script->Run();
++    } else if (!is_nw_protocol) {
++        // Clean accessor if nodejs is turned off
++        m_global->ForceSet(v8::String::New("global"), v8::Undefined());
++        m_global->ForceSet(v8::String::New("process"), v8::Undefined());
++        m_global->ForceSet(v8::String::New("require"), v8::Undefined());
++        m_global->ForceSet(v8::String::New("Buffer"), v8::Undefined());
 +    }
 +
 +    if (use_node || is_nw_protocol) {
@@ -146,7 +153,7 @@ index 4dfce70..dcd22d8 100644
      if (m_frame->document())
          context->AllowCodeGenerationFromStrings(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));
  
-@@ -385,6 +443,11 @@ bool V8DOMWindowShell::installDOMWindow(v8::Handle<v8::Context> context, DOMWind
+@@ -385,6 +450,11 @@ bool V8DOMWindowShell::installDOMWindow(v8::Handle<v8::Context> context, DOMWind
      V8DOMWrapper::setDOMWrapper(v8::Handle<v8::Object>::Cast(windowWrapper->GetPrototype()), &V8DOMWindow::info, window);
      V8DOMWrapper::setJSWrapperForDOMObject(PassRefPtr<DOMWindow>(window), windowWrapper);
  
@@ -158,7 +165,7 @@ index 4dfce70..dcd22d8 100644
      // Install the windowWrapper as the prototype of the innerGlobalObject.
      // The full structure of the global object is as follows:
      //
-@@ -444,6 +507,8 @@ void V8DOMWindowShell::clearDocumentProperty()
+@@ -444,6 +514,8 @@ void V8DOMWindowShell::clearDocumentProperty()
  
  void V8DOMWindowShell::setSecurityToken()
  {
@@ -167,7 +174,7 @@ index 4dfce70..dcd22d8 100644
      Document* document = m_frame->document();
  
      // Ask the document's SecurityOrigin to generate a security token.
-@@ -470,6 +535,7 @@ void V8DOMWindowShell::setSecurityToken()
+@@ -470,6 +542,7 @@ void V8DOMWindowShell::setSecurityToken()
      // NOTE: V8 does identity comparison in fast path, must use a symbol
      // as the security token.
      m_context->SetSecurityToken(v8::String::NewSymbol(utf8Token.data(), utf8Token.length()));
