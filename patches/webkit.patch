@@ -64,7 +64,7 @@ index 4ebe654..3905511 100644
      }
      if ($interfaceName eq "HTMLDocument") {
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-index 4dfce70..2ef1042 100644
+index 4dfce70..dcd22d8 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 +++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 @@ -63,6 +63,13 @@
@@ -81,22 +81,22 @@ index 4dfce70..2ef1042 100644
  #include <algorithm>
  #include <stdio.h>
  #include <utility>
-@@ -286,6 +293,7 @@ bool V8DOMWindowShell::initializeIfNeeded()
-         return true;
+@@ -81,6 +88,11 @@
  
-     v8::HandleScope handleScope;
-+    v8::Handle<v8::Context> nodeContext = v8::Context::GetEntered();
+ namespace WebCore {
  
-     initializeV8IfNeeded();
- 
-@@ -317,7 +325,43 @@ bool V8DOMWindowShell::initializeIfNeeded()
- 
-     updateDocument();
- 
--    setSecurityToken();
-+    // Bypass default security token
-+    context->SetSecurityToken(nodeContext->GetSecurityToken());
++static v8::Handle<v8::Value> globalGetter(v8::Local<v8::String> property, const v8::AccessorInfo& info)
++{
++    return node::g_context->Global()->Get(property);
++}
 +
+ static void reportFatalError(const char* location, const char* message)
+ {
+     int memoryUsageMB = MemoryUsageSupport::actualMemoryUsageMB();
+@@ -319,6 +331,52 @@ bool V8DOMWindowShell::initializeIfNeeded()
+ 
+     setSecurityToken();
+ 
 +    // Do we integrate node?
 +    bool use_node = CommandLine::ForCurrentProcess()->HasSwitch(switches::kmNodejs);
 +
@@ -113,31 +113,6 @@ index 4dfce70..2ef1042 100644
 +    ));
 +    bool is_nw_protocol = protocol_script->Run()->BooleanValue();
 +
-+    // Transfer node's global symbols to webkit
-+    if (use_node || is_nw_protocol) {
-+        // Don't use WebKit's timers in node
-+        v8::Local<v8::Object> disableMap = v8::Object::New();
-+        disableMap->Set(v8::String::New("setTimeout"), v8::Integer::New(1));
-+        disableMap->Set(v8::String::New("clearTimeout"), v8::Integer::New(1));
-+        disableMap->Set(v8::String::New("setInterval"), v8::Integer::New(1));
-+        disableMap->Set(v8::String::New("clearInterval"), v8::Integer::New(1));
-+
-+        v8::Local<v8::Object> nodeGlobal = nodeContext->Global();
-+        v8::Local<v8::Array> symbols = nodeGlobal->GetPropertyNames();
-+        for (unsigned i = 0; i < symbols->Length(); ++i) {
-+            v8::Local<v8::Value> key = symbols->Get(i);
-+            if (disableMap->Has(key->ToString()))
-+                continue;
-+            m_global->Set(key, nodeGlobal->Get(key));
-+        }
-+    }
- 
-     if (m_frame->document())
-         context->AllowCodeGenerationFromStrings(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));
-@@ -328,6 +372,36 @@ bool V8DOMWindowShell::initializeIfNeeded()
-     // we do isolated worlds the WebCore way.
-     m_frame->loader()->dispatchDidClearWindowObjectInWorld(0);
- 
 +    if (use_node) {
 +        v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
 +            // Make node's relative modules work
@@ -168,9 +143,38 @@ index 4dfce70..2ef1042 100644
 +        script->Run();
 +    }
 +
-     return true;
+     if (m_frame->document())
+         context->AllowCodeGenerationFromStrings(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));
+ 
+@@ -385,6 +443,11 @@ bool V8DOMWindowShell::installDOMWindow(v8::Handle<v8::Context> context, DOMWind
+     V8DOMWrapper::setDOMWrapper(v8::Handle<v8::Object>::Cast(windowWrapper->GetPrototype()), &V8DOMWindow::info, window);
+     V8DOMWrapper::setJSWrapperForDOMObject(PassRefPtr<DOMWindow>(window), windowWrapper);
+ 
++    windowWrapper->SetAccessor(v8::String::New("global"), globalGetter);
++    windowWrapper->SetAccessor(v8::String::New("process"), globalGetter);
++    windowWrapper->SetAccessor(v8::String::New("require"), globalGetter);
++    windowWrapper->SetAccessor(v8::String::New("Buffer"), globalGetter);
++
+     // Install the windowWrapper as the prototype of the innerGlobalObject.
+     // The full structure of the global object is as follows:
+     //
+@@ -444,6 +507,8 @@ void V8DOMWindowShell::clearDocumentProperty()
+ 
+ void V8DOMWindowShell::setSecurityToken()
+ {
++    m_context->SetSecurityToken(node::g_context->GetSecurityToken());
++#if 0
+     Document* document = m_frame->document();
+ 
+     // Ask the document's SecurityOrigin to generate a security token.
+@@ -470,6 +535,7 @@ void V8DOMWindowShell::setSecurityToken()
+     // NOTE: V8 does identity comparison in fast path, must use a symbol
+     // as the security token.
+     m_context->SetSecurityToken(v8::String::NewSymbol(utf8Token.data(), utf8Token.length()));
++#endif
  }
  
+ void V8DOMWindowShell::updateDocument()
 diff --git a/Source/WebCore/loader/CrossOriginAccessControl.cpp b/Source/WebCore/loader/CrossOriginAccessControl.cpp
 index aba2ba0..ec76d5a 100644
 --- a/Source/WebCore/loader/CrossOriginAccessControl.cpp
