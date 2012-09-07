@@ -122,6 +122,12 @@ class Shell : public WebContentsDelegate,
                                   int64 source_frame_id,
                                   const GURL& target_url,
                                   WebContents* new_contents) OVERRIDE;
+  virtual void RunFileChooser(
+      content::WebContents* web_contents,
+      const content::FileChooserParams& params) OVERRIDE;
+  virtual void EnumerateDirectory(content::WebContents* web_contents,
+                                  int request_id,
+                                  const FilePath& path) OVERRIDE;
   virtual void DidNavigateMainFramePostCommit(
       WebContents* web_contents) OVERRIDE;
   virtual JavaScriptDialogCreator* GetJavaScriptDialogCreator() OVERRIDE;

@@ -36,6 +36,7 @@
 #include "content/public/browser/notification_types.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
+#include "content/nw/src/browser/file_select_helper.h"
 #include "content/nw/src/media/media_stream_devices_controller.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/shell_browser_main_parts.h"
@@ -298,6 +299,17 @@ void Shell::WebContentsCreated(WebContents* source_contents,
     manifest->SetInteger(switches::kmY, features.y);
 
   CreateShell(new_contents, manifest);
+}
+
+void Shell::RunFileChooser(WebContents* web_contents,
+                           const content::FileChooserParams& params) {
+  FileSelectHelper::RunFileChooser(web_contents, params);
+}
+
+void Shell::EnumerateDirectory(WebContents* web_contents,
+                               int request_id,
+                               const FilePath& path) {
+  FileSelectHelper::EnumerateDirectory(web_contents, request_id, path);
 }
 
 void Shell::DidNavigateMainFramePostCommit(WebContents* web_contents) {
