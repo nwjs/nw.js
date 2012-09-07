@@ -247,11 +247,9 @@ void Shell::LoadingStateChanged(WebContents* source) {
 }
 
 void Shell::ActivateContents(content::WebContents* contents) {
-  LOG(ERROR) << "ActivateContents";
 }
 
 void Shell::DeactivateContents(content::WebContents* contents) {
-  LOG(ERROR) << "DeactivateContents";
 }
 
 void Shell::CloseContents(WebContents* source) {
@@ -269,16 +267,13 @@ bool Shell::IsPopupOrPanel(const WebContents* source) const {
 
 bool Shell::TakeFocus(WebContents* soruce,
                       bool reverse) {
-  LOG(ERROR) << "TakeFocus";
   return true;
 }
 
 void Shell::LostCapture() {
-  LOG(ERROR) << "LostCapture";
 }
 
 void Shell::WebContentsFocused(WebContents* contents) {
-  LOG(ERROR) << "WebContentsFocused";
 }
 
 void Shell::WebContentsCreated(WebContents* source_contents,
