@@ -196,6 +196,18 @@ index 4dfce70..455f7d2 100644
  }
  
  void V8DOMWindowShell::updateDocument()
+diff --git a/Source/WebCore/fileapi/File.idl b/Source/WebCore/fileapi/File.idl
+index 7c0de43..1a22eb5 100644
+--- a/Source/WebCore/fileapi/File.idl
++++ b/Source/WebCore/fileapi/File.idl
+@@ -31,6 +31,7 @@ module html {
+         JSNoStaticTables
+     ] File : Blob {
+         readonly attribute DOMString name;
++        readonly attribute DOMString path;
+ #if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
+         readonly attribute Date lastModifiedDate;
+ #endif
 diff --git a/Source/WebCore/html/FileInputType.cpp b/Source/WebCore/html/FileInputType.cpp
 index f7896ba..ee7506e 100644
 --- a/Source/WebCore/html/FileInputType.cpp
