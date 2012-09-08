@@ -248,9 +248,11 @@ void Shell::LoadingStateChanged(WebContents* source) {
 }
 
 void Shell::ActivateContents(content::WebContents* contents) {
+  LOG(ERROR) << "activate";
 }
 
 void Shell::DeactivateContents(content::WebContents* contents) {
+  LOG(ERROR) << "deactivate";
 }
 
 void Shell::CloseContents(WebContents* source) {

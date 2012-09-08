@@ -78,7 +78,7 @@ index 26b1237..68a9386 100644
  
  v8::Local<v8::Value> ScriptController::callFunction(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-index 4dfce70..455f7d2 100644
+index 4dfce70..998c289 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 +++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 @@ -63,6 +63,13 @@
@@ -95,19 +95,7 @@ index 4dfce70..455f7d2 100644
  #include <algorithm>
  #include <stdio.h>
  #include <utility>
-@@ -81,6 +88,11 @@
- 
- namespace WebCore {
- 
-+static v8::Handle<v8::Value> globalGetter(v8::Local<v8::String> property, const v8::AccessorInfo& info)
-+{
-+    return node::g_context->Global()->Get(property);
-+}
-+
- static void reportFatalError(const char* location, const char* message)
- {
-     int memoryUsageMB = MemoryUsageSupport::actualMemoryUsageMB();
-@@ -319,6 +331,59 @@ bool V8DOMWindowShell::initializeIfNeeded()
+@@ -319,6 +326,71 @@ bool V8DOMWindowShell::initializeIfNeeded()
  
      setSecurityToken();
  
@@ -128,6 +116,24 @@ index 4dfce70..455f7d2 100644
 +    ));
 +    bool is_nw_protocol = protocol_script->Run()->BooleanValue();
 +
++    if (use_node || is_nw_protocol) {
++        // Don't use WebKit's timers in node
++        v8::Local<v8::Object> disableMap = v8::Object::New();
++        disableMap->Set(v8::String::New("setTimeout"), v8::Integer::New(1));
++        disableMap->Set(v8::String::New("clearTimeout"), v8::Integer::New(1));
++        disableMap->Set(v8::String::New("setInterval"), v8::Integer::New(1));
++        disableMap->Set(v8::String::New("clearInterval"), v8::Integer::New(1));
++
++        v8::Local<v8::Object> nodeGlobal = node::g_context->Global();
++        v8::Local<v8::Array> symbols = nodeGlobal->GetPropertyNames();
++        for (unsigned i = 0; i < symbols->Length(); ++i) {
++            v8::Local<v8::Value> key = symbols->Get(i);
++            if (disableMap->Has(key->ToString()))
++                continue;
++            m_global->Set(key, nodeGlobal->Get(key));
++        }
++    }
++
 +    if (use_node) {
 +        v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
 +            // Make node's relative modules work
@@ -140,12 +146,6 @@ index 4dfce70..455f7d2 100644
 +            "process.mainModule.paths = require('module')._nodeModulePaths(process.cwd());"
 +        ));
 +        script->Run();
-+    } else if (!is_nw_protocol) {
-+        // Clean accessor if nodejs is turned off
-+        m_global->ForceSet(v8::String::New("global"), v8::Undefined());
-+        m_global->ForceSet(v8::String::New("process"), v8::Undefined());
-+        m_global->ForceSet(v8::String::New("require"), v8::Undefined());
-+        m_global->ForceSet(v8::String::New("Buffer"), v8::Undefined());
 +    }
 +
 +    if (use_node || is_nw_protocol) {
@@ -167,19 +167,7 @@ index 4dfce70..455f7d2 100644
      if (m_frame->document())
          context->AllowCodeGenerationFromStrings(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));
  
-@@ -385,6 +450,11 @@ bool V8DOMWindowShell::installDOMWindow(v8::Handle<v8::Context> context, DOMWind
-     V8DOMWrapper::setDOMWrapper(v8::Handle<v8::Object>::Cast(windowWrapper->GetPrototype()), &V8DOMWindow::info, window);
-     V8DOMWrapper::setJSWrapperForDOMObject(PassRefPtr<DOMWindow>(window), windowWrapper);
- 
-+    windowWrapper->SetAccessor(v8::String::New("global"), globalGetter);
-+    windowWrapper->SetAccessor(v8::String::New("process"), globalGetter);
-+    windowWrapper->SetAccessor(v8::String::New("require"), globalGetter);
-+    windowWrapper->SetAccessor(v8::String::New("Buffer"), globalGetter);
-+
-     // Install the windowWrapper as the prototype of the innerGlobalObject.
-     // The full structure of the global object is as follows:
-     //
-@@ -444,6 +514,8 @@ void V8DOMWindowShell::clearDocumentProperty()
+@@ -444,6 +516,8 @@ void V8DOMWindowShell::clearDocumentProperty()
  
  void V8DOMWindowShell::setSecurityToken()
  {
@@ -188,7 +176,7 @@ index 4dfce70..455f7d2 100644
      Document* document = m_frame->document();
  
      // Ask the document's SecurityOrigin to generate a security token.
-@@ -470,6 +542,7 @@ void V8DOMWindowShell::setSecurityToken()
+@@ -470,6 +544,7 @@ void V8DOMWindowShell::setSecurityToken()
      // NOTE: V8 does identity comparison in fast path, must use a symbol
      // as the security token.
      m_context->SetSecurityToken(v8::String::NewSymbol(utf8Token.data(), utf8Token.length()));
