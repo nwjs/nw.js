@@ -196,6 +196,40 @@ index 4dfce70..455f7d2 100644
  }
  
  void V8DOMWindowShell::updateDocument()
+diff --git a/Source/WebCore/html/FileInputType.cpp b/Source/WebCore/html/FileInputType.cpp
+index f7896ba..ee7506e 100644
+--- a/Source/WebCore/html/FileInputType.cpp
++++ b/Source/WebCore/html/FileInputType.cpp
+@@ -207,7 +207,7 @@ RenderObject* FileInputType::createRenderer(RenderArena* arena, RenderStyle*) co
+ 
+ bool FileInputType::canSetStringValue() const
+ {
+-    return false;
++    return true;
+ }
+ 
+ bool FileInputType::canChangeFromAnotherType() const
+@@ -217,7 +217,7 @@ bool FileInputType::canChangeFromAnotherType() const
+     // field's value to something like /etc/passwd and then change it to a file input.
+     // I don't think this would actually occur in WebKit, but this rule still may be
+     // important for compatibility.
+-    return false;
++    return true;
+ }
+ 
+ FileList* FileInputType::files()
+@@ -247,7 +247,10 @@ bool FileInputType::getTypeSpecificValue(String& value)
+     // decided to try to parse the value by looking for backslashes
+     // (because that's what Windows file paths use). To be compatible
+     // with that code, we make up a fake path for the file.
+-    value = "C:\\fakepath\\" + m_fileList->item(0)->name();
++    unsigned numFiles = m_fileList->length();
++    value = m_fileList->item(0)->path();
++    for (unsigned i = 1; i < numFiles; ++i)
++        value += ";" + m_fileList->item(i)->path();
+     return true;
+ }
+ 
 diff --git a/Source/WebCore/loader/CrossOriginAccessControl.cpp b/Source/WebCore/loader/CrossOriginAccessControl.cpp
 index aba2ba0..ec76d5a 100644
 --- a/Source/WebCore/loader/CrossOriginAccessControl.cpp
