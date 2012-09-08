@@ -197,18 +197,19 @@ index 7c0de43..1a22eb5 100644
          readonly attribute Date lastModifiedDate;
  #endif
 diff --git a/Source/WebCore/html/FileInputType.cpp b/Source/WebCore/html/FileInputType.cpp
-index f7896ba..f16aa36 100644
+index f7896ba..c596176 100644
 --- a/Source/WebCore/html/FileInputType.cpp
 +++ b/Source/WebCore/html/FileInputType.cpp
-@@ -184,6 +184,7 @@ void FileInputType::handleDOMActivateEvent(Event* event)
-         FileChooserSettings settings;
-         HTMLInputElement* input = element();
- #if ENABLE(DIRECTORY_UPLOAD)
-+        settings.directoryChooser = input->fastHasAttribute(nwdirectoryAttr);
-         settings.allowsDirectoryUpload = input->fastHasAttribute(webkitdirectoryAttr);
-         settings.allowsMultipleFiles = settings.allowsDirectoryUpload || input->fastHasAttribute(multipleAttr);
+@@ -189,6 +189,8 @@ void FileInputType::handleDOMActivateEvent(Event* event)
  #else
-@@ -207,7 +208,7 @@ RenderObject* FileInputType::createRenderer(RenderArena* arena, RenderStyle*) co
+         settings.allowsMultipleFiles = input->fastHasAttribute(multipleAttr);
+ #endif
++        settings.directoryChooser = input->fastHasAttribute(nwdirectoryAttr);
++        settings.saveAs = input->fastHasAttribute(nwsaveasAttr);
+         settings.acceptMIMETypes = input->acceptMIMETypes();
+         settings.acceptFileExtensions = input->acceptFileExtensions();
+         settings.selectedFiles = m_fileList->paths();
+@@ -207,7 +209,7 @@ RenderObject* FileInputType::createRenderer(RenderArena* arena, RenderStyle*) co
  
  bool FileInputType::canSetStringValue() const
  {
@@ -217,7 +218,7 @@ index f7896ba..f16aa36 100644
  }
  
  bool FileInputType::canChangeFromAnotherType() const
-@@ -217,7 +218,7 @@ bool FileInputType::canChangeFromAnotherType() const
+@@ -217,7 +219,7 @@ bool FileInputType::canChangeFromAnotherType() const
      // field's value to something like /etc/passwd and then change it to a file input.
      // I don't think this would actually occur in WebKit, but this rule still may be
      // important for compatibility.
@@ -226,7 +227,7 @@ index f7896ba..f16aa36 100644
  }
  
  FileList* FileInputType::files()
-@@ -247,7 +248,10 @@ bool FileInputType::getTypeSpecificValue(String& value)
+@@ -247,7 +249,10 @@ bool FileInputType::getTypeSpecificValue(String& value)
      // decided to try to parse the value by looking for backslashes
      // (because that's what Windows file paths use). To be compatible
      // with that code, we make up a fake path for the file.
@@ -239,14 +240,15 @@ index f7896ba..f16aa36 100644
  }
  
 diff --git a/Source/WebCore/html/HTMLAttributeNames.in b/Source/WebCore/html/HTMLAttributeNames.in
-index 459078f..41d0a57 100644
+index 459078f..bfa3636 100644
 --- a/Source/WebCore/html/HTMLAttributeNames.in
 +++ b/Source/WebCore/html/HTMLAttributeNames.in
-@@ -163,6 +163,7 @@ noresize
+@@ -163,6 +163,8 @@ noresize
  noshade
  novalidate
  nowrap
 +nwdirectory
++nwsaveas
  object
  onabort
  onbeforecopy
@@ -345,17 +347,18 @@ index 6934717..fc949c2 100644
      , m_canLoadLocalResources(false)
      , m_blockThirdPartyStorage(false)
 diff --git a/Source/WebCore/platform/FileChooser.h b/Source/WebCore/platform/FileChooser.h
-index a94c1c5..f2f17ee 100644
+index a94c1c5..4d94887 100644
 --- a/Source/WebCore/platform/FileChooser.h
 +++ b/Source/WebCore/platform/FileChooser.h
-@@ -52,6 +52,7 @@ struct FileChooserFileInfo {
- struct FileChooserSettings {
+@@ -53,6 +53,8 @@ struct FileChooserSettings {
      bool allowsMultipleFiles;
  #if ENABLE(DIRECTORY_UPLOAD)
-+    bool directoryChooser;
      bool allowsDirectoryUpload;
++    bool directoryChooser;
++    bool saveAs;
  #endif
      Vector<String> acceptMIMETypes;
+     Vector<String> acceptFileExtensions;
 diff --git a/Source/WebKit/chromium/public/WebFileChooserParams.h b/Source/WebKit/chromium/public/WebFileChooserParams.h
 index f15e224..08ef670 100644
 --- a/Source/WebKit/chromium/public/WebFileChooserParams.h
@@ -378,10 +381,10 @@ index f15e224..08ef670 100644
      }
  };
 diff --git a/Source/WebKit/chromium/src/ChromeClientImpl.cpp b/Source/WebKit/chromium/src/ChromeClientImpl.cpp
-index dc5afc8..b0b52c5 100644
+index dc5afc8..a390ecc 100644
 --- a/Source/WebKit/chromium/src/ChromeClientImpl.cpp
 +++ b/Source/WebKit/chromium/src/ChromeClientImpl.cpp
-@@ -713,10 +713,11 @@ void ChromeClientImpl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileCh
+@@ -713,10 +713,12 @@ void ChromeClientImpl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileCh
      WebFileChooserParams params;
      params.multiSelect = fileChooser->settings().allowsMultipleFiles;
  #if ENABLE(DIRECTORY_UPLOAD)
@@ -391,6 +394,7 @@ index dc5afc8..b0b52c5 100644
      params.directory = false;
  #endif
 +    params.extractDirectory = fileChooser->settings().allowsDirectoryUpload;
++    params.saveAs = fileChooser->settings().saveAs;
      params.acceptTypes = fileChooser->settings().acceptTypes();
      params.selectedFiles = fileChooser->settings().selectedFiles;
      if (params.selectedFiles.size() > 0)
