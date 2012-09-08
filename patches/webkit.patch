@@ -63,6 +63,20 @@ index 4ebe654..3905511 100644
  END
      }
      if ($interfaceName eq "HTMLDocument") {
+diff --git a/Source/WebCore/bindings/v8/ScriptController.cpp b/Source/WebCore/bindings/v8/ScriptController.cpp
+index 26b1237..68a9386 100644
+--- a/Source/WebCore/bindings/v8/ScriptController.cpp
++++ b/Source/WebCore/bindings/v8/ScriptController.cpp
+@@ -189,7 +189,8 @@ void ScriptController::updatePlatformScriptObjects()
+ 
+ bool ScriptController::processingUserGesture()
+ {
+-    return UserGestureIndicator::processingUserGesture();
++    // Enable scripts to emulate all kinds of user guesture
++    return true;
+ }
+ 
+ v8::Local<v8::Value> ScriptController::callFunction(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 index 4dfce70..455f7d2 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
