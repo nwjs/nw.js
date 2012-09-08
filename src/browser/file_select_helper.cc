@@ -25,6 +25,7 @@
 #include "base/bind.h"
 #include "base/file_util.h"
 #include "base/platform_file.h"
+#include "base/logging.h"
 #include "base/string_split.h"
 #include "base/string_util.h"
 #include "base/utf_string_conversions.h"
@@ -149,7 +150,8 @@ void FileSelectHelper::FileSelectedWithExtraInfo(
     return;
 
   const FilePath& path = file.local_path;
-  if (dialog_type_ == ui::SelectFileDialog::SELECT_FOLDER) {
+  if (dialog_type_ == ui::SelectFileDialog::SELECT_FOLDER &&
+      extract_directory_) {
     StartNewEnumeration(path, kFileSelectEnumerationId, render_view_host_);
     return;
   }
@@ -328,6 +330,7 @@ void FileSelectHelper::RunFileChooser(content::WebContents* tab,
   // FileSelectHelper will keep itself alive until it sends the result message.
   scoped_refptr<FileSelectHelper> file_select_helper(
       new FileSelectHelper());
+  file_select_helper->extract_directory_ = params.extract_directory;
   file_select_helper->RunFileChooser(tab->GetRenderViewHost(), tab, params);
 }
 
@@ -422,11 +425,7 @@ void FileSelectHelper::RunFileChooserOnUIThread(
       select_file_types_.get() ? 1 : 0,  // 1-based index.
       FILE_PATH_LITERAL(""),
       owning_window,
-#if defined(OS_ANDROID)
       const_cast<content::FileChooserParams*>(&params));
-#else
-      NULL);
-#endif
 
   select_file_types_.reset();
 }

@@ -135,6 +135,8 @@ class FileSelectHelper
   // callback is received from the enumeration code.
   void EnumerateDirectoryEnd();
 
+  bool extract_directory_;
+
   // Helper method to get allowed extensions for select file dialog from
   // the specified accept types as defined in the spec:
   //   http://whatwg.org/html/number-state.html#attr-input-accept
