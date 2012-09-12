@@ -18,15 +18,15 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "shell_browser_main_parts.h"
+#include "content/nw/src/shell_browser_main_parts.h"
 
 #import <Cocoa/Cocoa.h>
 
 #include "base/mac/bundle_locations.h"
 #include "base/memory/scoped_nsobject.h"
 #include "base/command_line.h"
-#include "shell_application_mac.h"
-#include "shell_switches.h"
+#include "content/nw/src/browser/shell_application_mac.h"
+#include "content/nw/src/shell_switches.h"
 
 namespace content {
 
@@ -38,6 +38,11 @@ void ShellBrowserMainParts::PreMainMessageLoopStart() {
       nib([[NSNib alloc] initWithNibNamed:@"MainMenu"
                                    bundle:base::mac::FrameworkBundle()]);
   [nib instantiateNibWithOwner:NSApp topLevelObjects:nil];
+
+  // Prevent Cocoa from turning command-line arguments into
+  // |-application:openFiles:|, since we already handle them directly.
+  [[NSUserDefaults standardUserDefaults]
+      setObject:@"NO" forKey:@"NSTreatUnknownArgumentsAsOpen"];
 }
 
 }  // namespace content
