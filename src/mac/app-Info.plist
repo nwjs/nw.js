@@ -30,5 +30,62 @@
 	<true/>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
 	<true/>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeIconFile</key>
+			<string>app.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>node-webkit App</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.inte.nw.app</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Folder</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>fold</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>None</string>
+		</dict>
+	</array>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>com.pkware.zip-archive</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>node-webkit App</string>
+			<key>UTTypeIconFile</key>
+			<string>app.icns</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.intel.nw.app</string>
+			<key>UTTypeReferenceURL</key>
+      <string>https://github.com/rogerwang/node-webkit/wiki/How-to-package-and-distribute-your-apps</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>com.apple.ostype</key>
+				<string>node-webkit</string>
+				<key>public.filename-extension</key>
+				<array>
+					<string>nw</string>
+				</array>
+				<key>public.mime-type</key>
+				<string>application/x-node-webkit-app</string>
+			</dict>
+		</dict>
+  </array>
 </dict>
 </plist>
