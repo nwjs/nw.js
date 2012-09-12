@@ -2,10 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "shell_content_main.h"
+#include "content/nw/src/shell_content_main.h"
 
+#include "base/command_line.h"
+#include "content/nw/src/shell_main_delegate.h"
+#include "content/nw/src/shell_switches.h"
 #include "content/public/app/content_main.h"
-#include "shell_main_delegate.h"
 #include "third_party/node/src/node.h"
 
 #if defined(OS_MACOSX)

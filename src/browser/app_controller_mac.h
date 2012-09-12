@@ -18,33 +18,13 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/nw/src/shell_browser_main.h"
+#ifndef CONTENT_NW_SRC_BROWSER_APP_CONTROLLER_MAC_H_
+#define CONTENT_NW_SRC_BROWSER_APP_CONTROLLER_MAC_H_
 
-#include "base/command_line.h"
-#include "base/compiler_specific.h"
-#include "base/logging.h"
-#include "base/memory/scoped_ptr.h"
-#include "base/threading/thread_restrictions.h"
-#include "content/nw/src/nw_package.h"
-#include "content/nw/src/shell.h"
-#include "content/nw/src/shell_browser_context.h"
-#include "content/nw/src/shell_content_browser_client.h"
-#include "content/nw/src/shell_switches.h"
-#include "content/public/browser/browser_main_runner.h"
+#import <Cocoa/Cocoa.h>
 
-// Main routine for running as the Browser process.
-int ShellBrowserMain(const content::MainFunctionParams& parameters) {
-  scoped_ptr<content::BrowserMainRunner> main_runner_(
-      content::BrowserMainRunner::Create());
-
-  int exit_code = main_runner_->Initialize(parameters);
-
-  if (exit_code >= 0)
-    return exit_code;
-
-  exit_code = main_runner_->Run();
-
-  main_runner_->Shutdown();
-
-  return exit_code;
+@interface AppController : NSObject<NSApplicationDelegate> {
 }
+@end
+
+#endif  // CONTENT_NW_SRC_BROWSER_APP_CONTROLLER_MAC_H_

@@ -18,33 +18,32 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/nw/src/shell_browser_main.h"
-
 #include "base/command_line.h"
-#include "base/compiler_specific.h"
-#include "base/logging.h"
-#include "base/memory/scoped_ptr.h"
-#include "base/threading/thread_restrictions.h"
+#import "content/nw/src/browser/app_controller_mac.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/shell.h"
 #include "content/nw/src/shell_browser_context.h"
+#include "content/nw/src/shell_browser_main_parts.h"
 #include "content/nw/src/shell_content_browser_client.h"
-#include "content/nw/src/shell_switches.h"
-#include "content/public/browser/browser_main_runner.h"
 
-// Main routine for running as the Browser process.
-int ShellBrowserMain(const content::MainFunctionParams& parameters) {
-  scoped_ptr<content::BrowserMainRunner> main_runner_(
-      content::BrowserMainRunner::Create());
+@implementation AppController
 
-  int exit_code = main_runner_->Initialize(parameters);
+- (BOOL)application:(NSApplication*)sender
+           openFile:(NSString*)filename {
+  if (content::Shell::windows().size() > 0)
+    return FALSE;
 
-  if (exit_code >= 0)
-    return exit_code;
+  CommandLine::ForCurrentProcess()->AppendArg([filename UTF8String]);
 
-  exit_code = main_runner_->Run();
-
-  main_runner_->Shutdown();
-
-  return exit_code;
+  return TRUE;
 }
+
+- (void) applicationDidFinishLaunching: (NSNotification *) note {
+  // Initlialize everything here
+  nw::InitPackageForceNoEmpty();
+  static_cast<content::ShellContentBrowserClient*>(
+    content::GetContentClient()->browser())->shell_browser_main_parts()->Init();
+}
+
+@end
+

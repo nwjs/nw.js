@@ -25,6 +25,7 @@
 #include "base/mac/bundle_locations.h"
 #include "base/memory/scoped_nsobject.h"
 #include "base/command_line.h"
+#include "content/nw/src/browser/app_controller_mac.h"
 #include "content/nw/src/browser/shell_application_mac.h"
 #include "content/nw/src/shell_switches.h"
 
@@ -38,6 +39,9 @@ void ShellBrowserMainParts::PreMainMessageLoopStart() {
       nib([[NSNib alloc] initWithNibNamed:@"MainMenu"
                                    bundle:base::mac::FrameworkBundle()]);
   [nib instantiateNibWithOwner:NSApp topLevelObjects:nil];
+
+  AppController* delegate = [AppController alloc];
+  [NSApp setDelegate:delegate];
 
   // Prevent Cocoa from turning command-line arguments into
   // |-application:openFiles:|, since we already handle them directly.

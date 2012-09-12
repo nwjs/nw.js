@@ -43,7 +43,7 @@
 			<string>Owner</string>
 			<key>LSItemContentTypes</key>
 			<array>
-				<string>com.inte.nw.app</string>
+				<string>com.intel.nw.app</string>
 			</array>
 		</dict>
 		<dict>

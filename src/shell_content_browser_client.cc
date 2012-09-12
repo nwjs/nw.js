@@ -64,7 +64,7 @@ void ShellContentBrowserClient::RenderViewHostCreated(
 
 void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     CommandLine* command_line, int child_process_id) {
-  if (nw::GetUseNode())
+  if (nw::GetManifest() && nw::GetUseNode())
     command_line->AppendSwitch(switches::kmNodejs);
 }
 

@@ -18,7 +18,7 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "shell_browser_main_parts.h"
+#include "content/nw/src/shell_browser_main_parts.h"
 
 #include "base/bind.h"
 #include "base/command_line.h"
@@ -26,17 +26,17 @@
 #include "base/string_number_conversions.h"
 #include "base/threading/thread.h"
 #include "base/threading/thread_restrictions.h"
+#include "content/nw/src/nw_package.h"
+#include "content/nw/src/shell.h"
+#include "content/nw/src/shell_browser_context.h"
+#include "content/nw/src/shell_devtools_delegate.h"
+#include "content/nw/src/shell_switches.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/main_function_params.h"
 #include "content/public/common/url_constants.h"
 #include "googleurl/src/gurl.h"
 #include "grit/net_resources.h"
 #include "net/base/net_module.h"
-#include "nw_package.h"
-#include "shell.h"
-#include "shell_browser_context.h"
-#include "shell_devtools_delegate.h"
-#include "shell_switches.h"
 #include "ui/base/resource/resource_bundle.h"
 
 #if defined(OS_ANDROID)
@@ -90,6 +90,34 @@ void ShellBrowserMainParts::PreEarlyInitialization() {
 }
 
 void ShellBrowserMainParts::PreMainMessageLoopRun() {
+#if !defined(OS_MACOSX)
+  Init();
+#endif
+
+  if (parameters_.ui_task) {
+    parameters_.ui_task->Run();
+    delete parameters_.ui_task;
+    run_message_loop_ = false;
+  }
+}
+
+bool ShellBrowserMainParts::MainMessageLoopRun(int* result_code)  {
+  return !run_message_loop_;
+}
+
+void ShellBrowserMainParts::PostMainMessageLoopRun() {
+#if defined(USE_AURA)
+  Shell::PlatformExit();
+#endif
+  if (devtools_delegate_)
+    devtools_delegate_->Stop();
+  browser_context_.reset();
+  off_the_record_browser_context_.reset();
+}
+
+void ShellBrowserMainParts::Init() {
+  nw::InitPackageForceNoEmpty();
+
   browser_context_.reset(new ShellBrowserContext(false));
   off_the_record_browser_context_.reset(new ShellBrowserContext(true));
 
@@ -122,26 +150,6 @@ void ShellBrowserMainParts::PreMainMessageLoopRun() {
                          NULL,
                          MSG_ROUTING_NONE,
                          NULL);
-
-  if (parameters_.ui_task) {
-    parameters_.ui_task->Run();
-    delete parameters_.ui_task;
-    run_message_loop_ = false;
-  }
-}
-
-bool ShellBrowserMainParts::MainMessageLoopRun(int* result_code)  {
-  return !run_message_loop_;
-}
-
-void ShellBrowserMainParts::PostMainMessageLoopRun() {
-#if defined(USE_AURA)
-  Shell::PlatformExit();
-#endif
-  if (devtools_delegate_)
-    devtools_delegate_->Stop();
-  browser_context_.reset();
-  off_the_record_browser_context_.reset();
 }
 
 }  // namespace
