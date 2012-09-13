@@ -197,7 +197,7 @@ index 7c0de43..1a22eb5 100644
          readonly attribute Date lastModifiedDate;
  #endif
 diff --git a/Source/WebCore/html/FileInputType.cpp b/Source/WebCore/html/FileInputType.cpp
-index 89fcc87..33fd040 100644
+index 89fcc87..eafbfd3 100644
 --- a/Source/WebCore/html/FileInputType.cpp
 +++ b/Source/WebCore/html/FileInputType.cpp
 @@ -190,6 +190,8 @@ void FileInputType::handleDOMActivateEvent(Event* event)
@@ -235,7 +235,7 @@ index 89fcc87..33fd040 100644
 +    unsigned numFiles = m_fileList->length();
 +    value = m_fileList->item(0)->path();
 +    for (unsigned i = 1; i < numFiles; ++i)
-+        value += ";" + m_fileList->item(i)->path();
++        value.append(String(";") + m_fileList->item(i)->path());
      return true;
  }
  
