@@ -1,8 +1,8 @@
 diff --git a/Source/WebCore/WebCore.gyp/WebCore.gyp b/Source/WebCore/WebCore.gyp/WebCore.gyp
-index fc0f6dc..a5ac8a8 100644
+index 4b1e4df..b18f236 100644
 --- a/Source/WebCore/WebCore.gyp/WebCore.gyp
 +++ b/Source/WebCore/WebCore.gyp/WebCore.gyp
-@@ -57,6 +57,7 @@
+@@ -55,6 +55,7 @@
      'webcore_include_dirs': [
        '../',
        '../..',
@@ -33,10 +33,10 @@ index e5144e0..4d57277 100644
  
  bool BindingSecurity::shouldAllowAccessToDOMWindow(BindingState* state, DOMWindow* target, SecurityReportingOption reportingOption)
 diff --git a/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm b/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
-index 4ebe654..3905511 100644
+index d459c9d..ed037a5 100644
 --- a/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
 +++ b/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
-@@ -2794,7 +2794,7 @@ END
+@@ -2780,7 +2780,7 @@ END
  
      my $access_check = "";
      if ($dataNode->extendedAttributes->{"CheckSecurity"} && !($interfaceName eq "DOMWindow")) {
@@ -45,7 +45,7 @@ index 4ebe654..3905511 100644
      }
  
      # For the DOMWindow interface, generate the shadow object template
-@@ -2806,7 +2806,7 @@ static v8::Persistent<v8::ObjectTemplate> ConfigureShadowObjectTemplate(v8::Pers
+@@ -2792,7 +2792,7 @@ static v8::Persistent<v8::ObjectTemplate> ConfigureShadowObjectTemplate(v8::Pers
      V8DOMConfiguration::batchConfigureAttributes(templ, v8::Handle<v8::ObjectTemplate>(), shadowAttrs, WTF_ARRAY_LENGTH(shadowAttrs));
  
      // Install a security handler with V8.
@@ -54,7 +54,7 @@ index 4ebe654..3905511 100644
      templ->SetInternalFieldCount(V8DOMWindow::internalFieldCount);
      return templ;
  }
-@@ -2945,7 +2945,7 @@ END
+@@ -2931,7 +2931,7 @@ END
      // Set access check callbacks, but turned off initially.
      // When a context is detached from a frame, turn on the access check.
      // Turning on checks also invalidates inline caches of the object.
@@ -64,10 +64,10 @@ index 4ebe654..3905511 100644
      }
      if ($interfaceName eq "HTMLDocument") {
 diff --git a/Source/WebCore/bindings/v8/ScriptController.cpp b/Source/WebCore/bindings/v8/ScriptController.cpp
-index 26b1237..68a9386 100644
+index 211ba94..0e94314 100644
 --- a/Source/WebCore/bindings/v8/ScriptController.cpp
 +++ b/Source/WebCore/bindings/v8/ScriptController.cpp
-@@ -189,7 +189,8 @@ void ScriptController::updatePlatformScriptObjects()
+@@ -178,7 +178,8 @@ void ScriptController::updatePlatformScriptObjects()
  
  bool ScriptController::processingUserGesture()
  {
@@ -78,10 +78,10 @@ index 26b1237..68a9386 100644
  
  v8::Local<v8::Value> ScriptController::callFunction(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-index 4dfce70..998c289 100644
+index 3f59554..570bce7 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 +++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-@@ -63,6 +63,13 @@
+@@ -64,6 +64,13 @@
  #include "V8ObjectConstructor.h"
  #include "V8PerContextData.h"
  #include "WorkerContextExecutionProxy.h"
@@ -95,9 +95,9 @@ index 4dfce70..998c289 100644
  #include <algorithm>
  #include <stdio.h>
  #include <utility>
-@@ -319,6 +326,71 @@ bool V8DOMWindowShell::initializeIfNeeded()
- 
-     setSecurityToken();
+@@ -382,6 +389,71 @@ bool V8DOMWindowShell::initializeIfNeeded()
+     }
+     m_frame->loader()->client()->didCreateScriptContext(m_context.get(), m_world->extensionGroup(), m_world->worldId());
  
 +    // Do we integrate node?
 +    bool use_node = CommandLine::ForCurrentProcess()->HasSwitch(switches::kmNodejs);
@@ -164,19 +164,19 @@ index 4dfce70..998c289 100644
 +        script->Run();
 +    }
 +
-     if (m_frame->document())
-         context->AllowCodeGenerationFromStrings(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));
- 
-@@ -444,6 +516,8 @@ void V8DOMWindowShell::clearDocumentProperty()
+     if (isMainWorld) {
+         // FIXME: This call is probably in the wrong spot, but causes a test timeout for http/tests/misc/window-open-then-write.html when removed.
+         // Additionally, ScriptController::existingWindowShell cannot be correctly implemented until this call is gone.
+@@ -510,6 +582,8 @@ void V8DOMWindowShell::clearDocumentProperty()
  
  void V8DOMWindowShell::setSecurityToken()
  {
 +    m_context->SetSecurityToken(node::g_context->GetSecurityToken());
 +#if 0
-     Document* document = m_frame->document();
+     ASSERT(m_world->isMainWorld());
  
-     // Ask the document's SecurityOrigin to generate a security token.
-@@ -470,6 +544,7 @@ void V8DOMWindowShell::setSecurityToken()
+     Document* document = m_frame->document();
+@@ -538,6 +612,7 @@ void V8DOMWindowShell::setSecurityToken()
      // NOTE: V8 does identity comparison in fast path, must use a symbol
      // as the security token.
      m_context->SetSecurityToken(v8::String::NewSymbol(utf8Token.data(), utf8Token.length()));
@@ -197,10 +197,10 @@ index 7c0de43..1a22eb5 100644
          readonly attribute Date lastModifiedDate;
  #endif
 diff --git a/Source/WebCore/html/FileInputType.cpp b/Source/WebCore/html/FileInputType.cpp
-index f7896ba..c596176 100644
+index 89fcc87..33fd040 100644
 --- a/Source/WebCore/html/FileInputType.cpp
 +++ b/Source/WebCore/html/FileInputType.cpp
-@@ -189,6 +189,8 @@ void FileInputType::handleDOMActivateEvent(Event* event)
+@@ -190,6 +190,8 @@ void FileInputType::handleDOMActivateEvent(Event* event)
  #else
          settings.allowsMultipleFiles = input->fastHasAttribute(multipleAttr);
  #endif
@@ -209,7 +209,7 @@ index f7896ba..c596176 100644
          settings.acceptMIMETypes = input->acceptMIMETypes();
          settings.acceptFileExtensions = input->acceptFileExtensions();
          settings.selectedFiles = m_fileList->paths();
-@@ -207,7 +209,7 @@ RenderObject* FileInputType::createRenderer(RenderArena* arena, RenderStyle*) co
+@@ -208,7 +210,7 @@ RenderObject* FileInputType::createRenderer(RenderArena* arena, RenderStyle*) co
  
  bool FileInputType::canSetStringValue() const
  {
@@ -218,7 +218,7 @@ index f7896ba..c596176 100644
  }
  
  bool FileInputType::canChangeFromAnotherType() const
-@@ -217,7 +219,7 @@ bool FileInputType::canChangeFromAnotherType() const
+@@ -218,7 +220,7 @@ bool FileInputType::canChangeFromAnotherType() const
      // field's value to something like /etc/passwd and then change it to a file input.
      // I don't think this would actually occur in WebKit, but this rule still may be
      // important for compatibility.
@@ -227,7 +227,7 @@ index f7896ba..c596176 100644
  }
  
  FileList* FileInputType::files()
-@@ -247,7 +249,10 @@ bool FileInputType::getTypeSpecificValue(String& value)
+@@ -248,7 +250,10 @@ bool FileInputType::getTypeSpecificValue(String& value)
      // decided to try to parse the value by looking for backslashes
      // (because that's what Windows file paths use). To be compatible
      // with that code, we make up a fake path for the file.
@@ -325,7 +325,7 @@ index 04d5881..65e4734 100644
  }
  
 diff --git a/Source/WebCore/page/SecurityOrigin.cpp b/Source/WebCore/page/SecurityOrigin.cpp
-index 6934717..fc949c2 100644
+index da15021..d015104 100644
 --- a/Source/WebCore/page/SecurityOrigin.cpp
 +++ b/Source/WebCore/page/SecurityOrigin.cpp
 @@ -120,7 +120,7 @@ SecurityOrigin::SecurityOrigin(const KURL& url)
@@ -335,7 +335,7 @@ index 6934717..fc949c2 100644
 -    , m_universalAccess(false)
 +    , m_universalAccess(true)
      , m_domainWasSetInDOM(false)
-     , m_blockThirdPartyStorage(false)
+     , m_storageBlockingPolicy(AllowAllStorage)
      , m_enforceFilePathSeparation(false)
 @@ -145,7 +145,7 @@ SecurityOrigin::SecurityOrigin()
      , m_domain("")
@@ -345,9 +345,9 @@ index 6934717..fc949c2 100644
 +    , m_universalAccess(true)
      , m_domainWasSetInDOM(false)
      , m_canLoadLocalResources(false)
-     , m_blockThirdPartyStorage(false)
+     , m_storageBlockingPolicy(AllowAllStorage)
 diff --git a/Source/WebCore/platform/FileChooser.h b/Source/WebCore/platform/FileChooser.h
-index a94c1c5..4d94887 100644
+index e6f6146..b20c11f 100644
 --- a/Source/WebCore/platform/FileChooser.h
 +++ b/Source/WebCore/platform/FileChooser.h
 @@ -53,6 +53,8 @@ struct FileChooserSettings {
@@ -381,10 +381,10 @@ index f15e224..08ef670 100644
      }
  };
 diff --git a/Source/WebKit/chromium/src/ChromeClientImpl.cpp b/Source/WebKit/chromium/src/ChromeClientImpl.cpp
-index dc5afc8..a390ecc 100644
+index 9857577..a28b2fa 100644
 --- a/Source/WebKit/chromium/src/ChromeClientImpl.cpp
 +++ b/Source/WebKit/chromium/src/ChromeClientImpl.cpp
-@@ -713,10 +713,12 @@ void ChromeClientImpl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileCh
+@@ -723,10 +723,12 @@ void ChromeClientImpl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileCh
      WebFileChooserParams params;
      params.multiSelect = fileChooser->settings().allowsMultipleFiles;
  #if ENABLE(DIRECTORY_UPLOAD)
