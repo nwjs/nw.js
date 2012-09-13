@@ -282,22 +282,21 @@ FileSelectHelper::GetFileTypesFromAcceptType(
       // so we just have to add it to the list.
       FilePath::StringType ext(ascii_type.begin(), ascii_type.end());
       extensions->push_back(ext.substr(1));
-    } else if (ascii_type == "image/*") {
-      description_known = true;
-      file_type->extension_description_overrides.push_back(
-          ASCIIToUTF16("Images"));
-      net::GetImageExtensions(extensions);
-    } else if (ascii_type == "audio/*") {
-      description_known = true;
-      file_type->extension_description_overrides.push_back(
-          ASCIIToUTF16("Audios"));
-      net::GetAudioExtensions(extensions);
-    } else if (ascii_type == "video/*") {
-      description_known = true;
-      file_type->extension_description_overrides.push_back(
-          ASCIIToUTF16("Videos"));
-      net::GetVideoExtensions(extensions);
     } else {
+      if (ascii_type == "image/*") {
+        description_known = true;
+        file_type->extension_description_overrides.push_back(
+            ASCIIToUTF16("Images"));
+      } else if (ascii_type == "audio/*") {
+        description_known = true;
+        file_type->extension_description_overrides.push_back(
+            ASCIIToUTF16("Audios"));
+      } else if (ascii_type == "video/*") {
+        description_known = true;
+        file_type->extension_description_overrides.push_back(
+            ASCIIToUTF16("Videos"));
+      }
+
       net::GetExtensionsForMimeType(ascii_type, extensions);
     }
 

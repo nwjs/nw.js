@@ -77,10 +77,15 @@ MediaStreamDevicesController::MediaStreamDevicesController(
     const content::MediaResponseCallback& callback)
     : request_(*request),
       callback_(callback) {
-  has_audio_ =
-      HasDevice(request_, content::MEDIA_STREAM_DEVICE_TYPE_AUDIO_CAPTURE);
-  has_video_ =
-      HasDevice(request_, content::MEDIA_STREAM_DEVICE_TYPE_VIDEO_CAPTURE);
+  for (content::MediaStreamDeviceMap::const_iterator it =
+           request_.devices.begin();
+       it != request_.devices.end(); ++it) {
+    if (content::IsAudioMediaType(it->first)) {
+      has_audio_ |= !it->second.empty();
+    } else if (content::IsVideoMediaType(it->first)) {
+      has_video_ |= !it->second.empty();
+    }
+  }
 }
 
 MediaStreamDevicesController::~MediaStreamDevicesController() {}
@@ -88,9 +93,6 @@ MediaStreamDevicesController::~MediaStreamDevicesController() {}
 bool MediaStreamDevicesController::DismissInfoBarAndTakeActionOnSettings() {
   // Deny the request and don't show the infobar if there is no devices.
   if (!has_audio_ && !has_video_) {
-    // TODO(xians): We should detect this in a early state, and post a callback
-    // to tell the users that no device is available. Remove the code and add
-    // a DCHECK when this is done.
     Deny();
     return true;
   }
@@ -103,24 +105,18 @@ bool MediaStreamDevicesController::DismissInfoBarAndTakeActionOnSettings() {
 
 content::MediaStreamDevices
 MediaStreamDevicesController::GetAudioDevices() const {
-  if (!has_audio_)
-    return content::MediaStreamDevices();
-
-  content::MediaStreamDeviceMap::const_iterator it =
-      request_.devices.find(content::MEDIA_STREAM_DEVICE_TYPE_AUDIO_CAPTURE);
-  DCHECK(it != request_.devices.end());
-  return it->second;
+  content::MediaStreamDevices all_audio_devices;
+  if (has_audio_)
+    FindSubsetOfDevices(&content::IsAudioMediaType, &all_audio_devices);
+  return all_audio_devices;
 }
 
 content::MediaStreamDevices
 MediaStreamDevicesController::GetVideoDevices() const {
-  if (!has_video_)
-    return content::MediaStreamDevices();
-
-  content::MediaStreamDeviceMap::const_iterator it =
-      request_.devices.find(content::MEDIA_STREAM_DEVICE_TYPE_VIDEO_CAPTURE);
-  DCHECK(it != request_.devices.end());
-  return it->second;
+  content::MediaStreamDevices all_video_devices;
+  if (has_video_)
+    FindSubsetOfDevices(&content::IsVideoMediaType, &all_video_devices);
+  return all_video_devices;
 }
 
 void MediaStreamDevicesController::Accept(const std::string& audio_id,
@@ -129,11 +125,11 @@ void MediaStreamDevicesController::Accept(const std::string& audio_id,
   content::MediaStreamDevices devices;
   std::string audio_device, video_device;
   if (has_audio_) {
-    AddDeviceWithId(content::MEDIA_STREAM_DEVICE_TYPE_AUDIO_CAPTURE,
+    AddDeviceWithId(content::MEDIA_DEVICE_AUDIO_CAPTURE,
                     audio_id, &devices, &audio_device);
   }
   if (has_video_) {
-    AddDeviceWithId(content::MEDIA_STREAM_DEVICE_TYPE_VIDEO_CAPTURE,
+    AddDeviceWithId(content::MEDIA_DEVICE_VIDEO_CAPTURE,
                     video_id, &devices, &video_device);
   }
   DCHECK(!devices.empty());
@@ -171,11 +167,11 @@ void MediaStreamDevicesController::GetAlwaysAllowedDevices(
   DCHECK(video_id->empty());
   if (has_audio_) {
     *audio_id =
-        GetFirstDeviceId(content::MEDIA_STREAM_DEVICE_TYPE_AUDIO_CAPTURE);
+        GetFirstDeviceId(content::MEDIA_DEVICE_AUDIO_CAPTURE);
   }
   if (has_video_) {
     *video_id =
-        GetFirstDeviceId(content::MEDIA_STREAM_DEVICE_TYPE_VIDEO_CAPTURE);
+        GetFirstDeviceId(content::MEDIA_DEVICE_VIDEO_CAPTURE);
   }
 }
 

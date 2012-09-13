@@ -23,7 +23,7 @@
 #include "base/string_piece.h"
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/base/resource/resource_bundle.h"
-#include "webkit/glue/user_agent.h"
+#include "webkit/user_agent/user_agent_util.h"
 
 namespace content {
 

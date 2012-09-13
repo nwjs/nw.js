@@ -52,6 +52,10 @@ class MediaStreamDevicesController {
   void Deny();
 
  private:
+  // Used by the various helper methods below to filter an operation on devices
+  // of a particular type.
+  typedef bool (*FilterByDeviceTypeFunc)(content::MediaStreamDeviceType);
+
   // Finds a device in the current request with the specified |id| and |type|,
   // adds it to the |devices| array and also return the name of the device.
   void AddDeviceWithId(content::MediaStreamDeviceType type,
@@ -70,6 +74,17 @@ class MediaStreamDevicesController {
                                 const std::string& name);
 
   std::string GetFirstDeviceId(content::MediaStreamDeviceType type);
+
+  // Copies all devices passing the |is_included| predicate to the given output
+  // container.
+  void FindSubsetOfDevices(FilterByDeviceTypeFunc is_included,
+                           content::MediaStreamDevices* out) const;
+
+  // Finds the first device with the given |device_id| within the subset of
+  // devices passing the |is_included| predicate, or return NULL.
+  const content::MediaStreamDevice* FindFirstDeviceWithIdInSubset(
+      FilterByDeviceTypeFunc is_included,
+      const std::string& device_id) const;
 
   bool has_audio_;
   bool has_video_;

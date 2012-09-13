@@ -40,6 +40,7 @@ class ShellURLRequestContextGetter : public net::URLRequestContextGetter {
   virtual ~ShellURLRequestContextGetter();
 
  private:
+  bool ignore_certificate_errors_;
   FilePath base_path_;
   MessageLoop* io_loop_;
   MessageLoop* file_loop_;
