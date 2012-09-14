@@ -18,34 +18,25 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/nw/src/renderer/shell_content_renderer_client.h"
+#ifndef CONTENT_NW_SRC_RENDERER_SHELL_RENDER_VIEW_OBSERVER_H_
+#define CONTENT_NW_SRC_RENDERER_SHELL_RENDER_VIEW_OBSERVER_H_
 
-#include "base/command_line.h"
-#include "base/utf_string_conversions.h"
-#include "content/nw/src/renderer/prerenderer/prerenderer_client.h"
-#include "content/nw/src/renderer/shell_render_process_observer.h"
-#include "content/nw/src/renderer/shell_render_view_observer.h"
-#include "content/nw/src/shell_switches.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebSecurityOrigin.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebSecurityPolicy.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/platform/WebString.h"
-#include "v8/include/v8.h"
+#include "content/public/renderer/render_view_observer.h"
 
 namespace content {
 
-ShellContentRendererClient::ShellContentRendererClient() {
-}
+class ShellRenderViewObserver : public RenderViewObserver {
+ public:
+  explicit ShellRenderViewObserver(content::RenderView* render_view);
+  virtual ~ShellRenderViewObserver();
 
-ShellContentRendererClient::~ShellContentRendererClient() {
-}
+ private:
+  // RenderViewObserver implementation.
+  virtual void DidClearWindowObject(WebKit::WebFrame* frame) OVERRIDE;
 
-void ShellContentRendererClient::RenderThreadStarted() {
-  shell_observer_.reset(new ShellRenderProcessObserver());
-}
-
-void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
-  new prerender::PrerendererClient(render_view);
-  new ShellRenderViewObserver(render_view);
-}
+  DISALLOW_COPY_AND_ASSIGN(ShellRenderViewObserver);
+};
 
 }  // namespace content
+
+#endif  // CONTENT_NW_SRC_RENDERER_SHELL_RENDER_VIEW_OBSERVER_H_
