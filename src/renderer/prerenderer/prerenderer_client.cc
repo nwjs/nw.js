@@ -18,24 +18,27 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "shell_render_process_observer.h"
+#include "content/nw/src/renderer/prerenderer/prerenderer_client.h"
 
-#include "base/command_line.h"
-#include "content/public/renderer/render_thread.h"
-#include "shell_switches.h"
-#include "webkit/glue/webkit_glue.h"
-#include "webkit/support/gc_extension.h"
+#include "base/logging.h"
+#include "content/public/renderer/render_view.h"
+#include "third_party/WebKit/Source/WebKit/chromium/public/WebView.h"
 
-namespace content {
+namespace prerender {
 
-ShellRenderProcessObserver::ShellRenderProcessObserver() {
-  RenderThread::Get()->AddObserver(this);
+PrerendererClient::PrerendererClient(content::RenderView* render_view)
+    : content::RenderViewObserver(render_view) {
+  DCHECK(render_view);
+  DVLOG(5) << "PrerendererClient::PrerendererClient()";
+  render_view->GetWebView()->setPrerendererClient(this);
 }
 
-ShellRenderProcessObserver::~ShellRenderProcessObserver() {
+PrerendererClient::~PrerendererClient() {
 }
 
-void ShellRenderProcessObserver::WebKitInitialized() {
+void PrerendererClient::willAddPrerender(
+    WebKit::WebPrerender* prerender) {
 }
 
-}  // namespace content
+}  // namespace prerender
+
