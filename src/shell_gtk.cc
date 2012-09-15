@@ -111,6 +111,7 @@ void Shell::PlatformSetIsLoading(bool loading) {
     gtk_spinner_stop(GTK_SPINNER(spinner_));
 }
 
+
 void Shell::PlatformCreateWindow(int width, int height) {
   window_ = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
   gtk_window_set_default_size(window_, width, height);
@@ -118,7 +119,11 @@ void Shell::PlatformCreateWindow(int width, int height) {
                    G_CALLBACK(OnWindowDestroyedThunk), this);
 
   std::string title = "node-webkit";
-  if (window_manifest_) {
+  
+  bool as_desktop = false;
+  window_manifest_->GetBoolean(switches::kmAsDesktop, &as_desktop);
+  
+  if (window_manifest_ && !as_desktop) {
     // window.x and window.y
     int x, y;
     if (window_manifest_->GetInteger(switches::kmX, &x) &&
@@ -160,6 +165,13 @@ void Shell::PlatformCreateWindow(int width, int height) {
 
     // window.title
     window_manifest_->GetString(switches::kmTitle, &title);
+  }
+  
+  if (as_desktop)
+  {
+      gtk_window_set_type_hint (window_, GDK_WINDOW_TYPE_HINT_DESKTOP);  
+		GdkScreen* screen = gtk_window_get_screen(window_);
+		gtk_window_set_default_size(window_, gdk_screen_get_width(screen), gdk_screen_get_height(screen));
   }
 
   gtk_window_set_title(window_, title.c_str());
