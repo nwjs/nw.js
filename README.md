@@ -6,6 +6,8 @@ native applications with all Web technologies.
 
 It's created and developed in Intel Open Source Technology Center.
 
+[Introduction to node-webkit (slides)](https://speakerdeck.com/u/zcbenz/p/node-webkit-app-runtime-based-on-chromium-and-node-dot-js)
+
 # Features
 
 * Write apps in modern HTML, CSS, JS and WebGL
