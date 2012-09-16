@@ -18,25 +18,40 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/nw/src/net/shell_url_request_context_getter.h"
-#include "content/nw/src/shell_resource_context.h"
+#include "content/nw/src/browser/shell_resource_dispatcher_host_delegate.h"
+
+#include "content/nw/src/browser/shell_login_dialog.h"
 
 namespace content {
 
-ShellResourceContext::ShellResourceContext(
-    ShellURLRequestContextGetter* getter)
-    : getter_(getter) {
+ShellResourceDispatcherHostDelegate::ShellResourceDispatcherHostDelegate() {
 }
 
-ShellResourceContext::~ShellResourceContext() {
+ShellResourceDispatcherHostDelegate::~ShellResourceDispatcherHostDelegate() {
 }
 
-net::HostResolver* ShellResourceContext::GetHostResolver() {
-  return getter_->host_resolver();
+bool ShellResourceDispatcherHostDelegate::AcceptAuthRequest(
+    net::URLRequest* request,
+    net::AuthChallengeInfo* auth_info) {
+  // Why not give it a try?
+  return true;
 }
 
-net::URLRequestContext* ShellResourceContext::GetRequestContext() {
-  return getter_->GetURLRequestContext();
+ResourceDispatcherHostLoginDelegate*
+ShellResourceDispatcherHostDelegate::CreateLoginDelegate(
+    net::AuthChallengeInfo* auth_info, net::URLRequest* request) {
+  if (!login_request_callback_.is_null()) {
+    login_request_callback_.Run();
+    login_request_callback_.Reset();
+    return NULL;
+  }
+
+#if !defined(OS_MACOSX) && !defined(TOOLKIT_GTK)
+// TODO: implement ShellLoginDialog for other platforms, drop this #if
+  return NULL;
+#else
+  return new ShellLoginDialog(auth_info, request);
+#endif
 }
 
 }  // namespace content
