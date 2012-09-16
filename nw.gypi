@@ -68,6 +68,8 @@
         'src/browser/shell_login_dialog_mac.mm',
         'src/browser/shell_login_dialog.cc',
         'src/browser/shell_login_dialog.h',
+        'src/common/shell_switches.cc',
+        'src/common/shell_switches.h',
         'src/common/zip.cc',
         'src/common/zip.h',
         'src/common/zip_reader.cc',
@@ -126,8 +128,6 @@
         'src/shell_resource_context.h',
         'src/shell_resource_dispatcher_host_delegate.cc',
         'src/shell_resource_dispatcher_host_delegate.h',
-        'src/shell_switches.cc',
-        'src/shell_switches.h',
       ],
       'msvs_settings': {
         'VCLinkerTool': {

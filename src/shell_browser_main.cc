@@ -25,11 +25,11 @@
 #include "base/logging.h"
 #include "base/memory/scoped_ptr.h"
 #include "base/threading/thread_restrictions.h"
+#include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/shell.h"
 #include "content/nw/src/shell_browser_context.h"
 #include "content/nw/src/shell_content_browser_client.h"
-#include "content/nw/src/shell_switches.h"
 #include "content/public/browser/browser_main_runner.h"
 
 // Main routine for running as the Browser process.

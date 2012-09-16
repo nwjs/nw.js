@@ -28,7 +28,7 @@
 #include "base/string_util.h"
 #include "base/values.h"
 #include "common/zip.h"
-#include "content/nw/src/shell_switches.h"
+#include "content/nw/src/common/shell_switches.h"
 
 #if defined(OS_WIN)
 #include "base/string16.h"

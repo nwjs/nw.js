@@ -39,12 +39,12 @@
 #include "content/nw/src/browser/file_select_helper.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/browser/shell_javascript_dialog_creator.h"
+#include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/media/media_stream_devices_controller.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/shell_browser_main_parts.h"
 #include "content/nw/src/shell_content_browser_client.h"
 #include "content/nw/src/shell_messages.h"
-#include "content/nw/src/shell_switches.h"
 #include "ui/gfx/size.h"
 
 namespace content {

@@ -10,7 +10,7 @@
 #include "content/nw/src/shell.h"
 #include "content/nw/src/shell_browser_context.h"
 #include "content/nw/src/shell_content_browser_client.h"
-#include "content/nw/src/shell_switches.h"
+#include "content/nw/src/common/shell_switches.h"
 
 @implementation ShellCrApplication
 

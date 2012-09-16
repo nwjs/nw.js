@@ -32,10 +32,10 @@
 #include "content/public/browser/native_web_keyboard_event.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
-#include "googleurl/src/gurl.h"
+#include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/resource.h"
-#include "content/nw/src/shell_switches.h"
+#include "googleurl/src/gurl.h"
 #import "ui/base/cocoa/underlay_opengl_hosting_window.h"
 
 #if !defined(MAC_OS_X_VERSION_10_7) || \

@@ -28,14 +28,14 @@
 #include "content/public/browser/browser_main_runner.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/url_constants.h"
+#include "content/nw/src/common/shell_switches.h"
+#include "content/nw/src/nw_version.h"
 #include "content/nw/src/renderer/shell_content_renderer_client.h"
 #include "content/nw/src/shell_browser_main.h"
 #include "content/nw/src/shell_content_browser_client.h"
-#include "content/nw/src/shell_switches.h"
 #include "third_party/node/src/node_version.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/base/ui_base_paths.h"
-#include "nw_version.h"
 
 #include <stdio.h>
 

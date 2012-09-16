@@ -31,8 +31,8 @@
 #include "base/win/wrapped_window_proc.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
+#include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/resource.h"
-#include "content/nw/src/shell_switches.h"
 #include "ui/base/win/hwnd_util.h"
 
 namespace {

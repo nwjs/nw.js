@@ -27,7 +27,7 @@
 #include "base/command_line.h"
 #include "content/nw/src/browser/app_controller_mac.h"
 #include "content/nw/src/browser/shell_application_mac.h"
-#include "content/nw/src/shell_switches.h"
+#include "content/nw/src/common/shell_switches.h"
 
 namespace content {
 

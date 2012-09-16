@@ -18,7 +18,7 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "shell.h"
+#include "content/nw/src/shell.h"
 
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
@@ -33,9 +33,9 @@
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
 #include "content/public/common/renderer_preferences.h"
-#include "shell_browser_context.h"
-#include "shell_content_browser_client.h"
-#include "shell_switches.h"
+#include "content/nw/src/common/shell_switches.h"
+#include "content/nw/src/shell_browser_context.h"
+#include "content/nw/src/shell_content_browser_client.h"
 #include "third_party/skia/include/core/SkColor.h"
 
 namespace content {

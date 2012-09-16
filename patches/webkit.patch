@@ -78,7 +78,7 @@ index 211ba94..0e94314 100644
  
  v8::Local<v8::Value> ScriptController::callFunction(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-index 3f59554..570bce7 100644
+index 3f59554..5bf89a8 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 +++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 @@ -64,6 +64,13 @@
@@ -87,7 +87,7 @@ index 3f59554..570bce7 100644
  #include "WorkerContextExecutionProxy.h"
 +
 +#include "base/command_line.h"
-+#include "content/nw/src/shell_switches.h"
++#include "content/nw/src/common/shell_switches.h"
 +#include "content/nw/src/nw_version.h"
 +#include "third_party/node/src/node.h"
 +#include "third_party/node/src/req_wrap.h"

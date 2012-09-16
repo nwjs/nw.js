@@ -22,10 +22,10 @@
 
 #include "base/command_line.h"
 #include "base/utf_string_conversions.h"
+#include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/renderer/prerenderer/prerenderer_client.h"
 #include "content/nw/src/renderer/shell_render_process_observer.h"
 #include "content/nw/src/renderer/shell_render_view_observer.h"
-#include "content/nw/src/shell_switches.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebSecurityOrigin.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebSecurityPolicy.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/platform/WebString.h"
