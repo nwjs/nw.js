@@ -21,11 +21,15 @@
 #include "content/nw/src/renderer/shell_content_renderer_client.h"
 
 #include "base/command_line.h"
+#include "base/logging.h"
 #include "base/utf_string_conversions.h"
 #include "content/nw/src/common/shell_switches.h"
+#include "content/nw/src/nw_version.h"
 #include "content/nw/src/renderer/prerenderer/prerenderer_client.h"
 #include "content/nw/src/renderer/shell_render_process_observer.h"
 #include "content/nw/src/renderer/shell_render_view_observer.h"
+#include "third_party/node/src/node.h"
+#include "third_party/node/src/req_wrap.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebSecurityOrigin.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebSecurityPolicy.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/platform/WebString.h"
@@ -46,6 +50,100 @@ void ShellContentRendererClient::RenderThreadStarted() {
 void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
   new prerender::PrerendererClient(render_view);
   new ShellRenderViewObserver(render_view);
+}
+
+void ShellContentRendererClient::DidCreateScriptContext(
+    WebKit::WebFrame* frame,
+    v8::Handle<v8::Context> context,
+    int extension_group,
+    int world_id) {
+}
+
+void ShellContentRendererClient::WillReleaseScriptContext(
+    WebKit::WebFrame* frame,
+    v8::Handle<v8::Context> context,
+    int world_id) {
+  InstallNodeSymbols(context);
+}
+
+bool ShellContentRendererClient::WillSetSecurityToken(
+    WebKit::WebFrame* frame,
+    v8::Handle<v8::Context> context) {
+  // Override context's security token
+  context->SetSecurityToken(node::g_context->GetSecurityToken());
+
+  return true;
+}
+
+void ShellContentRendererClient::InstallNodeSymbols(
+    v8::Handle<v8::Context> context) {
+  // Do we integrate node?
+  bool use_node = CommandLine::ForCurrentProcess()->HasSwitch(switches::kmNodejs);
+
+  // Test if protocol is file:
+  v8::Local<v8::Script> protocol_script = v8::Script::New(v8::String::New(
+      "(function(){ return window.location.protocol == 'file:' })();"
+  ));
+  bool is_file_protocol = protocol_script->Run()->BooleanValue();
+
+  // Disable nodejs in no-file protocols
+  use_node = is_file_protocol ? use_node : false;
+
+  // Test if protocol is 'nw:'
+  // test for 'about:blank' is also here becuase window.open would open 'about:blank' first
+  protocol_script = v8::Script::New(v8::String::New(
+      "(function(){ return window.location.protocol == 'nw:' || window.location == 'about:blank'; })();"
+  ));
+  bool is_nw_protocol = protocol_script->Run()->BooleanValue();
+
+  if (use_node || is_nw_protocol) {
+    // Don't use WebKit's timers in node
+    v8::Local<v8::Object> disableMap = v8::Object::New();
+    disableMap->Set(v8::String::New("setTimeout"), v8::Integer::New(1));
+    disableMap->Set(v8::String::New("clearTimeout"), v8::Integer::New(1));
+    disableMap->Set(v8::String::New("setInterval"), v8::Integer::New(1));
+    disableMap->Set(v8::String::New("clearInterval"), v8::Integer::New(1));
+
+    v8::Local<v8::Object> nodeGlobal = node::g_context->Global();
+    v8::Local<v8::Object> v8Global = context->Global();
+    v8::Local<v8::Array> symbols = nodeGlobal->GetPropertyNames();
+    for (unsigned i = 0; i < symbols->Length(); ++i) {
+      v8::Local<v8::Value> key = symbols->Get(i);
+      if (disableMap->Has(key->ToString()))
+        continue;
+      v8Global->Set(key, nodeGlobal->Get(key));
+    }
+  }
+
+  if (use_node) {
+    v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
+        // Make node's relative modules work
+#if defined(OS_WIN)
+        "process.mainModule.filename = window.location.pathname.substr(1);"
+#else
+        "process.mainModule.filename = window.location.pathname;"
+#endif
+        "process.chdir(require('path').dirname(process.mainModule.filename));"
+        "process.mainModule.paths = require('module')._nodeModulePaths(process.cwd());"
+    ));
+    script->Run();
+  }
+
+  if (use_node || is_nw_protocol) {
+    v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
+        // Use WebKit's console globally
+        "global.console = console;"
+
+        // Don't exit on exception
+        "process.on('uncaughtException', function (err) {"
+          "console.log(err.stack);"
+        "});"
+
+        // Save node-webkit version
+        "process.versions['node-webkit'] = '" NW_VERSION_STRING "';"
+    ));
+    script->Run();
+  }
 }
 
 }  // namespace content

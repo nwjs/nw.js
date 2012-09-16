@@ -36,7 +36,19 @@ class ShellContentRendererClient : public ContentRendererClient {
   virtual void RenderThreadStarted() OVERRIDE;
   virtual void RenderViewCreated(RenderView* render_view) OVERRIDE;
 
+  virtual void DidCreateScriptContext(WebKit::WebFrame* frame,
+                                      v8::Handle<v8::Context> context,
+                                      int extension_group,
+                                      int world_id) OVERRIDE;
+  virtual void WillReleaseScriptContext(WebKit::WebFrame* frame,
+                                        v8::Handle<v8::Context> context,
+                                        int world_id) OVERRIDE;
+  virtual bool WillSetSecurityToken(WebKit::WebFrame* frame,
+                                    v8::Handle<v8::Context>) OVERRIDE;
+
  private:
+  void InstallNodeSymbols(v8::Handle<v8::Context> context);
+
   scoped_ptr<ShellRenderProcessObserver> shell_observer_;
 };
 

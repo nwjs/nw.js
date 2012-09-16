@@ -1,37 +1,3 @@
-diff --git a/Source/WebCore/WebCore.gyp/WebCore.gyp b/Source/WebCore/WebCore.gyp/WebCore.gyp
-index 4b1e4df..b18f236 100644
---- a/Source/WebCore/WebCore.gyp/WebCore.gyp
-+++ b/Source/WebCore/WebCore.gyp/WebCore.gyp
-@@ -55,6 +55,7 @@
-     'webcore_include_dirs': [
-       '../',
-       '../..',
-+      '../../../../..',
-       '../Modules/battery',
-       '../Modules/filesystem',
-       '../Modules/filesystem/chromium',
-diff --git a/Source/WebCore/bindings/generic/BindingSecurity.cpp b/Source/WebCore/bindings/generic/BindingSecurity.cpp
-index e5144e0..4d57277 100644
---- a/Source/WebCore/bindings/generic/BindingSecurity.cpp
-+++ b/Source/WebCore/bindings/generic/BindingSecurity.cpp
-@@ -47,6 +47,7 @@ static bool canAccessDocument(BindingState* state, Document* targetDocument, Sec
-     if (!targetDocument)
-         return false;
- 
-+#if 0
-     DOMWindow* active = activeDOMWindow(state);
-     if (!active)
-         return false;
-@@ -58,6 +59,9 @@ static bool canAccessDocument(BindingState* state, Document* targetDocument, Sec
-         printErrorMessageForFrame(targetDocument->frame(), targetDocument->domWindow()->crossDomainAccessErrorMessage(active));
- 
-     return false;
-+#endif
-+
-+    return true;
- }
- 
- bool BindingSecurity::shouldAllowAccessToDOMWindow(BindingState* state, DOMWindow* target, SecurityReportingOption reportingOption)
 diff --git a/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm b/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
 index d459c9d..ed037a5 100644
 --- a/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
@@ -78,112 +44,19 @@ index 211ba94..0e94314 100644
  
  v8::Local<v8::Value> ScriptController::callFunction(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-index 3f59554..5bf89a8 100644
+index 3f59554..aad2212 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 +++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-@@ -64,6 +64,13 @@
- #include "V8ObjectConstructor.h"
- #include "V8PerContextData.h"
- #include "WorkerContextExecutionProxy.h"
-+
-+#include "base/command_line.h"
-+#include "content/nw/src/common/shell_switches.h"
-+#include "content/nw/src/nw_version.h"
-+#include "third_party/node/src/node.h"
-+#include "third_party/node/src/req_wrap.h"
-+
- #include <algorithm>
- #include <stdio.h>
- #include <utility>
-@@ -382,6 +389,71 @@ bool V8DOMWindowShell::initializeIfNeeded()
-     }
-     m_frame->loader()->client()->didCreateScriptContext(m_context.get(), m_world->extensionGroup(), m_world->worldId());
- 
-+    // Do we integrate node?
-+    bool use_node = CommandLine::ForCurrentProcess()->HasSwitch(switches::kmNodejs);
-+
-+    // Test if protocol is file:
-+    v8::Local<v8::Script> protocol_script = v8::Script::New(v8::String::New(
-+        "(function(){ return window.location.protocol == 'file:' })();"
-+    ));
-+    bool is_file_protocol = protocol_script->Run()->BooleanValue();
-+    use_node = is_file_protocol ? use_node : false;
-+
-+    // Test if protocol is 'nw:'
-+    // test for 'about:blank' is also here becuase window.open would open 'about:blank' first
-+    protocol_script = v8::Script::New(v8::String::New(
-+        "(function(){ return window.location.protocol == 'nw:' || window.location == 'about:blank'; })();"
-+    ));
-+    bool is_nw_protocol = protocol_script->Run()->BooleanValue();
-+
-+    if (use_node || is_nw_protocol) {
-+        // Don't use WebKit's timers in node
-+        v8::Local<v8::Object> disableMap = v8::Object::New();
-+        disableMap->Set(v8::String::New("setTimeout"), v8::Integer::New(1));
-+        disableMap->Set(v8::String::New("clearTimeout"), v8::Integer::New(1));
-+        disableMap->Set(v8::String::New("setInterval"), v8::Integer::New(1));
-+        disableMap->Set(v8::String::New("clearInterval"), v8::Integer::New(1));
-+
-+        v8::Local<v8::Object> nodeGlobal = node::g_context->Global();
-+        v8::Local<v8::Array> symbols = nodeGlobal->GetPropertyNames();
-+        for (unsigned i = 0; i < symbols->Length(); ++i) {
-+            v8::Local<v8::Value> key = symbols->Get(i);
-+            if (disableMap->Has(key->ToString()))
-+                continue;
-+            m_global->Set(key, nodeGlobal->Get(key));
-+        }
-+    }
-+
-+    if (use_node) {
-+        v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
-+            // Make node's relative modules work
-+#if defined(OS_WIN)
-+            "process.mainModule.filename = window.location.pathname.substr(1);"
-+#else
-+            "process.mainModule.filename = window.location.pathname;"
-+#endif
-+            "process.chdir(require('path').dirname(process.mainModule.filename));"
-+            "process.mainModule.paths = require('module')._nodeModulePaths(process.cwd());"
-+        ));
-+        script->Run();
-+    }
-+
-+    if (use_node || is_nw_protocol) {
-+        v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
-+            // Use WebKit's console globally
-+            "global.console = console;"
-+
-+            // Don't exit on exception
-+            "process.on('uncaughtException', function (err) {"
-+              "console.log(err.stack);"
-+            "});"
-+
-+            // Save node-webkit version
-+            "process.versions['node-webkit'] = '" NW_VERSION_STRING "';"
-+        ));
-+        script->Run();
-+    }
-+
-     if (isMainWorld) {
-         // FIXME: This call is probably in the wrong spot, but causes a test timeout for http/tests/misc/window-open-then-write.html when removed.
-         // Additionally, ScriptController::existingWindowShell cannot be correctly implemented until this call is gone.
-@@ -510,6 +582,8 @@ void V8DOMWindowShell::clearDocumentProperty()
+@@ -510,6 +510,9 @@ void V8DOMWindowShell::clearDocumentProperty()
  
  void V8DOMWindowShell::setSecurityToken()
  {
-+    m_context->SetSecurityToken(node::g_context->GetSecurityToken());
-+#if 0
++    if (m_frame->loader()->client()->willSetSecurityToken(m_context.get()))
++        return;
++
      ASSERT(m_world->isMainWorld());
  
      Document* document = m_frame->document();
-@@ -538,6 +612,7 @@ void V8DOMWindowShell::setSecurityToken()
-     // NOTE: V8 does identity comparison in fast path, must use a symbol
-     // as the security token.
-     m_context->SetSecurityToken(v8::String::NewSymbol(utf8Token.data(), utf8Token.length()));
-+#endif
- }
- 
- void V8DOMWindowShell::updateDocument()
 diff --git a/Source/WebCore/fileapi/File.idl b/Source/WebCore/fileapi/File.idl
 index 7c0de43..1a22eb5 100644
 --- a/Source/WebCore/fileapi/File.idl
@@ -264,65 +137,29 @@ index 879a34f..5c9bfa1 100644
          attribute [Reflect] DOMString useMap;
          attribute [Reflect] boolean incremental;
          attribute [Conditional=INPUT_SPEECH, Reflect, V8EnabledAtRuntime] boolean webkitSpeech;
-diff --git a/Source/WebCore/loader/CrossOriginAccessControl.cpp b/Source/WebCore/loader/CrossOriginAccessControl.cpp
-index aba2ba0..ec76d5a 100644
---- a/Source/WebCore/loader/CrossOriginAccessControl.cpp
-+++ b/Source/WebCore/loader/CrossOriginAccessControl.cpp
-@@ -134,37 +134,6 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
+diff --git a/Source/WebCore/loader/EmptyClients.h b/Source/WebCore/loader/EmptyClients.h
+index fbda2f6..9a1454e 100644
+--- a/Source/WebCore/loader/EmptyClients.h
++++ b/Source/WebCore/loader/EmptyClients.h
+@@ -365,6 +365,7 @@ public:
+ #if USE(V8)
+     virtual void didCreateScriptContext(v8::Handle<v8::Context>, int extensionGroup, int worldId) { }
+     virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int worldId) { }
++    virtual bool willSetSecurityToken(v8::Handle<v8::Context>) { return false; };
+     virtual bool allowScriptExtension(const String& extensionName, int extensionGroup, int worldId) { return false; }
+ #endif
  
- bool passesAccessControlCheck(const ResourceResponse& response, StoredCredentials includeCredentials, SecurityOrigin* securityOrigin, String& errorDescription)
- {
--    AtomicallyInitializedStatic(AtomicString&, accessControlAllowOrigin = *new AtomicString("access-control-allow-origin"));
--    AtomicallyInitializedStatic(AtomicString&, accessControlAllowCredentials = *new AtomicString("access-control-allow-credentials"));
--
--    // A wildcard Access-Control-Allow-Origin can not be used if credentials are to be sent,
--    // even with Access-Control-Allow-Credentials set to true.
--    const String& accessControlOriginString = response.httpHeaderField(accessControlAllowOrigin);
--    if (accessControlOriginString == "*" && includeCredentials == DoNotAllowStoredCredentials)
--        return true;
--
--    if (securityOrigin->isUnique()) {
--        errorDescription = "Cannot make any requests from " + securityOrigin->toString() + ".";
--        return false;
--    }
--
--    // FIXME: Access-Control-Allow-Origin can contain a list of origins.
--    if (accessControlOriginString != securityOrigin->toString()) {
--        if (accessControlOriginString == "*")
--            errorDescription = "Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true.";
--        else
--            errorDescription =  "Origin " + securityOrigin->toString() + " is not allowed by Access-Control-Allow-Origin.";
--        return false;
--    }
--
--    if (includeCredentials == AllowStoredCredentials) {
--        const String& accessControlCredentialsString = response.httpHeaderField(accessControlAllowCredentials);
--        if (accessControlCredentialsString != "true") {
--            errorDescription = "Credentials flag is true, but Access-Control-Allow-Credentials is not \"true\".";
--            return false;
--        }
--    }
--
-     return true;
- }
- 
-diff --git a/Source/WebCore/loader/CrossOriginPreflightResultCache.cpp b/Source/WebCore/loader/CrossOriginPreflightResultCache.cpp
-index 04d5881..65e4734 100644
---- a/Source/WebCore/loader/CrossOriginPreflightResultCache.cpp
-+++ b/Source/WebCore/loader/CrossOriginPreflightResultCache.cpp
-@@ -123,13 +123,6 @@ bool CrossOriginPreflightResultCacheItem::allowsCrossOriginMethod(const String&
- 
- bool CrossOriginPreflightResultCacheItem::allowsCrossOriginHeaders(const HTTPHeaderMap& requestHeaders, String& errorDescription) const
- {
--    HTTPHeaderMap::const_iterator end = requestHeaders.end();
--    for (HTTPHeaderMap::const_iterator it = requestHeaders.begin(); it != end; ++it) {
--        if (!m_headers.contains(it->first) && !isOnAccessControlSimpleRequestHeaderWhitelist(it->first, it->second)) {
--            errorDescription = "Request header field " + it->first.string() + " is not allowed by Access-Control-Allow-Headers.";
--            return false;
--        }
--    }
-     return true;
- }
+diff --git a/Source/WebCore/loader/FrameLoaderClient.h b/Source/WebCore/loader/FrameLoaderClient.h
+index be81028..a12f5ed 100644
+--- a/Source/WebCore/loader/FrameLoaderClient.h
++++ b/Source/WebCore/loader/FrameLoaderClient.h
+@@ -281,6 +281,7 @@ namespace WebCore {
+ #if USE(V8)
+         virtual void didCreateScriptContext(v8::Handle<v8::Context>, int extensionGroup, int worldId) = 0;
+         virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int worldId) = 0;
++        virtual bool willSetSecurityToken(v8::Handle<v8::Context>) = 0;
+         virtual bool allowScriptExtension(const String& extensionName, int extensionGroup, int worldId) = 0;
+ #endif
  
 diff --git a/Source/WebCore/page/SecurityOrigin.cpp b/Source/WebCore/page/SecurityOrigin.cpp
 index da15021..d015104 100644
@@ -380,6 +217,20 @@ index f15e224..08ef670 100644
      {
      }
  };
+diff --git a/Source/WebKit/chromium/public/WebFrameClient.h b/Source/WebKit/chromium/public/WebFrameClient.h
+index b4fcceb..421efcd 100644
+--- a/Source/WebKit/chromium/public/WebFrameClient.h
++++ b/Source/WebKit/chromium/public/WebFrameClient.h
+@@ -300,6 +300,9 @@ public:
+ 
+     // WebKit is about to release its reference to a v8 context for a frame.
+     virtual void willReleaseScriptContext(WebFrame*, v8::Handle<v8::Context>, int worldId) { }
++
++    // WebKit will set page's security token
++    virtual bool willSetSecurityToken(WebFrame*, v8::Handle<v8::Context>) { return false; };
+ #endif
+ 
+     // Geometry notifications ----------------------------------------------
 diff --git a/Source/WebKit/chromium/src/ChromeClientImpl.cpp b/Source/WebKit/chromium/src/ChromeClientImpl.cpp
 index 9857577..a28b2fa 100644
 --- a/Source/WebKit/chromium/src/ChromeClientImpl.cpp
@@ -398,6 +249,37 @@ index 9857577..a28b2fa 100644
      params.acceptTypes = fileChooser->settings().acceptTypes();
      params.selectedFiles = fileChooser->settings().selectedFiles;
      if (params.selectedFiles.size() > 0)
+diff --git a/Source/WebKit/chromium/src/FrameLoaderClientImpl.cpp b/Source/WebKit/chromium/src/FrameLoaderClientImpl.cpp
+index c99bd7c..ccdc1b7 100644
+--- a/Source/WebKit/chromium/src/FrameLoaderClientImpl.cpp
++++ b/Source/WebKit/chromium/src/FrameLoaderClientImpl.cpp
+@@ -157,6 +157,14 @@ void FrameLoaderClientImpl::willReleaseScriptContext(v8::Handle<v8::Context> con
+     if (m_webFrame->client())
+         m_webFrame->client()->willReleaseScriptContext(m_webFrame, context, worldId);
+ }
++
++bool FrameLoaderClientImpl::willSetSecurityToken(v8::Handle<v8::Context> context)
++{
++    if (m_webFrame->client())
++        return m_webFrame->client()->willSetSecurityToken(m_webFrame, context);
++    else
++        return false;
++}
+ #endif
+ 
+ bool FrameLoaderClientImpl::allowScriptExtension(const String& extensionName,
+diff --git a/Source/WebKit/chromium/src/FrameLoaderClientImpl.h b/Source/WebKit/chromium/src/FrameLoaderClientImpl.h
+index ecb20a2..a9f0a04 100644
+--- a/Source/WebKit/chromium/src/FrameLoaderClientImpl.h
++++ b/Source/WebKit/chromium/src/FrameLoaderClientImpl.h
+@@ -64,6 +64,7 @@ public:
+ #if USE(V8)
+     virtual void didCreateScriptContext(v8::Handle<v8::Context>, int extensionGroup, int worldId);
+     virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int worldId);
++    virtual bool willSetSecurityToken(v8::Handle<v8::Context>);
+ #endif
+ 
+     // Returns true if we should allow the given V8 extension to be added to
 diff --git a/Source/WebKit/chromium/src/WebKit.cpp b/Source/WebKit/chromium/src/WebKit.cpp
 index 9331d05..eca2f5b 100644
 --- a/Source/WebKit/chromium/src/WebKit.cpp
