@@ -18,13 +18,13 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/shell/shell_javascript_dialog.h"
+#include "content/nw/src/browser/shell_javascript_dialog.h"
 
 #import <Cocoa/Cocoa.h>
 
 #import "base/memory/scoped_nsobject.h"
 #include "base/sys_string_conversions.h"
-#include "content/shell/shell_javascript_dialog_creator.h"
+#include "content/nw/src/browser/shell_javascript_dialog_creator.h"
 
 // Helper object that receives the notification that the dialog/sheet is
 // going away. Is responsible for cleaning itself up.

@@ -29,9 +29,9 @@
 #include "base/threading/thread.h"
 #include "base/values.h"
 #include "content/public/browser/browser_thread.h"
+#include "content/nw/src/browser/shell_download_manager_delegate.h"
 #include "content/nw/src/net/shell_url_request_context_getter.h"
 #include "content/nw/src/nw_package.h"
-#include "content/nw/src/shell_download_manager_delegate.h"
 #include "content/nw/src/shell_resource_context.h"
 #include "content/nw/src/shell_switches.h"
 

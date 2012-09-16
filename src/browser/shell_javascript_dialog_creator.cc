@@ -18,15 +18,15 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "shell_javascript_dialog_creator.h"
+#include "content/nw/src/browser/shell_javascript_dialog_creator.h"
 
 #include "base/command_line.h"
 #include "base/logging.h"
 #include "base/utf_string_conversions.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
-#include "shell_javascript_dialog.h"
-#include "shell_switches.h"
+#include "content/nw/src/browser/shell_javascript_dialog.h"
+#include "content/nw/src/shell_switches.h"
 #include "net/base/net_util.h"
 
 namespace content {
