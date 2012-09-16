@@ -45,6 +45,16 @@ ShellContentRendererClient::~ShellContentRendererClient() {
 
 void ShellContentRendererClient::RenderThreadStarted() {
   shell_observer_.reset(new ShellRenderProcessObserver());
+
+  // Initialize node after render thread is started
+  v8::V8::Initialize();
+  v8::HandleScope scope;
+
+  node::g_context = v8::Context::New();
+  node::g_context->Enter();
+
+  char* argv[] = { (char*)"node", NULL };
+  node::SetupContext(1, argv, node::g_context->Global());
 }
 
 void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {

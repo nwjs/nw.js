@@ -23,6 +23,8 @@
 #include "base/command_line.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/public/renderer/render_thread.h"
+#include "third_party/node/src/node.h"
+#include "third_party/node/src/req_wrap.h"
 #include "webkit/glue/webkit_glue.h"
 #include "webkit/support/gc_extension.h"
 
