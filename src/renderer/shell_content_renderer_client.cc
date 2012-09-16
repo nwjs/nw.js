@@ -133,7 +133,6 @@ void ShellContentRendererClient::InstallNodeSymbols(
 #else
         "process.mainModule.filename = window.location.pathname;"
 #endif
-        "process.chdir(require('path').dirname(process.mainModule.filename));"
         "process.mainModule.paths = require('module')._nodeModulePaths(process.cwd());"
     ));
     script->Run();
