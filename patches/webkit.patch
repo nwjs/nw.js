@@ -1,34 +1,3 @@
-diff --git a/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm b/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
-index d459c9d..ed037a5 100644
---- a/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
-+++ b/Source/WebCore/bindings/scripts/CodeGeneratorV8.pm
-@@ -2780,7 +2780,7 @@ END
- 
-     my $access_check = "";
-     if ($dataNode->extendedAttributes->{"CheckSecurity"} && !($interfaceName eq "DOMWindow")) {
--        $access_check = "instance->SetAccessCheckCallbacks(V8${interfaceName}::namedSecurityCheck, V8${interfaceName}::indexedSecurityCheck, v8::External::Wrap(&V8${interfaceName}::info));";
-+        $access_check = "";
-     }
- 
-     # For the DOMWindow interface, generate the shadow object template
-@@ -2792,7 +2792,7 @@ static v8::Persistent<v8::ObjectTemplate> ConfigureShadowObjectTemplate(v8::Pers
-     V8DOMConfiguration::batchConfigureAttributes(templ, v8::Handle<v8::ObjectTemplate>(), shadowAttrs, WTF_ARRAY_LENGTH(shadowAttrs));
- 
-     // Install a security handler with V8.
--    templ->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::External::Wrap(&V8DOMWindow::info));
-+    // templ->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::External::Wrap(&V8DOMWindow::info));
-     templ->SetInternalFieldCount(V8DOMWindow::internalFieldCount);
-     return templ;
- }
-@@ -2931,7 +2931,7 @@ END
-     // Set access check callbacks, but turned off initially.
-     // When a context is detached from a frame, turn on the access check.
-     // Turning on checks also invalidates inline caches of the object.
--    instance->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::External::Wrap(&V8DOMWindow::info), false);
-+    // instance->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::External::Wrap(&V8DOMWindow::info), false);
- END
-     }
-     if ($interfaceName eq "HTMLDocument") {
 diff --git a/Source/WebCore/bindings/v8/ScriptController.cpp b/Source/WebCore/bindings/v8/ScriptController.cpp
 index 211ba94..0e94314 100644
 --- a/Source/WebCore/bindings/v8/ScriptController.cpp
@@ -280,17 +249,3 @@ index ecb20a2..a9f0a04 100644
  #endif
  
      // Returns true if we should allow the given V8 extension to be added to
-diff --git a/Source/WebKit/chromium/src/WebKit.cpp b/Source/WebKit/chromium/src/WebKit.cpp
-index 9331d05..eca2f5b 100644
---- a/Source/WebKit/chromium/src/WebKit.cpp
-+++ b/Source/WebKit/chromium/src/WebKit.cpp
-@@ -95,7 +95,8 @@ static bool generateEntropy(unsigned char* buffer, size_t length)
- #ifndef NDEBUG
- static void assertV8RecursionScope()
- {
--    ASSERT(!isMainThread() || WebCore::V8RecursionScope::properlyUsed());
-+    // FIXME See why this failed when node::SetupContext
-+    // ASSERT(!isMainThread() || WebCore::V8RecursionScope::properlyUsed());
- }
- #endif
- 

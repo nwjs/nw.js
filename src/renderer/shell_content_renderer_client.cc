@@ -57,13 +57,13 @@ void ShellContentRendererClient::DidCreateScriptContext(
     v8::Handle<v8::Context> context,
     int extension_group,
     int world_id) {
+  InstallNodeSymbols(context);
 }
 
 void ShellContentRendererClient::WillReleaseScriptContext(
     WebKit::WebFrame* frame,
     v8::Handle<v8::Context> context,
     int world_id) {
-  InstallNodeSymbols(context);
 }
 
 bool ShellContentRendererClient::WillSetSecurityToken(

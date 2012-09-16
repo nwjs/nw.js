@@ -22,6 +22,7 @@
 
 #include "base/command_line.h"
 #include "base/file_path.h"
+#include "content/public/common/content_switches.h"
 #include "content/public/browser/browser_url_handler.h"
 #include "content/public/browser/resource_dispatcher_host.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
@@ -64,6 +65,10 @@ void ShellContentBrowserClient::RenderViewHostCreated(
 
 void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     CommandLine* command_line, int child_process_id) {
+  // Disable web security
+  command_line->AppendSwitch(switches::kAllowFileAccessFromFiles);
+  command_line->AppendSwitch(switches::kDisableWebSecurity);
+
   if (nw::GetManifest() && nw::GetUseNode())
     command_line->AppendSwitch(switches::kmNodejs);
 }
