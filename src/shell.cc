@@ -44,7 +44,6 @@
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/shell_browser_main_parts.h"
 #include "content/nw/src/shell_content_browser_client.h"
-#include "content/nw/src/shell_messages.h"
 #include "ui/gfx/size.h"
 
 namespace content {

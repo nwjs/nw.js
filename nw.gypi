@@ -120,8 +120,6 @@
         'src/shell_content_client.h',
         'src/shell_main_delegate.cc',
         'src/shell_main_delegate.h',
-        'src/shell_messages.cc',
-        'src/shell_messages.h',
         'src/shell_network_delegate.cc',
         'src/shell_network_delegate.h',
         'src/shell_resource_context.cc',
