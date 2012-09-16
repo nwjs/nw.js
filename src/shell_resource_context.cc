@@ -18,8 +18,8 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/shell/shell_resource_context.h"
-#include "content/shell/shell_url_request_context_getter.h"
+#include "content/nw/src/net/shell_url_request_context_getter.h"
+#include "content/nw/src/shell_resource_context.h"
 
 namespace content {
 

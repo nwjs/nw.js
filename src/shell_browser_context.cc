@@ -18,7 +18,7 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "shell_browser_context.h"
+#include "content/nw/src/shell_browser_context.h"
 
 #include "base/bind.h"
 #include "base/command_line.h"
@@ -29,11 +29,11 @@
 #include "base/threading/thread.h"
 #include "base/values.h"
 #include "content/public/browser/browser_thread.h"
-#include "nw_package.h"
-#include "shell_download_manager_delegate.h"
-#include "shell_resource_context.h"
-#include "shell_switches.h"
-#include "shell_url_request_context_getter.h"
+#include "content/nw/src/net/shell_url_request_context_getter.h"
+#include "content/nw/src/nw_package.h"
+#include "content/nw/src/shell_download_manager_delegate.h"
+#include "content/nw/src/shell_resource_context.h"
+#include "content/nw/src/shell_switches.h"
 
 #if defined(OS_WIN)
 #include "base/base_paths_win.h"
