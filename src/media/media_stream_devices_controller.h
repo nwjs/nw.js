@@ -43,9 +43,6 @@ class MediaStreamDevicesController {
   // Public methods to be called by MediaStreamInfoBarDelegate;
   bool has_audio() const { return has_audio_; }
   bool has_video() const { return has_video_; }
-  content::MediaStreamDevices GetAudioDevices() const;
-  content::MediaStreamDevices GetVideoDevices() const;
-  const GURL& GetSecurityOrigin() const;
   void Accept(const std::string& audio_id,
               const std::string& video_id,
               bool always_allow);
@@ -74,17 +71,6 @@ class MediaStreamDevicesController {
                                 const std::string& name);
 
   std::string GetFirstDeviceId(content::MediaStreamDeviceType type);
-
-  // Copies all devices passing the |is_included| predicate to the given output
-  // container.
-  void FindSubsetOfDevices(FilterByDeviceTypeFunc is_included,
-                           content::MediaStreamDevices* out) const;
-
-  // Finds the first device with the given |device_id| within the subset of
-  // devices passing the |is_included| predicate, or return NULL.
-  const content::MediaStreamDevice* FindFirstDeviceWithIdInSubset(
-      FilterByDeviceTypeFunc is_included,
-      const std::string& device_id) const;
 
   bool has_audio_;
   bool has_video_;

@@ -103,22 +103,6 @@ bool MediaStreamDevicesController::DismissInfoBarAndTakeActionOnSettings() {
   return true;
 }
 
-content::MediaStreamDevices
-MediaStreamDevicesController::GetAudioDevices() const {
-  content::MediaStreamDevices all_audio_devices;
-  if (has_audio_)
-    FindSubsetOfDevices(&content::IsAudioMediaType, &all_audio_devices);
-  return all_audio_devices;
-}
-
-content::MediaStreamDevices
-MediaStreamDevicesController::GetVideoDevices() const {
-  content::MediaStreamDevices all_video_devices;
-  if (has_video_)
-    FindSubsetOfDevices(&content::IsVideoMediaType, &all_video_devices);
-  return all_video_devices;
-}
-
 void MediaStreamDevicesController::Accept(const std::string& audio_id,
                                           const std::string& video_id,
                                           bool always_allow) {
