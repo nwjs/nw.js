@@ -26,6 +26,7 @@
 #include "base/logging.h"
 #include "base/scoped_temp_dir.h"
 #include "base/string_util.h"
+#include "base/threading/thread_restrictions.h"
 #include "base/values.h"
 #include "common/zip.h"
 #include "content/nw/src/common/shell_switches.h"
@@ -250,6 +251,8 @@ bool GetUseNode() {
 }
 
 void InitPackageForceNoEmpty() {
+  base::ThreadRestrictions::SetIOAllowed(true);
+
   InitPackage();
 
   if (g_manifest == NULL) {

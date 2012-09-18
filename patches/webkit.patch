@@ -1,5 +1,5 @@
 diff --git a/Source/WebCore/bindings/v8/ScriptController.cpp b/Source/WebCore/bindings/v8/ScriptController.cpp
-index 211ba94..0e94314 100644
+index fb9d557..5f81548 100644
 --- a/Source/WebCore/bindings/v8/ScriptController.cpp
 +++ b/Source/WebCore/bindings/v8/ScriptController.cpp
 @@ -178,7 +178,8 @@ void ScriptController::updatePlatformScriptObjects()
@@ -13,7 +13,7 @@ index 211ba94..0e94314 100644
  
  v8::Local<v8::Value> ScriptController::callFunction(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-index 3f59554..aad2212 100644
+index 9fe6d7c..9a26674 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 +++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 @@ -510,6 +510,9 @@ void V8DOMWindowShell::clearDocumentProperty()
@@ -26,6 +26,19 @@ index 3f59554..aad2212 100644
      ASSERT(m_world->isMainWorld());
  
      Document* document = m_frame->document();
+diff --git a/Source/WebCore/bindings/v8/V8RecursionScope.h b/Source/WebCore/bindings/v8/V8RecursionScope.h
+index 64c6c8a..aeeaccd 100644
+--- a/Source/WebCore/bindings/v8/V8RecursionScope.h
++++ b/Source/WebCore/bindings/v8/V8RecursionScope.h
+@@ -77,7 +77,7 @@ public:
+ #ifndef NDEBUG
+     static bool properlyUsed()
+     {
+-        return recursionLevel() > 0 || V8PerIsolateData::current()->internalScriptRecursionLevel() > 0;
++        return true;
+     }
+ #endif
+ 
 diff --git a/Source/WebCore/fileapi/File.idl b/Source/WebCore/fileapi/File.idl
 index 7c0de43..1a22eb5 100644
 --- a/Source/WebCore/fileapi/File.idl
@@ -107,10 +120,10 @@ index 879a34f..5c9bfa1 100644
          attribute [Reflect] boolean incremental;
          attribute [Conditional=INPUT_SPEECH, Reflect, V8EnabledAtRuntime] boolean webkitSpeech;
 diff --git a/Source/WebCore/loader/EmptyClients.h b/Source/WebCore/loader/EmptyClients.h
-index fbda2f6..9a1454e 100644
+index 256aa99..4d5bf63 100644
 --- a/Source/WebCore/loader/EmptyClients.h
 +++ b/Source/WebCore/loader/EmptyClients.h
-@@ -365,6 +365,7 @@ public:
+@@ -366,6 +366,7 @@ public:
  #if USE(V8)
      virtual void didCreateScriptContext(v8::Handle<v8::Context>, int extensionGroup, int worldId) { }
      virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int worldId) { }
@@ -119,7 +132,7 @@ index fbda2f6..9a1454e 100644
  #endif
  
 diff --git a/Source/WebCore/loader/FrameLoaderClient.h b/Source/WebCore/loader/FrameLoaderClient.h
-index be81028..a12f5ed 100644
+index 668edbc..08eba45 100644
 --- a/Source/WebCore/loader/FrameLoaderClient.h
 +++ b/Source/WebCore/loader/FrameLoaderClient.h
 @@ -281,6 +281,7 @@ namespace WebCore {
@@ -219,7 +232,7 @@ index 9857577..a28b2fa 100644
      params.selectedFiles = fileChooser->settings().selectedFiles;
      if (params.selectedFiles.size() > 0)
 diff --git a/Source/WebKit/chromium/src/FrameLoaderClientImpl.cpp b/Source/WebKit/chromium/src/FrameLoaderClientImpl.cpp
-index c99bd7c..ccdc1b7 100644
+index 5dd02b5..3273f1a 100644
 --- a/Source/WebKit/chromium/src/FrameLoaderClientImpl.cpp
 +++ b/Source/WebKit/chromium/src/FrameLoaderClientImpl.cpp
 @@ -157,6 +157,14 @@ void FrameLoaderClientImpl::willReleaseScriptContext(v8::Handle<v8::Context> con
