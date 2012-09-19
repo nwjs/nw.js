@@ -44,6 +44,23 @@
         '<(DEPTH)',
       ],
       'sources': [
+        'src/api/dispatcher.cc',
+        'src/api/dispatcher.h',
+        'src/api/v8_utils.cc',
+        'src/api/v8_utils.h',
+        'src/api/menu/menu.cc',
+        'src/api/menu/menu.h',
+        'src/api/menu/menu_gtk.cc',
+        'src/api/menu/menu_mac.mm',
+        'src/api/menu/menu_win.cc',
+        'src/api/menuitem/menuitem.cc',
+        'src/api/menuitem/menuitem.h',
+        'src/api/menuitem/menuitem_mac.mm',
+        'src/api/menuitem/menuitem_delegate_mac.h',
+        'src/api/menuitem/menuitem_delegate_mac.mm',
+        'src/api/tray/tray.cc',
+        'src/api/tray/tray.h',
+        'src/api/tray/tray_mac.mm',
         'src/browser/app_controller_mac.h',
         'src/browser/app_controller_mac.mm',
         'src/browser/file_select_helper.cc',
@@ -109,7 +126,6 @@
         'src/renderer/shell_render_view_observer.h',
         'src/shell.cc',
         'src/shell.h',
-        'src/shell_aura.cc',
         'src/shell_gtk.cc',
         'src/shell_mac.mm',
         'src/shell_win.cc',
@@ -156,29 +172,6 @@
             },
           },
         }],  # OS=="win"
-        ['os_posix==1 and use_aura==1 and linux_use_tcmalloc==1', {
-          'dependencies': [
-            # This is needed by content/app/content_main_runner.cc
-            '<(DEPTH)/base/allocator/allocator.gyp:allocator',
-          ],
-        }],
-        ['use_aura==1', {
-          'dependencies': [
-            '<(DEPTH)/ui/aura/aura.gyp:aura',
-            '<(DEPTH)/ui/base/strings/ui_strings.gyp:ui_strings',
-            '<(DEPTH)/ui/views/views.gyp:views',
-            '<(DEPTH)/ui/ui.gyp:ui_resources',
-          ],
-          'sources/': [
-            ['exclude', 'src/shell_gtk.cc'],
-            ['exclude', 'src/shell_win.cc'],
-          ],
-        }],  # use_aura==1
-        ['chromeos==1', {
-          'dependencies': [
-            '<(DEPTH)/chromeos/chromeos.gyp:chromeos',
-           ],
-        }], # chromeos==1
         ['inside_chromium_build==0 or component!="shared_library"', {
           'dependencies': [
             '<(webkit_src_dir)/Source/WebCore/WebCore.gyp/WebCore.gyp:webcore_test_support',
