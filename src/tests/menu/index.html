@@ -1,0 +1,60 @@
+<html>
+<head>
+  <script type="text/javascript" src="../assert.js"></script>
+</head>
+<body>
+<script>
+  var gui = require('nw.gui');
+
+  var menu = new gui.Menu({ title: 'Tray Menu' });
+  assert(menu.length == 0, 'Empty Menu');
+
+  menu.append(new gui.MenuItem({
+    label: 'Item 1',
+    click: function() {
+      console.log('Click on Item 1');
+    }
+  }));
+  assert(menu.length == 1, menu[0].label == 'Item 1', 'One Menu');
+
+  menu.append(new gui.MenuItem({ type: 'separator' }));
+  menu.append(new gui.MenuItem({
+    label: 'Item 2',
+    click: function() {
+      console.log('Click on Item 2');
+    }
+  }));
+  menu.append(new gui.MenuItem({ label: 'Item 3' }));
+  menu.append(new gui.MenuItem({ label: 'Item 4' }));
+  menu.append(new gui.MenuItem({ label: 'Item 5' }));
+  menu.insert(new gui.MenuItem({ label: 'Item Papa' }), 1);
+  assert(menu.length == 7,
+         menu[0].label == 'Item 1',
+         menu[1].label == 'Item Papa',
+         menu[2].type == 'separator',
+         menu[3].label == 'Item 2',
+         menu[4].label == 'Item 3',
+         menu[5].label == 'Item 4',
+         menu[6].label == 'Item 5',
+         'More Menu');
+
+  var removedItem = new gui.MenuItem({ label: 'Item Deleted' });
+  menu.insert(removedItem, 4);
+  assert(menu.length == 8,
+         menu[4].label == 'Item Deleted',
+         'Before Delete');
+
+  menu.remove(removedItem);
+  assert(menu.length == 7,
+         menu[4].label == 'Item 3',
+         'After Delete');
+
+  menu.insert(new gui.MenuItem({ label: 'Item Deleted' }), 1);
+  assert(menu.length == 8, menu[1].label == 'Item Deleted', 'Before Delete 2');
+
+  menu.removeAt(1);
+  assert(menu.length == 7, menu[1].label == 'Item Papa', 'After Delete 2');
+</script>
+</body>
+</html>
+
