@@ -30,8 +30,6 @@ api::MenuItem::MenuItemType TypeStringToType(Handle<Value> type_str) {
   String::Utf8Value utf8_value(type_str);
   if (!strcmp("checkbox", *utf8_value))
     return api::MenuItem::CHECKBOX;
-  else if (!strcmp("radio", *utf8_value))
-    return api::MenuItem::RADIO;
   else if (!strcmp("separator", *utf8_value))
     return api::MenuItem::SEPARATOR;
   else
@@ -42,8 +40,6 @@ Handle<Value> TypeToTypeString(api::MenuItem::MenuItemType type) {
   switch (type) {
     case api::MenuItem::CHECKBOX:
       return String::New("checkbox");
-    case api::MenuItem::RADIO:
-      return String::New("radio");
     case api::MenuItem::SEPARATOR:
       return String::New("separator");
     case api::MenuItem::NORMAL:
@@ -59,7 +55,8 @@ Persistent<Function> MenuItem::constructor_;
 
 MenuItem::CreationOption::CreationOption()
     : type(MenuItem::NORMAL),
-      enabled(true) {
+      enabled(true),
+      checked(false) {
 }
 
 // static
@@ -74,25 +71,16 @@ void MenuItem::Init(Handle<Object> target) {
   tpl->InstanceTemplate()->SetAccessor(
       String::New("icon"), PropertyGetter, PropertySetter);
   tpl->InstanceTemplate()->SetAccessor(
+      String::New("tooltip"), PropertyGetter, PropertySetter);
+  tpl->InstanceTemplate()->SetAccessor(
       String::New("enabled"), PropertyGetter, PropertySetter);
   tpl->InstanceTemplate()->SetAccessor(
       String::New("checked"), PropertyGetter, PropertySetter);
   tpl->InstanceTemplate()->SetAccessor(
-      String::New("click"), PropertyGetter, PropertySetter);
+      String::New("submenu"), PropertyGetter, PropertySetter);
 
   constructor_ = Persistent<Function>::New(tpl->GetFunction());
   target->Set(String::NewSymbol("MenuItem"), constructor_);
-}
-
-// static
-Handle<Object> MenuItem::From(MenuItem* foreign) {
-  HandleScope scope;
-
-  Handle<Value> argv[1] = { External::New(foreign) };
-  Handle<Object> obj = MenuItem::constructor_->NewInstance(1, argv);
-  foreign->Wrap(obj);
-
-  return obj;
 }
 
 void MenuItem::OnClick() {
@@ -126,6 +114,8 @@ Handle<Value> MenuItem::New(const Arguments& args) {
     option.label = *String::Utf8Value(v8op->Get(String::New("label")));
   if (v8op->Has(String::New("icon")))
     option.icon = *String::Utf8Value(v8op->Get(String::New("icon")));
+  if (v8op->Has(String::New("tooltip")))
+    option.tooltip = *String::Utf8Value(v8op->Get(String::New("tooltip")));
   if (v8op->Has(String::New("type")))
     option.type = TypeStringToType(v8op->Get(String::New("type")));
   if (v8op->Has(String::New("enabled")))
@@ -135,13 +125,18 @@ Handle<Value> MenuItem::New(const Arguments& args) {
 
   // Wrap C++ object in V8 object
   MenuItem* obj = new MenuItem(option);
+  obj->option_ = option;
   obj->Wrap(args.This());
 
-  // Save callback
+  // this.click = option.click
   Handle<Value> callback = v8op->Get(String::New("click"));
-  if (callback->IsFunction()) {
-    obj->handle_->Set(String::New("click"), callback);
-  }
+  if (callback->IsFunction())
+    args.This()->Set(String::New("click"), callback);
+
+  // this.submenu = option.submenu
+  Handle<Value> submenu = v8op->Get(String::New("submenu"));
+  if (submenu->IsObject())
+    args.This()->Set(String::New("submenu"), submenu);
 
   return args.This();
 }
@@ -156,13 +151,17 @@ Handle<Value> MenuItem::PropertyGetter(Local<String> property,
   if (!strcmp(*key, "label"))
     return String::New(obj->GetLabel().c_str());
   else if (!strcmp(*key, "icon"))
-    return String::New(obj->GetIcon().c_str());
+    return String::New(obj->option_.icon.c_str());
+  else if (!strcmp(*key, "tooltip"))
+    return String::New(obj->GetTooltip().c_str());
   else if (!strcmp(*key, "enabled"))
     return Boolean::New(obj->GetEnabled());
   else if (!strcmp(*key, "checked"))
     return Boolean::New(obj->GetChecked());
   else if (!strcmp(*key, "type"))
-    return TypeToTypeString(obj->GetType());
+    return TypeToTypeString(obj->option_.type);
+  else if (!strcmp(*key, "submenu"))
+    return info.This()->GetHiddenValue(String::New("realsubmenu"));
 
   return Undefined();
 }
@@ -175,14 +174,24 @@ void MenuItem::PropertySetter(Local<String> property,
   MenuItem* obj = ObjectWrap::Unwrap<MenuItem>(info.This());
 
   String::Utf8Value key(property);
-  if (!strcmp(*key, "label"))
+  if (!strcmp(*key, "label")) {
     obj->SetLabel(*String::Utf8Value(value));
-  else if (!strcmp(*key, "icon"))
+  } else if (!strcmp(*key, "icon")) {
+    if (obj->option_.type == SEPARATOR)
+      return;
+
+    obj->option_.icon = *String::Utf8Value(value);
     obj->SetIcon(*String::Utf8Value(value));
-  else if (!strcmp(*key, "enabled"))
+  } else if (!strcmp(*key, "tooltip")) {
+    obj->SetTooltip(*String::Utf8Value(value));
+  } else if (!strcmp(*key, "enabled")) {
     obj->SetEnabled(value->BooleanValue());
-  else if (!strcmp(*key, "checked"))
+  } else if (!strcmp(*key, "checked")) {
     obj->SetChecked(value->BooleanValue());
+  } else if (!strcmp(*key, "submenu")) {
+    info.This()->SetHiddenValue(String::New("realsubmenu"), value);
+    obj->SetSubmenu(ObjectWrap::Unwrap<Menu>(value->ToObject()));
+  }
 }
 
 }  // namespace api

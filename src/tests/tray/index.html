@@ -1,0 +1,47 @@
+<html>
+<head>
+  <script type="text/javascript" src="../assert.js"></script>
+</head>
+<body>
+<script>
+  var gui = require('nw.gui');
+
+  var menu = new gui.Menu({ title: 'Tray Menu' });
+
+  menu.append(new gui.MenuItem({ label: 'Sub 1', checked: true, enabled: false }));
+  menu.append(new gui.MenuItem({ label: 'Sub 2', checked: false, enabled: true }));
+  menu.append(new gui.MenuItem({ label: 'Sub 3', checked: false, enabled: true }));
+  menu.append(new gui.MenuItem({ label: 'Sub 4', checked: false, enabled: true }));
+
+  // Click to flip other items
+  var lastone = menu[0];
+  menu[0].click = menu[1].click = menu[2].click = menu[3].click = function() {
+    lastone.checked = false;
+    lastone.enabled = true;
+    this.checked = true;
+    this.enabled = false;
+    lastone = this;
+  }
+
+  var tray = new gui.Tray({
+    title: 'Test Tray',
+    menu: menu
+  });
+  menu[0].icon = tray.icon = 'icon.png';
+
+  assert(
+  tray.title == 'Test Tray',
+  tray.tooltip == '',
+  tray.menu == menu,
+  'Init tray');
+
+  tray.title = 'Love Tray';
+  tray.tooltip = 'Love Tooltip';
+  assert(
+  tray.title == 'Love Tray',
+  tray.tooltip == 'Love Tooltip',
+  'Change tray');
+
+</script>
+</body>
+</html>

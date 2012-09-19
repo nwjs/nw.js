@@ -39,13 +39,12 @@ class MenuItemDelegate;
 
 namespace api {
 
+class Menu;
+
 class MenuItem : node::ObjectWrap {
  public:
   // Install MenuItem into an object
   static void Init(v8::Handle<v8::Object> target);
-
-  // Return an MenuItem object that wraps the C++ object
-  static v8::Handle<v8::Object> From(MenuItem*);
 
   // Clicked
   void OnClick();
@@ -54,7 +53,6 @@ class MenuItem : node::ObjectWrap {
   enum MenuItemType {
     NORMAL,
     CHECKBOX,
-    RADIO,
     SEPARATOR
   };
 
@@ -67,31 +65,25 @@ class MenuItem : node::ObjectWrap {
 
     std::string label;
     std::string icon;
+    std::string tooltip;
     MenuItemType type;
     bool enabled;
     bool checked;
   };
 
-  // Native manu type
-#if defined(OS_MACOSX)
-  typedef NSMenuItem* NativeType;
-#elif defined(TOOLKIT_GTK)
-#elif defined(OS_WIN)
-#endif
-
   MenuItem(CreationOption options);
-  MenuItem(NativeType foreign);
   virtual ~MenuItem();
 
   void SetLabel(const std::string& label);
   std::string GetLabel();
   void SetIcon(const std::string& icon);
-  std::string GetIcon();
-  MenuItemType GetType();
+  void SetTooltip(const std::string& tooltip);
+  std::string GetTooltip();
   void SetEnabled(bool enabled);
   bool GetEnabled();
   void SetChecked(bool checked);
   bool GetChecked();
+  void SetSubmenu(Menu* sub_menu);
 
   static v8::Handle<v8::Value> New(const v8::Arguments& args);
   static v8::Handle<v8::Value> PropertyGetter(v8::Local<v8::String> property,
@@ -103,6 +95,14 @@ class MenuItem : node::ObjectWrap {
   static v8::Persistent<v8::Function> constructor_;
 
   CreationOption option_;
+
+  // Native manu type
+#if defined(OS_MACOSX)
+  typedef NSMenuItem* NativeType;
+#elif defined(TOOLKIT_GTK)
+#elif defined(OS_WIN)
+#endif
+
   NativeType menu_item_;
 
 #if defined(OS_MACOSX)

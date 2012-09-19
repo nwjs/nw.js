@@ -1,15 +1,19 @@
 function assert() {
+  document.write('<div>' + arguments[arguments.length - 1] + ': ');
+
   var result = true;
   for (var i = 0; i < arguments.length - 1; ++i) {
-    result &= arguments[i];
+    if (!arguments[i]) {
+      result = false;
+      document.write('<span style="color:red">FAILED</span>');
+      document.write('<span style="color:grey"> at condition ' + (i + 1) + ' </span>');
+    }
   }
 
-  document.write(arguments[arguments.length - 1] + ': ');
   if (result) {
     document.write('<span style="color:green">PASSED</span>');
-  } else {
-    document.write('<span style="color:red">FAILED</span>');
   }
-  document.write('<br/>');
+
+  document.write('</div>');
 }
 

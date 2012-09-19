@@ -36,6 +36,8 @@ void Tray::Init(Handle<Object> target) {
   tpl->InstanceTemplate()->SetAccessor(
       String::New("icon"), PropertyGetter, PropertySetter);
   tpl->InstanceTemplate()->SetAccessor(
+      String::New("tooltip"), PropertyGetter, PropertySetter);
+  tpl->InstanceTemplate()->SetAccessor(
       String::New("menu"), PropertyGetter, PropertySetter);
   tpl->PrototypeTemplate()->Set(String::NewSymbol("remove"),
       FunctionTemplate::New(Remove)->GetFunction());
@@ -66,9 +68,17 @@ Handle<Value> Tray::New(const Arguments& args) {
     option.icon = *String::Utf8Value(v8op->Get(String::New("icon")));
   if (v8op->Has(String::New("title")))
     option.title = *String::Utf8Value(v8op->Get(String::New("title")));
+  if (v8op->Has(String::New("tooltip")))
+    option.tooltip = *String::Utf8Value(v8op->Get(String::New("tooltip")));
 
   Tray* obj = new Tray(option);
+  obj->option_ = option;
   obj->Wrap(args.This());
+
+  // this.menu = option.menu
+  if (v8op->Has(String::New("menu"))) {
+    args.This()->Set(String::New("menu"), v8op->Get(String::New("menu")));
+  }
 
   return args.This();
 }
@@ -90,7 +100,9 @@ Handle<Value> Tray::PropertyGetter(Local<String> property,
   if (!strcmp(*key, "title")) {
     return String::New(obj->GetTitle().c_str());
   } else if (!strcmp(*key, "icon")) {
-    return String::New(obj->GetIcon().c_str());
+    return String::New(obj->option_.icon.c_str());
+  } else if (!strcmp(*key, "tooltip")) {
+    return String::New(obj->GetTooltip().c_str());
   } else if (!strcmp(*key, "menu")) {
     return info.This()->GetHiddenValue(String::New("realmenu"));
   }
@@ -109,7 +121,10 @@ void Tray::PropertySetter(Local<String> property,
   if (!strcmp(*key, "title")) {
     obj->SetTitle(*String::Utf8Value(value));
   } else if (!strcmp(*key, "icon")) {
+    obj->option_.icon = *String::Utf8Value(value);
     obj->SetIcon(*String::Utf8Value(value));
+  } else if (!strcmp(*key, "tooltip")) {
+    obj->SetTooltip(*String::Utf8Value(value));
   } else if (!strcmp(*key, "menu")) {
     info.This()->SetHiddenValue(String::New("realmenu"), value);
     obj->SetMenu(ObjectWrap::Unwrap<Menu>(value->ToObject()));

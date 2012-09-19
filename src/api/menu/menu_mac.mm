@@ -30,6 +30,7 @@ using namespace v8;
 Menu::Menu(CreationOption option) {
   menu_ = [[NSMenu alloc]
       initWithTitle:[NSString stringWithUTF8String:option.title.c_str()]];
+  [menu_ setAutoenablesItems:NO];
 }
 
 Menu::~Menu() {
@@ -58,14 +59,6 @@ void Menu::Remove(MenuItem* menu_item) {
 
 void Menu::Remove(int pos) {
   [menu_ removeItemAtIndex:pos];
-}
-
-int Menu::Length() {
-  return [menu_ numberOfItems];
-}
-
-MenuItem* Menu::IndexAt(int pos) {
-  return new MenuItem([menu_ itemAtIndex:pos]);
 }
 
 }  // namespace api

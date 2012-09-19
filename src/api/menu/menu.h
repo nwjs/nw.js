@@ -45,6 +45,7 @@ class Menu : node::ObjectWrap {
   static void Init(v8::Handle<v8::Object> target);
 
  private:
+  friend class MenuItem;
   friend class Tray;
 
   // The menu create properties
@@ -61,8 +62,6 @@ class Menu : node::ObjectWrap {
   void Insert(MenuItem* menu_item, int pos);
   void Remove(MenuItem* menu_item);
   void Remove(int pos);
-  int Length();
-  MenuItem* IndexAt(int pos);
 
   static v8::Handle<v8::Value> New(const v8::Arguments& args);
   static v8::Handle<v8::Value> Append(const v8::Arguments& args);

@@ -46,8 +46,9 @@ class Tray : node::ObjectWrap {
  private:
   // The menu create properties
   struct CreationOption {
-    std::string icon;
     std::string title;
+    std::string icon;
+    std::string tooltip;
   };
 
   Tray(CreationOption option);
@@ -56,7 +57,8 @@ class Tray : node::ObjectWrap {
   void SetTitle(const std::string& title);
   std::string GetTitle();
   void SetIcon(const std::string& icon_path);
-  std::string GetIcon();
+  void SetTooltip(const std::string& title);
+  std::string GetTooltip();
   void SetMenu(Menu* menu);
   void Remove();
 

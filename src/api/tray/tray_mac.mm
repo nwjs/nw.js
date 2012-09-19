@@ -26,8 +26,7 @@
 
 namespace api {
 
-Tray::Tray(CreationOption option)
-    : option_(option) {
+Tray::Tray(CreationOption option) {
   NSStatusBar *status_bar = [NSStatusBar systemStatusBar];
   status_item_ = [status_bar statusItemWithLength:NSVariableStatusItemLength];
   [status_item_ retain];
@@ -37,6 +36,8 @@ Tray::Tray(CreationOption option)
     SetIcon(option.icon);
   if (!option.title.empty())
     SetTitle(option.title);
+  if (!option.tooltip.empty())
+    SetTooltip(option.tooltip);
 }
 
 Tray::~Tray() {
@@ -53,14 +54,19 @@ std::string Tray::GetTitle() {
 }
 
 void Tray::SetIcon(const std::string& path) {
-  option_.icon = path;
   NSString* icon_path = [NSString stringWithUTF8String:path.c_str()];
   NSImage* icon = [[NSImage alloc] initWithContentsOfFile:icon_path];
   [status_item_ setImage:icon];
 }
 
-std::string Tray::GetIcon() {
-  return option_.icon;
+void Tray::SetTooltip(const std::string& tooltip) {
+  [status_item_ setToolTip:
+      [NSString stringWithUTF8String:tooltip.c_str()]];
+}
+
+std::string Tray::GetTooltip() {
+  NSString* tooltip = [status_item_ toolTip];
+  return tooltip == nil ? "" : [tooltip UTF8String];
 }
 
 void Tray::SetMenu(Menu* menu) {
