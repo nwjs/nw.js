@@ -25,6 +25,10 @@
 #include "base/memory/scoped_ptr.h"
 #include "content/public/renderer/content_renderer_client.h"
 
+namespace api {
+class Dispatcher;
+}
+
 namespace content {
 
 class ShellRenderProcessObserver;
@@ -47,9 +51,10 @@ class ShellContentRendererClient : public ContentRendererClient {
                                     v8::Handle<v8::Context>) OVERRIDE;
 
  private:
-  void InstallNodeSymbols(v8::Handle<v8::Context> context);
-
+  scoped_ptr<api::Dispatcher> api_dispatcher_;
   scoped_ptr<ShellRenderProcessObserver> shell_observer_;
+
+  void InstallNodeSymbols(v8::Handle<v8::Context> context);
 };
 
 }  // namespace content

@@ -23,6 +23,7 @@
 #include "base/command_line.h"
 #include "base/logging.h"
 #include "base/utf_string_conversions.h"
+#include "content/nw/src/api/dispatcher.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_version.h"
 #include "content/nw/src/renderer/prerenderer/prerenderer_client.h"
@@ -44,8 +45,6 @@ ShellContentRendererClient::~ShellContentRendererClient() {
 }
 
 void ShellContentRendererClient::RenderThreadStarted() {
-  shell_observer_.reset(new ShellRenderProcessObserver());
-
   // Initialize node after render thread is started
   v8::V8::Initialize();
   v8::HandleScope scope;
@@ -55,6 +54,10 @@ void ShellContentRendererClient::RenderThreadStarted() {
 
   char* argv[] = { (char*)"node", NULL };
   node::SetupContext(1, argv, node::g_context->Global());
+
+  // Start observers
+  shell_observer_.reset(new ShellRenderProcessObserver());
+  api_dispatcher_.reset(new api::Dispatcher());
 }
 
 void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
@@ -68,12 +71,16 @@ void ShellContentRendererClient::DidCreateScriptContext(
     int extension_group,
     int world_id) {
   InstallNodeSymbols(context);
+
+  api_dispatcher_->DidCreateScriptContext(
+      frame, context, extension_group, world_id);
 }
 
 void ShellContentRendererClient::WillReleaseScriptContext(
     WebKit::WebFrame* frame,
     v8::Handle<v8::Context> context,
     int world_id) {
+  api_dispatcher_->WillReleaseScriptContext(frame, context, world_id);
 }
 
 bool ShellContentRendererClient::WillSetSecurityToken(
