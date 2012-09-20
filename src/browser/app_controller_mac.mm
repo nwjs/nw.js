@@ -40,7 +40,6 @@
 
 - (void) applicationDidFinishLaunching: (NSNotification *) note {
   // Initlialize everything here
-  nw::InitPackageForceNoEmpty();
   static_cast<content::ShellContentBrowserClient*>(
     content::GetContentClient()->browser())->shell_browser_main_parts()->Init();
 }
