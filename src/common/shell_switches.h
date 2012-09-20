@@ -16,8 +16,9 @@ extern const char kDeveloper[];
 extern const char kDumpRenderTree[];
 extern const char kNoTimeout[];
 extern const char kNoToolbar[];
-extern const char kVersion[];
 extern const char kUrl[];
+extern const char kVersion[];
+extern const char kWorkingDirectory[];
 
 // Manifest settings
 extern const char kmMain[];

@@ -21,6 +21,8 @@
 #include "content/nw/src/renderer/shell_content_renderer_client.h"
 
 #include "base/command_line.h"
+#include "base/file_path.h"
+#include "base/file_util.h"
 #include "base/logging.h"
 #include "base/utf_string_conversions.h"
 #include "content/nw/src/api/dispatcher.h"
@@ -45,6 +47,13 @@ ShellContentRendererClient::~ShellContentRendererClient() {
 }
 
 void ShellContentRendererClient::RenderThreadStarted() {
+  // Change working directory
+  CommandLine* command_line = CommandLine::ForCurrentProcess();
+  if (command_line->HasSwitch(switches::kWorkingDirectory)) {
+    file_util::SetCurrentDirectory(
+        command_line->GetSwitchValuePath(switches::kWorkingDirectory));
+  }
+
   // Initialize node after render thread is started
   v8::V8::Initialize();
   v8::HandleScope scope;

@@ -43,11 +43,14 @@ const char kNoTimeout[] = "no-timeout";
 // Display no toolbar
 const char kNoToolbar[] = "no-toolbar";
 
+// Open specified url
+const char kUrl[] = "url";
+
 // Show version and quit
 const char kVersion[] = "version";
 
-// Open specified url
-const char kUrl[] = "url";
+// Set current working directory
+const char kWorkingDirectory[] = "working-directory";
 
 const char kmMain[]      = "main";
 const char kmName[]      = "name";
