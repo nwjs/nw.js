@@ -65,9 +65,14 @@ std::string MenuItem::GetLabel() {
 }
 
 void MenuItem::SetIcon(const std::string& icon) {
-  NSImage* image = [[NSImage alloc]
-       initWithContentsOfFile:[NSString stringWithUTF8String:icon.c_str()]];
-  [menu_item_ setImage:image];
+  if (!icon.empty()) {
+    NSImage* image = [[NSImage alloc]
+         initWithContentsOfFile:[NSString stringWithUTF8String:icon.c_str()]];
+    [menu_item_ setImage:image];
+    [image release];
+  } else {
+    [menu_item_ setImage:nil];
+  }
 }
 
 void MenuItem::SetTooltip(const std::string& tooltip) {

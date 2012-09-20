@@ -53,10 +53,15 @@ std::string Tray::GetTitle() {
   return [[status_item_ title] UTF8String];
 }
 
-void Tray::SetIcon(const std::string& path) {
-  NSString* icon_path = [NSString stringWithUTF8String:path.c_str()];
-  NSImage* icon = [[NSImage alloc] initWithContentsOfFile:icon_path];
-  [status_item_ setImage:icon];
+void Tray::SetIcon(const std::string& icon) {
+  if (!icon.empty()) {
+    NSImage* image = [[NSImage alloc]
+         initWithContentsOfFile:[NSString stringWithUTF8String:icon.c_str()]];
+    [status_item_ setImage:image];
+    [image release];
+  } else {
+    [status_item_ setImage:nil];
+  }
 }
 
 void Tray::SetTooltip(const std::string& tooltip) {

@@ -139,7 +139,17 @@
   }
 
   var tray = new gui.Tray({ title: 'Test Menu', menu: menu });
-  menu[0].icon = tray.icon = 'icon1.png';
+  menu[0].icon = 'icon1.png';
+  assert(
+  menu[0].icon == 'icon1.png',
+  'Set Menu Icon');
+
+  menu[0].icon = '';
+  assert(
+  menu[0].icon == '',
+  'Clear Menu Icon');
+
+  menu[1].icon = tray.icon = 'icon1.png';
 </script>
 </body>
 </html>
