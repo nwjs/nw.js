@@ -18,38 +18,52 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/nw/src/api/menu/menu.h"
-
 #include "content/nw/src/api/menuitem/menuitem.h"
+
+#include "content/nw/src/api/menu/menu.h"
 
 namespace api {
 
 using namespace v8;
 
-Menu::Menu(CreationOption option) {
+MenuItem::MenuItem(CreationOption option) {
+} 
+
+MenuItem::~MenuItem() {
 }
 
-Menu::~Menu() {
+void MenuItem::SetLabel(const std::string& label) {
 }
 
-void Menu::SetTitle(const std::string& title) {
-}
-
-std::string Menu::GetTitle() {
+std::string MenuItem::GetLabel() {
   return std::string();
 }
 
-void Menu::Append(MenuItem* menu_item) {
+void MenuItem::SetIcon(const std::string& icon) {
 }
 
-void Menu::Insert(MenuItem* menu_item, int pos) {
+void MenuItem::SetTooltip(const std::string& tooltip) {
 }
 
-void Menu::Remove(MenuItem* menu_item) {
+std::string MenuItem::GetTooltip() {
+  return std::string();
 }
 
-void Menu::Remove(int pos) {
+void MenuItem::SetEnabled(bool enabled) {
+}
+
+bool MenuItem::GetEnabled() {
+  return true;
+}
+
+void MenuItem::SetChecked(bool checked) {
+}
+
+bool MenuItem::GetChecked() {
+  return false;
+}
+
+void MenuItem::SetSubmenu(Menu* sub_menu) {
 }
 
 }  // namespace api
-

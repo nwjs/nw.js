@@ -33,8 +33,10 @@
 @class NSMenu;
 #else
 class NSMenu;
-#endif
-#endif
+#endif  // __OBJC__
+#elif defined(TOOLKIT_GTK)
+struct GtkMenu;
+#endif  // defined(OS_MACOSX)
 
 namespace api {
 
@@ -83,6 +85,7 @@ class Menu : node::ObjectWrap {
 #if defined(OS_MACOSX)
   typedef NSMenu* NativeType;
 #elif defined(TOOLKIT_GTK)
+  typedef GtkMenu* NativeType;
 #elif defined(OS_WIN)
 #endif
 

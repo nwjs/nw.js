@@ -35,6 +35,8 @@
 class NSMenuItem;
 class MenuItemDelegate;
 #endif  // __OBJC__
+#elif defined(TOOLKIT_GTK)
+class GtkMenuItem;
 #endif  // defined(OS_MACOSX)
 
 namespace api {
@@ -100,6 +102,7 @@ class MenuItem : node::ObjectWrap {
 #if defined(OS_MACOSX)
   typedef NSMenuItem* NativeType;
 #elif defined(TOOLKIT_GTK)
+  typedef GtkMenuItem* NativeType;
 #elif defined(OS_WIN)
 #endif
 

@@ -18,38 +18,39 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/nw/src/api/menu/menu.h"
+#include "content/nw/src/api/tray/tray.h"
 
-#include "content/nw/src/api/menuitem/menuitem.h"
+#include "content/nw/src/api/menu/menu.h"
 
 namespace api {
 
-using namespace v8;
-
-Menu::Menu(CreationOption option) {
+Tray::Tray(CreationOption option) {
 }
 
-Menu::~Menu() {
+Tray::~Tray() {
 }
 
-void Menu::SetTitle(const std::string& title) {
+void Tray::SetTitle(const std::string& title) {
 }
 
-std::string Menu::GetTitle() {
+std::string Tray::GetTitle() {
   return std::string();
 }
 
-void Menu::Append(MenuItem* menu_item) {
+void Tray::SetIcon(const std::string& path) {
 }
 
-void Menu::Insert(MenuItem* menu_item, int pos) {
+void Tray::SetTooltip(const std::string& tooltip) {
 }
 
-void Menu::Remove(MenuItem* menu_item) {
+std::string Tray::GetTooltip() {
+  return std::string();
 }
 
-void Menu::Remove(int pos) {
+void Tray::SetMenu(Menu* menu) {
+}
+
+void Tray::Remove() {
 }
 
 }  // namespace api
-

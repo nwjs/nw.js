@@ -20,14 +20,37 @@
 
 #include "content/nw/src/api/menu/menu.h"
 
+#include "content/nw/src/api/menuitem/menuitem.h"
+
 namespace api {
 
 using namespace v8;
 
-Menu::Menu(CreationOptions options) {
+Menu::Menu(CreationOption option) {
 }
 
 Menu::~Menu() {
 }
 
+void Menu::SetTitle(const std::string& title) {
+}
+
+std::string Menu::GetTitle() {
+  return std::string();
+}
+
+void Menu::Append(MenuItem* menu_item) {
+}
+
+void Menu::Insert(MenuItem* menu_item, int pos) {
+}
+
+void Menu::Remove(MenuItem* menu_item) {
+}
+
+void Menu::Remove(int pos) {
+}
+
 }  // namespace api
+
+

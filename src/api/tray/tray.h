@@ -32,8 +32,10 @@
 @class NSStatusItem;
 #else
 class NSStatusItem;
-#endif
-#endif
+#endif  // __OBJC__
+#elif defined(TOOLKIT_GTK)
+class GtkStatusIcon;
+#endif  // defined(OS_MACOSX)
 
 namespace api {
 
@@ -76,6 +78,7 @@ class Tray : node::ObjectWrap {
 #if defined(OS_MACOSX)
   typedef NSStatusItem* NativeType;
 #elif defined(TOOLKIT_GTK)
+  typedef GtkStatusIcon* NativeType;
 #elif defined(OS_WIN)
 #endif
 
