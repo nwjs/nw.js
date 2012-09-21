@@ -123,20 +123,17 @@ void ShellContentRendererClient::InstallNodeSymbols(
   bool is_nw_protocol = protocol_script->Run()->BooleanValue();
 
   if (use_node || is_nw_protocol) {
-    // Don't use WebKit's timers in node
-    v8::Local<v8::Object> disableMap = v8::Object::New();
-    disableMap->Set(v8::String::New("setTimeout"), v8::Integer::New(1));
-    disableMap->Set(v8::String::New("clearTimeout"), v8::Integer::New(1));
-    disableMap->Set(v8::String::New("setInterval"), v8::Integer::New(1));
-    disableMap->Set(v8::String::New("clearInterval"), v8::Integer::New(1));
+    v8::Local<v8::Array> symbols = v8::Array::New(5);
+    symbols->Set(0, v8::String::New("require"));
+    symbols->Set(1, v8::String::New("global"));
+    symbols->Set(2, v8::String::New("process"));
+    symbols->Set(3, v8::String::New("Buffer"));
+    symbols->Set(4, v8::String::New("root"));
 
     v8::Local<v8::Object> nodeGlobal = node::g_context->Global();
     v8::Local<v8::Object> v8Global = context->Global();
-    v8::Local<v8::Array> symbols = nodeGlobal->GetPropertyNames();
     for (unsigned i = 0; i < symbols->Length(); ++i) {
       v8::Local<v8::Value> key = symbols->Get(i);
-      if (disableMap->Has(key->ToString()))
-        continue;
       v8Global->Set(key, nodeGlobal->Get(key));
     }
   }
