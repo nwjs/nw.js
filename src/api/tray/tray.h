@@ -35,6 +35,8 @@ class NSStatusItem;
 #endif  // __OBJC__
 #elif defined(TOOLKIT_GTK)
 class GtkStatusIcon;
+#elif defined(OS_WIN)
+#include <windows.h>
 #endif  // defined(OS_MACOSX)
 
 namespace api {
@@ -74,15 +76,13 @@ class Tray : node::ObjectWrap {
 
   CreationOption option_;
 
-  // Native tray type
 #if defined(OS_MACOSX)
-  typedef NSStatusItem* NativeType;
+  NSStatusItem* status_item_;
 #elif defined(TOOLKIT_GTK)
-  typedef GtkStatusIcon* NativeType;
+  GtkStatusIcon* status_item_;
 #elif defined(OS_WIN)
+   
 #endif
-
-  NativeType status_item_;
 
   DISALLOW_COPY_AND_ASSIGN(Tray);
 };

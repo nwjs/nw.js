@@ -37,6 +37,8 @@ class MenuItemDelegate;
 #endif  // __OBJC__
 #elif defined(TOOLKIT_GTK)
 class GtkMenuItem;
+#elif defined(OS_WIN)
+#include <windows.h>
 #endif  // defined(OS_MACOSX)
 
 namespace api {
@@ -98,16 +100,14 @@ class MenuItem : node::ObjectWrap {
 
   CreationOption option_;
 
-  // Native manu type
 #if defined(OS_MACOSX)
-  typedef NSMenuItem* NativeType;
+  NSMenuItem* menu_item_;
 #elif defined(TOOLKIT_GTK)
-  typedef GtkMenuItem* NativeType;
+  GtkMenuItem* menu_item_;
 #elif defined(OS_WIN)
+
 #endif
-
-  NativeType menu_item_;
-
+  
 #if defined(OS_MACOSX)
   MenuItemDelegate* delegate_;
 #endif

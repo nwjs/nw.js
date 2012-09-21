@@ -20,6 +20,7 @@
 
 #include "content/nw/src/api/menuitem/menuitem.h"
 
+#include <base/logging.h>
 #include <string.h>
 
 using namespace v8;
@@ -45,6 +46,9 @@ Handle<Value> TypeToTypeString(api::MenuItem::MenuItemType type) {
     case api::MenuItem::NORMAL:
       return String::New("normal");
   }
+
+  NOTREACHED() << "Invalid MenuItem type.";
+  return Undefined();
 }
 
 }  // namespace

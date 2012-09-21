@@ -36,6 +36,8 @@ class NSMenu;
 #endif  // __OBJC__
 #elif defined(TOOLKIT_GTK)
 struct GtkMenu;
+#elif defined(OS_WIN)
+#include <windows.h>
 #endif  // defined(OS_MACOSX)
 
 namespace api {
@@ -81,15 +83,13 @@ class Menu : node::ObjectWrap {
 
   static v8::Persistent<v8::Function> constructor_;
 
-  // Native manu type
 #if defined(OS_MACOSX)
-  typedef NSMenu* NativeType;
+  NSMenu* menu_;
 #elif defined(TOOLKIT_GTK)
-  typedef GtkMenu* NativeType;
+  GtkMenu* menu_;
 #elif defined(OS_WIN)
+  HMENU menu_;
 #endif
-
-  NativeType menu_;
 
   DISALLOW_COPY_AND_ASSIGN(Menu);
 };
