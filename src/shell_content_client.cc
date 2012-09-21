@@ -31,10 +31,7 @@ ShellContentClient::~ShellContentClient() {
 }
 
 std::string ShellContentClient::GetUserAgent() const {
-  // The "19" is so that sites that sniff for version think that this is
-  // something reasonably current; the "77.34.5" is a hint that this isn't a
-  // standard Chrome.
-  return webkit_glue::BuildUserAgentFromProduct("Chrome/19.77.34.5");
+  return webkit_glue::BuildUserAgentFromProduct("Chrome/22.90.11.27");
 }
 
 string16 ShellContentClient::GetLocalizedString(int message_id) const {
