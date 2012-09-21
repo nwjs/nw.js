@@ -251,7 +251,18 @@ void Shell::ActivateContents(content::WebContents* contents) {
 }
 
 void Shell::DeactivateContents(content::WebContents* contents) {
-  Focus(false);
+  if (windows_.size() == 1) {
+    Focus(false);
+    return;
+  }
+
+  // Move focus to other window
+  for (unsigned i = 0; i < windows_.size(); ++i) {
+    if (windows_[i] != this) {
+      windows_[i]->Focus(true);
+      break;
+    }
+  }
 }
 
 void Shell::CloseContents(WebContents* source) {

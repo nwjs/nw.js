@@ -233,6 +233,11 @@ void Shell::Move(const gfx::Rect& pos) {
                SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
+void Shell::Focus(bool focus) {
+  if (focus)
+    SetFocus(window_);
+}
+
 ATOM Shell::RegisterWindowClass() {
   const char16* menu_name = NULL;
   if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDeveloper)) {
