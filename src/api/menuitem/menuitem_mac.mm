@@ -31,6 +31,10 @@ using namespace v8;
 MenuItem::MenuItem(CreationOption option) {
   if (option.type == SEPARATOR) {
     menu_item_ = [NSMenuItem separatorItem];
+
+    // Balance release
+    delegate_ = [MenuItemDelegate alloc];
+    [menu_item_ retain];
   } else {
     menu_item_ = [[NSMenuItem alloc]
        initWithTitle:[NSString stringWithUTF8String:option.label.c_str()]
