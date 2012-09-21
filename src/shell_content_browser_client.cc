@@ -23,6 +23,7 @@
 #include "base/command_line.h"
 #include "base/file_path.h"
 #include "base/file_util.h"
+#include "base/threading/thread_restrictions.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/browser/browser_url_handler.h"
 #include "content/public/browser/resource_dispatcher_host.h"
@@ -71,6 +72,8 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
   command_line->AppendSwitch(switches::kDisableWebSecurity);
 
   if (nw::GetManifest() && nw::GetUseNode()) {
+    base::ThreadRestrictions::SetIOAllowed(true);
+
     // Whether to disable node
     command_line->AppendSwitch(switches::kmNodejs);
 

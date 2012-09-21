@@ -318,6 +318,11 @@ void Shell::Move(const gfx::Rect& bounds) {
   gtk_window_resize(window_, width, height);
 }
 
+void Shell::Focus(bool focus) {
+  if (focus)
+    gtk_window_present(window_);
+}
+
 void Shell::OnBackButtonClicked(GtkWidget* widget) {
   GoBackOrForward(-1);
 }
