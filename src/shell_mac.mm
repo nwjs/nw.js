@@ -368,6 +368,16 @@ void Shell::Move(const gfx::Rect& pos) {
   [window_ setFrame:cocoa_bounds display:YES];
 }
 
+void Shell::Focus(bool focus) {
+  if (focus)
+    [window_ makeKeyAndOrderFront:window_];
+  else
+    [window_ orderBack:window_];
+}
+
+void Shell::Show(bool show) {
+}
+
 void Shell::ActionPerformed(int control) {
   switch (control) {
     case IDC_NAV_BACK:
