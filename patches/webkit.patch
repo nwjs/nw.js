@@ -143,6 +143,30 @@ index 668edbc..08eba45 100644
          virtual bool allowScriptExtension(const String& extensionName, int extensionGroup, int worldId) = 0;
  #endif
  
+diff --git a/Source/WebCore/page/DOMWindow.cpp b/Source/WebCore/page/DOMWindow.cpp
+index c4651d7..d7cc791 100644
+--- a/Source/WebCore/page/DOMWindow.cpp
++++ b/Source/WebCore/page/DOMWindow.cpp
+@@ -908,6 +908,8 @@ void DOMWindow::focus(ScriptExecutionContext* context)
+             allowFocus = true;
+     }
+ 
++    allowFocus = true;
++
+     // If we're a top level window, bring the window to the front.
+     if (m_frame == page->mainFrame() && allowFocus)
+         page->chrome()->focus();
+@@ -928,8 +930,10 @@ void DOMWindow::blur()
+     if (!page)
+         return;
+ 
++#if 0
+     if (m_frame->settings()->windowFocusRestricted())
+         return;
++#endif
+ 
+     if (m_frame != page->mainFrame())
+         return;
 diff --git a/Source/WebCore/page/SecurityOrigin.cpp b/Source/WebCore/page/SecurityOrigin.cpp
 index da15021..d015104 100644
 --- a/Source/WebCore/page/SecurityOrigin.cpp
