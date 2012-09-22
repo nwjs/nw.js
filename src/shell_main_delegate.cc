@@ -105,12 +105,13 @@ bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
   logging::LogEventProvider::Initialize(kContentShellProviderName);
 #endif
 
-  // Print version and quit
-  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kVersion)) {
-    printf("nw %s\nnode %s\n", NW_VERSION, NODE_VERSION);
-    *exit_code = 0;
-    return true;
-  }
+  // Disable web security
+  CommandLine* command_line = CommandLine::ForCurrentProcess();
+  command_line->AppendSwitch(switches::kAllowFileAccessFromFiles);
+  command_line->AppendSwitch(switches::kDisableWebSecurity);
+
+  // Enforce single process
+  command_line->AppendSwitch(switches::kSingleProcess);
 
   InitLogging();
 
@@ -124,9 +125,6 @@ void ShellMainDelegate::PreSandboxStartup() {
   OverrideChildProcessPath();
 #endif  // OS_MACOSX
   InitializeResourceBundle();
-
-  // Just prevent sandbox
-  CommandLine::ForCurrentProcess()->AppendSwitch(switches::kNoSandbox);
 }
 
 int ShellMainDelegate::RunProcess(

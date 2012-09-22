@@ -34,7 +34,6 @@
 #include "content/nw/src/shell.h"
 #include "content/nw/src/shell_browser_context.h"
 #include "content/nw/src/shell_browser_main_parts.h"
-#include "content/nw/src/nw_package.h"
 #include "geolocation/shell_access_token_store.h"
 #include "googleurl/src/gurl.h"
 #include "ui/base/l10n/l10n_util.h"
@@ -63,25 +62,6 @@ BrowserMainParts* ShellContentBrowserClient::CreateBrowserMainParts(
 
 void ShellContentBrowserClient::RenderViewHostCreated(
     RenderViewHost* render_view_host) {
-}
-
-void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
-    CommandLine* command_line, int child_process_id) {
-  // Disable web security
-  command_line->AppendSwitch(switches::kAllowFileAccessFromFiles);
-  command_line->AppendSwitch(switches::kDisableWebSecurity);
-
-  if (nw::GetManifest() && nw::GetUseNode()) {
-    base::ThreadRestrictions::SetIOAllowed(true);
-
-    // Whether to disable node
-    command_line->AppendSwitch(switches::kmNodejs);
-
-    // Set cwd
-    FilePath cwd;
-    file_util::GetCurrentDirectory(&cwd);
-    command_line->AppendSwitchPath(switches::kWorkingDirectory, cwd);
-  }
 }
 
 std::string ShellContentBrowserClient::GetApplicationLocale() {

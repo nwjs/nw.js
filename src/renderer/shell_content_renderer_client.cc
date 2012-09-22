@@ -27,6 +27,7 @@
 #include "base/utf_string_conversions.h"
 #include "content/nw/src/api/dispatcher.h"
 #include "content/nw/src/common/shell_switches.h"
+#include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_version.h"
 #include "content/nw/src/renderer/prerenderer/prerenderer_client.h"
 #include "content/nw/src/renderer/shell_render_process_observer.h"
@@ -47,13 +48,6 @@ ShellContentRendererClient::~ShellContentRendererClient() {
 }
 
 void ShellContentRendererClient::RenderThreadStarted() {
-  // Change working directory
-  CommandLine* command_line = CommandLine::ForCurrentProcess();
-  if (command_line->HasSwitch(switches::kWorkingDirectory)) {
-    file_util::SetCurrentDirectory(
-        command_line->GetSwitchValuePath(switches::kWorkingDirectory));
-  }
-
   // Initialize node after render thread is started
   v8::V8::Initialize();
   v8::HandleScope scope;
@@ -104,7 +98,8 @@ bool ShellContentRendererClient::WillSetSecurityToken(
 void ShellContentRendererClient::InstallNodeSymbols(
     v8::Handle<v8::Context> context) {
   // Do we integrate node?
-  bool use_node = CommandLine::ForCurrentProcess()->HasSwitch(switches::kmNodejs);
+  bool use_node =
+      CommandLine::ForCurrentProcess()->HasSwitch(switches::kmNodejs);
 
   // Test if protocol is file:
   v8::Local<v8::Script> protocol_script = v8::Script::New(v8::String::New(

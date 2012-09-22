@@ -116,7 +116,10 @@ void ShellBrowserMainParts::PostMainMessageLoopRun() {
 }
 
 void ShellBrowserMainParts::Init() {
+  CommandLine& command_line = *CommandLine::ForCurrentProcess();
   nw::InitPackageForceNoEmpty();
+  if (nw::GetUseNode())
+    command_line.AppendSwitch(switches::kmNodejs);
 
   browser_context_.reset(new ShellBrowserContext(false));
   off_the_record_browser_context_.reset(new ShellBrowserContext(true));
@@ -129,7 +132,6 @@ void ShellBrowserMainParts::Init() {
 #if !defined(OS_ANDROID)
   // See if the user specified a port on the command line (useful for
   // automation). If not, use an ephemeral port by specifying 0.
-  const CommandLine& command_line = *CommandLine::ForCurrentProcess();
   if (command_line.HasSwitch(switches::kRemoteDebuggingPort)) {
     int temp_port;
     std::string port_str =
