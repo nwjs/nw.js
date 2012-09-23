@@ -104,15 +104,12 @@ class MenuItem : node::ObjectWrap {
   struct uv_async_s click_event_;
 
 #if defined(OS_MACOSX)
-  NSMenuItem* menu_item_;
+  __block NSMenuItem* menu_item_;
+  __block MenuItemDelegate* delegate_;
 #elif defined(TOOLKIT_GTK)
   GtkMenuItem* menu_item_;
 #elif defined(OS_WIN)
 
-#endif
-  
-#if defined(OS_MACOSX)
-  MenuItemDelegate* delegate_;
 #endif
 
   DISALLOW_COPY_AND_ASSIGN(MenuItem);

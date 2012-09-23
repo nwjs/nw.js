@@ -23,94 +23,133 @@
 #import <Cocoa/Cocoa.h>
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/menuitem/menuitem_delegate_mac.h"
+#include <dispatch/dispatch.h>
 
 namespace api {
 
 using namespace v8;
 
 MenuItem::MenuItem(CreationOption option) {
-  if (option.type == SEPARATOR) {
-    menu_item_ = [NSMenuItem separatorItem];
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    if (option.type == SEPARATOR) {
+      menu_item_ = [NSMenuItem separatorItem];
 
-    // Balance release
-    delegate_ = [MenuItemDelegate alloc];
-    [menu_item_ retain];
-  } else {
-    menu_item_ = [[NSMenuItem alloc]
-       initWithTitle:[NSString stringWithUTF8String:option.label.c_str()]
-       action: @selector(invoke:)
-       keyEquivalent: @""];
+      // Balance release
+      delegate_ = [MenuItemDelegate alloc];
+      [menu_item_ retain];
+    } else {
+      menu_item_ = [[NSMenuItem alloc]
+         initWithTitle:[NSString stringWithUTF8String:option.label.c_str()]
+         action: @selector(invoke:)
+         keyEquivalent: @""];
 
-    delegate_ = [[MenuItemDelegate alloc] initWithMenuItem:this];
-    [menu_item_ setTarget:delegate_];
+      delegate_ = [[MenuItemDelegate alloc] initWithMenuItem:this];
+      [menu_item_ setTarget:delegate_];
 
-    if (!option.enabled)
-      SetEnabled(option.enabled);
-    if (!option.icon.empty())
-      SetIcon(option.icon);
-    if (option.checked)
-      SetChecked(option.checked);
-    if (!option.tooltip.empty())
-      SetTooltip(option.tooltip);
-  }
-} 
+      // Don't recursively call methods of MenuItem, otherwise we would
+      // have deadlock
+      if (!option.enabled)
+        [menu_item_ setEnabled:NO];
+      if (!option.icon.empty()) {
+        NSImage* image = [[NSImage alloc]
+            initWithContentsOfFile:[NSString
+                stringWithUTF8String:option.icon.c_str()]];
+        [menu_item_ setImage:image];
+        [image release];
+      }
+      if (option.checked)
+        [menu_item_ setState:NSOnState];
+      if (!option.tooltip.empty())
+        [menu_item_ setToolTip:
+            [NSString stringWithUTF8String:option.tooltip.c_str()]];
+    }
+  });
+}
 
 MenuItem::~MenuItem() {
-  [menu_item_ release];
-  [delegate_ release];
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    [menu_item_ release];
+    [delegate_ release];
+  });
 }
 
 void MenuItem::SetLabel(const std::string& label) {
-  [menu_item_ setTitle:[NSString stringWithUTF8String:label.c_str()]];
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    [menu_item_ setTitle:[NSString stringWithUTF8String:label.c_str()]];
+  });
 }
 
 std::string MenuItem::GetLabel() {
-  return [[menu_item_ title] UTF8String];
+  __block NSString* title = nil;
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    title = [menu_item_ title];
+  });
+  return [title UTF8String];
 }
 
 void MenuItem::SetIcon(const std::string& icon) {
-  if (!icon.empty()) {
-    NSImage* image = [[NSImage alloc]
-         initWithContentsOfFile:[NSString stringWithUTF8String:icon.c_str()]];
-    [menu_item_ setImage:image];
-    [image release];
-  } else {
-    [menu_item_ setImage:nil];
-  }
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    if (!icon.empty()) {
+      NSImage* image = [[NSImage alloc]
+           initWithContentsOfFile:[NSString stringWithUTF8String:icon.c_str()]];
+      [menu_item_ setImage:image];
+      [image release];
+    } else {
+      [menu_item_ setImage:nil];
+    }
+  });
 }
 
 void MenuItem::SetTooltip(const std::string& tooltip) {
-  [menu_item_ setToolTip:
-      [NSString stringWithUTF8String:tooltip.c_str()]];
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    [menu_item_ setToolTip:
+        [NSString stringWithUTF8String:tooltip.c_str()]];
+  });
 }
 
 std::string MenuItem::GetTooltip() {
-  NSString* tooltip = [menu_item_ toolTip];
+  __block NSString* tooltip = nil;
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    tooltip = [menu_item_ toolTip];
+  });
   return tooltip == nil ? "" : [tooltip UTF8String];
 }
 
 void MenuItem::SetEnabled(bool enabled) {
-  [menu_item_ setEnabled:enabled];
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    [menu_item_ setEnabled:enabled];
+  });
 }
 
 bool MenuItem::GetEnabled() {
-  return [menu_item_ isEnabled];
+  __block bool enabled;
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    enabled = [menu_item_ isEnabled];
+  });
+  return enabled;
 }
 
 void MenuItem::SetChecked(bool checked) {
-  if (checked)
-    [menu_item_ setState:NSOnState];
-  else
-    [menu_item_ setState:NSOffState];
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    if (checked)
+      [menu_item_ setState:NSOnState];
+    else
+      [menu_item_ setState:NSOffState];
+  });
 }
 
 bool MenuItem::GetChecked() {
-  return [menu_item_ state];
+  __block bool checked;
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    checked = [menu_item_ state];
+  });
+  return checked;
 }
 
 void MenuItem::SetSubmenu(Menu* sub_menu) {
-  [menu_item_ setSubmenu:sub_menu->menu_];
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    [menu_item_ setSubmenu:sub_menu->menu_];
+  });
 }
 
 }  // namespace api
-

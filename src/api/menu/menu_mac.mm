@@ -27,43 +27,62 @@
 #include "content/public/browser/web_contents_view.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
 #include "content/nw/src/shell.h"
+#include <dispatch/dispatch.h>
 
 namespace api {
 
 using namespace v8;
 
 Menu::Menu(CreationOption option) {
-  menu_ = [[NSMenu alloc]
-      initWithTitle:[NSString stringWithUTF8String:option.title.c_str()]];
-  [menu_ setAutoenablesItems:NO];
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    menu_ = [[NSMenu alloc]
+        initWithTitle:[NSString stringWithUTF8String:option.title.c_str()]];
+    [menu_ setAutoenablesItems:NO];
+  });
 }
 
 Menu::~Menu() {
-  [menu_ release];
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    [menu_ release];
+  });
 }
 
 void Menu::SetTitle(const std::string& title) {
-  [menu_ setTitle:[NSString stringWithUTF8String:title.c_str()]];
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    [menu_ setTitle:[NSString stringWithUTF8String:title.c_str()]];
+  });
 }
 
 std::string Menu::GetTitle() {
-  return [[menu_ title] UTF8String];
+  __block NSString* title = nil;
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    title = [menu_ title];
+  });
+  return [title UTF8String];
 }
 
 void Menu::Append(MenuItem* menu_item) {
-  [menu_ addItem:menu_item->menu_item_];
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    [menu_ addItem:menu_item->menu_item_];
+  });
 }
 
 void Menu::Insert(MenuItem* menu_item, int pos) {
-  [menu_ insertItem:menu_item->menu_item_ atIndex:pos];
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    [menu_ insertItem:menu_item->menu_item_ atIndex:pos];
+  });
 }
 
 void Menu::Remove(MenuItem* menu_item) {
-  [menu_ removeItem:menu_item->menu_item_];
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    [menu_ removeItem:menu_item->menu_item_];
+  });
 }
 
 void Menu::Remove(int pos) {
-  [menu_ removeItemAtIndex:pos];
+  dispatch_sync(dispatch_get_main_queue(), ^{
+    [menu_ removeItemAtIndex:pos];
+  });
 }
 
 void Menu::PopupInUI(int x, int y, content::Shell* shell) {

@@ -93,7 +93,7 @@ class Menu : node::ObjectWrap {
   static v8::Persistent<v8::Function> constructor_;
 
 #if defined(OS_MACOSX)
-  NSMenu* menu_;
+  __block NSMenu* menu_;
 #elif defined(TOOLKIT_GTK)
   GtkMenu* menu_;
 #elif defined(OS_WIN)

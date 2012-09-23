@@ -77,7 +77,7 @@ class Tray : node::ObjectWrap {
   CreationOption option_;
 
 #if defined(OS_MACOSX)
-  NSStatusItem* status_item_;
+  __block NSStatusItem* status_item_;
 #elif defined(TOOLKIT_GTK)
   GtkStatusIcon* status_item_;
 #elif defined(OS_WIN)
