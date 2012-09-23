@@ -186,7 +186,7 @@ Handle<Value> Menu::Popup(const Arguments& args) {
   content::BrowserThread::PostTask(
       content::BrowserThread::UI,
       FROM_HERE,
-      base::Bind(&Menu::PopupFromUI,
+      base::Bind(&Menu::BeforePopupInUI,
                  base::Unretained(obj),
                  x, y,
                  render_view_id));
@@ -194,9 +194,9 @@ Handle<Value> Menu::Popup(const Arguments& args) {
   return args.This();
 }
 
-void Menu::PopupFromUI(int x, int y, int render_view_id) {
+void Menu::BeforePopupInUI(int x, int y, int render_view_id) {
   content::Shell* shell = GetShellFromRenderViewInUI(render_view_id);
-  Popup(x, y, shell);
+  PopupInUI(x, y, shell);
 }
 
 // static

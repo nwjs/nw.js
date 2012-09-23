@@ -71,7 +71,7 @@ class Menu : node::ObjectWrap {
   void Insert(MenuItem* menu_item, int pos);
   void Remove(MenuItem* menu_item);
   void Remove(int pos);
-  void Popup(int x, int y, content::Shell*);
+  void PopupInUI(int x, int y, content::Shell*);
 
   // Shared implementations
   static v8::Handle<v8::Value> New(const v8::Arguments& args);
@@ -80,7 +80,7 @@ class Menu : node::ObjectWrap {
   static v8::Handle<v8::Value> Remove(const v8::Arguments& args);
   static v8::Handle<v8::Value> RemoveAt(const v8::Arguments& args);
   static v8::Handle<v8::Value> Popup(const v8::Arguments& args);
-  void PopupFromUI(int x, int y, int render_view_id);
+  void BeforePopupInUI(int x, int y, int render_view_id);
   static v8::Handle<v8::Value> PropertyGetter(v8::Local<v8::String> property,
                                               const v8::AccessorInfo& info);
   static void PropertySetter(v8::Local<v8::String> property,

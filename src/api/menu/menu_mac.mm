@@ -66,7 +66,7 @@ void Menu::Remove(int pos) {
   [menu_ removeItemAtIndex:pos];
 }
 
-void Menu::Popup(int x, int y, content::Shell* shell) {
+void Menu::PopupInUI(int x, int y, content::Shell* shell) {
   // Fake out a context menu event for our menu
   NSEvent* currentEvent = [NSApp currentEvent];
   NSWindow* window = shell->window();

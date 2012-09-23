@@ -151,15 +151,9 @@
 
   menu[1].icon = tray.icon = 'icon1.png';
 </script>
-<div
-  style="background:grey;color:white;width:300px;height:300px;"
-  id="menuarea">
-Right click to show context menu.
-</div>
 <script>
   document.body.addEventListener('contextmenu', function(ev) { 
     ev.preventDefault();
-    console.log(ev.x, ev.y);
     menu.popup(ev.x, ev.y);
     return false;
   }, false);
