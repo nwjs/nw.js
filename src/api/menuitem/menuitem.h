@@ -50,7 +50,9 @@ class MenuItem : node::ObjectWrap {
   // Install MenuItem into an object
   static void Init(v8::Handle<v8::Object> target);
 
-  // Clicked
+  // Call OnClick from UI thread
+  void OnClickFromUI();
+  // Call click callback in renderer thread
   void OnClick();
 
   // Different types of menu items
@@ -99,6 +101,7 @@ class MenuItem : node::ObjectWrap {
   static v8::Persistent<v8::Function> constructor_;
 
   CreationOption option_;
+  struct uv_async_s click_event_;
 
 #if defined(OS_MACOSX)
   NSMenuItem* menu_item_;

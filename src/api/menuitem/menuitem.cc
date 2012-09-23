@@ -51,6 +51,10 @@ Handle<Value> TypeToTypeString(api::MenuItem::MenuItemType type) {
   return Undefined();
 }
 
+void on_click_callback(uv_async_t* handle, int status) {
+  ((api::MenuItem*)(handle->data))->OnClick();
+}
+
 }  // namespace
 
 namespace api {
@@ -85,6 +89,10 @@ void MenuItem::Init(Handle<Object> target) {
 
   constructor_ = Persistent<Function>::New(tpl->GetFunction());
   target->Set(String::NewSymbol("MenuItem"), constructor_);
+}
+
+void MenuItem::OnClickFromUI() {
+  uv_async_send(&click_event_);
 }
 
 void MenuItem::OnClick() {
@@ -132,6 +140,10 @@ Handle<Value> MenuItem::New(const Arguments& args) {
   obj->option_ = option;
   obj->Wrap(args.This());
 
+  // Async events
+  obj->click_event_.data = obj;
+  uv_async_init(uv_default_loop(), &obj->click_event_, on_click_callback);
+
   // this.click = option.click
   Handle<Value> callback = v8op->Get(String::New("click"));
   if (callback->IsFunction())
@@ -148,7 +160,6 @@ Handle<Value> MenuItem::New(const Arguments& args) {
 // static
 Handle<Value> MenuItem::PropertyGetter(Local<String> property,
                                        const AccessorInfo& info) {
-  HandleScope scope;
   MenuItem* obj = ObjectWrap::Unwrap<MenuItem>(info.This());
 
   String::Utf8Value key(property);

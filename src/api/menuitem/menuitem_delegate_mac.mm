@@ -25,14 +25,15 @@
 @implementation MenuItemDelegate
 
 -(id)initWithMenuItem: (api::MenuItem*)item {
-  if ([super init])
+  if ([super init]) {
     menu_item_ = item;
+  }
 
   return self;
 }
 
 -(void)invoke: (id)sender {
-  menu_item_->OnClick();
+  menu_item_->OnClickFromUI();
 }
 
 @end
