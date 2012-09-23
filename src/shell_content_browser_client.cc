@@ -26,6 +26,7 @@
 #include "base/threading/thread_restrictions.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/browser/browser_url_handler.h"
+#include "content/public/browser/render_process_host.h"
 #include "content/public/browser/resource_dispatcher_host.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/browser/shell_resource_dispatcher_host_delegate.h"
@@ -48,7 +49,8 @@
 namespace content {
 
 ShellContentBrowserClient::ShellContentBrowserClient()
-    : shell_browser_main_parts_(NULL) {
+    : shell_browser_main_parts_(NULL),
+      render_process_id_(-1) {
 }
 
 ShellContentBrowserClient::~ShellContentBrowserClient() {
@@ -60,8 +62,9 @@ BrowserMainParts* ShellContentBrowserClient::CreateBrowserMainParts(
   return shell_browser_main_parts_;
 }
 
-void ShellContentBrowserClient::RenderViewHostCreated(
-    RenderViewHost* render_view_host) {
+void ShellContentBrowserClient::RenderProcessHostCreated(
+    RenderProcessHost* host) {
+  render_process_id_ = host->GetID();
 }
 
 std::string ShellContentBrowserClient::GetApplicationLocale() {

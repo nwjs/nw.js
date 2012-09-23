@@ -6,6 +6,7 @@
 #define CONTENT_SHELL_SHELL_CONTENT_BROWSER_CLIENT_H_
 
 #include <string>
+#include <map>
 
 #include "base/compiler_specific.h"
 #include "base/memory/scoped_ptr.h"
@@ -25,8 +26,7 @@ class ShellContentBrowserClient : public ContentBrowserClient {
   // ContentBrowserClient overrides.
   virtual BrowserMainParts* CreateBrowserMainParts(
       const MainFunctionParams& parameters) OVERRIDE;
-  virtual void RenderViewHostCreated(
-      RenderViewHost* render_view_host) OVERRIDE;
+  virtual void RenderProcessHostCreated(RenderProcessHost* host) OVERRIDE;
   virtual std::string GetApplicationLocale() OVERRIDE;
   virtual void ResourceDispatcherHostCreated() OVERRIDE;
   virtual AccessTokenStore* CreateAccessTokenStore() OVERRIDE;
@@ -48,12 +48,18 @@ class ShellContentBrowserClient : public ContentBrowserClient {
   ShellBrowserMainParts* shell_browser_main_parts() {
     return shell_browser_main_parts_;
   }
+  int render_process_id() {
+    return render_process_id_;
+  }
 
  private:
   scoped_ptr<ShellResourceDispatcherHostDelegate>
       resource_dispatcher_host_delegate_;
 
   ShellBrowserMainParts* shell_browser_main_parts_;
+
+  // Cached RenderProcessHost, since we have only process.
+  int render_process_id_;
 };
 
 }  // namespace content

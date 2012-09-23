@@ -46,8 +46,8 @@
       'sources': [
         'src/api/dispatcher.cc',
         'src/api/dispatcher.h',
-        'src/api/v8_utils.cc',
-        'src/api/v8_utils.h',
+        'src/api/utils.cc',
+        'src/api/utils.h',
         'src/api/menu/menu.cc',
         'src/api/menu/menu.h',
         'src/api/menu/menu_gtk.cc',
