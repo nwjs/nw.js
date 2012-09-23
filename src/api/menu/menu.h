@@ -40,6 +40,10 @@ struct GtkMenu;
 #include <windows.h>
 #endif  // defined(OS_MACOSX)
 
+namespace content {
+class Shell;
+}
+
 namespace api {
 
 class MenuItem;
@@ -60,18 +64,23 @@ class Menu : node::ObjectWrap {
   Menu(CreationOption options);
   virtual ~Menu();
 
+  // Platform-independent implementations
   void SetTitle(const std::string& title);
   std::string GetTitle();
   void Append(MenuItem* menu_item);
   void Insert(MenuItem* menu_item, int pos);
   void Remove(MenuItem* menu_item);
   void Remove(int pos);
+  void Popup(int x, int y, content::Shell*);
 
+  // Shared implementations
   static v8::Handle<v8::Value> New(const v8::Arguments& args);
   static v8::Handle<v8::Value> Append(const v8::Arguments& args);
   static v8::Handle<v8::Value> Insert(const v8::Arguments& args);
   static v8::Handle<v8::Value> Remove(const v8::Arguments& args);
   static v8::Handle<v8::Value> RemoveAt(const v8::Arguments& args);
+  static v8::Handle<v8::Value> Popup(const v8::Arguments& args);
+  void PopupFromUI(int x, int y, int render_view_id);
   static v8::Handle<v8::Value> PropertyGetter(v8::Local<v8::String> property,
                                               const v8::AccessorInfo& info);
   static void PropertySetter(v8::Local<v8::String> property,

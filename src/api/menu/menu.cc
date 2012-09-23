@@ -20,8 +20,11 @@
 
 #include "content/nw/src/api/menu/menu.h"
 
+#include "base/bind.h"
+#include "content/public/browser/browser_thread.h"
+#include "content/public/renderer/render_view.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
-#include "content/nw/src/api/v8_utils.h"
+#include "content/nw/src/api/utils.h"
 
 using namespace v8;
 
@@ -48,6 +51,8 @@ void Menu::Init(Handle<Object> target) {
       FunctionTemplate::New(Remove)->GetFunction());
   tpl->PrototypeTemplate()->Set(String::NewSymbol("removeAt"),
       FunctionTemplate::New(RemoveAt)->GetFunction());
+  tpl->PrototypeTemplate()->Set(String::NewSymbol("popup"),
+      FunctionTemplate::New(Popup)->GetFunction());
 
   constructor_ = Persistent<Function>::New(tpl->GetFunction());
   target->Set(String::NewSymbol("Menu"), constructor_);
@@ -164,6 +169,34 @@ Handle<Value> Menu::RemoveAt(const Arguments& args) {
              "splice", 2, argv);
 
   return args.This();
+}
+
+// static
+Handle<Value> Menu::Popup(const Arguments& args) {
+  HandleScope scope;
+  Menu* obj = ObjectWrap::Unwrap<Menu>(args.This());
+
+  if (args.Length() < 2 || !args[0]->IsNumber() || !args[1]->IsNumber())
+    return ThrowException(Exception::Error(
+          String::New("Wrong arguments for Menu.Popup(x, y)")));
+
+  int x = args[0]->IntegerValue();
+  int y = args[1]->IntegerValue();
+  int render_view_id = GetCurrentRenderViewInRenderer();
+  content::BrowserThread::PostTask(
+      content::BrowserThread::UI,
+      FROM_HERE,
+      base::Bind(&Menu::PopupFromUI,
+                 base::Unretained(obj),
+                 x, y,
+                 render_view_id));
+
+  return args.This();
+}
+
+void Menu::PopupFromUI(int x, int y, int render_view_id) {
+  content::Shell* shell = GetShellFromRenderViewInUI(render_view_id);
+  Popup(x, y, shell);
 }
 
 // static

@@ -20,8 +20,13 @@
 
 #include "content/nw/src/api/menu/menu.h"
 
+#include "base/message_loop.h"
+#include "base/mac/scoped_sending_event.h"
 #import <Cocoa/Cocoa.h>
+#include "content/public/browser/web_contents.h"
+#include "content/public/browser/web_contents_view.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
+#include "content/nw/src/shell.h"
 
 namespace api {
 
@@ -59,6 +64,41 @@ void Menu::Remove(MenuItem* menu_item) {
 
 void Menu::Remove(int pos) {
   [menu_ removeItemAtIndex:pos];
+}
+
+void Menu::Popup(int x, int y, content::Shell* shell) {
+  // Fake out a context menu event for our menu
+  NSEvent* currentEvent = [NSApp currentEvent];
+  NSWindow* window = shell->window();
+  NSView* web_view = shell->web_contents()->GetView()->GetNativeView();
+  NSPoint position = { x, web_view.bounds.size.height - y };
+  NSTimeInterval eventTime = [currentEvent timestamp];
+  NSEvent* clickEvent = [NSEvent mouseEventWithType:NSRightMouseDown
+                                           location:position
+                                      modifierFlags:NSRightMouseDownMask
+                                          timestamp:eventTime
+                                       windowNumber:[window windowNumber]
+                                            context:nil
+                                        eventNumber:0
+                                         clickCount:1
+                                           pressure:1.0];
+
+  {
+    // Make sure events can be pumped while the menu is up.
+    MessageLoop::ScopedNestableTaskAllower allow(MessageLoop::current());
+
+    // One of the events that could be pumped is |window.close()|.
+    // User-initiated event-tracking loops protect against this by
+    // setting flags in -[CrApplication sendEvent:], but since
+    // web-content menus are initiated by IPC message the setup has to
+    // be done manually.
+    base::mac::ScopedSendingEvent sendingEventScoper;
+
+    // Show the menu.
+    [NSMenu popUpContextMenu:menu_
+                   withEvent:clickEvent
+                     forView:web_view];
+  }
 }
 
 }  // namespace api
