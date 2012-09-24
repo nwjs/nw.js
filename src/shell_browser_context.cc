@@ -90,9 +90,6 @@ void ShellBrowserContext::InitWhileIOAllowed() {
 #elif defined(OS_MACOSX)
   CHECK(PathService::Get(base::DIR_APP_DATA, &path_));
   path_ = path_.Append(name);
-#elif defined(OS_ANDROID)
-  DCHECK(PathService::Get(base::DIR_ANDROID_APP_DATA, &path_));
-  path_ = path_.Append(name);
 #else
   NOTIMPLEMENTED();
 #endif

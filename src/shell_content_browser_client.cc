@@ -39,13 +39,6 @@
 #include "googleurl/src/gurl.h"
 #include "ui/base/l10n/l10n_util.h"
 
-#if defined(OS_ANDROID)
-#include "base/android/path_utils.h"
-#include "base/path_service.h"
-#include "base/platform_file.h"
-#include "content/shell/android/shell_descriptors.h"
-#endif
-
 namespace content {
 
 ShellContentBrowserClient::ShellContentBrowserClient()
@@ -89,27 +82,6 @@ MediaObserver* ShellContentBrowserClient::GetMediaObserver() {
 void ShellContentBrowserClient::BrowserURLHandlerCreated(
     BrowserURLHandler* handler) {
 }
-
-#if defined(OS_ANDROID)
-void ShellContentBrowserClient::GetAdditionalMappedFilesForChildProcess(
-    const CommandLine& command_line,
-    base::GlobalDescriptors::Mapping* mappings) {
-  int flags = base::PLATFORM_FILE_OPEN | base::PLATFORM_FILE_READ;
-  FilePath pak_file;
-  DCHECK(PathService::Get(base::DIR_ANDROID_APP_DATA, &pak_file));
-  pak_file = pak_file.Append(FILE_PATH_LITERAL("paks"));
-  pak_file = pak_file.Append(FILE_PATH_LITERAL("nw.pak"));
-
-  base::PlatformFile f =
-      base::CreatePlatformFile(pak_file, flags, NULL, NULL);
-  if (f == base::kInvalidPlatformFileValue) {
-    NOTREACHED() << "Failed to open file when creating renderer process: "
-                 << "nw.pak";
-  }
-  mappings->push_back(std::pair<base::GlobalDescriptors::Key, int>(
-      kShellPakDescriptor, f));
-}
-#endif
 
 ShellBrowserContext* ShellContentBrowserClient::browser_context() {
   return shell_browser_main_parts_->browser_context();

@@ -39,11 +39,6 @@
 
 #include <stdio.h>
 
-#if defined(OS_ANDROID)
-#include "base/global_descriptors_posix.h"
-#include "content/shell/android/shell_descriptors.h"
-#endif
-
 #if defined(OS_MACOSX)
 #include "content/shell/paths_mac.h"
 #endif  // OS_MACOSX
@@ -94,9 +89,6 @@ ShellMainDelegate::ShellMainDelegate() {
 }
 
 ShellMainDelegate::~ShellMainDelegate() {
-#if defined(OS_ANDROID)
-  NOTREACHED();
-#endif
 }
 
 bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
@@ -133,48 +125,16 @@ int ShellMainDelegate::RunProcess(
   if (!process_type.empty())
     return -1;
 
-#if !defined(OS_ANDROID)
   return ShellBrowserMain(main_function_params);
-#else
-  // If no process type is specified, we are creating the main browser process.
-  browser_runner_.reset(BrowserMainRunner::Create());
-  int exit_code = browser_runner_->Initialize(main_function_params);
-  DCHECK(exit_code < 0)
-      << "BrowserRunner::Initialize failed in ShellMainDelegate";
-
-  return exit_code;
-#endif
 }
 
 void ShellMainDelegate::InitializeResourceBundle() {
-#if defined(OS_ANDROID)
-  // In the Android case, the renderer runs with a different UID and can never
-  // access the file system.  So we are passed a file descriptor to the
-  // ResourceBundle pak at launch time.
-  int pak_fd =
-      base::GlobalDescriptors::GetInstance()->MaybeGet(kShellPakDescriptor);
-  if (pak_fd != base::kInvalidPlatformFileValue) {
-    ui::ResourceBundle::InitSharedInstanceWithPakFile(pak_fd, false);
-    ResourceBundle::GetSharedInstance().AddDataPackFromFile(
-        pak_fd, ui::SCALE_FACTOR_100P);
-    return;
-  }
-#endif
-
   FilePath pak_file;
 #if defined(OS_MACOSX)
   pak_file = GetResourcesPakFilePath();
 #else
   FilePath pak_dir;
-
-#if defined(OS_ANDROID)
-  bool got_path = PathService::Get(base::DIR_ANDROID_APP_DATA, &pak_dir);
-  DCHECK(got_path);
-  pak_dir = pak_dir.Append(FILE_PATH_LITERAL("paks"));
-#else
   PathService::Get(base::DIR_MODULE, &pak_dir);
-#endif
-
   pak_file = pak_dir.Append(FILE_PATH_LITERAL("nw.pak"));
 #endif
   ui::ResourceBundle::InitSharedInstanceWithPakPath(pak_file);

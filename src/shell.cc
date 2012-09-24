@@ -49,7 +49,6 @@
 namespace content {
 
 std::vector<Shell*> Shell::windows_;
-base::Callback<void(Shell*)> Shell::shell_created_callback_;
 
 bool Shell::quit_message_loop_ = true;
 
@@ -63,7 +62,7 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
       max_width_(-1),
       min_height_(-1),
       min_width_(-1)
-#if defined(OS_WIN) && !defined(USE_AURA)
+#if defined(OS_WIN)
       , default_edit_wnd_proc_(0)
 #endif
   {
@@ -79,11 +78,6 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   registrar_.Add(this, NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,
       Source<WebContents>(web_contents));
   windows_.push_back(this);
-
-  if (!shell_created_callback_.is_null()) {
-    shell_created_callback_.Run(this);
-    shell_created_callback_.Reset();
-  }
 }
 
 Shell::~Shell() {
@@ -125,12 +119,6 @@ void Shell::CloseAllWindows() {
   for (size_t i = 0; i < open_windows.size(); ++i)
     open_windows[i]->Close();
   MessageLoop::current()->RunAllPending();
-}
-
-void Shell::SetShellCreatedCallback(
-    base::Callback<void(Shell*)> shell_created_callback) {
-  DCHECK(shell_created_callback_.is_null());
-  shell_created_callback_ = shell_created_callback;
 }
 
 Shell* Shell::FromRenderViewHost(RenderViewHost* rvh) {
@@ -281,12 +269,6 @@ bool Shell::IsPopupOrPanel(const WebContents* source) const {
 bool Shell::TakeFocus(WebContents* soruce,
                       bool reverse) {
   return true;
-}
-
-void Shell::LostCapture() {
-}
-
-void Shell::WebContentsFocused(WebContents* contents) {
 }
 
 void Shell::WebContentsCreated(WebContents* source_contents,

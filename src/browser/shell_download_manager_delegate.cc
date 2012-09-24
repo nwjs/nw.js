@@ -145,7 +145,7 @@ void ShellDownloadManagerDelegate::ChooseDownloadPath(
     return;
 
   FilePath result;
-#if defined(OS_WIN) && !defined(USE_AURA)
+#if defined(OS_WIN)
   std::wstring file_part = FilePath(suggested_path).BaseName().value();
   wchar_t file_name[MAX_PATH];
   base::wcslcpy(file_name, file_part.c_str(), arraysize(file_name));

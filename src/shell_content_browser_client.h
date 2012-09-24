@@ -34,12 +34,6 @@ class ShellContentBrowserClient : public ContentBrowserClient {
   virtual MediaObserver* GetMediaObserver() OVERRIDE;
   virtual void BrowserURLHandlerCreated(BrowserURLHandler* handler) OVERRIDE;
 
-#if defined(OS_ANDROID)
-  virtual void GetAdditionalMappedFilesForChildProcess(
-      const CommandLine& command_line,
-      base::GlobalDescriptors::Mapping* mappings) OVERRIDE;
-#endif
-
   ShellBrowserContext* browser_context();
   ShellBrowserContext* off_the_record_browser_context();
   ShellResourceDispatcherHostDelegate* resource_dispatcher_host_delegate() {

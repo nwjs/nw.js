@@ -217,11 +217,6 @@ base::DictionaryValue* GetManifest() {
 }
 
 GURL GetStartupURL() {
-#if defined(OS_ANDROID)
-  // Delay renderer creation on Android until surface is ready.
-  return GURL();
-#endif
-
   std::string url; 
   // Specify URL in --url
   CommandLine* command_line = CommandLine::ForCurrentProcess();

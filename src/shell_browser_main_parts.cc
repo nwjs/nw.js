@@ -39,13 +39,6 @@
 #include "net/base/net_module.h"
 #include "ui/base/resource/resource_bundle.h"
 
-#if defined(OS_ANDROID)
-#include "net/base/network_change_notifier.h"
-#include "net/android/network_change_notifier_factory.h"
-#endif
-
-namespace content {
-
 namespace {
 
 base::StringPiece PlatformResourceProvider(int key) {
@@ -59,6 +52,8 @@ base::StringPiece PlatformResourceProvider(int key) {
 }
 
 }  // namespace
+
+namespace content {
 
 ShellBrowserMainParts::ShellBrowserMainParts(
     const MainFunctionParams& parameters)
@@ -75,19 +70,6 @@ ShellBrowserMainParts::~ShellBrowserMainParts() {
 void ShellBrowserMainParts::PreMainMessageLoopStart() {
 }
 #endif
-
-void ShellBrowserMainParts::PostMainMessageLoopStart() {
-#if defined(OS_ANDROID)
-  MessageLoopForUI::current()->Start();
-#endif
-}
-
-void ShellBrowserMainParts::PreEarlyInitialization() {
-#if defined(OS_ANDROID)
-  net::NetworkChangeNotifier::SetFactory(
-      new net::android::NetworkChangeNotifierFactory());
-#endif
-}
 
 void ShellBrowserMainParts::PreMainMessageLoopRun() {
 #if !defined(OS_MACOSX)
@@ -106,9 +88,6 @@ bool ShellBrowserMainParts::MainMessageLoopRun(int* result_code)  {
 }
 
 void ShellBrowserMainParts::PostMainMessageLoopRun() {
-#if defined(USE_AURA)
-  Shell::PlatformExit();
-#endif
   if (devtools_delegate_)
     devtools_delegate_->Stop();
   browser_context_.reset();
@@ -128,8 +107,6 @@ void ShellBrowserMainParts::Init() {
   net::NetModule::SetResourceProvider(PlatformResourceProvider);
 
   int port = 0;
-// On android the port number isn't used.
-#if !defined(OS_ANDROID)
   // See if the user specified a port on the command line (useful for
   // automation). If not, use an ephemeral port by specifying 0.
   if (command_line.HasSwitch(switches::kRemoteDebuggingPort)) {
@@ -143,7 +120,6 @@ void ShellBrowserMainParts::Init() {
       DLOG(WARNING) << "Invalid http debugger port number " << temp_port;
     }
   }
-#endif
   devtools_delegate_ = new ShellDevToolsDelegate(
       port, browser_context_->GetRequestContext());
 
@@ -154,4 +130,4 @@ void ShellBrowserMainParts::Init() {
                          NULL);
 }
 
-}  // namespace
+}  // namespace content

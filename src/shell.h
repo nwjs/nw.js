@@ -38,18 +38,6 @@
 #include "ui/base/gtk/gtk_signal.h"
 
 typedef struct _GtkToolItem GtkToolItem;
-#elif defined(OS_ANDROID)
-#include "base/android/scoped_java_ref.h"
-#elif defined(USE_AURA)
-namespace views {
-class Widget;
-class ViewsDelegate;
-}
-namespace aura {
-namespace client {
-class StackingClient;
-}
-}
 #endif
 
 namespace base {
@@ -103,10 +91,6 @@ class Shell : public WebContentsDelegate,
   // Closes all windows and exits.
   static void PlatformExit();
 
-  // Used for content_browsertests. Called once.
-  static void SetShellCreatedCallback(
-      base::Callback<void(Shell*)> shell_created_callback);
-
   WebContents* web_contents() const { return web_contents_.get(); }
   gfx::NativeWindow window() { return window_; }
 
@@ -114,18 +98,12 @@ class Shell : public WebContentsDelegate,
   // Public to be called by an ObjC bridge object.
   void ActionPerformed(int control);
   void URLEntered(std::string url_string);
-#elif defined(OS_ANDROID)
-  // Registers the Android Java to native methods.
-  static bool Register(JNIEnv* env);
 #endif
 
   // WebContentsDelegate
   virtual WebContents* OpenURLFromTab(WebContents* source,
                                       const OpenURLParams& params) OVERRIDE;
   virtual void LoadingStateChanged(WebContents* source) OVERRIDE;
-#if defined(OS_ANDROID)
-  virtual void LoadProgressChanged(double progress) OVERRIDE;
-#endif
   virtual void ActivateContents(content::WebContents* contents) OVERRIDE;
   virtual void DeactivateContents(content::WebContents* contents) OVERRIDE;
   virtual void CloseContents(WebContents* source) OVERRIDE;
@@ -133,8 +111,6 @@ class Shell : public WebContentsDelegate,
   virtual bool IsPopupOrPanel(const WebContents* source) const OVERRIDE;
   virtual bool TakeFocus(WebContents* soruce,
                          bool reverse) OVERRIDE;
-  virtual void LostCapture() OVERRIDE;
-  virtual void WebContentsFocused(WebContents* contents) OVERRIDE;
   virtual void WebContentsCreated(WebContents* source_contents,
                                   int64 source_frame_id,
                                   const GURL& target_url,
@@ -209,7 +185,7 @@ class Shell : public WebContentsDelegate,
                        const NotificationSource& source,
                        const NotificationDetails& details) OVERRIDE;
 
-#if defined(OS_WIN) && !defined(USE_AURA)
+#if defined(OS_WIN)
   static ATOM RegisterWindowClass();
   static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
   static LRESULT CALLBACK EditWndProc(HWND, UINT, WPARAM, LPARAM);
@@ -248,7 +224,7 @@ class Shell : public WebContentsDelegate,
   int min_height_;
   int min_width_;
 
-#if defined(OS_WIN) && !defined(USE_AURA)
+#if defined(OS_WIN)
   WNDPROC default_edit_wnd_proc_;
   static HINSTANCE instance_handle_;
 #elif defined(TOOLKIT_GTK)
@@ -264,20 +240,11 @@ class Shell : public WebContentsDelegate,
 
   int content_width_;
   int content_height_;
-#elif defined(OS_ANDROID)
-  base::android::ScopedJavaGlobalRef<jobject> java_object_;
-#elif defined(USE_AURA)
-  static aura::client::StackingClient* stacking_client_;
-  static views::ViewsDelegate* views_delegate_;
-
-  views::Widget* window_widget_;
 #endif
 
   // A container of all the open windows. We use a vector so we can keep track
   // of ordering.
   static std::vector<Shell*> windows_;
-
-  static base::Callback<void(Shell*)> shell_created_callback_;
 
   // True if the destructur of Shell should post a quit closure on the current
   // message loop if the destructed Shell object was the last one.
