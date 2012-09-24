@@ -20,24 +20,20 @@
 
 #include "content/nw/src/shell_content_browser_client.h"
 
-#include "base/command_line.h"
 #include "base/file_path.h"
 #include "base/file_util.h"
 #include "base/threading/thread_restrictions.h"
-#include "content/public/common/content_switches.h"
 #include "content/public/browser/browser_url_handler.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/resource_dispatcher_host.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/browser/shell_resource_dispatcher_host_delegate.h"
-#include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/media/media_internals.h"
 #include "content/nw/src/shell.h"
 #include "content/nw/src/shell_browser_context.h"
 #include "content/nw/src/shell_browser_main_parts.h"
 #include "geolocation/shell_access_token_store.h"
 #include "googleurl/src/gurl.h"
-#include "ui/base/l10n/l10n_util.h"
 
 namespace content {
 
@@ -58,10 +54,6 @@ BrowserMainParts* ShellContentBrowserClient::CreateBrowserMainParts(
 void ShellContentBrowserClient::RenderProcessHostCreated(
     RenderProcessHost* host) {
   render_process_id_ = host->GetID();
-}
-
-std::string ShellContentBrowserClient::GetApplicationLocale() {
-  return l10n_util::GetApplicationLocale("en-US");
 }
 
 void ShellContentBrowserClient::ResourceDispatcherHostCreated() {

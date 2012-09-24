@@ -27,7 +27,6 @@ class ShellContentBrowserClient : public ContentBrowserClient {
   virtual BrowserMainParts* CreateBrowserMainParts(
       const MainFunctionParams& parameters) OVERRIDE;
   virtual void RenderProcessHostCreated(RenderProcessHost* host) OVERRIDE;
-  virtual std::string GetApplicationLocale() OVERRIDE;
   virtual void ResourceDispatcherHostCreated() OVERRIDE;
   virtual AccessTokenStore* CreateAccessTokenStore() OVERRIDE;
   virtual std::string GetDefaultDownloadName() OVERRIDE;

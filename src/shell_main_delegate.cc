@@ -34,8 +34,10 @@
 #include "content/nw/src/shell_browser_main.h"
 #include "content/nw/src/shell_content_browser_client.h"
 #include "third_party/node/src/node_version.h"
+#include "ui/base/l10n/l10n_util.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/base/ui_base_paths.h"
+#include "ui/base/ui_base_switches.h"
 
 #include <stdio.h>
 
@@ -104,6 +106,10 @@ bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
 
   // Enforce single process
   command_line->AppendSwitch(switches::kSingleProcess);
+
+  // Fix navigator.language in single process mode
+  std::string locale = l10n_util::GetApplicationLocale("en-US");
+  command_line->AppendSwitchASCII(switches::kLang, locale);
 
   InitLogging();
 
