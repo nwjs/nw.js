@@ -51,6 +51,7 @@ void Menu::Remove(MenuItem* menu_item) {
 void Menu::Remove(int pos) {
 }
 
+void Menu::PopupInUI(int x, int y, content::Shell* shell) {
+}
+
 }  // namespace api
-
-
