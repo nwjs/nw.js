@@ -99,17 +99,12 @@ bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
   logging::LogEventProvider::Initialize(kContentShellProviderName);
 #endif
 
-  // Disable web security
-  CommandLine* command_line = CommandLine::ForCurrentProcess();
-  command_line->AppendSwitch(switches::kAllowFileAccessFromFiles);
-  command_line->AppendSwitch(switches::kDisableWebSecurity);
-
   // Enforce single process
-  command_line->AppendSwitch(switches::kSingleProcess);
+  // command_line->AppendSwitch(switches::kSingleProcess);
 
   // Fix navigator.language in single process mode
   std::string locale = l10n_util::GetApplicationLocale("en-US");
-  command_line->AppendSwitchASCII(switches::kLang, locale);
+  CommandLine::ForCurrentProcess()->AppendSwitchASCII(switches::kLang, locale);
 
   InitLogging();
 

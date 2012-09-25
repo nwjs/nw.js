@@ -34,6 +34,7 @@
 #include "content/nw/src/shell_browser_main_parts.h"
 #include "geolocation/shell_access_token_store.h"
 #include "googleurl/src/gurl.h"
+#include "webkit/glue/webpreferences.h"
 
 namespace content {
 
@@ -86,6 +87,22 @@ ShellBrowserContext*
 
 AccessTokenStore* ShellContentBrowserClient::CreateAccessTokenStore() {
   return new ShellAccessTokenStore(browser_context()->GetRequestContext());
+}
+
+void ShellContentBrowserClient::OverrideWebkitPrefs(
+      RenderViewHost* render_view_host,
+      const GURL& url,
+      webkit_glue::WebPreferences* prefs) {
+  // Disable web security
+  prefs->web_security_enabled = false;
+  prefs->allow_file_access_from_file_urls = true;
+
+  // Disable plugins to speed up (TODO provide flag to enable them)
+  prefs->plugins_enabled = false;
+  prefs->java_enabled = false;
+
+  // No caches
+  prefs->uses_page_cache = false;
 }
 
 }  // namespace content
