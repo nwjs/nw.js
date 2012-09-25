@@ -48,6 +48,13 @@ ShellContentRendererClient::~ShellContentRendererClient() {
 }
 
 void ShellContentRendererClient::RenderThreadStarted() {
+  // Change working directory
+  CommandLine* command_line = CommandLine::ForCurrentProcess();
+  if (command_line->HasSwitch(switches::kWorkingDirectory)) {
+    file_util::SetCurrentDirectory(
+        command_line->GetSwitchValuePath(switches::kWorkingDirectory));
+  }
+
   // Initialize node after render thread is started
   v8::V8::Initialize();
   v8::HandleScope scope;

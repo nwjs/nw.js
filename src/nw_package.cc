@@ -37,6 +37,8 @@
 
 namespace {
 
+FilePath package_root;
+
 // Don't bother with lifetime since it's used through out the program
 base::DictionaryValue* g_manifest = NULL;
 
@@ -160,7 +162,7 @@ bool InitPackage() {
   }
 
   // Set the directory of app as our working directory
-  file_util::SetCurrentDirectory(path);
+  package_root = path;
 
 #if defined(OS_WIN)
   FilePath manifest_path = path.Append(L"package.json");
@@ -243,6 +245,10 @@ bool GetUseNode() {
   bool use_node = true;
   GetManifest()->GetBoolean(switches::kmNodejs, &use_node);
   return use_node;
+}
+
+FilePath GetPackageRoot() {
+  return package_root;
 }
 
 void InitPackageForceNoEmpty() {

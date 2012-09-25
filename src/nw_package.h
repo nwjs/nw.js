@@ -23,6 +23,8 @@
 
 #include "googleurl/src/gurl.h"
 
+class FilePath;
+
 namespace base {
   class DictionaryValue;
 }
@@ -37,6 +39,9 @@ GURL GetStartupURL();
 
 // Return if we enable node.js
 bool GetUseNode();
+
+// Return root path of package
+FilePath GetPackageRoot();
 
 // Extract app package and initialize manifest file
 void InitPackageForceNoEmpty();

@@ -27,6 +27,9 @@ class ShellContentBrowserClient : public ContentBrowserClient {
   virtual BrowserMainParts* CreateBrowserMainParts(
       const MainFunctionParams& parameters) OVERRIDE;
   virtual void RenderProcessHostCreated(RenderProcessHost* host) OVERRIDE;
+  virtual std::string GetApplicationLocale() OVERRIDE;
+  virtual void AppendExtraCommandLineSwitches(CommandLine* command_line,
+                                              int child_process_id) OVERRIDE;
   virtual void ResourceDispatcherHostCreated() OVERRIDE;
   virtual AccessTokenStore* CreateAccessTokenStore() OVERRIDE;
   virtual void OverrideWebkitPrefs(

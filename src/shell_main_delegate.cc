@@ -26,6 +26,7 @@
 #include "base/path_service.h"
 #include "base/utf_string_conversions.h"
 #include "content/public/browser/browser_main_runner.h"
+#include "content/public/browser/render_process_host.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/url_constants.h"
 #include "content/nw/src/common/shell_switches.h"
@@ -99,13 +100,6 @@ bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
   logging::LogEventProvider::Initialize(kContentShellProviderName);
 #endif
 
-  // Enforce single process
-  // command_line->AppendSwitch(switches::kSingleProcess);
-
-  // Fix navigator.language in single process mode
-  std::string locale = l10n_util::GetApplicationLocale("en-US");
-  CommandLine::ForCurrentProcess()->AppendSwitchASCII(switches::kLang, locale);
-
   InitLogging();
 
   SetContentClient(&content_client_);
@@ -118,6 +112,9 @@ void ShellMainDelegate::PreSandboxStartup() {
   OverrideChildProcessPath();
 #endif  // OS_MACOSX
   InitializeResourceBundle();
+
+  // Just prevent sandbox
+  CommandLine::ForCurrentProcess()->AppendSwitch(switches::kNoSandbox);
 }
 
 int ShellMainDelegate::RunProcess(
