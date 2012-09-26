@@ -22,8 +22,7 @@
 #define CONTENT_NW_SRC_API_DISPATCHER_H_
 
 #include "base/basictypes.h"
-#include "base/memory/scoped_ptr.h"
-#include "v8/include/v8.h"
+#include "content/public/renderer/render_view_observer.h"
 
 namespace WebKit {
 class WebFrame;
@@ -31,22 +30,16 @@ class WebFrame;
 
 namespace api {
 
-class Dispatcher {
+class Dispatcher : public content::RenderViewObserver {
  public:
-  Dispatcher();
+  explicit Dispatcher(content::RenderView* render_view);
   virtual ~Dispatcher();
 
-  void DidCreateScriptContext(WebKit::WebFrame* frame,
-                              v8::Handle<v8::Context> context,
-                              int extension_group,
-                              int world_id);
-  void WillReleaseScriptContext(WebKit::WebFrame* frame,
-                                v8::Handle<v8::Context> context,
-                                int world_id);
+  // RenderViewObserver implementation.
+  virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
+  virtual void DidClearWindowObject(WebKit::WebFrame* frame) OVERRIDE;
 
  private:
-  v8::Persistent<v8::Object> gui_;
-
   DISALLOW_COPY_AND_ASSIGN(Dispatcher);
 };
 

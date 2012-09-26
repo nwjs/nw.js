@@ -20,13 +20,8 @@
 
 #include "content/nw/src/renderer/shell_render_process_observer.h"
 
-#include "base/command_line.h"
-#include "content/nw/src/common/shell_switches.h"
 #include "content/public/renderer/render_thread.h"
-#include "third_party/node/src/node.h"
-#include "third_party/node/src/req_wrap.h"
 #include "webkit/glue/webkit_glue.h"
-#include "webkit/support/gc_extension.h"
 
 namespace content {
 
@@ -38,6 +33,9 @@ ShellRenderProcessObserver::~ShellRenderProcessObserver() {
 }
 
 void ShellRenderProcessObserver::WebKitInitialized() {
+  // To implement a catch-all for not yet implemented controller properties.
+  webkit_glue::SetJavaScriptFlags(" --harmony_proxies");
+  // RenderThread::Get()->RegisterExtension(new WebKitTestRunnerBindings());
 }
 
 }  // namespace content

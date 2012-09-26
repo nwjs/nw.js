@@ -25,10 +25,6 @@
 #include "base/memory/scoped_ptr.h"
 #include "content/public/renderer/content_renderer_client.h"
 
-namespace api {
-class Dispatcher;
-}
-
 namespace content {
 
 class ShellRenderProcessObserver;
@@ -44,14 +40,10 @@ class ShellContentRendererClient : public ContentRendererClient {
                                       v8::Handle<v8::Context> context,
                                       int extension_group,
                                       int world_id) OVERRIDE;
-  virtual void WillReleaseScriptContext(WebKit::WebFrame* frame,
-                                        v8::Handle<v8::Context> context,
-                                        int world_id) OVERRIDE;
   virtual bool WillSetSecurityToken(WebKit::WebFrame* frame,
                                     v8::Handle<v8::Context>) OVERRIDE;
 
  private:
-  scoped_ptr<api::Dispatcher> api_dispatcher_;
   scoped_ptr<ShellRenderProcessObserver> shell_observer_;
 
   void InstallNodeSymbols(v8::Handle<v8::Context> context);

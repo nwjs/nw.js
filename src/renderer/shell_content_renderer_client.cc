@@ -31,7 +31,6 @@
 #include "content/nw/src/nw_version.h"
 #include "content/nw/src/renderer/prerenderer/prerenderer_client.h"
 #include "content/nw/src/renderer/shell_render_process_observer.h"
-#include "content/nw/src/renderer/shell_render_view_observer.h"
 #include "third_party/node/src/node.h"
 #include "third_party/node/src/req_wrap.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebSecurityOrigin.h"
@@ -67,12 +66,11 @@ void ShellContentRendererClient::RenderThreadStarted() {
 
   // Start observers
   shell_observer_.reset(new ShellRenderProcessObserver());
-  api_dispatcher_.reset(new api::Dispatcher());
 }
 
 void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
+  new api::Dispatcher(render_view);
   new prerender::PrerendererClient(render_view);
-  new ShellRenderViewObserver(render_view);
 }
 
 void ShellContentRendererClient::DidCreateScriptContext(
@@ -81,16 +79,6 @@ void ShellContentRendererClient::DidCreateScriptContext(
     int extension_group,
     int world_id) {
   InstallNodeSymbols(context);
-
-  api_dispatcher_->DidCreateScriptContext(
-      frame, context, extension_group, world_id);
-}
-
-void ShellContentRendererClient::WillReleaseScriptContext(
-    WebKit::WebFrame* frame,
-    v8::Handle<v8::Context> context,
-    int world_id) {
-  api_dispatcher_->WillReleaseScriptContext(frame, context, world_id);
 }
 
 bool ShellContentRendererClient::WillSetSecurityToken(

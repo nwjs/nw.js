@@ -20,46 +20,27 @@
 
 #include "content/nw/src/api/dispatcher.h"
 
-#include "content/nw/src/api/menu/menu.h"
-#include "content/nw/src/api/menuitem/menuitem.h"
-#include "content/nw/src/api/tray/tray.h"
+#include "content/nw/src/api/api_messages.h"
 
 namespace api {
 
-Dispatcher::Dispatcher() {
+Dispatcher::Dispatcher(content::RenderView* render_view)
+    : content::RenderViewObserver(render_view) {
 }
 
 Dispatcher::~Dispatcher() {
-  gui_.Dispose();
 }
 
-void Dispatcher::DidCreateScriptContext(
-    WebKit::WebFrame* frame,
-    v8::Handle<v8::Context> context,
-    int extension_group,
-    int world_id) {
-  v8::HandleScope scope;
-
-  // Create our gui bindings
-  if (gui_.IsEmpty()) {
-    gui_ = v8::Persistent<v8::Object>::New(v8::Object::New());
-    MenuItem::Init(gui_);
-    Menu::Init(gui_);
-    Tray::Init(gui_);
-  }
-
-  // And attach it to the global
-  v8::Handle<v8::Value> process = context->Global()->Get(
-      v8::String::New("process"));
-  if (process->IsObject()) {
-    process->ToObject()->Set(v8::String::New("gui"), gui_);
-  }
+void Dispatcher::DidClearWindowObject(WebKit::WebFrame* frame) {
 }
 
-void Dispatcher::WillReleaseScriptContext(
-    WebKit::WebFrame* frame,
-    v8::Handle<v8::Context> context,
-    int world_id) {
+bool Dispatcher::OnMessageReceived(const IPC::Message& message) {
+  bool handled = true;
+  IPC_BEGIN_MESSAGE_MAP(Dispatcher, message)
+    IPC_MESSAGE_UNHANDLED(handled = false)
+  IPC_END_MESSAGE_MAP()
+
+  return handled;
 }
 
 }  // namespace api

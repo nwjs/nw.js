@@ -44,6 +44,8 @@
         '<(DEPTH)',
       ],
       'sources': [
+        'src/api/api_messages.cc',
+        'src/api/api_messages.h',
         'src/api/dispatcher.cc',
         'src/api/dispatcher.h',
         'src/api/utils.cc',
@@ -126,8 +128,6 @@
         'src/renderer/shell_content_renderer_client.h',
         'src/renderer/shell_render_process_observer.cc',
         'src/renderer/shell_render_process_observer.h',
-        'src/renderer/shell_render_view_observer.cc',
-        'src/renderer/shell_render_view_observer.h',
         'src/shell.cc',
         'src/shell.h',
         'src/shell_gtk.cc',
