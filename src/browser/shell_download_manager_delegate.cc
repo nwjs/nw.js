@@ -127,7 +127,8 @@ void ShellDownloadManagerDelegate::OnDownloadPathGenerated(
   if (suppress_prompting_) {
     // Testing exit.
     callback.Run(suggested_path, DownloadItem::TARGET_DISPOSITION_OVERWRITE,
-                 DOWNLOAD_DANGER_TYPE_NOT_DANGEROUS, suggested_path);
+                 DOWNLOAD_DANGER_TYPE_NOT_DANGEROUS,
+                 suggested_path.AddExtension(FILE_PATH_LITERAL(".crdownload")));
     return;
   }
 
@@ -139,9 +140,8 @@ void ShellDownloadManagerDelegate::ChooseDownloadPath(
     const DownloadTargetCallback& callback,
     const FilePath& suggested_path) {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
-  DownloadItem* item =
-      download_manager_->GetActiveDownloadItem(download_id);
-  if (!item)
+  DownloadItem* item = download_manager_->GetDownload(download_id);
+  if (!item || (item->GetState() != DownloadItem::IN_PROGRESS))
     return;
 
   FilePath result;

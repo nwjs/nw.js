@@ -17,27 +17,27 @@
 //  OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WH
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ 
+var nwDispatcher = nwDispatcher || {};
 
-#include "content/nw/src/renderer/shell_render_process_observer.h"
+(function() {
+  native function GetConstructorName();
+  native function GetNextObjectId();
+  native function AllocateObject();
+  native function DeallocateObject();
+  native function CallObjectMethod();
 
-#include "content/public/renderer/render_thread.h"
-#include "content/nw/src/api/dispatcher_bindings.h"
-#include "webkit/glue/webkit_glue.h"
+  nwDispatcher.AllocateObject = function(object, option) {
+    var id = GetNextObjectId();
+    object.id = id;
+    AllocateObject(id, GetConstructorName(object), option);
+  }
 
-namespace content {
+  nwDispatcher.DeallocateObject = function(object) {
+    DeallocateObject(object.id);
+  };
 
-ShellRenderProcessObserver::ShellRenderProcessObserver() {
-  RenderThread::Get()->AddObserver(this);
-}
-
-ShellRenderProcessObserver::~ShellRenderProcessObserver() {
-}
-
-void ShellRenderProcessObserver::WebKitInitialized() {
-  // Enable javascript proxy
-  webkit_glue::SetJavaScriptFlags(" --harmony_proxies");
-
-  RenderThread::Get()->RegisterExtension(new api::DispatcherBindings());
-}
-
-}  // namespace content
+  nwDispatcher.CallObjectMethod = function(object, method, args) {
+    CallObjectMethod(object.id, GetConstructorName(object), method, args);
+  };
+})();

@@ -27,6 +27,7 @@
 #include "content/public/browser/browser_url_handler.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/resource_dispatcher_host.h"
+#include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/browser/shell_resource_dispatcher_host_delegate.h"
@@ -59,6 +60,11 @@ BrowserMainParts* ShellContentBrowserClient::CreateBrowserMainParts(
 void ShellContentBrowserClient::RenderProcessHostCreated(
     RenderProcessHost* host) {
   render_process_id_ = host->GetID();
+}
+
+void ShellContentBrowserClient::RenderViewHostCreated(
+    RenderViewHost* render_view_host) {
+  new api::DispatcherHost(render_view_host);
 }
 
 std::string ShellContentBrowserClient::GetApplicationLocale() {

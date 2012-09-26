@@ -27,6 +27,8 @@ class ShellContentBrowserClient : public ContentBrowserClient {
   virtual BrowserMainParts* CreateBrowserMainParts(
       const MainFunctionParams& parameters) OVERRIDE;
   virtual void RenderProcessHostCreated(RenderProcessHost* host) OVERRIDE;
+  virtual void RenderViewHostCreated(
+      RenderViewHost* render_view_host) OVERRIDE;
   virtual std::string GetApplicationLocale() OVERRIDE;
   virtual void AppendExtraCommandLineSwitches(CommandLine* command_line,
                                               int child_process_id) OVERRIDE;

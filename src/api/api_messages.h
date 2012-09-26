@@ -18,26 +18,31 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/nw/src/renderer/shell_render_process_observer.h"
+// Multiply-included file, no traditional include guard.
+#include <string>
 
-#include "content/public/renderer/render_thread.h"
-#include "content/nw/src/api/dispatcher_bindings.h"
-#include "webkit/glue/webkit_glue.h"
+#include "base/values.h"
+#include "content/public/common/common_param_traits.h"
+#include "ipc/ipc_message_macros.h"
 
-namespace content {
+#define IPC_MESSAGE_START ShellMsgStart
 
-ShellRenderProcessObserver::ShellRenderProcessObserver() {
-  RenderThread::Get()->AddObserver(this);
-}
+IPC_MESSAGE_ROUTED3(ShellViewHostMsg_Allocate_Object,
+                    int /* object id */,
+                    std::string /* type name */,
+                    DictionaryValue /* option */)
 
-ShellRenderProcessObserver::~ShellRenderProcessObserver() {
-}
+IPC_MESSAGE_ROUTED1(ShellViewHostMsg_Deallocate_Object,
+                    int /* object id */)
 
-void ShellRenderProcessObserver::WebKitInitialized() {
-  // Enable javascript proxy
-  webkit_glue::SetJavaScriptFlags(" --harmony_proxies");
+IPC_MESSAGE_ROUTED4(ShellViewHostMsg_Call_Object_Method,
+                    int /* object id */,
+                    std::string /* type name */,
+                    std::string /* method name */,
+                    ListValue /* arguments */)
 
-  RenderThread::Get()->RegisterExtension(new api::DispatcherBindings());
-}
+IPC_MESSAGE_ROUTED3(ShellViewMsg_Object_On_Event,
+                    int /* object id */,
+                    std::string /* event name */,
+                    ListValue /* arguments */)
 
-}  // namespace content

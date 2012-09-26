@@ -18,26 +18,42 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/nw/src/renderer/shell_render_process_observer.h"
+#ifndef CONTENT_NW_SRC_API_DISPATCHER_HOST_H_
+#define CONTENT_NW_SRC_API_DISPATCHER_HOST_H_
 
-#include "content/public/renderer/render_thread.h"
-#include "content/nw/src/api/dispatcher_bindings.h"
-#include "webkit/glue/webkit_glue.h"
+#include "base/basictypes.h"
+#include "base/values.h"
+#include "content/public/browser/render_view_host_observer.h"
 
-namespace content {
+#include <string>
 
-ShellRenderProcessObserver::ShellRenderProcessObserver() {
-  RenderThread::Get()->AddObserver(this);
+namespace WebKit {
+class WebFrame;
 }
 
-ShellRenderProcessObserver::~ShellRenderProcessObserver() {
-}
+namespace api {
 
-void ShellRenderProcessObserver::WebKitInitialized() {
-  // Enable javascript proxy
-  webkit_glue::SetJavaScriptFlags(" --harmony_proxies");
+class DispatcherHost : public content::RenderViewHostObserver {
+ public:
+  explicit DispatcherHost(content::RenderViewHost* render_view_host);
+  virtual ~DispatcherHost();
 
-  RenderThread::Get()->RegisterExtension(new api::DispatcherBindings());
-}
+  // RenderViewHostObserver implementation.
+  virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
 
-}  // namespace content
+  void OnAllocateObject(int object_id,
+                        const std::string& type,
+                        const base::DictionaryValue& option);
+  void OnDeallocateObject(int object_id);
+  void OnCallObjectMethod(int object_id,
+                          const std::string& type,
+                          const std::string& method,
+                          const base::ListValue& arguments);
+
+ private:
+  DISALLOW_COPY_AND_ASSIGN(DispatcherHost);
+};
+
+}  // namespace api
+
+#endif  // CONTENT_NW_SRC_API_DISPATCHER_HOST_H_

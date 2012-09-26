@@ -18,26 +18,30 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/nw/src/renderer/shell_render_process_observer.h"
+#ifndef CONTENT_NW_SRC_API_WINDOW_WINDOW_H_
+#define CONTENT_NW_SRC_API_WINDOW_WINDOW_H_ 
 
-#include "content/public/renderer/render_thread.h"
-#include "content/nw/src/api/dispatcher_bindings.h"
-#include "webkit/glue/webkit_glue.h"
+#include "third_party/node/src/node.h"
 
 namespace content {
-
-ShellRenderProcessObserver::ShellRenderProcessObserver() {
-  RenderThread::Get()->AddObserver(this);
+class Shell;
 }
 
-ShellRenderProcessObserver::~ShellRenderProcessObserver() {
-}
+namespace api {
 
-void ShellRenderProcessObserver::WebKitInitialized() {
-  // Enable javascript proxy
-  webkit_glue::SetJavaScriptFlags(" --harmony_proxies");
+class Window {
+ public:
+  static void Init(v8::Handle<v8::Object> target);
 
-  RenderThread::Get()->RegisterExtension(new api::DispatcherBindings());
-}
+ private:
+  Window();
+  ~Window();
 
-}  // namespace content
+  // Shared implementations
+  static v8::Handle<v8::Value> Show(const v8::Arguments& args);
+  static v8::Handle<v8::Value> Hide(const v8::Arguments& args);
+};
+
+}  // namespace api
+
+#endif  // CONTENT_NW_SRC_API_WINDOW_WINDOW_H_

@@ -18,26 +18,34 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/nw/src/renderer/shell_render_process_observer.h"
+#ifndef CONTENT_NW_SRC_API_DISPATCHER_BINDINGS_H_
+#define CONTENT_NW_SRC_API_DISPATCHER_BINDINGS_H_
 
-#include "content/public/renderer/render_thread.h"
-#include "content/nw/src/api/dispatcher_bindings.h"
-#include "webkit/glue/webkit_glue.h"
+#include "base/basictypes.h"
+#include "base/compiler_specific.h"
+#include "v8/include/v8.h"
 
-namespace content {
+namespace api {
 
-ShellRenderProcessObserver::ShellRenderProcessObserver() {
-  RenderThread::Get()->AddObserver(this);
-}
+class DispatcherBindings : public v8::Extension {
+ public:
+  DispatcherBindings();
+  virtual ~DispatcherBindings();
 
-ShellRenderProcessObserver::~ShellRenderProcessObserver() {
-}
+  // v8::Extension implementation.
+  virtual v8::Handle<v8::FunctionTemplate>
+      GetNativeFunction(v8::Handle<v8::String> name) OVERRIDE;
 
-void ShellRenderProcessObserver::WebKitInitialized() {
-  // Enable javascript proxy
-  webkit_glue::SetJavaScriptFlags(" --harmony_proxies");
+ private:
+  static v8::Handle<v8::Value> GetConstructorName(const v8::Arguments& args);
+  static v8::Handle<v8::Value> GetNextObjectId(const v8::Arguments& args);
+  static v8::Handle<v8::Value> AllocateObject(const v8::Arguments& args);
+  static v8::Handle<v8::Value> DeallocateObject(const v8::Arguments& args);
+  static v8::Handle<v8::Value> CallObjectMethod(const v8::Arguments& args);
 
-  RenderThread::Get()->RegisterExtension(new api::DispatcherBindings());
-}
+  DISALLOW_COPY_AND_ASSIGN(DispatcherBindings);
+};
 
-}  // namespace content
+}  // namespace api
+
+#endif  // CONTENT_NW_SRC_API_DISPATCHER_BINDINGS_H_

@@ -18,26 +18,20 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/nw/src/renderer/shell_render_process_observer.h"
+#include "content/nw/src/api/menu/menu.h"
 
-#include "content/public/renderer/render_thread.h"
-#include "content/nw/src/api/dispatcher_bindings.h"
-#include "webkit/glue/webkit_glue.h"
+#include "content/nw/src/shell.h"
 
-namespace content {
+using namespace v8;
 
-ShellRenderProcessObserver::ShellRenderProcessObserver() {
-  RenderThread::Get()->AddObserver(this);
+namespace api {
+
+// static
+void Window::Init(Handle<Object> target) {
+  HandleScope scope;
+
+  Local<Object> window = Object::New();
+  target->Set(String::NewSymbol("Window", window));
 }
 
-ShellRenderProcessObserver::~ShellRenderProcessObserver() {
-}
-
-void ShellRenderProcessObserver::WebKitInitialized() {
-  // Enable javascript proxy
-  webkit_glue::SetJavaScriptFlags(" --harmony_proxies");
-
-  RenderThread::Get()->RegisterExtension(new api::DispatcherBindings());
-}
-
-}  // namespace content
+}  // namespace api
