@@ -48,6 +48,8 @@
         '<(DEPTH)/chrome/renderer/static_v8_external_string_resource.h',
         'src/api/api_messages.cc',
         'src/api/api_messages.h',
+        'src/api/base/base.cc',
+        'src/api/base/base.h',
         'src/api/dispatcher.cc',
         'src/api/dispatcher.h',
         'src/api/dispatcher_bindings.cc',
