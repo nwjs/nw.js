@@ -19,7 +19,14 @@
       console.log('Click on Item 1');
     }
   }));
-  assert(menu.items.length == 1, menu.items[0].label == 'Item 1', 'One Menu');
+  assert(
+  menu.items.length == 1,
+  menu.items[0].label == 'Item 1',
+  menu.items[0].icon == '',
+  menu.items[0].tooltip == '',
+  menu.items[0].checked == false,
+  menu.items[0].enabled == true,
+  'One Menu');
 
   menu.append(new gui.MenuItem({ type: 'separator' }));
   menu.append(new gui.MenuItem({

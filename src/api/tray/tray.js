@@ -27,23 +27,32 @@ function Tray(option) {
 
   if (!option.hasOwnProperty('title'))
     option.title = '';
+  else
+    option.title = String(option.title);
 
-  if (!option.hasOwnProperty('tooltip'))
-    option.tooltip = '';
+  if (option.hasOwnProperty('icon'))
+    option.icon = String(option.icon);
 
-  if (!option.hasOwnProperty('icon'))
-    option.icon = '';
+  if (option.hasOwnProperty('tooltip'))
+    option.tooltip = String(option.tooltip);
 
-  if (option.hasOwnProperty('menu') &&
-      this.getConstructorName.call(option.menu) != 'Menu')
-    throw new String("'menu' must be a valid Menu object");
+  if (option.hasOwnProperty('menu')) {
+    if (this.getConstructorName.call(option.menu) != 'Menu')
+      throw new String("'menu' must be a valid Menu");
 
-  option.title = String(option.title);
-  option.tooltip = String(option.tooltip);
-  option.icon = String(option.icon);
+    // Transfer only object id
+    this.setHiddenValue('menu', option.menu);
+    option.menu = option.menu.id;
+  }
 
   this.setHiddenValue('option', option);
   nw.allocateObject(this, option);
+
+  // All properties must be set after initialization.
+  if (!option.hasOwnProperty('icon'))
+    option.icon = '';
+  if (!option.hasOwnProperty('tooltip'))
+    option.tooltip = '';
 }
 nw.inherits(Tray, exports.Base);
 
@@ -72,14 +81,14 @@ Tray.prototype.__defineSetter__('tooltip', function(val) {
 });
 
 Tray.prototype.__defineGetter__('menu', function() {
-  return this.handleGetter('menu');
+  return this.getHiddenValue('menu');
 });
 
 Tray.prototype.__defineSetter__('menu', function(val) {
   if (this.getConstructorName.call(val) != 'Menu')
     throw new String("'menu' property requries a valid Menu");
 
-  this.getHiddenValue('option').menu = val;
+  this.setHiddenValue('menu', val);
   nw.callObjectMethod(this, 'SetMenu', [ val ]);
 });
 

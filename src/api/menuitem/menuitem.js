@@ -22,39 +22,59 @@ function MenuItem(option) {
   if (typeof option != 'object')
     throw new String('Invalid option.');
 
-  if (!option.type)
+  if (!option.hasOwnProperty('type'))
     option.type = 'normal';
 
   if (option.type != 'normal' && option.type != 'separator')
     throw new String('Invalid MenuItem type: ' + option.type);
 
-  if (!option.hasOwnProperty('label'))
-    option.label = '';
-
-  if (!option.hasOwnProperty('tooltip'))
-    option.tooltip = '';
-
-  if (!option.hasOwnProperty('enabled'))
-    option.enabled = true;
-
-  if (option.hasOwnProperty('submenu') &&
-      this.getConstructorName.call(option.submenu) != 'Menu')
-    throw new String("'submenu' must be a valid MenuItem");
-
-  if (option.hasOwnProperty('click')) {
-    if (typeof option.click != 'function')
-      throw new String("'click' must be a valid Function");
+  if (option.type == 'normal') {
+    if (!option.hasOwnProperty('label'))
+      throw new String('A normal MenuItem must have a label');
     else
-      this.click = option.click;
-  }
+      option.label = String(option.label);
 
-  option.label = String(option.label);
-  option.tooltip = String(option.tooltip);
-  option.enabled = Boolean(option.enabled);
-  option.checked = Boolean(option.checked);
+    if (option.hasOwnProperty('icon'))
+      option.icon = String(option.icon);
+
+    if (option.hasOwnProperty('tooltip'))
+      option.tooltip = String(option.tooltip);
+
+    if (option.hasOwnProperty('checked'))
+      option.checked = Boolean(option.checked);
+
+    if (option.hasOwnProperty('enabled'))
+      option.enabled = Boolean(option.enabled);
+
+    if (option.hasOwnProperty('submenu')) {
+      if (this.getConstructorName.call(option.submenu) != 'Menu')
+        throw new String("'submenu' must be a valid Menu");
+
+      // Transfer only object id
+      this.setHiddenValue('submenu', option.submenu);
+      option.submenu = option.submenu.id;
+    }
+
+    if (option.hasOwnProperty('click')) {
+      if (typeof option.click != 'function')
+        throw new String("'click' must be a valid Function");
+      else
+        this.click = option.click;
+    }
+  }
 
   this.setHiddenValue('option', option);
   nw.allocateObject(this, option);
+
+  // All properties must be set after initialization.
+  if (!option.hasOwnProperty('icon'))
+    option.icon = '';
+  if (!option.hasOwnProperty('tooltip'))
+    option.tooltip = '';
+  if (!option.hasOwnProperty('checked'))
+    option.checked = false;
+  if (!option.hasOwnProperty('enabled'))
+    option.enabled = true;
 }
 nw.inherits(MenuItem, exports.Base);
 
@@ -107,14 +127,14 @@ MenuItem.prototype.__defineSetter__('enabled', function(val) {
 });
 
 MenuItem.prototype.__defineGetter__('submenu', function() {
-  return this.handleGetter('submenu');
+  return this.getHiddenValue('submenu');
 });
 
 MenuItem.prototype.__defineSetter__('submenu', function(val) {
   if (this.getConstructorName.call(val) != 'Menu')
     throw new String("'submenu' property requries a valid Menu");
 
-  this.getHiddenValue('option').submenu = val;
+  this.setHiddenValue('submenu', val);
   nw.callObjectMethod(this, 'SetMenu', [ val ]);
 });
 

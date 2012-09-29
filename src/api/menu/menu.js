@@ -24,8 +24,8 @@ function Menu(option) {
 
   if (!option.hasOwnProperty('title'))
     throw new String("'title' field is required");
-
-  option.title = String(option.title);
+  else
+    option.title = String(option.title);
 
   this.setHiddenValue('option', option);
   this.setHiddenValue('items', []);
