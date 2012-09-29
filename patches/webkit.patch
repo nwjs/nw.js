@@ -1,5 +1,5 @@
 diff --git a/Source/WebCore/bindings/v8/ScriptController.cpp b/Source/WebCore/bindings/v8/ScriptController.cpp
-index fb9d557..5f81548 100644
+index 4800ade..8f387cc 100644
 --- a/Source/WebCore/bindings/v8/ScriptController.cpp
 +++ b/Source/WebCore/bindings/v8/ScriptController.cpp
 @@ -178,7 +178,8 @@ void ScriptController::updatePlatformScriptObjects()
@@ -13,10 +13,10 @@ index fb9d557..5f81548 100644
  
  v8::Local<v8::Value> ScriptController::callFunction(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-index 9fe6d7c..9a26674 100644
+index 81ea21a..51cd870 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 +++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-@@ -510,6 +510,9 @@ void V8DOMWindowShell::clearDocumentProperty()
+@@ -509,6 +509,9 @@ void V8DOMWindowShell::clearDocumentProperty()
  
  void V8DOMWindowShell::setSecurityToken()
  {
@@ -132,10 +132,10 @@ index 256aa99..4d5bf63 100644
  #endif
  
 diff --git a/Source/WebCore/loader/FrameLoaderClient.h b/Source/WebCore/loader/FrameLoaderClient.h
-index 668edbc..08eba45 100644
+index 6ec3d79..db31ac5 100644
 --- a/Source/WebCore/loader/FrameLoaderClient.h
 +++ b/Source/WebCore/loader/FrameLoaderClient.h
-@@ -281,6 +281,7 @@ namespace WebCore {
+@@ -283,6 +283,7 @@ namespace WebCore {
  #if USE(V8)
          virtual void didCreateScriptContext(v8::Handle<v8::Context>, int extensionGroup, int worldId) = 0;
          virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int worldId) = 0;
@@ -256,10 +256,10 @@ index 9857577..a28b2fa 100644
      params.selectedFiles = fileChooser->settings().selectedFiles;
      if (params.selectedFiles.size() > 0)
 diff --git a/Source/WebKit/chromium/src/FrameLoaderClientImpl.cpp b/Source/WebKit/chromium/src/FrameLoaderClientImpl.cpp
-index 5dd02b5..3273f1a 100644
+index 7a616c5..7c1e68e 100644
 --- a/Source/WebKit/chromium/src/FrameLoaderClientImpl.cpp
 +++ b/Source/WebKit/chromium/src/FrameLoaderClientImpl.cpp
-@@ -157,6 +157,14 @@ void FrameLoaderClientImpl::willReleaseScriptContext(v8::Handle<v8::Context> con
+@@ -163,6 +163,14 @@ void FrameLoaderClientImpl::willReleaseScriptContext(v8::Handle<v8::Context> con
      if (m_webFrame->client())
          m_webFrame->client()->willReleaseScriptContext(m_webFrame, context, worldId);
  }
@@ -275,10 +275,10 @@ index 5dd02b5..3273f1a 100644
  
  bool FrameLoaderClientImpl::allowScriptExtension(const String& extensionName,
 diff --git a/Source/WebKit/chromium/src/FrameLoaderClientImpl.h b/Source/WebKit/chromium/src/FrameLoaderClientImpl.h
-index ecb20a2..a9f0a04 100644
+index 1cf5cd1..6e7dec6 100644
 --- a/Source/WebKit/chromium/src/FrameLoaderClientImpl.h
 +++ b/Source/WebKit/chromium/src/FrameLoaderClientImpl.h
-@@ -64,6 +64,7 @@ public:
+@@ -67,6 +67,7 @@ public:
  #if USE(V8)
      virtual void didCreateScriptContext(v8::Handle<v8::Context>, int extensionGroup, int worldId);
      virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int worldId);
