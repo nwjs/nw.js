@@ -47,9 +47,12 @@ bool DispatcherHost::OnMessageReceived(const IPC::Message& message) {
 void DispatcherHost::OnAllocateObject(int object_id,
                                       const std::string& type,
                                       const base::DictionaryValue& option) {
+  LOG(INFO) << "OnAllocateObject: object_id:" << object_id
+            << " type:" << type;
 }
 
 void DispatcherHost::OnDeallocateObject(int object_id) {
+  LOG(INFO) << "OnDeallocateObject: object_id:" << object_id;
 }
 
 void DispatcherHost::OnCallObjectMethod(
@@ -57,6 +60,23 @@ void DispatcherHost::OnCallObjectMethod(
     const std::string& type,
     const std::string& method,
     const base::ListValue& arguments) {
+  LOG(INFO) << "OnCallObjectMethod: object_id:" << object_id
+            << " type:" << type
+            << " method:" << method << " (";
+  int size = arguments.GetSize();
+  for (int i = 0; i < size; ++i) {
+    const Value* value;
+    arguments.Get(i, &value);
+    std::string str;
+    if (value->GetAsString(&str))
+      LOG(INFO) << str;
+    else
+      LOG(INFO) << "[other type]";
+
+    if (i != size - 1)
+      LOG(INFO) << ", ";
+  }
+  LOG(INFO) << ")";
 }
 
 }  // namespace api

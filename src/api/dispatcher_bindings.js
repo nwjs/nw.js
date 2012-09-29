@@ -1,43 +1,96 @@
 // Copyright (c) 2012 Intel Corp
 // Copyright (c) 2012 The Chromium Authors
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy 
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 //  in the Software without restriction, including without limitation the rights
 //  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell co
 // pies of the Software, and to permit persons to whom the Software is furnished
 //  to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in al
 // l copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IM
 // PLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNES
 // S FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
 //  OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WH
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- 
+
 var nwDispatcher = nwDispatcher || {};
 
 (function() {
-  native function GetConstructorName();
+  native function RequireNwGui();
+  native function GetIDWeakMapConstructor();
   native function GetNextObjectId();
+
   native function AllocateObject();
   native function DeallocateObject();
   native function CallObjectMethod();
 
-  nwDispatcher.AllocateObject = function(object, option) {
+  native function GetConstructorName();
+  native function GetHiddenValue();
+  native function SetHiddenValue();
+  native function SetDestructor();
+
+  var IDWeakMap = GetIDWeakMapConstructor();
+
+  // Store id2object map
+  var objectsRegistry = new IDWeakMap();
+
+  // Request a new object from browser
+  nwDispatcher.allocateObject = function(object, option) {
     var id = GetNextObjectId();
-    object.id = id;
-    AllocateObject(id, GetConstructorName(object), option);
+    AllocateObject(id, object.getConstructorName(), option);
+
+    // Store object id and make it readonly
+    Object.defineProperty(object, 'id', {
+      value: id,
+      writable: false
+    });
+
+    // Deallcoate on destroy
+    object.setDestructor(nwDispatcher.deallocateObject);
+
+    // Store id to object relations, there is no delete in deallocateObject
+    // since this is a weak map.
+    objectsRegistry.set(id, object);
   }
 
-  nwDispatcher.DeallocateObject = function(object) {
+  // Free a object in browser
+  nwDispatcher.deallocateObject = function(object) {
     DeallocateObject(object.id);
   };
 
-  nwDispatcher.CallObjectMethod = function(object, method, args) {
-    CallObjectMethod(object.id, GetConstructorName(object), method, args);
+  // Call method of a object in browser
+  nwDispatcher.callObjectMethod = function(object, method, args) {
+    for (var i = 0; i < args.length; ++i) {
+      // A remote object?
+      if (typeof args[i].getConstructorName == 'function') {
+        var remoteObject = args[i];
+        args[i] = remoteObject.id;
+      }
+    }
+
+    CallObjectMethod(object.id, object.getConstructorName(), method, args);
+  };
+
+  nwDispatcher.requireNwGui = RequireNwGui;
+
+  // Extended prototype of objects.
+  nwDispatcher.getConstructorName = GetConstructorName;
+  nwDispatcher.getHiddenValue = GetHiddenValue;
+  nwDispatcher.setHiddenValue = SetHiddenValue;
+  nwDispatcher.setDestructor = SetDestructor;
+  nwDispatcher.inherits = function(ctor, superCtor) {
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
   };
 })();

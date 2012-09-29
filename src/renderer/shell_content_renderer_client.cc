@@ -61,6 +61,7 @@ void ShellContentRendererClient::RenderThreadStarted() {
   node::g_context = v8::Context::New();
   node::g_context->Enter();
 
+  // Setup node.js
   char* argv[] = { (char*)"node", NULL };
   node::SetupContext(1, argv, node::g_context->Global());
 
@@ -113,12 +114,11 @@ void ShellContentRendererClient::InstallNodeSymbols(
   bool is_nw_protocol = protocol_script->Run()->BooleanValue();
 
   if (use_node || is_nw_protocol) {
-    v8::Local<v8::Array> symbols = v8::Array::New(5);
-    symbols->Set(0, v8::String::New("require"));
-    symbols->Set(1, v8::String::New("global"));
-    symbols->Set(2, v8::String::New("process"));
-    symbols->Set(3, v8::String::New("Buffer"));
-    symbols->Set(4, v8::String::New("root"));
+    v8::Local<v8::Array> symbols = v8::Array::New(4);
+    symbols->Set(0, v8::String::New("global"));
+    symbols->Set(1, v8::String::New("process"));
+    symbols->Set(2, v8::String::New("Buffer"));
+    symbols->Set(3, v8::String::New("root"));
 
     v8::Local<v8::Object> nodeGlobal = node::g_context->Global();
     v8::Local<v8::Object> v8Global = context->Global();
@@ -136,7 +136,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
 #else
         "process.mainModule.filename = decodeURIComponent(window.location.pathname);"
 #endif
-        "process.mainModule.paths = require('module')._nodeModulePaths(process.cwd());"
+        "process.mainModule.paths = global.require('module')._nodeModulePaths(process.cwd());"
     ));
     script->Run();
   }
@@ -145,6 +145,13 @@ void ShellContentRendererClient::InstallNodeSymbols(
     v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
         // Use WebKit's console globally
         "global.console = console;"
+
+        // Overload require
+        "window.require = function(name) {"
+        "  if (name == 'nw.gui')"
+        "    return nwDispatcher.requireNwGui();"
+        "  return global.require(arguments);"
+        "};"
 
         // Don't exit on exception
         "process.on('uncaughtException', function (err) {"

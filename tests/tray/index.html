@@ -15,7 +15,7 @@
 
   // Click to flip other items
   var lastone = menu[0];
-  menu[0].click = menu[1].click = menu[2].click = menu[3].click = function() {
+  menu.items[0].click = menu.items[1].click = menu.items[2].click = menu.items[3].click = function() {
     lastone.checked = false;
     lastone.enabled = true;
     this.checked = true;
@@ -61,6 +61,8 @@
   tray.menu == tray2.menu,
   tray2.title == 'Test Tray 2',
   'Second Tray');
+
+  gc();
 
 </script>
 </body>

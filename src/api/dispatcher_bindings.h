@@ -37,8 +37,19 @@ class DispatcherBindings : public v8::Extension {
       GetNativeFunction(v8::Handle<v8::String> name) OVERRIDE;
 
  private:
-  static v8::Handle<v8::Value> GetConstructorName(const v8::Arguments& args);
+  // Helper functions for bindings.
+  static v8::Handle<v8::Value> RequireNwGui(const v8::Arguments& args);
+  static v8::Handle<v8::Value> GetIDWeakMapConstructor(
+      const v8::Arguments& args);
   static v8::Handle<v8::Value> GetNextObjectId(const v8::Arguments& args);
+
+  // Extended prototype of objects.
+  static v8::Handle<v8::Value> GetHiddenValue(const v8::Arguments& args);
+  static v8::Handle<v8::Value> SetHiddenValue(const v8::Arguments& args);
+  static v8::Handle<v8::Value> GetConstructorName(const v8::Arguments& args);
+  static v8::Handle<v8::Value> SetDestructor(const v8::Arguments& args);
+
+  // Remote objects.
   static v8::Handle<v8::Value> AllocateObject(const v8::Arguments& args);
   static v8::Handle<v8::Value> DeallocateObject(const v8::Arguments& args);
   static v8::Handle<v8::Value> CallObjectMethod(const v8::Arguments& args);

@@ -18,27 +18,35 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/nw/src/renderer/shell_render_process_observer.h"
+#include "third_party/node/src/node.h"
 
-#include "content/public/renderer/render_thread.h"
-#include "content/nw/src/api/dispatcher_bindings.h"
-#include "webkit/glue/webkit_glue.h"
-#include "webkit/support/gc_extension.h"
-#include "v8/include/v8.h"
+#include <map>
 
-namespace content {
+namespace api {
 
-ShellRenderProcessObserver::ShellRenderProcessObserver() {
-  RenderThread::Get()->AddObserver(this);
-}
+// Key is int type and Value is weak pointer
+class IDWeakMap : node::ObjectWrap {
+ public:
+  static void Init();
+  static v8::Handle<v8::Function> GetContructor();
 
-ShellRenderProcessObserver::~ShellRenderProcessObserver() {
-}
+  static v8::Handle<v8::Value> New(const v8::Arguments& args);
+  static v8::Handle<v8::Value> Set(const v8::Arguments& args);
+  static v8::Handle<v8::Value> Get(const v8::Arguments& args);
+  static v8::Handle<v8::Value> Has(const v8::Arguments& args);
+  static v8::Handle<v8::Value> Delete(const v8::Arguments& args);
 
-void ShellRenderProcessObserver::WebKitInitialized() {
-  webkit_glue::SetJavaScriptFlags(" --expose-gc");
-  RenderThread::Get()->RegisterExtension(extensions_v8::GCExtension::Get());
-  RenderThread::Get()->RegisterExtension(new api::DispatcherBindings());
-}
+ private:
+  explicit IDWeakMap();
+  virtual ~IDWeakMap();
 
-}  // namespace content
+  void Erase(int key);
+
+  static void WeakCallback(v8::Persistent<v8::Value> value, void *data);
+
+  static v8::Persistent<v8::Function> constructor_;
+
+  std::map< int, v8::Persistent<v8::Value> > map_;
+};
+
+}  // namespace api

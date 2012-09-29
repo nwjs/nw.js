@@ -18,27 +18,27 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/nw/src/renderer/shell_render_process_observer.h"
+#ifndef CONTENT_NW_SRC_API_OBJECT_LIFE_MONITOR_H_
+#define CONTENT_NW_SRC_API_OBJECT_LIFE_MONITOR_H_
 
-#include "content/public/renderer/render_thread.h"
-#include "content/nw/src/api/dispatcher_bindings.h"
-#include "webkit/glue/webkit_glue.h"
-#include "webkit/support/gc_extension.h"
 #include "v8/include/v8.h"
 
-namespace content {
+namespace api {
 
-ShellRenderProcessObserver::ShellRenderProcessObserver() {
-  RenderThread::Get()->AddObserver(this);
-}
+class ObjectLifeMonitor {
+ public:
+  static void BindTo(v8::Handle<v8::Object> target,
+                     v8::Handle<v8::Value> destructor);
 
-ShellRenderProcessObserver::~ShellRenderProcessObserver() {
-}
+ private:
+  ObjectLifeMonitor();
+  virtual ~ObjectLifeMonitor();
 
-void ShellRenderProcessObserver::WebKitInitialized() {
-  webkit_glue::SetJavaScriptFlags(" --expose-gc");
-  RenderThread::Get()->RegisterExtension(extensions_v8::GCExtension::Get());
-  RenderThread::Get()->RegisterExtension(new api::DispatcherBindings());
-}
+  static void WeakCallback(v8::Persistent<v8::Value> value, void *data);
 
-}  // namespace content
+  v8::Persistent<v8::Object> handle_;
+};
+
+}  // namespace api
+
+#endif  // CONTENT_NW_SRC_API_OBJECT_LIFE_MONITOR_H_

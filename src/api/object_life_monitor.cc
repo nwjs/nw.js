@@ -18,27 +18,44 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/nw/src/renderer/shell_render_process_observer.h"
+#include "content/nw/src/api/object_life_monitor.h"
 
-#include "content/public/renderer/render_thread.h"
-#include "content/nw/src/api/dispatcher_bindings.h"
-#include "webkit/glue/webkit_glue.h"
-#include "webkit/support/gc_extension.h"
-#include "v8/include/v8.h"
+namespace api {
 
-namespace content {
+// static
+void ObjectLifeMonitor::BindTo(v8::Handle<v8::Object> target,
+                               v8::Handle<v8::Value> destructor) {
+  target->SetHiddenValue(v8::String::New("destructor"), destructor);
 
-ShellRenderProcessObserver::ShellRenderProcessObserver() {
-  RenderThread::Get()->AddObserver(this);
+  ObjectLifeMonitor* olm = new ObjectLifeMonitor();
+  olm->handle_ = v8::Persistent<v8::Object>::New(target);
+  olm->handle_.MakeWeak(olm, WeakCallback);
 }
 
-ShellRenderProcessObserver::~ShellRenderProcessObserver() {
+ObjectLifeMonitor::ObjectLifeMonitor() {
 }
 
-void ShellRenderProcessObserver::WebKitInitialized() {
-  webkit_glue::SetJavaScriptFlags(" --expose-gc");
-  RenderThread::Get()->RegisterExtension(extensions_v8::GCExtension::Get());
-  RenderThread::Get()->RegisterExtension(new api::DispatcherBindings());
+ObjectLifeMonitor::~ObjectLifeMonitor() {
+  handle_.ClearWeak();
+  handle_.Dispose();
+  handle_.Clear();
 }
 
-}  // namespace content
+// static
+void ObjectLifeMonitor::WeakCallback(v8::Persistent<v8::Value> value,
+                                     void *data) {
+  // destructor.call(object, object);
+  {
+    v8::HandleScope scope;
+
+    v8::Local<v8::Object> obj = value->ToObject();
+    v8::Local<v8::Value> args[] = { obj };
+    v8::Local<v8::Function>::Cast(obj->GetHiddenValue(
+        v8::String::New("destructor")))->Call(obj, 1, args);
+  }
+
+  ObjectLifeMonitor* obj = static_cast<ObjectLifeMonitor*>(data);
+  delete obj;
+}
+
+}  // namespace api

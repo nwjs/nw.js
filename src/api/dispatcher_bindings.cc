@@ -22,10 +22,13 @@
 
 #include "base/logging.h"
 #include "base/values.h"
+#include "chrome/renderer/static_v8_external_string_resource.h"
 #include "content/public/renderer/render_view.h"
 #include "content/public/renderer/render_thread.h"
 #include "content/public/renderer/v8_value_converter.h"
 #include "content/nw/src/api/api_messages.h"
+#include "content/nw/src/api/id_weak_map.h"
+#include "content/nw/src/api/object_life_monitor.h"
 #include "grit/nw_resources.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebFrame.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebView.h"
@@ -60,6 +63,33 @@ RenderView* GetCurrentRenderView() {
   return render_view;
 }
 
+v8::Handle<v8::String> WrapSource(v8::Handle<v8::String> source) {
+  v8::HandleScope handle_scope;
+  v8::Handle<v8::String> left =
+      v8::String::New("(function(nw, exports) {");
+  v8::Handle<v8::String> right = v8::String::New("\n})");
+  return handle_scope.Close(
+      v8::String::Concat(left, v8::String::Concat(source, right)));
+}
+
+// Similar to node's `require` function, save functions in `exports`.
+void RequireFromResource(v8::Handle<v8::Object> root,
+                         v8::Handle<v8::Object> gui,
+                         v8::Handle<v8::String> name,
+                         int resource_id) {
+  v8::HandleScope scope;
+
+  v8::Handle<v8::String> source = v8::String::NewExternal(
+      new StaticV8ExternalAsciiStringResource(
+          GetStringResource(resource_id)));
+  v8::Handle<v8::String> wrapped_source = WrapSource(source);
+
+  v8::Handle<v8::Script> script(v8::Script::New(wrapped_source, name));
+  v8::Handle<v8::Function> func = v8::Handle<v8::Function>::Cast(script->Run());
+  v8::Handle<v8::Value> args[] = { root, gui };
+  func->Call(root, 2, args);
+}
+
 }  // namespace
 
 DispatcherBindings::DispatcherBindings()
@@ -75,15 +105,30 @@ DispatcherBindings::DispatcherBindings()
 DispatcherBindings::~DispatcherBindings() {
 }
 
-// static
 v8::Handle<v8::FunctionTemplate>
 DispatcherBindings::GetNativeFunction(v8::Handle<v8::String> name) {
-  if (name->Equals(v8::String::New("GetConstructorName")))
+  if (name->Equals(v8::String::New("RequireNwGui")))
+    return v8::FunctionTemplate::New(RequireNwGui);
+  // Since we can only return FunctionTemplate here, we have no choice but to
+  // return a helper function to return the real constructor.
+  else if (name->Equals(v8::String::New("GetIDWeakMapConstructor")))
+    return v8::FunctionTemplate::New(GetIDWeakMapConstructor);
+  else if (name->Equals(v8::String::New("GetConstructorName")))
     return v8::FunctionTemplate::New(GetConstructorName);
+  else if (name->Equals(v8::String::New("GetHiddenValue")))
+    return v8::FunctionTemplate::New(GetHiddenValue);
+  else if (name->Equals(v8::String::New("SetHiddenValue")))
+    return v8::FunctionTemplate::New(SetHiddenValue);
+  else if (name->Equals(v8::String::New("SetDestructor")))
+    return v8::FunctionTemplate::New(SetDestructor);
   else if (name->Equals(v8::String::New("GetNextObjectId")))
     return v8::FunctionTemplate::New(GetNextObjectId);
   else if (name->Equals(v8::String::New("AllocateObject")))
     return v8::FunctionTemplate::New(AllocateObject);
+  else if (name->Equals(v8::String::New("DeallocateObject")))
+    return v8::FunctionTemplate::New(DeallocateObject);
+  else if (name->Equals(v8::String::New("CallObjectMethod")))
+    return v8::FunctionTemplate::New(CallObjectMethod);
 
   NOTREACHED();
   return v8::FunctionTemplate::New();
@@ -91,8 +136,33 @@ DispatcherBindings::GetNativeFunction(v8::Handle<v8::String> name) {
 
 // static
 v8::Handle<v8::Value>
-DispatcherBindings::GetConstructorName(const v8::Arguments& args) {
-  return args[0]->ToObject()->GetConstructorName();
+DispatcherBindings::RequireNwGui(const v8::Arguments& args) {
+  v8::HandleScope scope;
+
+  // Initialize lazily
+  v8::Local<v8::String> NwGuiSymbol = v8::String::NewSymbol("nwGui");
+  v8::Local<v8::Value> NwGuiHidden = args.This()->Get(NwGuiSymbol);
+  if (NwGuiHidden->IsObject())
+    return scope.Close(NwGuiHidden);
+
+  v8::Local<v8::Object> NwGui = v8::Object::New();
+  args.This()->Set(NwGuiSymbol, NwGui);
+  RequireFromResource(args.This(),
+      NwGui, v8::String::New("base.js"), IDR_NW_API_BASE_JS);
+  RequireFromResource(args.This(),
+      NwGui, v8::String::New("menuitem.js"), IDR_NW_API_MENUITEM_JS);
+  RequireFromResource(args.This(),
+      NwGui, v8::String::New("menu.js"), IDR_NW_API_MENU_JS);
+  RequireFromResource(args.This(),
+      NwGui, v8::String::New("tray.js"), IDR_NW_API_TRAY_JS);
+
+  return scope.Close(NwGui);
+}
+
+// static
+v8::Handle<v8::Value>
+DispatcherBindings::GetIDWeakMapConstructor(const v8::Arguments& args) {
+  return IDWeakMap::GetContructor();
 }
 
 // static
@@ -100,6 +170,32 @@ v8::Handle<v8::Value>
 DispatcherBindings::GetNextObjectId(const v8::Arguments& args) {
   static int next_object_id = 1;
   return v8::Integer::New(next_object_id++);
+}
+
+// static
+v8::Handle<v8::Value>
+DispatcherBindings::GetHiddenValue(const v8::Arguments& args) {
+  return args.This()->GetHiddenValue(args[0]->ToString());
+}
+
+// static
+v8::Handle<v8::Value>
+DispatcherBindings::SetHiddenValue(const v8::Arguments& args) {
+  args.This()->SetHiddenValue(args[0]->ToString(), args[1]);
+  return v8::Undefined();
+}
+
+// static
+v8::Handle<v8::Value>
+DispatcherBindings::GetConstructorName(const v8::Arguments& args) {
+  return args.This()->GetConstructorName();
+}
+
+// static
+v8::Handle<v8::Value>
+DispatcherBindings::SetDestructor(const v8::Arguments& args) {
+  ObjectLifeMonitor::BindTo(args.This(), args[0]);
+  return v8::Undefined();
 }
 
 // static
@@ -124,8 +220,6 @@ DispatcherBindings::AllocateObject(const v8::Arguments& args) {
             "Unable to convert 'option' passed to AllocateObject")));
   }
 
-  // Get the current RenderView so that we can send a routed IPC message from
-  // the correct source.
   RenderView* render_view = GetCurrentRenderView();
   if (!render_view) {
     return v8::ThrowException(v8::Exception::Error(v8::String::New(
@@ -150,8 +244,6 @@ DispatcherBindings::DeallocateObject(const v8::Arguments& args) {
 
   int object_id = args[0]->Int32Value();
 
-  // Get the current RenderView so that we can send a routed IPC message from
-  // the correct source.
   RenderView* render_view = GetCurrentRenderView();
   if (!render_view) {
     return v8::ThrowException(v8::Exception::Error(v8::String::New(
@@ -185,8 +277,6 @@ DispatcherBindings::CallObjectMethod(const v8::Arguments& args) {
             "Unable to convert 'args' passed to CallObjectMethod")));
   }
 
-  // Get the current RenderView so that we can send a routed IPC message from
-  // the correct source.
   RenderView* render_view = GetCurrentRenderView();
   if (!render_view) {
     return v8::ThrowException(v8::Exception::Error(v8::String::New(

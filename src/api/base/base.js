@@ -1,16 +1,16 @@
 // Copyright (c) 2012 Intel Corp
 // Copyright (c) 2012 The Chromium Authors
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy 
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 //  in the Software without restriction, including without limitation the rights
 //  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell co
 // pies of the Software, and to permit persons to whom the Software is furnished
 //  to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in al
 // l copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IM
 // PLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNES
 // S FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
@@ -18,27 +18,35 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/nw/src/renderer/shell_render_process_observer.h"
-
-#include "content/public/renderer/render_thread.h"
-#include "content/nw/src/api/dispatcher_bindings.h"
-#include "webkit/glue/webkit_glue.h"
-#include "webkit/support/gc_extension.h"
-#include "v8/include/v8.h"
-
-namespace content {
-
-ShellRenderProcessObserver::ShellRenderProcessObserver() {
-  RenderThread::Get()->AddObserver(this);
+function Base() {
+  throw new String("It's forbidden to instantialize a Base class.");
 }
 
-ShellRenderProcessObserver::~ShellRenderProcessObserver() {
+// Move helper functions to Base
+Base.prototype.getConstructorName = nw.getConstructorName;
+Base.prototype.getHiddenValue = nw.getHiddenValue;
+Base.prototype.setHiddenValue = nw.setHiddenValue;
+Base.prototype.setDestructor = nw.setDestructor;
+delete nw.getConstructorName;
+delete nw.getHiddenValue;
+delete nw.setHiddenValue;
+delete nw.setDestructor;
+
+// Silent unhandled events
+Base.prototype.handleResponse = function(ev) {
+  if (typeof this.on == 'function')
+    this.on(arguments);
 }
 
-void ShellRenderProcessObserver::WebKitInitialized() {
-  webkit_glue::SetJavaScriptFlags(" --expose-gc");
-  RenderThread::Get()->RegisterExtension(extensions_v8::GCExtension::Get());
-  RenderThread::Get()->RegisterExtension(new api::DispatcherBindings());
+// Generic getter and setter
+Base.prototype.handleGetter = function(name) {
+  return this.getHiddenValue('option')[name];
 }
 
-}  // namespace content
+Base.prototype.handleSetter = function(name, setter, type, value) {
+  value = type(value);
+  this.getHiddenValue('option')[name] = value;
+  nw.callObjectMethod(this, setter, [ value ]);
+}
+
+exports.Base = Base;
