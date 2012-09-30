@@ -60,8 +60,6 @@
         'src/api/id_weak_map.h',
         'src/api/object_life_monitor.cc',
         'src/api/object_life_monitor.h',
-        'src/api/utils.cc',
-        'src/api/utils.h',
         'src/api/menu/menu.cc',
         'src/api/menu/menu.h',
         'src/api/menu/menu_gtk.cc',
