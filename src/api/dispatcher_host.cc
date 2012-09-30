@@ -21,7 +21,12 @@
 #include "content/nw/src/api/dispatcher_host.h"
 
 #include "base/logging.h"
+#include "base/values.h"
 #include "content/nw/src/api/api_messages.h"
+#include "content/nw/src/api/base/base.h"
+#include "content/nw/src/api/menu/menu.h"
+#include "content/nw/src/api/menuitem/menuitem.h"
+#include "content/nw/src/api/tray/tray.h"
 
 namespace api {
 
@@ -30,6 +35,17 @@ DispatcherHost::DispatcherHost(content::RenderViewHost* render_view_host)
 }
 
 DispatcherHost::~DispatcherHost() {
+}
+
+Base* DispatcherHost::GetObject(int id) {
+  return objects_registry_.Lookup(id); 
+}
+
+void DispatcherHost::SendEvent(Base* object,
+                               const std::string& event,
+                               const base::ListValue& arguments) {
+  Send(new ShellViewMsg_Object_On_Event(
+       routing_id(), object->id(), event, arguments));
 }
 
 bool DispatcherHost::OnMessageReceived(const IPC::Message& message) {
@@ -47,13 +63,26 @@ bool DispatcherHost::OnMessageReceived(const IPC::Message& message) {
 void DispatcherHost::OnAllocateObject(int object_id,
                                       const std::string& type,
                                       const base::DictionaryValue& option) {
-  LOG(INFO) << "OnAllocateObject: object_id:" << object_id
-            << " type:" << type
-            << " option:" << option;
+  DLOG(INFO) << "OnAllocateObject: object_id:" << object_id
+             << " type:" << type
+             << " option:" << option;
+
+  if (type == "Menu") {
+    objects_registry_.AddWithID(new Menu(object_id, this, option), object_id);
+  } else if (type == "MenuItem") {
+    objects_registry_.AddWithID(
+        new MenuItem(object_id, this, option), object_id);
+  } else if (type == "Tray") {
+    objects_registry_.AddWithID(new Tray(object_id, this, option), object_id);
+  } else {
+    LOG(ERROR) << "Allocate an object of unknow type: " << type;
+    objects_registry_.AddWithID(new Base(object_id, this, option), object_id);
+  }
 }
 
 void DispatcherHost::OnDeallocateObject(int object_id) {
-  LOG(INFO) << "OnDeallocateObject: object_id:" << object_id;
+  DLOG(INFO) << "OnDeallocateObject: object_id:" << object_id;
+  objects_registry_.Remove(object_id);
 }
 
 void DispatcherHost::OnCallObjectMethod(
@@ -61,10 +90,14 @@ void DispatcherHost::OnCallObjectMethod(
     const std::string& type,
     const std::string& method,
     const base::ListValue& arguments) {
-  LOG(INFO) << "OnCallObjectMethod: object_id:" << object_id
-            << " type:" << type
-            << " method:" << method
-            << " arguments:" << arguments;
+  DLOG(INFO) << "OnCallObjectMethod: object_id:" << object_id
+             << " type:" << type
+             << " method:" << method
+             << " arguments:" << arguments;
+
+  Base* object = GetObject(object_id);
+  DCHECK(object) << "Unknown object: " << object_id;
+  object->Call(method, arguments);
 }
 
 }  // namespace api

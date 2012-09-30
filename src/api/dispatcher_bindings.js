@@ -76,6 +76,12 @@ var nwDispatcher = nwDispatcher || {};
     CallObjectMethod(object.id, object.getConstructorName(), method, args);
   };
 
+  nwDispatcher.handleEvent = function(object_id, ev, args) {
+    var object = objectsRegistry.get(object_id);
+    args.splice(0, 0, ev);
+    object.handleEvent.apply(object, args);
+  }
+
   nwDispatcher.requireNwGui = RequireNwGui;
 
   // Extended prototype of objects.

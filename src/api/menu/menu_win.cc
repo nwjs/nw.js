@@ -26,17 +26,13 @@ namespace api {
 
 using namespace v8;
 
-Menu::Menu(CreationOption option) {
+void Menu::Create(const base::DictionaryValue& option) {
 }
 
-Menu::~Menu() {
+void Menu::Destroy() {
 }
 
 void Menu::SetTitle(const std::string& title) {
-}
-
-std::string Menu::GetTitle() {
-  return std::string();
 }
 
 void Menu::Append(MenuItem* menu_item) {
@@ -45,13 +41,13 @@ void Menu::Append(MenuItem* menu_item) {
 void Menu::Insert(MenuItem* menu_item, int pos) {
 }
 
-void Menu::Remove(MenuItem* menu_item) {
+void Menu::Remove(MenuItem* menu_item, int pos_hint) {
 }
 
-void Menu::Remove(int pos) {
+void Menu::RemoveAt(int pos) {
 }
 
-void Menu::PopupInUI(int x, int y, content::Shell* shell) {
+void Menu::Popup(int x, int y, content::Shell* shell) {
 }
 
 }  // namespace api

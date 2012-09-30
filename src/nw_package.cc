@@ -163,6 +163,7 @@ bool InitPackage() {
 
   // Set the directory of app as our working directory
   package_root = path;
+  file_util::SetCurrentDirectory(path);
 
 #if defined(OS_WIN)
   FilePath manifest_path = path.Append(L"package.json");

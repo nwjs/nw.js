@@ -20,96 +20,65 @@
 
 #include "content/nw/src/api/tray/tray.h"
 
-#include "content/nw/src/api/menu/menu.h"
-
+#include "base/values.h"
 #import <Cocoa/Cocoa.h>
+#include "content/nw/src/api/dispatcher_host.h"
+#include "content/nw/src/api/menu/menu.h"
 
 namespace api {
 
-Tray::Tray(CreationOption option) {
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    NSStatusBar *status_bar = [NSStatusBar systemStatusBar];
-    status_item_ = [status_bar statusItemWithLength:NSVariableStatusItemLength];
-    [status_item_ retain];
-    [status_item_ setHighlightMode:YES];
+void Tray::Create(const base::DictionaryValue& option) {
+  NSStatusBar *status_bar = [NSStatusBar systemStatusBar];
+  status_item_ = [status_bar statusItemWithLength:NSVariableStatusItemLength];
+  [status_item_ setHighlightMode:YES];
+  [status_item_ retain];
 
-    // Don't recursively call methods of MenuItem, otherwise we would
-    // have deadlock
-    if (!option.icon.empty()) {
-      NSImage* image = [[NSImage alloc]
-          initWithContentsOfFile:[NSString 
-              stringWithUTF8String:option.icon.c_str()]];
-      [status_item_ setImage:image];
-      [image release];
-    }
-    if (!option.title.empty())
-      [status_item_ setTitle:
-          [NSString stringWithUTF8String:option.title.c_str()]];
-    if (!option.tooltip.empty())
-      [status_item_ setToolTip:
-          [NSString stringWithUTF8String:option.tooltip.c_str()]];
-  });
+  std::string title;
+  if (option.GetString("title", &title))
+    SetTitle(title);
+
+  std::string icon;
+  if (option.GetString("icon", &icon) && !icon.empty())
+    SetIcon(icon);
+
+  std::string tooltip;
+  if (option.GetString("tooltip", &tooltip))
+    SetTitle(tooltip);
+
+  int menu_id;
+  if (option.GetInteger("menu", &menu_id))
+    SetMenu(static_cast<Menu*>(dispatcher_host()->GetObject(menu_id)));
 }
 
-Tray::~Tray() {
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    [status_item_ release];
-  });
+void Tray::Destroy() {
+  [status_item_ release];
 }
 
 void Tray::SetTitle(const std::string& title) {
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    [status_item_ setTitle:
-        [NSString stringWithUTF8String:title.c_str()]];
-  });
-}
-
-std::string Tray::GetTitle() {
-  __block NSString* title = nil;
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    title = [status_item_ title];
-  });
-  return [title UTF8String];
+  [status_item_ setTitle:[NSString stringWithUTF8String:title.c_str()]];
 }
 
 void Tray::SetIcon(const std::string& icon) {
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    if (!icon.empty()) {
-      NSImage* image = [[NSImage alloc]
-           initWithContentsOfFile:[NSString stringWithUTF8String:icon.c_str()]];
-      [status_item_ setImage:image];
-      [image release];
-    } else {
-      [status_item_ setImage:nil];
-    }
-  });
+  if (!icon.empty()) {
+    NSImage* image = [[NSImage alloc]
+         initWithContentsOfFile:[NSString stringWithUTF8String:icon.c_str()]];
+    [status_item_ setImage:image];
+    [image release];
+  } else {
+    [status_item_ setImage:nil];
+  }
 }
 
 void Tray::SetTooltip(const std::string& tooltip) {
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    [status_item_ setToolTip:
-        [NSString stringWithUTF8String:tooltip.c_str()]];
-  });
-}
-
-std::string Tray::GetTooltip() {
-  __block NSString* tooltip = nil;
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    tooltip = [status_item_ toolTip];
-  });
-  return tooltip == nil ? "" : [tooltip UTF8String];
+  [status_item_ setToolTip:[NSString stringWithUTF8String:tooltip.c_str()]];
 }
 
 void Tray::SetMenu(Menu* menu) {
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    [status_item_ setMenu:menu->menu_];
-  });
+  [status_item_ setMenu:menu->menu_];
 }
 
 void Tray::Remove() {
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    [[NSStatusBar systemStatusBar] removeStatusItem:status_item_];
-  });
+  [[NSStatusBar systemStatusBar] removeStatusItem:status_item_];
 }
 
 }  // namespace api

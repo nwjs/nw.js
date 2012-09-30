@@ -63,8 +63,9 @@ Menu.prototype.insert = function(menu_item, i) {
 }
 
 Menu.prototype.remove = function(menu_item) {
-  this.items.splice(this.items.indexOf(menu_item), 1);
-  nw.callObjectMethod(this, 'Remove', [ menu_item ]);
+  var pos_hint = this.items.indexOf(menu_item);
+  this.items.splice(pos_hint, 1);
+  nw.callObjectMethod(this, 'Remove', [ menu_item, pos_hint ]);
 }
 
 Menu.prototype.removeAt = function(i) {

@@ -21,11 +21,15 @@
 #include "content/nw/src/api/base/base.h"
 
 #include "base/logging.h"
+#include "base/values.h"
 
 namespace api {
 
-Base::Base(int id)
-    : id_(id) {
+Base::Base(int id,
+           DispatcherHost* dispatcher_host,
+           const base::DictionaryValue& option)
+    : id_(id),
+      dispatcher_host_(dispatcher_host) {
 }
 
 Base::~Base() {
@@ -33,9 +37,9 @@ Base::~Base() {
 
 
 void Base::Call(const std::string& method, const base::ListValue& arguments) {
-  LOG(ERROR) << "Uncatched call in Base"
-             << " method:" << method
-             << " arguments:" << arguments;
+  NOTREACHED() << "Uncatched call in Base"
+               << " method:" << method
+               << " arguments:" << arguments;
 }
 
 }  // namespace api

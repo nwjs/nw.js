@@ -24,19 +24,13 @@
 
 namespace api {
 
-using namespace v8;
-
-MenuItem::MenuItem(CreationOption option) {
+void MenuItem::Create(const base::DictionaryValue& option) {
 } 
 
-MenuItem::~MenuItem() {
+void MenuItem::Destroy() {
 }
 
 void MenuItem::SetLabel(const std::string& label) {
-}
-
-std::string MenuItem::GetLabel() {
-  return std::string();
 }
 
 void MenuItem::SetIcon(const std::string& icon) {
@@ -45,22 +39,10 @@ void MenuItem::SetIcon(const std::string& icon) {
 void MenuItem::SetTooltip(const std::string& tooltip) {
 }
 
-std::string MenuItem::GetTooltip() {
-  return std::string();
-}
-
 void MenuItem::SetEnabled(bool enabled) {
 }
 
-bool MenuItem::GetEnabled() {
-  return true;
-}
-
 void MenuItem::SetChecked(bool checked) {
-}
-
-bool MenuItem::GetChecked() {
-  return false;
 }
 
 void MenuItem::SetSubmenu(Menu* sub_menu) {

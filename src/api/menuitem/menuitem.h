@@ -23,7 +23,7 @@
 
 #include "base/basictypes.h"
 #include "base/compiler_specific.h"
-#include "third_party/node/src/node.h"
+#include "content/nw/src/api/base/base.h"
 
 #include <string>
 
@@ -45,63 +45,29 @@ namespace api {
 
 class Menu;
 
-class MenuItem : node::ObjectWrap {
+class MenuItem : public Base {
  public:
-  // Install MenuItem into an object
-  static void Init(v8::Handle<v8::Object> target);
+  MenuItem(int id,
+           DispatcherHost* dispatcher_host,
+           const base::DictionaryValue& option);
+  virtual ~MenuItem();
 
-  // Call OnClick from UI thread
-  void OnClickFromUI();
-  // Call click callback in renderer thread
+  virtual void Call(const std::string& method,
+                    const base::ListValue& arguments) OVERRIDE;
   void OnClick();
-
-  // Different types of menu items
-  enum MenuItemType {
-    NORMAL,
-    CHECKBOX,
-    SEPARATOR
-  };
 
  private:
   friend class Menu;
 
-  // The menu item create properties
-  struct CreationOption {
-    CreationOption();
-
-    std::string label;
-    std::string icon;
-    std::string tooltip;
-    MenuItemType type;
-    bool enabled;
-    bool checked;
-  };
-
-  MenuItem(CreationOption options);
-  virtual ~MenuItem();
-
+  // Platform-independent implementations
+  void Create(const base::DictionaryValue& option);
+  void Destroy();
   void SetLabel(const std::string& label);
-  std::string GetLabel();
   void SetIcon(const std::string& icon);
   void SetTooltip(const std::string& tooltip);
-  std::string GetTooltip();
   void SetEnabled(bool enabled);
-  bool GetEnabled();
   void SetChecked(bool checked);
-  bool GetChecked();
   void SetSubmenu(Menu* sub_menu);
-
-  static v8::Handle<v8::Value> New(const v8::Arguments& args);
-  static v8::Handle<v8::Value> PropertyGetter(v8::Local<v8::String> property,
-                                              const v8::AccessorInfo& info);
-  static void PropertySetter(v8::Local<v8::String> property,
-                             v8::Local<v8::Value> value,
-                             const v8::AccessorInfo& info);
-
-  static v8::Persistent<v8::Function> constructor_;
-
-  CreationOption option_;
-  struct uv_async_s click_event_;
 
 #if defined(OS_MACOSX)
   __block NSMenuItem* menu_item_;

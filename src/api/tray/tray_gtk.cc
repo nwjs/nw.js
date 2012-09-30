@@ -20,31 +20,24 @@
 
 #include "content/nw/src/api/tray/tray.h"
 
+#include "base/values.h"
 #include "content/nw/src/api/menu/menu.h"
 
 namespace api {
 
-Tray::Tray(CreationOption option) {
+void Tray::Create(const base::DictionaryValue& option) {
 }
 
-Tray::~Tray() {
+void Tray::Destroy() {
 }
 
 void Tray::SetTitle(const std::string& title) {
-}
-
-std::string Tray::GetTitle() {
-  return std::string();
 }
 
 void Tray::SetIcon(const std::string& path) {
 }
 
 void Tray::SetTooltip(const std::string& tooltip) {
-}
-
-std::string Tray::GetTooltip() {
-  return std::string();
 }
 
 void Tray::SetMenu(Menu* menu) {

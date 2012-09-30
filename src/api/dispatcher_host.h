@@ -22,10 +22,15 @@
 #define CONTENT_NW_SRC_API_DISPATCHER_HOST_H_
 
 #include "base/basictypes.h"
-#include "base/values.h"
+#include "base/id_map.h"
 #include "content/public/browser/render_view_host_observer.h"
 
 #include <string>
+
+namespace base {
+class DictionaryValue;
+class ListValue;
+}
 
 namespace WebKit {
 class WebFrame;
@@ -33,10 +38,24 @@ class WebFrame;
 
 namespace api {
 
+class Base;
+
 class DispatcherHost : public content::RenderViewHostObserver {
  public:
   explicit DispatcherHost(content::RenderViewHost* render_view_host);
   virtual ~DispatcherHost();
+
+  Base* GetObject(int id);
+  void SendEvent(Base* object,
+                 const std::string& event,
+                 const base::ListValue& arguments);
+
+  content::RenderViewHost* render_view_host() const {
+    return content::RenderViewHostObserver::render_view_host();
+  }
+
+ private:
+  IDMap<Base, IDMapOwnPointer> objects_registry_;
 
   // RenderViewHostObserver implementation.
   virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
@@ -50,7 +69,6 @@ class DispatcherHost : public content::RenderViewHostObserver {
                           const std::string& method,
                           const base::ListValue& arguments);
 
- private:
   DISALLOW_COPY_AND_ASSIGN(DispatcherHost);
 };
 

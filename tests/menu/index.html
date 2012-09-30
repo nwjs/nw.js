@@ -24,7 +24,7 @@
   menu.items[0].label == 'Item 1',
   menu.items[0].icon == '',
   menu.items[0].tooltip == '',
-  menu.items[0].checked == false,
+  typeof menu.items[0].checked == 'undefined',
   menu.items[0].enabled == true,
   'One Menu');
 
@@ -96,10 +96,10 @@
   }));
 
   var submenu = new gui.Menu({ title: 'SubMenu' });
-  submenu.append(new gui.MenuItem({ label: 'Sub 1', checked: true, enabled: false }));
-  submenu.append(new gui.MenuItem({ label: 'Sub 2', checked: true, enabled: false }));
-  submenu.append(new gui.MenuItem({ label: 'Sub 3', checked: true, enabled: false }));
-  submenu.append(new gui.MenuItem({ label: 'Sub 4', checked: true, enabled: false }));
+  submenu.append(new gui.MenuItem({ type: 'checkbox', label: 'Sub 1', checked: true, enabled: false }));
+  submenu.append(new gui.MenuItem({ type: 'checkbox', label: 'Sub 2', checked: true, enabled: false }));
+  submenu.append(new gui.MenuItem({ type: 'checkbox', label: 'Sub 3', checked: true, enabled: false }));
+  submenu.append(new gui.MenuItem({ type: 'checkbox', label: 'Sub 4', checked: true, enabled: false }));
   menu.append(new gui.MenuItem({ type: 'separator' }));
   menu.append(new gui.MenuItem({ label: 'I have submenu', submenu: submenu }));
 
@@ -142,10 +142,10 @@
   // Click to flip other items
   var lastone = submenu.items[0];
   submenu.items[0].click = submenu.items[1].click = submenu.items[2].click = submenu.items[3].click = function() {
-    lastone.checked = false;
-    lastone.enabled = true;
-    this.checked = true;
-    this.enabled = false;
+    lastone.checked = !lastone.checked;
+    lastone.enabled = !lastone.enabled;
+    this.checked = !this.checked;
+    this.enabled = !this.enabled;
     lastone = this;
   }
 

@@ -22,70 +22,49 @@
 
 #include "base/message_loop.h"
 #include "base/mac/scoped_sending_event.h"
+#include "base/values.h"
 #import <Cocoa/Cocoa.h>
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
 #include "content/nw/src/shell.h"
-#include <dispatch/dispatch.h>
 
 namespace api {
 
-using namespace v8;
+void Menu::Create(const base::DictionaryValue& option) {
+  std::string title;
+  option.GetString("title", &title);
 
-Menu::Menu(CreationOption option) {
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    menu_ = [[NSMenu alloc]
-        initWithTitle:[NSString stringWithUTF8String:option.title.c_str()]];
-    [menu_ setAutoenablesItems:NO];
-  });
+  menu_ = [[NSMenu alloc]
+      initWithTitle:[NSString stringWithUTF8String:title.c_str()]];
+  [menu_ setAutoenablesItems:NO];
 }
 
-Menu::~Menu() {
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    [menu_ release];
-  });
+void Menu::Destroy() {
+  [menu_ release];
 }
 
 void Menu::SetTitle(const std::string& title) {
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    [menu_ setTitle:[NSString stringWithUTF8String:title.c_str()]];
-  });
-}
-
-std::string Menu::GetTitle() {
-  __block NSString* title = nil;
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    title = [menu_ title];
-  });
-  return [title UTF8String];
+  [menu_ setTitle:[NSString stringWithUTF8String:title.c_str()]];
 }
 
 void Menu::Append(MenuItem* menu_item) {
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    [menu_ addItem:menu_item->menu_item_];
-  });
+  [menu_ addItem:menu_item->menu_item_];
 }
 
 void Menu::Insert(MenuItem* menu_item, int pos) {
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    [menu_ insertItem:menu_item->menu_item_ atIndex:pos];
-  });
+  [menu_ insertItem:menu_item->menu_item_ atIndex:pos];
 }
 
-void Menu::Remove(MenuItem* menu_item) {
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    [menu_ removeItem:menu_item->menu_item_];
-  });
+void Menu::Remove(MenuItem* menu_item, int pos_hint) {
+  [menu_ removeItem:menu_item->menu_item_];
 }
 
-void Menu::Remove(int pos) {
-  dispatch_sync(dispatch_get_main_queue(), ^{
-    [menu_ removeItemAtIndex:pos];
-  });
+void Menu::RemoveAt(int pos) {
+  [menu_ removeItemAtIndex:pos];
 }
 
-void Menu::PopupInUI(int x, int y, content::Shell* shell) {
+void Menu::Popup(int x, int y, content::Shell* shell) {
   // Fake out a context menu event for our menu
   NSEvent* currentEvent = [NSApp currentEvent];
   NSWindow* window = shell->window();

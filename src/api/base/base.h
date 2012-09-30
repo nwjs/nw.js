@@ -21,24 +21,33 @@
 #ifndef CONTENT_NW_SRC_API_BASE_BASE_H_
 #define CONTENT_NW_SRC_API_BASE_BASE_H_
 
-#include "base/values.h"
-
 #include <string>
+
+namespace base {
+class DictionaryValue;
+class ListValue;
+}
 
 namespace api {
 
+class DispatcherHost;
+
 class Base {
  public:
-  Base(int id);
+  Base(int id,
+       DispatcherHost* dispatcher_host,
+       const base::DictionaryValue& option);
   virtual ~Base();
 
   virtual void Call(const std::string& method,
                     const base::ListValue& arguments);
 
   int id() const { return id_; }
+  DispatcherHost* dispatcher_host() const { return dispatcher_host_; }
 
  private:
   int id_;
+  DispatcherHost* dispatcher_host_;
 };
 
 }  // namespace api

@@ -8,13 +8,13 @@
 
   var menu = new gui.Menu({ title: 'Tray Menu' });
 
-  menu.append(new gui.MenuItem({ label: 'Sub 1', checked: true, enabled: false }));
-  menu.append(new gui.MenuItem({ label: 'Sub 2', checked: false, enabled: true }));
-  menu.append(new gui.MenuItem({ label: 'Sub 3', checked: false, enabled: true }));
-  menu.append(new gui.MenuItem({ label: 'Sub 4', checked: false, enabled: true }));
+  menu.append(new gui.MenuItem({ type: 'checkbox', label: 'Sub 1', checked: true, enabled: false }));
+  menu.append(new gui.MenuItem({ type: 'checkbox', label: 'Sub 2', checked: false, enabled: true }));
+  menu.append(new gui.MenuItem({ type: 'checkbox', label: 'Sub 3', checked: false, enabled: true }));
+  menu.append(new gui.MenuItem({ type: 'checkbox', label: 'Sub 4', checked: false, enabled: true }));
 
   // Click to flip other items
-  var lastone = menu[0];
+  var lastone = menu.items[0];
   menu.items[0].click = menu.items[1].click = menu.items[2].click = menu.items[3].click = function() {
     lastone.checked = false;
     lastone.enabled = true;

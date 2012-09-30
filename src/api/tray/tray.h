@@ -23,7 +23,7 @@
 
 #include "base/basictypes.h"
 #include "base/compiler_specific.h"
-#include "third_party/node/src/node.h"
+#include "content/nw/src/api/base/base.h"
 
 #include <string>
 
@@ -43,38 +43,25 @@ namespace api {
 
 class Menu;
 
-class Tray : node::ObjectWrap {
+class Tray : public Base {
  public:
-  static void Init(v8::Handle<v8::Object> target);
-
- private:
-  // The menu create properties
-  struct CreationOption {
-    std::string title;
-    std::string icon;
-    std::string tooltip;
-  };
-
-  Tray(CreationOption option);
+  Tray(int id,
+       DispatcherHost* dispatcher_host,
+       const base::DictionaryValue& option);
   virtual ~Tray();
 
+  virtual void Call(const std::string& method,
+                    const base::ListValue& arguments) OVERRIDE;
+
+ private:
+  // Platform-independent implementations
+  void Create(const base::DictionaryValue& option);
+  void Destroy();
   void SetTitle(const std::string& title);
-  std::string GetTitle();
   void SetIcon(const std::string& icon_path);
   void SetTooltip(const std::string& title);
-  std::string GetTooltip();
   void SetMenu(Menu* menu);
   void Remove();
-
-  static v8::Handle<v8::Value> New(const v8::Arguments& args);
-  static v8::Handle<v8::Value> Remove(const v8::Arguments& args);
-  static v8::Handle<v8::Value> PropertyGetter(v8::Local<v8::String> property,
-                                              const v8::AccessorInfo& info);
-  static void PropertySetter(v8::Local<v8::String> property,
-                             v8::Local<v8::Value> value,
-                             const v8::AccessorInfo& info);
-
-  CreationOption option_;
 
 #if defined(OS_MACOSX)
   __block NSStatusItem* status_item_;

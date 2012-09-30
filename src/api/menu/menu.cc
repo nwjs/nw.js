@@ -20,217 +20,63 @@
 
 #include "content/nw/src/api/menu/menu.h"
 
-#include "base/bind.h"
-#include "content/public/browser/browser_thread.h"
-#include "content/public/renderer/render_view.h"
+#include "base/values.h"
+#include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
-#include "content/nw/src/api/utils.h"
-
-using namespace v8;
+#include "content/nw/src/shell.h"
 
 namespace api {
 
-Persistent<Function> Menu::constructor_;
-
-// static
-void Menu::Init(Handle<Object> target) {
-  Local<FunctionTemplate> tpl = FunctionTemplate::New(New);
-  tpl->SetClassName(String::NewSymbol("Menu"));
-  tpl->InstanceTemplate()->SetInternalFieldCount(1);
-  tpl->InstanceTemplate()->SetAccessor(
-      String::New("title"), PropertyGetter, PropertySetter);
-  tpl->InstanceTemplate()->SetAccessor(
-      String::New("length"), PropertyGetter);
-  tpl->InstanceTemplate()->SetIndexedPropertyHandler(
-      MenuItemGetter);
-  tpl->PrototypeTemplate()->Set(String::NewSymbol("append"),
-      FunctionTemplate::New(Append)->GetFunction());
-  tpl->PrototypeTemplate()->Set(String::NewSymbol("insert"),
-      FunctionTemplate::New(Insert)->GetFunction());
-  tpl->PrototypeTemplate()->Set(String::NewSymbol("remove"),
-      FunctionTemplate::New(Remove)->GetFunction());
-  tpl->PrototypeTemplate()->Set(String::NewSymbol("removeAt"),
-      FunctionTemplate::New(RemoveAt)->GetFunction());
-  tpl->PrototypeTemplate()->Set(String::NewSymbol("popup"),
-      FunctionTemplate::New(Popup)->GetFunction());
-
-  constructor_ = Persistent<Function>::New(tpl->GetFunction());
-  target->Set(String::NewSymbol("Menu"), constructor_);
+Menu::Menu(int id,
+           DispatcherHost* dispatcher_host,
+           const base::DictionaryValue& option)
+    : Base(id, dispatcher_host, option) {
+  Create(option);
 }
 
-// static
-Handle<Value> Menu::New(const Arguments& args) {
-  HandleScope scope;
+Menu::~Menu() {
+  Destroy();
+}
 
-  CreationOption option;
-  if (args.Length() < 1 || !args[0]->IsObject()) {
-    return ThrowException(Exception::Error(
-          String::New("Require first argument as option in contructor.")));
+void Menu::Call(const std::string& method,
+                const base::ListValue& arguments) {
+  if (method == "SetTitle") {
+    std::string title;
+    arguments.GetString(0, &title);
+    SetTitle(title);
+  } else if (method == "Append") {
+    int object_id = 0;
+    arguments.GetInteger(0, &object_id);
+    Append(static_cast<MenuItem*>(dispatcher_host()->GetObject(object_id)));
+  } else if (method == "Insert") {
+    int object_id = 0;
+    arguments.GetInteger(0, &object_id);
+    int pos = 0;
+    arguments.GetInteger(1, &pos);
+    Insert(static_cast<MenuItem*>(dispatcher_host()->GetObject(object_id)),
+           pos);
+  } else if (method == "Remove") {
+    int object_id = 0;
+    arguments.GetInteger(0, &object_id);
+    int pos_hint = 0;
+    arguments.GetInteger(1, &pos_hint);
+    Remove(static_cast<MenuItem*>(dispatcher_host()->GetObject(object_id)),
+           pos_hint);
+  } else if (method == "RemoveAt") {
+    int pos = 0;
+    arguments.GetInteger(0, &pos);
+    RemoveAt(pos);
+  } else if (method == "Popup") {
+    int x = 0;
+    arguments.GetInteger(0, &x);
+    int y = 0;
+    arguments.GetInteger(1, &y);
+    Popup(x, y, content::Shell::FromRenderViewHost(
+          dispatcher_host()->render_view_host()));
+  } else {
+    NOTREACHED() << "Invalid call to Menu method:" << method
+                 << " arguments:" << arguments;
   }
-
-  Handle<Object> v8op = args[0]->ToObject();
-  if (!v8op->Has(String::New("title")))
-    return ThrowException(Exception::Error(
-          String::New("Option 'title' is required for Menu.")));
-
-  option.title = *String::Utf8Value(v8op->Get(String::New("title")));
-
-  Menu* obj = new Menu(option);
-  obj->Wrap(args.This());
-
-  // Save menu items in 'items'
-  args.This()->SetHiddenValue(String::New("items"), Array::New());
-
-  return args.This();
-}
-
-// static
-Handle<Value> Menu::Append(const Arguments& args) {
-  HandleScope scope;
-  Menu* obj = ObjectWrap::Unwrap<Menu>(args.This());
-
-  if (args.Length() < 1)
-    return ThrowException(Exception::Error(
-          String::New("Menu.Append requires one argument.")));
-
-  obj->Append(ObjectWrap::Unwrap<MenuItem>(args[0]->ToObject()));
-
-  // menu.items.push(args[0]);
-  Handle<Value> argv[] = { args[0] };
-  CallMethod(args.This()->GetHiddenValue(String::New("items")),
-             "push", 1, argv);
-
-  return args.This();
-}
-
-// static
-Handle<Value> Menu::Insert(const Arguments& args) {
-  HandleScope scope;
-  Menu* obj = ObjectWrap::Unwrap<Menu>(args.This());
-
-  if (args.Length() < 2)
-    return ThrowException(Exception::Error(
-          String::New("Menu.Insert requires two arguments.")));
-
-  if (!args[0]->IsObject() || !args[1]->IsNumber())
-    return ThrowException(Exception::Error(
-          String::New("Invalid arguments for Menu.Insert")));
-
-  obj->Insert(ObjectWrap::Unwrap<MenuItem>(args[0]->ToObject()),
-              args[1]->IntegerValue());
-
-  // menu.items.splice(args[1], 0, args[0]);
-  Handle<Value> argv[] = { args[1], Integer::New(0), args[0] };
-  CallMethod(args.This()->GetHiddenValue(String::New("items")),
-             "splice", 3, argv);
-
-  return args.This();
-}
-
-// static
-Handle<Value> Menu::Remove(const Arguments& args) {
-  HandleScope scope;
-  Menu* obj = ObjectWrap::Unwrap<Menu>(args.This());
-
-  if (args.Length() < 1)
-    return ThrowException(Exception::Error(
-          String::New("Menu.Remove requires one argument.")));
-
-  obj->Remove(ObjectWrap::Unwrap<MenuItem>(args[0]->ToObject()));
-
-  // index = menu.items.indexOf(args[0])
-  Handle<Value> argv[] = { args[0] };
-  Handle<Value> index = CallMethod(
-      args.This()->GetHiddenValue(String::New("items")),
-      "indexOf", 1, argv);
-
-  // menu.items.splice(index, 1);
-  Handle<Value> argv2[] = { index, Integer::New(1) };
-  CallMethod(args.This()->GetHiddenValue(String::New("items")),
-             "splice", 2, argv2);
-
-  return args.This();
-}
-
-// static
-Handle<Value> Menu::RemoveAt(const Arguments& args) {
-  HandleScope scope;
-  Menu* obj = ObjectWrap::Unwrap<Menu>(args.This());
-
-  if (args.Length() < 1)
-    return ThrowException(Exception::Error(
-          String::New("Menu.RemoveAt requires one argument.")));
-
-  obj->Remove(args[0]->IntegerValue());
-
-  // menu.items.splice(args[0], 1);
-  Handle<Value> argv[] = { args[0], Integer::New(1) };
-  CallMethod(args.This()->GetHiddenValue(String::New("items")),
-             "splice", 2, argv);
-
-  return args.This();
-}
-
-// static
-Handle<Value> Menu::Popup(const Arguments& args) {
-  HandleScope scope;
-  Menu* obj = ObjectWrap::Unwrap<Menu>(args.This());
-
-  if (args.Length() < 2 || !args[0]->IsNumber() || !args[1]->IsNumber())
-    return ThrowException(Exception::Error(
-          String::New("Wrong arguments for Menu.Popup(x, y)")));
-
-  int x = args[0]->IntegerValue();
-  int y = args[1]->IntegerValue();
-  int render_view_id = GetCurrentRenderViewInRenderer();
-  content::BrowserThread::PostTask(
-      content::BrowserThread::UI,
-      FROM_HERE,
-      base::Bind(&Menu::BeforePopupInUI,
-                 base::Unretained(obj),
-                 x, y,
-                 render_view_id));
-
-  return args.This();
-}
-
-void Menu::BeforePopupInUI(int x, int y, int render_view_id) {
-  content::Shell* shell = GetShellFromRenderViewInUI(render_view_id);
-  PopupInUI(x, y, shell);
-}
-
-// static
-Handle<Value> Menu::PropertyGetter(Local<String> property,
-                                   const AccessorInfo& info) {
-  Menu* obj = ObjectWrap::Unwrap<Menu>(info.This());
-
-  String::Utf8Value key(property);
-  if (!strcmp(*key, "title"))
-    return String::New(obj->GetTitle().c_str());
-  else if (!strcmp(*key, "length"))
-    return Integer::New(Handle<Array>::Cast(
-        info.This()->GetHiddenValue(String::New("items")))->Length());
-
-  return Undefined();
-}
-
-// static
-void Menu::PropertySetter(Local<String> property,
-                          Local<Value> value,
-                          const AccessorInfo& info) {
-  HandleScope scope;
-  Menu* obj = ObjectWrap::Unwrap<Menu>(info.This());
-
-  String::Utf8Value key(property);
-  if (!strcmp(*key, "title"))
-    obj->SetTitle(*String::Utf8Value(value));
-}
-
-// static
-Handle<Value> Menu::MenuItemGetter(uint32_t index,
-                                   const v8::AccessorInfo& info) {
-  return info.This()->GetHiddenValue(String::New("items"))->
-      ToObject()->Get(index);
 }
 
 }  // namespace api

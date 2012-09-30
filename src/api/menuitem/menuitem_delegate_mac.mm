@@ -33,7 +33,7 @@
 }
 
 -(void)invoke: (id)sender {
-  menu_item_->OnClickFromUI();
+  menu_item_->OnClick();
 }
 
 @end

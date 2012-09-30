@@ -24,6 +24,10 @@
 #include "base/basictypes.h"
 #include "content/public/renderer/render_view_observer.h"
 
+namespace base {
+class ListValue;
+}
+
 namespace WebKit {
 class WebFrame;
 }
@@ -35,11 +39,15 @@ class Dispatcher : public content::RenderViewObserver {
   explicit Dispatcher(content::RenderView* render_view);
   virtual ~Dispatcher();
 
+ private:
   // RenderViewObserver implementation.
   virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
   virtual void DidClearWindowObject(WebKit::WebFrame* frame) OVERRIDE;
 
- private:
+  void OnEvent(int object_id,
+               std::string event,
+               const base::ListValue& arguments);
+
   DISALLOW_COPY_AND_ASSIGN(Dispatcher);
 };
 

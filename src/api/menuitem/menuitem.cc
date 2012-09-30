@@ -20,193 +20,61 @@
 
 #include "content/nw/src/api/menuitem/menuitem.h"
 
-#include <base/logging.h>
+#include "base/logging.h"
+#include "base/values.h"
+#include "content/nw/src/api/dispatcher_host.h"
+#include "content/nw/src/api/menu/menu.h"
+
 #include <string.h>
-
-using namespace v8;
-
-namespace {
-
-api::MenuItem::MenuItemType TypeStringToType(Handle<Value> type_str) {
-  String::Utf8Value utf8_value(type_str);
-  if (!strcmp("checkbox", *utf8_value))
-    return api::MenuItem::CHECKBOX;
-  else if (!strcmp("separator", *utf8_value))
-    return api::MenuItem::SEPARATOR;
-  else
-    return api::MenuItem::NORMAL;
-}
-
-Handle<Value> TypeToTypeString(api::MenuItem::MenuItemType type) {
-  switch (type) {
-    case api::MenuItem::CHECKBOX:
-      return String::New("checkbox");
-    case api::MenuItem::SEPARATOR:
-      return String::New("separator");
-    case api::MenuItem::NORMAL:
-      return String::New("normal");
-  }
-
-  NOTREACHED() << "Invalid MenuItem type.";
-  return Undefined();
-}
-
-void on_click_callback(uv_async_t* handle, int status) {
-  ((api::MenuItem*)(handle->data))->OnClick();
-}
-
-}  // namespace
 
 namespace api {
 
-Persistent<Function> MenuItem::constructor_;
-
-MenuItem::CreationOption::CreationOption()
-    : type(MenuItem::NORMAL),
-      enabled(true),
-      checked(false) {
+MenuItem::MenuItem(int id,
+                   DispatcherHost* dispatcher_host,
+                   const base::DictionaryValue& option)
+    : Base(id, dispatcher_host, option) {
+  Create(option);
 }
 
-// static
-void MenuItem::Init(Handle<Object> target) {
-  Local<FunctionTemplate> tpl = FunctionTemplate::New(New);
-  tpl->SetClassName(String::NewSymbol("MenuItem"));
-  tpl->InstanceTemplate()->SetInternalFieldCount(1);
-  tpl->InstanceTemplate()->SetAccessor(
-      String::New("type"), PropertyGetter);
-  tpl->InstanceTemplate()->SetAccessor(
-      String::New("label"), PropertyGetter, PropertySetter);
-  tpl->InstanceTemplate()->SetAccessor(
-      String::New("icon"), PropertyGetter, PropertySetter);
-  tpl->InstanceTemplate()->SetAccessor(
-      String::New("tooltip"), PropertyGetter, PropertySetter);
-  tpl->InstanceTemplate()->SetAccessor(
-      String::New("enabled"), PropertyGetter, PropertySetter);
-  tpl->InstanceTemplate()->SetAccessor(
-      String::New("checked"), PropertyGetter, PropertySetter);
-  tpl->InstanceTemplate()->SetAccessor(
-      String::New("submenu"), PropertyGetter, PropertySetter);
-
-  constructor_ = Persistent<Function>::New(tpl->GetFunction());
-  target->Set(String::NewSymbol("MenuItem"), constructor_);
+MenuItem::~MenuItem() {
+  Destroy();
 }
 
-void MenuItem::OnClickFromUI() {
-  uv_async_send(&click_event_);
+void MenuItem::Call(const std::string& method,
+                    const base::ListValue& arguments) {
+  if (method == "SetLabel") {
+    std::string label;
+    arguments.GetString(0, &label);
+    SetLabel(label);
+  } else if (method == "SetIcon") {
+    std::string icon;
+    arguments.GetString(0, &icon);
+    SetIcon(icon);
+  } else if (method == "SetTooltip") {
+    std::string tooltip;
+    arguments.GetString(0, &tooltip);
+    SetTooltip(tooltip);
+  } else if (method == "SetEnabled") {
+    bool enabled = true;
+    arguments.GetBoolean(0, &enabled);
+    SetEnabled(enabled);
+  } else if (method == "SetChecked") {
+    bool checked = false;
+    arguments.GetBoolean(0, &checked);
+    SetChecked(checked);
+  } else if (method == "SetSubmenu") {
+    int object_id = 0;
+    arguments.GetInteger(0, &object_id);
+    SetSubmenu(static_cast<Menu*>(dispatcher_host()->GetObject(object_id)));
+  } else {
+    NOTREACHED() << "Invalid call to MenuItem method:" << method
+                 << " arguments:" << arguments;
+  }
 }
 
 void MenuItem::OnClick() {
-  HandleScope scope;
-
-  // Call the 'click' function of MenuItem object
-  Handle<Value> click = handle_->Get(String::New("click"));
-  if (click->IsFunction()) {
-    Handle<Value> argv[1];
-    Handle<Function>::Cast(click)->Call(handle_, 0, argv);
-  }
-}
-
-// static
-Handle<Value> MenuItem::New(const Arguments& args) {
-  HandleScope scope;
-
-  // Check if called from C++
-  if (args.Length() == 1 && args[0]->IsExternal()) {
-    return args.This();
-  }
-
-  CreationOption option;
-  if (args.Length() < 1 || !args[0]->IsObject()) {
-    return ThrowException(Exception::Error(
-          String::New("Require first argument as option in contructor.")));
-  }
-
-  Handle<Object> v8op = args[0]->ToObject();
-  if (v8op->Has(String::New("label")))
-    option.label = *String::Utf8Value(v8op->Get(String::New("label")));
-  if (v8op->Has(String::New("icon")))
-    option.icon = *String::Utf8Value(v8op->Get(String::New("icon")));
-  if (v8op->Has(String::New("tooltip")))
-    option.tooltip = *String::Utf8Value(v8op->Get(String::New("tooltip")));
-  if (v8op->Has(String::New("type")))
-    option.type = TypeStringToType(v8op->Get(String::New("type")));
-  if (v8op->Has(String::New("enabled")))
-    option.enabled = v8op->Get(String::New("enabled"))->BooleanValue();
-  if (v8op->Has(String::New("checked")))
-    option.checked = v8op->Get(String::New("checked"))->BooleanValue();
-
-  // Wrap C++ object in V8 object
-  MenuItem* obj = new MenuItem(option);
-  obj->option_ = option;
-  obj->Wrap(args.This());
-
-  // Async events
-  obj->click_event_.data = obj;
-  uv_async_init(uv_default_loop(), &obj->click_event_, on_click_callback);
-
-  // this.click = option.click
-  Handle<Value> callback = v8op->Get(String::New("click"));
-  if (callback->IsFunction())
-    args.This()->Set(String::New("click"), callback);
-
-  // this.submenu = option.submenu
-  Handle<Value> submenu = v8op->Get(String::New("submenu"));
-  if (submenu->IsObject())
-    args.This()->Set(String::New("submenu"), submenu);
-
-  return args.This();
-}
-
-// static
-Handle<Value> MenuItem::PropertyGetter(Local<String> property,
-                                       const AccessorInfo& info) {
-  MenuItem* obj = ObjectWrap::Unwrap<MenuItem>(info.This());
-
-  String::Utf8Value key(property);
-  if (!strcmp(*key, "label"))
-    return String::New(obj->GetLabel().c_str());
-  else if (!strcmp(*key, "icon"))
-    return String::New(obj->option_.icon.c_str());
-  else if (!strcmp(*key, "tooltip"))
-    return String::New(obj->GetTooltip().c_str());
-  else if (!strcmp(*key, "enabled"))
-    return Boolean::New(obj->GetEnabled());
-  else if (!strcmp(*key, "checked"))
-    return Boolean::New(obj->GetChecked());
-  else if (!strcmp(*key, "type"))
-    return TypeToTypeString(obj->option_.type);
-  else if (!strcmp(*key, "submenu"))
-    return info.This()->GetHiddenValue(String::New("realsubmenu"));
-
-  return Undefined();
-}
-
-// static
-void MenuItem::PropertySetter(Local<String> property,
-                                       Local<Value> value,
-                                       const AccessorInfo& info) {
-  HandleScope scope;
-  MenuItem* obj = ObjectWrap::Unwrap<MenuItem>(info.This());
-
-  String::Utf8Value key(property);
-  if (!strcmp(*key, "label")) {
-    obj->SetLabel(*String::Utf8Value(value));
-  } else if (!strcmp(*key, "icon")) {
-    if (obj->option_.type == SEPARATOR)
-      return;
-
-    obj->option_.icon = *String::Utf8Value(value);
-    obj->SetIcon(*String::Utf8Value(value));
-  } else if (!strcmp(*key, "tooltip")) {
-    obj->SetTooltip(*String::Utf8Value(value));
-  } else if (!strcmp(*key, "enabled")) {
-    obj->SetEnabled(value->BooleanValue());
-  } else if (!strcmp(*key, "checked")) {
-    obj->SetChecked(value->BooleanValue());
-  } else if (!strcmp(*key, "submenu")) {
-    info.This()->SetHiddenValue(String::New("realsubmenu"), value);
-    obj->SetSubmenu(ObjectWrap::Unwrap<Menu>(value->ToObject()));
-  }
+  base::ListValue args;
+  dispatcher_host()->SendEvent(this, "click", args);
 }
 
 }  // namespace api

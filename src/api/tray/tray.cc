@@ -20,114 +20,46 @@
 
 #include "content/nw/src/api/tray/tray.h"
 
+#include "base/values.h"
+#include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"
 
 namespace api {
 
-using namespace v8;
-
-// static
-void Tray::Init(Handle<Object> target) {
-  Local<FunctionTemplate> tpl = FunctionTemplate::New(New);
-  tpl->SetClassName(String::NewSymbol("Tray"));
-  tpl->InstanceTemplate()->SetInternalFieldCount(1);
-  tpl->InstanceTemplate()->SetAccessor(
-      String::New("title"), PropertyGetter, PropertySetter);
-  tpl->InstanceTemplate()->SetAccessor(
-      String::New("icon"), PropertyGetter, PropertySetter);
-  tpl->InstanceTemplate()->SetAccessor(
-      String::New("tooltip"), PropertyGetter, PropertySetter);
-  tpl->InstanceTemplate()->SetAccessor(
-      String::New("menu"), PropertyGetter, PropertySetter);
-  tpl->PrototypeTemplate()->Set(String::NewSymbol("remove"),
-      FunctionTemplate::New(Remove)->GetFunction());
-
-  Persistent<Function> constructor = 
-      Persistent<Function>::New(tpl->GetFunction());
-  target->Set(String::NewSymbol("Tray"), constructor);
+Tray::Tray(int id,
+           DispatcherHost* dispatcher_host,
+           const base::DictionaryValue& option)
+    : Base(id, dispatcher_host, option) {
+  Create(option);
 }
 
-// static
-Handle<Value> Tray::New(const Arguments& args) {
-  HandleScope scope;
-
-  CreationOption option;
-  if (args.Length() < 1 || !args[0]->IsObject()) {
-    return ThrowException(Exception::Error(
-          String::New("Require first argument as option in contructor.")));
-  }
-
-  Handle<Object> v8op = args[0]->ToObject();
-  if (!v8op->Has(String::New("title")) &&
-      !v8op->Has(String::New("icon"))) {
-    return ThrowException(Exception::Error(
-          String::New("Must set 'icon' or 'title' in option.")));
-  }
-
-  if (v8op->Has(String::New("icon")))
-    option.icon = *String::Utf8Value(v8op->Get(String::New("icon")));
-  if (v8op->Has(String::New("title")))
-    option.title = *String::Utf8Value(v8op->Get(String::New("title")));
-  if (v8op->Has(String::New("tooltip")))
-    option.tooltip = *String::Utf8Value(v8op->Get(String::New("tooltip")));
-
-  Tray* obj = new Tray(option);
-  obj->option_ = option;
-  obj->Wrap(args.This());
-
-  // this.menu = option.menu
-  if (v8op->Has(String::New("menu"))) {
-    args.This()->Set(String::New("menu"), v8op->Get(String::New("menu")));
-  }
-
-  return args.This();
+Tray::~Tray() {
+  Destroy();
 }
 
-// static
-v8::Handle<v8::Value> Tray::Remove(const v8::Arguments& args) {
-  Tray* obj = ObjectWrap::Unwrap<Tray>(args.This());
-  obj->Remove();
-
-  return Undefined();
-}
-
-// static
-Handle<Value> Tray::PropertyGetter(Local<String> property,
-                                   const AccessorInfo& info) {
-  Tray* obj = ObjectWrap::Unwrap<Tray>(info.This());
-
-  String::Utf8Value key(property);
-  if (!strcmp(*key, "title")) {
-    return String::New(obj->GetTitle().c_str());
-  } else if (!strcmp(*key, "icon")) {
-    return String::New(obj->option_.icon.c_str());
-  } else if (!strcmp(*key, "tooltip")) {
-    return String::New(obj->GetTooltip().c_str());
-  } else if (!strcmp(*key, "menu")) {
-    return info.This()->GetHiddenValue(String::New("realmenu"));
-  }
-
-  return Undefined();
-}
-
-// static
-void Tray::PropertySetter(Local<String> property,
-                          Local<Value> value,
-                          const AccessorInfo& info) {
-  HandleScope scope;
-  Tray* obj = ObjectWrap::Unwrap<Tray>(info.This());
-
-  String::Utf8Value key(property);
-  if (!strcmp(*key, "title")) {
-    obj->SetTitle(*String::Utf8Value(value));
-  } else if (!strcmp(*key, "icon")) {
-    obj->option_.icon = *String::Utf8Value(value);
-    obj->SetIcon(*String::Utf8Value(value));
-  } else if (!strcmp(*key, "tooltip")) {
-    obj->SetTooltip(*String::Utf8Value(value));
-  } else if (!strcmp(*key, "menu")) {
-    info.This()->SetHiddenValue(String::New("realmenu"), value);
-    obj->SetMenu(ObjectWrap::Unwrap<Menu>(value->ToObject()));
+void Tray::Call(const std::string& method,
+                const base::ListValue& arguments) {
+  if (method == "SetTitle") {
+    std::string title;
+    arguments.GetString(0, &title);
+    SetTitle(title);
+  } else if (method == "SetIcon") {
+    std::string icon;
+    arguments.GetString(0, &icon);
+    SetIcon(icon);
+  } else if (method == "SetTooltip") {
+    std::string tooltip;
+    arguments.GetString(0, &tooltip);
+    SetTooltip(tooltip);
+  } else if (method == "SetMenu") {
+    int object_id = 0;
+    arguments.GetInteger(0, &object_id);
+    SetMenu(static_cast<Menu*>(dispatcher_host()->GetObject(object_id)));
+  } else if (method == "Remove") {
+    Remove();
+  } else {
+    NOTREACHED() << "Invalid call to Tray method:" << method
+                 << " arguments:" << arguments;
   }
 }
 

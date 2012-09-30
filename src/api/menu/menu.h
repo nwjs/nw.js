@@ -23,7 +23,7 @@
 
 #include "base/basictypes.h"
 #include "base/compiler_specific.h"
-#include "third_party/node/src/node.h"
+#include "content/nw/src/api/base/base.h"
 
 #include <string>
 #include <vector>
@@ -48,49 +48,29 @@ namespace api {
 
 class MenuItem;
 
-class Menu : node::ObjectWrap {
+class Menu : public Base {
  public:
-  static void Init(v8::Handle<v8::Object> target);
+  Menu(int id,
+       DispatcherHost* dispatcher_host,
+       const base::DictionaryValue& option);
+  virtual ~Menu();
+
+  virtual void Call(const std::string& method,
+                    const base::ListValue& arguments) OVERRIDE;
 
  private:
   friend class MenuItem;
   friend class Tray;
 
-  // The menu create properties
-  struct CreationOption {
-    std::string title;
-  };
-
-  Menu(CreationOption options);
-  virtual ~Menu();
-
   // Platform-independent implementations
+  void Create(const base::DictionaryValue& option);
+  void Destroy();
   void SetTitle(const std::string& title);
-  std::string GetTitle();
   void Append(MenuItem* menu_item);
   void Insert(MenuItem* menu_item, int pos);
-  void Remove(MenuItem* menu_item);
-  void Remove(int pos);
-  void PopupInUI(int x, int y, content::Shell*);
-
-  // Shared implementations
-  static v8::Handle<v8::Value> New(const v8::Arguments& args);
-  static v8::Handle<v8::Value> Append(const v8::Arguments& args);
-  static v8::Handle<v8::Value> Insert(const v8::Arguments& args);
-  static v8::Handle<v8::Value> Remove(const v8::Arguments& args);
-  static v8::Handle<v8::Value> RemoveAt(const v8::Arguments& args);
-  static v8::Handle<v8::Value> Popup(const v8::Arguments& args);
-  void BeforePopupInUI(int x, int y, int render_view_id);
-  static v8::Handle<v8::Value> PropertyGetter(v8::Local<v8::String> property,
-                                              const v8::AccessorInfo& info);
-  static void PropertySetter(v8::Local<v8::String> property,
-                             v8::Local<v8::Value> value,
-                             const v8::AccessorInfo& info);
-  static v8::Handle<v8::Value> MenuItemGetter(
-      uint32_t index,
-      const v8::AccessorInfo& info);
-
-  static v8::Persistent<v8::Function> constructor_;
+  void Remove(MenuItem* menu_item, int pos_hint);
+  void RemoveAt(int pos);
+  void Popup(int x, int y, content::Shell*);
 
 #if defined(OS_MACOSX)
   __block NSMenu* menu_;

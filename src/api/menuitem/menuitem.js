@@ -25,10 +25,15 @@ function MenuItem(option) {
   if (!option.hasOwnProperty('type'))
     option.type = 'normal';
 
-  if (option.type != 'normal' && option.type != 'separator')
+  if (option.type != 'normal' &&
+      option.type != 'checkbox' &&
+      option.type != 'separator')
     throw new String('Invalid MenuItem type: ' + option.type);
 
-  if (option.type == 'normal') {
+  if (option.type == 'normal' || option.type == 'checkbox') {
+    if (option.type == 'checkbox')
+      option.checked = Boolean(option.checked);
+
     if (!option.hasOwnProperty('label'))
       throw new String('A normal MenuItem must have a label');
     else
@@ -39,9 +44,6 @@ function MenuItem(option) {
 
     if (option.hasOwnProperty('tooltip'))
       option.tooltip = String(option.tooltip);
-
-    if (option.hasOwnProperty('checked'))
-      option.checked = Boolean(option.checked);
 
     if (option.hasOwnProperty('enabled'))
       option.enabled = Boolean(option.enabled);
@@ -71,8 +73,6 @@ function MenuItem(option) {
     option.icon = '';
   if (!option.hasOwnProperty('tooltip'))
     option.tooltip = '';
-  if (!option.hasOwnProperty('checked'))
-    option.checked = false;
   if (!option.hasOwnProperty('enabled'))
     option.enabled = true;
 }
@@ -111,10 +111,16 @@ MenuItem.prototype.__defineSetter__('tooltip', function(val) {
 });
 
 MenuItem.prototype.__defineGetter__('checked', function() {
+  if (this.type != 'checkbox')
+    return undefined;
+    
   return this.handleGetter('checked');
 });
 
 MenuItem.prototype.__defineSetter__('checked', function(val) {
+  if (this.type != 'checkbox')
+    throw new String("'checked' property is only available for checkbox");
+    
   this.handleSetter('checked', 'SetChecked', Boolean, val);
 });
 
@@ -138,11 +144,13 @@ MenuItem.prototype.__defineSetter__('submenu', function(val) {
   nw.callObjectMethod(this, 'SetMenu', [ val ]);
 });
 
-MenuItem.prototype.handleResponse = function(ev) {
+MenuItem.prototype.handleEvent = function(ev) {
+  // Emit click handler
   if (ev == 'click' && typeof this.click == 'function')
-    this.click();
-  else if (typeof this.on == 'function')
-    this.on.apply(this, arguments);
+    this.click.apply(this, arguments.slice(1));
+
+  // Emit generate event handler
+  exports.Base.prototype.handleEvent.apply(this, arguments);
 }
 
 exports.MenuItem = MenuItem;

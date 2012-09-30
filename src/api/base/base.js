@@ -33,7 +33,7 @@ delete nw.setHiddenValue;
 delete nw.setDestructor;
 
 // Silent unhandled events
-Base.prototype.handleResponse = function(ev) {
+Base.prototype.handleEvent = function(ev) {
   if (typeof this.on == 'function')
     this.on(arguments);
 }
