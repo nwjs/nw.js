@@ -150,7 +150,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
         "window.require = function(name) {"
         "  if (name == 'nw.gui')"
         "    return nwDispatcher.requireNwGui();"
-        "  return global.require(arguments);"
+        "  return global.require(name);"
         "};"
 
         // Don't exit on exception
