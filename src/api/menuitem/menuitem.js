@@ -147,7 +147,7 @@ MenuItem.prototype.__defineSetter__('submenu', function(val) {
 MenuItem.prototype.handleEvent = function(ev) {
   // Emit click handler
   if (ev == 'click' && typeof this.click == 'function')
-    this.click.apply(this, arguments.slice(1));
+    this.click();
 
   // Emit generate event handler
   exports.Base.prototype.handleEvent.apply(this, arguments);
