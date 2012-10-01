@@ -45,6 +45,7 @@ void Clipboard::Call(const std::string& method,
     arguments.GetString(1, &type);
     SetText(text);
   } else if (method == "Clear") {
+    Clear();
   } else {
     NOTREACHED() << "Invalid call to Clipboard method:" << method
                  << " arguments:" << arguments;
