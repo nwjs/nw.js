@@ -50,6 +50,7 @@ class DispatcherHost : public content::RenderViewHostObserver {
                  const std::string& event,
                  const base::ListValue& arguments);
 
+  virtual bool Send(IPC::Message* message) OVERRIDE;
   content::RenderViewHost* render_view_host() const {
     return content::RenderViewHostObserver::render_view_host();
   }
@@ -68,6 +69,11 @@ class DispatcherHost : public content::RenderViewHostObserver {
                           const std::string& type,
                           const std::string& method,
                           const base::ListValue& arguments);
+  void OnCallObjectMethodSync(int object_id,
+                              const std::string& type,
+                              const std::string& method,
+                              const base::ListValue& arguments,
+                              base::ListValue* result);
 
   DISALLOW_COPY_AND_ASSIGN(DispatcherHost);
 };

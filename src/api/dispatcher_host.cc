@@ -24,6 +24,7 @@
 #include "base/values.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/base/base.h"
+#include "content/nw/src/api/clipboard/clipboard.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
 #include "content/nw/src/api/tray/tray.h"
@@ -48,12 +49,18 @@ void DispatcherHost::SendEvent(Base* object,
        routing_id(), object->id(), event, arguments));
 }
 
+bool DispatcherHost::Send(IPC::Message* message) {
+  return content::RenderViewHostObserver::Send(message);
+}
+
 bool DispatcherHost::OnMessageReceived(const IPC::Message& message) {
   bool handled = true;
   IPC_BEGIN_MESSAGE_MAP(DispatcherHost, message)
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_Allocate_Object, OnAllocateObject)
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_Deallocate_Object, OnDeallocateObject)
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_Call_Object_Method, OnCallObjectMethod)
+    IPC_MESSAGE_HANDLER(ShellViewHostMsg_Call_Object_Method_Sync,
+                        OnCallObjectMethodSync)
     IPC_MESSAGE_UNHANDLED(handled = false)
   IPC_END_MESSAGE_MAP()
 
@@ -74,6 +81,9 @@ void DispatcherHost::OnAllocateObject(int object_id,
         new MenuItem(object_id, this, option), object_id);
   } else if (type == "Tray") {
     objects_registry_.AddWithID(new Tray(object_id, this, option), object_id);
+  } else if (type == "Clipboard") {
+    objects_registry_.AddWithID(
+        new Clipboard(object_id, this, option), object_id);
   } else {
     LOG(ERROR) << "Allocate an object of unknow type: " << type;
     objects_registry_.AddWithID(new Base(object_id, this, option), object_id);
@@ -98,6 +108,22 @@ void DispatcherHost::OnCallObjectMethod(
   Base* object = GetObject(object_id);
   DCHECK(object) << "Unknown object: " << object_id;
   object->Call(method, arguments);
+}
+
+void DispatcherHost::OnCallObjectMethodSync(
+    int object_id,
+    const std::string& type,
+    const std::string& method,
+    const base::ListValue& arguments,
+    base::ListValue* result) {
+  DLOG(INFO) << "OnCallObjectMethodSync: object_id:" << object_id
+             << " type:" << type
+             << " method:" << method
+             << " arguments:" << arguments;
+
+  Base* object = GetObject(object_id);
+  DCHECK(object) << "Unknown object: " << object_id;
+  object->CallSync(method, arguments, result);
 }
 
 }  // namespace api

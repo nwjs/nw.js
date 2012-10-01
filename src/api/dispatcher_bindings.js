@@ -28,6 +28,7 @@ var nwDispatcher = nwDispatcher || {};
   native function AllocateObject();
   native function DeallocateObject();
   native function CallObjectMethod();
+  native function CallObjectMethodSync();
 
   native function GetConstructorName();
   native function GetHiddenValue();
@@ -74,6 +75,19 @@ var nwDispatcher = nwDispatcher || {};
     }
 
     CallObjectMethod(object.id, object.getConstructorName(), method, args);
+  };
+
+  nwDispatcher.callObjectMethodSync = function(object, method, args) {
+    for (var i = 0; i < args.length; ++i) {
+      // A remote object?
+      if (typeof args[i].getConstructorName == 'function') {
+        var remoteObject = args[i];
+        args[i] = remoteObject.id;
+      }
+    }
+
+    return CallObjectMethodSync(
+        object.id, object.getConstructorName(), method, args);
   };
 
   nwDispatcher.handleEvent = function(object_id, ev, args) {

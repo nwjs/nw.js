@@ -42,4 +42,12 @@ void Base::Call(const std::string& method, const base::ListValue& arguments) {
                << " arguments:" << arguments;
 }
 
+void Base::CallSync(const std::string& method,
+                    const base::ListValue& arguments,
+                    base::ListValue* result) {
+  NOTREACHED() << "Uncatched callAsync in Base"
+               << " method:" << method
+               << " arguments:" << arguments;
+}
+
 }  // namespace api

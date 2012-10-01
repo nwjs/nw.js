@@ -129,6 +129,8 @@ DispatcherBindings::GetNativeFunction(v8::Handle<v8::String> name) {
     return v8::FunctionTemplate::New(DeallocateObject);
   else if (name->Equals(v8::String::New("CallObjectMethod")))
     return v8::FunctionTemplate::New(CallObjectMethod);
+  else if (name->Equals(v8::String::New("CallObjectMethodSync")))
+    return v8::FunctionTemplate::New(CallObjectMethodSync);
 
   NOTREACHED();
   return v8::FunctionTemplate::New();
@@ -155,6 +157,8 @@ DispatcherBindings::RequireNwGui(const v8::Arguments& args) {
       NwGui, v8::String::New("menu.js"), IDR_NW_API_MENU_JS);
   RequireFromResource(args.This(),
       NwGui, v8::String::New("tray.js"), IDR_NW_API_TRAY_JS);
+  RequireFromResource(args.This(),
+      NwGui, v8::String::New("clipboard.js"), IDR_NW_API_CLIPBOARD_JS);
 
   return scope.Close(NwGui);
 }
@@ -290,6 +294,45 @@ DispatcherBindings::CallObjectMethod(const v8::Arguments& args) {
         method,
         *static_cast<base::ListValue*>(value_args.get())));
   return v8::Undefined();
+}
+
+// static
+v8::Handle<v8::Value> DispatcherBindings::CallObjectMethodSync(
+    const v8::Arguments& args) {
+  if (args.Length() < 4) {
+    return v8::ThrowException(v8::Exception::Error(v8::String::New(
+            "CallObjectMethodSync requries 4 arguments")));
+  }
+
+  int object_id = args[0]->Int32Value();
+  std::string type = *v8::String::Utf8Value(args[1]);
+  std::string method = *v8::String::Utf8Value(args[2]);
+
+  scoped_ptr<V8ValueConverter> converter(V8ValueConverter::create());
+
+  scoped_ptr<base::Value> value_args(
+      converter->FromV8Value(args[3], v8::Context::GetCurrent()));
+  if (!value_args.get() ||
+      !value_args->IsType(base::Value::TYPE_LIST)) {
+    return v8::ThrowException(v8::Exception::Error(v8::String::New(
+            "Unable to convert 'args' passed to CallObjectMethodSync")));
+  }
+
+  RenderView* render_view = GetCurrentRenderView();
+  if (!render_view) {
+    return v8::ThrowException(v8::Exception::Error(v8::String::New(
+            "Unable to get render view in CallObjectMethodSync")));
+  }
+
+  base::ListValue result;
+  render_view->Send(new ShellViewHostMsg_Call_Object_Method_Sync(
+        render_view->GetRoutingID(),
+        object_id,
+        type,
+        method,
+        *static_cast<base::ListValue*>(value_args.get()),
+        &result));
+  return converter->ToV8Value(&result, v8::Context::GetCurrent());
 }
 
 }  // namespace api

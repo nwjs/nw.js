@@ -18,45 +18,35 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#ifndef CONTENT_NW_SRC_API_BASE_BASE_H_
-#define CONTENT_NW_SRC_API_BASE_BASE_H_
+#ifndef CONTENT_NW_SRC_API_CLIPBOARD_CLIPBOARD_H_
+#define CONTENT_NW_SRC_API_CLIPBOARD_CLIPBOARD_H_
 
-#include "base/basictypes.h"
-
-#include <string>
-
-namespace base {
-class DictionaryValue;
-class ListValue;
-}
+#include "base/compiler_specific.h"
+#include "content/nw/src/api/base/base.h"
 
 namespace api {
 
-class DispatcherHost;
-
-class Base {
+class Clipboard : public Base {
  public:
-  Base(int id,
-       DispatcherHost* dispatcher_host,
-       const base::DictionaryValue& option);
-  virtual ~Base();
+  Clipboard(int id,
+            DispatcherHost* dispatcher_host,
+            const base::DictionaryValue& option);
+  virtual ~Clipboard();
 
   virtual void Call(const std::string& method,
-                    const base::ListValue& arguments);
+                    const base::ListValue& arguments) OVERRIDE;
   virtual void CallSync(const std::string& method,
                         const base::ListValue& arguments,
-                        base::ListValue* result);
-
-  int id() const { return id_; }
-  DispatcherHost* dispatcher_host() const { return dispatcher_host_; }
+                        base::ListValue* result) OVERRIDE;
 
  private:
-  int id_;
-  DispatcherHost* dispatcher_host_;
+  void SetText(std::string& text);
+  std::string GetText();
+  void Clear();
 
-  DISALLOW_COPY_AND_ASSIGN(Base);
+  DISALLOW_COPY_AND_ASSIGN(Clipboard);
 };
 
 }  // namespace api
 
-#endif  // CONTENT_NW_SRC_API_BASE_BASE_H_
+#endif  // CONTENT_NW_SRC_API_CLIPBOARD_CLIPBOARD_H_

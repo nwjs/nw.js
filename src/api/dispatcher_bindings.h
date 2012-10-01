@@ -53,6 +53,7 @@ class DispatcherBindings : public v8::Extension {
   static v8::Handle<v8::Value> AllocateObject(const v8::Arguments& args);
   static v8::Handle<v8::Value> DeallocateObject(const v8::Arguments& args);
   static v8::Handle<v8::Value> CallObjectMethod(const v8::Arguments& args);
+  static v8::Handle<v8::Value> CallObjectMethodSync(const v8::Arguments& args);
 
   DISALLOW_COPY_AND_ASSIGN(DispatcherBindings);
 };
