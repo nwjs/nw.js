@@ -21,6 +21,7 @@
 function Base() {
   throw new String("It's forbidden to instantialize a Base class.");
 }
+require('util').inherits(Base, require('events').EventEmitter);
 
 // Move helper functions to Base
 Base.prototype.getConstructorName = nw.getConstructorName;
@@ -33,9 +34,8 @@ delete nw.setHiddenValue;
 delete nw.setDestructor;
 
 // Silent unhandled events
-Base.prototype.handleEvent = function(ev) {
-  if (typeof this.on == 'function')
-    this.on(arguments);
+Base.prototype.handleEvent = function() {
+  this.emit.apply(this, arguments);
 }
 
 // Generic getter and setter

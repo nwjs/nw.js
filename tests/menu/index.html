@@ -162,6 +162,10 @@
 
   menu.items[1].icon = tray.icon = 'icon1.png';
 
+  menu.items[1].on('click', function() {
+    console.log('Item Mama');
+  });
+
   gc();
 </script>
 <script>
