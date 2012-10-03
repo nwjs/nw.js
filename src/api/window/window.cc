@@ -32,6 +32,8 @@ Window::Window(int id,
     : Base(id, dispatcher_host, option),
       shell_(content::Shell::FromRenderViewHost(dispatcher_host->
            render_view_host())) {
+  // Set ID for Shell
+  shell_->set_id(id);
 }
 
 Window::~Window() {
@@ -41,6 +43,10 @@ void Window::Call(const std::string& method,
                   const base::ListValue& arguments) {
   if (method == "Show") {
     shell_->Show();
+  } else if (method == "Close") {
+    bool force = false;
+    arguments.GetBoolean(0, &force);
+    shell_->Close(force);
   } else if (method == "Hide") {
     shell_->Hide();
   } else if (method == "Maximize") {

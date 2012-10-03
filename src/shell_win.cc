@@ -50,7 +50,7 @@ namespace content {
 
 HINSTANCE Shell::instance_handle_;
 
-void Shell::Close() {
+void Shell::Close(bool force) {
   DestroyWindow(window_);
 }
 

@@ -74,7 +74,7 @@ GtkWidget* CreateMenuBar(Shell* shell) {
 
 }  // namespace
 
-void Shell::Close() {
+void Shell::Close(bool force) {
   gtk_widget_destroy(GTK_WIDGET(window_));
 }
 

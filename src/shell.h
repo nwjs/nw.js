@@ -64,7 +64,7 @@ class Shell : public WebContentsDelegate,
   void Reload();
   void Stop();
   void UpdateNavigationControls();
-  void Close();
+  void Close(bool force = false);
   void Move(const gfx::Rect& pos);
   void ShowDevTools();
   void Focus(bool focus);
@@ -74,6 +74,9 @@ class Shell : public WebContentsDelegate,
   void Unmaximize();
   void Minimize();
   void Restore();
+
+  // Send an event to renderer.
+  void SendEvent(const std::string& event);
 
   // Do one time initialization at application startup.
   static void PlatformInitialize();
@@ -98,6 +101,10 @@ class Shell : public WebContentsDelegate,
 
   WebContents* web_contents() const { return web_contents_.get(); }
   gfx::NativeWindow window() { return window_; }
+
+  bool force_close() { return force_close_; }
+  void set_id(int id) { id_ = id; }
+  int id() const { return id_; }
 
 #if defined(OS_MACOSX)
   // Public to be called by an ObjC bridge object.
@@ -219,6 +226,12 @@ class Shell : public WebContentsDelegate,
 
   // Notification manager
   NotificationRegistrar registrar_;
+
+  // Flag to indicate we will force closing
+  bool force_close_ = false;
+
+  // ID of corresponding js object.
+  int id_;
 
   // Window manifest
   base::DictionaryValue* window_manifest_;

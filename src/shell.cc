@@ -36,6 +36,7 @@
 #include "content/public/browser/notification_types.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
+#include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/browser/file_select_helper.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/browser/shell_javascript_dialog_creator.h"
@@ -55,6 +56,8 @@ bool Shell::quit_message_loop_ = true;
 Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
     : window_(NULL),
       url_edit_view_(NULL),
+      force_close_(false),
+      id_(-1),
       window_manifest_(manifest),
       is_show_devtools_(false),
       is_toolbar_open_(true),
@@ -94,6 +97,12 @@ Shell::~Shell() {
     MessageLoop::current()->PostTask(FROM_HERE, MessageLoop::QuitClosure());
 }
 
+void Shell::SendEvent(const std::string& event) {
+  base::ListValue args;
+  web_contents()->GetRenderViewHost()->Send(new ShellViewMsg_Object_On_Event(
+      web_contents()->GetRoutingID(), id(), event, args));
+}
+
 Shell* Shell::CreateShell(WebContents* web_contents,
                           base::DictionaryValue* manifest) {
   int width = 700;
@@ -106,10 +115,9 @@ Shell* Shell::CreateShell(WebContents* web_contents,
 
   shell->web_contents_.reset(web_contents);
   web_contents->SetDelegate(shell);
-
   shell->PlatformSetContents();
-
   shell->PlatformResizeSubViews();
+
   return shell;
 }
 
@@ -211,6 +219,7 @@ void Shell::ShowDevTools() {
       WebContents::Create(web_contents()->GetBrowserContext(),
                           NULL, MSG_ROUTING_NONE, NULL),
       &manifest);
+  shell->force_close_ = true;
   shell->LoadURL(url);
 }
 

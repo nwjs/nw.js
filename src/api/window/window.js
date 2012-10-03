@@ -93,8 +93,8 @@ Window.prototype.hide = function() {
   nw.callObjectMethod(this, 'Hide', []);
 }
 
-Window.prototype.close = function() {
-  window.close();
+Window.prototype.close = function(force) {
+  nw.callObjectMethod(this, 'Close', [ Boolean(force) ]);
 }
 
 Window.prototype.maximize = function() {
@@ -111,6 +111,17 @@ Window.prototype.minimize = function() {
 
 Window.prototype.restore = function() {
   nw.callObjectMethod(this, 'Restore', []);
+}
+
+Window.prototype.handleEvent = function(ev) {
+  // If no one is listening to 'close' then close directly
+  if (ev == 'close' && this.listeners(ev).length == 0) {
+    this.close(true);
+    return;
+  }
+
+  // Emit generate event handler
+  exports.Base.prototype.handleEvent.apply(this, arguments);
 }
 
 exports.Window = {

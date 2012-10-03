@@ -1,26 +1,21 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <title>新窗口</title>
+  <title>New Window</title>
 </head>
 <body>
-  This is the popup window<br/>
-  <script>
-    document.write('node ' + process.version);
-    document.write('<br/>window.opener.testwindow == ' + window.opener.testwindow); 
-    document.write('<br/>global.testglobal == ' + global.testglobal); 
-    // window.Test = "Popup window value";
-    // setTimeout(function() {
-    //   window.moveTo(0, 0);
-    //   setInterval(function() {
-    //     window.moveBy(10, 10);
-    //     window.resizeBy(10, 10);
-    //   }, 1000);
-    // }, 1000);
-  </script>
-  <br/>
-  <button onclick="window.blur()">Blur Me</button>
-  <br/>
-  <button onclick="window.opener.focus()">Focus Parent</button>
+This is the popup window<br/>
+<script>
+  var enable = false;
+  var gui = require('nw.gui');
+  var win = gui.Window.get();
+  win.on('close', function() {
+    if (enable)
+      this.close(true);
+    else
+      console.log('This window can not be closed.');
+  });
+</script>
+<button onclick="javascript:enable = true;">Enable to be closed</button>
 </body>
 </html>

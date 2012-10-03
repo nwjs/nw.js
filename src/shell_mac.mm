@@ -73,6 +73,11 @@ enum {
 // before we go deleting objects. By returning YES, we allow the window to be
 // removed from the screen.
 - (BOOL)windowShouldClose:(id)window {
+  if (shell_->id() > 0 && !shell_->force_close()) {
+    shell_->SendEvent("close");
+    return NO;
+  }
+
   [window autorelease];
 
   // Clean ourselves up and do the work after clearing the stack of anything
@@ -152,7 +157,9 @@ void MakeShellButton(NSRect* rect,
 
 namespace content {
 
-void Shell::Close() {
+void Shell::Close(bool force) {
+  if (!force_close_)
+    force_close_ = force;
   [window_ performClose:nil];
 }
 
