@@ -25,7 +25,6 @@
 #include "base/file_util.h"
 #include "base/threading/thread_restrictions.h"
 #include "content/public/browser/browser_url_handler.h"
-#include "content/public/browser/render_process_host.h"
 #include "content/public/browser/resource_dispatcher_host.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/common/shell_switches.h"
@@ -44,8 +43,7 @@
 namespace content {
 
 ShellContentBrowserClient::ShellContentBrowserClient()
-    : shell_browser_main_parts_(NULL),
-      render_process_id_(-1) {
+    : shell_browser_main_parts_(NULL) {
 }
 
 ShellContentBrowserClient::~ShellContentBrowserClient() {
@@ -55,11 +53,6 @@ BrowserMainParts* ShellContentBrowserClient::CreateBrowserMainParts(
     const MainFunctionParams& parameters) {
   shell_browser_main_parts_ = new ShellBrowserMainParts(parameters);
   return shell_browser_main_parts_;
-}
-
-void ShellContentBrowserClient::RenderProcessHostCreated(
-    RenderProcessHost* host) {
-  render_process_id_ = host->GetID();
 }
 
 void ShellContentBrowserClient::RenderViewHostCreated(
