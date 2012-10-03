@@ -159,6 +159,8 @@ DispatcherBindings::RequireNwGui(const v8::Arguments& args) {
       NwGui, v8::String::New("tray.js"), IDR_NW_API_TRAY_JS);
   RequireFromResource(args.This(),
       NwGui, v8::String::New("clipboard.js"), IDR_NW_API_CLIPBOARD_JS);
+  RequireFromResource(args.This(),
+      NwGui, v8::String::New("window.js"), IDR_NW_API_WINDOW_JS);
 
   return scope.Close(NwGui);
 }

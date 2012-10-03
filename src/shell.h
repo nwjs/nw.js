@@ -68,7 +68,12 @@ class Shell : public WebContentsDelegate,
   void Move(const gfx::Rect& pos);
   void ShowDevTools();
   void Focus(bool focus);
-  void Show(bool show);
+  void Show();
+  void Hide();
+  void Maximize();
+  void Unmaximize();
+  void Minimize();
+  void Restore();
 
   // Do one time initialization at application startup.
   static void PlatformInitialize();

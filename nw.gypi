@@ -79,6 +79,8 @@
         'src/api/tray/tray_gtk.cc',
         'src/api/tray/tray_mac.mm',
         'src/api/tray/tray_win.cc',
+        'src/api/window/window.cc',
+        'src/api/window/window.h',
         'src/browser/app_controller_mac.h',
         'src/browser/app_controller_mac.mm',
         'src/browser/file_select_helper.cc',

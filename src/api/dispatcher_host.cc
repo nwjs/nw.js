@@ -28,6 +28,7 @@
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
 #include "content/nw/src/api/tray/tray.h"
+#include "content/nw/src/api/window/window.h"
 
 namespace api {
 
@@ -84,6 +85,8 @@ void DispatcherHost::OnAllocateObject(int object_id,
   } else if (type == "Clipboard") {
     objects_registry_.AddWithID(
         new Clipboard(object_id, this, option), object_id);
+  } else if (type == "Window") {
+    objects_registry_.AddWithID(new Window(object_id, this, option), object_id);
   } else {
     LOG(ERROR) << "Allocate an object of unknow type: " << type;
     objects_registry_.AddWithID(new Base(object_id, this, option), object_id);

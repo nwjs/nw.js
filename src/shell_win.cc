@@ -50,6 +50,44 @@ namespace content {
 
 HINSTANCE Shell::instance_handle_;
 
+void Shell::Close() {
+  DestroyWindow(window_);
+}
+
+void Shell::Move(const gfx::Rect& pos) {
+  SetWindowPos(window_, NULL, pos.x(), pos.y(), pos.width(), pos.height(),
+               SWP_NOACTIVATE | SWP_NOZORDER);
+}
+
+void Shell::Focus(bool focus) {
+  if (focus)
+    SetFocus(window_);
+}
+
+void Shell::Show() {
+  ShowWindow(window_, SW_SHOW);
+}
+
+void Shell::Hide() {
+  ShowWindow(window_, SW_HIDE);
+}
+
+void Shell::Maximize() {
+  ShowWindow(window_, SW_MAXIMIZE);
+}
+
+void Shell::Unmaximize() {
+  ShowWindow(window_, SW_RESTORE);
+}
+
+void Shell::Minimize() {
+  ShowWindow(window_, SW_MINIMIZE);
+}
+
+void Shell::Restore() {
+  ShowWindow(window_, SW_RESTORE);
+}
+
 void Shell::PlatformInitialize() {
   _setmode(_fileno(stdout), _O_BINARY);
   _setmode(_fileno(stderr), _O_BINARY);
@@ -222,20 +260,6 @@ void Shell::PlatformResizeSubViews() {
   } else {
     MoveWindow(GetContentView(), 0, 0, rc.right, rc.bottom, TRUE);
   }
-}
-
-void Shell::Close() {
-  DestroyWindow(window_);
-}
-
-void Shell::Move(const gfx::Rect& pos) {
-  SetWindowPos(window_, NULL, pos.x(), pos.y(), pos.width(), pos.height(),
-               SWP_NOACTIVATE | SWP_NOZORDER);
-}
-
-void Shell::Focus(bool focus) {
-  if (focus)
-    SetFocus(window_);
 }
 
 ATOM Shell::RegisterWindowClass() {

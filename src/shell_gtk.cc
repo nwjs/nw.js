@@ -74,6 +74,49 @@ GtkWidget* CreateMenuBar(Shell* shell) {
 
 }  // namespace
 
+void Shell::Close() {
+  gtk_widget_destroy(GTK_WIDGET(window_));
+}
+
+void Shell::Move(const gfx::Rect& bounds) {
+  gint x = static_cast<gint>(bounds.x());
+  gint y = static_cast<gint>(bounds.y());
+  gint width = static_cast<gint>(bounds.width());
+  gint height = static_cast<gint>(bounds.height());
+
+  gtk_window_move(window_, x, y);
+  gtk_window_resize(window_, width, height);
+}
+
+void Shell::Focus(bool focus) {
+  if (focus)
+    gtk_window_present(window_);
+}
+
+void Shell::Show() {
+  gtk_widget_show_all(GTK_WIDGET(window_));
+}
+
+void Shell::Hide() {
+  gtk_widget_hide(GTK_WIDGET(window_));
+}
+
+void Shell::Maximize() {
+  gtk_window_maximize(window_);
+}
+
+void Shell::Unmaximize() {
+  gtk_window_unmaximize(window_);
+}
+
+void Shell::Minimize() {
+  gtk_window_iconify(window_);
+}
+
+void Shell::Restore() {
+  gtk_window_deiconify(window_);
+}
+
 void Shell::PlatformInitialize() {
 }
 
@@ -302,25 +345,6 @@ void Shell::SizeTo(int width, int height) {
 
 void Shell::PlatformResizeSubViews() {
   SizeTo(content_width_, content_height_);
-}
-
-void Shell::Close() {
-  gtk_widget_destroy(GTK_WIDGET(window_));
-}
-
-void Shell::Move(const gfx::Rect& bounds) {
-  gint x = static_cast<gint>(bounds.x());
-  gint y = static_cast<gint>(bounds.y());
-  gint width = static_cast<gint>(bounds.width());
-  gint height = static_cast<gint>(bounds.height());
-
-  gtk_window_move(window_, x, y);
-  gtk_window_resize(window_, width, height);
-}
-
-void Shell::Focus(bool focus) {
-  if (focus)
-    gtk_window_present(window_);
 }
 
 void Shell::OnBackButtonClicked(GtkWidget* widget) {
