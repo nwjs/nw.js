@@ -1,0 +1,10 @@
+{
+    "name": "nw-test",
+    "main": "index.html",
+    "window": {
+        "title": "Window Test",
+        "position": "center",
+        "width": 400,
+        "height": 400
+    }
+}

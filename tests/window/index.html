@@ -1,0 +1,28 @@
+<html>
+<head>
+</head>
+<body>
+<script>
+  var gui = require('nw.gui');
+  var win = gui.Window.from(
+    window.open('popup.html', '_blank', 'screenX=100,screenY=100,width=400,height=300')
+  );
+</script>
+<br/>
+<button onclick="win.focus()">Focus</button>
+<br/>
+<button onclick="win.blur()">Blur</button>
+<br/>
+<button onclick="win.show()">Show</button>
+<br/>
+<button onclick="win.hide()">Hide</button>
+<br/>
+<button onclick="win.maximize()">Maximize</button>
+<br/>
+<button onclick="win.unmaximize()">Unmaximize</button>
+<br/>
+<button onclick="win.minimize()">Minimize</button>
+<br/>
+<button onclick="win.restore()">Restore</button>
+</body>
+</html>
