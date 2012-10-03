@@ -73,6 +73,8 @@ enum {
 // before we go deleting objects. By returning YES, we allow the window to be
 // removed from the screen.
 - (BOOL)windowShouldClose:(id)window {
+  // If this window is bound to a js object and is not forced to close,
+  // then send event to renderer to let the user decide.
   if (shell_->id() > 0 && !shell_->force_close()) {
     shell_->SendEvent("close");
     return NO;
@@ -87,6 +89,15 @@ enum {
                       waitUntilDone:NO];
 
   return YES;
+}
+
+// Catch fullscreen events
+- (void)windowWillEnterFullScreen:(NSNotification*)notification {
+  shell_->SendEvent("enter-fullscreen");
+}
+
+- (void)windowWillExitFullScreen:(NSNotification*)notification {
+  shell_->SendEvent("leave-fullscreen");
 }
 
 // Does the work of removing the window from our various bookkeeping lists
@@ -204,6 +215,14 @@ void Shell::Minimize() {
 
 void Shell::Restore() {
   [window_ deminiaturize:nil];
+}
+
+void Shell::EnterFullscreen() {
+  [window_ toggleFullScreen:nil];
+}
+
+void Shell::LeaveFullscreen() {
+  [window_ toggleFullScreen:nil];
 }
 
 void Shell::PlatformInitialize() {

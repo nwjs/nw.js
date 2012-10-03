@@ -57,6 +57,10 @@ void Window::Call(const std::string& method,
     shell_->Minimize();
   } else if (method == "Restore") {
     shell_->Restore();
+  } else if (method == "EnterFullscreen") {
+    shell_->EnterFullscreen();
+  } else if (method == "LeaveFullscreen") {
+    shell_->LeaveFullscreen();
   } else {
     NOTREACHED() << "Invalid call to Clipboard method:" << method
                  << " arguments:" << arguments;

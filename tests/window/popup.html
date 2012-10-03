@@ -15,7 +15,17 @@ This is the popup window<br/>
     else
       console.log('This window can not be closed.');
   });
+
+  win.on('enter-fullscreen', function() {
+    console.log('Enter fullscreen');
+  });
+
+  win.on('leave-fullscreen', function() {
+    console.log('Leave fullscreen');
+  });
 </script>
 <button onclick="javascript:enable = true;">Enable to be closed</button>
+<br/>
+<button onclick="win.leaveFullscreen()">Leave fullscreen</button>
 </body>
 </html>

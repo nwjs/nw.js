@@ -113,6 +113,14 @@ Window.prototype.restore = function() {
   nw.callObjectMethod(this, 'Restore', []);
 }
 
+Window.prototype.enterFullscreen = function() {
+  nw.callObjectMethod(this, 'EnterFullscreen', []);
+}
+
+Window.prototype.leaveFullscreen = function() {
+  nw.callObjectMethod(this, 'LeaveFullscreen', []);
+}
+
 Window.prototype.handleEvent = function(ev) {
   // If no one is listening to 'close' then close directly
   if (ev == 'close' && this.listeners(ev).length == 0) {

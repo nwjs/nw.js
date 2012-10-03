@@ -98,6 +98,9 @@ Shell::~Shell() {
 }
 
 void Shell::SendEvent(const std::string& event) {
+  if (id() < 0)
+    return;
+
   base::ListValue args;
   web_contents()->GetRenderViewHost()->Send(new ShellViewMsg_Object_On_Event(
       web_contents()->GetRoutingID(), id(), event, args));

@@ -74,6 +74,8 @@ class Shell : public WebContentsDelegate,
   void Unmaximize();
   void Minimize();
   void Restore();
+  void EnterFullscreen();
+  void LeaveFullscreen();
 
   // Send an event to renderer.
   void SendEvent(const std::string& event);
