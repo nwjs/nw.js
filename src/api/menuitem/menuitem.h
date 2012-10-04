@@ -35,7 +35,7 @@ class NSMenuItem;
 class MenuItemDelegate;
 #endif  // __OBJC__
 #elif defined(TOOLKIT_GTK)
-class GtkMenuItem;
+#include <gtk/gtk.h>
 #elif defined(OS_WIN)
 #include <windows.h>
 #endif  // defined(OS_MACOSX)

@@ -25,8 +25,6 @@
 
 namespace api {
 
-using namespace v8;
-
 void Menu::Create(const base::DictionaryValue& option) {
 }
 
