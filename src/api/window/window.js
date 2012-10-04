@@ -133,15 +133,15 @@ Window.prototype.handleEvent = function(ev) {
 }
 
 exports.Window = {
-  get: function() {
-    if (nwDispatcher.windowInstance == null) {
+  get: function(other) {
+    // Return other window
+    if (typeof other != 'undefined' && typeof other.require == 'function')
+      return win.require('nw.gui').Window.get();
+
+    // Other return this window
+    if (nwDispatcher.windowInstance == null)
       nwDispatcher.windowInstance = new Window();
-    }
 
     return nwDispatcher.windowInstance;
-  },
-
-  from: function(win) {
-    return win.require('nw.gui').Window.get();
   }
 };
