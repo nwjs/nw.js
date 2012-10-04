@@ -132,7 +132,8 @@ DispatcherBindings::GetNativeFunction(v8::Handle<v8::String> name) {
   else if (name->Equals(v8::String::New("CallObjectMethodSync")))
     return v8::FunctionTemplate::New(CallObjectMethodSync);
 
-  NOTREACHED();
+  NOTREACHED() << "Trying to get an non-exist function in DispatcherBindings:"
+               << *v8::String::Utf8Value(name);
   return v8::FunctionTemplate::New();
 }
 

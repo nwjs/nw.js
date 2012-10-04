@@ -91,13 +91,28 @@ enum {
   return YES;
 }
 
-// Catch fullscreen events
 - (void)windowWillEnterFullScreen:(NSNotification*)notification {
   shell_->SendEvent("enter-fullscreen");
 }
 
 - (void)windowWillExitFullScreen:(NSNotification*)notification {
   shell_->SendEvent("leave-fullscreen");
+}
+
+- (void)windowDidBecomeKey:(NSNotification *)notification {
+  shell_->SendEvent("focus");
+}
+
+- (void)windowDidResignKey:(NSNotification *)notification {
+  shell_->SendEvent("blur");
+}
+
+- (void)windowDidMiniaturize:(NSNotification *)notification{
+  shell_->SendEvent("minimize");
+}
+
+- (void)windowDidDeminiaturize:(NSNotification *)notification {
+  shell_->SendEvent("restore");
 }
 
 // Does the work of removing the window from our various bookkeeping lists

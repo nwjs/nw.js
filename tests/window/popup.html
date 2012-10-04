@@ -23,6 +23,22 @@ This is the popup window<br/>
   win.on('leave-fullscreen', function() {
     console.log('Leave fullscreen');
   });
+
+  win.on('focus', function() {
+    console.log('Window is focused');
+  });
+
+  win.on('blur', function() {
+    console.log('Window lost focus');
+  });
+
+  win.on('minimize', function() {
+    console.log('Window is minimized');
+  });
+
+  win.on('restore', function() {
+    console.log('Window is restored');
+  });
 </script>
 <button onclick="javascript:enable = true;">Enable to be closed</button>
 <br/>

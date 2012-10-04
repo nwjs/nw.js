@@ -230,7 +230,7 @@ class Shell : public WebContentsDelegate,
   NotificationRegistrar registrar_;
 
   // Flag to indicate we will force closing
-  bool force_close_ = false;
+  bool force_close_;
 
   // ID of corresponding js object.
   int id_;
