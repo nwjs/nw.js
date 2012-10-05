@@ -121,6 +121,10 @@ Window.prototype.leaveFullscreen = function() {
   nw.callObjectMethod(this, 'LeaveFullscreen', []);
 }
 
+Window.prototype.showDevTools = function() {
+  nw.callObjectMethod(this, 'ShowDevTools', []);
+}
+
 Window.prototype.handleEvent = function(ev) {
   // If no one is listening to 'close' then close directly
   if (ev == 'close' && this.listeners(ev).length == 0) {
@@ -136,7 +140,7 @@ exports.Window = {
   get: function(other) {
     // Return other window
     if (typeof other != 'undefined' && typeof other.require == 'function')
-      return win.require('nw.gui').Window.get();
+      return other.require('nw.gui').Window.get();
 
     // Other return this window
     if (nwDispatcher.windowInstance == null)

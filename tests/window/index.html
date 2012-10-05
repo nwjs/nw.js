@@ -4,7 +4,7 @@
 <body>
 <script>
   var gui = require('nw.gui');
-  var win = gui.Window.from(
+  var win = gui.Window.get(
     window.open('popup.html', '_blank', 'screenX=100,screenY=100,width=200,height=300')
   );
 </script>
@@ -31,5 +31,7 @@
 <button onclick="win.close()">Close</button>
 <br/>
 <button onclick="win.close(true)">Force Close</button>
+<br/>
+<button onclick="win.showDevTools()">Open DevTools</button>
 </body>
 </html>

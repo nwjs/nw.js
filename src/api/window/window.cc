@@ -61,6 +61,8 @@ void Window::Call(const std::string& method,
     shell_->EnterFullscreen();
   } else if (method == "LeaveFullscreen") {
     shell_->LeaveFullscreen();
+  } else if (method == "ShowDevTools") {
+    shell_->ShowDevTools();
   } else {
     NOTREACHED() << "Invalid call to Clipboard method:" << method
                  << " arguments:" << arguments;
