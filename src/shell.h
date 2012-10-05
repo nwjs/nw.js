@@ -169,10 +169,6 @@ class Shell : public WebContentsDelegate,
 
   explicit Shell(WebContents* web_contents, base::DictionaryValue* manifest);
 
-  // Helper to create a new Shell given a newly created WebContents.
-  static Shell* CreateShell(WebContents* web_contents,
-                            base::DictionaryValue* manifest);
-
   // All the methods that begin with Platform need to be implemented by the
   // platform specific Shell implementation.
   // Called from the destructor to let each platform do any necessary cleanup.

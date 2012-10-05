@@ -69,18 +69,30 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
       , default_edit_wnd_proc_(0)
 #endif
   {
-  if (window_manifest_) {
-    window_manifest_->GetBoolean(switches::kmToolbar, &is_toolbar_open_);
-    window_manifest_->GetBoolean(switches::kDeveloper, &is_show_devtools_);
-    window_manifest_->GetInteger(switches::kmMaxHeight, &max_height_);
-    window_manifest_->GetInteger(switches::kmMaxWidth, &max_width_);
-    window_manifest_->GetInteger(switches::kmMinHeight, &min_height_);
-    window_manifest_->GetInteger(switches::kmMinWidth, &min_width_);
-  }
-
+  // Register shell.
   registrar_.Add(this, NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,
       Source<WebContents>(web_contents));
   windows_.push_back(this);
+
+  // Read manifest into members.
+  manifest->GetBoolean(switches::kmToolbar, &is_toolbar_open_);
+  manifest->GetBoolean(switches::kDeveloper, &is_show_devtools_);
+  manifest->GetInteger(switches::kmMaxHeight, &max_height_);
+  manifest->GetInteger(switches::kmMaxWidth, &max_width_);
+  manifest->GetInteger(switches::kmMinHeight, &min_height_);
+  manifest->GetInteger(switches::kmMinWidth, &min_width_);
+
+  int width = 700;
+  int height = 450;
+  manifest->GetInteger(switches::kmWidth, &width);
+  manifest->GetInteger(switches::kmHeight, &height);
+
+  // Initialize shell.
+  PlatformCreateWindow(width, height);
+  web_contents_.reset(web_contents);
+  web_contents_->SetDelegate(this);
+  PlatformSetContents();
+  PlatformResizeSubViews();
 }
 
 Shell::~Shell() {
@@ -104,24 +116,6 @@ void Shell::SendEvent(const std::string& event) {
   base::ListValue args;
   web_contents()->GetRenderViewHost()->Send(new ShellViewMsg_Object_On_Event(
       web_contents()->GetRoutingID(), id(), event, args));
-}
-
-Shell* Shell::CreateShell(WebContents* web_contents,
-                          base::DictionaryValue* manifest) {
-  int width = 700;
-  int height = 450;
-  manifest->GetInteger(switches::kmWidth, &width);
-  manifest->GetInteger(switches::kmHeight, &height);
-
-  Shell* shell = new Shell(web_contents, manifest);
-  shell->PlatformCreateWindow(width, height);
-
-  shell->web_contents_.reset(web_contents);
-  web_contents->SetDelegate(shell);
-  shell->PlatformSetContents();
-  shell->PlatformResizeSubViews();
-
-  return shell;
 }
 
 nw::Package* Shell::GetPackage() {
@@ -168,7 +162,7 @@ Shell* Shell::CreateNewWindow(BrowserContext* browser_context,
   if (!manifest->HasKey(switches::kmPosition))
     manifest->SetString(switches::kmPosition, "center");
 
-  Shell* shell = CreateShell(web_contents, manifest);
+  Shell* shell = new Shell(web_contents, manifest);
   if (!url.is_empty())
     shell->LoadURL(url);
   return shell;
@@ -223,7 +217,7 @@ void Shell::ShowDevTools() {
   manifest.SetInteger(switches::kmWidth, 600);
   manifest.SetInteger(switches::kmHeight, 500);
 
-  Shell* shell = CreateShell(
+  Shell* shell = new Shell(
       WebContents::Create(web_contents()->GetBrowserContext(),
                           NULL, MSG_ROUTING_NONE, NULL),
       &manifest);
@@ -288,12 +282,14 @@ bool Shell::TakeFocus(WebContents* soruce,
   return true;
 }
 
+// Window opened by window.open
 void Shell::WebContentsCreated(WebContents* source_contents,
                                int64 source_frame_id,
                                const GURL& target_url,
                                WebContents* new_contents) {
   // Create with package's manifest
-  base::DictionaryValue *manifest = GetPackage()->window();
+  scoped_ptr<base::DictionaryValue> manifest(
+      GetPackage()->window()->DeepCopy());
   manifest->SetBoolean(switches::kDeveloper,
       CommandLine::ForCurrentProcess()->HasSwitch(switches::kDeveloper));
 
@@ -308,7 +304,7 @@ void Shell::WebContentsCreated(WebContents* source_contents,
   if (features.ySet)
     manifest->SetInteger(switches::kmY, features.y);
 
-  CreateShell(new_contents, manifest);
+  new Shell(new_contents, manifest.get());
 }
 
 void Shell::RunFileChooser(WebContents* web_contents,
