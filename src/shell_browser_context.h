@@ -12,6 +12,10 @@
 #include "base/scoped_temp_dir.h"
 #include "content/public/browser/browser_context.h"
 
+namespace nw {
+class Package;
+}
+
 namespace content {
 
 class DownloadManagerDelegate;
@@ -20,7 +24,8 @@ class ShellDownloadManagerDelegate;
 
 class ShellBrowserContext : public BrowserContext {
  public:
-  explicit ShellBrowserContext(bool off_the_record);
+  explicit ShellBrowserContext(bool off_the_record,
+                               nw::Package* package);
   virtual ~ShellBrowserContext();
 
   // BrowserContext implementation.
@@ -52,6 +57,7 @@ class ShellBrowserContext : public BrowserContext {
   void InitWhileIOAllowed();
 
   bool off_the_record_;
+  nw::Package* package_;
   ScopedTempDir testing_path_;
   FilePath path_;
   scoped_ptr<ResourceContext> resource_context_;

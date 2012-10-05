@@ -95,10 +95,11 @@ void ShellBrowserMainParts::PostMainMessageLoopRun() {
 }
 
 void ShellBrowserMainParts::Init() {
-  nw::InitPackageForceNoEmpty();
+  package_.reset(new nw::Package());
 
-  browser_context_.reset(new ShellBrowserContext(false));
-  off_the_record_browser_context_.reset(new ShellBrowserContext(true));
+  browser_context_.reset(new ShellBrowserContext(false, package()));
+  off_the_record_browser_context_.reset(
+      new ShellBrowserContext(true, package()));
 
   Shell::PlatformInitialize();
   net::NetModule::SetResourceProvider(PlatformResourceProvider);
@@ -122,7 +123,7 @@ void ShellBrowserMainParts::Init() {
       port, browser_context_->GetRequestContext());
 
   Shell::CreateNewWindow(browser_context_.get(),
-                         nw::GetStartupURL(),
+                         package()->GetStartupURL(),
                          NULL,
                          MSG_ROUTING_NONE,
                          NULL);

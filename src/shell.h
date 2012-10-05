@@ -44,7 +44,12 @@ namespace base {
 class DictionaryValue;
 }
 
+namespace nw {
+class Package;
+}
+
 class GURL;
+
 namespace content {
 
 class BrowserContext;
@@ -100,6 +105,8 @@ class Shell : public WebContentsDelegate,
 
   // Closes all windows and exits.
   static void PlatformExit();
+
+  static nw::Package* GetPackage();
 
   WebContents* web_contents() const { return web_contents_.get(); }
   gfx::NativeWindow window() { return window_; }

@@ -45,8 +45,10 @@
 
 namespace content {
 
-ShellBrowserContext::ShellBrowserContext(bool off_the_record)
-    : off_the_record_(off_the_record) {
+ShellBrowserContext::ShellBrowserContext(bool off_the_record,
+                                         nw::Package* package)
+    : off_the_record_(off_the_record),
+      package_(package) {
   InitWhileIOAllowed();
 }
 
@@ -68,7 +70,6 @@ void ShellBrowserContext::InitWhileIOAllowed() {
     path_ = cmd_line->GetSwitchValuePath(switches::kContentShellDataPath);
     return;
   }
-  base::DictionaryValue *manifest = nw::GetManifest();
   FilePath::StringType name(
 #if defined(OS_WIN)
       L"node-webkit"
@@ -76,7 +77,7 @@ void ShellBrowserContext::InitWhileIOAllowed() {
       "node-webkit"
 #endif
       );
-  manifest->GetString(switches::kmName, &name);
+  package_->root()->GetString(switches::kmName, &name);
 #if defined(OS_WIN)
   CHECK(PathService::Get(base::DIR_LOCAL_APP_DATA, &path_));
   path_ = path_.Append(name);

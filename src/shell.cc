@@ -124,6 +124,12 @@ Shell* Shell::CreateShell(WebContents* web_contents,
   return shell;
 }
 
+nw::Package* Shell::GetPackage() {
+  ShellContentBrowserClient* browser_client = 
+      static_cast<ShellContentBrowserClient*>(GetContentClient()->browser());
+  return browser_client->shell_browser_main_parts()->package();
+}
+
 void Shell::CloseAllWindows() {
   AutoReset<bool> auto_reset(&quit_message_loop_, false);
   std::vector<Shell*> open_windows(windows_);
@@ -154,8 +160,7 @@ Shell* Shell::CreateNewWindow(BrowserContext* browser_context,
       base_web_contents);
 
   // Create with package's manifest
-  base::DictionaryValue *manifest = NULL;
-  nw::GetManifest()->GetDictionary(switches::kmWindow, &manifest);
+  base::DictionaryValue *manifest = GetPackage()->window();
   manifest->SetBoolean(switches::kDeveloper,
       CommandLine::ForCurrentProcess()->HasSwitch(switches::kDeveloper));
 
@@ -288,8 +293,7 @@ void Shell::WebContentsCreated(WebContents* source_contents,
                                const GURL& target_url,
                                WebContents* new_contents) {
   // Create with package's manifest
-  base::DictionaryValue *manifest = NULL;
-  nw::GetManifest()->GetDictionary(switches::kmWindow, &manifest);
+  base::DictionaryValue *manifest = GetPackage()->window();
   manifest->SetBoolean(switches::kDeveloper,
       CommandLine::ForCurrentProcess()->HasSwitch(switches::kDeveloper));
 

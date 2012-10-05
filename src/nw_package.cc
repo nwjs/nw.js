@@ -26,21 +26,16 @@
 #include "base/logging.h"
 #include "base/scoped_temp_dir.h"
 #include "base/string_util.h"
+#include "base/string16.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
-#include "common/zip.h"
 #include "content/nw/src/common/shell_switches.h"
+#include "content/nw/src/common/zip.h"
+#include "googleurl/src/gurl.h"
 
-#if defined(OS_WIN)
-#include "base/string16.h"
-#endif
+namespace nw {
 
 namespace {
-
-FilePath package_root;
-
-// Don't bother with lifetime since it's used through out the program
-base::DictionaryValue* g_manifest = NULL;
 
 bool MakePathAbsolute(FilePath* file_path) {
   DCHECK(file_path);
@@ -62,41 +57,41 @@ bool MakePathAbsolute(FilePath* file_path) {
   return true;
 }
 
-void ManifestConvertRelativePaths(
-    FilePath path,
-    base::DictionaryValue* manifest) {
-  if (manifest->HasKey(switches::kmMain)) {
-#if defined(OS_WIN)
-    string16 out;
-#else
-    std::string out;
-#endif
-    if (!manifest->GetString(switches::kmMain, &out)) {
-      manifest->Remove(switches::kmMain, NULL);
-      LOG(WARNING) << "'main' field in manifest must be a string.";
-      return;
-    }
+FilePath GetPathFromCommandLine(bool* self_extract) {
+  FilePath path;
+  CommandLine* command_line = CommandLine::ForCurrentProcess();
+  const CommandLine::StringVector& args = command_line->GetArgs();
 
-    // Don't append path if there is already a prefix
-#if defined(OS_WIN)
-    if (MatchPattern(out, L"*://*")) {
+  if (args.size() == 0) {
+    *self_extract = true;
+#if defined(OS_MACOSX)
+    // Find if we have node-webkit.app/Resources/app.nw.
+    path = path.DirName().DirName().Append("Resources").Append("app.nw");
 #else
-    if (MatchPattern(out, "*://*")) {
+    // See itself as a package (allowing standalone).
+    path = FilePath(command_line->GetProgram());
 #endif
-      return;
-    }
-
-
-    FilePath main_path = path.Append(out);
-#if defined(OS_WIN)
-    string16 url(L"file://");
-#else
-    std::string url("file://");
-#endif
-    manifest->SetString(switches::kmMain, url + main_path.value());
   } else {
-    LOG(WARNING) << "'main' field in manifest should be specifed.";
+    *self_extract = false;
+    // Get first argument.
+    path = FilePath(args[0]);
   }
+
+  return path;
+}
+
+void RelativePathToURI(FilePath root, base::DictionaryValue* manifest) {
+  std::string old;
+  if (!manifest->GetString(switches::kmMain, &old))
+    return;
+
+  // Don't append path if there is already a prefix
+  if (MatchPattern(old, "*://*"))
+    return;
+
+  FilePath main_path = root.Append(FilePath::FromUTF8Unsafe(old));
+  manifest->SetString(switches::kmMain,
+                      std::string("file://") + main_path.AsUTF8Unsafe());
 }
 
 bool ExtractPackage(const FilePath& zip_file, FilePath* where) {
@@ -121,105 +116,25 @@ bool ExtractPackage(const FilePath& zip_file, FilePath* where) {
   return zip::Unzip(zip_file, *where);
 }
 
-bool InitPackage() {
-  FilePath path;
-  bool is_self_extract = false;
-
-  CommandLine* command_line = CommandLine::ForCurrentProcess();
-  const CommandLine::StringVector& args = command_line->GetArgs();
-
-  if (args.size() == 0) {
-    // See itself as a package (allowing standalone)
-    path = FilePath(command_line->GetProgram());
-    is_self_extract = true;
-#if defined(OS_MACOSX)
-    // Find if we have node-webkit.app/Resources/app.nw
-    path = path.DirName().DirName().Append("Resources").Append("app.nw");
-#endif
-  } else {
-    // Get first argument
-    path = FilePath(args[0]);
-    if (!file_util::PathExists(path)) {
-      LOG(WARNING) << "Package does not exist.";
-      return false;
-    }
-  }
-
-  // Convert to absoulute path
-  if (!MakePathAbsolute(&path)) {
-    DLOG(ERROR) << "Cannot make absolute path from " << path.value();
-  }
-
-  // If it's a file then try to extract from it
-  if (!file_util::DirectoryExists(path)) {
-    DLOG(INFO) << "Extracting packaging...";
-    FilePath zip_file(path);
-    if (!ExtractPackage(zip_file, &path)) {
-      if (!is_self_extract)
-        LOG(ERROR) << "Unable to extract package.";
-      return false;
-    }
-  }
-
-  // Set the directory of app as our working directory
-  package_root = path;
-  file_util::SetCurrentDirectory(path);
-
-#if defined(OS_WIN)
-  FilePath manifest_path = path.Append(L"package.json");
-#else
-  FilePath manifest_path = path.Append("package.json");
-#endif
-  if (!file_util::PathExists(manifest_path)) {
-    LOG(ERROR) << "No 'package.json' in package.";
-    return false;
-  }
-
-  // Parse file
-  std::string error;
-  JSONFileValueSerializer serializer(manifest_path);
-  scoped_ptr<Value> root(serializer.Deserialize(NULL, &error));
-  if (!root.get()) {
-    if (error.empty()) {
-      LOG(ERROR) << "It's not able to read the manifest file.";
-    } else {
-      LOG(ERROR) << "Manifest parsing error: " << error;
-    }
-    return false;
-  }
-
-  if (!root->IsType(Value::TYPE_DICTIONARY)) {
-    LOG(ERROR) << "Manifest file is invalid, we need a dictionary type";
-    return false;
-  }
-
-  // Save result in global
-  g_manifest = static_cast<DictionaryValue*>(root.release());
-  // And save the root path
-  g_manifest->SetString(switches::kmRoot, path.value());
-
-  // Check fields
-  const char* required_fields[] = { switches::kmMain, switches::kmName };
-  for (unsigned i = 0; i < arraysize(required_fields); i++) {
-    if (!g_manifest->HasKey(required_fields[i])) {
-      LOG(ERROR) << "'" << required_fields[i] << "' field is required.";
-      return false;
-    }
-  }
-
-  ManifestConvertRelativePaths(path, g_manifest);
-  return true;
-}
-
 }  // namespace
 
-namespace nw {
-
-base::DictionaryValue* GetManifest() {
-  return g_manifest;
+Package::Package()
+    : path_(GetPathFromCommandLine(&self_extract_)) {
+  if (!InitFromPath())
+    InitWithDefault();
 }
 
-GURL GetStartupURL() {
+Package::Package(FilePath path)
+    : path_(path),
+      self_extract_(false) {
+  if (!InitFromPath())
+    InitWithDefault();
+}
+
+Package::~Package() {
+}
+
+GURL Package::GetStartupURL() {
   std::string url; 
   // Specify URL in --url
   CommandLine* command_line = CommandLine::ForCurrentProcess();
@@ -233,43 +148,109 @@ GURL GetStartupURL() {
   }
 
   // Read from manifest
-  base::DictionaryValue* manifest = nw::GetManifest();
-  manifest->GetString(switches::kmMain, &url);
-
-  if (url.empty())
-    url = "nw:blank";
-
-  return GURL(url);
+  if (root()->GetString(switches::kmMain, &url))
+    return GURL(url);
+  else
+    return GURL("nw:blank");
 }
 
-bool GetUseNode() {
+bool Package::GetUseNode() {
   bool use_node = true;
-  GetManifest()->GetBoolean(switches::kmNodejs, &use_node);
+  root()->GetBoolean(switches::kmNodejs, &use_node);
   return use_node;
 }
 
-FilePath GetPackageRoot() {
-  return package_root;
+base::DictionaryValue* Package::window() {
+  base::DictionaryValue* window;
+  root()->GetDictionaryWithoutPathExpansion(switches::kmWindow, &window);
+  return window;
 }
 
-void InitPackageForceNoEmpty() {
+bool Package::InitFromPath() {
   base::ThreadRestrictions::SetIOAllowed(true);
 
-  InitPackage();
+  if (!ExtractPath(&path_))
+    return false;
 
-  if (g_manifest == NULL) {
-    g_manifest = new base::DictionaryValue();
-    g_manifest->SetString(switches::kmName, "node-webkit");
+  file_util::SetCurrentDirectory(path_);
+
+  // path_/package.json
+  FilePath manifest_path = path_.AppendASCII("package.json");
+  if (!file_util::PathExists(manifest_path)) {
+    if (!self_extract())
+      LOG(ERROR) << "No 'package.json' in package.";
+    return false;
   }
 
-  if (!g_manifest->HasKey(switches::kmWindow)) {
-    base::DictionaryValue* window = new base::DictionaryValue();
-    g_manifest->Set(switches::kmWindow, window);
-
-    // Hide toolbar is specifed in the command line
-    if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kNoToolbar))
-      window->SetBoolean(switches::kmToolbar, false);
+  // Parse file.
+  std::string error;
+  JSONFileValueSerializer serializer(manifest_path);
+  scoped_ptr<Value> root(serializer.Deserialize(NULL, &error));
+  if (!root.get()) {
+    if (error.empty())
+      LOG(ERROR) << "It's not able to read the manifest file.";
+    else
+      LOG(ERROR) << "Manifest parsing error: " << error;
+    return false;
+  } else if (!root->IsType(Value::TYPE_DICTIONARY)) {
+    LOG(ERROR) << "Manifest file is invalid, we need a dictionary type";
+    return false;
   }
+
+  // Save result in global
+  root_.reset(static_cast<DictionaryValue*>(root.release()));
+
+  // Check fields
+  const char* required_fields[] = {
+    switches::kmMain,
+    switches::kmName
+  };
+  for (unsigned i = 0; i < arraysize(required_fields); i++)
+    if (!root_->HasKey(required_fields[i])) {
+      LOG(ERROR) << "'" << required_fields[i] << "' field is required.";
+      return false;
+    }
+
+  // Force window field no empty
+  if (!root_->HasKey(switches::kmWindow))
+    root_->Set(switches::kmWindow, new base::DictionaryValue());
+
+  RelativePathToURI(path_, this->root());
+  return true;
+}
+
+void Package::InitWithDefault() {
+  root_.reset(new base::DictionaryValue());
+  root()->SetString(switches::kmName, "node-webkit");
+  root()->SetString(switches::kmMain, "nw:blank");
+  base::DictionaryValue* window = new base::DictionaryValue();
+  root()->Set(switches::kmWindow, window);
+
+  // Hide toolbar is specifed in the command line
+  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kNoToolbar))
+    window->SetBoolean(switches::kmToolbar, false);
+}
+
+bool Package::ExtractPath(FilePath* path) {
+  // Convert to absoulute path.
+  if (!MakePathAbsolute(&path_)) {
+    LOG(ERROR) << "Cannot make absolute path from " << path_.value();
+    return false;
+  }
+
+  // If it's a file then try to extract from it.
+  if (!file_util::DirectoryExists(path_)) {
+    DLOG(INFO) << "Extracting packaging...";
+    FilePath extracted_path;
+    if (ExtractPackage(path_, &extracted_path)) {
+      path_ = extracted_path;
+    } else if (!self_extract()) {
+      LOG(ERROR) << "Unable to extract package.";
+      return false;
+    }
+  }
+
+  return true;
 }
 
 }  // namespace nw

@@ -385,7 +385,7 @@ void Shell::PlatformCreateWindow(int width, int height) {
   }
 
   // Replace all node-webkit stuff to app's name
-  base::DictionaryValue* manifest = nw::GetManifest();
+  base::DictionaryValue* manifest = GetPackage()->root();
   std::string name;
   if (manifest->GetString(switches::kmName, &name) &&
      name != "node-webkit") {

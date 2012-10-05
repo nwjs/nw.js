@@ -21,9 +21,13 @@
 #ifndef CONTENT_NW_SRC_NW_PACKAGE_H
 #define CONTENT_NW_SRC_NW_PACKAGE_H
 
-#include "googleurl/src/gurl.h"
+#include "base/basictypes.h"
+#include "base/file_path.h"
+#include "base/memory/scoped_ptr.h"
 
-class FilePath;
+#include <string>
+
+class GURL;
 
 namespace base {
   class DictionaryValue;
@@ -31,20 +35,45 @@ namespace base {
 
 namespace nw {
 
-// Return the global manifest file
-base::DictionaryValue* GetManifest();
+class Package {
+ public:
+  // Init package from command line parameters.
+  Package();
 
-// Return the startup url from mainfest file or command line
-GURL GetStartupURL();
+  // Init package from specifed path.
+  Package(FilePath path);
+  ~Package();
 
-// Return if we enable node.js
-bool GetUseNode();
+  // Get startup url.
+  GURL GetStartupURL();
 
-// Return root path of package
-FilePath GetPackageRoot();
+  // Return if we enable node.js.
+  bool GetUseNode();
 
-// Extract app package and initialize manifest file
-void InitPackageForceNoEmpty();
+  // Root path of package.
+  FilePath path() const { return path_; }
+
+  // If the package is extracting itself.
+  bool self_extract() const { return self_extract_; }
+
+  // Manifest root.
+  base::DictionaryValue* root() { return root_.get(); }
+
+  // Window field of manifest.
+  base::DictionaryValue* window();
+
+ private:
+  bool InitFromPath();
+  void InitWithDefault();
+  bool ExtractPath(FilePath* path);
+
+  FilePath path_;
+  bool self_extract_;
+  bool initialized_;
+  scoped_ptr<base::DictionaryValue> root_;
+
+  DISALLOW_COPY_AND_ASSIGN(Package);
+};
 
 }  // namespae nw
 

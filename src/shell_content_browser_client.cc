@@ -67,13 +67,14 @@ std::string ShellContentBrowserClient::GetApplicationLocale() {
 void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     CommandLine* command_line,
     int child_process_id) {
-  if (nw::GetManifest() && nw::GetUseNode()) {
+  nw::Package* package = shell_browser_main_parts()->package();
+  if (package && package->GetUseNode()) {
     // Allow node.js
     command_line->AppendSwitch(switches::kmNodejs);
 
     // Set cwd
     command_line->AppendSwitchPath(switches::kWorkingDirectory,
-                                   nw::GetPackageRoot());
+                                   package->path());
   }
 }
 

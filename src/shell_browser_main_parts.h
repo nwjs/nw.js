@@ -13,6 +13,10 @@ namespace base {
 class Thread;
 }
 
+namespace nw {
+class Package;
+}
+
 namespace content {
 
 class ShellBrowserContext;
@@ -39,10 +43,12 @@ class ShellBrowserMainParts : public BrowserMainParts {
   ShellBrowserContext* off_the_record_browser_context() {
     return off_the_record_browser_context_.get();
   }
+  nw::Package* package() { return package_.get(); }
 
  private:
   scoped_ptr<ShellBrowserContext> browser_context_;
   scoped_ptr<ShellBrowserContext> off_the_record_browser_context_;
+  scoped_ptr<nw::Package> package_;
 
   // For running content_browsertests.
   const MainFunctionParams& parameters_;
