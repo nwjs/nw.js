@@ -81,6 +81,14 @@ class Shell : public WebContentsDelegate,
   void Restore();
   void EnterFullscreen();
   void LeaveFullscreen();
+  void SetMininumSize(int width, int height);
+  void SetMaximumSize(int width, int height);
+  void SetResizable(bool resizable);
+  void SetPosition(const std::string& position);
+  void SetTitle(const std::string& title);
+#if defined(TOOLKIT_GTK)
+  void SetAsDesktop();
+#endif
 
   // Send an event to renderer.
   void SendEvent(const std::string& event);
@@ -187,15 +195,6 @@ class Shell : public WebContentsDelegate,
   void PlatformSetAddressBarURL(const GURL& url);
   // Sets whether the spinner is spinning.
   void PlatformSetIsLoading(bool loading);
-  // Set the title of shell window
-  void PlatformSetTitle(const string16& title);
-
-  // Resizes the main window to the given dimensions.
-#if defined(TOOLKIT_GTK)
-  void SizeTo(int width, int height);
-#elif defined(OS_WIN)
-  void SizeTo(int width, int height, int x = -1, int y = -1);
-#endif
 
   gfx::NativeView GetContentView();
 
@@ -224,29 +223,25 @@ class Shell : public WebContentsDelegate,
   gfx::NativeWindow window_;
   gfx::NativeEditView url_edit_view_;
 
-  // Notification manager
+  // Notification manager.
   NotificationRegistrar registrar_;
 
-  // Flag to indicate we will force closing
+  // Flag to indicate we will force closing.
   bool force_close_;
 
   // ID of corresponding js object.
   int id_;
 
-  // Window manifest
+  // Debug settings.
   bool is_show_devtools_;
   bool is_toolbar_open_;
-  bool is_desktop_;
-  int x_, y_;
-  int height_, width_;
-  int max_height_, max_width_;
-  int min_height_, min_width_;
-  std::string position_;
-  std::string title_;
 
 #if defined(OS_WIN)
   WNDPROC default_edit_wnd_proc_;
   static HINSTANCE instance_handle_;
+
+  int min_width_, min_height_;
+  int max_width_, max_height_;
 #elif defined(TOOLKIT_GTK)
   GtkWidget* vbox_;
 

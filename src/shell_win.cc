@@ -88,6 +88,50 @@ void Shell::Restore() {
   ShowWindow(window_, SW_RESTORE);
 }
 
+void Shell::EnterFullscreen() {
+}
+
+void Shell::LeaveFullscreen() {
+}
+
+void Shell::SetMininumSize(int width, int height) {
+  min_width_ = width;
+  min_height_ = height;
+}
+
+void Shell::SetMaximumSize(int width, int height) {
+  max_width_ = width;
+  max_height_ = height;
+}
+
+void Shell::SetResizable(bool resizable) {
+}
+
+void Shell::SetPosition(const std::string& position) {
+  RECT rc;
+  GetWindowRect(window_, &rc);
+  OffsetRect(&rc, -rc.left, -rc.top);
+  int width = rc.right;
+  int height = rc.bottom
+
+  int x, y;
+  if (position_ == "center") {
+    x = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
+    y = (GetSystemMetrics(SM_CYSCREEN) - height) / 2;
+  } else if (position_ == "mouse") {
+    POINT point;
+    GetCursorPos(&point);
+    x = point.x - width / 2;
+    y = point.y - height / 2;
+  }
+  MoveWindow(window_, x, y, width, height, FALSE);
+}
+
+void Shell::SetTitle(const std::string& title) {
+  string16 title_utf16 = UTF8ToUTF16(title);
+  ::SetWindowText(window_, title_utf16.c_str());
+}
+
 void Shell::PlatformInitialize() {
   _setmode(_fileno(stdout), _O_BINARY);
   _setmode(_fileno(stderr), _O_BINARY);
@@ -141,7 +185,7 @@ void Shell::PlatformSetIsLoading(bool loading) {
 }
 
 void Shell::PlatformCreateWindow(int width, int height) {
-  window_ = CreateWindow(kWindowClass, title_.c_str(),
+  window_ = CreateWindow(kWindowClass, "node-webkit",
                          WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
                          CW_USEDEFAULT, 0,
                          width, height,
@@ -188,54 +232,8 @@ void Shell::PlatformCreateWindow(int width, int height) {
   }
 }
 
-void Shell::PlatformSetupWindow() {
-  int x, y;
-  if (x_ > 0 && y_ > 0) {
-    // window.x and window.y
-    x = x_;
-    y = y_;
-  } else {
-    // window.position
-    if (position_ == "center") {
-      x = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
-      y = (GetSystemMetrics(SM_CYSCREEN) - height) / 2;
-    } else if (position_ == "mouse") {
-      POINT point;
-      GetCursorPos(&point);
-      x = point.x - width / 2;
-      y = point.y - height / 2;
-    }
-  }
-
-  SizeTo(width, height, x, y);
-}
-
 void Shell::PlatformSetContents() {
   SetParent(web_contents_->GetView()->GetNativeView(), window_);
-}
-
-void Shell::SizeTo(int width, int height, int x, int y) {
-  RECT rc, rw;
-  GetClientRect(window_, &rc);
-  GetWindowRect(window_, &rw);
-
-  int client_width = rc.right - rc.left;
-  int window_width = rw.right - rw.left;
-  window_width = (window_width - client_width) + width;
-
-  int client_height = rc.bottom - rc.top;
-  int window_height = rw.bottom - rw.top;
-  window_height = (window_height - client_height) + height;
-
-  // Add space for the url bar.
-  if (is_toolbar_open_)
-    window_height += kURLBarHeight;
-
-  UINT flag = SWP_NOZORDER;
-  if (x == -1 || y == -1)
-    flag |= SWP_NOMOVE;
-
-  SetWindowPos(window_, NULL, x, y, window_width, window_height, flag);
 }
 
 void Shell::PlatformResizeSubViews() {
@@ -380,10 +378,6 @@ LRESULT CALLBACK Shell::EditWndProc(HWND hwnd, UINT message,
 
   return CallWindowProc(shell->default_edit_wnd_proc_, hwnd, message, wParam,
                         lParam);
-}
-
-void Shell::PlatformSetTitle(const string16& text) {
-  ::SetWindowText(window_, text.c_str());
 }
 
 }  // namespace content

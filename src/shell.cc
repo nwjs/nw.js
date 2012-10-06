@@ -59,20 +59,13 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
       force_close_(false),
       id_(-1),
       is_show_devtools_(false),
-      is_toolbar_open_(true),
-      is_desktop_(false),
-      x_(-1),
-      y_(-1),
-      height_(450),
-      width_(700),
-      max_height_(-1),
+      is_toolbar_open_(true)
+#if defined(OS_WIN)
+      , max_height_(-1),
       max_width_(-1),
       min_height_(-1),
       min_width_(-1),
-      position_("center"),
-      title_("node-webkit")
-#if defined(OS_WIN)
-      , default_edit_wnd_proc_(0)
+      default_edit_wnd_proc_(0)
 #endif
   {
   // Register shell.
@@ -80,25 +73,47 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
       Source<WebContents>(web_contents));
   windows_.push_back(this);
 
-  // Read manifest into members.
+  // Debug settings
   is_show_devtools_ =
       CommandLine::ForCurrentProcess()->HasSwitch(switches::kDeveloper);
   manifest->GetBoolean(switches::kmToolbar, &is_toolbar_open_);
-  manifest->GetBoolean(switches::kmAsDesktop, &is_desktop_);
-  manifest->GetInteger(switches::kmX, &x_);
-  manifest->GetInteger(switches::kmY, &y_);
-  manifest->GetInteger(switches::kmWidth, &width_);
-  manifest->GetInteger(switches::kmHeight, &height_);
-  manifest->GetInteger(switches::kmMaxHeight, &max_height_);
-  manifest->GetInteger(switches::kmMaxWidth, &max_width_);
-  manifest->GetInteger(switches::kmMinHeight, &min_height_);
-  manifest->GetInteger(switches::kmMinWidth, &min_width_);
-  manifest->GetString(switches::kmPosition, &position_);
-  manifest->GetString(switches::kmTitle, &title_);
 
   // Initialize shell.
-  PlatformCreateWindow(width_, height_);
-  PlatformSetupWindow();
+  int width = 700, height = 450;
+  manifest->GetInteger(switches::kmWidth, &width);
+  manifest->GetInteger(switches::kmHeight, &height);
+  PlatformCreateWindow(width, height);
+
+  // Setup window from manifest.
+#if defined(TOOLKIT_GTK)
+  bool as_desktop;
+  if (manifest->GetBoolean(switches::kmAsDesktop, &as_desktop) && as_desktop) {
+    SetAsDesktop();
+  }
+#endif
+  int x, y;
+  std::string position;
+  if (manifest->GetInteger(switches::kmX, &x) &&
+      manifest->GetInteger(switches::kmY, &y)) {
+    Move(gfx::Rect(x, y, width, height));
+  } else if (manifest->GetString(switches::kmPosition, &position)) {
+    SetPosition(position);
+  }
+  int min_height, min_width;
+  if (manifest->GetInteger(switches::kmMinHeight, &min_height) &&
+      manifest->GetInteger(switches::kmMinWidth, &min_width)) {
+    SetMininumSize(min_width, min_height);
+  }
+  int max_height, max_width;
+  if (manifest->GetInteger(switches::kmMaxHeight, &max_height) &&
+      manifest->GetInteger(switches::kmMaxWidth, &max_width)) {
+    SetMaximumSize(max_width, max_height);
+  }
+  std::string title("node-webkit");
+  manifest->GetString(switches::kmTitle, &title);
+  SetTitle(title);
+
+  // Add web contents.
   web_contents_.reset(web_contents);
   web_contents_->SetDelegate(this);
   PlatformSetContents();
@@ -107,6 +122,8 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
 }
 
 Shell::~Shell() {
+  SendEvent("closed");
+
   PlatformCleanUp();
 
   for (size_t i = 0; i < windows_.size(); ++i) {
@@ -164,11 +181,7 @@ Shell* Shell::CreateNewWindow(BrowserContext* browser_context,
       routing_id,
       base_web_contents);
 
-  // Create with package's manifest.
-  scoped_ptr<base::DictionaryValue> manifest(
-      GetPackage()->window()->DeepCopy());
-
-  Shell* shell = new Shell(web_contents, manifest.get());
+  Shell* shell = new Shell(web_contents, GetPackage()->window());
   shell->LoadURL(url);
   return shell;
 }
@@ -358,7 +371,7 @@ void Shell::Observe(int type,
 
     if (title->first) {
       string16 text = title->first->GetTitle();
-      PlatformSetTitle(text);
+      SetTitle(UTF16ToUTF8(text));
     }
   }
 }

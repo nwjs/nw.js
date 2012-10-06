@@ -240,6 +240,38 @@ void Shell::LeaveFullscreen() {
   [window_ toggleFullScreen:nil];
 }
 
+void Shell::SetMininumSize(int width, int height) {
+  NSSize min_size = NSMakeSize(width, height);
+  NSView* content = [window_ contentView];
+  [window_ setContentMinSize:[content convertSize:min_size toView:nil]];
+}
+
+void Shell::SetMaximumSize(int width, int height) {
+  NSSize max_size = NSMakeSize(width, height);
+  NSView* content = [window_ contentView];
+  [window_ setContentMaxSize:[content convertSize:max_size toView:nil]];
+}
+
+void Shell::SetResizable(bool resizable) {
+  if (resizable) {
+    [[window_ standardWindowButton:NSWindowZoomButton] setEnabled:YES];
+    [window_ setStyleMask:window_.styleMask | NSResizableWindowMask];
+  } else {
+    [[window_ standardWindowButton:NSWindowZoomButton] setEnabled:NO];
+    [window_ setStyleMask:window_.styleMask ^ NSResizableWindowMask];
+  }
+}
+
+void Shell::SetPosition(const std::string& position) {
+  if (position == "center")
+    [window_ center];
+}
+
+void Shell::SetTitle(const std::string& title) {
+  NSString* title_string = base::SysUTF8ToNSString(title);
+  [window_ setTitle:title_string];
+}
+
 void Shell::PlatformInitialize() {
 }
 
@@ -374,32 +406,6 @@ void Shell::PlatformCreateWindow(int width, int height) {
   }
 }
 
-void Shell::PlatformSetupWindow() {
-  NSView* content = [window_ contentView];
-  // window.min_height and window.min_width
-  if (min_height_ > 0 && min_width_ > 0) {
-    NSSize min_size = NSMakeSize(min_width_, min_height_);
-    [window_ setContentMinSize:[content convertSize:min_size toView:nil]];
-  }
-
-  // window.max_height and window.max_width
-  if (max_height_ > 0 && max_width_ > 0) {
-    NSSize max_size = NSMakeSize(max_width_, max_height_);
-    [window_ setContentMaxSize:[content convertSize:max_size toView:nil]];
-  }
-
-  if (x_ > 0 && y_ >0 ) {
-    // window.x and window.y
-    Move(gfx::Rect(x_, y_, width_, height_));
-  } else {
-    // window.position
-    if (position_ == "center")
-      [window_ center];
-  }
-
-  [window_ setTitle:[[NSString alloc] initWithUTF8String:title_.c_str()]];
-}
-
 void Shell::PlatformSetContents() {
   NSView* web_view = web_contents_->GetView()->GetNativeView();
   NSView* content = [window_ contentView];
@@ -416,11 +422,6 @@ void Shell::PlatformSetContents() {
 
 void Shell::PlatformResizeSubViews() {
   // Not needed; subviews are bound.
-}
-
-void Shell::PlatformSetTitle(const string16& title) {
-  NSString* title_string = base::SysUTF16ToNSString(title);
-  [window_ setTitle:title_string];
 }
 
 void Shell::ActionPerformed(int control) {

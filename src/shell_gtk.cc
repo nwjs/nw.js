@@ -117,6 +117,55 @@ void Shell::Restore() {
   gtk_window_deiconify(window_);
 }
 
+void Shell::EnterFullscreen() {
+  gtk_window_fullscreen(window_);
+}
+
+void Shell::LeaveFullscreen() {
+  gtk_window_unfullscreen(window_);
+}
+
+void Shell::SetMininumSize(int width, int height) {
+  GdkGeometry geometry = { 0 };
+  geometry.min_width = width;
+  geometry.min_height = height;
+  int hints = GDK_HINT_POS | GDK_HINT_MIN_SIZE;
+  gtk_window_set_geometry_hints(
+      window_, GTK_WIDGET(window_), &geometry, (GdkWindowHints)hints);
+}
+
+void Shell::SetMaximumSize(int width, int height) {
+  GdkGeometry geometry = { 0 };
+  geometry.max_width = width;
+  geometry.max_height = height;
+  int hints = GDK_HINT_POS | GDK_HINT_MAX_SIZE;
+  gtk_window_set_geometry_hints(
+      window_, GTK_WIDGET(window_), &geometry, (GdkWindowHints)hints);
+}
+
+void Shell::SetResizable(bool resizable) {
+  gtk_window_set_resizable(window_, resizable);
+}
+
+void Shell::SetPosition(const std::string& position) {
+  if (position_ == "center")
+    gtk_window_set_position(window_, GTK_WIN_POS_CENTER);
+  else if (position_ == "mouse")
+    gtk_window_set_position(window_, GTK_WIN_POS_MOUSE);
+}
+
+void Shell::SetTitle(const std::string& title) {
+  gtk_window_set_title(GTK_WINDOW(window_), title.c_str());
+}
+
+void Shell::SetAsDesktop() {
+  gtk_window_set_type_hint(window_, GDK_WINDOW_TYPE_HINT_DESKTOP);
+  GdkScreen* screen = gtk_window_get_screen(window_);
+  gtk_window_set_default_size(window_,
+                              gdk_screen_get_width(screen),
+                              gdk_screen_get_height(screen));
+}
+
 void Shell::PlatformInitialize() {
 }
 
@@ -219,55 +268,6 @@ void Shell::PlatformCreateWindow(int width, int height) {
   gtk_container_add(GTK_CONTAINER(window_), vbox_);
 }
 
-void Shell::PlatformSetupWindow() {
-  // window.as_desktop, the window will be used as a desktop background window
-  if (is_desktop_) {
-    gtk_window_set_type_hint(window_, GDK_WINDOW_TYPE_HINT_DESKTOP);
-		GdkScreen* screen = gtk_window_get_screen(window_);
-		gtk_window_set_default_size(window_,
-                                gdk_screen_get_width(screen),
-                                gdk_screen_get_height(screen));
-  } else {
-    if (x_ > 0 && y_ > 0) {
-      // window.x and window.y
-      gtk_window_move(window_, x, y);
-    } else {
-      // window.postion
-      if (position_ == "center")
-        gtk_window_set_position(window_, GTK_WIN_POS_CENTER);
-      else if (position_ == "mouse")
-        gtk_window_set_position(window_, GTK_WIN_POS_MOUSE);
-    }
-
-    GdkGeometry geometry = { 0 };
-    int hints = GDK_HINT_POS;
-    if (min_width_ > 0) {
-      hints |= GDK_HINT_MIN_SIZE;
-      geometry.min_width = min_width_;
-    }
-    if (min_height_ > 0) {
-      hints |= GDK_HINT_MIN_SIZE;
-      geometry.min_height = min_height_;
-    }
-    if (max_width_ > 0) {
-      hints |= GDK_HINT_MAX_SIZE;
-      geometry.max_width = max_width_;
-    }
-    if (max_height_ > 0) {
-      hints |= GDK_HINT_MAX_SIZE;
-      geometry.max_height = max_height_;
-    }
-    if (hints != GDK_HINT_POS) {
-      gtk_window_set_geometry_hints(
-          window_, GTK_WIDGET(window_), &geometry, (GdkWindowHints)hints);
-    }
-
-    SizeTo(width, height);
-  }
-
-  gtk_window_set_title(window_, title_.c_str());
-}
-
 void Shell::PlatformSetContents() {
   WebContentsView* content_view = web_contents_->GetView();
   gtk_container_add(GTK_CONTAINER(vbox_), content_view->GetNativeView());
@@ -287,16 +287,11 @@ void Shell::PlatformSetContents() {
   prefs->inactive_selection_fg_color = SkColorSetRGB(50, 50, 50);
 }
 
-void Shell::SizeTo(int width, int height) {
+void Shell::PlatformResizeSubViews() {
   content_width_ = width;
   content_height_ = height;
-  if (web_contents_.get()) {
+  if (web_contents_.get())
     gtk_widget_set_size_request(web_contents_->GetNativeView(), width, height);
-  }
-}
-
-void Shell::PlatformResizeSubViews() {
-  SizeTo(content_width_, content_height_);
 }
 
 void Shell::OnBackButtonClicked(GtkWidget* widget) {
@@ -327,11 +322,6 @@ void Shell::OnURLEntryActivate(GtkWidget* entry) {
 gboolean Shell::OnWindowDestroyed(GtkWidget* window) {
   delete this;
   return FALSE;  // Don't stop this message.
-}
-
-void Shell::PlatformSetTitle(const string16& title) {
-  std::string title_utf8 = UTF16ToUTF8(title);
-  gtk_window_set_title(GTK_WINDOW(window_), title_utf8.c_str());
 }
 
 }  // namespace content
