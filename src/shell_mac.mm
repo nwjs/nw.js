@@ -287,38 +287,9 @@ void Shell::PlatformCreateWindow(int width, int height) {
                                        styleMask:style_mask
                                          backing:NSBackingStoreBuffered
                                            defer:NO];
-  [window setShell:this];
   window_ = window;
+  [window setShell:this];
   NSView* content = [window_ contentView];
-
-  // window.min_height and window.min_width
-  if (min_height_ > 0 || min_width_ > 0) {
-    min_height_ = min_height_ > 0 ? min_height_ : height;
-    min_width_ = min_width_ > 0 ? min_width_ : width;
-
-    NSSize min_size = NSMakeSize(min_width_, min_height_);
-    [window_ setContentMinSize:[content convertSize:min_size toView:nil]];
-  }
-
-  // window.max_height and window.max_width
-  if (max_height_ > 0 || max_width_ > 0) {
-    max_height_ = max_height_ > 0 ? max_height_ : height;
-    max_width_ = max_width_ > 0 ? max_width_ : width;
-
-    NSSize max_size = NSMakeSize(max_width_, max_height_);
-    [window_ setContentMaxSize:[content convertSize:max_size toView:nil]];
-  }
-
-  if (x_ > 0 && y_ >0 ) {
-    // window.x and window.y
-    Move(gfx::Rect(x_, y_, width, height));
-  } else {
-    // window.position
-    if (position_ == "center")
-      [window_ center];
-  }
-
-  [window_ setTitle:[[NSString alloc] initWithUTF8String:title_.c_str()]];
 
   // Set the shell window to participate in Lion Fullscreen mode. Set
   // Setting this flag has no effect on Snow Leopard or earlier.
@@ -337,33 +308,6 @@ void Shell::PlatformCreateWindow(int width, int height) {
   ContentShellWindowDelegate* delegate =
       [[ContentShellWindowDelegate alloc] initWithShell:this];
   [window_ setDelegate:delegate];
-
-  if (is_toolbar_open_) {
-    NSRect button_frame =
-        NSMakeRect(0, NSMaxY(initial_window_bounds) - kURLBarHeight,
-                   kButtonWidth, kURLBarHeight);
-
-    MakeShellButton(&button_frame, @"Back", content, IDC_NAV_BACK,
-                    (NSView*)delegate, @"[", NSCommandKeyMask);
-    MakeShellButton(&button_frame, @"Forward", content, IDC_NAV_FORWARD,
-                    (NSView*)delegate, @"]", NSCommandKeyMask);
-    MakeShellButton(&button_frame, @"Reload", content, IDC_NAV_RELOAD,
-                    (NSView*)delegate, @"r", NSCommandKeyMask);
-    MakeShellButton(&button_frame, @"Stop", content, IDC_NAV_STOP,
-                    (NSView*)delegate, @".", NSCommandKeyMask);
-
-    button_frame.size.width =
-        NSWidth(initial_window_bounds) - NSMinX(button_frame);
-    scoped_nsobject<NSTextField> url_edit_view(
-        [[NSTextField alloc] initWithFrame:button_frame]);
-    [content addSubview:url_edit_view];
-    [url_edit_view setAutoresizingMask:(NSViewWidthSizable | NSViewMinYMargin)];
-    [url_edit_view setTarget:delegate];
-    [url_edit_view setAction:@selector(takeURLStringValueFrom:)];
-    [[url_edit_view cell] setWraps:NO];
-    [[url_edit_view cell] setScrollable:YES];
-    url_edit_view_ = url_edit_view.get();
-  }
 
   // Show Debug menu wish --developer
   if (!is_show_devtools_) {
@@ -402,8 +346,58 @@ void Shell::PlatformCreateWindow(int width, int height) {
     }
   }
 
-  // show the window
-  [window_ makeKeyAndOrderFront:nil];
+  if (is_toolbar_open_) {
+    NSRect button_frame =
+        NSMakeRect(0, NSMaxY(initial_window_bounds) - kURLBarHeight,
+                   kButtonWidth, kURLBarHeight);
+
+    MakeShellButton(&button_frame, @"Back", content, IDC_NAV_BACK,
+                    (NSView*)delegate, @"[", NSCommandKeyMask);
+    MakeShellButton(&button_frame, @"Forward", content, IDC_NAV_FORWARD,
+                    (NSView*)delegate, @"]", NSCommandKeyMask);
+    MakeShellButton(&button_frame, @"Reload", content, IDC_NAV_RELOAD,
+                    (NSView*)delegate, @"r", NSCommandKeyMask);
+    MakeShellButton(&button_frame, @"Stop", content, IDC_NAV_STOP,
+                    (NSView*)delegate, @".", NSCommandKeyMask);
+
+    button_frame.size.width =
+        NSWidth(initial_window_bounds) - NSMinX(button_frame);
+    scoped_nsobject<NSTextField> url_edit_view(
+        [[NSTextField alloc] initWithFrame:button_frame]);
+    [content addSubview:url_edit_view];
+    [url_edit_view setAutoresizingMask:(NSViewWidthSizable | NSViewMinYMargin)];
+    [url_edit_view setTarget:delegate];
+    [url_edit_view setAction:@selector(takeURLStringValueFrom:)];
+    [[url_edit_view cell] setWraps:NO];
+    [[url_edit_view cell] setScrollable:YES];
+    url_edit_view_ = url_edit_view.get();
+  }
+}
+
+void Shell::PlatformSetupWindow() {
+  NSView* content = [window_ contentView];
+  // window.min_height and window.min_width
+  if (min_height_ > 0 && min_width_ > 0) {
+    NSSize min_size = NSMakeSize(min_width_, min_height_);
+    [window_ setContentMinSize:[content convertSize:min_size toView:nil]];
+  }
+
+  // window.max_height and window.max_width
+  if (max_height_ > 0 && max_width_ > 0) {
+    NSSize max_size = NSMakeSize(max_width_, max_height_);
+    [window_ setContentMaxSize:[content convertSize:max_size toView:nil]];
+  }
+
+  if (x_ > 0 && y_ >0 ) {
+    // window.x and window.y
+    Move(gfx::Rect(x_, y_, width_, height_));
+  } else {
+    // window.position
+    if (position_ == "center")
+      [window_ center];
+  }
+
+  [window_ setTitle:[[NSString alloc] initWithUTF8String:title_.c_str()]];
 }
 
 void Shell::PlatformSetContents() {

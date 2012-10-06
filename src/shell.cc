@@ -63,6 +63,8 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
       is_desktop_(false),
       x_(-1),
       y_(-1),
+      height_(450),
+      width_(700),
       max_height_(-1),
       max_width_(-1),
       min_height_(-1),
@@ -84,6 +86,8 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   manifest->GetBoolean(switches::kmAsDesktop, &is_desktop_);
   manifest->GetInteger(switches::kmX, &x_);
   manifest->GetInteger(switches::kmY, &y_);
+  manifest->GetInteger(switches::kmWidth, &width_);
+  manifest->GetInteger(switches::kmHeight, &height_);
   manifest->GetInteger(switches::kmMaxHeight, &max_height_);
   manifest->GetInteger(switches::kmMaxWidth, &max_width_);
   manifest->GetInteger(switches::kmMinHeight, &min_height_);
@@ -91,17 +95,14 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   manifest->GetString(switches::kmPosition, &position_);
   manifest->GetString(switches::kmTitle, &title_);
 
-  int width = 700;
-  int height = 450;
-  manifest->GetInteger(switches::kmWidth, &width);
-  manifest->GetInteger(switches::kmHeight, &height);
-
   // Initialize shell.
-  PlatformCreateWindow(width, height);
+  PlatformCreateWindow(width_, height_);
+  PlatformSetupWindow();
   web_contents_.reset(web_contents);
   web_contents_->SetDelegate(this);
   PlatformSetContents();
   PlatformResizeSubViews();
+  Show();
 }
 
 Shell::~Shell() {

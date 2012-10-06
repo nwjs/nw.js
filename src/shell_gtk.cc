@@ -161,51 +161,6 @@ void Shell::PlatformCreateWindow(int width, int height) {
   g_signal_connect(G_OBJECT(window_), "destroy",
                    G_CALLBACK(OnWindowDestroyedThunk), this);
 
-  // window.as_desktop, the window will be used as a desktop background window
-  if (is_desktop_) {
-    gtk_window_set_type_hint(window_, GDK_WINDOW_TYPE_HINT_DESKTOP);
-		GdkScreen* screen = gtk_window_get_screen(window_);
-		gtk_window_set_default_size(window_,
-                                gdk_screen_get_width(screen),
-                                gdk_screen_get_height(screen));
-  } else {
-    if (x_ > 0 && y_ > 0) {
-      // window.x and window.y
-      gtk_window_move(window_, x, y);
-    } else {
-      // window.postion
-      if (position_ == "center")
-        gtk_window_set_position(window_, GTK_WIN_POS_CENTER);
-      else if (position_ == "mouse")
-        gtk_window_set_position(window_, GTK_WIN_POS_MOUSE);
-    }
-
-    GdkGeometry geometry = { 0 };
-    int hints = GDK_HINT_POS;
-    if (min_width_ > 0) {
-      hints |= GDK_HINT_MIN_SIZE;
-      geometry.min_width = min_width_;
-    }
-    if (min_height_ > 0) {
-      hints |= GDK_HINT_MIN_SIZE;
-      geometry.min_height = min_height_;
-    }
-    if (max_width_ > 0) {
-      hints |= GDK_HINT_MAX_SIZE;
-      geometry.max_width = max_width_;
-    }
-    if (max_height_ > 0) {
-      hints |= GDK_HINT_MAX_SIZE;
-      geometry.max_height = max_height_;
-    }
-    if (hints != GDK_HINT_POS) {
-      gtk_window_set_geometry_hints(
-          window_, GTK_WIDGET(window_), &geometry, (GdkWindowHints)hints);
-    }
-  }
-
-  gtk_window_set_title(window_, title_.c_str());
-
   vbox_ = gtk_vbox_new(FALSE, 0);
 
   // Create the menu bar.
@@ -262,12 +217,55 @@ void Shell::PlatformCreateWindow(int width, int height) {
     gtk_box_pack_start(GTK_BOX(vbox_), toolbar, FALSE, FALSE, 0);
 
   gtk_container_add(GTK_CONTAINER(window_), vbox_);
-  gtk_widget_show_all(GTK_WIDGET(window_));
+}
 
-  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree))
-    gtk_widget_set_uposition(GTK_WIDGET(window_), 10000, 10000);
+void Shell::PlatformSetupWindow() {
+  // window.as_desktop, the window will be used as a desktop background window
+  if (is_desktop_) {
+    gtk_window_set_type_hint(window_, GDK_WINDOW_TYPE_HINT_DESKTOP);
+		GdkScreen* screen = gtk_window_get_screen(window_);
+		gtk_window_set_default_size(window_,
+                                gdk_screen_get_width(screen),
+                                gdk_screen_get_height(screen));
+  } else {
+    if (x_ > 0 && y_ > 0) {
+      // window.x and window.y
+      gtk_window_move(window_, x, y);
+    } else {
+      // window.postion
+      if (position_ == "center")
+        gtk_window_set_position(window_, GTK_WIN_POS_CENTER);
+      else if (position_ == "mouse")
+        gtk_window_set_position(window_, GTK_WIN_POS_MOUSE);
+    }
 
-  SizeTo(width, height);
+    GdkGeometry geometry = { 0 };
+    int hints = GDK_HINT_POS;
+    if (min_width_ > 0) {
+      hints |= GDK_HINT_MIN_SIZE;
+      geometry.min_width = min_width_;
+    }
+    if (min_height_ > 0) {
+      hints |= GDK_HINT_MIN_SIZE;
+      geometry.min_height = min_height_;
+    }
+    if (max_width_ > 0) {
+      hints |= GDK_HINT_MAX_SIZE;
+      geometry.max_width = max_width_;
+    }
+    if (max_height_ > 0) {
+      hints |= GDK_HINT_MAX_SIZE;
+      geometry.max_height = max_height_;
+    }
+    if (hints != GDK_HINT_POS) {
+      gtk_window_set_geometry_hints(
+          window_, GTK_WIDGET(window_), &geometry, (GdkWindowHints)hints);
+    }
+
+    SizeTo(width, height);
+  }
+
+  gtk_window_set_title(window_, title_.c_str());
 }
 
 void Shell::PlatformSetContents() {

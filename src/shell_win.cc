@@ -141,28 +141,10 @@ void Shell::PlatformSetIsLoading(bool loading) {
 }
 
 void Shell::PlatformCreateWindow(int width, int height) {
-  int ox = CW_USEDEFAULT;
-  int oy = 0;
-  if (x_ > 0 && y_ > 0) {
-    // window.x and window.y
-    ox = x_;
-    oy = y_;
-  } else {
-    // window.position
-    if (position_ == "center") {
-      ox = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
-      oy = (GetSystemMetrics(SM_CYSCREEN) - height) / 2;
-    } else if (position_ == "mouse") {
-      POINT point;
-      GetCursorPos(&point);
-      ox = point.x - width / 2;
-      oy = point.y - height / 2;
-    }
-  }
-
   window_ = CreateWindow(kWindowClass, title_.c_str(),
                          WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
-                         ox, oy, width, height,
+                         CW_USEDEFAULT, 0,
+                         width, height,
                          NULL, NULL, instance_handle_, NULL);
   ui::SetWindowUserData(window_, this);
 
@@ -204,10 +186,28 @@ void Shell::PlatformCreateWindow(int width, int height) {
                                                Shell::EditWndProc);
     ui::SetWindowUserData(url_edit_view_, this);
   }
+}
 
-  ShowWindow(window_, SW_SHOW);
+void Shell::PlatformSetupWindow() {
+  int x, y;
+  if (x_ > 0 && y_ > 0) {
+    // window.x and window.y
+    x = x_;
+    y = y_;
+  } else {
+    // window.position
+    if (position_ == "center") {
+      x = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
+      y = (GetSystemMetrics(SM_CYSCREEN) - height) / 2;
+    } else if (position_ == "mouse") {
+      POINT point;
+      GetCursorPos(&point);
+      x = point.x - width / 2;
+      y = point.y - height / 2;
+    }
+  }
 
-  SizeTo(width, height);
+  SizeTo(width, height, x, y);
 }
 
 void Shell::PlatformSetContents() {

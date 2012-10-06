@@ -175,6 +175,8 @@ class Shell : public WebContentsDelegate,
   void PlatformCleanUp();
   // Creates the main window GUI.
   void PlatformCreateWindow(int width, int height);
+  // Setup window from manifest's settings
+  void PlatformSetupWindow();
   // Links the WebContents into the newly created window.
   void PlatformSetContents();
   // Resize the content area and GUI.
@@ -236,6 +238,7 @@ class Shell : public WebContentsDelegate,
   bool is_toolbar_open_;
   bool is_desktop_;
   int x_, y_;
+  int height_, width_;
   int max_height_, max_width_;
   int min_height_, min_width_;
   std::string position_;
