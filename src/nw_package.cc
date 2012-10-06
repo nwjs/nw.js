@@ -229,6 +229,9 @@ void Package::InitWithDefault() {
   // Hide toolbar if specifed in the command line.
   if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kNoToolbar))
     window->SetBoolean(switches::kmToolbar, false);
+
+  // Window should show in center by default.
+  window->SetString(switches::kmPosition, "center");
 }
 
 bool Package::ExtractPath(FilePath* path) {

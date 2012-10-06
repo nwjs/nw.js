@@ -109,6 +109,10 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
       manifest->GetInteger(switches::kmMaxWidth, &max_width)) {
     SetMaximumSize(max_width, max_height);
   }
+  bool resizable;
+  if (manifest->GetBoolean(switches::kmResizable, &resizable)) {
+    SetResizable(resizable);
+  }
   std::string title("node-webkit");
   manifest->GetString(switches::kmTitle, &title);
   SetTitle(title);
@@ -310,6 +314,7 @@ void Shell::WebContentsCreated(WebContents* source_contents,
 
   // Get window features
   WebKit::WebWindowFeatures features = new_contents->GetWindowFeatures();
+  manifest->SetBoolean(switches::kmResizable, features.resizable);
   if (features.widthSet)
     manifest->SetInteger(switches::kmWidth, features.width);
   if (features.heightSet)
