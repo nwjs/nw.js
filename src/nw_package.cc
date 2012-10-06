@@ -212,8 +212,11 @@ bool Package::InitFromPath() {
     }
 
   // Force window field no empty.
-  if (!root_->HasKey(switches::kmWindow))
-    root_->Set(switches::kmWindow, new base::DictionaryValue());
+  if (!root_->HasKey(switches::kmWindow)) {
+    base::DictionaryValue* window = new base::DictionaryValue();
+    window->SetString(switches::kmPosition, "center");
+    root_->Set(switches::kmWindow, window);
+  }
 
   RelativePathToURI(path_, this->root());
   return true;

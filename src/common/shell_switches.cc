@@ -52,25 +52,26 @@ const char kVersion[] = "version";
 // Set current working directory
 const char kWorkingDirectory[] = "working-directory";
 
-const char kmMain[]      = "main";
-const char kmName[]      = "name";
-const char kmWebkit[]    = "webkit";
-const char kmNodejs[]    = "nodejs";
-const char kmRoot[]      = "root";
-const char kmWindow[]    = "window";
-const char kmTitle[]     = "title";
-const char kmToolbar[]   = "toolbar";
-const char kmIcon[]      = "icon";
-const char kmWidth[]     = "width";
-const char kmHeight[]    = "height";
-const char kmX[]         = "x";
-const char kmY[]         = "y";
-const char kmResizable[] = "resizable";
-const char kmPosition[]  = "position";
-const char kmMinWidth[]  = "min_width";
-const char kmMinHeight[] = "min_height";
-const char kmMaxWidth[]  = "max_width";
-const char kmMaxHeight[] = "max_height";
-const char kmAsDesktop[] = "as_desktop";
+const char kmMain[]       = "main";
+const char kmName[]       = "name";
+const char kmWebkit[]     = "webkit";
+const char kmNodejs[]     = "nodejs";
+const char kmRoot[]       = "root";
+const char kmWindow[]     = "window";
+const char kmTitle[]      = "title";
+const char kmToolbar[]    = "toolbar";
+const char kmIcon[]       = "icon";
+const char kmWidth[]      = "width";
+const char kmHeight[]     = "height";
+const char kmX[]          = "x";
+const char kmY[]          = "y";
+const char kmResizable[]  = "resizable";
+const char kmPosition[]   = "position";
+const char kmMinWidth[]   = "min_width";
+const char kmMinHeight[]  = "min_height";
+const char kmMaxWidth[]   = "max_width";
+const char kmMaxHeight[]  = "max_height";
+const char kmAsDesktop[]  = "as_desktop";
+const char kmFullscreen[] = "fullscreen";
 
 }  // namespace switches

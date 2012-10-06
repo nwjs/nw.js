@@ -41,6 +41,7 @@ extern const char kmMinHeight[];
 extern const char kmMaxWidth[];
 extern const char kmMaxHeight[];
 extern const char kmAsDesktop[];
+extern const char kmFullscreen[];
 
 }  // namespace switches
 
