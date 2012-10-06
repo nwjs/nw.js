@@ -40,19 +40,19 @@ Window.prototype.__defineGetter__('y', function() {
 });
 
 Window.prototype.__defineSetter__('width', function(width) {
-  window.resizeTo(width, window.innerHeight);
+  window.resizeTo(width, window.outerHeight);
 });
 
 Window.prototype.__defineGetter__('width', function() {
-  return window.innerWidth;
+  return window.outerWidth;
 });
 
 Window.prototype.__defineSetter__('height', function(height) {
-  window.resizeTo(window.innerWidth, height);
+  window.resizeTo(window.outerWidth, height);
 });
 
 Window.prototype.__defineGetter__('height', function() {
-  return window.innerHeight;
+  return window.outerHeight;
 });
 
 Window.prototype.moveTo = function(x, y) {

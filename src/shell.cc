@@ -81,8 +81,9 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   windows_.push_back(this);
 
   // Read manifest into members.
+  is_show_devtools_ =
+      CommandLine::ForCurrentProcess()->HasSwitch(switches::kDeveloper);
   manifest->GetBoolean(switches::kmToolbar, &is_toolbar_open_);
-  manifest->GetBoolean(switches::kDeveloper, &is_show_devtools_);
   manifest->GetBoolean(switches::kmAsDesktop, &is_desktop_);
   manifest->GetInteger(switches::kmX, &x_);
   manifest->GetInteger(switches::kmY, &y_);
@@ -217,7 +218,6 @@ void Shell::ShowDevTools() {
   // Use our minimum set manifest
   base::DictionaryValue manifest;
   manifest.SetBoolean(switches::kmToolbar, false);
-  manifest.SetBoolean(switches::kDeveloper, true);
   manifest.SetInteger(switches::kmWidth, 600);
   manifest.SetInteger(switches::kmHeight, 500);
 
@@ -294,8 +294,6 @@ void Shell::WebContentsCreated(WebContents* source_contents,
   // Create with package's manifest
   scoped_ptr<base::DictionaryValue> manifest(
       GetPackage()->window()->DeepCopy());
-  manifest->SetBoolean(switches::kDeveloper,
-      CommandLine::ForCurrentProcess()->HasSwitch(switches::kDeveloper));
 
   // Get window features
   WebKit::WebWindowFeatures features = new_contents->GetWindowFeatures();

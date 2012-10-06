@@ -7,6 +7,10 @@
   var win = gui.Window.get(
     window.open('popup.html', '_blank', 'screenX=100,screenY=100,width=200,height=300')
   );
+  gui.Window.get().on('close', function() {
+    win.close(true);
+    this.close(true);
+  });
 </script>
 <button onclick="win.focus()">Focus</button>
 <br/>
