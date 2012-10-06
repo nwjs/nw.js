@@ -37,7 +37,7 @@
 
 namespace {
 
-const wchar_t kWindowClass[] = L"CONTENT_SHELL";
+const wchar_t kWindowClass[] = L"NODE_WEBKIT";
 
 const int kButtonWidth = 72;
 const int kURLBarHeight = 24;
@@ -143,33 +143,24 @@ void Shell::PlatformSetIsLoading(bool loading) {
 void Shell::PlatformCreateWindow(int width, int height) {
   int ox = CW_USEDEFAULT;
   int oy = 0;
-  std::wstring title = L"node-webkit";
-  if (window_manifest_) {
+  if (x_ > 0 && y_ > 0) {
     // window.x and window.y
-    if (window_manifest_->GetInteger(switches::kmX, &ox) &&
-        window_manifest_->GetInteger(switches::kmY, &oy)) {
-      // Do nothing, it will just be used
-    } else {
-      // window.position
-      std::string position;
-      if (window_manifest_->GetString(switches::kmPosition, &position)) {
-        if (position == "center") {
-          ox = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
-          oy = (GetSystemMetrics(SM_CYSCREEN) - height) / 2;
-        } else if (position == "mouse") {
-          POINT point;
-          GetCursorPos(&point);
-          ox = point.x - width / 2;
-          oy = point.y - height / 2;
-        }
-      }
+    ox = x_;
+    oy = y_;
+  } else {
+    // window.position
+    if (position_ == "center") {
+      ox = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
+      oy = (GetSystemMetrics(SM_CYSCREEN) - height) / 2;
+    } else if (position_ == "mouse") {
+      POINT point;
+      GetCursorPos(&point);
+      ox = point.x - width / 2;
+      oy = point.y - height / 2;
     }
-
-    // window.title
-    window_manifest_->GetString(switches::kmTitle, &title);
   }
 
-  window_ = CreateWindow(kWindowClass, title.c_str(),
+  window_ = CreateWindow(kWindowClass, title_.c_str(),
                          WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
                          ox, oy, width, height,
                          NULL, NULL, instance_handle_, NULL);
@@ -295,17 +286,6 @@ LRESULT CALLBACK Shell::WndProc(HWND hwnd, UINT message, WPARAM wParam,
     case WM_COMMAND: {
       int id = LOWORD(wParam);
       switch (id) {
-        case IDM_NEW_WINDOW:
-          CreateNewWindow(
-              shell->web_contents()->GetBrowserContext(),
-              GURL(), NULL, MSG_ROUTING_NONE, NULL);
-          break;
-        case IDM_CLOSE_WINDOW:
-          DestroyWindow(hwnd);
-          break;
-        case IDM_EXIT:
-          PlatformExit();
-          break;
         case IDM_SHOW_DEVELOPER_TOOLS:
           shell->ShowDevTools();
           break;

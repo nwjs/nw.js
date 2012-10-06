@@ -24,12 +24,6 @@ LANGUAGE 9, 1
 
 IDC_CONTENTSHELL MENU 
 BEGIN
-    POPUP "&File"
-    BEGIN
-        MENUITEM "&New Window",          IDM_NEW_WINDOW
-        MENUITEM "&Close Window",        IDM_CLOSE_WINDOW
-        MENUITEM "E&xit",                IDM_EXIT
-    END
     POPUP "&Debug"
     BEGIN
         MENUITEM "&Show Developer Tools...", IDM_SHOW_DEVELOPER_TOOLS

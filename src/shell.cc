@@ -58,13 +58,17 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
       url_edit_view_(NULL),
       force_close_(false),
       id_(-1),
-      window_manifest_(manifest),
       is_show_devtools_(false),
       is_toolbar_open_(true),
+      is_desktop_(false),
+      x_(-1),
+      y_(-1),
       max_height_(-1),
       max_width_(-1),
       min_height_(-1),
-      min_width_(-1)
+      min_width_(-1),
+      position_("center"),
+      title_("node-webkit")
 #if defined(OS_WIN)
       , default_edit_wnd_proc_(0)
 #endif
@@ -77,10 +81,15 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   // Read manifest into members.
   manifest->GetBoolean(switches::kmToolbar, &is_toolbar_open_);
   manifest->GetBoolean(switches::kDeveloper, &is_show_devtools_);
+  manifest->GetBoolean(switches::kmAsDesktop, &is_desktop_);
+  manifest->GetInteger(switches::kmX, &x_);
+  manifest->GetInteger(switches::kmY, &y_);
   manifest->GetInteger(switches::kmMaxHeight, &max_height_);
   manifest->GetInteger(switches::kmMaxWidth, &max_width_);
   manifest->GetInteger(switches::kmMinHeight, &min_height_);
   manifest->GetInteger(switches::kmMinWidth, &min_width_);
+  manifest->GetString(switches::kmPosition, &position_);
+  manifest->GetString(switches::kmTitle, &title_);
 
   int width = 700;
   int height = 450;
@@ -153,18 +162,12 @@ Shell* Shell::CreateNewWindow(BrowserContext* browser_context,
       routing_id,
       base_web_contents);
 
-  // Create with package's manifest
-  base::DictionaryValue *manifest = GetPackage()->window();
-  manifest->SetBoolean(switches::kDeveloper,
-      CommandLine::ForCurrentProcess()->HasSwitch(switches::kDeveloper));
+  // Create with package's manifest.
+  scoped_ptr<base::DictionaryValue> manifest(
+      GetPackage()->window()->DeepCopy());
 
-  // Center window by default
-  if (!manifest->HasKey(switches::kmPosition))
-    manifest->SetString(switches::kmPosition, "center");
-
-  Shell* shell = new Shell(web_contents, manifest);
-  if (!url.is_empty())
-    shell->LoadURL(url);
+  Shell* shell = new Shell(web_contents, manifest.get());
+  shell->LoadURL(url);
   return shell;
 }
 

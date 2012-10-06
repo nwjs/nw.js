@@ -27,15 +27,4 @@
   handlingSendEvent_ = handlingSendEvent;
 }
 
-- (IBAction)newDocument:(id)sender {
-  content::ShellBrowserContext* browserContext =
-      static_cast<content::ShellContentBrowserClient*>(
-        content::GetContentClient()->browser())->browser_context();
-  content::Shell::CreateNewWindow(browserContext,
-                                  GURL("nw:blank"),
-                                  NULL,
-                                  MSG_ROUTING_NONE,
-                                  NULL);
-}
-
 @end

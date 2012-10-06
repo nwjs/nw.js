@@ -213,13 +213,6 @@ class Shell : public WebContentsDelegate,
   CHROMEGTK_CALLBACK_0(Shell, void, OnStopButtonClicked);
   CHROMEGTK_CALLBACK_0(Shell, void, OnURLEntryActivate);
   CHROMEGTK_CALLBACK_0(Shell, gboolean, OnWindowDestroyed);
-
-  CHROMEG_CALLBACK_3(Shell, gboolean, OnCloseWindowKeyPressed, GtkAccelGroup*,
-                     GObject*, guint, GdkModifierType);
-  CHROMEG_CALLBACK_3(Shell, gboolean, OnNewWindowKeyPressed, GtkAccelGroup*,
-                     GObject*, guint, GdkModifierType);
-  CHROMEG_CALLBACK_3(Shell, gboolean, OnHighlightURLView, GtkAccelGroup*,
-                     GObject*, guint, GdkModifierType);
 #endif
 
   scoped_ptr<ShellJavaScriptDialogCreator> dialog_creator_;
@@ -239,13 +232,14 @@ class Shell : public WebContentsDelegate,
   int id_;
 
   // Window manifest
-  base::DictionaryValue* window_manifest_;
   bool is_show_devtools_;
   bool is_toolbar_open_;
-  int max_height_;
-  int max_width_;
-  int min_height_;
-  int min_width_;
+  bool is_desktop_;
+  int x_, y_;
+  int max_height_, max_width_;
+  int min_height_, min_width_;
+  std::string position_;
+  std::string title_;
 
 #if defined(OS_WIN)
   WNDPROC default_edit_wnd_proc_;

@@ -211,7 +211,7 @@ bool Package::InitFromPath() {
       return false;
     }
 
-  // Force window field no empty
+  // Force window field no empty.
   if (!root_->HasKey(switches::kmWindow))
     root_->Set(switches::kmWindow, new base::DictionaryValue());
 
@@ -226,7 +226,7 @@ void Package::InitWithDefault() {
   base::DictionaryValue* window = new base::DictionaryValue();
   root()->Set(switches::kmWindow, window);
 
-  // Hide toolbar is specifed in the command line
+  // Hide toolbar if specifed in the command line.
   if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kNoToolbar))
     window->SetBoolean(switches::kmToolbar, false);
 }

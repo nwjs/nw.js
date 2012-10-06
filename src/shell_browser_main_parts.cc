@@ -26,6 +26,7 @@
 #include "base/string_number_conversions.h"
 #include "base/threading/thread.h"
 #include "base/threading/thread_restrictions.h"
+#include "base/values.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
@@ -104,10 +105,14 @@ void ShellBrowserMainParts::Init() {
   Shell::PlatformInitialize();
   net::NetModule::SetResourceProvider(PlatformResourceProvider);
 
+  // See if we're in developer mode.
+  CommandLine& command_line = *CommandLine::ForCurrentProcess();
+  package()->root()->SetBoolean(switches::kDeveloper,
+      command_line.HasSwitch(switches::kDeveloper));
+
   int port = 0;
   // See if the user specified a port on the command line (useful for
   // automation). If not, use an ephemeral port by specifying 0.
-  CommandLine& command_line = *CommandLine::ForCurrentProcess();
   if (command_line.HasSwitch(switches::kRemoteDebuggingPort)) {
     int temp_port;
     std::string port_str =

@@ -1,16 +1,16 @@
 // Copyright (c) 2012 Intel Corp
 // Copyright (c) 2012 The Chromium Authors
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy 
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 //  in the Software without restriction, including without limitation the rights
 //  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell co
 // pies of the Software, and to permit persons to whom the Software is furnished
 //  to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in al
 // l copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IM
 // PLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNES
 // S FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
@@ -161,35 +161,23 @@ void Shell::PlatformCreateWindow(int width, int height) {
   g_signal_connect(G_OBJECT(window_), "destroy",
                    G_CALLBACK(OnWindowDestroyedThunk), this);
 
-  std::string title = "node-webkit";
-  
   // window.as_desktop, the window will be used as a desktop background window
-  bool as_desktop = false;
-  if (window_manifest_ &&
-      window_manifest_->GetBoolean(switches::kmAsDesktop, &as_desktop) &&
-      as_desktop) {
-    gtk_window_set_type_hint(window_, GDK_WINDOW_TYPE_HINT_DESKTOP);  
+  if (is_desktop_) {
+    gtk_window_set_type_hint(window_, GDK_WINDOW_TYPE_HINT_DESKTOP);
 		GdkScreen* screen = gtk_window_get_screen(window_);
 		gtk_window_set_default_size(window_,
                                 gdk_screen_get_width(screen),
                                 gdk_screen_get_height(screen));
-  }
-  
-  if (window_manifest_ && !as_desktop) {
-    // window.x and window.y
-    int x, y;
-    if (window_manifest_->GetInteger(switches::kmX, &x) &&
-        window_manifest_->GetInteger(switches::kmY, &y)) {
+  } else {
+    if (x_ > 0 && y_ > 0) {
+      // window.x and window.y
       gtk_window_move(window_, x, y);
     } else {
       // window.postion
-      std::string desription;
-      if (window_manifest_->GetString(switches::kmPosition, &desription)) {
-        if (desription == "center")
-          gtk_window_set_position(window_, GTK_WIN_POS_CENTER);
-        else if (desription == "mouse")
-          gtk_window_set_position(window_, GTK_WIN_POS_MOUSE);
-      }
+      if (position_ == "center")
+        gtk_window_set_position(window_, GTK_WIN_POS_CENTER);
+      else if (position_ == "mouse")
+        gtk_window_set_position(window_, GTK_WIN_POS_MOUSE);
     }
 
     GdkGeometry geometry = { 0 };
@@ -205,7 +193,7 @@ void Shell::PlatformCreateWindow(int width, int height) {
     if (max_width_ > 0) {
       hints |= GDK_HINT_MAX_SIZE;
       geometry.max_width = max_width_;
-    } 
+    }
     if (max_height_ > 0) {
       hints |= GDK_HINT_MAX_SIZE;
       geometry.max_height = max_height_;
@@ -214,12 +202,9 @@ void Shell::PlatformCreateWindow(int width, int height) {
       gtk_window_set_geometry_hints(
           window_, GTK_WIDGET(window_), &geometry, (GdkWindowHints)hints);
     }
-
-    // window.title
-    window_manifest_->GetString(switches::kmTitle, &title);
   }
 
-  gtk_window_set_title(window_, title.c_str());
+  gtk_window_set_title(window_, title_.c_str());
 
   vbox_ = gtk_vbox_new(FALSE, 0);
 
@@ -229,23 +214,6 @@ void Shell::PlatformCreateWindow(int width, int height) {
     gtk_box_pack_start(GTK_BOX(vbox_), menu_bar, FALSE, FALSE, 0);
   }
 
-  // Create the object that mediates accelerators.
-  GtkAccelGroup* accel_group = gtk_accel_group_new();
-  gtk_window_add_accel_group(GTK_WINDOW(window_), accel_group);
-
-  // Set global window handling accelerators:
-  gtk_accel_group_connect(
-      accel_group, GDK_w, GDK_CONTROL_MASK,
-      GTK_ACCEL_VISIBLE,
-      g_cclosure_new(G_CALLBACK(OnCloseWindowKeyPressedThunk),
-                     this, NULL));
-
-  gtk_accel_group_connect(
-      accel_group, GDK_n, GDK_CONTROL_MASK,
-      GTK_ACCEL_VISIBLE,
-      g_cclosure_new(G_CALLBACK(OnNewWindowKeyPressedThunk),
-                    this, NULL));
-
   GtkWidget* toolbar = gtk_toolbar_new();
   // Turn off the labels on the toolbar buttons.
   gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
@@ -254,24 +222,16 @@ void Shell::PlatformCreateWindow(int width, int height) {
   g_signal_connect(back_button_, "clicked",
                    G_CALLBACK(&OnBackButtonClickedThunk), this);
   gtk_toolbar_insert(GTK_TOOLBAR(toolbar), back_button_, -1 /* append */);
-  gtk_widget_add_accelerator(GTK_WIDGET(back_button_), "clicked", accel_group,
-                             GDK_Left, GDK_MOD1_MASK, GTK_ACCEL_VISIBLE);
 
   forward_button_ = gtk_tool_button_new_from_stock(GTK_STOCK_GO_FORWARD);
   g_signal_connect(forward_button_, "clicked",
                    G_CALLBACK(&OnForwardButtonClickedThunk), this);
   gtk_toolbar_insert(GTK_TOOLBAR(toolbar), forward_button_, -1 /* append */);
-  gtk_widget_add_accelerator(GTK_WIDGET(forward_button_), "clicked",
-                             accel_group,
-                             GDK_Right, GDK_MOD1_MASK, GTK_ACCEL_VISIBLE);
 
   reload_button_ = gtk_tool_button_new_from_stock(GTK_STOCK_REFRESH);
   g_signal_connect(reload_button_, "clicked",
                    G_CALLBACK(&OnReloadButtonClickedThunk), this);
   gtk_toolbar_insert(GTK_TOOLBAR(toolbar), reload_button_, -1 /* append */);
-  gtk_widget_add_accelerator(GTK_WIDGET(reload_button_), "clicked",
-                             accel_group,
-                             GDK_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
   stop_button_ = gtk_tool_button_new_from_stock(GTK_STOCK_STOP);
   g_signal_connect(stop_button_, "clicked",
@@ -281,12 +241,6 @@ void Shell::PlatformCreateWindow(int width, int height) {
   url_edit_view_ = gtk_entry_new();
   g_signal_connect(G_OBJECT(url_edit_view_), "activate",
                    G_CALLBACK(&OnURLEntryActivateThunk), this);
-
-  gtk_accel_group_connect(
-      accel_group, GDK_l, GDK_CONTROL_MASK,
-      GTK_ACCEL_VISIBLE,
-      g_cclosure_new(G_CALLBACK(OnHighlightURLViewThunk),
-                     this, NULL));
 
   GtkToolItem* tool_item = gtk_tool_item_new();
   gtk_container_add(GTK_CONTAINER(tool_item), url_edit_view_);
@@ -375,37 +329,6 @@ void Shell::OnURLEntryActivate(GtkWidget* entry) {
 gboolean Shell::OnWindowDestroyed(GtkWidget* window) {
   delete this;
   return FALSE;  // Don't stop this message.
-}
-
-gboolean Shell::OnCloseWindowKeyPressed(GtkAccelGroup* accel_group,
-                                        GObject* acceleratable,
-                                        guint keyval,
-                                        GdkModifierType modifier) {
-  gtk_widget_destroy(GTK_WIDGET(window_));
-  return TRUE;
-}
-
-gboolean Shell::OnNewWindowKeyPressed(GtkAccelGroup* accel_group,
-                                      GObject* acceleratable,
-                                      guint keyval,
-                                      GdkModifierType modifier) {
-  ShellBrowserContext* browser_context =
-      static_cast<ShellContentBrowserClient*>(
-        GetContentClient()->browser())->browser_context();
-  Shell::CreateNewWindow(browser_context,
-                         GURL(),
-                         NULL,
-                         MSG_ROUTING_NONE,
-                         NULL);
-  return TRUE;
-}
-
-gboolean Shell::OnHighlightURLView(GtkAccelGroup* accel_group,
-                                   GObject* acceleratable,
-                                   guint keyval,
-                                   GdkModifierType modifier) {
-  gtk_widget_grab_focus(GTK_WIDGET(url_edit_view_));
-  return TRUE;
 }
 
 void Shell::PlatformSetTitle(const string16& title) {

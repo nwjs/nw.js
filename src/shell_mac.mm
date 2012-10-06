@@ -291,45 +291,34 @@ void Shell::PlatformCreateWindow(int width, int height) {
   window_ = window;
   NSView* content = [window_ contentView];
 
-  std::string title = "node-webkit";
-  if (window_manifest_) {
-    // window.min_height and window.min_width
-    if (min_height_ > 0 || min_width_ > 0) {
-      min_height_ = min_height_ > 0 ? min_height_ : height;
-      min_width_ = min_width_ > 0 ? min_width_ : width;
+  // window.min_height and window.min_width
+  if (min_height_ > 0 || min_width_ > 0) {
+    min_height_ = min_height_ > 0 ? min_height_ : height;
+    min_width_ = min_width_ > 0 ? min_width_ : width;
 
-      NSSize min_size = NSMakeSize(min_width_, min_height_);
-      [window_ setContentMinSize:[content convertSize:min_size toView:nil]];
-    }
-
-    // window.max_height and window.max_width
-    if (max_height_ > 0 || max_width_ > 0) {
-      max_height_ = max_height_ > 0 ? max_height_ : height;
-      max_width_ = max_width_ > 0 ? max_width_ : width;
-
-      NSSize max_size = NSMakeSize(max_width_, max_height_);
-      [window_ setContentMaxSize:[content convertSize:max_size toView:nil]];
-    }
-
-    // window.x and window.y
-    int x, y;
-    if (window_manifest_->GetInteger(switches::kmX, &x) &&
-        window_manifest_->GetInteger(switches::kmY, &y)) {
-      Move(gfx::Rect(x, y, width, height));
-    } else {
-      // window.position
-      std::string position_string;
-      if (window_manifest_->GetString(switches::kmPosition, &position_string) &&
-          position_string == "center") {
-        [window_ center];
-      }
-    }
-
-    // window.title
-    window_manifest_->GetString(switches::kmTitle, &title);
+    NSSize min_size = NSMakeSize(min_width_, min_height_);
+    [window_ setContentMinSize:[content convertSize:min_size toView:nil]];
   }
 
-  [window_ setTitle:[[NSString alloc] initWithUTF8String:title.c_str()]];
+  // window.max_height and window.max_width
+  if (max_height_ > 0 || max_width_ > 0) {
+    max_height_ = max_height_ > 0 ? max_height_ : height;
+    max_width_ = max_width_ > 0 ? max_width_ : width;
+
+    NSSize max_size = NSMakeSize(max_width_, max_height_);
+    [window_ setContentMaxSize:[content convertSize:max_size toView:nil]];
+  }
+
+  if (x_ > 0 && y_ >0 ) {
+    // window.x and window.y
+    Move(gfx::Rect(x_, y_, width, height));
+  } else {
+    // window.position
+    if (position_ == "center")
+      [window_ center];
+  }
+
+  [window_ setTitle:[[NSString alloc] initWithUTF8String:title_.c_str()]];
 
   // Set the shell window to participate in Lion Fullscreen mode. Set
   // Setting this flag has no effect on Snow Leopard or earlier.
@@ -388,7 +377,7 @@ void Shell::PlatformCreateWindow(int width, int height) {
   base::DictionaryValue* manifest = GetPackage()->root();
   std::string name;
   if (manifest->GetString(switches::kmName, &name) &&
-     name != "node-webkit") {
+      name != "node-webkit") {
     NSString* nsname = [NSString stringWithUTF8String:name.c_str()];
     // Sub main menus
     NSMenu* menu = [NSApp mainMenu];
@@ -473,16 +462,8 @@ void Shell::HandleKeyboardEvent(WebContents* source,
 
   // The event handling to get this strictly right is a tangle; cheat here a bit
   // by just letting the menus have a chance at it.
-  if ([event.os_event type] == NSKeyDown) {
-    if (is_toolbar_open_ &&
-        ([event.os_event modifierFlags] & NSCommandKeyMask) &&
-        [[event.os_event characters] isEqual:@"l"]) {
-      [window_ makeFirstResponder:url_edit_view_];
-      return;
-    }
-
+  if ([event.os_event type] == NSKeyDown)
     [[NSApp mainMenu] performKeyEquivalent:event.os_event];
-  }
 }
 
 }  // namespace content
