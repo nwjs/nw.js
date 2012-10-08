@@ -48,7 +48,6 @@ class ShellBrowserContext : public BrowserContext {
       GetGeolocationPermissionContext() OVERRIDE;
   virtual SpeechRecognitionPreferences*
       GetSpeechRecognitionPreferences() OVERRIDE;
-  virtual bool DidLastSessionExitCleanly() OVERRIDE;
   virtual quota::SpecialStoragePolicy* GetSpecialStoragePolicy() OVERRIDE;
 
  private:
