@@ -89,7 +89,7 @@ Tray.prototype.__defineSetter__('menu', function(val) {
     throw new String("'menu' property requries a valid Menu");
 
   this.setHiddenValue('menu', val);
-  nw.callObjectMethod(this, 'SetMenu', [ val ]);
+  nw.callObjectMethod(this, 'SetMenu', [ val.id ]);
 });
 
 Tray.prototype.remove = function() {

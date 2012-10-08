@@ -66,26 +66,10 @@ var nwDispatcher = nwDispatcher || {};
 
   // Call method of a object in browser
   nwDispatcher.callObjectMethod = function(object, method, args) {
-    for (var i = 0; i < args.length; ++i) {
-      // A remote object?
-      if (typeof args[i].getConstructorName == 'function') {
-        var remoteObject = args[i];
-        args[i] = remoteObject.id;
-      }
-    }
-
     CallObjectMethod(object.id, object.getConstructorName(), method, args);
   };
 
   nwDispatcher.callObjectMethodSync = function(object, method, args) {
-    for (var i = 0; i < args.length; ++i) {
-      // A remote object?
-      if (typeof args[i].getConstructorName == 'function') {
-        var remoteObject = args[i];
-        args[i] = remoteObject.id;
-      }
-    }
-
     return CallObjectMethodSync(
         object.id, object.getConstructorName(), method, args);
   };

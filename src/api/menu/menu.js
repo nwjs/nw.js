@@ -54,18 +54,18 @@ Menu.prototype.append = function(menu_item) {
     throw new String("Menu.append() requires a valid MenuItem");
     
   this.items.push(menu_item);
-  nw.callObjectMethod(this, 'Append', [ menu_item ]);
+  nw.callObjectMethod(this, 'Append', [ menu_item.id ]);
 };
 
 Menu.prototype.insert = function(menu_item, i) {
   this.items.splice(i, 0, menu_item);
-  nw.callObjectMethod(this, 'Insert', [ menu_item, i ]);
+  nw.callObjectMethod(this, 'Insert', [ menu_item.id, i ]);
 }
 
 Menu.prototype.remove = function(menu_item) {
   var pos_hint = this.items.indexOf(menu_item);
   this.items.splice(pos_hint, 1);
-  nw.callObjectMethod(this, 'Remove', [ menu_item, pos_hint ]);
+  nw.callObjectMethod(this, 'Remove', [ menu_item.id, pos_hint ]);
 }
 
 Menu.prototype.removeAt = function(i) {
