@@ -7,7 +7,7 @@ native applications with all Web technologies.
 
 It's created and developed in Intel Open Source Technology Center.
 
-[Introduction to node-webkit (slides)](https://speakerdeck.com/u/zcbenz/p/node-webkit-app-runtime-based-on-chromium-and-node-dot-js)
+[Introduction to node-webkit (slides)](https://speakerdeck.com/u/zcbenz/p/node-webkit-app-runtime-based-on-chromium-and-node-dot-js).
 
 # Features
 
@@ -32,6 +32,8 @@ Demos:
 
 * [Hello World](http://s3.amazonaws.com/node-webkit/hello_world2.nw)
 * [File Explorer](https://github.com/zcbenz/nw-file-explorer)
+
+And also [List of apps and companies using node-webkit](https://github.com/rogerwang/node-webkit/wiki/List-of-apps-and-companies-using-node-webkit).
 
 # Quick Start
 
