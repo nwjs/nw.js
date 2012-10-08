@@ -1,5 +1,5 @@
 diff --git a/Source/WebCore/bindings/v8/ScriptController.cpp b/Source/WebCore/bindings/v8/ScriptController.cpp
-index 4800ade..8f387cc 100644
+index 2fcaca6..3635516 100644
 --- a/Source/WebCore/bindings/v8/ScriptController.cpp
 +++ b/Source/WebCore/bindings/v8/ScriptController.cpp
 @@ -178,7 +178,8 @@ void ScriptController::updatePlatformScriptObjects()
@@ -13,7 +13,7 @@ index 4800ade..8f387cc 100644
  
  v8::Local<v8::Value> ScriptController::callFunction(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-index 81ea21a..51cd870 100644
+index 1936ae8..4835851 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 +++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 @@ -509,6 +509,9 @@ void V8DOMWindowShell::clearDocumentProperty()
@@ -108,7 +108,7 @@ index 459078f..bfa3636 100644
  onabort
  onbeforecopy
 diff --git a/Source/WebCore/html/HTMLInputElement.idl b/Source/WebCore/html/HTMLInputElement.idl
-index 879a34f..5c9bfa1 100644
+index 4266b4f..5e14343 100644
 --- a/Source/WebCore/html/HTMLInputElement.idl
 +++ b/Source/WebCore/html/HTMLInputElement.idl
 @@ -91,6 +91,7 @@ module html {
@@ -120,10 +120,10 @@ index 879a34f..5c9bfa1 100644
          attribute [Reflect] boolean incremental;
          attribute [Conditional=INPUT_SPEECH, Reflect, V8EnabledAtRuntime] boolean webkitSpeech;
 diff --git a/Source/WebCore/loader/EmptyClients.h b/Source/WebCore/loader/EmptyClients.h
-index 256aa99..4d5bf63 100644
+index 3902790..a245857 100644
 --- a/Source/WebCore/loader/EmptyClients.h
 +++ b/Source/WebCore/loader/EmptyClients.h
-@@ -366,6 +366,7 @@ public:
+@@ -364,6 +364,7 @@ public:
  #if USE(V8)
      virtual void didCreateScriptContext(v8::Handle<v8::Context>, int extensionGroup, int worldId) { }
      virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int worldId) { }
@@ -132,10 +132,10 @@ index 256aa99..4d5bf63 100644
  #endif
  
 diff --git a/Source/WebCore/loader/FrameLoaderClient.h b/Source/WebCore/loader/FrameLoaderClient.h
-index 6ec3d79..db31ac5 100644
+index 703fd3b..1d910b3 100644
 --- a/Source/WebCore/loader/FrameLoaderClient.h
 +++ b/Source/WebCore/loader/FrameLoaderClient.h
-@@ -283,6 +283,7 @@ namespace WebCore {
+@@ -285,6 +285,7 @@ namespace WebCore {
  #if USE(V8)
          virtual void didCreateScriptContext(v8::Handle<v8::Context>, int extensionGroup, int worldId) = 0;
          virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int worldId) = 0;
@@ -144,7 +144,7 @@ index 6ec3d79..db31ac5 100644
  #endif
  
 diff --git a/Source/WebCore/page/DOMWindow.cpp b/Source/WebCore/page/DOMWindow.cpp
-index c4651d7..d7cc791 100644
+index 6e96e97..998e2b0 100644
 --- a/Source/WebCore/page/DOMWindow.cpp
 +++ b/Source/WebCore/page/DOMWindow.cpp
 @@ -908,6 +908,8 @@ void DOMWindow::focus(ScriptExecutionContext* context)
@@ -224,10 +224,10 @@ index f15e224..08ef670 100644
      }
  };
 diff --git a/Source/WebKit/chromium/public/WebFrameClient.h b/Source/WebKit/chromium/public/WebFrameClient.h
-index b4fcceb..421efcd 100644
+index 73980bf..777fb12 100644
 --- a/Source/WebKit/chromium/public/WebFrameClient.h
 +++ b/Source/WebKit/chromium/public/WebFrameClient.h
-@@ -300,6 +300,9 @@ public:
+@@ -301,6 +301,9 @@ public:
  
      // WebKit is about to release its reference to a v8 context for a frame.
      virtual void willReleaseScriptContext(WebFrame*, v8::Handle<v8::Context>, int worldId) { }
@@ -238,10 +238,10 @@ index b4fcceb..421efcd 100644
  
      // Geometry notifications ----------------------------------------------
 diff --git a/Source/WebKit/chromium/src/ChromeClientImpl.cpp b/Source/WebKit/chromium/src/ChromeClientImpl.cpp
-index 9857577..a28b2fa 100644
+index 6dd11ec..5186867 100644
 --- a/Source/WebKit/chromium/src/ChromeClientImpl.cpp
 +++ b/Source/WebKit/chromium/src/ChromeClientImpl.cpp
-@@ -723,10 +723,12 @@ void ChromeClientImpl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileCh
+@@ -722,10 +722,12 @@ void ChromeClientImpl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileCh
      WebFileChooserParams params;
      params.multiSelect = fileChooser->settings().allowsMultipleFiles;
  #if ENABLE(DIRECTORY_UPLOAD)
@@ -256,10 +256,10 @@ index 9857577..a28b2fa 100644
      params.selectedFiles = fileChooser->settings().selectedFiles;
      if (params.selectedFiles.size() > 0)
 diff --git a/Source/WebKit/chromium/src/FrameLoaderClientImpl.cpp b/Source/WebKit/chromium/src/FrameLoaderClientImpl.cpp
-index 7a616c5..7c1e68e 100644
+index 49e780b..42b8a9a 100644
 --- a/Source/WebKit/chromium/src/FrameLoaderClientImpl.cpp
 +++ b/Source/WebKit/chromium/src/FrameLoaderClientImpl.cpp
-@@ -163,6 +163,14 @@ void FrameLoaderClientImpl::willReleaseScriptContext(v8::Handle<v8::Context> con
+@@ -165,6 +165,14 @@ void FrameLoaderClientImpl::willReleaseScriptContext(v8::Handle<v8::Context> con
      if (m_webFrame->client())
          m_webFrame->client()->willReleaseScriptContext(m_webFrame, context, worldId);
  }
@@ -275,7 +275,7 @@ index 7a616c5..7c1e68e 100644
  
  bool FrameLoaderClientImpl::allowScriptExtension(const String& extensionName,
 diff --git a/Source/WebKit/chromium/src/FrameLoaderClientImpl.h b/Source/WebKit/chromium/src/FrameLoaderClientImpl.h
-index 1cf5cd1..6e7dec6 100644
+index f2c4d07..b0939ef 100644
 --- a/Source/WebKit/chromium/src/FrameLoaderClientImpl.h
 +++ b/Source/WebKit/chromium/src/FrameLoaderClientImpl.h
 @@ -67,6 +67,7 @@ public:
