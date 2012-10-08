@@ -240,7 +240,7 @@ void Shell::LeaveFullscreen() {
   [window_ toggleFullScreen:nil];
 }
 
-void Shell::SetMininumSize(int width, int height) {
+void Shell::SetMinimumSize(int width, int height) {
   NSSize min_size = NSMakeSize(width, height);
   NSView* content = [window_ contentView];
   [window_ setContentMinSize:[content convertSize:min_size toView:nil]];

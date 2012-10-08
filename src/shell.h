@@ -81,7 +81,7 @@ class Shell : public WebContentsDelegate,
   void Restore();
   void EnterFullscreen();
   void LeaveFullscreen();
-  void SetMininumSize(int width, int height);
+  void SetMinimumSize(int width, int height);
   void SetMaximumSize(int width, int height);
   void SetResizable(bool resizable);
   void SetPosition(const std::string& position);

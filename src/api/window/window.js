@@ -55,6 +55,14 @@ Window.prototype.__defineGetter__('height', function() {
   return window.outerHeight;
 });
 
+Window.prototype.__defineSetter__('title', function(title) {
+  window.document.title = title;
+});
+
+Window.prototype.__defineGetter__('title', function() {
+  return window.document.title;
+});
+
 Window.prototype.moveTo = function(x, y) {
   window.moveTo(x, y);
 }
@@ -123,6 +131,25 @@ Window.prototype.leaveFullscreen = function() {
 
 Window.prototype.showDevTools = function() {
   nw.callObjectMethod(this, 'ShowDevTools', []);
+}
+
+Window.prototype.setMinimumSize = function(width, height) {
+  nw.callObjectMethod(this, 'SetMinimumSize', [ width, height ]);
+}
+
+Window.prototype.setMaximumSize = function(width, height) {
+  nw.callObjectMethod(this, 'SetMaximumSize', [ width, height ]);
+}
+
+Window.prototype.setResizable = function(resizable) {
+  resizable = Boolean(resizable);
+  nw.callObjectMethod(this, 'SetResizable', [ resizable ]);
+}
+
+Window.prototype.setPosition = function(position) {
+  if (position != 'center' && position != 'mouse')
+    throw new String('Invalid postion');
+  nw.callObjectMethod(this, 'SetPosition', [ position ]);
 }
 
 Window.prototype.handleEvent = function(ev) {

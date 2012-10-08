@@ -63,6 +63,20 @@ void Window::Call(const std::string& method,
     shell_->LeaveFullscreen();
   } else if (method == "ShowDevTools") {
     shell_->ShowDevTools();
+  } else if (method == "SetMaximumSize") {
+    int width, height;
+    if (arguments.GetInteger(0, &width) &&
+        arguments.GetInteger(1, &height))
+      shell_->SetMaximumSize(width, height);
+  } else if (method == "SetMinimumSize") {
+    int width, height;
+    if (arguments.GetInteger(0, &width) &&
+        arguments.GetInteger(1, &height))
+      shell_->SetMinimumSize(width, height);
+  } else if (method == "SetResizable") {
+    bool resizable;
+    if (arguments.GetBoolean(0, &resizable))
+      shell_->SetResizable(resizable);
   } else {
     NOTREACHED() << "Invalid call to Clipboard method:" << method
                  << " arguments:" << arguments;

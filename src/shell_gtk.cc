@@ -130,7 +130,7 @@ void Shell::LeaveFullscreen() {
   gtk_window_unfullscreen(window_);
 }
 
-void Shell::SetMininumSize(int width, int height) {
+void Shell::SetMinimumSize(int width, int height) {
   GdkGeometry geometry = { 0 };
   geometry.min_width = width;
   geometry.min_height = height;

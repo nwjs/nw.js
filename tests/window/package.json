@@ -5,7 +5,7 @@
         "title": "Window Test",
         "position": "center",
         "width": 400,
-        "height": 400,
+        "height": 500,
         "resizable": false
     }
 }

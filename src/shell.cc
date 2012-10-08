@@ -102,7 +102,7 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   int min_height, min_width;
   if (manifest->GetInteger(switches::kmMinHeight, &min_height) &&
       manifest->GetInteger(switches::kmMinWidth, &min_width)) {
-    SetMininumSize(min_width, min_height);
+    SetMinimumSize(min_width, min_height);
   }
   int max_height, max_width;
   if (manifest->GetInteger(switches::kmMaxHeight, &max_height) &&

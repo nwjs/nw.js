@@ -94,7 +94,7 @@ void Shell::EnterFullscreen() {
 void Shell::LeaveFullscreen() {
 }
 
-void Shell::SetMininumSize(int width, int height) {
+void Shell::SetMinimumSize(int width, int height) {
   min_width_ = width;
   min_height_ = height;
 }
