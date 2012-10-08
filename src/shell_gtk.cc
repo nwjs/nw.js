@@ -75,7 +75,10 @@ GtkWidget* CreateMenuBar(Shell* shell) {
 }  // namespace
 
 void Shell::Close(bool force) {
-  gtk_widget_destroy(GTK_WIDGET(window_));
+  if (force)
+    gtk_widget_destroy(GTK_WIDGET(window_));
+  else
+    SendEvent("close");
 }
 
 void Shell::Move(const gfx::Rect& bounds) {
@@ -86,6 +89,8 @@ void Shell::Move(const gfx::Rect& bounds) {
 
   gtk_window_move(window_, x, y);
   gtk_window_resize(window_, width, height);
+  content_width_ = width;
+  content_height_ = height;
 }
 
 void Shell::Focus(bool focus) {
@@ -114,7 +119,7 @@ void Shell::Minimize() {
 }
 
 void Shell::Restore() {
-  gtk_window_deiconify(window_);
+  gtk_window_present(window_);
 }
 
 void Shell::EnterFullscreen() {
@@ -148,9 +153,9 @@ void Shell::SetResizable(bool resizable) {
 }
 
 void Shell::SetPosition(const std::string& position) {
-  if (position_ == "center")
+  if (position == "center")
     gtk_window_set_position(window_, GTK_WIN_POS_CENTER);
-  else if (position_ == "mouse")
+  else if (position == "mouse")
     gtk_window_set_position(window_, GTK_WIN_POS_MOUSE);
 }
 
@@ -205,10 +210,19 @@ void Shell::PlatformSetIsLoading(bool loading) {
 
 
 void Shell::PlatformCreateWindow(int width, int height) {
+  content_width_ = width;
+  content_height_ = height;
   window_ = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
-  gtk_window_set_default_size(window_, width, height);
   g_signal_connect(G_OBJECT(window_), "destroy",
                    G_CALLBACK(OnWindowDestroyedThunk), this);
+  g_signal_connect(G_OBJECT(window_), "focus-in-event",
+                   G_CALLBACK(OnFocusInThunk), this);
+  g_signal_connect(G_OBJECT(window_), "focus-out-event",
+                   G_CALLBACK(OnFocusOutThunk), this);
+  g_signal_connect(G_OBJECT(window_), "window-state-event",
+                   G_CALLBACK(OnWindowStateThunk), this);
+  g_signal_connect(G_OBJECT(window_), "delete-event",
+                   G_CALLBACK(OnWindowDeleteEventThunk), this);
 
   vbox_ = gtk_vbox_new(FALSE, 0);
 
@@ -288,10 +302,9 @@ void Shell::PlatformSetContents() {
 }
 
 void Shell::PlatformResizeSubViews() {
-  content_width_ = width;
-  content_height_ = height;
   if (web_contents_.get())
-    gtk_widget_set_size_request(web_contents_->GetNativeView(), width, height);
+    gtk_widget_set_size_request(web_contents_->GetNativeView(),
+                                content_width_, content_height_);
 }
 
 void Shell::OnBackButtonClicked(GtkWidget* widget) {
@@ -319,9 +332,56 @@ void Shell::OnURLEntryActivate(GtkWidget* entry) {
 }
 
 // Callback for when the main window is destroyed.
-gboolean Shell::OnWindowDestroyed(GtkWidget* window) {
+void Shell::OnWindowDestroyed(GtkWidget* window) {
   delete this;
-  return FALSE;  // Don't stop this message.
+}
+
+// Window is focused.
+void Shell::OnFocusIn(GtkWidget* window, GdkEventFocus*) {
+  SendEvent("focus");
+}
+
+// Window lost focus.
+void Shell::OnFocusOut(GtkWidget* window, GdkEventFocus*) {
+  SendEvent("blur");
+}
+
+// Window state has changed.
+void Shell::OnWindowState(GtkWidget* window,
+                          GdkEventWindowState* event) {
+  switch (event->changed_mask) {
+    case GDK_WINDOW_STATE_ICONIFIED:
+      if (event->new_window_state & GDK_WINDOW_STATE_ICONIFIED)
+        SendEvent("minimize");
+      else
+        SendEvent("restore");
+      break;
+    case GDK_WINDOW_STATE_MAXIMIZED:
+      if (event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED)
+        SendEvent("maximize");
+      else
+        SendEvent("demaximize");
+      break;
+    case GDK_WINDOW_STATE_FULLSCREEN:
+      if (event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN)
+        SendEvent("enter-fullscreen");
+      else
+        SendEvent("leave-fullscreen");
+      break;
+    default:
+      break;
+  }
+}
+
+// Window will be closed.
+gboolean Shell::OnWindowDeleteEvent(GtkWidget* widget,
+                                    GdkEvent* event) {
+  if (id_ > 0) {
+    SendEvent("close");
+    return TRUE;
+  }
+
+  return FALSE;
 }
 
 }  // namespace content

@@ -213,7 +213,13 @@ class Shell : public WebContentsDelegate,
   CHROMEGTK_CALLBACK_0(Shell, void, OnReloadButtonClicked);
   CHROMEGTK_CALLBACK_0(Shell, void, OnStopButtonClicked);
   CHROMEGTK_CALLBACK_0(Shell, void, OnURLEntryActivate);
-  CHROMEGTK_CALLBACK_0(Shell, gboolean, OnWindowDestroyed);
+  CHROMEGTK_CALLBACK_0(Shell, void, OnWindowDestroyed);
+  CHROMEGTK_CALLBACK_1(Shell, void, OnFocusIn, GdkEventFocus*);
+  CHROMEGTK_CALLBACK_1(Shell, void, OnFocusOut, GdkEventFocus*);
+  CHROMEGTK_CALLBACK_1(Shell, void, OnWindowState,
+                       GdkEventWindowState*);
+  CHROMEGTK_CALLBACK_1(Shell, gboolean, OnWindowDeleteEvent,
+                       GdkEvent*);
 #endif
 
   scoped_ptr<ShellJavaScriptDialogCreator> dialog_creator_;
