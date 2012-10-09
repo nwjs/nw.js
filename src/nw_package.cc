@@ -64,12 +64,11 @@ FilePath GetPathFromCommandLine(bool* self_extract) {
 
   if (args.size() == 0) {
     *self_extract = true;
+    // See itself as a package (allowing standalone).
+    path = FilePath(command_line->GetProgram());
 #if defined(OS_MACOSX)
     // Find if we have node-webkit.app/Resources/app.nw.
     path = path.DirName().DirName().Append("Resources").Append("app.nw");
-#else
-    // See itself as a package (allowing standalone).
-    path = FilePath(command_line->GetProgram());
 #endif
   } else {
     *self_extract = false;
