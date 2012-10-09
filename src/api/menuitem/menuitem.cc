@@ -72,9 +72,4 @@ void MenuItem::Call(const std::string& method,
   }
 }
 
-void MenuItem::OnClick() {
-  base::ListValue args;
-  dispatcher_host()->SendEvent(this, "click", args);
-}
-
 }  // namespace api

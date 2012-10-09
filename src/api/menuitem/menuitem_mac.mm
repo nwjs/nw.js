@@ -50,7 +50,9 @@ void MenuItem::Create(const base::DictionaryValue& option) {
     delegate_ = [[MenuItemDelegate alloc] initWithMenuItem:this];
     [menu_item_ setTarget:delegate_];
 
+    is_checkbox_ = false;
     if (type == "checkbox") {
+      is_checkbox_ = true;
       bool checked = false;
       option.GetBoolean("checked", &checked);
       SetChecked(checked);

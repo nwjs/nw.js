@@ -36,6 +36,7 @@ class MenuItemDelegate;
 #endif  // __OBJC__
 #elif defined(TOOLKIT_GTK)
 #include <gtk/gtk.h>
+#include "ui/base/gtk/gtk_signal.h"
 #elif defined(OS_WIN)
 #include <windows.h>
 #endif  // defined(OS_MACOSX)
@@ -53,7 +54,10 @@ class MenuItem : public Base {
 
   virtual void Call(const std::string& method,
                     const base::ListValue& arguments) OVERRIDE;
-  void OnClick();
+
+#if defined(OS_MACOSX)
+  bool is_checkbox() const { return is_checkbox_; }
+#endif
 
  private:
   friend class Menu;
@@ -65,14 +69,29 @@ class MenuItem : public Base {
   void SetIcon(const std::string& icon);
   void SetTooltip(const std::string& tooltip);
   void SetEnabled(bool enabled);
+#if defined(OS_MACOSX)
+ public:
+#endif
   void SetChecked(bool checked);
+#if defined(OS_MACOSX)
+ private:
+#endif
   void SetSubmenu(Menu* sub_menu);
 
 #if defined(OS_MACOSX)
-  __block NSMenuItem* menu_item_;
-  __block MenuItemDelegate* delegate_;
+  NSMenuItem* menu_item_;
+  MenuItemDelegate* delegate_;
+
+  // Remember whether it's a checkbox.
+  bool is_checkbox_;
 #elif defined(TOOLKIT_GTK)
-  GtkMenuItem* menu_item_;
+  GtkWidget* menu_item_;
+
+  // Don't send click event on active.
+  bool block_active_;
+
+  // Callback invoked when user left-clicks on the menu item.
+  CHROMEGTK_CALLBACK_0(MenuItem, void, OnClick);
 #elif defined(OS_WIN)
 
 #endif

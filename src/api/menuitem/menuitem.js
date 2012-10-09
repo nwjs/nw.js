@@ -145,9 +145,17 @@ MenuItem.prototype.__defineSetter__('submenu', function(val) {
 });
 
 MenuItem.prototype.handleEvent = function(ev) {
-  // Emit click handler
-  if (ev == 'click' && typeof this.click == 'function')
-    this.click();
+  if (ev == 'click') {
+    // Automatically flag the 'checked' property.
+    if (this.type == 'checkbox') {
+      var option = this.getHiddenValue('option');
+      option.checked = !option.checked;
+    }
+
+    // Emit click handler
+    if (typeof this.click == 'function')
+      this.click();
+  }
 
   // Emit generate event handler
   exports.Base.prototype.handleEvent.apply(this, arguments);

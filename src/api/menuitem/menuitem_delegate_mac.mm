@@ -20,6 +20,7 @@
 
 #import "content/nw/src/api/menuitem/menuitem_delegate_mac.h"
 
+#include "base/values.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
 
 @implementation MenuItemDelegate
@@ -33,7 +34,13 @@
 }
 
 -(void)invoke: (id)sender {
-  menu_item_->OnClick();
+  // Automatically set the checked flag.
+  if (menu_item_->is_checkbox())
+    menu_item_->SetChecked(true);
+
+  // Send event.
+  base::ListValue args;
+  menu_item_->dispatcher_host()->SendEvent(this, "click", args);
 }
 
 @end
