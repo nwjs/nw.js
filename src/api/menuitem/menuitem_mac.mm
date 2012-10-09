@@ -62,10 +62,6 @@ void MenuItem::Create(const base::DictionaryValue& option) {
     if (option.GetBoolean("enabled", &enabled))
       SetEnabled(enabled);
 
-    std::string icon;
-    if (option.GetString("icon", &icon) && !icon.empty())
-      SetIcon(icon);
-
     std::string tooltip;
     if (option.GetString("tooltip", &tooltip))
       SetTooltip(tooltip);

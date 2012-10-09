@@ -39,9 +39,6 @@ function MenuItem(option) {
     else
       option.label = String(option.label);
 
-    if (option.hasOwnProperty('icon'))
-      option.icon = String(option.icon);
-
     if (option.hasOwnProperty('tooltip'))
       option.tooltip = String(option.tooltip);
 
@@ -68,9 +65,12 @@ function MenuItem(option) {
   this.setHiddenValue('option', option);
   nw.allocateObject(this, option);
 
-  // All properties must be set after initialization.
-  if (!option.hasOwnProperty('icon'))
+  if (option.type == 'normal' && option.hasOwnProperty('icon'))
+    this.icon = option.icon;
+  else
     option.icon = '';
+
+  // All properties must be set after initialization.
   if (!option.hasOwnProperty('tooltip'))
     option.tooltip = '';
   if (!option.hasOwnProperty('enabled'))
@@ -99,7 +99,8 @@ MenuItem.prototype.__defineGetter__('icon', function() {
 });
 
 MenuItem.prototype.__defineSetter__('icon', function(val) {
-  this.handleSetter('icon', 'SetIcon', String, val);
+  this.getHiddenValue('option').icon = String(val);
+  nw.callObjectMethod(this, 'SetIcon', [ nw.getAbsolutePath(val) ]);
 });
 
 MenuItem.prototype.__defineGetter__('tooltip', function() {

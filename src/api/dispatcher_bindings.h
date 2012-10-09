@@ -42,6 +42,7 @@ class DispatcherBindings : public v8::Extension {
   static v8::Handle<v8::Value> GetIDWeakMapConstructor(
       const v8::Arguments& args);
   static v8::Handle<v8::Value> GetNextObjectId(const v8::Arguments& args);
+  static v8::Handle<v8::Value> GetAbsolutePath(const v8::Arguments& args);
 
   // Extended prototype of objects.
   static v8::Handle<v8::Value> GetHiddenValue(const v8::Arguments& args);

@@ -171,8 +171,6 @@ bool Package::InitFromPath() {
   if (!ExtractPath(&path_))
     return false;
 
-  file_util::SetCurrentDirectory(path_);
-
   // path_/package.json
   FilePath manifest_path = path_.AppendASCII("package.json");
   if (!file_util::PathExists(manifest_path)) {

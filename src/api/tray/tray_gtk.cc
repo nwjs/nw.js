@@ -34,10 +34,6 @@ void Tray::Create(const base::DictionaryValue& option) {
   if (option.GetString("title", &title))
     SetTitle(title);
 
-  std::string icon;
-  if (option.GetString("icon", &icon) && !icon.empty())
-    SetIcon(icon);
-
   std::string tooltip;
   if (option.GetString("tooltip", &tooltip))
     SetTitle(tooltip);
