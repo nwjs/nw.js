@@ -21,6 +21,7 @@
 #import "content/nw/src/api/menuitem/menuitem_delegate_mac.h"
 
 #include "base/values.h"
+#include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
 
 @implementation MenuItemDelegate
@@ -40,7 +41,7 @@
 
   // Send event.
   base::ListValue args;
-  menu_item_->dispatcher_host()->SendEvent(this, "click", args);
+  menu_item_->dispatcher_host()->SendEvent(menu_item_, "click", args);
 }
 
 @end
