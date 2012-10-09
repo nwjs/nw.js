@@ -28,6 +28,9 @@ namespace api {
 void Tray::Create(const base::DictionaryValue& option) {
 }
 
+void Tray::ShowAfterCreate() {
+}
+
 void Tray::Destroy() {
 }
 

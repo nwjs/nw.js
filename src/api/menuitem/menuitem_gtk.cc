@@ -40,6 +40,9 @@ void MenuItem::Create(const base::DictionaryValue& option) {
         SetChecked(checked);
     } else {
       menu_item_ = gtk_image_menu_item_new();
+      std::string icon;
+      if (option.GetString("icon", &icon))
+        SetIcon(icon);
     }
 
     bool enabled;

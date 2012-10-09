@@ -30,6 +30,11 @@ function Tray(option) {
   else
     option.title = String(option.title);
 
+  if (option.hasOwnProperty('icon')) {
+    option.shadowIcon = String(option.icon);
+    option.icon = nw.getAbsolutePath(option.icon);
+  }
+
   if (option.hasOwnProperty('tooltip'))
     option.tooltip = String(option.tooltip);
 
@@ -45,12 +50,9 @@ function Tray(option) {
   this.setHiddenValue('option', option);
   nw.allocateObject(this, option);
 
-  if (option.hasOwnProperty('icon'))
-    this.icon = option.icon;
-  else
-    option.icon = '';
-
   // All properties must be set after initialization.
+  if (!option.hasOwnProperty('icon'))
+    option.shadowIcon = '';
   if (!option.hasOwnProperty('tooltip'))
     option.tooltip = '';
 }
@@ -65,12 +67,12 @@ Tray.prototype.__defineSetter__('title', function(val) {
 });
 
 Tray.prototype.__defineGetter__('icon', function() {
-  return this.handleGetter('icon');
+  return this.handleGetter('shadowIcon');
 });
 
 Tray.prototype.__defineSetter__('icon', function(val) {
-  this.getHiddenValue('option').icon = String(val);
-  nw.callObjectMethod(this, 'SetIcon', [ nw.getAbsolutePath(val) ]);
+  this.getHiddenValue('option').shadowIcon = String(val);
+  this.handleSetter('icon', 'SetIcon', String, nw.getAbsolutePath(val));
 });
 
 Tray.prototype.__defineGetter__('tooltip', function() {

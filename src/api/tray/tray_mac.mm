@@ -22,7 +22,6 @@
 
 #include "base/values.h"
 #import <Cocoa/Cocoa.h>
-#include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"
 
 namespace api {
@@ -32,18 +31,9 @@ void Tray::Create(const base::DictionaryValue& option) {
   status_item_ = [status_bar statusItemWithLength:NSVariableStatusItemLength];
   [status_item_ setHighlightMode:YES];
   [status_item_ retain];
+}
 
-  std::string title;
-  if (option.GetString("title", &title))
-    SetTitle(title);
-
-  std::string tooltip;
-  if (option.GetString("tooltip", &tooltip))
-    SetTitle(tooltip);
-
-  int menu_id;
-  if (option.GetInteger("menu", &menu_id))
-    SetMenu(static_cast<Menu*>(dispatcher_host()->GetObject(menu_id)));
+void Tray::ShowAfterCreate() {
 }
 
 void Tray::Destroy() {

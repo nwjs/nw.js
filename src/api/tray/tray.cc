@@ -31,6 +31,22 @@ Tray::Tray(int id,
            const base::DictionaryValue& option)
     : Base(id, dispatcher_host, option) {
   Create(option);
+
+  std::string title;
+  if (option.GetString("title", &title))
+    SetTitle(title);
+
+  std::string icon;
+  if (option.GetString("icon", &icon) && !icon.empty())
+    SetIcon(icon);
+
+  std::string tooltip;
+  if (option.GetString("tooltip", &tooltip))
+    SetTitle(tooltip);
+
+  int menu_id;
+  if (option.GetInteger("menu", &menu_id))
+    SetMenu(static_cast<Menu*>(dispatcher_host->GetObject(menu_id)));
 }
 
 Tray::~Tray() {

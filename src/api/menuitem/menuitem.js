@@ -39,6 +39,11 @@ function MenuItem(option) {
     else
       option.label = String(option.label);
 
+    if (option.hasOwnProperty('icon')) {
+      option.shadowIcon = String(option.icon);
+      option.icon = nw.getAbsolutePath(option.icon);
+    }
+
     if (option.hasOwnProperty('tooltip'))
       option.tooltip = String(option.tooltip);
 
@@ -60,17 +65,18 @@ function MenuItem(option) {
       else
         this.click = option.click;
     }
+  } else if (option.type == 'separator') {
+    option = {
+      type: 'separator'
+    };
   }
 
   this.setHiddenValue('option', option);
   nw.allocateObject(this, option);
 
-  if (option.type == 'normal' && option.hasOwnProperty('icon'))
-    this.icon = option.icon;
-  else
-    option.icon = '';
-
   // All properties must be set after initialization.
+  if (!option.hasOwnProperty('icon'))
+    option.shadowIcon = '';
   if (!option.hasOwnProperty('tooltip'))
     option.tooltip = '';
   if (!option.hasOwnProperty('enabled'))
@@ -95,12 +101,12 @@ MenuItem.prototype.__defineSetter__('label', function(val) {
 });
 
 MenuItem.prototype.__defineGetter__('icon', function() {
-  return this.handleGetter('icon');
+  return this.handleGetter('shadowIcon');
 });
 
 MenuItem.prototype.__defineSetter__('icon', function(val) {
-  this.getHiddenValue('option').icon = String(val);
-  nw.callObjectMethod(this, 'SetIcon', [ nw.getAbsolutePath(val) ]);
+  this.getHiddenValue('option').shadowIcon = String(val);
+  this.handleSetter('icon', 'SetIcon', String, nw.getAbsolutePath(val));
 });
 
 MenuItem.prototype.__defineGetter__('tooltip', function() {
