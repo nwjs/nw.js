@@ -58,6 +58,7 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
       url_edit_view_(NULL),
       force_close_(false),
       id_(-1),
+      has_frame_(true),
       is_show_devtools_(false),
       is_toolbar_open_(true)
 #if defined(OS_WIN)
@@ -82,6 +83,7 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   int width = 700, height = 450;
   manifest->GetInteger(switches::kmWidth, &width);
   manifest->GetInteger(switches::kmHeight, &height);
+  manifest->GetBoolean(switches::kmFrame, &has_frame_);
   PlatformCreateWindow(width, height);
 
   // Setup window from manifest.
@@ -123,6 +125,7 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
 
   // Add web contents.
   web_contents_.reset(web_contents);
+  content::WebContentsObserver::Observe(web_contents);
   web_contents_->SetDelegate(this);
   PlatformSetContents();
   PlatformResizeSubViews();
@@ -256,6 +259,16 @@ gfx::NativeView Shell::GetContentView() {
   return web_contents_->GetNativeView();
 }
 
+bool Shell::OnMessageReceived(const IPC::Message& message) {
+  bool handled = true;
+  IPC_BEGIN_MESSAGE_MAP(Shell, message)
+    IPC_MESSAGE_HANDLER(ShellViewHostMsg_UpdateDraggableRegions,
+                        UpdateDraggableRegions)
+    IPC_MESSAGE_UNHANDLED(handled = false)
+  IPC_END_MESSAGE_MAP()
+  return handled;
+}
+
 WebContents* Shell::OpenURLFromTab(WebContents* source,
                                    const OpenURLParams& params) {
   // The only one we implement for now.
@@ -360,7 +373,6 @@ bool Shell::AddMessageToConsole(WebContents* source,
                                 const string16& source_id) {
   return false;
 }
-
 
 void Shell::RequestMediaAccessPermission(
       content::WebContents* web_contents,

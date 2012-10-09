@@ -29,6 +29,7 @@
 #include "base/string_piece.h"
 #include "base/sys_string_conversions.h"
 #include "base/values.h"
+#include "chrome/common/extensions/draggable_region.h"
 #include "content/public/browser/native_web_keyboard_event.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
@@ -153,6 +154,21 @@ enum {
 
 @end
 
+@interface ControlRegionView : NSView
+@end
+@implementation ControlRegionView
+- (BOOL)mouseDownCanMoveWindow {
+  return NO;
+}
+- (NSView*)hitTest:(NSPoint)aPoint {
+  return nil;
+}
+@end
+
+@interface NSView (WebContentsView)
+- (void)setMouseDownCanMoveWindow:(BOOL)can_move;
+@end
+
 namespace {
 
 // Layout constants (in view coordinates)
@@ -272,6 +288,42 @@ void Shell::SetTitle(const std::string& title) {
   [window_ setTitle:title_string];
 }
 
+void Shell::UpdateDraggableRegions(
+    const std::vector<extensions::DraggableRegion>& regions) {
+  if (has_frame_)
+    return;
+
+  // All ControlRegionViews should be added as children of the WebContentsView,
+  // because WebContentsView will be removed and re-added when entering and
+  // leaving fullscreen mode.
+  NSView* webView = web_contents()->GetView()->GetNativeView();
+  NSInteger webViewHeight = NSHeight([webView bounds]);
+
+  // Remove all ControlRegionViews that are added last time.
+  // Note that [webView subviews] returns the view's mutable internal array and
+  // it should be copied to avoid mutating the original array while enumerating
+  // it.
+  scoped_nsobject<NSArray> subviews([[webView subviews] copy]);
+  for (NSView* subview in subviews.get())
+    if ([subview isKindOfClass:[ControlRegionView class]])
+      [subview removeFromSuperview];
+
+  // Create and add ControlRegionView for each region that needs to be excluded
+  // from the dragging.
+  for (std::vector<extensions::DraggableRegion>::const_iterator iter =
+           regions.begin();
+       iter != regions.end();
+       ++iter) {
+    const extensions::DraggableRegion& region = *iter;
+    scoped_nsobject<NSView> controlRegion([[ControlRegionView alloc] init]);
+    [controlRegion setFrame:NSMakeRect(region.bounds.x(),
+                                       webViewHeight - region.bounds.bottom(),
+                                       region.bounds.width(),
+                                       region.bounds.height())];
+    [webView addSubview:controlRegion];
+  }
+}
+
 void Shell::PlatformInitialize() {
 }
 
@@ -313,14 +365,15 @@ void Shell::PlatformCreateWindow(int width, int height) {
   NSUInteger style_mask = NSTitledWindowMask |
                           NSClosableWindowMask |
                           NSMiniaturizableWindowMask |
-                          NSResizableWindowMask;
+                          NSResizableWindowMask |
+                          NSTexturedBackgroundWindowMask;
   CrShellWindow* window =
       [[CrShellWindow alloc] initWithContentRect:content_rect
                                        styleMask:style_mask
                                          backing:NSBackingStoreBuffered
                                            defer:NO];
-  window_ = window;
   [window setShell:this];
+  window_ = window;
   NSView* content = [window_ contentView];
 
   // Set the shell window to participate in Lion Fullscreen mode. Set
@@ -407,17 +460,24 @@ void Shell::PlatformCreateWindow(int width, int height) {
 }
 
 void Shell::PlatformSetContents() {
-  NSView* web_view = web_contents_->GetView()->GetNativeView();
-  NSView* content = [window_ contentView];
-  [content addSubview:web_view];
+  NSView* view = web_contents()->GetView()->GetNativeView();
+  if (has_frame_) {
+    NSRect frame = [[window() contentView] bounds];
+    if (is_toolbar_open_)
+      frame.size.height -= kURLBarHeight;
+    [view setFrame:frame];
+    [[window() contentView] addSubview:view];
+  } else {
+    [view setMouseDownCanMoveWindow:YES];
 
-  NSRect frame = [content bounds];
-  if (is_toolbar_open_) {
-    frame.size.height -= kURLBarHeight;
+    NSView* frameView = [[window() contentView] superview];
+    [view setFrame:[frameView bounds]];
+    [frameView addSubview:view];
+
+    [[window() standardWindowButton:NSWindowZoomButton] setHidden:YES];
+    [[window() standardWindowButton:NSWindowMiniaturizeButton] setHidden:YES];
+    [[window() standardWindowButton:NSWindowCloseButton] setHidden:YES];
   }
-  [web_view setFrame:frame];
-  [web_view setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
-  [web_view setNeedsDisplay:YES];
 }
 
 void Shell::PlatformResizeSubViews() {

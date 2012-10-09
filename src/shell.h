@@ -30,6 +30,7 @@
 #include "content/public/browser/notification_registrar.h"
 #include "content/public/browser/notification_observer.h"
 #include "content/public/browser/web_contents_delegate.h"
+#include "content/public/browser/web_contents_observer.h"
 #include "ipc/ipc_channel.h"
 #include "ui/gfx/native_widget_types.h"
 
@@ -42,6 +43,10 @@ typedef struct _GtkToolItem GtkToolItem;
 
 namespace base {
 class DictionaryValue;
+}
+
+namespace extensions {
+struct DraggableRegion;
 }
 
 namespace nw {
@@ -60,6 +65,7 @@ class WebContents;
 // This represents one window of the Content Shell, i.e. all the UI including
 // buttons and url bar, as well as the web content area.
 class Shell : public WebContentsDelegate,
+              public content::WebContentsObserver,
               public NotificationObserver {
  public:
   virtual ~Shell();
@@ -90,6 +96,9 @@ class Shell : public WebContentsDelegate,
   void SetAsDesktop();
 #endif
 
+  void UpdateDraggableRegions(
+      const std::vector<extensions::DraggableRegion>& regions);
+
   // Send an event to renderer.
   void SendEvent(const std::string& event);
 
@@ -116,6 +125,8 @@ class Shell : public WebContentsDelegate,
 
   static nw::Package* GetPackage();
 
+  gfx::NativeView GetContentView();
+
   WebContents* web_contents() const { return web_contents_.get(); }
   gfx::NativeWindow window() { return window_; }
 
@@ -128,6 +139,9 @@ class Shell : public WebContentsDelegate,
   void ActionPerformed(int control);
   void URLEntered(std::string url_string);
 #endif
+
+  // content::WebContentsObserver implementation.
+  virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
 
   // WebContentsDelegate
   virtual WebContents* OpenURLFromTab(WebContents* source,
@@ -196,8 +210,6 @@ class Shell : public WebContentsDelegate,
   // Sets whether the spinner is spinning.
   void PlatformSetIsLoading(bool loading);
 
-  gfx::NativeView GetContentView();
-
   // NotificationObserver
   virtual void Observe(int type,
                        const NotificationSource& source,
@@ -237,6 +249,9 @@ class Shell : public WebContentsDelegate,
 
   // ID of corresponding js object.
   int id_;
+
+  // Is it a frameless window?
+  bool has_frame_;
 
   // Debug settings.
   bool is_show_devtools_;

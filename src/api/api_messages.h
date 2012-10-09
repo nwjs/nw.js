@@ -22,10 +22,18 @@
 #include <string>
 
 #include "base/values.h"
+#include "chrome/common/extensions/draggable_region.h"
 #include "content/public/common/common_param_traits.h"
 #include "ipc/ipc_message_macros.h"
 
 #define IPC_MESSAGE_START ShellMsgStart
+
+IPC_STRUCT_TRAITS_BEGIN(extensions::DraggableRegion)
+  IPC_STRUCT_TRAITS_MEMBER(draggable)
+  IPC_STRUCT_TRAITS_MEMBER(label)
+  IPC_STRUCT_TRAITS_MEMBER(bounds)
+  IPC_STRUCT_TRAITS_MEMBER(clip)
+IPC_STRUCT_TRAITS_END()
 
 IPC_MESSAGE_ROUTED3(ShellViewHostMsg_Allocate_Object,
                     int /* object id */,
@@ -53,3 +61,6 @@ IPC_MESSAGE_ROUTED3(ShellViewMsg_Object_On_Event,
                     std::string /* event name */,
                     ListValue /* arguments */)
 
+// Sent by the renderer when the draggable regions are updated.
+IPC_MESSAGE_ROUTED1(ShellViewHostMsg_UpdateDraggableRegions,
+                    std::vector<extensions::DraggableRegion> /* regions */)

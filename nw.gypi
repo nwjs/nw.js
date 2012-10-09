@@ -44,6 +44,8 @@
         '<(DEPTH)',
       ],
       'sources': [
+        '<(DEPTH)/chrome/common/extensions/draggable_region.cc',
+        '<(DEPTH)/chrome/common/extensions/draggable_region.h',
         '<(DEPTH)/chrome/renderer/static_v8_external_string_resource.cc',
         '<(DEPTH)/chrome/renderer/static_v8_external_string_resource.h',
         'src/api/api_messages.cc',

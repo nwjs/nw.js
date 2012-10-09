@@ -42,7 +42,7 @@ class Dispatcher : public content::RenderViewObserver {
  private:
   // RenderViewObserver implementation.
   virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
-  virtual void DidClearWindowObject(WebKit::WebFrame* frame) OVERRIDE;
+  virtual void DraggableRegionsChanged(WebKit::WebFrame* frame) OVERRIDE;
 
   void OnEvent(int object_id,
                std::string event,

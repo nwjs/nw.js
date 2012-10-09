@@ -171,6 +171,11 @@ void Shell::SetAsDesktop() {
                               gdk_screen_get_height(screen));
 }
 
+void Shell::UpdateDraggableRegions(
+    const std::vector<extensions::DraggableRegion>& regions) {
+  LOG(ERROR) << "UpdateDraggableRegions";
+}
+
 void Shell::PlatformInitialize() {
 }
 

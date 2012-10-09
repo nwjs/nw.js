@@ -73,5 +73,6 @@ const char kmMaxWidth[]   = "max_width";
 const char kmMaxHeight[]  = "max_height";
 const char kmAsDesktop[]  = "as_desktop";
 const char kmFullscreen[] = "fullscreen";
+const char kmFrame[]      = "frame";
 
 }  // namespace switches

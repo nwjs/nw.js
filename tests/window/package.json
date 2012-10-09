@@ -3,9 +3,11 @@
     "main": "index.html",
     "window": {
         "title": "Window Test",
+        "toolbar": false,
         "position": "center",
         "width": 400,
         "height": 500,
-        "resizable": false
+        "resizable": false,
+        "frame": false
     }
 }

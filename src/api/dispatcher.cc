@@ -23,6 +23,7 @@
 #include "content/nw/src/api/api_messages.h"
 #include "content/public/renderer/render_view.h"
 #include "content/renderer/v8_value_converter_impl.h"
+#include "third_party/WebKit/Source/WebKit/chromium/public/WebDocument.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebFrame.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebView.h"
 #include "v8/include/v8.h"
@@ -36,9 +37,6 @@ Dispatcher::Dispatcher(content::RenderView* render_view)
 Dispatcher::~Dispatcher() {
 }
 
-void Dispatcher::DidClearWindowObject(WebKit::WebFrame* frame) {
-}
-
 bool Dispatcher::OnMessageReceived(const IPC::Message& message) {
   bool handled = true;
   IPC_BEGIN_MESSAGE_MAP(Dispatcher, message)
@@ -49,6 +47,24 @@ bool Dispatcher::OnMessageReceived(const IPC::Message& message) {
   return handled;
 }
 
+void Dispatcher::DraggableRegionsChanged(WebKit::WebFrame* frame) {
+  WebKit::WebVector<WebKit::WebDraggableRegion> webregions =
+      frame->document().draggableRegions();
+  std::vector<extensions::DraggableRegion> regions;
+  for (size_t i = 0; i < webregions.size(); ++i) {
+    extensions::DraggableRegion region;
+    region.bounds = webregions[i].bounds;
+    region.draggable = webregions[i].draggable;
+
+    // TODO(jianli): to be removed after WebKit patch that changes the draggable
+    // region syntax is landed.
+    region.label = UTF16ToASCII(webregions[i].label);
+    region.clip = webregions[i].clip;
+
+    regions.push_back(region);
+  }
+  Send(new ShellViewHostMsg_UpdateDraggableRegions(routing_id(), regions));
+}
 
 void Dispatcher::OnEvent(int object_id,
                          std::string event,

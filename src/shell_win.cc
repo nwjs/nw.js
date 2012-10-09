@@ -132,6 +132,11 @@ void Shell::SetTitle(const std::string& title) {
   ::SetWindowText(window_, title_utf16.c_str());
 }
 
+void Shell::UpdateDraggableRegions(
+    const std::vector<extensions::DraggableRegion>& regions) {
+  LOG(ERROR) << "UpdateDraggableRegions";
+}
+
 void Shell::PlatformInitialize() {
   _setmode(_fileno(stdout), _O_BINARY);
   _setmode(_fileno(stderr), _O_BINARY);
