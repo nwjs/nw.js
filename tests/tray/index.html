@@ -37,6 +37,8 @@
   tray.icon == '',
   'Clear Tray Icon');
 
+  tray.icon = 'icon.png';
+
   assert(
   tray.title == 'Test Tray',
   tray.tooltip == '',
@@ -52,7 +54,6 @@
 
   var tray2 = new gui.Tray({
     title: 'Test Tray 2',
-    icon: 'icon.png',
     menu: menu
   });
 

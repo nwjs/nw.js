@@ -56,12 +56,8 @@ void Menu::Insert(MenuItem* menu_item, int pos) {
   [menu_ insertItem:menu_item->menu_item_ atIndex:pos];
 }
 
-void Menu::Remove(MenuItem* menu_item, int pos_hint) {
+void Menu::Remove(MenuItem* menu_item, int pos) {
   [menu_ removeItem:menu_item->menu_item_];
-}
-
-void Menu::RemoveAt(int pos) {
-  [menu_ removeItemAtIndex:pos];
 }
 
 void Menu::Popup(int x, int y, content::Shell* shell) {

@@ -67,14 +67,13 @@ class Menu : public Base {
   void SetTitle(const std::string& title);
   void Append(MenuItem* menu_item);
   void Insert(MenuItem* menu_item, int pos);
-  void Remove(MenuItem* menu_item, int pos_hint);
-  void RemoveAt(int pos);
+  void Remove(MenuItem* menu_item, int pos);
   void Popup(int x, int y, content::Shell*);
 
 #if defined(OS_MACOSX)
   __block NSMenu* menu_;
 #elif defined(TOOLKIT_GTK)
-  GtkMenu* menu_;
+  GtkWidget* menu_;
 #elif defined(OS_WIN)
   HMENU menu_;
 #endif

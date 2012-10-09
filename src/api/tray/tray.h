@@ -34,6 +34,7 @@ class NSStatusItem;
 #endif  // __OBJC__
 #elif defined(TOOLKIT_GTK)
 #include <gtk/gtk.h>
+#include "ui/base/gtk/gtk_signal.h"
 #elif defined(OS_WIN)
 #include <windows.h>
 #endif  // defined(OS_MACOSX)
@@ -66,6 +67,14 @@ class Tray : public Base {
   __block NSStatusItem* status_item_;
 #elif defined(TOOLKIT_GTK)
   GtkStatusIcon* status_item_;
+
+  // Reference to the associated menu.
+  Menu* menu_;
+
+  // Callback invoked when user left-clicks on the status icon.
+  CHROMEGTK_CALLBACK_0(Tray, void, OnClick);
+  // Callback invoked when user right-clicks on the status icon.
+  CHROMEGTK_CALLBACK_2(Tray, void, OnPopupMenu, guint, guint);
 #elif defined(OS_WIN)
    
 #endif

@@ -29,6 +29,7 @@
 #include "base/utf_string_conversions.h"
 #include "base/values.h"
 #include "base/win/wrapped_window_proc.h"
+#include "chrome/common/extensions/draggable_region.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
 #include "content/nw/src/common/shell_switches.h"

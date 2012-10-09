@@ -64,13 +64,13 @@ Menu.prototype.insert = function(menu_item, i) {
 
 Menu.prototype.remove = function(menu_item) {
   var pos_hint = this.items.indexOf(menu_item);
-  this.items.splice(pos_hint, 1);
   nw.callObjectMethod(this, 'Remove', [ menu_item.id, pos_hint ]);
+  this.items.splice(pos_hint, 1);
 }
 
 Menu.prototype.removeAt = function(i) {
+  nw.callObjectMethod(this, 'Remove', [ this.items[i].id, i ]);
   this.items.splice(i, 1);
-  nw.callObjectMethod(this, 'RemoveAt', [ i ]);
 }
 
 Menu.prototype.popup = function(x, y) {

@@ -21,29 +21,73 @@
 #include "content/nw/src/api/tray/tray.h"
 
 #include "base/values.h"
+#include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"
 
 namespace api {
 
 void Tray::Create(const base::DictionaryValue& option) {
+  menu_ = NULL;
+  status_item_ = gtk_status_icon_new();
+
+  std::string title;
+  if (option.GetString("title", &title))
+    SetTitle(title);
+
+  std::string icon;
+  if (option.GetString("icon", &icon) && !icon.empty())
+    SetIcon(icon);
+
+  std::string tooltip;
+  if (option.GetString("tooltip", &tooltip))
+    SetTitle(tooltip);
+
+  int menu_id;
+  if (option.GetInteger("menu", &menu_id))
+    SetMenu(static_cast<Menu*>(dispatcher_host()->GetObject(menu_id)));
+
+  gtk_status_icon_set_visible(status_item_, TRUE);
+  g_signal_connect(status_item_, "activate",
+                   G_CALLBACK(OnClickThunk), this);
+  g_signal_connect(status_item_, "popup-menu",
+                   G_CALLBACK(OnPopupMenuThunk), this);
 }
 
 void Tray::Destroy() {
+  // This object will be destroyed after Remove is called, so we don't release
+  // in destructor but in the Remove function.
 }
 
 void Tray::SetTitle(const std::string& title) {
+  gtk_status_icon_set_title(status_item_, title.c_str());
 }
 
 void Tray::SetIcon(const std::string& path) {
+  gtk_status_icon_set_from_file(status_item_, path.c_str());
 }
 
 void Tray::SetTooltip(const std::string& tooltip) {
+  gtk_status_icon_set_tooltip_text(GTK_STATUS_ICON(status_item_),
+                                   tooltip.c_str());
 }
 
 void Tray::SetMenu(Menu* menu) {
+  menu_ = menu;
 }
 
 void Tray::Remove() {
+  g_object_unref(G_OBJECT(status_item_));
+}
+
+void Tray::OnClick(GtkWidget* widget) {
+}
+
+void Tray::OnPopupMenu(GtkWidget* widget, guint button, guint time) {
+  if (menu_) {
+    gtk_menu_popup(GTK_MENU(menu_->menu_), NULL, NULL,
+                   gtk_status_icon_position_menu,
+                   status_item_, button, time);
+  }
 }
 
 }  // namespace api

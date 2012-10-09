@@ -28,6 +28,7 @@
 #include "base/string_piece.h"
 #include "base/utf_string_conversions.h"
 #include "base/values.h"
+#include "chrome/common/extensions/draggable_region.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/native_web_keyboard_event.h"
 #include "content/public/browser/web_contents.h"

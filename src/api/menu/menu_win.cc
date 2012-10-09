@@ -39,10 +39,7 @@ void Menu::Append(MenuItem* menu_item) {
 void Menu::Insert(MenuItem* menu_item, int pos) {
 }
 
-void Menu::Remove(MenuItem* menu_item, int pos_hint) {
-}
-
-void Menu::RemoveAt(int pos) {
+void Menu::Remove(MenuItem* menu_item, int pos) {
 }
 
 void Menu::Popup(int x, int y, content::Shell* shell) {

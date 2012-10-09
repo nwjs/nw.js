@@ -58,14 +58,10 @@ void Menu::Call(const std::string& method,
   } else if (method == "Remove") {
     int object_id = 0;
     arguments.GetInteger(0, &object_id);
-    int pos_hint = 0;
-    arguments.GetInteger(1, &pos_hint);
-    Remove(static_cast<MenuItem*>(dispatcher_host()->GetObject(object_id)),
-           pos_hint);
-  } else if (method == "RemoveAt") {
     int pos = 0;
-    arguments.GetInteger(0, &pos);
-    RemoveAt(pos);
+    arguments.GetInteger(1, &pos);
+    Remove(static_cast<MenuItem*>(dispatcher_host()->GetObject(object_id)),
+           pos);
   } else if (method == "Popup") {
     int x = 0;
     arguments.GetInteger(0, &x);
