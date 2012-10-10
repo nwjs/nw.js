@@ -56,6 +56,7 @@ class Tray : public Base {
  private:
   // Platform-independent implementations
   void Create(const base::DictionaryValue& option);
+  void ShowAfterCreate();
   void Destroy();
   void SetTitle(const std::string& title);
   void SetIcon(const std::string& icon_path);

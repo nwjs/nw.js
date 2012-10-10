@@ -24,6 +24,7 @@ var nwDispatcher = nwDispatcher || {};
   native function RequireNwGui();
   native function GetIDWeakMapConstructor();
   native function GetNextObjectId();
+  native function GetAbsolutePath();
 
   native function AllocateObject();
   native function DeallocateObject();
@@ -81,6 +82,8 @@ var nwDispatcher = nwDispatcher || {};
   }
 
   nwDispatcher.requireNwGui = RequireNwGui;
+
+  nwDispatcher.getAbsolutePath = GetAbsolutePath;
 
   // Extended prototype of objects.
   nwDispatcher.getConstructorName = GetConstructorName;

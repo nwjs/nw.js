@@ -21,7 +21,6 @@
 #include "content/nw/src/api/tray/tray.h"
 
 #include "base/values.h"
-#include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"
 
 namespace api {
@@ -29,28 +28,14 @@ namespace api {
 void Tray::Create(const base::DictionaryValue& option) {
   menu_ = NULL;
   status_item_ = gtk_status_icon_new();
+}
 
-  std::string title;
-  if (option.GetString("title", &title))
-    SetTitle(title);
-
-  std::string icon;
-  if (option.GetString("icon", &icon) && !icon.empty())
-    SetIcon(icon);
-
-  std::string tooltip;
-  if (option.GetString("tooltip", &tooltip))
-    SetTitle(tooltip);
-
-  int menu_id;
-  if (option.GetInteger("menu", &menu_id))
-    SetMenu(static_cast<Menu*>(dispatcher_host()->GetObject(menu_id)));
-
-  gtk_status_icon_set_visible(status_item_, TRUE);
+void Tray::ShowAfterCreate() {
   g_signal_connect(status_item_, "activate",
                    G_CALLBACK(OnClickThunk), this);
   g_signal_connect(status_item_, "popup-menu",
                    G_CALLBACK(OnPopupMenuThunk), this);
+  gtk_status_icon_set_visible(status_item_, TRUE);
 }
 
 void Tray::Destroy() {

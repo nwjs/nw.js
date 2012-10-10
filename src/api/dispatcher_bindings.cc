@@ -20,8 +20,11 @@
 
 #include "content/nw/src/api/dispatcher_bindings.h"
 
+#include "base/file_path.h"
+#include "base/file_util.h"
 #include "base/logging.h"
 #include "base/values.h"
+#include "base/command_line.h"
 #include "chrome/renderer/static_v8_external_string_resource.h"
 #include "content/public/renderer/render_view.h"
 #include "content/public/renderer/render_thread.h"
@@ -90,6 +93,26 @@ void RequireFromResource(v8::Handle<v8::Object> root,
   func->Call(root, 2, args);
 }
 
+bool MakePathAbsolute(FilePath* file_path) {
+  DCHECK(file_path);
+
+  FilePath current_directory;
+  if (!file_util::GetCurrentDirectory(&current_directory))
+    return false;
+
+  if (file_path->IsAbsolute())
+    return true;
+
+  if (current_directory.empty())
+    return file_util::AbsolutePath(file_path);
+
+  if (!current_directory.IsAbsolute())
+    return false;
+
+  *file_path = current_directory.Append(*file_path);
+  return true;
+}
+
 }  // namespace
 
 DispatcherBindings::DispatcherBindings()
@@ -123,6 +146,8 @@ DispatcherBindings::GetNativeFunction(v8::Handle<v8::String> name) {
     return v8::FunctionTemplate::New(SetDestructor);
   else if (name->Equals(v8::String::New("GetNextObjectId")))
     return v8::FunctionTemplate::New(GetNextObjectId);
+  else if (name->Equals(v8::String::New("GetAbsolutePath")))
+    return v8::FunctionTemplate::New(GetAbsolutePath);
   else if (name->Equals(v8::String::New("AllocateObject")))
     return v8::FunctionTemplate::New(AllocateObject);
   else if (name->Equals(v8::String::New("DeallocateObject")))
@@ -177,6 +202,18 @@ v8::Handle<v8::Value>
 DispatcherBindings::GetNextObjectId(const v8::Arguments& args) {
   static int next_object_id = 1;
   return v8::Integer::New(next_object_id++);
+}
+
+// static
+v8::Handle<v8::Value>
+DispatcherBindings::GetAbsolutePath(const v8::Arguments& args) {
+  FilePath path = FilePath::FromUTF8Unsafe(*v8::String::Utf8Value(args[0]));
+  MakePathAbsolute(&path);
+#if defined(OS_POSIX)
+  return v8::String::New(path.value().c_str());
+#else
+  return v8::String::New(path.AsUTF8Unsafe().c_str());
+#endif
 }
 
 // static

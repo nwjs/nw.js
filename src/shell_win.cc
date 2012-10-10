@@ -113,13 +113,13 @@ void Shell::SetPosition(const std::string& position) {
   GetWindowRect(window_, &rc);
   OffsetRect(&rc, -rc.left, -rc.top);
   int width = rc.right;
-  int height = rc.bottom
+  int height = rc.bottom;
 
   int x, y;
-  if (position_ == "center") {
+  if (position == "center") {
     x = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
     y = (GetSystemMetrics(SM_CYSCREEN) - height) / 2;
-  } else if (position_ == "mouse") {
+  } else if (position == "mouse") {
     POINT point;
     GetCursorPos(&point);
     x = point.x - width / 2;
@@ -191,7 +191,7 @@ void Shell::PlatformSetIsLoading(bool loading) {
 }
 
 void Shell::PlatformCreateWindow(int width, int height) {
-  window_ = CreateWindow(kWindowClass, "node-webkit",
+  window_ = CreateWindow(kWindowClass, L"node-webkit",
                          WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
                          CW_USEDEFAULT, 0,
                          width, height,
