@@ -1,5 +1,5 @@
 diff --git a/Source/WebCore/bindings/v8/ScriptController.cpp b/Source/WebCore/bindings/v8/ScriptController.cpp
-index 2fcaca6..3635516 100644
+index 9b967d9..3c672a0 100644
 --- a/Source/WebCore/bindings/v8/ScriptController.cpp
 +++ b/Source/WebCore/bindings/v8/ScriptController.cpp
 @@ -178,7 +178,8 @@ void ScriptController::updatePlatformScriptObjects()
@@ -144,7 +144,7 @@ index 703fd3b..1d910b3 100644
  #endif
  
 diff --git a/Source/WebCore/page/DOMWindow.cpp b/Source/WebCore/page/DOMWindow.cpp
-index 6e96e97..998e2b0 100644
+index 71ade41..df038ea 100644
 --- a/Source/WebCore/page/DOMWindow.cpp
 +++ b/Source/WebCore/page/DOMWindow.cpp
 @@ -908,6 +908,8 @@ void DOMWindow::focus(ScriptExecutionContext* context)
@@ -168,7 +168,7 @@ index 6e96e97..998e2b0 100644
      if (m_frame != page->mainFrame())
          return;
 diff --git a/Source/WebCore/page/SecurityOrigin.cpp b/Source/WebCore/page/SecurityOrigin.cpp
-index da15021..d015104 100644
+index d53750a..3a83030 100644
 --- a/Source/WebCore/page/SecurityOrigin.cpp
 +++ b/Source/WebCore/page/SecurityOrigin.cpp
 @@ -120,7 +120,7 @@ SecurityOrigin::SecurityOrigin(const KURL& url)
@@ -238,7 +238,7 @@ index 73980bf..777fb12 100644
  
      // Geometry notifications ----------------------------------------------
 diff --git a/Source/WebKit/chromium/src/ChromeClientImpl.cpp b/Source/WebKit/chromium/src/ChromeClientImpl.cpp
-index 6dd11ec..5186867 100644
+index 65810b9..5e6c226 100644
 --- a/Source/WebKit/chromium/src/ChromeClientImpl.cpp
 +++ b/Source/WebKit/chromium/src/ChromeClientImpl.cpp
 @@ -722,10 +722,12 @@ void ChromeClientImpl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileCh
