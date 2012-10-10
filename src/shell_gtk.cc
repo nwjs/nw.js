@@ -343,17 +343,19 @@ void Shell::OnWindowDestroyed(GtkWidget* window) {
 }
 
 // Window is focused.
-void Shell::OnFocusIn(GtkWidget* window, GdkEventFocus*) {
+gboolean Shell::OnFocusIn(GtkWidget* window, GdkEventFocus*) {
   SendEvent("focus");
+  return FALSE;
 }
 
 // Window lost focus.
-void Shell::OnFocusOut(GtkWidget* window, GdkEventFocus*) {
+gboolean Shell::OnFocusOut(GtkWidget* window, GdkEventFocus*) {
   SendEvent("blur");
+  return FALSE;
 }
 
 // Window state has changed.
-void Shell::OnWindowState(GtkWidget* window,
+gboolean Shell::OnWindowState(GtkWidget* window,
                           GdkEventWindowState* event) {
   switch (event->changed_mask) {
     case GDK_WINDOW_STATE_ICONIFIED:
@@ -377,6 +379,7 @@ void Shell::OnWindowState(GtkWidget* window,
     default:
       break;
   }
+  return FALSE;
 }
 
 // Window will be closed.

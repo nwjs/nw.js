@@ -226,9 +226,9 @@ class Shell : public WebContentsDelegate,
   CHROMEGTK_CALLBACK_0(Shell, void, OnStopButtonClicked);
   CHROMEGTK_CALLBACK_0(Shell, void, OnURLEntryActivate);
   CHROMEGTK_CALLBACK_0(Shell, void, OnWindowDestroyed);
-  CHROMEGTK_CALLBACK_1(Shell, void, OnFocusIn, GdkEventFocus*);
-  CHROMEGTK_CALLBACK_1(Shell, void, OnFocusOut, GdkEventFocus*);
-  CHROMEGTK_CALLBACK_1(Shell, void, OnWindowState,
+  CHROMEGTK_CALLBACK_1(Shell, gboolean, OnFocusIn, GdkEventFocus*);
+  CHROMEGTK_CALLBACK_1(Shell, gboolean, OnFocusOut, GdkEventFocus*);
+  CHROMEGTK_CALLBACK_1(Shell, gboolean, OnWindowState,
                        GdkEventWindowState*);
   CHROMEGTK_CALLBACK_1(Shell, gboolean, OnWindowDeleteEvent,
                        GdkEvent*);
