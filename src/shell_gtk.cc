@@ -38,10 +38,17 @@
 #include "content/nw/src/shell_browser_context.h"
 #include "content/nw/src/shell_content_browser_client.h"
 #include "third_party/skia/include/core/SkColor.h"
+#include "ui/gfx/gtk_util.h"
+#include "ui/gfx/skia_utils_gtk.h"
 
 namespace content {
 
 namespace {
+
+// Dividing GTK's cursor blink cycle time (in milliseconds) by this value yields
+// an appropriate value for content::RendererPreferences::caret_blink_interval.
+// This matches the logic in the WebKit GTK port.
+const double kGtkCursorBlinkCycleFactor = 2000.0;
 
 // Callback for Debug > Show web inspector... menu item.
 gboolean ShowWebInspectorActivated(GtkWidget* widget, Shell* shell) {
@@ -289,22 +296,55 @@ void Shell::PlatformCreateWindow(int width, int height) {
 }
 
 void Shell::PlatformSetContents() {
+  // Set WebKit's styles according to current GTK theme.
+  content::RendererPreferences* prefs =
+      web_contents_->GetMutableRendererPrefs();
+  GtkStyle* frame_style = gtk_rc_get_style(GTK_WIDGET(window_));
+  prefs->focus_ring_color =
+      gfx::GdkColorToSkColor(frame_style->bg[GTK_STATE_SELECTED]);
+
+  const GdkColor* theme_thumb_active = NULL;
+  const GdkColor* theme_thumb_inactive = NULL;
+  const GdkColor* theme_trough_color = NULL;
+  gtk_widget_style_get(GTK_WIDGET(window_),
+                       "scrollbar-slider-prelight-color", &theme_thumb_active,
+                       "scrollbar-slider-normal-color", &theme_thumb_inactive,
+                       "scrollbar-trough-color", &theme_trough_color,
+                       NULL);
+  if (theme_thumb_active)
+    prefs->thumb_active_color = gfx::GdkColorToSkColor(*theme_thumb_active);
+  else
+    prefs->thumb_active_color = SkColorSetRGB(244, 244, 244);
+  if (theme_thumb_inactive)
+    prefs->thumb_inactive_color =
+        gfx::GdkColorToSkColor(*theme_thumb_inactive);
+  else
+    prefs->thumb_inactive_color = SkColorSetRGB(234, 234, 234);
+  if (theme_trough_color)
+    prefs->track_color = gfx::GdkColorToSkColor(*theme_trough_color);
+  else
+    prefs->track_color = SkColorSetRGB(211, 211, 211);
+
+  GtkStyle* entry_style = gtk_rc_get_style(url_edit_view_);
+  prefs->active_selection_bg_color =
+      gfx::GdkColorToSkColor(entry_style->base[GTK_STATE_SELECTED]);
+  prefs->active_selection_fg_color =
+      gfx::GdkColorToSkColor(entry_style->text[GTK_STATE_SELECTED]);
+  prefs->inactive_selection_bg_color =
+      gfx::GdkColorToSkColor(entry_style->base[GTK_STATE_ACTIVE]);
+  prefs->inactive_selection_fg_color =
+      gfx::GdkColorToSkColor(entry_style->text[GTK_STATE_ACTIVE]);
+
+  const base::TimeDelta cursor_blink_time = gfx::GetCursorBlinkCycle();
+  prefs->caret_blink_interval =
+      cursor_blink_time.InMilliseconds() ?
+      cursor_blink_time.InMilliseconds() / kGtkCursorBlinkCycleFactor :
+      0;
+
+  // Then we add the render view to window.
   WebContentsView* content_view = web_contents_->GetView();
   gtk_container_add(GTK_CONTAINER(vbox_), content_view->GetNativeView());
 
-  // As an additional requirement on Linux, we must set the colors for the
-  // render widgets in webkit.
-  content::RendererPreferences* prefs =
-      web_contents_->GetMutableRendererPrefs();
-  prefs->focus_ring_color = SkColorSetARGB(255, 229, 151, 0);
-  prefs->thumb_active_color = SkColorSetRGB(244, 244, 244);
-  prefs->thumb_inactive_color = SkColorSetRGB(234, 234, 234);
-  prefs->track_color = SkColorSetRGB(211, 211, 211);
-
-  prefs->active_selection_bg_color = SkColorSetRGB(30, 144, 255);
-  prefs->active_selection_fg_color = SK_ColorWHITE;
-  prefs->inactive_selection_bg_color = SkColorSetRGB(200, 200, 200);
-  prefs->inactive_selection_fg_color = SkColorSetRGB(50, 50, 50);
 }
 
 void Shell::PlatformResizeSubViews() {
