@@ -154,15 +154,43 @@ enum {
 
 @end
 
-@interface ControlRegionView : NSView
+@interface ControlRegionView : NSView {
+ @private
+  content::Shell* shellWindow_;  // Weak; owns self.
+}
+
 @end
+
 @implementation ControlRegionView
+
+- (id)initWithShellWindow:(content::Shell*)shellWindow {
+  if ((self = [super init]))
+    shellWindow_ = shellWindow;
+  return self;
+}
+
 - (BOOL)mouseDownCanMoveWindow {
   return NO;
 }
+
 - (NSView*)hitTest:(NSPoint)aPoint {
-  return nil;
+  if (shellWindow_->use_system_drag())
+    return nil;
+  if (!shellWindow_->draggable_region() ||
+      !shellWindow_->draggable_region()->contains(aPoint.x, aPoint.y)) {
+    return nil;
+  }
+  return self;
 }
+
+- (void)mouseDown:(NSEvent*)event {
+  shellWindow_->HandleMouseEvent(event);
+}
+
+- (void)mouseDragged:(NSEvent*)event {
+  shellWindow_->HandleMouseEvent(event);
+}
+
 @end
 
 @interface NSView (WebContentsView)
@@ -290,38 +318,43 @@ void Shell::SetTitle(const std::string& title) {
 
 void Shell::UpdateDraggableRegions(
     const std::vector<extensions::DraggableRegion>& regions) {
+  // Draggable region is not supported for non-frameless window.
   if (has_frame_)
     return;
 
-  // All ControlRegionViews should be added as children of the WebContentsView,
-  // because WebContentsView will be removed and re-added when entering and
-  // leaving fullscreen mode.
-  NSView* webView = web_contents()->GetView()->GetNativeView();
-  NSInteger webViewHeight = NSHeight([webView bounds]);
+  // To use system drag, the window has to be marked as draggable with
+  // non-draggable areas being excluded via overlapping views.
+  // 1) If no draggable area is provided, the window is not draggable at all.
+  // 2) If only one draggable area is given, as this is the most common
+  //    case, use the system drag. The non-draggable areas that are opposite of
+  //    the draggable area are computed.
+  // 3) Otherwise, use the custom drag. As such, we lose the capability to
+  //    support some features like snapping into other space.
 
-  // Remove all ControlRegionViews that are added last time.
-  // Note that [webView subviews] returns the view's mutable internal array and
-  // it should be copied to avoid mutating the original array while enumerating
-  // it.
-  scoped_nsobject<NSArray> subviews([[webView subviews] copy]);
-  for (NSView* subview in subviews.get())
-    if ([subview isKindOfClass:[ControlRegionView class]])
-      [subview removeFromSuperview];
-
-  // Create and add ControlRegionView for each region that needs to be excluded
-  // from the dragging.
+  // Determine how to perform the drag by counting the number of draggable
+  // areas.
+  const extensions::DraggableRegion* draggable_area = NULL;
+  use_system_drag_ = true;
   for (std::vector<extensions::DraggableRegion>::const_iterator iter =
            regions.begin();
        iter != regions.end();
        ++iter) {
-    const extensions::DraggableRegion& region = *iter;
-    scoped_nsobject<NSView> controlRegion([[ControlRegionView alloc] init]);
-    [controlRegion setFrame:NSMakeRect(region.bounds.x(),
-                                       webViewHeight - region.bounds.bottom(),
-                                       region.bounds.width(),
-                                       region.bounds.height())];
-    [webView addSubview:controlRegion];
+    if (iter->draggable) {
+      // If more than one draggable area is found, use custom drag.
+      if (draggable_area) {
+        use_system_drag_ = false;
+        break;
+      }
+      draggable_area = &(*iter);
+    }
   }
+
+  if (use_system_drag_)
+    UpdateDraggableRegionsForSystemDrag(regions, draggable_area);
+  else
+    UpdateDraggableRegionsForCustomDrag(regions);
+
+  InstallDraggableRegionViews();
 }
 
 void Shell::PlatformInitialize() {
@@ -510,6 +543,24 @@ void Shell::URLEntered(std::string url_string) {
   }
 }
 
+void Shell::HandleMouseEvent(NSEvent* event) {
+  if ([event type] == NSLeftMouseDown) {
+    NSPoint last_mouse_location = 
+        [window() convertBaseToScreen:[event locationInWindow]];
+    last_mouse_location_x_ = last_mouse_location.x;
+    last_mouse_location_y_ = last_mouse_location.y;
+  } else if ([event type] == NSLeftMouseDragged) {
+    NSPoint current_mouse_location =
+        [window() convertBaseToScreen:[event locationInWindow]];
+    NSPoint frame_origin = [window() frame].origin;
+    frame_origin.x += current_mouse_location.x - last_mouse_location_x_;
+    frame_origin.y += current_mouse_location.y - last_mouse_location_y_;
+    [window() setFrameOrigin:frame_origin];
+    last_mouse_location_x_ = current_mouse_location.x;
+    last_mouse_location_y_ = current_mouse_location.y;
+  }
+}
+
 void Shell::HandleKeyboardEvent(WebContents* source,
                                 const NativeWebKeyboardEvent& event) {
   if (event.skip_in_browser)
@@ -519,6 +570,137 @@ void Shell::HandleKeyboardEvent(WebContents* source,
   // by just letting the menus have a chance at it.
   if ([event.os_event type] == NSKeyDown)
     [[NSApp mainMenu] performKeyEquivalent:event.os_event];
+}
+
+void Shell::InstallDraggableRegionViews() {
+  DCHECK(!has_frame_);
+
+  // All ControlRegionViews should be added as children of the WebContentsView,
+  // because WebContentsView will be removed and re-added when entering and
+  // leaving fullscreen mode.
+  NSView* webView = web_contents()->GetView()->GetNativeView();
+  NSInteger webViewHeight = NSHeight([webView bounds]);
+
+  // Remove all ControlRegionViews that are added last time.
+  // Note that [webView subviews] returns the view's mutable internal array and
+  // it should be copied to avoid mutating the original array while enumerating
+  // it.
+  scoped_nsobject<NSArray> subviews([[webView subviews] copy]);
+  for (NSView* subview in subviews.get())
+    if ([subview isKindOfClass:[ControlRegionView class]])
+      [subview removeFromSuperview];
+
+  // Create and add ControlRegionView for each region that needs to be excluded
+  // from the dragging.
+  for (std::vector<gfx::Rect>::const_iterator iter =
+           system_drag_exclude_areas_.begin();
+       iter != system_drag_exclude_areas_.end();
+       ++iter) {
+    scoped_nsobject<NSView> controlRegion(
+        [[ControlRegionView alloc] initWithShellWindow:this]);
+    [controlRegion setFrame:NSMakeRect(iter->x(),
+                                       webViewHeight - iter->bottom(),
+                                       iter->width(),
+                                       iter->height())];
+    [webView addSubview:controlRegion];
+  }
+}
+
+void Shell::UpdateDraggableRegionsForSystemDrag(
+    const std::vector<extensions::DraggableRegion>& regions,
+    const extensions::DraggableRegion* draggable_area) {
+  NSView* web_view = web_contents()->GetView()->GetNativeView();
+  NSInteger web_view_width = NSWidth([web_view bounds]);
+  NSInteger web_view_height = NSHeight([web_view bounds]);
+
+  system_drag_exclude_areas_.clear();
+
+  // The whole window is not draggable if no draggable area is given.
+  if (!draggable_area) {
+    gfx::Rect window_bounds(0, 0, web_view_width, web_view_height);
+    system_drag_exclude_areas_.push_back(window_bounds);
+    return;
+  }
+
+  // Otherwise, there is only one draggable area. Compute non-draggable areas
+  // that are the opposite of the given draggable area, combined with the
+  // remaining provided non-draggable areas.
+
+  // Copy all given non-draggable areas.
+  for (std::vector<extensions::DraggableRegion>::const_iterator iter =
+           regions.begin();
+       iter != regions.end();
+       ++iter) {
+    if (!iter->draggable)
+      system_drag_exclude_areas_.push_back(iter->bounds);
+  }
+
+  gfx::Rect draggable_bounds = draggable_area->bounds;
+  gfx::Rect non_draggable_bounds;
+
+  // Add the non-draggable area above the given draggable area.
+  if (draggable_bounds.y() > 0) {
+    non_draggable_bounds.SetRect(0,
+                                 0,
+                                 web_view_width,
+                                 draggable_bounds.y() - 1);
+    system_drag_exclude_areas_.push_back(non_draggable_bounds);
+  }
+
+  // Add the non-draggable area below the given draggable area.
+  if (draggable_bounds.bottom() < web_view_height) {
+    non_draggable_bounds.SetRect(0,
+                                 draggable_bounds.bottom() + 1,
+                                 web_view_width,
+                                 web_view_height - draggable_bounds.bottom());
+    system_drag_exclude_areas_.push_back(non_draggable_bounds);
+  }
+
+  // Add the non-draggable area to the left of the given draggable area.
+  if (draggable_bounds.x() > 0) {
+    non_draggable_bounds.SetRect(0,
+                                 draggable_bounds.y(),
+                                 draggable_bounds.x() - 1,
+                                 draggable_bounds.height());
+    system_drag_exclude_areas_.push_back(non_draggable_bounds);
+  }
+
+  // Add the non-draggable area to the right of the given draggable area.
+  if (draggable_bounds.right() < web_view_width) {
+    non_draggable_bounds.SetRect(draggable_bounds.right() + 1,
+                                 draggable_bounds.y(),
+                                 web_view_width - draggable_bounds.right(),
+                                 draggable_bounds.height());
+    system_drag_exclude_areas_.push_back(non_draggable_bounds);
+  }
+}
+
+void Shell::UpdateDraggableRegionsForCustomDrag(
+    const std::vector<extensions::DraggableRegion>& regions) {
+  // We still need one ControlRegionView to cover the whole window such that
+  // mouse events could be captured.
+  NSView* web_view = web_contents()->GetView()->GetNativeView();
+  gfx::Rect window_bounds(
+      0, 0, NSWidth([web_view bounds]), NSHeight([web_view bounds]));
+  system_drag_exclude_areas_.clear();
+  system_drag_exclude_areas_.push_back(window_bounds);
+
+  // Aggregate the draggable areas and non-draggable areas such that hit test
+  // could be performed easily.
+  SkRegion* draggable_region = new SkRegion;
+  for (std::vector<extensions::DraggableRegion>::const_iterator iter =
+           regions.begin();
+       iter != regions.end();
+       ++iter) {
+    const extensions::DraggableRegion& region = *iter;
+    draggable_region->op(
+        region.bounds.x(),
+        region.bounds.y(),
+        region.bounds.right(),
+        region.bounds.bottom(),
+        region.draggable ? SkRegion::kUnion_Op : SkRegion::kDifference_Op);
+  }
+  draggable_region_.reset(draggable_region);
 }
 
 }  // namespace content

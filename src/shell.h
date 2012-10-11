@@ -32,12 +32,11 @@
 #include "content/public/browser/web_contents_delegate.h"
 #include "content/public/browser/web_contents_observer.h"
 #include "ipc/ipc_channel.h"
+#include "third_party/skia/include/core/SkRegion.h"
 #include "ui/gfx/native_widget_types.h"
 
 #if defined(TOOLKIT_GTK)
 #include <gtk/gtk.h>
-
-#include "third_party/skia/include/core/SkRegion.h"
 #include "ui/base/gtk/gtk_signal.h"
 #endif
 
@@ -138,6 +137,12 @@ class Shell : public WebContentsDelegate,
   // Public to be called by an ObjC bridge object.
   void ActionPerformed(int control);
   void URLEntered(std::string url_string);
+
+  // Called to handle a mouse event.
+  void HandleMouseEvent(NSEvent* event);
+
+  bool use_system_drag() const { return use_system_drag_; }
+  SkRegion* draggable_region() const { return draggable_region_.get(); }
 #endif
 
   // content::WebContentsObserver implementation.
@@ -237,6 +242,13 @@ class Shell : public WebContentsDelegate,
                        GdkEvent*);
   CHROMEGTK_CALLBACK_1(Shell, gboolean, OnButtonPress,
                        GdkEventButton*);
+#elif defined(OS_MACOSX)
+  void InstallDraggableRegionViews();
+  void UpdateDraggableRegionsForSystemDrag(
+      const std::vector<extensions::DraggableRegion>& regions,
+      const extensions::DraggableRegion* draggable_area);
+  void UpdateDraggableRegionsForCustomDrag(
+      const std::vector<extensions::DraggableRegion>& regions);
 #endif
 
   scoped_ptr<ShellJavaScriptDialogCreator> dialog_creator_;
@@ -286,6 +298,23 @@ class Shell : public WebContentsDelegate,
   // If true, don't call gdk_window_raise() when we get a click in the title
   // bar or window border.  This is to work around a compiz bug.
   bool suppress_window_raise_;
+#elif defined(OS_MACOSX)
+  // Indicates whether system drag or custom drag should be used, depending on
+  // the complexity of draggable regions.
+  bool use_system_drag_;
+
+  // For system drag, the whole window is draggable and the non-draggable areas
+  // have to been explicitly excluded.
+  std::vector<gfx::Rect> system_drag_exclude_areas_;
+
+  // For custom drag, the whole window is non-draggable and the draggable region
+  // has to been explicitly provided.
+  scoped_ptr<SkRegion> draggable_region_;  // used in custom drag.
+
+  // Mouse location since the last mouse event, in screen coordinates. This is
+  // used in custom drag to compute the window movement.
+  double last_mouse_location_x_;
+  double last_mouse_location_y_;
 #endif
 
   // A container of all the open windows. We use a vector so we can keep track
