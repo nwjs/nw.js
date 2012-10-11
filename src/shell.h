@@ -36,9 +36,9 @@
 
 #if defined(TOOLKIT_GTK)
 #include <gtk/gtk.h>
-#include "ui/base/gtk/gtk_signal.h"
 
-typedef struct _GtkToolItem GtkToolItem;
+#include "third_party/skia/include/core/SkRegion.h"
+#include "ui/base/gtk/gtk_signal.h"
 #endif
 
 namespace base {
@@ -220,6 +220,9 @@ class Shell : public WebContentsDelegate,
   static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
   static LRESULT CALLBACK EditWndProc(HWND, UINT, WPARAM, LPARAM);
 #elif defined(TOOLKIT_GTK)
+  // Getthe position and size of the current window.
+  gfx::Rect GetBounds();
+
   CHROMEGTK_CALLBACK_0(Shell, void, OnBackButtonClicked);
   CHROMEGTK_CALLBACK_0(Shell, void, OnForwardButtonClicked);
   CHROMEGTK_CALLBACK_0(Shell, void, OnReloadButtonClicked);
@@ -232,6 +235,8 @@ class Shell : public WebContentsDelegate,
                        GdkEventWindowState*);
   CHROMEGTK_CALLBACK_1(Shell, gboolean, OnWindowDeleteEvent,
                        GdkEvent*);
+  CHROMEGTK_CALLBACK_1(Shell, gboolean, OnButtonPress,
+                       GdkEventButton*);
 #endif
 
   scoped_ptr<ShellJavaScriptDialogCreator> dialog_creator_;
@@ -274,8 +279,13 @@ class Shell : public WebContentsDelegate,
   GtkWidget* spinner_;
   GtkToolItem* spinner_item_;
 
-  int content_width_;
-  int content_height_;
+  // The region is treated as title bar, can be dragged to move
+  // and double clicked to maximize.
+  SkRegion draggable_region_;
+
+  // If true, don't call gdk_window_raise() when we get a click in the title
+  // bar or window border.  This is to work around a compiz bug.
+  bool suppress_window_raise_;
 #endif
 
   // A container of all the open windows. We use a vector so we can keep track

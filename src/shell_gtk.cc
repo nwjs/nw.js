@@ -28,6 +28,7 @@
 #include "base/string_piece.h"
 #include "base/utf_string_conversions.h"
 #include "base/values.h"
+#include "chrome/browser/ui/gtk/gtk_window_util.h"
 #include "chrome/common/extensions/draggable_region.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/native_web_keyboard_event.h"
@@ -38,6 +39,7 @@
 #include "content/nw/src/shell_browser_context.h"
 #include "content/nw/src/shell_content_browser_client.h"
 #include "third_party/skia/include/core/SkColor.h"
+#include "ui/base/x/active_window_watcher_x.h"
 #include "ui/gfx/gtk_util.h"
 #include "ui/gfx/skia_utils_gtk.h"
 
@@ -97,8 +99,6 @@ void Shell::Move(const gfx::Rect& bounds) {
 
   gtk_window_move(window_, x, y);
   gtk_window_resize(window_, width, height);
-  content_width_ = width;
-  content_height_ = height;
 }
 
 void Shell::Focus(bool focus) {
@@ -157,6 +157,14 @@ void Shell::SetMaximumSize(int width, int height) {
 }
 
 void Shell::SetResizable(bool resizable) {
+  // Should request widget size after setting unresizable, otherwise the 
+  // window will shrink to a very small size.
+  if (resizable == false) {
+    gint width, height;
+    gtk_window_get_size(window_, &width, &height);
+    gtk_widget_set_size_request(GTK_WIDGET(window_), width, height);
+  }
+
   gtk_window_set_resizable(window_, resizable);
 }
 
@@ -181,7 +189,27 @@ void Shell::SetAsDesktop() {
 
 void Shell::UpdateDraggableRegions(
     const std::vector<extensions::DraggableRegion>& regions) {
-  LOG(ERROR) << "UpdateDraggableRegions";
+  // Draggable region is not supported for non-frameless window.
+  if (has_frame_)
+    return;
+
+  SkRegion draggable_region;
+
+  // By default, the whole window is non-draggable. We need to explicitly
+  // include those draggable regions.
+  for (std::vector<extensions::DraggableRegion>::const_iterator iter =
+           regions.begin();
+       iter != regions.end(); ++iter) {
+    const extensions::DraggableRegion& region = *iter;
+    draggable_region.op(
+        region.bounds.x(),
+        region.bounds.y(),
+        region.bounds.right(),
+        region.bounds.bottom(),
+        region.draggable ? SkRegion::kUnion_Op : SkRegion::kDifference_Op);
+  }
+
+  draggable_region_ = draggable_region;
 }
 
 void Shell::PlatformInitialize() {
@@ -223,8 +251,6 @@ void Shell::PlatformSetIsLoading(bool loading) {
 
 
 void Shell::PlatformCreateWindow(int width, int height) {
-  content_width_ = width;
-  content_height_ = height;
   window_ = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
   g_signal_connect(G_OBJECT(window_), "destroy",
                    G_CALLBACK(OnWindowDestroyedThunk), this);
@@ -236,6 +262,22 @@ void Shell::PlatformCreateWindow(int width, int height) {
                    G_CALLBACK(OnWindowStateThunk), this);
   g_signal_connect(G_OBJECT(window_), "delete-event",
                    G_CALLBACK(OnWindowDeleteEventThunk), this);
+  if (!has_frame_) {
+    g_signal_connect(G_OBJECT(window_), "button-press-event",
+                     G_CALLBACK(OnButtonPressThunk), this);
+  }
+  gtk_window_set_default_size(window_, width, height);
+
+  // Hide titlebar when {frame: false} specified.
+  if (!has_frame_)
+    gtk_window_set_decorated(window_, false);
+
+  // In some (older) versions of compiz, raising top-level windows when they
+  // are partially off-screen causes them to get snapped back on screen, not
+  // always even on the current virtual desktop.  If we are running under
+  // compiz, suppress such raises, as they are not necessary in compiz anyway.
+  if (ui::GuessWindowManager() == ui::WM_COMPIZ)
+    suppress_window_raise_ = true;
 
   vbox_ = gtk_vbox_new(FALSE, 0);
 
@@ -348,9 +390,15 @@ void Shell::PlatformSetContents() {
 }
 
 void Shell::PlatformResizeSubViews() {
-  if (web_contents_.get())
-    gtk_widget_set_size_request(web_contents_->GetNativeView(),
-                                content_width_, content_height_);
+}
+
+gfx::Rect Shell::GetBounds() {
+  gint width, height;
+  gtk_window_get_size(window_, &width, &height);
+  gint x, y;
+  gtk_window_get_position(window_, &x, &y);
+
+  return gfx::Rect(x, y, width, height);
 }
 
 void Shell::OnBackButtonClicked(GtkWidget* widget) {
@@ -428,6 +476,25 @@ gboolean Shell::OnWindowDeleteEvent(GtkWidget* widget,
   if (id_ > 0) {
     SendEvent("close");
     return TRUE;
+  }
+
+  return FALSE;
+}
+
+gboolean Shell::OnButtonPress(GtkWidget* widget,
+                              GdkEventButton* event) {
+  if (!draggable_region_.isEmpty() &&
+      draggable_region_.contains(event->x, event->y)) {
+    if (event->button == 1 && GDK_BUTTON_PRESS == event->type) {
+      if (!suppress_window_raise_)
+        gdk_window_raise(GTK_WIDGET(widget)->window);
+
+      return gtk_window_util::HandleTitleBarLeftMousePress(
+          GTK_WINDOW(widget), GetBounds(), event);
+    } else if (event->button == 2) {
+      gdk_window_lower(GTK_WIDGET(widget)->window);
+      return TRUE;
+    }
   }
 
   return FALSE;

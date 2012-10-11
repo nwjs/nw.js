@@ -44,6 +44,9 @@
         '<(DEPTH)',
       ],
       'sources': [
+        '<(DEPTH)/chrome/browser/ui/base_window.h',
+        '<(DEPTH)/chrome/browser/ui/gtk/gtk_window_util.h',
+        '<(DEPTH)/chrome/browser/ui/gtk/gtk_window_util.cc',
         '<(DEPTH)/chrome/common/extensions/draggable_region.cc',
         '<(DEPTH)/chrome/common/extensions/draggable_region.h',
         '<(DEPTH)/chrome/renderer/static_v8_external_string_resource.cc',
