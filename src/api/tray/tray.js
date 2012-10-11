@@ -72,7 +72,8 @@ Tray.prototype.__defineGetter__('icon', function() {
 
 Tray.prototype.__defineSetter__('icon', function(val) {
   this.getHiddenValue('option').shadowIcon = String(val);
-  this.handleSetter('icon', 'SetIcon', String, nw.getAbsolutePath(val));
+  var real_path = val == '' ? '' : nw.getAbsolutePath(val);
+  this.handleSetter('icon', 'SetIcon', String, real_path);
 });
 
 Tray.prototype.__defineGetter__('tooltip', function() {
