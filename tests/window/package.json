@@ -3,7 +3,7 @@
     "main": "index.html",
     "window": {
         "title": "Window Test",
-        "toolbar": false,
+        "toolbar": true,
         "position": "center",
         "width": 400,
         "height": 500,
