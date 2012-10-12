@@ -51,6 +51,11 @@ enum {
   NSWindowCollectionBehaviorFullScreenAuxiliary = 1 << 8
 };
 
+enum {
+  NSWindowDocumentVersionsButton = 6,
+  NSWindowFullScreenButton
+};
+
 @interface NSWindow (LionSDKDeclarations)
 - (void)toggleFullScreen:(id)sender;
 @end
@@ -256,6 +261,7 @@ void NativeWindowCocoa::InstallView() {
     [[window() standardWindowButton:NSWindowZoomButton] setHidden:YES];
     [[window() standardWindowButton:NSWindowMiniaturizeButton] setHidden:YES];
     [[window() standardWindowButton:NSWindowCloseButton] setHidden:YES];
+    [[window() standardWindowButton:NSWindowFullScreenButton] setHidden:YES];
 
     InstallDraggableRegionViews();
   }
@@ -428,6 +434,9 @@ void NativeWindowCocoa::HandleMouseEvent(NSEvent* event) {
 }
 
 void NativeWindowCocoa::AddToolbar() {
+  if (!has_frame_)
+    return;
+
   // create the toolbar object
   scoped_nsobject<NSToolbar> toolbar(
       [[NSToolbar alloc] initWithIdentifier:@"node-webkit toolbar"]);
