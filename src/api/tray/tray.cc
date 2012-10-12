@@ -47,6 +47,8 @@ Tray::Tray(int id,
   int menu_id;
   if (option.GetInteger("menu", &menu_id))
     SetMenu(static_cast<Menu*>(dispatcher_host->GetObject(menu_id)));
+
+  ShowAfterCreate();
 }
 
 Tray::~Tray() {
