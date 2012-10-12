@@ -74,7 +74,6 @@ class NativeWindowCocoa : public NativeWindow {
  protected:
   // NativeWindow implementation.
   virtual void AddToolbar() OVERRIDE;
-  virtual void AddDebugMenu() OVERRIDE;
   virtual void UpdateDraggableRegions(
       const std::vector<extensions::DraggableRegion>& regions) OVERRIDE;
   virtual void HandleKeyboardEvent(

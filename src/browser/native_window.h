@@ -84,7 +84,6 @@ class NativeWindow {
                                        bool enabled) = 0;
   virtual void SetToolbarUrlEntry(const std::string& url) = 0;
   virtual void SetToolbarIsLoading(bool loading) = 0;
-  virtual void AddDebugMenu() = 0;
 
   virtual void UpdateDraggableRegions(
       const std::vector<extensions::DraggableRegion>& regions) = 0;

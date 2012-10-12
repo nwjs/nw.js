@@ -25,9 +25,12 @@
 #include "chrome/common/extensions/draggable_region.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/shell.h"
+#include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
 #include "content/public/common/renderer_preferences.h"
+#include "ui/base/x/x11_util.h"
+#include "ui/gfx/gtk_util.h"
 #include "ui/gfx/rect.h"
 #include "ui/gfx/skia_utils_gtk.h"
 
@@ -43,14 +46,28 @@ const double kGtkCursorBlinkCycleFactor = 2000.0;
 }  // namespace 
   
 NativeWindowGtk::NativeWindowGtk(content::Shell* shell,
-                                 const base::DictionaryValue* manifest)
+                                 base::DictionaryValue* manifest)
     : NativeWindow(shell, manifest),
       content_thinks_its_fullscreen_(false) {
   window_ = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
 
+  GtkWidget* vbox = gtk_vbox_new(FALSE, 0);
+  gtk_widget_show(vbox);
+  gtk_container_add(GTK_CONTAINER(window_), vbox);
+
+  // Always create toolbar since we need to create a url entry.
+  CreateToolbar();
+
+  // Check it in consturctor since it's impossible to add a toolbar afterward.
+  bool toolbar = true;
+  manifest->GetBoolean(switches::kmToolbar, &toolbar);
+  if (toolbar)
+    gtk_box_pack_start(GTK_BOX(vbox), toolbar_, FALSE, FALSE, 0);
+
   gfx::NativeView native_view =
       web_contents()->GetView()->GetNativeView();
-  gtk_container_add(GTK_CONTAINER(window_), native_view);
+  gtk_widget_show(native_view);
+  gtk_container_add(GTK_CONTAINER(vbox), native_view);
 
   int width, height;
   manifest->GetInteger(switches::kmWidth, &width);
@@ -97,7 +114,6 @@ NativeWindowGtk::NativeWindowGtk(content::Shell* shell,
                      G_CALLBACK(OnButtonPressThunk), this);
   }
 
-  CreateToolbar();
   SetWebKitColorStyle();
 }
 
@@ -124,7 +140,7 @@ void NativeWindowGtk::Focus(bool focus) {
 }
 
 void NativeWindowGtk::Show() {
-  gtk_widget_show_all(GTK_WIDGET(window_));
+  gtk_widget_show(GTK_WIDGET(window_));
 }
 
 void NativeWindowGtk::Hide() {
@@ -209,19 +225,52 @@ void NativeWindowGtk::SetAsDesktop() {
 }
 
 void NativeWindowGtk::AddToolbar() {
+  DCHECK(toolbar_);
+  gtk_widget_show_all(toolbar_);
 }
 
 void NativeWindowGtk::SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
-                                                bool enabled) {
+                                              bool enabled) {
+  if (!toolbar_)
+    return;
+
+  GtkToolItem* target = NULL;
+  switch (button) {
+    case BUTTON_BACK:
+      target = back_button_;
+      break;
+    case BUTTON_FORWARD:
+      target = forward_button_;
+      break;
+    case BUTTON_REFRESH_OR_STOP:
+      target = refresh_stop_button_;
+      break;
+    case BUTTON_DEVTOOLS:
+      target = devtools_button_;
+      break;
+  }
+
+  DCHECK(target);
+  gtk_widget_set_sensitive(GTK_WIDGET(target), enabled);
 }
 
 void NativeWindowGtk::SetToolbarUrlEntry(const std::string& url) {
+  if (!toolbar_)
+    return;
+
+  gtk_entry_set_text(GTK_ENTRY(url_entry_), url.c_str());
 }
   
 void NativeWindowGtk::SetToolbarIsLoading(bool loading) {
-}
+  if (!toolbar_)
+    return;
 
-void NativeWindowGtk::AddDebugMenu() {
+  if (loading)
+    gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(refresh_stop_button_),
+                                 GTK_STOCK_STOP);
+  else
+    gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(refresh_stop_button_),
+                                 GTK_STOCK_REFRESH);
 }
 
 void NativeWindowGtk::UpdateDraggableRegions(
@@ -265,7 +314,7 @@ void NativeWindowGtk::SetWebKitColorStyle() {
   prefs->thumb_inactive_color = SkColorSetRGB(234, 234, 234);
   prefs->track_color = SkColorSetRGB(211, 211, 211);
 
-  GtkStyle* entry_style = gtk_rc_get_style(entry_);
+  GtkStyle* entry_style = gtk_rc_get_style(url_entry_);
   prefs->active_selection_bg_color =
       gfx::GdkColorToSkColor(entry_style->base[GTK_STATE_SELECTED]);
   prefs->active_selection_fg_color =
@@ -283,15 +332,37 @@ void NativeWindowGtk::SetWebKitColorStyle() {
 }
 
 void NativeWindowGtk::CreateToolbar() {
-  GtkWidget* toolbar = gtk_toolbar_new();
-  gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
+  toolbar_ = gtk_toolbar_new();
+  gtk_toolbar_set_style(GTK_TOOLBAR(toolbar_), GTK_TOOLBAR_ICONS);
 
-  entry_ = gtk_entry_new();
+  back_button_ = gtk_tool_button_new_from_stock(GTK_STOCK_GO_BACK);
+  g_signal_connect(back_button_, "clicked",
+                   G_CALLBACK(&OnBackButtonClickedThunk), this);
+  gtk_toolbar_insert(GTK_TOOLBAR(toolbar_), back_button_, -1);
+
+  forward_button_ = gtk_tool_button_new_from_stock(GTK_STOCK_GO_FORWARD);
+  g_signal_connect(forward_button_, "clicked",
+                   G_CALLBACK(&OnForwardButtonClickedThunk), this);
+  gtk_toolbar_insert(GTK_TOOLBAR(toolbar_), forward_button_, -1);
+
+  refresh_stop_button_ = gtk_tool_button_new_from_stock(GTK_STOCK_STOP);
+  g_signal_connect(refresh_stop_button_, "clicked",
+                   G_CALLBACK(&OnRefreshStopButtonClickedThunk), this);
+  gtk_toolbar_insert(GTK_TOOLBAR(toolbar_), refresh_stop_button_, -1);
+
+  url_entry_ = gtk_entry_new();
+  g_signal_connect(url_entry_, "activate",
+                   G_CALLBACK(&OnURLEntryActivateThunk), this);
 
   GtkToolItem* tool_item = gtk_tool_item_new();
-  gtk_container_add(GTK_CONTAINER(tool_item), entry_);
+  gtk_container_add(GTK_CONTAINER(tool_item), url_entry_);
   gtk_tool_item_set_expand(tool_item, TRUE);
-  gtk_toolbar_insert(GTK_TOOLBAR(toolbar), tool_item, -1 /* append */);
+  gtk_toolbar_insert(GTK_TOOLBAR(toolbar_), tool_item, -1);
+
+  devtools_button_ = gtk_tool_button_new_from_stock(GTK_STOCK_EXECUTE);
+  g_signal_connect(devtools_button_, "clicked",
+                   G_CALLBACK(&OnDevtoolsButtonClickedThunk), this);
+  gtk_toolbar_insert(GTK_TOOLBAR(toolbar_), devtools_button_, -1);
 }
 
 gfx::Rect NativeWindowGtk::GetBounds() {
@@ -303,9 +374,34 @@ gfx::Rect NativeWindowGtk::GetBounds() {
   return gfx::Rect(x, y, width, height);
 }
 
+void NativeWindowGtk::OnBackButtonClicked(GtkWidget* widget) {
+  shell()->GoBackOrForward(-1);
+}
+
+void NativeWindowGtk::OnForwardButtonClicked(GtkWidget* widget) {
+  shell()->GoBackOrForward(1);
+}
+
+void NativeWindowGtk::OnRefreshStopButtonClicked(GtkWidget* widget) {
+  shell()->ReloadOrStop();
+}
+
+void NativeWindowGtk::OnURLEntryActivate(GtkWidget* entry) {
+  const gchar* str = gtk_entry_get_text(GTK_ENTRY(entry));
+  GURL url(str);
+  if (!url.has_scheme())
+    url = GURL(std::string("http://") + std::string(str));
+  shell()->LoadURL(GURL(url));
+}
+
+void NativeWindowGtk::OnDevtoolsButtonClicked(GtkWidget* entry) {
+  shell()->ShowDevTools();
+}
+
 // Callback for when the main window is destroyed.
-void NativeWindowGtk::OnWindowDestroyed(GtkWidget* window) {
+gboolean NativeWindowGtk::OnWindowDestroyed(GtkWidget* window) {
   delete shell();
+  return FALSE;
 }
 
 // Window is focused.
@@ -361,6 +457,26 @@ gboolean NativeWindowGtk::OnWindowDeleteEvent(GtkWidget* widget,
                                               GdkEvent* event) {
   if (!shell()->ShouldCloseWindow())
     return TRUE;
+
+  return FALSE;
+}
+
+// Capture mouse click on window.
+gboolean NativeWindowGtk::OnButtonPress(GtkWidget* widget,
+                                        GdkEventButton* event) {
+  if (!draggable_region_.isEmpty() &&
+      draggable_region_.contains(event->x, event->y)) {
+    if (event->button == 1 && GDK_BUTTON_PRESS == event->type) {
+      if (!suppress_window_raise_)
+        gdk_window_raise(GTK_WIDGET(widget)->window);
+
+      return gtk_window_util::HandleTitleBarLeftMousePress(
+          GTK_WINDOW(widget), GetBounds(), event);
+    } else if (event->button == 2) {
+      gdk_window_lower(GTK_WIDGET(widget)->window);
+      return TRUE;
+    }
+  }
 
   return FALSE;
 }

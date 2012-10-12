@@ -142,9 +142,6 @@ void NativeWindowWin::SetToolbarUrlEntry(const std::string& url) {
 void NativeWindowWin::SetToolbarIsLoading(bool loading) {
 }
 
-void NativeWindowWin::AddDebugMenu() {
-}
-
 void NativeWindowWin::UpdateDraggableRegions(
     const std::vector<extensions::DraggableRegion>& regions) {
   LOG(ERROR) << "UpdateDraggableRegions";

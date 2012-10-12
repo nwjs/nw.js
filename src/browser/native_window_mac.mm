@@ -462,9 +462,6 @@ void NativeWindowCocoa::SetToolbarIsLoading(bool loading) {
     [toolbar_delegate_ setIsLoading:loading];
 }
 
-void NativeWindowCocoa::AddDebugMenu() {
-}
-
 void NativeWindowCocoa::UpdateDraggableRegions(
     const std::vector<extensions::DraggableRegion>& regions) {
   // Draggable region is not supported for non-frameless window.

@@ -21,6 +21,8 @@
 #ifndef CONTENT_NW_SRC_BROWSER_NATIVE_WINDOW_GTK_H_
 #define CONTENT_NW_SRC_BROWSER_NATIVE_WINDOW_GTK_H_
 
+#include <gtk/gtk.h>
+
 #include "content/nw/src/browser/native_window.h"
 #include "third_party/skia/include/core/SkRegion.h"
 #include "ui/base/gtk/gtk_signal.h"
@@ -54,14 +56,13 @@ class NativeWindowGtk : public NativeWindow {
                                        bool enabled) OVERRIDE;
   virtual void SetToolbarUrlEntry(const std::string& url) OVERRIDE;
   virtual void SetToolbarIsLoading(bool loading) OVERRIDE;
-  void SetAsDesktop();
 
   GtkWindow* window() const { return window_; }
 
  protected:
   // NativeWindow implementation.
   virtual void AddToolbar() OVERRIDE;
-  virtual void AddDebugMenu() OVERRIDE;
+  void SetAsDesktop();
   virtual void UpdateDraggableRegions(
       const std::vector<extensions::DraggableRegion>& regions) OVERRIDE;
   virtual void HandleKeyboardEvent(
@@ -77,7 +78,13 @@ class NativeWindowGtk : public NativeWindow {
   // Get the position and size of the current window.
   gfx::Rect GetBounds();
 
-  CHROMEGTK_CALLBACK_0(NativeWindowGtk, void, OnWindowDestroyed);
+  CHROMEGTK_CALLBACK_0(NativeWindowGtk, void, OnBackButtonClicked);
+  CHROMEGTK_CALLBACK_0(NativeWindowGtk, void, OnForwardButtonClicked);
+  CHROMEGTK_CALLBACK_0(NativeWindowGtk, void, OnRefreshStopButtonClicked);
+  CHROMEGTK_CALLBACK_0(NativeWindowGtk, void, OnURLEntryActivate);
+  CHROMEGTK_CALLBACK_0(NativeWindowGtk, void, OnDevtoolsButtonClicked);
+
+  CHROMEGTK_CALLBACK_0(NativeWindowGtk, gboolean, OnWindowDestroyed);
   CHROMEGTK_CALLBACK_1(NativeWindowGtk, gboolean, OnFocusIn, GdkEventFocus*);
   CHROMEGTK_CALLBACK_1(NativeWindowGtk, gboolean, OnFocusOut, GdkEventFocus*);
   CHROMEGTK_CALLBACK_1(NativeWindowGtk, gboolean, OnWindowState,
@@ -88,7 +95,12 @@ class NativeWindowGtk : public NativeWindow {
                        GdkEventButton*);
 
   GtkWindow* window_;
-  GtkWidget* entry_;
+  GtkWidget* toolbar_;
+  GtkWidget* url_entry_;
+  GtkToolItem* back_button_;
+  GtkToolItem* forward_button_;
+  GtkToolItem* refresh_stop_button_;
+  GtkToolItem* devtools_button_;
 
   // True if the RVH is in fullscreen mode. The window may not actually be in
   // fullscreen, however: some WMs don't support fullscreen.
