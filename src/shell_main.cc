@@ -22,7 +22,6 @@
 
 #include "content/shell/shell_main_delegate.h"
 #include "sandbox/win/src/sandbox_types.h"
-#include "third_party/node/src/node.h"
 
 #if defined(OS_WIN)
 #include "content/public/app/startup_helper_win.h"
@@ -35,10 +34,6 @@
 #if defined(OS_WIN)
 
 int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE, wchar_t*, int) {
-  int argc = 1;
-  char* argv[] = { (char*)"node" };
-  node::SetupUv(argc, argv);
-
   sandbox::SandboxInterfaceInfo sandbox_info = {0};
   content::InitializeSandboxInfo(&sandbox_info);
   content::ShellMainDelegate delegate;
@@ -53,7 +48,6 @@ int main(int argc, const char** argv) {
   // delegate types.
   return ::ContentMain(argc, argv);
 #else
-  node::SetupUv(1, (char**)argv);
   content::ShellMainDelegate delegate;
   return content::ContentMain(argc, argv, &delegate);
 #endif  // OS_MACOSX

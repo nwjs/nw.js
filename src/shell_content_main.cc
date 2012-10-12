@@ -24,12 +24,10 @@
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/shell_main_delegate.h"
 #include "content/public/app/content_main.h"
-#include "third_party/node/src/node.h"
 
 #if defined(OS_MACOSX)
 int ContentMain(int argc,
                 const char** argv) {
-  node::SetupUv(1, (char**)argv);
   content::ShellMainDelegate delegate;
   return content::ContentMain(argc, argv, &delegate);
 }

@@ -47,25 +47,28 @@ ShellContentRendererClient::~ShellContentRendererClient() {
 }
 
 void ShellContentRendererClient::RenderThreadStarted() {
-  // Change working directory
+  // Change working directory.
   CommandLine* command_line = CommandLine::ForCurrentProcess();
   if (command_line->HasSwitch(switches::kWorkingDirectory)) {
     file_util::SetCurrentDirectory(
         command_line->GetSwitchValuePath(switches::kWorkingDirectory));
   }
 
-  // Initialize node after render thread is started
+  // Initialize uv.
+  char* argv[] = { (char*)"node", NULL };
+  node::SetupUv(1, argv);
+
+  // Initialize node after render thread is started.
   v8::V8::Initialize();
   v8::HandleScope scope;
 
   node::g_context = v8::Context::New();
   node::g_context->Enter();
 
-  // Setup node.js
-  char* argv[] = { (char*)"node", NULL };
+  // Setup node.js.
   node::SetupContext(1, argv, node::g_context->Global());
 
-  // Start observers
+  // Start observers.
   shell_observer_.reset(new ShellRenderProcessObserver());
 }
 
