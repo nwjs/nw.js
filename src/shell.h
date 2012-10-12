@@ -24,21 +24,12 @@
 #include <vector>
 
 #include "base/basictypes.h"
-#include "base/callback_forward.h"
 #include "base/memory/scoped_ptr.h"
-#include "base/string_piece.h"
 #include "content/public/browser/notification_registrar.h"
 #include "content/public/browser/notification_observer.h"
 #include "content/public/browser/web_contents_delegate.h"
 #include "content/public/browser/web_contents_observer.h"
 #include "ipc/ipc_channel.h"
-#include "third_party/skia/include/core/SkRegion.h"
-#include "ui/gfx/native_widget_types.h"
-
-#if defined(TOOLKIT_GTK)
-#include <gtk/gtk.h>
-#include "ui/base/gtk/gtk_signal.h"
-#endif
 
 namespace base {
 class DictionaryValue;
@@ -48,11 +39,12 @@ namespace extensions {
 struct DraggableRegion;
 }
 
+class GURL;
+
 namespace nw {
+class NativeWindow;
 class Package;
 }
-
-class GURL;
 
 namespace content {
 
@@ -69,86 +61,47 @@ class Shell : public WebContentsDelegate,
  public:
   virtual ~Shell();
 
-  void LoadURL(const GURL& url);
-  void GoBackOrForward(int offset);
-  void Reload();
-  void Stop();
-  void UpdateNavigationControls();
-  void Close(bool force = false);
-  void Move(const gfx::Rect& pos);
-  void ShowDevTools();
-  void Focus(bool focus);
-  void Show();
-  void Hide();
-  void Maximize();
-  void Unmaximize();
-  void Minimize();
-  void Restore();
-  void EnterFullscreen();
-  void LeaveFullscreen();
-  void SetMinimumSize(int width, int height);
-  void SetMaximumSize(int width, int height);
-  void SetResizable(bool resizable);
-  void SetPosition(const std::string& position);
-  void SetTitle(const std::string& title);
-#if defined(TOOLKIT_GTK)
-  void SetAsDesktop();
-#endif
-
-  void UpdateDraggableRegions(
-      const std::vector<extensions::DraggableRegion>& regions);
-
-  // Send an event to renderer.
-  void SendEvent(const std::string& event);
-
-  // Do one time initialization at application startup.
-  static void PlatformInitialize();
-
-  static Shell* CreateNewWindow(BrowserContext* browser_context,
-                                const GURL& url,
-                                SiteInstance* site_instance,
-                                int routing_id,
-                                WebContents* base_web_contents);
+  // Create a new shell.
+  static Shell* Create(BrowserContext* browser_context,
+                       const GURL& url,
+                       SiteInstance* site_instance,
+                       int routing_id,
+                       WebContents* base_web_contents);
 
   // Returns the Shell object corresponding to the given RenderViewHost.
   static Shell* FromRenderViewHost(RenderViewHost* rvh);
 
+  void LoadURL(const GURL& url);
+  void GoBackOrForward(int offset);
+  void Reload();
+  void Stop();
+  void ReloadOrStop();
+  void ShowDevTools();
+
+  // Send an event to renderer.
+  void SendEvent(const std::string& event);
+
+  // Decide whether we should close the window.
+  bool ShouldCloseWindow();
+
   // Returns the currently open windows.
   static std::vector<Shell*>& windows() { return windows_; }
 
-  // Closes all windows and returns. This runs a message loop.
-  static void CloseAllWindows();
-
-  // Closes all windows and exits.
-  static void PlatformExit();
-
   static nw::Package* GetPackage();
 
-  gfx::NativeView GetContentView();
-
   WebContents* web_contents() const { return web_contents_.get(); }
-  gfx::NativeWindow window() { return window_; }
+  nw::NativeWindow* window() { return window_.get(); }
 
-  bool force_close() { return force_close_; }
+  void set_force_close(bool force) { force_close_ = force; }
+  bool force_close() const { return force_close_; }
   void set_id(int id) { id_ = id; }
   int id() const { return id_; }
 
-#if defined(OS_MACOSX)
-  // Public to be called by an ObjC bridge object.
-  void ActionPerformed(int control);
-  void URLEntered(std::string url_string);
-
-  // Called to handle a mouse event.
-  void HandleMouseEvent(NSEvent* event);
-
-  bool use_system_drag() const { return use_system_drag_; }
-  SkRegion* draggable_region() const { return draggable_region_.get(); }
-#endif
-
+ protected:
   // content::WebContentsObserver implementation.
   virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
 
-  // WebContentsDelegate
+  // content::WebContentsDelegate implementation.
   virtual WebContents* OpenURLFromTab(WebContents* source,
                                       const OpenURLParams& params) OVERRIDE;
   virtual void LoadingStateChanged(WebContents* source) OVERRIDE;
@@ -172,11 +125,9 @@ class Shell : public WebContentsDelegate,
   virtual void DidNavigateMainFramePostCommit(
       WebContents* web_contents) OVERRIDE;
   virtual JavaScriptDialogCreator* GetJavaScriptDialogCreator() OVERRIDE;
-#if defined(OS_MACOSX)
   virtual void HandleKeyboardEvent(
       WebContents* source,
       const NativeWebKeyboardEvent& event) OVERRIDE;
-#endif
   virtual bool AddMessageToConsole(WebContents* source,
                                    int32 level,
                                    const string16& message,
@@ -188,75 +139,19 @@ class Shell : public WebContentsDelegate,
       const content::MediaResponseCallback& callback) OVERRIDE;
 
  private:
-  enum UIControl {
-    BACK_BUTTON,
-    FORWARD_BUTTON,
-    STOP_BUTTON
-  };
-
   explicit Shell(WebContents* web_contents, base::DictionaryValue* manifest);
 
-  // All the methods that begin with Platform need to be implemented by the
-  // platform specific Shell implementation.
-  // Called from the destructor to let each platform do any necessary cleanup.
-  void PlatformCleanUp();
-  // Creates the main window GUI.
-  void PlatformCreateWindow(int width, int height);
-  // Setup window from manifest's settings
-  void PlatformSetupWindow();
-  // Links the WebContents into the newly created window.
-  void PlatformSetContents();
-  // Resize the content area and GUI.
-  void PlatformResizeSubViews();
-  // Enable/disable a button.
-  void PlatformEnableUIControl(UIControl control, bool is_enabled);
-  // Updates the url in the url bar.
-  void PlatformSetAddressBarURL(const GURL& url);
-  // Sets whether the spinner is spinning.
-  void PlatformSetIsLoading(bool loading);
+  void UpdateDraggableRegions(
+      const std::vector<extensions::DraggableRegion>& regions);
 
   // NotificationObserver
   virtual void Observe(int type,
                        const NotificationSource& source,
                        const NotificationDetails& details) OVERRIDE;
 
-#if defined(OS_WIN)
-  static ATOM RegisterWindowClass();
-  static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-  static LRESULT CALLBACK EditWndProc(HWND, UINT, WPARAM, LPARAM);
-#elif defined(TOOLKIT_GTK)
-  // Getthe position and size of the current window.
-  gfx::Rect GetBounds();
-
-  CHROMEGTK_CALLBACK_0(Shell, void, OnBackButtonClicked);
-  CHROMEGTK_CALLBACK_0(Shell, void, OnForwardButtonClicked);
-  CHROMEGTK_CALLBACK_0(Shell, void, OnReloadButtonClicked);
-  CHROMEGTK_CALLBACK_0(Shell, void, OnStopButtonClicked);
-  CHROMEGTK_CALLBACK_0(Shell, void, OnURLEntryActivate);
-  CHROMEGTK_CALLBACK_0(Shell, void, OnWindowDestroyed);
-  CHROMEGTK_CALLBACK_1(Shell, gboolean, OnFocusIn, GdkEventFocus*);
-  CHROMEGTK_CALLBACK_1(Shell, gboolean, OnFocusOut, GdkEventFocus*);
-  CHROMEGTK_CALLBACK_1(Shell, gboolean, OnWindowState,
-                       GdkEventWindowState*);
-  CHROMEGTK_CALLBACK_1(Shell, gboolean, OnWindowDeleteEvent,
-                       GdkEvent*);
-  CHROMEGTK_CALLBACK_1(Shell, gboolean, OnButtonPress,
-                       GdkEventButton*);
-#elif defined(OS_MACOSX)
-  void InstallDraggableRegionViews();
-  void UpdateDraggableRegionsForSystemDrag(
-      const std::vector<extensions::DraggableRegion>& regions,
-      const extensions::DraggableRegion* draggable_area);
-  void UpdateDraggableRegionsForCustomDrag(
-      const std::vector<extensions::DraggableRegion>& regions);
-#endif
-
   scoped_ptr<ShellJavaScriptDialogCreator> dialog_creator_;
-
   scoped_ptr<WebContents> web_contents_;
-
-  gfx::NativeWindow window_;
-  gfx::NativeEditView url_edit_view_;
+  scoped_ptr<nw::NativeWindow> window_;
 
   // Notification manager.
   NotificationRegistrar registrar_;
@@ -266,56 +161,6 @@ class Shell : public WebContentsDelegate,
 
   // ID of corresponding js object.
   int id_;
-
-  // Is it a frameless window?
-  bool has_frame_;
-
-  // Debug settings.
-  bool is_show_devtools_;
-  bool is_toolbar_open_;
-
-#if defined(OS_WIN)
-  WNDPROC default_edit_wnd_proc_;
-  static HINSTANCE instance_handle_;
-
-  int min_width_, min_height_;
-  int max_width_, max_height_;
-#elif defined(TOOLKIT_GTK)
-  GtkWidget* vbox_;
-
-  GtkToolItem* back_button_;
-  GtkToolItem* forward_button_;
-  GtkToolItem* reload_button_;
-  GtkToolItem* stop_button_;
-
-  GtkWidget* spinner_;
-  GtkToolItem* spinner_item_;
-
-  // The region is treated as title bar, can be dragged to move
-  // and double clicked to maximize.
-  SkRegion draggable_region_;
-
-  // If true, don't call gdk_window_raise() when we get a click in the title
-  // bar or window border.  This is to work around a compiz bug.
-  bool suppress_window_raise_;
-#elif defined(OS_MACOSX)
-  // Indicates whether system drag or custom drag should be used, depending on
-  // the complexity of draggable regions.
-  bool use_system_drag_;
-
-  // For system drag, the whole window is draggable and the non-draggable areas
-  // have to been explicitly excluded.
-  std::vector<gfx::Rect> system_drag_exclude_areas_;
-
-  // For custom drag, the whole window is non-draggable and the draggable region
-  // has to been explicitly provided.
-  scoped_ptr<SkRegion> draggable_region_;  // used in custom drag.
-
-  // Mouse location since the last mouse event, in screen coordinates. This is
-  // used in custom drag to compute the window movement.
-  double last_mouse_location_x_;
-  double last_mouse_location_y_;
-#endif
 
   // A container of all the open windows. We use a vector so we can keep track
   // of ordering.

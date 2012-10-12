@@ -20,22 +20,15 @@
 
 #include "content/nw/src/shell_browser_main_parts.h"
 
-#include "base/bind.h"
 #include "base/command_line.h"
-#include "base/message_loop.h"
 #include "base/string_number_conversions.h"
-#include "base/threading/thread.h"
 #include "base/threading/thread_restrictions.h"
-#include "base/values.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
-#include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/shell.h"
 #include "content/nw/src/shell_browser_context.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/main_function_params.h"
-#include "content/public/common/url_constants.h"
-#include "googleurl/src/gurl.h"
 #include "grit/net_resources.h"
 #include "net/base/net_module.h"
 #include "ui/base/resource/resource_bundle.h"
@@ -102,7 +95,6 @@ void ShellBrowserMainParts::Init() {
   off_the_record_browser_context_.reset(
       new ShellBrowserContext(true, package()));
 
-  Shell::PlatformInitialize();
   net::NetModule::SetResourceProvider(PlatformResourceProvider);
 
   int port = 0;
@@ -122,11 +114,11 @@ void ShellBrowserMainParts::Init() {
   }
   devtools_delegate_ = new ShellDevToolsDelegate(port);
 
-  Shell::CreateNewWindow(browser_context_.get(),
-                         package()->GetStartupURL(),
-                         NULL,
-                         MSG_ROUTING_NONE,
-                         NULL);
+  Shell::Create(browser_context_.get(),
+                package()->GetStartupURL(),
+                NULL,
+                MSG_ROUTING_NONE,
+                NULL);
 }
 
 }  // namespace content

@@ -21,8 +21,9 @@
 #include "content/nw/src/api/window/window.h"
 
 #include "base/values.h"
-#include "content/nw/src/shell.h"
 #include "content/nw/src/api/dispatcher_host.h"
+#include "content/nw/src/browser/native_window.h"
+#include "content/nw/src/shell.h"
 
 namespace api {
 
@@ -42,41 +43,42 @@ Window::~Window() {
 void Window::Call(const std::string& method,
                   const base::ListValue& arguments) {
   if (method == "Show") {
-    shell_->Show();
+    shell_->window()->Show();
   } else if (method == "Close") {
     bool force = false;
     arguments.GetBoolean(0, &force);
-    shell_->Close(force);
+    shell_->set_force_close(force);
+    shell_->window()->Close();
   } else if (method == "Hide") {
-    shell_->Hide();
+    shell_->window()->Hide();
   } else if (method == "Maximize") {
-    shell_->Maximize();
+    shell_->window()->Maximize();
   } else if (method == "Unmaximize") {
-    shell_->Unmaximize();
+    shell_->window()->Unmaximize();
   } else if (method == "Minimize") {
-    shell_->Minimize();
+    shell_->window()->Minimize();
   } else if (method == "Restore") {
-    shell_->Restore();
+    shell_->window()->Restore();
   } else if (method == "EnterFullscreen") {
-    shell_->EnterFullscreen();
+    shell_->window()->SetFullscreen(true);
   } else if (method == "LeaveFullscreen") {
-    shell_->LeaveFullscreen();
+    shell_->window()->SetFullscreen(false);
   } else if (method == "ShowDevTools") {
     shell_->ShowDevTools();
   } else if (method == "SetMaximumSize") {
     int width, height;
     if (arguments.GetInteger(0, &width) &&
         arguments.GetInteger(1, &height))
-      shell_->SetMaximumSize(width, height);
+      shell_->window()->SetMaximumSize(width, height);
   } else if (method == "SetMinimumSize") {
     int width, height;
     if (arguments.GetInteger(0, &width) &&
         arguments.GetInteger(1, &height))
-      shell_->SetMinimumSize(width, height);
+      shell_->window()->SetMinimumSize(width, height);
   } else if (method == "SetResizable") {
     bool resizable;
     if (arguments.GetBoolean(0, &resizable))
-      shell_->SetResizable(resizable);
+      shell_->window()->SetResizable(resizable);
   } else {
     NOTREACHED() << "Invalid call to Clipboard method:" << method
                  << " arguments:" << arguments;

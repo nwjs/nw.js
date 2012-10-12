@@ -20,12 +20,8 @@
 
 #include "content/nw/src/shell.h"
 
-#include "base/auto_reset.h"
 #include "base/command_line.h"
 #include "base/message_loop.h"
-#include "base/path_service.h"
-#include "base/string_number_conversions.h"
-#include "base/string_util.h"
 #include "base/utf_string_conversions.h"
 #include "base/values.h"
 #include "content/public/browser/devtools_http_handler.h"
@@ -38,6 +34,7 @@
 #include "content/public/browser/web_contents.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/browser/file_select_helper.h"
+#include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/browser/shell_javascript_dialog_creator.h"
 #include "content/nw/src/common/shell_switches.h"
@@ -45,7 +42,6 @@
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/shell_browser_main_parts.h"
 #include "content/nw/src/shell_content_browser_client.h"
-#include "ui/gfx/size.h"
 
 namespace content {
 
@@ -53,89 +49,51 @@ std::vector<Shell*> Shell::windows_;
 
 bool Shell::quit_message_loop_ = true;
 
+Shell* Shell::Create(BrowserContext* browser_context,
+                     const GURL& url,
+                     SiteInstance* site_instance,
+                     int routing_id,
+                     WebContents* base_web_contents) {
+  WebContents* web_contents = WebContents::Create(
+      browser_context,
+      site_instance,
+      routing_id,
+      base_web_contents);
+
+  Shell* shell = new Shell(web_contents, GetPackage()->window());
+  shell->LoadURL(url);
+  return shell;
+}
+
+Shell* Shell::FromRenderViewHost(RenderViewHost* rvh) {
+  for (size_t i = 0; i < windows_.size(); ++i) {
+    if (windows_[i]->web_contents() &&
+        windows_[i]->web_contents()->GetRenderViewHost() == rvh) {
+      return windows_[i];
+    }
+  }
+  return NULL;
+}
+
 Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
-    : window_(NULL),
-      url_edit_view_(NULL),
-      force_close_(false),
-      id_(-1),
-      has_frame_(true),
-      is_show_devtools_(false),
-      is_toolbar_open_(true)
-#if defined(OS_WIN)
-      , max_height_(-1),
-      max_width_(-1),
-      min_height_(-1),
-      min_width_(-1),
-      default_edit_wnd_proc_(0)
-#endif
-  {
+    : force_close_(false),
+      id_(-1) {
   // Register shell.
   registrar_.Add(this, NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,
       Source<WebContents>(web_contents));
   windows_.push_back(this);
 
-  // Debug settings
-  is_show_devtools_ =
-      CommandLine::ForCurrentProcess()->HasSwitch(switches::kDeveloper);
-  manifest->GetBoolean(switches::kmToolbar, &is_toolbar_open_);
-
-  // Initialize shell.
-  int width = 700, height = 450;
-  manifest->GetInteger(switches::kmWidth, &width);
-  manifest->GetInteger(switches::kmHeight, &height);
-  manifest->GetBoolean(switches::kmFrame, &has_frame_);
-  PlatformCreateWindow(width, height);
-
-  // Setup window from manifest.
-#if defined(TOOLKIT_GTK)
-  bool as_desktop;
-  if (manifest->GetBoolean(switches::kmAsDesktop, &as_desktop) && as_desktop) {
-    SetAsDesktop();
-  }
-#endif
-  int x, y;
-  std::string position;
-  if (manifest->GetInteger(switches::kmX, &x) &&
-      manifest->GetInteger(switches::kmY, &y)) {
-    Move(gfx::Rect(x, y, width, height));
-  } else if (manifest->GetString(switches::kmPosition, &position)) {
-    SetPosition(position);
-  }
-  int min_height, min_width;
-  if (manifest->GetInteger(switches::kmMinHeight, &min_height) &&
-      manifest->GetInteger(switches::kmMinWidth, &min_width)) {
-    SetMinimumSize(min_width, min_height);
-  }
-  int max_height, max_width;
-  if (manifest->GetInteger(switches::kmMaxHeight, &max_height) &&
-      manifest->GetInteger(switches::kmMaxWidth, &max_width)) {
-    SetMaximumSize(max_width, max_height);
-  }
-  bool resizable;
-  if (manifest->GetBoolean(switches::kmResizable, &resizable)) {
-    SetResizable(resizable);
-  }
-  bool fullscreen;
-  if (manifest->GetBoolean(switches::kmFullscreen, &fullscreen) && fullscreen) {
-    EnterFullscreen();
-  }
-  std::string title("node-webkit");
-  manifest->GetString(switches::kmTitle, &title);
-  SetTitle(title);
-
   // Add web contents.
   web_contents_.reset(web_contents);
   content::WebContentsObserver::Observe(web_contents);
   web_contents_->SetDelegate(this);
-  PlatformSetContents();
-  PlatformResizeSubViews();
-  Show();
+
+  // Create window.
+  window_.reset(nw::NativeWindow::Create(this, manifest));
 }
 
 Shell::~Shell() {
   SendEvent("closed");
-
-  PlatformCleanUp();
 
   for (size_t i = 0; i < windows_.size(); ++i) {
     if (windows_[i] == this) {
@@ -157,44 +115,18 @@ void Shell::SendEvent(const std::string& event) {
       web_contents()->GetRoutingID(), id(), event, args));
 }
 
+bool Shell::ShouldCloseWindow() {
+  if (id() < 0 || force_close_)
+    return true;
+
+  SendEvent("close");
+  return false;
+}
+
 nw::Package* Shell::GetPackage() {
   ShellContentBrowserClient* browser_client = 
       static_cast<ShellContentBrowserClient*>(GetContentClient()->browser());
   return browser_client->shell_browser_main_parts()->package();
-}
-
-void Shell::CloseAllWindows() {
-  AutoReset<bool> auto_reset(&quit_message_loop_, false);
-  std::vector<Shell*> open_windows(windows_);
-  for (size_t i = 0; i < open_windows.size(); ++i)
-    open_windows[i]->Close();
-  MessageLoop::current()->RunAllPending();
-}
-
-Shell* Shell::FromRenderViewHost(RenderViewHost* rvh) {
-  for (size_t i = 0; i < windows_.size(); ++i) {
-    if (windows_[i]->web_contents() &&
-        windows_[i]->web_contents()->GetRenderViewHost() == rvh) {
-      return windows_[i];
-    }
-  }
-  return NULL;
-}
-
-Shell* Shell::CreateNewWindow(BrowserContext* browser_context,
-                              const GURL& url,
-                              SiteInstance* site_instance,
-                              int routing_id,
-                              WebContents* base_web_contents) {
-  WebContents* web_contents = WebContents::Create(
-      browser_context,
-      site_instance,
-      routing_id,
-      base_web_contents);
-
-  Shell* shell = new Shell(web_contents, GetPackage()->window());
-  shell->LoadURL(url);
-  return shell;
 }
 
 void Shell::LoadURL(const GURL& url) {
@@ -204,6 +136,7 @@ void Shell::LoadURL(const GURL& url) {
       PAGE_TRANSITION_TYPED,
       std::string());
   web_contents_->Focus();
+  window()->SetToolbarButtonEnabled(nw::NativeWindow::BUTTON_FORWARD, false);
 }
 
 void Shell::GoBackOrForward(int offset) {
@@ -221,13 +154,11 @@ void Shell::Stop() {
   web_contents_->Focus();
 }
 
-void Shell::UpdateNavigationControls() {
-  int current_index = web_contents_->GetController().GetCurrentEntryIndex();
-  int max_index = web_contents_->GetController().GetEntryCount() - 1;
-
-  PlatformEnableUIControl(BACK_BUTTON, current_index > 0);
-  PlatformEnableUIControl(FORWARD_BUTTON, current_index < max_index);
-  PlatformEnableUIControl(STOP_BUTTON, web_contents_->IsLoading());
+void Shell::ReloadOrStop() {
+  if (web_contents_->IsLoading())
+    Stop();
+  else
+    Reload();
 }
 
 void Shell::ShowDevTools() {
@@ -253,10 +184,9 @@ void Shell::ShowDevTools() {
   shell->LoadURL(url);
 }
 
-gfx::NativeView Shell::GetContentView() {
-  if (!web_contents_.get())
-    return NULL;
-  return web_contents_->GetNativeView();
+void Shell::UpdateDraggableRegions(
+      const std::vector<extensions::DraggableRegion>& regions) {
+  window()->UpdateDraggableRegions(regions);
 }
 
 bool Shell::OnMessageReceived(const IPC::Message& message) {
@@ -279,35 +209,40 @@ WebContents* Shell::OpenURLFromTab(WebContents* source,
 }
 
 void Shell::LoadingStateChanged(WebContents* source) {
-  UpdateNavigationControls();
-  PlatformSetIsLoading(source->IsLoading());
+  int current_index = web_contents_->GetController().GetCurrentEntryIndex();
+  int max_index = web_contents_->GetController().GetEntryCount() - 1;
+
+  window()->SetToolbarButtonEnabled(nw::NativeWindow::BUTTON_BACK,
+                                    current_index > 0);
+  window()->SetToolbarButtonEnabled(nw::NativeWindow::BUTTON_FORWARD,
+                                    current_index < max_index);
+  window()->SetToolbarIsLoading(source->IsLoading());
 }
 
 void Shell::ActivateContents(content::WebContents* contents) {
-  Focus(true);
+  window()->Focus(true);
 }
 
 void Shell::DeactivateContents(content::WebContents* contents) {
   if (windows_.size() == 1) {
-    Focus(false);
+    window()->Focus(false);
     return;
   }
 
   // Move focus to other window
-  for (unsigned i = 0; i < windows_.size(); ++i) {
+  for (unsigned i = 0; i < windows_.size(); ++i)
     if (windows_[i] != this) {
-      windows_[i]->Focus(true);
+      windows_[i]->window()->Focus(true);
       break;
     }
-  }
 }
 
 void Shell::CloseContents(WebContents* source) {
-  Close();
+  window()->Close();
 }
 
 void Shell::MoveContents(WebContents* source, const gfx::Rect& pos) {
-  Move(pos);
+  window()->Move(pos);
 }
 
 bool Shell::IsPopupOrPanel(const WebContents* source) const {
@@ -357,7 +292,7 @@ void Shell::EnumerateDirectory(WebContents* web_contents,
 }
 
 void Shell::DidNavigateMainFramePostCommit(WebContents* web_contents) {
-  PlatformSetAddressBarURL(web_contents->GetURL());
+  window()->SetToolbarUrlEntry(web_contents->GetURL().spec());
 }
 
 JavaScriptDialogCreator* Shell::GetJavaScriptDialogCreator() {
@@ -372,6 +307,11 @@ bool Shell::AddMessageToConsole(WebContents* source,
                                 int32 line_no,
                                 const string16& source_id) {
   return false;
+}
+
+void Shell::HandleKeyboardEvent(WebContents* source,
+                                const NativeWebKeyboardEvent& event) {
+  window()->HandleKeyboardEvent(event);
 }
 
 void Shell::RequestMediaAccessPermission(
@@ -393,7 +333,7 @@ void Shell::Observe(int type,
 
     if (title->first) {
       string16 text = title->first->GetTitle();
-      SetTitle(UTF16ToUTF8(text));
+      window()->SetTitle(UTF16ToUTF8(text));
     }
   }
 }

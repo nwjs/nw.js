@@ -27,6 +27,7 @@
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
+#include "content/nw/src/browser/native_window_mac.h"
 #include "content/nw/src/shell.h"
 
 namespace api {
@@ -62,8 +63,9 @@ void Menu::Remove(MenuItem* menu_item, int pos) {
 
 void Menu::Popup(int x, int y, content::Shell* shell) {
   // Fake out a context menu event for our menu
+  NSWindow* window =
+       static_cast<nw::NativeWindowCocoa*>(shell->window())->window();
   NSEvent* currentEvent = [NSApp currentEvent];
-  NSWindow* window = shell->window();
   NSView* web_view = shell->web_contents()->GetView()->GetNativeView();
   NSPoint position = { x, web_view.bounds.size.height - y };
   NSTimeInterval eventTime = [currentEvent timestamp];
