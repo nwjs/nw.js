@@ -3,7 +3,7 @@
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <title>New Window</title>
 </head>
-<body>
+<body style="margin:0">
   <div style="width: 100%; height: 50px; background-color: green; -webkit-app-region: drag;">
   </div>
 This is the popup window<br/>
@@ -41,6 +41,10 @@ This is the popup window<br/>
   win.on('restore', function() {
     console.log('Window is restored');
   });
+
+  window.onload = function() {
+    gui.Window.get().show();
+  }
 </script>
 <button onclick="javascript:enable = true;">Enable to be closed</button>
 <br/>

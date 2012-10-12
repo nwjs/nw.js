@@ -97,7 +97,10 @@ NativeWindow* NativeWindow::Create(content::Shell* shell,
   window->SetTitle(title);
 
   // Then show it.
-  window->Show();
+  bool show = true;
+  manifest->GetBoolean(switches::kmShow, &show);
+  if (show)
+    window->Show();
 
   return window;
 }

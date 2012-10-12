@@ -289,7 +289,7 @@ void NativeWindowCocoa::Move(const gfx::Rect& pos) {
 }
 
 void NativeWindowCocoa::Focus(bool focus) {
-  if (focus)
+  if (focus && [window() isVisible])
     [window() makeKeyAndOrderFront:nil];
   else
     [window() orderBack:nil];

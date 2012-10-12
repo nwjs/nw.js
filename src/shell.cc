@@ -61,7 +61,11 @@ Shell* Shell::Create(BrowserContext* browser_context,
       base_web_contents);
 
   Shell* shell = new Shell(web_contents, GetPackage()->window());
-  shell->LoadURL(url);
+  web_contents->GetController().LoadURL(
+      url,
+      Referrer(),
+      PAGE_TRANSITION_TYPED,
+      std::string());
   return shell;
 }
 
