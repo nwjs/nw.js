@@ -79,6 +79,10 @@ void Window::Call(const std::string& method,
     bool resizable;
     if (arguments.GetBoolean(0, &resizable))
       shell_->window()->SetResizable(resizable);
+  } else if (method == "RequestAttention") {
+    bool flash;
+    if (arguments.GetBoolean(0, &flash))
+      shell_->window()->FlashFrame(flash);
   } else {
     NOTREACHED() << "Invalid call to Clipboard method:" << method
                  << " arguments:" << arguments;

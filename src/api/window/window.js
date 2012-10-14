@@ -146,6 +146,11 @@ Window.prototype.setResizable = function(resizable) {
   nw.callObjectMethod(this, 'SetResizable', [ resizable ]);
 }
 
+Window.prototype.requestAttention = function(flash) {
+  flash = Boolean(flash);
+  nw.callObjectMethod(this, 'RequestAttention', [ flash ]);
+}
+
 Window.prototype.setPosition = function(position) {
   if (position != 'center' && position != 'mouse')
     throw new String('Invalid postion');
