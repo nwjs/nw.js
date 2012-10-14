@@ -9,15 +9,10 @@
 
 namespace switches {
 
-extern const char kCheckLayoutTestSysDeps[];
-extern const char kContentBrowserTest[];
 extern const char kContentShellDataPath[];
 extern const char kDeveloper[];
-extern const char kDumpRenderTree[];
-extern const char kNoTimeout[];
 extern const char kNoToolbar[];
 extern const char kUrl[];
-extern const char kVersion[];
 extern const char kWorkingDirectory[];
 
 // Manifest settings
@@ -25,25 +20,25 @@ extern const char kmMain[];
 extern const char kmName[];
 extern const char kmWebkit[];
 extern const char kmNodejs[];
-extern const char kmRoot[];
 extern const char kmWindow[];
+
 extern const char kmTitle[];
 extern const char kmToolbar[];
 extern const char kmIcon[];
-extern const char kmWidth[];
-extern const char kmHeight[];
+extern const char kmFrame[];
+extern const char kmShow[];
+extern const char kmPosition[];
 extern const char kmX[];
 extern const char kmY[];
-extern const char kmResizable[];
-extern const char kmPosition[];
+extern const char kmWidth[];
+extern const char kmHeight[];
 extern const char kmMinWidth[];
 extern const char kmMinHeight[];
 extern const char kmMaxWidth[];
 extern const char kmMaxHeight[];
+extern const char kmResizable[];
 extern const char kmAsDesktop[];
 extern const char kmFullscreen[];
-extern const char kmFrame[];
-extern const char kmShow[];
 
 }  // namespace switches
 

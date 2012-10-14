@@ -20,13 +20,10 @@
 
 #include "content/nw/src/shell_browser_context.h"
 
-#include "base/bind.h"
 #include "base/command_line.h"
 #include "base/environment.h"
 #include "base/file_util.h"
-#include "base/logging.h"
 #include "base/path_service.h"
-#include "base/threading/thread.h"
 #include "base/values.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/nw/src/browser/shell_download_manager_delegate.h"
@@ -61,11 +58,6 @@ ShellBrowserContext::~ShellBrowserContext() {
 
 void ShellBrowserContext::InitWhileIOAllowed() {
   CommandLine* cmd_line = CommandLine::ForCurrentProcess();
-  if (cmd_line->HasSwitch(switches::kDumpRenderTree)) {
-    CHECK(testing_path_.CreateUniqueTempDir());
-    path_ = testing_path_.path();
-    return;
-  }
   if (cmd_line->HasSwitch(switches::kContentShellDataPath)) {
     path_ = cmd_line->GetSwitchValuePath(switches::kContentShellDataPath);
     return;
