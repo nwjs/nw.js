@@ -114,16 +114,23 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
       RenderViewHost* render_view_host,
       const GURL& url,
       webkit_glue::WebPreferences* prefs) {
+  nw::Package* package = shell_browser_main_parts()->package();
+
   // Disable web security
   prefs->web_security_enabled = false;
   prefs->allow_file_access_from_file_urls = true;
 
-  // Disable plugins to speed up (TODO provide flag to enable them)
+  // Disable plugins and cache by default
   prefs->plugins_enabled = false;
   prefs->java_enabled = false;
-
-  // No caches
   prefs->uses_page_cache = false;
+
+  base::DictionaryValue* webkit;
+  if (package->root()->GetDictionary(switches::kmWebkit, &webkit)) {
+    webkit->GetBoolean(switches::kmJava, &prefs->java_enabled);
+    webkit->GetBoolean(switches::kmPlugin, &prefs->plugins_enabled);
+    webkit->GetBoolean(switches::kmPageCache, &prefs->uses_page_cache);
+  }
 }
 
 }  // namespace content

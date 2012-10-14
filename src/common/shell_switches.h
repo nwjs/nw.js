@@ -40,6 +40,11 @@ extern const char kmResizable[];
 extern const char kmAsDesktop[];
 extern const char kmFullscreen[];
 
+extern const char kmWebgl[];
+extern const char kmJava[];
+extern const char kmPlugin[];
+extern const char kmPageCache[];
+
 }  // namespace switches
 
 #endif  // CONTENT_NW_SRC_SHELL_SWITCHES_H_

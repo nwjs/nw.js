@@ -37,11 +37,11 @@ const char kUrl[] = "url";
 // Set current working directory
 const char kWorkingDirectory[] = "working-directory";
 
-const char kmMain[]       = "main";
-const char kmName[]       = "name";
-const char kmWebkit[]     = "webkit";
-const char kmNodejs[]     = "nodejs";
-const char kmWindow[]     = "window";
+const char kmMain[]   = "main";
+const char kmName[]   = "name";
+const char kmWebkit[] = "webkit";
+const char kmNodejs[] = "nodejs";
+const char kmWindow[] = "window";
 
 const char kmTitle[]      = "title";
 const char kmToolbar[]    = "toolbar";
@@ -60,5 +60,10 @@ const char kmMaxHeight[]  = "max_height";
 const char kmResizable[]  = "resizable";
 const char kmFullscreen[] = "fullscreen";
 const char kmAsDesktop[]  = "as_desktop";
+
+const char kmWebgl[]     = "webgl";
+const char kmJava[]      = "java";
+const char kmPlugin[]    = "plugin";
+const char kmPageCache[] = "page-cache";
 
 }  // namespace switches
