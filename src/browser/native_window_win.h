@@ -23,13 +23,25 @@
 
 #include "content/nw/src/browser/native_window.h"
 
+#include "third_party/skia/include/core/SkRegion.h"
+#include "ui/gfx/image/image_skia.h"
+#include "ui/gfx/rect.h"
+#include "ui/views/widget/widget_delegate.h"
+
+namespace views {
+class WebView;
+}
+
 namespace nw {
 
-class NativeWindowWin : public NativeWindow {
+class NativeWindowWin : public NativeWindow,
+                        public views::WidgetDelegateView {
  public:
   explicit NativeWindowWin(content::Shell* shell,
                            const base::DictionaryValue* manifest);
   virtual ~NativeWindowWin();
+
+  SkRegion* draggable_region() { return draggable_region_.get(); }
 
   // NativeWindow implementation.
   virtual void Close() OVERRIDE;
@@ -53,6 +65,22 @@ class NativeWindowWin : public NativeWindow {
   virtual void SetToolbarUrlEntry(const std::string& url) OVERRIDE;
   virtual void SetToolbarIsLoading(bool loading) OVERRIDE;
 
+  // WidgetDelegate implementation.
+  virtual views::View* GetContentsView() OVERRIDE;
+  virtual views::ClientView* CreateClientView() OVERRIDE;
+  virtual views::NonClientFrameView* CreateNonClientFrameView(
+      views::Widget* widget) OVERRIDE;
+  virtual bool CanResize() const OVERRIDE;
+  virtual bool CanMaximize() const OVERRIDE;
+  virtual views::Widget* GetWidget() OVERRIDE;
+  virtual const views::Widget* GetWidget() const OVERRIDE;
+  virtual string16 GetWindowTitle() const OVERRIDE;
+  virtual void DeleteDelegate() OVERRIDE;
+  virtual views::View* GetInitiallyFocusedView() OVERRIDE;
+  virtual gfx::ImageSkia GetWindowAppIcon() OVERRIDE;
+  virtual gfx::ImageSkia GetWindowIcon() OVERRIDE;
+  virtual bool ShouldShowWindowTitle() const OVERRIDE;
+
  protected:
   // NativeWindow implementation.
   virtual void AddToolbar() OVERRIDE;
@@ -61,7 +89,33 @@ class NativeWindowWin : public NativeWindow {
   virtual void HandleKeyboardEvent(
       const content::NativeWebKeyboardEvent& event) OVERRIDE;
 
+  // views::View implementation.
+  virtual void Layout() OVERRIDE;
+  virtual void ViewHierarchyChanged(
+      bool is_add, views::View *parent, views::View *child) OVERRIDE;
+  virtual gfx::Size GetMinimumSize() OVERRIDE;
+  virtual gfx::Size GetMaximumSize() OVERRIDE;
+  virtual void OnFocus() OVERRIDE;
+
+  // views::WidgetDelegate implementation.
+  virtual void SaveWindowPlacement(const gfx::Rect& bounds,
+                                   ui::WindowShowState show_state) OVERRIDE;
+
  private:
+  friend class NativeWindowFrameView;
+
+  void OnViewWasResized();
+
+  views::WebView* web_view_;
+  scoped_ptr<views::Widget> window_;
+  bool is_fullscreen_;
+
+  scoped_ptr<SkRegion> draggable_region_;
+
+  bool resizable_;
+  std::string title_;
+  gfx::Size minimum_size_;
+  gfx::Size maximum_size_;
 
   DISALLOW_COPY_AND_ASSIGN(NativeWindowWin);
 };
