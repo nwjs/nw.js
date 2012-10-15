@@ -167,6 +167,23 @@ index 71ade41..df038ea 100644
  
      if (m_frame != page->mainFrame())
          return;
+diff --git a/Source/WebCore/page/FrameView.cpp b/Source/WebCore/page/FrameView.cpp
+index 659c9c9..6cdf8ed 100644
+--- a/Source/WebCore/page/FrameView.cpp
++++ b/Source/WebCore/page/FrameView.cpp
+@@ -202,10 +202,12 @@ FrameView::FrameView(Frame* frame)
+     if (!page)
+         return;
+ 
++#if 0
+     if (m_frame == page->mainFrame()) {
+         ScrollableArea::setVerticalScrollElasticity(ScrollElasticityAllowed);
+         ScrollableArea::setHorizontalScrollElasticity(ScrollElasticityAllowed);
+     }
++#endif
+ }
+ 
+ PassRefPtr<FrameView> FrameView::create(Frame* frame)
 diff --git a/Source/WebCore/page/SecurityOrigin.cpp b/Source/WebCore/page/SecurityOrigin.cpp
 index d53750a..3a83030 100644
 --- a/Source/WebCore/page/SecurityOrigin.cpp
