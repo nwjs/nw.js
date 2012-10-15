@@ -190,6 +190,8 @@
             '<(SHARED_INTERMEDIATE_DIR)/webkit',
           ],
           'dependencies': [
+            '<(DEPTH)/ui/views/controls/webview/webview.gyp:webview',
+            '<(DEPTH)/ui/views/views.gyp:views',
             '<(DEPTH)/webkit/support/webkit_support.gyp:webkit_resources',
             '<(DEPTH)/webkit/support/webkit_support.gyp:webkit_strings',
           ],

@@ -23,10 +23,15 @@
 #include "base/utf_string_conversions.h"
 #include "base/values.h"
 #include "base/win/wrapped_window_proc.h"
+#include "chrome/common/extensions/draggable_region.h"
+#include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/shell.h"
+#include "content/public/browser/render_view_host.h"
+#include "content/public/browser/render_widget_host_view.h"
 #include "third_party/skia/include/core/SkPaint.h"
 #include "ui/base/hit_test.h"
 #include "ui/base/win/hwnd_util.h"
+#include "ui/gfx/path.h"
 #include "ui/views/controls/webview/webview.h"
 #include "ui/views/layout/grid_layout.h"
 #include "ui/views/views_delegate.h"
@@ -176,17 +181,16 @@ gfx::Size NativeWindowFrameView::GetMaximumSize() {
 }  // namespace
 
 NativeWindowWin::NativeWindowWin(content::Shell* shell,
-                                 const base::DictionaryValue* manifest)
+                                 base::DictionaryValue* manifest)
     : NativeWindow(shell, manifest),
       web_view_(NULL),
       is_fullscreen_(false),
       resizable_(true),
       minimum_size_(0, 0),
       maximum_size_(INT_MAX, INT_MAX) {
-  window_.reset(new views::Widget);
+  window_ = new views::Widget;
   views::Widget::InitParams params(views::Widget::InitParams::TYPE_WINDOW);
   params.delegate = this;
-  params.ownership = views::Widget::InitParams:WIDGET_OWNS_NATIVE_WIDGET;
   params.remove_standard_frame = !has_frame();
   params.use_system_default_icon = true;
   window_->Init(params);
@@ -195,10 +199,7 @@ NativeWindowWin::NativeWindowWin(content::Shell* shell,
   manifest->GetInteger(switches::kmWidth, &width);
   manifest->GetInteger(switches::kmHeight, &height);
 
-  gfx::Rect window_bounds =
-      window_->non_client_view()->GetWindowBoundsForClientBounds(
-          gfx::Rect(width, height));
-  window_->SetBounds(window_bounds);
+  window_->SetBounds(gfx::Rect(width, height));
 
   OnViewWasResized();
 }
@@ -265,8 +266,10 @@ void NativeWindowWin::SetResizable(bool resizable) {
 }
 
 void NativeWindowWin::SetPosition(const std::string& position) {
-  if (position == "center")
-    window_->CenterWindow(window_->GetWindowBoundsInScreen());
+  if (position == "center") {
+    gfx::Rect bounds = window_->GetWindowBoundsInScreen();
+    window_->CenterWindow(gfx::Size(bounds.width(), bounds.height()));
+  }
 }
 
 void NativeWindowWin::FlashFrame(bool flash) {
@@ -295,14 +298,17 @@ views::View* NativeWindowWin::GetContentsView() {
   return this;
 }
 
-views::ClientView* NativeWindowWin::CreateClientView() {
+views::ClientView* NativeWindowWin::CreateClientView(views::Widget* widget) {
   // TODO
   // Create a new clientview that handles CanClose.
-  return new ClientView(widget, GetContentsView());
+  return new views::ClientView(widget, GetContentsView());
 }
 
 views::NonClientFrameView* NativeWindowWin::CreateNonClientFrameView(
     views::Widget* widget) {
+  if (has_frame())
+    return NULL;
+
   NativeWindowFrameView* frame_view = new NativeWindowFrameView(this);
   frame_view->Init(window_);
   return frame_view;
@@ -425,7 +431,7 @@ void NativeWindowWin::OnViewWasResized() {
     // Don't round the corners when the window is maximized or fullscreen.
     path.addRect(0, 0, width, height);
   } else {
-    if (frameless_) {
+    if (!has_frame()) {
       path.moveTo(0, radius);
       path.lineTo(radius, 0);
       path.lineTo(width - radius, 0);
@@ -448,7 +454,7 @@ void NativeWindowWin::OnViewWasResized() {
     if (draggable_region())
       rgn->op(*draggable_region(), SkRegion::kUnion_Op);
     if (!window_->IsMaximized()) {
-      if (frameless_)
+      if (!has_frame())
         rgn->op(0, 0, width, kResizeInsideBoundsSize, SkRegion::kUnion_Op);
       rgn->op(0, 0, kResizeInsideBoundsSize, height, SkRegion::kUnion_Op);
       rgn->op(width - kResizeInsideBoundsSize, 0, width, height,

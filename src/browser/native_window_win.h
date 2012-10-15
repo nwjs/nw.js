@@ -28,6 +28,8 @@
 #include "ui/gfx/rect.h"
 #include "ui/views/widget/widget_delegate.h"
 
+class NativeWindowFrameView;
+
 namespace views {
 class WebView;
 }
@@ -38,7 +40,7 @@ class NativeWindowWin : public NativeWindow,
                         public views::WidgetDelegateView {
  public:
   explicit NativeWindowWin(content::Shell* shell,
-                           const base::DictionaryValue* manifest);
+                           base::DictionaryValue* manifest);
   virtual ~NativeWindowWin();
 
   SkRegion* draggable_region() { return draggable_region_.get(); }
@@ -67,7 +69,7 @@ class NativeWindowWin : public NativeWindow,
 
   // WidgetDelegate implementation.
   virtual views::View* GetContentsView() OVERRIDE;
-  virtual views::ClientView* CreateClientView() OVERRIDE;
+  virtual views::ClientView* CreateClientView(views::Widget*) OVERRIDE;
   virtual views::NonClientFrameView* CreateNonClientFrameView(
       views::Widget* widget) OVERRIDE;
   virtual bool CanResize() const OVERRIDE;
@@ -107,7 +109,7 @@ class NativeWindowWin : public NativeWindow,
   void OnViewWasResized();
 
   views::WebView* web_view_;
-  scoped_ptr<views::Widget> window_;
+  views::Widget* window_;
   bool is_fullscreen_;
 
   scoped_ptr<SkRegion> draggable_region_;
