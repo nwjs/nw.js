@@ -41,8 +41,27 @@
 namespace nw {
 
 namespace {
+
 const int kResizeInsideBoundsSize = 5;
 const int kResizeAreaCornerSize = 16;
+
+class NativeWindowClientView : public views::ClientView {
+ public:
+  NativeWindowClientView(views::Widget* widget,
+                         views::View* contents_view,
+                         content::Shell* shell)
+      : views::ClientView(widget, contents_view),
+        shell_(shell) {
+  }
+  virtual ~NativeWindowClientView() {}
+
+  virtual bool CanClose() OVERRIDE {
+    return shell_->ShouldCloseWindow();
+  }
+
+ private:
+  content::Shell* shell_;
+};
 
 class NativeWindowFrameView : public views::NonClientFrameView {
  public:
@@ -299,9 +318,7 @@ views::View* NativeWindowWin::GetContentsView() {
 }
 
 views::ClientView* NativeWindowWin::CreateClientView(views::Widget* widget) {
-  // TODO
-  // Create a new clientview that handles CanClose.
-  return new views::ClientView(widget, GetContentsView());
+  return new NativeWindowClientView(widget, GetContentsView(), shell());
 }
 
 views::NonClientFrameView* NativeWindowWin::CreateNonClientFrameView(
