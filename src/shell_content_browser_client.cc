@@ -116,11 +116,13 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
       webkit_glue::WebPreferences* prefs) {
   nw::Package* package = shell_browser_main_parts()->package();
 
-  // Disable web security
+  // Disable web security.
+  prefs->dom_paste_enabled = true;
+  prefs->javascript_can_access_clipboard = true;
   prefs->web_security_enabled = false;
   prefs->allow_file_access_from_file_urls = true;
 
-  // Disable plugins and cache by default
+  // Disable plugins and cache by default.
   prefs->plugins_enabled = false;
   prefs->java_enabled = false;
   prefs->uses_page_cache = false;
