@@ -121,6 +121,9 @@ NativeWindowGtk::~NativeWindowGtk() {
 }
 
 void NativeWindowGtk::Close() {
+  if (!shell_->ShouldCloseWindow())
+    return;
+
   gtk_widget_destroy(GTK_WIDGET(window_));
 }
 
