@@ -26,6 +26,7 @@
 #include "chrome/common/extensions/draggable_region.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_shell.h"
+#include "content/public/browser/native_web_keyboard_event.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/render_widget_host_view.h"
 #include "third_party/skia/include/core/SkPaint.h"
@@ -401,7 +402,10 @@ void NativeWindowWin::UpdateDraggableRegions(
 
 void NativeWindowWin::HandleKeyboardEvent(
     const content::NativeWebKeyboardEvent& event) {
-  // no-op
+  // Any unhandled keyboard/character messages should be defproced.
+  // This allows stuff like F10, etc to work correctly.
+  DefWindowProc(event.os_event.hwnd, event.os_event.message,
+                event.os_event.wParam, event.os_event.lParam);
 }
 
 void NativeWindowWin::Layout() {
