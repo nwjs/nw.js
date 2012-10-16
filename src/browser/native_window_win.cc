@@ -35,7 +35,7 @@
 #include "ui/base/win/hwnd_util.h"
 #include "ui/gfx/path.h"
 #include "ui/views/controls/webview/webview.h"
-#include "ui/views/layout/grid_layout.h"
+#include "ui/views/layout/box_layout.h"
 #include "ui/views/views_delegate.h"
 #include "ui/views/widget/widget.h"
 #include "ui/views/window/non_client_view.h"
@@ -205,6 +205,7 @@ NativeWindowWin::NativeWindowWin(content::Shell* shell,
                                  base::DictionaryValue* manifest)
     : NativeWindow(shell, manifest),
       web_view_(NULL),
+      toolbar_(NULL),
       is_fullscreen_(false),
       resizable_(true),
       minimum_size_(0, 0),
@@ -303,10 +304,12 @@ void NativeWindowWin::SetTitle(const std::string& title) {
 }
 
 void NativeWindowWin::AddToolbar() {
+  toolbar_ = new NativeWindowToolbarWin(shell());
+  AddChildViewAt(toolbar_, 0);
 }
 
 void NativeWindowWin::SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
-                                                bool enabled) {
+                                              bool enabled) {
 }
 
 void NativeWindowWin::SetToolbarUrlEntry(const std::string& url) {
@@ -411,23 +414,25 @@ void NativeWindowWin::HandleKeyboardEvent(
 
 void NativeWindowWin::Layout() {
   DCHECK(web_view_);
-  web_view_->SetBounds(0, 0, width(), height());
+  if (toolbar_) {
+    toolbar_->SetBounds(0, 0, width(), 30);
+    web_view_->SetBounds(0, 30, width(), height() - 30);
+  } else {
+    web_view_->SetBounds(0, 0, width(), height());
+  }
   OnViewWasResized();
 }
 
 void NativeWindowWin::ViewHierarchyChanged(
     bool is_add, views::View *parent, views::View *child) {
   if (is_add && child == this) {
-    views::BoxLayout* layout = new BoxLayout(kVertical, 0, 0, 0);
+    views::BoxLayout* layout = new views::BoxLayout(
+        views::BoxLayout::kVertical, 0, 0, 0);
     SetLayoutManager(layout);
 
     web_view_ = new views::WebView(NULL);
-    AddChildView(web_view_);
-
-    toolbar_ = new NativeWindowToolbarWin(shell());
-    AddChildView(toolbar_);
-
     web_view_->SetWebContents(web_contents());
+    AddChildView(web_view_);
   }
 }
 

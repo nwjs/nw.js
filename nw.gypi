@@ -109,6 +109,8 @@
         'src/browser/native_window_helper_mac.h',
         'src/browser/native_window_mac.h',
         'src/browser/native_window_mac.mm',
+        'src/browser/native_window_toolbar_win.cc',
+        'src/browser/native_window_toolbar_win.h',
         'src/browser/native_window_win.cc',
         'src/browser/native_window_win.h',
         'src/browser/shell_application_mac.h',
@@ -192,6 +194,7 @@
             '<(SHARED_INTERMEDIATE_DIR)/webkit',
           ],
           'dependencies': [
+            '<(DEPTH)/ui/ui.gyp:ui_resources',
             '<(DEPTH)/ui/views/controls/webview/webview.gyp:webview',
             '<(DEPTH)/ui/views/views.gyp:views',
             '<(DEPTH)/webkit/support/webkit_support.gyp:webkit_resources',

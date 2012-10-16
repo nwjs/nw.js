@@ -20,7 +20,7 @@
 
 #include "content/nw/src/browser/native_window_toolbar_win.h"
 
-#include "base/string16"
+#include "base/string16.h"
 #include "content/nw/src/nw_shell.h"
 #include "grit/ui_resources.h"
 #include "ui/base/resource/resource_bundle.h"
@@ -29,6 +29,8 @@
 #include "ui/views/layout/box_layout.h"
 
 namespace nw {
+
+const int kButtonMargin = 5;
 
 NativeWindowToolbarWin::NativeWindowToolbarWin(content::Shell* shell)
     : shell_(shell) {
@@ -41,11 +43,51 @@ views::View* NativeWindowToolbarWin::GetContentsView() {
   return this;
 }
 
+void NativeWindowToolbarWin::Layout() {
+  int panel_width = width();
+  int x = kButtonMargin;
+
+  // Place three left buttons.
+  gfx::Size sz = back_button_->GetPreferredSize();
+  back_button_->SetBounds(x, (height() - sz.height()) / 2,
+                          sz.width(), sz.height());
+  x += sz.width() + kButtonMargin;
+
+  sz = forward_button_->GetPreferredSize();
+  forward_button_->SetBounds(x, back_button_->y(),
+                             sz.width(), sz.height());
+  x += sz.width() + kButtonMargin;
+
+  sz = stop_or_refresh_button_->GetPreferredSize();
+  stop_or_refresh_button_->SetBounds(x, back_button_->y(),
+                                     sz.width(), sz.height());
+  x += sz.width() + kButtonMargin;
+
+  // And place devtools button as far as possible.
+  sz = devtools_button_->GetPreferredSize();
+  devtools_button_->SetBounds(panel_width - sz.width() - kButtonMargin,
+                              back_button_->y(),
+                              sz.width(),
+                              sz.height());
+
+  // Stretch url entry.
+  sz = url_entry_->GetPreferredSize();
+  url_entry_->SetBounds(x,
+                        (height() - sz.height()) / 2,
+                        devtools_button_->x() - kButtonMargin - x,
+                        sz.height());
+}
+
 void NativeWindowToolbarWin::ViewHierarchyChanged(bool is_add,
                                                   views::View* parent,
                                                   views::View* child) {
   if (is_add && child == this)
     InitToolbar();
+}
+
+void NativeWindowToolbarWin::ContentsChanged(
+    views::Textfield* sender,
+    const string16& new_contents) {
 }
 
 bool NativeWindowToolbarWin::HandleKeyEvent(views::Textfield* sender,
@@ -58,7 +100,8 @@ void NativeWindowToolbarWin::ButtonPressed(views::Button* sender,
 }
 
 void NativeWindowToolbarWin::InitToolbar() {
-  views::BoxLayout* layout = new BoxLayout(kHorizontal, 5, 5, 10);
+  views::BoxLayout* layout = new views::BoxLayout(
+      views::BoxLayout::kHorizontal, 5, 5, 10);
   SetLayoutManager(layout);
 
   ui::ResourceBundle& rb = ui::ResourceBundle::GetSharedInstance();
@@ -92,7 +135,7 @@ void NativeWindowToolbarWin::InitToolbar() {
   stop_or_refresh_button_->SetAccessibleName(L"Stop");
   AddChildView(stop_or_refresh_button_);
 
-  url_entry_ = new views::Textfield(STYLE_DEFAULT);
+  url_entry_ = new views::Textfield(views::Textfield::STYLE_DEFAULT);
   url_entry_->SetController(this);
   AddChildView(url_entry_);
 
