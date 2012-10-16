@@ -27,7 +27,7 @@
 #include "base/utf_string_conversions.h"
 #include "content/nw/src/browser/shell_javascript_dialog_creator.h"
 #include "content/nw/src/resource.h"
-#include "content/nw/src/shell.h"
+#include "content/nw/src/nw_shell.h"
 
 namespace {
 

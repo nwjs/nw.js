@@ -22,7 +22,7 @@
 
 #include "base/values.h"
 #include "content/nw/src/common/shell_switches.h"
-#include "content/nw/src/shell.h"
+#include "content/nw/src/nw_shell.h"
 #include "ui/gfx/rect.h"
 
 #if defined(OS_MACOSX)

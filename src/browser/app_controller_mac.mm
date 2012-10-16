@@ -21,7 +21,7 @@
 #include "base/command_line.h"
 #import "content/nw/src/browser/app_controller_mac.h"
 #include "content/nw/src/nw_package.h"
-#include "content/nw/src/shell.h"
+#include "content/nw/src/nw_shell.h"
 #include "content/nw/src/shell_browser_context.h"
 #include "content/nw/src/shell_browser_main_parts.h"
 #include "content/nw/src/shell_content_browser_client.h"

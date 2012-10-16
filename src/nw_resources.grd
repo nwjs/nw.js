@@ -19,6 +19,7 @@
       <include name="IDR_NW_API_TRAY_JS" file="api/tray/tray.js" type="BINDATA" />
       <include name="IDR_NW_API_CLIPBOARD_JS" file="api/clipboard/clipboard.js" type="BINDATA" />
       <include name="IDR_NW_API_WINDOW_JS" file="api/window/window.js" type="BINDATA" />
+      <include name="IDR_NW_API_SHELL_JS" file="api/shell/shell.js" type="BINDATA" />
       <include name="IDR_CONTENT_SHELL_DEVTOOLS_DISCOVERY_PAGE" file="resources/shell_devtools_discovery_page.html" type="BINDATA" />
     </includes>
   </release>

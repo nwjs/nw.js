@@ -45,7 +45,10 @@ class DispatcherHost : public content::RenderViewHostObserver {
   explicit DispatcherHost(content::RenderViewHost* render_view_host);
   virtual ~DispatcherHost();
 
+  // Get C++ object from its id.
   Base* GetObject(int id);
+
+  // Send event to C++ object's corresponding js object.
   void SendEvent(Base* object,
                  const std::string& event,
                  const base::ListValue& arguments);
@@ -74,6 +77,9 @@ class DispatcherHost : public content::RenderViewHostObserver {
                               const std::string& method,
                               const base::ListValue& arguments,
                               base::ListValue* result);
+  void OnCallStaticMethod(const std::string& type,
+                          const std::string& method,
+                          const base::ListValue& arguments);
 
   DISALLOW_COPY_AND_ASSIGN(DispatcherHost);
 };

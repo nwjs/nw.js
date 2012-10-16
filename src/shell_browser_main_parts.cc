@@ -25,7 +25,7 @@
 #include "base/threading/thread_restrictions.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/nw_package.h"
-#include "content/nw/src/shell.h"
+#include "content/nw/src/nw_shell.h"
 #include "content/nw/src/shell_browser_context.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/main_function_params.h"

@@ -23,7 +23,7 @@
 #include "base/values.h"
 #include "base/logging.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
-#include "content/nw/src/shell.h"
+#include "content/nw/src/nw_shell.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/render_widget_host_view.h"
 #include "ui/gfx/point.h"

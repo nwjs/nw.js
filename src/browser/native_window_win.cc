@@ -25,7 +25,7 @@
 #include "base/win/wrapped_window_proc.h"
 #include "chrome/common/extensions/draggable_region.h"
 #include "content/nw/src/common/shell_switches.h"
-#include "content/nw/src/shell.h"
+#include "content/nw/src/nw_shell.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/render_widget_host_view.h"
 #include "third_party/skia/include/core/SkPaint.h"

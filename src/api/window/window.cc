@@ -23,7 +23,7 @@
 #include "base/values.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/browser/native_window.h"
-#include "content/nw/src/shell.h"
+#include "content/nw/src/nw_shell.h"
 
 namespace api {
 

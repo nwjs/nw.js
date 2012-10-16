@@ -156,6 +156,8 @@ DispatcherBindings::GetNativeFunction(v8::Handle<v8::String> name) {
     return v8::FunctionTemplate::New(CallObjectMethod);
   else if (name->Equals(v8::String::New("CallObjectMethodSync")))
     return v8::FunctionTemplate::New(CallObjectMethodSync);
+  else if (name->Equals(v8::String::New("CallStaticMethod")))
+    return v8::FunctionTemplate::New(CallStaticMethod);
 
   NOTREACHED() << "Trying to get an non-exist function in DispatcherBindings:"
                << *v8::String::Utf8Value(name);
@@ -187,6 +189,8 @@ DispatcherBindings::RequireNwGui(const v8::Arguments& args) {
       NwGui, v8::String::New("clipboard.js"), IDR_NW_API_CLIPBOARD_JS);
   RequireFromResource(args.This(),
       NwGui, v8::String::New("window.js"), IDR_NW_API_WINDOW_JS);
+  RequireFromResource(args.This(),
+      NwGui, v8::String::New("shell.js"), IDR_NW_API_SHELL_JS);
 
   return scope.Close(NwGui);
 }
@@ -373,6 +377,41 @@ v8::Handle<v8::Value> DispatcherBindings::CallObjectMethodSync(
         *static_cast<base::ListValue*>(value_args.get()),
         &result));
   return converter->ToV8Value(&result, v8::Context::GetCurrent());
+}
+
+// static
+v8::Handle<v8::Value> DispatcherBindings::CallStaticMethod(
+    const v8::Arguments& args) {
+  if (args.Length() < 3) {
+    return v8::ThrowException(v8::Exception::Error(v8::String::New(
+            "CallStaticMethod requries 3 arguments")));
+  }
+
+  std::string type = *v8::String::Utf8Value(args[0]);
+  std::string method = *v8::String::Utf8Value(args[1]);
+
+  scoped_ptr<V8ValueConverter> converter(V8ValueConverter::create());
+
+  scoped_ptr<base::Value> value_args(
+      converter->FromV8Value(args[2], v8::Context::GetCurrent()));
+  if (!value_args.get() ||
+      !value_args->IsType(base::Value::TYPE_LIST)) {
+    return v8::ThrowException(v8::Exception::Error(v8::String::New(
+            "Unable to convert 'args' passed to CallStaticMethod")));
+  }
+
+  RenderView* render_view = GetCurrentRenderView();
+  if (!render_view) {
+    return v8::ThrowException(v8::Exception::Error(v8::String::New(
+            "Unable to get render view in CallStaticMethod")));
+  }
+
+  render_view->Send(new ShellViewHostMsg_Call_Static_Method(
+        render_view->GetRoutingID(),
+        type,
+        method,
+        *static_cast<base::ListValue*>(value_args.get())));
+  return v8::Undefined();
 }
 
 }  // namespace api

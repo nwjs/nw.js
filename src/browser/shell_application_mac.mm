@@ -7,7 +7,7 @@
 #include "base/auto_reset.h"
 #include "base/command_line.h"
 #include "googleurl/src/gurl.h"
-#include "content/nw/src/shell.h"
+#include "content/nw/src/nw_shell.h"
 #include "content/nw/src/shell_browser_context.h"
 #include "content/nw/src/shell_content_browser_client.h"
 #include "content/nw/src/common/shell_switches.h"

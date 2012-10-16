@@ -32,7 +32,7 @@
 #include "content/nw/src/browser/shell_resource_dispatcher_host_delegate.h"
 #include "content/nw/src/media/media_internals.h"
 #include "content/nw/src/nw_package.h"
-#include "content/nw/src/shell.h"
+#include "content/nw/src/nw_shell.h"
 #include "content/nw/src/shell_browser_context.h"
 #include "content/nw/src/shell_browser_main_parts.h"
 #include "geolocation/shell_access_token_store.h"

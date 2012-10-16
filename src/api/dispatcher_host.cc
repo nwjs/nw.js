@@ -27,6 +27,7 @@
 #include "content/nw/src/api/clipboard/clipboard.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
+#include "content/nw/src/api/shell/shell.h"
 #include "content/nw/src/api/tray/tray.h"
 #include "content/nw/src/api/window/window.h"
 
@@ -62,6 +63,7 @@ bool DispatcherHost::OnMessageReceived(const IPC::Message& message) {
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_Call_Object_Method, OnCallObjectMethod)
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_Call_Object_Method_Sync,
                         OnCallObjectMethodSync)
+    IPC_MESSAGE_HANDLER(ShellViewHostMsg_Call_Static_Method, OnCallStaticMethod)
     IPC_MESSAGE_UNHANDLED(handled = false)
   IPC_END_MESSAGE_MAP()
 
@@ -127,6 +129,26 @@ void DispatcherHost::OnCallObjectMethodSync(
   Base* object = GetObject(object_id);
   DCHECK(object) << "Unknown object: " << object_id;
   object->CallSync(method, arguments, result);
+}
+
+void DispatcherHost::OnCallStaticMethod(
+    const std::string& type,
+    const std::string& method,
+    const base::ListValue& arguments) {
+  DLOG(INFO) << "OnCallStaticMethod: "
+             << " type:" << type
+             << " method:" << method
+             << " arguments:" << arguments;
+
+  if (type == "Shell") {
+    api::Shell::Call(method, arguments);
+    return;
+  } else {
+    NOTREACHED() << "Calling method of unknown class " << type;
+    return;
+  }
+
+  NOTREACHED() << "Calling unknown method " << method << " of class " << type;
 }
 
 }  // namespace api

@@ -18,33 +18,30 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/nw/src/shell_browser_main.h"
+#ifndef CONTENT_NW_SRC_API_SHELL_SHELL_H_
+#define CONTENT_NW_SRC_API_SHELL_SHELL_H_
 
-#include "base/command_line.h"
-#include "base/compiler_specific.h"
-#include "base/logging.h"
-#include "base/memory/scoped_ptr.h"
-#include "base/threading/thread_restrictions.h"
-#include "content/public/common/content_switches.h"
-#include "content/public/browser/browser_main_runner.h"
-#include "content/nw/src/common/shell_switches.h"
-#include "content/nw/src/nw_shell.h"
-#include "content/nw/src/shell_browser_context.h"
-#include "content/nw/src/shell_content_browser_client.h"
+#include "base/basictypes.h"
 
-// Main routine for running as the Browser process.
-int ShellBrowserMain(const content::MainFunctionParams& parameters) {
-  scoped_ptr<content::BrowserMainRunner> main_runner_(
-      content::BrowserMainRunner::Create());
+#include <string>
 
-  int exit_code = main_runner_->Initialize(parameters);
-
-  if (exit_code >= 0)
-    return exit_code;
-
-  exit_code = main_runner_->Run();
-
-  main_runner_->Shutdown();
-
-  return exit_code;
+namespace base {
+class ListValue;
 }
+
+namespace api {
+  
+class Shell {
+ public:
+  static void Call(const std::string& method,
+                   const base::ListValue& arguments);
+
+ private:
+  Shell();
+
+  DISALLOW_COPY_AND_ASSIGN(Shell);
+};
+
+}  // namespace api
+
+#endif  // CONTENT_NW_SRC_API_SHELL_SHELL_H_

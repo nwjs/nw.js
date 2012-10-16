@@ -28,7 +28,7 @@
 #include "content/public/browser/web_contents_view.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
 #include "content/nw/src/browser/native_window_mac.h"
-#include "content/nw/src/shell.h"
+#include "content/nw/src/nw_shell.h"
 
 namespace api {
 

@@ -56,6 +56,11 @@ IPC_SYNC_MESSAGE_ROUTED4_1(ShellViewHostMsg_Call_Object_Method_Sync,
                            ListValue /* arguments */,
                            ListValue /* result */)
 
+IPC_MESSAGE_ROUTED3(ShellViewHostMsg_Call_Static_Method,
+                    std::string /* type name */,
+                    std::string /* method name */,
+                    ListValue /* arguments */)
+
 IPC_MESSAGE_ROUTED3(ShellViewMsg_Object_On_Event,
                     int /* object id */,
                     std::string /* event name */,

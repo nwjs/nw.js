@@ -18,33 +18,34 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/nw/src/shell_browser_main.h"
+#include "content/nw/src/api/shell/shell.h"
 
-#include "base/command_line.h"
-#include "base/compiler_specific.h"
+#include "base/file_path.h"
 #include "base/logging.h"
-#include "base/memory/scoped_ptr.h"
-#include "base/threading/thread_restrictions.h"
-#include "content/public/common/content_switches.h"
-#include "content/public/browser/browser_main_runner.h"
-#include "content/nw/src/common/shell_switches.h"
-#include "content/nw/src/nw_shell.h"
-#include "content/nw/src/shell_browser_context.h"
-#include "content/nw/src/shell_content_browser_client.h"
+#include "base/values.h"
+#include "chrome/browser/platform_util.h"
+#include "googleurl/src/gurl.h"
 
-// Main routine for running as the Browser process.
-int ShellBrowserMain(const content::MainFunctionParams& parameters) {
-  scoped_ptr<content::BrowserMainRunner> main_runner_(
-      content::BrowserMainRunner::Create());
+namespace api {
+  
+// static
+void Shell::Call(const std::string& method,
+                 const base::ListValue& arguments) {
+  if (method == "OpenExternal") {
+    std::string uri;
+    arguments.GetString(0, &uri);
+    platform_util::OpenExternal(GURL(uri));
+  } else if (method == "OpenItem") {
+    std::string full_path;
+    arguments.GetString(0, &full_path);
+    platform_util::OpenItem(FilePath::FromUTF8Unsafe(full_path));
+  } else if (method == "ShowItemInFolder") {
+    std::string full_path;
+    arguments.GetString(0, &full_path);
+    platform_util::ShowItemInFolder(FilePath::FromUTF8Unsafe(full_path));
+  }
 
-  int exit_code = main_runner_->Initialize(parameters);
-
-  if (exit_code >= 0)
-    return exit_code;
-
-  exit_code = main_runner_->Run();
-
-  main_runner_->Shutdown();
-
-  return exit_code;
+  NOTREACHED() << "Calling unknown method " << method << " of Shell";
 }
+
+}  // namespace api

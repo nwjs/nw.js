@@ -25,7 +25,7 @@
 #import "base/memory/scoped_nsobject.h"
 #include "base/sys_string_conversions.h"
 #include "content/nw/src/browser/native_window.h"
-#include "content/nw/src/shell.h"
+#include "content/nw/src/nw_shell.h"
 #include "googleurl/src/gurl.h"
 
 static NSString *BackToolbarItemIdentifier = @"Back";

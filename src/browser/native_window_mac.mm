@@ -27,7 +27,7 @@
 #include "content/nw/src/browser/native_window_helper_mac.h"
 #include "content/nw/src/browser/shell_toolbar_delegate_mac.h"
 #include "content/nw/src/common/shell_switches.h"
-#include "content/nw/src/shell.h"
+#include "content/nw/src/nw_shell.h"
 #include "content/public/browser/native_web_keyboard_event.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"

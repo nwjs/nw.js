@@ -30,6 +30,7 @@ var nwDispatcher = nwDispatcher || {};
   native function DeallocateObject();
   native function CallObjectMethod();
   native function CallObjectMethodSync();
+  native function CallStaticMethod();
 
   native function GetConstructorName();
   native function GetHiddenValue();
@@ -65,15 +66,19 @@ var nwDispatcher = nwDispatcher || {};
     DeallocateObject(object.id);
   };
 
-  // Call method of a object in browser
+  // Call method of a object in browser.
   nwDispatcher.callObjectMethod = function(object, method, args) {
     CallObjectMethod(object.id, object.getConstructorName(), method, args);
   };
 
+  // Call sync method of a object in browser and return results.
   nwDispatcher.callObjectMethodSync = function(object, method, args) {
     return CallObjectMethodSync(
         object.id, object.getConstructorName(), method, args);
   };
+
+  // Call a static method
+  nwDispatcher.callStaticMethod = CallStaticMethod;
 
   nwDispatcher.handleEvent = function(object_id, ev, args) {
     var object = objectsRegistry.get(object_id);
