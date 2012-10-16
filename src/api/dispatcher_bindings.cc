@@ -236,7 +236,10 @@ DispatcherBindings::SetHiddenValue(const v8::Arguments& args) {
 // static
 v8::Handle<v8::Value>
 DispatcherBindings::GetConstructorName(const v8::Arguments& args) {
-  return args.This()->GetConstructorName();
+  if (args.Length() < 1 || !args[0]->IsObject())
+    return v8::Undefined();
+
+  return args[0]->ToObject()->GetConstructorName();
 }
 
 // static

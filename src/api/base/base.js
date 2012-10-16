@@ -24,11 +24,9 @@ function Base() {
 require('util').inherits(Base, require('events').EventEmitter);
 
 // Move helper functions to Base
-Base.prototype.getConstructorName = nw.getConstructorName;
 Base.prototype.getHiddenValue = nw.getHiddenValue;
 Base.prototype.setHiddenValue = nw.setHiddenValue;
 Base.prototype.setDestructor = nw.setDestructor;
-delete nw.getConstructorName;
 delete nw.getHiddenValue;
 delete nw.setHiddenValue;
 delete nw.setDestructor;

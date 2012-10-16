@@ -39,7 +39,7 @@ function Tray(option) {
     option.tooltip = String(option.tooltip);
 
   if (option.hasOwnProperty('menu')) {
-    if (this.getConstructorName.call(option.menu) != 'Menu')
+    if (nw.getConstructorName(option.menu) != 'Menu')
       throw new String("'menu' must be a valid Menu");
 
     // Transfer only object id
@@ -89,7 +89,7 @@ Tray.prototype.__defineGetter__('menu', function() {
 });
 
 Tray.prototype.__defineSetter__('menu', function(val) {
-  if (this.getConstructorName.call(val) != 'Menu')
+  if (nw.getConstructorName(val) != 'Menu')
     throw new String("'menu' property requries a valid Menu");
 
   this.setHiddenValue('menu', val);

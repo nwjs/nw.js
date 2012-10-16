@@ -45,7 +45,7 @@ var nwDispatcher = nwDispatcher || {};
   // Request a new object from browser
   nwDispatcher.allocateObject = function(object, option) {
     var id = GetNextObjectId();
-    AllocateObject(id, object.getConstructorName(), option);
+    AllocateObject(id, GetConstructorName(object), option);
 
     // Store object id and make it readonly
     Object.defineProperty(object, 'id', {
@@ -68,13 +68,13 @@ var nwDispatcher = nwDispatcher || {};
 
   // Call method of a object in browser.
   nwDispatcher.callObjectMethod = function(object, method, args) {
-    CallObjectMethod(object.id, object.getConstructorName(), method, args);
+    CallObjectMethod(object.id, GetConstructorName(object), method, args);
   };
 
   // Call sync method of a object in browser and return results.
   nwDispatcher.callObjectMethodSync = function(object, method, args) {
     return CallObjectMethodSync(
-        object.id, object.getConstructorName(), method, args);
+        object.id, GetConstructorName(object), method, args);
   };
 
   // Call a static method
@@ -87,11 +87,10 @@ var nwDispatcher = nwDispatcher || {};
   }
 
   nwDispatcher.requireNwGui = RequireNwGui;
-
   nwDispatcher.getAbsolutePath = GetAbsolutePath;
+  nwDispatcher.getConstructorName = GetConstructorName;
 
   // Extended prototype of objects.
-  nwDispatcher.getConstructorName = GetConstructorName;
   nwDispatcher.getHiddenValue = GetHiddenValue;
   nwDispatcher.setHiddenValue = SetHiddenValue;
   nwDispatcher.setDestructor = SetDestructor;

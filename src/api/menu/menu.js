@@ -50,7 +50,7 @@ Menu.prototype.__defineSetter__('items', function(val) {
 });
 
 Menu.prototype.append = function(menu_item) {
-  if (this.getConstructorName.call(menu_item) != 'MenuItem')
+  if (nw.getConstructorName(menu_item) != 'MenuItem')
     throw new String("Menu.append() requires a valid MenuItem");
     
   this.items.push(menu_item);

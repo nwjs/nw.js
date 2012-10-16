@@ -51,7 +51,7 @@ function MenuItem(option) {
       option.enabled = Boolean(option.enabled);
 
     if (option.hasOwnProperty('submenu')) {
-      if (this.getConstructorName.call(option.submenu) != 'Menu')
+      if (nw.getConstructorName(option.submenu) != 'Menu')
         throw new String("'submenu' must be a valid Menu");
 
       // Transfer only object id
@@ -145,7 +145,7 @@ MenuItem.prototype.__defineGetter__('submenu', function() {
 });
 
 MenuItem.prototype.__defineSetter__('submenu', function(val) {
-  if (this.getConstructorName.call(val) != 'Menu')
+  if (nw.getConstructorName(val) != 'Menu')
     throw new String("'submenu' property requries a valid Menu");
 
   this.setHiddenValue('submenu', val);
