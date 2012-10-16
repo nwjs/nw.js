@@ -17,20 +17,6 @@
 LANGUAGE 9, 1
 #pragma code_page(1252)
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// Menu
-//
-
-IDC_CONTENTSHELL MENU 
-BEGIN
-    POPUP "&Debug"
-    BEGIN
-        MENUITEM "&Show Developer Tools...", IDM_SHOW_DEVELOPER_TOOLS
-    END
-END
-
-
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //

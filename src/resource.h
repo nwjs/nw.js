@@ -8,16 +8,9 @@
 //
 
 
-#define IDR_MAINFRAME             128
-#define IDM_SHOW_DEVELOPER_TOOLS  108
-#define IDC_CONTENTSHELL          109
 #define IDD_ALERT                 130
 #define IDD_CONFIRM               131
 #define IDD_PROMPT                132
-#define IDC_NAV_BACK              1001
-#define IDC_NAV_FORWARD           1002
-#define IDC_NAV_RELOAD            1003
-#define IDC_NAV_STOP              1004
 #define IDC_PROMPTEDIT            1005
 #define IDC_DIALOGTEXT            1006
 
