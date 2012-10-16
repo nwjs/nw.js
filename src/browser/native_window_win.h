@@ -36,6 +36,8 @@ class WebView;
 
 namespace nw {
 
+class NativeWindowToolbarWin;
+
 class NativeWindowWin : public NativeWindow,
                         public views::WidgetDelegateView {
  public:
@@ -108,6 +110,7 @@ class NativeWindowWin : public NativeWindow,
 
   void OnViewWasResized();
 
+  NativeWindowToolbarWin* toolbar_;
   views::WebView* web_view_;
   views::Widget* window_;
   bool is_fullscreen_;

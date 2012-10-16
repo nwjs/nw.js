@@ -24,6 +24,7 @@
 #include "base/values.h"
 #include "base/win/wrapped_window_proc.h"
 #include "chrome/common/extensions/draggable_region.h"
+#include "content/nw/src/browser/native_window_toolbar_win.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/native_web_keyboard_event.h"
@@ -417,8 +418,15 @@ void NativeWindowWin::Layout() {
 void NativeWindowWin::ViewHierarchyChanged(
     bool is_add, views::View *parent, views::View *child) {
   if (is_add && child == this) {
+    views::BoxLayout* layout = new BoxLayout(kVertical, 0, 0, 0);
+    SetLayoutManager(layout);
+
     web_view_ = new views::WebView(NULL);
     AddChildView(web_view_);
+
+    toolbar_ = new NativeWindowToolbarWin(shell());
+    AddChildView(toolbar_);
+
     web_view_->SetWebContents(web_contents());
   }
 }
