@@ -29,8 +29,8 @@
 #include "base/string16.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
+#include "chrome/common/zip.h"
 #include "content/nw/src/common/shell_switches.h"
-#include "content/nw/src/common/zip.h"
 #include "googleurl/src/gurl.h"
 
 namespace nw {
