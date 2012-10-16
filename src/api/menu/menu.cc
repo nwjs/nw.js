@@ -47,21 +47,19 @@ void Menu::Call(const std::string& method,
   } else if (method == "Append") {
     int object_id = 0;
     arguments.GetInteger(0, &object_id);
-    Append(static_cast<MenuItem*>(dispatcher_host()->GetObject(object_id)));
+    Append(dispatcher_host()->GetObject<MenuItem>(object_id));
   } else if (method == "Insert") {
     int object_id = 0;
     arguments.GetInteger(0, &object_id);
     int pos = 0;
     arguments.GetInteger(1, &pos);
-    Insert(static_cast<MenuItem*>(dispatcher_host()->GetObject(object_id)),
-           pos);
+    Insert(dispatcher_host()->GetObject<MenuItem>(object_id), pos);
   } else if (method == "Remove") {
     int object_id = 0;
     arguments.GetInteger(0, &object_id);
     int pos = 0;
     arguments.GetInteger(1, &pos);
-    Remove(static_cast<MenuItem*>(dispatcher_host()->GetObject(object_id)),
-           pos);
+    Remove(dispatcher_host()->GetObject<MenuItem>(object_id), pos);
   } else if (method == "Popup") {
     int x = 0;
     arguments.GetInteger(0, &x);

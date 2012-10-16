@@ -48,6 +48,12 @@ class DispatcherHost : public content::RenderViewHostObserver {
   // Get C++ object from its id.
   Base* GetObject(int id);
 
+  // Helper function to convert type.
+  template<class T>
+  T* GetObject(int id) {
+    return static_cast<T*>(GetObject(id));
+  }
+
   // Send event to C++ object's corresponding js object.
   void SendEvent(Base* object,
                  const std::string& event,

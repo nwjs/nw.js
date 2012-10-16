@@ -46,7 +46,7 @@ Tray::Tray(int id,
 
   int menu_id;
   if (option.GetInteger("menu", &menu_id))
-    SetMenu(static_cast<Menu*>(dispatcher_host->GetObject(menu_id)));
+    SetMenu(dispatcher_host->GetObject<Menu>(menu_id));
 
   ShowAfterCreate();
 }
@@ -72,7 +72,7 @@ void Tray::Call(const std::string& method,
   } else if (method == "SetMenu") {
     int object_id = 0;
     arguments.GetInteger(0, &object_id);
-    SetMenu(static_cast<Menu*>(dispatcher_host()->GetObject(object_id)));
+    SetMenu(dispatcher_host()->GetObject<Menu>(object_id));
   } else if (method == "Remove") {
     Remove();
   } else {

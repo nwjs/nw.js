@@ -59,7 +59,7 @@ void MenuItem::Create(const base::DictionaryValue& option) {
 
     int menu_id;
     if (option.GetInteger("submenu", &menu_id))
-      SetSubmenu(static_cast<Menu*>(dispatcher_host()->GetObject(menu_id)));
+      SetSubmenu(dispatcher_host()->GetObject<Menu>(menu_id));
 
     block_active_ = false;
     g_signal_connect(menu_item_, "activate",
