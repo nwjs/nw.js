@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grit latest_public_release="0" current_release="1">
+  <outputs>
+    <output filename="grit/nw_resources.h" type="rc_header" context="default_100_percent" >
+      <emit emit_type='prepend'></emit>
+    </output>
+    <output filename="grit/nw_resources_map.cc" type="resource_map_source" context="default_100_percent" />
+    <output filename="grit/nw_resources_map.h" type="resource_map_header" context="default_100_percent" />
+    <output filename="nw_resources.pak" type="data_package" context="default_100_percent" />
+  </outputs>
+  <translations />
+  <release seq="1">
+    <structures fallback_to_low_resolution="true">
+      <structure type="chrome_scaled_image" name="IDR_NW_BACK" file="browser_back_normal.png" />
+      <structure type="chrome_scaled_image" name="IDR_NW_BACK_D" file="browser_back_disabled.png" />
+      <structure type="chrome_scaled_image" name="IDR_NW_BACK_H" file="browser_back_hover.png" />
+      <structure type="chrome_scaled_image" name="IDR_NW_BACK_P" file="browser_back_pressed.png" />
+      <structure type="chrome_scaled_image" name="IDR_NW_FORWARD" file="browser_forward_normal.png" />
+      <structure type="chrome_scaled_image" name="IDR_NW_FORWARD_D" file="browser_forward_disabled.png" />
+      <structure type="chrome_scaled_image" name="IDR_NW_FORWARD_H" file="browser_forward_hover.png" />
+      <structure type="chrome_scaled_image" name="IDR_NW_FORWARD_P" file="browser_forward_pressed.png" />
+      <structure type="chrome_scaled_image" name="IDR_NW_STOP" file="browser_stop_normal.png" />
+      <structure type="chrome_scaled_image" name="IDR_NW_STOP_D" file="browser_stop_disabled.png" />
+      <structure type="chrome_scaled_image" name="IDR_NW_STOP_H" file="browser_stop_hover.png" />
+      <structure type="chrome_scaled_image" name="IDR_NW_STOP_P" file="browser_stop_pressed.png" />
+      <structure type="chrome_scaled_image" name="IDR_NW_RELOAD" file="browser_reload_normal.png" />
+      <structure type="chrome_scaled_image" name="IDR_NW_RELOAD_D" file="browser_reload_disabled.png" />
+      <structure type="chrome_scaled_image" name="IDR_NW_RELOAD_H" file="browser_reload_hover.png" />
+      <structure type="chrome_scaled_image" name="IDR_NW_RELOAD_P" file="browser_reload_pressed.png" />
+      <structure type="chrome_scaled_image" name="IDR_NW_TOOLS" file="browser_tools_normal.png" />
+      <structure type="chrome_scaled_image" name="IDR_NW_TOOLS_H" file="browser_tools_hover.png" />
+      <structure type="chrome_scaled_image" name="IDR_NW_TOOLS_P" file="browser_tools_pressed.png" />
+    </structures>
+    <includes>
+      <include name="IDR_NW_VERSION" file="pages/nw_version.html" type="BINDATA" />
+      <include name="IDR_NW_BLANK" file="pages/nw_blank.html" type="BINDATA" />
+      <include name="IDR_NW_DEVTOOLS_DISCOVERY_PAGE" file="pages/shell_devtools_discovery_page.html" type="BINDATA" />
+      <include name="IDR_NW_API_DISPATCHER_BINDINGS_JS" file="../api/dispatcher_bindings.js" type="BINDATA" />
+      <include name="IDR_NW_API_BASE_JS" file="../api/base/base.js" type="BINDATA" />
+      <include name="IDR_NW_API_MENUITEM_JS" file="../api/menuitem/menuitem.js" type="BINDATA" />
+      <include name="IDR_NW_API_MENU_JS" file="../api/menu/menu.js" type="BINDATA" />
+      <include name="IDR_NW_API_TRAY_JS" file="../api/tray/tray.js" type="BINDATA" />
+      <include name="IDR_NW_API_CLIPBOARD_JS" file="../api/clipboard/clipboard.js" type="BINDATA" />
+      <include name="IDR_NW_API_WINDOW_JS" file="../api/window/window.js" type="BINDATA" />
+      <include name="IDR_NW_API_SHELL_JS" file="../api/shell/shell.js" type="BINDATA" />
+    </includes>
+  </release>
+</grit>

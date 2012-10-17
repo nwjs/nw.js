@@ -45,6 +45,7 @@
       ],
       'sources': [
         '<(DEPTH)/chrome/browser/platform_util_common_linux.cc',
+        '<(DEPTH)/chrome/browser/platform_util_linux.cc',
         '<(DEPTH)/chrome/browser/platform_util_mac.mm',
         '<(DEPTH)/chrome/browser/platform_util_win.cc',
         '<(DEPTH)/chrome/browser/platform_util.h',
@@ -241,7 +242,7 @@
         {
           'action_name': 'nw_resources',
           'variables': {
-            'grit_grd_file': 'src/nw_resources.grd',
+            'grit_grd_file': 'src/resources/nw_resources.grd',
           },
           'includes': [ '../../build/grit_action.gypi' ],
         },
