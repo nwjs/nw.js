@@ -27,13 +27,14 @@
 #include "grit/nw_resources.h"
 #include "grit/ui_resources.h"
 #include "ui/base/resource/resource_bundle.h"
+#include "ui/views/background.h"
 #include "ui/views/controls/button/image_button.h"
 #include "ui/views/controls/textfield/textfield.h"
 #include "ui/views/layout/box_layout.h"
 
 namespace nw {
 
-const int kButtonMargin = 5;
+const int kButtonMargin = 2;
 
 NativeWindowToolbarWin::NativeWindowToolbarWin(content::Shell* shell)
     : shell_(shell) {
@@ -96,7 +97,7 @@ void NativeWindowToolbarWin::ContentsChanged(
 bool NativeWindowToolbarWin::HandleKeyEvent(views::Textfield* sender,
                                             const ui::KeyEvent& key_event) {
   if (key_event.key_code() == ui::VKEY_RETURN) {
-    string16 url_string = url_entry_.text();
+    string16 url_string = url_entry_->text();
     if (!url_string.empty()) {
       GURL url(url_string);
       if (!url.has_scheme())
@@ -123,6 +124,8 @@ void NativeWindowToolbarWin::ButtonPressed(views::Button* sender,
 }
 
 void NativeWindowToolbarWin::InitToolbar() {
+  set_background(views::Background::CreateStandardPanelBackground());
+
   views::BoxLayout* layout = new views::BoxLayout(
       views::BoxLayout::kHorizontal, 5, 5, 10);
   SetLayoutManager(layout);
@@ -195,6 +198,8 @@ void NativeWindowToolbarWin::SetUrlEntry(const std::string& url) {
 }
 
 void NativeWindowToolbarWin::SetIsLoading(bool loading) {
+  ui::ResourceBundle& rb = ui::ResourceBundle::GetSharedInstance();
+
   if (loading) {
     stop_or_refresh_button_->SetImage(views::CustomButton::BS_NORMAL,
         rb.GetNativeImageNamed(IDR_NW_STOP).ToImageSkia());
@@ -216,6 +221,9 @@ void NativeWindowToolbarWin::SetIsLoading(bool loading) {
         rb.GetNativeImageNamed(IDR_NW_RELOAD_D).ToImageSkia());
     stop_or_refresh_button_->SetAccessibleName(L"Reload");
   }
+
+  // Force refresh
+  stop_or_refresh_button_->SchedulePaint();
 }
   
 }  // namespace nw

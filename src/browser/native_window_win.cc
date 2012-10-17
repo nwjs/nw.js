@@ -155,10 +155,16 @@ int NativeWindowFrameView::NonClientHitTest(const gfx::Point& point) {
   if (frame_component != HTNOWHERE)
     return frame_component;
 
+  // Ajust the point if we have a toolbar.
+  gfx::Point adjusted_point(point);
+  if (window_->toolbar())
+    adjusted_point.set_y(adjusted_point.y() - window_->toolbar()->height());
+
   // Check for possible draggable region in the client area for the frameless
   // window.
   if (window_->draggable_region() &&
-      window_->draggable_region()->contains(point.x(), point.y()))
+      window_->draggable_region()->contains(adjusted_point.x(),
+                                            adjusted_point.y()))
     return HTCAPTION;
 
   int client_component = frame_->client_view()->NonClientHitTest(point);
@@ -216,6 +222,7 @@ NativeWindowWin::NativeWindowWin(content::Shell* shell,
   params.remove_standard_frame = !has_frame();
   params.use_system_default_icon = true;
   window_->Init(params);
+  window_->set_frame_type(views::Widget::FRAME_TYPE_FORCE_CUSTOM);
 
   int width, height;
   manifest->GetInteger(switches::kmWidth, &width);
@@ -310,12 +317,18 @@ void NativeWindowWin::AddToolbar() {
 
 void NativeWindowWin::SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
                                               bool enabled) {
+  if (toolbar_)
+    toolbar_->SetButtonEnabled(button, enabled);
 }
 
 void NativeWindowWin::SetToolbarUrlEntry(const std::string& url) {
+  if (toolbar_)
+    toolbar_->SetUrlEntry(url);
 }
   
 void NativeWindowWin::SetToolbarIsLoading(bool loading) {
+  if (toolbar_)
+    toolbar_->SetIsLoading(loading);
 }
 
 views::View* NativeWindowWin::GetContentsView() {
@@ -415,8 +428,8 @@ void NativeWindowWin::HandleKeyboardEvent(
 void NativeWindowWin::Layout() {
   DCHECK(web_view_);
   if (toolbar_) {
-    toolbar_->SetBounds(0, 0, width(), 30);
-    web_view_->SetBounds(0, 30, width(), height() - 30);
+    toolbar_->SetBounds(0, 0, width(), 34);
+    web_view_->SetBounds(0, 34, width(), height() - 34);
   } else {
     web_view_->SetBounds(0, 0, width(), height());
   }

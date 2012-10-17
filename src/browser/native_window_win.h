@@ -28,8 +28,6 @@
 #include "ui/gfx/rect.h"
 #include "ui/views/widget/widget_delegate.h"
 
-class NativeWindowFrameView;
-
 namespace views {
 class WebView;
 }
@@ -46,6 +44,7 @@ class NativeWindowWin : public NativeWindow,
   virtual ~NativeWindowWin();
 
   SkRegion* draggable_region() { return draggable_region_.get(); }
+  NativeWindowToolbarWin* toolbar() { return toolbar_; }
 
   // NativeWindow implementation.
   virtual void Close() OVERRIDE;
@@ -106,8 +105,6 @@ class NativeWindowWin : public NativeWindow,
                                    ui::WindowShowState show_state) OVERRIDE;
 
  private:
-  friend class NativeWindowFrameView;
-
   void OnViewWasResized();
 
   NativeWindowToolbarWin* toolbar_;

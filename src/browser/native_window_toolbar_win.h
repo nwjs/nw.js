@@ -45,6 +45,11 @@ class NativeWindowToolbarWin : public views::WidgetDelegateView,
   explicit NativeWindowToolbarWin(content::Shell* shell);
   ~NativeWindowToolbarWin();
 
+  void SetButtonEnabled(NativeWindow::TOOLBAR_BUTTON button,
+                        bool enabled);
+  void SetUrlEntry(const std::string& url);
+  void SetIsLoading(bool loading);
+
  protected:
   // Overridden from WidgetDelegateView:
   virtual views::View* GetContentsView() OVERRIDE;
@@ -67,10 +72,6 @@ class NativeWindowToolbarWin : public views::WidgetDelegateView,
 
  private:
   void InitToolbar();
-  void SetButtonEnabled(NativeWindow::TOOLBAR_BUTTON button,
-                        bool enabled);
-  void SetUrlEntry(const std::string& url);
-  void SetIsLoading(bool loading);
 
   content::Shell* shell_;
 
