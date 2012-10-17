@@ -227,8 +227,9 @@ NativeWindowWin::NativeWindowWin(content::Shell* shell,
   int width, height;
   manifest->GetInteger(switches::kmWidth, &width);
   manifest->GetInteger(switches::kmHeight, &height);
-
   window_->SetBounds(gfx::Rect(width, height));
+
+  window_->UpdateWindowIcon();
 
   OnViewWasResized();
 }
