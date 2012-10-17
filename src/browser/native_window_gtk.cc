@@ -55,6 +55,11 @@ NativeWindowGtk::NativeWindowGtk(content::Shell* shell,
   gtk_widget_show(vbox);
   gtk_container_add(GTK_CONTAINER(window_), vbox);
 
+  // Set window icon.
+  gfx::Image app_icon = app_icon();
+  if (!app_icon.IsEmpty())
+    gtk_window_set_icon(window_, app_icon.ToGdkPixbuf());
+
   // Always create toolbar since we need to create a url entry.
   CreateToolbar();
 

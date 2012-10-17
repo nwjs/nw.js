@@ -133,6 +133,13 @@ Package::Package(FilePath path)
 Package::~Package() {
 }
 
+FilePath Package::ConvertToAbsoutePath(const FilePath& path) {
+  if (path.IsAbsolute())
+    return path;
+
+  return this->path().Append(path);
+}
+
 GURL Package::GetStartupURL() {
   std::string url; 
   // Specify URL in --url

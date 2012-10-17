@@ -26,6 +26,7 @@
 
 #include "base/basictypes.h"
 #include "base/compiler_specific.h"
+#include "ui/gfx/image/image.h"
 #include "ui/gfx/native_widget_types.h"
 
 namespace base {
@@ -93,6 +94,7 @@ class NativeWindow {
   content::Shell* shell() const { return shell_; }
   content::WebContents* web_contents() const;
   bool has_frame() const { return has_frame_; }
+  const gfx::Image& app_icon() const { return app_icon_; }
 
  protected:
   explicit NativeWindow(content::Shell* shell,
@@ -103,7 +105,12 @@ class NativeWindow {
 
   bool has_frame_;
 
+  // Icon showed in the task bar.
+  gfx::Image app_icon_;
+
  private:
+  void LoadAppIconFromPackage();
+
   DISALLOW_COPY_AND_ASSIGN(NativeWindow);
 };
 

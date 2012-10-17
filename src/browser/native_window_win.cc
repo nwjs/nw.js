@@ -378,13 +378,15 @@ bool NativeWindowWin::ShouldShowWindowTitle() const {
 }
 
 gfx::ImageSkia NativeWindowWin::GetWindowAppIcon() {
-  // TODO return icon from manifest here.
-  return gfx::ImageSkia();
+  gfx::Image app_icon = app_icon();
+  if (!app_icon.IsEmpty())
+    return *app_icon.ToImageSkia();
 }
 
 gfx::ImageSkia NativeWindowWin::GetWindowIcon() {
-  // TODO return icon from manifest here.
-  return gfx::ImageSkia();
+  gfx::Image app_icon = app_icon();
+  if (!app_icon.IsEmpty())
+    return *app_icon.ToImageSkia();
 }
 
 views::View* NativeWindowWin::GetInitiallyFocusedView() {

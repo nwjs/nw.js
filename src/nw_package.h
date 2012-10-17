@@ -44,6 +44,9 @@ class Package {
   Package(FilePath path);
   ~Package();
 
+  // Convert path to absoulte path.
+  FilePath ConvertToAbsoutePath(const FilePath& path);
+
   // Get startup url.
   GURL GetStartupURL();
 
