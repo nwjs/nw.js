@@ -378,15 +378,15 @@ bool NativeWindowWin::ShouldShowWindowTitle() const {
 }
 
 gfx::ImageSkia NativeWindowWin::GetWindowAppIcon() {
-  gfx::Image app_icon = app_icon();
-  if (!app_icon.IsEmpty())
-    return *app_icon.ToImageSkia();
+  gfx::Image icon = app_icon();
+  if (icon.IsEmpty())
+    return gfx::ImageSkia();
+
+  return *icon.ToImageSkia();
 }
 
 gfx::ImageSkia NativeWindowWin::GetWindowIcon() {
-  gfx::Image app_icon = app_icon();
-  if (!app_icon.IsEmpty())
-    return *app_icon.ToImageSkia();
+  return GetWindowAppIcon();
 }
 
 views::View* NativeWindowWin::GetInitiallyFocusedView() {
