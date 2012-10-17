@@ -22,6 +22,7 @@
 #define CONTENT_NW_SRC_BROWSER_NATIVE_WINDOW_TOOLBAR_WIN_H_
 
 #include "base/basictypes.h"
+#include "content/nw/src/browser/native_window.h"
 #include "ui/views/controls/button/button.h"
 #include "ui/views/controls/textfield/textfield_controller.h"
 #include "ui/views/widget/widget_delegate.h"
@@ -66,6 +67,10 @@ class NativeWindowToolbarWin : public views::WidgetDelegateView,
 
  private:
   void InitToolbar();
+  void SetButtonEnabled(NativeWindow::TOOLBAR_BUTTON button,
+                        bool enabled);
+  void SetUrlEntry(const std::string& url);
+  void SetIsLoading(bool loading);
 
   content::Shell* shell_;
 
