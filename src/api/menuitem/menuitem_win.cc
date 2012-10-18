@@ -35,6 +35,7 @@ void MenuItem::Create(const base::DictionaryValue& option) {
   is_checked_ = false;
   is_enabled_ = true;
   type_ = "normal";
+  submenu_ = NULL;
 
   option.GetString("type", &type_);
   option.GetString("label", &label_);
@@ -45,6 +46,10 @@ void MenuItem::Create(const base::DictionaryValue& option) {
   std::string icon;
   if (option.GetString("icon", &icon) && !icon.empty())
     SetIcon(icon);
+
+  int menu_id;
+  if (option.GetInteger("submenu", &menu_id))
+    SetSubmenu(dispatcher_host()->GetObject<Menu>(menu_id));
 } 
 
 void MenuItem::Destroy() {
@@ -85,7 +90,8 @@ void MenuItem::SetChecked(bool checked) {
   is_checked_ = checked;
 }
 
-void MenuItem::SetSubmenu(Menu* sub_menu) {
+void MenuItem::SetSubmenu(Menu* menu) {
+  submenu_ = menu;
 }
 
 }  // namespace api

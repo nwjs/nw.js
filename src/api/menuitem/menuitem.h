@@ -108,6 +108,7 @@ class MenuItem : public Base {
   std::string type_;
   string16 label_;
   string16 tooltip_;
+  Menu* submenu_;
 #endif
 
   DISALLOW_COPY_AND_ASSIGN(MenuItem);

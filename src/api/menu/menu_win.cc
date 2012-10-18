@@ -43,7 +43,10 @@ void Menu::Destroy() {
 }
 
 void Menu::Append(MenuItem* menu_item) {
-  if (menu_item->type_ == "normal")
+  if (menu_item->submenu_)
+    menu_model_->AddSubMenu(menu_item->id(), menu_item->label_,
+                            menu_item->submenu_->menu_model_.get());
+  else if (menu_item->type_ == "normal")
     menu_model_->AddItem(menu_item->id(), menu_item->label_);
   else if (menu_item->type_ == "checkbox")
     menu_model_->AddCheckItem(menu_item->id(), menu_item->label_);
@@ -54,7 +57,10 @@ void Menu::Append(MenuItem* menu_item) {
 }
 
 void Menu::Insert(MenuItem* menu_item, int pos) {
-  if (menu_item->type_ == "normal")
+  if (menu_item->submenu_)
+    menu_model_->InsertSubMenuAt(pos, menu_item->id(), menu_item->label_,
+                                 menu_item->submenu_->menu_model_.get());
+  else if (menu_item->type_ == "normal")
     menu_model_->InsertItemAt(pos, menu_item->id(), menu_item->label_);
   else if (menu_item->type_ == "checkbox")
     menu_model_->InsertCheckItemAt(pos, menu_item->id(), menu_item->label_);
