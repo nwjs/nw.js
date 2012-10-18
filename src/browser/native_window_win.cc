@@ -23,6 +23,7 @@
 #include "base/utf_string_conversions.h"
 #include "base/values.h"
 #include "base/win/wrapped_window_proc.h"
+#include "chrome/browser/platform_util.h"
 #include "chrome/common/extensions/draggable_region.h"
 #include "content/nw/src/browser/native_window_toolbar_win.h"
 #include "content/nw/src/common/shell_switches.h"
@@ -46,6 +47,23 @@ namespace {
 
 const int kResizeInsideBoundsSize = 5;
 const int kResizeAreaCornerSize = 16;
+
+// Returns true if |possible_parent| is a parent window of |child|.
+bool IsParent(gfx::NativeView child, gfx::NativeView possible_parent) {
+  if (!child)
+    return false;
+#if !defined(USE_AURA) && defined(OS_WIN)
+  if (::GetWindow(child, GW_OWNER) == possible_parent)
+    return true;
+#endif
+  gfx::NativeView parent = child;
+  while ((parent = platform_util::GetParent(parent))) {
+    if (possible_parent == parent)
+      return true;
+  }
+
+  return false;
+}
 
 class NativeWindowClientView : public views::ClientView {
  public:
@@ -213,6 +231,9 @@ NativeWindowWin::NativeWindowWin(content::Shell* shell,
       web_view_(NULL),
       toolbar_(NULL),
       is_fullscreen_(false),
+      is_minimized_(false),
+      is_focus_(false),
+      is_blur_(false),
       resizable_(true),
       minimum_size_(0, 0),
       maximum_size_(INT_MAX, INT_MAX) {
@@ -223,6 +244,8 @@ NativeWindowWin::NativeWindowWin(content::Shell* shell,
   params.use_system_default_icon = true;
   window_->Init(params);
   window_->set_frame_type(views::Widget::FRAME_TYPE_FORCE_CUSTOM);
+
+  views::WidgetFocusManager::GetInstance()->AddFocusChangeListener(this);
 
   int width, height;
   manifest->GetInteger(switches::kmWidth, &width);
@@ -235,6 +258,7 @@ NativeWindowWin::NativeWindowWin(content::Shell* shell,
 }
 
 NativeWindowWin::~NativeWindowWin() {
+  views::WidgetFocusManager::GetInstance()->RemoveFocusChangeListener(this);
 }
 
 void NativeWindowWin::Close() {
@@ -276,9 +300,10 @@ void NativeWindowWin::Restore() {
 void NativeWindowWin::SetFullscreen(bool fullscreen) {
   is_fullscreen_ = fullscreen;
   window_->SetFullscreen(fullscreen);
-  // TODO(jeremya) we need to call RenderViewHost::ExitFullscreen() if we
-  // ever drop the window out of fullscreen in response to something that
-  // wasn't the app calling webkitCancelFullScreen().
+  if (fullscreen)
+    shell()->SendEvent("enter-fullscreen");
+  else
+    shell()->SendEvent("leave-fullscreen");
 }
 
 void NativeWindowWin::SetMinimumSize(int width, int height) {
@@ -378,6 +403,26 @@ bool NativeWindowWin::ShouldShowWindowTitle() const {
   return has_frame();
 }
 
+void NativeWindowWin::OnNativeFocusChange(gfx::NativeView focused_before,
+                                          gfx::NativeView focused_now) {
+  gfx::NativeView this_window = GetWidget()->GetNativeView();
+  if (IsParent(focused_now, this_window) ||
+      IsParent(this_window, focused_now))
+    return;
+
+  if (focused_now == this_window) {
+    if (!is_focus_)
+      shell()->SendEvent("focus");
+    is_focus_ = true;
+    is_blur_ = false;
+  } else if (focused_before == this_window) {
+    if (!is_blur_)
+      shell()->SendEvent("blur");
+    is_focus_ = false;
+    is_blur_ = true;
+  }
+}
+
 gfx::ImageSkia NativeWindowWin::GetWindowAppIcon() {
   gfx::Image icon = app_icon();
   if (icon.IsEmpty())
@@ -462,6 +507,18 @@ gfx::Size NativeWindowWin::GetMaximumSize() {
 
 void NativeWindowWin::OnFocus() {
   web_view_->RequestFocus();
+}
+
+bool NativeWindowWin::ExecuteWindowsCommand(int command_id) {
+  if (command_id == SC_MINIMIZE) {
+    is_minimized_ = true;
+    shell()->SendEvent("minimize");
+  } else if (command_id == SC_RESTORE && is_minimized_) {
+    is_minimized_ = false;
+    shell()->SendEvent("restore");
+  }
+
+  return false;
 }
 
 void NativeWindowWin::SaveWindowPlacement(const gfx::Rect& bounds,

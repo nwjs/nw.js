@@ -26,6 +26,7 @@
 #include "third_party/skia/include/core/SkRegion.h"
 #include "ui/gfx/image/image_skia.h"
 #include "ui/gfx/rect.h"
+#include "ui/views/focus/widget_focus_manager.h"
 #include "ui/views/widget/widget_delegate.h"
 
 namespace views {
@@ -37,6 +38,7 @@ namespace nw {
 class NativeWindowToolbarWin;
 
 class NativeWindowWin : public NativeWindow,
+                        public views::WidgetFocusChangeListener,
                         public views::WidgetDelegateView {
  public:
   explicit NativeWindowWin(content::Shell* shell,
@@ -84,6 +86,10 @@ class NativeWindowWin : public NativeWindow,
   virtual gfx::ImageSkia GetWindowIcon() OVERRIDE;
   virtual bool ShouldShowWindowTitle() const OVERRIDE;
 
+  // WidgetFocusChangeListener implementation.
+  virtual void OnNativeFocusChange(gfx::NativeView focused_before,
+                                   gfx::NativeView focused_now) OVERRIDE;
+
  protected:
   // NativeWindow implementation.
   virtual void AddToolbar() OVERRIDE;
@@ -101,6 +107,7 @@ class NativeWindowWin : public NativeWindow,
   virtual void OnFocus() OVERRIDE;
 
   // views::WidgetDelegate implementation.
+  virtual bool ExecuteWindowsCommand(int command_id) OVERRIDE;
   virtual void SaveWindowPlacement(const gfx::Rect& bounds,
                                    ui::WindowShowState show_state) OVERRIDE;
 
@@ -111,6 +118,11 @@ class NativeWindowWin : public NativeWindow,
   views::WebView* web_view_;
   views::Widget* window_;
   bool is_fullscreen_;
+
+  // Flags used to prevent sending extra events.
+  bool is_minimized_;
+  bool is_focus_;
+  bool is_blur_;
 
   scoped_ptr<SkRegion> draggable_region_;
 
