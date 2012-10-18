@@ -96,9 +96,6 @@ void Menu::Destroy() {
   g_object_unref(G_OBJECT(menu_));
 }
 
-void Menu::SetTitle(const std::string& title) {
-}
-
 void Menu::Append(MenuItem* menu_item) {
   gtk_menu_shell_append(GTK_MENU_SHELL(menu_), menu_item->menu_item_);
 }

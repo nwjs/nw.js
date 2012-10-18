@@ -42,9 +42,6 @@ void Menu::Create(const base::DictionaryValue& option) {
 void Menu::Destroy() {
 }
 
-void Menu::SetTitle(const std::string& title) {
-}
-
 void Menu::Append(MenuItem* menu_item) {
   if (menu_item->type_ == "normal")
     menu_model_->AddItem(menu_item->id(), menu_item->label_);

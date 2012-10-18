@@ -67,7 +67,6 @@ class Menu : public Base {
   // Platform-independent implementations
   void Create(const base::DictionaryValue& option);
   void Destroy();
-  void SetTitle(const std::string& title);
   void Append(MenuItem* menu_item);
   void Insert(MenuItem* menu_item, int pos);
   void Remove(MenuItem* menu_item, int pos);

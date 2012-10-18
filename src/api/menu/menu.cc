@@ -40,11 +40,7 @@ Menu::~Menu() {
 
 void Menu::Call(const std::string& method,
                 const base::ListValue& arguments) {
-  if (method == "SetTitle") {
-    std::string title;
-    arguments.GetString(0, &title);
-    SetTitle(title);
-  } else if (method == "Append") {
+  if (method == "Append") {
     int object_id = 0;
     arguments.GetInteger(0, &object_id);
     Append(dispatcher_host()->GetObject<MenuItem>(object_id));

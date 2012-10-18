@@ -6,7 +6,7 @@
 <script>
   var gui = require('nw.gui');
 
-  var menu = new gui.Menu({ title: 'Tray Menu' });
+  var menu = new gui.Menu();
 
   menu.append(new gui.MenuItem({ type: 'checkbox', label: 'Sub 1', checked: true, enabled: false }));
   menu.append(new gui.MenuItem({ type: 'checkbox', label: 'Sub 2', checked: false, enabled: true }));

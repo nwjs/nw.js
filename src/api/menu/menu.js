@@ -19,27 +19,10 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 function Menu(option) {
-  if (typeof option != 'object')
-    throw new String('Invalid option.');
-
-  if (!option.hasOwnProperty('title'))
-    throw new String("'title' field is required");
-  else
-    option.title = String(option.title);
-
-  this.setHiddenValue('option', option);
   this.setHiddenValue('items', []);
-  nw.allocateObject(this, option);
+  nw.allocateObject(this, {});
 }
 nw.inherits(Menu, exports.Base);
-
-Menu.prototype.__defineGetter__('title', function() {
-  return this.handleGetter('title');
-});
-
-Menu.prototype.__defineSetter__('title', function(val) {
-  this.handleSetter('title', 'SetTitle', String, val);
-});
 
 Menu.prototype.__defineGetter__('items', function() {
   return this.getHiddenValue('items');

@@ -6,10 +6,9 @@
 <script>
   var gui = require('nw.gui');
 
-  var menu = new gui.Menu({ title: 'Tray Menu' });
+  var menu = new gui.Menu();
   assert(
   menu.items.length == 0,
-  menu.title == 'Tray Menu',
   typeof menu.click == 'undefined',
   'Empty Menu');
 
@@ -95,7 +94,7 @@
     }
   }));
 
-  var submenu = new gui.Menu({ title: 'SubMenu' });
+  var submenu = new gui.Menu();
   submenu.append(new gui.MenuItem({ type: 'checkbox', label: 'Sub 1', checked: true, enabled: false }));
   submenu.append(new gui.MenuItem({ type: 'checkbox', label: 'Sub 2', checked: true, enabled: false }));
   submenu.append(new gui.MenuItem({ type: 'checkbox', label: 'Sub 3', checked: true, enabled: false }));

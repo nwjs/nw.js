@@ -33,20 +33,12 @@
 namespace api {
 
 void Menu::Create(const base::DictionaryValue& option) {
-  std::string title;
-  option.GetString("title", &title);
-
-  menu_ = [[NSMenu alloc]
-      initWithTitle:[NSString stringWithUTF8String:title.c_str()]];
+  menu_ = [[NSMenu alloc] initWithTitle:@"NW Menu"];
   [menu_ setAutoenablesItems:NO];
 }
 
 void Menu::Destroy() {
   [menu_ release];
-}
-
-void Menu::SetTitle(const std::string& title) {
-  [menu_ setTitle:[NSString stringWithUTF8String:title.c_str()]];
 }
 
 void Menu::Append(MenuItem* menu_item) {
