@@ -22,6 +22,7 @@
 #define CONTENT_NW_SRC_API_MENU_MENU_H_ 
 
 #include "base/compiler_specific.h"
+#include "base/memory/scoped_ptr.h"
 #include "content/nw/src/api/base/base.h"
 
 #include <string>
@@ -36,8 +37,10 @@ class NSMenu;
 #elif defined(TOOLKIT_GTK)
 #include <gtk/gtk.h>
 #elif defined(OS_WIN)
-#include <windows.h>
-#endif  // defined(OS_MACOSX)
+#include "content/nw/src/api/menu/menu_delegate_win.h"
+#include "ui/views/controls/menu/menu_model_adapter.h"
+#include "ui/views/controls/menu/menu_runner.h"
+#endif
 
 namespace content {
 class Shell;
@@ -75,7 +78,15 @@ class Menu : public Base {
 #elif defined(TOOLKIT_GTK)
   GtkWidget* menu_;
 #elif defined(OS_WIN)
-  HMENU menu_;
+  // Flag to indicate the menu has been modified since last show, so we should
+  // rebuild the menu before next show.
+  bool is_menu_modified_;
+
+  scoped_ptr<MenuDelegate> menu_delegate_;
+  scoped_ptr<ui::SimpleMenuModel> menu_model_;
+  scoped_ptr<views::MenuModelAdapter> menu_model_adapter_;
+  views::MenuItemView* menu_;   // Owned by menu_runner_.
+  scoped_ptr<views::MenuRunner> menu_runner_;
 #endif
 
   DISALLOW_COPY_AND_ASSIGN(Menu);

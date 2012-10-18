@@ -30,7 +30,11 @@
 class GURL;
 
 namespace base {
-  class DictionaryValue;
+class DictionaryValue;
+}
+
+namespace gfx {
+class Image;
 }
 
 namespace nw {
@@ -46,6 +50,9 @@ class Package {
 
   // Convert path to absoulte path.
   FilePath ConvertToAbsoutePath(const FilePath& path);
+
+  // Get Image from icon path.
+  bool GetImage(const FilePath& path, gfx::Image* image);
 
   // Get startup url.
   GURL GetStartupURL();

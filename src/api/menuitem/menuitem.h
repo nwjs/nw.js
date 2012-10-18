@@ -38,7 +38,8 @@ class MenuItemDelegate;
 #include <gtk/gtk.h>
 #include "ui/base/gtk/gtk_signal.h"
 #elif defined(OS_WIN)
-#include <windows.h>
+#include "base/string16.h"
+#include "ui/gfx/image/image.h"
 #endif  // defined(OS_MACOSX)
 
 namespace api {
@@ -57,6 +58,8 @@ class MenuItem : public Base {
 
 #if defined(OS_MACOSX)
   bool is_checkbox() const { return is_checkbox_; }
+#elif defined(OS_WIN)
+  void OnClick();
 #endif
 
  private:
@@ -93,7 +96,18 @@ class MenuItem : public Base {
   // Callback invoked when user left-clicks on the menu item.
   CHROMEGTK_CALLBACK_0(MenuItem, void, OnClick);
 #elif defined(OS_WIN)
+  friend class MenuDelegate;
 
+  // Flag to indicate we need refresh.
+  bool is_modified_;
+
+  // Item attributes.
+  bool is_checked_;
+  bool is_enabled_;
+  gfx::Image icon_;
+  std::string type_;
+  string16 label_;
+  string16 tooltip_;
 #endif
 
   DISALLOW_COPY_AND_ASSIGN(MenuItem);

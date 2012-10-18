@@ -21,10 +21,22 @@
 #include "content/nw/src/api/menu/menu.h"
 
 #include "content/nw/src/api/menuitem/menuitem.h"
+#include "content/nw/src/browser/native_window_win.h"
+#include "content/nw/src/nw_shell.h"
+#include "content/public/browser/web_contents.h"
+#include "content/public/browser/web_contents_view.h"
+#include "ui/views/widget/widget.h"
 
 namespace api {
 
 void Menu::Create(const base::DictionaryValue& option) {
+  is_menu_modified_ = true;
+  menu_delegate_.reset(new MenuDelegate(dispatcher_host()));
+  menu_model_.reset(new ui::SimpleMenuModel(menu_delegate_.get()));
+  menu_model_adapter_.reset(new views::MenuModelAdapter(menu_model_.get()));
+  menu_ = new views::MenuItemView(menu_model_adapter_.get());
+  menu_runner_.reset(new views::MenuRunner(menu_));
+  menu_model_adapter_->BuildMenu(menu_);
 }
 
 void Menu::Destroy() {
@@ -34,15 +46,50 @@ void Menu::SetTitle(const std::string& title) {
 }
 
 void Menu::Append(MenuItem* menu_item) {
+  if (menu_item->type_ == "normal")
+    menu_model_->AddItem(menu_item->id(), menu_item->label_);
+  else if (menu_item->type_ == "checkbox")
+    menu_model_->AddCheckItem(menu_item->id(), menu_item->label_);
+  else if (menu_item->type_ == "separator")
+    menu_model_->AddSeparator(ui::NORMAL_SEPARATOR);
+
+  is_menu_modified_ = true;
 }
 
 void Menu::Insert(MenuItem* menu_item, int pos) {
+  if (menu_item->type_ == "normal")
+    menu_model_->InsertItemAt(pos, menu_item->id(), menu_item->label_);
+  else if (menu_item->type_ == "checkbox")
+    menu_model_->InsertCheckItemAt(pos, menu_item->id(), menu_item->label_);
+  else if (menu_item->type_ == "separator")
+    menu_model_->InsertSeparatorAt(pos, ui::NORMAL_SEPARATOR);
+
+  is_menu_modified_ = true;
 }
 
 void Menu::Remove(MenuItem* menu_item, int pos) {
+  menu_model_->RemoveAt(pos);
+  is_menu_modified_ = true;
 }
 
 void Menu::Popup(int x, int y, content::Shell* shell) {
+  if (is_menu_modified_) {
+    // Refresh menu before show.
+    menu_model_adapter_->BuildMenu(menu_);
+    is_menu_modified_ = false;
+  }
+
+  // Map point from document to screen.
+  POINT screen_point = { x, y };
+  ClientToScreen(shell->web_contents()->GetView()->GetNativeView(),
+                 &screen_point);
+
+  views::Widget* window = static_cast<nw::NativeWindowWin*>(
+      shell->window())->window();
+  menu_runner_->RunMenuAt(window, NULL,
+                          gfx::Rect(screen_point.x, screen_point.y, 0, 0),
+                          views::MenuItemView::TOPLEFT,
+                          views::MenuRunner::CONTEXT_MENU);
 }
 
 }  // namespace api

@@ -20,29 +20,69 @@
 
 #include "content/nw/src/api/menuitem/menuitem.h"
 
+#include "base/file_path.h"
+#include "base/utf_string_conversions.h"
+#include "base/values.h"
+#include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"
+#include "content/nw/src/nw_package.h"
+#include "content/nw/src/nw_shell.h"
 
 namespace api {
 
 void MenuItem::Create(const base::DictionaryValue& option) {
+  is_modified_ = false;
+  is_checked_ = false;
+  is_enabled_ = true;
+  type_ = "normal";
+
+  option.GetString("type", &type_);
+  option.GetString("label", &label_);
+  option.GetString("tooltip", &tooltip_);
+  option.GetBoolean("checked", &is_checked_);
+  option.GetBoolean("enabled", &is_enabled_);
+
+  std::string icon;
+  if (option.GetString("icon", &icon) && !icon.empty())
+    SetIcon(icon);
 } 
 
 void MenuItem::Destroy() {
 }
 
+void MenuItem::OnClick() {
+  base::ListValue args;
+  dispatcher_host()->SendEvent(this, "click", args);
+}
+
 void MenuItem::SetLabel(const std::string& label) {
+  is_modified_ = true;
+  label_ = UTF8ToUTF16(label);
 }
 
 void MenuItem::SetIcon(const std::string& icon) {
+  is_modified_ = true;
+  if (icon.empty()) {
+    icon_ = gfx::Image();
+    return;
+  }
+
+  content::Shell* shell = content::Shell::FromRenderViewHost(
+      dispatcher_host()->render_view_host());
+  nw::Package* package = shell->GetPackage();
+  package->GetImage(FilePath::FromUTF8Unsafe(icon), &icon_);
 }
 
 void MenuItem::SetTooltip(const std::string& tooltip) {
+  tooltip_ = UTF8ToUTF16(tooltip);
 }
 
 void MenuItem::SetEnabled(bool enabled) {
+  is_enabled_ = enabled;
 }
 
 void MenuItem::SetChecked(bool checked) {
+  is_checked_ = checked;
 }
 
 void MenuItem::SetSubmenu(Menu* sub_menu) {

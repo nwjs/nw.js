@@ -80,6 +80,8 @@
         'src/api/object_life_monitor.h',
         'src/api/menu/menu.cc',
         'src/api/menu/menu.h',
+        'src/api/menu/menu_delegate_win.cc',
+        'src/api/menu/menu_delegate_win.h',
         'src/api/menu/menu_gtk.cc',
         'src/api/menu/menu_mac.mm',
         'src/api/menu/menu_win.cc',

@@ -47,6 +47,7 @@ class NativeWindowWin : public NativeWindow,
 
   SkRegion* draggable_region() { return draggable_region_.get(); }
   NativeWindowToolbarWin* toolbar() { return toolbar_; }
+  views::Widget* window() { return window_; }
 
   // NativeWindow implementation.
   virtual void Close() OVERRIDE;
