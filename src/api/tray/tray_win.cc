@@ -30,14 +30,13 @@
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
+#include "ui/gfx/image/image.h"
 
 namespace api {
 
-namespace {
-
 class TrayObserver : public StatusIconObserver {
  public:
-  TrayObserver(content::Shell shell)
+  TrayObserver(content::Shell* shell)
       : shell_(shell) {
   }
 
@@ -51,8 +50,6 @@ class TrayObserver : public StatusIconObserver {
  private:
   content::Shell* shell_;
 };
-
-}  // namespace
 
 void Tray::Create(const base::DictionaryValue& option) {
   if (!status_tray_)
@@ -87,11 +84,12 @@ void Tray::SetIcon(const std::string& path) {
   nw::Package* package = shell->GetPackage();
   package->GetImage(FilePath::FromUTF8Unsafe(path), &icon);
 
-  status_icon_->SetImage(*icon.ToImageSkia());
+  if (!icon.IsEmpty())
+    status_icon_->SetImage(*icon.ToImageSkia());
 }
 
 void Tray::SetTooltip(const std::string& tooltip) {
-  status_icon_->SetTooltip(UTF8ToUTF16(tooltip));
+  status_icon_->SetToolTip(UTF8ToUTF16(tooltip));
 }
 
 void Tray::SetMenu(Menu* menu) {

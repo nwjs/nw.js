@@ -38,12 +38,12 @@ class NSStatusItem;
 #elif defined(OS_WIN)
 class StatusIcon;
 class StatusTray;
-class TrayObserver;
 #endif  // defined(OS_MACOSX)
 
 namespace api {
 
 class Menu;
+class TrayObserver;
 
 class Tray : public Base {
  public:
@@ -86,7 +86,7 @@ class Tray : public Base {
   StatusIcon* status_icon_;
 
   // Click observer.
-  TrayObserver status_observer_;
+  TrayObserver* status_observer_;
 #endif
 
   DISALLOW_COPY_AND_ASSIGN(Tray);
