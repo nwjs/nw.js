@@ -34,21 +34,24 @@
 
 namespace api {
 
+StatusTray* Tray::status_tray_ = NULL;
+
 class TrayObserver : public StatusIconObserver {
  public:
-  TrayObserver(content::Shell* shell)
-      : shell_(shell) {
+  TrayObserver(Tray* tray)
+      : tray_(tray) {
   }
 
   virtual ~TrayObserver() {
   }
 
   virtual void OnStatusIconClicked() OVERRIDE {
-    shell_->SendEvent("click");
+    base::ListValue args;
+    tray_->dispatcher_host()->SendEvent(tray_, "click", args);
   }
 
  private:
-  content::Shell* shell_;
+  Tray* tray_;
 };
 
 void Tray::Create(const base::DictionaryValue& option) {
@@ -56,10 +59,7 @@ void Tray::Create(const base::DictionaryValue& option) {
     status_tray_ = StatusTray::Create();
 
   status_icon_ = status_tray_->CreateStatusIcon();
-
-  content::Shell* shell = content::Shell::FromRenderViewHost(
-      dispatcher_host()->render_view_host());
-  status_observer_ = new TrayObserver(shell);
+  status_observer_ = new TrayObserver(this);
   status_icon_->AddObserver(status_observer_);
 }
 
@@ -67,9 +67,6 @@ void Tray::ShowAfterCreate() {
 }
 
 void Tray::Destroy() {
-  status_icon_->RemoveObserver(status_observer_);
-  delete status_observer_;
-
   if (status_icon_)
     Remove();
 }
@@ -98,6 +95,9 @@ void Tray::SetMenu(Menu* menu) {
 
 void Tray::Remove() {
   if (status_icon_) {
+    status_icon_->RemoveObserver(status_observer_);
+    delete status_observer_;
+
     status_tray_->RemoveStatusIcon(status_icon_);
     status_icon_ = NULL;
   }

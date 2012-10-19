@@ -21,6 +21,7 @@
 #include "content/nw/src/api/tray/tray.h"
 
 #include "base/values.h"
+#include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"
 
 namespace api {
@@ -65,6 +66,8 @@ void Tray::Remove() {
 }
 
 void Tray::OnClick(GtkWidget* widget) {
+  base::ListValue args;
+  dispatcher_host()->SendEvent(this, "click", args);
 }
 
 void Tray::OnPopupMenu(GtkWidget* widget, guint button, guint time) {

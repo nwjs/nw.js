@@ -27,8 +27,6 @@
 
 namespace api {
 
-StatusTray* Tray::status_tray_ = NULL;
-
 Tray::Tray(int id,
            DispatcherHost* dispatcher_host,
            const base::DictionaryValue& option)
