@@ -36,7 +36,9 @@ class NSStatusItem;
 #include <gtk/gtk.h>
 #include "ui/base/gtk/gtk_signal.h"
 #elif defined(OS_WIN)
-#include <windows.h>
+class StatusIcon;
+class StatusTray;
+class TrayObserver;
 #endif  // defined(OS_MACOSX)
 
 namespace api {
@@ -77,7 +79,14 @@ class Tray : public Base {
   // Callback invoked when user right-clicks on the status icon.
   CHROMEGTK_CALLBACK_2(Tray, void, OnPopupMenu, guint, guint);
 #elif defined(OS_WIN)
-   
+  // The global presentation of system tray.
+  static StatusTray* status_tray_;
+
+  // The icons on the system tray.
+  StatusIcon* status_icon_;
+
+  // Click observer.
+  TrayObserver status_observer_;
 #endif
 
   DISALLOW_COPY_AND_ASSIGN(Tray);

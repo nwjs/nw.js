@@ -21,10 +21,13 @@
 #include "content/nw/src/api/tray/tray.h"
 
 #include "base/values.h"
+#include "chrome/browser/status_icons/status_tray.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"
 
 namespace api {
+
+StatusTray* Tray::status_tray_ = NULL;
 
 Tray::Tray(int id,
            DispatcherHost* dispatcher_host,
