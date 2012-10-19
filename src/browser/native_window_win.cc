@@ -243,14 +243,16 @@ NativeWindowWin::NativeWindowWin(content::Shell* shell,
   params.remove_standard_frame = !has_frame();
   params.use_system_default_icon = true;
   window_->Init(params);
-  window_->set_frame_type(views::Widget::FRAME_TYPE_FORCE_CUSTOM);
 
   views::WidgetFocusManager::GetInstance()->AddFocusChangeListener(this);
 
   int width, height;
   manifest->GetInteger(switches::kmWidth, &width);
   manifest->GetInteger(switches::kmHeight, &height);
-  window_->SetBounds(gfx::Rect(width, height));
+  gfx::Rect window_bounds = 
+    window_->non_client_view()->GetWindowBoundsForClientBounds(
+        gfx::Rect(width,height));
+  window_->SetBounds(window_bounds);
 
   window_->UpdateWindowIcon();
 
