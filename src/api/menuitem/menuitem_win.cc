@@ -56,6 +56,11 @@ void MenuItem::Destroy() {
 }
 
 void MenuItem::OnClick() {
+  // Automatically flip checkbox.
+  if (type_ == "checkbox")
+    is_checked_ = !is_checked_;
+
+  // Send event.
   base::ListValue args;
   dispatcher_host()->SendEvent(this, "click", args);
 }
