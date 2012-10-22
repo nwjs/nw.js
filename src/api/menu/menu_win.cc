@@ -25,6 +25,7 @@
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
+#include "ui/views/controls/menu/menu_2.h"
 #include "ui/views/widget/widget.h"
 
 namespace api {
@@ -33,10 +34,7 @@ void Menu::Create(const base::DictionaryValue& option) {
   is_menu_modified_ = true;
   menu_delegate_.reset(new MenuDelegate(dispatcher_host()));
   menu_model_.reset(new ui::SimpleMenuModel(menu_delegate_.get()));
-  menu_model_adapter_.reset(new views::MenuModelAdapter(menu_model_.get()));
-  menu_ = new views::MenuItemView(menu_model_adapter_.get());
-  menu_runner_.reset(new views::MenuRunner(menu_));
-  menu_model_adapter_->BuildMenu(menu_);
+  menu_.reset(new views::NativeMenuWin(menu_model_.get(), NULL));
 }
 
 void Menu::Destroy() {
@@ -78,7 +76,7 @@ void Menu::Remove(MenuItem* menu_item, int pos) {
 void Menu::Popup(int x, int y, content::Shell* shell) {
   if (is_menu_modified_) {
     // Refresh menu before show.
-    menu_model_adapter_->BuildMenu(menu_);
+    menu_->Rebuild();
     is_menu_modified_ = false;
   }
 
@@ -87,12 +85,8 @@ void Menu::Popup(int x, int y, content::Shell* shell) {
   ClientToScreen(shell->web_contents()->GetView()->GetNativeView(),
                  &screen_point);
 
-  views::Widget* window = static_cast<nw::NativeWindowWin*>(
-      shell->window())->window();
-  menu_runner_->RunMenuAt(window, NULL,
-                          gfx::Rect(screen_point.x, screen_point.y, 0, 0),
-                          views::MenuItemView::TOPLEFT,
-                          views::MenuRunner::CONTEXT_MENU);
+  menu_->RunMenuAt(gfx::Point(screen_point.x, screen_point.y),
+                   views::Menu2::ALIGN_TOPLEFT);
 }
 
 }  // namespace api

@@ -46,6 +46,8 @@ class MenuDelegate : public ui::SimpleMenuModel::Delegate {
 
   virtual void ExecuteCommand(int command_id) OVERRIDE;
 
+  virtual bool HasIcon(int command_id) OVERRIDE;
+
  private:
   DispatcherHost* dispatcher_host_;
 

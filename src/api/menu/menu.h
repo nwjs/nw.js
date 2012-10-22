@@ -38,8 +38,7 @@ class NSMenu;
 #include <gtk/gtk.h>
 #elif defined(OS_WIN)
 #include "content/nw/src/api/menu/menu_delegate_win.h"
-#include "ui/views/controls/menu/menu_model_adapter.h"
-#include "ui/views/controls/menu/menu_runner.h"
+#include "ui/views/controls/menu/native_menu_win.h"
 #endif
 
 namespace content {
@@ -83,9 +82,7 @@ class Menu : public Base {
 
   scoped_ptr<MenuDelegate> menu_delegate_;
   scoped_ptr<ui::SimpleMenuModel> menu_model_;
-  scoped_ptr<views::MenuModelAdapter> menu_model_adapter_;
-  views::MenuItemView* menu_;   // Owned by menu_runner_.
-  scoped_ptr<views::MenuRunner> menu_runner_;
+  scoped_ptr<views::NativeMenuWin> menu_;
 #endif
 
   DISALLOW_COPY_AND_ASSIGN(Menu);
