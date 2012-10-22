@@ -31,6 +31,7 @@ namespace api {
 void MenuItem::Create(const base::DictionaryValue& option) {
   std::string type;
   option.GetString("type", &type);
+  type_ = type;
 
   if (type == "separator") {
     menu_item_ = [NSMenuItem separatorItem];
@@ -50,9 +51,7 @@ void MenuItem::Create(const base::DictionaryValue& option) {
     delegate_ = [[MenuItemDelegate alloc] initWithMenuItem:this];
     [menu_item_ setTarget:delegate_];
 
-    is_checkbox_ = false;
     if (type == "checkbox") {
-      is_checkbox_ = true;
       bool checked = false;
       option.GetBoolean("checked", &checked);
       SetChecked(checked);
@@ -74,6 +73,16 @@ void MenuItem::Create(const base::DictionaryValue& option) {
     if (option.GetInteger("submenu", &menu_id))
       SetSubmenu(dispatcher_host()->GetObject<Menu>(menu_id));
   }
+}
+
+void MenuItem::OnClick() {
+  if (type_ != "checkbox")
+    return;
+
+  if ([menu_item_ state] == NSOffState)
+    [menu_item_ setState:NSOnState];
+  else
+    [menu_item_ setState:NSOffState];
 }
 
 void MenuItem::Destroy() {
