@@ -35,9 +35,7 @@
 }
 
 -(void)invoke: (id)sender {
-  // Automatically set the checked flag.
-  if (menu_item_->is_checkbox())
-    menu_item_->SetChecked(true);
+  menu_item_->OnClick();
 
   // Send event.
   base::ListValue args;

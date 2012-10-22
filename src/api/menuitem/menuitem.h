@@ -56,9 +56,7 @@ class MenuItem : public Base {
   virtual void Call(const std::string& method,
                     const base::ListValue& arguments) OVERRIDE;
 
-#if defined(OS_MACOSX)
-  bool is_checkbox() const { return is_checkbox_; }
-#elif defined(OS_WIN)
+#if defined(OS_MACOSX) || defined(OS_WIN)
   void OnClick();
 #endif
 
@@ -72,21 +70,14 @@ class MenuItem : public Base {
   void SetIcon(const std::string& icon);
   void SetTooltip(const std::string& tooltip);
   void SetEnabled(bool enabled);
-#if defined(OS_MACOSX)
- public:
-#endif
   void SetChecked(bool checked);
-#if defined(OS_MACOSX)
- private:
-#endif
   void SetSubmenu(Menu* sub_menu);
 
 #if defined(OS_MACOSX)
+  std::string type_;
+
   NSMenuItem* menu_item_;
   MenuItemDelegate* delegate_;
-
-  // Remember whether it's a checkbox.
-  bool is_checkbox_;
 #elif defined(TOOLKIT_GTK)
   GtkWidget* menu_item_;
 
