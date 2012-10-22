@@ -75,11 +75,10 @@ void NativeWindowToolbarWin::Layout() {
                               sz.height());
 
   // Stretch url entry.
-  sz = url_entry_->GetPreferredSize();
   url_entry_->SetBounds(x,
-                        (height() - sz.height()) / 2,
+                        (height() - 24) / 2,
                         devtools_button_->x() - kButtonMargin - x,
-                        sz.height());
+                        24);
 }
 
 void NativeWindowToolbarWin::ViewHierarchyChanged(bool is_add,
