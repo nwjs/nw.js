@@ -57,6 +57,11 @@ class MediaInternals : public content::MediaObserver {
       int render_process_id,
       int render_view_id,
       const content::MediaStreamDevices& devices) OVERRIDE;
+  virtual void OnMediaRequestStateChanged(
+      int render_process_id,
+      int render_view_id,
+      const content::MediaStreamDevice& device,
+      content::MediaRequestState state) OVERRIDE;
 
  private:
   friend struct DefaultSingletonTraits<MediaInternals>;

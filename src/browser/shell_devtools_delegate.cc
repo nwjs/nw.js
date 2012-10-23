@@ -20,7 +20,9 @@
 
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 
+#include "content/nw/src/nw_shell.h"
 #include "content/public/browser/devtools_http_handler.h"
+#include "content/public/browser/web_contents.h"
 #include "grit/nw_resources.h"
 #include "net/base/tcp_listen_socket.h"
 #include "net/url_request/url_request_context_getter.h"
@@ -29,7 +31,9 @@
 
 namespace content {
 
-ShellDevToolsDelegate::ShellDevToolsDelegate(int port) {
+ShellDevToolsDelegate::ShellDevToolsDelegate(BrowserContext* browser_context,
+                                             int port)
+    : browser_context_(browser_context) {
   devtools_http_handler_ = DevToolsHttpHandler::Start(
       new net::TCPListenSocketFactory("127.0.0.1", port),
       "",
@@ -60,6 +64,15 @@ FilePath ShellDevToolsDelegate::GetDebugFrontendDir() {
 
 std::string ShellDevToolsDelegate::GetPageThumbnailData(const GURL& url) {
   return "";
+}
+
+RenderViewHost* ShellDevToolsDelegate::CreateNewTarget() {
+  Shell* shell = Shell::Create(browser_context_,
+                               GURL("nw:blank"),
+                               NULL,
+                               MSG_ROUTING_NONE,
+                               NULL);
+  return shell->web_contents()->GetRenderViewHost();
 }
 
 }  // namespace content

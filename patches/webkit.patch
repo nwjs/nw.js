@@ -1,8 +1,8 @@
 diff --git a/Source/WebCore/bindings/v8/ScriptController.cpp b/Source/WebCore/bindings/v8/ScriptController.cpp
-index 9b967d9..3c672a0 100644
+index b2a9b96..d59cfe5 100644
 --- a/Source/WebCore/bindings/v8/ScriptController.cpp
 +++ b/Source/WebCore/bindings/v8/ScriptController.cpp
-@@ -178,7 +178,8 @@ void ScriptController::updatePlatformScriptObjects()
+@@ -177,7 +177,8 @@ void ScriptController::updatePlatformScriptObjects()
  
  bool ScriptController::processingUserGesture()
  {
@@ -13,10 +13,10 @@ index 9b967d9..3c672a0 100644
  
  v8::Local<v8::Value> ScriptController::callFunction(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-index 1936ae8..4835851 100644
+index de65721..f57f76e 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 +++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-@@ -509,6 +509,9 @@ void V8DOMWindowShell::clearDocumentProperty()
+@@ -518,6 +518,9 @@ void V8DOMWindowShell::clearDocumentProperty()
  
  void V8DOMWindowShell::setSecurityToken()
  {
@@ -40,16 +40,16 @@ index 64c6c8a..aeeaccd 100644
  #endif
  
 diff --git a/Source/WebCore/fileapi/File.idl b/Source/WebCore/fileapi/File.idl
-index 7c0de43..1a22eb5 100644
+index ddfb9a2..f67f1f5 100644
 --- a/Source/WebCore/fileapi/File.idl
 +++ b/Source/WebCore/fileapi/File.idl
-@@ -31,6 +31,7 @@ module html {
-         JSNoStaticTables
-     ] File : Blob {
-         readonly attribute DOMString name;
-+        readonly attribute DOMString path;
+@@ -29,6 +29,7 @@
+     JSNoStaticTables
+ ] interface File : Blob {
+     readonly attribute DOMString name;
++    readonly attribute DOMString path;
  #if !defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT
-         readonly attribute Date lastModifiedDate;
+     readonly attribute Date lastModifiedDate;
  #endif
 diff --git a/Source/WebCore/html/FileInputType.cpp b/Source/WebCore/html/FileInputType.cpp
 index 89fcc87..eafbfd3 100644
@@ -108,22 +108,22 @@ index 459078f..bfa3636 100644
  onabort
  onbeforecopy
 diff --git a/Source/WebCore/html/HTMLInputElement.idl b/Source/WebCore/html/HTMLInputElement.idl
-index 4266b4f..5e14343 100644
+index 4a86fe2..bffed45 100644
 --- a/Source/WebCore/html/HTMLInputElement.idl
 +++ b/Source/WebCore/html/HTMLInputElement.idl
-@@ -91,6 +91,7 @@ module html {
-         // Non-standard attributes
-         attribute [Reflect] DOMString align;
-         attribute [Conditional=DIRECTORY_UPLOAD, Reflect] boolean webkitdirectory;
-+        attribute [Reflect] boolean nwdirectory;
-         attribute [Reflect] DOMString useMap;
-         attribute [Reflect] boolean incremental;
-         attribute [Conditional=INPUT_SPEECH, Reflect, V8EnabledAtRuntime] boolean webkitSpeech;
+@@ -96,6 +96,7 @@ interface HTMLInputElement : HTMLElement {
+     // Non-standard attributes
+     [Reflect] attribute DOMString align;
+     [Conditional=DIRECTORY_UPLOAD, Reflect] attribute boolean webkitdirectory;
++    [Reflect] attribute boolean nwdirectory;
+     [Reflect] attribute DOMString useMap;
+     [Reflect] attribute boolean incremental;
+     [Conditional=INPUT_SPEECH, Reflect, V8EnabledAtRuntime] attribute boolean webkitSpeech;
 diff --git a/Source/WebCore/loader/EmptyClients.h b/Source/WebCore/loader/EmptyClients.h
-index 3902790..a245857 100644
+index 9c2c23d..3863710 100644
 --- a/Source/WebCore/loader/EmptyClients.h
 +++ b/Source/WebCore/loader/EmptyClients.h
-@@ -364,6 +364,7 @@ public:
+@@ -365,6 +365,7 @@ public:
  #if USE(V8)
      virtual void didCreateScriptContext(v8::Handle<v8::Context>, int extensionGroup, int worldId) { }
      virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int worldId) { }
@@ -132,10 +132,10 @@ index 3902790..a245857 100644
  #endif
  
 diff --git a/Source/WebCore/loader/FrameLoaderClient.h b/Source/WebCore/loader/FrameLoaderClient.h
-index 703fd3b..1d910b3 100644
+index 4f2388a..5d86756 100644
 --- a/Source/WebCore/loader/FrameLoaderClient.h
 +++ b/Source/WebCore/loader/FrameLoaderClient.h
-@@ -285,6 +285,7 @@ namespace WebCore {
+@@ -286,6 +286,7 @@ namespace WebCore {
  #if USE(V8)
          virtual void didCreateScriptContext(v8::Handle<v8::Context>, int extensionGroup, int worldId) = 0;
          virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int worldId) = 0;
@@ -144,7 +144,7 @@ index 703fd3b..1d910b3 100644
  #endif
  
 diff --git a/Source/WebCore/page/DOMWindow.cpp b/Source/WebCore/page/DOMWindow.cpp
-index 71ade41..df038ea 100644
+index faa4ba0..0748173 100644
 --- a/Source/WebCore/page/DOMWindow.cpp
 +++ b/Source/WebCore/page/DOMWindow.cpp
 @@ -908,6 +908,8 @@ void DOMWindow::focus(ScriptExecutionContext* context)
@@ -168,7 +168,7 @@ index 71ade41..df038ea 100644
      if (m_frame != page->mainFrame())
          return;
 diff --git a/Source/WebCore/page/FrameView.cpp b/Source/WebCore/page/FrameView.cpp
-index 659c9c9..6cdf8ed 100644
+index 2d312a3..7492377 100644
 --- a/Source/WebCore/page/FrameView.cpp
 +++ b/Source/WebCore/page/FrameView.cpp
 @@ -202,10 +202,12 @@ FrameView::FrameView(Frame* frame)
@@ -255,7 +255,7 @@ index 73980bf..777fb12 100644
  
      // Geometry notifications ----------------------------------------------
 diff --git a/Source/WebKit/chromium/src/ChromeClientImpl.cpp b/Source/WebKit/chromium/src/ChromeClientImpl.cpp
-index 65810b9..5e6c226 100644
+index 9d0961c4..5a3bcae 100644
 --- a/Source/WebKit/chromium/src/ChromeClientImpl.cpp
 +++ b/Source/WebKit/chromium/src/ChromeClientImpl.cpp
 @@ -722,10 +722,12 @@ void ChromeClientImpl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileCh
@@ -292,7 +292,7 @@ index 49e780b..42b8a9a 100644
  
  bool FrameLoaderClientImpl::allowScriptExtension(const String& extensionName,
 diff --git a/Source/WebKit/chromium/src/FrameLoaderClientImpl.h b/Source/WebKit/chromium/src/FrameLoaderClientImpl.h
-index f2c4d07..b0939ef 100644
+index 12a76fe..981c689 100644
 --- a/Source/WebKit/chromium/src/FrameLoaderClientImpl.h
 +++ b/Source/WebKit/chromium/src/FrameLoaderClientImpl.h
 @@ -67,6 +67,7 @@ public:

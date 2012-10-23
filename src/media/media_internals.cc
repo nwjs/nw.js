@@ -63,4 +63,11 @@ void MediaInternals::OnCaptureDevicesClosed(
     const content::MediaStreamDevices& devices) {
 }
 
+void MediaInternals::OnMediaRequestStateChanged(
+    int render_process_id,
+    int render_view_id,
+    const content::MediaStreamDevice& device,
+    content::MediaRequestState state) {
+}
+
 MediaInternals::MediaInternals() {}

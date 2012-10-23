@@ -55,12 +55,6 @@ void Dispatcher::DraggableRegionsChanged(WebKit::WebFrame* frame) {
     extensions::DraggableRegion region;
     region.bounds = webregions[i].bounds;
     region.draggable = webregions[i].draggable;
-
-    // TODO(jianli): to be removed after WebKit patch that changes the draggable
-    // region syntax is landed.
-    region.label = UTF16ToASCII(webregions[i].label);
-    region.clip = webregions[i].clip;
-
     regions.push_back(region);
   }
   Send(new ShellViewHostMsg_UpdateDraggableRegions(routing_id(), regions));

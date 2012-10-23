@@ -112,7 +112,7 @@ void ShellBrowserMainParts::Init() {
       DLOG(WARNING) << "Invalid http debugger port number " << temp_port;
     }
   }
-  devtools_delegate_ = new ShellDevToolsDelegate(port);
+  devtools_delegate_ = new ShellDevToolsDelegate(browser_context_.get(), port);
 
   Shell::Create(browser_context_.get(),
                 package()->GetStartupURL(),

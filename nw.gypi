@@ -37,6 +37,7 @@
         '<(DEPTH)/ui/ui.gyp:ui',
         '<(DEPTH)/v8/tools/gyp/v8.gyp:v8',
         '<(DEPTH)/webkit/support/webkit_support.gyp:webkit_support',
+        '<(DEPTH)/third_party/zlib/zlib.gyp:minizip',
         '<(webkit_src_dir)/Source/WebKit/chromium/WebKit.gyp:webkit',
         'nw_resources',
       ],

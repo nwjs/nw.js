@@ -27,17 +27,14 @@
 #include "base/compiler_specific.h"
 #include "content/public/browser/devtools_http_handler_delegate.h"
 
-namespace net {
-class URLRequestContextGetter;
-}
-
 namespace content {
 
+class BrowserContext;
 class DevToolsHttpHandler;
 
 class ShellDevToolsDelegate : public DevToolsHttpHandlerDelegate {
  public:
-  explicit ShellDevToolsDelegate(int port);
+  ShellDevToolsDelegate(BrowserContext* browser_context, int port);
   virtual ~ShellDevToolsDelegate();
 
   // Stops http server.
@@ -48,12 +45,14 @@ class ShellDevToolsDelegate : public DevToolsHttpHandlerDelegate {
   virtual bool BundlesFrontendResources() OVERRIDE;
   virtual FilePath GetDebugFrontendDir() OVERRIDE;
   virtual std::string GetPageThumbnailData(const GURL& url) OVERRIDE;
+  virtual RenderViewHost* CreateNewTarget() OVERRIDE;
 
   DevToolsHttpHandler* devtools_http_handler() {
     return devtools_http_handler_;
   }
 
  private:
+  BrowserContext* browser_context_;
   DevToolsHttpHandler* devtools_http_handler_;
 
   DISALLOW_COPY_AND_ASSIGN(ShellDevToolsDelegate);
