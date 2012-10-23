@@ -18,9 +18,9 @@ It's created and developed in Intel Open Source Technology Center.
 
 # Downloads
 
-[v0.2.6 release note](https://groups.google.com/forum/?fromgroups=#!topic/node-webkit/dIYKeL6fPRM)
+[v0.3.0 release note](https://groups.google.com/forum/?fromgroups=#!topic/node-webkit/OL8HhB06Ygs)
 
-Prebuilt binaries (v0.2.6):
+Prebuilt binaries (v0.3.0):
 
 * Linux: [32bit](http://s3.amazonaws.com/node-webkit/nw_release_linux_x32.tar.gz) / [64bit](https://s3.amazonaws.com/node-webkit/nw_release_linux_x64.tar.gz)
 * Windows: [win32](http://s3.amazonaws.com/node-webkit/nw_release_win32.zip)
@@ -28,12 +28,7 @@ Prebuilt binaries (v0.2.6):
 
 [Looking for older versions?](https://github.com/rogerwang/node-webkit/wiki/Downloads-of-old-versions)
 
-Demos:
-
-* [Hello World](http://s3.amazonaws.com/node-webkit/hello_world2.nw)
-* [File Explorer](https://github.com/zcbenz/nw-file-explorer)
-
-And also [List of apps and companies using node-webkit](https://github.com/rogerwang/node-webkit/wiki/List-of-apps-and-companies-using-node-webkit).
+You may also be interested in [our demos repository](https://github.com/zcbenz/nw-sample-apps) and the [List of apps and companies using node-webkit](https://github.com/rogerwang/node-webkit/wiki/List-of-apps-and-companies-using-node-webkit).
 
 # Quick Start
 
@@ -85,7 +80,7 @@ And our [Wiki](https://github.com/rogerwang/node-webkit/wiki) for much more.
 
 # Community
 
-We use [node-webkit | Google Groups](http://groups.google.com/group/node-webkit) as
+We use [node-webkit group](http://groups.google.com/group/node-webkit) as
 our mailing list, subscribe via [node-webkit+subscribe@googlegroups.com](mailto:node-webkit+subscribe@googlegroups.com).
 
 # License
