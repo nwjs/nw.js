@@ -252,7 +252,8 @@ NativeWindowWin::NativeWindowWin(content::Shell* shell,
   gfx::Rect window_bounds = 
     window_->non_client_view()->GetWindowBoundsForClientBounds(
         gfx::Rect(width,height));
-  window_->SetBounds(window_bounds);
+  window_->SetSize(window_bounds.size());
+  window_->CenterWindow(window_bounds.size());
 
   window_->UpdateWindowIcon();
 
