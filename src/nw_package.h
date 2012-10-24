@@ -76,11 +76,22 @@ class Package {
   bool InitFromPath();
   void InitWithDefault();
   bool ExtractPath(FilePath* path);
+  bool ExtractPackage(const FilePath& zip_file, FilePath* where);
 
+  // Convert error info into data url.
+  void ReportError(const std::string& title, const std::string& content);
+
+  // Root path of the package.
   FilePath path_;
+
+  // Is it a standalone and self-extractable app?
   bool self_extract_;
-  bool initialized_;
+
+  // The parsed package.json.
   scoped_ptr<base::DictionaryValue> root_;
+
+  // Stored url for error page.
+  std::string error_page_url_;
 
   DISALLOW_COPY_AND_ASSIGN(Package);
 };

@@ -20,18 +20,21 @@
 
 #include "content/nw/src/nw_package.h"
 
+#include <vector>
+
 #include "base/command_line.h"
 #include "base/file_util.h"
 #include "base/json/json_file_value_serializer.h"
-#include "base/logging.h"
 #include "base/scoped_temp_dir.h"
 #include "base/string_util.h"
-#include "base/string16.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
 #include "chrome/common/zip.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "googleurl/src/gurl.h"
+#include "grit/nw_resources.h"
+#include "net/base/escape.h"
+#include "ui/base/resource/resource_bundle.h"
 #include "ui/gfx/image/image.h"
 #include "ui/gfx/image/image_skia_rep.h"
 #include "webkit/glue/image_decoder.h"
@@ -94,28 +97,6 @@ void RelativePathToURI(FilePath root, base::DictionaryValue* manifest) {
   FilePath main_path = root.Append(FilePath::FromUTF8Unsafe(old));
   manifest->SetString(switches::kmMain,
                       std::string("file://") + main_path.AsUTF8Unsafe());
-}
-
-bool ExtractPackage(const FilePath& zip_file, FilePath* where) {
-  // Auto clean our temporary directory
-  static scoped_ptr<ScopedTempDir> scoped_temp_dir;
-
-#if defined(OS_WIN)
-  if (!file_util::CreateNewTempDirectory(L"nw", where)) {
-#else
-  if (!file_util::CreateNewTempDirectory("nw", where)) {
-#endif
-    LOG(ERROR) << "Unable to create temporary directory.";
-    return false;
-  }
-
-  scoped_temp_dir.reset(new ScopedTempDir());
-  if (!scoped_temp_dir->Set(*where)) {
-    LOG(ERROR) << "Unable to set temporary directory.";
-    return false;
-  }
-
-  return zip::Unzip(zip_file, *where);
 }
 
 }  // namespace
@@ -183,7 +164,11 @@ GURL Package::GetStartupURL() {
     return gurl;
   }
 
-  // Read from manifest
+  // Report if encountered errors.
+  if (!error_page_url_.empty())
+    return GURL(error_page_url_);
+
+  // Read from manifest.
   if (root()->GetString(switches::kmMain, &url))
     return GURL(url);
   else
@@ -212,7 +197,9 @@ bool Package::InitFromPath() {
   FilePath manifest_path = path_.AppendASCII("package.json");
   if (!file_util::PathExists(manifest_path)) {
     if (!self_extract())
-      LOG(ERROR) << "No 'package.json' in package.";
+      ReportError("Invalid package",
+                  "There is no 'package.json' in the package, please make "
+                  "sure the 'package.json' is in the root of the package.");
     return false;
   }
 
@@ -221,13 +208,15 @@ bool Package::InitFromPath() {
   JSONFileValueSerializer serializer(manifest_path);
   scoped_ptr<Value> root(serializer.Deserialize(NULL, &error));
   if (!root.get()) {
-    if (error.empty())
-      LOG(ERROR) << "It's not able to read the manifest file.";
-    else
-      LOG(ERROR) << "Manifest parsing error: " << error;
+    ReportError("Unable to parse package.json",
+                error.empty() ?
+                    "Failed to read the manifest file: " +
+                        manifest_path.AsUTF8Unsafe() :
+                    error);
     return false;
   } else if (!root->IsType(Value::TYPE_DICTIONARY)) {
-    LOG(ERROR) << "Manifest file is invalid, we need a dictionary type";
+    ReportError("Invalid package.json",
+                "package.json's content should be a object type.");
     return false;
   }
 
@@ -241,7 +230,9 @@ bool Package::InitFromPath() {
   };
   for (unsigned i = 0; i < arraysize(required_fields); i++)
     if (!root_->HasKey(required_fields[i])) {
-      LOG(ERROR) << "'" << required_fields[i] << "' field is required.";
+      ReportError("Invalid package.json",
+                  std::string("Field '") + required_fields[i] + "'"
+                      " is required.");
       return false;
     }
 
@@ -274,23 +265,72 @@ void Package::InitWithDefault() {
 bool Package::ExtractPath(FilePath* path) {
   // Convert to absoulute path.
   if (!MakePathAbsolute(&path_)) {
-    LOG(ERROR) << "Cannot make absolute path from " << path_.value();
+    ReportError("Cannot extract package",
+                "Path is invalid: " + path_.AsUTF8Unsafe());
     return false;
   }
 
   // If it's a file then try to extract from it.
   if (!file_util::DirectoryExists(path_)) {
-    DLOG(INFO) << "Extracting packaging...";
     FilePath extracted_path;
     if (ExtractPackage(path_, &extracted_path)) {
       path_ = extracted_path;
     } else if (!self_extract()) {
-      LOG(ERROR) << "Unable to extract package.";
+      ReportError("Cannot extract package",
+                  "Failed to unzip the package file: " + path_.AsUTF8Unsafe());
       return false;
     }
   }
 
   return true;
+}
+
+bool Package::ExtractPackage(const FilePath& zip_file, FilePath* where) {
+  // Auto clean our temporary directory
+  static scoped_ptr<ScopedTempDir> scoped_temp_dir;
+
+#if defined(OS_WIN)
+  if (!file_util::CreateNewTempDirectory(L"nw", where)) {
+#else
+  if (!file_util::CreateNewTempDirectory("nw", where)) {
+#endif
+    ReportError("Cannot extract package",
+                "Unable to create temporary directory.");
+    return false;
+  }
+
+  scoped_temp_dir.reset(new ScopedTempDir());
+  if (!scoped_temp_dir->Set(*where)) {
+    ReportError("Cannot extract package",
+                "Unable to set temporary directory.");
+    return false;
+  }
+
+  return zip::Unzip(zip_file, *where);
+}
+
+void Package::ReportError(const std::string& title,
+                          const std::string& content) {
+  if (!error_page_url_.empty())
+    return;
+
+  const base::StringPiece template_html(
+      ResourceBundle::GetSharedInstance().GetRawDataResource(
+          IDR_NW_ERROR, ui::SCALE_FACTOR_NONE));
+
+  if (template_html.empty()) {
+    // Print hand written error info if nw.pak doesn't exist.
+    NOTREACHED() << "Unable to load error template.";
+    error_page_url_ = "data:text/html;base64,VW5hYmxlIHRvIGZpbmQgbncucGFrLgo=";
+    return;
+  }
+
+  std::vector<std::string> subst;
+  subst.push_back(title);
+  subst.push_back(content);
+  error_page_url_ = "data:text/html;charset=utf-8," + 
+      net::EscapeQueryParamValue(
+          ReplaceStringPlaceholders(template_html, subst, NULL), false);
 }
 
 }  // namespace nw
