@@ -129,6 +129,14 @@ Window.prototype.leaveFullscreen = function() {
   nw.callObjectMethod(this, 'LeaveFullscreen', []);
 }
 
+Window.prototype.enterKioskMode = function() {
+  nw.callObjectMethod(this, 'EnterKioskMode', []);
+}
+
+Window.prototype.leaveKioskMode = function() {
+  nw.callObjectMethod(this, 'LeaveKioskMode', []);
+}
+
 Window.prototype.showDevTools = function() {
   nw.callObjectMethod(this, 'ShowDevTools', []);
 }

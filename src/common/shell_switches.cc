@@ -58,12 +58,23 @@ const char kmMinHeight[]  = "min_height";
 const char kmMaxWidth[]   = "max_width";
 const char kmMaxHeight[]  = "max_height";
 const char kmResizable[]  = "resizable";
-const char kmFullscreen[] = "fullscreen";
 const char kmAsDesktop[]  = "as_desktop";
+const char kmFullscreen[] = "fullscreen";
 
-const char kmWebgl[]     = "webgl";
-const char kmJava[]      = "java";
-const char kmPlugin[]    = "plugin";
+// Start with the kiosk mode, see Opera's page for description:
+// http://www.opera.com/support/mastering/kiosk/
+const char kmKiosk[] = "kiosk";
+
+// Whether we should support WebGL.
+const char kmWebgl[] = "webgl";
+
+// Whether to enable Java applets in web page.
+const char kmJava[] = "java";
+
+// Whether to enable third party NPAPI plugins.
+const char kmPlugin[] = "plugin";
+
+// Whether to enable page caches.
 const char kmPageCache[] = "page-cache";
 
 }  // namespace switches

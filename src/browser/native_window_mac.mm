@@ -325,12 +325,17 @@ void NativeWindowCocoa::SetFullscreen(bool fullscreen) {
     return;
 
   if (base::mac::IsOSLionOrLater()) {
+    is_fullscreen_ = fullscreen;
     [window() toggleFullScreen:nil];
     return;
   }
 
   DCHECK(base::mac::IsOSSnowLeopard());
 
+  SetNonLionFullscreen(fullscreen);
+}
+
+void NativeWindowCocoa::SetNonLionFullscreen(bool fullscreen) {
   // Fade to black.
   const CGDisplayReservationInterval kFadeDurationSeconds = 0.6;
   bool did_fade_out = false;
@@ -416,6 +421,24 @@ void NativeWindowCocoa::FlashFrame(bool flash) {
   } else {
     [NSApp cancelUserAttentionRequest:attention_request_id_];
     attention_request_id_ = 0;
+  }
+}
+
+void NativeWindowCocoa::SetKiosk(bool kiosk) {
+  if (kiosk) {
+    NSApplicationPresentationOptions options =
+        NSApplicationPresentationHideDock +
+        NSApplicationPresentationHideMenuBar + 
+        NSApplicationPresentationDisableAppleMenu +
+        NSApplicationPresentationDisableProcessSwitching +
+        NSApplicationPresentationDisableForceQuit +
+        NSApplicationPresentationDisableSessionTermination +
+        NSApplicationPresentationDisableHideApplication;
+    [NSApp setPresentationOptions:options];
+    SetNonLionFullscreen(true);
+  } else {
+    [NSApp setPresentationOptions:[NSApp currentSystemPresentationOptions]];
+    SetNonLionFullscreen(false);
   }
 }
 

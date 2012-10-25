@@ -52,6 +52,7 @@ class NativeWindowGtk : public NativeWindow {
   virtual void SetPosition(const std::string& position) OVERRIDE;
   virtual void SetTitle(const std::string& title) OVERRIDE;
   virtual void FlashFrame(bool flash) OVERRIDE;
+  virtual void SetKiosk(bool kiosk) OVERRIDE;
   virtual void SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
                                        bool enabled) OVERRIDE;
   virtual void SetToolbarUrlEntry(const std::string& url) OVERRIDE;
@@ -62,11 +63,12 @@ class NativeWindowGtk : public NativeWindow {
  protected:
   // NativeWindow implementation.
   virtual void AddToolbar() OVERRIDE;
-  void SetAsDesktop();
   virtual void UpdateDraggableRegions(
       const std::vector<extensions::DraggableRegion>& regions) OVERRIDE;
   virtual void HandleKeyboardEvent(
       const content::NativeWebKeyboardEvent& event) OVERRIDE;
+
+  void SetAsDesktop();
 
  private:
   // Set WebKit's style from current theme.

@@ -66,6 +66,7 @@ class NativeWindowWin : public NativeWindow,
   virtual void SetPosition(const std::string& position) OVERRIDE;
   virtual void SetTitle(const std::string& title) OVERRIDE;
   virtual void FlashFrame(bool flash) OVERRIDE;
+  virtual void SetKiosk(bool kiosk) OVERRIDE;
   virtual void SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
                                        bool enabled) OVERRIDE;
   virtual void SetToolbarUrlEntry(const std::string& url) OVERRIDE;

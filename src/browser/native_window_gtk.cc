@@ -224,6 +224,10 @@ void NativeWindowGtk::FlashFrame(bool flash) {
   gtk_window_set_urgency_hint(window_, flash);
 }
 
+void NativeWindowGtk::SetKiosk(bool kiosk) {
+  SetFullscreen(kiosk);
+}
+
 void NativeWindowGtk::SetAsDesktop() {
   gtk_window_set_type_hint(window_, GDK_WINDOW_TYPE_HINT_DESKTOP);
   GdkScreen* screen = gtk_window_get_screen(window_);

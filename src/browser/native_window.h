@@ -72,6 +72,7 @@ class NativeWindow {
   virtual void SetPosition(const std::string& position) = 0;
   virtual void SetTitle(const std::string& title) = 0;
   virtual void FlashFrame(bool flash) = 0;
+  virtual void SetKiosk(bool kiosk) = 0;
 
   // Toolbar related controls.
   enum TOOLBAR_BUTTON {

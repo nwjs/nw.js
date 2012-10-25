@@ -56,6 +56,7 @@ class NativeWindowCocoa : public NativeWindow {
   virtual void SetPosition(const std::string& position) OVERRIDE;
   virtual void SetTitle(const std::string& title) OVERRIDE;
   virtual void FlashFrame(bool flash) OVERRIDE;
+  virtual void SetKiosk(bool kiosk) OVERRIDE;
   virtual void SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
                                        bool enabled) OVERRIDE;
   virtual void SetToolbarUrlEntry(const std::string& url) OVERRIDE;
@@ -78,6 +79,8 @@ class NativeWindowCocoa : public NativeWindow {
       const std::vector<extensions::DraggableRegion>& regions) OVERRIDE;
   virtual void HandleKeyboardEvent(
       const content::NativeWebKeyboardEvent& event) OVERRIDE;
+
+  void SetNonLionFullscreen(bool fullscreen);
 
  private:
   void InstallView();

@@ -334,6 +334,10 @@ void NativeWindowWin::FlashFrame(bool flash) {
   window_->FlashFrame(flash);
 }
 
+void NativeWindowWin::SetKiosk(bool kiosk) {
+  SetFullscreen(kiosk);
+}
+
 void NativeWindowWin::SetTitle(const std::string& title) {
   title_ = title;
   window_->UpdateWindowTitle();

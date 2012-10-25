@@ -88,6 +88,10 @@ NativeWindow* NativeWindow::Create(content::Shell* shell,
   if (manifest->GetBoolean(switches::kmFullscreen, &fullscreen) && fullscreen) {
     window->SetFullscreen(true);
   }
+  bool kiosk;
+  if (manifest->GetBoolean(switches::kmKiosk, &kiosk) && kiosk) {
+    window->SetKiosk(kiosk);
+  }
   bool toolbar = true;
   manifest->GetBoolean(switches::kmToolbar, &toolbar);
   if (toolbar) {
