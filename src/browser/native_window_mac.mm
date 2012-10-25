@@ -106,6 +106,7 @@ enum {
 }
 
 - (void)windowDidBecomeKey:(NSNotification *)notification {
+  shell_->web_contents()->Focus();
   shell_->SendEvent("focus");
 }
 
