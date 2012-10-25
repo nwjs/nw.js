@@ -414,6 +414,8 @@ gboolean NativeWindowGtk::OnWindowDestroyed(GtkWidget* window) {
 
 // Window is focused.
 gboolean NativeWindowGtk::OnFocusIn(GtkWidget* window, GdkEventFocus*) {
+  gtk_widget_grab_focus(web_contents()->GetView()->GetContentNativeView());
+
   shell()->SendEvent("focus");
   return FALSE;
 }

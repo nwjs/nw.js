@@ -62,10 +62,7 @@ Shell* Shell::Create(BrowserContext* browser_context,
 
   Shell* shell = new Shell(web_contents, GetPackage()->window());
   web_contents->GetController().LoadURL(
-      url,
-      Referrer(),
-      PAGE_TRANSITION_TYPED,
-      std::string());
+      url, Referrer(), PAGE_TRANSITION_TYPED, std::string());
   return shell;
 }
 
@@ -251,11 +248,6 @@ void Shell::MoveContents(WebContents* source, const gfx::Rect& pos) {
 
 bool Shell::IsPopupOrPanel(const WebContents* source) const {
   // Treat very window as popup so we can use window operations
-  return true;
-}
-
-bool Shell::TakeFocus(WebContents* soruce,
-                      bool reverse) {
   return true;
 }
 
