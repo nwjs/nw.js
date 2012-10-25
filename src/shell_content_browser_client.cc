@@ -122,6 +122,12 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
   prefs->web_security_enabled = false;
   prefs->allow_file_access_from_file_urls = true;
 
+  // Open experimental features.
+  prefs->css_sticky_position_enabled = true;
+  prefs->css_regions_enabled = true;
+  prefs->css_shaders_enabled = true;
+  prefs->css_variables_enabled = true;
+
   // Disable plugins and cache by default.
   prefs->plugins_enabled = false;
   prefs->java_enabled = false;
