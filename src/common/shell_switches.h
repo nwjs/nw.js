@@ -14,6 +14,7 @@ extern const char kDeveloper[];
 extern const char kNoToolbar[];
 extern const char kUrl[];
 extern const char kWorkingDirectory[];
+extern const char kNodeMain[];
 
 // Manifest settings
 extern const char kmMain[];

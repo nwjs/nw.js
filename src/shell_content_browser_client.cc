@@ -24,6 +24,7 @@
 #include "base/file_path.h"
 #include "base/file_util.h"
 #include "base/threading/thread_restrictions.h"
+#include "base/values.h"
 #include "content/public/browser/browser_url_handler.h"
 #include "content/public/browser/resource_dispatcher_host.h"
 #include "content/nw/src/api/dispatcher_host.h"
@@ -75,6 +76,11 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     // Set cwd
     command_line->AppendSwitchPath(switches::kWorkingDirectory,
                                    package->path());
+
+    // Check if we have 'node-main'.
+    std::string node_main;
+    if (package->root()->GetString(switches::kNodeMain, &node_main))
+      command_line->AppendSwitchASCII(switches::kNodeMain, node_main);
   }
 }
 

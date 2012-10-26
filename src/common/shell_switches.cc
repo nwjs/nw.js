@@ -34,8 +34,11 @@ const char kNoToolbar[] = "no-toolbar";
 // Open specified url
 const char kUrl[] = "url";
 
-// Set current working directory
+// Set current working directory.
 const char kWorkingDirectory[] = "working-directory";
+
+// Pass the main script to node.
+const char kNodeMain[] = "node-main";
 
 const char kmMain[]   = "main";
 const char kmName[]   = "name";

@@ -54,9 +54,19 @@ void ShellContentRendererClient::RenderThreadStarted() {
         command_line->GetSwitchValuePath(switches::kWorkingDirectory));
   }
 
+  int argc = 1;
+  char* argv[] = { const_cast<char*>("node"), NULL, NULL };
+  std::string node_main;
+
+  // Check if there is a 'node-main'.
+  if (command_line->HasSwitch(switches::kNodeMain)) {
+    argc++;
+    node_main = command_line->GetSwitchValueASCII(switches::kNodeMain);
+    argv[1] = const_cast<char*>(node_main.c_str());
+  }
+
   // Initialize uv.
-  char* argv[] = { (char*)"node", NULL };
-  node::SetupUv(1, argv);
+  node::SetupUv(argc, argv);
 
   // Initialize node after render thread is started.
   v8::V8::Initialize();
@@ -66,7 +76,7 @@ void ShellContentRendererClient::RenderThreadStarted() {
   node::g_context->Enter();
 
   // Setup node.js.
-  node::SetupContext(1, argv, node::g_context->Global());
+  node::SetupContext(argc, argv, node::g_context->Global());
 
   // Start observers.
   shell_observer_.reset(new ShellRenderProcessObserver());
