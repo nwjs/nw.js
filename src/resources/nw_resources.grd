@@ -44,6 +44,7 @@
       <include name="IDR_NW_API_CLIPBOARD_JS" file="../api/clipboard/clipboard.js" type="BINDATA" />
       <include name="IDR_NW_API_WINDOW_JS" file="../api/window/window.js" type="BINDATA" />
       <include name="IDR_NW_API_SHELL_JS" file="../api/shell/shell.js" type="BINDATA" />
+      <include name="IDR_NW_API_APP_JS" file="../api/app/app.js" type="BINDATA" />
     </includes>
   </release>
 </grit>

@@ -23,6 +23,7 @@
 #include "base/logging.h"
 #include "base/values.h"
 #include "content/nw/src/api/api_messages.h"
+#include "content/nw/src/api/app/app.h"
 #include "content/nw/src/api/base/base.h"
 #include "content/nw/src/api/clipboard/clipboard.h"
 #include "content/nw/src/api/menu/menu.h"
@@ -142,6 +143,9 @@ void DispatcherHost::OnCallStaticMethod(
 
   if (type == "Shell") {
     api::Shell::Call(method, arguments);
+    return;
+  } else if (type == "App") {
+    api::App::Call(method, arguments);
     return;
   } else {
     NOTREACHED() << "Calling method of unknown class " << type;
