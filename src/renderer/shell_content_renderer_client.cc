@@ -25,10 +25,12 @@
 #include "base/file_util.h"
 #include "base/logging.h"
 #include "base/utf_string_conversions.h"
+#include "chrome/renderer/page_click_tracker.h"
 #include "content/nw/src/api/dispatcher.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_version.h"
+#include "content/nw/src/renderer/autofill_agent.h"
 #include "content/nw/src/renderer/prerenderer/prerenderer_client.h"
 #include "content/nw/src/renderer/shell_render_process_observer.h"
 #include "third_party/node/src/node.h"
@@ -85,6 +87,10 @@ void ShellContentRendererClient::RenderThreadStarted() {
 void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
   new api::Dispatcher(render_view);
   new prerender::PrerendererClient(render_view);
+
+  PageClickTracker* page_click_tracker = new PageClickTracker(render_view);
+  nw::AutofillAgent* autofill_agent = new nw::AutofillAgent(render_view);
+  page_click_tracker->AddListener(autofill_agent);
 }
 
 void ShellContentRendererClient::DidCreateScriptContext(
