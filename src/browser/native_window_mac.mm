@@ -219,9 +219,14 @@ NativeWindowCocoa::NativeWindowCocoa(
   [shell_window setShell:shell];
   [window() setDelegate:[[NativeWindowDelegate alloc] initWithShell:shell]];
 
-  NSUInteger collectionBehavior = [window() collectionBehavior];
-  collectionBehavior |= NSWindowCollectionBehaviorFullScreenPrimary;
-  [window() setCollectionBehavior:collectionBehavior];
+  // Disable fullscreen button when 'fullscreen' is specified to false.
+  bool fullscreen;
+  if (!(manifest->GetBoolean(switches::kmFullscreen, &fullscreen) &&
+        !fullscreen)) {
+    NSUInteger collectionBehavior = [window() collectionBehavior];
+    collectionBehavior |= NSWindowCollectionBehaviorFullScreenPrimary;
+    [window() setCollectionBehavior:collectionBehavior];
+  }
 
   if (base::mac::IsOSSnowLeopard() &&
       [window() respondsToSelector:@selector(setBottomCornerRounded:)])

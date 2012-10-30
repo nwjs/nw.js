@@ -174,6 +174,7 @@ void Shell::ShowDevTools() {
   // Use our minimum set manifest
   base::DictionaryValue manifest;
   manifest.SetBoolean(switches::kmToolbar, false);
+  manifest.SetBoolean(switches::kmFullscreen, false);
   manifest.SetInteger(switches::kmWidth, 600);
   manifest.SetInteger(switches::kmHeight, 500);
 
