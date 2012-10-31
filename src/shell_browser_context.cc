@@ -139,13 +139,15 @@ net::URLRequestContextGetter*
 
 net::URLRequestContextGetter*
     ShellBrowserContext::GetMediaRequestContextForStoragePartition(
-        const std::string& partition_id) {
+        const FilePath& partition_path,
+        bool in_memory) {
   return GetRequestContext();
 }
 
 net::URLRequestContextGetter*
     ShellBrowserContext::GetRequestContextForStoragePartition(
-        const std::string& partition_id)  {
+        const FilePath& partition_path,
+        bool in_memory) {
   return NULL;
 }
 

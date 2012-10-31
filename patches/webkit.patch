@@ -1,8 +1,8 @@
 diff --git a/Source/WebCore/bindings/v8/ScriptController.cpp b/Source/WebCore/bindings/v8/ScriptController.cpp
-index b2a9b96..d59cfe5 100644
+index 7836a0f..3f1417a 100644
 --- a/Source/WebCore/bindings/v8/ScriptController.cpp
 +++ b/Source/WebCore/bindings/v8/ScriptController.cpp
-@@ -177,7 +177,8 @@ void ScriptController::updatePlatformScriptObjects()
+@@ -174,7 +174,8 @@ void ScriptController::updatePlatformScriptObjects()
  
  bool ScriptController::processingUserGesture()
  {
@@ -13,7 +13,7 @@ index b2a9b96..d59cfe5 100644
  
  v8::Local<v8::Value> ScriptController::callFunction(v8::Handle<v8::Function> function, v8::Handle<v8::Object> receiver, int argc, v8::Handle<v8::Value> args[])
 diff --git a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
-index de65721..f57f76e 100644
+index 4d37fc9..a89fd59 100644
 --- a/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 +++ b/Source/WebCore/bindings/v8/V8DOMWindowShell.cpp
 @@ -518,6 +518,9 @@ void V8DOMWindowShell::clearDocumentProperty()
@@ -108,7 +108,7 @@ index 459078f..bfa3636 100644
  onabort
  onbeforecopy
 diff --git a/Source/WebCore/html/HTMLInputElement.idl b/Source/WebCore/html/HTMLInputElement.idl
-index 4a86fe2..bffed45 100644
+index 9315f67..6056bc6 100644
 --- a/Source/WebCore/html/HTMLInputElement.idl
 +++ b/Source/WebCore/html/HTMLInputElement.idl
 @@ -96,6 +96,7 @@ interface HTMLInputElement : HTMLElement {
@@ -144,10 +144,10 @@ index 4f2388a..5d86756 100644
  #endif
  
 diff --git a/Source/WebCore/page/DOMWindow.cpp b/Source/WebCore/page/DOMWindow.cpp
-index faa4ba0..0748173 100644
+index a84fec5..ca6e201 100644
 --- a/Source/WebCore/page/DOMWindow.cpp
 +++ b/Source/WebCore/page/DOMWindow.cpp
-@@ -908,6 +908,8 @@ void DOMWindow::focus(ScriptExecutionContext* context)
+@@ -926,6 +926,8 @@ void DOMWindow::focus(ScriptExecutionContext* context)
              allowFocus = true;
      }
  
@@ -156,7 +156,7 @@ index faa4ba0..0748173 100644
      // If we're a top level window, bring the window to the front.
      if (m_frame == page->mainFrame() && allowFocus)
          page->chrome()->focus();
-@@ -928,8 +930,10 @@ void DOMWindow::blur()
+@@ -946,8 +948,10 @@ void DOMWindow::blur()
      if (!page)
          return;
  
@@ -168,7 +168,7 @@ index faa4ba0..0748173 100644
      if (m_frame != page->mainFrame())
          return;
 diff --git a/Source/WebCore/page/FrameView.cpp b/Source/WebCore/page/FrameView.cpp
-index 2d312a3..7492377 100644
+index 6959a8c..9d0bf11 100644
 --- a/Source/WebCore/page/FrameView.cpp
 +++ b/Source/WebCore/page/FrameView.cpp
 @@ -202,10 +202,12 @@ FrameView::FrameView(Frame* frame)
@@ -255,10 +255,10 @@ index 73980bf..777fb12 100644
  
      // Geometry notifications ----------------------------------------------
 diff --git a/Source/WebKit/chromium/src/ChromeClientImpl.cpp b/Source/WebKit/chromium/src/ChromeClientImpl.cpp
-index 9d0961c4..5a3bcae 100644
+index f71d677..1075998 100644
 --- a/Source/WebKit/chromium/src/ChromeClientImpl.cpp
 +++ b/Source/WebKit/chromium/src/ChromeClientImpl.cpp
-@@ -722,10 +722,12 @@ void ChromeClientImpl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileCh
+@@ -708,10 +708,12 @@ void ChromeClientImpl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileCh
      WebFileChooserParams params;
      params.multiSelect = fileChooser->settings().allowsMultipleFiles;
  #if ENABLE(DIRECTORY_UPLOAD)
@@ -273,7 +273,7 @@ index 9d0961c4..5a3bcae 100644
      params.selectedFiles = fileChooser->settings().selectedFiles;
      if (params.selectedFiles.size() > 0)
 diff --git a/Source/WebKit/chromium/src/FrameLoaderClientImpl.cpp b/Source/WebKit/chromium/src/FrameLoaderClientImpl.cpp
-index 49e780b..42b8a9a 100644
+index 11c726a..bf3b661 100644
 --- a/Source/WebKit/chromium/src/FrameLoaderClientImpl.cpp
 +++ b/Source/WebKit/chromium/src/FrameLoaderClientImpl.cpp
 @@ -165,6 +165,14 @@ void FrameLoaderClientImpl::willReleaseScriptContext(v8::Handle<v8::Context> con

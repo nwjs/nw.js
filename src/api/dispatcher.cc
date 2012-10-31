@@ -72,7 +72,7 @@ void Dispatcher::OnEvent(int object_id,
   v8::Handle<v8::Context> context = web_frame->mainWorldScriptContext();
   v8::Context::Scope context_scope(context);
 
-  V8ValueConverterImpl converter;
+  content::V8ValueConverterImpl converter;
   v8::Handle<v8::Value> args = converter.ToV8Value(&arguments, context);
   DCHECK(!args.IsEmpty()) << "Invalid 'arguments' in Dispatcher::OnEvent";
   v8::Handle<v8::Value> argv[] = {
