@@ -19,7 +19,7 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 exports.App = {
-  Quit: function() {
+  quit: function() {
     nw.callStaticMethod('App', 'Quit', [ ]);
   }
 };
