@@ -128,7 +128,7 @@ void StandardMenusMac::BuildWindowMenu() {
 
   [windowMenu addItem:[NSMenuItem separatorItem]];
 
-  [windowMenu addItemWithTitle:@"Bring ALl to Front"
+  [windowMenu addItemWithTitle:@"Bring All to Front"
                         action:@selector(arrangeInFront:)
                  keyEquivalent:@""];
     

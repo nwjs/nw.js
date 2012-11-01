@@ -20,6 +20,7 @@
 
 #include "base/command_line.h"
 #import "content/nw/src/browser/app_controller_mac.h"
+#include "content/nw/src/browser/standard_menus_mac.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/nw/src/shell_browser_context.h"
@@ -40,8 +41,20 @@
 
 - (void) applicationDidFinishLaunching: (NSNotification *) note {
   // Initlialize everything here
-  static_cast<content::ShellContentBrowserClient*>(
-    content::GetContentClient()->browser())->shell_browser_main_parts()->Init();
+  content::ShellContentBrowserClient* browser_client = 
+      static_cast<content::ShellContentBrowserClient*>(
+          content::GetContentClient()->browser());
+  browser_client->shell_browser_main_parts()->Init();
+
+  // And init menu.
+  [NSApp setMainMenu:[[[NSMenu alloc] init] autorelease]];
+  [[NSApp mainMenu] addItem:[[[NSMenuItem alloc]
+      initWithTitle:@"" action:nil keyEquivalent:@""] autorelease]];
+  nw::StandardMenusMac standard_menus(
+      browser_client->shell_browser_main_parts()->package()->GetName());
+  standard_menus.BuildAppleMenu();
+  standard_menus.BuildEditMenu();
+  standard_menus.BuildWindowMenu();
 }
 
 @end

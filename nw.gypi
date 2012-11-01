@@ -460,7 +460,6 @@
           'mac_bundle': 1,
           'mac_bundle_resources': [
             'src/mac/English.lproj/HttpAuth.xib',
-            'src/mac/English.lproj/MainMenu.xib',
             '<(PRODUCT_DIR)/nw.pak'
           ],
           'dependencies': [

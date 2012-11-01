@@ -20,8 +20,6 @@
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>0.3.2</string>
-	<key>NSMainNibFile</key>
-	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>LSMinimumSystemVersion</key>

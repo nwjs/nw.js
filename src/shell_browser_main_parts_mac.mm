@@ -35,11 +35,6 @@ void ShellBrowserMainParts::PreMainMessageLoopStart() {
   // Force the NSApplication subclass to be used.
   [ShellCrApplication sharedApplication];
 
-  scoped_nsobject<NSNib>
-      nib([[NSNib alloc] initWithNibNamed:@"MainMenu"
-                                   bundle:base::mac::FrameworkBundle()]);
-  [nib instantiateNibWithOwner:NSApp topLevelObjects:nil];
-
   AppController* delegate = [AppController alloc];
   [NSApp setDelegate:delegate];
 
