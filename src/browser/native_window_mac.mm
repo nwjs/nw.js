@@ -24,9 +24,12 @@
 #include "base/sys_string_conversions.h"
 #include "base/values.h"
 #include "chrome/common/extensions/draggable_region.h"
+#include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/browser/native_window_helper_mac.h"
 #include "content/nw/src/browser/shell_toolbar_delegate_mac.h"
+#include "content/nw/src/browser/standard_menus_mac.h"
 #include "content/nw/src/common/shell_switches.h"
+#include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/native_web_keyboard_event.h"
 #include "content/public/browser/web_contents.h"
@@ -445,6 +448,14 @@ void NativeWindowCocoa::SetKiosk(bool kiosk) {
     [NSApp setPresentationOptions:[NSApp currentSystemPresentationOptions]];
     SetNonLionFullscreen(false);
   }
+}
+
+void NativeWindowCocoa::SetMenu(api::Menu* menu) {
+  StandardMenusMac standard_menus(shell_->GetPackage()->GetName());
+  [NSApp setMainMenu:menu->menu_];
+  standard_menus.BuildAppleMenu();
+  standard_menus.BuildEditMenu();
+  standard_menus.BuildWindowMenu();
 }
 
 void NativeWindowCocoa::HandleMouseEvent(NSEvent* event) {

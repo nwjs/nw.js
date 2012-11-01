@@ -228,6 +228,9 @@ void NativeWindowGtk::SetKiosk(bool kiosk) {
   SetFullscreen(kiosk);
 }
 
+void NativeWindowGtk::SetMenu(api::Menu* menu) {
+}
+
 void NativeWindowGtk::SetAsDesktop() {
   gtk_window_set_type_hint(window_, GDK_WINDOW_TYPE_HINT_DESKTOP);
   GdkScreen* screen = gtk_window_get_screen(window_);

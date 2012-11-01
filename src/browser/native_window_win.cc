@@ -338,6 +338,9 @@ void NativeWindowWin::SetKiosk(bool kiosk) {
   SetFullscreen(kiosk);
 }
 
+void NativeWindowWin::SetMenu(api::Menu* menu) {
+}
+
 void NativeWindowWin::SetTitle(const std::string& title) {
   title_ = title;
   window_->UpdateWindowTitle();

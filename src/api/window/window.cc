@@ -22,6 +22,7 @@
 
 #include "base/values.h"
 #include "content/nw/src/api/dispatcher_host.h"
+#include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/nw_shell.h"
 
@@ -87,6 +88,10 @@ void Window::Call(const std::string& method,
     bool flash;
     if (arguments.GetBoolean(0, &flash))
       shell_->window()->FlashFrame(flash);
+  } else if (method == "SetMenu") {
+    int id;
+    if (arguments.GetInteger(0, &id))
+      shell_->window()->SetMenu(dispatcher_host()->GetObject<Menu>(id));
   } else {
     NOTREACHED() << "Invalid call to Clipboard method:" << method
                  << " arguments:" << arguments;

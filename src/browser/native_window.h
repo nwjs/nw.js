@@ -29,6 +29,10 @@
 #include "ui/gfx/image/image.h"
 #include "ui/gfx/native_widget_types.h"
 
+namespace api {
+class Menu;
+}
+
 namespace base {
 class DictionaryValue;
 }
@@ -73,6 +77,7 @@ class NativeWindow {
   virtual void SetTitle(const std::string& title) = 0;
   virtual void FlashFrame(bool flash) = 0;
   virtual void SetKiosk(bool kiosk) = 0;
+  virtual void SetMenu(api::Menu* menu) = 0;
 
   // Toolbar related controls.
   enum TOOLBAR_BUTTON {

@@ -175,6 +175,12 @@ GURL Package::GetStartupURL() {
     return GURL("nw:blank");
 }
 
+std::string Package::GetName() {
+  std::string name("node-webkit");
+  root()->GetString(switches::kmName, &name);
+  return name;
+}
+
 bool Package::GetUseNode() {
   bool use_node = true;
   root()->GetBoolean(switches::kmNodejs, &use_node);

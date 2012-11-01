@@ -19,8 +19,15 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 function Menu(option) {
+  if (typeof option != 'object')
+    option = { type: 'contextmenu' };
+
+  if (option.type != 'contextmenu' && option.type != 'menubar')
+    throw new String('Invalid menu type: ' + option.type);
+
+  this.type = option.type;
   this.setHiddenValue('items', []);
-  nw.allocateObject(this, {});
+  nw.allocateObject(this, option);
 }
 nw.inherits(Menu, exports.Base);
 

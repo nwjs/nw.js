@@ -34,6 +34,10 @@
 #else
 class NSMenu;
 #endif  // __OBJC__
+
+namespace nw {
+class NativeWindowCocoa;
+}
 #elif defined(TOOLKIT_GTK)
 #include <gtk/gtk.h>
 #elif defined(OS_WIN)
@@ -72,7 +76,8 @@ class Menu : public Base {
   void Popup(int x, int y, content::Shell*);
 
 #if defined(OS_MACOSX)
-  __block NSMenu* menu_;
+  friend class nw::NativeWindowCocoa;
+  NSMenu* menu_;
 #elif defined(TOOLKIT_GTK)
   GtkWidget* menu_;
 #elif defined(OS_WIN)

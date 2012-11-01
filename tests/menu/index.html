@@ -164,6 +164,16 @@
     console.log('Item Mama');
   });
 
+  var win = gui.Window.get();
+  var menubar = new gui.Menu({ type: 'menubar' });
+  var sub1 = new gui.Menu();
+  sub1.append(new gui.MenuItem({ label: 'Test' }));
+  var sub2 = new gui.Menu();
+  sub2.append(new gui.MenuItem({ label: 'Test2' }));
+  menubar.append(new gui.MenuItem({ label: 'Sub1', submenu: sub1}));
+  menubar.append(new gui.MenuItem({ label: 'Sub2', submenu: sub2}));
+  win.menu = menubar;
+
   gc();
 </script>
 <script>

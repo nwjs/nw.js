@@ -35,6 +35,13 @@ namespace api {
 void Menu::Create(const base::DictionaryValue& option) {
   menu_ = [[NSMenu alloc] initWithTitle:@"NW Menu"];
   [menu_ setAutoenablesItems:NO];
+
+  std::string type;
+  if (option.GetString("type", &type) && type == "menubar") {
+    // Preserve the apple menu.
+    [menu_ addItem:[[[NSMenuItem alloc]
+        initWithTitle:@"" action:nil keyEquivalent:@""] autorelease]];
+  }
 }
 
 void Menu::Destroy() {

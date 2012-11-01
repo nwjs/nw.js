@@ -63,6 +63,21 @@ Window.prototype.__defineGetter__('title', function() {
   return window.document.title;
 });
 
+Window.prototype.__defineSetter__('menu', function(menu) {
+  if (nw.getConstructorName(menu) != 'Menu')
+    throw new String("'menu' property requries a valid Menu");
+
+  if (menu.type != 'menubar')
+    throw new String('Only menu of type "menubar" can be used as window menu');
+
+  this.setHiddenValue('menu', menu);
+  nw.callObjectMethod(this, 'SetMenu', [ menu.id ]);
+});
+
+Window.prototype.__defineGetter__('menu', function() {
+  return this.getHiddenValue('menu');
+});
+
 Window.prototype.moveTo = function(x, y) {
   window.moveTo(x, y);
 }

@@ -121,6 +121,7 @@ void MenuItem::SetChecked(bool checked) {
 }
 
 void MenuItem::SetSubmenu(Menu* sub_menu) {
+  [sub_menu->menu_ setTitle:[menu_item_ title]];
   [menu_item_ setSubmenu:sub_menu->menu_];
 }
 
