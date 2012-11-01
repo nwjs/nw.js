@@ -23,6 +23,7 @@
 #include "base/values.h"
 #include "chrome/browser/ui/gtk/gtk_window_util.h"
 #include "chrome/common/extensions/draggable_region.h"
+#include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/render_view_host.h"
@@ -51,9 +52,9 @@ NativeWindowGtk::NativeWindowGtk(content::Shell* shell,
       content_thinks_its_fullscreen_(false) {
   window_ = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
 
-  GtkWidget* vbox = gtk_vbox_new(FALSE, 0);
-  gtk_widget_show(vbox);
-  gtk_container_add(GTK_CONTAINER(window_), vbox);
+  vbox_ = gtk_vbox_new(FALSE, 0);
+  gtk_widget_show(vbox_);
+  gtk_container_add(GTK_CONTAINER(window_), vbox_);
 
   // Set window icon.
   gfx::Image icon = app_icon();
@@ -67,12 +68,12 @@ NativeWindowGtk::NativeWindowGtk(content::Shell* shell,
   bool toolbar = true;
   manifest->GetBoolean(switches::kmToolbar, &toolbar);
   if (toolbar)
-    gtk_box_pack_start(GTK_BOX(vbox), toolbar_, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(vbox_), toolbar_, FALSE, FALSE, 0);
 
   gfx::NativeView native_view =
       web_contents()->GetView()->GetNativeView();
   gtk_widget_show(native_view);
-  gtk_container_add(GTK_CONTAINER(vbox), native_view);
+  gtk_container_add(GTK_CONTAINER(vbox_), native_view);
 
   int width, height;
   manifest->GetInteger(switches::kmWidth, &width);
@@ -229,6 +230,8 @@ void NativeWindowGtk::SetKiosk(bool kiosk) {
 }
 
 void NativeWindowGtk::SetMenu(api::Menu* menu) {
+  gtk_box_pack_start(GTK_BOX(vbox_), menu->menu_, FALSE, FALSE, 0);
+  gtk_box_reorder_child(GTK_BOX(vbox_), menu->menu_, 0);
 }
 
 void NativeWindowGtk::SetAsDesktop() {

@@ -20,8 +20,8 @@
 
 #include "content/nw/src/api/menu/menu.h"
 
-#include "base/values.h"
 #include "base/logging.h"
+#include "base/values.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/web_contents.h"
@@ -86,7 +86,12 @@ void PointMenuPositionFunc(GtkMenu* menu,
 }  // namespace
 
 void Menu::Create(const base::DictionaryValue& option) {
-  menu_ = gtk_menu_new();
+  std::string type;
+  if (option.GetString("type", &type) && type == "menubar")
+    menu_ = gtk_menu_bar_new();
+  else
+    menu_ = gtk_menu_new();
+
   gtk_widget_show(menu_);
   g_object_ref_sink(G_OBJECT(menu_));
 }

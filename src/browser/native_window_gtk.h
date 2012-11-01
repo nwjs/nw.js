@@ -100,6 +100,7 @@ class NativeWindowGtk : public NativeWindow {
   GtkWindow* window_;
   GtkWidget* toolbar_;
   GtkWidget* url_entry_;
+  GtkWidget* vbox_;
   GtkToolItem* back_button_;
   GtkToolItem* forward_button_;
   GtkToolItem* refresh_stop_button_;
