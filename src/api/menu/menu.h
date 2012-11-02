@@ -47,6 +47,10 @@ class NativeWindowGtk;
 #elif defined(OS_WIN)
 #include "content/nw/src/api/menu/menu_delegate_win.h"
 #include "ui/views/controls/menu/native_menu_win.h"
+
+namespace nw {
+class NativeWindowWin;
+}
 #endif
 
 namespace content {
@@ -86,6 +90,10 @@ class Menu : public Base {
   friend class nw::NativeWindowGtk;
   GtkWidget* menu_;
 #elif defined(OS_WIN)
+  friend class nw::NativeWindowWin;
+
+  void Rebuild();
+
   // Flag to indicate the menu has been modified since last show, so we should
   // rebuild the menu before next show.
   bool is_menu_modified_;

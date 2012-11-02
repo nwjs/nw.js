@@ -20,6 +20,7 @@
 
 #include "content/nw/src/api/menu/menu.h"
 
+#include "base/values.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
 #include "content/nw/src/browser/native_window_win.h"
 #include "content/nw/src/nw_shell.h"
@@ -35,6 +36,10 @@ void Menu::Create(const base::DictionaryValue& option) {
   menu_delegate_.reset(new MenuDelegate(dispatcher_host()));
   menu_model_.reset(new ui::SimpleMenuModel(menu_delegate_.get()));
   menu_.reset(new views::NativeMenuWin(menu_model_.get(), NULL));
+
+  std::string type;
+  if (option.GetString("type", &type) && type == "menubar")
+    menu_->set_is_popup_menu(false);
 }
 
 void Menu::Destroy() {
@@ -74,11 +79,7 @@ void Menu::Remove(MenuItem* menu_item, int pos) {
 }
 
 void Menu::Popup(int x, int y, content::Shell* shell) {
-  if (is_menu_modified_) {
-    // Refresh menu before show.
-    menu_->Rebuild();
-    is_menu_modified_ = false;
-  }
+  Rebuild();
 
   // Map point from document to screen.
   POINT screen_point = { x, y };
@@ -87,6 +88,14 @@ void Menu::Popup(int x, int y, content::Shell* shell) {
 
   menu_->RunMenuAt(gfx::Point(screen_point.x, screen_point.y),
                    views::Menu2::ALIGN_TOPLEFT);
+}
+
+void Menu::Rebuild() {
+  if (is_menu_modified_) {
+    // Refresh menu before show.
+    menu_->Rebuild();
+    is_menu_modified_ = false;
+  }
 }
 
 }  // namespace api

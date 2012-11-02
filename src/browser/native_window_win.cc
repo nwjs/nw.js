@@ -25,6 +25,7 @@
 #include "base/win/wrapped_window_proc.h"
 #include "chrome/browser/platform_util.h"
 #include "chrome/common/extensions/draggable_region.h"
+#include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/browser/native_window_toolbar_win.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_shell.h"
@@ -339,6 +340,9 @@ void NativeWindowWin::SetKiosk(bool kiosk) {
 }
 
 void NativeWindowWin::SetMenu(api::Menu* menu) {
+  window_->set_has_menu_bar(true);
+  menu->Rebuild();
+  ::SetMenu(window_->GetNativeWindow(), menu->menu_->menu());
 }
 
 void NativeWindowWin::SetTitle(const std::string& title) {
