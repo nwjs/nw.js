@@ -40,7 +40,7 @@
 #include "ui/views/layout/box_layout.h"
 #include "ui/views/views_delegate.h"
 #include "ui/views/widget/widget.h"
-#include "ui/views/window/non_client_view.h"
+#include "ui/views/window/native_frame_view.h"
 
 namespace nw {
 
@@ -238,7 +238,7 @@ NativeWindowWin::NativeWindowWin(content::Shell* shell,
       menu_(NULL),
       resizable_(true),
       minimum_size_(0, 0),
-      maximum_size_(INT_MAX, INT_MAX) {
+      maximum_size_() {
   window_ = new views::Widget;
   views::Widget::InitParams params(views::Widget::InitParams::TYPE_WINDOW);
   params.delegate = this;
@@ -389,7 +389,7 @@ views::ClientView* NativeWindowWin::CreateClientView(views::Widget* widget) {
 views::NonClientFrameView* NativeWindowWin::CreateNonClientFrameView(
     views::Widget* widget) {
   if (has_frame())
-    return NULL;
+    return new views::NativeFrameView(GetWidget());
 
   NativeWindowFrameView* frame_view = new NativeWindowFrameView(this);
   frame_view->Init(window_);
