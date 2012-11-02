@@ -167,9 +167,23 @@
   var win = gui.Window.get();
   var menubar = new gui.Menu({ type: 'menubar' });
   var sub1 = new gui.Menu();
-  sub1.append(new gui.MenuItem({ label: 'Test' }));
+  sub1.append(new gui.MenuItem({
+    label: 'Test1',
+    click: function() {
+      var element = document.createElement('div');
+      element.appendChild(document.createTextNode('Test 1'));
+      document.body.appendChild(element);
+    }
+  }));
   var sub2 = new gui.Menu();
-  sub2.append(new gui.MenuItem({ label: 'Test2' }));
+  sub2.append(new gui.MenuItem({
+    label: 'Test2',
+    click: function() {
+      var element = document.createElement('div');
+      element.appendChild(document.createTextNode('Test 2'));
+      document.body.appendChild(element);
+    }
+  }));
   menubar.append(new gui.MenuItem({ label: 'Sub1', submenu: sub1}));
   menubar.append(new gui.MenuItem({ label: 'Sub2', submenu: sub2}));
   win.menu = menubar;

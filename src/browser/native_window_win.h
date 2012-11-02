@@ -111,6 +111,7 @@ class NativeWindowWin : public NativeWindow,
 
   // views::WidgetDelegate implementation.
   virtual bool ExecuteWindowsCommand(int command_id) OVERRIDE;
+  virtual bool ExecuteAppCommand(int command_id) OVERRIDE;
   virtual void SaveWindowPlacement(const gfx::Rect& bounds,
                                    ui::WindowShowState show_state) OVERRIDE;
 
@@ -128,6 +129,9 @@ class NativeWindowWin : public NativeWindow,
   bool is_blur_;
 
   scoped_ptr<SkRegion> draggable_region_;
+
+  // The window's menubar.
+  api::Menu* menu_;
 
   bool resizable_;
   std::string title_;

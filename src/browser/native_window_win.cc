@@ -235,6 +235,7 @@ NativeWindowWin::NativeWindowWin(content::Shell* shell,
       is_minimized_(false),
       is_focus_(false),
       is_blur_(false),
+      menu_(NULL),
       resizable_(true),
       minimum_size_(0, 0),
       maximum_size_(INT_MAX, INT_MAX) {
@@ -341,7 +342,13 @@ void NativeWindowWin::SetKiosk(bool kiosk) {
 
 void NativeWindowWin::SetMenu(api::Menu* menu) {
   window_->set_has_menu_bar(true);
+  menu_ = menu;
+
+  // The menu is lazily built.
   menu->Rebuild();
+
+  // menu is api::Menu, menu->menu_ is NativeMenuWin,
+  // we use menu->menu_->menu() to get real HMENU, ugly here.
   ::SetMenu(window_->GetNativeWindow(), menu->menu_->menu());
 }
 
@@ -531,6 +538,13 @@ bool NativeWindowWin::ExecuteWindowsCommand(int command_id) {
     is_minimized_ = false;
     shell()->SendEvent("restore");
   }
+
+  return false;
+}
+
+bool NativeWindowWin::ExecuteAppCommand(int command_id) {
+  if (menu_)
+    menu_->menu_delegate_->ExecuteCommand(command_id);
 
   return false;
 }
