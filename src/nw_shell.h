@@ -24,6 +24,7 @@
 #include <vector>
 
 #include "base/basictypes.h"
+#include "base/memory/weak_ptr.h"
 #include "base/memory/scoped_ptr.h"
 #include "content/public/browser/notification_registrar.h"
 #include "content/public/browser/notification_observer.h"
@@ -153,6 +154,12 @@ class Shell : public WebContentsDelegate,
 
   // Notification manager.
   NotificationRegistrar registrar_;
+
+  // Weak potiner to devtools window.
+  base::WeakPtr<Shell> devtools_window_;
+
+  // Factory to generate weak pointer, used by devtools.
+  base::WeakPtrFactory<Shell> weak_ptr_factory_;
 
   // Flag to indicate we will force closing.
   bool force_close_;

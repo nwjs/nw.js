@@ -77,7 +77,8 @@ Shell* Shell::FromRenderViewHost(RenderViewHost* rvh) {
 }
 
 Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
-    : force_close_(false),
+    : ALLOW_THIS_IN_INITIALIZER_LIST(weak_ptr_factory_(this)),
+      force_close_(false),
       id_(-1) {
   // Register shell.
   registrar_.Add(this, NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,
@@ -166,6 +167,12 @@ void Shell::ShowDevTools() {
   ShellContentBrowserClient* browser_client =
       static_cast<ShellContentBrowserClient*>(
           GetContentClient()->browser());
+  // Reuse reopened one if we have.
+  if (devtools_window_) {
+    devtools_window_->window_->Focus(true);
+    return;
+  }
+
   ShellDevToolsDelegate* delegate =
       browser_client->shell_browser_main_parts()->devtools_delegate();
   GURL url = delegate->devtools_http_handler()->GetFrontendURL(
@@ -184,6 +191,9 @@ void Shell::ShowDevTools() {
       &manifest);
   shell->force_close_ = true;
   shell->LoadURL(url);
+
+  // Save devtools window in current shell.
+  devtools_window_ = shell->weak_ptr_factory_.GetWeakPtr();
 }
 
 void Shell::UpdateDraggableRegions(
