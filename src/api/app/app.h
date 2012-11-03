@@ -29,12 +29,21 @@ namespace base {
 class ListValue;
 }
 
+namespace content {
+class Shell;
+}
+
 namespace api {
   
 class App {
  public:
   static void Call(const std::string& method,
                    const base::ListValue& arguments);
+
+  static void Call(content::Shell* shell,
+                   const std::string& method,
+                   const base::ListValue& arguments,
+                   base::ListValue* result);
 
  private:
   App();

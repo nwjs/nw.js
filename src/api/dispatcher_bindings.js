@@ -31,6 +31,7 @@ var nwDispatcher = nwDispatcher || {};
   native function CallObjectMethod();
   native function CallObjectMethodSync();
   native function CallStaticMethod();
+  native function CallStaticMethodSync();
 
   native function GetConstructorName();
   native function GetHiddenValue();
@@ -77,8 +78,11 @@ var nwDispatcher = nwDispatcher || {};
         object.id, GetConstructorName(object), method, args);
   };
 
-  // Call a static method
+  // Call a static method.
   nwDispatcher.callStaticMethod = CallStaticMethod;
+
+  // Call a sync method of static class in browse and return.
+  nwDispatcher.callStaticMethodSync = CallStaticMethodSync;
 
   nwDispatcher.handleEvent = function(object_id, ev, args) {
     var object = objectsRegistry.get(object_id);

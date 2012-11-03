@@ -18,8 +18,20 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-exports.App = {
-  quit: function() {
-    nw.callStaticMethod('App', 'Quit', [ ]);
-  }
-};
+var argv;
+
+function App() {
+}
+
+App.prototype.quit = function() {
+  nw.callStaticMethod('App', 'Quit', [ ]);
+}
+
+App.prototype.__defineGetter__('argv', function() {
+  if (!argv)
+    argv = nw.callStaticMethodSync('App', 'GetArgv', [ ]);
+
+  return argv;
+});
+
+exports.App = new App();

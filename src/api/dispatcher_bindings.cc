@@ -158,6 +158,8 @@ DispatcherBindings::GetNativeFunction(v8::Handle<v8::String> name) {
     return v8::FunctionTemplate::New(CallObjectMethodSync);
   else if (name->Equals(v8::String::New("CallStaticMethod")))
     return v8::FunctionTemplate::New(CallStaticMethod);
+  else if (name->Equals(v8::String::New("CallStaticMethodSync")))
+    return v8::FunctionTemplate::New(CallStaticMethodSync);
 
   NOTREACHED() << "Trying to get an non-exist function in DispatcherBindings:"
                << *v8::String::Utf8Value(name);
@@ -417,6 +419,43 @@ v8::Handle<v8::Value> DispatcherBindings::CallStaticMethod(
         method,
         *static_cast<base::ListValue*>(value_args.get())));
   return v8::Undefined();
+}
+
+// static
+v8::Handle<v8::Value> DispatcherBindings::CallStaticMethodSync(
+    const v8::Arguments& args) {
+  if (args.Length() < 3) {
+    return v8::ThrowException(v8::Exception::Error(v8::String::New(
+            "CallStaticMethodSync requries 3 arguments")));
+  }
+
+  std::string type = *v8::String::Utf8Value(args[0]);
+  std::string method = *v8::String::Utf8Value(args[1]);
+
+  scoped_ptr<V8ValueConverter> converter(V8ValueConverter::create());
+
+  scoped_ptr<base::Value> value_args(
+      converter->FromV8Value(args[2], v8::Context::GetCurrent()));
+  if (!value_args.get() ||
+      !value_args->IsType(base::Value::TYPE_LIST)) {
+    return v8::ThrowException(v8::Exception::Error(v8::String::New(
+            "Unable to convert 'args' passed to CallStaticMethodSync")));
+  }
+
+  RenderView* render_view = GetCurrentRenderView();
+  if (!render_view) {
+    return v8::ThrowException(v8::Exception::Error(v8::String::New(
+            "Unable to get render view in CallStaticMethodSync")));
+  }
+
+  base::ListValue result;
+  render_view->Send(new ShellViewHostMsg_Call_Static_Method_Sync(
+        render_view->GetRoutingID(),
+        type,
+        method,
+        *static_cast<base::ListValue*>(value_args.get()),
+        &result));
+  return converter->ToV8Value(&result, v8::Context::GetCurrent());
 }
 
 }  // namespace api

@@ -86,6 +86,10 @@ class DispatcherHost : public content::RenderViewHostObserver {
   void OnCallStaticMethod(const std::string& type,
                           const std::string& method,
                           const base::ListValue& arguments);
+  void OnCallStaticMethodSync(const std::string& type,
+                              const std::string& method,
+                              const base::ListValue& arguments,
+                              base::ListValue* result);
 
   DISALLOW_COPY_AND_ASSIGN(DispatcherHost);
 };

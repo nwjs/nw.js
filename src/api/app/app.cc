@@ -20,8 +20,12 @@
 
 #include "content/nw/src/api/app/app.h"
 
+#include "base/command_line.h"
 #include "base/logging.h"
 #include "base/message_loop.h"
+#include "base/values.h"
+#include "content/nw/src/nw_package.h"
+#include "content/nw/src/nw_shell.h"
 
 namespace api {
   
@@ -34,6 +38,26 @@ void App::Call(const std::string& method,
   }
 
   NOTREACHED() << "Calling unknown method " << method << " of App";
+}
+
+
+// static
+void App::Call(content::Shell* shell,
+               const std::string& method,
+               const base::ListValue& arguments,
+               base::ListValue* result) {
+  if (method == "GetArgv") {
+    nw::Package* package = shell->GetPackage();
+    CommandLine* command_line = CommandLine::ForCurrentProcess();
+    CommandLine::StringVector args = command_line->GetArgs();
+
+    // Ignore first arg if it's not a standalone package.
+    unsigned i = package->self_extract() ? 0 : 1;
+    for (; i < args.size(); ++i)
+      result->AppendString(args[i]);
+  }
+
+  NOTREACHED() << "Calling unknown sync method " << method << " of App";
 }
 
 }  // namespace api

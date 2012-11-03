@@ -31,6 +31,7 @@
 #include "content/nw/src/api/shell/shell.h"
 #include "content/nw/src/api/tray/tray.h"
 #include "content/nw/src/api/window/window.h"
+#include "content/nw/src/nw_shell.h"
 
 namespace api {
 
@@ -65,6 +66,8 @@ bool DispatcherHost::OnMessageReceived(const IPC::Message& message) {
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_Call_Object_Method_Sync,
                         OnCallObjectMethodSync)
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_Call_Static_Method, OnCallStaticMethod)
+    IPC_MESSAGE_HANDLER(ShellViewHostMsg_Call_Static_Method_Sync,
+                        OnCallStaticMethodSync)
     IPC_MESSAGE_UNHANDLED(handled = false)
   IPC_END_MESSAGE_MAP()
 
@@ -147,8 +150,25 @@ void DispatcherHost::OnCallStaticMethod(
   } else if (type == "App") {
     api::App::Call(method, arguments);
     return;
-  } else {
-    NOTREACHED() << "Calling method of unknown class " << type;
+  }
+
+  NOTREACHED() << "Calling unknown method " << method << " of class " << type;
+}
+
+void DispatcherHost::OnCallStaticMethodSync(
+    const std::string& type,
+    const std::string& method,
+    const base::ListValue& arguments,
+    base::ListValue* result) {
+  DLOG(INFO) << "OnCallStaticMethodSync: "
+             << " type:" << type
+             << " method:" << method
+             << " arguments:" << arguments;
+
+  if (type == "App") {
+    content::Shell* shell = 
+        content::Shell::FromRenderViewHost(render_view_host());
+    api::App::Call(shell, method, arguments, result);
     return;
   }
 
