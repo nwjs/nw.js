@@ -66,7 +66,7 @@ void StandardMenusMac::BuildAppleMenu() {
   [appleMenu addItem:[NSMenuItem separatorItem]];
 
   [appleMenu addItemWithTitle:[@"Quit " stringByAppendingString:name]
-                       action:@selector(terminate:)
+                       action:@selector(closeAllWindows:)
                 keyEquivalent:@"q"];
 
   // Add to menubar.

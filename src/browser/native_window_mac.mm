@@ -25,6 +25,7 @@
 #include "base/values.h"
 #include "chrome/common/extensions/draggable_region.h"
 #include "content/nw/src/api/menu/menu.h"
+#include "content/nw/src/api/app/app.h"
 #include "content/nw/src/browser/native_window_helper_mac.h"
 #include "content/nw/src/browser/shell_toolbar_delegate_mac.h"
 #include "content/nw/src/browser/standard_menus_mac.h"
@@ -177,6 +178,7 @@ enum {
 }
 - (void)setShell:(content::Shell*)shell;
 - (void)showDevTools:(id)sender;
+- (void)closeAllWindows:(id)sender;
 @end
 
 @implementation ShellNSWindow
@@ -187,6 +189,10 @@ enum {
 
 - (void)showDevTools:(id)sender {
   shell_->ShowDevTools();
+}
+
+- (void)closeAllWindows:(id)sender {
+  api::App::CloseAllWindows();
 }
 
 @end
