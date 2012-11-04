@@ -78,6 +78,7 @@ Shell* Shell::FromRenderViewHost(RenderViewHost* rvh) {
 
 Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
     : ALLOW_THIS_IN_INITIALIZER_LIST(weak_ptr_factory_(this)),
+      is_devtools_(false),
       force_close_(false),
       id_(-1) {
   // Register shell.
@@ -99,6 +100,10 @@ Shell::~Shell() {
 
   for (size_t i = 0; i < windows_.size(); ++i) {
     if (windows_[i] == this) {
+      // Close the devtools window if it has one.
+      if (devtools_window_)
+        delete devtools_window_.get();
+
       windows_.erase(windows_.begin() + i);
       break;
     }
@@ -189,6 +194,7 @@ void Shell::ShowDevTools() {
       WebContents::Create(web_contents()->GetBrowserContext(),
                           NULL, MSG_ROUTING_NONE, NULL),
       &manifest);
+  shell->is_devtools_ = true;
   shell->force_close_ = true;
   shell->LoadURL(url);
 

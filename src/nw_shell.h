@@ -161,6 +161,9 @@ class Shell : public WebContentsDelegate,
   // Factory to generate weak pointer, used by devtools.
   base::WeakPtrFactory<Shell> weak_ptr_factory_;
 
+  // Whether this shell is devtools window.
+  bool is_devtools_;
+
   // Flag to indicate we will force closing.
   bool force_close_;
 
