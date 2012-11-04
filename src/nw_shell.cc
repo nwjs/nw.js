@@ -101,11 +101,11 @@ Shell::~Shell() {
 
   for (size_t i = 0; i < windows_.size(); ++i) {
     if (windows_[i] == this) {
+      windows_.erase(windows_.begin() + i);
+
       // Close the devtools window if it has one.
       if (devtools_window_)
-        delete devtools_window_.get();
-
-      windows_.erase(windows_.begin() + i);
+        devtools_window_->CloseContents(web_contents());
       break;
     }
   }
