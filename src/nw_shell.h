@@ -94,6 +94,7 @@ class Shell : public WebContentsDelegate,
   nw::NativeWindow* window() { return window_.get(); }
 
   void set_force_close(bool force) { force_close_ = force; }
+  bool is_devtools() const { return is_devtools_; }
   bool force_close() const { return force_close_; }
   void set_id(int id) { id_ = id; }
   int id() const { return id_; }

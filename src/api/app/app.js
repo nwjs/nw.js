@@ -27,6 +27,10 @@ App.prototype.quit = function() {
   nw.callStaticMethod('App', 'Quit', [ ]);
 }
 
+App.prototype.closeAllWindows = function() {
+  nw.callStaticMethod('App', 'CloseAllWindows', [ ]);
+}
+
 App.prototype.__defineGetter__('argv', function() {
   if (!argv)
     argv = nw.callStaticMethodSync('App', 'GetArgv', [ ]);

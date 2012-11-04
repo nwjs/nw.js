@@ -45,6 +45,12 @@ class App {
                    const base::ListValue& arguments,
                    base::ListValue* result);
 
+  // Try to close all windows (then will cause whole app to quit).
+  static void CloseAllWindows();
+
+  // Quit the whole app.
+  static void Quit();
+
  private:
   App();
 

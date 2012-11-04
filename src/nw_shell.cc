@@ -33,6 +33,7 @@
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
 #include "content/nw/src/api/api_messages.h"
+#include "content/nw/src/api/app/app.h"
 #include "content/nw/src/browser/file_select_helper.h"
 #include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
@@ -110,7 +111,7 @@ Shell::~Shell() {
   }
 
   if (windows_.empty() && quit_message_loop_)
-    MessageLoop::current()->PostTask(FROM_HERE, MessageLoop::QuitClosure());
+    api::App::Quit();
 }
 
 void Shell::SendEvent(const std::string& event) {

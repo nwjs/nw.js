@@ -33,7 +33,10 @@ namespace api {
 void App::Call(const std::string& method,
                const base::ListValue& arguments) {
   if (method == "Quit") {
-    MessageLoop::current()->PostTask(FROM_HERE, MessageLoop::QuitClosure());
+    Quit();
+    return;
+  } else if (method == "CloseAllWindows") {
+    CloseAllWindows();
     return;
   }
 
@@ -58,6 +61,26 @@ void App::Call(content::Shell* shell,
   }
 
   NOTREACHED() << "Calling unknown sync method " << method << " of App";
+}
+
+// static
+void App::CloseAllWindows() {
+  std::vector<content::Shell*> windows = content::Shell::windows();
+
+  for (size_t i = 0; i < windows.size(); ++i) {
+    // Only send close event to browser windows, since devtools windows will
+    // be automatically closed.
+    if (!windows[i]->is_devtools()) {
+      // If there is no js object bound to the window, then just close.
+      if (windows[i]->ShouldCloseWindow())
+        delete windows[i];
+    }
+  }
+}
+
+// static
+void App::Quit() {
+  MessageLoop::current()->PostTask(FROM_HERE, MessageLoop::QuitClosure());
 }
 
 }  // namespace api
