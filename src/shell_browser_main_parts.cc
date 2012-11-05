@@ -22,9 +22,14 @@
 
 #include "base/bind.h"
 #include "base/command_line.h"
+#include "base/message_loop.h"
 #include "base/string_number_conversions.h"
 #include "base/threading/thread_restrictions.h"
+#include "base/utf_string_conversions.h"
+#include "base/values.h"
+#include "content/nw/src/api/app/app.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
+#include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/nw/src/shell_browser_context.h"
@@ -100,9 +105,16 @@ void ShellBrowserMainParts::Init() {
   // to check for other instances of node-webkit on Mac.
 #if !defined(MAC_OSX)
   process_singleton_.reset(new ProcessSingleton(browser_context_->GetPath()));
-  process_singleton_->NotifyOtherProcessOrCreate(
-      base::Bind(&ShellBrowserMainParts::ProcessSingletonNotificationCallback,
-                 base::Unretained(this)));
+  ProcessSingleton::NotifyResult result =
+      process_singleton_->NotifyOtherProcessOrCreate(
+        base::Bind(&ShellBrowserMainParts::ProcessSingletonNotificationCallback,
+                   base::Unretained(this)));
+
+  // Quit if the other existing instance want to handle it.
+  if (result == ProcessSingleton::PROCESS_NOTIFIED) {
+    MessageLoop::current()->PostTask(FROM_HERE, MessageLoop::QuitClosure());
+    return;
+  }
 #endif
 
   net::NetModule::SetResourceProvider(PlatformResourceProvider);
@@ -134,8 +146,30 @@ void ShellBrowserMainParts::Init() {
 bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(
     const CommandLine& command_line,
     const FilePath& current_directory) {
-  LOG(ERROR) << "ProcessSingletonNotificationCallback";
-  return false;
+  if (!package_->self_extract()) {
+    // We're in runtime mode, create the new app.
+    return false;
+  }
+
+  // Don't reuse current instance if 'single-instance' is specified to false.
+  bool single_instance;
+  if (package_->root()->GetBoolean(switches::kmSingleInstance,
+                                   &single_instance) &&
+      !single_instance)
+    return false;
+
+  CommandLine::StringVector args = command_line.GetArgs();
+
+  // Send open event one by one.
+  for (size_t i = 0; i < args.size(); ++i) { 
+#if defined(OS_WIN)
+    api::App::EmitOpenEvent(UTF16ToUTF8(args[i]));
+#else
+    api::App::EmitOpenEvent(args[i]);
+#endif
+  }
+
+  return true;
 }
 
 }  // namespace content

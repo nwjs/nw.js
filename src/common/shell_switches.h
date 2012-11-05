@@ -23,6 +23,8 @@ extern const char kmWebkit[];
 extern const char kmNodejs[];
 extern const char kmWindow[];
 
+extern const char kmSingleInstance[];
+
 extern const char kmTitle[];
 extern const char kmToolbar[];
 extern const char kmIcon[];
