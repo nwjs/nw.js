@@ -7,6 +7,7 @@
 
 #include "base/basictypes.h"
 #include "base/memory/scoped_ptr.h"
+#include "chrome/browser/process_singleton.h"
 #include "content/public/browser/browser_main_parts.h"
 
 namespace base {
@@ -16,6 +17,9 @@ class Thread;
 namespace nw {
 class Package;
 }
+
+class CommandLine;
+class FilePath;
 
 namespace content {
 
@@ -46,9 +50,14 @@ class ShellBrowserMainParts : public BrowserMainParts {
   nw::Package* package() { return package_.get(); }
 
  private:
+  bool ProcessSingletonNotificationCallback(const CommandLine& command_line,
+                                            const FilePath& current_directory);
+
   scoped_ptr<ShellBrowserContext> browser_context_;
   scoped_ptr<ShellBrowserContext> off_the_record_browser_context_;
   scoped_ptr<nw::Package> package_;
+
+  scoped_ptr<ProcessSingleton> process_singleton_;
 
   // For running content_browsertests.
   const MainFunctionParams& parameters_;

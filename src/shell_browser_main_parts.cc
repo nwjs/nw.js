@@ -20,6 +20,7 @@
 
 #include "content/nw/src/shell_browser_main_parts.h"
 
+#include "base/bind.h"
 #include "base/command_line.h"
 #include "base/string_number_conversions.h"
 #include "base/threading/thread_restrictions.h"
@@ -95,6 +96,15 @@ void ShellBrowserMainParts::Init() {
   off_the_record_browser_context_.reset(
       new ShellBrowserContext(true, package()));
 
+  // OS X automatically handles multi process issue for us, so we don't need
+  // to check for other instances of node-webkit on Mac.
+#if !defined(MAC_OSX)
+  process_singleton_.reset(new ProcessSingleton(browser_context_->GetPath()));
+  process_singleton_->NotifyOtherProcessOrCreate(
+      base::Bind(&ShellBrowserMainParts::ProcessSingletonNotificationCallback,
+                 base::Unretained(this)));
+#endif
+
   net::NetModule::SetResourceProvider(PlatformResourceProvider);
 
   int port = 0;
@@ -119,6 +129,13 @@ void ShellBrowserMainParts::Init() {
                 NULL,
                 MSG_ROUTING_NONE,
                 NULL);
+}
+
+bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(
+    const CommandLine& command_line,
+    const FilePath& current_directory) {
+  LOG(ERROR) << "ProcessSingletonNotificationCallback";
+  return false;
 }
 
 }  // namespace content
