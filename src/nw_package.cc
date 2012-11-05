@@ -63,24 +63,14 @@ bool MakePathAbsolute(FilePath* file_path) {
   return true;
 }
 
-FilePath GetPathFromCommandLine(bool* self_extract) {
-  FilePath path;
+FilePath GetSelfPath() {
   CommandLine* command_line = CommandLine::ForCurrentProcess();
-  const CommandLine::StringVector& args = command_line->GetArgs();
 
-  if (args.size() == 0) {
-    *self_extract = true;
-    // See itself as a package (allowing standalone).
-    path = FilePath(command_line->GetProgram());
+  FilePath path = FilePath(command_line->GetProgram());
 #if defined(OS_MACOSX)
-    // Find if we have node-webkit.app/Resources/app.nw.
-    path = path.DirName().DirName().Append("Resources").Append("app.nw");
+  // Find if we have node-webkit.app/Resources/app.nw.
+  path = path.DirName().DirName().Append("Resources").Append("app.nw");
 #endif
-  } else {
-    *self_extract = false;
-    // Get first argument.
-    path = FilePath(args[0]);
-  }
 
   return path;
 }
@@ -102,9 +92,25 @@ void RelativePathToURI(FilePath root, base::DictionaryValue* manifest) {
 }  // namespace
 
 Package::Package()
-    : path_(GetPathFromCommandLine(&self_extract_)) {
-  if (!InitFromPath())
-    InitWithDefault();
+    : path_(GetSelfPath()),
+      self_extract_(true) {
+  // First try to extract self.
+  if (InitFromPath())
+    return;
+
+  // Then see if we have arguments and extract it.
+  CommandLine* command_line = CommandLine::ForCurrentProcess();
+  const CommandLine::StringVector& args = command_line->GetArgs();
+  if (args.size() > 0) {
+    self_extract_ = false;
+    path_ = FilePath(args[0]);
+    if (InitFromPath())
+      return;
+  }
+
+  // Finally we init with default settings.
+  self_extract_ = false;
+  InitWithDefault();
 }
 
 Package::Package(FilePath path)
