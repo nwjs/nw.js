@@ -19,6 +19,7 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "base/command_line.h"
+#include "content/nw/src/api/app/app.h"
 #import "content/nw/src/browser/app_controller_mac.h"
 #include "content/nw/src/browser/standard_menus_mac.h"
 #include "content/nw/src/nw_package.h"
@@ -31,12 +32,22 @@
 
 - (BOOL)application:(NSApplication*)sender
            openFile:(NSString*)filename {
-  if (content::Shell::windows().size() > 0)
-    return FALSE;
+  if (content::Shell::windows().size() == 0) {
+    CommandLine::ForCurrentProcess()->AppendArg([filename UTF8String]);
+    return TRUE;
+  }
 
-  CommandLine::ForCurrentProcess()->AppendArg([filename UTF8String]);
+  // Just pick a shell and get its package.
+  nw::Package* package = content::Shell::windows()[0]->GetPackage();
 
-  return TRUE;
+  if (package->self_extract()) {
+    // Let the app deal with the opening event if it's a standalone app.
+    api::App::EmitOpenEvent([filename UTF8String]);
+  } else {
+    // Or open a new app in the runtime mode.
+  }
+
+  return FALSE;
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification *) note {
