@@ -51,6 +51,9 @@ class App {
   // Quit the whole app.
   static void Quit();
 
+  // Post "open" event.
+  static void EmitOpenEvent(const std::string& path);
+
  private:
   App();
 

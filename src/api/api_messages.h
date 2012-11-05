@@ -73,3 +73,7 @@ IPC_MESSAGE_ROUTED3(ShellViewMsg_Object_On_Event,
 // Sent by the renderer when the draggable regions are updated.
 IPC_MESSAGE_ROUTED1(ShellViewHostMsg_UpdateDraggableRegions,
                     std::vector<extensions::DraggableRegion> /* regions */)
+
+// The browser want to open a file.
+IPC_MESSAGE_CONTROL1(ShellViewMsg_Open,
+                     std::string /* file name */)

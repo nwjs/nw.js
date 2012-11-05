@@ -22,6 +22,7 @@ var argv;
 
 function App() {
 }
+nw.inherits(App, exports.Base);
 
 App.prototype.quit = function() {
   nw.callStaticMethod('App', 'Quit', [ ]);
@@ -38,4 +39,9 @@ App.prototype.__defineGetter__('argv', function() {
   return argv;
 });
 
-exports.App = new App();
+// Store App object in node's context.
+if (process['_nw_app']) {
+  exports.App = process['_nw_app'];
+} else {
+  exports.App = process['_nw_app'] = new App();
+}

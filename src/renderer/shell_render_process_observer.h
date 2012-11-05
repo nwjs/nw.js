@@ -21,6 +21,8 @@
 #ifndef CONTENT_NW_SRC_RENDERER_SHELL_RENDER_PROCESS_OBSERVER_H_
 #define CONTENT_NW_SRC_RENDERER_SHELL_RENDER_PROCESS_OBSERVER_H_
 
+#include <string>
+
 #include "base/basictypes.h"
 #include "base/compiler_specific.h"
 #include "content/public/renderer/render_process_observer.h"
@@ -33,9 +35,12 @@ class ShellRenderProcessObserver : public RenderProcessObserver {
   virtual ~ShellRenderProcessObserver();
 
   // RenderProcessObserver implementation.
+  virtual bool OnControlMessageReceived(const IPC::Message& message) OVERRIDE;
   virtual void WebKitInitialized() OVERRIDE;
 
  private:
+  void OnOpen(const std::string& path);
+
   DISALLOW_COPY_AND_ASSIGN(ShellRenderProcessObserver);
 };
 
