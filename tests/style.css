@@ -1,0 +1,15 @@
+* {
+  font-family: sans-serif;
+}
+
+div {
+  margin-bottom: 3px;
+}
+
+.success {
+  color: #AAA
+}
+
+.fail {
+  color: black
+}

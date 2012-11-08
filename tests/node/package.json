@@ -1,0 +1,8 @@
+{
+  "name": "nw-test",
+  "main": "index.html",
+  "window": {
+    "title": "node.js Test",
+    "toolbar": true
+  }
+}

@@ -1,19 +1,24 @@
 function assert() {
-  document.write('<div>' + arguments[arguments.length - 1] + ': ');
+  var str = '';
+  str += ('<span class="description">' + arguments[arguments.length - 1] + ': </span>');
 
   var result = true;
   for (var i = 0; i < arguments.length - 1; ++i) {
     if (!arguments[i]) {
       result = false;
-      document.write('<span style="color:red">FAILED</span>');
-      document.write('<span style="color:grey"> at condition ' + (i + 1) + ' </span>');
+      str += ('<span style="color:red">FAILED</span>');
+      str += ('<span style="color:grey"> at condition ' + (i + 1) + ' </span>');
     }
   }
 
   if (result) {
-    document.write('<span style="color:green">PASSED</span>');
+    str = '<div class="success">' + str + '<span style="color:green">PASSED</span>';
+  } else {
+    str = '<div class="fail">' + str;
   }
 
-  document.write('</div>');
+  str += '</div>';
+
+  $(document.body).append(str);
 }
 
