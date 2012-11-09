@@ -17,9 +17,10 @@ var http = require('http');
 var now;
 
 // Run a clock with node's timer, which should pause when alert() is called.
+var count = 0;
 global.setInterval(function() {
-  $('#timer').text(+new Date());
-}, 400);
+  $('#timer').text(++count);
+}, 500);
 
 function run_tests() {
   // Clear previous test results
