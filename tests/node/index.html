@@ -5,7 +5,9 @@
   <script type="text/javascript" src="../assert.js"></script>
 </head>
 <body>
-<button onclick="alert('test')">Show a alert dialog</button>
+Clock (should pause when showing alert dialog): <span id="timer"></span>
+<br/>
+<button onclick="alert('test')">Show an alert dialog</button>
 <button onclick="run_tests()">Run all tests agian</button>
 <script>
 var path = require('path');
@@ -13,6 +15,11 @@ var fs = require('fs');
 var exec = require('child_process').exec;
 var http = require('http');
 var now;
+
+// Run a clock with node's timer, which should pause when alert() is called.
+global.setInterval(function() {
+  $('#timer').text(+new Date());
+}, 400);
 
 function run_tests() {
   // Clear previous test results
