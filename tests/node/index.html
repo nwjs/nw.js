@@ -5,12 +5,18 @@
   <script type="text/javascript" src="../assert.js"></script>
 </head>
 <body>
+<button onclick="alert('test')">Show a alert dialog</button>
+<button onclick="run_tests()">Run all tests agian</button>
 <script>
-  var path = require('path');
-  var fs = require('fs');
-  var exec = require('child_process').exec;
-  var http = require('http');
-  var now;
+var path = require('path');
+var fs = require('fs');
+var exec = require('child_process').exec;
+var http = require('http');
+var now;
+
+function run_tests() {
+  // Clear previous test results
+  $('.test').remove();
 
   // ================ Module by relative path
   assert(
@@ -175,9 +181,10 @@
 
   // ================ request module should work
 	var request = require('request');
-	request('http://baidu.com/', function (error, response, body) {
+	request('http://intel.com/', function (error, response, body) {
     assert(
     error == null,
+    response != undefined,
     response.statusCode == 200,
     'request module should work')
   });
@@ -190,6 +197,9 @@
 
   // Done.
   global.console.log('done');
+}
+
+run_tests();
 </script>
 </body>
 </html>

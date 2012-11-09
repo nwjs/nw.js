@@ -12,9 +12,9 @@ function assert() {
   }
 
   if (result) {
-    str = '<div class="success">' + str + '<span style="color:green">PASSED</span>';
+    str = '<div class="success test">' + str + '<span style="color:green">PASSED</span>';
   } else {
-    str = '<div class="fail">' + str;
+    str = '<div class="fail test">' + str;
   }
 
   str += '</div>';

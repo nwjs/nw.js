@@ -6,6 +6,11 @@ div {
   margin-bottom: 3px;
 }
 
+button {
+  height: 20px;
+  margin-bottom: 5px;
+}
+
 .success {
   color: #AAA
 }
