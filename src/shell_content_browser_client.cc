@@ -40,6 +40,7 @@
 #include "googleurl/src/gurl.h"
 #include "webkit/glue/webpreferences.h"
 #include "ui/base/l10n/l10n_util.h"
+#include "webkit/plugins/npapi/plugin_list.h"
 
 namespace content {
 
@@ -144,6 +145,11 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
     webkit->GetBoolean(switches::kmJava, &prefs->java_enabled);
     webkit->GetBoolean(switches::kmPlugin, &prefs->plugins_enabled);
     webkit->GetBoolean(switches::kmPageCache, &prefs->uses_page_cache);
+    FilePath plugins_dir = package->path();
+    //PathService::Get(base::DIR_CURRENT, &plugins_dir);
+    plugins_dir = plugins_dir.AppendASCII("plugins");
+
+    webkit::npapi::PluginList::Singleton()->AddExtraPluginDir(plugins_dir);
   }
 }
 
