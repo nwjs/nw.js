@@ -97,7 +97,7 @@ function run_tests() {
   var child = exec('echo echo back', function (error, stdout, stderr) {
     assert(
     error == null,
-    stdout == 'echo back\n',
+    stdout == (process.platform == 'win32' ? 'echo back\r\n' : 'echo back\n'),
     stderr == '',
     'Execute child process'
     );
