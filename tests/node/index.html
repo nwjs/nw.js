@@ -198,22 +198,30 @@ function run_tests() {
   });
 
   // ================ native modules
-  try {
-    var bignum = require('bignum');
-    assert(
-    bignum('782910138827292261791972728324982').sub('182373273283402171237474774728373').div(8) == '75067108192986261319312244199576',
-    'Native modules should work');
-  } catch (e) {
-    assert(
-    false,
-    'Native modules should work')
+  if (process.platform != 'win32') {
+    try {
+      var bignum = require('bignum');
+      assert(
+      bignum('782910138827292261791972728324982').sub('182373273283402171237474774728373').div(8) == '75067108192986261319312244199576',
+      'Native modules should work');
+    } catch (e) {
+      assert(
+      false,
+      'Native modules should work')
+    }
   }
 
   // ================ native modules without handle scope
+  try {
     var nw_test_loop_without_handle = new require('nw_test_loop_without_handle');
     assert(
     true,
     'Message loop should be wrapped by handle scope')
+  } catch (e) {
+    assert(
+    false,
+    'Message loop should be wrapped by handle scope')
+  }
 
   // Done.
   global.console.log('done');
