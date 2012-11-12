@@ -47,8 +47,7 @@ namespace api {
 namespace {
 
 base::StringPiece GetStringResource(int resource_id) {
-  return ResourceBundle::GetSharedInstance().GetRawDataResource(
-      resource_id, ui::SCALE_FACTOR_NONE);
+  return ResourceBundle::GetSharedInstance().GetRawDataResource(resource_id);
 }
 
 RenderView* GetCurrentRenderView() {

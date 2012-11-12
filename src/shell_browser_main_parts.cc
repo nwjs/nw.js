@@ -45,7 +45,7 @@ base::StringPiece PlatformResourceProvider(int key) {
   if (key == IDR_DIR_HEADER_HTML) {
     base::StringPiece html_data =
         ui::ResourceBundle::GetSharedInstance().GetRawDataResource(
-            IDR_DIR_HEADER_HTML, ui::SCALE_FACTOR_NONE);
+            IDR_DIR_HEADER_HTML);
     return html_data;
   }
   return base::StringPiece();

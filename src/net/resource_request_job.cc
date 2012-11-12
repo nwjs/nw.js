@@ -142,7 +142,7 @@ void ResourceRequestJob::StartAsync() {
 
   NotifyHeadersComplete();
   DataAvailable(ResourceBundle::GetSharedInstance().LoadDataResourceBytes(
-      resource_id_, ui::SCALE_FACTOR_NONE));
+      resource_id_));
 }
 
 }  // namespace nw

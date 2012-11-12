@@ -50,8 +50,7 @@ void ShellDevToolsDelegate::Stop() {
 
 std::string ShellDevToolsDelegate::GetDiscoveryPageHTML() {
   return ResourceBundle::GetSharedInstance().GetRawDataResource(
-      IDR_NW_DEVTOOLS_DISCOVERY_PAGE,
-      ui::SCALE_FACTOR_NONE).as_string();
+      IDR_NW_DEVTOOLS_DISCOVERY_PAGE).as_string();
 }
 
 bool ShellDevToolsDelegate::BundlesFrontendResources() {

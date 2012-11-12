@@ -22,6 +22,7 @@
 
 #include "base/logging.h"
 #include "base/string_split.h"
+#include "base/string_util.h"
 #include "base/threading/worker_pool.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/nw/src/net/shell_network_delegate.h"
@@ -38,6 +39,7 @@
 #include "net/http/http_network_session.h"
 #include "net/http/http_server_properties_impl.h"
 #include "net/proxy/proxy_service.h"
+#include "net/url_request/static_http_user_agent_settings.h"
 #include "net/url_request/url_request_context.h"
 #include "net/url_request/url_request_context_storage.h"
 #include "net/url_request/url_request_job_factory_impl.h"
@@ -79,8 +81,9 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
     storage_->set_server_bound_cert_service(new net::ServerBoundCertService(
         new net::DefaultServerBoundCertStore(NULL),
         base::WorkerPool::GetTaskRunner(true)));
-    url_request_context_->set_accept_language("en-us,en");
-    url_request_context_->set_accept_charset("iso-8859-1,*,utf-8");
+    storage_->set_http_user_agent_settings(
+        new net::StaticHttpUserAgentSettings(
+            "en-us,en", "iso-8859-1,*,utf-8", EmptyString()));
 
     scoped_ptr<net::HostResolver> host_resolver(
         net::HostResolver::CreateDefaultResolver(NULL));
