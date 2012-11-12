@@ -145,6 +145,8 @@ void ShellContentRendererClient::InstallNodeSymbols(
       v8::Local<v8::Value> key = symbols->Get(i);
       v8Global->Set(key, nodeGlobal->Get(key));
     }
+
+    nodeGlobal->Set(v8::String::New("window"), v8Global);
   }
 
   if (use_node) {
