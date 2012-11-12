@@ -24,7 +24,9 @@
 #include "base/message_loop.h"
 #include "base/utf_string_conversions.h"
 #include "base/values.h"
+#include "content/public/browser/devtools_agent_host_registry.h"
 #include "content/public/browser/devtools_http_handler.h"
+#include "content/public/browser/devtools_manager.h"
 #include "content/public/browser/navigation_entry.h"
 #include "content/public/browser/navigation_controller.h"
 #include "content/public/browser/notification_details.h"
@@ -179,10 +181,20 @@ void Shell::ShowDevTools() {
     return;
   }
 
+  RenderViewHost* inspected_rvh = web_contents()->GetRenderViewHost();
+  DevToolsAgentHost* agent = DevToolsAgentHostRegistry::GetDevToolsAgentHost(
+      inspected_rvh);
+  DevToolsManager* manager = DevToolsManager::GetInstance();
+  DevToolsClientHost* host = manager->GetDevToolsClientHostFor(agent);
+
+  if (host) {
+    // Break remote debugging debugging session.
+    manager->UnregisterDevToolsClientHostFor(agent);
+  }
+
   ShellDevToolsDelegate* delegate =
       browser_client->shell_browser_main_parts()->devtools_delegate();
-  GURL url = delegate->devtools_http_handler()->GetFrontendURL(
-      web_contents()->GetRenderViewHost());
+  GURL url = delegate->devtools_http_handler()->GetFrontendURL(inspected_rvh);
 
   // Use our minimum set manifest
   base::DictionaryValue manifest;
