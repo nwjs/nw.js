@@ -84,6 +84,10 @@ NativeWindow* NativeWindow::Create(content::Shell* shell,
   if (manifest->GetBoolean(switches::kmResizable, &resizable)) {
     window->SetResizable(resizable);
   }
+  bool top;
+  if (manifest->GetBoolean(switches::kmAlwaysOnTop, &top) && top) {
+    window->SetAlwaysOnTop(true);
+  }
   bool fullscreen;
   if (manifest->GetBoolean(switches::kmFullscreen, &fullscreen) && fullscreen) {
     window->SetFullscreen(true);

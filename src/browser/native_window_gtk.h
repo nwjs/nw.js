@@ -49,6 +49,7 @@ class NativeWindowGtk : public NativeWindow {
   virtual void SetMinimumSize(int width, int height) OVERRIDE;
   virtual void SetMaximumSize(int width, int height) OVERRIDE;
   virtual void SetResizable(bool resizable) OVERRIDE;
+  virtual void SetAlwaysOnTop(bool top) OVERRIDE;
   virtual void SetPosition(const std::string& position) OVERRIDE;
   virtual void SetTitle(const std::string& title) OVERRIDE;
   virtual void FlashFrame(bool flash) OVERRIDE;

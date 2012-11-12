@@ -71,6 +71,9 @@ const char kmFullscreen[] = "fullscreen";
 // http://www.opera.com/support/mastering/kiosk/
 const char kmKiosk[] = "kiosk";
 
+// Make windows stays on the top of all other windows.
+const char kmAlwaysOnTop[] = "always-on-top";
+
 // Whether we should support WebGL.
 const char kmWebgl[] = "webgl";
 

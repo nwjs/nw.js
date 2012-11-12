@@ -210,6 +210,10 @@ void NativeWindowGtk::SetResizable(bool resizable) {
   gtk_window_set_resizable(window_, resizable);
 }
 
+void NativeWindowGtk::SetAlwaysOnTop(bool top) {
+  gtk_window_set_keep_above(window_, top ? TRUE : FALSE);
+}
+
 void NativeWindowGtk::SetPosition(const std::string& position) {
   if (position == "center")
     gtk_window_set_position(window_, GTK_WIN_POS_CENTER);

@@ -169,6 +169,10 @@ Window.prototype.setResizable = function(resizable) {
   nw.callObjectMethod(this, 'SetResizable', [ resizable ]);
 }
 
+Window.prototype.setAlwaysOnTop = function(flag) {
+  nw.callObjectMethod(this, 'SetAlwaysOnTop', [ Boolean(flag) ]);
+}
+
 Window.prototype.requestAttention = function(flash) {
   flash = Boolean(flash);
   nw.callObjectMethod(this, 'RequestAttention', [ flash ]);

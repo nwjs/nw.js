@@ -43,6 +43,7 @@ extern const char kmResizable[];
 extern const char kmAsDesktop[];
 extern const char kmFullscreen[];
 extern const char kmKiosk[];
+extern const char kmAlwaysOnTop[];
 
 extern const char kmWebgl[];
 extern const char kmJava[];

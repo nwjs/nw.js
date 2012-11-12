@@ -40,6 +40,7 @@
 #include "ui/views/layout/box_layout.h"
 #include "ui/views/views_delegate.h"
 #include "ui/views/widget/widget.h"
+#include "ui/views/widget/native_widget_win.h"
 #include "ui/views/window/native_frame_view.h"
 
 namespace nw {
@@ -323,6 +324,10 @@ void NativeWindowWin::SetMaximumSize(int width, int height) {
 
 void NativeWindowWin::SetResizable(bool resizable) {
   resizable_ = resizable;
+}
+
+void NativeWindowWin::SetAlwaysOnTop(bool top) {
+  window_->SetAlwaysOnTop(top);
 }
 
 void NativeWindowWin::SetPosition(const std::string& position) {

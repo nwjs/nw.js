@@ -73,6 +73,7 @@ class NativeWindow {
   virtual void SetMinimumSize(int width, int height) = 0;
   virtual void SetMaximumSize(int width, int height) = 0;
   virtual void SetResizable(bool resizable) = 0;
+  virtual void SetAlwaysOnTop(bool top) = 0;
   virtual void SetPosition(const std::string& position) = 0;
   virtual void SetTitle(const std::string& title) = 0;
   virtual void FlashFrame(bool flash) = 0;

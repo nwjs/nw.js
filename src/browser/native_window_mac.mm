@@ -420,6 +420,10 @@ void NativeWindowCocoa::SetResizable(bool resizable) {
   }
 }
 
+void NativeWindowCocoa::SetAlwaysOnTop(bool top) {
+  [window() setLevel:(top ? NSFloatingWindowLevel : NSNormalWindowLevel)];
+}
+
 void NativeWindowCocoa::SetPosition(const std::string& position) {
   if (position == "center")
     [window() center];

@@ -84,6 +84,10 @@ void Window::Call(const std::string& method,
     bool resizable;
     if (arguments.GetBoolean(0, &resizable))
       shell_->window()->SetResizable(resizable);
+  } else if (method == "SetAlwaysOnTop") {
+    bool top;
+    if (arguments.GetBoolean(0, &top))
+      shell_->window()->SetAlwaysOnTop(top);
   } else if (method == "RequestAttention") {
     bool flash;
     if (arguments.GetBoolean(0, &flash))
