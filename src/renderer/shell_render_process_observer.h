@@ -36,12 +36,11 @@ class ShellRenderProcessObserver : public RenderProcessObserver {
 
   // RenderProcessObserver implementation.
   virtual bool OnControlMessageReceived(const IPC::Message& message) OVERRIDE;
-  virtual void OnRenderProcessShutdown() OVERRIDE;
+  virtual void OnRenderProcessWillShutdown() OVERRIDE;
   virtual void WebKitInitialized() OVERRIDE;
 
  private:
   void OnOpen(const std::string& path);
-  void OnWillQuit();
 
   DISALLOW_COPY_AND_ASSIGN(ShellRenderProcessObserver);
 };

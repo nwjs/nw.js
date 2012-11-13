@@ -27,6 +27,7 @@
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
+#include "content/common/view_messages.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/render_process_host.h"
 
@@ -102,7 +103,8 @@ void App::CloseAllWindows() {
 // static
 void App::Quit(content::RenderProcessHost* render_process_host) {
   // Send the quit message.
-  render_process_host->Send(new ShellViewMsg_WillQuit());
+  int no_use;
+  render_process_host->Send(new ViewMsg_WillQuit(&no_use));
 
   // Then quit.
   MessageLoop::current()->PostTask(FROM_HERE, MessageLoop::QuitClosure());

@@ -20,6 +20,7 @@
 
 #include "content/nw/src/renderer/shell_render_process_observer.h"
 
+#include "base/file_util.h"
 #include "content/public/renderer/render_thread.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/dispatcher_bindings.h"
@@ -43,14 +44,16 @@ bool ShellRenderProcessObserver::OnControlMessageReceived(
   bool handled = true;
   IPC_BEGIN_MESSAGE_MAP(ShellRenderProcessObserver, message)
     IPC_MESSAGE_HANDLER(ShellViewMsg_Open, OnOpen)
-    IPC_MESSAGE_HANDLER(ShellViewMsg_WillQuit, OnWillQuit)
     IPC_MESSAGE_UNHANDLED(handled = false)
   IPC_END_MESSAGE_MAP()
 
   return handled;
 }
 
-void ShellRenderProcessObserver::OnRenderProcessShutdown() {
+void ShellRenderProcessObserver::OnRenderProcessWillShutdown() {
+  // process.emit('exit');
+  node::EmitExit(node::process);
+  node::RunAtExit();
 }
 
 void ShellRenderProcessObserver::WebKitInitialized() {
@@ -76,12 +79,6 @@ void ShellRenderProcessObserver::OnOpen(const std::string& path) {
     };
     emit->Call(app, 2, argv);
   }
-}
-
-void ShellRenderProcessObserver::OnWillQuit() {
-  // process.emit('exit');
-  node::EmitExit(node::process);
-  node::RunAtExit();
 }
 
 }  // namespace content

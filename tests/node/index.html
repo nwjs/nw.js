@@ -226,24 +226,6 @@ function run_tests() {
 
   // ================ "exit" should be emited for process on exit
   var tmppath = process.platform == 'win32' ? 'c:\\nw_test_process_exit' : '/tmp/nw_test_process_exit';
-  var fail;
-  try {
-    fail = false;
-    fs.statSync(tmppath);
-    assert(
-    true,
-    '"exit" should be emited for process on exit')
-  } catch(e) {
-    fail = true;
-    assert(
-    false,
-    '"exit" should be emited for process on exit(will fail when run for first time)')
-  }
-  gui.Window.get().on('close', function() {
-    if (!fail)
-      fs.unlinkSync(tmppath);
-    this.close(true);
-  });
   // Write file on exit
   process.on('exit', function() {
     fs.writeFileSync(tmppath, 'nw_test_process_exit');
