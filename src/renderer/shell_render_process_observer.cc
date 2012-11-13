@@ -25,6 +25,7 @@
 #include "content/nw/src/api/dispatcher_bindings.h"
 #include "webkit/glue/webkit_glue.h"
 #include "webkit/support/gc_extension.h"
+#include "third_party/node/src/node.h"
 #include "third_party/node/src/req_wrap.h"
 #include "v8/include/v8.h"
 
@@ -42,6 +43,7 @@ bool ShellRenderProcessObserver::OnControlMessageReceived(
   bool handled = true;
   IPC_BEGIN_MESSAGE_MAP(ShellRenderProcessObserver, message)
     IPC_MESSAGE_HANDLER(ShellViewMsg_Open, OnOpen)
+    IPC_MESSAGE_HANDLER(ShellViewMsg_WillQuit, OnWillQuit)
     IPC_MESSAGE_UNHANDLED(handled = false)
   IPC_END_MESSAGE_MAP()
 
@@ -74,6 +76,12 @@ void ShellRenderProcessObserver::OnOpen(const std::string& path) {
     };
     emit->Call(app, 2, argv);
   }
+}
+
+void ShellRenderProcessObserver::OnWillQuit() {
+  // process.emit('exit');
+  node::EmitExit(node::process);
+  node::RunAtExit();
 }
 
 }  // namespace content

@@ -113,7 +113,7 @@ Shell::~Shell() {
   }
 
   if (windows_.empty() && quit_message_loop_)
-    api::App::Quit();
+    api::App::Quit(web_contents()->GetRenderProcessHost());
 }
 
 void Shell::SendEvent(const std::string& event) {

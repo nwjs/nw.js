@@ -41,6 +41,7 @@ class ShellRenderProcessObserver : public RenderProcessObserver {
 
  private:
   void OnOpen(const std::string& path);
+  void OnWillQuit();
 
   DISALLOW_COPY_AND_ASSIGN(ShellRenderProcessObserver);
 };

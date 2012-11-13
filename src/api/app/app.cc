@@ -31,12 +31,30 @@
 #include "content/public/browser/render_process_host.h"
 
 namespace api {
+
+namespace {
+
+// Get render process host.
+content::RenderProcessHost* GetRenderProcessHost() {
+  content::RenderProcessHost* render_process_host = NULL;
+  std::vector<content::Shell*> windows = content::Shell::windows();
+  for (size_t i = 0; i < windows.size(); ++i) {
+    if (!windows[i]->is_devtools()) {
+      render_process_host = windows[i]->web_contents()->GetRenderProcessHost();
+      break;
+    }
+  }
+
+  return render_process_host;
+}
+
+}  // namespace
   
 // static
 void App::Call(const std::string& method,
                const base::ListValue& arguments) {
   if (method == "Quit") {
-    Quit();
+    Quit(GetRenderProcessHost());
     return;
   } else if (method == "CloseAllWindows") {
     CloseAllWindows();
@@ -82,23 +100,20 @@ void App::CloseAllWindows() {
 }
 
 // static
-void App::Quit() {
+void App::Quit(content::RenderProcessHost* render_process_host) {
+  // Send the quit message.
+  render_process_host->Send(new ShellViewMsg_WillQuit());
+
+  // Then quit.
   MessageLoop::current()->PostTask(FROM_HERE, MessageLoop::QuitClosure());
 }
 
 // static
 void App::EmitOpenEvent(const std::string& path) {
   // Get the app's renderer process.
-  content::RenderProcessHost* render_process_host = NULL;
-  std::vector<content::Shell*> windows = content::Shell::windows();
-  for (size_t i = 0; i < windows.size(); ++i) {
-    if (!windows[i]->is_devtools()) {
-      render_process_host = windows[i]->web_contents()->GetRenderProcessHost();
-      break;
-    }
-  }
-
+  content::RenderProcessHost* render_process_host = GetRenderProcessHost();
   DCHECK(render_process_host != NULL);
+
   render_process_host->Send(new ShellViewMsg_Open(path));
 }
 

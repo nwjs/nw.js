@@ -30,6 +30,7 @@ class ListValue;
 }
 
 namespace content {
+class RenderProcessHost;
 class Shell;
 }
 
@@ -49,7 +50,7 @@ class App {
   static void CloseAllWindows();
 
   // Quit the whole app.
-  static void Quit();
+  static void Quit(content::RenderProcessHost* render_view_host);
 
   // Post "open" event.
   static void EmitOpenEvent(const std::string& path);
