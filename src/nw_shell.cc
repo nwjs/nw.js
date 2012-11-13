@@ -200,7 +200,7 @@ void Shell::ShowDevTools() {
   base::DictionaryValue manifest;
   manifest.SetBoolean(switches::kmToolbar, false);
   manifest.SetBoolean(switches::kmFullscreen, false);
-  manifest.SetInteger(switches::kmWidth, 600);
+  manifest.SetInteger(switches::kmWidth, 700);
   manifest.SetInteger(switches::kmHeight, 500);
 
   Shell* shell = new Shell(
