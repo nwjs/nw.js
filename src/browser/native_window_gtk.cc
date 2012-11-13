@@ -140,7 +140,7 @@ void NativeWindowGtk::Move(const gfx::Rect& bounds) {
   gint height = static_cast<gint>(bounds.height());
 
   gtk_window_move(window_, x, y);
-  gtk_window_resize(window_, width, height);
+  gtk_window_util::SetWindowSize(window_, gfx::Size(width, height));
 }
 
 void NativeWindowGtk::Focus(bool focus) {
