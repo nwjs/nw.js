@@ -6,9 +6,8 @@
         "toolbar": true,
         "position": "center",
         "width": 400,
-        "height": 500,
+        "height": 700,
         "resizable": false,
-        "show": false,
-        "frame": false
+        "show": false
     }
 }
