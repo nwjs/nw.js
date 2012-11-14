@@ -23,6 +23,7 @@
 #include "base/mac/mac_util.h"
 #include "base/sys_string_conversions.h"
 #include "base/values.h"
+#import "chrome/browser/ui/cocoa/custom_frame_view.h"
 #include "chrome/common/extensions/draggable_region.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/app/app.h"
@@ -172,6 +173,12 @@ enum {
 
 @end
 
+// This is really a method on NSGrayFrame, so it should only be called on the
+// view passed into -[NSWindow drawCustomFrameRect:forView:].
+@interface NSView (PrivateMethods)
+- (CGFloat)roundedCornerRadius;
+@end
+
 @interface ShellNSWindow : UnderlayOpenGLHostingWindow {
  @private
   content::Shell* shell_;
@@ -193,6 +200,52 @@ enum {
 
 - (void)closeAllWindows:(id)sender {
   api::App::CloseAllWindows();
+}
+
+@end
+
+@interface ShellFramelessNSWindow : ShellNSWindow
+
+- (void)drawCustomFrameRect:(NSRect)rect forView:(NSView*)view;
+
+@end
+
+@implementation ShellFramelessNSWindow
+
+- (void)drawCustomFrameRect:(NSRect)rect forView:(NSView*)view {
+  [super drawCustomFrameRect:rect forView:view];
+
+  [[NSBezierPath bezierPathWithRect:rect] addClip];
+  [[NSColor clearColor] set];
+  NSRectFill(rect);
+
+  // Set up our clip.
+  CGFloat cornerRadius = 4.0;
+  if ([view respondsToSelector:@selector(roundedCornerRadius)])
+    cornerRadius = [view roundedCornerRadius];
+  [[NSBezierPath bezierPathWithRoundedRect:[view bounds]
+                                   xRadius:cornerRadius
+                                   yRadius:cornerRadius] addClip];
+  [[NSColor whiteColor] set];
+  NSRectFill(rect);
+}
+
++ (NSRect)frameRectForContentRect:(NSRect)contentRect
+                        styleMask:(NSUInteger)mask {
+  return contentRect;
+}
+
++ (NSRect)contentRectForFrameRect:(NSRect)frameRect
+                        styleMask:(NSUInteger)mask {
+  return frameRect;
+}
+
+- (NSRect)frameRectForContentRect:(NSRect)contentRect {
+  return contentRect;
+}
+
+- (NSRect)contentRectForFrameRect:(NSRect)frameRect {
+  return frameRect;
 }
 
 @end
@@ -219,11 +272,20 @@ NativeWindowCocoa::NativeWindowCocoa(
   NSUInteger style_mask = NSTitledWindowMask | NSClosableWindowMask |
                           NSMiniaturizableWindowMask | NSResizableWindowMask |
                           NSTexturedBackgroundWindowMask;
-  ShellNSWindow* shell_window = [[ShellNSWindow alloc]
-      initWithContentRect:cocoa_bounds
-                styleMask:style_mask
-                  backing:NSBackingStoreBuffered
-                    defer:NO];
+  ShellNSWindow* shell_window;
+  if (has_frame_) {
+    shell_window = [[ShellNSWindow alloc]
+        initWithContentRect:cocoa_bounds
+                  styleMask:style_mask
+                    backing:NSBackingStoreBuffered
+                      defer:NO];
+  } else {
+    shell_window = [[ShellFramelessNSWindow alloc]
+        initWithContentRect:cocoa_bounds
+                  styleMask:style_mask
+                    backing:NSBackingStoreBuffered
+                      defer:NO];
+  }
   window_ = shell_window;
   [shell_window setShell:shell];
   [window() setDelegate:[[NativeWindowDelegate alloc] initWithShell:shell]];

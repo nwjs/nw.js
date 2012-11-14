@@ -60,6 +60,8 @@
         '<(DEPTH)/chrome/browser/status_icons/status_icon_observer.h',
         '<(DEPTH)/chrome/browser/status_icons/status_tray.cc',
         '<(DEPTH)/chrome/browser/status_icons/status_tray.h',
+        '<(DEPTH)/chrome/browser/ui/cocoa/custom_frame_view.h',
+        '<(DEPTH)/chrome/browser/ui/cocoa/custom_frame_view.mm',
         '<(DEPTH)/chrome/browser/ui/base_window.h',
         '<(DEPTH)/chrome/browser/ui/gtk/gtk_window_util.cc',
         '<(DEPTH)/chrome/browser/ui/gtk/gtk_window_util.h',
