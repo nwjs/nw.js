@@ -412,6 +412,11 @@ void NativeWindowCocoa::SetFullscreen(bool fullscreen) {
 }
 
 void NativeWindowCocoa::SetNonLionFullscreen(bool fullscreen) {
+  if (fullscreen == is_fullscreen_)
+    return;
+
+  is_fullscreen_ = fullscreen;
+
   // Fade to black.
   const CGDisplayReservationInterval kFadeDurationSeconds = 0.6;
   bool did_fade_out = false;
