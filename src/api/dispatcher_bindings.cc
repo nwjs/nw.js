@@ -376,7 +376,7 @@ v8::Handle<v8::Value> DispatcherBindings::CallObjectMethodSync(
 
   base::ListValue result;
   render_view->Send(new ShellViewHostMsg_Call_Object_Method_Sync(
-        render_view->GetRoutingID(),
+        MSG_ROUTING_NONE,
         object_id,
         type,
         method,
@@ -449,7 +449,7 @@ v8::Handle<v8::Value> DispatcherBindings::CallStaticMethodSync(
 
   base::ListValue result;
   render_view->Send(new ShellViewHostMsg_Call_Static_Method_Sync(
-        render_view->GetRoutingID(),
+        MSG_ROUTING_NONE,
         type,
         method,
         *static_cast<base::ListValue*>(value_args.get()),

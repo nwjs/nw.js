@@ -80,6 +80,8 @@ void App::Call(content::Shell* shell,
     unsigned i = package->self_extract() ? 0 : 1;
     for (; i < args.size(); ++i)
       result->AppendString(args[i]);
+
+    return;
   }
 
   NOTREACHED() << "Calling unknown sync method " << method << " of App";
