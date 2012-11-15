@@ -60,6 +60,8 @@ class NativeWindow {
   static NativeWindow* Create(content::Shell* shell,
                               base::DictionaryValue* manifest);
 
+  void InitFromManifest(base::DictionaryValue* manifest);
+
   virtual void Close() = 0;
   virtual void Move(const gfx::Rect& pos) = 0;
   virtual void Focus(bool focus) = 0;

@@ -58,59 +58,6 @@ NativeWindow* NativeWindow::Create(content::Shell* shell,
   NOTREACHED() << "Cannot create native window on unsupported platform.";
 #endif
 
-  // Setup window from manifest.
-  int x, y;
-  std::string position;
-  if (manifest->GetInteger(switches::kmX, &x) &&
-      manifest->GetInteger(switches::kmY, &y)) {
-    int width, height;
-    manifest->GetInteger(switches::kmWidth, &width);
-    manifest->GetInteger(switches::kmHeight, &height);
-    window->Move(gfx::Rect(x, y, width, height));
-  } else if (manifest->GetString(switches::kmPosition, &position)) {
-    window->SetPosition(position);
-  }
-  int min_height, min_width;
-  if (manifest->GetInteger(switches::kmMinHeight, &min_height) &&
-      manifest->GetInteger(switches::kmMinWidth, &min_width)) {
-    window->SetMinimumSize(min_width, min_height);
-  }
-  int max_height, max_width;
-  if (manifest->GetInteger(switches::kmMaxHeight, &max_height) &&
-      manifest->GetInteger(switches::kmMaxWidth, &max_width)) {
-    window->SetMaximumSize(max_width, max_height);
-  }
-  bool resizable;
-  if (manifest->GetBoolean(switches::kmResizable, &resizable)) {
-    window->SetResizable(resizable);
-  }
-  bool top;
-  if (manifest->GetBoolean(switches::kmAlwaysOnTop, &top) && top) {
-    window->SetAlwaysOnTop(true);
-  }
-  bool fullscreen;
-  if (manifest->GetBoolean(switches::kmFullscreen, &fullscreen) && fullscreen) {
-    window->SetFullscreen(true);
-  }
-  bool kiosk;
-  if (manifest->GetBoolean(switches::kmKiosk, &kiosk) && kiosk) {
-    window->SetKiosk(kiosk);
-  }
-  bool toolbar = true;
-  manifest->GetBoolean(switches::kmToolbar, &toolbar);
-  if (toolbar) {
-    window->AddToolbar();
-  }
-  std::string title("node-webkit");
-  manifest->GetString(switches::kmTitle, &title);
-  window->SetTitle(title);
-
-  // Then show it.
-  bool show = true;
-  manifest->GetBoolean(switches::kmShow, &show);
-  if (show)
-    window->Show();
-
   return window;
 }
 
@@ -128,6 +75,61 @@ NativeWindow::~NativeWindow() {
 
 content::WebContents* NativeWindow::web_contents() const {
   return shell_->web_contents();
+}
+
+void NativeWindow::InitFromManifest(base::DictionaryValue* manifest) {
+  // Setup window from manifest.
+  int x, y;
+  std::string position;
+  if (manifest->GetInteger(switches::kmX, &x) &&
+      manifest->GetInteger(switches::kmY, &y)) {
+    int width, height;
+    manifest->GetInteger(switches::kmWidth, &width);
+    manifest->GetInteger(switches::kmHeight, &height);
+    Move(gfx::Rect(x, y, width, height));
+  } else if (manifest->GetString(switches::kmPosition, &position)) {
+    SetPosition(position);
+  }
+  int min_height, min_width;
+  if (manifest->GetInteger(switches::kmMinHeight, &min_height) &&
+      manifest->GetInteger(switches::kmMinWidth, &min_width)) {
+    SetMinimumSize(min_width, min_height);
+  }
+  int max_height, max_width;
+  if (manifest->GetInteger(switches::kmMaxHeight, &max_height) &&
+      manifest->GetInteger(switches::kmMaxWidth, &max_width)) {
+    SetMaximumSize(max_width, max_height);
+  }
+  bool resizable;
+  if (manifest->GetBoolean(switches::kmResizable, &resizable)) {
+    SetResizable(resizable);
+  }
+  bool top;
+  if (manifest->GetBoolean(switches::kmAlwaysOnTop, &top) && top) {
+    SetAlwaysOnTop(true);
+  }
+  bool fullscreen;
+  if (manifest->GetBoolean(switches::kmFullscreen, &fullscreen) && fullscreen) {
+    SetFullscreen(true);
+  }
+  bool kiosk;
+  if (manifest->GetBoolean(switches::kmKiosk, &kiosk) && kiosk) {
+    SetKiosk(kiosk);
+  }
+  bool toolbar = true;
+  manifest->GetBoolean(switches::kmToolbar, &toolbar);
+  if (toolbar) {
+    AddToolbar();
+  }
+  std::string title("node-webkit");
+  manifest->GetString(switches::kmTitle, &title);
+  SetTitle(title);
+
+  // Then show it.
+  bool show = true;
+  manifest->GetBoolean(switches::kmShow, &show);
+  if (show)
+    Show();
 }
 
 void NativeWindow::LoadAppIconFromPackage() {

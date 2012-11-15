@@ -96,6 +96,10 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
 
   // Create window.
   window_.reset(nw::NativeWindow::Create(this, manifest));
+
+  // Initialize window after we set window_, because some operations of 
+  // NativeWindow requires the window_ to be non-NULL. 
+  window_->InitFromManifest(manifest);
 }
 
 Shell::~Shell() {
