@@ -34,6 +34,7 @@
 #include "googleurl/src/gurl.h"
 #include "grit/nw_resources.h"
 #include "net/base/escape.h"
+#include "third_party/node/deps/uv/include/uv.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/gfx/image/image.h"
 #include "ui/gfx/image/image_skia_rep.h"
@@ -66,7 +67,16 @@ bool MakePathAbsolute(FilePath* file_path) {
 FilePath GetSelfPath() {
   CommandLine* command_line = CommandLine::ForCurrentProcess();
 
-  FilePath path = FilePath(command_line->GetProgram());
+  FilePath path;
+
+  size_t size = 2*PATH_MAX;
+  char* execPath = new char[size];
+  if (uv_exepath(execPath, &size) == 0) {
+    path = FilePath::FromUTF8Unsafe(std::string(execPath, size));
+  } else {
+    path = FilePath(command_line->GetProgram());
+  }
+
 #if defined(OS_MACOSX)
   // Find if we have node-webkit.app/Resources/app.nw.
   path = path.DirName().DirName().Append("Resources").Append("app.nw");
@@ -202,7 +212,7 @@ base::DictionaryValue* Package::window() {
 bool Package::InitFromPath() {
   base::ThreadRestrictions::SetIOAllowed(true);
 
-  if (!ExtractPath(&path_))
+  if (!ExtractPath())
     return false;
 
   // path_/package.json
@@ -274,13 +284,20 @@ void Package::InitWithDefault() {
   window->SetString(switches::kmPosition, "center");
 }
 
-bool Package::ExtractPath(FilePath* path) {
+bool Package::ExtractPath() {
   // Convert to absoulute path.
   if (!MakePathAbsolute(&path_)) {
     ReportError("Cannot extract package",
                 "Path is invalid: " + path_.AsUTF8Unsafe());
     return false;
   }
+
+  // Read symbolic link.
+#if defined(OS_POSIX)
+  FilePath target;
+  if (file_util::ReadSymbolicLink(path_, &target))
+    path_ = target;
+#endif
 
   // If it's a file then try to extract from it.
   if (!file_util::DirectoryExists(path_)) {

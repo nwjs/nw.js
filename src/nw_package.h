@@ -78,7 +78,7 @@ class Package {
  private:
   bool InitFromPath();
   void InitWithDefault();
-  bool ExtractPath(FilePath* path);
+  bool ExtractPath();
   bool ExtractPackage(const FilePath& zip_file, FilePath* where);
 
   // Convert error info into data url.
