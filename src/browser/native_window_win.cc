@@ -314,16 +314,24 @@ void NativeWindowWin::SetFullscreen(bool fullscreen) {
 
 void NativeWindowWin::SetMinimumSize(int width, int height) {
   minimum_size_.set_width(width);
-  minimum_size_.set_height(width);
+  minimum_size_.set_height(height);
 }
 
 void NativeWindowWin::SetMaximumSize(int width, int height) {
   maximum_size_.set_width(width);
-  maximum_size_.set_height(width);
+  maximum_size_.set_height(height);
 }
 
 void NativeWindowWin::SetResizable(bool resizable) {
   resizable_ = resizable;
+
+  // Show/Hide the maximize button.
+  DWORD style = ::GetWindowLong(window_->GetNativeView(), GWL_STYLE);
+  if (resizable)
+    style |= WS_MAXIMIZEBOX;
+  else
+    style &= ~WS_MAXIMIZEBOX;
+  ::SetWindowLong(window_->GetNativeView(), GWL_STYLE, style);
 }
 
 void NativeWindowWin::SetAlwaysOnTop(bool top) {
@@ -406,7 +414,7 @@ bool NativeWindowWin::CanResize() const {
 }
 
 bool NativeWindowWin::CanMaximize() const {
-  return true;
+  return resizable_;
 }
 
 views::Widget* NativeWindowWin::GetWidget() {
