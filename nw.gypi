@@ -488,7 +488,7 @@
               # Copy FFmpeg binaries for audio/video support.
               'destination': '<(PRODUCT_DIR)/$(CONTENTS_FOLDER_PATH)/Libraries',
               'files': [
-                'src/mac/ffmpegsumo.so',
+                '<(PRODUCT_DIR)/ffmpegsumo.so',
               ],
             },
           ],
