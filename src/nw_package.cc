@@ -44,6 +44,10 @@ namespace nw {
 
 namespace {
 
+#ifndef PATH_MAX
+#define PATH_MAX MAX_PATH
+#endif
+
 bool MakePathAbsolute(FilePath* file_path) {
   DCHECK(file_path);
 
