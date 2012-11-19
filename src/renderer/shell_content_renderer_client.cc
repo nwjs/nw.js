@@ -165,7 +165,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
   if (use_node || is_nw_protocol) {
     v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
         // Use WebKit's console globally
-        "global.__console= console;"
+        "global.console = console;"
 
         // Overload require
         "window.require = function(name) {"

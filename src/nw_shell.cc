@@ -40,7 +40,6 @@
 #include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/browser/shell_javascript_dialog_creator.h"
-#include "content/nw/src/common/gpu_internals.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/media/media_stream_devices_controller.h"
 #include "content/nw/src/nw_package.h"
@@ -177,9 +176,6 @@ void Shell::ReloadOrStop() {
 }
 
 void Shell::ShowDevTools() {
-  PrintGpuInfo();
-  PrintClientInfo();
-
   ShellContentBrowserClient* browser_client =
       static_cast<ShellContentBrowserClient*>(
           GetContentClient()->browser());
