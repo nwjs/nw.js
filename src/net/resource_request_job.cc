@@ -58,6 +58,9 @@ ResourceRequestJob* ResourceRequestJob::Factory(
   if (url == "nw:version") {
     return new ResourceRequestJob(request,
         network_delegate, "text/html", IDR_NW_VERSION);
+  } else if (url == "nw:gpu") {
+    return new ResourceRequestJob(request,
+        network_delegate, "text/html", IDR_NW_GPU);
   }
 
   return new ResourceRequestJob(request,

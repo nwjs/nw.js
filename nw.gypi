@@ -166,6 +166,8 @@
         'src/browser/shell_toolbar_delegate_mac.mm',
         'src/browser/standard_menus_mac.h',
         'src/browser/standard_menus_mac.mm',
+        'src/common/gpu_internals.cc',
+        'src/common/gpu_internals.h',
         'src/common/shell_switches.cc',
         'src/common/shell_switches.h',
         'src/geolocation/shell_access_token_store.cc',
