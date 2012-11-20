@@ -24,6 +24,7 @@
 #include "base/compiler_specific.h"
 #include "base/memory/scoped_ptr.h"
 #include "content/public/renderer/content_renderer_client.h"
+#include "v8/include/v8.h"
 
 namespace content {
 
@@ -47,6 +48,9 @@ class ShellContentRendererClient : public ContentRendererClient {
   scoped_ptr<ShellRenderProcessObserver> shell_observer_;
 
   void InstallNodeSymbols(v8::Handle<v8::Context> context);
+
+  // Catch node uncaughtException.
+  static v8::Handle<v8::Value> ReportException(const v8::Arguments& args);
 };
 
 }  // namespace content

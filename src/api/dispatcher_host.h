@@ -90,6 +90,7 @@ class DispatcherHost : public content::RenderViewHostObserver {
                               const std::string& method,
                               const base::ListValue& arguments,
                               base::ListValue* result);
+  void OnUncaughtException(const std::string& err);
 
   DISALLOW_COPY_AND_ASSIGN(DispatcherHost);
 };

@@ -27,20 +27,46 @@
 #include "base/utf_string_conversions.h"
 #include "chrome/renderer/page_click_tracker.h"
 #include "content/nw/src/api/dispatcher.h"
+#include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_version.h"
 #include "content/nw/src/renderer/autofill_agent.h"
 #include "content/nw/src/renderer/prerenderer/prerenderer_client.h"
 #include "content/nw/src/renderer/shell_render_process_observer.h"
+#include "content/public/renderer/render_view.h"
 #include "third_party/node/src/node.h"
 #include "third_party/node/src/req_wrap.h"
+#include "third_party/WebKit/Source/WebKit/chromium/public/WebFrame.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebSecurityOrigin.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebSecurityPolicy.h"
+#include "third_party/WebKit/Source/WebKit/chromium/public/WebView.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/platform/WebString.h"
-#include "v8/include/v8.h"
+
+using content::RenderView;
+using WebKit::WebFrame;
+using WebKit::WebView;
 
 namespace content {
+
+namespace {
+
+RenderView* GetCurrentRenderView() {
+  WebFrame* frame = WebFrame::frameForCurrentContext();
+  DCHECK(frame);
+  if (!frame)
+    return NULL;
+
+  WebView* view = frame->view();
+  if (!view)
+    return NULL;  // can happen during closing.
+
+  RenderView* render_view = RenderView::FromWebView(view);
+  DCHECK(render_view);
+  return render_view;
+}
+
+}  // namespace
 
 ShellContentRendererClient::ShellContentRendererClient() {
 }
@@ -112,6 +138,8 @@ bool ShellContentRendererClient::WillSetSecurityToken(
 
 void ShellContentRendererClient::InstallNodeSymbols(
     v8::Handle<v8::Context> context) {
+  v8::HandleScope handle_scope;
+
   // Do we integrate node?
   bool use_node =
       CommandLine::ForCurrentProcess()->HasSwitch(switches::kmNodejs);
@@ -147,6 +175,12 @@ void ShellContentRendererClient::InstallNodeSymbols(
     }
 
     nodeGlobal->Set(v8::String::New("window"), v8Global);
+
+    // Listen uncaughtException with ReportException.
+    v8::Local<v8::Function> cb = v8::FunctionTemplate::New(ReportException)->
+        GetFunction();
+    v8::Local<v8::Value> argv[] = { v8::String::New("uncaughtException"), cb };
+    node::MakeCallback(node::process, "on", 2, argv);
   }
 
   if (use_node) {
@@ -174,16 +208,36 @@ void ShellContentRendererClient::InstallNodeSymbols(
         "  return global.require(name);"
         "};"
 
-        // Don't exit on exception
-        "process.on('uncaughtException', function (err) {"
-          "console.log(err.stack);"
-        "});"
-
         // Save node-webkit version
         "process.versions['node-webkit'] = '" NW_VERSION_STRING "';"
     ));
     script->Run();
   }
+}
+
+// static
+v8::Handle<v8::Value> ShellContentRendererClient::ReportException(
+    const v8::Arguments& args) {
+  v8::HandleScope handle_scope;
+
+  v8::Local<v8::String> stack_symbol = v8::String::New("stack");
+  std::string error;
+
+  v8::Local<v8::Object> exception = args[0]->ToObject();
+  if (exception->Has(stack_symbol))
+    error = *v8::String::Utf8Value(exception->Get(stack_symbol));
+  else
+    error = *v8::String::Utf8Value(exception);
+
+  RenderView* render_view = GetCurrentRenderView();
+  if (!render_view)
+    return v8::Undefined(); 
+
+  render_view->Send(new ShellViewHostMsg_UncaughtException(
+      render_view->GetRoutingID(),
+      error));
+
+  return v8::Undefined(); 
 }
 
 }  // namespace content

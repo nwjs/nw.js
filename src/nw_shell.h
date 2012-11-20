@@ -85,6 +85,10 @@ class Shell : public WebContentsDelegate,
   // Decide whether we should close the window.
   bool ShouldCloseWindow();
 
+  // Print critical error.
+  void PrintCriticalError(const std::string& title,
+                          const std::string& content);
+
   // Returns the currently open windows.
   static std::vector<Shell*>& windows() { return windows_; }
 

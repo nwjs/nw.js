@@ -348,7 +348,8 @@ void Package::ReportError(const std::string& title,
     return;
 
   const base::StringPiece template_html(
-      ResourceBundle::GetSharedInstance().GetRawDataResource(IDR_NW_ERROR));
+      ResourceBundle::GetSharedInstance().GetRawDataResource(
+          IDR_NW_PACKAGE_ERROR));
 
   if (template_html.empty()) {
     // Print hand written error info if nw.pak doesn't exist.

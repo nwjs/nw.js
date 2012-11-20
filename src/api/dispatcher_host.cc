@@ -68,6 +68,8 @@ bool DispatcherHost::OnMessageReceived(const IPC::Message& message) {
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_Call_Static_Method, OnCallStaticMethod)
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_Call_Static_Method_Sync,
                         OnCallStaticMethodSync)
+    IPC_MESSAGE_HANDLER(ShellViewHostMsg_UncaughtException,
+                        OnUncaughtException);
     IPC_MESSAGE_UNHANDLED(handled = false)
   IPC_END_MESSAGE_MAP()
 
@@ -173,6 +175,12 @@ void DispatcherHost::OnCallStaticMethodSync(
   }
 
   NOTREACHED() << "Calling unknown method " << method << " of class " << type;
+}
+
+void DispatcherHost::OnUncaughtException(const std::string& err) {
+  content::Shell* shell = 
+      content::Shell::FromRenderViewHost(render_view_host());
+  shell->PrintCriticalError("Uncaught node.js Error", err);
 }
 
 }  // namespace api

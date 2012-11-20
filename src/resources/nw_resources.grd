@@ -34,7 +34,8 @@
     <includes>
       <include name="IDR_NW_VERSION" file="pages/nw_version.html" type="BINDATA" />
       <include name="IDR_NW_BLANK" file="pages/nw_blank.html" type="BINDATA" />
-      <include name="IDR_NW_ERROR" file="pages/nw_error.html" type="BINDATA" />
+      <include name="IDR_NW_PACKAGE_ERROR" file="pages/package_error.html" type="BINDATA" />
+      <include name="IDR_NW_FATAL_ERROR" file="pages/fatal_error.html" type="BINDATA" />
       <include name="IDR_NW_GPU" file="pages/nw_gpu.html" type="BINDATA" />
       <include name="IDR_NW_DEVTOOLS_DISCOVERY_PAGE" file="pages/shell_devtools_discovery_page.html" type="BINDATA" />
       <include name="IDR_NW_API_DISPATCHER_BINDINGS_JS" file="../api/dispatcher_bindings.js" type="BINDATA" />

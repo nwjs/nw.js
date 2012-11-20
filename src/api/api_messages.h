@@ -70,6 +70,10 @@ IPC_MESSAGE_ROUTED3(ShellViewMsg_Object_On_Event,
                     std::string /* event name */,
                     ListValue /* arguments */)
 
+// Tell browser we have an uncaughtException from node.
+IPC_MESSAGE_ROUTED1(ShellViewHostMsg_UncaughtException,
+                    std::string /* err */)
+
 // Sent by the renderer when the draggable regions are updated.
 IPC_MESSAGE_ROUTED1(ShellViewHostMsg_UpdateDraggableRegions,
                     std::vector<extensions::DraggableRegion> /* regions */)
