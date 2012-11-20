@@ -166,6 +166,8 @@
         'src/browser/shell_toolbar_delegate_mac.mm',
         'src/browser/standard_menus_mac.h',
         'src/browser/standard_menus_mac.mm',
+        'src/common/gpu_internals.cc',
+        'src/common/gpu_internals.h',
         'src/common/shell_switches.cc',
         'src/common/shell_switches.h',
         'src/geolocation/shell_access_token_store.cc',
@@ -368,6 +370,17 @@
         ['OS=="win"', {
           'sources': [
             'src/shell.rc',
+					  '../../webkit/glue/resources/pan_east.cur',
+						'../../webkit/glue/resources/pan_middle.cur',
+						'../../webkit/glue/resources/pan_north.cur',
+						'../../webkit/glue/resources/pan_north_east.cur',
+					  '../../webkit/glue/resources/pan_north_west.cur',
+						'../../webkit/glue/resources/pan_south.cur',
+						'../../webkit/glue/resources/pan_south_east.cur',
+						'../../webkit/glue/resources/pan_south_west.cur',
+						'../../webkit/glue/resources/pan_west.cur',
+
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_resources.rc',
           ],
           'configurations': {
             'Debug_Base': {

@@ -174,6 +174,11 @@ void ShellContentRendererClient::InstallNodeSymbols(
         "  return global.require(name);"
         "};"
 
+        // Don't exit on exception
+        "process.on('uncaughtException', function (err) {"
+          "console.log(err.stack);"
+        "});"
+
         // Save node-webkit version
         "process.versions['node-webkit'] = '" NW_VERSION_STRING "';"
     ));
