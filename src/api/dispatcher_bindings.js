@@ -37,14 +37,7 @@ var nwDispatcher = nwDispatcher || {};
   native function SetHiddenValue();
   native function SetDestructor();
 
-  var objectsRegistry;
-
-  nwDispatcher.requireNwGui = function() {
-    // Store id2object map
-    objectsRegistry = new global.IDWeakMap();
-
-    return RequireNwGui.call(nwDispatcher);;
-  }
+  nwDispatcher.requireNwGui = RequireNwGui;
 
   // Request a new object from browser
   nwDispatcher.allocateObject = function(object, option) {
@@ -62,7 +55,7 @@ var nwDispatcher = nwDispatcher || {};
 
     // Store id to object relations, there is no delete in deallocateObject
     // since this is a weak map.
-    objectsRegistry.set(id, object);
+    global.__nwObjectsRegistry.set(id, object);
   }
 
   // Free a object in browser
@@ -88,7 +81,7 @@ var nwDispatcher = nwDispatcher || {};
   nwDispatcher.callStaticMethodSync = CallStaticMethodSync;
 
   nwDispatcher.handleEvent = function(object_id, ev, args) {
-    var object = objectsRegistry.get(object_id);
+    var object = global.__nwObjectsRegistry.get(object_id);
     args.splice(0, 0, ev);
     object.handleEvent.apply(object, args);
   }
