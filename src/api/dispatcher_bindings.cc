@@ -27,7 +27,6 @@
 #include "base/command_line.h"
 #include "chrome/renderer/static_v8_external_string_resource.h"
 #include "content/nw/src/api/api_messages.h"
-#include "content/nw/src/api/id_weak_map.h"
 #include "content/nw/src/api/object_life_monitor.h"
 #include "content/public/renderer/render_view.h"
 #include "content/public/renderer/render_thread.h"
@@ -131,10 +130,6 @@ v8::Handle<v8::FunctionTemplate>
 DispatcherBindings::GetNativeFunction(v8::Handle<v8::String> name) {
   if (name->Equals(v8::String::New("RequireNwGui")))
     return v8::FunctionTemplate::New(RequireNwGui);
-  // Since we can only return FunctionTemplate here, we have no choice but to
-  // return a helper function to return the real constructor.
-  else if (name->Equals(v8::String::New("GetIDWeakMapConstructor")))
-    return v8::FunctionTemplate::New(GetIDWeakMapConstructor);
   else if (name->Equals(v8::String::New("GetConstructorName")))
     return v8::FunctionTemplate::New(GetConstructorName);
   else if (name->Equals(v8::String::New("GetHiddenValue")))
@@ -196,12 +191,6 @@ DispatcherBindings::RequireNwGui(const v8::Arguments& args) {
       NwGui, v8::String::New("app.js"), IDR_NW_API_APP_JS);
 
   return scope.Close(NwGui);
-}
-
-// static
-v8::Handle<v8::Value>
-DispatcherBindings::GetIDWeakMapConstructor(const v8::Arguments& args) {
-  return IDWeakMap::GetContructor();
 }
 
 // static

@@ -100,8 +100,6 @@
         'src/api/dispatcher_bindings.h',
         'src/api/dispatcher_host.cc',
         'src/api/dispatcher_host.h',
-        'src/api/id_weak_map.cc',
-        'src/api/id_weak_map.h',
         'src/api/object_life_monitor.cc',
         'src/api/object_life_monitor.h',
         'src/api/menu/menu.cc',

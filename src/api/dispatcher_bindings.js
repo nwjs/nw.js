@@ -22,7 +22,6 @@ var nwDispatcher = nwDispatcher || {};
 
 (function() {
   native function RequireNwGui();
-  native function GetIDWeakMapConstructor();
   native function GetNextObjectId();
   native function GetAbsolutePath();
 
@@ -38,10 +37,14 @@ var nwDispatcher = nwDispatcher || {};
   native function SetHiddenValue();
   native function SetDestructor();
 
-  var IDWeakMap = GetIDWeakMapConstructor();
+  var objectsRegistry;
 
-  // Store id2object map
-  var objectsRegistry = new IDWeakMap();
+  nwDispatcher.requireNwGui = function() {
+    // Store id2object map
+    objectsRegistry = new global.IDWeakMap();
+
+    return RequireNwGui.call(nwDispatcher);;
+  }
 
   // Request a new object from browser
   nwDispatcher.allocateObject = function(object, option) {
@@ -90,7 +93,6 @@ var nwDispatcher = nwDispatcher || {};
     object.handleEvent.apply(object, args);
   }
 
-  nwDispatcher.requireNwGui = RequireNwGui;
   nwDispatcher.getAbsolutePath = GetAbsolutePath;
   nwDispatcher.getConstructorName = GetConstructorName;
 
