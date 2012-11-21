@@ -138,8 +138,6 @@ DispatcherBindings::GetNativeFunction(v8::Handle<v8::String> name) {
     return v8::FunctionTemplate::New(SetHiddenValue);
   else if (name->Equals(v8::String::New("SetDestructor")))
     return v8::FunctionTemplate::New(SetDestructor);
-  else if (name->Equals(v8::String::New("GetNextObjectId")))
-    return v8::FunctionTemplate::New(GetNextObjectId);
   else if (name->Equals(v8::String::New("GetAbsolutePath")))
     return v8::FunctionTemplate::New(GetAbsolutePath);
   else if (name->Equals(v8::String::New("AllocateObject")))
@@ -191,13 +189,6 @@ DispatcherBindings::RequireNwGui(const v8::Arguments& args) {
       NwGui, v8::String::New("app.js"), IDR_NW_API_APP_JS);
 
   return scope.Close(NwGui);
-}
-
-// static
-v8::Handle<v8::Value>
-DispatcherBindings::GetNextObjectId(const v8::Arguments& args) {
-  static int next_object_id = 1;
-  return v8::Integer::New(next_object_id++);
 }
 
 // static

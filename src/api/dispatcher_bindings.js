@@ -22,7 +22,6 @@ var nwDispatcher = nwDispatcher || {};
 
 (function() {
   native function RequireNwGui();
-  native function GetNextObjectId();
   native function GetAbsolutePath();
 
   native function AllocateObject();
@@ -41,7 +40,7 @@ var nwDispatcher = nwDispatcher || {};
 
   // Request a new object from browser
   nwDispatcher.allocateObject = function(object, option) {
-    var id = GetNextObjectId();
+    var id = global.__nwObjectsRegistry.allocateId();
     AllocateObject(id, GetConstructorName(object), option);
 
     // Store object id and make it readonly
