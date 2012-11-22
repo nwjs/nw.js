@@ -39,7 +39,9 @@ class Window : public Base {
 
   virtual void Call(const std::string& method,
                     const base::ListValue& arguments) OVERRIDE;
-
+  virtual void CallSync(const std::string& method,
+                        const base::ListValue& arguments,
+                        base::ListValue* result) OVERRIDE;
  private:
   content::Shell* shell_;
 

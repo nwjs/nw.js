@@ -180,6 +180,10 @@ void NativeWindowGtk::SetFullscreen(bool fullscreen) {
     gtk_window_unfullscreen(window_);
 }
 
+bool NativeWindowGtk::IsFullscreen() {
+  return content_thinks_its_fullscreen_;
+}
+
 void NativeWindowGtk::SetMinimumSize(int width, int height) {
   GdkGeometry geometry = { 0 };
   geometry.min_width = width;
@@ -231,6 +235,10 @@ void NativeWindowGtk::FlashFrame(bool flash) {
 
 void NativeWindowGtk::SetKiosk(bool kiosk) {
   SetFullscreen(kiosk);
+}
+
+bool NativeWindowGtk::IsKiosk() {
+  return IsFullscreen();
 }
 
 void NativeWindowGtk::SetMenu(api::Menu* menu) {

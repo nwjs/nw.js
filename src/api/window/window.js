@@ -78,6 +78,16 @@ Window.prototype.__defineGetter__('menu', function() {
   return this.getHiddenValue('menu');
 });
 
+Window.prototype.__defineGetter__('isFullscreen', function() {
+  var result = nw.callObjectMethodSync(this, 'IsFullscreen', []);
+	return Boolean(result[0]);
+});
+
+Window.prototype.__defineGetter__('isKioskMode', function() {
+  var result = nw.callObjectMethodSync(this, 'IsKioskMode', []);
+  return Boolean(result[0]);
+});
+
 Window.prototype.moveTo = function(x, y) {
   window.moveTo(x, y);
 }
@@ -144,12 +154,20 @@ Window.prototype.leaveFullscreen = function() {
   nw.callObjectMethod(this, 'LeaveFullscreen', []);
 }
 
+Window.prototype.toggleFullscreen = function() {
+  nw.callObjectMethod(this, 'ToggleFullscreen', []);
+}
+
 Window.prototype.enterKioskMode = function() {
   nw.callObjectMethod(this, 'EnterKioskMode', []);
 }
 
 Window.prototype.leaveKioskMode = function() {
   nw.callObjectMethod(this, 'LeaveKioskMode', []);
+}
+
+Window.prototype.toggleKioskMode = function() {
+  nw.callObjectMethod(this, 'ToggleKioskMode', []);
 }
 
 Window.prototype.showDevTools = function() {
