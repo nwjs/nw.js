@@ -257,6 +257,7 @@ NativeWindowCocoa::NativeWindowCocoa(
     base::DictionaryValue* manifest)
     : NativeWindow(shell, manifest),
       is_fullscreen_(false),
+      is_kiosk_(false),
       attention_request_id_(0),
       use_system_drag_(true) {
   int width, height;
