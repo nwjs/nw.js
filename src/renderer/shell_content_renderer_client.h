@@ -26,6 +26,10 @@
 #include "content/public/renderer/content_renderer_client.h"
 #include "v8/include/v8.h"
 
+namespace api {
+class WindowBindings;
+}
+
 namespace content {
 
 class ShellRenderProcessObserver;
@@ -46,6 +50,7 @@ class ShellContentRendererClient : public ContentRendererClient {
 
  private:
   scoped_ptr<ShellRenderProcessObserver> shell_observer_;
+  scoped_ptr<api::WindowBindings> window_bindings_;;
 
   void InstallNodeSymbols(v8::Handle<v8::Context> context);
 

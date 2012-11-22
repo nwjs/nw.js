@@ -27,42 +27,19 @@
 #include "base/command_line.h"
 #include "chrome/renderer/static_v8_external_string_resource.h"
 #include "content/nw/src/api/api_messages.h"
+#include "content/nw/src/api/bindings_common.h"
 #include "content/nw/src/api/object_life_monitor.h"
 #include "content/public/renderer/render_view.h"
 #include "content/public/renderer/render_thread.h"
 #include "content/public/renderer/v8_value_converter.h"
 #include "grit/nw_resources.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebFrame.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebView.h"
-#include "ui/base/resource/resource_bundle.h"
 
 using content::RenderView;
 using content::V8ValueConverter;
-using WebKit::WebFrame;
-using WebKit::WebView;
 
 namespace api {
 
 namespace {
-
-base::StringPiece GetStringResource(int resource_id) {
-  return ResourceBundle::GetSharedInstance().GetRawDataResource(resource_id);
-}
-
-RenderView* GetCurrentRenderView() {
-  WebFrame* frame = WebFrame::frameForCurrentContext();
-  DCHECK(frame);
-  if (!frame)
-    return NULL;
-
-  WebView* view = frame->view();
-  if (!view)
-    return NULL;  // can happen during closing.
-
-  RenderView* render_view = RenderView::FromWebView(view);
-  DCHECK(render_view);
-  return render_view;
-}
 
 v8::Handle<v8::String> WrapSource(v8::Handle<v8::String> source) {
   v8::HandleScope handle_scope;
@@ -140,6 +117,10 @@ DispatcherBindings::GetNativeFunction(v8::Handle<v8::String> name) {
     return v8::FunctionTemplate::New(SetDestructor);
   else if (name->Equals(v8::String::New("GetAbsolutePath")))
     return v8::FunctionTemplate::New(GetAbsolutePath);
+  else if (name->Equals(v8::String::New("GetShellIdForCurrentContext")))
+    return v8::FunctionTemplate::New(GetShellIdForCurrentContext);
+  else if (name->Equals(v8::String::New("GetRoutingIDForCurrentContext")))
+    return v8::FunctionTemplate::New(GetRoutingIDForCurrentContext);
   else if (name->Equals(v8::String::New("AllocateObject")))
     return v8::FunctionTemplate::New(AllocateObject);
   else if (name->Equals(v8::String::New("DeallocateObject")))
@@ -205,6 +186,32 @@ DispatcherBindings::GetAbsolutePath(const v8::Arguments& args) {
 
 // static
 v8::Handle<v8::Value>
+DispatcherBindings::GetShellIdForCurrentContext(const v8::Arguments& args) {
+  RenderView* render_view = GetCurrentRenderView();
+  if (!render_view) {
+    return v8::ThrowException(v8::Exception::Error(v8::String::New(
+            "Unable to get render view in CallStaticMethodSync")));
+  }
+
+  int id = -1;
+  render_view->Send(new ShellViewHostMsg_GetShellId(MSG_ROUTING_NONE, &id));
+  return v8::Integer::New(id);
+}
+
+// static
+v8::Handle<v8::Value>
+DispatcherBindings::GetRoutingIDForCurrentContext(const v8::Arguments& args) {
+  RenderView* render_view = GetCurrentRenderView();
+  if (!render_view) {
+    return v8::ThrowException(v8::Exception::Error(v8::String::New(
+            "Unable to get render view in GetRoutingIDForCurrentContext")));
+  }
+
+  return v8::Integer::New(render_view->GetRoutingID());
+}
+
+// static
+v8::Handle<v8::Value>
 DispatcherBindings::GetHiddenValue(const v8::Arguments& args) {
   return args.This()->GetHiddenValue(args[0]->ToString());
 }
@@ -235,24 +242,12 @@ DispatcherBindings::SetDestructor(const v8::Arguments& args) {
 // static
 v8::Handle<v8::Value>
 DispatcherBindings::AllocateObject(const v8::Arguments& args) {
-  if (args.Length() < 3) {
+  if (args.Length() < 3)
     return v8::ThrowException(v8::Exception::Error(v8::String::New(
-            "AllocateObject requries 3 arguments")));
-  }
+        "AllocateObject requries 3 arguments")));
 
   int object_id = args[0]->Int32Value();
   std::string name = *v8::String::Utf8Value(args[1]);
-
-  scoped_ptr<V8ValueConverter> converter(V8ValueConverter::create());
-  converter->SetStripNullFromObjects(true);
-
-  scoped_ptr<base::Value> value_option(
-      converter->FromV8Value(args[2], v8::Context::GetCurrent()));
-  if (!value_option.get() ||
-      !value_option->IsType(base::Value::TYPE_DICTIONARY)) {
-    return v8::ThrowException(v8::Exception::Error(v8::String::New(
-            "Unable to convert 'option' passed to AllocateObject")));
-  }
 
   RenderView* render_view = GetCurrentRenderView();
   if (!render_view) {
@@ -260,56 +255,37 @@ DispatcherBindings::AllocateObject(const v8::Arguments& args) {
             "Unable to get render view in AllocateObject")));
   }
 
-  render_view->Send(new ShellViewHostMsg_Allocate_Object(
-        render_view->GetRoutingID(),
-        object_id,
-        name,
-        *static_cast<base::DictionaryValue*>(value_option.get())));
-  return v8::Undefined();
+  return remote::AllocateObject(
+      render_view->GetRoutingID(), object_id, name, args[2]);
 }
 
 // static
 v8::Handle<v8::Value>
 DispatcherBindings::DeallocateObject(const v8::Arguments& args) {
-  if (args.Length() < 1) {
-    return v8::ThrowException(v8::Exception::Error(v8::String::New(
-            "DeallocateObject requries 1 arguments")));
-  }
-
-  int object_id = args[0]->Int32Value();
-
   RenderView* render_view = GetCurrentRenderView();
   if (!render_view) {
     return v8::ThrowException(v8::Exception::Error(v8::String::New(
             "Unable to get render view in DeallocateObject")));
   }
 
-  render_view->Send(new ShellViewHostMsg_Deallocate_Object(
-        render_view->GetRoutingID(), object_id));
-  return v8::Undefined();
+  if (args.Length() < 1)
+    return v8::ThrowException(v8::Exception::Error(v8::String::New(
+        "DeallocateObject requries 1 arguments")));
+
+  return remote::DeallocateObject(render_view->GetRoutingID(),
+                                  args[0]->Int32Value());
 }
 
 // static
 v8::Handle<v8::Value>
 DispatcherBindings::CallObjectMethod(const v8::Arguments& args) {
-  if (args.Length() < 4) {
+  if (args.Length() < 4)
     return v8::ThrowException(v8::Exception::Error(v8::String::New(
-            "CallObjectMethod requries 4 arguments")));
-  }
+        "CallObjectMethod requries 4 arguments")));
 
   int object_id = args[0]->Int32Value();
   std::string type = *v8::String::Utf8Value(args[1]);
   std::string method = *v8::String::Utf8Value(args[2]);
-
-  scoped_ptr<V8ValueConverter> converter(V8ValueConverter::create());
-
-  scoped_ptr<base::Value> value_args(
-      converter->FromV8Value(args[3], v8::Context::GetCurrent()));
-  if (!value_args.get() ||
-      !value_args->IsType(base::Value::TYPE_LIST)) {
-    return v8::ThrowException(v8::Exception::Error(v8::String::New(
-            "Unable to convert 'args' passed to CallObjectMethod")));
-  }
 
   RenderView* render_view = GetCurrentRenderView();
   if (!render_view) {
@@ -317,52 +293,29 @@ DispatcherBindings::CallObjectMethod(const v8::Arguments& args) {
             "Unable to get render view in CallObjectMethod")));
   }
 
-  render_view->Send(new ShellViewHostMsg_Call_Object_Method(
-        render_view->GetRoutingID(),
-        object_id,
-        type,
-        method,
-        *static_cast<base::ListValue*>(value_args.get())));
-  return v8::Undefined();
+  return remote::CallObjectMethod(
+      render_view->GetRoutingID(), object_id, type, method, args[3]);
 }
 
 // static
 v8::Handle<v8::Value> DispatcherBindings::CallObjectMethodSync(
     const v8::Arguments& args) {
-  if (args.Length() < 4) {
+  if (args.Length() < 4)
     return v8::ThrowException(v8::Exception::Error(v8::String::New(
-            "CallObjectMethodSync requries 4 arguments")));
-  }
+        "CallObjectMethodSync requries 4 arguments")));
 
   int object_id = args[0]->Int32Value();
   std::string type = *v8::String::Utf8Value(args[1]);
   std::string method = *v8::String::Utf8Value(args[2]);
 
-  scoped_ptr<V8ValueConverter> converter(V8ValueConverter::create());
-
-  scoped_ptr<base::Value> value_args(
-      converter->FromV8Value(args[3], v8::Context::GetCurrent()));
-  if (!value_args.get() ||
-      !value_args->IsType(base::Value::TYPE_LIST)) {
-    return v8::ThrowException(v8::Exception::Error(v8::String::New(
-            "Unable to convert 'args' passed to CallObjectMethodSync")));
-  }
-
   RenderView* render_view = GetCurrentRenderView();
   if (!render_view) {
     return v8::ThrowException(v8::Exception::Error(v8::String::New(
-            "Unable to get render view in CallObjectMethodSync")));
+            "Unable to get render view in CallObjectMethod")));
   }
 
-  base::ListValue result;
-  render_view->Send(new ShellViewHostMsg_Call_Object_Method_Sync(
-        MSG_ROUTING_NONE,
-        object_id,
-        type,
-        method,
-        *static_cast<base::ListValue*>(value_args.get()),
-        &result));
-  return converter->ToV8Value(&result, v8::Context::GetCurrent());
+  return remote::CallObjectMethodSync(
+      render_view->GetRoutingID(), object_id, type, method, args[3]);
 }
 
 // static

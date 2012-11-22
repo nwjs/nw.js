@@ -28,6 +28,7 @@
 #include "chrome/renderer/page_click_tracker.h"
 #include "content/nw/src/api/dispatcher.h"
 #include "content/nw/src/api/api_messages.h"
+#include "content/nw/src/api/window_bindings.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_version.h"
@@ -100,7 +101,15 @@ void ShellContentRendererClient::RenderThreadStarted() {
   v8::V8::Initialize();
   v8::HandleScope scope;
 
-  node::g_context = v8::Context::New();
+  // Install window bindings into node. The Window API is implemented in node's
+  // context, so when a Shell changes to a new location and destroy previous
+  // window context, our Window API can still work.
+  window_bindings_.reset(new api::WindowBindings());
+  v8::RegisterExtension(window_bindings_.get());
+  const char* names[] = { "window_bindings.js" };
+  v8::ExtensionConfiguration extension_configuration(1, names);
+
+  node::g_context = v8::Context::New(&extension_configuration);
   node::g_context->Enter();
 
   // Setup node.js.

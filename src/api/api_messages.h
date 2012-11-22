@@ -70,6 +70,10 @@ IPC_MESSAGE_ROUTED3(ShellViewMsg_Object_On_Event,
                     std::string /* event name */,
                     ListValue /* arguments */)
 
+// Request Shell's id for current render_view_host.
+IPC_SYNC_MESSAGE_ROUTED0_1(ShellViewHostMsg_GetShellId,
+                           int /* result */)
+
 // Tell browser we have an uncaughtException from node.
 IPC_MESSAGE_ROUTED1(ShellViewHostMsg_UncaughtException,
                     std::string /* err */)

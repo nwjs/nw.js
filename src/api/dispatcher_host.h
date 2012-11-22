@@ -91,6 +91,7 @@ class DispatcherHost : public content::RenderViewHostObserver {
                               const base::ListValue& arguments,
                               base::ListValue* result);
   void OnUncaughtException(const std::string& err);
+  void OnGetShellId(int* id);
 
   DISALLOW_COPY_AND_ASSIGN(DispatcherHost);
 };

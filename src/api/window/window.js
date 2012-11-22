@@ -18,193 +18,28 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-function Window() {
-  nw.allocateObject(this, {});
-}
-nw.inherits(Window, exports.Base);
-
-Window.prototype.__defineSetter__('x', function(x) {
-  window.moveTo(x, window.screenY);
-});
-
-Window.prototype.__defineGetter__('x', function() {
-  return window.screenX;
-});
-
-Window.prototype.__defineSetter__('y', function(y) {
-  window.moveTo(window.screenX, y);
-});
-
-Window.prototype.__defineGetter__('y', function() {
-  return window.screenY;
-});
-
-Window.prototype.__defineSetter__('width', function(width) {
-  window.resizeTo(width, window.outerHeight);
-});
-
-Window.prototype.__defineGetter__('width', function() {
-  return window.outerWidth;
-});
-
-Window.prototype.__defineSetter__('height', function(height) {
-  window.resizeTo(window.outerWidth, height);
-});
-
-Window.prototype.__defineGetter__('height', function() {
-  return window.outerHeight;
-});
-
-Window.prototype.__defineSetter__('title', function(title) {
-  window.document.title = title;
-});
-
-Window.prototype.__defineGetter__('title', function() {
-  return window.document.title;
-});
-
-Window.prototype.__defineSetter__('menu', function(menu) {
-  if (nw.getConstructorName(menu) != 'Menu')
-    throw new String("'menu' property requries a valid Menu");
-
-  if (menu.type != 'menubar')
-    throw new String('Only menu of type "menubar" can be used as window menu');
-
-  this.setHiddenValue('menu', menu);
-  nw.callObjectMethod(this, 'SetMenu', [ menu.id ]);
-});
-
-Window.prototype.__defineGetter__('menu', function() {
-  return this.getHiddenValue('menu');
-});
-
-Window.prototype.moveTo = function(x, y) {
-  window.moveTo(x, y);
-}
-
-Window.prototype.moveBy = function(x, y) {
-  window.moveBy(x, y);
-}
-
-Window.prototype.resizeTo = function(width, height) {
-  window.resizeTo(width, height);
-}
-
-Window.prototype.resizeBy = function(width, height) {
-  window.resizeBy(width, height);
-}
-
-Window.prototype.focus = function(flag) {
-  if (typeof flag == 'undefined' || Boolean(flag))
-    window.focus();
-  else
-    this.blur();
-}
-
-Window.prototype.blur = function() {
-  window.blur();
-}
-
-Window.prototype.show = function(flag) {
-  if (typeof flag == 'undefined' || Boolean(flag))
-    nw.callObjectMethod(this, 'Show', []);
-  else
-    this.hide();
-}
-
-Window.prototype.hide = function() {
-  nw.callObjectMethod(this, 'Hide', []);
-}
-
-Window.prototype.close = function(force) {
-  nw.callObjectMethod(this, 'Close', [ Boolean(force) ]);
-}
-
-Window.prototype.maximize = function() {
-  nw.callObjectMethod(this, 'Maximize', []);
-}
-
-Window.prototype.unmaximize = function() {
-  nw.callObjectMethod(this, 'Unmaximize', []);
-}
-
-Window.prototype.minimize = function() {
-  nw.callObjectMethod(this, 'Minimize', []);
-}
-
-Window.prototype.restore = function() {
-  nw.callObjectMethod(this, 'Restore', []);
-}
-
-Window.prototype.enterFullscreen = function() {
-  nw.callObjectMethod(this, 'EnterFullscreen', []);
-}
-
-Window.prototype.leaveFullscreen = function() {
-  nw.callObjectMethod(this, 'LeaveFullscreen', []);
-}
-
-Window.prototype.enterKioskMode = function() {
-  nw.callObjectMethod(this, 'EnterKioskMode', []);
-}
-
-Window.prototype.leaveKioskMode = function() {
-  nw.callObjectMethod(this, 'LeaveKioskMode', []);
-}
-
-Window.prototype.showDevTools = function() {
-  nw.callObjectMethod(this, 'ShowDevTools', []);
-}
-
-Window.prototype.setMinimumSize = function(width, height) {
-  nw.callObjectMethod(this, 'SetMinimumSize', [ width, height ]);
-}
-
-Window.prototype.setMaximumSize = function(width, height) {
-  nw.callObjectMethod(this, 'SetMaximumSize', [ width, height ]);
-}
-
-Window.prototype.setResizable = function(resizable) {
-  resizable = Boolean(resizable);
-  nw.callObjectMethod(this, 'SetResizable', [ resizable ]);
-}
-
-Window.prototype.setAlwaysOnTop = function(flag) {
-  nw.callObjectMethod(this, 'SetAlwaysOnTop', [ Boolean(flag) ]);
-}
-
-Window.prototype.requestAttention = function(flash) {
-  flash = Boolean(flash);
-  nw.callObjectMethod(this, 'RequestAttention', [ flash ]);
-}
-
-Window.prototype.setPosition = function(position) {
-  if (position != 'center' && position != 'mouse')
-    throw new String('Invalid postion');
-  nw.callObjectMethod(this, 'SetPosition', [ position ]);
-}
-
-Window.prototype.handleEvent = function(ev) {
-  // If no one is listening to 'close' then close directly
-  if (ev == 'close' && this.listeners(ev).length == 0) {
-    this.close(true);
-    return;
-  }
-
-  // Emit generate event handler
-  exports.Base.prototype.handleEvent.apply(this, arguments);
-}
-
 exports.Window = {
   get: function(other) {
-    // Return other window
+    // Return other window.
     if (typeof other != 'undefined' && typeof other.require == 'function')
       return other.require('nw.gui').Window.get();
 
-    // Other return this window
-    if (nwDispatcher.windowInstance == null)
-      nwDispatcher.windowInstance = new Window();
+    var id;
+    // See if this window context has requested Shell's id before.
+    if (typeof window.__nwWindowId == 'number')
+      id = window.__nwWindowId;
+    else // else see if the Shell has a corresponding js object.
+      id = nw.getShellIdForCurrentContext();
 
-    return nwDispatcher.windowInstance;
+    // Return API's window object from id.
+    if (id > 0) {
+      window.__nwWindowId = id;
+      return global.__nwWindowsStore[window.__nwWindowId];
+    }
+
+    // Otherwise create it.
+    var win = new global.Window(nw.getRoutingIDForCurrentContext());
+    window.__nwWindowId = win.id;
+    return win;
   }
 };

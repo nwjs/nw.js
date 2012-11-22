@@ -70,6 +70,7 @@ bool DispatcherHost::OnMessageReceived(const IPC::Message& message) {
                         OnCallStaticMethodSync)
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_UncaughtException,
                         OnUncaughtException);
+    IPC_MESSAGE_HANDLER(ShellViewHostMsg_GetShellId, OnGetShellId);
     IPC_MESSAGE_UNHANDLED(handled = false)
   IPC_END_MESSAGE_MAP()
 
@@ -181,6 +182,12 @@ void DispatcherHost::OnUncaughtException(const std::string& err) {
   content::Shell* shell = 
       content::Shell::FromRenderViewHost(render_view_host());
   shell->PrintCriticalError("Uncaught node.js Error", err);
+}
+
+void DispatcherHost::OnGetShellId(int* id) {
+  content::Shell* shell = 
+      content::Shell::FromRenderViewHost(render_view_host());
+  *id = shell->id();
 }
 
 }  // namespace api

@@ -24,6 +24,9 @@ var nwDispatcher = nwDispatcher || {};
   native function RequireNwGui();
   native function GetAbsolutePath();
 
+  native function GetShellIdForCurrentContext();
+  native function GetRoutingIDForCurrentContext();
+
   native function AllocateObject();
   native function DeallocateObject();
   native function CallObjectMethod();
@@ -79,27 +82,14 @@ var nwDispatcher = nwDispatcher || {};
   // Call a sync method of static class in browse and return.
   nwDispatcher.callStaticMethodSync = CallStaticMethodSync;
 
-  nwDispatcher.handleEvent = function(object_id, ev, args) {
-    var object = global.__nwObjectsRegistry.get(object_id);
-    args.splice(0, 0, ev);
-    object.handleEvent.apply(object, args);
-  }
-
   nwDispatcher.getAbsolutePath = GetAbsolutePath;
   nwDispatcher.getConstructorName = GetConstructorName;
+
+  nwDispatcher.getShellIdForCurrentContext = GetShellIdForCurrentContext;
+  nwDispatcher.getRoutingIDForCurrentContext = GetRoutingIDForCurrentContext;
 
   // Extended prototype of objects.
   nwDispatcher.getHiddenValue = GetHiddenValue;
   nwDispatcher.setHiddenValue = SetHiddenValue;
   nwDispatcher.setDestructor = SetDestructor;
-  nwDispatcher.inherits = function(ctor, superCtor) {
-    ctor.prototype = Object.create(superCtor.prototype, {
-      constructor: {
-        value: ctor,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      }
-    });
-  };
 })();
