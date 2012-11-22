@@ -71,7 +71,7 @@ void Window::Call(const std::string& method,
   } else if (method == "LeaveKioskMode") {
     shell_->window()->SetKiosk(false);
   } else if (method == "ToggleKioskMode") {
-    shell_->window()->SetKiosk(!shell_->window()->IsFullscreen());
+    shell_->window()->SetKiosk(!shell_->window()->IsKiosk());
   } else if (method == "ShowDevTools") {
     shell_->ShowDevTools();
   } else if (method == "SetMaximumSize") {
