@@ -149,6 +149,8 @@ void ShellContentRendererClient::InstallNodeSymbols(
     v8::Handle<v8::Context> context) {
   v8::HandleScope handle_scope;
 
+  static bool installed_once = false;
+
   // Do we integrate node?
   bool use_node =
       CommandLine::ForCurrentProcess()->HasSwitch(switches::kmNodejs);
@@ -183,13 +185,22 @@ void ShellContentRendererClient::InstallNodeSymbols(
       v8Global->Set(key, nodeGlobal->Get(key));
     }
 
-    nodeGlobal->Set(v8::String::New("window"), v8Global);
+    if (!installed_once) {
+      installed_once = true;
 
-    // Listen uncaughtException with ReportException.
-    v8::Local<v8::Function> cb = v8::FunctionTemplate::New(ReportException)->
+      // The following listener on process should not be added each
+      // time when a document is created, or it will leave the
+      // reference to the closure created by the call back and leak
+      // memory (see #203)
+
+      nodeGlobal->Set(v8::String::New("window"), v8Global);
+
+      // Listen uncaughtException with ReportException.
+      v8::Local<v8::Function> cb = v8::FunctionTemplate::New(ReportException)->
         GetFunction();
-    v8::Local<v8::Value> argv[] = { v8::String::New("uncaughtException"), cb };
-    node::MakeCallback(node::process, "on", 2, argv);
+      v8::Local<v8::Value> argv[] = { v8::String::New("uncaughtException"), cb };
+      node::MakeCallback(node::process, "on", 2, argv);
+    }
   }
 
   if (use_node) {
