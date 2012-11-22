@@ -22,7 +22,7 @@ var argv;
 
 function App() {
 }
-nw.inherits(App, exports.Base);
+require('util').inherits(App, exports.Base);
 
 App.prototype.quit = function() {
   nw.callStaticMethod('App', 'Quit', [ ]);

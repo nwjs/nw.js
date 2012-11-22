@@ -23,7 +23,7 @@ var clipboardInstance = null;
 function Clipboard() {
   nw.allocateObject(this, {});
 }
-nw.inherits(Clipboard, exports.Base);
+require('util').inherits(Clipboard, exports.Base);
 
 Clipboard.prototype.set = function(data, type) {
   if (typeof type == 'undefined')

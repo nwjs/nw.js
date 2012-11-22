@@ -18,8 +18,8 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#ifndef CONTENT_NW_SRC_API_DISPATCHER_BINDINGS_H_
-#define CONTENT_NW_SRC_API_DISPATCHER_BINDINGS_H_
+#ifndef CONTENT_NW_SRC_API_WINDOW_BINDINGS_H_
+#define CONTENT_NW_SRC_API_WINDOW_BINDINGS_H_
 
 #include "base/basictypes.h"
 #include "base/compiler_specific.h"
@@ -27,45 +27,31 @@
 
 namespace api {
 
-class DispatcherBindings : public v8::Extension {
+class WindowBindings : public v8::Extension {
  public:
-  DispatcherBindings();
-  virtual ~DispatcherBindings();
+  WindowBindings();
+  virtual ~WindowBindings();
 
   // v8::Extension implementation.
   virtual v8::Handle<v8::FunctionTemplate>
       GetNativeFunction(v8::Handle<v8::String> name) OVERRIDE;
-
+  
  private:
-  // Helper functions for bindings.
-  static v8::Handle<v8::Value> RequireNwGui(const v8::Arguments& args);
-  static v8::Handle<v8::Value> GetAbsolutePath(const v8::Arguments& args);
+  // Tell browser to bind a js object to Shell.
+  static v8::Handle<v8::Value> BindToShell(const v8::Arguments& args);
 
-  // Get Shell's corresponding js object's id.
-  static v8::Handle<v8::Value> GetShellIdForCurrentContext(
-      const v8::Arguments& args);
-
-  // Get current routing id.
-  static v8::Handle<v8::Value> GetRoutingIDForCurrentContext(
-      const v8::Arguments& args);
-
-  // Extended prototype of objects.
-  static v8::Handle<v8::Value> GetHiddenValue(const v8::Arguments& args);
-  static v8::Handle<v8::Value> SetHiddenValue(const v8::Arguments& args);
-  static v8::Handle<v8::Value> GetConstructorName(const v8::Arguments& args);
-  static v8::Handle<v8::Value> SetDestructor(const v8::Arguments& args);
-
-  // Remote objects.
-  static v8::Handle<v8::Value> AllocateObject(const v8::Arguments& args);
-  static v8::Handle<v8::Value> DeallocateObject(const v8::Arguments& args);
+  // Call method of an object in browser.
   static v8::Handle<v8::Value> CallObjectMethod(const v8::Arguments& args);
-  static v8::Handle<v8::Value> CallObjectMethodSync(const v8::Arguments& args);
-  static v8::Handle<v8::Value> CallStaticMethod(const v8::Arguments& args);
-  static v8::Handle<v8::Value> CallStaticMethodSync(const v8::Arguments& args);
 
-  DISALLOW_COPY_AND_ASSIGN(DispatcherBindings);
+  // Call method of an object in browser synchrounously.
+  static v8::Handle<v8::Value> CallObjectMethodSync(const v8::Arguments& args);
+
+  // Get the window object of current render view.
+  static v8::Handle<v8::Value> GetWindowObject(const v8::Arguments& args);
+
+  DISALLOW_COPY_AND_ASSIGN(WindowBindings);
 };
 
 }  // namespace api
 
-#endif  // CONTENT_NW_SRC_API_DISPATCHER_BINDINGS_H_
+#endif  // CONTENT_NW_SRC_API_WINDOW_BINDINGS_H_

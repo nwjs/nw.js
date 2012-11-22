@@ -56,7 +56,7 @@ function Tray(option) {
   if (!option.hasOwnProperty('tooltip'))
     option.tooltip = '';
 }
-nw.inherits(Tray, exports.Base);
+require('util').inherits(Tray, exports.Base);
 
 Tray.prototype.__defineGetter__('title', function() {
   return this.handleGetter('title');

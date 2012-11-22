@@ -28,6 +28,7 @@
 #include "chrome/renderer/page_click_tracker.h"
 #include "content/nw/src/api/dispatcher.h"
 #include "content/nw/src/api/api_messages.h"
+#include "content/nw/src/api/window_bindings.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_version.h"
@@ -100,7 +101,15 @@ void ShellContentRendererClient::RenderThreadStarted() {
   v8::V8::Initialize();
   v8::HandleScope scope;
 
-  node::g_context = v8::Context::New();
+  // Install window bindings into node. The Window API is implemented in node's
+  // context, so when a Shell changes to a new location and destroy previous
+  // window context, our Window API can still work.
+  window_bindings_.reset(new api::WindowBindings());
+  v8::RegisterExtension(window_bindings_.get());
+  const char* names[] = { "window_bindings.js" };
+  v8::ExtensionConfiguration extension_configuration(1, names);
+
+  node::g_context = v8::Context::New(&extension_configuration);
   node::g_context->Enter();
 
   // Setup node.js.
@@ -140,6 +149,8 @@ void ShellContentRendererClient::InstallNodeSymbols(
     v8::Handle<v8::Context> context) {
   v8::HandleScope handle_scope;
 
+  static bool installed_once = false;
+
   // Do we integrate node?
   bool use_node =
       CommandLine::ForCurrentProcess()->HasSwitch(switches::kmNodejs);
@@ -174,13 +185,22 @@ void ShellContentRendererClient::InstallNodeSymbols(
       v8Global->Set(key, nodeGlobal->Get(key));
     }
 
-    nodeGlobal->Set(v8::String::New("window"), v8Global);
+    if (!installed_once) {
+      installed_once = true;
 
-    // Listen uncaughtException with ReportException.
-    v8::Local<v8::Function> cb = v8::FunctionTemplate::New(ReportException)->
+      // The following listener on process should not be added each
+      // time when a document is created, or it will leave the
+      // reference to the closure created by the call back and leak
+      // memory (see #203)
+
+      nodeGlobal->Set(v8::String::New("window"), v8Global);
+
+      // Listen uncaughtException with ReportException.
+      v8::Local<v8::Function> cb = v8::FunctionTemplate::New(ReportException)->
         GetFunction();
-    v8::Local<v8::Value> argv[] = { v8::String::New("uncaughtException"), cb };
-    node::MakeCallback(node::process, "on", 2, argv);
+      v8::Local<v8::Value> argv[] = { v8::String::New("uncaughtException"), cb };
+      node::MakeCallback(node::process, "on", 2, argv);
+    }
   }
 
   if (use_node) {

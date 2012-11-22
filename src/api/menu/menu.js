@@ -29,7 +29,7 @@ function Menu(option) {
   this.setHiddenValue('items', []);
   nw.allocateObject(this, option);
 }
-nw.inherits(Menu, exports.Base);
+require('util').inherits(Menu, exports.Base);
 
 Menu.prototype.__defineGetter__('items', function() {
   return this.getHiddenValue('items');

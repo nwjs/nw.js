@@ -39,6 +39,7 @@
       <include name="IDR_NW_GPU" file="pages/nw_gpu.html" type="BINDATA" />
       <include name="IDR_NW_DEVTOOLS_DISCOVERY_PAGE" file="pages/shell_devtools_discovery_page.html" type="BINDATA" />
       <include name="IDR_NW_API_DISPATCHER_BINDINGS_JS" file="../api/dispatcher_bindings.js" type="BINDATA" />
+      <include name="IDR_NW_API_WINDOW_BINDINGS_JS" file="../api/window_bindings.js" type="BINDATA" />
       <include name="IDR_NW_API_BASE_JS" file="../api/base/base.js" type="BINDATA" />
       <include name="IDR_NW_API_MENUITEM_JS" file="../api/menuitem/menuitem.js" type="BINDATA" />
       <include name="IDR_NW_API_MENU_JS" file="../api/menu/menu.js" type="BINDATA" />

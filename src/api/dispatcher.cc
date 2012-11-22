@@ -23,6 +23,8 @@
 #include "content/nw/src/api/api_messages.h"
 #include "content/public/renderer/render_view.h"
 #include "content/renderer/v8_value_converter_impl.h"
+#include "third_party/node/src/node.h"
+#include "third_party/node/src/req_wrap.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebDocument.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebFrame.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebView.h"
@@ -68,23 +70,17 @@ void Dispatcher::OnEvent(int object_id,
   if (web_view == NULL)
     return;
 
-  WebKit::WebFrame* web_frame = web_view->mainFrame();
-  v8::Handle<v8::Context> context = web_frame->mainWorldScriptContext();
-  v8::Context::Scope context_scope(context);
-
   content::V8ValueConverterImpl converter;
-  v8::Handle<v8::Value> args = converter.ToV8Value(&arguments, context);
+  v8::Handle<v8::Value> args = converter.ToV8Value(&arguments, node::g_context);
   DCHECK(!args.IsEmpty()) << "Invalid 'arguments' in Dispatcher::OnEvent";
   v8::Handle<v8::Value> argv[] = {
       v8::Integer::New(object_id), v8::String::New(event.c_str()), args };
 
-  // nwDispatcher.handleEvent(object_id, event, arguments);
-  v8::Handle<v8::Object> nwDispatcher = 
-      context->Global()->Get(v8::String::New("nwDispatcher"))->ToObject();
-  DCHECK(!nwDispatcher.IsEmpty()) << "Cannot get nwDispatcher from window";
-  v8::Handle<v8::Function> handleEvent = v8::Handle<v8::Function>::Cast(
-      nwDispatcher->Get(v8::String::New("handleEvent")));
-  handleEvent->Call(nwDispatcher, 3, argv);
+  // __nwObjectsRegistry.handleEvent(object_id, event, arguments);
+  v8::Handle<v8::Object> objects_registry = 
+      node::g_context->Global()->Get(v8::String::New("__nwObjectsRegistry"))->
+          ToObject();
+  node::MakeCallback(objects_registry, "handleEvent", 3, argv);
 }
 
 }  // namespace api
