@@ -525,7 +525,7 @@ void NativeWindowCocoa::SetKiosk(bool kiosk) {
         NSApplicationPresentationDisableSessionTermination +
         NSApplicationPresentationDisableHideApplication;
     [NSApp setPresentationOptions:options];
-    is_kiosk_ = ture;
+    is_kiosk_ = true;
     SetNonLionFullscreen(true);
   } else {
     [NSApp setPresentationOptions:[NSApp currentSystemPresentationOptions]];
