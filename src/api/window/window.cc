@@ -64,10 +64,14 @@ void Window::Call(const std::string& method,
     shell_->window()->SetFullscreen(true);
   } else if (method == "LeaveFullscreen") {
     shell_->window()->SetFullscreen(false);
+  } else if (method == "ToggleFullscreen") {
+    shell_->window()->SetFullscreen(!shell_->window()->IsFullscreen());
   } else if (method == "EnterKioskMode") {
     shell_->window()->SetKiosk(true);
   } else if (method == "LeaveKioskMode") {
     shell_->window()->SetKiosk(false);
+  } else if (method == "ToggleKioskMode") {
+    shell_->window()->SetKiosk(!shell_->window()->IsKiosk());
   } else if (method == "ShowDevTools") {
     shell_->ShowDevTools();
   } else if (method == "SetMaximumSize") {
@@ -97,7 +101,20 @@ void Window::Call(const std::string& method,
     if (arguments.GetInteger(0, &id))
       shell_->window()->SetMenu(dispatcher_host()->GetObject<Menu>(id));
   } else {
-    NOTREACHED() << "Invalid call to Clipboard method:" << method
+    NOTREACHED() << "Invalid call to Window method:" << method
+                 << " arguments:" << arguments;
+  }
+}
+
+void Window::CallSync(const std::string& method,
+                      const base::ListValue& arguments,
+                      base::ListValue* result) {
+  if (method == "IsFullscreen") {
+    result->AppendBoolean(shell_->window()->IsFullscreen());
+  } else if (method == "IsKioskMode") {
+    result->AppendBoolean(shell_->window()->IsKiosk());
+  } else {
+    NOTREACHED() << "Invalid call to Window method:" << method
                  << " arguments:" << arguments;
   }
 }

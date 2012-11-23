@@ -312,6 +312,10 @@ void NativeWindowWin::SetFullscreen(bool fullscreen) {
     shell()->SendEvent("leave-fullscreen");
 }
 
+bool NativeWindowWin::IsFullscreen() {
+  return is_fullscreen_;
+}
+
 void NativeWindowWin::SetMinimumSize(int width, int height) {
   minimum_size_.set_width(width);
   minimum_size_.set_height(height);
@@ -351,6 +355,10 @@ void NativeWindowWin::FlashFrame(bool flash) {
 
 void NativeWindowWin::SetKiosk(bool kiosk) {
   SetFullscreen(kiosk);
+}
+
+bool NativeWindowWin::IsKiosk() {
+  return IsFullscreen();
 }
 
 void NativeWindowWin::SetMenu(api::Menu* menu) {

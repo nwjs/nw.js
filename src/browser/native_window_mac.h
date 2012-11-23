@@ -50,6 +50,7 @@ class NativeWindowCocoa : public NativeWindow {
   virtual void Minimize() OVERRIDE;
   virtual void Restore() OVERRIDE;
   virtual void SetFullscreen(bool fullscreen) OVERRIDE;
+  virtual bool IsFullscreen() OVERRIDE;
   virtual void SetMinimumSize(int width, int height) OVERRIDE;
   virtual void SetMaximumSize(int width, int height) OVERRIDE;
   virtual void SetResizable(bool resizable) OVERRIDE;
@@ -58,6 +59,7 @@ class NativeWindowCocoa : public NativeWindow {
   virtual void SetTitle(const std::string& title) OVERRIDE;
   virtual void FlashFrame(bool flash) OVERRIDE;
   virtual void SetKiosk(bool kiosk) OVERRIDE;
+  virtual bool IsKiosk() OVERRIDE;
   virtual void SetMenu(api::Menu* menu) OVERRIDE;
   virtual void SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
                                        bool enabled) OVERRIDE;
@@ -100,6 +102,7 @@ class NativeWindowCocoa : public NativeWindow {
   scoped_nsobject<ShellToolbarDelegate> toolbar_delegate_;
 
   bool is_fullscreen_;
+  bool is_kiosk_;
   NSRect restored_bounds_;
 
   NSInteger attention_request_id_;  // identifier from requestUserAttention

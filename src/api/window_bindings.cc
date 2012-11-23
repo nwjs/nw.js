@@ -48,6 +48,8 @@ WindowBindings::GetNativeFunction(v8::Handle<v8::String> name) {
     return v8::FunctionTemplate::New(BindToShell);
   else if (name->Equals(v8::String::New("CallObjectMethod")))
     return v8::FunctionTemplate::New(CallObjectMethod);
+  else if (name->Equals(v8::String::New("CallObjectMethodSync")))
+    return v8::FunctionTemplate::New(CallObjectMethodSync);
   else if (name->Equals(v8::String::New("GetWindowObject")))
     return v8::FunctionTemplate::New(GetWindowObject);
 
