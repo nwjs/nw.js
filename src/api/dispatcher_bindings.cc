@@ -28,7 +28,6 @@
 #include "chrome/renderer/static_v8_external_string_resource.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/bindings_common.h"
-#include "content/nw/src/api/object_life_monitor.h"
 #include "content/public/renderer/render_view.h"
 #include "content/public/renderer/render_thread.h"
 #include "content/public/renderer/v8_value_converter.h"
@@ -107,8 +106,6 @@ v8::Handle<v8::FunctionTemplate>
 DispatcherBindings::GetNativeFunction(v8::Handle<v8::String> name) {
   if (name->Equals(v8::String::New("RequireNwGui")))
     return v8::FunctionTemplate::New(RequireNwGui);
-  else if (name->Equals(v8::String::New("SetDestructor")))
-    return v8::FunctionTemplate::New(SetDestructor);
   else if (name->Equals(v8::String::New("GetAbsolutePath")))
     return v8::FunctionTemplate::New(GetAbsolutePath);
   else if (name->Equals(v8::String::New("GetShellIdForCurrentContext")))
@@ -202,13 +199,6 @@ DispatcherBindings::GetRoutingIDForCurrentContext(const v8::Arguments& args) {
   }
 
   return v8::Integer::New(render_view->GetRoutingID());
-}
-
-// static
-v8::Handle<v8::Value>
-DispatcherBindings::SetDestructor(const v8::Arguments& args) {
-  ObjectLifeMonitor::BindTo(args.This(), args[0]);
-  return v8::Undefined();
 }
 
 // static

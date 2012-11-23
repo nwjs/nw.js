@@ -34,15 +34,14 @@ var nwDispatcher = nwDispatcher || {};
   native function CallStaticMethod();
   native function CallStaticMethodSync();
 
-  native function SetDestructor();
-
   nwDispatcher.requireNwGui = RequireNwGui;
 
   // Request a new object from browser
   nwDispatcher.allocateObject = function(object, option) {
+    var v8_util = process.binding('v8_util');
+
     var id = global.__nwObjectsRegistry.allocateId();
-    AllocateObject(id, process.binding('v8_util').getConstructorName(object),
-                   option);
+    AllocateObject(id, v8_util.getConstructorName(object), option);
 
     // Store object id and make it readonly
     Object.defineProperty(object, 'id', {
@@ -51,7 +50,7 @@ var nwDispatcher = nwDispatcher || {};
     });
 
     // Deallcoate on destroy
-    object.setDestructor(nwDispatcher.deallocateObject);
+    v8_util.setDestructor(object, nwDispatcher.deallocateObject);
 
     // Store id to object relations, there is no delete in deallocateObject
     // since this is a weak map.
@@ -87,10 +86,6 @@ var nwDispatcher = nwDispatcher || {};
   nwDispatcher.callStaticMethodSync = CallStaticMethodSync;
 
   nwDispatcher.getAbsolutePath = GetAbsolutePath;
-
   nwDispatcher.getShellIdForCurrentContext = GetShellIdForCurrentContext;
   nwDispatcher.getRoutingIDForCurrentContext = GetRoutingIDForCurrentContext;
-
-  // Extended prototype of objects.
-  nwDispatcher.setDestructor = SetDestructor;
 })();

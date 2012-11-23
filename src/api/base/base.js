@@ -25,10 +25,6 @@ function Base() {
 }
 require('util').inherits(Base, require('events').EventEmitter);
 
-// Move helper functions to Base
-Base.prototype.setDestructor = nw.setDestructor;
-delete nw.setDestructor;
-
 // Silent unhandled events
 Base.prototype.handleEvent = function() {
   this.emit.apply(this, arguments);

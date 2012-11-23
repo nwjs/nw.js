@@ -102,8 +102,6 @@
         'src/api/dispatcher_bindings.h',
         'src/api/dispatcher_host.cc',
         'src/api/dispatcher_host.h',
-        'src/api/object_life_monitor.cc',
-        'src/api/object_life_monitor.h',
         'src/api/window_bindings.cc',
         'src/api/window_bindings.h',
         'src/api/menu/menu.cc',
