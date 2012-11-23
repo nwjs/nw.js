@@ -257,6 +257,7 @@ NativeWindowCocoa::NativeWindowCocoa(
     base::DictionaryValue* manifest)
     : NativeWindow(shell, manifest),
       is_fullscreen_(false),
+      is_kiosk_(false),
       attention_request_id_(0),
       use_system_drag_(true) {
   int width, height;
@@ -411,6 +412,10 @@ void NativeWindowCocoa::SetFullscreen(bool fullscreen) {
   SetNonLionFullscreen(fullscreen);
 }
 
+bool NativeWindowCocoa::IsFullscreen() {
+  return is_fullscreen_;
+}
+
 void NativeWindowCocoa::SetNonLionFullscreen(bool fullscreen) {
   if (fullscreen == is_fullscreen_)
     return;
@@ -520,11 +525,17 @@ void NativeWindowCocoa::SetKiosk(bool kiosk) {
         NSApplicationPresentationDisableSessionTermination +
         NSApplicationPresentationDisableHideApplication;
     [NSApp setPresentationOptions:options];
+    is_kiosk_ = ture;
     SetNonLionFullscreen(true);
   } else {
     [NSApp setPresentationOptions:[NSApp currentSystemPresentationOptions]];
+    is_kiosk_  = false;
     SetNonLionFullscreen(false);
   }
+}
+
+bool NativeWindowCocoa::IsKiosk() {
+  return is_kiosk_;
 }
 
 void NativeWindowCocoa::SetMenu(api::Menu* menu) {

@@ -72,6 +72,7 @@ class NativeWindow {
   virtual void Minimize() = 0;
   virtual void Restore() = 0;
   virtual void SetFullscreen(bool fullscreen) = 0;
+  virtual bool IsFullscreen() = 0;
   virtual void SetMinimumSize(int width, int height) = 0;
   virtual void SetMaximumSize(int width, int height) = 0;
   virtual void SetResizable(bool resizable) = 0;
@@ -80,6 +81,7 @@ class NativeWindow {
   virtual void SetTitle(const std::string& title) = 0;
   virtual void FlashFrame(bool flash) = 0;
   virtual void SetKiosk(bool kiosk) = 0;
+  virtual bool IsKiosk() = 0;
   virtual void SetMenu(api::Menu* menu) = 0;
 
   // Toolbar related controls.
