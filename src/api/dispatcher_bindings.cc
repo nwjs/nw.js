@@ -107,12 +107,6 @@ v8::Handle<v8::FunctionTemplate>
 DispatcherBindings::GetNativeFunction(v8::Handle<v8::String> name) {
   if (name->Equals(v8::String::New("RequireNwGui")))
     return v8::FunctionTemplate::New(RequireNwGui);
-  else if (name->Equals(v8::String::New("GetConstructorName")))
-    return v8::FunctionTemplate::New(GetConstructorName);
-  else if (name->Equals(v8::String::New("GetHiddenValue")))
-    return v8::FunctionTemplate::New(GetHiddenValue);
-  else if (name->Equals(v8::String::New("SetHiddenValue")))
-    return v8::FunctionTemplate::New(SetHiddenValue);
   else if (name->Equals(v8::String::New("SetDestructor")))
     return v8::FunctionTemplate::New(SetDestructor);
   else if (name->Equals(v8::String::New("GetAbsolutePath")))
@@ -208,28 +202,6 @@ DispatcherBindings::GetRoutingIDForCurrentContext(const v8::Arguments& args) {
   }
 
   return v8::Integer::New(render_view->GetRoutingID());
-}
-
-// static
-v8::Handle<v8::Value>
-DispatcherBindings::GetHiddenValue(const v8::Arguments& args) {
-  return args.This()->GetHiddenValue(args[0]->ToString());
-}
-
-// static
-v8::Handle<v8::Value>
-DispatcherBindings::SetHiddenValue(const v8::Arguments& args) {
-  args.This()->SetHiddenValue(args[0]->ToString(), args[1]);
-  return v8::Undefined();
-}
-
-// static
-v8::Handle<v8::Value>
-DispatcherBindings::GetConstructorName(const v8::Arguments& args) {
-  if (args.Length() < 1 || !args[0]->IsObject())
-    return v8::Undefined();
-
-  return args[0]->ToObject()->GetConstructorName();
 }
 
 // static

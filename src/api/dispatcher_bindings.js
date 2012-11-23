@@ -34,9 +34,6 @@ var nwDispatcher = nwDispatcher || {};
   native function CallStaticMethod();
   native function CallStaticMethodSync();
 
-  native function GetConstructorName();
-  native function GetHiddenValue();
-  native function SetHiddenValue();
   native function SetDestructor();
 
   nwDispatcher.requireNwGui = RequireNwGui;
@@ -44,7 +41,8 @@ var nwDispatcher = nwDispatcher || {};
   // Request a new object from browser
   nwDispatcher.allocateObject = function(object, option) {
     var id = global.__nwObjectsRegistry.allocateId();
-    AllocateObject(id, GetConstructorName(object), option);
+    AllocateObject(id, process.binding('v8_util').getConstructorName(object),
+                   option);
 
     // Store object id and make it readonly
     Object.defineProperty(object, 'id', {
@@ -67,13 +65,19 @@ var nwDispatcher = nwDispatcher || {};
 
   // Call method of a object in browser.
   nwDispatcher.callObjectMethod = function(object, method, args) {
-    CallObjectMethod(object.id, GetConstructorName(object), method, args);
+    CallObjectMethod(object.id,
+                     process.binding('v8_util').getConstructorName(object),
+                     method,
+                     args);
   };
 
   // Call sync method of a object in browser and return results.
   nwDispatcher.callObjectMethodSync = function(object, method, args) {
     return CallObjectMethodSync(
-        object.id, GetConstructorName(object), method, args);
+        object.id,
+        process.binding('v8_util').getConstructorName(object),
+        method,
+        args);
   };
 
   // Call a static method.
@@ -83,13 +87,10 @@ var nwDispatcher = nwDispatcher || {};
   nwDispatcher.callStaticMethodSync = CallStaticMethodSync;
 
   nwDispatcher.getAbsolutePath = GetAbsolutePath;
-  nwDispatcher.getConstructorName = GetConstructorName;
 
   nwDispatcher.getShellIdForCurrentContext = GetShellIdForCurrentContext;
   nwDispatcher.getRoutingIDForCurrentContext = GetRoutingIDForCurrentContext;
 
   // Extended prototype of objects.
-  nwDispatcher.getHiddenValue = GetHiddenValue;
-  nwDispatcher.setHiddenValue = SetHiddenValue;
   nwDispatcher.setDestructor = SetDestructor;
 })();

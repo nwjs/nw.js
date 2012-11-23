@@ -18,6 +18,8 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+var v8_util = process.binding('v8_util');
+
 function Menu(option) {
   if (typeof option != 'object')
     option = { type: 'contextmenu' };
@@ -26,13 +28,13 @@ function Menu(option) {
     throw new String('Invalid menu type: ' + option.type);
 
   this.type = option.type;
-  this.setHiddenValue('items', []);
+  v8_util.setHiddenValue(this, 'items', []);
   nw.allocateObject(this, option);
 }
 require('util').inherits(Menu, exports.Base);
 
 Menu.prototype.__defineGetter__('items', function() {
-  return this.getHiddenValue('items');
+  return v8_util.getHiddenValue(this, 'items');
 });
 
 Menu.prototype.__defineSetter__('items', function(val) {
@@ -40,7 +42,7 @@ Menu.prototype.__defineSetter__('items', function(val) {
 });
 
 Menu.prototype.append = function(menu_item) {
-  if (nw.getConstructorName(menu_item) != 'MenuItem')
+  if (v8_util.getConstructorName(menu_item) != 'MenuItem')
     throw new String("Menu.append() requires a valid MenuItem");
     
   this.items.push(menu_item);

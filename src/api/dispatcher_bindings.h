@@ -50,9 +50,6 @@ class DispatcherBindings : public v8::Extension {
       const v8::Arguments& args);
 
   // Extended prototype of objects.
-  static v8::Handle<v8::Value> GetHiddenValue(const v8::Arguments& args);
-  static v8::Handle<v8::Value> SetHiddenValue(const v8::Arguments& args);
-  static v8::Handle<v8::Value> GetConstructorName(const v8::Arguments& args);
   static v8::Handle<v8::Value> SetDestructor(const v8::Arguments& args);
 
   // Remote objects.

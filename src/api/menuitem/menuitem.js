@@ -18,6 +18,8 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+var v8_util = process.binding('v8_util');
+
 function MenuItem(option) {
   if (typeof option != 'object')
     throw new String('Invalid option.');
@@ -51,11 +53,11 @@ function MenuItem(option) {
       option.enabled = Boolean(option.enabled);
 
     if (option.hasOwnProperty('submenu')) {
-      if (nw.getConstructorName(option.submenu) != 'Menu')
+      if (v8_util.getConstructorName(option.submenu) != 'Menu')
         throw new String("'submenu' must be a valid Menu");
 
       // Transfer only object id
-      this.setHiddenValue('submenu', option.submenu);
+      v8_util.setHiddenValue(this, 'submenu', option.submenu);
       option.submenu = option.submenu.id;
     }
 
@@ -71,7 +73,7 @@ function MenuItem(option) {
     };
   }
 
-  this.setHiddenValue('option', option);
+  v8_util.setHiddenValue(this, 'option', option);
   nw.allocateObject(this, option);
 
   // All properties must be set after initialization.
@@ -105,7 +107,7 @@ MenuItem.prototype.__defineGetter__('icon', function() {
 });
 
 MenuItem.prototype.__defineSetter__('icon', function(val) {
-  this.getHiddenValue('option').shadowIcon = String(val);
+  v8_util.getHiddenValue(this, 'option').shadowIcon = String(val);
   var real_path = val == '' ? '' : nw.getAbsolutePath(val);
   this.handleSetter('icon', 'SetIcon', String, real_path);
 });
@@ -141,14 +143,14 @@ MenuItem.prototype.__defineSetter__('enabled', function(val) {
 });
 
 MenuItem.prototype.__defineGetter__('submenu', function() {
-  return this.getHiddenValue('submenu');
+  return v8_util.getHiddenValue(this, 'submenu');
 });
 
 MenuItem.prototype.__defineSetter__('submenu', function(val) {
-  if (nw.getConstructorName(val) != 'Menu')
+  if (v8_util.getConstructorName(val) != 'Menu')
     throw new String("'submenu' property requries a valid Menu");
 
-  this.setHiddenValue('submenu', val);
+  v8_util.setHiddenValue(this, 'submenu', val);
   nw.callObjectMethod(this, 'SetMenu', [ val.id ]);
 });
 
@@ -156,7 +158,7 @@ MenuItem.prototype.handleEvent = function(ev) {
   if (ev == 'click') {
     // Automatically flag the 'checked' property.
     if (this.type == 'checkbox') {
-      var option = this.getHiddenValue('option');
+      var option = v8_util.getHiddenValue(this, 'option');
       option.checked = !option.checked;
     }
 

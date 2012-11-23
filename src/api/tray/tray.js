@@ -18,6 +18,8 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+var v8_util = process.binding('v8_util');
+
 function Tray(option) {
   if (typeof option != 'object')
     throw new String('Invalid option');
@@ -39,15 +41,15 @@ function Tray(option) {
     option.tooltip = String(option.tooltip);
 
   if (option.hasOwnProperty('menu')) {
-    if (nw.getConstructorName(option.menu) != 'Menu')
+    if (v8_util.getConstructorName(option.menu) != 'Menu')
       throw new String("'menu' must be a valid Menu");
 
     // Transfer only object id
-    this.setHiddenValue('menu', option.menu);
+    v8_util.setHiddenValue(this, 'menu', option.menu);
     option.menu = option.menu.id;
   }
 
-  this.setHiddenValue('option', option);
+  v8_util.setHiddenValue(this, 'option', option);
   nw.allocateObject(this, option);
 
   // All properties must be set after initialization.
@@ -71,7 +73,7 @@ Tray.prototype.__defineGetter__('icon', function() {
 });
 
 Tray.prototype.__defineSetter__('icon', function(val) {
-  this.getHiddenValue('option').shadowIcon = String(val);
+  v8_util.getHiddenValue(this, 'option').shadowIcon = String(val);
   var real_path = val == '' ? '' : nw.getAbsolutePath(val);
   this.handleSetter('icon', 'SetIcon', String, real_path);
 });
@@ -85,14 +87,14 @@ Tray.prototype.__defineSetter__('tooltip', function(val) {
 });
 
 Tray.prototype.__defineGetter__('menu', function() {
-  return this.getHiddenValue('menu');
+  return v8_util.getHiddenValue(this, 'menu');
 });
 
 Tray.prototype.__defineSetter__('menu', function(val) {
-  if (nw.getConstructorName(val) != 'Menu')
+  if (v8_util.getConstructorName(val) != 'Menu')
     throw new String("'menu' property requries a valid Menu");
 
-  this.setHiddenValue('menu', val);
+  v8_util.setHiddenValue(this, 'menu', val);
   nw.callObjectMethod(this, 'SetMenu', [ val.id ]);
 });
 

@@ -18,17 +18,15 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+var v8_util = process.binding('v8_util');
+
 function Base() {
   throw new String("It's forbidden to instantialize a Base class.");
 }
 require('util').inherits(Base, require('events').EventEmitter);
 
 // Move helper functions to Base
-Base.prototype.getHiddenValue = nw.getHiddenValue;
-Base.prototype.setHiddenValue = nw.setHiddenValue;
 Base.prototype.setDestructor = nw.setDestructor;
-delete nw.getHiddenValue;
-delete nw.setHiddenValue;
 delete nw.setDestructor;
 
 // Silent unhandled events
@@ -38,12 +36,12 @@ Base.prototype.handleEvent = function() {
 
 // Generic getter and setter
 Base.prototype.handleGetter = function(name) {
-  return this.getHiddenValue('option')[name];
+  return v8_util.getHiddenValue(this, 'option')[name];
 }
 
 Base.prototype.handleSetter = function(name, setter, type, value) {
   value = type(value);
-  this.getHiddenValue('option')[name] = value;
+  v8_util.getHiddenValue(this, 'option')[name] = value;
   nw.callObjectMethod(this, setter, [ value ]);
 }
 

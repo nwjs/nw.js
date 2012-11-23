@@ -24,6 +24,8 @@ function Window(routing_id) {
 // And init everything after the inheritance.
 Window.init = function() {
 
+var v8_util = process.binding('v8_util');
+
 native function CallObjectMethod();
 native function CallObjectMethodSync();
 
@@ -86,18 +88,18 @@ Window.prototype.__defineGetter__('title', function() {
 });
 
 Window.prototype.__defineSetter__('menu', function(menu) {
-  if (nw.getConstructorName(menu) != 'Menu')
+  if (v8_util.getConstructorName(menu) != 'Menu')
     throw new String("'menu' property requries a valid Menu");
 
   if (menu.type != 'menubar')
     throw new String('Only menu of type "menubar" can be used as this.window menu');
 
-  this.setHiddenValue('menu', menu);
-  nw.callObjectMethod(this, 'SetMenu', [ menu.id ]);
+  v8_util.setHiddenValue(this, 'menu', menu);
+  CallObjectMethod(this, 'SetMenu', [ menu.id ]);
 });
 
 Window.prototype.__defineGetter__('menu', function() {
-  return this.getHiddenValue('menu');
+  return v8_util.getHiddenValue(this, 'menu');
 });
 
 Window.prototype.moveTo = function(x, y) {
