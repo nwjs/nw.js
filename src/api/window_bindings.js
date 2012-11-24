@@ -102,9 +102,23 @@ Window.prototype.__defineGetter__('menu', function() {
   return v8_util.getHiddenValue(this, 'menu');
 });
 
+Window.prototype.__defineSetter__('isFullscreen', function(flag) {
+  if (flag)
+    this.enterFullscreen();
+  else
+    this.leaveFullscreen();
+});
+
 Window.prototype.__defineGetter__('isFullscreen', function() {
   var result = CallObjectMethodSync(this, 'IsFullscreen', []);
   return Boolean(result[0]);
+});
+
+Window.prototype.__defineSetter__('isKioskMode', function(flag) {
+  if (flag)
+    this.enterKioskMode();
+  else
+    this.leaveKioskMode();
 });
 
 Window.prototype.__defineGetter__('isKioskMode', function() {
