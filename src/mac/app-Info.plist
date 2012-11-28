@@ -9,7 +9,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFile</key>
-	<string>app.icns</string>
+	<string>nw.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.intel.nw</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -32,7 +32,7 @@
 	<array>
 		<dict>
 			<key>CFBundleTypeIconFile</key>
-			<string>app.icns</string>
+			<string>nw.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>node-webkit App</string>
 			<key>CFBundleTypeRole</key>
@@ -67,7 +67,7 @@
 			<key>UTTypeDescription</key>
 			<string>node-webkit App</string>
 			<key>UTTypeIconFile</key>
-			<string>app.icns</string>
+			<string>nw.icns</string>
 			<key>UTTypeIdentifier</key>
 			<string>com.intel.nw.app</string>
 			<key>UTTypeReferenceURL</key>

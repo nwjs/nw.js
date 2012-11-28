@@ -344,7 +344,7 @@
         'src/shell_main.cc',
       ],
       'mac_bundle_resources': [
-        'src/mac/app.icns',
+        'src/mac/nw.icns',
         'src/mac/app-Info.plist',
       ],
       # TODO(mark): Come up with a fancier way to do this.  It should only
