@@ -25,6 +25,7 @@
 #include "base/string_util.h"
 #include "base/utf_string_conversions.h"
 #include "base/values.h"
+#include "content/browser/child_process_security_policy_impl.h"
 #include "content/public/browser/devtools_agent_host_registry.h"
 #include "content/public/browser/devtools_http_handler.h"
 #include "content/public/browser/devtools_manager.h"
@@ -33,8 +34,10 @@
 #include "content/public/browser/notification_details.h"
 #include "content/public/browser/notification_source.h"
 #include "content/public/browser/notification_types.h"
+#include "content/public/browser/render_process_host.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
+#include "content/public/common/url_constants.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/app/app.h"
 #include "content/nw/src/browser/file_select_helper.h"
@@ -245,6 +248,8 @@ void Shell::ShowDevTools() {
       WebContents::Create(web_contents()->GetBrowserContext(),
                           NULL, MSG_ROUTING_NONE, NULL),
       &manifest);
+  int rh_id = shell->web_contents_->GetRenderProcessHost()->GetID();
+  ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, chrome::kFileScheme);
   shell->is_devtools_ = true;
   shell->force_close_ = true;
   shell->LoadURL(url);
