@@ -24,6 +24,8 @@
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
+#include "grit/nw_resources.h"
+#include "ui/base/resource/resource_bundle.h"
 #include "ui/gfx/rect.h"
 
 #if defined(OS_MACOSX)
@@ -67,7 +69,7 @@ NativeWindow::NativeWindow(content::Shell* shell,
       has_frame_(true) {
   manifest->GetBoolean(switches::kmFrame, &has_frame_);
 
-  LoadAppIconFromPackage();
+  LoadAppIconFromPackage(manifest);
 }
 
 NativeWindow::~NativeWindow() {
@@ -132,12 +134,17 @@ void NativeWindow::InitFromManifest(base::DictionaryValue* manifest) {
     Show();
 }
 
-void NativeWindow::LoadAppIconFromPackage() {
-  nw::Package* package = shell_->GetPackage();
+void NativeWindow::LoadAppIconFromPackage(base::DictionaryValue* manifest) {
   std::string path_string;
-  if (package->window()->GetString(switches::kmIcon, &path_string))
-    package->GetImage(FilePath::FromUTF8Unsafe(path_string),
-                      &app_icon_);
+  if (manifest->GetString(switches::kmIcon, &path_string)) {
+    // Read icon from "icon" field.
+    shell_->GetPackage()->GetImage(FilePath::FromUTF8Unsafe(path_string),
+         &app_icon_);
+  } else {
+    // Set default icon.
+    app_icon_ = ui::ResourceBundle::GetSharedInstance().
+        GetNativeImageNamed(IDR_NW_DEFAULT_ICON);
+  }
 }
 
 }  // namespace nw

@@ -120,7 +120,7 @@ class NativeWindow {
   gfx::Image app_icon_;
 
  private:
-  void LoadAppIconFromPackage();
+  void LoadAppIconFromPackage(base::DictionaryValue* manifest);
 
   DISALLOW_COPY_AND_ASSIGN(NativeWindow);
 };

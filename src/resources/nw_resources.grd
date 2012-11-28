@@ -11,6 +11,7 @@
   <translations />
   <release seq="1">
     <structures fallback_to_low_resolution="true">
+      <structure type="chrome_scaled_image" name="IDR_NW_DEFAULT_ICON" file="nw.png" />
       <structure type="chrome_scaled_image" name="IDR_NW_BACK" file="browser_back_normal.png" />
       <structure type="chrome_scaled_image" name="IDR_NW_BACK_D" file="browser_back_disabled.png" />
       <structure type="chrome_scaled_image" name="IDR_NW_BACK_H" file="browser_back_hover.png" />
