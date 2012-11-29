@@ -31,6 +31,9 @@ native function CallObjectMethodSync();
 
 // Route events.
 Window.prototype.handleEvent = function(ev) {
+  // Route events to EventEmitter.
+  this.emit.apply(this, arguments);
+
   // If no one is listening to 'close' then close directly
   if (ev == 'close' && this.listeners(ev).length == 0) {
     this.close(true);
@@ -39,9 +42,6 @@ Window.prototype.handleEvent = function(ev) {
     delete global.__nwWindowsStore[this.id];
     return;
   }
-
-  // Route events to EventEmitter.
-  this.emit.apply(this, arguments);
 }
 
 // Return current window object of Shell's DOM.
