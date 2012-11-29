@@ -9,11 +9,12 @@
 <body style="-webkit-user-select: none; -webkit-app-region: drag">
 <script>
   var gui = require('nw.gui');
-  var win = gui.Window.get(
-    window.open('popup.html', '_blank', 'screenX=100,screenY=100,width=200,height=300')
-  );
+  var win = gui.Window.open('popup.html', {
+    x: 100, y: 100, width: 200, height: 300
+  });
 
   win.on('closed', function() {
+    console.log('popup window is closed');
     win = null;
   });
 
