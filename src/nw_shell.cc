@@ -127,11 +127,14 @@ Shell::~Shell() {
     api::App::Quit(web_contents()->GetRenderProcessHost());
 }
 
-void Shell::SendEvent(const std::string& event) {
+void Shell::SendEvent(const std::string& event, const std::string& arg1) {
   if (id() < 0)
     return;
 
   base::ListValue args;
+  if (!arg1.empty())
+    args.AppendString(arg1);
+
   web_contents()->GetRenderViewHost()->Send(new ShellViewMsg_Object_On_Event(
       web_contents()->GetRoutingID(), id(), event, args));
 }
@@ -291,6 +294,11 @@ void Shell::LoadingStateChanged(WebContents* source) {
   window()->SetToolbarButtonEnabled(nw::NativeWindow::BUTTON_FORWARD,
                                     current_index < max_index);
   window()->SetToolbarIsLoading(source->IsLoading());
+
+  if (source->IsLoading())
+    SendEvent("loading");
+  else
+    SendEvent("loaded");
 }
 
 void Shell::ActivateContents(content::WebContents* contents) {

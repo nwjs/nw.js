@@ -14,8 +14,16 @@
   });
 
   win.on('closed', function() {
-    console.log('popup window is closed');
+    console.log('popup window is closed.');
     win = null;
+  });
+
+  win.on('loading', function() {
+    console.log('start to load new window.');
+  });
+
+  win.on('loaded', function() {
+    console.log('new window loaded.');
   });
 
   gui.Window.get().on('close', function() {

@@ -81,7 +81,7 @@ class Shell : public WebContentsDelegate,
   void ShowDevTools();
 
   // Send an event to renderer.
-  void SendEvent(const std::string& event);
+  void SendEvent(const std::string& event, const std::string& arg1 = "");
 
   // Decide whether we should close the window.
   bool ShouldCloseWindow();
