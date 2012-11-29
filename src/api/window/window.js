@@ -41,5 +41,9 @@ exports.Window = {
     var win = new global.Window(nw.getRoutingIDForCurrentContext());
     window.__nwWindowId = win.id;
     return win;
+  },
+  open: function(url, options) {
+    var routing_id = nw.createShell(url, options);
+    return new global.Window(routing_id);
   }
 };

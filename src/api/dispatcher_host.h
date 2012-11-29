@@ -92,6 +92,9 @@ class DispatcherHost : public content::RenderViewHostObserver {
                               base::ListValue* result);
   void OnUncaughtException(const std::string& err);
   void OnGetShellId(int* id);
+  void OnCreateShell(const std::string& url,
+                     const base::DictionaryValue& manifest,
+                     int* routing_id);
 
   DISALLOW_COPY_AND_ASSIGN(DispatcherHost);
 };

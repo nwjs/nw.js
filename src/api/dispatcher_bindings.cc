@@ -112,6 +112,8 @@ DispatcherBindings::GetNativeFunction(v8::Handle<v8::String> name) {
     return v8::FunctionTemplate::New(GetShellIdForCurrentContext);
   else if (name->Equals(v8::String::New("GetRoutingIDForCurrentContext")))
     return v8::FunctionTemplate::New(GetRoutingIDForCurrentContext);
+  else if (name->Equals(v8::String::New("CreateShell")))
+    return v8::FunctionTemplate::New(CreateShell);
   else if (name->Equals(v8::String::New("AllocateObject")))
     return v8::FunctionTemplate::New(AllocateObject);
   else if (name->Equals(v8::String::New("DeallocateObject")))
@@ -199,6 +201,41 @@ DispatcherBindings::GetRoutingIDForCurrentContext(const v8::Arguments& args) {
   }
 
   return v8::Integer::New(render_view->GetRoutingID());
+}
+
+// static
+v8::Handle<v8::Value>
+DispatcherBindings::CreateShell(const v8::Arguments& args) {
+  if (args.Length() < 2)
+    return v8::ThrowException(v8::Exception::Error(v8::String::New(
+        "CreateShell requries 2 arguments")));
+
+  std::string url = *v8::String::Utf8Value(args[0]);
+
+  scoped_ptr<V8ValueConverter> converter(V8ValueConverter::create());
+
+  scoped_ptr<base::Value> value_manifest(
+      converter->FromV8Value(args[1], v8::Context::GetCurrent()));
+  if (!value_manifest.get() ||
+      !value_manifest->IsType(base::Value::TYPE_DICTIONARY)) {
+    return v8::ThrowException(v8::Exception::Error(v8::String::New(
+            "Unable to convert 'options' passed to CreateShell")));
+  }
+
+  RenderView* render_view = GetCurrentRenderView();
+  if (!render_view) {
+    return v8::ThrowException(v8::Exception::Error(v8::String::New(
+            "Unable to get render view in CallStaticMethod")));
+  }
+
+  int routing_id = -1;
+  render_view->Send(new ShellViewHostMsg_CreateShell(
+      render_view->GetRoutingID(),
+      url,
+      *static_cast<base::DictionaryValue*>(value_manifest.get()),
+      &routing_id));
+
+  return v8::Integer::New(routing_id);
 }
 
 // static

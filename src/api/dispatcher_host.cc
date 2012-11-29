@@ -32,6 +32,10 @@
 #include "content/nw/src/api/tray/tray.h"
 #include "content/nw/src/api/window/window.h"
 #include "content/nw/src/nw_shell.h"
+#include "content/public/browser/render_process_host.h"
+#include "content/public/browser/web_contents.h"
+
+using content::WebContents;
 
 namespace api {
 
@@ -71,6 +75,7 @@ bool DispatcherHost::OnMessageReceived(const IPC::Message& message) {
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_UncaughtException,
                         OnUncaughtException);
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_GetShellId, OnGetShellId);
+    IPC_MESSAGE_HANDLER(ShellViewHostMsg_CreateShell, OnCreateShell);
     IPC_MESSAGE_UNHANDLED(handled = false)
   IPC_END_MESSAGE_MAP()
 
@@ -188,6 +193,29 @@ void DispatcherHost::OnGetShellId(int* id) {
   content::Shell* shell = 
       content::Shell::FromRenderViewHost(render_view_host());
   *id = shell->id();
+}
+
+void DispatcherHost::OnCreateShell(const std::string& url,
+                                   const base::DictionaryValue& manifest,
+                                   int* routing_id) {
+  WebContents* base_web_contents = 
+      content::Shell::FromRenderViewHost(render_view_host())->web_contents();
+  WebContents* web_contents = WebContents::Create(
+      base_web_contents->GetBrowserContext(),
+      base_web_contents->GetSiteInstance(),
+      MSG_ROUTING_NONE,
+      NULL);
+
+  scoped_ptr<base::DictionaryValue> new_manifest(manifest.DeepCopy());
+
+  new content::Shell(web_contents, new_manifest.get());
+  web_contents->GetController().LoadURL(
+      GURL(url),
+      content::Referrer(),
+      content::PAGE_TRANSITION_TYPED,
+      std::string());
+
+  *routing_id = web_contents->GetRoutingID();
 }
 
 }  // namespace api

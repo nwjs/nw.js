@@ -74,6 +74,12 @@ IPC_MESSAGE_ROUTED3(ShellViewMsg_Object_On_Event,
 IPC_SYNC_MESSAGE_ROUTED0_1(ShellViewHostMsg_GetShellId,
                            int /* result */)
 
+// Create a Shell and returns its routing id.
+IPC_SYNC_MESSAGE_ROUTED2_1(ShellViewHostMsg_CreateShell,
+                           std::string /* url */,
+                           DictionaryValue /* manifest */,
+                           int /* result */)
+
 // Tell browser we have an uncaughtException from node.
 IPC_MESSAGE_ROUTED1(ShellViewHostMsg_UncaughtException,
                     std::string /* err */)

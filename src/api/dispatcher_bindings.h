@@ -49,8 +49,8 @@ class DispatcherBindings : public v8::Extension {
   static v8::Handle<v8::Value> GetRoutingIDForCurrentContext(
       const v8::Arguments& args);
 
-  // Extended prototype of objects.
-  static v8::Handle<v8::Value> SetDestructor(const v8::Arguments& args);
+  // Create new shell and returns its routing id.
+  static v8::Handle<v8::Value> CreateShell(const v8::Arguments& args);
 
   // Remote objects.
   static v8::Handle<v8::Value> AllocateObject(const v8::Arguments& args);

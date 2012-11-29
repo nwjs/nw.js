@@ -26,6 +26,7 @@ var nwDispatcher = nwDispatcher || {};
 
   native function GetShellIdForCurrentContext();
   native function GetRoutingIDForCurrentContext();
+  native function CreateShell();
 
   native function AllocateObject();
   native function DeallocateObject();
@@ -88,4 +89,5 @@ var nwDispatcher = nwDispatcher || {};
   nwDispatcher.getAbsolutePath = GetAbsolutePath;
   nwDispatcher.getShellIdForCurrentContext = GetShellIdForCurrentContext;
   nwDispatcher.getRoutingIDForCurrentContext = GetRoutingIDForCurrentContext;
+  nwDispatcher.createShell = CreateShell;
 })();

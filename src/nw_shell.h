@@ -60,6 +60,7 @@ class Shell : public WebContentsDelegate,
               public content::WebContentsObserver,
               public NotificationObserver {
  public:
+  explicit Shell(WebContents* web_contents, base::DictionaryValue* manifest);
   virtual ~Shell();
 
   // Create a new shell.
@@ -143,8 +144,6 @@ class Shell : public WebContentsDelegate,
       const content::MediaResponseCallback& callback) OVERRIDE;
 
  private:
-  explicit Shell(WebContents* web_contents, base::DictionaryValue* manifest);
-
   void UpdateDraggableRegions(
       const std::vector<extensions::DraggableRegion>& regions);
 

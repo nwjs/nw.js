@@ -35,6 +35,9 @@ Window.prototype.handleEvent = function(ev) {
   if (ev == 'close' && this.listeners(ev).length == 0) {
     this.close(true);
     return;
+  } else if (ev == 'closed') { // Clear me.
+    delete global.__nwWindowsStore[this.id];
+    return;
   }
 
   // Route events to EventEmitter.
