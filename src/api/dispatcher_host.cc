@@ -22,6 +22,7 @@
 
 #include "base/logging.h"
 #include "base/values.h"
+#include "content/browser/web_contents/web_contents_impl.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/app/app.h"
 #include "content/nw/src/api/base/base.h"
@@ -33,7 +34,6 @@
 #include "content/nw/src/api/window/window.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/render_process_host.h"
-#include "content/public/browser/web_contents.h"
 
 using content::WebContents;
 
@@ -200,11 +200,12 @@ void DispatcherHost::OnCreateShell(const std::string& url,
                                    int* routing_id) {
   WebContents* base_web_contents = 
       content::Shell::FromRenderViewHost(render_view_host())->web_contents();
-  WebContents* web_contents = WebContents::Create(
+  WebContents* web_contents = content::WebContentsImpl::CreateWithOpener(
       base_web_contents->GetBrowserContext(),
       base_web_contents->GetSiteInstance(),
       MSG_ROUTING_NONE,
-      NULL);
+      static_cast<content::WebContentsImpl*>(base_web_contents),
+      static_cast<content::WebContentsImpl*>(base_web_contents));
 
   scoped_ptr<base::DictionaryValue> new_manifest(manifest.DeepCopy());
 

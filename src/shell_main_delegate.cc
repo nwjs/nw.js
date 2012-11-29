@@ -113,8 +113,19 @@ void ShellMainDelegate::PreSandboxStartup() {
 #endif  // OS_MACOSX
   InitializeResourceBundle();
 
-  // Just prevent sandbox
-  CommandLine::ForCurrentProcess()->AppendSwitch(switches::kNoSandbox);
+  CommandLine* command_line = CommandLine::ForCurrentProcess();
+
+  // Just prevent sandbox.
+  command_line->AppendSwitch(switches::kNoSandbox);
+
+  // Make sure we keep using only one render process for one app, by using the
+  // process-per-tab mode, we can make Chrome only create new site instance
+  // when we require to, the default mode is creating different site instances
+  // for different domains.
+  // This is needed because we want our Window API to have full control of new 
+  // windows created, which require all windows to be in one render process
+  // host.
+  command_line->AppendSwitch(switches::kProcessPerTab);
 }
 
 int ShellMainDelegate::RunProcess(
