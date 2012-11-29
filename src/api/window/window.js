@@ -43,6 +43,18 @@ exports.Window = {
     return win;
   },
   open: function(url, options) {
+    // Conver relative url to full url.
+    var protocol = url.match(/^[a-z]+:\/\//i);
+    if (protocol == null || protocol.length == 0) {
+      var href = window.location.href;
+      url = href.substring(0, href.lastIndexOf('/') + 1) + url;
+    }
+
+    // Force no empty options.
+    if (typeof options != 'object')
+      options = {};
+
+    // Create new shell and get it's routing id.
     var routing_id = nw.createShell(url, options);
     return new global.Window(routing_id);
   }
