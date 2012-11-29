@@ -77,6 +77,7 @@ For more information on how to write/package/run apps, see:
 
 * [How to run apps](https://github.com/rogerwang/node-webkit/wiki/How-to-run-apps)
 * [How to package and distribute your apps](https://github.com/rogerwang/node-webkit/wiki/How-to-package-and-distribute-your-apps)
+* [How to use 3rd party node.js modules in node-webkit](https://github.com/rogerwang/node-webkit/wiki/How-to-use-3rd-party-node.js-modules-in-node-webkit)
 
 And our [Wiki](https://github.com/rogerwang/node-webkit/wiki) for much more.
 
