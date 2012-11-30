@@ -60,6 +60,12 @@ class Shell : public WebContentsDelegate,
               public content::WebContentsObserver,
               public NotificationObserver {
  public:
+  enum ReloadType {
+    RELOAD,                      // Normal (cache-validating) reload.
+    RELOAD_IGNORING_CACHE,       // Reload bypassing the cache (shift-reload).
+    RELOAD_ORIGINAL_REQUEST_URL  // Reload using the original request URL.
+  };
+
   explicit Shell(WebContents* web_contents, base::DictionaryValue* manifest);
   virtual ~Shell();
 
@@ -75,7 +81,7 @@ class Shell : public WebContentsDelegate,
 
   void LoadURL(const GURL& url);
   void GoBackOrForward(int offset);
-  void Reload();
+  void Reload(ReloadType type = RELOAD);
   void Stop();
   void ReloadOrStop();
   void ShowDevTools();

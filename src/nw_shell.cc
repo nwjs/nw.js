@@ -198,8 +198,19 @@ void Shell::GoBackOrForward(int offset) {
   web_contents_->Focus();
 }
 
-void Shell::Reload() {
-  web_contents_->GetController().Reload(false);
+void Shell::Reload(ReloadType type) {
+  switch (type) {
+    case RELOAD:
+      web_contents_->GetController().Reload(false);
+      break;
+    case RELOAD_IGNORING_CACHE:
+      web_contents_->GetController().ReloadIgnoringCache(false);
+      break;
+    case RELOAD_ORIGINAL_REQUEST_URL:
+      web_contents_->GetController().ReloadOriginalRequestURL(false);
+      break;
+  }
+
   web_contents_->Focus();
 }
 

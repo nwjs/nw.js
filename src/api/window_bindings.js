@@ -247,4 +247,20 @@ Window.prototype.setPosition = function(position) {
   CallObjectMethod(this, 'SetPosition', [ position ]);
 }
 
+Window.prototype.reload = function(type) {
+  // type is default to 0 (RELOAD).
+  if (!(typeof type == 'number' && 0 <= type && type <= 2))
+    type = 0;
+
+  CallObjectMethod(this, 'Reload', [ type ]);
+}
+
+Window.prototype.reloadIgnoringCache = function() {
+  this.reload(1);
+}
+
+Window.prototype.reloadOriginalRequestURL = function() {
+  this.reload(2);
+}
+
 }  // function Window.init

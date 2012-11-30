@@ -100,6 +100,10 @@ void Window::Call(const std::string& method,
     int id;
     if (arguments.GetInteger(0, &id))
       shell_->window()->SetMenu(dispatcher_host()->GetObject<Menu>(id));
+  } else if (method == "Reload") {
+    int type;
+    if (arguments.GetInteger(0, &type))
+      shell_->Reload(static_cast<content::Shell::ReloadType>(type));
   } else {
     NOTREACHED() << "Invalid call to Window method:" << method
                  << " arguments:" << arguments;
