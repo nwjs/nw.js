@@ -25,12 +25,55 @@ function Window(routing_id) {
 Window.init = function() {
 
 var v8_util = process.binding('v8_util');
+var EventEmitter = process.EventEmitter;
 
 native function CallObjectMethod();
 native function CallObjectMethodSync();
 
+// Override the addListener method.
+Window.prototype.on = Window.prototype.addListener = function(ev, callback) {
+  // Save window id of where the callback is created.
+  var closure = v8_util.getCreationContext(callback);
+  if (v8_util.getConstructorName(closure) == 'Window' && 
+      closure.hasOwnProperty('nwDispatcher')) {
+    v8_util.setHiddenValue(callback, '__nwWindowId',
+        closure.nwDispatcher.requireNwGui().Window.get().id);
+  }
+
+  // Call parent.
+  EventEmitter.prototype.addListener.apply(this, arguments);
+}
+
 // Route events.
 Window.prototype.handleEvent = function(ev) {
+  // Filter invalid callbacks.
+  var listeners_copy = this.listeners(ev).slice(0);
+  for (var i = 0; i < listeners_copy.length; ++i) {
+    var original_closure = v8_util.getCreationContext(listeners_copy[i]);
+
+    // Skip for node context. 
+    if (v8_util.getConstructorName(original_closure) != 'Window')
+      continue;
+
+    var window_id = v8_util.getHiddenValue(listeners_copy[i], '__nwWindowId');
+
+    // Remove callback if original window is closed (not in __nwWindowsStore).
+    if (global.__nwWindowsStore.hasOwnProperty(window_id)) {
+      // Check hashes and see if the window context of Shell has been changed,
+      // this happens when we refresh the Shell or change it's locations.
+      var original_hash = v8_util.getObjectHash(original_closure);
+      var current_hash = v8_util.getObjectHash(
+          global.__nwWindowsStore[window_id].window);
+
+      // Do nothing if nothing is changed.
+      if (original_hash == current_hash)
+        continue;
+    }
+
+    console.warn('Remove zombie callback for window id ' + window_id);
+    this.removeListener(ev, listeners_copy[i]);
+  }
+
   // Route events to EventEmitter.
   this.emit.apply(this, arguments);
 

@@ -21,8 +21,8 @@
 exports.Window = {
   get: function(other) {
     // Return other window.
-    if (typeof other != 'undefined' && typeof other.require == 'function')
-      return other.require('nw.gui').Window.get();
+    if (typeof other != 'undefined' && other.hasOwnProperty('nwDispatcher'))
+      return other.nwDispatcher.requireNwGui().Window.get();
 
     var id;
     // See if this window context has requested Shell's id before.
