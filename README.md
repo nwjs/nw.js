@@ -15,6 +15,7 @@ It's created and developed in Intel Open Source Technology Center.
 * Complete support for [Node.js APIs](http://nodejs.org/api/) and all its [third party modules](https://npmjs.org).
 * Good performance: Node and WebKit runs in the same thread: Function calls are made straightforward; objects are in the same heap and can just reference each other;
 * Easy to package and distribute apps.
+* Available on Linux, Mac OSX and Windows
 
 # Downloads
 
