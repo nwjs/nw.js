@@ -57,8 +57,6 @@ void ShellRenderProcessObserver::OnRenderProcessWillShutdown() {
 }
 
 void ShellRenderProcessObserver::WebKitInitialized() {
-  webkit_glue::SetJavaScriptFlags(" --expose-gc");
-  RenderThread::Get()->RegisterExtension(extensions_v8::GCExtension::Get());
   RenderThread::Get()->RegisterExtension(new api::DispatcherBindings());
 }
 
