@@ -27,6 +27,16 @@ function run_tests() {
   // Clear previous test results
   $('.test').remove();
 
+  // ================ Test requires's members
+  assert(
+  typeof global.require == 'function',
+  typeof global.require.resolve == 'function',
+  typeof global.require.main == 'object',
+  typeof global.require.extensions == 'object',
+  typeof global.require.registerExtension == 'function',
+  typeof global.require.cache == 'object',
+  "Test requires's members")
+
   // ================ Module by relative path
   assert(
   require('./module1.js').test() == 'module1',
