@@ -136,6 +136,9 @@ class Shell : public WebContentsDelegate,
   virtual void DidNavigateMainFramePostCommit(
       WebContents* web_contents) OVERRIDE;
   virtual JavaScriptDialogCreator* GetJavaScriptDialogCreator() OVERRIDE;
+  virtual void RequestToLockMouse(WebContents* web_contents,
+                                  bool user_gesture,
+                                  bool last_unlocked_by_target) OVERRIDE;
   virtual void HandleKeyboardEvent(
       WebContents* source,
       const NativeWebKeyboardEvent& event) OVERRIDE;

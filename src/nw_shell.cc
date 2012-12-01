@@ -397,6 +397,12 @@ bool Shell::AddMessageToConsole(WebContents* source,
   return false;
 }
 
+void Shell::RequestToLockMouse(WebContents* web_contents,
+                               bool user_gesture,
+                               bool last_unlocked_by_target) {
+  web_contents->GotResponseToLockMouseRequest(true);
+}
+
 void Shell::HandleKeyboardEvent(WebContents* source,
                                 const NativeWebKeyboardEvent& event) {
   window()->HandleKeyboardEvent(event);
