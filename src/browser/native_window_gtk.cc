@@ -20,6 +20,8 @@
 
 #include "content/nw/src/browser/native_window_gtk.h"
 
+#include <gdk/gdk.h>
+
 #include "base/values.h"
 #include "chrome/browser/ui/gtk/gtk_window_util.h"
 #include "chrome/common/extensions/draggable_region.h"
@@ -184,6 +186,19 @@ bool NativeWindowGtk::IsFullscreen() {
   return content_thinks_its_fullscreen_;
 }
 
+void NativeWindowGtk::SetSize(const gfx::Size& size) {
+  gtk_window_util::SetWindowSize(window_, size);
+}
+
+gfx::Size NativeWindowGtk::GetSize() {
+  GdkWindow* gdk_window = gtk_widget_get_window(window_);
+
+  GdkRectangle frame_extents;
+  gdk_window_get_frame_extents(gdk_window, &frame_extents);
+
+  return gfx::Size(frame_extents.width, frame_extents.height); 
+}
+
 void NativeWindowGtk::SetMinimumSize(int width, int height) {
   GdkGeometry geometry = { 0 };
   geometry.min_width = width;
@@ -223,6 +238,19 @@ void NativeWindowGtk::SetPosition(const std::string& position) {
     gtk_window_set_position(window_, GTK_WIN_POS_CENTER);
   else if (position == "mouse")
     gtk_window_set_position(window_, GTK_WIN_POS_MOUSE);
+}
+
+void NativeWindowGtk::SetPosition(const gfx::Point& position) {
+  gtk_window_move(window_, position.x(), position.y());
+}
+
+gfx::Point NativeWindowGtk::GetPosition() {
+  GdkWindow* gdk_window = gtk_widget_get_window(window_);
+
+  GdkRectangle frame_extents;
+  gdk_window_get_frame_extents(gdk_window, &frame_extents);
+
+  return gfx::Point(frame_extents.x, frame_extents.y); 
 }
 
 void NativeWindowGtk::SetTitle(const std::string& title) {

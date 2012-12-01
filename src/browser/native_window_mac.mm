@@ -470,6 +470,19 @@ void NativeWindowCocoa::SetNonLionFullscreen(bool fullscreen) {
     shell()->SendEvent("leave-fullscreen");
 }
 
+void NativeWindowCocoa::SetSize(const gfx::Size& size) {
+  NSRect frame = [window_ frame];
+  frame.size.width = size.width();
+  frame.size.height = size.height();
+
+  [window() setFrame:frame display:YES];
+}
+
+gfx::Size NativeWindowCocoa::GetSize() {
+  NSRect frame = [window_ frame];
+  return gfx::Size(frame.size.width, frame.size.height);
+}
+
 void NativeWindowCocoa::SetMinimumSize(int width, int height) {
   NSSize min_size = NSMakeSize(width, height);
   NSView* content = [window() contentView];
@@ -499,6 +512,15 @@ void NativeWindowCocoa::SetAlwaysOnTop(bool top) {
 void NativeWindowCocoa::SetPosition(const std::string& position) {
   if (position == "center")
     [window() center];
+}
+
+void NativeWindowCocoa::SetPosition(const gfx::Point& position) {
+  Move(gfx::Rect(position, GetSize()));
+}
+
+gfx::Point NativeWindowCocoa::GetPosition() {
+  NSRect frame = [window_ frame];
+  return gfx::Point(frame.origin.x, frame.origin.y);
 }
 
 void NativeWindowCocoa::SetTitle(const std::string& title) {

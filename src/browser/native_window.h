@@ -28,6 +28,8 @@
 #include "base/compiler_specific.h"
 #include "ui/gfx/image/image.h"
 #include "ui/gfx/native_widget_types.h"
+#include "ui/gfx/point.h"
+#include "ui/gfx/size.h"
 
 namespace api {
 class Menu;
@@ -73,11 +75,15 @@ class NativeWindow {
   virtual void Restore() = 0;
   virtual void SetFullscreen(bool fullscreen) = 0;
   virtual bool IsFullscreen() = 0;
+  virtual void SetSize(const gfx::Size& size) = 0;
+  virtual gfx::Size GetSize() = 0;
   virtual void SetMinimumSize(int width, int height) = 0;
   virtual void SetMaximumSize(int width, int height) = 0;
   virtual void SetResizable(bool resizable) = 0;
   virtual void SetAlwaysOnTop(bool top) = 0;
   virtual void SetPosition(const std::string& position) = 0;
+  virtual void SetPosition(const gfx::Point& position) = 0;
+  virtual gfx::Point GetPosition() = 0;
   virtual void SetTitle(const std::string& title) = 0;
   virtual void FlashFrame(bool flash) = 0;
   virtual void SetKiosk(bool kiosk) = 0;

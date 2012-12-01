@@ -61,11 +61,15 @@ class NativeWindowWin : public NativeWindow,
   virtual void Restore() OVERRIDE;
   virtual void SetFullscreen(bool fullscreen) OVERRIDE;
   virtual bool IsFullscreen() OVERRIDE;
+  virtual void SetSize(const gfx::Size& size) OVERRIDE;
+  virtual gfx::Size GetSize() OVERRIDE;
   virtual void SetMinimumSize(int width, int height) OVERRIDE;
   virtual void SetMaximumSize(int width, int height) OVERRIDE;
   virtual void SetResizable(bool resizable) OVERRIDE;
   virtual void SetAlwaysOnTop(bool top) OVERRIDE;
   virtual void SetPosition(const std::string& position) OVERRIDE;
+  virtual void SetPosition(const gfx::Point& position) OVERRIDE;
+  virtual gfx::Point GetPosition() OVERRIDE;
   virtual void SetTitle(const std::string& title) OVERRIDE;
   virtual void FlashFrame(bool flash) OVERRIDE;
   virtual void SetKiosk(bool kiosk) OVERRIDE;

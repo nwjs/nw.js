@@ -316,6 +316,14 @@ bool NativeWindowWin::IsFullscreen() {
   return is_fullscreen_;
 }
 
+void NativeWindowWin::SetSize(const gfx::Size& size) {
+  window_->SetSize(size);
+}
+
+gfx::Size NativeWindowWin::GetSize() {
+  return window_->size();
+}
+
 void NativeWindowWin::SetMinimumSize(int width, int height) {
   minimum_size_.set_width(width);
   minimum_size_.set_height(height);
@@ -347,6 +355,14 @@ void NativeWindowWin::SetPosition(const std::string& position) {
     gfx::Rect bounds = window_->GetWindowBoundsInScreen();
     window_->CenterWindow(gfx::Size(bounds.width(), bounds.height()));
   }
+}
+
+void NativeWindowWin::SetPosition(const gfx::Point& position) {
+  window_->SetPosition(position);
+}
+
+gfx::Point NativeWindowWin::GetPosition() {
+  return window_->bounds().origin();
 }
 
 void NativeWindowWin::FlashFrame(bool flash) {
