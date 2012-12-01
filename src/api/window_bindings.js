@@ -94,35 +94,35 @@ Window.prototype.__defineGetter__('window', function() {
 });
 
 Window.prototype.__defineSetter__('x', function(x) {
-  this.window.moveTo(x, this.window.screenY);
+  this.moveTo(x, this.y);
 });
 
 Window.prototype.__defineGetter__('x', function() {
-  return this.window.screenX;
+  return CallObjectMethodSync(this, 'GetPosition', [])[0];
 });
 
 Window.prototype.__defineSetter__('y', function(y) {
-  this.window.moveTo(this.window.screenX, y);
+  this.moveTo(this.x, y);
 });
 
 Window.prototype.__defineGetter__('y', function() {
-  return this.window.screenY;
+  return CallObjectMethodSync(this, 'GetPosition', [])[1];
 });
 
 Window.prototype.__defineSetter__('width', function(width) {
-  this.window.resizeTo(width, this.window.outerHeight);
+  this.resizeTo(width, this.height);
 });
 
 Window.prototype.__defineGetter__('width', function() {
-  return this.window.outerWidth;
+  return CallObjectMethodSync(this, 'GetSize', [])[0];
 });
 
 Window.prototype.__defineSetter__('height', function(height) {
-  this.window.resizeTo(this.window.outerWidth, height);
+  this.resizeTo(this.width, height);
 });
 
 Window.prototype.__defineGetter__('height', function() {
-  return this.window.outerHeight;
+  return CallObjectMethodSync(this, 'GetSize', [])[1];
 });
 
 Window.prototype.__defineSetter__('title', function(title) {
@@ -173,19 +173,21 @@ Window.prototype.__defineGetter__('isKioskMode', function() {
 });
 
 Window.prototype.moveTo = function(x, y) {
-  this.window.moveTo(x, y);
+  CallObjectMethod(this, 'MoveTo', [ x, y ]);
 }
 
 Window.prototype.moveBy = function(x, y) {
-  this.window.moveBy(x, y);
+  var position = CallObjectMethodSync(this, 'GetPosition', []);
+  this.moveTo(position[0] + x, position[1] + y);
 }
 
 Window.prototype.resizeTo = function(width, height) {
-  this.window.resizeTo(width, height);
+  CallObjectMethod(this, 'ResizeTo', [ width, height ]);
 }
 
 Window.prototype.resizeBy = function(width, height) {
-  this.window.resizeBy(width, height);
+  var size = CallObjectMethodSync(this, 'GetSize', []);
+  this.resizeTo(size[0] + width, size[1] + height);
 }
 
 Window.prototype.focus = function(flag) {

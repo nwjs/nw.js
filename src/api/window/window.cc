@@ -74,6 +74,11 @@ void Window::Call(const std::string& method,
     shell_->window()->SetKiosk(!shell_->window()->IsKiosk());
   } else if (method == "ShowDevTools") {
     shell_->ShowDevTools();
+  } else if (method == "ResizeTo") {
+    int width, height;
+    if (arguments.GetInteger(0, &width) &&
+        arguments.GetInteger(1, &height))
+      shell_->window()->SetSize(gfx::Size(width, height));
   } else if (method == "SetMaximumSize") {
     int width, height;
     if (arguments.GetInteger(0, &width) &&
@@ -92,6 +97,11 @@ void Window::Call(const std::string& method,
     bool top;
     if (arguments.GetBoolean(0, &top))
       shell_->window()->SetAlwaysOnTop(top);
+  } else if (method == "MoveTo") {
+    int x, y;
+    if (arguments.GetInteger(0, &x) &&
+        arguments.GetInteger(1, &y))
+      shell_->window()->SetPosition(gfx::Point(x, y));
   } else if (method == "RequestAttention") {
     bool flash;
     if (arguments.GetBoolean(0, &flash))
@@ -117,6 +127,14 @@ void Window::CallSync(const std::string& method,
     result->AppendBoolean(shell_->window()->IsFullscreen());
   } else if (method == "IsKioskMode") {
     result->AppendBoolean(shell_->window()->IsKiosk());
+  } else if (method == "GetSize") {
+    gfx::Size size = shell_->window()->GetSize();
+    result->AppendInteger(size.width());
+    result->AppendInteger(size.height());
+  } else if (method == "GetPosition") {
+    gfx::Point position = shell_->window()->GetPosition();
+    result->AppendInteger(position.x());
+    result->AppendInteger(position.y());
   } else {
     NOTREACHED() << "Invalid call to Window method:" << method
                  << " arguments:" << arguments;

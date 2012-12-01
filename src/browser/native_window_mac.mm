@@ -472,6 +472,7 @@ void NativeWindowCocoa::SetNonLionFullscreen(bool fullscreen) {
 
 void NativeWindowCocoa::SetSize(const gfx::Size& size) {
   NSRect frame = [window_ frame];
+  frame.origin.y -= size.height() - frame.size.height;
   frame.size.width = size.width();
   frame.size.height = size.height();
 
@@ -520,7 +521,10 @@ void NativeWindowCocoa::SetPosition(const gfx::Point& position) {
 
 gfx::Point NativeWindowCocoa::GetPosition() {
   NSRect frame = [window_ frame];
-  return gfx::Point(frame.origin.x, frame.origin.y);
+  NSScreen* screen = [[NSScreen screens] objectAtIndex:0];
+
+  return gfx::Point(frame.origin.x,
+      NSHeight([screen frame]) - frame.origin.y - frame.size.height);
 }
 
 void NativeWindowCocoa::SetTitle(const std::string& title) {
