@@ -321,7 +321,7 @@ void NativeWindowWin::SetSize(const gfx::Size& size) {
 }
 
 gfx::Size NativeWindowWin::GetSize() {
-  return window_->size();
+  return window_->GetWindowBoundsInScreen().size();
 }
 
 void NativeWindowWin::SetMinimumSize(int width, int height) {
@@ -358,11 +358,12 @@ void NativeWindowWin::SetPosition(const std::string& position) {
 }
 
 void NativeWindowWin::SetPosition(const gfx::Point& position) {
-  window_->SetPosition(position);
+  gfx::Rect bounds = window_->GetWindowBoundsInScreen();
+  window_->SetBounds(gfx::Rect(position, bounds.size()));
 }
 
 gfx::Point NativeWindowWin::GetPosition() {
-  return window_->bounds().origin();
+  return window_->GetWindowBoundsInScreen().origin();
 }
 
 void NativeWindowWin::FlashFrame(bool flash) {
