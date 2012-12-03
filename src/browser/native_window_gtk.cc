@@ -148,6 +148,8 @@ void NativeWindowGtk::Move(const gfx::Rect& bounds) {
 void NativeWindowGtk::Focus(bool focus) {
   if (focus)
     gtk_window_present(window_);
+  else
+    gdk_window_lower(gtk_widget_get_window(GTK_WIDGET(window_)));
 }
 
 void NativeWindowGtk::Show() {
@@ -191,7 +193,7 @@ void NativeWindowGtk::SetSize(const gfx::Size& size) {
 }
 
 gfx::Size NativeWindowGtk::GetSize() {
-  GdkWindow* gdk_window = gtk_widget_get_window(window_);
+  GdkWindow* gdk_window = gtk_widget_get_window(GTK_WIDGET(window_));
 
   GdkRectangle frame_extents;
   gdk_window_get_frame_extents(gdk_window, &frame_extents);
@@ -245,7 +247,7 @@ void NativeWindowGtk::SetPosition(const gfx::Point& position) {
 }
 
 gfx::Point NativeWindowGtk::GetPosition() {
-  GdkWindow* gdk_window = gtk_widget_get_window(window_);
+  GdkWindow* gdk_window = gtk_widget_get_window(GTK_WIDGET(window_));
 
   GdkRectangle frame_extents;
   gdk_window_get_frame_extents(gdk_window, &frame_extents);
