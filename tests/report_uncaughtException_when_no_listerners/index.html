@@ -1,0 +1,13 @@
+<html>
+<head>
+  <script type="text/javascript" src="../zepto.min.js"></script>
+  <script type="text/javascript" src="../assert.js"></script>
+</head>
+<body>
+<script>
+process.nextTick(function() {
+  throw new String('PASSED if you see this under "uncaught node.js error"');
+});
+</script>
+</body>
+</html>
