@@ -25,13 +25,13 @@
 
 #include "content/nw/src/browser/native_window.h"
 
-namespace content {
+namespace nw {
 class Shell;
 }
 
 @interface ShellToolbarDelegate : NSObject<NSToolbarDelegate> {
  @private
-  content::Shell* shell_;
+  nw::Shell* shell_;
   NSTextField* entry_;
   NSToolbarItem* back_button_;
   NSToolbarItem* forward_button_;
@@ -39,7 +39,7 @@ class Shell;
   NSToolbarItem* devtools_button_;
 }
 
-- (id)initWithShell:(content::Shell*)shell;
+- (id)initWithShell:(nw::Shell*)shell;
 - (void)buttonPressed:(id)sender;
 - (void)urlEntered:(id)sender;
 - (void)setEnabled:(BOOL)enabled

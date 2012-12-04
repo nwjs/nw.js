@@ -48,8 +48,7 @@ const double kGtkCursorBlinkCycleFactor = 2000.0;
 
 }  // namespace 
   
-NativeWindowGtk::NativeWindowGtk(content::Shell* shell,
-                                 base::DictionaryValue* manifest)
+NativeWindowGtk::NativeWindowGtk(Shell* shell, base::DictionaryValue* manifest)
     : NativeWindow(shell, manifest),
       content_thinks_its_fullscreen_(false) {
   window_ = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));

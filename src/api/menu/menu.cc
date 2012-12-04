@@ -61,7 +61,7 @@ void Menu::Call(const std::string& method,
     arguments.GetInteger(0, &x);
     int y = 0;
     arguments.GetInteger(1, &y);
-    Popup(x, y, content::Shell::FromRenderViewHost(
+    Popup(x, y, nw::Shell::FromRenderViewHost(
           dispatcher_host()->render_view_host()));
   } else {
     NOTREACHED() << "Invalid call to Menu method:" << method

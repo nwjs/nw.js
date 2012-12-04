@@ -31,8 +31,7 @@ namespace nw {
 
 class NativeWindowGtk : public NativeWindow {
  public:
-  explicit NativeWindowGtk(content::Shell* shell,
-                           base::DictionaryValue* manifest);
+  explicit NativeWindowGtk(Shell* shell, base::DictionaryValue* manifest);
   virtual ~NativeWindowGtk();
 
   // NativeWindow implementation.

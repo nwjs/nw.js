@@ -36,7 +36,7 @@ namespace nw {
 
 const int kButtonMargin = 2;
 
-NativeWindowToolbarWin::NativeWindowToolbarWin(content::Shell* shell)
+NativeWindowToolbarWin::NativeWindowToolbarWin(Shell* shell)
     : shell_(shell) {
 }
 

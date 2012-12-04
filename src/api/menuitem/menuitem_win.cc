@@ -77,7 +77,7 @@ void MenuItem::SetIcon(const std::string& icon) {
     return;
   }
 
-  content::Shell* shell = content::Shell::FromRenderViewHost(
+  nw::Shell* shell = nw::Shell::FromRenderViewHost(
       dispatcher_host()->render_view_host());
   nw::Package* package = shell->GetPackage();
   package->GetImage(FilePath::FromUTF8Unsafe(icon), &icon_);

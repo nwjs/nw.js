@@ -38,7 +38,7 @@ namespace {
 // Get render process host.
 content::RenderProcessHost* GetRenderProcessHost() {
   content::RenderProcessHost* render_process_host = NULL;
-  std::vector<content::Shell*> windows = content::Shell::windows();
+  std::vector<nw::Shell*> windows = nw::Shell::windows();
   for (size_t i = 0; i < windows.size(); ++i) {
     if (!windows[i]->is_devtools()) {
       render_process_host = windows[i]->web_contents()->GetRenderProcessHost();
@@ -67,7 +67,7 @@ void App::Call(const std::string& method,
 
 
 // static
-void App::Call(content::Shell* shell,
+void App::Call(nw::Shell* shell,
                const std::string& method,
                const base::ListValue& arguments,
                base::ListValue* result) {
@@ -89,7 +89,7 @@ void App::Call(content::Shell* shell,
 
 // static
 void App::CloseAllWindows() {
-  std::vector<content::Shell*> windows = content::Shell::windows();
+  std::vector<nw::Shell*> windows = nw::Shell::windows();
 
   for (size_t i = 0; i < windows.size(); ++i) {
     // Only send close event to browser windows, since devtools windows will

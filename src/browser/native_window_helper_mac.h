@@ -22,15 +22,12 @@ namespace base {
 class DictionaryValue;
 }
 
-namespace content {
-class Shell;
-}
-
 namespace nw {
 
 class NativeWindow;
+class Shell;
 
-NativeWindow* CreateNativeWindowCocoa(content::Shell* shell,
+NativeWindow* CreateNativeWindowCocoa(Shell* shell,
                                       base::DictionaryValue* manifest);
 
 }  // namespace nw

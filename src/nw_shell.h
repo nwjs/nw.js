@@ -18,8 +18,8 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#ifndef CONTENT_NW_SRC_SHELL_H_
-#define CONTENT_NW_SRC_SHELL_H_
+#ifndef CONTENT_NW_SRC_NW_SHELL_H_
+#define CONTENT_NW_SRC_NW_SHELL_H_
 
 #include <vector>
 
@@ -36,6 +36,13 @@ namespace base {
 class DictionaryValue;
 }
 
+namespace content {
+class BrowserContext;
+class ShellJavaScriptDialogCreator;
+class SiteInstance;
+class WebContents;
+}
+
 namespace extensions {
 struct DraggableRegion;
 }
@@ -43,22 +50,15 @@ struct DraggableRegion;
 class GURL;
 
 namespace nw {
+
 class NativeWindow;
 class Package;
-}
-
-namespace content {
-
-class BrowserContext;
-class ShellJavaScriptDialogCreator;
-class SiteInstance;
-class WebContents;
 
 // This represents one window of the Content Shell, i.e. all the UI including
 // buttons and url bar, as well as the web content area.
-class Shell : public WebContentsDelegate,
+class Shell : public content::WebContentsDelegate,
               public content::WebContentsObserver,
-              public NotificationObserver {
+              public content::NotificationObserver {
  public:
   enum ReloadType {
     RELOAD,                      // Normal (cache-validating) reload.
@@ -66,18 +66,19 @@ class Shell : public WebContentsDelegate,
     RELOAD_ORIGINAL_REQUEST_URL  // Reload using the original request URL.
   };
 
-  explicit Shell(WebContents* web_contents, base::DictionaryValue* manifest);
+  explicit Shell(content::WebContents* web_contents,
+                 base::DictionaryValue* manifest);
   virtual ~Shell();
 
   // Create a new shell.
-  static Shell* Create(BrowserContext* browser_context,
+  static Shell* Create(content::BrowserContext* browser_context,
                        const GURL& url,
-                       SiteInstance* site_instance,
+                       content::SiteInstance* site_instance,
                        int routing_id,
-                       WebContents* base_web_contents);
+                       content::WebContents* base_web_contents);
 
   // Returns the Shell object corresponding to the given RenderViewHost.
-  static Shell* FromRenderViewHost(RenderViewHost* rvh);
+  static Shell* FromRenderViewHost(content::RenderViewHost* rvh);
 
   void LoadURL(const GURL& url);
   void GoBackOrForward(int offset);
@@ -99,10 +100,10 @@ class Shell : public WebContentsDelegate,
   // Returns the currently open windows.
   static std::vector<Shell*>& windows() { return windows_; }
 
-  static nw::Package* GetPackage();
+  static Package* GetPackage();
 
-  WebContents* web_contents() const { return web_contents_.get(); }
-  nw::NativeWindow* window() { return window_.get(); }
+  content::WebContents* web_contents() const { return web_contents_.get(); }
+  NativeWindow* window() { return window_.get(); }
 
   void set_force_close(bool force) { force_close_ = force; }
   bool is_devtools() const { return is_devtools_; }
@@ -115,18 +116,21 @@ class Shell : public WebContentsDelegate,
   virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
 
   // content::WebContentsDelegate implementation.
-  virtual WebContents* OpenURLFromTab(WebContents* source,
-                                      const OpenURLParams& params) OVERRIDE;
-  virtual void LoadingStateChanged(WebContents* source) OVERRIDE;
+  virtual content::WebContents* OpenURLFromTab(
+      content::WebContents* source,
+      const content::OpenURLParams& params) OVERRIDE;
+  virtual void LoadingStateChanged(content::WebContents* source) OVERRIDE;
   virtual void ActivateContents(content::WebContents* contents) OVERRIDE;
   virtual void DeactivateContents(content::WebContents* contents) OVERRIDE;
-  virtual void CloseContents(WebContents* source) OVERRIDE;
-  virtual void MoveContents(WebContents* source, const gfx::Rect& pos) OVERRIDE;
-  virtual bool IsPopupOrPanel(const WebContents* source) const OVERRIDE;
-  virtual void WebContentsCreated(WebContents* source_contents,
+  virtual void CloseContents(content::WebContents* source) OVERRIDE;
+  virtual void MoveContents(content::WebContents* source,
+                            const gfx::Rect& pos) OVERRIDE;
+  virtual bool IsPopupOrPanel(
+      const content::WebContents* source) const OVERRIDE;
+  virtual void WebContentsCreated(content::WebContents* source_contents,
                                   int64 source_frame_id,
                                   const GURL& target_url,
-                                  WebContents* new_contents) OVERRIDE;
+                                  content::WebContents* new_contents) OVERRIDE;
   virtual void RunFileChooser(
       content::WebContents* web_contents,
       const content::FileChooserParams& params) OVERRIDE;
@@ -134,15 +138,16 @@ class Shell : public WebContentsDelegate,
                                   int request_id,
                                   const FilePath& path) OVERRIDE;
   virtual void DidNavigateMainFramePostCommit(
-      WebContents* web_contents) OVERRIDE;
-  virtual JavaScriptDialogCreator* GetJavaScriptDialogCreator() OVERRIDE;
-  virtual void RequestToLockMouse(WebContents* web_contents,
+      content::WebContents* web_contents) OVERRIDE;
+  virtual content::JavaScriptDialogCreator*
+      GetJavaScriptDialogCreator() OVERRIDE;
+  virtual void RequestToLockMouse(content::WebContents* web_contents,
                                   bool user_gesture,
                                   bool last_unlocked_by_target) OVERRIDE;
   virtual void HandleKeyboardEvent(
-      WebContents* source,
-      const NativeWebKeyboardEvent& event) OVERRIDE;
-  virtual bool AddMessageToConsole(WebContents* source,
+      content::WebContents* source,
+      const content::NativeWebKeyboardEvent& event) OVERRIDE;
+  virtual bool AddMessageToConsole(content::WebContents* source,
                                    int32 level,
                                    const string16& message,
                                    int32 line_no,
@@ -158,15 +163,15 @@ class Shell : public WebContentsDelegate,
 
   // NotificationObserver
   virtual void Observe(int type,
-                       const NotificationSource& source,
-                       const NotificationDetails& details) OVERRIDE;
+                       const content::NotificationSource& source,
+                       const content::NotificationDetails& details) OVERRIDE;
 
-  scoped_ptr<ShellJavaScriptDialogCreator> dialog_creator_;
-  scoped_ptr<WebContents> web_contents_;
-  scoped_ptr<nw::NativeWindow> window_;
+  scoped_ptr<content::ShellJavaScriptDialogCreator> dialog_creator_;
+  scoped_ptr<content::WebContents> web_contents_;
+  scoped_ptr<NativeWindow> window_;
 
   // Notification manager.
-  NotificationRegistrar registrar_;
+  content::NotificationRegistrar registrar_;
 
   // Weak potiner to devtools window.
   base::WeakPtr<Shell> devtools_window_;
@@ -192,6 +197,6 @@ class Shell : public WebContentsDelegate,
   static bool quit_message_loop_;
 };
 
-}  // namespace content
+}  // namespace nw
 
-#endif  // CONTENT_NW_SRC_SHELL_H_
+#endif  // CONTENT_NW_SRC_NW_SHELL_H_

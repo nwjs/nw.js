@@ -32,13 +32,13 @@
 
 - (BOOL)application:(NSApplication*)sender
            openFile:(NSString*)filename {
-  if (content::Shell::windows().size() == 0) {
+  if (nw::Shell::windows().size() == 0) {
     CommandLine::ForCurrentProcess()->AppendArg([filename UTF8String]);
     return TRUE;
   }
 
   // Just pick a shell and get its package.
-  nw::Package* package = content::Shell::windows()[0]->GetPackage();
+  nw::Package* package = nw::Shell::windows()[0]->GetPackage();
 
   if (package->self_extract()) {
     // Let the app deal with the opening event if it's a standalone app.

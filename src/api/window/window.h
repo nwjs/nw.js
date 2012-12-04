@@ -24,7 +24,7 @@
 #include "base/compiler_specific.h"
 #include "content/nw/src/api/base/base.h"
 
-namespace content {
+namespace nw {
 class Shell;
 }
 
@@ -43,7 +43,7 @@ class Window : public Base {
                         const base::ListValue& arguments,
                         base::ListValue* result) OVERRIDE;
  private:
-  content::Shell* shell_;
+  nw::Shell* shell_;
 
   DISALLOW_COPY_AND_ASSIGN(Window);
 };

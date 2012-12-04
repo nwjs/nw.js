@@ -66,11 +66,11 @@ std::string ShellDevToolsDelegate::GetPageThumbnailData(const GURL& url) {
 }
 
 RenderViewHost* ShellDevToolsDelegate::CreateNewTarget() {
-  Shell* shell = Shell::Create(browser_context_,
-                               GURL("nw:blank"),
-                               NULL,
-                               MSG_ROUTING_NONE,
-                               NULL);
+  nw::Shell* shell = nw::Shell::Create(browser_context_,
+                                       GURL("nw:blank"),
+                                       NULL,
+                                       MSG_ROUTING_NONE,
+                                       NULL);
   return shell->web_contents()->GetRenderViewHost();
 }
 

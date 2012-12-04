@@ -136,11 +136,11 @@ void ShellBrowserMainParts::Init() {
   }
   devtools_delegate_ = new ShellDevToolsDelegate(browser_context_.get(), port);
 
-  Shell::Create(browser_context_.get(),
-                package()->GetStartupURL(),
-                NULL,
-                MSG_ROUTING_NONE,
-                NULL);
+  nw::Shell::Create(browser_context_.get(),
+                    package()->GetStartupURL(),
+                    NULL,
+                    MSG_ROUTING_NONE,
+                    NULL);
 }
 
 bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(

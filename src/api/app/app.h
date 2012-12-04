@@ -31,6 +31,9 @@ class ListValue;
 
 namespace content {
 class RenderProcessHost;
+}
+
+namespace nw {
 class Shell;
 }
 
@@ -41,7 +44,7 @@ class App {
   static void Call(const std::string& method,
                    const base::ListValue& arguments);
 
-  static void Call(content::Shell* shell,
+  static void Call(nw::Shell* shell,
                    const std::string& method,
                    const base::ListValue& arguments,
                    base::ListValue* result);

@@ -60,7 +60,7 @@ void Menu::Remove(MenuItem* menu_item, int pos) {
   [menu_ removeItem:menu_item->menu_item_];
 }
 
-void Menu::Popup(int x, int y, content::Shell* shell) {
+void Menu::Popup(int x, int y, nw::Shell* shell) {
   // Fake out a context menu event for our menu
   NSWindow* window =
        static_cast<nw::NativeWindowCocoa*>(shell->window())->window();

@@ -53,7 +53,7 @@ class NativeWindowWin;
 }
 #endif
 
-namespace content {
+namespace nw {
 class Shell;
 }
 
@@ -81,7 +81,7 @@ class Menu : public Base {
   void Append(MenuItem* menu_item);
   void Insert(MenuItem* menu_item, int pos);
   void Remove(MenuItem* menu_item, int pos);
-  void Popup(int x, int y, content::Shell*);
+  void Popup(int x, int y, nw::Shell*);
 
 #if defined(OS_MACOSX)
   friend class nw::NativeWindowCocoa;

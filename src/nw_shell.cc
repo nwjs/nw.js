@@ -53,7 +53,18 @@
 #include "net/base/escape.h"
 #include "ui/base/resource/resource_bundle.h"
 
-namespace content {
+using content::BrowserContext;
+using content::GetContentClient;
+using content::NavigationEntry;
+using content::RenderViewHost;
+using content::SiteInstance;
+using content::ShellContentBrowserClient;
+using content::ShellDevToolsDelegate;
+using content::ShellJavaScriptDialogCreator;
+using content::JavaScriptDialogCreator;
+using content::WebContents;
+
+namespace nw {
 
 std::vector<Shell*> Shell::windows_;
 
@@ -72,7 +83,7 @@ Shell* Shell::Create(BrowserContext* browser_context,
 
   Shell* shell = new Shell(web_contents, GetPackage()->window());
   web_contents->GetController().LoadURL(
-      url, Referrer(), PAGE_TRANSITION_TYPED, std::string());
+      url, content::Referrer(), content::PAGE_TRANSITION_TYPED, std::string());
   return shell;
 }
 
@@ -92,8 +103,8 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
       force_close_(false),
       id_(-1) {
   // Register shell.
-  registrar_.Add(this, NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,
-      Source<WebContents>(web_contents));
+  registrar_.Add(this, content::NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,
+      content::Source<WebContents>(web_contents));
   windows_.push_back(this);
 
   // Add web contents.
@@ -102,7 +113,7 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   web_contents_->SetDelegate(this);
 
   // Create window.
-  window_.reset(nw::NativeWindow::Create(this, manifest));
+  window_.reset(NativeWindow::Create(this, manifest));
 
   // Initialize window after we set window_, because some operations of 
   // NativeWindow requires the window_ to be non-NULL. 
@@ -177,7 +188,7 @@ void Shell::PrintCriticalError(const std::string& title,
   LoadURL(GURL(error_page_url));
 }
 
-nw::Package* Shell::GetPackage() {
+Package* Shell::GetPackage() {
   ShellContentBrowserClient* browser_client = 
       static_cast<ShellContentBrowserClient*>(GetContentClient()->browser());
   return browser_client->shell_browser_main_parts()->package();
@@ -186,11 +197,11 @@ nw::Package* Shell::GetPackage() {
 void Shell::LoadURL(const GURL& url) {
   web_contents_->GetController().LoadURL(
       url,
-      Referrer(),
-      PAGE_TRANSITION_TYPED,
+      content::Referrer(),
+      content::PAGE_TRANSITION_TYPED,
       std::string());
   web_contents_->Focus();
-  window()->SetToolbarButtonEnabled(nw::NativeWindow::BUTTON_FORWARD, false);
+  window()->SetToolbarButtonEnabled(NativeWindow::BUTTON_FORWARD, false);
 }
 
 void Shell::GoBackOrForward(int offset) {
@@ -237,10 +248,10 @@ void Shell::ShowDevTools() {
   }
 
   RenderViewHost* inspected_rvh = web_contents()->GetRenderViewHost();
-  DevToolsAgentHost* agent = DevToolsAgentHostRegistry::GetDevToolsAgentHost(
-      inspected_rvh);
-  DevToolsManager* manager = DevToolsManager::GetInstance();
-  DevToolsClientHost* host = manager->GetDevToolsClientHostFor(agent);
+  content::DevToolsAgentHost* agent =
+      content::DevToolsAgentHostRegistry::GetDevToolsAgentHost(inspected_rvh);
+  content::DevToolsManager* manager = content::DevToolsManager::GetInstance();
+  content::DevToolsClientHost* host = manager->GetDevToolsClientHostFor(agent);
 
   if (host) {
     // Break remote debugging debugging session.
@@ -262,8 +273,12 @@ void Shell::ShowDevTools() {
       WebContents::Create(web_contents()->GetBrowserContext(),
                           NULL, MSG_ROUTING_NONE, NULL),
       &manifest);
+
+  // Allow devtools window to show local files.
   int rh_id = shell->web_contents_->GetRenderProcessHost()->GetID();
-  ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, chrome::kFileScheme);
+  content::ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(
+      rh_id, chrome::kFileScheme);
+
   shell->is_devtools_ = true;
   shell->force_close_ = true;
   shell->LoadURL(url);
@@ -288,7 +303,7 @@ bool Shell::OnMessageReceived(const IPC::Message& message) {
 }
 
 WebContents* Shell::OpenURLFromTab(WebContents* source,
-                                   const OpenURLParams& params) {
+                                   const content::OpenURLParams& params) {
   // The only one we implement for now.
   DCHECK(params.disposition == CURRENT_TAB);
   source->GetController().LoadURL(
@@ -300,9 +315,9 @@ void Shell::LoadingStateChanged(WebContents* source) {
   int current_index = web_contents_->GetController().GetCurrentEntryIndex();
   int max_index = web_contents_->GetController().GetEntryCount() - 1;
 
-  window()->SetToolbarButtonEnabled(nw::NativeWindow::BUTTON_BACK,
+  window()->SetToolbarButtonEnabled(NativeWindow::BUTTON_BACK,
                                     current_index > 0);
-  window()->SetToolbarButtonEnabled(nw::NativeWindow::BUTTON_FORWARD,
+  window()->SetToolbarButtonEnabled(NativeWindow::BUTTON_FORWARD,
                                     current_index < max_index);
   window()->SetToolbarIsLoading(source->IsLoading());
 
@@ -312,11 +327,11 @@ void Shell::LoadingStateChanged(WebContents* source) {
     SendEvent("loaded");
 }
 
-void Shell::ActivateContents(content::WebContents* contents) {
+void Shell::ActivateContents(WebContents* contents) {
   window()->Focus(true);
 }
 
-void Shell::DeactivateContents(content::WebContents* contents) {
+void Shell::DeactivateContents(WebContents* contents) {
   if (windows_.size() == 1) {
     window()->Focus(false);
     return;
@@ -404,12 +419,12 @@ void Shell::RequestToLockMouse(WebContents* web_contents,
 }
 
 void Shell::HandleKeyboardEvent(WebContents* source,
-                                const NativeWebKeyboardEvent& event) {
+                                const content::NativeWebKeyboardEvent& event) {
   window()->HandleKeyboardEvent(event);
 }
 
 void Shell::RequestMediaAccessPermission(
-      content::WebContents* web_contents,
+      WebContents* web_contents,
       const content::MediaStreamRequest* request,
       const content::MediaResponseCallback& callback) {
   scoped_ptr<MediaStreamDevicesController>
@@ -419,11 +434,11 @@ void Shell::RequestMediaAccessPermission(
 }
 
 void Shell::Observe(int type,
-                    const NotificationSource& source,
-                    const NotificationDetails& details) {
-  if (type == NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED) {
+                    const content::NotificationSource& source,
+                    const content::NotificationDetails& details) {
+  if (type == content::NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED) {
     std::pair<NavigationEntry*, bool>* title =
-        Details<std::pair<NavigationEntry*, bool> >(details).ptr();
+        content::Details<std::pair<NavigationEntry*, bool> >(details).ptr();
 
     if (title->first) {
       string16 text = title->first->GetTitle();
@@ -432,4 +447,4 @@ void Shell::Observe(int type,
   }
 }
 
-}  // namespace content
+}  // namespace nw

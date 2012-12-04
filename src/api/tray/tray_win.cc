@@ -76,7 +76,7 @@ void Tray::SetTitle(const std::string& title) {
 
 void Tray::SetIcon(const std::string& path) {
   gfx::Image icon;
-  content::Shell* shell = content::Shell::FromRenderViewHost(
+  nw::Shell* shell = nw::Shell::FromRenderViewHost(
       dispatcher_host()->render_view_host());
   nw::Package* package = shell->GetPackage();
   package->GetImage(FilePath::FromUTF8Unsafe(path), &icon);

@@ -69,14 +69,14 @@ enum {
 
 @interface NativeWindowDelegate : NSObject<NSWindowDelegate> {
  @private
-  content::Shell* shell_;
+  nw::Shell* shell_;
 }
-- (id)initWithShell:(content::Shell*)shell;
+- (id)initWithShell:(nw::Shell*)shell;
 @end
 
 @implementation NativeWindowDelegate
 
-- (id)initWithShell:(content::Shell*)shell {
+- (id)initWithShell:(nw::Shell*)shell {
   if ((self = [super init])) {
     shell_ = shell;
   }
@@ -181,16 +181,16 @@ enum {
 
 @interface ShellNSWindow : UnderlayOpenGLHostingWindow {
  @private
-  content::Shell* shell_;
+  nw::Shell* shell_;
 }
-- (void)setShell:(content::Shell*)shell;
+- (void)setShell:(nw::Shell*)shell;
 - (void)showDevTools:(id)sender;
 - (void)closeAllWindows:(id)sender;
 @end
 
 @implementation ShellNSWindow
 
-- (void)setShell:(content::Shell*)shell {
+- (void)setShell:(nw::Shell*)shell {
   shell_ = shell;
 }
 
@@ -253,7 +253,7 @@ enum {
 namespace nw {
 
 NativeWindowCocoa::NativeWindowCocoa(
-    content::Shell* shell,
+    nw::Shell* shell,
     base::DictionaryValue* manifest)
     : NativeWindow(shell, manifest),
       is_fullscreen_(false),
@@ -808,8 +808,8 @@ void NativeWindowCocoa::InstallDraggableRegionViews() {
   }
 }
 
-NativeWindow* CreateNativeWindowCocoa(content::Shell* shell,
-                                           base::DictionaryValue* manifest) {
+NativeWindow* CreateNativeWindowCocoa(Shell* shell,
+                                      base::DictionaryValue* manifest) {
   return new NativeWindowCocoa(shell, manifest);
 }
 

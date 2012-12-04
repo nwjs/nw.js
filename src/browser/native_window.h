@@ -41,7 +41,6 @@ class DictionaryValue;
 
 namespace content {
 struct NativeWebKeyboardEvent;
-class Shell;
 class WebContents;
 }
 
@@ -55,12 +54,13 @@ class Rect;
 
 namespace nw {
 
+class Shell;
+
 class NativeWindow {
  public:
   virtual ~NativeWindow();
 
-  static NativeWindow* Create(content::Shell* shell,
-                              base::DictionaryValue* manifest);
+  static NativeWindow* Create(Shell* shell, base::DictionaryValue* manifest);
 
   void InitFromManifest(base::DictionaryValue* manifest);
 
@@ -108,17 +108,17 @@ class NativeWindow {
   virtual void HandleKeyboardEvent(
       const content::NativeWebKeyboardEvent& event) = 0;
 
-  content::Shell* shell() const { return shell_; }
+  nw::Shell* shell() const { return shell_; }
   content::WebContents* web_contents() const;
   bool has_frame() const { return has_frame_; }
   const gfx::Image& app_icon() const { return app_icon_; }
 
  protected:
-  explicit NativeWindow(content::Shell* shell,
+  explicit NativeWindow(nw::Shell* shell,
                         base::DictionaryValue* manifest);
 
   // Weak reference to parent.
-  content::Shell* shell_;
+  nw::Shell* shell_;
 
   bool has_frame_;
 

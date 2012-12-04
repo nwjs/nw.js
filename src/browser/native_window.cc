@@ -39,7 +39,7 @@
 namespace nw {
 
 // static
-NativeWindow* NativeWindow::Create(content::Shell* shell,
+NativeWindow* NativeWindow::Create(Shell* shell,
                                    base::DictionaryValue* manifest) {
   // Set default width/height.
   if (!manifest->HasKey(switches::kmWidth))
@@ -63,8 +63,7 @@ NativeWindow* NativeWindow::Create(content::Shell* shell,
   return window;
 }
 
-NativeWindow::NativeWindow(content::Shell* shell,
-                           base::DictionaryValue* manifest)
+NativeWindow::NativeWindow(Shell* shell, base::DictionaryValue* manifest)
     : shell_(shell),
       has_frame_(true) {
   manifest->GetBoolean(switches::kmFrame, &has_frame_);

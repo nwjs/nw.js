@@ -113,7 +113,7 @@ void Menu::Remove(MenuItem* menu_item, int pos) {
   gtk_container_remove(GTK_CONTAINER(menu_), menu_item->menu_item_);
 }
 
-void Menu::Popup(int x, int y, content::Shell* shell) {
+void Menu::Popup(int x, int y, nw::Shell* shell) {
   GdkEventButton* event = shell->web_contents()->GetRenderWidgetHostView()->
       GetLastMouseDown();
   uint32_t triggering_event_time = event ? event->time : GDK_CURRENT_TIME;

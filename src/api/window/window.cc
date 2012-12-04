@@ -32,7 +32,7 @@ Window::Window(int id,
                DispatcherHost* dispatcher_host,
                const base::DictionaryValue& option)
     : Base(id, dispatcher_host, option),
-      shell_(content::Shell::FromRenderViewHost(dispatcher_host->
+      shell_(nw::Shell::FromRenderViewHost(dispatcher_host->
            render_view_host())) {
   // Set ID for Shell
   shell_->set_id(id);
@@ -113,7 +113,7 @@ void Window::Call(const std::string& method,
   } else if (method == "Reload") {
     int type;
     if (arguments.GetInteger(0, &type))
-      shell_->Reload(static_cast<content::Shell::ReloadType>(type));
+      shell_->Reload(static_cast<nw::Shell::ReloadType>(type));
   } else {
     NOTREACHED() << "Invalid call to Window method:" << method
                  << " arguments:" << arguments;

@@ -27,22 +27,20 @@
 #include "ui/views/controls/textfield/textfield_controller.h"
 #include "ui/views/widget/widget_delegate.h"
 
-namespace content {
-class Shell;
-}
-
 namespace views {
 class ImageButton;
 class Textfield;
 }
 
 namespace nw {
+
+class Shell;
   
 class NativeWindowToolbarWin : public views::WidgetDelegateView,
                                public views::TextfieldController,
                                public views::ButtonListener {
  public:
-  explicit NativeWindowToolbarWin(content::Shell* shell);
+  explicit NativeWindowToolbarWin(Shell* shell);
   ~NativeWindowToolbarWin();
 
   void SetButtonEnabled(NativeWindow::TOOLBAR_BUTTON button,
@@ -73,7 +71,7 @@ class NativeWindowToolbarWin : public views::WidgetDelegateView,
  private:
   void InitToolbar();
 
-  content::Shell* shell_;
+  Shell* shell_;
 
   views::ImageButton* back_button_;
   views::ImageButton* forward_button_;

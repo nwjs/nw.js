@@ -71,7 +71,7 @@ class NativeWindowClientView : public views::ClientView {
  public:
   NativeWindowClientView(views::Widget* widget,
                          views::View* contents_view,
-                         content::Shell* shell)
+                         Shell* shell)
       : views::ClientView(widget, contents_view),
         shell_(shell) {
   }
@@ -82,7 +82,7 @@ class NativeWindowClientView : public views::ClientView {
   }
 
  private:
-  content::Shell* shell_;
+  Shell* shell_;
 };
 
 class NativeWindowFrameView : public views::NonClientFrameView {
@@ -227,8 +227,7 @@ gfx::Size NativeWindowFrameView::GetMaximumSize() {
 
 }  // namespace
 
-NativeWindowWin::NativeWindowWin(content::Shell* shell,
-                                 base::DictionaryValue* manifest)
+NativeWindowWin::NativeWindowWin(Shell* shell, base::DictionaryValue* manifest)
     : NativeWindow(shell, manifest),
       web_view_(NULL),
       toolbar_(NULL),

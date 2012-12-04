@@ -35,8 +35,7 @@ namespace nw {
 
 class NativeWindowCocoa : public NativeWindow {
  public:
-  explicit NativeWindowCocoa(content::Shell* shell,
-                             base::DictionaryValue* manifest);
+  explicit NativeWindowCocoa(Shell* shell, base::DictionaryValue* manifest);
   virtual ~NativeWindowCocoa();
 
   // NativeWindow implementation.

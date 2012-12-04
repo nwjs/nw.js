@@ -36,7 +36,7 @@ static NSString *EntryToolbarItemIdentifier = @"Entry";
 
 @implementation ShellToolbarDelegate
 
-- (id)initWithShell:(content::Shell*)shell {
+- (id)initWithShell:(nw::Shell*)shell {
   if ((self = [super init])) {
     shell_ = shell;
   }

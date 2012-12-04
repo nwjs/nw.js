@@ -174,8 +174,7 @@ void DispatcherHost::OnCallStaticMethodSync(
              << " arguments:" << arguments;
 
   if (type == "App") {
-    content::Shell* shell = 
-        content::Shell::FromRenderViewHost(render_view_host());
+    nw::Shell* shell = nw::Shell::FromRenderViewHost(render_view_host());
     api::App::Call(shell, method, arguments, result);
     return;
   }
@@ -184,14 +183,12 @@ void DispatcherHost::OnCallStaticMethodSync(
 }
 
 void DispatcherHost::OnUncaughtException(const std::string& err) {
-  content::Shell* shell = 
-      content::Shell::FromRenderViewHost(render_view_host());
+  nw::Shell* shell = nw::Shell::FromRenderViewHost(render_view_host());
   shell->PrintCriticalError("Uncaught node.js Error", err);
 }
 
 void DispatcherHost::OnGetShellId(int* id) {
-  content::Shell* shell = 
-      content::Shell::FromRenderViewHost(render_view_host());
+  nw::Shell* shell = nw::Shell::FromRenderViewHost(render_view_host());
   *id = shell->id();
 }
 
@@ -199,7 +196,7 @@ void DispatcherHost::OnCreateShell(const std::string& url,
                                    const base::DictionaryValue& manifest,
                                    int* routing_id) {
   WebContents* base_web_contents = 
-      content::Shell::FromRenderViewHost(render_view_host())->web_contents();
+      nw::Shell::FromRenderViewHost(render_view_host())->web_contents();
   WebContents* web_contents = content::WebContentsImpl::CreateWithOpener(
       base_web_contents->GetBrowserContext(),
       base_web_contents->GetSiteInstance(),
@@ -209,7 +206,7 @@ void DispatcherHost::OnCreateShell(const std::string& url,
 
   scoped_ptr<base::DictionaryValue> new_manifest(manifest.DeepCopy());
 
-  new content::Shell(web_contents, new_manifest.get());
+  new nw::Shell(web_contents, new_manifest.get());
   web_contents->GetController().LoadURL(
       GURL(url),
       content::Referrer(),
