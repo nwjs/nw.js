@@ -240,6 +240,21 @@ v8::Handle<v8::Value> ShellContentRendererClient::ReportException(
     const v8::Arguments& args) {
   v8::HandleScope handle_scope;
 
+  // Do nothing if user is listening to uncaughtException.
+  v8::Local<v8::Value> listeners_v =
+      node::process->Get(v8::String::New("listeners"));
+  v8::Local<v8::Function> listeners = 
+      v8::Local<v8::Function>::Cast(listeners_v);
+
+  v8::Local<v8::Value> argv[1] = { v8::String::New("uncaughtException") };
+  v8::Local<v8::Value> ret = listeners->Call(node::process, 1, argv);
+  v8::Local<v8::Array> listener_array = v8::Local<v8::Array>::Cast(ret);
+
+  uint32_t length = listener_array->Length();
+  if (length > 1)
+    return v8::Undefined(); 
+
+  // Print stacktrace.
   v8::Local<v8::String> stack_symbol = v8::String::New("stack");
   std::string error;
 
