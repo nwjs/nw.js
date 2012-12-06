@@ -26,7 +26,9 @@
 #include "base/threading/worker_pool.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/nw/src/net/shell_network_delegate.h"
+#include "content/nw/src/net/sqlite_persistent_cookie_store.h"
 #include "content/nw/src/nw_protocol_handler.h"
+#include "content/nw/src/nw_shell.h"
 #include "net/base/cert_verifier.h"
 #include "net/base/default_server_bound_cert_store.h"
 #include "net/base/host_resolver.h"
@@ -77,7 +79,14 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
     url_request_context_->set_network_delegate(network_delegate_.get());
     storage_.reset(
         new net::URLRequestContextStorage(url_request_context_.get()));
-    storage_->set_cookie_store(new net::CookieMonster(NULL, NULL));
+
+    FilePath cookie_path = base_path_.Append(FILE_PATH_LITERAL("cookies"));
+    scoped_refptr<SQLitePersistentCookieStore> cookie_db =
+        new SQLitePersistentCookieStore(cookie_path, true, NULL);
+    net::CookieMonster* cookie_store = new net::CookieMonster(cookie_db.get(), NULL);
+    cookie_store->GetCookieMonster()->SetPersistSessionCookies(true);
+    storage_->set_cookie_store(cookie_store);
+
     storage_->set_server_bound_cert_service(new net::ServerBoundCertService(
         new net::DefaultServerBoundCertStore(NULL),
         base::WorkerPool::GetTaskRunner(true)));
@@ -87,7 +96,7 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
 
     scoped_ptr<net::HostResolver> host_resolver(
         net::HostResolver::CreateDefaultResolver(NULL));
-    
+
     storage_->set_cert_verifier(net::CertVerifier::CreateDefault());
     // TODO(jam): use v8 if possible, look at chrome code.
     storage_->set_proxy_service(
