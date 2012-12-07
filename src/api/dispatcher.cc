@@ -77,9 +77,11 @@ void Dispatcher::OnEvent(int object_id,
       v8::Integer::New(object_id), v8::String::New(event.c_str()), args };
 
   // __nwObjectsRegistry.handleEvent(object_id, event, arguments);
-  v8::Handle<v8::Object> objects_registry = 
-      node::g_context->Global()->Get(v8::String::New("__nwObjectsRegistry"))->
-          ToObject();
+  v8::Handle<v8::Value> val =
+    node::g_context->Global()->Get(v8::String::New("__nwObjectsRegistry"));
+  if (val->IsNull() || val->IsUndefined())
+    return; // need to find out why it's undefined here in debugger
+  v8::Handle<v8::Object> objects_registry = val->ToObject();
   node::MakeCallback(objects_registry, "handleEvent", 3, argv);
 }
 
