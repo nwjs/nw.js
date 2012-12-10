@@ -24,7 +24,13 @@ function App() {
 }
 require('util').inherits(App, exports.Base);
 
-App.filteredArgv = [ '--no-sandbox', '--process-per-tab' ];
+App.filteredArgv = [
+  /--no-sandbox/,
+  /--process-per-tab/,
+  /--no-toolbar/,
+  /--url=.*/,
+  /--remote-debugging-port=.*/,
+];
 
 App.prototype.quit = function() {
   nw.callStaticMethod('App', 'Quit', [ ]);
@@ -39,8 +45,17 @@ App.prototype.__defineGetter__('argv', function() {
     var fullArgv = this.fullArgv;
     argv = [];
     for (var i = 0; i < fullArgv.length; ++i) {
-      if (App.filteredArgv.indexOf(fullArgv[i]) == -1)
-        argv.push(fullArgv[i]);
+      var matched = false;
+      for (var j = 0; j < App.filteredArgv.length; ++j) {
+        if (App.filteredArgv[j].test(fullArgv[i])) {
+          matched = true;
+          break;;
+        }
+      }
+      if (matched)
+        continue;
+
+      argv.push(fullArgv[i]);
     }
   }
 
