@@ -192,11 +192,8 @@ describe('browser', function() {
 
   describe('render crashes', function() {
     it('MessageChannel should not crash', function(done) {
-      var mc = new window.MessageChannel()
-      mc.port1.onmessage = function(m) {
-        done();
-      }
-      mc.port2.postMessage("HELLO");
+      var test = require('./tests/node/message_channel_test.js');
+      test.run(done); // force to run in node context.
     });
   });
 });
