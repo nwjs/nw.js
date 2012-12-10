@@ -37,6 +37,7 @@ class Shell;
   NSToolbarItem* forward_button_;
   NSToolbarItem* refresh_stop_button_;
   NSToolbarItem* devtools_button_;
+  NSToolbarItem* refresh_dev_button_;
 }
 
 - (id)initWithShell:(content::Shell*)shell;

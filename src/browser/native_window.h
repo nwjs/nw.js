@@ -95,7 +95,8 @@ class NativeWindow {
     BUTTON_BACK = 0,
     BUTTON_FORWARD,
     BUTTON_REFRESH_OR_STOP,
-    BUTTON_DEVTOOLS
+    BUTTON_DEVTOOLS,
+    BUTTON_REFRESH_DEV
   };
   virtual void AddToolbar() = 0;
   virtual void SetToolbarButtonEnabled(TOOLBAR_BUTTON button,

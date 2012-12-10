@@ -33,6 +33,7 @@ static NSString *ForwardToolbarItemIdentifier = @"Forward";
 static NSString *RefreshToolbarItemIdentifier = @"Refresh";
 static NSString *DevtoolsToolbarItemIdentifier = @"Devtools";
 static NSString *EntryToolbarItemIdentifier = @"Entry";
+static NSString *ReloadDevToolbarItemIdentifier = @"RefreshDev";
 
 @implementation ShellToolbarDelegate
 
@@ -56,6 +57,9 @@ static NSString *EntryToolbarItemIdentifier = @"Entry";
       break;
     case nw::NativeWindow::BUTTON_DEVTOOLS:
       shell_->ShowDevTools();
+      break;
+    case nw::NativeWindow::BUTTON_REFRESH_DEV:
+      shell_->Reload(content::Shell::RELOAD_DEV);
       break;
   }
 }
@@ -84,6 +88,9 @@ static NSString *EntryToolbarItemIdentifier = @"Entry";
       break;
     case nw::NativeWindow::BUTTON_DEVTOOLS:
       [devtools_button_ setEnabled:enabled];
+      break;
+    case nw::NativeWindow::BUTTON_REFRESH_DEV:
+      [refresh_dev_button_ setEnabled:enabled];
       break;
   }
 }
@@ -150,6 +157,10 @@ static NSString *EntryToolbarItemIdentifier = @"Entry";
     [item setMaxSize:NSMakeSize(28, 24)];
     [item setImage:[NSImage imageNamed:NSImageNameActionTemplate]];
     [item setTag:nw::NativeWindow::BUTTON_DEVTOOLS];
+  } else if ([identifier isEqualTo:ReloadDevToolbarItemIdentifier]) {
+    refresh_dev_button_ = item;
+    [item setImage:[NSImage imageNamed:NSImageNameRefreshTemplate]];
+    [item setTag:nw::NativeWindow::BUTTON_REFRESH_DEV];
   }
 
   return [item autorelease];
@@ -161,6 +172,7 @@ static NSString *EntryToolbarItemIdentifier = @"Entry";
       RefreshToolbarItemIdentifier, 
       EntryToolbarItemIdentifier,
       DevtoolsToolbarItemIdentifier,
+      ReloadDevToolbarItemIdentifier,
       nil];
 }
 
@@ -170,6 +182,7 @@ static NSString *EntryToolbarItemIdentifier = @"Entry";
       RefreshToolbarItemIdentifier, 
       EntryToolbarItemIdentifier,
       DevtoolsToolbarItemIdentifier,
+      ReloadDevToolbarItemIdentifier,
       nil];
 }
 
