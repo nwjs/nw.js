@@ -75,11 +75,18 @@ void App::Call(content::Shell* shell,
     nw::Package* package = shell->GetPackage();
     CommandLine* command_line = CommandLine::ForCurrentProcess();
     CommandLine::StringVector args = command_line->GetArgs();
+    CommandLine::StringVector argv = command_line->argv();
 
-    // Ignore first arg if it's not a standalone package.
-    unsigned i = package->self_extract() ? 0 : 1;
-    for (; i < args.size(); ++i)
-      result->AppendString(args[i]);
+    // Ignore first non-switch arg if it's not a standalone package.
+    bool ignore_arg = !package->self_extract();
+    for (unsigned i = 1; i < argv.size(); ++i) {
+      if (ignore_arg && argv[i] == args[0]) {
+        ignore_arg = false;
+        continue;
+      }
+
+      result->AppendString(argv[i]);
+    }
 
     return;
   }
