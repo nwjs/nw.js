@@ -1,0 +1,17 @@
+{
+  "name": "nw-tests",
+  "version": "0.1.0",
+  "main": "index.html",
+  "dependencies": {
+    "commander": "0.6.1",
+    "growl": "1.6.x",
+    "jade": "0.26.3",
+    "diff": "1.0.2",
+    "debug": "*",
+    "mkdirp": "0.3.3",
+    "ms": "0.3.0",
+    "should": "*",
+    "coffee-script": "1.2",
+    "mocha": "1.7.4"
+  }
+}
