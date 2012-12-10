@@ -18,11 +18,13 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-var argv;
+var argv, fullArgv;
 
 function App() {
 }
 require('util').inherits(App, exports.Base);
+
+App.filteredArgv = [ '--no-sandbox', '--process-per-tab' ];
 
 App.prototype.quit = function() {
   nw.callStaticMethod('App', 'Quit', [ ]);
@@ -33,10 +35,23 @@ App.prototype.closeAllWindows = function() {
 }
 
 App.prototype.__defineGetter__('argv', function() {
-  if (!argv)
-    argv = nw.callStaticMethodSync('App', 'GetArgv', [ ]);
+  if (!argv) {
+    var fullArgv = this.fullArgv;
+    argv = [];
+    for (var i = 0; i < fullArgv.length; ++i) {
+      if (App.filteredArgv.indexOf(fullArgv[i]) == -1)
+        argv.push(fullArgv[i]);
+    }
+  }
 
   return argv;
+});
+
+App.prototype.__defineGetter__('fullArgv', function() {
+  if (!fullArgv)
+    fullArgv = nw.callStaticMethodSync('App', 'GetArgv', [ ]);
+
+  return fullArgv;
 });
 
 // Store App object in node's context.
