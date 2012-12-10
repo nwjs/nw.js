@@ -308,6 +308,9 @@ void NativeWindowGtk::SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
     case BUTTON_DEVTOOLS:
       target = devtools_button_;
       break;
+    case BUTTON_REFRESH_DEV:
+      target = dev_reload_button_;
+      break;
   }
 
   DCHECK(target);
