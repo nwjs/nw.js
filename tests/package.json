@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "main": "index.html",
   "dependencies": {
+    "tar": "*",
     "commander": "0.6.1",
     "growl": "1.6.x",
     "jade": "0.26.3",

@@ -1,0 +1,36 @@
+<html>
+<head>
+  <link href="node_modules/mocha/mocha.css" rel="stylesheet">
+  <script type="text/javascript" src="zepto.min.js"></script>
+</head>
+<body>
+<script type="text/javascript" charset="utf-8">
+  var Mocha = require('mocha');
+  var fs = require('fs');
+  var path = require('path');
+
+  var mocha = new Mocha();
+
+  // Print results to page.
+  global.document = window.document;
+  mocha.reporter('html');
+
+  // Read all test files.
+  fs.readdir('tests', function(err, dirs) {
+    if (err)
+      throw err;
+
+    for (var i = 0; i < dirs.length; ++i) {
+      var test_file_path = path.join('tests', dirs[i], dirs[i] + '.js');
+      mocha.addFile(test_file_path);
+    }
+
+    // Run!
+    mocha.run();
+  });
+</script>
+
+<div id="mocha"></div>
+
+</body>
+</html>
