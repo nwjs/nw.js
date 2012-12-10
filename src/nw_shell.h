@@ -63,7 +63,10 @@ class Shell : public WebContentsDelegate,
   enum ReloadType {
     RELOAD,                      // Normal (cache-validating) reload.
     RELOAD_IGNORING_CACHE,       // Reload bypassing the cache (shift-reload).
-    RELOAD_ORIGINAL_REQUEST_URL  // Reload using the original request URL.
+    RELOAD_ORIGINAL_REQUEST_URL, // Reload using the original request
+                                 // URL.
+    RELOAD_DEV                   // Refresh code from disk, should start a new renderer
+                                 // process
   };
 
   explicit Shell(WebContents* web_contents, base::DictionaryValue* manifest);

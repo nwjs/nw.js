@@ -209,6 +209,9 @@ void Shell::Reload(ReloadType type) {
     case RELOAD_ORIGINAL_REQUEST_URL:
       web_contents_->GetController().ReloadOriginalRequestURL(false);
       break;
+    case RELOAD_DEV:
+      web_contents_->GetController().ReloadDev(false);
+      break;
   }
 
   web_contents_->Focus();

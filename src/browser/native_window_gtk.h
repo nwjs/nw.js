@@ -93,6 +93,7 @@ class NativeWindowGtk : public NativeWindow {
   CHROMEGTK_CALLBACK_0(NativeWindowGtk, void, OnRefreshStopButtonClicked);
   CHROMEGTK_CALLBACK_0(NativeWindowGtk, void, OnURLEntryActivate);
   CHROMEGTK_CALLBACK_0(NativeWindowGtk, void, OnDevtoolsButtonClicked);
+  CHROMEGTK_CALLBACK_0(NativeWindowGtk, void, OnDevReloadButtonClicked);
 
   CHROMEGTK_CALLBACK_0(NativeWindowGtk, gboolean, OnWindowDestroyed);
   CHROMEGTK_CALLBACK_1(NativeWindowGtk, gboolean, OnFocusIn, GdkEventFocus*);
@@ -112,6 +113,7 @@ class NativeWindowGtk : public NativeWindow {
   GtkToolItem* forward_button_;
   GtkToolItem* refresh_stop_button_;
   GtkToolItem* devtools_button_;
+  GtkToolItem* dev_reload_button_;
 
   // True if the RVH is in fullscreen mode. The window may not actually be in
   // fullscreen, however: some WMs don't support fullscreen.

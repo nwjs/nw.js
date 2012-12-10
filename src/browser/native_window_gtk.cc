@@ -423,6 +423,11 @@ void NativeWindowGtk::CreateToolbar() {
   g_signal_connect(devtools_button_, "clicked",
                    G_CALLBACK(&OnDevtoolsButtonClickedThunk), this);
   gtk_toolbar_insert(GTK_TOOLBAR(toolbar_), devtools_button_, -1);
+
+  dev_reload_button_ = gtk_tool_button_new_from_stock(GTK_STOCK_REFRESH);
+  g_signal_connect(dev_reload_button_, "clicked",
+                   G_CALLBACK(&OnDevReloadButtonClickedThunk), this);
+  gtk_toolbar_insert(GTK_TOOLBAR(toolbar_), dev_reload_button_, -1);
 }
 
 gfx::Rect NativeWindowGtk::GetBounds() {
@@ -444,6 +449,10 @@ void NativeWindowGtk::OnForwardButtonClicked(GtkWidget* widget) {
 
 void NativeWindowGtk::OnRefreshStopButtonClicked(GtkWidget* widget) {
   shell()->ReloadOrStop();
+}
+
+void NativeWindowGtk::OnDevReloadButtonClicked(GtkWidget* widget) {
+  shell()->Reload(content::Shell::RELOAD_DEV);
 }
 
 void NativeWindowGtk::OnURLEntryActivate(GtkWidget* entry) {
