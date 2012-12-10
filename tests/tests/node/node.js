@@ -186,13 +186,21 @@ describe('performance', function() {
 describe('browser', function() {
   describe('security', function() {
     it('cross domain call in file:// should succeed', function(done) {
-      window.$(function() {
-        window.$.get('http://baidu.com', function(data, status) {
-          assert.equal(status, 'success');
-          assert.notEqual(data, null);
-          done();
-        });
+      window.$.get('http://baidu.com', function(data, status) {
+        assert.equal(status, 'success');
+        assert.notEqual(data, null);
+        done();
       });
+    });
+  });
+
+  describe('render crashes', function() {
+    it('MessageChannel should not crash', function(done) {
+      var mc = new window.MessageChannel()
+      mc.port1.onmessage = function(m) {
+        done();
+      }
+      mc.port2.postMessage("HELLO");
     });
   });
 });
