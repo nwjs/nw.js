@@ -2,18 +2,41 @@
 <head>
   <link href="node_modules/mocha/mocha.css" rel="stylesheet">
   <script type="text/javascript" src="zepto.min.js"></script>
+  <script type="text/javascript" charset="utf-8">
+    // Remove symbols of node-webkit to avoid conficts with mocha in browser.
+    var nodeRequire = require;
+    var nodeGlobal = global;
+    var nodeProcess = process;
+    require = undefined;
+    global = undefined;
+    process = undefined;
+  </script>
+  <!-- Use the browser version of mocha, the node version of mocha will -->
+  <!-- run tests in node contex, which make it imposssible to test nw.gui. -->
+  <script type="text/javascript" src="node_modules/mocha/mocha.js"></script>
+  <script type="text/javascript" charset="utf-8">
+    // Restore default node-webkit environment.
+    require = nodeRequire;
+    global = nodeGlobal;
+    process = nodeProcess;
+  </script>
 </head>
 <body>
 <script type="text/javascript" charset="utf-8">
-  var Mocha = require('mocha');
+$(function() {
   var fs = require('fs');
   var path = require('path');
 
-  var mocha = new Mocha();
+  // TODO
+  // 1) Make user choose which test to run in command line.
+  // 2) Add option to print results to file.
 
   // Print results to page.
   global.document = window.document;
   mocha.reporter('html');
+
+  // Call this to set 'describe', 'it' and else.
+  mocha.setup('bdd');
 
   // Read all test files.
   fs.readdir('tests', function(err, dirs) {
@@ -22,12 +45,20 @@
 
     for (var i = 0; i < dirs.length; ++i) {
       var test_file_path = path.join('tests', dirs[i], dirs[i] + '.js');
-      mocha.addFile(test_file_path);
+      var content = fs.readFileSync(test_file_path);
+
+      // Simple wrapped 'eval' to setup tests, so:
+      // 1) working directory is the directory of 'index.html'.
+      // 2) tests run in window context.
+      // 3) global variables in each test are wrapped in its local scope.
+      // 4) tests are setup synchronously.
+      eval('(function() {' + content + '})();');
     }
 
     // Run!
     mocha.run();
   });
+});
 </script>
 
 <div id="mocha"></div>

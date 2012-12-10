@@ -3,29 +3,29 @@ var assert = require('assert');
 describe('require', function() {
   describe('type', function() {
     it('is function', function() {
-      assert.equal(typeof require, 'function');
+      assert.equal(typeof global.require, 'function');
     });
   });
 
   describe('members', function() {
     it('have resolve', function() {
-      assert.equal(typeof require.resolve, 'function');
+      assert.equal(typeof global.require.resolve, 'function');
     });
 
     it('have main', function() {
-      assert.equal(typeof require.main, 'object');
+      assert.equal(typeof global.require.main, 'object');
     });
 
     it('have extensions', function() {
-      assert.equal(typeof require.extensions, 'object');
+      assert.equal(typeof global.require.extensions, 'object');
     });
 
     it('have registerExtension', function() {
-      assert.equal(typeof require.registerExtension, 'function');
+      assert.equal(typeof global.require.registerExtension, 'function');
     });
 
     it('have cache', function() {
-      assert.equal(typeof require.cache, 'object');
+      assert.equal(typeof global.require.cache, 'object');
     });
   });
 });
@@ -34,20 +34,16 @@ describe('module', function() {
   describe('javascript modules', function() {
     var path = require('path');
 
-    it('require by relative path', function() {
-      assert.equal(require('./module1.js').test(), 'module1');
-    });
-
-    it('require by absolute path', function() {
-      assert.equal(require(path.join(__dirname, 'module1.js')).test(), 'module1');
+    it('require by path', function() {
+      assert.equal(require('./tests/node/module1.js').test(), 'module1');
     });
 
     it('simple file module', function() {
-      assert.equal(require('module3').test(), 'module3');
+      assert.equal(require('./tests/node/node_modules/module3').test(), 'module3');
     });
 
     it('space in path', function() {
-      assert.equal(require('module4 space').test(), 'module4');
+      assert.equal(require('./tests/node/node_modules/module4 space').test(), 'module4');
     });
   });
 
@@ -58,7 +54,7 @@ describe('module', function() {
     var exec = require('child_process').exec;
 
     it('read self', function() {
-      var path1 = __filename;
+      var path1 = 'tests/node/node.js';
       var path2 = path.join(process.cwd(), 'tests', 'node', 'node.js');
       var content = fs.readFileSync(path1, 'utf8');
       fs.readFile(path2, 'utf8', function(err, data) {
@@ -112,13 +108,13 @@ describe('module', function() {
   describe('native modules', function() {
     it('bignum should work on posix environment', function() {
       if (process.platform != 'win32') {
-        var bignum = require('bignum');
+        var bignum = require('./tests/node/node_modules/bignum');
         assert.equal(bignum('782910138827292261791972728324982').sub('182373273283402171237474774728373').div(8), '75067108192986261319312244199576');
       }
     });
 
     it('native modules without handle scope', function() {
-      require('nw_test_loop_without_handle');
+      require('./tests/node/node_modules/nw_test_loop_without_handle');
     });
   });
 });
@@ -160,14 +156,14 @@ describe('performance', function() {
     it('file reading should be quick even when we have a child process running', function(done) {
       this.timeout(100);
       exec('sleep 1000', function () { });
-      fs.readFile(__filename, 'utf8', function(err, data) {
+      fs.readFile('tests/node/node.js', 'utf8', function(err, data) {
         done();
       });
     });
 
     it('untar a file should be quick', function(done) {
       this.timeout(100);
-      fs.createReadStream(path.join(__dirname, 'test.tar'))
+      fs.createReadStream('tests/node/test.tar')
       .pipe(tar.Extract({ path: 'tmp' }))
       .on('error', function (er) {
         assert.equal(false, true);
