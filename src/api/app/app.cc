@@ -75,7 +75,7 @@ void App::Call(content::Shell* shell,
     nw::Package* package = shell->GetPackage();
     CommandLine* command_line = CommandLine::ForCurrentProcess();
     CommandLine::StringVector args = command_line->GetArgs();
-    CommandLine::StringVector argv = command_line->argv();
+    CommandLine::StringVector argv = command_line->original_argv();
 
     // Ignore first non-switch arg if it's not a standalone package.
     bool ignore_arg = !package->self_extract();

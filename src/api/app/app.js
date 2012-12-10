@@ -25,8 +25,6 @@ function App() {
 require('util').inherits(App, exports.Base);
 
 App.filteredArgv = [
-  /--no-sandbox/,
-  /--process-per-tab/,
   /--no-toolbar/,
   /--url=.*/,
   /--remote-debugging-port=.*/,
