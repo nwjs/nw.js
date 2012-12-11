@@ -103,14 +103,22 @@ void Menu::Destroy() {
 
 void Menu::Append(MenuItem* menu_item) {
   gtk_menu_shell_append(GTK_MENU_SHELL(menu_), menu_item->menu_item_);
+  menu_item_icons_.push_back(&(menu_item->menu_item_icon_)); 
 }
 
 void Menu::Insert(MenuItem* menu_item, int pos) {
   gtk_menu_shell_insert(GTK_MENU_SHELL(menu_), menu_item->menu_item_, pos);
+  menu_item_icons_.push_back(&(menu_item->menu_item_icon_)); 
 }
 
 void Menu::Remove(MenuItem* menu_item, int pos) {
   gtk_container_remove(GTK_CONTAINER(menu_), menu_item->menu_item_);
+  for (uint32 index = 0; index < menu_item_icons_.size(); index++) {
+    if (menu_item_icons_[index] == &(menu_item->menu_item_icon_)) {
+      menu_item_icons_[index] = NULL;
+      break;
+    }
+  }
 }
 
 void Menu::Popup(int x, int y, content::Shell* shell) {
@@ -121,6 +129,13 @@ void Menu::Popup(int x, int y, content::Shell* shell) {
   gtk_menu_popup(GTK_MENU(menu_), NULL, NULL, 
                  PointMenuPositionFunc, &point,
                  3, triggering_event_time);
+  // Show the icons of the menu item.
+  for (uint32 index = 0; index < menu_item_icons_.size(); index++) {
+    if (menu_item_icons_[index] != NULL) {
+      if (*(menu_item_icons_[index]) != NULL)
+        gtk_widget_show(*(menu_item_icons_[index]));
+    }
+  }
 }
 
 }  // namespace api
