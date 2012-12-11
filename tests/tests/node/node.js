@@ -30,6 +30,37 @@ describe('require', function() {
   });
 });
 
+describe('node', function() {
+
+  var mocha_callback;
+
+  before(function() {
+    mocha_callback = process.listeners('uncaughtException')[1];
+    process.removeListener('uncaughtException', mocha_callback);
+  });
+
+  after(function() {
+    process.on('uncaughtException', mocha_callback);
+  });
+
+  describe('process', function() {
+    it('uncaughtException should have a default listener', function() {
+      assert.equal(process.listeners('uncaughtException').length, 1);
+    });
+
+    it('throwing uncaughtException should not show error page when having listener', function(done) {
+      var empty = function(e) {
+        process.removeListener('uncaughtException', empty);
+        done();
+      };
+      process.on('uncaughtException', empty);
+      process.nextTick(function() {
+        throw new String('If you see this then uncaughtException test failed');
+      });
+    });
+  });
+});
+
 describe('module', function() {
   describe('javascript modules', function() {
     var path = require('path');
