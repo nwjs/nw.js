@@ -46,6 +46,7 @@
   program
     .version(JSON.parse(fs.readFileSync('package.json', 'utf8')).version)
     .option('-S, --silent', 'hide the browser window (run silently)')
+    .option('-o, --output <name>', 'output the results to specifed file, usually used together with json reporter')
     .option('-R, --reporter <name>', 'specify the reporter to use', 'html')
     .option('-g, --grep <pattern>', 'only run tests matching <pattern>')
     .option('-i, --invert', 'inverts --grep matches')
@@ -57,8 +58,6 @@
 
   // --silent
   if (!program.silent) gui.Window.get().show();
-  // --reporter <name>
-  mocha.reporter(program.reporter);
   // --grep
   if (program.grep) mocha.grep(new RegExp(program.grep));
   // --invert
@@ -71,6 +70,16 @@
   mocha.suite.bail(program.bail);
   // --async-only
   if (program.asyncOnly) mocha.asyncOnly();
+  // --reporter <name>
+  if (program.reporter == 'json')
+    mocha.reporter(require('./json_reporter.js'));
+  else
+    mocha.reporter(program.reporter);
+  // --output <name>
+  if (program.output)
+    process.stdout.write = function(data) {
+      fs.writeFileSync(program.output, data, 'utf8');
+    }
 
   // Call this to set 'describe', 'it' and else.
   mocha.setup('bdd');
@@ -93,7 +102,10 @@
     }
 
     // Run!
-    mocha.run();
+    if (program.silent)
+      mocha.run(gui.App.quit);
+    else
+      mocha.run();
   });
 </script>
 </body>
