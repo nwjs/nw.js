@@ -11,8 +11,10 @@
     global = undefined;
     process = undefined;
   </script>
-  <!-- Use the browser version of mocha, the node version of mocha will -->
-  <!-- run tests in node contex, which make it imposssible to test nw.gui. -->
+  <!--
+  Use the browser version of mocha, the node version of mocha will
+  run tests in node contex, which make it imposssible to test nw.gui.
+  -->
   <script type="text/javascript" src="node_modules/mocha/mocha.js"></script>
   <script type="text/javascript" charset="utf-8">
     // Restore default node-webkit environment.
@@ -22,17 +24,53 @@
   </script>
 </head>
 <body>
+
+<div id="mocha"></div>
+
 <script type="text/javascript" charset="utf-8">
-$(function() {
   var fs = require('fs');
+  var gui = require('nw.gui');
   var path = require('path');
+  var program = require('commander');
 
   // TODO
   // 1) Make user choose which test to run in command line.
   // 2) Add option to print results to file.
 
-  // Print results to page.
-  mocha.reporter('html');
+  // Hook process.exit to App.quit.
+  process.exit = function() {
+    gui.App.quit();
+  }
+
+  // Parse command line arguments.
+  program
+    .version(JSON.parse(fs.readFileSync('package.json', 'utf8')).version)
+    .option('-S, --silent', 'hide the browser window (run silently)')
+    .option('-R, --reporter <name>', 'specify the reporter to use', 'html')
+    .option('-g, --grep <pattern>', 'only run tests matching <pattern>')
+    .option('-i, --invert', 'inverts --grep matches')
+    .option('-t, --timeout <ms>', 'set test-case timeout in milliseconds [2000]')
+    .option('-s, --slow <ms>', '"slow" test threshold in milliseconds [75]')
+    .option('-b, --bail', "bail after first test failure")
+    .option('-A, --async-only', "force all tests to take a callback (async)")
+    .parse([ 'node-webkit', 'nw-test' ].concat(gui.App.argv));
+
+  // --silent
+  if (!program.silent) gui.Window.get().show();
+  // --reporter <name>
+  mocha.reporter(program.reporter);
+  // --grep
+  if (program.grep) mocha.grep(new RegExp(program.grep));
+  // --invert
+  if (program.invert) mocha.invert();
+  // --slow <ms>
+  if (program.slow) mocha.suite.slow(program.slow);
+  // --timeout
+  if (program.timeout) mocha.suite.timeout(program.timeout);
+  // --bail
+  mocha.suite.bail(program.bail);
+  // --async-only
+  if (program.asyncOnly) mocha.asyncOnly();
 
   // Call this to set 'describe', 'it' and else.
   mocha.setup('bdd');
@@ -57,10 +95,6 @@ $(function() {
     // Run!
     mocha.run();
   });
-});
 </script>
-
-<div id="mocha"></div>
-
 </body>
 </html>
