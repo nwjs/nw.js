@@ -80,6 +80,7 @@ class NativeWindowToolbarWin : public views::WidgetDelegateView,
   views::ImageButton* stop_or_refresh_button_;
   views::Textfield* url_entry_;
   views::ImageButton* devtools_button_;
+  views::ImageButton* dev_reload_button_;
 
   DISALLOW_COPY_AND_ASSIGN(NativeWindowToolbarWin);
 };
