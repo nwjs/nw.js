@@ -1,14 +1,83 @@
-# How to run tests
+## Prerequisite
 
-First install dependencies with npm:
+node-webkit didn't ship third party node modules required for testing, you
+need to install them with npm:
 
-````
+````bash
+$ cd src/content/nw/tests
 $ npm install -d
 ````
 
-Then use node-webkit to run:
+## How to run tests
 
-````
+The test suits is indeed a node-webkit app, so use node-webkit to run it:
+
+````bash
 $ /path-to-node-webkit src/content/nw/tests
 ````
+
+## Command line options
+
+    $ /path-to-node-webkit src/content/nw/tests --help
+    
+      Usage: nw-test [options]
+    
+      Options:
+    
+        -h, --help             output usage information
+        -V, --version          output the version number
+        -S, --silent           hide the browser window (run silently)
+        -R, --reporter <name>  specify the reporter to use
+        -g, --grep <pattern>   only run tests matching <pattern>
+        -i, --invert           inverts --grep matches
+        -t, --timeout <ms>     set test-case timeout in milliseconds [2000]
+        -s, --slow <ms>        "slow" test threshold in milliseconds [75]
+        -b, --bail             bail after first test failure
+        -A, --async-only       force all tests to take a callback (async)
+
+### -S, --silent
+Hide the browser window (run silently), suitable for automatic tests system.
+
+### -R, --reporter <name>
+The `--reporter` option allows you to specify the reporter that will be used,
+defaulting to `html`. This flag may also be used to utilize third-party
+reporters. For example if you `npm install mocha-lcov-reporter` you may then
+do `--reporter mocha-lcov-reporter`.
+
+### -g, --grep <pattern>
+
+The `--grep` option when specified will trigger mocha to only run tests matching
+the given pattern which is internally compiled to a RegExp.
+
+Suppose for example you have `api` related tests, as well as `app` related
+tests, as shown in the following snippet; One could use `--grep api` or
+`--grep app` to run one or the other. The same goes for any other part of a
+suite or test-case title, `--grep users` would be valid as well, or even
+`--grep GET`.
+
+````javascript
+describe('api', function(){
+  describe('GET /api/users', function(){
+    it('respond with an array of users')
+  })
+})
+
+describe('app', function(){
+  describe('GET /users', function(){
+    it('respond with an array of users')
+  })
+})
+````
+
+### -t, --timeout <ms>
+Specifies the test-case timeout, defaulting to 2 seconds. To override you
+may pass the timeout in milliseconds, or a value with the s suffix, ex:
+`--timeout 2s` or `--timeout 2000` would be equivalent.
+
+### -s, --slow <ms>
+Specify the `slow` test threshold, defaulting to 75ms. Mocha uses this to
+highlight test-cases that are taking too long.
+
+### -b, --bail
+Only interested in the first exception? use `--bail` !
 
