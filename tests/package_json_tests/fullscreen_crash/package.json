@@ -1,7 +1,0 @@
-{
-    "name": "nw-test",
-    "main": "index.html",
-    "window": {
-        "fullscreen": true
-    }
-}
