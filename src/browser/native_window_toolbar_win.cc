@@ -67,9 +67,15 @@ void NativeWindowToolbarWin::Layout() {
                                      sz.width(), sz.height());
   x += sz.width() + kButtonMargin;
 
-  // And place devtools button as far as possible.
+  // And place dev reload button as far as possible.
+  sz = dev_reload_button_->GetPreferredSize();
+  dev_reload_button_->SetBounds(panel_width - sz.width() - kButtonMargin,
+                                back_button_->y(),
+                                sz.width(),
+                                sz.height());
+
   sz = devtools_button_->GetPreferredSize();
-  devtools_button_->SetBounds(panel_width - sz.width() - kButtonMargin,
+  devtools_button_->SetBounds(dev_reload_button_->x() - sz.width() - kButtonMargin,
                               back_button_->y(),
                               sz.width(),
                               sz.height());
@@ -118,6 +124,8 @@ void NativeWindowToolbarWin::ButtonPressed(views::Button* sender,
     shell_->ReloadOrStop();
   else if (sender == devtools_button_)
     shell_->ShowDevTools();
+  else if (sender == dev_reload_button_)
+    shell_->Reload(content::Shell::RELOAD_DEV);
 
   NOTREACHED() << "Click on unkown toolbar button.";
 }
@@ -171,6 +179,18 @@ void NativeWindowToolbarWin::InitToolbar() {
       rb.GetNativeImageNamed(IDR_NW_TOOLS_P).ToImageSkia());
   devtools_button_->SetAccessibleName(L"Devtools");
   AddChildView(devtools_button_);
+
+  dev_reload_button_ = new views::ImageButton(this);
+  dev_reload_button_->SetImage(views::CustomButton::BS_NORMAL,
+      rb.GetNativeImageNamed(IDR_NW_RELOAD).ToImageSkia());
+  dev_reload_button_->SetImage(views::CustomButton::BS_HOT,
+      rb.GetNativeImageNamed(IDR_NW_RELOAD_H).ToImageSkia());
+  dev_reload_button_->SetImage(views::CustomButton::BS_PUSHED,
+      rb.GetNativeImageNamed(IDR_NW_RELOAD_P).ToImageSkia());
+  dev_reload_button_->SetImage(views::CustomButton::BS_DISABLED,
+      rb.GetNativeImageNamed(IDR_NW_RELOAD_D).ToImageSkia());
+  dev_reload_button_->SetAccessibleName(L"Reload render process");
+  AddChildView(dev_reload_button_);
 }
 
 void NativeWindowToolbarWin::SetButtonEnabled(
@@ -188,6 +208,9 @@ void NativeWindowToolbarWin::SetButtonEnabled(
       break;
     case nw::NativeWindow::BUTTON_DEVTOOLS:
       devtools_button_->SetEnabled(enabled);
+      break;
+    case nw::NativeWindow::BUTTON_REFRESH_DEV:
+      dev_reload_button_->SetEnabled(enabled);
       break;
   }
 }
