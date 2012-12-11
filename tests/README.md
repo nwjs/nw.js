@@ -26,7 +26,7 @@ $ /path-to-node-webkit src/content/nw/tests
     
         -h, --help             output usage information
         -V, --version          output the version number
-        -S, --silent           hide the browser window (run silently)
+        -S, --silent           hide the browser window and quit when done (run silently)
         -R, --reporter <name>  specify the reporter to use
         -g, --grep <pattern>   only run tests matching <pattern>
         -i, --invert           inverts --grep matches
@@ -36,7 +36,13 @@ $ /path-to-node-webkit src/content/nw/tests
         -A, --async-only       force all tests to take a callback (async)
 
 ### -S, --silent
-Hide the browser window (run silently), suitable for automatic tests system.
+Hide the browser window (run silently), and quit the app when tests are done,
+suitable for automatic tests system.
+
+### -o, --output <name>
+Output result to a file, this is usually used together with `json_file`
+reporter, so we can write the results of test to the file in the format of
+JSON.
 
 ### -R, --reporter <name>
 The `--reporter` option allows you to specify the reporter that will be used,
@@ -80,4 +86,18 @@ highlight test-cases that are taking too long.
 
 ### -b, --bail
 Only interested in the first exception? use `--bail` !
+
+## Automatic test
+
+To make the testing automatic, we need to:
+
+1. Write results to a file.
+2. Print the results in a machine-readable format, like JSON.
+3. Run tests silently and quit when done.
+
+In node-webkit's test, we can do:
+
+````bash
+$ /path-to-node-webkit src/content/nw/tests --silent --output result.json --reporter json_file
+````
 
