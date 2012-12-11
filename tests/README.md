@@ -40,7 +40,7 @@ Hide the browser window (run silently), and quit the app when tests are done,
 suitable for automatic tests system.
 
 ### -o, --output <name>
-Output result to a file, this is usually used together with `json_file`
+Output result to a file, this is usually used together with `json`
 reporter, so we can write the results of test to the file in the format of
 JSON.
 
@@ -98,6 +98,6 @@ To make the testing automatic, we need to:
 In node-webkit's test, we can do:
 
 ````bash
-$ /path-to-node-webkit src/content/nw/tests --silent --output result.json --reporter json_file
+$ /path-to-node-webkit src/content/nw/tests --silent --output result.json --reporter json
 ````
 
