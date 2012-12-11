@@ -89,6 +89,7 @@ class Menu : public Base {
 #elif defined(TOOLKIT_GTK)
   friend class nw::NativeWindowGtk;
   GtkWidget* menu_;
+  std::vector<GtkWidget**> menu_item_icons_;
 #elif defined(OS_WIN)
   friend class nw::NativeWindowWin;
 
