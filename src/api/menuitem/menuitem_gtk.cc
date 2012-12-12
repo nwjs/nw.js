@@ -82,8 +82,7 @@ void MenuItem::SetLabel(const std::string& label) {
 void MenuItem::SetIcon(const std::string& icon) {
   if (icon.empty()) {
     gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item_), NULL); 
-  }
-  else {
+  } else {
     gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item_),
                                   gtk_image_new_from_file(icon.c_str()));
     gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(menu_item_),
