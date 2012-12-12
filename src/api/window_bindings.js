@@ -173,7 +173,7 @@ Window.prototype.__defineGetter__('isKioskMode', function() {
 });
 
 Window.prototype.moveTo = function(x, y) {
-  CallObjectMethod(this, 'MoveTo', [ x, y ]);
+  CallObjectMethod(this, 'MoveTo', [ Number(x), Number(y) ]);
 }
 
 Window.prototype.moveBy = function(x, y) {
@@ -182,7 +182,7 @@ Window.prototype.moveBy = function(x, y) {
 }
 
 Window.prototype.resizeTo = function(width, height) {
-  CallObjectMethod(this, 'ResizeTo', [ width, height ]);
+  CallObjectMethod(this, 'ResizeTo', [ Number(width), Number(height) ]);
 }
 
 Window.prototype.resizeBy = function(width, height) {
