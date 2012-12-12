@@ -27,8 +27,6 @@
 namespace api {
 
 void MenuItem::Create(const base::DictionaryValue& option) {
-  menu_item_icon_ = NULL;
-
   std::string type;
   option.GetString("type", &type);
 
@@ -84,12 +82,11 @@ void MenuItem::SetLabel(const std::string& label) {
 void MenuItem::SetIcon(const std::string& icon) {
   if (icon.empty()) {
     gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item_), NULL); 
-    menu_item_icon_ = NULL;
-  }
-  else {
-    menu_item_icon_ = gtk_image_new_from_file(icon.c_str());
+  } else {
     gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menu_item_),
-                                  menu_item_icon_);
+                                  gtk_image_new_from_file(icon.c_str()));
+    gtk_image_menu_item_set_always_show_image(GTK_IMAGE_MENU_ITEM(menu_item_),
+                                              TRUE);
   }
 }
 

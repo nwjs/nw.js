@@ -80,7 +80,6 @@ class MenuItem : public Base {
   MenuItemDelegate* delegate_;
 #elif defined(TOOLKIT_GTK)
   GtkWidget* menu_item_;
-  GtkWidget* menu_item_icon_;
 
   // Don't send click event on active.
   bool block_active_;
