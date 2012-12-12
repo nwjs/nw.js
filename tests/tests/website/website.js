@@ -4,7 +4,7 @@ describe('website', function() {
   describe('scores', function() {
     var gui = require('nw.gui');
 
-    it('html5test.com should score high', function(done) {
+    it('html5test.com should score high (long-to-run)', function(done) {
       this.timeout(0);
       var win = gui.Window.open('http://html5test.com', { show: false });
       win.on('loaded', function() {
