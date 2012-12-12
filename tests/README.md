@@ -101,3 +101,13 @@ In node-webkit's test, we can do:
 $ /path-to-node-webkit src/content/nw/tests --silent --output result.json --reporter json
 ````
 
+## Ignore tests that take too long to run
+
+Some tests like visiting html5test.com and getting its score would take too
+long to run for normal tasks, these tests are usually marked as `long-to-run`,
+so you can use following command to filter out them:
+
+````bash
+$ /path-to-node-webkit src/content/nw/tests --grep long-to-run -i
+````
+
