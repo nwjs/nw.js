@@ -32,15 +32,9 @@ describe('require', function() {
 
 describe('node', function() {
 
-  var mocha_callback;
-
   before(function() {
-    mocha_callback = process.listeners('uncaughtException')[1];
+    var mocha_callback = process.listeners('uncaughtException')[1];
     process.removeListener('uncaughtException', mocha_callback);
-  });
-
-  after(function() {
-    process.on('uncaughtException', mocha_callback);
   });
 
   describe('process', function() {
