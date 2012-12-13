@@ -65,7 +65,7 @@ void MenuItem::Call(const std::string& method,
   } else if (method == "SetSubmenu") {
     int object_id = 0;
     arguments.GetInteger(0, &object_id);
-    SetSubmenu(dispatcher_host()->GetObject<Menu>(object_id));
+    SetSubmenu(dispatcher_host()->GetApiObject<Menu>(object_id));
   } else {
     NOTREACHED() << "Invalid call to MenuItem method:" << method
                  << " arguments:" << arguments;

@@ -46,7 +46,7 @@ DispatcherHost::DispatcherHost(content::RenderViewHost* render_view_host)
 DispatcherHost::~DispatcherHost() {
 }
 
-Base* DispatcherHost::GetObject(int id) {
+Base* DispatcherHost::GetApiObject(int id) {
   return objects_registry_.Lookup(id); 
 }
 
@@ -122,7 +122,7 @@ void DispatcherHost::OnCallObjectMethod(
              << " method:" << method
              << " arguments:" << arguments;
 
-  Base* object = GetObject(object_id);
+  Base* object = GetApiObject(object_id);
   DCHECK(object) << "Unknown object: " << object_id;
   object->Call(method, arguments);
 }
@@ -138,7 +138,7 @@ void DispatcherHost::OnCallObjectMethodSync(
              << " method:" << method
              << " arguments:" << arguments;
 
-  Base* object = GetObject(object_id);
+  Base* object = GetApiObject(object_id);
   DCHECK(object) << "Unknown object: " << object_id;
   object->CallSync(method, arguments, result);
 }

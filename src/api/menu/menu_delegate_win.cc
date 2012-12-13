@@ -38,7 +38,7 @@ bool MenuDelegate::IsCommandIdChecked(int command_id) const {
   if (command_id < 0)
     return false;
 
-  MenuItem* item = dispatcher_host_->GetObject<MenuItem>(command_id);
+  MenuItem* item = dispatcher_host_->GetApiObject<MenuItem>(command_id);
   return item->is_checked_;
 }
 
@@ -46,7 +46,7 @@ bool MenuDelegate::IsCommandIdEnabled(int command_id) const {
   if (command_id < 0)
     return false;
 
-  MenuItem* item = dispatcher_host_->GetObject<MenuItem>(command_id);
+  MenuItem* item = dispatcher_host_->GetApiObject<MenuItem>(command_id);
   return item->is_enabled_;
 }
 
@@ -54,18 +54,18 @@ bool MenuDelegate::IsItemForCommandIdDynamic(int command_id) const {
   if (command_id < 0)
     return false;
 
-  MenuItem* item = dispatcher_host_->GetObject<MenuItem>(command_id);
+  MenuItem* item = dispatcher_host_->GetApiObject<MenuItem>(command_id);
   return item->is_modified_;
 }
 
 string16 MenuDelegate::GetLabelForCommandId(int command_id) const {
-  MenuItem* item = dispatcher_host_->GetObject<MenuItem>(command_id);
+  MenuItem* item = dispatcher_host_->GetApiObject<MenuItem>(command_id);
   return item->label_;
 }
 
 bool MenuDelegate::GetIconForCommandId(int command_id,
                                        gfx::Image* icon) const {
-  MenuItem* item = dispatcher_host_->GetObject<MenuItem>(command_id);
+  MenuItem* item = dispatcher_host_->GetApiObject<MenuItem>(command_id);
   if (item->icon_.IsEmpty())
     return false;
 
@@ -77,7 +77,7 @@ void MenuDelegate::ExecuteCommand(int command_id) {
   if (command_id < 0)
     return;
 
-  MenuItem* item = dispatcher_host_->GetObject<MenuItem>(command_id);
+  MenuItem* item = dispatcher_host_->GetApiObject<MenuItem>(command_id);
   item->OnClick();
 }
 
@@ -85,7 +85,7 @@ bool MenuDelegate::HasIcon(int command_id) {
   if (command_id < 0)
     return false;
 
-  MenuItem* item = dispatcher_host_->GetObject<MenuItem>(command_id);
+  MenuItem* item = dispatcher_host_->GetApiObject<MenuItem>(command_id);
   return !item->icon_.IsEmpty();
 }
 
