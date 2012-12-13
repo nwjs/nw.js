@@ -28,12 +28,16 @@
 #include "content/nw/src/browser/app_controller_mac.h"
 #include "content/nw/src/browser/shell_application_mac.h"
 #include "content/nw/src/common/shell_switches.h"
+#include "ui/base/l10n/l10n_util_mac.h"
 
 namespace content {
 
 void ShellBrowserMainParts::PreMainMessageLoopStart() {
   // Force the NSApplication subclass to be used.
   [ShellCrApplication sharedApplication];
+
+  // Initialize locale.
+  l10n_util::OverrideLocaleWithCocoaLocale();
 
   AppController* delegate = [AppController alloc];
   [NSApp setDelegate:delegate];
