@@ -504,7 +504,7 @@ gboolean NativeWindowGtk::OnWindowState(GtkWidget* window,
       if (event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED)
         shell()->SendEvent("maximize");
       else
-        shell()->SendEvent("demaximize");
+        shell()->SendEvent("unmaximize");
       break;
     case GDK_WINDOW_STATE_FULLSCREEN:
       if (event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN)

@@ -42,6 +42,14 @@ This is the popup window<br/>
     console.log('Window is restored');
   });
 
+  win.on('maximize', function() {
+    console.log('Window is maximized');
+  });
+
+  win.on('unmaximize', function() {
+    console.log('Window is unmaximized');
+  });
+
   window.onload = function() {
     gui.Window.get().show();
   }

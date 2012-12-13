@@ -575,6 +575,10 @@ bool NativeWindowWin::ExecuteWindowsCommand(int command_id) {
   } else if (command_id == SC_RESTORE && is_minimized_) {
     is_minimized_ = false;
     shell()->SendEvent("restore");
+  } else if (command_id == SC_RESTORE && !is_minimized_) {
+    shell()->SendEvent("unmaximize");
+  } else if (command_id == SC_MAXIMIZE) {
+    shell()->SendEvent("maximize");
   }
 
   return false;

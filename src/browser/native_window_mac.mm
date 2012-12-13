@@ -127,6 +127,18 @@ enum {
   shell_->SendEvent("restore");
 }
 
+- (BOOL)windowShouldZoom:(NSWindow*)window toFrame:(NSRect)newFrame {
+  // Cocoa doen't have concept of maximize/unmaximize, so wee need to emulate
+  // them by calculating size change when zooming.
+  if (newFrame.size.width < [window frame].size.width ||
+      newFrame.size.height < [window frame].size.height)
+    shell_->SendEvent("unmaximize");
+  else
+    shell_->SendEvent("maximize");
+
+  return YES;
+}
+
 - (void)cleanup:(id)window {
   delete shell_;
 
