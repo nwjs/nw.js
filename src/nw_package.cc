@@ -118,9 +118,17 @@ Package::Package()
   if (args.size() > 0) {
     self_extract_ = false;
     path_ = FilePath(args[0]);
-    if (InitFromPath())
-      return;
+  } else {
+    // Try to load from the folder where the exe resides.
+    // Note: self_extract_ is true here, otherwise a 'Invalid Package' error
+    // would be triggered.
+    path_ = GetSelfPath().DirName();
+#if defined(OS_MACOSX)
+    path_ = path_.DirName().DirName().DirName();
+#endif
   }
+  if (InitFromPath())
+    return;
 
   // Finally we init with default settings.
   self_extract_ = false;
