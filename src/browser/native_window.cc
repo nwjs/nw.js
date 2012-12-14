@@ -92,13 +92,19 @@ void NativeWindow::InitFromManifest(base::DictionaryValue* manifest) {
   } else if (manifest->GetString(switches::kmPosition, &position)) {
     SetPosition(position);
   }
-  int min_height, min_width;
-  if (manifest->GetInteger(switches::kmMinHeight, &min_height) &&
+  int min_height = 0, min_width = 0;
+  if (manifest->GetInteger(switches::kmMinHeight, &min_height) |
       manifest->GetInteger(switches::kmMinWidth, &min_width)) {
     SetMinimumSize(min_width, min_height);
   }
-  int max_height, max_width;
-  if (manifest->GetInteger(switches::kmMaxHeight, &max_height) &&
+  int max_height = INT_MAX, max_width = INT_MAX;
+#if defined(OS_WIN)
+  // On Windows max_height and max_width will be filled with max length when
+  // it's zero. 
+  max_height = 0;
+  max_width = 0;
+#endif
+  if (manifest->GetInteger(switches::kmMaxHeight, &max_height) |
       manifest->GetInteger(switches::kmMaxWidth, &max_width)) {
     SetMaximumSize(max_width, max_height);
   }
