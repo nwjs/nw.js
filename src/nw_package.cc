@@ -112,25 +112,18 @@ Package::Package()
   if (InitFromPath())
     return;
 
-#if !defined(OS_MACOSX)
-  // Then try to load from the folder where the exe resides.
-  // (Don't try on Mac because nw is a bundle)
-  path_ = path_.DirName();
-  if (InitFromPath())
-    return;
-#endif
-
-  self_extract_ = false;
   // Then see if we have arguments and extract it.
   CommandLine* command_line = CommandLine::ForCurrentProcess();
   const CommandLine::StringVector& args = command_line->GetArgs();
   if (args.size() > 0) {
+    self_extract_ = false;
     path_ = FilePath(args[0]);
     if (InitFromPath())
       return;
   }
 
   // Finally we init with default settings.
+  self_extract_ = false;
   InitWithDefault();
 }
 
