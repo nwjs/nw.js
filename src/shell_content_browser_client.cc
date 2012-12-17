@@ -23,10 +23,13 @@
 #include "base/command_line.h"
 #include "base/file_path.h"
 #include "base/file_util.h"
+#include "base/string_util.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
 #include "content/public/browser/browser_url_handler.h"
 #include "content/public/browser/resource_dispatcher_host.h"
+#include "content/public/browser/web_contents.h"
+#include "content/public/common/renderer_preferences.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
@@ -34,6 +37,7 @@
 #include "content/nw/src/media/media_internals.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
+#include "content/nw/src/nw_version.h"
 #include "content/nw/src/shell_browser_context.h"
 #include "content/nw/src/shell_browser_main_parts.h"
 #include "geolocation/shell_access_token_store.h"
@@ -55,6 +59,25 @@ BrowserMainParts* ShellContentBrowserClient::CreateBrowserMainParts(
     const MainFunctionParams& parameters) {
   shell_browser_main_parts_ = new ShellBrowserMainParts(parameters);
   return shell_browser_main_parts_;
+}
+
+WebContentsView* ShellContentBrowserClient::OverrideCreateWebContentsView(
+      WebContents* web_contents,
+      RenderViewHostDelegateView** render_view_host_delegate_view) {
+  std::string user_agent;
+  nw::Package* package = shell_browser_main_parts()->package();
+  if (package->root()->GetString(switches::kmUserAgent, &user_agent)) {
+    std::string name, version;
+    package->root()->GetString(switches::kmName, &name);
+    package->root()->GetString("version", &version);
+    ReplaceSubstringsAfterOffset(&user_agent, 0, "%name", name);
+    ReplaceSubstringsAfterOffset(&user_agent, 0, "%ver", version);
+    ReplaceSubstringsAfterOffset(&user_agent, 0, "%nwver", NW_VERSION_STRING);
+    content::RendererPreferences* prefs =
+      web_contents->GetMutableRendererPrefs();
+    prefs->user_agent_override = user_agent;
+  }
+  return NULL;
 }
 
 void ShellContentBrowserClient::RenderViewHostCreated(

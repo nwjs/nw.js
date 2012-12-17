@@ -86,4 +86,5 @@ const char kmPlugin[] = "plugin";
 // Whether to enable page caches.
 const char kmPageCache[] = "page-cache";
 
+const char kmUserAgent[] = "user-agent";
 }  // namespace switches

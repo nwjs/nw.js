@@ -49,6 +49,7 @@ extern const char kmWebgl[];
 extern const char kmJava[];
 extern const char kmPlugin[];
 extern const char kmPageCache[];
+extern const char kmUserAgent[];
 
 }  // namespace switches
 

@@ -71,8 +71,12 @@ Shell* Shell::Create(BrowserContext* browser_context,
       base_web_contents);
 
   Shell* shell = new Shell(web_contents, GetPackage()->window());
-  web_contents->GetController().LoadURL(
-      url, Referrer(), PAGE_TRANSITION_TYPED, std::string());
+  NavigationController::LoadURLParams params(url);
+  params.transition_type = PAGE_TRANSITION_TYPED;
+  params.override_user_agent = NavigationController::UA_OVERRIDE_TRUE;
+
+  web_contents->GetController().LoadURLWithParams(params);
+
   return shell;
 }
 
