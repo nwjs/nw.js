@@ -21,7 +21,7 @@ It's created and developed in Intel Open Source Technology Center.
 
 [v0.3.6 release note](https://groups.google.com/d/msg/node-webkit/sUamgSnbTzk/0gI-lywN_2IJ)
 
-Prebuilt binaries (v0.3.6):
+Prebuilt binaries (v0.3.6 — Dec 14, 2012):
 
 * Linux: [32bit](http://s3.amazonaws.com/node-webkit/node-webkit-latest-linux-ia32.tar.gz) / [64bit](http://s3.amazonaws.com/node-webkit/node-webkit-latest-linux-x64.tar.gz)
 * Windows: [win32](http://s3.amazonaws.com/node-webkit/node-webkit-latest-win-ia32.zip)
