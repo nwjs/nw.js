@@ -126,6 +126,9 @@ void ShellMainDelegate::PreSandboxStartup() {
   // windows created, which require all windows to be in one render process
   // host.
   command_line->AppendSwitch(switches::kProcessPerTab);
+
+  // Allow file:// URIs can read other file:// URIs by default.
+  command_line->AppendSwitch(switches::kAllowFileAccessFromFiles);
 }
 
 int ShellMainDelegate::RunProcess(
