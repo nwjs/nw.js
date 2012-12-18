@@ -38,6 +38,7 @@
 #include "content/public/renderer/render_view.h"
 #include "third_party/node/src/node.h"
 #include "third_party/node/src/req_wrap.h"
+#include "third_party/WebKit/Source/WebKit/chromium/public/WebDocument.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebFrame.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebSecurityOrigin.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebSecurityPolicy.h"
@@ -133,7 +134,9 @@ void ShellContentRendererClient::DidCreateScriptContext(
     v8::Handle<v8::Context> context,
     int extension_group,
     int world_id) {
-  InstallNodeSymbols(context);
+  GURL url(frame->document().url());
+  DVLOG(1) << url;
+  InstallNodeSymbols(context, url);
 }
 
 bool ShellContentRendererClient::WillSetSecurityToken(
@@ -146,7 +149,8 @@ bool ShellContentRendererClient::WillSetSecurityToken(
 }
 
 void ShellContentRendererClient::InstallNodeSymbols(
-    v8::Handle<v8::Context> context) {
+    v8::Handle<v8::Context> context,
+    const GURL& url) {
   v8::HandleScope handle_scope;
 
   static bool installed_once = false;
@@ -155,21 +159,14 @@ void ShellContentRendererClient::InstallNodeSymbols(
   bool use_node =
       CommandLine::ForCurrentProcess()->HasSwitch(switches::kmNodejs);
 
-  // Test if protocol is file:
-  v8::Local<v8::Script> protocol_script = v8::Script::New(v8::String::New(
-      "(function(){ return window.location.protocol == 'file:' })();"
-  ));
-  bool is_file_protocol = protocol_script->Run()->BooleanValue();
+  bool is_file_protocol = url.SchemeIsFile();
 
   // Disable nodejs in no-file protocols
   use_node = is_file_protocol ? use_node : false;
 
   // Test if protocol is 'nw:'
   // test for 'about:blank' is also here becuase window.open would open 'about:blank' first
-  protocol_script = v8::Script::New(v8::String::New(
-      "(function(){ return window.location.protocol == 'nw:' || window.location == 'about:blank'; })();"
-  ));
-  bool is_nw_protocol = protocol_script->Run()->BooleanValue();
+  bool is_nw_protocol = url.SchemeIs("nw") || url.SchemeIs("about");
 
   if (use_node || is_nw_protocol) {
     v8::Local<v8::Array> symbols = v8::Array::New(4);
