@@ -328,6 +328,25 @@
         },
       ],
     },
+	{
+	  'target_name': 'nw_package_bin',
+	  'type': 'none',
+	  'actions': [
+	    {
+		  'action_name': 'package_nw_binaries',
+		  'variables':{
+		    'package_script': '<(DEPTH)/content/nw/tools/package_binaries.py',
+		  },
+		  'inputs': [
+		    '<(package_script)',
+		  ],
+		  'outputs': [
+			'<(PRODUCT_DIR)/new_package.re',
+		  ],
+		  'action': ['python', '<(package_script)', '<@(_outputs)'],
+		},
+	  ],
+	},
     {
       'target_name': 'nw',
       'type': 'executable',
