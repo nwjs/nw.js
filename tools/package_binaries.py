@@ -37,7 +37,12 @@ required_file_linux = (
 )
 
 required_file_win = (
-                     
+  'ffmpegsumo.dll',
+  'icudt.dll',
+  'libEGL.dll',
+  'libGLESv2.dll',
+  'nw.exe',
+  'nw.pak',
 )
 
 required_file_mac = (
