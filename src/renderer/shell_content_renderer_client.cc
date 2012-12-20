@@ -36,6 +36,8 @@
 #include "content/nw/src/renderer/prerenderer/prerenderer_client.h"
 #include "content/nw/src/renderer/shell_render_process_observer.h"
 #include "content/public/renderer/render_view.h"
+#include "content/renderer/render_view_impl.h"
+#include "net/proxy/proxy_bypass_rules.h"
 #include "third_party/node/src/node.h"
 #include "third_party/node/src/req_wrap.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebDocument.h"
@@ -46,6 +48,8 @@
 #include "third_party/WebKit/Source/WebKit/chromium/public/platform/WebString.h"
 
 using content::RenderView;
+using content::RenderViewImpl;
+using net::ProxyBypassRules;
 using WebKit::WebFrame;
 using WebKit::WebView;
 
@@ -136,7 +140,11 @@ void ShellContentRendererClient::DidCreateScriptContext(
     int world_id) {
   GURL url(frame->document().url());
   DVLOG(1) << url;
-  InstallNodeSymbols(context, url);
+  RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
+  ProxyBypassRules rules;
+  rules.ParseFromString(rv->renderer_preferences_.nw_remote_page_rules);
+  bool force_on = rules.Matches(url);
+  InstallNodeSymbols(context, url, force_on);
 }
 
 bool ShellContentRendererClient::WillSetSecurityToken(
@@ -150,19 +158,18 @@ bool ShellContentRendererClient::WillSetSecurityToken(
 
 void ShellContentRendererClient::InstallNodeSymbols(
     v8::Handle<v8::Context> context,
-    const GURL& url) {
+    const GURL& url,
+    bool force_on) {
   v8::HandleScope handle_scope;
 
   static bool installed_once = false;
 
-  // Do we integrate node?
-  bool use_node =
-      CommandLine::ForCurrentProcess()->HasSwitch(switches::kmNodejs);
-
   bool is_file_protocol = url.SchemeIsFile();
 
-  // Disable nodejs in no-file protocols
-  use_node = is_file_protocol ? use_node : false;
+  // Do we integrate node?
+  bool use_node =
+    CommandLine::ForCurrentProcess()->HasSwitch(switches::kmNodejs) &&
+    (force_on || is_file_protocol);
 
   // Test if protocol is 'nw:'
   // test for 'about:blank' is also here becuase window.open would open 'about:blank' first

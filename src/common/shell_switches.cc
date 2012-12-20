@@ -87,4 +87,8 @@ const char kmPlugin[] = "plugin";
 const char kmPageCache[] = "page-cache";
 
 const char kmUserAgent[] = "user-agent";
+
+// rules to turn on Node for remote pages
+const char kmRemotePages[] = "access-node-remote";
+
 }  // namespace switches

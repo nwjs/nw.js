@@ -50,7 +50,7 @@ extern const char kmJava[];
 extern const char kmPlugin[];
 extern const char kmPageCache[];
 extern const char kmUserAgent[];
-
+extern const char kmRemotePages[];
 }  // namespace switches
 
 #endif  // CONTENT_NW_SRC_SHELL_SWITCHES_H_
