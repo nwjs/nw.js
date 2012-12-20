@@ -100,6 +100,11 @@ class ShellLoginDialog : public ResourceDispatcherHostLoginDelegate {
 #if defined(OS_MACOSX)
   // Threading: UI thread.
   ShellLoginDialogHelper* helper_;  // owned
+#elif defined(OS_WIN)
+  HWND dialog_win_;
+  string16 message_text_;
+  static INT_PTR CALLBACK DialogProc(HWND dialog, UINT message, WPARAM wparam,
+                                     LPARAM lparam);
 #elif defined(TOOLKIT_GTK)
   GtkWidget* username_entry_;
   GtkWidget* password_entry_;

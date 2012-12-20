@@ -1,6 +1,6 @@
 //Microsoft Visual C++ generated resource script.
 //
-#include "shell/resource.h"
+#include "resource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -78,6 +78,19 @@ BEGIN
     EDITTEXT        IDC_PROMPTEDIT,15,33,210,14,ES_AUTOHSCROLL
 END
 
+IDD_LOGIN DIALOGEX 0, 0, 241, 117
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Authentication Required"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "", IDC_DIALOG_MESSAGETEXT, 12,7,215,25
+    LTEXT           "User Name: ",IDC_DIALOG_USERNAMETEXT,30,42,50,14
+    LTEXT           "Password: ",IDC_DIALOG_PASSWORDTEXT,30,69,50,14
+    EDITTEXT        IDC_USERNAMEEDIT,84,38,125,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_PASSWORDEDIT,84,65,125,14,ES_PASSWORD | ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "Log In",IDOK,131,88,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,184,88,50,14
+END
 
 /////////////////////////////////////////////////////////////////////////////
 //

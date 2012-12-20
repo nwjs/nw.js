@@ -156,6 +156,7 @@
         'src/browser/shell_javascript_dialog.h',
         'src/browser/shell_login_dialog_gtk.cc',
         'src/browser/shell_login_dialog_mac.mm',
+        'src/browser/shell_login_dialog_win.cc',
         'src/browser/shell_login_dialog.cc',
         'src/browser/shell_login_dialog.h',
         'src/browser/shell_resource_context.cc',
