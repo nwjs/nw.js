@@ -11,8 +11,14 @@
 #define IDD_ALERT                 130
 #define IDD_CONFIRM               131
 #define IDD_PROMPT                132
+#define IDD_LOGIN                 133
 #define IDC_PROMPTEDIT            1005
 #define IDC_DIALOGTEXT            1006
+#define IDC_DIALOG_USERNAMETEXT   1007
+#define IDC_DIALOG_PASSWORDTEXT   1008
+#define IDC_DIALOG_MESSAGETEXT    1009
+#define IDC_USERNAMEEDIT          1010
+#define IDC_PASSWORDEDIT          1011
 
 #ifndef IDC_STATIC
 #define IDC_STATIC                -1
