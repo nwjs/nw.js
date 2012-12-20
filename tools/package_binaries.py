@@ -81,11 +81,11 @@ binary_store_path = os.path.join(project_root,
 
 if not os.path.exists(binary_store_path):
   os.mkdir(binary_store_path)
-#change working directory
-os.chdir(binary_store_path)
+
 
 binary_full_path = os.path.join(binary_store_path, binary_name)
 binary_tar_full_path = os.path.join(binary_store_path, binary_tar)
+
 
 if os.path.exists(binary_full_path):
   shutil.rmtree(binary_full_path)
@@ -101,7 +101,7 @@ for file in required_file:
 print 'copy file end.\n'
 
 
-"""
+
 if (os.path.isfile(binary_tar_full_path)):
   os.remove(binary_tar_full_path)
 
@@ -111,5 +111,9 @@ tar = tarfile.open(binary_tar_full_path, 'w:gz')
 tar.add(binary_full_path, os.path.basename(binary_full_path))
 tar.close()
 print 'tar file end.\n'
-"""
+
+
+print 'the binaries files store in path:', os.path.normpath(
+    os.path.join(os.getcwd(), binary_store_path))
+
 

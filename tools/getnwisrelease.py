@@ -9,5 +9,5 @@ f = open(nw_version_h)
 for line in f:
   if re.match('#define NW_VERSION_IS_RELEASE', line):
     release = int(line.split()[2])
-    print release
+    #print release
     

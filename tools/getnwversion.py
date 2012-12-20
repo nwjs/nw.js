@@ -16,7 +16,7 @@ for line in f:
 
 nw_version = '%(major)s.%(minor)s.%(patch)s'% locals()  
 
-print '%(major)s.%(minor)s.%(patch)s'% locals()
+#print '%(major)s.%(minor)s.%(patch)s'% locals()
 
 
 
