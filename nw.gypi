@@ -337,10 +337,10 @@
           'variables':{
             'package_script': '<(DEPTH)/content/nw/tools/package_binaries.py',
           },
-          'input': [
+          'inputs': [
             '<(package_script)',
           ],
-          'output':[
+          'outputs':[
             '<(PRODUCT_DIR)/new_package.re',
           ],
           'action': ['python', '<(package_script)', '<@(_outputs)'],
