@@ -569,15 +569,19 @@ void NativeWindowWin::OnFocus() {
 }
 
 bool NativeWindowWin::ExecuteWindowsCommand(int command_id) {
-  if (command_id == SC_MINIMIZE) {
+  // Windows uses the 4 lower order bits of |command_id| for type-specific
+  // information so we must exclude this when comparing.
+  static const int sc_mask = 0xFFF0;
+
+  if ((command_id & sc_mask) == SC_MINIMIZE) {
     is_minimized_ = true;
     shell()->SendEvent("minimize");
-  } else if (command_id == SC_RESTORE && is_minimized_) {
+  } else if ((command_id & sc_mask) == SC_RESTORE && is_minimized_) {
     is_minimized_ = false;
     shell()->SendEvent("restore");
-  } else if (command_id == SC_RESTORE && !is_minimized_) {
+  } else if ((command_id & sc_mask) == SC_RESTORE && !is_minimized_) {
     shell()->SendEvent("unmaximize");
-  } else if (command_id == SC_MAXIMIZE) {
+  } else if ((command_id & sc_mask) == SC_MAXIMIZE) {
     shell()->SendEvent("maximize");
   }
 
