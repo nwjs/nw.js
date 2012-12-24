@@ -177,4 +177,14 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
   }
 }
 
+bool ShellContentBrowserClient::ShouldTryToUseExistingProcessHost(
+      BrowserContext* browser_context, const GURL& url) {
+  return true;
+}
+
+bool ShellContentBrowserClient::IsSuitableHost(RenderProcessHost* process_host,
+                                          const GURL& site_url) {
+  return true;
+}
+
 }  // namespace content

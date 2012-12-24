@@ -43,6 +43,10 @@ class ShellContentBrowserClient : public ContentBrowserClient {
   virtual std::string GetDefaultDownloadName() OVERRIDE;
   virtual MediaObserver* GetMediaObserver() OVERRIDE;
   virtual void BrowserURLHandlerCreated(BrowserURLHandler* handler) OVERRIDE;
+  virtual bool ShouldTryToUseExistingProcessHost(
+      BrowserContext* browser_context, const GURL& url) OVERRIDE;
+  virtual bool IsSuitableHost(RenderProcessHost* process_host,
+                              const GURL& site_url) OVERRIDE;
   ShellBrowserContext* browser_context();
   ShellBrowserContext* off_the_record_browser_context();
   ShellResourceDispatcherHostDelegate* resource_dispatcher_host_delegate() {
