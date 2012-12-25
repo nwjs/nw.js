@@ -104,6 +104,10 @@ class Shell : public WebContentsDelegate,
 
   static nw::Package* GetPackage();
 
+  static void set_exit_code(int code) { exit_code_ = code; }
+
+  static int exit_code() { return exit_code_; }
+
   WebContents* web_contents() const { return web_contents_.get(); }
   nw::NativeWindow* window() { return window_.get(); }
 
@@ -193,6 +197,8 @@ class Shell : public WebContentsDelegate,
   // True if the destructur of Shell should post a quit closure on the current
   // message loop if the destructed Shell object was the last one.
   static bool quit_message_loop_;
+
+  static int exit_code_;
 };
 
 }  // namespace content

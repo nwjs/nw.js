@@ -42,9 +42,9 @@ int ShellBrowserMain(const content::MainFunctionParams& parameters) {
   if (exit_code >= 0)
     return exit_code;
 
-  exit_code = main_runner_->Run();
+  main_runner_->Run();
 
   main_runner_->Shutdown();
 
-  return exit_code;
+  return content::Shell::exit_code();
 }

@@ -34,6 +34,7 @@
 #include "content/public/browser/notification_details.h"
 #include "content/public/browser/notification_source.h"
 #include "content/public/browser/notification_types.h"
+#include "content/public/browser/notification_service.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
@@ -58,6 +59,8 @@ namespace content {
 std::vector<Shell*> Shell::windows_;
 
 bool Shell::quit_message_loop_ = true;
+
+int Shell::exit_code_ = 0;
 
 Shell* Shell::Create(BrowserContext* browser_context,
                      const GURL& url,
@@ -98,6 +101,8 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   // Register shell.
   registrar_.Add(this, NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,
       Source<WebContents>(web_contents));
+  registrar_.Add(this, NOTIFICATION_RENDERER_PROCESS_CLOSED,
+                 NotificationService::AllBrowserContextsAndSources());
   windows_.push_back(this);
 
   // Add web contents.
@@ -436,6 +441,15 @@ void Shell::Observe(int type,
       string16 text = title->first->GetTitle();
       window()->SetTitle(UTF16ToUTF8(text));
     }
+  } else if (type == NOTIFICATION_RENDERER_PROCESS_CLOSED) {
+    exit_code_ =
+        content::Details<content::RenderProcessHost::RendererClosedDetails>(
+            details)->exit_code;
+#if defined(OS_POSIX)
+    if (WIFEXITED(exit_code_))
+      exit_code_ = WEXITSTATUS(exit_code_);
+#endif
+    MessageLoop::current()->PostTask(FROM_HERE, MessageLoop::QuitClosure());
   }
 }
 
