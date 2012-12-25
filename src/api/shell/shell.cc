@@ -43,9 +43,9 @@ void Shell::Call(const std::string& method,
     std::string full_path;
     arguments.GetString(0, &full_path);
     platform_util::ShowItemInFolder(FilePath::FromUTF8Unsafe(full_path));
+  } else {
+    NOTREACHED() << "Calling unknown method " << method << " of Shell";
   }
-
-  NOTREACHED() << "Calling unknown method " << method << " of Shell";
 }
 
 }  // namespace api
