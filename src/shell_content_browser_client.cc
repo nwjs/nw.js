@@ -179,7 +179,12 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
 
 bool ShellContentBrowserClient::ShouldTryToUseExistingProcessHost(
       BrowserContext* browser_context, const GURL& url) {
-  return true;
+  ShellBrowserContext* shell_browser_context =
+    static_cast<ShellBrowserContext*>(browser_context);
+  if (shell_browser_context->pending_devreload())
+    return false;
+  else
+    return true;
 }
 
 bool ShellContentBrowserClient::IsSuitableHost(RenderProcessHost* process_host,

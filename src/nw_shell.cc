@@ -48,6 +48,7 @@
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/media/media_stream_devices_controller.h"
 #include "content/nw/src/nw_package.h"
+#include "content/nw/src/shell_browser_context.h"
 #include "content/nw/src/shell_browser_main_parts.h"
 #include "content/nw/src/shell_content_browser_client.h"
 #include "grit/nw_resources.h"
@@ -208,6 +209,9 @@ void Shell::GoBackOrForward(int offset) {
 }
 
 void Shell::Reload(ReloadType type) {
+  ShellBrowserContext* browser_context =
+      static_cast<ShellBrowserContext*>(web_contents_->GetBrowserContext());
+
   switch (type) {
     case RELOAD:
       web_contents_->GetController().Reload(false);
@@ -219,7 +223,11 @@ void Shell::Reload(ReloadType type) {
       web_contents_->GetController().ReloadOriginalRequestURL(false);
       break;
     case RELOAD_DEV:
+      // ShellContentBrowserClient always tries to use the existing
+      // process so we need to overwrite it here
+      browser_context->set_pending_devreload(true);
       web_contents_->GetController().ReloadDev(false);
+      browser_context->set_pending_devreload(false);
       break;
   }
 

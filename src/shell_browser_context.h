@@ -52,11 +52,14 @@ class ShellBrowserContext : public BrowserContext {
       GetSpeechRecognitionPreferences() OVERRIDE;
   virtual quota::SpecialStoragePolicy* GetSpecialStoragePolicy() OVERRIDE;
 
+  bool pending_devreload() { return is_pending_devreload_; }
+  void set_pending_devreload(bool val) { is_pending_devreload_ = val; }
  private:
   // Performs initialization of the ShellBrowserContext while IO is still
   // allowed on the current thread.
   void InitWhileIOAllowed();
 
+  bool is_pending_devreload_;  // whether dev reload is in process
   bool off_the_record_;
   nw::Package* package_;
   ScopedTempDir testing_path_;
