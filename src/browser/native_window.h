@@ -113,7 +113,7 @@ class NativeWindow {
   content::WebContents* web_contents() const;
   bool has_frame() const { return has_frame_; }
   const gfx::Image& app_icon() const { return app_icon_; }
-
+  bool is_transparent() const { return is_transparent_; }
  protected:
   explicit NativeWindow(content::Shell* shell,
                         base::DictionaryValue* manifest);
@@ -122,7 +122,8 @@ class NativeWindow {
   content::Shell* shell_;
 
   bool has_frame_;
-
+  bool is_transparent_;
+  
   // Icon showed in the task bar.
   gfx::Image app_icon_;
 

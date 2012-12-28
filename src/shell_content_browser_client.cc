@@ -163,6 +163,9 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
   prefs->plugins_enabled = false;
   prefs->java_enabled = false;
   prefs->uses_page_cache = false;
+  
+  // Force compositing mode to support transparency
+  prefs->force_compositing_mode = true;
 
   base::DictionaryValue* webkit;
   if (package->root()->GetDictionary(switches::kmWebkit, &webkit)) {

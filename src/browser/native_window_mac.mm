@@ -282,7 +282,14 @@ NativeWindowCocoa::NativeWindowCocoa(
       (NSHeight(main_screen_rect) - height) / 2,
       width,
       height);
-  NSUInteger style_mask = NSTitledWindowMask | NSClosableWindowMask |
+  
+  NSUInteger style_mask;
+  
+  bool transparent;
+  if(manifest->GetBoolean(switches::kmTransparent, &transparent) && transparent)
+    style_mask = NSTitledWindowMask | NSClosableWindowMask;
+  else
+    style_mask = NSTitledWindowMask | NSClosableWindowMask |
                           NSMiniaturizableWindowMask | NSResizableWindowMask |
                           NSTexturedBackgroundWindowMask;
   ShellNSWindow* shell_window;
@@ -303,6 +310,12 @@ NativeWindowCocoa::NativeWindowCocoa(
   [shell_window setShell:shell];
   [window() setDelegate:[[NativeWindowDelegate alloc] initWithShell:shell]];
 
+  bool shadow;
+  if(manifest->GetBoolean(switches::kmShadow, &shadow) && !shadow)
+    [window() setHasShadow:NO];
+  else
+    [window() setHasShadow:YES];
+        
   // Disable fullscreen button when 'fullscreen' is specified to false.
   bool fullscreen;
   if (!(manifest->GetBoolean(switches::kmFullscreen, &fullscreen) &&
