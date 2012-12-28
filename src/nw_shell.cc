@@ -278,10 +278,19 @@ void Shell::ShowDevTools() {
   manifest.SetInteger(switches::kmWidth, 700);
   manifest.SetInteger(switches::kmHeight, 500);
 
+  ShellBrowserContext* browser_context =
+      static_cast<ShellBrowserContext*>(web_contents_->GetBrowserContext());
+
+  browser_context->set_pinning_renderer(false); // opens devtool in
+                                                // new renderer
+                                                // process or break
+                                                // points will stall both
   Shell* shell = new Shell(
       WebContents::Create(web_contents()->GetBrowserContext(),
                           NULL, MSG_ROUTING_NONE, NULL),
       &manifest);
+  browser_context->set_pinning_renderer(true);
+
   int rh_id = shell->web_contents_->GetRenderProcessHost()->GetID();
   ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, chrome::kFileScheme);
   shell->is_devtools_ = true;
