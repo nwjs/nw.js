@@ -225,9 +225,9 @@ void Shell::Reload(ReloadType type) {
     case RELOAD_DEV:
       // ShellContentBrowserClient always tries to use the existing
       // process so we need to overwrite it here
-      browser_context->set_pending_devreload(true);
+      browser_context->set_pinning_renderer(false);
       web_contents_->GetController().ReloadDev(false);
-      browser_context->set_pending_devreload(false);
+      browser_context->set_pinning_renderer(true);
       break;
   }
 

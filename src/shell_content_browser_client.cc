@@ -181,10 +181,10 @@ bool ShellContentBrowserClient::ShouldTryToUseExistingProcessHost(
       BrowserContext* browser_context, const GURL& url) {
   ShellBrowserContext* shell_browser_context =
     static_cast<ShellBrowserContext*>(browser_context);
-  if (shell_browser_context->pending_devreload())
-    return false;
-  else
+  if (shell_browser_context->pinning_renderer())
     return true;
+  else
+    return false;
 }
 
 bool ShellContentBrowserClient::IsSuitableHost(RenderProcessHost* process_host,

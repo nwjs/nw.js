@@ -52,14 +52,16 @@ class ShellBrowserContext : public BrowserContext {
       GetSpeechRecognitionPreferences() OVERRIDE;
   virtual quota::SpecialStoragePolicy* GetSpecialStoragePolicy() OVERRIDE;
 
-  bool pending_devreload() { return is_pending_devreload_; }
-  void set_pending_devreload(bool val) { is_pending_devreload_ = val; }
+  bool pinning_renderer() { return !disable_pinning_renderer_; }
+  void set_pinning_renderer(bool val) { disable_pinning_renderer_ = !val; }
  private:
   // Performs initialization of the ShellBrowserContext while IO is still
   // allowed on the current thread.
   void InitWhileIOAllowed();
 
-  bool is_pending_devreload_;  // whether dev reload is in process
+  bool disable_pinning_renderer_;  // whether dev reload is in process
+                                   // or we want to disable pinning
+                                   // temporarily
   bool off_the_record_;
   nw::Package* package_;
   ScopedTempDir testing_path_;
