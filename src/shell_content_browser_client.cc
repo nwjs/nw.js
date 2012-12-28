@@ -43,6 +43,7 @@
 #include "geolocation/shell_access_token_store.h"
 #include "googleurl/src/gurl.h"
 #include "webkit/glue/webpreferences.h"
+#include "webkit/user_agent/user_agent_util.h"
 #include "ui/base/l10n/l10n_util.h"
 #include "webkit/plugins/npapi/plugin_list.h"
 
@@ -74,6 +75,8 @@ WebContentsView* ShellContentBrowserClient::OverrideCreateWebContentsView(
     ReplaceSubstringsAfterOffset(&user_agent, 0, "%name", name);
     ReplaceSubstringsAfterOffset(&user_agent, 0, "%ver", version);
     ReplaceSubstringsAfterOffset(&user_agent, 0, "%nwver", NW_VERSION_STRING);
+    ReplaceSubstringsAfterOffset(&user_agent, 0, "%webkit_ver", webkit_glue::GetWebKitVersion());
+    ReplaceSubstringsAfterOffset(&user_agent, 0, "%osinfo", webkit_glue::BuildOSInfo());
     prefs->user_agent_override = user_agent;
   }
   if (package->root()->GetString(switches::kmRemotePages, &rules))
