@@ -32,13 +32,18 @@
   var gui = require('nw.gui');
   var path = require('path');
   var program = require('commander');
-
+ 
+  //socket server
+  var net = require('net');
+  global.server = net.createServer();
+  var server = global.server;
   // TODO
   // 1) Make user choose which test to run in command line.
   // 2) Add option to print results to file.
 
   // Hook process.exit to App.quit.
   process.exit = function() {
+    server.close();
     gui.App.quit();
   }
 
@@ -54,6 +59,7 @@
     .option('-s, --slow <ms>', '"slow" test threshold in milliseconds [75]')
     .option('-b, --bail', "bail after first test failure")
     .option('-A, --async-only', "force all tests to take a callback (async)")
+    .option('-p, --port <port>', "set the port used by socket")
     .parse([ 'node-webkit', 'nw-test' ].concat(gui.App.argv));
 
   // --silent
@@ -80,16 +86,19 @@
     process.stdout.write = function(data) {
       fs.writeFileSync(program.output, data, 'utf8');
     }
+  
+  global.auto = true;
+
+  global.port = 13013;
+  if (program.port) global.port = program.port;
+
 
   // Call this to set 'describe', 'it' and else.
   mocha.setup('bdd');
 
   // Read all test files.
-  fs.readdir('tests', function(err, dirs) {
-    if (err)
-      throw err;
-
-    for (var i = 0; i < dirs.length; ++i) {
+  var dirs = fs.readdirSync('tests');
+  for (var i = 0; i < dirs.length; ++i) {
       var test_file_path = path.join('tests', dirs[i], dirs[i] + '.js');
       var content = fs.readFileSync(test_file_path);
 
@@ -101,12 +110,43 @@
       eval('(function() {' + content + '})();');
     }
 
-    // Run!
-    if (program.silent)
-      mocha.run(gui.App.quit);
-    else
-      mocha.run();
+  // Read app test files.
+  dirs = fs.readdirSync('app_tests');
+  for (var i = 0; i < dirs.length;i++){
+    var test_file_path = path.join('app_tests',dirs[i], 'mocha_test.js');
+   
+    if (fs.existsSync(test_file_path)){   
+      var content = fs.readFileSync(test_file_path);
+      eval('(function() {' + content + '})();');    
+    }
+  }
+
+
+  server.on('listening', function(){
+
+  // Run!
+  if (program.silent)
+    mocha.run(gui.App.quit);
+  else
+    mocha.run();
+   
+
   });
+
+  server.on('error', function(e){
+    if (e.code == 'EADDRINUSE'){
+      console.log('Port in use, retrying new..');
+      server.close();
+      global.port += 1;
+      server.listen(global.port);
+    }
+  });
+      
+  server.listen(global.port);
+   
+
+
+
 </script>
 </body>
 </html>
