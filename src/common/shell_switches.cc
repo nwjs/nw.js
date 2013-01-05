@@ -45,6 +45,7 @@ const char kmName[]   = "name";
 const char kmWebkit[] = "webkit";
 const char kmNodejs[] = "nodejs";
 const char kmWindow[] = "window";
+const char kmChromiumArgs[] = "chromium-args";
 
 // Allows only one instance of the app.
 const char kmSingleInstance[] = "single-instance";

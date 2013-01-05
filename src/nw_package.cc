@@ -26,6 +26,7 @@
 #include "base/file_util.h"
 #include "base/json/json_file_value_serializer.h"
 #include "base/scoped_temp_dir.h"
+#include "base/string_split.h"
 #include "base/string_util.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
@@ -277,6 +278,9 @@ bool Package::InitFromPath() {
     root_->Set(switches::kmWindow, window);
   }
 
+  // Read chromium command line args.
+  ReadChromiumArgs();
+
   RelativePathToURI(path_, this->root());
   return true;
 }
@@ -348,6 +352,25 @@ bool Package::ExtractPackage(const FilePath& zip_file, FilePath* where) {
   }
 
   return zip::Unzip(zip_file, *where);
+}
+
+void Package::ReadChromiumArgs() {
+  if (!root()->HasKey(switches::kmChromiumArgs))
+    return;
+
+  std::string args;
+  if (!root()->GetStringASCII(switches::kmChromiumArgs, &args))
+    return;
+
+  std::vector<std::string> chromium_args;
+  base::SplitString(args, ' ', &chromium_args);
+
+  CommandLine* command_line = CommandLine::ForCurrentProcess();
+  for (unsigned i = 0; i < chromium_args.size(); ++i) {
+    if (ContainsOnlyWhitespaceASCII(chromium_args[i]))
+      continue;
+    command_line->AppendSwitch(chromium_args[i]);
+  }
 }
 
 void Package::ReportError(const std::string& title,
