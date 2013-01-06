@@ -45,6 +45,7 @@ const char kmName[]   = "name";
 const char kmWebkit[] = "webkit";
 const char kmNodejs[] = "nodejs";
 const char kmWindow[] = "window";
+const char kmChromiumArgs[] = "chromium-args";
 
 // Allows only one instance of the app.
 const char kmSingleInstance[] = "single-instance";
@@ -93,6 +94,6 @@ const char kmPageCache[] = "page-cache";
 const char kmUserAgent[] = "user-agent";
 
 // rules to turn on Node for remote pages
-const char kmRemotePages[] = "access-node-remote";
+const char kmRemotePages[] = "node-remote";
 
 }  // namespace switches
