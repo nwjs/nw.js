@@ -294,7 +294,7 @@ Window.prototype.setPosition = function(position) {
 
 Window.prototype.reload = function(type) {
   // type is default to 0 (RELOAD).
-  if (!(typeof type == 'number' && 0 <= type && type <= 2))
+  if (!(typeof type == 'number' && 0 <= type && type <= 3))
     type = 0;
 
   CallObjectMethod(this, 'Reload', [ type ]);
@@ -306,6 +306,10 @@ Window.prototype.reloadIgnoringCache = function() {
 
 Window.prototype.reloadOriginalRequestURL = function() {
   this.reload(2);
+}
+
+Window.prototype.reloadDev = function() {
+  this.reload(3);
 }
 
 }  // function Window.init
