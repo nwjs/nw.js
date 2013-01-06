@@ -22,6 +22,7 @@ extern const char kmName[];
 extern const char kmWebkit[];
 extern const char kmNodejs[];
 extern const char kmWindow[];
+extern const char kmChromiumArgs[];
 
 extern const char kmSingleInstance[];
 
