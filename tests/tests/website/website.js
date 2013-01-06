@@ -8,9 +8,15 @@ describe('website', function() {
       this.timeout(0);
       var win = gui.Window.open('http://html5test.com', { show: false });
       win.on('loaded', function() {
-        var score = win.window.document.getElementById('results').childNodes[0].childNodes[1].innerHTML;;
+        var results = win.window.document.getElementById('results');
+        if (results == null){
+          done('Can not connect to the web');          
+          return;
+        }
+        var score = results.childNodes[0].childNodes[1].innerHTML;;
         assert.equal(score >= 445, true);
         done();
+        
       });
       gui.Window.get().on('close', function() {
         win.close(true);
