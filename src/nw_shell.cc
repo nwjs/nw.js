@@ -374,9 +374,7 @@ void Shell::WebContentsCreated(WebContents* source_contents,
 
   manifest->SetBoolean(switches::kmResizable, features.resizable);
   manifest->SetBoolean(switches::kmFullscreen, features.fullscreen);
-  manifest->SetBoolean(switches::kmTransparent, features.transparent);
-  manifest->SetBoolean(switches::kmFrame, features.frame);
-  manifest->SetBoolean(switches::kmShadow, features.shadow);
+
   if (features.widthSet)
     manifest->SetInteger(switches::kmWidth, features.width);
   if (features.heightSet)

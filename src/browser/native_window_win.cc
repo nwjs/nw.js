@@ -42,6 +42,7 @@
 #include "ui/views/widget/widget.h"
 #include "ui/views/widget/native_widget_win.h"
 #include "ui/views/window/native_frame_view.h"
+#include <dwmapi.h>
 
 namespace nw {
 
@@ -242,6 +243,11 @@ NativeWindowWin::NativeWindowWin(content::Shell* shell,
       maximum_size_() {
   window_ = new views::Widget;
   views::Widget::InitParams params(views::Widget::InitParams::TYPE_WINDOW);
+
+  bool transparent;
+  if(manifest->GetBoolean(switches::kmTransparent, &transparent) && transparent) 
+	params.type = views::Widget::InitParams::TYPE_WINDOW_FRAMELESS;
+
   params.delegate = this;
   params.remove_standard_frame = !has_frame();
   params.use_system_default_icon = true;
@@ -261,6 +267,11 @@ NativeWindowWin::NativeWindowWin(content::Shell* shell,
   window_->UpdateWindowIcon();
 
   OnViewWasResized();
+
+  if(transparent) {
+	MARGINS mgMarInset = { -1, -1, -1, -1 };
+	DwmExtendFrameIntoClientArea(window_->GetNativeWindow(), &mgMarInset);
+  }
 }
 
 NativeWindowWin::~NativeWindowWin() {
