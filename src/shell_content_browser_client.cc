@@ -166,6 +166,15 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
   prefs->plugins_enabled = false;
   prefs->java_enabled = false;
   prefs->uses_page_cache = false;
+  
+  // Force compositing mode to support transparency
+  prefs->force_compositing_mode = true;
+  prefs->accelerated_2d_canvas_enabled = true;
+  prefs->accelerated_animation_enabled = true;
+  prefs->accelerated_compositing_enabled = true;
+  prefs->accelerated_filters_enabled = true;
+  prefs->accelerated_layers_enabled = true;
+  prefs->accelerated_painting_enabled = true;
 
   base::DictionaryValue* webkit;
   if (package->root()->GetDictionary(switches::kmWebkit, &webkit)) {

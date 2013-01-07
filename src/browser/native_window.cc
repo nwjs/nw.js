@@ -129,6 +129,7 @@ void NativeWindow::InitFromManifest(base::DictionaryValue* manifest) {
   if (toolbar) {
     AddToolbar();
   }
+  manifest->GetBoolean(switches::kmTransparent, &is_transparent_);
   std::string title("node-webkit");
   manifest->GetString(switches::kmTitle, &title);
   SetTitle(title);

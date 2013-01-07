@@ -37,6 +37,8 @@
 #include "content/public/browser/notification_service.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/render_view_host.h"
+#include "content/public/browser/web_contents_view.h"
+#include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/url_constants.h"
 #include "content/nw/src/api/api_messages.h"
@@ -337,8 +339,11 @@ void Shell::LoadingStateChanged(WebContents* source) {
 
   if (source->IsLoading())
     SendEvent("loading");
-  else
+  else {
+    if(window()->is_transparent())
+      web_contents_->GetRenderViewHost()->SetTransparent(true);
     SendEvent("loaded");
+  }
 }
 
 void Shell::ActivateContents(content::WebContents* contents) {
@@ -383,8 +388,10 @@ void Shell::WebContentsCreated(WebContents* source_contents,
 
   // Get window features
   WebKit::WebWindowFeatures features = new_contents->GetWindowFeatures();
+
   manifest->SetBoolean(switches::kmResizable, features.resizable);
   manifest->SetBoolean(switches::kmFullscreen, features.fullscreen);
+
   if (features.widthSet)
     manifest->SetInteger(switches::kmWidth, features.width);
   if (features.heightSet)
