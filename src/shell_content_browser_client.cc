@@ -43,6 +43,7 @@
 #include "geolocation/shell_access_token_store.h"
 #include "googleurl/src/gurl.h"
 #include "webkit/glue/webpreferences.h"
+#include "webkit/user_agent/user_agent_util.h"
 #include "ui/base/l10n/l10n_util.h"
 #include "webkit/plugins/npapi/plugin_list.h"
 
@@ -74,6 +75,8 @@ WebContentsView* ShellContentBrowserClient::OverrideCreateWebContentsView(
     ReplaceSubstringsAfterOffset(&user_agent, 0, "%name", name);
     ReplaceSubstringsAfterOffset(&user_agent, 0, "%ver", version);
     ReplaceSubstringsAfterOffset(&user_agent, 0, "%nwver", NW_VERSION_STRING);
+    ReplaceSubstringsAfterOffset(&user_agent, 0, "%webkit_ver", webkit_glue::GetWebKitVersion());
+    ReplaceSubstringsAfterOffset(&user_agent, 0, "%osinfo", webkit_glue::BuildOSInfo());
     prefs->user_agent_override = user_agent;
   }
   if (package->root()->GetString(switches::kmRemotePages, &rules))
@@ -166,6 +169,12 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
   
   // Force compositing mode to support transparency
   prefs->force_compositing_mode = true;
+  prefs->accelerated_2d_canvas_enabled = true;
+  prefs->accelerated_animation_enabled = true;
+  prefs->accelerated_compositing_enabled = true;
+  prefs->accelerated_filters_enabled = true;
+  prefs->accelerated_layers_enabled = true;
+  prefs->accelerated_painting_enabled = true;
 
   base::DictionaryValue* webkit;
   if (package->root()->GetDictionary(switches::kmWebkit, &webkit)) {
@@ -182,7 +191,12 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
 
 bool ShellContentBrowserClient::ShouldTryToUseExistingProcessHost(
       BrowserContext* browser_context, const GURL& url) {
-  return true;
+  ShellBrowserContext* shell_browser_context =
+    static_cast<ShellBrowserContext*>(browser_context);
+  if (shell_browser_context->pinning_renderer())
+    return true;
+  else
+    return false;
 }
 
 bool ShellContentBrowserClient::IsSuitableHost(RenderProcessHost* process_host,

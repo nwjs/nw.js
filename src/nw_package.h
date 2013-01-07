@@ -81,6 +81,9 @@ class Package {
   bool ExtractPath();
   bool ExtractPackage(const FilePath& zip_file, FilePath* where);
 
+  // Read chromium command line args from the package.json if specifed.
+  void ReadChromiumArgs();
+
   // Convert error info into data url.
   void ReportError(const std::string& title, const std::string& content);
 

@@ -172,8 +172,9 @@ void ShellContentRendererClient::InstallNodeSymbols(
     (force_on || is_file_protocol);
 
   // Test if protocol is 'nw:'
-  // test for 'about:blank' is also here becuase window.open would open 'about:blank' first
-  bool is_nw_protocol = url.SchemeIs("nw") || url.SchemeIs("about");
+  // test for 'about:blank' is also here becuase window.open would
+  // open 'about:blank' first // FIXME
+  bool is_nw_protocol = url.SchemeIs("nw") || !url.is_valid();
 
   if (use_node || is_nw_protocol) {
     v8::Local<v8::Array> symbols = v8::Array::New(4);

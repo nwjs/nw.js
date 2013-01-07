@@ -39,6 +39,10 @@ Window::Window(int id,
 }
 
 Window::~Window() {
+  // Window object got deleted when we launch new render view host and
+  // delete the old one; at this time the Shell should be decoupled
+  // with the renderer side
+  shell_->set_id(-1);
 }
 
 void Window::Call(const std::string& method,

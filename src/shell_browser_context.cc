@@ -44,8 +44,9 @@ namespace content {
 
 ShellBrowserContext::ShellBrowserContext(bool off_the_record,
                                          nw::Package* package)
-    : off_the_record_(off_the_record),
-      package_(package) {
+  : disable_pinning_renderer_(false),
+    off_the_record_(off_the_record),
+    package_(package) {
   InitWhileIOAllowed();
 }
 

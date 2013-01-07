@@ -52,11 +52,16 @@ class ShellBrowserContext : public BrowserContext {
       GetSpeechRecognitionPreferences() OVERRIDE;
   virtual quota::SpecialStoragePolicy* GetSpecialStoragePolicy() OVERRIDE;
 
+  bool pinning_renderer() { return !disable_pinning_renderer_; }
+  void set_pinning_renderer(bool val) { disable_pinning_renderer_ = !val; }
  private:
   // Performs initialization of the ShellBrowserContext while IO is still
   // allowed on the current thread.
   void InitWhileIOAllowed();
 
+  bool disable_pinning_renderer_;  // whether dev reload is in process
+                                   // or we want to disable pinning
+                                   // temporarily
   bool off_the_record_;
   nw::Package* package_;
   ScopedTempDir testing_path_;
