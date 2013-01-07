@@ -45,7 +45,9 @@ extern const char kmAsDesktop[];
 extern const char kmFullscreen[];
 extern const char kmKiosk[];
 extern const char kmAlwaysOnTop[];
-
+extern const char kmTransparent[];
+extern const char kmShadow[];
+  
 extern const char kmWebgl[];
 extern const char kmJava[];
 extern const char kmPlugin[];

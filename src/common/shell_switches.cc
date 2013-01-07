@@ -67,6 +67,7 @@ const char kmMaxHeight[]  = "max_height";
 const char kmResizable[]  = "resizable";
 const char kmAsDesktop[]  = "as_desktop";
 const char kmFullscreen[] = "fullscreen";
+const char kmShadow[]     = "shadow";
 
 // Start with the kiosk mode, see Opera's page for description:
 // http://www.opera.com/support/mastering/kiosk/
@@ -75,6 +76,9 @@ const char kmKiosk[] = "kiosk";
 // Make windows stays on the top of all other windows.
 const char kmAlwaysOnTop[] = "always-on-top";
 
+// Make window transparent
+const char kmTransparent[] = "transparent";
+  
 // Whether we should support WebGL.
 const char kmWebgl[] = "webgl";
 

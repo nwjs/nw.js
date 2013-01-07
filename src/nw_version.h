@@ -20,7 +20,7 @@
 
 #ifndef NW_VERSION_H
 #define NW_VERSION_H
-
+ 
 #define NW_MAJOR_VERSION 0
 #define NW_MINOR_VERSION 3
 #define NW_PATCH_VERSION 8
