@@ -18,5 +18,6 @@
     "should": "*",
     "coffee-script": "1.2",
     "mocha": "1.7.4"
-  }
+  },
+  "chromium-args": "disable-javascript-i18n-api"
 }
