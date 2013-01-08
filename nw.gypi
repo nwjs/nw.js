@@ -293,7 +293,7 @@
       'target_name': 'nw_pak',
       'type': 'none',
       'dependencies': [
-        '<(DEPTH)/content/browser/debugger/devtools_resources.gyp:devtools_resources',
+        '<(DEPTH)/content/browser/devtools/devtools_resources.gyp:devtools_resources',
         '<(DEPTH)/ui/ui.gyp:ui_resources',
         'nw_resources',
       ],

@@ -198,13 +198,14 @@ void DispatcherHost::OnGetShellId(int* id) {
 void DispatcherHost::OnCreateShell(const std::string& url,
                                    const base::DictionaryValue& manifest,
                                    int* routing_id) {
-  WebContents* base_web_contents = 
+  WebContents* base_web_contents =
       content::Shell::FromRenderViewHost(render_view_host())->web_contents();
-  WebContents* web_contents = content::WebContentsImpl::CreateWithOpener(
+  WebContents::CreateParams create_params(
       base_web_contents->GetBrowserContext(),
-      base_web_contents->GetSiteInstance(),
-      MSG_ROUTING_NONE,
-      static_cast<content::WebContentsImpl*>(base_web_contents),
+      base_web_contents->GetSiteInstance());
+
+  WebContents* web_contents = content::WebContentsImpl::CreateWithOpener(
+      create_params,
       static_cast<content::WebContentsImpl*>(base_web_contents));
 
   scoped_ptr<base::DictionaryValue> new_manifest(manifest.DeepCopy());
