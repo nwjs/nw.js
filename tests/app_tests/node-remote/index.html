@@ -1,0 +1,69 @@
+<html>
+  <head>
+      
+</head>
+<body>
+<script>
+
+  var gui = require('nw.gui');
+
+  var win = gui.Window.open('http://127.0.0.1/test.html', { show: false });
+  win.on('loaded', function() {
+    if (!win.window.test) {
+      document.getElementById('msg80').innerHTML = 'can not connect this page';
+      
+      return;
+    }
+    var result = win.window.test();
+
+    if (result) {
+      document.getElementById('msg80').innerHTML = 'YES';
+    } else {
+      document.getElementById('msg80').innerHTML = 'NO';
+    }
+    
+  });
+
+  
+  var win_2 = gui.Window.open('http://127.0.0.1:8080/test.html', { show: false });
+  win_2.on('loaded', function() {
+    if (!win_2.window.test) {
+      document.getElementById('msg8080').innerHTML = 'can not connect this page';
+      
+      return;
+    }
+
+    var result = win_2.window.test();
+
+    if (result) {
+      document.getElementById('msg8080').innerHTML = 'YES';
+    } else {
+      document.getElementById('msg8080').innerHTML = 'NO';
+    }
+    
+  });
+  
+  gui.Window.get().on('close', function() {
+    win.close(true);
+    win_2.close(true);
+    this.close(true);
+  });
+  
+</script>
+
+<div>
+  <span>Can remote page</span>
+  <a href="http://127.0.0.1/test.html">http://127.0.0.1/test.html</a> 
+  <span>call Node: </span>
+  <span id="msg80" style="color:blue"></span>
+</div>
+
+<div>  
+  <span>Can remote page</span>
+  <a href="http://127.0.0.1:8080/test.html">http://127.0.0.1:8080/test.html</a> 
+  <span>call Node: </span>
+  <span id="msg8080" style="color:blue"></span>
+</div>
+
+</body>
+</html>
