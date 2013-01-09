@@ -25,7 +25,7 @@
 #include "base/command_line.h"
 #include "base/file_util.h"
 #include "base/json/json_file_value_serializer.h"
-#include "base/scoped_temp_dir.h"
+#include "base/files/scoped_temp_dir.h"
 #include "base/string_split.h"
 #include "base/string_util.h"
 #include "base/threading/thread_restrictions.h"
@@ -332,7 +332,7 @@ bool Package::ExtractPath() {
 
 bool Package::ExtractPackage(const FilePath& zip_file, FilePath* where) {
   // Auto clean our temporary directory
-  static scoped_ptr<ScopedTempDir> scoped_temp_dir;
+  static scoped_ptr<base::ScopedTempDir> scoped_temp_dir;
 
 #if defined(OS_WIN)
   if (!file_util::CreateNewTempDirectory(L"nw", where)) {
@@ -344,7 +344,7 @@ bool Package::ExtractPackage(const FilePath& zip_file, FilePath* where) {
     return false;
   }
 
-  scoped_temp_dir.reset(new ScopedTempDir());
+  scoped_temp_dir.reset(new base::ScopedTempDir());
   if (!scoped_temp_dir->Set(*where)) {
     ReportError("Cannot extract package",
                 "Unable to set temporary directory.");
