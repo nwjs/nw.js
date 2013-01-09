@@ -19,5 +19,6 @@
     "coffee-script": "1.2",
     "mocha": "1.7.4"
   },
-  "chromium-args": "disable-javascript-i18n-api"
+  "chromium-args": "disable-javascript-i18n-api",
+  "user-agent": "%name/%nwver/%ver/%webkit_ver/%osinfo"
 }
