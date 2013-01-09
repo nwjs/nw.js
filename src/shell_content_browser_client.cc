@@ -158,7 +158,6 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
 
   // Open experimental features.
   prefs->css_sticky_position_enabled = true;
-  prefs->css_regions_enabled = true;
   prefs->css_shaders_enabled = true;
   prefs->css_variables_enabled = true;
 

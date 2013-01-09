@@ -175,6 +175,8 @@
         'src/geolocation/shell_access_token_store.h',
         'src/media/media_internals.cc',
         'src/media/media_internals.h',
+        'src/media/media_capture_devices_dispatcher.cc',
+        'src/media/media_capture_devices_dispatcher.h',
         'src/media/media_stream_devices_controller.cc',
         'src/media/media_stream_devices_controller.h',
         'src/net/clear_on_exit_policy.h',
