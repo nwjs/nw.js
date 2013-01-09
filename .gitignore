@@ -1,4 +1,8 @@
 .DS_Store
 tests/node_modules
 *.pyc
-
+*~
+.*.sw?
+.project
+tags
+Thumbs.db
