@@ -40,7 +40,11 @@
 #include "net/http/http_cache.h"
 #include "net/http/http_network_session.h"
 #include "net/http/http_server_properties_impl.h"
+#include "net/proxy/dhcp_proxy_script_fetcher_factory.h"
+#include "net/proxy/proxy_config_service.h"
+#include "net/proxy/proxy_script_fetcher_impl.h"
 #include "net/proxy/proxy_service.h"
+#include "net/proxy/proxy_service_v8.h"
 #include "net/url_request/static_http_user_agent_settings.h"
 #include "net/url_request/url_request_context.h"
 #include "net/url_request/url_request_context_storage.h"
@@ -98,12 +102,20 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
         net::HostResolver::CreateDefaultResolver(NULL));
 
     storage_->set_cert_verifier(net::CertVerifier::CreateDefault());
-    // TODO(jam): use v8 if possible, look at chrome code.
-    storage_->set_proxy_service(
-        net::ProxyService::CreateUsingSystemProxyResolver(
+
+    net::ProxyService* proxy_service;
+    net::DhcpProxyScriptFetcherFactory dhcp_factory;
+
+    proxy_service = net::CreateProxyServiceUsingV8ProxyResolver(
         proxy_config_service_.release(),
         0,
-        NULL));
+        new net::ProxyScriptFetcherImpl(url_request_context_.get()),
+        dhcp_factory.Create(url_request_context_.get()),
+        host_resolver.get(),
+        NULL,
+        url_request_context_->network_delegate());
+    storage_->set_proxy_service(proxy_service);
+
     storage_->set_ssl_config_service(new net::SSLConfigServiceDefaults);
     storage_->set_http_auth_handler_factory(
         net::HttpAuthHandlerFactory::CreateDefault(host_resolver.get()));

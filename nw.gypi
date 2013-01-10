@@ -30,7 +30,7 @@
         '<(DEPTH)/content/content_resources.gyp:content_resources',
         '<(DEPTH)/ipc/ipc.gyp:ipc',
         '<(DEPTH)/media/media.gyp:media',
-        '<(DEPTH)/net/net.gyp:net',
+        '<(DEPTH)/net/net.gyp:net_with_v8',
         '<(DEPTH)/net/net.gyp:net_resources',
         '<(DEPTH)/skia/skia.gyp:skia',
         '<(DEPTH)/third_party/node/node.gyp:node',
