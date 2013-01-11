@@ -68,6 +68,9 @@ const char kmResizable[]  = "resizable";
 const char kmAsDesktop[]  = "as_desktop";
 const char kmFullscreen[] = "fullscreen";
 
+// Make windows icon hide show or hide in taskbar.
+const char kmShowInTaskbar[] = "show_in_taskbar";
+
 // Start with the kiosk mode, see Opera's page for description:
 // http://www.opera.com/support/mastering/kiosk/
 const char kmKiosk[] = "kiosk";
