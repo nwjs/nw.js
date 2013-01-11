@@ -67,6 +67,7 @@ class NativeWindowWin : public NativeWindow,
   virtual void SetMaximumSize(int width, int height) OVERRIDE;
   virtual void SetResizable(bool resizable) OVERRIDE;
   virtual void SetAlwaysOnTop(bool top) OVERRIDE;
+  virtual void SetShowInTaskbar(bool show) OVERRIDE;
   virtual void SetPosition(const std::string& position) OVERRIDE;
   virtual void SetPosition(const gfx::Point& position) OVERRIDE;
   virtual gfx::Point GetPosition() OVERRIDE;
@@ -142,6 +143,7 @@ class NativeWindowWin : public NativeWindow,
   api::Menu* menu_;
 
   bool resizable_;
+  bool showInTaskbar_;
   std::string title_;
   gfx::Size minimum_size_;
   gfx::Size maximum_size_;

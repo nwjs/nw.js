@@ -20,8 +20,11 @@
 
 #include "content/nw/src/browser/native_window_win.h"
 
+#include <shobjidl.h>
+
 #include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
+#include "base/win/scoped_comptr.h"
 #include "base/win/wrapped_window_proc.h"
 #include "chrome/browser/platform_util.h"
 #include "content/nw/src/api/menu/menu.h"
@@ -245,6 +248,7 @@ NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
       is_blur_(false),
       menu_(NULL),
       resizable_(true),
+      showInTaskbar_(true),
       minimum_size_(0, 0),
       maximum_size_() {
   window_ = new views::Widget;
@@ -356,6 +360,34 @@ void NativeWindowWin::SetResizable(bool resizable) {
   else
     style &= ~WS_MAXIMIZEBOX;
   ::SetWindowLong(window_->GetNativeView(), GWL_STYLE, style);
+}
+
+void NativeWindowWin::SetShowInTaskbar(bool show) {
+  base::win::ScopedComPtr<ITaskbarList> taskbar;
+  HRESULT result = taskbar.CreateInstance(CLSID_TaskbarList, NULL,
+                                          CLSCTX_INPROC_SERVER);
+  if (FAILED(result)) {
+    VLOG(1) << "Failed creating a TaskbarList object: " << result;
+    return;
+  }
+
+  result = taskbar->HrInit();
+  if (FAILED(result)) {
+    LOG(ERROR) << "Failed initializing an ITaskbarList interface.";
+    return;
+  }
+
+  if (show)
+    result = taskbar->AddTab(window_->GetNativeWindow());
+  else
+    result = taskbar->DeleteTab(window_->GetNativeWindow());
+
+  if (FAILED(result)) {
+    LOG(ERROR) << "Failed to change the show in taskbar attribute";
+    return;
+  } else {
+    showInTaskbar_ = show;
+  }
 }
 
 void NativeWindowWin::SetAlwaysOnTop(bool top) {
