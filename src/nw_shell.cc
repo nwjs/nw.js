@@ -255,18 +255,18 @@ void Shell::ShowDevTools() {
   }
 
   RenderViewHost* inspected_rvh = web_contents()->GetRenderViewHost();
-  DevToolsAgentHost* agent = DevToolsAgentHost::GetFor(inspected_rvh);
+  scoped_refptr<DevToolsAgentHost> agent(DevToolsAgentHost::GetFor(inspected_rvh));
   DevToolsManager* manager = DevToolsManager::GetInstance();
-  DevToolsClientHost* host = manager->GetDevToolsClientHostFor(agent);
+  DevToolsClientHost* host = manager->GetDevToolsClientHostFor(agent.get());
 
   if (host) {
     // Break remote debugging debugging session.
-    manager->UnregisterDevToolsClientHostFor(agent);
+    manager->UnregisterDevToolsClientHostFor(agent.get());
   }
 
   ShellDevToolsDelegate* delegate =
       browser_client->shell_browser_main_parts()->devtools_delegate();
-  GURL url = delegate->devtools_http_handler()->GetFrontendURL(agent);
+  GURL url = delegate->devtools_http_handler()->GetFrontendURL(agent.get());
 
   // Use our minimum set manifest
   base::DictionaryValue manifest;
