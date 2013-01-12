@@ -1,0 +1,101 @@
+<html>
+  <head>
+      
+</head>
+<body>
+<script>
+
+  var gui = require('nw.gui');
+  var program = require('../../node_modules/commander');
+  var net = require('net');
+  //command line arguments.
+  program
+    .option('--auto', 'run app automatic')
+    .option('-p, --port <port>', "set port used by socket")
+    .parse([ 'node-webkit', 'nw-test' ].concat(gui.App.argv));
+
+  var prot = 13013;
+  if (program.port) port = program.port;
+  if (!program.auto) gui.Window.get().show();
+  //gui.Window.get().show();
+   
+  var result_80, result_8080;
+  var client;
+  if (program.auto) {   
+    client = net.connect({port: port});
+    client.setEncoding('utf8');    
+  }
+
+  var win = gui.Window.open('http://127.0.0.1/test.html', { show: false });
+  win.on('loaded', function() {
+    if (!win.window.test) {
+      document.getElementById('msg80').innerHTML = 
+        'Can not connect to this page';
+
+      result_80 = 'Can not connect to this page';
+      
+    } else if (win.window.test()) {
+      document.getElementById('msg80').innerHTML = 'YES';
+      result_80 = 'ok';
+    } else {
+      document.getElementById('msg80').innerHTML = 'NO';
+      result_80 = 'Unable call Node';
+    }
+    if (program.auto) {     
+      client.write('80/done');
+    }
+    
+  });
+
+  
+  var win_2 = gui.Window.open('http://127.0.0.1:8080/test.html', 
+                              { show: false });
+
+  win_2.on('loaded', function() {
+    if (!win_2.window.test) {
+      document.getElementById('msg8080').innerHTML = 
+        'Can not connect to this page';
+
+      result_8080 = 'Can not connect to this page';
+    } else if (win_2.window.test()) {
+      document.getElementById('msg8080').innerHTML = 'YES';
+      result_8080 = 'Able call Node';
+    } else {
+      document.getElementById('msg8080').innerHTML = 'NO';
+      result_8080 = 'ok';
+    }
+     if (program.auto) {     
+      client.write('8080/done');
+    }
+    
+  });
+
+  client.on('data', function(data) {
+    if (data == '80') client.write('80/' + result_80);
+    if (data == '8080') client.write('8080/' + result_8080);
+  });
+  
+  gui.Window.get().on('close', function() {
+    win.close(true);
+    win_2.close(true);
+    this.close(true);
+  });
+  
+</script>
+
+<div>
+  <span>Can remote page</span>
+  <a href="http://127.0.0.1/test.html">http://127.0.0.1/test.html</a> 
+  <span>call Node: </span>
+  <span id="msg80" style="color:blue"></span>
+</div>
+
+<div>  
+  <span>Can remote page</span>
+  <a href="http://127.0.0.1:8080/test.html">http://127.0.0.1:8080/test.html</a> 
+  <span>call Node: </span>
+  <span id="msg8080" style="color:blue"></span>
+</div>
+
+</body>
+</html>

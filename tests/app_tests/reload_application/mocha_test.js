@@ -6,7 +6,7 @@ var server = global.server;
 
 describe('AppTest', function(){
 
-  describe('reload app', function(){
+  describe('reload app (long-to-run)', function(){
         
     var exec_argv;  
     
