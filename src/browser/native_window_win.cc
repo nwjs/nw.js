@@ -25,6 +25,7 @@
 #include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
 #include "base/win/scoped_comptr.h"
+#include "base/win/windows_version.h"
 #include "base/win/wrapped_window_proc.h"
 #include "chrome/browser/platform_util.h"
 #include "content/nw/src/api/menu/menu.h"
@@ -363,6 +364,17 @@ void NativeWindowWin::SetResizable(bool resizable) {
 }
 
 void NativeWindowWin::SetShowInTaskbar(bool show) {
+  if (show == false && base::win::GetVersion() < base::win::VERSION_VISTA) {
+    if (hidden_owner_window_.get() == NULL) {
+      hidden_owner_window_.reset(new HiddenOwnerWindow());
+    }
+
+    // Change the owner of native window. Only needed on Windows XP.
+    ::SetWindowLong(window_->GetNativeView(),
+                    GWL_HWNDPARENT,
+                    (LONG)hidden_owner_window_->hwnd());
+  }
+
   base::win::ScopedComPtr<ITaskbarList> taskbar;
   HRESULT result = taskbar.CreateInstance(CLSID_TaskbarList, NULL,
                                           CLSCTX_INPROC_SERVER);
