@@ -27,6 +27,8 @@
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
 #include "content/public/browser/browser_url_handler.h"
+#include "content/public/browser/render_process_host.h"
+#include "content/public/browser/render_view_host.h"
 #include "content/public/browser/resource_dispatcher_host.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/renderer_preferences.h"
@@ -96,6 +98,25 @@ std::string ShellContentBrowserClient::GetApplicationLocale() {
 void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     CommandLine* command_line,
     int child_process_id) {
+  if (child_process_id > 0) {
+    content::RenderProcessHost* rph =
+      content::RenderProcessHost::FromID(child_process_id);
+
+    content::RenderProcessHost::RenderWidgetHostsIterator iter(
+      rph->GetRenderWidgetHostsIterator());
+    for (; !iter.IsAtEnd(); iter.Advance()) {
+      const content::RenderWidgetHost* widget = iter.GetCurrentValue();
+      DCHECK(widget);
+      if (!widget || !widget->IsRenderView())
+        continue;
+
+      content::RenderViewHost* host = content::RenderViewHost::From(
+        const_cast<content::RenderWidgetHost*>(widget));
+      content::Shell* shell = content::Shell::FromRenderViewHost(host);
+      if (shell && shell->is_devtools())
+        return;
+    }
+  }
   nw::Package* package = shell_browser_main_parts()->package();
   if (package && package->GetUseNode()) {
     // Allow node.js
