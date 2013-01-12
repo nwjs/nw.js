@@ -26,6 +26,7 @@
 #include "base/file_util.h"
 #include "base/files/scoped_temp_dir.h"
 #include "base/json/json_file_value_serializer.h"
+#include "base/string_split.h"
 #include "base/string_util.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
