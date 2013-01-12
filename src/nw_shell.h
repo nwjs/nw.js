@@ -155,9 +155,9 @@ class Shell : public WebContentsDelegate,
                                    int32 line_no,
                                    const string16& source_id) OVERRIDE;
   virtual void RequestMediaAccessPermission(
-      content::WebContents* web_contents,
-      const content::MediaStreamRequest* request,
-      const content::MediaResponseCallback& callback) OVERRIDE;
+      WebContents* web_contents,
+      const MediaStreamRequest& request,
+      const MediaResponseCallback& callback) OVERRIDE;
 
  private:
   void UpdateDraggableRegions(

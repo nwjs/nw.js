@@ -85,10 +85,7 @@ void NativeWindow::InitFromManifest(base::DictionaryValue* manifest) {
   std::string position;
   if (manifest->GetInteger(switches::kmX, &x) &&
       manifest->GetInteger(switches::kmY, &y)) {
-    int width, height;
-    manifest->GetInteger(switches::kmWidth, &width);
-    manifest->GetInteger(switches::kmHeight, &height);
-    Move(gfx::Rect(x, y, width, height));
+    SetPosition(gfx::Point(x, y));
   } else if (manifest->GetString(switches::kmPosition, &position)) {
     SetPosition(position);
   }

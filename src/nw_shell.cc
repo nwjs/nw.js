@@ -26,7 +26,7 @@
 #include "base/utf_string_conversions.h"
 #include "base/values.h"
 #include "content/browser/child_process_security_policy_impl.h"
-#include "content/public/browser/devtools_agent_host_registry.h"
+#include "content/public/browser/devtools_agent_host.h"
 #include "content/public/browser/devtools_http_handler.h"
 #include "content/public/browser/devtools_manager.h"
 #include "content/public/browser/navigation_entry.h"
@@ -68,11 +68,9 @@ Shell* Shell::Create(BrowserContext* browser_context,
                      SiteInstance* site_instance,
                      int routing_id,
                      WebContents* base_web_contents) {
-  WebContents* web_contents = WebContents::Create(
-      browser_context,
-      site_instance,
-      routing_id,
-      base_web_contents);
+  WebContents::CreateParams create_params(browser_context, site_instance);
+  create_params.routing_id = routing_id;
+  WebContents* web_contents = WebContents::Create(create_params);
 
   Shell* shell = new Shell(web_contents, GetPackage()->window());
   NavigationController::LoadURLParams params(url);
@@ -257,19 +255,18 @@ void Shell::ShowDevTools() {
   }
 
   RenderViewHost* inspected_rvh = web_contents()->GetRenderViewHost();
-  DevToolsAgentHost* agent = DevToolsAgentHostRegistry::GetDevToolsAgentHost(
-      inspected_rvh);
+  scoped_refptr<DevToolsAgentHost> agent(DevToolsAgentHost::GetFor(inspected_rvh));
   DevToolsManager* manager = DevToolsManager::GetInstance();
-  DevToolsClientHost* host = manager->GetDevToolsClientHostFor(agent);
+  DevToolsClientHost* host = manager->GetDevToolsClientHostFor(agent.get());
 
   if (host) {
     // Break remote debugging debugging session.
-    manager->UnregisterDevToolsClientHostFor(agent);
+    manager->UnregisterDevToolsClientHostFor(agent.get());
   }
 
   ShellDevToolsDelegate* delegate =
       browser_client->shell_browser_main_parts()->devtools_delegate();
-  GURL url = delegate->devtools_http_handler()->GetFrontendURL(inspected_rvh);
+  GURL url = delegate->devtools_http_handler()->GetFrontendURL(agent.get());
 
   // Use our minimum set manifest
   base::DictionaryValue manifest;
@@ -285,10 +282,9 @@ void Shell::ShowDevTools() {
                                                 // new renderer
                                                 // process or break
                                                 // points will stall both
-  Shell* shell = new Shell(
-      WebContents::Create(web_contents()->GetBrowserContext(),
-                          NULL, MSG_ROUTING_NONE, NULL),
-      &manifest);
+  WebContents::CreateParams create_params(web_contents()->GetBrowserContext(), NULL);
+  WebContents* web_contents = WebContents::Create(create_params);
+  Shell* shell = new Shell(web_contents, &manifest);
   browser_context->set_pinning_renderer(true);
 
   int rh_id = shell->web_contents_->GetRenderProcessHost()->GetID();
@@ -438,9 +434,9 @@ void Shell::HandleKeyboardEvent(WebContents* source,
 }
 
 void Shell::RequestMediaAccessPermission(
-      content::WebContents* web_contents,
-      const content::MediaStreamRequest* request,
-      const content::MediaResponseCallback& callback) {
+      WebContents* web_contents,
+      const MediaStreamRequest& request,
+      const MediaResponseCallback& callback) {
   scoped_ptr<MediaStreamDevicesController>
       controller(new MediaStreamDevicesController(request,
                                                   callback));

@@ -45,8 +45,7 @@ namespace content {
 
 ShellDownloadManagerDelegate::ShellDownloadManagerDelegate()
     : download_manager_(NULL),
-      suppress_prompting_(false),
-      last_download_db_handle_(DownloadItem::kUninitializedHandle) {
+      suppress_prompting_(false) {
   // Balanced in Shutdown();
   AddRef();
 }
@@ -195,12 +194,6 @@ void ShellDownloadManagerDelegate::ChooseDownloadPath(
 
   callback.Run(result, DownloadItem::TARGET_DISPOSITION_PROMPT,
                DOWNLOAD_DANGER_TYPE_NOT_DANGEROUS, result);
-}
-
-void ShellDownloadManagerDelegate::AddItemToPersistentStore(
-    DownloadItem* item) {
-  download_manager_->OnItemAddedToPersistentStore(
-      item->GetId(), --last_download_db_handle_);
 }
 
 void ShellDownloadManagerDelegate::SetDownloadBehaviorForTesting(
