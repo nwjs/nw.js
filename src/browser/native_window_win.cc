@@ -249,7 +249,6 @@ NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
       is_blur_(false),
       menu_(NULL),
       resizable_(true),
-      showInTaskbar_(true),
       minimum_size_(0, 0),
       maximum_size_() {
   window_ = new views::Widget;
@@ -397,8 +396,6 @@ void NativeWindowWin::SetShowInTaskbar(bool show) {
   if (FAILED(result)) {
     LOG(ERROR) << "Failed to change the show in taskbar attribute";
     return;
-  } else {
-    showInTaskbar_ = show;
   }
 }
 

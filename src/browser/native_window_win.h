@@ -173,7 +173,6 @@ class NativeWindowWin : public NativeWindow,
   api::Menu* menu_;
 
   bool resizable_;
-  bool showInTaskbar_;
   std::string title_;
   gfx::Size minimum_size_;
   gfx::Size maximum_size_;
