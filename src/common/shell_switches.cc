@@ -92,4 +92,6 @@ const char kmUserAgent[] = "user-agent";
 // rules to turn on Node for remote pages
 const char kmRemotePages[] = "node-remote";
 
+const char kmNewInstance[] = "new-instance";
+
 }  // namespace switches
