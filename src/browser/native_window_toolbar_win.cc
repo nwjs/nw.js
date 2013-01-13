@@ -139,25 +139,25 @@ void NativeWindowToolbarWin::InitToolbar() {
 
   ui::ResourceBundle& rb = ui::ResourceBundle::GetSharedInstance();
   back_button_ = new views::ImageButton(this);
-  back_button_->SetImage(views::CustomButton::BS_NORMAL,
+  back_button_->SetImage(views::CustomButton::STATE_NORMAL,
       rb.GetNativeImageNamed(IDR_NW_BACK).ToImageSkia());
-  back_button_->SetImage(views::CustomButton::BS_HOT,
+  back_button_->SetImage(views::CustomButton::STATE_HOVERED,
       rb.GetNativeImageNamed(IDR_NW_BACK_H).ToImageSkia());
-  back_button_->SetImage(views::CustomButton::BS_PUSHED,
+  back_button_->SetImage(views::CustomButton::STATE_PRESSED,
       rb.GetNativeImageNamed(IDR_NW_BACK_P).ToImageSkia());
-  back_button_->SetImage(views::CustomButton::BS_DISABLED,
+  back_button_->SetImage(views::CustomButton::STATE_DISABLED,
       rb.GetNativeImageNamed(IDR_NW_BACK_D).ToImageSkia());
   back_button_->SetAccessibleName(L"Back");
   AddChildView(back_button_);
 
   forward_button_ = new views::ImageButton(this);
-  forward_button_->SetImage(views::CustomButton::BS_NORMAL,
+  forward_button_->SetImage(views::CustomButton::STATE_NORMAL,
       rb.GetNativeImageNamed(IDR_NW_FORWARD).ToImageSkia());
-  forward_button_->SetImage(views::CustomButton::BS_HOT,
+  forward_button_->SetImage(views::CustomButton::STATE_HOVERED,
       rb.GetNativeImageNamed(IDR_NW_FORWARD_H).ToImageSkia());
-  forward_button_->SetImage(views::CustomButton::BS_PUSHED,
+  forward_button_->SetImage(views::CustomButton::STATE_PRESSED,
       rb.GetNativeImageNamed(IDR_NW_FORWARD_P).ToImageSkia());
-  forward_button_->SetImage(views::CustomButton::BS_DISABLED,
+  forward_button_->SetImage(views::CustomButton::STATE_DISABLED,
       rb.GetNativeImageNamed(IDR_NW_FORWARD_D).ToImageSkia());
   forward_button_->SetAccessibleName(L"Forward");
   AddChildView(forward_button_);
@@ -171,23 +171,23 @@ void NativeWindowToolbarWin::InitToolbar() {
   AddChildView(url_entry_);
 
   devtools_button_ = new views::ImageButton(this);
-  devtools_button_->SetImage(views::CustomButton::BS_NORMAL,
+  devtools_button_->SetImage(views::CustomButton::STATE_NORMAL,
       rb.GetNativeImageNamed(IDR_NW_TOOLS).ToImageSkia());
-  devtools_button_->SetImage(views::CustomButton::BS_HOT,
+  devtools_button_->SetImage(views::CustomButton::STATE_HOVERED,
       rb.GetNativeImageNamed(IDR_NW_TOOLS_H).ToImageSkia());
-  devtools_button_->SetImage(views::CustomButton::BS_PUSHED,
+  devtools_button_->SetImage(views::CustomButton::STATE_PRESSED,
       rb.GetNativeImageNamed(IDR_NW_TOOLS_P).ToImageSkia());
   devtools_button_->SetAccessibleName(L"Devtools");
   AddChildView(devtools_button_);
 
   dev_reload_button_ = new views::ImageButton(this);
-  dev_reload_button_->SetImage(views::CustomButton::BS_NORMAL,
+  dev_reload_button_->SetImage(views::CustomButton::STATE_NORMAL,
       rb.GetNativeImageNamed(IDR_NW_RELOAD).ToImageSkia());
-  dev_reload_button_->SetImage(views::CustomButton::BS_HOT,
+  dev_reload_button_->SetImage(views::CustomButton::STATE_HOVERED,
       rb.GetNativeImageNamed(IDR_NW_RELOAD_H).ToImageSkia());
-  dev_reload_button_->SetImage(views::CustomButton::BS_PUSHED,
+  dev_reload_button_->SetImage(views::CustomButton::STATE_PRESSED,
       rb.GetNativeImageNamed(IDR_NW_RELOAD_P).ToImageSkia());
-  dev_reload_button_->SetImage(views::CustomButton::BS_DISABLED,
+  dev_reload_button_->SetImage(views::CustomButton::STATE_DISABLED,
       rb.GetNativeImageNamed(IDR_NW_RELOAD_D).ToImageSkia());
   dev_reload_button_->SetAccessibleName(L"Reload render process");
   AddChildView(dev_reload_button_);
@@ -223,23 +223,23 @@ void NativeWindowToolbarWin::SetIsLoading(bool loading) {
   ui::ResourceBundle& rb = ui::ResourceBundle::GetSharedInstance();
 
   if (loading) {
-    stop_or_refresh_button_->SetImage(views::CustomButton::BS_NORMAL,
+    stop_or_refresh_button_->SetImage(views::CustomButton::STATE_NORMAL,
         rb.GetNativeImageNamed(IDR_NW_STOP).ToImageSkia());
-    stop_or_refresh_button_->SetImage(views::CustomButton::BS_HOT,
+    stop_or_refresh_button_->SetImage(views::CustomButton::STATE_HOVERED,
         rb.GetNativeImageNamed(IDR_NW_STOP_H).ToImageSkia());
-    stop_or_refresh_button_->SetImage(views::CustomButton::BS_PUSHED,
+    stop_or_refresh_button_->SetImage(views::CustomButton::STATE_PRESSED,
         rb.GetNativeImageNamed(IDR_NW_STOP_P).ToImageSkia());
-    stop_or_refresh_button_->SetImage(views::CustomButton::BS_DISABLED,
+    stop_or_refresh_button_->SetImage(views::CustomButton::STATE_DISABLED,
         rb.GetNativeImageNamed(IDR_NW_STOP_D).ToImageSkia());
     stop_or_refresh_button_->SetAccessibleName(L"Stop");
   } else {
-    stop_or_refresh_button_->SetImage(views::CustomButton::BS_NORMAL,
+    stop_or_refresh_button_->SetImage(views::CustomButton::STATE_NORMAL,
         rb.GetNativeImageNamed(IDR_NW_RELOAD).ToImageSkia());
-    stop_or_refresh_button_->SetImage(views::CustomButton::BS_HOT,
+    stop_or_refresh_button_->SetImage(views::CustomButton::STATE_HOVERED,
         rb.GetNativeImageNamed(IDR_NW_RELOAD_H).ToImageSkia());
-    stop_or_refresh_button_->SetImage(views::CustomButton::BS_PUSHED,
+    stop_or_refresh_button_->SetImage(views::CustomButton::STATE_PRESSED,
         rb.GetNativeImageNamed(IDR_NW_RELOAD_P).ToImageSkia());
-    stop_or_refresh_button_->SetImage(views::CustomButton::BS_DISABLED,
+    stop_or_refresh_button_->SetImage(views::CustomButton::STATE_DISABLED,
         rb.GetNativeImageNamed(IDR_NW_RELOAD_D).ToImageSkia());
     stop_or_refresh_button_->SetAccessibleName(L"Reload");
   }
