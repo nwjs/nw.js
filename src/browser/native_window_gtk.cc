@@ -123,6 +123,7 @@ NativeWindowGtk::NativeWindowGtk(content::Shell* shell,
   }
 
   SetWebKitColorStyle();
+  gtk_widget_realize(GTK_WIDGET(window_));
 }
 
 NativeWindowGtk::~NativeWindowGtk() {
