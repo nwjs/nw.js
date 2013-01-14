@@ -98,6 +98,8 @@ std::string ShellContentBrowserClient::GetApplicationLocale() {
 void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     CommandLine* command_line,
     int child_process_id) {
+  if (command_line->GetSwitchValueASCII("type") == "gpu-process")
+    return;
   if (child_process_id > 0) {
     content::RenderProcessHost* rph =
       content::RenderProcessHost::FromID(child_process_id);
