@@ -111,3 +111,7 @@ so you can use following command to filter out them:
 $ /path-to-node-webkit src/content/nw/tests --grep long-to-run -i
 ````
 
+## Tips
+in test case `node-remote` we need to open a http server, e.g. apache
+to be the remote site. We use port 80, 8080 for test, and please put `node_remote_test.html`
+to the http server document root.
