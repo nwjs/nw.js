@@ -1,0 +1,14 @@
+{
+  "name": "server",
+  "description": "server",
+  "version": "0.1",
+  "nodejs":true,
+  "node-main": "main.js",
+  "main": "index.html",
+  "window": {
+    "show": false,
+    "toolbar": true,
+    "fullscreen":false
+
+    }
+}
