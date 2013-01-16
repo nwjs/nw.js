@@ -25,7 +25,7 @@ Prebuilt binaries (v0.3.7 — Jan 6, 2013):
 
 * Linux: [32bit](https://s3.amazonaws.com/node-webkit/v0.3.7/node-webkit-v0.3.7-linux-ia32.tar.gz) / [64bit](https://s3.amazonaws.com/node-webkit/v0.3.7/node-webkit-v0.3.7-linux-x64.tar.gz)
 * Windows: [win32](https://s3.amazonaws.com/node-webkit/v0.3.7/node-webkit-v0.3.7-win-ia32.zip)
-* Mac: [32bit](https://s3.amazonaws.com/node-webkit/v0.3.7/node-webkit-v0.3.7-osx-ia32.zip)
+* Mac: [32bit, 10.7+](https://s3.amazonaws.com/node-webkit/v0.3.7/node-webkit-v0.3.7-osx-ia32.zip)
 
 [Looking for older versions?](https://github.com/rogerwang/node-webkit/wiki/Downloads-of-old-versions)
 
