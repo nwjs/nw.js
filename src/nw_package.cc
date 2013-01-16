@@ -366,10 +366,12 @@ void Package::ReadChromiumArgs() {
   base::SplitString(args, ' ', &chromium_args);
 
   CommandLine* command_line = CommandLine::ForCurrentProcess();
+
   for (unsigned i = 0; i < chromium_args.size(); ++i) {
-    if (ContainsOnlyWhitespaceASCII(chromium_args[i]))
+    std::string key, value;
+    if (!IsSwitch(chromium_args[i], &key, &value))
       continue;
-    command_line->AppendSwitch(chromium_args[i]);
+    command_line->AppendSwitchASCII(key, value);
   }
 }
 
