@@ -382,7 +382,7 @@ void Package::ReadChromiumArgs() {
       continue;
     command_line->AppendSwitchASCII(WideToASCII(key),
                                     WideToASCII(value));
-#elif
+#else
     if (!IsSwitch(chromium_args[i], &key, &value))
       continue;
     command_line->AppendSwitchASCII(key, value);
