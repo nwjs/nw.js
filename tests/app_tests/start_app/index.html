@@ -1,0 +1,25 @@
+<html>
+<head>
+  <title> Hello World </title>
+</head>
+<body>
+<script>
+  var gui = require('nw.gui');
+  var net = require('net');
+  var port = 13013;
+  //gui.Window.get().show();
+  var client = net.connect({port: port},
+      function() {
+    gui.App.quit();
+  });
+  client.setEncoding('utf8');
+  
+  
+ 
+  
+  
+</script>
+  <p>this is node-webkit</p>
+
+</body>
+</html>
