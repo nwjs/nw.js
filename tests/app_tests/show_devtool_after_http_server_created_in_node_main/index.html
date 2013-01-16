@@ -1,0 +1,31 @@
+<html>
+<head>
+</head>
+<body>
+<script>
+  var gui = require('nw.gui');
+   
+  /*
+   * your work
+   * tell parent process the result of your work, such as 'ok'
+   */
+  function callback(socket) {
+    
+    gui.Window.get().showDevTools();
+    
+    setTimeout(function(){
+      socket.write('ok');
+    }, 1000);
+    
+  }
+  require('../../app_test.js').createClient(gui, callback);
+  
+  
+
+</script>
+  <p>nw rocks !</p>
+  <p>after launch devtool, nw should not close by itself.</p>
+  <button onclick="gui.Window.get().showDevTools()">open devtool</button>
+  <button onclick="client.write('click')">click</button>
+</body>
+</html>

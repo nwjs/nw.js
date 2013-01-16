@@ -42,30 +42,30 @@ describe('node-remote', function() {
 
     it('http://127.0.0.1/node_remote_test.html should be able call Node',      
 	  function(done) {
-	    this.timeout(0);
-	    socket.on('data', function(data) {
-		  if (data == 'ok'){
+        this.timeout(0);
+        socket.on('data', function(data) {
+          if (data == 'ok'){
             done();
           } else {
             done(data);
           }
-	
-	    });    
-	    socket.write('80');
+
+        });    
+        socket.write('80');
     })
 
-    it('http://127.0.0.1:8080/node_remote_test.html should be able call Node',
+    it('http://127.0.0.1:8080/node_remote_test.html should not be able call Node',
       function(done) {
         this.timeout(0);
-	    socket.on('data', function(data) {
-		  if (data == 'ok'){
-            done();
+        socket.on('data', function(data) {
+         if (data == 'ok'){
+            done('should not call node');
           } else {
-            done(data);
+            done();
           }
-	
-	    });    
-	    socket.write('80');
+          
+        });    
+        socket.write('8080');
         
     })
 
