@@ -104,6 +104,11 @@ void RelativePathToURI(FilePath root, base::DictionaryValue* manifest) {
                       std::string("file://") + main_path.AsUTF8Unsafe());
 }
 
+std::wstring ASCIIToWide(const std::string& ascii) {
+  DCHECK(IsStringASCII(ascii)) << ascii;
+  return std::wstring(ascii.begin(), ascii.end());
+}
+
 }  // namespace
 
 Package::Package()
@@ -368,10 +373,20 @@ void Package::ReadChromiumArgs() {
   CommandLine* command_line = CommandLine::ForCurrentProcess();
 
   for (unsigned i = 0; i < chromium_args.size(); ++i) {
-    std::string key, value;
+    CommandLine::StringType key, value;
+#if defined(OS_WIN)
+    // Note:: On Windows, the |CommandLine::StringType| will be |std::wstring|,
+    // so the chromium_args[i] is not compatible. We convert the wstring to
+    // string here is safe beacuse we use ASCII only.
+    if (!IsSwitch(ASCIIToWide(chromium_args[i]), &key, &value))
+      continue;
+    command_line->AppendSwitchASCII(WideToASCII(key),
+                                    WideToASCII(value));
+#elif
     if (!IsSwitch(chromium_args[i], &key, &value))
       continue;
     command_line->AppendSwitchASCII(key, value);
+#endif
   }
 }
 
