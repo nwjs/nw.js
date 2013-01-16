@@ -4,5 +4,6 @@ tests/node_modules
 *~
 .*.sw?
 .project
+.pydevproject
 tags
 Thumbs.db

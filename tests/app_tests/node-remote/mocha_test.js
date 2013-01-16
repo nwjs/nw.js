@@ -8,9 +8,8 @@ describe('node-remote', function() {
     var app;
     var exec_argv;
     var socket;
-    var msg = ['',''];
     before(function(done) {
-      this.timeout(0);
+      //this.timeout(0);
       exec_argv = [path.join('app_tests', 'node-remote'), 
                     '--port',
                     global.port];
@@ -20,36 +19,7 @@ describe('node-remote', function() {
       server.on('connection', function(s){
         socket = s;
         s.setEncoding('utf8');
-
-        socket.on('data', function(data) {
-          var data_list = data.split('/');
-          if (data_list[0] == '80'){
-            if (data_list[1] == 'done'){        
-              socket.write('80');
-            } else if (data_list[1] == 'ok') {
-              msg[0] = 'ok';
-            } else {
-              msg[0] = data_list[1];
-            }
-            
-          }
-
-          if (data_list[0] == '8080'){
-            if (data_list[1] == 'done'){        
-              socket.write('8080');
-            } else {
-              if (data_list[1] == 'ok') {
-                msg[1] = 'ok';
-              } else {
-               msg[1] = data_list[1];
-              }
-            done();
-            }
-            
-          }
-          
-
-        });
+		done();
       });
       app = spawn(process.execPath, exec_argv);
       
@@ -65,29 +35,37 @@ describe('node-remote', function() {
     
 
     afterEach(function(){
-      //console.log('before Each');
       socket.removeAllListeners('data');
     })
 
      
 
-    it('http://127.0.0.1/test.html should be able call Node',
-      function(done) {
-        if (msg[0] == 'ok'){
-          done();
-        } else {
-          done(msg[0]);
-        }
-        
+    it('http://127.0.0.1/node_remote_test.html should be able call Node',      
+	  function(done) {
+	    this.timeout(0);
+	    socket.on('data', function(data) {
+		  if (data == 'ok'){
+            done();
+          } else {
+            done(data);
+          }
+	
+	    });    
+	    socket.write('80');
     })
 
-    it('http://127.0.0.1:8080/test.html should be able call Node',
+    it('http://127.0.0.1:8080/node_remote_test.html should be able call Node',
       function(done) {
-        if (msg[0] == 'ok'){
-          done();
-        } else {
-          done(msg[0]);
-        }
+        this.timeout(0);
+	    socket.on('data', function(data) {
+		  if (data == 'ok'){
+            done();
+          } else {
+            done(data);
+          }
+	
+	    });    
+	    socket.write('80');
         
     })
 
