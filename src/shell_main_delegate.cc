@@ -34,6 +34,7 @@
 #include "content/nw/src/renderer/shell_content_renderer_client.h"
 #include "content/nw/src/shell_browser_main.h"
 #include "content/nw/src/shell_content_browser_client.h"
+#include "net/cookies/cookie_monster.h"
 #include "third_party/node/src/node_version.h"
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/base/resource/resource_bundle.h"
@@ -101,6 +102,7 @@ bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
 #endif
 
   InitLogging();
+  net::CookieMonster::EnableFileScheme();
 
   SetContentClient(&content_client_);
   return false;
