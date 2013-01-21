@@ -133,13 +133,13 @@ describe('module', function() {
   describe('native modules', function() {
     it('bignum should work on posix environment', function() {
       if (process.platform != 'win32') {
-        var bignum = require('./tests/node/node_modules/bignum');
+        var bignum = require('./node_modules/bignum');
         assert.equal(bignum('782910138827292261791972728324982').sub('182373273283402171237474774728373').div(8), '75067108192986261319312244199576');
       }
     });
 
     it('native modules without handle scope', function() {
-      require('./tests/node/node_modules/nw_test_loop_without_handle');
+      require('./node_modules/nw_test_loop_without_handle');
     });
   });
 });
