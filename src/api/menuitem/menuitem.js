@@ -151,7 +151,7 @@ MenuItem.prototype.__defineSetter__('submenu', function(val) {
     throw new String("'submenu' property requries a valid Menu");
 
   v8_util.setHiddenValue(this, 'submenu', val);
-  nw.callObjectMethod(this, 'SetMenu', [ val.id ]);
+  nw.callObjectMethod(this, 'SetSubmenu', [ val.id ]);
 });
 
 MenuItem.prototype.handleEvent = function(ev) {

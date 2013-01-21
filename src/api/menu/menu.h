@@ -51,6 +51,23 @@ class NativeWindowGtk;
 namespace nw {
 class NativeWindowWin;
 }
+
+namespace ui {
+
+// A derived class to override |HasIcons| to prevent the |NativeMenuWin| from
+// being a owner-draw control.
+// Note: this method maybe confused when the menuitem has an icon. I always
+// return |false| here, and set the icon by using |SetMenuItemBitmaps|.
+class NwMenuModel : public SimpleMenuModel {
+ public:
+  NwMenuModel(Delegate* delegate);
+
+  // Overridden from MenuModel:
+  virtual bool HasIcons() const OVERRIDE;
+};
+
+} // namespace ui
+
 #endif
 
 namespace content {
@@ -92,15 +109,18 @@ class Menu : public Base {
 #elif defined(OS_WIN)
   friend class nw::NativeWindowWin;
 
-  void Rebuild();
+  void Rebuild(const gfx::NativeMenu *parent_menu = NULL);
 
   // Flag to indicate the menu has been modified since last show, so we should
   // rebuild the menu before next show.
   bool is_menu_modified_;
 
   scoped_ptr<MenuDelegate> menu_delegate_;
-  scoped_ptr<ui::SimpleMenuModel> menu_model_;
+  scoped_ptr<ui::NwMenuModel> menu_model_;
   scoped_ptr<views::NativeMenuWin> menu_;
+
+  // A container for the handles of the icon bitmap.
+  std::vector<HBITMAP> icon_bitmaps_;
 #endif
 
   DISALLOW_COPY_AND_ASSIGN(Menu);

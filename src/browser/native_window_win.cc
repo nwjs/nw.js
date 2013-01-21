@@ -387,8 +387,7 @@ void NativeWindowWin::SetMenu(api::Menu* menu) {
   menu->Rebuild();
 
   // menu is api::Menu, menu->menu_ is NativeMenuWin,
-  // we use menu->menu_->menu() to get real HMENU, ugly here.
-  ::SetMenu(window_->GetNativeWindow(), menu->menu_->menu());
+  ::SetMenu(window_->GetNativeWindow(), menu->menu_->GetNativeMenu());
 }
 
 void NativeWindowWin::SetTitle(const std::string& title) {
