@@ -211,12 +211,15 @@ void ShellContentRendererClient::InstallNodeSymbols(
   if (use_node) {
     v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
         // Make node's relative modules work
+        "if (!process.mainModule.filename) {"
 #if defined(OS_WIN)
         "process.mainModule.filename = decodeURIComponent(window.location.pathname.substr(1));"
 #else
         "process.mainModule.filename = decodeURIComponent(window.location.pathname);"
 #endif
         "process.mainModule.paths = global.require('module')._nodeModulePaths(process.cwd());"
+        "process.mainModule.loaded = true;"
+        "}"
     ));
     script->Run();
   }
