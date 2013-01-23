@@ -133,6 +133,14 @@ Window.prototype.__defineGetter__('title', function() {
   return this.window.document.title;
 });
 
+Window.prototype.__defineSetter__('zoomLevel', function(level) {
+  CallObjectMethodSync(this, 'SetZoomLevel', level);
+});
+
+Window.prototype.__defineGetter__('zoomLevel', function() {
+  return CallObjectMethodSync(this, 'GetZoomLevel', [])[0];
+});
+
 Window.prototype.__defineSetter__('menu', function(menu) {
   if (v8_util.getConstructorName(menu) != 'Menu')
     throw new String("'menu' property requries a valid Menu");

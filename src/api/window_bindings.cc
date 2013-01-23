@@ -82,10 +82,38 @@ WindowBindings::CallObjectMethod(const v8::Arguments& args) {
 // static
 v8::Handle<v8::Value>
 WindowBindings::CallObjectMethodSync(const v8::Arguments& args) {
+  v8::HandleScope scope;
+
   v8::Local<v8::Object> self = args[0]->ToObject();
   int routing_id = self->Get(v8::String::New("routing_id"))->Int32Value();
   int object_id = self->Get(v8::String::New("id"))->Int32Value();
   std::string method = *v8::String::Utf8Value(args[1]);
+
+  if (method == "GetZoomLevel") {
+    content::RenderViewImpl* render_view = static_cast<content::RenderViewImpl*>(
+                       content::ChildThread::current()->ResolveRoute(routing_id));
+    if (!render_view)
+      return v8::ThrowException(v8::Exception::Error(v8::String::New(
+        "Unable to get render view in GetZoomLevel")));
+
+    float zoom_level = render_view->GetWebView()->zoomLevel();
+
+    v8::Local<v8::Array> array = v8::Array::New();
+    array->Set(0, v8::Number::New(zoom_level));
+    return scope.Close(array);
+  }
+
+  if (method == "SetZoomLevel") {
+    content::RenderViewImpl* render_view = static_cast<content::RenderViewImpl*>(
+                       content::ChildThread::current()->ResolveRoute(routing_id));
+    if (!render_view)
+      return v8::ThrowException(v8::Exception::Error(v8::String::New(
+        "Unable to get render view in SetZoomLevel")));
+
+    double zoom_level = args[2]->ToNumber()->Value();
+    render_view->OnSetZoomLevel(zoom_level);
+    return v8::Undefined();
+  }
 
   return remote::CallObjectMethodSync(
       routing_id, object_id, "Window", method, args[2]);

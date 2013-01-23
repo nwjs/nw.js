@@ -85,4 +85,26 @@ void Dispatcher::OnEvent(int object_id,
   node::MakeCallback(objects_registry, "handleEvent", 3, argv);
 }
 
+void Dispatcher::ZoomLevelChanged() {
+  WebKit::WebView* web_view = render_view()->GetWebView();
+  float zoom_level = web_view->zoomLevel();
+  v8::Handle<v8::Value> v8win = web_view->mainFrame()->
+    mainWorldScriptContext()->Global();
+  v8::Handle<v8::Value> val = v8win->ToObject()->Get(v8::String::New("__nwWindowId"));
+
+  if (val->IsNull() || val->IsUndefined())
+    return;
+
+  v8::Handle<v8::Value> registry =
+    node::g_context->Global()->Get(v8::String::New("__nwObjectsRegistry"));
+  if (registry->IsNull() || registry->IsUndefined())
+    return;
+  v8::Handle<v8::Object> objects_registry = registry->ToObject();
+
+  v8::Local<v8::Array> args = v8::Array::New();
+  args->Set(0, v8::Number::New(zoom_level));
+  v8::Handle<v8::Value> argv[] = {val, v8::String::New("zoom"), args };
+
+  node::MakeCallback(objects_registry, "handleEvent", 3, argv);
+}
 }  // namespace api
