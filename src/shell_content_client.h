@@ -23,6 +23,7 @@ class ShellContentClient : public ContentClient {
       int resource_id,
       ui::ScaleFactor scale_factor) const OVERRIDE;
   virtual gfx::Image& GetNativeImageNamed(int resource_id) const OVERRIDE;
+  virtual bool CanHandleWhileSwappedOut(const IPC::Message& msg) OVERRIDE;
 };
 
 }  // namespace content
