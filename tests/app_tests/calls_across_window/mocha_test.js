@@ -3,6 +3,7 @@ var spawn = require('child_process').spawn;
 var path = require('path');
 var net = require('net');
 var server = global.server
+var cb;
 
 describe('AppTest', function(){
   describe('call across window', function(){
@@ -18,7 +19,7 @@ describe('AppTest', function(){
  
       if (global.auto) exec_argv.push('--auto');
 
-      server.on('connection', function(s){
+      server.on('connection', cb = function(s){
         socket = s;
         s.setEncoding('utf8');
         s.on('end', function(){
@@ -40,6 +41,7 @@ describe('AppTest', function(){
       */
       app.kill();
       done();
+      server.removeListener('connection', cb);
     })
 
     afterEach(function(){

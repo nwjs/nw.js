@@ -3,6 +3,7 @@ var spawn = require('child_process').spawn;
 var path = require('path');
 var net = require('net');
 var server = global.server;
+var cb;
 
 describe('AppTest', function(){
 
@@ -20,14 +21,14 @@ describe('AppTest', function(){
     });
 
     afterEach(function(){
-      server.removeAllListeners('connection');
+      server.removeListener('connection', cb);
     });
 
     it('close window after reload', function(done){
       this.timeout(0);
       exec_argv.push('--type');
       exec_argv.push(0);
-      server.on('connection', function(socket){
+      server.on('connection', cb = function(socket){
         socket.on('end', function(){
           //console.log('client disconnect');
         });
@@ -63,7 +64,7 @@ describe('AppTest', function(){
       this.timeout(0);
       exec_argv.push('--type');
       exec_argv.push(1);
-      server.on('connection', function(socket){
+      server.on('connection', cb = function(socket){
         socket.on('end', function(){
         });
 
@@ -95,7 +96,7 @@ describe('AppTest', function(){
       exec_argv.push('--type');
       exec_argv.push(2);
       var times = 0;
-      server.on('connection', function(socket){
+      server.on('connection', cb = function(socket){
         socket.on('end', function(){
           //console.log('client diss');
         });
@@ -138,7 +139,7 @@ describe('AppTest', function(){
       exec_argv.push('--type');
       exec_argv.push(3);
       var times = 0;
-      server.on('connection', function(socket){
+      server.on('connection', cb = function(socket){
         socket.on('end', function(){
           //console.log('client diss');
         });
