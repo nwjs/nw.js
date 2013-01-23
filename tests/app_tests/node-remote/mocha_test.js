@@ -2,6 +2,7 @@ var spawn = require('child_process').spawn;
 var path = require('path');
 var net = require('net');
 var server = global.server;
+var cb;
 
 describe('node-remote', function() {
   describe('enable remote site http://127.0.0.1:80/', function() {
@@ -16,10 +17,10 @@ describe('node-remote', function() {
  
       if (global.auto) exec_argv.push('--auto');
 
-      server.on('connection', function(s){
+      server.on('connection', cb = function(s){
         socket = s;
         s.setEncoding('utf8');
-		done();
+        done();
       });
       app = spawn(process.execPath, exec_argv);
       
@@ -30,7 +31,8 @@ describe('node-remote', function() {
     after(function(done) {
       this.timeout(0);
       app.kill();
-      done();      
+      done();
+      server.removeListener('connection', cb);
     })
     
 
