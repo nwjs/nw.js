@@ -396,17 +396,7 @@
         ['OS=="win"', {
           'sources': [
             'src/shell.rc',
-					  '../../webkit/glue/resources/pan_east.cur',
-						'../../webkit/glue/resources/pan_middle.cur',
-						'../../webkit/glue/resources/pan_north.cur',
-						'../../webkit/glue/resources/pan_north_east.cur',
-					  '../../webkit/glue/resources/pan_north_west.cur',
-						'../../webkit/glue/resources/pan_south.cur',
-						'../../webkit/glue/resources/pan_south_east.cur',
-						'../../webkit/glue/resources/pan_south_west.cur',
-						'../../webkit/glue/resources/pan_west.cur',
-
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_resources.rc',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_unscaled_resources.rc',
           ],
           'configurations': {
             'Debug_Base': {
