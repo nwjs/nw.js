@@ -29,6 +29,11 @@
 #include <commdlg.h>
 #endif
 
+#if defined(OS_MACOSX)
+#include <AppKit/NSSavePanel.h>
+#include <Foundation/NSURL.h>
+#endif
+
 #include "base/bind.h"
 #include "base/file_util.h"
 #include "base/logging.h"
@@ -189,7 +194,17 @@ void ShellDownloadManagerDelegate::ChooseDownloadPath(
   }
   gtk_widget_destroy(dialog);
 #else
-  NOTIMPLEMENTED();
+    std::string base_name = FilePath(suggested_path).BaseName().value();
+    
+    NSSavePanel *savePanel = [NSSavePanel savePanel];
+    
+    [savePanel setNamedFieldStringValue:[NSString stringWithUTF8String:base_name.c_str()]];
+    
+    if ([savePanel runModal] == NSFileHandlingPanelOKButton) {
+        char *filename = (char *)[[[savePanel URL] path] UTF8String];
+        
+        result = FilePath(filename);
+    }
 #endif
 
   callback.Run(result, DownloadItem::TARGET_DISPOSITION_PROMPT,
