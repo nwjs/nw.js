@@ -194,14 +194,16 @@ void ShellDownloadManagerDelegate::ChooseDownloadPath(
   }
   gtk_widget_destroy(dialog);
 #else
+    std::string directory_name = FilePath(suggested_path).DirName().value();
     std::string base_name = FilePath(suggested_path).BaseName().value();
     
     NSSavePanel *savePanel = [NSSavePanel savePanel];
     
+    [savePanel setDirectoryURL:[NSURL fileURLWithPath:[NSString stringWithUTF8String:directory_name.c_str()] isDirectory:YES]];
     [savePanel setNamedFieldStringValue:[NSString stringWithUTF8String:base_name.c_str()]];
     
     if ([savePanel runModal] == NSFileHandlingPanelOKButton) {
-        char *filename = (char *)[[[savePanel URL] path] UTF8String];
+        const char *filename = [[[savePanel URL] path] UTF8String];
         
         result = FilePath(filename);
     }
