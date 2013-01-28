@@ -166,6 +166,12 @@ void ShellContentRendererClient::InstallNodeSymbols(
   static bool installed_once = false;
 
   bool is_file_protocol = url.SchemeIsFile();
+  v8::Local<v8::Object> nodeGlobal = node::g_context->Global();
+  v8::Local<v8::Object> v8Global = context->Global();
+
+  // Use WebKit's console globally
+  nodeGlobal->Set(v8::String::New("console"),
+                  v8Global->Get(v8::String::New("console")));
 
   // Do we integrate node?
   bool use_node =
@@ -184,8 +190,6 @@ void ShellContentRendererClient::InstallNodeSymbols(
     symbols->Set(2, v8::String::New("Buffer"));
     symbols->Set(3, v8::String::New("root"));
 
-    v8::Local<v8::Object> nodeGlobal = node::g_context->Global();
-    v8::Local<v8::Object> v8Global = context->Global();
     for (unsigned i = 0; i < symbols->Length(); ++i) {
       v8::Local<v8::Value> key = symbols->Get(i);
       v8Global->Set(key, nodeGlobal->Get(key));
@@ -227,9 +231,6 @@ void ShellContentRendererClient::InstallNodeSymbols(
 
   if (use_node || is_nw_protocol) {
     v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
-        // Use WebKit's console globally
-        "global.console = console;"
-
         // Overload require
         "window.require = function(name) {"
         "  if (name == 'nw.gui')"
