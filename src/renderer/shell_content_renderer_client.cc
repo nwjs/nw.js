@@ -144,7 +144,7 @@ void ShellContentRendererClient::DidCreateScriptContext(
   ProxyBypassRules rules;
   rules.ParseFromString(rv->renderer_preferences_.nw_remote_page_rules);
   bool force_on = rules.Matches(url);
-  InstallNodeSymbols(context, url, force_on);
+  InstallNodeSymbols(frame, context, url, force_on);
 }
 
 bool ShellContentRendererClient::WillSetSecurityToken(
@@ -157,6 +157,7 @@ bool ShellContentRendererClient::WillSetSecurityToken(
 }
 
 void ShellContentRendererClient::InstallNodeSymbols(
+    WebKit::WebFrame* frame,
     v8::Handle<v8::Context> context,
     const GURL& url,
     bool force_on) {
