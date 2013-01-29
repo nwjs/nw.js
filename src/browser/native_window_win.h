@@ -24,6 +24,7 @@
 #include "content/nw/src/browser/native_window.h"
 
 #include "third_party/skia/include/core/SkRegion.h"
+#include "ui/base/win/window_impl.h"
 #include "ui/gfx/image/image_skia.h"
 #include "ui/gfx/rect.h"
 #include "ui/views/focus/widget_focus_manager.h"
@@ -36,6 +37,31 @@ class WebView;
 namespace nw {
 
 class NativeWindowToolbarWin;
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// HiddenOwnerWindow
+//  This class is used as a hidden owner window for NativeWindowWin.
+//  Note: The reason for using it is on Windows XP, while using the
+//  ITaskbarList::DeleteTab to remove the icon from the taskbar, the icon will
+//  appear in taskbar again when it blur and being focused again. This class
+//  object will only exist on Windows XP. See the implementation about
+//  |NativeWindowWin::SetShowInTaskbar|.
+//
+///////////////////////////////////////////////////////////////////////////////
+class HiddenOwnerWindow : public ui::WindowImpl {
+ public:
+  HiddenOwnerWindow() {
+    Init(NULL, gfx::Rect());
+  }
+
+  ~HiddenOwnerWindow() {
+    DestroyWindow(hwnd());
+  }
+
+  BEGIN_MSG_MAP_EX(HiddenOwnerWindow)
+  END_MSG_MAP()
+};
 
 class NativeWindowWin : public NativeWindow,
                         public views::WidgetFocusChangeListener,
@@ -67,6 +93,7 @@ class NativeWindowWin : public NativeWindow,
   virtual void SetMaximumSize(int width, int height) OVERRIDE;
   virtual void SetResizable(bool resizable) OVERRIDE;
   virtual void SetAlwaysOnTop(bool top) OVERRIDE;
+  virtual void SetShowInTaskbar(bool show = true) OVERRIDE;
   virtual void SetPosition(const std::string& position) OVERRIDE;
   virtual void SetPosition(const gfx::Point& position) OVERRIDE;
   virtual gfx::Point GetPosition() OVERRIDE;
@@ -136,6 +163,10 @@ class NativeWindowWin : public NativeWindow,
   bool is_blur_;
 
   scoped_ptr<SkRegion> draggable_region_;
+
+  // This is only useful on Windows XP. Hidden owner window for Windows XP to
+  // let SetShowInTaskbar work like on Windows 7.
+  scoped_ptr<HiddenOwnerWindow> hidden_owner_window_;
 
   // The window's menubar.
   api::Menu* menu_;

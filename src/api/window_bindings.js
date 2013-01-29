@@ -289,6 +289,11 @@ Window.prototype.setAlwaysOnTop = function(flag) {
   CallObjectMethod(this, 'SetAlwaysOnTop', [ Boolean(flag) ]);
 }
 
+Window.prototype.setShowInTaskbar = function(flag) {
+  flag = Boolean(flag);
+  CallObjectMethod(this, 'SetShowInTaskbar', [ flag ]);
+}
+
 Window.prototype.requestAttention = function(flash) {
   flash = Boolean(flash);
   CallObjectMethod(this, 'RequestAttention', [ flash ]);

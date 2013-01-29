@@ -113,6 +113,11 @@ void NativeWindow::InitFromManifest(base::DictionaryValue* manifest) {
   if (manifest->GetBoolean(switches::kmAlwaysOnTop, &top) && top) {
     SetAlwaysOnTop(true);
   }
+  bool showInTaskbar;
+  if (manifest->GetBoolean(switches::kmShowInTaskbar, &showInTaskbar) &&
+      !showInTaskbar) {
+    SetShowInTaskbar(false);
+  }
   bool fullscreen;
   if (manifest->GetBoolean(switches::kmFullscreen, &fullscreen) && fullscreen) {
     SetFullscreen(true);

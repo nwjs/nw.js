@@ -236,6 +236,10 @@ void NativeWindowGtk::SetAlwaysOnTop(bool top) {
   gtk_window_set_keep_above(window_, top ? TRUE : FALSE);
 }
 
+void NativeWindowGtk::SetShowInTaskbar(bool show) {
+  gtk_window_set_skip_taskbar_hint(window_, show ? FALSE : TRUE);
+}
+
 void NativeWindowGtk::SetPosition(const std::string& position) {
   if (position == "center")
     gtk_window_set_position(window_, GTK_WIN_POS_CENTER);
