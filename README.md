@@ -29,8 +29,6 @@ Prebuilt binaries (v0.4.0 — Jan 18, 2013):
 
 [Looking for older versions?](https://github.com/rogerwang/node-webkit/wiki/Downloads-of-old-versions)
 
-You may also be interested in [our demos repository](https://github.com/zcbenz/nw-sample-apps) and the [List of apps and companies using node-webkit](https://github.com/rogerwang/node-webkit/wiki/List-of-apps-and-companies-using-node-webkit).
-
 # Quick Start
 
 Create `index.html`:
@@ -71,6 +69,16 @@ $ ./nw app.nw
 ````
 
 Note: on Windows, you can drag the `app.nw` to `nw.exe` to open it.
+
+# Demo applications
+
+You may also be interested in [our demos repository](https://github.com/zcbenz/nw-sample-apps) 
+
+# Real applications
+
+[List of apps and companies using node-webkit](https://github.com/rogerwang/node-webkit/wiki/List-of-apps-and-companies-using-node-webkit)
+
+
 
 # Documents
 
