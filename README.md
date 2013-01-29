@@ -1,4 +1,4 @@
-# Introduction
+## Introduction
 
 node-webkit is an app runtime based on `Chromium` and `node.js`. You can 
 write native apps in HTML and Javascript with node-webkit. It also lets you
@@ -9,7 +9,7 @@ It's created and developed in Intel Open Source Technology Center.
 
 [Introduction to node-webkit (slides)](https://speakerdeck.com/u/zcbenz/p/node-webkit-app-runtime-based-on-chromium-and-node-dot-js).
 
-# Features
+## Features
 
 * Apps written in modern HTML5, CSS3, JS and WebGL.
 * Complete support for [Node.js APIs](http://nodejs.org/api/) and all its [third party modules](https://npmjs.org).
@@ -17,7 +17,7 @@ It's created and developed in Intel Open Source Technology Center.
 * Easy to package and distribute apps.
 * Available on Linux, Mac OSX and Windows
 
-# Downloads
+## Downloads
 
 [v0.4.0 release note](https://groups.google.com/d/msg/node-webkit/bTqRSmcfJ_E/9njVffk-k4cJ)
 
@@ -29,9 +29,10 @@ Prebuilt binaries (v0.4.0 — Jan 18, 2013):
 
 [Looking for older versions?](https://github.com/rogerwang/node-webkit/wiki/Downloads-of-old-versions)
 
+###Demos and real apps
 You may also be interested in [our demos repository](https://github.com/zcbenz/nw-sample-apps) and the [List of apps and companies using node-webkit](https://github.com/rogerwang/node-webkit/wiki/List-of-apps-and-companies-using-node-webkit).
 
-# Quick Start
+## Quick Start
 
 Create `index.html`:
 
@@ -72,7 +73,7 @@ $ ./nw app.nw
 
 Note: on Windows, you can drag the `app.nw` to `nw.exe` to open it.
 
-# Documents
+## Documents
 
 For more information on how to write/package/run apps, see:
 
@@ -82,11 +83,11 @@ For more information on how to write/package/run apps, see:
 
 And our [Wiki](https://github.com/rogerwang/node-webkit/wiki) for much more.
 
-# Community
+## Community
 
 We use [node-webkit group](http://groups.google.com/group/node-webkit) as
 our mailing list, subscribe via [node-webkit+subscribe@googlegroups.com](mailto:node-webkit+subscribe@googlegroups.com).
 
-# License
+## License
 
 `node-webkit`'s code uses the MIT license, see our `LICENSE` file.
