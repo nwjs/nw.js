@@ -43,6 +43,9 @@
 
 namespace nw {
 
+// Sperator for the string from |chromium_args| of |package.json|.
+const char kChromiumArgsSeparator = ';';
+
 namespace {
 
 #ifndef PATH_MAX
@@ -368,7 +371,7 @@ void Package::ReadChromiumArgs() {
     return;
 
   std::vector<std::string> chromium_args;
-  base::SplitString(args, ' ', &chromium_args);
+  base::SplitString(args, kChromiumArgsSeparator, &chromium_args);
 
   CommandLine* command_line = CommandLine::ForCurrentProcess();
 
