@@ -26,7 +26,7 @@
 #include "base/file_util.h"
 #include "base/files/scoped_temp_dir.h"
 #include "base/json/json_file_value_serializer.h"
-#include "base/string_split.h"
+#include "base/string_tokenizer.h"
 #include "base/string_util.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
@@ -42,6 +42,9 @@
 #include "webkit/glue/image_decoder.h"
 
 namespace nw {
+
+// Separator for string of |chromium_args| from |manifest|.
+const char kChromiumArgsSeparator[] = " ";
 
 namespace {
 
@@ -286,6 +289,9 @@ bool Package::InitFromPath() {
   // Read chromium command line args.
   ReadChromiumArgs();
 
+  // Read flags for v8 engine.
+  ReadJsFlags();
+
   RelativePathToURI(path_, this->root());
   return true;
 }
@@ -368,7 +374,13 @@ void Package::ReadChromiumArgs() {
     return;
 
   std::vector<std::string> chromium_args;
-  base::SplitString(args, ' ', &chromium_args);
+  StringTokenizer tokenizer(args, kChromiumArgsSeparator);
+  tokenizer.set_quote_chars("\'");
+  while (tokenizer.GetNext()) {
+    std::string token = tokenizer.token();
+    RemoveChars(token, "\'", &token);
+    chromium_args.push_back(token);
+  }
 
   CommandLine* command_line = CommandLine::ForCurrentProcess();
 
@@ -388,6 +400,18 @@ void Package::ReadChromiumArgs() {
     command_line->AppendSwitchASCII(key, value);
 #endif
   }
+}
+
+void Package::ReadJsFlags() {
+  if (!root()->HasKey(switches::kmJsFlags))
+    return;
+
+  std::string flags;
+  if (!root()->GetStringASCII(switches::kmJsFlags, &flags))
+    return;
+
+  CommandLine* command_line = CommandLine::ForCurrentProcess();
+  command_line->AppendSwitchASCII("js-flags", flags);
 }
 
 void Package::ReportError(const std::string& title,
