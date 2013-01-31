@@ -20,7 +20,10 @@
 
 #include "content/nw/src/browser/shell_resource_dispatcher_host_delegate.h"
 
+#include "chrome/browser/platform_util.h"
 #include "content/nw/src/browser/shell_login_dialog.h"
+#include "content/public/browser/browser_thread.h"
+
 
 namespace content {
 
@@ -48,5 +51,23 @@ ShellResourceDispatcherHostDelegate::CreateLoginDelegate(
 
   return new ShellLoginDialog(auth_info, request);
 }
+
+bool ShellResourceDispatcherHostDelegate::HandleExternalProtocol(
+    const GURL& url, int child_id, int route_id) {
+#if defined(OS_MACOSX)
+  // This must run on the UI thread on OS X.
+  platform_util::OpenExternal(url);
+#else
+  // Otherwise put this work on the file thread. On Windows ShellExecute may
+  // block for a significant amount of time, and it shouldn't hurt on Linux.
+  BrowserThread::PostTask(
+      BrowserThread::FILE,
+      FROM_HERE,
+      base::Bind(&platform_util::OpenExternal, url));
+#endif
+
+  return true;
+}
+
 
 }  // namespace content
