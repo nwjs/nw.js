@@ -22,9 +22,7 @@ describe('AppTest', function(){
       server.on('connection', cb = function(s){
         socket = s;
         s.setEncoding('utf8');
-        s.on('end', function(){
-          console.log('client dissconnect');
-        });
+        
         done();
       });
       app = spawn(process.execPath, exec_argv);
