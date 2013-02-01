@@ -144,6 +144,7 @@ void Menu::Rebuild(const gfx::NativeMenu *parent_menu) {
   if (is_menu_modified_) {
     // Refresh menu before show.
     menu_->Rebuild();
+    menu_->UpdateStates();
     for (size_t index = 0; index < icon_bitmaps_.size(); ++index) {
       ::DeleteObject(icon_bitmaps_[index]);
     }
