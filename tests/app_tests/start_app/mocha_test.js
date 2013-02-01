@@ -34,6 +34,7 @@ describe('different method of starting app (long-to-run)', function() {
 
   it('start from nw that package.json in the same folder', function(done) {
     this.timeout(0);
+    var result = false;
     
     if (os.platform() == 'darwin') {
       //mac don't have this method
@@ -43,25 +44,33 @@ describe('different method of starting app (long-to-run)', function() {
     
     var app = spawn(execPath);
     app.on('exit', function() {
+      result = true;
       done();
     });
-    setTimeout(function(){
-      done('timeout');
-      app.kill();
+    
+    setTimeout(function() {
+      if (!result) {
+        done('timeout');
+        app.kill();
+      }
     }, 10000);
   
   })
    
   it('start from app.nw', function(done) {
     this.timeout(0);
+    var result = false;
     
     var app = spawn(execPath, [path.join('tmp-nw', 'app.nw')]);
     app.on('exit', function() {
+      result = true;
       done();
     });
-    setTimeout(function(){
-      done('timeout');
-      app.kill();
+    setTimeout(function() {
+      if (!result) {
+        done('timeout');
+        app.kill();
+      }
     }, 10000);
     
   })
@@ -69,7 +78,7 @@ describe('different method of starting app (long-to-run)', function() {
   
   it('start from an executable file app.exe', function(done) {
     this.timeout(0);
-    
+    var result = false;
       
     if (os.platform() == 'win32') {
       execPath = path.join('tmp-nw', 'app.exe');
@@ -85,12 +94,15 @@ describe('different method of starting app (long-to-run)', function() {
     }
     var app = spawn(execPath);
     app.on('exit', function() {
+      result = true;
       done();
     });
     
-    setTimeout(function(){
-      done('timeout');
-      app.kill();
+    setTimeout(function() {
+      if (!result) {
+        done('timeout');
+        app.kill();
+      }
     }, 10000);
     
   })
