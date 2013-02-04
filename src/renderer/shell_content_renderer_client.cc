@@ -195,6 +195,8 @@ void ShellContentRendererClient::InstallNodeSymbols(
       v8Global->Set(key, nodeGlobal->Get(key));
     }
 
+    frame->setNodeJS(true);
+
     if (!installed_once) {
       installed_once = true;
 
