@@ -115,7 +115,7 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
       content::RenderViewHost* host = content::RenderViewHost::From(
         const_cast<content::RenderWidgetHost*>(widget));
       content::Shell* shell = content::Shell::FromRenderViewHost(host);
-      if (shell && shell->is_devtools())
+      if (shell && (shell->is_devtools() || !shell->nodejs()))
         return;
     }
   }
