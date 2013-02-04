@@ -211,9 +211,7 @@ void DispatcherHost::OnCreateShell(const std::string& url,
                                &new_renderer) && new_renderer)
     browser_context->set_pinning_renderer(false);
 
-  WebContents::CreateParams create_params(
-      browser_context,
-      base_web_contents->GetSiteInstance());
+  WebContents::CreateParams create_params(browser_context, NULL);
 
   WebContents* web_contents = content::WebContentsImpl::CreateWithOpener(
       create_params,
