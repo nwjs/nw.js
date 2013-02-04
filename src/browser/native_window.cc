@@ -67,7 +67,11 @@ NativeWindow::NativeWindow(content::Shell* shell,
                            base::DictionaryValue* manifest)
     : shell_(shell),
       has_frame_(true) {
-  manifest->GetBoolean(switches::kmFrame, &has_frame_);
+  bool transparent;
+  if(manifest->GetBoolean(switches::kmTransparent, &transparent) && transparent)
+    has_frame_ = false;
+  else
+    manifest->GetBoolean(switches::kmFrame, &has_frame_);
 
   LoadAppIconFromPackage(manifest);
 }
@@ -120,6 +124,13 @@ void NativeWindow::InitFromManifest(base::DictionaryValue* manifest) {
   bool kiosk;
   if (manifest->GetBoolean(switches::kmKiosk, &kiosk) && kiosk) {
     SetKiosk(kiosk);
+  }
+  bool transparent;
+  if (manifest->GetBoolean(switches::kmTransparent, &transparent) && transparent) {
+    SetTransparent();
+
+    /* Transparent windows cannot have toolbars or other window controls */
+    manifest->SetBoolean(switches::kmToolbar, false);
   }
   bool toolbar = true;
   manifest->GetBoolean(switches::kmToolbar, &toolbar);

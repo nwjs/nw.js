@@ -84,10 +84,15 @@ class NativeWindow {
   virtual void SetPosition(const std::string& position) = 0;
   virtual void SetPosition(const gfx::Point& position) = 0;
   virtual gfx::Point GetPosition() = 0;
+  virtual gfx::Point GetMousePosition() = 0;
+  virtual void BeginOffclientMouseMove() = 0;
+  virtual void EndOffclientMouseMove() = 0;
   virtual void SetTitle(const std::string& title) = 0;
   virtual void FlashFrame(bool flash) = 0;
   virtual void SetKiosk(bool kiosk) = 0;
   virtual bool IsKiosk() = 0;
+  virtual void SetTransparent() = 0;
+  virtual bool IsTransparent() = 0;
   virtual void SetMenu(api::Menu* menu) = 0;
 
   // Toolbar related controls.

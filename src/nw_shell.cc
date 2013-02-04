@@ -36,6 +36,7 @@
 #include "content/public/browser/notification_types.h"
 #include "content/public/browser/notification_service.h"
 #include "content/public/browser/render_process_host.h"
+#include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/url_constants.h"
@@ -54,6 +55,7 @@
 #include "grit/nw_resources.h"
 #include "net/base/escape.h"
 #include "ui/base/resource/resource_bundle.h"
+#include "third_party/skia/include/core/SkBitmap.h"
 
 namespace content {
 
@@ -310,6 +312,21 @@ bool Shell::OnMessageReceived(const IPC::Message& message) {
     IPC_MESSAGE_UNHANDLED(handled = false)
   IPC_END_MESSAGE_MAP()
   return handled;
+}
+
+void Shell::RenderViewCreated(RenderViewHost* render_view_host) {
+  std::string transparent;
+  if(window_->IsTransparent())
+  {
+    SkBitmap background;
+    background.setConfig(SkBitmap::kARGB_8888_Config, 1, 1);
+    background.allocPixels();
+    background.eraseARGB(0x00, 0x00, 0x00, 0x00);
+
+    content::RenderWidgetHostView* view = render_view_host->GetView();
+    DCHECK(view);
+    view->SetBackground(background);
+  }
 }
 
 WebContents* Shell::OpenURLFromTab(WebContents* source,
