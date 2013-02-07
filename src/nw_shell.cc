@@ -315,7 +315,6 @@ bool Shell::OnMessageReceived(const IPC::Message& message) {
 }
 
 void Shell::RenderViewCreated(RenderViewHost* render_view_host) {
-  std::string transparent;
   if(window_->IsTransparent())
   {
     SkBitmap background;
