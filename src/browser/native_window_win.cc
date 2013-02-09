@@ -292,6 +292,13 @@ void NativeWindowWin::Focus(bool focus) {
 
 void NativeWindowWin::Show() {
   window_->Show();
+
+  // We have to re-establish our composition by shaking the compositing surface
+  // TODO: Find a better way of doing this.
+  if(IsTransparent()) {
+    Maximize();
+    Unmaximize();
+  }
 }
 
 void NativeWindowWin::Hide() {
