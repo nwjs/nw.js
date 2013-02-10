@@ -59,8 +59,8 @@ scoped_refptr<CapturePageHelper> CapturePageHelper::Create(
 }
 
 CapturePageHelper::CapturePageHelper(content::Shell *shell)
-    : shell_(shell),
-      content::WebContentsObserver(shell->web_contents()) {
+    : content::WebContentsObserver(shell->web_contents()),
+      shell_(shell) {
 }
 
 CapturePageHelper::~CapturePageHelper() {

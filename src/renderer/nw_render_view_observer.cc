@@ -72,8 +72,6 @@ void NwRenderViewObserver::OnCaptureSnapshot() {
 
 bool NwRenderViewObserver::CaptureSnapshot(WebKit::WebView* view,
                                            SkBitmap* snapshot) {
-  base::TimeTicks beginning_time = base::TimeTicks::Now();
-
   view->layout();
   const WebSize& size = view->size();
 
