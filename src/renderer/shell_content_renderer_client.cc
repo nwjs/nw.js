@@ -33,6 +33,7 @@
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_version.h"
 #include "content/nw/src/renderer/autofill_agent.h"
+#include "content/nw/src/renderer/nw_render_view_observer.h"
 #include "content/nw/src/renderer/prerenderer/prerenderer_client.h"
 #include "content/nw/src/renderer/shell_render_process_observer.h"
 #include "content/public/renderer/render_view.h"
@@ -126,6 +127,7 @@ void ShellContentRendererClient::RenderThreadStarted() {
 
 void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
   new api::Dispatcher(render_view);
+  new nw::NwRenderViewObserver(render_view);
   new prerender::PrerendererClient(render_view);
 
   PageClickTracker* page_click_tracker = new PageClickTracker(render_view);
