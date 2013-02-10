@@ -132,6 +132,10 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     std::string node_main;
     if (package->root()->GetString(switches::kNodeMain, &node_main))
       command_line->AppendSwitchASCII(switches::kNodeMain, node_main);
+
+    std::string snapshot_path;
+    if (package->root()->GetString(switches::kSnapshot, &snapshot_path))
+      command_line->AppendSwitchASCII(switches::kSnapshot, snapshot_path);
   }
 }
 

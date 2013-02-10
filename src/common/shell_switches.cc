@@ -40,6 +40,9 @@ const char kWorkingDirectory[] = "working-directory";
 // Pass the main script to node.
 const char kNodeMain[] = "node-main";
 
+// snapshot file path
+const char kSnapshot[] = "snapshot";
+
 const char kmMain[]   = "main";
 const char kmName[]   = "name";
 const char kmWebkit[] = "webkit";

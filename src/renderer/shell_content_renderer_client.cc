@@ -103,8 +103,15 @@ void ShellContentRendererClient::RenderThreadStarted() {
   // Initialize uv.
   node::SetupUv(argc, argv);
 
+  std::string snapshot_path;
+  if (command_line->HasSwitch(switches::kSnapshot)) {
+    snapshot_path = command_line->GetSwitchValuePath(switches::kSnapshot).AsUTF8Unsafe();
+  }
   // Initialize node after render thread is started.
-  v8::V8::Initialize();
+  if (!snapshot_path.empty()) {
+    v8::V8::Initialize(snapshot_path.c_str());
+  }else
+    v8::V8::Initialize();
   v8::HandleScope scope;
 
   // Install window bindings into node. The Window API is implemented in node's
