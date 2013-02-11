@@ -96,13 +96,19 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
     : ALLOW_THIS_IN_INITIALIZER_LIST(weak_ptr_factory_(this)),
       is_devtools_(false),
       force_close_(false),
-      id_(-1) {
+      id_(-1),
+      enable_nodejs_(true)
+{
   // Register shell.
   registrar_.Add(this, NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,
       Source<WebContents>(web_contents));
   registrar_.Add(this, NOTIFICATION_RENDERER_PROCESS_CLOSED,
                  NotificationService::AllBrowserContextsAndSources());
   windows_.push_back(this);
+
+  bool enable_nodejs = true;
+  if (manifest->GetBoolean(switches::kmNodejs, &enable_nodejs))
+    enable_nodejs_ = enable_nodejs;
 
   // Add web contents.
   web_contents_.reset(web_contents);

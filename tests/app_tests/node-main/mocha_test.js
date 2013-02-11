@@ -6,9 +6,8 @@ describe('node-main', function() {
     it('nw should not close by itself after show devtool',      	   
 	  function(done) {
         this.timeout(0);
-               
-        setTimeout(function(){ done('nw close by itself')}, 3000);
-    
+        var result = false; 
+            
         var child = app_test.createChildProcess({
           execPath: process.execPath,
           appPath: path.join('app_tests', 'show_devtool_after_http_server_created_in_node_main'),
@@ -19,10 +18,16 @@ describe('node-main', function() {
             } else {
               done('erro');    
             }
-            app.kill(); 
+            app.kill();
+            result = true;
           }
         });
         
+        setTimeout(function(){
+          if (!result) {
+            done('nw close by itself')
+          }
+        }, 3000);
         //child.app.stderr.on('data', function(d){ console.log ('app' + d);});
             	    
     })  

@@ -98,7 +98,7 @@ std::string ShellContentBrowserClient::GetApplicationLocale() {
 void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     CommandLine* command_line,
     int child_process_id) {
-  if (command_line->GetSwitchValueASCII("type") == "gpu-process")
+  if (command_line->GetSwitchValueASCII("type") != "renderer")
     return;
   if (child_process_id > 0) {
     content::RenderProcessHost* rph =
@@ -115,7 +115,7 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
       content::RenderViewHost* host = content::RenderViewHost::From(
         const_cast<content::RenderWidgetHost*>(widget));
       content::Shell* shell = content::Shell::FromRenderViewHost(host);
-      if (shell && shell->is_devtools())
+      if (shell && (shell->is_devtools() || !shell->nodejs()))
         return;
     }
   }
@@ -132,6 +132,10 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     std::string node_main;
     if (package->root()->GetString(switches::kNodeMain, &node_main))
       command_line->AppendSwitchASCII(switches::kNodeMain, node_main);
+
+    std::string snapshot_path;
+    if (package->root()->GetString(switches::kSnapshot, &snapshot_path))
+      command_line->AppendSwitchASCII(switches::kSnapshot, snapshot_path);
   }
 }
 
