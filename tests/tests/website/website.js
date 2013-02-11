@@ -26,5 +26,22 @@ describe('website', function() {
         this.close(true);
       });
     });
+    
+    
+    it('should support WebGL at get.webgl.org', function(done) {
+      this.timeout(0);
+      var win = gui.Window.open('http://get.webgl.org', { show: false });
+      win.on('loaded', function() {
+        var results = win.window.document.getElementById('webgl-yes');
+        if (results.classList.contains('webgl-hidden')) {
+          done('do not support WebGL');
+        } else {
+          done();
+        }
+        win.close();
+      });
+    })
+    
+    
   });
 });

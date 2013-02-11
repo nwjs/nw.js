@@ -22,6 +22,9 @@ class ShellResourceDispatcherHostDelegate
                                  net::AuthChallengeInfo* auth_info) OVERRIDE;
   virtual ResourceDispatcherHostLoginDelegate* CreateLoginDelegate(
       net::AuthChallengeInfo* auth_info, net::URLRequest* request) OVERRIDE;
+  virtual bool HandleExternalProtocol(const GURL& url,
+                                      int child_id,
+                                      int route_id) OVERRIDE;
 
   // Used for content_browsertests.
   void set_login_request_callback(

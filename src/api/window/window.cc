@@ -122,6 +122,10 @@ void Window::Call(const std::string& method,
     shell_->window()->BeginOffclientMouseMove();
   } else if (method == "EndOffclientMouseMove") {
     shell_->window()->EndOffclientMouseMove();
+  } else if (method == "CapturePage") {
+    std::string image_format_str;
+    if (arguments.GetString(0, &image_format_str))
+      shell_->window()->CapturePage(image_format_str);
   } else {
     NOTREACHED() << "Invalid call to Window method:" << method
                  << " arguments:" << arguments;

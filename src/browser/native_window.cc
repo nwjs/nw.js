@@ -21,6 +21,7 @@
 #include "content/nw/src/browser/native_window.h"
 
 #include "base/values.h"
+#include "content/nw/src/browser/capture_page_helper.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
@@ -66,7 +67,8 @@ NativeWindow* NativeWindow::Create(content::Shell* shell,
 NativeWindow::NativeWindow(content::Shell* shell,
                            base::DictionaryValue* manifest)
     : shell_(shell),
-      has_frame_(true) {
+      has_frame_(true),
+      capture_page_helper_(NULL) {
   bool transparent;
   if(manifest->GetBoolean(switches::kmTransparent, &transparent) && transparent)
     has_frame_ = false;
@@ -146,6 +148,14 @@ void NativeWindow::InitFromManifest(base::DictionaryValue* manifest) {
   manifest->GetBoolean(switches::kmShow, &show);
   if (show)
     Show();
+}
+
+void NativeWindow::CapturePage(const std::string& image_format) {
+  // Lazily instance CapturePageHelper.
+  if (capture_page_helper_ == NULL)
+    capture_page_helper_ = CapturePageHelper::Create(shell_);
+
+  capture_page_helper_->StartCapturePage(image_format);
 }
 
 void NativeWindow::LoadAppIconFromPackage(base::DictionaryValue* manifest) {

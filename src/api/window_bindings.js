@@ -341,4 +341,18 @@ Window.prototype.reloadDev = function() {
   this.reload(3);
 }
 
+Window.prototype.capturePage = function(callback, image_format) {
+  if (image_format != 'jpeg' && image_format != 'png') {
+    image_format = 'jpeg';
+  }
+
+  if (typeof callback == 'function') {
+    this.once('capturepagedone', function(imgdata) {
+      callback(imgdata);
+    });
+  }
+
+  CallObjectMethod(this, 'CapturePage', [image_format]);
+}
+
 }  // function Window.init

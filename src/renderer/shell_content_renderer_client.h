@@ -52,7 +52,8 @@ class ShellContentRendererClient : public ContentRendererClient {
   scoped_ptr<ShellRenderProcessObserver> shell_observer_;
   scoped_ptr<api::WindowBindings> window_bindings_;;
 
-  void InstallNodeSymbols(v8::Handle<v8::Context> context, const GURL& url,
+  void InstallNodeSymbols(WebKit::WebFrame* frame,
+                          v8::Handle<v8::Context> context, const GURL& url,
                           bool force_on = false);
 
   // Catch node uncaughtException.

@@ -667,8 +667,10 @@ bool NativeWindowWin::ExecuteWindowsCommand(int command_id) {
 }
 
 bool NativeWindowWin::ExecuteAppCommand(int command_id) {
-  if (menu_)
+  if (menu_) {
     menu_->menu_delegate_->ExecuteCommand(command_id);
+    menu_->menu_->UpdateStates();
+  }
 
   return false;
 }
@@ -684,28 +686,8 @@ void NativeWindowWin::OnViewWasResized() {
   DCHECK(web_view_);
   gfx::Size sz = web_view_->size();
   int height = sz.height(), width = sz.width();
-  int radius = 1;
   gfx::Path path;
-  if (window_->IsMaximized() || window_->IsFullscreen() || IsTransparent()) {
-    // Don't round the corners when the window is maximized or fullscreen.
-    path.addRect(0, 0, width, height);
-  } else {
-    if (!has_frame()) {
-      path.moveTo(0, radius);
-      path.lineTo(radius, 0);
-      path.lineTo(width - radius, 0);
-      path.lineTo(width, radius);
-    } else {
-      // Don't round the top corners in chrome-style frame mode.
-      path.moveTo(0, 0);
-      path.lineTo(width, 0);
-    }
-    path.lineTo(width, height - radius - 1);
-    path.lineTo(width - radius - 1, height);
-    path.lineTo(radius + 1, height);
-    path.lineTo(0, height - radius - 1);
-    path.close();
-  }
+  path.addRect(0, 0, width, height);
   SetWindowRgn(web_contents()->GetNativeView(), path.CreateNativeRegion(), 1);
 
   SkRegion* rgn = new SkRegion;
@@ -713,13 +695,14 @@ void NativeWindowWin::OnViewWasResized() {
     if (draggable_region())
       rgn->op(*draggable_region(), SkRegion::kUnion_Op);
     if (!window_->IsMaximized()) {
-      if (!has_frame())
+      if (!has_frame()) {
         rgn->op(0, 0, width, kResizeInsideBoundsSize, SkRegion::kUnion_Op);
-      rgn->op(0, 0, kResizeInsideBoundsSize, height, SkRegion::kUnion_Op);
-      rgn->op(width - kResizeInsideBoundsSize, 0, width, height,
-          SkRegion::kUnion_Op);
-      rgn->op(0, height - kResizeInsideBoundsSize, width, height,
-          SkRegion::kUnion_Op);
+        rgn->op(0, 0, kResizeInsideBoundsSize, height, SkRegion::kUnion_Op);
+        rgn->op(width - kResizeInsideBoundsSize, 0, width, height,
+            SkRegion::kUnion_Op);
+        rgn->op(0, height - kResizeInsideBoundsSize, width, height,
+            SkRegion::kUnion_Op);
+      }
     }
   }
   if (web_contents()->GetRenderViewHost()->GetView())

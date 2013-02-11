@@ -40,12 +40,16 @@ const char kWorkingDirectory[] = "working-directory";
 // Pass the main script to node.
 const char kNodeMain[] = "node-main";
 
+// snapshot file path
+const char kSnapshot[] = "snapshot";
+
 const char kmMain[]   = "main";
 const char kmName[]   = "name";
 const char kmWebkit[] = "webkit";
 const char kmNodejs[] = "nodejs";
 const char kmWindow[] = "window";
 const char kmChromiumArgs[] = "chromium-args";
+const char kmJsFlags[] = "js-flags";
 
 // Allows only one instance of the app.
 const char kmSingleInstance[] = "single-instance";
