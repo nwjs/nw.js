@@ -445,11 +445,13 @@ bool NativeWindowCocoa::IsFullscreen() {
 
 void NativeWindowCocoa::SetTransparent() {
   is_transparent_ = true;
-  restored_bounds_ = [window() frame];
-  [window() setStyleMask:(NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask)];
-  [window() setFrame:[window()
+  if(base::mac::IsOSMountainLionOrLater()) {
+    restored_bounds_ = [window() frame];
+    [window() setStyleMask:(NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask)];
+    [window() setFrame:[window()
                       frameRectForContentRect:[window() frame]]
              display:YES];
+  }
   [window() setHasShadow:NO];
   ShellNSWindow* swin = (ShellNSWindow*)window();
   [swin setTransparent];
