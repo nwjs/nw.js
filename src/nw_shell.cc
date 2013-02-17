@@ -26,7 +26,7 @@
 #include "base/utf_string_conversions.h"
 #include "base/values.h"
 #include "content/browser/child_process_security_policy_impl.h"
-#include "content/public/browser/devtools_agent_host_registry.h"
+#include "content/public/browser/devtools_agent_host.h"
 #include "content/public/browser/devtools_http_handler.h"
 #include "content/public/browser/devtools_manager.h"
 #include "content/public/browser/navigation_entry.h"
@@ -36,6 +36,7 @@
 #include "content/public/browser/notification_types.h"
 #include "content/public/browser/notification_service.h"
 #include "content/public/browser/render_process_host.h"
+#include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/url_constants.h"
@@ -54,6 +55,7 @@
 #include "grit/nw_resources.h"
 #include "net/base/escape.h"
 #include "ui/base/resource/resource_bundle.h"
+#include "third_party/skia/include/core/SkBitmap.h"
 
 namespace content {
 
@@ -68,11 +70,9 @@ Shell* Shell::Create(BrowserContext* browser_context,
                      SiteInstance* site_instance,
                      int routing_id,
                      WebContents* base_web_contents) {
-  WebContents* web_contents = WebContents::Create(
-      browser_context,
-      site_instance,
-      routing_id,
-      base_web_contents);
+  WebContents::CreateParams create_params(browser_context, site_instance);
+  create_params.routing_id = routing_id;
+  WebContents* web_contents = WebContents::Create(create_params);
 
   Shell* shell = new Shell(web_contents, GetPackage()->window());
   NavigationController::LoadURLParams params(url);
@@ -98,13 +98,19 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
     : ALLOW_THIS_IN_INITIALIZER_LIST(weak_ptr_factory_(this)),
       is_devtools_(false),
       force_close_(false),
-      id_(-1) {
+      id_(-1),
+      enable_nodejs_(true)
+{
   // Register shell.
   registrar_.Add(this, NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,
       Source<WebContents>(web_contents));
   registrar_.Add(this, NOTIFICATION_RENDERER_PROCESS_CLOSED,
                  NotificationService::AllBrowserContextsAndSources());
   windows_.push_back(this);
+
+  bool enable_nodejs = true;
+  if (manifest->GetBoolean(switches::kmNodejs, &enable_nodejs))
+    enable_nodejs_ = enable_nodejs;
 
   // Add web contents.
   web_contents_.reset(web_contents);
@@ -257,19 +263,18 @@ void Shell::ShowDevTools() {
   }
 
   RenderViewHost* inspected_rvh = web_contents()->GetRenderViewHost();
-  DevToolsAgentHost* agent = DevToolsAgentHostRegistry::GetDevToolsAgentHost(
-      inspected_rvh);
+  scoped_refptr<DevToolsAgentHost> agent(DevToolsAgentHost::GetFor(inspected_rvh));
   DevToolsManager* manager = DevToolsManager::GetInstance();
-  DevToolsClientHost* host = manager->GetDevToolsClientHostFor(agent);
+  DevToolsClientHost* host = manager->GetDevToolsClientHostFor(agent.get());
 
   if (host) {
     // Break remote debugging debugging session.
-    manager->UnregisterDevToolsClientHostFor(agent);
+    manager->UnregisterDevToolsClientHostFor(agent.get());
   }
 
   ShellDevToolsDelegate* delegate =
       browser_client->shell_browser_main_parts()->devtools_delegate();
-  GURL url = delegate->devtools_http_handler()->GetFrontendURL(inspected_rvh);
+  GURL url = delegate->devtools_http_handler()->GetFrontendURL(agent.get());
 
   // Use our minimum set manifest
   base::DictionaryValue manifest;
@@ -285,10 +290,9 @@ void Shell::ShowDevTools() {
                                                 // new renderer
                                                 // process or break
                                                 // points will stall both
-  Shell* shell = new Shell(
-      WebContents::Create(web_contents()->GetBrowserContext(),
-                          NULL, MSG_ROUTING_NONE, NULL),
-      &manifest);
+  WebContents::CreateParams create_params(web_contents()->GetBrowserContext(), NULL);
+  WebContents* web_contents = WebContents::Create(create_params);
+  Shell* shell = new Shell(web_contents, &manifest);
   browser_context->set_pinning_renderer(true);
 
   int rh_id = shell->web_contents_->GetRenderProcessHost()->GetID();
@@ -314,6 +318,20 @@ bool Shell::OnMessageReceived(const IPC::Message& message) {
     IPC_MESSAGE_UNHANDLED(handled = false)
   IPC_END_MESSAGE_MAP()
   return handled;
+}
+
+void Shell::RenderViewCreated(RenderViewHost* render_view_host) {
+  if(window_->IsTransparent())
+  {
+    SkBitmap background;
+    background.setConfig(SkBitmap::kARGB_8888_Config, 1, 1);
+    background.allocPixels();
+    background.eraseARGB(0x00, 0x00, 0x00, 0x00);
+
+    content::RenderWidgetHostView* view = render_view_host->GetView();
+    DCHECK(view);
+    view->SetBackground(background);
+  }
 }
 
 WebContents* Shell::OpenURLFromTab(WebContents* source,
@@ -438,9 +456,9 @@ void Shell::HandleKeyboardEvent(WebContents* source,
 }
 
 void Shell::RequestMediaAccessPermission(
-      content::WebContents* web_contents,
-      const content::MediaStreamRequest* request,
-      const content::MediaResponseCallback& callback) {
+      WebContents* web_contents,
+      const MediaStreamRequest& request,
+      const MediaResponseCallback& callback) {
   scoped_ptr<MediaStreamDevicesController>
       controller(new MediaStreamDevicesController(request,
                                                   callback));

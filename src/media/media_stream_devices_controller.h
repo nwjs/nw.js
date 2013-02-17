@@ -1,36 +1,18 @@
-// Copyright (c) 2012 Intel Corp
-// Copyright (c) 2012 The Chromium Authors
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy 
-// of this software and associated documentation files (the "Software"), to deal
-//  in the Software without restriction, including without limitation the rights
-//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell co
-// pies of the Software, and to permit persons to whom the Software is furnished
-//  to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in al
-// l copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IM
-// PLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNES
-// S FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-//  OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WH
-// ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-//  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
-#ifndef CONTENT_NW_SRC_MEDIA_MEDIA_STREAM_DEVICES_CONTROLLER_H_
-#define CONTENT_NW_SRC_MEDIA_MEDIA_STREAM_DEVICES_CONTROLLER_H_
+#ifndef NW_MEDIA_MEDIA_STREAM_DEVICES_CONTROLLER_H_
+#define NW_MEDIA_MEDIA_STREAM_DEVICES_CONTROLLER_H_
 
 #include <string>
 
 #include "content/public/browser/web_contents_delegate.h"
 
-class GURL;
-
 class MediaStreamDevicesController {
  public:
-  // TODO(xians): Use const content::MediaStreamRequest& instead of *.
-  MediaStreamDevicesController(const content::MediaStreamRequest* request,
+  MediaStreamDevicesController(
+                               const content::MediaStreamRequest& request,
                                const content::MediaResponseCallback& callback);
 
   virtual ~MediaStreamDevicesController();
@@ -43,37 +25,42 @@ class MediaStreamDevicesController {
   // Public methods to be called by MediaStreamInfoBarDelegate;
   bool has_audio() const { return has_audio_; }
   bool has_video() const { return has_video_; }
-  void Accept(const std::string& audio_id,
-              const std::string& video_id,
-              bool always_allow);
-  void Deny();
+  const std::string& GetSecurityOriginSpec() const;
+  void Accept(bool update_content_setting);
+  void Deny(bool update_content_setting);
 
  private:
-  // Used by the various helper methods below to filter an operation on devices
-  // of a particular type.
-  typedef bool (*FilterByDeviceTypeFunc)(content::MediaStreamDeviceType);
+  // Returns true if audio capture is disabled by policy.
+  bool IsAudioDeviceBlockedByPolicy() const;
 
-  // Finds a device in the current request with the specified |id| and |type|,
-  // adds it to the |devices| array and also return the name of the device.
-  void AddDeviceWithId(content::MediaStreamDeviceType type,
-                       const std::string& id,
-                       content::MediaStreamDevices* devices,
-                       std::string* device_name);
+  // Returns true if video capture is disabled by policy.
+  bool IsVideoDeviceBlockedByPolicy() const;
 
-  // Gets the respective "always allowed" devices for the origin in |request_|.
-  // |audio_id| and |video_id| will be empty if there is no "always allowed"
-  // device for the origin, or any of the devices is not listed on the devices
-  // list in |request_|.
-  void GetAlwaysAllowedDevices(std::string* audio_id,
-                               std::string* video_id);
+  // Returns true if the origin of the request has been granted the media
+  // access before, otherwise returns false.
+  bool IsRequestAllowedByDefault() const;
 
-  std::string GetDeviceIdByName(content::MediaStreamDeviceType type,
-                                const std::string& name);
+  // Returns true if the media access for the origin of the request has been
+  // blocked before. Otherwise returns false.
+  bool IsRequestBlockedByDefault() const;
 
-  std::string GetFirstDeviceId(content::MediaStreamDeviceType type);
+  // Returns true if the media section in content settings is set to
+  // |CONTENT_SETTING_BLOCK|, otherwise returns false.
+  bool IsDefaultMediaAccessBlocked() const;
 
-  bool has_audio_;
-  bool has_video_;
+  // Handles Tab Capture media request.
+  void HandleTapMediaRequest();
+
+  // Returns true if the origin is a secure scheme, otherwise returns false.
+  bool IsSchemeSecure() const;
+
+  // Returns true if request's origin is from internal objects like
+  // chrome://URLs, otherwise returns false.
+  bool ShouldAlwaysAllowOrigin() const;
+
+  // Sets the permission of the origin of the request. This is triggered when
+  // the users deny the request or allow the request for https sites.
+  void SetPermission(bool allowed) const;
 
   // The original request for access to devices.
   const content::MediaStreamRequest request_;
@@ -81,7 +68,10 @@ class MediaStreamDevicesController {
   // The callback that needs to be Run to notify WebRTC of whether access to
   // audio/video devices was granted or not.
   content::MediaResponseCallback callback_;
+
+  bool has_audio_;
+  bool has_video_;
   DISALLOW_COPY_AND_ASSIGN(MediaStreamDevicesController);
 };
 
-#endif  // CONTENT_NW_SRC_MEDIA_MEDIA_STREAM_DEVICES_CONTROLLER_H_
+#endif  // CHROME_BROWSER_MEDIA_MEDIA_STREAM_DEVICES_CONTROLLER_H_

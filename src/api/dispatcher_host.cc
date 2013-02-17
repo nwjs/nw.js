@@ -32,10 +32,13 @@
 #include "content/nw/src/api/shell/shell.h"
 #include "content/nw/src/api/tray/tray.h"
 #include "content/nw/src/api/window/window.h"
+#include "content/nw/src/common/shell_switches.h"
+#include "content/nw/src/shell_browser_context.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/render_process_host.h"
 
 using content::WebContents;
+using content::ShellBrowserContext;
 
 namespace api {
 
@@ -198,23 +201,30 @@ void DispatcherHost::OnGetShellId(int* id) {
 void DispatcherHost::OnCreateShell(const std::string& url,
                                    const base::DictionaryValue& manifest,
                                    int* routing_id) {
-  WebContents* base_web_contents = 
+  WebContents* base_web_contents =
       content::Shell::FromRenderViewHost(render_view_host())->web_contents();
-  WebContents* web_contents = content::WebContentsImpl::CreateWithOpener(
-      base_web_contents->GetBrowserContext(),
-      base_web_contents->GetSiteInstance(),
-      MSG_ROUTING_NONE,
-      static_cast<content::WebContentsImpl*>(base_web_contents),
-      static_cast<content::WebContentsImpl*>(base_web_contents));
-
+  ShellBrowserContext* browser_context =
+      static_cast<ShellBrowserContext*>(base_web_contents->GetBrowserContext());
   scoped_ptr<base::DictionaryValue> new_manifest(manifest.DeepCopy());
+  bool new_renderer = false;
+  if (new_manifest->GetBoolean(switches::kmNewInstance,
+                               &new_renderer) && new_renderer)
+    browser_context->set_pinning_renderer(false);
 
+  WebContents::CreateParams create_params(browser_context, NULL);
+
+  WebContents* web_contents = content::WebContentsImpl::CreateWithOpener(
+      create_params,
+      static_cast<content::WebContentsImpl*>(base_web_contents));
   new content::Shell(web_contents, new_manifest.get());
   web_contents->GetController().LoadURL(
       GURL(url),
       content::Referrer(),
       content::PAGE_TRANSITION_TYPED,
       std::string());
+
+  if (new_renderer)
+    browser_context->set_pinning_renderer(true);
 
   *routing_id = web_contents->GetRoutingID();
 }

@@ -22,6 +22,7 @@
 
 #include "base/utf_string_conversions.h"
 #include "base/values.h"
+#include "base/win/windows_version.h"
 #include "base/win/wrapped_window_proc.h"
 #include "chrome/browser/platform_util.h"
 #include "chrome/common/extensions/draggable_region.h"
@@ -32,6 +33,7 @@
 #include "content/public/browser/native_web_keyboard_event.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/render_widget_host_view.h"
+#include "content/public/browser/web_contents.h"
 #include "third_party/skia/include/core/SkPaint.h"
 #include "ui/base/hit_test.h"
 #include "ui/base/win/hwnd_util.h"
@@ -42,6 +44,10 @@
 #include "ui/views/widget/widget.h"
 #include "ui/views/widget/native_widget_win.h"
 #include "ui/views/window/native_frame_view.h"
+
+#include <time.h>
+#include <stdlib.h>
+#include <Dwmapi.h>
 
 namespace nw {
 
@@ -233,6 +239,7 @@ NativeWindowWin::NativeWindowWin(content::Shell* shell,
       web_view_(NULL),
       toolbar_(NULL),
       is_fullscreen_(false),
+      is_transparent_(false),
       is_minimized_(false),
       is_focus_(false),
       is_blur_(false),
@@ -257,7 +264,6 @@ NativeWindowWin::NativeWindowWin(content::Shell* shell,
         gfx::Rect(width,height));
   window_->SetSize(window_bounds.size());
   window_->CenterWindow(window_bounds.size());
-
   window_->UpdateWindowIcon();
 
   OnViewWasResized();
@@ -273,6 +279,11 @@ void NativeWindowWin::Close() {
 
 void NativeWindowWin::Move(const gfx::Rect& bounds) {
   window_->SetBounds(bounds);
+
+  if(IsTransparent()) {
+    MARGINS mgMarInset = { -1, -1, -1, -1 };
+    DwmExtendFrameIntoClientArea(window_->GetNativeWindow(), &mgMarInset);
+  }
 }
 
 void NativeWindowWin::Focus(bool focus) {
@@ -281,6 +292,13 @@ void NativeWindowWin::Focus(bool focus) {
 
 void NativeWindowWin::Show() {
   window_->Show();
+
+  // We have to re-establish our composition by shaking the compositing surface
+  // TODO: Find a better way of doing this.
+  if(IsTransparent()) {
+    Maximize();
+    Unmaximize();
+  }
 }
 
 void NativeWindowWin::Hide() {
@@ -314,6 +332,48 @@ void NativeWindowWin::SetFullscreen(bool fullscreen) {
 
 bool NativeWindowWin::IsFullscreen() {
   return is_fullscreen_;
+}
+
+void NativeWindowWin::SetTransparent() {
+  is_transparent_ = true;
+  
+  // Check for Windows Vista or higher, transparency isn't supported in 
+  // anything lower. 
+  if (base::win::GetVersion() < base::win::VERSION_VISTA) {
+    NOTREACHED() << "The operating system does not support transparency.";
+    is_transparent_ = false;
+    return;
+  }
+
+  // Check to see if composition is disabled, if so we have to throw an 
+  // error, there's no graceful recovery, yet. TODO: Graceful recovery.
+  BOOL enabled = FALSE;
+  HRESULT result = ::DwmIsCompositionEnabled(&enabled);
+  if (!enabled || !SUCCEEDED(result)) {
+    NOTREACHED() << "Windows DWM composition is not enabled, transparency is not supported.";
+    is_transparent_ = false;
+    return;
+  }
+
+  // These override any other window settings, which isn't the greatest idea
+  // however transparent windows (in Windows) are very tricky and are not 
+  // usable with any other styles.
+  SetWindowLong(window_->GetNativeWindow(), GWL_STYLE, WS_POPUP | WS_SYSMENU | WS_BORDER); 
+  SetWindowLong(window_->GetNativeWindow(), GWL_EXSTYLE , WS_EX_COMPOSITED);
+
+  MARGINS mgMarInset = { -1, -1, -1, -1 };
+  if(DwmExtendFrameIntoClientArea(window_->GetNativeWindow(), &mgMarInset) != S_OK) {
+    NOTREACHED() << "Windows DWM extending to client area failed, transparency is not supported.";
+    is_transparent_ = false;
+    return;
+  }
+
+  // Send a message to swap frames and refresh contexts
+  SetWindowPos(window_->GetNativeWindow(), NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+}
+
+bool NativeWindowWin::IsTransparent() {
+  return is_transparent_;
 }
 
 void NativeWindowWin::SetSize(const gfx::Size& size) {
@@ -360,10 +420,29 @@ void NativeWindowWin::SetPosition(const std::string& position) {
 void NativeWindowWin::SetPosition(const gfx::Point& position) {
   gfx::Rect bounds = window_->GetWindowBoundsInScreen();
   window_->SetBounds(gfx::Rect(position, bounds.size()));
+
+  if(IsTransparent()) {
+    MARGINS mgMarInset = { -1, -1, -1, -1 };
+    DwmExtendFrameIntoClientArea(window_->GetNativeWindow(), &mgMarInset);
+  }
 }
 
 gfx::Point NativeWindowWin::GetPosition() {
   return window_->GetWindowBoundsInScreen().origin();
+}
+
+gfx::Point NativeWindowWin::GetMousePosition() {
+  POINT p;
+  GetCursorPos(&p);
+  return gfx::Point(p.x,p.y);
+}
+
+void NativeWindowWin::BeginOffclientMouseMove() {
+  SetCapture(window_->GetNativeWindow());
+}
+
+void NativeWindowWin::EndOffclientMouseMove() {
+  ReleaseCapture();
 }
 
 void NativeWindowWin::FlashFrame(bool flash) {
@@ -386,8 +465,7 @@ void NativeWindowWin::SetMenu(api::Menu* menu) {
   menu->Rebuild();
 
   // menu is api::Menu, menu->menu_ is NativeMenuWin,
-  // we use menu->menu_->menu() to get real HMENU, ugly here.
-  ::SetMenu(window_->GetNativeWindow(), menu->menu_->menu());
+  ::SetMenu(window_->GetNativeWindow(), menu->menu_->GetNativeMenu());
 }
 
 void NativeWindowWin::SetTitle(const std::string& title) {
@@ -589,8 +667,10 @@ bool NativeWindowWin::ExecuteWindowsCommand(int command_id) {
 }
 
 bool NativeWindowWin::ExecuteAppCommand(int command_id) {
-  if (menu_)
+  if (menu_) {
     menu_->menu_delegate_->ExecuteCommand(command_id);
+    menu_->menu_->UpdateStates();
+  }
 
   return false;
 }
@@ -606,28 +686,8 @@ void NativeWindowWin::OnViewWasResized() {
   DCHECK(web_view_);
   gfx::Size sz = web_view_->size();
   int height = sz.height(), width = sz.width();
-  int radius = 1;
   gfx::Path path;
-  if (window_->IsMaximized() || window_->IsFullscreen()) {
-    // Don't round the corners when the window is maximized or fullscreen.
-    path.addRect(0, 0, width, height);
-  } else {
-    if (!has_frame()) {
-      path.moveTo(0, radius);
-      path.lineTo(radius, 0);
-      path.lineTo(width - radius, 0);
-      path.lineTo(width, radius);
-    } else {
-      // Don't round the top corners in chrome-style frame mode.
-      path.moveTo(0, 0);
-      path.lineTo(width, 0);
-    }
-    path.lineTo(width, height - radius - 1);
-    path.lineTo(width - radius - 1, height);
-    path.lineTo(radius + 1, height);
-    path.lineTo(0, height - radius - 1);
-    path.close();
-  }
+  path.addRect(0, 0, width, height);
   SetWindowRgn(web_contents()->GetNativeView(), path.CreateNativeRegion(), 1);
 
   SkRegion* rgn = new SkRegion;
@@ -635,13 +695,14 @@ void NativeWindowWin::OnViewWasResized() {
     if (draggable_region())
       rgn->op(*draggable_region(), SkRegion::kUnion_Op);
     if (!window_->IsMaximized()) {
-      if (!has_frame())
+      if (!has_frame()) {
         rgn->op(0, 0, width, kResizeInsideBoundsSize, SkRegion::kUnion_Op);
-      rgn->op(0, 0, kResizeInsideBoundsSize, height, SkRegion::kUnion_Op);
-      rgn->op(width - kResizeInsideBoundsSize, 0, width, height,
-          SkRegion::kUnion_Op);
-      rgn->op(0, height - kResizeInsideBoundsSize, width, height,
-          SkRegion::kUnion_Op);
+        rgn->op(0, 0, kResizeInsideBoundsSize, height, SkRegion::kUnion_Op);
+        rgn->op(width - kResizeInsideBoundsSize, 0, width, height,
+            SkRegion::kUnion_Op);
+        rgn->op(0, height - kResizeInsideBoundsSize, width, height,
+            SkRegion::kUnion_Op);
+      }
     }
   }
   if (web_contents()->GetRenderViewHost()->GetView())

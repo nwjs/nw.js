@@ -1,4 +1,11 @@
 .DS_Store
 tests/node_modules
+tests/native_modules
+tests/tmp-nw
 *.pyc
-
+*~
+.*.sw?
+.project
+.pydevproject
+tags
+Thumbs.db

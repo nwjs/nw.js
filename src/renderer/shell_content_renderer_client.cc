@@ -33,6 +33,7 @@
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_version.h"
 #include "content/nw/src/renderer/autofill_agent.h"
+#include "content/nw/src/renderer/nw_render_view_observer.h"
 #include "content/nw/src/renderer/prerenderer/prerenderer_client.h"
 #include "content/nw/src/renderer/shell_render_process_observer.h"
 #include "content/public/renderer/render_view.h"
@@ -102,8 +103,15 @@ void ShellContentRendererClient::RenderThreadStarted() {
   // Initialize uv.
   node::SetupUv(argc, argv);
 
+  std::string snapshot_path;
+  if (command_line->HasSwitch(switches::kSnapshot)) {
+    snapshot_path = command_line->GetSwitchValuePath(switches::kSnapshot).AsUTF8Unsafe();
+  }
   // Initialize node after render thread is started.
-  v8::V8::Initialize();
+  if (!snapshot_path.empty()) {
+    v8::V8::Initialize(snapshot_path.c_str());
+  }else
+    v8::V8::Initialize();
   v8::HandleScope scope;
 
   // Install window bindings into node. The Window API is implemented in node's
@@ -126,6 +134,7 @@ void ShellContentRendererClient::RenderThreadStarted() {
 
 void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
   new api::Dispatcher(render_view);
+  new nw::NwRenderViewObserver(render_view);
   new prerender::PrerendererClient(render_view);
 
   PageClickTracker* page_click_tracker = new PageClickTracker(render_view);
@@ -144,7 +153,7 @@ void ShellContentRendererClient::DidCreateScriptContext(
   ProxyBypassRules rules;
   rules.ParseFromString(rv->renderer_preferences_.nw_remote_page_rules);
   bool force_on = rules.Matches(url);
-  InstallNodeSymbols(context, url, force_on);
+  InstallNodeSymbols(frame, context, url, force_on);
 }
 
 bool ShellContentRendererClient::WillSetSecurityToken(
@@ -157,6 +166,7 @@ bool ShellContentRendererClient::WillSetSecurityToken(
 }
 
 void ShellContentRendererClient::InstallNodeSymbols(
+    WebKit::WebFrame* frame,
     v8::Handle<v8::Context> context,
     const GURL& url,
     bool force_on) {
@@ -165,6 +175,12 @@ void ShellContentRendererClient::InstallNodeSymbols(
   static bool installed_once = false;
 
   bool is_file_protocol = url.SchemeIsFile();
+  v8::Local<v8::Object> nodeGlobal = node::g_context->Global();
+  v8::Local<v8::Object> v8Global = context->Global();
+
+  // Use WebKit's console globally
+  nodeGlobal->Set(v8::String::New("console"),
+                  v8Global->Get(v8::String::New("console")));
 
   // Do we integrate node?
   bool use_node =
@@ -183,12 +199,12 @@ void ShellContentRendererClient::InstallNodeSymbols(
     symbols->Set(2, v8::String::New("Buffer"));
     symbols->Set(3, v8::String::New("root"));
 
-    v8::Local<v8::Object> nodeGlobal = node::g_context->Global();
-    v8::Local<v8::Object> v8Global = context->Global();
     for (unsigned i = 0; i < symbols->Length(); ++i) {
       v8::Local<v8::Value> key = symbols->Get(i);
       v8Global->Set(key, nodeGlobal->Get(key));
     }
+
+    frame->setNodeJS(true);
 
     if (!installed_once) {
       installed_once = true;
@@ -211,21 +227,21 @@ void ShellContentRendererClient::InstallNodeSymbols(
   if (use_node) {
     v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
         // Make node's relative modules work
+        "if (!process.mainModule.filename) {"
 #if defined(OS_WIN)
         "process.mainModule.filename = decodeURIComponent(window.location.pathname.substr(1));"
 #else
         "process.mainModule.filename = decodeURIComponent(window.location.pathname);"
 #endif
         "process.mainModule.paths = global.require('module')._nodeModulePaths(process.cwd());"
+        "process.mainModule.loaded = true;"
+        "}"
     ));
     script->Run();
   }
 
   if (use_node || is_nw_protocol) {
     v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
-        // Use WebKit's console globally
-        "global.console = console;"
-
         // Overload require
         "window.require = function(name) {"
         "  if (name == 'nw.gui')"

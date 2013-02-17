@@ -28,7 +28,10 @@
 #include "webkit/support/gc_extension.h"
 #include "third_party/node/src/node.h"
 #include "third_party/node/src/req_wrap.h"
+#include "third_party/WebKit/Source/WebKit/chromium/public/WebRuntimeFeatures.h"
 #include "v8/include/v8.h"
+
+using WebKit::WebRuntimeFeatures;
 
 namespace content {
 
@@ -58,6 +61,7 @@ void ShellRenderProcessObserver::OnRenderProcessWillShutdown() {
 
 void ShellRenderProcessObserver::WebKitInitialized() {
   RenderThread::Get()->RegisterExtension(new api::DispatcherBindings());
+  WebRuntimeFeatures::enableCSSRegions(true);
 }
 
 void ShellRenderProcessObserver::OnOpen(const std::string& path) {

@@ -113,6 +113,7 @@ class Shell : public WebContentsDelegate,
 
   void set_force_close(bool force) { force_close_ = force; }
   bool is_devtools() const { return is_devtools_; }
+  bool nodejs() const { return enable_nodejs_; }
   bool force_close() const { return force_close_; }
   void set_id(int id) { id_ = id; }
   int id() const { return id_; }
@@ -120,7 +121,7 @@ class Shell : public WebContentsDelegate,
  protected:
   // content::WebContentsObserver implementation.
   virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
-
+  virtual void RenderViewCreated(RenderViewHost* render_view_host) OVERRIDE;
   // content::WebContentsDelegate implementation.
   virtual WebContents* OpenURLFromTab(WebContents* source,
                                       const OpenURLParams& params) OVERRIDE;
@@ -155,9 +156,9 @@ class Shell : public WebContentsDelegate,
                                    int32 line_no,
                                    const string16& source_id) OVERRIDE;
   virtual void RequestMediaAccessPermission(
-      content::WebContents* web_contents,
-      const content::MediaStreamRequest* request,
-      const content::MediaResponseCallback& callback) OVERRIDE;
+      WebContents* web_contents,
+      const MediaStreamRequest& request,
+      const MediaResponseCallback& callback) OVERRIDE;
 
  private:
   void UpdateDraggableRegions(
@@ -190,6 +191,7 @@ class Shell : public WebContentsDelegate,
   // ID of corresponding js object.
   int id_;
 
+  bool enable_nodejs_;
   // A container of all the open windows. We use a vector so we can keep track
   // of ordering.
   static std::vector<Shell*> windows_;

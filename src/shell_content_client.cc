@@ -21,6 +21,8 @@
 #include "content/nw/src/shell_content_client.h"
 
 #include "base/string_piece.h"
+#include "content/nw/src/api/api_messages.h"
+#include "content/nw/src/renderer/common/render_messages.h"
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "webkit/user_agent/user_agent_util.h"
@@ -31,7 +33,7 @@ ShellContentClient::~ShellContentClient() {
 }
 
 std::string ShellContentClient::GetUserAgent() const {
-  return webkit_glue::BuildUserAgentFromProduct("Chrome/25.0.1337.0");
+  return webkit_glue::BuildUserAgentFromProduct("Chrome/26.0.1377.0");
 }
 
 string16 ShellContentClient::GetLocalizedString(int message_id) const {
@@ -46,6 +48,28 @@ base::StringPiece ShellContentClient::GetDataResource(
 
 gfx::Image& ShellContentClient::GetNativeImageNamed(int resource_id) const {
   return ResourceBundle::GetSharedInstance().GetNativeImageNamed(resource_id);
+}
+
+// This is for message handling after the rvh is swapped out
+// FIXME: move dispatcher_host to WebContentsObserver
+
+bool ShellContentClient::CanHandleWhileSwappedOut(
+    const IPC::Message& msg) {
+  switch (msg.type()) {
+    case ShellViewHostMsg_Allocate_Object::ID:
+    case ShellViewHostMsg_Deallocate_Object::ID:
+    case ShellViewHostMsg_Call_Object_Method::ID:
+    case ShellViewHostMsg_Call_Object_Method_Sync::ID:
+    case ShellViewHostMsg_Call_Static_Method::ID:
+    case ShellViewHostMsg_Call_Static_Method_Sync::ID:
+    case ShellViewHostMsg_UncaughtException::ID:
+    case ShellViewHostMsg_GetShellId::ID:
+    case ShellViewHostMsg_CreateShell::ID:
+      return true;
+    default:
+      break;
+  }
+  return false;
 }
 
 }  // namespace content

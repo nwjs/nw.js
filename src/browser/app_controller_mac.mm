@@ -34,6 +34,7 @@
            openFile:(NSString*)filename {
   if (content::Shell::windows().size() == 0) {
     CommandLine::ForCurrentProcess()->AppendArg([filename UTF8String]);
+    CommandLine::ForCurrentProcess()->FixOrigArgv4Finder([filename UTF8String]);
     return TRUE;
   }
 

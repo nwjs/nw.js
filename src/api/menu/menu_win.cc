@@ -21,20 +21,67 @@
 #include "content/nw/src/api/menu/menu.h"
 
 #include "base/values.h"
+#include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
 #include "content/nw/src/browser/native_window_win.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
+#include "skia/ext/image_operations.h"
+#include "ui/gfx/gdi_util.h"
+#include "ui/gfx/icon_util.h"
 #include "ui/views/controls/menu/menu_2.h"
 #include "ui/views/widget/widget.h"
 
+namespace {
+
+HBITMAP GetNativeBitmapFromSkBitmap(const SkBitmap& bitmap) {
+  int width = bitmap.width();
+  int height = bitmap.height();
+
+  BITMAPV4HEADER native_bitmap_header;
+  gfx::CreateBitmapV4Header(width, height, &native_bitmap_header);
+
+  HDC dc = ::GetDC(NULL);
+  void* bits;
+  HBITMAP native_bitmap = ::CreateDIBSection(dc,
+      reinterpret_cast<BITMAPINFO*>(&native_bitmap_header),
+      DIB_RGB_COLORS,
+      &bits,
+      NULL,
+      0);
+  DCHECK(native_bitmap);
+  ::ReleaseDC(NULL, dc);
+  bitmap.copyPixelsTo(bits, width * height * 4, width * 4);
+  return native_bitmap;
+}
+
+} // namespace
+
+
+namespace ui {
+
+NwMenuModel::NwMenuModel(Delegate* delegate) : SimpleMenuModel(delegate) {
+}
+
+bool NwMenuModel::HasIcons() const {
+  // Always return false, see the comment about |NwMenuModel|.
+  return false;
+}
+
+} // namespace ui
+
 namespace api {
+
+// The width of the icon for the menuitem
+static const int kIconWidth = 16;
+// The height of the icon for the menuitem
+static const int kIconHeight = 16;
 
 void Menu::Create(const base::DictionaryValue& option) {
   is_menu_modified_ = true;
   menu_delegate_.reset(new MenuDelegate(dispatcher_host()));
-  menu_model_.reset(new ui::SimpleMenuModel(menu_delegate_.get()));
+  menu_model_.reset(new ui::NwMenuModel(menu_delegate_.get()));
   menu_.reset(new views::NativeMenuWin(menu_model_.get(), NULL));
 
   std::string type;
@@ -43,6 +90,9 @@ void Menu::Create(const base::DictionaryValue& option) {
 }
 
 void Menu::Destroy() {
+  for (size_t index = 0; index < icon_bitmaps_.size(); ++index) {
+    ::DeleteObject(icon_bitmaps_[index]);
+  }
 }
 
 void Menu::Append(MenuItem* menu_item) {
@@ -90,10 +140,50 @@ void Menu::Popup(int x, int y, content::Shell* shell) {
                    views::Menu2::ALIGN_TOPLEFT);
 }
 
-void Menu::Rebuild() {
+void Menu::Rebuild(const gfx::NativeMenu *parent_menu) {
   if (is_menu_modified_) {
     // Refresh menu before show.
     menu_->Rebuild();
+    menu_->UpdateStates();
+    for (size_t index = 0; index < icon_bitmaps_.size(); ++index) {
+      ::DeleteObject(icon_bitmaps_[index]);
+    }
+    icon_bitmaps_.clear();
+
+    gfx::NativeMenu native_menu = parent_menu == NULL ?
+        menu_->GetNativeMenu() : *parent_menu;
+
+    int first_item_index =
+        menu_model_->GetFirstItemIndex(native_menu);
+    for (int menu_index = first_item_index;
+          menu_index < first_item_index + menu_model_->GetItemCount();
+          ++menu_index) {
+      int model_index = menu_index - first_item_index;
+      int command_id = menu_model_->GetCommandIdAt(model_index);
+
+      if (menu_model_->GetTypeAt(model_index) == ui::MenuModel::TYPE_COMMAND ||
+          menu_model_->GetTypeAt(model_index) == ui::MenuModel::TYPE_SUBMENU) {
+        gfx::Image icon;
+        menu_model_->GetIconAt(model_index, &icon);
+        if (!icon.IsEmpty()) {
+          SkBitmap resized_bitmap =
+              skia::ImageOperations::Resize(*icon.ToSkBitmap(),
+                                            skia::ImageOperations::RESIZE_GOOD,
+                                            kIconWidth,
+                                            kIconHeight);
+          HBITMAP icon_bitmap = GetNativeBitmapFromSkBitmap(resized_bitmap);
+          ::SetMenuItemBitmaps(native_menu, command_id, MF_BYCOMMAND,
+                               icon_bitmap, icon_bitmap);
+          icon_bitmaps_.push_back(icon_bitmap);
+        }
+      }
+
+      MenuItem* item = dispatcher_host()->GetApiObject<MenuItem>(command_id);
+      if (item != NULL && item->submenu_) {
+        item->submenu_->Rebuild(&native_menu);
+      }
+    }
+
     is_menu_modified_ = false;
   }
 }

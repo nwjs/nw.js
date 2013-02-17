@@ -28,6 +28,7 @@ App.filteredArgv = [
   /--no-toolbar/,
   /--url=.*/,
   /--remote-debugging-port=.*/,
+  /--renderer-cmd-prefix.*/,
 ];
 
 App.prototype.quit = function() {

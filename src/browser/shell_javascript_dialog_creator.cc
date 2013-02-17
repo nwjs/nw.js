@@ -62,16 +62,13 @@ void ShellJavaScriptDialogCreator::RunJavaScriptDialog(
     return;
   }
 
-  string16 new_message_text = net::FormatUrl(origin_url, accept_lang) +
-                              ASCIIToUTF16("\n\n") +
-                              message_text;
   gfx::NativeWindow parent_window =
       web_contents->GetView()->GetTopLevelNativeWindow();
 
   dialog_.reset(new ShellJavaScriptDialog(this,
                                           parent_window,
                                           javascript_message_type,
-                                          new_message_text,
+                                          message_text,
                                           default_prompt_text,
                                           callback));
 #else

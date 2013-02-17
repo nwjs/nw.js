@@ -111,3 +111,18 @@ so you can use following command to filter out them:
 $ /path-to-node-webkit src/content/nw/tests --grep long-to-run -i
 ````
 
+## Tips
+in test case `node-remote` we need to open a http server, e.g. apache
+to be the remote site. We use port 80, 8080 for test, and please put `node_remote_test.html`
+to the http server document root.
+
+## Native Modules
+When there is a new nw release, We hope you to rebuild native modules.
+
+We use `tools/build_native_modules.py` to build our native modules:
+
+````bash
+$ cd src/content/nw
+$ python tools/build_native_modules.py`
+````
+Alao, please update `node_modules` using `npm install -d`.

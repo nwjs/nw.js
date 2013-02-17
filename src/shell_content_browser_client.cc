@@ -27,6 +27,8 @@
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
 #include "content/public/browser/browser_url_handler.h"
+#include "content/public/browser/render_process_host.h"
+#include "content/public/browser/render_view_host.h"
 #include "content/public/browser/resource_dispatcher_host.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/renderer_preferences.h"
@@ -96,6 +98,27 @@ std::string ShellContentBrowserClient::GetApplicationLocale() {
 void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     CommandLine* command_line,
     int child_process_id) {
+  if (command_line->GetSwitchValueASCII("type") != "renderer")
+    return;
+  if (child_process_id > 0) {
+    content::RenderProcessHost* rph =
+      content::RenderProcessHost::FromID(child_process_id);
+
+    content::RenderProcessHost::RenderWidgetHostsIterator iter(
+      rph->GetRenderWidgetHostsIterator());
+    for (; !iter.IsAtEnd(); iter.Advance()) {
+      const content::RenderWidgetHost* widget = iter.GetCurrentValue();
+      DCHECK(widget);
+      if (!widget || !widget->IsRenderView())
+        continue;
+
+      content::RenderViewHost* host = content::RenderViewHost::From(
+        const_cast<content::RenderWidgetHost*>(widget));
+      content::Shell* shell = content::Shell::FromRenderViewHost(host);
+      if (shell && (shell->is_devtools() || !shell->nodejs()))
+        return;
+    }
+  }
   nw::Package* package = shell_browser_main_parts()->package();
   if (package && package->GetUseNode()) {
     // Allow node.js
@@ -109,6 +132,10 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     std::string node_main;
     if (package->root()->GetString(switches::kNodeMain, &node_main))
       command_line->AppendSwitchASCII(switches::kNodeMain, node_main);
+
+    std::string snapshot_path;
+    if (package->root()->GetString(switches::kSnapshot, &snapshot_path))
+      command_line->AppendSwitchASCII(switches::kSnapshot, snapshot_path);
   }
 }
 
@@ -158,10 +185,10 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
 
   // Open experimental features.
   prefs->css_sticky_position_enabled = true;
-  prefs->css_regions_enabled = true;
   prefs->css_shaders_enabled = true;
   prefs->css_variables_enabled = true;
-
+  prefs->experimental_webgl_enabled = true;
+  
   // Disable plugins and cache by default.
   prefs->plugins_enabled = false;
   prefs->java_enabled = false;

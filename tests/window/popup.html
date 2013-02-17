@@ -50,10 +50,17 @@ This is the popup window<br/>
     console.log('Window is unmaximized');
   });
 
+  win.on('zoom', function(level) {
+    document.getElementById('zoom').innerText = level;
+  });
+
   window.onload = function() {
     gui.Window.get().show();
   }
+  document.write("zoomLevel = <div id='zoom'>" + win.zoomLevel + '</div>');
 </script>
+<br/>
+
 <button onclick="javascript:enable = true;">Enable to be closed</button>
 <br/>
 <button onclick="win.leaveFullscreen()">Leave fullscreen</button>

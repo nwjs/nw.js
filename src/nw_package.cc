@@ -24,9 +24,9 @@
 
 #include "base/command_line.h"
 #include "base/file_util.h"
+#include "base/files/scoped_temp_dir.h"
 #include "base/json/json_file_value_serializer.h"
-#include "base/scoped_temp_dir.h"
-#include "base/string_split.h"
+#include "base/string_tokenizer.h"
 #include "base/string_util.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
@@ -42,6 +42,9 @@
 #include "webkit/glue/image_decoder.h"
 
 namespace nw {
+
+// Separator for string of |chromium_args| from |manifest|.
+const char kChromiumArgsSeparator[] = " ";
 
 namespace {
 
@@ -102,6 +105,11 @@ void RelativePathToURI(FilePath root, base::DictionaryValue* manifest) {
   FilePath main_path = root.Append(FilePath::FromUTF8Unsafe(old));
   manifest->SetString(switches::kmMain,
                       std::string("file://") + main_path.AsUTF8Unsafe());
+}
+
+std::wstring ASCIIToWide(const std::string& ascii) {
+  DCHECK(IsStringASCII(ascii)) << ascii;
+  return std::wstring(ascii.begin(), ascii.end());
 }
 
 }  // namespace
@@ -281,6 +289,9 @@ bool Package::InitFromPath() {
   // Read chromium command line args.
   ReadChromiumArgs();
 
+  // Read flags for v8 engine.
+  ReadJsFlags();
+
   RelativePathToURI(path_, this->root());
   return true;
 }
@@ -332,7 +343,7 @@ bool Package::ExtractPath() {
 
 bool Package::ExtractPackage(const FilePath& zip_file, FilePath* where) {
   // Auto clean our temporary directory
-  static scoped_ptr<ScopedTempDir> scoped_temp_dir;
+  static scoped_ptr<base::ScopedTempDir> scoped_temp_dir;
 
 #if defined(OS_WIN)
   if (!file_util::CreateNewTempDirectory(L"nw", where)) {
@@ -344,7 +355,7 @@ bool Package::ExtractPackage(const FilePath& zip_file, FilePath* where) {
     return false;
   }
 
-  scoped_temp_dir.reset(new ScopedTempDir());
+  scoped_temp_dir.reset(new base::ScopedTempDir());
   if (!scoped_temp_dir->Set(*where)) {
     ReportError("Cannot extract package",
                 "Unable to set temporary directory.");
@@ -363,14 +374,44 @@ void Package::ReadChromiumArgs() {
     return;
 
   std::vector<std::string> chromium_args;
-  base::SplitString(args, ' ', &chromium_args);
+  StringTokenizer tokenizer(args, kChromiumArgsSeparator);
+  tokenizer.set_quote_chars("\'");
+  while (tokenizer.GetNext()) {
+    std::string token = tokenizer.token();
+    RemoveChars(token, "\'", &token);
+    chromium_args.push_back(token);
+  }
 
   CommandLine* command_line = CommandLine::ForCurrentProcess();
+
   for (unsigned i = 0; i < chromium_args.size(); ++i) {
-    if (ContainsOnlyWhitespaceASCII(chromium_args[i]))
+    CommandLine::StringType key, value;
+#if defined(OS_WIN)
+    // Note:: On Windows, the |CommandLine::StringType| will be |std::wstring|,
+    // so the chromium_args[i] is not compatible. We convert the wstring to
+    // string here is safe beacuse we use ASCII only.
+    if (!IsSwitch(ASCIIToWide(chromium_args[i]), &key, &value))
       continue;
-    command_line->AppendSwitch(chromium_args[i]);
+    command_line->AppendSwitchASCII(WideToASCII(key),
+                                    WideToASCII(value));
+#else
+    if (!IsSwitch(chromium_args[i], &key, &value))
+      continue;
+    command_line->AppendSwitchASCII(key, value);
+#endif
   }
+}
+
+void Package::ReadJsFlags() {
+  if (!root()->HasKey(switches::kmJsFlags))
+    return;
+
+  std::string flags;
+  if (!root()->GetStringASCII(switches::kmJsFlags, &flags))
+    return;
+
+  CommandLine* command_line = CommandLine::ForCurrentProcess();
+  command_line->AppendSwitchASCII("js-flags", flags);
 }
 
 void Package::ReportError(const std::string& title,

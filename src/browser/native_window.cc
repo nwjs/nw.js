@@ -21,6 +21,7 @@
 #include "content/nw/src/browser/native_window.h"
 
 #include "base/values.h"
+#include "content/nw/src/browser/capture_page_helper.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
@@ -66,8 +67,13 @@ NativeWindow* NativeWindow::Create(content::Shell* shell,
 NativeWindow::NativeWindow(content::Shell* shell,
                            base::DictionaryValue* manifest)
     : shell_(shell),
-      has_frame_(true) {
-  manifest->GetBoolean(switches::kmFrame, &has_frame_);
+      has_frame_(true),
+      capture_page_helper_(NULL) {
+  bool transparent;
+  if(manifest->GetBoolean(switches::kmTransparent, &transparent) && transparent)
+    has_frame_ = false;
+  else
+    manifest->GetBoolean(switches::kmFrame, &has_frame_);
 
   LoadAppIconFromPackage(manifest);
 }
@@ -85,10 +91,7 @@ void NativeWindow::InitFromManifest(base::DictionaryValue* manifest) {
   std::string position;
   if (manifest->GetInteger(switches::kmX, &x) &&
       manifest->GetInteger(switches::kmY, &y)) {
-    int width, height;
-    manifest->GetInteger(switches::kmWidth, &width);
-    manifest->GetInteger(switches::kmHeight, &height);
-    Move(gfx::Rect(x, y, width, height));
+    SetPosition(gfx::Point(x, y));
   } else if (manifest->GetString(switches::kmPosition, &position)) {
     SetPosition(position);
   }
@@ -124,6 +127,13 @@ void NativeWindow::InitFromManifest(base::DictionaryValue* manifest) {
   if (manifest->GetBoolean(switches::kmKiosk, &kiosk) && kiosk) {
     SetKiosk(kiosk);
   }
+  bool transparent;
+  if (manifest->GetBoolean(switches::kmTransparent, &transparent) && transparent) {
+    SetTransparent();
+
+    /* Transparent windows cannot have toolbars or other window controls */
+    manifest->SetBoolean(switches::kmToolbar, false);
+  }
   bool toolbar = true;
   manifest->GetBoolean(switches::kmToolbar, &toolbar);
   if (toolbar) {
@@ -138,6 +148,14 @@ void NativeWindow::InitFromManifest(base::DictionaryValue* manifest) {
   manifest->GetBoolean(switches::kmShow, &show);
   if (show)
     Show();
+}
+
+void NativeWindow::CapturePage(const std::string& image_format) {
+  // Lazily instance CapturePageHelper.
+  if (capture_page_helper_ == NULL)
+    capture_page_helper_ = CapturePageHelper::Create(shell_);
+
+  capture_page_helper_->StartCapturePage(image_format);
 }
 
 void NativeWindow::LoadAppIconFromPackage(base::DictionaryValue* manifest) {

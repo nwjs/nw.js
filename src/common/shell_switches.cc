@@ -40,12 +40,16 @@ const char kWorkingDirectory[] = "working-directory";
 // Pass the main script to node.
 const char kNodeMain[] = "node-main";
 
+// snapshot file path
+const char kSnapshot[] = "snapshot";
+
 const char kmMain[]   = "main";
 const char kmName[]   = "name";
 const char kmWebkit[] = "webkit";
 const char kmNodejs[] = "nodejs";
 const char kmWindow[] = "window";
 const char kmChromiumArgs[] = "chromium-args";
+const char kmJsFlags[] = "js-flags";
 
 // Allows only one instance of the app.
 const char kmSingleInstance[] = "single-instance";
@@ -67,6 +71,7 @@ const char kmMaxHeight[]  = "max_height";
 const char kmResizable[]  = "resizable";
 const char kmAsDesktop[]  = "as_desktop";
 const char kmFullscreen[] = "fullscreen";
+const char kmTransparent[] = "transparent";
 
 // Start with the kiosk mode, see Opera's page for description:
 // http://www.opera.com/support/mastering/kiosk/
@@ -91,5 +96,7 @@ const char kmUserAgent[] = "user-agent";
 
 // rules to turn on Node for remote pages
 const char kmRemotePages[] = "node-remote";
+
+const char kmNewInstance[] = "new-instance";
 
 }  // namespace switches
