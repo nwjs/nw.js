@@ -38,6 +38,7 @@
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
+#include "content/public/common/content_switches.h"
 #include "content/public/common/url_constants.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/app/app.h"
@@ -107,7 +108,7 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   windows_.push_back(this);
 
   bool enable_nodejs = true;
-  if (manifest->GetBoolean(switches::kmNodejs, &enable_nodejs))
+  if (manifest->GetBoolean(switches::kNodejs, &enable_nodejs))
     enable_nodejs_ = enable_nodejs;
 
   // Add web contents.

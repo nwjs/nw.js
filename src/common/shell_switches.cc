@@ -46,7 +46,6 @@ const char kSnapshot[] = "snapshot";
 const char kmMain[]   = "main";
 const char kmName[]   = "name";
 const char kmWebkit[] = "webkit";
-const char kmNodejs[] = "nodejs";
 const char kmWindow[] = "window";
 const char kmChromiumArgs[] = "chromium-args";
 const char kmJsFlags[] = "js-flags";

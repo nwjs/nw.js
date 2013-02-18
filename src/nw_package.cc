@@ -32,6 +32,7 @@
 #include "base/values.h"
 #include "chrome/common/zip.h"
 #include "content/nw/src/common/shell_switches.h"
+#include "content/public/common/content_switches.h"
 #include "googleurl/src/gurl.h"
 #include "grit/nw_resources.h"
 #include "net/base/escape.h"
@@ -220,7 +221,7 @@ std::string Package::GetName() {
 
 bool Package::GetUseNode() {
   bool use_node = true;
-  root()->GetBoolean(switches::kmNodejs, &use_node);
+  root()->GetBoolean(switches::kNodejs, &use_node);
   return use_node;
 }
 

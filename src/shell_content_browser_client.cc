@@ -123,7 +123,7 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
   nw::Package* package = shell_browser_main_parts()->package();
   if (package && package->GetUseNode()) {
     // Allow node.js
-    command_line->AppendSwitch(switches::kmNodejs);
+    command_line->AppendSwitch(switches::kNodejs);
 
     // Set cwd
     command_line->AppendSwitchPath(switches::kWorkingDirectory,

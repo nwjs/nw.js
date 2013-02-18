@@ -36,6 +36,7 @@
 #include "content/nw/src/renderer/nw_render_view_observer.h"
 #include "content/nw/src/renderer/prerenderer/prerenderer_client.h"
 #include "content/nw/src/renderer/shell_render_process_observer.h"
+#include "content/public/common/content_switches.h"
 #include "content/public/renderer/render_view.h"
 #include "content/renderer/render_view_impl.h"
 #include "net/proxy/proxy_bypass_rules.h"
@@ -184,7 +185,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
 
   // Do we integrate node?
   bool use_node =
-    CommandLine::ForCurrentProcess()->HasSwitch(switches::kmNodejs) &&
+    CommandLine::ForCurrentProcess()->HasSwitch(switches::kNodejs) &&
     (force_on || is_file_protocol);
 
   // Test if protocol is 'nw:'
