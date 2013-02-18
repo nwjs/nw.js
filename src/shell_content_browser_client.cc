@@ -144,8 +144,9 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
   // destory rph immediately. Then the channel error msg is caught by
   // SuicideOnChannelErrorFilter and the renderer is killed
   // immediately
-
+#if defined(OS_POSIX)
   command_line->AppendSwitch(switches::kChildCleanExit);
+#endif
 }
 
 void ShellContentBrowserClient::ResourceDispatcherHostCreated() {
