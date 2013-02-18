@@ -31,6 +31,7 @@
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/resource_dispatcher_host.h"
 #include "content/public/browser/web_contents.h"
+#include "content/public/common/content_switches.h"
 #include "content/public/common/renderer_preferences.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/common/shell_switches.h"
@@ -137,6 +138,14 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     if (package->root()->GetString(switches::kSnapshot, &snapshot_path))
       command_line->AppendSwitchASCII(switches::kSnapshot, snapshot_path);
   }
+
+  // without the switch, the destructor of the shell object will
+  // shutdown renderwidgethost (RenderWidgetHostImpl::Shutdown) and
+  // destory rph immediately. Then the channel error msg is caught by
+  // SuicideOnChannelErrorFilter and the renderer is killed
+  // immediately
+
+  command_line->AppendSwitch(switches::kChildCleanExit);
 }
 
 void ShellContentBrowserClient::ResourceDispatcherHostCreated() {
