@@ -98,7 +98,7 @@ AutofillAgent::~AutofillAgent() {
 bool AutofillAgent::InputElementClicked(const WebInputElement& element,
                                         bool was_focused,
                                         bool is_focused) {
-  if (was_focused || is_focused)
+  if (was_focused)
     ShowSuggestions(element, true, false, true);
 
   return false;
@@ -197,34 +197,26 @@ void AutofillAgent::ShowSuggestions(const WebInputElement& element,
 
   element_ = element;
 
-  // If autocomplete is disabled at the form level, then we might want to show
-  // a warning in place of suggestions. However, if autocomplete is disabled
-  // specifically for this field, we never want to show a warning. Otherwise,
-  // we might interfere with custom popups (e.g. search suggestions) used by
-  // the website. Also, if the field has no name, then we won't have values.
-  const WebFormElement form = element.form();
-  if ((!element.autoComplete() && (form.isNull() || form.autoComplete())) ||
-      element.nameForAutofill().isEmpty()) {
-    std::vector<string16> v;
-    std::vector<string16> l;
-    std::vector<string16> i;
-    std::vector<int> ids;
+  // TODO: Currently node-webkit didn't support HTML5 attribute |autocomplete|
+  // of the |input|.
+  std::vector<string16> v;
+  std::vector<string16> l;
+  std::vector<string16> i;
+  std::vector<int> ids;
+  AppendDataListSuggestions(element, &v, &l, &i, &ids);
 
-    AppendDataListSuggestions(element, &v, &l, &i, &ids);
+  WebKit::WebView* web_view = render_view()->GetWebView();
+  if (!web_view)
+    return;
 
-    WebKit::WebView* web_view = render_view()->GetWebView();
-    if (!web_view)
-      return;
-
-    if (v.empty()) {
-      // No suggestions, any popup currently showing is obsolete.
-      web_view->hidePopups();
-      return;
-    }
-
-    // Send to WebKit for display.
-    web_view->applyAutofillSuggestions(element, v, l, i, ids);
+  if (v.empty()) {
+    // No suggestions, any popup currently showing is obsolete.
+    web_view->hidePopups();
+    return;
   }
+
+  // Send to WebKit for display.
+  web_view->applyAutofillSuggestions(element, v, l, i, ids);
 }
 
 void AutofillAgent::AcceptDataListSuggestion(const string16& suggested_value) {
