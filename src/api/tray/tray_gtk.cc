@@ -78,4 +78,7 @@ void Tray::OnPopupMenu(GtkWidget* widget, guint button, guint time) {
   }
 }
 
+void Tray::SetAltIcon(const std::string& alticon_path) {
+}
+
 }  // namespace api

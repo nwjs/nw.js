@@ -103,4 +103,7 @@ void Tray::Remove() {
   }
 }
 
+void Tray::SetAltIcon(const std::string& alticon_path) {
+}
+
 }  // namespace api
