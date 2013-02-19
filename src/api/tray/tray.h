@@ -62,13 +62,12 @@ class Tray : public Base {
   void Destroy();
   void SetTitle(const std::string& title);
   void SetIcon(const std::string& icon_path);
+  void SetAltIcon(const std::string& alticon_path);
   void SetTooltip(const std::string& title);
   void SetMenu(Menu* menu);
   void Remove();
 
 #if defined(OS_MACOSX)
-  // Alternate icons only work with Macs
-  void SetAltIcon(const std::string& alticon_path);
   __block NSStatusItem* status_item_;
 #elif defined(TOOLKIT_GTK)
   GtkStatusIcon* status_item_;
