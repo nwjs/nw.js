@@ -62,7 +62,6 @@ class Tray : public Base {
   void Destroy();
   void SetTitle(const std::string& title);
   void SetIcon(const std::string& icon_path);
-  void SetAltIcon(const std::string& alticon_path);
   void SetTooltip(const std::string& title);
   void SetMenu(Menu* menu);
   void Remove();
