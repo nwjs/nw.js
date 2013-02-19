@@ -55,7 +55,7 @@ void Tray::SetIcon(const std::string& icon) {
   }
 }
 
-void Tray::SetAltIcon(const std::string& alticon) {
+void Tray::SetAlticon(const std::string& alticon) {
   if (!alticon.empty()) {
     NSImage* image = [[NSImage alloc]
          initWithContentsOfFile:[NSString stringWithUTF8String:alticon.c_str()]];
