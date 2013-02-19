@@ -40,6 +40,10 @@ Tray::Tray(int id,
   std::string icon;
   if (option.GetString("icon", &icon) && !icon.empty())
     SetIcon(icon);
+    
+  std::string alticon;
+  if (option.GetString("alticon", &alticon) && !alticon.empty())
+    SetAltIcon(alticon);
 
   std::string alticon;
   if (option.GetString("alticon", &alticon) && !alticon.empty())

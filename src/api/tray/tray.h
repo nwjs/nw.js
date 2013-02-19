@@ -69,6 +69,8 @@ class Tray : public Base {
   void SetAltIcon(const std::string& alticon_path);
 
 #if defined(OS_MACOSX)
+  // Alternate icons only work with Macs
+  void SetAltIcon(const std::string& alticon_path);
   __block NSStatusItem* status_item_;
 #elif defined(TOOLKIT_GTK)
   GtkStatusIcon* status_item_;
