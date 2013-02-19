@@ -55,17 +55,6 @@ void Tray::SetIcon(const std::string& icon) {
   }
 }
 
-void Tray::SetAlticon(const std::string& alticon) {
-  if (!alticon.empty()) {
-    NSImage* image = [[NSImage alloc]
-         initWithContentsOfFile:[NSString stringWithUTF8String:alticon.c_str()]];
-    [status_item_ setAlternateImage:image];
-    [image release];
-  } else {
-    [status_item_ setAlternateImage:nil];
-  }
-}
-
 void Tray::SetTooltip(const std::string& tooltip) {
   [status_item_ setToolTip:[NSString stringWithUTF8String:tooltip.c_str()]];
 }
