@@ -126,8 +126,8 @@ void NativeWindowToolbarWin::ButtonPressed(views::Button* sender,
     shell_->ShowDevTools();
   else if (sender == dev_reload_button_)
     shell_->Reload(content::Shell::RELOAD_DEV);
-
-  NOTREACHED() << "Click on unkown toolbar button.";
+  else
+    NOTREACHED() << "Click on unkown toolbar button.";
 }
 
 void NativeWindowToolbarWin::InitToolbar() {
