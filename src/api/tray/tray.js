@@ -119,4 +119,16 @@ Tray.prototype.remove = function() {
   nw.callObjectMethod(this, 'Remove', []);
 }
 
+Tray.prototype.displayBalloon = function(icon, title, contents) {
+  var icon_path;
+  if (icon == undefined) {
+    icon_path = '';
+  } else {
+    icon_path = nw.getAbsolutePath(icon);
+  }
+
+  nw.callObjectMethod(this, 'DisplayBalloon',
+                      [ String(icon_path), String(title), String(contents) ]);
+}
+
 exports.Tray = Tray;

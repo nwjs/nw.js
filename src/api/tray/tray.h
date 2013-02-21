@@ -67,6 +67,9 @@ class Tray : public Base {
   void Remove();
   // Alternate icons only work with Macs
   void SetAltIcon(const std::string& alticon_path);
+  void DisplayBalloon(const std::string& icon_path,
+                      const std::string& title,
+                      const std::string& contents);
 
 #if defined(OS_MACOSX)
   __block NSStatusItem* status_item_;
