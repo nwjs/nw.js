@@ -60,6 +60,7 @@ required_file_linux = (
   'nw',
   'nw.pak',
   'libffmpegsumo.so',
+  'nwsnapshot',
 )
 
 required_file_win = (
@@ -69,10 +70,12 @@ required_file_win = (
   'libGLESv2.dll',
   'nw.exe',
   'nw.pak',
+  'nwsnapshot.exe',
 )
 
 required_file_mac = (
   'node-webkit.app',
+  'nwsnapshot',
 )
 
 
