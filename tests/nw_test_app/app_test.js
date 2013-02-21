@@ -76,21 +76,23 @@ exports.createChildProcess = function(options) {
       path = options.appPath,
       exec_argv = [path, '--port', port, '--auto'],
       app, cb,
+      no_connect = options.no_connect || false,
       child = new childProcess();
         
+  if (!no_connect) {
   
-  server.on('connection', cb = function(socket){
-    socket.setEncoding('utf8');
-    console.log('in app connect');
-    child.socket = socket;
-    socket.on('data', function(data) {
-      options.end(JSON.parse(data), app);
-      server.removeListener('connection', cb);
+    server.on('connection', cb = function(socket){
+      socket.setEncoding('utf8');
+      console.log('in app connect');
+      child.socket = socket;
       
-    });
-    
-
-  });
+      socket.on('data', function(data) {
+        options.end(JSON.parse(data), app);
+        server.removeListener('connection', cb);        
+      });
+      
+    }); //server.on() 
+  } //if (no_conect)
   
   app = spawn(execPath, exec_argv);
   child.app = app;
