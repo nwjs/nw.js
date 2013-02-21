@@ -78,4 +78,11 @@ void Tray::Remove() {
   [[NSStatusBar systemStatusBar] removeStatusItem:status_item_];
 }
 
+void Tray::DisplayBalloon(const std::string& icon_path,
+                         const std::string& title,
+                         const std::string& contents) {
+// TODO: We can use the |DesktopNotificationBalloon| to provide the notification
+// balloon functionality once we integrate the html5 notification.
+}
+
 }  // namespace api

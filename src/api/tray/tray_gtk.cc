@@ -81,4 +81,11 @@ void Tray::OnPopupMenu(GtkWidget* widget, guint button, guint time) {
 void Tray::SetAltIcon(const std::string& alticon_path) {
 }
 
+void Tray::DisplayBalloon(const std::string& icon_path,
+                         const std::string& title,
+                         const std::string& contents) {
+// TODO: We can use the DesktopNotificationBalloon to provide the notification
+// balloon functionality once we integrate the html5 notification.
+}
+
 }  // namespace api
