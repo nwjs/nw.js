@@ -103,7 +103,24 @@ void Tray::Remove() {
   }
 }
 
+// This api is used for mac only, so do nothing here.
 void Tray::SetAltIcon(const std::string& alticon_path) {
+}
+
+void Tray::DisplayBalloon(const std::string& icon_path,
+                          const std::string& title,
+                          const std::string& contents) {
+  if (status_icon_) {
+    gfx::Image icon;
+    content::Shell* shell = content::Shell::FromRenderViewHost(
+        dispatcher_host()->render_view_host());
+    nw::Package* package = shell->GetPackage();
+    package->GetImage(FilePath::FromUTF8Unsafe(icon_path), &icon);
+
+    status_icon_->DisplayBalloon(icon.AsImageSkia(),
+        string16(ASCIIToUTF16(title)),
+        string16(ASCIIToUTF16(contents)));
+  }
 }
 
 }  // namespace api

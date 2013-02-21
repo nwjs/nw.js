@@ -84,6 +84,14 @@ void Tray::Call(const std::string& method,
     SetMenu(dispatcher_host()->GetApiObject<Menu>(object_id));
   } else if (method == "Remove") {
     Remove();
+  } else if (method == "DisplayBalloon") {
+    std::string icon_path;
+    std::string title;
+    std::string contents;
+    arguments.GetString(0, &icon_path);
+    arguments.GetString(1, &title);
+    arguments.GetString(2, &contents);
+    DisplayBalloon(icon_path, title, contents);
   } else {
     NOTREACHED() << "Invalid call to Tray method:" << method
                  << " arguments:" << arguments;
