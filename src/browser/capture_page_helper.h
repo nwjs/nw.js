@@ -63,7 +63,7 @@ class CapturePageHelper : public base::RefCountedThreadSafe<CapturePageHelper>,
 
  private:
   CapturePageHelper(content::Shell *shell);
-  ~CapturePageHelper();
+  virtual ~CapturePageHelper();
 
   // Internal helpers ----------------------------------------------------------
 
