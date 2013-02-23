@@ -7,7 +7,7 @@
 <script>
 function onLoad() {
   var tabs_list_request = new XMLHttpRequest();
-  tabs_list_request.open("GET", "/json" + new Date().getTime(), true);
+  tabs_list_request.open("GET", "/json?" + new Date().getTime(), true);
   tabs_list_request.onreadystatechange = onReady;
   tabs_list_request.send();
 }
