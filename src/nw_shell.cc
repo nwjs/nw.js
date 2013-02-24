@@ -143,8 +143,12 @@ Shell::~Shell() {
 }
 
 void Shell::SendEvent(const std::string& event, const std::string& arg1) {
+
   if (id() < 0)
     return;
+
+  DVLOG(1) << "Shell::SendEvent " << event << " id():"
+           << id() << " RoutingID: " << web_contents()->GetRoutingID();
 
   base::ListValue args;
   if (!arg1.empty())
@@ -337,6 +341,9 @@ void Shell::LoadingStateChanged(WebContents* source) {
   window()->SetToolbarButtonEnabled(nw::NativeWindow::BUTTON_FORWARD,
                                     current_index < max_index);
   window()->SetToolbarIsLoading(source->IsLoading());
+
+  DVLOG(1) << "Shell(" << id() << ")::LoadingStateChanged "
+           << (source->IsLoading() ? "loading" : "loaded");
 
   if (source->IsLoading())
     SendEvent("loading");

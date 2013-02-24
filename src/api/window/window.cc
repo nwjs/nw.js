@@ -34,6 +34,7 @@ Window::Window(int id,
     : Base(id, dispatcher_host, option),
       shell_(content::Shell::FromRenderViewHost(dispatcher_host->
            render_view_host())) {
+  DVLOG(1) << "Window::Window(" << id << ")";
   // Set ID for Shell
   shell_->set_id(id);
 }
@@ -42,6 +43,7 @@ Window::~Window() {
   // Window object got deleted when we launch new render view host and
   // delete the old one; at this time the Shell should be decoupled
   // with the renderer side
+  DVLOG(1) << "Window::~Window(" << shell_->id() << ")";
   shell_->set_id(-1);
 }
 

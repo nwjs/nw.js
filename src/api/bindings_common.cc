@@ -71,6 +71,8 @@ v8::Handle<v8::Value> AllocateObject(int routing_id,
     return v8::ThrowException(v8::Exception::Error(v8::String::New(
         "Unable to convert 'option' passed to AllocateObject")));
 
+  DVLOG(1) << "remote::AllocateObject(routing_id=" << routing_id << ", object_id=" << object_id << ")";
+
   RenderThread::Get()->Send(new ShellViewHostMsg_Allocate_Object(
       routing_id,
       object_id,

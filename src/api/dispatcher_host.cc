@@ -88,7 +88,7 @@ bool DispatcherHost::OnMessageReceived(const IPC::Message& message) {
 void DispatcherHost::OnAllocateObject(int object_id,
                                       const std::string& type,
                                       const base::DictionaryValue& option) {
-  DLOG(INFO) << "OnAllocateObject: object_id:" << object_id
+  DVLOG(1) << "OnAllocateObject: object_id:" << object_id
              << " type:" << type
              << " option:" << option;
 
