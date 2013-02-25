@@ -49,7 +49,9 @@ describe('snapshot', function() {
         
         setTimeout(function(){
           if (!result) {
-            done('the native code does not been executed')
+            done('the native code does not been executed');
+            child.removeConnection();
+            child.app.kill();
           }
         }, 3000);
         //child.app.stderr.on('data', function(d){ console.log ('app' + d);});

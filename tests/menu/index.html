@@ -176,6 +176,13 @@
       document.body.appendChild(element);
     }
   }));
+  
+  sub1.append(new gui.MenuItem({
+    type: 'checkbox',
+    checked: true, //<------------------------------------------------!!!!!!
+    label: 'Test CheckBox'
+  }));
+  
   var sub2 = new gui.Menu();
   sub2.append(new gui.MenuItem({
     label: 'Test2',
