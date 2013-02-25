@@ -14,7 +14,7 @@
   }
   catch (e) {
     result.ok = false;
-    result.error = e;
+    result.error = e.message;
   }
   
   var client = require('../../nw_test_app').createClient({
