@@ -344,53 +344,50 @@ void NativeWindowWin::UpdateWindowAttribute(int attribute_index,
 }
 
 void NativeWindowWin::SetSize(const gfx::Size& size) {
-  
-  
-  if (!this->has_frame()) { 
-  // An overlapped window is a top-level window that has a titlebar, border,
-  // and client area. The Windows system will automatically put the shadow
-  // around the whole window. Also the system will enforce the minimum height
-  // (38 pixels based on observation) for the overlapped window such that it
-  // will always has the space for the titlebar.
-  //
-  // On contrast, a popup window is a bare minimum window without border and
-  // titlebar by default. It is often used for the popup menu and the window
-  // with short life. The Windows system does not add the shadow around the
-  // whole window though CS_DROPSHADOW class style could be passed to add the
-  // drop shadow which is only around the right and bottom edges.
-  //
-  // The height of the title-only or minimized panel is smaller than the minimum
-  // overlapped window height. If the panel still uses the overlapped window
-  // style, Windows system will automatically increase the window height. To
-  // work around this limitation, we temporarily change the window style to
-  // popup when the height to set is smaller than the minimum overlapped window
-  // height and then restore the window style to overlapped when the height
-  // grows.
-    
-  static const int kMinimumOverlappedWindowHeight = 38;
-  gfx::Rect old_bounds = GetWidget()->GetRestoredBounds();
-  gfx::Rect new_bounds(size);
-  if (old_bounds.height() > kMinimumOverlappedWindowHeight &&
-      new_bounds.height() <= kMinimumOverlappedWindowHeight) {
-    // When the panel height shrinks below the minimum overlapped window height,
-    // change the window style to popup such that we can show the title-only
-    // and minimized panel without additional height being added by the system.
-    UpdateWindowAttribute(GWL_STYLE,
-                          WS_POPUP,
-                          WS_OVERLAPPED | WS_THICKFRAME | WS_SYSMENU,
-                          true);
-  } else if (old_bounds.height() <= kMinimumOverlappedWindowHeight &&
-             new_bounds.height() > kMinimumOverlappedWindowHeight) {
-    // Change the window style back to overlappped when the panel height grow
-    // taller than the minimum overlapped window height.
-    UpdateWindowAttribute(GWL_STYLE,
-                          WS_OVERLAPPED | WS_THICKFRAME | WS_SYSMENU,
-                          WS_POPUP,
-                          true);
+  if (!this->has_frame()) {
+    // An overlapped window is a top-level window that has a titlebar, border,
+    // and client area. The Windows system will automatically put the shadow
+    // around the whole window. Also the system will enforce the minimum height
+    // (38 pixels based on observation) for the overlapped window such that it
+    // will always has the space for the titlebar.
+    //
+    // On contrast, a popup window is a bare minimum window without border and
+    // titlebar by default. It is often used for the popup menu and the window
+    // with short life. The Windows system does not add the shadow around the
+    // whole window though CS_DROPSHADOW class style could be passed to add the
+    // drop shadow which is only around the right and bottom edges.
+    //
+    // The height of the title-only or minimized panel is smaller than the
+    // minimum overlapped window height. If the panel still uses the overlapped
+    // window style, Windows system will automatically increase the window
+    // height. To work around this limitation, we temporarily change the window
+    // style to popup when the height to set is smaller than the minimum
+    // overlapped window height and then restore the window style to overlapped
+    // when the height grows.
+    static const int kMinimumOverlappedWindowHeight = 38;
+    gfx::Rect old_bounds = GetWidget()->GetRestoredBounds();
+    gfx::Rect new_bounds(size);
+    if (old_bounds.height() > kMinimumOverlappedWindowHeight &&
+        new_bounds.height() <= kMinimumOverlappedWindowHeight) {
+      // When the panel height shrinks below the minimum overlapped window
+      // height, change the window style to popup such that we can show the
+      // title-only and minimized panel without additional height being added by
+      // the system.
+      UpdateWindowAttribute(GWL_STYLE,
+                            WS_POPUP,
+                            WS_OVERLAPPED | WS_THICKFRAME | WS_SYSMENU,
+                            true);
+    } else if (old_bounds.height() <= kMinimumOverlappedWindowHeight &&
+               new_bounds.height() > kMinimumOverlappedWindowHeight) {
+      // Change the window style back to overlappped when the panel height grow
+      // taller than the minimum overlapped window height.
+      UpdateWindowAttribute(GWL_STYLE,
+                            WS_OVERLAPPED | WS_THICKFRAME | WS_SYSMENU,
+                            WS_POPUP,
+                            true);
+    }
   }
 
-  }
-  
   window_->SetSize(size);
 }
 
@@ -483,7 +480,7 @@ void NativeWindowWin::SetToolbarUrlEntry(const std::string& url) {
   if (toolbar_)
     toolbar_->SetUrlEntry(url);
 }
-  
+
 void NativeWindowWin::SetToolbarIsLoading(bool loading) {
   if (toolbar_)
     toolbar_->SetIsLoading(loading);
@@ -674,7 +671,7 @@ void NativeWindowWin::SaveWindowPlacement(const gfx::Rect& bounds,
                                           ui::WindowShowState show_state) {
   // views::WidgetDelegate::SaveWindowPlacement(bounds, show_state);
 }
-  
+
 void NativeWindowWin::OnViewWasResized() {
   // Set the window shape of the RWHV.
   DCHECK(window_);
