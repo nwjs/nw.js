@@ -125,6 +125,15 @@ class NativeWindowWin : public NativeWindow,
  private:
   void OnViewWasResized();
 
+
+  // Sets |attribute_value_to_set| and/or clears |attribute_value_to_reset| for
+  // the attibute denoted by |attribute_index|. This is used to update the style
+  // or extended style for the native window.
+  void UpdateWindowAttribute(int attribute_index,
+                             int attribute_value_to_set,
+                             int attribute_value_to_reset,
+                             bool update_frame);
+
   NativeWindowToolbarWin* toolbar_;
   views::WebView* web_view_;
   views::Widget* window_;
