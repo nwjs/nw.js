@@ -403,6 +403,8 @@ void Shell::WebContentsCreated(WebContents* source_contents,
     manifest->SetInteger(switches::kmX, features.x);
   if (features.ySet)
     manifest->SetInteger(switches::kmY, features.y);
+  // window.open should show the window by default.
+  manifest->SetBoolean(switches::kmShow, true);
 
   new Shell(new_contents, manifest.get());
 }
