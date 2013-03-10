@@ -146,30 +146,28 @@ void ShellBrowserMainParts::Init() {
 bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(
     const CommandLine& command_line,
     const FilePath& current_directory) {
-  if (!package_->self_extract()) {
-    // We're in runtime mode, create the new app.
-    return false;
-  }
-
   // Don't reuse current instance if 'single-instance' is specified to false.
-  bool single_instance;
-  if (package_->root()->GetBoolean(switches::kmSingleInstance,
-                                   &single_instance) &&
-      !single_instance)
-    return false;
+  bool single_instance = false;
+  if (!package_->root()->GetBoolean(switches::kmSingleInstance,
+                                    &single_instance))
+    if (package_->self_extract())
+      single_instance = true;
 
-  CommandLine::StringVector args = command_line.GetArgs();
+  // open event is sent only for standalone app which is single-instance.
+  if (package_->self_extract() && single_instance) {
+    CommandLine::StringVector args = command_line.GetArgs();
 
-  // Send open event one by one.
-  for (size_t i = 0; i < args.size(); ++i) { 
+    // Send open event one by one.
+    for (size_t i = 0; i < args.size(); ++i) {
 #if defined(OS_WIN)
-    api::App::EmitOpenEvent(UTF16ToUTF8(args[i]));
+      api::App::EmitOpenEvent(UTF16ToUTF8(args[i]));
 #else
-    api::App::EmitOpenEvent(args[i]);
+      api::App::EmitOpenEvent(args[i]);
 #endif
+    }
   }
 
-  return true;
+  return single_instance;
 }
 
 }  // namespace content
