@@ -50,6 +50,7 @@ namespace {
 
 const int kResizeInsideBoundsSize = 5;
 const int kResizeAreaCornerSize = 16;
+const int kMinimumOverlappedWindowHeight = 38;
 
 // Returns true if |possible_parent| is a parent window of |child|.
 bool IsParent(gfx::NativeView child, gfx::NativeView possible_parent) {
@@ -239,6 +240,7 @@ NativeWindowWin::NativeWindowWin(content::Shell* shell,
       is_blur_(false),
       menu_(NULL),
       resizable_(true),
+      is_under_minimum_overlapped_window_height_(false),
       minimum_size_(0, 0),
       maximum_size_() {
   window_ = new views::Widget;
@@ -289,6 +291,7 @@ void NativeWindowWin::Hide() {
 }
 
 void NativeWindowWin::Maximize() {
+  CheckWindowAttribute(gfx::Size(0, 40));
   window_->Maximize();
 }
 
@@ -317,8 +320,102 @@ bool NativeWindowWin::IsFullscreen() {
   return is_fullscreen_;
 }
 
+void NativeWindowWin::SetWindowAttributeToNormal() {
+  UpdateWindowAttribute(GWL_STYLE,
+                        WS_OVERLAPPED | WS_THICKFRAME | WS_SYSMENU,
+                        WS_POPUP,
+                        true);
+}
+
+void NativeWindowWin::CheckWindowAttribute(const gfx::Size& size) {
+  if (!has_frame()) {
+    if (is_under_minimum_overlapped_window_height_ && 
+        size.height() >= kMinimumOverlappedWindowHeight) {
+      is_under_minimum_overlapped_window_height_ = false;
+      SetWindowAttributeToNormal();
+    }
+  }
+}
+
+void NativeWindowWin::UpdateWindowAttribute(int attribute_index,
+                                            int attribute_value_to_set,
+                                            int attribute_value_to_reset,
+                                            bool update_frame) {
+  HWND native_window = window_->GetNativeWindow();
+  int value = ::GetWindowLong(native_window, attribute_index);
+  int expected_value = value;
+  if (attribute_value_to_set)
+    expected_value |=  attribute_value_to_set;
+  if (attribute_value_to_reset)
+    expected_value &=  ~attribute_value_to_reset;
+  if (value != expected_value)
+    ::SetWindowLong(native_window, attribute_index, expected_value);
+
+  // Per MSDN, if any of the frame styles is changed, SetWindowPos with the
+  // SWP_FRAMECHANGED flag must be called in order for the cached window data
+  // to be updated properly.
+  // http://msdn.microsoft.com/en-us/library/windows/desktop/ms633591(v=vs.85).aspx
+  if (update_frame) {
+    ::SetWindowPos(native_window, NULL, 0, 0, 0, 0,
+                   SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE |
+                   SWP_NOZORDER | SWP_NOACTIVATE);
+  }
+}
+
 void NativeWindowWin::SetSize(const gfx::Size& size) {
+  
+  
+  if (!this->has_frame()) { 
+  // An overlapped window is a top-level window that has a titlebar, border,
+  // and client area. The Windows system will automatically put the shadow
+  // around the whole window. Also the system will enforce the minimum height
+  // (38 pixels based on observation) for the overlapped window such that it
+  // will always has the space for the titlebar.
+  //
+  // On contrast, a popup window is a bare minimum window without border and
+  // titlebar by default. It is often used for the popup menu and the window
+  // with short life. The Windows system does not add the shadow around the
+  // whole window though CS_DROPSHADOW class style could be passed to add the
+  // drop shadow which is only around the right and bottom edges.
+  //
+  // The height of the title-only or minimized panel is smaller than the minimum
+  // overlapped window height. If the panel still uses the overlapped window
+  // style, Windows system will automatically increase the window height. To
+  // work around this limitation, we temporarily change the window style to
+  // popup when the height to set is smaller than the minimum overlapped window
+  // height and then restore the window style to overlapped when the height
+  // grows.
+  
+  gfx::Rect old_bounds = window_->GetWindowBoundsInScreen();
+  gfx::Rect new_bounds(size);
+  if (old_bounds.height() > kMinimumOverlappedWindowHeight &&
+      new_bounds.height() <= kMinimumOverlappedWindowHeight) {
+    // When the panel height shrinks below the minimum overlapped window height,
+    // change the window style to popup such that we can show the title-only
+    // and minimized panel without additional height being added by the system.
+    UpdateWindowAttribute(GWL_STYLE,
+                          WS_POPUP,
+                          WS_OVERLAPPED | WS_THICKFRAME | WS_SYSMENU,
+                          true);
+    is_under_minimum_overlapped_window_height_ = true;
+  } else if (old_bounds.height() <= kMinimumOverlappedWindowHeight &&
+             new_bounds.height() > kMinimumOverlappedWindowHeight) {
+    // Change the window style back to overlappped when the panel height grow
+    // taller than the minimum overlapped window height.
+    UpdateWindowAttribute(GWL_STYLE,
+                          WS_OVERLAPPED | WS_THICKFRAME | WS_SYSMENU,
+                          WS_POPUP,
+                          true);
+    is_under_minimum_overlapped_window_height_ = false;
+  }
+
+  }
+  
   window_->SetSize(size);
+}
+
+void NativeWindowWin::OnWindowEndUserBoundsChange() {
+  CheckWindowAttribute(window_->GetWindowBoundsInScreen().size());
 }
 
 gfx::Size NativeWindowWin::GetSize() {

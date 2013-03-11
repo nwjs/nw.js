@@ -95,6 +95,7 @@ class NativeWindowWin : public NativeWindow,
   virtual gfx::ImageSkia GetWindowAppIcon() OVERRIDE;
   virtual gfx::ImageSkia GetWindowIcon() OVERRIDE;
   virtual bool ShouldShowWindowTitle() const OVERRIDE;
+  virtual void OnWindowEndUserBoundsChange() OVERRIDE;
 
   // WidgetFocusChangeListener implementation.
   virtual void OnNativeFocusChange(gfx::NativeView focused_before,
@@ -124,6 +125,22 @@ class NativeWindowWin : public NativeWindow,
 
  private:
   void OnViewWasResized();
+
+  //Because we change window style in size when the height is under 38px.
+  //We have to restore the value when maximze and drag.
+  void CheckWindowAttribute(const gfx::Size& size);
+
+  //Set window attribute to WS_OVERLAPPED | WS_THICKFRAME | WS_SYSMENU
+  void SetWindowAttributeToNormal();
+  // Sets |attribute_value_to_set| and/or clears |attribute_value_to_reset| for
+  // the attibute denoted by |attribute_index|. This is used to update the style
+  // or extended style for the native window.
+  void UpdateWindowAttribute(int attribute_index,
+                             int attribute_value_to_set,
+                             int attribute_value_to_reset,
+                             bool update_frame);
+ 
+  bool is_under_minimum_overlapped_window_height_; 
 
   NativeWindowToolbarWin* toolbar_;
   views::WebView* web_view_;
