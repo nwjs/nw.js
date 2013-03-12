@@ -355,6 +355,16 @@ void NativeWindowWin::SetPosition(const std::string& position) {
   if (position == "center") {
     gfx::Rect bounds = window_->GetWindowBoundsInScreen();
     window_->CenterWindow(gfx::Size(bounds.width(), bounds.height()));
+  } else if (position == "mouse") {
+    gfx::Rect bounds = window_->GetWindowBoundsInScreen();
+    POINT pt;
+    if (::GetCursorPos(&pt)) {
+      int x = pt.x - (bounds.width() >> 1);
+      int y = pt.y - (bounds.height() >> 1);
+      bounds.set_x(x > 0 ? x : 0);
+      bounds.set_y(y > 0 ? y : 0);
+      window_->SetBoundsConstrained(bounds);
+    }
   }
 }
 
