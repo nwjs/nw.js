@@ -18,7 +18,7 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-var argv, fullArgv;
+var argv, fullArgv, manifest;
 
 function App() {
 }
@@ -38,6 +38,14 @@ App.prototype.quit = function() {
 App.prototype.closeAllWindows = function() {
   nw.callStaticMethod('App', 'CloseAllWindows', [ ]);
 }
+
+App.prototype.__defineGetter__('manifest', function() {
+  if (!manifest) {
+    manifest = JSON.parse(
+        nw.callStaticMethodSync('App', 'GetPackage', [ ])[0]);
+  }
+  return manifest;
+});
 
 App.prototype.__defineGetter__('argv', function() {
   if (!argv) {

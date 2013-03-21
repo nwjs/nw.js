@@ -74,6 +74,9 @@ class Package {
 
   // Window field of manifest.
   base::DictionaryValue* window();
+  
+  // Manifest string.
+  std::string package_string() { return package_string_; } 
 
  private:
   bool InitFromPath();
@@ -98,6 +101,9 @@ class Package {
 
   // The parsed package.json.
   scoped_ptr<base::DictionaryValue> root_;
+
+  // The origin JSON string package.json.
+  std::string package_string_;
 
   // Stored url for error page.
   std::string error_page_url_;

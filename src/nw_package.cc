@@ -25,6 +25,7 @@
 #include "base/command_line.h"
 #include "base/file_util.h"
 #include "base/files/scoped_temp_dir.h"
+#include "base/json/json_string_value_serializer.h"
 #include "base/json/json_file_value_serializer.h"
 #include "base/string_tokenizer.h"
 #include "base/string_util.h"
@@ -266,6 +267,13 @@ bool Package::InitFromPath() {
 
   // Save result in global
   root_.reset(static_cast<DictionaryValue*>(root.release()));
+
+  // Save origin package info
+  // Since we will change some value in root_,
+  // We need to catch the origin value of package.json
+  package_string_ = "";
+  JSONStringValueSerializer stringSerializer(&package_string_);
+  stringSerializer.Serialize(*root_);  
 
   // Check fields
   const char* required_fields[] = {
