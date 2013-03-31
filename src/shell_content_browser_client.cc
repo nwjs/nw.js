@@ -21,7 +21,7 @@
 #include "content/nw/src/shell_content_browser_client.h"
 
 #include "base/command_line.h"
-#include "base/file_path.h"
+#include "base/files/file_path.h"
 #include "base/file_util.h"
 #include "base/string_util.h"
 #include "base/threading/thread_restrictions.h"
@@ -50,6 +50,7 @@
 #include "ui/base/l10n/l10n_util.h"
 #include "webkit/plugins/npapi/plugin_list.h"
 
+
 namespace content {
 
 ShellContentBrowserClient::ShellContentBrowserClient()
@@ -65,7 +66,7 @@ BrowserMainParts* ShellContentBrowserClient::CreateBrowserMainParts(
   return shell_browser_main_parts_;
 }
 
-WebContentsView* ShellContentBrowserClient::OverrideCreateWebContentsView(
+WebContentsViewPort* ShellContentBrowserClient::OverrideCreateWebContentsView(
       WebContents* web_contents,
       RenderViewHostDelegateView** render_view_host_delegate_view) {
   std::string user_agent, rules;
@@ -229,6 +230,59 @@ bool ShellContentBrowserClient::ShouldTryToUseExistingProcessHost(
 bool ShellContentBrowserClient::IsSuitableHost(RenderProcessHost* process_host,
                                           const GURL& site_url) {
   return true;
+}
+
+net::URLRequestContextGetter* ShellContentBrowserClient::CreateRequestContext(
+    BrowserContext* content_browser_context,
+    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+        blob_protocol_handler,
+    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+        file_system_protocol_handler,
+    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+        developer_protocol_handler,
+    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+        chrome_protocol_handler,
+    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+        chrome_devtools_protocol_handler) {
+  ShellBrowserContext* shell_browser_context =
+      ShellBrowserContextForBrowserContext(content_browser_context);
+  return shell_browser_context->CreateRequestContext(
+      blob_protocol_handler.Pass(), file_system_protocol_handler.Pass(),
+      developer_protocol_handler.Pass(), chrome_protocol_handler.Pass(),
+      chrome_devtools_protocol_handler.Pass());
+}
+
+net::URLRequestContextGetter*
+ShellContentBrowserClient::CreateRequestContextForStoragePartition(
+    BrowserContext* content_browser_context,
+    const base::FilePath& partition_path,
+    bool in_memory,
+    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+        blob_protocol_handler,
+    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+        file_system_protocol_handler,
+    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+        developer_protocol_handler,
+    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+        chrome_protocol_handler,
+    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+        chrome_devtools_protocol_handler) {
+  ShellBrowserContext* shell_browser_context =
+      ShellBrowserContextForBrowserContext(content_browser_context);
+  return shell_browser_context->CreateRequestContextForStoragePartition(
+      partition_path, in_memory, blob_protocol_handler.Pass(),
+      file_system_protocol_handler.Pass(),
+      developer_protocol_handler.Pass(), chrome_protocol_handler.Pass(),
+      chrome_devtools_protocol_handler.Pass());
+}
+
+ShellBrowserContext*
+ShellContentBrowserClient::ShellBrowserContextForBrowserContext(
+    BrowserContext* content_browser_context) {
+  if (content_browser_context == browser_context())
+    return browser_context();
+  DCHECK_EQ(content_browser_context, off_the_record_browser_context());
+  return off_the_record_browser_context();
 }
 
 }  // namespace content

@@ -39,6 +39,7 @@
 #include "net/base/net_module.h"
 #include "ui/base/resource/resource_bundle.h"
 
+
 namespace {
 
 base::StringPiece PlatformResourceProvider(int key) {
@@ -60,7 +61,8 @@ ShellBrowserMainParts::ShellBrowserMainParts(
     : BrowserMainParts(),
       parameters_(parameters),
       run_message_loop_(true),
-      devtools_delegate_(NULL) {
+      devtools_delegate_(NULL)
+{
 }
 
 ShellBrowserMainParts::~ShellBrowserMainParts() {
@@ -107,8 +109,7 @@ void ShellBrowserMainParts::Init() {
   process_singleton_.reset(new ProcessSingleton(browser_context_->GetPath()));
   ProcessSingleton::NotifyResult result =
       process_singleton_->NotifyOtherProcessOrCreate(
-        base::Bind(&ShellBrowserMainParts::ProcessSingletonNotificationCallback,
-                   base::Unretained(this)));
+                                                     base::Bind(&ShellBrowserMainParts::ProcessSingletonNotificationCallback, base::Unretained(this)));
 
   // Quit if the other existing instance want to handle it.
   if (result == ProcessSingleton::PROCESS_NOTIFIED) {
@@ -145,7 +146,7 @@ void ShellBrowserMainParts::Init() {
 
 bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(
     const CommandLine& command_line,
-    const FilePath& current_directory) {
+    const base::FilePath& current_directory) {
   if (!package_->self_extract()) {
     // We're in runtime mode, create the new app.
     return false;

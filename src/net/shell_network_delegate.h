@@ -23,6 +23,7 @@
 
 #include "base/basictypes.h"
 #include "base/compiler_specific.h"
+#include "base/files/file_path.h"
 #include "net/base/network_delegate.h"
 
 namespace content {
@@ -68,7 +69,7 @@ class ShellNetworkDelegate : public net::NetworkDelegate {
                               const std::string& cookie_line,
                               net::CookieOptions* options) OVERRIDE;
   virtual bool OnCanAccessFile(const net::URLRequest& request,
-                               const FilePath& path) const OVERRIDE;
+                               const base::FilePath& path) const OVERRIDE;
   virtual bool OnCanThrottleRequest(
       const net::URLRequest& request) const OVERRIDE;
   virtual int OnBeforeSocketStreamConnect(

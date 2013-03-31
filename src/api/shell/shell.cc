@@ -20,14 +20,16 @@
 
 #include "content/nw/src/api/shell/shell.h"
 
-#include "base/file_path.h"
+#include "base/files/file_path.h"
 #include "base/logging.h"
 #include "base/values.h"
 #include "chrome/browser/platform_util.h"
 #include "googleurl/src/gurl.h"
 
+using base::FilePath;
+
 namespace api {
-  
+
 // static
 void Shell::Call(const std::string& method,
                  const base::ListValue& arguments) {

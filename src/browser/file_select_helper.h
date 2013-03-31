@@ -29,7 +29,7 @@
 #include "content/public/browser/notification_observer.h"
 #include "content/public/browser/notification_registrar.h"
 #include "net/base/directory_lister.h"
-#include "ui/base/dialogs/select_file_dialog.h"
+#include "ui/shell_dialogs/select_file_dialog.h"
 
 namespace content {
 class RenderViewHost;
@@ -41,6 +41,9 @@ namespace ui {
 struct SelectedFileInfo;
 }
 
+namespace base {
+class FilePath;
+}
 // This class handles file-selection requests coming from WebUI elements
 // (via the extensions::ExtensionHost class). It implements both the
 // initialisation and listener functions for file-selection dialogs.
@@ -57,7 +60,7 @@ class FileSelectHelper
   // Enumerates all the files in directory.
   static void EnumerateDirectory(content::WebContents* tab,
                                  int request_id,
-                                 const FilePath& path);
+                                 const base::FilePath& path);
 
  private:
   friend class base::RefCountedThreadSafe<FileSelectHelper>;
@@ -99,12 +102,12 @@ class FileSelectHelper
 
   // SelectFileDialog::Listener overrides.
   virtual void FileSelected(
-      const FilePath& path, int index, void* params) OVERRIDE;
+      const base::FilePath& path, int index, void* params) OVERRIDE;
   virtual void FileSelectedWithExtraInfo(
       const ui::SelectedFileInfo& file,
       int index,
       void* params) OVERRIDE;
-  virtual void MultiFilesSelected(const std::vector<FilePath>& files,
+  virtual void MultiFilesSelected(const std::vector<base::FilePath>& files,
                                   void* params) OVERRIDE;
   virtual void MultiFilesSelectedWithExtraInfo(
       const std::vector<ui::SelectedFileInfo>& files,
@@ -118,10 +121,10 @@ class FileSelectHelper
 
   void EnumerateDirectory(int request_id,
                           content::RenderViewHost* render_view_host,
-                          const FilePath& path);
+                          const base::FilePath& path);
 
   // Kicks off a new directory enumeration.
-  void StartNewEnumeration(const FilePath& path,
+  void StartNewEnumeration(const base::FilePath& path,
                            int request_id,
                            content::RenderViewHost* render_view_host);
 

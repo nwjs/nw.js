@@ -5,6 +5,7 @@
 #ifndef CONTENT_SHELL_SHELL_BROWSER_MAIN_PARTS_H_
 #define CONTENT_SHELL_SHELL_BROWSER_MAIN_PARTS_H_
 
+#include "base/memory/ref_counted_memory.h"
 #include "base/basictypes.h"
 #include "base/memory/scoped_ptr.h"
 #include "chrome/browser/process_singleton.h"
@@ -51,7 +52,7 @@ class ShellBrowserMainParts : public BrowserMainParts {
 
  private:
   bool ProcessSingletonNotificationCallback(const CommandLine& command_line,
-                                            const FilePath& current_directory);
+                                            const base::FilePath& current_directory);
 
   scoped_ptr<ShellBrowserContext> browser_context_;
   scoped_ptr<ShellBrowserContext> off_the_record_browser_context_;
@@ -64,6 +65,7 @@ class ShellBrowserMainParts : public BrowserMainParts {
   bool run_message_loop_;
 
   ShellDevToolsDelegate* devtools_delegate_;
+  //base::WeakPtrFactory<ShellBrowserMainParts> weak_factory_;
 
   DISALLOW_COPY_AND_ASSIGN(ShellBrowserMainParts);
 };

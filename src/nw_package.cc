@@ -26,7 +26,7 @@
 #include "base/file_util.h"
 #include "base/files/scoped_temp_dir.h"
 #include "base/json/json_file_value_serializer.h"
-#include "base/string_tokenizer.h"
+#include "base/strings/string_tokenizer.h"
 #include "base/string_util.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
@@ -41,6 +41,10 @@
 #include "ui/gfx/image/image.h"
 #include "ui/gfx/image/image_skia_rep.h"
 #include "webkit/glue/image_decoder.h"
+
+bool IsSwitch(const CommandLine::StringType& string,
+              CommandLine::StringType* switch_string,
+              CommandLine::StringType* switch_value);
 
 namespace nw {
 
@@ -185,7 +189,7 @@ bool Package::GetImage(const FilePath& icon_path, gfx::Image* image) {
   if (decoded->empty())
     return false;  // Unable to decode.
 
-  *image = gfx::Image(*decoded.release());
+  *image = gfx::Image::CreateFrom1xBitmap(*decoded.release());
   return true;
 }
 
@@ -375,7 +379,7 @@ void Package::ReadChromiumArgs() {
     return;
 
   std::vector<std::string> chromium_args;
-  StringTokenizer tokenizer(args, kChromiumArgsSeparator);
+  base::StringTokenizer tokenizer(args, kChromiumArgsSeparator);
   tokenizer.set_quote_chars("\'");
   while (tokenizer.GetNext()) {
     std::string token = tokenizer.token();

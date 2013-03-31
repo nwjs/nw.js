@@ -20,7 +20,7 @@
 
 #include "content/nw/src/api/dispatcher_bindings.h"
 
-#include "base/file_path.h"
+#include "base/files/file_path.h"
 #include "base/file_util.h"
 #include "base/logging.h"
 #include "base/values.h"
@@ -35,6 +35,7 @@
 
 using content::RenderView;
 using content::V8ValueConverter;
+using base::FilePath;
 
 namespace api {
 

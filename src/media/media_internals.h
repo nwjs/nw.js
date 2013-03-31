@@ -71,6 +71,11 @@ class MediaInternals : public content::MediaObserver {
       int render_view_id,
       const content::MediaStreamDevice& device,
       content::MediaRequestState state) OVERRIDE;
+  virtual void OnAudioStreamPlayingChanged(
+      int render_process_id,
+      int render_view_id,
+      int stream_id,
+      bool playing) OVERRIDE;
 
   // Methods for observers.
   // Observers should add themselves on construction and remove themselves

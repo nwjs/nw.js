@@ -41,6 +41,8 @@
 #include "content/public/browser/web_contents_view.h"
 #include "net/base/net_util.h"
 
+using base::FilePath;
+
 namespace content {
 
 ShellDownloadManagerDelegate::ShellDownloadManagerDelegate()

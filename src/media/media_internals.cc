@@ -139,6 +139,10 @@ void MediaInternals::OnMediaRequestStateChanged(
     content::MediaRequestState state) {
 }
 
+void MediaInternals::OnAudioStreamPlayingChanged(
+    int render_process_id, int render_view_id, int stream_id, bool playing) {
+}
+
 scoped_refptr<MediaCaptureDevicesDispatcher>
 MediaInternals::GetMediaCaptureDevicesDispatcher() {
   return media_devices_dispatcher_;

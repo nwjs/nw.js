@@ -24,7 +24,7 @@
 
 #include "base/values.h"
 #include "chrome/browser/ui/gtk/gtk_window_util.h"
-#include "chrome/common/extensions/draggable_region.h"
+#include "extensions/common/draggable_region.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_shell.h"

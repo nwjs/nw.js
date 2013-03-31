@@ -20,6 +20,7 @@
 
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 
+#include "base/files/file_path.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/devtools_http_handler.h"
 #include "content/public/browser/web_contents.h"
@@ -57,8 +58,8 @@ bool ShellDevToolsDelegate::BundlesFrontendResources() {
   return true;
 }
 
-FilePath ShellDevToolsDelegate::GetDebugFrontendDir() {
-  return FilePath();
+base::FilePath ShellDevToolsDelegate::GetDebugFrontendDir() {
+  return base::FilePath();
 }
 
 std::string ShellDevToolsDelegate::GetPageThumbnailData(const GURL& url) {
@@ -72,6 +73,11 @@ RenderViewHost* ShellDevToolsDelegate::CreateNewTarget() {
                                MSG_ROUTING_NONE,
                                NULL);
   return shell->web_contents()->GetRenderViewHost();
+}
+
+DevToolsHttpHandlerDelegate::TargetType
+ShellDevToolsDelegate::GetTargetType(RenderViewHost*) {
+  return kTargetTypeTab;
 }
 
 }  // namespace content

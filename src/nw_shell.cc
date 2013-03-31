@@ -208,13 +208,13 @@ void Shell::LoadURL(const GURL& url) {
       Referrer(),
       PAGE_TRANSITION_TYPED,
       std::string());
-  web_contents_->Focus();
+  web_contents_->GetView()->Focus();
   window()->SetToolbarButtonEnabled(nw::NativeWindow::BUTTON_FORWARD, false);
 }
 
 void Shell::GoBackOrForward(int offset) {
   web_contents_->GetController().GoToOffset(offset);
-  web_contents_->Focus();
+  web_contents_->GetView()->Focus();
 }
 
 void Shell::Reload(ReloadType type) {
@@ -240,12 +240,12 @@ void Shell::Reload(ReloadType type) {
       break;
   }
 
-  web_contents_->Focus();
+  web_contents_->GetView()->Focus();
 }
 
 void Shell::Stop() {
   web_contents_->Stop();
-  web_contents_->Focus();
+  web_contents_->GetView()->Focus();
 }
 
 void Shell::ReloadOrStop() {
@@ -424,7 +424,7 @@ void Shell::DidNavigateMainFramePostCommit(WebContents* web_contents) {
   window()->SetToolbarUrlEntry(web_contents->GetURL().spec());
 }
 
-JavaScriptDialogCreator* Shell::GetJavaScriptDialogCreator() {
+JavaScriptDialogManager* Shell::GetJavaScriptDialogCreator() {
   if (!dialog_creator_.get())
     dialog_creator_.reset(new ShellJavaScriptDialogCreator());
   return dialog_creator_.get();

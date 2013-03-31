@@ -21,7 +21,7 @@
 #include "content/nw/src/shell_main_delegate.h"
 
 #include "base/command_line.h"
-#include "base/file_path.h"
+#include "base/files/file_path.h"
 #include "base/logging.h"
 #include "base/path_service.h"
 #include "base/utf_string_conversions.h"
@@ -42,6 +42,8 @@
 #include "ui/base/ui_base_switches.h"
 
 #include <stdio.h>
+
+using base::FilePath;
 
 #if defined(OS_MACOSX)
 #include "content/shell/paths_mac.h"

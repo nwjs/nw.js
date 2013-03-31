@@ -22,7 +22,7 @@
 #include <string>
 
 #include "base/values.h"
-#include "chrome/common/extensions/draggable_region.h"
+#include "extensions/common/draggable_region.h"
 #include "content/public/common/common_param_traits.h"
 #include "ipc/ipc_message_macros.h"
 

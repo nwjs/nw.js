@@ -70,8 +70,9 @@ class CapturePageHelper : public base::RefCountedThreadSafe<CapturePageHelper>,
   // Message handler.
   void OnSnapshot(const SkBitmap& bitmap);
 
-  void CopyFromBackingStoreComplete(skia::PlatformBitmap* bitmap,
-      bool succeeded);
+  void CopyFromBackingStoreComplete(
+                                    bool succeeded,
+                                    const SkBitmap& bitmap);
   void SendResultFromBitmap(const SkBitmap& screen_capture);
 
   // content::WebContentsObserver overrides:
