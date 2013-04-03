@@ -24,7 +24,6 @@
 #include "base/values.h"
 #include "base/win/wrapped_window_proc.h"
 #include "chrome/browser/platform_util.h"
-#include "chrome/common/extensions/draggable_region.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/browser/native_window_toolbar_win.h"
 #include "content/nw/src/common/shell_switches.h"
@@ -33,6 +32,8 @@
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/web_contents.h"
+#include "content/public/browser/web_contents_view.h"
+#include "extensions/common/draggable_region.h"
 #include "third_party/skia/include/core/SkPaint.h"
 #include "ui/base/hit_test.h"
 #include "ui/base/win/hwnd_util.h"
@@ -610,7 +611,9 @@ void NativeWindowWin::OnViewWasResized() {
   int height = sz.height(), width = sz.width();
   gfx::Path path;
   path.addRect(0, 0, width, height);
-  SetWindowRgn(web_contents()->GetNativeView(), path.CreateNativeRegion(), 1);
+  SetWindowRgn(web_contents()->GetView()->GetNativeView(),
+               path.CreateNativeRegion(),
+               1);
 
   SkRegion* rgn = new SkRegion;
   if (!window_->IsFullscreen()) {

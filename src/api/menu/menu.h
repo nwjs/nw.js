@@ -109,7 +109,7 @@ class Menu : public Base {
 #elif defined(OS_WIN)
   friend class nw::NativeWindowWin;
 
-  void Rebuild(const gfx::NativeMenu *parent_menu = NULL);
+  void Rebuild(const HMENU *parent_menu = NULL);
 
   // Flag to indicate the menu has been modified since last show, so we should
   // rebuild the menu before next show.

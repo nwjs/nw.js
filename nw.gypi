@@ -256,6 +256,7 @@
               },
             },
           },
+          'msvs_disabled_warnings': [ 4800 ],
         }],  # OS=="win"
       ],
     },

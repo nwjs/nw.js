@@ -42,18 +42,6 @@ class MediaInternals : public content::MediaObserver {
   static MediaInternals* GetInstance();
 
   // Overridden from content::MediaObserver:
-  virtual void OnDeleteAudioStream(void* host, int stream_id) OVERRIDE;
-  virtual void OnSetAudioStreamPlaying(void* host,
-                                       int stream_id,
-                                       bool playing) OVERRIDE;
-  virtual void OnSetAudioStreamStatus(void* host,
-                                      int stream_id,
-                                      const std::string& status) OVERRIDE;
-  virtual void OnSetAudioStreamVolume(void* host,
-                                      int stream_id,
-                                      double volume) OVERRIDE;
-  virtual void OnMediaEvent(int render_process_id,
-                            const media::MediaLogEvent& event) OVERRIDE;
   virtual void OnCaptureDevicesOpened(
       int render_process_id,
       int render_view_id,

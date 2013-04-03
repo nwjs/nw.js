@@ -42,21 +42,21 @@ namespace content {
 void ShellDownloadManagerDelegate::ChooseDownloadPath(
     int32 download_id,
     const DownloadTargetCallback& callback,
-    const FilePath& suggested_path) {
+    const base::FilePath& suggested_path) {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
   DownloadItem* item = download_manager_->GetDownload(download_id);
   if (!item || (item->GetState() != DownloadItem::IN_PROGRESS))
     return;
 
-  FilePath result;
+  base::FilePath result;
 
-  std::wstring file_part = FilePath(suggested_path).BaseName().value();
+  std::wstring file_part = base::FilePath(suggested_path).BaseName().value();
   wchar_t file_name[MAX_PATH];
   base::wcslcpy(file_name, file_part.c_str(), arraysize(file_name));
   OPENFILENAME save_as;
   ZeroMemory(&save_as, sizeof(save_as));
   save_as.lStructSize = sizeof(OPENFILENAME);
-  save_as.hwndOwner = item->GetWebContents()->GetNativeView();
+  save_as.hwndOwner = item->GetWebContents()->GetView()->GetNativeView();
   save_as.lpstrFile = file_name;
   save_as.nMaxFile = arraysize(file_name);
 
@@ -69,7 +69,7 @@ void ShellDownloadManagerDelegate::ChooseDownloadPath(
                   OFN_NOCHANGEDIR | OFN_PATHMUSTEXIST;
 
   if (GetSaveFileName(&save_as))
-    result = FilePath(std::wstring(save_as.lpstrFile));
+    result = base::FilePath(std::wstring(save_as.lpstrFile));
 
   callback.Run(result, DownloadItem::TARGET_DISPOSITION_PROMPT,
                DOWNLOAD_DANGER_TYPE_NOT_DANGEROUS, result);
