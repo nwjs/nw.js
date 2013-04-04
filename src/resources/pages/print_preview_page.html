@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<head>
+<style>
+  body {
+    margin: 0px;
+    width: 0px;
+  }
+  .row {
+    display: table-row;
+    vertical-align: inherit;
+  }
+  #header, #footer {
+    display: table;
+    table-layout:fixed;
+    width: inherit;
+  }
+  #header {
+    vertical-align: top;
+  }
+  #footer {
+    vertical-align: bottom;
+  }
+  .text {
+    display: table-cell;
+    font-family: sans-serif;
+    font-size: 8px;
+    vertical-align: inherit;
+    white-space: nowrap;
+  }
+  #page_number {
+    text-align: right;
+  }
+  #title {
+    text-align: center;
+  }
+  #date, #url {
+    padding-left: 0.7cm;
+    padding-right: 0.1cm;
+  }
+  #title, #page_number {
+    padding-left: 0.1cm;
+    padding-right: 0.7cm;
+  }
+  #title, #url {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #title, #date {
+    padding-bottom: 0cm;
+    padding-top: 0.4cm;
+  }
+  #page_number, #url {
+    padding-bottom: 0.4cm;
+    padding-top: 0cm;
+  }
+</style>
+<script>
+
+function pixels(value) {
+  return value + 'px';
+}
+  
+function setup(options) {
+  var body = document.querySelector('body');
+  var header = document.querySelector('#header');
+  var content = document.querySelector('#content');
+  var footer = document.querySelector('#footer');
+
+  body.style.width = pixels(options['width']);
+  body.style.height = pixels(options['height']);
+  header.style.height = pixels(options['topMargin']);
+  content.style.height = pixels(options['height'] - options['topMargin'] -
+                                options['bottomMargin']);
+  footer.style.height = pixels(options['bottomMargin']);
+
+  document.querySelector('#date span').innerText = options['date'];
+  document.querySelector('#title span').innerText = options['title'];
+  document.querySelector('#url span').innerText = options['url'];
+  document.querySelector('#page_number span').innerText = options['pageNumber'];
+
+  // Reduce date and page number space to give more space to title and url.
+  document.querySelector('#date').style.width =
+      pixels(document.querySelector('#date span').offsetWidth);
+  document.querySelector('#page_number').style.width =
+      pixels(document.querySelector('#page_number span').offsetWidth);
+
+  // Hide text if it doesn't fit into expected margins.
+  if (header.offsetHeight > options['topMargin'] + 1) {
+    header.style.display = 'none';
+    content.style.height = pixels(options['height'] - options['bottomMargin']);
+  }
+  if (footer.offsetHeight > options['bottomMargin'] + 1) {
+    footer.style.display = 'none';
+  }
+}
+
+</script>
+</head>
+<body>
+  <div id="header">
+    <div class="row">
+      <div id="date" class="text"><span/></div>
+      <div id="title" class="text"><span/></div>
+    </div>
+  </div>
+  <div id="content">
+  </div>
+  <div id="footer">
+    <div class="row">
+      <div id="url" class="text"><span/></div>
+      <div id="page_number" class="text"><span/></div>
+    </div>
+  </div>
+</body>
+</html>

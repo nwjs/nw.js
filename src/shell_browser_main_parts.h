@@ -36,10 +36,11 @@ class ShellBrowserMainParts : public BrowserMainParts {
   // BrowserMainParts overrides.
   virtual void PreMainMessageLoopStart() OVERRIDE;
   virtual void PreMainMessageLoopRun() OVERRIDE;
+  virtual void PostMainMessageLoopStart() OVERRIDE;
   virtual bool MainMessageLoopRun(int* result_code) OVERRIDE;
   virtual void PostMainMessageLoopRun() OVERRIDE;
 
-  // Init browser context and every thing 
+  // Init browser context and every thing
   void Init();
 
   ShellDevToolsDelegate* devtools_delegate() { return devtools_delegate_; }

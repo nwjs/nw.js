@@ -1,16 +1,16 @@
 // Copyright (c) 2012 Intel Corp
 // Copyright (c) 2012 The Chromium Authors
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy 
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 //  in the Software without restriction, including without limitation the rights
 //  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell co
 // pies of the Software, and to permit persons to whom the Software is furnished
 //  to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in al
 // l copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IM
 // PLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNES
 // S FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
@@ -39,6 +39,9 @@
 #include "net/base/net_module.h"
 #include "ui/base/resource/resource_bundle.h"
 
+#if defined(TOOLKIT_GTK)
+#include "content/nw/src/browser/printing/print_dialog_gtk.h"
+#endif
 
 namespace {
 
@@ -94,6 +97,13 @@ void ShellBrowserMainParts::PostMainMessageLoopRun() {
     devtools_delegate_->Stop();
   browser_context_.reset();
   off_the_record_browser_context_.reset();
+}
+
+void ShellBrowserMainParts::PostMainMessageLoopStart() {
+#if defined(TOOLKIT_GTK)
+  printing::PrintingContextGtk::SetCreatePrintDialogFunction(
+      &PrintDialogGtk::CreatePrintDialog);
+#endif
 }
 
 void ShellBrowserMainParts::Init() {
@@ -162,7 +172,7 @@ bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(
   CommandLine::StringVector args = command_line.GetArgs();
 
   // Send open event one by one.
-  for (size_t i = 0; i < args.size(); ++i) { 
+  for (size_t i = 0; i < args.size(); ++i) {
 #if defined(OS_WIN)
     api::App::EmitOpenEvent(UTF16ToUTF8(args[i]));
 #else

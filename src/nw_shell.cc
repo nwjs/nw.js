@@ -1,16 +1,16 @@
 // Copyright (c) 2012 Intel Corp
 // Copyright (c) 2012 The Chromium Authors
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy 
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 //  in the Software without restriction, including without limitation the rights
 //  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell co
 // pies of the Software, and to permit persons to whom the Software is furnished
 //  to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in al
 // l copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IM
 // PLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNES
 // S FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
@@ -55,6 +55,8 @@
 #include "grit/nw_resources.h"
 #include "net/base/escape.h"
 #include "ui/base/resource/resource_bundle.h"
+
+#include "content/nw/src/browser/printing/print_view_manager.h"
 
 namespace content {
 
@@ -119,8 +121,12 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   // Create window.
   window_.reset(nw::NativeWindow::Create(this, manifest));
 
-  // Initialize window after we set window_, because some operations of 
-  // NativeWindow requires the window_ to be non-NULL. 
+#if defined(ENABLE_PRINTING)
+  printing::PrintViewManager::CreateForWebContents(web_contents);
+#endif
+
+  // Initialize window after we set window_, because some operations of
+  // NativeWindow requires the window_ to be non-NULL.
   window_->InitFromManifest(manifest);
 }
 
@@ -188,7 +194,7 @@ void Shell::PrintCriticalError(const std::string& title,
     std::vector<std::string> subst;
     subst.push_back(title);
     subst.push_back(content_with_no_space);
-    error_page_url = "data:text/html;charset=utf-8," + 
+    error_page_url = "data:text/html;charset=utf-8," +
         net::EscapeQueryParamValue(
             ReplaceStringPlaceholders(template_html, subst, NULL), false);
   }
@@ -197,7 +203,7 @@ void Shell::PrintCriticalError(const std::string& title,
 }
 
 nw::Package* Shell::GetPackage() {
-  ShellContentBrowserClient* browser_client = 
+  ShellContentBrowserClient* browser_client =
       static_cast<ShellContentBrowserClient*>(GetContentClient()->browser());
   return browser_client->shell_browser_main_parts()->package();
 }

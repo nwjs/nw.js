@@ -13,6 +13,10 @@
 #include "content/public/browser/content_browser_client.h"
 #include "content/public/browser/web_contents_view.h"
 
+namespace printing {
+class PrintJobManager;
+}
+
 namespace content {
 
 class ShellBrowserContext;
@@ -56,6 +60,8 @@ class ShellContentBrowserClient : public ContentBrowserClient {
   ShellBrowserMainParts* shell_browser_main_parts() {
     return shell_browser_main_parts_;
   }
+  virtual printing::PrintJobManager* print_job_manager();
+  virtual void RenderProcessHostCreated(RenderProcessHost* host) OVERRIDE;
   virtual net::URLRequestContextGetter* CreateRequestContext(
       BrowserContext* browser_context,
       scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
@@ -90,6 +96,8 @@ class ShellContentBrowserClient : public ContentBrowserClient {
       resource_dispatcher_host_delegate_;
 
   ShellBrowserMainParts* shell_browser_main_parts_;
+  // Ensures that all the print jobs are finished before closing the browser.
+  scoped_ptr<printing::PrintJobManager> print_job_manager_;
 };
 
 }  // namespace content
