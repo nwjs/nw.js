@@ -146,7 +146,7 @@ class Shell : public WebContentsDelegate,
                                   const FilePath& path) OVERRIDE;
   virtual void DidNavigateMainFramePostCommit(
       WebContents* web_contents) OVERRIDE;
-  virtual JavaScriptDialogManager* GetJavaScriptDialogCreator() OVERRIDE;
+  virtual JavaScriptDialogManager* GetJavaScriptDialogManager() OVERRIDE;
   virtual void RequestToLockMouse(WebContents* web_contents,
                                   bool user_gesture,
                                   bool last_unlocked_by_target) OVERRIDE;
