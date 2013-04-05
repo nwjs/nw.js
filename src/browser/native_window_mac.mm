@@ -24,7 +24,6 @@
 #include "base/sys_string_conversions.h"
 #include "base/values.h"
 #import "chrome/browser/ui/cocoa/custom_frame_view.h"
-#include "chrome/common/extensions/draggable_region.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/app/app.h"
 #include "content/nw/src/browser/native_window_helper_mac.h"
@@ -36,6 +35,7 @@
 #include "content/public/browser/native_web_keyboard_event.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
+#include "extensions/common/draggable_region.h"
 #include "third_party/skia/include/core/SkRegion.h"
 #import "ui/base/cocoa/underlay_opengl_hosting_window.h"
 
@@ -111,7 +111,7 @@ enum {
 }
 
 - (void)windowDidBecomeKey:(NSNotification *)notification {
-  shell_->web_contents()->Focus();
+  shell_->web_contents()->GetView()->Focus();
   shell_->SendEvent("focus");
 }
 

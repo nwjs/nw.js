@@ -25,6 +25,7 @@
 
 #include "base/bind.h"
 #include "base/file_util.h"
+#include "base/files/file_path.h"
 #include "base/logging.h"
 #include "base/string_util.h"
 #include "base/utf_string_conversions.h"
@@ -34,6 +35,8 @@
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
 #include "net/base/net_util.h"
+
+using base::FilePath;
 
 namespace content {
 

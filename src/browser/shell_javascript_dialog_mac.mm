@@ -35,11 +35,11 @@
 
   // Copies of the fields in ShellJavaScriptDialog because they're private.
   content::ShellJavaScriptDialogCreator* creator_;
-  content::JavaScriptDialogCreator::DialogClosedCallback callback_;
+  content::JavaScriptDialogManager::DialogClosedCallback callback_;
 }
 
 - (id)initHelperWithCreator:(content::ShellJavaScriptDialogCreator*)creator
-   andCallback:(content::JavaScriptDialogCreator::DialogClosedCallback)callback;
+   andCallback:(content::JavaScriptDialogManager::DialogClosedCallback)callback;
 - (NSAlert*)alert;
 - (NSTextField*)textField;
 - (void)alertDidEnd:(NSAlert*)alert
@@ -52,7 +52,7 @@
 @implementation ShellJavaScriptDialogHelper
 
 - (id)initHelperWithCreator:(content::ShellJavaScriptDialogCreator*)creator
-  andCallback:(content::JavaScriptDialogCreator::DialogClosedCallback)callback {
+  andCallback:(content::JavaScriptDialogManager::DialogClosedCallback)callback {
   if (self = [super init]) {
     creator_ = creator;
     callback_ = callback;
@@ -107,7 +107,7 @@ ShellJavaScriptDialog::ShellJavaScriptDialog(
     JavaScriptMessageType message_type,
     const string16& message_text,
     const string16& default_prompt_text,
-    const JavaScriptDialogCreator::DialogClosedCallback& callback)
+    const JavaScriptDialogManager::DialogClosedCallback& callback)
     : creator_(creator),
       callback_(callback) {
   bool text_field = message_type == JAVASCRIPT_MESSAGE_TYPE_PROMPT;

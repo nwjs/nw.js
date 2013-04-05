@@ -5,7 +5,7 @@
 #ifndef CONTENT_SHELL_PATHS_MAC_H_
 #define CONTENT_SHELL_PATHS_MAC_H_
 
-#include "base/file_path.h"
+#include "base/files/file_path.h"
 
 // Sets up base::mac::FrameworkBundle.
 void OverrideFrameworkBundlePath();
@@ -14,6 +14,6 @@ void OverrideFrameworkBundlePath();
 void OverrideChildProcessPath();
 
 // Gets the path to the content shell's pak file.
-FilePath GetResourcesPakFilePath();
+base::FilePath GetResourcesPakFilePath();
 
 #endif  // CONTENT_SHELL_PATHS_MAC_H_

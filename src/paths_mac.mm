@@ -25,6 +25,8 @@
 #include "base/path_service.h"
 #include "content/public/common/content_paths.h"
 
+using base::FilePath;
+
 namespace {
 
 FilePath GetFrameworksPath() {
