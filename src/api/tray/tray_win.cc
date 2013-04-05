@@ -20,7 +20,7 @@
 
 #include "content/nw/src/api/tray/tray.h"
 
-#include "base/file_path.h"
+#include "base/files/file_path.h"
 #include "base/utf_string_conversions.h"
 #include "base/values.h"
 #include "chrome/browser/status_icons/status_icon.h"
@@ -79,7 +79,7 @@ void Tray::SetIcon(const std::string& path) {
   content::Shell* shell = content::Shell::FromRenderViewHost(
       dispatcher_host()->render_view_host());
   nw::Package* package = shell->GetPackage();
-  package->GetImage(FilePath::FromUTF8Unsafe(path), &icon);
+  package->GetImage(base::FilePath::FromUTF8Unsafe(path), &icon);
 
   if (!icon.IsEmpty())
     status_icon_->SetImage(*icon.ToImageSkia());

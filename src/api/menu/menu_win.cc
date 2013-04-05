@@ -140,25 +140,22 @@ void Menu::Popup(int x, int y, content::Shell* shell) {
                    views::Menu2::ALIGN_TOPLEFT);
 }
 
-void Menu::Rebuild(const gfx::NativeMenu *parent_menu) {
+void Menu::Rebuild(const HMENU *parent_menu) {
   if (is_menu_modified_) {
     // Refresh menu before show.
-    menu_->Rebuild();
+    menu_->Rebuild(NULL);
     menu_->UpdateStates();
     for (size_t index = 0; index < icon_bitmaps_.size(); ++index) {
       ::DeleteObject(icon_bitmaps_[index]);
     }
     icon_bitmaps_.clear();
 
-    gfx::NativeMenu native_menu = parent_menu == NULL ?
+    HMENU native_menu = parent_menu == NULL ?
         menu_->GetNativeMenu() : *parent_menu;
 
-    int first_item_index =
-        menu_model_->GetFirstItemIndex(native_menu);
-    for (int menu_index = first_item_index;
-          menu_index < first_item_index + menu_model_->GetItemCount();
-          ++menu_index) {
-      int model_index = menu_index - first_item_index;
+    for (int model_index = 0;
+         model_index < menu_model_->GetItemCount();
+         ++model_index) {
       int command_id = menu_model_->GetCommandIdAt(model_index);
 
       if (menu_model_->GetTypeAt(model_index) == ui::MenuModel::TYPE_COMMAND ||

@@ -89,25 +89,6 @@ MediaInternals* MediaInternals::GetInstance() {
 
 MediaInternals::~MediaInternals() {}
 
-void MediaInternals::OnDeleteAudioStream(void* host, int stream_id) {
-}
-
-void MediaInternals::OnSetAudioStreamPlaying(
-    void* host, int stream_id, bool playing) {
-}
-
-void MediaInternals::OnSetAudioStreamStatus(
-    void* host, int stream_id, const std::string& status) {
-}
-
-void MediaInternals::OnSetAudioStreamVolume(
-    void* host, int stream_id, double volume) {
-}
-
-void MediaInternals::OnMediaEvent(
-    int render_process_id, const media::MediaLogEvent& event) {
-}
-
 void MediaInternals::OnCaptureDevicesOpened(
     int render_process_id,
     int render_view_id,

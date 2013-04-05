@@ -97,7 +97,7 @@ ShellJavaScriptDialog::ShellJavaScriptDialog(
     JavaScriptMessageType message_type,
     const string16& message_text,
     const string16& default_prompt_text,
-    const JavaScriptDialogCreator::DialogClosedCallback& callback)
+    const JavaScriptDialogManager::DialogClosedCallback& callback)
     : creator_(creator),
       callback_(callback),
       message_text_(message_text),
