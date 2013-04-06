@@ -613,18 +613,17 @@ void NativeWindowWin::OnViewWasResized() {
   SetWindowRgn(web_contents()->GetNativeView(), path.CreateNativeRegion(), 1);
 
   SkRegion* rgn = new SkRegion;
-  if (!window_->IsFullscreen()) {
+  if (!window_->IsFullscreen() && !window_->IsMaximized()) {
     if (draggable_region())
       rgn->op(*draggable_region(), SkRegion::kUnion_Op);
-    if (!window_->IsMaximized()) {
-      if (!has_frame()) {
-        rgn->op(0, 0, width, kResizeInsideBoundsSize, SkRegion::kUnion_Op);
-        rgn->op(0, 0, kResizeInsideBoundsSize, height, SkRegion::kUnion_Op);
-        rgn->op(width - kResizeInsideBoundsSize, 0, width, height,
-            SkRegion::kUnion_Op);
-        rgn->op(0, height - kResizeInsideBoundsSize, width, height,
-            SkRegion::kUnion_Op);
-      }
+
+    if (!has_frame() && CanResize()) {
+      rgn->op(0, 0, width, kResizeInsideBoundsSize, SkRegion::kUnion_Op);
+      rgn->op(0, 0, kResizeInsideBoundsSize, height, SkRegion::kUnion_Op);
+      rgn->op(width - kResizeInsideBoundsSize, 0, width, height,
+          SkRegion::kUnion_Op);
+      rgn->op(0, height - kResizeInsideBoundsSize, width, height,
+          SkRegion::kUnion_Op);
     }
   }
   if (web_contents()->GetRenderViewHost()->GetView())
