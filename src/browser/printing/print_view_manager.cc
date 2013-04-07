@@ -42,6 +42,10 @@
 #include "printing/printed_document.h"
 #include "ui/base/l10n/l10n_util.h"
 
+#if defined(OS_WIN)
+#include "content/nw/src/common/shell_switches.h"
+#endif
+
 using base::TimeDelta;
 using content::BrowserThread;
 using content::WebContents;
