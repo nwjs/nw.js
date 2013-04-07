@@ -26,6 +26,7 @@
 #import "chrome/browser/ui/cocoa/custom_frame_view.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/app/app.h"
+#include "content/nw/src/browser/chrome_event_processing_window.h"
 #include "content/nw/src/browser/native_window_helper_mac.h"
 #include "content/nw/src/browser/shell_toolbar_delegate_mac.h"
 #include "content/nw/src/browser/standard_menus_mac.h"
@@ -52,6 +53,7 @@
     MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_7
 
 enum {
+  NSWindowCollectionBehaviorParticipatesInCycle = 1 << 5,
   NSWindowCollectionBehaviorFullScreenPrimary = 1 << 7,
   NSWindowCollectionBehaviorFullScreenAuxiliary = 1 << 8
 };
@@ -191,7 +193,7 @@ enum {
 - (CGFloat)roundedCornerRadius;
 @end
 
-@interface ShellNSWindow : UnderlayOpenGLHostingWindow {
+@interface ShellNSWindow : ChromeEventProcessingWindow {
  @private
   content::Shell* shell_;
 }
@@ -310,6 +312,11 @@ NativeWindowCocoa::NativeWindowCocoa(
     NSUInteger collectionBehavior = [window() collectionBehavior];
     collectionBehavior |= NSWindowCollectionBehaviorFullScreenPrimary;
     [window() setCollectionBehavior:collectionBehavior];
+  }
+
+  if (base::mac::IsOSSnowLeopard()) {
+    [window() setCollectionBehavior:
+        NSWindowCollectionBehaviorParticipatesInCycle];
   }
 
   if (base::mac::IsOSSnowLeopard() &&
@@ -680,13 +687,22 @@ void NativeWindowCocoa::UpdateDraggableRegions(
 
 void NativeWindowCocoa::HandleKeyboardEvent(
     const content::NativeWebKeyboardEvent& event) {
-  if (event.skip_in_browser)
+  DVLOG(1) << "NativeWindowCocoa::HandleKeyboardEvent";
+  if (event.skip_in_browser ||
+      event.type == content::NativeWebKeyboardEvent::Char)
     return;
 
-  // The event handling to get this strictly right is a tangle; cheat here a bit
-  // by just letting the menus have a chance at it.
-  if ([event.os_event type] == NSKeyDown)
-    [[NSApp mainMenu] performKeyEquivalent:event.os_event];
+  
+  DVLOG(1) << "NativeWindowCocoa::HandleKeyboardEvent - redispatch";
+
+  // // The event handling to get this strictly right is a tangle; cheat here a bit
+  // // by just letting the menus have a chance at it.
+  // if ([event.os_event type] == NSKeyDown)
+  //   [[NSApp mainMenu] performKeyEquivalent:event.os_event];
+  ChromeEventProcessingWindow* event_window =
+      static_cast<ChromeEventProcessingWindow*>(window());
+  DCHECK([event_window isKindOfClass:[ChromeEventProcessingWindow class]]);
+  [event_window redispatchKeyEvent:event.os_event];
 }
 
 void NativeWindowCocoa::UpdateDraggableRegionsForSystemDrag(

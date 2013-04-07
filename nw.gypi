@@ -132,6 +132,8 @@
         'src/browser/app_controller_mac.mm',
         'src/browser/capture_page_helper.h',
         'src/browser/capture_page_helper.cc',
+        'src/browser/chrome_event_processing_window.mm',
+        'src/browser/chrome_event_processing_window.h',
         'src/browser/file_select_helper.cc',
         'src/browser/file_select_helper.h',
         'src/browser/native_window.cc',
