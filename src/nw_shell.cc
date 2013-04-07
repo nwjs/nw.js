@@ -39,6 +39,7 @@
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/content_switches.h"
+#include "content/public/common/renderer_preferences.h"
 #include "content/public/common/url_constants.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/app/app.h"
@@ -66,6 +67,7 @@ bool Shell::quit_message_loop_ = true;
 
 int Shell::exit_code_ = 0;
 
+// static
 Shell* Shell::Create(BrowserContext* browser_context,
                      const GURL& url,
                      SiteInstance* site_instance,
@@ -84,6 +86,28 @@ Shell* Shell::Create(BrowserContext* browser_context,
 
   return shell;
 }
+
+// static
+Shell* Shell::Create(WebContents* source_contents,
+                     const GURL& target_url,
+                     base::DictionaryValue* manifest,
+                     WebContents* new_contents) {
+  Shell* shell = new Shell(new_contents, manifest);
+
+  NavigationController::LoadURLParams params(target_url);
+  params.transition_type = PAGE_TRANSITION_TYPED;
+  params.override_user_agent = NavigationController::UA_OVERRIDE_TRUE;
+  new_contents->GetController().LoadURLWithParams(params);
+
+  // Use the user agent value from the source WebContents.
+  std::string source_user_agent =
+      source_contents->GetMutableRendererPrefs()->user_agent_override;
+  RendererPreferences* prefs = source_contents->GetMutableRendererPrefs();
+  prefs->user_agent_override = source_user_agent;
+
+  return shell;
+}
+
 
 Shell* Shell::FromRenderViewHost(RenderViewHost* rvh) {
   for (size_t i = 0; i < windows_.size(); ++i) {
@@ -412,7 +436,7 @@ void Shell::WebContentsCreated(WebContents* source_contents,
   // window.open should show the window by default.
   manifest->SetBoolean(switches::kmShow, true);
 
-  new Shell(new_contents, manifest.get());
+  Shell::Create(source_contents, target_url, manifest.get(), new_contents);
 }
 
 void Shell::RunFileChooser(WebContents* web_contents,

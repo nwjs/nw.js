@@ -82,6 +82,12 @@ class Shell : public WebContentsDelegate,
                        int routing_id,
                        WebContents* base_web_contents);
 
+  // Create a new shell for window.open and Window.open
+  static Shell* Create(WebContents* source_contents,
+                       const GURL& target_url,
+                       base::DictionaryValue* manifest,
+                       WebContents* new_contents);
+
   // Returns the Shell object corresponding to the given RenderViewHost.
   static Shell* FromRenderViewHost(RenderViewHost* rvh);
 
