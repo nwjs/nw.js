@@ -97,4 +97,9 @@ const char kmRemotePages[] = "node-remote";
 
 const char kmNewInstance[] = "new-instance";
 
+#if defined(OS_WIN)
+// Enable conversion from vector to raster for any page.
+const char kPrintRaster[] = "print-raster";
+#endif
+
 }  // namespace switches
