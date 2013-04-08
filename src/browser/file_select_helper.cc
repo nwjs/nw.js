@@ -413,6 +413,7 @@ void FileSelectHelper::RunFileChooserOnUIThread(
   }
 
   FilePath default_file_name = params.default_file_name;
+  FilePath working_path      = params.initial_path;
 
   gfx::NativeWindow owning_window =
       platform_util::GetTopLevel(render_view_host_->GetView()->GetNativeView());
@@ -425,7 +426,8 @@ void FileSelectHelper::RunFileChooserOnUIThread(
       select_file_types_.get() ? 1 : 0,  // 1-based index.
       FILE_PATH_LITERAL(""),
       owning_window,
-      const_cast<content::FileChooserParams*>(&params));
+      const_cast<content::FileChooserParams*>(&params),
+      working_path);
 
   select_file_types_.reset();
 }
