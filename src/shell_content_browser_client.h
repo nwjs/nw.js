@@ -22,6 +22,7 @@ namespace content {
 class ShellBrowserContext;
 class ShellBrowserMainParts;
 class ShellResourceDispatcherHostDelegate;
+class RenderProcessHost;
 
 class ShellContentBrowserClient : public ContentBrowserClient {
  public:
@@ -96,6 +97,7 @@ class ShellContentBrowserClient : public ContentBrowserClient {
       resource_dispatcher_host_delegate_;
 
   ShellBrowserMainParts* shell_browser_main_parts_;
+  content::RenderProcessHost* master_rph_;
 };
 
 }  // namespace content

@@ -56,7 +56,8 @@
 namespace content {
 
 ShellContentBrowserClient::ShellContentBrowserClient()
-    : shell_browser_main_parts_(NULL) {
+  : shell_browser_main_parts_(NULL),
+    master_rph_(NULL) {
 }
 
 ShellContentBrowserClient::~ShellContentBrowserClient() {
@@ -231,7 +232,7 @@ bool ShellContentBrowserClient::ShouldTryToUseExistingProcessHost(
 
 bool ShellContentBrowserClient::IsSuitableHost(RenderProcessHost* process_host,
                                           const GURL& site_url) {
-  return true;
+  return process_host == master_rph_;
 }
 
 net::URLRequestContextGetter* ShellContentBrowserClient::CreateRequestContext(
@@ -294,6 +295,8 @@ printing::PrintJobManager* ShellContentBrowserClient::print_job_manager() {
 void ShellContentBrowserClient::RenderProcessHostCreated(
     RenderProcessHost* host) {
   int id = host->GetID();
+  if (!master_rph_)
+    master_rph_ = host;
 #if defined(ENABLE_PRINTING)
   host->GetChannel()->AddFilter(new PrintingMessageFilter(id));
 #endif
