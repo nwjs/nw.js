@@ -96,8 +96,6 @@ class ShellContentBrowserClient : public ContentBrowserClient {
       resource_dispatcher_host_delegate_;
 
   ShellBrowserMainParts* shell_browser_main_parts_;
-  // Ensures that all the print jobs are finished before closing the browser.
-  scoped_ptr<printing::PrintJobManager> print_job_manager_;
 };
 
 }  // namespace content

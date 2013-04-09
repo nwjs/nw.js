@@ -22,6 +22,10 @@ class Package;
 class CommandLine;
 class FilePath;
 
+namespace printing {
+class PrintJobManager;
+}
+
 namespace content {
 
 class ShellBrowserContext;
@@ -50,6 +54,7 @@ class ShellBrowserMainParts : public BrowserMainParts {
     return off_the_record_browser_context_.get();
   }
   nw::Package* package() { return package_.get(); }
+  virtual printing::PrintJobManager* print_job_manager();
 
  private:
   bool ProcessSingletonNotificationCallback(const CommandLine& command_line,
@@ -60,6 +65,9 @@ class ShellBrowserMainParts : public BrowserMainParts {
   scoped_ptr<nw::Package> package_;
 
   scoped_ptr<ProcessSingleton> process_singleton_;
+
+  // Ensures that all the print jobs are finished before closing the browser.
+  scoped_ptr<printing::PrintJobManager> print_job_manager_;
 
   // For running content_browsertests.
   const MainFunctionParams& parameters_;

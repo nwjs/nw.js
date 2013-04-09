@@ -65,10 +65,6 @@ ShellContentBrowserClient::~ShellContentBrowserClient() {
 BrowserMainParts* ShellContentBrowserClient::CreateBrowserMainParts(
     const MainFunctionParams& parameters) {
   shell_browser_main_parts_ = new ShellBrowserMainParts(parameters);
-#if defined(ENABLE_PRINTING)
-  // Must be created after the NotificationService.
-  print_job_manager_.reset(new printing::PrintJobManager);
-#endif
   return shell_browser_main_parts_;
 }
 
@@ -292,12 +288,7 @@ ShellContentBrowserClient::ShellBrowserContextForBrowserContext(
 }
 
 printing::PrintJobManager* ShellContentBrowserClient::print_job_manager() {
-  // TODO(abarth): DCHECK(CalledOnValidThread());
-  // http://code.google.com/p/chromium/issues/detail?id=6828
-  // print_job_manager_ is initialized in the constructor and destroyed in the
-  // destructor, so it should always be valid.
-  DCHECK(print_job_manager_.get());
-  return print_job_manager_.get();
+  return shell_browser_main_parts_->print_job_manager();
 }
 
 void ShellContentBrowserClient::RenderProcessHostCreated(

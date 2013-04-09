@@ -28,6 +28,7 @@
 #include "base/utf_string_conversions.h"
 #include "base/values.h"
 #include "content/nw/src/api/app/app.h"
+#include "content/nw/src/browser/printing/print_job_manager.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
@@ -66,6 +67,10 @@ ShellBrowserMainParts::ShellBrowserMainParts(
       run_message_loop_(true),
       devtools_delegate_(NULL)
 {
+#if defined(ENABLE_PRINTING)
+  // Must be created after the NotificationService.
+  print_job_manager_.reset(new printing::PrintJobManager);
+#endif
 }
 
 ShellBrowserMainParts::~ShellBrowserMainParts() {
@@ -181,6 +186,15 @@ bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(
   }
 
   return true;
+}
+
+printing::PrintJobManager* ShellBrowserMainParts::print_job_manager() {
+  // TODO(abarth): DCHECK(CalledOnValidThread());
+  // http://code.google.com/p/chromium/issues/detail?id=6828
+  // print_job_manager_ is initialized in the constructor and destroyed in the
+  // destructor, so it should always be valid.
+  DCHECK(print_job_manager_.get());
+  return print_job_manager_.get();
 }
 
 }  // namespace content
