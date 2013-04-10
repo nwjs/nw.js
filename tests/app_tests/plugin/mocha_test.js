@@ -21,7 +21,7 @@ describe('Plugin', function() {
           done('nw crash.');
           child.removeConnection();
         }
-      }, 1000);
+      }, 2000);
         
       
     })
