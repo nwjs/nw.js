@@ -95,10 +95,9 @@ import platform
 
 nw_version = 'v' + getnwversion.nw_version
 is_release = getnwisrelease.release
-
 if is_release == 0:
-  nw_version += '-pre'
-  
+  nw_version += getnwisrelease.postfix
+
 bits = platform.architecture()[0]
 
 if bits == '64bit':
