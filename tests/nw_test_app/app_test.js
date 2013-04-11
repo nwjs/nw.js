@@ -112,9 +112,8 @@ exports.createChildProcess = function(options) {
         options.end(JSON.parse(data), app);
         server.removeListener('connection', cb);        
       });
-      
-    }); //server.on()
-    child.server_connection_cb = cb;
+      child.server_connection_cb = cb;
+    }); //server.on()   
   } //if (no_conect)
   
   app = spawn(execPath, exec_argv);
