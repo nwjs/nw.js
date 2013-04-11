@@ -10,7 +10,7 @@ describe('new-instance', function() {
      server.removeListener('connection', cb);
   });
   
-	it('loaded event can been fired', function(done) {
+	it('new window has different pid', function(done) {
 	    this.timeout(0);
 	    var result = false; 
 	    var times = 0;
