@@ -21,7 +21,7 @@
 #include "content/nw/src/shell_main_delegate.h"
 
 #include "base/command_line.h"
-#include "base/file_path.h"
+#include "base/files/file_path.h"
 #include "base/logging.h"
 #include "base/path_service.h"
 #include "base/utf_string_conversions.h"
@@ -43,6 +43,8 @@
 
 #include <stdio.h>
 
+using base::FilePath;
+
 #if defined(OS_MACOSX)
 #include "content/shell/paths_mac.h"
 #endif  // OS_MACOSX
@@ -50,6 +52,16 @@
 #if defined(OS_WIN)
 #include "base/logging_win.h"
 #include <initguid.h>
+#endif
+
+#include "ipc/ipc_message.h"  // For IPC_MESSAGE_LOG_ENABLED.
+
+#if defined(IPC_MESSAGE_LOG_ENABLED)
+#define IPC_MESSAGE_MACROS_LOG_ENABLED
+#include "content/public/common/content_ipc_logging.h"
+#define IPC_LOG_TABLE_ADD_ENTRY(msg_id, logger) \
+    content::RegisterIPCLogger(msg_id, logger)
+#include "content/nw/src/common/common_message_generator.h"
 #endif
 
 namespace {

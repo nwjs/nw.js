@@ -1,16 +1,16 @@
 // Copyright (c) 2012 Intel Corp
 // Copyright (c) 2012 The Chromium Authors
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy 
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 //  in the Software without restriction, including without limitation the rights
 //  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell co
 // pies of the Software, and to permit persons to whom the Software is furnished
 //  to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in al
 // l copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IM
 // PLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNES
 // S FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
@@ -28,6 +28,7 @@
 #include "base/utf_string_conversions.h"
 #include "base/values.h"
 #include "content/nw/src/api/app/app.h"
+#include "content/nw/src/browser/printing/print_job_manager.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
@@ -38,6 +39,10 @@
 #include "grit/net_resources.h"
 #include "net/base/net_module.h"
 #include "ui/base/resource/resource_bundle.h"
+
+#if defined(TOOLKIT_GTK)
+#include "content/nw/src/browser/printing/print_dialog_gtk.h"
+#endif
 
 namespace {
 
@@ -60,7 +65,12 @@ ShellBrowserMainParts::ShellBrowserMainParts(
     : BrowserMainParts(),
       parameters_(parameters),
       run_message_loop_(true),
-      devtools_delegate_(NULL) {
+      devtools_delegate_(NULL)
+{
+#if defined(ENABLE_PRINTING)
+  // Must be created after the NotificationService.
+  print_job_manager_.reset(new printing::PrintJobManager);
+#endif
 }
 
 ShellBrowserMainParts::~ShellBrowserMainParts() {
@@ -94,6 +104,13 @@ void ShellBrowserMainParts::PostMainMessageLoopRun() {
   off_the_record_browser_context_.reset();
 }
 
+void ShellBrowserMainParts::PostMainMessageLoopStart() {
+#if defined(TOOLKIT_GTK)
+  printing::PrintingContextGtk::SetCreatePrintDialogFunction(
+      &PrintDialogGtk::CreatePrintDialog);
+#endif
+}
+
 void ShellBrowserMainParts::Init() {
   package_.reset(new nw::Package());
 
@@ -107,8 +124,7 @@ void ShellBrowserMainParts::Init() {
   process_singleton_.reset(new ProcessSingleton(browser_context_->GetPath()));
   ProcessSingleton::NotifyResult result =
       process_singleton_->NotifyOtherProcessOrCreate(
-        base::Bind(&ShellBrowserMainParts::ProcessSingletonNotificationCallback,
-                   base::Unretained(this)));
+                                                     base::Bind(&ShellBrowserMainParts::ProcessSingletonNotificationCallback, base::Unretained(this)));
 
   // Quit if the other existing instance want to handle it.
   if (result == ProcessSingleton::PROCESS_NOTIFIED) {
@@ -145,7 +161,7 @@ void ShellBrowserMainParts::Init() {
 
 bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(
     const CommandLine& command_line,
-    const FilePath& current_directory) {
+    const base::FilePath& current_directory) {
   if (!package_->self_extract()) {
     // We're in runtime mode, create the new app.
     return false;
@@ -161,7 +177,7 @@ bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(
   CommandLine::StringVector args = command_line.GetArgs();
 
   // Send open event one by one.
-  for (size_t i = 0; i < args.size(); ++i) { 
+  for (size_t i = 0; i < args.size(); ++i) {
 #if defined(OS_WIN)
     api::App::EmitOpenEvent(UTF16ToUTF8(args[i]));
 #else
@@ -170,6 +186,15 @@ bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(
   }
 
   return true;
+}
+
+printing::PrintJobManager* ShellBrowserMainParts::print_job_manager() {
+  // TODO(abarth): DCHECK(CalledOnValidThread());
+  // http://code.google.com/p/chromium/issues/detail?id=6828
+  // print_job_manager_ is initialized in the constructor and destroyed in the
+  // destructor, so it should always be valid.
+  DCHECK(print_job_manager_.get());
+  return print_job_manager_.get();
 }
 
 }  // namespace content

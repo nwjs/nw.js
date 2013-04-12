@@ -46,7 +46,6 @@ const char kSnapshot[] = "snapshot";
 const char kmMain[]   = "main";
 const char kmName[]   = "name";
 const char kmWebkit[] = "webkit";
-const char kmNodejs[] = "nodejs";
 const char kmWindow[] = "window";
 const char kmChromiumArgs[] = "chromium-args";
 const char kmJsFlags[] = "js-flags";
@@ -97,5 +96,10 @@ const char kmUserAgent[] = "user-agent";
 const char kmRemotePages[] = "node-remote";
 
 const char kmNewInstance[] = "new-instance";
+
+#if defined(OS_WIN)
+// Enable conversion from vector to raster for any page.
+const char kPrintRaster[] = "print-raster";
+#endif
 
 }  // namespace switches

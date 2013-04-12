@@ -68,7 +68,7 @@ void Clipboard::SetText(std::string& text) {
   ui::Clipboard::ObjectMap map;
   map[ui::Clipboard::CBF_TEXT].push_back(
       std::vector<char>(text.begin(), text.end()));
-  clipboard->WriteObjects(ui::Clipboard::BUFFER_STANDARD, map);
+  clipboard->WriteObjects(ui::Clipboard::BUFFER_STANDARD, map, NULL);
 }
 
 std::string Clipboard::GetText() {

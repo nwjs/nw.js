@@ -60,6 +60,7 @@ required_file_linux = (
   'nw',
   'nw.pak',
   'libffmpegsumo.so',
+  'nwsnapshot',
 )
 
 required_file_win = (
@@ -69,10 +70,12 @@ required_file_win = (
   'libGLESv2.dll',
   'nw.exe',
   'nw.pak',
+  'nwsnapshot.exe',
 )
 
 required_file_mac = (
   'node-webkit.app',
+  'nwsnapshot',
 )
 
 
@@ -92,10 +95,9 @@ import platform
 
 nw_version = 'v' + getnwversion.nw_version
 is_release = getnwisrelease.release
-
 if is_release == 0:
-  nw_version += '-pre'
-  
+  nw_version += getnwisrelease.postfix
+
 bits = platform.architecture()[0]
 
 if bits == '64bit':

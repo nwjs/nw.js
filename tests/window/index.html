@@ -26,6 +26,14 @@
     console.log('new window loaded.');
   });
 
+  function takeSnapshot() {
+    gui.Window.get().capturePage(function(img) {
+      var image = win.window.document.getElementById('image');
+      image.src = img;
+           
+    }, 'png');
+  }
+  
   gui.Window.get().on('close', function() {
     if (win != null)
       win.close(true);
@@ -81,6 +89,8 @@
 <button onclick="win.zoomLevel = 2">set zoomLevel to 2</button>
 <br/>
 <button onclick="win.zoomLevel = 0">set zoomLevel to 0</button>
+<br/>
+<button onclick="takeSnapshot()">takeSnapshot</button> 
 <br/>
 Reload the window and do all tests again.
 <button onclick="win.reload()">Reload</button>

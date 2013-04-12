@@ -34,7 +34,7 @@ namespace nw {
 class NwRenderViewObserver : public content::RenderViewObserver {
  public:
   NwRenderViewObserver(content::RenderView* render_view);
-  ~NwRenderViewObserver();
+  virtual ~NwRenderViewObserver();
 
  private:
   // RenderViewObserver implementation.

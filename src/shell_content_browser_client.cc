@@ -1,16 +1,16 @@
 // Copyright (c) 2012 Intel Corp
 // Copyright (c) 2012 The Chromium Authors
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy 
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 //  in the Software without restriction, including without limitation the rights
 //  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell co
 // pies of the Software, and to permit persons to whom the Software is furnished
 //  to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in al
 // l copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IM
 // PLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNES
 // S FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
@@ -21,19 +21,22 @@
 #include "content/nw/src/shell_content_browser_client.h"
 
 #include "base/command_line.h"
-#include "base/file_path.h"
+#include "base/files/file_path.h"
 #include "base/file_util.h"
 #include "base/string_util.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
 #include "content/public/browser/browser_url_handler.h"
+#include "content/nw/src/browser/printing/printing_message_filter.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/resource_dispatcher_host.h"
 #include "content/public/browser/web_contents.h"
+#include "content/public/common/content_switches.h"
 #include "content/public/common/renderer_preferences.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/common/shell_switches.h"
+#include "content/nw/src/browser/printing/print_job_manager.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/browser/shell_resource_dispatcher_host_delegate.h"
 #include "content/nw/src/media/media_internals.h"
@@ -49,10 +52,12 @@
 #include "ui/base/l10n/l10n_util.h"
 #include "webkit/plugins/npapi/plugin_list.h"
 
+
 namespace content {
 
 ShellContentBrowserClient::ShellContentBrowserClient()
-    : shell_browser_main_parts_(NULL) {
+  : shell_browser_main_parts_(NULL),
+    master_rph_(NULL) {
 }
 
 ShellContentBrowserClient::~ShellContentBrowserClient() {
@@ -64,7 +69,7 @@ BrowserMainParts* ShellContentBrowserClient::CreateBrowserMainParts(
   return shell_browser_main_parts_;
 }
 
-WebContentsView* ShellContentBrowserClient::OverrideCreateWebContentsView(
+WebContentsViewPort* ShellContentBrowserClient::OverrideCreateWebContentsView(
       WebContents* web_contents,
       RenderViewHostDelegateView** render_view_host_delegate_view) {
   std::string user_agent, rules;
@@ -122,7 +127,7 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
   nw::Package* package = shell_browser_main_parts()->package();
   if (package && package->GetUseNode()) {
     // Allow node.js
-    command_line->AppendSwitch(switches::kmNodejs);
+    command_line->AppendSwitch(switches::kNodejs);
 
     // Set cwd
     command_line->AppendSwitchPath(switches::kWorkingDirectory,
@@ -137,6 +142,15 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     if (package->root()->GetString(switches::kSnapshot, &snapshot_path))
       command_line->AppendSwitchASCII(switches::kSnapshot, snapshot_path);
   }
+
+  // without the switch, the destructor of the shell object will
+  // shutdown renderwidgethost (RenderWidgetHostImpl::Shutdown) and
+  // destory rph immediately. Then the channel error msg is caught by
+  // SuicideOnChannelErrorFilter and the renderer is killed
+  // immediately
+#if defined(OS_POSIX)
+  command_line->AppendSwitch(switches::kChildCleanExit);
+#endif
 }
 
 void ShellContentBrowserClient::ResourceDispatcherHostCreated() {
@@ -218,7 +232,73 @@ bool ShellContentBrowserClient::ShouldTryToUseExistingProcessHost(
 
 bool ShellContentBrowserClient::IsSuitableHost(RenderProcessHost* process_host,
                                           const GURL& site_url) {
-  return true;
+  return process_host == master_rph_;
 }
 
+net::URLRequestContextGetter* ShellContentBrowserClient::CreateRequestContext(
+    BrowserContext* content_browser_context,
+    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+        blob_protocol_handler,
+    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+        file_system_protocol_handler,
+    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+        developer_protocol_handler,
+    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+        chrome_protocol_handler,
+    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+        chrome_devtools_protocol_handler) {
+  ShellBrowserContext* shell_browser_context =
+      ShellBrowserContextForBrowserContext(content_browser_context);
+  return shell_browser_context->CreateRequestContext(
+      blob_protocol_handler.Pass(), file_system_protocol_handler.Pass(),
+      developer_protocol_handler.Pass(), chrome_protocol_handler.Pass(),
+      chrome_devtools_protocol_handler.Pass());
+}
+
+net::URLRequestContextGetter*
+ShellContentBrowserClient::CreateRequestContextForStoragePartition(
+    BrowserContext* content_browser_context,
+    const base::FilePath& partition_path,
+    bool in_memory,
+    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+        blob_protocol_handler,
+    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+        file_system_protocol_handler,
+    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+        developer_protocol_handler,
+    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+        chrome_protocol_handler,
+    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+        chrome_devtools_protocol_handler) {
+  ShellBrowserContext* shell_browser_context =
+      ShellBrowserContextForBrowserContext(content_browser_context);
+  return shell_browser_context->CreateRequestContextForStoragePartition(
+      partition_path, in_memory, blob_protocol_handler.Pass(),
+      file_system_protocol_handler.Pass(),
+      developer_protocol_handler.Pass(), chrome_protocol_handler.Pass(),
+      chrome_devtools_protocol_handler.Pass());
+}
+
+ShellBrowserContext*
+ShellContentBrowserClient::ShellBrowserContextForBrowserContext(
+    BrowserContext* content_browser_context) {
+  if (content_browser_context == browser_context())
+    return browser_context();
+  DCHECK_EQ(content_browser_context, off_the_record_browser_context());
+  return off_the_record_browser_context();
+}
+
+printing::PrintJobManager* ShellContentBrowserClient::print_job_manager() {
+  return shell_browser_main_parts_->print_job_manager();
+}
+
+void ShellContentBrowserClient::RenderProcessHostCreated(
+    RenderProcessHost* host) {
+  int id = host->GetID();
+  if (!master_rph_)
+    master_rph_ = host;
+#if defined(ENABLE_PRINTING)
+  host->GetChannel()->AddFilter(new PrintingMessageFilter(id));
+#endif
+}
 }  // namespace content

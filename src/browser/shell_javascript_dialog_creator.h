@@ -8,13 +8,13 @@
 #include "base/compiler_specific.h"
 #include "base/callback_forward.h"
 #include "base/memory/scoped_ptr.h"
-#include "content/public/browser/javascript_dialogs.h"
+#include "content/public/browser/javascript_dialog_manager.h"
 
 namespace content {
 
 class ShellJavaScriptDialog;
 
-class ShellJavaScriptDialogCreator : public JavaScriptDialogCreator {
+class ShellJavaScriptDialogCreator : public JavaScriptDialogManager {
  public:
   ShellJavaScriptDialogCreator();
   virtual ~ShellJavaScriptDialogCreator();

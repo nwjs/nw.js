@@ -70,6 +70,8 @@ void Dispatcher::OnEvent(int object_id,
   if (web_view == NULL)
     return;
 
+  DVLOG(1) << "Dispatcher::OnEvent(object_id=" << object_id << ", event=\"" << event << "\")";
+
   content::V8ValueConverterImpl converter;
   v8::Handle<v8::Value> args = converter.ToV8Value(&arguments, node::g_context);
   DCHECK(!args.IsEmpty()) << "Invalid 'arguments' in Dispatcher::OnEvent";
@@ -82,6 +84,7 @@ void Dispatcher::OnEvent(int object_id,
   if (val->IsNull() || val->IsUndefined())
     return; // need to find out why it's undefined here in debugger
   v8::Handle<v8::Object> objects_registry = val->ToObject();
+  DVLOG(1) << "handleEvent(object_id=" << object_id << ", event=\"" << event << "\")";
   node::MakeCallback(objects_registry, "handleEvent", 3, argv);
 }
 

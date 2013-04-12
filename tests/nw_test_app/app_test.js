@@ -9,6 +9,13 @@ var port = global.port;
 var program = require('commander');
 
 
+/*
+ * options:
+ *   argv: the argv of nw
+ *   data: (string|json) data to be sended to control
+ *         
+ *
+ */
 exports.createClient = function(options) {
   var
       argv = options.argv;
@@ -30,7 +37,8 @@ exports.createClient = function(options) {
   if (program.auto) {
     var client = net.connect({port: client_prot});
     client.setEncoding('utf8');   
-
+   
+    if (options.data != null) {   
     if (options.delay) {
       setTimeout(function(){        
         client.end(JSON.stringify(options.data));
@@ -38,6 +46,8 @@ exports.createClient = function(options) {
       
     } else {
       client.end(JSON.stringify(options.data));
+    }
+    
     }
     
   }
@@ -52,20 +62,31 @@ exports.init = function(arg1, arg2) {
 function childProcess() {
   this.socket = null;
   this.app = null;
-  
+  this.server_connection_cb = null;
 }
 
-childProcess.prototype.a = function(cb) {
-  this.socket.on('data', cb(data));
+childProcess.prototype.removeConnection = function() {
+  try {
+    server.removeListener('connection', this.server_connection_cb); 
+  } catch (e) {
+  }
 }
 
 /*
  * options: 
  *   execPath: (string)the path of nw.
  *   appPath: (string)the path of app.
+ * 
  *   end:  (function)we should do the report here, after get child process's result.    
  *           data: JSON object
  *           app: nodejs childProcess.spawn 
+ *   no_connect: (bool) whether listen the connection event
+ *
+ * notices:
+ *   now we can only receive data one time. 
+ *   if your client exists error then crash, and casue the data can not been
+ *   sended, please call `removeConnection()`. otherwise there would be problem. 
+ *
  */
 exports.createChildProcess = function(options) {
   
@@ -76,21 +97,24 @@ exports.createChildProcess = function(options) {
       path = options.appPath,
       exec_argv = [path, '--port', port, '--auto'],
       app, cb,
+      no_connect = options.no_connect || false,
       child = new childProcess();
-        
   
-  server.on('connection', cb = function(socket){
-    socket.setEncoding('utf8');
-    console.log('in app connect');
-    child.socket = socket;
-    socket.on('data', function(data) {
-      options.end(JSON.parse(data), app);
-      server.removeListener('connection', cb);
+  
+  if (!no_connect) {
+  
+    server.on('connection', cb = function(socket){
+      socket.setEncoding('utf8');
+      console.log('in app connect');
+      child.socket = socket;
       
-    });
-    
-
-  });
+      socket.on('data', function(data) {
+        options.end(JSON.parse(data), app);
+        server.removeListener('connection', cb);        
+      });
+      child.server_connection_cb = cb;
+    }); //server.on()   
+  } //if (no_conect)
   
   app = spawn(execPath, exec_argv);
   child.app = app;

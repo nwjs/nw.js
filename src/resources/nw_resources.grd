@@ -49,6 +49,24 @@
       <include name="IDR_NW_API_WINDOW_JS" file="../api/window/window.js" type="BINDATA" />
       <include name="IDR_NW_API_SHELL_JS" file="../api/shell/shell.js" type="BINDATA" />
       <include name="IDR_NW_API_APP_JS" file="../api/app/app.js" type="BINDATA" />
+      <if expr="pp_ifdef('enable_printing')">
+        <include name="IDR_PRINT_PREVIEW_PAGE" file="pages/print_preview_page.html" flattenhtml="true" allowexternalscript="false" type="BINDATA" />
+      </if>
     </includes>
+    <messages fallback_to_english="true">
+      <message name="IDS_PRINT_PREVIEW_INVALID_PRINTER_SETTINGS" desc="Message to display when selected printer is not reachable or its settings are invalid.">
+        The selected printer is not available or not installed correctly.  Check your printer or try selecting another printer.
+      </message>
+      <!-- Print -->
+      <message name="IDS_DEFAULT_PRINT_DOCUMENT_TITLE" desc="Default title for a print document">
+        Untitled Document
+      </message>
+      <message name="IDS_PRINT_SPOOL_FAILED_TITLE_TEXT" desc="Title of a message box when printing fails because of printer issues.">
+        Print Failed
+      </message>
+      <message name="IDS_PRINT_SPOOL_FAILED_ERROR_TEXT" desc="Text in a messagebox when printing fails because of printer issues.">
+        Something went wrong when trying to print.  Please check your printer and try again.
+      </message>
+    </messages>
   </release>
 </grit>

@@ -5,6 +5,7 @@
 #ifndef CONTENT_SHELL_SHELL_BROWSER_MAIN_PARTS_H_
 #define CONTENT_SHELL_SHELL_BROWSER_MAIN_PARTS_H_
 
+#include "base/memory/ref_counted_memory.h"
 #include "base/basictypes.h"
 #include "base/memory/scoped_ptr.h"
 #include "chrome/browser/process_singleton.h"
@@ -21,6 +22,10 @@ class Package;
 class CommandLine;
 class FilePath;
 
+namespace printing {
+class PrintJobManager;
+}
+
 namespace content {
 
 class ShellBrowserContext;
@@ -35,10 +40,11 @@ class ShellBrowserMainParts : public BrowserMainParts {
   // BrowserMainParts overrides.
   virtual void PreMainMessageLoopStart() OVERRIDE;
   virtual void PreMainMessageLoopRun() OVERRIDE;
+  virtual void PostMainMessageLoopStart() OVERRIDE;
   virtual bool MainMessageLoopRun(int* result_code) OVERRIDE;
   virtual void PostMainMessageLoopRun() OVERRIDE;
 
-  // Init browser context and every thing 
+  // Init browser context and every thing
   void Init();
 
   ShellDevToolsDelegate* devtools_delegate() { return devtools_delegate_; }
@@ -48,10 +54,11 @@ class ShellBrowserMainParts : public BrowserMainParts {
     return off_the_record_browser_context_.get();
   }
   nw::Package* package() { return package_.get(); }
+  virtual printing::PrintJobManager* print_job_manager();
 
  private:
   bool ProcessSingletonNotificationCallback(const CommandLine& command_line,
-                                            const FilePath& current_directory);
+                                            const base::FilePath& current_directory);
 
   scoped_ptr<ShellBrowserContext> browser_context_;
   scoped_ptr<ShellBrowserContext> off_the_record_browser_context_;
@@ -59,11 +66,15 @@ class ShellBrowserMainParts : public BrowserMainParts {
 
   scoped_ptr<ProcessSingleton> process_singleton_;
 
+  // Ensures that all the print jobs are finished before closing the browser.
+  scoped_ptr<printing::PrintJobManager> print_job_manager_;
+
   // For running content_browsertests.
   const MainFunctionParams& parameters_;
   bool run_message_loop_;
 
   ShellDevToolsDelegate* devtools_delegate_;
+  //base::WeakPtrFactory<ShellBrowserMainParts> weak_factory_;
 
   DISALLOW_COPY_AND_ASSIGN(ShellBrowserMainParts);
 };

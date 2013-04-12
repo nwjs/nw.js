@@ -11,12 +11,18 @@
 #include "base/compiler_specific.h"
 #include "base/memory/scoped_ptr.h"
 #include "content/public/browser/content_browser_client.h"
+#include "content/public/browser/web_contents_view.h"
+
+namespace printing {
+class PrintJobManager;
+}
 
 namespace content {
 
 class ShellBrowserContext;
 class ShellBrowserMainParts;
 class ShellResourceDispatcherHostDelegate;
+class RenderProcessHost;
 
 class ShellContentBrowserClient : public ContentBrowserClient {
  public:
@@ -28,7 +34,7 @@ class ShellContentBrowserClient : public ContentBrowserClient {
       const MainFunctionParams& parameters) OVERRIDE;
   virtual void RenderViewHostCreated(
       RenderViewHost* render_view_host) OVERRIDE;
-  virtual WebContentsView* OverrideCreateWebContentsView(
+  virtual WebContentsViewPort* OverrideCreateWebContentsView(
       WebContents* web_contents,
       RenderViewHostDelegateView** render_view_host_delegate_view) OVERRIDE;
   virtual std::string GetApplicationLocale() OVERRIDE;
@@ -55,12 +61,43 @@ class ShellContentBrowserClient : public ContentBrowserClient {
   ShellBrowserMainParts* shell_browser_main_parts() {
     return shell_browser_main_parts_;
   }
+  virtual printing::PrintJobManager* print_job_manager();
+  virtual void RenderProcessHostCreated(RenderProcessHost* host) OVERRIDE;
+  virtual net::URLRequestContextGetter* CreateRequestContext(
+      BrowserContext* browser_context,
+      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+          blob_protocol_handler,
+      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+          file_system_protocol_handler,
+      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+          developer_protocol_handler,
+      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+          chrome_protocol_handler,
+      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+          chrome_devtools_protocol_handler) OVERRIDE;
+  virtual net::URLRequestContextGetter* CreateRequestContextForStoragePartition(
+      BrowserContext* browser_context,
+      const base::FilePath& partition_path,
+      bool in_memory,
+      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+          blob_protocol_handler,
+      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+          file_system_protocol_handler,
+      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+          developer_protocol_handler,
+      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+          chrome_protocol_handler,
+      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+          chrome_devtools_protocol_handler) OVERRIDE;
 
  private:
+  ShellBrowserContext* ShellBrowserContextForBrowserContext(
+      BrowserContext* content_browser_context);
   scoped_ptr<ShellResourceDispatcherHostDelegate>
       resource_dispatcher_host_delegate_;
 
   ShellBrowserMainParts* shell_browser_main_parts_;
+  content::RenderProcessHost* master_rph_;
 };
 
 }  // namespace content

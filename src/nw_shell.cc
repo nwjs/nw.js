@@ -1,16 +1,16 @@
 // Copyright (c) 2012 Intel Corp
 // Copyright (c) 2012 The Chromium Authors
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy 
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 //  in the Software without restriction, including without limitation the rights
 //  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell co
 // pies of the Software, and to permit persons to whom the Software is furnished
 //  to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in al
 // l copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IM
 // PLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNES
 // S FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
@@ -38,6 +38,7 @@
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
+#include "content/public/common/content_switches.h"
 #include "content/public/common/url_constants.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/app/app.h"
@@ -54,6 +55,8 @@
 #include "grit/nw_resources.h"
 #include "net/base/escape.h"
 #include "ui/base/resource/resource_bundle.h"
+
+#include "content/nw/src/browser/printing/print_view_manager.h"
 
 namespace content {
 
@@ -107,7 +110,7 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   windows_.push_back(this);
 
   bool enable_nodejs = true;
-  if (manifest->GetBoolean(switches::kmNodejs, &enable_nodejs))
+  if (manifest->GetBoolean(switches::kNodejs, &enable_nodejs))
     enable_nodejs_ = enable_nodejs;
 
   // Add web contents.
@@ -118,8 +121,12 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   // Create window.
   window_.reset(nw::NativeWindow::Create(this, manifest));
 
-  // Initialize window after we set window_, because some operations of 
-  // NativeWindow requires the window_ to be non-NULL. 
+#if defined(ENABLE_PRINTING)
+  printing::PrintViewManager::CreateForWebContents(web_contents);
+#endif
+
+  // Initialize window after we set window_, because some operations of
+  // NativeWindow requires the window_ to be non-NULL.
   window_->InitFromManifest(manifest);
 }
 
@@ -142,8 +149,12 @@ Shell::~Shell() {
 }
 
 void Shell::SendEvent(const std::string& event, const std::string& arg1) {
+
   if (id() < 0)
     return;
+
+  DVLOG(1) << "Shell::SendEvent " << event << " id():"
+           << id() << " RoutingID: " << web_contents()->GetRoutingID();
 
   base::ListValue args;
   if (!arg1.empty())
@@ -183,7 +194,7 @@ void Shell::PrintCriticalError(const std::string& title,
     std::vector<std::string> subst;
     subst.push_back(title);
     subst.push_back(content_with_no_space);
-    error_page_url = "data:text/html;charset=utf-8," + 
+    error_page_url = "data:text/html;charset=utf-8," +
         net::EscapeQueryParamValue(
             ReplaceStringPlaceholders(template_html, subst, NULL), false);
   }
@@ -192,7 +203,7 @@ void Shell::PrintCriticalError(const std::string& title,
 }
 
 nw::Package* Shell::GetPackage() {
-  ShellContentBrowserClient* browser_client = 
+  ShellContentBrowserClient* browser_client =
       static_cast<ShellContentBrowserClient*>(GetContentClient()->browser());
   return browser_client->shell_browser_main_parts()->package();
 }
@@ -203,13 +214,13 @@ void Shell::LoadURL(const GURL& url) {
       Referrer(),
       PAGE_TRANSITION_TYPED,
       std::string());
-  web_contents_->Focus();
+  web_contents_->GetView()->Focus();
   window()->SetToolbarButtonEnabled(nw::NativeWindow::BUTTON_FORWARD, false);
 }
 
 void Shell::GoBackOrForward(int offset) {
   web_contents_->GetController().GoToOffset(offset);
-  web_contents_->Focus();
+  web_contents_->GetView()->Focus();
 }
 
 void Shell::Reload(ReloadType type) {
@@ -235,12 +246,12 @@ void Shell::Reload(ReloadType type) {
       break;
   }
 
-  web_contents_->Focus();
+  web_contents_->GetView()->Focus();
 }
 
 void Shell::Stop() {
   web_contents_->Stop();
-  web_contents_->Focus();
+  web_contents_->GetView()->Focus();
 }
 
 void Shell::ReloadOrStop() {
@@ -337,6 +348,9 @@ void Shell::LoadingStateChanged(WebContents* source) {
                                     current_index < max_index);
   window()->SetToolbarIsLoading(source->IsLoading());
 
+  DVLOG(1) << "Shell(" << id() << ")::LoadingStateChanged "
+           << (source->IsLoading() ? "loading" : "loaded");
+
   if (source->IsLoading())
     SendEvent("loading");
   else
@@ -395,6 +409,8 @@ void Shell::WebContentsCreated(WebContents* source_contents,
     manifest->SetInteger(switches::kmX, features.x);
   if (features.ySet)
     manifest->SetInteger(switches::kmY, features.y);
+  // window.open should show the window by default.
+  manifest->SetBoolean(switches::kmShow, true);
 
   new Shell(new_contents, manifest.get());
 }
@@ -414,7 +430,7 @@ void Shell::DidNavigateMainFramePostCommit(WebContents* web_contents) {
   window()->SetToolbarUrlEntry(web_contents->GetURL().spec());
 }
 
-JavaScriptDialogCreator* Shell::GetJavaScriptDialogCreator() {
+JavaScriptDialogManager* Shell::GetJavaScriptDialogManager() {
   if (!dialog_creator_.get())
     dialog_creator_.reset(new ShellJavaScriptDialogCreator());
   return dialog_creator_.get();

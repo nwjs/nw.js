@@ -86,22 +86,19 @@ void CapturePageHelper::StartCapturePage(const std::string& image_format_str) {
     return;
   }
 
-  skia::PlatformBitmap* temp_bitmap = new skia::PlatformBitmap;
   render_view_host->CopyFromBackingStore(
       gfx::Rect(),
       view->GetViewBounds().size(),
       base::Bind(&CapturePageHelper::CopyFromBackingStoreComplete,
-                 this,
-                 base::Owned(temp_bitmap)),
-      temp_bitmap);
+                 this));
 }
 
 void CapturePageHelper::CopyFromBackingStoreComplete(
-    skia::PlatformBitmap* bitmap,
-    bool succeeded) {
+                                                     bool succeeded,
+                                                     const SkBitmap& bitmap) {
   if (succeeded) {
     // Get image from backing store.
-    SendResultFromBitmap(bitmap->GetBitmap());
+    SendResultFromBitmap(bitmap);
     return;
   }
 

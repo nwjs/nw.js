@@ -19,8 +19,9 @@ describe('Plugin', function() {
       setTimeout(function(){ 
         if (!result) {
           done('nw crash.');
+          child.removeConnection();
         }
-      }, 3000);
+      }, 2000);
         
       
     })

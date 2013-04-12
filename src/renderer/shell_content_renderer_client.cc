@@ -21,7 +21,7 @@
 #include "content/nw/src/renderer/shell_content_renderer_client.h"
 
 #include "base/command_line.h"
-#include "base/file_path.h"
+#include "base/files/file_path.h"
 #include "base/file_util.h"
 #include "base/logging.h"
 #include "base/utf_string_conversions.h"
@@ -35,7 +35,9 @@
 #include "content/nw/src/renderer/autofill_agent.h"
 #include "content/nw/src/renderer/nw_render_view_observer.h"
 #include "content/nw/src/renderer/prerenderer/prerenderer_client.h"
+#include "content/nw/src/renderer/printing/print_web_view_helper.h"
 #include "content/nw/src/renderer/shell_render_process_observer.h"
+#include "content/public/common/content_switches.h"
 #include "content/public/renderer/render_view.h"
 #include "content/renderer/render_view_impl.h"
 #include "net/proxy/proxy_bypass_rules.h"
@@ -46,7 +48,7 @@
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebSecurityOrigin.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebSecurityPolicy.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebView.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/platform/WebString.h"
+//#include "third_party/WebKit/Source/WebKit/chromium/public/platform/WebString.h"
 
 using content::RenderView;
 using content::RenderViewImpl;
@@ -136,6 +138,9 @@ void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
   new api::Dispatcher(render_view);
   new nw::NwRenderViewObserver(render_view);
   new prerender::PrerendererClient(render_view);
+#if defined(ENABLE_PRINTING)
+  new printing::PrintWebViewHelper(render_view);
+#endif
 
   PageClickTracker* page_click_tracker = new PageClickTracker(render_view);
   nw::AutofillAgent* autofill_agent = new nw::AutofillAgent(render_view);
@@ -184,7 +189,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
 
   // Do we integrate node?
   bool use_node =
-    CommandLine::ForCurrentProcess()->HasSwitch(switches::kmNodejs) &&
+    CommandLine::ForCurrentProcess()->HasSwitch(switches::kNodejs) &&
     (force_on || is_file_protocol);
 
   // Test if protocol is 'nw:'

@@ -34,6 +34,7 @@
 
 namespace base {
 class DictionaryValue;
+class FilePath;
 }
 
 namespace extensions {
@@ -53,6 +54,8 @@ class BrowserContext;
 class ShellJavaScriptDialogCreator;
 class SiteInstance;
 class WebContents;
+
+using base::FilePath;
 
 // This represents one window of the Content Shell, i.e. all the UI including
 // buttons and url bar, as well as the web content area.
@@ -143,7 +146,7 @@ class Shell : public WebContentsDelegate,
                                   const FilePath& path) OVERRIDE;
   virtual void DidNavigateMainFramePostCommit(
       WebContents* web_contents) OVERRIDE;
-  virtual JavaScriptDialogCreator* GetJavaScriptDialogCreator() OVERRIDE;
+  virtual JavaScriptDialogManager* GetJavaScriptDialogManager() OVERRIDE;
   virtual void RequestToLockMouse(WebContents* web_contents,
                                   bool user_gesture,
                                   bool last_unlocked_by_target) OVERRIDE;

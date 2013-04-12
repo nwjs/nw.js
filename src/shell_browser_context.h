@@ -6,11 +6,12 @@
 #define CONTENT_SHELL_SHELL_BROWSER_CONTEXT_H_
 
 #include "base/compiler_specific.h"
-#include "base/file_path.h"
+#include "base/files/file_path.h"
 #include "base/files/scoped_temp_dir.h"
 #include "base/memory/ref_counted.h"
 #include "base/memory/scoped_ptr.h"
 #include "content/public/browser/browser_context.h"
+#include "net/url_request/url_request_job_factory.h"
 
 namespace nw {
 class Package;
@@ -18,9 +19,12 @@ class Package;
 
 namespace content {
 
+using base::FilePath;
+
 class DownloadManagerDelegate;
 class ResourceContext;
 class ShellDownloadManagerDelegate;
+class ShellURLRequestContextGetter;
 
 class ShellBrowserContext : public BrowserContext {
  public:
@@ -42,9 +46,6 @@ class ShellBrowserContext : public BrowserContext {
       GetMediaRequestContextForStoragePartition(
           const FilePath& partition_path,
           bool in_memory) OVERRIDE;
-  virtual net::URLRequestContextGetter* GetRequestContextForStoragePartition(
-      const FilePath& partition_path,
-      bool in_memory) OVERRIDE;
   virtual ResourceContext* GetResourceContext() OVERRIDE;
   virtual GeolocationPermissionContext*
       GetGeolocationPermissionContext() OVERRIDE;
@@ -52,9 +53,39 @@ class ShellBrowserContext : public BrowserContext {
       GetSpeechRecognitionPreferences() OVERRIDE;
   virtual quota::SpecialStoragePolicy* GetSpecialStoragePolicy() OVERRIDE;
 
+  net::URLRequestContextGetter* CreateRequestContext(
+      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+          blob_protocol_handler,
+      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+          file_system_protocol_handler,
+      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+          developer_protocol_handler,
+      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+          chrome_protocol_handler,
+      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+          chrome_devtools_protocol_handler);
+
+  net::URLRequestContextGetter* CreateRequestContextForStoragePartition(
+      const base::FilePath& partition_path,
+      bool in_memory,
+      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+          blob_protocol_handler,
+      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+          file_system_protocol_handler,
+      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+          developer_protocol_handler,
+      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+          chrome_protocol_handler,
+      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
+          chrome_devtools_protocol_handler);
+
+
   bool pinning_renderer() { return !disable_pinning_renderer_; }
   void set_pinning_renderer(bool val) { disable_pinning_renderer_ = !val; }
+
  private:
+  class ShellResourceContext;
+
   // Performs initialization of the ShellBrowserContext while IO is still
   // allowed on the current thread.
   void InitWhileIOAllowed();
@@ -63,12 +94,13 @@ class ShellBrowserContext : public BrowserContext {
                                    // or we want to disable pinning
                                    // temporarily
   bool off_the_record_;
+  bool ignore_certificate_errors_;
   nw::Package* package_;
   base::ScopedTempDir testing_path_;
   FilePath path_;
-  scoped_ptr<ResourceContext> resource_context_;
+  scoped_ptr<ShellResourceContext> resource_context_;
   scoped_refptr<ShellDownloadManagerDelegate> download_manager_delegate_;
-  scoped_refptr<net::URLRequestContextGetter> url_request_getter_;
+  scoped_refptr<ShellURLRequestContextGetter> url_request_getter_;
 
   DISALLOW_COPY_AND_ASSIGN(ShellBrowserContext);
 };

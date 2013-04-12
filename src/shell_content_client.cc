@@ -33,7 +33,7 @@ ShellContentClient::~ShellContentClient() {
 }
 
 std::string ShellContentClient::GetUserAgent() const {
-  return webkit_glue::BuildUserAgentFromProduct("Chrome/26.0.1377.0");
+  return webkit_glue::BuildUserAgentFromProduct("Chrome/27.0.1430.0");
 }
 
 string16 ShellContentClient::GetLocalizedString(int message_id) const {
@@ -43,7 +43,13 @@ string16 ShellContentClient::GetLocalizedString(int message_id) const {
 base::StringPiece ShellContentClient::GetDataResource(
     int resource_id,
     ui::ScaleFactor scale_factor) const {
-  return ResourceBundle::GetSharedInstance().GetRawDataResource(resource_id);
+  return ResourceBundle::GetSharedInstance().GetRawDataResourceForScale(
+      resource_id, scale_factor);
+}
+
+base::RefCountedStaticMemory* ShellContentClient::GetDataResourceBytes(
+    int resource_id) const {
+  return ResourceBundle::GetSharedInstance().LoadDataResourceBytes(resource_id);
 }
 
 gfx::Image& ShellContentClient::GetNativeImageNamed(int resource_id) const {

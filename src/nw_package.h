@@ -22,7 +22,7 @@
 #define CONTENT_NW_SRC_NW_PACKAGE_H
 
 #include "base/basictypes.h"
-#include "base/file_path.h"
+#include "base/files/file_path.h"
 #include "base/memory/scoped_ptr.h"
 
 #include <string>
@@ -31,6 +31,7 @@ class GURL;
 
 namespace base {
 class DictionaryValue;
+class FilePath;
 }
 
 namespace gfx {
@@ -39,6 +40,7 @@ class Image;
 
 namespace nw {
 
+using base::FilePath;
 class Package {
  public:
   // Init package from command line parameters.

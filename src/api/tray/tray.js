@@ -36,6 +36,11 @@ function Tray(option) {
     option.shadowIcon = String(option.icon);
     option.icon = nw.getAbsolutePath(option.icon);
   }
+  
+  if (option.hasOwnProperty('alticon')) {
+    option.shadowAlticon = String(option.alticon);
+    option.alticon = nw.getAbsolutePath(option.alticon);
+  }
 
   if (option.hasOwnProperty('tooltip'))
     option.tooltip = String(option.tooltip);
@@ -55,6 +60,8 @@ function Tray(option) {
   // All properties must be set after initialization.
   if (!option.hasOwnProperty('icon'))
     option.shadowIcon = '';
+  if (!option.hasOwnProperty('alticon'))
+    option.shadowAlticon = '';
   if (!option.hasOwnProperty('tooltip'))
     option.tooltip = '';
 }
@@ -72,10 +79,20 @@ Tray.prototype.__defineGetter__('icon', function() {
   return this.handleGetter('shadowIcon');
 });
 
+Tray.prototype.__defineGetter__('alticon', function() {
+  return this.handleGetter('shadowAlticon');
+});
+
 Tray.prototype.__defineSetter__('icon', function(val) {
   v8_util.getHiddenValue(this, 'option').shadowIcon = String(val);
   var real_path = val == '' ? '' : nw.getAbsolutePath(val);
   this.handleSetter('icon', 'SetIcon', String, real_path);
+});
+
+Tray.prototype.__defineSetter__('alticon', function(val) {
+  v8_util.getHiddenValue(this, 'option').shadowAlticon = String(val);
+  var real_path = val == '' ? '' : nw.getAbsolutePath(val);
+  this.handleSetter('alticon', 'SetAlticon', String, real_path);
 });
 
 Tray.prototype.__defineGetter__('tooltip', function() {

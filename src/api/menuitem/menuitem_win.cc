@@ -20,7 +20,7 @@
 
 #include "content/nw/src/api/menuitem/menuitem.h"
 
-#include "base/file_path.h"
+#include "base/files/file_path.h"
 #include "base/utf_string_conversions.h"
 #include "base/values.h"
 #include "content/nw/src/api/dispatcher_host.h"
@@ -80,7 +80,7 @@ void MenuItem::SetIcon(const std::string& icon) {
   content::Shell* shell = content::Shell::FromRenderViewHost(
       dispatcher_host()->render_view_host());
   nw::Package* package = shell->GetPackage();
-  package->GetImage(FilePath::FromUTF8Unsafe(icon), &icon_);
+  package->GetImage(base::FilePath::FromUTF8Unsafe(icon), &icon_);
 }
 
 void MenuItem::SetTooltip(const std::string& tooltip) {
