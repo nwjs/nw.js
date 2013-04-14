@@ -53,8 +53,10 @@ class ShellContentRendererClient : public ContentRendererClient {
   scoped_ptr<api::WindowBindings> window_bindings_;;
 
   void InstallNodeSymbols(WebKit::WebFrame* frame,
-                          v8::Handle<v8::Context> context, const GURL& url,
-                          bool force_on = false);
+                          v8::Handle<v8::Context> context, const GURL& url);
+  void UninstallNodeSymbols(WebKit::WebFrame* frame,
+                            v8::Handle<v8::Context> context);
+  bool goodForNode(WebKit::WebFrame* frame);
 
   // Catch node uncaughtException.
   static v8::Handle<v8::Value> ReportException(const v8::Arguments& args);

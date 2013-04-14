@@ -194,7 +194,7 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
   // Disable web security.
   prefs->dom_paste_enabled = true;
   prefs->javascript_can_access_clipboard = true;
-  prefs->web_security_enabled = false;
+  prefs->web_security_enabled = true;
   prefs->allow_file_access_from_file_urls = true;
 
   // Open experimental features.
