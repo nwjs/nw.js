@@ -13,54 +13,54 @@ describe('different method of starting app (long-to-run)', function() {
   var temp_root = 'tmp-nw';
   before(function(done){
     this.timeout(0);
-    func.copyExecFiles();  
+    func.copyExecFiles();
     func.copySourceFiles();
     func.zipSourceFiles(function() {
       func.makeExecuableFile();
-      done(); 
+      done();
     });
-    
+
   })
-  
-  
+
+
   after(function() {
-    setTimeout(function() {      
+    setTimeout(function() {
       fs.remove('tmp-nw', function (er) {
         if (er) throw er;
       })
     }, 1000);
   })
-  
+
 
   it('start from nw that package.json in the same folder', function(done) {
     this.timeout(0);
     var result = false;
-    
+
     if (os.platform() == 'darwin') {
       //mac don't have this method
       done();
       return;
     }
-    
+
     var app = spawn(execPath);
     app.on('exit', function() {
       result = true;
       done();
     });
-    
+
     setTimeout(function() {
       if (!result) {
         done('timeout');
         app.kill();
       }
     }, 10000);
-  
+
   })
-   
+
   it('start from app.nw', function(done) {
     this.timeout(0);
     var result = false;
-    
+
     var app = spawn(execPath, [path.join('tmp-nw', 'app.nw')]);
     app.on('exit', function() {
       result = true;
@@ -72,14 +72,32 @@ describe('different method of starting app (long-to-run)', function() {
         app.kill();
       }
     }, 10000);
-    
+
   })
-  
-  
+
+  it('start from folder contains `../`', function(done) {
+    this.timeout(0);
+    var result = false;
+    var app = spawn(execPath, ['tests/../tmp-nw']);
+
+
+    app.on('exit', function() {
+      result = true;
+      done();
+    });
+
+    setTimeout(function() {
+      if (!result) {
+        done('timeout');
+        app.kill();
+      }
+    }, 10000);
+  })
+
   it('start from an executable file app.exe', function(done) {
     this.timeout(0);
     var result = false;
-      
+
     if (os.platform() == 'win32') {
       execPath = path.join('tmp-nw', 'app.exe');
     }
@@ -97,16 +115,15 @@ describe('different method of starting app (long-to-run)', function() {
       result = true;
       done();
     });
-    
+
     setTimeout(function() {
       if (!result) {
         done('timeout');
         app.kill();
       }
     }, 10000);
-    
+
   })
-  
-   
+
 })
 })
