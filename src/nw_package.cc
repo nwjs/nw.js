@@ -243,6 +243,7 @@ bool Package::InitFromPath() {
 
   // path_/package.json
   FilePath manifest_path = path_.AppendASCII("package.json");
+  file_util::AbsolutePath(&manifest_path);
   if (!file_util::PathExists(manifest_path)) {
     if (!self_extract())
       ReportError("Invalid package",
