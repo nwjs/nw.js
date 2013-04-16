@@ -13,13 +13,16 @@ describe('website', function() {
           done('Can not connect to the web');          
           return;
         }
-        var score = results.childNodes[0].childNodes[1].innerHTML;;
-        if (score >= 445) {
-          done();
-        } else {
-          done('have a low score');
+		try {
+          var score = results.childNodes[0].childNodes[1].innerHTML;;
+          if (score >= 445) {
+            done();
+          } else {
+            done('have a low score');
+          }
+        } catch (e) {
+           done('Can not connect to the web');   
         }
-        
       });
       gui.Window.get().on('close', function() {
         win.close(true);
