@@ -1,9 +1,10 @@
 ## Prerequisite
 
 node-webkit didn't ship third party node modules required for testing, you
-need to install them with npm:
+need to install them. We use `nw-gyp` to build native modules. So please run this:
 
 ````bash
+$ npm install -g nw-gyp
 $ cd src/content/nw/tests
 $ npm install -d
 ````
