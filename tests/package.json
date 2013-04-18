@@ -18,7 +18,6 @@
     "should": "*",
     "coffee-script": "1.2",
     "mocha": "1.7.4",
-    "nw-gyp": "*",
     "nw_test_loop": "git+https://github.com/owenc4a4/nw_test_loop_without_handle.git",
     "bignum": "git+https://github.com/owenc4a4/bignum.git",
     "fs-extra": "*"
