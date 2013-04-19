@@ -1,7 +1,7 @@
 <html>
 <head>
-  <script type="text/javascript" src="../zepto.min.js"></script>
-  <script type="text/javascript" src="../assert.js"></script>
+  <script type="text/javascript" src="../../zepto.min.js"></script>
+  <script type="text/javascript" src="../../assert.js"></script>
 </head>
 <body>
 <script>
@@ -176,13 +176,13 @@
       document.body.appendChild(element);
     }
   }));
-  
+
   sub1.append(new gui.MenuItem({
     type: 'checkbox',
     checked: true, //<------------------------------------------------!!!!!!
     label: 'Test CheckBox'
   }));
-  
+
   var sub2 = new gui.Menu();
   sub2.append(new gui.MenuItem({
     label: 'Test2',
@@ -199,7 +199,7 @@
   gc();
 </script>
 <script>
-  document.body.addEventListener('contextmenu', function(ev) { 
+  document.body.addEventListener('contextmenu', function(ev) {
     ev.preventDefault();
     menu.popup(ev.x, ev.y);
     return false;
