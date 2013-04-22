@@ -37,7 +37,7 @@
     var list = document.getElementsByName('file');
     for (var i = 0; i < list.length; i++) {
       if (process.platform == 'win32') {
-    	  list[i].nwworkingdir = dir_win;
+    	  list[i].nwworkingdir = dir_win[i];
       } else {
       	list[i].nwworkingdir = dir_unix[i];
       }
