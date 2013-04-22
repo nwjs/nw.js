@@ -83,7 +83,8 @@
 <button onclick="win.setResizable(true)">setResizable(true)</button>
 <button onclick="win.setResizable(false)">(false)</button>
 <br/>
-<button onclick="win.setAlwaysOnTop(true)">setAlwaysOnTop(true)</button>
+<p>Focus another application within 2sec, popup window should on top.</p>
+<button onclick="setTimeout(function(){win.setAlwaysOnTop(true);},2000)">setAlwaysOnTop(true)</button>
 <button onclick="win.setAlwaysOnTop(false)">(false)</button>
 <br/>
 <button onclick="win.zoomLevel = 2">set zoomLevel to 2</button>
