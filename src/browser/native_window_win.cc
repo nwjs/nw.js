@@ -349,6 +349,9 @@ void NativeWindowWin::SetResizable(bool resizable) {
 }
 
 void NativeWindowWin::SetAlwaysOnTop(bool top) {
+  window_->StackAtTop();
+  // SetAlwaysOnTop should be called after StackAtTop because otherwise
+  // the top-most flag will be removed.
   window_->SetAlwaysOnTop(top);
 }
 
