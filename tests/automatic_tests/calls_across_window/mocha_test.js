@@ -22,7 +22,9 @@ describe('AppTest', function(){
       server.on('connection', cb = function(s){
         socket = s;
         s.setEncoding('utf8');
-
+        s.on('error', function(er) {
+          //console.log(er);
+        })
         done();
       });
       app = spawn(process.execPath, exec_argv);
