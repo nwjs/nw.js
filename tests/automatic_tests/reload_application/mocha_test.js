@@ -82,6 +82,9 @@ describe('AppTest', function(){
 
         //console.log('client connect in 1');
         socket.setEncoding('utf8');
+        socket.on('error', function(er) {
+          //console.log(er);
+        });
         socket.on('data', function(data){
           if (data == 'open'){
 
@@ -124,7 +127,9 @@ describe('AppTest', function(){
       var result = false;
 
       server.on('connection', cb = function(socket){
-
+        socket.on('error', function(er) {
+          //console.log(er);
+        });
         //console.log('client connect');
         socket.setEncoding('utf8');
         socket.on('data', function(data){

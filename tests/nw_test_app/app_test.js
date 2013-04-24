@@ -112,6 +112,9 @@ exports.createChildProcess = function(options) {
         options.end(JSON.parse(data), app);
         server.removeListener('connection', cb);        
       });
+      socket.on('error', function(e) {
+        //console.log(e);
+      });
       child.server_connection_cb = cb;
     }); //server.on()   
   } //if (no_conect)

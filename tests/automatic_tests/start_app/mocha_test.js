@@ -14,7 +14,7 @@ describe('different method of starting app (long-to-run)', function() {
   var temp_root = 'tmp-nw';
 
   before(function(done){
-    this.timeout(0);
+    this.timeout(10000);
     func.copyExecFiles();
     func.copySourceFiles();
     func.zipSourceFiles(function() {
