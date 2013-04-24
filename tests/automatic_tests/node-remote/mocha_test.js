@@ -21,26 +21,23 @@ describe('node-remote', function() {
         socket = s;
         s.setEncoding('utf8');
         done();
+        socket.on('error', function(e) {
+          console.log(e);
+        });
       });
       app = spawn(process.execPath, exec_argv);
-
-
     })
-
 
     after(function(done) {
       this.timeout(0);
-      app.kill();
-      done();
+      app.kill();   
       server.removeListener('connection', cb);
+      done();
     })
-
 
     afterEach(function(){
       socket.removeAllListeners('data');
     })
-
-
 
     it('http://127.0.0.1/node_remote_test.html should be able call Node',
 	  function(done) {
@@ -68,9 +65,6 @@ describe('node-remote', function() {
 
         });
         socket.write('8080');
-
     })
-
   })
-
 })

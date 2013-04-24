@@ -26,7 +26,9 @@ describe('new-instance', function() {
 
 	    server.on('connection', cb = function(socket){
 	      socket.setEncoding('utf8');
-
+          socket.on('error', function(er) {
+            console.log(er);
+          })
 	      socket.on('data', function(data) {
 
 	        if (times == 0) {

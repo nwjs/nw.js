@@ -60,6 +60,7 @@
     .option('-b, --bail', "bail after first test failure")
     .option('-A, --async-only', "force all tests to take a callback (async)")
     .option('-p, --port <port>', "set the port used by socket")
+    .option('-v, --verbose', "show the test case which is running.")
     .parse([ 'node-webkit', 'nw-test' ].concat(gui.App.argv));
 
   // --silent
@@ -87,6 +88,8 @@
       fs.writeFileSync(program.output, data, 'utf8');
     }
 
+  // --verbose
+  if (program.verbose) global.verbose = true;
   global.auto = true;
 
   global.port = 13013;
@@ -108,7 +111,11 @@
       // 2) tests run in window context.
       // 3) global variables in each test are wrapped in its local scope.
       // 4) tests are setup synchronously.
-      eval('(function() {' + content + '})();');
+      try {
+        eval('(function() {' + content + '})();');
+      } catch (e) {
+        console.log(e);
+      }
     }
   }
 
