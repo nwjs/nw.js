@@ -38,6 +38,7 @@
 #include "content/public/common/main_function_params.h"
 #include "grit/net_resources.h"
 #include "net/base/net_module.h"
+#include "net/proxy/proxy_resolver_v8.h"
 #include "ui/base/resource/resource_bundle.h"
 
 #if defined(TOOLKIT_GTK)
@@ -109,6 +110,11 @@ void ShellBrowserMainParts::PostMainMessageLoopStart() {
   printing::PrintingContextGtk::SetCreatePrintDialogFunction(
       &PrintDialogGtk::CreatePrintDialog);
 #endif
+}
+
+int ShellBrowserMainParts::PreCreateThreads() {
+  net::ProxyResolverV8::RememberDefaultIsolate();
+  return 0;
 }
 
 void ShellBrowserMainParts::Init() {

@@ -43,6 +43,7 @@ class ShellBrowserMainParts : public BrowserMainParts {
   virtual void PostMainMessageLoopStart() OVERRIDE;
   virtual bool MainMessageLoopRun(int* result_code) OVERRIDE;
   virtual void PostMainMessageLoopRun() OVERRIDE;
+  virtual int PreCreateThreads() OVERRIDE;
 
   // Init browser context and every thing
   void Init();
