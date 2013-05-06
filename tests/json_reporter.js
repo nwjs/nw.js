@@ -47,7 +47,7 @@ function JSONReporter(runner) {
       , passes: passes.map(clean)
     };
 
-    process.stdout.write(JSON.stringify(obj));
+    process.stdout.write(JSON.stringify(obj, null, 2));
   });
 }
 
