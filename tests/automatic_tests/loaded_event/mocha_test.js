@@ -22,8 +22,9 @@ describe('loaded event', function() {
 
         setTimeout(function(){
           if (!result) {
-            child.app.kill();
-            child.removeConnection();
+            child.close();
+            //child.app.kill();
+            //child.removeConnection();
             done('loaded evenet does not been fired');
           }
         }, 3000);

@@ -32,7 +32,7 @@ describe('snapshot', function() {
       fs.unlink(path.join(global.tests_dir, 'snapshot', 'v8.log'));
     })
 
-    it('the native code cloud be exectuted',
+    it('the native code could be exectuted',
 	  function(done) {
         this.timeout(0);
         var result = false;
@@ -50,8 +50,9 @@ describe('snapshot', function() {
         setTimeout(function(){
           if (!result) {
             done('the native code does not been executed');
-            child.removeConnection();
-            child.app.kill();
+            child.close();
+            //child.removeConnection();
+            //child.app.kill();
           }
         }, 3000);
         //child.app.stderr.on('data', function(d){ console.log ('app' + d);});
