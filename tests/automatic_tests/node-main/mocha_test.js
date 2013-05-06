@@ -13,13 +13,12 @@ describe('node-main', function() {
           appPath: path.join(global.tests_dir,
               'show_devtool_after_http_server_created_in_node_main'),
           end: function(data, app) {
-
+            app.kill();
             if (data.success) {
               done();
             } else {
               done('erro');
-            }
-            app.kill();
+            }     
             result = true;
           }
         });
@@ -42,13 +41,12 @@ describe('node-main', function() {
         execPath: process.execPath,
         appPath: path.join(global.tests_dir, 'call_require_with_node-main_set'),
         end: function(data, app) {
-
+          app.kill();
           if (data.ok) {
             done();
           } else {
             done(data.error);
-          }
-          app.kill();
+          }  
         }
       });
     })

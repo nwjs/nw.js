@@ -9,17 +9,18 @@ describe('Plugin', function() {
       var child = app_test.createChildProcess({
         execPath: process.execPath,
         appPath: path.join(global.tests_dir, 'plugin', 'flash'),
-        end: function(data, app) {
-          done();
+        end: function(data, app) {        
           result = true;
           app.kill();
+          done();
         }
       });
 
       setTimeout(function(){
         if (!result) {
           done('nw crash.');
-          child.removeConnection();
+          child.close();
+          //child.removeConnection();
         }
       }, 2000);
 
