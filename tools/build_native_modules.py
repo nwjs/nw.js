@@ -41,16 +41,12 @@ opts, args = parser.parse_args()
 if opts.target:
   target = opts.target
 
-exec_args = ['node',
-             'nw-gyp',
+exec_args = ['nw-gyp',
              'configure',
              '--target=%s'%(target),
              'build']
 
 win = sys.platform in ('win32', 'cygwin')
-
-if win:
-  exec_args.insert(4, '--arch=ia32')
 
 
 for dir in native_modules:
@@ -60,7 +56,7 @@ for dir in native_modules:
 
   native_dir = os.path.join(native_root, dir)
   os.chdir(native_dir)
-  exec_args[1] = os.path.relpath(nw_gyp_script, os.getcwd())
+  #exec_args[1] = os.path.relpath(nw_gyp_script, os.getcwd())
   subprocess.call(exec_args)
   #os.execl(node_gyp_script, '', 'build')
 
