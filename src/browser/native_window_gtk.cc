@@ -51,7 +51,9 @@ const double kGtkCursorBlinkCycleFactor = 2000.0;
 NativeWindowGtk::NativeWindowGtk(content::Shell* shell,
                                  base::DictionaryValue* manifest)
     : NativeWindow(shell, manifest),
-      content_thinks_its_fullscreen_(false) {
+      content_thinks_its_fullscreen_(false),
+      minimum_size_(0, 0),
+      maximum_size_(0, 0){
   window_ = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
 
   vbox_ = gtk_vbox_new(FALSE, 0);
@@ -202,22 +204,42 @@ gfx::Size NativeWindowGtk::GetSize() {
   return gfx::Size(frame_extents.width, frame_extents.height); 
 }
 
+void NativeWindowGtk::SetWindowGeometry(gfx::Size min_size, gfx::Size max_size) {
+  int min_width = min_size.width();
+  int min_height = min_size.height();
+  int max_width = max_size.width();
+  int max_height = max_size.height();
+  GdkGeometry hints;
+  int hints_mask = GDK_HINT_POS;
+  if (min_width || min_height) {
+    hints.min_height = min_height;
+    hints.min_width = min_width;
+    hints_mask |= GDK_HINT_MIN_SIZE;
+  }
+  if (max_width || max_height) {
+    hints.max_height = max_height ? max_height : G_MAXINT;
+    hints.max_width = max_width ? max_width : G_MAXINT;
+    hints_mask |= GDK_HINT_MAX_SIZE;
+  }
+  if (hints_mask) {
+    gtk_window_set_geometry_hints(
+        window_,
+        GTK_WIDGET(window_),
+        &hints,
+        static_cast<GdkWindowHints>(hints_mask));
+  }
+}
+
 void NativeWindowGtk::SetMinimumSize(int width, int height) {
-  GdkGeometry geometry = { 0 };
-  geometry.min_width = width;
-  geometry.min_height = height;
-  int hints = GDK_HINT_POS | GDK_HINT_MIN_SIZE;
-  gtk_window_set_geometry_hints(
-      window_, GTK_WIDGET(window_), &geometry, (GdkWindowHints)hints);
+  minimum_size_.set_width(width);
+  minimum_size_.set_height(height);
+  SetWindowGeometry(minimum_size_, maximum_size_);
 }
 
 void NativeWindowGtk::SetMaximumSize(int width, int height) {
-  GdkGeometry geometry = { 0 };
-  geometry.max_width = width;
-  geometry.max_height = height;
-  int hints = GDK_HINT_POS | GDK_HINT_MAX_SIZE;
-  gtk_window_set_geometry_hints(
-      window_, GTK_WIDGET(window_), &geometry, (GdkWindowHints)hints);
+  maximum_size_.set_width(width);
+  maximum_size_.set_height(height);
+  SetWindowGeometry(minimum_size_, maximum_size_);
 }
 
 void NativeWindowGtk::SetResizable(bool resizable) {
