@@ -38,6 +38,7 @@ class ShellBrowserMainParts : public BrowserMainParts {
   virtual ~ShellBrowserMainParts();
 
   // BrowserMainParts overrides.
+  virtual void PreEarlyInitialization() OVERRIDE;
   virtual void PreMainMessageLoopStart() OVERRIDE;
   virtual void PreMainMessageLoopRun() OVERRIDE;
   virtual void PostMainMessageLoopStart() OVERRIDE;

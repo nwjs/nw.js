@@ -27,6 +27,7 @@
 #include "base/threading/thread_restrictions.h"
 #include "base/utf_string_conversions.h"
 #include "base/values.h"
+#include "chrome/common/chrome_switches.h"
 #include "content/nw/src/api/app/app.h"
 #include "content/nw/src/browser/printing/print_job_manager.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
@@ -41,11 +42,36 @@
 #include "net/proxy/proxy_resolver_v8.h"
 #include "ui/base/resource/resource_bundle.h"
 
+#if !defined(OS_WIN)
+#include <sys/resource.h>
+#endif
+
 #if defined(TOOLKIT_GTK)
 #include "content/nw/src/browser/printing/print_dialog_gtk.h"
 #endif
 
 namespace {
+
+#if !defined(OS_WIN)
+// Sets the file descriptor soft limit to |max_descriptors| or the OS hard
+// limit, whichever is lower.
+void SetFileDescriptorLimit(unsigned int max_descriptors) {
+  struct rlimit limits;
+  if (getrlimit(RLIMIT_NOFILE, &limits) == 0) {
+    unsigned int new_limit = max_descriptors;
+    if (limits.rlim_max > 0 && limits.rlim_max < max_descriptors) {
+      new_limit = limits.rlim_max;
+    }
+    limits.rlim_cur = new_limit;
+    if (setrlimit(RLIMIT_NOFILE, &limits) != 0) {
+      PLOG(INFO) << "Failed to set file descriptor limit";
+    }
+  } else {
+    PLOG(INFO) << "Failed to get file descriptor limit";
+  }
+}
+
+#endif
 
 base::StringPiece PlatformResourceProvider(int key) {
   if (key == IDR_DIR_HEADER_HTML) {
@@ -201,6 +227,28 @@ printing::PrintJobManager* ShellBrowserMainParts::print_job_manager() {
   // destructor, so it should always be valid.
   DCHECK(print_job_manager_.get());
   return print_job_manager_.get();
+}
+
+void ShellBrowserMainParts::PreEarlyInitialization() {
+#if !defined(OS_WIN)
+  // see chrome_browser_main_posix.cc
+  CommandLine& command_line = *CommandLine::ForCurrentProcess();
+  const std::string fd_limit_string =
+      command_line.GetSwitchValueASCII(switches::kFileDescriptorLimit);
+  int fd_limit = 0;
+  if (!fd_limit_string.empty()) {
+    base::StringToInt(fd_limit_string, &fd_limit);
+  }
+#if defined(OS_MACOSX)
+  // We use quite a few file descriptors for our IPC, and the default limit on
+  // the Mac is low (256), so bump it up if there is no explicit override.
+  if (fd_limit == 0) {
+    fd_limit = 1024;
+  }
+#endif  // OS_MACOSX
+  if (fd_limit > 0)
+    SetFileDescriptorLimit(fd_limit);
+#endif // !OS_WIN
 }
 
 }  // namespace content
