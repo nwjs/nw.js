@@ -88,6 +88,9 @@ class NativeWindowGtk : public NativeWindow {
   // Get the position and size of the current window.
   gfx::Rect GetBounds();
 
+  // Set Geometry Hints of the window.
+  void SetWindowGeometry(gfx::Size min_size, gfx::Size max_size);
+
   CHROMEGTK_CALLBACK_0(NativeWindowGtk, void, OnBackButtonClicked);
   CHROMEGTK_CALLBACK_0(NativeWindowGtk, void, OnForwardButtonClicked);
   CHROMEGTK_CALLBACK_0(NativeWindowGtk, void, OnRefreshStopButtonClicked);
@@ -126,6 +129,11 @@ class NativeWindowGtk : public NativeWindow {
   // If true, don't call gdk_window_raise() when we get a click in the title
   // bar or window border.  This is to work around a compiz bug.
   bool suppress_window_raise_;
+
+  // True if the window should be resizable by the user.
+  bool resizable_;
+  gfx::Size minimum_size_;
+  gfx::Size maximum_size_;
 
   DISALLOW_COPY_AND_ASSIGN(NativeWindowGtk);
 };
