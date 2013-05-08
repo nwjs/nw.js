@@ -182,7 +182,10 @@ void NativeWindowGtk::Minimize() {
 }
 
 void NativeWindowGtk::Restore() {
-  gtk_window_present(window_);
+  if (IsMaximized())
+    gtk_window_unmaximize(window_);
+  else if (IsMinimized())
+    gtk_window_deiconify(window_);
 }
 
 void NativeWindowGtk::SetFullscreen(bool fullscreen) {
