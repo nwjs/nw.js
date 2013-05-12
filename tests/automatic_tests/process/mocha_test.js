@@ -17,8 +17,7 @@ describe('process', function() {
       setTimeout(function() {
         fs.exists(path.join(global.tests_dir, 'process', 'exit', 'a.txt'), function (exists) {
           if (exists) {
-            fs.unlink(path.join(global.tests_dir, 'process', 'exit', 'a.txt'));
-            done();
+            fs.unlink(path.join(global.tests_dir, 'process', 'exit', 'a.txt'), done);
           } else {
             done('the event `exit` does not been called.');
           }

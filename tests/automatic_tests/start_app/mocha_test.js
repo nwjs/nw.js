@@ -15,11 +15,12 @@ describe('different method of starting app (long-to-run)', function() {
 
   before(function(done){
     this.timeout(10000);
-    func.copyExecFiles();
-    func.copySourceFiles();
-    func.zipSourceFiles(function() {
-      func.makeExecuableFile();
-      done();
+    func.copyExecFiles(function() {
+      func.copySourceFiles();
+      func.zipSourceFiles(function() {
+        func.makeExecuableFile();
+        done();
+      });
     });
 
   })
@@ -97,31 +98,37 @@ describe('different method of starting app (long-to-run)', function() {
   it('start from an executable file app.exe', function(done) {
     this.timeout(0);
     var result = false;
+    function launch() {
+      var app = spawn(execPath);
+      app.on('exit', function() {
+        result = true;
+        done();
+      });
+
+      setTimeout(function() {
+        if (!result) {
+          done('timeout');
+          app.kill();
+        }
+      }, 10000);
+    }
 
     if (os.platform() == 'win32') {
       execPath = path.join('tmp-nw', 'app.exe');
+      launch();
     }
     if (os.platform() == 'linux') {
       execPath = path.join('tmp-nw', 'app');
+      launch();
     }
     if (os.platform() == 'darwin') {
       var app_path = 'tmp-nw/node-webkit.app/Contents/Resources/app.nw';
-      fs.mkdir(app_path);
-      fs.copy('tmp-nw/index.html', path.join(app_path, 'index.html'));
-      fs.copy('tmp-nw/package.html', path.join(app_path, 'package.html'));
+      fs.mkdir(app_path, function(err) {
+        if(err && err.code !== 'EEXIST') throw err
+        fs.copy('tmp-nw/index.html', path.join(app_path, 'index.html'));
+        fs.copy('tmp-nw/package.html', path.join(app_path, 'package.html'), launch);
+      });
     }
-    var app = spawn(execPath);
-    app.on('exit', function() {
-      result = true;
-      done();
-    });
-
-    setTimeout(function() {
-      if (!result) {
-        done('timeout');
-        app.kill();
-      }
-    }, 10000);
 
   })
 
