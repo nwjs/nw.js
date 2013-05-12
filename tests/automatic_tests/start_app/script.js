@@ -55,15 +55,19 @@ exports.getExecPath = function() {
 
 }
 
-function copyExecFiles() {
-  fs.mkdir('tmp-nw');
-
-  for (var i in required_file) {
-    var src_file = path.join(exec_root, required_file[i]);
-    var dst_file = path.join('tmp-nw', required_file[i]);
-    //fs.copyFileSync(src_file, dst_file);
-    fs.copy(src_file, dst_file);
-  }
+function copyExecFiles(done) {
+  fs.mkdir('tmp-nw', function(err) {
+    if(err && err.code !== 'EEXIST') throw err;
+    var files_done = 0;
+    for (var i in required_file) {
+      var src_file = path.join(exec_root, required_file[i]);
+      var dst_file = path.join('tmp-nw', required_file[i]);
+      fs.copy(src_file, dst_file, function(err) {
+        if(err) throw err;
+        if(++files_done === required_file.length) done();
+      });
+    }
+  });
 
 }
 
