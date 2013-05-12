@@ -36,6 +36,8 @@ if (os.platform() == 'linux') {
 }
 if (os.platform() == 'darwin') {
   required_file = required_file_macox;
+  if (~exec_root.indexOf("Helper.app"))
+    exec_root = path.join(exec_root, '..', '..', '..')
   exec_root = path.normalize(
       path.join(exec_root, '..', '..', '..'));
 }
