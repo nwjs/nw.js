@@ -28,8 +28,8 @@ describe('snapshot', function() {
     })
 
     after(function() {
-      fs.unlink(path.join(global.tests_dir, 'snapshot', 'mytest.bin'));
-      fs.unlink(path.join(global.tests_dir, 'snapshot', 'v8.log'));
+      fs.unlink(path.join(global.tests_dir, 'snapshot', 'mytest.bin'), function(err) {if(err && err.code !== 'ENOENT') throw err});
+      fs.unlink(path.join(global.tests_dir, 'snapshot', 'v8.log'), function(err) {if(err && err.code !== 'ENOENT') throw err});
     })
 
     it('the native code could be exectuted',
