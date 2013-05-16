@@ -130,15 +130,8 @@ void Menu::Remove(MenuItem* menu_item, int pos) {
 
 void Menu::Popup(int x, int y, content::Shell* shell) {
   Rebuild();
-  bool enable_increment, enable_decremen;
-  int zoom_level = shell->web_contents()->GetZoomLevel();
-  int real_x = x, real_y = y;
-  if (zoom_level != 0) {
-    int zoom_percent = shell->web_contents()->GetZoomPercent(
-        &enable_increment, &enable_decremen);
-    real_x = x * zoom_percent * 0.01;
-    real_y = y * zoom_percent * 0.01;
-  }
+  int real_x = ConvertToRealPosition(x, shell);
+  int real_y = ConvertToRealPosition(y, shell);
 
   // Map point from document to screen.
   POINT screen_point = { real_x, real_y };

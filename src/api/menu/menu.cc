@@ -23,6 +23,7 @@
 #include "base/values.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
+#include "content/public/browser/web_contents.h"
 #include "content/nw/src/nw_shell.h"
 
 namespace api {
@@ -67,6 +68,20 @@ void Menu::Call(const std::string& method,
     NOTREACHED() << "Invalid call to Menu method:" << method
                  << " arguments:" << arguments;
   }
+}
+
+int Menu::ConvertToRealPosition(int origin, content::Shell* shell) {
+  bool enable_increment, enable_decremen;
+  int zoom_level = shell->web_contents()->GetZoomLevel();
+  int real = origin;
+  if (zoom_level != 0) {
+    int zoom_percent = shell->web_contents()->GetZoomPercent(
+        &enable_increment, &enable_decremen);
+
+    real = origin * zoom_percent * 0.01;
+
+  }
+  return real;
 }
 
 }  // namespace api
