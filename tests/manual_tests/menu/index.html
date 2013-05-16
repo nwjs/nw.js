@@ -3,9 +3,16 @@
   <script type="text/javascript" src="../../zepto.min.js"></script>
   <script type="text/javascript" src="../../assert.js"></script>
 </head>
-<body>
 <script>
   var gui = require('nw.gui');
+  var win = gui.Window.get();
+</script>
+<body>
+  <p> check whether menu.popup misplaced when zoomLevel is set </p>
+  <button onclick="win.zoomLevel=2">set zoomLevel to 2</button><br>
+  <button onclick="win.zoomLevel=-2">set zoomLevl to -2</button><br>
+  <button onclick="win.zoomLevel=0">set zoomLevl to 0</button><br>
+<script>
 
   var menu = new gui.Menu();
   assert(
@@ -165,7 +172,6 @@
     console.log('Item Mama');
   });
 
-  var win = gui.Window.get();
   var menubar = new gui.Menu({ type: 'menubar' });
   var sub1 = new gui.Menu();
   sub1.append(new gui.MenuItem({
