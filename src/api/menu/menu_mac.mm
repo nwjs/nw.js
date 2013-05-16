@@ -66,7 +66,16 @@ void Menu::Popup(int x, int y, content::Shell* shell) {
        static_cast<nw::NativeWindowCocoa*>(shell->window())->window();
   NSEvent* currentEvent = [NSApp currentEvent];
   NSView* web_view = shell->web_contents()->GetView()->GetNativeView();
-  NSPoint position = { x, web_view.bounds.size.height - y };
+  bool enable_increment, enable_decremen;
+  int zoom_level = shell->web_contents()->GetZoomLevel();
+  int real_x = x, real_y = y;
+  if (zoom_level != 0) {
+    int zoom_percent = shell->web_contents()->GetZoomPercent(
+        &enable_increment, &enable_decremen);
+    real_x = x * zoom_percent * 0.01;
+    real_y = y * zoom_percent * 0.01;
+  }
+  NSPoint position = { real_x, web_view.bounds.size.height - real_y };
   NSTimeInterval eventTime = [currentEvent timestamp];
   NSEvent* clickEvent = [NSEvent mouseEventWithType:NSRightMouseDown
                                            location:position
