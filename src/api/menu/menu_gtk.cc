@@ -117,7 +117,12 @@ void Menu::Popup(int x, int y, content::Shell* shell) {
   GdkEventButton* event = shell->web_contents()->GetRenderWidgetHostView()->
       GetLastMouseDown();
   uint32_t triggering_event_time = event ? event->time : GDK_CURRENT_TIME;
-  gfx::Point point(event->x_root, event->y_root);
+
+  int real_x = ConvertToRealPosition(x, shell);
+  int real_y = ConvertToRealPosition(y, shell);
+  gfx::Rect view_bound = shell->web_contents()->GetRenderWidgetHostView()->
+      GetViewBounds();
+  gfx::Point point(view_bound.x() + real_x, view_bound.y() + real_y);
   gtk_menu_popup(GTK_MENU(menu_), NULL, NULL, 
                  PointMenuPositionFunc, &point,
                  3, triggering_event_time);

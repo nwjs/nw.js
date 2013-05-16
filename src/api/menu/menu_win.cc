@@ -130,9 +130,11 @@ void Menu::Remove(MenuItem* menu_item, int pos) {
 
 void Menu::Popup(int x, int y, content::Shell* shell) {
   Rebuild();
+  int real_x = ConvertToRealPosition(x, shell);
+  int real_y = ConvertToRealPosition(y, shell);
 
   // Map point from document to screen.
-  POINT screen_point = { x, y };
+  POINT screen_point = { real_x, real_y };
   ClientToScreen(shell->web_contents()->GetView()->GetNativeView(),
                  &screen_point);
 

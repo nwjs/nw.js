@@ -100,6 +100,7 @@ class Menu : public Base {
   void Remove(MenuItem* menu_item, int pos);
   void Popup(int x, int y, content::Shell*);
 
+  int ConvertToRealPosition(int origin, content::Shell*);
 #if defined(OS_MACOSX)
   friend class nw::NativeWindowCocoa;
   NSMenu* menu_;
