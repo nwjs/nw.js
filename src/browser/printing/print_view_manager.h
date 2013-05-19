@@ -6,7 +6,7 @@
 #define CHROME_BROWSER_PRINTING_PRINT_VIEW_MANAGER_H_
 
 #include "base/memory/ref_counted.h"
-#include "base/prefs/public/pref_member.h"
+#include "base/prefs/pref_member.h"
 #include "base/string16.h"
 #include "content/public/browser/notification_observer.h"
 #include "content/public/browser/notification_registrar.h"
@@ -182,8 +182,6 @@ class PrintViewManager : public content::NotificationObserver,
   // The document cookie of the current PrinterQuery.
   int cookie_;
 
-  /* // Current state of print preview for this view. */
-  /* PrintPreviewState print_preview_state_; */
 
   // Keeps track of the pending callback during scripted print preview.
   content::RenderProcessHost* scripted_print_preview_rph_;

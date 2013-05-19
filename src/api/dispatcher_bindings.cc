@@ -78,8 +78,10 @@ bool MakePathAbsolute(FilePath* file_path) {
   if (file_path->IsAbsolute())
     return true;
 
-  if (current_directory.empty())
-    return file_util::AbsolutePath(file_path);
+  if (current_directory.empty()) {
+    *file_path = base::MakeAbsoluteFilePath(*file_path);
+    return true;
+  }
 
   if (!current_directory.IsAbsolute())
     return false;

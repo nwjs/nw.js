@@ -30,7 +30,7 @@
 #include "base/string_util.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
-#include "chrome/common/zip.h"
+#include "third_party/zlib/google/zip.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/public/common/content_switches.h"
 #include "googleurl/src/gurl.h"
@@ -67,8 +67,10 @@ bool MakePathAbsolute(FilePath* file_path) {
   if (file_path->IsAbsolute())
     return true;
 
-  if (current_directory.empty())
-    return file_util::AbsolutePath(file_path);
+  if (current_directory.empty()) {
+    *file_path = MakeAbsoluteFilePath(*file_path);
+    return true;
+  }
 
   if (!current_directory.IsAbsolute())
     return false;
@@ -243,7 +245,7 @@ bool Package::InitFromPath() {
 
   // path_/package.json
   FilePath manifest_path = path_.AppendASCII("package.json");
-  file_util::AbsolutePath(&manifest_path);
+  MakeAbsoluteFilePath(manifest_path);
   if (!file_util::PathExists(manifest_path)) {
     if (!self_extract())
       ReportError("Invalid package",

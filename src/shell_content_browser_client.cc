@@ -182,13 +182,13 @@ ShellBrowserContext*
 }
 
 AccessTokenStore* ShellContentBrowserClient::CreateAccessTokenStore() {
-  return new ShellAccessTokenStore(browser_context()->GetRequestContext());
+  return new ShellAccessTokenStore(browser_context());
 }
 
 void ShellContentBrowserClient::OverrideWebkitPrefs(
       RenderViewHost* render_view_host,
       const GURL& url,
-      webkit_glue::WebPreferences* prefs) {
+      WebPreferences* prefs) {
   nw::Package* package = shell_browser_main_parts()->package();
 
   // Disable web security.
@@ -205,13 +205,11 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
   // Disable plugins and cache by default.
   prefs->plugins_enabled = false;
   prefs->java_enabled = false;
-  prefs->uses_page_cache = false;
 
   base::DictionaryValue* webkit;
   if (package->root()->GetDictionary(switches::kmWebkit, &webkit)) {
     webkit->GetBoolean(switches::kmJava, &prefs->java_enabled);
     webkit->GetBoolean(switches::kmPlugin, &prefs->plugins_enabled);
-    webkit->GetBoolean(switches::kmPageCache, &prefs->uses_page_cache);
     FilePath plugins_dir = package->path();
     //PathService::Get(base::DIR_CURRENT, &plugins_dir);
     plugins_dir = plugins_dir.AppendASCII("plugins");
@@ -237,22 +235,10 @@ bool ShellContentBrowserClient::IsSuitableHost(RenderProcessHost* process_host,
 
 net::URLRequestContextGetter* ShellContentBrowserClient::CreateRequestContext(
     BrowserContext* content_browser_context,
-    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-        blob_protocol_handler,
-    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-        file_system_protocol_handler,
-    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-        developer_protocol_handler,
-    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-        chrome_protocol_handler,
-    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-        chrome_devtools_protocol_handler) {
+    ProtocolHandlerMap* protocol_handlers) {
   ShellBrowserContext* shell_browser_context =
       ShellBrowserContextForBrowserContext(content_browser_context);
-  return shell_browser_context->CreateRequestContext(
-      blob_protocol_handler.Pass(), file_system_protocol_handler.Pass(),
-      developer_protocol_handler.Pass(), chrome_protocol_handler.Pass(),
-      chrome_devtools_protocol_handler.Pass());
+  return shell_browser_context->CreateRequestContext(protocol_handlers);
 }
 
 net::URLRequestContextGetter*
@@ -260,24 +246,13 @@ ShellContentBrowserClient::CreateRequestContextForStoragePartition(
     BrowserContext* content_browser_context,
     const base::FilePath& partition_path,
     bool in_memory,
-    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-        blob_protocol_handler,
-    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-        file_system_protocol_handler,
-    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-        developer_protocol_handler,
-    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-        chrome_protocol_handler,
-    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-        chrome_devtools_protocol_handler) {
+    ProtocolHandlerMap* protocol_handlers) {
   ShellBrowserContext* shell_browser_context =
       ShellBrowserContextForBrowserContext(content_browser_context);
   return shell_browser_context->CreateRequestContextForStoragePartition(
-      partition_path, in_memory, blob_protocol_handler.Pass(),
-      file_system_protocol_handler.Pass(),
-      developer_protocol_handler.Pass(), chrome_protocol_handler.Pass(),
-      chrome_devtools_protocol_handler.Pass());
+      partition_path, in_memory, protocol_handlers);
 }
+
 
 ShellBrowserContext*
 ShellContentBrowserClient::ShellBrowserContextForBrowserContext(

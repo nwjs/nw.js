@@ -120,7 +120,7 @@ Shell* Shell::FromRenderViewHost(RenderViewHost* rvh) {
 }
 
 Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
-    : ALLOW_THIS_IN_INITIALIZER_LIST(weak_ptr_factory_(this)),
+    : weak_ptr_factory_(this),
       is_devtools_(false),
       force_close_(false),
       id_(-1),
@@ -285,7 +285,31 @@ void Shell::ReloadOrStop() {
     Reload();
 }
 
+#if 0
+void Shell::CloseDevTools() {
+  if (!devtools_frontend_)
+    return;
+  registrar_.Remove(this,
+                    NOTIFICATION_WEB_CONTENTS_DESTROYED,
+                    Source<WebContents>(
+                        devtools_frontend_->frontend_shell()->web_contents()));
+  devtools_frontend_->Close();
+  devtools_frontend_ = NULL;
+}
+#endif
+
 void Shell::ShowDevTools() {
+#if 0
+  if (devtools_frontend_) {
+    devtools_frontend_->Focus();
+    return;
+  }
+  devtools_frontend_ = ShellDevToolsFrontend::Show(web_contents());
+  registrar_.Add(this,
+                 NOTIFICATION_WEB_CONTENTS_DESTROYED,
+                 Source<WebContents>(
+                     devtools_frontend_->frontend_shell()->web_contents()));
+#else
   ShellContentBrowserClient* browser_client =
       static_cast<ShellContentBrowserClient*>(
           GetContentClient()->browser());
@@ -296,13 +320,12 @@ void Shell::ShowDevTools() {
   }
 
   RenderViewHost* inspected_rvh = web_contents()->GetRenderViewHost();
-  scoped_refptr<DevToolsAgentHost> agent(DevToolsAgentHost::GetFor(inspected_rvh));
+  scoped_refptr<DevToolsAgentHost> agent(DevToolsAgentHost::GetOrCreateFor(inspected_rvh));
   DevToolsManager* manager = DevToolsManager::GetInstance();
-  DevToolsClientHost* host = manager->GetDevToolsClientHostFor(agent.get());
 
-  if (host) {
+  if (agent->IsAttached()) {
     // Break remote debugging debugging session.
-    manager->UnregisterDevToolsClientHostFor(agent.get());
+    manager->CloseAllClientHosts();
   }
 
   ShellDevToolsDelegate* delegate =
@@ -336,6 +359,7 @@ void Shell::ShowDevTools() {
 
   // Save devtools window in current shell.
   devtools_window_ = shell->weak_ptr_factory_.GetWeakPtr();
+#endif
 }
 
 void Shell::UpdateDraggableRegions(

@@ -10,12 +10,12 @@
 #include "base/compiler_specific.h"
 #include "base/message_loop.h"
 #include "base/values.h"
-//#include "chrome/browser/browser_process.h"
 #include "content/nw/src/browser/printing/print_job.h"
-#include "content/public/browser/browser_thread.h"
-#include "content/public/browser/content_browser_client.h"
-#include "content/public/browser/notification_service.h"
 #include "content/public/browser/notification_types.h"
+#include "content/public/browser/browser_thread.h"
+#include "content/public/browser/notification_service.h"
+#include "content/public/browser/content_browser_client.h"
+#include "content/public/common/content_client.h"
 #include "grit/nw_resources.h"
 #include "printing/backend/print_backend.h"
 #include "printing/print_job_constants.h"
@@ -52,12 +52,12 @@ void NotificationCallback(PrintJobWorkerOwner* print_job,
 PrintJobWorker::PrintJobWorker(PrintJobWorkerOwner* owner)
     : Thread("Printing_Worker"),
       owner_(owner),
-      ALLOW_THIS_IN_INITIALIZER_LIST(weak_factory_(this)) {
+      weak_factory_(this) {
   // The object is created in the IO thread.
   DCHECK_EQ(owner_->message_loop(), MessageLoop::current());
 
   printing_context_.reset(PrintingContext::Create(
-        content::GetContentClient()->browser()->GetApplicationLocale()));
+                                                  content::GetContentClient()->browser()->GetApplicationLocale()));
 }
 
 PrintJobWorker::~PrintJobWorker() {

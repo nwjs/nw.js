@@ -23,7 +23,7 @@
 #include "base/bind.h"
 #include "base/message_loop.h"
 #include "base/string_util.h"
-#include "base/string_split.h"
+#include "base/strings/string_split.h"
 #include "content/public/renderer/render_view.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebInputEvent.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebNode.h"

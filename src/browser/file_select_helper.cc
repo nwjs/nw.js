@@ -26,7 +26,7 @@
 #include "base/file_util.h"
 #include "base/platform_file.h"
 #include "base/logging.h"
-#include "base/string_split.h"
+#include "base/strings/string_split.h"
 #include "base/string_util.h"
 #include "base/utf_string_conversions.h"
 #include "chrome/browser/platform_util.h"

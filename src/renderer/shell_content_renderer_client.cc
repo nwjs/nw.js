@@ -26,14 +26,15 @@
 #include "base/logging.h"
 #include "base/string16.h"
 #include "base/utf_string_conversions.h"
-#include "chrome/renderer/page_click_tracker.h"
+#include "components/autofill/renderer/page_click_tracker.h"
 #include "content/nw/src/api/dispatcher.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/window_bindings.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_version.h"
-#include "content/nw/src/renderer/autofill_agent.h"
+#include "components/autofill/renderer/autofill_agent.h"
+#include "components/autofill/renderer/password_autofill_agent.h"
 #include "content/nw/src/renderer/nw_render_view_observer.h"
 #include "content/nw/src/renderer/prerenderer/prerenderer_client.h"
 #include "content/nw/src/renderer/printing/print_web_view_helper.h"
@@ -53,6 +54,8 @@
 
 using content::RenderView;
 using content::RenderViewImpl;
+using autofill::AutofillAgent;
+using autofill::PasswordAutofillAgent;
 using net::ProxyBypassRules;
 using WebKit::WebFrame;
 using WebKit::WebView;
@@ -144,9 +147,11 @@ void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
   new printing::PrintWebViewHelper(render_view);
 #endif
 
-  PageClickTracker* page_click_tracker = new PageClickTracker(render_view);
-  nw::AutofillAgent* autofill_agent = new nw::AutofillAgent(render_view);
-  page_click_tracker->AddListener(autofill_agent);
+  // PageClickTracker* page_click_tracker = new PageClickTracker(render_view);
+  PasswordAutofillAgent* password_autofill_agent =
+      new PasswordAutofillAgent(render_view);
+  new AutofillAgent(render_view, password_autofill_agent);
+  //page_click_tracker->AddListener(autofill_agent);
 }
 
 void ShellContentRendererClient::DidCreateScriptContext(

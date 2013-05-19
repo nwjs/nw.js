@@ -91,7 +91,7 @@ WindowBindings::CallObjectMethodSync(const v8::Arguments& args) {
 
   if (method == "GetZoomLevel") {
     content::RenderViewImpl* render_view = static_cast<content::RenderViewImpl*>(
-                       content::ChildThread::current()->ResolveRoute(routing_id));
+                                                                                 content::RenderViewImpl::FromRoutingID(routing_id));
     if (!render_view)
       return v8::ThrowException(v8::Exception::Error(v8::String::New(
         "Unable to get render view in GetZoomLevel")));
@@ -105,7 +105,7 @@ WindowBindings::CallObjectMethodSync(const v8::Arguments& args) {
 
   if (method == "SetZoomLevel") {
     content::RenderViewImpl* render_view = static_cast<content::RenderViewImpl*>(
-                       content::ChildThread::current()->ResolveRoute(routing_id));
+                                                                                 content::RenderViewImpl::FromRoutingID(routing_id));
     if (!render_view)
       return v8::ThrowException(v8::Exception::Error(v8::String::New(
         "Unable to get render view in SetZoomLevel")));
@@ -126,7 +126,7 @@ WindowBindings::GetWindowObject(const v8::Arguments& args) {
 
   // Dark magic to digg out the RenderView from its id.
   content::RenderViewImpl* render_view = static_cast<content::RenderViewImpl*>(
-      content::ChildThread::current()->ResolveRoute(routing_id));
+                                                                               content::RenderViewImpl::FromRoutingID(routing_id));
   if (!render_view)
     return v8::ThrowException(v8::Exception::Error(v8::String::New(
         "Unable to get render view in GetWindowObject")));

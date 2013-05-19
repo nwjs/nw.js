@@ -119,11 +119,11 @@ void MediaStreamDevicesController::Accept(bool update_content_setting) {
                                      has_video_,
                                      &devices);
 
-  callback_.Run(devices);
+  callback_.Run(devices, scoped_ptr<content::MediaStreamUI>());
 }
 
 void MediaStreamDevicesController::Deny(bool update_content_setting) {
-  callback_.Run(content::MediaStreamDevices());
+  callback_.Run(content::MediaStreamDevices(), scoped_ptr<content::MediaStreamUI>());
 }
 
 bool MediaStreamDevicesController::IsAudioDeviceBlockedByPolicy() const {
@@ -161,7 +161,7 @@ void MediaStreamDevicesController::HandleTapMediaRequest() {
           content::MEDIA_TAB_AUDIO_CAPTURE, "", ""));
   }
 
-  callback_.Run(devices);
+  callback_.Run(devices, scoped_ptr<content::MediaStreamUI>());
 }
 
 bool MediaStreamDevicesController::IsSchemeSecure() const {

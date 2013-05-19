@@ -51,6 +51,7 @@ class Package;
 namespace content {
 
 class BrowserContext;
+class ShellDevToolsFrontend;
 class ShellJavaScriptDialogCreator;
 class SiteInstance;
 class WebContents;
@@ -97,7 +98,9 @@ class Shell : public WebContentsDelegate,
   void Stop();
   void ReloadOrStop();
   void ShowDevTools();
-
+#if 0
+  void CloseDevTools();
+#endif
   // Send an event to renderer.
   void SendEvent(const std::string& event, const std::string& arg1 = "");
 
@@ -187,7 +190,9 @@ class Shell : public WebContentsDelegate,
 
   // Weak potiner to devtools window.
   base::WeakPtr<Shell> devtools_window_;
-
+#if 0
+  ShellDevToolsFrontend* devtools_frontend_;
+#endif
   // Factory to generate weak pointer, used by devtools.
   base::WeakPtrFactory<Shell> weak_ptr_factory_;
 

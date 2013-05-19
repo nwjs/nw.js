@@ -8,10 +8,11 @@
 #include "base/bind_helpers.h"
 #include "base/message_loop.h"
 #include "base/threading/thread_restrictions.h"
+#include "base/threading/worker_pool.h"
 #include "base/timer.h"
 #include "content/nw/src/browser/printing/print_job_worker.h"
-#include "content/public/browser/notification_service.h"
 #include "content/public/browser/notification_types.h"
+#include "content/public/browser/notification_service.h"
 #include "printing/printed_document.h"
 #include "printing/printed_page.h"
 
@@ -36,7 +37,10 @@ PrintJob::PrintJob()
       settings_(),
       is_job_pending_(false),
       is_canceling_(false),
-      ALLOW_THIS_IN_INITIALIZER_LIST(quit_factory_(this)) {
+      is_stopping_(false),
+      is_stopped_(false),
+      quit_factory_(this),
+      weak_ptr_factory_(this) {
   DCHECK(ui_message_loop_);
   // This is normally a UI message loop, but in unit tests, the message loop is
   // of the 'default' type.
@@ -220,6 +224,14 @@ bool PrintJob::is_job_pending() const {
   return is_job_pending_;
 }
 
+bool PrintJob::is_stopping() const {
+  return is_stopping_;
+}
+
+bool PrintJob::is_stopped() const {
+  return is_stopped_;
+}
+
 PrintedDocument* PrintJob::document() const {
   return document_.get();
 }
@@ -342,12 +354,24 @@ void PrintJob::ControlledWorkerShutdown() {
   }
 #endif
 
-  // Temporarily allow it until we fix
-  // http://code.google.com/p/chromium/issues/detail?id=67044
-  base::ThreadRestrictions::ScopedAllowIO allow_io;
 
-  // Now make sure the thread object is cleaned up.
-  worker_->Stop();
+  // Now make sure the thread object is cleaned up. Do this on a worker
+  // thread because it may block.
+  is_stopping_ = true;
+
+  base::WorkerPool::PostTaskAndReply(
+      FROM_HERE,
+      base::Bind(&PrintJobWorker::Stop,
+                 base::Unretained(worker_.get())),
+      base::Bind(&PrintJob::HoldUntilStopIsCalled,
+                 weak_ptr_factory_.GetWeakPtr(),
+                 scoped_refptr<PrintJob>(this)),
+      false);
+}
+
+void PrintJob::HoldUntilStopIsCalled(const scoped_refptr<PrintJob>&) {
+  is_stopped_ = true;
+  is_stopping_ = false;
 }
 
 void PrintJob::Quit() {

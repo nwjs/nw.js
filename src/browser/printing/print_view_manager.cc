@@ -14,8 +14,8 @@
 #include "base/prefs/pref_service.h"
 #include "base/timer.h"
 #include "base/utf_string_conversions.h"
-#include "chrome/browser/browser_process.h"
-//#include "content/nw/src/browser/printing/print_error_dialog.h"
+//#include "chrome/browser/browser_process.h"
+//#include "chrome/browser/printing/print_error_dialog.h"
 #include "content/nw/src/browser/printing/print_job.h"
 #include "content/nw/src/browser/printing/print_job_manager.h"
 //#include "content/nw/src/browser/printing/print_preview_dialog_controller.h"
@@ -23,15 +23,15 @@
 #include "content/nw/src/browser/printing/printer_query.h"
 //#include "chrome/browser/profiles/profile.h"
 //#include "chrome/browser/ui/webui/print_preview/print_preview_ui.h"
+#include "content/nw/src/shell_content_browser_client.h"
+#include "content/public/browser/notification_types.h"
 //#include "chrome/common/chrome_switches.h"
 //#include "chrome/common/pref_names.h"
-#include "content/nw/src/shell_content_browser_client.h"
 #include "content/nw/src/common/print_messages.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/notification_details.h"
 #include "content/public/browser/notification_service.h"
 #include "content/public/browser/notification_source.h"
-#include "content/public/browser/notification_types.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
@@ -42,10 +42,6 @@
 #include "printing/printed_document.h"
 #include "ui/base/l10n/l10n_util.h"
 
-#if defined(OS_WIN)
-#include "content/nw/src/common/shell_switches.h"
-#endif
-
 using base::TimeDelta;
 using content::BrowserThread;
 using content::WebContents;
@@ -53,11 +49,6 @@ using content::WebContents;
 DEFINE_WEB_CONTENTS_USER_DATA_KEY(printing::PrintViewManager);
 
 namespace {
-
-// Keeps track of pending scripted print preview closures.
-// No locking, only access on the UI thread.
-typedef std::map<content::RenderProcessHost*, base::Closure>
-    ScriptedPrintPreviewClosureMap;
 
 // Limits memory usage by raster to 64 MiB.
 const int kMaxRasterSizeInPixels = 16*1024*1024;
@@ -96,6 +87,10 @@ bool PrintViewManager::PrintForSystemDialogNow() {
   return PrintNowInternal(new PrintMsg_PrintForSystemDialog(routing_id()));
 }
 
+// bool PrintViewManager::AdvancedPrintNow() {
+//   return PrintNow();
+// }
+
 bool PrintViewManager::PrintToDestination() {
   // TODO(mad): Remove this once we can send user metrics from the metro driver.
   // crbug.com/142330
@@ -103,7 +98,7 @@ bool PrintViewManager::PrintToDestination() {
   // TODO(mad): Use a passed in destination interface instead.
   content::ShellContentBrowserClient* browser_client =
     static_cast<content::ShellContentBrowserClient*>(content::GetContentClient()->browser());
-  browser_client->print_job_manager()->SetPrintDestination(
+    browser_client->print_job_manager()->SetPrintDestination(
       printing::CreatePrintDestination());
   return PrintNowInternal(new PrintMsg_PrintPages(routing_id()));
 }
@@ -234,10 +229,6 @@ void PrintViewManager::OnPrintingFailed(int cookie) {
     NOTREACHED();
     return;
   }
-
-  // FIXME
-  // chrome::ShowPrintErrorDialog(
-  //     web_contents()->GetView()->GetTopLevelNativeWindow());
 
   ReleasePrinterQuery();
 
@@ -534,8 +525,7 @@ bool PrintViewManager::OpportunisticallyCreatePrintJob(int cookie) {
   scoped_refptr<PrinterQuery> queued_query;
   content::ShellContentBrowserClient* browser_client =
     static_cast<content::ShellContentBrowserClient*>(content::GetContentClient()->browser());
-  browser_client->print_job_manager()->PopPrinterQuery(cookie,
-                                                          &queued_query);
+  browser_client->print_job_manager()->PopPrinterQuery(cookie, &queued_query);
   DCHECK(queued_query.get());
   if (!queued_query.get())
     return false;
@@ -566,13 +556,13 @@ void PrintViewManager::ReleasePrinterQuery() {
 
   int cookie = cookie_;
   cookie_ = 0;
-
   content::ShellContentBrowserClient* browser_client =
     static_cast<content::ShellContentBrowserClient*>(content::GetContentClient()->browser());
   browser_client->print_job_manager()->SetPrintDestination(NULL);
 
+
   printing::PrintJobManager* print_job_manager =
-    browser_client->print_job_manager();
+      browser_client->print_job_manager();
   // May be NULL in tests.
   if (!print_job_manager)
     return;

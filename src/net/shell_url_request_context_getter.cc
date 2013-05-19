@@ -21,21 +21,21 @@
 #include "content/nw/src/net/shell_url_request_context_getter.h"
 
 #include "base/logging.h"
-#include "base/string_split.h"
+#include "base/strings/string_split.h"
 #include "base/string_util.h"
 #include "base/threading/worker_pool.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/common/url_constants.h"
 #include "content/nw/src/net/shell_network_delegate.h"
-#include "content/nw/src/net/sqlite_persistent_cookie_store.h"
+#include "content/public/browser/cookie_store_factory.h"
 #include "content/nw/src/nw_protocol_handler.h"
 #include "content/nw/src/nw_shell.h"
-#include "net/base/cert_verifier.h"
-#include "net/base/default_server_bound_cert_store.h"
-#include "net/base/host_resolver.h"
-#include "net/base/mapped_host_resolver.h"
-#include "net/base/server_bound_cert_service.h"
-#include "net/base/ssl_config_service_defaults.h"
+#include "net/cert/cert_verifier.h"
+#include "net/ssl/default_server_bound_cert_store.h"
+#include "net/dns/host_resolver.h"
+#include "net/dns/mapped_host_resolver.h"
+#include "net/ssl/server_bound_cert_service.h"
+#include "net/ssl/ssl_config_service_defaults.h"
 #include "net/cookies/cookie_monster.h"
 #include "net/http/http_auth_handler_factory.h"
 #include "net/http/http_cache.h"
@@ -54,33 +54,38 @@
 
 namespace content {
 
+namespace {
+
+void InstallProtocolHandlers(net::URLRequestJobFactoryImpl* job_factory,
+                             ProtocolHandlerMap* protocol_handlers) {
+  for (ProtocolHandlerMap::iterator it =
+           protocol_handlers->begin();
+       it != protocol_handlers->end();
+       ++it) {
+    bool set_protocol = job_factory->SetProtocolHandler(
+        it->first, it->second.release());
+    DCHECK(set_protocol);
+  }
+  protocol_handlers->clear();
+}
+
+}  // namespace
+
+
 ShellURLRequestContextGetter::ShellURLRequestContextGetter(
     bool ignore_certificate_errors,
     const FilePath& base_path,
     MessageLoop* io_loop,
     MessageLoop* file_loop,
-    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-        blob_protocol_handler,
-    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-        file_system_protocol_handler,
-    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-        developer_protocol_handler,
-    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-        chrome_protocol_handler,
-    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-        chrome_devtools_protocol_handler)
+    ProtocolHandlerMap* protocol_handlers)
     : ignore_certificate_errors_(ignore_certificate_errors),
       base_path_(base_path),
       io_loop_(io_loop),
-      file_loop_(file_loop),
-      blob_protocol_handler_(blob_protocol_handler.Pass()),
-      file_system_protocol_handler_(file_system_protocol_handler.Pass()),
-      developer_protocol_handler_(developer_protocol_handler.Pass()),
-      chrome_protocol_handler_(chrome_protocol_handler.Pass()),
-      chrome_devtools_protocol_handler_(
-          chrome_devtools_protocol_handler.Pass()) {
+      file_loop_(file_loop) {
   // Must first be created on the UI thread.
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
+
+  std::swap(protocol_handlers_, *protocol_handlers);
 
   // We must create the proxy config service on the UI loop on Linux because it
   // must synchronously run on the glib message loop. This will be passed to
@@ -104,9 +109,12 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
         new net::URLRequestContextStorage(url_request_context_.get()));
 
     FilePath cookie_path = base_path_.Append(FILE_PATH_LITERAL("cookies"));
-    scoped_refptr<SQLitePersistentCookieStore> cookie_db =
-        new SQLitePersistentCookieStore(cookie_path, true, NULL);
-    net::CookieMonster* cookie_store = new net::CookieMonster(cookie_db.get(), NULL);
+    scoped_refptr<net::CookieStore> cookie_store = NULL;
+    cookie_store = content::CreatePersistentCookieStore(
+        cookie_path,
+        false,
+        NULL,
+        NULL);
     cookie_store->GetCookieMonster()->SetPersistSessionCookies(true);
     storage_->set_cookie_store(cookie_store);
 
@@ -114,8 +122,7 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
         new net::DefaultServerBoundCertStore(NULL),
         base::WorkerPool::GetTaskRunner(true)));
     storage_->set_http_user_agent_settings(
-        new net::StaticHttpUserAgentSettings(
-            "en-us,en", "iso-8859-1,*,utf-8", EmptyString()));
+        new net::StaticHttpUserAgentSettings("en-us,en", EmptyString()));
 
     scoped_ptr<net::HostResolver> host_resolver(
         net::HostResolver::CreateDefaultResolver(NULL));
@@ -177,23 +184,9 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
 
     scoped_ptr<net::URLRequestJobFactoryImpl> job_factory(
         new net::URLRequestJobFactoryImpl());
-    bool set_protocol = job_factory->SetProtocolHandler(
-        chrome::kBlobScheme, blob_protocol_handler_.release());
-    DCHECK(set_protocol);
-    set_protocol = job_factory->SetProtocolHandler(
-        chrome::kFileSystemScheme, file_system_protocol_handler_.release());
-    DCHECK(set_protocol);
-    set_protocol = job_factory->SetProtocolHandler(
-            chrome::kChromeUIScheme, chrome_protocol_handler_.release());
-    DCHECK(set_protocol);
-    set_protocol = job_factory->SetProtocolHandler(
-        chrome::kChromeDevToolsScheme,
-        chrome_devtools_protocol_handler_.release());
-    DCHECK(set_protocol);
+    InstallProtocolHandlers(job_factory.get(), &protocol_handlers_);
     job_factory->SetProtocolHandler("nw", new nw::NwProtocolHandler());
-    storage_->set_job_factory(new net::ProtocolInterceptJobFactory(
-        job_factory.PassAs<net::URLRequestJobFactory>(),
-        developer_protocol_handler_.Pass()));
+    storage_->set_job_factory(job_factory.release());
 
   }
 
