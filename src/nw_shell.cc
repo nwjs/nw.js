@@ -79,7 +79,7 @@ Shell* Shell::Create(BrowserContext* browser_context,
 
   Shell* shell = new Shell(web_contents, GetPackage()->window());
   NavigationController::LoadURLParams params(url);
-  params.transition_type = PAGE_TRANSITION_TYPED;
+  params.transition_type = PageTransitionFromInt(PAGE_TRANSITION_TYPED);
   params.override_user_agent = NavigationController::UA_OVERRIDE_TRUE;
 
   web_contents->GetController().LoadURLWithParams(params);
@@ -94,11 +94,12 @@ Shell* Shell::Create(WebContents* source_contents,
                      WebContents* new_contents) {
   Shell* shell = new Shell(new_contents, manifest);
 
-  NavigationController::LoadURLParams params(target_url);
-  params.transition_type = PAGE_TRANSITION_TYPED;
-  params.override_user_agent = NavigationController::UA_OVERRIDE_TRUE;
-  new_contents->GetController().LoadURLWithParams(params);
-
+  if (!target_url.is_empty()) {
+    NavigationController::LoadURLParams params(target_url);
+    params.transition_type = PageTransitionFromInt(PAGE_TRANSITION_TYPED);
+    params.override_user_agent = NavigationController::UA_OVERRIDE_TRUE;
+    new_contents->GetController().LoadURLWithParams(params);
+  }
   // Use the user agent value from the source WebContents.
   std::string source_user_agent =
       source_contents->GetMutableRendererPrefs()->user_agent_override;
@@ -439,6 +440,7 @@ bool Shell::IsPopupOrPanel(const WebContents* source) const {
 // Window opened by window.open
 void Shell::WebContentsCreated(WebContents* source_contents,
                                int64 source_frame_id,
+                               const string16& frame_name,
                                const GURL& target_url,
                                WebContents* new_contents) {
   // Create with package's manifest
@@ -460,7 +462,8 @@ void Shell::WebContentsCreated(WebContents* source_contents,
   // window.open should show the window by default.
   manifest->SetBoolean(switches::kmShow, true);
 
-  Shell::Create(source_contents, target_url, manifest.get(), new_contents);
+  // don't pass the url on window.open case
+  Shell::Create(source_contents, GURL::EmptyGURL(), manifest.get(), new_contents);
 }
 
 void Shell::RunFileChooser(WebContents* web_contents,

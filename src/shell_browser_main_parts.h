@@ -10,6 +10,7 @@
 #include "base/memory/scoped_ptr.h"
 #include "chrome/browser/process_singleton.h"
 #include "content/public/browser/browser_main_parts.h"
+#include "content/public/browser/render_view_host.h"
 
 namespace base {
 class Thread;
@@ -76,6 +77,8 @@ class ShellBrowserMainParts : public BrowserMainParts {
   bool run_message_loop_;
 
   ShellDevToolsDelegate* devtools_delegate_;
+  content::RenderViewHost::CreatedCallback rvh_callback_;
+
   //base::WeakPtrFactory<ShellBrowserMainParts> weak_factory_;
 
   DISALLOW_COPY_AND_ASSIGN(ShellBrowserMainParts);

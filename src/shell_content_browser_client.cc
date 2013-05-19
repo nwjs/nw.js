@@ -91,11 +91,6 @@ WebContentsViewPort* ShellContentBrowserClient::OverrideCreateWebContentsView(
   return NULL;
 }
 
-void ShellContentBrowserClient::RenderViewHostCreated(
-    RenderViewHost* render_view_host) {
-  new api::DispatcherHost(render_view_host);
-}
-
 std::string ShellContentBrowserClient::GetApplicationLocale() {
   return l10n_util::GetApplicationLocale("en-US");
 }

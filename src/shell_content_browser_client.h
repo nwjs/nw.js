@@ -32,8 +32,6 @@ class ShellContentBrowserClient : public ContentBrowserClient {
   // ContentBrowserClient overrides.
   virtual BrowserMainParts* CreateBrowserMainParts(
       const MainFunctionParams& parameters) OVERRIDE;
-  virtual void RenderViewHostCreated(
-      RenderViewHost* render_view_host) OVERRIDE;
   virtual WebContentsViewPort* OverrideCreateWebContentsView(
       WebContents* web_contents,
       RenderViewHostDelegateView** render_view_host_delegate_view) OVERRIDE;

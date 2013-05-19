@@ -145,6 +145,7 @@ class Shell : public WebContentsDelegate,
   virtual bool IsPopupOrPanel(const WebContents* source) const OVERRIDE;
   virtual void WebContentsCreated(WebContents* source_contents,
                                   int64 source_frame_id,
+                                  const string16& frame_name,
                                   const GURL& target_url,
                                   WebContents* new_contents) OVERRIDE;
   virtual void RunFileChooser(

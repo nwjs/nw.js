@@ -29,6 +29,7 @@
 #include "base/values.h"
 #include "chrome/common/chrome_switches.h"
 #include "content/nw/src/api/app/app.h"
+#include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/browser/printing/print_job_manager.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/common/shell_switches.h"
@@ -83,6 +84,11 @@ base::StringPiece PlatformResourceProvider(int key) {
   return base::StringPiece();
 }
 
+void RenderViewHostCreated(content::RenderViewHost* render_view_host) {
+  //FIXME: handle removal
+  new api::DispatcherHost(render_view_host);
+}
+
 }  // namespace
 
 namespace content {
@@ -92,15 +98,18 @@ ShellBrowserMainParts::ShellBrowserMainParts(
     : BrowserMainParts(),
       parameters_(parameters),
       run_message_loop_(true),
-      devtools_delegate_(NULL)
+      devtools_delegate_(NULL),
+      rvh_callback_(base::Bind(&RenderViewHostCreated))
 {
 #if defined(ENABLE_PRINTING)
   // Must be created after the NotificationService.
   print_job_manager_.reset(new printing::PrintJobManager);
 #endif
+  content::RenderViewHost::AddCreatedCallback(rvh_callback_);
 }
 
 ShellBrowserMainParts::~ShellBrowserMainParts() {
+  content::RenderViewHost::RemoveCreatedCallback(rvh_callback_);
 }
 
 #if !defined(OS_MACOSX)

@@ -143,6 +143,8 @@ void ShellMainDelegate::PreSandboxStartup() {
 
   // Allow file:// URIs can read other file:// URIs by default.
   command_line->AppendSwitch(switches::kAllowFileAccessFromFiles);
+  command_line->AppendSwitch(switches::kEnableExperimentalWebKitFeatures);
+  command_line->AppendSwitch(switches::kEnableCssShaders);
 }
 
 int ShellMainDelegate::RunProcess(
