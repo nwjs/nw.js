@@ -89,18 +89,6 @@ MediaInternals* MediaInternals::GetInstance() {
 
 MediaInternals::~MediaInternals() {}
 
-void MediaInternals::OnCaptureDevicesOpened(
-    int render_process_id,
-    int render_view_id,
-    const content::MediaStreamDevices& devices) {
-}
-
-void MediaInternals::OnCaptureDevicesClosed(
-    int render_process_id,
-    int render_view_id,
-    const content::MediaStreamDevices& devices) {
-}
-
 void MediaInternals::OnAudioCaptureDevicesChanged(
     const content::MediaStreamDevices& devices) {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::IO));
