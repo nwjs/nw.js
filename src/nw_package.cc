@@ -26,6 +26,7 @@
 #include "base/file_util.h"
 #include "base/files/scoped_temp_dir.h"
 #include "base/json/json_file_value_serializer.h"
+#include "base/strings/string_number_conversions.h"
 #include "base/strings/string_tokenizer.h"
 #include "base/string_util.h"
 #include "base/threading/thread_restrictions.h"
@@ -35,6 +36,7 @@
 #include "content/public/common/content_switches.h"
 #include "googleurl/src/gurl.h"
 #include "grit/nw_resources.h"
+#include "media/base/media_switches.h"
 #include "net/base/escape.h"
 #include "third_party/node/deps/uv/include/uv.h"
 #include "ui/base/resource/resource_bundle.h"
@@ -294,6 +296,14 @@ bool Package::InitFromPath() {
     root_->Set(switches::kmWindow, window);
   }
 
+  std::string bufsz_str;
+  if (root_->GetString(switches::kAudioBufferSize, &bufsz_str)) {
+    int buffer_size = 0;
+    if (base::StringToInt(bufsz_str, &buffer_size) && buffer_size > 0) {
+      CommandLine* command_line = CommandLine::ForCurrentProcess();
+      command_line->AppendSwitchASCII(switches::kAudioBufferSize, bufsz_str);
+    }
+  }
   // Read chromium command line args.
   ReadChromiumArgs();
 
