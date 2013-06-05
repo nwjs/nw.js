@@ -89,6 +89,9 @@ void App::Call(content::Shell* shell,
     }
 
     return;
+  } else if (method == "GetPackage") {    
+    result->AppendString(shell->GetPackage()->package_string());
+    return;
   }
 
   NOTREACHED() << "Calling unknown sync method " << method << " of App";
