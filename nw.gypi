@@ -46,6 +46,13 @@
       ],
       'include_dirs': [
         '<(DEPTH)',
+        '<(DEPTH)/third_party/WebKit/Source',
+        '<(DEPTH)/third_party/WebKit/Source/WebKit/chromium/public',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings',
+      ],
+      'cflags_cc': [
+        '-Wno-error=c++0x-compat',
       ],
       'sources': [
         '<(DEPTH)/chrome/browser/platform_util_common_linux.cc',

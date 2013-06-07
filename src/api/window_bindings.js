@@ -268,8 +268,15 @@ Window.prototype.toggleKioskMode = function() {
   CallObjectMethod(this, 'ToggleKioskMode', []);
 }
 
-Window.prototype.showDevTools = function() {
-  CallObjectMethod(this, 'ShowDevTools', []);
+Window.prototype.showDevTools = function(id) {
+      CallObjectMethod(this, 'ShowDevTools', [id]);
+}
+
+    Window.prototype.__setDevToolsJail = function(id) {
+        var frm = null;
+        if (id)
+            frm = this.window.document.getElementById(id);
+        CallObjectMethod(this, 'setDevToolsJail', frm);
 }
 
 Window.prototype.setMinimumSize = function(width, height) {

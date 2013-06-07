@@ -299,7 +299,7 @@ void Shell::CloseDevTools() {
 }
 #endif
 
-void Shell::ShowDevTools() {
+void Shell::ShowDevTools(const char* jail_id) {
 #if 0
   if (devtools_frontend_) {
     devtools_frontend_->Focus();
@@ -321,6 +321,10 @@ void Shell::ShowDevTools() {
   }
 
   RenderViewHost* inspected_rvh = web_contents()->GetRenderViewHost();
+  std::string jscript = std::string("require('nw.gui').Window.get().__setDevToolsJail('")
+    + (jail_id ? jail_id : "") + "');";
+  inspected_rvh->ExecuteJavascriptInWebFrame(string16(), UTF8ToUTF16(jscript.c_str()));
+
   scoped_refptr<DevToolsAgentHost> agent(DevToolsAgentHost::GetOrCreateFor(inspected_rvh));
   DevToolsManager* manager = DevToolsManager::GetInstance();
 

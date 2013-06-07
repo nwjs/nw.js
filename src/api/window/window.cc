@@ -79,7 +79,9 @@ void Window::Call(const std::string& method,
   } else if (method == "ToggleKioskMode") {
     shell_->window()->SetKiosk(!shell_->window()->IsKiosk());
   } else if (method == "ShowDevTools") {
-    shell_->ShowDevTools();
+    std::string jail_id;
+    arguments.GetString(0, &jail_id);
+    shell_->ShowDevTools(jail_id.c_str());
   } else if (method == "ResizeTo") {
     int width, height;
     if (arguments.GetInteger(0, &width) &&
