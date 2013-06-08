@@ -73,7 +73,7 @@ bool MenuDelegate::GetIconForCommandId(int command_id,
   return true;
 }
 
-void MenuDelegate::ExecuteCommand(int command_id) {
+void MenuDelegate::ExecuteCommand(int command_id, int event_flags) {
   if (command_id < 0)
     return;
 

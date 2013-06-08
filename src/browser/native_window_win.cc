@@ -594,7 +594,7 @@ bool NativeWindowWin::ExecuteWindowsCommand(int command_id) {
 
 bool NativeWindowWin::ExecuteAppCommand(int command_id) {
   if (menu_) {
-    menu_->menu_delegate_->ExecuteCommand(command_id);
+    menu_->menu_delegate_->ExecuteCommand(command_id, 0);
     menu_->menu_->UpdateStates();
   }
 

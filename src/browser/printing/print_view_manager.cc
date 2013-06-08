@@ -28,6 +28,7 @@
 //#include "chrome/common/chrome_switches.h"
 //#include "chrome/common/pref_names.h"
 #include "content/nw/src/common/print_messages.h"
+#include "content/nw/src/common/shell_switches.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/notification_details.h"
 #include "content/public/browser/notification_service.h"

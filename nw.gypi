@@ -446,7 +446,7 @@
         ['OS=="win"', {
           'sources': [
             'src/shell.rc',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_unscaled_resources.rc',
+            '<(SHARED_INTERMEDIATE_DIR)/ui/ui_resources/ui_unscaled_resources.rc',
           ],
           'configurations': {
             'Debug_Base': {
