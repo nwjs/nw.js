@@ -299,7 +299,7 @@ void Shell::CloseDevTools() {
 }
 #endif
 
-void Shell::ShowDevTools(const char* jail_id) {
+void Shell::ShowDevTools(const char* jail_id, bool headless) {
 #if 0
   if (devtools_frontend_) {
     devtools_frontend_->Focus();
@@ -337,6 +337,10 @@ void Shell::ShowDevTools(const char* jail_id) {
       browser_client->shell_browser_main_parts()->devtools_delegate();
   GURL url = delegate->devtools_http_handler()->GetFrontendURL(agent.get());
 
+  if (headless) {
+    SendEvent("devtools-opened", url.spec());
+    return;
+  }
   // Use our minimum set manifest
   base::DictionaryValue manifest;
   manifest.SetBoolean(switches::kmToolbar, false);

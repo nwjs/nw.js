@@ -268,8 +268,8 @@ Window.prototype.toggleKioskMode = function() {
   CallObjectMethod(this, 'ToggleKioskMode', []);
 }
 
-Window.prototype.showDevTools = function(id) {
-      CallObjectMethod(this, 'ShowDevTools', [id]);
+Window.prototype.showDevTools = function(id, headless) {
+      CallObjectMethod(this, 'ShowDevTools', [id, Boolean(headless)]);
 }
 
     Window.prototype.__setDevToolsJail = function(id) {

@@ -97,7 +97,7 @@ class Shell : public WebContentsDelegate,
   void Reload(ReloadType type = RELOAD);
   void Stop();
   void ReloadOrStop();
-  void ShowDevTools(const char* jail_id = NULL);
+  void ShowDevTools(const char* jail_id = NULL, bool headless = false);
 #if 0
   void CloseDevTools();
 #endif
