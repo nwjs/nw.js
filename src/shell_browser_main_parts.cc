@@ -99,7 +99,8 @@ ShellBrowserMainParts::ShellBrowserMainParts(
       parameters_(parameters),
       run_message_loop_(true),
       devtools_delegate_(NULL),
-      rvh_callback_(base::Bind(&RenderViewHostCreated))
+      rvh_callback_(base::Bind(&RenderViewHostCreated)),
+      notify_result_(ProcessSingleton::PROCESS_NONE)
 {
 #if defined(ENABLE_PRINTING)
   // Must be created after the NotificationService.
@@ -136,6 +137,9 @@ bool ShellBrowserMainParts::MainMessageLoopRun(int* result_code)  {
 void ShellBrowserMainParts::PostMainMessageLoopRun() {
   if (devtools_delegate_)
     devtools_delegate_->Stop();
+  if (notify_result_ == ProcessSingleton::PROCESS_NONE)
+    process_singleton_->Cleanup();
+
   browser_context_.reset();
   off_the_record_browser_context_.reset();
 }
@@ -164,12 +168,11 @@ void ShellBrowserMainParts::Init() {
 #if !defined(MAC_OSX)
   process_singleton_.reset(new ProcessSingleton(browser_context_->GetPath(),
                                                 base::Bind(&ShellBrowserMainParts::ProcessSingletonNotificationCallback, base::Unretained(this))));
-  ProcessSingleton::NotifyResult result =
-    process_singleton_->NotifyOtherProcessOrCreate();
+  notify_result_ = process_singleton_->NotifyOtherProcessOrCreate();
 
 
   // Quit if the other existing instance want to handle it.
-  if (result == ProcessSingleton::PROCESS_NOTIFIED) {
+  if (notify_result_ == ProcessSingleton::PROCESS_NOTIFIED) {
     MessageLoop::current()->PostTask(FROM_HERE, MessageLoop::QuitClosure());
     return;
   }
