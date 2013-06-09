@@ -33,7 +33,7 @@ ShellContentClient::~ShellContentClient() {
 }
 
 std::string ShellContentClient::GetUserAgent() const {
-  return webkit_glue::BuildUserAgentFromProduct("Chrome/27.0.1430.0");
+  return webkit_glue::BuildUserAgentFromProduct("Chrome/28.0.1500.11");
 }
 
 string16 ShellContentClient::GetLocalizedString(int message_id) const {
