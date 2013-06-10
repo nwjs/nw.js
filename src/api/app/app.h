@@ -55,6 +55,7 @@ class App {
   // Post "open" event.
   static void EmitOpenEvent(const std::string& path);
 
+  static void ClearCache(content::RenderProcessHost* render_view_host);
  private:
   App();
 

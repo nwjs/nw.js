@@ -28,6 +28,7 @@
 #include "webkit/support/gc_extension.h"
 #include "third_party/node/src/node.h"
 #include "third_party/node/src/req_wrap.h"
+#include "third_party/WebKit/Source/WebKit/chromium/public/WebCache.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebRuntimeFeatures.h"
 #include "v8/include/v8.h"
 
@@ -35,7 +36,8 @@ using WebKit::WebRuntimeFeatures;
 
 namespace content {
 
-ShellRenderProcessObserver::ShellRenderProcessObserver() {
+ShellRenderProcessObserver::ShellRenderProcessObserver()
+  :webkit_initialized_(false) {
   RenderThread::Get()->AddObserver(this);
 }
 
@@ -47,6 +49,7 @@ bool ShellRenderProcessObserver::OnControlMessageReceived(
   bool handled = true;
   IPC_BEGIN_MESSAGE_MAP(ShellRenderProcessObserver, message)
     IPC_MESSAGE_HANDLER(ShellViewMsg_Open, OnOpen)
+    IPC_MESSAGE_HANDLER(ShellViewMsg_ClearCache, OnClearCache)
     IPC_MESSAGE_UNHANDLED(handled = false)
   IPC_END_MESSAGE_MAP()
 
@@ -60,6 +63,7 @@ void ShellRenderProcessObserver::OnRenderProcessWillShutdown() {
 }
 
 void ShellRenderProcessObserver::WebKitInitialized() {
+  webkit_initialized_ = true;
   RenderThread::Get()->RegisterExtension(new api::DispatcherBindings());
   WebRuntimeFeatures::enableCSSRegions(true);
 }
@@ -81,6 +85,11 @@ void ShellRenderProcessObserver::OnOpen(const std::string& path) {
     };
     emit->Call(app, 2, argv);
   }
+}
+
+void ShellRenderProcessObserver::OnClearCache() {
+  if (webkit_initialized_)
+    WebKit::WebCache::clear();
 }
 
 }  // namespace content

@@ -155,6 +155,8 @@
         'src/browser/native_window_toolbar_win.h',
         'src/browser/native_window_win.cc',
         'src/browser/native_window_win.h',
+        'src/browser/net_disk_cache_remover.cc',
+        'src/browser/net_disk_cache_remover.h',
         'src/browser/printing/print_dialog_gtk.cc',
         'src/browser/printing/print_dialog_gtk.h',
         'src/browser/printing/print_job.cc',
