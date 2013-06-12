@@ -163,9 +163,6 @@ void ShellBrowserMainParts::Init() {
   off_the_record_browser_context_.reset(
       new ShellBrowserContext(true, package()));
 
-  // OS X automatically handles multi process issue for us, so we don't need
-  // to check for other instances of node-webkit on Mac.
-#if !defined(MAC_OSX)
   process_singleton_.reset(new ProcessSingleton(browser_context_->GetPath(),
                                                 base::Bind(&ShellBrowserMainParts::ProcessSingletonNotificationCallback, base::Unretained(this))));
   notify_result_ = process_singleton_->NotifyOtherProcessOrCreate();
@@ -176,7 +173,6 @@ void ShellBrowserMainParts::Init() {
     MessageLoop::current()->PostTask(FROM_HERE, MessageLoop::QuitClosure());
     return;
   }
-#endif
 
   net::NetModule::SetResourceProvider(PlatformResourceProvider);
 
