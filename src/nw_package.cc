@@ -307,7 +307,7 @@ bool Package::InitFromPath() {
   }
 
   int dom_storage_quota_mb = 0;
-  if (root_->GetInteger("dom-storage-quota", &dom_storage_quota_mb) &&
+  if (root_->GetInteger("dom_storage_quota", &dom_storage_quota_mb) &&
       dom_storage_quota_mb > 0) {
     dom_storage::DomStorageMap::SetQuotaOverride(dom_storage_quota_mb * 1024 * 1024);
   }
