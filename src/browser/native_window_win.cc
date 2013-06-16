@@ -38,6 +38,7 @@
 #include "ui/base/hit_test.h"
 #include "ui/base/win/hwnd_util.h"
 #include "ui/gfx/path.h"
+#include "ui/gfx/image/image_skia_operations.h"
 #include "ui/views/controls/webview/webview.h"
 #include "ui/views/layout/box_layout.h"
 #include "ui/views/views_delegate.h"
@@ -491,11 +492,23 @@ gfx::ImageSkia NativeWindowWin::GetWindowAppIcon() {
   if (icon.IsEmpty())
     return gfx::ImageSkia();
 
-  return *icon.ToImageSkia();
+  gfx::ImageSkia icon2 = *icon.ToImageSkia();
+#if defined(OS_WIN)
+  int size = ::GetSystemMetrics(SM_CXICON);
+  return gfx::ImageSkiaOperations::CreateResizedImage(icon2,
+     skia::ImageOperations::RESIZE_BEST,
+     gfx::Size(size, size));
+#else
+  return icon2;
+#endif
 }
 
 gfx::ImageSkia NativeWindowWin::GetWindowIcon() {
-  return GetWindowAppIcon();
+  gfx::Image icon = app_icon();
+  if (icon.IsEmpty())
+    return gfx::ImageSkia();
+
+  return *icon.ToImageSkia();
 }
 
 views::View* NativeWindowWin::GetInitiallyFocusedView() {
