@@ -21,8 +21,15 @@
 #import "content/nw/src/api/menuitem/menuitem_delegate_mac.h"
 
 #include "base/values.h"
+#import <Cocoa/Cocoa.h>
+#include "content/nw/src/api/app/app.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
+#include "content/nw/src/browser/native_window_mac.h"
+#include "content/nw/src/nw_shell.h"
+#include "content/public/browser/web_contents.h"
+#include "content/public/browser/render_widget_host_view.h"
+#include "content/public/browser/render_view_host.h"
 
 @implementation MenuItemDelegate
 
@@ -35,11 +42,50 @@
 }
 
 -(void)invoke: (id)sender {
-  menu_item_->OnClick();
+  NSString *value = [NSString stringWithUTF8String:menu_item_->selector_.c_str()];
+  
+  content::WebContents *contents = content::WebContents::FromRenderViewHost(menu_item_->dispatcher_host()->render_view_host());
+  //content::RenderWidgetHostView *view = contents->GetRenderWidgetHostView();
+  content::RenderViewHost *viewhost = contents->GetRenderViewHost();
+  content::Shell *shell = content::Shell::FromRenderViewHost(menu_item_->dispatcher_host()->render_view_host());
+  
+  NSWindow *window = static_cast<nw::NativeWindowCocoa *>(shell->window())->window();
+  
+  if([value isEqualToString:@"closeAllWindows"]) {
+    api::App::CloseAllWindows();
+  } else if([value isEqualToString:@"orderFrontStandardAboutPanel"]) {
+    [NSApp performSelector:@selector(orderFrontStandardAboutPanel:)];
+  } else if([value isEqualToString:@"hide"]) {
+    [NSApp performSelector:@selector(hide:)];
+  } else if([value isEqualToString:@"hideOtherApplications"]) {
+    [NSApp performSelector:@selector(hideOtherApplications:)];
+  } else if([value isEqualToString:@"unhideAllApplications"]) {
+    [NSApp performSelector:@selector(unhideAllApplications:)];
+  } else if([value isEqualToString:@"undo"]) {
+    viewhost->Undo();
+  } else if([value isEqualToString:@"cut"]) {
+    viewhost->Cut();
+  } else if([value isEqualToString:@"copy"]) {
+    viewhost->Copy();
+  } else if([value isEqualToString:@"paste"]) {
+    viewhost->Paste();
+  } else if([value isEqualToString:@"delete"]) {
+    viewhost->Delete();
+  } else if([value isEqualToString:@"selectAll"]) {
+    viewhost->SelectAll();
+  } else if([value isEqualToString:@"performMiniaturize"]) {
+    [window performSelector:@selector(performMiniaturize:)];
+  } else if([value isEqualToString:@"performClose"]) {
+    [window performSelector:@selector(performClose:)];
+  } else if([value isEqualToString:@"arrangeInFront"]) {
+    [window performSelector:@selector(arrangeInFront:)];
+  } else {
+    menu_item_->OnClick();
 
-  // Send event.
-  base::ListValue args;
-  menu_item_->dispatcher_host()->SendEvent(menu_item_, "click", args);
+    // Send event.
+    base::ListValue args;
+    menu_item_->dispatcher_host()->SendEvent(menu_item_, "click", args);
+  }
 }
 
 @end

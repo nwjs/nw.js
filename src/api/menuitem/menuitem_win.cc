@@ -87,6 +87,11 @@ void MenuItem::SetTooltip(const std::string& tooltip) {
   tooltip_ = UTF8ToUTF16(tooltip);
 }
 
+void MenuItem::SetSelector(const std::string& selector) {
+}
+
+void MenuItem::SetKeyModifier(const std::string& selector) {}
+
 void MenuItem::SetEnabled(bool enabled) {
   is_enabled_ = enabled;
 }

@@ -583,12 +583,8 @@ bool NativeWindowCocoa::IsKiosk() {
   return is_kiosk_;
 }
 
-void NativeWindowCocoa::SetMenu(api::Menu* menu) {
-  StandardMenusMac standard_menus(shell_->GetPackage()->GetName());
+void NativeWindowCocoa::SetMenu(api::Menu* menu) {  
   [NSApp setMainMenu:menu->menu_];
-  standard_menus.BuildAppleMenu();
-  standard_menus.BuildEditMenu();
-  standard_menus.BuildWindowMenu();
 }
 
 void NativeWindowCocoa::HandleMouseEvent(NSEvent* event) {

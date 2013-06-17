@@ -25,6 +25,8 @@
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/menuitem/menuitem_delegate_mac.h"
+#include "content/nw/src/browser/native_window_mac.h"
+#include "content/nw/src/nw_shell.h"
 
 namespace api {
 
@@ -41,15 +43,32 @@ void MenuItem::Create(const base::DictionaryValue& option) {
     [menu_item_ retain];
   } else {
     std::string label;
-    option.GetString("label", &label);
+    std::string selector;
+    std::string keymodifier;
 
+    option.GetString("label", &label);
+    option.GetString("selector", &selector);
+    option.GetString("keymodifier", &keymodifier);
+
+    selector_ = selector;
+    
+    //if(selector.empty())
+      //nsselect = @"invoke";
+    
+         //NSSelectorFromString([NSString stringWithUTF8String:selector.c_str()])
     menu_item_ = [[NSMenuItem alloc]
        initWithTitle:[NSString stringWithUTF8String:label.c_str()]
-       action: @selector(invoke:)
-       keyEquivalent: @""];
+                  action:@selector(invoke:)
+                  keyEquivalent:[NSString stringWithUTF8String:keymodifier.c_str()]];
 
-    delegate_ = [[MenuItemDelegate alloc] initWithMenuItem:this];
-    [menu_item_ setTarget:delegate_];
+    //if(selector.empty()) {
+      delegate_ = [[MenuItemDelegate alloc] initWithMenuItem:this];
+      [menu_item_ setTarget:delegate_];
+    //} else {
+    //  nw::NativeWindowCocoa foo = static_cast<nw::NativeWindowCocoa*>(content::Shell::FromRenderViewHost(dispatcher_host()->render_view_host())->window());
+      
+     // [menu_item_ setTarget:[]];
+    //}
 
     if (type == "checkbox") {
       bool checked = false;
@@ -103,6 +122,15 @@ void MenuItem::SetIcon(const std::string& icon) {
   } else {
     [menu_item_ setImage:nil];
   }
+}
+  
+void MenuItem::SetSelector(const std::string& selector) {
+  //[menu_item_ setAction:NSSelectorFromString([NSString stringWithUTF8String:selector.c_str()])];
+  selector_ = selector;
+}
+  
+void MenuItem::SetKeyModifier(const std::string& selector) {
+  [menu_item_ setKeyEquivalent:[NSString stringWithUTF8String:selector.c_str()]];
 }
 
 void MenuItem::SetTooltip(const std::string& tooltip) {

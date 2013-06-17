@@ -60,6 +60,8 @@ class MenuItem : public Base {
   void OnClick();
 #endif
 
+  std::string selector_;
+
  private:
   friend class Menu;
 
@@ -72,6 +74,8 @@ class MenuItem : public Base {
   void SetEnabled(bool enabled);
   void SetChecked(bool checked);
   void SetSubmenu(Menu* sub_menu);
+  void SetSelector(const std::string& selector);
+  void SetKeyModifier(const std::string& selector);
 
 #if defined(OS_MACOSX)
   std::string type_;

@@ -18,6 +18,8 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#include "chrome/common/zip.h"
+
 #include "content/nw/src/api/app/app.h"
 
 #include "base/command_line.h"
@@ -88,6 +90,20 @@ void App::Call(content::Shell* shell,
       result->AppendString(argv[i]);
     }
 
+    return;
+  } else if (method == "Zip") { 
+    std::string zipdir;
+    std::string zipfile;
+    arguments.GetString(0,&zipdir);
+    arguments.GetString(1,&zipfile);
+    result->AppendBoolean(zip::Zip(base::FilePath::FromUTF8Unsafe(zipdir), base::FilePath::FromUTF8Unsafe(zipfile), true));
+    return;
+  } else if (method == "Unzip") {
+    std::string zipfile;
+    std::string zipdir;
+    arguments.GetString(0,&zipfile);
+    arguments.GetString(1,&zipdir);
+    result->AppendBoolean(zip::Unzip(base::FilePath::FromUTF8Unsafe(zipfile), base::FilePath::FromUTF8Unsafe(zipdir)));
     return;
   }
 

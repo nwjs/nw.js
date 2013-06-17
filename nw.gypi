@@ -101,6 +101,8 @@
         'src/api/dispatcher.h',
         'src/api/dispatcher_bindings.cc',
         'src/api/dispatcher_bindings.h',
+	'src/api/ti_bindings.cc',
+	'src/api/ti_bindings.h',
         'src/api/dispatcher_host.cc',
         'src/api/dispatcher_host.h',
         'src/api/window_bindings.cc',

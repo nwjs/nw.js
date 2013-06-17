@@ -35,6 +35,14 @@ App.prototype.quit = function() {
   nw.callStaticMethod('App', 'Quit', [ ]);
 }
 
+App.prototype.zip = function(zipdir, zipfile) {
+  nw.callStaticMethodSync('App','Zip',[zipdir, zipfile]);
+}
+
+App.prototype.unzip = function(zipfile, dest) {
+  nw.callStaticMethodSync('App','Unzip',[zipfile, dest]);
+}
+
 App.prototype.closeAllWindows = function() {
   nw.callStaticMethod('App', 'CloseAllWindows', [ ]);
 }

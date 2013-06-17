@@ -36,11 +36,21 @@ function MenuItem(option) {
     if (option.type == 'checkbox')
       option.checked = Boolean(option.checked);
 
-    if (!option.hasOwnProperty('label'))
-      throw new String('A normal MenuItem must have a label');
-    else
+    //if (!option.hasOwnProperty('label'))
+    //  throw new String('A normal MenuItem must have a label');
+    //else
       option.label = String(option.label);
+    
+    if(option.hasOwnProperty('selector'))
+      option.selector = String(option.selector);
+    else
+      option.selector = String('');
 
+    if(option.hasOwnProperty('keymodifier'))
+      option.keymodifier = String(option.keymodifier);
+    else
+      option.keymodifier = String('');
+    
     if (option.hasOwnProperty('icon')) {
       option.shadowIcon = String(option.icon);
       option.icon = nw.getAbsolutePath(option.icon);
@@ -152,6 +162,22 @@ MenuItem.prototype.__defineSetter__('submenu', function(val) {
 
   v8_util.setHiddenValue(this, 'submenu', val);
   nw.callObjectMethod(this, 'SetSubmenu', [ val.id ]);
+});
+
+MenuItem.prototype.__defineSetter__('selector', function(val) {
+  this.handleSetter('selector','SetSelector', String, val);
+});
+
+MenuItem.prototype.__defineGetter__('selector', function() {
+  return this.handleGetter('selector');
+});
+
+MenuItem.prototype.__defineSetter__('keymodifier', function(val) {
+  this.handleSetter('keymodifier','SetKeyModifier', String, val);
+});
+
+MenuItem.prototype.__defineGetter__('keymodifier', function() {
+  return this.handleGetter('keymodifier');
 });
 
 MenuItem.prototype.handleEvent = function(ev) {

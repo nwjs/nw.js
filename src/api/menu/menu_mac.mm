@@ -39,8 +39,8 @@ void Menu::Create(const base::DictionaryValue& option) {
   std::string type;
   if (option.GetString("type", &type) && type == "menubar") {
     // Preserve the apple menu.
-    [menu_ addItem:[[[NSMenuItem alloc]
-        initWithTitle:@"" action:nil keyEquivalent:@""] autorelease]];
+    //[menu_ addItem:[[[NSMenuItem alloc]
+        //initWithTitle:@"" action:nil keyEquivalent:@""] autorelease]];
   }
 }
 

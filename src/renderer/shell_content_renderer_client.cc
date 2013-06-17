@@ -26,8 +26,10 @@
 #include "base/logging.h"
 #include "base/utf_string_conversions.h"
 #include "chrome/renderer/page_click_tracker.h"
+#include "chrome/renderer/static_v8_external_string_resource.h"
 #include "content/nw/src/api/dispatcher.h"
 #include "content/nw/src/api/api_messages.h"
+#include "content/nw/src/api/bindings_common.h"
 #include "content/nw/src/api/window_bindings.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
@@ -48,8 +50,8 @@
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebSecurityOrigin.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebSecurityPolicy.h"
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebView.h"
+#include "grit/nw_resources.h"
 //#include "third_party/WebKit/Source/WebKit/chromium/public/platform/WebString.h"
-
 using content::RenderView;
 using content::RenderViewImpl;
 using net::ProxyBypassRules;
@@ -258,6 +260,22 @@ void ShellContentRendererClient::InstallNodeSymbols(
         "process.versions['node-webkit'] = '" NW_VERSION_STRING "';"
     ));
     script->Run();
+  }
+  
+  if (use_node || is_nw_protocol) {
+    int tiFiles[16] = { IDR_TI_API_APPLICATION_JS, IDR_TI_API_BUFFERED_STREAM_JS,
+                        IDR_TI_API_CLIPBOARD_JS, IDR_TI_API_COMPRESSION_JS,
+                        IDR_TI_API_DOMAIN_JS, IDR_TI_API_FILE_JS, IDR_TI_API_FILE_SYSTEM_JS,
+                        IDR_TI_API_HASH_JS, IDR_TI_API_MENU_JS, IDR_TI_API_MENU_ITEM_JS,
+                        IDR_TI_API_PLATFORM_JS, IDR_TI_API_PROPERTY_OBJECT_JS, IDR_TI_API_SOCKET_JS,
+                        IDR_TI_API_WINDOW_JS, IDR_TI_API_TRAY_JS, IDR_TI_API_FILEDIALOG_JS };
+
+    for(int i=0; i < 16; i++)
+    {
+      v8::Handle<v8::String> source = v8::String::NewExternal(new StaticV8ExternalAsciiStringResource(GetStringResource(tiFiles[i])));
+      v8::Local<v8::Script> script = v8::Script::New(source);
+      script->Run();
+    }
   }
 }
 
