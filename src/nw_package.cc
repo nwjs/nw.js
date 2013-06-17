@@ -26,20 +26,23 @@
 #include "base/file_util.h"
 #include "base/files/scoped_temp_dir.h"
 #include "base/json/json_file_value_serializer.h"
+#include "base/strings/string_number_conversions.h"
 #include "base/strings/string_tokenizer.h"
 #include "base/string_util.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
-#include "chrome/common/zip.h"
+#include "third_party/zlib/google/zip.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/public/common/content_switches.h"
 #include "googleurl/src/gurl.h"
 #include "grit/nw_resources.h"
+#include "media/base/media_switches.h"
 #include "net/base/escape.h"
 #include "third_party/node/deps/uv/include/uv.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/gfx/image/image.h"
 #include "ui/gfx/image/image_skia_rep.h"
+#include "webkit/dom_storage/dom_storage_map.h"
 #include "webkit/glue/image_decoder.h"
 
 bool IsSwitch(const CommandLine::StringType& string,
@@ -67,8 +70,10 @@ bool MakePathAbsolute(FilePath* file_path) {
   if (file_path->IsAbsolute())
     return true;
 
-  if (current_directory.empty())
-    return file_util::AbsolutePath(file_path);
+  if (current_directory.empty()) {
+    *file_path = MakeAbsoluteFilePath(*file_path);
+    return true;
+  }
 
   if (!current_directory.IsAbsolute())
     return false;
@@ -243,6 +248,7 @@ bool Package::InitFromPath() {
 
   // path_/package.json
   FilePath manifest_path = path_.AppendASCII("package.json");
+  manifest_path = MakeAbsoluteFilePath(manifest_path);
   if (!file_util::PathExists(manifest_path)) {
     if (!self_extract())
       ReportError("Invalid package",
@@ -289,6 +295,21 @@ bool Package::InitFromPath() {
     base::DictionaryValue* window = new base::DictionaryValue();
     window->SetString(switches::kmPosition, "center");
     root_->Set(switches::kmWindow, window);
+  }
+
+  std::string bufsz_str;
+  if (root_->GetString(switches::kAudioBufferSize, &bufsz_str)) {
+    int buffer_size = 0;
+    if (base::StringToInt(bufsz_str, &buffer_size) && buffer_size > 0) {
+      CommandLine* command_line = CommandLine::ForCurrentProcess();
+      command_line->AppendSwitchASCII(switches::kAudioBufferSize, bufsz_str);
+    }
+  }
+
+  int dom_storage_quota_mb = 0;
+  if (root_->GetInteger("dom_storage_quota", &dom_storage_quota_mb) &&
+      dom_storage_quota_mb > 0) {
+    dom_storage::DomStorageMap::SetQuotaOverride(dom_storage_quota_mb * 1024 * 1024);
   }
 
   // Read chromium command line args.

@@ -15,7 +15,7 @@ namespace printing {
 
 PrinterQuery::PrinterQuery()
     : io_message_loop_(MessageLoop::current()),
-      ALLOW_THIS_IN_INITIALIZER_LIST(worker_(new PrintJobWorker(this))),
+      worker_(new PrintJobWorker(this)),
       is_print_dialog_box_shown_(false),
       cookie_(PrintSettings::NewCookie()),
       last_status_(PrintingContext::FAILED) {

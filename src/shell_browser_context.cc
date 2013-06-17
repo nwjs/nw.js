@@ -147,27 +147,14 @@ net::URLRequestContextGetter* ShellBrowserContext::GetRequestContext()  {
 }
 
 net::URLRequestContextGetter* ShellBrowserContext::CreateRequestContext(
-    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-        blob_protocol_handler,
-    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-        file_system_protocol_handler,
-    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-        developer_protocol_handler,
-    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-        chrome_protocol_handler,
-    scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-        chrome_devtools_protocol_handler) {
+    ProtocolHandlerMap* protocol_handlers) {
   DCHECK(!url_request_getter_);
   url_request_getter_ = new ShellURLRequestContextGetter(
       ignore_certificate_errors_,
       GetPath(),
       BrowserThread::UnsafeGetMessageLoopForThread(BrowserThread::IO),
       BrowserThread::UnsafeGetMessageLoopForThread(BrowserThread::FILE),
-      blob_protocol_handler.Pass(),
-      file_system_protocol_handler.Pass(),
-      developer_protocol_handler.Pass(),
-      chrome_protocol_handler.Pass(),
-      chrome_devtools_protocol_handler.Pass());
+      protocol_handlers);
   resource_context_->set_url_request_context_getter(url_request_getter_.get());
   return url_request_getter_.get();
 }
@@ -200,16 +187,7 @@ net::URLRequestContextGetter*
     ShellBrowserContext::CreateRequestContextForStoragePartition(
         const base::FilePath& partition_path,
         bool in_memory,
-        scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-            blob_protocol_handler,
-        scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-            file_system_protocol_handler,
-        scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-            developer_protocol_handler,
-        scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-            chrome_protocol_handler,
-        scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-            chrome_devtools_protocol_handler) {
+        ProtocolHandlerMap* protocol_handlers) {
   return NULL;
 }
 

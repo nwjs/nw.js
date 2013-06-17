@@ -51,6 +51,7 @@ class Package;
 namespace content {
 
 class BrowserContext;
+class ShellDevToolsFrontend;
 class ShellJavaScriptDialogCreator;
 class SiteInstance;
 class WebContents;
@@ -82,6 +83,12 @@ class Shell : public WebContentsDelegate,
                        int routing_id,
                        WebContents* base_web_contents);
 
+  // Create a new shell for window.open and Window.open
+  static Shell* Create(WebContents* source_contents,
+                       const GURL& target_url,
+                       base::DictionaryValue* manifest,
+                       WebContents* new_contents);
+
   // Returns the Shell object corresponding to the given RenderViewHost.
   static Shell* FromRenderViewHost(RenderViewHost* rvh);
 
@@ -90,8 +97,10 @@ class Shell : public WebContentsDelegate,
   void Reload(ReloadType type = RELOAD);
   void Stop();
   void ReloadOrStop();
-  void ShowDevTools();
-
+  void ShowDevTools(const char* jail_id = NULL, bool headless = false);
+#if 0
+  void CloseDevTools();
+#endif
   // Send an event to renderer.
   void SendEvent(const std::string& event, const std::string& arg1 = "");
 
@@ -136,6 +145,7 @@ class Shell : public WebContentsDelegate,
   virtual bool IsPopupOrPanel(const WebContents* source) const OVERRIDE;
   virtual void WebContentsCreated(WebContents* source_contents,
                                   int64 source_frame_id,
+                                  const string16& frame_name,
                                   const GURL& target_url,
                                   WebContents* new_contents) OVERRIDE;
   virtual void RunFileChooser(
@@ -181,7 +191,9 @@ class Shell : public WebContentsDelegate,
 
   // Weak potiner to devtools window.
   base::WeakPtr<Shell> devtools_window_;
-
+#if 0
+  ShellDevToolsFrontend* devtools_frontend_;
+#endif
   // Factory to generate weak pointer, used by devtools.
   base::WeakPtrFactory<Shell> weak_ptr_factory_;
 

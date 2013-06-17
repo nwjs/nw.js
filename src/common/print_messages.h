@@ -437,3 +437,7 @@ IPC_SYNC_MESSAGE_ROUTED1_0(PrintHostMsg_ScriptedPrintPreview,
 // Notify the browser that the PDF in the initiator renderer has disabled print
 // scaling option.
 IPC_MESSAGE_ROUTED0(PrintHostMsg_PrintPreviewScalingDisabled)
+
+// Check if printing is enabled.
+IPC_SYNC_MESSAGE_ROUTED0_1(PrintHostMsg_IsPrintingEnabled,
+                           bool /* is_enabled */)

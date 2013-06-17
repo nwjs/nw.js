@@ -8,7 +8,10 @@
 #include "base/memory/ref_counted.h"
 #include "printing/printing_context.h"
 
+namespace base {
 class MessageLoop;
+}
+
 
 namespace printing {
 
@@ -28,7 +31,7 @@ class PrintJobWorkerOwner
   virtual PrintJobWorker* DetachWorker(PrintJobWorkerOwner* new_owner) = 0;
 
   // Retrieves the message loop that is expected to process GetSettingsDone.
-  virtual MessageLoop* message_loop() = 0;
+  virtual base::MessageLoop* message_loop() = 0;
 
   // Access the current settings.
   virtual const PrintSettings& settings() const = 0;

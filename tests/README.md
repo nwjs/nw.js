@@ -1,9 +1,14 @@
 ## Prerequisite
 
-node-webkit didn't ship third party node modules required for testing, you
-need to install them with npm:
+* node-webkit didn't ship third party node modules required for testing, you
+need to install them.
+* We use `nw-gyp` to build native modules.
+* We have test case that needs a http server e.g. apache. Please open port 80 and 8080 then put `tests/automatic_tests/node-remote/node_remote_test.html`to the http server document root.
+
+So please run this:
 
 ````bash
+$ npm install -g nw-gyp
 $ cd src/content/nw/tests
 $ npm install -d
 ````
@@ -19,11 +24,11 @@ $ /path-to-node-webkit src/content/nw/tests
 ## Command line options
 
     $ /path-to-node-webkit src/content/nw/tests --help
-    
+
       Usage: nw-test [options]
-    
+
       Options:
-    
+
         -h, --help             output usage information
         -V, --version          output the version number
         -S, --silent           hide the browser window and quit when done (run silently)

@@ -21,7 +21,7 @@
 #include "content/nw/src/browser/native_window_mac.h"
 
 #include "base/mac/mac_util.h"
-#include "base/sys_string_conversions.h"
+#include "base/strings/sys_string_conversions.h"
 #include "base/values.h"
 #import "chrome/browser/ui/cocoa/custom_frame_view.h"
 #include "content/nw/src/api/menu/menu.h"

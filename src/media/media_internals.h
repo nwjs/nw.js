@@ -42,14 +42,6 @@ class MediaInternals : public content::MediaObserver {
   static MediaInternals* GetInstance();
 
   // Overridden from content::MediaObserver:
-  virtual void OnCaptureDevicesOpened(
-      int render_process_id,
-      int render_view_id,
-      const content::MediaStreamDevices& devices) OVERRIDE;
-  virtual void OnCaptureDevicesClosed(
-      int render_process_id,
-      int render_view_id,
-      const content::MediaStreamDevices& devices) OVERRIDE;
   virtual void OnAudioCaptureDevicesChanged(
       const content::MediaStreamDevices& devices) OVERRIDE;
   virtual void OnVideoCaptureDevicesChanged(

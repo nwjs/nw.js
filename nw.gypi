@@ -18,6 +18,7 @@
         '<(DEPTH)/base/base.gyp:base',
         '<(DEPTH)/base/third_party/dynamic_annotations/dynamic_annotations.gyp:dynamic_annotations',
         '<(DEPTH)/build/temp_gyp/googleurl.gyp:googleurl',
+        '<(DEPTH)/components/components.gyp:autofill_renderer',
         '<(DEPTH)/content/content.gyp:content_app',
         '<(DEPTH)/content/content.gyp:content_browser',
         '<(DEPTH)/content/content.gyp:content_common',
@@ -45,6 +46,13 @@
       ],
       'include_dirs': [
         '<(DEPTH)',
+        '<(DEPTH)/third_party/WebKit/Source',
+        '<(DEPTH)/third_party/WebKit/Source/WebKit/chromium/public',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings',
+      ],
+      'cflags_cc': [
+        '-Wno-error=c++0x-compat',
       ],
       'sources': [
         '<(DEPTH)/chrome/browser/platform_util_common_linux.cc',
@@ -76,15 +84,15 @@
         '<(DEPTH)/chrome/common/chrome_switches.h',
         '<(DEPTH)/extensions/common/draggable_region.cc',
         '<(DEPTH)/extensions/common/draggable_region.h',
-        '<(DEPTH)/chrome/common/zip.cc',
-        '<(DEPTH)/chrome/common/zip.h',
-        '<(DEPTH)/chrome/common/zip_reader.cc',
-        '<(DEPTH)/chrome/common/zip_reader.h',
-        '<(DEPTH)/chrome/common/zip_internal.cc',
-        '<(DEPTH)/chrome/common/zip_internal.h',
-        '<(DEPTH)/chrome/renderer/page_click_listener.h',
-        '<(DEPTH)/chrome/renderer/page_click_tracker.cc',
-        '<(DEPTH)/chrome/renderer/page_click_tracker.h',
+        '<(DEPTH)/third_party/zlib/google/zip.cc',
+        '<(DEPTH)/third_party/zlib/google/zip.h',
+        '<(DEPTH)/third_party/zlib/google/zip_reader.cc',
+        '<(DEPTH)/third_party/zlib/google/zip_reader.h',
+        '<(DEPTH)/third_party/zlib/google/zip_internal.cc',
+        '<(DEPTH)/third_party/zlib/google/zip_internal.h',
+        '<(DEPTH)/components/autofill/renderer/page_click_listener.h',
+        '<(DEPTH)/components/autofill/renderer/page_click_tracker.cc',
+        '<(DEPTH)/components/autofill/renderer/page_click_tracker.h',
         '<(DEPTH)/chrome/renderer/static_v8_external_string_resource.cc',
         '<(DEPTH)/chrome/renderer/static_v8_external_string_resource.h',
         'src/api/api_messages.cc',
@@ -149,6 +157,8 @@
         'src/browser/native_window_toolbar_win.h',
         'src/browser/native_window_win.cc',
         'src/browser/native_window_win.h',
+        'src/browser/net_disk_cache_remover.cc',
+        'src/browser/net_disk_cache_remover.h',
         'src/browser/printing/print_dialog_gtk.cc',
         'src/browser/printing/print_dialog_gtk.h',
         'src/browser/printing/print_job.cc',
@@ -210,8 +220,6 @@
         'src/net/shell_network_delegate.h',
         'src/net/shell_url_request_context_getter.cc',
         'src/net/shell_url_request_context_getter.h',
-        'src/net/sqlite_persistent_cookie_store.h',
-        'src/net/sqlite_persistent_cookie_store.cc',
         'src/nw_protocol_handler.cc',
         'src/nw_protocol_handler.h',
         'src/nw_package.cc',
@@ -219,8 +227,6 @@
         'src/nw_version.h',
         'src/paths_mac.h',
         'src/paths_mac.mm',
-        'src/renderer/autofill_agent.h',
-        'src/renderer/autofill_agent.cc',
         'src/renderer/common/render_messages.cc',
         'src/renderer/common/render_messages.h',
         'src/renderer/prerenderer/prerenderer_client.cc',
@@ -425,6 +431,13 @@
       },
       'msvs_settings': {
         'VCLinkerTool': {
+          'AdditionalOptions': [
+            "\"/manifestdependency:type='win32' "
+                "name='Microsoft.Windows.Common-Controls' "
+                "version='6.0.0.0' "
+                "processorArchitecture='*' "
+                "publicKeyToken='6595b64144ccf1df' language='*'\"",
+          ],
           'SubSystem': '2',  # Set /SUBSYSTEM:WINDOWS
         },
       },
@@ -437,7 +450,7 @@
         ['OS=="win"', {
           'sources': [
             'src/shell.rc',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_unscaled_resources.rc',
+            '<(SHARED_INTERMEDIATE_DIR)/ui/ui_resources/ui_unscaled_resources.rc',
           ],
           'configurations': {
             'Debug_Base': {

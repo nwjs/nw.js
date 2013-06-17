@@ -10,6 +10,7 @@
 #include "base/memory/scoped_ptr.h"
 #include "chrome/browser/process_singleton.h"
 #include "content/public/browser/browser_main_parts.h"
+#include "content/public/browser/render_view_host.h"
 
 namespace base {
 class Thread;
@@ -38,11 +39,13 @@ class ShellBrowserMainParts : public BrowserMainParts {
   virtual ~ShellBrowserMainParts();
 
   // BrowserMainParts overrides.
+  virtual void PreEarlyInitialization() OVERRIDE;
   virtual void PreMainMessageLoopStart() OVERRIDE;
   virtual void PreMainMessageLoopRun() OVERRIDE;
   virtual void PostMainMessageLoopStart() OVERRIDE;
   virtual bool MainMessageLoopRun(int* result_code) OVERRIDE;
   virtual void PostMainMessageLoopRun() OVERRIDE;
+  virtual int PreCreateThreads() OVERRIDE;
 
   // Init browser context and every thing
   void Init();
@@ -74,6 +77,9 @@ class ShellBrowserMainParts : public BrowserMainParts {
   bool run_message_loop_;
 
   ShellDevToolsDelegate* devtools_delegate_;
+  content::RenderViewHost::CreatedCallback rvh_callback_;
+  ProcessSingleton::NotifyResult notify_result_;
+
   //base::WeakPtrFactory<ShellBrowserMainParts> weak_factory_;
 
   DISALLOW_COPY_AND_ASSIGN(ShellBrowserMainParts);

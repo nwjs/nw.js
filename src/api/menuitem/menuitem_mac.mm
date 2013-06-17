@@ -52,23 +52,13 @@ void MenuItem::Create(const base::DictionaryValue& option) {
 
     selector_ = selector;
     
-    //if(selector.empty())
-      //nsselect = @"invoke";
-    
-         //NSSelectorFromString([NSString stringWithUTF8String:selector.c_str()])
     menu_item_ = [[NSMenuItem alloc]
        initWithTitle:[NSString stringWithUTF8String:label.c_str()]
                   action:@selector(invoke:)
                   keyEquivalent:[NSString stringWithUTF8String:keymodifier.c_str()]];
 
-    //if(selector.empty()) {
-      delegate_ = [[MenuItemDelegate alloc] initWithMenuItem:this];
-      [menu_item_ setTarget:delegate_];
-    //} else {
-    //  nw::NativeWindowCocoa foo = static_cast<nw::NativeWindowCocoa*>(content::Shell::FromRenderViewHost(dispatcher_host()->render_view_host())->window());
-      
-     // [menu_item_ setTarget:[]];
-    //}
+    delegate_ = [[MenuItemDelegate alloc] initWithMenuItem:this];
+    [menu_item_ setTarget:delegate_];
 
     if (type == "checkbox") {
       bool checked = false;

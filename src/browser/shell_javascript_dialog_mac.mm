@@ -23,7 +23,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import "base/memory/scoped_nsobject.h"
-#include "base/sys_string_conversions.h"
+#include "base/strings/sys_string_conversions.h"
 #include "content/nw/src/browser/shell_javascript_dialog_creator.h"
 
 // Helper object that receives the notification that the dialog/sheet is

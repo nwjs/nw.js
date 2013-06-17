@@ -9,7 +9,7 @@
 #include "base/memory/scoped_ptr.h"
 #include "base/memory/weak_ptr.h"
 #include "base/message_loop.h"
-#include "content/nw/src/browser/printing/print_job_worker_owner.h"
+#include "chrome/browser/printing/print_job_worker_owner.h"
 #include "content/public/browser/notification_observer.h"
 #include "content/public/browser/notification_registrar.h"
 
@@ -65,10 +65,11 @@ class PrintJob : public PrintJobWorkerOwner,
   // spool as soon as data is available.
   void StartPrinting();
 
-  // Waits for the worker thread to finish its queued tasks and disconnects the
-  // delegate object. The PrintJobManager will remove it reference. This may
+  // Asks for the worker thread to finish its queued tasks and disconnects the
+  // delegate object. The PrintJobManager will remove its reference. This may
   // have the side-effect of destroying the object if the caller doesn't have a
-  // handle to the object.
+  // handle to the object. Use PrintJob::is_stopped() to check whether the
+  // worker thread has actually stopped.
   void Stop();
 
   // Cancels printing job and stops the worker thread. Takes effect immediately.
@@ -86,6 +87,12 @@ class PrintJob : public PrintJobWorkerOwner,
   // Returns true if the print job is pending, i.e. between a StartPrinting()
   // and the end of the spooling.
   bool is_job_pending() const;
+
+  // Returns true if the worker thread is in the process of stopping.
+  bool is_stopping() const;
+
+  // Returns true if the worker thread has stopped.
+  bool is_stopped() const;
 
   // Access the current printed document. Warning: may be NULL.
   PrintedDocument* document() const;
@@ -110,6 +117,8 @@ class PrintJob : public PrintJobWorkerOwner,
 
   // Called at shutdown when running a nested message loop.
   void Quit();
+
+  void HoldUntilStopIsCalled(const scoped_refptr<PrintJob>& job);
 
   content::NotificationRegistrar registrar_;
 
@@ -139,8 +148,16 @@ class PrintJob : public PrintJobWorkerOwner,
   // the notified calls Cancel() again.
   bool is_canceling_;
 
+  // Is the worker thread stopping.
+  bool is_stopping_;
+
+  // Is the worker thread stopped.
+  bool is_stopped_;
+
   // Used at shutdown so that we can quit a nested message loop.
   base::WeakPtrFactory<PrintJob> quit_factory_;
+
+  base::WeakPtrFactory<PrintJob> weak_ptr_factory_;
 
   DISALLOW_COPY_AND_ASSIGN(PrintJob);
 };

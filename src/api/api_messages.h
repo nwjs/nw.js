@@ -91,3 +91,6 @@ IPC_MESSAGE_ROUTED1(ShellViewHostMsg_UpdateDraggableRegions,
 // The browser want to open a file.
 IPC_MESSAGE_CONTROL1(ShellViewMsg_Open,
                      std::string /* file name */)
+
+// clear cache on the renderer side
+IPC_MESSAGE_CONTROL0(ShellViewMsg_ClearCache)

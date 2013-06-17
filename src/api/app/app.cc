@@ -27,6 +27,7 @@
 #include "base/message_loop.h"
 #include "base/values.h"
 #include "content/nw/src/api/api_messages.h"
+#include "content/nw/src/browser/net_disk_cache_remover.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/common/view_messages.h"
@@ -63,7 +64,6 @@ void App::Call(const std::string& method,
     CloseAllWindows();
     return;
   }
-
   NOTREACHED() << "Calling unknown method " << method << " of App";
 }
 
@@ -105,6 +105,8 @@ void App::Call(content::Shell* shell,
     arguments.GetString(1,&zipdir);
     result->AppendBoolean(zip::Unzip(base::FilePath::FromUTF8Unsafe(zipfile), base::FilePath::FromUTF8Unsafe(zipdir)));
     return;
+  } else if (method == "ClearCache") {
+    ClearCache(GetRenderProcessHost());
   }
 
   NOTREACHED() << "Calling unknown sync method " << method << " of App";
@@ -142,6 +144,12 @@ void App::EmitOpenEvent(const std::string& path) {
   DCHECK(render_process_host != NULL);
 
   render_process_host->Send(new ShellViewMsg_Open(path));
+}
+
+void App::ClearCache(content::RenderProcessHost* render_process_host) {
+  render_process_host->Send(new ShellViewMsg_ClearCache());
+  nw::RemoveHttpDiskCache(render_process_host->GetBrowserContext(),
+                          render_process_host->GetID());
 }
 
 }  // namespace api

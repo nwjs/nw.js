@@ -38,6 +38,7 @@
 #include "ui/base/hit_test.h"
 #include "ui/base/win/hwnd_util.h"
 #include "ui/gfx/path.h"
+#include "ui/gfx/image/image_skia_operations.h"
 #include "ui/views/controls/webview/webview.h"
 #include "ui/views/layout/box_layout.h"
 #include "ui/views/views_delegate.h"
@@ -349,6 +350,9 @@ void NativeWindowWin::SetResizable(bool resizable) {
 }
 
 void NativeWindowWin::SetAlwaysOnTop(bool top) {
+  window_->StackAtTop();
+  // SetAlwaysOnTop should be called after StackAtTop because otherwise
+  // the top-most flag will be removed.
   window_->SetAlwaysOnTop(top);
 }
 
@@ -488,11 +492,23 @@ gfx::ImageSkia NativeWindowWin::GetWindowAppIcon() {
   if (icon.IsEmpty())
     return gfx::ImageSkia();
 
-  return *icon.ToImageSkia();
+  gfx::ImageSkia icon2 = *icon.ToImageSkia();
+#if defined(OS_WIN)
+  int size = ::GetSystemMetrics(SM_CXICON);
+  return gfx::ImageSkiaOperations::CreateResizedImage(icon2,
+     skia::ImageOperations::RESIZE_BEST,
+     gfx::Size(size, size));
+#else
+  return icon2;
+#endif
 }
 
 gfx::ImageSkia NativeWindowWin::GetWindowIcon() {
-  return GetWindowAppIcon();
+  gfx::Image icon = app_icon();
+  if (icon.IsEmpty())
+    return gfx::ImageSkia();
+
+  return *icon.ToImageSkia();
 }
 
 views::View* NativeWindowWin::GetInitiallyFocusedView() {
@@ -591,7 +607,7 @@ bool NativeWindowWin::ExecuteWindowsCommand(int command_id) {
 
 bool NativeWindowWin::ExecuteAppCommand(int command_id) {
   if (menu_) {
-    menu_->menu_delegate_->ExecuteCommand(command_id);
+    menu_->menu_delegate_->ExecuteCommand(command_id, 0);
     menu_->menu_->UpdateStates();
   }
 
@@ -616,18 +632,17 @@ void NativeWindowWin::OnViewWasResized() {
                1);
 
   SkRegion* rgn = new SkRegion;
-  if (!window_->IsFullscreen()) {
+  if (!window_->IsFullscreen() && !window_->IsMaximized()) {
     if (draggable_region())
       rgn->op(*draggable_region(), SkRegion::kUnion_Op);
-    if (!window_->IsMaximized()) {
-      if (!has_frame()) {
-        rgn->op(0, 0, width, kResizeInsideBoundsSize, SkRegion::kUnion_Op);
-        rgn->op(0, 0, kResizeInsideBoundsSize, height, SkRegion::kUnion_Op);
-        rgn->op(width - kResizeInsideBoundsSize, 0, width, height,
-            SkRegion::kUnion_Op);
-        rgn->op(0, height - kResizeInsideBoundsSize, width, height,
-            SkRegion::kUnion_Op);
-      }
+
+    if (!has_frame() && CanResize()) {
+      rgn->op(0, 0, width, kResizeInsideBoundsSize, SkRegion::kUnion_Op);
+      rgn->op(0, 0, kResizeInsideBoundsSize, height, SkRegion::kUnion_Op);
+      rgn->op(width - kResizeInsideBoundsSize, 0, width, height,
+          SkRegion::kUnion_Op);
+      rgn->op(0, height - kResizeInsideBoundsSize, width, height,
+          SkRegion::kUnion_Op);
     }
   }
   if (web_contents()->GetRenderViewHost()->GetView())

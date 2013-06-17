@@ -39,6 +39,7 @@
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/content_switches.h"
+#include "content/public/common/renderer_preferences.h"
 #include "content/public/common/url_constants.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/app/app.h"
@@ -66,6 +67,7 @@ bool Shell::quit_message_loop_ = true;
 
 int Shell::exit_code_ = 0;
 
+// static
 Shell* Shell::Create(BrowserContext* browser_context,
                      const GURL& url,
                      SiteInstance* site_instance,
@@ -77,13 +79,36 @@ Shell* Shell::Create(BrowserContext* browser_context,
 
   Shell* shell = new Shell(web_contents, GetPackage()->window());
   NavigationController::LoadURLParams params(url);
-  params.transition_type = PAGE_TRANSITION_TYPED;
+  params.transition_type = PageTransitionFromInt(PAGE_TRANSITION_TYPED);
   params.override_user_agent = NavigationController::UA_OVERRIDE_TRUE;
 
   web_contents->GetController().LoadURLWithParams(params);
 
   return shell;
 }
+
+// static
+Shell* Shell::Create(WebContents* source_contents,
+                     const GURL& target_url,
+                     base::DictionaryValue* manifest,
+                     WebContents* new_contents) {
+  Shell* shell = new Shell(new_contents, manifest);
+
+  if (!target_url.is_empty()) {
+    NavigationController::LoadURLParams params(target_url);
+    params.transition_type = PageTransitionFromInt(PAGE_TRANSITION_TYPED);
+    params.override_user_agent = NavigationController::UA_OVERRIDE_TRUE;
+    new_contents->GetController().LoadURLWithParams(params);
+  }
+  // Use the user agent value from the source WebContents.
+  std::string source_user_agent =
+      source_contents->GetMutableRendererPrefs()->user_agent_override;
+  RendererPreferences* prefs = source_contents->GetMutableRendererPrefs();
+  prefs->user_agent_override = source_user_agent;
+
+  return shell;
+}
+
 
 Shell* Shell::FromRenderViewHost(RenderViewHost* rvh) {
   for (size_t i = 0; i < windows_.size(); ++i) {
@@ -96,7 +121,7 @@ Shell* Shell::FromRenderViewHost(RenderViewHost* rvh) {
 }
 
 Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
-    : ALLOW_THIS_IN_INITIALIZER_LIST(weak_ptr_factory_(this)),
+    : weak_ptr_factory_(this),
       is_devtools_(false),
       force_close_(false),
       id_(-1),
@@ -261,7 +286,31 @@ void Shell::ReloadOrStop() {
     Reload();
 }
 
-void Shell::ShowDevTools() {
+#if 0
+void Shell::CloseDevTools() {
+  if (!devtools_frontend_)
+    return;
+  registrar_.Remove(this,
+                    NOTIFICATION_WEB_CONTENTS_DESTROYED,
+                    Source<WebContents>(
+                        devtools_frontend_->frontend_shell()->web_contents()));
+  devtools_frontend_->Close();
+  devtools_frontend_ = NULL;
+}
+#endif
+
+void Shell::ShowDevTools(const char* jail_id, bool headless) {
+#if 0
+  if (devtools_frontend_) {
+    devtools_frontend_->Focus();
+    return;
+  }
+  devtools_frontend_ = ShellDevToolsFrontend::Show(web_contents());
+  registrar_.Add(this,
+                 NOTIFICATION_WEB_CONTENTS_DESTROYED,
+                 Source<WebContents>(
+                     devtools_frontend_->frontend_shell()->web_contents()));
+#else
   ShellContentBrowserClient* browser_client =
       static_cast<ShellContentBrowserClient*>(
           GetContentClient()->browser());
@@ -272,19 +321,26 @@ void Shell::ShowDevTools() {
   }
 
   RenderViewHost* inspected_rvh = web_contents()->GetRenderViewHost();
-  scoped_refptr<DevToolsAgentHost> agent(DevToolsAgentHost::GetFor(inspected_rvh));
-  DevToolsManager* manager = DevToolsManager::GetInstance();
-  DevToolsClientHost* host = manager->GetDevToolsClientHostFor(agent.get());
+  std::string jscript = std::string("require('nw.gui').Window.get().__setDevToolsJail('")
+    + (jail_id ? jail_id : "") + "');";
+  inspected_rvh->ExecuteJavascriptInWebFrame(string16(), UTF8ToUTF16(jscript.c_str()));
 
-  if (host) {
+  scoped_refptr<DevToolsAgentHost> agent(DevToolsAgentHost::GetOrCreateFor(inspected_rvh));
+  DevToolsManager* manager = DevToolsManager::GetInstance();
+
+  if (agent->IsAttached()) {
     // Break remote debugging debugging session.
-    manager->UnregisterDevToolsClientHostFor(agent.get());
+    manager->CloseAllClientHosts();
   }
 
   ShellDevToolsDelegate* delegate =
       browser_client->shell_browser_main_parts()->devtools_delegate();
   GURL url = delegate->devtools_http_handler()->GetFrontendURL(agent.get());
 
+  if (headless) {
+    SendEvent("devtools-opened", url.spec());
+    return;
+  }
   // Use our minimum set manifest
   base::DictionaryValue manifest;
   manifest.SetBoolean(switches::kmToolbar, false);
@@ -312,6 +368,7 @@ void Shell::ShowDevTools() {
 
   // Save devtools window in current shell.
   devtools_window_ = shell->weak_ptr_factory_.GetWeakPtr();
+#endif
 }
 
 void Shell::UpdateDraggableRegions(
@@ -391,6 +448,7 @@ bool Shell::IsPopupOrPanel(const WebContents* source) const {
 // Window opened by window.open
 void Shell::WebContentsCreated(WebContents* source_contents,
                                int64 source_frame_id,
+                               const string16& frame_name,
                                const GURL& target_url,
                                WebContents* new_contents) {
   // Create with package's manifest
@@ -412,7 +470,8 @@ void Shell::WebContentsCreated(WebContents* source_contents,
   // window.open should show the window by default.
   manifest->SetBoolean(switches::kmShow, true);
 
-  new Shell(new_contents, manifest.get());
+  // don't pass the url on window.open case
+  Shell::Create(source_contents, GURL::EmptyGURL(), manifest.get(), new_contents);
 }
 
 void Shell::RunFileChooser(WebContents* web_contents,

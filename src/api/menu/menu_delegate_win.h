@@ -44,7 +44,7 @@ class MenuDelegate : public ui::SimpleMenuModel::Delegate {
   virtual bool GetIconForCommandId(int command_id,
                                    gfx::Image* icon) const OVERRIDE;
 
-  virtual void ExecuteCommand(int command_id) OVERRIDE;
+  virtual void ExecuteCommand(int command_id, int event_flags) OVERRIDE;
 
   virtual bool HasIcon(int command_id) OVERRIDE;
 

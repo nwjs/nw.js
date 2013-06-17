@@ -25,7 +25,7 @@
 #include "content/public/browser/devtools_http_handler.h"
 #include "content/public/browser/web_contents.h"
 #include "grit/nw_resources.h"
-#include "net/base/tcp_listen_socket.h"
+#include "net/socket/tcp_listen_socket.h"
 #include "net/url_request/url_request_context_getter.h"
 #include "ui/base/layout.h"
 #include "ui/base/resource/resource_bundle.h"
@@ -78,6 +78,18 @@ RenderViewHost* ShellDevToolsDelegate::CreateNewTarget() {
 DevToolsHttpHandlerDelegate::TargetType
 ShellDevToolsDelegate::GetTargetType(RenderViewHost*) {
   return kTargetTypeTab;
+}
+
+std::string ShellDevToolsDelegate::GetViewDescription(
+    content::RenderViewHost*) {
+  return std::string();
+}
+
+scoped_refptr<net::StreamListenSocket>
+ShellDevToolsDelegate::CreateSocketForTethering(
+    net::StreamListenSocket::Delegate* delegate,
+    std::string* name) {
+  return NULL;
 }
 
 }  // namespace content

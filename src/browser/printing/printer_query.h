@@ -12,10 +12,9 @@
 #include "printing/print_job_constants.h"
 #include "ui/gfx/native_widget_types.h"
 
-class MessageLoop;
-
 namespace base {
 class DictionaryValue;
+class MessageLoop;
 }
 
 namespace printing {
@@ -38,7 +37,7 @@ class PrinterQuery : public PrintJobWorkerOwner {
   virtual void GetSettingsDone(const PrintSettings& new_settings,
                                PrintingContext::Result result) OVERRIDE;
   virtual PrintJobWorker* DetachWorker(PrintJobWorkerOwner* new_owner) OVERRIDE;
-  virtual MessageLoop* message_loop() OVERRIDE;
+  virtual base::MessageLoop* message_loop() OVERRIDE;
   virtual const PrintSettings& settings() const OVERRIDE;
   virtual int cookie() const OVERRIDE;
 
@@ -79,7 +78,7 @@ class PrinterQuery : public PrintJobWorkerOwner {
 
   // Main message loop reference. Used to send notifications in the right
   // thread.
-  MessageLoop* const io_message_loop_;
+  base::MessageLoop* const io_message_loop_;
 
   // All the UI is done in a worker thread because many Win32 print functions
   // are blocking and enters a message loop without your consent. There is one

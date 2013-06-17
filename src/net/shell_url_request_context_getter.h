@@ -25,16 +25,20 @@
 #include "base/files/file_path.h"
 #include "base/memory/ref_counted.h"
 #include "base/memory/scoped_ptr.h"
+#include "content/public/browser/content_browser_client.h"
 #include "net/url_request/url_request_context_getter.h"
 #include "net/url_request/url_request_job_factory.h"
 
-class MessageLoop;
 
 namespace net {
 class HostResolver;
 class NetworkDelegate;
 class ProxyConfigService;
 class URLRequestContextStorage;
+}
+
+namespace base{
+class MessageLoop;
 }
 
 namespace content {
@@ -44,18 +48,9 @@ class ShellURLRequestContextGetter : public net::URLRequestContextGetter {
   ShellURLRequestContextGetter(
       bool ignore_certificate_errors,
       const base::FilePath& base_path,
-      MessageLoop* io_loop,
-      MessageLoop* file_loop,
-      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-          blob_protocol_handler,
-      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-          file_system_protocol_handler,
-      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-          developer_protocol_handler,
-      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-          chrome_protocol_handler,
-      scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-          chrome_devtools_protocol_handler);
+      base::MessageLoop* io_loop,
+      base::MessageLoop* file_loop,
+      ProtocolHandlerMap* protocol_handlers);
 
   // net::URLRequestContextGetter implementation.
   virtual net::URLRequestContext* GetURLRequestContext() OVERRIDE;
@@ -70,23 +65,14 @@ class ShellURLRequestContextGetter : public net::URLRequestContextGetter {
  private:
   bool ignore_certificate_errors_;
   base::FilePath base_path_;
-  MessageLoop* io_loop_;
-  MessageLoop* file_loop_;
+  base::MessageLoop* io_loop_;
+  base::MessageLoop* file_loop_;
 
   scoped_ptr<net::ProxyConfigService> proxy_config_service_;
   scoped_ptr<net::NetworkDelegate> network_delegate_;
   scoped_ptr<net::URLRequestContextStorage> storage_;
   scoped_ptr<net::URLRequestContext> url_request_context_;
-  scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-      blob_protocol_handler_;
-  scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-      file_system_protocol_handler_;
-  scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-      developer_protocol_handler_;
-  scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-      chrome_protocol_handler_;
-  scoped_ptr<net::URLRequestJobFactory::ProtocolHandler>
-      chrome_devtools_protocol_handler_;
+  ProtocolHandlerMap protocol_handlers_;
 
   DISALLOW_COPY_AND_ASSIGN(ShellURLRequestContextGetter);
 };

@@ -20,7 +20,7 @@
 
 #include "content/nw/src/browser/standard_menus_mac.h"
 
-#include "base/sys_string_conversions.h"
+#include "base/strings/sys_string_conversions.h"
 #import <Cocoa/Cocoa.h>
 
 // For some reaon, Apple removed setAppleMenu from the headers in 10.4,

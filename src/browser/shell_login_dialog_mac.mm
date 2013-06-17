@@ -25,7 +25,7 @@
 #include "base/logging.h"
 #include "base/mac/bundle_locations.h"
 #import "base/memory/scoped_nsobject.h"
-#include "base/sys_string_conversions.h"
+#include "base/strings/sys_string_conversions.h"
 #include "content/public/browser/browser_thread.h"
 #import "ui/base/cocoa/nib_loading.h"
 

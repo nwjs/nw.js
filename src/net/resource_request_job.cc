@@ -47,7 +47,7 @@ ResourceRequestJob::ResourceRequestJob(
       pending_buf_size_(0),
       mime_type_(mime_type),
       resource_id_(resource_id),
-      ALLOW_THIS_IN_INITIALIZER_LIST(weak_factory_(this)) {
+      weak_factory_(this) {
 }
 
 // static

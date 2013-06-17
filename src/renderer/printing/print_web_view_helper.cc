@@ -63,7 +63,7 @@ void ExecuteScript(WebKit::WebFrame* frame,
                    const base::Value& parameters) {
   std::string json;
   base::JSONWriter::Write(&parameters, &json);
-  std::string script = StringPrintf(script_format, json.c_str());
+  std::string script = base::StringPrintf(script_format, json.c_str());
   frame->executeScript(WebKit::WebString(UTF8ToUTF16(script)));
 }
 
@@ -438,7 +438,7 @@ void PrintWebViewHelper::PrintHeaderAndFooter(
   options->SetDouble("topMargin", page_layout.margin_top);
   options->SetDouble("bottomMargin", page_layout.margin_bottom);
   options->SetString("pageNumber",
-                     StringPrintf("%d/%d", page_number, total_pages));
+                     base::StringPrintf("%d/%d", page_number, total_pages));
 
   ExecuteScript(frame, kPageSetupScriptFormat, *options);
 
@@ -491,7 +491,7 @@ class PrepareFrameAndViewForPrint : public WebKit::WebViewClient,
 
   // Optional. Replaces |frame_| with selection if needed. Will call |on_ready|
   // when completed.
-  void CopySelectionIfNeeded(const webkit_glue::WebPreferences& preferences,
+  void CopySelectionIfNeeded(const WebPreferences& preferences,
                              const base::Closure& on_ready);
 
   // Prepares frame for printing.
@@ -527,7 +527,7 @@ class PrepareFrameAndViewForPrint : public WebKit::WebViewClient,
  private:
   void ResizeForPrinting();
   void RestoreSize();
-  void CopySelection(const webkit_glue::WebPreferences& preferences);
+  void CopySelection(const WebPreferences& preferences);
 
   base::WeakPtrFactory<PrepareFrameAndViewForPrint> weak_ptr_factory_;
 
@@ -614,7 +614,7 @@ void PrepareFrameAndViewForPrint::StartPrinting() {
 }
 
 void PrepareFrameAndViewForPrint::CopySelectionIfNeeded(
-    const webkit_glue::WebPreferences& preferences,
+    const WebPreferences& preferences,
     const base::Closure& on_ready) {
   on_ready_ = on_ready;
   if (should_print_selection_only_)
@@ -624,7 +624,7 @@ void PrepareFrameAndViewForPrint::CopySelectionIfNeeded(
 }
 
 void PrepareFrameAndViewForPrint::CopySelection(
-    const webkit_glue::WebPreferences& preferences) {
+    const WebPreferences& preferences) {
   ResizeForPrinting();
   std::string url_str = "data:text/html;charset=utf-8,";
   url_str.append(frame_->selectionAsMarkup().utf8());
@@ -632,13 +632,13 @@ void PrepareFrameAndViewForPrint::CopySelection(
   // Create a new WebView with the same settings as the current display one.
   // Except that we disable javascript (don't want any active content running
   // on the page).
-  webkit_glue::WebPreferences prefs = preferences;
+  WebPreferences prefs = preferences;
   prefs.javascript_enabled = false;
   prefs.java_enabled = false;
 
   WebKit::WebView* web_view = WebKit::WebView::create(this);
   owns_web_view_ = true;
-  prefs.Apply(web_view);
+  webkit_glue::ApplyWebPreferences(prefs, web_view);
   web_view->initializeMainFrame(this);
   frame_ = web_view->mainFrame();
   node_to_print_.reset();

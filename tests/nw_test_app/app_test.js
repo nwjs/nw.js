@@ -38,7 +38,7 @@ exports.createClient = function(options) {
     var client = net.connect({port: client_prot});
     client.setEncoding('utf8');   
    
-    if (options.data != null) {   
+    if (options.data != null) {
     if (options.delay) {
       setTimeout(function(){        
         client.end(JSON.stringify(options.data));
@@ -51,7 +51,7 @@ exports.createClient = function(options) {
     }
     
   }
-  return {'auto': program.auto};
+  return {'auto': program.auto, 'socket': client};
 }
 
 exports.init = function(arg1, arg2) {
@@ -69,6 +69,15 @@ childProcess.prototype.removeConnection = function() {
   try {
     server.removeListener('connection', this.server_connection_cb); 
   } catch (e) {
+  }
+}
+
+childProcess.prototype.close = function() {
+  try {
+    this.app.kill();
+    server.removeListener('connection', this.server_connection_cb); 
+  } catch (e) {
+    console.log('error');
   }
 }
 
@@ -109,8 +118,14 @@ exports.createChildProcess = function(options) {
       child.socket = socket;
       
       socket.on('data', function(data) {
-        options.end(JSON.parse(data), app);
-        server.removeListener('connection', cb);        
+        options.end(JSON.parse(data), app);              
+      });
+      socket.on('end', function() {
+        //console.log('in app end');
+        server.removeListener('connection', cb); 
+      });
+      socket.on('error', function(e) {
+        //console.log(e);
       });
       child.server_connection_cb = cb;
     }); //server.on()   

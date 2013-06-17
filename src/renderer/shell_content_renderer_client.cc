@@ -24,9 +24,11 @@
 #include "base/files/file_path.h"
 #include "base/file_util.h"
 #include "base/logging.h"
+#include "base/string16.h"
 #include "base/utf_string_conversions.h"
 #include "chrome/renderer/page_click_tracker.h"
 #include "chrome/renderer/static_v8_external_string_resource.h"
+#include "components/autofill/renderer/page_click_tracker.h"
 #include "content/nw/src/api/dispatcher.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/bindings_common.h"
@@ -34,7 +36,8 @@
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_version.h"
-#include "content/nw/src/renderer/autofill_agent.h"
+#include "components/autofill/renderer/autofill_agent.h"
+#include "components/autofill/renderer/password_autofill_agent.h"
 #include "content/nw/src/renderer/nw_render_view_observer.h"
 #include "content/nw/src/renderer/prerenderer/prerenderer_client.h"
 #include "content/nw/src/renderer/printing/print_web_view_helper.h"
@@ -54,6 +57,8 @@
 //#include "third_party/WebKit/Source/WebKit/chromium/public/platform/WebString.h"
 using content::RenderView;
 using content::RenderViewImpl;
+using autofill::AutofillAgent;
+using autofill::PasswordAutofillAgent;
 using net::ProxyBypassRules;
 using WebKit::WebFrame;
 using WebKit::WebView;
@@ -127,6 +132,7 @@ void ShellContentRendererClient::RenderThreadStarted() {
   v8::ExtensionConfiguration extension_configuration(1, names);
 
   node::g_context = v8::Context::New(&extension_configuration);
+  node::g_context->SetSecurityToken(v8::String::NewSymbol("nw-token", 8));
   node::g_context->Enter();
 
   // Setup node.js.
@@ -144,9 +150,11 @@ void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
   new printing::PrintWebViewHelper(render_view);
 #endif
 
-  PageClickTracker* page_click_tracker = new PageClickTracker(render_view);
-  nw::AutofillAgent* autofill_agent = new nw::AutofillAgent(render_view);
-  page_click_tracker->AddListener(autofill_agent);
+  // PageClickTracker* page_click_tracker = new PageClickTracker(render_view);
+  PasswordAutofillAgent* password_autofill_agent =
+      new PasswordAutofillAgent(render_view);
+  new AutofillAgent(render_view, password_autofill_agent);
+  //page_click_tracker->AddListener(autofill_agent);
 }
 
 void ShellContentRendererClient::DidCreateScriptContext(
@@ -155,33 +163,53 @@ void ShellContentRendererClient::DidCreateScriptContext(
     int extension_group,
     int world_id) {
   GURL url(frame->document().url());
-  DVLOG(1) << url;
+  VLOG(1) << "DidCreateScriptContext: " << url;
+  InstallNodeSymbols(frame, context, url);
+}
+
+bool ShellContentRendererClient::goodForNode(WebKit::WebFrame* frame)
+{
   RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
+  GURL url(frame->document().url());
   ProxyBypassRules rules;
   rules.ParseFromString(rv->renderer_preferences_.nw_remote_page_rules);
   bool force_on = rules.Matches(url);
-  InstallNodeSymbols(frame, context, url, force_on);
+  bool is_nw_protocol = url.SchemeIs("nw") || !url.is_valid();
+  bool use_node =
+    CommandLine::ForCurrentProcess()->HasSwitch(switches::kNodejs) &&
+    !frame->isNwDisabledChildFrame() &&
+    (force_on || url.SchemeIsFile() || is_nw_protocol);
+  return use_node;
 }
 
 bool ShellContentRendererClient::WillSetSecurityToken(
     WebKit::WebFrame* frame,
     v8::Handle<v8::Context> context) {
-  // Override context's security token
-  context->SetSecurityToken(node::g_context->GetSecurityToken());
+  GURL url(frame->document().url());
+  VLOG(1) << "WillSetSecurityToken: " << url;
+  if (goodForNode(frame)) {
+    // Override context's security token
+    context->SetSecurityToken(node::g_context->GetSecurityToken());
+    frame->document().securityOrigin().grantUniversalAccess();
+    return true;
+  }
 
-  return true;
+  // window.open frame was enabled for Node earlier
+  if (frame->isNodeJS()) {
+    frame->setNodeJS(false);
+    UninstallNodeSymbols(frame, context);
+  }
+  return false;
 }
 
 void ShellContentRendererClient::InstallNodeSymbols(
     WebKit::WebFrame* frame,
     v8::Handle<v8::Context> context,
-    const GURL& url,
-    bool force_on) {
+    const GURL& url) {
   v8::HandleScope handle_scope;
 
   static bool installed_once = false;
 
-  bool is_file_protocol = url.SchemeIsFile();
   v8::Local<v8::Object> nodeGlobal = node::g_context->Global();
   v8::Local<v8::Object> v8Global = context->Global();
 
@@ -190,9 +218,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
                   v8Global->Get(v8::String::New("console")));
 
   // Do we integrate node?
-  bool use_node =
-    CommandLine::ForCurrentProcess()->HasSwitch(switches::kNodejs) &&
-    (force_on || is_file_protocol);
+  bool use_node = goodForNode(frame);
 
   // Test if protocol is 'nw:'
   // test for 'about:blank' is also here becuase window.open would
@@ -200,6 +226,8 @@ void ShellContentRendererClient::InstallNodeSymbols(
   bool is_nw_protocol = url.SchemeIs("nw") || !url.is_valid();
 
   if (use_node || is_nw_protocol) {
+    frame->setNodeJS(true);
+
     v8::Local<v8::Array> symbols = v8::Array::New(4);
     symbols->Set(0, v8::String::New("global"));
     symbols->Set(1, v8::String::New("process"));
@@ -210,8 +238,6 @@ void ShellContentRendererClient::InstallNodeSymbols(
       v8::Local<v8::Value> key = symbols->Get(i);
       v8Global->Set(key, nodeGlobal->Get(key));
     }
-
-    frame->setNodeJS(true);
 
     if (!installed_once) {
       installed_once = true;
@@ -317,6 +343,26 @@ v8::Handle<v8::Value> ShellContentRendererClient::ReportException(
       error));
 
   return v8::Undefined(); 
+}
+
+void ShellContentRendererClient::UninstallNodeSymbols(
+    WebKit::WebFrame* frame,
+    v8::Handle<v8::Context> context) {
+  v8::HandleScope handle_scope;
+
+  v8::Local<v8::Object> v8Global = context->Global();
+  v8::Local<v8::Array> symbols = v8::Array::New(5);
+  symbols->Set(0, v8::String::New("global"));
+  symbols->Set(1, v8::String::New("process"));
+  symbols->Set(2, v8::String::New("Buffer"));
+  symbols->Set(3, v8::String::New("root"));
+  symbols->Set(4, v8::String::New("require"));
+
+  for (unsigned i = 0; i < symbols->Length(); ++i) {
+    v8::Local<v8::String> key = symbols->Get(i)->ToString();
+    if(v8Global->Has(key))
+      v8Global->Delete(key);
+  }
 }
 
 }  // namespace content
