@@ -133,7 +133,7 @@ class Shell : public WebContentsDelegate,
  protected:
   // content::WebContentsObserver implementation.
   virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
-
+  virtual void RenderViewCreated(RenderViewHost* render_view_host) OVERRIDE;
   // content::WebContentsDelegate implementation.
   virtual WebContents* OpenURLFromTab(WebContents* source,
                                       const OpenURLParams& params) OVERRIDE;

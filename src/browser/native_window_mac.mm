@@ -196,10 +196,13 @@ enum {
 @interface ShellNSWindow : ChromeEventProcessingWindow {
  @private
   content::Shell* shell_;
+  bool is_transparent_;
 }
 - (void)setShell:(content::Shell*)shell;
 - (void)showDevTools:(id)sender;
 - (void)closeAllWindows:(id)sender;
+- (void)setTransparent;
+- (BOOL)getTransparent;
 @end
 
 @implementation ShellNSWindow
@@ -214,6 +217,14 @@ enum {
 
 - (void)closeAllWindows:(id)sender {
   api::App::CloseAllWindows();
+}
+
+- (void)setTransparent {
+  is_transparent_ = true;
+}
+
+- (BOOL)getTransparent {
+  return is_transparent_;
 }
 
 @end
@@ -233,15 +244,18 @@ enum {
   [[NSColor clearColor] set];
   NSRectFill(rect);
 
-  // Set up our clip.
-  CGFloat cornerRadius = 4.0;
-  if ([view respondsToSelector:@selector(roundedCornerRadius)])
-    cornerRadius = [view roundedCornerRadius];
-  [[NSBezierPath bezierPathWithRoundedRect:[view bounds]
-                                   xRadius:cornerRadius
-                                   yRadius:cornerRadius] addClip];
-  [[NSColor whiteColor] set];
-  NSRectFill(rect);
+  if(![self getTransparent])
+  {
+    // Set up our clip.
+    CGFloat cornerRadius = 4.0;
+    if ([view respondsToSelector:@selector(roundedCornerRadius)])
+      cornerRadius = [view roundedCornerRadius];
+    [[NSBezierPath bezierPathWithRoundedRect:[view bounds]
+                                     xRadius:cornerRadius
+                                     yRadius:cornerRadius] addClip];
+    [[NSColor whiteColor] set];
+    NSRectFill(rect);
+  }
 }
 
 + (NSRect)frameRectForContentRect:(NSRect)contentRect
@@ -272,6 +286,7 @@ NativeWindowCocoa::NativeWindowCocoa(
     : NativeWindow(shell, manifest),
       is_fullscreen_(false),
       is_kiosk_(false),
+      is_transparent_(false),
       attention_request_id_(0),
       use_system_drag_(true) {
   int width, height;
@@ -433,6 +448,26 @@ void NativeWindowCocoa::SetFullscreen(bool fullscreen) {
 
 bool NativeWindowCocoa::IsFullscreen() {
   return is_fullscreen_;
+}
+
+void NativeWindowCocoa::SetTransparent() {
+  is_transparent_ = true;
+  if(base::mac::IsOSMountainLionOrLater()) {
+    restored_bounds_ = [window() frame];
+    [window() setStyleMask:(NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask)];
+    [window() setFrame:[window()
+                      frameRectForContentRect:[window() frame]]
+             display:YES];
+  }
+  [window() setHasShadow:NO];
+  ShellNSWindow* swin = (ShellNSWindow*)window();
+  [swin setTransparent];
+  [window() setOpaque:NO];
+  [window() setBackgroundColor:[NSColor clearColor]];
+}
+
+bool NativeWindowCocoa::IsTransparent() {
+  return is_transparent_;
 }
 
 void NativeWindowCocoa::SetNonLionFullscreen(bool fullscreen) {
@@ -830,6 +865,21 @@ void NativeWindowCocoa::InstallDraggableRegionViews() {
                                        iter->height())];
     [webView addSubview:controlRegion];
   }
+}
+
+gfx::Point NativeWindowCocoa::GetMousePosition() {
+  CGEventRef event = CGEventCreate(NULL);
+  CGPoint cursor = CGEventGetLocation(event);
+  CFRelease(event);
+  return gfx::Point(cursor.x,cursor.y);
+}
+
+void NativeWindowCocoa::BeginOffclientMouseMove() {
+  // Not implemented
+}
+
+void NativeWindowCocoa::EndOffclientMouseMove() {
+  // Not implemented
 }
 
 NativeWindow* CreateNativeWindowCocoa(content::Shell* shell,

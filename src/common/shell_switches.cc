@@ -70,6 +70,7 @@ const char kmMaxHeight[]  = "max_height";
 const char kmResizable[]  = "resizable";
 const char kmAsDesktop[]  = "as_desktop";
 const char kmFullscreen[] = "fullscreen";
+const char kmTransparent[] = "transparent";
 
 // Start with the kiosk mode, see Opera's page for description:
 // http://www.opera.com/support/mastering/kiosk/
