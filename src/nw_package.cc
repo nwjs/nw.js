@@ -42,7 +42,6 @@
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/gfx/image/image.h"
 #include "ui/gfx/image/image_skia_rep.h"
-#include "webkit/dom_storage/dom_storage_map.h"
 #include "webkit/glue/image_decoder.h"
 
 bool IsSwitch(const CommandLine::StringType& string,
@@ -304,12 +303,6 @@ bool Package::InitFromPath() {
       CommandLine* command_line = CommandLine::ForCurrentProcess();
       command_line->AppendSwitchASCII(switches::kAudioBufferSize, bufsz_str);
     }
-  }
-
-  int dom_storage_quota_mb = 0;
-  if (root_->GetInteger("dom_storage_quota", &dom_storage_quota_mb) &&
-      dom_storage_quota_mb > 0) {
-    dom_storage::DomStorageMap::SetQuotaOverride(dom_storage_quota_mb * 1024 * 1024);
   }
 
   // Read chromium command line args.

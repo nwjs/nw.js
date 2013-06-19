@@ -24,6 +24,7 @@
 #include "base/files/file_path.h"
 #include "base/file_util.h"
 #include "base/string_util.h"
+#include "base/strings/string_number_conversions.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
 #include "content/public/browser/browser_url_handler.h"
@@ -144,6 +145,10 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     std::string snapshot_path;
     if (package->root()->GetString(switches::kSnapshot, &snapshot_path))
       command_line->AppendSwitchASCII(switches::kSnapshot, snapshot_path);
+
+    int dom_storage_quota_mb;
+    if (package->root()->GetInteger("dom_storage_quota", &dom_storage_quota_mb))
+      command_line->AppendSwitchASCII(switches::kDomStorageQuota, base::IntToString(dom_storage_quota_mb));
   }
 
   // without the switch, the destructor of the shell object will
