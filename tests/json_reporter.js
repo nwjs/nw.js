@@ -42,9 +42,7 @@ function JSONReporter(runner) {
   runner.on('end', function(){
     var obj = {
         stats: self.stats
-      , tests: tests.map(clean)
       , failures: failures.map(clean)
-      , passes: passes.map(clean)
     };
 
     process.stdout.write(JSON.stringify(obj, null, 2));
@@ -65,5 +63,6 @@ function clean(test) {
       title: test.title
     , fullTitle: test.fullTitle()
     , duration: test.duration
+    , error_stack: test.err.stack.split('\n')
   }
 }
