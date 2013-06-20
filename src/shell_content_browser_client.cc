@@ -115,8 +115,16 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
       content::RenderViewHost* host = content::RenderViewHost::From(
         const_cast<content::RenderWidgetHost*>(widget));
       content::Shell* shell = content::Shell::FromRenderViewHost(host);
-      if (shell && (shell->is_devtools() || !shell->nodejs()))
-        return;
+      if (shell) {
+        if (!shell->nodejs())
+          return;
+        if (shell->is_devtools()) {
+          // DevTools should have powerful permissions to load local
+          // files by XHR (e.g. for source map)
+          command_line->AppendSwitch(switches::kNodejs);
+          return;
+        }
+      }
     }
   }
   nw::Package* package = shell_browser_main_parts()->package();

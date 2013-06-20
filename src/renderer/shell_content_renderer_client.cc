@@ -59,6 +59,9 @@ using autofill::PasswordAutofillAgent;
 using net::ProxyBypassRules;
 using WebKit::WebFrame;
 using WebKit::WebView;
+using WebKit::WebString;
+using WebKit::WebSecurityPolicy;
+
 
 namespace content {
 
@@ -137,6 +140,11 @@ void ShellContentRendererClient::RenderThreadStarted() {
 
   // Start observers.
   shell_observer_.reset(new ShellRenderProcessObserver());
+
+  WebString file_scheme(ASCIIToUTF16("file"));
+  // file: resources should be allowed to receive CORS requests.
+  WebSecurityPolicy::registerURLSchemeAsCORSEnabled(file_scheme);
+
 }
 
 void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
