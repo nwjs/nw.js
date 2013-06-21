@@ -170,7 +170,7 @@ Shell::~Shell() {
   }
 
   if (windows_.empty() && quit_message_loop_)
-    api::App::Quit(web_contents()->GetRenderProcessHost());
+    api::App::Quit();
 }
 
 void Shell::SendEvent(const std::string& event, const std::string& arg1) {

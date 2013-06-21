@@ -50,7 +50,7 @@ class App {
   static void CloseAllWindows();
 
   // Quit the whole app.
-  static void Quit(content::RenderProcessHost* render_view_host);
+  static void Quit();
 
   // Post "open" event.
   static void EmitOpenEvent(const std::string& path);
