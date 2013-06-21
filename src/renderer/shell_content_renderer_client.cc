@@ -144,6 +144,8 @@ void ShellContentRendererClient::RenderThreadStarted() {
   node::g_context->SetSecurityToken(v8::String::NewSymbol("nw-token", 8));
   node::g_context->Enter();
 
+  node::g_context->SetEmbedderData(0, v8::String::NewSymbol("node"));
+
   // Setup node.js.
   node::SetupContext(argc, argv, node::g_context->Global());
 
