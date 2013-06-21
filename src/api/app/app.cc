@@ -28,9 +28,12 @@
 #include "content/nw/src/browser/net_disk_cache_remover.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
+#include "content/nw/src/shell_browser_context.h"
 #include "content/common/view_messages.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/render_process_host.h"
+
+using content::ShellBrowserContext;
 
 namespace api {
 
@@ -51,7 +54,7 @@ content::RenderProcessHost* GetRenderProcessHost() {
 }
 
 }  // namespace
-  
+
 // static
 void App::Call(const std::string& method,
                const base::ListValue& arguments) {
@@ -71,7 +74,12 @@ void App::Call(content::Shell* shell,
                const std::string& method,
                const base::ListValue& arguments,
                base::ListValue* result) {
-  if (method == "GetArgv") {
+  if (method == "GetDataPath") {
+    ShellBrowserContext* browser_context =
+      static_cast<ShellBrowserContext*>(shell->web_contents()->GetBrowserContext());
+    result->AppendString(browser_context->GetPath().value());
+    return;
+  }else if (method == "GetArgv") {
     nw::Package* package = shell->GetPackage();
     CommandLine* command_line = CommandLine::ForCurrentProcess();
     CommandLine::StringVector args = command_line->GetArgs();
