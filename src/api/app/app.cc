@@ -133,20 +133,23 @@ void App::CloseAllWindows() {
 }
 
 // static
-void App::Quit() {
+void App::Quit(RenderProcessHost* render_process_host) {
   // Send the quit message.
   int no_use;
-  std::set<RenderProcessHost*> rphs;
-  std::set<RenderProcessHost*>::iterator it;
+  if (render_process_host) {
+    render_process_host->Send(new ViewMsg_WillQuit(&no_use));
+  }else{
+    std::set<RenderProcessHost*> rphs;
+    std::set<RenderProcessHost*>::iterator it;
 
-  GetRenderProcessHosts(rphs);
-  for (it = rphs.begin(); it != rphs.end(); it++) {
-    RenderProcessHost* rph = *it;
-    DCHECK(rph != NULL);
+    GetRenderProcessHosts(rphs);
+    for (it = rphs.begin(); it != rphs.end(); it++) {
+      RenderProcessHost* rph = *it;
+      DCHECK(rph != NULL);
 
-    rph->Send(new ViewMsg_WillQuit(&no_use));
+      rph->Send(new ViewMsg_WillQuit(&no_use));
+    }
   }
-
   // Then quit.
   MessageLoop::current()->PostTask(FROM_HERE, MessageLoop::QuitClosure());
 }
