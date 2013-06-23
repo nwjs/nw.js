@@ -377,7 +377,7 @@
       ],
     },
     {
-      'target_name': 'nw_package_bin',
+      'target_name': 'dist',
       'type': 'none',
       'actions': [
         {
