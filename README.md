@@ -18,7 +18,7 @@ It's created and developed in Intel Open Source Technology Center.
 * Available on Linux, Mac OSX and Windows
 
 ## Downloads
-[v0.6.1 release note](https://groups.google.com/d/msg/node-webkit/YC01gRQqwk4/bb5_1bw4ZwkJ)
+[v0.6.1 release note](https://groups.google.com/d/msg/node-webkit/-s98wi-P6ZY/w-JYABBnFMgJ)
 
 Prebuilt binaries (v0.6.1 - Jun 24, 2013):
 
