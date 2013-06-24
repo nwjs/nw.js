@@ -27,10 +27,22 @@
 
 <div>
 	<h2>file dialog</h2>
-	<span>nwworkingdir: </span><input name='file' type="file"/> <br/>
-	<span>nwworkingdir with nwdirectory: </span><input name='file' type="file" nwdirectory/> <br/>
-	<span>nwworkingdir with webkitdirectory: </span><input name='file' type="file" webkitdirectory/> <br/>
-	<span>nwworkingdir with multiple: </span><input name='file' type="file" multiple/> <br/>
+
+	<div><p>nwworkingdir(C:\Windows or /usr/):</p>    
+      <input name='file' type="file"/> <br/>
+    </div>
+	
+  <div><p>nwworkingdir(C:\Users or /home) with nwdirectory: </p>
+    <input name='file' type="file" nwdirectory/> <br/>
+  </div>
+  
+  <div><p>nwworkingdir(C:\Users\Public or /sys) with webkitdirectory: </p>
+  <input name='file' type="file" webkitdirectory/> <br/>
+  </div>
+  
+  <div><p>nwworkingdir(C:\Windows or /usr/local) with multiple: </p>
+  <input name='file' type="file" multiple/> <br/>
+  </div>
 	<script>
     var dir_win = ["C:\\Windows", 'C:\\Users', 'C:\\Users\\Public', 'C:\\Windows'];
     var dir_unix = ["/usr/", '/home', '/sys', '/usr/local'];
