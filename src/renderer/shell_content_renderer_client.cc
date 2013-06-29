@@ -122,8 +122,9 @@ void ShellContentRendererClient::RenderThreadStarted() {
   if (command_line->HasSwitch(switches::kDomStorageQuota)) {
     std::string quota_str = command_line->GetSwitchValueASCII(switches::kDomStorageQuota);
     int quota = 0;
-    if (base::StringToInt(quota_str, &quota) && quota > 0)
+    if (base::StringToInt(quota_str, &quota) && quota > 0) {
       dom_storage::DomStorageMap::SetQuotaOverride(quota * 1024 * 1024);
+    }
   }
   // Initialize node after render thread is started.
   if (!snapshot_path.empty()) {

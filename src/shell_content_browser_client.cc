@@ -48,9 +48,10 @@
 #include "content/nw/src/shell_browser_main_parts.h"
 #include "geolocation/shell_access_token_store.h"
 #include "googleurl/src/gurl.h"
+#include "ui/base/l10n/l10n_util.h"
+#include "webkit/dom_storage/dom_storage_map.h"
 #include "webkit/glue/webpreferences.h"
 #include "webkit/user_agent/user_agent_util.h"
-#include "ui/base/l10n/l10n_util.h"
 #include "webkit/plugins/npapi/plugin_list.h"
 
 
@@ -147,8 +148,10 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
       command_line->AppendSwitchASCII(switches::kSnapshot, snapshot_path);
 
     int dom_storage_quota_mb;
-    if (package->root()->GetInteger("dom_storage_quota", &dom_storage_quota_mb))
+    if (package->root()->GetInteger("dom_storage_quota", &dom_storage_quota_mb)) {
+      dom_storage::DomStorageMap::SetQuotaOverride(dom_storage_quota_mb * 1024 * 1024);
       command_line->AppendSwitchASCII(switches::kDomStorageQuota, base::IntToString(dom_storage_quota_mb));
+    }
   }
 
   // without the switch, the destructor of the shell object will
