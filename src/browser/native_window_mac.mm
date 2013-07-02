@@ -53,7 +53,7 @@
     MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_7
 
 enum {
-  NSWindowCollectionBehaviorParticipatesInCycle = 1 << 5,
+//  NSWindowCollectionBehaviorParticipatesInCycle = 1 << 5,
   NSWindowCollectionBehaviorFullScreenPrimary = 1 << 7,
   NSWindowCollectionBehaviorFullScreenAuxiliary = 1 << 8
 };

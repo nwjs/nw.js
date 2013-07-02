@@ -28,6 +28,7 @@
 #include "content/public/common/url_constants.h"
 #include "content/nw/src/net/shell_network_delegate.h"
 #include "content/public/browser/cookie_store_factory.h"
+#include "content/nw/src/embed_protocol_handler.h"
 #include "content/nw/src/nw_protocol_handler.h"
 #include "content/nw/src/nw_shell.h"
 #include "net/cert/cert_verifier.h"
@@ -186,6 +187,7 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
         new net::URLRequestJobFactoryImpl());
     InstallProtocolHandlers(job_factory.get(), &protocol_handlers_);
     job_factory->SetProtocolHandler("nw", new nw::NwProtocolHandler());
+    job_factory->SetProtocolHandler("embed", new nw::EmbedProtocolHandler());
     storage_->set_job_factory(job_factory.release());
 
   }

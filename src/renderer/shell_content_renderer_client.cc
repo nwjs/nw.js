@@ -26,7 +26,7 @@
 #include "base/logging.h"
 #include "base/string16.h"
 #include "base/utf_string_conversions.h"
-#include "chrome/renderer/page_click_tracker.h"
+#include "components/autofill/renderer/page_click_tracker.h"
 #include "chrome/renderer/static_v8_external_string_resource.h"
 #include "components/autofill/renderer/page_click_tracker.h"
 #include "content/nw/src/api/dispatcher.h"

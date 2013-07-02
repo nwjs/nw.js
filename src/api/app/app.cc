@@ -18,8 +18,7 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "chrome/common/zip.h"
-
+#include "third_party/zlib/google/zip.h"
 #include "content/nw/src/api/app/app.h"
 
 #include "base/command_line.h"

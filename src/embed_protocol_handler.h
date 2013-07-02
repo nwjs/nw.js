@@ -1,14 +1,29 @@
-//
-//  embed_protocol_handler.h
-//  content
-//
-//  Created by Trevor Linton on 6/27/13.
-//
-//
+#ifndef CONTENT_NW_SRC_NW_EMBED_HANDLER_H_
+#define CONTENT_NW_SRC_NW_EMBED_HANDLER_H_
 
-#ifndef __content__embed_protocol_handler__
-#define __content__embed_protocol_handler__
+#include "base/basictypes.h"
+#include "base/compiler_specific.h"
+#include "net/url_request/url_request_job_factory.h"
 
-#include <iostream>
+class GURL;
 
-#endif /* defined(__content__embed_protocol_handler__) */
+namespace net {
+  class URLRequestJob;
+}
+
+namespace nw {
+  
+  class EmbedProtocolHandler :
+  public net::URLRequestJobFactory::ProtocolHandler {
+  public:
+    EmbedProtocolHandler();
+    virtual net::URLRequestJob* MaybeCreateJob(
+        net::URLRequest* request,
+        net::NetworkDelegate* network_delegate) const OVERRIDE;
+    
+  private:
+    DISALLOW_COPY_AND_ASSIGN(EmbedProtocolHandler);
+  };
+  
+}
+#endif

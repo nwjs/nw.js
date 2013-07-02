@@ -33,6 +33,7 @@
 #include "content/nw/src/browser/printing/print_job_manager.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/common/shell_switches.h"
+#include "content/nw/src/net/util/embed_utils.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/nw/src/shell_browser_context.h"
@@ -192,7 +193,7 @@ void ShellBrowserMainParts::Init() {
     }
   }
   devtools_delegate_ = new ShellDevToolsDelegate(browser_context_.get(), port);
-
+	
   Shell::Create(browser_context_.get(),
                 package()->GetStartupURL(),
                 NULL,
