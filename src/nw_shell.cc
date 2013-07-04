@@ -134,9 +134,8 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
                  NotificationService::AllBrowserContextsAndSources());
   windows_.push_back(this);
 
-  bool enable_nodejs = true;
-  if (manifest->GetBoolean(switches::kNodejs, &enable_nodejs))
-    enable_nodejs_ = enable_nodejs;
+  enable_nodejs_ = GetPackage()->GetUseNode();
+  VLOG(1) << "enable nodejs from manifest: " << enable_nodejs_;
 
   // Add web contents.
   web_contents_.reset(web_contents);
@@ -321,9 +320,11 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
   }
 
   RenderViewHost* inspected_rvh = web_contents()->GetRenderViewHost();
-  std::string jscript = std::string("require('nw.gui').Window.get().__setDevToolsJail('")
-    + (jail_id ? jail_id : "") + "');";
-  inspected_rvh->ExecuteJavascriptInWebFrame(string16(), UTF8ToUTF16(jscript.c_str()));
+  if (nodejs()) {
+    std::string jscript = std::string("require('nw.gui').Window.get().__setDevToolsJail('")
+      + (jail_id ? jail_id : "") + "');";
+    inspected_rvh->ExecuteJavascriptInWebFrame(string16(), UTF8ToUTF16(jscript.c_str()));
+  }
 
   scoped_refptr<DevToolsAgentHost> agent(DevToolsAgentHost::GetOrCreateFor(inspected_rvh));
   DevToolsManager* manager = DevToolsManager::GetInstance();
