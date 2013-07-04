@@ -8,7 +8,10 @@ describe('snapshot', function() {
 
     before(function(done) {
       var snapshotExec;
-      if (os.platform() == 'darwin' || os.platform() == 'linux') {
+      if (os.platform() == 'darwin') {
+        snapshotExec = '../../../../../../nwsnapshot';
+      }
+      if (os.platform() == 'linux') {
         snapshotExec = 'nwsnapshot';
       }
       if (os.platform() == 'win32') {
@@ -16,6 +19,7 @@ describe('snapshot', function() {
       }
 
       var snapshotPath = path.join(process.execPath, '..', snapshotExec);
+      console.log("snapshotPath: " + snapshotPath);
 
       cp.execFile(snapshotPath,
                   ['--extra_code', 'mytest.js', 'mytest.bin'],
