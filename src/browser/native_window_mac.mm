@@ -398,6 +398,11 @@ void NativeWindowCocoa::Show() {
   [myApp activateIgnoringOtherApps:YES];
   content::RenderWidgetHostView* rwhv =
       shell_->web_contents()->GetRenderWidgetHostView();
+
+  // orderFrontRegardless causes us to become the first responder. The usual
+  // Chrome assumption is that becoming the first responder = you have focus
+  // so we use this trick to refuse to become first responder during orderFrontRegardless
+
   if (rwhv)
     rwhv->SetTakesFocusOnlyOnMouseDown(true);
   [window() orderFrontRegardless];
