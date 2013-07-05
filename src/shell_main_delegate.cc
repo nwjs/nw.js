@@ -62,6 +62,7 @@ using base::FilePath;
 #define IPC_LOG_TABLE_ADD_ENTRY(msg_id, logger) \
     content::RegisterIPCLogger(msg_id, logger)
 #include "content/nw/src/common/common_message_generator.h"
+#include "components/autofill/common/autofill_messages.h"
 #endif
 
 namespace {
