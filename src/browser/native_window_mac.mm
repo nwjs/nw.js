@@ -34,6 +34,7 @@
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/native_web_keyboard_event.h"
+#include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
 #include "extensions/common/draggable_region.h"
@@ -393,7 +394,15 @@ void NativeWindowCocoa::Focus(bool focus) {
 }
 
 void NativeWindowCocoa::Show() {
-  [window() makeKeyAndOrderFront:nil];
+  NSApplication *myApp = [NSApplication sharedApplication];
+  [myApp activateIgnoringOtherApps:YES];
+  content::RenderWidgetHostView* rwhv =
+      shell_->web_contents()->GetRenderWidgetHostView();
+  if (rwhv)
+    rwhv->SetTakesFocusOnlyOnMouseDown(true);
+  [window() orderFrontRegardless];
+  if (rwhv)
+    rwhv->SetTakesFocusOnlyOnMouseDown(false);
 }
 
 void NativeWindowCocoa::Hide() {
