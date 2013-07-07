@@ -57,7 +57,20 @@
 	iframe_devtools.src = url;
 	iframe_devtools.height = '1000';
 	iframe_devtools.width = '1000';
-	
+
+	function get_results() {
+	    var console_logs = devtools.document.getElementsByClassName('console-log-level');
+	    
+	    for (var i = 0; i < console_logs.length; i++)
+		results.push(console_logs[i].childNodes[0].childNodes[0].innerHTML);
+	    
+	    win.showDevTools(); <!-- why? -->
+		var client = require('../../nw_test_app').createClient({
+		    argv: gui.App.argv,
+		    data: results
+		});
+	}
+
 	function get_console_logs() {
             var console_msgs = devtools.document.getElementsByClassName('console');
 	    
@@ -66,17 +79,8 @@
 		setTimeout(get_console_logs, 3000);
 	    else {
 		console_msgs[0].click();
-		var console_logs = devtools.document.getElementsByClassName('console-log-level');
-		
-		for (var i = 0; i < console_logs.length; i++)
-		    results.push(console_logs[i].childNodes[0].childNodes[0].innerHTML);
-
-		win.showDevTools(); <!-- why? -->
-		var client = require('../../nw_test_app').createClient({
-		    argv: gui.App.argv,
-		    data: results
-		});
-		
+	    <!-- make sure it is complete -->
+		setTimeout(get_results, 3000);
 	    }
 	}
 
