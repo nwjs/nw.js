@@ -130,20 +130,26 @@ Package::Package()
   if (InitFromPath())
     return;
 
+  // Try to load from the folder where the exe resides.
+  // Note: self_extract_ is true here, otherwise a 'Invalid Package' error
+  // would be triggered.
+  path_ = GetSelfPath().DirName();
+#if defined(OS_MACOSX)
+  path_ = path_.DirName().DirName().DirName();
+#endif
+  if (InitFromPath())
+    return;
+
+  path_ = path_.Append("package.nw");
+  if (InitFromPath())
+    return;
+
   // Then see if we have arguments and extract it.
   CommandLine* command_line = CommandLine::ForCurrentProcess();
   const CommandLine::StringVector& args = command_line->GetArgs();
   if (args.size() > 0) {
     self_extract_ = false;
     path_ = FilePath(args[0]);
-  } else {
-    // Try to load from the folder where the exe resides.
-    // Note: self_extract_ is true here, otherwise a 'Invalid Package' error
-    // would be triggered.
-    path_ = GetSelfPath().DirName();
-#if defined(OS_MACOSX)
-    path_ = path_.DirName().DirName().DirName();
-#endif
   }
   if (InitFromPath())
     return;
