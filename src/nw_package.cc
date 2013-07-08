@@ -140,7 +140,7 @@ Package::Package()
   if (InitFromPath())
     return;
 
-  path_ = path_.Append("package.nw");
+  path_ = path_.AppendASCII("package.nw");
   if (InitFromPath())
     return;
 
