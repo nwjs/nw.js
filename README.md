@@ -18,13 +18,13 @@ It's created and developed in Intel Open Source Technology Center.
 * Available on Linux, Mac OSX and Windows
 
 ## Downloads
-[v0.6.1 release note](https://groups.google.com/d/msg/node-webkit/-s98wi-P6ZY/w-JYABBnFMgJ)
+[v0.6.2 release note](https://groups.google.com/d/msg/node-webkit/x2iBCBBnHt0/BrQVFyU-weQJ)
 
-Prebuilt binaries (v0.6.1 - Jun 24, 2013):
+Prebuilt binaries (v0.6.2 - Jul 8, 2013):
 
-* Linux: [32bit](https://s3.amazonaws.com/node-webkit/v0.6.1/node-webkit-v0.6.1-linux-ia32.tar.gz) / [64bit] (https://s3.amazonaws.com/node-webkit/v0.6.1/node-webkit-v0.6.1-linux-x64.tar.gz)
-* Windows: [win32](https://s3.amazonaws.com/node-webkit/v0.6.1/node-webkit-v0.6.1-win-ia32.zip)
-* Mac: [32bit, 10.7+](https://s3.amazonaws.com/node-webkit/v0.6.1/node-webkit-v0.6.1-osx-ia32.zip)
+* Linux: [32bit](https://s3.amazonaws.com/node-webkit/v0.6.2/node-webkit-v0.6.2-linux-ia32.tar.gz) / [64bit] (https://s3.amazonaws.com/node-webkit/v0.6.2/node-webkit-v0.6.2-linux-x64.tar.gz)
+* Windows: [win32](https://s3.amazonaws.com/node-webkit/v0.6.2/node-webkit-v0.6.2-win-ia32.zip)
+* Mac: [32bit, 10.7+](https://s3.amazonaws.com/node-webkit/v0.6.2/node-webkit-v0.6.2-osx-ia32.zip)
 
 [Looking for older versions?](https://github.com/rogerwang/node-webkit/wiki/Downloads-of-old-versions)
 
