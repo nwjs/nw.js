@@ -367,24 +367,24 @@ bool Package::ExtractPath() {
 }
 
 bool Package::ExtractPackage(const FilePath& zip_file, FilePath* where) {
-  // Auto clean our temporary directory
-  static scoped_ptr<base::ScopedTempDir> scoped_temp_dir;
 
+  if (!scoped_temp_dir_.IsValid()) {
 #if defined(OS_WIN)
-  if (!file_util::CreateNewTempDirectory(L"nw", where)) {
+    if (!file_util::CreateNewTempDirectory(L"nw", where)) {
 #else
-  if (!file_util::CreateNewTempDirectory("nw", where)) {
+    if (!file_util::CreateNewTempDirectory("nw", where)) {
 #endif
-    ReportError("Cannot extract package",
-                "Unable to create temporary directory.");
-    return false;
-  }
-
-  scoped_temp_dir.reset(new base::ScopedTempDir());
-  if (!scoped_temp_dir->Set(*where)) {
-    ReportError("Cannot extract package",
-                "Unable to set temporary directory.");
-    return false;
+      ReportError("Cannot extract package",
+                  "Unable to create temporary directory.");
+      return false;
+    }
+    if (!scoped_temp_dir_.Set(*where)) {
+      ReportError("Cannot extract package",
+                  "Unable to set temporary directory.");
+      return false;
+    }
+  }else{
+    *where = scoped_temp_dir_.path();
   }
 
   return zip::Unzip(zip_file, *where);
