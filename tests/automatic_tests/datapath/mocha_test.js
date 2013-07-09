@@ -1,12 +1,20 @@
 var assert = require('assert');
 var fs = require('fs');
+var path = require('path');
+var app_test = require('./nw_test_app');
+describe('data-path', function() {
+  it('setting datapath for chromium should pass',
+    function(done) {
+      this.timeout(0);
 
-describe('datapath', function() {
-	var package_info = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-	var info = package_info["chromium-args"].split(" ");
-  it("setting datapath for chromium should pass",
-    function() {
-      assert.equal("--data-path='./'", info[1]);
-    }
-  )
+      var child = app_test.createChildProcess({
+        execPath: process.execPath,
+        appPath: path.join(global.tests_dir, 'datapath'),
+        end: function(data, app) {
+        	app.kill();
+            assert.equal("--data-path='./'", data);
+            done();
+        }
+      });
+  })
 })
