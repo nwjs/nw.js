@@ -22,7 +22,7 @@
     "bignum": "git+https://github.com/owenc4a4/bignum.git",
     "fs-extra": "*"
   },
-  "chromium-args": "--disable-javascript-i18n-api",
+  "chromium-args": "--disable-javascript-i18n-api --data-path='./'",
   "user-agent": "%name/%nwver/%ver/%webkit_ver/%osinfo",
   "scripts": {
     "install": "python ../tools/build_native_modules.py"
