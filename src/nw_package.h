@@ -24,6 +24,7 @@
 #include "base/basictypes.h"
 #include "base/files/file_path.h"
 #include "base/memory/scoped_ptr.h"
+#include "base/files/scoped_temp_dir.h"
 
 #include <string>
 
@@ -103,6 +104,9 @@ class Package {
 
   // Stored url for error page.
   std::string error_page_url_;
+
+  // Auto clean our temporary directory
+  base::ScopedTempDir scoped_temp_dir_;
 
   DISALLOW_COPY_AND_ASSIGN(Package);
 };
