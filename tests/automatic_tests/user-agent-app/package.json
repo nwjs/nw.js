@@ -1,0 +1,8 @@
+{
+  "name": "user agent app",
+  "main": "index.html",
+  "window": {
+    "show": false
+  }
+}
+
