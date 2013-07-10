@@ -4,16 +4,17 @@
 </head>
 <body>
 <h1>Testing data path</h1>
-the data path should be set as ./
+the data path should be set as
 <script>
 		var gui = require('nw.gui');
 	var fs = require('fs');
 	var package_info = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 	var info = package_info["chromium-args"];
-	var client = require('../../nw_test_app').createClient({
+	var client = require('../../../nw_test_app').createClient({
       argv: gui.App.argv,
-      data: info
+      data: "ok"
     });
+    document.write(info);
 </script>
 </body>
 </html>
