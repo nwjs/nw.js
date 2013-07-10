@@ -12,11 +12,14 @@ describe('user-agent-app', function() {
         execPath: process.execPath,
         appPath: path.join(global.tests_dir, 'user-agent-app'),
         end: function(data, app) {
-          result = true;
-          var package_info = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-            app.kill();
-            assert.equal(data, package_info.name);
-            done();
+			result = true;
+			var package_info = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+			if (data == package_info.name) {
+				done();
+			}
+			else{
+				done('the user agent has changed');
+			}
         }
       });
       setTimeout(function(){
