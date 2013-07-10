@@ -1,6 +1,7 @@
 var assert = require('assert');
 var fs = require('fs');
 var path = require('path');
+var gui = require('nw.gui');
 var app_test = require('./nw_test_app');
 describe('data-path', function() {
   it('setting datapath as ./data-cash/ should pass',
@@ -10,7 +11,6 @@ describe('data-path', function() {
         execPath: process.execPath,
         appPath: path.join(global.tests_dir, 'datapath/datacash'),
         end: function(data, app) {
-          app.kill();
             done();
         }
       });
@@ -23,7 +23,6 @@ describe('data-path', function() {
         execPath: process.execPath,
         appPath: path.join(global.tests_dir, 'datapath/datapath'),
         end: function(data, app) {
-          app.kill();
             done();
         }
       });
@@ -36,7 +35,6 @@ describe('data-path', function() {
         execPath: process.execPath,
         appPath: path.join(global.tests_dir, 'datapath/datapath-cash'),
         end: function(data, app) {
-          app.kill();
             done();
         }
       });
@@ -49,7 +47,6 @@ describe('data-path', function() {
         execPath: process.execPath,
         appPath: path.join(global.tests_dir, 'datapath/datacash-path'),
         end: function(data, app) {
-          app.kill();
             done();
         }
       });
