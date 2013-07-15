@@ -27,6 +27,7 @@
 #include "base/strings/string_number_conversions.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
+#include "content/browser/child_process_security_policy_impl.h"
 #include "content/public/browser/browser_url_handler.h"
 #include "content/nw/src/browser/printing/printing_message_filter.h"
 #include "content/public/browser/render_process_host.h"
@@ -35,6 +36,7 @@
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/renderer_preferences.h"
+#include "content/public/common/url_constants.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/browser/printing/print_job_manager.h"
@@ -283,6 +285,11 @@ void ShellContentBrowserClient::RenderProcessHostCreated(
   int id = host->GetID();
   if (!master_rph_)
     master_rph_ = host;
+  // Grant file: scheme to the whole process, since we impose
+  // per-view access checks.
+  content::ChildProcessSecurityPolicy::GetInstance()->GrantScheme(
+      host->GetID(), chrome::kFileScheme);
+
 #if defined(ENABLE_PRINTING)
   host->GetChannel()->AddFilter(new PrintingMessageFilter(id));
 #endif
