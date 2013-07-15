@@ -368,18 +368,32 @@ v8::Handle<v8::Value> DispatcherBindings::CallStaticMethodSync(
 
   scoped_ptr<V8ValueConverter> converter(V8ValueConverter::create());
 
+  RenderView* render_view = GetCurrentRenderView();
+  if (!render_view) {
+    return v8::ThrowException(v8::Exception::Error(v8::String::New(
+            "Unable to get render view in CallStaticMethodSync")));
+  }
+
+  if (type == "App" && method == "getProxyForURL") {
+    std::string url = *v8::String::Utf8Value(args[2]);
+    GURL gurl(url);
+    if (!gurl.is_valid())
+      return v8::ThrowException(v8::Exception::Error(v8::String::New(
+             "Invalid URL passed to App.getProxyForURL()")));
+
+    std::string proxy;
+    bool result = content::RenderThread::Get()->ResolveProxy(gurl, &proxy);
+    if (!result)
+      return v8::Undefined();
+    return v8::String::New(proxy.c_str());
+  }
+
   scoped_ptr<base::Value> value_args(
       converter->FromV8Value(args[2], v8::Context::GetCurrent()));
   if (!value_args.get() ||
       !value_args->IsType(base::Value::TYPE_LIST)) {
     return v8::ThrowException(v8::Exception::Error(v8::String::New(
             "Unable to convert 'args' passed to CallStaticMethodSync")));
-  }
-
-  RenderView* render_view = GetCurrentRenderView();
-  if (!render_view) {
-    return v8::ThrowException(v8::Exception::Error(v8::String::New(
-            "Unable to get render view in CallStaticMethodSync")));
   }
 
   base::ListValue result;
