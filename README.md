@@ -36,6 +36,7 @@ You may also be interested in [our demos repository](https://github.com/zcbenz/n
 Create `index.html`:
 
 ````html
+<!DOCTYPE html>
 <html>
 <head>
 <title>Hello World!</title>
