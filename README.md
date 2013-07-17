@@ -57,8 +57,13 @@ Create `package.json`:
 }
 ````
 
-Compress `index.html` and `package.json` into a zip archive, and rename
-it to `app.nw`:
+Compress `index.html` and `package.json` into a zip archive called `app.nw`:
+
+````bash
+$ zip app.nw index.html package.json
+````
+
+This should create a structure like this:
 
     app.nw
     |-- package.json
