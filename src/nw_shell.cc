@@ -550,4 +550,10 @@ void Shell::Observe(int type,
   }
 }
 
+GURL Shell::OverrideDOMStorageOrigin(const GURL& origin) {
+  if (!is_devtools())
+    return origin;
+  return GURL("devtools://");
+}
+
 }  // namespace content
