@@ -138,9 +138,13 @@ os.mkdir(binary_full_path)
 #copy file to binary
 print 'Begin copy file.'
 for file in required_file:
-  shutil.copy(os.path.join(project_root, file),
-              os.path.join(binary_full_path, file))
-
+  try:
+    shutil.copy(os.path.join(project_root, file),
+                os.path.join(binary_full_path, file))
+  except:
+    shutil.copytree(os.path.join(project_root, file),
+                    os.path.join(binary_full_path, file))
+    
 print 'copy file end.\n'
 
 if (os.path.isfile(binary_tar_full_path)):
