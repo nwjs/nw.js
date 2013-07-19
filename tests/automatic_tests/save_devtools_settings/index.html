@@ -62,7 +62,10 @@
 		result.push(devtools.document.getElementsByName('Show CPU activity on the ruler')[0].checked);
 		result.push(devtools.document.getElementsByName('Log XMLHttpRequests')[0].checked);
 		result.push(devtools.document.getElementsByName('Preserve log upon navigation')[0].checked);
-		result.push(devtools.document.getElementsByName('Enable Ctrl + 1-9 shortcut to switch panels')[0].checked);
+	        if (process.platform != 'darwin')
+		        result.push(devtools.document.getElementsByName('Enable Ctrl + 1-9 shortcut to switch panels')[0].checked);
+         	else
+            		result.push(devtools.document.getElementsByName('Enable Cmd + 1-9 shortcut to switch panels')[0].checked);
 
 		// overrides 
 		devtools.WebInspector.settingsController._settingsScreen._tabbedPane._tabs[0]._tabbedPane.selectTab("overrides", true);
@@ -115,12 +118,16 @@ result.push(devtools.document.getElementsByClassName('help-block')[0].childNodes
 		    devtools.document.getElementsByName('Use CodeMirror editor')[0].click(); i++;
 		    devtools.document.getElementsByName("Show objects' hidden properties")[0].click(); i++;
 		    devtools.document.getElementsByName('Limit number of captured JS stack frames')[0].click(); i++;
-		    if(!result[i - 1])
+		    if (!result[i - 1])
 			devtools.document.getElementsByClassName('numeric')[0].value = (result[i++] + 1) % 10;
 		    devtools.document.getElementsByName('Show CPU activity on the ruler')[0].click(); i++;
 		    devtools.document.getElementsByName('Log XMLHttpRequests')[0].click(); i++;
 		    devtools.document.getElementsByName('Preserve log upon navigation')[0].click(); i++;
-		    devtools.document.getElementsByName('Enable Ctrl + 1-9 shortcut to switch panels')[0].click(); i++;
+                    if (process.platform != 'darwin')
+		        devtools.document.getElementsByName('Enable Ctrl + 1-9 shortcut to switch panels')[0].click();
+		    else
+            		devtools.document.getElementsByName('Enable Cmd + 1-9 shortcut to switch panels')[0].click();
+		    i++;
 
 		    // overrides 
 		    devtools.WebInspector.settingsController._settingsScreen._tabbedPane._tabs[0]._tabbedPane.selectTab("overrides", true);
