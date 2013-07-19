@@ -4,12 +4,16 @@ var fs = require('fs-extra');
 describe('remote-file-access', function(){
 	before(function(done){
 		this.timeout(0);
-		fs.copy(global.tests_dir+'/remote-img/star.jpg','/tmp/star.jpg');
+		fs.exists('/tmp/', function (exists) {
+			fs.copy(global.tests_dir+'/remote-img/star.jpg','/tmp/star.jpg');
+		});
 		done();
 	})
 	after(function() {
 		this.timeout(0);
-	    fs.remove('/tmp/star.jpg');
+		fs.exists('/tmp/', function (exists) {
+	    	fs.remove('/tmp/star.jpg');	
+		})
 	  })
 	it ('remote img should work', function(done){
 		this.timeout(0);
