@@ -105,6 +105,8 @@ if bits == '64bit':
 else:
   arch = 'ia32'
 
+if (platform_name == 'win' or platform_name == 'osx'):
+  arch = 'ia32'
 
 tarname = 'node-webkit-' + nw_version
 
