@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <title>Test</title>   
+</head>
+<body>
+<span>Can this remote page call node: </span>
+<span id="msg" style="color:Green"></span>
+<script>
+  function test(){
+    return ((typeof require == 'function') &&
+            (typeof process == 'object'));
+  }
+
+  
+  if (test()) {
+    document.getElementById('msg').innerHTML = 'YES';
+    } else {
+      document.getElementById('msg').innerHTML = 'NO';
+  }
+</script>
+
+</body>
+</html>
