@@ -2,7 +2,7 @@ var http = require("http"),
 url = require("url"),
 path = require("path"),
 fs = require("fs"), 
-ports = new Array(80,8080),
+ports = new Array(8123,8124),
 servers = new Array(ports.length);
 
 types = {
