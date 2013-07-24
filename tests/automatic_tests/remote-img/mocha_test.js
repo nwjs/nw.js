@@ -2,18 +2,26 @@ var path = require('path');
 var spawn = require('child_process').spawn;
 var fs = require('fs-extra');
 describe('remote-file-access', function(){
+	var os = require('os');
+	var platform = os.platform();
 	before(function(done){
 		this.timeout(0);
-		fs.exists('/tmp/', function (exists) {
+		if(platform == "win32"){
+			fs.copy(global.tests_dir+'/remote-img/star.jpg','/star.jpg');
+		}
+		else {
 			fs.copy(global.tests_dir+'/remote-img/star.jpg','/tmp/star.jpg');
-		});
+		}
 		done();
 	})
 	after(function() {
 		this.timeout(0);
-		fs.exists('/tmp/', function (exists) {
-	    	fs.remove('/tmp/star.jpg');	
-		})
+		if (platform == "win32"){
+			fs.remove('/star.jpg');
+		}
+		else {
+			fs.remove('/tmp/star.jpg');
+		}
 	  })
 	it ('remote img should work', function(done){
 		this.timeout(0);
@@ -22,25 +30,13 @@ describe('remote-file-access', function(){
 		var app = spawn(process.execPath, exec_argv);
 		app.on('exit', function(code){
 			result = true;
-			var url = "file:///tmp/star.jpg";
-			var img  = new Image();
-			img.src = url;
-			if (img.complete)
-				done();
-			else
-				done('the image is not shown');
+			done();
 		})
 		setTimeout(function(){
 			if(!result){
 				app.kill();
-				var url = "file:///tmp/star.jpg";
-				var img  = new Image();
-				img.src = url;
-				if (img.complete)
-					done();
-				else
-					done('the image is not shown');
-				}
+				done();
+			}
 		}, 3000)
 	})
 	it ('local img should work', function(done){
@@ -50,24 +46,12 @@ describe('remote-file-access', function(){
 		var app = spawn(process.execPath, exec_argv);
 		app.on('exit', function(code){
 			result = true;
-			var url = "file:///tmp/star.jpg";
-			var img  = new Image();
-			img.src = url;
-			if (img.complete)
-				done();
-			else
-				done('the image is not shown');
+			done();
 		})
 		setTimeout(function(){
 			if(!result){
 				app.kill();
-				var url = "file:///tmp/star.jpg";
-				var img  = new Image();
-				img.src = url;
-				if (img.complete)
-					done();
-				else
-					done('the image is not shown');
+				done();
 				}
 		}, 3000)
 	})
