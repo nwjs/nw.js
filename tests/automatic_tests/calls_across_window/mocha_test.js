@@ -12,7 +12,7 @@ describe('AppTest', function(){
     var exec_argv;
     var socket;
     before(function(done){
-      //this.timeout(0);
+      this.timeout(0);
       exec_argv = [path.join(global.tests_dir, 'calls_across_window'),
                     '--port',
                     global.port];
