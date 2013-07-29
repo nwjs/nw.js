@@ -237,10 +237,23 @@ void NativeWindowGtk::SetAlwaysOnTop(bool top) {
 }
 
 void NativeWindowGtk::SetPosition(const std::string& position) {
-  if (position == "center")
-    gtk_window_set_position(window_, GTK_WIN_POS_CENTER);
-  else if (position == "mouse")
-    gtk_window_set_position(window_, GTK_WIN_POS_MOUSE);
+  if (position == "center"){
+    GdkWindow *root;
+    gint width, height, rwidth, rheight;
+
+    gtk_window_get_size (window_, &width, &height);
+    root = gtk_widget_get_root_window (GTK_WIDGET (window_));
+    gdk_window_get_geometry (root, NULL, NULL, &rwidth,
+                             &rheight,NULL);
+
+    gtk_window_move (window_, (rwidth - width) / 2,
+                     (rheight - height) / 2);
+  }
+  else if (position == "mouse"){
+    gtk_widget_hide(GTK_WIDGET(window_));
+    gtk_window_set_position(GTK_WINDOW(window_), GTK_WIN_POS_MOUSE);
+    gtk_widget_show(GTK_WIDGET(window_)); 
+  }
 }
 
 void NativeWindowGtk::SetPosition(const gfx::Point& position) {
