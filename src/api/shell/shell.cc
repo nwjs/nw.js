@@ -57,17 +57,25 @@ void Shell::Call(const std::string& method,
       std::vector<base::FilePath::StringType> components;
       file_path.GetComponents(&components);
       std::vector<base::FilePath::StringType>::const_iterator it = components.begin();
-      
+#if defined(OS_POSIX)
+      const base::FilePath::StringType home_path = "~";
+      const base::FilePath::StringType current_path = ".";
+      const base::FilePath::StringType parent_path = "..";
+#elif defined(OS_WIN)
+      const base::FilePath::StringType home_path = L"~";
+      const base::FilePath::StringType current_path = L".";
+      const base::FilePath::StringType parent_path = L"..";
+#endif
       for (; it != components.end(); ++it) {
 	const base::FilePath::StringType& component = *it;  
-	if (component == "~") {
+	if (component == home_path) {
 	  package_path = file_path;
 	  break;
 	}
 	else {
-	  if (component == ".")
+	  if (component == current_path)
 	    ;//do nothing
-	  else if (component == "..") 
+	  else if (component == parent_path) 
 	    package_path = package_path.DirName();
 	  else 
 	    package_path = package_path.Append(component);
@@ -75,7 +83,7 @@ void Shell::Call(const std::string& method,
       }
       file_path = package_path;
     }
-    
+    DLOG(INFO) << file_path.value().c_str();
     platform_util::ShowItemInFolder(file_path);
   } else {
     NOTREACHED() << "Calling unknown method " << method << " of Shell";
