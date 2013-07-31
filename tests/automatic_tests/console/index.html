@@ -79,7 +79,8 @@
 	    else {
 		console_msgs[0].click();
 		
-		win.showDevTools(); <!-- why? -->
+		if (process.platform != 'darwin')
+        	    win.showDevTools(); <!-- why? -->
 	      
 		<!-- make sure it is complete -->
 	        setTimeout(get_results, 3000);
