@@ -21,7 +21,7 @@
 #include "content/nw/src/media/media_internals.h"
 
 #include "base/memory/scoped_ptr.h"
-#include "base/string16.h"
+#include "base/strings/string16.h"
 #include "base/stringprintf.h"
 #include "content/nw/src/media/media_capture_devices_dispatcher.h"
 #include "content/public/browser/browser_thread.h"

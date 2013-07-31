@@ -26,9 +26,9 @@
 #include "base/file_util.h"
 #include "base/platform_file.h"
 #include "base/logging.h"
-#include "base/strings/string_split.h"
 #include "base/string_util.h"
-#include "base/utf_string_conversions.h"
+#include "base/strings/string_split.h"
+#include "base/strings/utf_string_conversions.h"
 #include "chrome/browser/platform_util.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/notification_details.h"
@@ -228,7 +228,7 @@ void FileSelectHelper::OnListFile(
   // Directory upload returns directories via a "." file, so that
   // empty directories are included.  This util call just checks
   // the flags in the structure; there's no file I/O going on.
-  if (file_util::FileEnumerator::IsDirectory(data.info))
+  if (data.info.IsDirectory())
     entry->results_.push_back(data.path.Append(FILE_PATH_LITERAL(".")));
   else
     entry->results_.push_back(data.path);

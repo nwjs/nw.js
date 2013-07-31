@@ -46,11 +46,14 @@
 #include "net/proxy/proxy_script_fetcher_impl.h"
 #include "net/proxy/proxy_service.h"
 #include "net/proxy/proxy_service_v8.h"
+#include "net/url_request/file_protocol_handler.h"
 #include "net/url_request/protocol_intercept_job_factory.h"
 #include "net/url_request/static_http_user_agent_settings.h"
 #include "net/url_request/url_request_context.h"
 #include "net/url_request/url_request_context_storage.h"
 #include "net/url_request/url_request_job_factory_impl.h"
+
+using base::MessageLoop;
 
 namespace content {
 
@@ -150,8 +153,9 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
     net::HttpCache::DefaultBackend* main_backend =
         new net::HttpCache::DefaultBackend(
             net::DISK_CACHE,
+            net::CACHE_BACKEND_SIMPLE,
             cache_path,
-            0,
+            10 * 1024 * 1024,  // 10M
             BrowserThread::GetMessageLoopProxyForThread(
                 BrowserThread::CACHE));
 
@@ -185,7 +189,10 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
     scoped_ptr<net::URLRequestJobFactoryImpl> job_factory(
         new net::URLRequestJobFactoryImpl());
     InstallProtocolHandlers(job_factory.get(), &protocol_handlers_);
+    job_factory->SetProtocolHandler(chrome::kFileScheme,
+                                    new net::FileProtocolHandler);
     job_factory->SetProtocolHandler("nw", new nw::NwProtocolHandler());
+
     storage_->set_job_factory(job_factory.release());
 
   }

@@ -13,7 +13,7 @@
 #include "ipc/ipc_message_macros.h"
 #include "printing/page_size_margins.h"
 #include "printing/print_job_constants.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebPrintScalingOption.h"
+#include "third_party/WebKit/public/web/WebPrintScalingOption.h"
 #include "ui/gfx/native_widget_types.h"
 #include "ui/gfx/rect.h"
 

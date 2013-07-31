@@ -26,8 +26,8 @@
 #include "content/public/renderer/render_view.h"
 #include "content/public/renderer/render_thread.h"
 #include "content/public/renderer/v8_value_converter.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebView.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebFrame.h"
+#include "third_party/WebKit/public/web/WebView.h"
+#include "third_party/WebKit/public/web/WebFrame.h"
 #include "ui/base/resource/resource_bundle.h"
 
 using content::RenderView;

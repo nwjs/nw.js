@@ -35,6 +35,8 @@
 #include "grit/nw_resources.h"
 #include "ui/base/resource/resource_bundle.h"
 
+using base::MessageLoop;
+
 namespace nw {
 
 ResourceRequestJob::ResourceRequestJob(

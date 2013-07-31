@@ -17,6 +17,7 @@
 #include "printing/printed_page.h"
 
 using base::TimeDelta;
+using base::MessageLoop;
 
 namespace {
 

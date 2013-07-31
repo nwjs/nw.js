@@ -13,7 +13,7 @@
 #include "base/metrics/histogram.h"
 #include "base/prefs/pref_service.h"
 #include "base/timer.h"
-#include "base/utf_string_conversions.h"
+#include "base/strings/utf_string_conversions.h"
 //#include "chrome/browser/browser_process.h"
 //#include "chrome/browser/printing/print_error_dialog.h"
 #include "content/nw/src/browser/printing/print_job.h"
@@ -44,6 +44,7 @@
 #include "ui/base/l10n/l10n_util.h"
 
 using base::TimeDelta;
+using base::MessageLoop;
 using content::BrowserThread;
 using content::WebContents;
 

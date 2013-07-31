@@ -23,7 +23,7 @@
 
 #include "base/compiler_specific.h"
 #include "content/public/renderer/render_view_observer.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebPrerendererClient.h"
+#include "third_party/WebKit/public/web/WebPrerendererClient.h"
 
 namespace prerender {
 

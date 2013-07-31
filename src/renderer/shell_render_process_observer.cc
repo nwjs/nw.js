@@ -17,6 +17,7 @@
 //  OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WH
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#define V8_USE_UNSAFE_HANDLES
 
 #include "content/nw/src/renderer/shell_render_process_observer.h"
 
@@ -28,8 +29,8 @@
 #include "webkit/support/gc_extension.h"
 #include "third_party/node/src/node.h"
 #include "third_party/node/src/req_wrap.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebCache.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebRuntimeFeatures.h"
+#include "third_party/WebKit/public/web/WebCache.h"
+#include "third_party/WebKit/public/web/WebRuntimeFeatures.h"
 #include "v8/include/v8.h"
 
 using WebKit::WebRuntimeFeatures;

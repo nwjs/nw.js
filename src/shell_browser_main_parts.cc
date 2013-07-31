@@ -23,9 +23,9 @@
 #include "base/bind.h"
 #include "base/command_line.h"
 #include "base/message_loop.h"
-#include "base/string_number_conversions.h"
+#include "base/strings/string_number_conversions.h"
+#include "base/strings/utf_string_conversions.h"
 #include "base/threading/thread_restrictions.h"
-#include "base/utf_string_conversions.h"
 #include "base/values.h"
 #include "chrome/common/chrome_switches.h"
 #include "content/nw/src/api/app/app.h"
@@ -50,6 +50,8 @@
 #if defined(TOOLKIT_GTK)
 #include "content/nw/src/browser/printing/print_dialog_gtk.h"
 #endif
+
+using base::MessageLoop;
 
 namespace {
 

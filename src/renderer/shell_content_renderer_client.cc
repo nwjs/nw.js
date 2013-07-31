@@ -18,24 +18,26 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#define V8_USE_UNSAFE_HANDLES
+
 #include "content/nw/src/renderer/shell_content_renderer_client.h"
 
 #include "base/command_line.h"
 #include "base/files/file_path.h"
 #include "base/file_util.h"
 #include "base/logging.h"
-#include "base/string16.h"
+#include "base/strings/string16.h"
 #include "base/strings/string_number_conversions.h"
-#include "base/utf_string_conversions.h"
-#include "components/autofill/renderer/page_click_tracker.h"
+#include "base/strings/utf_string_conversions.h"
+#include "components/autofill/content/renderer/page_click_tracker.h"
 #include "content/nw/src/api/dispatcher.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/window_bindings.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_version.h"
-#include "components/autofill/renderer/autofill_agent.h"
-#include "components/autofill/renderer/password_autofill_agent.h"
+#include "components/autofill/content/renderer/autofill_agent.h"
+#include "components/autofill/content/renderer/password_autofill_agent.h"
 #include "content/nw/src/renderer/nw_render_view_observer.h"
 #include "content/nw/src/renderer/prerenderer/prerenderer_client.h"
 #include "content/nw/src/renderer/printing/print_web_view_helper.h"
@@ -46,13 +48,13 @@
 #include "net/proxy/proxy_bypass_rules.h"
 #include "third_party/node/src/node.h"
 #include "third_party/node/src/req_wrap.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebDocument.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebFrame.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebSecurityOrigin.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebSecurityPolicy.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebView.h"
+#include "third_party/WebKit/public/web/WebDocument.h"
+#include "third_party/WebKit/public/web/WebFrame.h"
+#include "third_party/WebKit/public/web/WebSecurityOrigin.h"
+#include "third_party/WebKit/public/web/WebSecurityPolicy.h"
+#include "third_party/WebKit/public/web/WebView.h"
 //#include "third_party/WebKit/Source/WebKit/chromium/public/platform/WebString.h"
-#include "webkit/dom_storage/dom_storage_map.h"
+#include "webkit/common/dom_storage/dom_storage_map.h"
 
 using content::RenderView;
 using content::RenderViewImpl;

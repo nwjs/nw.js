@@ -11,6 +11,8 @@
 #include "base/values.h"
 #include "content/nw/src/browser/printing/print_job_worker.h"
 
+using base::MessageLoop;
+
 namespace printing {
 
 PrinterQuery::PrinterQuery()
