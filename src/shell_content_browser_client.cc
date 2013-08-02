@@ -289,6 +289,8 @@ void ShellContentBrowserClient::RenderProcessHostCreated(
   // per-view access checks.
   content::ChildProcessSecurityPolicy::GetInstance()->GrantScheme(
       host->GetID(), chrome::kFileScheme);
+  content::ChildProcessSecurityPolicy::GetInstance()->GrantScheme(
+      host->GetID(), "app");
 
 #if defined(ENABLE_PRINTING)
   host->GetChannel()->AddFilter(new PrintingMessageFilter(id));
@@ -304,6 +306,7 @@ bool ShellContentBrowserClient::IsHandledURL(const GURL& url) {
   static const char* const kProtocolList[] = {
     chrome::kFileSystemScheme,
     chrome::kFileScheme,
+    "app",
   };
   for (size_t i = 0; i < arraysize(kProtocolList); ++i) {
     if (url.scheme() == kProtocolList[i])

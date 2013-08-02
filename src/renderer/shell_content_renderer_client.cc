@@ -156,8 +156,10 @@ void ShellContentRendererClient::RenderThreadStarted() {
   shell_observer_.reset(new ShellRenderProcessObserver());
 
   WebString file_scheme(ASCIIToUTF16("file"));
+  WebString app_scheme(ASCIIToUTF16("app"));
   // file: resources should be allowed to receive CORS requests.
   WebSecurityPolicy::registerURLSchemeAsCORSEnabled(file_scheme);
+  WebSecurityPolicy::registerURLSchemeAsCORSEnabled(app_scheme);
 
 }
 

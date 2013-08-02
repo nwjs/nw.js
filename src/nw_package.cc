@@ -204,7 +204,7 @@ bool Package::GetImage(const FilePath& icon_path, gfx::Image* image) {
 }
 
 GURL Package::GetStartupURL() {
-  std::string url; 
+  std::string url;
   // Specify URL in --url
   CommandLine* command_line = CommandLine::ForCurrentProcess();
   if (command_line->HasSwitch(switches::kUrl)) {

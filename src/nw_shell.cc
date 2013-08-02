@@ -367,6 +367,7 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
 
   int rh_id = shell->web_contents_->GetRenderProcessHost()->GetID();
   ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, chrome::kFileScheme);
+  ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, "app");
   shell->is_devtools_ = true;
   shell->force_close_ = true;
   shell->LoadURL(url);

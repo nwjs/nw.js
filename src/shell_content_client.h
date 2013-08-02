@@ -26,6 +26,9 @@ class ShellContentClient : public ContentClient {
       int resource_id) const OVERRIDE;
   virtual gfx::Image& GetNativeImageNamed(int resource_id) const OVERRIDE;
   virtual bool CanHandleWhileSwappedOut(const IPC::Message& msg) OVERRIDE;
+  virtual void AddAdditionalSchemes(
+      std::vector<std::string>* standard_schemes,
+      std::vector<std::string>* saveable_shemes) OVERRIDE;
 };
 
 }  // namespace content
