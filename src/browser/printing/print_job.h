@@ -34,7 +34,7 @@ class PrinterQuery;
 // runs in the UI thread.
 class PrintJob : public PrintJobWorkerOwner,
                  public content::NotificationObserver,
-                 public MessageLoop::DestructionObserver {
+                 public base::MessageLoop::DestructionObserver {
  public:
   // Create a empty PrintJob. When initializing with this constructor,
   // post-constructor initialization must be done with Initialize().
@@ -54,7 +54,7 @@ class PrintJob : public PrintJobWorkerOwner,
   virtual void GetSettingsDone(const PrintSettings& new_settings,
                                PrintingContext::Result result) OVERRIDE;
   virtual PrintJobWorker* DetachWorker(PrintJobWorkerOwner* new_owner) OVERRIDE;
-  virtual MessageLoop* message_loop() OVERRIDE;
+  virtual base::MessageLoop* message_loop() OVERRIDE;
   virtual const PrintSettings& settings() const OVERRIDE;
   virtual int cookie() const OVERRIDE;
 
@@ -124,7 +124,7 @@ class PrintJob : public PrintJobWorkerOwner,
 
   // Main message loop reference. Used to send notifications in the right
   // thread.
-  MessageLoop* const ui_message_loop_;
+  base::MessageLoop* const ui_message_loop_;
 
   // Source that generates the PrintedPage's (i.e. a WebContents). It will be
   // set back to NULL if the source is deleted before this object.

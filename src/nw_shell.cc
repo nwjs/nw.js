@@ -23,7 +23,7 @@
 #include "base/command_line.h"
 #include "base/message_loop.h"
 #include "base/string_util.h"
-#include "base/utf_string_conversions.h"
+#include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
 #include "content/browser/child_process_security_policy_impl.h"
 #include "content/public/browser/devtools_agent_host.h"
@@ -59,6 +59,8 @@
 
 #include "content/nw/src/browser/printing/print_view_manager.h"
 
+using base::MessageLoop;
+
 namespace content {
 
 std::vector<Shell*> Shell::windows_;
@@ -81,6 +83,7 @@ Shell* Shell::Create(BrowserContext* browser_context,
   NavigationController::LoadURLParams params(url);
   params.transition_type = PageTransitionFromInt(PAGE_TRANSITION_TYPED);
   params.override_user_agent = NavigationController::UA_OVERRIDE_TRUE;
+  params.frame_name = std::string();
 
   web_contents->GetController().LoadURLWithParams(params);
 
@@ -98,6 +101,8 @@ Shell* Shell::Create(WebContents* source_contents,
     NavigationController::LoadURLParams params(target_url);
     params.transition_type = PageTransitionFromInt(PAGE_TRANSITION_TYPED);
     params.override_user_agent = NavigationController::UA_OVERRIDE_TRUE;
+    params.frame_name = std::string();
+
     new_contents->GetController().LoadURLWithParams(params);
   }
   // Use the user agent value from the source WebContents.

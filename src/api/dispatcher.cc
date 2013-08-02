@@ -18,6 +18,8 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#define V8_USE_UNSAFE_HANDLES
+
 #include "content/nw/src/api/dispatcher.h"
 
 #include "content/nw/src/api/api_messages.h"
@@ -25,9 +27,9 @@
 #include "content/renderer/v8_value_converter_impl.h"
 #include "third_party/node/src/node.h"
 #include "third_party/node/src/req_wrap.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebDocument.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebFrame.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebView.h"
+#include "third_party/WebKit/public/web/WebDocument.h"
+#include "third_party/WebKit/public/web/WebFrame.h"
+#include "third_party/WebKit/public/web/WebView.h"
 #include "v8/include/v8.h"
 
 namespace api {

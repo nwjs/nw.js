@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "chrome/renderer/printing/print_web_view_helper.h"
+#include "content/nw/src/renderer/printing/print_web_view_helper.h"
 
 #include "base/file_descriptor_posix.h"
 #include "base/logging.h"
@@ -16,7 +16,7 @@
 #include "printing/page_size_margins.h"
 #include "skia/ext/platform_device.h"
 #include "skia/ext/vector_canvas.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebFrame.h"
+#include "third_party/WebKit/public/web/WebFrame.h"
 
 #if !defined(OS_CHROMEOS)
 #include "base/process_util.h"

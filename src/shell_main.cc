@@ -20,7 +20,7 @@
 
 #include "content/public/app/content_main.h"
 
-#include "content/shell/shell_main_delegate.h"
+#include "content/nw/src/shell_main_delegate.h"
 #include "sandbox/win/src/sandbox_types.h"
 
 #if defined(OS_WIN)
