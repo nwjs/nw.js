@@ -94,6 +94,7 @@ And our [Wiki](https://github.com/rogerwang/node-webkit/wiki) for much more.
 
 We use the [node-webkit group](http://groups.google.com/group/node-webkit) as
 our mailing list. Subscribe via [node-webkit+subscribe@googlegroups.com](mailto:node-webkit+subscribe@googlegroups.com).
+Issues are being tracked here on GitHub.
 
 ## License
 
