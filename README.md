@@ -2,10 +2,10 @@
 
 node-webkit is an app runtime based on `Chromium` and `node.js`. You can 
 write native apps in HTML and Javascript with node-webkit. It also lets you
-to call Node.js modules directly from DOM and enables a new way of writing
+call Node.js modules directly from the DOM and enables a new way of writing
 native applications with all Web technologies.
 
-It's created and developed in Intel Open Source Technology Center.
+It's created and developed in the Intel Open Source Technology Center.
 
 [Introduction to node-webkit (slides)](https://speakerdeck.com/u/zcbenz/p/node-webkit-app-runtime-based-on-chromium-and-node-dot-js).
 
@@ -35,27 +35,27 @@ You may also be interested in [our demos repository](https://github.com/zcbenz/n
 
 Create `index.html`:
 
-````html
+```html
 <!DOCTYPE html>
 <html>
-<head>
-<title>Hello World!</title>
-</head>
-<body>
-<h1>Hello World!</h1>
-We are using node.js <script>document.write(process.version)</script>
-</body>
+  <head>
+    <title>Hello World!</title>
+  </head>
+  <body>
+    <h1>Hello World!</h1>
+    We are using node.js <script>document.write(process.version)</script>.
+  </body>
 </html>
-````
+```
 
 Create `package.json`:
 
-````json
+```json
 {
   "name": "nw-demo",
   "main": "index.html"
 }
-````
+```
 
 Compress `index.html` and `package.json` into a zip archive called `app.nw`:
 
@@ -65,9 +65,11 @@ $ zip app.nw index.html package.json
 
 This should create a structure like this:
 
-    app.nw
-    |-- package.json
-    `-- index.html
+```
+app.nw
+|-- package.json
+`-- index.html
+```
 
 Download the prebuilt binary for your platform and use it to open the
 `app.nw` file:
@@ -90,8 +92,9 @@ And our [Wiki](https://github.com/rogerwang/node-webkit/wiki) for much more.
 
 ## Community
 
-We use [node-webkit group](http://groups.google.com/group/node-webkit) as
-our mailing list, subscribe via [node-webkit+subscribe@googlegroups.com](mailto:node-webkit+subscribe@googlegroups.com).
+We use the [node-webkit group](http://groups.google.com/group/node-webkit) as
+our mailing list. Subscribe via [node-webkit+subscribe@googlegroups.com](mailto:node-webkit+subscribe@googlegroups.com).
+Issues are being tracked here on GitHub.
 
 ## License
 
