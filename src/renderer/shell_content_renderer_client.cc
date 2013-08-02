@@ -279,17 +279,20 @@ void ShellContentRendererClient::InstallNodeSymbols(
   }
 
   if (use_node) {
-    v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
+    RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
+    v8::Local<v8::Script> script = v8::Script::New(v8::String::New((
         // Make node's relative modules work
         "if (!process.mainModule.filename) {"
+        "  var root = '" + rv->renderer_preferences_.nw_app_root_path.AsUTF8Unsafe() + "';"
 #if defined(OS_WIN)
         "process.mainModule.filename = decodeURIComponent(window.location.pathname.substr(1));"
 #else
         "process.mainModule.filename = decodeURIComponent(window.location.pathname);"
 #endif
+        "if (window.location.href.indexOf('app://') === 0) {process.mainModule.filename = root + '/' + process.mainModule.filename}"
         "process.mainModule.paths = global.require('module')._nodeModulePaths(process.cwd());"
         "process.mainModule.loaded = true;"
-        "}"
+        "}").c_str()
     ));
     script->Run();
   }
@@ -318,7 +321,7 @@ v8::Handle<v8::Value> ShellContentRendererClient::ReportException(
   // Do nothing if user is listening to uncaughtException.
   v8::Local<v8::Value> listeners_v =
       node::process->Get(v8::String::New("listeners"));
-  v8::Local<v8::Function> listeners = 
+  v8::Local<v8::Function> listeners =
       v8::Local<v8::Function>::Cast(listeners_v);
 
   v8::Local<v8::Value> argv[1] = { v8::String::New("uncaughtException") };
@@ -327,7 +330,7 @@ v8::Handle<v8::Value> ShellContentRendererClient::ReportException(
 
   uint32_t length = listener_array->Length();
   if (length > 1)
-    return v8::Undefined(); 
+    return v8::Undefined();
 
   // Print stacktrace.
   v8::Local<v8::String> stack_symbol = v8::String::New("stack");
@@ -341,13 +344,13 @@ v8::Handle<v8::Value> ShellContentRendererClient::ReportException(
 
   RenderView* render_view = GetCurrentRenderView();
   if (!render_view)
-    return v8::Undefined(); 
+    return v8::Undefined();
 
   render_view->Send(new ShellViewHostMsg_UncaughtException(
       render_view->GetRoutingID(),
       error));
 
-  return v8::Undefined(); 
+  return v8::Undefined();
 }
 
 void ShellContentRendererClient::UninstallNodeSymbols(

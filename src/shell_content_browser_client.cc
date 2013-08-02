@@ -92,6 +92,8 @@ WebContentsViewPort* ShellContentBrowserClient::OverrideCreateWebContentsView(
   }
   if (package->root()->GetString(switches::kmRemotePages, &rules))
       prefs->nw_remote_page_rules = rules;
+
+  prefs->nw_app_root_path = package->path();
   return NULL;
 }
 
