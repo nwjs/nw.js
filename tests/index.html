@@ -32,8 +32,9 @@
   var gui = require('nw.gui');
   var path = require('path');
   var program = require('commander');
-  var local_server = require('./server/server');
-  
+  global.local_server = require('./server/server');
+  var local_server = global.local_server;
+
   //socket server
   var net = require('net');
   global.server = net.createServer();
