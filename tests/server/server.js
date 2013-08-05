@@ -31,7 +31,7 @@ types = {
 
 function request_listener(req, res) {
     var pathname=__dirname+url.parse(req.url).pathname;
-
+    console.log("Receive request");
     if (path.extname(pathname)=="") {
 	pathname+="/";
     }
@@ -57,6 +57,7 @@ function request_listener(req, res) {
 		    res.writeHead(304, "Not Modified");
 		    res.end();
 		} else {
+		    res_save.push({"status": 200, 'pathname':req.url.slice(1)});
 		    fs.readFile(pathname,function (err,data){
 			res.end(data);
 		    });
