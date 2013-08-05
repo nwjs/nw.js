@@ -31,7 +31,6 @@
 	    else {
 	    	// open settitng 
 		devtools.WebInspector.SettingsController.prototype.showSettingsScreen();
-		
 		// save original settings
 		// general
 		devtools.WebInspector.settingsController._settingsScreen._tabbedPane._tabs[0]._tabbedPane.selectTab('general', true);
@@ -55,7 +54,7 @@
 		result.push(devtools.document.getElementsByName('Enable source maps')[0].checked);
 		// 0~3
 		result.push(devtools.document.getElementsByClassName('toplevel')[0].childNodes[1].selectedIndex);
-		result.push(devtools.document.getElementsByName('Use CodeMirror editor')[0].checked);
+		result.push(devtools.document.getElementsByName('Show whitespace characters')[0].checked);
 		result.push(devtools.document.getElementsByName("Show objects' hidden properties")[0].checked);
 		result.push(devtools.document.getElementsByName('Limit number of captured JS stack frames')[0].checked);
 		result.push(devtools.document.getElementsByClassName('numeric')[0].value);
@@ -66,7 +65,6 @@
 		        result.push(devtools.document.getElementsByName('Enable Ctrl + 1-9 shortcut to switch panels')[0].checked);
          	else
             		result.push(devtools.document.getElementsByName('Enable Cmd + 1-9 shortcut to switch panels')[0].checked);
-
 		// overrides 
 		devtools.WebInspector.settingsController._settingsScreen._tabbedPane._tabs[0]._tabbedPane.selectTab("overrides", true);
 
@@ -87,11 +85,10 @@ result.push(devtools.document.getElementsByClassName('help-block')[0].childNodes
 		result.push(devtools.document.getElementById('device-orientation-override-alpha').value);
 		result.push(devtools.document.getElementById('device-orientation-override-beta').value);
 		result.push(devtools.document.getElementById('device-orientation-override-gamma').value);
-		result.push(devtools.document.getElementsByName('Emulate touch events')[0].checked);
+		result.push(devtools.document.getElementsByClassName('help-block')[4].childNodes[0].childNodes[0].childNodes[0].checked);
 		result.push(devtools.document.getElementsByClassName('help-block')[5].childNodes[0].childNodes[0].childNodes[0].checked);
 		// 0~8
 		result.push(devtools.document.getElementsByClassName('help-block')[5].childNodes[0].childNodes[1].selectedIndex);
-
 		if (action == '1') {
 		    var i = 0;
 		    // change original settings
@@ -115,7 +112,7 @@ result.push(devtools.document.getElementsByClassName('help-block')[0].childNodes
 		    if (!result[i - 1])
 			// 0~3
 			devtools.document.getElementsByClassName('toplevel')[0].childNodes[1].selectedIndex = (result[i++] + 1) % 4;
-		    devtools.document.getElementsByName('Use CodeMirror editor')[0].click(); i++;
+		    devtools.document.getElementsByName('Show whitespace characters')[0].click(); i++;
 		    devtools.document.getElementsByName("Show objects' hidden properties")[0].click(); i++;
 		    devtools.document.getElementsByName('Limit number of captured JS stack frames')[0].click(); i++;
 		    if (!result[i - 1])
@@ -153,7 +150,7 @@ result.push(devtools.document.getElementsByClassName('help-block')[0].childNodes
 			devtools.document.getElementById('device-orientation-override-beta').value = (result[i++] + 1) % 10;
 			devtools.document.getElementById('device-orientation-override-gamma').value = (result[i++] + 1) % 10;
 		    }
-		    devtools.document.getElementsByName('Emulate touch events')[0].click(); i++;
+		    devtools.document.getElementsByClassName('help-block')[4].childNodes[0].childNodes[0].childNodes[0].click(); i++;
 		    devtools.document.getElementsByClassName('help-block')[5].childNodes[0].childNodes[0].childNodes[0].click(); i++;
 		    if (!result[i - 1])
 			// 0~8
