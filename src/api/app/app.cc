@@ -113,6 +113,9 @@ void App::Call(Shell* shell,
     return;
   } else if (method == "ClearCache") {
     ClearCache(GetRenderProcessHost());
+  } else if (method == "GetPackage") {
+    result->AppendString(shell->GetPackage()->package_string());
+    return;
   }
 
   NOTREACHED() << "Calling unknown sync method " << method << " of App";

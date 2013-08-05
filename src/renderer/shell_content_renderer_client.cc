@@ -1,16 +1,16 @@
 // Copyright (c) 2012 Intel Corp
 // Copyright (c) 2012 The Chromium Authors
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy 
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 //  in the Software without restriction, including without limitation the rights
 //  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell co
 // pies of the Software, and to permit persons to whom the Software is furnished
 //  to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in al
 // l copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IM
 // PLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNES
 // S FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
@@ -156,8 +156,10 @@ void ShellContentRendererClient::RenderThreadStarted() {
   shell_observer_.reset(new ShellRenderProcessObserver());
 
   WebString file_scheme(ASCIIToUTF16("file"));
+  WebString app_scheme(ASCIIToUTF16("app"));
   // file: resources should be allowed to receive CORS requests.
   WebSecurityPolicy::registerURLSchemeAsCORSEnabled(file_scheme);
+  WebSecurityPolicy::registerURLSchemeAsCORSEnabled(app_scheme);
 
 }
 
@@ -197,7 +199,7 @@ bool ShellContentRendererClient::goodForNode(WebKit::WebFrame* frame)
   bool use_node =
     CommandLine::ForCurrentProcess()->HasSwitch(switches::kNodejs) &&
     !frame->isNwDisabledChildFrame() &&
-    (force_on || url.SchemeIsFile() || is_nw_protocol);
+    (force_on || url.SchemeIsFile() || is_nw_protocol || url.SchemeIs("app"));
   return use_node;
 }
 
@@ -277,17 +279,20 @@ void ShellContentRendererClient::InstallNodeSymbols(
   }
 
   if (use_node) {
-    v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
+    RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
+    v8::Local<v8::Script> script = v8::Script::New(v8::String::New((
         // Make node's relative modules work
         "if (!process.mainModule.filename) {"
+        "  var root = '" + rv->renderer_preferences_.nw_app_root_path.AsUTF8Unsafe() + "';"
 #if defined(OS_WIN)
         "process.mainModule.filename = decodeURIComponent(window.location.pathname.substr(1));"
 #else
         "process.mainModule.filename = decodeURIComponent(window.location.pathname);"
 #endif
+        "if (window.location.href.indexOf('app://') === 0) {process.mainModule.filename = root + '/' + process.mainModule.filename}"
         "process.mainModule.paths = global.require('module')._nodeModulePaths(process.cwd());"
         "process.mainModule.loaded = true;"
-        "}"
+        "}").c_str()
     ));
     script->Run();
   }
@@ -316,7 +321,7 @@ v8::Handle<v8::Value> ShellContentRendererClient::ReportException(
   // Do nothing if user is listening to uncaughtException.
   v8::Local<v8::Value> listeners_v =
       node::process->Get(v8::String::New("listeners"));
-  v8::Local<v8::Function> listeners = 
+  v8::Local<v8::Function> listeners =
       v8::Local<v8::Function>::Cast(listeners_v);
 
   v8::Local<v8::Value> argv[1] = { v8::String::New("uncaughtException") };
@@ -325,7 +330,7 @@ v8::Handle<v8::Value> ShellContentRendererClient::ReportException(
 
   uint32_t length = listener_array->Length();
   if (length > 1)
-    return v8::Undefined(); 
+    return v8::Undefined();
 
   // Print stacktrace.
   v8::Local<v8::String> stack_symbol = v8::String::New("stack");
@@ -339,13 +344,13 @@ v8::Handle<v8::Value> ShellContentRendererClient::ReportException(
 
   RenderView* render_view = GetCurrentRenderView();
   if (!render_view)
-    return v8::Undefined(); 
+    return v8::Undefined();
 
   render_view->Send(new ShellViewHostMsg_UncaughtException(
       render_view->GetRoutingID(),
       error));
 
-  return v8::Undefined(); 
+  return v8::Undefined();
 }
 
 void ShellContentRendererClient::UninstallNodeSymbols(
