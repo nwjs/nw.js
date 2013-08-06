@@ -212,6 +212,11 @@ bool ShellContentRendererClient::WillSetSecurityToken(
     // Override context's security token
     context->SetSecurityToken(node::g_context->GetSecurityToken());
     frame->document().securityOrigin().grantUniversalAccess();
+
+    int ret;
+    RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
+    rv->Send(new ShellViewHostMsg_GrantUniversalPermissions(rv->GetRoutingID(), &ret));
+
     return true;
   }
 

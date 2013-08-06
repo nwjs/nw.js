@@ -95,7 +95,7 @@ class DispatcherHost : public content::RenderViewHostObserver {
   void OnCreateShell(const std::string& url,
                      const base::DictionaryValue& manifest,
                      int* routing_id);
-
+  void OnGrantUniversalPermissions(int* ret);
   DISALLOW_COPY_AND_ASSIGN(DispatcherHost);
 };
 
