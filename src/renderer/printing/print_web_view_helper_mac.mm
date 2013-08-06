@@ -16,8 +16,8 @@
 #include "printing/page_size_margins.h"
 #include "skia/ext/platform_device.h"
 #include "skia/ext/vector_canvas.h"
-#include "third_party/WebKit/Source/Platform/chromium/public/WebCanvas.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebFrame.h"
+#include "third_party/WebKit/public/platform/WebCanvas.h"
+#include "third_party/WebKit/public/web/WebFrame.h"
 
 namespace printing {
 

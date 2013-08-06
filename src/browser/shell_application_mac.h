@@ -5,7 +5,7 @@
 #ifndef CONTENT_NW_SRC_BROWSER_SHELL_APPLICATION_MAC_H_
 #define CONTENT_NW_SRC_BROWSER_SHELL_APPLICATION_MAC_H_
 
-#include "base/message_pump_mac.h"
+#include "base/message_loop/message_pump_mac.h"
 #include "base/mac/scoped_sending_event.h"
 
 @interface ShellCrApplication : NSApplication<CrAppProtocol,
