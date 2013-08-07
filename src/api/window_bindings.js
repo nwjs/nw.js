@@ -1,4 +1,4 @@
-function Window(routing_id) {
+function Window(routing_id, nobind) {
   // Get and set id.
   var id = global.__nwObjectsRegistry.allocateId();
   Object.defineProperty(this, 'id', {
@@ -15,7 +15,8 @@ function Window(routing_id) {
 
   // Tell Shell I'm the js delegate of it.
   native function BindToShell();
-  BindToShell(this.routing_id, this.id);
+  if (!nobind)
+    BindToShell(this.routing_id, this.id);
 }
 
 // Window will inherit EventEmitter in "third_party/node/src/node.js", do
