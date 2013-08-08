@@ -269,7 +269,7 @@
             '<(DEPTH)/base/allocator/allocator.gyp:allocator',
           ],
         }],
-        ['(os_posix==1 and linux_use_tcmalloc==1) or (android_use_tcmalloc==1)', {
+        ['(os_posix==1 and OS != "mac" and linux_use_tcmalloc==1)', {
           'dependencies': [
             # This is needed by content/app/content_main_runner.cc
             '<(DEPTH)/base/allocator/allocator.gyp:allocator',
