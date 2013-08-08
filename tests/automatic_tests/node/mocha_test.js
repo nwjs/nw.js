@@ -32,10 +32,14 @@ describe('require', function() {
 
 describe('node', function() {
 
+  var mocha_callback = null;
   before(function() {
-    var mocha_callback = process.listeners('uncaughtException')[1];
+    mocha_callback = process.listeners('uncaughtException')[1];
     process.removeListener('uncaughtException', mocha_callback);
   });
+  after(function(){
+    process.on('uncaughtException',mocha_callback);
+  })
 
   describe('process', function() {
     it('uncaughtException should have a default listener', function() {
