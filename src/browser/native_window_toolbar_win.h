@@ -58,7 +58,7 @@ class NativeWindowToolbarWin : public views::WidgetDelegateView,
   virtual void Layout() OVERRIDE;
   virtual void ViewHierarchyChanged(bool is_add,
                                     views::View* parent,
-                                    views::View* child) OVERRIDE;
+                                    views::View* child);
 
   // Overridden from TextfieldController:
   virtual void ContentsChanged(views::Textfield* sender,

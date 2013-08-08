@@ -21,8 +21,8 @@
 #include "content/nw/src/browser/native_window_toolbar_win.h"
 
 #include "base/logging.h"
-#include "base/string16.h"
-#include "base/utf_string_conversions.h"
+#include "base/strings/string16.h"
+#include "base/strings/utf_string_conversions.h"
 #include "content/nw/src/nw_shell.h"
 #include "grit/nw_resources.h"
 #include "grit/ui_resources.h"
