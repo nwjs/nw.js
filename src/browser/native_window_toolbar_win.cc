@@ -87,10 +87,9 @@ void NativeWindowToolbarWin::Layout() {
                         24);
 }
 
-void NativeWindowToolbarWin::ViewHierarchyChanged(bool is_add,
-                                                  views::View* parent,
-                                                  views::View* child) {
-  if (is_add && child == this)
+void NativeWindowToolbarWin::ViewHierarchyChanged(
+    const ViewHierarchyChangedDetails& details) {
+  if (details.is_add && details.child == this)
     InitToolbar();
 }
 

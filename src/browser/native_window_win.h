@@ -111,7 +111,7 @@ class NativeWindowWin : public NativeWindow,
   // views::View implementation.
   virtual void Layout() OVERRIDE;
   virtual void ViewHierarchyChanged(
-      bool is_add, views::View *parent, views::View *child);
+      const ViewHierarchyChangedDetails& details) OVERRIDE;
   virtual gfx::Size GetMinimumSize() OVERRIDE;
   virtual gfx::Size GetMaximumSize() OVERRIDE;
   virtual void OnFocus() OVERRIDE;
