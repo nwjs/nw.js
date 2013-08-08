@@ -1,0 +1,29 @@
+<html>
+<head>
+<title>Hello World!</title>
+<script>
+    var gui = require('nw.gui');
+    var win1 = gui.Window.open('1.html');
+    var win2 = gui.Window.open('2.html');
+    var i = 0;
+
+    setInterval(function() {
+        if (i % 2 == 0) {
+            win1.focus();
+        } else {
+            win2.focus();
+        }
+        i++;
+    }, 1000);
+    win1.on('focus',function(){
+      console.log('win1 focus');
+    })
+    win2.on('focus',function(){
+      console.log('win2 focus');
+    })
+</script>
+</head>
+<body>
+<h1>Hello World!</h1>
+</body>
+</html>
