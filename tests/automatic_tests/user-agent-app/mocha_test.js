@@ -14,7 +14,8 @@ describe('user-agent-app', function() {
         end: function(data, app) {
 			result = true;
 			var package_info = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-			if (data == package_info.name) {
+			app.kill();
+      if (data == package_info.name) {
 				done();
 			}
 			else{
