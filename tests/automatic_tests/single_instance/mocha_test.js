@@ -1,116 +1,125 @@
-var path = require('path');
-var app_test = require('./nw_test_app');
-var exec = require('child_process').exec;
-var pid1, pid2, pid3, pid4;
-var pid1_exist, pid2_exist, pid3_exist, pid4_exist;
-var cmd;
-var child1, child2, child3, child4;
+var func = require('./' + global.tests_dir +'/start_app/script.js');
+var execPath = func.getExecPath();
+var fs = require('fs-extra');
+var os = require('os');
+var spawn = require('child_process').spawn;
 
-if (process.platform == 'linux')
-    cmd = 'ps -a | grep ';
-else if (process.platform == 'win32')
-    cmd = 'tasklist | findstr ';
-else if (process.platform == 'darwin')
-    return;
+var app =  new Array();
 
-describe('single-instance', function() {
+var mac_app_path = path.join('tmp-nw', 'node-webkit.app')
+
+function make_execuable_file(folder_path, done) {
+    func.copyExecFiles(function() {
+	func.copySourceFiles(folder_path); 
+	func.zipSourceFiles(function() {
+	    func.makeExecuableFile();
+	    if (os.platform() == 'darwin') {
+		var app_path = 'tmp-nw/node-webkit.app/Contents/Resources/app.nw';
+		fs.mkdir(app_path, function(err) {
+		    if(err && err.code !== 'EEXIST') throw err
+		    fs.copy('tmp-nw/index.html', path.join(app_path, 'index.html'));
+		    fs.copy('tmp-nw/package.html', path.join(app_path, 'package.html'));
+		});
+	    }
+	    done();
+	});
+    });
+}
+
+function check_have(i, cmd, options, msg, last, done) {
+    var result = false;
+    app[i] = spawn(cmd, options);
+    app[i].on('exit', function() {
+	result = true;
+    });
+    
+    if (last == 2) {
+	setTimeout(function() {
+	    if (result) {
+		done();
+	    } else {
+		done(msg);
+	    }
+	    app[i].kill();
+	    app[i - 1].kill();
+	}, 3000);
+    } else {
+	setTimeout(function() {
+	    if (result) {
+		done(msg);
+	    } else {
+		done();
+	    }
+	    if (last == 1) {
+		app[i].kill();
+		app[i - 1].kill();
+	    }
+	}, 3000);
+    }
+}
+
+describe('single-instance', function() { 
     this.timeout(0);
 
     describe('single-instance false', function() {
-    	var app_mul_path = path.join(global.tests_dir, 'single_instance', process.platform, 'app_mul');
-    	before(function() {
-    	    child3 = exec(app_mul_path);
-    	    pid3 = child3.pid;
-    	    console.log(pid3);
+	before(function(done) {
+	    make_execuable_file('single_instance/mul', done);
+	});
 
-	    // normally we won't launch app one after another immediately
-	    setTimeout(function(){
-    		child4 = exec(app_mul_path);
-    		pid4 = child4.pid;
-    		console.log(pid4);
-	    },1000);
-    	});
+	it('should have a instance', function(done) {
+	    check_have(0, execPath, "", 'not have a instance', 0, done);
+	});
 
-    	it('should have a instance', function(done) {
-    	    child = exec(cmd + pid3, function (error, stdout, stderr) {
-    		if (stdout == "")
-    		    pid3_exist = false;
-    		else
-    		    pid3_exist = true;
-		
-    		if (pid3_exist, true)
-    		    done();
-    		else
-    		    done("not have a instance");
-    	    });
-    	});
-	
-    	it('should have a second instance', function(done) {
-    	    setTimeout(function() {
-    		child = exec(cmd + pid4, function (error, stdout, stderr) {
-    		    if (stdout == "")
-    			pid4_exist = false;
-    		    else
-    			pid4_exist = true;
-		    
-    		    if (pid4_exist, true)
-    			done();
-    		    else
-    			done('have a second instance');
-    		});
-    	    }, 5500);
-    	});
-    });
+	if (os.platform() == 'darwin') {
+	    it('should have a instance (open app)', function(done) {
+		check_have(4, 'open', [mac_app_path], 'not have a instance', 0, done);
+	    });
+	}
+
+	it('should have a second instance', function(done) {
+	    check_have(1, execPath, "", 'not have a second instance', 1, done);
+	});
+
+	if (os.platform() == 'darwin') {
+	    it('should have a second instance (open app)', function(done) {
+		check_have(5, 'open', [mac_app_path], 'not have a second instance', 1, done);
+	    });
+	}
+    })
+    
 
     describe('single-instance default', function() {
-    	var app_path = path.join(global.tests_dir, 'single_instance', process.platform, 'app');
-    	before(function(done) {
 
+	before(function(done) {
+	    make_execuable_file('single_instance/single', done);
+	});
+
+	after(function() {
 	    setTimeout(function() {
-    		child1 = exec(app_path);
-    		pid1 = child1.pid;
-    		console.log(pid1);
-		
-		// normally we won't launch app one after another immediately
-		// Otherwise,sometimes it won't work here
-		setTimeout(function(){
-    		    child2 = exec(app_path);
-    		    pid2 = child2.pid;
-		    console.log(pid2);
-		    done();
-		}, 1000);
-	    }, 2000)
-    	});
-	
-    	it('should have a instance', function(done) {
-    	    child = exec(cmd + pid1, function (error, stdout, stderr) {
-    		if (stdout == "")
-    		    pid1_exist = false;
-    		else
-    		    pid1_exist = true;
-		
-		if (pid1_exist)
-    		    done();
-		else
-		    done('not have a instance');
-    	    });
-    	});
-	
-    	it('should not have a second instance', function(done) {
-    	    setTimeout(function() {
-    		child = exec(cmd + pid2, function (error, stdout, stderr) {
-    		    if (stdout == "")
-    			pid2_exist = false;
-    		    else
-    			pid2_exist = true;
-		    
-		    if (!pid2_exist)
-    			done();
-		    else
-			done("have a second instance");
-    		});
-    	    }, 5500);
-    	});
+		fs.remove('tmp-nw', function (er) {
+		    if (er) throw er;
+		})
+	    }, 1000);
+	});
+
+	it('should have a instance', function(done) {
+	    check_have(2, execPath, "", 'not have a instance', 0, done);
+	});
+
+	if (os.platform() == 'darwin') {
+	    it('should have a instance (open app)', function(done) {
+		check_have(6, 'open', [mac_app_path], 'not have a instance', 0, done);
+	    });
+	}
+
+	it('should not have a second instance', function(done) {
+	    check_have(3, execPath, "", 'have a second instance', 2, done);
+	});
+
+	if (os.platform() == 'darwin') {
+	    it('should not have a second instance (open app)', function(done) {
+		check_have(7, 'open', [mac_app_path], 'have a second instance', 2, done);
+	    });
+	}
     });
-    
-});	
+});
