@@ -38,7 +38,7 @@ class MenuItemDelegate;
 #include <gtk/gtk.h>
 #include "ui/base/gtk/gtk_signal.h"
 #elif defined(OS_WIN)
-#include "base/string16.h"
+#include "base/strings/string16.h"
 #include "ui/gfx/image/image.h"
 #endif  // defined(OS_MACOSX)
 

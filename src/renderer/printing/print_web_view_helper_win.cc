@@ -20,7 +20,7 @@
 #include "skia/ext/platform_device.h"
 #include "skia/ext/refptr.h"
 #include "skia/ext/vector_canvas.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebFrame.h"
+#include "third_party/WebKit/public/web/WebFrame.h"
 #include "ui/gfx/gdi_util.h"
 #include "ui/gfx/point.h"
 #include "ui/gfx/rect.h"
