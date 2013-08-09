@@ -55,6 +55,8 @@
         '-Wno-error=c++0x-compat',
       ],
       'sources': [
+        '<(DEPTH)/chrome/browser/chrome_process_finder_win.cc',
+        '<(DEPTH)/chrome/browser/chrome_process_finder_win.h',
         '<(DEPTH)/chrome/browser/platform_util_common_linux.cc',
         '<(DEPTH)/chrome/browser/platform_util_linux.cc',
         '<(DEPTH)/chrome/browser/platform_util_mac.mm',
