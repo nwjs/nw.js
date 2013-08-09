@@ -17,7 +17,7 @@ describe('proxy', function(){
   after(function(){
     this.timeout(0);
     if (os.platform() == "win32"){
-      fs.unlink('/test.reg', function (err) {
+      fs.unlink('c:/test.reg', function (err) {
         if (err) console.log(err);
       });
     }
