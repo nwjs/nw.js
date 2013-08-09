@@ -217,16 +217,23 @@ bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(
       !single_instance)
     return false;
 
-  CommandLine::StringVector args = command_line.GetArgs();
-
-  // Send open event one by one.
-  for (size_t i = 0; i < args.size(); ++i) {
-#if defined(OS_WIN)
-    api::App::EmitOpenEvent(UTF16ToUTF8(args[i]));
-#else
-    api::App::EmitOpenEvent(args[i]);
-#endif
+  CommandLine::StringType cmd = command_line.GetCommandLineString();
+  static const char* const kSwitchNames[] = {
+    switches::kNoSandbox,
+    switches::kProcessPerTab,
+    switches::kEnableExperimentalWebKitFeatures,
+    switches::kEnableCssShaders,
+    switches::kAllowFileAccessFromFiles,
+  };
+  for (size_t i = 0; i < arraysize(kSwitchNames); ++i) {
+    ReplaceSubstringsAfterOffset(&cmd, 0, CommandLine::StringType(" --") + kSwitchNames[i], "");
   }
+
+#if defined(OS_WIN)
+  api::App::EmitOpenEvent(UTF16ToUTF8(cmd));
+#else
+  api::App::EmitOpenEvent(cmd);
+#endif
 
   return true;
 }
