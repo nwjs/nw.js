@@ -65,7 +65,13 @@ describe('single-instance', function() {
 	before(function(done) {
 	    make_execuable_file('single_instance/mul', done);
 	});
-
+	
+	after(function() {
+	    fs.remove('tmp-nw', function (er) {
+		if (er) throw er;
+	    });
+	});
+	
 	it('should have a instance', function(done) {
 	    check_have(0, execPath, "", 'not have a instance', 0, done);
 	});
@@ -91,15 +97,15 @@ describe('single-instance', function() {
     describe('single-instance default', function() {
 
 	before(function(done) {
-	    make_execuable_file('single_instance/single', done);
+	    setTimeout(function() {
+		make_execuable_file('single_instance/single', done);
+	    }, 2000);
 	});
 
 	after(function() {
-	    setTimeout(function() {
-		fs.remove('tmp-nw', function (er) {
-		    if (er) throw er;
-		})
-	    }, 1000);
+	    fs.remove('tmp-nw', function (er) {
+		if (er) throw er;
+	    });
 	});
 
 	it('should have a instance', function(done) {
