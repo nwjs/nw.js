@@ -21,7 +21,7 @@
 #include "content/nw/src/api/tray/tray.h"
 
 #include "base/files/file_path.h"
-#include "base/utf_string_conversions.h"
+#include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
 #include "chrome/browser/status_icons/status_icon.h"
 #include "chrome/browser/status_icons/status_icon_observer.h"

@@ -20,7 +20,7 @@
 
 #include "content/nw/src/browser/native_window_win.h"
 
-#include "base/utf_string_conversions.h"
+#include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
 #include "base/win/wrapped_window_proc.h"
 #include "chrome/browser/platform_util.h"
@@ -111,7 +111,7 @@ class NativeWindowFrameView : public views::NonClientFrameView {
   // views::View implementation.
   virtual gfx::Size GetPreferredSize() OVERRIDE;
   virtual void Layout() OVERRIDE;
-  virtual std::string GetClassName() const OVERRIDE;
+  virtual const char* GetClassName() const OVERRIDE;
   virtual void OnPaint(gfx::Canvas* canvas) OVERRIDE;
   virtual gfx::Size GetMinimumSize() OVERRIDE;
   virtual gfx::Size GetMaximumSize() OVERRIDE;
@@ -216,7 +216,7 @@ void NativeWindowFrameView::Layout() {
 void NativeWindowFrameView::OnPaint(gfx::Canvas* canvas) {
 }
 
-std::string NativeWindowFrameView::GetClassName() const {
+const char* NativeWindowFrameView::GetClassName() const {
   return kViewClassName;
 }
 
@@ -571,8 +571,8 @@ void NativeWindowWin::Layout() {
 }
 
 void NativeWindowWin::ViewHierarchyChanged(
-    bool is_add, views::View *parent, views::View *child) {
-  if (is_add && child == this) {
+    const ViewHierarchyChangedDetails& details) {
+  if (details.is_add && details.child == this) {
     views::BoxLayout* layout = new views::BoxLayout(
         views::BoxLayout::kVertical, 0, 0, 0);
     SetLayoutManager(layout);

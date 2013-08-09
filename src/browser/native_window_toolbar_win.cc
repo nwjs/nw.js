@@ -21,8 +21,8 @@
 #include "content/nw/src/browser/native_window_toolbar_win.h"
 
 #include "base/logging.h"
-#include "base/string16.h"
-#include "base/utf_string_conversions.h"
+#include "base/strings/string16.h"
+#include "base/strings/utf_string_conversions.h"
 #include "content/nw/src/nw_shell.h"
 #include "grit/nw_resources.h"
 #include "grit/ui_resources.h"
@@ -87,10 +87,9 @@ void NativeWindowToolbarWin::Layout() {
                         24);
 }
 
-void NativeWindowToolbarWin::ViewHierarchyChanged(bool is_add,
-                                                  views::View* parent,
-                                                  views::View* child) {
-  if (is_add && child == this)
+void NativeWindowToolbarWin::ViewHierarchyChanged(
+    const ViewHierarchyChangedDetails& details) {
+  if (details.is_add && details.child == this)
     InitToolbar();
 }
 
