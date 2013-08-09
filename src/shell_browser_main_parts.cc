@@ -217,7 +217,11 @@ bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(
       !single_instance)
     return false;
 
-  CommandLine::StringType cmd = command_line.GetCommandLineString();
+#if defined(OS_WIN)
+  std::string cmd = UTF16ToUTF8(command_line.GetCommandLineString());
+#else
+  std::string cmd = command_line.GetCommandLineString();
+#endif
   static const char* const kSwitchNames[] = {
     switches::kNoSandbox,
     switches::kProcessPerTab,
@@ -226,10 +230,10 @@ bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(
     switches::kAllowFileAccessFromFiles,
   };
   for (size_t i = 0; i < arraysize(kSwitchNames); ++i) {
-    ReplaceSubstringsAfterOffset(&cmd, 0, CommandLine::StringType(" --") + kSwitchNames[i], "");
+    ReplaceSubstringsAfterOffset(&cmd, 0, std::string(" --") + kSwitchNames[i], "");
   }
 
-#if defined(OS_WIN)
+#if 0
   api::App::EmitOpenEvent(UTF16ToUTF8(cmd));
 #else
   api::App::EmitOpenEvent(cmd);
