@@ -26,6 +26,8 @@
 #include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
 #include "content/browser/child_process_security_policy_impl.h"
+#include "content/browser/renderer_host/render_view_host_impl.h"
+#include "content/browser/web_contents/web_contents_impl.h"
 #include "content/public/browser/devtools_agent_host.h"
 #include "content/public/browser/devtools_http_handler.h"
 #include "content/public/browser/devtools_manager.h"
@@ -117,9 +119,16 @@ Shell* Shell::Create(WebContents* source_contents,
 
 Shell* Shell::FromRenderViewHost(RenderViewHost* rvh) {
   for (size_t i = 0; i < windows_.size(); ++i) {
-    if (windows_[i]->web_contents() &&
-        windows_[i]->web_contents()->GetRenderViewHost() == rvh) {
+    WebContents* web_contents = windows_[i]->web_contents();
+    if (!web_contents)
+      continue;
+    if (web_contents->GetRenderViewHost() == rvh) {
       return windows_[i];
+    }else{
+      WebContentsImpl* impl = static_cast<WebContentsImpl*>(web_contents);
+      RenderViewHostManager* rvhm = impl->GetRenderManagerForTesting();
+      if (rvhm && static_cast<RenderViewHost*>(rvhm->pending_render_view_host()) == rvh)
+        return windows_[i];
     }
   }
   return NULL;
