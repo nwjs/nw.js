@@ -3,11 +3,11 @@ var execPath = func.getExecPath();
 var fs = require('fs-extra');
 var os = require('os');
 var spawn = require('child_process').spawn;
+var exec = require('child_process').exec;
 
 var app =  new Array();
-
-var mac_app_path = path.join('tmp-nw', 'node-webkit.app')
-
+var child1, child2;
+var mac_app_path = path.join('tmp-nw', 'node-webkit.app');
 function make_execuable_file(folder_path, done) {
     func.copyExecFiles(function() {
 	func.copySourceFiles(folder_path); 
@@ -65,67 +65,115 @@ describe('single-instance', function() {
 	before(function(done) {
 	    make_execuable_file('single_instance/mul', done);
 	});
-	
-	after(function() {
+
+        after(function() {
 	    fs.remove('tmp-nw', function (er) {
-		if (er) throw er;
-	    });
-	});
-	
+                    if (er) throw er;
+            });
+        });
+
 	it('should have a instance', function(done) {
 	    check_have(0, execPath, "", 'not have a instance', 0, done);
 	});
 
-	if (os.platform() == 'darwin') {
-	    it('should have a instance (open app)', function(done) {
-		check_have(4, 'open', [mac_app_path], 'not have a instance', 0, done);
-	    });
-	}
-
 	it('should have a second instance', function(done) {
 	    check_have(1, execPath, "", 'not have a second instance', 1, done);
 	});
+    });
 
-	if (os.platform() == 'darwin') {
-	    it('should have a second instance (open app)', function(done) {
-		check_have(5, 'open', [mac_app_path], 'not have a second instance', 1, done);
-	    });
-	}
-    })
-    
 
     describe('single-instance default', function() {
 
 	before(function(done) {
 	    setTimeout(function() {
 		make_execuable_file('single_instance/single', done);
-	    }, 2000);
+	    }, 3000);
 	});
 
-	after(function() {
+        after(function() {
 	    fs.remove('tmp-nw', function (er) {
-		if (er) throw er;
-	    });
-	});
+                    if (er) throw er;
+            });
+        });
 
 	it('should have a instance', function(done) {
 	    check_have(2, execPath, "", 'not have a instance', 0, done);
 	});
 
-	if (os.platform() == 'darwin') {
-	    it('should have a instance (open app)', function(done) {
-		check_have(6, 'open', [mac_app_path], 'not have a instance', 0, done);
-	    });
-	}
-
 	it('should not have a second instance', function(done) {
 	    check_have(3, execPath, "", 'have a second instance', 2, done);
 	});
+    });
 
-	if (os.platform() == 'darwin') {
-	    it('should not have a second instance (open app)', function(done) {
-		check_have(7, 'open', [mac_app_path], 'have a second instance', 2, done);
+    if (os.platform() == 'darwin') {
+        describe('single-instance false(open app)', function(){
+                before(function(done) {
+                        setTimeout(function() {
+                                make_execuable_file('single_instance/open_mul', done);
+                            }, 3000);
+                });
+
+                after(function() {
+                        fs.remove('tmp-nw', function (er) {
+                                if (er) throw er;
+                            });
+                });
+
+                it('should have a instance (open app)', function(done) {
+                        child1 = exec('open ' + mac_app_path);
+                        setTimeout(function () {
+                                var content = fs.readFileSync('tmp-nw/msg');
+                                if (content + "" != "")
+                                    done();
+                                else
+                                    done("not have a instance");
+                            }, 6000);
+                });
+                
+                it('should have a second instance (open app)', function(done) {
+                        child2 = exec('open ' + mac_app_path);
+                        var content = fs.readFileSync('tmp-nw/msg');
+                        if (content + "" == "11")
+                            done();
+                        else
+                            done("not have a instance");
+                });
+
+        });
+
+        describe('single-instance default(open app)', function(){
+                before(function(done) {
+                        setTimeout(function() {
+                                make_execuable_file('single_instance/open_single', done);
+                            }, 3000);
+                });
+
+                after(function() {
+                        fs.remove('tmp-nw', function (er) {
+                                if (er) throw er;
+                            });
+                });
+
+                it('should have a instance (open app)', function(done) {
+                        child1 = exec('open ' + mac_app_path);
+                        setTimeout(function () {
+                                var content = fs.readFileSync('tmp-nw/msg_s');
+                                if (content + "" != "")
+                                    done();
+                                else
+                                    done("not have a instance");
+                            }, 6000);
+                 });
+                
+                it('should not have a second instance (open app)', function(done) {
+                        child2 = exec('open ' + mac_app_path);
+                        var content = fs.readFileSync('tmp-nw/msg_s');
+                        if (content + "" == "11")
+                            done("have a second instance");
+                        else
+                            done();
+
+                });
 	    });
 	}
-    });
 });
