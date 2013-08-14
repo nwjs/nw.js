@@ -4,7 +4,7 @@ var assert = require('assert');
 var window_counts = 3;
 var results;
 
-describe('windoww', function() {
+describe('window', function() {
     this.timeout(0);
     before(function(done) {
 	this.timeout(0);
