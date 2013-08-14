@@ -62,10 +62,16 @@ if platform_name == 'osx' and not os.path.exists(
   print 'nw file does not exist.\n'
   exit()
 
-if not os.path.exists(
+if platform_name != 'win' and not os.path.exists(
   os.path.join(project_root, 'chromedriver2_server')):
   print 'chromedriver2_server file does not exist.\n'
   exit()
+
+if platform_name == 'win' and not os.path.exists(
+  os.path.join(project_root, 'chromedriver2_server.exe')):
+  print 'chromedriver2_server file does not exist.\n'
+  exit()
+
 
 required_file_linux = (
   'nw',
@@ -89,20 +95,26 @@ required_file_mac = (
   'nwsnapshot',
 )
 
-required_chromedriver2_file = (
+required_chromedriver2_file_win = (
+  'chromedriver2_server.exe',
+)
+
+required_chromedriver2_file_others = (
   'chromedriver2_server',
 )
 
 if (platform_name == 'linux'):
   required_file.append(required_file_linux)
+  required_file.append(required_chromedriver2_file_others)
 
 if (platform_name == 'win'):
   required_file.append(required_file_win)
+  required_file.append(required_chromedriver2_file_win);
 
 if (platform_name == 'osx'):
   required_file.append(required_file_mac)
+  required_file.append(required_chromedriver2_file_others)
 
-required_file.append(required_chromedriver2_file)
 
 #generate binary tar name
 import getnwisrelease
