@@ -303,7 +303,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
         "process.mainModule.loaded = true;"
         "}").c_str()
     ));
-    CHECK(script);
+    CHECK(*script);
     script->Run();
   }
 
