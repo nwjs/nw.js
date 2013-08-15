@@ -285,10 +285,14 @@ void ShellContentRendererClient::InstallNodeSymbols(
 
   if (use_node) {
     RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
+    std::string root_path = rv->renderer_preferences_.nw_app_root_path.AsUTF8Unsafe();
+#if defined(OS_WIN)
+    ReplaceChars(root_path, "\\", "\\\\", &root_path);
+#endif
     v8::Local<v8::Script> script = v8::Script::New(v8::String::New((
         // Make node's relative modules work
         "if (!process.mainModule.filename) {"
-        "  var root = '" + rv->renderer_preferences_.nw_app_root_path.AsUTF8Unsafe() + "';"
+        "  var root = '" + root_path + "';"
 #if defined(OS_WIN)
         "process.mainModule.filename = decodeURIComponent(window.location.pathname.substr(1));"
 #else
@@ -299,6 +303,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
         "process.mainModule.loaded = true;"
         "}").c_str()
     ));
+    CHECK(*script);
     script->Run();
   }
 

@@ -22,7 +22,13 @@ AppProtocolHandler::AppProtocolHandler(const base::FilePath& root)
 URLRequestJob* AppProtocolHandler::MaybeCreateJob(
     URLRequest* request, NetworkDelegate* network_delegate) const {
   base::FilePath file_path;
-  const bool is_file = FileURLToFilePath(request->url(), &file_path);
+  GURL url(request->url());
+  url_canon::Replacements<char> replacements;
+  replacements.SetScheme("file", url_parse::Component(0, 4));
+  replacements.ClearHost();
+  url = url.ReplaceComponents(replacements);
+  
+  const bool is_file = FileURLToFilePath(url, &file_path);
 
   file_path = root_path_.Append(file_path);
   // Check file access permissions.

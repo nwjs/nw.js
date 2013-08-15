@@ -201,7 +201,6 @@ if platform_name in ('win', 'osx'):
     for dirpath, dirnames, filenames in os.walk(binary_full_path[index]):
       for name in filenames:
         path = os.path.normpath(os.path.join(dirpath, name))
-      
         zip.write(path, path.replace(binary_full_path[index] + os.sep, ''))
 
     zip.close()
