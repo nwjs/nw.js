@@ -47,7 +47,7 @@ class App {
                    base::ListValue* result);
 
   // Try to close all windows (then will cause whole app to quit).
-  static void CloseAllWindows();
+  static void CloseAllWindows(bool force = false);
 
   // Quit the whole app.
   static void Quit(content::RenderProcessHost* rph = NULL);

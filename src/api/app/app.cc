@@ -122,7 +122,7 @@ void App::Call(Shell* shell,
 }
 
 // static
-void App::CloseAllWindows() {
+void App::CloseAllWindows(bool force) {
   std::vector<Shell*> windows = Shell::windows();
 
   for (size_t i = 0; i < windows.size(); ++i) {
@@ -130,7 +130,7 @@ void App::CloseAllWindows() {
     // be automatically closed.
     if (!windows[i]->is_devtools()) {
       // If there is no js object bound to the window, then just close.
-      if (windows[i]->ShouldCloseWindow())
+      if (force || windows[i]->ShouldCloseWindow())
         delete windows[i];
     }
   }
@@ -153,6 +153,7 @@ void App::Quit(RenderProcessHost* render_process_host) {
 
       rph->Send(new ViewMsg_WillQuit(&no_use));
     }
+    CloseAllWindows(true);
   }
   // Then quit.
   MessageLoop::current()->PostTask(FROM_HERE, MessageLoop::QuitClosure());
