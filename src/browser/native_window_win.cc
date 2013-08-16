@@ -237,6 +237,7 @@ NativeWindowWin::NativeWindowWin(content::Shell* shell,
       toolbar_(NULL),
       is_fullscreen_(false),
       is_minimized_(false),
+      is_maximized_(false),
       is_focus_(false),
       is_blur_(false),
       menu_(NULL),
@@ -283,7 +284,10 @@ void NativeWindowWin::Focus(bool focus) {
 }
 
 void NativeWindowWin::Show() {
-  window_->Show();
+  if (is_maximized_)
+    window_->native_widget_private()->ShowWithWindowState(ui::SHOW_STATE_MAXIMIZED);
+  else
+    window_->native_widget_private()->Show();
 }
 
 void NativeWindowWin::Hide() {
@@ -607,8 +611,10 @@ bool NativeWindowWin::ExecuteWindowsCommand(int command_id) {
     is_minimized_ = false;
     shell()->SendEvent("restore");
   } else if ((command_id & sc_mask) == SC_RESTORE && !is_minimized_) {
+    is_maximized_ = false;
     shell()->SendEvent("unmaximize");
   } else if ((command_id & sc_mask) == SC_MAXIMIZE) {
+    is_maximized_ = true;
     shell()->SendEvent("maximize");
   }
 

@@ -132,6 +132,7 @@ class NativeWindowWin : public NativeWindow,
 
   // Flags used to prevent sending extra events.
   bool is_minimized_;
+  bool is_maximized_;
   bool is_focus_;
   bool is_blur_;
 
