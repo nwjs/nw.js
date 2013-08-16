@@ -404,6 +404,10 @@
           'action': ['python', '<(package_script)'],
         },
       ],
+      'dependencies': [
+        '<(DEPTH)/chrome/chrome.gyp:chromedriver2_server',
+      ],
+
     },
     {
       'target_name': 'nw',
