@@ -25,6 +25,7 @@
 #include "base/message_loop.h"
 #include "base/values.h"
 #include "content/nw/src/api/api_messages.h"
+#include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/browser/net_disk_cache_remover.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
@@ -131,7 +132,9 @@ void App::CloseAllWindows(bool force) {
     if (!windows[i]->is_devtools()) {
       // If there is no js object bound to the window, then just close.
       if (force || windows[i]->ShouldCloseWindow())
-        delete windows[i];
+        // we used to delete the Shell object here
+        // but it should be deleted on native window destruction
+        windows[i]->window()->Close();
     }
   }
 }
