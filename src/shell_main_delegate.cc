@@ -22,6 +22,7 @@
 
 #include "base/command_line.h"
 #include "base/files/file_path.h"
+#include "base/file_util.h"
 #include "base/logging.h"
 #include "base/path_service.h"
 #include "base/strings/utf_string_conversions.h"
@@ -163,6 +164,7 @@ void ShellMainDelegate::InitializeResourceBundle() {
   FilePath pak_dir;
   PathService::Get(base::DIR_MODULE, &pak_dir);
   pak_file = pak_dir.Append(FILE_PATH_LITERAL("nw.pak"));
+  CHECK(file_util::PathExists(pak_file)) << "nw.pak is missing";
 #endif
   ui::ResourceBundle::InitSharedInstanceWithPakPath(pak_file);
 }
