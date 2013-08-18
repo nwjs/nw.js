@@ -97,7 +97,7 @@ FilePath GetSelfPath() {
 
 #if defined(OS_MACOSX)
   // Find if we have node-webkit.app/Resources/app.nw.
-  path = path.DirName().DirName().Append("Resources").Append("app.nw");
+  path = path.DirName().DirName().Append("Resources").Append("Package");
 #endif
 
   return path;

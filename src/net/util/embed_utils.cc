@@ -121,6 +121,23 @@ namespace embed_util {
 		
 		return true;
 	}
+	
+	/*bool Utility::WriteTempFile(std::string filename, base::FilePath* path) {
+		embed_util::FileMetaInfo info;
+		file_util::GetTempDir(path);
+		path->Append(base::FilePath::FromUTF8Unsafe(filename));
+		if(Utility::GetFileInfo(filename, &info)) {
+			char buf[info.file_size];
+			net::FileStream *fstream = new net::FileStream(NULL);
+			if(fstream->OpenSync(base::FilePath::FromUTF8Unsafe(Utility::GetContainer()), base::PLATFORM_FILE_OPEN | base::PLATFORM_FILE_READ) < 0) return false;
+			fstream->SeekSync(net::Whence::FROM_BEGIN, info.offset);
+			fstream->ReadSync(&buf, info.file_size);
+			
+			file_util::WriteFile(path, &buf, info.file_size);
+			return true;
+		}
+		return false;
+	}*/
 }
 
 

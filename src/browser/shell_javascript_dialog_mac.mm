@@ -126,7 +126,7 @@ ShellJavaScriptDialog::ShellJavaScriptDialog(
   }
   [alert setDelegate:helper_];
   [alert setInformativeText:base::SysUTF16ToNSString(message_text)];
-  [alert setMessageText:@"Javascript alert"];
+  [alert setMessageText:@""];
   [alert addButtonWithTitle:@"OK"];
   if (!one_button) {
     NSButton* other = [alert addButtonWithTitle:@"Cancel"];

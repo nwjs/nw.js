@@ -48,6 +48,8 @@ namespace embed_util {
 			static int IndexOf(net::FileStream *input, const char* needle);
 
 			static bool Load();
+		
+			//static bool WriteTempFile(std::string filename, base::FilePath* path);
 	};
 }
 
