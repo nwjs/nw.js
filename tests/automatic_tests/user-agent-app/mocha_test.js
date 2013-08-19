@@ -3,7 +3,7 @@ var fs = require('fs');
 var path = require('path');
 var app_test = require('./nw_test_app');
 describe('user-agent-app', function() {
-  it('user agent shoud be different when open a new window',
+  it('user agent shoud be the same when open a new window',
     function(done) {
       this.timeout(0);
       var result = false;
@@ -28,6 +28,6 @@ describe('user-agent-app', function() {
             child.close();
             done('loaded event does not been fired');
           }
-        }, 3000);
+        }, 5000);
   })
 })
