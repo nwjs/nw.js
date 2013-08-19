@@ -130,13 +130,13 @@ describe('single-instance', function() {
                             }, 6000);
                 });
                 
-                it('should have a second instance (open app)', function(done) {
+                it('should not have a second instance (open app)', function(done) {
                         child2 = exec('open ' + mac_app_path);
                         var content = fs.readFileSync('tmp-nw/msg');
                         if (content + "" == "11")
-                            done();
+                            done("have a second instance");
                         else
-                            done("not have a instance");
+                            done();
                 });
 
         });
