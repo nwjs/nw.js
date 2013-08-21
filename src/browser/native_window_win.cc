@@ -316,10 +316,12 @@ void NativeWindowWin::Restore() {
 void NativeWindowWin::SetFullscreen(bool fullscreen) {
   is_fullscreen_ = fullscreen;
   window_->SetFullscreen(fullscreen);
-  if (fullscreen)
-    shell()->SendEvent("enter-fullscreen");
-  else
-    shell()->SendEvent("leave-fullscreen");
+  if (shell()) {
+    if (fullscreen)
+      shell()->SendEvent("enter-fullscreen");
+    else
+      shell()->SendEvent("leave-fullscreen");
+  }
 }
 
 bool NativeWindowWin::IsFullscreen() {
@@ -477,7 +479,7 @@ string16 NativeWindowWin::GetWindowTitle() const {
 }
 
 void NativeWindowWin::DeleteDelegate() {
-  delete shell();
+  OnNativeWindowDestory();
 }
 
 bool NativeWindowWin::ShouldShowWindowTitle() const {
@@ -492,12 +494,12 @@ void NativeWindowWin::OnNativeFocusChange(gfx::NativeView focused_before,
     return;
 
   if (focused_now == this_window) {
-    if (!is_focus_)
+    if (!is_focus_ && shell())
       shell()->SendEvent("focus");
     is_focus_ = true;
     is_blur_ = false;
   } else if (focused_before == this_window) {
-    if (!is_blur_)
+    if (!is_blur_ && shell())
       shell()->SendEvent("blur");
     is_focus_ = false;
     is_blur_ = true;
@@ -609,16 +611,20 @@ bool NativeWindowWin::ExecuteWindowsCommand(int command_id) {
 
   if ((command_id & sc_mask) == SC_MINIMIZE) {
     is_minimized_ = true;
-    shell()->SendEvent("minimize");
+    if (shell())
+      shell()->SendEvent("minimize");
   } else if ((command_id & sc_mask) == SC_RESTORE && is_minimized_) {
     is_minimized_ = false;
-    shell()->SendEvent("restore");
+    if (shell())
+      shell()->SendEvent("restore");
   } else if ((command_id & sc_mask) == SC_RESTORE && !is_minimized_) {
     is_maximized_ = false;
-    shell()->SendEvent("unmaximize");
+    if (shell())
+      shell()->SendEvent("unmaximize");
   } else if ((command_id & sc_mask) == SC_MAXIMIZE) {
     is_maximized_ = true;
-    shell()->SendEvent("maximize");
+    if (shell())
+      shell()->SendEvent("maximize");
   }
 
   return false;

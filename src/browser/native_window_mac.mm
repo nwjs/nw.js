@@ -89,7 +89,7 @@ enum {
 - (BOOL)windowShouldClose:(id)window {
   // If this window is bound to a js object and is not forced to close,
   // then send event to renderer to let the user decide.
-  if (!shell_->ShouldCloseWindow())
+  if (shell_ && !shell_->ShouldCloseWindow())
     return NO;
 
   // Clean ourselves up and do the work after clearing the stack of anything
@@ -102,48 +102,60 @@ enum {
 }
 
 - (void)windowWillEnterFullScreen:(NSNotification*)notification {
-  static_cast<nw::NativeWindowCocoa*>(shell_->window())->
-      set_is_fullscreen(true);
-  shell_->SendEvent("enter-fullscreen");
+  if (shell_) {
+    static_cast<nw::NativeWindowCocoa*>(shell_->window())->
+        set_is_fullscreen(true);
+    shell_->SendEvent("enter-fullscreen");
+  }
 }
 
 - (void)windowWillExitFullScreen:(NSNotification*)notification {
-  static_cast<nw::NativeWindowCocoa*>(shell_->window())->
-      set_is_fullscreen(false);
-  shell_->SendEvent("leave-fullscreen");
+  if (shell_) {
+    static_cast<nw::NativeWindowCocoa*>(shell_->window())->
+        set_is_fullscreen(false);
+    shell_->SendEvent("leave-fullscreen");
+  }
 }
 
 - (void)windowDidBecomeKey:(NSNotification *)notification {
-  shell_->web_contents()->GetView()->Focus();
-  shell_->SendEvent("focus");
+  if (shell_) {
+    shell_->web_contents()->GetView()->Focus();
+    shell_->SendEvent("focus");
+  }
 }
 
 - (void)windowDidResignKey:(NSNotification *)notification {
-  shell_->SendEvent("blur");
+  if (shell_)
+    shell_->SendEvent("blur");
 }
 
 - (void)windowDidMiniaturize:(NSNotification *)notification{
-  shell_->SendEvent("minimize");
+  if (shell_)
+    shell_->SendEvent("minimize");
 }
 
 - (void)windowDidDeminiaturize:(NSNotification *)notification {
-  shell_->SendEvent("restore");
+  if (shell_)
+    shell_->SendEvent("restore");
 }
 
 - (BOOL)windowShouldZoom:(NSWindow*)window toFrame:(NSRect)newFrame {
   // Cocoa doen't have concept of maximize/unmaximize, so wee need to emulate
   // them by calculating size change when zooming.
-  if (newFrame.size.width < [window frame].size.width ||
-      newFrame.size.height < [window frame].size.height)
-    shell_->SendEvent("unmaximize");
-  else
-    shell_->SendEvent("maximize");
+  if (shell_) {
+    if (newFrame.size.width < [window frame].size.width ||
+        newFrame.size.height < [window frame].size.height)
+      shell_->SendEvent("unmaximize");
+    else
+      shell_->SendEvent("maximize");
+  }
 
   return YES;
 }
 
 - (void)cleanup:(id)window {
-  delete shell_;
+  if (shell_)
+    delete shell_.get();
 
   [self release];
 }
