@@ -269,15 +269,22 @@ Window.prototype.toggleKioskMode = function() {
   CallObjectMethod(this, 'ToggleKioskMode', []);
 }
 
-Window.prototype.showDevTools = function(id, headless) {
-      CallObjectMethod(this, 'ShowDevTools', [id, Boolean(headless)]);
+Window.prototype.showDevTools = function(frm, headless) {
+    var id = '';
+    if (typeof frm === 'string')
+        id = frm;
+    else
+        this._pending_devtools_jail = frm;
+    CallObjectMethod(this, 'ShowDevTools', [id, Boolean(headless)]);
 }
 
-    Window.prototype.__setDevToolsJail = function(id) {
-        var frm = null;
-        if (id)
-            frm = this.window.document.getElementById(id);
-        CallObjectMethod(this, 'setDevToolsJail', frm);
+Window.prototype.__setDevToolsJail = function(id) {
+    var frm = null;
+    if (id)
+        frm = this.window.document.getElementById(id);
+    else
+        frm = this._pending_devtools_jail;
+    CallObjectMethod(this, 'setDevToolsJail', frm);
 }
 
 Window.prototype.setMinimumSize = function(width, height) {
