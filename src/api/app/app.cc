@@ -137,6 +137,16 @@ void App::CloseAllWindows(bool force) {
         windows[i]->window()->Close();
     }
   }
+  if (force) {
+    // in a special force close case, since we're going to exit the
+    // main loop soon, we should delete the shell object asap so the
+    // render widget can be closed on the renderer side
+    windows = Shell::windows();
+    for (size_t i = 0; i < windows.size(); ++i) {
+      if (!windows[i]->is_devtools())
+        delete windows[i];
+    }
+  }
 }
 
 // static
