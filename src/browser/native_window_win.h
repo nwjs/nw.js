@@ -41,7 +41,7 @@ class NativeWindowWin : public NativeWindow,
                         public views::WidgetFocusChangeListener,
                         public views::WidgetDelegateView {
  public:
-  explicit NativeWindowWin(content::Shell* shell,
+  explicit NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
                            base::DictionaryValue* manifest);
   virtual ~NativeWindowWin();
 

@@ -74,18 +74,21 @@ class NativeWindowClientView : public views::ClientView {
  public:
   NativeWindowClientView(views::Widget* widget,
                          views::View* contents_view,
-                         content::Shell* shell)
+                         const base::WeakPtr<content::Shell>& shell)
       : views::ClientView(widget, contents_view),
         shell_(shell) {
   }
   virtual ~NativeWindowClientView() {}
 
   virtual bool CanClose() OVERRIDE {
-    return shell_->ShouldCloseWindow();
+    if (shell_)
+      return shell_->ShouldCloseWindow();
+    else
+      return true;
   }
 
  private:
-  content::Shell* shell_;
+  base::WeakPtr<content::Shell> shell_;
 };
 
 class NativeWindowFrameView : public views::NonClientFrameView {
@@ -230,7 +233,7 @@ gfx::Size NativeWindowFrameView::GetMaximumSize() {
 
 }  // namespace
 
-NativeWindowWin::NativeWindowWin(content::Shell* shell,
+NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
                                  base::DictionaryValue* manifest)
     : NativeWindow(shell, manifest),
       web_view_(NULL),
@@ -440,7 +443,7 @@ views::View* NativeWindowWin::GetContentsView() {
 }
 
 views::ClientView* NativeWindowWin::CreateClientView(views::Widget* widget) {
-  return new NativeWindowClientView(widget, GetContentsView(), shell());
+  return new NativeWindowClientView(widget, GetContentsView(), shell_);
 }
 
 views::NonClientFrameView* NativeWindowWin::CreateNonClientFrameView(

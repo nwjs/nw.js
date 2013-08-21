@@ -72,14 +72,14 @@ enum {
 
 @interface NativeWindowDelegate : NSObject<NSWindowDelegate> {
  @private
-  content::Shell* shell_;
+  base::WeakPtr<content::Shell> shell_;
 }
-- (id)initWithShell:(content::Shell*)shell;
+- (id)initWithShell:(const base::WeakPtr<content::Shell>&)shell;
 @end
 
 @implementation NativeWindowDelegate
 
-- (id)initWithShell:(content::Shell*)shell {
+- (id)initWithShell:(const base::WeakPtr<content::Shell>&)shell {
   if ((self = [super init])) {
     shell_ = shell;
   }
@@ -196,21 +196,22 @@ enum {
 
 @interface ShellNSWindow : ChromeEventProcessingWindow {
  @private
-  content::Shell* shell_;
+  base::WeakPtr<content::Shell> shell_;
 }
-- (void)setShell:(content::Shell*)shell;
+- (void)setShell:(const base::WeakPtr<content::Shell>&)shell;
 - (void)showDevTools:(id)sender;
 - (void)closeAllWindows:(id)sender;
 @end
 
 @implementation ShellNSWindow
 
-- (void)setShell:(content::Shell*)shell {
+- (void)setShell:(const base::WeakPtr<content::Shell>&)shell {
   shell_ = shell;
 }
 
 - (void)showDevTools:(id)sender {
-  shell_->ShowDevTools();
+  if (shell_)
+    shell_->ShowDevTools();
 }
 
 - (void)closeAllWindows:(id)sender {
@@ -268,7 +269,7 @@ enum {
 namespace nw {
 
 NativeWindowCocoa::NativeWindowCocoa(
-    content::Shell* shell,
+    const base::WeakPtr<content::Shell>& shell,
     base::DictionaryValue* manifest)
     : NativeWindow(shell, manifest),
       is_fullscreen_(false),
@@ -850,7 +851,7 @@ void NativeWindowCocoa::InstallDraggableRegionViews() {
   }
 }
 
-NativeWindow* CreateNativeWindowCocoa(content::Shell* shell,
+NativeWindow* CreateNativeWindowCocoa(const base::WeakPtr<content::Shell>& shell,
                                            base::DictionaryValue* manifest) {
   return new NativeWindowCocoa(shell, manifest);
 }

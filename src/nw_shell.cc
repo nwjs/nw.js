@@ -135,11 +135,12 @@ Shell* Shell::FromRenderViewHost(RenderViewHost* rvh) {
 }
 
 Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
-    : weak_ptr_factory_(this),
+    :
       is_devtools_(false),
       force_close_(false),
       id_(-1),
-      enable_nodejs_(true)
+      enable_nodejs_(true),
+      weak_ptr_factory_(this)
 {
   // Register shell.
   registrar_.Add(this, NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,
@@ -157,7 +158,7 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   web_contents_->SetDelegate(this);
 
   // Create window.
-  window_.reset(nw::NativeWindow::Create(this, manifest));
+  window_.reset(nw::NativeWindow::Create(weak_ptr_factory_.GetWeakPtr(), manifest));
 
 #if defined(ENABLE_PRINTING)
   printing::PrintViewManager::CreateForWebContents(web_contents);
