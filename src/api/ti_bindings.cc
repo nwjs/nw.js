@@ -213,8 +213,34 @@ namespace api {
   }
   
   
-  
-  
+    
+	
+	
+	TiConnectionBindings::TiConnectionBindings()
+	: v8::Extension("Connection.js",
+					GetStringResource(
+									  IDR_TI_API_CONNECTION_JS).data(),
+					0,     // num dependencies.
+					NULL,  // dependencies array.
+					GetStringResource(
+									  IDR_TI_API_CONNECTION_JS).size()) {
+					}
+
+	TiConnectionBindings::~TiConnectionBindings() {
+	}
+	
+  	TiFileDialogBindings::TiFileDialogBindings()
+	: v8::Extension("FileDialog.js",
+					GetStringResource(
+									  IDR_TI_API_FILEDIALOG_JS).data(),
+					0,     // num dependencies.
+					NULL,  // dependencies array.
+					GetStringResource(
+									  IDR_TI_API_FILEDIALOG_JS).size()) {
+					}
+	
+	TiFileDialogBindings::~TiFileDialogBindings() {
+	}
   TiWindowBindings::TiWindowBindings()
   : v8::Extension("TIWindow.js",
                   GetStringResource(

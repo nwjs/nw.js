@@ -174,7 +174,7 @@ bool ShellContentRendererClient::goodForNode(WebKit::WebFrame* frame)
   ProxyBypassRules rules;
   rules.ParseFromString(rv->renderer_preferences_.nw_remote_page_rules);
   bool force_on = rules.Matches(url);
-  bool is_nw_protocol = url.SchemeIs("nw") || !url.is_valid();
+  bool is_nw_protocol = url.SchemeIs("nw") || url.SchemeIs("embed") || !url.is_valid();
   bool use_node =
     CommandLine::ForCurrentProcess()->HasSwitch(switches::kNodejs) &&
     !frame->isNwDisabledChildFrame() &&
@@ -223,7 +223,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
   // Test if protocol is 'nw:'
   // test for 'about:blank' is also here becuase window.open would
   // open 'about:blank' first // FIXME
-  bool is_nw_protocol = url.SchemeIs("nw") || !url.is_valid();
+  bool is_nw_protocol = url.SchemeIs("nw") || url.SchemeIs("embed") || !url.is_valid();
 
   if (use_node || is_nw_protocol) {
     frame->setNodeJS(true);
@@ -289,14 +289,14 @@ void ShellContentRendererClient::InstallNodeSymbols(
   }
   
   if (use_node || is_nw_protocol) {
-    int tiFiles[16] = { IDR_TI_API_APPLICATION_JS, IDR_TI_API_BUFFERED_STREAM_JS,
+    int tiFiles[17] = { IDR_TI_API_APPLICATION_JS, IDR_TI_API_BUFFERED_STREAM_JS,
                         IDR_TI_API_CLIPBOARD_JS, IDR_TI_API_COMPRESSION_JS,
                         IDR_TI_API_DOMAIN_JS, IDR_TI_API_FILE_JS, IDR_TI_API_FILE_SYSTEM_JS,
                         IDR_TI_API_HASH_JS, IDR_TI_API_MENU_JS, IDR_TI_API_MENU_ITEM_JS,
-                        IDR_TI_API_PLATFORM_JS, IDR_TI_API_PROPERTY_OBJECT_JS, IDR_TI_API_SOCKET_JS,
+                        IDR_TI_API_PLATFORM_JS, IDR_TI_API_PROPERTY_OBJECT_JS, IDR_TI_API_SOCKET_JS, IDR_TI_API_CONNECTION_JS, 
                         IDR_TI_API_WINDOW_JS, IDR_TI_API_TRAY_JS, IDR_TI_API_FILEDIALOG_JS };
 
-    for(int i=0; i < 16; i++)
+    for(int i=0; i < 17; i++)
     {
       v8::Handle<v8::String> source = v8::String::NewExternal(new StaticV8ExternalAsciiStringResource(GetStringResource(tiFiles[i])));
       v8::Local<v8::Script> script = v8::Script::New(source);

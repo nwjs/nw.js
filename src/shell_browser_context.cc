@@ -96,9 +96,9 @@ void ShellBrowserContext::InitWhileIOAllowed() {
   }
   FilePath::StringType name(
 #if defined(OS_WIN)
-      L"node-webkit"
+      L"Runtime"
 #else
-      "node-webkit"
+      "Runtime"
 #endif
       );
   package_->root()->GetString(switches::kmName, &name);

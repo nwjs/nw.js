@@ -197,5 +197,9 @@ namespace nw {
 			}
 		}
 	}
-} 
+	
+	bool EmbedRequestJob::IsRedirectResponse(GURL* location,  int* http_status_code) {
+		return false;
+	}
+}
 

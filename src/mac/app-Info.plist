@@ -10,9 +10,9 @@
 	<array>
 		<dict>
 			<key>CFBundleTypeIconFile</key>
-			<string>nw.icns</string>
+			<string>app.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>node-webkit App</string>
+			<string>Runtime App</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSHandlerRank</key>
@@ -38,9 +38,9 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFile</key>
-	<string>nw.icns</string>
+	<string>app.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.intel.nw</string>
+	<string>com.trueinteractions.runtime</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -49,6 +49,8 @@
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>0.6.0</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.developer-tools</string>
 	<key>LSFileQuarantineEnabled</key>
 	<true/>
 	<key>LSMinimumSystemVersion</key>
@@ -65,23 +67,23 @@
 				<string>com.pkware.zip-archive</string>
 			</array>
 			<key>UTTypeDescription</key>
-			<string>node-webkit App</string>
+			<string>Runtime App</string>
 			<key>UTTypeIconFile</key>
-			<string>nw.icns</string>
+			<string>app.icns</string>
 			<key>UTTypeIdentifier</key>
-			<string>com.intel.nw.app</string>
+			<string>com.trueinteractions.runtime</string>
 			<key>UTTypeReferenceURL</key>
-			<string>https://github.com/rogerwang/node-webkit/wiki/How-to-package-and-distribute-your-apps</string>
+			<string></string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>com.apple.ostype</key>
-				<string>node-webkit</string>
+				<string>ti-runtime</string>
 				<key>public.filename-extension</key>
 				<array>
 					<string>nw</string>
 				</array>
 				<key>public.mime-type</key>
-				<string>application/x-node-webkit-app</string>
+				<string>application/x-ti-runtime</string>
 			</dict>
 		</dict>
 	</array>

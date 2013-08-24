@@ -223,7 +223,7 @@ GURL Package::GetStartupURL() {
 }
 
 std::string Package::GetName() {
-  std::string name("node-webkit");
+  std::string name("Runtime");
   root()->GetString(switches::kmName, &name);
   return name;
 }
@@ -324,7 +324,7 @@ bool Package::InitFromPath() {
 
 void Package::InitWithDefault() {
   root_.reset(new base::DictionaryValue());
-  root()->SetString(switches::kmName, "node-webkit");
+  root()->SetString(switches::kmName, "Runtime");
   root()->SetString(switches::kmMain, "nw:blank");
   base::DictionaryValue* window = new base::DictionaryValue();
   root()->Set(switches::kmWindow, window);

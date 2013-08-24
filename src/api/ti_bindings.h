@@ -110,7 +110,23 @@ namespace api {
     
     DISALLOW_COPY_AND_ASSIGN(TiSocketBindings);
   };
-  
+	
+	class TiConnectionBindings : public v8::Extension {
+	public:
+		TiConnectionBindings();
+		virtual ~TiConnectionBindings();
+		
+		DISALLOW_COPY_AND_ASSIGN(TiConnectionBindings);
+	};
+
+	class TiFileDialogBindings : public v8::Extension {
+	public:
+		TiFileDialogBindings();
+		virtual ~TiFileDialogBindings();
+		
+		DISALLOW_COPY_AND_ASSIGN(TiFileDialogBindings);
+	};
+	
   class TiWindowBindings : public v8::Extension {
   public:
     TiWindowBindings();

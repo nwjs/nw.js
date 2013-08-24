@@ -41,7 +41,7 @@ namespace nw {
     virtual Filter* SetupFilter() const OVERRIDE;
     virtual bool GetMimeType(std::string* mime_type) const OVERRIDE;
     virtual void SetExtraRequestHeaders(const HttpRequestHeaders& headers) OVERRIDE;
-    
+	virtual bool IsRedirectResponse(GURL* location,  int* http_status_code) OVERRIDE;
   private:
     int64 remaining_bytes_;
     std::string file_;

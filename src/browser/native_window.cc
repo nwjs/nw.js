@@ -139,7 +139,7 @@ void NativeWindow::InitFromManifest(base::DictionaryValue* manifest) {
   if (toolbar) {
     AddToolbar();
   }
-  std::string title("node-webkit");
+  std::string title("Runtime");
   manifest->GetString(switches::kmTitle, &title);
   SetTitle(title);
 

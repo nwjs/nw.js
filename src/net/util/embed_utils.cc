@@ -73,42 +73,46 @@ namespace embed_util {
 		std::map<std::string, embed_util::FileMetaInfo *> *OffsetMap = Utility::GetOffsetMap();
 		std::string magickey = "\x20\x01\x77\xf3\x66\x31"; // [ 0x20, 0x01, 0x77, 0xf3, 0x66, 0x31, 0x00 ]
 		net::FileStream *stream = new net::FileStream(NULL);
-		int p1, p2;
+		int64 a, b, c;
 		char *filename = new char[256];
-		unsigned char *size = new unsigned char[8];
+		std::string key;
+		int64 filesize;
 		
 		if(stream->OpenSync(base::FilePath(Utility::GetContainer()), base::PLATFORM_FILE_OPEN | base::PLATFORM_FILE_READ) < 0) return false;
 		if(stream->SeekSync(net::Whence::FROM_BEGIN, 0) < 0) return false;
 		
 		while(stream->Available() > 0)
 		{
-			p1 = Utility::IndexOf(stream, magickey.c_str());
-			if(p1 == -1) return false;
-			p2 = Utility::IndexOf(stream, magickey.c_str());
-			if(p2 == -1) return false;
-
-			if(static_cast<unsigned long>(p2-p1-magickey.size()) < sizeof(filename)) return false;
+			if( (a = Utility::IndexOf(stream, magickey.c_str())) < 0 ) return false;
+			if( (b = Utility::IndexOf(stream, magickey.c_str())) < 0 ) return false;
+			if( (c = static_cast<unsigned long>(b-a-magickey.size())) < sizeof(filename) ) return false;
+			if(stream->SeekSync(net::Whence::FROM_BEGIN, a) < 0) return false;
+			if(stream->ReadSync(filename, c) < 0) return false;
+			if(stream->SeekSync(net::Whence::FROM_BEGIN, b) < 0) return false;
+			if(stream->ReadSync((char *)&filesize, 8) < 0) return false;
+			if(stream->SeekSync(net::Whence::FROM_CURRENT, (int32)filesize) < 0) return false;
 			
-			if(stream->SeekSync(net::Whence::FROM_BEGIN, p1) < 0) return false;
-			if(stream->ReadSync(filename, p2-p1-magickey.size()) < 0) return false;
-			if(stream->SeekSync(net::Whence::FROM_BEGIN, p2) < 0) return false;
-			if(stream->ReadSync((char *)size, 8) < 0) return false;
-			std::string key = std::string(filename, p2-p1-magickey.size());
+			key = std::string(filename, b-a-magickey.size());
 			(*OffsetMap)[key] = new embed_util::FileMetaInfo();
-			(*OffsetMap)[key]->offset = p2 + 8;
+			(*OffsetMap)[key]->offset = b + 8;
 			(*OffsetMap)[key]->file_exists = true;
-			(*OffsetMap)[key]->file_size = (uint32_t)size[4] << 24 | (uint32_t)size[5] << 16 | (uint32_t)size[6] << 8 | (uint32_t)size[7];
+			(*OffsetMap)[key]->file_size = (int32)filesize;
 			(*OffsetMap)[key]->is_directory = false;
 			(*OffsetMap)[key]->mime_type_result = net::GetMimeTypeFromFile(base::FilePath::FromUTF8Unsafe(key), &(*OffsetMap)[key]->mime_type);
 			(*OffsetMap)[key]->file_name = key;
-
-			stream->SeekSync(net::Whence::FROM_CURRENT, (*OffsetMap)[key]->file_size);
+			
+			//(uint32_t)size[7] << 24 | (uint32_t)size[6] << 16 | (uint32_t)size[5] << 8 | (uint32_t)size[4] ||
+			//(uint32_t)size[3] << 24 | (uint32_t)size[2] << 16 | (uint32_t)size[1] << 8 | (uint32_t)size[0];
 		}
 		return true;
 	}
  
 	bool Utility::GetFileInfo(std::string file, embed_util::FileMetaInfo* meta_info) {
 		std::map<std::string, embed_util::FileMetaInfo *> *OffsetMap = Utility::GetOffsetMap();
+		std::size_t bs = file.find("/",0,1);
+		if(bs!=std::string::npos) {
+			file = file.replace(0, 1, "");
+		}
 		if((*OffsetMap).find(file) == (*OffsetMap).end()) return false;
 		
 		meta_info->file_exists = (*OffsetMap)[file]->file_exists;
