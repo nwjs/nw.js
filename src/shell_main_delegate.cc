@@ -90,9 +90,11 @@ void InitLogging() {
   PathService::Get(base::DIR_EXE, &log_filename);
   log_filename = log_filename.AppendASCII("debug.log");
   logging::LoggingSettings settings;
-  settings.logging_dest = logging::LOG_TO_ALL;
-  settings.log_file = log_filename.value().c_str();
-  settings.delete_old = logging::DELETE_OLD_LOG_FILE;
+  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kEnableLogging)) {
+    settings.logging_dest = logging::LOG_TO_ALL;
+    settings.log_file = log_filename.value().c_str();
+    settings.delete_old = logging::DELETE_OLD_LOG_FILE;
+  }
   logging::InitLogging(settings);
   logging::SetLogItems(true, false, true, false);
 }
