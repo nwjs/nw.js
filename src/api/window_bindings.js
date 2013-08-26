@@ -271,10 +271,11 @@ Window.prototype.toggleKioskMode = function() {
 
 Window.prototype.showDevTools = function(frm, headless) {
     var id = '';
-    if (typeof frm === 'string')
+    if (typeof frm === 'string') {
         id = frm;
-    else
+    }else{
         this._pending_devtools_jail = frm;
+    }
     CallObjectMethod(this, 'ShowDevTools', [id, Boolean(headless)]);
 }
 
@@ -283,7 +284,7 @@ Window.prototype.__setDevToolsJail = function(id) {
     if (id)
         frm = this.window.document.getElementById(id);
     else
-        frm = this._pending_devtools_jail;
+        frm = this._pending_devtools_jail || null;
     CallObjectMethod(this, 'setDevToolsJail', frm);
 }
 
