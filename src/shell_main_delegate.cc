@@ -94,6 +94,10 @@ void InitLogging() {
     settings.logging_dest = logging::LOG_TO_ALL;
     settings.log_file = log_filename.value().c_str();
     settings.delete_old = logging::DELETE_OLD_LOG_FILE;
+  }else{
+#if defined(OS_WIN)
+    settings.logging_dest = logging::LOG_NONE;
+#endif
   }
   logging::InitLogging(settings);
   logging::SetLogItems(true, false, true, false);
