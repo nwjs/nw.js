@@ -43,7 +43,7 @@ describe('AppTest', function(){
           app.kill();
           done("Timeout, Can not close window.");
         }
-      }, 10000);
+      }, 30000);
 
     })
 
@@ -66,7 +66,7 @@ describe('AppTest', function(){
           app.kill();
           done("Timeout, Can not quit App.");
         }
-      }, 10000);
+      }, 30000);
 
 
     })
@@ -114,7 +114,7 @@ describe('AppTest', function(){
           app.kill();
           done("Timeout, Can not close window.");
         }
-      }, 10000);
+      }, 30000);
 
 
     })
@@ -161,7 +161,7 @@ describe('AppTest', function(){
           app.kill();
           done("Timeout, Can not quit App.");
         }
-      }, 10000);
+      }, 30000);
 
 
     })
