@@ -28,6 +28,6 @@ describe('user-agent-app', function() {
             child.close();
             done('loaded event does not been fired');
           }
-        }, 5000);
+        }, 10000);
   })
 })
