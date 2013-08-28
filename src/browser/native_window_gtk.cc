@@ -95,6 +95,10 @@ NativeWindowGtk::NativeWindowGtk(const base::WeakPtr<content::Shell>& shell,
   if (!has_frame_)
     gtk_window_set_decorated(window_, false);
 
+  bool initial_focus = true;
+  manifest->GetBoolean(switches::kmInitialFocus, &initial_focus);
+  SetInitialFocus(initial_focus);
+
   // Set to desktop
   bool as_desktop;
   if (manifest->GetBoolean(switches::kmAsDesktop, &as_desktop) && as_desktop)
@@ -275,6 +279,14 @@ bool NativeWindowGtk::IsKiosk() {
 void NativeWindowGtk::SetMenu(api::Menu* menu) {
   gtk_box_pack_start(GTK_BOX(vbox_), menu->menu_, FALSE, FALSE, 0);
   gtk_box_reorder_child(GTK_BOX(vbox_), menu->menu_, 0);
+}
+
+void NativeWindowGtk::SetInitialFocus(bool initial_focus) {
+  gtk_window_set_focus_on_map(GTK_WINDOW(window_), initial_focus);
+}
+
+bool NativeWindowGtk::InitialFocus() {
+  return gtk_window_get_focus_on_map(GTK_WINDOW(window_));
 }
 
 void NativeWindowGtk::SetAsDesktop() {
