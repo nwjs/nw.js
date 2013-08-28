@@ -19,12 +19,18 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "content/public/app/content_main.h"
-
+#include "base/command_line.h"
 #include "content/shell/shell_main_delegate.h"
 #include "sandbox/win/src/sandbox_types.h"
 
 #if defined(OS_WIN)
+#include "base/command_line.h"
+#include "base/file_util.h"
+#include "base/files/scoped_temp_dir.h"
+#include "third_party/zlib/google/zip.h"
 #include "content/public/app/startup_helper_win.h"
+#include "content/shell/shell_main_delegate.h"
+#include "sandbox/win/src/sandbox_types.h"
 #endif
 
 #if defined(OS_MACOSX)
@@ -32,8 +38,33 @@
 #endif
 
 #if defined(OS_WIN)
+void Bootstrap() {
+  CommandLine *cmd = CommandLine::ForCurrentProcess();
+  CommandLine::StringVector args = cmd->GetArgs();
+
+  base::FilePath path = (args.size() > 0) ? base::FilePath(args[0]) : base::FilePath(cmd->GetProgram());
+  path = base::MakeAbsoluteFilePath(path);
+  if(file_util::DirectoryExists(path)) {
+    cmd->AppendSwitchASCII("working-directory",path.AsUTF8Unsafe());
+    return;
+  } else if(file_util::PathExists(path)) {
+    base::FilePath where;
+    static scoped_ptr<base::ScopedTempDir> scoped_temp_dir;
+    file_util::CreateNewTempDirectory(L"nw", &where);
+    scoped_temp_dir.reset(new base::ScopedTempDir());
+    if(scoped_temp_dir->Set(where) && zip::Unzip(path, where)) {
+      cmd->AppendSwitchASCII("working-directory",where.AsUTF8Unsafe());
+      return;
+    }
+  }
+  cmd->AppendSwitchASCII("working-directory", base::MakeAbsoluteFilePath(cmd->GetProgram().DirName()).AsUTF8Unsafe());
+  return;
+}
 
 int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE, wchar_t*, int) {
+  CommandLine::Init(__argc, __argv);
+  if(!CommandLine::ForCurrentProcess()->HasSwitch("working-directory")) Bootstrap();
+  AddDllDirectory(CommandLine::ForCurrentProcess()->GetSwitchValueNative("working-directory").c_str());
   sandbox::SandboxInterfaceInfo sandbox_info = {0};
   content::InitializeSandboxInfo(&sandbox_info);
   content::ShellMainDelegate delegate;

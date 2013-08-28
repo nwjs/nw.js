@@ -27,6 +27,7 @@
 #include "base/message_loop.h"
 #include "base/logging.h"
 #include "base/platform_file.h"
+#include "base/files/file_path.h"
 #include "base/string_util.h"
 #include "base/synchronization/lock.h"
 #include "base/threading/worker_pool.h"
@@ -44,7 +45,7 @@
 #include "net/url_request/url_request_error_job.h"
 #include "net/url_request/url_request_file_dir_job.h"
 #include "net/url_request/url_request_job.h"
-
+using namespace base;
 namespace nw {
   using namespace net;
   using namespace embed_util;
@@ -52,7 +53,7 @@ namespace nw {
 	// static
 	bool EmbedRequestJob::EmbedURLToFilePath(const GURL& url, base::FilePath* path) {
 		*path = base::FilePath();
-		std::string& file_path_str = const_cast<std::string&>(path->value());
+		std::wstring& file_path_str = const_cast<std::wstring&>(path->value());
 		file_path_str.clear();
 		if (!url.is_valid()) return false;
 		std::string old_path = url.path();
@@ -64,7 +65,7 @@ namespace nw {
 		  ReplaceSubstringsAfterOffset(&new_path, 0, "//", "/");
 		  old_path.swap(new_path);
 		} while (new_path != old_path);
-		file_path_str.assign(old_path);
+		file_path_str.assign(old_path.begin(),old_path.end());
 		return !file_path_str.empty();
 	}
 
@@ -106,7 +107,8 @@ namespace nw {
 			DidOpen(ERR_FILE_NOT_FOUND);
 			return;
 		}
-		int rv = stream_->Open(base::FilePath(Utility::GetContainer()),
+    std::string tmp = Utility::GetContainer();
+		int rv = stream_->Open(base::FilePath(std::wstring(tmp.begin(),tmp.end())),
 							   base::PLATFORM_FILE_OPEN | base::PLATFORM_FILE_READ | base::PLATFORM_FILE_ASYNC,
 							   base::Bind(&EmbedRequestJob::DidOpen, weak_factory_.GetWeakPtr()));
 		if (rv != ERR_IO_PENDING) DidOpen(rv);

@@ -1,4 +1,4 @@
-//Microsoft Visual C++ generated resource script.
+// Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
 
@@ -10,11 +10,15 @@
 #define APSTUDIO_HIDDEN_SYMBOLS
 #include "windows.h"
 #undef APSTUDIO_HIDDEN_SYMBOLS
+
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-LANGUAGE 9, 1
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
 
 #ifdef APSTUDIO_INVOKED
@@ -22,12 +26,13 @@ LANGUAGE 9, 1
 //
 // TEXTINCLUDE
 //
-1 TEXTINCLUDE  
+
+1 TEXTINCLUDE 
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE  
+2 TEXTINCLUDE 
 BEGIN
     "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
     "#include ""windows.h""\r\n"
@@ -35,13 +40,14 @@ BEGIN
     "\0"
 END
 
-3 TEXTINCLUDE  
+3 TEXTINCLUDE 
 BEGIN
     "\r\n"
     "\0"
 END
 
 #endif    // APSTUDIO_INVOKED
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -83,7 +89,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTI
 CAPTION "Authentication Required"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LTEXT           "", IDC_DIALOG_MESSAGETEXT, 12,7,215,25
+    LTEXT           "",IDC_DIALOG_MESSAGETEXT,12,7,215,25
     LTEXT           "User Name: ",IDC_DIALOG_USERNAMETEXT,30,42,50,14
     LTEXT           "Password: ",IDC_DIALOG_PASSWORDTEXT,30,69,50,14
     EDITTEXT        IDC_USERNAMEEDIT,84,38,125,14,ES_AUTOHSCROLL
@@ -91,6 +97,7 @@ BEGIN
     DEFPUSHBUTTON   "Log In",IDOK,131,88,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,184,88,50,14
 END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -126,8 +133,19 @@ BEGIN
 END
 #endif    // APSTUDIO_INVOKED
 
-#endif
+
 /////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "resources\\nw.ico"
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
 
 #ifndef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -135,13 +153,7 @@ END
 // Generated from the TEXTINCLUDE 3 resource.
 //
 
+
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// Icon
-//
-
-IDR_MAINFRAME           ICON                    "resources\\nw.ico"
-/////////////////////////////////////////////////////////////////////////////

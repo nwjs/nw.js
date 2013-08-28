@@ -1,15 +1,34 @@
 #include "content/nw/src/net/util/embed_utils.h"
 
 #include "base/command_line.h"
+#include "base/files/memory_mapped_file.h"
 #include "net/base/mime_util.h"
+#include "net/base/file_stream_whence.h"
+#include "base/files/file_path.h"
 #include "third_party/node/deps/uv/include/uv.h"
+
+#ifndef PATH_MAX
+#define PATH_MAX MAX_PATH
+#endif
+
+#ifndef MAGIC_KEY 
+#define MAGIC_KEY "\x20\x01\x77\xf3\x66"
+#define MAGIC_KEY_END '\x31'
+#endif
+
+#ifndef MAGIC_SIZE
+#define MAGIC_SIZE 6
+#endif
+
+using namespace net;
+using namespace base;
 
 namespace embed_util {
 
 	FileMetaInfo::FileMetaInfo()
 		: file_size(0),
-		mime_type_result(false),
-		file_exists(false),
+		mime_type_result(true),
+		file_exists(true),
 		is_directory(false) {
 	}
 	
@@ -26,84 +45,65 @@ namespace embed_util {
 
 		CommandLine* command_line = CommandLine::ForCurrentProcess();
 		base::FilePath path;
-
-		size_t size = 2*PATH_MAX;
-		char* execPath = new char[size];
-		if (uv_exepath(execPath, &size) == 0) path = base::FilePath::FromUTF8Unsafe(std::string(execPath, size));
-		else path = base::FilePath(command_line->GetProgram());
 #if defined(OS_MACOSX)
 		path = path.DirName().DirName().Append("Resources").Append("Package");
+#else
+    if(command_line->GetArgs().size() > 0)
+      path = base::FilePath(command_line->GetArgs()[0]);
+    else {
+		  size_t size = 1024;
+		  char* execPath = new char[size];
+		  if (uv_exepath(execPath, &size) == 0) path = base::FilePath::FromUTF8Unsafe(std::string(execPath, size));
+		  else path = base::FilePath(command_line->GetProgram());
+    }
 #endif
 		_path = path.AsUTF8Unsafe();
 		cached = true;
 		return _path;
 	}
 
-	int Utility::IndexOf(net::FileStream *haystack, const char* sign_needle) {
-		const unsigned char* needle = (const unsigned char *)sign_needle;
+	int Utility::IndexOf(const unsigned char *data, const size_t length, size_t pos) {
+		const unsigned char needle[MAGIC_SIZE] = MAGIC_KEY;
 		typedef std::vector<size_t> occtable_type;
-		size_t needle_length = strlen(sign_needle);
-		occtable_type occ(UCHAR_MAX+1, needle_length);
-		size_t haystack_init_pos = haystack->SeekSync(net::Whence::FROM_CURRENT, 0);
-		size_t haystack_length = haystack->Available();
-		if(needle_length >= 1) {
-			const size_t needle_length_minus_1 = needle_length-1;
-			for(size_t a=0; a<needle_length_minus_1; ++a)
-				occ[needle[a]] = needle_length_minus_1 - a;
-		}
-		if(needle_length > haystack_length) return -1;
-		const size_t needle_length_minus_1 = needle_length-1;		
-		const unsigned char last_needle_char = needle[needle_length_minus_1];
-		size_t haystack_position=0;
-		while(haystack_position <= haystack_length-needle_length) {
-			unsigned char hay_chars[needle_length_minus_1+1];
-			haystack->SeekSync(net::Whence::FROM_BEGIN, haystack_init_pos + haystack_position);
-			haystack->ReadSync((char *)(&hay_chars[0]), needle_length_minus_1 + 1);
-			if(last_needle_char == hay_chars[needle_length_minus_1] && std::memcmp(needle, hay_chars, needle_length_minus_1) == 0)
-				return haystack_init_pos + haystack_position + needle_length_minus_1 + 1;
-			haystack_position += occ[hay_chars[needle_length_minus_1]];
+		occtable_type occ(UCHAR_MAX+1, MAGIC_SIZE);
+    for(int a=0;a<(MAGIC_SIZE-1);a++) occ[needle[a]] = MAGIC_SIZE-(a+1);
+    if(MAGIC_SIZE > length - pos) return -1;
+		size_t hay_pos=0;
+		while((pos + hay_pos) <= length-MAGIC_SIZE) {
+			const unsigned char *s = (data + pos + hay_pos);
+			if(MAGIC_KEY_END == s[5] && std::memcmp(needle,s,MAGIC_SIZE-1) == 0) return hay_pos+MAGIC_SIZE;
+			hay_pos += occ[s[5]];
 		}
 		return -1;
 	}
 	
 	bool Utility::Load() {
 		static bool loaded = false;
-		if(loaded==true) return true;
-		loaded = true;
+		if(loaded==true) return loaded = true;
 		std::map<std::string, embed_util::FileMetaInfo *> *OffsetMap = Utility::GetOffsetMap();
-		std::string magickey = "\x20\x01\x77\xf3\x66\x31"; // [ 0x20, 0x01, 0x77, 0xf3, 0x66, 0x31, 0x00 ]
-		net::FileStream *stream = new net::FileStream(NULL);
-		int64 a, b, c;
-		char *filename = new char[256];
-		std::string key;
-		int64 filesize;
-		
-		if(stream->OpenSync(base::FilePath(Utility::GetContainer()), base::PLATFORM_FILE_OPEN | base::PLATFORM_FILE_READ) < 0) return false;
-		if(stream->SeekSync(net::Whence::FROM_BEGIN, 0) < 0) return false;
-		
-		while(stream->Available() > 0)
-		{
-			if( (a = Utility::IndexOf(stream, magickey.c_str())) < 0 ) return false;
-			if( (b = Utility::IndexOf(stream, magickey.c_str())) < 0 ) return false;
-			if( (c = static_cast<unsigned long>(b-a-magickey.size())) < sizeof(filename) ) return false;
-			if(stream->SeekSync(net::Whence::FROM_BEGIN, a) < 0) return false;
-			if(stream->ReadSync(filename, c) < 0) return false;
-			if(stream->SeekSync(net::Whence::FROM_BEGIN, b) < 0) return false;
-			if(stream->ReadSync((char *)&filesize, 8) < 0) return false;
-			if(stream->SeekSync(net::Whence::FROM_CURRENT, (int32)filesize) < 0) return false;
-			
-			key = std::string(filename, b-a-magickey.size());
+    std::shared_ptr<base::MemoryMappedFile> mmap_;
+    size_t pos=0,a=0,b=0;
+    mmap_.reset(new base::MemoryMappedFile);
+    if (!mmap_->Initialize(base::FilePath::FromUTF8Unsafe(Utility::GetContainer()))) {
+      DLOG(ERROR) << "Failed to mmap application data (embed_utils.cc:93)";
+      mmap_.reset();
+      return false;
+    }
+    const uint8* data = mmap_->data();
+    const size_t len = mmap_->length();
+		while(pos < len) {
+			if( (a=Utility::IndexOf(reinterpret_cast<const unsigned char*>(data),len,pos)) < 0 ) return false;
+			if( (b=Utility::IndexOf(reinterpret_cast<const unsigned char*>(data),len,pos+a)) < (MAGIC_SIZE+1) ) return false;
+      if(a==b) return false;
+      std::string key = std::string(reinterpret_cast<const char*>(data+pos+a),(b-MAGIC_SIZE));
 			(*OffsetMap)[key] = new embed_util::FileMetaInfo();
-			(*OffsetMap)[key]->offset = b + 8;
-			(*OffsetMap)[key]->file_exists = true;
-			(*OffsetMap)[key]->file_size = (int32)filesize;
-			(*OffsetMap)[key]->is_directory = false;
+			(*OffsetMap)[key]->offset = pos+a+b+8;
+			(*OffsetMap)[key]->file_size = *reinterpret_cast<const unsigned int *>(data+pos+a+b);
 			(*OffsetMap)[key]->mime_type_result = net::GetMimeTypeFromFile(base::FilePath::FromUTF8Unsafe(key), &(*OffsetMap)[key]->mime_type);
 			(*OffsetMap)[key]->file_name = key;
-			
-			//(uint32_t)size[7] << 24 | (uint32_t)size[6] << 16 | (uint32_t)size[5] << 8 | (uint32_t)size[4] ||
-			//(uint32_t)size[3] << 24 | (uint32_t)size[2] << 16 | (uint32_t)size[1] << 8 | (uint32_t)size[0];
+      pos = (*OffsetMap)[key]->offset + (*OffsetMap)[key]->file_size;
 		}
+    mmap_.reset();
 		return true;
 	}
  

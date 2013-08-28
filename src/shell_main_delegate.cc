@@ -22,6 +22,7 @@
 
 #include "base/command_line.h"
 #include "base/files/file_path.h"
+#include "base/file_util.h"
 #include "base/logging.h"
 #include "base/path_service.h"
 #include "base/utf_string_conversions.h"
@@ -44,7 +45,7 @@
 #include <stdio.h>
 
 using base::FilePath;
-
+using namespace file_util;
 #if defined(OS_MACOSX)
 #include "content/shell/paths_mac.h"
 #endif  // OS_MACOSX
@@ -164,6 +165,8 @@ void ShellMainDelegate::InitializeResourceBundle() {
   FilePath pak_dir;
   PathService::Get(base::DIR_MODULE, &pak_dir);
   pak_file = pak_dir.Append(FILE_PATH_LITERAL("nw.pak"));
+  if(file_util::PathExists((FilePath(CommandLine::ForCurrentProcess()->GetSwitchValueNative("working-directory"))).Append(FILE_PATH_LITERAL("nw.pak"))))
+    pak_file = FilePath(CommandLine::ForCurrentProcess()->GetSwitchValueNative("working-directory")).Append(FILE_PATH_LITERAL("nw.pak"));
 #endif
   ui::ResourceBundle::InitSharedInstanceWithPakPath(pak_file);
 }

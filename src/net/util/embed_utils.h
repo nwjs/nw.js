@@ -15,7 +15,8 @@ namespace embed_util {
 			FileMetaInfo();
 
 			// Size of the file.
-			uint32_t file_size;
+
+			unsigned int file_size;
 
 			// Mime type info
 			std::string mime_type;
@@ -45,7 +46,8 @@ namespace embed_util {
 
 			static bool GetFileInfo(std::string path, embed_util::FileMetaInfo* meta_info);
 
-			static int IndexOf(net::FileStream *input, const char* needle);
+			static int Utility::IndexOf(const unsigned char *data, const size_t length, const size_t pos);
+      //static int IndexOf(net::FileStream *input, const char* needle);
 
 			static bool Load();
 		

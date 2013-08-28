@@ -363,7 +363,7 @@ bool Package::ExtractPath() {
       return false;
     }
   }
-
+  CommandLine::ForCurrentProcess()->AppendSwitchASCII("working-directory",path_.AsUTF8Unsafe());
   return true;
 }
 
