@@ -273,6 +273,7 @@ Window.prototype.showDevTools = function(frm, headless) {
     var id = '';
     if (typeof frm === 'string') {
         id = frm;
+        this._pending_devtools_jail = null;
     }else{
         this._pending_devtools_jail = frm;
     }
