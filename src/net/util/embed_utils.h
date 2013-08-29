@@ -36,6 +36,12 @@ namespace embed_util {
 
 			// Offset to the information in the file.
 			int64 offset;
+		
+			// Data
+			unsigned char *data;
+		
+			// Data Size
+			unsigned int data_size;
 	};
 
 	class Utility {
@@ -46,12 +52,11 @@ namespace embed_util {
 
 			static bool GetFileInfo(std::string path, embed_util::FileMetaInfo* meta_info);
 
-			static int Utility::IndexOf(const unsigned char *data, const size_t length, const size_t pos);
-      //static int IndexOf(net::FileStream *input, const char* needle);
-
+			static int IndexOf(const unsigned char *data, const size_t length, const size_t pos);
+      
+			static bool GetFileData(embed_util::FileMetaInfo *meta_info);
+			
 			static bool Load();
-		
-			//static bool WriteTempFile(std::string filename, base::FilePath* path);
 	};
 }
 

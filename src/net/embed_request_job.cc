@@ -51,10 +51,7 @@ namespace nw {
   using namespace embed_util;
 
 	// static
-	bool EmbedRequestJob::EmbedURLToFilePath(const GURL& url, base::FilePath* path) {
-		*path = base::FilePath();
-		std::wstring& file_path_str = const_cast<std::wstring&>(path->value());
-		file_path_str.clear();
+	std::string EmbedRequestJob::EmbedURLToFilePath(const GURL& url) {
 		if (!url.is_valid()) return false;
 		std::string old_path = url.path();
 		if (old_path.empty()) return false;
@@ -65,15 +62,12 @@ namespace nw {
 		  ReplaceSubstringsAfterOffset(&new_path, 0, "//", "/");
 		  old_path.swap(new_path);
 		} while (new_path != old_path);
-		file_path_str.assign(old_path.begin(),old_path.end());
-		return !file_path_str.empty();
+		return old_path;
 	}
 
 	// static
 	EmbedRequestJob* EmbedRequestJob::Factory(URLRequest* request, NetworkDelegate* network_delegate) {
-		base::FilePath file_path;
-		EmbedURLToFilePath(request->url(), &file_path);
-		return new EmbedRequestJob(request,network_delegate,file_path.AsUTF8Unsafe());
+		return new EmbedRequestJob(request,network_delegate,EmbedURLToFilePath(request->url()));
 	}
 	
 	
@@ -97,7 +91,6 @@ namespace nw {
 	}
 
 	void EmbedRequestJob::FetchMetaInfo(const std::string& path, embed_util::FileMetaInfo* meta_info) {
-		embed_util::Utility::Load();
 		Utility::GetFileInfo(path, meta_info);
 	}
 
@@ -107,8 +100,7 @@ namespace nw {
 			DidOpen(ERR_FILE_NOT_FOUND);
 			return;
 		}
-    std::string tmp = Utility::GetContainer();
-		int rv = stream_->Open(base::FilePath(std::wstring(tmp.begin(),tmp.end())),
+		int rv = stream_->Open(base::FilePath(Utility::GetContainer()),
 							   base::PLATFORM_FILE_OPEN | base::PLATFORM_FILE_READ | base::PLATFORM_FILE_ASYNC,
 							   base::Bind(&EmbedRequestJob::DidOpen, weak_factory_.GetWeakPtr()));
 		if (rv != ERR_IO_PENDING) DidOpen(rv);

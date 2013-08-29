@@ -6,6 +6,8 @@
 #include "net/base/file_stream_whence.h"
 #include "base/files/file_path.h"
 #include "third_party/node/deps/uv/include/uv.h"
+#include "net/base/gzip_header.h"
+#include "third_party/zlib/zlib.h"
 
 #ifndef PATH_MAX
 #define PATH_MAX MAX_PATH
@@ -19,6 +21,8 @@
 #ifndef MAGIC_SIZE
 #define MAGIC_SIZE 6
 #endif
+
+#define CHUNK 16384
 
 using namespace net;
 using namespace base;
@@ -38,26 +42,25 @@ namespace embed_util {
 		return OffsetMap;
 	}
 
-	std::string Utility::GetContainer() {
+	base::FilePath::StringType Utility::GetContainer() {
 		static bool cached = false;
-		static std::string _path;
+		static base::FilePath::StringType _path;
 		if(cached) return _path;
-
-		CommandLine* command_line = CommandLine::ForCurrentProcess();
 		base::FilePath path;
+		CommandLine* command_line = CommandLine::ForCurrentProcess();
 #if defined(OS_MACOSX)
-		path = path.DirName().DirName().Append("Resources").Append("Package");
+		path = command_line->GetProgram().DirName().DirName().Append("Resources").Append("Package");
 #else
-    if(command_line->GetArgs().size() > 0)
-      path = base::FilePath(command_line->GetArgs()[0]);
-    else {
+		if(command_line->GetArgs().size() > 0)
+			path = base::FilePath(command_line->GetArgs()[0]);
+		else {
 		  size_t size = 1024;
 		  char* execPath = new char[size];
 		  if (uv_exepath(execPath, &size) == 0) path = base::FilePath::FromUTF8Unsafe(std::string(execPath, size));
 		  else path = base::FilePath(command_line->GetProgram());
-    }
+		}
 #endif
-		_path = path.AsUTF8Unsafe();
+		_path = path.value();
 		cached = true;
 		return _path;
 	}
@@ -79,35 +82,33 @@ namespace embed_util {
 	
 	bool Utility::Load() {
 		static bool loaded = false;
-		if(loaded==true) return loaded = true;
+		if(loaded==true) return loaded=true;
 		std::map<std::string, embed_util::FileMetaInfo *> *OffsetMap = Utility::GetOffsetMap();
-    std::shared_ptr<base::MemoryMappedFile> mmap_;
-    size_t pos=0,a=0,b=0;
-    mmap_.reset(new base::MemoryMappedFile);
-    if (!mmap_->Initialize(base::FilePath::FromUTF8Unsafe(Utility::GetContainer()))) {
-      DLOG(ERROR) << "Failed to mmap application data (embed_utils.cc:93)";
-      mmap_.reset();
-      return false;
-    }
-    const uint8* data = mmap_->data();
-    const size_t len = mmap_->length();
+		base::MemoryMappedFile mmap_;
+		size_t pos=0,a=0,b=0;
+		if (!mmap_.Initialize(base::FilePath::FromUTF8Unsafe(Utility::GetContainer()))) {
+			DLOG(ERROR) << "Failed to mmap application data (embed_utils.cc:93)";
+			return loaded=false;
+		}
+		const uint8* data = mmap_.data();
+		const size_t len = mmap_.length();
 		while(pos < len) {
-			if( (a=Utility::IndexOf(reinterpret_cast<const unsigned char*>(data),len,pos)) < 0 ) return false;
-			if( (b=Utility::IndexOf(reinterpret_cast<const unsigned char*>(data),len,pos+a)) < (MAGIC_SIZE+1) ) return false;
-      if(a==b) return false;
-      std::string key = std::string(reinterpret_cast<const char*>(data+pos+a),(b-MAGIC_SIZE));
+			a=Utility::IndexOf(reinterpret_cast<const unsigned char*>(data),len,pos);
+			if( (b=Utility::IndexOf(reinterpret_cast<const unsigned char*>(data),len,pos+a)) < (MAGIC_SIZE+1) ) return loaded=false;
+			if(a==b) return loaded=true;
+			std::string key = std::string(reinterpret_cast<const char*>(data+pos+a),(b-MAGIC_SIZE));
 			(*OffsetMap)[key] = new embed_util::FileMetaInfo();
 			(*OffsetMap)[key]->offset = pos+a+b+8;
 			(*OffsetMap)[key]->file_size = *reinterpret_cast<const unsigned int *>(data+pos+a+b);
 			(*OffsetMap)[key]->mime_type_result = net::GetMimeTypeFromFile(base::FilePath::FromUTF8Unsafe(key), &(*OffsetMap)[key]->mime_type);
 			(*OffsetMap)[key]->file_name = key;
-      pos = (*OffsetMap)[key]->offset + (*OffsetMap)[key]->file_size;
+			pos = (*OffsetMap)[key]->offset + (*OffsetMap)[key]->file_size;
 		}
-    mmap_.reset();
-		return true;
+		return loaded=true;
 	}
  
 	bool Utility::GetFileInfo(std::string file, embed_util::FileMetaInfo* meta_info) {
+		if(!embed_util::Utility::Load()) return false;
 		std::map<std::string, embed_util::FileMetaInfo *> *OffsetMap = Utility::GetOffsetMap();
 		std::size_t bs = file.find("/",0,1);
 		if(bs!=std::string::npos) {
@@ -126,22 +127,40 @@ namespace embed_util {
 		return true;
 	}
 	
-	/*bool Utility::WriteTempFile(std::string filename, base::FilePath* path) {
-		embed_util::FileMetaInfo info;
-		file_util::GetTempDir(path);
-		path->Append(base::FilePath::FromUTF8Unsafe(filename));
-		if(Utility::GetFileInfo(filename, &info)) {
-			char buf[info.file_size];
-			net::FileStream *fstream = new net::FileStream(NULL);
-			if(fstream->OpenSync(base::FilePath::FromUTF8Unsafe(Utility::GetContainer()), base::PLATFORM_FILE_OPEN | base::PLATFORM_FILE_READ) < 0) return false;
-			fstream->SeekSync(net::Whence::FROM_BEGIN, info.offset);
-			fstream->ReadSync(&buf, info.file_size);
-			
-			file_util::WriteFile(path, &buf, info.file_size);
-			return true;
+	bool Utility::GetFileData(embed_util::FileMetaInfo *meta) {
+		if(!embed_util::Utility::Load()) return false;
+		base::MemoryMappedFile mmap_;
+		if (!mmap_.Initialize(base::FilePath::FromUTF8Unsafe(Utility::GetContainer()))) {
+			DLOG(ERROR) << "Failed to mmap application data (embed_utils.cc:134)";
+			return false;
 		}
-		return false;
-	}*/
+		meta->data_size = 0;
+		meta->data = (unsigned char *)malloc(CHUNK);
+		int ret;
+		{
+			z_stream strm;
+			strm.total_in = strm.avail_in = meta->file_size;
+			strm.next_in = (unsigned char *)malloc(meta->file_size);
+			memcpy(strm.next_in,mmap_.data()+meta->offset,meta->file_size);
+			strm.zalloc = Z_NULL;
+			strm.zfree = Z_NULL;
+			strm.opaque = Z_NULL;
+			ret = inflateInit2(&strm,(15 + 32));
+			if (ret == Z_OK) {
+				do {
+					strm.avail_out = CHUNK;
+					strm.next_out = meta->data + meta->data_size;
+					ret = inflate(&strm, Z_NO_FLUSH);
+					meta->data_size = meta->data_size + strm.avail_out;
+					if(strm.avail_in != 0)
+						meta->data = (unsigned char *)realloc(meta->data, meta->data_size + strm.avail_out);
+				} while (strm.avail_in != 0 && ret != Z_STREAM_END);
+				meta->data_size = strm.total_out;
+				inflateEnd(&strm);
+			}
+		}
+		return ret == Z_STREAM_END;
+	}
 }
 
 

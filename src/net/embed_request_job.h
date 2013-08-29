@@ -33,7 +33,7 @@ namespace nw {
                        std::string file);
     
     static EmbedRequestJob* Factory(URLRequest* request, NetworkDelegate* network_delegate);
-    static bool EmbedURLToFilePath(const GURL& url, base::FilePath* path);
+	static std::string EmbedURLToFilePath(const GURL& url);
     // net::URLRequestJob methods.
     virtual void Start() OVERRIDE;
     virtual void Kill() OVERRIDE;

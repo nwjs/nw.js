@@ -26,6 +26,7 @@
 #include "base/file_util.h"
 #include "base/files/scoped_temp_dir.h"
 #include "base/json/json_file_value_serializer.h"
+#include "base/json/json_string_value_serializer.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_tokenizer.h"
 #include "base/string_util.h"
@@ -34,6 +35,7 @@
 #include "third_party/zlib/google/zip.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/public/common/content_switches.h"
+#include "content/nw/src/net/util/embed_utils.h"
 #include "googleurl/src/gurl.h"
 #include "grit/nw_resources.h"
 #include "media/base/media_switches.h"
@@ -50,7 +52,7 @@ bool IsSwitch(const CommandLine::StringType& string,
               CommandLine::StringType* switch_value);
 
 namespace nw {
-
+	using namespace std;
 // Separator for string of |chromium_args| from |manifest|.
 const char kChromiumArgsSeparator[] = " ";
 
@@ -246,22 +248,36 @@ bool Package::InitFromPath() {
   if (!ExtractPath())
     return false;
 
-  // path_/package.json
-  FilePath manifest_path = path_.AppendASCII("package.json");
-  manifest_path = MakeAbsoluteFilePath(manifest_path);
-  if (!file_util::PathExists(manifest_path)) {
-    if (!self_extract())
-      ReportError("Invalid package",
-                  "There is no 'package.json' in the package, please make "
-                  "sure the 'package.json' is in the root of the package.");
-    return false;
-  }
+	FilePath manifest_path;
+	std::string error;
+	Value *root;
+	embed_util::FileMetaInfo pe;
 
-  // Parse file.
-  std::string error;
-  JSONFileValueSerializer serializer(manifest_path);
-  scoped_ptr<Value> root(serializer.Deserialize(NULL, &error));
-  if (!root.get()) {
+	if(embed_util::Utility::GetFileInfo("package.json", &pe)
+	   && embed_util::Utility::GetFileData(&pe)) {
+		// Path is embedded.
+		std::string error;
+		std::string json((char *)pe.data,pe.data_size);
+		
+		JSONStringValueSerializer serializer(&json);
+		root = serializer.Deserialize(NULL, &error);
+	} else {
+		// path_/package.json
+		manifest_path = path_.AppendASCII("package.json");
+		manifest_path = MakeAbsoluteFilePath(manifest_path);
+		if (!file_util::PathExists(manifest_path)) {
+			if (!self_extract())
+				ReportError("Invalid package",
+							"There is no 'package.json' in the package, please make "
+							"sure the 'package.json' is in the root of the package.");
+			return false;
+		}
+		// Parse file.
+		JSONFileValueSerializer serializer(manifest_path);
+		root = serializer.Deserialize(NULL, &error);
+	}
+
+  if (root == NULL) {
     ReportError("Unable to parse package.json",
                 error.empty() ?
                     "Failed to read the manifest file: " +
@@ -275,7 +291,7 @@ bool Package::InitFromPath() {
   }
 
   // Save result in global
-  root_.reset(static_cast<DictionaryValue*>(root.release()));
+  root_.reset(static_cast<DictionaryValue*>(root));
 
   // Check fields
   const char* required_fields[] = {
