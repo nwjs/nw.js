@@ -23,9 +23,9 @@
 #include "base/bind.h"
 #include "base/command_line.h"
 #include "base/message_loop.h"
-#include "base/string_number_conversions.h"
+#include "base/strings/string_number_conversions.h"
+#include "base/strings/utf_string_conversions.h"
 #include "base/threading/thread_restrictions.h"
-#include "base/utf_string_conversions.h"
 #include "base/values.h"
 #include "chrome/common/chrome_switches.h"
 #include "content/nw/src/api/app/app.h"
@@ -51,6 +51,8 @@
 #if defined(TOOLKIT_GTK)
 #include "content/nw/src/browser/printing/print_dialog_gtk.h"
 #endif
+
+using base::MessageLoop;
 
 namespace {
 
@@ -216,16 +218,27 @@ bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(
       !single_instance)
     return false;
 
-  CommandLine::StringVector args = command_line.GetArgs();
-
-  // Send open event one by one.
-  for (size_t i = 0; i < args.size(); ++i) {
 #if defined(OS_WIN)
-    api::App::EmitOpenEvent(UTF16ToUTF8(args[i]));
+  std::string cmd = UTF16ToUTF8(command_line.GetCommandLineString());
 #else
-    api::App::EmitOpenEvent(args[i]);
+  std::string cmd = command_line.GetCommandLineString();
 #endif
+  static const char* const kSwitchNames[] = {
+    switches::kNoSandbox,
+    switches::kProcessPerTab,
+    switches::kEnableExperimentalWebKitFeatures,
+    switches::kEnableCssShaders,
+    switches::kAllowFileAccessFromFiles,
+  };
+  for (size_t i = 0; i < arraysize(kSwitchNames); ++i) {
+    ReplaceSubstringsAfterOffset(&cmd, 0, std::string(" --") + kSwitchNames[i], "");
   }
+
+#if 0
+  api::App::EmitOpenEvent(UTF16ToUTF8(cmd));
+#else
+  api::App::EmitOpenEvent(cmd);
+#endif
 
   return true;
 }

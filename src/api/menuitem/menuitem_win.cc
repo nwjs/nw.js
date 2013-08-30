@@ -21,7 +21,7 @@
 #include "content/nw/src/api/menuitem/menuitem.h"
 
 #include "base/files/file_path.h"
-#include "base/utf_string_conversions.h"
+#include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"

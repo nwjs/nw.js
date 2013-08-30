@@ -56,6 +56,7 @@ exports.Window = {
 
     // Create new shell and get it's routing id.
     var routing_id = nw.createShell(url, options);
-    return new global.Window(routing_id);
+
+    return new global.Window(routing_id, options['new-instance']);
   }
 };

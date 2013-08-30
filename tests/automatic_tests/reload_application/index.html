@@ -78,7 +78,7 @@
         client.write('open');
         client.on('data', function(data){
           if (data == 'quit'){
-            if (type == 3) gui.App.quit();
+            if (type == 3) setTimeout(gui.App.quit, 1000);
             if (type == 2) gui.Window.get().close();
           }
           if (data == 'reload'){

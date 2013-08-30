@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Test Case for 'App.clearCache'</title>
+  </head>
+  <body onload='fun()'>
+    <p id="wait" style="font-size:1.5em">Please wait to be closed.</p>
+    <img src='http://127.0.0.1:8123/img.jpg'/>
+  </body>
+</html>
+<script>
+  function fun() {
+    var gui = require('nw.gui');
+
+    if (self.name == '')
+       self.name = 0; //initial
+    else
+       self.name++;//1:304,2:200;
+    
+    if (self.name == 2)
+       gui.App.clearCache();
+    else if (self.name == 3) {
+	var client = require('../../nw_test_app').createClient({
+	    argv: gui.App.argv,
+	    data: {}
+	});
+    }
+    location.reload();
+  }
+</script>
+

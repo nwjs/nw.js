@@ -73,10 +73,19 @@ function copyExecFiles(done) {
 
 }
 
+<<<<<<< HEAD:tests/automatic_tests/start_app/script.js
 exports.copySourceFiles = function() {
   fs.createReadStream(global.tests_dir + '/start_app/index.html').pipe(
       fs.createWriteStream('tmp-nw/index.html'));
   fs.createReadStream(global.tests_dir + '/start_app/package.json').pipe(
+=======
+exports.copySourceFiles = function(folder) {
+  if (folder == undefined)
+	folder = 'start_app';
+  fs.createReadStream(global.tests_dir + '/' + folder + '/index.html').pipe(
+      fs.createWriteStream('tmp-nw/index.html'));
+  fs.createReadStream(global.tests_dir + '/' + folder + '/package.json').pipe(
+>>>>>>> upstream/master:tests/automatic_tests/start_app/script.js
       fs.createWriteStream('tmp-nw/package.json'));
 
 }

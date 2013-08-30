@@ -77,7 +77,6 @@ class ShellBrowserContext : public BrowserContext {
   bool off_the_record_;
   bool ignore_certificate_errors_;
   nw::Package* package_;
-  base::ScopedTempDir testing_path_;
   FilePath path_;
   scoped_ptr<ShellResourceContext> resource_context_;
   scoped_refptr<ShellDownloadManagerDelegate> download_manager_delegate_;

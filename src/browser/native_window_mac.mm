@@ -34,6 +34,7 @@
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/native_web_keyboard_event.h"
+#include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
 #include "extensions/common/draggable_region.h"
@@ -71,14 +72,14 @@ enum {
 
 @interface NativeWindowDelegate : NSObject<NSWindowDelegate> {
  @private
-  content::Shell* shell_;
+  base::WeakPtr<content::Shell> shell_;
 }
-- (id)initWithShell:(content::Shell*)shell;
+- (id)initWithShell:(const base::WeakPtr<content::Shell>&)shell;
 @end
 
 @implementation NativeWindowDelegate
 
-- (id)initWithShell:(content::Shell*)shell {
+- (id)initWithShell:(const base::WeakPtr<content::Shell>&)shell {
   if ((self = [super init])) {
     shell_ = shell;
   }
@@ -88,7 +89,7 @@ enum {
 - (BOOL)windowShouldClose:(id)window {
   // If this window is bound to a js object and is not forced to close,
   // then send event to renderer to let the user decide.
-  if (!shell_->ShouldCloseWindow())
+  if (shell_ && !shell_->ShouldCloseWindow())
     return NO;
 
   // Clean ourselves up and do the work after clearing the stack of anything
@@ -101,48 +102,60 @@ enum {
 }
 
 - (void)windowWillEnterFullScreen:(NSNotification*)notification {
-  static_cast<nw::NativeWindowCocoa*>(shell_->window())->
-      set_is_fullscreen(true);
-  shell_->SendEvent("enter-fullscreen");
+  if (shell_) {
+    static_cast<nw::NativeWindowCocoa*>(shell_->window())->
+        set_is_fullscreen(true);
+    shell_->SendEvent("enter-fullscreen");
+  }
 }
 
 - (void)windowWillExitFullScreen:(NSNotification*)notification {
-  static_cast<nw::NativeWindowCocoa*>(shell_->window())->
-      set_is_fullscreen(false);
-  shell_->SendEvent("leave-fullscreen");
+  if (shell_) {
+    static_cast<nw::NativeWindowCocoa*>(shell_->window())->
+        set_is_fullscreen(false);
+    shell_->SendEvent("leave-fullscreen");
+  }
 }
 
 - (void)windowDidBecomeKey:(NSNotification *)notification {
-  shell_->web_contents()->GetView()->Focus();
-  shell_->SendEvent("focus");
+  if (shell_) {
+    shell_->web_contents()->GetView()->Focus();
+    shell_->SendEvent("focus");
+  }
 }
 
 - (void)windowDidResignKey:(NSNotification *)notification {
-  shell_->SendEvent("blur");
+  if (shell_)
+    shell_->SendEvent("blur");
 }
 
 - (void)windowDidMiniaturize:(NSNotification *)notification{
-  shell_->SendEvent("minimize");
+  if (shell_)
+    shell_->SendEvent("minimize");
 }
 
 - (void)windowDidDeminiaturize:(NSNotification *)notification {
-  shell_->SendEvent("restore");
+  if (shell_)
+    shell_->SendEvent("restore");
 }
 
 - (BOOL)windowShouldZoom:(NSWindow*)window toFrame:(NSRect)newFrame {
   // Cocoa doen't have concept of maximize/unmaximize, so wee need to emulate
   // them by calculating size change when zooming.
-  if (newFrame.size.width < [window frame].size.width ||
-      newFrame.size.height < [window frame].size.height)
-    shell_->SendEvent("unmaximize");
-  else
-    shell_->SendEvent("maximize");
+  if (shell_) {
+    if (newFrame.size.width < [window frame].size.width ||
+        newFrame.size.height < [window frame].size.height)
+      shell_->SendEvent("unmaximize");
+    else
+      shell_->SendEvent("maximize");
+  }
 
   return YES;
 }
 
 - (void)cleanup:(id)window {
-  delete shell_;
+  if (shell_)
+    delete shell_.get();
 
   [self release];
 }
@@ -195,10 +208,14 @@ enum {
 
 @interface ShellNSWindow : ChromeEventProcessingWindow {
  @private
+<<<<<<< HEAD
   content::Shell* shell_;
   bool is_transparent_;
+=======
+  base::WeakPtr<content::Shell> shell_;
+>>>>>>> upstream/master
 }
-- (void)setShell:(content::Shell*)shell;
+- (void)setShell:(const base::WeakPtr<content::Shell>&)shell;
 - (void)showDevTools:(id)sender;
 - (void)closeAllWindows:(id)sender;
 - (void)setTransparent;
@@ -207,12 +224,13 @@ enum {
 
 @implementation ShellNSWindow
 
-- (void)setShell:(content::Shell*)shell {
+- (void)setShell:(const base::WeakPtr<content::Shell>&)shell {
   shell_ = shell;
 }
 
 - (void)showDevTools:(id)sender {
-  shell_->ShowDevTools();
+  if (shell_)
+    shell_->ShowDevTools();
 }
 
 - (void)closeAllWindows:(id)sender {
@@ -281,7 +299,7 @@ enum {
 namespace nw {
 
 NativeWindowCocoa::NativeWindowCocoa(
-    content::Shell* shell,
+    const base::WeakPtr<content::Shell>& shell,
     base::DictionaryValue* manifest)
     : NativeWindow(shell, manifest),
       is_fullscreen_(false),
@@ -408,7 +426,20 @@ void NativeWindowCocoa::Focus(bool focus) {
 }
 
 void NativeWindowCocoa::Show() {
-  [window() makeKeyAndOrderFront:nil];
+  NSApplication *myApp = [NSApplication sharedApplication];
+  [myApp activateIgnoringOtherApps:YES];
+  content::RenderWidgetHostView* rwhv =
+      shell_->web_contents()->GetRenderWidgetHostView();
+
+  // orderFrontRegardless causes us to become the first responder. The usual
+  // Chrome assumption is that becoming the first responder = you have focus
+  // so we use this trick to refuse to become first responder during orderFrontRegardless
+
+  if (rwhv)
+    rwhv->SetTakesFocusOnlyOnMouseDown(true);
+  [window() orderFrontRegardless];
+  if (rwhv)
+    rwhv->SetTakesFocusOnlyOnMouseDown(false);
 }
 
 void NativeWindowCocoa::Hide() {
@@ -867,6 +898,7 @@ void NativeWindowCocoa::InstallDraggableRegionViews() {
   }
 }
 
+<<<<<<< HEAD
 gfx::Point NativeWindowCocoa::GetMousePosition() {
   CGEventRef event = CGEventCreate(NULL);
   CGPoint cursor = CGEventGetLocation(event);
@@ -883,6 +915,9 @@ void NativeWindowCocoa::EndOffclientMouseMove() {
 }
 
 NativeWindow* CreateNativeWindowCocoa(content::Shell* shell,
+=======
+NativeWindow* CreateNativeWindowCocoa(const base::WeakPtr<content::Shell>& shell,
+>>>>>>> upstream/master
                                            base::DictionaryValue* manifest) {
   return new NativeWindowCocoa(shell, manifest);
 }

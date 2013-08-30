@@ -22,7 +22,7 @@
 #define CONTENT_NW_SRC_BROWSER_SHELL_LOGIN_DIALOG_H_
 
 #include "base/compiler_specific.h"
-#include "base/string16.h"
+#include "base/strings/string16.h"
 #include "content/public/browser/resource_dispatcher_host_login_delegate.h"
 
 #if defined(TOOLKIT_GTK)

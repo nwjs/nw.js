@@ -26,21 +26,31 @@
 #include "base/message_loop.h"
 #include "base/values.h"
 #include "content/nw/src/api/api_messages.h"
+<<<<<<< HEAD
+=======
+#include "content/nw/src/browser/native_window.h"
+>>>>>>> upstream/master
 #include "content/nw/src/browser/net_disk_cache_remover.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
+#include "content/nw/src/shell_browser_context.h"
 #include "content/common/view_messages.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/render_process_host.h"
+
+using base::MessageLoop;
+using content::Shell;
+using content::ShellBrowserContext;
+using content::RenderProcessHost;
 
 namespace api {
 
 namespace {
 
 // Get render process host.
-content::RenderProcessHost* GetRenderProcessHost() {
-  content::RenderProcessHost* render_process_host = NULL;
-  std::vector<content::Shell*> windows = content::Shell::windows();
+RenderProcessHost* GetRenderProcessHost() {
+  RenderProcessHost* render_process_host = NULL;
+  std::vector<Shell*> windows = Shell::windows();
   for (size_t i = 0; i < windows.size(); ++i) {
     if (!windows[i]->is_devtools()) {
       render_process_host = windows[i]->web_contents()->GetRenderProcessHost();
@@ -51,13 +61,24 @@ content::RenderProcessHost* GetRenderProcessHost() {
   return render_process_host;
 }
 
+void GetRenderProcessHosts(std::set<RenderProcessHost*>& rphs) {
+  RenderProcessHost* render_process_host = NULL;
+  std::vector<Shell*> windows = Shell::windows();
+  for (size_t i = 0; i < windows.size(); ++i) {
+    if (!windows[i]->is_devtools()) {
+      render_process_host = windows[i]->web_contents()->GetRenderProcessHost();
+      rphs.insert(render_process_host);
+    }
+  }
+}
+
 }  // namespace
-  
+
 // static
 void App::Call(const std::string& method,
                const base::ListValue& arguments) {
   if (method == "Quit") {
-    Quit(GetRenderProcessHost());
+    Quit();
     return;
   } else if (method == "CloseAllWindows") {
     CloseAllWindows();
@@ -68,11 +89,16 @@ void App::Call(const std::string& method,
 
 
 // static
-void App::Call(content::Shell* shell,
+void App::Call(Shell* shell,
                const std::string& method,
                const base::ListValue& arguments,
                base::ListValue* result) {
-  if (method == "GetArgv") {
+  if (method == "GetDataPath") {
+    ShellBrowserContext* browser_context =
+      static_cast<ShellBrowserContext*>(shell->web_contents()->GetBrowserContext());
+    result->AppendString(browser_context->GetPath().value());
+    return;
+  }else if (method == "GetArgv") {
     nw::Package* package = shell->GetPackage();
     CommandLine* command_line = CommandLine::ForCurrentProcess();
     CommandLine::StringVector args = command_line->GetArgs();
@@ -90,6 +116,7 @@ void App::Call(content::Shell* shell,
     }
 
     return;
+<<<<<<< HEAD
   } else if (method == "Zip") { 
     std::string zipdir;
     std::string zipfile;
@@ -106,43 +133,86 @@ void App::Call(content::Shell* shell,
     return;
   } else if (method == "ClearCache") {
     ClearCache(GetRenderProcessHost());
+=======
+  } else if (method == "ClearCache") {
+    ClearCache(GetRenderProcessHost());
+  } else if (method == "GetPackage") {
+    result->AppendString(shell->GetPackage()->package_string());
+    return;
+>>>>>>> upstream/master
   }
 
   NOTREACHED() << "Calling unknown sync method " << method << " of App";
 }
 
 // static
-void App::CloseAllWindows() {
-  std::vector<content::Shell*> windows = content::Shell::windows();
+void App::CloseAllWindows(bool force) {
+  std::vector<Shell*> windows = Shell::windows();
 
   for (size_t i = 0; i < windows.size(); ++i) {
     // Only send close event to browser windows, since devtools windows will
     // be automatically closed.
     if (!windows[i]->is_devtools()) {
       // If there is no js object bound to the window, then just close.
-      if (windows[i]->ShouldCloseWindow())
+      if (force || windows[i]->ShouldCloseWindow())
+        // we used to delete the Shell object here
+        // but it should be deleted on native window destruction
+        windows[i]->window()->Close();
+    }
+  }
+  if (force) {
+    // in a special force close case, since we're going to exit the
+    // main loop soon, we should delete the shell object asap so the
+    // render widget can be closed on the renderer side
+    windows = Shell::windows();
+    for (size_t i = 0; i < windows.size(); ++i) {
+      if (!windows[i]->is_devtools())
         delete windows[i];
     }
   }
 }
 
 // static
-void App::Quit(content::RenderProcessHost* render_process_host) {
+void App::Quit(RenderProcessHost* render_process_host) {
   // Send the quit message.
   int no_use;
-  render_process_host->Send(new ViewMsg_WillQuit(&no_use));
+  if (render_process_host) {
+    render_process_host->Send(new ViewMsg_WillQuit(&no_use));
+  }else{
+    std::set<RenderProcessHost*> rphs;
+    std::set<RenderProcessHost*>::iterator it;
 
+    GetRenderProcessHosts(rphs);
+    for (it = rphs.begin(); it != rphs.end(); it++) {
+      RenderProcessHost* rph = *it;
+      DCHECK(rph != NULL);
+
+      rph->Send(new ViewMsg_WillQuit(&no_use));
+    }
+    CloseAllWindows(true);
+  }
   // Then quit.
   MessageLoop::current()->PostTask(FROM_HERE, MessageLoop::QuitClosure());
 }
 
 // static
 void App::EmitOpenEvent(const std::string& path) {
-  // Get the app's renderer process.
-  content::RenderProcessHost* render_process_host = GetRenderProcessHost();
-  DCHECK(render_process_host != NULL);
+  std::set<RenderProcessHost*> rphs;
+  std::set<RenderProcessHost*>::iterator it;
 
-  render_process_host->Send(new ShellViewMsg_Open(path));
+  GetRenderProcessHosts(rphs);
+  for (it = rphs.begin(); it != rphs.end(); it++) {
+    RenderProcessHost* rph = *it;
+    DCHECK(rph != NULL);
+
+    rph->Send(new ShellViewMsg_Open(path));
+  }
+}
+
+void App::ClearCache(content::RenderProcessHost* render_process_host) {
+  render_process_host->Send(new ShellViewMsg_ClearCache());
+  nw::RemoveHttpDiskCache(render_process_host->GetBrowserContext(),
+                          render_process_host->GetID());
 }
 
 void App::ClearCache(content::RenderProcessHost* render_process_host) {

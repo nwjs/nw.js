@@ -14,9 +14,9 @@
 #include "content/public/renderer/render_view_observer.h"
 #include "content/public/renderer/render_view_observer_tracker.h"
 #include "printing/metafile_impl.h"
-#include "third_party/WebKit/Source/Platform/chromium/public/WebCanvas.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebNode.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebPrintParams.h"
+#include "third_party/WebKit/public/platform/WebCanvas.h"
+#include "third_party/WebKit/public/web/WebNode.h"
+#include "third_party/WebKit/public/web/WebPrintParams.h"
 #include "ui/gfx/size.h"
 
 struct PrintMsg_Print_Params;

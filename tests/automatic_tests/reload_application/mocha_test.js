@@ -43,7 +43,11 @@ describe('AppTest', function(){
           app.kill();
           done("Timeout, Can not close window.");
         }
+<<<<<<< HEAD:tests/automatic_tests/reload_application/mocha_test.js
       }, 10000);
+=======
+      }, 30000);
+>>>>>>> upstream/master:tests/automatic_tests/reload_application/mocha_test.js
 
     })
 
@@ -66,9 +70,13 @@ describe('AppTest', function(){
           app.kill();
           done("Timeout, Can not quit App.");
         }
-      }, 10000);
+      }, 30000);
 
 
+<<<<<<< HEAD:tests/automatic_tests/reload_application/mocha_test.js
+
+=======
+>>>>>>> upstream/master:tests/automatic_tests/reload_application/mocha_test.js
     })
 
     it('close window after reload dev', function(done){
@@ -114,7 +122,11 @@ describe('AppTest', function(){
           app.kill();
           done("Timeout, Can not close window.");
         }
+<<<<<<< HEAD:tests/automatic_tests/reload_application/mocha_test.js
       }, 10000);
+=======
+      }, 30000);
+>>>>>>> upstream/master:tests/automatic_tests/reload_application/mocha_test.js
 
 
     })
@@ -161,7 +173,11 @@ describe('AppTest', function(){
           app.kill();
           done("Timeout, Can not quit App.");
         }
+<<<<<<< HEAD:tests/automatic_tests/reload_application/mocha_test.js
       }, 10000);
+=======
+      }, 30000);
+>>>>>>> upstream/master:tests/automatic_tests/reload_application/mocha_test.js
 
 
     })

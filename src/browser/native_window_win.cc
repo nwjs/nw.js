@@ -20,7 +20,7 @@
 
 #include "content/nw/src/browser/native_window_win.h"
 
-#include "base/utf_string_conversions.h"
+#include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
 #include "base/win/windows_version.h"
 #include "base/win/wrapped_window_proc.h"
@@ -79,18 +79,21 @@ class NativeWindowClientView : public views::ClientView {
  public:
   NativeWindowClientView(views::Widget* widget,
                          views::View* contents_view,
-                         content::Shell* shell)
+                         const base::WeakPtr<content::Shell>& shell)
       : views::ClientView(widget, contents_view),
         shell_(shell) {
   }
   virtual ~NativeWindowClientView() {}
 
   virtual bool CanClose() OVERRIDE {
-    return shell_->ShouldCloseWindow();
+    if (shell_)
+      return shell_->ShouldCloseWindow();
+    else
+      return true;
   }
 
  private:
-  content::Shell* shell_;
+  base::WeakPtr<content::Shell> shell_;
 };
 
 class NativeWindowFrameView : public views::NonClientFrameView {
@@ -116,7 +119,7 @@ class NativeWindowFrameView : public views::NonClientFrameView {
   // views::View implementation.
   virtual gfx::Size GetPreferredSize() OVERRIDE;
   virtual void Layout() OVERRIDE;
-  virtual std::string GetClassName() const OVERRIDE;
+  virtual const char* GetClassName() const OVERRIDE;
   virtual void OnPaint(gfx::Canvas* canvas) OVERRIDE;
   virtual gfx::Size GetMinimumSize() OVERRIDE;
   virtual gfx::Size GetMaximumSize() OVERRIDE;
@@ -221,7 +224,7 @@ void NativeWindowFrameView::Layout() {
 void NativeWindowFrameView::OnPaint(gfx::Canvas* canvas) {
 }
 
-std::string NativeWindowFrameView::GetClassName() const {
+const char* NativeWindowFrameView::GetClassName() const {
   return kViewClassName;
 }
 
@@ -235,7 +238,7 @@ gfx::Size NativeWindowFrameView::GetMaximumSize() {
 
 }  // namespace
 
-NativeWindowWin::NativeWindowWin(content::Shell* shell,
+NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
                                  base::DictionaryValue* manifest)
     : NativeWindow(shell, manifest),
       web_view_(NULL),
@@ -243,6 +246,7 @@ NativeWindowWin::NativeWindowWin(content::Shell* shell,
       is_fullscreen_(false),
       is_transparent_(false),
       is_minimized_(false),
+      is_maximized_(false),
       is_focus_(false),
       is_blur_(false),
       menu_(NULL),
@@ -293,6 +297,7 @@ void NativeWindowWin::Focus(bool focus) {
 }
 
 void NativeWindowWin::Show() {
+<<<<<<< HEAD
   window_->Show();
 
   // We have to re-establish our composition by shaking the compositing surface
@@ -301,6 +306,12 @@ void NativeWindowWin::Show() {
     Maximize();
     Unmaximize();
   }
+=======
+  if (is_maximized_)
+    window_->native_widget_private()->ShowWithWindowState(ui::SHOW_STATE_MAXIMIZED);
+  else
+    window_->native_widget_private()->Show();
+>>>>>>> upstream/master
 }
 
 void NativeWindowWin::Hide() {
@@ -326,10 +337,12 @@ void NativeWindowWin::Restore() {
 void NativeWindowWin::SetFullscreen(bool fullscreen) {
   is_fullscreen_ = fullscreen;
   window_->SetFullscreen(fullscreen);
-  if (fullscreen)
-    shell()->SendEvent("enter-fullscreen");
-  else
-    shell()->SendEvent("leave-fullscreen");
+  if (shell()) {
+    if (fullscreen)
+      shell()->SendEvent("enter-fullscreen");
+    else
+      shell()->SendEvent("leave-fullscreen");
+  }
 }
 
 bool NativeWindowWin::IsFullscreen() {
@@ -419,6 +432,16 @@ void NativeWindowWin::SetPosition(const std::string& position) {
   if (position == "center") {
     gfx::Rect bounds = window_->GetWindowBoundsInScreen();
     window_->CenterWindow(gfx::Size(bounds.width(), bounds.height()));
+  } else if (position == "mouse") {
+    gfx::Rect bounds = window_->GetWindowBoundsInScreen();
+    POINT pt;
+    if (::GetCursorPos(&pt)) {
+      int x = pt.x - (bounds.width() >> 1);
+      int y = pt.y - (bounds.height() >> 1);
+      bounds.set_x(x > 0 ? x : 0);
+      bounds.set_y(y > 0 ? y : 0);
+      window_->SetBoundsConstrained(bounds);
+    }
   }
 }
 
@@ -504,7 +527,7 @@ views::View* NativeWindowWin::GetContentsView() {
 }
 
 views::ClientView* NativeWindowWin::CreateClientView(views::Widget* widget) {
-  return new NativeWindowClientView(widget, GetContentsView(), shell());
+  return new NativeWindowClientView(widget, GetContentsView(), shell_);
 }
 
 views::NonClientFrameView* NativeWindowWin::CreateNonClientFrameView(
@@ -538,7 +561,7 @@ string16 NativeWindowWin::GetWindowTitle() const {
 }
 
 void NativeWindowWin::DeleteDelegate() {
-  delete shell();
+  OnNativeWindowDestory();
 }
 
 bool NativeWindowWin::ShouldShowWindowTitle() const {
@@ -553,12 +576,12 @@ void NativeWindowWin::OnNativeFocusChange(gfx::NativeView focused_before,
     return;
 
   if (focused_now == this_window) {
-    if (!is_focus_)
+    if (!is_focus_ && shell())
       shell()->SendEvent("focus");
     is_focus_ = true;
     is_blur_ = false;
   } else if (focused_before == this_window) {
-    if (!is_blur_)
+    if (!is_blur_ && shell())
       shell()->SendEvent("blur");
     is_focus_ = false;
     is_blur_ = true;
@@ -639,8 +662,8 @@ void NativeWindowWin::Layout() {
 }
 
 void NativeWindowWin::ViewHierarchyChanged(
-    bool is_add, views::View *parent, views::View *child) {
-  if (is_add && child == this) {
+    const ViewHierarchyChangedDetails& details) {
+  if (details.is_add && details.child == this) {
     views::BoxLayout* layout = new views::BoxLayout(
         views::BoxLayout::kVertical, 0, 0, 0);
     SetLayoutManager(layout);
@@ -670,14 +693,20 @@ bool NativeWindowWin::ExecuteWindowsCommand(int command_id) {
 
   if ((command_id & sc_mask) == SC_MINIMIZE) {
     is_minimized_ = true;
-    shell()->SendEvent("minimize");
+    if (shell())
+      shell()->SendEvent("minimize");
   } else if ((command_id & sc_mask) == SC_RESTORE && is_minimized_) {
     is_minimized_ = false;
-    shell()->SendEvent("restore");
+    if (shell())
+      shell()->SendEvent("restore");
   } else if ((command_id & sc_mask) == SC_RESTORE && !is_minimized_) {
-    shell()->SendEvent("unmaximize");
+    is_maximized_ = false;
+    if (shell())
+      shell()->SendEvent("unmaximize");
   } else if ((command_id & sc_mask) == SC_MAXIMIZE) {
-    shell()->SendEvent("maximize");
+    is_maximized_ = true;
+    if (shell())
+      shell()->SendEvent("maximize");
   }
 
   return false;

@@ -26,7 +26,9 @@
 
 #include "base/basictypes.h"
 #include "base/memory/ref_counted.h"
+#include "base/memory/weak_ptr.h"
 #include "base/compiler_specific.h"
+#include "content/nw/src/nw_shell.h"
 #include "ui/gfx/image/image.h"
 #include "ui/gfx/native_widget_types.h"
 #include "ui/gfx/point.h"
@@ -62,7 +64,7 @@ class NativeWindow {
  public:
   virtual ~NativeWindow();
 
-  static NativeWindow* Create(content::Shell* shell,
+  static NativeWindow* Create(const base::WeakPtr<content::Shell>& shell,
                               base::DictionaryValue* manifest);
 
   void InitFromManifest(base::DictionaryValue* manifest);
@@ -117,18 +119,22 @@ class NativeWindow {
   virtual void HandleKeyboardEvent(
       const content::NativeWebKeyboardEvent& event) = 0;
 
-  content::Shell* shell() const { return shell_; }
+  content::Shell* shell() const { return shell_.get(); }
   content::WebContents* web_contents() const;
   bool has_frame() const { return has_frame_; }
   const gfx::Image& app_icon() const { return app_icon_; }
   void CapturePage(const std::string& image_format);
 
  protected:
-  explicit NativeWindow(content::Shell* shell,
+  void OnNativeWindowDestory() {
+    if (shell_)
+      delete shell_.get();
+  }
+  explicit NativeWindow(const base::WeakPtr<content::Shell>& shell,
                         base::DictionaryValue* manifest);
 
   // Weak reference to parent.
-  content::Shell* shell_;
+  base::WeakPtr<content::Shell> shell_;
 
   bool has_frame_;
 
@@ -136,6 +142,7 @@ class NativeWindow {
   gfx::Image app_icon_;
 
   scoped_refptr<CapturePageHelper> capture_page_helper_;
+  friend class content::Shell;
 
  private:
   void LoadAppIconFromPackage(base::DictionaryValue* manifest);

@@ -7,7 +7,7 @@
 
 #include "base/compiler_specific.h"
 #include "base/memory/scoped_ptr.h"
-#include "content/shell/shell_content_client.h"
+#include "content/nw/src/shell_content_client.h"
 #include "content/public/app/content_main_delegate.h"
 
 namespace content {

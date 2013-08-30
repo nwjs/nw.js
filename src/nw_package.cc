@@ -133,20 +133,26 @@ Package::Package()
   if (InitFromPath())
     return;
 
+  // Try to load from the folder where the exe resides.
+  // Note: self_extract_ is true here, otherwise a 'Invalid Package' error
+  // would be triggered.
+  path_ = GetSelfPath().DirName();
+#if defined(OS_MACOSX)
+  path_ = path_.DirName().DirName().DirName();
+#endif
+  if (InitFromPath())
+    return;
+
+  path_ = path_.AppendASCII("package.nw");
+  if (InitFromPath())
+    return;
+
   // Then see if we have arguments and extract it.
   CommandLine* command_line = CommandLine::ForCurrentProcess();
   const CommandLine::StringVector& args = command_line->GetArgs();
   if (args.size() > 0) {
     self_extract_ = false;
     path_ = FilePath(args[0]);
-  } else {
-    // Try to load from the folder where the exe resides.
-    // Note: self_extract_ is true here, otherwise a 'Invalid Package' error
-    // would be triggered.
-    path_ = GetSelfPath().DirName();
-#if defined(OS_MACOSX)
-    path_ = path_.DirName().DirName().DirName();
-#endif
   }
   if (InitFromPath())
     return;
@@ -201,7 +207,7 @@ bool Package::GetImage(const FilePath& icon_path, gfx::Image* image) {
 }
 
 GURL Package::GetStartupURL() {
-  std::string url; 
+  std::string url;
   // Specify URL in --url
   CommandLine* command_line = CommandLine::ForCurrentProcess();
   if (command_line->HasSwitch(switches::kUrl)) {
@@ -248,6 +254,7 @@ bool Package::InitFromPath() {
   if (!ExtractPath())
     return false;
 
+<<<<<<< HEAD
 	FilePath manifest_path;
 	std::string error;
 	Value *root;
@@ -278,6 +285,24 @@ bool Package::InitFromPath() {
 	}
 
   if (root == NULL) {
+=======
+  // path_/package.json
+  FilePath manifest_path = path_.AppendASCII("package.json");
+  manifest_path = MakeAbsoluteFilePath(manifest_path);
+  if (!file_util::PathExists(manifest_path)) {
+    if (!self_extract())
+      ReportError("Invalid package",
+                  "There is no 'package.json' in the package, please make "
+                  "sure the 'package.json' is in the root of the package.");
+    return false;
+  }
+
+  // Parse file.
+  std::string error;
+  JSONFileValueSerializer serializer(manifest_path);
+  scoped_ptr<Value> root(serializer.Deserialize(NULL, &error));
+  if (!root.get()) {
+>>>>>>> upstream/master
     ReportError("Unable to parse package.json",
                 error.empty() ?
                     "Failed to read the manifest file: " +
@@ -292,6 +317,13 @@ bool Package::InitFromPath() {
 
   // Save result in global
   root_.reset(static_cast<DictionaryValue*>(root));
+
+  // Save origin package info
+  // Since we will change some value in root_,
+  // We need to catch the origin value of package.json
+  package_string_ = "";
+  JSONStringValueSerializer stringSerializer(&package_string_);
+  stringSerializer.Serialize(*root_);
 
   // Check fields
   const char* required_fields[] = {
@@ -322,12 +354,15 @@ bool Package::InitFromPath() {
     }
   }
 
+<<<<<<< HEAD
   int dom_storage_quota_mb = 0;
   if (root_->GetInteger("dom_storage_quota", &dom_storage_quota_mb) &&
       dom_storage_quota_mb > 0) {
     dom_storage::DomStorageMap::SetQuotaOverride(dom_storage_quota_mb * 1024 * 1024);
   }
 
+=======
+>>>>>>> upstream/master
   // Read chromium command line args.
   ReadChromiumArgs();
 
@@ -384,24 +419,24 @@ bool Package::ExtractPath() {
 }
 
 bool Package::ExtractPackage(const FilePath& zip_file, FilePath* where) {
-  // Auto clean our temporary directory
-  static scoped_ptr<base::ScopedTempDir> scoped_temp_dir;
 
+  if (!scoped_temp_dir_.IsValid()) {
 #if defined(OS_WIN)
-  if (!file_util::CreateNewTempDirectory(L"nw", where)) {
+    if (!file_util::CreateNewTempDirectory(L"nw", where)) {
 #else
-  if (!file_util::CreateNewTempDirectory("nw", where)) {
+    if (!file_util::CreateNewTempDirectory("nw", where)) {
 #endif
-    ReportError("Cannot extract package",
-                "Unable to create temporary directory.");
-    return false;
-  }
-
-  scoped_temp_dir.reset(new base::ScopedTempDir());
-  if (!scoped_temp_dir->Set(*where)) {
-    ReportError("Cannot extract package",
-                "Unable to set temporary directory.");
-    return false;
+      ReportError("Cannot extract package",
+                  "Unable to create temporary directory.");
+      return false;
+    }
+    if (!scoped_temp_dir_.Set(*where)) {
+      ReportError("Cannot extract package",
+                  "Unable to set temporary directory.");
+      return false;
+    }
+  }else{
+    *where = scoped_temp_dir_.path();
   }
 
   return zip::Unzip(zip_file, *where);

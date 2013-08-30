@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Test Case for 'console.log'</title>
+  </head>
+  <body>
+    <p id="wait" style="font-size:1.5em">Please wait to be closed.</p>
+    <script>
+    <!-- string, number, boolean, array, object, undefined, null -->
+    var city = "New York";
+    var number = 18;
+    var bool = true;
+    var cars = new Array("Saab","Volvo","BMW");
+    var person = {
+    firstname : "John",
+    lastname : "Doe",
+    id : 5566
+    };
+    var country;
+    var street = null;
+    
+    console.log(city);
+    console.log(number);
+    console.log(bool);
+    console.log(!bool);
+    console.log(cars);
+    console.log(person);
+    console.log(country);
+    console.log(street);
+    
+    <!-- concatenate expressions -->
+    <!-- String substitution and formatting -->
+    console.log("Node count:", document.childNodes.length, "Done");
+    console.log("%s", "Sam");
+    console.log("%d", 100);
+    console.log("%i", 2);
+    console.log("%f", 12.23)
+    console.log(document.childNodes[0]);
+    console.log("%o", document.childNodes[0]);
+    console.log("%O", document.childNodes[0]);
+    console.log("%c Sam has 100 points and 2 pencils.He carrys 12.23 kg of water",  "color:orange;background: blue; font-size: 16pt");
+    
+    
+    <!-- all formats -->
+    console.log("%c%s has %d points and %i pencils.He carrys %f kg of water. %o %O", "color:orange;background: blue; font-size: 16pt", "Sam", 100, 2, 12.23, document.childNodes[0], document.childNodes[0]);
+    
+    var gui = require('nw.gui');
+    var win = gui.Window.get();
+    var results = new Array();
+
+    <!-- load devtools into iframe -->
+    win.showDevTools('', true);
+    win.on("devtools-opened", function(url) {
+	var iframe_devtools = document.createElement("iframe");
+	iframe_devtools.id = 'devtools';
+	iframe_devtools.src = url;
+	iframe_devtools.height = '1000';
+	iframe_devtools.width = '1000';
+	
+	function get_results() {
+	    var console_logs = devtools.document.getElementsByClassName('console-log-level');
+	    
+	    for (var i = 0; i < console_logs.length; i++)
+		results.push(console_logs[i].childNodes[0].childNodes[0].innerHTML);
+	    
+	    var client = require('../../nw_test_app').createClient({
+		argv: gui.App.argv,
+		data: results
+	    });
+	}
+	
+	function get_console_logs() {
+            var console_msgs = devtools.document.getElementsByClassName('console');
+	    
+		<!-- make sure it is complete -->
+            if(console_msgs == undefined  || console_msgs[0] == undefined || console_msgs[0].click == undefined)
+		setTimeout(get_console_logs, 3000);
+	    else {
+		console_msgs[0].click();
+		
+		if (process.platform != 'darwin')
+        	    win.showDevTools(); <!-- why? -->
+	      
+		<!-- make sure it is complete -->
+	        setTimeout(get_results, 3000);
+	    }
+	}
+
+	iframe_devtools.onload = get_console_logs;
+	document.getElementById("wait").appendChild(iframe_devtools);
+    });
+    </script>
+  </body>
+</html>

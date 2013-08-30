@@ -16,6 +16,7 @@ extern const char kUrl[];
 extern const char kWorkingDirectory[];
 extern const char kNodeMain[];
 extern const char kSnapshot[];
+extern const char kDomStorageQuota[];
 
 // Manifest settings
 extern const char kmMain[];

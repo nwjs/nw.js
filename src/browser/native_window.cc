@@ -20,6 +20,7 @@
 
 #include "content/nw/src/browser/native_window.h"
 
+#include "base/memory/weak_ptr.h"
 #include "base/values.h"
 #include "content/nw/src/browser/capture_page_helper.h"
 #include "content/nw/src/common/shell_switches.h"
@@ -37,10 +38,11 @@
 #include "content/nw/src/browser/native_window_win.h"
 #endif
 
+
 namespace nw {
 
 // static
-NativeWindow* NativeWindow::Create(content::Shell* shell,
+NativeWindow* NativeWindow::Create(const base::WeakPtr<content::Shell>& shell,
                                    base::DictionaryValue* manifest) {
   // Set default width/height.
   if (!manifest->HasKey(switches::kmWidth))
@@ -49,7 +51,7 @@ NativeWindow* NativeWindow::Create(content::Shell* shell,
     manifest->SetInteger(switches::kmHeight, 450);
 
   // Create window.
-  NativeWindow* window = 
+  NativeWindow* window =
 #if defined(TOOLKIT_GTK)
       new NativeWindowGtk(shell, manifest);
 #elif defined(OS_MACOSX)
@@ -64,7 +66,7 @@ NativeWindow* NativeWindow::Create(content::Shell* shell,
   return window;
 }
 
-NativeWindow::NativeWindow(content::Shell* shell,
+NativeWindow::NativeWindow(const base::WeakPtr<content::Shell>& shell,
                            base::DictionaryValue* manifest)
     : shell_(shell),
       has_frame_(true),

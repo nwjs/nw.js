@@ -48,7 +48,7 @@ const double kGtkCursorBlinkCycleFactor = 2000.0;
 
 }  // namespace 
   
-NativeWindowGtk::NativeWindowGtk(content::Shell* shell,
+NativeWindowGtk::NativeWindowGtk(const base::WeakPtr<content::Shell>& shell,
                                  base::DictionaryValue* manifest)
     : NativeWindow(shell, manifest),
       content_thinks_its_fullscreen_(false) {
@@ -130,7 +130,7 @@ NativeWindowGtk::~NativeWindowGtk() {
 }
 
 void NativeWindowGtk::Close() {
-  if (!shell_->ShouldCloseWindow())
+  if (shell_ && !shell_->ShouldCloseWindow())
     return;
 
   gtk_widget_destroy(GTK_WIDGET(window_));
@@ -444,19 +444,23 @@ gfx::Rect NativeWindowGtk::GetBounds() {
 }
 
 void NativeWindowGtk::OnBackButtonClicked(GtkWidget* widget) {
-  shell()->GoBackOrForward(-1);
+  if (shell())
+    shell()->GoBackOrForward(-1);
 }
 
 void NativeWindowGtk::OnForwardButtonClicked(GtkWidget* widget) {
-  shell()->GoBackOrForward(1);
+  if (shell())
+    shell()->GoBackOrForward(1);
 }
 
 void NativeWindowGtk::OnRefreshStopButtonClicked(GtkWidget* widget) {
-  shell()->ReloadOrStop();
+  if (shell())
+    shell()->ReloadOrStop();
 }
 
 void NativeWindowGtk::OnDevReloadButtonClicked(GtkWidget* widget) {
-  shell()->Reload(content::Shell::RELOAD_DEV);
+  if (shell())
+    shell()->Reload(content::Shell::RELOAD_DEV);
 }
 
 void NativeWindowGtk::OnURLEntryActivate(GtkWidget* entry) {
@@ -464,16 +468,18 @@ void NativeWindowGtk::OnURLEntryActivate(GtkWidget* entry) {
   GURL url(str);
   if (!url.has_scheme())
     url = GURL(std::string("http://") + std::string(str));
-  shell()->LoadURL(GURL(url));
+  if (shell())
+    shell()->LoadURL(GURL(url));
 }
 
 void NativeWindowGtk::OnDevtoolsButtonClicked(GtkWidget* entry) {
-  shell()->ShowDevTools();
+  if (shell())
+    shell()->ShowDevTools();
 }
 
 // Callback for when the main window is destroyed.
 gboolean NativeWindowGtk::OnWindowDestroyed(GtkWidget* window) {
-  delete shell();
+  OnNativeWindowDestory();
   return FALSE;
 }
 
@@ -481,13 +487,15 @@ gboolean NativeWindowGtk::OnWindowDestroyed(GtkWidget* window) {
 gboolean NativeWindowGtk::OnFocusIn(GtkWidget* window, GdkEventFocus*) {
   gtk_widget_grab_focus(web_contents()->GetView()->GetContentNativeView());
 
-  shell()->SendEvent("focus");
+  if (shell())
+    shell()->SendEvent("focus");
   return FALSE;
 }
 
 // Window lost focus.
 gboolean NativeWindowGtk::OnFocusOut(GtkWidget* window, GdkEventFocus*) {
-  shell()->SendEvent("blur");
+  if (shell())
+    shell()->SendEvent("blur");
   return FALSE;
 }
 
@@ -496,22 +504,28 @@ gboolean NativeWindowGtk::OnWindowState(GtkWidget* window,
                                         GdkEventWindowState* event) {
   switch (event->changed_mask) {
     case GDK_WINDOW_STATE_ICONIFIED:
-      if (event->new_window_state & GDK_WINDOW_STATE_ICONIFIED)
-        shell()->SendEvent("minimize");
-      else
-        shell()->SendEvent("restore");
+      if (shell()) {
+        if (event->new_window_state & GDK_WINDOW_STATE_ICONIFIED)
+          shell()->SendEvent("minimize");
+        else
+          shell()->SendEvent("restore");
+      }
       break;
     case GDK_WINDOW_STATE_MAXIMIZED:
-      if (event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED)
-        shell()->SendEvent("maximize");
-      else
-        shell()->SendEvent("unmaximize");
+      if (shell()) {
+        if (event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED)
+          shell()->SendEvent("maximize");
+        else
+          shell()->SendEvent("unmaximize");
+      }
       break;
     case GDK_WINDOW_STATE_FULLSCREEN:
-      if (event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN)
-        shell()->SendEvent("enter-fullscreen");
-      else
-        shell()->SendEvent("leave-fullscreen");
+      if (shell()) {
+        if (event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN)
+          shell()->SendEvent("enter-fullscreen");
+        else
+          shell()->SendEvent("leave-fullscreen");
+      }
 
       if (content_thinks_its_fullscreen_ &&
           !(event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN)) {
@@ -530,7 +544,7 @@ gboolean NativeWindowGtk::OnWindowState(GtkWidget* window,
 // Window will be closed.
 gboolean NativeWindowGtk::OnWindowDeleteEvent(GtkWidget* widget,
                                               GdkEvent* event) {
-  if (!shell()->ShouldCloseWindow())
+  if (shell() && !shell()->ShouldCloseWindow())
     return TRUE;
 
   return FALSE;

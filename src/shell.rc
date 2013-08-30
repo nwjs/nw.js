@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
@@ -157,3 +158,154 @@ IDR_MAINFRAME           ICON                    "resources\\nw.ico"
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
 
+=======
+//Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE 9, 1
+#pragma code_page(1252)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+1 TEXTINCLUDE  
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE  
+BEGIN
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE  
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ALERT DIALOGEX 0, 0, 241, 76
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Alert"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,184,55,50,14
+    LTEXT           "",IDC_DIALOGTEXT,16,17,210,30, SS_NOPREFIX
+END
+
+IDD_CONFIRM DIALOGEX 0, 0, 241, 76
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Confirm"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "Cancel",IDCANCEL,184,55,50,14
+    DEFPUSHBUTTON   "OK",IDOK,131,55,50,14
+    LTEXT           "",IDC_DIALOGTEXT,16,17,210,30, SS_NOPREFIX
+END
+
+IDD_PROMPT DIALOGEX 0, 0, 241, 76
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Prompt"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,131,55,50,14
+    LTEXT           "",IDC_DIALOGTEXT,16,17,210,18, SS_NOPREFIX
+    PUSHBUTTON      "Cancel",IDCANCEL,184,55,50,14
+    EDITTEXT        IDC_PROMPTEDIT,15,33,210,14,ES_AUTOHSCROLL
+END
+
+IDD_LOGIN DIALOGEX 0, 0, 241, 117
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Authentication Required"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "", IDC_DIALOG_MESSAGETEXT, 12,7,215,25
+    LTEXT           "User Name: ",IDC_DIALOG_USERNAMETEXT,30,42,50,14
+    LTEXT           "Password: ",IDC_DIALOG_PASSWORDTEXT,30,69,50,14
+    EDITTEXT        IDC_USERNAMEEDIT,84,38,125,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_PASSWORDEDIT,84,65,125,14,ES_PASSWORD | ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "Log In",IDOK,131,88,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,184,88,50,14
+END
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ALERT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 234
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 69
+    END
+
+    IDD_CONFIRM, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 234
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 69
+    END
+
+    IDD_PROMPT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 234
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 69
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif
+/////////////////////////////////////////////////////////////////////////////
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+IDR_MAINFRAME           ICON                    "resources\\nw.ico"
+/////////////////////////////////////////////////////////////////////////////
+
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "nw.exe.manifest"
+>>>>>>> upstream/master

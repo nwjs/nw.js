@@ -23,9 +23,11 @@
 #include "base/command_line.h"
 #include "base/message_loop.h"
 #include "base/string_util.h"
-#include "base/utf_string_conversions.h"
+#include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
 #include "content/browser/child_process_security_policy_impl.h"
+#include "content/browser/renderer_host/render_view_host_impl.h"
+#include "content/browser/web_contents/web_contents_impl.h"
 #include "content/public/browser/devtools_agent_host.h"
 #include "content/public/browser/devtools_http_handler.h"
 #include "content/public/browser/devtools_manager.h"
@@ -61,6 +63,8 @@
 
 #include "content/nw/src/browser/printing/print_view_manager.h"
 
+using base::MessageLoop;
+
 namespace content {
 
 std::vector<Shell*> Shell::windows_;
@@ -83,6 +87,7 @@ Shell* Shell::Create(BrowserContext* browser_context,
   NavigationController::LoadURLParams params(url);
   params.transition_type = PageTransitionFromInt(PAGE_TRANSITION_TYPED);
   params.override_user_agent = NavigationController::UA_OVERRIDE_TRUE;
+  params.frame_name = std::string();
 
   web_contents->GetController().LoadURLWithParams(params);
 
@@ -100,6 +105,11 @@ Shell* Shell::Create(WebContents* source_contents,
     NavigationController::LoadURLParams params(target_url);
     params.transition_type = PageTransitionFromInt(PAGE_TRANSITION_TYPED);
     params.override_user_agent = NavigationController::UA_OVERRIDE_TRUE;
+<<<<<<< HEAD
+=======
+    params.frame_name = std::string();
+
+>>>>>>> upstream/master
     new_contents->GetController().LoadURLWithParams(params);
   }
   // Use the user agent value from the source WebContents.
@@ -114,20 +124,32 @@ Shell* Shell::Create(WebContents* source_contents,
 
 Shell* Shell::FromRenderViewHost(RenderViewHost* rvh) {
   for (size_t i = 0; i < windows_.size(); ++i) {
-    if (windows_[i]->web_contents() &&
-        windows_[i]->web_contents()->GetRenderViewHost() == rvh) {
+    WebContents* web_contents = windows_[i]->web_contents();
+    if (!web_contents)
+      continue;
+    if (web_contents->GetRenderViewHost() == rvh) {
       return windows_[i];
+    }else{
+      WebContentsImpl* impl = static_cast<WebContentsImpl*>(web_contents);
+      RenderViewHostManager* rvhm = impl->GetRenderManagerForTesting();
+      if (rvhm && static_cast<RenderViewHost*>(rvhm->pending_render_view_host()) == rvh)
+        return windows_[i];
     }
   }
   return NULL;
 }
 
 Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
+<<<<<<< HEAD
     : weak_ptr_factory_(this),
+=======
+    :
+>>>>>>> upstream/master
       is_devtools_(false),
       force_close_(false),
       id_(-1),
-      enable_nodejs_(true)
+      enable_nodejs_(true),
+      weak_ptr_factory_(this)
 {
   // Register shell.
   registrar_.Add(this, NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,
@@ -136,9 +158,8 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
                  NotificationService::AllBrowserContextsAndSources());
   windows_.push_back(this);
 
-  bool enable_nodejs = true;
-  if (manifest->GetBoolean(switches::kNodejs, &enable_nodejs))
-    enable_nodejs_ = enable_nodejs;
+  enable_nodejs_ = GetPackage()->GetUseNode();
+  VLOG(1) << "enable nodejs from manifest: " << enable_nodejs_;
 
   // Add web contents.
   web_contents_.reset(web_contents);
@@ -146,7 +167,7 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   web_contents_->SetDelegate(this);
 
   // Create window.
-  window_.reset(nw::NativeWindow::Create(this, manifest));
+  window_.reset(nw::NativeWindow::Create(weak_ptr_factory_.GetWeakPtr(), manifest));
 
 #if defined(ENABLE_PRINTING)
   printing::PrintViewManager::CreateForWebContents(web_contents);
@@ -323,9 +344,17 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
   }
 
   RenderViewHost* inspected_rvh = web_contents()->GetRenderViewHost();
+<<<<<<< HEAD
   std::string jscript = std::string("require('nw.gui').Window.get().__setDevToolsJail('")
     + (jail_id ? jail_id : "") + "');";
   inspected_rvh->ExecuteJavascriptInWebFrame(string16(), UTF8ToUTF16(jscript.c_str()));
+=======
+  if (nodejs()) {
+    std::string jscript = std::string("require('nw.gui').Window.get().__setDevToolsJail('")
+      + (jail_id ? jail_id : "(null)") + "');";
+    inspected_rvh->ExecuteJavascriptInWebFrame(string16(), UTF8ToUTF16(jscript.c_str()));
+  }
+>>>>>>> upstream/master
 
   scoped_refptr<DevToolsAgentHost> agent(DevToolsAgentHost::GetOrCreateFor(inspected_rvh));
   DevToolsManager* manager = DevToolsManager::GetInstance();
@@ -360,14 +389,17 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
   WebContents::CreateParams create_params(web_contents()->GetBrowserContext(), NULL);
   WebContents* web_contents = WebContents::Create(create_params);
   Shell* shell = new Shell(web_contents, &manifest);
-  browser_context->set_pinning_renderer(true);
 
   int rh_id = shell->web_contents_->GetRenderProcessHost()->GetID();
   ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, chrome::kFileScheme);
+  ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, "app");
   shell->is_devtools_ = true;
   shell->force_close_ = true;
   shell->LoadURL(url);
 
+  // LoadURL() could allocate new SiteInstance so we have to pin the
+  // renderer after it
+  browser_context->set_pinning_renderer(true);
   // Save devtools window in current shell.
   devtools_window_ = shell->weak_ptr_factory_.GetWeakPtr();
 #endif
@@ -561,6 +593,12 @@ void Shell::Observe(int type,
 #endif
     MessageLoop::current()->PostTask(FROM_HERE, MessageLoop::QuitClosure());
   }
+}
+
+GURL Shell::OverrideDOMStorageOrigin(const GURL& origin) {
+  if (!is_devtools())
+    return origin;
+  return GURL("devtools://");
 }
 
 }  // namespace content

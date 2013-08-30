@@ -44,27 +44,27 @@
   }
 
   if (!program.auto) {
-    connectToRemotePage('http://127.0.0.1/node_remote_test.html', 'msg80');
-    connectToRemotePage('http://127.0.0.1:8080/node_remote_test.html', 'msg8080');
+    connectToRemotePage('http://127.0.0.1:8123/node_remote_test.html', 'msg8123');
+    connectToRemotePage('http://127.0.0.1:8124/node_remote_test.html', 'msg8124');
   } else {
     var client;
     client = net.connect({port: port});
     client.setEncoding('utf8'); 
 	
     client.on('data', function(data) {	  
-      if (data == '80') {
-	    connectToRemotePage('http://127.0.0.1/node_remote_test.html',
-			'msg80', function(result){
+      if (data == '8123') {
+	    connectToRemotePage('http://127.0.0.1:8123/node_remote_test.html',
+			'msg8123', function(result){
 			   client.write(result);
 		});
-	  }//if (data == '80') 
+	  }//if (data == '8123') 
 	  
-	  if (data == '8080') {
-	    connectToRemotePage('http://127.0.0.1:8080/node_remote_test.html', 
-			'msg8080', function(result){
+	  if (data == '8124') {
+	    connectToRemotePage('http://127.0.0.1:8124/node_remote_test.html', 
+			'msg8124', function(result){
 		       client.write(result);
 		});
-	  }//if (data == '80') 
+	  }//if (data == '8124') 
 	  
 	});
   }  
@@ -77,16 +77,16 @@
 
 <div>
   <span>Can remote page</span>
-  <a href="http://127.0.0.1/node_remote_test.html">http://127.0.0.1/node_remote_test.html</a> 
+  <a href="http://127.0.0.1:8123/node_remote_test.html">http://127.0.0.1:8123/node_remote_test.html</a> 
   <span>call Node: </span>
-  <span id="msg80" style="color:blue"></span>
+  <span id="msg8123" style="color:blue"></span>
 </div>
 
 <div>  
   <span>Can remote page</span>
-  <a href="http://127.0.0.1:8080/node_remote_test.html">http://127.0.0.1:8080/node_remote_test.html</a> 
+  <a href="http://127.0.0.1:8124/node_remote_test.html">http://127.0.0.1:8124/node_remote_test.html</a> 
   <span>call Node: </span>
-  <span id="msg8080" style="color:blue"></span>
+  <span id="msg8124" style="color:blue"></span>
 </div>
 
 </body>

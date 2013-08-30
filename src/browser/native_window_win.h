@@ -41,7 +41,7 @@ class NativeWindowWin : public NativeWindow,
                         public views::WidgetFocusChangeListener,
                         public views::WidgetDelegateView {
  public:
-  explicit NativeWindowWin(content::Shell* shell,
+  explicit NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
                            base::DictionaryValue* manifest);
   virtual ~NativeWindowWin();
 
@@ -116,7 +116,7 @@ class NativeWindowWin : public NativeWindow,
   // views::View implementation.
   virtual void Layout() OVERRIDE;
   virtual void ViewHierarchyChanged(
-      bool is_add, views::View *parent, views::View *child) OVERRIDE;
+      const ViewHierarchyChangedDetails& details) OVERRIDE;
   virtual gfx::Size GetMinimumSize() OVERRIDE;
   virtual gfx::Size GetMaximumSize() OVERRIDE;
   virtual void OnFocus() OVERRIDE;
@@ -137,6 +137,7 @@ class NativeWindowWin : public NativeWindow,
 
   // Flags used to prevent sending extra events.
   bool is_minimized_;
+  bool is_maximized_;
   bool is_focus_;
   bool is_blur_;
 

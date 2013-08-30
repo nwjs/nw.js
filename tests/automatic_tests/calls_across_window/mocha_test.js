@@ -12,7 +12,11 @@ describe('AppTest', function(){
     var exec_argv;
     var socket;
     before(function(done){
+<<<<<<< HEAD:tests/automatic_tests/calls_across_window/mocha_test.js
       //this.timeout(0);
+=======
+      this.timeout(0);
+>>>>>>> upstream/master:tests/automatic_tests/calls_across_window/mocha_test.js
       exec_argv = [path.join(global.tests_dir, 'calls_across_window'),
                     '--port',
                     global.port];

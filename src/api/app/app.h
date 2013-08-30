@@ -47,10 +47,10 @@ class App {
                    base::ListValue* result);
 
   // Try to close all windows (then will cause whole app to quit).
-  static void CloseAllWindows();
+  static void CloseAllWindows(bool force = false);
 
   // Quit the whole app.
-  static void Quit(content::RenderProcessHost* render_view_host);
+  static void Quit(content::RenderProcessHost* rph = NULL);
 
   // Post "open" event.
   static void EmitOpenEvent(const std::string& path);

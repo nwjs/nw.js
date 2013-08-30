@@ -54,11 +54,11 @@ namespace keys = nw::capture_page_helper_constants;
 
 // static
 scoped_refptr<CapturePageHelper> CapturePageHelper::Create(
-    content::Shell* shell) {
+                const base::WeakPtr<content::Shell>& shell) {
   return make_scoped_refptr(new CapturePageHelper(shell));
 }
 
-CapturePageHelper::CapturePageHelper(content::Shell *shell)
+CapturePageHelper::CapturePageHelper(const base::WeakPtr<content::Shell>&shell)
     : content::WebContentsObserver(shell->web_contents()),
       shell_(shell) {
 }

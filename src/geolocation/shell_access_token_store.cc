@@ -6,7 +6,11 @@
 
 #include "base/bind.h"
 #include "base/message_loop.h"
+<<<<<<< HEAD
 #include "base/utf_string_conversions.h"
+=======
+#include "base/strings/utf_string_conversions.h"
+>>>>>>> upstream/master
 #include "content/public/browser/browser_thread.h"
 #include "content/nw/src/shell_browser_context.h"
 

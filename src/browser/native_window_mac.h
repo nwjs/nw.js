@@ -25,6 +25,7 @@
 
 #include "base/memory/scoped_ptr.h"
 #include "base/memory/scoped_nsobject.h"
+#include "base/memory/weak_ptr.h"
 #include "content/nw/src/browser/native_window.h"
 
 @class ShellNSWindow;
@@ -35,7 +36,7 @@ namespace nw {
 
 class NativeWindowCocoa : public NativeWindow {
  public:
-  explicit NativeWindowCocoa(content::Shell* shell,
+  explicit NativeWindowCocoa(const base::WeakPtr<content::Shell>& shell,
                              base::DictionaryValue* manifest);
   virtual ~NativeWindowCocoa();
 

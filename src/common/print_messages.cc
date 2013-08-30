@@ -5,7 +5,7 @@
 #include "content/nw/src/common/print_messages.h"
 
 #include "base/basictypes.h"
-#include "base/string16.h"
+#include "base/strings/string16.h"
 #include "ui/gfx/size.h"
 
 PrintMsg_Print_Params::PrintMsg_Print_Params()

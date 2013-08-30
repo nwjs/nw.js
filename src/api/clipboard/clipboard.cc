@@ -21,8 +21,8 @@
 #include "content/nw/src/api/clipboard/clipboard.h"
 
 #include "base/values.h"
-#include "base/utf_string_conversions.h"
-#include "base/string16.h"
+#include "base/strings/utf_string_conversions.h"
+#include "base/strings/string16.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "ui/base/clipboard/clipboard.h"
 
@@ -68,7 +68,7 @@ void Clipboard::SetText(std::string& text) {
   ui::Clipboard::ObjectMap map;
   map[ui::Clipboard::CBF_TEXT].push_back(
       std::vector<char>(text.begin(), text.end()));
-  clipboard->WriteObjects(ui::Clipboard::BUFFER_STANDARD, map, NULL);
+  clipboard->WriteObjects(ui::Clipboard::BUFFER_STANDARD, map);
 }
 
 std::string Clipboard::GetText() {

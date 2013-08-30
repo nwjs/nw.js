@@ -85,7 +85,7 @@ childProcess.prototype.close = function() {
  * options: 
  *   execPath: (string)the path of nw.
  *   appPath: (string)the path of app.
- * 
+ *   args: (array)the args of the app.
  *   end:  (function)we should do the report here, after get child process's result.    
  *           data: JSON object
  *           app: nodejs childProcess.spawn 
@@ -104,12 +104,16 @@ exports.createChildProcess = function(options) {
   var 
       execPath = options.execPath,
       path = options.appPath,
-      exec_argv = [path, '--port', port, '--auto'],
+      exec_argv, 
       app, cb,
       no_connect = options.no_connect || false,
       child = new childProcess();
   
-  
+    if (!options.args)
+	exec_argv = [path, '--port', port, '--auto'];
+    else
+	exec_argv = [path].concat(options.args).concat(['--port', port, '--auto']);
+
   if (!no_connect) {
   
     server.on('connection', cb = function(socket){

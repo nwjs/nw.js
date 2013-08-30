@@ -2,10 +2,10 @@
 
 node-webkit is an app runtime based on `Chromium` and `node.js`. You can 
 write native apps in HTML and Javascript with node-webkit. It also lets you
-to call Node.js modules directly from DOM and enables a new way of writing
+call Node.js modules directly from the DOM and enables a new way of writing
 native applications with all Web technologies.
 
-It's created and developed in Intel Open Source Technology Center.
+It's created and developed in the Intel Open Source Technology Center.
 
 [Introduction to node-webkit (slides)](https://speakerdeck.com/u/zcbenz/p/node-webkit-app-runtime-based-on-chromium-and-node-dot-js).
 
@@ -18,6 +18,7 @@ It's created and developed in Intel Open Source Technology Center.
 * Available on Linux, Mac OSX and Windows
 
 ## Downloads
+<<<<<<< HEAD
 [v0.6.0 release note](https://groups.google.com/d/msg/node-webkit/YC01gRQqwk4/bb5_1bw4ZwkJ)
 
 Prebuilt binaries (v0.6.0 - Jun 17, 2013):
@@ -25,6 +26,15 @@ Prebuilt binaries (v0.6.0 - Jun 17, 2013):
 * Linux: [32bit](https://s3.amazonaws.com/node-webkit/v0.6.0/node-webkit-v0.6.0-linux-ia32.tar.gz) / [64bit] (https://s3.amazonaws.com/node-webkit/v0.6.0/node-webkit-v0.6.0-linux-x64.tar.gz)
 * Windows: [win32](https://s3.amazonaws.com/node-webkit/v0.6.0/node-webkit-v0.6.0-win-ia32.zip)
 * Mac: [32bit, 10.7+](https://s3.amazonaws.com/node-webkit/v0.6.0/node-webkit-v0.6.0-osx-ia32.zip)
+=======
+[v0.7.2 release notes](https://groups.google.com/d/msg/node-webkit/ZzEfEBAp0NU/SXfRRTGcMDcJ)
+
+Prebuilt binaries (v0.7.2 - Aug 26, 2013):
+
+* Linux: [32bit](https://s3.amazonaws.com/node-webkit/v0.7.2/node-webkit-v0.7.2-linux-ia32.tar.gz) / [64bit] (https://s3.amazonaws.com/node-webkit/v0.7.2/node-webkit-v0.7.2-linux-x64.tar.gz)
+* Windows: [win32](https://s3.amazonaws.com/node-webkit/v0.7.2/node-webkit-v0.7.2-win-ia32.zip)
+* Mac: [32bit, 10.7+](https://s3.amazonaws.com/node-webkit/v0.7.2/node-webkit-v0.7.2-osx-ia32.zip)
+>>>>>>> upstream/master
 
 [Looking for older versions?](https://github.com/rogerwang/node-webkit/wiki/Downloads-of-old-versions)
 
@@ -35,33 +45,41 @@ You may also be interested in [our demos repository](https://github.com/zcbenz/n
 
 Create `index.html`:
 
-````html
+```html
+<!DOCTYPE html>
 <html>
-<head>
-<title>Hello World!</title>
-</head>
-<body>
-<h1>Hello World!</h1>
-We are using node.js <script>document.write(process.version)</script>
-</body>
+  <head>
+    <title>Hello World!</title>
+  </head>
+  <body>
+    <h1>Hello World!</h1>
+    We are using node.js <script>document.write(process.version)</script>.
+  </body>
 </html>
-````
+```
 
 Create `package.json`:
 
-````json
+```json
 {
   "name": "nw-demo",
   "main": "index.html"
 }
+```
+
+Compress `index.html` and `package.json` into a zip archive called `app.nw`:
+
+````bash
+$ zip app.nw index.html package.json
 ````
 
-Compress `index.html` and `package.json` into a zip archive, and rename
-it to `app.nw`:
+This should create a structure like this:
 
-    app.nw
-    |-- package.json
-    `-- index.html
+```
+app.nw
+|-- package.json
+`-- index.html
+```
 
 Download the prebuilt binary for your platform and use it to open the
 `app.nw` file:
@@ -78,14 +96,15 @@ For more information on how to write/package/run apps, see:
 
 * [How to run apps](https://github.com/rogerwang/node-webkit/wiki/How-to-run-apps)
 * [How to package and distribute your apps](https://github.com/rogerwang/node-webkit/wiki/How-to-package-and-distribute-your-apps)
-* [How to use 3rd party node.js modules in node-webkit](https://github.com/rogerwang/node-webkit/wiki/How-to-use-3rd-party-node.js-modules-in-node-webkit)
+* [How to use Node.js modules in node-webkit](https://github.com/rogerwang/node-webkit/wiki/Using-Node-modules)
 
 And our [Wiki](https://github.com/rogerwang/node-webkit/wiki) for much more.
 
 ## Community
 
-We use [node-webkit group](http://groups.google.com/group/node-webkit) as
-our mailing list, subscribe via [node-webkit+subscribe@googlegroups.com](mailto:node-webkit+subscribe@googlegroups.com).
+We use the [node-webkit group](http://groups.google.com/group/node-webkit) as
+our mailing list. Subscribe via [node-webkit+subscribe@googlegroups.com](mailto:node-webkit+subscribe@googlegroups.com).
+Issues are being tracked here on GitHub.
 
 ## License
 

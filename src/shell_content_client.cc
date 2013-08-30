@@ -25,7 +25,7 @@
 #include "content/nw/src/renderer/common/render_messages.h"
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/base/resource/resource_bundle.h"
-#include "webkit/user_agent/user_agent_util.h"
+#include "webkit/common/user_agent/user_agent_util.h"
 
 namespace content {
 
@@ -33,7 +33,11 @@ ShellContentClient::~ShellContentClient() {
 }
 
 std::string ShellContentClient::GetUserAgent() const {
+<<<<<<< HEAD
   return webkit_glue::BuildUserAgentFromProduct("Chrome/28.0.1500.11");
+=======
+  return webkit_glue::BuildUserAgentFromProduct("Chrome/29.0.1547.31");
+>>>>>>> upstream/master
 }
 
 string16 ShellContentClient::GetLocalizedString(int message_id) const {
@@ -76,6 +80,12 @@ bool ShellContentClient::CanHandleWhileSwappedOut(
       break;
   }
   return false;
+}
+
+void ShellContentClient::AddAdditionalSchemes(
+    std::vector<std::string>* standard_schemes,
+    std::vector<std::string>* savable_schemes) {
+  standard_schemes->push_back("app");
 }
 
 }  // namespace content

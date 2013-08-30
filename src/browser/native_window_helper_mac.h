@@ -30,7 +30,7 @@ namespace nw {
 
 class NativeWindow;
 
-NativeWindow* CreateNativeWindowCocoa(content::Shell* shell,
+NativeWindow* CreateNativeWindowCocoa(const base::WeakPtr<content::Shell>& shell,
                                       base::DictionaryValue* manifest);
 
 }  // namespace nw

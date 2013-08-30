@@ -5,7 +5,7 @@ var server = global.server;
 var cb;
 
 describe('node-remote', function() {
-  describe('enable remote site http://127.0.0.1:80/', function() {
+  describe('enable remote site http://127.0.0.1:8123/', function() {
     var app;
     var exec_argv;
     var socket;
@@ -39,7 +39,11 @@ describe('node-remote', function() {
       socket.removeAllListeners('data');
     })
 
+<<<<<<< HEAD:tests/automatic_tests/node-remote/mocha_test.js
     it('http://127.0.0.1/node_remote_test.html should be able call Node',
+=======
+    it('http://127.0.0.1:8123/node_remote_test.html should be able call Node',
+>>>>>>> upstream/master:tests/automatic_tests/node-remote/mocha_test.js
 	  function(done) {
         this.timeout(0);
         socket.on('data', function(data) {
@@ -50,10 +54,14 @@ describe('node-remote', function() {
           }
 
         });
+<<<<<<< HEAD:tests/automatic_tests/node-remote/mocha_test.js
         socket.write('80');
+=======
+        socket.write('8123');
+>>>>>>> upstream/master:tests/automatic_tests/node-remote/mocha_test.js
     })
 
-    it('http://127.0.0.1:8080/node_remote_test.html should not be able call Node',
+    it('http://127.0.0.1:8124/node_remote_test.html should not be able call Node',
       function(done) {
         this.timeout(0);
         socket.on('data', function(data) {
@@ -64,7 +72,11 @@ describe('node-remote', function() {
           }
 
         });
+<<<<<<< HEAD:tests/automatic_tests/node-remote/mocha_test.js
         socket.write('8080');
+=======
+        socket.write('8124');
+>>>>>>> upstream/master:tests/automatic_tests/node-remote/mocha_test.js
     })
   })
 })

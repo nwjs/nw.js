@@ -3,7 +3,11 @@
 * node-webkit didn't ship third party node modules required for testing, you
 need to install them.
 * We use `nw-gyp` to build native modules.
+<<<<<<< HEAD
 * We have test case that needs a http server e.g. apache. Please open port 80 and 8080 then put `tests/automatic_tests/node-remote/node_remote_test.html`to the http server document root.
+=======
+* We have test cases that need a http server. And we have set up a simple nodejs server with port 8123 and 8124 opened. The http server document root is `tests/server`. You can add ports in `tests/server/server.js`
+>>>>>>> upstream/master
 
 So please run this:
 
@@ -117,9 +121,9 @@ $ /path-to-node-webkit src/content/nw/tests --grep long-to-run -i
 ````
 
 ## Tips
-in test case `node-remote` we need to open a http server, e.g. apache
-to be the remote site. We use port 80, 8080 for test, and please put `node_remote_test.html`
-to the http server document root.
+in test case like `node-remote`, we need to open a http server 
+to be the remote site. It is automatically opened when we run tests. We use port 8123, 8124 for test.
+The http server document root is `tests/server`. We have put some resources there e.g. `node_remote_test.html`.
 
 ## Native Modules
 When there is a new nw release, We hope you to rebuild native modules.

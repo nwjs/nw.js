@@ -21,13 +21,18 @@
 #include "content/nw/src/api/window_bindings.h"
 
 #include "base/values.h"
-#include "content/common/child_thread.h"
+#include "content/child/child_thread.h"
 #include "content/nw/src/api/bindings_common.h"
 #include "content/renderer/render_view_impl.h"
 #include "grit/nw_resources.h"
 #undef LOG
 #include "third_party/WebKit/Source/core/html/HTMLIFrameElement.h"
+<<<<<<< HEAD
 #include "third_party/WebKit/Source/WebKit/chromium/public/WebFrame.h"
+=======
+#include "third_party/WebKit/public/web/WebFrame.h"
+#include "third_party/WebKit/public/web/WebView.h"
+>>>>>>> upstream/master
 #include "third_party/WebKit/Source/WebKit/chromium/src/WebFrameImpl.h"
 
 #include "V8HTMLIFrameElement.h"

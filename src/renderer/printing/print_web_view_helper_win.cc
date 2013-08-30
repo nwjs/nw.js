@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "chrome/renderer/printing/print_web_view_helper.h"
+#include "content/nw/src/renderer/printing/print_web_view_helper.h"
 
 #include "base/logging.h"
 #include "base/memory/scoped_ptr.h"
@@ -20,7 +20,7 @@
 #include "skia/ext/platform_device.h"
 #include "skia/ext/refptr.h"
 #include "skia/ext/vector_canvas.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebFrame.h"
+#include "third_party/WebKit/public/web/WebFrame.h"
 #include "ui/gfx/gdi_util.h"
 #include "ui/gfx/point.h"
 #include "ui/gfx/rect.h"

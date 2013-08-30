@@ -24,8 +24,10 @@
 #include "base/files/file_path.h"
 #include "base/file_util.h"
 #include "base/string_util.h"
+#include "base/strings/string_number_conversions.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
+#include "content/browser/child_process_security_policy_impl.h"
 #include "content/public/browser/browser_url_handler.h"
 #include "content/nw/src/browser/printing/printing_message_filter.h"
 #include "content/public/browser/render_process_host.h"
@@ -34,6 +36,7 @@
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/renderer_preferences.h"
+#include "content/public/common/url_constants.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/browser/printing/print_job_manager.h"
@@ -47,9 +50,10 @@
 #include "content/nw/src/shell_browser_main_parts.h"
 #include "geolocation/shell_access_token_store.h"
 #include "googleurl/src/gurl.h"
-#include "webkit/glue/webpreferences.h"
-#include "webkit/user_agent/user_agent_util.h"
 #include "ui/base/l10n/l10n_util.h"
+#include "webkit/common/dom_storage/dom_storage_map.h"
+#include "webkit/common/webpreferences.h"
+#include "webkit/common/user_agent/user_agent_util.h"
 #include "webkit/plugins/npapi/plugin_list.h"
 
 
@@ -88,9 +92,14 @@ WebContentsViewPort* ShellContentBrowserClient::OverrideCreateWebContentsView(
   }
   if (package->root()->GetString(switches::kmRemotePages, &rules))
       prefs->nw_remote_page_rules = rules;
+
+<<<<<<< HEAD
+=======
+  prefs->nw_app_root_path = package->path();
   return NULL;
 }
 
+>>>>>>> upstream/master
 std::string ShellContentBrowserClient::GetApplicationLocale() {
   return l10n_util::GetApplicationLocale("en-US");
 }
@@ -101,22 +110,30 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
   if (command_line->GetSwitchValueASCII("type") != "renderer")
     return;
   if (child_process_id > 0) {
-    content::RenderProcessHost* rph =
-      content::RenderProcessHost::FromID(child_process_id);
-
-    content::RenderProcessHost::RenderWidgetHostsIterator iter(
-      rph->GetRenderWidgetHostsIterator());
-    for (; !iter.IsAtEnd(); iter.Advance()) {
-      const content::RenderWidgetHost* widget = iter.GetCurrentValue();
-      DCHECK(widget);
-      if (!widget || !widget->IsRenderView())
+    content::RenderWidgetHost::List widgets =
+      content::RenderWidgetHost::GetRenderWidgetHosts();
+    for (size_t i = 0; i < widgets.size(); ++i) {
+      if (widgets[i]->GetProcess()->GetID() != child_process_id)
         continue;
+      if (!widgets[i]->IsRenderView())
+        continue;
+
+      const content::RenderWidgetHost* widget = widgets[i];
+      DCHECK(widget);
 
       content::RenderViewHost* host = content::RenderViewHost::From(
         const_cast<content::RenderWidgetHost*>(widget));
       content::Shell* shell = content::Shell::FromRenderViewHost(host);
-      if (shell && (shell->is_devtools() || !shell->nodejs()))
-        return;
+      if (shell) {
+        if (!shell->nodejs())
+          return;
+        if (shell->is_devtools()) {
+          // DevTools should have powerful permissions to load local
+          // files by XHR (e.g. for source map)
+          command_line->AppendSwitch(switches::kNodejs);
+          return;
+        }
+      }
     }
   }
   nw::Package* package = shell_browser_main_parts()->package();
@@ -136,6 +153,12 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     std::string snapshot_path;
     if (package->root()->GetString(switches::kSnapshot, &snapshot_path))
       command_line->AppendSwitchASCII(switches::kSnapshot, snapshot_path);
+
+    int dom_storage_quota_mb;
+    if (package->root()->GetInteger("dom_storage_quota", &dom_storage_quota_mb)) {
+      dom_storage::DomStorageMap::SetQuotaOverride(dom_storage_quota_mb * 1024 * 1024);
+      command_line->AppendSwitchASCII(switches::kDomStorageQuota, base::IntToString(dom_storage_quota_mb));
+    }
   }
 
   // without the switch, the destructor of the shell object will
@@ -268,8 +291,34 @@ void ShellContentBrowserClient::RenderProcessHostCreated(
   int id = host->GetID();
   if (!master_rph_)
     master_rph_ = host;
+  // Grant file: scheme to the whole process, since we impose
+  // per-view access checks.
+  content::ChildProcessSecurityPolicy::GetInstance()->GrantScheme(
+      host->GetID(), chrome::kFileScheme);
+  content::ChildProcessSecurityPolicy::GetInstance()->GrantScheme(
+      host->GetID(), "app");
+
 #if defined(ENABLE_PRINTING)
   host->GetChannel()->AddFilter(new PrintingMessageFilter(id));
 #endif
 }
+
+bool ShellContentBrowserClient::IsHandledURL(const GURL& url) {
+  if (!url.is_valid())
+    return false;
+  DCHECK_EQ(url.scheme(), StringToLowerASCII(url.scheme()));
+  // Keep in sync with ProtocolHandlers added by
+  // ShellURLRequestContextGetter::GetURLRequestContext().
+  static const char* const kProtocolList[] = {
+    chrome::kFileSystemScheme,
+    chrome::kFileScheme,
+    "app",
+  };
+  for (size_t i = 0; i < arraysize(kProtocolList); ++i) {
+    if (url.scheme() == kProtocolList[i])
+      return true;
+  }
+  return false;
+}
+
 }  // namespace content
