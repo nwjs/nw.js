@@ -26,18 +26,10 @@
 #include "base/files/file_path.h"
 #include "base/file_util.h"
 #include "base/logging.h"
-<<<<<<< HEAD
-#include "base/string16.h"
-#include "base/utf_string_conversions.h"
-#include "components/autofill/renderer/page_click_tracker.h"
-#include "chrome/renderer/static_v8_external_string_resource.h"
-#include "components/autofill/renderer/page_click_tracker.h"
-=======
 #include "base/strings/string16.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/utf_string_conversions.h"
 #include "components/autofill/content/renderer/page_click_tracker.h"
->>>>>>> upstream/master
 #include "content/nw/src/api/dispatcher.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/bindings_common.h"
@@ -45,13 +37,8 @@
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_version.h"
-<<<<<<< HEAD
-#include "components/autofill/renderer/autofill_agent.h"
-#include "components/autofill/renderer/password_autofill_agent.h"
-=======
 #include "components/autofill/content/renderer/autofill_agent.h"
 #include "components/autofill/content/renderer/password_autofill_agent.h"
->>>>>>> upstream/master
 #include "content/nw/src/renderer/nw_render_view_observer.h"
 #include "content/nw/src/renderer/prerenderer/prerenderer_client.h"
 #include "content/nw/src/renderer/printing/print_web_view_helper.h"
@@ -62,15 +49,6 @@
 #include "net/proxy/proxy_bypass_rules.h"
 #include "third_party/node/src/node.h"
 #include "third_party/node/src/req_wrap.h"
-<<<<<<< HEAD
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebDocument.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebFrame.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebSecurityOrigin.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebSecurityPolicy.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebView.h"
-#include "grit/nw_resources.h"
-//#include "third_party/WebKit/Source/WebKit/chromium/public/platform/WebString.h"
-=======
 #include "third_party/WebKit/public/web/WebDocument.h"
 #include "third_party/WebKit/public/web/WebFrame.h"
 #include "third_party/WebKit/public/web/WebSecurityOrigin.h"
@@ -79,7 +57,6 @@
 //#include "third_party/WebKit/Source/WebKit/chromium/public/platform/WebString.h"
 #include "webkit/common/dom_storage/dom_storage_map.h"
 
->>>>>>> upstream/master
 using content::RenderView;
 using content::RenderViewImpl;
 using autofill::AutofillAgent;
@@ -219,19 +196,11 @@ bool ShellContentRendererClient::goodForNode(WebKit::WebFrame* frame)
   ProxyBypassRules rules;
   rules.ParseFromString(rv->renderer_preferences_.nw_remote_page_rules);
   bool force_on = rules.Matches(url);
-<<<<<<< HEAD
   bool is_nw_protocol = url.SchemeIs("nw") || url.SchemeIs("embed") || !url.is_valid();
   bool use_node =
     CommandLine::ForCurrentProcess()->HasSwitch(switches::kNodejs) &&
     !frame->isNwDisabledChildFrame() &&
-    (force_on || url.SchemeIsFile() || is_nw_protocol);
-=======
-  bool is_nw_protocol = url.SchemeIs("nw") || !url.is_valid();
-  bool use_node =
-    CommandLine::ForCurrentProcess()->HasSwitch(switches::kNodejs) &&
-    !frame->isNwDisabledChildFrame() &&
     (force_on || url.SchemeIsFile() || is_nw_protocol || url.SchemeIs("app"));
->>>>>>> upstream/master
   return use_node;
 }
 
@@ -244,14 +213,11 @@ bool ShellContentRendererClient::WillSetSecurityToken(
     // Override context's security token
     context->SetSecurityToken(node::g_context->GetSecurityToken());
     frame->document().securityOrigin().grantUniversalAccess();
-<<<<<<< HEAD
-=======
 
     int ret;
     RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
     rv->Send(new ShellViewHostMsg_GrantUniversalPermissions(rv->GetRoutingID(), &ret));
 
->>>>>>> upstream/master
     return true;
   }
 

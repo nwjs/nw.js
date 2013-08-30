@@ -26,10 +26,6 @@
 #include "base/file_util.h"
 #include "base/platform_file.h"
 #include "base/logging.h"
-<<<<<<< HEAD
-#include "base/strings/string_split.h"
-=======
->>>>>>> upstream/master
 #include "base/string_util.h"
 #include "base/strings/string_split.h"
 #include "base/strings/utf_string_conversions.h"

@@ -51,13 +51,10 @@ App.prototype.clearCache = function() {
   nw.callStaticMethodSync('App', 'ClearCache', [ ]);
 }
 
-<<<<<<< HEAD
-=======
 App.prototype.getProxyForURL = function (url) {
   return nw.callStaticMethodSync('App', 'getProxyForURL', [ url ]);
 }
 
->>>>>>> upstream/master
 App.prototype.__defineGetter__('argv', function() {
   if (!argv) {
     var fullArgv = this.fullArgv;

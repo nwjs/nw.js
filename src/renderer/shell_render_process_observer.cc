@@ -29,13 +29,8 @@
 #include "webkit/support/gc_extension.h"
 #include "third_party/node/src/node.h"
 #include "third_party/node/src/req_wrap.h"
-<<<<<<< HEAD
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebCache.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebRuntimeFeatures.h"
-=======
 #include "third_party/WebKit/public/web/WebCache.h"
 #include "third_party/WebKit/public/web/WebRuntimeFeatures.h"
->>>>>>> upstream/master
 #include "v8/include/v8.h"
 
 using WebKit::WebRuntimeFeatures;

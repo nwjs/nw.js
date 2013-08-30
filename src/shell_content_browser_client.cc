@@ -93,13 +93,10 @@ WebContentsViewPort* ShellContentBrowserClient::OverrideCreateWebContentsView(
   if (package->root()->GetString(switches::kmRemotePages, &rules))
       prefs->nw_remote_page_rules = rules;
 
-<<<<<<< HEAD
-=======
   prefs->nw_app_root_path = package->path();
   return NULL;
 }
 
->>>>>>> upstream/master
 std::string ShellContentBrowserClient::GetApplicationLocale() {
   return l10n_util::GetApplicationLocale("en-US");
 }

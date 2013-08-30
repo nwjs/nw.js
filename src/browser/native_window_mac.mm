@@ -208,12 +208,8 @@ enum {
 
 @interface ShellNSWindow : ChromeEventProcessingWindow {
  @private
-<<<<<<< HEAD
-  content::Shell* shell_;
   bool is_transparent_;
-=======
   base::WeakPtr<content::Shell> shell_;
->>>>>>> upstream/master
 }
 - (void)setShell:(const base::WeakPtr<content::Shell>&)shell;
 - (void)showDevTools:(id)sender;
@@ -898,7 +894,6 @@ void NativeWindowCocoa::InstallDraggableRegionViews() {
   }
 }
 
-<<<<<<< HEAD
 gfx::Point NativeWindowCocoa::GetMousePosition() {
   CGEventRef event = CGEventCreate(NULL);
   CGPoint cursor = CGEventGetLocation(event);
@@ -914,10 +909,8 @@ void NativeWindowCocoa::EndOffclientMouseMove() {
   // Not implemented
 }
 
-NativeWindow* CreateNativeWindowCocoa(content::Shell* shell,
-=======
+
 NativeWindow* CreateNativeWindowCocoa(const base::WeakPtr<content::Shell>& shell,
->>>>>>> upstream/master
                                            base::DictionaryValue* manifest) {
   return new NativeWindowCocoa(shell, manifest);
 }

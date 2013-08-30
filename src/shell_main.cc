@@ -19,13 +19,8 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "content/public/app/content_main.h"
-<<<<<<< HEAD
 #include "base/command_line.h"
-#include "content/shell/shell_main_delegate.h"
-=======
-
 #include "content/nw/src/shell_main_delegate.h"
->>>>>>> upstream/master
 #include "sandbox/win/src/sandbox_types.h"
 
 #if defined(OS_WIN)

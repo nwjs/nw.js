@@ -26,10 +26,7 @@
 #include "base/message_loop.h"
 #include "base/values.h"
 #include "content/nw/src/api/api_messages.h"
-<<<<<<< HEAD
-=======
 #include "content/nw/src/browser/native_window.h"
->>>>>>> upstream/master
 #include "content/nw/src/browser/net_disk_cache_remover.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
@@ -133,13 +130,9 @@ void App::Call(Shell* shell,
     return;
   } else if (method == "ClearCache") {
     ClearCache(GetRenderProcessHost());
-=======
-  } else if (method == "ClearCache") {
-    ClearCache(GetRenderProcessHost());
   } else if (method == "GetPackage") {
     result->AppendString(shell->GetPackage()->package_string());
     return;
->>>>>>> upstream/master
   }
 
   NOTREACHED() << "Calling unknown sync method " << method << " of App";

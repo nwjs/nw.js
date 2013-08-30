@@ -105,11 +105,7 @@ Shell* Shell::Create(WebContents* source_contents,
     NavigationController::LoadURLParams params(target_url);
     params.transition_type = PageTransitionFromInt(PAGE_TRANSITION_TYPED);
     params.override_user_agent = NavigationController::UA_OVERRIDE_TRUE;
-<<<<<<< HEAD
-=======
     params.frame_name = std::string();
-
->>>>>>> upstream/master
     new_contents->GetController().LoadURLWithParams(params);
   }
   // Use the user agent value from the source WebContents.
@@ -140,11 +136,7 @@ Shell* Shell::FromRenderViewHost(RenderViewHost* rvh) {
 }
 
 Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
-<<<<<<< HEAD
-    : weak_ptr_factory_(this),
-=======
     :
->>>>>>> upstream/master
       is_devtools_(false),
       force_close_(false),
       id_(-1),
@@ -344,17 +336,11 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
   }
 
   RenderViewHost* inspected_rvh = web_contents()->GetRenderViewHost();
-<<<<<<< HEAD
-  std::string jscript = std::string("require('nw.gui').Window.get().__setDevToolsJail('")
-    + (jail_id ? jail_id : "") + "');";
-  inspected_rvh->ExecuteJavascriptInWebFrame(string16(), UTF8ToUTF16(jscript.c_str()));
-=======
   if (nodejs()) {
     std::string jscript = std::string("require('nw.gui').Window.get().__setDevToolsJail('")
       + (jail_id ? jail_id : "(null)") + "');";
     inspected_rvh->ExecuteJavascriptInWebFrame(string16(), UTF8ToUTF16(jscript.c_str()));
   }
->>>>>>> upstream/master
 
   scoped_refptr<DevToolsAgentHost> agent(DevToolsAgentHost::GetOrCreateFor(inspected_rvh));
   DevToolsManager* manager = DevToolsManager::GetInstance();

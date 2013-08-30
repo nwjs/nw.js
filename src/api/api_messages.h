@@ -94,10 +94,6 @@ IPC_MESSAGE_CONTROL1(ShellViewMsg_Open,
 
 // clear cache on the renderer side
 IPC_MESSAGE_CONTROL0(ShellViewMsg_ClearCache)
-<<<<<<< HEAD
-=======
 
 // grant the policy permissions
 IPC_SYNC_MESSAGE_ROUTED0_1(ShellViewHostMsg_GrantUniversalPermissions, int)
-
->>>>>>> upstream/master

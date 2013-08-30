@@ -196,12 +196,7 @@ class Shell : public WebContentsDelegate,
 #if 0
   ShellDevToolsFrontend* devtools_frontend_;
 #endif
-<<<<<<< HEAD
-  // Factory to generate weak pointer, used by devtools.
-  base::WeakPtrFactory<Shell> weak_ptr_factory_;
 
-=======
->>>>>>> upstream/master
   // Whether this shell is devtools window.
   bool is_devtools_;
 

@@ -28,11 +28,8 @@
 #include "content/public/common/url_constants.h"
 #include "content/nw/src/net/shell_network_delegate.h"
 #include "content/public/browser/cookie_store_factory.h"
-<<<<<<< HEAD
 #include "content/nw/src/embed_protocol_handler.h"
-=======
 #include "content/nw/src/net/app_protocol_handler.h"
->>>>>>> upstream/master
 #include "content/nw/src/nw_protocol_handler.h"
 #include "content/nw/src/nw_shell.h"
 #include "net/cert/cert_verifier.h"
@@ -118,11 +115,7 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
     storage_.reset(
         new net::URLRequestContextStorage(url_request_context_.get()));
 
-<<<<<<< HEAD
-    FilePath cookie_path = base_path_.Append(FILE_PATH_LITERAL("cookies"));
-=======
     FilePath cookie_path = data_path_.Append(FILE_PATH_LITERAL("cookies"));
->>>>>>> upstream/master
     scoped_refptr<net::CookieStore> cookie_store = NULL;
     cookie_store = content::CreatePersistentCookieStore(
         cookie_path,
@@ -200,17 +193,12 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
     scoped_ptr<net::URLRequestJobFactoryImpl> job_factory(
         new net::URLRequestJobFactoryImpl());
     InstallProtocolHandlers(job_factory.get(), &protocol_handlers_);
-<<<<<<< HEAD
-    job_factory->SetProtocolHandler("nw", new nw::NwProtocolHandler());
-    job_factory->SetProtocolHandler("embed", new nw::EmbedProtocolHandler());
-=======
     job_factory->SetProtocolHandler(chrome::kFileScheme,
                                     new net::FileProtocolHandler);
     job_factory->SetProtocolHandler("app",
                                     new net::AppProtocolHandler(root_path_));
     job_factory->SetProtocolHandler("nw", new nw::NwProtocolHandler());
-
->>>>>>> upstream/master
+    job_factory->SetProtocolHandler("embed", new nw::EmbedProtocolHandler());
     storage_->set_job_factory(job_factory.release());
 
   }

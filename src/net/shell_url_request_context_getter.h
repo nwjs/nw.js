@@ -47,12 +47,8 @@ class ShellURLRequestContextGetter : public net::URLRequestContextGetter {
  public:
   ShellURLRequestContextGetter(
       bool ignore_certificate_errors,
-<<<<<<< HEAD
-      const base::FilePath& base_path,
-=======
       const base::FilePath& data_path,
       const base::FilePath& root_path,
->>>>>>> upstream/master
       base::MessageLoop* io_loop,
       base::MessageLoop* file_loop,
       ProtocolHandlerMap* protocol_handlers);
@@ -69,12 +65,8 @@ class ShellURLRequestContextGetter : public net::URLRequestContextGetter {
 
  private:
   bool ignore_certificate_errors_;
-<<<<<<< HEAD
-  base::FilePath base_path_;
-=======
   base::FilePath data_path_;
   base::FilePath root_path_;
->>>>>>> upstream/master
   base::MessageLoop* io_loop_;
   base::MessageLoop* file_loop_;
 

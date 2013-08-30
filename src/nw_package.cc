@@ -254,7 +254,6 @@ bool Package::InitFromPath() {
   if (!ExtractPath())
     return false;
 
-<<<<<<< HEAD
 	FilePath manifest_path;
 	std::string error;
 	Value *root;
@@ -285,24 +284,6 @@ bool Package::InitFromPath() {
 	}
 
   if (root == NULL) {
-=======
-  // path_/package.json
-  FilePath manifest_path = path_.AppendASCII("package.json");
-  manifest_path = MakeAbsoluteFilePath(manifest_path);
-  if (!file_util::PathExists(manifest_path)) {
-    if (!self_extract())
-      ReportError("Invalid package",
-                  "There is no 'package.json' in the package, please make "
-                  "sure the 'package.json' is in the root of the package.");
-    return false;
-  }
-
-  // Parse file.
-  std::string error;
-  JSONFileValueSerializer serializer(manifest_path);
-  scoped_ptr<Value> root(serializer.Deserialize(NULL, &error));
-  if (!root.get()) {
->>>>>>> upstream/master
     ReportError("Unable to parse package.json",
                 error.empty() ?
                     "Failed to read the manifest file: " +
@@ -354,15 +335,6 @@ bool Package::InitFromPath() {
     }
   }
 
-<<<<<<< HEAD
-  int dom_storage_quota_mb = 0;
-  if (root_->GetInteger("dom_storage_quota", &dom_storage_quota_mb) &&
-      dom_storage_quota_mb > 0) {
-    dom_storage::DomStorageMap::SetQuotaOverride(dom_storage_quota_mb * 1024 * 1024);
-  }
-
-=======
->>>>>>> upstream/master
   // Read chromium command line args.
   ReadChromiumArgs();
 

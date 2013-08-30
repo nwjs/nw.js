@@ -170,12 +170,9 @@ void ShellMainDelegate::InitializeResourceBundle() {
   FilePath pak_dir;
   PathService::Get(base::DIR_MODULE, &pak_dir);
   pak_file = pak_dir.Append(FILE_PATH_LITERAL("nw.pak"));
-<<<<<<< HEAD
   if(file_util::PathExists((FilePath(CommandLine::ForCurrentProcess()->GetSwitchValueNative("working-directory"))).Append(FILE_PATH_LITERAL("nw.pak"))))
     pak_file = FilePath(CommandLine::ForCurrentProcess()->GetSwitchValueNative("working-directory")).Append(FILE_PATH_LITERAL("nw.pak"));
-=======
   CHECK(file_util::PathExists(pak_file)) << "nw.pak is missing";
->>>>>>> upstream/master
 #endif
   ui::ResourceBundle::InitSharedInstanceWithPakPath(pak_file);
 }

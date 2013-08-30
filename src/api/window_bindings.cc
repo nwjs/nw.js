@@ -27,12 +27,8 @@
 #include "grit/nw_resources.h"
 #undef LOG
 #include "third_party/WebKit/Source/core/html/HTMLIFrameElement.h"
-<<<<<<< HEAD
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebFrame.h"
-=======
 #include "third_party/WebKit/public/web/WebFrame.h"
 #include "third_party/WebKit/public/web/WebView.h"
->>>>>>> upstream/master
 #include "third_party/WebKit/Source/WebKit/chromium/src/WebFrameImpl.h"
 
 #include "V8HTMLIFrameElement.h"

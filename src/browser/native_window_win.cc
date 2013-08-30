@@ -297,7 +297,6 @@ void NativeWindowWin::Focus(bool focus) {
 }
 
 void NativeWindowWin::Show() {
-<<<<<<< HEAD
   window_->Show();
 
   // We have to re-establish our composition by shaking the compositing surface
@@ -306,12 +305,11 @@ void NativeWindowWin::Show() {
     Maximize();
     Unmaximize();
   }
-=======
   if (is_maximized_)
     window_->native_widget_private()->ShowWithWindowState(ui::SHOW_STATE_MAXIMIZED);
   else
     window_->native_widget_private()->Show();
->>>>>>> upstream/master
+
 }
 
 void NativeWindowWin::Hide() {
