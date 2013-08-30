@@ -17,12 +17,8 @@
       'dependencies': [
         '<(DEPTH)/base/base.gyp:base',
         '<(DEPTH)/base/third_party/dynamic_annotations/dynamic_annotations.gyp:dynamic_annotations',
-<<<<<<< HEAD
-        '<(DEPTH)/build/temp_gyp/googleurl.gyp:googleurl',
-        '<(DEPTH)/components/components.gyp:autofill_renderer',
-=======
+#        '<(DEPTH)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(DEPTH)/components/components.gyp:autofill_content_renderer',
->>>>>>> upstream/master
         '<(DEPTH)/content/content.gyp:content_app',
         '<(DEPTH)/content/content.gyp:content_browser',
         '<(DEPTH)/content/content.gyp:content_common',
@@ -52,11 +48,7 @@
       'include_dirs': [
         '<(DEPTH)',
         '<(DEPTH)/third_party/WebKit/Source',
-<<<<<<< HEAD
-        '<(DEPTH)/third_party/WebKit/Source/WebKit/chromium/public',
-=======
         '<(DEPTH)/third_party/WebKit/public/web',
->>>>>>> upstream/master
         '<(SHARED_INTERMEDIATE_DIR)/webkit',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings',
       ],
@@ -101,15 +93,9 @@
         '<(DEPTH)/third_party/zlib/google/zip_reader.h',
         '<(DEPTH)/third_party/zlib/google/zip_internal.cc',
         '<(DEPTH)/third_party/zlib/google/zip_internal.h',
-<<<<<<< HEAD
-        '<(DEPTH)/components/autofill/renderer/page_click_listener.h',
-        '<(DEPTH)/components/autofill/renderer/page_click_tracker.cc',
-        '<(DEPTH)/components/autofill/renderer/page_click_tracker.h',
-=======
         '<(DEPTH)/components/autofill/content/renderer/page_click_listener.h',
         '<(DEPTH)/components/autofill/content/renderer/page_click_tracker.cc',
         '<(DEPTH)/components/autofill/content/renderer/page_click_tracker.h',
->>>>>>> upstream/master
         '<(DEPTH)/chrome/renderer/static_v8_external_string_resource.cc',
         '<(DEPTH)/chrome/renderer/static_v8_external_string_resource.h',
         'src/api/api_messages.cc',
@@ -126,8 +112,8 @@
         'src/api/dispatcher.h',
         'src/api/dispatcher_bindings.cc',
         'src/api/dispatcher_bindings.h',
-		'src/api/ti_bindings.cc',
-		'src/api/ti_bindings.h',
+		    'src/api/ti_bindings.cc',
+		    'src/api/ti_bindings.h',
         'src/api/dispatcher_host.cc',
         'src/api/dispatcher_host.h',
         'src/api/window_bindings.cc',
@@ -235,18 +221,18 @@
         'src/net/clear_on_exit_policy.cc',
         'src/net/resource_request_job.cc',
         'src/net/resource_request_job.h',
-		'src/net/util/embed_utils.cc',
-		'src/net/util/embed_utils.h',
-		'src/net/embed_request_job.cc',
-		'src/net/embed_request_job.h',
+		    'src/net/util/embed_utils.cc',
+		    'src/net/util/embed_utils.h',
+		    'src/net/embed_request_job.cc',
+		    'src/net/embed_request_job.h',
         'src/net/shell_network_delegate.cc',
         'src/net/shell_network_delegate.h',
         'src/net/shell_url_request_context_getter.cc',
         'src/net/shell_url_request_context_getter.h',
         'src/nw_protocol_handler.cc',
         'src/nw_protocol_handler.h',
-		'src/embed_protocol_handler.cc',
-		'src/embed_protocol_handler.h',
+		    'src/embed_protocol_handler.cc',
+		    'src/embed_protocol_handler.h',
         'src/nw_package.cc',
         'src/nw_package.h',
         'src/nw_version.h',
