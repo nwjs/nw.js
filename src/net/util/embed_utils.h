@@ -15,7 +15,6 @@ namespace embed_util {
 			FileMetaInfo();
 
 			// Size of the file.
-
 			unsigned int file_size;
 
 			// Mime type info
@@ -48,7 +47,7 @@ namespace embed_util {
 		public:
 			static std::map<std::string, embed_util::FileMetaInfo *> *GetOffsetMap();
 			
-			static std::string GetContainer();
+			static base::FilePath::StringType GetContainer();
 
 			static bool GetFileInfo(std::string path, embed_util::FileMetaInfo* meta_info);
 

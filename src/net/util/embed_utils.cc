@@ -86,7 +86,7 @@ namespace embed_util {
 		std::map<std::string, embed_util::FileMetaInfo *> *OffsetMap = Utility::GetOffsetMap();
 		base::MemoryMappedFile mmap_;
 		size_t pos=0,a=0,b=0;
-		if (!mmap_.Initialize(base::FilePath::FromUTF8Unsafe(Utility::GetContainer()))) {
+		if (!mmap_.Initialize(base::FilePath(Utility::GetContainer()))) {
 			DLOG(ERROR) << "Failed to mmap application data (embed_utils.cc:93)";
 			return loaded=false;
 		}
@@ -130,7 +130,7 @@ namespace embed_util {
 	bool Utility::GetFileData(embed_util::FileMetaInfo *meta) {
 		if(!embed_util::Utility::Load()) return false;
 		base::MemoryMappedFile mmap_;
-		if (!mmap_.Initialize(base::FilePath::FromUTF8Unsafe(Utility::GetContainer()))) {
+		if (!mmap_.Initialize(base::FilePath(Utility::GetContainer()))) {
 			DLOG(ERROR) << "Failed to mmap application data (embed_utils.cc:134)";
 			return false;
 		}
