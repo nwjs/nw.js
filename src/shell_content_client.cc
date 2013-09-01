@@ -82,6 +82,7 @@ void ShellContentClient::AddAdditionalSchemes(
     std::vector<std::string>* standard_schemes,
     std::vector<std::string>* savable_schemes) {
   standard_schemes->push_back("app");
+  standard_schemes->push_back("embed");
 }
 
 }  // namespace content

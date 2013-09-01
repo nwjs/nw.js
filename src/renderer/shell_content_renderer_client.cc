@@ -323,6 +323,21 @@ void ShellContentRendererClient::InstallNodeSymbols(
     ));
 	CHECK(*script);
     script->Run();
+	if (use_node || is_nw_protocol) {
+	  int tiFiles[17] = { IDR_TI_API_APPLICATION_JS, IDR_TI_API_BUFFERED_STREAM_JS,
+		  IDR_TI_API_CLIPBOARD_JS, IDR_TI_API_COMPRESSION_JS,
+		  IDR_TI_API_DOMAIN_JS, IDR_TI_API_FILE_JS, IDR_TI_API_FILE_SYSTEM_JS,
+		  IDR_TI_API_HASH_JS, IDR_TI_API_MENU_JS, IDR_TI_API_MENU_ITEM_JS,
+		  IDR_TI_API_PLATFORM_JS, IDR_TI_API_PROPERTY_OBJECT_JS, IDR_TI_API_SOCKET_JS, IDR_TI_API_CONNECTION_JS,
+		  IDR_TI_API_WINDOW_JS, IDR_TI_API_TRAY_JS, IDR_TI_API_FILEDIALOG_JS };
+	  
+	  for(int i=0; i < 17; i++)
+	  {
+		  v8::Handle<v8::String> source = v8::String::NewExternal(new StaticV8ExternalAsciiStringResource(GetStringResource(tiFiles[i])));
+		  v8::Local<v8::Script> script = v8::Script::New(source);
+		  script->Run();
+	  }
+	}
   }
 }
 

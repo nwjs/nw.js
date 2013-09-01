@@ -3,10 +3,10 @@
 <assemblyIdentity
     version="1.0.0.0"
     processorArchitecture="*"
-    name="Intel.Software.node-webkit"
+    name="com.trueinteractions.runtime"
     type="win32"
 />
-<description>node-webkit</description>
+<description>ti-runtime</description>
 <dependency>
     <dependentAssembly>
         <assemblyIdentity
