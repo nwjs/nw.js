@@ -30,6 +30,9 @@
 #include "third_party/zlib/google/zip.h"
 #include "content/public/app/startup_helper_win.h"
 #include "sandbox/win/src/sandbox_types.h"
+#include "base/path_service.h"
+#include "content/nw/src/nw_version.h"
+#include "content/nw/src/net/util/embed_utils.h"
 #endif
 
 #if defined(OS_MACOSX)
@@ -37,6 +40,9 @@
 #endif
 
 #if defined(OS_WIN)
+
+#define VINFO "TI_" NW_VERSION_STRING
+
 void Bootstrap() {
   CommandLine *cmd = CommandLine::ForCurrentProcess();
   CommandLine::StringVector args = cmd->GetArgs();
@@ -44,19 +50,27 @@ void Bootstrap() {
   base::FilePath path = (args.size() > 0) ? base::FilePath(args[0]) : base::FilePath(cmd->GetProgram());
   path = base::MakeAbsoluteFilePath(path);
   if(file_util::DirectoryExists(path)) {
-    cmd->AppendSwitchASCII("working-directory",path.AsUTF8Unsafe());
+    cmd->AppendSwitchNative("working-directory",path.value());
     return;
   } else if(file_util::PathExists(path)) {
-    base::FilePath where;
-    static scoped_ptr<base::ScopedTempDir> scoped_temp_dir;
-    file_util::CreateNewTempDirectory(L"nw", &where);
-    scoped_temp_dir.reset(new base::ScopedTempDir());
-    if(scoped_temp_dir->Set(where) && zip::Unzip(path, where)) {
-      cmd->AppendSwitchASCII("working-directory",where.AsUTF8Unsafe());
-      return;
+    PathService::Get(base::DIR_LOCAL_APP_DATA, &path);
+    std::string version = VINFO;
+    std::wstring resources[] = {L"D3DCompiler_43.dll",L"d3dx9_43.dll",L"ffmpegsumo.dll",L"icudt.dll",L"libEGL.dll",L"libGLESv2.dll",L"nw.pak"};
+    int resource_count = 7;
+    path = path.Append(std::wstring(version.begin(),version.end()));
+    if(!file_util::PathExists(path)) file_util::CreateDirectory(path);
+    for(int i=0; i < resource_count; i++) {
+      if(!file_util::PathExists(path.Append(resources[i]))) {
+        embed_util::FileMetaInfo meta;
+        if(embed_util::Utility::GetFileInfo(std::string(resources[i].begin(),resources[i].end()), &meta) &&
+          embed_util::Utility::GetFileData(&meta))
+            file_util::WriteFile(base::FilePath(std::wstring(meta.file_name.begin(),meta.file_name.end())),reinterpret_cast<const char *>(meta.data),meta.data_size);
+      }
     }
+    cmd->AppendSwitchNative("working-directory", path.value());
+    return;
   }
-  cmd->AppendSwitchASCII("working-directory", base::MakeAbsoluteFilePath(cmd->GetProgram().DirName()).AsUTF8Unsafe());
+  cmd->AppendSwitchNative("working-directory", base::MakeAbsoluteFilePath(cmd->GetProgram().DirName()).value());
   return;
 }
 

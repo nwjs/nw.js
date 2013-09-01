@@ -35,6 +35,13 @@
 #include "content/common/view_messages.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/render_process_host.h"
+#if defined(OS_WIN)
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <io.h>
+#include <stdio.h>
+#endif
 
 using base::MessageLoop;
 using content::Shell;
@@ -136,10 +143,13 @@ void App::Call(Shell* shell,
 	  
 	  arguments.GetString(0,&ssrc);
 	  arguments.GetString(1,&sdst);
-	  
-	  int src = open(ssrc.c_str(), O_RDONLY);
+#if defined(OS_WIN)
+    int src = _open(ssrc.c_str(), _O_RDONLY);
+	  int dst = _open(sdst.c_str(), _O_WRONLY|_O_CREAT|_O_TRUNC);
+#else
+    int src = open(ssrc.c_str(), O_RDONLY);
 	  int dst = open(sdst.c_str(), O_WRONLY|O_CREAT|O_TRUNC,S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
-	  
+#endif
 	  gzFile zDst = gzdopen(dst, "w");
 	  
 	  if(zDst == NULL || src == -1) {
@@ -148,11 +158,18 @@ void App::Call(Shell* shell,
 	  }
 	  
 	  while(bytes_read > 0 && bytes_written > 0) {
+#if defined(OS_WIN)
+      bytes_read = _read(src,&buffer,0x1000);
+#else
 		  bytes_read = read(src,&buffer,0x1000);
+#endif
 		  bytes_written = gzwrite(zDst,&buffer,bytes_read);
 	  }
-	  
-	  close(src);
+#if defined(OS_WIN)
+	  _close(src);
+#else
+    close(src);
+#endif
 	  gzflush(zDst, Z_FINISH);
 	  gzclose(zDst);
 	  result->AppendBoolean(bytes_read != -1 && bytes_written != -1);
@@ -165,10 +182,14 @@ void App::Call(Shell* shell,
 	  
 	  arguments.GetString(0,&ssrc);
 	  arguments.GetString(1,&sdst);
-	  
+	
+#if defined(OS_WIN)
+    int src = _open(ssrc.c_str(), _O_RDONLY);
+	  int dst = _open(sdst.c_str(), _O_WRONLY|_O_CREAT|_O_TRUNC);
+#else
 	  int src = open(ssrc.c_str(), O_RDONLY);
 	  int dst = open(sdst.c_str(), O_WRONLY|O_CREAT|O_TRUNC,S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
-	  
+#endif
 	  gzFile zSrc = gzdopen(src, "r");
 	  
 	  
@@ -181,11 +202,18 @@ void App::Call(Shell* shell,
 			bytes_read > 0 &&
 			bytes_written > 0) {
 		  bytes_read = gzread(zSrc,&buffer,0x1000);
-		  bytes_written = write(dst,&buffer,bytes_read);
+#if defined(OS_WIN)
+		  bytes_written = _write(dst,&buffer,bytes_read);
+#else
+      bytes_written = write(dst,&buffer,bytes_read);
+#endif
 		  eof = gzeof(zSrc);
 	  }
-	  
-	  close(dst);
+#if defined(OS_WIN)
+	  _close(dst);
+#else
+    close(dst);
+#endif
 	  gzclose(zSrc);
 	  result->AppendBoolean(eof==1);
 	  return;
