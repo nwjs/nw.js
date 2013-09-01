@@ -44,7 +44,6 @@
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/gfx/image/image.h"
 #include "ui/gfx/image/image_skia_rep.h"
-#include "webkit/dom_storage/dom_storage_map.h"
 #include "webkit/glue/image_decoder.h"
 
 bool IsSwitch(const CommandLine::StringType& string,

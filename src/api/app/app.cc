@@ -19,6 +19,7 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "third_party/zlib/google/zip.h"
+#include "third_party/zlib/zlib.h"
 #include "content/nw/src/api/app/app.h"
 
 #include "base/command_line.h"
@@ -113,7 +114,6 @@ void App::Call(Shell* shell,
     }
 
     return;
-<<<<<<< HEAD
   } else if (method == "Zip") { 
     std::string zipdir;
     std::string zipfile;
@@ -128,6 +128,67 @@ void App::Call(Shell* shell,
     arguments.GetString(1,&zipdir);
     result->AppendBoolean(zip::Unzip(base::FilePath::FromUTF8Unsafe(zipfile), base::FilePath::FromUTF8Unsafe(zipdir)));
     return;
+  } else if (method == "Gzip") {
+	  std::string ssrc;
+	  std::string sdst;
+	  unsigned char buffer[0x1000];
+	  int bytes_read = 1, bytes_written = 1;
+	  
+	  arguments.GetString(0,&ssrc);
+	  arguments.GetString(1,&sdst);
+	  
+	  int src = open(ssrc.c_str(), O_RDONLY);
+	  int dst = open(sdst.c_str(), O_WRONLY|O_CREAT|O_TRUNC,S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
+	  
+	  gzFile zDst = gzdopen(dst, "w");
+	  
+	  if(zDst == NULL || src == -1) {
+		  result->AppendBoolean(false);
+		  return;
+	  }
+	  
+	  while(bytes_read > 0 && bytes_written > 0) {
+		  bytes_read = read(src,&buffer,0x1000);
+		  bytes_written = gzwrite(zDst,&buffer,bytes_read);
+	  }
+	  
+	  close(src);
+	  gzflush(zDst, Z_FINISH);
+	  gzclose(zDst);
+	  result->AppendBoolean(bytes_read != -1 && bytes_written != -1);
+	  return;
+  } else if (method == "Ungzip") {
+	  std::string ssrc;
+	  std::string sdst;
+	  unsigned char buffer[0x1000];
+	  int bytes_read = 1, bytes_written = 1, eof = 0;
+	  
+	  arguments.GetString(0,&ssrc);
+	  arguments.GetString(1,&sdst);
+	  
+	  int src = open(ssrc.c_str(), O_RDONLY);
+	  int dst = open(sdst.c_str(), O_WRONLY|O_CREAT|O_TRUNC,S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
+	  
+	  gzFile zSrc = gzdopen(src, "r");
+	  
+	  
+	  if(zSrc == NULL || dst == -1) {
+		  result->AppendBoolean(false);
+		  return;
+	  }
+	  
+	  while(eof == 0 &&
+			bytes_read > 0 &&
+			bytes_written > 0) {
+		  bytes_read = gzread(zSrc,&buffer,0x1000);
+		  bytes_written = write(dst,&buffer,bytes_read);
+		  eof = gzeof(zSrc);
+	  }
+	  
+	  close(dst);
+	  gzclose(zSrc);
+	  result->AppendBoolean(eof==1);
+	  return;
   } else if (method == "ClearCache") {
     ClearCache(GetRenderProcessHost());
   } else if (method == "GetPackage") {
@@ -200,12 +261,6 @@ void App::EmitOpenEvent(const std::string& path) {
 
     rph->Send(new ShellViewMsg_Open(path));
   }
-}
-
-void App::ClearCache(content::RenderProcessHost* render_process_host) {
-  render_process_host->Send(new ShellViewMsg_ClearCache());
-  nw::RemoveHttpDiskCache(render_process_host->GetBrowserContext(),
-                          render_process_host->GetID());
 }
 
 void App::ClearCache(content::RenderProcessHost* render_process_host) {

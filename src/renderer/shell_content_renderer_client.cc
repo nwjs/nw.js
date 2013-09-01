@@ -320,23 +320,8 @@ void ShellContentRendererClient::InstallNodeSymbols(
         // Save node-webkit version
         "process.versions['node-webkit'] = '" NW_VERSION_STRING "';"
     ));
+	CHECK(*script);
     script->Run();
-  }
-  
-  if (use_node || is_nw_protocol) {
-    int tiFiles[17] = { IDR_TI_API_APPLICATION_JS, IDR_TI_API_BUFFERED_STREAM_JS,
-                        IDR_TI_API_CLIPBOARD_JS, IDR_TI_API_COMPRESSION_JS,
-                        IDR_TI_API_DOMAIN_JS, IDR_TI_API_FILE_JS, IDR_TI_API_FILE_SYSTEM_JS,
-                        IDR_TI_API_HASH_JS, IDR_TI_API_MENU_JS, IDR_TI_API_MENU_ITEM_JS,
-                        IDR_TI_API_PLATFORM_JS, IDR_TI_API_PROPERTY_OBJECT_JS, IDR_TI_API_SOCKET_JS, IDR_TI_API_CONNECTION_JS, 
-                        IDR_TI_API_WINDOW_JS, IDR_TI_API_TRAY_JS, IDR_TI_API_FILEDIALOG_JS };
-
-    for(int i=0; i < 17; i++)
-    {
-      v8::Handle<v8::String> source = v8::String::NewExternal(new StaticV8ExternalAsciiStringResource(GetStringResource(tiFiles[i])));
-      v8::Local<v8::Script> script = v8::Script::New(source);
-      script->Run();
-    }
   }
 }
 
@@ -378,26 +363,6 @@ v8::Handle<v8::Value> ShellContentRendererClient::ReportException(
       error));
 
   return v8::Undefined();
-}
-
-void ShellContentRendererClient::UninstallNodeSymbols(
-    WebKit::WebFrame* frame,
-    v8::Handle<v8::Context> context) {
-  v8::HandleScope handle_scope;
-
-  v8::Local<v8::Object> v8Global = context->Global();
-  v8::Local<v8::Array> symbols = v8::Array::New(5);
-  symbols->Set(0, v8::String::New("global"));
-  symbols->Set(1, v8::String::New("process"));
-  symbols->Set(2, v8::String::New("Buffer"));
-  symbols->Set(3, v8::String::New("root"));
-  symbols->Set(4, v8::String::New("require"));
-
-  for (unsigned i = 0; i < symbols->Length(); ++i) {
-    v8::Local<v8::String> key = symbols->Get(i)->ToString();
-    if(v8Global->Has(key))
-      v8Global->Delete(key);
-  }
 }
 
 void ShellContentRendererClient::UninstallNodeSymbols(
