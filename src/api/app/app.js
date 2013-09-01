@@ -43,6 +43,14 @@ App.prototype.unzip = function(zipfile, dest) {
   nw.callStaticMethodSync('App','Unzip',[zipfile, dest]);
 }
 
+App.prototype.gzip = function(src, dst) {
+	nw.callStaticMethodSync('App','Gzip',[src, dst]);
+}
+
+App.prototype.ungzip = function(src, dst) {
+	nw.callStaticMethodSync('App','Ungzip',[src, dst]);
+}
+
 App.prototype.closeAllWindows = function() {
   nw.callStaticMethod('App', 'CloseAllWindows', [ ]);
 }
