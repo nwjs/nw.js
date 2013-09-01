@@ -29,7 +29,6 @@
 #include "base/files/scoped_temp_dir.h"
 #include "third_party/zlib/google/zip.h"
 #include "content/public/app/startup_helper_win.h"
-#include "content/shell/shell_main_delegate.h"
 #include "sandbox/win/src/sandbox_types.h"
 #endif
 

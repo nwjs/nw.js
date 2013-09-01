@@ -49,7 +49,6 @@
       <include name="IDR_NW_API_WINDOW_JS" file="../api/window/window.js" type="BINDATA" />
       <include name="IDR_NW_API_SHELL_JS" file="../api/shell/shell.js" type="BINDATA" />
       <include name="IDR_NW_API_APP_JS" file="../api/app/app.js" type="BINDATA" />
-
       <include name="IDR_TI_API_APPLICATION_JS" file="../../../../create-sdk/src/Application.js" type="BINDATA" />
       <include name="IDR_TI_API_BUFFERED_STREAM_JS" file="../../../../create-sdk/src/BufferedStream.js" type="BINDATA" />
       <include name="IDR_TI_API_CLIPBOARD_JS" file="../../../../create-sdk/src/Clipboard.js" type="BINDATA" />
@@ -63,7 +62,7 @@
       <include name="IDR_TI_API_PLATFORM_JS" file="../../../../create-sdk/src/Platform.js" type="BINDATA" />
       <include name="IDR_TI_API_PROPERTY_OBJECT_JS" file="../../../../create-sdk/src/PropertyObject.js" type="BINDATA" />
       <include name="IDR_TI_API_SOCKET_JS" file="../../../../create-sdk/src/Socket.js" type="BINDATA" />
-	  <include name="IDR_TI_API_CONNECTION_JS" file="../../../../create-sdk/src/Connection.js" type="BINDATA" />
+	    <include name="IDR_TI_API_CONNECTION_JS" file="../../../../create-sdk/src/Connection.js" type="BINDATA" />
       <include name="IDR_TI_API_WINDOW_JS" file="../../../../create-sdk/src/TIWindow.js" type="BINDATA" />
       <include name="IDR_TI_API_TRAY_JS" file="../../../../create-sdk/src/Tray.js" type="BINDATA" />
       <include name="IDR_TI_API_FILEDIALOG_JS" file="../../../../create-sdk/src/FileDialog.js" type="BINDATA" />

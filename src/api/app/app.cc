@@ -113,7 +113,6 @@ void App::Call(Shell* shell,
     }
 
     return;
-<<<<<<< HEAD
   } else if (method == "Zip") { 
     std::string zipdir;
     std::string zipfile;
@@ -200,12 +199,6 @@ void App::EmitOpenEvent(const std::string& path) {
 
     rph->Send(new ShellViewMsg_Open(path));
   }
-}
-
-void App::ClearCache(content::RenderProcessHost* render_process_host) {
-  render_process_host->Send(new ShellViewMsg_ClearCache());
-  nw::RemoveHttpDiskCache(render_process_host->GetBrowserContext(),
-                          render_process_host->GetID());
 }
 
 void App::ClearCache(content::RenderProcessHost* render_process_host) {

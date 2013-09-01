@@ -23,6 +23,7 @@
 
 #include "base/compiler_specific.h"
 #include "base/memory/scoped_ptr.h"
+#include "chrome/renderer/static_v8_external_string_resource.h"
 #include "content/public/renderer/content_renderer_client.h"
 #include "v8/include/v8.h"
 
