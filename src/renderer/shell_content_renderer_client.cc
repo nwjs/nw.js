@@ -323,6 +323,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
     ));
 	CHECK(*script);
     script->Run();
+	  
 	if (use_node || is_nw_protocol) {
 	  int tiFiles[17] = { IDR_TI_API_APPLICATION_JS, IDR_TI_API_BUFFERED_STREAM_JS,
 		  IDR_TI_API_CLIPBOARD_JS, IDR_TI_API_COMPRESSION_JS,
