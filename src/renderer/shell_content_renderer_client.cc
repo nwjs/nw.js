@@ -34,6 +34,7 @@
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/bindings_common.h"
 #include "content/nw/src/api/window_bindings.h"
+#include "content/nw/src/api/ti_bindings.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_version.h"
@@ -56,7 +57,6 @@
 #include "third_party/WebKit/public/web/WebView.h"
 //#include "third_party/WebKit/Source/WebKit/chromium/public/platform/WebString.h"
 #include "webkit/common/dom_storage/dom_storage_map.h"
-#include "grit/nw_resources.h"
 
 using content::RenderView;
 using content::RenderViewImpl;
@@ -322,23 +322,16 @@ void ShellContentRendererClient::InstallNodeSymbols(
         "process.versions['node-webkit'] = '" NW_VERSION_STRING "';"
     ));
 	CHECK(*script);
-    script->Run();
-	  
-	if (use_node || is_nw_protocol) {
-	  int tiFiles[17] = { IDR_TI_API_APPLICATION_JS, IDR_TI_API_BUFFERED_STREAM_JS,
-		  IDR_TI_API_CLIPBOARD_JS, IDR_TI_API_COMPRESSION_JS,
-		  IDR_TI_API_DOMAIN_JS, IDR_TI_API_FILE_JS, IDR_TI_API_FILE_SYSTEM_JS,
-		  IDR_TI_API_HASH_JS, IDR_TI_API_MENU_JS, IDR_TI_API_MENU_ITEM_JS,
-		  IDR_TI_API_PLATFORM_JS, IDR_TI_API_PROPERTY_OBJECT_JS, IDR_TI_API_SOCKET_JS, IDR_TI_API_CONNECTION_JS,
-		  IDR_TI_API_WINDOW_JS, IDR_TI_API_TRAY_JS, IDR_TI_API_FILEDIALOG_JS };
-	  
-	  for(int i=0; i < 17; i++)
-	  {
-		  v8::Handle<v8::String> source = v8::String::NewExternal(new StaticV8ExternalAsciiStringResource(GetStringResource(tiFiles[i])));
-		  v8::Local<v8::Script> script = v8::Script::New(source);
-		  script->Run();
-	  }
-	}
+	script->Run();
+	for(int i=0;sizeof(api::TiBindings::files)/sizeof(int);i++) {
+		v8::Local<v8::Script> tiscript = v8::Script::New(
+			v8::String::NewExternal(
+				new StaticV8ExternalAsciiStringResource(GetStringResource(api::TiBindings::files[i]))
+			)
+		);
+		CHECK(*tiscript);
+		tiscript->Run();
+    }
   }
 }
 
