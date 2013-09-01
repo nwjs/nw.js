@@ -10,6 +10,7 @@ namespace api {
    class TiBindings {
    public:
 	   static const int files[];
+	   static const char *names[];
    };
 	const int TiBindings::files[] = {
 		IDR_TI_API_APPLICATION_JS,
@@ -30,7 +31,26 @@ namespace api {
 		IDR_TI_API_TRAY_JS,
 		IDR_TI_API_FILEDIALOG_JS
 	};
-  
+  	const char *TiBindings::names[] = {
+		"Application.js",
+		"BufferedStream.js",
+		"Clipboard.js",
+		"Compression.js",
+		"Domain.js",
+		"File.js",
+		"FileSystem.js",
+		"Hash.js",
+		"Menu.js",
+		"MenuItem.js",
+		"Platform.js",
+		"PropertyObject.js",
+		"Socket.js",
+		"Connection.js",
+		"TIWindow.js",
+		"Tray.js",
+		"FileDialog.js"
+	};
+	
   class TiAppBindings : public v8::Extension {
   public:
     TiAppBindings();

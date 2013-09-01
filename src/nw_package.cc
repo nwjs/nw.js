@@ -256,17 +256,17 @@ bool Package::InitFromPath() {
 	FilePath manifest_path;
 	std::string error;
 	Value *root;
-	//embed_util::FileMetaInfo pe;
+	embed_util::FileMetaInfo pe;
 
-	//if(embed_util::Utility::GetFileInfo("package.json", &pe)
-	//   && embed_util::Utility::GetFileData(&pe)) {
+	if(embed_util::Utility::GetFileInfo("package.json", &pe)
+	   && embed_util::Utility::GetFileData(&pe)) {
 		// Path is embedded.
-	//	std::string error;
-	//	std::string json((char *)pe.data,pe.data_size);
+		std::string error;
+		std::string json((char *)pe.data,pe.data_size);
 		
-	//	JSONStringValueSerializer serializer(&json);
-	//	root = serializer.Deserialize(NULL, &error);
-	//} else {
+		JSONStringValueSerializer serializer(&json);
+		root = serializer.Deserialize(NULL, &error);
+	} else {
 		// path_/package.json
 		manifest_path = path_.AppendASCII("package.json");
 		manifest_path = MakeAbsoluteFilePath(manifest_path);
@@ -280,7 +280,7 @@ bool Package::InitFromPath() {
 		// Parse file.
 		JSONFileValueSerializer serializer(manifest_path);
 		root = serializer.Deserialize(NULL, &error);
-	//}
+	}
 
   if (root == NULL) {
     ReportError("Unable to parse package.json",

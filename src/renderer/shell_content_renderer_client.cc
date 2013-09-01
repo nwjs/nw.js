@@ -159,9 +159,11 @@ void ShellContentRendererClient::RenderThreadStarted() {
 
   WebString file_scheme(ASCIIToUTF16("file"));
   WebString app_scheme(ASCIIToUTF16("app"));
+  WebString embed_scheme(ASCIIToUTF16("embed"));
   // file: resources should be allowed to receive CORS requests.
   WebSecurityPolicy::registerURLSchemeAsCORSEnabled(file_scheme);
   WebSecurityPolicy::registerURLSchemeAsCORSEnabled(app_scheme);
+  WebSecurityPolicy::registerURLSchemeAsCORSEnabled(embed_scheme);
 
 }
 
