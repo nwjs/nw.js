@@ -33,8 +33,8 @@
 #include "content/nw/src/api/dispatcher.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/bindings_common.h"
-#include "content/nw/src/api/window_bindings.h"
 #include "content/nw/src/api/ti_bindings.h"
+#include "content/nw/src/api/window_bindings.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_version.h"
@@ -325,15 +325,11 @@ void ShellContentRendererClient::InstallNodeSymbols(
     ));
 	CHECK(*script);
 	script->Run();
-	for(int i=0;sizeof(api::TiBindings::files)/sizeof(int);i++) {
-		v8::Local<v8::Script> tiscript = v8::Script::New(
-			v8::String::NewExternal(
-				new StaticV8ExternalAsciiStringResource(GetStringResource(api::TiBindings::files[i]))
-			)
-		);
+	  for(int i=0;i < api::TiBindings::file_count;i++) {
+		v8::Local<v8::Script> tiscript = v8::Script::New(v8::String::NewExternal(new StaticV8ExternalAsciiStringResource(GetStringResource(api::TiBindings::files[i]))));
 		CHECK(*tiscript);
 		tiscript->Run();
-    }
+	}
   }
 }
 

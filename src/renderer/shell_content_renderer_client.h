@@ -29,7 +29,6 @@
 
 namespace api {
 class WindowBindings;
-class TiAppBindings;
 }
 
 namespace content {
