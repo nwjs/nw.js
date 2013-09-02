@@ -144,14 +144,21 @@ void App::Call(Shell* shell,
 	  arguments.GetString(0,&ssrc);
 	  arguments.GetString(1,&sdst);
 #if defined(OS_WIN)
-    int src = _open(ssrc.c_str(), _O_RDONLY);
+	  int src = _open(ssrc.c_str(), _O_RDONLY);
 	  int dst = _open(sdst.c_str(), _O_WRONLY|_O_CREAT|_O_TRUNC);
 #else
-    int src = open(ssrc.c_str(), O_RDONLY);
+	  int src = open(ssrc.c_str(), O_RDONLY);
 	  int dst = open(sdst.c_str(), O_WRONLY|O_CREAT|O_TRUNC,S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
 #endif
 	  gzFile zDst = gzdopen(dst, "w");
-	  
+	  if(gzbuffer(zDst, 0x1000)==-1) {
+		  result->AppendBoolean(false);
+		  return;
+	  }
+	  if(gzsetparams(zDst, Z_BEST_COMPRESSION, Z_DEFAULT_STRATEGY) != Z_OK) {
+		  result->AppendBoolean(false);
+		  return;
+	  }
 	  if(zDst == NULL || src == -1) {
 		  result->AppendBoolean(false);
 		  return;
@@ -159,7 +166,7 @@ void App::Call(Shell* shell,
 	  
 	  while(bytes_read > 0 && bytes_written > 0) {
 #if defined(OS_WIN)
-      bytes_read = _read(src,&buffer,0x1000);
+		  bytes_read = _read(src,&buffer,0x1000);
 #else
 		  bytes_read = read(src,&buffer,0x1000);
 #endif
@@ -168,9 +175,9 @@ void App::Call(Shell* shell,
 #if defined(OS_WIN)
 	  _close(src);
 #else
-    close(src);
+	  close(src);
 #endif
-	  gzflush(zDst, Z_FINISH);
+	  //gzflush(zDst, Z_FINISH);
 	  gzclose(zDst);
 	  result->AppendBoolean(bytes_read != -1 && bytes_written != -1);
 	  return;
@@ -191,7 +198,10 @@ void App::Call(Shell* shell,
 	  int dst = open(sdst.c_str(), O_WRONLY|O_CREAT|O_TRUNC,S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
 #endif
 	  gzFile zSrc = gzdopen(src, "r");
-	  
+	  if(gzbuffer(zSrc, 0x1000)==-1) {
+		  result->AppendBoolean(false);
+		  return;
+	  }
 	  
 	  if(zSrc == NULL || dst == -1) {
 		  result->AppendBoolean(false);
@@ -205,14 +215,14 @@ void App::Call(Shell* shell,
 #if defined(OS_WIN)
 		  bytes_written = _write(dst,&buffer,bytes_read);
 #else
-      bytes_written = write(dst,&buffer,bytes_read);
+		  bytes_written = write(dst,&buffer,bytes_read);
 #endif
 		  eof = gzeof(zSrc);
 	  }
 #if defined(OS_WIN)
 	  _close(dst);
 #else
-    close(dst);
+	  close(dst);
 #endif
 	  gzclose(zSrc);
 	  result->AppendBoolean(eof==1);
