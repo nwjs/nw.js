@@ -287,10 +287,16 @@ NativeWindowCocoa::NativeWindowCocoa(
       is_fullscreen_(false),
       is_kiosk_(false),
       attention_request_id_(0),
-      use_system_drag_(true) {
+      use_system_drag_(true),
+      initial_focus_(false),    // the initial value is different from other
+                                // platforms since osx will focus the first
+                                // window and we want to distinguish the first
+                                // window opening and Window.open case. See also #497
+      first_show_(true) {
   int width, height;
   manifest->GetInteger(switches::kmWidth, &width);
   manifest->GetInteger(switches::kmHeight, &height);
+  manifest->GetBoolean(switches::kmInitialFocus, &initial_focus_);
 
   NSRect main_screen_rect = [[[NSScreen screens] objectAtIndex:0] frame];
   NSRect cocoa_bounds = NSMakeRect(
@@ -412,15 +418,22 @@ void NativeWindowCocoa::Show() {
   content::RenderWidgetHostView* rwhv =
       shell_->web_contents()->GetRenderWidgetHostView();
 
-  // orderFrontRegardless causes us to become the first responder. The usual
-  // Chrome assumption is that becoming the first responder = you have focus
-  // so we use this trick to refuse to become first responder during orderFrontRegardless
+  if (first_show_ && initial_focus_) {
+    [window() makeKeyAndOrderFront:nil];
+    // FIXME: the new window through Window.open failed
+    // the focus-on-load test
+  } else {
+    // orderFrontRegardless causes us to become the first responder. The usual
+    // Chrome assumption is that becoming the first responder = you have focus
+    // so we use this trick to refuse to become first responder during orderFrontRegardless
 
-  if (rwhv)
-    rwhv->SetTakesFocusOnlyOnMouseDown(true);
-  [window() orderFrontRegardless];
-  if (rwhv)
-    rwhv->SetTakesFocusOnlyOnMouseDown(false);
+    if (rwhv)
+      rwhv->SetTakesFocusOnlyOnMouseDown(true);
+    [window() orderFrontRegardless];
+    if (rwhv)
+      rwhv->SetTakesFocusOnlyOnMouseDown(false);
+  }
+  first_show_ = false;
 }
 
 void NativeWindowCocoa::Hide() {
@@ -616,6 +629,14 @@ void NativeWindowCocoa::SetMenu(api::Menu* menu) {
   standard_menus.BuildAppleMenu();
   standard_menus.BuildEditMenu();
   standard_menus.BuildWindowMenu();
+}
+
+void NativeWindowCocoa::SetInitialFocus(bool accept_focus) {
+  initial_focus_ = accept_focus;
+}
+
+bool NativeWindowCocoa::InitialFocus() {
+  return initial_focus_;
 }
 
 void NativeWindowCocoa::HandleMouseEvent(NSEvent* event) {
