@@ -422,6 +422,27 @@
       ],
     },
     {
+      'target_name': 'strip',
+      'type': 'none',
+      'actions': [
+        {
+          'action_name': 'strip_nw_binaries',
+          'inputs': [
+            '<(PRODUCT_DIR)/nw',
+          ],
+          'outputs': [
+            '<(PRODUCT_DIR)/strip_nw.stamp',
+          ],
+          'action': ['strip',
+                     '<@(_inputs)'],
+          'message': 'Stripping release executable',
+        },
+      ],
+      'dependencies': [
+        'nw',
+      ],
+    },
+    {
       'target_name': 'dist',
       'type': 'none',
       'actions': [
@@ -440,6 +461,7 @@
         },
       ],
       'dependencies': [
+        'strip',
         '<(DEPTH)/chrome/chrome.gyp:chromedriver2_server',
       ],
 
