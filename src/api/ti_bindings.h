@@ -12,7 +12,6 @@ namespace api {
 		static const int file_count;
 		static const int files[];
 	};
-	const int TiBindings::file_count = 17;
 	const int TiBindings::files[] = {
 		IDR_TI_API_APPLICATION_JS,
 		IDR_TI_API_BUFFERED_STREAM_JS,
@@ -33,6 +32,8 @@ namespace api {
 		IDR_TI_API_FILEDIALOG_JS,
 		IDR_TI_API_NOTIFY_JS
 	};
+	
+	const int TiBindings::file_count = sizeof(TiBindings::files)/sizeof(int);
 }  // namespace api
 
 #endif  // CONTENT_TI_SRC_API_BINDINGS_H_
