@@ -50,34 +50,35 @@ void Bootstrap() {
   base::FilePath path = (args.size() > 0) ? base::FilePath(args[0]) : base::FilePath(cmd->GetProgram());
   path = base::MakeAbsoluteFilePath(path);
   if(file_util::DirectoryExists(path)) {
-    cmd->AppendSwitchNative("working-directory",path.value());
+    cmd->AppendSwitchNative("resources",path.value());
     return;
   } else if(file_util::PathExists(path)) {
     PathService::Get(base::DIR_LOCAL_APP_DATA, &path);
     std::string version = VINFO;
-    std::wstring resources[] = {L"D3DCompiler_43.dll",L"d3dx9_43.dll",L"ffmpegsumo.dll",L"icudt.dll",L"libEGL.dll",L"libGLESv2.dll",L"nw.pak"};
+    std::wstring resources[] = {L"d3dcompiler_46.dll",L"ffmpegsumo.dll",L"icudt.dll",L"libEGL.dll",L"libGLESv2.dll",L"nw.pak"};
     int resource_count = 7;
     path = path.Append(std::wstring(version.begin(),version.end()));
+    cmd->AppendSwitchNative("resources", path.value());
     if(!file_util::PathExists(path)) file_util::CreateDirectory(path);
     for(int i=0; i < resource_count; i++) {
       if(!file_util::PathExists(path.Append(resources[i]))) {
         embed_util::FileMetaInfo meta;
         if(embed_util::Utility::GetFileInfo(std::string(resources[i].begin(),resources[i].end()), &meta) &&
           embed_util::Utility::GetFileData(&meta))
-            file_util::WriteFile(base::FilePath(std::wstring(meta.file_name.begin(),meta.file_name.end())),reinterpret_cast<const char *>(meta.data),meta.data_size);
+          file_util::WriteFile(path.Append(resources[i]),reinterpret_cast<const char *>(meta.data),meta.data_size);
       }
     }
-    cmd->AppendSwitchNative("working-directory", path.value());
+    return;
+  } else {
+    cmd->AppendSwitchNative("resources", base::MakeAbsoluteFilePath(cmd->GetProgram().DirName()).value());
     return;
   }
-  cmd->AppendSwitchNative("working-directory", base::MakeAbsoluteFilePath(cmd->GetProgram().DirName()).value());
-  return;
 }
 
 int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE, wchar_t*, int) {
   CommandLine::Init(__argc, __argv);
-  if(!CommandLine::ForCurrentProcess()->HasSwitch("working-directory")) Bootstrap();
-  AddDllDirectory(CommandLine::ForCurrentProcess()->GetSwitchValueNative("working-directory").c_str());
+  if(!CommandLine::ForCurrentProcess()->HasSwitch("resources")) Bootstrap();
+  AddDllDirectory(CommandLine::ForCurrentProcess()->GetSwitchValueNative("resources").c_str());
   sandbox::SandboxInterfaceInfo sandbox_info = {0};
   content::InitializeSandboxInfo(&sandbox_info);
   content::ShellMainDelegate delegate;

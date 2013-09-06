@@ -52,6 +52,8 @@ namespace embed_util {
 			static bool GetFileInfo(std::string path, embed_util::FileMetaInfo* meta_info);
 
 			static int IndexOf(const unsigned char *data, const size_t length, const size_t pos);
+
+      static bool Gunzip(const char *in_data, const unsigned int in_size, char *out_data, unsigned int out_size);
       
 			static bool GetFileData(embed_util::FileMetaInfo *meta_info);
 			

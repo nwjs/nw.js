@@ -22,7 +22,7 @@
 #define MAGIC_SIZE 6
 #endif
 
-#define CHUNK 16384
+#define CHUNK 0x1000
 
 using namespace net;
 using namespace base;
@@ -126,40 +126,56 @@ namespace embed_util {
 		
 		return true;
 	}
+
+  bool Utility::Gunzip(const char *in_data, const unsigned int in_size, char *out_data, unsigned int out_size)
+  {
+    return true;
+  }
 	
 	bool Utility::GetFileData(embed_util::FileMetaInfo *meta) {
 		if(!embed_util::Utility::Load()) return false;
 		base::MemoryMappedFile mmap_;
+    z_stream strm;
+    unsigned char *ptr;
 		if (!mmap_.Initialize(base::FilePath(Utility::GetContainer()))) {
-			DLOG(ERROR) << "Failed to mmap application data (embed_utils.cc:134)";
+			DLOG(ERROR) << "Failed to mmap application data (embed_utils.cc:139)";
 			return false;
 		}
 		meta->data_size = 0;
 		meta->data = (unsigned char *)malloc(CHUNK);
-		int ret;
-		{
-			z_stream strm;
-			strm.total_in = strm.avail_in = meta->file_size;
-			strm.next_in = (unsigned char *)malloc(meta->file_size);
-			memcpy(strm.next_in,mmap_.data()+meta->offset,meta->file_size);
-			strm.zalloc = Z_NULL;
-			strm.zfree = Z_NULL;
-			strm.opaque = Z_NULL;
-			ret = inflateInit2(&strm,(15 + 32));
-			if (ret == Z_OK) {
-				do {
-					strm.avail_out = CHUNK;
-					strm.next_out = meta->data + meta->data_size;
-					ret = inflate(&strm, Z_NO_FLUSH);
-					meta->data_size = meta->data_size + strm.avail_out;
-					if(strm.avail_in != 0)
-						meta->data = (unsigned char *)realloc(meta->data, meta->data_size + strm.avail_out);
-				} while (strm.avail_in != 0 && ret != Z_STREAM_END);
-				meta->data_size = strm.total_out;
-				inflateEnd(&strm);
-			}
-		}
-		return ret == Z_STREAM_END;
+		strm.total_in = strm.avail_in = meta->file_size;
+		strm.next_in = const_cast<unsigned char *>(mmap_.data()+meta->offset);
+		strm.zalloc = Z_NULL, strm.zfree = Z_NULL, strm.opaque = Z_NULL;
+
+		if (inflateInit2(&strm,(15 + 32)) != Z_OK)  return false;
+
+		while(true) {
+			strm.avail_out = CHUNK;
+			strm.next_out = meta->data + meta->data_size;
+			switch(inflate(&strm, Z_NO_FLUSH)) {
+        case Z_OK:
+        case Z_BUF_ERROR:
+          meta->data_size = strm.total_out;
+          ptr = (unsigned char *)realloc(meta->data, meta->data_size + CHUNK);
+          if(ptr == NULL) {
+            DLOG(ERROR) << "Failed to aquire enough memory for realloc (embed_utils.cc:163)";
+            inflateEnd(&strm);
+            return false;
+          }
+				  meta->data = ptr;
+          break;
+        case Z_STREAM_END:
+          meta->data_size = strm.total_out;
+          inflateEnd(&strm);
+          return true;
+          break;
+        default:
+          DLOG(ERROR) << "Error in stream (embed_utils.cc:163)";
+          inflateEnd(&strm);
+          return false;
+          break;
+      }
+    }
 	}
 }
 

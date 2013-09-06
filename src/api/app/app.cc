@@ -17,11 +17,12 @@
 //  OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WH
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+#include "base/threading/thread_restrictions.h"
 #include "third_party/zlib/google/zip.h"
 #include "third_party/zlib/zlib.h"
 #include "content/nw/src/api/app/app.h"
-
+#include "base/file_util.h"
+#include "base/files/memory_mapped_file.h"
 #include "base/command_line.h"
 #include "base/logging.h"
 #include "base/message_loop.h"
@@ -43,6 +44,16 @@
 #include <stdio.h>
 #endif
 
+#if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
+#  include <fcntl.h>
+#  include <io.h>
+#  define SET_BINARY_MODE(file) _setmode(_fileno(file), O_BINARY)
+#else
+#  define SET_BINARY_MODE(file)
+#endif
+
+#define CHUNK 16384
+
 using base::MessageLoop;
 using content::Shell;
 using content::ShellBrowserContext;
@@ -51,6 +62,56 @@ using content::RenderProcessHost;
 namespace api {
 
 namespace {
+
+int _defgzip(FILE *source, FILE *dest, int level)
+{
+    int ret = 0, flush = 0;
+    unsigned have = 0;
+    z_stream strm = z_stream();
+    unsigned char in[CHUNK];
+    unsigned char out[CHUNK];
+
+    /* allocate deflate state */
+    strm.zalloc = Z_NULL;
+    strm.zfree = Z_NULL;
+    strm.opaque = Z_NULL;
+    ret = deflateInit2(&strm, level,Z_DEFLATED,16+MAX_WBITS,8,Z_DEFAULT_STRATEGY);
+    if (ret != Z_OK)
+        return ret;
+
+    /* compress until end of file */
+    do {
+        strm.avail_in = fread(in, 1, CHUNK, source);
+        if (ferror(source)) {
+            (void)deflateEnd(&strm);
+            return Z_ERRNO;
+        }
+        flush = feof(source) ? Z_FINISH : Z_NO_FLUSH;
+        strm.next_in = in;
+
+        /* run deflate() on input until output buffer not full, finish
+           compression if all of source has been read in */
+        do {
+            strm.avail_out = CHUNK;
+            strm.next_out = out;
+            ret = deflate(&strm, flush);    /* no bad return value */
+            assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
+            have = CHUNK - strm.avail_out;
+            if (fwrite(out, 1, have, dest) != have || ferror(dest)) {
+                (void)deflateEnd(&strm);
+                return Z_ERRNO;
+            }
+        } while (strm.avail_out == 0);
+        assert(strm.avail_in == 0);     /* all input will be used */
+
+        /* done when last data in file processed */
+    } while (flush != Z_FINISH);
+    assert(ret == Z_STREAM_END);        /* stream will be complete */
+
+    /* clean up and return */
+    (void)deflateEnd(&strm);
+    return Z_OK;
+}
 
 // Get render process host.
 RenderProcessHost* GetRenderProcessHost() {
@@ -98,6 +159,7 @@ void App::Call(Shell* shell,
                const std::string& method,
                const base::ListValue& arguments,
                base::ListValue* result) {
+  base::ThreadRestrictions::SetIOAllowed(true);
   if (method == "GetDataPath") {
     ShellBrowserContext* browser_context =
       static_cast<ShellBrowserContext*>(shell->web_contents()->GetBrowserContext());
@@ -136,16 +198,125 @@ void App::Call(Shell* shell,
     result->AppendBoolean(zip::Unzip(base::FilePath::FromUTF8Unsafe(zipfile), base::FilePath::FromUTF8Unsafe(zipdir)));
     return;
   } else if (method == "Gzip") {
-	  std::string ssrc;
-	  std::string sdst;
-	  unsigned char buffer[0x1000];
-	  int bytes_read = 1, bytes_written = 1;
-	  
+	  std::string ssrc = "";
+	  std::string sdst = "";
+    
 	  arguments.GetString(0,&ssrc);
 	  arguments.GetString(1,&sdst);
+
+    FILE *src = fopen(ssrc.c_str(), "r");
+    if(src==NULL) {
+      DLOG(ERROR) << "Cannot open for read " << ssrc << " IO ERROR: " << _strerror(NULL);
+      result->AppendBoolean(false);
+      return;
+    }
+
+    FILE *dst = fopen(sdst.c_str(), "w+");
+
+    if(dst==NULL) {
+      DLOG(ERROR) << "Cannot open for read/write/trunc " << ssrc << " IO ERROR: " << _strerror(NULL);
+      result->AppendBoolean(false);
+      fclose(src);
+      return;
+    }
+
+    SET_BINARY_MODE(src);
+    SET_BINARY_MODE(dst);
+
+    if(_defgzip(src,dst,Z_DEFAULT_COMPRESSION) == Z_OK)
+      result->AppendBoolean(true);
+    else
+      result->AppendBoolean(false);
+
+    fflush(dst);
+    fclose(src);
+    fclose(dst);
+    return;
+
+   /*
+   // Open file in text mode:
+   if( fopen_s( &stream, "fread.out", "w+t" ) == 0 )
+   {
+      for ( i = 0; i < 25; i++ )
+         list[i] = (char)('z' - i);
+      // Write 25 characters to stream 
+      numwritten = fwrite( list, sizeof( char ), 25, stream );
+      printf( "Wrote %d items\n", numwritten );
+      fclose( stream );
+
+   }
+   else
+      printf( "Problem opening the file\n" );
+
+   if( fopen_s( &stream, "fread.out", "r+t" ) == 0 )
+   {
+      // Attempt to read in 25 characters 
+      numread = fread( list, sizeof( char ), 25, stream );
+      printf( "Number of items read = %d\n", numread );
+      printf( "Contents of buffer = %.25s\n", list );
+      fclose( stream );
+   }
+   else
+      printf( "File could not be opened\n" );
+}
+
+    base::FilePath src = base::FilePath::FromUTF8Unsafe(ssrc);
+    base::MemoryMappedFile mmap_;
+    z_stream strm;
+    unsigned char *ptr;
+    if (!mmap_.Initialize(base::FilePath::FromUTF8Unsafe(ssrc))) {
+		  result->AppendBoolean(false);
+		  return;
+		}
+
+    unsigned char *data = (unsigned char *)malloc(CHUNK);
+    int data_size = 0;
+		strm.total_in = strm.avail_in = mmap_.length();
+		strm.next_in = const_cast<unsigned char *>(mmap_.data());
+		strm.zalloc = Z_NULL, strm.zfree = Z_NULL, strm.opaque = Z_NULL;
+
+		if (deflateInit(&strm, Z_BEST_COMPRESSION) != Z_OK) {
+		  result->AppendBoolean(false);
+		  return;
+		}
+
+		while(true) {
+			strm.avail_out=CHUNK;
+			strm.next_out=data+data_size;
+			switch(deflate(&strm, Z_FINISH)) {
+        case Z_OK:
+        case Z_BUF_ERROR:
+          data_size = strm.total_out;
+          ptr = (unsigned char *)realloc(data, data_size + CHUNK);
+          if(ptr == NULL) {
+            deflateEnd(&strm);
+            result->AppendBoolean(false);
+            return;
+          }
+				  data = ptr;
+          break;
+        case Z_STREAM_END:
+          data_size = strm.total_out;
+          deflateEnd(&strm);
+
+          file_util::WriteFile(base::FilePath::FromUTF8Unsafe(sdst),reinterpret_cast<const char *>(data),data_size);
+
+          result->AppendBoolean(true);
+          return;
+          break;
+        default:
+          inflateEnd(&strm);
+          result->AppendBoolean(false);
+          break;
+      }
+    }
+
+
 #if defined(OS_WIN)
-	  int src = _open(ssrc.c_str(), _O_RDONLY);
-	  int dst = _open(sdst.c_str(), _O_WRONLY|_O_CREAT|_O_TRUNC);
+    int src;
+    int dst;
+    _sopen_s(&src,ssrc.c_str(), _O_RDONLY, _SH_DENYNO, _S_IREAD);
+	  _sopen_s(&dst,sdst.c_str(), _O_WRONLY|_O_CREAT|_O_TRUNC, _SH_DENYNO, _S_IWRITE);
 #else
 	  int src = open(ssrc.c_str(), O_RDONLY);
 	  int dst = open(sdst.c_str(), O_WRONLY|O_CREAT|O_TRUNC,S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
@@ -163,23 +334,21 @@ void App::Call(Shell* shell,
 		  result->AppendBoolean(false);
 		  return;
 	  }
-	  
-	  while(bytes_read > 0 && bytes_written > 0) {
 #if defined(OS_WIN)
+    while(bytes_read > 0 && bytes_written > 0) {
 		  bytes_read = _read(src,&buffer,0x1000);
+      bytes_written = gzwrite(zDst,&buffer,bytes_read);
+    }
+    _close(src);
 #else
+    while(bytes_read > 0 && bytes_written > 0) {
 		  bytes_read = read(src,&buffer,0x1000);
+      bytes_written = gzwrite(zDst,&buffer,bytes_read);
+    }
+    close(src);
 #endif
-		  bytes_written = gzwrite(zDst,&buffer,bytes_read);
-	  }
-#if defined(OS_WIN)
-	  _close(src);
-#else
-	  close(src);
-#endif
-	  //gzflush(zDst, Z_FINISH);
 	  gzclose(zDst);
-	  result->AppendBoolean(bytes_read != -1 && bytes_written != -1);
+	  result->AppendBoolean(bytes_read != -1 && bytes_written != -1);*/
 	  return;
   } else if (method == "Ungzip") {
 	  std::string ssrc;
@@ -191,8 +360,10 @@ void App::Call(Shell* shell,
 	  arguments.GetString(1,&sdst);
 	
 #if defined(OS_WIN)
-    int src = _open(ssrc.c_str(), _O_RDONLY);
-	  int dst = _open(sdst.c_str(), _O_WRONLY|_O_CREAT|_O_TRUNC);
+    int src;
+    int dst;
+    _sopen_s(&src,ssrc.c_str(), _O_RDONLY, _SH_DENYNO, _S_IREAD);
+	  _sopen_s(&dst,sdst.c_str(), _O_WRONLY|_O_CREAT|_O_TRUNC, _SH_DENYNO, _S_IWRITE);
 #else
 	  int src = open(ssrc.c_str(), O_RDONLY);
 	  int dst = open(sdst.c_str(), O_WRONLY|O_CREAT|O_TRUNC,S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
