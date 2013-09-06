@@ -146,7 +146,7 @@ void NativeWindowGtk::Move(const gfx::Rect& bounds) {
   gtk_window_util::SetWindowSize(window_, gfx::Size(width, height));
 }
 
-void NativeWindowGtk::Notify(std::string title, std::string text, std::string subtitle) {
+void NativeWindowGtk::Notify(std::string title, std::string text, std::string subtitle, bool sound) {
 	
 }
 

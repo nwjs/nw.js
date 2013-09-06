@@ -51,8 +51,8 @@ App.prototype.ungzip = function(src, dst) {
 	return nw.callStaticMethodSync('App','Ungzip',[src, dst]);
 }
 
-App.prototype.notify = function(title, text, subtitle) {
-	return nw.callStaticMethodSync('App','Notify',[title, text, subtitle]);
+App.prototype.notify = function(title, text, subtitle, sound) {
+	return nw.callStaticMethodSync('App','Notify',[title, text, subtitle, sound]);
 }
 
 App.prototype.closeAllWindows = function() {

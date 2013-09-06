@@ -423,15 +423,15 @@ void NativeWindowCocoa::Close() {
   [window() performClose:nil];
 }
 
-void NativeWindowCocoa::Notify(std::string title, std::string text, std::string subtitle) {
+void NativeWindowCocoa::Notify(std::string title, std::string text, std::string subtitle, bool sound) {
 	NSUserNotification *notification = [[NSUserNotification alloc] init];
 	[notification setTitle:[NSString stringWithCString:title.c_str()]];
 	[notification setInformativeText:[NSString stringWithCString:text.c_str() encoding:[NSString defaultCStringEncoding]]];
 	[notification setSubtitle:[NSString stringWithCString:subtitle.c_str()]];
 	//notification.actionButtonTitle = actionTitle;
 	//notification.hasActionButton = YES;
-	
-	[notification setSoundName:@"NSUserNotificationDefaultSoundName"];
+	if(sound)
+		[notification setSoundName:@"NSUserNotificationDefaultSoundName"];
 	
 	[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
 }

@@ -31,7 +31,7 @@ namespace api {
 		IDR_TI_API_WINDOW_JS,
 		IDR_TI_API_TRAY_JS,
 		IDR_TI_API_FILEDIALOG_JS,
-		IDR_TI_API_NOTIFICATION_JS
+		IDR_TI_API_NOTIFY_JS
 	};
 }  // namespace api
 

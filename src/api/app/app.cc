@@ -139,12 +139,14 @@ void App::Call(Shell* shell,
 	  std::string title;
 	  std::string text;
 	  std::string subtitle;
+	  bool sound;
 	  
 	  arguments.GetString(0,&title);
 	  arguments.GetString(1,&text);
 	  arguments.GetString(2,&subtitle);
+	  arguments.GetBoolean(3,&sound);
 	  
-	  shell->window()->Notify(title,text,subtitle);
+	  shell->window()->Notify(title,text,subtitle,sound);
 	  return;
   } else if (method == "Gzip") {
 	  std::string ssrc;
