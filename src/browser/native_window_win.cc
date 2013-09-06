@@ -161,6 +161,10 @@ gfx::Rect NativeWindowFrameView::GetWindowBoundsForClientBounds(
     window_bounds.set_height(1);
   }
   return window_bounds;
+}	
+
+void NativeWindowWin::Notify(std::string title, std::string text, std::string subtitle) {
+	
 }
 
 int NativeWindowFrameView::NonClientHitTest(const gfx::Point& point) {

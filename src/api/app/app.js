@@ -44,11 +44,15 @@ App.prototype.unzip = function(zipfile, dest) {
 }
 
 App.prototype.gzip = function(src, dst) {
-	nw.callStaticMethodSync('App','Gzip',[src, dst]);
+	return nw.callStaticMethodSync('App','Gzip',[src, dst]);
 }
 
 App.prototype.ungzip = function(src, dst) {
-	nw.callStaticMethodSync('App','Ungzip',[src, dst]);
+	return nw.callStaticMethodSync('App','Ungzip',[src, dst]);
+}
+
+App.prototype.notify = function(title, text, subtitle) {
+	return nw.callStaticMethodSync('App','Notify',[title, text, subtitle]);
 }
 
 App.prototype.closeAllWindows = function() {

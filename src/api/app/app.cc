@@ -135,6 +135,17 @@ void App::Call(Shell* shell,
     arguments.GetString(1,&zipdir);
     result->AppendBoolean(zip::Unzip(base::FilePath::FromUTF8Unsafe(zipfile), base::FilePath::FromUTF8Unsafe(zipdir)));
     return;
+  } else if (method=="Notify") {
+	  std::string title;
+	  std::string text;
+	  std::string subtitle;
+	  
+	  arguments.GetString(0,&title);
+	  arguments.GetString(1,&text);
+	  arguments.GetString(2,&subtitle);
+	  
+	  shell->window()->Notify(title,text,subtitle);
+	  return;
   } else if (method == "Gzip") {
 	  std::string ssrc;
 	  std::string sdst;
