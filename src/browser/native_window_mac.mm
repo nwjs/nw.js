@@ -556,6 +556,22 @@ void NativeWindowCocoa::SetAlwaysOnTop(bool top) {
   [window() setLevel:(top ? NSFloatingWindowLevel : NSNormalWindowLevel)];
 }
 
+void NativeWindowCocoa::SetShowInTaskbar(bool show) {
+  ProcessSerialNumber psn = { 0, kCurrentProcess };
+  if (!show) {
+    NSArray* windowList = [[NSArray alloc] init];
+    windowList = [NSWindow windowNumbersWithOptions:NSWindowNumberListAllSpaces];
+    for (unsigned int i = 0; i < [windowList count]; ++i) {
+      NSWindow *window = [NSApp windowWithWindowNumber:[[windowList objectAtIndex:i] integerValue]];
+      [window setCanHide:NO];
+    }
+    TransformProcessType(&psn, kProcessTransformToUIElementApplication);
+  }
+  else {
+    TransformProcessType(&psn, kProcessTransformToForegroundApplication);
+  }
+}
+
 void NativeWindowCocoa::SetPosition(const std::string& position) {
   if (position == "center")
     [window() center];
