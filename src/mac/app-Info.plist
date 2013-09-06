@@ -19,7 +19,7 @@
 			<string>Owner</string>
 			<key>LSItemContentTypes</key>
 			<array>
-				<string>com.intel.nw.app</string>
+				<string>com.trueinteractions.Runtime</string>
 			</array>
 		</dict>
 		<dict>

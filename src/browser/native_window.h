@@ -99,6 +99,7 @@ class NativeWindow {
   virtual void SetTransparent() = 0;
   virtual bool IsTransparent() = 0;
   virtual void SetMenu(api::Menu* menu) = 0;
+  virtual void Notify(std::string title, std::string text, std::string subtitle, bool sound) = 0;
 
   // Toolbar related controls.
   enum TOOLBAR_BUTTON {

@@ -49,6 +49,18 @@
 - (void)setMouseDownCanMoveWindow:(BOOL)can_move;
 @end
 
+#if !defined(MAC_OS_X_VERSION_10_8) || \
+MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_8
+@interface NSUserNotificationCenter : NSObject
+@end
+@implementation NSUserNotificationCenter
+@end
+@interface NSUserNotification : NSObject
+@end
+@implementation NSUserNotification
+@end
+#endif
+
 // Replicate specific 10.7 SDK declarations for building with prior SDKs.
 #if !defined(MAC_OS_X_VERSION_10_7) || \
     MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_7
@@ -83,8 +95,17 @@ enum {
   if ((self = [super init])) {
     shell_ = shell;
   }
+	
+	// Set user default notification
+	[[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
   return self;
 }
+
+- (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center shouldPresentNotification:(NSUserNotification *)notification
+{
+	return YES;
+}
+
 
 - (BOOL)windowShouldClose:(id)window {
   // If this window is bound to a js object and is not forced to close,
@@ -400,6 +421,19 @@ void NativeWindowCocoa::UninstallView() {
 
 void NativeWindowCocoa::Close() {
   [window() performClose:nil];
+}
+
+void NativeWindowCocoa::Notify(std::string title, std::string text, std::string subtitle, bool sound) {
+	NSUserNotification *notification = [[NSUserNotification alloc] init];
+	[notification setTitle:@(title.c_str())];
+	[notification setInformativeText:@(text.c_str())];
+	[notification setSubtitle:@(subtitle.c_str())];
+	//notification.actionButtonTitle = actionTitle;
+	//notification.hasActionButton = YES;
+	if(sound)
+		[notification setSoundName:@"NSUserNotificationDefaultSoundName"];
+	
+	[[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
 }
 
 void NativeWindowCocoa::Move(const gfx::Rect& pos) {
