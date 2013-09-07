@@ -98,4 +98,4 @@ Issues are being tracked here on GitHub.
 
 ## License
 
-`node-webkit`'s code uses the MIT license, see our `LICENSE` file.
+`node-webkit`'s code in this repo uses the MIT license, see our `LICENSE` file. To redistribute the binary, see [How to package and distribute your apps](https://github.com/rogerwang/node-webkit/wiki/How-to-package-and-distribute-your-apps)
