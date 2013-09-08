@@ -318,6 +318,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
 
         // Save node-webkit version
         "process.versions['node-webkit'] = '" NW_VERSION_STRING "';"
+        "process.versions['chromium'] = '" CHROME_VERSION "';"
     ));
     script->Run();
   }
