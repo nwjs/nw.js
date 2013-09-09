@@ -300,31 +300,14 @@ void Shell::ReloadOrStop() {
     Reload();
 }
 
-#if 0
 void Shell::CloseDevTools() {
-  if (!devtools_frontend_)
+  if (!devtools_window_)
     return;
-  registrar_.Remove(this,
-                    NOTIFICATION_WEB_CONTENTS_DESTROYED,
-                    Source<WebContents>(
-                        devtools_frontend_->frontend_shell()->web_contents()));
-  devtools_frontend_->Close();
-  devtools_frontend_ = NULL;
+  devtools_window_->window()->Close();
+  devtools_window_.reset();
 }
-#endif
 
 void Shell::ShowDevTools(const char* jail_id, bool headless) {
-#if 0
-  if (devtools_frontend_) {
-    devtools_frontend_->Focus();
-    return;
-  }
-  devtools_frontend_ = ShellDevToolsFrontend::Show(web_contents());
-  registrar_.Add(this,
-                 NOTIFICATION_WEB_CONTENTS_DESTROYED,
-                 Source<WebContents>(
-                     devtools_frontend_->frontend_shell()->web_contents()));
-#else
   ShellContentBrowserClient* browser_client =
       static_cast<ShellContentBrowserClient*>(
           GetContentClient()->browser());
@@ -387,7 +370,6 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
   browser_context->set_pinning_renderer(true);
   // Save devtools window in current shell.
   devtools_window_ = shell->weak_ptr_factory_.GetWeakPtr();
-#endif
 }
 
 void Shell::UpdateDraggableRegions(

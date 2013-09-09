@@ -98,9 +98,7 @@ class Shell : public WebContentsDelegate,
   void Stop();
   void ReloadOrStop();
   void ShowDevTools(const char* jail_id = NULL, bool headless = false);
-#if 0
   void CloseDevTools();
-#endif
   // Send an event to renderer.
   void SendEvent(const std::string& event, const std::string& arg1 = "");
 
