@@ -230,6 +230,11 @@ enum {
   api::App::CloseAllWindows();
 }
 
+- (NSRect)constrainFrameRect:(NSRect)frameRect toScreen:(NSScreen *)screen
+{
+  return frameRect;
+}
+
 @end
 
 @interface ShellFramelessNSWindow : ShellNSWindow
