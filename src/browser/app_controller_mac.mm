@@ -69,4 +69,10 @@
   standard_menus.BuildWindowMenu();
 }
 
+- (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication
+                    hasVisibleWindows:(BOOL)flag {
+  api::App::EmitReopenEvent();
+  return YES;
+}
+
 @end
