@@ -50,6 +50,7 @@ bool ShellRenderProcessObserver::OnControlMessageReceived(
   bool handled = true;
   IPC_BEGIN_MESSAGE_MAP(ShellRenderProcessObserver, message)
     IPC_MESSAGE_HANDLER(ShellViewMsg_Open, OnOpen)
+    IPC_MESSAGE_HANDLER(ShellViewMsg_Reopen, OnReopen)
     IPC_MESSAGE_HANDLER(ShellViewMsg_ClearCache, OnClearCache)
     IPC_MESSAGE_UNHANDLED(handled = false)
   IPC_END_MESSAGE_MAP()
@@ -85,6 +86,25 @@ void ShellRenderProcessObserver::OnOpen(const std::string& path) {
         v8::String::New("open"), v8::String::New(path.c_str())
     };
     emit->Call(app, 2, argv);
+  }
+}
+
+void ShellRenderProcessObserver::OnReopen() {
+  v8::HandleScope handle_scope;
+
+  // the App object is stored in process["_nw_app"].
+  v8::Local<v8::Object> process = node::g_context->Global()->Get(
+      node::process_symbol)->ToObject();
+  v8::Local<v8::String> app_symbol = v8::String::NewSymbol("_nw_app");
+  if (process->Has(app_symbol)) {
+    // process["_nw_app"].emit(path).
+    v8::Local<v8::Object> app = process->Get(app_symbol)->ToObject();
+    v8::Local<v8::Function> emit = v8::Local<v8::Function>::Cast(
+        app->Get(v8::String::New("emit")));
+    v8::Local<v8::Value> argv[] = {
+        v8::String::New("reopen")
+    };
+    emit->Call(app, 1, argv);
   }
 }
 
