@@ -314,6 +314,7 @@
       'type': 'none',
       'dependencies': [
         'generate_nw_resources',
+        'about_credits',
       ],
       'variables': {
         'grit_out_dir': '<(SHARED_INTERMEDIATE_DIR)/content',
@@ -341,6 +342,33 @@
             'grit_grd_file': 'src/resources/nw_resources.grd',
           },
           'includes': [ '../../build/grit_action.gypi' ],
+        },
+      ],
+    },
+    {
+      'target_name': 'about_credits',
+      'type': 'none',
+      'actions': [
+        {
+          'variables': {
+            'generator_path': '../../tools/licenses.py',
+            'about_credits_file': '<(PRODUCT_DIR)/credits.html',
+          },
+          'action_name': 'generate_about_credits',
+          'inputs': [
+            # TODO(phajdan.jr): make licenses.py print inputs too.
+            '<(generator_path)',
+          ],
+          'outputs': [
+            '<(about_credits_file)',
+          ],
+          'hard_dependency': 1,
+          'action': ['python',
+                     '<(generator_path)',
+                     'credits',
+                     '<(about_credits_file)',
+          ],
+          'message': 'Generating about:credits.',
         },
       ],
     },
