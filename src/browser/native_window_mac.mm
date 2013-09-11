@@ -629,10 +629,14 @@ bool NativeWindowCocoa::IsKiosk() {
 }
 
 void NativeWindowCocoa::SetMenu(api::Menu* menu) {
+  bool no_edit_menu = false;
+  shell_->GetPackage()->root()->GetBoolean("no-edit-menu", &no_edit_menu);
+
   StandardMenusMac standard_menus(shell_->GetPackage()->GetName());
   [NSApp setMainMenu:menu->menu_];
   standard_menus.BuildAppleMenu();
-  standard_menus.BuildEditMenu();
+  if (!no_edit_menu)
+    standard_menus.BuildEditMenu();
   standard_menus.BuildWindowMenu();
 }
 
