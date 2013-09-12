@@ -155,6 +155,7 @@ void ShellContentRendererClient::RenderThreadStarted() {
   // Setup node.js.
   node::SetupContext(argc, argv, node::g_context->Global());
 
+#if !defined(OS_WIN)
   v8::Local<v8::Script> script = v8::Script::New(v8::String::New((
       "process.__nwfds_to_close = [" +
       base::StringPrintf("%d", base::GlobalDescriptors::GetInstance()->Get(kPrimaryIPCChannel)) +
@@ -162,7 +163,7 @@ void ShellContentRendererClient::RenderThreadStarted() {
     ).c_str()));
   CHECK(*script);
   script->Run();
-
+#endif
   // Start observers.
   shell_observer_.reset(new ShellRenderProcessObserver());
 
