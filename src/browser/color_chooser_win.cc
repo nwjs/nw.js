@@ -54,8 +54,8 @@ ColorChooserWin* ColorChooserWin::Open(content::WebContents* web_contents,
 ColorChooserWin::ColorChooserWin(content::WebContents* web_contents,
                                  SkColor initial_color)
     : web_contents_(web_contents) {
-  gfx::NativeWindow owning_window = platform_util::GetTopLevel(
-      web_contents->GetRenderViewHost()->GetView()->GetNativeView());
+  gfx::NativeWindow owning_window = ::GetAncestor(
+      web_contents->GetRenderViewHost()->GetView()->GetNativeView(), GA_ROOT);
   color_chooser_dialog_ = new ColorChooserDialog(this,
                                                  initial_color,
                                                  owning_window);
@@ -82,7 +82,7 @@ void ColorChooserWin::OnColorChooserDialogClosed() {
     web_contents_->DidEndColorChooser();
 }
 
-namespace chrome {
+namespace nw {
 
 content::ColorChooser* ShowColorChooser(content::WebContents* web_contents,
                                         SkColor initial_color) {
