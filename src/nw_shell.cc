@@ -45,6 +45,7 @@
 #include "content/public/common/url_constants.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/app/app.h"
+#include "content/nw/src/browser/browser_dialogs.h"
 #include "content/nw/src/browser/file_select_helper.h"
 #include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
@@ -473,6 +474,11 @@ void Shell::WebContentsCreated(WebContents* source_contents,
 
   // don't pass the url on window.open case
   Shell::Create(source_contents, GURL::EmptyGURL(), manifest.get(), new_contents);
+}
+
+content::ColorChooser*
+Shell::OpenColorChooser(content::WebContents* web_contents, SkColor color) {
+  return nw::ShowColorChooser(web_contents, color);
 }
 
 void Shell::RunFileChooser(WebContents* web_contents,
