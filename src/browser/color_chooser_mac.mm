@@ -6,7 +6,7 @@
 
 #include "base/logging.h"
 #import "base/mac/scoped_nsobject.h"
-#include "chrome/browser/ui/browser_dialogs.h"
+#include "content/nw/src/browser/browser_dialogs.h"
 #include "content/public/browser/color_chooser.h"
 #include "content/public/browser/web_contents.h"
 #include "skia/ext/skia_utils_mac.h"
@@ -64,7 +64,7 @@ ColorChooserMac* ColorChooserMac::Open(content::WebContents* web_contents,
                                        SkColor initial_color) {
   if (current_color_chooser_)
     current_color_chooser_->End();
-  DCHECK(!current_color_chooser_);
+  CHECK(!current_color_chooser_);
   current_color_chooser_ =
       new ColorChooserMac(web_contents, initial_color);
   return current_color_chooser_;
@@ -80,7 +80,7 @@ ColorChooserMac::ColorChooserMac(content::WebContents* web_contents,
 
 ColorChooserMac::~ColorChooserMac() {
   // Always call End() before destroying.
-  DCHECK(!panel_);
+  CHECK(!panel_);
 }
 
 void ColorChooserMac::DidChooseColorInColorPanel(SkColor color) {
@@ -94,7 +94,7 @@ void ColorChooserMac::DidCloseColorPabel() {
 
 void ColorChooserMac::End() {
   panel_.reset();
-  DCHECK(current_color_chooser_ == this);
+  CHECK(current_color_chooser_ == this);
   current_color_chooser_ = NULL;
   if (web_contents_)
       web_contents_->DidEndColorChooser();
@@ -130,8 +130,8 @@ void ColorChooserMac::SetSelectedColor(SkColor color) {
 }
 
 - (void)windowWillClose:(NSNotification*)notification {
-  chooser_->DidCloseColorPabel();
   nonUserChange_ = NO;
+  chooser_->DidCloseColorPabel();
 }
 
 - (void)didChooseColor:(NSColorPanel*)panel {
@@ -149,7 +149,7 @@ void ColorChooserMac::SetSelectedColor(SkColor color) {
   [[NSColorPanel sharedColorPanel] setColor:color];
 }
 
-namespace chrome {
+namespace nw {
 
 content::ColorChooser* ShowColorChooser(content::WebContents* web_contents,
                                         SkColor initial_color) {

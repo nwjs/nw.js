@@ -142,10 +142,9 @@
         'src/browser/app_controller_mac.mm',
         'src/browser/capture_page_helper.h',
         'src/browser/capture_page_helper.cc',
-        'src/browser/color_chooser_dialog.cc',
-        'src/browser/color_chooser_dialog.h',
         'src/browser/color_chooser_gtk.cc',
         'src/browser/color_chooser_win.cc',
+        'src/browser/color_chooser_mac.mm',
         'src/browser/chrome_event_processing_window.mm',
         'src/browser/chrome_event_processing_window.h',
         'src/browser/file_select_helper.cc',
@@ -290,6 +289,10 @@
           ],
         }],
         ['OS=="win"', {
+          'sources': [
+            'src/browser/color_chooser_dialog.cc',
+            'src/browser/color_chooser_dialog.h',
+          ],
           'resource_include_dirs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit',
           ],
