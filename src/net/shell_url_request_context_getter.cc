@@ -124,6 +124,9 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
     cookie_store->GetCookieMonster()->SetPersistSessionCookies(true);
     storage_->set_cookie_store(cookie_store);
 
+    const char* schemes[] = {"app"};
+    cookie_store->GetCookieMonster()->SetCookieableSchemes(schemes, 1);
+
     storage_->set_server_bound_cert_service(new net::ServerBoundCertService(
         new net::DefaultServerBoundCertStore(NULL),
         base::WorkerPool::GetTaskRunner(true)));
