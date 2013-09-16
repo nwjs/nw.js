@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>test dev tools</title>
+</head>
+<body>
+hello world
+<iframe id = "devtools" src = "test.html"></iframe>
+<script type="text/javascript">
+var gui = require('nw.gui');
+var win = gui.Window.get();
+win.showDevTools('devtools');
+setTimeout(function() {
+  location.reload();
+}, 2000);
+setTimeout(function() {
+  var client = require('../../nw_test_app').createClient({
+    argv: gui.App.argv,
+    data: 'ok'
+  });  
+}, 3000);
+</script>
+</body>
+</html>
