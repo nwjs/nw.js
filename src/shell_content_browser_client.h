@@ -81,6 +81,8 @@ class ShellContentBrowserClient : public ContentBrowserClient {
     bool strict_enforcement,
     const base::Callback<void(bool)>& callback,
     content::CertificateRequestResultType* result) OVERRIDE;
+  virtual void GetAdditionalAllowedSchemesForFileSystem(
+      std::vector<std::string>* additional_schemes) OVERRIDE;
 
  private:
   ShellBrowserContext* ShellBrowserContextForBrowserContext(
