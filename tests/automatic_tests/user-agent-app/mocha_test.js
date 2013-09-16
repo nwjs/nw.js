@@ -13,7 +13,7 @@ describe('user-agent-app', function() {
         appPath: path.join(global.tests_dir, 'user-agent-app'),
         end: function(data, app) {
 			result = true;
-			var package_info = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+			var package_info = JSON.parse(fs.readFileSync('automatic_tests/user-agent-app/package.json', 'utf8'));
 			app.kill();
       if (data == package_info.name) {
 				done();
