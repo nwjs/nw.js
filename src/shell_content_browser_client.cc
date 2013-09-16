@@ -329,7 +329,12 @@ void ShellContentBrowserClient::AllowCertificateError(
     const base::Callback<void(bool)>& callback,
     content::CertificateRequestResultType* result) {
   VLOG(1) << "AllowCertificateError: " << request_url;
-  *result = content::CERTIFICATE_REQUEST_RESULT_TYPE_DENY;
+  CommandLine* cmd_line = CommandLine::ForCurrentProcess();
+  if (cmd_line->HasSwitch(switches::kIgnoreCertificateErrors)) {
+    *result = content::CERTIFICATE_REQUEST_RESULT_TYPE_CONTINUE;
+  }
+  else
+    *result = content::CERTIFICATE_REQUEST_RESULT_TYPE_DENY;
   return;
 }
 
