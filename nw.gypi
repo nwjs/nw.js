@@ -461,10 +461,15 @@
         },
       ],
       'dependencies': [
-        'strip',
         '<(DEPTH)/chrome/chrome.gyp:chromedriver2_server',
       ],
-
+      'conditions': [
+        ['OS == "linux"', {
+          'dependencies': [
+            'strip',
+          ],
+        }],
+      ],
     },
     {
       'target_name': 'nw',
