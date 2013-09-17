@@ -222,9 +222,10 @@ GURL Package::GetStartupURL() {
     return GURL(error_page_url_);
 
   // Read from manifest.
-  if (root()->GetString(switches::kmMain, &url))
+  if (root()->GetString(switches::kmMain, &url)) {
+    VLOG(1) << "Package startup URL: " << GURL(url);
     return GURL(url);
-  else
+  }else
     return GURL("nw:blank");
 }
 

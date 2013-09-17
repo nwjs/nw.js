@@ -67,6 +67,10 @@
       <message name="IDS_PRINT_SPOOL_FAILED_ERROR_TEXT" desc="Text in a messagebox when printing fails because of printer issues.">
         Something went wrong when trying to print.  Please check your printer and try again.
       </message>
+      <!-- Color chooser dialog default titles (only used on Linux) -->
+      <message name="IDS_SELECT_COLOR_DIALOG_TITLE" desc="The default title for the Select Color color chooser dialog.">
+        Select Color
+      </message>
     </messages>
   </release>
 </grit>

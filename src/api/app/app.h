@@ -55,6 +55,10 @@ class App {
   // Post "open" event.
   static void EmitOpenEvent(const std::string& path);
 
+  // Post "reopen" event.
+  // (This event is received when the user clicked the icon in the Dock).
+  static void EmitReopenEvent();
+
   static void ClearCache(content::RenderProcessHost* render_view_host);
  private:
   App();

@@ -317,4 +317,32 @@ bool ShellContentBrowserClient::IsHandledURL(const GURL& url) {
   return false;
 }
 
+void ShellContentBrowserClient::AllowCertificateError(
+    int render_process_id,
+    int render_view_id,
+    int cert_error,
+    const net::SSLInfo& ssl_info,
+    const GURL& request_url,
+    ResourceType::Type resource_type,
+    bool overridable,
+    bool strict_enforcement,
+    const base::Callback<void(bool)>& callback,
+    content::CertificateRequestResultType* result) {
+  VLOG(1) << "AllowCertificateError: " << request_url;
+  CommandLine* cmd_line = CommandLine::ForCurrentProcess();
+  if (cmd_line->HasSwitch(switches::kIgnoreCertificateErrors)) {
+    *result = content::CERTIFICATE_REQUEST_RESULT_TYPE_CONTINUE;
+  }
+  else
+    *result = content::CERTIFICATE_REQUEST_RESULT_TYPE_DENY;
+  return;
+}
+
+void ShellContentBrowserClient::GetAdditionalAllowedSchemesForFileSystem(
+    std::vector<std::string>* additional_allowed_schemes) {
+  ContentBrowserClient::GetAdditionalAllowedSchemesForFileSystem(
+      additional_allowed_schemes);
+  additional_allowed_schemes->push_back("app");
+}
+
 }  // namespace content

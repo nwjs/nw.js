@@ -269,6 +269,10 @@ Window.prototype.toggleKioskMode = function() {
   CallObjectMethod(this, 'ToggleKioskMode', []);
 }
 
+Window.prototype.closeDevTools = function() {
+  CallObjectMethod(this, 'CloseDevTools', []);
+}
+
 Window.prototype.showDevTools = function(frm, headless) {
     var id = '';
     if (typeof frm === 'string') {

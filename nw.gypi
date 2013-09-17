@@ -142,6 +142,9 @@
         'src/browser/app_controller_mac.mm',
         'src/browser/capture_page_helper.h',
         'src/browser/capture_page_helper.cc',
+        'src/browser/color_chooser_gtk.cc',
+        'src/browser/color_chooser_win.cc',
+        'src/browser/color_chooser_mac.mm',
         'src/browser/chrome_event_processing_window.mm',
         'src/browser/chrome_event_processing_window.h',
         'src/browser/file_select_helper.cc',
@@ -286,6 +289,10 @@
           ],
         }],
         ['OS=="win"', {
+          'sources': [
+            'src/browser/color_chooser_dialog.cc',
+            'src/browser/color_chooser_dialog.h',
+          ],
           'resource_include_dirs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit',
           ],
@@ -314,6 +321,7 @@
       'type': 'none',
       'dependencies': [
         'generate_nw_resources',
+        'about_credits',
       ],
       'variables': {
         'grit_out_dir': '<(SHARED_INTERMEDIATE_DIR)/content',
@@ -341,6 +349,33 @@
             'grit_grd_file': 'src/resources/nw_resources.grd',
           },
           'includes': [ '../../build/grit_action.gypi' ],
+        },
+      ],
+    },
+    {
+      'target_name': 'about_credits',
+      'type': 'none',
+      'actions': [
+        {
+          'variables': {
+            'generator_path': '../../tools/licenses.py',
+            'about_credits_file': '<(PRODUCT_DIR)/credits.html',
+          },
+          'action_name': 'generate_about_credits',
+          'inputs': [
+            # TODO(phajdan.jr): make licenses.py print inputs too.
+            '<(generator_path)',
+          ],
+          'outputs': [
+            '<(about_credits_file)',
+          ],
+          'hard_dependency': 1,
+          'action': ['python',
+                     '<(generator_path)',
+                     'credits',
+                     '<(about_credits_file)',
+          ],
+          'message': 'Generating about:credits.',
         },
       ],
     },
@@ -387,6 +422,27 @@
       ],
     },
     {
+      'target_name': 'strip',
+      'type': 'none',
+      'actions': [
+        {
+          'action_name': 'strip_nw_binaries',
+          'inputs': [
+            '<(PRODUCT_DIR)/nw',
+          ],
+          'outputs': [
+            '<(PRODUCT_DIR)/strip_nw.stamp',
+          ],
+          'action': ['strip',
+                     '<@(_inputs)'],
+          'message': 'Stripping release executable',
+        },
+      ],
+      'dependencies': [
+        'nw',
+      ],
+    },
+    {
       'target_name': 'dist',
       'type': 'none',
       'actions': [
@@ -405,6 +461,7 @@
         },
       ],
       'dependencies': [
+        'strip',
         '<(DEPTH)/chrome/chrome.gyp:chromedriver2_server',
       ],
 

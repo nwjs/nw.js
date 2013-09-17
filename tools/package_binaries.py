@@ -78,6 +78,7 @@ required_file_linux = (
   'nw.pak',
   'libffmpegsumo.so',
   'nwsnapshot',
+  'credits.html',
 )
 
 required_file_win = (
@@ -88,11 +89,13 @@ required_file_win = (
   'nw.exe',
   'nw.pak',
   'nwsnapshot.exe',
+  'credits.html',
 )
 
 required_file_mac = (
   'node-webkit.app',
   'nwsnapshot',
+  'credits.html',
 )
 
 required_chromedriver2_file_win = (

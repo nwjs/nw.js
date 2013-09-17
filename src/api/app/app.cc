@@ -186,6 +186,20 @@ void App::EmitOpenEvent(const std::string& path) {
   }
 }
 
+// static
+void App::EmitReopenEvent() {
+  std::set<RenderProcessHost*> rphs;
+  std::set<RenderProcessHost*>::iterator it;
+
+  GetRenderProcessHosts(rphs);
+  for (it = rphs.begin(); it != rphs.end(); it++) {
+    RenderProcessHost* rph = *it;
+    DCHECK(rph != NULL);
+
+    rph->Send(new ShellViewMsg_Reopen());
+  }
+}
+
 void App::ClearCache(content::RenderProcessHost* render_process_host) {
   render_process_host->Send(new ShellViewMsg_ClearCache());
   nw::RemoveHttpDiskCache(render_process_host->GetBrowserContext(),

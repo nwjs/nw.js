@@ -98,9 +98,7 @@ class Shell : public WebContentsDelegate,
   void Stop();
   void ReloadOrStop();
   void ShowDevTools(const char* jail_id = NULL, bool headless = false);
-#if 0
   void CloseDevTools();
-#endif
   // Send an event to renderer.
   void SendEvent(const std::string& event, const std::string& arg1 = "");
 
@@ -150,6 +148,8 @@ class Shell : public WebContentsDelegate,
                                   const string16& frame_name,
                                   const GURL& target_url,
                                   WebContents* new_contents) OVERRIDE;
+  virtual content::ColorChooser* OpenColorChooser(
+      content::WebContents* web_contents, SkColor color) OVERRIDE;
   virtual void RunFileChooser(
       content::WebContents* web_contents,
       const content::FileChooserParams& params) OVERRIDE;
