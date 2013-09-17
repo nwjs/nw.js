@@ -62,6 +62,7 @@ class ShellJavaScriptDialog {
 #elif defined(OS_WIN)
   JavaScriptMessageType message_type_;
   HWND dialog_win_;
+  gfx::NativeWindow parent_window_;
   string16 message_text_;
   string16 default_prompt_text_;
   static INT_PTR CALLBACK DialogProc(HWND dialog, UINT message, WPARAM wparam,
