@@ -100,7 +100,7 @@ class NativeWindowWin : public NativeWindow,
   virtual gfx::ImageSkia GetWindowAppIcon() OVERRIDE;
   virtual gfx::ImageSkia GetWindowIcon() OVERRIDE;
   virtual bool ShouldShowWindowTitle() const OVERRIDE;
-  virtual void Notify(std::string title, std::string text, std::string subtitle, bool sound) const OVERRIDE;
+  virtual void Notify(const std::string& title, const std::string& text, const std::string& subtitle, bool sound) OVERRIDE;
 								
 							
   // WidgetFocusChangeListener implementation.

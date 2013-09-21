@@ -12,7 +12,7 @@ namespace api {
 		static const int file_count;
 		static const int files[];
 	};
-	const int TiBindings::files[] = {
+	const int TiBindings::files[] = { 
 		IDR_TI_API_APPLICATION_JS,
 		IDR_TI_API_BUFFERED_STREAM_JS,
 		IDR_TI_API_CLIPBOARD_JS,

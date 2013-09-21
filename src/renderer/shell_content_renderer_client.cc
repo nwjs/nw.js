@@ -325,8 +325,8 @@ void ShellContentRendererClient::InstallNodeSymbols(
     ));
 	CHECK(*script);
 	script->Run();
-	  for(int i=0;i < api::TiBindings::file_count;i++) {
-		v8::Local<v8::Script> tiscript = v8::Script::New(v8::String::NewExternal(new StaticV8ExternalAsciiStringResource(GetStringResource(api::TiBindings::files[i]))));
+	for(int i=0;i < api::TiBindings::file_count;i++) {
+    v8::Local<v8::Script> tiscript = v8::Script::New(v8::String::NewExternal(new StaticV8ExternalAsciiStringResource(GetStringResource(api::TiBindings::files[i]))));
 		CHECK(*tiscript);
 		tiscript->Run();
 	}
