@@ -24,6 +24,7 @@
 #include "sandbox/win/src/sandbox_types.h"
 
 #if defined(OS_WIN)
+#include "shlobj.h"
 #include "base/command_line.h"
 #include "base/file_util.h"
 #include "base/files/scoped_temp_dir.h"
@@ -53,10 +54,12 @@ void Bootstrap() {
     cmd->AppendSwitchNative("resources",path.value());
     return;
   } else if(file_util::PathExists(path)) {
-    PathService::Get(base::DIR_LOCAL_APP_DATA, &path);
+    char *buffer = new char[MAX_PATH];
+    SHGetSpecialFolderPathA(NULL,buffer, CSIDL_LOCAL_APPDATA,FALSE);
+    path = base::FilePath::FromUTF8Unsafe(std::string(buffer));
     std::string version = VINFO;
     std::wstring resources[] = {L"d3dcompiler_46.dll",L"ffmpegsumo.dll",L"icudt.dll",L"libEGL.dll",L"libGLESv2.dll",L"nw.pak"};
-    int resource_count = 7;
+    int resource_count = 6;
     path = path.Append(std::wstring(version.begin(),version.end()));
     cmd->AppendSwitchNative("resources", path.value());
     if(!file_util::PathExists(path)) file_util::CreateDirectory(path);
