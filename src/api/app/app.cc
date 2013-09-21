@@ -219,7 +219,7 @@ void App::Call(Shell* shell,
 
     FILE *src = fopen(ssrc.c_str(), "r");
     if(src==NULL) {
-      DLOG(ERROR) << "Cannot open for read " << ssrc << " IO ERROR: " << _strerror(NULL);
+      DLOG(ERROR) << "Cannot open for read " << ssrc << " IO ERROR: " << strerror(NULL);
       result->AppendBoolean(false);
       return;
     }
@@ -227,7 +227,7 @@ void App::Call(Shell* shell,
     FILE *dst = fopen(sdst.c_str(), "w+");
 
     if(dst==NULL) {
-      DLOG(ERROR) << "Cannot open for read/write/trunc " << ssrc << " IO ERROR: " << _strerror(NULL);
+      DLOG(ERROR) << "Cannot open for read/write/trunc " << ssrc << " IO ERROR: " << strerror(NULL);
       result->AppendBoolean(false);
       fclose(src);
       return;

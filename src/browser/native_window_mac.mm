@@ -434,7 +434,7 @@ void NativeWindowCocoa::Close() {
   [window() performClose:nil];
 }
 
-void NativeWindowCocoa::Notify(std::string title, std::string text, std::string subtitle, bool sound) {
+void NativeWindowCocoa::Notify(const std::string& title, const std::string& text, const std::string& subtitle, bool sound) {
 	NSUserNotification *notification = [[NSUserNotification alloc] init];
 	[notification setTitle:@(title.c_str())];
 	[notification setInformativeText:@(text.c_str())];
