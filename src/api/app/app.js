@@ -98,7 +98,7 @@ App.prototype.__defineGetter__('fullArgv', function() {
 
 App.prototype.__defineGetter__('dataPath', function() {
   if (!dataPath)
-    dataPath = nw.callStaticMethodSync('App', 'GetDataPath', [ ]);
+    dataPath = nw.callStaticMethodSync('App', 'GetDataPath', [ ])[0];
 
   return dataPath;
 });

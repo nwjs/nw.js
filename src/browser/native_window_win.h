@@ -84,6 +84,8 @@ class NativeWindowWin : public NativeWindow,
                                        bool enabled) OVERRIDE;
   virtual void SetToolbarUrlEntry(const std::string& url) OVERRIDE;
   virtual void SetToolbarIsLoading(bool loading) OVERRIDE;
+  virtual void SetInitialFocus(bool initial_focus) OVERRIDE;
+  virtual bool InitialFocus() OVERRIDE { return initial_focus_; }
 
   // WidgetDelegate implementation.
   virtual views::View* GetContentsView() OVERRIDE;
@@ -152,6 +154,8 @@ class NativeWindowWin : public NativeWindow,
   std::string title_;
   gfx::Size minimum_size_;
   gfx::Size maximum_size_;
+
+  bool initial_focus_;
 
   DISALLOW_COPY_AND_ASSIGN(NativeWindowWin);
 };

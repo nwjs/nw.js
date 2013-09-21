@@ -40,6 +40,7 @@ class ShellRenderProcessObserver : public RenderProcessObserver {
   virtual void WebKitInitialized() OVERRIDE;
  private:
   void OnOpen(const std::string& path);
+  void OnReopen();
   void OnClearCache();
 
   bool webkit_initialized_;

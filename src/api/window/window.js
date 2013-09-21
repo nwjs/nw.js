@@ -54,6 +54,9 @@ exports.Window = {
     if (typeof options != 'object')
       options = {};
 
+    if (!('focus' in options)) {
+        options.focus = false;
+    }
     // Create new shell and get it's routing id.
     var routing_id = nw.createShell(url, options);
 

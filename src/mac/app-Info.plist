@@ -6,6 +6,28 @@
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
 	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleExecutable</key>
+	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleIconFile</key>
+	<string>nw.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.intel.nw</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>${PRODUCT_NAME}</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.7.5</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>${MACOSX_DEPLOYMENT_TARGET}.0</string>
+	<key>LSFileQuarantineEnabled</key>
+	<true/>
+	<key>NSSupportsAutomaticGraphicsSwitching</key>
+	<true/>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
@@ -33,58 +55,6 @@
 			<string>Viewer</string>
 			<key>LSHandlerRank</key>
 			<string>None</string>
-		</dict>
-	</array>
-	<key>CFBundleExecutable</key>
-	<string>${EXECUTABLE_NAME}</string>
-	<key>CFBundleIconFile</key>
-	<string>app.icns</string>
-	<key>CFBundleIdentifier</key>
-	<string>com.trueinteractions.runtime</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>${PRODUCT_NAME}</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>0.6.0</string>
-	<key>LSApplicationCategoryType</key>
-	<string>public.app-category.developer-tools</string>
-	<key>LSFileQuarantineEnabled</key>
-	<true/>
-	<key>LSMinimumSystemVersion</key>
-	<string>${MACOSX_DEPLOYMENT_TARGET}.0</string>
-	<key>NSPrincipalClass</key>
-	<string>NSApplication</string>
-	<key>NSSupportsAutomaticGraphicsSwitching</key>
-	<true/>
-	<key>UTExportedTypeDeclarations</key>
-	<array>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>com.pkware.zip-archive</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>Runtime App</string>
-			<key>UTTypeIconFile</key>
-			<string>app.icns</string>
-			<key>UTTypeIdentifier</key>
-			<string>com.trueinteractions.runtime</string>
-			<key>UTTypeReferenceURL</key>
-			<string></string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>com.apple.ostype</key>
-				<string>ti-runtime</string>
-				<key>public.filename-extension</key>
-				<array>
-					<string>nw</string>
-				</array>
-				<key>public.mime-type</key>
-				<string>application/x-ti-runtime</string>
-			</dict>
 		</dict>
 	</array>
 </dict>

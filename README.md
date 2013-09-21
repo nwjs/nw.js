@@ -18,23 +18,13 @@ It's created and developed in the Intel Open Source Technology Center.
 * Available on Linux, Mac OSX and Windows
 
 ## Downloads
-<<<<<<< HEAD
-[v0.6.0 release note](https://groups.google.com/d/msg/node-webkit/YC01gRQqwk4/bb5_1bw4ZwkJ)
 
-Prebuilt binaries (v0.6.0 - Jun 17, 2013):
+Prebuilt binaries (v0.7.5 - Sep 18, 2013):
 
-* Linux: [32bit](https://s3.amazonaws.com/node-webkit/v0.6.0/node-webkit-v0.6.0-linux-ia32.tar.gz) / [64bit] (https://s3.amazonaws.com/node-webkit/v0.6.0/node-webkit-v0.6.0-linux-x64.tar.gz)
-* Windows: [win32](https://s3.amazonaws.com/node-webkit/v0.6.0/node-webkit-v0.6.0-win-ia32.zip)
-* Mac: [32bit, 10.7+](https://s3.amazonaws.com/node-webkit/v0.6.0/node-webkit-v0.6.0-osx-ia32.zip)
 =======
-[v0.7.2 release notes](https://groups.google.com/d/msg/node-webkit/ZzEfEBAp0NU/SXfRRTGcMDcJ)
-
-Prebuilt binaries (v0.7.2 - Aug 26, 2013):
-
-* Linux: [32bit](https://s3.amazonaws.com/node-webkit/v0.7.2/node-webkit-v0.7.2-linux-ia32.tar.gz) / [64bit] (https://s3.amazonaws.com/node-webkit/v0.7.2/node-webkit-v0.7.2-linux-x64.tar.gz)
-* Windows: [win32](https://s3.amazonaws.com/node-webkit/v0.7.2/node-webkit-v0.7.2-win-ia32.zip)
-* Mac: [32bit, 10.7+](https://s3.amazonaws.com/node-webkit/v0.7.2/node-webkit-v0.7.2-osx-ia32.zip)
->>>>>>> upstream/master
+* Linux: [32bit](https://s3.amazonaws.com/node-webkit/v0.7.5/node-webkit-v0.7.5-linux-ia32.tar.gz) / [64bit] (https://s3.amazonaws.com/node-webkit/v0.7.5/node-webkit-v0.7.5-linux-x64.tar.gz)
+* Windows: [win32](https://s3.amazonaws.com/node-webkit/v0.7.5/node-webkit-v0.7.5-win-ia32.zip)
+* Mac: [32bit, 10.7+](https://s3.amazonaws.com/node-webkit/v0.7.5/node-webkit-v0.7.5-osx-ia32.zip)
 
 [Looking for older versions?](https://github.com/rogerwang/node-webkit/wiki/Downloads-of-old-versions)
 
@@ -108,4 +98,4 @@ Issues are being tracked here on GitHub.
 
 ## License
 
-`node-webkit`'s code uses the MIT license, see our `LICENSE` file.
+`node-webkit`'s code in this repo uses the MIT license, see our `LICENSE` file. To redistribute the binary, see [How to package and distribute your apps](https://github.com/rogerwang/node-webkit/wiki/How-to-package-and-distribute-your-apps)

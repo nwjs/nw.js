@@ -128,8 +128,12 @@ void DispatcherHost::OnCallObjectMethod(
              << " arguments:" << arguments;
 
   Base* object = GetApiObject(object_id);
-  DCHECK(object) << "Unknown object: " << object_id;
-  object->Call(method, arguments);
+  CHECK(object) << "Unknown object: " << object_id
+             << " type:" << type
+             << " method:" << method
+             << " arguments:" << arguments;
+  if (object)
+    object->Call(method, arguments);
 }
 
 void DispatcherHost::OnCallObjectMethodSync(
@@ -144,8 +148,12 @@ void DispatcherHost::OnCallObjectMethodSync(
              << " arguments:" << arguments;
 
   Base* object = GetApiObject(object_id);
-  DCHECK(object) << "Unknown object: " << object_id;
-  object->CallSync(method, arguments, result);
+  CHECK(object) << "Unknown object: " << object_id
+             << " type:" << type
+             << " method:" << method
+             << " arguments:" << arguments;
+  if (object)
+    object->CallSync(method, arguments, result);
 }
 
 void DispatcherHost::OnCallStaticMethod(

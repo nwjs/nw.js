@@ -252,7 +252,10 @@ NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
       menu_(NULL),
       resizable_(true),
       minimum_size_(0, 0),
-      maximum_size_() {
+      maximum_size_(),
+      initial_focus_(true) {
+  manifest->GetBoolean("focus", &initial_focus_);
+
   window_ = new views::Widget;
   views::Widget::InitParams params(views::Widget::InitParams::TYPE_WINDOW);
   params.delegate = this;
@@ -310,9 +313,13 @@ void NativeWindowWin::Show() {
     Maximize();
     Unmaximize();
   }
+  VLOG(1) << "NativeWindowWin::Show(); initial_focus = " << initial_focus_;
   if (is_maximized_)
     window_->native_widget_private()->ShowWithWindowState(ui::SHOW_STATE_MAXIMIZED);
-  else
+  else if (!initial_focus_) {
+    window_->set_focus_on_creation(false);
+    window_->native_widget_private()->ShowWithWindowState(ui::SHOW_STATE_INACTIVE);
+  } else
     window_->native_widget_private()->Show();
 
 }
@@ -687,6 +694,10 @@ gfx::Size NativeWindowWin::GetMaximumSize() {
 
 void NativeWindowWin::OnFocus() {
   web_view_->RequestFocus();
+}
+
+void NativeWindowWin::SetInitialFocus(bool initial_focus) {
+  initial_focus_ = initial_focus;
 }
 
 bool NativeWindowWin::ExecuteWindowsCommand(int command_id) {
