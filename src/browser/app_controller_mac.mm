@@ -27,6 +27,7 @@
 #include "content/nw/src/shell_browser_context.h"
 #include "content/nw/src/shell_browser_main_parts.h"
 #include "content/nw/src/shell_content_browser_client.h"
+#include "base/values.h"
 
 @implementation AppController
 
@@ -59,14 +60,24 @@
   browser_client->shell_browser_main_parts()->Init();
 
   // And init menu.
+  bool no_edit_menu = false;
+  browser_client->shell_browser_main_parts()->package()->root()->GetBoolean("no-edit-menu", &no_edit_menu);
+
   [NSApp setMainMenu:[[[NSMenu alloc] init] autorelease]];
   [[NSApp mainMenu] addItem:[[[NSMenuItem alloc]
       initWithTitle:@"" action:nil keyEquivalent:@""] autorelease]];
   nw::StandardMenusMac standard_menus(
       browser_client->shell_browser_main_parts()->package()->GetName());
   standard_menus.BuildAppleMenu();
-  standard_menus.BuildEditMenu();
+  if (!no_edit_menu)
+    standard_menus.BuildEditMenu();
   standard_menus.BuildWindowMenu();
+}
+
+- (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication
+                    hasVisibleWindows:(BOOL)flag {
+  api::App::EmitReopenEvent();
+  return YES;
 }
 
 @end

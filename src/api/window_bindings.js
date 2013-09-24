@@ -1,4 +1,4 @@
-function Window(routing_id) {
+function Window(routing_id, nobind) {
   // Get and set id.
   var id = global.__nwObjectsRegistry.allocateId();
   Object.defineProperty(this, 'id', {
@@ -15,7 +15,8 @@ function Window(routing_id) {
 
   // Tell Shell I'm the js delegate of it.
   native function BindToShell();
-  BindToShell(this.routing_id, this.id);
+  if (!nobind)
+    BindToShell(this.routing_id, this.id);
 }
 
 // Window will inherit EventEmitter in "third_party/node/src/node.js", do
@@ -268,15 +269,28 @@ Window.prototype.toggleKioskMode = function() {
   CallObjectMethod(this, 'ToggleKioskMode', []);
 }
 
-Window.prototype.showDevTools = function(id, headless) {
-      CallObjectMethod(this, 'ShowDevTools', [id, Boolean(headless)]);
+Window.prototype.closeDevTools = function() {
+  CallObjectMethod(this, 'CloseDevTools', []);
 }
 
-    Window.prototype.__setDevToolsJail = function(id) {
-        var frm = null;
-        if (id)
-            frm = this.window.document.getElementById(id);
-        CallObjectMethod(this, 'setDevToolsJail', frm);
+Window.prototype.showDevTools = function(frm, headless) {
+    var id = '';
+    if (typeof frm === 'string') {
+        id = frm;
+        this._pending_devtools_jail = null;
+    }else{
+        this._pending_devtools_jail = frm;
+    }
+    CallObjectMethod(this, 'ShowDevTools', [id, Boolean(headless)]);
+}
+
+Window.prototype.__setDevToolsJail = function(id) {
+    var frm = null;
+    if (id)
+        frm = this.window.document.getElementById(id);
+    else
+        frm = this._pending_devtools_jail || null;
+    CallObjectMethod(this, 'setDevToolsJail', frm);
 }
 
 Window.prototype.setMinimumSize = function(width, height) {

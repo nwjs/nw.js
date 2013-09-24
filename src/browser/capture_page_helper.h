@@ -22,6 +22,7 @@
 #define CONTENT_NW_SRC_BROWSER_CAPTURE_PAGE_HELPER_H_
 
 #include "base/memory/ref_counted.h"
+#include "base/memory/weak_ptr.h"
 #include "content/public/browser/web_contents_observer.h"
 
 namespace content {
@@ -56,13 +57,13 @@ class CapturePageHelper : public base::RefCountedThreadSafe<CapturePageHelper>,
     FORMAT_PNG
   };
 
-  static scoped_refptr<CapturePageHelper> Create(content::Shell *shell);
+  static scoped_refptr<CapturePageHelper> Create(const base::WeakPtr<content::Shell>& shell);
 
   // Capture a snapshot of the page.
   void StartCapturePage(const std::string& image_format_str);
 
  private:
-  CapturePageHelper(content::Shell *shell);
+  CapturePageHelper(const base::WeakPtr<content::Shell>& shell);
   virtual ~CapturePageHelper();
 
   // Internal helpers ----------------------------------------------------------
@@ -78,7 +79,7 @@ class CapturePageHelper : public base::RefCountedThreadSafe<CapturePageHelper>,
   // content::WebContentsObserver overrides:
   virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
 
-  content::Shell* shell_;
+  base::WeakPtr<content::Shell> shell_;
 
   // The format (JPEG vs PNG) of the resulting image. Set in StartCapturePage().
   ImageFormat image_format_;

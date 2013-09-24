@@ -3,7 +3,7 @@ var fs = require('fs');
 var path = require('path');
 var app_test = require('./nw_test_app');
 describe('user-agent-app', function() {
-  it('user agent shoud be different when open a new window',
+  it('user agent shoud be the same when open a new window',
     function(done) {
       this.timeout(0);
       var result = false;
@@ -13,8 +13,9 @@ describe('user-agent-app', function() {
         appPath: path.join(global.tests_dir, 'user-agent-app'),
         end: function(data, app) {
 			result = true;
-			var package_info = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-			if (data == package_info.name) {
+			var package_info = JSON.parse(fs.readFileSync('automatic_tests/user-agent-app/package.json', 'utf8'));
+			app.kill();
+      if (data == package_info.name) {
 				done();
 			}
 			else{
@@ -27,6 +28,6 @@ describe('user-agent-app', function() {
             child.close();
             done('loaded event does not been fired');
           }
-        }, 3000);
+        }, 10000);
   })
 })

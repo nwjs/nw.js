@@ -31,7 +31,7 @@ namespace nw {
 
 class NativeWindowGtk : public NativeWindow {
  public:
-  explicit NativeWindowGtk(content::Shell* shell,
+  explicit NativeWindowGtk(const base::WeakPtr<content::Shell>& shell,
                            base::DictionaryValue* manifest);
   virtual ~NativeWindowGtk();
 
@@ -61,6 +61,8 @@ class NativeWindowGtk : public NativeWindow {
   virtual void SetKiosk(bool kiosk) OVERRIDE;
   virtual bool IsKiosk() OVERRIDE;
   virtual void SetMenu(api::Menu* menu) OVERRIDE;
+  virtual void SetInitialFocus(bool initial_focus) OVERRIDE;
+  virtual bool InitialFocus() OVERRIDE;
   virtual void SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
                                        bool enabled) OVERRIDE;
   virtual void SetToolbarUrlEntry(const std::string& url) OVERRIDE;

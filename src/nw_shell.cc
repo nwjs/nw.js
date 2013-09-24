@@ -26,6 +26,8 @@
 #include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
 #include "content/browser/child_process_security_policy_impl.h"
+#include "content/browser/renderer_host/render_view_host_impl.h"
+#include "content/browser/web_contents/web_contents_impl.h"
 #include "content/public/browser/devtools_agent_host.h"
 #include "content/public/browser/devtools_http_handler.h"
 #include "content/public/browser/devtools_manager.h"
@@ -43,6 +45,7 @@
 #include "content/public/common/url_constants.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/app/app.h"
+#include "content/nw/src/browser/browser_dialogs.h"
 #include "content/nw/src/browser/file_select_helper.h"
 #include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
@@ -117,20 +120,28 @@ Shell* Shell::Create(WebContents* source_contents,
 
 Shell* Shell::FromRenderViewHost(RenderViewHost* rvh) {
   for (size_t i = 0; i < windows_.size(); ++i) {
-    if (windows_[i]->web_contents() &&
-        windows_[i]->web_contents()->GetRenderViewHost() == rvh) {
+    WebContents* web_contents = windows_[i]->web_contents();
+    if (!web_contents)
+      continue;
+    if (web_contents->GetRenderViewHost() == rvh) {
       return windows_[i];
+    }else{
+      WebContentsImpl* impl = static_cast<WebContentsImpl*>(web_contents);
+      RenderViewHostManager* rvhm = impl->GetRenderManagerForTesting();
+      if (rvhm && static_cast<RenderViewHost*>(rvhm->pending_render_view_host()) == rvh)
+        return windows_[i];
     }
   }
   return NULL;
 }
 
 Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
-    : weak_ptr_factory_(this),
+    :
       is_devtools_(false),
       force_close_(false),
       id_(-1),
-      enable_nodejs_(true)
+      enable_nodejs_(true),
+      weak_ptr_factory_(this)
 {
   // Register shell.
   registrar_.Add(this, NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,
@@ -148,7 +159,7 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   web_contents_->SetDelegate(this);
 
   // Create window.
-  window_.reset(nw::NativeWindow::Create(this, manifest));
+  window_.reset(nw::NativeWindow::Create(weak_ptr_factory_.GetWeakPtr(), manifest));
 
 #if defined(ENABLE_PRINTING)
   printing::PrintViewManager::CreateForWebContents(web_contents);
@@ -290,31 +301,14 @@ void Shell::ReloadOrStop() {
     Reload();
 }
 
-#if 0
 void Shell::CloseDevTools() {
-  if (!devtools_frontend_)
+  if (!devtools_window_)
     return;
-  registrar_.Remove(this,
-                    NOTIFICATION_WEB_CONTENTS_DESTROYED,
-                    Source<WebContents>(
-                        devtools_frontend_->frontend_shell()->web_contents()));
-  devtools_frontend_->Close();
-  devtools_frontend_ = NULL;
+  devtools_window_->window()->Close();
+  devtools_window_.reset();
 }
-#endif
 
 void Shell::ShowDevTools(const char* jail_id, bool headless) {
-#if 0
-  if (devtools_frontend_) {
-    devtools_frontend_->Focus();
-    return;
-  }
-  devtools_frontend_ = ShellDevToolsFrontend::Show(web_contents());
-  registrar_.Add(this,
-                 NOTIFICATION_WEB_CONTENTS_DESTROYED,
-                 Source<WebContents>(
-                     devtools_frontend_->frontend_shell()->web_contents()));
-#else
   ShellContentBrowserClient* browser_client =
       static_cast<ShellContentBrowserClient*>(
           GetContentClient()->browser());
@@ -327,7 +321,7 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
   RenderViewHost* inspected_rvh = web_contents()->GetRenderViewHost();
   if (nodejs()) {
     std::string jscript = std::string("require('nw.gui').Window.get().__setDevToolsJail('")
-      + (jail_id ? jail_id : "") + "');";
+      + (jail_id ? jail_id : "(null)") + "');";
     inspected_rvh->ExecuteJavascriptInWebFrame(string16(), UTF8ToUTF16(jscript.c_str()));
   }
 
@@ -377,7 +371,6 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
   browser_context->set_pinning_renderer(true);
   // Save devtools window in current shell.
   devtools_window_ = shell->weak_ptr_factory_.GetWeakPtr();
-#endif
 }
 
 void Shell::UpdateDraggableRegions(
@@ -481,6 +474,11 @@ void Shell::WebContentsCreated(WebContents* source_contents,
 
   // don't pass the url on window.open case
   Shell::Create(source_contents, GURL::EmptyGURL(), manifest.get(), new_contents);
+}
+
+content::ColorChooser*
+Shell::OpenColorChooser(content::WebContents* web_contents, SkColor color) {
+  return nw::ShowColorChooser(web_contents, color);
 }
 
 void Shell::RunFileChooser(WebContents* web_contents,

@@ -66,14 +66,14 @@ describe('console.log', function() {
 	it('should display null correctly', function() {
 	    assert.equal(results[7], expected[7]);
 	});
-    });//describe('output data types', function()
+    });
 
 
     describe('concatenate expressions', function() {
 	it('should display string correctly', function() {
 	    assert.equal(results[8], expected[8]);
 	});
-    });//describe('concatenate expressions', function())
+    });
 
     describe('format output', function() {
 	it('should display correctly with %s', function() {
@@ -111,5 +111,5 @@ describe('console.log', function() {
 	it('should display correcty with all formats', function() {
 	    assert.equal(results[17], expected[17]);
 	});
-    })//describe('format output', function())
+    })
 });

@@ -22,6 +22,7 @@
 
 #include "base/logging.h"
 #include "base/values.h"
+#include "content/browser/child_process_security_policy_impl.h"
 #include "content/browser/web_contents/web_contents_impl.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/app/app.h"
@@ -79,6 +80,7 @@ bool DispatcherHost::OnMessageReceived(const IPC::Message& message) {
                         OnUncaughtException);
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_GetShellId, OnGetShellId);
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_CreateShell, OnCreateShell);
+    IPC_MESSAGE_HANDLER(ShellViewHostMsg_GrantUniversalPermissions, OnGrantUniversalPermissions);
     IPC_MESSAGE_UNHANDLED(handled = false)
   IPC_END_MESSAGE_MAP()
 
@@ -126,8 +128,12 @@ void DispatcherHost::OnCallObjectMethod(
              << " arguments:" << arguments;
 
   Base* object = GetApiObject(object_id);
-  DCHECK(object) << "Unknown object: " << object_id;
-  object->Call(method, arguments);
+  CHECK(object) << "Unknown object: " << object_id
+             << " type:" << type
+             << " method:" << method
+             << " arguments:" << arguments;
+  if (object)
+    object->Call(method, arguments);
 }
 
 void DispatcherHost::OnCallObjectMethodSync(
@@ -142,8 +148,12 @@ void DispatcherHost::OnCallObjectMethodSync(
              << " arguments:" << arguments;
 
   Base* object = GetApiObject(object_id);
-  DCHECK(object) << "Unknown object: " << object_id;
-  object->CallSync(method, arguments, result);
+  CHECK(object) << "Unknown object: " << object_id
+             << " type:" << type
+             << " method:" << method
+             << " arguments:" << arguments;
+  if (object)
+    object->CallSync(method, arguments, result);
 }
 
 void DispatcherHost::OnCallStaticMethod(
@@ -226,6 +236,16 @@ void DispatcherHost::OnCreateShell(const std::string& url,
     browser_context->set_pinning_renderer(true);
 
   *routing_id = web_contents->GetRoutingID();
+}
+
+void DispatcherHost::OnGrantUniversalPermissions(int *ret) {
+  content::Shell* shell =
+      content::Shell::FromRenderViewHost(render_view_host());
+  if (shell->nodejs()) {
+    content::ChildProcessSecurityPolicy::GetInstance()->GrantUniversalAccess(shell->web_contents()->GetRenderProcessHost()->GetID());
+    *ret = 1;
+  }else
+    *ret = 0;
 }
 
 }  // namespace api

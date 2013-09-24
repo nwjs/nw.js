@@ -22,6 +22,7 @@
 
 #include "base/command_line.h"
 #include "base/files/file_path.h"
+#include "base/file_util.h"
 #include "base/logging.h"
 #include "base/path_service.h"
 #include "base/strings/utf_string_conversions.h"
@@ -89,9 +90,15 @@ void InitLogging() {
   PathService::Get(base::DIR_EXE, &log_filename);
   log_filename = log_filename.AppendASCII("debug.log");
   logging::LoggingSettings settings;
-  settings.logging_dest = logging::LOG_TO_ALL;
-  settings.log_file = log_filename.value().c_str();
-  settings.delete_old = logging::DELETE_OLD_LOG_FILE;
+  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kEnableLogging)) {
+    settings.logging_dest = logging::LOG_TO_ALL;
+    settings.log_file = log_filename.value().c_str();
+    settings.delete_old = logging::DELETE_OLD_LOG_FILE;
+  }else{
+#if defined(OS_WIN)
+    settings.logging_dest = logging::LOG_NONE;
+#endif
+  }
   logging::InitLogging(settings);
   logging::SetLogItems(true, false, true, false);
 }
@@ -163,6 +170,7 @@ void ShellMainDelegate::InitializeResourceBundle() {
   FilePath pak_dir;
   PathService::Get(base::DIR_MODULE, &pak_dir);
   pak_file = pak_dir.Append(FILE_PATH_LITERAL("nw.pak"));
+  CHECK(file_util::PathExists(pak_file)) << "nw.pak is missing";
 #endif
   ui::ResourceBundle::InitSharedInstanceWithPakPath(pak_file);
 }

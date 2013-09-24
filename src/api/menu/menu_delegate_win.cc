@@ -21,7 +21,7 @@
 #include "content/nw/src/api/menu/menu_delegate_win.h"
 
 #include "base/logging.h"
-#include "base/string16.h"
+#include "base/strings/string16.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
 

@@ -92,5 +92,12 @@ IPC_MESSAGE_ROUTED1(ShellViewHostMsg_UpdateDraggableRegions,
 IPC_MESSAGE_CONTROL1(ShellViewMsg_Open,
                      std::string /* file name */)
 
+// Tell browser we have to reopen.
+IPC_MESSAGE_CONTROL0(ShellViewMsg_Reopen)
+
 // clear cache on the renderer side
 IPC_MESSAGE_CONTROL0(ShellViewMsg_ClearCache)
+
+// grant the policy permissions
+IPC_SYNC_MESSAGE_ROUTED0_1(ShellViewHostMsg_GrantUniversalPermissions, int)
+

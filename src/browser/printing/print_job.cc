@@ -332,7 +332,7 @@ void PrintJob::ControlledWorkerShutdown() {
   // - We don't want to run tasks while the thread is quitting.
   // - We want this code path to wait on the thread to quit before continuing.
   MSG msg;
-  HANDLE thread_handle = worker_->thread_handle();
+  HANDLE thread_handle = worker_->thread_handle().platform_handle();
   for (; thread_handle;) {
     // Note that we don't do any kind of message prioritization since we don't
     // execute any pending task or timer.

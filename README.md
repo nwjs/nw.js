@@ -18,13 +18,13 @@ It's created and developed in the Intel Open Source Technology Center.
 * Available on Linux, Mac OSX and Windows
 
 ## Downloads
-[v0.6.3 release note](https://groups.google.com/d/msg/node-webkit/OfJwV1aFdxw/aP6V9IX60_AJ)
+[v0.7.5 release notes](https://groups.google.com/d/msg/node-webkit/4VBQuHO2H0c/UAdc2O1ZiBwJ)
 
-Prebuilt binaries (v0.6.3 - Jul 23, 2013):
+Prebuilt binaries (v0.7.5 - Sep 18, 2013):
 
-* Linux: [32bit](https://s3.amazonaws.com/node-webkit/v0.6.3/node-webkit-v0.6.3-linux-ia32.tar.gz) / [64bit] (https://s3.amazonaws.com/node-webkit/v0.6.3/node-webkit-v0.6.3-linux-x64.tar.gz)
-* Windows: [win32](https://s3.amazonaws.com/node-webkit/v0.6.3/node-webkit-v0.6.3-win-ia32.zip)
-* Mac: [32bit, 10.7+](https://s3.amazonaws.com/node-webkit/v0.6.3/node-webkit-v0.6.3-osx-ia32.zip)
+* Linux: [32bit](https://s3.amazonaws.com/node-webkit/v0.7.5/node-webkit-v0.7.5-linux-ia32.tar.gz) / [64bit] (https://s3.amazonaws.com/node-webkit/v0.7.5/node-webkit-v0.7.5-linux-x64.tar.gz)
+* Windows: [win32](https://s3.amazonaws.com/node-webkit/v0.7.5/node-webkit-v0.7.5-win-ia32.zip)
+* Mac: [32bit, 10.7+](https://s3.amazonaws.com/node-webkit/v0.7.5/node-webkit-v0.7.5-osx-ia32.zip)
 
 [Looking for older versions?](https://github.com/rogerwang/node-webkit/wiki/Downloads-of-old-versions)
 
@@ -98,4 +98,4 @@ Issues are being tracked here on GitHub.
 
 ## License
 
-`node-webkit`'s code uses the MIT license, see our `LICENSE` file.
+`node-webkit`'s code in this repo uses the MIT license, see our `LICENSE` file. To redistribute the binary, see [How to package and distribute your apps](https://github.com/rogerwang/node-webkit/wiki/How-to-package-and-distribute-your-apps)

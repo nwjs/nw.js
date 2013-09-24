@@ -26,8 +26,10 @@
 #include "base/files/file_path.h"
 #include "base/file_util.h"
 #include "base/logging.h"
+#include "base/posix/global_descriptors.h"
 #include "base/strings/string16.h"
 #include "base/strings/string_number_conversions.h"
+#include "base/strings/stringprintf.h"
 #include "base/strings/utf_string_conversions.h"
 #include "components/autofill/content/renderer/page_click_tracker.h"
 #include "content/nw/src/api/dispatcher.h"
@@ -45,6 +47,7 @@
 #include "content/public/common/content_switches.h"
 #include "content/public/renderer/render_view.h"
 #include "content/renderer/render_view_impl.h"
+#include "ipc/ipc_descriptors.h"
 #include "net/proxy/proxy_bypass_rules.h"
 #include "third_party/node/src/node.h"
 #include "third_party/node/src/req_wrap.h"
@@ -152,6 +155,15 @@ void ShellContentRendererClient::RenderThreadStarted() {
   // Setup node.js.
   node::SetupContext(argc, argv, node::g_context->Global());
 
+#if !defined(OS_WIN)
+  v8::Local<v8::Script> script = v8::Script::New(v8::String::New((
+      "process.__nwfds_to_close = [" +
+      base::StringPrintf("%d", base::GlobalDescriptors::GetInstance()->Get(kPrimaryIPCChannel)) +
+      "];"
+    ).c_str()));
+  CHECK(*script);
+  script->Run();
+#endif
   // Start observers.
   shell_observer_.reset(new ShellRenderProcessObserver());
 
@@ -212,6 +224,11 @@ bool ShellContentRendererClient::WillSetSecurityToken(
     // Override context's security token
     context->SetSecurityToken(node::g_context->GetSecurityToken());
     frame->document().securityOrigin().grantUniversalAccess();
+
+    int ret;
+    RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
+    rv->Send(new ShellViewHostMsg_GrantUniversalPermissions(rv->GetRoutingID(), &ret));
+
     return true;
   }
 
@@ -280,10 +297,14 @@ void ShellContentRendererClient::InstallNodeSymbols(
 
   if (use_node) {
     RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
+    std::string root_path = rv->renderer_preferences_.nw_app_root_path.AsUTF8Unsafe();
+#if defined(OS_WIN)
+    ReplaceChars(root_path, "\\", "\\\\", &root_path);
+#endif
     v8::Local<v8::Script> script = v8::Script::New(v8::String::New((
         // Make node's relative modules work
         "if (!process.mainModule.filename) {"
-        "  var root = '" + rv->renderer_preferences_.nw_app_root_path.AsUTF8Unsafe() + "';"
+        "  var root = '" + root_path + "';"
 #if defined(OS_WIN)
         "process.mainModule.filename = decodeURIComponent(window.location.pathname.substr(1));"
 #else
@@ -294,6 +315,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
         "process.mainModule.loaded = true;"
         "}").c_str()
     ));
+    CHECK(*script);
     script->Run();
   }
 
@@ -308,6 +330,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
 
         // Save node-webkit version
         "process.versions['node-webkit'] = '" NW_VERSION_STRING "';"
+        "process.versions['chromium'] = '" CHROME_VERSION "';"
     ));
     script->Run();
   }

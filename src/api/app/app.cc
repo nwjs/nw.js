@@ -25,6 +25,7 @@
 #include "base/message_loop.h"
 #include "base/values.h"
 #include "content/nw/src/api/api_messages.h"
+#include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/browser/net_disk_cache_remover.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
@@ -122,7 +123,7 @@ void App::Call(Shell* shell,
 }
 
 // static
-void App::CloseAllWindows() {
+void App::CloseAllWindows(bool force) {
   std::vector<Shell*> windows = Shell::windows();
 
   for (size_t i = 0; i < windows.size(); ++i) {
@@ -130,7 +131,19 @@ void App::CloseAllWindows() {
     // be automatically closed.
     if (!windows[i]->is_devtools()) {
       // If there is no js object bound to the window, then just close.
-      if (windows[i]->ShouldCloseWindow())
+      if (force || windows[i]->ShouldCloseWindow())
+        // we used to delete the Shell object here
+        // but it should be deleted on native window destruction
+        windows[i]->window()->Close();
+    }
+  }
+  if (force) {
+    // in a special force close case, since we're going to exit the
+    // main loop soon, we should delete the shell object asap so the
+    // render widget can be closed on the renderer side
+    windows = Shell::windows();
+    for (size_t i = 0; i < windows.size(); ++i) {
+      if (!windows[i]->is_devtools())
         delete windows[i];
     }
   }
@@ -153,6 +166,7 @@ void App::Quit(RenderProcessHost* render_process_host) {
 
       rph->Send(new ViewMsg_WillQuit(&no_use));
     }
+    CloseAllWindows(true);
   }
   // Then quit.
   MessageLoop::current()->PostTask(FROM_HERE, MessageLoop::QuitClosure());
@@ -169,6 +183,20 @@ void App::EmitOpenEvent(const std::string& path) {
     DCHECK(rph != NULL);
 
     rph->Send(new ShellViewMsg_Open(path));
+  }
+}
+
+// static
+void App::EmitReopenEvent() {
+  std::set<RenderProcessHost*> rphs;
+  std::set<RenderProcessHost*>::iterator it;
+
+  GetRenderProcessHosts(rphs);
+  for (it = rphs.begin(); it != rphs.end(); it++) {
+    RenderProcessHost* rph = *it;
+    DCHECK(rph != NULL);
+
+    rph->Send(new ShellViewMsg_Reopen());
   }
 }
 
