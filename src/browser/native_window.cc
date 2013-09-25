@@ -173,4 +173,8 @@ void NativeWindow::LoadAppIconFromPackage(base::DictionaryValue* manifest) {
   }
 }
 
+void NativeWindow::RenderViewCreated(content::RenderViewHost *render_view_host) {
+  // no default implementation
+}
+
 }  // namespace nw

@@ -27,6 +27,9 @@
 #include "base/values.h"
 #include "content/browser/child_process_security_policy_impl.h"
 #include "content/browser/renderer_host/render_view_host_impl.h"
+#if defined(OS_WIN)
+#include "content/browser/renderer_host/render_widget_host_view_win.h"
+#endif
 #include "content/browser/web_contents/web_contents_impl.h"
 #include "content/public/browser/devtools_agent_host.h"
 #include "content/public/browser/devtools_http_handler.h"
@@ -49,6 +52,13 @@
 #include "content/nw/src/browser/browser_dialogs.h"
 #include "content/nw/src/browser/file_select_helper.h"
 #include "content/nw/src/browser/native_window.h"
+#if defined(OS_WIN)
+#include "content/nw/src/browser/native_window_win.h"
+#include "ui/views/view.h"
+#include "ui/views/widget/widget.h"
+#include "ui/views/widget/native_widget_win.h"
+#include "ui/views/widget/widget_delegate.h"
+#endif
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/browser/shell_javascript_dialog_creator.h"
 #include "content/nw/src/common/shell_switches.h"
@@ -400,6 +410,9 @@ void Shell::RenderViewCreated(RenderViewHost* render_view_host) {
     content::RenderWidgetHostView* view = render_view_host->GetView();
     DCHECK(view);
     view->SetBackground(background);
+#if defined(OS_WIN)
+    window_->RenderViewCreated(render_view_host);
+#endif
   }
 }
 

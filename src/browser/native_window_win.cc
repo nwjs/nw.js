@@ -29,6 +29,7 @@
 #include "content/nw/src/browser/native_window_toolbar_win.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_shell.h"
+#include "content/browser/renderer_host/render_widget_host_view_win.h"
 #include "content/public/browser/native_web_keyboard_event.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/render_widget_host_view.h"
@@ -364,27 +365,27 @@ void NativeWindowWin::SetTransparent() {
   
   // Check for Windows Vista or higher, transparency isn't supported in 
   // anything lower. 
-  if (base::win::GetVersion() < base::win::VERSION_VISTA) {
-    NOTREACHED() << "The operating system does not support transparency.";
-    is_transparent_ = false;
-    return;
-  }
+  //if (base::win::GetVersion() < base::win::VERSION_VISTA) {
+  //  NOTREACHED() << "The operating system does not support transparency.";
+  //  is_transparent_ = false;
+  //  return;
+  //}
 
   // Check to see if composition is disabled, if so we have to throw an 
   // error, there's no graceful recovery, yet. TODO: Graceful recovery.
-  BOOL enabled = FALSE;
-  HRESULT result = ::DwmIsCompositionEnabled(&enabled);
-  if (!enabled || !SUCCEEDED(result)) {
-    NOTREACHED() << "Windows DWM composition is not enabled, transparency is not supported.";
-    is_transparent_ = false;
-    return;
-  }
+  //BOOL enabled = FALSE;
+  //HRESULT result = ::DwmIsCompositionEnabled(&enabled);
+  //if (!enabled || !SUCCEEDED(result)) {
+  //  NOTREACHED() << "Windows DWM composition is not enabled, transparency is not supported.";
+  //  is_transparent_ = false;
+  //  return;
+  //}
 
   // These override any other window settings, which isn't the greatest idea
   // however transparent windows (in Windows) are very tricky and are not 
   // usable with any other styles.
   SetWindowLong(window_->GetNativeWindow(), GWL_STYLE, WS_POPUP | WS_SYSMENU | WS_BORDER); 
-  SetWindowLong(window_->GetNativeWindow(), GWL_EXSTYLE , WS_EX_COMPOSITED);
+  SetWindowLong(window_->GetNativeWindow(), GWL_EXSTYLE, WS_EX_LAYERED);
 
   MARGINS mgMarInset = { -1, -1, -1, -1 };
   if(DwmExtendFrameIntoClientArea(window_->GetNativeWindow(), &mgMarInset) != S_OK) {
@@ -452,6 +453,10 @@ void NativeWindowWin::SetPosition(const std::string& position) {
       bounds.set_y(y > 0 ? y : 0);
       window_->SetBoundsConstrained(bounds);
     }
+  }
+  if(IsTransparent()) {
+    MARGINS mgMarInset = { -1, -1, -1, -1 };
+    DwmExtendFrameIntoClientArea(window_->GetNativeWindow(), &mgMarInset);
   }
 }
 
@@ -768,6 +773,12 @@ void NativeWindowWin::OnViewWasResized() {
   }
   if (web_contents()->GetRenderViewHost()->GetView())
     web_contents()->GetRenderViewHost()->GetView()->SetClickthroughRegion(rgn);
+}
+
+void NativeWindowWin::RenderViewCreated(content::RenderViewHost *render_view_host) {
+  if (is_transparent_) {
+    ((content::RenderWidgetHostViewWin *)render_view_host->GetView())->SetLayeredWindow(window_->GetNativeWindow());
+  }
 }
 
 }  // namespace nw

@@ -103,8 +103,8 @@ class NativeWindowWin : public NativeWindow,
   virtual gfx::ImageSkia GetWindowIcon() OVERRIDE;
   virtual bool ShouldShowWindowTitle() const OVERRIDE;
   virtual void Notify(const std::string& title, const std::string& text, const std::string& subtitle, bool sound) OVERRIDE;
-								
-							
+  virtual void RenderViewCreated(content::RenderViewHost *render_view_host) OVERRIDE;
+
   // WidgetFocusChangeListener implementation.
   virtual void OnNativeFocusChange(gfx::NativeView focused_before,
                                    gfx::NativeView focused_now) OVERRIDE;
