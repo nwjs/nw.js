@@ -117,18 +117,6 @@ void ShellJavaScriptDialogCreator::RunBeforeUnloadDialog(
 #endif
 }
 
-void ShellJavaScriptDialogCreator::ResetJavaScriptState(
-    WebContents* web_contents) {
-#if defined(OS_MACOSX) || defined(OS_WIN) || defined(TOOLKIT_GTK)
-  if (dialog_.get()) {
-    dialog_->Cancel();
-    dialog_.reset();
-  }
-#else
-  // TODO: implement ShellJavaScriptDialog for other platforms, drop this #if
-#endif
-}
-
 void ShellJavaScriptDialogCreator::WebContentsDestroyed(
     WebContents* web_contents) {
 }

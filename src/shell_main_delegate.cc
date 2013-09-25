@@ -47,7 +47,7 @@
 using base::FilePath;
 
 #if defined(OS_MACOSX)
-#include "content/shell/paths_mac.h"
+#include "content/nw/src/paths_mac.h"
 #endif  // OS_MACOSX
 
 #if defined(OS_WIN)

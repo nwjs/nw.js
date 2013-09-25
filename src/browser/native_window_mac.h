@@ -23,8 +23,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+#include "base/mac/scoped_nsobject.h"
 #include "base/memory/scoped_ptr.h"
-#include "base/memory/scoped_nsobject.h"
 #include "base/memory/weak_ptr.h"
 #include "content/nw/src/browser/native_window.h"
 
@@ -106,7 +106,7 @@ class NativeWindowCocoa : public NativeWindow {
   NSWindow* window_;
 
   // Delegate to the toolbar.
-  scoped_nsobject<ShellToolbarDelegate> toolbar_delegate_;
+  base::scoped_nsobject<ShellToolbarDelegate> toolbar_delegate_;
 
   bool is_fullscreen_;
   bool is_kiosk_;

@@ -668,7 +668,7 @@ void NativeWindowCocoa::AddToolbar() {
     return;
 
   // create the toolbar object
-  scoped_nsobject<NSToolbar> toolbar(
+  base::scoped_nsobject<NSToolbar> toolbar(
       [[NSToolbar alloc] initWithIdentifier:@"node-webkit toolbar"]);
 
   // set initial toolbar properties
@@ -872,7 +872,7 @@ void NativeWindowCocoa::InstallDraggableRegionViews() {
   // Note that [webView subviews] returns the view's mutable internal array and
   // it should be copied to avoid mutating the original array while enumerating
   // it.
-  scoped_nsobject<NSArray> subviews([[webView subviews] copy]);
+  base::scoped_nsobject<NSArray> subviews([[webView subviews] copy]);
   for (NSView* subview in subviews.get())
     if ([subview isKindOfClass:[ControlRegionView class]])
       [subview removeFromSuperview];
@@ -883,7 +883,7 @@ void NativeWindowCocoa::InstallDraggableRegionViews() {
            system_drag_exclude_areas_.begin();
        iter != system_drag_exclude_areas_.end();
        ++iter) {
-    scoped_nsobject<NSView> controlRegion(
+    base::scoped_nsobject<NSView> controlRegion(
         [[ControlRegionView alloc] initWithShellWindow:this]);
     [controlRegion setFrame:NSMakeRect(iter->x(),
                                        webViewHeight - iter->bottom(),

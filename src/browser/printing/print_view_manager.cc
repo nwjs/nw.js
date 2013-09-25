@@ -121,7 +121,7 @@ void PrintViewManager::StopNavigation() {
   TerminatePrintJob(true);
 }
 
-void PrintViewManager::RenderViewGone(base::TerminationStatus status) {
+void PrintViewManager::RenderProcessGone(base::TerminationStatus status) {
   ReleasePrinterQuery();
 
   if (!print_job_.get())

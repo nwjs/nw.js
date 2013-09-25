@@ -23,7 +23,7 @@
 #import <Cocoa/Cocoa.h>
 
 #include "base/mac/bundle_locations.h"
-#include "base/memory/scoped_nsobject.h"
+#include "base/mac/scoped_nsobject.h"
 #include "base/command_line.h"
 #include "content/nw/src/browser/app_controller_mac.h"
 #include "content/nw/src/browser/shell_application_mac.h"
