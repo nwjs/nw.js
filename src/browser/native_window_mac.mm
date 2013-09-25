@@ -39,7 +39,6 @@
 #include "content/public/browser/web_contents_view.h"
 #include "extensions/common/draggable_region.h"
 #include "third_party/skia/include/core/SkRegion.h"
-#import "ui/base/cocoa/underlay_opengl_hosting_window.h"
 
 @interface NSWindow (NSPrivateApis)
 - (void)setBottomCornerRounded:(BOOL)rounded;
@@ -338,6 +337,7 @@ NativeWindowCocoa::NativeWindowCocoa(
   manifest->GetInteger(switches::kmWidth, &width);
   manifest->GetInteger(switches::kmHeight, &height);
   manifest->GetBoolean(switches::kmInitialFocus, &initial_focus_);
+  manifest->GetBoolean(switches::kmTransparent, &is_transparent_);
 
   NSRect main_screen_rect = [[[NSScreen screens] objectAtIndex:0] frame];
   NSRect cocoa_bounds = NSMakeRect(
@@ -346,8 +346,10 @@ NativeWindowCocoa::NativeWindowCocoa(
       width,
       height);
   NSUInteger style_mask = NSTitledWindowMask | NSClosableWindowMask |
-                          NSMiniaturizableWindowMask | NSResizableWindowMask |
-                          NSTexturedBackgroundWindowMask;
+                          NSMiniaturizableWindowMask | NSTexturedBackgroundWindowMask | NSResizableWindowMask;
+  if(is_transparent_)
+    style_mask = NSBorderlessWindowMask;
+
   ShellNSWindow* shell_window;
   if (has_frame_) {
     shell_window = [[ShellNSWindow alloc]
@@ -365,7 +367,8 @@ NativeWindowCocoa::NativeWindowCocoa(
   window_ = shell_window;
   [shell_window setShell:shell];
   [window() setDelegate:[[NativeWindowDelegate alloc] initWithShell:shell]];
-
+  if(is_transparent_)
+    SetTransparent();
   // Disable fullscreen button when 'fullscreen' is specified to false.
   bool fullscreen;
   if (!(manifest->GetBoolean(switches::kmFullscreen, &fullscreen) &&
@@ -533,10 +536,8 @@ void NativeWindowCocoa::SetTransparent() {
   is_transparent_ = true;
   if(base::mac::IsOSMountainLionOrLater()) {
     restored_bounds_ = [window() frame];
-    [window() setStyleMask:(NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask)];
-    [window() setFrame:[window()
-                      frameRectForContentRect:[window() frame]]
-             display:YES];
+    [window() setStyleMask:NSBorderlessWindowMask];
+    [window() setFrame:[window() frameRectForContentRect:[window() frame]] display:YES];
   }
   [window() setHasShadow:NO];
   ShellNSWindow* swin = (ShellNSWindow*)window();
