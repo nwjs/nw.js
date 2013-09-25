@@ -67,7 +67,7 @@ bool MediaStreamDevicesController::DismissInfoBarAndTakeActionOnSettings() {
 
   if (request_.audio_type == content::MEDIA_TAB_AUDIO_CAPTURE ||
       request_.video_type == content::MEDIA_TAB_VIDEO_CAPTURE ||
-      request_.video_type == content::MEDIA_SCREEN_VIDEO_CAPTURE) {
+      request_.video_type == content::MEDIA_DESKTOP_VIDEO_CAPTURE) {
     HandleTapMediaRequest();
     return true;
   }
@@ -161,9 +161,9 @@ void MediaStreamDevicesController::HandleTapMediaRequest() {
     devices.push_back(content::MediaStreamDevice(
           content::MEDIA_TAB_AUDIO_CAPTURE, "", ""));
   }
-  if (request_.video_type == content::MEDIA_SCREEN_VIDEO_CAPTURE) {
+  if (request_.video_type == content::MEDIA_DESKTOP_VIDEO_CAPTURE) {
     devices.push_back(content::MediaStreamDevice(
-          content::MEDIA_SCREEN_VIDEO_CAPTURE, std::string(), "Screen"));
+          content::MEDIA_DESKTOP_VIDEO_CAPTURE, std::string(), "Screen"));
   }
 
   callback_.Run(devices, scoped_ptr<content::MediaStreamUI>());

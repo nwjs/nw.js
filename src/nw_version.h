@@ -43,7 +43,7 @@
 
 #define NW_VERSION "v" NW_VERSION_STRING
 
-#define CHROME_VERSION "29.0.1547.31"
+#define CHROME_VERSION "30.0.1599.36"
 
 #define NW_VERSION_AT_LEAST(major, minor, patch) \
   (( (major) < NW_MAJOR_VERSION) \

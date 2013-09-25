@@ -18,10 +18,6 @@
 #include "skia/ext/vector_canvas.h"
 #include "third_party/WebKit/public/web/WebFrame.h"
 
-#if !defined(OS_CHROMEOS)
-#include "base/process_util.h"
-#endif  // !defined(OS_CHROMEOS)
-
 namespace printing {
 
 using WebKit::WebFrame;

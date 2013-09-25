@@ -23,7 +23,7 @@
 #include "base/command_line.h"
 #include "base/files/file_path.h"
 #include "base/file_util.h"
-#include "base/string_util.h"
+#include "base/strings/string_util.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
@@ -51,10 +51,11 @@
 #include "geolocation/shell_access_token_store.h"
 #include "googleurl/src/gurl.h"
 #include "ui/base/l10n/l10n_util.h"
-#include "webkit/common/dom_storage/dom_storage_map.h"
+#include "content/common/dom_storage/dom_storage_map.h"
 #include "webkit/common/webpreferences.h"
 #include "webkit/common/user_agent/user_agent_util.h"
-#include "webkit/plugins/npapi/plugin_list.h"
+#include "content/common/plugin_list.h"
+#include "content/public/browser/plugin_service.h"
 
 
 namespace content {
@@ -153,7 +154,7 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
 
     int dom_storage_quota_mb;
     if (package->root()->GetInteger("dom_storage_quota", &dom_storage_quota_mb)) {
-      dom_storage::DomStorageMap::SetQuotaOverride(dom_storage_quota_mb * 1024 * 1024);
+      content::DOMStorageMap::SetQuotaOverride(dom_storage_quota_mb * 1024 * 1024);
       command_line->AppendSwitchASCII(switches::kDomStorageQuota, base::IntToString(dom_storage_quota_mb));
     }
   }
@@ -229,7 +230,8 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
     //PathService::Get(base::DIR_CURRENT, &plugins_dir);
     plugins_dir = plugins_dir.AppendASCII("plugins");
 
-    webkit::npapi::PluginList::Singleton()->AddExtraPluginDir(plugins_dir);
+    PluginService* plugin_service = PluginService::GetInstance();
+    plugin_service->AddExtraPluginDir(plugins_dir);
   }
 }
 

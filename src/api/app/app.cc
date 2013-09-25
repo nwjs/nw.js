@@ -22,7 +22,7 @@
 
 #include "base/command_line.h"
 #include "base/logging.h"
-#include "base/message_loop.h"
+#include "base/message_loop/message_loop.h"
 #include "base/values.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/browser/native_window.h"

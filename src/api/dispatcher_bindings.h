@@ -38,27 +38,27 @@ class DispatcherBindings : public v8::Extension {
 
  private:
   // Helper functions for bindings.
-  static v8::Handle<v8::Value> RequireNwGui(const v8::Arguments& args);
-  static v8::Handle<v8::Value> GetAbsolutePath(const v8::Arguments& args);
+  static void RequireNwGui(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void GetAbsolutePath(const v8::FunctionCallbackInfo<v8::Value>& args);
 
   // Get Shell's corresponding js object's id.
-  static v8::Handle<v8::Value> GetShellIdForCurrentContext(
-      const v8::Arguments& args);
+  static void GetShellIdForCurrentContext(
+      const v8::FunctionCallbackInfo<v8::Value>& args);
 
   // Get current routing id.
-  static v8::Handle<v8::Value> GetRoutingIDForCurrentContext(
-      const v8::Arguments& args);
+  static void GetRoutingIDForCurrentContext(
+      const v8::FunctionCallbackInfo<v8::Value>& args);
 
   // Create new shell and returns its routing id.
-  static v8::Handle<v8::Value> CreateShell(const v8::Arguments& args);
+  static void CreateShell(const v8::FunctionCallbackInfo<v8::Value>& args);
 
   // Remote objects.
-  static v8::Handle<v8::Value> AllocateObject(const v8::Arguments& args);
-  static v8::Handle<v8::Value> DeallocateObject(const v8::Arguments& args);
-  static v8::Handle<v8::Value> CallObjectMethod(const v8::Arguments& args);
-  static v8::Handle<v8::Value> CallObjectMethodSync(const v8::Arguments& args);
-  static v8::Handle<v8::Value> CallStaticMethod(const v8::Arguments& args);
-  static v8::Handle<v8::Value> CallStaticMethodSync(const v8::Arguments& args);
+  static void AllocateObject(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void DeallocateObject(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void CallObjectMethodSync(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void CallStaticMethod(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void CallStaticMethodSync(const v8::FunctionCallbackInfo<v8::Value>& args);
 
   DISALLOW_COPY_AND_ASSIGN(DispatcherBindings);
 };

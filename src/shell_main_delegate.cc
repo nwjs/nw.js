@@ -149,7 +149,7 @@ void ShellMainDelegate::PreSandboxStartup() {
 
   // Allow file:// URIs can read other file:// URIs by default.
   command_line->AppendSwitch(switches::kAllowFileAccessFromFiles);
-  command_line->AppendSwitch(switches::kEnableExperimentalWebKitFeatures);
+  command_line->AppendSwitch(switches::kEnableExperimentalWebPlatformFeatures);
   command_line->AppendSwitch(switches::kEnableCssShaders);
 }
 
@@ -170,7 +170,7 @@ void ShellMainDelegate::InitializeResourceBundle() {
   FilePath pak_dir;
   PathService::Get(base::DIR_MODULE, &pak_dir);
   pak_file = pak_dir.Append(FILE_PATH_LITERAL("nw.pak"));
-  CHECK(file_util::PathExists(pak_file)) << "nw.pak is missing";
+  CHECK(base::PathExists(pak_file)) << "nw.pak is missing";
 #endif
   ui::ResourceBundle::InitSharedInstanceWithPakPath(pak_file);
 }

@@ -26,12 +26,14 @@
 #include "content/renderer/render_view_impl.h"
 #include "grit/nw_resources.h"
 #undef LOG
+using namespace WebCore;
+
+#include "V8HTMLIFrameElement.h"
 #include "third_party/WebKit/Source/core/html/HTMLIFrameElement.h"
 #include "third_party/WebKit/public/web/WebFrame.h"
 #include "third_party/WebKit/public/web/WebView.h"
-#include "third_party/WebKit/Source/WebKit/chromium/src/WebFrameImpl.h"
+#include "third_party/WebKit/Source/web/WebFrameImpl.h"
 
-#include "V8HTMLIFrameElement.h"
 
 namespace api {
 
@@ -63,19 +65,19 @@ WindowBindings::GetNativeFunction(v8::Handle<v8::String> name) {
 }
 
 // static
-v8::Handle<v8::Value>
-WindowBindings::BindToShell(const v8::Arguments& args) {
+void
+WindowBindings::BindToShell(const v8::FunctionCallbackInfo<v8::Value>& args) {
   int routing_id = args[0]->Int32Value();
   int object_id = args[1]->Int32Value();
 
   remote::AllocateObject(routing_id, object_id, "Window", v8::Object::New());
 
-  return v8::Undefined();
+  args.GetReturnValue().Set(v8::Undefined());
 }
 
 // static
-v8::Handle<v8::Value>
-WindowBindings::CallObjectMethod(const v8::Arguments& args) {
+void
+WindowBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args) {
   v8::Local<v8::Object> self = args[0]->ToObject();
   int routing_id = self->Get(v8::String::New("routing_id"))->Int32Value();
   int object_id = self->Get(v8::String::New("id"))->Int32Value();
@@ -84,7 +86,8 @@ WindowBindings::CallObjectMethod(const v8::Arguments& args) {
                                                                                  content::RenderViewImpl::FromRoutingID(routing_id));
   if (!render_view) {
     std::string msg = "Unable to get render view in " + method;
-    return v8::ThrowException(v8::Exception::Error(v8::String::New(msg.c_str())));
+    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(msg.c_str()))));
+    return;
   }
 
   if (method == "setDevToolsJail") {
@@ -96,16 +99,16 @@ WindowBindings::CallObjectMethod(const v8::Arguments& args) {
       WebCore::HTMLIFrameElement* iframe = WebCore::V8HTMLIFrameElement::toNative(frm);
       main_frame->setDevtoolsJail(WebKit::WebFrameImpl::fromFrame(iframe->contentFrame()));
     }
-    return v8::Undefined();
+    args.GetReturnValue().Set(v8::Undefined());
+    return;
   }
 
-  return remote::CallObjectMethod(
-      routing_id, object_id, "Window", method, args[2]);
+  args.GetReturnValue().Set(remote::CallObjectMethod(routing_id, object_id, "Window", method, args[2]));
 }
 
 // static
-v8::Handle<v8::Value>
-WindowBindings::CallObjectMethodSync(const v8::Arguments& args) {
+void
+WindowBindings::CallObjectMethodSync(const v8::FunctionCallbackInfo<v8::Value>& args) {
   v8::HandleScope scope;
 
   v8::Local<v8::Object> self = args[0]->ToObject();
@@ -116,7 +119,8 @@ WindowBindings::CallObjectMethodSync(const v8::Arguments& args) {
                                                                                  content::RenderViewImpl::FromRoutingID(routing_id));
   if (!render_view) {
     std::string msg = "Unable to get render view in " + method;
-    return v8::ThrowException(v8::Exception::Error(v8::String::New(msg.c_str())));
+    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(msg.c_str()))));
+    return;
   }
 
   if (method == "GetZoomLevel") {
@@ -124,31 +128,30 @@ WindowBindings::CallObjectMethodSync(const v8::Arguments& args) {
 
     v8::Local<v8::Array> array = v8::Array::New();
     array->Set(0, v8::Number::New(zoom_level));
-    return scope.Close(array);
+    args.GetReturnValue().Set(scope.Close(array));
+    return;
   }else if (method == "SetZoomLevel") {
     double zoom_level = args[2]->ToNumber()->Value();
     render_view->OnSetZoomLevel(zoom_level);
-    return v8::Undefined();
+    args.GetReturnValue().Set(v8::Undefined());
   }
-  return remote::CallObjectMethodSync(
-      routing_id, object_id, "Window", method, args[2]);
+  args.GetReturnValue().Set(remote::CallObjectMethodSync(routing_id, object_id, "Window", method, args[2]));
 }
 
 // static
-v8::Handle<v8::Value>
-WindowBindings::GetWindowObject(const v8::Arguments& args) {
+void
+WindowBindings::GetWindowObject(const v8::FunctionCallbackInfo<v8::Value>& args) {
   int routing_id = args[0]->Int32Value();
 
   // Dark magic to digg out the RenderView from its id.
   content::RenderViewImpl* render_view = static_cast<content::RenderViewImpl*>(
                                                                                content::RenderViewImpl::FromRoutingID(routing_id));
-  if (!render_view)
-    return v8::ThrowException(v8::Exception::Error(v8::String::New(
-        "Unable to get render view in GetWindowObject")));
-
+  if (!render_view) {
+    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New("Unable to get render view in GetWindowObject"))));
+    return;
+  }
   // Return the window object.
-  return render_view->GetWebView()->mainFrame()->mainWorldScriptContext()->
-      Global();
+  args.GetReturnValue().Set(render_view->GetWebView()->mainFrame()->mainWorldScriptContext()->Global());
 }
 
 }  // namespace api

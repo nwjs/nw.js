@@ -81,7 +81,7 @@ bool NwRenderViewObserver::CaptureSnapshot(WebKit::WebView* view,
   if (!canvas)
     return false;
 
-  view->paint(webkit_glue::ToWebCanvas(canvas.get()),
+  view->paint(canvas.get(),
               WebRect(0, 0, size.width, size.height));
   // TODO: Add a way to snapshot the whole page, not just the currently
   // visible part.

@@ -71,6 +71,19 @@
       <message name="IDS_SELECT_COLOR_DIALOG_TITLE" desc="The default title for the Select Color color chooser dialog.">
         Select Color
       </message>
+      <message name="IDS_IMAGE_FILES" desc="The description of the image file extensions in the select file dialog.">
+        Image Files
+      </message>
+      <message name="IDS_AUDIO_FILES" desc="The description of the audio file extensions in the select file dialog.">
+        Audio Files
+      </message>
+      <message name="IDS_VIDEO_FILES" desc="The description of the video file extensions in the select file dialog.">
+        Video Files
+      </message>
+      <message name="IDS_CUSTOM_FILES" desc="The description of the custom file extensions in the select file dialog.">
+        Custom Files
+      </message>
+
     </messages>
   </release>
 </grit>

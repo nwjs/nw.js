@@ -29,7 +29,7 @@
 #include "base/json/json_string_value_serializer.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_tokenizer.h"
-#include "base/string_util.h"
+#include "base/strings/string_util.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
 #include "third_party/zlib/google/zip.h"
@@ -43,7 +43,7 @@
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/gfx/image/image.h"
 #include "ui/gfx/image/image_skia_rep.h"
-#include "webkit/glue/image_decoder.h"
+#include "content/child/image_decoder.h"
 
 bool IsSwitch(const CommandLine::StringType& string,
               CommandLine::StringType* switch_string,
@@ -188,7 +188,7 @@ bool Package::GetImage(const FilePath& icon_path, gfx::Image* image) {
   // Decode the bitmap using WebKit's image decoder.
   const unsigned char* data =
       reinterpret_cast<const unsigned char*>(file_contents.data());
-  webkit_glue::ImageDecoder decoder;
+  content::ImageDecoder decoder;
   scoped_ptr<SkBitmap> decoded(new SkBitmap());
   // Note: This class only decodes bitmaps from extension resources. Chrome
   // doesn't (for security reasons) directly load extension resources provided
@@ -256,7 +256,7 @@ bool Package::InitFromPath() {
   // path_/package.json
   FilePath manifest_path = path_.AppendASCII("package.json");
   manifest_path = MakeAbsoluteFilePath(manifest_path);
-  if (!file_util::PathExists(manifest_path)) {
+  if (!base::PathExists(manifest_path)) {
     if (!self_extract())
       ReportError("Invalid package",
                   "There is no 'package.json' in the package, please make "
@@ -361,7 +361,7 @@ bool Package::ExtractPath() {
 #endif
 
   // If it's a file then try to extract from it.
-  if (!file_util::DirectoryExists(path_)) {
+  if (!base::DirectoryExists(path_)) {
     FilePath extracted_path;
     if (ExtractPackage(path_, &extracted_path)) {
       path_ = extracted_path;

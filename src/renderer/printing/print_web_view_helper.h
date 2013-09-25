@@ -9,8 +9,8 @@
 
 #include "base/gtest_prod_util.h"
 #include "base/memory/scoped_ptr.h"
-#include "base/shared_memory.h"
-#include "base/time.h"
+#include "base/memory/shared_memory.h"
+#include "base/time/time.h"
 #include "content/public/renderer/render_view_observer.h"
 #include "content/public/renderer/render_view_observer_tracker.h"
 #include "printing/metafile_impl.h"

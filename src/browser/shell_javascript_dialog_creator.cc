@@ -129,6 +129,22 @@ void ShellJavaScriptDialogCreator::ResetJavaScriptState(
 #endif
 }
 
+void ShellJavaScriptDialogCreator::WebContentsDestroyed(
+    WebContents* web_contents) {
+}
+
+void ShellJavaScriptDialogCreator::CancelActiveAndPendingDialogs(
+    WebContents* web_contents) {
+#if defined(OS_MACOSX) || defined(OS_WIN) || defined(TOOLKIT_GTK)
+  if (dialog_) {
+    dialog_->Cancel();
+    dialog_.reset();
+  }
+#else
+  // TODO: implement ShellJavaScriptDialog for other platforms, drop this #if
+#endif
+}
+
 void ShellJavaScriptDialogCreator::DialogClosed(ShellJavaScriptDialog* dialog) {
 #if defined(OS_MACOSX) || defined(OS_WIN) || defined(TOOLKIT_GTK)
   DCHECK_EQ(dialog, dialog_.get());

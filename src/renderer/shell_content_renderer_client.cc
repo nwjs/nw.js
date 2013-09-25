@@ -57,7 +57,7 @@
 #include "third_party/WebKit/public/web/WebSecurityPolicy.h"
 #include "third_party/WebKit/public/web/WebView.h"
 //#include "third_party/WebKit/Source/WebKit/chromium/public/platform/WebString.h"
-#include "webkit/common/dom_storage/dom_storage_map.h"
+#include "content/common/dom_storage/dom_storage_map.h"
 
 using content::RenderView;
 using content::RenderViewImpl;
@@ -128,7 +128,7 @@ void ShellContentRendererClient::RenderThreadStarted() {
     std::string quota_str = command_line->GetSwitchValueASCII(switches::kDomStorageQuota);
     int quota = 0;
     if (base::StringToInt(quota_str, &quota) && quota > 0) {
-      dom_storage::DomStorageMap::SetQuotaOverride(quota * 1024 * 1024);
+      content::DOMStorageMap::SetQuotaOverride(quota * 1024 * 1024);
     }
   }
   // Initialize node after render thread is started.
@@ -337,8 +337,8 @@ void ShellContentRendererClient::InstallNodeSymbols(
 }
 
 // static
-v8::Handle<v8::Value> ShellContentRendererClient::ReportException(
-    const v8::Arguments& args) {
+void ShellContentRendererClient::ReportException(
+            const v8::FunctionCallbackInfo<v8::Value>&  args) {
   v8::HandleScope handle_scope;
 
   // Do nothing if user is listening to uncaughtException.
@@ -352,8 +352,10 @@ v8::Handle<v8::Value> ShellContentRendererClient::ReportException(
   v8::Local<v8::Array> listener_array = v8::Local<v8::Array>::Cast(ret);
 
   uint32_t length = listener_array->Length();
-  if (length > 1)
-    return v8::Undefined();
+  if (length > 1) {
+    args.GetReturnValue().Set(v8::Undefined());
+    return;
+  }
 
   // Print stacktrace.
   v8::Local<v8::String> stack_symbol = v8::String::New("stack");
@@ -366,14 +368,16 @@ v8::Handle<v8::Value> ShellContentRendererClient::ReportException(
     error = *v8::String::Utf8Value(exception);
 
   RenderView* render_view = GetCurrentRenderView();
-  if (!render_view)
-    return v8::Undefined();
+  if (!render_view) {
+    args.GetReturnValue().Set(v8::Undefined());
+    return;
+  }
 
   render_view->Send(new ShellViewHostMsg_UncaughtException(
       render_view->GetRoutingID(),
       error));
 
-  return v8::Undefined();
+  args.GetReturnValue().Set(v8::Undefined());
 }
 
 void ShellContentRendererClient::UninstallNodeSymbols(
