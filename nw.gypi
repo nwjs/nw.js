@@ -300,8 +300,8 @@
             '<(DEPTH)/ui/ui.gyp:ui_resources',
             '<(DEPTH)/ui/views/controls/webview/webview.gyp:webview',
             '<(DEPTH)/ui/views/views.gyp:views',
-            '<(DEPTH)/webkit/support/webkit_support.gyp:webkit_resources',
-            '<(DEPTH)/webkit/support/webkit_support.gyp:webkit_strings',
+            '<(DEPTH)/webkit/webkit_resources.gyp:webkit_resources',
+            '<(DEPTH)/webkit/webkit_resources.gyp:webkit_strings',
           ],
           'configurations': {
             'Debug_Base': {

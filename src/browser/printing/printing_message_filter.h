@@ -11,7 +11,7 @@
 #include "content/public/browser/browser_message_filter.h"
 
 #if defined(OS_WIN)
-#include "base/shared_memory.h"
+#include "base/memory/shared_memory.h"
 #endif
 
 struct PrintHostMsg_ScriptedPrint_Params;
