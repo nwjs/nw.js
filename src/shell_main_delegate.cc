@@ -23,6 +23,7 @@
 #include "base/command_line.h"
 #include "base/files/file_path.h"
 #include "base/file_util.h"
+#include "base/lazy_instance.h"
 #include "base/logging.h"
 #include "base/path_service.h"
 #include "base/strings/utf_string_conversions.h"
@@ -30,6 +31,8 @@
 #include "content/public/browser/render_process_host.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/url_constants.h"
+#include "content/nw/src/breakpad_linux.h"
+#include "content/nw/src/chrome_breakpad_client.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_version.h"
 #include "content/nw/src/renderer/shell_content_renderer_client.h"
@@ -85,6 +88,11 @@ const GUID kContentShellProviderName = {
         { 0x84, 0x13, 0xec, 0x94, 0xd8, 0xc2, 0xa4, 0xb6 } };
 #endif
 
+#if defined(OS_POSIX)
+base::LazyInstance<chrome::ChromeBreakpadClient>::Leaky
+    g_chrome_breakpad_client = LAZY_INSTANCE_INITIALIZER;
+#endif
+
 void InitLogging() {
   base::FilePath log_filename;
   PathService::Get(base::DIR_EXE, &log_filename);
@@ -127,6 +135,10 @@ bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
 }
 
 void ShellMainDelegate::PreSandboxStartup() {
+#if defined(OS_POSIX)
+  breakpad::SetBreakpadClient(g_chrome_breakpad_client.Pointer());
+#endif
+
 #if defined(OS_MACOSX)
   OverrideFrameworkBundlePath();
   OverrideChildProcessPath();
@@ -151,6 +163,8 @@ void ShellMainDelegate::PreSandboxStartup() {
   command_line->AppendSwitch(switches::kAllowFileAccessFromFiles);
   command_line->AppendSwitch(switches::kEnableExperimentalWebPlatformFeatures);
   command_line->AppendSwitch(switches::kEnableCssShaders);
+
+  InitCrashReporter();
 }
 
 int ShellMainDelegate::RunProcess(
