@@ -17,7 +17,10 @@
       'dependencies': [
         '<(DEPTH)/base/base.gyp:base',
         '<(DEPTH)/base/third_party/dynamic_annotations/dynamic_annotations.gyp:dynamic_annotations',
+        '<(DEPTH)/breakpad/breakpad.gyp:breakpad_client',
+        '<(DEPTH)/components/components.gyp:breakpad_component',
         '<(DEPTH)/components/components.gyp:autofill_content_renderer',
+        '<(DEPTH)/components/components.gyp:browser_context_keyed_service',
         '<(DEPTH)/content/content.gyp:content_app_browser',
         '<(DEPTH)/content/content.gyp:content_browser',
         '<(DEPTH)/content/content.gyp:content_common',
@@ -48,6 +51,7 @@
         '<(DEPTH)',
         '<(DEPTH)/third_party/WebKit/Source',
         '<(DEPTH)/third_party/WebKit/public/web',
+        '<(DEPTH)/breakpad/src',
         '<(SHARED_INTERMEDIATE_DIR)/blink',
         '<(SHARED_INTERMEDIATE_DIR)/blink/bindings',
       ],
@@ -57,6 +61,15 @@
       'sources': [
         '<(DEPTH)/chrome/browser/chrome_process_finder_win.cc',
         '<(DEPTH)/chrome/browser/chrome_process_finder_win.h',
+        '<(DEPTH)/chrome/common/child_process_logging.h',
+        '<(DEPTH)/chrome/common/child_process_logging_mac.mm',
+        '<(DEPTH)/chrome/common/child_process_logging_posix.cc',
+        '<(DEPTH)/chrome/common/child_process_logging_win.cc',
+        '<(DEPTH)/chrome/common/crash_keys.cc',
+        '<(DEPTH)/chrome/common/dump_without_crashing.cc',
+        '<(DEPTH)/chrome/common/env_vars.cc',
+        '<(DEPTH)/chrome/browser/crash_upload_list.cc',
+        '<(DEPTH)/chrome/browser/upload_list.cc',
         '<(DEPTH)/chrome/browser/platform_util_common_linux.cc',
         '<(DEPTH)/chrome/browser/platform_util_linux.cc',
         '<(DEPTH)/chrome/browser/platform_util_mac.mm',
@@ -207,6 +220,13 @@
         'src/common/print_messages.h',
         'src/common/shell_switches.cc',
         'src/common/shell_switches.h',
+        'src/breakpad_linux.cc',
+        'src/breakpad_linux.h',
+        'src/breakpad_linux_impl.h',
+        'src/chrome_breakpad_client.cc',
+        'src/chrome_breakpad_client.h',
+        'src/crash_handler_host_linux.cc',
+        'src/crash_handler_host_linux.h',
         'src/geolocation/shell_access_token_store.cc',
         'src/geolocation/shell_access_token_store.h',
         'src/media/media_internals.cc',
@@ -720,5 +740,40 @@
         },  # target nw_helper_app
       ],
     }],  # OS=="mac"
-  ]
+    ['OS=="linux"',
+      { 'targets': [
+        {
+          'target_name': 'linux_symbols',
+          'type': 'none',
+          'conditions': [
+            ['linux_dump_symbols==1', {
+              'actions': [
+                {
+                  'action_name': 'dump_symbols',
+                  'inputs': [
+                    '<(DEPTH)/build/linux/dump_app_syms',
+                    '<(PRODUCT_DIR)/dump_syms',
+                    '<(PRODUCT_DIR)/nw',
+                  ],
+                  'outputs': [
+                    '<(PRODUCT_DIR)/nw.breakpad.<(target_arch)',
+                  ],
+                  'action': ['<(DEPTH)/build/linux/dump_app_syms',
+                             '<(PRODUCT_DIR)/dump_syms',
+                             '<(linux_strip_binary)',
+                             '<(PRODUCT_DIR)/nw',
+                             '<@(_outputs)'],
+                  'message': 'Dumping breakpad symbols to <(_outputs)',
+                  'process_outputs_as_sources': 1,
+                },
+              ],
+              'dependencies': [
+                'nw',
+                '../breakpad/breakpad.gyp:dump_syms',
+              ],
+            }],
+          ],
+        }],
+    }], # OS=="linux"
+  ] # conditions
 }
