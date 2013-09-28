@@ -223,6 +223,8 @@
         'src/breakpad_linux.cc',
         'src/breakpad_linux.h',
         'src/breakpad_linux_impl.h',
+        'src/breakpad_win.cc',
+        'src/breakpad_win.h',
         'src/chrome_breakpad_client.cc',
         'src/chrome_breakpad_client.h',
         'src/crash_handler_host_linux.cc',
