@@ -49,7 +49,7 @@
 #include "content/nw/src/shell_browser_context.h"
 #include "content/nw/src/shell_browser_main_parts.h"
 #include "geolocation/shell_access_token_store.h"
-#include "googleurl/src/gurl.h"
+#include "url/gurl.h"
 #include "ui/base/l10n/l10n_util.h"
 #include "content/common/dom_storage/dom_storage_map.h"
 #include "webkit/common/webpreferences.h"

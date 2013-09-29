@@ -35,7 +35,7 @@
 #include "third_party/zlib/google/zip.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/public/common/content_switches.h"
-#include "googleurl/src/gurl.h"
+#include "url/gurl.h"
 #include "grit/nw_resources.h"
 #include "media/base/media_switches.h"
 #include "net/base/escape.h"
