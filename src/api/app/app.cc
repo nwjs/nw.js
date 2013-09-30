@@ -79,6 +79,9 @@ void App::Call(const std::string& method,
   } else if (method == "CloseAllWindows") {
     CloseAllWindows();
     return;
+  } else if (method == "CrashBrowser") {
+    int* ptr = NULL;
+    *ptr = 1;
   }
   NOTREACHED() << "Calling unknown method " << method << " of App";
 }

@@ -39,6 +39,10 @@ App.prototype.closeAllWindows = function() {
   nw.callStaticMethod('App', 'CloseAllWindows', [ ]);
 }
 
+App.prototype.crashBrowser = function() {
+  nw.callStaticMethod('App', 'CrashBrowser', [ ]);
+}
+
 App.prototype.clearCache = function() {
   nw.callStaticMethodSync('App', 'ClearCache', [ ]);
 }
