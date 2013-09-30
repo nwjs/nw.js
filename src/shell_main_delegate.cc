@@ -88,10 +88,8 @@ const GUID kContentShellProviderName = {
         { 0x84, 0x13, 0xec, 0x94, 0xd8, 0xc2, 0xa4, 0xb6 } };
 #endif
 
-#if defined(OS_POSIX)
 base::LazyInstance<chrome::ChromeBreakpadClient>::Leaky
     g_chrome_breakpad_client = LAZY_INSTANCE_INITIALIZER;
-#endif
 
 void InitLogging() {
   base::FilePath log_filename;
@@ -135,9 +133,7 @@ bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
 }
 
 void ShellMainDelegate::PreSandboxStartup() {
-#if defined(OS_POSIX)
   breakpad::SetBreakpadClient(g_chrome_breakpad_client.Pointer());
-#endif
 
 #if defined(OS_MACOSX)
   OverrideFrameworkBundlePath();

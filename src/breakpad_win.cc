@@ -34,7 +34,7 @@
 #include "components/breakpad/breakpad_client.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/result_codes.h"
-#include "policy/policy_constants.h"
+//#include "policy/policy_constants.h"
 #include "sandbox/win/src/nt_internals.h"
 #include "sandbox/win/src/sidestep/preamble_patcher.h"
 
@@ -288,6 +288,7 @@ void SetPluginPath(const std::wstring& path) {
 // indicates whether policy data was successfully read. If it is true, |result|
 // contains the value set by policy.
 static bool MetricsReportingControlledByPolicy(bool* result) {
+#if 0
   string16 key_name = UTF8ToUTF16(policy::key::kMetricsReportingEnabled);
   DWORD value = 0;
   base::win::RegKey hklm_policy_key(HKEY_LOCAL_MACHINE,
@@ -303,7 +304,7 @@ static bool MetricsReportingControlledByPolicy(bool* result) {
     *result = value != 0;
     return true;
   }
-
+#endif
   return false;
 }
 

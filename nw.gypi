@@ -17,8 +17,6 @@
       'dependencies': [
         '<(DEPTH)/base/base.gyp:base',
         '<(DEPTH)/base/third_party/dynamic_annotations/dynamic_annotations.gyp:dynamic_annotations',
-        '<(DEPTH)/breakpad/breakpad.gyp:breakpad_client',
-        '<(DEPTH)/components/components.gyp:breakpad_component',
         '<(DEPTH)/components/components.gyp:autofill_content_renderer',
         '<(DEPTH)/components/components.gyp:browser_context_keyed_service',
         '<(DEPTH)/content/content.gyp:content_app_browser',
@@ -216,19 +214,17 @@
         'src/browser/shell_toolbar_delegate_mac.mm',
         'src/browser/standard_menus_mac.h',
         'src/browser/standard_menus_mac.mm',
+        'src/chrome_breakpad_client.cc',
+        'src/chrome_breakpad_client.h',
         'src/common/print_messages.cc',
         'src/common/print_messages.h',
         'src/common/shell_switches.cc',
         'src/common/shell_switches.h',
-        'src/breakpad_linux.cc',
-        'src/breakpad_linux.h',
         'src/breakpad_linux_impl.h',
         'src/breakpad_win.cc',
         'src/breakpad_win.h',
-        'src/chrome_breakpad_client.cc',
-        'src/chrome_breakpad_client.h',
-        'src/crash_handler_host_linux.cc',
-        'src/crash_handler_host_linux.h',
+        'src/hard_error_handler_win.cc',
+        'src/hard_error_handler_win.h',
         'src/geolocation/shell_access_token_store.cc',
         'src/geolocation/shell_access_token_store.h',
         'src/media/media_internals.cc',
@@ -300,6 +296,25 @@
           'dependencies': [
             # This is needed by content/app/content_main_runner.cc
             '<(DEPTH)/base/allocator/allocator.gyp:allocator',
+          ],
+        }],
+        ['OS=="win"', {
+          'dependencies': [
+            '<(DEPTH)/breakpad/breakpad.gyp:breakpad_handler',
+            '<(DEPTH)/breakpad/breakpad.gyp:breakpad_sender',
+            '<(DEPTH)/components/components.gyp:breakpad_component',
+          ],
+        }],
+        ['os_posix==1 and OS != "mac" and OS != "ios"', {
+          'sources': [
+            'src/breakpad_linux.cc',
+            'src/breakpad_linux.h',
+            'src/crash_handler_host_linux.cc',
+            'src/crash_handler_host_linux.h',
+          ],
+          'dependencies': [
+            '<(DEPTH)/breakpad/breakpad.gyp:breakpad_client',
+            '<(DEPTH)/components/components.gyp:breakpad_component',
           ],
         }],
         ['toolkit_uses_gtk == 1', {
