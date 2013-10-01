@@ -216,11 +216,14 @@
         'src/browser/standard_menus_mac.mm',
         'src/chrome_breakpad_client.cc',
         'src/chrome_breakpad_client.h',
+        'src/chrome_breakpad_client_mac.mm',
         'src/common/print_messages.cc',
         'src/common/print_messages.h',
         'src/common/shell_switches.cc',
         'src/common/shell_switches.h',
         'src/breakpad_linux_impl.h',
+        'src/breakpad_mac.mm',
+        'src/breakpad_mac.h',
         'src/breakpad_win.cc',
         'src/breakpad_win.h',
         'src/hard_error_handler_win.cc',
@@ -314,6 +317,15 @@
           ],
           'dependencies': [
             '<(DEPTH)/breakpad/breakpad.gyp:breakpad_client',
+            '<(DEPTH)/components/components.gyp:breakpad_component',
+          ],
+        }],
+        ['OS == "mac"', {
+          'sources!': [
+            '<(DEPTH)/chrome/common/child_process_logging_posix.cc',
+          ],
+          'dependencies': [
+            '<(DEPTH)/breakpad/breakpad.gyp:breakpad',
             '<(DEPTH)/components/components.gyp:breakpad_component',
           ],
         }],
