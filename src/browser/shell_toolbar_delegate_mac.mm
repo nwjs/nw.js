@@ -26,7 +26,7 @@
 #include "base/strings/sys_string_conversions.h"
 #include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/nw_shell.h"
-#include "googleurl/src/gurl.h"
+#include "url/gurl.h"
 
 static NSString *BackToolbarItemIdentifier = @"Back";
 static NSString *ForwardToolbarItemIdentifier = @"Forward";

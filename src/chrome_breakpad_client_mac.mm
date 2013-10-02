@@ -7,6 +7,7 @@
 #include "base/command_line.h"
 #include "chrome/common/chrome_switches.h"
 
+<<<<<<< HEAD
 #if !defined(DISABLE_NACL)
 #import "breakpad/src/client/mac/Framework/Breakpad.h"
 #include "components/nacl/common/nacl_switches.h"
@@ -35,6 +36,11 @@ void ChromeBreakpadClient::InstallAdditionalFilters(BreakpadRef breakpad) {
     BreakpadSetFilterCallback(breakpad, NaClBreakpadCrashFilter, NULL);
   }
 #endif
+=======
+namespace chrome {
+
+void ChromeBreakpadClient::InstallAdditionalFilters(BreakpadRef breakpad) {
+>>>>>>> 75583278d6e056c59e5acca60221da6f73756624
 }
 
 }  // namespace chrome
