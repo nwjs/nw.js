@@ -1629,11 +1629,11 @@ void HandleCrashDump(const BreakpadInfo& info) {
     }
 
     // Helper process.
-    IGNORE_RET(sys_unlink(info.filename));
+    // IGNORE_RET(sys_unlink(info.filename));
 #if defined(ADDRESS_SANITIZER)
     IGNORE_RET(sys_unlink(info.log_filename));
 #endif
-    IGNORE_RET(sys_unlink(temp_file));
+    // IGNORE_RET(sys_unlink(temp_file));
     sys__exit(0);
   }
 
