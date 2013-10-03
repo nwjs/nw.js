@@ -24,7 +24,6 @@
 #include "base/command_line.h"
 #include "base/files/file_path.h"
 #include "base/file_util.h"
-#include "base/linux_util.h"
 #include "base/strings/string_util.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/threading/thread_restrictions.h"
@@ -44,7 +43,6 @@
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/breakpad_mac.h"
 #include "content/nw/src/common/shell_switches.h"
-#include "content/nw/src/crash_handler_host_linux.h"
 #include "content/nw/src/browser/printing/print_job_manager.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/browser/shell_resource_dispatcher_host_delegate.h"
@@ -62,6 +60,11 @@
 #include "webkit/common/user_agent/user_agent_util.h"
 #include "content/common/plugin_list.h"
 #include "content/public/browser/plugin_service.h"
+
+#if defined(OS_LINUX)
+#include "base/linux_util.h"
+#include "content/nw/src/crash_handler_host_linux.h"
+#endif
 
 using base::FileDescriptor;
 

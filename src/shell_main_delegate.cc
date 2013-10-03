@@ -198,12 +198,12 @@ ContentRendererClient* ShellMainDelegate::CreateContentRendererClient() {
   return renderer_client_.get();
 }
 
-void ShellMainDelegate::ZygoteForked() {
 #if defined(OS_POSIX) && !defined(OS_MACOSX)
+void ShellMainDelegate::ZygoteForked() {
   // Needs to be called after we have chrome::DIR_USER_DATA.  BrowserMain sets
   // this up for the browser process in a different manner.
   InitCrashReporter();
-#endif
 }
+#endif
 
 }  // namespace content
