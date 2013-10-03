@@ -129,6 +129,8 @@ DispatcherBindings::GetNativeFunction(v8::Handle<v8::String> name) {
     return v8::FunctionTemplate::New(CallStaticMethod);
   else if (name->Equals(v8::String::New("CallStaticMethodSync")))
     return v8::FunctionTemplate::New(CallStaticMethodSync);
+  else if (name->Equals(v8::String::New("CrashRenderer")))
+    return v8::FunctionTemplate::New(CrashRenderer);
 
   NOTREACHED() << "Trying to get an non-exist function in DispatcherBindings:"
                << *v8::String::Utf8Value(name);
@@ -371,6 +373,13 @@ void DispatcherBindings::CallStaticMethod(
         method,
         *static_cast<base::ListValue*>(value_args.get())));
   args.GetReturnValue().Set(v8::Undefined());
+}
+
+// static
+void DispatcherBindings::CrashRenderer(
+    const v8::FunctionCallbackInfo<v8::Value>& args) {
+  int* ptr = NULL;
+  *ptr = 1;
 }
 
 // static

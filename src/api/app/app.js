@@ -43,6 +43,10 @@ App.prototype.crashBrowser = function() {
   nw.callStaticMethod('App', 'CrashBrowser', [ ]);
 }
 
+App.prototype.crashRenderer = function() {
+  nw.crashRenderer();
+}
+
 App.prototype.clearCache = function() {
   nw.callStaticMethodSync('App', 'ClearCache', [ ]);
 }

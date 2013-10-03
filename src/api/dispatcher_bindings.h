@@ -59,6 +59,7 @@ class DispatcherBindings : public v8::Extension {
   static void CallObjectMethodSync(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void CallStaticMethod(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void CallStaticMethodSync(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void CrashRenderer(const v8::FunctionCallbackInfo<v8::Value>& args);
 
   DISALLOW_COPY_AND_ASSIGN(DispatcherBindings);
 };
