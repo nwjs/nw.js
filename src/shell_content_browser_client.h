@@ -83,6 +83,12 @@ class ShellContentBrowserClient : public ContentBrowserClient {
     content::CertificateRequestResultType* result) OVERRIDE;
   virtual void GetAdditionalAllowedSchemesForFileSystem(
       std::vector<std::string>* additional_schemes) OVERRIDE;
+#if defined(OS_POSIX) && !defined(OS_MACOSX)
+  virtual void GetAdditionalMappedFilesForChildProcess(
+      const CommandLine& command_line,
+      int child_process_id,
+      std::vector<content::FileDescriptorInfo>* mappings) OVERRIDE;
+#endif
 
  private:
   ShellBrowserContext* ShellBrowserContextForBrowserContext(

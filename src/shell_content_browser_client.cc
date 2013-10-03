@@ -20,13 +20,16 @@
 
 #include "content/nw/src/shell_content_browser_client.h"
 
+#include "base/base_switches.h"
 #include "base/command_line.h"
 #include "base/files/file_path.h"
 #include "base/file_util.h"
+#include "base/linux_util.h"
 #include "base/strings/string_util.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
+#include "chrome/common/child_process_logging.h"
 #include "content/browser/child_process_security_policy_impl.h"
 #include "content/public/browser/browser_url_handler.h"
 #include "content/nw/src/browser/printing/printing_message_filter.h"
@@ -34,11 +37,14 @@
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/resource_dispatcher_host.h"
 #include "content/public/browser/web_contents.h"
+#include "content/public/common/content_descriptors.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/renderer_preferences.h"
 #include "content/public/common/url_constants.h"
 #include "content/nw/src/api/dispatcher_host.h"
+#include "content/nw/src/breakpad_mac.h"
 #include "content/nw/src/common/shell_switches.h"
+#include "content/nw/src/crash_handler_host_linux.h"
 #include "content/nw/src/browser/printing/print_job_manager.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/browser/shell_resource_dispatcher_host_delegate.h"
@@ -57,6 +63,32 @@
 #include "content/common/plugin_list.h"
 #include "content/public/browser/plugin_service.h"
 
+using base::FileDescriptor;
+
+namespace {
+
+#if defined(OS_POSIX) && !defined(OS_MACOSX)
+int GetCrashSignalFD(const CommandLine& command_line) {
+  std::string process_type =
+      command_line.GetSwitchValueASCII(switches::kProcessType);
+
+  if (process_type == switches::kRendererProcess)
+    return RendererCrashHandlerHostLinux::GetInstance()->GetDeathSignalSocket();
+
+  if (process_type == switches::kPluginProcess)
+    return PluginCrashHandlerHostLinux::GetInstance()->GetDeathSignalSocket();
+
+  if (process_type == switches::kPpapiPluginProcess)
+    return PpapiCrashHandlerHostLinux::GetInstance()->GetDeathSignalSocket();
+
+  if (process_type == switches::kGpuProcess)
+    return GpuCrashHandlerHostLinux::GetInstance()->GetDeathSignalSocket();
+
+  return -1;
+}
+#endif  // defined(OS_POSIX) && !defined(OS_MACOSX)
+
+}
 
 namespace content {
 
@@ -105,6 +137,18 @@ std::string ShellContentBrowserClient::GetApplicationLocale() {
 void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     CommandLine* command_line,
     int child_process_id) {
+#if defined(OS_MACOSX)
+  if (IsCrashReporterEnabled()) {
+    command_line->AppendSwitchASCII(switches::kEnableCrashReporter,
+                                    child_process_logging::GetClientId());
+  }
+#elif defined(OS_POSIX)
+  if (IsCrashReporterEnabled()) {
+    command_line->AppendSwitchASCII(switches::kEnableCrashReporter,
+        child_process_logging::GetClientId() + "," + base::GetLinuxDistro());
+  }
+
+#endif  // OS_MACOSX
   if (command_line->GetSwitchValueASCII("type") != "renderer")
     return;
   if (child_process_id > 0) {
@@ -167,6 +211,7 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
 #if defined(OS_POSIX)
   command_line->AppendSwitch(switches::kChildCleanExit);
 #endif
+
 }
 
 void ShellContentBrowserClient::ResourceDispatcherHostCreated() {
@@ -346,5 +391,20 @@ void ShellContentBrowserClient::GetAdditionalAllowedSchemesForFileSystem(
       additional_allowed_schemes);
   additional_allowed_schemes->push_back("app");
 }
+
+#if defined(OS_POSIX) && !defined(OS_MACOSX)
+void ShellContentBrowserClient::GetAdditionalMappedFilesForChildProcess(
+    const CommandLine& command_line,
+    int child_process_id,
+    std::vector<FileDescriptorInfo>* mappings) {
+  int crash_signal_fd = GetCrashSignalFD(command_line);
+  if (crash_signal_fd >= 0) {
+    mappings->push_back(FileDescriptorInfo(kCrashDumpSignal,
+                                           FileDescriptor(crash_signal_fd,
+                                                          false)));
+  }
+}
+#endif  // defined(OS_POSIX) && !defined(OS_MACOSX)
+
 
 }  // namespace content
