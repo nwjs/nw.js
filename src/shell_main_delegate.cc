@@ -159,8 +159,11 @@ void ShellMainDelegate::PreSandboxStartup() {
   command_line->AppendSwitch(switches::kAllowFileAccessFromFiles);
   command_line->AppendSwitch(switches::kEnableExperimentalWebPlatformFeatures);
   command_line->AppendSwitch(switches::kEnableCssShaders);
+  std::string process_type =
+      command_line->GetSwitchValueASCII(switches::kProcessType);
 
-  InitCrashReporter();
+  if (process_type != switches::kZygoteProcess)
+    InitCrashReporter();
 }
 
 int ShellMainDelegate::RunProcess(
