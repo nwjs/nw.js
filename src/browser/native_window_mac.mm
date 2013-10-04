@@ -699,15 +699,15 @@ bool NativeWindowCocoa::IsKiosk() {
 }
 
 void NativeWindowCocoa::SetMenu(api::Menu* menu) {
-  bool no_edit_menu = false;
-  shell_->GetPackage()->root()->GetBoolean("no-edit-menu", &no_edit_menu);
+  //bool no_edit_menu = false;
+  //shell_->GetPackage()->root()->GetBoolean("no-edit-menu", &no_edit_menu);
 
-  StandardMenusMac standard_menus(shell_->GetPackage()->GetName());
+  //StandardMenusMac standard_menus(shell_->GetPackage()->GetName());
   [NSApp setMainMenu:menu->menu_];
-  standard_menus.BuildAppleMenu();
-  if (!no_edit_menu)
-    standard_menus.BuildEditMenu();
-  standard_menus.BuildWindowMenu();
+  //standard_menus.BuildAppleMenu();
+  //if (!no_edit_menu)
+  //  standard_menus.BuildEditMenu();
+  //standard_menus.BuildWindowMenu();
 }
 
 void NativeWindowCocoa::SetInitialFocus(bool accept_focus) {
@@ -978,6 +978,9 @@ void NativeWindowCocoa::EndOffclientMouseMove() {
   // Not implemented
 }
 
+void NativeWindowCocoa::RenderViewCreated(content::RenderViewHost *render_view_host) {
+	
+}
 
 NativeWindow* CreateNativeWindowCocoa(const base::WeakPtr<content::Shell>& shell,
                                            base::DictionaryValue* manifest) {

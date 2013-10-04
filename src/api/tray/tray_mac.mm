@@ -47,7 +47,9 @@ void Tray::SetTitle(const std::string& title) {
 void Tray::SetIcon(const std::string& icon) {
   if (!icon.empty()) {
     NSImage* image = [[NSImage alloc]
-         initWithContentsOfFile:[NSString stringWithUTF8String:icon.c_str()]];
+					  initWithContentsOfFile:[NSString stringWithUTF8String:icon.c_str()]];
+    [image setScalesWhenResized:YES];
+    [image setSize:NSMakeSize(22, 22)];
     [status_item_ setImage:image];
     [image release];
   } else {

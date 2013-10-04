@@ -224,7 +224,7 @@ void App::Call(Shell* shell,
       return;
     }
 
-    FILE *dst = fopen(sdst.c_str(), "w+");
+    FILE *dst = fopen(sdst.c_str(), "a+"); // this must remain a+, not w+
 
     if(dst==NULL) {
       DLOG(ERROR) << "Cannot open for read/write/trunc " << ssrc << " IO ERROR: " << strerror(NULL);
@@ -245,124 +245,6 @@ void App::Call(Shell* shell,
     fclose(src);
     fclose(dst);
     return;
-
-   /*
-   // Open file in text mode:
-   if( fopen_s( &stream, "fread.out", "w+t" ) == 0 )
-   {
-      for ( i = 0; i < 25; i++ )
-         list[i] = (char)('z' - i);
-      // Write 25 characters to stream 
-      numwritten = fwrite( list, sizeof( char ), 25, stream );
-      printf( "Wrote %d items\n", numwritten );
-      fclose( stream );
-
-   }
-   else
-      printf( "Problem opening the file\n" );
-
-   if( fopen_s( &stream, "fread.out", "r+t" ) == 0 )
-   {
-      // Attempt to read in 25 characters 
-      numread = fread( list, sizeof( char ), 25, stream );
-      printf( "Number of items read = %d\n", numread );
-      printf( "Contents of buffer = %.25s\n", list );
-      fclose( stream );
-   }
-   else
-      printf( "File could not be opened\n" );
-}
-
-    base::FilePath src = base::FilePath::FromUTF8Unsafe(ssrc);
-    base::MemoryMappedFile mmap_;
-    z_stream strm;
-    unsigned char *ptr;
-    if (!mmap_.Initialize(base::FilePath::FromUTF8Unsafe(ssrc))) {
-		  result->AppendBoolean(false);
-		  return;
-		}
-
-    unsigned char *data = (unsigned char *)malloc(CHUNK);
-    int data_size = 0;
-		strm.total_in = strm.avail_in = mmap_.length();
-		strm.next_in = const_cast<unsigned char *>(mmap_.data());
-		strm.zalloc = Z_NULL, strm.zfree = Z_NULL, strm.opaque = Z_NULL;
-
-		if (deflateInit(&strm, Z_BEST_COMPRESSION) != Z_OK) {
-		  result->AppendBoolean(false);
-		  return;
-		}
-
-		while(true) {
-			strm.avail_out=CHUNK;
-			strm.next_out=data+data_size;
-			switch(deflate(&strm, Z_FINISH)) {
-        case Z_OK:
-        case Z_BUF_ERROR:
-          data_size = strm.total_out;
-          ptr = (unsigned char *)realloc(data, data_size + CHUNK);
-          if(ptr == NULL) {
-            deflateEnd(&strm);
-            result->AppendBoolean(false);
-            return;
-          }
-				  data = ptr;
-          break;
-        case Z_STREAM_END:
-          data_size = strm.total_out;
-          deflateEnd(&strm);
-
-          file_util::WriteFile(base::FilePath::FromUTF8Unsafe(sdst),reinterpret_cast<const char *>(data),data_size);
-
-          result->AppendBoolean(true);
-          return;
-          break;
-        default:
-          inflateEnd(&strm);
-          result->AppendBoolean(false);
-          break;
-      }
-    }
-
-
-#if defined(OS_WIN)
-    int src;
-    int dst;
-    _sopen_s(&src,ssrc.c_str(), _O_RDONLY, _SH_DENYNO, _S_IREAD);
-	  _sopen_s(&dst,sdst.c_str(), _O_WRONLY|_O_CREAT|_O_TRUNC, _SH_DENYNO, _S_IWRITE);
-#else
-	  int src = open(ssrc.c_str(), O_RDONLY);
-	  int dst = open(sdst.c_str(), O_WRONLY|O_CREAT|O_TRUNC,S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
-#endif
-	  gzFile zDst = gzdopen(dst, "w");
-	  if(gzbuffer(zDst, 0x1000)==-1) {
-		  result->AppendBoolean(false);
-		  return;
-	  }
-	  if(gzsetparams(zDst, Z_BEST_COMPRESSION, Z_DEFAULT_STRATEGY) != Z_OK) {
-		  result->AppendBoolean(false);
-		  return;
-	  }
-	  if(zDst == NULL || src == -1) {
-		  result->AppendBoolean(false);
-		  return;
-	  }
-#if defined(OS_WIN)
-    while(bytes_read > 0 && bytes_written > 0) {
-		  bytes_read = _read(src,&buffer,0x1000);
-      bytes_written = gzwrite(zDst,&buffer,bytes_read);
-    }
-    _close(src);
-#else
-    while(bytes_read > 0 && bytes_written > 0) {
-		  bytes_read = read(src,&buffer,0x1000);
-      bytes_written = gzwrite(zDst,&buffer,bytes_read);
-    }
-    close(src);
-#endif
-	  gzclose(zDst);
-	  result->AppendBoolean(bytes_read != -1 && bytes_written != -1);*/
-	  return;
   } else if (method == "Ungzip") {
 	  std::string ssrc;
 	  std::string sdst;

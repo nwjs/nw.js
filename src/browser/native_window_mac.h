@@ -78,6 +78,8 @@ class NativeWindowCocoa : public NativeWindow {
   virtual void Notify(const std::string& title, const std::string& text, const std::string& subtitle, bool sound) OVERRIDE;
   virtual void SetInitialFocus(bool accept_focus) OVERRIDE;
   virtual bool InitialFocus() OVERRIDE;
+  virtual void RenderViewCreated(content::RenderViewHost *render_view_host) OVERRIDE;
+
   // Called to handle a mouse event.
   void HandleMouseEvent(NSEvent* event);
 
