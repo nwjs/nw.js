@@ -29,7 +29,7 @@ class ShellMainDelegate : public ContentMainDelegate {
   virtual ContentRendererClient* CreateContentRendererClient() OVERRIDE;
 
   static void InitializeResourceBundle();
-#if defined(OS_POSIX) && !defined(OS_ANDROID)
+#if defined(OS_POSIX) && !defined(OS_MACOSX)
   virtual void ZygoteForked() OVERRIDE;
 #endif
 
