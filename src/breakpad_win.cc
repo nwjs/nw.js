@@ -1064,6 +1064,8 @@ void InitCrashReporter() {
       google_breakpad::ExceptionHandler::HANDLER_NONE,
       dump_type, pipe_name.c_str(), custom_info);
 
+  LOG(INFO) << "Initialized crash dump in " << temp_dir;
+
   if (g_breakpad->IsOutOfProcess()) {
     // Tells breakpad to handle breakpoint and single step exceptions.
     // This might break JIT debuggers, but at least it will always
@@ -1091,4 +1093,11 @@ void StringVectorToCStringVector(const std::vector<std::wstring>& wstrings,
   cstrings->reserve(wstrings.size());
   for (size_t i = 0; i < wstrings.size(); ++i)
     cstrings->push_back(wstrings[i].c_str());
+}
+
+bool SetCrashDumpPath(const char* path) {
+  if (!g_breakpad)
+    return false;
+  g_breakpad->set_dump_path(base::UTF8ToWide(path));
+  return true;
 }

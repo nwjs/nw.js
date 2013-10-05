@@ -48,6 +48,7 @@ App.prototype.crashRenderer = function() {
 }
 
 App.prototype.setCrashDumpDir = function(dir) {
+  nw.setCrashDumpDir(dir); // for windows renderer process
   return nw.callStaticMethodSync('App', 'SetCrashDumpDir', [ dir ]);
 }
 

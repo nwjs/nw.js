@@ -26,6 +26,7 @@
 #include "base/values.h"
 #include "base/command_line.h"
 #include "chrome/renderer/static_v8_external_string_resource.h"
+#include "content/nw/src/breakpad_linux.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/bindings_common.h"
 #include "content/public/renderer/render_view.h"
@@ -131,6 +132,8 @@ DispatcherBindings::GetNativeFunction(v8::Handle<v8::String> name) {
     return v8::FunctionTemplate::New(CallStaticMethodSync);
   else if (name->Equals(v8::String::New("CrashRenderer")))
     return v8::FunctionTemplate::New(CrashRenderer);
+  else if (name->Equals(v8::String::New("SetCrashDumpDir")))
+    return v8::FunctionTemplate::New(SetCrashDumpDir);
 
   NOTREACHED() << "Trying to get an non-exist function in DispatcherBindings:"
                << *v8::String::Utf8Value(name);
@@ -380,6 +383,15 @@ void DispatcherBindings::CrashRenderer(
     const v8::FunctionCallbackInfo<v8::Value>& args) {
   int* ptr = NULL;
   *ptr = 1;
+}
+
+// static
+void DispatcherBindings::SetCrashDumpDir(
+    const v8::FunctionCallbackInfo<v8::Value>& args) {
+#if defined(OS_WIN)
+  std::string path = *v8::String::Utf8Value(args[0]);
+  SetCrashDumpPath(path.c_str());
+#endif  
 }
 
 // static
