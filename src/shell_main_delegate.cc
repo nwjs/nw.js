@@ -142,6 +142,11 @@ void ShellMainDelegate::PreSandboxStartup() {
   InitializeResourceBundle();
 
   CommandLine* command_line = CommandLine::ForCurrentProcess();
+  std::string process_type =
+      command_line->GetSwitchValueASCII(switches::kProcessType);
+
+  if (process_type != switches::kZygoteProcess)
+    InitCrashReporter();
 
   // Just prevent sandbox.
   command_line->AppendSwitch(switches::kNoSandbox);
@@ -159,11 +164,6 @@ void ShellMainDelegate::PreSandboxStartup() {
   command_line->AppendSwitch(switches::kAllowFileAccessFromFiles);
   command_line->AppendSwitch(switches::kEnableExperimentalWebPlatformFeatures);
   command_line->AppendSwitch(switches::kEnableCssShaders);
-  std::string process_type =
-      command_line->GetSwitchValueASCII(switches::kProcessType);
-
-  if (process_type != switches::kZygoteProcess)
-    InitCrashReporter();
 }
 
 int ShellMainDelegate::RunProcess(
