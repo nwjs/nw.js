@@ -22,4 +22,5 @@ extern void InitNonBrowserCrashReporterForAndroid();
 // whether InitCrashReporter() is called.
 bool IsCrashReporterEnabled();
 
+bool SetCrashDumpPath(const char* path);
 #endif  // CHROME_APP_BREAKPAD_LINUX_H_

@@ -39,6 +39,7 @@
 #include "breakpad/src/common/memory.h"
 #include "content/nw/src/breakpad_linux_impl.h"
 #include "chrome/common/child_process_logging.h"
+#include "chrome/common/chrome_paths.h"
 #include "components/breakpad/breakpad_client.h"
 #include "content/public/common/content_descriptors.h"
 #include "content/public/common/content_switches.h"
@@ -1715,4 +1716,14 @@ void InitNonBrowserCrashReporterForAndroid() {
 
 bool IsCrashReporterEnabled() {
   return g_is_crash_reporter_enabled;
+}
+
+bool SetCrashDumpPath(const char* path) {
+  if (!g_breakpad)
+    return false;
+  g_breakpad->set_minidump_descriptor(MinidumpDescriptor(path));
+  base::FilePath filepath(path);
+  // for renderer dumps
+  PathService::Override(chrome::DIR_CRASH_DUMPS, filepath);
+  return true;
 }
