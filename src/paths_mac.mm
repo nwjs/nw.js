@@ -27,8 +27,6 @@
 
 using base::FilePath;
 
-namespace {
-
 FilePath GetFrameworksPath() {
   // Start out with the path to the running executable.
   FilePath path;
@@ -49,8 +47,6 @@ FilePath GetFrameworksPath() {
   // Go into the frameworks directory.
   return path.Append("Frameworks");
 }
-
-}  // namespace
 
 void OverrideFrameworkBundlePath() {
   FilePath helper_path =

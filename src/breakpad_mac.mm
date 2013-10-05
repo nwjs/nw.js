@@ -26,6 +26,7 @@
 #include "chrome/common/child_process_logging.h"
 #include "content/public/common/content_switches.h"
 #include "components/breakpad/breakpad_client.h"
+#include "content/nw/src/paths_mac.h"
 //#include "policy/policy_constants.h"
 
 namespace {
@@ -182,19 +183,19 @@ void InitCrashReporter() {
   }
 
   // Tell Breakpad where crash_inspector and crash_report_sender are.
-  NSString* resource_path = [main_bundle resourcePath];
+  NSString* resource_path = [[NSString alloc] initWithUTF8String:GetFrameworksPath().value().c_str()];
   NSString *inspector_location =
       [resource_path stringByAppendingPathComponent:@"crash_inspector"];
   NSString *reporter_bundle_location =
       [resource_path stringByAppendingPathComponent:@"crash_report_sender.app"];
   NSString *reporter_location =
       [[NSBundle bundleWithPath:reporter_bundle_location] executablePath];
+ 
 
   VLOG(1) << "resource_path: " << [resource_path UTF8String];
   VLOG(1) << "inspector_location: " << [inspector_location UTF8String];
-  VLOG(1) << "reporter_location: " << [reporter_location UTF8String];
 
-  if (!inspector_location || !reporter_location) {
+  if (!inspector_location) {
     VLOG_IF(1, is_browser && base::mac::AmIBundled()) << "Breakpad disabled";
     return;
   }

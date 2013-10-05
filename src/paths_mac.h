@@ -16,4 +16,6 @@ void OverrideChildProcessPath();
 // Gets the path to the content shell's pak file.
 base::FilePath GetResourcesPakFilePath();
 
+base::FilePath GetFrameworksPath();
+
 #endif  // CONTENT_SHELL_PATHS_MAC_H_
