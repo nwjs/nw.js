@@ -348,7 +348,7 @@ void CrashHandlerHostLinux::OnFileCanReadWithoutBlocking(int fd) {
   // Nothing gets uploaded in android.
   info->upload = false;
 #else
-  info->upload = (getenv(env_vars::kHeadless) == NULL);
+  info->upload = false;
 #endif
 
   info->crash_keys = crash_keys;
