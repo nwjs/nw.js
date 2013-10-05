@@ -281,3 +281,10 @@ void InitCrashProcessInfo() {
   // Store process type in crash dump.
   SetCrashKeyValue(@"ptype", process_type);
 }
+
+bool SetCrashDumpPath(const char* path) {
+  if (!gBreakpadRef)
+    return false;
+  BreakpadSetKeyValue(gBreakpadRef, @BREAKPAD_DUMP_DIRECTORY, base::SysUTF8ToNSString(path));
+  return true;
+}
