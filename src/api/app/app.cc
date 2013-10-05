@@ -25,6 +25,7 @@
 #include "base/message_loop/message_loop.h"
 #include "base/values.h"
 #include "content/nw/src/api/api_messages.h"
+#include "content/nw/src/breakpad_linux.h"
 #include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/browser/net_disk_cache_remover.h"
 #include "content/nw/src/nw_package.h"
@@ -120,6 +121,10 @@ void App::Call(Shell* shell,
   } else if (method == "GetPackage") {
     result->AppendString(shell->GetPackage()->package_string());
     return;
+  } else if (method == "SetCrashDumpDir") {
+    std::string path;
+    arguments.GetString(0, &path);
+    result->AppendBoolean(SetCrashDumpPath(path.c_str()));
   }
 
   NOTREACHED() << "Calling unknown sync method " << method << " of App";

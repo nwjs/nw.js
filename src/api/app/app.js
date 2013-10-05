@@ -47,6 +47,10 @@ App.prototype.crashRenderer = function() {
   nw.crashRenderer();
 }
 
+App.prototype.setCrashDumpDir = function(dir) {
+  return nw.callStaticMethodSync('App', 'SetCrashDumpDir', [ dir ]);
+}
+
 App.prototype.clearCache = function() {
   nw.callStaticMethodSync('App', 'ClearCache', [ ]);
 }
