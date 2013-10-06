@@ -186,11 +186,12 @@ void InitCrashReporter() {
   NSString* resource_path = [[NSString alloc] initWithUTF8String:GetFrameworksPath().value().c_str()];
   NSString *inspector_location =
       [resource_path stringByAppendingPathComponent:@"crash_inspector"];
+#if 0
   NSString *reporter_bundle_location =
       [resource_path stringByAppendingPathComponent:@"crash_report_sender.app"];
   NSString *reporter_location =
       [[NSBundle bundleWithPath:reporter_bundle_location] executablePath];
- 
+#endif 
 
   VLOG(1) << "resource_path: " << [resource_path UTF8String];
   VLOG(1) << "inspector_location: " << [inspector_location UTF8String];
@@ -205,8 +206,10 @@ void InitCrashReporter() {
       [[info_dictionary mutableCopy] autorelease];
   [breakpad_config setObject:inspector_location
                       forKey:@BREAKPAD_INSPECTOR_LOCATION];
+#if 0
   [breakpad_config setObject:reporter_location
                       forKey:@BREAKPAD_REPORTER_EXE_LOCATION];
+#endif
 
   // In the main application (the browser process), crashes can be passed to
   // the system's Crash Reporter.  This allows the system to notify the user
