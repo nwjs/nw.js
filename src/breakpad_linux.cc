@@ -292,8 +292,9 @@ class MimeWriter {
     iov_index_ = 0;
   }
 
- protected:
   void AddItem(const void* base, size_t size);
+
+protected:
   // Minor performance trade-off for easier-to-maintain code.
   void AddString(const char* str) {
     AddItem(str, my_strlen(str));
@@ -684,6 +685,7 @@ void EnableCrashDumping(bool unattended) {
       true,  // Install handlers.
       -1);   // Server file descriptor. -1 for in-process.
 #endif
+  LOG(INFO) << "Initialized crash dump in " << dumps_path.value();
 }
 
 #if defined(OS_ANDROID)
@@ -1052,7 +1054,6 @@ void HandleCrashDump(const BreakpadInfo& info) {
   exe_buf = GetCrashingProcessName(info, &allocator);
 #endif
 
-  VLOG(1) << "info.fd: " << info.fd << " info.filename:" << info.filename;
   if (info.fd != -1) {
     // Dump is provided with an open FD.
     keep_fd = true;
@@ -1240,289 +1241,12 @@ void HandleCrashDump(const BreakpadInfo& info) {
 #else
   MimeWriter writer(temp_file_fd, mime_boundary);
 #endif
-  {
-    std::string product_name;
-    std::string version;
-
-    breakpad::GetBreakpadClient()->GetProductNameAndVersion(&product_name,
-                                                            &version);
-
-    writer.AddBoundary();
-    writer.AddPairString("prod", product_name.c_str());
-    writer.AddBoundary();
-    writer.AddPairString("ver", version.c_str());
-    writer.AddBoundary();
-    writer.AddPairString("guid", info.guid);
-    writer.AddBoundary();
-    if (info.pid > 0) {
-      char pid_value_buf[kUint64StringSize];
-      uint64_t pid_value_len = my_uint64_len(info.pid);
-      my_uint64tos(pid_value_buf, info.pid, pid_value_len);
-      static const char pid_key_name[] = "pid";
-      writer.AddPairData(pid_key_name, sizeof(pid_key_name) - 1,
-                         pid_value_buf, pid_value_len);
-      writer.AddBoundary();
-    }
-#if defined(OS_ANDROID)
-    // Addtional MIME blocks are added for logging on Android devices.
-    static const char android_build_id[] = "android_build_id";
-    static const char android_build_fp[] = "android_build_fp";
-    static const char device[] = "device";
-    static const char model[] = "model";
-    static const char brand[] = "brand";
-    static const char exception_info[] = "exception_info";
-
-    base::android::BuildInfo* android_build_info =
-        base::android::BuildInfo::GetInstance();
-    writer.AddPairString(
-        android_build_id, android_build_info->android_build_id());
-    writer.AddBoundary();
-    writer.AddPairString(
-        android_build_fp, android_build_info->android_build_fp());
-    writer.AddBoundary();
-    writer.AddPairString(device, android_build_info->device());
-    writer.AddBoundary();
-    writer.AddPairString(model, android_build_info->model());
-    writer.AddBoundary();
-    writer.AddPairString(brand, android_build_info->brand());
-    writer.AddBoundary();
-    if (android_build_info->java_exception_info() != NULL) {
-      writer.AddPairString(exception_info,
-                           android_build_info->java_exception_info());
-      writer.AddBoundary();
-    }
-#endif
-    writer.Flush();
-  }
-
-  if (info.process_start_time > 0) {
-    struct kernel_timeval tv;
-    if (!sys_gettimeofday(&tv, NULL)) {
-      uint64_t time = kernel_timeval_to_ms(&tv);
-      if (time > info.process_start_time) {
-        time -= info.process_start_time;
-        char time_str[kUint64StringSize];
-        const unsigned time_len = my_uint64_len(time);
-        my_uint64tos(time_str, time, time_len);
-
-        static const char process_time_msg[] = "ptime";
-        writer.AddPairData(process_time_msg, sizeof(process_time_msg) - 1,
-                           time_str, time_len);
-        writer.AddBoundary();
-        writer.Flush();
-      }
-    }
-  }
-
-  if (info.process_type_length) {
-    writer.AddPairString("ptype", info.process_type);
-    writer.AddBoundary();
-    writer.Flush();
-  }
-
-  // If GPU info is known, send it.
-  if (*child_process_logging::g_gpu_vendor_id) {
-#if !defined(OS_ANDROID)
-    static const char vendor_msg[] = "gpu-venid";
-    static const char device_msg[] = "gpu-devid";
-#endif
-    static const char gl_vendor_msg[] = "gpu-gl-vendor";
-    static const char gl_renderer_msg[] = "gpu-gl-renderer";
-    static const char driver_msg[] = "gpu-driver";
-    static const char psver_msg[] = "gpu-psver";
-    static const char vsver_msg[] = "gpu-vsver";
-
-#if !defined(OS_ANDROID)
-    writer.AddPairString(vendor_msg, child_process_logging::g_gpu_vendor_id);
-    writer.AddBoundary();
-    writer.AddPairString(device_msg, child_process_logging::g_gpu_device_id);
-    writer.AddBoundary();
-#endif
-    writer.AddPairString(gl_vendor_msg, child_process_logging::g_gpu_gl_vendor);
-    writer.AddBoundary();
-    writer.AddPairString(gl_renderer_msg,
-                         child_process_logging::g_gpu_gl_renderer);
-    writer.AddBoundary();
-    writer.AddPairString(driver_msg, child_process_logging::g_gpu_driver_ver);
-    writer.AddBoundary();
-    writer.AddPairString(psver_msg, child_process_logging::g_gpu_ps_ver);
-    writer.AddBoundary();
-    writer.AddPairString(vsver_msg, child_process_logging::g_gpu_vs_ver);
-    writer.AddBoundary();
-    writer.Flush();
-  }
-
-  if (info.distro_length) {
-    static const char distro_msg[] = "lsb-release";
-    writer.AddPairString(distro_msg, info.distro);
-    writer.AddBoundary();
-    writer.Flush();
-  }
-
-  // For renderers and plugins.
-  if (info.crash_url_length) {
-    static const char url_chunk_msg[] = "url-chunk-";
-    static const unsigned kMaxUrlLength = 8 * MimeWriter::kMaxCrashChunkSize;
-    writer.AddPairDataInChunks(url_chunk_msg, sizeof(url_chunk_msg) - 1,
-        info.crash_url, std::min(info.crash_url_length, kMaxUrlLength),
-        MimeWriter::kMaxCrashChunkSize, false /* Don't strip whitespaces. */);
-  }
-
-  if (*child_process_logging::g_channel) {
-    writer.AddPairString("channel", child_process_logging::g_channel);
-    writer.AddBoundary();
-    writer.Flush();
-  }
-
-  if (*child_process_logging::g_num_views) {
-    writer.AddPairString("num-views", child_process_logging::g_num_views);
-    writer.AddBoundary();
-    writer.Flush();
-  }
-
-  if (*child_process_logging::g_num_extensions) {
-    writer.AddPairString("num-extensions",
-                         child_process_logging::g_num_extensions);
-    writer.AddBoundary();
-    writer.Flush();
-  }
-
-  unsigned extension_ids_len =
-      my_strlen(child_process_logging::g_extension_ids);
-  if (extension_ids_len) {
-    static const char extension_msg[] = "extension-";
-    static const unsigned kMaxExtensionsLen =
-        kMaxReportedActiveExtensions * child_process_logging::kExtensionLen;
-    writer.AddPairDataInChunks(extension_msg, sizeof(extension_msg) - 1,
-        child_process_logging::g_extension_ids,
-        std::min(extension_ids_len, kMaxExtensionsLen),
-        child_process_logging::kExtensionLen,
-        false /* Don't strip whitespace. */);
-  }
-
-  unsigned printer_info_len =
-      my_strlen(child_process_logging::g_printer_info);
-  if (printer_info_len) {
-    static const char printer_info_msg[] = "prn-info-";
-    static const unsigned kMaxPrnInfoLen =
-        kMaxReportedPrinterRecords * child_process_logging::kPrinterInfoStrLen;
-    writer.AddPairDataInChunks(printer_info_msg, sizeof(printer_info_msg) - 1,
-        child_process_logging::g_printer_info,
-        std::min(printer_info_len, kMaxPrnInfoLen),
-        child_process_logging::kPrinterInfoStrLen,
-        true);
-  }
-
-  if (*child_process_logging::g_num_switches) {
-    writer.AddPairString("num-switches",
-                         child_process_logging::g_num_switches);
-    writer.AddBoundary();
-    writer.Flush();
-  }
-
-  unsigned switches_len =
-      my_strlen(child_process_logging::g_switches);
-  if (switches_len) {
-    static const char switch_msg[] = "switch-";
-    static const unsigned kMaxSwitchLen =
-        kMaxSwitches * child_process_logging::kSwitchLen;
-    writer.AddPairDataInChunks(switch_msg, sizeof(switch_msg) - 1,
-        child_process_logging::g_switches,
-        std::min(switches_len, kMaxSwitchLen),
-        child_process_logging::kSwitchLen,
-        true /* Strip whitespace since switches are padded to kSwitchLen. */);
-  }
-
-  if (*child_process_logging::g_num_variations) {
-    writer.AddPairString("num-experiments",
-                         child_process_logging::g_num_variations);
-    writer.AddBoundary();
-    writer.Flush();
-  }
-
-  unsigned variation_chunks_len =
-      my_strlen(child_process_logging::g_variation_chunks);
-  if (variation_chunks_len) {
-    static const char variation_msg[] = "experiment-chunk-";
-    static const unsigned kMaxVariationsLen =
-        kMaxReportedVariationChunks * kMaxVariationChunkSize;
-    writer.AddPairDataInChunks(variation_msg, sizeof(variation_msg) - 1,
-        child_process_logging::g_variation_chunks,
-        std::min(variation_chunks_len, kMaxVariationsLen),
-        kMaxVariationChunkSize,
-        true /* Strip whitespace since variation chunks are padded. */);
-  }
-
-  if (info.oom_size) {
-    char oom_size_str[kUint64StringSize];
-    const unsigned oom_size_len = my_uint64_len(info.oom_size);
-    my_uint64tos(oom_size_str, info.oom_size, oom_size_len);
-    static const char oom_size_msg[] = "oom-size";
-    writer.AddPairData(oom_size_msg, sizeof(oom_size_msg) - 1,
-                       oom_size_str, oom_size_len);
-    writer.AddBoundary();
-    writer.Flush();
-  }
-
-  if (info.crash_keys) {
-    CrashKeyStorage::Iterator crash_key_iterator(*info.crash_keys);
-    const CrashKeyStorage::Entry* entry;
-    while ((entry = crash_key_iterator.Next())) {
-      writer.AddPairString(entry->key, entry->value);
-      writer.AddBoundary();
-      writer.Flush();
-    }
-  }
-
-  writer.AddFileContents(g_dump_msg, dump_data, dump_size);
-#if defined(ADDRESS_SANITIZER)
-  // Append a multipart boundary and the contents of the AddressSanitizer log.
-  writer.AddBoundary();
-  writer.AddFileContents(g_log_msg, log_data, log_size);
-#endif
-  writer.AddEnd();
+  writer.AddItem(dump_data, dump_size);
   writer.Flush();
 
   IGNORE_RET(sys_close(temp_file_fd));
 
-#if defined(OS_ANDROID)
-  if (info.filename) {
-    int filename_length = my_strlen(info.filename);
-
-    // If this was a file, we need to copy it to the right place and use the
-    // right file name so it gets uploaded by the browser.
-    const char msg[] = "Output crash dump file:";
-    WriteLog(msg, sizeof(msg) - 1);
-    WriteLog(info.filename, filename_length - 1);
-
-    char pid_buf[kUint64StringSize];
-    uint64_t pid_str_length = my_uint64_len(info.pid);
-    my_uint64tos(pid_buf, info.pid, pid_str_length);
-
-    // -1 because we won't need the null terminator on the original filename.
-    unsigned done_filename_len = filename_length - 1 + pid_str_length;
-    char* done_filename = reinterpret_cast<char*>(
-        allocator.Alloc(done_filename_len));
-    // Rename the file such that the pid is the suffix in order signal to other
-    // processes that the minidump is complete. The advantage of using the pid
-    // as the suffix is that it is trivial to associate the minidump with the
-    // crashed process.
-    // Finally, note strncpy prevents null terminators from
-    // being copied. Pad the rest with 0's.
-    my_strncpy(done_filename, info.filename, done_filename_len);
-    // Append the suffix a null terminator should be added.
-    my_strncat(done_filename, pid_buf, pid_str_length);
-    // Rename the minidump file to signal that it is complete.
-    if (rename(info.filename, done_filename)) {
-      const char failed_msg[] = "Failed to rename:";
-      WriteLog(failed_msg, sizeof(failed_msg) - 1);
-      WriteLog(info.filename, filename_length - 1);
-      const char to_msg[] = "to";
-      WriteLog(to_msg, sizeof(to_msg) - 1);
-      WriteLog(done_filename, done_filename_len - 1);
-    }
-  }
-#endif
+  LOG(ERROR) << "crash dump file written to " << info.filename;
 
   if (!info.upload)
     return;
