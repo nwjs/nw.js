@@ -602,6 +602,7 @@
               'destination': '<(PRODUCT_DIR)/<(nw_product_name).app/Contents/Frameworks',
               'files': [
                 '<(PRODUCT_DIR)/<(nw_product_name) Helper.app',
+                '<(PRODUCT_DIR)/crash_inspector',
               ],
             },
           ],
