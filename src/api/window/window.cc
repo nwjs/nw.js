@@ -130,6 +130,10 @@ void Window::Call(const std::string& method,
     std::string image_format_str;
     if (arguments.GetString(0, &image_format_str))
       shell_->window()->CapturePage(image_format_str);
+  } else if (method == "SetPosition") {
+    std::string position;
+    if (arguments.GetString(0, &position))
+      shell_->window()->SetPosition(position);
   } else {
     NOTREACHED() << "Invalid call to Window method:" << method
                  << " arguments:" << arguments;
