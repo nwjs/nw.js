@@ -151,6 +151,8 @@ void Window::CallSync(const std::string& method,
     gfx::Point position = shell_->window()->GetPosition();
     result->AppendInteger(position.x());
     result->AppendInteger(position.y());
+  } else if (method == "IsDevToolsOpen") {
+    result->AppendBoolean(shell_->devToolsOpen());
   } else {
     NOTREACHED() << "Invalid call to Window method:" << method
                  << " arguments:" << arguments;

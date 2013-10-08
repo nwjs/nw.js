@@ -99,6 +99,7 @@ class Shell : public WebContentsDelegate,
   void ReloadOrStop();
   void ShowDevTools(const char* jail_id = NULL, bool headless = false);
   void CloseDevTools();
+  bool devToolsOpen() { return devtools_window_.get() != NULL; }
   // Send an event to renderer.
   void SendEvent(const std::string& event, const std::string& arg1 = "");
 
