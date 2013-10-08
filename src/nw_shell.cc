@@ -60,6 +60,13 @@
 #include "net/base/escape.h"
 #include "ui/base/resource/resource_bundle.h"
 
+
+#if defined(OS_WIN)
+#include "content/nw/src/browser/native_window_win.h"
+#include "ui/views/controls/webview/webview.h"
+using nw::NativeWindowWin;
+#endif
+
 #include "content/nw/src/browser/printing/print_view_manager.h"
 
 using base::MessageLoop;
@@ -475,6 +482,13 @@ void Shell::WebContentsCreated(WebContents* source_contents,
   // don't pass the url on window.open case
   Shell::Create(source_contents, GURL::EmptyGURL(), manifest.get(), new_contents);
 }
+
+#if defined(OS_WIN)
+void Shell::WebContentsFocused(content::WebContents* web_contents) {
+  NativeWindowWin* win = static_cast<NativeWindowWin*>(window_.get());
+  win->web_view_->OnWebContentsFocused(web_contents);
+}
+#endif
 
 content::ColorChooser*
 Shell::OpenColorChooser(content::WebContents* web_contents, SkColor color) {

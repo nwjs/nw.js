@@ -125,6 +125,7 @@ class NativeWindowWin : public NativeWindow,
                                    ui::WindowShowState show_state) OVERRIDE;
 
  private:
+  friend class content::Shell;
   void OnViewWasResized();
 
   NativeWindowToolbarWin* toolbar_;

@@ -148,6 +148,9 @@ class Shell : public WebContentsDelegate,
                                   const string16& frame_name,
                                   const GURL& target_url,
                                   WebContents* new_contents) OVERRIDE;
+#if defined(OS_WIN)
+  virtual void WebContentsFocused(WebContents* contents) OVERRIDE;
+#endif
   virtual content::ColorChooser* OpenColorChooser(
       content::WebContents* web_contents, SkColor color) OVERRIDE;
   virtual void RunFileChooser(
