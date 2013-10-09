@@ -180,6 +180,10 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
 Shell::~Shell() {
   SendEvent("closed");
 
+  if (is_devtools_ && devtools_owner_.get()) {
+    devtools_owner_->SendEvent("devtools-closed");
+  }
+
   for (size_t i = 0; i < windows_.size(); ++i) {
     if (windows_[i] == this) {
       windows_.erase(windows_.begin() + i);
@@ -344,10 +348,11 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
       browser_client->shell_browser_main_parts()->devtools_delegate();
   GURL url = delegate->devtools_http_handler()->GetFrontendURL(agent.get());
 
-  if (headless) {
-    SendEvent("devtools-opened", url.spec());
+  SendEvent("devtools-opened", url.spec());
+
+  if (headless)
     return;
-  }
+
   // Use our minimum set manifest
   base::DictionaryValue manifest;
   manifest.SetBoolean(switches::kmToolbar, false);
@@ -370,6 +375,7 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
   ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, chrome::kFileScheme);
   ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, "app");
   shell->is_devtools_ = true;
+  shell->devtools_owner_ = weak_ptr_factory_.GetWeakPtr();
   shell->force_close_ = true;
   shell->LoadURL(url);
 

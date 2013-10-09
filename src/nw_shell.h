@@ -197,6 +197,7 @@ class Shell : public WebContentsDelegate,
 
   // Weak potiner to devtools window.
   base::WeakPtr<Shell> devtools_window_;
+  base::WeakPtr<Shell> devtools_owner_;
 #if 0
   ShellDevToolsFrontend* devtools_frontend_;
 #endif
