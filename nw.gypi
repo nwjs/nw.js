@@ -283,6 +283,8 @@
         'src/shell_content_client.h',
         'src/shell_main_delegate.cc',
         'src/shell_main_delegate.h',
+        'src/shell_quota_permission_context.cc',
+        'src/shell_quota_permission_context.h',
       ],
       'msvs_settings': {
         'VCLinkerTool': {

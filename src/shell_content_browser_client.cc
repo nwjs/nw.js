@@ -45,6 +45,7 @@
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/browser/printing/print_job_manager.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
+#include "content/nw/src/shell_quota_permission_context.h"
 #include "content/nw/src/browser/shell_resource_dispatcher_host_delegate.h"
 #include "content/nw/src/media/media_internals.h"
 #include "content/nw/src/nw_package.h"
@@ -409,5 +410,9 @@ void ShellContentBrowserClient::GetAdditionalMappedFilesForChildProcess(
 }
 #endif  // defined(OS_POSIX) && !defined(OS_MACOSX)
 
+QuotaPermissionContext*
+ShellContentBrowserClient::CreateQuotaPermissionContext() {
+  return new ShellQuotaPermissionContext();
+}
 
 }  // namespace content

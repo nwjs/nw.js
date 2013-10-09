@@ -89,6 +89,7 @@ class ShellContentBrowserClient : public ContentBrowserClient {
       int child_process_id,
       std::vector<content::FileDescriptorInfo>* mappings) OVERRIDE;
 #endif
+  virtual QuotaPermissionContext* CreateQuotaPermissionContext() OVERRIDE;
 
  private:
   ShellBrowserContext* ShellBrowserContextForBrowserContext(
