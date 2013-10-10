@@ -14,7 +14,7 @@
 #endif
 
 #ifndef MAGIC_KEY 
-#define MAGIC_KEY "\x20\x01\x77\xf3\x66"
+#define MAGIC_KEY "\x20\x01\x77\x55\x66"
 #define MAGIC_KEY_END '\x31'
 #endif
 
