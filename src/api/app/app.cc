@@ -125,6 +125,7 @@ void App::Call(Shell* shell,
     std::string path;
     arguments.GetString(0, &path);
     result->AppendBoolean(SetCrashDumpPath(path.c_str()));
+    return;
   }
 
   NOTREACHED() << "Calling unknown sync method " << method << " of App";
