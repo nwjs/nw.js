@@ -37,7 +37,8 @@ using WebKit::WebFrame;
 using WebKit::WebView;
 
 RenderView* GetCurrentRenderView() {
-  WebFrame* frame = WebFrame::frameForCurrentContext();
+  v8::Local<v8::Context> ctx = v8::Context::GetEntered();
+  WebFrame* frame = WebFrame::frameForContext(ctx);
   if (!frame)
     return NULL;
 
