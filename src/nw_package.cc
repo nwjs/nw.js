@@ -188,7 +188,6 @@ bool Package::GetImage(const FilePath& icon_path, gfx::Image* image) {
   // Decode the bitmap using WebKit's image decoder.
   const unsigned char* data =
       reinterpret_cast<const unsigned char*>(file_contents.data());
-  content::ImageDecoder decoder;
   scoped_ptr<SkBitmap> decoded(new SkBitmap());
   // Note: This class only decodes bitmaps from extension resources. Chrome
   // doesn't (for security reasons) directly load extension resources provided
