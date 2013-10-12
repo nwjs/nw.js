@@ -250,6 +250,7 @@ NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
       is_maximized_(false),
       is_focus_(false),
       is_blur_(false),
+      is_dockless_(false),
       menu_(NULL),
       resizable_(true),
       minimum_size_(0, 0),
@@ -275,7 +276,8 @@ NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
   window_->SetSize(window_bounds.size());
   window_->CenterWindow(window_bounds.size());
   window_->UpdateWindowIcon();
-
+  manifest->GetBoolean(switches::kmNoTaskBar, &is_dockless_);
+  if(is_dockless_) SetWindowLong(window_->GetNativeWindow(), GWL_EXSTYLE, GetWindowLong(window_->GetNativeWindow(),GWL_EXSTYLE)|WS_EX_TOOLWINDOW);
   OnViewWasResized();
 }
 
@@ -384,9 +386,13 @@ void NativeWindowWin::SetTransparent() {
   // These override any other window settings, which isn't the greatest idea
   // however transparent windows (in Windows) are very tricky and are not 
   // usable with any other styles.
-  SetWindowLong(window_->GetNativeWindow(), GWL_STYLE, WS_POPUP | WS_SYSMENU | WS_BORDER); 
-  SetWindowLong(window_->GetNativeWindow(), GWL_EXSTYLE, WS_EX_LAYERED);
-
+  if(is_dockless_) {
+    SetWindowLong(window_->GetNativeWindow(), GWL_STYLE, WS_POPUP | WS_SYSMENU | WS_BORDER); 
+    SetWindowLong(window_->GetNativeWindow(), GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TOOLWINDOW);
+  } else {
+    SetWindowLong(window_->GetNativeWindow(), GWL_STYLE, WS_POPUP | WS_SYSMENU | WS_BORDER); 
+    SetWindowLong(window_->GetNativeWindow(), GWL_EXSTYLE, WS_EX_LAYERED);
+  }
   MARGINS mgMarInset = { -1, -1, -1, -1 };
   if(DwmExtendFrameIntoClientArea(window_->GetNativeWindow(), &mgMarInset) != S_OK) {
     NOTREACHED() << "Windows DWM extending to client area failed, transparency is not supported.";
@@ -509,6 +515,8 @@ void NativeWindowWin::SetMenu(api::Menu* menu) {
 
   // menu is api::Menu, menu->menu_ is NativeMenuWin,
   ::SetMenu(window_->GetNativeWindow(), menu->menu_->GetNativeMenu());
+  // shake the window to get it to respond to adding the menu.
+  SetPosition(GetPosition());
 }
 
 void NativeWindowWin::SetTitle(const std::string& title) {
