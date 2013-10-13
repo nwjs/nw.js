@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grit latest_public_release="0" current_release="1">
+  <outputs>
+    <output filename="grit/nw_strings.h" type="rc_header">
+      <emit emit_type='prepend'></emit>
+    </output>
+    <output filename="en-US.pak" type="data_package" lang="en" />
+    <output filename="am.pak" type="data_package" lang="am" />
+    <output filename="ar.pak" type="data_package" lang="ar" />
+    <output filename="bg.pak" type="data_package" lang="bg" />
+    <output filename="bn.pak" type="data_package" lang="bn" />
+    <output filename="ca.pak" type="data_package" lang="ca" />
+    <output filename="cs.pak" type="data_package" lang="cs" />
+    <output filename="da.pak" type="data_package" lang="da" />
+    <output filename="de.pak" type="data_package" lang="de" />
+    <output filename="el.pak" type="data_package" lang="el" />
+    <output filename="en-GB.pak" type="data_package" lang="en-GB" />
+    <output filename="es.pak" type="data_package" lang="es" />
+    <output filename="es-419.pak" type="data_package" lang="es-419" />
+    <output filename="et.pak" type="data_package" lang="et" />
+    <output filename="fa.pak" type="data_package" lang="fa" />
+    <output filename="fi.pak" type="data_package" lang="fi" />
+    <output filename="fil.pak" type="data_package" lang="fil" />
+    <output filename="fr.pak" type="data_package" lang="fr" />
+    <output filename="gu.pak" type="data_package" lang="gu" />
+    <output filename="hi.pak" type="data_package" lang="hi" />
+    <output filename="hr.pak" type="data_package" lang="hr" />
+    <output filename="hu.pak" type="data_package" lang="hu" />
+    <output filename="id.pak" type="data_package" lang="id" />
+    <output filename="it.pak" type="data_package" lang="it" />
+    <output filename="iw.pak" type="data_package" lang="he" />
+    <output filename="ja.pak" type="data_package" lang="ja" />
+    <output filename="kn.pak" type="data_package" lang="kn" />
+    <output filename="ko.pak" type="data_package" lang="ko" />
+    <output filename="lt.pak" type="data_package" lang="lt" />
+    <output filename="lv.pak" type="data_package" lang="lv" />
+    <output filename="ml.pak" type="data_package" lang="ml" />
+    <output filename="mr.pak" type="data_package" lang="mr" />
+    <output filename="ms.pak" type="data_package" lang="ms" />
+    <output filename="nl.pak" type="data_package" lang="nl" />
+    <output filename="no.pak" type="data_package" lang="no" />
+    <output filename="pl.pak" type="data_package" lang="pl" />
+    <output filename="pt-BR.pak" type="data_package" lang="pt-BR" />
+    <output filename="pt-PT.pak" type="data_package" lang="pt-PT" />
+    <output filename="ro.pak" type="data_package" lang="ro" />
+    <output filename="ru.pak" type="data_package" lang="ru" />
+    <output filename="sk.pak" type="data_package" lang="sk" />
+    <output filename="sl.pak" type="data_package" lang="sl" />
+    <output filename="sr.pak" type="data_package" lang="sr" />
+    <output filename="sv.pak" type="data_package" lang="sv" />
+    <output filename="sw.pak" type="data_package" lang="sw" />
+    <output filename="ta.pak" type="data_package" lang="ta" />
+    <output filename="te.pak" type="data_package" lang="te" />
+    <output filename="th.pak" type="data_package" lang="th" />
+    <output filename="tr.pak" type="data_package" lang="tr" />
+    <output filename="uk.pak" type="data_package" lang="uk" />
+    <output filename="vi.pak" type="data_package" lang="vi" />
+    <output filename="zh-CN.pak" type="data_package" lang="zh-CN" />
+    <output filename="zh-TW.pak" type="data_package" lang="zh-TW" />
+  </outputs>
+  <translations>
+    <file path="locale/nw_strings_am.xtb" lang="am" />
+    <file path="locale/nw_strings_ar.xtb" lang="ar" />
+    <file path="locale/nw_strings_bg.xtb" lang="bg" />
+    <file path="locale/nw_strings_bn.xtb" lang="bn" />
+    <file path="locale/nw_strings_ca.xtb" lang="ca" />
+    <file path="locale/nw_strings_cs.xtb" lang="cs" />
+    <file path="locale/nw_strings_da.xtb" lang="da" />
+    <file path="locale/nw_strings_de.xtb" lang="de" />
+    <file path="locale/nw_strings_el.xtb" lang="el" />
+    <file path="locale/nw_strings_en-GB.xtb" lang="en-GB" />
+    <file path="locale/nw_strings_es.xtb" lang="es" />
+    <file path="locale/nw_strings_es-419.xtb" lang="es-419" />
+    <file path="locale/nw_strings_et.xtb" lang="et" />
+    <file path="locale/nw_strings_fa.xtb" lang="fa" />
+    <file path="locale/nw_strings_fi.xtb" lang="fi" />
+    <file path="locale/nw_strings_fil.xtb" lang="fil" />
+    <file path="locale/nw_strings_fr.xtb" lang="fr" />
+    <file path="locale/nw_strings_gu.xtb" lang="gu" />
+    <file path="locale/nw_strings_hi.xtb" lang="hi" />
+    <file path="locale/nw_strings_hr.xtb" lang="hr" />
+    <file path="locale/nw_strings_hu.xtb" lang="hu" />
+    <file path="locale/nw_strings_id.xtb" lang="id" />
+    <file path="locale/nw_strings_it.xtb" lang="it" />
+    <!-- The translation console uses 'iw' for Hebrew, but we use 'he'. -->
+    <file path="locale/nw_strings_iw.xtb" lang="he" />
+    <file path="locale/nw_strings_ja.xtb" lang="ja" />
+    <file path="locale/nw_strings_kn.xtb" lang="kn" />
+    <file path="locale/nw_strings_ko.xtb" lang="ko" />
+    <file path="locale/nw_strings_lt.xtb" lang="lt" />
+    <file path="locale/nw_strings_lv.xtb" lang="lv" />
+    <file path="locale/nw_strings_ml.xtb" lang="ml" />
+    <file path="locale/nw_strings_mr.xtb" lang="mr" />
+    <file path="locale/nw_strings_ms.xtb" lang="ms" />
+    <file path="locale/nw_strings_nl.xtb" lang="nl" />
+    <file path="locale/nw_strings_no.xtb" lang="no" />
+    <file path="locale/nw_strings_pl.xtb" lang="pl" />
+    <file path="locale/nw_strings_pt-BR.xtb" lang="pt-BR" />
+    <file path="locale/nw_strings_pt-PT.xtb" lang="pt-PT" />
+    <file path="locale/nw_strings_ro.xtb" lang="ro" />
+    <file path="locale/nw_strings_ru.xtb" lang="ru" />
+    <file path="locale/nw_strings_sk.xtb" lang="sk" />
+    <file path="locale/nw_strings_sl.xtb" lang="sl" />
+    <file path="locale/nw_strings_sr.xtb" lang="sr" />
+    <file path="locale/nw_strings_sv.xtb" lang="sv" />
+    <file path="locale/nw_strings_sw.xtb" lang="sw" />
+    <file path="locale/nw_strings_ta.xtb" lang="ta" />
+    <file path="locale/nw_strings_te.xtb" lang="te" />
+    <file path="locale/nw_strings_th.xtb" lang="th" />
+    <file path="locale/nw_strings_tr.xtb" lang="tr" />
+    <file path="locale/nw_strings_uk.xtb" lang="uk" />
+    <file path="locale/nw_strings_vi.xtb" lang="vi" />
+    <file path="locale/nw_strings_zh-CN.xtb" lang="zh-CN" />
+    <file path="locale/nw_strings_zh-TW.xtb" lang="zh-TW" />
+  </translations>
+  <release seq="1">
+    <messages fallback_to_english="true">
+      <if expr="is_macosx">
+        <message name="IDS_EDIT_MENU_MAC" desc="The menu title of the Mac edit menu.">
+          Edit
+        </message>
+        <message name="IDS_WINDOW_MENU_MAC" desc="The menu title of the Mac window menu.">
+          Window
+        </message>
+        <message name="IDS_ABOUT_MAC" desc="The Mac menu item to open the about box.">
+          About <ph name="PRODUCT_NAME">$1<ex>Google Chrome</ex></ph>
+        </message>
+        <message name="IDS_HIDE_APP_MAC" desc="The Mac menu item to hide all browser windows in the app menu.">
+          Hide <ph name="PRODUCT_NAME">$1<ex>Google Chrome</ex></ph>
+        </message>
+        <message name="IDS_HIDE_OTHERS_MAC" desc="The Mac menu item to hide other applications' windows in the app menu.">
+          Hide Others
+        </message>
+        <message name="IDS_SHOW_ALL_MAC" desc="The Mac menu item to show all browser windows in the app menu.">
+          Show All
+        </message>
+        <message name="IDS_EXIT_MAC" desc="The Mac menu item to quit the browser in the app menu.">
+          Quit <ph name="PRODUCT_NAME">$1<ex>Google Chrome</ex></ph>
+        </message>
+        <message name="IDS_EDIT_UNDO_MAC" desc="The Mac menu item undo in the edit menu.">
+          Undo
+        </message>
+        <message name="IDS_EDIT_REDO_MAC" desc="The Mac menu item redo in the edit menu.">
+          Redo
+        </message>
+        <message name="IDS_CUT_MAC" desc="The Mac menu item for cut in the edit menu.">
+          Cut
+        </message>
+        <message name="IDS_COPY_MAC" desc="The Mac menu item for copy in the edit menu.">
+          Copy
+        </message>
+        <message name="IDS_PASTE_MAC" desc="The Mac menu item for paste in the edit menu.">
+          Paste
+        </message>
+        <message name="IDS_EDIT_DELETE_MAC" desc="The Mac menu item delete in the edit menu.">
+          Delete
+        </message>
+        <message name="IDS_EDIT_SELECT_ALL_MAC" desc="The Mac menu item select all in the edit menu.">
+          Select All
+        </message>
+        <message name="IDS_MINIMIZE_WINDOW_MAC"
+                 desc="The Mac menu item for minimize the window menu."
+                 meaning="Mac Menubar: The Mac menu item for minimize the window menu.">
+          Minimize
+        </message>
+        <message name="IDS_CLOSE_WINDOW_MAC" desc="The Mac menu item to close a window in the file menu.">
+          Close Window
+        </message>
+        <message name="IDS_ALL_WINDOWS_FRONT_MAC" desc="The Mac menu item for bring all to front the window menu.">
+          Bring All to Front
+        </message>
+      </if>
+    </messages>
+  </release>
+</grit>

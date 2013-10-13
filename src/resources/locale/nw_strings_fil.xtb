@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<!DOCTYPE translationbundle>
+<translationbundle lang="fil">
+<translation id="9065203028668620118">I-edit</translation>
+<translation id="5230516054153933099">Window</translation>
+<translation id="7772127298218883077">Tungkol sa <ph name="PRODUCT_NAME"/></translation>
+<translation id="3315158641124845231">Itago ang <ph name="PRODUCT_NAME"/></translation>
+<translation id="881799181680267069">Hide Others</translation>
+<translation id="923467487918828349">Show All</translation>
+<translation id="4708849949179781599">Quit <ph name="PRODUCT_NAME"/></translation>
+<translation id="2079545284768500474">I-undo</translation>
+<translation id="6556866813142980365">Redo</translation>
+<translation id="7724603315864178912">Cut</translation>
+<translation id="6896758677409633944">Copy</translation>
+<translation id="3943857333388298514">Paste</translation>
+<translation id="8261506727792406068">Tanggalin</translation>
+<translation id="5037676449506322593">Select All</translation>
+<translation id="5941711191222866238">Minimize</translation>
+<translation id="2498539833203011245">I-minimize</translation>
+<translation id="3265459715026181080">Close Window</translation>
+<translation id="6315493146179903667">Bring All to Front</translation>
+</translationbundle>

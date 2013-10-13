@@ -1,14 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <grit latest_public_release="0" current_release="1">
   <outputs>
-    <output filename="grit/nw_resources.h" type="rc_header" context="default_100_percent" >
+    <output filename="grit/nw_resources.h" type="rc_header" context="default_100_percent">
       <emit emit_type='prepend'></emit>
     </output>
-    <output filename="grit/nw_resources_map.cc" type="resource_map_source" context="default_100_percent" />
-    <output filename="grit/nw_resources_map.h" type="resource_map_header" context="default_100_percent" />
-    <output filename="nw_resources.pak" type="data_package" context="default_100_percent" />
+    <output filename="grit/nw_resources_map.cc" type="resource_map_source" context="default_100_percent"/>
+    <output filename="grit/nw_resources_map.h" type="resource_map_header" context="default_100_percent"/>
+    <output filename="nw_resources.pak" type="data_package" context="default_100_percent"/>
+<!--
+    <output filename="nw_resources_de.pak" type="data_package" lang="de" />
+    <output filename="nw_resources_es.pak" type="data_package" lang="es" />
+    <output filename="nw_resources_fr.pak" type="data_package" lang="fr" />
+    <output filename="nw_resources_jp.pak" type="data_package" lang="jp" />
+    <output filename="nw_resources_pt-BR.pak" type="data_package" lang="pt-BR" />
+-->
+    <output filename="nw_resources_zh-CN.pak" type="data_package" lang="zh-CN" context="default_100_percent"/>
   </outputs>
-  <translations />
+  <translations>
+<!--
+    <file path="nw_resources_de.xtb" lang="de" />
+    <file path="nw_resources_es.xtb" lang="es" />
+    <file path="nw_resources_fr.xtb" lang="fr" />
+    <file path="nw_resources_jp.xtb" lang="jp" />
+    <file path="nw_resources_pt-BR.xtb" lang="pt-BR" />
+-->
+    <file path="nw_resources_zh-CN.xtb" lang="zh-CN" />
+  </translations>
   <release seq="1">
     <structures fallback_to_low_resolution="true">
       <structure type="chrome_scaled_image" name="IDR_NW_DEFAULT_ICON" file="nw.png" />
