@@ -83,7 +83,61 @@
       <message name="IDS_CUSTOM_FILES" desc="The description of the custom file extensions in the select file dialog.">
         Custom Files
       </message>
-
+      <if expr="is_macosx">
+        <message name="IDS_EDIT_MENU_MAC" desc="The menu title of the Mac edit menu.">
+          Edit
+        </message>
+        <message name="IDS_WINDOW_MENU_MAC" desc="The menu title of the Mac window menu.">
+          Window
+        </message>
+        <message name="IDS_ABOUT_MAC" desc="The Mac menu item to open the about box.">
+          About <ph name="PRODUCT_NAME">$1<ex>Google Chrome</ex></ph>
+        </message>
+        <message name="IDS_HIDE_APP_MAC" desc="The Mac menu item to hide all browser windows in the app menu.">
+          Hide <ph name="PRODUCT_NAME">$1<ex>Google Chrome</ex></ph>
+        </message>
+        <message name="IDS_HIDE_OTHERS_MAC" desc="The Mac menu item to hide other applications' windows in the app menu.">
+          Hide Others
+        </message>
+        <message name="IDS_SHOW_ALL_MAC" desc="The Mac menu item to show all browser windows in the app menu.">
+          Show All
+        </message>
+        <message name="IDS_EXIT_MAC" desc="The Mac menu item to quit the browser in the app menu.">
+          Quit <ph name="PRODUCT_NAME">$1<ex>Google Chrome</ex></ph>
+        </message>
+        <message name="IDS_EDIT_UNDO_MAC" desc="The Mac menu item undo in the edit menu.">
+          Undo
+        </message>
+        <message name="IDS_EDIT_REDO_MAC" desc="The Mac menu item redo in the edit menu.">
+          Redo
+        </message>
+        <message name="IDS_CUT_MAC" desc="The Mac menu item for cut in the edit menu.">
+          Cut
+        </message>
+        <message name="IDS_COPY_MAC" desc="The Mac menu item for copy in the edit menu.">
+          Copy
+        </message>
+        <message name="IDS_PASTE_MAC" desc="The Mac menu item for paste in the edit menu.">
+          Paste
+        </message>
+        <message name="IDS_EDIT_DELETE_MAC" desc="The Mac menu item delete in the edit menu.">
+          Delete
+        </message>
+        <message name="IDS_EDIT_SELECT_ALL_MAC" desc="The Mac menu item select all in the edit menu.">
+          Select All
+        </message>
+        <message name="IDS_MINIMIZE_WINDOW_MAC"
+                 desc="The Mac menu item for minimize the window menu."
+                 meaning="Mac Menubar: The Mac menu item for minimize the window menu.">
+          Minimize
+        </message>
+        <message name="IDS_CLOSE_WINDOW_MAC" desc="The Mac menu item to close a window in the file menu.">
+          Close Window
+        </message>
+        <message name="IDS_ALL_WINDOWS_FRONT_MAC" desc="The Mac menu item for bring all to front the window menu.">
+          Bring All to Front
+        </message>
+      </if>
     </messages>
   </release>
 </grit>
