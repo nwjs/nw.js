@@ -277,7 +277,10 @@ NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
   window_->CenterWindow(window_bounds.size());
   window_->UpdateWindowIcon();
   manifest->GetBoolean(switches::kmNoTaskBar, &is_dockless_);
-  if(is_dockless_) SetWindowLong(window_->GetNativeWindow(), GWL_EXSTYLE, GetWindowLong(window_->GetNativeWindow(),GWL_EXSTYLE)|WS_EX_TOOLWINDOW);
+  if(is_dockless_) {
+    SetWindowLong(window_->GetNativeWindow(), GWL_EXSTYLE, GetWindowLong(window_->GetNativeWindow(),GWL_EXSTYLE)|WS_EX_TOOLWINDOW);
+    SetWindowLong(window_->GetNativeWindow(), GWL_STYLE, GetWindowLong(window_->GetNativeWindow(),GWL_STYLE) & ~WS_CAPTION);
+  }
   OnViewWasResized();
 }
 
