@@ -135,7 +135,7 @@ WebContentsViewPort* ShellContentBrowserClient::OverrideCreateWebContentsView(
 }
 
 std::string ShellContentBrowserClient::GetApplicationLocale() {
-  return l10n_util::GetApplicationLocale("en-US");
+  return l10n_util::GetApplicationLocale(std::string());
 }
 
 void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
