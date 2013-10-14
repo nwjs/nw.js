@@ -23,6 +23,7 @@
 #include "base/mac/bundle_locations.h"
 #include "base/mac/foundation_util.h"
 #include "base/path_service.h"
+#include "base/strings/sys_string_conversions.h"
 #include "content/public/common/content_paths.h"
 
 using base::FilePath;
@@ -64,10 +65,24 @@ void OverrideChildProcessPath() {
   PathService::Override(content::CHILD_PROCESS_EXE, helper_path);
 }
 
-FilePath GetResourcesPakFilePath() {
+bool GetResourcesPakFilePath(FilePath& output) {
   NSString* pak_path =
       [base::mac::FrameworkBundle() pathForResource:@"nw"
                                              ofType:@"pak"];
 
-  return FilePath([pak_path fileSystemRepresentation]);
+  if (!pak_path)
+    return false;
+  output = FilePath([pak_path fileSystemRepresentation]);
+  return true;
+}
+
+bool GetLocalePakFilePath(const std::string& locale, FilePath& output) {
+  NSString* pak_path =
+      [base::mac::FrameworkBundle() pathForResource:base::SysUTF8ToNSString(locale)
+                                             ofType:@"pak"];
+
+  if (!pak_path)
+    return false;
+  output = FilePath([pak_path fileSystemRepresentation]);
+  return true;
 }

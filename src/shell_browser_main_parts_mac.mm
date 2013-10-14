@@ -29,6 +29,7 @@
 #include "content/nw/src/browser/shell_application_mac.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "ui/base/l10n/l10n_util_mac.h"
+#include "ui/base/resource/resource_bundle.h"
 
 namespace content {
 
@@ -37,7 +38,10 @@ void ShellBrowserMainParts::PreMainMessageLoopStart() {
   [ShellCrApplication sharedApplication];
 
   // Initialize locale.
-  l10n_util::OverrideLocaleWithCocoaLocale();
+  // l10n_util::OverrideLocaleWithCocoaLocale();
+//  const std::string loaded_locale =
+//    ResourceBundle::GetSharedInstance().ReloadLocaleResources(std::string());
+//  CHECK(!loaded_locale.empty()) << "Default locale could not be found";
 
   AppController* delegate = [AppController alloc];
   [NSApp setDelegate:delegate];

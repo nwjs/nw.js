@@ -41,6 +41,9 @@
 #include "net/cookies/cookie_monster.h"
 #include "third_party/node/src/node_version.h"
 #include "ui/base/l10n/l10n_util.h"
+#if defined(OS_MACOSX)
+#include "ui/base/l10n/l10n_util_mac.h"
+#endif
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/base/ui_base_paths.h"
 #include "ui/base/ui_base_switches.h"
@@ -138,6 +141,7 @@ void ShellMainDelegate::PreSandboxStartup() {
 #if defined(OS_MACOSX)
   OverrideFrameworkBundlePath();
   OverrideChildProcessPath();
+  l10n_util::OverrideLocaleWithUserDefault();
 #endif  // OS_MACOSX
   InitializeResourceBundle();
 
@@ -178,14 +182,20 @@ int ShellMainDelegate::RunProcess(
 void ShellMainDelegate::InitializeResourceBundle() {
   FilePath pak_file;
 #if defined(OS_MACOSX)
-  pak_file = GetResourcesPakFilePath();
+  FilePath locale_file;
+  if (!GetResourcesPakFilePath(pak_file))
+    LOG(FATAL) << "nw.pak file not found.";
+  std::string locale = l10n_util::GetApplicationLocale(std::string());
+  if (!GetLocalePakFilePath(locale, locale_file))
+    LOG(FATAL) << locale << ".pak file not found.";
+  ui::ResourceBundle::InitSharedInstanceWithPakPath2(pak_file, locale_file);
 #else
   FilePath pak_dir;
   PathService::Get(base::DIR_MODULE, &pak_dir);
   pak_file = pak_dir.Append(FILE_PATH_LITERAL("nw.pak"));
   CHECK(base::PathExists(pak_file)) << "nw.pak is missing";
-#endif
   ui::ResourceBundle::InitSharedInstanceWithPakPath(pak_file);
+#endif
 }
 
 ContentBrowserClient* ShellMainDelegate::CreateContentBrowserClient() {

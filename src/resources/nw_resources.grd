@@ -7,25 +7,7 @@
     <output filename="grit/nw_resources_map.cc" type="resource_map_source" context="default_100_percent"/>
     <output filename="grit/nw_resources_map.h" type="resource_map_header" context="default_100_percent"/>
     <output filename="nw_resources.pak" type="data_package" context="default_100_percent"/>
-<!--
-    <output filename="nw_resources_de.pak" type="data_package" lang="de" />
-    <output filename="nw_resources_es.pak" type="data_package" lang="es" />
-    <output filename="nw_resources_fr.pak" type="data_package" lang="fr" />
-    <output filename="nw_resources_jp.pak" type="data_package" lang="jp" />
-    <output filename="nw_resources_pt-BR.pak" type="data_package" lang="pt-BR" />
--->
-    <output filename="nw_resources_zh-CN.pak" type="data_package" lang="zh-CN" context="default_100_percent"/>
   </outputs>
-  <translations>
-<!--
-    <file path="nw_resources_de.xtb" lang="de" />
-    <file path="nw_resources_es.xtb" lang="es" />
-    <file path="nw_resources_fr.xtb" lang="fr" />
-    <file path="nw_resources_jp.xtb" lang="jp" />
-    <file path="nw_resources_pt-BR.xtb" lang="pt-BR" />
--->
-    <file path="nw_resources_zh-CN.xtb" lang="zh-CN" />
-  </translations>
   <release seq="1">
     <structures fallback_to_low_resolution="true">
       <structure type="chrome_scaled_image" name="IDR_NW_DEFAULT_ICON" file="nw.png" />
@@ -100,61 +82,6 @@
       <message name="IDS_CUSTOM_FILES" desc="The description of the custom file extensions in the select file dialog.">
         Custom Files
       </message>
-      <if expr="is_macosx">
-        <message name="IDS_EDIT_MENU_MAC" desc="The menu title of the Mac edit menu.">
-          Edit
-        </message>
-        <message name="IDS_WINDOW_MENU_MAC" desc="The menu title of the Mac window menu.">
-          Window
-        </message>
-        <message name="IDS_ABOUT_MAC" desc="The Mac menu item to open the about box.">
-          About <ph name="PRODUCT_NAME">$1<ex>Google Chrome</ex></ph>
-        </message>
-        <message name="IDS_HIDE_APP_MAC" desc="The Mac menu item to hide all browser windows in the app menu.">
-          Hide <ph name="PRODUCT_NAME">$1<ex>Google Chrome</ex></ph>
-        </message>
-        <message name="IDS_HIDE_OTHERS_MAC" desc="The Mac menu item to hide other applications' windows in the app menu.">
-          Hide Others
-        </message>
-        <message name="IDS_SHOW_ALL_MAC" desc="The Mac menu item to show all browser windows in the app menu.">
-          Show All
-        </message>
-        <message name="IDS_EXIT_MAC" desc="The Mac menu item to quit the browser in the app menu.">
-          Quit <ph name="PRODUCT_NAME">$1<ex>Google Chrome</ex></ph>
-        </message>
-        <message name="IDS_EDIT_UNDO_MAC" desc="The Mac menu item undo in the edit menu.">
-          Undo
-        </message>
-        <message name="IDS_EDIT_REDO_MAC" desc="The Mac menu item redo in the edit menu.">
-          Redo
-        </message>
-        <message name="IDS_CUT_MAC" desc="The Mac menu item for cut in the edit menu.">
-          Cut
-        </message>
-        <message name="IDS_COPY_MAC" desc="The Mac menu item for copy in the edit menu.">
-          Copy
-        </message>
-        <message name="IDS_PASTE_MAC" desc="The Mac menu item for paste in the edit menu.">
-          Paste
-        </message>
-        <message name="IDS_EDIT_DELETE_MAC" desc="The Mac menu item delete in the edit menu.">
-          Delete
-        </message>
-        <message name="IDS_EDIT_SELECT_ALL_MAC" desc="The Mac menu item select all in the edit menu.">
-          Select All
-        </message>
-        <message name="IDS_MINIMIZE_WINDOW_MAC"
-                 desc="The Mac menu item for minimize the window menu."
-                 meaning="Mac Menubar: The Mac menu item for minimize the window menu.">
-          Minimize
-        </message>
-        <message name="IDS_CLOSE_WINDOW_MAC" desc="The Mac menu item to close a window in the file menu.">
-          Close Window
-        </message>
-        <message name="IDS_ALL_WINDOWS_FRONT_MAC" desc="The Mac menu item for bring all to front the window menu.">
-          Bring All to Front
-        </message>
-      </if>
     </messages>
   </release>
 </grit>
