@@ -10,6 +10,7 @@
 #include "base/gtest_prod_util.h"
 #include "base/memory/scoped_ptr.h"
 #include "base/memory/shared_memory.h"
+#include "base/memory/weak_ptr.h"
 #include "base/time/time.h"
 #include "content/public/renderer/render_view_observer.h"
 #include "content/public/renderer/render_view_observer_tracker.h"
@@ -458,6 +459,9 @@ class PrintWebViewHelper
 
   bool print_node_in_progress_;
   PrintPreviewContext print_preview_context_;
+  bool is_loading_;
+  bool is_scripted_preview_delayed_;
+  base::WeakPtrFactory<PrintWebViewHelper> weak_ptr_factory_;
   DISALLOW_COPY_AND_ASSIGN(PrintWebViewHelper);
 };
 
