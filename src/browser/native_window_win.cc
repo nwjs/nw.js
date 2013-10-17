@@ -250,7 +250,7 @@ NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
       is_maximized_(false),
       is_focus_(false),
       is_blur_(false),
-      is_dockless_(false),
+      is_intaskbar_(false),
       menu_(NULL),
       resizable_(true),
       minimum_size_(0, 0),
@@ -276,8 +276,11 @@ NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
   window_->SetSize(window_bounds.size());
   window_->CenterWindow(window_bounds.size());
   window_->UpdateWindowIcon();
-  manifest->GetBoolean(switches::kmNoTaskBar, &is_dockless_);
-  if(is_dockless_) SetWindowLong(window_->GetNativeWindow(), GWL_EXSTYLE, GetWindowLong(window_->GetNativeWindow(),GWL_EXSTYLE)|WS_EX_TOOLWINDOW);
+  manifest->GetBoolean(switches::kmTaskBar, &is_intaskbar_); if(!manifest->HasKey(switches::kmTaskBar)) is_intaskbar_=true;
+  if(!is_intaskbar_) {
+    SetWindowLong(window_->GetNativeWindow(), GWL_EXSTYLE, GetWindowLong(window_->GetNativeWindow(),GWL_EXSTYLE)|WS_EX_TOOLWINDOW);
+    SetWindowLong(window_->GetNativeWindow(), GWL_STYLE, GetWindowLong(window_->GetNativeWindow(),GWL_STYLE) & ~WS_CAPTION);
+  }
   OnViewWasResized();
 }
 
@@ -386,7 +389,7 @@ void NativeWindowWin::SetTransparent() {
   // These override any other window settings, which isn't the greatest idea
   // however transparent windows (in Windows) are very tricky and are not 
   // usable with any other styles.
-  if(is_dockless_) {
+  if(!is_intaskbar_) {
     SetWindowLong(window_->GetNativeWindow(), GWL_STYLE, WS_POPUP | WS_SYSMENU | WS_BORDER); 
     SetWindowLong(window_->GetNativeWindow(), GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TOOLWINDOW);
   } else {

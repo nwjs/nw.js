@@ -168,7 +168,6 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   web_contents_.reset(web_contents);
   content::WebContentsObserver::Observe(web_contents);
   web_contents_->SetDelegate(this);
-
   // Create window.
   window_.reset(nw::NativeWindow::Create(weak_ptr_factory_.GetWeakPtr(), manifest));
 
