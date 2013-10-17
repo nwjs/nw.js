@@ -40,6 +40,7 @@
 #include "content/nw/src/nw_version.h"
 #include "components/autofill/content/renderer/autofill_agent.h"
 #include "components/autofill/content/renderer/password_autofill_agent.h"
+#include "content/nw/src/renderer/autofill_agent.h"
 #include "content/nw/src/renderer/nw_render_view_observer.h"
 #include "content/nw/src/renderer/prerenderer/prerenderer_client.h"
 #include "content/nw/src/renderer/printing/print_web_view_helper.h"
@@ -183,11 +184,11 @@ void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
   new printing::PrintWebViewHelper(render_view);
 #endif
 
-  // PageClickTracker* page_click_tracker = new PageClickTracker(render_view);
-  PasswordAutofillAgent* password_autofill_agent =
-      new PasswordAutofillAgent(render_view);
-  new AutofillAgent(render_view, password_autofill_agent);
-  //page_click_tracker->AddListener(autofill_agent);
+  nw::AutofillAgent* autofill_agent = new nw::AutofillAgent(render_view);
+  page_click_tracker_.reset(new autofill::PageClickTracker(render_view, autofill_agent));
+  // PasswordAutofillAgent* password_autofill_agent =
+  //     new PasswordAutofillAgent(render_view);
+  // new AutofillAgent(render_view, password_autofill_agent);
 }
 
 void ShellContentRendererClient::DidCreateScriptContext(

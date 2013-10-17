@@ -21,15 +21,15 @@
 #include "content/nw/src/renderer/autofill_agent.h"
 
 #include "base/bind.h"
-#include "base/message_loop.h"
-#include "base/string_util.h"
+#include "base/message_loop/message_loop.h"
+#include "base/strings/string_util.h"
 #include "base/strings/string_split.h"
 #include "content/public/renderer/render_view.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebInputEvent.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebNode.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebNodeCollection.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebOptionElement.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebView.h"
+#include "third_party/WebKit/public/web/WebInputEvent.h"
+#include "third_party/WebKit/public/web/WebNode.h"
+#include "third_party/WebKit/public/web/WebNodeCollection.h"
+#include "third_party/WebKit/public/web/WebOptionElement.h"
+#include "third_party/WebKit/public/web/WebView.h"
 #include "ui/base/keycodes/keyboard_codes.h"
 
 using WebKit::WebAutofillClient;
@@ -88,26 +88,24 @@ void AppendDataListSuggestions(const WebKit::WebInputElement& element,
 
 AutofillAgent::AutofillAgent(content::RenderView* render_view)
     : content::RenderViewObserver(render_view),
-      ALLOW_THIS_IN_INITIALIZER_LIST(weak_ptr_factory_(this)) {
+      weak_ptr_factory_(this) {
   render_view->GetWebView()->setAutofillClient(this);
 }
 
 AutofillAgent::~AutofillAgent() {
 }
 
-bool AutofillAgent::InputElementClicked(const WebInputElement& element,
+void AutofillAgent::InputElementClicked(const WebInputElement& element,
                                         bool was_focused,
                                         bool is_focused) {
   if (was_focused)
     ShowSuggestions(element, true, false, true);
 
-  return false;
 }
 
-bool AutofillAgent::InputElementLostFocus() {
-  return false;
+void AutofillAgent::InputElementLostFocus() {
 }
- 
+
 void AutofillAgent::didAcceptAutofillSuggestion(const WebNode& node,
                                                 const WebString& value,
                                                 const WebString& label,
@@ -154,7 +152,7 @@ void AutofillAgent::textFieldDidChange(const WebInputElement& element) {
   // properly at this point (http://bugs.webkit.org/show_bug.cgi?id=16976) and
   // it is needed to trigger autofill.
   weak_ptr_factory_.InvalidateWeakPtrs();
-  MessageLoop::current()->PostTask(
+  base::MessageLoop::current()->PostTask(
         FROM_HERE,
         base::Bind(&AutofillAgent::TextFieldDidChangeImpl,
                    weak_ptr_factory_.GetWeakPtr(), element));

@@ -253,6 +253,8 @@
         'src/nw_version.h',
         'src/paths_mac.h',
         'src/paths_mac.mm',
+        'src/renderer/autofill_agent.cc',
+        'src/renderer/autofill_agent.h',
         'src/renderer/common/render_messages.cc',
         'src/renderer/common/render_messages.h',
         'src/renderer/prerenderer/prerenderer_client.cc',
