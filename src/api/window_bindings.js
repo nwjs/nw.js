@@ -278,6 +278,11 @@ Window.prototype.closeDevTools = function() {
   CallObjectMethod(this, 'CloseDevTools', []);
 }
 
+Window.prototype.setShowInTaskbar = function(flag) {
+flag = Boolean(flag);
+ CallObjectMethod(this, 'SetShowInTaskbar', [ flag ]);
+}
+
 Window.prototype.showDevTools = function(frm, headless) {
     var id = '';
     if (typeof frm === 'string') {
