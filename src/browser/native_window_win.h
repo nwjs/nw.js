@@ -138,7 +138,7 @@ class NativeWindowWin : public NativeWindow,
   views::Widget* window_;
   bool is_fullscreen_;
   bool is_transparent_;
-  bool is_dockless_;
+  bool is_intaskbar_;
 
   // Flags used to prevent sending extra events.
   bool is_minimized_;
