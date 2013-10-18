@@ -376,6 +376,10 @@ void NativeWindowWin::SetAlwaysOnTop(bool top) {
   window_->SetAlwaysOnTop(top);
 }
 
+void NativeWindowWin::SetBadgeCount(int count) {
+
+}
+
 void NativeWindowWin::SetShowInTaskbar(bool show) {
    if (show == false && base::win::GetVersion() < base::win::VERSION_VISTA) {
     if (hidden_owner_window_.get() == NULL) {

@@ -95,6 +95,7 @@ class NativeWindowWin : public NativeWindow,
   virtual void SetMaximumSize(int width, int height) OVERRIDE;
   virtual void SetResizable(bool resizable) OVERRIDE;
   virtual void SetAlwaysOnTop(bool top) OVERRIDE;
+  virtual void SetBadgeCount(int count = 0) OVERRIDE;
   virtual void SetShowInTaskbar(bool show = true) OVERRIDE;
   virtual void SetPosition(const std::string& position) OVERRIDE;
   virtual void SetPosition(const gfx::Point& position) OVERRIDE;

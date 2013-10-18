@@ -423,6 +423,8 @@ namespace nw {
       content::RenderWidgetHostView* rwhv =
       shell_->web_contents()->GetRenderWidgetHostView();
 
+       
+
       if (first_show_ && initial_focus_) {
         [window() makeKeyAndOrderFront:nil];
     // FIXME: the new window through Window.open failed
@@ -574,6 +576,22 @@ namespace nw {
       [window() setLevel:(top ? NSFloatingWindowLevel : NSNormalWindowLevel)];
     }
 
+    void NativeWindowCocoa::SetBadgeCount(int count) {
+
+      NSApplication *myApp = [NSApplication sharedApplication];
+      NSDockTile *dockTile = [myApp dockTile];
+        
+      if (count > 0) {
+            NSString *label = [NSString stringWithFormat:@"%d", count];
+             [dockTile setShowsApplicationBadge:YES];
+            [dockTile setBadgeLabel:label];
+        }
+        else {
+            [dockTile setShowsApplicationBadge:NO];
+            [dockTile setBadgeLabel:nil];
+        }
+
+    }
 
     void NativeWindowCocoa::SetShowInTaskbar(bool show) {
    /*    ProcessSerialNumber psn = { 0, kCurrentProcess };

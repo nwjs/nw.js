@@ -278,8 +278,17 @@ Window.prototype.closeDevTools = function() {
   CallObjectMethod(this, 'CloseDevTools', []);
 }
 
+Window.prototype.setBadgeCount = function(count) {
+ CallObjectMethod(this, 'SetBadgeCount', [ count ]);
+}
+
 Window.prototype.setShowInTaskbar = function(flag) {
-flag = Boolean(flag);
+  if(flag ==false){
+    Window.title = '-';
+  }
+
+  flag = Boolean(flag);
+
  CallObjectMethod(this, 'SetShowInTaskbar', [ flag ]);
 }
 

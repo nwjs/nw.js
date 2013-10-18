@@ -100,6 +100,10 @@ void Window::Call(const std::string& method,
     bool show;
     if (arguments.GetBoolean(0, &show))
      shell_->window()->SetShowInTaskbar(show);
+  }else if (method == "SetBadgeCount" ) {
+    int count; 
+    if (arguments.GetInteger(0, &count))
+     shell_->window()->SetBadgeCount(count);
   } else if (method == "SetMinimumSize") {
     int width, height;
     if (arguments.GetInteger(0, &width) &&

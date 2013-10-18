@@ -240,6 +240,10 @@ void NativeWindowGtk::SetAlwaysOnTop(bool top) {
   gtk_window_set_keep_above(window_, top ? TRUE : FALSE);
 }
 
+void NativeWindowGtk::SetBadgeCount(int count) {
+  
+}
+
 void NativeWindowGtk::SetShowInTaskbar(bool show) {
   gtk_window_set_skip_taskbar_hint(window_, show ? FALSE : TRUE);
 }
