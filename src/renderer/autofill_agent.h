@@ -21,10 +21,10 @@
 #include "base/basictypes.h"
 #include "base/compiler_specific.h"
 #include "base/memory/weak_ptr.h"
-#include "components/autofill/content/renderer/page_click_listener.h"
+#include "components/autofill/renderer/page_click_listener.h"
 #include "content/public/renderer/render_view_observer.h"
-#include "third_party/WebKit/public/web/WebAutofillClient.h"
-#include "third_party/WebKit/public/web/WebInputElement.h"
+#include "third_party/WebKit/Source/WebKit/chromium/public/WebAutofillClient.h"
+#include "third_party/WebKit/Source/WebKit/chromium/public/WebInputElement.h"
 
 namespace content {
 class RenderView;
@@ -37,7 +37,7 @@ class WebNode;
 namespace nw {
 
 class AutofillAgent : public content::RenderViewObserver,
-                      public autofill::PageClickListener,
+                      public PageClickListener,
                       public WebKit::WebAutofillClient {
  public:
   AutofillAgent(content::RenderView* render_view);
@@ -51,10 +51,10 @@ class AutofillAgent : public content::RenderViewObserver,
   };
 
   // PageClickListener:
-  virtual void InputElementClicked(const WebKit::WebInputElement& element,
+  virtual bool InputElementClicked(const WebKit::WebInputElement& element,
                                    bool was_focused,
                                    bool is_focused) OVERRIDE;
-  virtual void InputElementLostFocus() OVERRIDE;
+  virtual bool InputElementLostFocus() OVERRIDE;
 
   // WebKit::WebAutofillClient:
   virtual void didAcceptAutofillSuggestion(const WebKit::WebNode& node,

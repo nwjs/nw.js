@@ -30,9 +30,6 @@ namespace api {
 class WindowBindings;
 }
 
-namespace autofill {
-class PageClickTracker;
-}
 namespace content {
 
 class ShellRenderProcessObserver;
@@ -53,8 +50,7 @@ class ShellContentRendererClient : public ContentRendererClient {
 
  private:
   scoped_ptr<ShellRenderProcessObserver> shell_observer_;
-  scoped_ptr<api::WindowBindings> window_bindings_;
-  scoped_ptr<autofill::PageClickTracker> page_click_tracker_;
+  scoped_ptr<api::WindowBindings> window_bindings_;;
 
   void InstallNodeSymbols(WebKit::WebFrame* frame,
                           v8::Handle<v8::Context> context, const GURL& url);
