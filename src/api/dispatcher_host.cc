@@ -21,6 +21,7 @@
 #include "content/nw/src/api/dispatcher_host.h"
 
 #include "base/logging.h"
+#include "base/threading/thread_restrictions.h"
 #include "base/values.h"
 #include "content/browser/child_process_security_policy_impl.h"
 #include "content/browser/web_contents/web_contents_impl.h"
@@ -67,6 +68,7 @@ bool DispatcherHost::Send(IPC::Message* message) {
 
 bool DispatcherHost::OnMessageReceived(const IPC::Message& message) {
   bool handled = true;
+  base::ThreadRestrictions::ScopedAllowIO allow_io;
   IPC_BEGIN_MESSAGE_MAP(DispatcherHost, message)
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_Allocate_Object, OnAllocateObject)
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_Deallocate_Object, OnDeallocateObject)
