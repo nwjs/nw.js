@@ -408,7 +408,7 @@ void DispatcherBindings::CallStaticMethodSync(
 
   scoped_ptr<V8ValueConverter> converter(V8ValueConverter::create());
 
-  RenderView* render_view = GetCurrentRenderView();
+  RenderView* render_view = GetEnteredRenderView();
   if (!render_view) {
     args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
                                      "Unable to get render view in CallStaticMethodSync"))));

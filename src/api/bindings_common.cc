@@ -36,8 +36,8 @@ using content::V8ValueConverter;
 using WebKit::WebFrame;
 using WebKit::WebView;
 
-RenderView* GetCurrentRenderView() {
-  v8::Local<v8::Context> ctx = v8::Context::GetEntered();
+namespace {
+RenderView* GetRenderView(v8::Handle<v8::Context> ctx) {
   WebFrame* frame = WebFrame::frameForContext(ctx);
   if (!frame)
     return NULL;
@@ -48,6 +48,18 @@ RenderView* GetCurrentRenderView() {
 
   RenderView* render_view = RenderView::FromWebView(view);
   return render_view;
+}
+
+}
+
+RenderView* GetCurrentRenderView() {
+  v8::Local<v8::Context> ctx = v8::Context::GetCurrent();
+  return GetRenderView(ctx);
+}
+
+RenderView* GetEnteredRenderView() {
+  v8::Local<v8::Context> ctx = v8::Context::GetEntered();
+  return GetRenderView(ctx);
 }
 
 base::StringPiece GetStringResource(int resource_id) {
