@@ -18,6 +18,14 @@ It's created and developed in the Intel Open Source Technology Center.
 * Available on Linux, Mac OSX and Windows
 
 ## Downloads
+[v0.8.0-rc1 release notes](https://groups.google.com/d/msg/node-webkit/wSFOm6zCadQ/PyNfaWx3jt0J)
+
+Prebuilt binaries (v0.8.0-rc1 - Oct 21, 2013):
+
+* Linux: [32bit](https://s3.amazonaws.com/node-webkit/v0.8.0-rc1/node-webkit-v0.8.0-rc1-linux-ia32.tar.gz) / [64bit] (https://s3.amazonaws.com/node-webkit/v0.8.0-rc1/node-webkit-v0.8.0-rc1-linux-x64.tar.gz)
+* Windows: [win32](https://s3.amazonaws.com/node-webkit/v0.8.0-rc1/node-webkit-v0.8.0-rc1-win-ia32.zip)
+* Mac: [32bit, 10.7+](https://s3.amazonaws.com/node-webkit/v0.8.0-rc1/node-webkit-v0.8.0-rc1-osx-ia32.zip)
+
 [v0.7.5 release notes](https://groups.google.com/d/msg/node-webkit/4VBQuHO2H0c/UAdc2O1ZiBwJ)
 
 Prebuilt binaries (v0.7.5 - Sep 18, 2013):
