@@ -19,7 +19,7 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "paths_mac.h"
-
+#include <string.h>
 #include "base/mac/bundle_locations.h"
 #include "base/mac/foundation_util.h"
 #include "base/path_service.h"
@@ -35,7 +35,7 @@ FilePath GetFrameworksPath() {
   PathService::Get(base::FILE_EXE, &path);
 
   // Up to Contents.
-  if (base::mac::IsBackgroundOnlyProcess()) {
+  if (base::mac::IsBackgroundOnlyProcess() && path.AsUTF8Unsafe().find("Helper") != std::string::npos) {
     // The running executable is the helper. Go up five steps:
     // Contents/Frameworks/Helper.app/Contents/MacOS/Helper
     // ^ to here                                     ^ from here
