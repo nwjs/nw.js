@@ -276,7 +276,7 @@ NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
   window_->SetSize(window_bounds.size());
   window_->CenterWindow(window_bounds.size());
   window_->UpdateWindowIcon();
-  manifest->GetBoolean(switches::kmTaskBar, &is_intaskbar_); if(!manifest->HasKey(switches::kmTaskBar)) is_intaskbar_=true;
+  if(manifest->HasKey(switches::kmTaskBar)) manifest->GetBoolean(switches::kmTaskBar, &is_intaskbar_); 
   if(!is_intaskbar_) {
     SetWindowLong(window_->GetNativeWindow(), GWL_EXSTYLE, GetWindowLong(window_->GetNativeWindow(),GWL_EXSTYLE)|WS_EX_TOOLWINDOW);
     SetWindowLong(window_->GetNativeWindow(), GWL_STYLE, GetWindowLong(window_->GetNativeWindow(),GWL_STYLE) & ~WS_CAPTION);
