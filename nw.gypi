@@ -895,7 +895,7 @@
     ['OS=="linux"',
       { 'targets': [
         {
-          'target_name': 'linux_symbols',
+          'target_name': 'nw_symbols',
           'type': 'none',
           'conditions': [
             ['linux_dump_symbols==1', {
