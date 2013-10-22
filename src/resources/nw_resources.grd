@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <grit latest_public_release="0" current_release="1">
+  <!-- Will this update the resources? -->
   <outputs>
     <output filename="grit/nw_resources.h" type="rc_header" context="default_100_percent" >
       <emit emit_type='prepend'></emit>
