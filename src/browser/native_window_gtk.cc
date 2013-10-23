@@ -51,7 +51,12 @@ const double kGtkCursorBlinkCycleFactor = 2000.0;
 NativeWindowGtk::NativeWindowGtk(const base::WeakPtr<content::Shell>& shell,
                                  base::DictionaryValue* manifest)
     : NativeWindow(shell, manifest),
-      content_thinks_its_fullscreen_(false) {
+      state_(GDK_WINDOW_STATE_WITHDRAWN),
+      content_thinks_its_fullscreen_(false),
+      frame_cursor_(NULL),
+      resizable_(true),
+      minimum_size_(0, 0),
+      maximum_size_(0, 0) {
   window_ = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
 
   vbox_ = gtk_vbox_new(FALSE, 0);
@@ -124,6 +129,9 @@ NativeWindowGtk::NativeWindowGtk(const base::WeakPtr<content::Shell>& shell,
   if (!has_frame_) {
     g_signal_connect(window_, "button-press-event",
                      G_CALLBACK(OnButtonPressThunk), this);
+
+    g_signal_connect(window_, "motion-notify-event",
+                     G_CALLBACK(OnMouseMoveEventThunk), this);
   }
 
   SetWebKitColorStyle();
@@ -178,7 +186,10 @@ void NativeWindowGtk::Minimize() {
 }
 
 void NativeWindowGtk::Restore() {
-  gtk_window_present(window_);
+  if (IsMaximized())
+    gtk_window_unmaximize(window_);
+  else if (IsMinimized())
+    gtk_window_deiconify(window_);
 }
 
 void NativeWindowGtk::SetFullscreen(bool fullscreen) {
@@ -191,6 +202,14 @@ void NativeWindowGtk::SetFullscreen(bool fullscreen) {
 
 bool NativeWindowGtk::IsFullscreen() {
   return content_thinks_its_fullscreen_;
+}
+
+bool NativeWindowGtk::IsMaximized() const {
+  return (state_ & GDK_WINDOW_STATE_MAXIMIZED);
+}
+
+bool NativeWindowGtk::IsMinimized() const {
+  return (state_ & GDK_WINDOW_STATE_ICONIFIED);
 }
 
 void NativeWindowGtk::SetSize(const gfx::Size& size) {
@@ -206,25 +225,46 @@ gfx::Size NativeWindowGtk::GetSize() {
   return gfx::Size(frame_extents.width, frame_extents.height); 
 }
 
+void NativeWindowGtk::SetWindowGeometry(gfx::Size min_size, gfx::Size max_size) {
+  int min_width = min_size.width();
+  int min_height = min_size.height();
+  int max_width = max_size.width();
+  int max_height = max_size.height();
+  GdkGeometry hints;
+  int hints_mask = GDK_HINT_POS;
+  if (min_width || min_height) {
+    hints.min_height = min_height;
+    hints.min_width = min_width;
+    hints_mask |= GDK_HINT_MIN_SIZE;
+  }
+  if (max_width || max_height) {
+    hints.max_height = max_height ? max_height : G_MAXINT;
+    hints.max_width = max_width ? max_width : G_MAXINT;
+    hints_mask |= GDK_HINT_MAX_SIZE;
+  }
+  if (hints_mask) {
+    gtk_window_set_geometry_hints(
+        window_,
+        GTK_WIDGET(window_),
+        &hints,
+        static_cast<GdkWindowHints>(hints_mask));
+  }
+}
+
 void NativeWindowGtk::SetMinimumSize(int width, int height) {
-  GdkGeometry geometry = { 0 };
-  geometry.min_width = width;
-  geometry.min_height = height;
-  int hints = GDK_HINT_POS | GDK_HINT_MIN_SIZE;
-  gtk_window_set_geometry_hints(
-      window_, GTK_WIDGET(window_), &geometry, (GdkWindowHints)hints);
+  minimum_size_.set_width(width);
+  minimum_size_.set_height(height);
+  SetWindowGeometry(minimum_size_, maximum_size_);
 }
 
 void NativeWindowGtk::SetMaximumSize(int width, int height) {
-  GdkGeometry geometry = { 0 };
-  geometry.max_width = width;
-  geometry.max_height = height;
-  int hints = GDK_HINT_POS | GDK_HINT_MAX_SIZE;
-  gtk_window_set_geometry_hints(
-      window_, GTK_WIDGET(window_), &geometry, (GdkWindowHints)hints);
+  maximum_size_.set_width(width);
+  maximum_size_.set_height(height);
+  SetWindowGeometry(minimum_size_, maximum_size_);
 }
 
 void NativeWindowGtk::SetResizable(bool resizable) {
+  resizable_ = resizable;
   // Should request widget size after setting unresizable, otherwise the 
   // window will shrink to a very small size.
   if (resizable == false) {
@@ -514,6 +554,8 @@ gboolean NativeWindowGtk::OnFocusOut(GtkWidget* window, GdkEventFocus*) {
 // Window state has changed.
 gboolean NativeWindowGtk::OnWindowState(GtkWidget* window,
                                         GdkEventWindowState* event) {
+  state_ = event->new_window_state;
+
   switch (event->changed_mask) {
     case GDK_WINDOW_STATE_ICONIFIED:
       if (shell()) {
@@ -562,23 +604,107 @@ gboolean NativeWindowGtk::OnWindowDeleteEvent(GtkWidget* widget,
   return FALSE;
 }
 
+bool NativeWindowGtk::GetWindowEdge(int x, int y, GdkWindowEdge* edge) {
+  if (has_frame_)
+    return false;
+
+  if (IsMaximized() || IsFullscreen())
+    return false;
+
+  return gtk_window_util::GetWindowEdge(GetBounds().size(), 0, x, y, edge);
+}
+
+gboolean NativeWindowGtk::OnMouseMoveEvent(GtkWidget* widget,
+                                           GdkEventMotion* event) {
+  if (has_frame_) {
+    // Reset the cursor.
+    if (frame_cursor_) {
+      frame_cursor_ = NULL;
+      gdk_window_set_cursor(gtk_widget_get_window(GTK_WIDGET(window_)), NULL);
+    }
+    return FALSE;
+  }
+
+  if (!resizable_)
+    return FALSE;
+
+  int win_x, win_y;
+  GdkWindow* gdk_window = gtk_widget_get_window(GTK_WIDGET(window_));
+  gdk_window_get_origin(gdk_window, &win_x, &win_y);
+  gfx::Point point(static_cast<int>(event->x_root - win_x),
+                   static_cast<int>(event->y_root - win_y));
+
+  // Update the cursor if we're on the custom frame border.
+  GdkWindowEdge edge;
+  bool has_hit_edge = GetWindowEdge(point.x(), point.y(), &edge);
+  GdkCursorType new_cursor = GDK_LAST_CURSOR;
+  if (has_hit_edge)
+    new_cursor = gtk_window_util::GdkWindowEdgeToGdkCursorType(edge);
+
+  GdkCursorType last_cursor = GDK_LAST_CURSOR;
+  if (frame_cursor_)
+    last_cursor = frame_cursor_->type;
+
+  if (last_cursor != new_cursor) {
+    frame_cursor_ = has_hit_edge ? gfx::GetCursor(new_cursor) : NULL;
+    gdk_window_set_cursor(gtk_widget_get_window(GTK_WIDGET(window_)),
+                          frame_cursor_);
+  }
+  return FALSE;
+}
+
 // Capture mouse click on window.
 gboolean NativeWindowGtk::OnButtonPress(GtkWidget* widget,
                                         GdkEventButton* event) {
-  if (!draggable_region_.isEmpty() &&
-      draggable_region_.contains(event->x, event->y)) {
-    if (event->button == 1 && GDK_BUTTON_PRESS == event->type) {
-      if (!suppress_window_raise_)
+  DCHECK(!has_frame_);
+  // Make the button press coordinate relative to the browser window.
+  int win_x, win_y;
+  GdkWindow* gdk_window = gtk_widget_get_window(GTK_WIDGET(window_));
+  gdk_window_get_origin(gdk_window, &win_x, &win_y);
+
+  GdkWindowEdge edge;
+  gfx::Point point(static_cast<int>(event->x_root - win_x),
+                   static_cast<int>(event->y_root - win_y));
+  bool has_hit_edge = resizable_ && GetWindowEdge(point.x(), point.y(), &edge);
+  bool has_hit_titlebar =
+      !draggable_region_.isEmpty() && draggable_region_.contains(event->x, event->y);
+
+  if (event->button == 1) {
+    if (GDK_BUTTON_PRESS == event->type) {
+      // Raise the window after a click on either the titlebar or the border to
+      // match the behavior of most window managers, unless that behavior has
+      // been suppressed.
+      if ((has_hit_titlebar || has_hit_edge) && !suppress_window_raise_)
         gdk_window_raise(GTK_WIDGET(widget)->window);
 
-      return gtk_window_util::HandleTitleBarLeftMousePress(
-          GTK_WINDOW(widget), GetBounds(), event);
-    } else if (event->button == 2) {
-      gdk_window_lower(GTK_WIDGET(widget)->window);
-      return TRUE;
+      if (has_hit_edge) {
+        gtk_window_begin_resize_drag(window_, edge, event->button,
+                                     static_cast<gint>(event->x_root),
+                                     static_cast<gint>(event->y_root),
+                                     event->time);
+        return TRUE;
+      } else if (has_hit_titlebar) {
+        return gtk_window_util::HandleTitleBarLeftMousePress(
+            window_, GetBounds(), event);
+      }
+    } else if (GDK_2BUTTON_PRESS == event->type) {
+      if (has_hit_titlebar && resizable_) {
+        // Maximize/restore on double click.
+        if (IsMaximized()) {
+          gtk_window_unmaximize(window_);
+          //gtk_window_util::UnMaximize(GTK_WINDOW(widget),
+          //    GetBounds(), restored_bounds_);
+        } else {
+          gtk_window_maximize(window_);
+        }
+        return TRUE;
+      }
     }
+  } else if (event->button == 2) {
+    if (has_hit_titlebar || has_hit_edge)
+      gdk_window_lower(gdk_window);
+    return TRUE;
   }
-
   return FALSE;
 }
 
