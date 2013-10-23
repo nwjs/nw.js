@@ -21,12 +21,16 @@
 #include "content/nw/src/api/shell/shell.h"
 
 #include "base/files/file_path.h"
+#include "base/file_util.h"
 #include "base/logging.h"
 #include "base/values.h"
 #include "chrome/browser/platform_util.h"
 #include "url/gurl.h"
 
-using base::FilePath;
+#include "content/nw/src/nw_package.h"
+#include "content/nw/src/shell_browser_main_parts.h"
+#include "content/nw/src/shell_content_browser_client.h"
+
 
 namespace api {
 
@@ -40,11 +44,22 @@ void Shell::Call(const std::string& method,
   } else if (method == "OpenItem") {
     std::string full_path;
     arguments.GetString(0, &full_path);
-    platform_util::OpenItem(FilePath::FromUTF8Unsafe(full_path));
+    platform_util::OpenItem(base::FilePath::FromUTF8Unsafe(full_path));
   } else if (method == "ShowItemInFolder") {
     std::string full_path;
     arguments.GetString(0, &full_path);
-    platform_util::ShowItemInFolder(FilePath::FromUTF8Unsafe(full_path));
+    base::FilePath file_path = base::FilePath::FromUTF8Unsafe(full_path);
+    
+    //change relative path to absolute path
+    if (!file_path.IsAbsolute()) {
+      content::ShellContentBrowserClient* browser_client =
+        static_cast<content::ShellContentBrowserClient*>(content::GetContentClient()->browser());
+      base::FilePath package_path = browser_client->shell_browser_main_parts()->package()->path();
+      file_util::SetCurrentDirectory(package_path);
+      file_path = base::MakeAbsoluteFilePath(file_path);
+    }
+    DLOG(INFO) << file_path.value().c_str();
+    platform_util::ShowItemInFolder(file_path);
   } else {
     NOTREACHED() << "Calling unknown method " << method << " of Shell";
   }
