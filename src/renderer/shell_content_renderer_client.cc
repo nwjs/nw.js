@@ -302,6 +302,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
 #if defined(OS_WIN)
     ReplaceChars(root_path, "\\", "\\\\", &root_path);
 #endif
+    ReplaceChars(root_path, "'", "\\'", &root_path);
     v8::Local<v8::Script> script = v8::Script::New(v8::String::New((
         // Make node's relative modules work
         "if (!process.mainModule.filename) {"
