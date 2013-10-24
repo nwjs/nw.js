@@ -42,7 +42,7 @@
 
 #if defined(OS_WIN)
 
-#define VINFO "TI_" NW_VERSION_STRING
+#define VINFO "Tint "+std::string(__DATE__)
 
 void Bootstrap() {
   CommandLine *cmd = CommandLine::ForCurrentProcess();
