@@ -10,10 +10,9 @@
 #include "base/command_line.h"
 #include "base/json/json_writer.h"
 #include "base/logging.h"
-#include "base/message_loop.h"
+#include "base/message_loop/message_loop.h"
 #include "base/metrics/histogram.h"
-#include "base/process_util.h"
-#include "base/stringprintf.h"
+#include "base/strings/stringprintf.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/utf_string_conversions.h"
 #include "chrome/common/chrome_switches.h"
@@ -711,7 +710,10 @@ PrintWebViewHelper::PrintWebViewHelper(content::RenderView* render_view)
       is_scripted_printing_blocked_(false),
       notify_browser_of_print_failure_(true),
       print_for_preview_(false),
-      print_node_in_progress_(false) {
+      print_node_in_progress_(false),
+      is_loading_(false),
+      is_scripted_preview_delayed_(false),
+      weak_ptr_factory_(this) {
 }
 
 PrintWebViewHelper::~PrintWebViewHelper() {}
@@ -1621,11 +1623,7 @@ void PrintWebViewHelper::RequestPrintPreview(PrintPreviewRequestType type) {
   params.has_selection = has_selection;
   switch (type) {
     case PRINT_PREVIEW_SCRIPTED: {
-      IPC::SyncMessage* msg =
-          new PrintHostMsg_ScriptedPrintPreview(routing_id(), is_modifiable);
-      msg->EnableMessagePumping();
-      Send(msg);
-      return;
+      break;
     }
     case PRINT_PREVIEW_USER_INITIATED_ENTIRE_FRAME: {
       break;

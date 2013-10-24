@@ -31,6 +31,9 @@ namespace api {
 class WindowBindings;
 }
 
+namespace autofill {
+class PageClickTracker;
+}
 namespace content {
 
 class ShellRenderProcessObserver;
@@ -51,7 +54,9 @@ class ShellContentRendererClient : public ContentRendererClient {
 
  private:
   scoped_ptr<ShellRenderProcessObserver> shell_observer_;
-  scoped_ptr<api::WindowBindings> window_bindings_;;
+  scoped_ptr<api::WindowBindings> window_bindings_;
+
+>>>>>>> upstream/master
   void InstallNodeSymbols(WebKit::WebFrame* frame,
                           v8::Handle<v8::Context> context, const GURL& url);
   void UninstallNodeSymbols(WebKit::WebFrame* frame,
@@ -59,7 +64,8 @@ class ShellContentRendererClient : public ContentRendererClient {
   bool goodForNode(WebKit::WebFrame* frame);
 
   // Catch node uncaughtException.
-  static v8::Handle<v8::Value> ReportException(const v8::Arguments& args);
+  static void ReportException(const v8::FunctionCallbackInfo<v8::Value>&  args);
+
 };
 
 }  // namespace content

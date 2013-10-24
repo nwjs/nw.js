@@ -24,7 +24,7 @@
 #include "base/logging.h"
 #include "base/values.h"
 #include "chrome/browser/platform_util.h"
-#include "googleurl/src/gurl.h"
+#include "url/gurl.h"
 
 using base::FilePath;
 

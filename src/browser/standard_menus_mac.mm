@@ -21,6 +21,11 @@
 #include "content/nw/src/browser/standard_menus_mac.h"
 
 #include "base/strings/sys_string_conversions.h"
+#include "base/strings/utf_string_conversions.h"
+#include "grit/nw_strings.h"
+#include "ui/base/l10n/l10n_util.h"
+#include "ui/base/l10n/l10n_util_mac.h"
+
 #import <Cocoa/Cocoa.h>
 
 // For some reaon, Apple removed setAppleMenu from the headers in 10.4,
@@ -42,30 +47,30 @@ StandardMenusMac::~StandardMenusMac() {
 void StandardMenusMac::BuildAppleMenu() {
   NSMenu* appleMenu = [[NSMenu alloc] initWithTitle:@""];
 
-  NSString* name = base::SysUTF8ToNSString(app_name_);
-  [appleMenu addItemWithTitle:[@"About " stringByAppendingString:name]
+  string16 name = base::UTF8ToUTF16(app_name_);
+  [appleMenu addItemWithTitle:l10n_util::GetNSStringFWithFixup(IDS_ABOUT_MAC, name)
                        action:@selector(orderFrontStandardAboutPanel:)
                 keyEquivalent:@""];
 
   [appleMenu addItem:[NSMenuItem separatorItem]];
 
-  [appleMenu addItemWithTitle:[@"Hide " stringByAppendingString:name]
+  [appleMenu addItemWithTitle:l10n_util::GetNSStringFWithFixup(IDS_HIDE_APP_MAC, name)
                        action:@selector(hide:)
                 keyEquivalent:@"h"];
 
   NSMenuItem* menuItem = (NSMenuItem *)[appleMenu
-      addItemWithTitle:@"Hide Others"
+      addItemWithTitle:l10n_util::GetNSStringWithFixup(IDS_HIDE_OTHERS_MAC)
                 action:@selector(hideOtherApplications:)
          keyEquivalent:@"h"];
   [menuItem setKeyEquivalentModifierMask:(NSAlternateKeyMask|NSCommandKeyMask)];
 
-  [appleMenu addItemWithTitle:@"Show All"
+  [appleMenu addItemWithTitle:l10n_util::GetNSStringWithFixup(IDS_SHOW_ALL_MAC)
                        action:@selector(unhideAllApplications:)
                 keyEquivalent:@""];
 
   [appleMenu addItem:[NSMenuItem separatorItem]];
 
-  [appleMenu addItemWithTitle:[@"Quit " stringByAppendingString:name]
+  [appleMenu addItemWithTitle:l10n_util::GetNSStringFWithFixup(IDS_EXIT_MAC, name)
                        action:@selector(closeAllWindows:)
                 keyEquivalent:@"q"];
 
@@ -77,36 +82,36 @@ void StandardMenusMac::BuildAppleMenu() {
 }
 
 void StandardMenusMac::BuildEditMenu() {
-  NSMenu* editMenu = [[NSMenu alloc] initWithTitle:@"Edit"];
+  NSMenu* editMenu = [[NSMenu alloc] initWithTitle:l10n_util::GetNSStringWithFixup(IDS_EDIT_MENU_MAC)];
 
-  [editMenu addItemWithTitle:@"Undo"
+  [editMenu addItemWithTitle:l10n_util::GetNSStringWithFixup(IDS_EDIT_UNDO_MAC)
                       action:@selector(undo:)
                keyEquivalent:@"z"];
   NSMenuItem* menuItem = (NSMenuItem *)[editMenu
-      addItemWithTitle:@"Redo"
+      addItemWithTitle:l10n_util::GetNSStringWithFixup(IDS_EDIT_REDO_MAC)
                 action:@selector(redo:)
          keyEquivalent:@"z"];
   [menuItem setKeyEquivalentModifierMask:(NSShiftKeyMask|NSCommandKeyMask)];
 
   [editMenu addItem:[NSMenuItem separatorItem]];
 
-  [editMenu addItemWithTitle:@"Cut"
+  [editMenu addItemWithTitle:l10n_util::GetNSStringWithFixup(IDS_CUT_MAC)
                       action:@selector(cut:)
                keyEquivalent:@"x"];
-  [editMenu addItemWithTitle:@"Copy"
+  [editMenu addItemWithTitle:l10n_util::GetNSStringWithFixup(IDS_COPY_MAC)
                       action:@selector(copy:)
                keyEquivalent:@"c"];
-  [editMenu addItemWithTitle:@"Paste"
+  [editMenu addItemWithTitle:l10n_util::GetNSStringWithFixup(IDS_PASTE_MAC)
                       action:@selector(paste:)
                keyEquivalent:@"v"];
-  [editMenu addItemWithTitle:@"Delete"
+  [editMenu addItemWithTitle:l10n_util::GetNSStringWithFixup(IDS_EDIT_DELETE_MAC)
                       action:@selector(delete:)
                keyEquivalent:@""];
-  [editMenu addItemWithTitle:@"Select All"
+  [editMenu addItemWithTitle:l10n_util::GetNSStringWithFixup(IDS_EDIT_SELECT_ALL_MAC)
                       action:@selector(selectAll:)
                keyEquivalent:@"a"];
     
-  menuItem = [[NSMenuItem alloc] initWithTitle:@"Edit"
+  menuItem = [[NSMenuItem alloc] initWithTitle:l10n_util::GetNSStringWithFixup(IDS_EDIT_MENU_MAC)
                                         action:nil
                                  keyEquivalent:@""];
   [menuItem setSubmenu:editMenu];
@@ -117,23 +122,24 @@ void StandardMenusMac::BuildEditMenu() {
 }
 
 void StandardMenusMac::BuildWindowMenu() {
-  NSMenu* windowMenu = [[NSMenu alloc] initWithTitle:@"Window"];
+  NSMenu* windowMenu = [[NSMenu alloc] initWithTitle:l10n_util::GetNSStringWithFixup(IDS_WINDOW_MENU_MAC)];
 
-  [windowMenu addItemWithTitle:@"Minimize"
+  [windowMenu addItemWithTitle:l10n_util::GetNSStringWithFixup(IDS_MINIMIZE_WINDOW_MAC)
                         action:@selector(performMiniaturize:)
                  keyEquivalent:@"m"];
-  [windowMenu addItemWithTitle:@"Close"
+
+  [windowMenu addItemWithTitle:l10n_util::GetNSStringWithFixup(IDS_CLOSE_WINDOW_MAC)
                         action:@selector(performClose:)
                  keyEquivalent:@"w"];
 
   [windowMenu addItem:[NSMenuItem separatorItem]];
 
-  [windowMenu addItemWithTitle:@"Bring All to Front"
+  [windowMenu addItemWithTitle:l10n_util::GetNSStringWithFixup(IDS_ALL_WINDOWS_FRONT_MAC)
                         action:@selector(arrangeInFront:)
                  keyEquivalent:@""];
     
   NSMenuItem* windowMenuItem = [[NSMenuItem alloc]
-      initWithTitle:@"Window"
+      initWithTitle:l10n_util::GetNSStringWithFixup(IDS_WINDOW_MENU_MAC)
              action:nil
       keyEquivalent:@""];
   [windowMenuItem setSubmenu:windowMenu];

@@ -29,6 +29,9 @@ class ShellMainDelegate : public ContentMainDelegate {
   virtual ContentRendererClient* CreateContentRendererClient() OVERRIDE;
 
   static void InitializeResourceBundle();
+#if defined(OS_POSIX) && !defined(OS_MACOSX)
+  virtual void ZygoteForked() OVERRIDE;
+#endif
 
  private:
   scoped_ptr<ShellContentBrowserClient> browser_client_;

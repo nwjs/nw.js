@@ -32,7 +32,7 @@
 #include "base/bind.h"
 #include "base/file_util.h"
 #include "base/logging.h"
-#include "base/string_util.h"
+#include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/browser_thread.h"
@@ -108,7 +108,7 @@ void ShellDownloadManagerDelegate::GenerateFilename(
     const FilePath& generated_name,
     const FilePath& suggested_directory) {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::FILE));
-  if (!file_util::PathExists(suggested_directory))
+  if (!base::PathExists(suggested_directory))
     file_util::CreateDirectory(suggested_directory);
 
   FilePath suggested_path(suggested_directory.Append(generated_name));

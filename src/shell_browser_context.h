@@ -34,7 +34,7 @@ class ShellBrowserContext : public BrowserContext {
   virtual ~ShellBrowserContext();
 
   // BrowserContext implementation.
-  virtual FilePath GetPath() OVERRIDE;
+  virtual FilePath GetPath() const OVERRIDE;
   virtual bool IsOffTheRecord() const OVERRIDE;
   virtual DownloadManagerDelegate* GetDownloadManagerDelegate() OVERRIDE;
   virtual net::URLRequestContextGetter* GetRequestContext() OVERRIDE;
@@ -50,9 +50,12 @@ class ShellBrowserContext : public BrowserContext {
   virtual ResourceContext* GetResourceContext() OVERRIDE;
   virtual GeolocationPermissionContext*
       GetGeolocationPermissionContext() OVERRIDE;
-  virtual SpeechRecognitionPreferences*
-      GetSpeechRecognitionPreferences() OVERRIDE;
   virtual quota::SpecialStoragePolicy* GetSpecialStoragePolicy() OVERRIDE;
+  virtual void RequestMIDISysExPermission(
+      int render_process_id,
+      int render_view_id,
+      const GURL& requesting_frame,
+      const MIDISysExPermissionCallback& callback) OVERRIDE;
 
   net::URLRequestContextGetter* CreateRequestContext(
                                                      ProtocolHandlerMap* protocol_handlers);

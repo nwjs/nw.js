@@ -2,14 +2,13 @@
 <grit latest_public_release="0" current_release="1">
   <!-- Will this update the resources? -->
   <outputs>
-    <output filename="grit/nw_resources.h" type="rc_header" context="default_100_percent" >
+    <output filename="grit/nw_resources.h" type="rc_header" context="default_100_percent">
       <emit emit_type='prepend'></emit>
     </output>
-    <output filename="grit/nw_resources_map.cc" type="resource_map_source" context="default_100_percent" />
-    <output filename="grit/nw_resources_map.h" type="resource_map_header" context="default_100_percent" />
-    <output filename="nw_resources.pak" type="data_package" context="default_100_percent" />
+    <output filename="grit/nw_resources_map.cc" type="resource_map_source" context="default_100_percent"/>
+    <output filename="grit/nw_resources_map.h" type="resource_map_header" context="default_100_percent"/>
+    <output filename="nw_resources.pak" type="data_package" context="default_100_percent"/>
   </outputs>
-  <translations />
   <release seq="1">
     <structures fallback_to_low_resolution="true">
       <structure type="chrome_scaled_image" name="IDR_NW_DEFAULT_ICON" file="tint.png" />
@@ -89,6 +88,18 @@
       <!-- Color chooser dialog default titles (only used on Linux) -->
       <message name="IDS_SELECT_COLOR_DIALOG_TITLE" desc="The default title for the Select Color color chooser dialog.">
         Select Color
+      </message>
+      <message name="IDS_IMAGE_FILES" desc="The description of the image file extensions in the select file dialog.">
+        Image Files
+      </message>
+      <message name="IDS_AUDIO_FILES" desc="The description of the audio file extensions in the select file dialog.">
+        Audio Files
+      </message>
+      <message name="IDS_VIDEO_FILES" desc="The description of the video file extensions in the select file dialog.">
+        Video Files
+      </message>
+      <message name="IDS_CUSTOM_FILES" desc="The description of the custom file extensions in the select file dialog.">
+        Custom Files
       </message>
     </messages>
   </release>

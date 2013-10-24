@@ -20,7 +20,7 @@
 
 #include "content/nw/src/api/menu/menu.h"
 
-#include "base/message_loop.h"
+#include "base/message_loop/message_loop.h"
 #include "base/mac/scoped_sending_event.h"
 #include "base/values.h"
 #import <Cocoa/Cocoa.h>

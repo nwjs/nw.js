@@ -20,7 +20,7 @@
 
 #include "content/nw/src/shell_content_client.h"
 
-#include "base/string_piece.h"
+#include "base/strings/string_piece.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/nw_version.h"
 #include "content/nw/src/renderer/common/render_messages.h"

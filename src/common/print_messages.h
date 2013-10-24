@@ -8,8 +8,8 @@
 #include <string>
 #include <vector>
 
+#include "base/memory/shared_memory.h"
 #include "base/values.h"
-#include "base/shared_memory.h"
 #include "ipc/ipc_message_macros.h"
 #include "printing/page_size_margins.h"
 #include "printing/print_job_constants.h"

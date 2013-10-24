@@ -35,19 +35,18 @@ class WindowBindings : public v8::Extension {
   // v8::Extension implementation.
   virtual v8::Handle<v8::FunctionTemplate>
       GetNativeFunction(v8::Handle<v8::String> name) OVERRIDE;
-  
  private:
   // Tell browser to bind a js object to Shell.
-  static v8::Handle<v8::Value> BindToShell(const v8::Arguments& args);
+  static void BindToShell(const v8::FunctionCallbackInfo<v8::Value>& args);
 
   // Call method of an object in browser.
-  static v8::Handle<v8::Value> CallObjectMethod(const v8::Arguments& args);
+  static void CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args);
 
   // Call method of an object in browser synchrounously.
-  static v8::Handle<v8::Value> CallObjectMethodSync(const v8::Arguments& args);
+  static void CallObjectMethodSync(const v8::FunctionCallbackInfo<v8::Value>& args);
 
   // Get the window object of current render view.
-  static v8::Handle<v8::Value> GetWindowObject(const v8::Arguments& args);
+  static void GetWindowObject(const v8::FunctionCallbackInfo<v8::Value>& args);
 
   DISALLOW_COPY_AND_ASSIGN(WindowBindings);
 };

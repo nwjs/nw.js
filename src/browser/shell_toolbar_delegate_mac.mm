@@ -22,11 +22,11 @@
 
 #include <string>
 
-#import "base/memory/scoped_nsobject.h"
+#import "base/mac/scoped_nsobject.h"
 #include "base/strings/sys_string_conversions.h"
 #include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/nw_shell.h"
-#include "googleurl/src/gurl.h"
+#include "url/gurl.h"
 
 static NSString *BackToolbarItemIdentifier = @"Back";
 static NSString *ForwardToolbarItemIdentifier = @"Forward";
@@ -115,7 +115,7 @@ static NSString *ReloadDevToolbarItemIdentifier = @"RefreshDev";
      [[NSToolbarItem alloc] initWithItemIdentifier:identifier];
 
   if ([identifier isEqualTo:EntryToolbarItemIdentifier]) {
-    scoped_nsobject<NSTextField> entry(
+    base::scoped_nsobject<NSTextField> entry(
         [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 24)]);
     entry_ = entry;
     [entry setAutoresizingMask:(NSViewWidthSizable | NSViewMinYMargin)];
@@ -128,7 +128,7 @@ static NSString *ReloadDevToolbarItemIdentifier = @"RefreshDev";
     [item setMinSize:NSMakeSize(100, 20)];
     [item setMaxSize:NSMakeSize(2000, 20)];
   } else {
-    scoped_nsobject<NSButton> button([[NSButton alloc] init]);
+    base::scoped_nsobject<NSButton> button([[NSButton alloc] init]);
     [button setBezelStyle:NSTexturedRoundedBezelStyle];
     [button setTarget:self];
     [button setAction:@selector(buttonPressed:)];

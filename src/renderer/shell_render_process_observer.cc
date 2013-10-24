@@ -25,8 +25,8 @@
 #include "content/public/renderer/render_thread.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/dispatcher_bindings.h"
+#include "content/shell/renderer/gc_extension.h"
 #include "webkit/glue/webkit_glue.h"
-#include "webkit/support/gc_extension.h"
 #include "third_party/node/src/node.h"
 #include "third_party/node/src/req_wrap.h"
 #include "third_party/WebKit/public/web/WebCache.h"
@@ -67,7 +67,8 @@ void ShellRenderProcessObserver::OnRenderProcessWillShutdown() {
 void ShellRenderProcessObserver::WebKitInitialized() {
   webkit_initialized_ = true;
   RenderThread::Get()->RegisterExtension(new api::DispatcherBindings());
-  WebRuntimeFeatures::enableCSSRegions(true);
+  WebRuntimeFeatures::enableStableFeatures(true);
+  WebRuntimeFeatures::enableExperimentalFeatures(true);
 }
 
 void ShellRenderProcessObserver::OnOpen(const std::string& path) {

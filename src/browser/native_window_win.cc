@@ -769,11 +769,11 @@ void NativeWindowWin::OnViewWasResized() {
                1);
 
   SkRegion* rgn = new SkRegion;
-  if (!window_->IsFullscreen() && !window_->IsMaximized()) {
+  if (!window_->IsFullscreen()) {
     if (draggable_region())
       rgn->op(*draggable_region(), SkRegion::kUnion_Op);
 
-    if (!has_frame() && CanResize()) {
+    if (!has_frame() && CanResize() && !window_->IsMaximized()) {
       rgn->op(0, 0, width, kResizeInsideBoundsSize, SkRegion::kUnion_Op);
       rgn->op(0, 0, kResizeInsideBoundsSize, height, SkRegion::kUnion_Op);
       rgn->op(width - kResizeInsideBoundsSize, 0, width, height,

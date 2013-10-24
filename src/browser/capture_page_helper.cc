@@ -25,7 +25,7 @@
 #include "base/base64.h"
 #include "base/bind.h"
 #include "base/stl_util.h"
-#include "base/stringprintf.h"
+#include "base/strings/stringprintf.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/nw/src/renderer/common/render_messages.h"

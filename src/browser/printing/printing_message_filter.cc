@@ -7,7 +7,6 @@
 #include <string>
 
 #include "base/bind.h"
-#include "base/process_util.h"
 #include "content/nw/src/browser/printing/printer_query.h"
 #include "content/nw/src/browser/printing/print_job_manager.h"
 #include "content/nw/src/common/print_messages.h"
@@ -131,7 +130,7 @@ void PrintingMessageFilter::OnDuplicateSection(
     base::SharedMemoryHandle* browser_handle) {
   // Duplicate the handle in this process right now so the memory is kept alive
   // (even if it is not mapped)
-  base::SharedMemory shared_buf(renderer_handle, true, peer_handle());
+  base::SharedMemory shared_buf(renderer_handle, true, PeerHandle());
   shared_buf.GiveToProcess(base::GetCurrentProcessHandle(), browser_handle);
 }
 #endif

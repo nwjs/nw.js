@@ -34,6 +34,8 @@ var nwDispatcher = nwDispatcher || {};
   native function CallObjectMethodSync();
   native function CallStaticMethod();
   native function CallStaticMethodSync();
+  native function CrashRenderer();
+  native function SetCrashDumpDir();
 
   nwDispatcher.requireNwGui = RequireNwGui;
 
@@ -90,4 +92,7 @@ var nwDispatcher = nwDispatcher || {};
   nwDispatcher.getShellIdForCurrentContext = GetShellIdForCurrentContext;
   nwDispatcher.getRoutingIDForCurrentContext = GetRoutingIDForCurrentContext;
   nwDispatcher.createShell = CreateShell;
+
+  nwDispatcher.crashRenderer = CrashRenderer;
+  nwDispatcher.setCrashDumpDir = SetCrashDumpDir;
 })();

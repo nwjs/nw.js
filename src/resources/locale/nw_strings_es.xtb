@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<!DOCTYPE translationbundle>
+<translationbundle lang="es">
+<translation id="9065203028668620118">Editar</translation>
+<translation id="5230516054153933099">Ventana</translation>
+<translation id="7772127298218883077">Información de <ph name="PRODUCT_NAME"/></translation>
+<translation id="3315158641124845231">Ocultar <ph name="PRODUCT_NAME"/></translation>
+<translation id="881799181680267069">Ocultar otras</translation>
+<translation id="923467487918828349">Mostrar todas</translation>
+<translation id="4708849949179781599">Salir de <ph name="PRODUCT_NAME"/></translation>
+<translation id="2079545284768500474">Deshacer</translation>
+<translation id="6556866813142980365">Rehacer</translation>
+<translation id="7724603315864178912">Cortar</translation>
+<translation id="6896758677409633944">Copiar</translation>
+<translation id="3943857333388298514">Pegar</translation>
+<translation id="8261506727792406068">Eliminar</translation>
+<translation id="5037676449506322593">Seleccionar todo</translation>
+<translation id="5941711191222866238">Minimizar</translation>
+<translation id="2498539833203011245">Minimizar</translation>
+<translation id="3265459715026181080">Cerrar ventana</translation>
+<translation id="6315493146179903667">Traer todo al frente</translation>
+</translationbundle>

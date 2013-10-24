@@ -21,8 +21,8 @@
 #include "content/nw/src/nw_shell.h"
 
 #include "base/command_line.h"
-#include "base/message_loop.h"
-#include "base/string_util.h"
+#include "base/message_loop/message_loop.h"
+#include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
 #include "content/browser/child_process_security_policy_impl.h"
@@ -71,6 +71,13 @@
 #include "net/base/escape.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "third_party/skia/include/core/SkBitmap.h"
+
+
+#if defined(OS_WIN)
+#include "content/nw/src/browser/native_window_win.h"
+#include "ui/views/controls/webview/webview.h"
+using nw::NativeWindowWin;
+#endif
 
 #include "content/nw/src/browser/printing/print_view_manager.h"
 
@@ -182,6 +189,10 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
 
 Shell::~Shell() {
   SendEvent("closed");
+
+  if (is_devtools_ && devtools_owner_.get()) {
+    devtools_owner_->SendEvent("devtools-closed");
+  }
 
   for (size_t i = 0; i < windows_.size(); ++i) {
     if (windows_[i] == this) {
@@ -347,10 +358,11 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
       browser_client->shell_browser_main_parts()->devtools_delegate();
   GURL url = delegate->devtools_http_handler()->GetFrontendURL(agent.get());
 
-  if (headless) {
-    SendEvent("devtools-opened", url.spec());
+  SendEvent("devtools-opened", url.spec());
+
+  if (headless)
     return;
-  }
+
   // Use our minimum set manifest
   base::DictionaryValue manifest;
   manifest.SetBoolean(switches::kmToolbar, false);
@@ -373,6 +385,7 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
   ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, chrome::kFileScheme);
   ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, "app");
   shell->is_devtools_ = true;
+  shell->devtools_owner_ = weak_ptr_factory_.GetWeakPtr();
   shell->force_close_ = true;
   shell->LoadURL(url);
 
@@ -502,6 +515,13 @@ void Shell::WebContentsCreated(WebContents* source_contents,
   // don't pass the url on window.open case
   Shell::Create(source_contents, GURL::EmptyGURL(), manifest.get(), new_contents);
 }
+
+#if defined(OS_WIN)
+void Shell::WebContentsFocused(content::WebContents* web_contents) {
+  NativeWindowWin* win = static_cast<NativeWindowWin*>(window_.get());
+  win->web_view_->OnWebContentsFocused(web_contents);
+}
+#endif
 
 content::ColorChooser*
 Shell::OpenColorChooser(content::WebContents* web_contents, SkColor color) {

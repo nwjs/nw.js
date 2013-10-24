@@ -74,7 +74,7 @@ class PrintViewManager : public content::NotificationObserver,
   virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
 
   // Terminates or cancels the print job if one was pending.
-  virtual void RenderViewGone(base::TerminationStatus status) OVERRIDE;
+  virtual void RenderProcessGone(base::TerminationStatus status) OVERRIDE;
 
   // Cancels the print job.
   virtual void StopNavigation() OVERRIDE;

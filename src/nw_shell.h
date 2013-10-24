@@ -99,6 +99,7 @@ class Shell : public WebContentsDelegate,
   void ReloadOrStop();
   void ShowDevTools(const char* jail_id = NULL, bool headless = false);
   void CloseDevTools();
+  bool devToolsOpen() { return devtools_window_.get() != NULL; }
   // Send an event to renderer.
   void SendEvent(const std::string& event, const std::string& arg1 = "");
 
@@ -148,6 +149,9 @@ class Shell : public WebContentsDelegate,
                                   const string16& frame_name,
                                   const GURL& target_url,
                                   WebContents* new_contents) OVERRIDE;
+#if defined(OS_WIN)
+  virtual void WebContentsFocused(WebContents* contents) OVERRIDE;
+#endif
   virtual content::ColorChooser* OpenColorChooser(
       content::WebContents* web_contents, SkColor color) OVERRIDE;
   virtual void RunFileChooser(
@@ -193,6 +197,7 @@ class Shell : public WebContentsDelegate,
 
   // Weak potiner to devtools window.
   base::WeakPtr<Shell> devtools_window_;
+  base::WeakPtr<Shell> devtools_owner_;
 #if 0
   ShellDevToolsFrontend* devtools_frontend_;
 #endif

@@ -57,6 +57,12 @@ class ShellBrowserContext::ShellResourceContext : public ResourceContext {
     CHECK(getter_);
     return getter_->GetURLRequestContext();
   }
+  virtual bool AllowMicAccess(const GURL& origin) OVERRIDE {
+    return true;
+  }
+  virtual bool AllowCameraAccess(const GURL& origin) OVERRIDE {
+    return true;
+  }
 
   void set_url_request_context_getter(ShellURLRequestContextGetter* getter) {
     getter_ = getter;
@@ -119,11 +125,11 @@ void ShellBrowserContext::InitWhileIOAllowed() {
   NOTIMPLEMENTED();
 #endif
 
-  if (!file_util::PathExists(path_))
+  if (!base::PathExists(path_))
     file_util::CreateDirectory(path_);
 }
 
-FilePath ShellBrowserContext::GetPath() {
+FilePath ShellBrowserContext::GetPath() const {
   return path_;
 }
 
@@ -201,13 +207,17 @@ GeolocationPermissionContext*
   return NULL;
 }
 
-SpeechRecognitionPreferences*
-    ShellBrowserContext::GetSpeechRecognitionPreferences() {
-  return NULL;
-}
-
 quota::SpecialStoragePolicy* ShellBrowserContext::GetSpecialStoragePolicy() {
   return NULL;
 }
+
+void ShellBrowserContext::RequestMIDISysExPermission(
+      int render_process_id,
+      int render_view_id,
+      const GURL& requesting_frame,
+      const MIDISysExPermissionCallback& callback) {
+  callback.Run(true);
+}
+
 
 }  // namespace content

@@ -59,6 +59,19 @@ App.prototype.closeAllWindows = function() {
   nw.callStaticMethod('App', 'CloseAllWindows', [ ]);
 }
 
+App.prototype.crashBrowser = function() {
+  nw.callStaticMethod('App', 'CrashBrowser', [ ]);
+}
+
+App.prototype.crashRenderer = function() {
+  nw.crashRenderer();
+}
+
+App.prototype.setCrashDumpDir = function(dir) {
+  nw.setCrashDumpDir(dir); // for windows renderer process
+  return nw.callStaticMethodSync('App', 'SetCrashDumpDir', [ dir ]);
+}
+
 App.prototype.clearCache = function() {
   nw.callStaticMethodSync('App', 'ClearCache', [ ]);
 }

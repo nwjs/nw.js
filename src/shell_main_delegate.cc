@@ -23,6 +23,7 @@
 #include "base/command_line.h"
 #include "base/files/file_path.h"
 #include "base/file_util.h"
+#include "base/lazy_instance.h"
 #include "base/logging.h"
 #include "base/path_service.h"
 #include "base/strings/utf_string_conversions.h"
@@ -30,6 +31,8 @@
 #include "content/public/browser/render_process_host.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/url_constants.h"
+#include "content/nw/src/breakpad_linux.h"
+#include "content/nw/src/chrome_breakpad_client.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_version.h"
 #include "content/nw/src/renderer/shell_content_renderer_client.h"
@@ -38,6 +41,9 @@
 #include "net/cookies/cookie_monster.h"
 #include "third_party/node/src/node_version.h"
 #include "ui/base/l10n/l10n_util.h"
+#if defined(OS_MACOSX)
+#include "ui/base/l10n/l10n_util_mac.h"
+#endif
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/base/ui_base_paths.h"
 #include "ui/base/ui_base_switches.h"
@@ -47,7 +53,7 @@
 using base::FilePath;
 using namespace file_util;
 #if defined(OS_MACOSX)
-#include "content/shell/paths_mac.h"
+#include "content/nw/src/paths_mac.h"
 #endif  // OS_MACOSX
 
 #if defined(OS_WIN)
@@ -84,6 +90,9 @@ const GUID kContentShellProviderName = {
     0x6a3e50a4, 0x7e15, 0x4099,
         { 0x84, 0x13, 0xec, 0x94, 0xd8, 0xc2, 0xa4, 0xb6 } };
 #endif
+
+base::LazyInstance<chrome::ChromeBreakpadClient>::Leaky
+    g_chrome_breakpad_client = LAZY_INSTANCE_INITIALIZER;
 
 void InitLogging() {
   base::FilePath log_filename;
@@ -127,13 +136,21 @@ bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
 }
 
 void ShellMainDelegate::PreSandboxStartup() {
+  breakpad::SetBreakpadClient(g_chrome_breakpad_client.Pointer());
+
 #if defined(OS_MACOSX)
   OverrideFrameworkBundlePath();
   OverrideChildProcessPath();
+  l10n_util::OverrideLocaleWithUserDefault();
 #endif  // OS_MACOSX
   InitializeResourceBundle();
 
   CommandLine* command_line = CommandLine::ForCurrentProcess();
+  std::string process_type =
+      command_line->GetSwitchValueASCII(switches::kProcessType);
+
+  if (process_type != switches::kZygoteProcess)
+    InitCrashReporter();
 
   // Just prevent sandbox.
   command_line->AppendSwitch(switches::kNoSandbox);
@@ -149,7 +166,7 @@ void ShellMainDelegate::PreSandboxStartup() {
 
   // Allow file:// URIs can read other file:// URIs by default.
   command_line->AppendSwitch(switches::kAllowFileAccessFromFiles);
-  command_line->AppendSwitch(switches::kEnableExperimentalWebKitFeatures);
+  command_line->AppendSwitch(switches::kEnableExperimentalWebPlatformFeatures);
   command_line->AppendSwitch(switches::kEnableCssShaders);
 }
 
@@ -165,16 +182,22 @@ int ShellMainDelegate::RunProcess(
 void ShellMainDelegate::InitializeResourceBundle() {
   FilePath pak_file;
 #if defined(OS_MACOSX)
-  pak_file = GetResourcesPakFilePath();
+  FilePath locale_file;
+  if (!GetResourcesPakFilePath(pak_file))
+    LOG(FATAL) << "nw.pak file not found.";
+  std::string locale = l10n_util::GetApplicationLocale(std::string());
+  if (!GetLocalePakFilePath(locale, locale_file))
+    LOG(FATAL) << locale << ".pak file not found.";
+  ui::ResourceBundle::InitSharedInstanceWithPakPath2(pak_file, locale_file);
 #else
   FilePath pak_dir;
   PathService::Get(base::DIR_MODULE, &pak_dir);
   pak_file = pak_dir.Append(FILE_PATH_LITERAL("nw.pak"));
   if(file_util::PathExists((FilePath(CommandLine::ForCurrentProcess()->GetSwitchValueNative("resources"))).Append(FILE_PATH_LITERAL("nw.pak"))))
     pak_file = FilePath(CommandLine::ForCurrentProcess()->GetSwitchValueNative("resources")).Append(FILE_PATH_LITERAL("nw.pak"));
-  CHECK(file_util::PathExists(pak_file)) << "nw.pak is missing";
-#endif
+  CHECK(base::PathExists(pak_file)) << "nw.pak is missing";
   ui::ResourceBundle::InitSharedInstanceWithPakPath(pak_file);
+#endif
 }
 
 ContentBrowserClient* ShellMainDelegate::CreateContentBrowserClient() {
@@ -186,5 +209,13 @@ ContentRendererClient* ShellMainDelegate::CreateContentRendererClient() {
   renderer_client_.reset(new ShellContentRendererClient);
   return renderer_client_.get();
 }
+
+#if defined(OS_POSIX) && !defined(OS_MACOSX)
+void ShellMainDelegate::ZygoteForked() {
+  // Needs to be called after we have chrome::DIR_USER_DATA.  BrowserMain sets
+  // this up for the browser process in a different manner.
+  InitCrashReporter();
+}
+#endif
 
 }  // namespace content

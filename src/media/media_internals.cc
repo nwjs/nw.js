@@ -22,7 +22,7 @@
 
 #include "base/memory/scoped_ptr.h"
 #include "base/strings/string16.h"
-#include "base/stringprintf.h"
+#include "base/strings/stringprintf.h"
 #include "content/nw/src/media/media_capture_devices_dispatcher.h"
 #include "content/public/browser/browser_thread.h"
 #include "media/base/media_log.h"
@@ -104,12 +104,19 @@ void MediaInternals::OnVideoCaptureDevicesChanged(
 void MediaInternals::OnMediaRequestStateChanged(
     int render_process_id,
     int render_view_id,
+    int page_request_id,
     const content::MediaStreamDevice& device,
     content::MediaRequestState state) {
 }
 
 void MediaInternals::OnAudioStreamPlayingChanged(
-    int render_process_id, int render_view_id, int stream_id, bool playing) {
+                                                 int render_process_id, int render_view_id, int stream_id, bool playing, float power_dbfs, bool clipped) {
+}
+
+void MediaInternals::OnCreatingAudioStream(
+    int render_process_id,
+    int render_view_id) {
+  media_devices_dispatcher_->OnCreatingAudioStream(render_process_id, render_view_id);
 }
 
 scoped_refptr<MediaCaptureDevicesDispatcher>

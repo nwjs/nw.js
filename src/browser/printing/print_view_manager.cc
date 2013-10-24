@@ -12,7 +12,7 @@
 #include "base/memory/scoped_ptr.h"
 #include "base/metrics/histogram.h"
 #include "base/prefs/pref_service.h"
-#include "base/timer.h"
+#include "base/timer/timer.h"
 #include "base/strings/utf_string_conversions.h"
 //#include "chrome/browser/browser_process.h"
 //#include "chrome/browser/printing/print_error_dialog.h"
@@ -121,7 +121,7 @@ void PrintViewManager::StopNavigation() {
   TerminatePrintJob(true);
 }
 
-void PrintViewManager::RenderViewGone(base::TerminationStatus status) {
+void PrintViewManager::RenderProcessGone(base::TerminationStatus status) {
   ReleasePrinterQuery();
 
   if (!print_job_.get())
@@ -264,8 +264,6 @@ bool PrintViewManager::OnMessageReceived(const IPC::Message& message) {
     IPC_MESSAGE_HANDLER(PrintHostMsg_DidShowPrintDialog, OnDidShowPrintDialog)
     IPC_MESSAGE_HANDLER(PrintHostMsg_DidPrintPage, OnDidPrintPage)
     IPC_MESSAGE_HANDLER(PrintHostMsg_PrintingFailed, OnPrintingFailed)
-    IPC_MESSAGE_HANDLER_DELAY_REPLY(PrintHostMsg_ScriptedPrintPreview,
-                                    OnScriptedPrintPreview)
     IPC_MESSAGE_UNHANDLED(handled = false)
   IPC_END_MESSAGE_MAP()
   return handled;

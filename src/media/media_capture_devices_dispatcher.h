@@ -27,6 +27,9 @@ class MediaCaptureDevicesDispatcher
     virtual void OnUpdateVideoDevices(
         const content::MediaStreamDevices& devices) {}
 
+    virtual void OnCreatingAudioStream(int render_process_id,
+                                       int render_view_id) {}
+
     virtual ~Observer() {}
   };
 
@@ -37,6 +40,9 @@ class MediaCaptureDevicesDispatcher
 
   // Called on IO thread when one video device is plugged in or unplugged.
   void VideoCaptureDevicesChanged(const content::MediaStreamDevices& devices);
+  void OnCreatingAudioStream(int render_process_id,
+                             int render_view_id);
+
 
   // Methods for observers. Called on UI thread.
   // Observers should add themselves on construction and remove themselves
@@ -54,6 +60,8 @@ class MediaCaptureDevicesDispatcher
   // executed on UI thread.
   void UpdateAudioDevicesOnUIThread(const content::MediaStreamDevices& devices);
   void UpdateVideoDevicesOnUIThread(const content::MediaStreamDevices& devices);
+  void OnCreatingAudioStreamOnUIThread(int render_process_id,
+                                       int render_view_id);
 
   // A list of cached audio capture devices.
   content::MediaStreamDevices audio_devices_;

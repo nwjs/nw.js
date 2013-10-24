@@ -117,10 +117,14 @@ void ShellJavaScriptDialogCreator::RunBeforeUnloadDialog(
 #endif
 }
 
-void ShellJavaScriptDialogCreator::ResetJavaScriptState(
+void ShellJavaScriptDialogCreator::WebContentsDestroyed(
+    WebContents* web_contents) {
+}
+
+void ShellJavaScriptDialogCreator::CancelActiveAndPendingDialogs(
     WebContents* web_contents) {
 #if defined(OS_MACOSX) || defined(OS_WIN) || defined(TOOLKIT_GTK)
-  if (dialog_.get()) {
+  if (dialog_) {
     dialog_->Cancel();
     dialog_.reset();
   }

@@ -275,7 +275,7 @@ void PrintDialogGtk::PrintDocument(const printing::Metafile* metafile,
 
   if (!error && !metafile->SaveTo(path_to_pdf_)) {
     LOG(ERROR) << "Saving metafile failed";
-    file_util::Delete(path_to_pdf_, false);
+    base::DeleteFile(path_to_pdf_, false);
     error = true;
   }
 
@@ -406,8 +406,8 @@ void PrintDialogGtk::OnJobCompleted(GtkPrintJob* print_job, GError* error) {
     LOG(ERROR) << "Printing failed: " << error->message;
   if (print_job)
     g_object_unref(print_job);
-  base::FileUtilProxy::Delete(
-      BrowserThread::GetMessageLoopProxyForThread(BrowserThread::FILE),
+  base::FileUtilProxy::DeleteFile(
+      BrowserThread::GetMessageLoopProxyForThread(BrowserThread::FILE).get(),
       path_to_pdf_, false, base::FileUtilProxy::StatusCallback());
   // Printing finished. Matches AddRef() in PrintDocument();
   Release();
