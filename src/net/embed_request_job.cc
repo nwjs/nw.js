@@ -28,7 +28,7 @@
 #include "base/logging.h"
 #include "base/platform_file.h"
 #include "base/files/file_path.h"
-#include "base/string_util.h"
+#include "base/strings/string_util.h"
 #include "base/synchronization/lock.h"
 #include "base/threading/worker_pool.h"
 #include "base/threading/thread_restrictions.h"
