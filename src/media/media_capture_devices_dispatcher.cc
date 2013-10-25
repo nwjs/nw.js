@@ -165,6 +165,3 @@ MediaCaptureDevicesDispatcher::GetFirstAvailableVideoDevice() {
   return &(*video_devices.begin());
 }
 
-MediaCaptureDevicesDispatcher* MediaCaptureDevicesDispatcher::GetInstance() {
-  return Singleton<MediaCaptureDevicesDispatcher>::get();
-}

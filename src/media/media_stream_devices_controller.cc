@@ -115,27 +115,26 @@ const std::string& MediaStreamDevicesController::GetSecurityOriginSpec() const {
 void MediaStreamDevicesController::Accept(bool update_content_setting) {
   // Get the default devices for the request.
   content::MediaStreamDevices devices;
+  MediaCaptureDevicesDispatcher* dispatcher =
+      MediaInternals::GetInstance()->GetMediaCaptureDevicesDispatcher();
   switch (request_.request_type) {
   case content::MEDIA_OPEN_DEVICE: {
     const content::MediaStreamDevice* device = NULL;
     // For open device request pick the desired device or fall back to the
     // first available of the given type.
     if (request_.audio_type == content::MEDIA_DEVICE_AUDIO_CAPTURE) {
-      device = MediaCaptureDevicesDispatcher::GetInstance()->
+      device = dispatcher->
         GetRequestedAudioDevice(request_.requested_audio_device_id);
       // TODO(wjia): Confirm this is the intended behavior.
       if (!device) {
-        device = MediaCaptureDevicesDispatcher::GetInstance()->
-          GetFirstAvailableAudioDevice();
+        device = dispatcher->GetFirstAvailableAudioDevice();
       }
     } else if (request_.video_type == content::MEDIA_DEVICE_VIDEO_CAPTURE) {
       // Pepper API opens only one device at a time.
-      device = MediaCaptureDevicesDispatcher::GetInstance()->
-        GetRequestedVideoDevice(request_.requested_video_device_id);
+      device = dispatcher->GetRequestedVideoDevice(request_.requested_video_device_id);
       // TODO(wjia): Confirm this is the intended behavior.
       if (!device) {
-        device = MediaCaptureDevicesDispatcher::GetInstance()->
-          GetFirstAvailableVideoDevice();
+        device = dispatcher->GetFirstAvailableVideoDevice();
       }
     }
     if (device)
@@ -148,8 +147,7 @@ void MediaStreamDevicesController::Accept(bool update_content_setting) {
       // Get the exact audio or video device if an id is specified.
       if (!request_.requested_audio_device_id.empty()) {
         const content::MediaStreamDevice* audio_device =
-          MediaCaptureDevicesDispatcher::GetInstance()->
-          GetRequestedAudioDevice(request_.requested_audio_device_id);
+          dispatcher->GetRequestedAudioDevice(request_.requested_audio_device_id);
         if (audio_device) {
           devices.push_back(*audio_device);
           needs_audio_device = false;
@@ -157,8 +155,7 @@ void MediaStreamDevicesController::Accept(bool update_content_setting) {
       }
       if (!request_.requested_video_device_id.empty()) {
         const content::MediaStreamDevice* video_device =
-          MediaCaptureDevicesDispatcher::GetInstance()->
-          GetRequestedVideoDevice(request_.requested_video_device_id);
+          dispatcher->GetRequestedVideoDevice(request_.requested_video_device_id);
         if (video_device) {
           devices.push_back(*video_device);
           needs_video_device = false;

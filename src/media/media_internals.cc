@@ -125,5 +125,5 @@ MediaInternals::GetMediaCaptureDevicesDispatcher() {
 }
 
 MediaInternals::MediaInternals()
-  : media_devices_dispatcher_(MediaCaptureDevicesDispatcher::GetInstance()) {
+  : media_devices_dispatcher_(new MediaCaptureDevicesDispatcher()) {
 }

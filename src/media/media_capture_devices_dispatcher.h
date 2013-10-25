@@ -33,8 +33,6 @@ class MediaCaptureDevicesDispatcher
     virtual ~Observer() {}
   };
 
-  static MediaCaptureDevicesDispatcher* GetInstance();
-
   MediaCaptureDevicesDispatcher();
   virtual ~MediaCaptureDevicesDispatcher();
 
@@ -66,7 +64,6 @@ class MediaCaptureDevicesDispatcher
   // are available.
   const content::MediaStreamDevice* GetFirstAvailableAudioDevice();
   const content::MediaStreamDevice* GetFirstAvailableVideoDevice();
-
 
  private:
   friend class base::RefCountedThreadSafe<MediaCaptureDevicesDispatcher>;
