@@ -56,7 +56,6 @@ class ShellContentRendererClient : public ContentRendererClient {
   scoped_ptr<ShellRenderProcessObserver> shell_observer_;
   scoped_ptr<api::WindowBindings> window_bindings_;
 
->>>>>>> upstream/master
   void InstallNodeSymbols(WebKit::WebFrame* frame,
                           v8::Handle<v8::Context> context, const GURL& url);
   void UninstallNodeSymbols(WebKit::WebFrame* frame,

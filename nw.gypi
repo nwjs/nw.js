@@ -820,15 +820,15 @@
             'src/shell_content_main.cc',
             'src/shell_content_main.h',
           ],
-          'copies': [
-            {
+          #'copies': [
+          #  {
               # Copy FFmpeg binaries for audio/video support.
-              'destination': '<(PRODUCT_DIR)/$(CONTENTS_FOLDER_PATH)/Libraries',
-              'files': [
-                '<(PRODUCT_DIR)/ffmpegsumo.so',
-              ],
-            },
-          ],
+              #'destination': '<(PRODUCT_DIR)/$(CONTENTS_FOLDER_PATH)/Libraries',
+              #'files': [
+              #  '<(PRODUCT_DIR)/ffmpegsumo.so',
+              #],
+          #  },
+          #],
         },  # target nw_framework
         {
           'target_name': 'nw_helper_app',

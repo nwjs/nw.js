@@ -270,7 +270,7 @@ bool Package::InitFromPath() {
 		// path_/package.json
 		manifest_path = path_.AppendASCII("package.json");
 		manifest_path = MakeAbsoluteFilePath(manifest_path);
-		if (!file_util::PathExists(manifest_path)) {
+		if (!base::PathExists(manifest_path)) {
 			if (!self_extract())
 				ReportError("Invalid package",
 							"There is no 'package.json' in the package, please make "

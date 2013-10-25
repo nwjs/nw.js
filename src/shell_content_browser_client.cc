@@ -285,8 +285,8 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
     //PathService::Get(base::DIR_CURRENT, &plugins_dir);
     plugins_dir = plugins_dir.AppendASCII("plugins");
 
-    PluginService* plugin_service = PluginService::GetInstance();
-    plugin_service->AddExtraPluginDir(plugins_dir);
+    //PluginService* plugin_service = PluginService::GetInstance();
+    //plugin_service->AddExtraPluginDir(plugins_dir);
   }
 }
 
