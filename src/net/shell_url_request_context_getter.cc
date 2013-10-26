@@ -53,6 +53,7 @@
 #include "net/url_request/url_request_context.h"
 #include "net/url_request/url_request_context_storage.h"
 #include "net/url_request/url_request_job_factory_impl.h"
+#include "ui/base/l10n/l10n_util.h"
 
 using base::MessageLoop;
 
@@ -130,8 +131,14 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
     storage_->set_server_bound_cert_service(new net::ServerBoundCertService(
         new net::DefaultServerBoundCertStore(NULL),
         base::WorkerPool::GetTaskRunner(true)));
+
+    std::string accept_lang = l10n_util::GetApplicationLocale(std::string());
+    if (accept_lang.empty())
+      accept_lang = "en-us,en";
+    else
+      accept_lang.append(",en-us,en");
     storage_->set_http_user_agent_settings(
-        new net::StaticHttpUserAgentSettings("en-us,en", EmptyString()));
+           new net::StaticHttpUserAgentSettings(accept_lang, EmptyString()));
 
     scoped_ptr<net::HostResolver> host_resolver(
         net::HostResolver::CreateDefaultResolver(NULL));
