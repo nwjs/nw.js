@@ -138,7 +138,9 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
     else
       accept_lang.append(",en-us,en");
     storage_->set_http_user_agent_settings(
-           new net::StaticHttpUserAgentSettings(accept_lang, EmptyString()));
+         new net::StaticHttpUserAgentSettings(
+                net::HttpUtil::GenerateAcceptLanguageHeader(accept_lang),
+                EmptyString()));
 
     scoped_ptr<net::HostResolver> host_resolver(
         net::HostResolver::CreateDefaultResolver(NULL));
