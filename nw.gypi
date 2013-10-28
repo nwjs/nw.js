@@ -5,6 +5,11 @@
 {
   'variables': {
     'nw_product_name': 'node-webkit',
+    'conditions': [
+      ['OS=="linux"', {
+       'linux_dump_symbols%': 1,
+      }],
+    ],
   },
   'targets': [
     {
