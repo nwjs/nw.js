@@ -31,6 +31,7 @@
 #include "content/nw/src/net/app_protocol_handler.h"
 #include "content/nw/src/nw_protocol_handler.h"
 #include "content/nw/src/nw_shell.h"
+#include "content/nw/src/shell_content_browser_client.h"
 #include "net/cert/cert_verifier.h"
 #include "net/ssl/default_server_bound_cert_store.h"
 #include "net/dns/host_resolver.h"
@@ -109,7 +110,11 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::IO));
 
   if (!url_request_context_.get()) {
-    url_request_context_.reset(new net::URLRequestContext());
+    ShellContentBrowserClient* browser_client =
+      static_cast<ShellContentBrowserClient*>(
+          GetContentClient()->browser());
+
+  url_request_context_.reset(new net::URLRequestContext());
     network_delegate_.reset(new ShellNetworkDelegate);
     url_request_context_->set_network_delegate(network_delegate_.get());
     storage_.reset(
@@ -132,7 +137,7 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
         new net::DefaultServerBoundCertStore(NULL),
         base::WorkerPool::GetTaskRunner(true)));
 
-    std::string accept_lang = l10n_util::GetApplicationLocale(std::string());
+    std::string accept_lang = browser_client->GetApplicationLocale();
     if (accept_lang.empty())
       accept_lang = "en-us,en";
     else

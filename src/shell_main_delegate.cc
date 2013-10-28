@@ -137,6 +137,7 @@ bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
 
 void ShellMainDelegate::PreSandboxStartup() {
   breakpad::SetBreakpadClient(g_chrome_breakpad_client.Pointer());
+  CommandLine* command_line = CommandLine::ForCurrentProcess();
 
 #if defined(OS_MACOSX)
   OverrideFrameworkBundlePath();
@@ -145,7 +146,6 @@ void ShellMainDelegate::PreSandboxStartup() {
 #endif  // OS_MACOSX
   InitializeResourceBundle();
 
-  CommandLine* command_line = CommandLine::ForCurrentProcess();
   std::string process_type =
       command_line->GetSwitchValueASCII(switches::kProcessType);
 

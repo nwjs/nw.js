@@ -56,6 +56,7 @@
 #include "geolocation/shell_access_token_store.h"
 #include "url/gurl.h"
 #include "ui/base/l10n/l10n_util.h"
+#include "ui/base/ui_base_switches.h"
 #include "content/common/dom_storage/dom_storage_map.h"
 #include "webkit/common/webpreferences.h"
 #include "webkit/common/user_agent/user_agent_util.h"
@@ -135,7 +136,12 @@ WebContentsViewPort* ShellContentBrowserClient::OverrideCreateWebContentsView(
 }
 
 std::string ShellContentBrowserClient::GetApplicationLocale() {
-  return l10n_util::GetApplicationLocale(std::string());
+  CommandLine* cmd_line = CommandLine::ForCurrentProcess();
+  std::string pref_locale;
+  if (cmd_line->HasSwitch(switches::kLang)) {
+    pref_locale = cmd_line->GetSwitchValueASCII(switches::kLang);
+  }
+  return l10n_util::GetApplicationLocale(pref_locale);
 }
 
 void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
