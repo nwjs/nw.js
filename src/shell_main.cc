@@ -50,10 +50,10 @@ void Bootstrap() {
 
   base::FilePath path = (args.size() > 0) ? base::FilePath(args[0]) : base::FilePath(cmd->GetProgram());
   path = base::MakeAbsoluteFilePath(path);
-  if(file_util::DirectoryExists(path)) {
+  if(base::DirectoryExists(path)) {
     cmd->AppendSwitchNative("resources",path.value());
     return;
-  } else if(file_util::PathExists(path)) {
+  } else if(base::PathExists(path)) {
     char *buffer = new char[MAX_PATH];
     SHGetSpecialFolderPathA(NULL,buffer, CSIDL_LOCAL_APPDATA,FALSE);
     path = base::FilePath::FromUTF8Unsafe(std::string(buffer));
@@ -62,9 +62,9 @@ void Bootstrap() {
     int resource_count = 6;
     path = path.Append(std::wstring(version.begin(),version.end()));
     cmd->AppendSwitchNative("resources", path.value());
-    if(!file_util::PathExists(path)) file_util::CreateDirectory(path);
+    if(!base::PathExists(path)) file_util::CreateDirectory(path);
     for(int i=0; i < resource_count; i++) {
-      if(!file_util::PathExists(path.Append(resources[i]))) {
+      if(!base::PathExists(path.Append(resources[i]))) {
         embed_util::FileMetaInfo meta;
         if(embed_util::Utility::GetFileInfo(std::string(resources[i].begin(),resources[i].end()), &meta) &&
           embed_util::Utility::GetFileData(&meta))
