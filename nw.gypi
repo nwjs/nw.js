@@ -630,6 +630,11 @@
         'VCLinkerTool': {
           'SubSystem': '2',  # Set /SUBSYSTEM:WINDOWS
         },
+	'VCManifestTool': {
+          'AdditionalManifestFiles': [
+            '$(ProjectDir)\\nw\\src\\nw.exe.manifest',
+          ],
+        },
       },
       'conditions': [
         ['OS=="win" and win_use_allocator_shim==1', {
