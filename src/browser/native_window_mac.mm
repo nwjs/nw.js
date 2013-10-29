@@ -48,17 +48,17 @@
 - (void)setMouseDownCanMoveWindow:(BOOL)can_move;
 @end
 
-#if !defined(MAC_OS_X_VERSION_10_8) || \
-MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_8
-@interface NSUserNotificationCenter : NSObject
-@end
-@implementation NSUserNotificationCenter
-@end
-@interface NSUserNotification : NSObject
-@end
-@implementation NSUserNotification
-@end
-#endif
+// #if !defined(MAC_OS_X_VERSION_10_8) || \
+// MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_8
+// @interface NSUserNotificationCenter : NSObject
+// @end
+// @implementation NSUserNotificationCenter
+// @end
+// @interface NSUserNotification : NSObject
+// @end
+// @implementation NSUserNotification
+// @end
+// #endif
 
 // Replicate specific 10.7 SDK declarations for building with prior SDKs.
 #if !defined(MAC_OS_X_VERSION_10_7) || \
@@ -96,7 +96,7 @@ enum {
   }
 	
 	// Set user default notification
-	[[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
+	//[[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
   return self;
 }
 

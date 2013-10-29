@@ -32,7 +32,7 @@
 #include "base/synchronization/lock.h"
 #include "base/threading/worker_pool.h"
 #include "base/threading/thread_restrictions.h"
-#include "googleurl/src/gurl.h"
+#include "url/gurl.h"
 #include "net/base/escape.h"
 #include "net/base/file_stream.h"
 #include "net/base/io_buffer.h"
