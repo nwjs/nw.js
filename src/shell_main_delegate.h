@@ -28,7 +28,7 @@ class ShellMainDelegate : public ContentMainDelegate {
   virtual ContentBrowserClient* CreateContentBrowserClient() OVERRIDE;
   virtual ContentRendererClient* CreateContentRendererClient() OVERRIDE;
 
-  static void InitializeResourceBundle();
+  static void InitializeResourceBundle(const std::string& pref_locale);
 #if defined(OS_POSIX) && !defined(OS_MACOSX)
   virtual void ZygoteForked() OVERRIDE;
 #endif

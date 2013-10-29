@@ -138,13 +138,17 @@ bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
 void ShellMainDelegate::PreSandboxStartup() {
   breakpad::SetBreakpadClient(g_chrome_breakpad_client.Pointer());
   CommandLine* command_line = CommandLine::ForCurrentProcess();
+  std::string pref_locale;
+  if (command_line->HasSwitch(switches::kLang)) {
+    pref_locale = command_line->GetSwitchValueASCII(switches::kLang);
+  }
 
 #if defined(OS_MACOSX)
   OverrideFrameworkBundlePath();
   OverrideChildProcessPath();
   l10n_util::OverrideLocaleWithUserDefault();
 #endif  // OS_MACOSX
-  InitializeResourceBundle();
+  InitializeResourceBundle(pref_locale);
 
   std::string process_type =
       command_line->GetSwitchValueASCII(switches::kProcessType);
@@ -179,13 +183,13 @@ int ShellMainDelegate::RunProcess(
   return ShellBrowserMain(main_function_params);
 }
 
-void ShellMainDelegate::InitializeResourceBundle() {
+void ShellMainDelegate::InitializeResourceBundle(const std::string& pref_locale) {
   FilePath pak_file;
 #if defined(OS_MACOSX)
   FilePath locale_file;
   if (!GetResourcesPakFilePath(pak_file))
     LOG(FATAL) << "nw.pak file not found.";
-  std::string locale = l10n_util::GetApplicationLocale(std::string());
+  std::string locale = l10n_util::GetApplicationLocale(pref_locale);
   if (!GetLocalePakFilePath(locale, locale_file))
     LOG(FATAL) << locale << ".pak file not found.";
   ui::ResourceBundle::InitSharedInstanceWithPakPath2(pak_file, locale_file);
