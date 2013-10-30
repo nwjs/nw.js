@@ -46,6 +46,14 @@ void ShellJavaScriptDialogCreator::RunJavaScriptDialog(
     const string16& default_prompt_text,
     const DialogClosedCallback& callback,
     bool* did_suppress_message) {
+#if defined(OS_WIN)
+    if(javascript_message_type==JAVASCRIPT_MESSAGE_TYPE_ALERT)
+    {
+        MessageBox(NULL, message_text.c_str(), L"", MB_OK);
+        *did_suppress_message = false;
+        return;
+    }
+#endif
   if (!dialog_request_callback_.is_null()) {
     dialog_request_callback_.Run();
     callback.Run(true, string16());
