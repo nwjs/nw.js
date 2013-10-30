@@ -72,6 +72,7 @@ const char kmResizable[]  = "resizable";
 const char kmAsDesktop[]  = "as_desktop";
 const char kmFullscreen[] = "fullscreen";
 const char kmTransparent[] = "transparent";
+const char kmGlass[] = "glass";
 const char kmInitialFocus[] = "focus";
 const char kmTaskBar[] = "taskbar";
 

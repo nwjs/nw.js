@@ -127,6 +127,7 @@ class NativeWindow {
   content::Shell* shell() const { return shell_.get(); }
   content::WebContents* web_contents() const;
   bool has_frame() const { return has_frame_; }
+  bool IsGlass() const;
   const gfx::Image& app_icon() const { return app_icon_; }
   void CapturePage(const std::string& image_format);
 
@@ -142,6 +143,7 @@ class NativeWindow {
   base::WeakPtr<content::Shell> shell_;
 
   bool has_frame_;
+  bool is_glass_;
 
   // Icon showed in the task bar.
   gfx::Image app_icon_;

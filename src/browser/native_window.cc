@@ -76,8 +76,13 @@ NativeWindow::NativeWindow(const base::WeakPtr<content::Shell>& shell,
     has_frame_ = false;
   else
     manifest->GetBoolean(switches::kmFrame, &has_frame_);
+  manifest->GetBoolean(switches::kmGlass, &is_glass_);
 
   LoadAppIconFromPackage(manifest);
+}
+
+bool NativeWindow::IsGlass() const {
+  return is_glass_;
 }
 
 NativeWindow::~NativeWindow() {

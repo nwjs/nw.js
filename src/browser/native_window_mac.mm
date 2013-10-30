@@ -229,6 +229,7 @@ enum {
 @interface ShellNSWindow : ChromeEventProcessingWindow {
  @private
   bool is_transparent_;
+  bool is_glass_;
   base::WeakPtr<content::Shell> shell_;
 }
 - (void)setShell:(const base::WeakPtr<content::Shell>&)shell;
@@ -257,6 +258,15 @@ enum {
   is_transparent_ = true;
 }
 
+- (void)setGlass {
+  is_glass_ = true;
+}
+
+- (BOOL)getGlass {
+  return is_glass_;
+}
+
+
 - (BOOL)getTransparent {
   return is_transparent_;
 }
@@ -279,11 +289,12 @@ enum {
 - (void)drawCustomFrameRect:(NSRect)rect forView:(NSView*)view {
   [super drawCustomFrameRect:rect forView:view];
 
-  [[NSBezierPath bezierPathWithRect:rect] addClip];
-  [[NSColor clearColor] set];
-  NSRectFill(rect);
-
-  if(![self getTransparent])
+  if(![self getGlass]) {
+    [[NSBezierPath bezierPathWithRect:rect] addClip];
+    [[NSColor clearColor] set];
+    NSRectFill(rect);
+  }
+  if(![self getTransparent] && ![self getGlass])
   {
     // Set up our clip.
     CGFloat cornerRadius = 4.0;
@@ -366,6 +377,7 @@ NativeWindowCocoa::NativeWindowCocoa(
   }
   window_ = shell_window;
   [shell_window setShell:shell];
+  if(is_glass_) [shell_window setGlass];
   [window() setDelegate:[[NativeWindowDelegate alloc] initWithShell:shell]];
   if(is_transparent_)
     SetTransparent();
