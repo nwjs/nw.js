@@ -190,8 +190,12 @@ void ShellMainDelegate::InitializeResourceBundle(const std::string& pref_locale)
   if (!GetResourcesPakFilePath(pak_file))
     LOG(FATAL) << "nw.pak file not found.";
   std::string locale = l10n_util::GetApplicationLocale(pref_locale);
-  if (!GetLocalePakFilePath(locale, locale_file))
-    LOG(FATAL) << locale << ".pak file not found.";
+  if (!GetLocalePakFilePath(locale, locale_file)) {
+    LOG(WARNING) << locale << ".pak file not found.";
+    locale = "en-US";
+    if (!GetLocalePakFilePath(locale, locale_file))
+      LOG(ERROR) << locale << ".pak file not found.";
+  }
   ui::ResourceBundle::InitSharedInstanceWithPakPath2(pak_file, locale_file);
 #else
   FilePath pak_dir;
