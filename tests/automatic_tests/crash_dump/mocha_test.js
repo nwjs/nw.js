@@ -5,11 +5,15 @@ var fs = require('fs');
 var fs_extra = require('fs-extra');
 var results;
 describe('crash dump', function() {
-
+    before(function(done) {
+	fs.mkdirSync('./automatic_tests/crash_dump/tmp');
+	done();
+    });
+    
     after(function () {
-	fs_extra.remove('./automatic_tests/crash_dump/tmp', function (er) {
+    	fs_extra.remove('./automatic_tests/crash_dump/tmp', function (er) {
             if (er) throw er;
-	});
+    	});
     });
 
     describe('crashBrowser()', function() {
@@ -20,8 +24,10 @@ describe('crash dump', function() {
 		appPath: path.join(global.tests_dir, 'crash_dump'),
 		args:[0],
 		end: function(data, app) {
-		    result = fs.readdirSync('./automatic_tests/crash_dump/tmp');
-                    done();
+		    setTimeout(function() {
+			result = fs.readdirSync('./automatic_tests/crash_dump/tmp');
+			done();
+		    }, 2000);
 		}
 	    });
 	});

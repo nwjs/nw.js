@@ -6,7 +6,7 @@ var fs_extra = require('fs-extra');
 var spawn = require('child_process').spawn;
 var result;
 
-describe('afterpp close previous window then open new', function() {
+describe('after close previous window then open new', function() {
     after(function () {
     	fs_extra.remove('./automatic_tests/after_close_previous_window_then_open_new/tmp', function (er) {
             if (er) throw er;
