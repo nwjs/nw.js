@@ -22,7 +22,13 @@
 #define CONTENT_NW_SRC_API_WINDOW_WINDOW_H_
 
 #include "base/compiler_specific.h"
+#include "base/values.h"
 #include "content/nw/src/api/base/base.h"
+#include "content/public/browser/render_process_host.h"
+#include "net/cookies/canonical_cookie.h"
+#include "net/url_request/url_request_context_getter.h"
+#include "url/gurl.h"
+
 
 namespace content {
 class Shell;
@@ -42,8 +48,19 @@ class Window : public Base {
   virtual void CallSync(const std::string& method,
                         const base::ListValue& arguments,
                         base::ListValue* result) OVERRIDE;
+
+  void CookieGet(const base::ListValue& arguments);
+  void GetCookieOnIOThread();
+  void GetCookieCallback(const net::CookieList& cookie_list);
+  void RespondOnUIThread();
+
  private:
+
   content::Shell* shell_;
+  net::URLRequestContextGetter* store_context_;
+  scoped_ptr<base::DictionaryValue> details_;
+  scoped_ptr<base::DictionaryValue> result_;
+  GURL url_;
 
   DISALLOW_COPY_AND_ASSIGN(Window);
 };

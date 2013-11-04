@@ -1,22 +1,36 @@
 function Window(routing_id, nobind) {
-  // Get and set id.
-  var id = global.__nwObjectsRegistry.allocateId();
-  Object.defineProperty(this, 'id', {
-    value: id,
-    writable: false
-  });
+    // Get and set id.
+    native function CallObjectMethod();
+    native function CallObjectMethodSync();
+    var id = global.__nwObjectsRegistry.allocateId();
+    Object.defineProperty(this, 'id', {
+        value: id,
+        writable: false
+    });
 
-  // Store routing id (need for IPC since we are in node's context).
-  this.routing_id = routing_id;
+    // Store routing id (need for IPC since we are in node's context).
+    this.routing_id = routing_id;
 
-  // Store myself in node's context.
-  global.__nwWindowsStore[id] = this;
-  global.__nwObjectsRegistry.set(id, this);
+    // Store myself in node's context.
+    global.__nwWindowsStore[id] = this;
+    global.__nwObjectsRegistry.set(id, this);
 
-  // Tell Shell I'm the js delegate of it.
-  native function BindToShell();
-  if (!nobind)
-    BindToShell(this.routing_id, this.id);
+    // Tell Shell I'm the js delegate of it.
+    native function BindToShell();
+    if (!nobind)
+        BindToShell(this.routing_id, this.id);
+
+    var that = this;
+    this.cookies = {
+        get : function(details, cb) {
+            CallObjectMethod(that, 'CookieGet', [ details ]);
+            if (typeof cb == 'function') {
+                that.once('__nw_gotcookie', function(cookie) {
+                    cb(cookie);
+                });
+            }
+        }
+    }
 }
 
 // Window will inherit EventEmitter in "third_party/node/src/node.js", do
@@ -52,7 +66,7 @@ Window.prototype.handleEvent = function(ev) {
   for (var i = 0; i < listeners_copy.length; ++i) {
     var original_closure = v8_util.getCreationContext(listeners_copy[i]);
 
-    // Skip for node context. 
+    // Skip for node context.
     if (v8_util.getConstructorName(original_closure) != 'Window')
       continue;
 
