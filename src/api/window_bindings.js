@@ -352,7 +352,7 @@ Window.prototype.capturePage = function(callback, image_format) {
   }
 
   if (typeof callback == 'function') {
-    this.once('capturepagedone', function(imgdata) {
+    this.once('__nw_capturepagedone', function(imgdata) {
       callback(imgdata);
     });
   }

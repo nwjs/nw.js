@@ -147,7 +147,7 @@ void CapturePageHelper::SendResultFromBitmap(const SkBitmap& screen_capture) {
   base64_result.insert(0, base::StringPrintf("data:%s;base64,",
                                              mime_type.c_str()));
 
-  shell_->SendEvent("capturepagedone", base64_result);
+  shell_->SendEvent("__nw_capturepagedone", base64_result);
 }
 
 void CapturePageHelper::OnSnapshot(const SkBitmap& bitmap) {
