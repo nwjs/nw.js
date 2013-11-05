@@ -26,6 +26,17 @@ function Window(routing_id, nobind) {
             CallObjectMethod(that, 'CookieGet', [ details ]);
             if (typeof cb == 'function') {
                 that.once('__nw_gotcookie', function(cookie) {
+                    if (cookie.length > 0)
+                        cb(cookie[0]);
+                    else
+                        cb(null);
+                });
+            }
+        },
+        getAll : function(details, cb) {
+            CallObjectMethod(that, 'CookieGetAll', [ details ]);
+            if (typeof cb == 'function') {
+                that.once('__nw_gotcookie', function(cookie) {
                     cb(cookie);
                 });
             }

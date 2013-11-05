@@ -49,9 +49,11 @@ class Window : public Base {
                         const base::ListValue& arguments,
                         base::ListValue* result) OVERRIDE;
 
-  void CookieGet(const base::ListValue& arguments);
+  void CookieGet(const base::ListValue& arguments, bool get_all = false);
   void GetCookieOnIOThread();
+  void GetAllCookieOnIOThread();
   void GetCookieCallback(const net::CookieList& cookie_list);
+  void GetAllCookieCallback(const net::CookieList& cookie_list);
   void RespondOnUIThread();
 
  private:
@@ -59,7 +61,7 @@ class Window : public Base {
   content::Shell* shell_;
   net::URLRequestContextGetter* store_context_;
   scoped_ptr<base::DictionaryValue> details_;
-  scoped_ptr<base::DictionaryValue> result_;
+  scoped_ptr<base::ListValue> result_;
   GURL url_;
 
   DISALLOW_COPY_AND_ASSIGN(Window);

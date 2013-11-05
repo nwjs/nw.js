@@ -53,6 +53,82 @@ void GetCookieListFromStore(
   }
 }
 
+bool MatchesDomain(base::DictionaryValue* details, const std::string& domain) {
+  std::string val;
+  if (!details->GetString("domain", &val))
+    return true;
+
+  // Add a leading '.' character to the filter domain if it doesn't exist.
+  if (net::cookie_util::DomainIsHostOnly(val))
+    val.insert(0, ".");
+
+  std::string sub_domain(domain);
+  // Strip any leading '.' character from the input cookie domain.
+  if (!net::cookie_util::DomainIsHostOnly(sub_domain))
+    sub_domain = sub_domain.substr(1);
+
+  // Now check whether the domain argument is a subdomain of the filter domain.
+  for (sub_domain.insert(0, ".");
+       sub_domain.length() >= val.length();) {
+    if (sub_domain == val)
+      return true;
+    const size_t next_dot = sub_domain.find('.', 1);  // Skip over leading dot.
+    sub_domain.erase(0, next_dot);
+  }
+  return false;
+}
+
+bool MatchesCookie(base::DictionaryValue* details,
+                     const net::CanonicalCookie& cookie) {
+  std::string val;
+
+  bool flag;
+  if (details->GetString("name", &val))
+    if (val != cookie.Name())
+      return false;
+
+  if (!MatchesDomain(details, cookie.Domain()))
+      return false;
+
+  if (details->GetString("path", &val))
+    if (val != cookie.Path())
+      return false;
+
+  if (details->GetBoolean("secure", &flag))
+    if (flag != cookie.IsSecure())
+      return false;
+
+  if (details->GetBoolean("session", &flag))
+    if (flag != cookie.IsPersistent())
+      return false;
+
+  return true;
+}
+
+base::DictionaryValue*
+PopulateCookieObject(const net::CanonicalCookie& canonical_cookie) {
+
+  base::DictionaryValue* result = new base::DictionaryValue();
+  // A cookie is a raw byte sequence. By explicitly parsing it as UTF-8, we
+  // apply error correction, so the string can be safely passed to the renderer.
+  result->SetString("name", UTF16ToUTF8(UTF8ToUTF16(canonical_cookie.Name())));
+  result->SetString("value", UTF16ToUTF8(UTF8ToUTF16(canonical_cookie.Value())));
+  result->SetString("domain", canonical_cookie.Domain());
+  result->SetBoolean("host_only", net::cookie_util::DomainIsHostOnly(
+                                                                      canonical_cookie.Domain()));
+  // A non-UTF8 path is invalid, so we just replace it with an empty string.
+  result->SetString("path", IsStringUTF8(canonical_cookie.Path()) ? canonical_cookie.Path()
+                     : std::string());
+  result->SetBoolean("secure", canonical_cookie.IsSecure());
+  result->SetBoolean("http_only", canonical_cookie.IsHttpOnly());
+  result->SetBoolean("session", !canonical_cookie.IsPersistent());
+  if (canonical_cookie.IsPersistent()) {
+    result->SetDouble("expiration_date",
+                       canonical_cookie.ExpiryDate().ToDoubleT());
+  }
+  return result;
+}
+
 } // namespace
 
 namespace api {
@@ -66,6 +142,8 @@ Window::Window(int id,
   DVLOG(1) << "Window::Window(" << id << ")";
   // Set ID for Shell
   shell_->set_id(id);
+
+  result_.reset(new base::ListValue);
 }
 
 Window::~Window() {
@@ -161,6 +239,8 @@ void Window::Call(const std::string& method,
       shell_->window()->CapturePage(image_format_str);
   } else if (method == "CookieGet") {
     CookieGet(arguments);
+  } else if (method == "CookieGetAll") {
+    CookieGet(arguments, true);
   } else {
     NOTREACHED() << "Invalid call to Window method:" << method
                  << " arguments:" << arguments;
@@ -191,7 +271,7 @@ void Window::CallSync(const std::string& method,
 }
 
 
-void Window::CookieGet(const base::ListValue& arguments) {
+void Window::CookieGet(const base::ListValue& arguments, bool get_all) {
   content::RenderProcessHost* render_process_host =
     dispatcher_host()->render_view_host()->GetProcess();
   net::URLRequestContextGetter* context_getter =
@@ -202,16 +282,33 @@ void Window::CookieGet(const base::ListValue& arguments) {
   std::string url;
 
   store_context_ = context_getter;
+  arguments.GetDictionary(0, &details);
   if (details) {
     details_.reset(details->DeepCopyWithoutEmptyChildren());
     details->GetString("url", &url);
   }
   url_ = GURL(url);
 
-  bool rv = BrowserThread::PostTask(
-      BrowserThread::IO, FROM_HERE,
-      base::Bind(&Window::GetCookieOnIOThread, base::Unretained(this)));
-  DCHECK(rv);
+  if (get_all) {
+    bool rv = BrowserThread::PostTask(
+                                      BrowserThread::IO, FROM_HERE,
+                                      base::Bind(&Window::GetAllCookieOnIOThread, base::Unretained(this)));
+    DCHECK(rv);
+  }else{
+    bool rv = BrowserThread::PostTask(
+                                      BrowserThread::IO, FROM_HERE,
+                                      base::Bind(&Window::GetCookieOnIOThread, base::Unretained(this)));
+    DCHECK(rv);
+  }
+}
+
+void Window::GetAllCookieOnIOThread() {
+  DCHECK(BrowserThread::CurrentlyOn(BrowserThread::IO));
+  net::CookieStore* cookie_store =
+      store_context_->GetURLRequestContext()->cookie_store();
+  GetCookieListFromStore(
+      cookie_store, url_,
+      base::Bind(&Window::GetAllCookieCallback, base::Unretained(this)));
 }
 
 void Window::GetCookieOnIOThread() {
@@ -223,13 +320,26 @@ void Window::GetCookieOnIOThread() {
       base::Bind(&Window::GetCookieCallback, base::Unretained(this)));
 }
 
+void Window::GetAllCookieCallback(const net::CookieList& cookie_list) {
+  net::CookieList::const_iterator it;
+  result_->Clear();
+  for (it = cookie_list.begin(); it != cookie_list.end(); ++it) {
+    if (MatchesCookie(details_.get(), *it)) {
+      result_->Append(PopulateCookieObject(*it));
+    }
+  }
+
+  bool rv = BrowserThread::PostTask(
+      BrowserThread::UI, FROM_HERE,
+      base::Bind(&Window::RespondOnUIThread, base::Unretained(this)));
+  DCHECK(rv);
+}
+
 void Window::GetCookieCallback(const net::CookieList& cookie_list) {
   net::CookieList::const_iterator it;
   std::string name;
   details_->GetString("name", &name);
 
-  if (!result_)
-    result_.reset(new base::DictionaryValue);
   result_->Clear();
 
   for (it = cookie_list.begin(); it != cookie_list.end(); ++it) {
@@ -238,24 +348,7 @@ void Window::GetCookieCallback(const net::CookieList& cookie_list) {
     // earliest creation time).
 
     if (it->Name() == name) {
-      const net::CanonicalCookie& canonical_cookie = *it;
-      // A cookie is a raw byte sequence. By explicitly parsing it as UTF-8, we
-      // apply error correction, so the string can be safely passed to the renderer.
-      result_->SetString("name", UTF16ToUTF8(UTF8ToUTF16(canonical_cookie.Name())));
-      result_->SetString("value", UTF16ToUTF8(UTF8ToUTF16(canonical_cookie.Value())));
-      result_->SetString("domain", canonical_cookie.Domain());
-      result_->SetBoolean("host_only", net::cookie_util::DomainIsHostOnly(
-                                                                          canonical_cookie.Domain()));
-      // A non-UTF8 path is invalid, so we just replace it with an empty string.
-      result_->SetString("path", IsStringUTF8(canonical_cookie.Path()) ? canonical_cookie.Path()
-                         : std::string());
-      result_->SetBoolean("secure", canonical_cookie.IsSecure());
-      result_->SetBoolean("http_only", canonical_cookie.IsHttpOnly());
-      result_->SetBoolean("session", !canonical_cookie.IsPersistent());
-      if (canonical_cookie.IsPersistent()) {
-        result_->SetDouble("expiration_date",
-                           canonical_cookie.ExpiryDate().ToDoubleT());
-      }
+      result_->Append(PopulateCookieObject(*it));
       break;
     }
   }
@@ -268,9 +361,9 @@ void Window::GetCookieCallback(const net::CookieList& cookie_list) {
 
 void Window::RespondOnUIThread() {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
-  base::ListValue args;
-  args.Append(result_.release());
-  dispatcher_host()->SendEvent(this, "__nw_gotcookie", args);
+  base::ListValue ret;
+  ret.Append(result_.release());
+  dispatcher_host()->SendEvent(this, "__nw_gotcookie", ret);
 }
 
 }  // namespace api
