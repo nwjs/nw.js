@@ -69,6 +69,7 @@ bool DispatcherHost::Send(IPC::Message* message) {
 bool DispatcherHost::OnMessageReceived(const IPC::Message& message) {
   bool handled = true;
   base::ThreadRestrictions::ScopedAllowIO allow_io;
+  base::ThreadRestrictions::ScopedAllowWait allow_wait;
   IPC_BEGIN_MESSAGE_MAP(DispatcherHost, message)
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_Allocate_Object, OnAllocateObject)
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_Deallocate_Object, OnDeallocateObject)
