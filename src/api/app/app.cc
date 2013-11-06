@@ -118,6 +118,7 @@ void App::Call(Shell* shell,
     return;
   } else if (method == "ClearCache") {
     ClearCache(GetRenderProcessHost());
+    return;
   } else if (method == "GetPackage") {
     result->AppendString(shell->GetPackage()->package_string());
     return;
