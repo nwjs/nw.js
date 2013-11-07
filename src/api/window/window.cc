@@ -21,6 +21,7 @@
 #include "content/nw/src/api/window/window.h"
 
 #include "base/values.h"
+#include "base/strings/stringprintf.h"
 #include "base/strings/utf_string_conversions.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"
@@ -282,8 +283,8 @@ void Window::CookieGet(const base::ListValue& arguments, bool get_all) {
 
   CookieAPIContext* api_context = new CookieAPIContext;
   api_context->store_context_ = context_getter;
-
-  arguments.GetDictionary(0, &details);
+  arguments.GetInteger(0, &api_context->req_id_);
+  arguments.GetDictionary(1, &details);
   if (details) {
     api_context->details_.reset(details->DeepCopyWithoutEmptyChildren());
     details->GetString("url", &url);
@@ -376,7 +377,7 @@ void Window::RespondOnUIThread(CookieAPIContext* api_context) {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
   base::ListValue ret;
   ret.Append(api_context->result_.release());
-  dispatcher_host()->SendEvent(this, "__nw_gotcookie", ret);
+  dispatcher_host()->SendEvent(this, base::StringPrintf("__nw_gotcookie%d", api_context->req_id_), ret);
 }
 
 }  // namespace api

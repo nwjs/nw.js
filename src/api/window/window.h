@@ -42,6 +42,7 @@ public:
   scoped_ptr<base::DictionaryValue> details_;
   scoped_ptr<base::ListValue> result_;
   GURL url_;
+  int req_id_;
 };
 
 

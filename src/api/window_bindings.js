@@ -22,24 +22,27 @@ function Window(routing_id, nobind) {
 
     var that = this;
     this.cookies = {
+        req_id : 0,
         get : function(details, cb) {
-            CallObjectMethod(that, 'CookieGet', [ details ]);
+            this.req_id++;
             if (typeof cb == 'function') {
-                that.once('__nw_gotcookie', function(cookie) {
+                that.once('__nw_gotcookie' + this.req_id, function(cookie) {
                     if (cookie.length > 0)
                         cb(cookie[0]);
                     else
                         cb(null);
                 });
             }
+            CallObjectMethod(that, 'CookieGet', [ this.req_id, details ]);
         },
         getAll : function(details, cb) {
-            CallObjectMethod(that, 'CookieGetAll', [ details ]);
+            this.req_id++;
             if (typeof cb == 'function') {
-                that.once('__nw_gotcookie', function(cookie) {
+                that.once('__nw_gotcookie' + this.req_id, function(cookie) {
                     cb(cookie);
                 });
             }
+            CallObjectMethod(that, 'CookieGetAll', [ this.req_id, details ]);
         }
     }
 }
