@@ -36,6 +36,15 @@ class Shell;
 
 namespace api {
 
+class CookieAPIContext : public base::RefCountedThreadSafe<CookieAPIContext> {
+public:
+  net::URLRequestContextGetter* store_context_;
+  scoped_ptr<base::DictionaryValue> details_;
+  scoped_ptr<base::ListValue> result_;
+  GURL url_;
+};
+
+
 class Window : public Base {
  public:
   Window(int id,
@@ -50,19 +59,15 @@ class Window : public Base {
                         base::ListValue* result) OVERRIDE;
 
   void CookieGet(const base::ListValue& arguments, bool get_all = false);
-  void GetCookieOnIOThread();
-  void GetAllCookieOnIOThread();
-  void GetCookieCallback(const net::CookieList& cookie_list);
-  void GetAllCookieCallback(const net::CookieList& cookie_list);
-  void RespondOnUIThread();
+  void GetCookieOnIOThread(CookieAPIContext*);
+  void GetAllCookieOnIOThread(CookieAPIContext*);
+  void GetCookieCallback(CookieAPIContext*, const net::CookieList& cookie_list);
+  void GetAllCookieCallback(CookieAPIContext*, const net::CookieList& cookie_list);
+  void RespondOnUIThread(CookieAPIContext*);
 
  private:
 
   content::Shell* shell_;
-  net::URLRequestContextGetter* store_context_;
-  scoped_ptr<base::DictionaryValue> details_;
-  scoped_ptr<base::ListValue> result_;
-  GURL url_;
 
   DISALLOW_COPY_AND_ASSIGN(Window);
 };
