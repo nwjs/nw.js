@@ -43,7 +43,9 @@ class MessageLoop;
 
 namespace content {
 
-class ShellURLRequestContextGetter : public net::URLRequestContextGetter {
+class ShellBrowserContext;
+
+ class ShellURLRequestContextGetter : public net::URLRequestContextGetter {
  public:
   ShellURLRequestContextGetter(
       bool ignore_certificate_errors,
@@ -51,7 +53,8 @@ class ShellURLRequestContextGetter : public net::URLRequestContextGetter {
       const base::FilePath& root_path,
       base::MessageLoop* io_loop,
       base::MessageLoop* file_loop,
-      ProtocolHandlerMap* protocol_handlers);
+      ProtocolHandlerMap* protocol_handlers,
+      ShellBrowserContext*);
 
   // net::URLRequestContextGetter implementation.
   virtual net::URLRequestContext* GetURLRequestContext() OVERRIDE;
@@ -75,6 +78,7 @@ class ShellURLRequestContextGetter : public net::URLRequestContextGetter {
   scoped_ptr<net::URLRequestContextStorage> storage_;
   scoped_ptr<net::URLRequestContext> url_request_context_;
   ProtocolHandlerMap protocol_handlers_;
+  ShellBrowserContext* browser_context_;
 
   DISALLOW_COPY_AND_ASSIGN(ShellURLRequestContextGetter);
 };

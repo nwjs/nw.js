@@ -23,7 +23,10 @@
 
 #include "base/compiler_specific.h"
 #include "base/values.h"
+#include "chrome/browser/net/chrome_cookie_notification_details.h"
 #include "content/nw/src/api/base/base.h"
+#include "content/public/browser/notification_observer.h"
+#include "content/public/browser/notification_registrar.h"
 #include "content/public/browser/render_process_host.h"
 #include "net/cookies/canonical_cookie.h"
 #include "net/url_request/url_request_context_getter.h"
@@ -32,6 +35,7 @@
 
 namespace content {
 class Shell;
+class ShellBrowserContext;
 }
 
 namespace api {
@@ -50,7 +54,7 @@ public:
 };
 
 
-class Window : public Base {
+class Window : public Base, public content::NotificationObserver {
  public:
   Window(int id,
          DispatcherHost* dispatcher_host,
@@ -77,9 +81,19 @@ class Window : public Base {
                             const net::CookieList& cookie_list);
   void PullCookie(CookieAPIContext* api_context, bool set_cookie_result);
   void SetCookieOnIOThread(CookieAPIContext* api_context);
-private:
+
+ private:
+  // content::NotificationObserver implementation.
+  virtual void Observe(int type,
+                       const content::NotificationSource& source,
+                       const content::NotificationDetails& details) OVERRIDE;
+
+  // Handler for the COOKIE_CHANGED event. The method takes the details of such
+  // an event and constructs a suitable JSON formatted extension event from it.
+  void CookieChanged(content::ShellBrowserContext*, ChromeCookieDetails* details);
 
   content::Shell* shell_;
+  content::NotificationRegistrar registrar_;
 
   DISALLOW_COPY_AND_ASSIGN(Window);
 };

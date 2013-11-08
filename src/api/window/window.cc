@@ -23,13 +23,16 @@
 #include "base/values.h"
 #include "base/strings/stringprintf.h"
 #include "base/strings/utf_string_conversions.h"
+#include "chrome/browser/chrome_notification_types.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/nw/src/shell_browser_context.h"
 #include "content/public/browser/browser_thread.h"
+#include "content/public/browser/notification_service.h"
 #include "content/public/browser/render_view_host.h"
+#include "content/public/common/url_constants.h"
 #include "net/cookies/canonical_cookie.h"
 #include "net/cookies/cookie_constants.h"
 #include "net/cookies/cookie_monster.h"
@@ -38,8 +41,32 @@
 #include "url/gurl.h"
 
 using content::BrowserThread;
+using content::ShellBrowserContext;
 
 namespace {
+
+const char kCauseKey[] = "cause";
+const char kCookieKey[] = "cookie";
+const char kDomainKey[] = "domain";
+const char kIdKey[] = "id";
+const char kRemovedKey[] = "removed";
+const char kTabIdsKey[] = "tabIds";
+
+// Cause Constants
+const char kEvictedChangeCause[] = "evicted";
+const char kExpiredChangeCause[] = "expired";
+const char kExpiredOverwriteChangeCause[] = "expired_overwrite";
+const char kExplicitChangeCause[] = "explicit";
+const char kOverwriteChangeCause[] = "overwrite";
+
+GURL GetURLFromCanonicalCookie(const net::CanonicalCookie& cookie) {
+  const std::string& domain_key = cookie.Domain();
+  const std::string scheme =
+    cookie.IsSecure() ? "https" : "http";
+  const std::string host =
+      domain_key.find('.') != 0 ? domain_key : domain_key.substr(1);
+  return GURL(scheme + content::kStandardSchemeSeparator + host + "/");
+}
 
 void GetCookieListFromStore(
     net::CookieStore* cookie_store, const GURL& url,
@@ -143,7 +170,10 @@ Window::Window(int id,
   DVLOG(1) << "Window::Window(" << id << ")";
   // Set ID for Shell
   shell_->set_id(id);
-
+  CHECK(registrar_.IsEmpty());
+  registrar_.Add(this,
+                 chrome::NOTIFICATION_COOKIE_CHANGED,
+                 content::NotificationService::AllBrowserContextsAndSources());
 }
 
 Window::~Window() {
@@ -510,6 +540,72 @@ void Window::PullCookieCallback(CookieAPIContext* api_context,
       base::Bind(&Window::RespondOnUIThread, base::Unretained(this),
                  make_scoped_refptr(api_context)));
   DCHECK(rv);
+}
+
+void Window::Observe(
+    int type,
+    const content::NotificationSource& source,
+    const content::NotificationDetails& details) {
+
+  ShellBrowserContext* browser_context =
+    content::Source<ShellBrowserContext>(source).ptr();
+
+  switch (type) {
+    case chrome::NOTIFICATION_COOKIE_CHANGED:
+      CookieChanged(
+          browser_context,
+          content::Details<ChromeCookieDetails>(details).ptr());
+      break;
+
+    default:
+      NOTREACHED();
+  }
+}
+
+void Window::CookieChanged(
+    ShellBrowserContext* browser_context,
+    ChromeCookieDetails* details) {
+  scoped_ptr<base::ListValue> args(new base::ListValue());
+  base::DictionaryValue* dict = new base::DictionaryValue();
+  dict->SetBoolean(kRemovedKey, details->removed);
+  dict->Set(kCookieKey, PopulateCookieObject(*details->cookie));
+
+  // Map the internal cause to an external string.
+  std::string cause;
+  switch (details->cause) {
+    case net::CookieMonster::Delegate::CHANGE_COOKIE_EXPLICIT:
+      cause = kExplicitChangeCause;
+      break;
+
+    case net::CookieMonster::Delegate::CHANGE_COOKIE_OVERWRITE:
+      cause = kOverwriteChangeCause;
+      break;
+
+    case net::CookieMonster::Delegate::CHANGE_COOKIE_EXPIRED:
+      cause = kExpiredChangeCause;
+      break;
+
+    case net::CookieMonster::Delegate::CHANGE_COOKIE_EVICTED:
+      cause = kEvictedChangeCause;
+      break;
+
+    case net::CookieMonster::Delegate::CHANGE_COOKIE_EXPIRED_OVERWRITE:
+      cause = kExpiredOverwriteChangeCause;
+      break;
+
+    default:
+      NOTREACHED();
+  }
+  dict->SetString(kCauseKey, cause);
+
+  args->Append(dict);
+
+  GURL cookie_domain =
+      GetURLFromCanonicalCookie(*details->cookie);
+
+  DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
+  dispatcher_host()->SendEvent(this, "__nw_cookie_changed", *args);
+
 }
 
 }  // namespace api

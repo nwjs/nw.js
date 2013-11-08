@@ -24,7 +24,10 @@
 #include "base/strings/string_split.h"
 #include "base/strings/string_util.h"
 #include "base/threading/worker_pool.h"
+#include "chrome/browser/chrome_notification_types.h"
+#include "chrome/browser/net/chrome_cookie_notification_details.h"
 #include "content/public/browser/browser_thread.h"
+#include "content/public/browser/notification_service.h"
 #include "content/public/common/url_constants.h"
 #include "content/nw/src/net/shell_network_delegate.h"
 #include "content/public/browser/cookie_store_factory.h"
@@ -75,6 +78,43 @@ void InstallProtocolHandlers(net::URLRequestJobFactoryImpl* job_factory,
   protocol_handlers->clear();
 }
 
+// ----------------------------------------------------------------------------
+// CookieMonster::Delegate implementation
+// ----------------------------------------------------------------------------
+class NWCookieMonsterDelegate : public net::CookieMonster::Delegate {
+ public:
+  explicit NWCookieMonsterDelegate(ShellBrowserContext* browser_context)
+    : browser_context_(browser_context) {
+  }
+
+  // net::CookieMonster::Delegate implementation.
+  virtual void OnCookieChanged(
+      const net::CanonicalCookie& cookie,
+      bool removed,
+      net::CookieMonster::Delegate::ChangeCause cause) OVERRIDE {
+    BrowserThread::PostTask(
+        BrowserThread::UI, FROM_HERE,
+        base::Bind(&NWCookieMonsterDelegate::OnCookieChangedAsyncHelper,
+                   this, cookie, removed, cause));
+  }
+
+ private:
+  virtual ~NWCookieMonsterDelegate() {}
+
+  void OnCookieChangedAsyncHelper(
+      const net::CanonicalCookie& cookie,
+      bool removed,
+      net::CookieMonster::Delegate::ChangeCause cause) {
+    ChromeCookieDetails cookie_details(&cookie, removed, cause);
+      content::NotificationService::current()->Notify(
+          chrome::NOTIFICATION_COOKIE_CHANGED,
+          content::Source<ShellBrowserContext>(browser_context_),
+          content::Details<ChromeCookieDetails>(&cookie_details));
+  }
+
+  ShellBrowserContext* browser_context_;
+};
+
 }  // namespace
 
 
@@ -84,12 +124,14 @@ ShellURLRequestContextGetter::ShellURLRequestContextGetter(
     const FilePath& root_path,
     MessageLoop* io_loop,
     MessageLoop* file_loop,
-    ProtocolHandlerMap* protocol_handlers)
+    ProtocolHandlerMap* protocol_handlers,
+    ShellBrowserContext* browser_context)
     : ignore_certificate_errors_(ignore_certificate_errors),
       data_path_(data_path),
       root_path_(root_path),
       io_loop_(io_loop),
-      file_loop_(file_loop) {
+      file_loop_(file_loop),
+      browser_context_(browser_context) {
   // Must first be created on the UI thread.
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
 
@@ -126,7 +168,7 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
         cookie_path,
         false,
         NULL,
-        NULL);
+        new NWCookieMonsterDelegate(browser_context_));
     cookie_store->GetCookieMonster()->SetPersistSessionCookies(true);
     storage_->set_cookie_store(cookie_store);
 

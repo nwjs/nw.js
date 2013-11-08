@@ -61,6 +61,14 @@ function Window(routing_id, nobind) {
                 });
             }
             CallObjectMethod(that, 'CookieSet', [ this.req_id, details ]);
+        },
+        onChanged : {
+            addListener : function(cb) {
+                that.on('__nw_cookie_changed', cb);
+            },
+            removeListener : function(cb) {
+                that.removeListener('__nw_cookie_changed', cb);
+            }
         }
     }
 }

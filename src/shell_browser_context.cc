@@ -161,7 +161,7 @@ net::URLRequestContextGetter* ShellBrowserContext::CreateRequestContext(
       package_->path(),
       BrowserThread::UnsafeGetMessageLoopForThread(BrowserThread::IO),
       BrowserThread::UnsafeGetMessageLoopForThread(BrowserThread::FILE),
-      protocol_handlers);
+      protocol_handlers, this);
   resource_context_->set_url_request_context_getter(url_request_getter_.get());
   return url_request_getter_.get();
 }
