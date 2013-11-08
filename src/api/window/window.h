@@ -38,11 +38,15 @@ namespace api {
 
 class CookieAPIContext : public base::RefCountedThreadSafe<CookieAPIContext> {
 public:
+  CookieAPIContext(DispatcherHost* dispatcher_host,
+                     const base::ListValue& arguments);
+
   net::URLRequestContextGetter* store_context_;
   scoped_ptr<base::DictionaryValue> details_;
   scoped_ptr<base::ListValue> result_;
   GURL url_;
   int req_id_;
+  bool success_;
 };
 
 
@@ -65,8 +69,15 @@ class Window : public Base {
   void GetCookieCallback(CookieAPIContext*, const net::CookieList& cookie_list);
   void GetAllCookieCallback(CookieAPIContext*, const net::CookieList& cookie_list);
   void RespondOnUIThread(CookieAPIContext*);
-
- private:
+  void RemoveCookieCallback(CookieAPIContext* api_context);
+  void RemoveCookieOnIOThread(CookieAPIContext*);
+  void CookieRemove(const base::ListValue& arguments);
+  void CookieSet(const base::ListValue& arguments);
+  void PullCookieCallback(CookieAPIContext* api_context,
+                            const net::CookieList& cookie_list);
+  void PullCookie(CookieAPIContext* api_context, bool set_cookie_result);
+  void SetCookieOnIOThread(CookieAPIContext* api_context);
+private:
 
   content::Shell* shell_;
 

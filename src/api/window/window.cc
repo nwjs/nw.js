@@ -241,6 +241,10 @@ void Window::Call(const std::string& method,
     CookieGet(arguments);
   } else if (method == "CookieGetAll") {
     CookieGet(arguments, true);
+  } else if (method == "CookieRemove") {
+    CookieRemove(arguments);
+  } else if (method == "CookieSet") {
+    CookieSet(arguments);
   } else {
     NOTREACHED() << "Invalid call to Window method:" << method
                  << " arguments:" << arguments;
@@ -270,10 +274,61 @@ void Window::CallSync(const std::string& method,
   }
 }
 
+void Window::CookieRemove(const base::ListValue& arguments) {
+  CookieAPIContext* api_context = new CookieAPIContext(dispatcher_host(), arguments);
+  bool rv = BrowserThread::PostTask(
+                                    BrowserThread::IO, FROM_HERE,
+                                    base::Bind(&Window::RemoveCookieOnIOThread,
+                                               base::Unretained(this),
+                                               make_scoped_refptr(api_context)));
+  DCHECK(rv);
+}
 
-void Window::CookieGet(const base::ListValue& arguments, bool get_all) {
+void Window::CookieSet(const base::ListValue& arguments) {
+  CookieAPIContext* api_context = new CookieAPIContext(dispatcher_host(), arguments);
+  bool rv = BrowserThread::PostTask(
+                                    BrowserThread::IO, FROM_HERE,
+                                    base::Bind(&Window::SetCookieOnIOThread,
+                                               base::Unretained(this),
+                                               make_scoped_refptr(api_context)));
+  DCHECK(rv);
+}
+
+void Window::RemoveCookieOnIOThread(CookieAPIContext* api_context) {
+  DCHECK(BrowserThread::CurrentlyOn(BrowserThread::IO));
+
+  // Remove the cookie
+  net::CookieStore* cookie_store =
+    api_context->store_context_->GetURLRequestContext()->cookie_store();
+  std::string name;
+  api_context->details_->GetString("name", &name);
+  cookie_store->DeleteCookieAsync(
+      api_context->url_, name,
+      base::Bind(&Window::RemoveCookieCallback, base::Unretained(this),
+                 make_scoped_refptr(api_context)));
+}
+
+void Window::RemoveCookieCallback(CookieAPIContext* api_context) {
+  std::string name;
+  api_context->details_->GetString("name", &name);
+
+  base::DictionaryValue* result = new base::DictionaryValue();
+  result->SetString("name", name);
+  result->SetString("url", api_context->url_.spec());
+  api_context->result_->Append(result);
+
+  // Return to UI thread
+  bool rv = BrowserThread::PostTask(
+      BrowserThread::UI, FROM_HERE,
+      base::Bind(&Window::RespondOnUIThread, base::Unretained(this),
+                 make_scoped_refptr(api_context)));
+  DCHECK(rv);
+}
+
+CookieAPIContext::CookieAPIContext(DispatcherHost* dispatcher_host,
+                                   const base::ListValue& arguments) {
   content::RenderProcessHost* render_process_host =
-    dispatcher_host()->render_view_host()->GetProcess();
+    dispatcher_host->render_view_host()->GetProcess();
   net::URLRequestContextGetter* context_getter =
     render_process_host->GetBrowserContext()->
     GetRequestContextForRenderProcess(render_process_host->GetID());
@@ -281,17 +336,21 @@ void Window::CookieGet(const base::ListValue& arguments, bool get_all) {
   const base::DictionaryValue* details = NULL;
   std::string url;
 
-  CookieAPIContext* api_context = new CookieAPIContext;
-  api_context->store_context_ = context_getter;
-  arguments.GetInteger(0, &api_context->req_id_);
+  store_context_ = context_getter;
+  arguments.GetInteger(0, &req_id_);
   arguments.GetDictionary(1, &details);
   if (details) {
-    api_context->details_.reset(details->DeepCopyWithoutEmptyChildren());
+    details_.reset(details->DeepCopyWithoutEmptyChildren());
     details->GetString("url", &url);
   }
 
-  api_context->url_ = GURL(url);
-  api_context->result_.reset(new base::ListValue);
+  url_ = GURL(url);
+  result_.reset(new base::ListValue);
+}
+
+void Window::CookieGet(const base::ListValue& arguments, bool get_all) {
+
+  CookieAPIContext* api_context = new CookieAPIContext(dispatcher_host(), arguments);
 
   if (get_all) {
     bool rv = BrowserThread::PostTask(
@@ -378,6 +437,79 @@ void Window::RespondOnUIThread(CookieAPIContext* api_context) {
   base::ListValue ret;
   ret.Append(api_context->result_.release());
   dispatcher_host()->SendEvent(this, base::StringPrintf("__nw_gotcookie%d", api_context->req_id_), ret);
+}
+
+void Window::SetCookieOnIOThread(CookieAPIContext* api_context) {
+  DCHECK(BrowserThread::CurrentlyOn(BrowserThread::IO));
+  net::CookieMonster* cookie_monster =
+    api_context->store_context_->GetURLRequestContext()->cookie_store()->
+      GetCookieMonster();
+
+  base::Time expiration_time;
+  double expiration_date;
+
+  if (api_context->details_->GetDouble("expirationDate", &expiration_date)) {
+    // Time::FromDoubleT converts double time 0 to empty Time object. So we need
+    // to do special handling here.
+    expiration_time = (expiration_date == 0) ?
+      base::Time::UnixEpoch() :
+      base::Time::FromDoubleT(expiration_date);
+  }
+
+  const base::DictionaryValue* details = api_context->details_.get();
+  std::string name, value, domain, path;
+  details->GetString("name",   &name);
+  details->GetString("value",  &value);
+  details->GetString("domain", &domain);
+  details->GetString("path",   &path);
+
+  bool secure = false, http_only = false;
+  details->GetBoolean("httpOnly", &http_only);
+  details->GetBoolean("secure",   &secure);
+
+  cookie_monster->SetCookieWithDetailsAsync(
+      api_context->url_,
+      name, value, domain, path,
+      expiration_time,
+      secure, http_only,
+      net::COOKIE_PRIORITY_DEFAULT,
+      base::Bind(&Window::PullCookie, base::Unretained(this),
+                 make_scoped_refptr(api_context)));
+}
+
+void Window::PullCookie(CookieAPIContext* api_context, bool set_cookie_result) {
+  // Pull the newly set cookie.
+  net::CookieMonster* cookie_monster =
+    api_context->store_context_->GetURLRequestContext()->cookie_store()->
+      GetCookieMonster();
+  api_context->success_ = set_cookie_result;
+  GetCookieListFromStore(
+      cookie_monster, api_context->url_,
+      base::Bind(&Window::PullCookieCallback,
+                 base::Unretained(this),
+                 make_scoped_refptr(api_context)));
+}
+
+void Window::PullCookieCallback(CookieAPIContext* api_context,
+    const net::CookieList& cookie_list) {
+  net::CookieList::const_iterator it;
+  for (it = cookie_list.begin(); it != cookie_list.end(); ++it) {
+    // Return the first matching cookie. Relies on the fact that the
+    // CookieMonster returns them in canonical order (longest path, then
+    // earliest creation time).
+    std::string name;
+    api_context->details_->GetString("name", &name);
+    if (it->Name() == name) {
+      api_context->result_->Append(PopulateCookieObject(*it));
+      break;
+    }
+  }
+
+  bool rv = BrowserThread::PostTask(
+      BrowserThread::UI, FROM_HERE,
+      base::Bind(&Window::RespondOnUIThread, base::Unretained(this),
+                 make_scoped_refptr(api_context)));
+  DCHECK(rv);
 }
 
 }  // namespace api

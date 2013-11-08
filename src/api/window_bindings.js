@@ -43,6 +43,24 @@ function Window(routing_id, nobind) {
                 });
             }
             CallObjectMethod(that, 'CookieGetAll', [ this.req_id, details ]);
+        },
+        remove : function(details, cb) {
+            this.req_id++;
+            if (typeof cb == 'function') {
+                that.once('__nw_gotcookie' + this.req_id, function(details) {
+                    cb(details);
+                });
+            }
+            CallObjectMethod(that, 'CookieRemove', [ this.req_id, details ]);
+        },
+        set : function(details, cb) {
+            this.req_id++;
+            if (typeof cb == 'function') {
+                that.once('__nw_gotcookie' + this.req_id, function(cookie) {
+                    cb(cookie);
+                });
+            }
+            CallObjectMethod(that, 'CookieSet', [ this.req_id, details ]);
         }
     }
 }
