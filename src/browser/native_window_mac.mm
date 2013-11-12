@@ -594,27 +594,34 @@ namespace nw {
     }
 
     void NativeWindowCocoa::SetShowInTaskbar(bool show) {
-   /*    ProcessSerialNumber psn = { 0, kCurrentProcess };
+
       if (!show) {
-   NSArray* windowList = [[NSArray alloc] init];
+
+      NSString *title = @"-";
+      [window() setTitle:base::SysUTF8ToNSString(title)];
+    
+      }
+      
+    /*
+
+    ProcessSerialNumber psn = { 0, kCurrentProcess };
+    NSArray* windowList = [[NSArray alloc] init];
     windowList = [NSWindow windowNumbersWithOptions:NSWindowNumberListAllSpaces];
     for (unsigned int i = 0; i < [windowList count]; ++i) {
       NSWindow *window = [NSApp windowWithWindowNumber:[[windowList objectAtIndex:i] integerValue]];
-     
     }
-      NSString *title = @"";
-      [window() setTitle:base::SysUTF8ToNSString(title)];
-
-      [window() setCanHide:YES];
-   [window() makeKeyAndOrderFront:nil];
+  
+    if (!show) {
+     [window() setCanHide:YES];
+     [window() makeKeyAndOrderFront:nil];
      [window() orderOut:nil];
-    TransformProcessType(&psn, kProcessTransformToUIElementApplication);
-   }
-   else {
+      TransformProcessType(&psn, kProcessTransformToUIElementApplication);
+     }
+     else {
 
-    [window() setCanHide:NO];
-    TransformProcessType(&psn, kProcessTransformToForegroundApplication);*
-  }
+      [window() setCanHide:NO];
+      TransformProcessType(&psn, kProcessTransformToForegroundApplication);*
+    }
 */
 }
 

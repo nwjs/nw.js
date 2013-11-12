@@ -283,8 +283,8 @@ Window.prototype.setBadgeCount = function(count) {
 }
 
 Window.prototype.setShowInTaskbar = function(flag) {
-  if(flag ==false){
-    Window.title = '-';
+  if(flag == true){
+    Window.title = this.window.document.title;
   }
 
   flag = Boolean(flag);
