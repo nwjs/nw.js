@@ -597,8 +597,9 @@ namespace nw {
 
       if (!show) {
 
-      NSString *title = @"-";
-      [window() setTitle:base::SysUTF8ToNSString(title)];
+     // NSString* title = [NSString stringWithFormat:@"-"];
+  
+      [window() setTitle:@"-"];
     
       }
       
