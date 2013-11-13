@@ -110,6 +110,14 @@ Window.prototype.__defineGetter__('y', function() {
   return CallObjectMethodSync(this, 'GetPosition', [])[1];
 });
 
+Window.prototype.__defineGetter__('mousex', function() {
+   return CallObjectMethodSync(this, 'GetMousePosition', [])[0];
+ });
+ 
+ Window.prototype.__defineGetter__('mousey', function() {
+   return CallObjectMethodSync(this, 'GetMousePosition', [])[1];
+ });
+
 Window.prototype.__defineSetter__('width', function(width) {
   this.resizeTo(width, this.height);
 });
@@ -174,6 +182,11 @@ Window.prototype.__defineGetter__('isFullscreen', function() {
   return Boolean(result[0]);
 });
 
+Window.prototype.__defineGetter__('isTransparent', function() {
+   var result = CallObjectMethodSync(this, 'IsTransparent', []);
+   return Boolean(result[0]);
+ });
+
 Window.prototype.__defineSetter__('isKioskMode', function(flag) {
   if (flag)
     this.enterKioskMode();
@@ -185,6 +198,15 @@ Window.prototype.__defineGetter__('isKioskMode', function() {
   var result = CallObjectMethodSync(this, 'IsKioskMode', []);
   return Boolean(result[0]);
 });
+
+
+Window.prototype.beginMouseOffclient = function() {
+   CallObjectMethodSync(this, 'BeginOffclientMouseMove', []);
+ }
+ 
+ Window.prototype.endMouseOffclient = function() {
+   CallObjectMethodSync(this, 'EndOffclientMouseMove', []);
+ }
 
 Window.prototype.moveTo = function(x, y) {
   CallObjectMethod(this, 'MoveTo', [ Number(x), Number(y) ]);

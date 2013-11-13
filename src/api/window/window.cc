@@ -126,6 +126,10 @@ void Window::Call(const std::string& method,
     bool flash;
     if (arguments.GetBoolean(0, &flash))
       shell_->window()->FlashFrame(flash);
+  } else if (method == "BeginOffclientMouseMove") {
+    shell_->window()->BeginOffclientMouseMove();
+  } else if (method == "EndOffclientMouseMove") {
+    shell_->window()->EndOffclientMouseMove();
   } else if (method == "SetMenu") {
     int id;
     if (arguments.GetInteger(0, &id))
@@ -151,6 +155,8 @@ void Window::CallSync(const std::string& method,
     result->AppendBoolean(shell_->window()->IsFullscreen());
   } else if (method == "IsKioskMode") {
     result->AppendBoolean(shell_->window()->IsKiosk());
+  } else if (method == "IsTransparent") {
+   result->AppendBoolean(shell_->window()->IsTransparent());
   } else if (method == "GetSize") {
     gfx::Size size = shell_->window()->GetSize();
     result->AppendInteger(size.width());
@@ -159,7 +165,11 @@ void Window::CallSync(const std::string& method,
     gfx::Point position = shell_->window()->GetPosition();
     result->AppendInteger(position.x());
     result->AppendInteger(position.y());
-  } else if (method == "IsDevToolsOpen") {
+  } else if (method == "GetMousePosition") {
+     gfx::Point position = shell_->window()->GetMousePosition();
+     result->AppendInteger(position.x());
+     result->AppendInteger(position.y());
+  }else if (method == "IsDevToolsOpen") {
     result->AppendBoolean(shell_->devToolsOpen());
   } else {
     NOTREACHED() << "Invalid call to Window method:" << method

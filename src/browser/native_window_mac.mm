@@ -209,10 +209,13 @@ return self;
 @interface ShellNSWindow : ChromeEventProcessingWindow {
 @private
   base::WeakPtr<content::Shell> shell_;
+  bool is_transparent_;
 }
 - (void)setShell:(const base::WeakPtr<content::Shell>&)shell;
 - (void)showDevTools:(id)sender;
 - (void)closeAllWindows:(id)sender;
+- (void)setTransparent;
+- (BOOL)getTransparent;
 @end
 
 @implementation ShellNSWindow
@@ -235,6 +238,14 @@ return self;
   return frameRect;
 }
 
+- (void)setTransparent {
+ is_transparent_ = true;
+}
+
+- (BOOL)getTransparent {
+ return is_transparent_;
+}
+
 @end
 
 @interface ShellFramelessNSWindow : ShellNSWindow
@@ -251,16 +262,17 @@ return self;
   [[NSBezierPath bezierPathWithRect:rect] addClip];
   [[NSColor clearColor] set];
   NSRectFill(rect);
-
-  // Set up our clip.
-  CGFloat cornerRadius = 4.0;
-  if ([view respondsToSelector:@selector(roundedCornerRadius)])
-    cornerRadius = [view roundedCornerRadius];
-  [[NSBezierPath bezierPathWithRoundedRect:[view bounds]
-   xRadius:cornerRadius
-   yRadius:cornerRadius] addClip];
-  [[NSColor whiteColor] set];
-  NSRectFill(rect);
+  if(![self getTransparent]){
+    // Set up our clip.
+    CGFloat cornerRadius = 4.0;
+    if ([view respondsToSelector:@selector(roundedCornerRadius)])
+      cornerRadius = [view roundedCornerRadius];
+    [[NSBezierPath bezierPathWithRoundedRect:[view bounds]
+     xRadius:cornerRadius
+     yRadius:cornerRadius] addClip];
+    [[NSColor whiteColor] set];
+    NSRectFill(rect);
+  }
 }
 
 + (NSRect)frameRectForContentRect:(NSRect)contentRect
@@ -291,6 +303,7 @@ namespace nw {
   : NativeWindow(shell, manifest),
   is_fullscreen_(false),
   is_kiosk_(false),
+  is_transparent_(false),
   attention_request_id_(0),
   use_system_drag_(true),
       initial_focus_(false),    // the initial value is different from other
@@ -310,8 +323,10 @@ namespace nw {
           width,
           height);
         NSUInteger style_mask = NSTitledWindowMask | NSClosableWindowMask |
-        NSMiniaturizableWindowMask | NSResizableWindowMask |
-        NSTexturedBackgroundWindowMask;
+         NSMiniaturizableWindowMask | NSTexturedBackgroundWindowMask | NSResizableWindowMask;
+   if(is_transparent_)
+     style_mask = NSBorderlessWindowMask;
+
         ShellNSWindow* shell_window;
         if (has_frame_) {
           shell_window = [[ShellNSWindow alloc]
@@ -331,6 +346,8 @@ namespace nw {
         [window() setDelegate:[[NativeWindowDelegate alloc] initWithShell:shell]];
 
   // Disable fullscreen button when 'fullscreen' is specified to false.
+         if(is_transparent_)
+           SetTransparent();
         bool fullscreen;
         if (!(manifest->GetBoolean(switches::kmFullscreen, &fullscreen) &&
           !fullscreen)) {
@@ -443,6 +460,7 @@ namespace nw {
       first_show_ = false;
     }
 
+
     void NativeWindowCocoa::Hide() {
       [window() orderOut:nil];
     }
@@ -480,6 +498,26 @@ namespace nw {
 
     bool NativeWindowCocoa::IsFullscreen() {
       return is_fullscreen_;
+    }
+
+    void NativeWindowCocoa::SetTransparent() {
+      is_transparent_ = true;
+      if(base::mac::IsOSMountainLionOrLater()) {
+       restored_bounds_ = [window() frame];
+       [window() setStyleMask:(NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask)];
+       [window() setFrame:[window()
+                         frameRectForContentRect:[window() frame]]
+                display:YES];
+      }
+      [window() setHasShadow:NO];
+      ShellNSWindow* swin = (ShellNSWindow*)window();
+      [swin setTransparent];
+      [window() setOpaque:NO];
+      [window() setBackgroundColor:[NSColor clearColor]];
+    }
+
+    bool NativeWindowCocoa::IsTransparent() {
+      return is_transparent_;
     }
 
     void NativeWindowCocoa::SetNonLionFullscreen(bool fullscreen) {
@@ -923,6 +961,27 @@ namespace nw {
       [webView addSubview:controlRegion];
     }
   }
+
+  gfx::Point NativeWindowCocoa::GetMousePosition() {
+   CGEventRef event = CGEventCreate(NULL);
+   CGPoint cursor = CGEventGetLocation(event);
+   CFRelease(event);
+   return gfx::Point(cursor.x,cursor.y);
+ }
+ 
+ void NativeWindowCocoa::BeginOffclientMouseMove() {
+   // Not implemented
+ }
+ 
+
+ void NativeWindowCocoa::EndOffclientMouseMove() {
+   // Not implemented
+ }
+ 
+ void NativeWindowCocoa::RenderViewCreated(content::RenderViewHost *render_view_host) {
+   
+ }
+
 
   NativeWindow* CreateNativeWindowCocoa(const base::WeakPtr<content::Shell>& shell,
    base::DictionaryValue* manifest) {

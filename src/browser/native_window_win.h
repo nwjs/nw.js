@@ -100,10 +100,17 @@ class NativeWindowWin : public NativeWindow,
   virtual void SetPosition(const std::string& position) OVERRIDE;
   virtual void SetPosition(const gfx::Point& position) OVERRIDE;
   virtual gfx::Point GetPosition() OVERRIDE;
+  virtual gfx::Point GetMousePosition() OVERRIDE;
+  virtual void BeginOffclientMouseMove() OVERRIDE;
+  virtual void EndOffclientMouseMove() OVERRIDE;
+  virtual void RenderViewCreated(content::RenderViewHost *render_view_host) OVERRIDE;
+
   virtual void SetTitle(const std::string& title) OVERRIDE;
   virtual void FlashFrame(bool flash) OVERRIDE;
   virtual void SetKiosk(bool kiosk) OVERRIDE;
   virtual bool IsKiosk() OVERRIDE;
+  virtual void SetTransparent() OVERRIDE;
+  virtual bool IsTransparent() OVERRIDE;
   virtual void SetMenu(api::Menu* menu) OVERRIDE;
   virtual void SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
                                        bool enabled) OVERRIDE;
@@ -162,6 +169,7 @@ class NativeWindowWin : public NativeWindow,
   views::WebView* web_view_;
   views::Widget* window_;
   bool is_fullscreen_;
+  bool is_transparent_;
 
   // Flags used to prevent sending extra events.
   bool is_minimized_;
