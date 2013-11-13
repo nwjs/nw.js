@@ -120,6 +120,7 @@ class NativeWindowCocoa : public NativeWindow {
   // the complexity of draggable regions.
   bool use_system_drag_;
 
+  NSString* title;
   // For system drag, the whole window is draggable and the non-draggable areas
   // have to been explicitly excluded.
   std::vector<gfx::Rect> system_drag_exclude_areas_;
