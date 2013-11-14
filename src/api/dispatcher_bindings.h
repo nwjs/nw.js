@@ -53,6 +53,7 @@ class DispatcherBindings : public v8::Extension {
   static void CreateShell(const v8::FunctionCallbackInfo<v8::Value>& args);
 
   // Remote objects.
+  static void AllocateId(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void AllocateObject(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void DeallocateObject(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args);

@@ -68,6 +68,16 @@ base::StringPiece GetStringResource(int resource_id) {
 
 namespace remote {
 
+v8::Handle<v8::Value> AllocateId(int routing_id) {
+  v8::HandleScope handle_scope;
+
+  int result = 0;
+  RenderThread::Get()->Send(new ShellViewHostMsg_AllocateId(
+      routing_id,
+      &result));
+  return v8::Integer::New(result);
+}
+
 v8::Handle<v8::Value> AllocateObject(int routing_id,
                                      int object_id,
                                      const std::string& type,

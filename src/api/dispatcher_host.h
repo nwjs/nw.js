@@ -48,6 +48,7 @@ class DispatcherHost : public content::RenderViewHostObserver {
   // Get C++ object from its id.
   Base* GetApiObject(int id);
 
+  static int AllocateId();
   // Helper function to convert type.
   template<class T>
   T* GetApiObject(int id) {
@@ -65,7 +66,8 @@ class DispatcherHost : public content::RenderViewHostObserver {
   }
 
  private:
-  IDMap<Base, IDMapOwnPointer> objects_registry_;
+  static IDMap<Base, IDMapOwnPointer> objects_registry_;
+  static int next_object_id_;
 
   // RenderViewHostObserver implementation.
   virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
@@ -96,6 +98,7 @@ class DispatcherHost : public content::RenderViewHostObserver {
                      const base::DictionaryValue& manifest,
                      int* routing_id);
   void OnGrantUniversalPermissions(int* ret);
+  void OnAllocateId(int* ret);
   DISALLOW_COPY_AND_ASSIGN(DispatcherHost);
 };
 

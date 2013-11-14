@@ -41,18 +41,38 @@
 
 using content::WebContents;
 using content::ShellBrowserContext;
+using content::Shell;
 
 namespace api {
 
+IDMap<Base, IDMapOwnPointer> api::DispatcherHost::objects_registry_;
+int api::DispatcherHost::next_object_id_ = 1;
+static std::map<content::RenderViewHost*, DispatcherHost*> g_dispatcher_host_map;
+
 DispatcherHost::DispatcherHost(content::RenderViewHost* render_view_host)
     : content::RenderViewHostObserver(render_view_host) {
+  g_dispatcher_host_map[render_view_host] = this;
 }
 
 DispatcherHost::~DispatcherHost() {
+  g_dispatcher_host_map.erase(render_view_host());
+}
+
+DispatcherHost*
+FindDispatcherHost(content::RenderViewHost* render_view_host) {
+  std::map<content::RenderViewHost*, DispatcherHost*>::iterator it
+    = g_dispatcher_host_map.find(render_view_host);
+  if (it == g_dispatcher_host_map.end())
+    return NULL;
+  return it->second;
 }
 
 Base* DispatcherHost::GetApiObject(int id) {
   return objects_registry_.Lookup(id);
+}
+
+int DispatcherHost::AllocateId() {
+  return next_object_id_++;
 }
 
 void DispatcherHost::SendEvent(Base* object,
@@ -84,6 +104,7 @@ bool DispatcherHost::OnMessageReceived(const IPC::Message& message) {
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_GetShellId, OnGetShellId);
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_CreateShell, OnCreateShell);
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_GrantUniversalPermissions, OnGrantUniversalPermissions);
+    IPC_MESSAGE_HANDLER(ShellViewHostMsg_AllocateId, OnAllocateId);
     IPC_MESSAGE_UNHANDLED(handled = false)
   IPC_END_MESSAGE_MAP()
 
@@ -239,6 +260,12 @@ void DispatcherHost::OnCreateShell(const std::string& url,
     browser_context->set_pinning_renderer(true);
 
   *routing_id = web_contents->GetRoutingID();
+
+  int object_id = 0;
+  if (new_manifest->GetInteger("object_id", &object_id)) {
+    DispatcherHost* dhost = FindDispatcherHost(web_contents->GetRenderViewHost());
+    dhost->OnAllocateObject(object_id, "Window", *new_manifest.get());
+  }
 }
 
 void DispatcherHost::OnGrantUniversalPermissions(int *ret) {
@@ -249,6 +276,10 @@ void DispatcherHost::OnGrantUniversalPermissions(int *ret) {
     *ret = 1;
   }else
     *ret = 0;
+}
+
+void DispatcherHost::OnAllocateId(int * ret) {
+  *ret = AllocateId();
 }
 
 }  // namespace api

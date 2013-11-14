@@ -32,15 +32,17 @@ exports.Window = {
       id = nw.getShellIdForCurrentContext();
 
     // Return API's window object from id.
+    var ret;
     if (id > 0) {
       window.__nwWindowId = id;
-      return global.__nwWindowsStore[window.__nwWindowId];
+      ret = global.__nwWindowsStore[window.__nwWindowId];
+      if (!ret) {
+        ret = new global.Window(nw.getRoutingIDForCurrentContext(), true, id);
+      }
+      return ret;
     }
 
-    // Otherwise create it.
-    var win = new global.Window(nw.getRoutingIDForCurrentContext());
-    window.__nwWindowId = win.id;
-    return win;
+    return new global.Window(nw.getRoutingIDForCurrentContext());
   },
   open: function(url, options) {
     // Conver relative url to full url.
@@ -58,8 +60,10 @@ exports.Window = {
         options.focus = false;
     }
     // Create new shell and get it's routing id.
+    var id = nw.allocateId();
+    options.object_id = id;
     var routing_id = nw.createShell(url, options);
 
-    return new global.Window(routing_id, options['new-instance']);
+    return new global.Window(routing_id, options['new-instance'], id);
   }
 };

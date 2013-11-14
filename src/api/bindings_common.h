@@ -37,6 +37,8 @@ base::StringPiece GetStringResource(int resource_id);
 
 namespace remote {
 
+v8::Handle<v8::Value> AllocateId(int routing_id);
+
 // Tell browser to allocate a new object.
 // function AllocateObject(id, name, options);
 v8::Handle<v8::Value> AllocateObject(int routing_id,

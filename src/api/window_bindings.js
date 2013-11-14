@@ -1,8 +1,15 @@
-function Window(routing_id, nobind) {
+function Window(routing_id, nobind, predefined_id) {
     // Get and set id.
     native function CallObjectMethod();
     native function CallObjectMethodSync();
-    var id = global.__nwObjectsRegistry.allocateId();
+    native function AllocateId();
+
+    var id;
+    if (predefined_id)
+        id = predefined_id;
+    else
+        id = AllocateId();
+
     Object.defineProperty(this, 'id', {
         value: id,
         writable: false

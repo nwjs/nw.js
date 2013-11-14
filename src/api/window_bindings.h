@@ -36,6 +36,8 @@ class WindowBindings : public v8::Extension {
   virtual v8::Handle<v8::FunctionTemplate>
       GetNativeFunction(v8::Handle<v8::String> name) OVERRIDE;
  private:
+  static void AllocateId(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   // Tell browser to bind a js object to Shell.
   static void BindToShell(const v8::FunctionCallbackInfo<v8::Value>& args);
 

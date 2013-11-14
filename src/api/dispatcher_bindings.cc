@@ -134,6 +134,8 @@ DispatcherBindings::GetNativeFunction(v8::Handle<v8::String> name) {
     return v8::FunctionTemplate::New(CrashRenderer);
   else if (name->Equals(v8::String::New("SetCrashDumpDir")))
     return v8::FunctionTemplate::New(SetCrashDumpDir);
+  else if (name->Equals(v8::String::New("AllocateId")))
+    return v8::FunctionTemplate::New(AllocateId);
 
   NOTREACHED() << "Trying to get an non-exist function in DispatcherBindings:"
                << *v8::String::Utf8Value(name);
@@ -256,6 +258,18 @@ DispatcherBindings::CreateShell(const v8::FunctionCallbackInfo<v8::Value>& args)
 
 // static
 void
+DispatcherBindings::AllocateId(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  RenderView* render_view = GetCurrentRenderView();
+  if (!render_view) {
+    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
+                                     "Unable to get render view in AllocateId"))));
+    return;
+  }
+
+  args.GetReturnValue().Set(remote::AllocateId(render_view->GetRoutingID()));
+}
+
+void
 DispatcherBindings::AllocateObject(const v8::FunctionCallbackInfo<v8::Value>& args) {
   if (args.Length() < 3) {
     args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
@@ -308,6 +322,8 @@ DispatcherBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& 
   std::string method = *v8::String::Utf8Value(args[2]);
 
   RenderView* render_view = GetCurrentRenderView();
+  if (!render_view)
+    render_view = GetEnteredRenderView();
   if (!render_view) {
     args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
                                      "Unable to get render view in CallObjectMethod"))));

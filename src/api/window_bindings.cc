@@ -60,6 +60,8 @@ WindowBindings::GetNativeFunction(v8::Handle<v8::String> name) {
     return v8::FunctionTemplate::New(CallObjectMethodSync);
   else if (name->Equals(v8::String::New("GetWindowObject")))
     return v8::FunctionTemplate::New(GetWindowObject);
+  else if (name->Equals(v8::String::New("AllocateId")))
+    return v8::FunctionTemplate::New(AllocateId);
 
   return v8::FunctionTemplate::New();
 }
@@ -75,6 +77,14 @@ WindowBindings::BindToShell(const v8::FunctionCallbackInfo<v8::Value>& args) {
   args.GetReturnValue().Set(v8::Undefined());
 }
 
+void
+WindowBindings::AllocateId(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  content::RenderViewImpl* render_view = static_cast<content::RenderViewImpl*>(GetEnteredRenderView());
+  int routing_id = render_view->GetRoutingID();
+
+  args.GetReturnValue().Set(remote::AllocateId(routing_id));
+}
+
 // static
 void
 WindowBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args) {
@@ -84,6 +94,9 @@ WindowBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args
   std::string method = *v8::String::Utf8Value(args[1]);
   content::RenderViewImpl* render_view = static_cast<content::RenderViewImpl*>(
                                                                                  content::RenderViewImpl::FromRoutingID(routing_id));
+  if (!render_view)
+    render_view = static_cast<content::RenderViewImpl*>(GetEnteredRenderView());
+
   if (!render_view) {
     std::string msg = "Unable to get render view in " + method;
     args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(msg.c_str()))));
@@ -103,7 +116,9 @@ WindowBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args
     return;
   }
 
-  args.GetReturnValue().Set(remote::CallObjectMethod(routing_id, object_id, "Window", method, args[2]));
+  args.GetReturnValue().Set(remote::CallObjectMethod(render_view->GetRoutingID(),
+                                                     object_id,
+                                                     "Window", method, args[2]));
 }
 
 // static
