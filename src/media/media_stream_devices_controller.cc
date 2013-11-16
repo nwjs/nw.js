@@ -8,6 +8,7 @@
 #include "content/nw/src/media/media_capture_devices_dispatcher.h"
 #include "content/nw/src/media/media_internals.h"
 #include "content/public/browser/browser_thread.h"
+#include "content/public/common/desktop_media_id.h"
 #include "content/public/common/media_stream_request.h"
 
 using content::BrowserThread;
@@ -226,8 +227,10 @@ void MediaStreamDevicesController::HandleTapMediaRequest() {
           content::MEDIA_TAB_AUDIO_CAPTURE, "", ""));
   }
   if (request_.video_type == content::MEDIA_DESKTOP_VIDEO_CAPTURE) {
+    content::DesktopMediaID media_id =
+      content::DesktopMediaID::Parse(request_.requested_video_device_id);
     devices.push_back(content::MediaStreamDevice(
-          content::MEDIA_DESKTOP_VIDEO_CAPTURE, std::string(), "Screen"));
+          content::MEDIA_DESKTOP_VIDEO_CAPTURE, media_id.ToString(), "Screen"));
   }
 
   callback_.Run(devices, scoped_ptr<content::MediaStreamUI>());
