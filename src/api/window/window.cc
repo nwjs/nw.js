@@ -215,12 +215,6 @@ void Window::Call(const std::string& method,
     shell_->window()->SetKiosk(false);
   } else if (method == "ToggleKioskMode") {
     shell_->window()->SetKiosk(!shell_->window()->IsKiosk());
-  } else if (method == "ShowDevTools") {
-    std::string jail_id;
-    bool headless = false;
-    arguments.GetString(0, &jail_id);
-    arguments.GetBoolean(1, &headless);
-    shell_->ShowDevTools(jail_id.c_str(), headless);
   } else if (method == "CloseDevTools") {
     shell_->CloseDevTools();
   }else if (method == "ResizeTo") {
@@ -298,6 +292,16 @@ void Window::CallSync(const std::string& method,
     result->AppendInteger(position.y());
   } else if (method == "IsDevToolsOpen") {
     result->AppendBoolean(shell_->devToolsOpen());
+  } else if (method == "ShowDevTools") {
+    std::string jail_id;
+    bool headless = false;
+    arguments.GetString(0, &jail_id);
+    arguments.GetBoolean(1, &headless);
+    shell_->ShowDevTools(jail_id.c_str(), headless);
+    int object_id = 0;
+    if (!headless)
+      object_id = shell_->WrapDevToolsWindow();
+    result->AppendInteger(object_id);
   } else {
     NOTREACHED() << "Invalid call to Window method:" << method
                  << " arguments:" << arguments;

@@ -36,6 +36,10 @@ namespace WebKit {
 class WebFrame;
 }
 
+namespace content {
+class Shell;
+}
+
 namespace api {
 
 class Base;
@@ -66,6 +70,8 @@ class DispatcherHost : public content::RenderViewHostObserver {
   }
 
  private:
+  friend class content::Shell;
+
   static IDMap<Base, IDMapOwnPointer> objects_registry_;
   static int next_object_id_;
 
@@ -101,6 +107,8 @@ class DispatcherHost : public content::RenderViewHostObserver {
   void OnAllocateId(int* ret);
   DISALLOW_COPY_AND_ASSIGN(DispatcherHost);
 };
+
+api::DispatcherHost* FindDispatcherHost(content::RenderViewHost* render_view_host);
 
 }  // namespace api
 

@@ -96,7 +96,7 @@ native function CallObjectMethodSync();
 Window.prototype.on = Window.prototype.addListener = function(ev, callback) {
   // Save window id of where the callback is created.
   var closure = v8_util.getCreationContext(callback);
-  if (v8_util.getConstructorName(closure) == 'Window' && 
+  if (v8_util.getConstructorName(closure) == 'Window' &&
       closure.hasOwnProperty('nwDispatcher')) {
     v8_util.setHiddenValue(callback, '__nwWindowId',
         closure.nwDispatcher.requireNwGui().Window.get().id);
@@ -347,7 +347,14 @@ Window.prototype.showDevTools = function(frm, headless) {
     }else{
         this._pending_devtools_jail = frm;
     }
-    CallObjectMethod(this, 'ShowDevTools', [id, Boolean(headless)]);
+    var win_id = CallObjectMethodSync(this, 'ShowDevTools', [id, Boolean(headless)])[0];
+    var ret;
+    if (typeof win_id == 'number' && win_id > 0) {
+        ret = global.__nwWindowsStore[win_id];
+        if (!ret)
+            ret = new global.Window(this.window.nwDispatcher.getRoutingIDForCurrentContext(), true, win_id);
+        return ret;
+    }
 }
 
 Window.prototype.__setDevToolsJail = function(id) {

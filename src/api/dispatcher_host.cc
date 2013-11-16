@@ -152,7 +152,7 @@ void DispatcherHost::OnCallObjectMethod(
              << " arguments:" << arguments;
 
   Base* object = GetApiObject(object_id);
-  CHECK(object) << "Unknown object: " << object_id
+  DLOG(WARNING) << "Unknown object: " << object_id
              << " type:" << type
              << " method:" << method
              << " arguments:" << arguments;
