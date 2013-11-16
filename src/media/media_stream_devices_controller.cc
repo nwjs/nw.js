@@ -184,11 +184,6 @@ void MediaStreamDevicesController::Accept(bool update_content_setting) {
     break;
   }
 
-  media::GetDefaultDevicesForProfile(
-                                     has_audio_,
-                                     has_video_,
-                                     &devices);
-
   callback_.Run(devices, scoped_ptr<content::MediaStreamUI>());
 }
 
