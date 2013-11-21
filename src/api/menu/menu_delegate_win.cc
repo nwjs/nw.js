@@ -47,6 +47,8 @@ bool MenuDelegate::IsCommandIdEnabled(int command_id) const {
     return false;
 
   MenuItem* item = dispatcher_host_->GetApiObject<MenuItem>(command_id);
+  if (!item)
+    return false;
   return item->is_enabled_;
 }
 
@@ -55,6 +57,8 @@ bool MenuDelegate::IsItemForCommandIdDynamic(int command_id) const {
     return false;
 
   MenuItem* item = dispatcher_host_->GetApiObject<MenuItem>(command_id);
+  if (!item)
+    return false;
   return item->is_modified_;
 }
 
@@ -66,6 +70,8 @@ string16 MenuDelegate::GetLabelForCommandId(int command_id) const {
 bool MenuDelegate::GetIconForCommandId(int command_id,
                                        gfx::Image* icon) const {
   MenuItem* item = dispatcher_host_->GetApiObject<MenuItem>(command_id);
+  if (!item)
+    return false;
   if (item->icon_.IsEmpty())
     return false;
 
@@ -78,6 +84,8 @@ void MenuDelegate::ExecuteCommand(int command_id, int event_flags) {
     return;
 
   MenuItem* item = dispatcher_host_->GetApiObject<MenuItem>(command_id);
+  if (!item)
+    return;
   item->OnClick();
 }
 
@@ -86,6 +94,8 @@ bool MenuDelegate::HasIcon(int command_id) {
     return false;
 
   MenuItem* item = dispatcher_host_->GetApiObject<MenuItem>(command_id);
+  if (!item)
+    return false;
   return !item->icon_.IsEmpty();
 }
 
