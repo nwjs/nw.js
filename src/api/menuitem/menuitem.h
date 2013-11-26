@@ -42,7 +42,7 @@ class MenuItemDelegate;
 #include "ui/gfx/image/image.h"
 #endif  // defined(OS_MACOSX)
 
-namespace api {
+namespace nwapi {
 
 class Menu;
 
@@ -105,6 +105,6 @@ class MenuItem : public Base {
   DISALLOW_COPY_AND_ASSIGN(MenuItem);
 };
 
-}  // namespace api
+}  // namespace nwapi
 
 #endif  // CONTENT_NW_SRC_API_MENUITEM_MENUITEM_H_

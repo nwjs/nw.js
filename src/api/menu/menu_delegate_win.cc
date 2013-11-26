@@ -25,7 +25,7 @@
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
 
-namespace api {
+namespace nwapi {
 
 MenuDelegate::MenuDelegate(DispatcherHost* dispatcher_host)
     : dispatcher_host_(dispatcher_host) {
@@ -99,4 +99,4 @@ bool MenuDelegate::HasIcon(int command_id) {
   return !item->icon_.IsEmpty();
 }
 
-}  // namespace api
+}  // namespace nwapi

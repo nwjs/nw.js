@@ -24,7 +24,7 @@
 #include "base/compiler_specific.h"
 #include "content/nw/src/api/base/base.h"
 
-namespace api {
+namespace nwapi {
 
 class Clipboard : public Base {
  public:
@@ -47,6 +47,6 @@ class Clipboard : public Base {
   DISALLOW_COPY_AND_ASSIGN(Clipboard);
 };
 
-}  // namespace api
+}  // namespace nwapi
 
 #endif  // CONTENT_NW_SRC_API_CLIPBOARD_CLIPBOARD_H_

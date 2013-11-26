@@ -74,7 +74,7 @@ class NativeWindowWin : public NativeWindow,
   virtual void FlashFrame(bool flash) OVERRIDE;
   virtual void SetKiosk(bool kiosk) OVERRIDE;
   virtual bool IsKiosk() OVERRIDE;
-  virtual void SetMenu(api::Menu* menu) OVERRIDE;
+  virtual void SetMenu(nwapi::Menu* menu) OVERRIDE;
   virtual void SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
                                        bool enabled) OVERRIDE;
   virtual void SetToolbarUrlEntry(const std::string& url) OVERRIDE;
@@ -142,7 +142,7 @@ class NativeWindowWin : public NativeWindow,
   scoped_ptr<SkRegion> draggable_region_;
 
   // The window's menubar.
-  api::Menu* menu_;
+  nwapi::Menu* menu_;
 
   bool resizable_;
   std::string title_;

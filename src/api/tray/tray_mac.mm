@@ -24,7 +24,7 @@
 #import <Cocoa/Cocoa.h>
 #include "content/nw/src/api/menu/menu.h"
 
-namespace api {
+namespace nwapi {
 
 void Tray::Create(const base::DictionaryValue& option) {
   NSStatusBar *status_bar = [NSStatusBar systemStatusBar];
@@ -78,4 +78,4 @@ void Tray::Remove() {
   [[NSStatusBar systemStatusBar] removeStatusItem:status_item_];
 }
 
-}  // namespace api
+}  // namespace nwapi

@@ -34,7 +34,7 @@
 #include "ui/gfx/point.h"
 #include "ui/gfx/size.h"
 
-namespace api {
+namespace nwapi {
 class Menu;
 }
 
@@ -93,7 +93,7 @@ class NativeWindow {
   virtual void FlashFrame(bool flash) = 0;
   virtual void SetKiosk(bool kiosk) = 0;
   virtual bool IsKiosk() = 0;
-  virtual void SetMenu(api::Menu* menu) = 0;
+  virtual void SetMenu(nwapi::Menu* menu) = 0;
   virtual void SetInitialFocus(bool accept_focus) = 0;
   virtual bool InitialFocus() = 0;
 

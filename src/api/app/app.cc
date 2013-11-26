@@ -40,7 +40,7 @@ using content::Shell;
 using content::ShellBrowserContext;
 using content::RenderProcessHost;
 
-namespace api {
+namespace nwapi {
 
 namespace {
 
@@ -216,4 +216,4 @@ void App::ClearCache(content::RenderProcessHost* render_process_host) {
                           render_process_host->GetID());
 }
 
-}  // namespace api
+}  // namespace nwapi

@@ -26,7 +26,7 @@
 #include "content/nw/src/api/dispatcher_host.h"
 #include "ui/base/clipboard/clipboard.h"
 
-namespace api {
+namespace nwapi {
 
 Clipboard::Clipboard(int id,
            DispatcherHost* dispatcher_host,
@@ -83,4 +83,4 @@ void Clipboard::Clear() {
   clipboard->Clear(ui::Clipboard::BUFFER_STANDARD);
 }
 
-}  // namespace api
+}  // namespace nwapi

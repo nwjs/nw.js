@@ -410,14 +410,14 @@ bool NativeWindowWin::IsKiosk() {
   return IsFullscreen();
 }
 
-void NativeWindowWin::SetMenu(api::Menu* menu) {
+void NativeWindowWin::SetMenu(nwapi::Menu* menu) {
   window_->set_has_menu_bar(true);
   menu_ = menu;
 
   // The menu is lazily built.
   menu->Rebuild();
 
-  // menu is api::Menu, menu->menu_ is NativeMenuWin,
+  // menu is nwapi::Menu, menu->menu_ is NativeMenuWin,
   ::SetMenu(window_->GetNativeWindow(), menu->menu_->GetNativeMenu());
 }
 

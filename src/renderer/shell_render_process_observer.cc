@@ -66,7 +66,7 @@ void ShellRenderProcessObserver::OnRenderProcessWillShutdown() {
 
 void ShellRenderProcessObserver::WebKitInitialized() {
   webkit_initialized_ = true;
-  RenderThread::Get()->RegisterExtension(new api::DispatcherBindings());
+  RenderThread::Get()->RegisterExtension(new nwapi::DispatcherBindings());
   WebRuntimeFeatures::enableStableFeatures(true);
   WebRuntimeFeatures::enableExperimentalFeatures(true);
 }

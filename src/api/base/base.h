@@ -30,7 +30,7 @@ class DictionaryValue;
 class ListValue;
 }
 
-namespace api {
+namespace nwapi {
 
 class DispatcherHost;
 
@@ -57,6 +57,6 @@ class Base {
   DISALLOW_COPY_AND_ASSIGN(Base);
 };
 
-}  // namespace api
+}  // namespace nwapi
 
 #endif  // CONTENT_NW_SRC_API_BASE_BASE_H_

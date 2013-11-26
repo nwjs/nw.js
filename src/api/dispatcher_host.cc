@@ -43,10 +43,10 @@ using content::WebContents;
 using content::ShellBrowserContext;
 using content::Shell;
 
-namespace api {
+namespace nwapi {
 
-IDMap<Base, IDMapOwnPointer> api::DispatcherHost::objects_registry_;
-int api::DispatcherHost::next_object_id_ = 1;
+IDMap<Base, IDMapOwnPointer> nwapi::DispatcherHost::objects_registry_;
+int nwapi::DispatcherHost::next_object_id_ = 1;
 static std::map<content::RenderViewHost*, DispatcherHost*> g_dispatcher_host_map;
 
 DispatcherHost::DispatcherHost(content::RenderViewHost* render_view_host)
@@ -190,10 +190,10 @@ void DispatcherHost::OnCallStaticMethod(
              << " arguments:" << arguments;
 
   if (type == "Shell") {
-    api::Shell::Call(method, arguments);
+    nwapi::Shell::Call(method, arguments);
     return;
   } else if (type == "App") {
-    api::App::Call(method, arguments);
+    nwapi::App::Call(method, arguments);
     return;
   }
 
@@ -213,7 +213,7 @@ void DispatcherHost::OnCallStaticMethodSync(
   if (type == "App") {
     content::Shell* shell =
         content::Shell::FromRenderViewHost(render_view_host());
-    api::App::Call(shell, method, arguments, result);
+    nwapi::App::Call(shell, method, arguments, result);
     return;
   }
 
@@ -282,4 +282,4 @@ void DispatcherHost::OnAllocateId(int * ret) {
   *ret = AllocateId();
 }
 
-}  // namespace api
+}  // namespace nwapi

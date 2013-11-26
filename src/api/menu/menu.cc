@@ -25,7 +25,7 @@
 #include "content/nw/src/api/menuitem/menuitem.h"
 #include "content/nw/src/nw_shell.h"
 
-namespace api {
+namespace nwapi {
 
 Menu::Menu(int id,
            DispatcherHost* dispatcher_host,
@@ -69,4 +69,4 @@ void Menu::Call(const std::string& method,
   }
 }
 
-}  // namespace api
+}  // namespace nwapi

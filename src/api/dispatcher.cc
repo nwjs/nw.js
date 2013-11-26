@@ -32,7 +32,7 @@
 #include "third_party/WebKit/public/web/WebView.h"
 #include "v8/include/v8.h"
 
-namespace api {
+namespace nwapi {
 
 Dispatcher::Dispatcher(content::RenderView* render_view)
     : content::RenderViewObserver(render_view) {
@@ -112,4 +112,4 @@ void Dispatcher::ZoomLevelChanged() {
 
   node::MakeCallback(objects_registry, "handleEvent", 3, argv);
 }
-}  // namespace api
+}  // namespace nwapi

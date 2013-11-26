@@ -159,7 +159,7 @@ PopulateCookieObject(const net::CanonicalCookie& canonical_cookie) {
 
 } // namespace
 
-namespace api {
+namespace nwapi {
 
 Window::Window(int id,
                DispatcherHost* dispatcher_host,
@@ -612,4 +612,4 @@ void Window::CookieChanged(
 
 }
 
-}  // namespace api
+}  // namespace nwapi

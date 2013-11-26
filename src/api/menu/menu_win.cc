@@ -71,7 +71,7 @@ bool NwMenuModel::HasIcons() const {
 
 } // namespace ui
 
-namespace api {
+namespace nwapi {
 
 // The width of the icon for the menuitem
 static const int kIconWidth = 16;
@@ -185,4 +185,4 @@ void Menu::Rebuild(const HMENU *parent_menu) {
   }
 }
 
-}  // namespace api
+}  // namespace nwapi

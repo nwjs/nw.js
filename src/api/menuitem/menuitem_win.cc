@@ -28,7 +28,7 @@
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
 
-namespace api {
+namespace nwapi {
 
 void MenuItem::Create(const base::DictionaryValue& option) {
   is_modified_ = false;
@@ -99,4 +99,4 @@ void MenuItem::SetSubmenu(Menu* menu) {
   submenu_ = menu;
 }
 
-}  // namespace api
+}  // namespace nwapi

@@ -227,7 +227,7 @@ enum {
 }
 
 - (void)closeAllWindows:(id)sender {
-  api::App::CloseAllWindows();
+  nwapi::App::CloseAllWindows();
 }
 
 - (NSRect)constrainFrameRect:(NSRect)frameRect toScreen:(NSScreen *)screen
@@ -628,7 +628,7 @@ bool NativeWindowCocoa::IsKiosk() {
   return is_kiosk_;
 }
 
-void NativeWindowCocoa::SetMenu(api::Menu* menu) {
+void NativeWindowCocoa::SetMenu(nwapi::Menu* menu) {
   bool no_edit_menu = false;
   shell_->GetPackage()->root()->GetBoolean("no-edit-menu", &no_edit_menu);
 

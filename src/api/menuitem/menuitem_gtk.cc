@@ -24,7 +24,7 @@
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"
 
-namespace api {
+namespace nwapi {
 
 void MenuItem::Create(const base::DictionaryValue& option) {
   std::string type;
@@ -120,4 +120,4 @@ void MenuItem::OnClick(GtkWidget* widget) {
   dispatcher_host()->SendEvent(this, "click", args);
 }
 
-}  // namespace api
+}  // namespace nwapi

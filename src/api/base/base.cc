@@ -23,7 +23,7 @@
 #include "base/logging.h"
 #include "base/values.h"
 
-namespace api {
+namespace nwapi {
 
 Base::Base(int id,
            DispatcherHost* dispatcher_host,
@@ -50,4 +50,4 @@ void Base::CallSync(const std::string& method,
                << " arguments:" << arguments;
 }
 
-}  // namespace api
+}  // namespace nwapi

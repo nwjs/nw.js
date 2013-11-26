@@ -32,7 +32,7 @@ namespace WebKit {
 class WebFrame;
 }
 
-namespace api {
+namespace nwapi {
 
 class Dispatcher : public content::RenderViewObserver {
  public:
@@ -52,7 +52,7 @@ class Dispatcher : public content::RenderViewObserver {
   DISALLOW_COPY_AND_ASSIGN(Dispatcher);
 };
 
-}  // namespace api
+}  // namespace nwapi
 
 #endif  // CONTENT_NW_SRC_API_DISPATCHER_H_
 

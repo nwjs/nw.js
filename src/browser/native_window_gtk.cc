@@ -291,7 +291,7 @@ bool NativeWindowGtk::IsKiosk() {
   return IsFullscreen();
 }
 
-void NativeWindowGtk::SetMenu(api::Menu* menu) {
+void NativeWindowGtk::SetMenu(nwapi::Menu* menu) {
   gtk_box_pack_start(GTK_BOX(vbox_), menu->menu_, FALSE, FALSE, 0);
   gtk_box_reorder_child(GTK_BOX(vbox_), menu->menu_, 0);
 }

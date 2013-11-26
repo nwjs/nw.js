@@ -74,7 +74,7 @@ namespace content {
 class Shell;
 }
 
-namespace api {
+namespace nwapi {
 
 class MenuItem;
 
@@ -126,6 +126,6 @@ class Menu : public Base {
   DISALLOW_COPY_AND_ASSIGN(Menu);
 };
 
-}  // namespace api
+}  // namespace nwapi
 
 #endif  // CONTENT_NW_SRC_API_MENU_MENU_H_

@@ -28,7 +28,7 @@
 
 using base::FilePath;
 
-namespace api {
+namespace nwapi {
 
 // static
 void Shell::Call(const std::string& method,
@@ -50,4 +50,4 @@ void Shell::Call(const std::string& method,
   }
 }
 
-}  // namespace api
+}  // namespace nwapi

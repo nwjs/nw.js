@@ -25,7 +25,7 @@
 #include "base/compiler_specific.h"
 #include "v8/include/v8.h"
 
-namespace api {
+namespace nwapi {
 
 class DispatcherBindings : public v8::Extension {
  public:
@@ -66,6 +66,6 @@ class DispatcherBindings : public v8::Extension {
   DISALLOW_COPY_AND_ASSIGN(DispatcherBindings);
 };
 
-}  // namespace api
+}  // namespace nwapi
 
 #endif  // CONTENT_NW_SRC_API_DISPATCHER_BINDINGS_H_

@@ -25,7 +25,7 @@
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"
 
-namespace api {
+namespace nwapi {
 
 Tray::Tray(int id,
            DispatcherHost* dispatcher_host,
@@ -90,4 +90,4 @@ void Tray::Call(const std::string& method,
   }
 }
 
-}  // namespace api
+}  // namespace nwapi

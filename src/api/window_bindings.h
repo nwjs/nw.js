@@ -25,7 +25,7 @@
 #include "base/compiler_specific.h"
 #include "v8/include/v8.h"
 
-namespace api {
+namespace nwapi {
 
 class WindowBindings : public v8::Extension {
  public:
@@ -53,6 +53,6 @@ class WindowBindings : public v8::Extension {
   DISALLOW_COPY_AND_ASSIGN(WindowBindings);
 };
 
-}  // namespace api
+}  // namespace nwapi
 
 #endif  // CONTENT_NW_SRC_API_WINDOW_BINDINGS_H_

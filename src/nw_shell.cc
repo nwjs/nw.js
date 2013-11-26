@@ -184,7 +184,7 @@ Shell::~Shell() {
 
   if (is_devtools_ && devtools_owner_.get()) {
     devtools_owner_->SendEvent("devtools-closed");
-    api::DispatcherHost* dhost = api::FindDispatcherHost(devtools_owner_->web_contents_->GetRenderViewHost());
+    nwapi::DispatcherHost* dhost = nwapi::FindDispatcherHost(devtools_owner_->web_contents_->GetRenderViewHost());
     dhost->OnDeallocateObject(devtools_owner_->devtools_window_id_);
     devtools_owner_->devtools_window_id_ = 0;
   }
@@ -201,7 +201,7 @@ Shell::~Shell() {
   }
 
   if (windows_.empty() && quit_message_loop_)
-    api::App::Quit(web_contents()->GetRenderProcessHost());
+    nwapi::App::Quit(web_contents()->GetRenderProcessHost());
 }
 
 void Shell::SendEvent(const std::string& event, const std::string& arg1) {
@@ -330,7 +330,7 @@ int Shell::WrapDevToolsWindow() {
     return devtools_window_id_;
   if (!devtools_window_)
     return 0;
-  api::DispatcherHost* dhost = api::FindDispatcherHost(devtools_window_->web_contents_->GetRenderViewHost());
+  nwapi::DispatcherHost* dhost = nwapi::FindDispatcherHost(devtools_window_->web_contents_->GetRenderViewHost());
   int object_id = dhost->AllocateId();
   base::DictionaryValue manifest;
   dhost->OnAllocateObject(object_id, "Window", manifest);
@@ -368,7 +368,6 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
   GURL url = delegate->devtools_http_handler()->GetFrontendURL(agent.get());
 
   SendEvent("devtools-opened", url.spec());
-
   if (headless)
     return;
 

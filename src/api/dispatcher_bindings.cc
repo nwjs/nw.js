@@ -38,7 +38,7 @@ using content::RenderView;
 using content::V8ValueConverter;
 using base::FilePath;
 
-namespace api {
+namespace nwapi {
 
 namespace {
 
@@ -468,4 +468,4 @@ void DispatcherBindings::CallStaticMethodSync(
   args.GetReturnValue().Set(converter->ToV8Value(&result, v8::Context::GetCurrent()));
 }
 
-}  // namespace api
+}  // namespace nwapi

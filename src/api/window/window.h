@@ -38,7 +38,7 @@ class Shell;
 class ShellBrowserContext;
 }
 
-namespace api {
+namespace nwapi {
 
 class CookieAPIContext : public base::RefCountedThreadSafe<CookieAPIContext> {
 public:
@@ -98,6 +98,6 @@ class Window : public Base, public content::NotificationObserver {
   DISALLOW_COPY_AND_ASSIGN(Window);
 };
 
-}  // namespace api
+}  // namespace nwapi
 
 #endif  // CONTENT_NW_SRC_API_WINDOW_WINDOW_H_

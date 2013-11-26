@@ -28,7 +28,7 @@
 #include "content/public/browser/render_widget_host_view.h"
 #include "ui/gfx/point.h"
 
-namespace api {
+namespace nwapi {
 
 namespace {
 
@@ -131,4 +131,4 @@ void Menu::Popup(int x, int y, content::Shell* shell) {
                  3, triggering_event_time);
 }
 
-}  // namespace api
+}  // namespace nwapi

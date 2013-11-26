@@ -34,7 +34,7 @@ class RenderProcessHost;
 class Shell;
 }
 
-namespace api {
+namespace nwapi {
 
 class App {
  public:
@@ -66,7 +66,7 @@ class App {
   DISALLOW_COPY_AND_ASSIGN(App);
 };
 
-}  // namespace api
+}  // namespace nwapi
 
 #endif  // CONTENT_NW_SRC_API_APP_APP_H_
 

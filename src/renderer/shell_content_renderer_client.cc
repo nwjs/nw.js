@@ -142,7 +142,7 @@ void ShellContentRendererClient::RenderThreadStarted() {
   // Install window bindings into node. The Window API is implemented in node's
   // context, so when a Shell changes to a new location and destroy previous
   // window context, our Window API can still work.
-  window_bindings_.reset(new api::WindowBindings());
+  window_bindings_.reset(new nwapi::WindowBindings());
   v8::RegisterExtension(window_bindings_.get());
   const char* names[] = { "window_bindings.js" };
   v8::ExtensionConfiguration extension_configuration(1, names);
@@ -177,7 +177,7 @@ void ShellContentRendererClient::RenderThreadStarted() {
 }
 
 void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
-  new api::Dispatcher(render_view);
+  new nwapi::Dispatcher(render_view);
   new nw::NwRenderViewObserver(render_view);
   new prerender::PrerendererClient(render_view);
 #if defined(ENABLE_PRINTING)

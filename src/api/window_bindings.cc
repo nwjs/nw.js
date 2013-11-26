@@ -35,7 +35,7 @@ using namespace WebCore;
 #include "third_party/WebKit/Source/web/WebFrameImpl.h"
 
 
-namespace api {
+namespace nwapi {
 
 WindowBindings::WindowBindings()
     : v8::Extension("window_bindings.js",
@@ -169,4 +169,4 @@ WindowBindings::GetWindowObject(const v8::FunctionCallbackInfo<v8::Value>& args)
   args.GetReturnValue().Set(render_view->GetWebView()->mainFrame()->mainWorldScriptContext()->Global());
 }
 
-}  // namespace api
+}  // namespace nwapi

@@ -89,7 +89,7 @@ base::StringPiece PlatformResourceProvider(int key) {
 
 void RenderViewHostCreated(content::RenderViewHost* render_view_host) {
   //FIXME: handle removal
-  new api::DispatcherHost(render_view_host);
+  new nwapi::DispatcherHost(render_view_host);
 }
 
 }  // namespace
@@ -236,9 +236,9 @@ bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(
   }
 
 #if 0
-  api::App::EmitOpenEvent(UTF16ToUTF8(cmd));
+  nwapi::App::EmitOpenEvent(UTF16ToUTF8(cmd));
 #else
-  api::App::EmitOpenEvent(cmd);
+  nwapi::App::EmitOpenEvent(cmd);
 #endif
 
   return true;
