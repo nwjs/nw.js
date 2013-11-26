@@ -172,7 +172,7 @@ void DispatcherHost::OnCallObjectMethodSync(
              << " arguments:" << arguments;
 
   Base* object = GetApiObject(object_id);
-  CHECK(object) << "Unknown object: " << object_id
+  LOG(WARNING) << "Unknown object: " << object_id
              << " type:" << type
              << " method:" << method
              << " arguments:" << arguments;
