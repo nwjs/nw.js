@@ -21,8 +21,13 @@
 #ifndef CONTENT_NW_SRC_BROWSER_SHELL_LOGIN_DIALOG_H_
 #define CONTENT_NW_SRC_BROWSER_SHELL_LOGIN_DIALOG_H_
 
+#include <deque>
+#include "base/basictypes.h"
 #include "base/compiler_specific.h"
+#include "base/memory/scoped_ptr.h"
 #include "base/strings/string16.h"
+#include "base/synchronization/lock.h"
+#include "content/public/browser/notification_observer.h"
 #include "content/public/browser/resource_dispatcher_host_login_delegate.h"
 
 #if defined(TOOLKIT_GTK)
@@ -37,6 +42,11 @@ class ShellLoginDialogHelper;
 #endif  // __OBJC__
 #endif  // defined(OS_MACOSX)
 
+namespace content {
+class RenderViewHostDelegate;
+class NotificationRegistrar;
+}  // namespace content
+
 namespace net {
 class AuthChallengeInfo;
 class URLRequest;
@@ -46,7 +56,9 @@ namespace content {
 
 // This class provides a dialog box to ask the user for credentials. Useful in
 // ResourceDispatcherHostDelegate::CreateLoginDelegate.
-class ShellLoginDialog : public ResourceDispatcherHostLoginDelegate {
+class ShellLoginDialog : public ResourceDispatcherHostLoginDelegate,
+                         public content::NotificationObserver
+{
  public:
   // Threading: IO thread.
   ShellLoginDialog(net::AuthChallengeInfo* auth_info, net::URLRequest* request);
@@ -62,16 +74,58 @@ class ShellLoginDialog : public ResourceDispatcherHostLoginDelegate {
   void UserAcceptedAuth(const string16& username, const string16& password);
   void UserCancelledAuth();
 
+  // Implements the content::NotificationObserver interface.
+  // Listens for AUTH_SUPPLIED and AUTH_CANCELLED notifications from other
+  // LoginHandlers so that this LoginHandler has the chance to dismiss itself
+  // if it was waiting for the same authentication.
+  virtual void Observe(int type,
+                       const content::NotificationSource& source,
+                       const content::NotificationDetails& details) OVERRIDE;
+
+  // Who/where/what asked for the authentication.
+  const net::AuthChallengeInfo* auth_info() const { return auth_info_.get(); }
+
+  // Returns whether authentication had been handled (SetAuth or CancelAuth).
+  bool WasAuthHandled() const;
+
  protected:
   // Threading: any
   virtual ~ShellLoginDialog();
 
+  // Performs necessary cleanup before deletion.
+  void ReleaseSoon();
+
  private:
+
+  // popup next dialog in queue on closing of this dialog
+  void HandleQueueOnClose();
+
+  // Calls SetAuth from the IO loop.
+  void SetAuthDeferred(const string16& username,
+                       const string16& password);
+
+  // Calls CancelAuth from the IO loop.
+  void CancelAuthDeferred();
+
+  // Closes the view_contents from the UI loop.
+  void CloseContentsDeferred();
+
+  // Marks authentication as handled and returns the previous handled
+  // state.
+  bool TestAndSetAuthHandled();
+
+  // Notify observers that authentication is supplied.
+  void NotifyAuthSupplied(const string16& username,
+                          const string16& password);
+
+  void NotifyAuthCancelled();
   // All the methods that begin with Platform need to be implemented by the
   // platform specific LoginDialog implementation.
   // Creates the dialog.
   // Threading: UI thread.
   void PlatformCreateDialog(const string16& message);
+
+  void PlatformShowDialog();
   // Called from the destructor to let each platform do any necessary cleanup.
   // Threading: UI thread.
   void PlatformCleanUp();
@@ -89,6 +143,12 @@ class ShellLoginDialog : public ResourceDispatcherHostLoginDelegate {
                            const string16& username,
                            const string16& password);
 
+  // Starts observing notifications from other LoginHandlers.
+  void AddObservers();
+
+  // Stops observing notifications from other LoginHandlers.
+  void RemoveObservers();
+
   // Who/where/what asked for the authentication.
   // Threading: IO thread.
   scoped_refptr<net::AuthChallengeInfo> auth_info_;
@@ -96,6 +156,18 @@ class ShellLoginDialog : public ResourceDispatcherHostLoginDelegate {
   // The request that wants login data.
   // Threading: IO thread.
   net::URLRequest* request_;
+
+  // True if we've handled auth (SetAuth or CancelAuth has been called).
+  bool handled_auth_;
+  mutable base::Lock handled_auth_lock_;
+
+  // Observes other login handlers so this login handler can respond.
+  // This is only accessed on the UI thread.
+  scoped_ptr<content::NotificationRegistrar> registrar_;
+
+  typedef std::deque<ShellLoginDialog*> ShellLoginDialogList;
+
+  static ShellLoginDialogList dialog_queue_;
 
 #if defined(OS_MACOSX)
   // Threading: UI thread.
@@ -110,7 +182,49 @@ class ShellLoginDialog : public ResourceDispatcherHostLoginDelegate {
   GtkWidget* password_entry_;
   GtkWidget* root_;
   CHROMEGTK_CALLBACK_1(ShellLoginDialog, void, OnResponse, int);
+  CHROMEGTK_CALLBACK_0(ShellLoginDialog, void, OnDestroy);
 #endif
+};
+
+// Details to provide the content::NotificationObserver.  Used by the automation
+// proxy for testing.
+class LoginNotificationDetails {
+ public:
+  explicit LoginNotificationDetails(ShellLoginDialog* handler)
+      : handler_(handler) {}
+  ShellLoginDialog* handler() const { return handler_; }
+
+ private:
+  LoginNotificationDetails() {}
+
+  ShellLoginDialog* handler_;  // Where to send the response.
+
+  DISALLOW_COPY_AND_ASSIGN(LoginNotificationDetails);
+};
+
+
+// Details to provide the NotificationObserver.  Used by the automation proxy
+// for testing and by other LoginHandlers to dismiss themselves when an
+// identical auth is supplied.
+class AuthSuppliedLoginNotificationDetails : public LoginNotificationDetails {
+ public:
+  AuthSuppliedLoginNotificationDetails(ShellLoginDialog* handler,
+                                       const string16& username,
+                                       const string16& password)
+      : LoginNotificationDetails(handler),
+        username_(username),
+        password_(password) {}
+  const string16& username() const { return username_; }
+  const string16& password() const { return password_; }
+
+ private:
+  // The username that was used for the authentication.
+  const string16 username_;
+
+  // The password that was used for the authentication.
+  const string16 password_;
+
+  DISALLOW_COPY_AND_ASSIGN(AuthSuppliedLoginNotificationDetails);
 };
 
 }  // namespace content
