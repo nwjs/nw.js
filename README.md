@@ -96,6 +96,8 @@ We use the [node-webkit group](http://groups.google.com/group/node-webkit) as
 our mailing list. Subscribe via [node-webkit+subscribe@googlegroups.com](mailto:node-webkit+subscribe@googlegroups.com).
 Issues are being tracked here on GitHub.
 
+You can chat with us on IRC in the ##node-webkit channel on irc.freenode.net  
+
 ## License
 
 `node-webkit`'s code in this repo uses the MIT license, see our `LICENSE` file. To redistribute the binary, see [How to package and distribute your apps](https://github.com/rogerwang/node-webkit/wiki/How-to-package-and-distribute-your-apps)
