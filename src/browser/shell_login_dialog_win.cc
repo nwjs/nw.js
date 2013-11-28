@@ -53,6 +53,7 @@ INT_PTR CALLBACK ShellLoginDialog::DialogProc(HWND dialog,
       owner->UserCancelledAuth();
       DestroyWindow(owner->dialog_win_);
       owner->dialog_win_ = NULL;
+      ReleaseSoon();
       break;
     }
     case WM_COMMAND: {
@@ -75,7 +76,7 @@ INT_PTR CALLBACK ShellLoginDialog::DialogProc(HWND dialog,
         NOTREACHED();
       }
 
-      break;	
+      break;
     }
     default:
       return DefWindowProc(dialog, message, wparam, lparam);
@@ -104,16 +105,22 @@ void ShellLoginDialog::PlatformCreateDialog(const string16& message) {
   gfx::NativeWindow parent_window =
       web_contents->GetView()->GetTopLevelNativeWindow();
   message_text_ = message;
-  dialog_win_ = CreateDialogParam(GetModuleHandle(0), 
-                                  MAKEINTRESOURCE(IDD_LOGIN), parent_window, 
+  dialog_win_ = CreateDialogParam(GetModuleHandle(0),
+                                  MAKEINTRESOURCE(IDD_LOGIN), parent_window,
                                   DialogProc, reinterpret_cast<LPARAM>(this));
+}
+
+void ShellLoginDialog::PlatformShowDialog() {
+  DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
   ShowWindow(dialog_win_, SW_SHOWNORMAL);
 }
 
 void ShellLoginDialog::PlatformCleanUp() {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
-  if (this->dialog_win_) 
-    DestroyWindow(this->dialog_win_);
+  if (dialog_win_) {
+    DestroyWindow(dialog_win_);
+    dialog_win_ = NULL;
+  }
 }
 
 void ShellLoginDialog::PlatformRequestCancelled() {
