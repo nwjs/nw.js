@@ -173,10 +173,6 @@ void ShellLoginDialog::SendAuthToRequester(bool success,
   } else
     request_->CancelAuth();
   ResourceDispatcherHost::Get()->ClearLoginDelegateForRequest(request_);
-
-  BrowserThread::PostTask(
-      BrowserThread::UI, FROM_HERE,
-      base::Bind(&ShellLoginDialog::PlatformCleanUp, this));
 }
 
 void ShellLoginDialog::NotifyAuthSupplied(const string16& username,
