@@ -88,12 +88,12 @@ class ShellLoginDialog : public ResourceDispatcherHostLoginDelegate,
   // Returns whether authentication had been handled (SetAuth or CancelAuth).
   bool WasAuthHandled() const;
 
+  // Performs necessary cleanup before deletion.
+  void ReleaseSoon();
+
  protected:
   // Threading: any
   virtual ~ShellLoginDialog();
-
-  // Performs necessary cleanup before deletion.
-  void ReleaseSoon();
 
  private:
 
@@ -172,6 +172,7 @@ class ShellLoginDialog : public ResourceDispatcherHostLoginDelegate,
 #if defined(OS_MACOSX)
   // Threading: UI thread.
   ShellLoginDialogHelper* helper_;  // owned
+  base::string16 message_;
 #elif defined(OS_WIN)
   HWND dialog_win_;
   string16 message_text_;
