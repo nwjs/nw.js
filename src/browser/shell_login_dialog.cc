@@ -28,6 +28,7 @@
 #include "content/public/browser/notification_registrar.h"
 #include "content/public/browser/notification_service.h"
 #include "content/public/browser/resource_dispatcher_host.h"
+#include "content/public/browser/resource_request_info.h"
 #include "net/base/auth.h"
 #include "net/url_request/url_request.h"
 #include "ui/base/text/text_elider.h"
@@ -51,10 +52,23 @@ ShellLoginDialog::ShellLoginDialogList ShellLoginDialog::dialog_queue_;
 
 ShellLoginDialog::ShellLoginDialog(
     net::AuthChallengeInfo* auth_info,
-    net::URLRequest* request) : auth_info_(auth_info),
-                                request_(request),
-                                handled_auth_(false) {
+    net::URLRequest* request)
+  : render_process_id_(0),
+    render_view_id_(0),
+    auth_info_(auth_info),
+    request_(request),
+    handled_auth_(false) {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::IO));
+
+  if (!ResourceRequestInfo::ForRequest(request_)->GetAssociatedRenderView(
+          &render_process_id_,  &render_view_id_)) {
+    NOTREACHED();
+  }
+
+  // prevent object destruction on wrong (IO) thread
+  // paired with ReleaseSoon()
+  AddRef();
+
   BrowserThread::PostTask(
       BrowserThread::UI, FROM_HERE,
       base::Bind(&ShellLoginDialog::PrepDialog, this,

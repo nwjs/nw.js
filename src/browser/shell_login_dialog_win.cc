@@ -52,9 +52,14 @@ INT_PTR CALLBACK ShellLoginDialog::DialogProc(HWND dialog,
           GetWindowLongPtr(dialog, DWL_USER));
       owner->UserCancelledAuth();
       DestroyWindow(owner->dialog_win_);
-      owner->dialog_win_ = NULL;
-      ReleaseSoon();
       break;
+    }
+    case WM_DESTROY: {
+      ShellLoginDialog* owner = reinterpret_cast<ShellLoginDialog*>(
+          GetWindowLongPtr(dialog, DWL_USER));
+      owner->dialog_win_ = NULL;
+      owner->ReleaseSoon();
+	  break;
     }
     case WM_COMMAND: {
       ShellLoginDialog* owner = reinterpret_cast<ShellLoginDialog*>(
@@ -73,7 +78,8 @@ INT_PTR CALLBACK ShellLoginDialog::DialogProc(HWND dialog,
       } else if (LOWORD(wparam) == IDCANCEL) {
         owner->UserCancelledAuth();
       } else {
-        NOTREACHED();
+        DLOG(INFO) << "wparam is " << LOWORD(wparam);
+        // NOTREACHED();
       }
 
       break;
@@ -88,16 +94,9 @@ INT_PTR CALLBACK ShellLoginDialog::DialogProc(HWND dialog,
 void ShellLoginDialog::PlatformCreateDialog(const string16& message) {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
 
-  int render_process_id;
-  int render_view_id;
-  if (!ResourceRequestInfo::ForRequest(request_)->GetAssociatedRenderView(
-          &render_process_id,  &render_view_id)) {
-    NOTREACHED();
-  }
-
   WebContents* web_contents = NULL;
   RenderViewHost* render_view_host =
-      RenderViewHost::FromID(render_process_id, render_view_id);
+      RenderViewHost::FromID(render_process_id_, render_view_id_);
   if (render_view_host)
     web_contents = WebContents::FromRenderViewHost(render_view_host);
   DCHECK(web_contents);

@@ -95,6 +95,9 @@ class ShellLoginDialog : public ResourceDispatcherHostLoginDelegate,
   // Threading: any
   virtual ~ShellLoginDialog();
 
+  int render_process_id_;
+  int render_view_id_;
+
  private:
 
   // popup next dialog in queue on closing of this dialog

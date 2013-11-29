@@ -134,6 +134,7 @@ void ShellLoginDialog::PlatformCleanUp() {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
   [helper_ release];
   helper_ = nil;
+  ReleaseSoon();
 }
 
 void ShellLoginDialog::PlatformRequestCancelled() {

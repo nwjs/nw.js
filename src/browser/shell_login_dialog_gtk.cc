@@ -94,6 +94,8 @@ void ShellLoginDialog::PlatformCreateDialog(const string16& message) {
   gtk_box_pack_start(GTK_BOX(content_area), table, FALSE, FALSE, 0);
 
   g_signal_connect(root_, "response", G_CALLBACK(OnResponseThunk), this);
+  g_signal_connect(root_, "destroy",  G_CALLBACK(OnDestroyThunk), this);
+
   gtk_widget_grab_focus(username_entry_);
 }
 
