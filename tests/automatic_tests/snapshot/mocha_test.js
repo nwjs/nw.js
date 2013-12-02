@@ -66,11 +66,11 @@ describe('snapshot', function() {
 	   })
     })
 
-    describe('another demo should work fine', function() {
+    describe('1266-snapshot-crash-start', function() {
     	before(function(done) {
     	    cp.execFile(snapshotPath,
     			['--extra_code', 'file_to_snapshot_to_app.bin.js', 'app.bin'],
-    			{cwd:'./' + global.tests_dir + '/snapshot/test-snapshot-app/'},
+    			{cwd:'./' + global.tests_dir + '/snapshot/1266-snapshot-crash-start/'},
     			function (error, stdout, stderr) {
     			    done();
     			}
@@ -79,18 +79,18 @@ describe('snapshot', function() {
     	})
 	
     	after(function() {
-    	    fs.unlink(path.join(global.tests_dir, 'snapshot','test-snapshot-app', 'app.bin'), function(err) {if(err && err.code !== 'ENOENT') throw err});
-    	    fs.unlink(path.join(global.tests_dir, 'snapshot','test-snapshot-app', 'v8.log'), function(err) {if(err && err.code !== 'ENOENT') throw err});
-    	    fs.unlink(path.join(global.tests_dir, 'snapshot','test-snapshot-app','tmp'), function(err) {if(err && err.code !== 'ENOENT') throw err});
+    	    fs.unlink(path.join(global.tests_dir, 'snapshot','1266-snapshot-crash-start', 'app.bin'), function(err) {if(err && err.code !== 'ENOENT') throw err});
+    	    fs.unlink(path.join(global.tests_dir, 'snapshot','1266-snapshot-crash-start', 'v8.log'), function(err) {if(err && err.code !== 'ENOENT') throw err});
+    	    fs.unlink(path.join(global.tests_dir, 'snapshot','1266-snapshot-crash-start','tmp'), function(err) {if(err && err.code !== 'ENOENT') throw err});
     	})
 	
     	it('another demo should close nomally', function(done) {
     	    this.timeout(0);
-    	    var ppath = process.execPath + " " + path.join(global.tests_dir, 'snapshot', 'test-snapshot-app');
+    	    var ppath = process.execPath + " " + path.join(global.tests_dir, 'snapshot', '1266-snapshot-crash-start');
     	    cp.exec(ppath, function(err, stdout, stderr) {
     	    });
     	    setTimeout(function(){
-		fs.exists(path.join(global.tests_dir, 'snapshot','test-snapshot-app', 'tmp'), function(exists) {
+		fs.exists(path.join(global.tests_dir, 'snapshot','1266-snapshot-crash-start', 'tmp'), function(exists) {
 		    if (exists)
 			done();
 		    else
