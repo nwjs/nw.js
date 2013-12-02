@@ -34,8 +34,8 @@ describe('crash dump', function() {
 
 	it('should work fine', function() {
 	    assert.equal(result.length, 1);
-	    var r = result[0].indexOf("renderer");
-	    assert.equal(r, -1);
+	    var r = result[0].indexOf("dmp");
+	    assert.notEqual(r, -1);
 	});
 	
     })
@@ -58,7 +58,7 @@ describe('crash dump', function() {
 
 	it('should work fine', function() {
 	    assert.equal(result.length, 2);
-	    var r = result[1].indexOf("renderer");
+	    var r = result[1].indexOf("dmp");
 	    assert.notEqual(r, -1);
 	});
     })
