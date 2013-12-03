@@ -30,8 +30,9 @@
 #include "base/values.h"
 #include "chrome/common/child_process_logging.h"
 #include "content/browser/child_process_security_policy_impl.h"
-#include "content/public/browser/browser_url_handler.h"
 #include "content/nw/src/browser/printing/printing_message_filter.h"
+#include "content/public/browser/browser_url_handler.h"
+#include "content/public/browser/compositor_util.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/resource_dispatcher_host.h"
@@ -159,8 +160,13 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
   }
 
 #endif  // OS_MACOSX
+
   if (command_line->GetSwitchValueASCII("type") != "renderer")
     return;
+
+  if (content::IsThreadedCompositingEnabled())
+    command_line->AppendSwitch(switches::kEnableThreadedCompositing);
+
   if (child_process_id > 0) {
     content::RenderWidgetHost::List widgets =
       content::RenderWidgetHost::GetRenderWidgetHosts();
