@@ -247,7 +247,8 @@ NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
       resizable_(true),
       minimum_size_(0, 0),
       maximum_size_(),
-      initial_focus_(true) {
+      initial_focus_(true),
+      last_width_(-1), last_height_(-1) {
   manifest->GetBoolean("focus", &initial_focus_);
 
   window_ = new views::Widget;
@@ -265,6 +266,9 @@ NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
   gfx::Rect window_bounds = 
     window_->non_client_view()->GetWindowBoundsForClientBounds(
         gfx::Rect(width,height));
+  last_width_  = width;
+  last_height_ = height;
+  window_->AddObserver(this);
   window_->SetSize(window_bounds.size());
   window_->CenterWindow(window_bounds.size());
 
@@ -372,6 +376,19 @@ void NativeWindowWin::SetAlwaysOnTop(bool top) {
   window_->SetAlwaysOnTop(top);
 }
 
+void NativeWindowWin::OnWidgetBoundsChanged(views::Widget* widget, const gfx::Rect& new_bounds)  {
+  int w = new_bounds.width();
+  int h = new_bounds.height();
+  if (shell() && (w != last_width_ || h != last_height_)) {
+    base::ListValue args;
+    args.AppendInteger(w);
+    args.AppendInteger(h);
+    shell()->SendEvent("resize", args);
+    last_width_ = w;
+    last_height_ = h;
+  }
+}
+
 void NativeWindowWin::SetPosition(const std::string& position) {
   if (position == "center") {
     gfx::Rect bounds = window_->GetWindowBoundsInScreen();
@@ -463,6 +480,16 @@ views::NonClientFrameView* NativeWindowWin::CreateNonClientFrameView(
   NativeWindowFrameView* frame_view = new NativeWindowFrameView(this);
   frame_view->Init(window_);
   return frame_view;
+}
+
+void NativeWindowWin::OnWidgetMove() {
+  gfx::Point origin = GetPosition();
+  if (shell()) {
+    base::ListValue args;
+    args.AppendInteger(origin.x());
+    args.AppendInteger(origin.y());
+    shell()->SendEvent("move", args);
+  }
 }
 
 bool NativeWindowWin::CanResize() const {
