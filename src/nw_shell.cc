@@ -185,8 +185,10 @@ Shell::~Shell() {
   if (is_devtools_ && devtools_owner_.get()) {
     devtools_owner_->SendEvent("devtools-closed");
     nwapi::DispatcherHost* dhost = nwapi::FindDispatcherHost(devtools_owner_->web_contents_->GetRenderViewHost());
-    dhost->OnDeallocateObject(devtools_owner_->devtools_window_id_);
-    devtools_owner_->devtools_window_id_ = 0;
+    if (devtools_owner_->devtools_window_id_) {
+      dhost->OnDeallocateObject(devtools_owner_->devtools_window_id_);
+      devtools_owner_->devtools_window_id_ = 0;
+    }
   }
 
   for (size_t i = 0; i < windows_.size(); ++i) {
