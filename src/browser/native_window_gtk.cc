@@ -54,7 +54,10 @@ NativeWindowGtk::NativeWindowGtk(const base::WeakPtr<content::Shell>& shell,
       state_(GDK_WINDOW_STATE_WITHDRAWN),
       content_thinks_its_fullscreen_(false),
       frame_cursor_(NULL),
-      resizable_(true) {
+      resizable_(true),
+      last_x_(-1), last_y_(-1),
+      last_width_(-1), last_height_(-1)
+{
   window_ = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
 
   vbox_ = gtk_vbox_new(FALSE, 0);
@@ -94,6 +97,9 @@ NativeWindowGtk::NativeWindowGtk(const base::WeakPtr<content::Shell>& shell,
     gtk_window_set_default_size(window_, width, height);
   }
 
+  last_width_  = width;
+  last_height_ = height;
+
   // Hide titlebar when {frame: false} specified.
   if (!has_frame_)
     gtk_window_set_decorated(window_, false);
@@ -124,6 +130,8 @@ NativeWindowGtk::NativeWindowGtk(const base::WeakPtr<content::Shell>& shell,
                    G_CALLBACK(OnWindowStateThunk), this);
   g_signal_connect(window_, "delete-event",
                    G_CALLBACK(OnWindowDeleteEventThunk), this);
+  g_signal_connect(window_, "configure-event",
+                   G_CALLBACK(OnWindowConfigureEventThunk), this);
   if (!has_frame_) {
     g_signal_connect(window_, "button-press-event",
                      G_CALLBACK(OnButtonPressThunk), this);
@@ -576,6 +584,38 @@ gboolean NativeWindowGtk::OnWindowDeleteEvent(GtkWidget* widget,
   if (shell() && !shell()->ShouldCloseWindow())
     return TRUE;
 
+  return FALSE;
+}
+
+gboolean NativeWindowGtk::OnWindowConfigureEvent(GtkWidget* window,
+                                             GdkEvent* event)
+{
+  int x, y;
+  int w, h;
+
+  x = event->configure.x;
+  y = event->configure.y;
+  if (x != last_x_ || y != last_y_) {
+    last_x_ = x;
+    last_y_ = y;
+    base::ListValue args;
+    args.AppendInteger(x);
+    args.AppendInteger(y);
+    if (shell())
+      shell()->SendEvent("move", args);
+  }
+
+  w = event->configure.width;
+  h = event->configure.height;
+  if (w != last_width_ || h != last_height_) {
+    last_width_ = w;
+    last_height_ = h;
+    base::ListValue args;
+    args.AppendInteger(w);
+    args.AppendInteger(h);
+    if (shell())
+      shell()->SendEvent("resize", args);
+  }
   return FALSE;
 }
 

@@ -116,6 +116,8 @@ class NativeWindowGtk : public NativeWindow {
                        GdkEventButton*);
   CHROMEGTK_CALLBACK_1(NativeWindowGtk, gboolean, OnMouseMoveEvent,
                        GdkEventMotion*);
+  CHROMEGTK_CALLBACK_1(NativeWindowGtk, gboolean, OnWindowConfigureEvent,
+                       GdkEvent*);
 
   GtkWindow* window_;
   GtkWidget* toolbar_;
@@ -146,6 +148,11 @@ class NativeWindowGtk : public NativeWindow {
 
   // True if the window should be resizable by the user.
   bool resizable_;
+
+  int last_x_;
+  int last_y_;
+  int last_width_;
+  int last_height_;
 
   DISALLOW_COPY_AND_ASSIGN(NativeWindowGtk);
 };
