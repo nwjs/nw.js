@@ -216,8 +216,14 @@ void Shell::SendEvent(const std::string& event, const std::string& arg1) {
   if (!arg1.empty())
     args.AppendString(arg1);
 
-  web_contents()->GetRenderViewHost()->Send(new ShellViewMsg_Object_On_Event(
-      web_contents()->GetRoutingID(), id(), event, args));
+  WebContents* web_contents;
+  if (is_devtools_ && devtools_owner_.get())
+    web_contents = devtools_owner_->web_contents();
+  else
+    web_contents = this->web_contents();
+
+  web_contents->GetRenderViewHost()->Send(new ShellViewMsg_Object_On_Event(
+      web_contents->GetRoutingID(), id(), event, args));
 }
 
 bool Shell::ShouldCloseWindow() {
