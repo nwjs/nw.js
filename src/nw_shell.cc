@@ -207,16 +207,19 @@ Shell::~Shell() {
 }
 
 void Shell::SendEvent(const std::string& event, const std::string& arg1) {
+  base::ListValue args;
+  if (!arg1.empty())
+    args.AppendString(arg1);
+  SendEvent(event, args);
+}
+
+void Shell::SendEvent(const std::string& event, const base::ListValue& args) {
 
   if (id() < 0)
     return;
 
   DVLOG(1) << "Shell::SendEvent " << event << " id():"
            << id() << " RoutingID: " << web_contents()->GetRoutingID();
-
-  base::ListValue args;
-  if (!arg1.empty())
-    args.AppendString(arg1);
 
   WebContents* web_contents;
   if (is_devtools_ && devtools_owner_.get())
