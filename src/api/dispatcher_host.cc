@@ -67,6 +67,10 @@ FindDispatcherHost(content::RenderViewHost* render_view_host) {
   return it->second;
 }
 
+void DispatcherHost::ClearObjectRegistry() {
+  objects_registry_.Clear();
+}
+
 Base* DispatcherHost::GetApiObject(int id) {
   return objects_registry_.Lookup(id);
 }

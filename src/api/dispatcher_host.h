@@ -59,6 +59,8 @@ class DispatcherHost : public content::RenderViewHostObserver {
     return static_cast<T*>(GetApiObject(id));
   }
 
+  static void ClearObjectRegistry();
+
   // Send event to C++ object's corresponding js object.
   void SendEvent(Base* object,
                  const std::string& event,

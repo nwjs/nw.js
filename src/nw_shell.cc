@@ -202,8 +202,13 @@ Shell::~Shell() {
     }
   }
 
-  if (windows_.empty() && quit_message_loop_)
+  if (windows_.empty() && quit_message_loop_) {
+    // If Window object is not clearred here, the Window destructor
+    // will be called at exit and block the thread exiting on
+    // Notification registrar destruction
+    nwapi::DispatcherHost::ClearObjectRegistry();
     nwapi::App::Quit(web_contents()->GetRenderProcessHost());
+  }
 }
 
 void Shell::SendEvent(const std::string& event, const std::string& arg1) {
