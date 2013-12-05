@@ -256,13 +256,18 @@ void DispatcherHost::OnCreateShell(const std::string& url,
   WebContents* web_contents = content::WebContentsImpl::CreateWithOpener(
       create_params,
       static_cast<content::WebContentsImpl*>(base_web_contents));
-  content::Shell::Create(base_web_contents,
-                         GURL(url),
-                         new_manifest.get(),
-                         web_contents);
+  content::Shell* new_shell =
+    content::Shell::Create(base_web_contents,
+                           GURL(url),
+                           new_manifest.get(),
+                           web_contents);
 
-  if (new_renderer)
+  if (new_renderer) {
     browser_context->set_pinning_renderer(true);
+    // since the new-instance shell is always bound
+    // there would be 'Close' event cannot reach dest
+    new_shell->set_force_close(true);
+  }
 
   *routing_id = web_contents->GetRoutingID();
 
