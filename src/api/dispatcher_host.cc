@@ -156,12 +156,13 @@ void DispatcherHost::OnCallObjectMethod(
              << " arguments:" << arguments;
 
   Base* object = GetApiObject(object_id);
-  DLOG(WARNING) << "Unknown object: " << object_id
+  if (object)
+    object->Call(method, arguments);
+  else
+    DLOG(WARNING) << "Unknown object: " << object_id
              << " type:" << type
              << " method:" << method
              << " arguments:" << arguments;
-  if (object)
-    object->Call(method, arguments);
 }
 
 void DispatcherHost::OnCallObjectMethodSync(

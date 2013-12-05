@@ -191,6 +191,11 @@ Shell::~Shell() {
     }
   }
 
+  if (!is_devtools_ && id_ > 0) {
+    nwapi::DispatcherHost* dhost = nwapi::FindDispatcherHost(web_contents_->GetRenderViewHost());
+    dhost->OnDeallocateObject(id_);
+  }
+
   for (size_t i = 0; i < windows_.size(); ++i) {
     if (windows_[i] == this) {
       windows_.erase(windows_.begin() + i);

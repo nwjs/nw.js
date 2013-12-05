@@ -64,6 +64,6 @@ exports.Window = {
     options.object_id = id;
     var routing_id = nw.createShell(url, options);
 
-    return new global.Window(routing_id, options['new-instance'], id);
+    return new global.Window(routing_id, true, id);
   }
 };
