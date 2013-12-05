@@ -69,13 +69,13 @@ base::StringPiece GetStringResource(int resource_id) {
 namespace remote {
 
 v8::Handle<v8::Value> AllocateId(int routing_id) {
-  v8::HandleScope handle_scope;
+  v8::HandleScope scope;
 
   int result = 0;
   RenderThread::Get()->Send(new ShellViewHostMsg_AllocateId(
       routing_id,
       &result));
-  return v8::Integer::New(result);
+  return scope.Close(v8::Integer::New(result));
 }
 
 v8::Handle<v8::Value> AllocateObject(int routing_id,
