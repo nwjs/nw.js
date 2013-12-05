@@ -139,6 +139,29 @@ enum {
     shell_->SendEvent("restore");
 }
 
+- (void)windowDidMove:(NSNotification*)notification {
+  if (shell_) {
+    gfx::Point origin = 
+      static_cast<nw::NativeWindowCocoa*>(shell_->window())->GetPosition();
+    base::ListValue args;
+    args.AppendInteger(origin.x());
+    args.AppendInteger(origin.y());
+    shell_->SendEvent("move", args);
+  }
+}
+
+- (void)windowDidResize:(NSNotification*)notification {
+  if (shell_) {
+    NSWindow* window =
+      static_cast<nw::NativeWindowCocoa*>(shell_->window())->window();
+    NSRect frame = [window frame];
+    base::ListValue args;
+    args.AppendInteger(frame.size.width);
+    args.AppendInteger(frame.size.height);
+    shell_->SendEvent("resize", args);
+  }
+}
+
 - (BOOL)windowShouldZoom:(NSWindow*)window toFrame:(NSRect)newFrame {
   // Cocoa doen't have concept of maximize/unmaximize, so wee need to emulate
   // them by calculating size change when zooming.
