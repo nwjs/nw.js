@@ -203,6 +203,10 @@ void Window::Call(const std::string& method,
     shell_->window()->Minimize();
   } else if (method == "Restore") {
     shell_->window()->Restore();
+  } else if (method == "Focus") {
+    shell_->window()->Focus(true);
+  } else if (method == "Blur") {
+    shell_->window()->Focus(false);
   } else if (method == "EnterFullscreen") {
     shell_->window()->SetFullscreen(true);
   } else if (method == "LeaveFullscreen") {

@@ -266,15 +266,21 @@ Window.prototype.resizeBy = function(width, height) {
 }
 
 Window.prototype.focus = function(flag) {
-  if (typeof flag == 'undefined' || Boolean(flag))
-    this.window.focus();
-  else
+  if (typeof flag == 'undefined' || Boolean(flag)) {
+      if (this.__nw_is_devtools)
+          CallObjectMethod(this, 'Focus', []);
+      else
+          this.window.focus();
+  } else
     this.blur();
-}
+};
 
 Window.prototype.blur = function() {
-  this.window.blur();
-}
+    if (this.__nw_is_devtools)
+        CallObjectMethod(this, 'Blur', []);
+    else
+        this.window.blur();
+};
 
 Window.prototype.show = function(flag) {
   if (typeof flag == 'undefined' || Boolean(flag))
@@ -351,8 +357,10 @@ Window.prototype.showDevTools = function(frm, headless) {
     var ret;
     if (typeof win_id == 'number' && win_id > 0) {
         ret = global.__nwWindowsStore[win_id];
-        if (!ret)
+        if (!ret) {
             ret = new global.Window(this.window.nwDispatcher.getRoutingIDForCurrentContext(), true, win_id);
+            ret.__nw_is_devtools = true;
+        }
         return ret;
     }
 }
