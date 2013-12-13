@@ -196,7 +196,7 @@ Window.prototype.__defineGetter__('title', function() {
 });
 
 Window.prototype.__defineSetter__('zoomLevel', function(level) {
-  CallObjectMethodSync(this, 'SetZoomLevel', level);
+  CallObjectMethodSync(this, 'SetZoomLevel', [level]);
 });
 
 Window.prototype.__defineGetter__('zoomLevel', function() {
