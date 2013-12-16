@@ -145,6 +145,35 @@ describe('module', function() {
     it('native modules without handle scope', function() {
       require('./node_modules/nw_test_loop_without_handle');
     });
+      
+    it('dtrace-provider should work', function() {
+	var d = require('./node_modules/dtrace-provider');
+	var dtp = d.createDTraceProvider("nodeapp");
+	var p1 = dtp.addProbe("probe1", "int", "int");
+	var p2 = dtp.addProbe("probe2", "char *");
+	dtp.enable();      
+    });
+  
+    it('ref should work', function() {
+	var ref = require('ref')
+	var buf = new Buffer(4)
+	buf.writeInt32LE(12345, 0)
+	console.log(buf.address())  // ← 140362165284824
+	buf.type = ref.types.int
+	assert.equal(buf.deref(), 12345)  // ← 12345
+	var one = buf.ref()
+	assert.equal(one.deref().deref(), 12345)  // ← 12345
+    });
+
+    it('lame should work', function() {
+	var lame = require('lame');
+	// create the Encoder instance
+	var encoder = new lame.Encoder({
+	    channels: 2,        // 2 channels (left and right)
+	    bitDepth: 16,       // 16-bit samples
+	    sampleRate: 44100   // 44,100 Hz sample rate
+	});
+    });
   });
 });
 
