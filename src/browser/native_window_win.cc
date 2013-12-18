@@ -520,6 +520,10 @@ bool NativeWindowWin::ShouldShowWindowTitle() const {
   return has_frame();
 }
 
+bool NativeWindowWin::ShouldHandleOnSize() const {
+  return true;
+}
+
 void NativeWindowWin::OnNativeFocusChange(gfx::NativeView focused_before,
                                           gfx::NativeView focused_now) {
   gfx::NativeView this_window = GetWidget()->GetNativeView();
@@ -659,12 +663,20 @@ bool NativeWindowWin::ExecuteWindowsCommand(int command_id) {
     is_maximized_ = false;
     if (shell())
       shell()->SendEvent("unmaximize");
-  } else if ((command_id & sc_mask) == SC_MAXIMIZE) {
+  }
+  return false;
+}
+
+bool NativeWindowWin::HandleSize(unsigned int param, const gfx::Size& size) {
+  if (param == SIZE_MAXIMIZED) {
     is_maximized_ = true;
     if (shell())
       shell()->SendEvent("maximize");
+  }else if (param == SIZE_RESTORED && is_maximized_) {
+    is_maximized_ = false;
+    if (shell())
+      shell()->SendEvent("unmaximize");
   }
-
   return false;
 }
 
@@ -681,7 +693,7 @@ void NativeWindowWin::SaveWindowPlacement(const gfx::Rect& bounds,
                                           ui::WindowShowState show_state) {
   // views::WidgetDelegate::SaveWindowPlacement(bounds, show_state);
 }
-  
+
 void NativeWindowWin::OnViewWasResized() {
   // Set the window shape of the RWHV.
   DCHECK(window_);
