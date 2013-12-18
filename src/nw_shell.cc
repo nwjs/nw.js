@@ -188,6 +188,13 @@ Shell::~Shell() {
     if (devtools_owner_->devtools_window_id_) {
       dhost->OnDeallocateObject(devtools_owner_->devtools_window_id_);
       devtools_owner_->devtools_window_id_ = 0;
+    }else if (id_) {
+      //FIXME: the ownership/ flow of window and shell destruction
+      //need to be cleared
+
+      // In linux, Shell destruction will be called immediately in
+      // CloseDevTools but in OSX it won't
+      dhost->OnDeallocateObject(id_);
     }
   }
 
