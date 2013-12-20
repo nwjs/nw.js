@@ -4,6 +4,9 @@ import subprocess
 
 native_modules = ['nw_test_loop_without_handle',
                   'bignum',
+                  'dtrace-provider',
+                  'ref',
+                  'lame',
                   ];
 
 script_dir = os.path.dirname(__file__)

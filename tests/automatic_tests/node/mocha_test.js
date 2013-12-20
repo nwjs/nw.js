@@ -143,7 +143,13 @@ describe('module', function() {
     });
 
     it('native modules without handle scope', function() {
-      require('./node_modules/nw_test_loop_without_handle');
+	require('./node_modules/nw_test_loop_without_handle');
+    });
+     
+    it('native modules should work', function() {
+	var nativeModules = new Array("dtrace-provider", "ref", "lame");
+	for (var i = 0; i < nativeModules.length; i++)
+	    assert.equal((typeof require(nativeModules[i])),  "object");
     });
   });
 });
