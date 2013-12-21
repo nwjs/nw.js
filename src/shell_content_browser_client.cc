@@ -30,11 +30,12 @@
 #include "base/values.h"
 #include "chrome/common/child_process_logging.h"
 #include "content/browser/child_process_security_policy_impl.h"
+#include "content/browser/gpu/compositor_util.h"
 #include "content/nw/src/browser/printing/printing_message_filter.h"
 #include "content/public/browser/browser_url_handler.h"
-#include "content/public/browser/compositor_util.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/render_view_host.h"
+#include "content/public/browser/render_widget_host_iterator.h"
 #include "content/public/browser/resource_dispatcher_host.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/content_descriptors.h"
@@ -155,8 +156,7 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
   }
 #elif defined(OS_POSIX)
   if (IsCrashReporterEnabled()) {
-    command_line->AppendSwitchASCII(switches::kEnableCrashReporter,
-        child_process_logging::GetClientId() + "," + base::GetLinuxDistro());
+    command_line->AppendSwitch(switches::kEnableCrashReporter);
   }
 
 #endif  // OS_MACOSX
@@ -168,16 +168,13 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     command_line->AppendSwitch(switches::kEnableThreadedCompositing);
 
   if (child_process_id > 0) {
-    content::RenderWidgetHost::List widgets =
+    scoped_ptr<content::RenderWidgetHostIterator> widgets =
       content::RenderWidgetHost::GetRenderWidgetHosts();
-    for (size_t i = 0; i < widgets.size(); ++i) {
-      if (widgets[i]->GetProcess()->GetID() != child_process_id)
+    while (RenderWidgetHost* widget = widgets->GetNextHost()) {
+      if (widget->GetProcess()->GetID() != child_process_id)
         continue;
-      if (!widgets[i]->IsRenderView())
+      if (!widget->IsRenderView())
         continue;
-
-      const content::RenderWidgetHost* widget = widgets[i];
-      DCHECK(widget);
 
       content::RenderViewHost* host = content::RenderViewHost::From(
         const_cast<content::RenderWidgetHost*>(widget));
@@ -275,8 +272,6 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
   prefs->allow_file_access_from_file_urls = true;
 
   // Open experimental features.
-  prefs->css_sticky_position_enabled = true;
-  prefs->css_shaders_enabled = true;
   prefs->css_variables_enabled = true;
 
   // Disable plugins and cache by default.
@@ -358,7 +353,7 @@ void ShellContentBrowserClient::RenderProcessHostCreated(
       host->GetID(), "app");
 
 #if defined(ENABLE_PRINTING)
-  host->GetChannel()->AddFilter(new PrintingMessageFilter(id));
+  host->AddFilter(new PrintingMessageFilter(id));
 #endif
 }
 

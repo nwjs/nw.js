@@ -256,8 +256,12 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
     scoped_ptr<net::URLRequestJobFactoryImpl> job_factory(
         new net::URLRequestJobFactoryImpl());
     InstallProtocolHandlers(job_factory.get(), &protocol_handlers_);
-    job_factory->SetProtocolHandler(chrome::kFileScheme,
-                                    new net::FileProtocolHandler);
+    job_factory->SetProtocolHandler(
+         chrome::kFileScheme,
+         new net::FileProtocolHandler(
+               content::BrowserThread::GetBlockingPool()->
+               GetTaskRunnerWithShutdownBehavior(
+                    base::SequencedWorkerPool::SKIP_ON_SHUTDOWN)));
     job_factory->SetProtocolHandler("app",
                                     new net::AppProtocolHandler(root_path_));
     job_factory->SetProtocolHandler("nw", new nw::NwProtocolHandler());

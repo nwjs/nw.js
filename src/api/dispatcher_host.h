@@ -23,7 +23,7 @@
 
 #include "base/basictypes.h"
 #include "base/id_map.h"
-#include "content/public/browser/render_view_host_observer.h"
+#include "content/public/browser/web_contents_observer.h"
 
 #include <string>
 
@@ -44,7 +44,7 @@ namespace nwapi {
 
 class Base;
 
-class DispatcherHost : public content::RenderViewHostObserver {
+class DispatcherHost : public content::WebContentsObserver {
  public:
   explicit DispatcherHost(content::RenderViewHost* render_view_host);
   virtual ~DispatcherHost();
@@ -68,16 +68,18 @@ class DispatcherHost : public content::RenderViewHostObserver {
 
   virtual bool Send(IPC::Message* message) OVERRIDE;
   content::RenderViewHost* render_view_host() const {
-    return content::RenderViewHostObserver::render_view_host();
+    return render_view_host_;
   }
 
  private:
+  content::RenderViewHost* render_view_host_;
   friend class content::Shell;
 
   static IDMap<Base, IDMapOwnPointer> objects_registry_;
   static int next_object_id_;
 
   // RenderViewHostObserver implementation.
+  // WebContentsObserver implementation:
   virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
 
   void OnAllocateObject(int object_id,

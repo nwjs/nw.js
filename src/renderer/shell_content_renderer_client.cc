@@ -51,6 +51,7 @@
 #include "ipc/ipc_descriptors.h"
 #include "net/proxy/proxy_bypass_rules.h"
 #include "third_party/node/src/node.h"
+#include "third_party/node/src/node_internals.h"
 #include "third_party/node/src/req_wrap.h"
 #include "third_party/WebKit/public/web/WebDocument.h"
 #include "third_party/WebKit/public/web/WebFrame.h"
@@ -147,14 +148,19 @@ void ShellContentRendererClient::RenderThreadStarted() {
   const char* names[] = { "window_bindings.js" };
   v8::ExtensionConfiguration extension_configuration(1, names);
 
-  node::g_context = v8::Context::New(&extension_configuration);
+  node::g_context.Reset(v8::Isolate::GetCurrent(),
+                        v8::Context::New(v8::Isolate::GetCurrent(),
+                                         &extension_configuration));
   node::g_context->SetSecurityToken(v8::String::NewSymbol("nw-token", 8));
   node::g_context->Enter();
 
   node::g_context->SetEmbedderData(0, v8::String::NewSymbol("node"));
 
   // Setup node.js.
-  node::SetupContext(argc, argv, node::g_context->Global());
+  v8::Local<v8::Context> context =
+    v8::Local<v8::Context>::New(node::g_context->GetIsolate(), node::g_context);
+
+  node::SetupContext(argc, argv, context);
 
 #if !defined(OS_WIN)
   v8::Local<v8::Script> script = v8::Script::New(v8::String::New((
@@ -296,7 +302,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
       v8::Local<v8::Function> cb = v8::FunctionTemplate::New(ReportException)->
         GetFunction();
       v8::Local<v8::Value> argv[] = { v8::String::New("uncaughtException"), cb };
-      node::MakeCallback(node::process, "on", 2, argv);
+      node::MakeCallback(node::g_env->process_object(), "on", 2, argv);
     }
   }
 
@@ -349,12 +355,12 @@ void ShellContentRendererClient::ReportException(
 
   // Do nothing if user is listening to uncaughtException.
   v8::Local<v8::Value> listeners_v =
-      node::process->Get(v8::String::New("listeners"));
+    node::g_env->process_object()->Get(v8::String::New("listeners"));
   v8::Local<v8::Function> listeners =
       v8::Local<v8::Function>::Cast(listeners_v);
 
   v8::Local<v8::Value> argv[1] = { v8::String::New("uncaughtException") };
-  v8::Local<v8::Value> ret = listeners->Call(node::process, 1, argv);
+  v8::Local<v8::Value> ret = listeners->Call(node::g_env->process_object(), 1, argv);
   v8::Local<v8::Array> listener_array = v8::Local<v8::Array>::Cast(ret);
 
   uint32_t length = listener_array->Length();

@@ -49,9 +49,10 @@ IDMap<Base, IDMapOwnPointer> nwapi::DispatcherHost::objects_registry_;
 int nwapi::DispatcherHost::next_object_id_ = 1;
 static std::map<content::RenderViewHost*, DispatcherHost*> g_dispatcher_host_map;
 
-DispatcherHost::DispatcherHost(content::RenderViewHost* render_view_host)
-    : content::RenderViewHostObserver(render_view_host) {
-  g_dispatcher_host_map[render_view_host] = this;
+DispatcherHost::DispatcherHost(content::RenderViewHost* host)
+  : content::WebContentsObserver(content::WebContents::FromRenderViewHost(host)),
+    render_view_host_(host) {
+  g_dispatcher_host_map[render_view_host_] = this;
 }
 
 DispatcherHost::~DispatcherHost() {
@@ -87,7 +88,7 @@ void DispatcherHost::SendEvent(Base* object,
 }
 
 bool DispatcherHost::Send(IPC::Message* message) {
-  return content::RenderViewHostObserver::Send(message);
+  return content::WebContentsObserver::Send(message);
 }
 
 bool DispatcherHost::OnMessageReceived(const IPC::Message& message) {

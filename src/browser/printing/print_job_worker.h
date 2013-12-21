@@ -15,6 +15,8 @@
 #include "printing/print_job_constants.h"
 #include "ui/gfx/native_widget_types.h"
 
+class PrintingUIWebContentsObserver;
+
 namespace base {
 class DictionaryValue;
 }
@@ -45,11 +47,12 @@ class PrintJobWorker : public base::Thread {
 
   // Initializes the print settings. If |ask_user_for_settings| is true, a
   // Print... dialog box will be shown to ask the user his preference.
-  void GetSettings(bool ask_user_for_settings,
-                   gfx::NativeView parent_view,
-                   int document_page_count,
-                   bool has_selection,
-                   MarginType margin_type);
+  void GetSettings(
+      bool ask_user_for_settings,
+      scoped_ptr<PrintingUIWebContentsObserver> web_contents_observer,
+      int document_page_count,
+      bool has_selection,
+      MarginType margin_type);
 
   // Set the new print settings. This function takes ownership of
   // |new_settings|.

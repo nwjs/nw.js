@@ -68,19 +68,19 @@ void Clipboard::SetText(std::string& text) {
   ui::Clipboard::ObjectMap map;
   map[ui::Clipboard::CBF_TEXT].push_back(
       std::vector<char>(text.begin(), text.end()));
-  clipboard->WriteObjects(ui::Clipboard::BUFFER_STANDARD, map);
+  clipboard->WriteObjects(ui::CLIPBOARD_TYPE_COPY_PASTE, map);
 }
 
 std::string Clipboard::GetText() {
   ui::Clipboard* clipboard = ui::Clipboard::GetForCurrentThread();
   string16 text;
-  clipboard->ReadText(ui::Clipboard::BUFFER_STANDARD, &text);
+  clipboard->ReadText(ui::CLIPBOARD_TYPE_COPY_PASTE, &text);
   return UTF16ToUTF8(text);
 }
 
 void Clipboard::Clear() {
   ui::Clipboard* clipboard = ui::Clipboard::GetForCurrentThread();
-  clipboard->Clear(ui::Clipboard::BUFFER_STANDARD);
+  clipboard->Clear(ui::CLIPBOARD_TYPE_COPY_PASTE);
 }
 
 }  // namespace nwapi

@@ -16,6 +16,7 @@
       'target_name': 'nw_lib',
       'type': 'static_library',
       'defines!': ['CONTENT_IMPLEMENTATION'],
+      'defines': ['BREAKPAD_IMPLEMENTATION'],
       'variables': {
         'chromium_code': 1,
       },
@@ -45,7 +46,7 @@
         '<(DEPTH)/ui/ui.gyp:ui_resources',
         '<(DEPTH)/url/url.gyp:url_lib',
         '<(DEPTH)/v8/tools/gyp/v8.gyp:v8',
-        '<(DEPTH)/webkit/support/webkit_support.gyp:webkit_support',
+        '<(DEPTH)/webkit/glue/webkit_glue.gyp:glue',
         '<(DEPTH)/third_party/zlib/zlib.gyp:minizip',
         '<(DEPTH)/third_party/WebKit/public/blink.gyp:blink',
         'nw_resources',
@@ -64,10 +65,10 @@
       'sources': [
         '<(DEPTH)/chrome/browser/chrome_process_finder_win.cc',
         '<(DEPTH)/chrome/browser/chrome_process_finder_win.h',
-        '<(DEPTH)/chrome/common/child_process_logging.h',
-        '<(DEPTH)/chrome/common/child_process_logging_mac.mm',
-        '<(DEPTH)/chrome/common/child_process_logging_posix.cc',
-        '<(DEPTH)/chrome/common/child_process_logging_win.cc',
+        #'<(DEPTH)/chrome/common/child_process_logging.h',
+        #'<(DEPTH)/chrome/common/child_process_logging_mac.mm',
+        #'<(DEPTH)/chrome/common/child_process_logging_posix.cc',
+        #'<(DEPTH)/chrome/common/child_process_logging_win.cc',
         '<(DEPTH)/chrome/common/crash_keys.cc',
         '<(DEPTH)/chrome/common/dump_without_crashing.cc',
         '<(DEPTH)/chrome/common/env_vars.cc',
@@ -189,6 +190,8 @@
         'src/browser/printing/print_job_worker_owner.h',
         'src/browser/printing/printing_message_filter.cc',
         'src/browser/printing/printing_message_filter.h',
+        'src/browser/printing/printing_ui_web_contents_observer.cc',
+        'src/browser/printing/printing_ui_web_contents_observer.h',
         'src/browser/printing/printer_query.cc',
         'src/browser/printing/printer_query.h',
         'src/browser/printing/print_view_manager.cc',
@@ -584,7 +587,7 @@
         },
       ],
       'dependencies': [
-        '<(DEPTH)/chrome/chrome.gyp:chromedriver2_server',
+        '<(DEPTH)/chrome/chrome.gyp:chromedriver',
       ],
       'conditions': [
         ['OS == "linux"', {

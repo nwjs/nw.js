@@ -144,7 +144,7 @@ Shell* Shell::FromRenderViewHost(RenderViewHost* rvh) {
 }
 
 Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
-    :
+  : content::WebContentsObserver(web_contents),
   devtools_window_id_(0),
   is_devtools_(false),
   force_close_(false),
@@ -386,7 +386,7 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
 
   ShellDevToolsDelegate* delegate =
       browser_client->shell_browser_main_parts()->devtools_delegate();
-  GURL url = delegate->devtools_http_handler()->GetFrontendURL(agent.get());
+  GURL url = delegate->devtools_http_handler()->GetFrontendURL();
 
   SendEvent("devtools-opened", url.spec());
   if (headless)
@@ -617,6 +617,11 @@ GURL Shell::OverrideDOMStorageOrigin(const GURL& origin) {
   if (!is_devtools())
     return origin;
   return GURL("devtools://");
+}
+
+void Shell::RenderViewCreated(RenderViewHost* render_view_host) {
+  //FIXME: handle removal
+  new nwapi::DispatcherHost(render_view_host);
 }
 
 }  // namespace content

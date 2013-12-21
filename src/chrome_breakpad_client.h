@@ -7,7 +7,7 @@
 
 #include "base/basictypes.h"
 #include "base/compiler_specific.h"
-#include "components/breakpad/breakpad_client.h"
+#include "components/breakpad/app/breakpad_client.h"
 
 namespace chrome {
 
@@ -17,6 +17,7 @@ class ChromeBreakpadClient : public breakpad::BreakpadClient {
   virtual ~ChromeBreakpadClient();
 
   // breakpad::BreakpadClient implementation.
+  virtual void SetClientID(const std::string& client_id) OVERRIDE;
 #if defined(OS_WIN)
   virtual bool GetAlternativeCrashDumpLocation(base::FilePath* crash_dir)
       OVERRIDE;
@@ -52,9 +53,7 @@ class ChromeBreakpadClient : public breakpad::BreakpadClient {
 
   virtual bool IsRunningUnattended() OVERRIDE;
 
-#if defined(OS_WIN) || defined(OS_MACOSX)
   virtual bool GetCollectStatsConsent() OVERRIDE;
-#endif
 
 #if defined(OS_ANDROID)
   virtual int GetAndroidMinidumpDescriptor() OVERRIDE;

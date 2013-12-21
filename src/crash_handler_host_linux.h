@@ -13,7 +13,9 @@
 #include "base/memory/scoped_ptr.h"
 #include "base/message_loop/message_loop.h"
 
+namespace breakpad {
 struct BreakpadInfo;
+}
 
 namespace base {
 class Thread;
@@ -66,13 +68,13 @@ class CrashHandlerHostLinux : public base::MessageLoopForIO::Watcher,
   virtual void SetProcessType() = 0;
 
   // Do work on the FILE thread for OnFileCanReadWithoutBlocking().
-  void WriteDumpFile(BreakpadInfo* info,
+  void WriteDumpFile(breakpad::BreakpadInfo* info,
                      pid_t crashing_pid,
                      char* crash_context,
                      int signal_fd);
 
   // Continue OnFileCanReadWithoutBlocking()'s work on the IO thread.
-  void QueueCrashDumpTask(BreakpadInfo* info, int signal_fd);
+  void QueueCrashDumpTask(breakpad::BreakpadInfo* info, int signal_fd);
 
   int process_socket_;
   int browser_socket_;

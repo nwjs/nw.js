@@ -75,7 +75,10 @@ void Dispatcher::OnEvent(int object_id,
   DVLOG(1) << "Dispatcher::OnEvent(object_id=" << object_id << ", event=\"" << event << "\")";
 
   content::V8ValueConverterImpl converter;
-  v8::Handle<v8::Value> args = converter.ToV8Value(&arguments, node::g_context);
+  v8::Local<v8::Context> context =
+    v8::Local<v8::Context>::New(node::g_context->GetIsolate(), node::g_context);
+
+  v8::Handle<v8::Value> args = converter.ToV8Value(&arguments, context);
   DCHECK(!args.IsEmpty()) << "Invalid 'arguments' in Dispatcher::OnEvent";
   v8::Handle<v8::Value> argv[] = {
       v8::Integer::New(object_id), v8::String::New(event.c_str()), args };

@@ -28,11 +28,13 @@
 #undef LOG
 using namespace WebCore;
 
-#include "V8HTMLIFrameElement.h"
+#include "third_party/WebKit/Source/config.h"
 #include "third_party/WebKit/Source/core/html/HTMLIFrameElement.h"
 #include "third_party/WebKit/public/web/WebFrame.h"
 #include "third_party/WebKit/public/web/WebView.h"
 #include "third_party/WebKit/Source/web/WebFrameImpl.h"
+
+#include "V8HTMLIFrameElement.h"
 
 
 namespace nwapi {

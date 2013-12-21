@@ -9,6 +9,7 @@
 #include "base/compiler_specific.h"
 #include "base/memory/scoped_ptr.h"
 #include "content/nw/src/browser/printing/print_job_worker_owner.h"
+#include "content/nw/src/browser/printing/printing_ui_web_contents_observer.h"
 #include "printing/print_job_constants.h"
 #include "ui/gfx/native_widget_types.h"
 
@@ -45,12 +46,13 @@ class PrinterQuery : public PrintJobWorkerOwner {
   // times to reinitialize the settings. |parent_view| parameter's window will
   // be the owner of the print setting dialog box. It is unused when
   // |ask_for_user_settings| is DEFAULTS.
-  void GetSettings(GetSettingsAskParam ask_user_for_settings,
-                   gfx::NativeView parent_view,
-                   int expected_page_count,
-                   bool has_selection,
-                   MarginType margin_type,
-                   const base::Closure& callback);
+  void GetSettings(
+      GetSettingsAskParam ask_user_for_settings,
+      scoped_ptr<PrintingUIWebContentsObserver> web_contents_observer,
+      int expected_page_count,
+      bool has_selection,
+      MarginType margin_type,
+      const base::Closure& callback);
 
   // Updates the current settings with |new_settings| dictionary values.
   void SetSettings(const base::DictionaryValue& new_settings,

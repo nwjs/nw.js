@@ -86,7 +86,7 @@ bool NwRenderViewObserver::CaptureSnapshot(WebKit::WebView* view,
   // TODO: Add a way to snapshot the whole page, not just the currently
   // visible part.
 
-  SkDevice* device = skia::GetTopDevice(*canvas);
+  SkBaseDevice* device = skia::GetTopDevice(*canvas);
 
   const SkBitmap& bitmap = device->accessBitmap(false);
   if (!bitmap.copyTo(snapshot, SkBitmap::kARGB_8888_Config))

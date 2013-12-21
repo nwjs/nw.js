@@ -133,6 +133,8 @@ class Shell : public WebContentsDelegate,
   void set_id(int id) { id_ = id; }
   int id() const { return id_; }
 
+  virtual void RenderViewCreated(RenderViewHost* render_view_host) OVERRIDE;
+
  protected:
   // content::WebContentsObserver implementation.
   virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;

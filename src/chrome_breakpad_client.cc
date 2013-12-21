@@ -60,6 +60,10 @@ ChromeBreakpadClient::ChromeBreakpadClient() {}
 
 ChromeBreakpadClient::~ChromeBreakpadClient() {}
 
+void ChromeBreakpadClient::SetClientID(const std::string& client_id) {
+  crash_keys::SetClientID(client_id);
+}
+
 #if defined(OS_WIN)
 bool ChromeBreakpadClient::GetAlternativeCrashDumpLocation(
     base::FilePath* crash_dir) {
@@ -224,11 +228,9 @@ bool ChromeBreakpadClient::IsRunningUnattended() {
   return true;
 }
 
-#if defined(OS_WIN) || defined(OS_MACOSX)
 bool ChromeBreakpadClient::GetCollectStatsConsent() {
   return false;
 }
-#endif
 
 #if defined(OS_ANDROID)
 int ChromeBreakpadClient::GetAndroidMinidumpDescriptor() {

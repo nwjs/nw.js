@@ -31,7 +31,7 @@
 #include "content/public/browser/resource_request_info.h"
 #include "net/base/auth.h"
 #include "net/url_request/url_request.h"
-#include "ui/base/text/text_elider.h"
+#include "ui/gfx/text_elider.h"
 
 using content::BrowserThread;
 using content::ResourceDispatcherHost;
@@ -141,7 +141,7 @@ void ShellLoginDialog::PrepDialog(const string16& host,
   // The realm is controlled by the remote server, so there is no reason to
   // believe it is of a reasonable length.
   string16 elided_realm;
-  ui::ElideString(realm, 120, &elided_realm);
+  gfx::ElideString(realm, 120, &elided_realm);
 
   string16 explanation =
       ASCIIToUTF16("The server ") + host +

@@ -5,6 +5,7 @@
 #include "content/nw/src/net/app_protocol_handler.h"
 
 #include "base/logging.h"
+#include "content/public/browser/browser_thread.h"
 #include "net/base/net_errors.h"
 #include "net/base/net_util.h"
 #include "net/url_request/url_request.h"
@@ -27,7 +28,7 @@ URLRequestJob* AppProtocolHandler::MaybeCreateJob(
   replacements.SetScheme("file", url_parse::Component(0, 4));
   replacements.ClearHost();
   url = url.ReplaceComponents(replacements);
-  
+
   const bool is_file = FileURLToFilePath(url, &file_path);
 
   file_path = root_path_.Append(file_path);
@@ -51,7 +52,10 @@ URLRequestJob* AppProtocolHandler::MaybeCreateJob(
 
   // Use a regular file request job for all non-directories (including invalid
   // file names).
-  return new URLRequestFileJob(request, network_delegate, file_path);
+  return new URLRequestFileJob(request, network_delegate, file_path,
+                               content::BrowserThread::GetBlockingPool()->
+                               GetTaskRunnerWithShutdownBehavior(
+                                                                 base::SequencedWorkerPool::SKIP_ON_SHUTDOWN));
 }
 
 bool AppProtocolHandler::IsSafeRedirectTarget(const GURL& location) const {
