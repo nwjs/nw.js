@@ -34,6 +34,7 @@ using namespace WebCore;
 #include "third_party/WebKit/public/web/WebView.h"
 #include "third_party/WebKit/Source/web/WebFrameImpl.h"
 
+#undef CHECK
 #include "V8HTMLIFrameElement.h"
 
 

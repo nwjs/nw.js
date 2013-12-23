@@ -28,6 +28,7 @@
 #include "content/shell/renderer/gc_extension.h"
 #include "webkit/glue/webkit_glue.h"
 #include "third_party/node/src/node.h"
+#undef CHECK
 #include "third_party/node/src/node_internals.h"
 #include "third_party/node/src/req_wrap.h"
 #include "third_party/WebKit/public/web/WebCache.h"

@@ -23,6 +23,7 @@
 #include "base/logging.h"
 #include "base/strings/string_split.h"
 #include "base/strings/string_util.h"
+#include "base/threading/sequenced_worker_pool.h"
 #include "base/threading/worker_pool.h"
 #include "chrome/browser/chrome_notification_types.h"
 #include "chrome/browser/net/chrome_cookie_notification_details.h"

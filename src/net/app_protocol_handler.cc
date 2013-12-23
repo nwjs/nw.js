@@ -5,6 +5,7 @@
 #include "content/nw/src/net/app_protocol_handler.h"
 
 #include "base/logging.h"
+#include "base/threading/sequenced_worker_pool.h"
 #include "content/public/browser/browser_thread.h"
 #include "net/base/net_errors.h"
 #include "net/base/net_util.h"

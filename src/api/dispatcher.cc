@@ -26,6 +26,7 @@
 #include "content/public/renderer/render_view.h"
 #include "content/renderer/v8_value_converter_impl.h"
 #include "third_party/node/src/node.h"
+#undef CHECK
 #include "third_party/node/src/req_wrap.h"
 #include "third_party/WebKit/public/web/WebDocument.h"
 #include "third_party/WebKit/public/web/WebFrame.h"
