@@ -291,6 +291,8 @@
         'src/shell_content_browser_client.h',
         'src/shell_content_client.cc',
         'src/shell_content_client.h',
+        'src/shell_devtools_frontend.cc',
+        'src/shell_devtools_frontend.h',
         'src/shell_main_delegate.cc',
         'src/shell_main_delegate.h',
         'src/shell_quota_permission_context.cc',

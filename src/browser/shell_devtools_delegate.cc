@@ -103,8 +103,8 @@ class Target : public content::DevToolsTarget {
   virtual scoped_refptr<DevToolsAgentHost> GetAgentHost() const OVERRIDE {
     return agent_host_;
   }
-  virtual bool Activate() const OVERRIDE { return false; }
-  virtual bool Close() const OVERRIDE { return false; }
+  virtual bool Activate() const OVERRIDE;
+  virtual bool Close() const OVERRIDE;
 
  private:
   scoped_refptr<DevToolsAgentHost> agent_host_;
@@ -122,6 +122,25 @@ Target::Target(WebContents* web_contents) {
   title_ = UTF16ToUTF8(web_contents->GetTitle());
   url_ = web_contents->GetURL();
   last_activity_time_ = web_contents->GetLastSelectedTime();
+}
+
+bool Target::Activate() const {
+  RenderViewHost* rvh = agent_host_->GetRenderViewHost();
+  if (!rvh)
+    return false;
+  WebContents* web_contents = WebContents::FromRenderViewHost(rvh);
+  if (!web_contents)
+    return false;
+  web_contents->GetDelegate()->ActivateContents(web_contents);
+  return true;
+}
+
+bool Target::Close() const {
+  RenderViewHost* rvh = agent_host_->GetRenderViewHost();
+  if (!rvh)
+    return false;
+  rvh->ClosePage();
+  return true;
 }
 
 void ShellDevToolsDelegate::EnumerateTargets(TargetCallback callback) OVERRIDE {

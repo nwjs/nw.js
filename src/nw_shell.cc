@@ -57,6 +57,8 @@
 #include "content/nw/src/shell_browser_context.h"
 #include "content/nw/src/shell_browser_main_parts.h"
 #include "content/nw/src/shell_content_browser_client.h"
+#include "content/nw/src/shell_devtools_frontend.h"
+
 #include "grit/nw_resources.h"
 #include "net/base/escape.h"
 #include "ui/base/resource/resource_bundle.h"
@@ -389,8 +391,10 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
   GURL url = delegate->devtools_http_handler()->GetFrontendURL();
 
   SendEvent("devtools-opened", url.spec());
-  if (headless)
+  if (headless) {
+    // FIXME: DevToolsFrontendHost
     return;
+  }
 
   // Use our minimum set manifest
   base::DictionaryValue manifest;
@@ -409,6 +413,10 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
   WebContents::CreateParams create_params(web_contents()->GetBrowserContext(), NULL);
   WebContents* web_contents = WebContents::Create(create_params);
   Shell* shell = new Shell(web_contents, &manifest);
+
+  new ShellDevToolsFrontend(
+      shell,
+      DevToolsAgentHost::GetOrCreateFor(inspected_rvh).get());
 
   int rh_id = shell->web_contents_->GetRenderProcessHost()->GetID();
   ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, chrome::kFileScheme);
