@@ -534,6 +534,10 @@ void Shell::WebContentsCreated(WebContents* source_contents,
 
   // don't pass the url on window.open case
   Shell::Create(source_contents, GURL::EmptyGURL(), manifest.get(), new_contents);
+
+  // in Chromium 32 RenderViewCreated will not be called so the case
+  // should be handled here
+  new nwapi::DispatcherHost(new_contents->GetRenderViewHost());
 }
 
 #if defined(OS_WIN)
