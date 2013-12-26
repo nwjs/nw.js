@@ -115,6 +115,13 @@ bool DispatcherHost::OnMessageReceived(const IPC::Message& message) {
   return handled;
 }
 
+void DispatcherHost::RenderViewHostChanged(content::RenderViewHost* old_host,
+                                           content::RenderViewHost* new_host) {
+  // LOG(INFO) << "RenderViewHostChanged(" << this << "): " << old_host << " --> " << new_host << " ; " << render_view_host_;
+  if (render_view_host_ != new_host)
+    delete this;
+}
+
 void DispatcherHost::OnAllocateObject(int object_id,
                                       const std::string& type,
                                       const base::DictionaryValue& option) {
