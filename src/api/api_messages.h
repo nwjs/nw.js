@@ -98,8 +98,5 @@ IPC_MESSAGE_CONTROL0(ShellViewMsg_Reopen)
 // clear cache on the renderer side
 IPC_MESSAGE_CONTROL0(ShellViewMsg_ClearCache)
 
-// grant the policy permissions
-IPC_SYNC_MESSAGE_ROUTED0_1(ShellViewHostMsg_GrantUniversalPermissions, int)
-
 IPC_SYNC_MESSAGE_ROUTED0_1(ShellViewHostMsg_AllocateId, int)
 

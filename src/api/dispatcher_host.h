@@ -107,7 +107,6 @@ class DispatcherHost : public content::WebContentsObserver {
   void OnCreateShell(const std::string& url,
                      const base::DictionaryValue& manifest,
                      int* routing_id);
-  void OnGrantUniversalPermissions(int* ret);
   void OnAllocateId(int* ret);
   DISALLOW_COPY_AND_ASSIGN(DispatcherHost);
 };

@@ -32,6 +32,7 @@
 #include "base/strings/stringprintf.h"
 #include "base/strings/utf_string_conversions.h"
 #include "components/autofill/content/renderer/page_click_tracker.h"
+#include "content/common/view_messages.h"
 #include "content/nw/src/api/dispatcher.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/window_bindings.h"
@@ -237,9 +238,9 @@ bool ShellContentRendererClient::WillSetSecurityToken(
     context->SetSecurityToken(node::g_context->GetSecurityToken());
     frame->document().securityOrigin().grantUniversalAccess();
 
-    int ret;
+    int ret = 0;
     RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
-    rv->Send(new ShellViewHostMsg_GrantUniversalPermissions(rv->GetRoutingID(), &ret));
+    rv->Send(new ViewHostMsg_GrantUniversalPermissions(rv->GetRoutingID(), &ret));
 
     return true;
   }
