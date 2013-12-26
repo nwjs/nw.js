@@ -107,7 +107,6 @@ bool DispatcherHost::OnMessageReceived(const IPC::Message& message) {
                         OnUncaughtException);
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_GetShellId, OnGetShellId);
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_CreateShell, OnCreateShell);
-    IPC_MESSAGE_HANDLER(ShellViewHostMsg_GrantUniversalPermissions, OnGrantUniversalPermissions);
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_AllocateId, OnAllocateId);
     IPC_MESSAGE_UNHANDLED(handled = false)
   IPC_END_MESSAGE_MAP()
@@ -276,16 +275,6 @@ void DispatcherHost::OnCreateShell(const std::string& url,
     DispatcherHost* dhost = FindDispatcherHost(web_contents->GetRenderViewHost());
     dhost->OnAllocateObject(object_id, "Window", *new_manifest.get());
   }
-}
-
-void DispatcherHost::OnGrantUniversalPermissions(int *ret) {
-  content::Shell* shell =
-      content::Shell::FromRenderViewHost(render_view_host());
-  if (shell->nodejs()) {
-    content::ChildProcessSecurityPolicy::GetInstance()->GrantUniversalAccess(shell->web_contents()->GetRenderProcessHost()->GetID());
-    *ret = 1;
-  }else
-    *ret = 0;
 }
 
 void DispatcherHost::OnAllocateId(int * ret) {
