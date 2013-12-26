@@ -68,11 +68,6 @@ std::string ShellDevToolsDelegate::GetPageThumbnailData(const GURL& url) {
   return "";
 }
 
-std::string ShellDevToolsDelegate::GetViewDescription(
-    content::RenderViewHost*) {
-  return std::string();
-}
-
 scoped_ptr<net::StreamListenSocket>
 ShellDevToolsDelegate::CreateSocketForTethering(
     net::StreamListenSocket::Delegate* delegate,
@@ -81,8 +76,6 @@ ShellDevToolsDelegate::CreateSocketForTethering(
 }
 
 const char kTargetTypePage[] = "page";
-
-std::string GetViewDescription(WebContents* web_contents);
 
 class Target : public content::DevToolsTarget {
  public:
@@ -143,7 +136,7 @@ bool Target::Close() const {
   return true;
 }
 
-void ShellDevToolsDelegate::EnumerateTargets(TargetCallback callback) OVERRIDE {
+void ShellDevToolsDelegate::EnumerateTargets(TargetCallback callback) {
   TargetList targets;
   std::vector<RenderViewHost*> rvh_list =
     content::DevToolsAgentHost::GetValidRenderViewHosts();

@@ -40,22 +40,6 @@ class ShellDevToolsFrontend : public WebContentsObserver,
 
   // DevToolsFrontendHostDelegate implementation
   virtual void DispatchOnEmbedder(const std::string& message) OVERRIDE {}
-
-  // DevToolsFrontendHostDelegate implementation
-  virtual void ActivateWindow() OVERRIDE {}
-  virtual void ChangeAttachedWindowHeight(unsigned height) OVERRIDE {}
-  virtual void CloseWindow() OVERRIDE {}
-  virtual void MoveWindow(int x, int y) OVERRIDE {}
-  virtual void SetDockSide(const std::string& side) OVERRIDE {}
-  virtual void OpenInNewTab(const std::string& url) OVERRIDE {}
-  virtual void SaveToFile(const std::string& url,
-                          const std::string& content,
-                          bool save_as) OVERRIDE {}
-  virtual void AppendToFile(const std::string& url,
-                            const std::string& content) OVERRIDE {}
-  virtual void RequestFileSystems() OVERRIDE {}
-  virtual void AddFileSystem() OVERRIDE {}
-  virtual void RemoveFileSystem(const std::string& file_system_path) OVERRIDE {}
   virtual void InspectedContentsClosing() OVERRIDE;
 
   Shell* frontend_shell_;

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "chrome/app/breakpad_mac.h"
+#import "components/breakpad/app/breakpad_mac.h"
 
 #include <CoreFoundation/CoreFoundation.h>
 #import <Foundation/Foundation.h>
@@ -25,7 +25,7 @@
 #import "breakpad/src/client/mac/Framework/Breakpad.h"
 #include "chrome/common/child_process_logging.h"
 #include "content/public/common/content_switches.h"
-#include "components/breakpad/breakpad_client.h"
+#include "components/breakpad/app/breakpad_client.h"
 #include "content/nw/src/paths_mac.h"
 //#include "policy/policy_constants.h"
 
@@ -250,7 +250,7 @@ void InitCrashReporter() {
     // Get the guid from the command line switch.
     std::string guid =
         command_line->GetSwitchValueASCII(switches::kEnableCrashReporter);
-    child_process_logging::SetClientId(guid);
+    breakpad::GetBreakpadClient()->SetClientID(guid);
   }
 
   logging::SetLogMessageHandler(&FatalMessageHandler);

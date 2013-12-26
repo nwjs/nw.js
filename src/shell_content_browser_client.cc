@@ -28,7 +28,8 @@
 #include "base/strings/string_number_conversions.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
-#include "chrome/common/child_process_logging.h"
+//#include "chrome/common/child_process_logging.h"
+#include "components/breakpad/app/breakpad_client.h"
 #include "content/browser/child_process_security_policy_impl.h"
 #include "content/browser/gpu/compositor_util.h"
 #include "content/nw/src/browser/printing/printing_message_filter.h"
@@ -151,8 +152,7 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     int child_process_id) {
 #if defined(OS_MACOSX)
   if (IsCrashReporterEnabled()) {
-    command_line->AppendSwitchASCII(switches::kEnableCrashReporter,
-                                    child_process_logging::GetClientId());
+    command_line->AppendSwitch(switches::kEnableCrashReporter);
   }
 #elif defined(OS_POSIX)
   if (IsCrashReporterEnabled()) {
