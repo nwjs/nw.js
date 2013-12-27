@@ -235,7 +235,7 @@ enum {
 }
 - (void)setShell:(const base::WeakPtr<content::Shell>&)shell;
 - (void)showDevTools:(id)sender;
-- (void)closeAllWindows:(id)sender;
+- (void)closeAllWindowsQuit:(id)sender;
 @end
 
 @implementation ShellNSWindow
@@ -249,8 +249,8 @@ enum {
     shell_->ShowDevTools();
 }
 
-- (void)closeAllWindows:(id)sender {
-  nwapi::App::CloseAllWindows();
+- (void)closeAllWindowsQuit:(id)sender {
+  nwapi::App::CloseAllWindows(false, true);
 }
 
 - (NSRect)constrainFrameRect:(NSRect)frameRect toScreen:(NSScreen *)screen

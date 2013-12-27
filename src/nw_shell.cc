@@ -248,11 +248,11 @@ void Shell::SendEvent(const std::string& event, const base::ListValue& args) {
       web_contents->GetRoutingID(), id(), event, args));
 }
 
-bool Shell::ShouldCloseWindow() {
+bool Shell::ShouldCloseWindow(bool quit) {
   if (id() < 0 || force_close_)
     return true;
 
-  SendEvent("close");
+  SendEvent("close", quit ? "quit" : "");
   return false;
 }
 

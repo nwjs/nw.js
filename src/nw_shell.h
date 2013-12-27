@@ -105,7 +105,7 @@ class Shell : public WebContentsDelegate,
   void SendEvent(const std::string& event, const base::ListValue& args);
 
   // Decide whether we should close the window.
-  bool ShouldCloseWindow();
+  bool ShouldCloseWindow(bool quit = false);
 
   virtual GURL OverrideDOMStorageOrigin(const GURL& origin);
 
