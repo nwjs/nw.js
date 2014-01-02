@@ -68,13 +68,6 @@ std::string ShellDevToolsDelegate::GetPageThumbnailData(const GURL& url) {
   return "";
 }
 
-#if 0
-std::string ShellDevToolsDelegate::GetViewDescription(
-    content::RenderViewHost*) {
-  return std::string();
-}
-#endif
-
 scoped_ptr<net::StreamListenSocket>
 ShellDevToolsDelegate::CreateSocketForTethering(
     net::StreamListenSocket::Delegate* delegate,
@@ -83,8 +76,6 @@ ShellDevToolsDelegate::CreateSocketForTethering(
 }
 
 const char kTargetTypePage[] = "page";
-
-std::string GetViewDescription(WebContents* web_contents);
 
 class Target : public content::DevToolsTarget {
  public:

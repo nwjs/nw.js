@@ -150,14 +150,6 @@ bool ChromeBreakpadClient::AboutToRestart() {
   return true;
 }
 
-#if 0
-base::string16 ChromeBreakpadClient::GetCrashGUID() {
-  std::wstring guid;
-  // GoogleUpdateSettings::GetMetricsId(&guid);
-  return base::WideToUTF16(guid);
-}
-#endif
-
 bool ChromeBreakpadClient::GetDeferredUploadsSupported(bool) {
   return false;
 }
@@ -172,6 +164,86 @@ bool ChromeBreakpadClient::GetShouldDumpLargerDumps(bool is_per_user_install) {
 
 int ChromeBreakpadClient::GetResultCodeRespawnFailed() {
   return chrome::RESULT_CODE_RESPAWN_FAILED;
+}
+
+void ChromeBreakpadClient::InitBrowserCrashDumpsRegKey() {
+  DCHECK(g_browser_crash_dump_regkey == NULL);
+
+  base::win::RegKey regkey;
+  if (regkey.Create(HKEY_CURRENT_USER,
+                    chrome::kBrowserCrashDumpAttemptsRegistryPath,
+                    KEY_ALL_ACCESS) != ERROR_SUCCESS) {
+    return;
+  }
+
+  // We use the current process id and the current tick count as a (hopefully)
+  // unique combination for the crash dump value. There's a small chance that
+  // across a reboot we might have a crash dump signal written, and the next
+  // browser process might have the same process id and tick count, but crash
+  // before consuming the signal (overwriting the signal with an identical one).
+  // For now, we're willing to live with that risk.
+  int length = base::strings::SafeSPrintf(g_browser_crash_dump_prefix,
+                                          kBrowserCrashDumpPrefixTemplate,
+                                          chrome::kChromeVersion,
+                                          ::GetCurrentProcessId(),
+                                          ::GetTickCount());
+  if (length <= 0) {
+    NOTREACHED();
+    g_browser_crash_dump_prefix[0] = '\0';
+    return;
+  }
+
+  // Hold the registry key in a global for update on crash dump.
+  g_browser_crash_dump_regkey = regkey.Take();
+}
+
+void ChromeBreakpadClient::RecordCrashDumpAttempt(bool is_real_crash) {
+  // If we're not a browser (or the registry is unavailable to us for some
+  // reason) then there's nothing to do.
+  if (g_browser_crash_dump_regkey == NULL)
+    return;
+
+  // Generate the final value name we'll use (appends the crash number to the
+  // base value name).
+  const size_t kMaxValueSize = 2 * kBrowserCrashDumpPrefixLength;
+  char value_name[kMaxValueSize + 1] = {};
+  int length = base::strings::SafeSPrintf(
+      value_name,
+      "%s-%x",
+      g_browser_crash_dump_prefix,
+      base::subtle::NoBarrier_AtomicIncrement(&g_browser_crash_dump_count, 1));
+
+  if (length > 0) {
+    DWORD value_dword = is_real_crash ? 1 : 0;
+    ::RegSetValueExA(g_browser_crash_dump_regkey, value_name, 0, REG_DWORD,
+                     reinterpret_cast<BYTE*>(&value_dword),
+                     sizeof(value_dword));
+  }
+}
+
+bool ChromeBreakpadClient::ReportingIsEnforcedByPolicy(bool* breakpad_enabled) {
+// Determine whether configuration management allows loading the crash reporter.
+// Since the configuration management infrastructure is not initialized at this
+// point, we read the corresponding registry key directly. The return status
+// indicates whether policy data was successfully read. If it is true,
+// |breakpad_enabled| contains the value set by policy.
+  string16 key_name = UTF8ToUTF16(policy::key::kMetricsReportingEnabled);
+  DWORD value = 0;
+  base::win::RegKey hklm_policy_key(HKEY_LOCAL_MACHINE,
+                                    policy::kRegistryChromePolicyKey, KEY_READ);
+  if (hklm_policy_key.ReadValueDW(key_name.c_str(), &value) == ERROR_SUCCESS) {
+    *breakpad_enabled = value != 0;
+    return true;
+  }
+
+  base::win::RegKey hkcu_policy_key(HKEY_CURRENT_USER,
+                                    policy::kRegistryChromePolicyKey, KEY_READ);
+  if (hkcu_policy_key.ReadValueDW(key_name.c_str(), &value) == ERROR_SUCCESS) {
+    *breakpad_enabled = value != 0;
+    return true;
+  }
+
+  return false;
 }
 #endif
 

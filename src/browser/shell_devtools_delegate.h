@@ -54,7 +54,6 @@ class ShellDevToolsDelegate : public DevToolsHttpHandlerDelegate {
   virtual std::string GetPageThumbnailData(const GURL& url) OVERRIDE;
   virtual scoped_ptr<DevToolsTarget> CreateNewTarget(const GURL& url) OVERRIDE;
   virtual void EnumerateTargets(TargetCallback callback) OVERRIDE;
-  // virtual std::string GetViewDescription(content::RenderViewHost*) OVERRIDE;
   virtual scoped_ptr<net::StreamListenSocket> CreateSocketForTethering(
       net::StreamListenSocket::Delegate* delegate,
       std::string* name) OVERRIDE;
