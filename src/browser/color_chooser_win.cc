@@ -54,8 +54,8 @@ ColorChooserWin* ColorChooserWin::Open(content::WebContents* web_contents,
 ColorChooserWin::ColorChooserWin(content::WebContents* web_contents,
                                  SkColor initial_color)
     : web_contents_(web_contents) {
-  gfx::NativeWindow owning_window = ::GetAncestor(
-      web_contents->GetRenderViewHost()->GetView()->GetNativeView(), GA_ROOT);
+  gfx::NativeWindow owning_window = (gfx::NativeWindow)::GetAncestor(
+      (HWND)web_contents->GetRenderViewHost()->GetView()->GetNativeView(), GA_ROOT);
   color_chooser_dialog_ = new ColorChooserDialog(this,
                                                  initial_color,
                                                  owning_window);

@@ -150,11 +150,13 @@ bool ChromeBreakpadClient::AboutToRestart() {
   return true;
 }
 
+#if 0
 base::string16 ChromeBreakpadClient::GetCrashGUID() {
   std::wstring guid;
   // GoogleUpdateSettings::GetMetricsId(&guid);
   return base::WideToUTF16(guid);
 }
+#endif
 
 bool ChromeBreakpadClient::GetDeferredUploadsSupported(bool) {
   return false;

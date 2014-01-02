@@ -36,7 +36,8 @@
 #include "extensions/common/draggable_region.h"
 #include "third_party/skia/include/core/SkPaint.h"
 #include "ui/base/hit_test.h"
-#include "ui/base/win/hwnd_util.h"
+#include "ui/gfx/native_widget_types.h"
+#include "ui/gfx/win/hwnd_util.h"
 #include "ui/gfx/path.h"
 #include "ui/gfx/image/image_skia_operations.h"
 #include "ui/views/controls/webview/webview.h"
@@ -361,12 +362,12 @@ void NativeWindowWin::SetResizable(bool resizable) {
   resizable_ = resizable;
 
   // Show/Hide the maximize button.
-  DWORD style = ::GetWindowLong(window_->GetNativeView(), GWL_STYLE);
+  DWORD style = ::GetWindowLong((HWND)window_->GetNativeView(), GWL_STYLE);
   if (resizable)
     style |= WS_MAXIMIZEBOX;
   else
     style &= ~WS_MAXIMIZEBOX;
-  ::SetWindowLong(window_->GetNativeView(), GWL_STYLE, style);
+  ::SetWindowLong((HWND)window_->GetNativeView(), GWL_STYLE, style);
 }
 
 void NativeWindowWin::SetAlwaysOnTop(bool top) {
@@ -435,7 +436,7 @@ void NativeWindowWin::SetMenu(nwapi::Menu* menu) {
   menu->Rebuild();
 
   // menu is nwapi::Menu, menu->menu_ is NativeMenuWin,
-  ::SetMenu(window_->GetNativeWindow(), menu->menu_->GetNativeMenu());
+  ::SetMenu((HWND)window_->GetNativeWindow(), menu->menu_->GetNativeMenu());
 }
 
 void NativeWindowWin::SetTitle(const std::string& title) {
@@ -690,7 +691,7 @@ void NativeWindowWin::OnViewWasResized() {
   int height = sz.height(), width = sz.width();
   gfx::Path path;
   path.addRect(0, 0, width, height);
-  SetWindowRgn(web_contents()->GetView()->GetNativeView(),
+  SetWindowRgn((HWND)web_contents()->GetView()->GetNativeView(),
                path.CreateNativeRegion(),
                1);
 

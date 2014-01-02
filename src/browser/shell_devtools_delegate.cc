@@ -68,10 +68,12 @@ std::string ShellDevToolsDelegate::GetPageThumbnailData(const GURL& url) {
   return "";
 }
 
+#if 0
 std::string ShellDevToolsDelegate::GetViewDescription(
     content::RenderViewHost*) {
   return std::string();
 }
+#endif
 
 scoped_ptr<net::StreamListenSocket>
 ShellDevToolsDelegate::CreateSocketForTethering(
@@ -143,7 +145,7 @@ bool Target::Close() const {
   return true;
 }
 
-void ShellDevToolsDelegate::EnumerateTargets(TargetCallback callback) OVERRIDE {
+void ShellDevToolsDelegate::EnumerateTargets(TargetCallback callback) {
   TargetList targets;
   std::vector<RenderViewHost*> rvh_list =
     content::DevToolsAgentHost::GetValidRenderViewHosts();

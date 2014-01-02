@@ -26,7 +26,7 @@ class ColorChooserDialog
   virtual ~ColorChooserDialog();
 
   // BaseShellDialog:
-  virtual bool IsRunning(HWND owning_hwnd) const OVERRIDE;
+  virtual bool IsRunning(gfx::NativeWindow owning_window) const OVERRIDE;
   virtual void ListenerDestroyed() OVERRIDE;
 
  private:
