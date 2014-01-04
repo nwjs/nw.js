@@ -49,6 +49,7 @@ namespace breakpad {
 // https://code.google.com/p/chromium/issues/detail?id=137062.
 std::vector<google_breakpad::CustomInfoEntry>* g_custom_entries = NULL;
 bool g_deferred_crash_uploads = false;
+google_breakpad::ExceptionHandler* g_breakpad = NULL;
 
 namespace {
 
@@ -78,7 +79,6 @@ const wchar_t kChromePipeName[] = L"\\\\.\\pipe\\ChromeCrashServices";
 // This is the well known SID for the system principal.
 const wchar_t kSystemPrincipalSid[] =L"S-1-5-18";
 
-google_breakpad::ExceptionHandler* g_breakpad = NULL;
 google_breakpad::ExceptionHandler* g_dumphandler_no_crash = NULL;
 
 EXCEPTION_POINTERS g_surrogate_exception_pointers = {0};
@@ -772,3 +772,11 @@ void InitCrashReporter() {
 }
 
 }  // namespace breakpad
+
+bool SetCrashDumpPath(const char* path) {
+  if (!breakpad::g_breakpad)
+    return false;
+  breakpad::g_breakpad->set_dump_path(base::UTF8ToWide(path));
+  return true;
+}
+

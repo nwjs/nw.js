@@ -303,6 +303,11 @@
           'SubSystem': '2',  # Set /SUBSYSTEM:WINDOWS
         },
       },
+      'configurations': {
+        'Debug': {
+          'defines': [ 'DEBUG' ],
+        },
+      },
       'conditions': [
         ['OS=="win" and win_use_allocator_shim==1', {
           'dependencies': [

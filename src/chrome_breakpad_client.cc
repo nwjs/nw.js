@@ -4,14 +4,17 @@
 
 #include "chrome/app/chrome_breakpad_client.h"
 
+#include "base/atomicops.h"
 #include "base/command_line.h"
 #include "base/environment.h"
 #include "base/files/file_path.h"
 #include "base/logging.h"
 #include "base/memory/scoped_ptr.h"
 #include "base/path_service.h"
+#include "base/strings/safe_sprintf.h"
 #include "base/strings/string_split.h"
 #include "base/strings/utf_string_conversions.h"
+#include "chrome/common/chrome_constants.h"
 #include "chrome/common/chrome_paths.h"
 #include "chrome/common/chrome_result_codes.h"
 #include "chrome/common/chrome_switches.h"
@@ -22,6 +25,7 @@
 #include <windows.h>
 
 #include "base/file_version_info.h"
+#include "base/win/registry.h"
 #include "chrome/installer/util/google_chrome_sxs_distribution.h"
 #include "chrome/installer/util/install_util.h"
 #endif
@@ -52,6 +56,19 @@ namespace {
 // This is the minimum version of google update that is required for deferred
 // crash uploads to work.
 const char kMinUpdateVersion[] = "1.3.21.115";
+
+// The value name prefix will be of the form {chrome-version}-{pid}-{timestamp}
+// (i.e., "#####.#####.#####.#####-########-########") which easily fits into a
+// 63 character buffer.
+const char kBrowserCrashDumpPrefixTemplate[] = "%s-%08x-%08x";
+const size_t kBrowserCrashDumpPrefixLength = 63;
+char g_browser_crash_dump_prefix[kBrowserCrashDumpPrefixLength + 1] = {};
+
+// These registry key to which we'll write a value for each crash dump attempt.
+HKEY g_browser_crash_dump_regkey = NULL;
+
+// A atomic counter to make each crash dump value name unique.
+base::subtle::Atomic32 g_browser_crash_dump_count = 0;
 #endif
 
 }  // namespace
@@ -184,7 +201,7 @@ void ChromeBreakpadClient::InitBrowserCrashDumpsRegKey() {
   // For now, we're willing to live with that risk.
   int length = base::strings::SafeSPrintf(g_browser_crash_dump_prefix,
                                           kBrowserCrashDumpPrefixTemplate,
-                                          chrome::kChromeVersion,
+                                          "chrome-version",
                                           ::GetCurrentProcessId(),
                                           ::GetTickCount());
   if (length <= 0) {
@@ -222,6 +239,7 @@ void ChromeBreakpadClient::RecordCrashDumpAttempt(bool is_real_crash) {
 }
 
 bool ChromeBreakpadClient::ReportingIsEnforcedByPolicy(bool* breakpad_enabled) {
+#if 0
 // Determine whether configuration management allows loading the crash reporter.
 // Since the configuration management infrastructure is not initialized at this
 // point, we read the corresponding registry key directly. The return status
@@ -244,6 +262,8 @@ bool ChromeBreakpadClient::ReportingIsEnforcedByPolicy(bool* breakpad_enabled) {
   }
 
   return false;
+#endif
+  return true;
 }
 #endif
 
