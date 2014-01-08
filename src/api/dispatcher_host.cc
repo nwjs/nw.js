@@ -260,6 +260,12 @@ void DispatcherHost::OnCreateShell(const std::string& url,
   WebContents::CreateParams create_params(browser_context,
                                           new_renderer ? NULL : base_web_contents->GetSiteInstance());
 
+  std::string filename;
+  if (new_manifest->GetString(switches::kmInjectJS, &filename))
+    create_params.nw_inject_js_fn = filename;
+  if (new_manifest->GetString(switches::kmInjectCSS, &filename))
+    create_params.nw_inject_css_fn = filename;
+
   WebContents* web_contents = content::WebContentsImpl::CreateWithOpener(
       create_params,
       static_cast<content::WebContentsImpl*>(base_web_contents));

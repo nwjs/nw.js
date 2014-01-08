@@ -116,7 +116,8 @@ BrowserMainParts* ShellContentBrowserClient::CreateBrowserMainParts(
 
 WebContentsViewPort* ShellContentBrowserClient::OverrideCreateWebContentsView(
       WebContents* web_contents,
-      RenderViewHostDelegateView** render_view_host_delegate_view) {
+      RenderViewHostDelegateView** render_view_host_delegate_view,
+      const WebContents::CreateParams& params) {
   std::string user_agent, rules;
   nw::Package* package = shell_browser_main_parts()->package();
   content::RendererPreferences* prefs = web_contents->GetMutableRendererPrefs();
@@ -135,6 +136,8 @@ WebContentsViewPort* ShellContentBrowserClient::OverrideCreateWebContentsView(
       prefs->nw_remote_page_rules = rules;
 
   prefs->nw_app_root_path = package->path();
+  prefs->nw_inject_css_fn = params.nw_inject_css_fn;
+  prefs->nw_inject_js_fn  = params.nw_inject_js_fn;
   return NULL;
 }
 
