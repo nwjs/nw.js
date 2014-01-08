@@ -434,6 +434,10 @@ Window.prototype.capturePage = function(callback, image_format) {
   }
 
   CallObjectMethod(this, 'CapturePage', [image_format]);
-}
+};
+
+    Window.prototype.eval = function(frame, script) {
+        return CallObjectMethod(this, 'EvaluateScript', frame, script);
+    };
 
 }  // function Window.init
