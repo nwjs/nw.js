@@ -34,7 +34,8 @@ class ShellContentBrowserClient : public ContentBrowserClient {
       const MainFunctionParams& parameters) OVERRIDE;
   virtual WebContentsViewPort* OverrideCreateWebContentsView(
       WebContents* web_contents,
-      RenderViewHostDelegateView** render_view_host_delegate_view) OVERRIDE;
+      RenderViewHostDelegateView** render_view_host_delegate_view,
+      const WebContents::CreateParams& params) OVERRIDE;
   virtual std::string GetApplicationLocale() OVERRIDE;
   virtual void AppendExtraCommandLineSwitches(CommandLine* command_line,
                                               int child_process_id) OVERRIDE;

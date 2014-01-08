@@ -36,9 +36,11 @@ class NwRenderViewObserver : public content::RenderViewObserver {
   NwRenderViewObserver(content::RenderView* render_view);
   virtual ~NwRenderViewObserver();
 
- private:
   // RenderViewObserver implementation.
   virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
+  virtual void DidFinishDocumentLoad(WebKit::WebFrame* frame) OVERRIDE;
+
+ private:
 
   void OnCaptureSnapshot();
 
