@@ -44,7 +44,11 @@
 #include "content/public/common/renderer_preferences.h"
 #include "content/public/common/url_constants.h"
 #include "content/nw/src/api/dispatcher_host.h"
+#if defined(OS_MACOSX)
 #include "content/nw/src/breakpad_mac.h"
+#elif defined(OS_POSIX)
+#include "content/nw/src/breakpad_linux.h"
+#endif
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/browser/printing/print_job_manager.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
@@ -154,11 +158,11 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     CommandLine* command_line,
     int child_process_id) {
 #if defined(OS_MACOSX)
-  if (IsCrashReporterEnabled()) {
+  if (breakpad::IsCrashReporterEnabled()) {
     command_line->AppendSwitch(switches::kEnableCrashReporter);
   }
 #elif defined(OS_POSIX)
-  if (IsCrashReporterEnabled()) {
+  if (breakpad::IsCrashReporterEnabled()) {
     command_line->AppendSwitch(switches::kEnableCrashReporter);
   }
 

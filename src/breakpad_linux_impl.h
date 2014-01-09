@@ -15,6 +15,8 @@
 #include "breakpad/src/common/simple_string_dictionary.h"
 #include "content/nw/src/breakpad_linux.h"
 
+namespace breakpad {
+
 typedef google_breakpad::NonAllocatingMap<256, 256, 64> CrashKeyStorage;
 
 static const size_t kMaxActiveURLSize = 1024;
@@ -64,5 +66,7 @@ struct BreakpadInfo {
 };
 
 extern void HandleCrashDump(const BreakpadInfo& info);
+
+} // namespace breakpad
 
 #endif  // CHROME_APP_BREAKPAD_LINUX_IMPL_H_

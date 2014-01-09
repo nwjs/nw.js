@@ -9,6 +9,8 @@
 
 #include "build/build_config.h"
 
+namespace breakpad {
+
 // Turns on the crash reporter in any process.
 extern void InitCrashReporter();
 
@@ -21,6 +23,8 @@ extern void InitNonBrowserCrashReporterForAndroid();
 // being opted into metrics reporting (and crash reporting), which controls
 // whether InitCrashReporter() is called.
 bool IsCrashReporterEnabled();
+
+} // namespace breakpad
 
 bool SetCrashDumpPath(const char* path);
 #endif  // CHROME_APP_BREAKPAD_LINUX_H_

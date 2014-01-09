@@ -76,6 +76,8 @@ using google_breakpad::MinidumpDescriptor;
 
 using breakpad::GetBreakpadClient;
 
+namespace breakpad {
+ExceptionHandler* g_breakpad = NULL;
 namespace {
 
 const char kUploadURL[] = "https://clients2.google.com/cr/report";
@@ -83,7 +85,6 @@ const char kUploadURL[] = "https://clients2.google.com/cr/report";
 bool g_is_crash_reporter_enabled = false;
 uint64_t g_process_start_time = 0;
 char* g_crash_log_path = NULL;
-ExceptionHandler* g_breakpad = NULL;
 
 #if defined(ADDRESS_SANITIZER)
 const char* g_asan_report_str = NULL;
@@ -1419,10 +1420,12 @@ bool IsCrashReporterEnabled() {
   return g_is_crash_reporter_enabled;
 }
 
+} // namespace breakpad
+
 bool SetCrashDumpPath(const char* path) {
-  if (!g_breakpad)
+  if (!breakpad::g_breakpad)
     return false;
-  g_breakpad->set_minidump_descriptor(MinidumpDescriptor(path));
+  breakpad::g_breakpad->set_minidump_descriptor(MinidumpDescriptor(path));
   base::FilePath filepath(path);
   // for renderer dumps
   PathService::Override(chrome::DIR_CRASH_DUMPS, filepath);
