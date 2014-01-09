@@ -33,6 +33,13 @@
 #include "third_party/WebKit/public/web/WebView.h"
 #include "v8/include/v8.h"
 
+#undef LOG
+#undef ASSERT
+#include "third_party/WebKit/Source/config.h"
+#include "third_party/WebKit/Source/core/frame/Frame.h"
+#include "third_party/WebKit/Source/web/WebFrameImpl.h"
+#include "V8HTMLElement.h"
+
 namespace nwapi {
 
 Dispatcher::Dispatcher(content::RenderView* render_view)
@@ -94,21 +101,33 @@ void Dispatcher::OnEvent(int object_id,
   node::MakeCallback(objects_registry, "handleEvent", 3, argv);
 }
 
+v8::Handle<v8::Object> Dispatcher::GetObjectRegistry() {
+  v8::Handle<v8::Value> registry =
+    node::g_context->Global()->Get(v8::String::New("__nwObjectsRegistry"));
+  // if (registry->IsNull() || registry->IsUndefined())
+  //   return v8::Undefined();
+  return registry->ToObject();
+}
+
+v8::Handle<v8::Value> Dispatcher::GetWindowId(WebKit::WebFrame* frame) {
+  v8::Handle<v8::Value> v8win = frame->mainWorldScriptContext()->Global();
+  v8::Handle<v8::Value> val = v8win->ToObject()->Get(v8::String::New("__nwWindowId"));
+
+  return val;
+}
+
 void Dispatcher::ZoomLevelChanged() {
   WebKit::WebView* web_view = render_view()->GetWebView();
   float zoom_level = web_view->zoomLevel();
-  v8::Handle<v8::Value> v8win = web_view->mainFrame()->
-    mainWorldScriptContext()->Global();
-  v8::Handle<v8::Value> val = v8win->ToObject()->Get(v8::String::New("__nwWindowId"));
+
+  v8::Handle<v8::Value> val = GetWindowId(web_view->mainFrame());
 
   if (val->IsNull() || val->IsUndefined())
     return;
 
-  v8::Handle<v8::Value> registry =
-    node::g_context->Global()->Get(v8::String::New("__nwObjectsRegistry"));
-  if (registry->IsNull() || registry->IsUndefined())
+  v8::Handle<v8::Object> objects_registry = GetObjectRegistry();
+  if (objects_registry->IsUndefined())
     return;
-  v8::Handle<v8::Object> objects_registry = registry->ToObject();
 
   v8::Local<v8::Array> args = v8::Array::New();
   args->Set(0, v8::Number::New(zoom_level));
@@ -116,4 +135,34 @@ void Dispatcher::ZoomLevelChanged() {
 
   node::MakeCallback(objects_registry, "handleEvent", 3, argv);
 }
+
+void Dispatcher::DidFinishDocumentLoad(WebKit::WebFrame* frame) {
+  WebKit::WebView* web_view = render_view()->GetWebView();
+
+  if (!web_view)
+    return;
+  v8::Context::Scope cscope (web_view->mainFrame()->mainWorldScriptContext());
+
+  v8::Handle<v8::Value> val = GetWindowId(web_view->mainFrame());
+  if (val->IsNull() || val->IsUndefined())
+    return;
+
+  v8::Handle<v8::Object> objects_registry = GetObjectRegistry();
+  if (objects_registry->IsUndefined())
+    return;
+
+  v8::Local<v8::Array> args = v8::Array::New();
+  v8::Handle<v8::Value> element = v8::Null();
+  WebCore::Frame* core_frame = WebKit::toWebFrameImpl(frame)->frame();
+  if (core_frame->ownerElement()) {
+    element = WebCore::toV8((WebCore::HTMLElement*)core_frame->ownerElement(),
+                            frame->mainWorldScriptContext()->Global(),
+                            frame->mainWorldScriptContext()->GetIsolate());
+  }
+  args->Set(0, element);
+  v8::Handle<v8::Value> argv[] = {val, v8::String::New("document-end"), args };
+
+  node::MakeCallback(objects_registry, "handleEvent", 3, argv);
+}
+
 }  // namespace nwapi
