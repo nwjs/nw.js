@@ -100,6 +100,7 @@ class NativeWindowWin : public NativeWindow,
   virtual gfx::ImageSkia GetWindowAppIcon() OVERRIDE;
   virtual gfx::ImageSkia GetWindowIcon() OVERRIDE;
   virtual bool ShouldShowWindowTitle() const OVERRIDE;
+  virtual bool ShouldHandleOnSize()    const OVERRIDE;
 
   // WidgetFocusChangeListener implementation.
   virtual void OnNativeFocusChange(gfx::NativeView focused_before,
@@ -126,6 +127,7 @@ class NativeWindowWin : public NativeWindow,
 
   // views::WidgetDelegate implementation.
   virtual bool ExecuteWindowsCommand(int command_id) OVERRIDE;
+  virtual bool HandleSize(unsigned int param, const gfx::Size& size) OVERRIDE;
   virtual bool ExecuteAppCommand(int command_id) OVERRIDE;
   virtual void SaveWindowPlacement(const gfx::Rect& bounds,
                                    ui::WindowShowState show_state) OVERRIDE;

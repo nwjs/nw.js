@@ -190,6 +190,13 @@ Shell::~Shell() {
     if (devtools_owner_->devtools_window_id_) {
       dhost->OnDeallocateObject(devtools_owner_->devtools_window_id_);
       devtools_owner_->devtools_window_id_ = 0;
+    }else if (id_) {
+      //FIXME: the ownership/ flow of window and shell destruction
+      //need to be cleared
+
+      // In linux, Shell destruction will be called immediately in
+      // CloseDevTools but in OSX it won't
+      dhost->OnDeallocateObject(id_);
     }
   }
 
@@ -243,11 +250,11 @@ void Shell::SendEvent(const std::string& event, const base::ListValue& args) {
       web_contents->GetRoutingID(), id(), event, args));
 }
 
-bool Shell::ShouldCloseWindow() {
+bool Shell::ShouldCloseWindow(bool quit) {
   if (id() < 0 || force_close_)
     return true;
 
-  SendEvent("close");
+  SendEvent("close", quit ? "quit" : "");
   return false;
 }
 
