@@ -38,7 +38,7 @@ class NwRenderViewObserver : public content::RenderViewObserver {
 
   // RenderViewObserver implementation.
   virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
-  virtual void DidFinishDocumentLoad(WebKit::WebFrame* frame) OVERRIDE;
+  virtual void DidCreateDocumentElement(WebKit::WebFrame* frame) OVERRIDE;
 
  private:
 
