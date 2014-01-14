@@ -136,7 +136,15 @@ void Dispatcher::ZoomLevelChanged() {
   node::MakeCallback(objects_registry, "handleEvent", 3, argv);
 }
 
+void Dispatcher::DidCreateDocumentElement(WebKit::WebFrame* frame) {
+  documentCallback("document-start", frame);
+}
+
 void Dispatcher::DidFinishDocumentLoad(WebKit::WebFrame* frame) {
+  documentCallback("document-end", frame);
+}
+
+void Dispatcher::documentCallback(const char* ev, WebKit::WebFrame* frame) {
   WebKit::WebView* web_view = render_view()->GetWebView();
 
   if (!web_view)
@@ -160,7 +168,7 @@ void Dispatcher::DidFinishDocumentLoad(WebKit::WebFrame* frame) {
                             frame->mainWorldScriptContext()->GetIsolate());
   }
   args->Set(0, element);
-  v8::Handle<v8::Value> argv[] = {val, v8::String::New("document-end"), args };
+  v8::Handle<v8::Value> argv[] = {val, v8::String::New(ev), args };
 
   node::MakeCallback(objects_registry, "handleEvent", 3, argv);
 }

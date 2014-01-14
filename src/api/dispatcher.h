@@ -49,6 +49,9 @@ class Dispatcher : public content::RenderViewObserver {
   virtual void DraggableRegionsChanged(WebKit::WebFrame* frame) OVERRIDE;
   virtual void ZoomLevelChanged() OVERRIDE;
   virtual void DidFinishDocumentLoad(WebKit::WebFrame* frame) OVERRIDE;
+  virtual void DidCreateDocumentElement(WebKit::WebFrame* frame) OVERRIDE;
+
+  void documentCallback(const char* ev, WebKit::WebFrame* frame);
 
   void OnEvent(int object_id,
                std::string event,
