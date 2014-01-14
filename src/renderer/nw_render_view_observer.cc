@@ -80,7 +80,7 @@ void NwRenderViewObserver::OnCaptureSnapshot() {
   Send(new NwViewHostMsg_Snapshot(routing_id(), snapshot));
 }
 
-void NwRenderViewObserver::DidFinishDocumentLoad(WebKit::WebFrame* frame) {
+void NwRenderViewObserver::DidCreateDocumentElement(WebKit::WebFrame* frame) {
   RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
   if (!rv)
     return;
