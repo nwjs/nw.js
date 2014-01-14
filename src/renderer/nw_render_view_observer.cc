@@ -80,11 +80,25 @@ void NwRenderViewObserver::OnCaptureSnapshot() {
   Send(new NwViewHostMsg_Snapshot(routing_id(), snapshot));
 }
 
+void NwRenderViewObserver::DidFinishDocumentLoad(WebKit::WebFrame* frame) {
+  RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
+  if (!rv)
+    return;
+  std::string js_fn = rv->renderer_preferences_.nw_inject_js_doc_end;
+  OnDocumentCallback(rv, js_fn, frame);
+}
+
 void NwRenderViewObserver::DidCreateDocumentElement(WebKit::WebFrame* frame) {
   RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
   if (!rv)
     return;
-  std::string js_fn = rv->renderer_preferences_.nw_inject_js_fn;
+  std::string js_fn = rv->renderer_preferences_.nw_inject_js_doc_start;
+  OnDocumentCallback(rv, js_fn, frame);
+}
+
+void NwRenderViewObserver::OnDocumentCallback(RenderViewImpl* rv,
+                                              const std::string& js_fn,
+                                              WebKit::WebFrame* frame) {
   if (js_fn.empty())
     return;
   std::string content;

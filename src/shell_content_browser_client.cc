@@ -139,9 +139,10 @@ WebContentsViewPort* ShellContentBrowserClient::OverrideCreateWebContentsView(
   if (package->root()->GetString(switches::kmRemotePages, &rules))
       prefs->nw_remote_page_rules = rules;
 
-  prefs->nw_app_root_path = package->path();
-  prefs->nw_inject_css_fn = params.nw_inject_css_fn;
-  prefs->nw_inject_js_fn  = params.nw_inject_js_fn;
+  prefs->nw_app_root_path        = package->path();
+  prefs->nw_inject_css_fn        = params.nw_inject_css_fn;
+  prefs->nw_inject_js_doc_start  = params.nw_inject_js_doc_start;
+  prefs->nw_inject_js_doc_end    = params.nw_inject_js_doc_end;
   return NULL;
 }
 

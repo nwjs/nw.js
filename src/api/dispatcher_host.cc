@@ -261,8 +261,10 @@ void DispatcherHost::OnCreateShell(const std::string& url,
                                           new_renderer ? NULL : base_web_contents->GetSiteInstance());
 
   std::string filename;
-  if (new_manifest->GetString(switches::kmInjectJS, &filename))
-    create_params.nw_inject_js_fn = filename;
+  if (new_manifest->GetString(switches::kmInjectJSDocStart, &filename))
+    create_params.nw_inject_js_doc_start = filename;
+  if (new_manifest->GetString(switches::kmInjectJSDocEnd, &filename))
+    create_params.nw_inject_js_doc_end = filename;
   if (new_manifest->GetString(switches::kmInjectCSS, &filename))
     create_params.nw_inject_css_fn = filename;
 
