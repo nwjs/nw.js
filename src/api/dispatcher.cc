@@ -41,6 +41,10 @@
 
 namespace nwapi {
 
+static inline v8::Local<v8::String> v8_str(const char* x) {
+  return v8::String::New(x);
+}
+
 Dispatcher::Dispatcher(content::RenderView* render_view)
     : content::RenderViewObserver(render_view) {
 }
@@ -85,11 +89,11 @@ void Dispatcher::OnEvent(int object_id,
   v8::Handle<v8::Value> args = converter.ToV8Value(&arguments, node::g_context);
   DCHECK(!args.IsEmpty()) << "Invalid 'arguments' in Dispatcher::OnEvent";
   v8::Handle<v8::Value> argv[] = {
-      v8::Integer::New(object_id), v8::String::New(event.c_str()), args };
+      v8::Integer::New(object_id), v8_str(event.c_str()), args };
 
   // __nwObjectsRegistry.handleEvent(object_id, event, arguments);
   v8::Handle<v8::Value> val =
-    node::g_context->Global()->Get(v8::String::New("__nwObjectsRegistry"));
+    node::g_context->Global()->Get(v8_str("__nwObjectsRegistry"));
   if (val->IsNull() || val->IsUndefined())
     return; // need to find out why it's undefined here in debugger
   v8::Handle<v8::Object> objects_registry = val->ToObject();
@@ -99,7 +103,7 @@ void Dispatcher::OnEvent(int object_id,
 
 v8::Handle<v8::Object> Dispatcher::GetObjectRegistry() {
   v8::Handle<v8::Value> registry =
-    node::g_context->Global()->Get(v8::String::New("__nwObjectsRegistry"));
+    node::g_context->Global()->Get(v8_str("__nwObjectsRegistry"));
   // if (registry->IsNull() || registry->IsUndefined())
   //   return v8::Undefined();
   return registry->ToObject();
@@ -107,7 +111,7 @@ v8::Handle<v8::Object> Dispatcher::GetObjectRegistry() {
 
 v8::Handle<v8::Value> Dispatcher::GetWindowId(WebKit::WebFrame* frame) {
   v8::Handle<v8::Value> v8win = frame->mainWorldScriptContext()->Global();
-  v8::Handle<v8::Value> val = v8win->ToObject()->Get(v8::String::New("__nwWindowId"));
+  v8::Handle<v8::Value> val = v8win->ToObject()->Get(v8_str("__nwWindowId"));
 
   return val;
 }
@@ -127,7 +131,7 @@ void Dispatcher::ZoomLevelChanged() {
 
   v8::Local<v8::Array> args = v8::Array::New();
   args->Set(0, v8::Number::New(zoom_level));
-  v8::Handle<v8::Value> argv[] = {val, v8::String::New("zoom"), args };
+  v8::Handle<v8::Value> argv[] = {val, v8_str("zoom"), args };
 
   node::MakeCallback(objects_registry, "handleEvent", 3, argv);
 }
