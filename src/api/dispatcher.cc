@@ -172,9 +172,63 @@ void Dispatcher::documentCallback(const char* ev, WebKit::WebFrame* frame) {
                             frame->mainWorldScriptContext()->GetIsolate());
   }
   args->Set(0, element);
-  v8::Handle<v8::Value> argv[] = {val, v8::String::New(ev), args };
+  v8::Handle<v8::Value> argv[] = {val, v8_str(ev), args };
 
   node::MakeCallback(objects_registry, "handleEvent", 3, argv);
+}
+
+void Dispatcher::willHandleNavigationPolicy(
+    content::RenderView* rv,
+    WebKit::WebFrame* frame,
+    const WebKit::WebURLRequest& request,
+    WebKit::WebNavigationPolicy* policy) {
+
+  WebKit::WebView* web_view = rv->GetWebView();
+
+  if (!web_view)
+    return;
+
+  v8::Context::Scope cscope (web_view->mainFrame()->mainWorldScriptContext());
+
+  v8::Handle<v8::Value> id_val = nwapi::Dispatcher::GetWindowId(web_view->mainFrame());
+  if (id_val->IsNull() || id_val->IsUndefined())
+    return;
+
+  v8::Handle<v8::Object> objects_registry = nwapi::Dispatcher::GetObjectRegistry();
+  if (objects_registry->IsUndefined())
+    return;
+
+  v8::Local<v8::Array> args = v8::Array::New();
+  v8::Handle<v8::Value> element = v8::Null();
+  v8::Handle<v8::Object> policy_obj = v8::Object::New();
+
+  WebCore::Frame* core_frame = WebKit::toWebFrameImpl(frame)->frame();
+  if (core_frame->ownerElement()) {
+    element = WebCore::toV8((WebCore::HTMLElement*)core_frame->ownerElement(),
+                            frame->mainWorldScriptContext()->Global(),
+                            frame->mainWorldScriptContext()->GetIsolate());
+  }
+  args->Set(0, element);
+  args->Set(1, v8_str(request.url().string().utf8().c_str()));
+  args->Set(2, policy_obj);
+
+  v8::Handle<v8::Value> argv[] = {id_val, v8_str("new-win-policy"), args };
+
+  node::MakeCallback(objects_registry, "handleEvent", 3, argv);
+  v8::Local<v8::Value> val = policy_obj->Get(v8_str("val"));
+  if (!val->IsString())
+    return;
+  v8::String::Utf8Value policy_str(val);
+  if (!strcmp(*policy_str, "ignore"))
+    *policy = WebKit::WebNavigationPolicyIgnore;
+  else if (!strcmp(*policy_str, "download"))
+    *policy = WebKit::WebNavigationPolicyDownload;
+  else if (!strcmp(*policy_str, "current"))
+    *policy = WebKit::WebNavigationPolicyCurrentTab;
+  else if (!strcmp(*policy_str, "new-window"))
+    *policy = WebKit::WebNavigationPolicyNewWindow;
+  else if (!strcmp(*policy_str, "new-popup"))
+    *policy = WebKit::WebNavigationPolicyNewPopup;
 }
 
 }  // namespace nwapi

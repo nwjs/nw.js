@@ -414,4 +414,13 @@ void ShellContentRendererClient::UninstallNodeSymbols(
   }
 }
 
+void ShellContentRendererClient::willHandleNavigationPolicy(
+    RenderView* rv,
+    WebKit::WebFrame* frame,
+    const WebKit::WebURLRequest& request,
+    WebKit::WebNavigationPolicy* policy) {
+
+  nwapi::Dispatcher::willHandleNavigationPolicy(rv, frame, request, policy);
+}
+
 }  // namespace content
