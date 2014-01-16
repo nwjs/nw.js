@@ -136,6 +136,14 @@ Window.prototype.handleEvent = function(ev) {
     this.removeListener(ev, listeners_copy[i]);
   }
 
+    if (ev == 'new-win-policy' && arguments.length > 3) {
+        var policy = arguments[3];
+        policy.ignore         =  function () { this.val = 'ignore'; };
+        policy.forceCurrent   =  function () { this.val = 'current'; };
+        policy.forceDownload  =  function () { this.val = 'download'; };
+        policy.forceNewWindow =  function () { this.val = 'new-window'; };
+        policy.forceNewPopup  =  function () { this.val = 'new-popup'; };
+    }
   // Route events to EventEmitter.
   this.emit.apply(this, arguments);
 
