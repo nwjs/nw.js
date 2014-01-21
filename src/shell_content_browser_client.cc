@@ -112,13 +112,9 @@ BrowserMainParts* ShellContentBrowserClient::CreateBrowserMainParts(
   return shell_browser_main_parts_;
 }
 
-WebContentsViewPort* ShellContentBrowserClient::OverrideCreateWebContentsView(
-      WebContents* web_contents,
-      RenderViewHostDelegateView** render_view_host_delegate_view,
-      const WebContents::CreateParams& params) {
-  std::string user_agent, rules;
+bool ShellContentBrowserClient::GetUserAgentManifest(std::string* agent) {
+  std::string user_agent;
   nw::Package* package = shell_browser_main_parts()->package();
-  content::RendererPreferences* prefs = web_contents->GetMutableRendererPrefs();
   if (package->root()->GetString(switches::kmUserAgent, &user_agent)) {
     std::string name, version;
     package->root()->GetString(switches::kmName, &name);
@@ -128,6 +124,20 @@ WebContentsViewPort* ShellContentBrowserClient::OverrideCreateWebContentsView(
     ReplaceSubstringsAfterOffset(&user_agent, 0, "%nwver", NW_VERSION_STRING);
     ReplaceSubstringsAfterOffset(&user_agent, 0, "%webkit_ver", webkit_glue::GetWebKitVersion());
     ReplaceSubstringsAfterOffset(&user_agent, 0, "%osinfo", webkit_glue::BuildOSInfo());
+    *agent = user_agent;
+    return true;
+  }
+  return false;
+}
+
+WebContentsViewPort* ShellContentBrowserClient::OverrideCreateWebContentsView(
+      WebContents* web_contents,
+      RenderViewHostDelegateView** render_view_host_delegate_view,
+      const WebContents::CreateParams& params) {
+  std::string user_agent, rules;
+  nw::Package* package = shell_browser_main_parts()->package();
+  content::RendererPreferences* prefs = web_contents->GetMutableRendererPrefs();
+  if (GetUserAgentManifest(&user_agent)) {
     prefs->user_agent_override = user_agent;
   }
   if (package->root()->GetString(switches::kmRemotePages, &rules))

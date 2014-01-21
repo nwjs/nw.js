@@ -95,6 +95,7 @@ class ShellContentBrowserClient : public ContentBrowserClient {
  private:
   ShellBrowserContext* ShellBrowserContextForBrowserContext(
       BrowserContext* content_browser_context);
+  bool GetUserAgentManifest(std::string* agent);
   scoped_ptr<ShellResourceDispatcherHostDelegate>
       resource_dispatcher_host_delegate_;
 
