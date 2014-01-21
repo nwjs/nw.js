@@ -181,6 +181,11 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
   if (content::IsThreadedCompositingEnabled())
     command_line->AppendSwitch(switches::kEnableThreadedCompositing);
 
+  std::string user_agent;
+  if (!command_line->HasSwitch(switches::kUserAgent) &&
+      GetUserAgentManifest(&user_agent)) {
+    command_line->AppendSwitchASCII(switches::kUserAgent, user_agent);
+  }
   if (child_process_id > 0) {
     content::RenderWidgetHost::List widgets =
       content::RenderWidgetHost::GetRenderWidgetHosts();
