@@ -23,6 +23,7 @@
 
 #include "base/basictypes.h"
 #include "base/id_map.h"
+#include "base/memory/weak_ptr.h"
 #include "content/public/browser/render_view_host_observer.h"
 
 #include <string>
@@ -76,6 +77,9 @@ class DispatcherHost : public content::RenderViewHostObserver {
 
   static IDMap<Base, IDMapOwnPointer> objects_registry_;
   static int next_object_id_;
+
+  // Factory to generate weak pointer
+  base::WeakPtrFactory<DispatcherHost> weak_ptr_factory_;
 
   // RenderViewHostObserver implementation.
   virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;

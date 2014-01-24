@@ -50,7 +50,8 @@ int nwapi::DispatcherHost::next_object_id_ = 1;
 static std::map<content::RenderViewHost*, DispatcherHost*> g_dispatcher_host_map;
 
 DispatcherHost::DispatcherHost(content::RenderViewHost* render_view_host)
-    : content::RenderViewHostObserver(render_view_host) {
+  : content::RenderViewHostObserver(render_view_host),
+    weak_ptr_factory_(this) {
   g_dispatcher_host_map[render_view_host] = this;
 }
 
@@ -122,20 +123,20 @@ void DispatcherHost::OnAllocateObject(int object_id,
              << " option:" << option;
 
   if (type == "Menu") {
-    objects_registry_.AddWithID(new Menu(object_id, this, option), object_id);
+    objects_registry_.AddWithID(new Menu(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else if (type == "MenuItem") {
     objects_registry_.AddWithID(
-        new MenuItem(object_id, this, option), object_id);
+        new MenuItem(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else if (type == "Tray") {
-    objects_registry_.AddWithID(new Tray(object_id, this, option), object_id);
+    objects_registry_.AddWithID(new Tray(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else if (type == "Clipboard") {
     objects_registry_.AddWithID(
-        new Clipboard(object_id, this, option), object_id);
+        new Clipboard(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else if (type == "Window") {
-    objects_registry_.AddWithID(new Window(object_id, this, option), object_id);
+    objects_registry_.AddWithID(new Window(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else {
     LOG(ERROR) << "Allocate an object of unknown type: " << type;
-    objects_registry_.AddWithID(new Base(object_id, this, option), object_id);
+    objects_registry_.AddWithID(new Base(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   }
 }
 

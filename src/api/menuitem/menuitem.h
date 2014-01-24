@@ -49,7 +49,7 @@ class Menu;
 class MenuItem : public Base {
  public:
   MenuItem(int id,
-           DispatcherHost* dispatcher_host,
+           const base::WeakPtr<DispatcherHost>& dispatcher_host,
            const base::DictionaryValue& option);
   virtual ~MenuItem();
 

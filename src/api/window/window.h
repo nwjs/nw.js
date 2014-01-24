@@ -57,7 +57,7 @@ public:
 class Window : public Base, public content::NotificationObserver {
  public:
   Window(int id,
-         DispatcherHost* dispatcher_host,
+         const base::WeakPtr<DispatcherHost>& dispatcher_host,
          const base::DictionaryValue& option);
   virtual ~Window();
 

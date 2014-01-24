@@ -28,7 +28,7 @@
 namespace nwapi {
 
 Tray::Tray(int id,
-           DispatcherHost* dispatcher_host,
+           const base::WeakPtr<DispatcherHost>& dispatcher_host,
            const base::DictionaryValue& option)
     : Base(id, dispatcher_host, option) {
   Create(option);
