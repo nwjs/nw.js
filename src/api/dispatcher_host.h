@@ -27,6 +27,7 @@
 #include "content/public/browser/web_contents_observer.h"
 
 #include <string>
+#include <set>
 
 namespace base {
 class DictionaryValue;
@@ -80,6 +81,8 @@ class DispatcherHost : public content::WebContentsObserver {
 
   static IDMap<Base, IDMapOwnPointer> objects_registry_;
   static int next_object_id_;
+
+  std::set<int> objects_;
 
   // Factory to generate weak pointer
   base::WeakPtrFactory<DispatcherHost> weak_ptr_factory_;

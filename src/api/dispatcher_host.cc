@@ -58,6 +58,12 @@ DispatcherHost::DispatcherHost(content::RenderViewHost* host)
 
 DispatcherHost::~DispatcherHost() {
   g_dispatcher_host_map.erase(render_view_host());
+  std::set<int>::iterator it;
+  for (it = objects_.begin(); it != objects_.end(); it++) {
+    if (Base* obj = GetApiObject(*it)) {
+      delete obj;
+    }
+  }
 }
 
 DispatcherHost*
@@ -146,11 +152,14 @@ void DispatcherHost::OnAllocateObject(int object_id,
     LOG(ERROR) << "Allocate an object of unknown type: " << type;
     objects_registry_.AddWithID(new Base(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   }
+  objects_.insert(object_id);
 }
 
 void DispatcherHost::OnDeallocateObject(int object_id) {
   DLOG(INFO) << "OnDeallocateObject: object_id:" << object_id;
-  objects_registry_.Remove(object_id);
+  if (objects_registry_.Lookup(object_id))
+    objects_registry_.Remove(object_id);
+  objects_.erase(object_id);
 }
 
 void DispatcherHost::OnCallObjectMethod(
