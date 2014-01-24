@@ -29,7 +29,7 @@ namespace nwapi {
 class Clipboard : public Base {
  public:
   Clipboard(int id,
-            DispatcherHost* dispatcher_host,
+            const base::WeakPtr<DispatcherHost>& dispatcher_host,
             const base::DictionaryValue& option);
   virtual ~Clipboard();
 

@@ -26,7 +26,7 @@
 namespace nwapi {
 
 Base::Base(int id,
-           DispatcherHost* dispatcher_host,
+           const base::WeakPtr<DispatcherHost>& dispatcher_host,
            const base::DictionaryValue& option)
     : id_(id),
       dispatcher_host_(dispatcher_host) {

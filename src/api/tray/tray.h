@@ -48,7 +48,7 @@ class TrayObserver;
 class Tray : public Base {
  public:
   Tray(int id,
-       DispatcherHost* dispatcher_host,
+       const base::WeakPtr<DispatcherHost>& dispatcher_host,
        const base::DictionaryValue& option);
   virtual ~Tray();
 

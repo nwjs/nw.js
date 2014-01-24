@@ -162,7 +162,7 @@ PopulateCookieObject(const net::CanonicalCookie& canonical_cookie) {
 namespace nwapi {
 
 Window::Window(int id,
-               DispatcherHost* dispatcher_host,
+               const base::WeakPtr<DispatcherHost>& dispatcher_host,
                const base::DictionaryValue& option)
     : Base(id, dispatcher_host, option),
       shell_(content::Shell::FromRenderViewHost(dispatcher_host->
@@ -313,6 +313,8 @@ void Window::CallSync(const std::string& method,
 }
 
 void Window::CookieRemove(const base::ListValue& arguments) {
+  if (!dispatcher_host())
+    return;
   CookieAPIContext* api_context = new CookieAPIContext(dispatcher_host(), arguments);
   bool rv = BrowserThread::PostTask(
                                     BrowserThread::IO, FROM_HERE,
@@ -323,6 +325,8 @@ void Window::CookieRemove(const base::ListValue& arguments) {
 }
 
 void Window::CookieSet(const base::ListValue& arguments) {
+  if (!dispatcher_host())
+    return;
   CookieAPIContext* api_context = new CookieAPIContext(dispatcher_host(), arguments);
   bool rv = BrowserThread::PostTask(
                                     BrowserThread::IO, FROM_HERE,
@@ -388,6 +392,8 @@ CookieAPIContext::CookieAPIContext(DispatcherHost* dispatcher_host,
 
 void Window::CookieGet(const base::ListValue& arguments, bool get_all) {
 
+  if (!dispatcher_host())
+    return;
   CookieAPIContext* api_context = new CookieAPIContext(dispatcher_host(), arguments);
 
   if (get_all) {
@@ -471,6 +477,8 @@ void Window::GetCookieCallback(CookieAPIContext* api_context,
 }
 
 void Window::RespondOnUIThread(CookieAPIContext* api_context) {
+  if (!dispatcher_host())
+    return;
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
   base::ListValue ret;
   ret.Append(api_context->result_.release());
@@ -573,6 +581,8 @@ void Window::Observe(
 void Window::CookieChanged(
     ShellBrowserContext* browser_context,
     ChromeCookieDetails* details) {
+  if (!dispatcher_host())
+    return;
   scoped_ptr<base::ListValue> args(new base::ListValue());
   base::DictionaryValue* dict = new base::DictionaryValue();
   dict->SetBoolean(kRemovedKey, details->removed);
