@@ -28,6 +28,14 @@ Prebuilt binaries (v0.8.4 - Dec 30, 2013):
 * Windows: [win32](https://s3.amazonaws.com/node-webkit/v0.8.4/node-webkit-v0.8.4-win-ia32.zip)
 * Mac: [32bit, 10.7+](https://s3.amazonaws.com/node-webkit/v0.8.4/node-webkit-v0.8.4-osx-ia32.zip)
 
+[v0.9.0-rc1 release notes](https://groups.google.com/d/msg/node-webkit/gz0p9tsW8xA/JCtpBwVIDGMJ)
+
+Prebuilt binaries (v0.9.0-rc1 - Jan 28, 2014):
+
+* Linux: [32bit](https://s3.amazonaws.com/node-webkit/v0.9.0-rc1/node-webkit-v0.9.0-rc1-linux-ia32.tar.gz) / [64bit] (https://s3.amazonaws.com/node-webkit/v0.9.0-rc1/node-webkit-v0.9.0-rc1-linux-x64.tar.gz)
+* Windows: [win32](https://s3.amazonaws.com/node-webkit/v0.9.0-rc1/node-webkit-v0.9.0-rc1-win-ia32.zip)
+* Mac: [32bit, 10.7+](https://s3.amazonaws.com/node-webkit/v0.9.0-rc1/node-webkit-v0.9.0-rc1-osx-ia32.zip)
+
 [Looking for older versions?](https://github.com/rogerwang/node-webkit/wiki/Downloads-of-old-versions)
 
 ###Demos and real apps
