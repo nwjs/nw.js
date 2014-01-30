@@ -69,8 +69,6 @@ void ShellRenderProcessObserver::OnRenderProcessWillShutdown() {
 void ShellRenderProcessObserver::WebKitInitialized() {
   webkit_initialized_ = true;
   RenderThread::Get()->RegisterExtension(new nwapi::DispatcherBindings());
-  WebRuntimeFeatures::enableStableFeatures(true);
-  WebRuntimeFeatures::enableExperimentalFeatures(true);
 }
 
 void ShellRenderProcessObserver::OnOpen(const std::string& path) {
