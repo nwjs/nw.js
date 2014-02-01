@@ -384,7 +384,7 @@ void FileSelectHelper::RunFileChooserOnUIThread(
       dialog_type_ = ui::SelectFileDialog::SELECT_OPEN_MULTI_FILE;
       break;
     case FileChooserParams::UploadFolder:
-      dialog_type_ = ui::SelectFileDialog::SELECT_UPLOAD_FOLDER;
+      dialog_type_ = ui::SelectFileDialog::SELECT_FOLDER;
       break;
     case FileChooserParams::Save:
       dialog_type_ = ui::SelectFileDialog::SELECT_SAVEAS_FILE;
