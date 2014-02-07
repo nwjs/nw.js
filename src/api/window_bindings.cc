@@ -122,7 +122,7 @@ WindowBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args
       WebCore::HTMLIFrameElement* iframe = WebCore::V8HTMLIFrameElement::toNative(frm);
       web_frame = WebKit::WebFrameImpl::fromFrame(iframe->contentFrame());
     }
-    base::string16 jscript = *v8::String::Value(args[3]);
+    base::string16 jscript((WCHAR*)*v8::String::Value(args[3]));
     if (web_frame) {
       result = web_frame->executeScriptAndReturnValue(WebScriptSource(jscript));
     }

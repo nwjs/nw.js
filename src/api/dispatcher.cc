@@ -19,6 +19,10 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #define V8_USE_UNSAFE_HANDLES
+#if defined(OS_WIN)
+#define _USE_MATH_DEFINES
+#include <math.h>
+#endif
 
 #include "content/nw/src/api/dispatcher.h"
 
