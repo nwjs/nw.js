@@ -37,10 +37,10 @@
 #include "breakpad/src/client/linux/minidump_writer/directory_reader.h"
 #include "breakpad/src/common/linux/linux_libc_support.h"
 #include "breakpad/src/common/memory.h"
-#include "content/nw/src/breakpad_linux_impl.h"
 #include "chrome/common/child_process_logging.h"
 #include "chrome/common/chrome_paths.h"
 #include "components/breakpad/app/breakpad_client.h"
+#include "components/breakpad/app/breakpad_linux_impl.h"
 #include "content/public/common/content_descriptors.h"
 #include "content/public/common/content_switches.h"
 
@@ -585,8 +585,6 @@ bool CrashDone(const MinidumpDescriptor& minidump,
 #endif
   info.process_type = "browser";
   info.process_type_length = 7;
-  info.crash_url = NULL;
-  info.crash_url_length = 0;
   info.distro = base::g_linux_distro;
   info.distro_length = my_strlen(base::g_linux_distro);
   info.upload = upload;
