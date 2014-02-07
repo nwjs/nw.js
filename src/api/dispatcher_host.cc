@@ -60,9 +60,8 @@ DispatcherHost::~DispatcherHost() {
   g_dispatcher_host_map.erase(render_view_host());
   std::set<int>::iterator it;
   for (it = objects_.begin(); it != objects_.end(); it++) {
-    if (Base* obj = GetApiObject(*it)) {
-      delete obj;
-    }
+    if (objects_registry_.Lookup(*it))
+      objects_registry_.Remove(*it);
   }
 }
 
