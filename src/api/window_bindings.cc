@@ -173,6 +173,7 @@ WindowBindings::CallObjectMethodSync(const v8::FunctionCallbackInfo<v8::Value>& 
     double zoom_level = args[2]->ToNumber()->Value();
     render_view->OnSetZoomLevel(zoom_level);
     args.GetReturnValue().Set(v8::Undefined());
+    return;
   }
   args.GetReturnValue().Set(remote::CallObjectMethodSync(routing_id, object_id, "Window", method, args[2]));
 }
