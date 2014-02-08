@@ -18,8 +18,6 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#define _USE_MATH_DEFINES
-
 #include "content/nw/src/api/window_bindings.h"
 
 #include "base/values.h"
@@ -29,6 +27,11 @@
 #include "grit/nw_resources.h"
 #undef LOG
 using namespace WebCore;
+#if defined(OS_WIN)
+#define _USE_MATH_DEFINES
+#include <math.h>
+#endif
+
 
 #include "third_party/WebKit/Source/config.h"
 #include "third_party/WebKit/Source/core/html/HTMLIFrameElement.h"

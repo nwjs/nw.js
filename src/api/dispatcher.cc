@@ -19,10 +19,6 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #define V8_USE_UNSAFE_HANDLES
-#if defined(OS_WIN)
-#define _USE_MATH_DEFINES
-#include <math.h>
-#endif
 
 #include "content/nw/src/api/dispatcher.h"
 
@@ -39,6 +35,10 @@
 
 #undef LOG
 #undef ASSERT
+#if defined(OS_WIN)
+#define _USE_MATH_DEFINES
+#include <math.h>
+#endif
 #include "third_party/WebKit/Source/config.h"
 #include "third_party/WebKit/Source/core/frame/Frame.h"
 #include "third_party/WebKit/Source/web/WebFrameImpl.h"
