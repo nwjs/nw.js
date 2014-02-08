@@ -27,7 +27,6 @@ PrintMsg_Print_Params::PrintMsg_Print_Params()
     print_scaling_option(WebKit::WebPrintScalingOptionSourceSize),
     print_to_pdf(false),
     display_header_footer(false),
-    date(),
     title(),
     url(),
     should_print_backgrounds(false) {
@@ -54,7 +53,6 @@ void PrintMsg_Print_Params::Reset() {
   print_scaling_option = WebKit::WebPrintScalingOptionSourceSize;
   print_to_pdf = false;
   display_header_footer = false;
-  date = string16();
   title = string16();
   url = string16();
   should_print_backgrounds = false;

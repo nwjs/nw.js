@@ -45,7 +45,6 @@ struct PrintMsg_Print_Params {
   WebKit::WebPrintScalingOption print_scaling_option;
   bool print_to_pdf;
   bool display_header_footer;
-  string16 date;
   string16 title;
   string16 url;
   bool should_print_backgrounds;
@@ -136,9 +135,6 @@ IPC_STRUCT_TRAITS_BEGIN(PrintMsg_Print_Params)
 
   // Specifies if the header and footer should be rendered.
   IPC_STRUCT_TRAITS_MEMBER(display_header_footer)
-
-  // Date string to be printed as header if requested by the user.
-  IPC_STRUCT_TRAITS_MEMBER(date)
 
   // Title string to be printed as header if requested by the user.
   IPC_STRUCT_TRAITS_MEMBER(title)
