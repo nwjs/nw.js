@@ -42,6 +42,7 @@
 #include "net/ssl/server_bound_cert_service.h"
 #include "net/ssl/ssl_config_service_defaults.h"
 #include "net/cookies/cookie_monster.h"
+#include "net/http/http_auth_filter.h"
 #include "net/http/http_auth_handler_factory.h"
 #include "net/http/http_cache.h"
 #include "net/http/http_network_session.h"
@@ -125,10 +126,20 @@ ShellURLRequestContextGetter::ShellURLRequestContextGetter(
     MessageLoop* io_loop,
     MessageLoop* file_loop,
     ProtocolHandlerMap* protocol_handlers,
-    ShellBrowserContext* browser_context)
+    ShellBrowserContext* browser_context,
+    const std::string& auth_schemes,
+    const std::string& auth_server_whitelist,
+    const std::string& auth_delegate_whitelist,
+    const std::string& gssapi_library_name)
     : ignore_certificate_errors_(ignore_certificate_errors),
       data_path_(data_path),
       root_path_(root_path),
+      auth_schemes_(auth_schemes),
+      negotiate_disable_cname_lookup_(false),
+      negotiate_enable_port_(false),
+      auth_server_whitelist_(auth_server_whitelist),
+      auth_delegate_whitelist_(auth_delegate_whitelist),
+      gssapi_library_name_(gssapi_library_name),
       io_loop_(io_loop),
       file_loop_(file_loop),
       browser_context_(browser_context) {
@@ -209,7 +220,8 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
 
     storage_->set_ssl_config_service(new net::SSLConfigServiceDefaults);
     storage_->set_http_auth_handler_factory(
-        net::HttpAuthHandlerFactory::CreateDefault(host_resolver.get()));
+            CreateDefaultAuthHandlerFactory(host_resolver.get()));
+
     storage_->set_http_server_properties(
         scoped_ptr<net::HttpServerProperties>(
             new net::HttpServerPropertiesImpl()));
@@ -276,6 +288,33 @@ scoped_refptr<base::SingleThreadTaskRunner>
 
 net::HostResolver* ShellURLRequestContextGetter::host_resolver() {
   return url_request_context_->host_resolver();
+}
+
+net::HttpAuthHandlerFactory* ShellURLRequestContextGetter::CreateDefaultAuthHandlerFactory(
+    net::HostResolver* resolver) {
+  net::HttpAuthFilterWhitelist* auth_filter_default_credentials = NULL;
+  if (!auth_server_whitelist_.empty()) {
+    auth_filter_default_credentials =
+        new net::HttpAuthFilterWhitelist(auth_server_whitelist_);
+  }
+  net::HttpAuthFilterWhitelist* auth_filter_delegate = NULL;
+  if (!auth_delegate_whitelist_.empty()) {
+    auth_filter_delegate =
+        new net::HttpAuthFilterWhitelist(auth_delegate_whitelist_);
+  }
+  url_security_manager_.reset(
+      net::URLSecurityManager::Create(auth_filter_default_credentials,
+                                      auth_filter_delegate));
+  std::vector<std::string> supported_schemes;
+  base::SplitString(auth_schemes_, ',', &supported_schemes);
+
+  scoped_ptr<net::HttpAuthHandlerRegistryFactory> registry_factory(
+      net::HttpAuthHandlerRegistryFactory::Create(
+          supported_schemes, url_security_manager_.get(),
+          resolver, gssapi_library_name_, negotiate_disable_cname_lookup_,
+          negotiate_enable_port_));
+
+  return registry_factory.release();
 }
 
 }  // namespace content
