@@ -25,6 +25,7 @@
 #include "base/file_util.h"
 #include "base/path_service.h"
 #include "base/values.h"
+#include "chrome/common/chrome_switches.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/resource_context.h"
 #include "content/public/browser/storage_partition.h"
@@ -155,13 +156,29 @@ net::URLRequestContextGetter* ShellBrowserContext::GetRequestContext()  {
 net::URLRequestContextGetter* ShellBrowserContext::CreateRequestContext(
     ProtocolHandlerMap* protocol_handlers) {
   DCHECK(!url_request_getter_);
+  CommandLine* cmd_line = CommandLine::ForCurrentProcess();
+  std::string auth_server_whitelist =
+    cmd_line->GetSwitchValueASCII(switches::kAuthServerWhitelist);
+  std::string auth_delegate_whitelist =
+    cmd_line->GetSwitchValueASCII(switches::kAuthNegotiateDelegateWhitelist);
+  std::string gssapi_library_name =
+    cmd_line->GetSwitchValueASCII(switches::kGSSAPILibraryName);
+  std::string auth_schemes =
+    cmd_line->GetSwitchValueASCII(switches::kAuthSchemes);
+
+  if (auth_schemes.empty())
+    auth_schemes = "digest,ntlm,negotiate";
+
   url_request_getter_ = new ShellURLRequestContextGetter(
       ignore_certificate_errors_,
       GetPath(),
       package_->path(),
       BrowserThread::UnsafeGetMessageLoopForThread(BrowserThread::IO),
       BrowserThread::UnsafeGetMessageLoopForThread(BrowserThread::FILE),
-      protocol_handlers, this);
+      protocol_handlers, this,
+      auth_schemes, auth_server_whitelist, auth_delegate_whitelist,
+      gssapi_library_name);
+
   resource_context_->set_url_request_context_getter(url_request_getter_.get());
   return url_request_getter_.get();
 }
