@@ -116,6 +116,10 @@ Shell* Shell::Create(WebContents* source_contents,
     params.override_user_agent = NavigationController::UA_OVERRIDE_TRUE;
     params.frame_name = std::string();
 
+    int nw_win_id = 0;
+    manifest->GetInteger("nw_win_id", &nw_win_id);
+    params.nw_win_id = nw_win_id;
+
     new_contents->GetController().LoadURLWithParams(params);
   }
   // Use the user agent value from the source WebContents.
