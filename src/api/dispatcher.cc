@@ -102,10 +102,14 @@ void Dispatcher::OnEvent(int object_id,
 }
 
 v8::Handle<v8::Object> Dispatcher::GetObjectRegistry() {
+  // need to enter node context to access the registry in
+  // some cases, e.g. normal frame in #1519
+  node::g_context->Enter();
   v8::Handle<v8::Value> registry =
     node::g_context->Global()->Get(v8_str("__nwObjectsRegistry"));
-  // if (registry->IsNull() || registry->IsUndefined())
-  //   return v8::Undefined();
+  node::g_context->Exit();
+  if (registry->IsNull() || registry->IsUndefined())
+    return v8::Undefined();
   return registry->ToObject();
 }
 

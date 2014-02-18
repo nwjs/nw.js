@@ -62,6 +62,7 @@ exports.Window = {
     // Create new shell and get it's routing id.
     var id = nw.allocateId();
     options.object_id = id;
+    options.nw_win_id = id;
     var routing_id = nw.createShell(url, options);
 
     return new global.Window(routing_id, true, id);

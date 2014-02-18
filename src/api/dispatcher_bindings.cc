@@ -242,7 +242,7 @@ DispatcherBindings::CreateShell(const v8::FunctionCallbackInfo<v8::Value>& args)
   RenderView* render_view = GetCurrentRenderView();
   if (!render_view) {
     args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
-                                     "Unable to get render view in CallStaticMethod"))));
+                                     "Unable to get render view in CreateShell"))));
     return;
   }
 
