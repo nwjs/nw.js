@@ -116,8 +116,8 @@ v8::Handle<v8::Object> Dispatcher::GetObjectRegistry() {
   v8::Handle<v8::Value> registry =
     node::g_context->Global()->Get(v8_str("__nwObjectsRegistry"));
   node::g_context->Exit();
-  if (registry->IsNull() || registry->IsUndefined())
-    return v8::Undefined();
+  // if (registry->IsNull() || registry->IsUndefined())
+  //   return v8::Undefined();
   return registry->ToObject();
 }
 
