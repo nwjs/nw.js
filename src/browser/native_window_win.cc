@@ -376,14 +376,10 @@ void NativeWindowWin::SetResizable(bool resizable) {
 
 void NativeWindowWin::SetShowInTaskbar(bool show) {
   if (show == false && base::win::GetVersion() < base::win::VERSION_VISTA) {
-    if (hidden_owner_window_.get() == NULL) {
-      hidden_owner_window_.reset(new HiddenOwnerWindow());
-    }
-
     // Change the owner of native window. Only needed on Windows XP.
     ::SetWindowLong(window_->GetNativeView(),
                     GWL_HWNDPARENT,
-                    (LONG)hidden_owner_window_->hwnd());
+                    (LONG)ui::GetHiddenWindow());
   }
 
   base::win::ScopedComPtr<ITaskbarList> taskbar;
