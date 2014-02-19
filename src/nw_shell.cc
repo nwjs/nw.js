@@ -89,7 +89,18 @@ Shell* Shell::Create(BrowserContext* browser_context,
                      int routing_id,
                      WebContents* base_web_contents) {
   WebContents::CreateParams create_params(browser_context, site_instance);
+
+  std::string filename;
+  base::DictionaryValue* manifest = GetPackage()->root();
+  if (manifest->GetString(switches::kmInjectJSDocStart, &filename))
+    create_params.nw_inject_js_doc_start = filename;
+  if (manifest->GetString(switches::kmInjectJSDocEnd, &filename))
+    create_params.nw_inject_js_doc_end = filename;
+  if (manifest->GetString(switches::kmInjectCSS, &filename))
+    create_params.nw_inject_css_fn = filename;
+
   create_params.routing_id = routing_id;
+
   WebContents* web_contents = WebContents::Create(create_params);
 
   Shell* shell = new Shell(web_contents, GetPackage()->window());
