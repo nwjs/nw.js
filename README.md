@@ -28,6 +28,7 @@ Prebuilt binaries (v0.9.2 - Feb 20, 2014):
 * Windows: [win32](https://s3.amazonaws.com/node-webkit/v0.9.2/node-webkit-v0.9.2-win-ia32.zip)
 * Mac: [32bit, 10.7+](https://s3.amazonaws.com/node-webkit/v0.9.2/node-webkit-v0.9.2-osx-ia32.zip)
 
+**If your native Node module works only with Node v0.10, then you should use node-webkit v0.8.x**  
 [v0.8.4 release notes](https://groups.google.com/d/msg/node-webkit/bPjur7aFaQc/4TP6o3SM-8sJ)
 
 Prebuilt binaries (v0.8.4 - Dec 30, 2013):
@@ -103,7 +104,7 @@ And our [Wiki](https://github.com/rogerwang/node-webkit/wiki) for much more.
 ## Community
 
 We use the [node-webkit group](http://groups.google.com/group/node-webkit) as
-our mailing list. Subscribe via [node-webkit+subscribe@googlegroups.com](mailto:node-webkit+subscribe@googlegroups.com).
+our mailing list (use English only). Subscribe via [node-webkit+subscribe@googlegroups.com](mailto:node-webkit+subscribe@googlegroups.com).
 Issues are being tracked here on GitHub.
 
 You can chat with us on IRC in the ##node-webkit channel on irc.freenode.net  
