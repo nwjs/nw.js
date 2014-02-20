@@ -11,6 +11,19 @@
       }],
     ],
   },
+  'target_defaults': {
+    'configurations': {
+      'Release_Base': {
+        # Set flags to unconditionally optimize chrome_frame_launcher.exe
+        # for release builds.
+        'msvs_settings': {
+          'VCLibrarianTool': {
+            'AdditionalOptions': ['/ltcg', '/expectedoutputsize:600000000'],
+          },
+        },
+      },
+    },
+  },
   'targets': [
     {
       'target_name': 'nw_lib',
