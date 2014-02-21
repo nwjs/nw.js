@@ -35,7 +35,7 @@
 #undef LOG
 #undef ASSERT
 #include "third_party/WebKit/Source/config.h"
-#include "third_party/WebKit/Source/core/frame/Frame.h"
+#include "third_party/WebKit/Source/core/page/Frame.h"
 #include "third_party/WebKit/Source/web/WebFrameImpl.h"
 #include "V8HTMLElement.h"
 
@@ -165,7 +165,7 @@ void Dispatcher::documentCallback(const char* ev, WebKit::WebFrame* frame) {
 
   v8::Local<v8::Array> args = v8::Array::New();
   v8::Handle<v8::Value> element = v8::Null();
-  WebCore::Frame* core_frame = WebKit::toWebFrameImpl(frame)->frame();
+  WebCore::Frame* core_frame = static_cast<WebKit::WebFrameImpl*>(frame)->frame();
   if (core_frame->ownerElement()) {
     element = WebCore::toV8((WebCore::HTMLElement*)core_frame->ownerElement(),
                             frame->mainWorldScriptContext()->Global(),
@@ -202,7 +202,7 @@ void Dispatcher::willHandleNavigationPolicy(
   v8::Handle<v8::Value> element = v8::Null();
   v8::Handle<v8::Object> policy_obj = v8::Object::New();
 
-  WebCore::Frame* core_frame = WebKit::toWebFrameImpl(frame)->frame();
+  WebCore::Frame* core_frame = static_cast<WebKit::WebFrameImpl*>(frame)->frame();
   if (core_frame->ownerElement()) {
     element = WebCore::toV8((WebCore::HTMLElement*)core_frame->ownerElement(),
                             frame->mainWorldScriptContext()->Global(),

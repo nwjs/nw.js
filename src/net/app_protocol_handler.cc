@@ -103,11 +103,7 @@ class URLRequestNWAppJob : public net::URLRequestFileJob {
                          const base::FilePath& file_path,
                          const std::string& content_security_policy,
                          bool send_cors_header)
-    : net::URLRequestFileJob(
-          request, network_delegate, base::FilePath(),
-          content::BrowserThread::GetBlockingPool()->
-              GetTaskRunnerWithShutdownBehavior(
-                  base::SequencedWorkerPool::SKIP_ON_SHUTDOWN)),
+    : net::URLRequestFileJob(request, network_delegate, base::FilePath()),
       content_security_policy_(content_security_policy),
       send_cors_header_(send_cors_header),
       weak_factory_(this) {

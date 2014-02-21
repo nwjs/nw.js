@@ -103,7 +103,7 @@ void NwRenderViewObserver::OnDocumentCallback(RenderViewImpl* rv,
     return;
   std::string content;
   base::FilePath path = rv->renderer_preferences_.nw_app_root_path.Append(js_fn);
-  if (!base::ReadFileToString(path, &content)) {
+  if (!file_util::ReadFileToString(path, &content)) {
     LOG(WARNING) << "Failed to load js script file: " << path.value();
     return;
   }
