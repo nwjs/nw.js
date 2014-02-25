@@ -303,7 +303,13 @@ void ShellContentRendererClient::InstallNodeSymbols(
 
   if (use_node) {
     RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
+
+    std::string js_set_id;
+    int nw_win_id = rv->GetNwWinID();
+    if (nw_win_id > 0)
+      js_set_id = "window.__nwWindowId = " + base::IntToString(nw_win_id) + ";";
     std::string root_path = rv->renderer_preferences_.nw_app_root_path.AsUTF8Unsafe();
+
 #if defined(OS_WIN)
     ReplaceChars(root_path, "\\", "\\\\", &root_path);
 #endif
@@ -320,7 +326,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
         "if (window.location.href.indexOf('app://') === 0) {process.mainModule.filename = root + '/' + process.mainModule.filename}"
         "process.mainModule.paths = global.require('module')._nodeModulePaths(process.cwd());"
         "process.mainModule.loaded = true;"
-        "}").c_str()
+        "}" + js_set_id ).c_str()
     ));
     CHECK(*script);
     script->Run();
