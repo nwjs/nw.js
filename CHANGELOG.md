@@ -1,3 +1,19 @@
+0.8.5 / 02-26-2014
+==================
+Backport 0.9 features to 0.8 branch
+
+- Support `'inject-js-start'` and `'inject-js-end'` in manifest (#1585)
+- `'new-win-policy'` event now works for windows opened by `nwgui.Window.open()` (#1519)
+- `'new-win-policy'` handler supports Ctrl click and middle click (#1547)
+- Support NTLM and the settings (`--auth-server-whitelist`, `--auth-schemes`, etc) (#590)
+- Support app frameworks like AngularJS better by returning HTTP response code in `'app://'` protocol handler (#1314)
+- Injecting JavaScript in window or iframe in various cases:
+    - 'inject-js' option in Window.open or manifest 
+    - 'document-start' and 'document-end' event for iframe: 
+    - Window.eval() to execute JavaScript in target window or iframe 
+- Handler to decide how new window is request from iframe, see 'new-win-policy' event in https://github.com/rogerwang/node-webkit/wiki/Window 
+- Overriding 'User-Agent' in iframe: https://github.com/rogerwang/node-webkit/wiki/Changes-to-dom#nwUserAgent 
+
 0.9.2 / 02-20-2014 
 ==================
 
