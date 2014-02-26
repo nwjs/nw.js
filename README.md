@@ -29,13 +29,13 @@ Prebuilt binaries (v0.9.2 - Feb 20, 2014):
 * Mac: [32bit, 10.7+](https://s3.amazonaws.com/node-webkit/v0.9.2/node-webkit-v0.9.2-osx-ia32.zip)
 
 **If your native Node module works only with Node v0.10, then you should use node-webkit v0.8.x, which is also a maintained branch. [More info](https://groups.google.com/d/msg/node-webkit/2OJ1cEMPLlA/09BvpTagSA0J)**  
-[v0.8.4 release notes](https://groups.google.com/d/msg/node-webkit/bPjur7aFaQc/4TP6o3SM-8sJ)
+[v0.8.5 release notes](https://groups.google.com/d/msg/node-webkit/Izwu5icHFOQ/0A-3uEKfldkJ)
 
-Prebuilt binaries (v0.8.4 - Dec 30, 2013):
+Prebuilt binaries (v0.8.5 - Feb 26, 2014):
 
-* Linux: [32bit](https://s3.amazonaws.com/node-webkit/v0.8.4/node-webkit-v0.8.4-linux-ia32.tar.gz) / [64bit] (https://s3.amazonaws.com/node-webkit/v0.8.4/node-webkit-v0.8.4-linux-x64.tar.gz)
-* Windows: [win32](https://s3.amazonaws.com/node-webkit/v0.8.4/node-webkit-v0.8.4-win-ia32.zip)
-* Mac: [32bit, 10.7+](https://s3.amazonaws.com/node-webkit/v0.8.4/node-webkit-v0.8.4-osx-ia32.zip)
+* Linux: [32bit](https://s3.amazonaws.com/node-webkit/v0.8.5/node-webkit-v0.8.5-linux-ia32.tar.gz) / [64bit] (https://s3.amazonaws.com/node-webkit/v0.8.5/node-webkit-v0.8.5-linux-x64.tar.gz)
+* Windows: [win32](https://s3.amazonaws.com/node-webkit/v0.8.5/node-webkit-v0.8.5-win-ia32.zip)
+* Mac: [32bit, 10.7+](https://s3.amazonaws.com/node-webkit/v0.8.5/node-webkit-v0.8.5-osx-ia32.zip)
 
 [Looking for older versions?](https://github.com/rogerwang/node-webkit/wiki/Downloads-of-old-versions)
 
