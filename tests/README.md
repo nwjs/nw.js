@@ -9,7 +9,7 @@ So please run this:
 
 ````bash
 $ npm install -g nw-gyp
-$ cd src/content/nw/tests
+$ cd tests
 $ npm install -d
 ````
 
@@ -18,12 +18,12 @@ $ npm install -d
 The test suits is indeed a node-webkit app, so use node-webkit to run it:
 
 ````bash
-$ /path-to-node-webkit src/content/nw/tests
+$ /path-to-node-webkit tests
 ````
 
 ## Command line options
 
-    $ /path-to-node-webkit src/content/nw/tests --help
+    $ /path-to-node-webkit tests --help
 
       Usage: nw-test [options]
 
@@ -103,7 +103,7 @@ To make the testing automatic, we need to:
 In node-webkit's test, we can do:
 
 ````bash
-$ /path-to-node-webkit src/content/nw/tests --silent --output result.json --reporter json
+$ /path-to-node-webkit tests --silent --output result.json --reporter json
 ````
 
 ## Ignore tests that take too long to run
@@ -113,7 +113,7 @@ long to run for normal tasks, these tests are usually marked as `long-to-run`,
 so you can use following command to filter out them:
 
 ````bash
-$ /path-to-node-webkit src/content/nw/tests --grep long-to-run -i
+$ /path-to-node-webkit tests --grep long-to-run -i
 ````
 
 ## Tips
