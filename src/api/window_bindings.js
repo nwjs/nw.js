@@ -301,10 +301,6 @@ Window.prototype.hide = function() {
   CallObjectMethod(this, 'Hide', []);
 }
 
-Window.prototype.hide = function() {
-  CallObjectMethod(this, 'Hide', []);
-}
-
 Window.prototype.close = function(force) {
   CallObjectMethod(this, 'Close', [ Boolean(force) ]);
 }
