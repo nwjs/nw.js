@@ -29,8 +29,10 @@
 #if defined(OS_MACOSX)
 #if __OBJC__
 @class NSStatusItem;
+@class MacTrayObserver;
 #else
 class NSStatusItem;
+class MacTrayObserver;
 #endif  // __OBJC__
 #elif defined(TOOLKIT_GTK)
 #include <gtk/gtk.h>
@@ -70,6 +72,7 @@ class Tray : public Base {
 
 #if defined(OS_MACOSX)
   __block NSStatusItem* status_item_;
+  MacTrayObserver* status_observer_;
 #elif defined(TOOLKIT_GTK)
   GtkStatusIcon* status_item_;
 
