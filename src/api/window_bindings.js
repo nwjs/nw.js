@@ -431,18 +431,43 @@ Window.prototype.reloadDev = function() {
   this.reload(3);
 }
 
-Window.prototype.capturePage = function(callback, image_format) {
-  if (image_format != 'jpeg' && image_format != 'png') {
-    image_format = 'jpeg';
+var mime_types = {
+  'jpeg' : 'image/jpeg',
+  'png'  : 'image/png'
+}
+
+Window.prototype.capturePage = function(callback, image_format_options) {
+  var options;
+
+  // Be compatible with the old api capturePage(callback, [format string])
+  if (typeof image_format_options == 'string' || image_format_options instanceof String) {
+    options = {
+      format : image_format_options
+    };
+  } else {
+    options = image_format_options || {};
+  }
+
+  if (options.format != 'jpeg' && options.format != 'png') {
+    options.format = 'jpeg';
   }
 
   if (typeof callback == 'function') {
     this.once('__nw_capturepagedone', function(imgdata) {
-      callback(imgdata);
+      switch(options.datatype){
+        case 'buffer' :
+          callback(new Buffer(imgdata, "base64"));
+          break;
+        case 'raw' :
+          callback(imgdata);
+        case 'datauri' :
+        default :
+          callback('data:' + mime_types[options.format] + ';base64,' + imgdata );
+      }
     });
   }
 
-  CallObjectMethod(this, 'CapturePage', [image_format]);
+  CallObjectMethod(this, 'CapturePage', [options.format]);
 };
 
     Window.prototype.eval = function(frame, script) {
