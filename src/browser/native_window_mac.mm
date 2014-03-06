@@ -631,7 +631,7 @@ void NativeWindowCocoa::SetKiosk(bool kiosk) {
   if (kiosk) {
     NSApplicationPresentationOptions options =
         NSApplicationPresentationHideDock +
-        NSApplicationPresentationHideMenuBar + 
+        NSApplicationPresentationHideMenuBar +
         NSApplicationPresentationDisableAppleMenu +
         NSApplicationPresentationDisableProcessSwitching +
         NSApplicationPresentationDisableForceQuit +
@@ -652,15 +652,17 @@ bool NativeWindowCocoa::IsKiosk() {
 }
 
 void NativeWindowCocoa::SetMenu(nwapi::Menu* menu) {
-  bool no_edit_menu = false;
-  shell_->GetPackage()->root()->GetBoolean("no-edit-menu", &no_edit_menu);
+  if(menu == nil) {
+    NSMenu *menu = [[NSMenu alloc] initWithTitle:@""];
+    [NSApp setMainMenu:menu];
+  } else {
+    [NSApp setMainMenu:menu->menu_];
+  }
+}
 
-  StandardMenusMac standard_menus(shell_->GetPackage()->GetName());
-  [NSApp setMainMenu:menu->menu_];
-  standard_menus.BuildAppleMenu();
-  if (!no_edit_menu)
-    standard_menus.BuildEditMenu();
-  standard_menus.BuildWindowMenu();
+void NativeWindowCocoa::ClearMenu() {
+  NSMenu *menu = [[NSMenu alloc] initWithTitle:@""];
+  [NSApp setMainMenu:menu];
 }
 
 void NativeWindowCocoa::SetInitialFocus(bool accept_focus) {
@@ -718,7 +720,7 @@ void NativeWindowCocoa::SetToolbarUrlEntry(const std::string& url) {
   if (toolbar_delegate_)
     [toolbar_delegate_ setUrl:base::SysUTF8ToNSString(url)];
 }
-  
+
 void NativeWindowCocoa::SetToolbarIsLoading(bool loading) {
   if (toolbar_delegate_)
     [toolbar_delegate_ setIsLoading:loading];
@@ -772,7 +774,7 @@ void NativeWindowCocoa::HandleKeyboardEvent(
       event.type == content::NativeWebKeyboardEvent::Char)
     return;
 
-  
+
   DVLOG(1) << "NativeWindowCocoa::HandleKeyboardEvent - redispatch";
 
   // // The event handling to get this strictly right is a tangle; cheat here a bit
