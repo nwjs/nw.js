@@ -212,6 +212,10 @@ Window.prototype.__defineGetter__('zoomLevel', function() {
 });
 
 Window.prototype.__defineSetter__('menu', function(menu) {
+  if(!menu) {
+    CallObjectMethod(this, "ClearMenu", []);
+    return;
+  }
   if (v8_util.getConstructorName(menu) != 'Menu')
     throw new String("'menu' property requries a valid Menu");
 
