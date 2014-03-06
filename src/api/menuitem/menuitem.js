@@ -83,6 +83,10 @@ function MenuItem(option) {
     option.tooltip = '';
   if (!option.hasOwnProperty('enabled'))
     option.enabled = true;
+  if (!option.hasOwnProperty('key'))
+    option.key = "";
+  if (!option.hasOwnProperty('modifiers'))
+    option.modifiers = "";
 }
 require('util').inherits(MenuItem, exports.Base);
 
@@ -123,14 +127,14 @@ MenuItem.prototype.__defineSetter__('tooltip', function(val) {
 MenuItem.prototype.__defineGetter__('checked', function() {
   if (this.type != 'checkbox')
     return undefined;
-    
+
   return this.handleGetter('checked');
 });
 
 MenuItem.prototype.__defineSetter__('checked', function(val) {
   if (this.type != 'checkbox')
     throw new String("'checked' property is only available for checkbox");
-    
+
   this.handleSetter('checked', 'SetChecked', Boolean, val);
 });
 

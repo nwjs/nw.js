@@ -68,6 +68,7 @@ class NativeWindowCocoa : public NativeWindow {
   virtual void SetKiosk(bool kiosk) OVERRIDE;
   virtual bool IsKiosk() OVERRIDE;
   virtual void SetMenu(nwapi::Menu* menu) OVERRIDE;
+  virtual void ClearMenu() OVERRIDE;
   virtual void SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
                                        bool enabled) OVERRIDE;
   virtual void SetToolbarUrlEntry(const std::string& url) OVERRIDE;
