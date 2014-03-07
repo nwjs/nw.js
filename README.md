@@ -91,6 +91,16 @@ $ ./nw app.nw
 
 Note: on Windows, you can drag the `app.nw` to `nw.exe` to open it.
 
+On Linux, if you receive the message:
+````
+./nw: error while loading shared libraries: libudev.so.0: cannot open shared object file: No such file or directory
+````
+Run the following (or see [this page](https://github.com/rogerwang/node-webkit/wiki/The-solution-of-lacking-libudev.so.0)):
+````bash
+$ sed -i 's/\x75\x64\x65\x76\x2E\x73\x6F\x2E\x30/\x75\x64\x65\x76\x2E\x73\x6F\x2E\x31/g' nw
+````
+
+
 ## Documents
 
 For more information on how to write/package/run apps, see:
