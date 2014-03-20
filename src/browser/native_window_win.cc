@@ -457,6 +457,10 @@ void NativeWindowWin::FlashFrame(bool flash) {
   window_->FlashFrame(flash);
 }
 
+void NativeWindowWin::SetBadgeLabel(const std::string& badge) {
+  // TODO
+}
+
 void NativeWindowWin::SetKiosk(bool kiosk) {
   SetFullscreen(kiosk);
 }

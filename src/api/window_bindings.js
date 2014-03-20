@@ -405,6 +405,11 @@ Window.prototype.requestAttention = function(flash) {
   CallObjectMethod(this, 'RequestAttention', [ flash ]);
 }
 
+Window.prototype.setBadgeLabel = function(label) {
+  label = "" + label;
+  CallObjectMethod(this, 'SetBadgeLabel', [ label ]);
+}
+
 Window.prototype.setPosition = function(position) {
   if (position != 'center' && position != 'mouse')
     throw new String('Invalid postion');

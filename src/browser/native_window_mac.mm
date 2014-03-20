@@ -643,6 +643,10 @@ void NativeWindowCocoa::FlashFrame(bool flash) {
   }
 }
 
+void NativeWindowCocoa::SetBadgeLabel(const std::string& badge) {
+  [[NSApp dockTile] setBadgeLabel:base::SysUTF8ToNSString(badge)];
+}
+
 void NativeWindowCocoa::SetKiosk(bool kiosk) {
   if (kiosk) {
     NSApplicationPresentationOptions options =

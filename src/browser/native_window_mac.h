@@ -64,6 +64,7 @@ class NativeWindowCocoa : public NativeWindow {
   virtual gfx::Point GetPosition() OVERRIDE;
   virtual void SetTitle(const std::string& title) OVERRIDE;
   virtual void FlashFrame(bool flash) OVERRIDE;
+  virtual void SetBadgeLabel(const std::string& badge) OVERRIDE;
   virtual void SetKiosk(bool kiosk) OVERRIDE;
   virtual bool IsKiosk() OVERRIDE;
   virtual void SetMenu(nwapi::Menu* menu) OVERRIDE;
