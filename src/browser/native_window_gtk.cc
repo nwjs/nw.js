@@ -295,6 +295,10 @@ void NativeWindowGtk::FlashFrame(bool flash) {
   gtk_window_set_urgency_hint(window_, flash);
 }
 
+void NativeWindowGtk::SetBadgeLabel(const std::string& badge) {
+  // TODO
+}
+
 void NativeWindowGtk::SetKiosk(bool kiosk) {
   SetFullscreen(kiosk);
 }

@@ -257,6 +257,10 @@ void Window::Call(const std::string& method,
     bool flash;
     if (arguments.GetBoolean(0, &flash))
       shell_->window()->FlashFrame(flash);
+  } else if (method == "SetBadgeLabel") {
+    std::string label;
+    if (arguments.GetString(0, &label))
+      shell_->window()->SetBadgeLabel(label);
   } else if (method == "SetMenu") {
     int id;
     if (arguments.GetInteger(0, &id))
