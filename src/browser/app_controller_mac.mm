@@ -66,12 +66,14 @@
   [NSApp setMainMenu:[[[NSMenu alloc] init] autorelease]];
   [[NSApp mainMenu] addItem:[[[NSMenuItem alloc]
       initWithTitle:@"" action:nil keyEquivalent:@""] autorelease]];
+#if 0
   nw::StandardMenusMac standard_menus(
       browser_client->shell_browser_main_parts()->package()->GetName());
   standard_menus.BuildAppleMenu();
   if (!no_edit_menu)
     standard_menus.BuildEditMenu();
   standard_menus.BuildWindowMenu();
+#endif
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication
