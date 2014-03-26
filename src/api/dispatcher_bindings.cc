@@ -48,6 +48,7 @@ namespace nwapi {
 
 namespace {
 
+
 v8::Handle<v8::String> WrapSource(v8::Handle<v8::String> source) {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::EscapableHandleScope handle_scope(isolate);
@@ -118,6 +119,9 @@ DispatcherBindings::DispatcherBindings()
                     NULL,  // dependencies array.
                     GetStringResource(
                         IDR_NW_API_DISPATCHER_BINDINGS_JS).size()) {
+#if defined(OS_MACOSX)
+  InitMsgIDMap();
+#endif
 }
 
 DispatcherBindings::~DispatcherBindings() {
@@ -155,7 +159,12 @@ DispatcherBindings::GetNativeFunctionTemplate(
     return v8::FunctionTemplate::New(isolate, SetCrashDumpDir);
   else if (name->Equals(v8::String::NewFromUtf8(isolate, "AllocateId")))
     return v8::FunctionTemplate::New(isolate, AllocateId);
-
+#if defined(OS_MACOSX)
+  else if (name->Equals(v8::String::NewFromUtf8(isolate, "GetNSStringWithFixup")))
+    return v8::FunctionTemplate::New(isolate, GetNSStringWithFixup);
+  else if (name->Equals(v8::String::NewFromUtf8(isolate, "GetNSStringFWithFixup")))
+    return v8::FunctionTemplate::New(isolate, GetNSStringFWithFixup);
+#endif
   NOTREACHED() << "Trying to get an non-exist function in DispatcherBindings:"
                << *v8::String::Utf8Value(name);
   return v8::FunctionTemplate::New(isolate);
