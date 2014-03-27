@@ -18,21 +18,22 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#ifndef CHROME_BROWSER_EXTENSIONS_GLOBAL_SHORTCUT_LISTENER_X11_H_
-#define CHROME_BROWSER_EXTENSIONS_GLOBAL_SHORTCUT_LISTENER_X11_H_
+#ifndef CONTENT_NW_SRC_API_SHORTCUT_GLOBAL_SHORTCUT_LISTENER_X11_H_
+#define CONTENT_NW_SRC_API_SHORTCUT_GLOBAL_SHORTCUT_LISTENER_X11_H_
 
 #include <X11/Xlib.h>
 #include <set>
 
+#include "base/compiler_specific.h"
 #include "base/message_loop/message_pump_dispatcher.h"
-#include "chrome/browser/extensions/global_shortcut_listener.h"
+#include "content/nw/src/api/shortcut/global_shortcut_listener.h"
 
 #if defined(TOOLKIT_GTK)
 #include <gtk/gtk.h>
 #include "ui/base/gtk/gtk_signal.h"
 #endif  // defined(TOOLKIT_GTK)
 
-namespace extensions {
+namespace nwapi {
 
 // X11-specific implementation of the GlobalShortcutListener class that
 // listens for global shortcuts. Handles basic keyboard intercepting and
@@ -84,6 +85,6 @@ class GlobalShortcutListenerX11
   DISALLOW_COPY_AND_ASSIGN(GlobalShortcutListenerX11);
 };
 
-}  // namespace extensions
+}  // namespace nwapi
 
-#endif  // CHROME_BROWSER_EXTENSIONS_GLOBAL_SHORTCUT_LISTENER_X11_H_
+#endif  // CONTENT_NW_SRC_API_SHORTCUT_GLOBAL_SHORTCUT_LISTENER_X11_H_

@@ -161,6 +161,8 @@
         'src/api/shell/shell.h',
         'src/api/shortcut/global_shortcut_listener.cc',
         'src/api/shortcut/global_shortcut_listener.h',
+        'src/api/shortcut/global_shortcut_listener_x11.cc',
+        'src/api/shortcut/global_shortcut_listener_x11.h',
         'src/api/shortcut/global_shortcut_listener_win.cc',
         'src/api/shortcut/global_shortcut_listener_win.h',
         'src/api/shortcut/shortcut.cc',
