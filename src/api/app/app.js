@@ -19,6 +19,7 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 var argv, fullArgv, dataPath, manifest;
+var v8_util = process.binding('v8_util');
 
 function App() {
 }
@@ -66,6 +67,20 @@ App.prototype.addOriginAccessWhitelistEntry = function(sourceOrigin, destination
 
 App.prototype.removeOriginAccessWhitelistEntry = function(sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains) {
     return nw.callStaticMethodSync('App', 'RemoveOriginAccessWhitelistEntry', sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains);
+}
+
+App.prototype.registerGlobalHotKey = function(shortcut) {
+  if (v8_util.getConstructorName(shortcut) != "Shortcut")
+    throw new TypeError("Invaild parameter, need Shortcut object.");
+
+  nw.callStaticMethod('App', 'RegisterGlobalHotKey', [ shortcut.id ]);
+}
+
+App.prototype.unregisterGlobalHotKey = function(shortcut) {
+  if (v8_util.getConstructorName(shortcut) != "Shortcut")
+    throw new TypeError("Invaild parameter, need Shortcut object.");
+
+  nw.callStaticMethod('App', 'UnregisterGlobalHotKey', [ shortcut.id ]);
 }
 
 App.prototype.__defineGetter__('argv', function() {

@@ -214,6 +214,8 @@ DispatcherBindings::RequireNwGui(const v8::FunctionCallbackInfo<v8::Value>& args
                       NwGui, global, v8::String::NewFromUtf8(isolate, "shell.js"), IDR_NW_API_SHELL_JS);
   RequireFromResource(args.This(),
                       NwGui, global, v8::String::NewFromUtf8(isolate, "app.js"), IDR_NW_API_APP_JS);
+  RequireFromResource(args.This(),
+                      NwGui, global, v8::String::NewFromUtf8("shortcut.js"), IDR_NW_API_SHORTCUT_JS);
 
   g_context->Exit();
   args.GetReturnValue().Set(handle_scope.Escape(NwGui));

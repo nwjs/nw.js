@@ -32,6 +32,7 @@
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
 #include "content/nw/src/api/shell/shell.h"
+#include "content/nw/src/api/shortcut/shortcut.h"
 #include "content/nw/src/api/tray/tray.h"
 #include "content/nw/src/api/window/window.h"
 #include "content/nw/src/common/shell_switches.h"
@@ -79,10 +80,12 @@ void DispatcherHost::ClearObjectRegistry() {
   objects_registry_.Clear();
 }
 
+// static
 Base* DispatcherHost::GetApiObject(int id) {
   return objects_registry_.Lookup(id);
 }
 
+// static
 int DispatcherHost::AllocateId() {
   return next_object_id_++;
 }
@@ -152,6 +155,8 @@ void DispatcherHost::OnAllocateObject(int object_id,
         new Clipboard(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else if (type == "Window") {
     objects_registry_.AddWithID(new Window(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
+  } else if (type == "Shortcut") {
+    objects_registry_.AddWithID(new Shortcut(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else {
     LOG(ERROR) << "Allocate an object of unknown type: " << type;
     objects_registry_.AddWithID(new Base(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);

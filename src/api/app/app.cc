@@ -25,6 +25,9 @@
 #include "base/message_loop/message_loop.h"
 #include "base/values.h"
 #include "content/nw/src/api/api_messages.h"
+#include "content/nw/src/api/dispatcher_host.h"
+#include "content/nw/src/api/shortcut/global_shortcut_listener.h"
+#include "content/nw/src/api/shortcut/shortcut.h"
 #include "content/nw/src/breakpad_linux.h"
 #include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/browser/net_disk_cache_remover.h"
@@ -76,17 +79,30 @@ void App::Call(const std::string& method,
                const base::ListValue& arguments) {
   if (method == "Quit") {
     Quit();
-    return;
   } else if (method == "CloseAllWindows") {
     CloseAllWindows();
-    return;
   } else if (method == "CrashBrowser") {
     int* ptr = NULL;
     *ptr = 1;
+  } else if (method == "RegisterGlobalHotKey") {
+    int object_id = -1;
+    arguments.GetInteger(0, &object_id);
+    Shortcut* shortcut =
+        static_cast<Shortcut*>(DispatcherHost::GetApiObject(object_id));
+    bool success = GlobalShortcutListener::GetInstance()->RegisterAccelerator(
+                       shortcut->GetAccelerator(), shortcut);
+    if (!success)
+      shortcut->OnFailed("Register global desktop keyboard shortcut failed.");
+  } else if (method == "UnregisterGlobalHotKey") {
+    int object_id = -1;
+    arguments.GetInteger(0, &object_id);
+    Shortcut* shortcut =
+        static_cast<Shortcut*>(DispatcherHost::GetApiObject(object_id));
+    GlobalShortcutListener::GetInstance()->UnregisterAccelerators(shortcut);
+  } else {
+    NOTREACHED() << "Calling unknown method " << method << " of App.";
   }
-  NOTREACHED() << "Calling unknown method " << method << " of App";
 }
-
 
 // static
 void App::Call(Shell* shell,
