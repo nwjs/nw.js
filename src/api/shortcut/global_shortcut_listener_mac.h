@@ -18,10 +18,10 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#ifndef CHROME_BROWSER_EXTENSIONS_GLOBAL_SHORTCUT_LISTENER_MAC_H_
-#define CHROME_BROWSER_EXTENSIONS_GLOBAL_SHORTCUT_LISTENER_MAC_H_
+#ifndef CONTENT_NW_SRC_API_SHORTCUT_GLOBAL_SHORTCUT_LISTENER_MAC_H_
+#define CONTENT_NW_SRC_API_SHORTCUT_GLOBAL_SHORTCUT_LISTENER_MAC_H_
 
-#include "chrome/browser/extensions/global_shortcut_listener.h"
+#include "content/nw/src/api/shortcut/global_shortcut_listener.h"
 
 #include <Carbon/Carbon.h>
 #include <CoreFoundation/CoreFoundation.h>
@@ -30,7 +30,7 @@
 
 #include "base/mac/scoped_nsobject.h"
 
-namespace extensions {
+namespace nwapi {
 
 // Mac-specific implementation of the GlobalShortcutListener class that
 // listens for global shortcuts. Handles basic keyboard intercepting and
@@ -117,6 +117,6 @@ class GlobalShortcutListenerMac : public GlobalShortcutListener {
   DISALLOW_COPY_AND_ASSIGN(GlobalShortcutListenerMac);
 };
 
-}  // namespace extensions
+}  // namespace nwapi
 
-#endif  // CHROME_BROWSER_EXTENSIONS_GLOBAL_SHORTCUT_LISTENER_MAC_H_
+#endif  // CONTENT_NW_SRC_API_SHORTCUT_GLOBAL_SHORTCUT_LISTENER_MAC_H_

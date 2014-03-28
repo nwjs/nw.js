@@ -18,21 +18,20 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "chrome/browser/extensions/global_shortcut_listener_mac.h"
+#include "content/nw/src/api/shortcut/global_shortcut_listener_mac.h"
 
 #include <ApplicationServices/ApplicationServices.h>
 #import <Cocoa/Cocoa.h>
 #include <IOKit/hidsystem/ev_keymap.h>
 
 #import "base/mac/foundation_util.h"
-#include "chrome/common/extensions/command.h"
 #include "content/public/browser/browser_thread.h"
 #include "ui/base/accelerators/accelerator.h"
 #include "ui/events/event.h"
 #import "ui/events/keycodes/keyboard_code_conversion_mac.h"
 
 using content::BrowserThread;
-using extensions::GlobalShortcutListenerMac;
+using nwapi::GlobalShortcutListenerMac;
 
 namespace {
 
@@ -54,9 +53,18 @@ ui::KeyboardCode MediaKeyCodeToKeyboardCode(int key_code) {
   return ui::VKEY_UNKNOWN;
 }
 
+bool IsMediaKey(const ui::Accelerator& accelerator) {
+  if (accelerator.modifiers() != 0)
+    return false;
+  return (accelerator.key_code() == ui::VKEY_MEDIA_NEXT_TRACK ||
+          accelerator.key_code() == ui::VKEY_MEDIA_PREV_TRACK ||
+          accelerator.key_code() == ui::VKEY_MEDIA_PLAY_PAUSE ||
+          accelerator.key_code() == ui::VKEY_MEDIA_STOP);
+}
+
 }  // namespace
 
-namespace extensions {
+namespace nwapi {
 
 // static
 GlobalShortcutListener* GlobalShortcutListener::GetInstance() {
@@ -141,7 +149,7 @@ bool GlobalShortcutListenerMac::RegisterAcceleratorImpl(
   CHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
   DCHECK(accelerator_ids_.find(accelerator) == accelerator_ids_.end());
 
-  if (Command::IsMediaKey(accelerator)) {
+  if (IsMediaKey(accelerator)) {
     if (!IsAnyMediaKeyRegistered()) {
       // If this is the first media key registered, start the event tap.
       StartWatchingMediaKeys();
@@ -169,7 +177,7 @@ void GlobalShortcutListenerMac::UnregisterAcceleratorImpl(
   DCHECK(accelerator_ids_.find(accelerator) != accelerator_ids_.end());
 
   // Unregister the hot_key if it's a keyboard shortcut.
-  if (!Command::IsMediaKey(accelerator))
+  if (!IsMediaKey(accelerator))
     UnregisterHotKey(accelerator);
 
   // Remove hot_key from the mappings.
@@ -177,7 +185,7 @@ void GlobalShortcutListenerMac::UnregisterAcceleratorImpl(
   id_accelerators_.erase(key_id);
   accelerator_ids_.erase(accelerator);
 
-  if (Command::IsMediaKey(accelerator)) {
+  if (IsMediaKey(accelerator)) {
     // If we unregistered a media key, and now no media keys are registered,
     // stop the media key tap.
     if (!IsAnyMediaKeyRegistered())
@@ -299,7 +307,7 @@ bool GlobalShortcutListenerMac::IsAnyMediaKeyRegistered() {
   // Iterate through registered accelerators, looking for media keys.
   AcceleratorIdMap::iterator it;
   for (it = accelerator_ids_.begin(); it != accelerator_ids_.end(); ++it) {
-    if (Command::IsMediaKey(it->first))
+    if (IsMediaKey(it->first))
       return true;
   }
   return false;
@@ -308,7 +316,7 @@ bool GlobalShortcutListenerMac::IsAnyMediaKeyRegistered() {
 bool GlobalShortcutListenerMac::IsAnyHotKeyRegistered() {
   AcceleratorIdMap::iterator it;
   for (it = accelerator_ids_.begin(); it != accelerator_ids_.end(); ++it) {
-    if (!Command::IsMediaKey(it->first))
+    if (!IsMediaKey(it->first))
       return true;
   }
   return false;
@@ -388,4 +396,4 @@ OSStatus GlobalShortcutListenerMac::HotKeyHandler(
   return noErr;
 }
 
-}  // namespace extensions
+}  // namespace nwapi

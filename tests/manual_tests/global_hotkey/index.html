@@ -30,10 +30,26 @@
       option.key = "Ctrl+Alt+C";
       var shortcut4 = new gui.Shortcut(option);
 
+      option.key = "MediaPrevTrack";
+      var shortcut5 = new gui.Shortcut(option);
+
+      option.key = "MediaNextTrack";
+      var shortcut6 = new gui.Shortcut(option);
+
+      option.key = "MediaPlayPause";
+      var shortcut7 = new gui.Shortcut(option);
+
+      option.key = "MediaStop";
+      var shortcut8 = new gui.Shortcut(option);
+
       gui.App.registerGlobalHotKey(shortcut1)
       gui.App.registerGlobalHotKey(shortcut2);
       gui.App.registerGlobalHotKey(shortcut3);
       gui.App.registerGlobalHotKey(shortcut4);
+      gui.App.registerGlobalHotKey(shortcut5);
+      gui.App.registerGlobalHotKey(shortcut6);
+      gui.App.registerGlobalHotKey(shortcut7);
+      gui.App.registerGlobalHotKey(shortcut8);
 
       function unregister() {
         gui.App.unregisterGlobalHotKey(shortcut2);
@@ -44,7 +60,7 @@
   </head>
 
   <body>
-    <div>Now you can try to press 'Alt+Shit+A', 'Ctrl+K', 'Alt+B', 'Ctrl+Alt+C'.</div>
+    <div>Now you can try to press 'Alt+Shit+A', 'Ctrl+K', 'Alt+B', 'Ctrl+Alt+C', 'MediaPrevTrack', 'MediaNextTrack', 'MediaPlayPause', 'MediaStop'.</div>
     <button onclick="unregister()">Click Me to Unregister HotKey 'Ctrl+K' and 'Alt+B'</button>
     <pre id="log"></pre>
   </body>
