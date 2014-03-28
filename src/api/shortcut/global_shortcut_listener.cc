@@ -35,7 +35,6 @@ GlobalShortcutListener::GlobalShortcutListener()
 
 GlobalShortcutListener::~GlobalShortcutListener() {
   CHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
-  DCHECK(accelerator_map_.empty());  // Make sure we've cleaned up.
 }
 
 bool GlobalShortcutListener::RegisterAccelerator(
@@ -70,8 +69,8 @@ void GlobalShortcutListener::UnregisterAccelerator(
     return;
 
   AcceleratorMap::iterator it = accelerator_map_.find(accelerator);
-  // We should never get asked to unregister something that we didn't register.
-  DCHECK(it != accelerator_map_.end());
+  if (it == accelerator_map_.end())
+    return;
   // The caller should call this function with the right observer.
   DCHECK(it->second == observer);
 

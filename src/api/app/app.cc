@@ -98,7 +98,8 @@ void App::Call(const std::string& method,
     arguments.GetInteger(0, &object_id);
     Shortcut* shortcut =
         static_cast<Shortcut*>(DispatcherHost::GetApiObject(object_id));
-    GlobalShortcutListener::GetInstance()->UnregisterAccelerators(shortcut);
+    GlobalShortcutListener::GetInstance()->UnregisterAccelerator(
+        shortcut->GetAccelerator(), shortcut);
   } else {
     NOTREACHED() << "Calling unknown method " << method << " of App.";
   }
