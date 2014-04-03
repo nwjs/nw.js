@@ -84,22 +84,6 @@ void App::Call(const std::string& method,
   } else if (method == "CrashBrowser") {
     int* ptr = NULL;
     *ptr = 1;
-  } else if (method == "RegisterGlobalHotKey") {
-    int object_id = -1;
-    arguments.GetInteger(0, &object_id);
-    Shortcut* shortcut =
-        static_cast<Shortcut*>(DispatcherHost::GetApiObject(object_id));
-    bool success = GlobalShortcutListener::GetInstance()->RegisterAccelerator(
-                       shortcut->GetAccelerator(), shortcut);
-    if (!success)
-      shortcut->OnFailed("Register global desktop keyboard shortcut failed.");
-  } else if (method == "UnregisterGlobalHotKey") {
-    int object_id = -1;
-    arguments.GetInteger(0, &object_id);
-    Shortcut* shortcut =
-        static_cast<Shortcut*>(DispatcherHost::GetApiObject(object_id));
-    GlobalShortcutListener::GetInstance()->UnregisterAccelerator(
-        shortcut->GetAccelerator(), shortcut);
   } else {
     NOTREACHED() << "Calling unknown method " << method << " of App.";
   }
@@ -143,6 +127,26 @@ void App::Call(Shell* shell,
     std::string path;
     arguments.GetString(0, &path);
     result->AppendBoolean(SetCrashDumpPath(path.c_str()));
+    return;
+  } else if (method == "RegisterGlobalHotKey") {
+    int object_id = -1;
+    arguments.GetInteger(0, &object_id);
+    Shortcut* shortcut =
+        static_cast<Shortcut*>(DispatcherHost::GetApiObject(object_id));
+    bool success = GlobalShortcutListener::GetInstance()->RegisterAccelerator(
+                       shortcut->GetAccelerator(), shortcut);
+    if (!success)
+      shortcut->OnFailed("Register global desktop keyboard shortcut failed.");
+
+    result->AppendBoolean(success);
+    return;
+  } else if (method == "UnregisterGlobalHotKey") {
+    int object_id = -1;
+    arguments.GetInteger(0, &object_id);
+    Shortcut* shortcut =
+        static_cast<Shortcut*>(DispatcherHost::GetApiObject(object_id));
+    GlobalShortcutListener::GetInstance()->UnregisterAccelerator(
+        shortcut->GetAccelerator(), shortcut);
     return;
   }
 

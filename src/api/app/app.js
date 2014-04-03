@@ -73,14 +73,16 @@ App.prototype.registerGlobalHotKey = function(shortcut) {
   if (v8_util.getConstructorName(shortcut) != "Shortcut")
     throw new TypeError("Invaild parameter, need Shortcut object.");
 
-  nw.callStaticMethod('App', 'RegisterGlobalHotKey', [ shortcut.id ]);
+  return nw.callStaticMethodSync('App',
+                                 'RegisterGlobalHotKey',
+                                 [ shortcut.id ])[0];
 }
 
 App.prototype.unregisterGlobalHotKey = function(shortcut) {
   if (v8_util.getConstructorName(shortcut) != "Shortcut")
     throw new TypeError("Invaild parameter, need Shortcut object.");
 
-  nw.callStaticMethod('App', 'UnregisterGlobalHotKey', [ shortcut.id ]);
+  nw.callStaticMethodSync('App', 'UnregisterGlobalHotKey', [ shortcut.id ]);
 }
 
 App.prototype.__defineGetter__('argv', function() {
