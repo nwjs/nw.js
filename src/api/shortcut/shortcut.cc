@@ -24,6 +24,7 @@
 
 #include "base/compiler_specific.h"
 #include "base/strings/string_split.h"
+#include "base/strings/string_util.h"
 #include "base/values.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/shortcut/shortcut_constants.h"
@@ -31,11 +32,14 @@
 namespace nwapi {
 
 ui::Accelerator Parse(const std::string& shortcut) {
+  // Convert to lower case, see
+  // https://github.com/rogerwang/node-webkit/pull/1735.
+  std::string lower_shortcut = StringToLowerASCII(shortcut);
+
   std::vector<std::string> tokens;
-  base::SplitString(shortcut, '+', &tokens);
-  if (tokens.size() == 0) {
+  base::SplitString(lower_shortcut, '+', &tokens);
+  if (tokens.size() == 0)
     return ui::Accelerator();
-  }
 
   int modifiers = ui::EF_NONE;
   ui::KeyboardCode key = ui::VKEY_UNKNOWN;
@@ -109,8 +113,8 @@ ui::Accelerator Parse(const std::string& shortcut) {
       } else if (tokens[i] == kKeyMediaStop) {
         key = ui::VKEY_MEDIA_STOP;
       } else if (tokens[i].size() == 1 &&
-                 tokens[i][0] >= 'A' && tokens[i][0] <= 'Z') {
-        key = static_cast<ui::KeyboardCode>(ui::VKEY_A + (tokens[i][0] - 'A'));
+                 tokens[i][0] >= 'a' && tokens[i][0] <= 'z') {
+        key = static_cast<ui::KeyboardCode>(ui::VKEY_A + (tokens[i][0] - 'a'));
       } else if (tokens[i].size() == 1 &&
                  tokens[i][0] >= '0' && tokens[i][0] <= '9') {
         key = static_cast<ui::KeyboardCode>(ui::VKEY_0 + (tokens[i][0] - '0'));

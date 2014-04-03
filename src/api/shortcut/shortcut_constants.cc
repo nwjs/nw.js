@@ -22,28 +22,27 @@
 
 namespace nwapi {
 
-const char kKeyAlt[] = "Alt";
-const char kKeyComma[] = "Comma";
-const char kKeyCommand[] = "Command";
-const char kKeyCtrl[] = "Ctrl";
-const char kKeyDel[] = "Delete";
-const char kKeyDown[] = "Down";
-const char kKeyEnd[] = "End";
-const char kKeyHome[] = "Home";
-const char kKeyIns[] = "Insert";
-const char kKeyLeft[] = "Left";
-const char kKeyMacCtrl[] = "MacCtrl";
-const char kKeyMediaNextTrack[] = "MediaNextTrack";
-const char kKeyMediaPlayPause[] = "MediaPlayPause";
-const char kKeyMediaPrevTrack[] = "MediaPrevTrack";
-const char kKeyMediaStop[] = "MediaStop";
-const char kKeyPgDwn[] = "PageDown";
-const char kKeyPgUp[] = "PageUp";
-const char kKeyPeriod[] = "Period";
-const char kKeyRight[] = "Right";
+const char kKeyAlt[] = "alt";
+const char kKeyComma[] = "comma";
+const char kKeyCommand[] = "command";
+const char kKeyCtrl[] = "ctrl";
+const char kKeyDel[] = "delete";
+const char kKeyDown[] = "down";
+const char kKeyEnd[] = "end";
+const char kKeyHome[] = "home";
+const char kKeyIns[] = "insert";
+const char kKeyLeft[] = "left";
+const char kKeyMediaNextTrack[] = "medianexttrack";
+const char kKeyMediaPlayPause[] = "mediaplaypause";
+const char kKeyMediaPrevTrack[] = "mediaprevtrack";
+const char kKeyMediaStop[] = "mediastop";
+const char kKeyPgDwn[] = "pagedown";
+const char kKeyPgUp[] = "pageup";
+const char kKeyPeriod[] = "period";
+const char kKeyRight[] = "right";
 const char kKeySeparator[] = "+";
-const char kKeyShift[] = "Shift";
-const char kKeyTab[] = "Tab";
-const char kKeyUp[] = "Up";
+const char kKeyShift[] = "shift";
+const char kKeyTab[] = "tab";
+const char kKeyUp[] = "up";
 
 }  // namespace nwapi

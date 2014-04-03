@@ -33,7 +33,6 @@ extern const char kKeyEnd[];
 extern const char kKeyHome[];
 extern const char kKeyIns[];
 extern const char kKeyLeft[];
-extern const char kKeyMacCtrl[];
 extern const char kKeyMediaNextTrack[];
 extern const char kKeyMediaPlayPause[];
 extern const char kKeyMediaPrevTrack[];
