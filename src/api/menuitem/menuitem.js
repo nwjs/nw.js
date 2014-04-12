@@ -137,6 +137,22 @@ MenuItem.prototype.__defineSetter__('tooltip', function(val) {
   this.handleSetter('tooltip', 'SetTooltip', String, val);
 });
 
+MenuItem.prototype.__defineGetter__('key', function() {
+  return this.handleGetter('key');
+});
+
+MenuItem.prototype.__defineSetter__('key', function(val) {
+  this.handleSetter('key', 'SetKey', String, val);
+});
+
+MenuItem.prototype.__defineGetter__('modifiers', function() {
+  return this.handleGetter('modifiers');
+});
+
+MenuItem.prototype.__defineSetter__('modifiers', function(val) {
+  this.handleSetter('modifiers', 'SetModifiers', String, val);
+});
+
 MenuItem.prototype.__defineGetter__('checked', function() {
   if (this.type != 'checkbox')
     return undefined;

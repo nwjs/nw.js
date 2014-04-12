@@ -89,17 +89,7 @@ void MenuItem::Create(const base::DictionaryValue& option) {
 
     std::string modifiers;
     if (option.GetString("modifiers", &modifiers)) {
-      NSUInteger mask = 0;
-      NSString* nsmodifiers = [NSString stringWithUTF8String:modifiers.c_str()];
-      if([nsmodifiers rangeOfString:@"shift"].location != NSNotFound)
-        mask = mask|NSShiftKeyMask;
-      if([nsmodifiers rangeOfString:@"cmd"].location != NSNotFound)
-        mask = mask|NSCommandKeyMask;
-      if([nsmodifiers rangeOfString:@"alt"].location != NSNotFound)
-        mask = mask|NSAlternateKeyMask;
-      if([nsmodifiers rangeOfString:@"ctrl"].location != NSNotFound)
-        mask = mask|NSControlKeyMask;
-      [menu_item_ setKeyEquivalentModifierMask:mask];
+      SetModifiers(modifiers);
     }
 
     int menu_id;
@@ -129,6 +119,21 @@ void MenuItem::SetLabel(const std::string& label) {
 
 void MenuItem::SetKey(const std::string& key) {
   [menu_item_ setKeyEquivalent:[NSString stringWithUTF8String:key.c_str()]];
+  VLOG(1) << "setkey: " << key;
+}
+
+void MenuItem::SetModifiers(const std::string& modifiers) {
+  NSUInteger mask = 0;
+  NSString* nsmodifiers = [NSString stringWithUTF8String:modifiers.c_str()];
+  if([nsmodifiers rangeOfString:@"shift"].location != NSNotFound)
+    mask = mask|NSShiftKeyMask;
+  if([nsmodifiers rangeOfString:@"cmd"].location != NSNotFound)
+    mask = mask|NSCommandKeyMask;
+  if([nsmodifiers rangeOfString:@"alt"].location != NSNotFound)
+    mask = mask|NSAlternateKeyMask;
+  if([nsmodifiers rangeOfString:@"ctrl"].location != NSNotFound)
+    mask = mask|NSControlKeyMask;
+  [menu_item_ setKeyEquivalentModifierMask:mask];
 }
 
 void MenuItem::SetIcon(const std::string& icon) {

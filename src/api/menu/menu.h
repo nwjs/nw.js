@@ -35,8 +35,10 @@
 #if defined(OS_MACOSX)
 #if __OBJC__
 @class NSMenu;
+@class NWMenuDelegate;
 #else
 class NSMenu;
+class NWMenuDelegate;
 #endif  // __OBJC__
 
 namespace nw {
@@ -118,6 +120,7 @@ class Menu : public Base {
 #if defined(OS_MACOSX)
   friend class nw::NativeWindowCocoa;
   NSMenu* menu_;
+  NWMenuDelegate* menu_delegate_;
 #elif defined(OS_LINUX)
   friend class nw::NativeWindowAura;
 

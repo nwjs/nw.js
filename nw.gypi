@@ -184,6 +184,8 @@
         'src/api/menu/menu.h',
         'src/api/menu/menu_delegate.cc',
         'src/api/menu/menu_delegate.h',
+        'src/api/menu/menu_delegate_mac.h',
+        'src/api/menu/menu_delegate_mac.mm',
         'src/api/menu/menu_mac.mm',
         'src/api/menu/menu_views.cc',
         'src/api/menuitem/menuitem.cc',
