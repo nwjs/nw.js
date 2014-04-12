@@ -30,6 +30,7 @@
 
 @class ShellNSWindow;
 @class ShellToolbarDelegate;
+@class NWMenuDelegate;
 class SkRegion;
 
 namespace nw {

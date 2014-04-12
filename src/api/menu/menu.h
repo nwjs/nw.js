@@ -31,13 +31,17 @@
 #if defined(OS_MACOSX)
 #if __OBJC__
 @class NSMenu;
+@class NWMenuDelegate;
 #else
 class NSMenu;
+class NWMenuDelegate;
 #endif  // __OBJC__
 
 namespace nw {
 class NativeWindowCocoa;
 }
+
+
 #elif defined(TOOLKIT_GTK)
 #include <gtk/gtk.h>
 
@@ -104,6 +108,7 @@ class Menu : public Base {
 #if defined(OS_MACOSX)
   friend class nw::NativeWindowCocoa;
   NSMenu* menu_;
+  NWMenuDelegate* menu_delegate_;
 #elif defined(TOOLKIT_GTK)
   friend class nw::NativeWindowGtk;
   GtkWidget* menu_;

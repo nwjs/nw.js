@@ -82,4 +82,10 @@
   return YES;
 }
 
+#if 0
+- (void)menuWillOpen:(NSMenu*)menu {
+    VLOG(1) << "menuWillOpen";
+}
+#endif
+
 @end
