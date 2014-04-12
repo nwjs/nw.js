@@ -78,6 +78,7 @@ class MenuItem : public Base {
   void SetIcon(const std::string& icon);
   void SetTooltip(const std::string& tooltip);
   void SetKey(const std::string& key);
+  void SetModifiers(const std::string& modifiers);
   void SetEnabled(bool enabled);
   void SetChecked(bool checked);
   void SetSubmenu(Menu* sub_menu);
