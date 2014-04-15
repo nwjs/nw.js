@@ -104,6 +104,15 @@ void Window::Call(const std::string& method,
     int count; 
     if (arguments.GetInteger(0, &count))
      shell_->window()->SetBadgeCount(count);
+  }else if (method == "Notify" ) {
+     std::string title;
+     std::string text;
+     std::string subtitle;
+     std::string callback;
+
+    if (arguments.GetString(0,&title) && arguments.GetString(1,&text) && arguments.GetString(2,&subtitle) && arguments.GetString(3,&callback))
+     shell_->window()->Notify(title,text,subtitle,callback);
+
   } else if (method == "SetMinimumSize") {
     int width, height;
     if (arguments.GetInteger(0, &width) &&

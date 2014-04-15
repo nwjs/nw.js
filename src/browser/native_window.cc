@@ -50,6 +50,7 @@ NativeWindow* NativeWindow::Create(const base::WeakPtr<content::Shell>& shell,
   if (!manifest->HasKey(switches::kmHeight))
     manifest->SetInteger(switches::kmHeight, 450);
 
+
   // Create window.
   NativeWindow* window =
 #if defined(TOOLKIT_GTK)
@@ -70,12 +71,14 @@ NativeWindow::NativeWindow(const base::WeakPtr<content::Shell>& shell,
                            base::DictionaryValue* manifest)
     : shell_(shell),
       has_frame_(true),
-      capture_page_helper_(NULL) {
+      capture_page_helper_(NULL){
  bool transparent;
    if(manifest->GetBoolean(switches::kmTransparent, &transparent) && transparent)
      has_frame_ = false;
    else
      manifest->GetBoolean(switches::kmFrame, &has_frame_);
+
+
 
   LoadAppIconFromPackage(manifest);
 }
@@ -155,6 +158,11 @@ void NativeWindow::InitFromManifest(base::DictionaryValue* manifest) {
   manifest->GetBoolean(switches::kmShow, &show);
   if (show)
     Show();
+}
+
+void NativeWindow::Notify(std::string title, std::string text, std::string subtitle, std::string callback) {
+  
+  
 }
 
 void NativeWindow::CapturePage(const std::string& image_format) {

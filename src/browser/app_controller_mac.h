@@ -21,9 +21,32 @@
 #ifndef CONTENT_NW_SRC_BROWSER_APP_CONTROLLER_MAC_H_
 #define CONTENT_NW_SRC_BROWSER_APP_CONTROLLER_MAC_H_
 
+
+#include "base/memory/weak_ptr.h"
+#include "content/public/browser/web_contents_observer.h"
+
 #import <Cocoa/Cocoa.h>
 
-@interface AppController : NSObject<NSApplicationDelegate> {
+namespace content {
+class Shell;
+}
+
+
+#if !defined(MAC_OS_X_VERSION_10_8) || \
+ MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_8
+ @interface NSUserNotificationCenter : NSObject
+ @end
+ @implementation NSUserNotificationCenter
+ @end
+ @interface NSUserNotification : NSObject
+ @end
+ @implementation NSUserNotification
+ @end
+#endif
+
+
+@interface AppController : NSObject<NSApplicationDelegate, NSUserNotificationCenterDelegate> {
+	base::WeakPtr<content::Shell> shell_;
 }
 @end
 

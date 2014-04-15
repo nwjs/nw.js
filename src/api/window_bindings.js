@@ -45,9 +45,25 @@ Window.prototype.on = Window.prototype.addListener = function(ev, callback) {
   EventEmitter.prototype.addListener.apply(this, arguments);
 }
 
+// Override the addListener method.
+Window.prototype.off = Window.prototype.removeListener = function(ev, callback) {
+  // Save window id of where the callback is created.
+  var closure = v8_util.getCreationContext(callback);
+  if (v8_util.getConstructorName(closure) == 'Window' && 
+      closure.hasOwnProperty('nwDispatcher')) {
+    v8_util.setHiddenValue(callback, '__nwWindowId',
+        closure.nwDispatcher.requireNwGui().Window.get().id);
+  }
+
+  // Call parent.
+  EventEmitter.prototype.removeListener.apply(this, arguments);
+}
+
+
 // Route events.
 Window.prototype.handleEvent = function(ev) {
   // Filter invalid callbacks.
+  console.log('handleEvent',ev);
   var listeners_copy = this.listeners(ev).slice(0);
   for (var i = 0; i < listeners_copy.length; ++i) {
     var original_closure = v8_util.getCreationContext(listeners_copy[i]);
@@ -248,9 +264,6 @@ Window.prototype.hide = function() {
   CallObjectMethod(this, 'Hide', []);
 }
 
-Window.prototype.hide = function() {
-  CallObjectMethod(this, 'Hide', []);
-}
 
 Window.prototype.close = function(force) {
   CallObjectMethod(this, 'Close', [ Boolean(force) ]);
@@ -303,6 +316,8 @@ Window.prototype.closeDevTools = function() {
 Window.prototype.setBadgeCount = function(count) {
  CallObjectMethod(this, 'SetBadgeCount', [ count ]);
 }
+
+
 
 Window.prototype.setShowInTaskbar = function(flag) {
 
@@ -378,6 +393,11 @@ Window.prototype.reloadOriginalRequestURL = function() {
 Window.prototype.reloadDev = function() {
   this.reload(3);
 }
+
+Window.prototype.notify = function(title, text, subtitle, callback) {
+ CallObjectMethod(this, 'Notify',[title, text, subtitle,callback]);
+}
+
 
 Window.prototype.capturePage = function(callback, image_format) {
   if (image_format != 'jpeg' && image_format != 'png') {

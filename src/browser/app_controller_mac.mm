@@ -29,6 +29,10 @@
 #include "content/nw/src/shell_content_browser_client.h"
 #include "base/values.h"
 
+
+
+
+
 @implementation AppController
 
 - (BOOL)application:(NSApplication*)sender
@@ -52,8 +56,14 @@
   return FALSE;
 }
 
+- (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center shouldPresentNotification:(NSUserNotification *)notification{
+   return YES;
+}
+
 - (void) applicationDidFinishLaunching: (NSNotification *) note {
   // Initlialize everything here
+  [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
+
   content::ShellContentBrowserClient* browser_client = 
       static_cast<content::ShellContentBrowserClient*>(
           content::GetContentClient()->browser());

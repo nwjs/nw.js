@@ -69,6 +69,7 @@ class NativeWindowGtk : public NativeWindow {
                                        bool enabled) OVERRIDE;
   virtual void SetToolbarUrlEntry(const std::string& url) OVERRIDE;
   virtual void SetToolbarIsLoading(bool loading) OVERRIDE;
+  virtual void Notify(std::string title, std::string text, std::string subtitle, std::string callback) OVERRIDE;
 
   GtkWindow* window() const { return window_; }
 

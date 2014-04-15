@@ -28,11 +28,13 @@
 #include "base/memory/weak_ptr.h"
 #include "content/nw/src/browser/native_window.h"
 
+
 @class ShellNSWindow;
 @class ShellToolbarDelegate;
 class SkRegion;
 
 namespace nw {
+
 
 class NativeWindowCocoa : public NativeWindow {
  public:
@@ -71,12 +73,14 @@ class NativeWindowCocoa : public NativeWindow {
   virtual void SetKiosk(bool kiosk) OVERRIDE;
   virtual bool IsKiosk() OVERRIDE;
   virtual void SetTransparent() OVERRIDE;
-  virtual bool IsTransparent() OVERRIDE;
+  virtual bool IsTransparent() OVERRIDE;  
   virtual void SetMenu(api::Menu* menu) OVERRIDE;
   virtual void SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
                                        bool enabled) OVERRIDE;
   virtual void SetToolbarUrlEntry(const std::string& url) OVERRIDE;
   virtual void SetToolbarIsLoading(bool loading) OVERRIDE;
+  virtual void Notify(std::string title, std::string text, std::string subtitle, std::string callback) OVERRIDE;
+
   virtual void SetInitialFocus(bool accept_focus) OVERRIDE;
   virtual bool InitialFocus() OVERRIDE;
   virtual void RenderViewCreated(content::RenderViewHost *render_view_host) OVERRIDE;
@@ -101,6 +105,8 @@ class NativeWindowCocoa : public NativeWindow {
 
   void SetNonLionFullscreen(bool fullscreen);
 
+
+
  private:
   void InstallView();
   void UninstallView();
@@ -110,7 +116,6 @@ class NativeWindowCocoa : public NativeWindow {
       const extensions::DraggableRegion* draggable_area);
   void UpdateDraggableRegionsForCustomDrag(
       const std::vector<extensions::DraggableRegion>& regions);
-
   NSWindow* window_;
 
   // Delegate to the toolbar.

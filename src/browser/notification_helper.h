@@ -18,8 +18,8 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#ifndef CONTENT_NW_SRC_BROWSER_CAPTURE_PAGE_HELPER_H_
-#define CONTENT_NW_SRC_BROWSER_CAPTURE_PAGE_HELPER_H_
+#ifndef CONTENT_NW_SRC_BROWSER_NOTIFICATION_HELPER_H_
+#define CONTENT_NW_SRC_BROWSER_NOTIFICATION_HELPER_H_
 
 #include "base/memory/ref_counted.h"
 #include "base/memory/weak_ptr.h"
@@ -29,65 +29,39 @@ namespace content {
 class Shell;
 }
 
-namespace skia {
-class PlatformBitmap;
-}
-
-class SkBitmap;
-
 namespace nw {
 
-namespace capture_page_helper_constants {
+namespace notification_helper_constants {
 
-extern const char kFormatValueJpeg[];
-extern const char kFormatValuePng[];
-extern const char kMimeTypeJpeg[];
-extern const char kMimeTypePng[];
 
-// The default quality setting used when encoding jpegs.
-extern const int kDefaultQuality;
+}; // namespace notification_helper_constants
 
-}; // namespace capture_page_helper_constants
-
-class CapturePageHelper : public base::RefCountedThreadSafe<CapturePageHelper>,
+class NotificationHelper : public base::RefCountedThreadSafe<NotificationHelper>,
                       public content::WebContentsObserver {
  public:
-  enum ImageFormat {
-    FORMAT_JPEG,
-    FORMAT_PNG
-  };
-
-  static scoped_refptr<CapturePageHelper> Create(const base::WeakPtr<content::Shell>& shell);
+  static scoped_refptr<NotificationHelper> Create(const base::WeakPtr<content::Shell>& shell);
 
   // Capture a snapshot of the page.
-  void StartCapturePage(const std::string& image_format_str);
-  void OnNotificationClicked(const base::WeakPtr<content::Shell>& shell, const std::string& event);
+  void SendNotification(const std::string& callback);
+  void SendCallbackNotification(const std::string& callback);
 
  private:
-  CapturePageHelper(const base::WeakPtr<content::Shell>& shell);
-  virtual ~CapturePageHelper();
+  NotificationHelper(const base::WeakPtr<content::Shell>& shell);
+  virtual ~NotificationHelper();
 
   // Internal helpers ----------------------------------------------------------
-
-  // Message handler.
-  void OnSnapshot(const SkBitmap& bitmap);
-
-
-  void CopyFromBackingStoreComplete(
-                                    bool succeeded,
-                                    const SkBitmap& bitmap);
-  void SendResultFromBitmap(const SkBitmap& screen_capture);
+  void OnClicked(bool succeeded,const std::string& callback);
+  void OnNotification(const std::string& callback);
 
   // content::WebContentsObserver overrides:
   virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
 
   base::WeakPtr<content::Shell> shell_;
 
-  // The format (JPEG vs PNG) of the resulting image. Set in StartCapturePage().
-  ImageFormat image_format_;
-  friend class base::RefCountedThreadSafe<CapturePageHelper>;
+  friend class base::RefCountedThreadSafe<NotificationHelper>;
 };
 
 }; // namespace nw
+
 
 #endif

@@ -116,6 +116,7 @@ void App::Call(Shell* shell,
     }
 
     return;
+
   } else if (method == "ClearCache") {
     ClearCache(GetRenderProcessHost());
   } else if (method == "GetPackage") {
@@ -192,6 +193,17 @@ void App::EmitOpenEvent(const std::string& path) {
     DCHECK(rph != NULL);
 
     rph->Send(new ShellViewMsg_Open(path));
+  }
+}
+
+// static
+void App::EmitNotificationEvent(const std::string& notification) {
+    std::vector<Shell*> windows = Shell::windows();
+
+  for (size_t i = 0; i < windows.size(); ++i) {
+  
+    windows[i]->window()->shell()->SendEvent(notification);
+    
   }
 }
 

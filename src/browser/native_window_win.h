@@ -104,6 +104,7 @@ class NativeWindowWin : public NativeWindow,
   virtual void BeginOffclientMouseMove() OVERRIDE;
   virtual void EndOffclientMouseMove() OVERRIDE;
   virtual void RenderViewCreated(content::RenderViewHost *render_view_host) OVERRIDE;
+  virtual void Notify(std::string title, std::string text, std::string subtitle) const OVERRIDE;
 
   virtual void SetTitle(const std::string& title) OVERRIDE;
   virtual void FlashFrame(bool flash) OVERRIDE;

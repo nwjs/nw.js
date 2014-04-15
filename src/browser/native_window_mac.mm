@@ -1,3 +1,5 @@
+
+
 // Copyright (c) 2012 Intel Corp
 // Copyright (c) 2012 The Chromium Authors
 //
@@ -22,6 +24,7 @@
 
 #include "base/mac/mac_util.h"
 #include "base/strings/sys_string_conversions.h"
+#include "base/strings/stringprintf.h"
 #include "base/values.h"
 #import "chrome/browser/ui/cocoa/custom_frame_view.h"
 #include "content/nw/src/api/menu/menu.h"
@@ -35,6 +38,7 @@
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/native_web_keyboard_event.h"
 #include "content/public/browser/render_widget_host_view.h"
+#include "content/nw/src/browser/notification_helper.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
 #include "extensions/common/draggable_region.h"
@@ -48,6 +52,18 @@
 @interface NSView (WebContentsView)
 - (void)setMouseDownCanMoveWindow:(BOOL)can_move;
 @end
+
+#if !defined(MAC_OS_X_VERSION_10_8) || \
+ MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_8
+ @interface NSUserNotificationCenter : NSObject
+ @end
+ @implementation NSUserNotificationCenter
+ @end
+ @interface NSUserNotification : NSObject
+ @end
+ @implementation NSUserNotification
+ @end
+#endif
 
 // Replicate specific 10.7 SDK declarations for building with prior SDKs.
 #if !defined(MAC_OS_X_VERSION_10_7) || \
@@ -68,13 +84,16 @@ enum {
 - (void)toggleFullScreen:(id)sender;
 @end
 
+
 #endif  // MAC_OS_X_VERSION_10_7
 
-@interface NativeWindowDelegate : NSObject<NSWindowDelegate> {
-@private
+
+@interface NativeWindowDelegate : NSObject<NSWindowDelegate, NSUserNotificationCenterDelegate> {
+ @private
   base::WeakPtr<content::Shell> shell_;
 }
 - (id)initWithShell:(const base::WeakPtr<content::Shell>&)shell;
+
 @end
 
 @implementation NativeWindowDelegate
@@ -83,10 +102,51 @@ enum {
   if ((self = [super init])) {
     shell_ = shell;
   }
+
+  // Set user default notification
   return self;
 }
 
-- (BOOL)windowShouldClose:(id)window {
+
+- (void) userNotificationCenter:(NSUserNotificationCenter *)center didActivateNotification:(NSUserNotification *)notification
+{
+  // NSRunAlertPanel([notification title], [notification informativeText], @"Ok", nil, nil);
+  //   NSRunAlertPanel(@"userInfo.callback",[notification.userInfo valueForKey:@"callback"], @"Ok", nil, nil);
+
+  // NSString* result = [NSString stringWithUTF8String:note.userInfo.callback];
+
+  NSString* callString= [[notification userInfo] valueForKey:@"callback"];
+  //  NSLog(@"callback %@",callString);
+
+  if (callString){
+
+      api::App::EmitNotificationEvent([callString UTF8String]);
+
+  }
+
+}
+
+- (void) applicationDidFinishLaunching: (NSNotification *) note {
+  // Initlialize everything here
+  [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
+
+  }
+
+
+
+- (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center shouldPresentNotification:(NSUserNotification *)notification{
+   return YES;
+}
+
+
+- (void) userNotificationCenter:(NSUserNotificationCenter *)center didDeliverNotification:(NSUserNotification *)notification
+{
+   // notifications=nil;
+    [center removeDeliveredNotification: notification];
+}
+
+
+- (BOOL)windowShouldClose:(id)window { 
   // If this window is bound to a js object and is not forced to close,
   // then send event to renderer to let the user decide.
   if (shell_ && !shell_->ShouldCloseWindow())
@@ -343,7 +403,8 @@ namespace nw {
         }
         window_ = shell_window;
         [shell_window setShell:shell];
-        [window() setDelegate:[[NativeWindowDelegate alloc] initWithShell:shell]];
+        NativeWindowDelegate * delegateWindow =[NativeWindowDelegate alloc];
+        [window() setDelegate:[delegateWindow initWithShell:shell]]; 
 
   // Disable fullscreen button when 'fullscreen' is specified to false.
          if(is_transparent_)
@@ -411,6 +472,8 @@ namespace nw {
       [view removeFromSuperview];
     }
 
+
+
     void NativeWindowCocoa::Close() {
       [window() performClose:nil];
     }
@@ -426,6 +489,37 @@ namespace nw {
 
       [window() setFrame:cocoa_bounds display:YES];
     }
+
+    void NativeWindowCocoa::Notify(std::string title, std::string text, std::string subtitle, std::string callback) {
+      
+     // NSApplication *myApp = [NSApplication sharedApplication];
+    //  [myApp activateIgnoringOtherApps:YES];
+  
+
+     NSUserNotification *notification = [[NSUserNotification alloc] init];
+      [notification setTitle:@(title.c_str())];
+      [notification setInformativeText:@(text.c_str())];
+      [notification setSubtitle:@(subtitle.c_str())]; 
+
+      [notification setUserInfo:@{ @"callback": @(callback.c_str()) }]; 
+     /* notification.actionButtonTitle = actionTitle;
+      notification.hasActionButton = YES;*/
+
+     [notification setSoundName:nil];
+
+    // [notification setSoundName:@"NSUserNotificationDefaultSoundName"];
+
+    // [ addObserver:self selector:@selector(foremostAppActivated:) name:NSWorkspaceDidActivateApplicationNotification object:nil];
+
+//[[NSWorkspace sharedWorkspace] notificationCenter]
+    [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
+  
+
+   }
+
+
+
+
 
     void NativeWindowCocoa::Focus(bool focus) {
       if (focus && [window() isVisible])

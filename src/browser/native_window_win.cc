@@ -166,6 +166,10 @@ gfx::Rect NativeWindowFrameView::GetWindowBoundsForClientBounds(
   return window_bounds;
 }
 
+void NativeWindowWin::Notify(std::string title, std::string text, std::string subtitle, std::string callback) {
+  
+}
+
 int NativeWindowFrameView::NonClientHitTest(const gfx::Point& point) {
   if (frame_->IsFullscreen())
     return HTCLIENT;

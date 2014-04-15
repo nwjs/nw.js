@@ -49,6 +49,7 @@ class Shell;
 class WebContents;
 }
 
+
 namespace extensions {
 struct DraggableRegion;
 }
@@ -102,9 +103,11 @@ class NativeWindow {
   virtual void SetTransparent() = 0;
   virtual bool IsTransparent() = 0;
   virtual void SetMenu(api::Menu* menu) = 0;
+  virtual void Notify(std::string title, std::string text, std::string subtitle, std::string callback) = 0;
   virtual void RenderViewCreated(content::RenderViewHost *render_view_host) = 0;
   virtual void SetInitialFocus(bool accept_focus) = 0;
   virtual bool InitialFocus() = 0;
+
 
   // Toolbar related controls.
   enum TOOLBAR_BUTTON {
@@ -119,13 +122,13 @@ class NativeWindow {
                                        bool enabled) = 0;
   virtual void SetToolbarUrlEntry(const std::string& url) = 0;
   virtual void SetToolbarIsLoading(bool loading) = 0;
-
   virtual void UpdateDraggableRegions(
       const std::vector<extensions::DraggableRegion>& regions) = 0;
   virtual void HandleKeyboardEvent(
       const content::NativeWebKeyboardEvent& event) = 0;
 
   content::Shell* shell() const { return shell_.get(); }
+
   content::WebContents* web_contents() const;
   bool has_frame() const { return has_frame_; }
   const gfx::Image& app_icon() const { return app_icon_; }
