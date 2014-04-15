@@ -28,12 +28,15 @@
 #include "base/strings/string_number_conversions.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
-#include "chrome/common/child_process_logging.h"
+//#include "chrome/common/child_process_logging.h"
+#include "components/breakpad/app/breakpad_client.h"
 #include "content/browser/child_process_security_policy_impl.h"
-#include "content/public/browser/browser_url_handler.h"
+#include "content/browser/gpu/compositor_util.h"
 #include "content/nw/src/browser/printing/printing_message_filter.h"
+#include "content/public/browser/browser_url_handler.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/render_view_host.h"
+#include "content/public/browser/render_widget_host_iterator.h"
 #include "content/public/browser/resource_dispatcher_host.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/content_descriptors.h"
@@ -41,7 +44,11 @@
 #include "content/public/common/renderer_preferences.h"
 #include "content/public/common/url_constants.h"
 #include "content/nw/src/api/dispatcher_host.h"
+#if defined(OS_MACOSX)
 #include "content/nw/src/breakpad_mac.h"
+#elif defined(OS_POSIX)
+#include "content/nw/src/breakpad_linux.h"
+#endif
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/browser/printing/print_job_manager.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
@@ -56,6 +63,7 @@
 #include "geolocation/shell_access_token_store.h"
 #include "url/gurl.h"
 #include "ui/base/l10n/l10n_util.h"
+#include "ui/base/ui_base_switches.h"
 #include "content/common/dom_storage/dom_storage_map.h"
 #include "webkit/common/webpreferences.h"
 #include "webkit/common/user_agent/user_agent_util.h"
@@ -110,12 +118,9 @@ BrowserMainParts* ShellContentBrowserClient::CreateBrowserMainParts(
   return shell_browser_main_parts_;
 }
 
-WebContentsViewPort* ShellContentBrowserClient::OverrideCreateWebContentsView(
-      WebContents* web_contents,
-      RenderViewHostDelegateView** render_view_host_delegate_view) {
-  std::string user_agent, rules;
+bool ShellContentBrowserClient::GetUserAgentManifest(std::string* agent) {
+  std::string user_agent;
   nw::Package* package = shell_browser_main_parts()->package();
-  content::RendererPreferences* prefs = web_contents->GetMutableRendererPrefs();
   if (package->root()->GetString(switches::kmUserAgent, &user_agent)) {
     std::string name, version;
     package->root()->GetString(switches::kmName, &name);
@@ -125,47 +130,74 @@ WebContentsViewPort* ShellContentBrowserClient::OverrideCreateWebContentsView(
     ReplaceSubstringsAfterOffset(&user_agent, 0, "%nwver", NW_VERSION_STRING);
     ReplaceSubstringsAfterOffset(&user_agent, 0, "%webkit_ver", webkit_glue::GetWebKitVersion());
     ReplaceSubstringsAfterOffset(&user_agent, 0, "%osinfo", webkit_glue::BuildOSInfo());
+    *agent = user_agent;
+    return true;
+  }
+  return false;
+}
+
+WebContentsViewPort* ShellContentBrowserClient::OverrideCreateWebContentsView(
+      WebContents* web_contents,
+      RenderViewHostDelegateView** render_view_host_delegate_view,
+      const WebContents::CreateParams& params) {
+  std::string user_agent, rules;
+  nw::Package* package = shell_browser_main_parts()->package();
+  content::RendererPreferences* prefs = web_contents->GetMutableRendererPrefs();
+  if (GetUserAgentManifest(&user_agent)) {
     prefs->user_agent_override = user_agent;
   }
   if (package->root()->GetString(switches::kmRemotePages, &rules))
       prefs->nw_remote_page_rules = rules;
 
-  prefs->nw_app_root_path = package->path();
+  prefs->nw_app_root_path        = package->path();
+  prefs->nw_inject_css_fn        = params.nw_inject_css_fn;
+  prefs->nw_inject_js_doc_start  = params.nw_inject_js_doc_start;
+  prefs->nw_inject_js_doc_end    = params.nw_inject_js_doc_end;
   return NULL;
 }
 
 std::string ShellContentBrowserClient::GetApplicationLocale() {
-  return l10n_util::GetApplicationLocale(std::string());
+  CommandLine* cmd_line = CommandLine::ForCurrentProcess();
+  std::string pref_locale;
+  if (cmd_line->HasSwitch(switches::kLang)) {
+    pref_locale = cmd_line->GetSwitchValueASCII(switches::kLang);
+  }
+  return l10n_util::GetApplicationLocale(pref_locale);
 }
 
 void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     CommandLine* command_line,
     int child_process_id) {
 #if defined(OS_MACOSX)
-  if (IsCrashReporterEnabled()) {
-    command_line->AppendSwitchASCII(switches::kEnableCrashReporter,
-                                    child_process_logging::GetClientId());
+  if (breakpad::IsCrashReporterEnabled()) {
+    command_line->AppendSwitch(switches::kEnableCrashReporter);
   }
 #elif defined(OS_POSIX)
-  if (IsCrashReporterEnabled()) {
-    command_line->AppendSwitchASCII(switches::kEnableCrashReporter,
-        child_process_logging::GetClientId() + "," + base::GetLinuxDistro());
+  if (breakpad::IsCrashReporterEnabled()) {
+    command_line->AppendSwitch(switches::kEnableCrashReporter);
   }
 
 #endif  // OS_MACOSX
+
   if (command_line->GetSwitchValueASCII("type") != "renderer")
     return;
-  if (child_process_id > 0) {
-    content::RenderWidgetHost::List widgets =
-      content::RenderWidgetHost::GetRenderWidgetHosts();
-    for (size_t i = 0; i < widgets.size(); ++i) {
-      if (widgets[i]->GetProcess()->GetID() != child_process_id)
-        continue;
-      if (!widgets[i]->IsRenderView())
-        continue;
 
-      const content::RenderWidgetHost* widget = widgets[i];
-      DCHECK(widget);
+  if (content::IsThreadedCompositingEnabled())
+    command_line->AppendSwitch(switches::kEnableThreadedCompositing);
+
+  std::string user_agent;
+  if (!command_line->HasSwitch(switches::kUserAgent) &&
+      GetUserAgentManifest(&user_agent)) {
+    command_line->AppendSwitchASCII(switches::kUserAgent, user_agent);
+  }
+  if (child_process_id > 0) {
+    scoped_ptr<content::RenderWidgetHostIterator> widgets =
+      content::RenderWidgetHost::GetRenderWidgetHosts();
+    while (RenderWidgetHost* widget = widgets->GetNextHost()) {
+      if (widget->GetProcess()->GetID() != child_process_id)
+        continue;
+      if (!widget->IsRenderView())
+        continue;
 
       content::RenderViewHost* host = content::RenderViewHost::From(
         const_cast<content::RenderWidgetHost*>(widget));
@@ -263,8 +295,6 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
   prefs->allow_file_access_from_file_urls = true;
 
   // Open experimental features.
-  prefs->css_sticky_position_enabled = true;
-  prefs->css_shaders_enabled = true;
   prefs->css_variables_enabled = true;
   prefs->experimental_webgl_enabled = true;
   // Disable plugins and cache by default.
@@ -346,7 +376,7 @@ void ShellContentBrowserClient::RenderProcessHostCreated(
       host->GetID(), "app");
 
 #if defined(ENABLE_PRINTING)
-  host->GetChannel()->AddFilter(new PrintingMessageFilter(id));
+  host->AddFilter(new PrintingMessageFilter(id));
 #endif
 }
 

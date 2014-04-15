@@ -27,7 +27,8 @@
 #include "breakpad/src/client/linux/handler/exception_handler.h"
 #include "breakpad/src/client/linux/minidump_writer/linux_dumper.h"
 #include "breakpad/src/client/linux/minidump_writer/minidump_writer.h"
-#include "chrome/app/breakpad_linux_impl.h"
+#include "components/breakpad/app/breakpad_linux_impl.h"
+
 #include "chrome/common/chrome_paths.h"
 #include "chrome/common/env_vars.h"
 #include "content/public/browser/browser_thread.h"
@@ -40,6 +41,8 @@
 
 using content::BrowserThread;
 using google_breakpad::ExceptionHandler;
+
+using namespace breakpad;
 
 namespace {
 
@@ -57,8 +60,6 @@ void CrashDumpTask(CrashHandlerHostLinux* handler, BreakpadInfo* info) {
   HandleCrashDump(*info);
   delete[] info->filename;
   delete[] info->process_type;
-  delete[] info->crash_url;
-  delete[] info->guid;
   delete[] info->distro;
   delete info->crash_keys;
   delete info;
@@ -135,8 +136,6 @@ void CrashHandlerHostLinux::OnFileCanReadWithoutBlocking(int fd) {
   // Freed in WriteDumpFile();
   char* crash_context = new char[kCrashContextSize];
   // Freed in CrashDumpTask();
-  char* guid = new char[kGuidSize + 1];
-  char* crash_url = new char[kMaxActiveURLSize + 1];
   char* distro = new char[kDistroSize + 1];
 #if defined(ADDRESS_SANITIZER)
   asan_report_str_ = new char[kMaxAsanReportSize + 1];
@@ -156,8 +155,6 @@ void CrashHandlerHostLinux::OnFileCanReadWithoutBlocking(int fd) {
   char control[kControlMsgSize];
   const ssize_t expected_msg_size =
       kCrashContextSize +
-      kGuidSize + 1 +
-      kMaxActiveURLSize + 1 +
       kDistroSize + 1 +
       sizeof(tid_buf_addr) + sizeof(tid_fd) +
       sizeof(uptime) +
@@ -168,25 +165,21 @@ void CrashHandlerHostLinux::OnFileCanReadWithoutBlocking(int fd) {
       crash_keys_size;
   iov[0].iov_base = crash_context;
   iov[0].iov_len = kCrashContextSize;
-  iov[1].iov_base = guid;
-  iov[1].iov_len = kGuidSize + 1;
-  iov[2].iov_base = crash_url;
-  iov[2].iov_len = kMaxActiveURLSize + 1;
-  iov[3].iov_base = distro;
-  iov[3].iov_len = kDistroSize + 1;
-  iov[4].iov_base = &tid_buf_addr;
-  iov[4].iov_len = sizeof(tid_buf_addr);
-  iov[5].iov_base = &tid_fd;
-  iov[5].iov_len = sizeof(tid_fd);
-  iov[6].iov_base = &uptime;
-  iov[6].iov_len = sizeof(uptime);
-  iov[7].iov_base = &oom_size;
-  iov[7].iov_len = sizeof(oom_size);
-  iov[8].iov_base = serialized_crash_keys;
-  iov[8].iov_len = crash_keys_size;
+  iov[1].iov_base = distro;
+  iov[1].iov_len = kDistroSize + 1;
+  iov[2].iov_base = &tid_buf_addr;
+  iov[2].iov_len = sizeof(tid_buf_addr);
+  iov[3].iov_base = &tid_fd;
+  iov[3].iov_len = sizeof(tid_fd);
+  iov[4].iov_base = &uptime;
+  iov[4].iov_len = sizeof(uptime);
+  iov[5].iov_base = &oom_size;
+  iov[5].iov_len = sizeof(oom_size);
+  iov[6].iov_base = serialized_crash_keys;
+  iov[6].iov_len = crash_keys_size;
 #if defined(ADDRESS_SANITIZER)
-  iov[9].iov_base = asan_report_str_;
-  iov[9].iov_len = kMaxAsanReportSize + 1;
+  iov[7].iov_base = asan_report_str_;
+  iov[7].iov_len = kMaxAsanReportSize + 1;
 #endif
   msg.msg_iov = iov;
   msg.msg_iovlen = kCrashIovSize;
@@ -323,10 +316,7 @@ void CrashHandlerHostLinux::OnFileCanReadWithoutBlocking(int fd) {
       reinterpret_cast<ExceptionHandler::CrashContext*>(crash_context);
   bad_context->tid = crashing_tid;
 
-  // Sanitize the string data a bit more
-  guid[kGuidSize] = crash_url[kMaxActiveURLSize] = distro[kDistroSize] = 0;
-
-  // Freed in CrashDumpTask();
+    // Freed in CrashDumpTask();
   BreakpadInfo* info = new BreakpadInfo;
 
   info->fd = -1;
@@ -335,12 +325,6 @@ void CrashHandlerHostLinux::OnFileCanReadWithoutBlocking(int fd) {
   process_type_.copy(process_type_str, info->process_type_length);
   process_type_str[info->process_type_length] = '\0';
   info->process_type = process_type_str;
-
-  info->crash_url_length = strlen(crash_url);
-  info->crash_url = crash_url;
-
-  info->guid_length = strlen(guid);
-  info->guid = guid;
 
   info->distro_length = strlen(distro);
   info->distro = distro;

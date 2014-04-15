@@ -71,7 +71,7 @@ bool NwMenuModel::HasIcons() const {
 
 } // namespace ui
 
-namespace api {
+namespace nwapi {
 
 // The width of the icon for the menuitem
 static const int kIconWidth = 16;
@@ -133,7 +133,7 @@ void Menu::Popup(int x, int y, content::Shell* shell) {
 
   // Map point from document to screen.
   POINT screen_point = { x, y };
-  ClientToScreen(shell->web_contents()->GetView()->GetNativeView(),
+  ClientToScreen((HWND)shell->web_contents()->GetView()->GetNativeView(),
                  &screen_point);
 
   menu_->RunMenuAt(gfx::Point(screen_point.x, screen_point.y),
@@ -185,4 +185,4 @@ void Menu::Rebuild(const HMENU *parent_menu) {
   }
 }
 
-}  // namespace api
+}  // namespace nwapi

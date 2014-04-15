@@ -25,7 +25,10 @@
 
 #include "base/basictypes.h"
 #include "base/compiler_specific.h"
+#include "content/public/browser/devtools_agent_host.h"
 #include "content/public/browser/devtools_http_handler_delegate.h"
+#include "content/public/browser/render_view_host.h"
+#include "content/public/browser/web_contents.h"
 
 namespace base {
 class FilePath;
@@ -49,10 +52,9 @@ class ShellDevToolsDelegate : public DevToolsHttpHandlerDelegate {
   virtual bool BundlesFrontendResources() OVERRIDE;
   virtual base::FilePath GetDebugFrontendDir() OVERRIDE;
   virtual std::string GetPageThumbnailData(const GURL& url) OVERRIDE;
-  virtual RenderViewHost* CreateNewTarget() OVERRIDE;
-  virtual TargetType GetTargetType(RenderViewHost*) OVERRIDE;
-  virtual std::string GetViewDescription(content::RenderViewHost*) OVERRIDE;
-  virtual scoped_refptr<net::StreamListenSocket> CreateSocketForTethering(
+  virtual scoped_ptr<DevToolsTarget> CreateNewTarget(const GURL& url) OVERRIDE;
+  virtual void EnumerateTargets(TargetCallback callback) OVERRIDE;
+  virtual scoped_ptr<net::StreamListenSocket> CreateSocketForTethering(
       net::StreamListenSocket::Delegate* delegate,
       std::string* name) OVERRIDE;
 

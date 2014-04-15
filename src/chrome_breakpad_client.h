@@ -7,7 +7,7 @@
 
 #include "base/basictypes.h"
 #include "base/compiler_specific.h"
-#include "components/breakpad/breakpad_client.h"
+#include "components/breakpad/app/breakpad_client.h"
 
 namespace chrome {
 
@@ -17,6 +17,7 @@ class ChromeBreakpadClient : public breakpad::BreakpadClient {
   virtual ~ChromeBreakpadClient();
 
   // breakpad::BreakpadClient implementation.
+  virtual void SetClientID(const std::string& client_id) OVERRIDE;
 #if defined(OS_WIN)
   virtual bool GetAlternativeCrashDumpLocation(base::FilePath* crash_dir)
       OVERRIDE;
@@ -29,11 +30,12 @@ class ChromeBreakpadClient : public breakpad::BreakpadClient {
                                        base::string16* message,
                                        bool* is_rtl_locale) OVERRIDE;
   virtual bool AboutToRestart() OVERRIDE;
-  virtual base::string16 GetCrashGUID() OVERRIDE;
   virtual bool GetDeferredUploadsSupported(bool is_per_user_install) OVERRIDE;
   virtual bool GetIsPerUserInstall(const base::FilePath& exe_path) OVERRIDE;
   virtual bool GetShouldDumpLargerDumps(bool is_per_user_install) OVERRIDE;
   virtual int GetResultCodeRespawnFailed() OVERRIDE;
+  virtual void InitBrowserCrashDumpsRegKey() OVERRIDE;
+  virtual void RecordCrashDumpAttempt(bool is_real_crash) OVERRIDE;
 #endif
 
 #if defined(OS_POSIX) && !defined(OS_MACOSX) && !defined(OS_IOS)
@@ -52,8 +54,10 @@ class ChromeBreakpadClient : public breakpad::BreakpadClient {
 
   virtual bool IsRunningUnattended() OVERRIDE;
 
-#if defined(OS_WIN) || defined(OS_MACOSX)
   virtual bool GetCollectStatsConsent() OVERRIDE;
+
+#if defined(OS_WIN) || defined(OS_MACOSX)
+  virtual bool ReportingIsEnforcedByPolicy(bool* breakpad_enabled) OVERRIDE;
 #endif
 
 #if defined(OS_ANDROID)

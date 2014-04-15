@@ -7,7 +7,9 @@ native applications with all Web technologies.
 
 It's created and developed in the Intel Open Source Technology Center.
 
-[Introduction to node-webkit (slides)](https://speakerdeck.com/u/zcbenz/p/node-webkit-app-runtime-based-on-chromium-and-node-dot-js).
+[Introduction to node-webkit (slides)](https://speakerdeck.com/u/zcbenz/p/node-webkit-app-runtime-based-on-chromium-and-node-dot-js)   
+[Creating Desktop Applications With node-webkit](http://strongloop.com/strongblog/creating-desktop-applications-with-node-webkit/)     
+[WebApp to DesktopApp with node-webkit (slides)](http://oldgeeksguide.github.io/presentations/html5devconf2013/wtod.html)
 
 ## Features
 
@@ -18,13 +20,22 @@ It's created and developed in the Intel Open Source Technology Center.
 * Available on Linux, Mac OSX and Windows
 
 ## Downloads
-[v0.7.5 release notes](https://groups.google.com/d/msg/node-webkit/4VBQuHO2H0c/UAdc2O1ZiBwJ)
+[v0.9.2 release notes](https://groups.google.com/d/msg/node-webkit/qpBhcWr-hSc/caGjhtl8cEgJ)
 
-Prebuilt binaries (v0.7.5 - Sep 18, 2013):
+Prebuilt binaries (v0.9.2 - Feb 20, 2014):
 
-* Linux: [32bit](https://s3.amazonaws.com/node-webkit/v0.7.5/node-webkit-v0.7.5-linux-ia32.tar.gz) / [64bit] (https://s3.amazonaws.com/node-webkit/v0.7.5/node-webkit-v0.7.5-linux-x64.tar.gz)
-* Windows: [win32](https://s3.amazonaws.com/node-webkit/v0.7.5/node-webkit-v0.7.5-win-ia32.zip)
-* Mac: [32bit, 10.7+](https://s3.amazonaws.com/node-webkit/v0.7.5/node-webkit-v0.7.5-osx-ia32.zip)
+* Linux: [32bit](http://dl.node-webkit.org/v0.9.2/node-webkit-v0.9.2-linux-ia32.tar.gz) / [64bit] (http://dl.node-webkit.org/v0.9.2/node-webkit-v0.9.2-linux-x64.tar.gz)
+* Windows: [win32](http://dl.node-webkit.org/v0.9.2/node-webkit-v0.9.2-win-ia32.zip)
+* Mac: [32bit, 10.7+](http://dl.node-webkit.org/v0.9.2/node-webkit-v0.9.2-osx-ia32.zip)
+
+**If your native Node module works only with Node v0.10, then you should use node-webkit v0.8.x, which is also a maintained branch. [More info](https://groups.google.com/d/msg/node-webkit/2OJ1cEMPLlA/09BvpTagSA0J)**  
+[v0.8.5 release notes](https://groups.google.com/d/msg/node-webkit/Izwu5icHFOQ/0A-3uEKfldkJ)
+
+Prebuilt binaries (v0.8.5 - Feb 26, 2014):
+
+* Linux: [32bit](http://dl.node-webkit.org/v0.8.5/node-webkit-v0.8.5-linux-ia32.tar.gz) / [64bit] (http://dl.node-webkit.org/v0.8.5/node-webkit-v0.8.5-linux-x64.tar.gz)
+* Windows: [win32](http://dl.node-webkit.org/v0.8.5/node-webkit-v0.8.5-win-ia32.zip)
+* Mac: [32bit, 10.7+](http://dl.node-webkit.org/v0.8.5/node-webkit-v0.8.5-osx-ia32.zip)
 
 [Looking for older versions?](https://github.com/rogerwang/node-webkit/wiki/Downloads-of-old-versions)
 
@@ -93,9 +104,13 @@ And our [Wiki](https://github.com/rogerwang/node-webkit/wiki) for much more.
 ## Community
 
 We use the [node-webkit group](http://groups.google.com/group/node-webkit) as
-our mailing list. Subscribe via [node-webkit+subscribe@googlegroups.com](mailto:node-webkit+subscribe@googlegroups.com).
+our mailing list (use English only). Subscribe via [node-webkit+subscribe@googlegroups.com](mailto:node-webkit+subscribe@googlegroups.com).
 Issues are being tracked here on GitHub.
+
+You can chat with us on IRC in the ##node-webkit channel on irc.freenode.net  
 
 ## License
 
 `node-webkit`'s code in this repo uses the MIT license, see our `LICENSE` file. To redistribute the binary, see [How to package and distribute your apps](https://github.com/rogerwang/node-webkit/wiki/How-to-package-and-distribute-your-apps)
+
+[![Analytics](https://ga-beacon.appspot.com/UA-27805459-2/node-webkit/index)](https://github.com/igrigorik/ga-beacon)

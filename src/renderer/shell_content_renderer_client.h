@@ -26,7 +26,7 @@
 #include "content/public/renderer/content_renderer_client.h"
 #include "v8/include/v8.h"
 
-namespace api {
+namespace nwapi {
 class WindowBindings;
 }
 
@@ -48,9 +48,15 @@ class ShellContentRendererClient : public ContentRendererClient {
   virtual bool WillSetSecurityToken(WebKit::WebFrame* frame,
                                     v8::Handle<v8::Context>) OVERRIDE;
 
+  virtual void willHandleNavigationPolicy(RenderView* rv,
+                                          WebKit::WebFrame* frame,
+                                          const WebKit::WebURLRequest& request,
+                                          WebKit::WebNavigationPolicy* policy) OVERRIDE;
+
  private:
   scoped_ptr<ShellRenderProcessObserver> shell_observer_;
-  scoped_ptr<api::WindowBindings> window_bindings_;;
+
+  scoped_ptr<nwapi::WindowBindings> window_bindings_;
 
   void InstallNodeSymbols(WebKit::WebFrame* frame,
                           v8::Handle<v8::Context> context, const GURL& url);

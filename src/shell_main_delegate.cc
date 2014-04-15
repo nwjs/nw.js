@@ -59,6 +59,7 @@ using base::FilePath;
 #if defined(OS_WIN)
 #include "base/logging_win.h"
 #include <initguid.h>
+#include "content/nw/src/breakpad_win.h"
 #endif
 
 #include "ipc/ipc_message.h"  // For IPC_MESSAGE_LOG_ENABLED.
@@ -137,20 +138,24 @@ bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
 
 void ShellMainDelegate::PreSandboxStartup() {
   breakpad::SetBreakpadClient(g_chrome_breakpad_client.Pointer());
+  CommandLine* command_line = CommandLine::ForCurrentProcess();
+  std::string pref_locale;
+  if (command_line->HasSwitch(switches::kLang)) {
+    pref_locale = command_line->GetSwitchValueASCII(switches::kLang);
+  }
 
 #if defined(OS_MACOSX)
   OverrideFrameworkBundlePath();
   OverrideChildProcessPath();
   l10n_util::OverrideLocaleWithUserDefault();
 #endif  // OS_MACOSX
-  InitializeResourceBundle();
+  InitializeResourceBundle(pref_locale);
 
-  CommandLine* command_line = CommandLine::ForCurrentProcess();
   std::string process_type =
       command_line->GetSwitchValueASCII(switches::kProcessType);
 
   if (process_type != switches::kZygoteProcess)
-    InitCrashReporter();
+    breakpad::InitCrashReporter();
 
   // Just prevent sandbox.
   command_line->AppendSwitch(switches::kNoSandbox);
@@ -166,8 +171,6 @@ void ShellMainDelegate::PreSandboxStartup() {
 
   // Allow file:// URIs can read other file:// URIs by default.
   command_line->AppendSwitch(switches::kAllowFileAccessFromFiles);
-  command_line->AppendSwitch(switches::kEnableExperimentalWebPlatformFeatures);
-  command_line->AppendSwitch(switches::kEnableCssShaders);
 }
 
 int ShellMainDelegate::RunProcess(
@@ -179,15 +182,19 @@ int ShellMainDelegate::RunProcess(
   return ShellBrowserMain(main_function_params);
 }
 
-void ShellMainDelegate::InitializeResourceBundle() {
+void ShellMainDelegate::InitializeResourceBundle(const std::string& pref_locale) {
   FilePath pak_file;
 #if defined(OS_MACOSX)
   FilePath locale_file;
   if (!GetResourcesPakFilePath(pak_file))
     LOG(FATAL) << "nw.pak file not found.";
-  std::string locale = l10n_util::GetApplicationLocale(std::string());
-  if (!GetLocalePakFilePath(locale, locale_file))
-    LOG(FATAL) << locale << ".pak file not found.";
+  std::string locale = l10n_util::GetApplicationLocale(pref_locale);
+  if (!GetLocalePakFilePath(locale, locale_file)) {
+    LOG(WARNING) << locale << ".pak file not found.";
+    locale = "en-US";
+    if (!GetLocalePakFilePath(locale, locale_file))
+      LOG(ERROR) << locale << ".pak file not found.";
+  }
   ui::ResourceBundle::InitSharedInstanceWithPakPath2(pak_file, locale_file);
 #else
   FilePath pak_dir;
@@ -212,7 +219,7 @@ ContentRendererClient* ShellMainDelegate::CreateContentRendererClient() {
 void ShellMainDelegate::ZygoteForked() {
   // Needs to be called after we have chrome::DIR_USER_DATA.  BrowserMain sets
   // this up for the browser process in a different manner.
-  InitCrashReporter();
+  breakpad::InitCrashReporter();
 }
 #endif
 

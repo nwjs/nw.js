@@ -30,11 +30,14 @@ class RenderView;
 
 // Get RenderView from current js context (only works under window context).
 content::RenderView* GetCurrentRenderView();
+content::RenderView* GetEnteredRenderView();
 
 // Get string from resource_id.
 base::StringPiece GetStringResource(int resource_id);
 
 namespace remote {
+
+v8::Handle<v8::Value> AllocateId(int routing_id);
 
 // Tell browser to allocate a new object.
 // function AllocateObject(id, name, options);

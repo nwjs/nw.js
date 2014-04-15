@@ -34,8 +34,9 @@
 		devtools.WebInspector.SettingsController.prototype.showSettingsScreen();
 		// source map feature  must be enabled first
 		// We cannot to reload it automatically or it  will crash
-		if(!devtools.document.getElementsByName('Enable source maps')[0].checked) {
-		    devtools.document.getElementsByName('Enable source maps')[0].checked = true;
+		if(!devtools.document.getElementsByName('Enable JS source maps')[0].checked || !devtools.document.getElementsByName('Enable CSS source maps')[0].checked) {
+		    devtools.document.getElementsByName('Enable JS source maps')[0].checked = true;
+		    devtools.document.getElementsByName('Enable CSS source maps')[0].checked = true;
 		}
 		else {
 		    // open scripts panel 

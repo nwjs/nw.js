@@ -28,6 +28,7 @@ var nwDispatcher = nwDispatcher || {};
   native function GetRoutingIDForCurrentContext();
   native function CreateShell();
 
+  native function AllocateId();
   native function AllocateObject();
   native function DeallocateObject();
   native function CallObjectMethod();
@@ -43,7 +44,7 @@ var nwDispatcher = nwDispatcher || {};
   nwDispatcher.allocateObject = function(object, option) {
     var v8_util = process.binding('v8_util');
 
-    var id = global.__nwObjectsRegistry.allocateId();
+    var id = AllocateId();
     AllocateObject(id, v8_util.getConstructorName(object), option);
 
     // Store object id and make it readonly
@@ -95,4 +96,5 @@ var nwDispatcher = nwDispatcher || {};
 
   nwDispatcher.crashRenderer = CrashRenderer;
   nwDispatcher.setCrashDumpDir = SetCrashDumpDir;
+  nwDispatcher.allocateId = AllocateId;
 })();

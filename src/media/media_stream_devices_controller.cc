@@ -8,6 +8,7 @@
 #include "content/nw/src/media/media_capture_devices_dispatcher.h"
 #include "content/nw/src/media/media_internals.h"
 #include "content/public/browser/browser_thread.h"
+#include "content/public/common/desktop_media_id.h"
 #include "content/public/common/media_stream_request.h"
 
 using content::BrowserThread;
@@ -115,10 +116,74 @@ const std::string& MediaStreamDevicesController::GetSecurityOriginSpec() const {
 void MediaStreamDevicesController::Accept(bool update_content_setting) {
   // Get the default devices for the request.
   content::MediaStreamDevices devices;
-  media::GetDefaultDevicesForProfile(
-                                     has_audio_,
-                                     has_video_,
-                                     &devices);
+  MediaCaptureDevicesDispatcher* dispatcher =
+      MediaInternals::GetInstance()->GetMediaCaptureDevicesDispatcher();
+  switch (request_.request_type) {
+  case content::MEDIA_OPEN_DEVICE: {
+    const content::MediaStreamDevice* device = NULL;
+    // For open device request pick the desired device or fall back to the
+    // first available of the given type.
+    if (request_.audio_type == content::MEDIA_DEVICE_AUDIO_CAPTURE) {
+      device = dispatcher->
+        GetRequestedAudioDevice(request_.requested_audio_device_id);
+      // TODO(wjia): Confirm this is the intended behavior.
+      if (!device) {
+        device = dispatcher->GetFirstAvailableAudioDevice();
+      }
+    } else if (request_.video_type == content::MEDIA_DEVICE_VIDEO_CAPTURE) {
+      // Pepper API opens only one device at a time.
+      device = dispatcher->GetRequestedVideoDevice(request_.requested_video_device_id);
+      // TODO(wjia): Confirm this is the intended behavior.
+      if (!device) {
+        device = dispatcher->GetFirstAvailableVideoDevice();
+      }
+    }
+    if (device)
+      devices.push_back(*device);
+    break;
+  } case content::MEDIA_GENERATE_STREAM: {
+      bool needs_audio_device = has_audio_;
+      bool needs_video_device = has_video_;
+
+      // Get the exact audio or video device if an id is specified.
+      if (!request_.requested_audio_device_id.empty()) {
+        const content::MediaStreamDevice* audio_device =
+          dispatcher->GetRequestedAudioDevice(request_.requested_audio_device_id);
+        if (audio_device) {
+          devices.push_back(*audio_device);
+          needs_audio_device = false;
+        }
+      }
+      if (!request_.requested_video_device_id.empty()) {
+        const content::MediaStreamDevice* video_device =
+          dispatcher->GetRequestedVideoDevice(request_.requested_video_device_id);
+        if (video_device) {
+          devices.push_back(*video_device);
+          needs_video_device = false;
+        }
+      }
+
+      // If either or both audio and video devices were requested but not
+      // specified by id, get the default devices.
+      if (needs_audio_device || needs_video_device) {
+        media::GetDefaultDevicesForProfile(
+                                      needs_audio_device,
+                                      needs_video_device,
+                                      &devices);
+      }
+      break;
+    } case content::MEDIA_DEVICE_ACCESS:
+    // Get the default devices for the request.
+    media::GetDefaultDevicesForProfile(
+                                  has_audio_,
+                                  has_video_,
+                                  &devices);
+    break;
+  case content::MEDIA_ENUMERATE_DEVICES:
+    // Do nothing.
+    NOTREACHED();
+    break;
+  }
 
   callback_.Run(devices, scoped_ptr<content::MediaStreamUI>());
 }
@@ -162,8 +227,10 @@ void MediaStreamDevicesController::HandleTapMediaRequest() {
           content::MEDIA_TAB_AUDIO_CAPTURE, "", ""));
   }
   if (request_.video_type == content::MEDIA_DESKTOP_VIDEO_CAPTURE) {
+    content::DesktopMediaID media_id =
+      content::DesktopMediaID::Parse(request_.requested_video_device_id);
     devices.push_back(content::MediaStreamDevice(
-          content::MEDIA_DESKTOP_VIDEO_CAPTURE, std::string(), "Screen"));
+          content::MEDIA_DESKTOP_VIDEO_CAPTURE, media_id.ToString(), "Screen"));
   }
 
   callback_.Run(devices, scoped_ptr<content::MediaStreamUI>());

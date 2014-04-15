@@ -182,7 +182,7 @@ bool Package::GetImage(const FilePath& icon_path, gfx::Image* image) {
 
   // Read the file from disk.
   std::string file_contents;
-  if (path.empty() || !file_util::ReadFileToString(path, &file_contents))
+  if (path.empty() || !base::ReadFileToString(path, &file_contents))
     return false;
 
   // Decode the bitmap using WebKit's image decoder.

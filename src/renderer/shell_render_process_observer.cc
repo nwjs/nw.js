@@ -28,6 +28,8 @@
 #include "content/shell/renderer/gc_extension.h"
 #include "webkit/glue/webkit_glue.h"
 #include "third_party/node/src/node.h"
+#undef CHECK
+#include "third_party/node/src/node_internals.h"
 #include "third_party/node/src/req_wrap.h"
 #include "third_party/WebKit/public/web/WebCache.h"
 #include "third_party/WebKit/public/web/WebRuntimeFeatures.h"
@@ -60,23 +62,20 @@ bool ShellRenderProcessObserver::OnControlMessageReceived(
 
 void ShellRenderProcessObserver::OnRenderProcessWillShutdown() {
   // process.emit('exit');
-  node::EmitExit(node::process);
-  node::RunAtExit();
+  node::EmitExit(node::g_env);
+  node::RunAtExit(node::g_env);
 }
 
 void ShellRenderProcessObserver::WebKitInitialized() {
   webkit_initialized_ = true;
-  RenderThread::Get()->RegisterExtension(new api::DispatcherBindings());
-  WebRuntimeFeatures::enableStableFeatures(true);
-  WebRuntimeFeatures::enableExperimentalFeatures(true);
+  RenderThread::Get()->RegisterExtension(new nwapi::DispatcherBindings());
 }
 
 void ShellRenderProcessObserver::OnOpen(const std::string& path) {
   v8::HandleScope handle_scope;
 
   // the App object is stored in process["_nw_app"].
-  v8::Local<v8::Object> process = node::g_context->Global()->Get(
-      node::process_symbol)->ToObject();
+  v8::Local<v8::Object> process = node::g_env->process_object();
   v8::Local<v8::String> app_symbol = v8::String::NewSymbol("_nw_app");
   if (process->Has(app_symbol)) {
     // process["_nw_app"].emit(path).
@@ -94,8 +93,7 @@ void ShellRenderProcessObserver::OnReopen() {
   v8::HandleScope handle_scope;
 
   // the App object is stored in process["_nw_app"].
-  v8::Local<v8::Object> process = node::g_context->Global()->Get(
-      node::process_symbol)->ToObject();
+  v8::Local<v8::Object> process = node::g_env->process_object();
   v8::Local<v8::String> app_symbol = v8::String::NewSymbol("_nw_app");
   if (process->Has(app_symbol)) {
     // process["_nw_app"].emit(path).

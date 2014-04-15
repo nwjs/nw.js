@@ -26,7 +26,7 @@
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/menuitem/menuitem_delegate_mac.h"
 
-namespace api {
+namespace nwapi {
 
 void MenuItem::Create(const base::DictionaryValue& option) {
   std::string type;
@@ -125,4 +125,4 @@ void MenuItem::SetSubmenu(Menu* sub_menu) {
   [menu_item_ setSubmenu:sub_menu->menu_];
 }
 
-}  // namespace api
+}  // namespace nwapi

@@ -170,7 +170,7 @@ void PrintWebViewHelper::RenderPage(
   gfx::Rect canvas_area =
       params.display_header_footer ? gfx::Rect(page_size) : content_area;
 
-  SkDevice* device = metafile->StartPageForVectorCanvas(
+  SkBaseDevice* device = metafile->StartPageForVectorCanvas(
       page_size, canvas_area, scale_factor);
   DCHECK(device);
   // The printPage method may take a reference to the canvas we pass down, so it

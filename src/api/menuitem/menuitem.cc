@@ -27,10 +27,10 @@
 
 #include <string.h>
 
-namespace api {
+namespace nwapi {
 
 MenuItem::MenuItem(int id,
-                   DispatcherHost* dispatcher_host,
+                   const base::WeakPtr<DispatcherHost>& dispatcher_host,
                    const base::DictionaryValue& option)
     : Base(id, dispatcher_host, option) {
   Create(option);
@@ -72,4 +72,4 @@ void MenuItem::Call(const std::string& method,
   }
 }
 
-}  // namespace api
+}  // namespace nwapi

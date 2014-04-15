@@ -77,7 +77,6 @@ class ShellBrowserMainParts : public BrowserMainParts {
   bool run_message_loop_;
 
   ShellDevToolsDelegate* devtools_delegate_;
-  content::RenderViewHost::CreatedCallback rvh_callback_;
   ProcessSingleton::NotifyResult notify_result_;
 
   //base::WeakPtrFactory<ShellBrowserMainParts> weak_factory_;

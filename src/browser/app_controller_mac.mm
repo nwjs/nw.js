@@ -48,7 +48,7 @@
 
   if (package->self_extract()) {
     // Let the app deal with the opening event if it's a standalone app.
-    api::App::EmitOpenEvent([filename UTF8String]);
+    nwapi::App::EmitOpenEvent([filename UTF8String]);
   } else {
     // Or open a new app in the runtime mode.
   }
@@ -86,7 +86,7 @@
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication
                     hasVisibleWindows:(BOOL)flag {
-  api::App::EmitReopenEvent();
+  nwapi::App::EmitReopenEvent();
   return YES;
 }
 

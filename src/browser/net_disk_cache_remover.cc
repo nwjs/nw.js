@@ -32,7 +32,8 @@ void Noop(base::WaitableEvent* completion, int rv) {
 
 void CallDoomAllEntries(Backend** backend, base::WaitableEvent* completion, int rv) {
   DCHECK(rv == net::OK);
-  (*backend)->DoomAllEntries(base::Bind(&Noop, completion));
+  if (backend && *backend)
+    (*backend)->DoomAllEntries(base::Bind(&Noop, completion));
 }
 
 void ClearHttpDiskCacheOfContext(URLRequestContextGetter* context_getter,

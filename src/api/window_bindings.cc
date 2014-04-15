@@ -27,15 +27,26 @@
 #include "grit/nw_resources.h"
 #undef LOG
 using namespace WebCore;
+#if defined(OS_WIN)
+#define _USE_MATH_DEFINES
+#include <math.h>
+#endif
 
-#include "V8HTMLIFrameElement.h"
+
+#include "third_party/WebKit/Source/config.h"
 #include "third_party/WebKit/Source/core/html/HTMLIFrameElement.h"
 #include "third_party/WebKit/public/web/WebFrame.h"
 #include "third_party/WebKit/public/web/WebView.h"
 #include "third_party/WebKit/Source/web/WebFrameImpl.h"
+#include "third_party/WebKit/public/web/WebScriptSource.h"
 
+#undef CHECK
+#include "V8HTMLIFrameElement.h"
 
-namespace api {
+using WebKit::WebScriptSource;
+using WebKit::WebFrame;
+
+namespace nwapi {
 
 WindowBindings::WindowBindings()
     : v8::Extension("window_bindings.js",
@@ -60,6 +71,8 @@ WindowBindings::GetNativeFunction(v8::Handle<v8::String> name) {
     return v8::FunctionTemplate::New(CallObjectMethodSync);
   else if (name->Equals(v8::String::New("GetWindowObject")))
     return v8::FunctionTemplate::New(GetWindowObject);
+  else if (name->Equals(v8::String::New("AllocateId")))
+    return v8::FunctionTemplate::New(AllocateId);
 
   return v8::FunctionTemplate::New();
 }
@@ -75,6 +88,14 @@ WindowBindings::BindToShell(const v8::FunctionCallbackInfo<v8::Value>& args) {
   args.GetReturnValue().Set(v8::Undefined());
 }
 
+void
+WindowBindings::AllocateId(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  content::RenderViewImpl* render_view = static_cast<content::RenderViewImpl*>(GetEnteredRenderView());
+  int routing_id = render_view->GetRoutingID();
+
+  args.GetReturnValue().Set(remote::AllocateId(routing_id));
+}
+
 // static
 void
 WindowBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args) {
@@ -84,14 +105,37 @@ WindowBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args
   std::string method = *v8::String::Utf8Value(args[1]);
   content::RenderViewImpl* render_view = static_cast<content::RenderViewImpl*>(
                                                                                  content::RenderViewImpl::FromRoutingID(routing_id));
+  if (!render_view)
+    render_view = static_cast<content::RenderViewImpl*>(GetEnteredRenderView());
+
   if (!render_view) {
     std::string msg = "Unable to get render view in " + method;
     args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(msg.c_str()))));
     return;
   }
 
-  if (method == "setDevToolsJail") {
-    WebKit::WebFrame* main_frame = render_view->GetWebView()->mainFrame();
+  WebFrame* main_frame = render_view->GetWebView()->mainFrame();
+  if (method == "EvaluateScript") {
+    v8::Handle<v8::Value> result;
+    v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[2]);
+    WebFrame* web_frame = NULL;
+    if (frm->IsNull()) {
+      web_frame = main_frame;
+    }else{
+      WebCore::HTMLIFrameElement* iframe = WebCore::V8HTMLIFrameElement::toNative(frm);
+      web_frame = WebKit::WebFrameImpl::fromFrame(iframe->contentFrame());
+    }
+#if defined(OS_WIN)
+    base::string16 jscript((WCHAR*)*v8::String::Value(args[3]));
+#else
+    base::string16 jscript = *v8::String::Value(args[3]);
+#endif
+    if (web_frame) {
+      result = web_frame->executeScriptAndReturnValue(WebScriptSource(jscript));
+    }
+    args.GetReturnValue().Set(result);
+    return;
+  } else if (method == "setDevToolsJail") {
     v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[2]);
     if (frm->IsNull()) {
       main_frame->setDevtoolsJail(NULL);
@@ -103,7 +147,9 @@ WindowBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args
     return;
   }
 
-  args.GetReturnValue().Set(remote::CallObjectMethod(routing_id, object_id, "Window", method, args[2]));
+  args.GetReturnValue().Set(remote::CallObjectMethod(render_view->GetRoutingID(),
+                                                     object_id,
+                                                     "Window", method, args[2]));
 }
 
 // static
@@ -134,6 +180,7 @@ WindowBindings::CallObjectMethodSync(const v8::FunctionCallbackInfo<v8::Value>& 
     double zoom_level = args[2]->ToNumber()->Value();
     render_view->OnSetZoomLevel(zoom_level);
     args.GetReturnValue().Set(v8::Undefined());
+    return;
   }
   args.GetReturnValue().Set(remote::CallObjectMethodSync(routing_id, object_id, "Window", method, args[2]));
 }
@@ -154,4 +201,4 @@ WindowBindings::GetWindowObject(const v8::FunctionCallbackInfo<v8::Value>& args)
   args.GetReturnValue().Set(render_view->GetWebView()->mainFrame()->mainWorldScriptContext()->Global());
 }
 
-}  // namespace api
+}  // namespace nwapi

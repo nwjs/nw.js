@@ -48,6 +48,7 @@
 #include "content/public/common/renderer_preferences.h"
 #include "content/public/common/url_constants.h"
 #include "content/nw/src/api/api_messages.h"
+#include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/app/app.h"
 #include "content/nw/src/browser/browser_dialogs.h"
 #include "content/nw/src/browser/file_select_helper.h"
@@ -60,6 +61,8 @@
 #include "content/nw/src/shell_browser_context.h"
 #include "content/nw/src/shell_browser_main_parts.h"
 #include "content/nw/src/shell_content_browser_client.h"
+#include "content/nw/src/shell_devtools_frontend.h"
+
 #include "grit/nw_resources.h"
 #include "net/base/escape.h"
 #include "ui/base/resource/resource_bundle.h"
@@ -91,7 +94,18 @@ Shell* Shell::Create(BrowserContext* browser_context,
                      int routing_id,
                      WebContents* base_web_contents) {
   WebContents::CreateParams create_params(browser_context, site_instance);
+
+  std::string filename;
+  base::DictionaryValue* manifest = GetPackage()->root();
+  if (manifest->GetString(switches::kmInjectJSDocStart, &filename))
+    create_params.nw_inject_js_doc_start = filename;
+  if (manifest->GetString(switches::kmInjectJSDocEnd, &filename))
+    create_params.nw_inject_js_doc_end = filename;
+  if (manifest->GetString(switches::kmInjectCSS, &filename))
+    create_params.nw_inject_css_fn = filename;
+
   create_params.routing_id = routing_id;
+
   WebContents* web_contents = WebContents::Create(create_params);
 
   Shell* shell = new Shell(web_contents, GetPackage()->window());
@@ -117,6 +131,10 @@ Shell* Shell::Create(WebContents* source_contents,
     params.transition_type = PageTransitionFromInt(PAGE_TRANSITION_TYPED);
     params.override_user_agent = NavigationController::UA_OVERRIDE_TRUE;
     params.frame_name = std::string();
+
+    int nw_win_id = 0;
+    manifest->GetInteger("nw_win_id", &nw_win_id);
+    params.nw_win_id = nw_win_id;
 
     new_contents->GetController().LoadURLWithParams(params);
   }
@@ -148,12 +166,13 @@ Shell* Shell::FromRenderViewHost(RenderViewHost* rvh) {
 }
 
 Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
-    :
-      is_devtools_(false),
-      force_close_(false),
-      id_(-1),
-      enable_nodejs_(true),
-      weak_ptr_factory_(this)
+  : content::WebContentsObserver(web_contents),
+  devtools_window_id_(0),
+  is_devtools_(false),
+  force_close_(false),
+  id_(-1),
+  enable_nodejs_(true),
+  weak_ptr_factory_(this)
 {
   // Register shell.
   registrar_.Add(this, NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,
@@ -187,6 +206,23 @@ Shell::~Shell() {
 
   if (is_devtools_ && devtools_owner_.get()) {
     devtools_owner_->SendEvent("devtools-closed");
+    nwapi::DispatcherHost* dhost = nwapi::FindDispatcherHost(devtools_owner_->web_contents_->GetRenderViewHost());
+    if (devtools_owner_->devtools_window_id_) {
+      dhost->OnDeallocateObject(devtools_owner_->devtools_window_id_);
+      devtools_owner_->devtools_window_id_ = 0;
+    }else if (id_) {
+      //FIXME: the ownership/ flow of window and shell destruction
+      //need to be cleared
+
+      // In linux, Shell destruction will be called immediately in
+      // CloseDevTools but in OSX it won't
+      dhost->OnDeallocateObject(id_);
+    }
+  }
+
+  if (!is_devtools_ && id_ > 0) {
+    nwapi::DispatcherHost* dhost = nwapi::FindDispatcherHost(web_contents_->GetRenderViewHost());
+    dhost->OnDeallocateObject(id_);
   }
 
   for (size_t i = 0; i < windows_.size(); ++i) {
@@ -200,11 +236,23 @@ Shell::~Shell() {
     }
   }
 
-  if (windows_.empty() && quit_message_loop_)
-    api::App::Quit(web_contents()->GetRenderProcessHost());
+  if (windows_.empty() && quit_message_loop_) {
+    // If Window object is not clearred here, the Window destructor
+    // will be called at exit and block the thread exiting on
+    // Notification registrar destruction
+    nwapi::DispatcherHost::ClearObjectRegistry();
+    nwapi::App::Quit(web_contents()->GetRenderProcessHost());
+  }
 }
 
 void Shell::SendEvent(const std::string& event, const std::string& arg1) {
+  base::ListValue args;
+  if (!arg1.empty())
+    args.AppendString(arg1);
+  SendEvent(event, args);
+}
+
+void Shell::SendEvent(const std::string& event, const base::ListValue& args) {
 
   if (id() < 0)
     return;
@@ -212,19 +260,21 @@ void Shell::SendEvent(const std::string& event, const std::string& arg1) {
   DVLOG(1) << "Shell::SendEvent " << event << " id():"
            << id() << " RoutingID: " << web_contents()->GetRoutingID();
 
-  base::ListValue args;
-  if (!arg1.empty())
-    args.AppendString(arg1);
+  WebContents* web_contents;
+  if (is_devtools_ && devtools_owner_.get())
+    web_contents = devtools_owner_->web_contents();
+  else
+    web_contents = this->web_contents();
 
-  web_contents()->GetRenderViewHost()->Send(new ShellViewMsg_Object_On_Event(
-      web_contents()->GetRoutingID(), id(), event, args));
+  web_contents->GetRenderViewHost()->Send(new ShellViewMsg_Object_On_Event(
+      web_contents->GetRoutingID(), id(), event, args));
 }
 
-bool Shell::ShouldCloseWindow() {
+bool Shell::ShouldCloseWindow(bool quit) {
   if (id() < 0 || force_close_)
     return true;
 
-  SendEvent("close");
+  SendEvent("close", quit ? "quit" : "");
   return false;
 }
 
@@ -322,6 +372,20 @@ void Shell::CloseDevTools() {
     return;
   devtools_window_->window()->Close();
   devtools_window_.reset();
+  devtools_window_id_ = 0;
+}
+
+int Shell::WrapDevToolsWindow() {
+  if (devtools_window_id_)
+    return devtools_window_id_;
+  if (!devtools_window_)
+    return 0;
+  nwapi::DispatcherHost* dhost = nwapi::FindDispatcherHost(devtools_window_->web_contents_->GetRenderViewHost());
+  int object_id = dhost->AllocateId();
+  base::DictionaryValue manifest;
+  dhost->OnAllocateObject(object_id, "Window", manifest);
+  devtools_window_id_ = object_id;
+  return object_id;
 }
 
 void Shell::ShowDevTools(const char* jail_id, bool headless) {
@@ -351,12 +415,13 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
 
   ShellDevToolsDelegate* delegate =
       browser_client->shell_browser_main_parts()->devtools_delegate();
-  GURL url = delegate->devtools_http_handler()->GetFrontendURL(agent.get());
+  GURL url = delegate->devtools_http_handler()->GetFrontendURL();
 
   SendEvent("devtools-opened", url.spec());
-
-  if (headless)
+  if (headless) {
+    // FIXME: DevToolsFrontendHost
     return;
+  }
 
   // Use our minimum set manifest
   base::DictionaryValue manifest;
@@ -375,6 +440,10 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
   WebContents::CreateParams create_params(web_contents()->GetBrowserContext(), NULL);
   WebContents* web_contents = WebContents::Create(create_params);
   Shell* shell = new Shell(web_contents, &manifest);
+
+  new ShellDevToolsFrontend(
+      shell,
+      DevToolsAgentHost::GetOrCreateFor(inspected_rvh).get());
 
   int rh_id = shell->web_contents_->GetRenderProcessHost()->GetID();
   ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, chrome::kFileScheme);
@@ -510,6 +579,10 @@ void Shell::WebContentsCreated(WebContents* source_contents,
 
   // don't pass the url on window.open case
   Shell::Create(source_contents, GURL::EmptyGURL(), manifest.get(), new_contents);
+
+  // in Chromium 32 RenderViewCreated will not be called so the case
+  // should be handled here
+  new nwapi::DispatcherHost(new_contents->GetRenderViewHost());
 }
 
 #if defined(OS_WIN)
@@ -601,6 +674,11 @@ GURL Shell::OverrideDOMStorageOrigin(const GURL& origin) {
   if (!is_devtools())
     return origin;
   return GURL("devtools://");
+}
+
+void Shell::RenderViewCreated(RenderViewHost* render_view_host) {
+  //FIXME: handle removal
+  new nwapi::DispatcherHost(render_view_host);
 }
 
 }  // namespace content

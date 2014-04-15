@@ -30,7 +30,7 @@
 #include "content/nw/src/browser/native_window_mac.h"
 #include "content/nw/src/nw_shell.h"
 
-namespace api {
+namespace nwapi {
 
 void Menu::Create(const base::DictionaryValue& option) {
   menu_ = [[NSMenu alloc] initWithTitle:@"NW Menu"];
@@ -96,4 +96,4 @@ void Menu::Popup(int x, int y, content::Shell* shell) {
   }
 }
 
-}  // namespace api
+}  // namespace nwapi

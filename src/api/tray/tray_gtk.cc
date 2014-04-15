@@ -24,7 +24,7 @@
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"
 
-namespace api {
+namespace nwapi {
 
 void Tray::Create(const base::DictionaryValue& option) {
   menu_ = NULL;
@@ -81,4 +81,4 @@ void Tray::OnPopupMenu(GtkWidget* widget, guint button, guint time) {
 void Tray::SetAltIcon(const std::string& alticon_path) {
 }
 
-}  // namespace api
+}  // namespace nwapi

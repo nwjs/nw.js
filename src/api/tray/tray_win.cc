@@ -32,7 +32,7 @@
 #include "content/nw/src/nw_shell.h"
 #include "ui/gfx/image/image.h"
 
-namespace api {
+namespace nwapi {
 
 StatusTray* Tray::status_tray_ = NULL;
 
@@ -107,4 +107,4 @@ void Tray::Remove() {
 void Tray::SetAltIcon(const std::string& alticon_path) {
 }
 
-}  // namespace api
+}  // namespace nwapi

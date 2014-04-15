@@ -87,11 +87,6 @@ base::StringPiece PlatformResourceProvider(int key) {
   return base::StringPiece();
 }
 
-void RenderViewHostCreated(content::RenderViewHost* render_view_host) {
-  //FIXME: handle removal
-  new api::DispatcherHost(render_view_host);
-}
-
 }  // namespace
 
 namespace content {
@@ -102,18 +97,15 @@ ShellBrowserMainParts::ShellBrowserMainParts(
       parameters_(parameters),
       run_message_loop_(true),
       devtools_delegate_(NULL),
-      rvh_callback_(base::Bind(&RenderViewHostCreated)),
       notify_result_(ProcessSingleton::PROCESS_NONE)
 {
 #if defined(ENABLE_PRINTING)
   // Must be created after the NotificationService.
   print_job_manager_.reset(new printing::PrintJobManager);
 #endif
-  content::RenderViewHost::AddCreatedCallback(rvh_callback_);
 }
 
 ShellBrowserMainParts::~ShellBrowserMainParts() {
-  content::RenderViewHost::RemoveCreatedCallback(rvh_callback_);
 }
 
 #if !defined(OS_MACOSX)
@@ -228,7 +220,7 @@ bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(
     switches::kNoSandbox,
     switches::kProcessPerTab,
     switches::kEnableExperimentalWebPlatformFeatures,
-    switches::kEnableCssShaders,
+    //    switches::kEnableCssShaders,
     switches::kAllowFileAccessFromFiles,
   };
   for (size_t i = 0; i < arraysize(kSwitchNames); ++i) {
@@ -236,9 +228,9 @@ bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(
   }
 
 #if 0
-  api::App::EmitOpenEvent(UTF16ToUTF8(cmd));
+  nwapi::App::EmitOpenEvent(UTF16ToUTF8(cmd));
 #else
-  api::App::EmitOpenEvent(cmd);
+  nwapi::App::EmitOpenEvent(cmd);
 #endif
 
   return true;

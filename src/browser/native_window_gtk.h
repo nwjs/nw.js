@@ -22,6 +22,7 @@
 #define CONTENT_NW_SRC_BROWSER_NATIVE_WINDOW_GTK_H_
 
 #include <gtk/gtk.h>
+#include <gdk/gdk.h>
 
 #include "content/nw/src/browser/native_window.h"
 #include "third_party/skia/include/core/SkRegion.h"
@@ -60,9 +61,10 @@ class NativeWindowGtk : public NativeWindow {
   virtual gfx::Point GetPosition() OVERRIDE;
   virtual void SetTitle(const std::string& title) OVERRIDE;
   virtual void FlashFrame(bool flash) OVERRIDE;
+  virtual void SetBadgeLabel(const std::string& badge) OVERRIDE;
   virtual void SetKiosk(bool kiosk) OVERRIDE;
   virtual bool IsKiosk() OVERRIDE;
-  virtual void SetMenu(api::Menu* menu) OVERRIDE;
+  virtual void SetMenu(nwapi::Menu* menu) OVERRIDE;
   virtual void SetInitialFocus(bool initial_focus) OVERRIDE;
   virtual bool InitialFocus() OVERRIDE;
   virtual void SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
@@ -73,6 +75,8 @@ class NativeWindowGtk : public NativeWindow {
 
   GtkWindow* window() const { return window_; }
 
+  bool IsMinimized() const;
+  bool IsMaximized() const;
  protected:
   // NativeWindow implementation.
   virtual void AddToolbar() OVERRIDE;
@@ -93,6 +97,11 @@ class NativeWindowGtk : public NativeWindow {
   // Get the position and size of the current window.
   gfx::Rect GetBounds();
 
+  // If the point (|x|, |y|) is within the resize border area of the window,
+  // returns true and sets |edge| to the appropriate GdkWindowEdge value.
+  // Otherwise, returns false.
+  bool GetWindowEdge(int x, int y, GdkWindowEdge* edge);
+
   CHROMEGTK_CALLBACK_0(NativeWindowGtk, void, OnBackButtonClicked);
   CHROMEGTK_CALLBACK_0(NativeWindowGtk, void, OnForwardButtonClicked);
   CHROMEGTK_CALLBACK_0(NativeWindowGtk, void, OnRefreshStopButtonClicked);
@@ -109,6 +118,10 @@ class NativeWindowGtk : public NativeWindow {
                        GdkEvent*);
   CHROMEGTK_CALLBACK_1(NativeWindowGtk, gboolean, OnButtonPress,
                        GdkEventButton*);
+  CHROMEGTK_CALLBACK_1(NativeWindowGtk, gboolean, OnMouseMoveEvent,
+                       GdkEventMotion*);
+  CHROMEGTK_CALLBACK_1(NativeWindowGtk, gboolean, OnWindowConfigureEvent,
+                       GdkEvent*);
 
   GtkWindow* window_;
   GtkWidget* toolbar_;
@@ -119,6 +132,7 @@ class NativeWindowGtk : public NativeWindow {
   GtkToolItem* refresh_stop_button_;
   GtkToolItem* devtools_button_;
   GtkToolItem* dev_reload_button_;
+  GdkWindowState state_;
 
   // True if the RVH is in fullscreen mode. The window may not actually be in
   // fullscreen, however: some WMs don't support fullscreen.
@@ -131,6 +145,18 @@ class NativeWindowGtk : public NativeWindow {
   // If true, don't call gdk_window_raise() when we get a click in the title
   // bar or window border.  This is to work around a compiz bug.
   bool suppress_window_raise_;
+
+  // The current window cursor.  We set it to a resize cursor when over the
+  // custom frame border.  We set it to NULL if we want the default cursor.
+  GdkCursor* frame_cursor_;
+
+  // True if the window should be resizable by the user.
+  bool resizable_;
+
+  int last_x_;
+  int last_y_;
+  int last_width_;
+  int last_height_;
 
   DISALLOW_COPY_AND_ASSIGN(NativeWindowGtk);
 };

@@ -36,8 +36,8 @@ using content::V8ValueConverter;
 using WebKit::WebFrame;
 using WebKit::WebView;
 
-RenderView* GetCurrentRenderView() {
-  v8::Local<v8::Context> ctx = v8::Context::GetEntered();
+namespace {
+RenderView* GetRenderView(v8::Handle<v8::Context> ctx) {
   WebFrame* frame = WebFrame::frameForContext(ctx);
   if (!frame)
     return NULL;
@@ -50,11 +50,33 @@ RenderView* GetCurrentRenderView() {
   return render_view;
 }
 
+}
+
+RenderView* GetCurrentRenderView() {
+  v8::Local<v8::Context> ctx = v8::Context::GetCurrent();
+  return GetRenderView(ctx);
+}
+
+RenderView* GetEnteredRenderView() {
+  v8::Local<v8::Context> ctx = v8::Context::GetEntered();
+  return GetRenderView(ctx);
+}
+
 base::StringPiece GetStringResource(int resource_id) {
   return ResourceBundle::GetSharedInstance().GetRawDataResource(resource_id);
 }
 
 namespace remote {
+
+v8::Handle<v8::Value> AllocateId(int routing_id) {
+  v8::HandleScope scope;
+
+  int result = 0;
+  RenderThread::Get()->Send(new ShellViewHostMsg_AllocateId(
+      routing_id,
+      &result));
+  return scope.Close(v8::Integer::New(result));
+}
 
 v8::Handle<v8::Value> AllocateObject(int routing_id,
                                      int object_id,

@@ -23,14 +23,19 @@
 #include "base/logging.h"
 #include "base/strings/string_split.h"
 #include "base/strings/string_util.h"
+#include "base/threading/sequenced_worker_pool.h"
 #include "base/threading/worker_pool.h"
+#include "chrome/browser/chrome_notification_types.h"
+#include "chrome/browser/net/chrome_cookie_notification_details.h"
 #include "content/public/browser/browser_thread.h"
+#include "content/public/browser/notification_service.h"
 #include "content/public/common/url_constants.h"
 #include "content/nw/src/net/shell_network_delegate.h"
 #include "content/public/browser/cookie_store_factory.h"
 #include "content/nw/src/net/app_protocol_handler.h"
 #include "content/nw/src/nw_protocol_handler.h"
 #include "content/nw/src/nw_shell.h"
+#include "content/nw/src/shell_content_browser_client.h"
 #include "net/cert/cert_verifier.h"
 #include "net/ssl/default_server_bound_cert_store.h"
 #include "net/dns/host_resolver.h"
@@ -38,6 +43,7 @@
 #include "net/ssl/server_bound_cert_service.h"
 #include "net/ssl/ssl_config_service_defaults.h"
 #include "net/cookies/cookie_monster.h"
+#include "net/http/http_auth_filter.h"
 #include "net/http/http_auth_handler_factory.h"
 #include "net/http/http_cache.h"
 #include "net/http/http_network_session.h"
@@ -53,6 +59,7 @@
 #include "net/url_request/url_request_context.h"
 #include "net/url_request/url_request_context_storage.h"
 #include "net/url_request/url_request_job_factory_impl.h"
+#include "ui/base/l10n/l10n_util.h"
 
 using base::MessageLoop;
 
@@ -73,6 +80,43 @@ void InstallProtocolHandlers(net::URLRequestJobFactoryImpl* job_factory,
   protocol_handlers->clear();
 }
 
+// ----------------------------------------------------------------------------
+// CookieMonster::Delegate implementation
+// ----------------------------------------------------------------------------
+class NWCookieMonsterDelegate : public net::CookieMonster::Delegate {
+ public:
+  explicit NWCookieMonsterDelegate(ShellBrowserContext* browser_context)
+    : browser_context_(browser_context) {
+  }
+
+  // net::CookieMonster::Delegate implementation.
+  virtual void OnCookieChanged(
+      const net::CanonicalCookie& cookie,
+      bool removed,
+      net::CookieMonster::Delegate::ChangeCause cause) OVERRIDE {
+    BrowserThread::PostTask(
+        BrowserThread::UI, FROM_HERE,
+        base::Bind(&NWCookieMonsterDelegate::OnCookieChangedAsyncHelper,
+                   this, cookie, removed, cause));
+  }
+
+ private:
+  virtual ~NWCookieMonsterDelegate() {}
+
+  void OnCookieChangedAsyncHelper(
+      const net::CanonicalCookie& cookie,
+      bool removed,
+      net::CookieMonster::Delegate::ChangeCause cause) {
+    ChromeCookieDetails cookie_details(&cookie, removed, cause);
+      content::NotificationService::current()->Notify(
+          chrome::NOTIFICATION_COOKIE_CHANGED,
+          content::Source<ShellBrowserContext>(browser_context_),
+          content::Details<ChromeCookieDetails>(&cookie_details));
+  }
+
+  ShellBrowserContext* browser_context_;
+};
+
 }  // namespace
 
 
@@ -82,12 +126,24 @@ ShellURLRequestContextGetter::ShellURLRequestContextGetter(
     const FilePath& root_path,
     MessageLoop* io_loop,
     MessageLoop* file_loop,
-    ProtocolHandlerMap* protocol_handlers)
+    ProtocolHandlerMap* protocol_handlers,
+    ShellBrowserContext* browser_context,
+    const std::string& auth_schemes,
+    const std::string& auth_server_whitelist,
+    const std::string& auth_delegate_whitelist,
+    const std::string& gssapi_library_name)
     : ignore_certificate_errors_(ignore_certificate_errors),
       data_path_(data_path),
       root_path_(root_path),
+      auth_schemes_(auth_schemes),
+      negotiate_disable_cname_lookup_(false),
+      negotiate_enable_port_(false),
+      auth_server_whitelist_(auth_server_whitelist),
+      auth_delegate_whitelist_(auth_delegate_whitelist),
+      gssapi_library_name_(gssapi_library_name),
       io_loop_(io_loop),
-      file_loop_(file_loop) {
+      file_loop_(file_loop),
+      browser_context_(browser_context) {
   // Must first be created on the UI thread.
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
 
@@ -108,7 +164,11 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::IO));
 
   if (!url_request_context_.get()) {
-    url_request_context_.reset(new net::URLRequestContext());
+    ShellContentBrowserClient* browser_client =
+      static_cast<ShellContentBrowserClient*>(
+          GetContentClient()->browser());
+
+  url_request_context_.reset(new net::URLRequestContext());
     network_delegate_.reset(new ShellNetworkDelegate);
     url_request_context_->set_network_delegate(network_delegate_.get());
     storage_.reset(
@@ -120,7 +180,7 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
         cookie_path,
         false,
         NULL,
-        NULL);
+        new NWCookieMonsterDelegate(browser_context_));
     cookie_store->GetCookieMonster()->SetPersistSessionCookies(true);
     storage_->set_cookie_store(cookie_store);
 
@@ -130,8 +190,16 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
     storage_->set_server_bound_cert_service(new net::ServerBoundCertService(
         new net::DefaultServerBoundCertStore(NULL),
         base::WorkerPool::GetTaskRunner(true)));
+
+    std::string accept_lang = browser_client->GetApplicationLocale();
+    if (accept_lang.empty())
+      accept_lang = "en-us,en";
+    else
+      accept_lang.append(",en-us,en");
     storage_->set_http_user_agent_settings(
-        new net::StaticHttpUserAgentSettings("en-us,en", EmptyString()));
+         new net::StaticHttpUserAgentSettings(
+                net::HttpUtil::GenerateAcceptLanguageHeader(accept_lang),
+                EmptyString()));
 
     scoped_ptr<net::HostResolver> host_resolver(
         net::HostResolver::CreateDefaultResolver(NULL));
@@ -153,7 +221,8 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
 
     storage_->set_ssl_config_service(new net::SSLConfigServiceDefaults);
     storage_->set_http_auth_handler_factory(
-        net::HttpAuthHandlerFactory::CreateDefault(host_resolver.get()));
+            CreateDefaultAuthHandlerFactory(host_resolver.get()));
+
     storage_->set_http_server_properties(
         scoped_ptr<net::HttpServerProperties>(
             new net::HttpServerPropertiesImpl()));
@@ -200,8 +269,12 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
     scoped_ptr<net::URLRequestJobFactoryImpl> job_factory(
         new net::URLRequestJobFactoryImpl());
     InstallProtocolHandlers(job_factory.get(), &protocol_handlers_);
-    job_factory->SetProtocolHandler(chrome::kFileScheme,
-                                    new net::FileProtocolHandler);
+    job_factory->SetProtocolHandler(
+         chrome::kFileScheme,
+         new net::FileProtocolHandler(
+               content::BrowserThread::GetBlockingPool()->
+               GetTaskRunnerWithShutdownBehavior(
+                    base::SequencedWorkerPool::SKIP_ON_SHUTDOWN)));
     job_factory->SetProtocolHandler("app",
                                     new net::AppProtocolHandler(root_path_));
     job_factory->SetProtocolHandler("nw", new nw::NwProtocolHandler());
@@ -220,6 +293,33 @@ scoped_refptr<base::SingleThreadTaskRunner>
 
 net::HostResolver* ShellURLRequestContextGetter::host_resolver() {
   return url_request_context_->host_resolver();
+}
+
+net::HttpAuthHandlerFactory* ShellURLRequestContextGetter::CreateDefaultAuthHandlerFactory(
+    net::HostResolver* resolver) {
+  net::HttpAuthFilterWhitelist* auth_filter_default_credentials = NULL;
+  if (!auth_server_whitelist_.empty()) {
+    auth_filter_default_credentials =
+        new net::HttpAuthFilterWhitelist(auth_server_whitelist_);
+  }
+  net::HttpAuthFilterWhitelist* auth_filter_delegate = NULL;
+  if (!auth_delegate_whitelist_.empty()) {
+    auth_filter_delegate =
+        new net::HttpAuthFilterWhitelist(auth_delegate_whitelist_);
+  }
+  url_security_manager_.reset(
+      net::URLSecurityManager::Create(auth_filter_default_credentials,
+                                      auth_filter_delegate));
+  std::vector<std::string> supported_schemes;
+  base::SplitString(auth_schemes_, ',', &supported_schemes);
+
+  scoped_ptr<net::HttpAuthHandlerRegistryFactory> registry_factory(
+      net::HttpAuthHandlerRegistryFactory::Create(
+          supported_schemes, url_security_manager_.get(),
+          resolver, gssapi_library_name_, negotiate_disable_cname_lookup_,
+          negotiate_enable_port_));
+
+  return registry_factory.release();
 }
 
 }  // namespace content

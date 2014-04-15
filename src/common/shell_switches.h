@@ -58,6 +58,9 @@ extern const char kmPageCache[];
 extern const char kmUserAgent[];
 extern const char kmRemotePages[];
 extern const char kmNewInstance[];
+extern const char kmInjectJSDocStart[];
+extern const char kmInjectJSDocEnd[];
+extern const char kmInjectCSS[];
 
 #if defined(OS_WIN)
 extern const char kPrintRaster[];

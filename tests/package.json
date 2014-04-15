@@ -20,9 +20,11 @@
     "mocha": "1.7.4",
     "nw_test_loop": "git+https://github.com/owenc4a4/nw_test_loop_without_handle.git",
     "bignum": "git+https://github.com/owenc4a4/bignum.git",
+    "node-dtrace-provider": "git+https://github.com/chrisa/node-dtrace-provider.git",
+    "ref": "git+https://github.com/TooTallNate/ref.git",
+    "node-lame": "git+https://github.com/TooTallNate/node-lame.git",
     "fs-extra": "*"
   },
-  "chromium-args": "--disable-javascript-i18n-api",
   "user-agent": "%name/%nwver/%ver/%webkit_ver/%osinfo",
   "scripts": {
     "install": "python ../tools/build_native_modules.py"

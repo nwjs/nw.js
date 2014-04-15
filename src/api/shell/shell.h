@@ -29,7 +29,7 @@ namespace base {
 class ListValue;
 }
 
-namespace api {
+namespace nwapi {
   
 class Shell {
  public:
@@ -42,6 +42,6 @@ class Shell {
   DISALLOW_COPY_AND_ASSIGN(Shell);
 };
 
-}  // namespace api
+}  // namespace nwapi
 
 #endif  // CONTENT_NW_SRC_API_SHELL_SHELL_H_

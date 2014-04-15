@@ -23,10 +23,10 @@
 #include "base/logging.h"
 #include "base/values.h"
 
-namespace api {
+namespace nwapi {
 
 Base::Base(int id,
-           DispatcherHost* dispatcher_host,
+           const base::WeakPtr<DispatcherHost>& dispatcher_host,
            const base::DictionaryValue& option)
     : id_(id),
       dispatcher_host_(dispatcher_host) {
@@ -50,4 +50,4 @@ void Base::CallSync(const std::string& method,
                << " arguments:" << arguments;
 }
 
-}  // namespace api
+}  // namespace nwapi

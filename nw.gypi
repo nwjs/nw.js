@@ -5,12 +5,31 @@
 {
   'variables': {
     'nw_product_name': 'node-webkit',
+    'conditions': [
+      ['OS=="linux"', {
+       'linux_dump_symbols%': 1,
+      }],
+    ],
+  },
+  'target_defaults': {
+    'configurations': {
+      'Release_Base': {
+        # Set flags to unconditionally optimize chrome_frame_launcher.exe
+        # for release builds.
+        'msvs_settings': {
+          'VCLibrarianTool': {
+            'AdditionalOptions': ['/ltcg', '/expectedoutputsize:600000000'],
+          },
+        },
+      },
+    },
   },
   'targets': [
     {
       'target_name': 'nw_lib',
       'type': 'static_library',
       'defines!': ['CONTENT_IMPLEMENTATION'],
+      'defines': ['BREAKPAD_IMPLEMENTATION'],
       'variables': {
         'chromium_code': 1,
       },
@@ -40,7 +59,7 @@
         '<(DEPTH)/ui/ui.gyp:ui_resources',
         '<(DEPTH)/url/url.gyp:url_lib',
         '<(DEPTH)/v8/tools/gyp/v8.gyp:v8',
-        '<(DEPTH)/webkit/support/webkit_support.gyp:webkit_support',
+        '<(DEPTH)/webkit/glue/webkit_glue.gyp:glue',
         '<(DEPTH)/third_party/zlib/zlib.gyp:minizip',
         '<(DEPTH)/third_party/WebKit/public/blink.gyp:blink',
         'nw_resources',
@@ -59,10 +78,10 @@
       'sources': [
         '<(DEPTH)/chrome/browser/chrome_process_finder_win.cc',
         '<(DEPTH)/chrome/browser/chrome_process_finder_win.h',
-        '<(DEPTH)/chrome/common/child_process_logging.h',
-        '<(DEPTH)/chrome/common/child_process_logging_mac.mm',
-        '<(DEPTH)/chrome/common/child_process_logging_posix.cc',
-        '<(DEPTH)/chrome/common/child_process_logging_win.cc',
+        #'<(DEPTH)/chrome/common/child_process_logging.h',
+        #'<(DEPTH)/chrome/common/child_process_logging_mac.mm',
+        #'<(DEPTH)/chrome/common/child_process_logging_posix.cc',
+        #'<(DEPTH)/chrome/common/child_process_logging_win.cc',
         '<(DEPTH)/chrome/common/crash_keys.cc',
         '<(DEPTH)/chrome/common/dump_without_crashing.cc',
         '<(DEPTH)/chrome/common/env_vars.cc',
@@ -186,6 +205,8 @@
         'src/browser/printing/print_job_worker_owner.h',
         'src/browser/printing/printing_message_filter.cc',
         'src/browser/printing/printing_message_filter.h',
+        'src/browser/printing/printing_ui_web_contents_observer.cc',
+        'src/browser/printing/printing_ui_web_contents_observer.h',
         'src/browser/printing/printer_query.cc',
         'src/browser/printing/printer_query.h',
         'src/browser/printing/print_view_manager.cc',
@@ -283,6 +304,8 @@
         'src/shell_content_browser_client.h',
         'src/shell_content_client.cc',
         'src/shell_content_client.h',
+        'src/shell_devtools_frontend.cc',
+        'src/shell_devtools_frontend.h',
         'src/shell_main_delegate.cc',
         'src/shell_main_delegate.h',
         'src/shell_quota_permission_context.cc',
@@ -291,6 +314,11 @@
       'msvs_settings': {
         'VCLinkerTool': {
           'SubSystem': '2',  # Set /SUBSYSTEM:WINDOWS
+        },
+      },
+      'configurations': {
+        'Debug': {
+          'defines': [ 'DEBUG' ],
         },
       },
       'conditions': [
@@ -579,7 +607,7 @@
         },
       ],
       'dependencies': [
-        '<(DEPTH)/chrome/chrome.gyp:chromedriver2_server',
+        '<(DEPTH)/chrome/chrome.gyp:chromedriver',
       ],
       'conditions': [
         ['OS == "linux"', {
@@ -624,6 +652,11 @@
       'msvs_settings': {
         'VCLinkerTool': {
           'SubSystem': '2',  # Set /SUBSYSTEM:WINDOWS
+        },
+	'VCManifestTool': {
+          'AdditionalManifestFiles': [
+            '$(ProjectDir)\\nw\\src\\nw.exe.manifest',
+          ],
         },
       },
       'conditions': [
@@ -895,7 +928,7 @@
     ['OS=="linux"',
       { 'targets': [
         {
-          'target_name': 'linux_symbols',
+          'target_name': 'nw_symbols',
           'type': 'none',
           'conditions': [
             ['linux_dump_symbols==1', {

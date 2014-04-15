@@ -116,7 +116,7 @@ void PrintViewManager::set_observer(PrintViewManagerObserver* observer) {
   observer_ = observer;
 }
 
-void PrintViewManager::StopNavigation() {
+void PrintViewManager::NavigationStopped() {
   // Cancel the current job, wait for the worker to finish.
   TerminatePrintJob(true);
 }

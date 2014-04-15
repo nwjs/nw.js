@@ -40,7 +40,7 @@ using content::Shell;
 using content::ShellBrowserContext;
 using content::RenderProcessHost;
 
-namespace api {
+namespace nwapi {
 
 namespace {
 
@@ -119,6 +119,7 @@ void App::Call(Shell* shell,
 
   } else if (method == "ClearCache") {
     ClearCache(GetRenderProcessHost());
+    return;
   } else if (method == "GetPackage") {
     result->AppendString(shell->GetPackage()->package_string());
     return;
@@ -133,7 +134,7 @@ void App::Call(Shell* shell,
 }
 
 // static
-void App::CloseAllWindows(bool force) {
+void App::CloseAllWindows(bool force, bool quit) {
   std::vector<Shell*> windows = Shell::windows();
 
   for (size_t i = 0; i < windows.size(); ++i) {
@@ -141,7 +142,7 @@ void App::CloseAllWindows(bool force) {
     // be automatically closed.
     if (!windows[i]->is_devtools()) {
       // If there is no js object bound to the window, then just close.
-      if (force || windows[i]->ShouldCloseWindow())
+      if (force || windows[i]->ShouldCloseWindow(quit))
         // we used to delete the Shell object here
         // but it should be deleted on native window destruction
         windows[i]->window()->Close();
@@ -227,4 +228,4 @@ void App::ClearCache(content::RenderProcessHost* render_process_host) {
                           render_process_host->GetID());
 }
 
-}  // namespace api
+}  // namespace nwapi

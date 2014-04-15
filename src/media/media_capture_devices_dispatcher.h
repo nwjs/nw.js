@@ -34,6 +34,7 @@ class MediaCaptureDevicesDispatcher
   };
 
   MediaCaptureDevicesDispatcher();
+  virtual ~MediaCaptureDevicesDispatcher();
 
   // Called on IO thread when one audio device is plugged in or unplugged.
   void AudioCaptureDevicesChanged(const content::MediaStreamDevices& devices);
@@ -52,9 +53,20 @@ class MediaCaptureDevicesDispatcher
   const content::MediaStreamDevices& GetAudioCaptureDevices();
   const content::MediaStreamDevices& GetVideoCaptureDevices();
 
+  // Helpers for picking particular requested devices, identified by raw id.
+  // If the device requested is not available it will return NULL.
+  const content::MediaStreamDevice*
+  GetRequestedAudioDevice(const std::string& requested_audio_device_id);
+  const content::MediaStreamDevice*
+  GetRequestedVideoDevice(const std::string& requested_video_device_id);
+
+  // Returns the first available audio or video device, or NULL if no devices
+  // are available.
+  const content::MediaStreamDevice* GetFirstAvailableAudioDevice();
+  const content::MediaStreamDevice* GetFirstAvailableVideoDevice();
+
  private:
   friend class base::RefCountedThreadSafe<MediaCaptureDevicesDispatcher>;
-  virtual ~MediaCaptureDevicesDispatcher();
 
   // Called by the public Audio/VideoCaptureDevicesChanged() functions,
   // executed on UI thread.

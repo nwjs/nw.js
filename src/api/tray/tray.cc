@@ -25,10 +25,10 @@
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"
 
-namespace api {
+namespace nwapi {
 
 Tray::Tray(int id,
-           DispatcherHost* dispatcher_host,
+           const base::WeakPtr<DispatcherHost>& dispatcher_host,
            const base::DictionaryValue& option)
     : Base(id, dispatcher_host, option) {
   Create(option);
@@ -90,4 +90,4 @@ void Tray::Call(const std::string& method,
   }
 }
 
-}  // namespace api
+}  // namespace nwapi

@@ -29,8 +29,10 @@
 #if defined(OS_MACOSX)
 #if __OBJC__
 @class NSStatusItem;
+@class MacTrayObserver;
 #else
 class NSStatusItem;
+class MacTrayObserver;
 #endif  // __OBJC__
 #elif defined(TOOLKIT_GTK)
 #include <gtk/gtk.h>
@@ -40,7 +42,7 @@ class StatusIcon;
 class StatusTray;
 #endif  // defined(OS_MACOSX)
 
-namespace api {
+namespace nwapi {
 
 class Menu;
 class TrayObserver;
@@ -48,7 +50,7 @@ class TrayObserver;
 class Tray : public Base {
  public:
   Tray(int id,
-       DispatcherHost* dispatcher_host,
+       const base::WeakPtr<DispatcherHost>& dispatcher_host,
        const base::DictionaryValue& option);
   virtual ~Tray();
 
@@ -70,6 +72,7 @@ class Tray : public Base {
 
 #if defined(OS_MACOSX)
   __block NSStatusItem* status_item_;
+  MacTrayObserver* status_observer_;
 #elif defined(TOOLKIT_GTK)
   GtkStatusIcon* status_item_;
 
@@ -94,6 +97,6 @@ class Tray : public Base {
   DISALLOW_COPY_AND_ASSIGN(Tray);
 };
 
-}  // namespace api
+}  // namespace nwapi
 
 #endif  // CONTENT_NW_SRC_API_TRAY_TRAY_H_

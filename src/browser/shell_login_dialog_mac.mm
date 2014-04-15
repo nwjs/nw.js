@@ -80,11 +80,14 @@ const int kPasswordFieldTag = 2;
 - (void)alertDidEnd:(NSAlert*)alert
          returnCode:(int)returnCode
         contextInfo:(void*)contextInfo {
-  if (returnCode == NSRunStoppedResponse)
-    return;
 
   content::ShellLoginDialog* this_dialog =
       reinterpret_cast<content::ShellLoginDialog*>(contextInfo);
+  if (returnCode == NSRunStoppedResponse) {
+    this_dialog->ReleaseSoon();
+    return;
+  }
+
   if (returnCode == NSAlertFirstButtonReturn) {
     this_dialog->UserAcceptedAuth(
         base::SysNSStringToUTF16([usernameField_ stringValue]),
@@ -106,11 +109,14 @@ namespace content {
 void ShellLoginDialog::PlatformCreateDialog(const string16& message) {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
   helper_ = [[ShellLoginDialogHelper alloc] init];
+  message_ = message;
+}
 
+void ShellLoginDialog::PlatformShowDialog() {
   // Show the modal dialog.
   NSAlert* alert = [helper_ alert];
   [alert setDelegate:helper_];
-  [alert setInformativeText:base::SysUTF16ToNSString(message)];
+  [alert setInformativeText:base::SysUTF16ToNSString(message_)];
   [alert setMessageText:@"Please log in."];
   [alert addButtonWithTitle:@"OK"];
   NSButton* other = [alert addButtonWithTitle:@"Cancel"];
@@ -128,6 +134,7 @@ void ShellLoginDialog::PlatformCleanUp() {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
   [helper_ release];
   helper_ = nil;
+  ReleaseSoon();
 }
 
 void ShellLoginDialog::PlatformRequestCancelled() {

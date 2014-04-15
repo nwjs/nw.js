@@ -24,7 +24,6 @@
 
 #include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
-#include "base/win/windows_version.h"
 #include "base/win/scoped_comptr.h"
 #include "base/win/windows_version.h"
 #include "base/win/wrapped_window_proc.h"
@@ -41,7 +40,8 @@
 #include "extensions/common/draggable_region.h"
 #include "third_party/skia/include/core/SkPaint.h"
 #include "ui/base/hit_test.h"
-#include "ui/base/win/hwnd_util.h"
+#include "ui/gfx/native_widget_types.h"
+#include "ui/gfx/win/hwnd_util.h"
 #include "ui/gfx/path.h"
 #include "ui/gfx/image/image_skia_operations.h"
 #include "ui/views/controls/webview/webview.h"
@@ -260,7 +260,8 @@ NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
       resizable_(true),
       minimum_size_(0, 0),
       maximum_size_(),
-      initial_focus_(true) {
+      initial_focus_(true),
+      last_width_(-1), last_height_(-1) {
   manifest->GetBoolean("focus", &initial_focus_);
 
   window_ = new views::Widget;
@@ -278,6 +279,9 @@ NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
   gfx::Rect window_bounds = 
     window_->non_client_view()->GetWindowBoundsForClientBounds(
         gfx::Rect(width,height));
+  last_width_  = width;
+  last_height_ = height;
+  window_->AddObserver(this);
   window_->SetSize(window_bounds.size());
   window_->CenterWindow(window_bounds.size());
 
@@ -426,36 +430,22 @@ void NativeWindowWin::SetResizable(bool resizable) {
   resizable_ = resizable;
 
   // Show/Hide the maximize button.
-  DWORD style = ::GetWindowLong(window_->GetNativeView(), GWL_STYLE);
+  DWORD style = ::GetWindowLong((HWND)window_->GetNativeView(), GWL_STYLE);
   if (resizable)
     style |= WS_MAXIMIZEBOX;
   else
     style &= ~WS_MAXIMIZEBOX;
-  ::SetWindowLong(window_->GetNativeView(), GWL_STYLE, style);
-}
-
-void NativeWindowWin::SetAlwaysOnTop(bool top) {
-  window_->StackAtTop();
-  // SetAlwaysOnTop should be called after StackAtTop because otherwise
-  // the top-most flag will be removed.
-  window_->SetAlwaysOnTop(top);
-}
-
-void NativeWindowWin::SetBadgeCount(int count) {
-
+  ::SetWindowLong((HWND)window_->GetNativeView(), GWL_STYLE, style);
 }
 
 void NativeWindowWin::SetShowInTaskbar(bool show) {
-   if (show == false && base::win::GetVersion() < base::win::VERSION_VISTA) {
-    if (hidden_owner_window_.get() == NULL) {
-      hidden_owner_window_.reset(new HiddenOwnerWindow());
-    }
-
+  if (show == false && base::win::GetVersion() < base::win::VERSION_VISTA) {
     // Change the owner of native window. Only needed on Windows XP.
     ::SetWindowLong(window_->GetNativeView(),
                     GWL_HWNDPARENT,
-                    (LONG)hidden_owner_window_->hwnd());
+                    (LONG)ui::GetHiddenWindow());
   }
+
   base::win::ScopedComPtr<ITaskbarList> taskbar;
   HRESULT result = taskbar.CreateInstance(CLSID_TaskbarList, NULL,
                                           CLSCTX_INPROC_SERVER);
@@ -478,6 +468,30 @@ void NativeWindowWin::SetShowInTaskbar(bool show) {
   if (FAILED(result)) {
     LOG(ERROR) << "Failed to change the show in taskbar attribute";
     return;
+  }
+}
+
+void NativeWindowWin::SetAlwaysOnTop(bool top) {
+  window_->StackAtTop();
+  // SetAlwaysOnTop should be called after StackAtTop because otherwise
+  // the top-most flag will be removed.
+  window_->SetAlwaysOnTop(top);
+}
+
+void NativeWindowWin::SetBadgeCount(int count) {
+
+}
+
+void NativeWindowWin::OnWidgetBoundsChanged(views::Widget* widget, const gfx::Rect& new_bounds)  {
+  int w = new_bounds.width();
+  int h = new_bounds.height();
+  if (shell() && (w != last_width_ || h != last_height_)) {
+    base::ListValue args;
+    args.AppendInteger(w);
+    args.AppendInteger(h);
+    shell()->SendEvent("resize", args);
+    last_width_ = w;
+    last_height_ = h;
   }
 }
 
@@ -530,6 +544,10 @@ void NativeWindowWin::FlashFrame(bool flash) {
   window_->FlashFrame(flash);
 }
 
+void NativeWindowWin::SetBadgeLabel(const std::string& badge) {
+  // TODO
+}
+
 void NativeWindowWin::SetKiosk(bool kiosk) {
   SetFullscreen(kiosk);
 }
@@ -538,15 +556,15 @@ bool NativeWindowWin::IsKiosk() {
   return IsFullscreen();
 }
 
-void NativeWindowWin::SetMenu(api::Menu* menu) {
+void NativeWindowWin::SetMenu(nwapi::Menu* menu) {
   window_->set_has_menu_bar(true);
   menu_ = menu;
 
   // The menu is lazily built.
   menu->Rebuild();
 
-  // menu is api::Menu, menu->menu_ is NativeMenuWin,
-  ::SetMenu(window_->GetNativeWindow(), menu->menu_->GetNativeMenu());
+  // menu is nwapi::Menu, menu->menu_ is NativeMenuWin,
+  ::SetMenu((HWND)window_->GetNativeWindow(), menu->menu_->GetNativeMenu());
 }
 
 void NativeWindowWin::SetTitle(const std::string& title) {
@@ -593,6 +611,16 @@ views::NonClientFrameView* NativeWindowWin::CreateNonClientFrameView(
   return frame_view;
 }
 
+void NativeWindowWin::OnWidgetMove() {
+  gfx::Point origin = GetPosition();
+  if (shell()) {
+    base::ListValue args;
+    args.AppendInteger(origin.x());
+    args.AppendInteger(origin.y());
+    shell()->SendEvent("move", args);
+  }
+}
+
 bool NativeWindowWin::CanResize() const {
   return resizable_;
 }
@@ -619,6 +647,10 @@ void NativeWindowWin::DeleteDelegate() {
 
 bool NativeWindowWin::ShouldShowWindowTitle() const {
   return has_frame();
+}
+
+bool NativeWindowWin::ShouldHandleOnSize() const {
+  return true;
 }
 
 void NativeWindowWin::OnNativeFocusChange(gfx::NativeView focused_before,
@@ -760,12 +792,20 @@ bool NativeWindowWin::ExecuteWindowsCommand(int command_id) {
     is_maximized_ = false;
     if (shell())
       shell()->SendEvent("unmaximize");
-  } else if ((command_id & sc_mask) == SC_MAXIMIZE) {
+  }
+  return false;
+}
+
+bool NativeWindowWin::HandleSize(unsigned int param, const gfx::Size& size) {
+  if (param == SIZE_MAXIMIZED) {
     is_maximized_ = true;
     if (shell())
       shell()->SendEvent("maximize");
+  }else if (param == SIZE_RESTORED && is_maximized_) {
+    is_maximized_ = false;
+    if (shell())
+      shell()->SendEvent("unmaximize");
   }
-
   return false;
 }
 
@@ -782,7 +822,7 @@ void NativeWindowWin::SaveWindowPlacement(const gfx::Rect& bounds,
                                           ui::WindowShowState show_state) {
   // views::WidgetDelegate::SaveWindowPlacement(bounds, show_state);
 }
-  
+
 void NativeWindowWin::OnViewWasResized() {
   // Set the window shape of the RWHV.
   DCHECK(window_);
@@ -791,7 +831,7 @@ void NativeWindowWin::OnViewWasResized() {
   int height = sz.height(), width = sz.width();
   gfx::Path path;
   path.addRect(0, 0, width, height);
-  SetWindowRgn(web_contents()->GetView()->GetNativeView(),
+  SetWindowRgn((HWND)web_contents()->GetView()->GetNativeView(),
                path.CreateNativeRegion(),
                1);
 

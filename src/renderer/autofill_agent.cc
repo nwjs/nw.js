@@ -25,12 +25,12 @@
 #include "base/string_util.h"
 #include "base/strings/string_split.h"
 #include "content/public/renderer/render_view.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebInputEvent.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebNode.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebNodeCollection.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebOptionElement.h"
-#include "third_party/WebKit/Source/WebKit/chromium/public/WebView.h"
-#include "ui/base/keycodes/keyboard_codes.h"
+#include "third_party/WebKit/public/web/WebInputEvent.h"
+#include "third_party/WebKit/public/web/WebNode.h"
+#include "third_party/WebKit/public/web/WebNodeCollection.h"
+#include "third_party/WebKit/public/web/WebOptionElement.h"
+#include "third_party/WebKit/public/web/WebView.h"
+#include "ui/events/keycodes/keyboard_codes.h"
 
 using WebKit::WebAutofillClient;
 using WebKit::WebFormElement;

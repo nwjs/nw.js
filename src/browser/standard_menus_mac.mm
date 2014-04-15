@@ -71,7 +71,7 @@ void StandardMenusMac::BuildAppleMenu() {
   [appleMenu addItem:[NSMenuItem separatorItem]];
 
   [appleMenu addItemWithTitle:l10n_util::GetNSStringFWithFixup(IDS_EXIT_MAC, name)
-                       action:@selector(closeAllWindows:)
+                       action:@selector(closeAllWindowsQuit:)
                 keyEquivalent:@"q"];
 
   // Add to menubar.

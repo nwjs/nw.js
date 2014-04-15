@@ -79,6 +79,10 @@ class PrintingMessageFilter : public content::BrowserMessageFilter {
       const base::Closure& callback,
       scoped_refptr<printing::PrinterQuery> printer_query);
 
+  void OnGetPrintSettingsFailed(
+      const base::Closure& callback,
+      scoped_refptr<printing::PrinterQuery> printer_query);
+
   // Checks if printing is enabled.
   void OnIsPrintingEnabled(bool* is_enabled);
 

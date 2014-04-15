@@ -25,10 +25,10 @@
 #include "content/nw/src/api/menuitem/menuitem.h"
 #include "content/nw/src/nw_shell.h"
 
-namespace api {
+namespace nwapi {
 
 Menu::Menu(int id,
-           DispatcherHost* dispatcher_host,
+           const base::WeakPtr<DispatcherHost>& dispatcher_host,
            const base::DictionaryValue& option)
     : Base(id, dispatcher_host, option) {
   Create(option);
@@ -69,4 +69,4 @@ void Menu::Call(const std::string& method,
   }
 }
 
-}  // namespace api
+}  // namespace nwapi

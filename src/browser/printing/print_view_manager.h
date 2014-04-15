@@ -77,7 +77,7 @@ class PrintViewManager : public content::NotificationObserver,
   virtual void RenderProcessGone(base::TerminationStatus status) OVERRIDE;
 
   // Cancels the print job.
-  virtual void StopNavigation() OVERRIDE;
+  virtual void NavigationStopped() OVERRIDE;
 
  private:
   explicit PrintViewManager(content::WebContents* web_contents);

@@ -22,15 +22,39 @@
 
 #include "base/values.h"
 #import <Cocoa/Cocoa.h>
+#include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"
 
-namespace api {
 
+@interface MacTrayObserver : NSObject {
+@private
+    nwapi::Tray* tray_;
+}
+- (void)setBacking:(nwapi::Tray*)tray_;
+- (void)onClick:(id)sender;
+@end
+
+@implementation MacTrayObserver
+- (void)setBacking:(nwapi::Tray*)newTray {
+    tray_ = newTray;
+}
+- (void)onClick:(id)sender {
+    base::ListValue args;
+    tray_->dispatcher_host()->SendEvent(tray_,"click",args);
+}
+@end
+
+namespace nwapi {
+    
 void Tray::Create(const base::DictionaryValue& option) {
   NSStatusBar *status_bar = [NSStatusBar systemStatusBar];
+  MacTrayObserver* observer = [[MacTrayObserver alloc] init];
+  [observer setBacking:this];
   status_item_ = [status_bar statusItemWithLength:NSVariableStatusItemLength];
   [status_item_ setHighlightMode:YES];
   [status_item_ retain];
+  [status_item_ setTarget:observer];
+  [status_item_ setAction:@selector(onClick:)];
 }
 
 void Tray::ShowAfterCreate() {
@@ -71,6 +95,8 @@ void Tray::SetTooltip(const std::string& tooltip) {
 }
 
 void Tray::SetMenu(Menu* menu) {
+  [status_item_ setTarget:nil];
+  [status_item_ setAction:nil];
   [status_item_ setMenu:menu->menu_];
 }
 
@@ -78,4 +104,4 @@ void Tray::Remove() {
   [[NSStatusBar systemStatusBar] removeStatusItem:status_item_];
 }
 
-}  // namespace api
+}  // namespace nwapi

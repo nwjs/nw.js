@@ -25,7 +25,7 @@
 #include "base/compiler_specific.h"
 #include "v8/include/v8.h"
 
-namespace api {
+namespace nwapi {
 
 class WindowBindings : public v8::Extension {
  public:
@@ -36,6 +36,8 @@ class WindowBindings : public v8::Extension {
   virtual v8::Handle<v8::FunctionTemplate>
       GetNativeFunction(v8::Handle<v8::String> name) OVERRIDE;
  private:
+  static void AllocateId(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   // Tell browser to bind a js object to Shell.
   static void BindToShell(const v8::FunctionCallbackInfo<v8::Value>& args);
 
@@ -51,6 +53,6 @@ class WindowBindings : public v8::Extension {
   DISALLOW_COPY_AND_ASSIGN(WindowBindings);
 };
 
-}  // namespace api
+}  // namespace nwapi
 
 #endif  // CONTENT_NW_SRC_API_WINDOW_BINDINGS_H_

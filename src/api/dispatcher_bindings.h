@@ -25,7 +25,7 @@
 #include "base/compiler_specific.h"
 #include "v8/include/v8.h"
 
-namespace api {
+namespace nwapi {
 
 class DispatcherBindings : public v8::Extension {
  public:
@@ -53,6 +53,7 @@ class DispatcherBindings : public v8::Extension {
   static void CreateShell(const v8::FunctionCallbackInfo<v8::Value>& args);
 
   // Remote objects.
+  static void AllocateId(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void AllocateObject(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void DeallocateObject(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -65,6 +66,6 @@ class DispatcherBindings : public v8::Extension {
   DISALLOW_COPY_AND_ASSIGN(DispatcherBindings);
 };
 
-}  // namespace api
+}  // namespace nwapi
 
 #endif  // CONTENT_NW_SRC_API_DISPATCHER_BINDINGS_H_

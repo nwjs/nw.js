@@ -70,12 +70,13 @@ int PrinterQuery::cookie() const {
   return cookie_;
 }
 
-void PrinterQuery::GetSettings(GetSettingsAskParam ask_user_for_settings,
-                               gfx::NativeView parent_view,
-                               int expected_page_count,
-                               bool has_selection,
-                               MarginType margin_type,
-                               const base::Closure& callback) {
+void PrinterQuery::GetSettings(
+    GetSettingsAskParam ask_user_for_settings,
+    scoped_ptr<PrintingUIWebContentsObserver> web_contents_observer,
+    int expected_page_count,
+    bool has_selection,
+    MarginType margin_type,
+    const base::Closure& callback) {
   DCHECK_EQ(io_message_loop_, MessageLoop::current());
   DCHECK(!is_print_dialog_box_shown_);
 
@@ -87,8 +88,11 @@ void PrinterQuery::GetSettings(GetSettingsAskParam ask_user_for_settings,
       FROM_HERE,
       base::Bind(&PrintJobWorker::GetSettings,
                  base::Unretained(worker_.get()),
-                 is_print_dialog_box_shown_, parent_view,
-                 expected_page_count, has_selection, margin_type));
+                 is_print_dialog_box_shown_,
+                 base::Passed(&web_contents_observer),
+                 expected_page_count,
+                 has_selection,
+                 margin_type));
 }
 
 void PrinterQuery::SetSettings(const DictionaryValue& new_settings,

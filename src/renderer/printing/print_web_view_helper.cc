@@ -15,6 +15,7 @@
 #include "base/strings/stringprintf.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/utf_string_conversions.h"
+#include "content/public/renderer/web_preferences.h"
 #include "chrome/common/chrome_switches.h"
 #include "chrome/common/print_messages.h"
 #include "chrome/common/render_messages.h"
@@ -45,7 +46,6 @@
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "webkit/common/webpreferences.h"
-#include "webkit/renderer/webpreferences_renderer.h"
 
 using base::MessageLoop;
 
@@ -86,40 +86,6 @@ bool PrintMsg_Print_Params_IsValid(const PrintMsg_Print_Params& params) {
          params.dpi && (params.margin_top >= 0) && (params.margin_left >= 0);
 }
 
-bool PageLayoutIsEqual(const PrintMsg_PrintPages_Params& oldParams,
-                       const PrintMsg_PrintPages_Params& newParams) {
-  return oldParams.params.content_size == newParams.params.content_size &&
-         oldParams.params.printable_area == newParams.params.printable_area &&
-         oldParams.params.page_size == newParams.params.page_size &&
-         oldParams.params.margin_top == newParams.params.margin_top &&
-         oldParams.params.margin_left == newParams.params.margin_left &&
-         oldParams.params.desired_dpi == newParams.params.desired_dpi &&
-         oldParams.params.dpi == newParams.params.dpi;
-}
-
-bool PrintMsg_Print_Params_IsEqual(
-    const PrintMsg_PrintPages_Params& oldParams,
-    const PrintMsg_PrintPages_Params& newParams) {
-  return PageLayoutIsEqual(oldParams, newParams) &&
-         oldParams.params.max_shrink == newParams.params.max_shrink &&
-         oldParams.params.min_shrink == newParams.params.min_shrink &&
-         oldParams.params.selection_only == newParams.params.selection_only &&
-         oldParams.params.supports_alpha_blend ==
-             newParams.params.supports_alpha_blend &&
-         oldParams.pages.size() == newParams.pages.size() &&
-         oldParams.params.print_to_pdf == newParams.params.print_to_pdf &&
-         oldParams.params.print_scaling_option ==
-             newParams.params.print_scaling_option &&
-         oldParams.params.display_header_footer ==
-             newParams.params.display_header_footer &&
-         oldParams.params.date == newParams.params.date &&
-         oldParams.params.title == newParams.params.title &&
-         oldParams.params.url == newParams.params.url &&
-         std::equal(oldParams.pages.begin(), oldParams.pages.end(),
-             newParams.pages.begin()) &&
-         oldParams.params.should_print_backgrounds ==
-             newParams.params.should_print_backgrounds;
-}
 
 PrintMsg_Print_Params GetCssPrintParams(
     WebKit::WebFrame* frame,
@@ -447,7 +413,7 @@ void PrintWebViewHelper::PrintHeaderAndFooter(
   WebKit::WebPrintParams webkit_params(page_size);
   webkit_params.printerDPI = GetDPI(&params);
 
-  frame->printBegin(webkit_params, WebKit::WebNode(), NULL);
+  frame->printBegin(webkit_params);
   frame->printPage(0, canvas);
   frame->printEnd();
 
@@ -610,8 +576,7 @@ void PrepareFrameAndViewForPrint::StartPrinting() {
   web_view->settings()->setShouldPrintBackgrounds(should_print_backgrounds_);
   // TODO(vitalybuka): Update call after
   // https://bugs.webkit.org/show_bug.cgi?id=107718 is fixed.
-  expected_pages_count_ = frame_->printBegin(web_print_params_, node_to_print_,
-                                             NULL);
+  expected_pages_count_ = frame_->printBegin(web_print_params_, node_to_print_);
   is_printing_started_ = true;
 }
 
@@ -640,7 +605,7 @@ void PrepareFrameAndViewForPrint::CopySelection(
 
   WebKit::WebView* web_view = WebKit::WebView::create(this);
   owns_web_view_ = true;
-  webkit_glue::ApplyWebPreferences(prefs, web_view);
+  content::ApplyWebPreferences(prefs, web_view);
   web_view->initializeMainFrame(this);
   frame_ = web_view->mainFrame();
   node_to_print_.reset();
@@ -922,26 +887,6 @@ void PrintWebViewHelper::OnPrintPreview(const DictionaryValue& settings) {
     return;
   }
 
-  if (!print_pages_params_->params.is_first_request &&
-      old_print_pages_params_.get() &&
-      PrintMsg_Print_Params_IsEqual(*old_print_pages_params_,
-                                    *print_pages_params_)) {
-    PrintHostMsg_DidPreviewDocument_Params preview_params;
-    preview_params.reuse_existing_data = true;
-    preview_params.data_size = 0;
-    preview_params.document_cookie =
-        print_pages_params_->params.document_cookie;
-    preview_params.expected_pages_count =
-        print_preview_context_.total_page_count();
-    preview_params.modifiable = print_preview_context_.IsModifiable();
-    preview_params.preview_request_id =
-        print_pages_params_->params.preview_request_id;
-
-    Send(new PrintHostMsg_MetafileReadyForPrinting(routing_id(),
-                                                   preview_params));
-    return;
-  }
-
   // If we are previewing a pdf and the print scaling is disabled, send a
   // message to browser.
   if (print_pages_params_->params.is_first_request &&
@@ -951,8 +896,6 @@ void PrintWebViewHelper::OnPrintPreview(const DictionaryValue& settings) {
     Send(new PrintHostMsg_PrintPreviewScalingDisabled(routing_id()));
   }
 
-  // Always clear |old_print_pages_params_| before rendering the pages.
-  old_print_pages_params_.reset();
   is_print_ready_metafile_sent_ = false;
 
   // PDF printer device supports alpha blending.
@@ -1020,25 +963,22 @@ bool PrintWebViewHelper::CreatePreviewDocument() {
                                   print_params, ignore_css_margins_, NULL,
                                   &default_page_layout);
 
-  if (!old_print_pages_params_.get() ||
-      !PageLayoutIsEqual(*old_print_pages_params_, *print_pages_params_)) {
-    bool has_page_size_style = PrintingFrameHasPageSizeStyle(
-        print_preview_context_.prepared_frame(),
-        print_preview_context_.total_page_count());
-    int dpi = GetDPI(&print_params);
+  bool has_page_size_style = PrintingFrameHasPageSizeStyle(
+      print_preview_context_.prepared_frame(),
+      print_preview_context_.total_page_count());
+  int dpi = GetDPI(&print_params);
 
-    gfx::Rect printable_area_in_points(
-        ConvertUnit(print_params.printable_area.x(), dpi, kPointsPerInch),
-        ConvertUnit(print_params.printable_area.y(), dpi, kPointsPerInch),
-        ConvertUnit(print_params.printable_area.width(), dpi, kPointsPerInch),
-        ConvertUnit(print_params.printable_area.height(), dpi, kPointsPerInch));
+  gfx::Rect printable_area_in_points(
+      ConvertUnit(print_params.printable_area.x(), dpi, kPointsPerInch),
+      ConvertUnit(print_params.printable_area.y(), dpi, kPointsPerInch),
+      ConvertUnit(print_params.printable_area.width(), dpi, kPointsPerInch),
+      ConvertUnit(print_params.printable_area.height(), dpi, kPointsPerInch));
 
-    // Margins: Send default page layout to browser process.
-    Send(new PrintHostMsg_DidGetDefaultPageLayout(routing_id(),
-                                                  default_page_layout,
-                                                  printable_area_in_points,
-                                                  has_page_size_style));
-  }
+  // Margins: Send default page layout to browser process.
+  Send(new PrintHostMsg_DidGetDefaultPageLayout(routing_id(),
+                                                default_page_layout,
+                                                printable_area_in_points,
+                                                has_page_size_style));
 
   PrintHostMsg_DidGetPreviewPageCount_Params params;
   params.page_count = print_preview_context_.total_page_count();
@@ -1206,7 +1146,6 @@ void PrintWebViewHelper::Print(WebKit::WebFrame* frame,
 }
 
 void PrintWebViewHelper::DidFinishPrinting(PrintingResult result) {
-  bool store_print_pages_params = true;
   switch (result) {
     case OK:
       break;
@@ -1224,7 +1163,6 @@ void PrintWebViewHelper::DidFinishPrinting(PrintingResult result) {
 
     case FAIL_PREVIEW:
       DCHECK(is_preview_enabled_);
-      store_print_pages_params = false;
       int cookie = print_pages_params_.get() ?
           print_pages_params_->params.document_cookie : 0;
       if (notify_browser_of_print_failure_) {
@@ -1236,16 +1174,8 @@ void PrintWebViewHelper::DidFinishPrinting(PrintingResult result) {
       print_preview_context_.Failed(notify_browser_of_print_failure_);
       break;
   }
-
   prep_frame_view_.reset();
-
-  if (store_print_pages_params) {
-    old_print_pages_params_.reset(print_pages_params_.release());
-  } else {
-    print_pages_params_.reset();
-    old_print_pages_params_.reset();
-  }
-
+  print_pages_params_.reset();
   notify_browser_of_print_failure_ = true;
 }
 
@@ -1479,8 +1409,8 @@ bool PrintWebViewHelper::UpdatePrintSettings(
     // Header/Footer: Set |header_footer_info_|.
     if (settings.params.display_header_footer) {
       header_footer_info_.reset(new DictionaryValue());
-      header_footer_info_->SetString(kSettingHeaderFooterDate,
-                                     settings.params.date);
+      header_footer_info_->SetDouble(kSettingHeaderFooterDate,
+                                     base::Time::Now().ToJsTime());
       header_footer_info_->SetString(kSettingHeaderFooterURL,
                                      settings.params.url);
       header_footer_info_->SetString(kSettingHeaderFooterTitle,
@@ -1617,7 +1547,6 @@ void PrintWebViewHelper::IncrementScriptedPrintCount() {
 void PrintWebViewHelper::RequestPrintPreview(PrintPreviewRequestType type) {
   const bool is_modifiable = print_preview_context_.IsModifiable();
   const bool has_selection = print_preview_context_.HasSelection();
-  old_print_pages_params_.reset();
   PrintHostMsg_RequestPrintPreview_Params params;
   params.is_modifiable = is_modifiable;
   params.has_selection = has_selection;

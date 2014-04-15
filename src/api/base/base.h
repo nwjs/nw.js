@@ -22,6 +22,7 @@
 #define CONTENT_NW_SRC_API_BASE_BASE_H_
 
 #include "base/basictypes.h"
+#include "base/memory/weak_ptr.h"
 
 #include <string>
 
@@ -30,14 +31,14 @@ class DictionaryValue;
 class ListValue;
 }
 
-namespace api {
+namespace nwapi {
 
 class DispatcherHost;
 
 class Base {
  public:
   Base(int id,
-       DispatcherHost* dispatcher_host,
+       const base::WeakPtr<DispatcherHost>& dispatcher_host,
        const base::DictionaryValue& option);
   virtual ~Base();
 
@@ -48,15 +49,15 @@ class Base {
                         base::ListValue* result);
 
   int id() const { return id_; }
-  DispatcherHost* dispatcher_host() const { return dispatcher_host_; }
+  DispatcherHost* dispatcher_host() const { return dispatcher_host_.get(); }
 
  private:
   int id_;
-  DispatcherHost* dispatcher_host_;
+  base::WeakPtr<DispatcherHost> dispatcher_host_;
 
   DISALLOW_COPY_AND_ASSIGN(Base);
 };
 
-}  // namespace api
+}  // namespace nwapi
 
 #endif  // CONTENT_NW_SRC_API_BASE_BASE_H_
