@@ -117,6 +117,8 @@ class DispatcherHost : public content::WebContentsObserver {
                      const base::DictionaryValue& manifest,
                      int* routing_id);
   void OnAllocateId(int* ret);
+  void OnSetForceClose(bool force, int* ret);
+
   DISALLOW_COPY_AND_ASSIGN(DispatcherHost);
 };
 

@@ -100,3 +100,5 @@ IPC_MESSAGE_CONTROL0(ShellViewMsg_ClearCache)
 
 IPC_SYNC_MESSAGE_ROUTED0_1(ShellViewHostMsg_AllocateId, int)
 
+IPC_SYNC_MESSAGE_ROUTED1_1(ShellViewHostMsg_SetForceClose, bool, int)
+

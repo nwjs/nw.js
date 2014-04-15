@@ -347,6 +347,16 @@ void ShellContentRendererClient::InstallNodeSymbols(
         "process.versions['chromium'] = '" CHROME_VERSION "';"
     ));
     script->Run();
+    v8::Local<v8::Script> script2 = v8::Script::New(v8::String::New(
+        "  nwDispatcher.requireNwGui().Window.get();"
+    ));
+    script2->Run();
+  } else {
+    int ret;
+    RenderViewImpl* render_view = RenderViewImpl::FromWebView(frame->view());
+
+    render_view->Send(new ShellViewHostMsg_SetForceClose(
+            render_view->GetRoutingID(), true, &ret));
   }
 }
 
