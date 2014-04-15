@@ -8,7 +8,7 @@
 </head>
 <body style="-webkit-user-select: none; -webkit-app-region: drag">
 <script>
-  var gui = require('nw.gui');
+  var gui = nodeRequire('nw.gui');
   var win = gui.Window.open('popup.html', {
     x: 100, y: 100, width: 200, height: 300
   });

@@ -5,9 +5,9 @@
 <body>
 <script>
 
-  var gui = require('nw.gui');
-  var program = require('../../node_modules/commander');
-  var net = require('net');
+  var gui = nodeRequire('nw.gui');
+  var program = nodeRequire('../../node_modules/commander');
+  var net = nodeRequire('net');
   //command line arguments.
   program
     .option('--auto', 'run app automatic')

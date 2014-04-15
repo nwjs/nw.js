@@ -153,6 +153,8 @@
         'src/browser/app_controller_mac.mm',
         'src/browser/capture_page_helper.h',
         'src/browser/capture_page_helper.cc',
+        'src/browser/notification_helper.h',
+        'src/browser/notification_helper.cc',
         'src/browser/color_chooser_gtk.cc',
         'src/browser/color_chooser_win.cc',
         'src/browser/color_chooser_mac.mm',

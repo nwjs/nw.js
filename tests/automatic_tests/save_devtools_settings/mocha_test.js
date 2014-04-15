@@ -1,6 +1,6 @@
-var path = require('path');
-var app_test = require('./nw_test_app');
-var assert = require('assert');
+var path = nodeRequire('path');
+var app_test = nodeRequire('./nw_test_app');
+var assert = nodeRequire('assert');
 var original;
 var changed;
 var ok = false;

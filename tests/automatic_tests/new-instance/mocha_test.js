@@ -1,6 +1,6 @@
 
-var path = require('path');
-var app_test = require('./nw_test_app');
+var path = nodeRequire('path');
+var app_test = nodeRequire('./nw_test_app');
 var server = global.server;
 var cb;
 

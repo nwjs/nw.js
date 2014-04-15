@@ -1,4 +1,4 @@
-var assert = require('assert');
+var assert = nodeRequire('assert');
 
 describe('chromium-args', function() {
   it("window.Intl should be undefined beacuse disabled in package.json",

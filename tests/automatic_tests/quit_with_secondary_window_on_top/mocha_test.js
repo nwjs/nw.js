@@ -1,8 +1,8 @@
-var assert = require('assert');
-var path = require('path');
-var exec = require('child_process').exec;
-var spawn = require('child_process').spawn;
-var os = require('os');
+var assert = nodeRequire('assert');
+var path = nodeRequire('path');
+var exec = nodeRequire('child_process').exec;
+var spawn = nodeRequire('child_process').spawn;
+var os = nodeRequire('os');
 var result;
 
 if (os.platform() != 'darwin')

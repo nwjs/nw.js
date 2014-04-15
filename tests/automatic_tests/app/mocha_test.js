@@ -1,6 +1,6 @@
-var gui = require('nw.gui');
-var assert = require('assert');
-var app_test = require('./nw_test_app');
+var gui = nodeRequire('nw.gui');
+var assert = nodeRequire('assert');
+var app_test = nodeRequire('./nw_test_app');
 
 describe('gui.App', function() {
     before(function(done) {

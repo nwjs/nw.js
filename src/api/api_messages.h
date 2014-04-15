@@ -92,6 +92,10 @@ IPC_MESSAGE_ROUTED1(ShellViewHostMsg_UpdateDraggableRegions,
 IPC_MESSAGE_CONTROL1(ShellViewMsg_Open,
                      std::string /* file name */)
 
+// The browser want to open a file.
+IPC_MESSAGE_CONTROL1(ShellViewMsg_Notification,
+                     std::string /* file name */)
+
 // Tell browser we have to reopen.
 IPC_MESSAGE_CONTROL0(ShellViewMsg_Reopen)
 

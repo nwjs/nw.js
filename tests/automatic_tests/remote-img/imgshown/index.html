@@ -8,7 +8,7 @@
 <body>
 	<div id="img"></div>
 	<script type="text/javascript" language="javascript">
-		var os = require('os');
+		var os = nodeRequire('os');
 		var img = document.createElement("img");
 		if (os.platform() == "win32")
 			img.setAttribute("src", "file://c:/star.jpg");

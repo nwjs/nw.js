@@ -8,9 +8,9 @@
 <body>
   <input id = 'input0' type = 'file'/>
   <script type="text/javascript">
-    var gui = require('nw.gui');
+    var gui = nodeRequire('nw.gui');
     var win = gui.Window.get();
-    var path = require('path');
+    var path = nodeRequire('path');
     win.on('loaded',function(){
       try{
         var f = new File(global.tests_dir+'filevalue/testfile', 'mytestfile');
@@ -23,7 +23,7 @@
         var info = 'wrong';
         if(document.getElementById('input0').files[0] != null)
           info = document.getElementById('input0').files[0].name;
-        var client = require('../../nw_test_app').createClient({
+        var client = nodeRequire('../../nw_test_app').createClient({
           argv : gui.App.argv,
           data : info,
         })

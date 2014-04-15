@@ -1,6 +1,6 @@
-var path = require('path');
-var app_test = require('./nw_test_app');
-var fs = require('fs-extra');
+var path = nodeRequire('path');
+var app_test = nodeRequire('./nw_test_app');
+var fs = nodeRequire('fs-extra');
 describe('data-path', function() {
 	before(function(done){
 		this.timeout(0);

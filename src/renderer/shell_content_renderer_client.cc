@@ -311,7 +311,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
         "process.mainModule.filename = decodeURIComponent(window.location.pathname);"
 #endif
         "if (window.location.href.indexOf('app://') === 0) {process.mainModule.filename = root + '/' + process.mainModule.filename}"
-        "process.mainModule.paths = global.require('module')._nodeModulePaths(process.cwd());"
+        "process.mainModule.paths = global.nodeRequire('module')._nodeModulePaths(process.cwd());"
         "process.mainModule.loaded = true;"
         "}").c_str()
     ));
@@ -322,7 +322,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
   if (use_node || is_nw_protocol) {
     v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
         // Overload require
-        "window.require = function(name) {"
+        "window.nodeRequire = function(name) {"
         "  if (name == 'nw.gui')"
         "    return nwDispatcher.requireNwGui();"
         "  return global.require(name);"
@@ -391,7 +391,7 @@ void ShellContentRendererClient::UninstallNodeSymbols(
   symbols->Set(1, v8::String::New("process"));
   symbols->Set(2, v8::String::New("Buffer"));
   symbols->Set(3, v8::String::New("root"));
-  symbols->Set(4, v8::String::New("require"));
+  symbols->Set(4, v8::String::New("nodeRequire"));
 
   for (unsigned i = 0; i < symbols->Length(); ++i) {
     v8::Local<v8::String> key = symbols->Get(i)->ToString();

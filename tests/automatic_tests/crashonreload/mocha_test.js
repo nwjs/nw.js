@@ -1,4 +1,4 @@
-var app_test = require('./nw_test_app');
+var app_test = nodeRequire('./nw_test_app');
 describe('crash on reload',function(){
   it('nw should not crash when reloading with devtool opened',function(done){
     this.timeout(0);

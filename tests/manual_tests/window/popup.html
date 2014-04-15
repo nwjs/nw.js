@@ -9,7 +9,7 @@
 This is the popup window<br/>
 <script>
   var enable = false;
-  var gui = require('nw.gui');
+  var gui = nodeRequire('nw.gui');
   var win = gui.Window.get();
   win.on('close', function() {
     if (enable)

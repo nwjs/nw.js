@@ -1,7 +1,7 @@
-var assert = require('assert');
-var spawn = require('child_process').spawn;
-var path = require('path');
-var net = require('net');
+var assert = nodeRequire('assert');
+var spawn = nodeRequire('child_process').spawn;
+var path = nodeRequire('path');
+var net = nodeRequire('net');
 var server = global.server;
 var cb;
 

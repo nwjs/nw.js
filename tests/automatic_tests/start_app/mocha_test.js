@@ -1,11 +1,11 @@
-var spawn = require('child_process').spawn;
-var exec = require('child_process').exec;
-var path = require('path');
-var net = require('net');
-var os = require('os');
+var spawn = nodeRequire('child_process').spawn;
+var exec = nodeRequire('child_process').exec;
+var path = nodeRequire('path');
+var net = nodeRequire('net');
+var os = nodeRequire('os');
 var server = global.server;
-var fs = require('fs-extra');
-var func = require('./' + global.tests_dir +'/start_app/script.js');
+var fs = nodeRequire('fs-extra');
+var func = nodeRequire('./' + global.tests_dir +'/start_app/script.js');
 var execPath = func.getExecPath();
 
 

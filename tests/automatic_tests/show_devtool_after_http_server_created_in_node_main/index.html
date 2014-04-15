@@ -3,7 +3,7 @@
 </head>
 <body>
 <script>
-  var gui = require('nw.gui');
+  var gui = nodeRequire('nw.gui');
   //gui.Window.get().show(); 
   
   
@@ -14,7 +14,7 @@
       success: false
   };  
     
-  var client = require('../../nw_test_app').createClient({
+  var client = nodeRequire('../../nw_test_app').createClient({
     argv: gui.App.argv,
     data: result,
     delay: 1100 //after 1100ms we send result to server

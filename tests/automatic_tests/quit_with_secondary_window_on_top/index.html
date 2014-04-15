@@ -7,7 +7,7 @@
     <h1>quit_with_secondary_window_on_top!</h1>
     with the created new window on top, hit CMD-Q or select Menu > Quit
     <script>
-      var gui = require('nw.gui');
+      var gui = nodeRequire('nw.gui');
       var win1 = gui.Window.open('index1.html');
       setTimeout(function() {
          win1.focus();

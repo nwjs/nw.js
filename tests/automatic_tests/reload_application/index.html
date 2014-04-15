@@ -1,7 +1,7 @@
 <html>
 <head>
 <script>
-  var gui = require('nw.gui');
+  var gui = nodeRequire('nw.gui');
   function quit(){
     gui.App.quit();
   }
@@ -22,8 +22,8 @@
   }
 
   
-  var program = require('../../node_modules/commander');
-  var net = require('net');
+  var program = nodeRequire('../../node_modules/commander');
+  var net = nodeRequire('net');
   //command line arguments.
   program
     .option('--auto', 'run app automatic')

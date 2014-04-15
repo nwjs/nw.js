@@ -1,5 +1,5 @@
-var spawn = require('child_process').spawn;
-var os = require('os');
+var spawn = nodeRequire('child_process').spawn;
+var os = nodeRequire('os');
 describe('app_path_escaping',function(){
   it('app should start normally with directory named xdk',function(done){
     this.timeout(0);

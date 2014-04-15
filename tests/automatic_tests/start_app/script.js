@@ -1,7 +1,7 @@
-var path = require('path');
-var os = require('os');
-var fs = require('fs-extra');
-var cp = require('child_process');
+var path = nodeRequire('path');
+var os = nodeRequire('os');
+var fs = nodeRequire('fs-extra');
+var cp = nodeRequire('child_process');
 var exec = cp.exec;
 var sqawn = cp.sqawn;
 

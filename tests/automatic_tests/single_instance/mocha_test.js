@@ -1,9 +1,9 @@
-var func = require('./' + global.tests_dir +'/start_app/script.js');
+var func = nodeRequire('./' + global.tests_dir +'/start_app/script.js');
 var execPath = func.getExecPath();
-var fs = require('fs-extra');
-var os = require('os');
-var spawn = require('child_process').spawn;
-var exec = require('child_process').exec;
+var fs = nodeRequire('fs-extra');
+var os = nodeRequire('os');
+var spawn = nodeRequire('child_process').spawn;
+var exec = nodeRequire('child_process').exec;
 
 var app =  new Array();
 var child1, child2;

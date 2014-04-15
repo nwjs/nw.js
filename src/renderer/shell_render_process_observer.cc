@@ -109,6 +109,7 @@ void ShellRenderProcessObserver::OnReopen() {
   }
 }
 
+
 void ShellRenderProcessObserver::OnClearCache() {
   if (webkit_initialized_)
     WebKit::WebCache::clear();

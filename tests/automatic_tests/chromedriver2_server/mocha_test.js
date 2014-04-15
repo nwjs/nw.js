@@ -1,8 +1,8 @@
-var path =  require('path');
-var exec = require('child_process').exec;
-var assert = require('assert');
-var func = require('./' + global.tests_dir +'/start_app/script.js');
-var fs = require('fs-extra');
+var path =  nodeRequire('path');
+var exec = nodeRequire('child_process').exec;
+var assert = nodeRequire('assert');
+var func = nodeRequire('./' + global.tests_dir +'/start_app/script.js');
+var fs = nodeRequire('fs-extra');
 var result = new Array();
 var child;
 var isFileExist = true;

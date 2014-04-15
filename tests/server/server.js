@@ -1,8 +1,8 @@
-var http = require("http"),
-url = require("url"),
-path = require("path"),
-fs = require("fs"), 
-config = require('./config');
+var http = nodeRequire("http"),
+url = nodeRequire("url"),
+path = nodeRequire("path"),
+fs = nodeRequire("fs"), 
+config = nodeRequire('./config');
 ports = new Array(8123,8124),
 servers = new Array(ports.length);
 

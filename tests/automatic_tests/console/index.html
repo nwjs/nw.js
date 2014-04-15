@@ -45,7 +45,7 @@
     <!-- all formats -->
     console.log("%c%s has %d points and %i pencils.He carrys %f kg of water. %o %O", "color:orange;background: blue; font-size: 16pt", "Sam", 100, 2, 12.23, document.childNodes[0], document.childNodes[0]);
     
-    var gui = require('nw.gui');
+    var gui = nodeRequire('nw.gui');
     var win = gui.Window.get();
     var results = new Array();
 
@@ -64,7 +64,7 @@
 	    for (var i = 0; i < console_logs.length; i++)
 		results.push(console_logs[i].childNodes[0].childNodes[0].innerHTML);
 	    
-	    var client = require('../../nw_test_app').createClient({
+	    var client = nodeRequire('../../nw_test_app').createClient({
 		argv: gui.App.argv,
 		data: results
 	    });
