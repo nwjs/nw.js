@@ -154,6 +154,9 @@ void NativeWindowGtk::Close() {
   gtk_widget_destroy(GTK_WIDGET(window_));
 }
 
+void NativeWindowGtk::Notify(std::string title, std::string text, std::string subtitle, std::string callback) {
+}
+
 void NativeWindowGtk::Move(const gfx::Rect& bounds) {
   gint x = static_cast<gint>(bounds.x());
   gint y = static_cast<gint>(bounds.y());

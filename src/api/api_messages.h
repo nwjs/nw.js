@@ -102,3 +102,5 @@ IPC_SYNC_MESSAGE_ROUTED0_1(ShellViewHostMsg_AllocateId, int)
 
 IPC_SYNC_MESSAGE_ROUTED1_1(ShellViewHostMsg_SetForceClose, bool, int)
 
+IPC_MESSAGE_CONTROL1(ShellViewMsg_Notification, std::string /* event */)
+

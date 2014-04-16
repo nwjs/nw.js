@@ -325,7 +325,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
         "process.mainModule.filename = decodeURIComponent(window.location.pathname);"
 #endif
         "if (window.location.href.indexOf('app://') === 0) {process.mainModule.filename = root + '/' + process.mainModule.filename}"
-        "process.mainModule.paths = global.nodeRequire('module')._nodeModulePaths(process.cwd());"
+        "process.mainModule.paths = global.require('module')._nodeModulePaths(process.cwd());"
         "process.mainModule.loaded = true;"
         "}").c_str()
     ));
@@ -339,7 +339,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
         "window.nodeRequire = function(name) {"
         "  if (name == 'nw.gui')"
         "    return nwDispatcher.requireNwGui();"
-        "  return global.nodeRequire(name);"
+        "  return global.require(name);"
         "};"
 
         // Save node-webkit version

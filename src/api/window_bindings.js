@@ -95,6 +95,7 @@ native function CallObjectMethodSync();
 // Override the addListener method.
 Window.prototype.on = Window.prototype.addListener = function(ev, callback) {
   // Save window id of where the callback is created.
+
   var closure = v8_util.getCreationContext(callback);
   if (v8_util.getConstructorName(closure) == 'Window' &&
       closure.hasOwnProperty('nwDispatcher')) {
@@ -104,6 +105,19 @@ Window.prototype.on = Window.prototype.addListener = function(ev, callback) {
 
   // Call parent.
   EventEmitter.prototype.addListener.apply(this, arguments);
+}
+
+Window.prototype.off = Window.prototype.removeListener = function(ev, callback) {
+   // Save window id of where the callback is created.
+   var closure = v8_util.getCreationContext(callback);
+   if (v8_util.getConstructorName(closure) == 'Window' && 
+       closure.hasOwnProperty('nwDispatcher')) {
+     v8_util.setHiddenValue(callback, '__nwWindowId',
+         closure.nwDispatcher.requireNwGui().Window.get().id);
+   }
+ 
+   // Call parent.
+   EventEmitter.prototype.removeListener.apply(this, arguments);
 }
 
 // Route events.
@@ -156,6 +170,11 @@ Window.prototype.handleEvent = function(ev) {
     return;
   }
 }
+
+Window.prototype.notify = function(title, text, subtitle, callback) {
+ CallObjectMethod(this, 'Notify',[title, text, subtitle,callback]);
+}
+
 
 // Return current window object of Shell's DOM.
 Window.prototype.__defineGetter__('window', function() {

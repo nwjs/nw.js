@@ -24,6 +24,7 @@
 #include "base/strings/sys_string_conversions.h"
 #include "base/values.h"
 #import "chrome/browser/ui/cocoa/custom_frame_view.h"
+#include "base/strings/stringprintf.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/app/app.h"
 #include "content/nw/src/browser/chrome_event_processing_window.h"
@@ -40,6 +41,19 @@
 #include "extensions/common/draggable_region.h"
 #include "third_party/skia/include/core/SkRegion.h"
 #import "ui/base/cocoa/underlay_opengl_hosting_window.h"
+
+
+#if !defined(MAC_OS_X_VERSION_10_8) || \
+ MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_8
+ @interface NSUserNotificationCenter : NSObject
+ @end
+ @implementation NSUserNotificationCenter
+ @end
+ @interface NSUserNotification : NSObject
+ @end
+ @implementation NSUserNotification
+ @end
+#endif
 
 @interface NSWindow (NSPrivateApis)
 - (void)setBottomCornerRounded:(BOOL)rounded;
@@ -70,7 +84,7 @@ enum {
 
 #endif  // MAC_OS_X_VERSION_10_7
 
-@interface NativeWindowDelegate : NSObject<NSWindowDelegate> {
+@interface NativeWindowDelegate : NSObject<NSWindowDelegate, NSUserNotificationCenterDelegate> {
  @private
   base::WeakPtr<content::Shell> shell_;
 }
@@ -84,6 +98,20 @@ enum {
     shell_ = shell;
   }
   return self;
+}
+
+
+
+- (void) applicationDidFinishLaunching: (NSNotification *) note {
+  // Initlialize everything here
+  [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
+
+  }
+
+- (void) userNotificationCenter:(NSUserNotificationCenter *)center didDeliverNotification:(NSUserNotification *)notification
+{
+   // notifications=nil;
+    [center removeDeliveredNotification: notification];
 }
 
 - (BOOL)windowShouldClose:(id)window {
@@ -351,7 +379,9 @@ NativeWindowCocoa::NativeWindowCocoa(
   }
   window_ = shell_window;
   [shell_window setShell:shell];
-  [window() setDelegate:[[NativeWindowDelegate alloc] initWithShell:shell]];
+ // [window() setDelegate:[[NativeWindowDelegate alloc] initWithShell:shell]];
+  NativeWindowDelegate * delegateWindow =[NativeWindowDelegate alloc];
+  [window() setDelegate:[delegateWindow initWithShell:shell]]; 
 
   // Disable fullscreen button when 'fullscreen' is specified to false.
   bool fullscreen;
@@ -439,6 +469,34 @@ void NativeWindowCocoa::Focus(bool focus) {
   else
     [window() orderBack:nil];
 }
+
+void NativeWindowCocoa::Notify(std::string title, std::string text, std::string subtitle, std::string callback) {
+      
+     // NSApplication *myApp = [NSApplication sharedApplication];
+    //  [myApp activateIgnoringOtherApps:YES];
+  
+
+     NSUserNotification *notification = [[NSUserNotification alloc] init];
+      [notification setTitle:@(title.c_str())];
+      [notification setInformativeText:@(text.c_str())];
+      [notification setSubtitle:@(subtitle.c_str())]; 
+
+      [notification setUserInfo:@{ @"callback": @(callback.c_str()) }]; 
+     /* notification.actionButtonTitle = actionTitle;
+      notification.hasActionButton = YES;*/
+
+     [notification setSoundName:nil];
+
+    // [notification setSoundName:@"NSUserNotificationDefaultSoundName"];
+
+    // [ addObserver:self selector:@selector(foremostAppActivated:) name:NSWorkspaceDidActivateApplicationNotification object:nil];
+
+//[[NSWorkspace sharedWorkspace] notificationCenter]
+    [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
+  
+
+}
+
 
 void NativeWindowCocoa::Show() {
   NSApplication *myApp = [NSApplication sharedApplication];
@@ -597,6 +655,7 @@ void NativeWindowCocoa::SetAlwaysOnTop(bool top) {
   [window() setLevel:(top ? NSFloatingWindowLevel : NSNormalWindowLevel)];
 }
 
+/*
 void NativeWindowCocoa::SetShowInTaskbar(bool show) {
   ProcessSerialNumber psn = { 0, kCurrentProcess };
   if (!show) {
@@ -611,7 +670,19 @@ void NativeWindowCocoa::SetShowInTaskbar(bool show) {
   else {
     TransformProcessType(&psn, kProcessTransformToForegroundApplication);
   }
-}
+}*/
+
+  void NativeWindowCocoa::SetShowInTaskbar(bool show) {
+
+    if (!show) {
+     title = [window() title];
+     [window() setTitle:@""];
+   } else{
+     [window() setTitle:title];
+   }
+
+  }
+
 
 void NativeWindowCocoa::SetPosition(const std::string& position) {
   if (position == "center")

@@ -52,6 +52,23 @@
   return FALSE;
 }
 
+- (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center shouldPresentNotification:(NSUserNotification *)notification{
+    return YES;
+ }
+
+- (void) userNotificationCenter:(NSUserNotificationCenter *)center didActivateNotification:(NSUserNotification *)notification
+{
+
+  NSString* callString= [[notification userInfo] valueForKey:@"callback"];
+
+  if (callString){
+
+      nwapi::App::EmitNotificationEvent([callString UTF8String]);
+
+  }
+
+}
+
 - (void) applicationDidFinishLaunching: (NSNotification *) note {
   // Initlialize everything here
   content::ShellContentBrowserClient* browser_client = 
@@ -59,6 +76,7 @@
           content::GetContentClient()->browser());
   browser_client->shell_browser_main_parts()->Init();
 
+  [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
   // And init menu.
   bool no_edit_menu = false;
   browser_client->shell_browser_main_parts()->package()->root()->GetBoolean("no-edit-menu", &no_edit_menu);

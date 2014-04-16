@@ -210,6 +210,14 @@ void App::EmitReopenEvent() {
   }
 }
 
+void App::EmitNotificationEvent(const std::string& notification) {
+    std::vector<Shell*> windows = Shell::windows();
+
+  for (size_t i = 0; i < windows.size(); ++i) {
+    windows[i]->window()->shell()->SendEvent(notification);  
+  }
+}
+
 void App::ClearCache(content::RenderProcessHost* render_process_host) {
   render_process_host->Send(new ShellViewMsg_ClearCache());
   nw::RemoveHttpDiskCache(render_process_host->GetBrowserContext(),

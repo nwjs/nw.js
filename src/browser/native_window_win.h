@@ -105,6 +105,8 @@ class NativeWindowWin : public NativeWindow,
   virtual bool ShouldShowWindowTitle() const OVERRIDE;
   virtual bool ShouldHandleOnSize()    const OVERRIDE;
 
+  virtual void Notify(std::string title, std::string text, std::string subtitle) const OVERRIDE;
+
   // WidgetFocusChangeListener implementation.
   virtual void OnNativeFocusChange(gfx::NativeView focused_before,
                                    gfx::NativeView focused_now) OVERRIDE;

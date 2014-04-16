@@ -68,6 +68,7 @@ class NativeWindowCocoa : public NativeWindow {
   virtual void SetKiosk(bool kiosk) OVERRIDE;
   virtual bool IsKiosk() OVERRIDE;
   virtual void SetMenu(nwapi::Menu* menu) OVERRIDE;
+  virtual void Notify(std::string title, std::string text, std::string subtitle, std::string callback) OVERRIDE;
   virtual void SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
                                        bool enabled) OVERRIDE;
   virtual void SetToolbarUrlEntry(const std::string& url) OVERRIDE;
@@ -112,6 +113,8 @@ class NativeWindowCocoa : public NativeWindow {
 
   bool is_fullscreen_;
   bool is_kiosk_;
+
+  NSString* title;
   NSRect restored_bounds_;
 
   NSInteger attention_request_id_;  // identifier from requestUserAttention

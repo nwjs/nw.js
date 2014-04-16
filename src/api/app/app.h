@@ -59,6 +59,8 @@ class App {
   // (This event is received when the user clicked the icon in the Dock).
   static void EmitReopenEvent();
 
+  static void EmitNotificationEvent(const std::string& notification);
+
   static void ClearCache(content::RenderProcessHost* render_view_host);
 
  private:
