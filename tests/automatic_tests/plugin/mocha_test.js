@@ -1,5 +1,5 @@
-var path = nodeRequire('path');
-var app_test = nodeRequire('./nw_test_app');
+var path = require('path');
+var app_test = require('./nw_test_app');
 
 describe('Plugin', function() {
   describe('flash', function(){

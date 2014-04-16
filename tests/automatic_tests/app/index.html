@@ -11,7 +11,7 @@
 </html>
 <script>
   function fun() {
-    var gui = nodeRequire('nw.gui');
+    var gui = require('nw.gui');
 
     if (self.name == '')
        self.name = 0; //initial
@@ -21,7 +21,7 @@
     if (self.name == 2)
        gui.App.clearCache();
     else if (self.name == 3) {
-	var client = nodeRequire('../../nw_test_app').createClient({
+	var client = require('../../nw_test_app').createClient({
 	    argv: gui.App.argv,
 	    data: {}
 	});

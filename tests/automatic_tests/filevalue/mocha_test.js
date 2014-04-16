@@ -1,5 +1,5 @@
-var app_test = nodeRequire('./nw_test_app');
-var path = nodeRequire('path');
+var app_test = require('./nw_test_app');
+var path = require('path');
 
 describe('file input',function(){
   describe('set value',function(){

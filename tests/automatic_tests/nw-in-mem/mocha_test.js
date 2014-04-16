@@ -1,7 +1,7 @@
-var os = nodeRequire('os');
-var path = nodeRequire('path');
-var exec = nodeRequire('child_process').exec;
-var spawn = nodeRequire('child_process').spawn;
+var os = require('os');
+var path = require('path');
+var exec = require('child_process').exec;
+var spawn = require('child_process').spawn;
 describe('nw in memory after quiting',function(){
   it('nw.exe should not be in memory after gui.App.quit is called on windows',function(done){
     this.timeout(0);

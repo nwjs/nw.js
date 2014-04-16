@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>new_win1</title>
     <script>
-    var gui = nodeRequire('nw.gui');
+    var gui = require('nw.gui');
     var win1 = gui.Window.get();
     localStorage.win1 = 0;
     win1.on('focus', function() {

@@ -106,25 +106,9 @@ Window.prototype.on = Window.prototype.addListener = function(ev, callback) {
   EventEmitter.prototype.addListener.apply(this, arguments);
 }
 
-// Override the addListener method.
-Window.prototype.off = Window.prototype.removeListener = function(ev, callback) {
-  // Save window id of where the callback is created.
-  var closure = v8_util.getCreationContext(callback);
-  if (v8_util.getConstructorName(closure) == 'Window' && 
-      closure.hasOwnProperty('nwDispatcher')) {
-    v8_util.setHiddenValue(callback, '__nwWindowId',
-        closure.nwDispatcher.requireNwGui().Window.get().id);
-  }
-
-  // Call parent.
-  EventEmitter.prototype.removeListener.apply(this, arguments);
-}
-
-
 // Route events.
 Window.prototype.handleEvent = function(ev) {
   // Filter invalid callbacks.
-  console.log('handleEvent',ev);
   var listeners_copy = this.listeners(ev).slice(0);
   for (var i = 0; i < listeners_copy.length; ++i) {
     var original_closure = v8_util.getCreationContext(listeners_copy[i]);
@@ -195,14 +179,6 @@ Window.prototype.__defineGetter__('y', function() {
   return CallObjectMethodSync(this, 'GetPosition', [])[1];
 });
 
-Window.prototype.__defineGetter__('mousex', function() {
-   return CallObjectMethodSync(this, 'GetMousePosition', [])[0];
- });
- 
- Window.prototype.__defineGetter__('mousey', function() {
-   return CallObjectMethodSync(this, 'GetMousePosition', [])[1];
- });
-
 Window.prototype.__defineSetter__('width', function(width) {
   this.resizeTo(width, this.height);
 });
@@ -267,11 +243,6 @@ Window.prototype.__defineGetter__('isFullscreen', function() {
   return Boolean(result[0]);
 });
 
-Window.prototype.__defineGetter__('isTransparent', function() {
-   var result = CallObjectMethodSync(this, 'IsTransparent', []);
-   return Boolean(result[0]);
- });
-
 Window.prototype.__defineSetter__('isKioskMode', function(flag) {
   if (flag)
     this.enterKioskMode();
@@ -283,15 +254,6 @@ Window.prototype.__defineGetter__('isKioskMode', function() {
   var result = CallObjectMethodSync(this, 'IsKioskMode', []);
   return Boolean(result[0]);
 });
-
-
-Window.prototype.beginMouseOffclient = function() {
-   CallObjectMethodSync(this, 'BeginOffclientMouseMove', []);
- }
- 
- Window.prototype.endMouseOffclient = function() {
-   CallObjectMethodSync(this, 'EndOffclientMouseMove', []);
- }
 
 Window.prototype.moveTo = function(x, y) {
   CallObjectMethod(this, 'MoveTo', [ Number(x), Number(y) ]);
@@ -387,19 +349,6 @@ Window.prototype.closeDevTools = function() {
   CallObjectMethod(this, 'CloseDevTools', []);
 }
 
-Window.prototype.setBadgeCount = function(count) {
- CallObjectMethod(this, 'SetBadgeCount', [ count ]);
-}
-
-
-
-Window.prototype.setShowInTaskbar = function(flag) {
-
-  flag = Boolean(flag);
-
- CallObjectMethod(this, 'SetShowInTaskbar', [ flag ]);
-}
-
 Window.prototype.showDevTools = function(frm, headless) {
     var id = '';
     if (typeof frm === 'string') {
@@ -486,12 +435,6 @@ Window.prototype.reloadOriginalRequestURL = function() {
 Window.prototype.reloadDev = function() {
   this.reload(3);
 }
-
-Window.prototype.notify = function(title, text, subtitle, callback) {
- CallObjectMethod(this, 'Notify',[title, text, subtitle,callback]);
-}
-
-
 
 var mime_types = {
   'jpeg' : 'image/jpeg',

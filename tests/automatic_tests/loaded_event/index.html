@@ -3,7 +3,7 @@
 </head>
 <body>
 <script>
-  var gui = nodeRequire('nw.gui');
+  var gui = require('nw.gui');
   gui.Window.get().showDevTools();
    
   var times = 0;
@@ -19,7 +19,7 @@
       } else {
         console.log(times + 'all done!');
         
-        var client = nodeRequire('../../nw_test_app').createClient({
+        var client = require('../../nw_test_app').createClient({
           argv: gui.App.argv,
           data: "ok"
         });       

@@ -8,13 +8,13 @@
 <span>The pid of new-instance page is: </span>
 <span id="msg2" style="color:Green"></span>
 <script>
-  var gui = nodeRequire('nw.gui');
+  var gui = require('nw.gui');
   document.getElementById('msg').innerHTML = process.pid; 
   
   var wnd = gui.Window.open("popup.html", {show: true, 'new-instance': true})
   
   
-  var client = nodeRequire('../../nw_test_app').createClient({
+  var client = require('../../nw_test_app').createClient({
     argv: gui.App.argv,
     data: process.pid
   });

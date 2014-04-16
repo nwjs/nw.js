@@ -27,9 +27,6 @@
 #include "base/values.h"
 #include "content/browser/child_process_security_policy_impl.h"
 #include "content/browser/renderer_host/render_view_host_impl.h"
-#if defined(OS_WIN)
-#include "content/browser/renderer_host/render_widget_host_view_win.h"
-#endif
 #include "content/browser/web_contents/web_contents_impl.h"
 #include "content/public/browser/devtools_agent_host.h"
 #include "content/public/browser/devtools_http_handler.h"
@@ -41,7 +38,6 @@
 #include "content/public/browser/notification_types.h"
 #include "content/public/browser/notification_service.h"
 #include "content/public/browser/render_process_host.h"
-#include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/content_switches.h"
@@ -66,7 +62,6 @@
 #include "grit/nw_resources.h"
 #include "net/base/escape.h"
 #include "ui/base/resource/resource_bundle.h"
-#include "third_party/skia/include/core/SkBitmap.h"
 
 
 #if defined(OS_WIN)
@@ -400,7 +395,7 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
 
   RenderViewHost* inspected_rvh = web_contents()->GetRenderViewHost();
   if (nodejs()) {
-    std::string jscript = std::string("nodeRequire('nw.gui').Window.get().__setDevToolsJail('")
+    std::string jscript = std::string("require('nw.gui').Window.get().__setDevToolsJail('")
       + (jail_id ? jail_id : "(null)") + "');";
     inspected_rvh->ExecuteJavascriptInWebFrame(string16(), UTF8ToUTF16(jscript.c_str()));
   }
@@ -474,7 +469,6 @@ bool Shell::OnMessageReceived(const IPC::Message& message) {
   IPC_END_MESSAGE_MAP()
   return handled;
 }
-
 
 WebContents* Shell::OpenURLFromTab(WebContents* source,
                                    const OpenURLParams& params) {
@@ -663,25 +657,5 @@ void Shell::RenderViewCreated(RenderViewHost* render_view_host) {
   //FIXME: handle removal
   new nwapi::DispatcherHost(render_view_host);
 }
-
-/*
-void Shell::RenderViewCreated(RenderViewHost* render_view_host) {
-   if(window_->IsTransparent())
-   {
-     SkBitmap background;
-     background.setConfig(SkBitmap::kARGB_8888_Config, 1, 1);
-     background.allocPixels();
-     background.eraseARGB(0x00, 0x00, 0x00, 0x00);
- 
-     content::RenderWidgetHostView* view = render_view_host->GetView();
-     DCHECK(view);
-     view->SetBackground(background);
-#if defined(OS_WIN)
-     window_->RenderViewCreated(render_view_host);
-#endif
-
-   }
- }
-*/
 
 }  // namespace content

@@ -28,15 +28,15 @@
 <div id="mocha"></div>
 
 <script type="text/javascript" charset="utf-8">
-  var fs = nodeRequire('fs');
-  var gui = nodeRequire('nw.gui');
-  var path = nodeRequire('path');
-  var program = nodeRequire('commander');
-  global.local_server = nodeRequire('./server/server');
+  var fs = require('fs');
+  var gui = require('nw.gui');
+  var path = require('path');
+  var program = require('commander');
+  global.local_server = require('./server/server');
   var local_server = global.local_server;
   var list = new Array();
   //socket server
-  var net = nodeRequire('net');
+  var net = require('net');
   global.server = net.createServer();
   var server = global.server;
   // TODO
@@ -82,7 +82,7 @@
   if (program.asyncOnly) mocha.asyncOnly();
   // --reporter <name>
   if (program.reporter == 'json')
-    mocha.reporter(nodeRequire('./json_reporter.js'));
+    mocha.reporter(require('./json_reporter.js'));
   else
     mocha.reporter(program.reporter);
   // --output <name>

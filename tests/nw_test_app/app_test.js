@@ -2,11 +2,11 @@
  * console module for app test
  */
 
-var spawn = nodeRequire('child_process').spawn;
-var net = nodeRequire('net');
+var spawn = require('child_process').spawn;
+var net = require('net');
 var server = global.server;
 var port = global.port;
-var program = nodeRequire('commander');
+var program = require('commander');
 
 
 /*

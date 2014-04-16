@@ -1,5 +1,5 @@
-var gui = nodeRequire('nw.gui');
-var assert = nodeRequire('assert');
+var gui = require('nw.gui');
+var assert = require('assert');
 
 
 describe('Menu', function(){

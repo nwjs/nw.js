@@ -1,7 +1,7 @@
-var assert = nodeRequire('assert');
-var fs = nodeRequire('fs');
-var app_test = nodeRequire('./nw_test_app');
-var path = nodeRequire('path');
+var assert = require('assert');
+var fs = require('fs');
+var app_test = require('./nw_test_app');
+var path = require('path');
 var results;
 describe('user-agent', function() {
     before(function(done) {

@@ -1,8 +1,8 @@
-var assert = nodeRequire('assert');
+var assert = require('assert');
 
 describe('website', function() {
   describe('scores', function() {
-    var gui = nodeRequire('nw.gui');
+    var gui = require('nw.gui');
 
     it('html5test.com should score high (long-to-run)', function(done) {
       this.timeout(0);

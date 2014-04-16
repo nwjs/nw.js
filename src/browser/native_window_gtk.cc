@@ -154,11 +154,6 @@ void NativeWindowGtk::Close() {
   gtk_widget_destroy(GTK_WIDGET(window_));
 }
 
-
-void NativeWindowGtk::Notify(std::string title, std::string text, std::string subtitle, std::string callback) {
-  
-}
-
 void NativeWindowGtk::Move(const gfx::Rect& bounds) {
   gint x = static_cast<gint>(bounds.x());
   gint y = static_cast<gint>(bounds.y());
@@ -266,10 +261,6 @@ void NativeWindowGtk::SetResizable(bool resizable) {
 
 void NativeWindowGtk::SetAlwaysOnTop(bool top) {
   gtk_window_set_keep_above(window_, top ? TRUE : FALSE);
-}
-
-void NativeWindowGtk::SetBadgeCount(int count) {
-  
 }
 
 void NativeWindowGtk::SetShowInTaskbar(bool show) {

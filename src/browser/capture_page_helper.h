@@ -61,7 +61,6 @@ class CapturePageHelper : public base::RefCountedThreadSafe<CapturePageHelper>,
 
   // Capture a snapshot of the page.
   void StartCapturePage(const std::string& image_format_str);
-  void OnNotificationClicked(const base::WeakPtr<content::Shell>& shell, const std::string& event);
 
  private:
   CapturePageHelper(const base::WeakPtr<content::Shell>& shell);
@@ -71,7 +70,6 @@ class CapturePageHelper : public base::RefCountedThreadSafe<CapturePageHelper>,
 
   // Message handler.
   void OnSnapshot(const SkBitmap& bitmap);
-
 
   void CopyFromBackingStoreComplete(
                                     bool succeeded,

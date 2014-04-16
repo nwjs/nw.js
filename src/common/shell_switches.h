@@ -45,7 +45,6 @@ extern const char kmMaxHeight[];
 extern const char kmResizable[];
 extern const char kmAsDesktop[];
 extern const char kmFullscreen[];
-extern const char kmTransparent[];
 extern const char kmShowInTaskbar[];
 extern const char kmKiosk[];
 extern const char kmAlwaysOnTop[];

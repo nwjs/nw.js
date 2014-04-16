@@ -231,23 +231,6 @@ void Window::Call(const std::string& method,
     if (arguments.GetInteger(0, &width) &&
         arguments.GetInteger(1, &height))
       shell_->window()->SetMaximumSize(width, height);
-  } else if (method == "SetShowInTaskbar" ) {
-    bool show;
-    if (arguments.GetBoolean(0, &show))
-     shell_->window()->SetShowInTaskbar(show);
-  }else if (method == "SetBadgeCount" ) {
-    int count; 
-    if (arguments.GetInteger(0, &count))
-     shell_->window()->SetBadgeCount(count);
-  }else if (method == "Notify" ) {
-     std::string title;
-     std::string text;
-     std::string subtitle;
-     std::string callback;
-
-    if (arguments.GetString(0,&title) && arguments.GetString(1,&text) && arguments.GetString(2,&subtitle) && arguments.GetString(3,&callback))
-     shell_->window()->Notify(title,text,subtitle,callback);
-
   } else if (method == "SetMinimumSize") {
     int width, height;
     if (arguments.GetInteger(0, &width) &&
@@ -274,10 +257,6 @@ void Window::Call(const std::string& method,
     bool flash;
     if (arguments.GetBoolean(0, &flash))
       shell_->window()->FlashFrame(flash);
-  } else if (method == "BeginOffclientMouseMove") {
-    shell_->window()->BeginOffclientMouseMove();
-  } else if (method == "EndOffclientMouseMove") {
-    shell_->window()->EndOffclientMouseMove();
   } else if (method == "SetBadgeLabel") {
     std::string label;
     if (arguments.GetString(0, &label))
@@ -315,8 +294,6 @@ void Window::CallSync(const std::string& method,
     result->AppendBoolean(shell_->window()->IsFullscreen());
   } else if (method == "IsKioskMode") {
     result->AppendBoolean(shell_->window()->IsKiosk());
-  } else if (method == "IsTransparent") {
-   result->AppendBoolean(shell_->window()->IsTransparent());
   } else if (method == "GetSize") {
     gfx::Size size = shell_->window()->GetSize();
     result->AppendInteger(size.width());
@@ -325,11 +302,7 @@ void Window::CallSync(const std::string& method,
     gfx::Point position = shell_->window()->GetPosition();
     result->AppendInteger(position.x());
     result->AppendInteger(position.y());
-  } else if (method == "GetMousePosition") {
-     gfx::Point position = shell_->window()->GetMousePosition();
-     result->AppendInteger(position.x());
-     result->AppendInteger(position.y());
-  }else if (method == "IsDevToolsOpen") {
+  } else if (method == "IsDevToolsOpen") {
     result->AppendBoolean(shell_->devToolsOpen());
   } else if (method == "ShowDevTools") {
     std::string jail_id;

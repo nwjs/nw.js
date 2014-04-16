@@ -28,13 +28,11 @@
 #include "base/memory/weak_ptr.h"
 #include "content/nw/src/browser/native_window.h"
 
-
 @class ShellNSWindow;
 @class ShellToolbarDelegate;
 class SkRegion;
 
 namespace nw {
-
 
 class NativeWindowCocoa : public NativeWindow {
  public:
@@ -60,28 +58,20 @@ class NativeWindowCocoa : public NativeWindow {
   virtual void SetMaximumSize(int width, int height) OVERRIDE;
   virtual void SetResizable(bool resizable) OVERRIDE;
   virtual void SetAlwaysOnTop(bool top) OVERRIDE;
-  virtual void SetBadgeCount(int count = 0) OVERRIDE;
   virtual void SetShowInTaskbar(bool show = true) OVERRIDE;
   virtual void SetPosition(const std::string& position) OVERRIDE;
   virtual void SetPosition(const gfx::Point& position) OVERRIDE;
   virtual gfx::Point GetPosition() OVERRIDE;
-  virtual gfx::Point GetMousePosition() OVERRIDE;
-  virtual void BeginOffclientMouseMove() OVERRIDE;
-  virtual void EndOffclientMouseMove() OVERRIDE;
   virtual void SetTitle(const std::string& title) OVERRIDE;
   virtual void FlashFrame(bool flash) OVERRIDE;
   virtual void SetBadgeLabel(const std::string& badge) OVERRIDE;
   virtual void SetKiosk(bool kiosk) OVERRIDE;
   virtual bool IsKiosk() OVERRIDE;
-  virtual void SetTransparent() OVERRIDE;
-  virtual bool IsTransparent() OVERRIDE;  
   virtual void SetMenu(nwapi::Menu* menu) OVERRIDE;
   virtual void SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
                                        bool enabled) OVERRIDE;
   virtual void SetToolbarUrlEntry(const std::string& url) OVERRIDE;
   virtual void SetToolbarIsLoading(bool loading) OVERRIDE;
-  virtual void Notify(std::string title, std::string text, std::string subtitle, std::string callback) OVERRIDE;
-
   virtual void SetInitialFocus(bool accept_focus) OVERRIDE;
   virtual bool InitialFocus() OVERRIDE;
 
@@ -105,8 +95,6 @@ class NativeWindowCocoa : public NativeWindow {
 
   void SetNonLionFullscreen(bool fullscreen);
 
-
-
  private:
   void InstallView();
   void UninstallView();
@@ -116,6 +104,7 @@ class NativeWindowCocoa : public NativeWindow {
       const extensions::DraggableRegion* draggable_area);
   void UpdateDraggableRegionsForCustomDrag(
       const std::vector<extensions::DraggableRegion>& regions);
+
   NSWindow* window_;
 
   // Delegate to the toolbar.
@@ -123,7 +112,6 @@ class NativeWindowCocoa : public NativeWindow {
 
   bool is_fullscreen_;
   bool is_kiosk_;
-  bool is_transparent_;
   NSRect restored_bounds_;
 
   NSInteger attention_request_id_;  // identifier from requestUserAttention
@@ -132,7 +120,6 @@ class NativeWindowCocoa : public NativeWindow {
   // the complexity of draggable regions.
   bool use_system_drag_;
 
-  NSString* title;
   // For system drag, the whole window is draggable and the non-draggable areas
   // have to been explicitly excluded.
   std::vector<gfx::Rect> system_drag_exclude_areas_;

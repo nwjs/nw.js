@@ -1,11 +1,10 @@
-
-var assert = nodeRequire('assert');
-var cp = nodeRequire('child_process');
-var fs = nodeRequire('fs');
-var fs_extra = nodeRequire('fs-extra');
+var assert = require('assert');
+var cp = require('child_process');
+var fs = require('fs');
+var fs_extra = require('fs-extra');
 var exec_path = process.execPath;
 var app_path = path.join(global.tests_dir, 'chromium-args');
-var app_test = nodeRequire('./nw_test_app');
+var app_test = require('./nw_test_app');
 
 describe('chromium-args', function() {
     describe('--disable-javascript', function() {

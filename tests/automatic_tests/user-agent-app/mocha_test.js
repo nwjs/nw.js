@@ -1,7 +1,7 @@
-var assert = nodeRequire('assert');
-var fs = nodeRequire('fs');
-var path = nodeRequire('path');
-var app_test = nodeRequire('./nw_test_app');
+var assert = require('assert');
+var fs = require('fs');
+var path = require('path');
+var app_test = require('./nw_test_app');
 describe('user-agent-app', function() {
   it('user agent shoud be the same when open a new window',
     function(done) {

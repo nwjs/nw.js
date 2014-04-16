@@ -39,33 +39,6 @@ namespace nw {
 
 class NativeWindowToolbarWin;
 
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// HiddenOwnerWindow
-//  This class is used as a hidden owner window for NativeWindowWin.
-//  Note: The reason for using it is on Windows XP, while using the
-//  ITaskbarList::DeleteTab to remove the icon from the taskbar, the icon will
-//  appear in taskbar again when it blur and being focused again. This class
-//  object will only exist on Windows XP. See the implementation about
-//  |NativeWindowWin::SetShowInTaskbar|.
-//
-///////////////////////////////////////////////////////////////////////////////
-class HiddenOwnerWindow : public ui::WindowImpl {
- public:
-  HiddenOwnerWindow() {
-    Init(NULL, gfx::Rect());
-  }
-
-  ~HiddenOwnerWindow() {
-    DestroyWindow(hwnd());
-  }
-
-  BEGIN_MSG_MAP_EX(HiddenOwnerWindow)
-  END_MSG_MAP()
-};
-
-
 class NativeWindowWin : public NativeWindow,
                         public views::WidgetFocusChangeListener,
                         public views::WidgetDelegateView , 
@@ -97,23 +70,15 @@ class NativeWindowWin : public NativeWindow,
   virtual void SetMaximumSize(int width, int height) OVERRIDE;
   virtual void SetResizable(bool resizable) OVERRIDE;
   virtual void SetAlwaysOnTop(bool top) OVERRIDE;
-  virtual void SetBadgeCount(int count = 0) OVERRIDE;
   virtual void SetShowInTaskbar(bool show = true) OVERRIDE;
   virtual void SetPosition(const std::string& position) OVERRIDE;
   virtual void SetPosition(const gfx::Point& position) OVERRIDE;
   virtual gfx::Point GetPosition() OVERRIDE;
-  virtual gfx::Point GetMousePosition() OVERRIDE;
-  virtual void BeginOffclientMouseMove() OVERRIDE;
-  virtual void EndOffclientMouseMove() OVERRIDE;
-  virtual void Notify(std::string title, std::string text, std::string subtitle) const OVERRIDE;
-
   virtual void SetTitle(const std::string& title) OVERRIDE;
   virtual void FlashFrame(bool flash) OVERRIDE;
   virtual void SetKiosk(bool kiosk) OVERRIDE;
   virtual void SetBadgeLabel(const std::string& badge) OVERRIDE;
   virtual bool IsKiosk() OVERRIDE;
-  virtual void SetTransparent() OVERRIDE;
-  virtual bool IsTransparent() OVERRIDE;
   virtual void SetMenu(nwapi::Menu* menu) OVERRIDE;
   virtual void SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
                                        bool enabled) OVERRIDE;
@@ -178,7 +143,6 @@ class NativeWindowWin : public NativeWindow,
   views::WebView* web_view_;
   views::Widget* window_;
   bool is_fullscreen_;
-  bool is_transparent_;
 
   // Flags used to prevent sending extra events.
   bool is_minimized_;
@@ -187,11 +151,6 @@ class NativeWindowWin : public NativeWindow,
   bool is_blur_;
 
   scoped_ptr<SkRegion> draggable_region_;
-
-  // This is only useful on Windows XP. Hidden owner window for Windows XP to
-  // let SetShowInTaskbar work like on Windows 7.
-  scoped_ptr<HiddenOwnerWindow> hidden_owner_window_;
-
 
   // The window's menubar.
   nwapi::Menu* menu_;

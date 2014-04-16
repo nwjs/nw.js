@@ -12,7 +12,7 @@
     //data[3]: reload(1)
     //data[4]: reload(2)
     //data[5]: reload(3)
-    var gui = nodeRequire('nw.gui');
+    var gui = require('nw.gui');
     var user_agent = navigator.userAgent.split('/');
     var win = gui.Window.get();
     if (localStorage.user_agent_count == undefined) {
@@ -47,7 +47,7 @@
 	delete localStorage.user_agent_count;
 	delete localStorage.user_agent;
 	delete localStorage.child_window_user_agent;
-	nodeRequire('../../nw_test_app').createClient({
+	require('../../nw_test_app').createClient({
 	    argv: gui.App.argv,
 	    data: data
 	});

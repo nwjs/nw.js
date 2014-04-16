@@ -8,7 +8,7 @@
   <p id="wait" style="font-size:1.5em">Please wait to be closed.</p>
   <input type="text" id="color" placeholder="css color"/>
   <script>
-    var gui = nodeRequire('nw.gui');
+    var gui = require('nw.gui');
     var win = gui.Window.get();
     var result = new Array();
     //action: 1 change the devtools settings
@@ -169,7 +169,7 @@
 		}
 		win.showDevTools();
 
-		var client = nodeRequire('../../nw_test_app').createClient({
+		var client = require('../../nw_test_app').createClient({
                     argv: gui.App.argv,
                     data: result
 		});

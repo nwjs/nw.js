@@ -7,8 +7,8 @@
     <h1>open Mul-instance</h1>
     We are using node.js 
     <script>
-      var gui = nodeRequire('nw.gui');
-      var fs = nodeRequire('fs');
+      var gui = require('nw.gui');
+      var fs = require('fs');
       fs.appendFileSync('msg', '1');
       setTimeout(function() {
          gui.App.quit();

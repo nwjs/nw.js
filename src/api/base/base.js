@@ -23,7 +23,7 @@ var v8_util = process.binding('v8_util');
 function Base() {
   throw new String("It's forbidden to instantialize a Base class.");
 }
-nodeRequire('util').inherits(Base, nodeRequire('events').EventEmitter);
+require('util').inherits(Base, require('events').EventEmitter);
 
 // Silent unhandled events
 Base.prototype.handleEvent = function() {

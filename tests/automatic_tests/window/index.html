@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Test Case for 'Window.focus'</title>
     <script>
-      var gui = nodeRequire('nw.gui');
+      var gui = require('nw.gui');
       var win = gui.Window.get();
       var win_c = new Array();
       var win2_clicked = false, win1_clicked = false;
@@ -38,7 +38,7 @@
       
       function done() {
  	  if (win1_clicked && win2_clicked) {
- 	      var client = nodeRequire('../../nw_test_app').createClient({
+ 	      var client = require('../../nw_test_app').createClient({
 		  argv: gui.App.argv,
 		  data: win_c
 	      });

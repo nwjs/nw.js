@@ -7,10 +7,9 @@
 hello world
 <iframe id = "devtools" src = "test.html"></iframe>
 <script type="text/javascript">
-var gui = nodeRequire('nw.gui');
+var gui = require('nw.gui');
 var win = gui.Window.get();
 win.showDevTools('devtools');
-
 
 win.on('loaded',function(){
   setTimeout(function() {

@@ -1,6 +1,6 @@
-var cp = nodeRequire('child_process');
-var fs = nodeRequire('fs');
-var os = nodeRequire('os');
+var cp = require('child_process');
+var fs = require('fs');
+var os = require('os');
 describe('proxy', function(){
   before(function(done){
     if (os.platform() == "win32"){
@@ -30,7 +30,7 @@ describe('proxy', function(){
         var index = data.indexOf('ProxyServer');
         var right = data.substring(index+14);
         var array = right.split('"');
-        var gui = nodeRequire('nw.gui');
+        var gui = require('nw.gui');
         var re = gui.App.getProxyForURL("https://www.google.com.hk");
         if (re == "PROXY "+array[0])
           done();

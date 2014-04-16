@@ -1,4 +1,4 @@
-var assert = nodeRequire('assert');
+var assert = require('assert');
 
 describe('require', function() {
   describe('type', function() {
@@ -61,26 +61,26 @@ describe('node', function() {
 
 describe('module', function() {
   describe('javascript modules', function() {
-    var path = nodeRequire('path');
+    var path = require('path');
 
     it('require by path', function() {
-      assert.equal(nodeRequire('./automatic_tests/node/module1.js').test(), 'module1');
+      assert.equal(require('./automatic_tests/node/module1.js').test(), 'module1');
     });
 
     it('simple file module', function() {
-      assert.equal(nodeRequire('./automatic_tests/node/node_modules/module3').test(), 'module3');
+      assert.equal(require('./automatic_tests/node/node_modules/module3').test(), 'module3');
     });
 
     it('space in path', function() {
-      assert.equal(nodeRequire('./automatic_tests/node/node_modules/module4 space').test(), 'module4');
+      assert.equal(require('./automatic_tests/node/node_modules/module4 space').test(), 'module4');
     });
   });
 
   describe('built-in modules', function() {
-    var fs = nodeRequire('fs');
-    var http = nodeRequire('http');
-    var path = nodeRequire('path');
-    var exec = nodeRequire('child_process').exec;
+    var fs = require('fs');
+    var http = require('http');
+    var path = require('path');
+    var exec = require('child_process').exec;
 
     it('read self', function() {
       var path1 = 'automatic_tests/node/mocha_test.js';
@@ -137,14 +137,13 @@ describe('module', function() {
   describe('native modules (long-to-run)', function() {
     it('bignum should work on posix environment', function() {
       if (process.platform != 'win32') {
-        var bignum = nodeRequire('./node_modules/bignum');
+        var bignum = require('./node_modules/bignum');
         assert.equal(bignum('782910138827292261791972728324982').sub('182373273283402171237474774728373').div(8), '75067108192986261319312244199576');
       }
     });
 
     it('native modules without handle scope', function() {
-
-	nodeRequire('./node_modules/nw_test_loop_without_handle');
+	require('./node_modules/nw_test_loop_without_handle');
     });
      
     it('native modules should work', function() {
@@ -184,10 +183,10 @@ describe('performance', function() {
   });
 
   describe('IO', function() {
-    var fs = nodeRequire('fs');
-    var path = nodeRequire('path');
-    var exec = nodeRequire('child_process').exec;
-    var tar = nodeRequire('tar');
+    var fs = require('fs');
+    var path = require('path');
+    var exec = require('child_process').exec;
+    var tar = require('tar');
 
     it('file reading should be quick even when we have a child process running', function(done) {
       this.timeout(100);
@@ -228,7 +227,7 @@ describe('browser', function() {
 
   describe('render crashes', function() {
     it('MessageChannel should not crash', function(done) {
-      var test = nodeRequire('./automatic_tests/node/message_channel_test.js');
+      var test = require('./automatic_tests/node/message_channel_test.js');
       test.run(done); // force to run in node context.
     });
   });

@@ -130,11 +130,6 @@ void NativeWindow::InitFromManifest(base::DictionaryValue* manifest) {
   if (manifest->GetBoolean(switches::kmKiosk, &kiosk) && kiosk) {
     SetKiosk(kiosk);
   }
- bool transparent;
- if (manifest->GetBoolean(switches::kmTransparent, &transparent) && transparent) {
-   SetTransparent();
-   /* Transparent windows cannot have toolbars or other window controls */
-  }
   bool toolbar = true;
   manifest->GetBoolean(switches::kmToolbar, &toolbar);
   if (toolbar) {
@@ -149,11 +144,6 @@ void NativeWindow::InitFromManifest(base::DictionaryValue* manifest) {
   manifest->GetBoolean(switches::kmShow, &show);
   if (show)
     Show();
-}
-
-void NativeWindow::Notify(std::string title, std::string text, std::string subtitle, std::string callback) {
-  
-  
 }
 
 void NativeWindow::CapturePage(const std::string& image_format) {

@@ -296,7 +296,7 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
 
   // Open experimental features.
   prefs->css_variables_enabled = true;
-  prefs->experimental_webgl_enabled = true;
+
   // Disable plugins and cache by default.
   prefs->plugins_enabled = false;
   prefs->java_enabled = false;

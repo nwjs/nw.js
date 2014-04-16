@@ -1,5 +1,3 @@
-
-
 // Copyright (c) 2012 Intel Corp
 // Copyright (c) 2012 The Chromium Authors
 //
@@ -24,7 +22,6 @@
 
 #include "base/mac/mac_util.h"
 #include "base/strings/sys_string_conversions.h"
-#include "base/strings/stringprintf.h"
 #include "base/values.h"
 #import "chrome/browser/ui/cocoa/custom_frame_view.h"
 #include "content/nw/src/api/menu/menu.h"
@@ -38,7 +35,6 @@
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/native_web_keyboard_event.h"
 #include "content/public/browser/render_widget_host_view.h"
-#include "content/nw/src/browser/notification_helper.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
 #include "extensions/common/draggable_region.h"
@@ -53,21 +49,9 @@
 - (void)setMouseDownCanMoveWindow:(BOOL)can_move;
 @end
 
-#if !defined(MAC_OS_X_VERSION_10_8) || \
-MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_8
- @interface NSUserNotificationCenter : NSObject
- @end
- @implementation NSUserNotificationCenter
- @end
- @interface NSUserNotification : NSObject
- @end
- @implementation NSUserNotification
- @end
-#endif
-
 // Replicate specific 10.7 SDK declarations for building with prior SDKs.
 #if !defined(MAC_OS_X_VERSION_10_7) || \
-MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_7
+    MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_7
 
 enum {
   NSWindowCollectionBehaviorParticipatesInCycle = 1 << 5,
@@ -84,16 +68,13 @@ enum {
 - (void)toggleFullScreen:(id)sender;
 @end
 
-
 #endif  // MAC_OS_X_VERSION_10_7
 
-
-@interface NativeWindowDelegate : NSObject<NSWindowDelegate, NSUserNotificationCenterDelegate> {
-@private
+@interface NativeWindowDelegate : NSObject<NSWindowDelegate> {
+ @private
   base::WeakPtr<content::Shell> shell_;
 }
 - (id)initWithShell:(const base::WeakPtr<content::Shell>&)shell;
-
 @end
 
 @implementation NativeWindowDelegate
@@ -102,51 +83,10 @@ enum {
   if ((self = [super init])) {
     shell_ = shell;
   }
-
-  // Set user default notification
   return self;
 }
 
-
-- (void) userNotificationCenter:(NSUserNotificationCenter *)center didActivateNotification:(NSUserNotification *)notification
-{
-  // NSRunAlertPanel([notification title], [notification informativeText], @"Ok", nil, nil);
-  //   NSRunAlertPanel(@"userInfo.callback",[notification.userInfo valueForKey:@"callback"], @"Ok", nil, nil);
-
-  // NSString* result = [NSString stringWithUTF8String:note.userInfo.callback];
-
-  NSString* callString= [[notification userInfo] valueForKey:@"callback"];
-  //  NSLog(@"callback %@",callString);
-
-  if (callString){
-
-    nwapi::App::EmitNotificationEvent([callString UTF8String]);
-
-  }
-
-}
-
-- (void) applicationDidFinishLaunching: (NSNotification *) note {
-  // Initlialize everything here
-  [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
-
-}
-
-
-
-- (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center shouldPresentNotification:(NSUserNotification *)notification{
- return YES;
-}
-
-
-- (void) userNotificationCenter:(NSUserNotificationCenter *)center didDeliverNotification:(NSUserNotification *)notification
-{
-   // notifications=nil;
-  [center removeDeliveredNotification: notification];
-}
-
-
-- (BOOL)windowShouldClose:(id)window { 
+- (BOOL)windowShouldClose:(id)window {
   // If this window is bound to a js object and is not forced to close,
   // then send event to renderer to let the user decide.
   if (shell_ && !shell_->ShouldCloseWindow())
@@ -155,8 +95,8 @@ enum {
   // Clean ourselves up and do the work after clearing the stack of anything
   // that might have the shell on it.
   [self performSelectorOnMainThread:@selector(cleanup:)
-   withObject:window
-   waitUntilDone:NO];
+                         withObject:window
+                      waitUntilDone:NO];
 
   return YES;
 }
@@ -164,7 +104,7 @@ enum {
 - (void)windowWillEnterFullScreen:(NSNotification*)notification {
   if (shell_) {
     static_cast<nw::NativeWindowCocoa*>(shell_->window())->
-    set_is_fullscreen(true);
+        set_is_fullscreen(true);
     shell_->SendEvent("enter-fullscreen");
   }
 }
@@ -172,7 +112,7 @@ enum {
 - (void)windowWillExitFullScreen:(NSNotification*)notification {
   if (shell_) {
     static_cast<nw::NativeWindowCocoa*>(shell_->window())->
-    set_is_fullscreen(false);
+        set_is_fullscreen(false);
     shell_->SendEvent("leave-fullscreen");
   }
 }
@@ -202,7 +142,7 @@ enum {
 - (void)windowDidMove:(NSNotification*)notification {
   if (shell_) {
     gfx::Point origin = 
-    static_cast<nw::NativeWindowCocoa*>(shell_->window())->GetPosition();
+      static_cast<nw::NativeWindowCocoa*>(shell_->window())->GetPosition();
     base::ListValue args;
     args.AppendInteger(origin.x());
     args.AppendInteger(origin.y());
@@ -213,7 +153,7 @@ enum {
 - (void)windowDidResize:(NSNotification*)notification {
   if (shell_) {
     NSWindow* window =
-    static_cast<nw::NativeWindowCocoa*>(shell_->window())->window();
+      static_cast<nw::NativeWindowCocoa*>(shell_->window())->window();
     NSRect frame = [window frame];
     base::ListValue args;
     args.AppendInteger(frame.size.width);
@@ -227,7 +167,7 @@ enum {
   // them by calculating size change when zooming.
   if (shell_) {
     if (newFrame.size.width < [window frame].size.width ||
-      newFrame.size.height < [window frame].size.height)
+        newFrame.size.height < [window frame].size.height)
       shell_->SendEvent("unmaximize");
     else
       shell_->SendEvent("maximize");
@@ -246,7 +186,7 @@ enum {
 @end
 
 @interface ControlRegionView : NSView {
-@private
+ @private
   nw::NativeWindowCocoa* shellWindow_;  // Weak; owns self.
 }
 @end
@@ -267,10 +207,10 @@ enum {
   if (shellWindow_->use_system_drag())
     return nil;
   if (!shellWindow_->draggable_region() ||
-    !shellWindow_->draggable_region()->contains(aPoint.x, aPoint.y)) {
+      !shellWindow_->draggable_region()->contains(aPoint.x, aPoint.y)) {
     return nil;
-}
-return self;
+  }
+  return self;
 }
 
 - (void)mouseDown:(NSEvent*)event {
@@ -290,13 +230,11 @@ return self;
 @end
 
 @interface ShellNSWindow : ChromeEventProcessingWindow {
-@private
+ @private
   base::WeakPtr<content::Shell> shell_;
-  bool is_transparent_;
 }
 - (void)setShell:(const base::WeakPtr<content::Shell>&)shell;
 - (void)showDevTools:(id)sender;
-
 - (void)closeAllWindowsQuit:(id)sender;
 @end
 
@@ -320,14 +258,6 @@ return self;
   return frameRect;
 }
 
-- (void)setTransparent {
- is_transparent_ = true;
-}
-
-- (BOOL)getTransparent {
- return is_transparent_;
-}
-
 @end
 
 @interface ShellFramelessNSWindow : ShellNSWindow
@@ -344,26 +274,25 @@ return self;
   [[NSBezierPath bezierPathWithRect:rect] addClip];
   [[NSColor clearColor] set];
   NSRectFill(rect);
-  if(![self getTransparent]){
-    // Set up our clip.
-    CGFloat cornerRadius = 4.0;
-    if ([view respondsToSelector:@selector(roundedCornerRadius)])
-      cornerRadius = [view roundedCornerRadius];
-    [[NSBezierPath bezierPathWithRoundedRect:[view bounds]
-     xRadius:cornerRadius
-     yRadius:cornerRadius] addClip];
-    [[NSColor whiteColor] set];
-    NSRectFill(rect);
-  }
+
+  // Set up our clip.
+  CGFloat cornerRadius = 4.0;
+  if ([view respondsToSelector:@selector(roundedCornerRadius)])
+    cornerRadius = [view roundedCornerRadius];
+  [[NSBezierPath bezierPathWithRoundedRect:[view bounds]
+                                   xRadius:cornerRadius
+                                   yRadius:cornerRadius] addClip];
+  [[NSColor whiteColor] set];
+  NSRectFill(rect);
 }
 
 + (NSRect)frameRectForContentRect:(NSRect)contentRect
-styleMask:(NSUInteger)mask {
+                        styleMask:(NSUInteger)mask {
   return contentRect;
 }
 
 + (NSRect)contentRectForFrameRect:(NSRect)frameRect
-styleMask:(NSUInteger)mask {
+                        styleMask:(NSUInteger)mask {
   return frameRect;
 }
 
@@ -379,73 +308,67 @@ styleMask:(NSUInteger)mask {
 
 namespace nw {
 
-  NativeWindowCocoa::NativeWindowCocoa(
+NativeWindowCocoa::NativeWindowCocoa(
     const base::WeakPtr<content::Shell>& shell,
     base::DictionaryValue* manifest)
-  : NativeWindow(shell, manifest),
-  is_fullscreen_(false),
-  is_kiosk_(false),
-  is_transparent_(false),
-  attention_request_id_(0),
-  use_system_drag_(true),
+    : NativeWindow(shell, manifest),
+      is_fullscreen_(false),
+      is_kiosk_(false),
+      attention_request_id_(0),
+      use_system_drag_(true),
       initial_focus_(false),    // the initial value is different from other
                                 // platforms since osx will focus the first
                                 // window and we want to distinguish the first
                                 // window opening and Window.open case. See also #497
       first_show_(true) {
-        int width, height;
-        manifest->GetInteger(switches::kmWidth, &width);
-        manifest->GetInteger(switches::kmHeight, &height);
-        manifest->GetBoolean(switches::kmInitialFocus, &initial_focus_);
+  int width, height;
+  manifest->GetInteger(switches::kmWidth, &width);
+  manifest->GetInteger(switches::kmHeight, &height);
+  manifest->GetBoolean(switches::kmInitialFocus, &initial_focus_);
 
-        NSRect main_screen_rect = [[[NSScreen screens] objectAtIndex:0] frame];
-        NSRect cocoa_bounds = NSMakeRect(
-          (NSWidth(main_screen_rect) - width) / 2,
-          (NSHeight(main_screen_rect) - height) / 2,
-          width,
-          height);
-        NSUInteger style_mask = NSTitledWindowMask | NSClosableWindowMask |
-        NSMiniaturizableWindowMask | NSTexturedBackgroundWindowMask | NSResizableWindowMask;
-        if(is_transparent_)
-         style_mask = NSBorderlessWindowMask;
-
-       ShellNSWindow* shell_window;
-       if (has_frame_) {
-        shell_window = [[ShellNSWindow alloc]
-          initWithContentRect:cocoa_bounds
-          styleMask:style_mask
-          backing:NSBackingStoreBuffered
-          defer:NO];
-      } else {
-        shell_window = [[ShellFramelessNSWindow alloc]
-          initWithContentRect:cocoa_bounds
-          styleMask:style_mask
-          backing:NSBackingStoreBuffered
-          defer:NO];
-      }
-      window_ = shell_window;
-      [shell_window setShell:shell];
-      NativeWindowDelegate * delegateWindow =[NativeWindowDelegate alloc];
-      [window() setDelegate:[delegateWindow initWithShell:shell]]; 
+  NSRect main_screen_rect = [[[NSScreen screens] objectAtIndex:0] frame];
+  NSRect cocoa_bounds = NSMakeRect(
+      (NSWidth(main_screen_rect) - width) / 2,
+      (NSHeight(main_screen_rect) - height) / 2,
+      width,
+      height);
+  NSUInteger style_mask = NSTitledWindowMask | NSClosableWindowMask |
+                          NSMiniaturizableWindowMask | NSResizableWindowMask |
+                          NSTexturedBackgroundWindowMask;
+  ShellNSWindow* shell_window;
+  if (has_frame_) {
+    shell_window = [[ShellNSWindow alloc]
+        initWithContentRect:cocoa_bounds
+                  styleMask:style_mask
+                    backing:NSBackingStoreBuffered
+                      defer:NO];
+  } else {
+    shell_window = [[ShellFramelessNSWindow alloc]
+        initWithContentRect:cocoa_bounds
+                  styleMask:style_mask
+                    backing:NSBackingStoreBuffered
+                      defer:NO];
+  }
+  window_ = shell_window;
+  [shell_window setShell:shell];
+  [window() setDelegate:[[NativeWindowDelegate alloc] initWithShell:shell]];
 
   // Disable fullscreen button when 'fullscreen' is specified to false.
-      if(is_transparent_)
-       SetTransparent();
-     bool fullscreen;
-     if (!(manifest->GetBoolean(switches::kmFullscreen, &fullscreen) &&
-      !fullscreen)) {
-      NSUInteger collectionBehavior = [window() collectionBehavior];
+  bool fullscreen;
+  if (!(manifest->GetBoolean(switches::kmFullscreen, &fullscreen) &&
+        !fullscreen)) {
+    NSUInteger collectionBehavior = [window() collectionBehavior];
     collectionBehavior |= NSWindowCollectionBehaviorFullScreenPrimary;
     [window() setCollectionBehavior:collectionBehavior];
   }
 
   if (base::mac::IsOSSnowLeopard()) {
     [window() setCollectionBehavior:
-      NSWindowCollectionBehaviorParticipatesInCycle];
+        NSWindowCollectionBehaviorParticipatesInCycle];
   }
 
   if (base::mac::IsOSSnowLeopard() &&
-    [window() respondsToSelector:@selector(setBottomCornerRounded:)])
+      [window() respondsToSelector:@selector(setBottomCornerRounded:)])
     [window() setBottomCornerRounded:NO];
 
   NSView* view = web_contents()->GetView()->GetNativeView();
@@ -454,7 +377,7 @@ namespace nw {
   // By default, the whole frameless window is not draggable.
   if (!has_frame_) {
     gfx::Rect window_bounds(
-      0, 0, NSWidth(cocoa_bounds), NSHeight(cocoa_bounds));
+        0, 0, NSWidth(cocoa_bounds), NSHeight(cocoa_bounds));
     system_drag_exclude_areas_.push_back(window_bounds);
   }
 
@@ -473,7 +396,7 @@ void NativeWindowCocoa::InstallView() {
     // TODO(jeremya): find a cleaner way to send this information to the
     // WebContentsViewCocoa view.
     DCHECK([view
-      respondsToSelector:@selector(setMouseDownCanMoveWindow:)]);
+        respondsToSelector:@selector(setMouseDownCanMoveWindow:)]);
     [view setMouseDownCanMoveWindow:YES];
 
     NSView* frameView = [[window() contentView] superview];
@@ -494,54 +417,21 @@ void NativeWindowCocoa::UninstallView() {
   [view removeFromSuperview];
 }
 
-
-
 void NativeWindowCocoa::Close() {
   [window() performClose:nil];
 }
 
 void NativeWindowCocoa::Move(const gfx::Rect& pos) {
   NSRect cocoa_bounds = NSMakeRect(pos.x(), 0,
-   pos.width(),
-   pos.height());
+                                   pos.width(),
+                                   pos.height());
   // Flip coordinates based on the primary screen.
   NSScreen* screen = [[NSScreen screens] objectAtIndex:0];
   cocoa_bounds.origin.y =
-  NSHeight([screen frame]) - pos.height() - pos.y();
+      NSHeight([screen frame]) - pos.height() - pos.y();
 
   [window() setFrame:cocoa_bounds display:YES];
 }
-
-void NativeWindowCocoa::Notify(std::string title, std::string text, std::string subtitle, std::string callback) {
-  
-     // NSApplication *myApp = [NSApplication sharedApplication];
-    //  [myApp activateIgnoringOtherApps:YES];
-  
-
- NSUserNotification *notification = [[NSUserNotification alloc] init];
- [notification setTitle:@(title.c_str())];
- [notification setInformativeText:@(text.c_str())];
- [notification setSubtitle:@(subtitle.c_str())]; 
-
- [notification setUserInfo:@{ @"callback": @(callback.c_str()) }]; 
-     /* notification.actionButtonTitle = actionTitle;
-      notification.hasActionButton = YES;*/
-
- [notification setSoundName:nil];
-
-    // [notification setSoundName:@"NSUserNotificationDefaultSoundName"];
-
-    // [ addObserver:self selector:@selector(foremostAppActivated:) name:NSWorkspaceDidActivateApplicationNotification object:nil];
-
-//[[NSWorkspace sharedWorkspace] notificationCenter]
- [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
- 
-
-}
-
-
-
-
 
 void NativeWindowCocoa::Focus(bool focus) {
   if (focus && [window() isVisible])
@@ -554,9 +444,7 @@ void NativeWindowCocoa::Show() {
   NSApplication *myApp = [NSApplication sharedApplication];
   [myApp activateIgnoringOtherApps:YES];
   content::RenderWidgetHostView* rwhv =
-  shell_->web_contents()->GetRenderWidgetHostView();
-
-
+      shell_->web_contents()->GetRenderWidgetHostView();
 
   if (first_show_ && initial_focus_) {
     [window() makeKeyAndOrderFront:nil];
@@ -575,7 +463,6 @@ void NativeWindowCocoa::Show() {
   }
   first_show_ = false;
 }
-
 
 void NativeWindowCocoa::Hide() {
   [window() orderOut:nil];
@@ -616,26 +503,6 @@ bool NativeWindowCocoa::IsFullscreen() {
   return is_fullscreen_;
 }
 
-void NativeWindowCocoa::SetTransparent() {
-  is_transparent_ = true;
-  if(base::mac::IsOSMountainLionOrLater()) {
-   restored_bounds_ = [window() frame];
-   [window() setStyleMask:(NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask)];
-   [window() setFrame:[window()
-     frameRectForContentRect:[window() frame]]
-   display:YES];
- }
- [window() setHasShadow:NO];
- ShellNSWindow* swin = (ShellNSWindow*)window();
- [swin setTransparent];
- [window() setOpaque:NO];
- [window() setBackgroundColor:[NSColor clearColor]];
-}
-
-bool NativeWindowCocoa::IsTransparent() {
-  return is_transparent_;
-}
-
 void NativeWindowCocoa::SetNonLionFullscreen(bool fullscreen) {
   if (fullscreen == is_fullscreen_)
     return;
@@ -647,38 +514,38 @@ void NativeWindowCocoa::SetNonLionFullscreen(bool fullscreen) {
   bool did_fade_out = false;
   CGDisplayFadeReservationToken token;
   if (CGAcquireDisplayFadeReservation(kFadeDurationSeconds, &token) ==
-    kCGErrorSuccess) {
+      kCGErrorSuccess) {
     did_fade_out = true;
-  CGDisplayFade(token, kFadeDurationSeconds / 2, kCGDisplayBlendNormal,
+    CGDisplayFade(token, kFadeDurationSeconds / 2, kCGDisplayBlendNormal,
         kCGDisplayBlendSolidColor, 0.0, 0.0, 0.0, /*synchronous=*/true);
-}
+  }
 
   // Since frameless windows insert the WebContentsView into the NSThemeFrame
   // ([[window contentView] superview]), and since that NSThemeFrame is
   // destroyed and recreated when we change the styleMask of the window, we
   // need to remove the view from the window when we change the style, and
   // add it back afterwards.
-UninstallView();
-if (fullscreen) {
-  restored_bounds_ = [window() frame];
-  [window() setStyleMask:NSBorderlessWindowMask];
-  [window() setFrame:[window()
-    frameRectForContentRect:[[window() screen] frame]]
-  display:YES];
-  base::mac::RequestFullScreen(base::mac::kFullScreenModeAutoHideAll);
-} else {
-  base::mac::ReleaseFullScreen(base::mac::kFullScreenModeAutoHideAll);
-  NSUInteger style_mask = NSTitledWindowMask | NSClosableWindowMask |
-  NSMiniaturizableWindowMask | NSResizableWindowMask |
-  NSTexturedBackgroundWindowMask;
-  [window() setStyleMask:style_mask];
-  [window() setFrame:restored_bounds_ display:YES];
-}
-InstallView();
+  UninstallView();
+  if (fullscreen) {
+    restored_bounds_ = [window() frame];
+    [window() setStyleMask:NSBorderlessWindowMask];
+    [window() setFrame:[window()
+        frameRectForContentRect:[[window() screen] frame]]
+               display:YES];
+    base::mac::RequestFullScreen(base::mac::kFullScreenModeAutoHideAll);
+  } else {
+    base::mac::ReleaseFullScreen(base::mac::kFullScreenModeAutoHideAll);
+    NSUInteger style_mask = NSTitledWindowMask | NSClosableWindowMask |
+                            NSMiniaturizableWindowMask | NSResizableWindowMask |
+                            NSTexturedBackgroundWindowMask;
+    [window() setStyleMask:style_mask];
+    [window() setFrame:restored_bounds_ display:YES];
+  }
+  InstallView();
 
   // Fade back in.
-if (did_fade_out) {
-  CGDisplayFade(token, kFadeDurationSeconds / 2, kCGDisplayBlendSolidColor,
+  if (did_fade_out) {
+    CGDisplayFade(token, kFadeDurationSeconds / 2, kCGDisplayBlendSolidColor,
         kCGDisplayBlendNormal, 0.0, 0.0, 0.0, /*synchronous=*/false);
     CGReleaseDisplayFadeReservation(token);
   }
@@ -730,34 +597,21 @@ void NativeWindowCocoa::SetAlwaysOnTop(bool top) {
   [window() setLevel:(top ? NSFloatingWindowLevel : NSNormalWindowLevel)];
 }
 
-void NativeWindowCocoa::SetBadgeCount(int count) {
-
-  NSApplication *myApp = [NSApplication sharedApplication];
-  NSDockTile *dockTile = [myApp dockTile];
-
-  if (count > 0) {
-    NSString *label = [NSString stringWithFormat:@"%d", count];
-    [dockTile setShowsApplicationBadge:YES];
-    [dockTile setBadgeLabel:label];
+void NativeWindowCocoa::SetShowInTaskbar(bool show) {
+  ProcessSerialNumber psn = { 0, kCurrentProcess };
+  if (!show) {
+    NSArray* windowList = [[NSArray alloc] init];
+    windowList = [NSWindow windowNumbersWithOptions:NSWindowNumberListAllSpaces];
+    for (unsigned int i = 0; i < [windowList count]; ++i) {
+      NSWindow *window = [NSApp windowWithWindowNumber:[[windowList objectAtIndex:i] integerValue]];
+      [window setCanHide:NO];
+    }
+    TransformProcessType(&psn, kProcessTransformToUIElementApplication);
   }
   else {
-    [dockTile setShowsApplicationBadge:NO];
-    [dockTile setBadgeLabel:nil];
+    TransformProcessType(&psn, kProcessTransformToForegroundApplication);
   }
-
 }
-
-void NativeWindowCocoa::SetShowInTaskbar(bool show) {
-
-  if (!show) {
-   title = [window() title];
-   [window() setTitle:@""];
- } else{
-   [window() setTitle:title];
- }
-
-}
-
 
 void NativeWindowCocoa::SetPosition(const std::string& position) {
   if (position == "center")
@@ -776,7 +630,6 @@ gfx::Point NativeWindowCocoa::GetPosition() {
       NSHeight([screen frame]) - frame.origin.y - frame.size.height);
 }
 
-
 void NativeWindowCocoa::SetTitle(const std::string& title) {
   [window() setTitle:base::SysUTF8ToNSString(title)];
 }
@@ -790,7 +643,6 @@ void NativeWindowCocoa::FlashFrame(bool flash) {
   }
 }
 
-
 void NativeWindowCocoa::SetBadgeLabel(const std::string& badge) {
   [[NSApp dockTile] setBadgeLabel:base::SysUTF8ToNSString(badge)];
 }
@@ -798,13 +650,13 @@ void NativeWindowCocoa::SetBadgeLabel(const std::string& badge) {
 void NativeWindowCocoa::SetKiosk(bool kiosk) {
   if (kiosk) {
     NSApplicationPresentationOptions options =
-    NSApplicationPresentationHideDock +
-    NSApplicationPresentationHideMenuBar + 
-    NSApplicationPresentationDisableAppleMenu +
-    NSApplicationPresentationDisableProcessSwitching +
-    NSApplicationPresentationDisableForceQuit +
-    NSApplicationPresentationDisableSessionTermination +
-    NSApplicationPresentationDisableHideApplication;
+        NSApplicationPresentationHideDock +
+        NSApplicationPresentationHideMenuBar + 
+        NSApplicationPresentationDisableAppleMenu +
+        NSApplicationPresentationDisableProcessSwitching +
+        NSApplicationPresentationDisableForceQuit +
+        NSApplicationPresentationDisableSessionTermination +
+        NSApplicationPresentationDisableHideApplication;
     [NSApp setPresentationOptions:options];
     is_kiosk_ = true;
     SetNonLionFullscreen(true);
@@ -826,8 +678,8 @@ void NativeWindowCocoa::SetMenu(nwapi::Menu* menu) {
   StandardMenusMac standard_menus(shell_->GetPackage()->GetName());
   [NSApp setMainMenu:menu->menu_];
   standard_menus.BuildAppleMenu();
-    //if (!no_edit_menu)
-  standard_menus.BuildEditMenu();
+  if (!no_edit_menu)
+    standard_menus.BuildEditMenu();
   standard_menus.BuildWindowMenu();
 }
 
@@ -842,10 +694,10 @@ bool NativeWindowCocoa::InitialFocus() {
 void NativeWindowCocoa::HandleMouseEvent(NSEvent* event) {
   if ([event type] == NSLeftMouseDown) {
     last_mouse_location_ =
-    [window() convertBaseToScreen:[event locationInWindow]];
+        [window() convertBaseToScreen:[event locationInWindow]];
   } else if ([event type] == NSLeftMouseDragged) {
     NSPoint current_mouse_location =
-    [window() convertBaseToScreen:[event locationInWindow]];
+        [window() convertBaseToScreen:[event locationInWindow]];
     NSPoint frame_origin = [window() frame].origin;
     frame_origin.x += current_mouse_location.x - last_mouse_location_.x;
     frame_origin.y += current_mouse_location.y - last_mouse_location_.y;
@@ -860,7 +712,7 @@ void NativeWindowCocoa::AddToolbar() {
 
   // create the toolbar object
   base::scoped_nsobject<NSToolbar> toolbar(
-    [[NSToolbar alloc] initWithIdentifier:@"node-webkit toolbar"]);
+      [[NSToolbar alloc] initWithIdentifier:@"node-webkit toolbar"]);
 
   // set initial toolbar properties
   [toolbar setAllowsUserCustomization:NO];
@@ -877,7 +729,7 @@ void NativeWindowCocoa::AddToolbar() {
 }
 
 void NativeWindowCocoa::SetToolbarButtonEnabled(TOOLBAR_BUTTON button_id,
-  bool enabled) {
+                                                bool enabled) {
   if (toolbar_delegate_)
     [toolbar_delegate_ setEnabled:enabled forButton:button_id];
 }
@@ -886,14 +738,14 @@ void NativeWindowCocoa::SetToolbarUrlEntry(const std::string& url) {
   if (toolbar_delegate_)
     [toolbar_delegate_ setUrl:base::SysUTF8ToNSString(url)];
 }
-
+  
 void NativeWindowCocoa::SetToolbarIsLoading(bool loading) {
   if (toolbar_delegate_)
     [toolbar_delegate_ setIsLoading:loading];
 }
 
 void NativeWindowCocoa::UpdateDraggableRegions(
-  const std::vector<extensions::DraggableRegion>& regions) {
+    const std::vector<extensions::DraggableRegion>& regions) {
   // Draggable region is not supported for non-frameless window.
   if (has_frame_)
     return;
@@ -912,9 +764,9 @@ void NativeWindowCocoa::UpdateDraggableRegions(
   const extensions::DraggableRegion* draggable_area = NULL;
   use_system_drag_ = true;
   for (std::vector<extensions::DraggableRegion>::const_iterator iter =
-   regions.begin();
-   iter != regions.end();
-   ++iter) {
+           regions.begin();
+       iter != regions.end();
+       ++iter) {
     if (iter->draggable) {
       // If more than one draggable area is found, use custom drag.
       if (draggable_area) {
@@ -934,13 +786,13 @@ void NativeWindowCocoa::UpdateDraggableRegions(
 }
 
 void NativeWindowCocoa::HandleKeyboardEvent(
-  const content::NativeWebKeyboardEvent& event) {
+    const content::NativeWebKeyboardEvent& event) {
   DVLOG(1) << "NativeWindowCocoa::HandleKeyboardEvent";
   if (event.skip_in_browser ||
-    event.type == content::NativeWebKeyboardEvent::Char)
+      event.type == content::NativeWebKeyboardEvent::Char)
     return;
 
-
+  
   DVLOG(1) << "NativeWindowCocoa::HandleKeyboardEvent - redispatch";
 
   // // The event handling to get this strictly right is a tangle; cheat here a bit
@@ -948,14 +800,14 @@ void NativeWindowCocoa::HandleKeyboardEvent(
   // if ([event.os_event type] == NSKeyDown)
   //   [[NSApp mainMenu] performKeyEquivalent:event.os_event];
   ChromeEventProcessingWindow* event_window =
-  static_cast<ChromeEventProcessingWindow*>(window());
+      static_cast<ChromeEventProcessingWindow*>(window());
   DCHECK([event_window isKindOfClass:[ChromeEventProcessingWindow class]]);
   [event_window redispatchKeyEvent:event.os_event];
 }
 
 void NativeWindowCocoa::UpdateDraggableRegionsForSystemDrag(
-  const std::vector<extensions::DraggableRegion>& regions,
-  const extensions::DraggableRegion* draggable_area) {
+    const std::vector<extensions::DraggableRegion>& regions,
+    const extensions::DraggableRegion* draggable_area) {
   NSView* web_view = web_contents()->GetView()->GetNativeView();
   NSInteger web_view_width = NSWidth([web_view bounds]);
   NSInteger web_view_height = NSHeight([web_view bounds]);
@@ -975,9 +827,9 @@ void NativeWindowCocoa::UpdateDraggableRegionsForSystemDrag(
 
   // Copy all given non-draggable areas.
   for (std::vector<extensions::DraggableRegion>::const_iterator iter =
-   regions.begin();
-   iter != regions.end();
-   ++iter) {
+           regions.begin();
+       iter != regions.end();
+       ++iter) {
     if (!iter->draggable)
       system_drag_exclude_areas_.push_back(iter->bounds);
   }
@@ -988,47 +840,47 @@ void NativeWindowCocoa::UpdateDraggableRegionsForSystemDrag(
   // Add the non-draggable area above the given draggable area.
   if (draggable_bounds.y() > 0) {
     non_draggable_bounds.SetRect(0,
-     0,
-     web_view_width,
-     draggable_bounds.y() - 1);
+                                 0,
+                                 web_view_width,
+                                 draggable_bounds.y() - 1);
     system_drag_exclude_areas_.push_back(non_draggable_bounds);
   }
 
   // Add the non-draggable area below the given draggable area.
   if (draggable_bounds.bottom() < web_view_height) {
     non_draggable_bounds.SetRect(0,
-     draggable_bounds.bottom() + 1,
-     web_view_width,
-     web_view_height - draggable_bounds.bottom());
+                                 draggable_bounds.bottom() + 1,
+                                 web_view_width,
+                                 web_view_height - draggable_bounds.bottom());
     system_drag_exclude_areas_.push_back(non_draggable_bounds);
   }
 
   // Add the non-draggable area to the left of the given draggable area.
   if (draggable_bounds.x() > 0) {
     non_draggable_bounds.SetRect(0,
-     draggable_bounds.y(),
-     draggable_bounds.x() - 1,
-     draggable_bounds.height());
+                                 draggable_bounds.y(),
+                                 draggable_bounds.x() - 1,
+                                 draggable_bounds.height());
     system_drag_exclude_areas_.push_back(non_draggable_bounds);
   }
 
   // Add the non-draggable area to the right of the given draggable area.
   if (draggable_bounds.right() < web_view_width) {
     non_draggable_bounds.SetRect(draggable_bounds.right() + 1,
-     draggable_bounds.y(),
-     web_view_width - draggable_bounds.right(),
-     draggable_bounds.height());
+                                 draggable_bounds.y(),
+                                 web_view_width - draggable_bounds.right(),
+                                 draggable_bounds.height());
     system_drag_exclude_areas_.push_back(non_draggable_bounds);
   }
 }
 
 void NativeWindowCocoa::UpdateDraggableRegionsForCustomDrag(
-  const std::vector<extensions::DraggableRegion>& regions) {
+    const std::vector<extensions::DraggableRegion>& regions) {
   // We still need one ControlRegionView to cover the whole window such that
   // mouse events could be captured.
   NSView* web_view = web_contents()->GetView()->GetNativeView();
   gfx::Rect window_bounds(
-    0, 0, NSWidth([web_view bounds]), NSHeight([web_view bounds]));
+      0, 0, NSWidth([web_view bounds]), NSHeight([web_view bounds]));
   system_drag_exclude_areas_.clear();
   system_drag_exclude_areas_.push_back(window_bounds);
 
@@ -1036,18 +888,18 @@ void NativeWindowCocoa::UpdateDraggableRegionsForCustomDrag(
   // could be performed easily.
   SkRegion* draggable_region = new SkRegion;
   for (std::vector<extensions::DraggableRegion>::const_iterator iter =
-   regions.begin();
-   iter != regions.end();
-   ++iter) {
+           regions.begin();
+       iter != regions.end();
+       ++iter) {
     const extensions::DraggableRegion& region = *iter;
-  draggable_region->op(
-    region.bounds.x(),
-    region.bounds.y(),
-    region.bounds.right(),
-    region.bounds.bottom(),
-    region.draggable ? SkRegion::kUnion_Op : SkRegion::kDifference_Op);
-}
-draggable_region_.reset(draggable_region);
+    draggable_region->op(
+        region.bounds.x(),
+        region.bounds.y(),
+        region.bounds.right(),
+        region.bounds.bottom(),
+        region.draggable ? SkRegion::kUnion_Op : SkRegion::kDifference_Op);
+  }
+  draggable_region_.reset(draggable_region);
 }
 
 void NativeWindowCocoa::InstallDraggableRegionViews() {
@@ -1070,40 +922,22 @@ void NativeWindowCocoa::InstallDraggableRegionViews() {
 
   // Create and add ControlRegionView for each region that needs to be excluded
   // from the dragging.
-    for (std::vector<gfx::Rect>::const_iterator iter =
-     system_drag_exclude_areas_.begin();
-     iter != system_drag_exclude_areas_.end();
-     ++iter) {
-      base::scoped_nsobject<NSView> controlRegion(
+  for (std::vector<gfx::Rect>::const_iterator iter =
+           system_drag_exclude_areas_.begin();
+       iter != system_drag_exclude_areas_.end();
+       ++iter) {
+    base::scoped_nsobject<NSView> controlRegion(
         [[ControlRegionView alloc] initWithShellWindow:this]);
     [controlRegion setFrame:NSMakeRect(iter->x(),
-     webViewHeight - iter->bottom(),
-     iter->width(),
-     iter->height())];
+                                       webViewHeight - iter->bottom(),
+                                       iter->width(),
+                                       iter->height())];
     [webView addSubview:controlRegion];
   }
 }
 
-gfx::Point NativeWindowCocoa::GetMousePosition() {
- CGEventRef event = CGEventCreate(NULL);
- CGPoint cursor = CGEventGetLocation(event);
- CFRelease(event);
- return gfx::Point(cursor.x,cursor.y);
-}
-
-void NativeWindowCocoa::BeginOffclientMouseMove() {
-   // Not implemented
-}
-
-
-void NativeWindowCocoa::EndOffclientMouseMove() {
-   // Not implemented
-}
-
-
-
 NativeWindow* CreateNativeWindowCocoa(const base::WeakPtr<content::Shell>& shell,
- base::DictionaryValue* manifest) {
+                                           base::DictionaryValue* manifest) {
   return new NativeWindowCocoa(shell, manifest);
 }
 

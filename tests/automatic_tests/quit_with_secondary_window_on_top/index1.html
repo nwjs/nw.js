@@ -7,7 +7,7 @@
     <h1>New Window!</h1>
     We are using node.js
     <script>
-      var gui = nodeRequire('nw.gui');
+      var gui = require('nw.gui');
       var win = gui.Window.get();
       win.on('focus', function() {
         gui.App.closeAllWindows();

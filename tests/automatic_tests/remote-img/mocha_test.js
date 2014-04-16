@@ -1,8 +1,8 @@
-var path = nodeRequire('path');
-var spawn = nodeRequire('child_process').spawn;
-var fs = nodeRequire('fs-extra');
+var path = require('path');
+var spawn = require('child_process').spawn;
+var fs = require('fs-extra');
 describe('remote-file-access', function(){
-	var os = nodeRequire('os');
+	var os = require('os');
 	var platform = os.platform();
 	before(function(done){
 		this.timeout(0);

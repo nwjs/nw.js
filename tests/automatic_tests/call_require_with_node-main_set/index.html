@@ -2,22 +2,22 @@
 <head>
 </head>
 <body>
-<p>If there are problem with `nodeRequire()`: <span style="color:blue" id='msg'></span></p>
+<p>If there are problem with `require()`: <span style="color:blue" id='msg'></span></p>
 <script>
-  var gui = nodeRequire('nw.gui');
+  var gui = require('nw.gui');
   //gui.Window.get().show();
 
   var result = { ok: true }; 
   
   try {
-    nodeRequire('test');
+    require('test');
   }
   catch (e) {
     result.ok = false;
     result.error = e.message;
   }
   
-  var client = nodeRequire('../../nw_test_app').createClient({
+  var client = require('../../nw_test_app').createClient({
     argv: gui.App.argv,
     data: result,
   });

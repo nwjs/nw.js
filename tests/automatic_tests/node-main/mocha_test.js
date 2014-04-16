@@ -1,5 +1,5 @@
-var path = nodeRequire('path');
-var app_test = nodeRequire('./nw_test_app');
+var path = require('path');
+var app_test = require('./nw_test_app');
 
 describe('node-main', function() {
   describe('create http server in node-main', function() {
@@ -33,7 +33,7 @@ describe('node-main', function() {
     })
   })
 
-  describe('call nodeRequire() in app', function() {
+  describe('call require() in app', function() {
     it('nw should can require modules', function(done){
       this.timeout(0);
 

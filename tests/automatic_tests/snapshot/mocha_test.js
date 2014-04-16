@@ -1,8 +1,8 @@
-var path = nodeRequire('path');
-var app_test = nodeRequire('./nw_test_app');
-var os = nodeRequire('os');
-var fs = nodeRequire('fs-extra');
-var cp = nodeRequire('child_process');
+var path = require('path');
+var app_test = require('./nw_test_app');
+var os = require('os');
+var fs = require('fs-extra');
+var cp = require('child_process');
 var snapshotPath;
 
 describe('snapshot', function() {

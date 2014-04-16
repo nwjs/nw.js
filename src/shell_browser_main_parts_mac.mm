@@ -52,5 +52,4 @@ void ShellBrowserMainParts::PreMainMessageLoopStart() {
       setObject:@"NO" forKey:@"NSTreatUnknownArgumentsAsOpen"];
 }
 
-
 }  // namespace content

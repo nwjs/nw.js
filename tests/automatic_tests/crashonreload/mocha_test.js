@@ -1,8 +1,6 @@
-
-var spawn = nodeRequire('child_process').spawn;
-var path = nodeRequire('path');
-var app_test = nodeRequire('./nw_test_app');
-
+var spawn = require('child_process').spawn;
+var path = require('path');
+var app_test = require('./nw_test_app');
 describe('crash on reload',function(){
   it('nw should not crash when reloading with devtool opened',function(done){
     this.timeout(0);

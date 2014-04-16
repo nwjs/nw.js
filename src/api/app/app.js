@@ -22,7 +22,7 @@ var argv, fullArgv, dataPath, manifest;
 
 function App() {
 }
-nodeRequire('util').inherits(App, exports.Base);
+require('util').inherits(App, exports.Base);
 
 App.filteredArgv = [
   /--no-toolbar/,
