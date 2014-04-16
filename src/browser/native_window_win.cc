@@ -852,10 +852,4 @@ void NativeWindowWin::OnViewWasResized() {
   if (web_contents()->GetRenderViewHost()->GetView())
     web_contents()->GetRenderViewHost()->GetView()->SetClickthroughRegion(rgn);
 }
-
-void NativeWindowWin::RenderViewCreated(content::RenderViewHost *render_view_host) {
-   if (is_transparent_) {
-     ((content::RenderWidgetHostViewWin *)render_view_host->GetView())->SetLayeredWindow(window_->GetNativeWindow());
-   }
- }
-}  // namespace nw
+ // namespace nw

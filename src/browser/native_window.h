@@ -104,7 +104,6 @@ class NativeWindow {
   virtual void SetTransparent() = 0;
   virtual bool IsTransparent() = 0;
   virtual void Notify(std::string title, std::string text, std::string subtitle, std::string callback) = 0;
-  virtual void RenderViewCreated(content::RenderViewHost *render_view_host) = 0;
   virtual void SetMenu(nwapi::Menu* menu) = 0;
   virtual void SetInitialFocus(bool accept_focus) = 0;
   virtual bool InitialFocus() = 0;

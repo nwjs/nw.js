@@ -120,7 +120,7 @@ enum {
 
   if (callString){
 
-    api::App::EmitNotificationEvent([callString UTF8String]);
+    nwapi::App::EmitNotificationEvent([callString UTF8String]);
 
   }
 
@@ -771,14 +771,9 @@ void NativeWindowCocoa::SetPosition(const gfx::Point& position) {
 gfx::Point NativeWindowCocoa::GetPosition() {
   NSRect frame = [window_ frame];
   NSScreen* screen = [[NSScreen screens] objectAtIndex:0];
+
   return gfx::Point(frame.origin.x,
-    NSHeight([screen frame]) - frame.origin.y - frame.size.height);
-}
-
-
-void NativeWindowCocoa::SetPosition(const std::string& position) {
-  if (position == "center")
-    [window() center];
+      NSHeight([screen frame]) - frame.origin.y - frame.size.height);
 }
 
 
@@ -1105,9 +1100,6 @@ void NativeWindowCocoa::EndOffclientMouseMove() {
    // Not implemented
 }
 
-void NativeWindowCocoa::RenderViewCreated(content::RenderViewHost *render_view_host) {
- 
-}
 
 
 NativeWindow* CreateNativeWindowCocoa(const base::WeakPtr<content::Shell>& shell,

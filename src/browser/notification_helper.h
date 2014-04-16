@@ -31,26 +31,19 @@ class Shell;
 
 namespace nw {
 
-namespace notification_helper_constants {
-
-
-}; // namespace notification_helper_constants
 
 class NotificationHelper : public base::RefCountedThreadSafe<NotificationHelper>,
                       public content::WebContentsObserver {
  public:
   static scoped_refptr<NotificationHelper> Create(const base::WeakPtr<content::Shell>& shell);
 
-  // Capture a snapshot of the page.
-  void SendNotification(const std::string& callback);
-  void SendCallbackNotification(const std::string& callback);
+ void SendCallbackNotification(const std::string& callback);
 
  private:
   NotificationHelper(const base::WeakPtr<content::Shell>& shell);
   virtual ~NotificationHelper();
 
   // Internal helpers ----------------------------------------------------------
-  void OnClicked(bool succeeded,const std::string& callback);
   void OnNotification(const std::string& callback);
 
   // content::WebContentsObserver overrides:

@@ -475,23 +475,6 @@ bool Shell::OnMessageReceived(const IPC::Message& message) {
   return handled;
 }
 
-void Shell::RenderViewCreated(RenderViewHost* render_view_host) {
-   if(window_->IsTransparent())
-   {
-     SkBitmap background;
-     background.setConfig(SkBitmap::kARGB_8888_Config, 1, 1);
-     background.allocPixels();
-     background.eraseARGB(0x00, 0x00, 0x00, 0x00);
- 
-     content::RenderWidgetHostView* view = render_view_host->GetView();
-     DCHECK(view);
-     view->SetBackground(background);
-#if defined(OS_WIN)
-     window_->RenderViewCreated(render_view_host);
-#endif
-
-   }
- }
 
 WebContents* Shell::OpenURLFromTab(WebContents* source,
                                    const OpenURLParams& params) {
@@ -680,5 +663,25 @@ void Shell::RenderViewCreated(RenderViewHost* render_view_host) {
   //FIXME: handle removal
   new nwapi::DispatcherHost(render_view_host);
 }
+
+/*
+void Shell::RenderViewCreated(RenderViewHost* render_view_host) {
+   if(window_->IsTransparent())
+   {
+     SkBitmap background;
+     background.setConfig(SkBitmap::kARGB_8888_Config, 1, 1);
+     background.allocPixels();
+     background.eraseARGB(0x00, 0x00, 0x00, 0x00);
+ 
+     content::RenderWidgetHostView* view = render_view_host->GetView();
+     DCHECK(view);
+     view->SetBackground(background);
+#if defined(OS_WIN)
+     window_->RenderViewCreated(render_view_host);
+#endif
+
+   }
+ }
+*/
 
 }  // namespace content

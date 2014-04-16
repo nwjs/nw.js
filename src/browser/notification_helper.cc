@@ -28,19 +28,11 @@
 #include "base/strings/stringprintf.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/nw_shell.h"
-#include "content/nw/src/renderer/common/render_messages.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/web_contents.h"
 
 namespace nw {
-
-namespace notification_helper_constants {
-
-
-}; // namespace notification_helper_constants
-
-namespace keys = nw::notification_helper_constants;
 
 // static
 scoped_refptr<NotificationHelper> NotificationHelper::Create(
@@ -56,33 +48,12 @@ NotificationHelper::NotificationHelper(const base::WeakPtr<content::Shell>&shell
 NotificationHelper::~NotificationHelper() {
 }
 
-void NotificationHelper::SendNotification(const std::string& callback) {
-
-   content::WebContents* web_contents = shell_->web_contents();
-  content::RenderViewHost* render_view_host =
-      web_contents->GetRenderViewHost();
-  content::RenderWidgetHostView* view = render_view_host->GetView();
-
-
-    base::Bind(&NotificationHelper::OnClicked,callback);
-}
-
-void NotificationHelper::OnClicked(bool succeeded,
-                                                     const std::string& callback) {
-  if(succeed){
-    SendCallbackNotification(callback);
-    return;
-  }
-
-  // Ask the renderer for a snapshot.
-
-}
 
 void NotificationHelper::SendCallbackNotification(const std::string& callback) {
   shell_->SendEvent("notification", callback);
 }
 
-void NotificationHelper::OnNotification(const std::string callback) {
+void NotificationHelper::OnNotification(const std::string& callback) {
   SendCallbackNotification(callback);
 }
 
@@ -91,7 +62,7 @@ void NotificationHelper::OnNotification(const std::string callback) {
 bool NotificationHelper::OnMessageReceived(const IPC::Message& message) {
   bool handled = true;
   IPC_BEGIN_MESSAGE_MAP(NotificationHelper, message)
-    IPC_MESSAGE_HANDLER(NwViewHostMsg_Notification, OnNotification)
+    IPC_MESSAGE_HANDLER(ShellHostMsg_Notification, OnNotification)
     IPC_MESSAGE_UNHANDLED(handled = false)
   IPC_END_MESSAGE_MAP()
   return handled;
