@@ -84,7 +84,7 @@ function MenuItem(option) {
   if (!option.hasOwnProperty('enabled'))
     option.enabled = true;
 }
-require('util').inherits(MenuItem, exports.Base);
+nodeRequire('util').inherits(MenuItem, exports.Base);
 
 MenuItem.prototype.__defineGetter__('type', function() {
   return this.handleGetter('type');

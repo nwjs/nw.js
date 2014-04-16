@@ -31,7 +31,7 @@ function Menu(option) {
   v8_util.setHiddenValue(this, 'items', []);
   nw.allocateObject(this, option);
 }
-require('util').inherits(Menu, exports.Base);
+nodeRequire('util').inherits(Menu, exports.Base);
 
 Menu.prototype.__defineGetter__('items', function() {
   return v8_util.getHiddenValue(this, 'items');

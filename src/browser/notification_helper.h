@@ -18,27 +18,43 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-var v8_util = process.binding('v8_util');
+#ifndef CONTENT_NW_SRC_BROWSER_NOTIFICATION_HELPER_H_
+#define CONTENT_NW_SRC_BROWSER_NOTIFICATION_HELPER_H_
 
-function Base() {
-  throw new String("It's forbidden to instantialize a Base class.");
-}
-nodeRequire('util').inherits(Base, nodeRequire('events').EventEmitter);
+#include "base/memory/ref_counted.h"
+#include "base/memory/weak_ptr.h"
+#include "content/public/browser/web_contents_observer.h"
 
-// Silent unhandled events
-Base.prototype.handleEvent = function() {
-  this.emit.apply(this, arguments);
-}
-
-// Generic getter and setter
-Base.prototype.handleGetter = function(name) {
-  return v8_util.getHiddenValue(this, 'option')[name];
+namespace content {
+class Shell;
 }
 
-Base.prototype.handleSetter = function(name, setter, type, value) {
-  value = type(value);
-  v8_util.getHiddenValue(this, 'option')[name] = value;
-  nw.callObjectMethod(this, setter, [ value ]);
-}
+namespace nw {
 
-exports.Base = Base;
+
+class NotificationHelper : public base::RefCountedThreadSafe<NotificationHelper>,
+                      public content::WebContentsObserver {
+ public:
+  static scoped_refptr<NotificationHelper> Create(const base::WeakPtr<content::Shell>& shell);
+
+ void SendCallbackNotification(const std::string& callback);
+
+ private:
+  NotificationHelper(const base::WeakPtr<content::Shell>& shell);
+  virtual ~NotificationHelper();
+
+  // Internal helpers ----------------------------------------------------------
+  void OnNotification(const std::string& callback);
+
+  // content::WebContentsObserver overrides:
+  virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
+
+  base::WeakPtr<content::Shell> shell_;
+
+  friend class base::RefCountedThreadSafe<NotificationHelper>;
+};
+
+}; // namespace nw
+
+
+#endif

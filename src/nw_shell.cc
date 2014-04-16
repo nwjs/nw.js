@@ -395,7 +395,7 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
 
   RenderViewHost* inspected_rvh = web_contents()->GetRenderViewHost();
   if (nodejs()) {
-    std::string jscript = std::string("require('nw.gui').Window.get().__setDevToolsJail('")
+    std::string jscript = std::string("nodeRequire('nw.gui').Window.get().__setDevToolsJail('")
       + (jail_id ? jail_id : "(null)") + "');";
     inspected_rvh->ExecuteJavascriptInWebFrame(string16(), UTF8ToUTF16(jscript.c_str()));
   }
