@@ -9,30 +9,38 @@
   <h1>Hello World!</h1>
   We are using node.js
   <script type="text/javascript">
-    var gui = require('nw.gui');
-    var win = gui.Window.get(window.open('http://localhost:8125'));
     var results = new Array();
     var changed = false;
-
+    var gui = require('nw.gui');
+    var win = gui.Window.get(window.open('http://localhost:8125'));
+    win.cookies.onChanged.addListener(function() {
+        changed = true;
+    });
+    
     var action = gui.App.argv[0];
 
-    function retrieveAll(domain) {
+    function retrieveAll(url,callback) {
         win.cookies.getAll({
-            "domain": domain
+            "url": url
         }, function(cookies) {
             if (!cookies || cookies.length === 0) {
                 results.push(false);
             } else {
-                result.push(true);
+                results.push(true);
+            }
+            if (typeof callback === 'function'){
+                setTimeout(function(){
+                    (callback)();
+                },20);
             }
         });
     };
 
-    function remove(url, name) {
+    function remove(url, name,callback) {
         win.cookies.remove({
             'url': url,
             'name': name
-        });
+        },callback);
     }
 
     function set(domain, url, name, value) {
@@ -44,7 +52,7 @@
         });
     }
 
-    function retrieve(url, name) {
+    function retrieve(url, name,callback) {
         win.cookies.get({
             "url": url,
             "name": name
@@ -54,30 +62,46 @@
             } else {
                 results.push(false);
             }
+            if (typeof callback === 'function'){
+                setTimeout(function(){
+                    (callback)();
+                },20);
+            }
         });
     }
 
     function sendResult() {
+        //we test cookies API, clear cookies when exit
+        win.cookies.getAll({"domain":"localhost"},function(cookies){
+            for (var i=0;i<cookies.length;++i){
+                (function(cookie){
+                    win.cookies.remove({"url":cookie.domain,"name":cookie.name});
+                })(cookies[i]);
+            }
+        });
         setTimeout(function() {
             var client = require('../../nw_test_app').createClient({
                 argv: gui.App.argv,
                 data: results
             });
-        }, 1000);
+        }, 1500);
     }
 
-    win.cookies.onChanged.addListener(function() {
-        changed = true;
-    });
+
 
 
     win.window.onload = function() {
+        
         if (action === '1') {
-            retrieve("http://localhost:8125/", "lang");
-            retrieveAll('localhost:8125');
-            results.push(changed);
-            win.close();
-            sendResult();
+            retrieve("http://localhost:8125/", "lang",function(){
+                retrieveAll('http://localhost:8125',function(){
+                    results.push(changed);
+                    sendResult();
+                    setTimeout(function(){
+                        // win.close();
+                    },4000);
+                });
+            });
         } else if (action === '2') {
             win.close();
             set('localhost', "http://localhost:8125/", "lang", "en");
@@ -106,10 +130,12 @@
                 sendResult();
             };
         } else if (action === '4') {
-            remove("http://localhost:8125","lang");
-            results.push(changed);//should be true
-            retrieve("http://localhost:8125","lang");//should be false
-            sendResult();
+            remove("http://localhost:8125","lang",function(){
+                results.push(changed);//should be true
+                retrieve("http://localhost:8125","lang",function(){
+                    sendResult();
+                });//should be false
+            });
         }
     };
   </script>
