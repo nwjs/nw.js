@@ -7,8 +7,6 @@ var id_list = [];
 
 var request_listener = function(req,res){
   var location = url.parse(req.url,true);
-  console.log("--------PATHNAME: "+location.pathname+"-----------REQUEST COOKIE:"+req.headers.cookie+"-------------------");
-
   var id = undefined;
   var lang = undefined;
   var cookies = {};
@@ -39,8 +37,6 @@ var request_listener = function(req,res){
     }
   }
 
-
-
   if (id_list.indexOf(id+'')===-1){
     id_list.push(id+'');
     set_cookies = [
@@ -51,6 +47,10 @@ var request_listener = function(req,res){
       "lang="+lang+"; Path=/; Expires="+expires+"; ",
     ];
   }
+
+  //do not let nw cache anything unless you need it,
+  //when you restart node-webkit, it may load content from the cache,
+  //this usually should not allowed when doing test.
   var headers = {
     "Content-type":"text/plain",
     "Pragma":"no-cache",
@@ -60,14 +60,10 @@ var request_listener = function(req,res){
 
   if (set_cookies && set_cookies.length >0){
     headers["Set-Cookie"] = set_cookies;
-    console.log("+++++++++++++++++++++++RESPONSE SET_COOKIE HEADER:"+set_cookies+"+++++++++++++++++++++++");
   }
   res.writeHead(200,headers);
-
-  // var html = '<!DOCTYPE html><html lang="en"><head><title></title></head><body>'+JSON.stringify(cookies)+'</body></html>';
   var html = JSON.stringify(cookies);
   res.end(html);
-  console.log(res.headers);
 };
 
 var server = http.createServer(request_listener);
