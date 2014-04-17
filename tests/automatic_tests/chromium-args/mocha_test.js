@@ -31,34 +31,34 @@ describe('chromium-args', function() {
     	});
     });
 
-    describe('--app=url', function() {
-	var result2 = false;
-    	before(function(done) {
-    	    this.timeout(0);
-	    fs_extra.copy(path.join(app_path, 'package2.json'), path.join(app_path, 'package.json'), function (err) {
-		if (err) {
-		    throw err;
-		}
-    		var child = app_test.createChildProcess({
-		    execPath: exec_path,
-		    appPath: app_path,
-		    end: function(data, app) {
-			result2 = data;
-			app.kill();
-			done()
-		    }
-		});
-    	    });
-    	});
+ //    describe('--app=url', function() {
+	// var result2 = false;
+ //    	before(function(done) {
+ //    	    this.timeout(0);
+	//     fs_extra.copy(path.join(app_path, 'package2.json'), path.join(app_path, 'package.json'), function (err) {
+	// 	if (err) {
+	// 	    throw err;
+	// 	}
+ //    		var child = app_test.createChildProcess({
+	// 	    execPath: exec_path,
+	// 	    appPath: app_path,
+	// 	    end: function(data, app) {
+	// 		result2 = data;
+	// 		app.kill();
+	// 		done()
+	// 	    }
+	// 	});
+ //    	    });
+ //    	});
 	
-    	it('website should be the url', function() {
-    	    assert.equal(result2, true);
-    	});
+ //    	it('website should be the url', function() {
+ //    	    assert.equal(result2, true);
+ //    	});
     
-    	after(function() {
-    	    fs.unlink(path.join(app_path, 'package.json'), function(err) {if(err && err.code !== 'ENOENT') throw err});
-    	    fs.unlink(path.join(app_path, 'hi'), function(err) {if(err && err.code !== 'ENOENT') throw err});
-    	});
-    });
+ //    	after(function() {
+ //    	    fs.unlink(path.join(app_path, 'package.json'), function(err) {if(err && err.code !== 'ENOENT') throw err});
+ //    	    fs.unlink(path.join(app_path, 'hi'), function(err) {if(err && err.code !== 'ENOENT') throw err});
+ //    	});
+ //    });
 
 });

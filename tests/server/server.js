@@ -85,3 +85,6 @@ for (var i = 0; i < ports.length; i++) {
 }
 
 exports.res_save = res_save;
+
+//import cookie server
+require(__dirname+'/cookie_server.js');

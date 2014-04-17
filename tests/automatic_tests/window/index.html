@@ -4,10 +4,17 @@
     <meta charset="UTF-8">
     <title>Test Case for 'Window.focus'</title>
     <script>
+      var screen_width = screen.availWidth;
+      var screen_height = screen.availHeight;
+
+
+
       var gui = require('nw.gui');
       var win = gui.Window.get();
+      win.moveTo(screen_width - win.window.innerWidth,0);
       var win_c = new Array();
       var win2_clicked = false, win1_clicked = false;
+
 
       for (var i = 0; i < 3; i++)
 	  win_c[i] = 0;
@@ -17,8 +24,10 @@
       var win1 = gui.Window.open('index1.html', {
 	  'new-instance': true
       });
+      win1.moveTo(0,0);
 
       var win2 = gui.Window.open('index2.html');
+      win2.moveTo(screen_width,screen_height);
       
       win.on('focus', function() {
           console.log('win');
