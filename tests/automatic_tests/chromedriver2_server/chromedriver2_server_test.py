@@ -19,13 +19,13 @@ def kill_process_tree(pid):
         parent.kill()
         return
     elif 'Windows' in machine_type:
-        import subprocess
-        subprocess.call(['taskkill', '/F', '/T', '/PID', str(pid)])
+        # import subprocess
+        # subprocess.call(['taskkill', '/F', '/T', '/PID', str(pid)])
         return
     elif 'Darwin' in machine_type:
         return
     else:
-        print "Unknow OS type"
+        # print "Unknow OS type"
         return
 
 
@@ -55,3 +55,4 @@ else:
 # driver.quit()
 spid = driver.service.process.pid
 kill_process_tree(spid)
+exit(0)
