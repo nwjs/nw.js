@@ -18,9 +18,10 @@ describe('Window.cookies', function() {
                 }
             });
         });
-        it('should get cookies', function() {
+        it('should get cookies', function(done) {
             assert.equal(results[0], true);
             assert.equal(results[1], true);
+            done();
         })
     })
 
@@ -41,8 +42,9 @@ describe('Window.cookies', function() {
                     }
                 });
             });
-            it('should get cookies', function() {
+            it('should get cookies', function(done) {
                 assert.equal(results[0], true);
+                done();
             })
         });
 
@@ -61,8 +63,9 @@ describe('Window.cookies', function() {
                 });
             });
 
-            it('should get cookies', function() {
+            it('should get cookies', function(done) {
                 assert.equal(results[0], true);
+                done();
             })
         });
 
@@ -84,14 +87,16 @@ describe('Window.cookies', function() {
             });
         });
 
-        it('should remove lang', function() {
+        it('should remove lang', function(done) {
             assert.equal(results[1], false);
+            done();
         });
     });
 
     describe('onChanged', function() {
-        it('should be called when changed', function() {
+        it('should be called when changed', function(done) {
             assert.equal(changed, true);
+            done();
         })
     });
 });
