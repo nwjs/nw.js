@@ -2,19 +2,32 @@ import traceback
 import time
 import os
 from selenium import webdriver
-import psutil
+from platform import platform
 
 #path = os.getcwd();
 #path = os.path.join(path, 'tmp-nw', 'chromedriver2_server');
 path = os.path.join(os.path.abspath(__file__),"../../../tmp-nw/chromedriver2_server")
 path = os.path.abspath(path)
 
-def kill_process_tree(pid,including_parent=True):
-    parent = psutil.Process(spid)
-    for child in parent.get_children(recursive=True):
-        child.kill()
-    if including_parent:
+def kill_process_tree(pid):
+    machine_type = platform()
+    if "Linux" in machine_type:
+        import psutil
+        parent = psutil.Process(spid)
+        for child in parent.get_children(recursive=True):
+            child.kill()
         parent.kill()
+        return
+    elif 'Windows' in machine_type:
+        import subprocess
+        subprocess.call(['taskkill', '/F', '/T', '/PID', str(pid)])
+        return
+    elif 'Darwin' in machine_type:
+        return
+    else:
+        print "Unknow OS type"
+        return
+
 
 
 
