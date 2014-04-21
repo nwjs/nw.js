@@ -12,7 +12,7 @@ var execPath = func.getExecPath();
 describe('Startup', function() {
 describe('different method of starting app (long-to-run)', function() {
   var temp_root = 'tmp-nw';
-
+  this.timeout(10000);
   before(function(done){
     this.timeout(10000);
     func.copyExecFiles(function() {
@@ -22,15 +22,16 @@ describe('different method of starting app (long-to-run)', function() {
         done();
       });
     });
+    setTimeout(function(){
+      done("ERROR")
+    },10000);
 
   })
 
   after(function() {
-    setTimeout(function() {
-      fs.remove('tmp-nw', function (er) {
-        if (er) throw er;
-      })
-    }, 1000);
+    fs.removeSync('tmp-nw', function (er) {
+      if (er) throw er;
+    })
   })
 
   it('start from nw that package.json in the same folder', function(done) {
