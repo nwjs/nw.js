@@ -9,6 +9,8 @@ describe('AppTest', function(){
 
   describe('reload app (long-to-run)', function(){
 
+    this.timeout(10000);
+
 
     var exec_argv = [path.join(global.tests_dir, 'reload_application'),
                     '--port',
