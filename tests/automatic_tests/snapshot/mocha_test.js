@@ -47,26 +47,35 @@ describe('snapshot', function() {
 				this.timeout(0);
 				var result = false;
 
-				var child = app_test.createChildProcess({
-					execPath: process.execPath,
-					appPath: path.join(global.tests_dir, 'snapshot'),
-					end: function(data, app) {
-						done();
-						app.kill();
-						result = true;
-					}
-				});
+				var checkBinExists = function() {
+					var binPath = path.join(global.tests_dir, 'snapshot', 'mytest.bin');
+					console.log(binPath);
+					if (fs.existsSync(binPath) == false) {
+						setTimeout(checkBinExists, 500);
+					} else {
+						var child = app_test.createChildProcess({
+							execPath: process.execPath,
+							appPath: path.join(global.tests_dir, 'snapshot'),
+							end: function(data, app) {
+								done();
+								app.kill();
+								result = true;
+							}
+						});
 
-				setTimeout(function() {
-					if (!result) {
-						done('the native code does not been executed');
-						child.close();
-						//child.removeConnection();
-						//child.app.kill();
+						setTimeout(function() {
+							if (!result) {
+								done('the native code does not been executed');
+								child.close();
+								//child.removeConnection();
+								//child.app.kill();
+							}
+						}, 10000);
+						//child.app.stderr.on('data', function(d){ console.log ('app' + d);});
 					}
-				}, 10000);
-				//child.app.stderr.on('data', function(d){ console.log ('app' + d);});
+				};
 
+				checkBinExists();
 			})
 	})
 
