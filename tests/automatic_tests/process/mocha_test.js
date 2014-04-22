@@ -5,7 +5,6 @@ var fs = require('fs-extra');
 
 describe('process', function() {
   describe('exit', function() {
-    this.timeout(10000);
     it('event process.exit should be fired after calling win.close(true)', function(done) {
       var crontab = undefined;
       var child = app_test.createChildProcess({

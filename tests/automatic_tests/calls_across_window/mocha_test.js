@@ -7,9 +7,6 @@ var cb;
 
 describe('AppTest', function(){
   describe('call across window', function(){
-    //this case will be very very slow on virtual machine,
-    //set this suite's timeout to make vm happy
-    this.timeout(10000);//10s
     var app;
     var exec_argv;
     var socket;

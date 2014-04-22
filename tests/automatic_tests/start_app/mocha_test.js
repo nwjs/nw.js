@@ -12,9 +12,7 @@ var execPath = func.getExecPath();
 describe('Startup', function() {
 describe('different method of starting app (long-to-run)', function() {
   var temp_root = 'tmp-nw';
-  this.timeout(10000);
   before(function(done){
-    this.timeout(10000);
     func.copyExecFiles(function() {
       func.copySourceFiles();
       func.zipSourceFiles(function() {
