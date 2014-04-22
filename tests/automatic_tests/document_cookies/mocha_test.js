@@ -4,7 +4,9 @@ var assert = require('assert');
 var gui = require('nw.gui');
 var results = new Array();
 describe('document.cookies', function() {
-
+//this case could be very slow on OS X
+//leave child process enough time to finish its job
+	this.timeout(10000);
 	describe('http', function() {
 		before(function(done) {
 			this.timeout(0);
@@ -38,7 +40,7 @@ describe('document.cookies', function() {
 					done();
 				}
 			});
-			crontab = setTimeout(done, 3000);
+			crontab = setTimeout(done, 10000);
 		});
 		it('should be set', function() {
 			assert.equal(results[1], '123');
@@ -61,7 +63,7 @@ describe('document.cookies', function() {
 					done();
 				}
 			});
-			crontab = setTimeout(done, 3000);
+			crontab = setTimeout(done, 10000);
 		});
 		it('should be set', function() {
 			assert.equal(results[2], '123');
