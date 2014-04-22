@@ -4247,7 +4247,8 @@ Runnable.prototype.inspect = function(){
 
 Runnable.prototype.resetTimeout = function(){
   var self = this;
-  var ms = this.timeout() || 1e9;
+  //var ms = this.timeout() || 1e9;//what the hell, more than 11 days
+  var ms = this.timeout() || 2*60*1000;
 
   this.clearTimeout();
   this.timer = setTimeout(function(){
