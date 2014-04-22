@@ -101,6 +101,7 @@
 
   // Call this to set 'describe', 'it' and else.
   mocha.setup('bdd');
+  mocha.timeout(20000);
   global.tests_dir = 'automatic_tests';
   // Read all test files.
   var dirs = fs.readdirSync(global.tests_dir);
