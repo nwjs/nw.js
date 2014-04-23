@@ -4247,8 +4247,14 @@ Runnable.prototype.inspect = function(){
 
 Runnable.prototype.resetTimeout = function(){
   var self = this;
-  //var ms = this.timeout() || 1e9;//what the hell, more than 11 days
-  var ms = this.timeout() || 2*60*1000;
+  var max_timeout = 10000;//default 10s
+  if (window && window.__mocha_max_timeout){
+    max_timeout = window.__mocha_max_timeout;
+  }
+  var ms = this.timeout() || max_timeout;
+  if (ms > max_timeout){
+    ms = max_timeout;
+  }
 
   this.clearTimeout();
   this.timer = setTimeout(function(){
