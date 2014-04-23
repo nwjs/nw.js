@@ -11,7 +11,7 @@ path = os.path.abspath(path)
 
 def kill_process_tree(pid):
     machine_type = platform()
-    if "Linux" in machine_type:
+    if "Linux" in machine_type or "Darwin" in machine_type:
         import psutil
         parent = psutil.Process(spid)
         for child in parent.get_children(recursive=True):
@@ -21,8 +21,6 @@ def kill_process_tree(pid):
     elif 'Windows' in machine_type:
         # import subprocess
         # subprocess.call(['taskkill', '/F', '/T', '/PID', str(pid)])
-        return
-    elif 'Darwin' in machine_type:
         return
     else:
         # print "Unknow OS type"
