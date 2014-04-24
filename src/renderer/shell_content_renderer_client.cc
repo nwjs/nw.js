@@ -354,8 +354,12 @@ void ShellContentRendererClient::InstallNodeSymbols(
     int ret;
     RenderViewImpl* render_view = RenderViewImpl::FromWebView(frame->view());
 
-    render_view->Send(new ShellViewHostMsg_SetForceClose(
+    if (frame->parent() == NULL) {
+      // do this only for top frames, or initialization of iframe
+      // could override parent settings here
+      render_view->Send(new ShellViewHostMsg_SetForceClose(
             render_view->GetRoutingID(), true, &ret));
+    }
   }
 }
 
