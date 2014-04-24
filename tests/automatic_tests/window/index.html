@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <title>Test Case for 'Window.focus'</title>
     <script>
+      var screenWidth = screen.availWidth;
       var gui = require('nw.gui');
       var win = gui.Window.get();
       var win_c = new Array();
       var win2_clicked = false, win1_clicked = false;
+
+      var mainWindowX = screenWidth - window.innerWidth;
+      win.moveTo(mainWindowX,0);
+
 
       for (var i = 0; i < 3; i++)
 	  win_c[i] = 0;
@@ -47,6 +52,22 @@
       }
      
      done();
+
+     setTimeout(function(){
+      var clickPositions = ["100,100",(mainWindowX+100)+","+100];
+      var spawn = require('child_process').spawn;
+      var child = spawn('java',['-jar','Mouse.jar'].concat(clickPositions));
+      child.on('exit',function(code,signal){
+        console.log(code,signal);
+        if (code === 0){
+          focus1();
+          setTimeout(function(){
+            win2.focus();
+          },500)
+        }
+      });
+      console.log("Start Java child process");
+     },1000);
     </script>
   </head>
   <body>
