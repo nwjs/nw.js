@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf8">
+    <title>test</title>
+    <style type="text/css">
+      tr{
+        border-top: solid;
+        border-bottom: solid;
+        text-align: center;
+      }
+      td{
+        border-left: solid;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <ol>
+        <li>Click Quit Button(Automatical)</li>
+        <li>Click native window red dot.(left top or right top)</li>
+        <li>Press COMMAND-Q(MAC ONLY)</li>
+        <li>Press left top system menu node-webkit and click nw-quit.(MAC ONLY)</li>
+      </ol>
+    </div>
+
+    <div>
+      <table id="result">
+        <thead>
+          <tr>
+            <td>Method</td>
+            <td>closeHandlerInNode</td>
+            <td>showSplashScreen</td>
+            <td>startServer</td>
+            <td>Result</td>
+          </tr>
+        </thead>
+        <tbody id="result-body">
+        </tbody>
+      </table>
+    </div>
+    <script type="text/javascript">
+      var os = require('os');
+      var url = require('url');
+      var http = require('http');
+      var spawn = require('child_process').spawn;
+      var resultFlag = 0;
+
+      var caseIndex = 1;
+      var methodIndex = 0;
+      var casesArgs = [
+        [0,0,2],//false,none,true
+        [1,0,0],//true,close,false
+        [0,0,0],//false,close,false
+      ];
+
+      var updateStatus = function(pathname,query){
+        if (pathname === '/crontab'){
+          if (resultFlag === 0){
+            resultFlag = 1;
+            return;
+          } else if (resultFlag === 2){
+            resultFlag = 3;
+            return;
+          }
+        } else if (pathname === "/close"){
+          if (resultFlag === 1){
+            resultFlag = 2;
+            return;
+          }
+        }
+        console.log("RESULT FLAG:"+resultFlag);
+      };
+
+      var resultBody = document.getElementById('result-body');
+      var methodId2Text = function(id){
+        id = parseInt(id);
+        switch(id){
+          case 0:
+            return "Click Quit Button";
+            break;
+          case 1:
+            return "Click native window red dot.";
+            break;
+          case 2:
+            return "Press COMMAND-Q(MAC ONLY)";
+            break;
+          case 3:
+            return "Press left top system menu node-webkit and click nw-quit.(MAC ONLY)";
+            break;
+        }
+      };
+      var generateView = function(){
+        var row = document.createElement("tr");
+        var methodText = methodId2Text(methodIndex);
+        var currentArgs = casesArgs[caseIndex].slice();
+        var closerText = (parseInt(currentArgs[0]) === 0?false:true)+"";
+        var splashMode = parseInt(currentArgs[1]);
+        var splashText = undefined;
+        switch(splashMode){
+          case 0:
+            splashText = "close";
+            break;
+          case 1:
+            splashText = "none";
+            break;
+          case 2:
+            splashText = "hide";
+            break;
+        }
+        var serverText = (parseInt(currentArgs[2])==0?false:true)+"";
+
+        var resultText = undefined;
+        if (resultFlag === 3){
+          resultText = "SUCCESS";
+        } else {
+          resultText = "FAIL"
+        }
+        resultFlag = 0;
+
+        var rowHTML = 
+          "<tr> <td class='Method'>"+methodText+"</td> <td class='closeHandlerInNode'>"+closerText+"</td> <td class='showSplashScreen'>"+splashText+"</td> <td class='startServer'>"+serverText+"</td> <td class='Result'>"+resultText+"</td></tr>";
+        resultBody.innerHTML += rowHTML;
+        return;
+      };
+      var server = http.createServer(function(req,res){
+        var location = url.parse(req.url,true);
+        var pathname = location.pathname;
+        var query = location.query;
+        updateStatus(pathname,query);
+        res.end();
+      });
+      server.listen(9000,function(){
+        console.log("Result server is running on localhost:9000");
+      });
+
+      var appNum = 2;
+      if (os.platform() === 'darwin'){
+        appNum = 3;//the last method should launch manual, could not as a child process.
+        caseIndex = 0;//only mac need the first row args 
+      }
+
+      
+
+      var next = function(){
+        var args = casesArgs[caseIndex];
+        if (args){
+          args = args.slice();
+        } else {
+          return;
+        }
+        if (methodIndex < appNum){
+          args.unshift(methodIndex);
+          args.unshift("app");
+          var app = spawn(process.execPath,args);
+          app.on("exit",function(code,signal){
+            generateView();
+            ++methodIndex;
+            next();
+          });
+        } else {
+          ++caseIndex;
+          methodIndex = 0;
+          next();
+        }
+      }
+
+
+      next();
+    </script>
+  </body>
+</html>
+    
