@@ -22,6 +22,7 @@
 #define CONTENT_NW_SRC_API_APP_APP_H_
 
 #include "base/basictypes.h"
+#include "../dispatcher_host.h"
 
 #include <string>
 
@@ -44,7 +45,8 @@ class App {
   static void Call(content::Shell* shell,
                    const std::string& method,
                    const base::ListValue& arguments,
-                   base::ListValue* result);
+                   base::ListValue* result,
+                   DispatcherHost* dispatcher_host);
 
   // Try to close all windows (then will cause whole app to quit).
   static void CloseAllWindows(bool force = false, bool quit = false);

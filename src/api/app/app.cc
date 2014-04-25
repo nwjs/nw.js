@@ -92,7 +92,8 @@ void App::Call(const std::string& method,
 void App::Call(Shell* shell,
                const std::string& method,
                const base::ListValue& arguments,
-               base::ListValue* result) {
+               base::ListValue* result,
+               DispatcherHost* dispatcher_host) {
   if (method == "GetDataPath") {
     ShellBrowserContext* browser_context =
       static_cast<ShellBrowserContext*>(shell->web_contents()->GetBrowserContext());
@@ -126,6 +127,9 @@ void App::Call(Shell* shell,
     std::string path;
     arguments.GetString(0, &path);
     result->AppendBoolean(SetCrashDumpPath(path.c_str()));
+    return;
+  } else if (method == "DoneMenuShow") {
+    dispatcher_host->quit_run_loop();
     return;
   }
 

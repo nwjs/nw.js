@@ -21,6 +21,7 @@
 #include "content/nw/src/api/dispatcher_host.h"
 
 #include "base/logging.h"
+#include "base/run_loop.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
 #include "content/browser/child_process_security_policy_impl.h"
@@ -52,7 +53,8 @@ static std::map<content::RenderViewHost*, DispatcherHost*> g_dispatcher_host_map
 DispatcherHost::DispatcherHost(content::RenderViewHost* host)
   : content::WebContentsObserver(content::WebContents::FromRenderViewHost(host)),
     render_view_host_(host),
-    weak_ptr_factory_(this) {
+    weak_ptr_factory_(this),
+    run_loop_(NULL) {
   g_dispatcher_host_map[render_view_host_] = this;
 }
 
@@ -95,6 +97,11 @@ void DispatcherHost::SendEvent(Base* object,
 
 bool DispatcherHost::Send(IPC::Message* message) {
   return content::WebContentsObserver::Send(message);
+}
+
+void DispatcherHost::quit_run_loop() {
+  if (run_loop_)
+    run_loop_->Quit();
 }
 
 bool DispatcherHost::OnMessageReceived(const IPC::Message& message) {
@@ -236,7 +243,7 @@ void DispatcherHost::OnCallStaticMethodSync(
   if (type == "App") {
     content::Shell* shell =
         content::Shell::FromRenderViewHost(render_view_host());
-    nwapi::App::Call(shell, method, arguments, result);
+    nwapi::App::Call(shell, method, arguments, result, this);
     return;
   }
 
