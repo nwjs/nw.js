@@ -61,6 +61,10 @@ App.prototype.clearCache = function() {
   nw.callStaticMethodSync('App', 'ClearCache', [ ]);
 }
 
+App.prototype.doneMenuShow = function() {
+  nw.callStaticMethodSync('App', 'DoneMenuShow', [ ]);
+}
+
 App.prototype.getProxyForURL = function (url) {
   return nw.callStaticMethodSync('App', 'getProxyForURL', [ url ]);
 }

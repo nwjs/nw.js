@@ -32,6 +32,7 @@
 namespace base {
 class DictionaryValue;
 class ListValue;
+class RunLoop;
 }
 
 namespace WebKit {
@@ -76,6 +77,8 @@ class DispatcherHost : public content::WebContentsObserver {
     return render_view_host_;
   }
 
+  void set_run_loop(base::RunLoop* run_loop) { run_loop_ = run_loop; }
+  void quit_run_loop();
  private:
   content::RenderViewHost* render_view_host_;
   friend class content::Shell;
@@ -87,6 +90,8 @@ class DispatcherHost : public content::WebContentsObserver {
 
   // Factory to generate weak pointer
   base::WeakPtrFactory<DispatcherHost> weak_ptr_factory_;
+
+  base::RunLoop* run_loop_;
 
   // RenderViewHostObserver implementation.
   // WebContentsObserver implementation:

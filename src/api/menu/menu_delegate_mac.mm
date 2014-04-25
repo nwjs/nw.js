@@ -18,6 +18,7 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#include "base/run_loop.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/menu/menu_delegate_mac.h"
@@ -35,7 +36,10 @@
 
 - (void)menuNeedsUpdate:(NSMenu*)menu {
   base::ListValue args;
+  base::RunLoop run_loop;
+  nwmenu_->dispatcher_host()->set_run_loop(&run_loop);
   nwmenu_->dispatcher_host()->SendEvent(nwmenu_, "show", args);
+  run_loop.Run();
 }
 
 @end
