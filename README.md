@@ -1,7 +1,7 @@
 ## Introduction
 
 node-webkit is an app runtime based on `Chromium` and `node.js`. You can 
-write native apps in HTML and Javascript with node-webkit. It also lets you
+write native apps in HTML and JavaScript with node-webkit. It also lets you
 call Node.js modules directly from the DOM and enables a new way of writing
 native applications with all Web technologies.
 
