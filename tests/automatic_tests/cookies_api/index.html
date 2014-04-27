@@ -1,129 +1,145 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>TEST CASE FOR COOKIES API</title>
-  </head>
-  <body>
-    <h1>Hello World!</h1>
-    We are using node.js
-    <script>
-      var gui = require('nw.gui');
-      var win = gui.Window.get( window.open('http://115.com'));      
-      var results = new Array();
-      var changed = false;
-      // action 1: retrieve(get), retrieveAll(getAll) set
-      // action 2: set
-      // action 3: set and onChanged
-      var action = gui.App.argv[0]; 
 
-      //retrieveAll(".115.com")
-      function retrieveAll(domain) {
-	  win.cookies.getAll({ 'domain': domain}, function(cookies) {
-	      console.log(cookies);
-	      if (cookies != null && cookies != undefined)
-		  results.push(true);
-	      else
-		  results.push(false);
-          //     for (var i = 0; i < cookies.length; i++) {
-          //         console.log("name: " + cookies[i].name + "\n" + "path: " + cookies[i].path + "\n" + "domain: " + cookies[i].domain + "\n" + "session: " + cookies[i].session.toString() + "\n" + "value: " + cookies[i].value + " " + "\n");
-	  //     }
-	  })
-      }
+<head>
+  <title>TEST CASE FOR COOKIES API</title>
+</head>
 
-     //remove("http://www.115.com","115_lang")
-     function remove(url, name) {
-	 win.cookies.remove({ 'url': url, 'name': name });
-     }
-
-     //set('.115.com',"http://www.115.com","115_lang","en")
-     function set(domain, url, name, value) {
-	 win.cookies.set({ 'domain': domain, 'url': url, 'name': name, 'value': value, 'expirationDate': 9999999999});
-     }
-
-     //retrieve("http://www.115.com","115_lang")
-     function retrieve(url, name){
-	 win.cookies.get({"url":url, "name": name},function (cookie){
-	     console.log(cookie);
-	     if (cookie != null && cookie != undefined) {
-		 results.push(true);
-	     } else {
-		 results.push(false);
-	     }
-	 });
-     }
-     
-     win.cookies.onChanged.addListener(function() {
-	 changed = true;
-     });
+<body>
+  <h1>Hello World!</h1>
+  We are using node.js
+  <script type="text/javascript">
+    var results = new Array();
+    var changed = false;
+    var gui = require('nw.gui');
+    var win = gui.Window.get(window.open('http://localhost:8125'));
+    win.cookies.onChanged.addListener(function() {
+        changed = true;
+    });
     
-     if (action == '1') {
-	 win.window.onload = function() {
-	     retrieve("http://www.115.com","115_lang");//get true
-     	     retrieveAll(".115.com");//getAll true
-	     results.push(changed);
-    	     win.close();
-	     // true, true
-	     setTimeout(function() {
-		 var client = require('../../nw_test_app').createClient({
-		     argv: gui.App.argv,
-		     data: results
-		     });
-	     }, 1000);
-	 }
-     } else if (action == '2') {
-	 win.close();
-     	 set('.115.com',"http://www.115.com","115_lang","en");//set true
-	 win = gui.Window.get(window.open('http://115.com'));      
-	 win.window.onload = function() {
-    	     if (win.window.document.title != "115 Cloud drive-Your files in the cloud-Easy&Safe")
-    		 results.push(false);
-	     else
-		 results.push(true);
-	     results.push(changed);
-	     win.close();
-	     setTimeout(function() {
-		 var client = require('../../nw_test_app').createClient({
-		     argv: gui.App.argv,
-		     data: results
-		 });
-	     }, 2000)
-	 }
-     } else if (action == '3') {
-	 win.close();
-     	 set('.115.com',"http://www.115.com","115_lang","zh");//set true
-	 win = gui.Window.get(window.open('http://115.com'));      
-	 win.window.onload = function() {
-	     if (win.window.document.title == "115 Cloud drive-Your files in the cloud-Easy&Safe")
-    		 results.push(false);
-	     else
-		 results.push(true);
-	     setTimeout(function() {
-		 win.close();	    
-		 results.push(changed);
-	     }, 1000);
-	     // true
-	     setTimeout(function() {
-		 var client = require('../../nw_test_app').createClient({
-		     argv: gui.App.argv,
-		     data: results
-		 });
-	     }, 3000);
-	 }
-     } else if (action == '4') {
-	 remove("http://www.115.com","115_lang");
-	 results.push(changed);
-         retrieve("http://www.115.com","115_lang");//get false
-	 
-	 //false, true
-	 setTimeout(function() {
-	     var client = require('../../nw_test_app').createClient({
-		 argv: gui.App.argv,
-		 data: results
-	     });
-	 }, 1000);
-     }
+    var action = gui.App.argv[0];
 
-    
-    </script>
-  </body>
+    function retrieveAll(url,callback) {
+        win.cookies.getAll({
+            "url": url
+        }, function(cookies) {
+            if (!cookies || cookies.length === 0) {
+                results.push(false);
+            } else {
+                results.push(true);
+            }
+            if (typeof callback === 'function'){
+                setTimeout(function(){
+                    (callback)();
+                },20);
+            }
+        });
+    };
+
+    function remove(url, name,callback) {
+        win.cookies.remove({
+            'url': url,
+            'name': name
+        },callback);
+    }
+
+    function set(domain, url, name, value) {
+        win.cookies.set({
+            'url': url,
+            'name': name,
+            'value': value,
+            'expirationDate': 9999999999
+        });
+    }
+
+    function retrieve(url, name,callback) {
+        win.cookies.get({
+            "url": url,
+            "name": name
+        }, function(cookie) {
+            if (cookie != null && cookie != undefined) {
+                results.push(true);
+            } else {
+                results.push(false);
+            }
+            if (typeof callback === 'function'){
+                setTimeout(function(){
+                    (callback)();
+                },20);
+            }
+        });
+    }
+
+    function sendResult() {
+        //we test cookies API, clear cookies when exit
+        win.cookies.getAll({"domain":"localhost"},function(cookies){
+            for (var i=0;i<cookies.length;++i){
+                (function(cookie){
+                    win.cookies.remove({"url":cookie.domain,"name":cookie.name});
+                })(cookies[i]);
+            }
+        });
+        setTimeout(function() {
+            var client = require('../../nw_test_app').createClient({
+                argv: gui.App.argv,
+                data: results
+            });
+        }, 1500);
+    }
+
+
+
+
+    win.window.onload = function() {
+        
+        if (action === '1') {
+            retrieve("http://localhost:8125/", "lang",function(){
+                retrieveAll('http://localhost:8125',function(){
+                    results.push(changed);
+                    sendResult();
+                    setTimeout(function(){
+                        // win.close();
+                    },4000);
+                });
+            });
+        } else if (action === '2') {
+            win.close();
+            set('localhost', "http://localhost:8125/", "lang", "en");
+            win = gui.Window.get(window.open('http://localhost:8125/'));
+            win.window.onload = function() {
+                var request_cookies = JSON.parse(win.window.document.body.innerText);
+                if (request_cookies.lang != "en") {
+                    results.push(false);
+                } else {
+                    results.push(true);
+                }
+                sendResult();
+            };
+        } else if (action === '3') {
+            win.close();
+            set('localhost', "http://localhost:8125/", "lang", "zh");
+            win = gui.Window.get(window.open('http://localhost:8125/'));
+            win.window.onload = function() {
+                var request_cookies = JSON.parse(win.window.document.body.innerText);
+                if (request_cookies.lang != "zh") {
+                    results.push(false);
+                } else {
+                    results.push(true);
+                }
+                win.close();
+                sendResult();
+            };
+        } else if (action === '4') {
+            remove("http://localhost:8125","lang",function(){
+                results.push(changed);//should be true
+                retrieve("http://localhost:8125","lang",function(){
+                    sendResult();
+                });//should be false
+            });
+        }
+    };
+  </script>
+
+</body>
+
 </html>

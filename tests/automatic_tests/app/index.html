@@ -21,10 +21,11 @@
     if (self.name == 2)
        gui.App.clearCache();
     else if (self.name == 3) {
+       gui.App.clearCache();
 	var client = require('../../nw_test_app').createClient({
 	    argv: gui.App.argv,
 	    data: {}
-	});
+	 });
     }
     location.reload();
   }

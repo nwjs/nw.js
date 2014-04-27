@@ -62,7 +62,7 @@ describe('node-remote', function() {
           } else {
             done();
           }
-
+          socket.end();
         });
         socket.write('8124');
     })

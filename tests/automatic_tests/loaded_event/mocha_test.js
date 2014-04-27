@@ -8,11 +8,15 @@ describe('loaded event', function() {
 	  function(done) {
         this.timeout(0);
         var result = false;
+        var crontab = undefined;
 
         var child = app_test.createChildProcess({
           execPath: process.execPath,
           appPath: path.join(global.tests_dir, 'loaded_event'),
           end: function(data, app) {
+            if (crontab !== undefined){
+              clearTimeout(crontab);
+            }
             result = true;
             done();
             app.kill();
@@ -20,7 +24,7 @@ describe('loaded event', function() {
         });
 
 
-        setTimeout(function(){
+        crontab = setTimeout(function(){
           if (!result) {
             child.close();
             //child.app.kill();

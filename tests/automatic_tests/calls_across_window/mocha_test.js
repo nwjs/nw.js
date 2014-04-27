@@ -7,7 +7,6 @@ var cb;
 
 describe('AppTest', function(){
   describe('call across window', function(){
-
     var app;
     var exec_argv;
     var socket;

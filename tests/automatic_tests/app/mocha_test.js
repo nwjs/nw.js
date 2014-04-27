@@ -37,11 +37,20 @@ describe('gui.App', function() {
     describe('clearCache()', function(done) {
 	it('should clear the HTTP cache in memory and the one on disk', function() {
 	    var res_save = global.local_server.res_save;
-	    
+	    //request 4 time
+	    //1. 200 request image from remote server
+	    //2. 304 load image from cache
+	    //3. 304 load image from cache, but we call clearCache API this time
+	    //4. 200 clear cache, request image from remote server
+	    assert.equal(res_save.length,4);
+	    assert.equal(res_save[0].status, 200);
+	    assert.equal(res_save[0].pathname, 'img.jpg');
 	    assert.equal(res_save[1].status, 304);
 	    assert.equal(res_save[1].pathname, 'img.jpg');
-	    assert.equal(res_save[2].status, 200);
+	    assert.equal(res_save[2].status, 304);
 	    assert.equal(res_save[2].pathname, 'img.jpg');
+	    assert.equal(res_save[3].status, 200);
+	    assert.equal(res_save[3].pathname, 'img.jpg');
 	});
     });
 })

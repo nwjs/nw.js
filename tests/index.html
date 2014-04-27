@@ -1,6 +1,6 @@
 <html>
 <head>
-  <link href="node_modules/mocha/mocha.css" rel="stylesheet">
+  <link href="mocha/mocha.css" rel="stylesheet">
   <script type="text/javascript" src="zepto.min.js"></script>
   <script type="text/javascript" charset="utf-8">
     // Remove symbols of node-webkit to avoid conficts with mocha in browser.
@@ -15,7 +15,7 @@
   Use the browser version of mocha, the node version of mocha will
   run tests in node contex, which make it imposssible to test nw.gui.
   -->
-  <script type="text/javascript" src="node_modules/mocha/mocha.js"></script>
+  <script type="text/javascript" src="mocha/mocha.js"></script>
   <script type="text/javascript" charset="utf-8">
     // Restore default node-webkit environment.
     require = nodeRequire;
@@ -24,7 +24,6 @@
   </script>
 </head>
 <body>
-
 <div id="mocha"></div>
 
 <script type="text/javascript" charset="utf-8">
@@ -75,7 +74,10 @@
   // --slow <ms>
   if (program.slow) mocha.suite.slow(program.slow);
   // --timeout
-  if (program.timeout) mocha.suite.timeout(program.timeout);
+  if (program.timeout) {
+    mocha.suite.timeout(program.timeout);
+    window.__mocha_max_timeout = parseInt(program.timeout);
+  }
   // --bail
   mocha.suite.bail(program.bail);
   // --async-only
@@ -112,29 +114,29 @@
       // Get all the test cases
       var content_tmp = content + "", content_bet, n, n1 = 0, obj, obj1;
       obj1 = new Object();
-      obj1.depth = 1;		      
+      obj1.depth = 1;         
       
       while (program.list && content_tmp.length != 0) {  
           n = content_tmp.search('describe');
-	  if (n == -1)
-	      break;
-	  n1 = content_tmp.search('{');
+    if (n == -1)
+        break;
+    n1 = content_tmp.search('{');
           content_bet = (content_tmp + "").slice(n1, n);
           var c = content_bet.split('{').length - content_bet.split('}').length;
 
           content_tmp = content_tmp.slice(n);
           n1 = content_tmp.search('{');
-	  n1 = content_tmp.lastIndexOf(',' ,n1);
+    n1 = content_tmp.lastIndexOf(',' ,n1);
           obj = new Object();                 
           obj.test_name = content_tmp.slice(10, n1 - 1);
           content_tmp = content_tmp.slice(n1);
           obj.depth = obj1.depth + c;
-	 
-	  list.push(obj);
+   
+    list.push(obj);
           obj1 = obj;
       }
       
-	
+  
       // Simple wrapped 'eval' to setup tests, so:
       // 1) working directory is the directory of 'index.html'.
       // 2) tests run in window context.
@@ -150,8 +152,8 @@
 
   if (program.list) {
       for (var i = 0; i < list.length; i++) {
-	  var split = '-';
-	  process.stdout.write(new Array(list[i].depth).join(split) + list[i].test_name + '\n');
+    var split = '-';
+    process.stdout.write(new Array(list[i].depth).join(split) + list[i].test_name + '\n');
       }
       process.stdout.write("Report total: " + list.length + '\n');
       server.close = function(){}
@@ -163,10 +165,18 @@
 
   server.on('listening', function(){
     // Run!
-    if (program.silent)
-      mocha.run(gui.App.quit);
-    else
-      mocha.run();
+    if (program.silent){
+      setTimeout(function(){
+        process.on('uncaughtException', window.__uncaught||function(){});
+        mocha.run(gui.App.quit);
+      },1000);
+    }
+    else{
+      setTimeout(function(){
+        process.on('uncaughtException', window.__uncaught||function(){});
+        mocha.run();
+      },1000);
+    }
   });
 
   server.on('error', function(e){
