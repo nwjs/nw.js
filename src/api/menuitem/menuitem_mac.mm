@@ -42,11 +42,18 @@ void MenuItem::Create(const base::DictionaryValue& option) {
   } else {
     std::string label;
     option.GetString("label", &label);
-
+    
+    NSString* keyEqu = @"";
+    
+    std::string keyEquStr;
+    if (option.GetString("shortcut", &keyEquStr) && !keyEquStr.empty()){
+        keyEqu = [NSString stringWithUTF8String:keyEquStr.c_str()];
+    }
+      
     menu_item_ = [[NSMenuItem alloc]
        initWithTitle:[NSString stringWithUTF8String:label.c_str()]
        action: @selector(invoke:)
-       keyEquivalent: @""];
+       keyEquivalent: keyEqu];
 
     delegate_ = [[MenuItemDelegate alloc] initWithMenuItem:this];
     [menu_item_ setTarget:delegate_];
@@ -109,6 +116,7 @@ void MenuItem::SetTooltip(const std::string& tooltip) {
   [menu_item_ setToolTip:[NSString stringWithUTF8String:tooltip.c_str()]];
 }
 
+    
 void MenuItem::SetEnabled(bool enabled) {
   [menu_item_ setEnabled:enabled];
 }
