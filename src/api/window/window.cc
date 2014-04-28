@@ -226,9 +226,10 @@ void Window::Call(const std::string& method,
       std::string text;
       std::string subtitle;
       std::string callback;
+      std::string image;
  
-     if (arguments.GetString(0,&title) && arguments.GetString(1,&text) && arguments.GetString(2,&subtitle) && arguments.GetString(3,&callback))
-      shell_->window()->Notify(title,text,subtitle,callback);
+     if (arguments.GetString(0,&title) && arguments.GetString(1,&text) && arguments.GetString(2,&subtitle) && arguments.GetString(3,&callback) && arguments.GetString(4,&image))
+      shell_->window()->Notify(title,text,subtitle,callback,image);
  
   }else if (method == "ResizeTo") {
     int width, height;

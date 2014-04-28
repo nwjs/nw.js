@@ -96,7 +96,7 @@ class NativeWindow {
   virtual void SetKiosk(bool kiosk) = 0;
   virtual bool IsKiosk() = 0;
   virtual void SetMenu(nwapi::Menu* menu) = 0;
-  virtual void Notify(std::string title, std::string text, std::string subtitle, std::string callback) = 0;
+  virtual void Notify(std::string title, std::string text, std::string subtitle, std::string callback, std::string image) = 0;
   virtual void SetInitialFocus(bool accept_focus) = 0;
   virtual bool InitialFocus() = 0;
 

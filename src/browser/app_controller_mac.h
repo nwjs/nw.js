@@ -30,18 +30,6 @@ namespace content {
  class Shell;
 }
 
-#if !defined(MAC_OS_X_VERSION_10_8) || \
- MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_8
- @interface NSUserNotificationCenter : NSObject
- @end
- @implementation NSUserNotificationCenter
- @end
- @interface NSUserNotification : NSObject
- @end
- @implementation NSUserNotification
- @end
-#endif
-
 @interface AppController : NSObject<NSApplicationDelegate, NSUserNotificationCenterDelegate> {
 	base::WeakPtr<content::Shell> shell_;
 }

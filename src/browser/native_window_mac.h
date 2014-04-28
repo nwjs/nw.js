@@ -30,92 +30,96 @@
 
 @class ShellNSWindow;
 @class ShellToolbarDelegate;
+
+
 class SkRegion;
 
 namespace nw {
 
-class NativeWindowCocoa : public NativeWindow {
- public:
-  explicit NativeWindowCocoa(const base::WeakPtr<content::Shell>& shell,
-                             base::DictionaryValue* manifest);
-  virtual ~NativeWindowCocoa();
+  class NativeWindowCocoa : public NativeWindow {
+  public:
+    explicit NativeWindowCocoa(const base::WeakPtr<content::Shell>& shell,
+     base::DictionaryValue* manifest);
+    virtual ~NativeWindowCocoa();
 
   // NativeWindow implementation.
-  virtual void Close() OVERRIDE;
-  virtual void Move(const gfx::Rect& pos) OVERRIDE;
-  virtual void Focus(bool focus) OVERRIDE;
-  virtual void Show() OVERRIDE;
-  virtual void Hide() OVERRIDE;
-  virtual void Maximize() OVERRIDE;
-  virtual void Unmaximize() OVERRIDE;
-  virtual void Minimize() OVERRIDE;
-  virtual void Restore() OVERRIDE;
-  virtual void SetFullscreen(bool fullscreen) OVERRIDE;
-  virtual bool IsFullscreen() OVERRIDE;
-  virtual void SetSize(const gfx::Size& size) OVERRIDE;
-  virtual gfx::Size GetSize() OVERRIDE;
-  virtual void SetMinimumSize(int width, int height) OVERRIDE;
-  virtual void SetMaximumSize(int width, int height) OVERRIDE;
-  virtual void SetResizable(bool resizable) OVERRIDE;
-  virtual void SetAlwaysOnTop(bool top) OVERRIDE;
-  virtual void SetShowInTaskbar(bool show = true) OVERRIDE;
-  virtual void SetPosition(const std::string& position) OVERRIDE;
-  virtual void SetPosition(const gfx::Point& position) OVERRIDE;
-  virtual gfx::Point GetPosition() OVERRIDE;
-  virtual void SetTitle(const std::string& title) OVERRIDE;
-  virtual void FlashFrame(bool flash) OVERRIDE;
-  virtual void SetBadgeLabel(const std::string& badge) OVERRIDE;
-  virtual void SetKiosk(bool kiosk) OVERRIDE;
-  virtual bool IsKiosk() OVERRIDE;
-  virtual void SetMenu(nwapi::Menu* menu) OVERRIDE;
-  virtual void Notify(std::string title, std::string text, std::string subtitle, std::string callback) OVERRIDE;
-  virtual void SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
-                                       bool enabled) OVERRIDE;
-  virtual void SetToolbarUrlEntry(const std::string& url) OVERRIDE;
-  virtual void SetToolbarIsLoading(bool loading) OVERRIDE;
-  virtual void SetInitialFocus(bool accept_focus) OVERRIDE;
-  virtual bool InitialFocus() OVERRIDE;
+    virtual void Close() OVERRIDE;
+    virtual void Move(const gfx::Rect& pos) OVERRIDE;
+    virtual void Focus(bool focus) OVERRIDE;
+    virtual void Show() OVERRIDE;
+    virtual void Hide() OVERRIDE;
+    virtual void Maximize() OVERRIDE;
+    virtual void Unmaximize() OVERRIDE;
+    virtual void Minimize() OVERRIDE;
+    virtual void Restore() OVERRIDE;
+    virtual void SetFullscreen(bool fullscreen) OVERRIDE;
+    virtual bool IsFullscreen() OVERRIDE;
+    virtual void SetSize(const gfx::Size& size) OVERRIDE;
+    virtual gfx::Size GetSize() OVERRIDE;
+    virtual void SetMinimumSize(int width, int height) OVERRIDE;
+    virtual void SetMaximumSize(int width, int height) OVERRIDE;
+    virtual void SetResizable(bool resizable) OVERRIDE;
+    virtual void SetAlwaysOnTop(bool top) OVERRIDE;
+    virtual void SetShowInTaskbar(bool show = true) OVERRIDE;
+    virtual void SetPosition(const std::string& position) OVERRIDE;
+    virtual void SetPosition(const gfx::Point& position) OVERRIDE;
+    virtual gfx::Point GetPosition() OVERRIDE;
+    virtual void SetTitle(const std::string& title) OVERRIDE;
+    virtual void FlashFrame(bool flash) OVERRIDE;
+    virtual void SetBadgeLabel(const std::string& badge) OVERRIDE;
+    virtual void SetKiosk(bool kiosk) OVERRIDE;
+    virtual bool IsKiosk() OVERRIDE;
+    virtual void SetMenu(nwapi::Menu* menu) OVERRIDE;
+    virtual void Notify(std::string title, std::string text, std::string subtitle, std::string callback, std::string image) OVERRIDE;
+    virtual void SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
+     bool enabled) OVERRIDE;
+    virtual void SetToolbarUrlEntry(const std::string& url) OVERRIDE;
+    virtual void SetToolbarIsLoading(bool loading) OVERRIDE;
+    virtual void SetInitialFocus(bool accept_focus) OVERRIDE;
+    virtual bool InitialFocus() OVERRIDE;
 
   // Called to handle a mouse event.
-  void HandleMouseEvent(NSEvent* event);
+    void HandleMouseEvent(NSEvent* event);
 
-  bool use_system_drag() const { return use_system_drag_; }
-  SkRegion* draggable_region() const { return draggable_region_.get(); }
+    bool use_system_drag() const { return use_system_drag_; }
+    SkRegion* draggable_region() const { return draggable_region_.get(); }
 
-  void set_is_fullscreen(bool fullscreen) { is_fullscreen_ = fullscreen; }
+    void set_is_fullscreen(bool fullscreen) { is_fullscreen_ = fullscreen; }
 
-  NSWindow* window() const { return window_; }
+    NSWindow* window() const { return window_; }
 
- protected:
+  protected:
   // NativeWindow implementation.
-  virtual void AddToolbar() OVERRIDE;
-  virtual void UpdateDraggableRegions(
+    virtual void AddToolbar() OVERRIDE;
+    virtual void UpdateDraggableRegions(
       const std::vector<extensions::DraggableRegion>& regions) OVERRIDE;
-  virtual void HandleKeyboardEvent(
+    virtual void HandleKeyboardEvent(
       const content::NativeWebKeyboardEvent& event) OVERRIDE;
 
-  void SetNonLionFullscreen(bool fullscreen);
+    void SetNonLionFullscreen(bool fullscreen);
 
- private:
-  void InstallView();
-  void UninstallView();
-  void InstallDraggableRegionViews();
-  void UpdateDraggableRegionsForSystemDrag(
+  private:
+    void InstallView();
+    void UninstallView();
+    void InstallDraggableRegionViews();
+    void UpdateDraggableRegionsForSystemDrag(
       const std::vector<extensions::DraggableRegion>& regions,
       const extensions::DraggableRegion* draggable_area);
-  void UpdateDraggableRegionsForCustomDrag(
+    void UpdateDraggableRegionsForCustomDrag(
       const std::vector<extensions::DraggableRegion>& regions);
 
-  NSWindow* window_;
+    NSWindow* window_;
 
   // Delegate to the toolbar.
-  base::scoped_nsobject<ShellToolbarDelegate> toolbar_delegate_;
+    base::scoped_nsobject<ShellToolbarDelegate> toolbar_delegate_;
 
-  bool is_fullscreen_;
-  bool is_kiosk_;
+    bool is_fullscreen_;
+    bool is_kiosk_;
 
-  NSString* title;
-  NSRect restored_bounds_;
+    NSString* title;
+    NSRect restored_bounds_;
+
+
 
   NSInteger attention_request_id_;  // identifier from requestUserAttention
 

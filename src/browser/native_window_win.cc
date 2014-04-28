@@ -164,7 +164,7 @@ gfx::Rect NativeWindowFrameView::GetWindowBoundsForClientBounds(
 }
 
 
-void NativeWindowWin::Notify(std::string title, std::string text, std::string subtitle, std::string callback) {
+void NativeWindowWin::Notify(std::string title, std::string text, std::string subtitle, std::string callback, std::string image) {
 }
 
 int NativeWindowFrameView::NonClientHitTest(const gfx::Point& point) {

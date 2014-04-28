@@ -154,7 +154,7 @@ void NativeWindowGtk::Close() {
   gtk_widget_destroy(GTK_WIDGET(window_));
 }
 
-void NativeWindowGtk::Notify(std::string title, std::string text, std::string subtitle, std::string callback) {
+void NativeWindowGtk::Notify(std::string title, std::string text, std::string subtitle, std::string callback, std::string image) {
 }
 
 void NativeWindowGtk::Move(const gfx::Rect& bounds) {

@@ -154,7 +154,7 @@ void NativeWindow::CapturePage(const std::string& image_format) {
   capture_page_helper_->StartCapturePage(image_format);
 }
 
-void NativeWindow::Notify(std::string title, std::string text, std::string subtitle, std::string callback) {
+void NativeWindow::Notify(std::string title, std::string text, std::string subtitle, std::string callback, std::string image) {
 }
 
 void NativeWindow::LoadAppIconFromPackage(base::DictionaryValue* manifest) {
