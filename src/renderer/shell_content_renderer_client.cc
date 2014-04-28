@@ -95,7 +95,8 @@ RenderView* GetCurrentRenderView() {
 
 }  // namespace
 
-ShellContentRendererClient::ShellContentRendererClient() {
+ShellContentRendererClient::ShellContentRendererClient()
+  :creating_first_context_(true) {
 }
 
 ShellContentRendererClient::~ShellContentRendererClient() {
@@ -211,6 +212,7 @@ void ShellContentRendererClient::DidCreateScriptContext(
   GURL url(frame->document().url());
   VLOG(1) << "DidCreateScriptContext: " << url;
   InstallNodeSymbols(frame, context, url);
+  creating_first_context_ = false;
 }
 
 bool ShellContentRendererClient::goodForNode(WebKit::WebFrame* frame)
@@ -355,7 +357,10 @@ void ShellContentRendererClient::InstallNodeSymbols(
     int ret;
     RenderViewImpl* render_view = RenderViewImpl::FromWebView(frame->view());
 
-    render_view->Send(new ShellViewHostMsg_SetForceClose(
+    if (frame->parent() == NULL && creating_first_context_) {
+      // do this only for top frames, or initialization of iframe
+      // could override parent settings here
+      render_view->Send(new ShellViewHostMsg_SetForceClose(
             render_view->GetRoutingID(), true, &ret));
   }
 }
