@@ -27,6 +27,7 @@
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
+#include "content/nw/src/api/menu/menu_delegate_mac.h"
 #include "content/nw/src/browser/native_window_mac.h"
 #include "content/nw/src/nw_shell.h"
 
@@ -35,6 +36,9 @@ namespace nwapi {
 void Menu::Create(const base::DictionaryValue& option) {
   menu_ = [[NSMenu alloc] initWithTitle:@"NW Menu"];
   [menu_ setAutoenablesItems:NO];
+
+  delegate_ = [[MenuDelegate alloc] initWithMenu:this];
+  [menu_ setDelegate:delegate_];
 
   std::string type;
   if (option.GetString("type", &type) && type == "menubar") {
@@ -46,6 +50,7 @@ void Menu::Create(const base::DictionaryValue& option) {
 
 void Menu::Destroy() {
   [menu_ release];
+  [delegate_ release];
 }
 
 void Menu::Append(MenuItem* menu_item) {

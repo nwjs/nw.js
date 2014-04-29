@@ -27,6 +27,13 @@ function Menu(option) {
   if (option.type != 'contextmenu' && option.type != 'menubar')
     throw new String('Invalid menu type: ' + option.type);
 
+  if (option.hasOwnProperty('update')) {
+      if (typeof option.update != 'function')
+        throw new String("'update' must be a valid Function");
+      else
+        this.update = option.update;
+    }
+
   this.type = option.type;
   v8_util.setHiddenValue(this, 'items', []);
   nw.allocateObject(this, option);
@@ -67,6 +74,17 @@ Menu.prototype.removeAt = function(i) {
 
 Menu.prototype.popup = function(x, y) {
   nw.callObjectMethod(this, 'Popup', [ x, y ]);
+}
+
+Menu.prototype.handleEvent = function(ev) {
+  if (ev == 'update') {
+    // Emit update handler
+    if (typeof this.update == 'function')
+      this.update();
+  }
+
+  // Emit generate event handler
+  exports.Base.prototype.handleEvent.apply(this, arguments);
 }
 
 exports.Menu = Menu;
