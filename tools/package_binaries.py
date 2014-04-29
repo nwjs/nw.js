@@ -63,13 +63,13 @@ if platform_name == 'osx' and not os.path.exists(
   exit(-1)
 
 if platform_name != 'win' and not os.path.exists(
-  os.path.join(project_root, 'chromedriver2_server')):
-  print 'chromedriver2_server file does not exist.\n'
+  os.path.join(project_root, 'chromedriver')):
+  print 'chromedriver file does not exist.\n'
   exit(-1)
 
 if platform_name == 'win' and not os.path.exists(
-  os.path.join(project_root, 'chromedriver2_server.exe')):
-  print 'chromedriver2_server file does not exist.\n'
+  os.path.join(project_root, 'chromedriver.exe')):
+  print 'chromedriver file does not exist.\n'
   exit(-1)
 
 
@@ -98,25 +98,25 @@ required_file_mac = (
   'credits.html',
 )
 
-required_chromedriver2_file_win = (
-  'chromedriver2_server.exe',
+required_chromedriver_file_win = (
+  'chromedriver.exe',
 )
 
-required_chromedriver2_file_others = (
-  'chromedriver2_server',
+required_chromedriver_file_others = (
+  'chromedriver',
 )
 
 if (platform_name == 'linux'):
   required_file.append(required_file_linux)
-  required_file.append(required_chromedriver2_file_others)
+  required_file.append(required_chromedriver_file_others)
 
 if (platform_name == 'win'):
   required_file.append(required_file_win)
-  required_file.append(required_chromedriver2_file_win);
+  required_file.append(required_chromedriver_file_win);
 
 if (platform_name == 'osx'):
   required_file.append(required_file_mac)
-  required_file.append(required_chromedriver2_file_others)
+  required_file.append(required_chromedriver_file_others)
 
 
 #generate binary tar name
@@ -140,7 +140,7 @@ if (platform_name == 'win' or platform_name == 'osx'):
   arch = 'ia32'
 
 tarname.append('node-webkit-' + nw_version)
-tarname.append('chromedriver2-nw-' + nw_version)
+tarname.append('chromedriver-nw-' + nw_version)
 for index in range(len(tarname)):
   binary_name.append(tarname[index] + '-' + platform_name + '-' + arch);
   binary_tar.append(binary_name[index] + '.tar.gz')
@@ -155,7 +155,7 @@ if platform_name in ('win', 'osx'):
 binary_store_path.append(os.path.join(project_root,                                 
                                  'node-webkit-binaries'))
 binary_store_path.append(os.path.join(project_root,                                 
-                                 'chromedriver2-binaries'))
+                                 'chromedriver-binaries'))
 
 for index in range(len(binary_store_path)):
   if not os.path.exists(binary_store_path[index]):
