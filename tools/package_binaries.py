@@ -26,11 +26,11 @@ if '-p' in sys.argv:
   tmp = sys.argv[sys.argv.index('-p') + 1]
   if not os.path.isabs(tmp):
     print 'the path is not an absolute path.\n'
-    exit()
+    exit(-1)
 
   if not os.path.exists(tmp):
     print 'the directory does not exist.\n'
-    exit()
+    exit(-1)
         
   project_root = tmp
 
@@ -50,27 +50,27 @@ if sys.platform == 'darwin':
 if platform_name == 'linux' and not os.path.exists(
     os.path.join(project_root, 'nw')):
   print 'nw file does not exist.\n'
-  exit()  
+  exit(-1)  
 
 if platform_name == 'win' and not os.path.exists(
     os.path.join(project_root, 'nw.exe')):
   print 'nw file does not exist.\n'
-  exit() 
+  exit(-1) 
   
 if platform_name == 'osx' and not os.path.exists(
     os.path.join(project_root, 'node-webkit.app')):
   print 'nw file does not exist.\n'
-  exit()
+  exit(-1)
 
 if platform_name != 'win' and not os.path.exists(
   os.path.join(project_root, 'chromedriver2_server')):
   print 'chromedriver2_server file does not exist.\n'
-  exit()
+  exit(-1)
 
 if platform_name == 'win' and not os.path.exists(
   os.path.join(project_root, 'chromedriver2_server.exe')):
   print 'chromedriver2_server file does not exist.\n'
-  exit()
+  exit(-1)
 
 
 required_file_linux = (
