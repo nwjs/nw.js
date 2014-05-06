@@ -67,7 +67,7 @@
   [[NSApp mainMenu] addItem:[[[NSMenuItem alloc]
       initWithTitle:@"" action:nil keyEquivalent:@""] autorelease]];
   nw::StandardMenusMac standard_menus(
-      browser_client->shell_browser_main_parts()->package()->GetName());
+      browser_client->shell_browser_main_parts()->package()->GetTitle());
   standard_menus.BuildAppleMenu();
   if (!no_edit_menu)
     standard_menus.BuildEditMenu();
