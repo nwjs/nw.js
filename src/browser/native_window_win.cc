@@ -302,11 +302,23 @@ void NativeWindowWin::Show() {
   VLOG(1) << "NativeWindowWin::Show(); initial_focus = " << initial_focus_;
   if (is_maximized_)
     window_->native_widget_private()->ShowWithWindowState(ui::SHOW_STATE_MAXIMIZED);
+  if (is_minimized_)
+    window_->native_widget_private()->ShowWithWindowState(ui::SHOW_STATE_MINIMIZED);
   else if (!initial_focus_) {
     window_->set_focus_on_creation(false);
     window_->native_widget_private()->ShowWithWindowState(ui::SHOW_STATE_INACTIVE);
   } else
     window_->native_widget_private()->Show();
+
+  if (is_fullscreen_) {
+    window_->SetFullscreen(is_fullscreen_);
+    if (shell()) {
+      if (is_fullscreen_)
+        shell()->SendEvent("enter-fullscreen");
+      else
+        shell()->SendEvent("leave-fullscreen");
+    }
+  }
 }
 
 void NativeWindowWin::Hide() {
@@ -314,23 +326,63 @@ void NativeWindowWin::Hide() {
 }
 
 void NativeWindowWin::Maximize() {
-  window_->Maximize();
+  bool visible = window_->IsVisible();
+  if (visible) {
+    window_->Maximize();
+  } else {
+    // NOTICE: 
+    // SendMessage(hwnd(), WM_SYSCOMMAND, SC_MAXIMIZE, 0) is a emulation of click maximizebox
+    // and it will lead the window to be visible, so does enter and exit fullscreen.
+    // So, just record the cmd and do it when show
+    is_maximized_ = true;
+    is_minimized_ = false;
+  }
 }
 
 void NativeWindowWin::Unmaximize() {
-  window_->Restore();
+  bool visible = window_->IsVisible();
+  if (visible) {
+    window_->Restore();
+  } else if (is_maximized_) {
+    is_maximized_ = false;
+  } else if (is_minimized_) {
+    is_minimized_ = false;
+  }
 }
 
 void NativeWindowWin::Minimize() {
-  window_->Minimize();
+  bool visible = window_->IsVisible();
+  if (visible) {
+    window_->Minimize();
+  } else {
+    // NOTICE: 
+    // SendMessage(hwnd(), WM_SYSCOMMAND, SC_MAXIMIZE, 0) is a emulation of click maximizebox
+    // and it will lead the window to be visible, so does enter and exit fullscreen.
+    // So, just record the cmd and do it when show
+    is_maximized_ = false;
+    is_minimized_ = true;
+  }
 }
 
 void NativeWindowWin::Restore() {
-  window_->Restore();
+  bool visible = window_->IsVisible();
+  if (visible) {
+    window_->Restore();
+  } else if (is_maximized_) {
+    is_maximized_ = false;
+  } else if (is_minimized_) {
+    is_minimized_ = false;
+  }
 }
 
 void NativeWindowWin::SetFullscreen(bool fullscreen) {
   is_fullscreen_ = fullscreen;
+  
+  bool visible = window_->IsVisible();
+  if (!visible) {
+    return;
+  }
+  
   window_->SetFullscreen(fullscreen);
   if (shell()) {
     if (fullscreen)
