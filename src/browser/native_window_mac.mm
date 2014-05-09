@@ -932,6 +932,7 @@ void NativeWindowCocoa::InstallDraggableRegionViews() {
                                        webViewHeight - iter->bottom(),
                                        iter->width(),
                                        iter->height())];
+    [controlRegion setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
     [webView addSubview:controlRegion];
   }
 }
