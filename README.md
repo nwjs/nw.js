@@ -22,7 +22,7 @@ It's created and developed in the Intel Open Source Technology Center.
 ## Downloads
 [v0.9.2 release notes](https://groups.google.com/d/msg/node-webkit/qpBhcWr-hSc/caGjhtl8cEgJ)
 
-Prebuilt binaries (v0.9.2 - Feb 20, 2014):
+Prebuilt binaries (v0.9.2 - Feb 20, 2014, based off of Node v0.11.9, Chrome 32.0.1700.107):
 
 * Linux: [32bit](http://dl.node-webkit.org/v0.9.2/node-webkit-v0.9.2-linux-ia32.tar.gz) / [64bit] (http://dl.node-webkit.org/v0.9.2/node-webkit-v0.9.2-linux-x64.tar.gz)
 * Windows: [win32](http://dl.node-webkit.org/v0.9.2/node-webkit-v0.9.2-win-ia32.zip)
@@ -31,7 +31,7 @@ Prebuilt binaries (v0.9.2 - Feb 20, 2014):
 **If your native Node module works only with Node v0.10, then you should use node-webkit v0.8.x, which is also a maintained branch. [More info](https://groups.google.com/d/msg/node-webkit/2OJ1cEMPLlA/09BvpTagSA0J)**  
 [v0.8.6 release notes](https://groups.google.com/d/msg/node-webkit/CLPkgfV-i7s/hwkkQuJ1kngJ)
 
-Prebuilt binaries (v0.8.6 - Apr 18, 2014):
+Prebuilt binaries (v0.8.6 - Apr 18, 2014, based off of Node v0.10.22, Chrome 30.0.1599.66):
 
 * Linux: [32bit](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-linux-ia32.tar.gz) / [64bit] (http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-linux-x64.tar.gz)
 * Windows: [win32](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-win-ia32.zip)
