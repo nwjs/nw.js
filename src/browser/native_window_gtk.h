@@ -89,6 +89,9 @@ class NativeWindowGtk : public NativeWindow {
   // Set WebKit's style from current theme.
   void SetWebKitColorStyle();
 
+  //Use to bind shortcut
+  GtkAccelGroup *gtk_accel_group;
+
   // Create toolbar.
   void CreateToolbar();
 

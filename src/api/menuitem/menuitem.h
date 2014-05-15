@@ -56,6 +56,10 @@ class MenuItem : public Base {
   virtual void Call(const std::string& method,
                     const base::ListValue& arguments) OVERRIDE;
 
+#if defined(OS_LINUX)
+  void UpdateKeys(GtkAccelGroup *gtk_accel_group);
+#endif
+
 #if defined(OS_MACOSX) || defined(OS_WIN)
   void OnClick();
 #endif
@@ -72,6 +76,15 @@ class MenuItem : public Base {
   void SetEnabled(bool enabled);
   void SetChecked(bool checked);
   void SetSubmenu(Menu* sub_menu);
+
+#if defined(OS_LINUX)
+  GtkAccelGroup *gtk_accel_group;
+  GdkModifierType modifiers_mask;
+  guint keyval;
+  bool  enable_shortcut;
+  Menu* submenu_;
+  std::string label_;
+#endif
 
 #if defined(OS_MACOSX)
   std::string type_;
