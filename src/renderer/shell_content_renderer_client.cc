@@ -362,6 +362,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
       // could override parent settings here
       render_view->Send(new ShellViewHostMsg_SetForceClose(
             render_view->GetRoutingID(), true, &ret));
+    }
   }
 }
 
