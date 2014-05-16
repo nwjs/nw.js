@@ -40,13 +40,20 @@ class MenuItemDelegate;
 #elif defined(OS_WIN)
 #include "base/strings/string16.h"
 #include "ui/gfx/image/image.h"
+#include "ui/base/accelerators/accelerator.h"
+#include "ui/views/focus/focus_manager.h"
 #endif  // defined(OS_MACOSX)
 
 namespace nwapi {
 
 class Menu;
 
+#if defined(OS_WIN)
+class MenuItem : public Base , 
+                 public ui::AcceleratorTarget {
+#else
 class MenuItem : public Base {
+#endif
  public:
   MenuItem(int id,
            const base::WeakPtr<DispatcherHost>& dispatcher_host,
@@ -58,6 +65,17 @@ class MenuItem : public Base {
 
 #if defined(OS_LINUX)
   void UpdateKeys(GtkAccelGroup *gtk_accel_group);
+#endif
+  
+#if defined(OS_WIN)
+  virtual bool AcceleratorPressed(const ui::Accelerator& accelerator) OVERRIDE{ 
+    OnClick();
+    return true;
+  }
+  virtual bool CanHandleAccelerators() const OVERRIDE { 
+    return true;
+  }
+  void UpdateKeys(views::FocusManager *focus_manager);
 #endif
 
 #if defined(OS_MACOSX) || defined(OS_WIN)
@@ -102,6 +120,13 @@ class MenuItem : public Base {
 #elif defined(OS_WIN)
   friend class MenuDelegate;
 
+  //**Never Try to free this pointer**
+  //We get it from top widget
+  views::FocusManager *focus_manager_;
+  
+  ui::Accelerator accelerator_;
+
+
   // Flag to indicate we need refresh.
   bool is_modified_;
 
@@ -113,6 +138,8 @@ class MenuItem : public Base {
   string16 label_;
   string16 tooltip_;
   Menu* submenu_;
+  bool enable_shortcut_;
+
 #endif
 
   DISALLOW_COPY_AND_ASSIGN(MenuItem);
