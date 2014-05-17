@@ -39,6 +39,7 @@
 }
 
 - (void)menuNeedsUpdate:(NSMenu*)menu {
+
   if (!nwmenu_->enable_show_event() || nwmenu_->dispatcher_host()->run_loop())
     return;
 
@@ -49,6 +50,9 @@
 
   // if ([event type] != NSSystemDefined || [event subtype] == 8)
   //  return;
+
+  if (!nwmenu_->enable_show_event())
+    return;
 
   base::ListValue args;
   base::RunLoop run_loop;

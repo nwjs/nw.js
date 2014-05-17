@@ -101,6 +101,10 @@ class Menu : public Base {
   ui::NwMenuModel* model() { return menu_model_.get(); }
 #endif
 
+  bool enable_show_event() { return enable_show_event_; }
+ protected:
+  bool enable_show_event_;
+
  private:
   friend class MenuItem;
   friend class Tray;
