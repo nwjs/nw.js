@@ -35,6 +35,8 @@
 }
 
 - (void)menuNeedsUpdate:(NSMenu*)menu {
+  if (!nwmenu_->enable_show_event())
+    return;
   base::ListValue args;
   base::RunLoop run_loop;
   nwmenu_->dispatcher_host()->set_run_loop(&run_loop);

@@ -93,6 +93,10 @@ class Menu : public Base {
   virtual void Call(const std::string& method,
                     const base::ListValue& arguments) OVERRIDE;
 
+  bool enable_show_event() { return enable_show_event_; }
+ protected:
+  bool enable_show_event_;
+
  private:
   friend class MenuItem;
   friend class Tray;
