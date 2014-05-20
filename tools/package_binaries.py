@@ -307,10 +307,14 @@ if len(file_list) == 0:
 import boto
 conn = boto.connect_s3(awsid, awskey)
 bucket = conn.get_bucket(bucket_name)
+
+def print_progress(transmitted, total):
+    print ' %d%% transferred of total: %d bytes.' % (transmitted*100/total, total)
+
 for f in file_list:
     print 'Uploading "' + f + '" ...'
     key = bucket.new_key(os.path.join(upload_path, f))
-    key.set_contents_from_filename(os.path.join(dist_dir, f))
+    key.set_contents_from_filename(filename=os.path.join(dist_dir, f), cb=print_progress, num_cb=20, replace=True)
 
 print 'Done.'
 
