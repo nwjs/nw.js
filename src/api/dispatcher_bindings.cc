@@ -33,6 +33,8 @@
 #include "content/public/renderer/render_thread.h"
 #include "content/public/renderer/v8_value_converter.h"
 #include "grit/nw_resources.h"
+#include "third_party/WebKit/public/web/WebSecurityPolicy.h"
+#include "url/gurl.h"
 
 using content::RenderView;
 using content::V8ValueConverter;
@@ -449,6 +451,32 @@ void DispatcherBindings::CallStaticMethodSync(
     return;
   }
 
+  if (type == "App" && method == "AddOriginAccessWhitelistEntry") {
+    std::string sourceOrigin        = *v8::String::Utf8Value(args[2]);
+    std::string destinationProtocol = *v8::String::Utf8Value(args[3]);
+    std::string destinationHost     = *v8::String::Utf8Value(args[4]);
+    bool allowDestinationSubdomains = args[5]->ToBoolean()->Value();
+
+    WebKit::WebSecurityPolicy::addOriginAccessWhitelistEntry(GURL(sourceOrigin),
+                                                             WebKit::WebString::fromUTF8(destinationProtocol),
+                                                             WebKit::WebString::fromUTF8(destinationHost),
+                                                             allowDestinationSubdomains);
+    args.GetReturnValue().Set(v8::Undefined());
+    return;
+  }
+  if (type == "App" && method == "RemoveOriginAccessWhitelistEntry") {
+    std::string sourceOrigin        = *v8::String::Utf8Value(args[2]);
+    std::string destinationProtocol = *v8::String::Utf8Value(args[3]);
+    std::string destinationHost     = *v8::String::Utf8Value(args[4]);
+    bool allowDestinationSubdomains = args[5]->ToBoolean()->Value();
+
+    WebKit::WebSecurityPolicy::removeOriginAccessWhitelistEntry(GURL(sourceOrigin),
+                                                             WebKit::WebString::fromUTF8(destinationProtocol),
+                                                             WebKit::WebString::fromUTF8(destinationHost),
+                                                             allowDestinationSubdomains);
+    args.GetReturnValue().Set(v8::Undefined());
+    return;
+  }
   scoped_ptr<base::Value> value_args(
       converter->FromV8Value(args[2], v8::Context::GetCurrent()));
   if (!value_args.get() ||
