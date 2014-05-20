@@ -27,6 +27,8 @@
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/render_widget_host_view.h"
 #include "ui/gfx/point.h"
+#include "vector"
+#include "gtk/gtk.h"
 
 namespace nwapi {
 
@@ -86,6 +88,7 @@ void PointMenuPositionFunc(GtkMenu* menu,
 }  // namespace
 
 void Menu::Create(const base::DictionaryValue& option) {
+  gtk_accel_group = NULL;
   std::string type;
   if (option.GetString("type", &type) && type == "menubar")
     menu_ = gtk_menu_bar_new();
@@ -102,14 +105,25 @@ void Menu::Destroy() {
 }
 
 void Menu::Append(MenuItem* menu_item) {
+  menu_items.push_back(menu_item);
+  if (GTK_IS_ACCEL_GROUP(gtk_accel_group)){
+    menu_item->UpdateKeys(gtk_accel_group);
+  }
   gtk_menu_shell_append(GTK_MENU_SHELL(menu_), menu_item->menu_item_);
 }
 
 void Menu::Insert(MenuItem* menu_item, int pos) {
+  std::vector<MenuItem*>::iterator begin = menu_items.begin();
+  menu_items.insert(begin+pos,menu_item);
+  if (GTK_IS_ACCEL_GROUP(gtk_accel_group)){
+    menu_item->UpdateKeys(gtk_accel_group);
+  }
   gtk_menu_shell_insert(GTK_MENU_SHELL(menu_), menu_item->menu_item_, pos);
 }
 
 void Menu::Remove(MenuItem* menu_item, int pos) {
+  std::vector<MenuItem*>::iterator begin = menu_items.begin();
+  menu_items.erase(begin+pos);
   gtk_container_remove(GTK_CONTAINER(menu_), menu_item->menu_item_);
 }
 
@@ -129,6 +143,23 @@ void Menu::Popup(int x, int y, content::Shell* shell) {
   gtk_menu_popup(GTK_MENU(menu_), NULL, NULL,
                  PointMenuPositionFunc, &point,
                  3, triggering_event_time);
+}
+
+void Menu::UpdateKeys(GtkAccelGroup *gtk_accel_group){
+  this->gtk_accel_group = gtk_accel_group;
+  if (!GTK_IS_ACCEL_GROUP(gtk_accel_group)){
+    return ;
+  } else {
+    std::vector<MenuItem*>::iterator menu_item_iterator = menu_items.begin();
+    std::vector<MenuItem*>::iterator menu_item_end = menu_items.end();
+    while (menu_item_iterator != menu_item_end){
+      MenuItem *menu_item = *menu_item_iterator;
+      if (menu_item!=NULL && GTK_IS_MENU_ITEM(menu_item->menu_item_)){
+        menu_item->UpdateKeys(gtk_accel_group);
+      }
+      ++menu_item_iterator;
+    }
+  }
 }
 
 }  // namespace nwapi

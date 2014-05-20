@@ -89,6 +89,10 @@ class Menu : public Base {
   virtual void Call(const std::string& method,
                     const base::ListValue& arguments) OVERRIDE;
 
+#if defined(OS_LINUX)
+  void UpdateKeys(GtkAccelGroup *gtk_accel_group);
+#endif
+
  private:
   friend class MenuItem;
   friend class Tray;
@@ -100,6 +104,12 @@ class Menu : public Base {
   void Insert(MenuItem* menu_item, int pos);
   void Remove(MenuItem* menu_item, int pos);
   void Popup(int x, int y, content::Shell*);
+
+#if defined(OS_LINUX)
+  std::vector<MenuItem*> menu_items;
+  GtkAccelGroup *gtk_accel_group;
+#endif
+
 
 #if defined(OS_MACOSX)
   friend class nw::NativeWindowCocoa;
