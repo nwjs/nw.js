@@ -5,11 +5,6 @@
 {
   'variables': {
     'nw_product_name': 'node-webkit',
-    'conditions': [
-      ['OS=="linux"', {
-       'linux_dump_symbols': 1,
-      }],
-    ],
   },
   'target_defaults': {
     'configurations': {
@@ -589,6 +584,38 @@
       ],
     },
     {
+      'target_name': 'nw_symbols',
+      'type': 'none',
+      'conditions': [
+        ['OS=="linux"', {
+          'actions': [
+            {
+              'action_name': 'dump_symbols',
+              'inputs': [
+                '<(DEPTH)/build/linux/dump_app_syms',
+                '<(PRODUCT_DIR)/dump_syms',
+                '<(PRODUCT_DIR)/nw',
+              ],
+              'outputs': [
+                '<(PRODUCT_DIR)/nw.breakpad.<(target_arch)',
+              ],
+              'action': ['<(DEPTH)/build/linux/dump_app_syms',
+                         '<(PRODUCT_DIR)/dump_syms',
+                         '<(linux_strip_binary)',
+                         '<(PRODUCT_DIR)/nw',
+                         '<@(_outputs)'],
+              'message': 'Dumping breakpad symbols to <(_outputs)',
+              'process_outputs_as_sources': 1,
+            },
+          ],
+          'dependencies': [
+            'nw',
+            '../breakpad/breakpad.gyp:dump_syms',
+          ],
+        }],
+      ],
+    },
+    {
       'target_name': 'dist',
       'type': 'none',
       'actions': [
@@ -608,6 +635,7 @@
       ],
       'dependencies': [
         '<(DEPTH)/chrome/chrome.gyp:chromedriver',
+        'nw_symbols',
       ],
       'conditions': [
         ['OS == "linux"', {
@@ -653,7 +681,7 @@
         'VCLinkerTool': {
           'SubSystem': '2',  # Set /SUBSYSTEM:WINDOWS
         },
-	'VCManifestTool': {
+      'VCManifestTool': {
           'AdditionalManifestFiles': [
             '$(ProjectDir)\\nw\\src\\nw.exe.manifest',
           ],
@@ -925,40 +953,5 @@
         },  # target nw_helper_app
       ],
     }],  # OS=="mac"
-    ['OS=="linux"',
-      { 'targets': [
-        {
-          'target_name': 'nw_symbols',
-          'type': 'none',
-          'conditions': [
-            ['linux_dump_symbols==1', {
-              'actions': [
-                {
-                  'action_name': 'dump_symbols',
-                  'inputs': [
-                    '<(DEPTH)/build/linux/dump_app_syms',
-                    '<(PRODUCT_DIR)/dump_syms',
-                    '<(PRODUCT_DIR)/nw',
-                  ],
-                  'outputs': [
-                    '<(PRODUCT_DIR)/nw.breakpad.<(target_arch)',
-                  ],
-                  'action': ['<(DEPTH)/build/linux/dump_app_syms',
-                             '<(PRODUCT_DIR)/dump_syms',
-                             '<(linux_strip_binary)',
-                             '<(PRODUCT_DIR)/nw',
-                             '<@(_outputs)'],
-                  'message': 'Dumping breakpad symbols to <(_outputs)',
-                  'process_outputs_as_sources': 1,
-                },
-              ],
-              'dependencies': [
-                'nw',
-                '../breakpad/breakpad.gyp:dump_syms',
-              ],
-            }],
-          ],
-        }],
-    }], # OS=="linux"
   ] # conditions
 }
