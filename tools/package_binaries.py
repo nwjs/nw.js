@@ -150,9 +150,9 @@ def generate_target_chromedriver(platform_name, arch, version):
         target['compress'] = 'zip'
     # Input
     if platform_name == 'win':
-        target['input'] = ['chromedriver.exe']
+        target['input'] = ['chromedriver2_server.exe']
     else:
-        target['input'] = ['chromedriver']
+        target['input'] = ['chromedriver2_server']
     target['folder'] = True # always create a folder
     return target
 
