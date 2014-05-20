@@ -13,8 +13,18 @@ import zipfile
 ################################
 # Parse command line args
 parser = argparse.ArgumentParser(description='Package nw binaries.')
-parser.add_argument('-p','--path',help='Where to find the binaries, like out/Release', required=False)
-parser.add_argument('-s','--step',help='Execute specified step. (could be "nw", "chromedriver" or "symbol")', required=False)
+parser.add_argument('-p','--path', help='Where to find the binaries, like out/Release', required=False)
+parser.add_argument('-s','--step', help='Execute specified step. (could be "nw", "chromedriver" or "symbol")', required=False)
+# AWS uploader args
+# Example: package_binaries.py -u -b linux_32bit -r 123 -n 99 -t my_bucket -i <id> -k <key>
+parser.add_argument('-u','--upload', help='Run aws uploader', action='store_true', required=False)
+parser.add_argument('-b','--buildername', help='Builder name', required=False)
+parser.add_argument('-r','--revision', help='Build revision',required=False)
+parser.add_argument('-n','--number', help='Build number', required=False)
+parser.add_argument('-t','--bucket', help='AWS bucket name', required=False)
+parser.add_argument('-i','--awsid', help='AWS_ACCESS_KEY_ID', required=False)
+parser.add_argument('-k','--awskey', help='AWS_SECRET_ACCESS_KEY', required=False)
+
 args = parser.parse_args()
 
 ################################
@@ -24,6 +34,7 @@ platform_name = None            # win/linux/osx
 arch = None                     # ia32/x64
 step = None                     # nw/chromedriver/symbol
 nw_ver = None                   # x.xx
+dist_dir = None                 # .../out/Release/dist
 
 step = args.step
 binaries_location = args.path
@@ -38,6 +49,8 @@ if not os.path.isabs(binaries_location):
 if not os.path.isdir(binaries_location):
     print 'Invalid path: ' + binaries_location
     exit(-1)
+binaries_location = os.path.normpath(binaries_location)
+dist_dir = os.path.join(binaries_location, 'dist')
 
 print 'Working on ' + binaries_location
 
@@ -208,12 +221,10 @@ def compress(from_dir, to_dir, fname, compress):
 
 
 def make_packages(targets):
-    dist_dir = os.path.join(binaries_location, 'dist')
 
     # check file existance
     for t in targets:
         for f in t['input']:
-            print f
             src = os.path.join(binaries_location, f)
             if not os.path.exists(src):
                 print 'File does not exist: ', src
@@ -230,6 +241,7 @@ def make_packages(targets):
     # now let's do it
     os.mkdir(dist_dir)
     for t in targets:
+        print 'Making "' + t['output'] + '.' + t['compress'] + '"'
         if (t.has_key('folder') and t['folder'] == True) or len(t['input']) > 1:
             # copy files into a folder then pack
             folder = os.path.join(dist_dir, t['output'])
@@ -263,7 +275,44 @@ else:
     targets.append(generate_target_chromedriver(platform_name, arch, nw_ver))
     targets.append(generate_target_symbols(platform_name, arch, nw_ver))
 
-make_packages(targets)
+if args.upload != True:
+    print 'Creating packages...'
+    make_packages(targets)
+    exit(0)
+################################################################
+# aws uploader
+
+from datetime import date
+
+print 'Starting aws uploader...'
+
+# Init variables
+builder_name = args.buildername
+got_revision = args.revision
+build_number = args.number
+bucket_name  = args.bucket
+awsid        = args.awsid
+awskey       = args.awskey
+date         = date.today().strftime('%m-%d-%y')
+
+upload_path = ''.join(['/' + date,
+                       '/' + builder_name + '-build-' + build_number + '-'  + got_revision])
+
+print 'Upload path: ' + upload_path
+file_list = os.listdir(dist_dir)
+if len(file_list) == 0:
+    print 'Cannot find packages!'
+    exit(-1)
+
+import boto
+conn = boto.connect_s3(awsid, awskey)
+bucket = conn.get_bucket(bucket_name)
+for f in file_list:
+    print 'Uploading "' + f + '" ...'
+    key = bucket.new_key(os.path.join(upload_path, f))
+    key.set_contents_from_filename(os.path.join(dist_dir, f))
+
+print 'Done.'
 
 
 # vim: et:ts=4:sw=4
