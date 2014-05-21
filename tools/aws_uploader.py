@@ -57,6 +57,7 @@ if not (data.has_key('awsid') and data.has_key('awskey')):
 awsid = data['awsid']
 awskey = data['awskey']
 
+# it's for S3, so always use '/' here
 upload_path = ''.join(['/' + date,
                        '/' + builder_name + '-build-' + build_number + '-'  + got_revision])
 
@@ -77,7 +78,8 @@ def aws_upload(upload_path, file_list):
     print 'Uploading to: ' + upload_path
     for f in file_list:
         print 'Uploading "' + f + '" ...'
-        key = bucket.new_key(os.path.join(upload_path, f))
+        # use '/' for s3
+        key = bucket.new_key(upload_path + '/' + f)
         key.set_contents_from_filename(filename=os.path.join(dist_dir, f), cb=print_progress, num_cb=50, replace=True)
 
 aws_upload(upload_path, file_list)
