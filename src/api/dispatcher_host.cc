@@ -108,6 +108,7 @@ bool DispatcherHost::Send(IPC::Message* message) {
 void DispatcherHost::quit_run_loop() {
   if (run_loop_)
     run_loop_->Quit();
+  run_loop_ = NULL;
 }
 
 bool DispatcherHost::OnMessageReceived(
