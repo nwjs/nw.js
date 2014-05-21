@@ -563,27 +563,6 @@
       ],
     },
     {
-      'target_name': 'strip',
-      'type': 'none',
-      'actions': [
-        {
-          'action_name': 'strip_nw_binaries',
-          'inputs': [
-            '<(PRODUCT_DIR)/nw',
-          ],
-          'outputs': [
-            '<(PRODUCT_DIR)/strip_nw.stamp',
-          ],
-          'action': ['strip',
-                     '<@(_inputs)'],
-          'message': 'Stripping release executable',
-        },
-      ],
-      'dependencies': [
-        'nw',
-      ],
-    },
-    {
       'target_name': 'nw_symbols',
       'type': 'none',
       'conditions': [
@@ -616,6 +595,31 @@
       ],
     },
     {
+      'target_name': 'strip',
+      'type': 'none',
+      'conditions': [
+        ['OS=="linux"', {
+          'actions': [
+            {
+              'action_name': 'strip_nw_binaries',
+              'inputs': [
+                '<(PRODUCT_DIR)/nw',
+              ],
+              'outputs': [
+                '<(PRODUCT_DIR)/strip_nw.stamp',
+              ],
+              'action': ['strip',
+                         '<@(_inputs)'],
+              'message': 'Stripping release executable',
+            },
+          ],
+        }],
+      ],
+      'dependencies': [
+        'nw_symbols',
+      ],
+    },
+    {
       'target_name': 'dist',
       'type': 'none',
       'actions': [
@@ -635,14 +639,7 @@
       ],
       'dependencies': [
         '<(DEPTH)/chrome/chrome.gyp:chromedriver',
-        'nw_symbols',
-      ],
-      'conditions': [
-        ['OS == "linux"', {
-          'dependencies': [
-            'strip',
-          ],
-        }],
+        'strip',
       ],
     },
     {
