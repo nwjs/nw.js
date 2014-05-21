@@ -43,7 +43,7 @@ dist_dir = os.path.normpath(dist_dir)
 
 # Check aws keyfile
 if keyfile == None:
-    keyfile = os.path.join(os.getenv('HOME'),'.awskey')
+    keyfile = os.path.join(os.path.expanduser('~'),'.awskey')
     print keyfile
 if not os.path.exists(keyfile):
     print "Cannot find aws key file"
@@ -78,7 +78,7 @@ def aws_upload(upload_path, file_list):
     for f in file_list:
         print 'Uploading "' + f + '" ...'
         key = bucket.new_key(os.path.join(upload_path, f))
-        key.set_contents_from_filename(filename=os.path.join(dist_dir, f), cb=print_progress, num_cb=20, replace=True)
+        key.set_contents_from_filename(filename=os.path.join(dist_dir, f), cb=print_progress, num_cb=50, replace=True)
 
 aws_upload(upload_path, file_list)
 print 'Done.'
