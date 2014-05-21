@@ -15,16 +15,6 @@ import zipfile
 parser = argparse.ArgumentParser(description='Package nw binaries.')
 parser.add_argument('-p','--path', help='Where to find the binaries, like out/Release', required=False)
 parser.add_argument('-s','--step', help='Execute specified step. (could be "nw", "chromedriver" or "symbol")', required=False)
-# AWS uploader args
-# Example: package_binaries.py -u -b linux_32bit -r 123 -n 99 -t my_bucket -i <id> -k <key>
-parser.add_argument('-u','--upload', help='Run aws uploader', action='store_true', required=False)
-parser.add_argument('-b','--buildername', help='Builder name', required=False)
-parser.add_argument('-r','--revision', help='Build revision',required=False)
-parser.add_argument('-n','--number', help='Build number', required=False)
-parser.add_argument('-t','--bucket', help='AWS bucket name', required=False)
-# example file content: {"awsid":"ABCDEF","awskey":"123456"}
-parser.add_argument('-k','--keyfile', help='JSNO file containing AWS access id and key', required=False)
-
 args = parser.parse_args()
 
 ################################
@@ -275,58 +265,7 @@ else:
     targets.append(generate_target_chromedriver(platform_name, arch, nw_ver))
     targets.append(generate_target_symbols(platform_name, arch, nw_ver))
 
-if args.upload != True:
-    print 'Creating packages...'
-    make_packages(targets)
-    exit(0)
-################################################################
-# aws uploader
-
-from datetime import date
-
-print 'Starting aws uploader...'
-
-# Init variables
-builder_name = args.buildername
-got_revision = args.revision
-build_number = args.number
-bucket_name  = args.bucket
-keyfile      = args.keyfile
-date         = date.today().strftime('%m-%d-%y')
-
-# Check aws keyfile
-if not os.path.exists(keyfile):
-    print "Cannot find aws key file"
-    exit(-1)
-
-import json
-json_data = open(keyfile)
-data = json.load(json_data)
-awsid = data['awsid']
-awskey = data['awskey']
-
-upload_path = ''.join(['/' + date,
-                       '/' + builder_name + '-build-' + build_number + '-'  + got_revision])
-
-print 'Upload path: ' + upload_path
-file_list = os.listdir(dist_dir)
-if len(file_list) == 0:
-    print 'Cannot find packages!'
-    exit(-1)
-
-import boto
-conn = boto.connect_s3(awsid, awskey)
-bucket = conn.get_bucket(bucket_name)
-
-def print_progress(transmitted, total):
-    print ' %d%% transferred of total: %d bytes.' % (transmitted*100/total, total)
-
-for f in file_list:
-    print 'Uploading "' + f + '" ...'
-    key = bucket.new_key(os.path.join(upload_path, f))
-    key.set_contents_from_filename(filename=os.path.join(dist_dir, f), cb=print_progress, num_cb=20, replace=True)
-
-print 'Done.'
-
+print 'Creating packages...'
+make_packages(targets)
 
 # vim: et:ts=4:sw=4
