@@ -78,6 +78,8 @@ class DispatcherHost : public content::WebContentsObserver {
 
   void set_run_loop(base::RunLoop* run_loop) { run_loop_ = run_loop; }
   void quit_run_loop();
+  base::RunLoop* run_loop() { return run_loop_; }
+
  private:
   content::RenderViewHost* render_view_host_;
   friend class content::Shell;

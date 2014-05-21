@@ -35,7 +35,13 @@
 }
 
 - (void)menuNeedsUpdate:(NSMenu*)menu {
-  if (!nwmenu_->enable_show_event())
+  if (!nwmenu_->enable_show_event() || nwmenu_->dispatcher_host()->run_loop())
+    return;
+  NSEvent* event = [NSApp currentEvent];
+  // NSLog (@"%@\n", event);
+  // Cocoa will try to populate menu on every keystoke of the key equivlants,
+  // which is slow. The following bypassed it
+  if ([event type] != NSSystemDefined || [event subtype] == 8)
     return;
   base::ListValue args;
   base::RunLoop run_loop;
