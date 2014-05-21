@@ -22,8 +22,8 @@ parser.add_argument('-b','--buildername', help='Builder name', required=False)
 parser.add_argument('-r','--revision', help='Build revision',required=False)
 parser.add_argument('-n','--number', help='Build number', required=False)
 parser.add_argument('-t','--bucket', help='AWS bucket name', required=False)
-parser.add_argument('-i','--awsid', help='AWS_ACCESS_KEY_ID', required=False)
-parser.add_argument('-k','--awskey', help='AWS_SECRET_ACCESS_KEY', required=False)
+# example file content: {"awsid":"ABCDEF","awskey":"123456"}
+parser.add_argument('-k','--keyfile', help='JSNO file containing AWS access id and key', required=False)
 
 args = parser.parse_args()
 
@@ -291,9 +291,19 @@ builder_name = args.buildername
 got_revision = args.revision
 build_number = args.number
 bucket_name  = args.bucket
-awsid        = args.awsid
-awskey       = args.awskey
+keyfile      = args.keyfile
 date         = date.today().strftime('%m-%d-%y')
+
+# Check aws keyfile
+if not os.path.exists(keyfile):
+    print "Cannot find aws key file"
+    exit(-1)
+
+import json
+json_data = open(keyfile)
+data = json.load(json_data)
+awsid = data['awsid']
+awskey = data['awskey']
 
 upload_path = ''.join(['/' + date,
                        '/' + builder_name + '-build-' + build_number + '-'  + got_revision])
