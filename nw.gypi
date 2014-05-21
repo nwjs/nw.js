@@ -608,7 +608,8 @@
               'outputs': [
                 '<(PRODUCT_DIR)/strip_nw.stamp',
               ],
-              'action': ['strip',
+              'action': ['sh', '<(DEPTH)/content/nw/tools/strip.sh',
+                         '<@(_outputs)',
                          '<@(_inputs)'],
               'message': 'Stripping release executable',
             },
@@ -639,7 +640,14 @@
       ],
       'dependencies': [
         '<(DEPTH)/chrome/chrome.gyp:chromedriver',
-        'strip',
+        'nw_symbols',
+      ],
+      'conditions': [
+        ['OS == "linux"', {
+          'dependencies': [
+            'strip',
+          ],
+        }],
       ],
     },
     {
