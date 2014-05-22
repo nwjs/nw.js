@@ -254,7 +254,7 @@ NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
       maximum_size_(),
       initial_focus_(true),
       last_width_(-1), last_height_(-1) {
-  manifest->GetBoolean("focus", &initial_focus_);
+  manifest->GetBoolean(kmInitialFocus, &initial_focus_);
 
   window_ = new views::Widget;
   views::Widget::InitParams params(views::Widget::InitParams::TYPE_WINDOW);
@@ -268,7 +268,7 @@ NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
   int width, height;
   manifest->GetInteger(switches::kmWidth, &width);
   manifest->GetInteger(switches::kmHeight, &height);
-  gfx::Rect window_bounds = 
+  gfx::Rect window_bounds =
     window_->non_client_view()->GetWindowBoundsForClientBounds(
         gfx::Rect(width,height));
   last_width_  = width;
