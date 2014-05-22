@@ -563,22 +563,25 @@
       ],
     },
     {
-      'target_name': 'nw_symbols',
+      'target_name': 'nw_strip_symbol',
       'type': 'none',
       'conditions': [
         ['OS=="linux"', {
+          'variables': {
+            'linux_strip_binary': 1,
+          },
           'actions': [
             {
-              'action_name': 'dump_symbols',
+              'action_name': 'dump_symbol_and_strip',
               'inputs': [
-                '<(DEPTH)/build/linux/dump_app_syms',
+                '<(DEPTH)/content/nw/tools/dump_app_syms',
                 '<(PRODUCT_DIR)/dump_syms',
                 '<(PRODUCT_DIR)/nw',
               ],
               'outputs': [
                 '<(PRODUCT_DIR)/nw.breakpad.<(target_arch)',
               ],
-              'action': ['<(DEPTH)/build/linux/dump_app_syms',
+              'action': ['<(DEPTH)/content/nw/tools/dump_app_syms',
                          '<(PRODUCT_DIR)/dump_syms',
                          '<(linux_strip_binary)',
                          '<(PRODUCT_DIR)/nw',
@@ -595,7 +598,7 @@
       ],
     },
     {
-      'target_name': 'strip',
+      'target_name': 'strip_binaries',
       'type': 'none',
       'conditions': [
         ['OS=="linux"', {
@@ -603,21 +606,22 @@
             {
               'action_name': 'strip_nw_binaries',
               'inputs': [
-                '<(PRODUCT_DIR)/nw',
+                '<(PRODUCT_DIR)/nwsnapshot',
+                '<(PRODUCT_DIR)/chromedriver',
               ],
               'outputs': [
-                '<(PRODUCT_DIR)/strip_nw.stamp',
+                '<(PRODUCT_DIR)/strip_binaries.stamp',
               ],
-              'action': ['sh', '<(DEPTH)/content/nw/tools/strip.sh',
-                         '<@(_outputs)',
+              'action': ['strip',
                          '<@(_inputs)'],
-              'message': 'Stripping release executable',
+              'message': 'Stripping release binaries',
             },
           ],
+          'dependencies': [
+             '<(DEPTH)/v8/tools/gyp/v8.gyp:nwsnapshot',
+             '<(DEPTH)/chrome/chrome.gyp:chromedriver',
+          ],
         }],
-      ],
-      'dependencies': [
-        'nw_symbols',
       ],
     },
     {
@@ -640,12 +644,12 @@
       ],
       'dependencies': [
         '<(DEPTH)/chrome/chrome.gyp:chromedriver',
-        'nw_symbols',
+        'nw_strip_symbol',
       ],
       'conditions': [
         ['OS == "linux"', {
           'dependencies': [
-            'strip',
+            'strip_binaries',
           ],
         }],
       ],
@@ -960,3 +964,4 @@
     }],  # OS=="mac"
   ] # conditions
 }
+
