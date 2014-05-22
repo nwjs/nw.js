@@ -56,6 +56,7 @@ extern const char kmAlwaysOnTop[];
 extern const char kmInitialFocus[];
 extern const char kmTransparent[];
 extern const char kmDisableTransparency[];
+extern const char kmInitialBkgd[];
 
 extern const char kmWebgl[];
 extern const char kmJava[];

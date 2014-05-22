@@ -74,6 +74,7 @@ const char kmFullscreen[] = "fullscreen";
 const char kmInitialFocus[] = "focus";
 const char kmTransparent[] = "transparent";
 const char kmDisableTransparency[] = "disable-transparency";
+const char kmInitialBkgd[]  = "win_bg";
 
 // Make windows icon hide show or hide in taskbar.
 const char kmShowInTaskbar[] = "show_in_taskbar";
