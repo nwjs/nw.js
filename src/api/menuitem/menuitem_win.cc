@@ -30,6 +30,7 @@
 #include "ui/base/accelerators/accelerator.h"
 #include "ui/events/event_constants.h"//for modifier key code
 #include "ui/events/keycodes/keyboard_codes.h"//for keycode
+#include "base/logging.h"
 
 ui::KeyboardCode GetKeycodeFromText(std::string text);
 
@@ -41,6 +42,8 @@ void MenuItem::Create(const base::DictionaryValue& option) {
   is_enabled_ = true;
   type_ = "normal";
   submenu_ = NULL;
+  super_down_flag_ = false;
+  meta_down_flag_ = false;
 
   focus_manager_ = NULL;
 
@@ -77,10 +80,10 @@ void MenuItem::Create(const base::DictionaryValue& option) {
     modifiers_value = modifiers_value | ui::EF_ALT_DOWN;
   }
   if (modifiers.find("super")!=std::string::npos){
-    modifiers_value = modifiers_value | ui::EF_COMMAND_DOWN;
+    super_down_flag_ = true;
   }
   if (modifiers.find("meta")!=std::string::npos){
-    modifiers_value = modifiers_value | ui::EF_EXTENDED;
+    meta_down_flag_ = true;
   }
   accelerator_ = ui::Accelerator(keyval,modifiers_value);
 

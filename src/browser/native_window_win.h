@@ -179,6 +179,9 @@ class NativeWindowWin : public NativeWindow,
   int last_width_;
   int last_height_;
 
+  bool super_down_;
+  bool meta_down_;
+
   DISALLOW_COPY_AND_ASSIGN(NativeWindowWin);
 };
 

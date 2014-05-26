@@ -68,11 +68,22 @@ class MenuItem : public Base {
 #endif
   
 #if defined(OS_WIN)
-  virtual bool AcceleratorPressed(const ui::Accelerator& accelerator) OVERRIDE{ 
+  virtual bool AcceleratorPressed(const ui::Accelerator& accelerator) OVERRIDE{
+    if (super_down_flag_){
+      if ( ( (::GetKeyState(VK_LWIN) & 0x8000) != 0x8000) 
+        || ( (::GetKeyState(VK_LWIN) & 0x8000) != 0x8000) ){
+        return true;
+      }
+    }
+    if (meta_down_flag_){
+      if ( (::GetKeyState(VK_APPS) & 0x8000) != 0x8000 ){
+        return true;
+      }
+    }
     OnClick();
     return true;
   }
-  virtual bool CanHandleAccelerators() const OVERRIDE { 
+  virtual bool CanHandleAccelerators() const OVERRIDE {
     return true;
   }
   void UpdateKeys(views::FocusManager *focus_manager);
@@ -126,7 +137,6 @@ class MenuItem : public Base {
   
   ui::Accelerator accelerator_;
 
-
   // Flag to indicate we need refresh.
   bool is_modified_;
 
@@ -139,6 +149,9 @@ class MenuItem : public Base {
   string16 tooltip_;
   Menu* submenu_;
   bool enable_shortcut_;
+
+  bool super_down_flag_;
+  bool meta_down_flag_;
 
 #endif
 
