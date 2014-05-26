@@ -93,6 +93,18 @@ class ShellContentBrowserClient : public ContentBrowserClient {
 #endif
   virtual QuotaPermissionContext* CreateQuotaPermissionContext() OVERRIDE;
 
+  //Notification
+  virtual void ShowDesktopNotification(
+    const ShowDesktopNotificationHostMsgParams& params,
+    int render_process_id,
+    int render_view_id,
+    bool worker) OVERRIDE;
+    
+   virtual void CancelDesktopNotification(
+    int render_process_id,
+    int render_view_id,
+    int notification_id) OVERRIDE;
+
  private:
   ShellBrowserContext* ShellBrowserContextForBrowserContext(
       BrowserContext* content_browser_context);

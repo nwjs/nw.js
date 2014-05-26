@@ -56,7 +56,7 @@ class TrayObserver : public StatusIconObserver {
 
 void Tray::Create(const base::DictionaryValue& option) {
   if (!status_tray_)
-    status_tray_ = StatusTray::Create();
+    status_tray_ = StatusTray::GetSingleton();
 
   status_icon_ = status_tray_->CreateStatusIcon(StatusTray::NOTIFICATION_TRAY_ICON,
                                                 gfx::ImageSkia(), base::string16());

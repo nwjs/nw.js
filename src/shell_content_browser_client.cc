@@ -57,6 +57,7 @@
 #include "content/nw/src/media/media_internals.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
+#include "content/nw/src/nw_notification_manager.h"
 #include "content/nw/src/nw_version.h"
 #include "content/nw/src/shell_browser_context.h"
 #include "content/nw/src/shell_browser_main_parts.h"
@@ -447,6 +448,40 @@ void ShellContentBrowserClient::GetAdditionalMappedFilesForChildProcess(
 QuotaPermissionContext*
 ShellContentBrowserClient::CreateQuotaPermissionContext() {
   return new ShellQuotaPermissionContext();
+}
+
+void ShellContentBrowserClient::ShowDesktopNotification(
+  const ShowDesktopNotificationHostMsgParams& params,
+  int render_process_id,
+  int render_view_id,
+  bool worker) {
+#if defined(ENABLE_NOTIFICATIONS)
+  nw::NotificationManager *notificationManager = nw::NotificationManager::getSingleton();
+  if (notificationManager == NULL) {
+    NOTIMPLEMENTED();
+    return;
+  }
+  notificationManager->AddDesktopNotification(params, render_process_id, render_view_id, worker);
+#else
+  NOTIMPLEMENTED();
+#endif
+
+}
+
+void ShellContentBrowserClient::CancelDesktopNotification(
+  int render_process_id,
+  int render_view_id,
+  int notification_id) {
+#if defined(ENABLE_NOTIFICATIONS)
+  nw::NotificationManager *notificationManager = nw::NotificationManager::getSingleton();
+  if (notificationManager == NULL) {
+    NOTIMPLEMENTED();
+    return;
+  }
+  notificationManager->CancelDesktopNotification(render_process_id, render_view_id, notification_id);
+#else
+  NOTIMPLEMENTED();
+#endif
 }
 
 }  // namespace content

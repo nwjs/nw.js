@@ -315,6 +315,14 @@
         'src/renderer/shell_render_process_observer.h',
         'src/nw_shell.cc',
         'src/nw_shell.h',
+        'src/nw_notification_manager.h',
+        'src/nw_notification_manager.cc',
+        'src/nw_notification_manager_win.h',
+        'src/nw_notification_manager_win.cc',		
+        'src/nw_notification_manager_mac.h',
+        'src/nw_notification_manager_mac.mm',
+        'src/nw_notification_manager_linux.h',
+        'src/nw_notification_manager_linux.cc',
         'src/shell_browser_context.cc',
         'src/shell_browser_context.h',
         'src/shell_browser_main.cc',
@@ -833,6 +841,11 @@
             '<(DEPTH)/build/linux/system.gyp:gtk',
           ],
         }],  # toolkit_uses_gtk
+        ['OS=="linux"', {
+          'dependencies': [
+            '<(DEPTH)/build/linux/system.gyp:notify',
+          ],
+        }],  # OS=="linux"
         ['OS=="mac"', {
           'product_name': '<(nw_product_name)',
           'dependencies!': [
