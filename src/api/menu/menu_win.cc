@@ -33,6 +33,9 @@
 #include "ui/views/controls/menu/menu_2.h"
 #include "ui/views/widget/widget.h"
 
+#include "ui/views/focus/focus_manager.h"
+#include "vector"
+
 namespace {
 
 HBITMAP GetNativeBitmapFromSkBitmap(const SkBitmap& bitmap) {
@@ -84,9 +87,12 @@ void Menu::Create(const base::DictionaryValue& option) {
   menu_model_.reset(new ui::NwMenuModel(menu_delegate_.get()));
   menu_.reset(new views::NativeMenuWin(menu_model_.get(), NULL));
 
+  focus_manager_ = NULL;
+
   std::string type;
   if (option.GetString("type", &type) && type == "menubar")
     menu_->set_is_popup_menu(false);
+  menu_items_.empty();
 }
 
 void Menu::Destroy() {
@@ -107,6 +113,7 @@ void Menu::Append(MenuItem* menu_item) {
     menu_model_->AddSeparator(ui::NORMAL_SEPARATOR);
 
   is_menu_modified_ = true;
+  menu_items_.push_back(menu_item);
 }
 
 void Menu::Insert(MenuItem* menu_item, int pos) {
@@ -184,5 +191,20 @@ void Menu::Rebuild(const HMENU *parent_menu) {
     is_menu_modified_ = false;
   }
 }
+
+void Menu::UpdateKeys(views::FocusManager *focus_manager){
+  if (focus_manager == NULL){
+    return ;
+  } else {
+    focus_manager_ = focus_manager;
+    std::vector<MenuItem*>::iterator it = menu_items_.begin();
+    while(it!=menu_items_.end()){
+      (*it)->UpdateKeys(focus_manager);
+      ++it;
+    }
+  }
+}
+
+
 
 }  // namespace nwapi
