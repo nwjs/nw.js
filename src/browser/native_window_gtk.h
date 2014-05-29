@@ -65,6 +65,7 @@ class NativeWindowGtk : public NativeWindow {
   virtual bool IsKiosk() OVERRIDE;
   virtual void SetMenu(nwapi::Menu* menu) OVERRIDE;
   virtual void SetInitialFocus(bool initial_focus) OVERRIDE;
+  virtual void SetIcon(std::string icon_path) OVERRIDE;
   virtual bool InitialFocus() OVERRIDE;
   virtual void SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
                                        bool enabled) OVERRIDE;

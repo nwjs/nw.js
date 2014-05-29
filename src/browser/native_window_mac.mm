@@ -687,6 +687,10 @@ void NativeWindowCocoa::SetInitialFocus(bool accept_focus) {
   initial_focus_ = accept_focus;
 }
 
+void NativeWindowCocoa::SetIcon(std::string icon_path) {
+  // Not implemented on Mac
+}
+
 bool NativeWindowCocoa::InitialFocus() {
   return initial_focus_;
 }

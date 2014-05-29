@@ -167,4 +167,8 @@ void NativeWindow::LoadAppIconFromPackage(base::DictionaryValue* manifest) {
   }
 }
 
+void NativeWindow::LoadAppIcon(std::string icon_path) {
+    shell_->GetPackage()->GetImage(FilePath::FromUTF8Unsafe(icon_path), &app_icon_);
+}
+
 }  // namespace nw

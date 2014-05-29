@@ -91,6 +91,7 @@ class NativeWindowWin : public NativeWindow,
   virtual void SetToolbarIsLoading(bool loading) OVERRIDE;
   virtual void SetInitialFocus(bool initial_focus) OVERRIDE;
   virtual bool InitialFocus() OVERRIDE { return initial_focus_; }
+  virtual void SetIcon(std::string icon_path) OVERRIDE;
 
   // WidgetDelegate implementation.
   virtual void OnWidgetMove() OVERRIDE;

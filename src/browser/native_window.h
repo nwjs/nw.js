@@ -98,6 +98,7 @@ class NativeWindow {
   virtual void SetMenu(nwapi::Menu* menu) = 0;
   virtual void SetInitialFocus(bool accept_focus) = 0;
   virtual bool InitialFocus() = 0;
+  virtual void SetIcon(std::string icon_path) = 0;
 
   // Toolbar related controls.
   enum TOOLBAR_BUTTON {
@@ -139,6 +140,7 @@ class NativeWindow {
 
   // Icon showed in the task bar.
   gfx::Image app_icon_;
+  void LoadAppIcon(std::string icon_path);
 
   scoped_refptr<CapturePageHelper> capture_page_helper_;
   friend class content::Shell;

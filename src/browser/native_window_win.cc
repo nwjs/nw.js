@@ -706,6 +706,11 @@ void NativeWindowWin::SetInitialFocus(bool initial_focus) {
   initial_focus_ = initial_focus;
 }
 
+void NativeWindowWin::SetIcon(std::string icon_path) {
+  LoadAppIcon(icon_path);
+  window_->UpdateWindowIcon();
+}
+
 bool NativeWindowWin::ExecuteWindowsCommand(int command_id) {
   // Windows uses the 4 lower order bits of |command_id| for type-specific
   // information so we must exclude this when comparing.

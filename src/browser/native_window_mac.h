@@ -74,6 +74,7 @@ class NativeWindowCocoa : public NativeWindow {
   virtual void SetToolbarIsLoading(bool loading) OVERRIDE;
   virtual void SetInitialFocus(bool accept_focus) OVERRIDE;
   virtual bool InitialFocus() OVERRIDE;
+  virtual void SetIcon(std::string icon_path) OVERRIDE;
 
   // Called to handle a mouse event.
   void HandleMouseEvent(NSEvent* event);
