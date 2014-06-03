@@ -254,9 +254,9 @@ void Window::Call(const std::string& method,
         arguments.GetInteger(1, &y))
       shell_->window()->SetPosition(gfx::Point(x, y));
   } else if (method == "RequestAttention") {
-    bool flash;
-    if (arguments.GetBoolean(0, &flash))
-      shell_->window()->FlashFrame(flash);
+    int count;
+    if (arguments.GetInteger(0, &count))
+      shell_->window()->FlashFrame(count);
   } else if (method == "SetBadgeLabel") {
     std::string label;
     if (arguments.GetString(0, &label))

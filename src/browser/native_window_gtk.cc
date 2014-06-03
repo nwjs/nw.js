@@ -294,8 +294,8 @@ void NativeWindowGtk::SetTitle(const std::string& title) {
   gtk_window_set_title(GTK_WINDOW(window_), title.c_str());
 }
 
-void NativeWindowGtk::FlashFrame(bool flash) {
-  gtk_window_set_urgency_hint(window_, flash);
+void NativeWindowGtk::FlashFrame(int count) {
+  gtk_window_set_urgency_hint(window_, count);
 }
 
 void NativeWindowGtk::SetBadgeLabel(const std::string& badge) {
