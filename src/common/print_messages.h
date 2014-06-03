@@ -42,11 +42,11 @@ struct PrintMsg_Print_Params {
   int32 preview_ui_id;
   int preview_request_id;
   bool is_first_request;
-  WebKit::WebPrintScalingOption print_scaling_option;
+  blink::WebPrintScalingOption print_scaling_option;
   bool print_to_pdf;
   bool display_header_footer;
-  string16 title;
-  string16 url;
+  base::string16 title;
+  base::string16 url;
   bool should_print_backgrounds;
 };
 
@@ -75,7 +75,7 @@ struct PrintHostMsg_RequestPrintPreview_Params {
 #define IPC_MESSAGE_START PrintMsgStart
 
 IPC_ENUM_TRAITS(printing::MarginType)
-IPC_ENUM_TRAITS(WebKit::WebPrintScalingOption)
+IPC_ENUM_TRAITS(blink::WebPrintScalingOption)
 
 // Parameters for a render request.
 IPC_STRUCT_TRAITS_BEGIN(PrintMsg_Print_Params)
@@ -287,7 +287,7 @@ IPC_MESSAGE_ROUTED0(PrintMsg_PrintNodeUnderContextMenu)
 // showing the print dialog. (This is the final step in the print preview
 // workflow.)
 IPC_MESSAGE_ROUTED1(PrintMsg_PrintForPrintPreview,
-                    DictionaryValue /* settings */)
+                    base::DictionaryValue /* settings */)
 
 // Tells the render view to switch the CSS to print media type, renders every
 // requested pages and switch back the CSS to display media type.
@@ -305,7 +305,7 @@ IPC_MESSAGE_ROUTED1(PrintMsg_SetScriptedPrintingBlocked,
 // requested pages for print preview using the given |settings|. This gets
 // called multiple times as the user updates settings.
 IPC_MESSAGE_ROUTED1(PrintMsg_PrintPreview,
-                    DictionaryValue /* settings */)
+                    base::DictionaryValue /* settings */)
 
 // Like PrintMsg_PrintPages, but using the print preview document's frame/node.
 IPC_MESSAGE_ROUTED0(PrintMsg_PrintForSystemDialog)
@@ -350,7 +350,7 @@ IPC_SYNC_MESSAGE_ROUTED0_1(PrintHostMsg_GetDefaultPrintSettings,
 // |job_settings|.
 IPC_SYNC_MESSAGE_ROUTED2_1(PrintHostMsg_UpdatePrintSettings,
                            int /* document_cookie */,
-                           DictionaryValue /* job_settings */,
+                           base::DictionaryValue /* job_settings */,
                            PrintMsg_PrintPages_Params /* current_settings */)
 
 // It's the renderer that controls the printing process when it is generated

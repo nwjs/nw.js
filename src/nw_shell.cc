@@ -154,7 +154,7 @@ Shell* Shell::FromRenderViewHost(RenderViewHost* rvh) {
       return windows_[i];
     }else{
       WebContentsImpl* impl = static_cast<WebContentsImpl*>(web_contents);
-      RenderViewHostManager* rvhm = impl->GetRenderManagerForTesting();
+      RenderFrameHostManager* rvhm = impl->GetRenderManagerForTesting();
       if (rvhm && static_cast<RenderViewHost*>(rvhm->pending_render_view_host()) == rvh)
         return windows_[i];
     }
@@ -289,9 +289,9 @@ void Shell::PrintCriticalError(const std::string& title,
     error_page_url = "data:text/html;base64,VW5hYmxlIHRvIGZpbmQgbncucGFrLgo=";
   } else {
     std::string content_with_no_newline, content_with_no_space;
-    ReplaceChars(net::EscapeForHTML(content),
+    base::ReplaceChars(net::EscapeForHTML(content),
                  "\n", "<br/>", &content_with_no_newline);
-    ReplaceChars(content_with_no_newline,
+    base::ReplaceChars(content_with_no_newline,
                  " ", "&nbsp;", &content_with_no_space);
 
     std::vector<std::string> subst;
@@ -399,7 +399,7 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
   if (nodejs()) {
     std::string jscript = std::string("require('nw.gui').Window.get().__setDevToolsJail('")
       + (jail_id ? jail_id : "(null)") + "');";
-    inspected_rvh->ExecuteJavascriptInWebFrame(string16(), UTF8ToUTF16(jscript.c_str()));
+    inspected_rvh->ExecuteJavascriptInWebFrame(base::string16(), base::UTF8ToUTF16(jscript.c_str()));
   }
 
   scoped_refptr<DevToolsAgentHost> agent(DevToolsAgentHost::GetOrCreateFor(inspected_rvh));
@@ -448,7 +448,7 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
       DevToolsAgentHost::GetOrCreateFor(inspected_rvh).get());
 
   int rh_id = shell->web_contents_->GetRenderProcessHost()->GetID();
-  ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, chrome::kFileScheme);
+  ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, content::kFileScheme);
   ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, "app");
   shell->is_devtools_ = true;
   shell->devtools_owner_ = weak_ptr_factory_.GetWeakPtr();
@@ -539,7 +539,7 @@ bool Shell::IsPopupOrPanel(const WebContents* source) const {
 // Window opened by window.open
 void Shell::WebContentsCreated(WebContents* source_contents,
                                int64 source_frame_id,
-                               const string16& frame_name,
+                               const base::string16& frame_name,
                                const GURL& target_url,
                                WebContents* new_contents) {
   // Create with package's manifest
@@ -547,7 +547,7 @@ void Shell::WebContentsCreated(WebContents* source_contents,
       GetPackage()->window()->DeepCopy());
 
   // Get window features
-  WebKit::WebWindowFeatures features = new_contents->GetWindowFeatures();
+  blink::WebWindowFeatures features = new_contents->GetWindowFeatures();
   manifest->SetBoolean(switches::kmResizable, features.resizable);
   manifest->SetBoolean(switches::kmFullscreen, features.fullscreen);
   if (features.widthSet)
@@ -604,9 +604,9 @@ JavaScriptDialogManager* Shell::GetJavaScriptDialogManager() {
 
 bool Shell::AddMessageToConsole(WebContents* source,
                                 int32 level,
-                                const string16& message,
+                                const base::string16& message,
                                 int32 line_no,
-                                const string16& source_id) {
+                                const base::string16& source_id) {
   return false;
 }
 
@@ -639,7 +639,7 @@ void Shell::Observe(int type,
         Details<std::pair<NavigationEntry*, bool> >(details).ptr();
 
     if (title->first) {
-      string16 text = title->first->GetTitle();
+      base::string16 text = title->first->GetTitle();
       window()->SetTitle(UTF16ToUTF8(text));
     }
   } else if (type == NOTIFICATION_RENDERER_PROCESS_CLOSED) {

@@ -139,8 +139,8 @@ PopulateCookieObject(const net::CanonicalCookie& canonical_cookie) {
   base::DictionaryValue* result = new base::DictionaryValue();
   // A cookie is a raw byte sequence. By explicitly parsing it as UTF-8, we
   // apply error correction, so the string can be safely passed to the renderer.
-  result->SetString("name", UTF16ToUTF8(UTF8ToUTF16(canonical_cookie.Name())));
-  result->SetString("value", UTF16ToUTF8(UTF8ToUTF16(canonical_cookie.Value())));
+  result->SetString("name", base::UTF16ToUTF8(base::UTF8ToUTF16(canonical_cookie.Name())));
+  result->SetString("value", base::UTF16ToUTF8(base::UTF8ToUTF16(canonical_cookie.Value())));
   result->SetString("domain", canonical_cookie.Domain());
   result->SetBoolean("host_only", net::cookie_util::DomainIsHostOnly(
                                                                       canonical_cookie.Domain()));

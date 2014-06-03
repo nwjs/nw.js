@@ -241,7 +241,7 @@ void FileSelectHelper::OnListDone(int id, int error) {
 
 scoped_ptr<ui::SelectFileDialog::FileTypeInfo>
 FileSelectHelper::GetFileTypesFromAcceptType(
-    const std::vector<string16>& accept_types) {
+                                             const std::vector<base::string16>& accept_types) {
   scoped_ptr<ui::SelectFileDialog::FileTypeInfo> base_file_type(
       new ui::SelectFileDialog::FileTypeInfo());
   if (accept_types.empty())
@@ -474,7 +474,7 @@ bool FileSelectHelper::IsAcceptTypeValid(const std::string& accept_type) {
   std::string unused;
   if (accept_type.length() <= 1 ||
       StringToLowerASCII(accept_type) != accept_type ||
-      TrimWhitespaceASCII(accept_type, TRIM_ALL, &unused) != TRIM_NONE) {
+      base::TrimWhitespaceASCII(accept_type, base::TRIM_ALL, &unused) != base::TRIM_NONE) {
     return false;
   }
   return true;

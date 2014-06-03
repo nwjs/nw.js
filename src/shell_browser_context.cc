@@ -127,7 +127,7 @@ void ShellBrowserContext::InitWhileIOAllowed() {
 #endif
 
   if (!base::PathExists(path_))
-    file_util::CreateDirectory(path_);
+    base::CreateDirectory(path_);
 }
 
 FilePath ShellBrowserContext::GetPath() const {
@@ -154,7 +154,9 @@ net::URLRequestContextGetter* ShellBrowserContext::GetRequestContext()  {
 }
 
 net::URLRequestContextGetter* ShellBrowserContext::CreateRequestContext(
-    ProtocolHandlerMap* protocol_handlers) {
+    ProtocolHandlerMap* protocol_handlers,
+    ProtocolHandlerScopedVector protocol_interceptors) {
+
   DCHECK(!url_request_getter_);
   CommandLine* cmd_line = CommandLine::ForCurrentProcess();
   std::string auth_server_whitelist =
@@ -228,20 +230,36 @@ quota::SpecialStoragePolicy* ShellBrowserContext::GetSpecialStoragePolicy() {
   return NULL;
 }
 
-void ShellBrowserContext::RequestMIDISysExPermission(
+void ShellBrowserContext::RequestMidiSysExPermission(
       int render_process_id,
       int render_view_id,
       int bridge_id,
       const GURL& requesting_frame,
-      const MIDISysExPermissionCallback& callback) {
+      bool user_gesture,
+      const MidiSysExPermissionCallback& callback) {
   callback.Run(true);
 }
 
-void ShellBrowserContext::CancelMIDISysExPermissionRequest(
+void ShellBrowserContext::CancelMidiSysExPermissionRequest(
     int render_process_id,
     int render_view_id,
     int bridge_id,
     const GURL& requesting_frame) {
 }
+
+void ShellBrowserContext::RequestProtectedMediaIdentifierPermission(
+    int render_process_id,
+    int render_view_id,
+    int bridge_id,
+    int group_id,
+    const GURL& requesting_frame,
+    const ProtectedMediaIdentifierPermissionCallback& callback) {
+  callback.Run(true);
+}
+
+void ShellBrowserContext::CancelProtectedMediaIdentifierPermissionRequests(
+    int group_id) {
+}
+
 
 }  // namespace content

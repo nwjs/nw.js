@@ -150,7 +150,7 @@ class Shell : public WebContentsDelegate,
   virtual bool IsPopupOrPanel(const WebContents* source) const OVERRIDE;
   virtual void WebContentsCreated(WebContents* source_contents,
                                   int64 source_frame_id,
-                                  const string16& frame_name,
+                                  const base::string16& frame_name,
                                   const GURL& target_url,
                                   WebContents* new_contents) OVERRIDE;
 #if defined(OS_WIN)
@@ -175,9 +175,9 @@ class Shell : public WebContentsDelegate,
       const NativeWebKeyboardEvent& event) OVERRIDE;
   virtual bool AddMessageToConsole(WebContents* source,
                                    int32 level,
-                                   const string16& message,
+                                   const base::string16& message,
                                    int32 line_no,
-                                   const string16& source_id) OVERRIDE;
+                                   const base::string16& source_id) OVERRIDE;
   virtual void RequestMediaAccessPermission(
       WebContents* web_contents,
       const MediaStreamRequest& request,

@@ -37,7 +37,7 @@
 #endif
 
 #if defined(OS_POSIX)
-#include "chrome/common/dump_without_crashing.h"
+#include "base/debug/dump_without_crashing.h"
 #endif
 
 #if defined(OS_WIN) || defined(OS_MACOSX)
@@ -306,12 +306,6 @@ bool ChromeBreakpadClient::GetCrashDumpLocation(base::FilePath* crash_dir) {
   return PathService::Get(chrome::DIR_CRASH_DUMPS, crash_dir);
 }
 
-#if defined(OS_POSIX)
-void ChromeBreakpadClient::SetDumpWithoutCrashingFunction(void (*function)()) {
-  logging::SetDumpWithoutCrashingFunction(function);
-}
-#endif
-
 size_t ChromeBreakpadClient::RegisterCrashKeys() {
   return crash_keys::RegisterChromeCrashKeys();
 }
@@ -331,5 +325,14 @@ int ChromeBreakpadClient::GetAndroidMinidumpDescriptor() {
   return kAndroidMinidumpDescriptor;
 }
 #endif
+
+bool ChromeBreakpadClient::EnableBreakpadForProcess(
+    const std::string& process_type) {
+  return process_type == switches::kRendererProcess ||
+         process_type == switches::kPluginProcess ||
+         process_type == switches::kPpapiPluginProcess ||
+         process_type == switches::kZygoteProcess ||
+         process_type == switches::kGpuProcess;
+}
 
 }  // namespace chrome

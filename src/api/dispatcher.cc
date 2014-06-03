@@ -35,6 +35,8 @@
 
 #undef LOG
 #undef ASSERT
+#undef FROM_HERE
+
 #if defined(OS_WIN)
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -47,7 +49,8 @@
 namespace nwapi {
 
 static inline v8::Local<v8::String> v8_str(const char* x) {
-  return v8::String::New(x);
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  return v8::String::NewFromUtf8(isolate, x);
 }
 
 Dispatcher::Dispatcher(content::RenderView* render_view)
@@ -67,8 +70,8 @@ bool Dispatcher::OnMessageReceived(const IPC::Message& message) {
   return handled;
 }
 
-void Dispatcher::DraggableRegionsChanged(WebKit::WebFrame* frame) {
-  WebKit::WebVector<WebKit::WebDraggableRegion> webregions =
+void Dispatcher::DraggableRegionsChanged(blink::WebFrame* frame) {
+  blink::WebVector<blink::WebDraggableRegion> webregions =
       frame->document().draggableRegions();
   std::vector<extensions::DraggableRegion> regions;
   for (size_t i = 0; i < webregions.size(); ++i) {
@@ -83,8 +86,9 @@ void Dispatcher::DraggableRegionsChanged(WebKit::WebFrame* frame) {
 void Dispatcher::OnEvent(int object_id,
                          std::string event,
                          const base::ListValue& arguments) {
-  v8::HandleScope scope;
-  WebKit::WebView* web_view = render_view()->GetWebView();
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope scope(isolate);
+  blink::WebView* web_view = render_view()->GetWebView();
   if (web_view == NULL)
     return;
 
@@ -92,36 +96,40 @@ void Dispatcher::OnEvent(int object_id,
 
   content::V8ValueConverterImpl converter;
   v8::Local<v8::Context> context =
-    v8::Local<v8::Context>::New(node::g_context->GetIsolate(), node::g_context);
+    v8::Local<v8::Context>::New(isolate, node::g_context);
 
   v8::Handle<v8::Value> args = converter.ToV8Value(&arguments, context);
   DCHECK(!args.IsEmpty()) << "Invalid 'arguments' in Dispatcher::OnEvent";
   v8::Handle<v8::Value> argv[] = {
-      v8::Integer::New(object_id), v8_str(event.c_str()), args };
+    v8::Integer::New(isolate, object_id), v8_str(event.c_str()), args };
 
   // __nwObjectsRegistry.handleEvent(object_id, event, arguments);
   v8::Handle<v8::Value> val =
-    node::g_context->Global()->Get(v8_str("__nwObjectsRegistry"));
+    context->Global()->Get(v8_str("__nwObjectsRegistry"));
   if (val->IsNull() || val->IsUndefined())
     return; // need to find out why it's undefined here in debugger
   v8::Handle<v8::Object> objects_registry = val->ToObject();
   DVLOG(1) << "handleEvent(object_id=" << object_id << ", event=\"" << event << "\")";
-  node::MakeCallback(objects_registry, "handleEvent", 3, argv);
+  node::MakeCallback(isolate, objects_registry, "handleEvent", 3, argv);
 }
 
 v8::Handle<v8::Object> Dispatcher::GetObjectRegistry() {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope scope(isolate);
+  v8::Local<v8::Context> context =
+    v8::Local<v8::Context>::New(isolate, node::g_context);
   // need to enter node context to access the registry in
   // some cases, e.g. normal frame in #1519
-  node::g_context->Enter();
+  context->Enter();
   v8::Handle<v8::Value> registry =
-    node::g_context->Global()->Get(v8_str("__nwObjectsRegistry"));
-  node::g_context->Exit();
+    context->Global()->Get(v8_str("__nwObjectsRegistry"));
+  context->Exit();
   // if (registry->IsNull() || registry->IsUndefined())
   //   return v8::Undefined();
   return registry->ToObject();
 }
 
-v8::Handle<v8::Value> Dispatcher::GetWindowId(WebKit::WebFrame* frame) {
+v8::Handle<v8::Value> Dispatcher::GetWindowId(blink::WebFrame* frame) {
   v8::Handle<v8::Value> v8win = frame->mainWorldScriptContext()->Global();
   v8::Handle<v8::Value> val = v8win->ToObject()->Get(v8_str("__nwWindowId"));
 
@@ -129,7 +137,8 @@ v8::Handle<v8::Value> Dispatcher::GetWindowId(WebKit::WebFrame* frame) {
 }
 
 void Dispatcher::ZoomLevelChanged() {
-  WebKit::WebView* web_view = render_view()->GetWebView();
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  blink::WebView* web_view = render_view()->GetWebView();
   float zoom_level = web_view->zoomLevel();
 
   v8::Handle<v8::Value> val = GetWindowId(web_view->mainFrame());
@@ -141,23 +150,24 @@ void Dispatcher::ZoomLevelChanged() {
   if (objects_registry->IsUndefined())
     return;
 
-  v8::Local<v8::Array> args = v8::Array::New();
-  args->Set(0, v8::Number::New(zoom_level));
+  v8::Local<v8::Array> args = v8::Array::New(isolate);
+  args->Set(0, v8::Number::New(isolate, zoom_level));
   v8::Handle<v8::Value> argv[] = {val, v8_str("zoom"), args };
 
-  node::MakeCallback(objects_registry, "handleEvent", 3, argv);
+  node::MakeCallback(isolate, objects_registry, "handleEvent", 3, argv);
 }
 
-void Dispatcher::DidCreateDocumentElement(WebKit::WebFrame* frame) {
+void Dispatcher::DidCreateDocumentElement(blink::WebFrame* frame) {
   documentCallback("document-start", frame);
 }
 
-void Dispatcher::DidFinishDocumentLoad(WebKit::WebFrame* frame) {
+void Dispatcher::DidFinishDocumentLoad(blink::WebFrame* frame) {
   documentCallback("document-end", frame);
 }
 
-void Dispatcher::documentCallback(const char* ev, WebKit::WebFrame* frame) {
-  WebKit::WebView* web_view = render_view()->GetWebView();
+void Dispatcher::documentCallback(const char* ev, blink::WebFrame* frame) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  blink::WebView* web_view = render_view()->GetWebView();
 
   if (!web_view)
     return;
@@ -171,9 +181,9 @@ void Dispatcher::documentCallback(const char* ev, WebKit::WebFrame* frame) {
   if (objects_registry->IsUndefined())
     return;
 
-  v8::Local<v8::Array> args = v8::Array::New();
-  v8::Handle<v8::Value> element = v8::Null();
-  WebCore::Frame* core_frame = WebKit::toWebFrameImpl(frame)->frame();
+  v8::Local<v8::Array> args = v8::Array::New(isolate);
+  v8::Handle<v8::Value> element = v8::Null(isolate);
+  WebCore::LocalFrame* core_frame = blink::toWebFrameImpl(frame)->frame();
   if (core_frame->ownerElement()) {
     element = WebCore::toV8((WebCore::HTMLElement*)core_frame->ownerElement(),
                             frame->mainWorldScriptContext()->Global(),
@@ -182,20 +192,21 @@ void Dispatcher::documentCallback(const char* ev, WebKit::WebFrame* frame) {
   args->Set(0, element);
   v8::Handle<v8::Value> argv[] = {val, v8_str(ev), args };
 
-  node::MakeCallback(objects_registry, "handleEvent", 3, argv);
+  node::MakeCallback(isolate, objects_registry, "handleEvent", 3, argv);
 }
 
 void Dispatcher::willHandleNavigationPolicy(
     content::RenderView* rv,
-    WebKit::WebFrame* frame,
-    const WebKit::WebURLRequest& request,
-    WebKit::WebNavigationPolicy* policy) {
+    blink::WebFrame* frame,
+    const blink::WebURLRequest& request,
+    blink::WebNavigationPolicy* policy) {
 
-  WebKit::WebView* web_view = rv->GetWebView();
+  blink::WebView* web_view = rv->GetWebView();
 
   if (!web_view)
     return;
 
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::Context::Scope cscope (web_view->mainFrame()->mainWorldScriptContext());
 
   v8::Handle<v8::Value> id_val = nwapi::Dispatcher::GetWindowId(web_view->mainFrame());
@@ -206,11 +217,11 @@ void Dispatcher::willHandleNavigationPolicy(
   if (objects_registry->IsUndefined())
     return;
 
-  v8::Local<v8::Array> args = v8::Array::New();
-  v8::Handle<v8::Value> element = v8::Null();
-  v8::Handle<v8::Object> policy_obj = v8::Object::New();
+  v8::Local<v8::Array> args = v8::Array::New(isolate);
+  v8::Handle<v8::Value> element = v8::Null(isolate);
+  v8::Handle<v8::Object> policy_obj = v8::Object::New(isolate);
 
-  WebCore::Frame* core_frame = WebKit::toWebFrameImpl(frame)->frame();
+  WebCore::LocalFrame* core_frame = blink::toWebFrameImpl(frame)->frame();
   if (core_frame->ownerElement()) {
     element = WebCore::toV8((WebCore::HTMLElement*)core_frame->ownerElement(),
                             frame->mainWorldScriptContext()->Global(),
@@ -222,21 +233,21 @@ void Dispatcher::willHandleNavigationPolicy(
 
   v8::Handle<v8::Value> argv[] = {id_val, v8_str("new-win-policy"), args };
 
-  node::MakeCallback(objects_registry, "handleEvent", 3, argv);
+  node::MakeCallback(isolate, objects_registry, "handleEvent", 3, argv);
   v8::Local<v8::Value> val = policy_obj->Get(v8_str("val"));
   if (!val->IsString())
     return;
   v8::String::Utf8Value policy_str(val);
   if (!strcmp(*policy_str, "ignore"))
-    *policy = WebKit::WebNavigationPolicyIgnore;
+    *policy = blink::WebNavigationPolicyIgnore;
   else if (!strcmp(*policy_str, "download"))
-    *policy = WebKit::WebNavigationPolicyDownload;
+    *policy = blink::WebNavigationPolicyDownload;
   else if (!strcmp(*policy_str, "current"))
-    *policy = WebKit::WebNavigationPolicyCurrentTab;
+    *policy = blink::WebNavigationPolicyCurrentTab;
   else if (!strcmp(*policy_str, "new-window"))
-    *policy = WebKit::WebNavigationPolicyNewWindow;
+    *policy = blink::WebNavigationPolicyNewWindow;
   else if (!strcmp(*policy_str, "new-popup"))
-    *policy = WebKit::WebNavigationPolicyNewPopup;
+    *policy = blink::WebNavigationPolicyNewPopup;
 }
 
 }  // namespace nwapi

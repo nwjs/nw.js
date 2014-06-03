@@ -114,7 +114,7 @@ Target::Target(WebContents* web_contents) {
   id_ = agent_host_->GetId();
   title_ = UTF16ToUTF8(web_contents->GetTitle());
   url_ = web_contents->GetURL();
-  last_activity_time_ = web_contents->GetLastSelectedTime();
+  last_activity_time_ = web_contents->GetLastActiveTime();
 }
 
 bool Target::Activate() const {

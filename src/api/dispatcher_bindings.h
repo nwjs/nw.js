@@ -34,7 +34,9 @@ class DispatcherBindings : public v8::Extension {
 
   // v8::Extension implementation.
   virtual v8::Handle<v8::FunctionTemplate>
-      GetNativeFunction(v8::Handle<v8::String> name) OVERRIDE;
+      GetNativeFunctionTemplate(
+                        v8::Isolate* isolate,
+                        v8::Handle<v8::String> name) OVERRIDE;
 
  private:
   // Helper functions for bindings.

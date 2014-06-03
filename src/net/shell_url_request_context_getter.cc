@@ -176,11 +176,11 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
 
     FilePath cookie_path = data_path_.Append(FILE_PATH_LITERAL("cookies"));
     scoped_refptr<net::CookieStore> cookie_store = NULL;
-    cookie_store = content::CreatePersistentCookieStore(
-        cookie_path,
-        false,
-        NULL,
-        new NWCookieMonsterDelegate(browser_context_));
+
+    content::CookieStoreConfig cookie_config(
+                                             cookie_path, content::CookieStoreConfig::PERSISTANT_SESSION_COOKIES,
+                                             NULL, new NWCookieMonsterDelegate(browser_context_));
+    cookie_store = content::CreateCookieStore(cookie_config);
     cookie_store->GetCookieMonster()->SetPersistSessionCookies(true);
     storage_->set_cookie_store(cookie_store);
 
@@ -199,7 +199,7 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
     storage_->set_http_user_agent_settings(
          new net::StaticHttpUserAgentSettings(
                 net::HttpUtil::GenerateAcceptLanguageHeader(accept_lang),
-                EmptyString()));
+                base::EmptyString()));
 
     scoped_ptr<net::HostResolver> host_resolver(
         net::HostResolver::CreateDefaultResolver(NULL));
@@ -270,7 +270,7 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
         new net::URLRequestJobFactoryImpl());
     InstallProtocolHandlers(job_factory.get(), &protocol_handlers_);
     job_factory->SetProtocolHandler(
-         chrome::kFileScheme,
+         content::kFileScheme,
          new net::FileProtocolHandler(
                content::BrowserThread::GetBlockingPool()->
                GetTaskRunnerWithShutdownBehavior(

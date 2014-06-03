@@ -37,7 +37,7 @@ class ShellContentBrowserClient : public ContentBrowserClient {
       RenderViewHostDelegateView** render_view_host_delegate_view,
       const WebContents::CreateParams& params) OVERRIDE;
   virtual std::string GetApplicationLocale() OVERRIDE;
-  virtual void AppendExtraCommandLineSwitches(CommandLine* command_line,
+  virtual void AppendExtraCommandLineSwitches(base::CommandLine* command_line,
                                               int child_process_id) OVERRIDE;
   virtual void ResourceDispatcherHostCreated() OVERRIDE;
   virtual AccessTokenStore* CreateAccessTokenStore() OVERRIDE;
@@ -65,7 +65,7 @@ class ShellContentBrowserClient : public ContentBrowserClient {
   virtual void RenderProcessHostCreated(RenderProcessHost* host) OVERRIDE;
   virtual net::URLRequestContextGetter* CreateRequestContext(
       BrowserContext* browser_context,
-      ProtocolHandlerMap* protocol_handlers) OVERRIDE;
+      ProtocolHandlerMap* protocol_handlers, ProtocolHandlerScopedVector protocol_interceptors) OVERRIDE;
   virtual net::URLRequestContextGetter* CreateRequestContextForStoragePartition(
       BrowserContext* browser_context,
       const base::FilePath& partition_path,
@@ -86,7 +86,7 @@ class ShellContentBrowserClient : public ContentBrowserClient {
       std::vector<std::string>* additional_schemes) OVERRIDE;
 #if defined(OS_POSIX) && !defined(OS_MACOSX)
   virtual void GetAdditionalMappedFilesForChildProcess(
-      const CommandLine& command_line,
+      const base::CommandLine& command_line,
       int child_process_id,
       std::vector<content::FileDescriptorInfo>* mappings) OVERRIDE;
 #endif

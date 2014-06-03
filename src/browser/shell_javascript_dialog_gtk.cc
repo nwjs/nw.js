@@ -35,12 +35,12 @@ const char kPromptTextId[] = "content_shell_prompt_text";
 
 // If there's a text entry in the dialog, get the text from the first one and
 // return it.
-string16 GetPromptText(GtkDialog* dialog) {
+base::string16 GetPromptText(GtkDialog* dialog) {
   GtkWidget* widget = static_cast<GtkWidget*>(
       g_object_get_data(G_OBJECT(dialog), kPromptTextId));
   if (widget)
-    return UTF8ToUTF16(gtk_entry_get_text(GTK_ENTRY(widget)));
-  return string16();
+    return base::UTF8ToUTF16(gtk_entry_get_text(GTK_ENTRY(widget)));
+  return base::string16();
 }
 
 }  // namespace
@@ -52,8 +52,8 @@ ShellJavaScriptDialog::ShellJavaScriptDialog(
     ShellJavaScriptDialogCreator* creator,
     gfx::NativeWindow parent_window,
     JavaScriptMessageType message_type,
-    const string16& message_text,
-    const string16& default_prompt_text,
+    const base::string16& message_text,
+    const base::string16& default_prompt_text,
     const JavaScriptDialogManager::DialogClosedCallback& callback)
     : creator_(creator),
       callback_(callback),
@@ -129,7 +129,7 @@ void ShellJavaScriptDialog::OnResponse(GtkWidget* dialog, int response_id) {
       break;
     case GTK_RESPONSE_CANCEL:
     case GTK_RESPONSE_DELETE_EVENT:
-      callback_.Run(false, string16());
+      callback_.Run(false, base::string16());
       break;
     default:
       NOTREACHED();

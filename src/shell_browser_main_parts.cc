@@ -141,7 +141,7 @@ void ShellBrowserMainParts::PostMainMessageLoopRun() {
 
 void ShellBrowserMainParts::PostMainMessageLoopStart() {
 #if defined(TOOLKIT_GTK)
-  printing::PrintingContextGtk::SetCreatePrintDialogFunction(
+  printing::PrintingContextLinux::SetCreatePrintDialogFunction(
       &PrintDialogGtk::CreatePrintDialog);
 #endif
 }

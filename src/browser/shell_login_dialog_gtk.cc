@@ -1,24 +1,8 @@
-// Copyright (c) 2012 Intel Corp
-// Copyright (c) 2012 The Chromium Authors
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy 
-// of this software and associated documentation files (the "Software"), to deal
-//  in the Software without restriction, including without limitation the rights
-//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell co
-// pies of the Software, and to permit persons to whom the Software is furnished
-//  to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in al
-// l copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IM
-// PLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNES
-// S FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-//  OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WH
-// ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-//  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+// Copyright 2013 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
-#include "content/nw/src/browser/shell_login_dialog.h"
+#include "content/shell/browser/shell_login_dialog.h"
 
 #include <gtk/gtk.h>
 
@@ -26,7 +10,7 @@
 #include "base/strings/string16.h"
 #include "base/strings/utf_string_conversions.h"
 #include "content/public/browser/browser_thread.h"
-#include "content/public/browser/render_view_host.h"
+#include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/resource_dispatcher_host.h"
 #include "content/public/browser/resource_request_info.h"
 #include "content/public/browser/web_contents.h"
@@ -35,21 +19,20 @@
 
 namespace content {
 
-void ShellLoginDialog::PlatformCreateDialog(const string16& message) {
+void ShellLoginDialog::PlatformCreateDialog(const base::string16& message) {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
 
   int render_process_id;
-  int render_view_id;
-  if (!ResourceRequestInfo::ForRequest(request_)->GetAssociatedRenderView(
-          &render_process_id,  &render_view_id)) {
+  int render_frame_id;
+  if (!ResourceRequestInfo::ForRequest(request_)->GetAssociatedRenderFrame(
+          &render_process_id,  &render_frame_id)) {
     NOTREACHED();
   }
 
   WebContents* web_contents = NULL;
-  RenderViewHost* render_view_host =
-      RenderViewHost::FromID(render_process_id, render_view_id);
-  if (render_view_host)
-    web_contents = WebContents::FromRenderViewHost(render_view_host);
+  RenderFrameHost* render_frame_host =
+      RenderFrameHost::FromID(render_process_id, render_frame_id);
+  web_contents = WebContents::FromRenderFrameHost(render_frame_host);
   DCHECK(web_contents);
 
   gfx::NativeWindow parent_window =
@@ -62,7 +45,7 @@ void ShellLoginDialog::PlatformCreateDialog(const string16& message) {
                                  "Please log in.");
 
   GtkWidget* content_area = gtk_dialog_get_content_area(GTK_DIALOG(root_));
-  GtkWidget* label = gtk_label_new(UTF16ToUTF8(message).c_str());
+  GtkWidget* label = gtk_label_new(base::UTF16ToUTF8(message).c_str());
   gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
   gtk_box_pack_start(GTK_BOX(content_area), label, FALSE, FALSE, 0);
 
@@ -94,34 +77,24 @@ void ShellLoginDialog::PlatformCreateDialog(const string16& message) {
   gtk_box_pack_start(GTK_BOX(content_area), table, FALSE, FALSE, 0);
 
   g_signal_connect(root_, "response", G_CALLBACK(OnResponseThunk), this);
-  g_signal_connect(root_, "destroy",  G_CALLBACK(OnDestroyThunk), this);
-
   gtk_widget_grab_focus(username_entry_);
+  gtk_widget_show_all(GTK_WIDGET(root_));
 }
 
 void ShellLoginDialog::PlatformCleanUp() {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
-  if (root_) {
-    gtk_widget_destroy(root_);
-    root_ = NULL;
-  }
 }
 
 void ShellLoginDialog::PlatformRequestCancelled() {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
 }
 
-void ShellLoginDialog::PlatformShowDialog() {
-  DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
-  gtk_widget_show_all(GTK_WIDGET(root_));
-}
-
 void ShellLoginDialog::OnResponse(GtkWidget* sender, int response_id) {
   switch (response_id) {
     case GTK_RESPONSE_OK:
       UserAcceptedAuth(
-          UTF8ToUTF16(gtk_entry_get_text(GTK_ENTRY(username_entry_))),
-          UTF8ToUTF16(gtk_entry_get_text(GTK_ENTRY(password_entry_))));
+          base::UTF8ToUTF16(gtk_entry_get_text(GTK_ENTRY(username_entry_))),
+          base::UTF8ToUTF16(gtk_entry_get_text(GTK_ENTRY(password_entry_))));
       break;
     case GTK_RESPONSE_CANCEL:
     case GTK_RESPONSE_DELETE_EVENT:
@@ -131,15 +104,7 @@ void ShellLoginDialog::OnResponse(GtkWidget* sender, int response_id) {
       NOTREACHED();
   }
 
-}
-
-void ShellLoginDialog::OnDestroy(GtkWidget* widget) {
-  DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
-
-  // The web contents modal dialog is going to delete itself; clear our pointer.
-  root_ = NULL;
-
-  ReleaseSoon();
+  gtk_widget_destroy(root_);
 }
 
 }  // namespace content

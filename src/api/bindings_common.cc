@@ -33,8 +33,8 @@
 using content::RenderView;
 using content::RenderThread;
 using content::V8ValueConverter;
-using WebKit::WebFrame;
-using WebKit::WebView;
+using blink::WebFrame;
+using blink::WebView;
 
 namespace {
 RenderView* GetRenderView(v8::Handle<v8::Context> ctx) {
@@ -53,12 +53,14 @@ RenderView* GetRenderView(v8::Handle<v8::Context> ctx) {
 }
 
 RenderView* GetCurrentRenderView() {
-  v8::Local<v8::Context> ctx = v8::Context::GetCurrent();
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::Local<v8::Context> ctx = isolate->GetCurrentContext();
   return GetRenderView(ctx);
 }
 
 RenderView* GetEnteredRenderView() {
-  v8::Local<v8::Context> ctx = v8::Context::GetEntered();
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::Local<v8::Context> ctx = isolate->GetEnteredContext();
   return GetRenderView(ctx);
 }
 
@@ -69,29 +71,31 @@ base::StringPiece GetStringResource(int resource_id) {
 namespace remote {
 
 v8::Handle<v8::Value> AllocateId(int routing_id) {
-  v8::HandleScope scope;
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::EscapableHandleScope scope(isolate);
 
   int result = 0;
   RenderThread::Get()->Send(new ShellViewHostMsg_AllocateId(
       routing_id,
       &result));
-  return scope.Close(v8::Integer::New(result));
+  return scope.Escape(v8::Integer::New(isolate, result));
 }
 
 v8::Handle<v8::Value> AllocateObject(int routing_id,
                                      int object_id,
                                      const std::string& type,
                                      v8::Handle<v8::Value> options) {
-  v8::HandleScope handle_scope;
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::EscapableHandleScope handle_scope(isolate);
 
   scoped_ptr<V8ValueConverter> converter(V8ValueConverter::create());
   converter->SetStripNullFromObjects(true);
 
   scoped_ptr<base::Value> value_option(
-      converter->FromV8Value(options, v8::Context::GetCurrent()));
+      converter->FromV8Value(options, isolate->GetCurrentContext()));
   if (!value_option.get() ||
       !value_option->IsType(base::Value::TYPE_DICTIONARY))
-    return v8::ThrowException(v8::Exception::Error(v8::String::New(
+    return isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
         "Unable to convert 'option' passed to AllocateObject")));
 
   DVLOG(1) << "remote::AllocateObject(routing_id=" << routing_id << ", object_id=" << object_id << ")";
@@ -101,14 +105,15 @@ v8::Handle<v8::Value> AllocateObject(int routing_id,
       object_id,
       type,
       *static_cast<base::DictionaryValue*>(value_option.get())));
-  return v8::Undefined();
+  return v8::Undefined(isolate);
 }
 
 v8::Handle<v8::Value> DeallocateObject(int routing_id,
                                        int object_id) {
   RenderThread::Get()->Send(new ShellViewHostMsg_Deallocate_Object(
       routing_id, object_id));
-  return v8::Undefined();
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  return v8::Undefined(isolate);
 }
 
 v8::Handle<v8::Value> CallObjectMethod(int routing_id,
@@ -116,13 +121,14 @@ v8::Handle<v8::Value> CallObjectMethod(int routing_id,
                                        const std::string& type,
                                        const std::string& method,
                                        v8::Handle<v8::Value> args) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
   scoped_ptr<V8ValueConverter> converter(V8ValueConverter::create());
 
   scoped_ptr<base::Value> value_args(
-      converter->FromV8Value(args, v8::Context::GetCurrent()));
+      converter->FromV8Value(args, isolate->GetCurrentContext()));
   if (!value_args.get() ||
       !value_args->IsType(base::Value::TYPE_LIST))
-    return v8::ThrowException(v8::Exception::Error(v8::String::New(
+    return isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
         "Unable to convert 'args' passed to CallObjectMethod")));
 
   RenderThread::Get()->Send(new ShellViewHostMsg_Call_Object_Method(
@@ -131,7 +137,7 @@ v8::Handle<v8::Value> CallObjectMethod(int routing_id,
       type,
       method,
       *static_cast<base::ListValue*>(value_args.get())));
-  return v8::Undefined();
+  return v8::Undefined(isolate);
 }
 
 v8::Handle<v8::Value> CallObjectMethodSync(int routing_id,
@@ -139,13 +145,14 @@ v8::Handle<v8::Value> CallObjectMethodSync(int routing_id,
                                            const std::string& type,
                                            const std::string& method,
                                            v8::Handle<v8::Value> args) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
   scoped_ptr<V8ValueConverter> converter(V8ValueConverter::create());
 
   scoped_ptr<base::Value> value_args(
-      converter->FromV8Value(args, v8::Context::GetCurrent()));
+      converter->FromV8Value(args, isolate->GetCurrentContext()));
   if (!value_args.get() ||
       !value_args->IsType(base::Value::TYPE_LIST))
-    return v8::ThrowException(v8::Exception::Error(v8::String::New(
+    return isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
         "Unable to convert 'args' passed to CallObjectMethodSync")));
 
   base::ListValue result;
@@ -156,7 +163,7 @@ v8::Handle<v8::Value> CallObjectMethodSync(int routing_id,
       method,
       *static_cast<base::ListValue*>(value_args.get()),
       &result));
-  return converter->ToV8Value(&result, v8::Context::GetCurrent());
+  return converter->ToV8Value(&result, isolate->GetCurrentContext());
 }
 
 }  // namespace remote

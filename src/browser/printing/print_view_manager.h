@@ -59,7 +59,7 @@ class PrintViewManager : public content::NotificationObserver,
   void set_observer(PrintViewManagerObserver* observer);
 
   // PrintedPagesSource implementation.
-  virtual string16 RenderSourceName() OVERRIDE;
+  virtual base::string16 RenderSourceName() OVERRIDE;
 
   // content::NotificationObserver implementation.
   virtual void Observe(int type,

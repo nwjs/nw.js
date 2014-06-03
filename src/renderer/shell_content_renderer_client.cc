@@ -41,7 +41,6 @@
 #include "content/nw/src/nw_version.h"
 #include "components/autofill/content/renderer/autofill_agent.h"
 #include "components/autofill/content/renderer/password_autofill_agent.h"
-#include "content/nw/src/renderer/autofill_agent.h"
 #include "content/nw/src/renderer/nw_render_view_observer.h"
 #include "content/nw/src/renderer/prerenderer/prerenderer_client.h"
 #include "content/nw/src/renderer/printing/print_web_view_helper.h"
@@ -68,10 +67,10 @@ using content::RenderViewImpl;
 using autofill::AutofillAgent;
 using autofill::PasswordAutofillAgent;
 using net::ProxyBypassRules;
-using WebKit::WebFrame;
-using WebKit::WebView;
-using WebKit::WebString;
-using WebKit::WebSecurityPolicy;
+using blink::WebFrame;
+using blink::WebView;
+using blink::WebString;
+using blink::WebSecurityPolicy;
 
 
 namespace content {
@@ -106,10 +105,10 @@ void ShellContentRendererClient::RenderThreadStarted() {
   // Change working directory.
   CommandLine* command_line = CommandLine::ForCurrentProcess();
   if (command_line->HasSwitch(switches::kWorkingDirectory)) {
-    file_util::SetCurrentDirectory(
+    base::SetCurrentDirectory(
         command_line->GetSwitchValuePath(switches::kWorkingDirectory));
   }
-
+#if 0
   int argc = 1;
   char* argv[] = { const_cast<char*>("node"), NULL, NULL };
   std::string node_main;
@@ -138,10 +137,11 @@ void ShellContentRendererClient::RenderThreadStarted() {
   }
   // Initialize node after render thread is started.
   if (!snapshot_path.empty()) {
-    v8::V8::Initialize(snapshot_path.c_str());
+    v8::V8::Initialize(); //FIXME
   }else
     v8::V8::Initialize();
-  v8::HandleScope scope;
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope scope(isolate);
 
   // Install window bindings into node. The Window API is implemented in node's
   // context, so when a Shell changes to a new location and destroy previous
@@ -154,19 +154,18 @@ void ShellContentRendererClient::RenderThreadStarted() {
   node::g_context.Reset(v8::Isolate::GetCurrent(),
                         v8::Context::New(v8::Isolate::GetCurrent(),
                                          &extension_configuration));
-  node::g_context->SetSecurityToken(v8::String::NewSymbol("nw-token", 8));
-  node::g_context->Enter();
+  v8::Local<v8::Context> context =
+    v8::Local<v8::Context>::New(isolate, node::g_context);
+  context->SetSecurityToken(v8::String::NewFromUtf8(isolate, "nw-token", v8::String::kInternalizedString));
+  context->Enter();
 
-  node::g_context->SetEmbedderData(0, v8::String::NewSymbol("node"));
+  context->SetEmbedderData(0, v8::String::NewFromUtf8(isolate, "node", v8::String::kInternalizedString));
 
   // Setup node.js.
-  v8::Local<v8::Context> context =
-    v8::Local<v8::Context>::New(node::g_context->GetIsolate(), node::g_context);
-
   node::SetupContext(argc, argv, context);
 
 #if !defined(OS_WIN)
-  v8::Local<v8::Script> script = v8::Script::New(v8::String::New((
+  v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate, (
       "process.__nwfds_to_close = [" +
       base::StringPrintf("%d", base::GlobalDescriptors::GetInstance()->Get(kPrimaryIPCChannel)) +
       "];"
@@ -174,11 +173,14 @@ void ShellContentRendererClient::RenderThreadStarted() {
   CHECK(*script);
   script->Run();
 #endif
+
+#endif //0
+
   // Start observers.
   shell_observer_.reset(new ShellRenderProcessObserver());
 
-  WebString file_scheme(ASCIIToUTF16("file"));
-  WebString app_scheme(ASCIIToUTF16("app"));
+  WebString file_scheme(base::ASCIIToUTF16("file"));
+  WebString app_scheme(base::ASCIIToUTF16("app"));
   // file: resources should be allowed to receive CORS requests.
   WebSecurityPolicy::registerURLSchemeAsCORSEnabled(file_scheme);
   WebSecurityPolicy::registerURLSchemeAsCORSEnabled(app_scheme);
@@ -193,11 +195,11 @@ void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
   new printing::PrintWebViewHelper(render_view);
 #endif
 
-  nw::AutofillAgent* autofill_agent = new nw::AutofillAgent(render_view);
+  // FIXME: nw::AutofillAgent* autofill_agent = new nw::AutofillAgent(render_view);
 
   // The PageClickTracker is a RenderViewObserver, and hence will be freed when
   // the RenderView is destroyed.
-  new autofill::PageClickTracker(render_view, autofill_agent);
+  // FIXME: new autofill::PageClickTracker(render_view, autofill_agent);
 
   // PasswordAutofillAgent* password_autofill_agent =
   //     new PasswordAutofillAgent(render_view);
@@ -205,7 +207,7 @@ void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
 }
 
 void ShellContentRendererClient::DidCreateScriptContext(
-    WebKit::WebFrame* frame,
+    blink::WebFrame* frame,
     v8::Handle<v8::Context> context,
     int extension_group,
     int world_id) {
@@ -215,7 +217,7 @@ void ShellContentRendererClient::DidCreateScriptContext(
   creating_first_context_ = false;
 }
 
-bool ShellContentRendererClient::goodForNode(WebKit::WebFrame* frame)
+bool ShellContentRendererClient::goodForNode(blink::WebFrame* frame)
 {
   RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
   GURL url(frame->document().url());
@@ -231,13 +233,17 @@ bool ShellContentRendererClient::goodForNode(WebKit::WebFrame* frame)
 }
 
 bool ShellContentRendererClient::WillSetSecurityToken(
-    WebKit::WebFrame* frame,
+    blink::WebFrame* frame,
     v8::Handle<v8::Context> context) {
   GURL url(frame->document().url());
   VLOG(1) << "WillSetSecurityToken: " << url;
   if (goodForNode(frame)) {
     // Override context's security token
-    context->SetSecurityToken(node::g_context->GetSecurityToken());
+    v8::Isolate* isolate = v8::Isolate::GetCurrent();
+    v8::HandleScope scope(isolate);
+    v8::Local<v8::Context> g_context =
+      v8::Local<v8::Context>::New(isolate, node::g_context);
+    context->SetSecurityToken(g_context->GetSecurityToken());
     frame->document().securityOrigin().grantUniversalAccess();
 
     int ret = 0;
@@ -256,19 +262,22 @@ bool ShellContentRendererClient::WillSetSecurityToken(
 }
 
 void ShellContentRendererClient::InstallNodeSymbols(
-    WebKit::WebFrame* frame,
+    blink::WebFrame* frame,
     v8::Handle<v8::Context> context,
     const GURL& url) {
-  v8::HandleScope handle_scope;
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope scope(isolate);
+  v8::Local<v8::Context> g_context =
+    v8::Local<v8::Context>::New(isolate, node::g_context);
 
   static bool installed_once = false;
 
-  v8::Local<v8::Object> nodeGlobal = node::g_context->Global();
+  v8::Local<v8::Object> nodeGlobal = g_context->Global();
   v8::Local<v8::Object> v8Global = context->Global();
 
   // Use WebKit's console globally
-  nodeGlobal->Set(v8::String::New("console"),
-                  v8Global->Get(v8::String::New("console")));
+  nodeGlobal->Set(v8::String::NewFromUtf8(isolate, "console"),
+                  v8Global->Get(v8::String::NewFromUtf8(isolate, "console")));
 
   // Do we integrate node?
   bool use_node = goodForNode(frame);
@@ -281,11 +290,11 @@ void ShellContentRendererClient::InstallNodeSymbols(
   if (use_node || is_nw_protocol) {
     frame->setNodeJS(true);
 
-    v8::Local<v8::Array> symbols = v8::Array::New(4);
-    symbols->Set(0, v8::String::New("global"));
-    symbols->Set(1, v8::String::New("process"));
-    symbols->Set(2, v8::String::New("Buffer"));
-    symbols->Set(3, v8::String::New("root"));
+    v8::Local<v8::Array> symbols = v8::Array::New(isolate, 4);
+    symbols->Set(0, v8::String::NewFromUtf8(isolate, "global"));
+    symbols->Set(1, v8::String::NewFromUtf8(isolate, "process"));
+    symbols->Set(2, v8::String::NewFromUtf8(isolate, "Buffer"));
+    symbols->Set(3, v8::String::NewFromUtf8(isolate, "root"));
 
     for (unsigned i = 0; i < symbols->Length(); ++i) {
       v8::Local<v8::Value> key = symbols->Get(i);
@@ -300,13 +309,13 @@ void ShellContentRendererClient::InstallNodeSymbols(
       // reference to the closure created by the call back and leak
       // memory (see #203)
 
-      nodeGlobal->Set(v8::String::New("window"), v8Global);
+      nodeGlobal->Set(v8::String::NewFromUtf8(isolate, "window"), v8Global);
 
       // Listen uncaughtException with ReportException.
-      v8::Local<v8::Function> cb = v8::FunctionTemplate::New(ReportException)->
+      v8::Local<v8::Function> cb = v8::FunctionTemplate::New(isolate, ReportException)->
         GetFunction();
-      v8::Local<v8::Value> argv[] = { v8::String::New("uncaughtException"), cb };
-      node::MakeCallback(node::g_env->process_object(), "on", 2, argv);
+      v8::Local<v8::Value> argv[] = { v8::String::NewFromUtf8(isolate, "uncaughtException"), cb };
+      node::MakeCallback(isolate, node::g_env->process_object(), "on", 2, argv);
     }
   }
 
@@ -314,10 +323,10 @@ void ShellContentRendererClient::InstallNodeSymbols(
     RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
     std::string root_path = rv->renderer_preferences_.nw_app_root_path.AsUTF8Unsafe();
 #if defined(OS_WIN)
-    ReplaceChars(root_path, "\\", "\\\\", &root_path);
+    base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
 #endif
-    ReplaceChars(root_path, "'", "\\'", &root_path);
-    v8::Local<v8::Script> script = v8::Script::New(v8::String::New((
+    base::ReplaceChars(root_path, "'", "\\'", &root_path);
+    v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate, (
         // Make node's relative modules work
         "if (!process.mainModule.filename) {"
         "  var root = '" + root_path + "';"
@@ -330,13 +339,13 @@ void ShellContentRendererClient::InstallNodeSymbols(
         "process.mainModule.paths = global.require('module')._nodeModulePaths(process.cwd());"
         "process.mainModule.loaded = true;"
         "}").c_str()
-    ));
+                                                                               ));
     CHECK(*script);
     script->Run();
   }
 
   if (use_node || is_nw_protocol) {
-    v8::Local<v8::Script> script = v8::Script::New(v8::String::New(
+    v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate,
         // Overload require
         "window.require = function(name) {"
         "  if (name == 'nw.gui')"
@@ -349,7 +358,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
         "process.versions['chromium'] = '" CHROME_VERSION "';"
     ));
     script->Run();
-    v8::Local<v8::Script> script2 = v8::Script::New(v8::String::New(
+    v8::Local<v8::Script> script2 = v8::Script::Compile(v8::String::NewFromUtf8(isolate,
         "  nwDispatcher.requireNwGui().Window.get();"
     ));
     script2->Run();
@@ -362,32 +371,34 @@ void ShellContentRendererClient::InstallNodeSymbols(
       // could override parent settings here
       render_view->Send(new ShellViewHostMsg_SetForceClose(
             render_view->GetRoutingID(), true, &ret));
+    }
   }
 }
 
 // static
 void ShellContentRendererClient::ReportException(
             const v8::FunctionCallbackInfo<v8::Value>&  args) {
-  v8::HandleScope handle_scope;
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope scope(isolate);
 
   // Do nothing if user is listening to uncaughtException.
   v8::Local<v8::Value> listeners_v =
-    node::g_env->process_object()->Get(v8::String::New("listeners"));
+    node::g_env->process_object()->Get(v8::String::NewFromUtf8(isolate, "listeners"));
   v8::Local<v8::Function> listeners =
       v8::Local<v8::Function>::Cast(listeners_v);
 
-  v8::Local<v8::Value> argv[1] = { v8::String::New("uncaughtException") };
+  v8::Local<v8::Value> argv[1] = { v8::String::NewFromUtf8(isolate, "uncaughtException") };
   v8::Local<v8::Value> ret = listeners->Call(node::g_env->process_object(), 1, argv);
   v8::Local<v8::Array> listener_array = v8::Local<v8::Array>::Cast(ret);
 
   uint32_t length = listener_array->Length();
   if (length > 1) {
-    args.GetReturnValue().Set(v8::Undefined());
+    args.GetReturnValue().Set(v8::Undefined(isolate));
     return;
   }
 
   // Print stacktrace.
-  v8::Local<v8::String> stack_symbol = v8::String::New("stack");
+  v8::Local<v8::String> stack_symbol = v8::String::NewFromUtf8(isolate, "stack");
   std::string error;
 
   v8::Local<v8::Object> exception = args[0]->ToObject();
@@ -398,7 +409,7 @@ void ShellContentRendererClient::ReportException(
 
   RenderView* render_view = GetCurrentRenderView();
   if (!render_view) {
-    args.GetReturnValue().Set(v8::Undefined());
+    args.GetReturnValue().Set(v8::Undefined(isolate));
     return;
   }
 
@@ -406,21 +417,22 @@ void ShellContentRendererClient::ReportException(
       render_view->GetRoutingID(),
       error));
 
-  args.GetReturnValue().Set(v8::Undefined());
+  args.GetReturnValue().Set(v8::Undefined(isolate));
 }
 
 void ShellContentRendererClient::UninstallNodeSymbols(
-    WebKit::WebFrame* frame,
+    blink::WebFrame* frame,
     v8::Handle<v8::Context> context) {
-  v8::HandleScope handle_scope;
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope scope(isolate);
 
   v8::Local<v8::Object> v8Global = context->Global();
-  v8::Local<v8::Array> symbols = v8::Array::New(5);
-  symbols->Set(0, v8::String::New("global"));
-  symbols->Set(1, v8::String::New("process"));
-  symbols->Set(2, v8::String::New("Buffer"));
-  symbols->Set(3, v8::String::New("root"));
-  symbols->Set(4, v8::String::New("require"));
+  v8::Local<v8::Array> symbols = v8::Array::New(isolate, 5);
+  symbols->Set(0, v8::String::NewFromUtf8(isolate, "global"));
+  symbols->Set(1, v8::String::NewFromUtf8(isolate, "process"));
+  symbols->Set(2, v8::String::NewFromUtf8(isolate, "Buffer"));
+  symbols->Set(3, v8::String::NewFromUtf8(isolate, "root"));
+  symbols->Set(4, v8::String::NewFromUtf8(isolate, "require"));
 
   for (unsigned i = 0; i < symbols->Length(); ++i) {
     v8::Local<v8::String> key = symbols->Get(i)->ToString();
@@ -431,9 +443,9 @@ void ShellContentRendererClient::UninstallNodeSymbols(
 
 void ShellContentRendererClient::willHandleNavigationPolicy(
     RenderView* rv,
-    WebKit::WebFrame* frame,
-    const WebKit::WebURLRequest& request,
-    WebKit::WebNavigationPolicy* policy) {
+    blink::WebFrame* frame,
+    const blink::WebURLRequest& request,
+    blink::WebNavigationPolicy* policy) {
 
   nwapi::Dispatcher::willHandleNavigationPolicy(rv, frame, request, policy);
 }

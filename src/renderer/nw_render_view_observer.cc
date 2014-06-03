@@ -33,15 +33,14 @@
 #include "third_party/WebKit/public/web/WebFrame.h"
 #include "third_party/WebKit/public/web/WebScriptSource.h"
 #include "third_party/WebKit/public/web/WebView.h"
-#include "webkit/glue/webkit_glue.h"
 
 using content::RenderView;
 using content::RenderViewImpl;
 
-using WebKit::WebFrame;
-using WebKit::WebRect;
-using WebKit::WebScriptSource;
-using WebKit::WebSize;
+using blink::WebFrame;
+using blink::WebRect;
+using blink::WebScriptSource;
+using blink::WebSize;
 
 namespace nw {
 
@@ -80,7 +79,7 @@ void NwRenderViewObserver::OnCaptureSnapshot() {
   Send(new NwViewHostMsg_Snapshot(routing_id(), snapshot));
 }
 
-void NwRenderViewObserver::DidFinishDocumentLoad(WebKit::WebFrame* frame) {
+void NwRenderViewObserver::DidFinishDocumentLoad(blink::WebFrame* frame) {
   RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
   if (!rv)
     return;
@@ -88,7 +87,7 @@ void NwRenderViewObserver::DidFinishDocumentLoad(WebKit::WebFrame* frame) {
   OnDocumentCallback(rv, js_fn, frame);
 }
 
-void NwRenderViewObserver::DidCreateDocumentElement(WebKit::WebFrame* frame) {
+void NwRenderViewObserver::DidCreateDocumentElement(blink::WebFrame* frame) {
   RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
   if (!rv)
     return;
@@ -98,7 +97,7 @@ void NwRenderViewObserver::DidCreateDocumentElement(WebKit::WebFrame* frame) {
 
 void NwRenderViewObserver::OnDocumentCallback(RenderViewImpl* rv,
                                               const std::string& js_fn,
-                                              WebKit::WebFrame* frame) {
+                                              blink::WebFrame* frame) {
   if (js_fn.empty())
     return;
   std::string content;
@@ -113,7 +112,7 @@ void NwRenderViewObserver::OnDocumentCallback(RenderViewImpl* rv,
   frame->executeScriptAndReturnValue(WebScriptSource(jscript));
 }
 
-bool NwRenderViewObserver::CaptureSnapshot(WebKit::WebView* view,
+bool NwRenderViewObserver::CaptureSnapshot(blink::WebView* view,
                                            SkBitmap* snapshot) {
   view->layout();
   const WebSize& size = view->size();
@@ -132,7 +131,7 @@ bool NwRenderViewObserver::CaptureSnapshot(WebKit::WebView* view,
   SkBaseDevice* device = skia::GetTopDevice(*canvas);
 
   const SkBitmap& bitmap = device->accessBitmap(false);
-  if (!bitmap.copyTo(snapshot, SkBitmap::kARGB_8888_Config))
+  if (!bitmap.copyTo(snapshot, SkBitmapConfigToColorType(SkBitmap::kARGB_8888_Config)))
     return false;
 
   return true;

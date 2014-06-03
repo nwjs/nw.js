@@ -66,10 +66,10 @@
 #include "ui/base/ui_base_switches.h"
 #include "content/common/dom_storage/dom_storage_map.h"
 #include "webkit/common/webpreferences.h"
-#include "webkit/common/user_agent/user_agent_util.h"
+#include "content/public/common/user_agent.h"
 #include "content/common/plugin_list.h"
 #include "content/public/browser/plugin_service.h"
-
+#include "chrome/common/chrome_switches.h"
 #if defined(OS_LINUX)
 #include "base/linux_util.h"
 #include "content/nw/src/crash_handler_host_linux.h"
@@ -128,8 +128,8 @@ bool ShellContentBrowserClient::GetUserAgentManifest(std::string* agent) {
     ReplaceSubstringsAfterOffset(&user_agent, 0, "%name", name);
     ReplaceSubstringsAfterOffset(&user_agent, 0, "%ver", version);
     ReplaceSubstringsAfterOffset(&user_agent, 0, "%nwver", NW_VERSION_STRING);
-    ReplaceSubstringsAfterOffset(&user_agent, 0, "%webkit_ver", webkit_glue::GetWebKitVersion());
-    ReplaceSubstringsAfterOffset(&user_agent, 0, "%osinfo", webkit_glue::BuildOSInfo());
+    ReplaceSubstringsAfterOffset(&user_agent, 0, "%webkit_ver", content::GetWebKitVersion());
+    ReplaceSubstringsAfterOffset(&user_agent, 0, "%osinfo", content::BuildOSInfo());
     *agent = user_agent;
     return true;
   }
@@ -157,6 +157,8 @@ WebContentsViewPort* ShellContentBrowserClient::OverrideCreateWebContentsView(
 }
 
 std::string ShellContentBrowserClient::GetApplicationLocale() {
+  base::ThreadRestrictions::ScopedAllowIO allow_io;
+
   CommandLine* cmd_line = CommandLine::ForCurrentProcess();
   std::string pref_locale;
   if (cmd_line->HasSwitch(switches::kLang)) {
@@ -331,10 +333,11 @@ bool ShellContentBrowserClient::IsSuitableHost(RenderProcessHost* process_host,
 
 net::URLRequestContextGetter* ShellContentBrowserClient::CreateRequestContext(
     BrowserContext* content_browser_context,
-    ProtocolHandlerMap* protocol_handlers) {
+    ProtocolHandlerMap* protocol_handlers,
+    ProtocolHandlerScopedVector protocol_interceptors) {
   ShellBrowserContext* shell_browser_context =
       ShellBrowserContextForBrowserContext(content_browser_context);
-  return shell_browser_context->CreateRequestContext(protocol_handlers);
+  return shell_browser_context->CreateRequestContext(protocol_handlers, protocol_interceptors.Pass());
 }
 
 net::URLRequestContextGetter*
@@ -371,7 +374,7 @@ void ShellContentBrowserClient::RenderProcessHostCreated(
   // Grant file: scheme to the whole process, since we impose
   // per-view access checks.
   content::ChildProcessSecurityPolicy::GetInstance()->GrantScheme(
-      host->GetID(), chrome::kFileScheme);
+      host->GetID(), content::kFileScheme);
   content::ChildProcessSecurityPolicy::GetInstance()->GrantScheme(
       host->GetID(), "app");
 
@@ -387,8 +390,8 @@ bool ShellContentBrowserClient::IsHandledURL(const GURL& url) {
   // Keep in sync with ProtocolHandlers added by
   // ShellURLRequestContextGetter::GetURLRequestContext().
   static const char* const kProtocolList[] = {
-    chrome::kFileSystemScheme,
-    chrome::kFileScheme,
+    content::kFileSystemScheme,
+    content::kFileScheme,
     "app",
   };
   for (size_t i = 0; i < arraysize(kProtocolList); ++i) {

@@ -77,7 +77,7 @@ void RenderParamsFromPrintSettings(const printing::PrintSettings& settings,
 }  // namespace
 
 PrintingMessageFilter::PrintingMessageFilter(int render_process_id)
-  : print_job_manager_(NULL),
+  : BrowserMessageFilter(PrintMsgStart), print_job_manager_(NULL),
     render_process_id_(render_process_id) {
 
   content::ShellContentBrowserClient* browser_client =
@@ -344,8 +344,8 @@ void PrintingMessageFilter::OnScriptedPrintReply(
 }
 
 void PrintingMessageFilter::OnUpdatePrintSettings(
-    int document_cookie, const DictionaryValue& job_settings,
-    IPC::Message* reply_msg) {
+                                                  int document_cookie, const base::DictionaryValue& job_settings,
+                                                  IPC::Message* reply_msg) {
   scoped_refptr<printing::PrinterQuery> printer_query;
 
   print_job_manager_->PopPrinterQuery(document_cookie, &printer_query);

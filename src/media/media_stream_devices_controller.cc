@@ -8,7 +8,7 @@
 #include "content/nw/src/media/media_capture_devices_dispatcher.h"
 #include "content/nw/src/media/media_internals.h"
 #include "content/public/browser/browser_thread.h"
-#include "content/public/common/desktop_media_id.h"
+#include "content/public/browser/desktop_media_id.h"
 #include "content/public/common/media_stream_request.h"
 
 using content::BrowserThread;
@@ -185,11 +185,14 @@ void MediaStreamDevicesController::Accept(bool update_content_setting) {
     break;
   }
 
-  callback_.Run(devices, scoped_ptr<content::MediaStreamUI>());
+  callback_.Run(devices,
+                devices.empty() ?
+                content::MEDIA_DEVICE_NO_HARDWARE : content::MEDIA_DEVICE_OK,
+                scoped_ptr<content::MediaStreamUI>());
 }
 
 void MediaStreamDevicesController::Deny(bool update_content_setting) {
-  callback_.Run(content::MediaStreamDevices(), scoped_ptr<content::MediaStreamUI>());
+  callback_.Run(content::MediaStreamDevices(), content::MEDIA_DEVICE_NO_HARDWARE, scoped_ptr<content::MediaStreamUI>());
 }
 
 bool MediaStreamDevicesController::IsAudioDeviceBlockedByPolicy() const {
@@ -233,7 +236,10 @@ void MediaStreamDevicesController::HandleTapMediaRequest() {
           content::MEDIA_DESKTOP_VIDEO_CAPTURE, media_id.ToString(), "Screen"));
   }
 
-  callback_.Run(devices, scoped_ptr<content::MediaStreamUI>());
+  callback_.Run(devices,
+                devices.empty() ?
+                     content::MEDIA_DEVICE_NO_HARDWARE : content::MEDIA_DEVICE_OK,
+                scoped_ptr<content::MediaStreamUI>());
 }
 
 bool MediaStreamDevicesController::IsSchemeSecure() const {

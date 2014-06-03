@@ -73,7 +73,7 @@ void Clipboard::SetText(std::string& text) {
 
 std::string Clipboard::GetText() {
   ui::Clipboard* clipboard = ui::Clipboard::GetForCurrentThread();
-  string16 text;
+  base::string16 text;
   clipboard->ReadText(ui::CLIPBOARD_TYPE_COPY_PASTE, &text);
   return UTF16ToUTF8(text);
 }

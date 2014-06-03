@@ -51,15 +51,14 @@ net::HttpResponseHeaders* BuildHttpHeaders(
                                           last_modified_time.ToInternalValue());
     hash = base::SHA1HashString(hash);
     std::string etag;
-    if (base::Base64Encode(hash, &etag)) {
-      raw_headers.append(1, '\0');
-      raw_headers.append("ETag: \"");
-      raw_headers.append(etag);
-      raw_headers.append("\"");
-      // Also force revalidation.
-      raw_headers.append(1, '\0');
-      raw_headers.append("cache-control: no-cache");
-    }
+    base::Base64Encode(hash, &etag);
+    raw_headers.append(1, '\0');
+    raw_headers.append("ETag: \"");
+    raw_headers.append(etag);
+    raw_headers.append("\"");
+    // Also force revalidation.
+    raw_headers.append(1, '\0');
+    raw_headers.append("cache-control: no-cache");
   }
 
   raw_headers.append(2, '\0');
@@ -74,8 +73,8 @@ void ReadMimeTypeFromFile(const base::FilePath& filename,
 
 base::Time GetFileLastModifiedTime(const base::FilePath& filename) {
   if (base::PathExists(filename)) {
-    base::PlatformFileInfo info;
-    if (file_util::GetFileInfo(filename, &info))
+    base::File::Info info;
+    if (base::GetFileInfo(filename, &info))
       return info.last_modified;
   }
   return base::Time();
@@ -83,8 +82,8 @@ base::Time GetFileLastModifiedTime(const base::FilePath& filename) {
 
 base::Time GetFileCreationTime(const base::FilePath& filename) {
   if (base::PathExists(filename)) {
-    base::PlatformFileInfo info;
-    if (file_util::GetFileInfo(filename, &info))
+    base::File::Info info;
+    if (base::GetFileInfo(filename, &info))
       return info.creation_time;
   }
   return base::Time();

@@ -43,11 +43,12 @@ namespace nwapi {
 namespace {
 
 v8::Handle<v8::String> WrapSource(v8::Handle<v8::String> source) {
-  v8::HandleScope handle_scope;
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::EscapableHandleScope handle_scope(isolate);
   v8::Handle<v8::String> left =
-      v8::String::New("(function(nw, exports) {");
-  v8::Handle<v8::String> right = v8::String::New("\n})");
-  return handle_scope.Close(
+    v8::String::NewFromUtf8(isolate, "(function(nw, exports) {");
+  v8::Handle<v8::String> right = v8::String::NewFromUtf8(isolate, "\n})");
+  return handle_scope.Escape(
       v8::String::Concat(left, v8::String::Concat(source, right)));
 }
 
@@ -56,14 +57,15 @@ void RequireFromResource(v8::Handle<v8::Object> root,
                          v8::Handle<v8::Object> gui,
                          v8::Handle<v8::String> name,
                          int resource_id) {
-  v8::HandleScope scope;
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope handle_scope(isolate);
 
-  v8::Handle<v8::String> source = v8::String::NewExternal(
+  v8::Handle<v8::String> source = v8::String::NewExternal(isolate,
       new StaticV8ExternalAsciiStringResource(
           GetStringResource(resource_id)));
   v8::Handle<v8::String> wrapped_source = WrapSource(source);
 
-  v8::Handle<v8::Script> script(v8::Script::New(wrapped_source, name));
+  v8::Handle<v8::Script> script(v8::Script::Compile(wrapped_source, name));
   v8::Handle<v8::Function> func = v8::Handle<v8::Function>::Cast(script->Run());
   v8::Handle<v8::Value> args[] = { root, gui };
   func->Call(root, 2, args);
@@ -73,7 +75,7 @@ bool MakePathAbsolute(FilePath* file_path) {
   DCHECK(file_path);
 
   FilePath current_directory;
-  if (!file_util::GetCurrentDirectory(&current_directory))
+  if (!base::GetCurrentDirectory(&current_directory))
     return false;
 
   if (file_path->IsAbsolute())
@@ -107,121 +109,128 @@ DispatcherBindings::~DispatcherBindings() {
 }
 
 v8::Handle<v8::FunctionTemplate>
-DispatcherBindings::GetNativeFunction(v8::Handle<v8::String> name) {
-  if (name->Equals(v8::String::New("RequireNwGui")))
-    return v8::FunctionTemplate::New(RequireNwGui);
-  else if (name->Equals(v8::String::New("GetAbsolutePath")))
-    return v8::FunctionTemplate::New(GetAbsolutePath);
-  else if (name->Equals(v8::String::New("GetShellIdForCurrentContext")))
-    return v8::FunctionTemplate::New(GetShellIdForCurrentContext);
-  else if (name->Equals(v8::String::New("GetRoutingIDForCurrentContext")))
-    return v8::FunctionTemplate::New(GetRoutingIDForCurrentContext);
-  else if (name->Equals(v8::String::New("CreateShell")))
-    return v8::FunctionTemplate::New(CreateShell);
-  else if (name->Equals(v8::String::New("AllocateObject")))
-    return v8::FunctionTemplate::New(AllocateObject);
-  else if (name->Equals(v8::String::New("DeallocateObject")))
-    return v8::FunctionTemplate::New(DeallocateObject);
-  else if (name->Equals(v8::String::New("CallObjectMethod")))
-    return v8::FunctionTemplate::New(CallObjectMethod);
-  else if (name->Equals(v8::String::New("CallObjectMethodSync")))
-    return v8::FunctionTemplate::New(CallObjectMethodSync);
-  else if (name->Equals(v8::String::New("CallStaticMethod")))
-    return v8::FunctionTemplate::New(CallStaticMethod);
-  else if (name->Equals(v8::String::New("CallStaticMethodSync")))
-    return v8::FunctionTemplate::New(CallStaticMethodSync);
-  else if (name->Equals(v8::String::New("CrashRenderer")))
-    return v8::FunctionTemplate::New(CrashRenderer);
-  else if (name->Equals(v8::String::New("SetCrashDumpDir")))
-    return v8::FunctionTemplate::New(SetCrashDumpDir);
-  else if (name->Equals(v8::String::New("AllocateId")))
-    return v8::FunctionTemplate::New(AllocateId);
+DispatcherBindings::GetNativeFunctionTemplate(
+                                      v8::Isolate* isolate,
+                                      v8::Handle<v8::String> name) {
+  if (name->Equals(v8::String::NewFromUtf8(isolate, "RequireNwGui")))
+    return v8::FunctionTemplate::New(isolate, RequireNwGui);
+  else if (name->Equals(v8::String::NewFromUtf8(isolate, "GetAbsolutePath")))
+    return v8::FunctionTemplate::New(isolate, GetAbsolutePath);
+  else if (name->Equals(v8::String::NewFromUtf8(isolate, "GetShellIdForCurrentContext")))
+    return v8::FunctionTemplate::New(isolate, GetShellIdForCurrentContext);
+  else if (name->Equals(v8::String::NewFromUtf8(isolate, "GetRoutingIDForCurrentContext")))
+    return v8::FunctionTemplate::New(isolate, GetRoutingIDForCurrentContext);
+  else if (name->Equals(v8::String::NewFromUtf8(isolate, "CreateShell")))
+    return v8::FunctionTemplate::New(isolate, CreateShell);
+  else if (name->Equals(v8::String::NewFromUtf8(isolate, "AllocateObject")))
+    return v8::FunctionTemplate::New(isolate, AllocateObject);
+  else if (name->Equals(v8::String::NewFromUtf8(isolate, "DeallocateObject")))
+    return v8::FunctionTemplate::New(isolate, DeallocateObject);
+  else if (name->Equals(v8::String::NewFromUtf8(isolate, "CallObjectMethod")))
+    return v8::FunctionTemplate::New(isolate, CallObjectMethod);
+  else if (name->Equals(v8::String::NewFromUtf8(isolate, "CallObjectMethodSync")))
+    return v8::FunctionTemplate::New(isolate, CallObjectMethodSync);
+  else if (name->Equals(v8::String::NewFromUtf8(isolate, "CallStaticMethod")))
+    return v8::FunctionTemplate::New(isolate, CallStaticMethod);
+  else if (name->Equals(v8::String::NewFromUtf8(isolate, "CallStaticMethodSync")))
+    return v8::FunctionTemplate::New(isolate, CallStaticMethodSync);
+  else if (name->Equals(v8::String::NewFromUtf8(isolate, "CrashRenderer")))
+    return v8::FunctionTemplate::New(isolate, CrashRenderer);
+  else if (name->Equals(v8::String::NewFromUtf8(isolate, "SetCrashDumpDir")))
+    return v8::FunctionTemplate::New(isolate, SetCrashDumpDir);
+  else if (name->Equals(v8::String::NewFromUtf8(isolate, "AllocateId")))
+    return v8::FunctionTemplate::New(isolate, AllocateId);
 
   NOTREACHED() << "Trying to get an non-exist function in DispatcherBindings:"
                << *v8::String::Utf8Value(name);
-  return v8::FunctionTemplate::New();
+  return v8::FunctionTemplate::New(isolate);
 }
 
 // static
 void
 DispatcherBindings::RequireNwGui(const v8::FunctionCallbackInfo<v8::Value>& args) {
-  v8::HandleScope scope;
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::EscapableHandleScope handle_scope(isolate);
 
   // Initialize lazily
-  v8::Local<v8::String> NwGuiSymbol = v8::String::NewSymbol("nwGui");
+  v8::Local<v8::String> NwGuiSymbol = v8::String::NewFromUtf8(isolate, "nwGui", v8::String::kInternalizedString);
   v8::Local<v8::Value> NwGuiHidden = args.This()->Get(NwGuiSymbol);
   if (NwGuiHidden->IsObject()) {
-    args.GetReturnValue().Set(scope.Close(NwGuiHidden));
+    args.GetReturnValue().Set(handle_scope.Escape(NwGuiHidden));
     return;
   }
 
-  v8::Local<v8::Object> NwGui = v8::Object::New();
+  v8::Local<v8::Object> NwGui = v8::Object::New(isolate);
   args.This()->Set(NwGuiSymbol, NwGui);
   RequireFromResource(args.This(),
-      NwGui, v8::String::New("base.js"), IDR_NW_API_BASE_JS);
+                      NwGui, v8::String::NewFromUtf8(isolate, "base.js"), IDR_NW_API_BASE_JS);
   RequireFromResource(args.This(),
-      NwGui, v8::String::New("menuitem.js"), IDR_NW_API_MENUITEM_JS);
+                      NwGui, v8::String::NewFromUtf8(isolate, "menuitem.js"), IDR_NW_API_MENUITEM_JS);
   RequireFromResource(args.This(),
-      NwGui, v8::String::New("menu.js"), IDR_NW_API_MENU_JS);
+                      NwGui, v8::String::NewFromUtf8(isolate, "menu.js"), IDR_NW_API_MENU_JS);
   RequireFromResource(args.This(),
-      NwGui, v8::String::New("tray.js"), IDR_NW_API_TRAY_JS);
+                      NwGui, v8::String::NewFromUtf8(isolate, "tray.js"), IDR_NW_API_TRAY_JS);
   RequireFromResource(args.This(),
-      NwGui, v8::String::New("clipboard.js"), IDR_NW_API_CLIPBOARD_JS);
+                      NwGui, v8::String::NewFromUtf8(isolate, "clipboard.js"), IDR_NW_API_CLIPBOARD_JS);
   RequireFromResource(args.This(),
-      NwGui, v8::String::New("window.js"), IDR_NW_API_WINDOW_JS);
+                      NwGui, v8::String::NewFromUtf8(isolate, "window.js"), IDR_NW_API_WINDOW_JS);
   RequireFromResource(args.This(),
-      NwGui, v8::String::New("shell.js"), IDR_NW_API_SHELL_JS);
+                      NwGui, v8::String::NewFromUtf8(isolate, "shell.js"), IDR_NW_API_SHELL_JS);
   RequireFromResource(args.This(),
-      NwGui, v8::String::New("app.js"), IDR_NW_API_APP_JS);
+                      NwGui, v8::String::NewFromUtf8(isolate, "app.js"), IDR_NW_API_APP_JS);
 
-  args.GetReturnValue().Set(scope.Close(NwGui));
+  args.GetReturnValue().Set(handle_scope.Escape(NwGui));
 }
 
 // static
 void
 DispatcherBindings::GetAbsolutePath(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
   FilePath path = FilePath::FromUTF8Unsafe(*v8::String::Utf8Value(args[0]));
   MakePathAbsolute(&path);
 #if defined(OS_POSIX)
-  args.GetReturnValue().Set(v8::String::New(path.value().c_str()));
+  args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, path.value().c_str()));
 #else
-  args.GetReturnValue().Set(v8::String::New(path.AsUTF8Unsafe().c_str()));
+  args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, path.AsUTF8Unsafe().c_str()));
 #endif
 }
 
 // static
 void
 DispatcherBindings::GetShellIdForCurrentContext(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
   RenderView* render_view = GetCurrentRenderView();
   if (!render_view) {
-    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
+    args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
                                      "Unable to get render view in CallStaticMethodSync"))));
     return;
   }
 
   int id = -1;
   render_view->Send(new ShellViewHostMsg_GetShellId(MSG_ROUTING_NONE, &id));
-  args.GetReturnValue().Set(v8::Integer::New(id));
+  args.GetReturnValue().Set(v8::Integer::New(isolate, id));
 }
 
 // static
 void
 DispatcherBindings::GetRoutingIDForCurrentContext(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
   RenderView* render_view = GetCurrentRenderView();
   if (!render_view) {
-    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
+    args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
                                      "Unable to get render view in GetRoutingIDForCurrentContext"))));
     return;
   }
 
-  args.GetReturnValue().Set(v8::Integer::New(render_view->GetRoutingID()));
+  args.GetReturnValue().Set(v8::Integer::New(isolate, render_view->GetRoutingID()));
 }
 
 // static
 void
 DispatcherBindings::CreateShell(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
   if (args.Length() < 2) {
-    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
+    args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
                                      "CreateShell requries 2 arguments"))));
     return;
   }
@@ -231,17 +240,17 @@ DispatcherBindings::CreateShell(const v8::FunctionCallbackInfo<v8::Value>& args)
   scoped_ptr<V8ValueConverter> converter(V8ValueConverter::create());
 
   scoped_ptr<base::Value> value_manifest(
-      converter->FromV8Value(args[1], v8::Context::GetCurrent()));
+                                         converter->FromV8Value(args[1], isolate->GetCurrentContext()));
   if (!value_manifest.get() ||
       !value_manifest->IsType(base::Value::TYPE_DICTIONARY)) {
-    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
+    args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
                                      "Unable to convert 'options' passed to CreateShell"))));
     return;
   }
 
   RenderView* render_view = GetCurrentRenderView();
   if (!render_view) {
-    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
+    args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
                                      "Unable to get render view in CreateShell"))));
     return;
   }
@@ -253,15 +262,16 @@ DispatcherBindings::CreateShell(const v8::FunctionCallbackInfo<v8::Value>& args)
       *static_cast<base::DictionaryValue*>(value_manifest.get()),
       &routing_id));
 
-  args.GetReturnValue().Set(v8::Integer::New(routing_id));
+  args.GetReturnValue().Set(v8::Integer::New(isolate, routing_id));
 }
 
 // static
 void
 DispatcherBindings::AllocateId(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
   RenderView* render_view = GetCurrentRenderView();
   if (!render_view) {
-    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
+    args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
                                      "Unable to get render view in AllocateId"))));
     return;
   }
@@ -271,8 +281,9 @@ DispatcherBindings::AllocateId(const v8::FunctionCallbackInfo<v8::Value>& args) 
 
 void
 DispatcherBindings::AllocateObject(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
   if (args.Length() < 3) {
-    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
+    args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
                                      "AllocateObject requries 3 arguments"))));
     return;
   }
@@ -282,7 +293,7 @@ DispatcherBindings::AllocateObject(const v8::FunctionCallbackInfo<v8::Value>& ar
 
   RenderView* render_view = GetCurrentRenderView();
   if (!render_view) {
-    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
+    args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
                                      "Unable to get render view in AllocateObject"))));
     return;
   }
@@ -293,15 +304,16 @@ DispatcherBindings::AllocateObject(const v8::FunctionCallbackInfo<v8::Value>& ar
 // static
 void
 DispatcherBindings::DeallocateObject(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
   RenderView* render_view = GetCurrentRenderView();
   if (!render_view) {
-    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
+    args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
                                      "Unable to get render view in DeallocateObject"))));
     return;
   }
 
   if (args.Length() < 1) {
-    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
+    args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
                                      "DeallocateObject requries 1 arguments"))));
     return;
   }
@@ -311,8 +323,9 @@ DispatcherBindings::DeallocateObject(const v8::FunctionCallbackInfo<v8::Value>& 
 // static
 void
 DispatcherBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
   if (args.Length() < 4) {
-    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
+    args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
                                      "CallObjectMethod requries 4 arguments"))));
     return;
   }
@@ -325,7 +338,7 @@ DispatcherBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& 
   if (!render_view)
     render_view = GetEnteredRenderView();
   if (!render_view) {
-    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
+    args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
                                      "Unable to get render view in CallObjectMethod"))));
     return;
   }
@@ -336,8 +349,9 @@ DispatcherBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& 
 // static
 void DispatcherBindings::CallObjectMethodSync(
     const v8::FunctionCallbackInfo<v8::Value>& args) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
   if (args.Length() < 4) {
-    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
+    args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
                                      "CallObjectMethodSync requries 4 arguments"))));
     return;
   }
@@ -348,7 +362,7 @@ void DispatcherBindings::CallObjectMethodSync(
 
   RenderView* render_view = GetCurrentRenderView();
   if (!render_view) {
-    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
+    args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
                                      "Unable to get render view in CallObjectMethod"))));
     return;
   }
@@ -359,8 +373,9 @@ void DispatcherBindings::CallObjectMethodSync(
 // static
 void DispatcherBindings::CallStaticMethod(
     const v8::FunctionCallbackInfo<v8::Value>& args) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
   if (args.Length() < 3) {
-    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
+    args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
                                      "CallStaticMethod requries 3 arguments"))));
     return;
   }
@@ -371,17 +386,17 @@ void DispatcherBindings::CallStaticMethod(
   scoped_ptr<V8ValueConverter> converter(V8ValueConverter::create());
 
   scoped_ptr<base::Value> value_args(
-      converter->FromV8Value(args[2], v8::Context::GetCurrent()));
+      converter->FromV8Value(args[2], isolate->GetCurrentContext()));
   if (!value_args.get() ||
       !value_args->IsType(base::Value::TYPE_LIST)) {
-    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
+    args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
                                      "Unable to convert 'args' passed to CallStaticMethod"))));
     return;
   }
 
   RenderView* render_view = GetCurrentRenderView();
   if (!render_view) {
-    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
+    args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
                                      "Unable to get render view in CallStaticMethod"))));
     return;
   }
@@ -391,7 +406,7 @@ void DispatcherBindings::CallStaticMethod(
         type,
         method,
         *static_cast<base::ListValue*>(value_args.get())));
-  args.GetReturnValue().Set(v8::Undefined());
+  args.GetReturnValue().Set(v8::Undefined(isolate));
 }
 
 // static
@@ -413,8 +428,9 @@ void DispatcherBindings::SetCrashDumpDir(
 // static
 void DispatcherBindings::CallStaticMethodSync(
     const v8::FunctionCallbackInfo<v8::Value>& args) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
   if (args.Length() < 3) {
-    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
+    args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
                                      "CallStaticMethodSync requries 3 arguments"))));
     return;
   }
@@ -426,7 +442,7 @@ void DispatcherBindings::CallStaticMethodSync(
 
   RenderView* render_view = GetEnteredRenderView();
   if (!render_view) {
-    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
+    args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
                                      "Unable to get render view in CallStaticMethodSync"))));
     return;
   }
@@ -435,25 +451,25 @@ void DispatcherBindings::CallStaticMethodSync(
     std::string url = *v8::String::Utf8Value(args[2]);
     GURL gurl(url);
     if (!gurl.is_valid()) {
-      args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
+      args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
                                        "Invalid URL passed to App.getProxyForURL()"))));
       return;
     }
     std::string proxy;
     bool result = content::RenderThread::Get()->ResolveProxy(gurl, &proxy);
     if (!result) {
-      args.GetReturnValue().Set(v8::Undefined());
+      args.GetReturnValue().Set(v8::Undefined(isolate));
       return;
     }
-    args.GetReturnValue().Set(v8::String::New(proxy.c_str()));
+    args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, proxy.c_str()));
     return;
   }
 
   scoped_ptr<base::Value> value_args(
-      converter->FromV8Value(args[2], v8::Context::GetCurrent()));
+                                     converter->FromV8Value(args[2], isolate->GetCurrentContext()));
   if (!value_args.get() ||
       !value_args->IsType(base::Value::TYPE_LIST)) {
-    args.GetReturnValue().Set(v8::ThrowException(v8::Exception::Error(v8::String::New(
+    args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
                                      "Unable to convert 'args' passed to CallStaticMethodSync"))));
     return;
   }
@@ -465,7 +481,7 @@ void DispatcherBindings::CallStaticMethodSync(
         method,
         *static_cast<base::ListValue*>(value_args.get()),
         &result));
-  args.GetReturnValue().Set(converter->ToV8Value(&result, v8::Context::GetCurrent()));
+  args.GetReturnValue().Set(converter->ToV8Value(&result, isolate->GetCurrentContext()));
 }
 
 }  // namespace nwapi

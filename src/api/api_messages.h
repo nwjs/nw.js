@@ -36,7 +36,7 @@ IPC_STRUCT_TRAITS_END()
 IPC_MESSAGE_ROUTED3(ShellViewHostMsg_Allocate_Object,
                     int /* object id */,
                     std::string /* type name */,
-                    DictionaryValue /* option */)
+                    base::DictionaryValue /* option */)
 
 IPC_MESSAGE_ROUTED1(ShellViewHostMsg_Deallocate_Object,
                     int /* object id */)
@@ -45,30 +45,30 @@ IPC_MESSAGE_ROUTED4(ShellViewHostMsg_Call_Object_Method,
                     int /* object id */,
                     std::string /* type name */,
                     std::string /* method name */,
-                    ListValue /* arguments */)
+                    base::ListValue /* arguments */)
 
 IPC_SYNC_MESSAGE_ROUTED4_1(ShellViewHostMsg_Call_Object_Method_Sync,
                            int /* object id */,
                            std::string /* type name */,
                            std::string /* method name */,
-                           ListValue /* arguments */,
-                           ListValue /* result */)
+                           base::ListValue /* arguments */,
+                           base::ListValue /* result */)
 
 IPC_MESSAGE_ROUTED3(ShellViewHostMsg_Call_Static_Method,
                     std::string /* type name */,
                     std::string /* method name */,
-                    ListValue /* arguments */)
+                    base::ListValue /* arguments */)
 
 IPC_SYNC_MESSAGE_ROUTED3_1(ShellViewHostMsg_Call_Static_Method_Sync,
                            std::string /* type name */,
                            std::string /* method name */,
-                           ListValue /* arguments */,
-                           ListValue /* result */)
+                           base::ListValue /* arguments */,
+                           base::ListValue /* result */)
 
 IPC_MESSAGE_ROUTED3(ShellViewMsg_Object_On_Event,
                     int /* object id */,
                     std::string /* event name */,
-                    ListValue /* arguments */)
+                    base::ListValue /* arguments */)
 
 // Request Shell's id for current render_view_host.
 IPC_SYNC_MESSAGE_ROUTED0_1(ShellViewHostMsg_GetShellId,
@@ -77,7 +77,7 @@ IPC_SYNC_MESSAGE_ROUTED0_1(ShellViewHostMsg_GetShellId,
 // Create a Shell and returns its routing id.
 IPC_SYNC_MESSAGE_ROUTED2_1(ShellViewHostMsg_CreateShell,
                            std::string /* url */,
-                           DictionaryValue /* manifest */,
+                           base::DictionaryValue /* manifest */,
                            int /* result */)
 
 // Tell browser we have an uncaughtException from node.

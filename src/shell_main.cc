@@ -49,7 +49,10 @@ int main(int argc, const char** argv) {
   return ::ContentMain(argc, argv);
 #else
   content::ShellMainDelegate delegate;
-  return content::ContentMain(argc, argv, &delegate);
+  content::ContentMainParams params(&delegate);
+  params.argc = argc;
+  params.argv = argv;
+  return content::ContentMain(params);
 #endif  // OS_MACOSX
 }
 

@@ -63,7 +63,7 @@ bool ShellResourceDispatcherHostDelegate::HandleExternalProtocol(
   BrowserThread::PostTask(
       BrowserThread::FILE,
       FROM_HERE,
-      base::Bind(&platform_util::OpenExternal, url));
+      base::Bind(&platform_util::OpenExternal2, url));
 #endif
 
   return true;

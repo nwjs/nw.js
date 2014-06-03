@@ -37,7 +37,7 @@
         '<(DEPTH)/base/base.gyp:base',
         '<(DEPTH)/base/third_party/dynamic_annotations/dynamic_annotations.gyp:dynamic_annotations',
         '<(DEPTH)/components/components.gyp:autofill_content_renderer',
-        '<(DEPTH)/components/components.gyp:browser_context_keyed_service',
+        '<(DEPTH)/components/components.gyp:keyed_service_content',
         '<(DEPTH)/content/content.gyp:content_app_browser',
         '<(DEPTH)/content/content.gyp:content_browser',
         '<(DEPTH)/content/content.gyp:content_common',
@@ -55,11 +55,10 @@
         '<(DEPTH)/printing/printing.gyp:printing',
         '<(DEPTH)/skia/skia.gyp:skia',
         '<(DEPTH)/third_party/node/node.gyp:node',
-        '<(DEPTH)/ui/ui.gyp:ui',
-        '<(DEPTH)/ui/ui.gyp:ui_resources',
+        '<(DEPTH)/ui/base/ui_base.gyp:ui_base',
+        '<(DEPTH)/ui/resources/ui_resources.gyp:ui_resources',
         '<(DEPTH)/url/url.gyp:url_lib',
         '<(DEPTH)/v8/tools/gyp/v8.gyp:v8',
-        '<(DEPTH)/webkit/glue/webkit_glue.gyp:glue',
         '<(DEPTH)/third_party/zlib/zlib.gyp:minizip',
         '<(DEPTH)/third_party/WebKit/public/blink.gyp:blink',
         'nw_resources',
@@ -71,6 +70,7 @@
         '<(DEPTH)/breakpad/src',
         '<(SHARED_INTERMEDIATE_DIR)/blink',
         '<(SHARED_INTERMEDIATE_DIR)/blink/bindings',
+        '<(SHARED_INTERMEDIATE_DIR)/chrome',
       ],
       'cflags_cc': [
         '-Wno-error=c++0x-compat',
@@ -83,7 +83,6 @@
         #'<(DEPTH)/chrome/common/child_process_logging_posix.cc',
         #'<(DEPTH)/chrome/common/child_process_logging_win.cc',
         '<(DEPTH)/chrome/common/crash_keys.cc',
-        '<(DEPTH)/chrome/common/dump_without_crashing.cc',
         '<(DEPTH)/chrome/common/env_vars.cc',
         '<(DEPTH)/chrome/browser/crash_upload_list.cc',
         '<(DEPTH)/chrome/browser/upload_list.cc',
@@ -274,8 +273,8 @@
         'src/nw_version.h',
         'src/paths_mac.h',
         'src/paths_mac.mm',
-        'src/renderer/autofill_agent.cc',
-        'src/renderer/autofill_agent.h',
+        #        'src/renderer/autofill_agent.cc',
+        # 'src/renderer/autofill_agent.h',
         'src/renderer/common/render_messages.cc',
         'src/renderer/common/render_messages.h',
         'src/renderer/prerenderer/prerenderer_client.cc',
@@ -378,7 +377,7 @@
             '<(SHARED_INTERMEDIATE_DIR)/webkit',
           ],
           'dependencies': [
-            '<(DEPTH)/ui/ui.gyp:ui_resources',
+            '<(DEPTH)/ui/resources/ui_resources.gyp:ui_resources',
             '<(DEPTH)/ui/views/controls/webview/webview.gyp:webview',
             '<(DEPTH)/ui/views/views.gyp:views',
             '<(DEPTH)/webkit/webkit_resources.gyp:webkit_resources',
@@ -532,7 +531,7 @@
       'type': 'none',
       'dependencies': [
         '<(DEPTH)/content/browser/devtools/devtools_resources.gyp:devtools_resources',
-        '<(DEPTH)/ui/ui.gyp:ui_resources',
+        '<(DEPTH)/ui/resources/ui_resources.gyp:ui_resources',
         'nw_resources',
       ],
       'variables': {
@@ -680,6 +679,10 @@
             },
           },
         }],  # OS=="win"
+        ['OS == "linux"', {
+          'ldflags': [
+            '-Wl,--whole-archive', 'obj/third_party/node/libnode.a', '-Wl,--no-whole-archive' ],
+        }],
         ['OS == "win" or toolkit_uses_gtk == 1', {
           'dependencies': [
             '<(DEPTH)/sandbox/sandbox.gyp:sandbox',

@@ -51,25 +51,36 @@ class ShellBrowserContext : public BrowserContext {
   virtual GeolocationPermissionContext*
       GetGeolocationPermissionContext() OVERRIDE;
   virtual quota::SpecialStoragePolicy* GetSpecialStoragePolicy() OVERRIDE;
-  virtual void RequestMIDISysExPermission(
+
+  virtual void RequestMidiSysExPermission(
       int render_process_id,
       int render_view_id,
       int bridge_id,
       const GURL& requesting_frame,
-      const MIDISysExPermissionCallback& callback) OVERRIDE;
-  virtual void CancelMIDISysExPermissionRequest(
-    int render_process_id,
-    int render_view_id,
-    int bridge_id,
-    const GURL& requesting_frame) OVERRIDE;
+      bool user_gesture,
+      const MidiSysExPermissionCallback& callback) OVERRIDE;
+  virtual void CancelMidiSysExPermissionRequest(
+      int render_process_id,
+      int render_view_id,
+      int bridge_id,
+      const GURL& requesting_frame) OVERRIDE;
+  virtual void RequestProtectedMediaIdentifierPermission(
+      int render_process_id,
+      int render_view_id,
+      int bridge_id,
+      int group_id,
+      const GURL& requesting_frame,
+      const ProtectedMediaIdentifierPermissionCallback& callback) OVERRIDE;
+  virtual void CancelProtectedMediaIdentifierPermissionRequests(
+      int group_id) OVERRIDE;
 
-
-  net::URLRequestContextGetter* CreateRequestContext(
-                                                     ProtocolHandlerMap* protocol_handlers);
-  net::URLRequestContextGetter* CreateRequestContextForStoragePartition(
+  virtual net::URLRequestContextGetter* CreateRequestContext(
+                                                     ProtocolHandlerMap* protocol_handlers,
+                                                     ProtocolHandlerScopedVector protocol_interceptors) OVERRIDE;
+  virtual net::URLRequestContextGetter* CreateRequestContextForStoragePartition(
       const base::FilePath& partition_path,
       bool in_memory,
-      ProtocolHandlerMap* protocol_handlers);
+      ProtocolHandlerMap* protocol_handlers) OVERRIDE;
 
   bool pinning_renderer() { return !disable_pinning_renderer_; }
   void set_pinning_renderer(bool val) { disable_pinning_renderer_ = !val; }

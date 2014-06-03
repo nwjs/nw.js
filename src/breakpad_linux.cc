@@ -25,6 +25,7 @@
 #include "base/base_switches.h"
 #include "base/command_line.h"
 #include "base/debug/crash_logging.h"
+#include "base/debug/dump_without_crashing.h"
 #include "base/files/file_path.h"
 #include "base/linux_util.h"
 #include "base/path_service.h"
@@ -1384,7 +1385,7 @@ void InitCrashReporter() {
 
   SetProcessStartTime();
 
-  breakpad::GetBreakpadClient()->SetDumpWithoutCrashingFunction(&DumpProcess);
+  base::debug::SetDumpWithoutCrashingFunction(&DumpProcess);
 #if defined(ADDRESS_SANITIZER)
   // Register the callback for AddressSanitizer error reporting.
   __asan_set_error_report_callback(AsanLinuxBreakpadCallback);
