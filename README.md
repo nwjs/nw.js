@@ -109,6 +109,8 @@ Issues are being tracked here on GitHub.
 
 You can chat with us on IRC in the ##node-webkit channel on irc.freenode.net  
 
+[![Bountysource](https://api.bountysource.com/badge/tracker?tracker_id=51989)](https://www.bountysource.com/trackers/51989-node-webkit?utm_source=51989&utm_medium=shield&utm_campaign=TRACKER_BADGE)
+
 ## License
 
 `node-webkit`'s code in this repo uses the MIT license, see our `LICENSE` file. To redistribute the binary, see [How to package and distribute your apps](https://github.com/rogerwang/node-webkit/wiki/How-to-package-and-distribute-your-apps)
