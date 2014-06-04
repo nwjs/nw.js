@@ -101,6 +101,9 @@ DispatcherBindings::DispatcherBindings()
                     NULL,  // dependencies array.
                     GetStringResource(
                         IDR_NW_API_DISPATCHER_BINDINGS_JS).size()) {
+#if defined(OS_MACOSX)
+  InitMsgIDMap();
+#endif
 }
 
 DispatcherBindings::~DispatcherBindings() {
@@ -136,6 +139,10 @@ DispatcherBindings::GetNativeFunction(v8::Handle<v8::String> name) {
     return v8::FunctionTemplate::New(SetCrashDumpDir);
   else if (name->Equals(v8::String::New("AllocateId")))
     return v8::FunctionTemplate::New(AllocateId);
+  else if (name->Equals(v8::String::New("GetNSStringWithFixup")))
+    return v8::FunctionTemplate::New(GetNSStringWithFixup);
+  else if (name->Equals(v8::String::New("GetNSStringFWithFixup")))
+    return v8::FunctionTemplate::New(GetNSStringFWithFixup);
 
   NOTREACHED() << "Trying to get an non-exist function in DispatcherBindings:"
                << *v8::String::Utf8Value(name);
