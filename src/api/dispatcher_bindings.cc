@@ -139,10 +139,12 @@ DispatcherBindings::GetNativeFunction(v8::Handle<v8::String> name) {
     return v8::FunctionTemplate::New(SetCrashDumpDir);
   else if (name->Equals(v8::String::New("AllocateId")))
     return v8::FunctionTemplate::New(AllocateId);
+#if defined(OS_MACOSX)
   else if (name->Equals(v8::String::New("GetNSStringWithFixup")))
     return v8::FunctionTemplate::New(GetNSStringWithFixup);
   else if (name->Equals(v8::String::New("GetNSStringFWithFixup")))
     return v8::FunctionTemplate::New(GetNSStringFWithFixup);
+#endif
 
   NOTREACHED() << "Trying to get an non-exist function in DispatcherBindings:"
                << *v8::String::Utf8Value(name);
