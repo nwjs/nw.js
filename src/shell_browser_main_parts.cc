@@ -199,10 +199,6 @@ void ShellBrowserMainParts::Init() {
 bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(
     const CommandLine& command_line,
     const base::FilePath& current_directory) {
-  if (!package_->self_extract()) {
-    // We're in runtime mode, create the new app.
-    return false;
-  }
 
   // Don't reuse current instance if 'single-instance' is specified to false.
   bool single_instance;
