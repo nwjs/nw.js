@@ -111,6 +111,8 @@ def generate_target_nw(platform_name, arch, version):
                            'libGLESv2.dll',
                            'nw.exe',
                            'nw.pak',
+                           'nw.exp',
+                           'nw.lib',
                            'nwsnapshot.exe',
                            'credits.html',
                            ]
