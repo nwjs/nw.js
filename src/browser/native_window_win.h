@@ -87,6 +87,7 @@ class NativeWindowWin : public NativeWindow,
   virtual void FlashFrame(int count) OVERRIDE;
   virtual void SetKiosk(bool kiosk) OVERRIDE;
   virtual void SetBadgeLabel(const std::string& badge) OVERRIDE;
+  virtual void SetProgressBar(double progress) OVERRIDE;
   virtual bool IsKiosk() OVERRIDE;
   virtual void SetMenu(nwapi::Menu* menu) OVERRIDE;
   virtual void SetToolbarButtonEnabled(TOOLBAR_BUTTON button,

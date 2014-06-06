@@ -61,6 +61,7 @@ class NativeWindowGtk : public NativeWindow {
   virtual void SetTitle(const std::string& title) OVERRIDE;
   virtual void FlashFrame(int count) OVERRIDE;
   virtual void SetBadgeLabel(const std::string& badge) OVERRIDE;
+  virtual void SetProgressBar(double progress) OVERRIDE;
   virtual void SetKiosk(bool kiosk) OVERRIDE;
   virtual bool IsKiosk() OVERRIDE;
   virtual void SetMenu(nwapi::Menu* menu) OVERRIDE;

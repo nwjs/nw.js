@@ -101,6 +101,7 @@ class NativeWindow {
   virtual void SetTitle(const std::string& title) = 0;
   virtual void FlashFrame(int count) = 0;
   virtual void SetBadgeLabel(const std::string& badge) = 0;
+  virtual void SetProgressBar(double progress) = 0;
   virtual void SetKiosk(bool kiosk) = 0;
   virtual bool IsKiosk() = 0;
   virtual void SetMenu(nwapi::Menu* menu) = 0;

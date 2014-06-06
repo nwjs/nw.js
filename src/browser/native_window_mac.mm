@@ -307,6 +307,41 @@ enum {
 
 @end
 
+@interface NWProgressBar : NSProgressIndicator
+@end
+
+@implementation NWProgressBar
+
+// override the drawing, so we can give color to the progress bar
+- (void)drawRect:(NSRect)dirtyRect {
+  
+  [super drawRect:dirtyRect];
+  
+  if(self.style != NSProgressIndicatorBarStyle)
+    return;
+  
+  NSRect sliceRect, remainderRect;
+  double progressFraction = ([self doubleValue] - [self minValue]) /
+  ([self maxValue] - [self minValue]);
+  
+  NSDivideRect(dirtyRect, &sliceRect, &remainderRect,
+               NSWidth(dirtyRect) * progressFraction, NSMinXEdge);
+  
+  const int kProgressBarCornerRadius = 3;
+  
+  if (progressFraction == 0.0)
+    return;
+  
+  NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:sliceRect
+                                                       xRadius:kProgressBarCornerRadius
+                                                       yRadius:kProgressBarCornerRadius];
+  // blue color with alpha blend 0.5
+  [[NSColor colorWithCalibratedRed:0 green:0 blue:1 alpha:0.5] set];
+  [path fill];
+}
+@end
+
+
 namespace nw {
 
 NativeWindowCocoa::NativeWindowCocoa(
@@ -647,6 +682,60 @@ void NativeWindowCocoa::FlashFrame(int count) {
 
 void NativeWindowCocoa::SetBadgeLabel(const std::string& badge) {
   [[NSApp dockTile] setBadgeLabel:base::SysUTF8ToNSString(badge)];
+}
+
+
+void NativeWindowCocoa::SetProgressBar(double progress){
+  NSDockTile *dockTile = [NSApp dockTile];
+  NWProgressBar *progressIndicator = NULL;
+  
+  if (dockTile.contentView == NULL && progress >= 0) {
+    
+    // create image view to draw application icon
+    NSImageView *iv = [[NSImageView alloc] init];
+    [iv setImage:[NSApp applicationIconImage]];
+    
+    // set dockTile content view to app icon
+    [dockTile setContentView:iv];
+    
+    progressIndicator = [[NWProgressBar alloc]
+                         initWithFrame:NSMakeRect(0.0f, 0.0f, dockTile.size.width, 15.)];
+    
+    [progressIndicator setStyle:NSProgressIndicatorBarStyle];
+    
+    [progressIndicator setBezeled:YES];
+    [progressIndicator setMinValue:0];
+    [progressIndicator setMaxValue:1];
+    [progressIndicator setHidden:NO];
+    [progressIndicator setUsesThreadedAnimation:false];
+    
+    // add progress indicator to image view
+    [iv addSubview:progressIndicator];
+  }
+  
+  progressIndicator = (NWProgressBar*)[dockTile.contentView.subviews objectAtIndex:0];
+  
+  if(progress >= 0) {
+    [progressIndicator setIndeterminate:progress > 1];
+    if(progress > 1) {
+      // progress Indicator is indeterminate
+      // [progressIndicator startAnimation:window_];
+      [progressIndicator setDoubleValue:1];
+    }
+    else {
+      //[progressIndicator stopAnimation:window_];
+      [progressIndicator setDoubleValue:progress];
+    }
+  }
+  else {
+    // progress indicator < 0, destroy it
+    [[dockTile.contentView.subviews objectAtIndex:0]release];
+    [dockTile.contentView release];
+    dockTile.contentView = NULL;
+  }
+  
+  [dockTile display];
+  
 }
 
 void NativeWindowCocoa::SetKiosk(bool kiosk) {

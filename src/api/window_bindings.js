@@ -420,6 +420,12 @@ Window.prototype.setBadgeLabel = function(label) {
   CallObjectMethod(this, 'SetBadgeLabel', [ label ]);
 }
 
+Window.prototype.setProgressBar = function(progress) {
+  if (typeof progress != "number")
+    throw new String('progress must be a number');
+  CallObjectMethod(this, 'SetProgressBar', [ progress ]);
+}
+
 Window.prototype.setPosition = function(position) {
   if (position != 'center' && position != 'mouse')
     throw new String('Invalid postion');
