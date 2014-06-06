@@ -312,11 +312,15 @@ nw::Package* Shell::GetPackage() {
 }
 
 void Shell::LoadURL(const GURL& url) {
-  web_contents_->GetController().LoadURL(
-      url,
-      Referrer(),
-      PAGE_TRANSITION_TYPED,
-      std::string());
+  NavigationController::LoadURLParams params(url);
+  params.transition_type = PageTransitionFromInt(
+      PAGE_TRANSITION_TYPED | PAGE_TRANSITION_FROM_ADDRESS_BAR);
+  web_contents_->GetController().LoadURLWithParams(params);
+  // web_contents_->GetController().LoadURL(
+  //     url,
+  //     Referrer(),
+  //     PAGE_TRANSITION_TYPED,
+  //     std::string());
   web_contents_->GetView()->Focus();
   window()->SetToolbarButtonEnabled(nw::NativeWindow::BUTTON_FORWARD, false);
 }

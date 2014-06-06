@@ -60,6 +60,9 @@ class ShellContentRendererClient : public ContentRendererClient {
   scoped_ptr<ShellRenderProcessObserver> shell_observer_;
   scoped_ptr<nwapi::WindowBindings> window_bindings_;
 
+  bool in_nav_cb_;
+  std::string in_nav_url_;
+
   bool creating_first_context_;
 
   void InstallNodeSymbols(blink::WebFrame* frame,

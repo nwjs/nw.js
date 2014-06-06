@@ -221,6 +221,17 @@ bool ShellContentRendererClient::goodForNode(blink::WebFrame* frame)
 {
   RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
   GURL url(frame->document().url());
+
+  // the way to tell the loading URL is not reliable in some cases
+  // like navigation and window.open. Fortunately we are in
+  // willHandleNavigationPolicy callback so we can use the request url
+  // from there
+
+  if (url.is_empty() && in_nav_cb_) {
+    ASSERT(!in_nav_url_.empty());
+    url = GURL(in_nav_url_);
+  }
+
   ProxyBypassRules rules;
   rules.ParseFromString(rv->renderer_preferences_.nw_remote_page_rules);
   bool force_on = rules.Matches(url);
@@ -238,6 +249,7 @@ bool ShellContentRendererClient::WillSetSecurityToken(
   GURL url(frame->document().url());
   VLOG(1) << "WillSetSecurityToken: " << url;
   if (goodForNode(frame)) {
+    VLOG(1) << "GOOD FOR NODE";
     // Override context's security token
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
     v8::HandleScope scope(isolate);
@@ -447,7 +459,10 @@ void ShellContentRendererClient::willHandleNavigationPolicy(
     const blink::WebURLRequest& request,
     blink::WebNavigationPolicy* policy) {
 
+  in_nav_cb_ = true;
+  in_nav_url_ = request.url().string().utf8();
   nwapi::Dispatcher::willHandleNavigationPolicy(rv, frame, request, policy);
+  in_nav_cb_ = false;
 }
 
 }  // namespace content

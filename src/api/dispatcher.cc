@@ -207,7 +207,6 @@ void Dispatcher::willHandleNavigationPolicy(
     return;
 
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
-  v8::Context::Scope cscope (web_view->mainFrame()->mainWorldScriptContext());
 
   v8::Handle<v8::Value> id_val = nwapi::Dispatcher::GetWindowId(web_view->mainFrame());
   if (id_val->IsNull() || id_val->IsUndefined())
@@ -216,6 +215,8 @@ void Dispatcher::willHandleNavigationPolicy(
   v8::Handle<v8::Object> objects_registry = nwapi::Dispatcher::GetObjectRegistry();
   if (objects_registry->IsUndefined())
     return;
+
+  v8::Context::Scope cscope (web_view->mainFrame()->mainWorldScriptContext());
 
   v8::Local<v8::Array> args = v8::Array::New(isolate);
   v8::Handle<v8::Value> element = v8::Null(isolate);
