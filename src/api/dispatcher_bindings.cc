@@ -473,11 +473,11 @@ void DispatcherBindings::CallStaticMethodSync(
     std::string destinationHost     = *v8::String::Utf8Value(args[4]);
     bool allowDestinationSubdomains = args[5]->ToBoolean()->Value();
 
-    WebKit::WebSecurityPolicy::addOriginAccessWhitelistEntry(GURL(sourceOrigin),
-                                                             WebKit::WebString::fromUTF8(destinationProtocol),
-                                                             WebKit::WebString::fromUTF8(destinationHost),
+    blink::WebSecurityPolicy::addOriginAccessWhitelistEntry(GURL(sourceOrigin),
+                                                             blink::WebString::fromUTF8(destinationProtocol),
+                                                             blink::WebString::fromUTF8(destinationHost),
                                                              allowDestinationSubdomains);
-    args.GetReturnValue().Set(v8::Undefined());
+    args.GetReturnValue().Set(v8::Undefined(isolate));
     return;
   }
   if (type == "App" && method == "RemoveOriginAccessWhitelistEntry") {
@@ -486,11 +486,11 @@ void DispatcherBindings::CallStaticMethodSync(
     std::string destinationHost     = *v8::String::Utf8Value(args[4]);
     bool allowDestinationSubdomains = args[5]->ToBoolean()->Value();
 
-    WebKit::WebSecurityPolicy::removeOriginAccessWhitelistEntry(GURL(sourceOrigin),
-                                                             WebKit::WebString::fromUTF8(destinationProtocol),
-                                                             WebKit::WebString::fromUTF8(destinationHost),
+    blink::WebSecurityPolicy::removeOriginAccessWhitelistEntry(GURL(sourceOrigin),
+                                                             blink::WebString::fromUTF8(destinationProtocol),
+                                                             blink::WebString::fromUTF8(destinationHost),
                                                              allowDestinationSubdomains);
-    args.GetReturnValue().Set(v8::Undefined());
+    args.GetReturnValue().Set(v8::Undefined(isolate));
     return;
   }
   scoped_ptr<base::Value> value_args(
