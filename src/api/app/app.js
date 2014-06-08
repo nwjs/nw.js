@@ -60,6 +60,14 @@ App.prototype.getProxyForURL = function (url) {
   return nw.callStaticMethodSync('App', 'getProxyForURL', [ url ]);
 }
 
+App.prototype.addOriginAccessWhitelistEntry = function(sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains) {
+    return nw.callStaticMethodSync('App', 'AddOriginAccessWhitelistEntry', sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains);
+}
+
+App.prototype.removeOriginAccessWhitelistEntry = function(sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains) {
+    return nw.callStaticMethodSync('App', 'RemoveOriginAccessWhitelistEntry', sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains);
+}
+
 App.prototype.__defineGetter__('argv', function() {
   if (!argv) {
     var fullArgv = this.fullArgv;

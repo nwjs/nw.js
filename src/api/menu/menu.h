@@ -48,7 +48,7 @@ class NativeWindowGtk;
 #include "content/nw/src/api/menu/menu_delegate_win.h"
 #include "ui/views/controls/menu/native_menu_win.h"
 #include "chrome/browser/status_icons/status_icon_menu_model.h"
-
+#include "ui/views/focus/focus_manager.h"
 namespace nw {
 class NativeWindowWin;
 }
@@ -89,6 +89,14 @@ class Menu : public Base {
   virtual void Call(const std::string& method,
                     const base::ListValue& arguments) OVERRIDE;
 
+#if defined(OS_LINUX)
+  void UpdateKeys(GtkAccelGroup *gtk_accel_group);
+#endif
+  
+#if defined(OS_WIN)
+  void UpdateKeys(views::FocusManager *focus_manager);
+#endif
+
  private:
   friend class MenuItem;
   friend class Tray;
@@ -101,6 +109,11 @@ class Menu : public Base {
   void Remove(MenuItem* menu_item, int pos);
   void Popup(int x, int y, content::Shell*);
 
+#if defined(OS_LINUX)
+  std::vector<MenuItem*> menu_items;
+  GtkAccelGroup *gtk_accel_group;
+#endif
+
 #if defined(OS_MACOSX)
   friend class nw::NativeWindowCocoa;
   NSMenu* menu_;
@@ -111,6 +124,11 @@ class Menu : public Base {
   friend class nw::NativeWindowWin;
 
   void Rebuild(const HMENU *parent_menu = NULL);
+
+  //**Never Try to free this pointer**
+  //We get it from top widget
+  views::FocusManager *focus_manager_;
+  std::vector<MenuItem*> menu_items_;
 
   // Flag to indicate the menu has been modified since last show, so we should
   // rebuild the menu before next show.

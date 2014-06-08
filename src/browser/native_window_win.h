@@ -31,6 +31,11 @@
 #include "ui/views/widget/widget_delegate.h"
 #include "ui/views/widget/widget_observer.h"
 
+#include "ui/base/accelerators/accelerator.h"
+#include "ui/base/accelerators/accelerator_manager.h"
+#include "ui/views/controls/webview/unhandled_keyboard_event_handler.h"
+#include "ui/events/keycodes/keyboard_codes.h"
+
 namespace views {
 class WebView;
 }
@@ -104,6 +109,9 @@ class NativeWindowWin : public NativeWindow,
   virtual gfx::ImageSkia GetWindowIcon() OVERRIDE;
   virtual bool ShouldShowWindowTitle() const OVERRIDE;
   virtual bool ShouldHandleOnSize()    const OVERRIDE;
+  views::UnhandledKeyboardEventHandler unhandled_keyboard_event_handler_;
+
+
 
   // WidgetFocusChangeListener implementation.
   virtual void OnNativeFocusChange(gfx::NativeView focused_before,
@@ -111,6 +119,13 @@ class NativeWindowWin : public NativeWindow,
 
   // WidgetObserver implementation
   virtual void OnWidgetBoundsChanged(views::Widget* widget, const gfx::Rect& new_bounds) OVERRIDE;
+
+  virtual bool AcceleratorPressed(const ui::Accelerator& accelerator) OVERRIDE{
+    return true;
+  }
+  virtual bool CanHandleAccelerators() const OVERRIDE{
+    return true;
+  }
 
  protected:
   // NativeWindow implementation.
@@ -151,7 +166,6 @@ class NativeWindowWin : public NativeWindow,
   bool is_blur_;
 
   scoped_ptr<SkRegion> draggable_region_;
-
   // The window's menubar.
   nwapi::Menu* menu_;
 
@@ -164,6 +178,9 @@ class NativeWindowWin : public NativeWindow,
 
   int last_width_;
   int last_height_;
+
+  bool super_down_;
+  bool meta_down_;
 
   DISALLOW_COPY_AND_ASSIGN(NativeWindowWin);
 };

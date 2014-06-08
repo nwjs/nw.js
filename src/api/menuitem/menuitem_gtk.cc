@@ -23,12 +23,14 @@
 #include "base/values.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"
+#include "gdk/gdkkeysyms.h"//to get keyval from name
 
 namespace nwapi {
 
 void MenuItem::Create(const base::DictionaryValue& option) {
   std::string type;
   option.GetString("type", &type);
+  submenu_ = NULL;
 
   if (type == "separator") {
     menu_item_ = gtk_separator_menu_item_new();
@@ -60,6 +62,31 @@ void MenuItem::Create(const base::DictionaryValue& option) {
     int menu_id;
     if (option.GetInteger("submenu", &menu_id))
       SetSubmenu(dispatcher_host()->GetApiObject<Menu>(menu_id));
+    std::string key;
+    if (option.GetString("key",&key)){
+      enable_shortcut = true;
+      std::string modifiers = "";
+      option.GetString("modifiers",&modifiers);
+      modifiers_mask = GdkModifierType(0);
+      if (modifiers.size() != 0){
+        if (modifiers.find("ctrl") != std::string::npos){
+          modifiers_mask = GdkModifierType(modifiers_mask|GDK_CONTROL_MASK);
+        }
+        if (modifiers.find("alt") != std::string::npos){
+          modifiers_mask = GdkModifierType(modifiers_mask|GDK_MOD1_MASK);
+        }
+        if (modifiers.find("super") != std::string::npos){
+          modifiers_mask = GdkModifierType(modifiers_mask|GDK_SUPER_MASK);
+        }
+        if (modifiers.find("meta") != std::string::npos){
+          modifiers_mask = GdkModifierType(modifiers_mask|GDK_META_MASK);
+        }
+      }
+      keyval = gdk_keyval_from_name(key.c_str());
+
+    } else {
+      enable_shortcut = false;
+    }
 
     block_active_ = false;
     g_signal_connect(menu_item_, "activate",
@@ -76,6 +103,7 @@ void MenuItem::Destroy() {
 }
 
 void MenuItem::SetLabel(const std::string& label) {
+  label_ = label;
   gtk_menu_item_set_label(GTK_MENU_ITEM(menu_item_), label.c_str());
 }
 
@@ -106,6 +134,10 @@ void MenuItem::SetChecked(bool checked) {
 }
 
 void MenuItem::SetSubmenu(Menu* sub_menu) {
+  submenu_ = sub_menu;
+  if (GTK_IS_ACCEL_GROUP(gtk_accel_group)){
+    sub_menu->UpdateKeys(gtk_accel_group);
+  }
   if (sub_menu == NULL)
     gtk_menu_item_remove_submenu(GTK_MENU_ITEM(menu_item_));
   else
@@ -120,4 +152,24 @@ void MenuItem::OnClick(GtkWidget* widget) {
   dispatcher_host()->SendEvent(this, "click", args);
 }
 
+
+void MenuItem::UpdateKeys(GtkAccelGroup *gtk_accel_group){
+  this->gtk_accel_group = gtk_accel_group;
+  if (enable_shortcut && GTK_IS_ACCEL_GROUP(gtk_accel_group)){
+    gtk_widget_add_accelerator(
+      menu_item_,
+      "activate",
+      gtk_accel_group,
+      keyval,
+      modifiers_mask,
+      GTK_ACCEL_VISIBLE);
+  }
+  if (submenu_ != NULL){
+    submenu_->UpdateKeys(gtk_accel_group);
+  }
+  return;
+}
+
 }  // namespace nwapi
+
+

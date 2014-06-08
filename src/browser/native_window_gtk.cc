@@ -60,6 +60,9 @@ NativeWindowGtk::NativeWindowGtk(const base::WeakPtr<content::Shell>& shell,
 {
   window_ = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
 
+  gtk_accel_group = gtk_accel_group_new();
+  gtk_window_add_accel_group(window_,gtk_accel_group);
+
   vbox_ = gtk_vbox_new(FALSE, 0);
   gtk_widget_show(vbox_);
   gtk_container_add(GTK_CONTAINER(window_), vbox_);
@@ -308,6 +311,7 @@ bool NativeWindowGtk::IsKiosk() {
 }
 
 void NativeWindowGtk::SetMenu(nwapi::Menu* menu) {
+  menu->UpdateKeys(gtk_accel_group);
   gtk_box_pack_start(GTK_BOX(vbox_), menu->menu_, FALSE, FALSE, 0);
   gtk_box_reorder_child(GTK_BOX(vbox_), menu->menu_, 0);
 }

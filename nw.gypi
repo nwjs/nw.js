@@ -5,11 +5,6 @@
 {
   'variables': {
     'nw_product_name': 'node-webkit',
-    'conditions': [
-      ['OS=="linux"', {
-       'linux_dump_symbols': 1,
-      }],
-    ],
   },
   'target_defaults': {
     'configurations': {
@@ -586,24 +581,65 @@
       ],
     },
     {
-      'target_name': 'strip',
+      'target_name': 'nw_strip_symbol',
       'type': 'none',
-      'actions': [
-        {
-          'action_name': 'strip_nw_binaries',
-          'inputs': [
-            '<(PRODUCT_DIR)/nw',
+      'conditions': [
+        ['OS=="linux"', {
+          'variables': {
+            'linux_strip_binary': 1,
+          },
+          'actions': [
+            {
+              'action_name': 'dump_symbol_and_strip',
+              'inputs': [
+                '<(DEPTH)/content/nw/tools/dump_app_syms',
+                '<(PRODUCT_DIR)/dump_syms',
+                '<(PRODUCT_DIR)/nw',
+              ],
+              'outputs': [
+                '<(PRODUCT_DIR)/nw.breakpad.<(target_arch)',
+              ],
+              'action': ['<(DEPTH)/content/nw/tools/dump_app_syms',
+                         '<(PRODUCT_DIR)/dump_syms',
+                         '<(linux_strip_binary)',
+                         '<(PRODUCT_DIR)/nw',
+                         '<@(_outputs)'],
+              'message': 'Dumping breakpad symbols to <(_outputs)',
+              'process_outputs_as_sources': 1,
+            },
           ],
-          'outputs': [
-            '<(PRODUCT_DIR)/strip_nw.stamp',
+          'dependencies': [
+            'nw',
+            '../breakpad/breakpad.gyp:dump_syms',
           ],
-          'action': ['strip',
-                     '<@(_inputs)'],
-          'message': 'Stripping release executable',
-        },
+        }],
       ],
-      'dependencies': [
-        'nw',
+    },
+    {
+      'target_name': 'strip_binaries',
+      'type': 'none',
+      'conditions': [
+        ['OS=="linux"', {
+          'actions': [
+            {
+              'action_name': 'strip_nw_binaries',
+              'inputs': [
+                '<(PRODUCT_DIR)/nwsnapshot',
+                '<(PRODUCT_DIR)/chromedriver',
+              ],
+              'outputs': [
+                '<(PRODUCT_DIR)/strip_binaries.stamp',
+              ],
+              'action': ['strip',
+                         '<@(_inputs)'],
+              'message': 'Stripping release binaries',
+            },
+          ],
+          'dependencies': [
+             '<(DEPTH)/v8/tools/gyp/v8.gyp:nwsnapshot',
+             '<(DEPTH)/chrome/chrome.gyp:chromedriver',
+          ],
+        }],
       ],
     },
     {
@@ -626,11 +662,12 @@
       ],
       'dependencies': [
         '<(DEPTH)/chrome/chrome.gyp:chromedriver',
+        'nw_strip_symbol',
       ],
       'conditions': [
         ['OS == "linux"', {
           'dependencies': [
-            'strip',
+            'strip_binaries',
           ],
         }],
       ],
@@ -671,7 +708,7 @@
         'VCLinkerTool': {
           'SubSystem': '2',  # Set /SUBSYSTEM:WINDOWS
         },
-	'VCManifestTool': {
+      'VCManifestTool': {
           'AdditionalManifestFiles': [
             '$(ProjectDir)\\nw\\src\\nw.exe.manifest',
           ],
@@ -947,40 +984,6 @@
         },  # target nw_helper_app
       ],
     }],  # OS=="mac"
-    ['OS=="linux"',
-      { 'targets': [
-        {
-          'target_name': 'nw_symbols',
-          'type': 'none',
-          'conditions': [
-            ['linux_dump_symbols==1', {
-              'actions': [
-                {
-                  'action_name': 'dump_symbols',
-                  'inputs': [
-                    '<(DEPTH)/build/linux/dump_app_syms',
-                    '<(PRODUCT_DIR)/dump_syms',
-                    '<(PRODUCT_DIR)/nw',
-                  ],
-                  'outputs': [
-                    '<(PRODUCT_DIR)/nw.breakpad.<(target_arch)',
-                  ],
-                  'action': ['<(DEPTH)/build/linux/dump_app_syms',
-                             '<(PRODUCT_DIR)/dump_syms',
-                             '<(linux_strip_binary)',
-                             '<(PRODUCT_DIR)/nw',
-                             '<@(_outputs)'],
-                  'message': 'Dumping breakpad symbols to <(_outputs)',
-                  'process_outputs_as_sources': 1,
-                },
-              ],
-              'dependencies': [
-                'nw',
-                '../breakpad/breakpad.gyp:dump_syms',
-              ],
-            }],
-          ],
-        }],
-    }], # OS=="linux"
   ] # conditions
 }
+

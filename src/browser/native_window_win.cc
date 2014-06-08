@@ -50,6 +50,18 @@
 #include "ui/views/widget/widget.h"
 #include "ui/views/widget/native_widget_win.h"
 #include "ui/views/window/native_frame_view.h"
+#include "ui/events/event_handler.h"
+
+#include "chrome/browser/ui/views/accelerator_table.h"
+#include "base/basictypes.h"
+#include "chrome/app/chrome_command_ids.h"
+#include "ui/base/accelerators/accelerator.h"
+#include "ui/events/event_constants.h"
+#if defined(USE_ASH)
+#include "ash/accelerators/accelerator_table.h"
+#endif
+
+
 
 namespace nw {
 
@@ -280,6 +292,7 @@ NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
   window_->UpdateWindowIcon();
 
   OnViewWasResized();
+  window_->SetInitialFocus();
 }
 
 NativeWindowWin::~NativeWindowWin() {
@@ -478,6 +491,8 @@ void NativeWindowWin::SetMenu(nwapi::Menu* menu) {
 
   // menu is nwapi::Menu, menu->menu_ is NativeMenuWin,
   ::SetMenu((HWND)window_->GetNativeWindow(), menu->menu_->GetNativeMenu());
+
+  menu->UpdateKeys( window_->GetFocusManager() );
 }
 
 void NativeWindowWin::SetTitle(const std::string& title) {
@@ -642,10 +657,13 @@ void NativeWindowWin::UpdateDraggableRegions(
 
 void NativeWindowWin::HandleKeyboardEvent(
     const content::NativeWebKeyboardEvent& event) {
+  unhandled_keyboard_event_handler_.HandleKeyboardEvent(event,
+                                                        GetFocusManager());
   // Any unhandled keyboard/character messages should be defproced.
   // This allows stuff like F10, etc to work correctly.
-  DefWindowProc(event.os_event.hwnd, event.os_event.message,
-                event.os_event.wParam, event.os_event.lParam);
+
+  // DefWindowProc(event.os_event.hwnd, event.os_event.message,
+  //               event.os_event.wParam, event.os_event.lParam);
 }
 
 void NativeWindowWin::Layout() {
