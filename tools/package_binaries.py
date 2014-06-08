@@ -100,7 +100,7 @@ def generate_target_nw(platform_name, arch, version):
                            'credits.html',
                            'libffmpegsumo.so',
                            'nw.pak',
-                           'nwsnapshot',
+#                           'nwsnapshot',
                            'nw',
                            ]
     elif platform_name == 'win':
@@ -113,13 +113,13 @@ def generate_target_nw(platform_name, arch, version):
                            'nw.pak',
                            'nw.exp',
                            'nw.lib',
-                           'nwsnapshot.exe',
+#                           'nwsnapshot.exe',
                            'credits.html',
                            ]
     elif platform_name == 'osx':
         target['input'] = [
                            'node-webkit.app',
-                           'nwsnapshot',
+#                           'nwsnapshot',
                            'credits.html',
                           ]
     else:
