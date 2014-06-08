@@ -501,7 +501,7 @@ WebContents* Shell::OpenURLFromTab(WebContents* source,
   return source;
 }
 
-void Shell::LoadingStateChanged(WebContents* source) {
+void Shell::LoadingStateChanged(WebContents* source, bool to_different_document) {
   int current_index = web_contents_->GetController().GetCurrentEntryIndex();
   int max_index = web_contents_->GetController().GetEntryCount() - 1;
 

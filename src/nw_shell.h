@@ -142,14 +142,15 @@ class Shell : public WebContentsDelegate,
   // content::WebContentsDelegate implementation.
   virtual WebContents* OpenURLFromTab(WebContents* source,
                                       const OpenURLParams& params) OVERRIDE;
-  virtual void LoadingStateChanged(WebContents* source) OVERRIDE;
+  virtual void LoadingStateChanged(WebContents* source,
+                                   bool to_different_document) OVERRIDE;
   virtual void ActivateContents(content::WebContents* contents) OVERRIDE;
   virtual void DeactivateContents(content::WebContents* contents) OVERRIDE;
   virtual void CloseContents(WebContents* source) OVERRIDE;
   virtual void MoveContents(WebContents* source, const gfx::Rect& pos) OVERRIDE;
   virtual bool IsPopupOrPanel(const WebContents* source) const OVERRIDE;
   virtual void WebContentsCreated(WebContents* source_contents,
-                                  int64 source_frame_id,
+                                  int source_frame_id,
                                   const base::string16& frame_name,
                                   const GURL& target_url,
                                   WebContents* new_contents) OVERRIDE;
