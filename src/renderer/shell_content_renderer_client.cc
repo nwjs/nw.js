@@ -32,6 +32,9 @@
 #include "base/strings/stringprintf.h"
 #include "base/strings/utf_string_conversions.h"
 #include "components/autofill/content/renderer/page_click_tracker.h"
+#include "components/autofill/content/renderer/autofill_agent.h"
+#include "components/autofill/content/renderer/password_autofill_agent.h"
+#include "components/autofill/content/renderer/password_generation_agent.h"
 #include "content/common/view_messages.h"
 #include "content/nw/src/api/dispatcher.h"
 #include "content/nw/src/api/api_messages.h"
@@ -66,6 +69,7 @@ using content::RenderView;
 using content::RenderViewImpl;
 using autofill::AutofillAgent;
 using autofill::PasswordAutofillAgent;
+using autofill::PasswordGenerationAgent;
 using net::ProxyBypassRules;
 using blink::WebFrame;
 using blink::WebView;
@@ -195,7 +199,15 @@ void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
   new printing::PrintWebViewHelper(render_view);
 #endif
 
-  // FIXME: nw::AutofillAgent* autofill_agent = new nw::AutofillAgent(render_view);
+  PasswordGenerationAgent* password_generation_agent =
+      new PasswordGenerationAgent(render_view);
+  PasswordAutofillAgent* password_autofill_agent =
+      new PasswordAutofillAgent(render_view);
+  new AutofillAgent(render_view,
+                    password_autofill_agent,
+                    password_generation_agent);
+  // FIXME:
+  // nw::AutofillAgent* autofill_agent = new nw::AutofillAgent(render_view);
 
   // The PageClickTracker is a RenderViewObserver, and hence will be freed when
   // the RenderView is destroyed.

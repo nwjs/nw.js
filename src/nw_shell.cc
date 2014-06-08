@@ -52,6 +52,7 @@
 #include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/browser/shell_javascript_dialog_creator.h"
+#include "content/nw/src/browser/tab_autofill_manager_delegate.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/media/media_stream_devices_controller.h"
 #include "content/nw/src/nw_package.h"
@@ -63,6 +64,9 @@
 #include "grit/nw_resources.h"
 #include "net/base/escape.h"
 #include "ui/base/resource/resource_bundle.h"
+
+#include "components/autofill/content/browser/content_autofill_driver.h"
+#include "components/autofill/core/browser/autofill_manager.h"
 
 
 #if defined(OS_WIN)
@@ -196,6 +200,13 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   // Initialize window after we set window_, because some operations of
   // NativeWindow requires the window_ to be non-NULL.
   window_->InitFromManifest(manifest);
+
+  autofill::TabAutofillManagerDelegate::CreateForWebContents(web_contents);
+  autofill::ContentAutofillDriver::CreateForWebContentsAndDelegate(
+      web_contents,
+      autofill::TabAutofillManagerDelegate::FromWebContents(web_contents),
+      "",
+      autofill::AutofillManager::DISABLE_AUTOFILL_DOWNLOAD_MANAGER);
 }
 
 Shell::~Shell() {
@@ -542,7 +553,7 @@ bool Shell::IsPopupOrPanel(const WebContents* source) const {
 
 // Window opened by window.open
 void Shell::WebContentsCreated(WebContents* source_contents,
-                               int64 source_frame_id,
+                               int source_frame_id,
                                const base::string16& frame_name,
                                const GURL& target_url,
                                WebContents* new_contents) {
@@ -571,6 +582,13 @@ void Shell::WebContentsCreated(WebContents* source_contents,
   // in Chromium 32 RenderViewCreated will not be called so the case
   // should be handled here
   new nwapi::DispatcherHost(new_contents->GetRenderViewHost());
+
+  autofill::TabAutofillManagerDelegate::CreateForWebContents(new_contents);
+  autofill::ContentAutofillDriver::CreateForWebContentsAndDelegate(
+      new_contents,
+      autofill::TabAutofillManagerDelegate::FromWebContents(new_contents),
+      "",
+      autofill::AutofillManager::ENABLE_AUTOFILL_DOWNLOAD_MANAGER);
 }
 
 #if defined(OS_WIN)

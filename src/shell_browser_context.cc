@@ -31,6 +31,7 @@
 #include "content/public/browser/storage_partition.h"
 #include "content/public/common/content_switches.h"
 #include "content/nw/src/browser/shell_download_manager_delegate.h"
+#include "content/nw/src/browser/nw_form_database_service.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/net/shell_url_request_context_getter.h"
 #include "content/nw/src/nw_package.h"
@@ -90,6 +91,14 @@ ShellBrowserContext::~ShellBrowserContext() {
     BrowserThread::DeleteSoon(
       BrowserThread::IO, FROM_HERE, resource_context_.release());
   }
+}
+
+void ShellBrowserContext::PreMainMessageLoopRun() {
+  form_database_service_.reset(new nw::NwFormDatabaseService(path_));
+}
+
+nw::NwFormDatabaseService* ShellBrowserContext::GetFormDatabaseService() {
+  return form_database_service_.get();
 }
 
 void ShellBrowserContext::InitWhileIOAllowed() {

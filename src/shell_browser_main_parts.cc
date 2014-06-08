@@ -114,6 +114,7 @@ void ShellBrowserMainParts::PreMainMessageLoopStart() {
 #endif
 
 void ShellBrowserMainParts::PreMainMessageLoopRun() {
+
 #if !defined(OS_MACOSX)
   Init();
 #endif
@@ -156,6 +157,8 @@ void ShellBrowserMainParts::Init() {
   CommandLine& command_line = *CommandLine::ForCurrentProcess();
 
   browser_context_.reset(new ShellBrowserContext(false, package()));
+  browser_context_->PreMainMessageLoopRun();
+
   off_the_record_browser_context_.reset(
       new ShellBrowserContext(true, package()));
 

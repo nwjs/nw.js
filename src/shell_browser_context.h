@@ -16,6 +16,7 @@
 
 namespace nw {
 class Package;
+class NwFormDatabaseService;
 }
 
 namespace content {
@@ -82,6 +83,11 @@ class ShellBrowserContext : public BrowserContext {
       bool in_memory,
       ProtocolHandlerMap* protocol_handlers) OVERRIDE;
 
+  nw::NwFormDatabaseService* GetFormDatabaseService();
+
+  // Maps to BrowserMainParts::PreMainMessageLoopRun.
+  void PreMainMessageLoopRun();
+
   bool pinning_renderer() { return !disable_pinning_renderer_; }
   void set_pinning_renderer(bool val) { disable_pinning_renderer_ = !val; }
 
@@ -102,6 +108,7 @@ class ShellBrowserContext : public BrowserContext {
   scoped_ptr<ShellResourceContext> resource_context_;
   scoped_refptr<ShellDownloadManagerDelegate> download_manager_delegate_;
   scoped_refptr<ShellURLRequestContextGetter> url_request_getter_;
+  scoped_ptr<nw::NwFormDatabaseService> form_database_service_;
 
   DISALLOW_COPY_AND_ASSIGN(ShellBrowserContext);
 };
