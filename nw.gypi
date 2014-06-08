@@ -173,6 +173,10 @@
         'src/browser/app_controller_mac.mm',
         'src/browser/autofill_popup_view_gtk.cc',
         'src/browser/autofill_popup_view_gtk.h',
+        'src/browser/autofill_popup_view_cocoa.h',
+        'src/browser/autofill_popup_view_cocoa.mm',
+        'src/browser/autofill_popup_view_bridge.h',
+        'src/browser/autofill_popup_view_bridge.mm',
         'src/browser/autofill_popup_controller_impl.cc',
         'src/browser/autofill_popup_controller_impl.h',
         'src/browser/tab_autofill_manager_delegate.cc',
@@ -369,6 +373,11 @@
             '<(DEPTH)/breakpad/breakpad.gyp:breakpad',
             '<(DEPTH)/components/components.gyp:breakpad_component',
           ],
+          'link_settings': {
+            'libraries': [
+              '$(SDKROOT)/System/Library/Frameworks/AddressBook.framework',
+            ],
+          },
         }],
         ['toolkit_uses_gtk == 1', {
           'dependencies': [

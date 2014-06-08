@@ -51,13 +51,6 @@ class MediaInternals : public content::MediaObserver {
       const GURL& security_origin,
       const content::MediaStreamDevice& device,
       content::MediaRequestState state) OVERRIDE;
-  virtual void OnAudioStreamPlayingChanged(
-      int render_process_id,
-      int render_view_id,
-      int stream_id,
-      bool playing,
-      float power_dbfs,
-      bool clipped) OVERRIDE;
   virtual void OnCreatingAudioStream(int render_process_id,
                                      int render_view_id) OVERRIDE;
 

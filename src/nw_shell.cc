@@ -599,7 +599,8 @@ void Shell::WebContentsFocused(content::WebContents* web_contents) {
 #endif
 
 content::ColorChooser*
-Shell::OpenColorChooser(content::WebContents* web_contents, SkColor color) {
+Shell::OpenColorChooser(content::WebContents* web_contents, SkColor color,
+      const std::vector<ColorSuggestion>& suggestions) {
   return nw::ShowColorChooser(web_contents, color);
 }
 

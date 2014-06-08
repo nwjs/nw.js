@@ -195,6 +195,14 @@ net::URLRequestContextGetter* ShellBrowserContext::CreateRequestContext(
 }
 
 net::URLRequestContextGetter*
+    ShellBrowserContext::CreateRequestContextForStoragePartition(
+        const base::FilePath& partition_path,
+        bool in_memory,
+        ProtocolHandlerMap* protocol_handlers) {
+  return NULL;
+}
+
+net::URLRequestContextGetter*
     ShellBrowserContext::GetRequestContextForRenderProcess(
         int renderer_child_id)  {
   return GetRequestContext();
@@ -216,14 +224,6 @@ net::URLRequestContextGetter*
         const FilePath& partition_path,
         bool in_memory) {
   return GetRequestContext();
-}
-
-net::URLRequestContextGetter*
-    ShellBrowserContext::CreateRequestContextForStoragePartition(
-        const base::FilePath& partition_path,
-        bool in_memory,
-        ProtocolHandlerMap* protocol_handlers) {
-  return NULL;
 }
 
 ResourceContext* ShellBrowserContext::GetResourceContext()  {

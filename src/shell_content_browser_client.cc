@@ -345,7 +345,8 @@ ShellContentBrowserClient::CreateRequestContextForStoragePartition(
     BrowserContext* content_browser_context,
     const base::FilePath& partition_path,
     bool in_memory,
-    ProtocolHandlerMap* protocol_handlers) {
+    ProtocolHandlerMap* protocol_handlers,
+    ProtocolHandlerScopedVector protocol_interceptors) {
   ShellBrowserContext* shell_browser_context =
       ShellBrowserContextForBrowserContext(content_browser_context);
   return shell_browser_context->CreateRequestContextForStoragePartition(
@@ -366,7 +367,7 @@ printing::PrintJobManager* ShellContentBrowserClient::print_job_manager() {
   return shell_browser_main_parts_->print_job_manager();
 }
 
-void ShellContentBrowserClient::RenderProcessHostCreated(
+void ShellContentBrowserClient::RenderProcessWillLaunch(
     RenderProcessHost* host) {
   int id = host->GetID();
   if (!master_rph_)

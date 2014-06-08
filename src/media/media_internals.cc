@@ -108,10 +108,6 @@ void MediaInternals::OnMediaRequestStateChanged(
     content::MediaRequestState state) {
 }
 
-void MediaInternals::OnAudioStreamPlayingChanged(
-                                                 int render_process_id, int render_view_id, int stream_id, bool playing, float power_dbfs, bool clipped) {
-}
-
 void MediaInternals::OnCreatingAudioStream(
     int render_process_id,
     int render_view_id) {

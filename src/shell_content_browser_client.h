@@ -62,7 +62,7 @@ class ShellContentBrowserClient : public ContentBrowserClient {
     return shell_browser_main_parts_;
   }
   virtual printing::PrintJobManager* print_job_manager();
-  virtual void RenderProcessHostCreated(RenderProcessHost* host) OVERRIDE;
+  virtual void RenderProcessWillLaunch(RenderProcessHost* host) OVERRIDE;
   virtual net::URLRequestContextGetter* CreateRequestContext(
       BrowserContext* browser_context,
       ProtocolHandlerMap* protocol_handlers, ProtocolHandlerScopedVector protocol_interceptors) OVERRIDE;
@@ -70,7 +70,8 @@ class ShellContentBrowserClient : public ContentBrowserClient {
       BrowserContext* browser_context,
       const base::FilePath& partition_path,
       bool in_memory,
-      ProtocolHandlerMap* protocol_handlers) OVERRIDE;
+      ProtocolHandlerMap* protocol_handlers,
+      ProtocolHandlerScopedVector protocol_interceptors) OVERRIDE;
   virtual void AllowCertificateError(
     int render_process_id,
     int render_view_id,

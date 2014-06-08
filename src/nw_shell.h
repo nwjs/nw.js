@@ -158,7 +158,9 @@ class Shell : public WebContentsDelegate,
   virtual void WebContentsFocused(WebContents* contents) OVERRIDE;
 #endif
   virtual content::ColorChooser* OpenColorChooser(
-      content::WebContents* web_contents, SkColor color) OVERRIDE;
+      content::WebContents* web_contents,
+      SkColor color,
+      const std::vector<ColorSuggestion>& suggestions) OVERRIDE;
   virtual void RunFileChooser(
       content::WebContents* web_contents,
       const content::FileChooserParams& params) OVERRIDE;

@@ -20,8 +20,10 @@ namespace nw {
 class Package;
 }
 
+namespace base {
 class CommandLine;
 class FilePath;
+}
 
 namespace printing {
 class PrintJobManager;

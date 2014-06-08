@@ -75,18 +75,18 @@ class ShellBrowserContext : public BrowserContext {
   virtual void CancelProtectedMediaIdentifierPermissionRequests(
       int group_id) OVERRIDE;
 
-  virtual net::URLRequestContextGetter* CreateRequestContext(
-                                                     ProtocolHandlerMap* protocol_handlers,
-                                                     ProtocolHandlerScopedVector protocol_interceptors) OVERRIDE;
-  virtual net::URLRequestContextGetter* CreateRequestContextForStoragePartition(
-      const base::FilePath& partition_path,
-      bool in_memory,
-      ProtocolHandlerMap* protocol_handlers) OVERRIDE;
-
   nw::NwFormDatabaseService* GetFormDatabaseService();
 
   // Maps to BrowserMainParts::PreMainMessageLoopRun.
   void PreMainMessageLoopRun();
+
+  virtual net::URLRequestContextGetter* CreateRequestContext(
+                                                     ProtocolHandlerMap* protocol_handlers,
+                                                     ProtocolHandlerScopedVector protocol_interceptors);
+  virtual net::URLRequestContextGetter* CreateRequestContextForStoragePartition(
+      const base::FilePath& partition_path,
+      bool in_memory,
+      ProtocolHandlerMap* protocol_handlers);
 
   bool pinning_renderer() { return !disable_pinning_renderer_; }
   void set_pinning_renderer(bool val) { disable_pinning_renderer_ = !val; }

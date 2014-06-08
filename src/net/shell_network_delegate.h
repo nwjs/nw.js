@@ -48,7 +48,8 @@ class ShellNetworkDelegate : public net::NetworkDelegate {
       const net::CompletionCallback& callback,
       const net::HttpResponseHeaders* original_response_headers,
       scoped_refptr<net::HttpResponseHeaders>*
-          override_response_headers) OVERRIDE;
+      override_response_headers,
+      GURL* allowed_unsafe_redirect_url) OVERRIDE;
   virtual void OnBeforeRedirect(net::URLRequest* request,
                                 const GURL& new_location) OVERRIDE;
   virtual void OnResponseStarted(net::URLRequest* request) OVERRIDE;
