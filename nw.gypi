@@ -832,6 +832,7 @@
           'mac_bundle': 1,
           'mac_bundle_resources': [
             'src/mac/English.lproj/HttpAuth.xib',
+            '<(PRODUCT_DIR)/icudtl.dat',
             '<(PRODUCT_DIR)/nw.pak',
             '<(PRODUCT_DIR)/locale/en-US.pak',
             '<(PRODUCT_DIR)/locale/am.pak',
@@ -897,6 +898,7 @@
             'src/shell_content_main.cc',
             'src/shell_content_main.h',
           ],
+          'xcode_settings': { 'OTHER_LDFLAGS': [ '-Wl,-force_load,libnode.a' ], },
           'copies': [
             {
               # Copy FFmpeg binaries for audio/video support.

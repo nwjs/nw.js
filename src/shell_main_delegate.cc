@@ -129,6 +129,15 @@ bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
   logging::LogEventProvider::Initialize(kContentShellProviderName);
 #endif
 
+#if defined(OS_MACOSX)
+  // Needs to happen before InitializeResourceBundle() and before
+  // WebKitTestPlatformInitialize() are called.
+  OverrideFrameworkBundlePath();
+  OverrideChildProcessPath();
+  // FIXME: EnsureCorrectResolutionSettings();
+  l10n_util::OverrideLocaleWithUserDefault();
+#endif  // OS_MACOSX
+
   InitLogging();
   // FIXME: net::CookieMonster::EnableFileScheme();
 
@@ -144,11 +153,6 @@ void ShellMainDelegate::PreSandboxStartup() {
     pref_locale = command_line->GetSwitchValueASCII(switches::kLang);
   }
 
-#if defined(OS_MACOSX)
-  OverrideFrameworkBundlePath();
-  OverrideChildProcessPath();
-  l10n_util::OverrideLocaleWithUserDefault();
-#endif  // OS_MACOSX
   InitializeResourceBundle(pref_locale);
 
   std::string process_type =
