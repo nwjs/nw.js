@@ -102,6 +102,7 @@ def generate_target_nw(platform_name, arch, version):
                            'nw.pak',
 #                           'nwsnapshot',
                            'nw',
+                           'icudtl.dat',
                            ]
     elif platform_name == 'win':
         target['input'] = [
@@ -163,10 +164,10 @@ def generate_target_symbols(platform_name, arch, version):
     elif platform_name == 'osx':
         target['compress'] = 'tar.gz'
         target['input'] = [
-                          'node-webkit.app.dSYM',
-                          'node-webkit Helper.app.dSYM',
-                          'node-webkit Framework.framework.dSYM',
-                          'ffmpegsumo.so.dSYM',
+#                          'node-webkit.app.dSYM',
+#                          'node-webkit Helper.app.dSYM',
+#                          'node-webkit Framework.framework.dSYM',
+#                          'ffmpegsumo.so.dSYM',
                           ]
     else:
         print 'Unsupported platform: ' + platform_name
