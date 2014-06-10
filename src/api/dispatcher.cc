@@ -115,7 +115,6 @@ void Dispatcher::OnEvent(int object_id,
 
 v8::Handle<v8::Object> Dispatcher::GetObjectRegistry() {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
-  v8::HandleScope scope(isolate);
   v8::Local<v8::Context> context =
     v8::Local<v8::Context>::New(isolate, node::g_context);
   // need to enter node context to access the registry in
@@ -124,6 +123,7 @@ v8::Handle<v8::Object> Dispatcher::GetObjectRegistry() {
   v8::Handle<v8::Value> registry =
     context->Global()->Get(v8_str("__nwObjectsRegistry"));
   context->Exit();
+  ASSERT(!(registry->IsNull() || registry->IsUndefined()));
   // if (registry->IsNull() || registry->IsUndefined())
   //   return v8::Undefined();
   return registry->ToObject();
@@ -138,6 +138,8 @@ v8::Handle<v8::Value> Dispatcher::GetWindowId(blink::WebFrame* frame) {
 
 void Dispatcher::ZoomLevelChanged() {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope scope(isolate);
+
   blink::WebView* web_view = render_view()->GetWebView();
   float zoom_level = web_view->zoomLevel();
 
@@ -168,6 +170,7 @@ void Dispatcher::DidFinishDocumentLoad(blink::WebFrame* frame) {
 void Dispatcher::documentCallback(const char* ev, blink::WebFrame* frame) {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   blink::WebView* web_view = render_view()->GetWebView();
+  v8::HandleScope scope(isolate);
 
   if (!web_view)
     return;
