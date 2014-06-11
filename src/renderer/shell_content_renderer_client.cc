@@ -169,11 +169,12 @@ void ShellContentRendererClient::RenderThreadStarted() {
   node::SetupContext(argc, argv, context);
 
 #if !defined(OS_WIN)
-  v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate, (
+  v8::Local<v8::Script> script =
+    v8::Script::Compile(v8::String::NewFromUtf8(isolate, (
       "process.__nwfds_to_close = [" +
       base::StringPrintf("%d", base::GlobalDescriptors::GetInstance()->Get(kPrimaryIPCChannel)) +
-      "];"
-    ).c_str()));
+      "];").c_str()),
+                        v8::String::NewFromUtf8(isolate, "nwfds"));
   CHECK(*script);
   script->Run();
 #endif
@@ -362,30 +363,46 @@ void ShellContentRendererClient::InstallNodeSymbols(
         "if (window.location.href.indexOf('app://') === 0) {process.mainModule.filename = root + '/' + process.mainModule.filename}"
         "process.mainModule.paths = global.require('module')._nodeModulePaths(process.cwd());"
         "process.mainModule.loaded = true;"
-        "}").c_str()
-                                                                               ));
+        "}").c_str()),
+                                                       v8::String::NewFromUtf8(isolate, "process_main"));
     CHECK(*script);
     script->Run();
   }
 
   if (use_node || is_nw_protocol) {
-    v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate,
+    v8::Context::Scope cscope(context);
+    {
+      v8::TryCatch try_catch;
+      v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate,
         // Overload require
-        "window.require = function(name) {"
-        "  if (name == 'nw.gui')"
-        "    return nwDispatcher.requireNwGui();"
-        "  return global.require(name);"
-        "};"
+        "window.require = function(name) { \n"
+        "  if (name == 'nw.gui') \n"
+        "    return nwDispatcher.requireNwGui(); \n"
+        "  return global.require(name); \n"
+        "}; \n"
 
         // Save node-webkit version
         "process.versions['node-webkit'] = '" NW_VERSION_STRING "';"
         "process.versions['chromium'] = '" CHROME_VERSION "';"
-    ));
-    script->Run();
-    v8::Local<v8::Script> script2 = v8::Script::Compile(v8::String::NewFromUtf8(isolate,
+                                                                                 ));
+      script->Run();
+      if (try_catch.HasCaught()) {
+        v8::Handle<v8::Message> message = try_catch.Message();
+        LOG(FATAL) << *v8::String::Utf8Value(message->Get());
+      }
+    }
+    {
+      v8::TryCatch try_catch;
+      v8::Local<v8::Script> script2 = v8::Script::Compile(v8::String::NewFromUtf8(isolate,
         "  nwDispatcher.requireNwGui().Window.get();"
-    ));
-    script2->Run();
+                                                                                  ),
+                                                          v8::String::NewFromUtf8(isolate, "initial_require"));
+      script2->Run();
+      if (try_catch.HasCaught()) {
+        v8::Handle<v8::Message> message = try_catch.Message();
+        LOG(FATAL) << *v8::String::Utf8Value(message->Get());
+      }
+    }
   } else {
     int ret;
     RenderViewImpl* render_view = RenderViewImpl::FromWebView(frame->view());

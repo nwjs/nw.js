@@ -67,10 +67,18 @@ void RequireFromResource(v8::Handle<v8::Object> root,
           GetStringResource(resource_id)));
   v8::Handle<v8::String> wrapped_source = WrapSource(source);
 
-  v8::Handle<v8::Script> script(v8::Script::Compile(wrapped_source, name));
-  v8::Handle<v8::Function> func = v8::Handle<v8::Function>::Cast(script->Run());
-  v8::Handle<v8::Value> args[] = { root, gui };
-  func->Call(root, 2, args);
+  {
+    v8::TryCatch try_catch;
+    v8::Handle<v8::Script> script(v8::Script::Compile(wrapped_source, name));
+    v8::Handle<v8::Function> func = v8::Handle<v8::Function>::Cast(script->Run());
+    v8::Handle<v8::Value> args[] = { root, gui };
+    func->Call(root, 2, args);
+    if (try_catch.HasCaught()) {
+      v8::String::Utf8Value stack(try_catch.StackTrace());
+      LOG(FATAL) << *stack;
+    }
+  }
+
 }
 
 bool MakePathAbsolute(FilePath* file_path) {
