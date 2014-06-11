@@ -94,7 +94,7 @@ class NativeWindow {
   virtual void SetKiosk(bool kiosk) = 0;
   virtual bool IsKiosk() = 0;
   virtual void SetMenu(nwapi::Menu* menu) = 0;
-  virtual void ClearMenu() = 0;
+  virtual void ClearMenu() {}
   virtual void SetInitialFocus(bool accept_focus) = 0;
   virtual bool InitialFocus() = 0;
 
