@@ -321,10 +321,13 @@ void ShellContentRendererClient::InstallNodeSymbols(
     symbols->Set(2, v8::String::NewFromUtf8(isolate, "Buffer"));
     symbols->Set(3, v8::String::NewFromUtf8(isolate, "root"));
 
+    g_context->Enter();
     for (unsigned i = 0; i < symbols->Length(); ++i) {
       v8::Local<v8::Value> key = symbols->Get(i);
-      v8Global->Set(key, nodeGlobal->Get(key));
+      v8::Local<v8::Value> val = nodeGlobal->Get(key);
+      v8Global->Set(key, val);
     }
+    g_context->Exit();
 
     if (!installed_once) {
       installed_once = true;

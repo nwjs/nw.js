@@ -33,6 +33,9 @@
 #include "content/public/renderer/render_thread.h"
 #include "content/public/renderer/v8_value_converter.h"
 #include "grit/nw_resources.h"
+#include "third_party/node/src/node.h"
+#include "third_party/node/src/node_internals.h"
+#include "third_party/node/src/req_wrap.h"
 #include "third_party/WebKit/public/web/WebSecurityPolicy.h"
 #include "url/gurl.h"
 
@@ -170,6 +173,10 @@ DispatcherBindings::RequireNwGui(const v8::FunctionCallbackInfo<v8::Value>& args
     return;
   }
 
+  v8::Local<v8::Context> g_context =
+    v8::Local<v8::Context>::New(isolate, node::g_context);
+
+  g_context->Enter();
   v8::Local<v8::Object> NwGui = v8::Object::New(isolate);
   args.This()->Set(NwGuiSymbol, NwGui);
   RequireFromResource(args.This(),
@@ -189,6 +196,7 @@ DispatcherBindings::RequireNwGui(const v8::FunctionCallbackInfo<v8::Value>& args
   RequireFromResource(args.This(),
                       NwGui, v8::String::NewFromUtf8(isolate, "app.js"), IDR_NW_API_APP_JS);
 
+  g_context->Exit();
   args.GetReturnValue().Set(handle_scope.Escape(NwGui));
 }
 
