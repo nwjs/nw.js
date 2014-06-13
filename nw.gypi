@@ -142,6 +142,8 @@
         'src/api/window_bindings.h',
         'src/api/menu/menu.cc',
         'src/api/menu/menu.h',
+        'src/api/menu/menu_delegate_mac.mm',
+        'src/api/menu/menu_delegate_mac.h',
         'src/api/menu/menu_delegate_win.cc',
         'src/api/menu/menu_delegate_win.h',
         'src/api/menu/menu_gtk.cc',
