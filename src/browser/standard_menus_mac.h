@@ -29,7 +29,7 @@ namespace nw {
 
 class StandardMenusMac {
  public:
-  StandardMenusMac(const std::string& app_name);
+  StandardMenusMac(const std::string& app_title);
   ~StandardMenusMac();
 
   void BuildAppleMenu();
@@ -37,7 +37,7 @@ class StandardMenusMac {
   void BuildWindowMenu();
 
  private:
-  std::string app_name_;
+  std::string app_title_;
 
   DISALLOW_COPY_AND_ASSIGN(StandardMenusMac);
 };

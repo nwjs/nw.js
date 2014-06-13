@@ -675,7 +675,7 @@ void NativeWindowCocoa::SetMenu(nwapi::Menu* menu) {
   bool no_edit_menu = false;
   shell_->GetPackage()->root()->GetBoolean("no-edit-menu", &no_edit_menu);
 
-  StandardMenusMac standard_menus(shell_->GetPackage()->GetName());
+  StandardMenusMac standard_menus(shell_->GetPackage()->GetTitle());
   [NSApp setMainMenu:menu->menu_];
   standard_menus.BuildAppleMenu();
   if (!no_edit_menu)

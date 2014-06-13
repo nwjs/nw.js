@@ -234,6 +234,16 @@ std::string Package::GetName() {
   return name;
 }
 
+std::string Package::GetTitle() {
+  std::string title("node-webkit");
+  root()->GetString(switches::kmName, &title);
+  base::DictionaryValue* window_manifest = window();
+  if (window_manifest) {
+      window_manifest->GetString(switches::kmTitle, &title);
+  }
+  return title;
+}
+
 bool Package::GetUseNode() {
   bool use_node = true;
   root()->GetBoolean(switches::kNodejs, &use_node);

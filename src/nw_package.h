@@ -63,6 +63,9 @@ class Package {
   // Get app's name.
   std::string GetName();
 
+  // Get app's main window title, defaulting to the name.
+  std::string GetTitle();
+
   // Return if we enable node.js.
   bool GetUseNode();
 

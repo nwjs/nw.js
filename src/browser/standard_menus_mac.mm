@@ -37,8 +37,15 @@
 
 namespace nw {
 
-StandardMenusMac::StandardMenusMac(const std::string& app_name)
-    : app_name_(app_name) {
+StandardMenusMac::StandardMenusMac(const std::string& app_title)
+    : app_title_(app_title) {
+  if (app_title_.size() == 0 || app_title_ == "node-webkit") {
+    NSBundle *mainBundle = [NSBundle mainBundle];
+    NSString *bundleName = [mainBundle objectForInfoDictionaryKey:@"CFBundleName"];
+    if (bundleName) {
+      app_title_ = [bundleName UTF8String];
+    }
+  }
 }
 
 StandardMenusMac::~StandardMenusMac() {
@@ -47,7 +54,7 @@ StandardMenusMac::~StandardMenusMac() {
 void StandardMenusMac::BuildAppleMenu() {
   NSMenu* appleMenu = [[NSMenu alloc] initWithTitle:@""];
 
-  string16 name = base::UTF8ToUTF16(app_name_);
+  string16 name = base::UTF8ToUTF16(app_title_);
   [appleMenu addItemWithTitle:l10n_util::GetNSStringFWithFixup(IDS_ABOUT_MAC, name)
                        action:@selector(orderFrontStandardAboutPanel:)
                 keyEquivalent:@""];
