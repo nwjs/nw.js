@@ -52,7 +52,7 @@ v8::Handle<v8::String> WrapSource(v8::Handle<v8::String> source) {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::EscapableHandleScope handle_scope(isolate);
   v8::Handle<v8::String> left =
-    v8::String::NewFromUtf8(isolate, "(function(nw, exports) {");
+    v8::String::NewFromUtf8(isolate, "(function(nw, exports, window) {");
   v8::Handle<v8::String> right = v8::String::NewFromUtf8(isolate, "\n})");
   return handle_scope.Escape(
       v8::String::Concat(left, v8::String::Concat(source, right)));
@@ -61,6 +61,7 @@ v8::Handle<v8::String> WrapSource(v8::Handle<v8::String> source) {
 // Similar to node's `require` function, save functions in `exports`.
 void RequireFromResource(v8::Handle<v8::Object> root,
                          v8::Handle<v8::Object> gui,
+                         v8::Handle<v8::Object> window,
                          v8::Handle<v8::String> name,
                          int resource_id) {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
@@ -75,8 +76,8 @@ void RequireFromResource(v8::Handle<v8::Object> root,
     v8::TryCatch try_catch;
     v8::Handle<v8::Script> script(v8::Script::Compile(wrapped_source, name));
     v8::Handle<v8::Function> func = v8::Handle<v8::Function>::Cast(script->Run());
-    v8::Handle<v8::Value> args[] = { root, gui };
-    func->Call(root, 2, args);
+    v8::Handle<v8::Value> args[] = { root, gui, window };
+    func->Call(root, 3, args);
     if (try_catch.HasCaught()) {
       v8::String::Utf8Value stack(try_catch.StackTrace());
       LOG(FATAL) << *stack;
@@ -174,6 +175,9 @@ DispatcherBindings::RequireNwGui(const v8::FunctionCallbackInfo<v8::Value>& args
     return;
   }
 
+  v8::Local<v8::Context> context = isolate->GetEnteredContext();
+  v8::Local<v8::Object> global = context->Global();
+  ASSERT(!global->IsUndefined());
   v8::Local<v8::Context> g_context =
     v8::Local<v8::Context>::New(isolate, node::g_context);
 
@@ -181,21 +185,21 @@ DispatcherBindings::RequireNwGui(const v8::FunctionCallbackInfo<v8::Value>& args
   v8::Local<v8::Object> NwGui = v8::Object::New(isolate);
   args.This()->Set(NwGuiSymbol, NwGui);
   RequireFromResource(args.This(),
-                      NwGui, v8::String::NewFromUtf8(isolate, "base.js"), IDR_NW_API_BASE_JS);
+                      NwGui, global, v8::String::NewFromUtf8(isolate, "base.js"), IDR_NW_API_BASE_JS);
   RequireFromResource(args.This(),
-                      NwGui, v8::String::NewFromUtf8(isolate, "menuitem.js"), IDR_NW_API_MENUITEM_JS);
+                      NwGui, global, v8::String::NewFromUtf8(isolate, "menuitem.js"), IDR_NW_API_MENUITEM_JS);
   RequireFromResource(args.This(),
-                      NwGui, v8::String::NewFromUtf8(isolate, "menu.js"), IDR_NW_API_MENU_JS);
+                      NwGui, global, v8::String::NewFromUtf8(isolate, "menu.js"), IDR_NW_API_MENU_JS);
   RequireFromResource(args.This(),
-                      NwGui, v8::String::NewFromUtf8(isolate, "tray.js"), IDR_NW_API_TRAY_JS);
+                      NwGui, global, v8::String::NewFromUtf8(isolate, "tray.js"), IDR_NW_API_TRAY_JS);
   RequireFromResource(args.This(),
-                      NwGui, v8::String::NewFromUtf8(isolate, "clipboard.js"), IDR_NW_API_CLIPBOARD_JS);
+                      NwGui, global, v8::String::NewFromUtf8(isolate, "clipboard.js"), IDR_NW_API_CLIPBOARD_JS);
   RequireFromResource(args.This(),
-                      NwGui, v8::String::NewFromUtf8(isolate, "window.js"), IDR_NW_API_WINDOW_JS);
+                      NwGui, global, v8::String::NewFromUtf8(isolate, "window.js"), IDR_NW_API_WINDOW_JS);
   RequireFromResource(args.This(),
-                      NwGui, v8::String::NewFromUtf8(isolate, "shell.js"), IDR_NW_API_SHELL_JS);
+                      NwGui, global, v8::String::NewFromUtf8(isolate, "shell.js"), IDR_NW_API_SHELL_JS);
   RequireFromResource(args.This(),
-                      NwGui, v8::String::NewFromUtf8(isolate, "app.js"), IDR_NW_API_APP_JS);
+                      NwGui, global, v8::String::NewFromUtf8(isolate, "app.js"), IDR_NW_API_APP_JS);
 
   g_context->Exit();
   args.GetReturnValue().Set(handle_scope.Escape(NwGui));
