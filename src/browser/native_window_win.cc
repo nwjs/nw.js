@@ -475,52 +475,50 @@ void NativeWindowWin::FlashFrame(bool flash) {
 }
 
 HICON createBadgeIcon(const HWND hWnd, const TCHAR *value, const int sizeX, const int sizeY) {
-	// canvas for the overlay icon
-	gfx::Canvas canvas(gfx::Size(sizeX, sizeY), 1, false);
+  // canvas for the overlay icon
+  gfx::Canvas canvas(gfx::Size(sizeX, sizeY), 1, false);
 
-	// drawing red circle
-	SkPaint paint;
-	paint.setColor(SK_ColorRED);
-	canvas.DrawCircle(gfx::Point(sizeX/2, sizeY/2), sizeX/2, paint);
+  // drawing red circle
+  SkPaint paint;
+  paint.setColor(SK_ColorRED);
+  canvas.DrawCircle(gfx::Point(sizeX / 2, sizeY / 2), sizeX / 2, paint);
 
-	// drawing the text
-	gfx::PlatformFont *platform_font = gfx::PlatformFont::CreateDefault();
-	const int fontSize = sizeY*0.65f;
-	gfx::Font font(platform_font->GetFontName(), fontSize);
-	platform_font->Release();
-	platform_font = NULL;
-	const int yMargin = (sizeY - fontSize) / 2;
-	canvas.DrawStringRectWithFlags(value, gfx::FontList(font), SK_ColorWHITE, gfx::Rect(sizeX, fontSize+yMargin+1), gfx::Canvas::TEXT_ALIGN_CENTER);
+  // drawing the text
+  gfx::PlatformFont *platform_font = gfx::PlatformFont::CreateDefault();
+  const int fontSize = sizeY*0.65f;
+  gfx::Font font(platform_font->GetFontName(), fontSize);
+  platform_font->Release();
+  platform_font = NULL;
+  const int yMargin = (sizeY - fontSize) / 2;
+  canvas.DrawStringRectWithFlags(value, gfx::FontList(font), SK_ColorWHITE, gfx::Rect(sizeX, fontSize + yMargin + 1), gfx::Canvas::TEXT_ALIGN_CENTER);
 
-	// return the canvas as windows native icon handle
-	return IconUtil::CreateHICONFromSkBitmap(canvas.ExtractImageRep().sk_bitmap());
+  // return the canvas as windows native icon handle
+  return IconUtil::CreateHICONFromSkBitmap(canvas.ExtractImageRep().sk_bitmap());
 }
 
 void NativeWindowWin::SetBadgeLabel(const std::string& badge) {
-	base::win::ScopedComPtr<ITaskbarList3> taskbar;
-	HRESULT result = taskbar.CreateInstance(CLSID_TaskbarList, NULL,
-		CLSCTX_INPROC_SERVER);
-	
-	if (FAILED(result)) {
-		VLOG(1) << "Failed creating a TaskbarList3 object: " << result;
-		return;
-	}
+  base::win::ScopedComPtr<ITaskbarList3> taskbar;
+  HRESULT result = taskbar.CreateInstance(CLSID_TaskbarList, NULL,
+    CLSCTX_INPROC_SERVER);
 
-	result = taskbar->HrInit();
-	if (FAILED(result)) {
-		LOG(ERROR) << "Failed initializing an ITaskbarList3 interface.";
-		return;
-	}
-	
-	HICON icon = NULL;
-	HWND hWnd = window_->GetNativeWindow();
-	if (badge.size())
-		icon = createBadgeIcon(hWnd, UTF8ToUTF16(badge).c_str(), 32, 32);
+  if (FAILED(result)) {
+    VLOG(1) << "Failed creating a TaskbarList3 object: " << result;
+    return;
+  }
 
-	taskbar->SetOverlayIcon(hWnd, icon, _T("Status"));
-	DestroyIcon(icon);
+  result = taskbar->HrInit();
+  if (FAILED(result)) {
+    LOG(ERROR) << "Failed initializing an ITaskbarList3 interface.";
+    return;
+  }
 
+  HICON icon = NULL;
+  HWND hWnd = window_->GetNativeWindow();
+  if (badge.size())
+    icon = createBadgeIcon(hWnd, UTF8ToUTF16(badge).c_str(), 32, 32);
 
+  taskbar->SetOverlayIcon(hWnd, icon, _T("Status"));
+  DestroyIcon(icon);
 }
 
 void NativeWindowWin::SetKiosk(bool kiosk) {
