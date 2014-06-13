@@ -89,7 +89,7 @@ class DispatcherHost : public content::WebContentsObserver {
 
   // RenderViewHostObserver implementation.
   // WebContentsObserver implementation:
-  virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
+  virtual bool OnMessageReceived(content::RenderViewHost* render_view_host, const IPC::Message& message) OVERRIDE;
 
   void OnAllocateObject(int object_id,
                         const std::string& type,

@@ -38,6 +38,7 @@
 #include "content/nw/src/shell_browser_context.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/render_process_host.h"
+#include "content/public/browser/render_view_host.h"
 
 using content::WebContents;
 using content::ShellBrowserContext;
@@ -94,10 +95,13 @@ void DispatcherHost::SendEvent(Base* object,
 }
 
 bool DispatcherHost::Send(IPC::Message* message) {
-  return content::WebContentsObserver::Send(message);
+  return render_view_host_->Send(message);
 }
 
-bool DispatcherHost::OnMessageReceived(const IPC::Message& message) {
+bool DispatcherHost::OnMessageReceived(content::RenderViewHost* render_view_host,
+                                       const IPC::Message& message) {
+  if (render_view_host != render_view_host_)
+    return false;
   bool handled = true;
   base::ThreadRestrictions::ScopedAllowIO allow_io;
   base::ThreadRestrictions::ScopedAllowWait allow_wait;
