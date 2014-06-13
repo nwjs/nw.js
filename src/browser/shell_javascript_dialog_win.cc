@@ -52,6 +52,7 @@ INT_PTR CALLBACK ShellJavaScriptDialog::DialogProc(HWND dialog,
         owner->dialog_win_ = 0;
         owner->callback_.Run(false, string16());
         owner->creator_->DialogClosed(owner);
+        SetFocus(owner->parent_window_);
       }
       break;
     }
@@ -82,6 +83,7 @@ INT_PTR CALLBACK ShellJavaScriptDialog::DialogProc(HWND dialog,
         owner->callback_.Run(result, user_input);
         DestroyWindow(dialog);
         owner->creator_->DialogClosed(owner);
+        SetFocus(owner->parent_window_);
       }
       break;
     }
@@ -99,6 +101,7 @@ ShellJavaScriptDialog::ShellJavaScriptDialog(
     const string16& default_prompt_text,
     const JavaScriptDialogManager::DialogClosedCallback& callback)
     : creator_(creator),
+      parent_window_(parent_window),
       callback_(callback),
       message_text_(message_text),
       default_prompt_text_(default_prompt_text),
