@@ -211,7 +211,7 @@ bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(
     return false;
 
 #if defined(OS_WIN)
-  std::string cmd = UTF16ToUTF8(command_line.GetCommandLineString());
+  std::string cmd = base::UTF16ToUTF8(command_line.GetCommandLineString());
 #else
   std::string cmd = command_line.GetCommandLineString();
 #endif

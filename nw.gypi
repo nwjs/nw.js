@@ -166,12 +166,16 @@
         'src/api/window/window.h',
         'src/browser/app_controller_mac.h',
         'src/browser/app_controller_mac.mm',
+        'src/browser/autofill_popup_base_view.cc',
+        'src/browser/autofill_popup_base_view.h',
         'src/browser/autofill_popup_view_gtk.cc',
         'src/browser/autofill_popup_view_gtk.h',
         'src/browser/autofill_popup_view_cocoa.h',
         'src/browser/autofill_popup_view_cocoa.mm',
         'src/browser/autofill_popup_view_bridge.h',
         'src/browser/autofill_popup_view_bridge.mm',
+        'src/browser/autofill_popup_view_views.cc',
+        'src/browser/autofill_popup_view_views.h',
         'src/browser/autofill_popup_controller_impl.cc',
         'src/browser/autofill_popup_controller_impl.h',
         'src/browser/tab_autofill_manager_delegate.cc',
@@ -236,7 +240,7 @@
         'src/browser/shell_javascript_dialog.h',
         'src/browser/shell_login_dialog_gtk.cc',
         'src/browser/shell_login_dialog_mac.mm',
-        'src/browser/shell_login_dialog_win.cc',
+        #FIXME 'src/browser/shell_login_dialog_win.cc',
         'src/browser/shell_login_dialog.cc',
         'src/browser/shell_login_dialog.h',
         'src/browser/shell_resource_dispatcher_host_delegate.cc',
@@ -708,11 +712,11 @@
         'VCLinkerTool': {
           'SubSystem': '2',  # Set /SUBSYSTEM:WINDOWS
         },
-      'VCManifestTool': {
-          'AdditionalManifestFiles': [
-            '$(ProjectDir)\\nw\\src\\nw.exe.manifest',
-          ],
-        },
+      #'VCManifestTool': {
+      #    'AdditionalManifestFiles': [
+      #      '$(ProjectDir)\\nw\\src\\nw.exe.manifest',
+      #    ],
+      #  },
       },
       'conditions': [
         ['OS=="win" and win_use_allocator_shim==1', {

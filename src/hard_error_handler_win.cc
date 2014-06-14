@@ -57,7 +57,7 @@ void RaiseHardErrorMsg(long nt_status, const std::string& p1,
   if (!count)
     return;
   count += p1.size() + p2.size() + 1;
-  string16 message;
+  base::string16 message;
   ::wsprintf(WriteInto(&message, count), msg_template, p1.c_str(), p2.c_str());
   // The MB_SERVICE_NOTIFICATION causes this message to be displayed by
   // csrss. This means that we are not creating windows or pumping WM messages

@@ -62,7 +62,7 @@ bool MenuDelegate::IsItemForCommandIdDynamic(int command_id) const {
   return item->is_modified_;
 }
 
-string16 MenuDelegate::GetLabelForCommandId(int command_id) const {
+base::string16 MenuDelegate::GetLabelForCommandId(int command_id) const {
   MenuItem* item = dispatcher_host_->GetApiObject<MenuItem>(command_id);
   return item->label_;
 }

@@ -663,7 +663,7 @@ void Shell::Observe(int type,
 
     if (title->first) {
       base::string16 text = title->first->GetTitle();
-      window()->SetTitle(UTF16ToUTF8(text));
+      window()->SetTitle(base::UTF16ToUTF8(text));
     }
   } else if (type == NOTIFICATION_RENDERER_PROCESS_CLOSED) {
     exit_code_ =

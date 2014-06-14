@@ -24,6 +24,7 @@
 #include "sandbox/win/src/sandbox_types.h"
 
 #if defined(OS_WIN)
+#include "base/win/win_util.h"
 #include "content/public/app/startup_helper_win.h"
 #endif
 
@@ -37,7 +38,12 @@ int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE, wchar_t*, int) {
   sandbox::SandboxInterfaceInfo sandbox_info = {0};
   content::InitializeSandboxInfo(&sandbox_info);
   content::ShellMainDelegate delegate;
-  return content::ContentMain(instance, &sandbox_info, &delegate);
+  content::ContentMainParams params(&delegate);
+  params.instance = instance;
+  params.sandbox_info = &sandbox_info;
+  int rv = content::ContentMain(params);
+  base::win::SetShouldCrashOnProcessDetach(false);
+  return rv;
 }
 
 #else

@@ -87,7 +87,7 @@ void Tray::SetIcon(const std::string& path) {
 }
 
 void Tray::SetTooltip(const std::string& tooltip) {
-  status_icon_->SetToolTip(UTF8ToUTF16(tooltip));
+  status_icon_->SetToolTip(base::UTF8ToUTF16(tooltip));
 }
 
 void Tray::SetMenu(Menu* menu) {

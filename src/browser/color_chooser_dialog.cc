@@ -32,8 +32,8 @@ ColorChooserDialog::ColorChooserDialog(views::ColorChooserListener* listener,
     : listener_(listener) {
   DCHECK(listener_);
   CopyCustomColors(g_custom_colors, custom_colors_);
-  ExecuteOpenParams execute_params(initial_color, BeginRun(owning_window),
-                                   owning_window);
+  ExecuteOpenParams execute_params(initial_color, BeginRun((HWND)owning_window),
+                                   (HWND)owning_window);
   execute_params.run_state.dialog_thread->message_loop()->PostTask(FROM_HERE,
       base::Bind(&ColorChooserDialog::ExecuteOpen, this, execute_params));
 }
@@ -41,8 +41,8 @@ ColorChooserDialog::ColorChooserDialog(views::ColorChooserListener* listener,
 ColorChooserDialog::~ColorChooserDialog() {
 }
 
-bool ColorChooserDialog::IsRunning(HWND owning_hwnd) const {
-  return listener_ && IsRunningDialogForOwner(owning_hwnd);
+bool ColorChooserDialog::IsRunning(gfx::NativeWindow owning_hwnd) const {
+  return listener_ && IsRunningDialogForOwner((HWND)owning_hwnd);
 }
 
 void ColorChooserDialog::ListenerDestroyed() {

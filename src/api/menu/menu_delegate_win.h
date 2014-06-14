@@ -40,7 +40,7 @@ class MenuDelegate : public ui::SimpleMenuModel::Delegate {
       ui::Accelerator* accelerator) { return false; }
 
   virtual bool IsItemForCommandIdDynamic(int command_id) const OVERRIDE;
-  virtual string16 GetLabelForCommandId(int command_id) const OVERRIDE;
+  virtual base::string16 GetLabelForCommandId(int command_id) const OVERRIDE;
   virtual bool GetIconForCommandId(int command_id,
                                    gfx::Image* icon) const OVERRIDE;
 

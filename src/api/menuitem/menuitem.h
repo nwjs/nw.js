@@ -145,8 +145,8 @@ class MenuItem : public Base {
   bool is_enabled_;
   gfx::Image icon_;
   std::string type_;
-  string16 label_;
-  string16 tooltip_;
+  base::string16 label_;
+  base::string16 tooltip_;
   Menu* submenu_;
   bool enable_shortcut_;
 

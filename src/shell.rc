@@ -146,4 +146,4 @@ END
 IDR_MAINFRAME           ICON                    "resources\\nw.ico"
 /////////////////////////////////////////////////////////////////////////////
 
-CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "nw.exe.manifest"
+//CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "nw.exe.manifest"

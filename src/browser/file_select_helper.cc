@@ -258,7 +258,7 @@ FileSelectHelper::GetFileTypesFromAcceptType(
   int valid_type_count = 0;
   int description_id = 0;
   for (size_t i = 0; i < accept_types.size(); ++i) {
-    std::string ascii_type = UTF16ToASCII(accept_types[i]);
+    std::string ascii_type = base::UTF16ToASCII(accept_types[i]);
     if (!IsAcceptTypeValid(ascii_type))
       continue;
 
@@ -399,7 +399,7 @@ void FileSelectHelper::RunFileChooserOnUIThread(
   FilePath working_path      = params.initial_path;
 
   gfx::NativeWindow owning_window =
-      platform_util::GetTopLevel(render_view_host_->GetView()->GetNativeView());
+      (gfx::NativeWindow)::GetAncestor((HWND)render_view_host_->GetView()->GetNativeView(), GA_ROOT);
 
   select_file_dialog_->SelectFile(
       dialog_type_,

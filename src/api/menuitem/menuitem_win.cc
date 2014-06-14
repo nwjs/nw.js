@@ -112,7 +112,7 @@ void MenuItem::OnClick() {
 
 void MenuItem::SetLabel(const std::string& label) {
   is_modified_ = true;
-  label_ = UTF8ToUTF16(label);
+  label_ = base::UTF8ToUTF16(label);
 }
 
 void MenuItem::SetIcon(const std::string& icon) {
@@ -129,7 +129,7 @@ void MenuItem::SetIcon(const std::string& icon) {
 }
 
 void MenuItem::SetTooltip(const std::string& tooltip) {
-  tooltip_ = UTF8ToUTF16(tooltip);
+  tooltip_ = base::UTF8ToUTF16(tooltip);
 }
 
 void MenuItem::SetEnabled(bool enabled) {

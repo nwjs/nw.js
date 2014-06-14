@@ -90,6 +90,11 @@ class ShellLoginDialog : public ResourceDispatcherHostLoginDelegate {
   GtkWidget* password_entry_;
   GtkWidget* root_;
   CHROMEGTK_CALLBACK_1(ShellLoginDialog, void, OnResponse, int);
+#elif defined(OS_WIN)
+INT_PTR CALLBACK DialogProc(HWND dialog,
+                                              UINT message,
+                                              WPARAM wparam,
+                                              LPARAM lparam);
 #endif
 };
 

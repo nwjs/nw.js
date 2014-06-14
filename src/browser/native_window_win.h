@@ -102,7 +102,7 @@ class NativeWindowWin : public NativeWindow,
   virtual bool CanMaximize() const OVERRIDE;
   virtual views::Widget* GetWidget() OVERRIDE;
   virtual const views::Widget* GetWidget() const OVERRIDE;
-  virtual string16 GetWindowTitle() const OVERRIDE;
+  virtual base::string16 GetWindowTitle() const OVERRIDE;
   virtual void DeleteDelegate() OVERRIDE;
   virtual views::View* GetInitiallyFocusedView() OVERRIDE;
   virtual gfx::ImageSkia GetWindowAppIcon() OVERRIDE;

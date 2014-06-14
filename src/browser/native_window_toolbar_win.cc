@@ -95,13 +95,13 @@ void NativeWindowToolbarWin::ViewHierarchyChanged(
 
 void NativeWindowToolbarWin::ContentsChanged(
     views::Textfield* sender,
-    const string16& new_contents) {
+    const base::string16& new_contents) {
 }
 
 bool NativeWindowToolbarWin::HandleKeyEvent(views::Textfield* sender,
                                             const ui::KeyEvent& key_event) {
   if (key_event.key_code() == ui::VKEY_RETURN) {
-    string16 url_string = url_entry_->text();
+    base::string16 url_string = url_entry_->text();
     if (!url_string.empty()) {
       GURL url(url_string);
       if (!url.has_scheme())
@@ -165,8 +165,8 @@ void NativeWindowToolbarWin::InitToolbar() {
   SetIsLoading(true);
   AddChildView(stop_or_refresh_button_);
 
-  url_entry_ = new views::Textfield(views::Textfield::STYLE_DEFAULT);
-  url_entry_->SetController(this);
+  url_entry_ = new views::Textfield();
+  url_entry_->set_controller(this);
   AddChildView(url_entry_);
 
   devtools_button_ = new views::ImageButton(this);
@@ -215,7 +215,7 @@ void NativeWindowToolbarWin::SetButtonEnabled(
 }
 
 void NativeWindowToolbarWin::SetUrlEntry(const std::string& url) {
-  url_entry_->SetText(UTF8ToUTF16(url));
+  url_entry_->SetText(base::UTF8ToUTF16(url));
 }
 
 void NativeWindowToolbarWin::SetIsLoading(bool loading) {

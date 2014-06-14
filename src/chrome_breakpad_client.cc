@@ -116,13 +116,7 @@ void ChromeBreakpadClient::GetProductNameAndVersion(
     if (!version_info->is_official_build())
       version->append(base::ASCIIToUTF16("-devel"));
 
-    const CommandLine& command = *CommandLine::ForCurrentProcess();
-    if (command.HasSwitch(switches::kChromeFrame)) {
-      *product_name = base::ASCIIToUTF16("ChromeFrame");
-    } else {
-      *product_name = version_info->product_short_name();
-    }
-
+    *product_name = version_info->product_short_name();
     *special_build = version_info->special_build();
   } else {
     // No version info found. Make up the values.

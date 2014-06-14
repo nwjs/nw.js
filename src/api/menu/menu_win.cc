@@ -131,7 +131,7 @@ void Menu::Insert(MenuItem* menu_item, int pos) {
 }
 
 void Menu::Remove(MenuItem* menu_item, int pos) {
-  menu_model_->RemoveAt(pos);
+  menu_model_->RemoveItemAt(pos);
   is_menu_modified_ = true;
 }
 

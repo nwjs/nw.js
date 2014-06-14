@@ -30,6 +30,7 @@
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_tokenizer.h"
 #include "base/strings/string_util.h"
+#include "base/strings/utf_string_conversions.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
 #include "third_party/zlib/google/zip.h"
@@ -427,8 +428,8 @@ void Package::ReadChromiumArgs() {
     // string here is safe beacuse we use ASCII only.
     if (!base::IsSwitch(ASCIIToWide(chromium_args[i]), &key, &value))
       continue;
-    command_line->AppendSwitchASCII(WideToASCII(key),
-                                    WideToASCII(value));
+    command_line->AppendSwitchASCII(base::UTF16ToASCII(key),
+                                    base::UTF16ToASCII(value));
 #else
     if (!base::IsSwitch(chromium_args[i], &key, &value))
       continue;
