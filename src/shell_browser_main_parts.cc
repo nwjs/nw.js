@@ -52,6 +52,13 @@
 #include "content/nw/src/browser/printing/print_dialog_gtk.h"
 #endif
 
+#if defined(USE_AURA)
+#include "ui/aura/env.h"
+#include "ui/gfx/screen.h"
+#include "ui/views/test/desktop_test_views_delegate.h"
+#include "ui/views/widget/desktop_aura/desktop_screen.h"
+#endif  // defined(USE_AURA)
+
 using base::MessageLoop;
 
 namespace {
@@ -149,7 +156,27 @@ void ShellBrowserMainParts::PostMainMessageLoopStart() {
 
 int ShellBrowserMainParts::PreCreateThreads() {
   net::ProxyResolverV8::RememberDefaultIsolate();
+#if defined(USE_AURA)
+  gfx::Screen::SetScreenInstance(gfx::SCREEN_TYPE_NATIVE,
+                                 views::CreateDesktopScreen());
+#endif
   return 0;
+}
+
+void ShellBrowserMainParts::PostDestroyThreads() {
+#if defined(USE_AURA)
+  aura::Env::DeleteInstance();
+  delete views::ViewsDelegate::views_delegate;
+#endif
+}
+
+void ShellBrowserMainParts::ToolkitInitialized() {
+#if defined(USE_AURA)
+  aura::Env::CreateInstance();
+
+  DCHECK(!views::ViewsDelegate::views_delegate);
+  new views::DesktopTestViewsDelegate;
+#endif
 }
 
 void ShellBrowserMainParts::Init() {

@@ -339,6 +339,13 @@
             '<(DEPTH)/base/allocator/allocator.gyp:allocator',
           ],
         }],
+        ['use_aura==1', {
+          'dependencies': [
+            '<(DEPTH)/ui/views/views.gyp:views',
+            '<(DEPTH)/ui/views/views.gyp:views_test_support',
+            '<(DEPTH)/ui/views/controls/webview/webview.gyp:webview',
+          ],
+        }],
         ['(os_posix==1 and OS != "mac" and linux_use_tcmalloc==1)', {
           'dependencies': [
             # This is needed by content/app/content_main_runner.cc
