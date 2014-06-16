@@ -10,11 +10,14 @@ import sys
 import tarfile
 import zipfile
 
+steps = ['nw', 'chromedriver', 'symbol']
 ################################
 # Parse command line args
 parser = argparse.ArgumentParser(description='Package nw binaries.')
 parser.add_argument('-p','--path', help='Where to find the binaries, like out/Release', required=False)
-parser.add_argument('-s','--step', help='Execute specified step. (could be "nw", "chromedriver" or "symbol")', required=False)
+group = parser.add_mutually_exclusive_group()
+group.add_argument('-s','--step', choices=steps, help='Execute specified step.', required=False)
+group.add_argument('-n','--skip', choices=steps, help='Skip specified step.', required=False)
 args = parser.parse_args()
 
 ################################
@@ -23,10 +26,12 @@ binaries_location = None        # .../out/Release
 platform_name = None            # win/linux/osx
 arch = None                     # ia32/x64
 step = None                     # nw/chromedriver/symbol
+skip = None
 nw_ver = None                   # x.xx
 dist_dir = None                 # .../out/Release/dist
 
 step = args.step
+skip = args.skip
 binaries_location = args.path
 # If the binaries location is not given, calculate it from script related dir.
 if binaries_location == None:
@@ -253,20 +258,20 @@ def make_packages(targets):
             # single file
             compress(binaries_location, dist_dir, t['input'][0], t['compress'])
 
-
+# must be aligned with steps
+generators = {}
+generators['nw'] = generate_target_nw
+generators['chromedriver'] = generate_target_chromedriver
+generators['symbol'] = generate_target_symbols
 ################################
 # Process targets
 targets = []
-if step == 'nw':
-    targets.append(generate_target_nw(platform_name, arch, nw_ver))
-elif step == 'chromedriver':
-    targets.append(generate_target_chromedriver(platform_name, arch, nw_ver))
-elif step == 'symbol':
-    targets.append(generate_target_symbols(platform_name, arch, nw_ver))
-else:
-    targets.append(generate_target_nw(platform_name, arch, nw_ver))
-    targets.append(generate_target_chromedriver(platform_name, arch, nw_ver))
-    targets.append(generate_target_symbols(platform_name, arch, nw_ver))
+for s in steps:
+    if (step != None) and (s != step):
+            continue
+    if (skip != None) and (s == skip):
+            continue
+    targets.append(generators[s](platform_name, arch, nw_ver))
 
 print 'Creating packages...'
 make_packages(targets)
