@@ -244,7 +244,11 @@ void Window::Call(const std::string& method,
     bool top;
     if (arguments.GetBoolean(0, &top))
       shell_->window()->SetAlwaysOnTop(top);
-  } else if (method == "MoveTo") {
+  } else if (method == "SetShowInTaskbar"){
+    bool show;
+    if (arguments.GetBoolean(0, &show))
+    shell_->window()->SetShowInTaskbar(show);
+  }else if (method == "MoveTo") {
     int x, y;
     if (arguments.GetInteger(0, &x) &&
         arguments.GetInteger(1, &y))
