@@ -112,7 +112,7 @@ def generate_target_nw(platform_name, arch, version):
     elif platform_name == 'win':
         target['input'] = [
                            'ffmpegsumo.dll',
-                           'icudt.dll',
+                           'icudtl.dat',
                            'libEGL.dll',
                            'libGLESv2.dll',
                            'nw.exe',
