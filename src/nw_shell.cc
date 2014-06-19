@@ -594,7 +594,8 @@ void Shell::WebContentsCreated(WebContents* source_contents,
 #if defined(OS_WIN)
 void Shell::WebContentsFocused(content::WebContents* web_contents) {
   NativeWindowWin* win = static_cast<NativeWindowWin*>(window_.get());
-  win->web_view_->OnWebContentsFocused(web_contents);
+  if (win) // on aura this function is called in the middle of window creation
+    win->web_view_->OnWebContentsFocused(web_contents);
 }
 #endif
 
