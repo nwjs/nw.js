@@ -108,7 +108,6 @@ def generate_target_nw(platform_name, arch, version):
 #                           'nwsnapshot',
                            'nw',
                            'icudtl.dat',
-                           'locales',
                            ]
     elif platform_name == 'win':
         target['input'] = [
@@ -122,7 +121,6 @@ def generate_target_nw(platform_name, arch, version):
                            'nw.lib',
 #                           'nwsnapshot.exe',
                            'credits.html',
-                           'locales',
                            ]
     elif platform_name == 'osx':
         target['input'] = [
