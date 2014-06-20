@@ -48,28 +48,30 @@ void DispatcherBindings::InitMsgIDMap() {
 // static
 void DispatcherBindings::GetNSStringWithFixup(
     const v8::FunctionCallbackInfo<v8::Value>& args) {
+  v8::Isolate* isolate = args.GetIsolate();
   std::string msgstr = *v8::String::Utf8Value(args[0]);
   MsgIDMap::iterator it = g_msgid_map.find(msgstr);
   if (it != g_msgid_map.end()) {
     int msgid = it->second;
-    args.GetReturnValue().Set(v8::String::New([l10n_util::GetNSStringWithFixup(msgid) UTF8String]));
+    args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, [l10n_util::GetNSStringWithFixup(msgid) UTF8String]));
     return;
   }
-  args.GetReturnValue().Set(v8::Undefined());
+  args.GetReturnValue().Set(v8::Undefined(isolate));
 }
 
 // static
 void DispatcherBindings::GetNSStringFWithFixup(
     const v8::FunctionCallbackInfo<v8::Value>& args) {
+  v8::Isolate* isolate = args.GetIsolate();
   std::string msgstr = *v8::String::Utf8Value(args[0]);
   base::string16 arg = *v8::String::Value(args[1]);
   MsgIDMap::iterator it = g_msgid_map.find(msgstr);
   if (it != g_msgid_map.end()) {
     int msgid = it->second;
-    args.GetReturnValue().Set(v8::String::New([l10n_util::GetNSStringFWithFixup(msgid, arg) UTF8String]));
+    args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, [l10n_util::GetNSStringFWithFixup(msgid, arg) UTF8String]));
     return;
   }
-  args.GetReturnValue().Set(v8::Undefined());
+  args.GetReturnValue().Set(v8::Undefined(isolate));
 }
 
 } // namespace nwapi
