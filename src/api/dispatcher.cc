@@ -145,6 +145,8 @@ void Dispatcher::ZoomLevelChanged() {
 
   v8::Handle<v8::Value> val = GetWindowId(web_view->mainFrame());
 
+  if (id_val.IsEmpty())
+    return;
   if (val->IsNull() || val->IsUndefined())
     return;
 
@@ -177,6 +179,8 @@ void Dispatcher::documentCallback(const char* ev, blink::WebFrame* frame) {
   v8::Context::Scope cscope (web_view->mainFrame()->mainWorldScriptContext());
 
   v8::Handle<v8::Value> val = GetWindowId(web_view->mainFrame());
+  if (id_val.IsEmpty())
+    return;
   if (val->IsNull() || val->IsUndefined())
     return;
 
@@ -212,7 +216,9 @@ void Dispatcher::willHandleNavigationPolicy(
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
 
   v8::Handle<v8::Value> id_val = nwapi::Dispatcher::GetWindowId(web_view->mainFrame());
-  if (id_val->IsNull() || id_val->IsUndefined())
+  if (id_val.IsEmpty())
+    return;
+  if (id_val->IsUndefined() || id_val->IsNull())
     return;
 
   v8::Handle<v8::Object> objects_registry = nwapi::Dispatcher::GetObjectRegistry();
