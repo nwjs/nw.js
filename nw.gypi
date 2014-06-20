@@ -5,6 +5,7 @@
 {
   'variables': {
     'nw_product_name': 'node-webkit',
+    'mac_strip_release': 1,
   },
   'target_defaults': {
     'configurations': {
