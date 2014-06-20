@@ -31,6 +31,7 @@ void MenuItem::Create(const base::DictionaryValue& option) {
   std::string type;
   option.GetString("type", &type);
   submenu_ = NULL;
+  gtk_accel_group = NULL;
 
   if (type == "separator") {
     menu_item_ = gtk_separator_menu_item_new();
