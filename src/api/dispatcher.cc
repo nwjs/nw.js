@@ -145,7 +145,7 @@ void Dispatcher::ZoomLevelChanged() {
 
   v8::Handle<v8::Value> val = GetWindowId(web_view->mainFrame());
 
-  if (id_val.IsEmpty())
+  if (val.IsEmpty())
     return;
   if (val->IsNull() || val->IsUndefined())
     return;
@@ -179,7 +179,7 @@ void Dispatcher::documentCallback(const char* ev, blink::WebFrame* frame) {
   v8::Context::Scope cscope (web_view->mainFrame()->mainWorldScriptContext());
 
   v8::Handle<v8::Value> val = GetWindowId(web_view->mainFrame());
-  if (id_val.IsEmpty())
+  if (val.IsEmpty())
     return;
   if (val->IsNull() || val->IsUndefined())
     return;
