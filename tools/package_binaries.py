@@ -10,7 +10,7 @@ import sys
 import tarfile
 import zipfile
 
-steps = ['nw', 'chromedriver', 'symbol']
+steps = ['nw', 'chromedriver', 'symbol', 'others']
 ################################
 # Parse command line args
 parser = argparse.ArgumentParser(description='Package nw binaries.')
@@ -182,6 +182,16 @@ def generate_target_symbols(platform_name, arch, version):
     target['folder'] = True
     return target
 
+def generate_target_others(platform_name, arch, version):
+    target = {}
+    target['output'] = ''
+    target['compress'] = None
+    if platform_name == 'win':
+        target['input'] = ['nw.exp', 'nw.lib']
+    else:
+        target['input'] = []
+    return target
+
 
 ################################
 # Make packages
@@ -221,7 +231,6 @@ def compress(from_dir, to_dir, fname, compress):
 
 
 def make_packages(targets):
-
     # check file existance
     for t in targets:
         for f in t['input']:
@@ -241,8 +250,16 @@ def make_packages(targets):
     # now let's do it
     os.mkdir(dist_dir)
     for t in targets:
-        print 'Making "' + t['output'] + '.' + t['compress'] + '"'
-        if (t.has_key('folder') and t['folder'] == True) or len(t['input']) > 1:
+        if t['compress'] == None:
+            if t['output'] != '':
+                os.mkdir(dist_dir + t['output'])
+            for f in t['input']:
+                src = os.path.join(binaries_location, f)
+                dest = os.path.join(dist_dir + t['output'], f)
+                print "Copying " + f
+                shutil.copy(src, dest)
+        elif (t.has_key('folder') and t['folder'] == True) or len(t['input']) > 1:
+            print 'Making "' + t['output'] + '.' + t['compress'] + '"'
             # copy files into a folder then pack
             folder = os.path.join(dist_dir, t['output'])
             os.mkdir(folder)
@@ -258,6 +275,7 @@ def make_packages(targets):
             shutil.rmtree(folder)
         else:
             # single file
+            print 'Making "' + t['output'] + '.' + t['compress'] + '"'
             compress(binaries_location, dist_dir, t['input'][0], t['compress'])
 
 # must be aligned with steps
@@ -265,6 +283,7 @@ generators = {}
 generators['nw'] = generate_target_nw
 generators['chromedriver'] = generate_target_chromedriver
 generators['symbol'] = generate_target_symbols
+generators['others'] = generate_target_others
 ################################
 # Process targets
 targets = []
