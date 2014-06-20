@@ -328,7 +328,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
       v8Global->Set(key, val);
     }
     g_context->Exit();
-
+    context->SetAlignedPointerInEmbedderData(NODE_CONTEXT_EMBEDDER_DATA_INDEX, node::g_env);
     if (!installed_once) {
       installed_once = true;
 
