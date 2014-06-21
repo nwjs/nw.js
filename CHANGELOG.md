@@ -1,3 +1,20 @@
+0.9.0-rc1 / 06-22-2014
+======================
+
+- Chromium is updated to 35.0.1916.113
+- Window event listeners in iframe work
+- New API: App.addOriginAccessWhitelistEntry & App.removeOriginAccessWhitelistEntry (#1016, #1514)
+- API to set Menu item shortcut
+- [OSX] Create & access to built-in menu from JS
+- SetBadgeLabel support on OSX and Win
+- Support for 'single-instance' when app is started in folder
+- better handling of MIME types and dataURI in capture page API
+
+
+0.8.6 / 04-18-2014
+==================
+- Fix: new instance window is force closed and cannot receive 'close' event on App.closeAllWindows() (Cmd-Q) (#1713, #1778)
+
 0.8.5 / 02-26-2014
 ==================
 Backport 0.9 features to 0.8 branch
