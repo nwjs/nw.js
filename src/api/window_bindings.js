@@ -117,6 +117,7 @@ Window.prototype.handleEvent = function(ev) {
     if (v8_util.getConstructorName(original_closure) != 'Window')
       continue;
 
+
     var window_id = v8_util.getHiddenValue(listeners_copy[i], '__nwWindowId');
 
     // Remove callback if original window is closed (not in __nwWindowsStore).
@@ -130,9 +131,11 @@ Window.prototype.handleEvent = function(ev) {
       // Do nothing if nothing is changed.
       if (original_hash == current_hash)
         continue;
+      if (original_closure.window.top === global.__nwWindowsStore[window_id].window) //iframe case
+        continue;
     }
 
-    console.warn('Remove zombie callback for window id ' + window_id);
+    console.warn('Remove zombie callback for window id ' + window_id + " ev: " + ev);
     this.removeListener(ev, listeners_copy[i]);
   }
 
