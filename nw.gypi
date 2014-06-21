@@ -599,7 +599,31 @@
       'target_name': 'nw_strip_symbol',
       'type': 'none',
       'conditions': [
-        ['OS=="win"', {
+        ['OS=="mac"', {
+          'variables': {
+          },
+          'actions': [
+            {
+              'action_name': 'dump_symbol',
+              'inputs': [
+                '<(DEPTH)/content/nw/tools/dump_mac_syms',
+                '<(PRODUCT_DIR)/dump_syms',
+              ],
+              'outputs': [
+                '<(PRODUCT_DIR)/node-webkit.breakpad.tar.bz2',
+              ],
+              'action': ['<(DEPTH)/content/nw/tools/dump_mac_syms',
+                         ],
+              'message': 'Dumping breakpad symbols to <(_outputs)',
+              'process_outputs_as_sources': 1,
+            },
+          ],
+          'dependencies': [
+            'nw',
+            '../breakpad/breakpad.gyp:dump_syms',
+          ],
+        }],
+       ['OS=="win"', {
           'actions': [
             {
               'action_name': 'dump_symbol_and_strip',
