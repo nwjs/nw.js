@@ -599,6 +599,30 @@
       'target_name': 'nw_strip_symbol',
       'type': 'none',
       'conditions': [
+        ['OS=="win"', {
+          'actions': [
+            {
+              'action_name': 'dump_symbol_and_strip',
+              'inputs': [
+                '<(DEPTH)/content/nw/tools/dump_win_syms.py',
+                '<(PRODUCT_DIR)/nw.exe',
+              ],
+              'outputs': [
+                '<(PRODUCT_DIR)/nw.sym.7z',
+              ],
+              'action': ['python',
+                         '<(DEPTH)/content/nw/tools/dump_win_syms.py',
+                         '<(PRODUCT_DIR)/nw.exe',
+                         '<(PRODUCT_DIR)/nw.sym',
+                         ],
+              'message': 'Dumping breakpad symbols to <(_outputs)',
+              'process_outputs_as_sources': 1,
+            },
+          ],
+          'dependencies': [
+            'nw',
+          ],
+        }],
         ['OS=="linux"', {
           'variables': {
             'linux_strip_binary': 1,
