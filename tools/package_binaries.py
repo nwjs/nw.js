@@ -117,8 +117,8 @@ def generate_target_nw(platform_name, arch, version):
                            'libGLESv2.dll',
                            'nw.exe',
                            'nw.pak',
-                           'nw.exp',
-                           'nw.lib',
+#                           'nw.exp',
+#                           'nw.lib',
 #                           'nwsnapshot.exe',
                            'credits.html',
                            ]
@@ -165,7 +165,8 @@ def generate_target_symbols(platform_name, arch, version):
         target['input'] = ['nw.breakpad.' + arch]
     elif platform_name == 'win':
         target['compress'] = 'zip'
-        target['input'] = ['nw.exe.pdb']
+#        target['input'] = ['nw.exe.pdb']
+        target['input'] = []
     elif platform_name == 'osx':
         target['compress'] = 'tar.gz'
         target['input'] = [
@@ -185,7 +186,9 @@ def generate_target_others(platform_name, arch, version):
     target['output'] = ''
     target['compress'] = None
     if platform_name == 'win':
-        target['input'] = ['nw.exp', 'nw.lib']
+        target['input'] = ['nw.exp', 'nw.lib', 'nw.sym.7z']
+    elif platform_name == 'osx' :
+        target['input'] = ['node-webkit.breakpad.tar.bz2']
     else:
         target['input'] = []
     return target
@@ -248,6 +251,8 @@ def make_packages(targets):
     # now let's do it
     os.mkdir(dist_dir)
     for t in targets:
+        if len(t['input']) == 0:
+            continue
         if t['compress'] == None:
             if t['output'] != '':
                 os.mkdir(dist_dir + t['output'])
