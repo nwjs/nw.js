@@ -2,7 +2,8 @@
 ======================
 
 - Chromium is updated to 35.0.1916.113
-- Window event listeners in iframe work
+- Node.js is updated to 0.11.13
+- Window event listeners in iframe works now
 - New API: App.addOriginAccessWhitelistEntry & App.removeOriginAccessWhitelistEntry (#1016, #1514)
 - API to set Menu item shortcut
 - [OSX] Create & access to built-in menu from JS
