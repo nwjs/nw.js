@@ -56,6 +56,8 @@
 #include "ui/views/win/hwnd_util.h"
 #include "ui/views/widget/native_widget_private.h"
 #include "ui/events/event_handler.h"
+#include "ui/wm/core/easy_resize_window_targeter.h"
+#include "ui/aura/window.h"
 
 #include "chrome/browser/ui/views/accelerator_table.h"
 #include "base/basictypes.h"
@@ -280,6 +282,8 @@ NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
   params.remove_standard_frame = !has_frame();
   params.use_system_default_icon = true;
   window_->Init(params);
+  if (!has_frame())
+    InstallEasyResizeTargeterOnContainer();
 
   views::WidgetFocusManager::GetInstance()->AddFocusChangeListener(this);
 
@@ -835,4 +839,29 @@ void NativeWindowWin::OnViewWasResized() {
 #endif
 }
 
+void NativeWindowWin::InstallEasyResizeTargeterOnContainer()  {
+  aura::Window* window = window_->GetNativeWindow();
+  gfx::Insets inset(kResizeInsideBoundsSize, kResizeInsideBoundsSize,
+                    kResizeInsideBoundsSize, kResizeInsideBoundsSize);
+  // Add the EasyResizeWindowTargeter on the window, not its root window. The
+  // root window does not have a delegate, which is needed to handle the event
+  // in Linux.
+  window->SetEventTargeter(scoped_ptr<ui::EventTargeter>(
+     new wm::EasyResizeWindowTargeter(window, inset, inset)));
+}
+
+bool NativeWindowWin::ShouldDescendIntoChildForEventHandling(
+    gfx::NativeView child,
+    const gfx::Point& location) {
+#if defined(USE_AURA)
+  if (child->Contains(web_view_->web_contents()->GetView()->GetNativeView())) {
+    // App window should claim mouse events that fall within the draggable
+    // region.
+    return !draggable_region_.get() ||
+      !draggable_region_->contains(location.x(), location.y());
+  }
+#endif
+
+  return true;
+}
 }  // namespace nw

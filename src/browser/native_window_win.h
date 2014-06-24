@@ -149,10 +149,13 @@ class NativeWindowWin : public NativeWindow,
   virtual bool ExecuteAppCommand(int command_id) OVERRIDE;
   virtual void SaveWindowPlacement(const gfx::Rect& bounds,
                                    ui::WindowShowState show_state) OVERRIDE;
-
+  virtual bool ShouldDescendIntoChildForEventHandling(
+        gfx::NativeView child,
+        const gfx::Point& location) OVERRIDE;
  private:
   friend class content::Shell;
   void OnViewWasResized();
+  void InstallEasyResizeTargeterOnContainer();
 
   NativeWindowToolbarWin* toolbar_;
   views::WebView* web_view_;
