@@ -84,8 +84,11 @@ exports.copySourceFiles = function(folder) {
 }
 
 exports.zipSourceFiles = function(callback) {
-  exec('python automatic_tests/start_app/zip.py');
-  setTimeout(callback, 2000);
+  exec('python automatic_tests/start_app/zip.py',function(){
+    if (typeof callback === 'function'){
+      callback();
+    }
+  });
 }
 
 exports.makeExecuableFile = function() {

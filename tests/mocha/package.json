@@ -1,0 +1,60 @@
+{
+  "name": "mocha",
+  "version": "1.18.2",
+  "description": "simple, flexible, fun test framework",
+  "keywords": [
+    "mocha",
+    "test",
+    "bdd",
+    "tdd",
+    "tap"
+  ],
+  "author": {
+    "name": "TJ Holowaychuk",
+    "email": "tj@vision-media.ca"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/visionmedia/mocha.git"
+  },
+  "main": "./index",
+  "bin": {
+    "mocha": "./bin/mocha",
+    "_mocha": "./bin/_mocha"
+  },
+  "engines": {
+    "node": ">= 0.4.x"
+  },
+  "scripts": {
+    "test": "make test-all"
+  },
+  "dependencies": {
+    "commander": "2.0.0",
+    "growl": "1.7.x",
+    "jade": "0.26.3",
+    "diff": "1.0.7",
+    "debug": "*",
+    "mkdirp": "0.3.5",
+    "glob": "3.2.3"
+  },
+  "devDependencies": {
+    "should": ">= 2.0.x",
+    "coffee-script": "1.2"
+  },
+  "files": [
+    "bin",
+    "images",
+    "lib",
+    "index.js",
+    "mocha.css",
+    "mocha.js"
+  ],
+  "readme": " [![Build Status](https://secure.travis-ci.org/visionmedia/mocha.png)](http://travis-ci.org/visionmedia/mocha)\n\n  [![Mocha test framework](http://f.cl.ly/items/3l1k0n2A1U3M1I1L210p/Screen%20Shot%202012-02-24%20at%202.21.43%20PM.png)](http://visionmedia.github.io/mocha)\n\n  Mocha is a simple, flexible, fun JavaScript test framework for node.js and the browser. For more information view the [documentation](http://visionmedia.github.io/mocha).\n\n## Contributors\n\n```\n\n project  : mocha\n repo age : 2 years, 4 months ago\n commits  : 1314\n active   : 372 days\n files    : 141\n authors  :\n   582    TJ Holowaychuk          44.3%\n   389    Tj Holowaychuk          29.6%\n    46    Travis Jeffery          3.5%\n    31    Guillermo Rauch         2.4%\n    13    Attila Domokos          1.0%\n    10    John Firebaugh          0.8%\n     8    Jo Liss                 0.6%\n     7    Nathan Rajlich          0.5%\n     6    Mike Pennisi            0.5%\n     6    James Carr              0.5%\n     6    Brendan Nee             0.5%\n     5    Aaron Heckmann          0.4%\n     5    Ryunosuke SATO          0.4%\n     4    hokaccha                0.3%\n     4    Joshua Krall            0.3%\n     4    Xavier Antoviaque       0.3%\n     3    Jesse Dailey            0.2%\n     3    Forbes Lindesay         0.2%\n     3    Sindre Sorhus           0.2%\n     3    Cory Thomas             0.2%\n     3    Fredrik Enestad         0.2%\n     3    Ben Lindsey             0.2%\n     3    Tyson Tate              0.2%\n     3    Mathieu Desvé          0.2%\n     3    Valentin Agachi         0.2%\n     3    Wil Moore III           0.2%\n     3    Merrick Christensen     0.2%\n     3    eiji.ienaga             0.2%\n     3    fool2fish               0.2%\n     3    Nathan Bowser           0.2%\n     3    Paul Miller             0.2%\n     2    Juzer Ali               0.2%\n     2    Pete Hawkins            0.2%\n     2    Jonas Westerlund        0.2%\n     2    Arian Stolwijk          0.2%\n     2    Quang Van               0.2%\n     2    Glen Mailer             0.2%\n     2    Justin DuJardin         0.2%\n     2    FARKAS Máté           0.2%\n     2    Raynos                  0.2%\n     2    Michael Riley           0.2%\n     2    Michael Schoonmaker     0.2%\n     2    Domenic Denicola        0.2%\n     2    Simon Gaeremynck        0.2%\n     2    Konstantin Käfer      0.2%\n     2    domenic                 0.2%\n     2    Paul Armstrong          0.2%\n     2    fcrisci                 0.2%\n     2    Alexander Early         0.2%\n     2    Shawn Krisman           0.2%\n     2    Brian Beck              0.2%\n     2    Nathan Alderson         0.2%\n     2    David Henderson         0.2%\n     2    Timo Tijhof             0.2%\n     2    Ian Storm Taylor        0.2%\n     2    travis jeffery          0.2%\n     1    Matt Smith              0.1%\n     1    Matthew Shanley         0.1%\n     1    Nathan Black            0.1%\n     1    Phil Sung               0.1%\n     1    R56                     0.1%\n     1    Refael Ackermann        0.1%\n     1    Richard Dingwall        0.1%\n     1    Romain Prieto           0.1%\n     1    Roman Neuhauser         0.1%\n     1    Roman Shtylman          0.1%\n     1    Russ Bradberry          0.1%\n     1    Russell Munson          0.1%\n     1    Rustem Mustafin         0.1%\n     1    Salehen Shovon Rahman   0.1%\n     1    Sasha Koss              0.1%\n     1    Seiya Konno             0.1%\n     1    Simon Goumaz            0.1%\n     1    Standa Opichal          0.1%\n     1    Stephen Mathieson       0.1%\n     1    Steve Mason             0.1%\n     1    Tapiwa Kelvin           0.1%\n     1    Teddy Zeenny            0.1%\n     1    Tim Ehat                0.1%\n     1    Vadim Nikitin           0.1%\n     1    Victor Costan           0.1%\n     1    Will Langstroth         0.1%\n     1    Yanis Wang              0.1%\n     1    Yuest Wang              0.1%\n     1    abrkn                   0.1%\n     1    airportyh               0.1%\n     1    badunk                  0.1%\n     1    fengmk2                 0.1%\n     1    grasGendarme            0.1%\n     1    lodr                    0.1%\n     1    tgautier@yahoo.com      0.1%\n     1    traleig1                0.1%\n     1    vlad                    0.1%\n     1    yuitest                 0.1%\n     1    Adam Crabtree           0.1%\n     1    Andreas Brekken         0.1%\n     1    Andreas Lind Petersen   0.1%\n     1    Andrew Nesbitt          0.1%\n     1    Andrey Popp             0.1%\n     1    Arnaud Brousseau        0.1%\n     1    Atsuya Takagi           0.1%\n     1    Austin Birch            0.1%\n     1    Bjørge Næss           0.1%\n     1    Brian Lalor             0.1%\n     1    Brian M. Carlson        0.1%\n     1    Brian Moore             0.1%\n     1    Bryan Donovan           0.1%\n     1    Casey Foster            0.1%\n     1    ChrisWren               0.1%\n     1    Corey Butler            0.1%\n     1    Daniel Stockman         0.1%\n     1    Dave McKenna            0.1%\n     1    Di Wu                   0.1%\n     1    Dmitry Shirokov         0.1%\n     1    Fedor Indutny           0.1%\n     1    Florian Margaine        0.1%\n     1    Frederico Silva         0.1%\n     1    Fredrik Lindin          0.1%\n     1    Gareth Murphy           0.1%\n     1    Gavin Mogan             0.1%\n     1    Glen Huang              0.1%\n     1    Greg Perkins            0.1%\n     1    Harry Brundage          0.1%\n     1    Herman Junge            0.1%\n     1    Ian Young               0.1%\n     1    Ivan                    0.1%\n     1    JP Bochi                0.1%\n     1    Jaakko Salonen          0.1%\n     1    Jakub Nešetřil      0.1%\n     1    James Bowes             0.1%\n     1    James Lal               0.1%\n     1    Jason Barry             0.1%\n     1    Javier Aranda           0.1%\n     1    Jeff Kunkle             0.1%\n     1    Jeremy Martin           0.1%\n     1    Jimmy Cuadra            0.1%\n     1    Jonathan Creamer        0.1%\n     1    Jussi Virtanen          0.1%\n     1    Katie Gengler           0.1%\n     1    Kazuhito Hokamura       0.1%\n     1    Kirill Korolyov         0.1%\n     1    Koen Punt               0.1%\n     1    Laszlo Bacsi            0.1%\n     1    Liam Newman             0.1%\n     1    László Bácsi         0.1%\n     1    Maciej Małecki         0.1%\n     1    Mal Graty               0.1%\n     1    Marc Kuo                0.1%\n     1    Matt Robenolt           0.1%\n```\n\n## Links\n\n  - [Google Group](http://groups.google.com/group/mochajs)\n  - [Wiki](https://github.com/visionmedia/mocha/wiki)\n  - Mocha [Extensions and reporters](https://github.com/visionmedia/mocha/wiki)\n",
+  "readmeFilename": "Readme.md",
+  "bugs": {
+    "url": "https://github.com/visionmedia/mocha/issues"
+  },
+  "homepage": "https://github.com/visionmedia/mocha",
+  "_id": "mocha@1.18.2",
+  "_from": "mocha@1.18.2"
+}
