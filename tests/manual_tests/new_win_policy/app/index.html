@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf8">
+    <title>test</title>
+  </head>
+  <body>
+    <a href="http://www.baidu.com/" target="_blank">WINDOW MANUAL CLICK LINK</a>
+    <iframe id="iframe" src="iframe.html" target="_blank"></iframe>
+    <script type="text/javascript">
+      //start js code here
+      var gui = require('nw.gui');
+      var win = gui.Window.get();
+      var command = gui.App.argv[0] || "window_ignore";
+      var test_url = "http://www.baidu.com/";
+      // document.getElementById('test_url').href = test_url;
+      var assert = require('assert');
+
+      var index = command.indexOf('_');
+      var origin = command.substr(0,index);
+      var policy_type = command.substr(index+1);
+
+      var iframe = document.getElementById('iframe');
+
+      win.on('new-win-policy', function(frame, url, policy) {
+        if (origin === 'window'){
+          assert.equal(frame,null);
+        } else {
+          assert.equal(frame,iframe);
+        }
+        assert.equal(url,test_url);
+
+        if (policy_type == "ignore"){
+          policy.ignore();
+        } else if (policy_type == "forceCurrent"){
+          policy.forceCurrent();
+        } else if (policy_type == "forceDownload" || policy_type == "forceDownload-manually"){
+          console.log('forceDownload');
+          policy.forceDownload();
+        } else if (policy_type == "forceNewWindow"){
+          policy.forceNewWindow();
+        } else if (policy_type == "forceNewPopup"){
+          policy.forceNewPopup();
+        }
+      });
+
+      if (origin === 'window'){
+        if (policy_type.indexOf('manually') == -1){
+          window.open(test_url);
+        }
+      } else {
+        setTimeout(function(){
+          if (policy_type.indexOf('manually') == -1){
+            iframe.contentWindow.OpenWindow(test_url);
+          }
+        },1000);
+      }
+    </script>
+  </body>
+</html>
+    
