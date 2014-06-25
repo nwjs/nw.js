@@ -82,4 +82,14 @@
   return YES;
 }
 
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)app {
+  // The termination procedure is completely and gracefully handled by node-webkit
+  // (triggered by CloseAllWindows, app exits when last window closes) so we
+  // don't need Cocoa to terminate the application immediately (NSTerminateNow)
+  // neither run a special event loop (NSTerminateLater) waiting for a termination
+  // reply
+  nwapi::App::CloseAllWindows(false, true);
+  return NSTerminateCancel;
+}
+
 @end
