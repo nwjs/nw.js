@@ -20,10 +20,10 @@
 
 #include "content/nw/src/api/shortcut/global_shortcut_listener_x11.h"
 
-#include "base/x11/x11_error_tracker.h"
 #include "content/public/browser/browser_thread.h"
 #include "ui/base/accelerators/accelerator.h"
 #include "ui/events/keycodes/keyboard_code_conversion_x.h"
+#include "ui/gfx/x/x11_error_tracker.h"
 #include "ui/gfx/x/x11_types.h"
 
 #if defined(TOOLKIT_GTK)
@@ -131,7 +131,7 @@ bool GlobalShortcutListenerX11::RegisterAcceleratorImpl(
   int modifiers = GetNativeModifiers(accelerator);
   KeyCode keycode = XKeysymToKeycode(x_display_,
       XKeysymForWindowsKeyCode(accelerator.key_code(), false));
-  base::X11ErrorTracker err_tracker;
+  gfx::X11ErrorTracker err_tracker;
 
   // Because XGrabKey only works on the exact modifiers mask, we should register
   // our hot keys with modifiers that we want to ignore, including Num lock,
