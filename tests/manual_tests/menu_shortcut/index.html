@@ -16,12 +16,10 @@
       var gui = require('nw.gui');
       var win = gui.Window.get();
       var menubar = new gui.Menu({ type: 'menubar' });
-      win.menu = menubar;
 
       var menubar_file = new gui.MenuItem({"label":"File"});
       menubar.append(menubar_file);
       var file_menu = new gui.Menu();
-      menubar_file.submenu = file_menu;
       var file_quit_item = new gui.MenuItem({
         "label":"Quit",
         "click":function(){
@@ -50,6 +48,9 @@
         }
       });
       file_menu.insert(file_about_item,0);
+
+      menubar_file.submenu = file_menu;
+      win.menu = menubar;
 
     </script>
   </body>
