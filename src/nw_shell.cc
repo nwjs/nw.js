@@ -323,6 +323,10 @@ nw::Package* Shell::GetPackage() {
 }
 
 void Shell::LoadURL(const GURL& url) {
+  if (url.is_empty() || !url.is_valid()) {
+    LOG(ERROR) << "Unable to load URL: " << url;
+    return;
+  }
   NavigationController::LoadURLParams params(url);
   params.transition_type = PageTransitionFromInt(
       PAGE_TRANSITION_TYPED | PAGE_TRANSITION_FROM_ADDRESS_BAR);
