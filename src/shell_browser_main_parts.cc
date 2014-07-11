@@ -160,7 +160,6 @@ int ShellBrowserMainParts::PreCreateThreads() {
 }
 
 void ShellBrowserMainParts::Init() {
-  package_.reset(new nw::Package());
   CommandLine& command_line = *CommandLine::ForCurrentProcess();
 
   browser_context_.reset(new ShellBrowserContext(false, package()));
@@ -250,6 +249,8 @@ printing::PrintJobManager* ShellBrowserMainParts::print_job_manager() {
 }
 
 void ShellBrowserMainParts::PreEarlyInitialization() {
+//extract package first to get chromium-args, and append them to our commandLine object
+  package_.reset(new nw::Package());
 #if !defined(OS_WIN)
   // see chrome_browser_main_posix.cc
   CommandLine& command_line = *CommandLine::ForCurrentProcess();
