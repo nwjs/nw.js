@@ -52,12 +52,13 @@ class DispatcherHost : public content::WebContentsObserver {
   virtual ~DispatcherHost();
 
   // Get C++ object from its id.
-  Base* GetApiObject(int id);
+  static Base* GetApiObject(int id);
 
   static int AllocateId();
+
   // Helper function to convert type.
   template<class T>
-  T* GetApiObject(int id) {
+  static T* GetApiObject(int id) {
     return static_cast<T*>(GetApiObject(id));
   }
 

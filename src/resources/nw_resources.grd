@@ -48,6 +48,7 @@
       <include name="IDR_NW_API_WINDOW_JS" file="../api/window/window.js" type="BINDATA" />
       <include name="IDR_NW_API_SHELL_JS" file="../api/shell/shell.js" type="BINDATA" />
       <include name="IDR_NW_API_APP_JS" file="../api/app/app.js" type="BINDATA" />
+      <include name="IDR_NW_API_SHORTCUT_JS" file="../api/shortcut/shorcut.js" type="BINDATA" />
       <if expr="pp_ifdef('enable_printing')">
         <include name="IDR_PRINT_PREVIEW_PAGE" file="pages/print_preview_page.html" flattenhtml="true" allowexternalscript="false" type="BINDATA" />
       </if>
