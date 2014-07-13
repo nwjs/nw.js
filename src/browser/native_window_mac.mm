@@ -24,6 +24,7 @@
 #include "base/strings/sys_string_conversions.h"
 #include "base/values.h"
 #import "chrome/browser/ui/cocoa/custom_frame_view.h"
+#import "chrome/browser/ui/cocoa/nsview_additions.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/app/app.h"
 #include "content/nw/src/browser/chrome_event_processing_window.h"
@@ -351,6 +352,7 @@ NativeWindowCocoa::NativeWindowCocoa(
   }
   window_ = shell_window;
   [shell_window setShell:shell];
+  [[window() contentView] cr_setWantsLayer:YES];
   [window() setDelegate:[[NativeWindowDelegate alloc] initWithShell:shell]];
 
   // Disable fullscreen button when 'fullscreen' is specified to false.

@@ -391,6 +391,10 @@
           'sources!': [
             '<(DEPTH)/chrome/common/child_process_logging_posix.cc',
           ],
+          'sources': [
+            '<(DEPTH)/chrome/browser/ui/cocoa/nsview_additions.h',
+            '<(DEPTH)/chrome/browser/ui/cocoa/nsview_additions.mm',
+          ],
           'dependencies': [
             '<(DEPTH)/breakpad/breakpad.gyp:breakpad',
             '<(DEPTH)/components/components.gyp:breakpad_component',
