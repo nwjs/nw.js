@@ -2,13 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "content/shell/browser/shell_login_dialog.h"
+#include "content/nw/src/browser/shell_login_dialog.h"
 
 #include "base/bind.h"
 #include "base/logging.h"
 #include "base/strings/utf_string_conversions.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/resource_dispatcher_host.h"
+#include "content/public/browser/resource_request_info.h"
 #include "net/base/auth.h"
 #include "net/url_request/url_request.h"
 #include "ui/gfx/text_elider.h"
@@ -20,6 +21,10 @@ ShellLoginDialog::ShellLoginDialog(
     net::URLRequest* request) : auth_info_(auth_info),
                                 request_(request) {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::IO));
+  if (!ResourceRequestInfo::ForRequest(request_)->GetAssociatedRenderFrame(
+          &render_process_id_,  &render_frame_id_)) {
+    NOTREACHED();
+  }
   BrowserThread::PostTask(
       BrowserThread::UI, FROM_HERE,
       base::Bind(&ShellLoginDialog::PrepDialog, this,

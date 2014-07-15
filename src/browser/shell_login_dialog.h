@@ -51,6 +51,9 @@ class ShellLoginDialog : public ResourceDispatcherHostLoginDelegate {
   // Threading: any
   virtual ~ShellLoginDialog();
 
+  int render_process_id_;
+  int render_frame_id_;
+
  private:
   // All the methods that begin with Platform need to be implemented by the
   // platform specific LoginDialog implementation.

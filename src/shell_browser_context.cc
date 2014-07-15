@@ -178,7 +178,7 @@ net::URLRequestContextGetter* ShellBrowserContext::CreateRequestContext(
     cmd_line->GetSwitchValueASCII(switches::kAuthSchemes);
 
   if (auth_schemes.empty())
-    auth_schemes = "digest,ntlm,negotiate";
+    auth_schemes = "basic,digest,ntlm,negotiate";
 
   url_request_getter_ = new ShellURLRequestContextGetter(
       ignore_certificate_errors_,

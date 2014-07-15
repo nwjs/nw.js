@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "content/shell/browser/shell_login_dialog.h"
+#include "content/nw/src/browser/shell_login_dialog.h"
 
 #include <gtk/gtk.h>
 
@@ -12,7 +12,6 @@
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/resource_dispatcher_host.h"
-#include "content/public/browser/resource_request_info.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
 #include "ui/base/gtk/gtk_hig_constants.h"
@@ -22,16 +21,9 @@ namespace content {
 void ShellLoginDialog::PlatformCreateDialog(const base::string16& message) {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
 
-  int render_process_id;
-  int render_frame_id;
-  if (!ResourceRequestInfo::ForRequest(request_)->GetAssociatedRenderFrame(
-          &render_process_id,  &render_frame_id)) {
-    NOTREACHED();
-  }
-
   WebContents* web_contents = NULL;
   RenderFrameHost* render_frame_host =
-      RenderFrameHost::FromID(render_process_id, render_frame_id);
+      RenderFrameHost::FromID(render_process_id_, render_frame_id_);
   web_contents = WebContents::FromRenderFrameHost(render_frame_host);
   DCHECK(web_contents);
 
