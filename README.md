@@ -20,32 +20,27 @@ It's created and developed in the Intel Open Source Technology Center.
 * Available on Linux, Mac OS X and Windows
 
 ## Downloads
-[v0.9.2 release notes](https://groups.google.com/d/msg/node-webkit/qpBhcWr-hSc/caGjhtl8cEgJ)
+* **0.9.2:** (Feb 20, 2014, based off of Node v0.11.9, Chrome 32.0.1700.107): [release notes](https://groups.google.com/d/msg/node-webkit/qpBhcWr-hSc/caGjhtl8cEgJ)
+ * Linux: [32bit](http://dl.node-webkit.org/v0.9.2/node-webkit-v0.9.2-linux-ia32.tar.gz) / [64bit](http://dl.node-webkit.org/v0.9.2/node-webkit-v0.9.2-linux-x64.tar.gz)
+ * Windows: [win32](http://dl.node-webkit.org/v0.9.2/node-webkit-v0.9.2-win-ia32.zip)
+ * Mac: [32bit, 10.7+](http://dl.node-webkit.org/v0.9.2/node-webkit-v0.9.2-osx-ia32.zip)
 
-Prebuilt binaries (v0.9.2 - Feb 20, 2014, based off of Node v0.11.9, Chrome 32.0.1700.107):
+* **v0.10.0-rc1:** (Jun 22, 2014, based off of Node v0.11.13, Chromium 35.0.1916.113): [release notes](https://groups.google.com/d/msg/node-webkit/zysKp3n37_4/Bs-QWWgsNIEJ)
 
-* Linux: [32bit](http://dl.node-webkit.org/v0.9.2/node-webkit-v0.9.2-linux-ia32.tar.gz) / [64bit] (http://dl.node-webkit.org/v0.9.2/node-webkit-v0.9.2-linux-x64.tar.gz)
-* Windows: [win32](http://dl.node-webkit.org/v0.9.2/node-webkit-v0.9.2-win-ia32.zip)
-* Mac: [32bit, 10.7+](http://dl.node-webkit.org/v0.9.2/node-webkit-v0.9.2-osx-ia32.zip)
+ * Linux: [32bit](http://dl.node-webkit.org/v0.10.0-rc1/node-webkit-v0.10.0-rc1-linux-ia32.tar.gz) / [64bit](http://dl.node-webkit.org/v0.10.0-rc1/node-webkit-v0.10.0-rc1-linux-x64.tar.gz)
+ * Windows: [win32](http://dl.node-webkit.org/v0.10.0-rc1/node-webkit-v0.10.0-rc1-win-ia32.zip)
+ * Mac: [32bit, 10.7+](http://dl.node-webkit.org/v0.10.0-rc1/node-webkit-v0.10.0-rc1-osx-ia32.zip)
 
-[v0.10.0-rc1 release notes](https://groups.google.com/d/msg/node-webkit/zysKp3n37_4/Bs-QWWgsNIEJ)
+* **0.8.6:** (Apr 18, 2014, based off of Node v0.10.22, Chrome 30.0.1599.66) **If your native Node module works only with Node v0.10, then you should use node-webkit v0.8.x, which is also a maintained branch. [More info](https://groups.google.com/d/msg/node-webkit/2OJ1cEMPLlA/09BvpTagSA0J)**  
+[release notes](https://groups.google.com/d/msg/node-webkit/CLPkgfV-i7s/hwkkQuJ1kngJ)
 
-Prebuilt binaries (v0.10.0-rc1 - Jun 22, 2014, based off of Node v0.11.13, Chromium 35.0.1916.113):
+ * Linux: [32bit](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-linux-ia32.tar.gz) / [64bit](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-linux-x64.tar.gz)
+ * Windows: [win32](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-win-ia32.zip)
+ * Mac: [32bit, 10.7+](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-osx-ia32.zip)
 
-* Linux: [32bit](http://dl.node-webkit.org/v0.10.0-rc1/node-webkit-v0.10.0-rc1-linux-ia32.tar.gz) / [64bit] (http://dl.node-webkit.org/v0.10.0-rc1/node-webkit-v0.10.0-rc1-linux-x64.tar.gz)
-* Windows: [win32](http://dl.node-webkit.org/v0.10.0-rc1/node-webkit-v0.10.0-rc1-win-ia32.zip)
-* Mac: [32bit, 10.7+](http://dl.node-webkit.org/v0.10.0-rc1/node-webkit-v0.10.0-rc1-osx-ia32.zip)
+* **latest live build**: git tip version; build triggered from every git commit: http://dl.node-webkit.org/live-build/
 
-**If your native Node module works only with Node v0.10, then you should use node-webkit v0.8.x, which is also a maintained branch. [More info](https://groups.google.com/d/msg/node-webkit/2OJ1cEMPLlA/09BvpTagSA0J)**  
-[v0.8.6 release notes](https://groups.google.com/d/msg/node-webkit/CLPkgfV-i7s/hwkkQuJ1kngJ)
-
-Prebuilt binaries (v0.8.6 - Apr 18, 2014, based off of Node v0.10.22, Chrome 30.0.1599.66):
-
-* Linux: [32bit](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-linux-ia32.tar.gz) / [64bit] (http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-linux-x64.tar.gz)
-* Windows: [win32](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-win-ia32.zip)
-* Mac: [32bit, 10.7+](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-osx-ia32.zip)
-
-[Looking for older versions?](https://github.com/rogerwang/node-webkit/wiki/Downloads-of-old-versions)
+* [Previous versions](https://github.com/rogerwang/node-webkit/wiki/Downloads-of-old-versions)
 
 ###Demos and real apps
 You may also be interested in [our demos repository](https://github.com/zcbenz/nw-sample-apps) and the [List of apps and companies using node-webkit](https://github.com/rogerwang/node-webkit/wiki/List-of-apps-and-companies-using-node-webkit).
