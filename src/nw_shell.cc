@@ -67,6 +67,7 @@
 
 #include "components/autofill/content/browser/content_autofill_driver.h"
 #include "components/autofill/core/browser/autofill_manager.h"
+#include "components/web_modal/web_contents_modal_dialog_manager.h"
 
 
 #if defined(OS_WIN)
@@ -201,6 +202,10 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   // NativeWindow requires the window_ to be non-NULL.
   window_->InitFromManifest(manifest);
 
+#if defined(OS_WIN)
+  web_modal::WebContentsModalDialogManager::CreateForWebContents(web_contents);
+  web_modal::WebContentsModalDialogManager::FromWebContents(web_contents)->SetDelegate(this);
+#endif
   autofill::TabAutofillManagerDelegate::CreateForWebContents(web_contents);
   autofill::ContentAutofillDriver::CreateForWebContentsAndDelegate(
       web_contents,
@@ -587,6 +592,14 @@ void Shell::WebContentsCreated(WebContents* source_contents,
   // should be handled here
   new nwapi::DispatcherHost(new_contents->GetRenderViewHost());
 
+#if defined(ENABLE_PRINTING)
+  printing::PrintViewManager::CreateForWebContents(new_contents);
+#endif
+
+#if defined(OS_WIN)
+  web_modal::WebContentsModalDialogManager::CreateForWebContents(new_contents);
+  web_modal::WebContentsModalDialogManager::FromWebContents(new_contents)->SetDelegate(this);
+#endif
   autofill::TabAutofillManagerDelegate::CreateForWebContents(new_contents);
   autofill::ContentAutofillDriver::CreateForWebContentsAndDelegate(
       new_contents,
@@ -692,5 +705,12 @@ void Shell::RenderViewCreated(RenderViewHost* render_view_host) {
   //FIXME: handle removal
   new nwapi::DispatcherHost(render_view_host);
 }
+
+#if defined(OS_WIN)
+bool Shell::IsWebContentsVisible(content::WebContents* web_contents) {
+  //FIXME
+  return true;
+}
+#endif
 
 }  // namespace content

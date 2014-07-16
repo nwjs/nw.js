@@ -13,6 +13,11 @@
 #include "ui/base/gtk/gtk_signal.h"
 #endif
 
+#if defined(OS_WIN)
+#include "ui/views/window/dialog_delegate.h"
+#include "login_view.h"
+#endif
+
 #if defined(OS_MACOSX)
 #if __OBJC__
 @class ShellLoginDialogHelper;
@@ -30,7 +35,11 @@ namespace content {
 
 // This class provides a dialog box to ask the user for credentials. Useful in
 // ResourceDispatcherHostDelegate::CreateLoginDelegate.
+#if defined(OS_WIN)
+class ShellLoginDialog : public ResourceDispatcherHostLoginDelegate, public views::DialogDelegate {
+#else
 class ShellLoginDialog : public ResourceDispatcherHostLoginDelegate {
+#endif
  public:
   // Threading: IO thread.
   ShellLoginDialog(net::AuthChallengeInfo* auth_info, net::URLRequest* request);
@@ -47,9 +56,25 @@ class ShellLoginDialog : public ResourceDispatcherHostLoginDelegate {
                         const base::string16& password);
   void UserCancelledAuth();
 
+#if defined(OS_WIN)
+  // views::DialogDelegate methods:
+  virtual base::string16 GetDialogButtonLabel(ui::DialogButton button) const OVERRIDE;
+  virtual base::string16 GetWindowTitle() const OVERRIDE;
+  virtual void WindowClosing() OVERRIDE;
+  virtual void DeleteDelegate() OVERRIDE;
+  virtual ui::ModalType GetModalType() const OVERRIDE;
+  virtual bool Cancel() OVERRIDE;
+  virtual bool Accept() OVERRIDE;
+  virtual views::View* GetInitiallyFocusedView() OVERRIDE;
+  virtual views::View* GetContentsView() OVERRIDE;
+  virtual views::Widget* GetWidget() OVERRIDE;
+  virtual const views::Widget* GetWidget() const OVERRIDE;
+#endif
+
  protected:
   // Threading: any
   virtual ~ShellLoginDialog();
+  void ReleaseSoon();
 
   int render_process_id_;
   int render_frame_id_;
@@ -93,11 +118,11 @@ class ShellLoginDialog : public ResourceDispatcherHostLoginDelegate {
   GtkWidget* password_entry_;
   GtkWidget* root_;
   CHROMEGTK_CALLBACK_1(ShellLoginDialog, void, OnResponse, int);
+  CHROMEGTK_CALLBACK_0(ShellLoginDialog, void, OnDestroy);
 #elif defined(OS_WIN)
-INT_PTR CALLBACK DialogProc(HWND dialog,
-                                              UINT message,
-                                              WPARAM wparam,
-                                              LPARAM lparam);
+  LoginView* login_view_;
+
+  views::Widget* dialog_;
 #endif
 };
 

@@ -34,6 +34,10 @@
 #include "ui/gfx/point.h"
 #include "ui/gfx/size.h"
 
+#if defined(OS_WIN)
+#include "components/web_modal/web_contents_modal_dialog_host.h"
+#endif
+
 namespace nwapi {
 class Menu;
 }
@@ -60,7 +64,11 @@ namespace nw {
 
 class CapturePageHelper;
 
+#if defined(OS_WIN)
+class NativeWindow : public web_modal::WebContentsModalDialogHost {
+#else
 class NativeWindow {
+#endif
  public:
   virtual ~NativeWindow();
 
@@ -119,6 +127,13 @@ class NativeWindow {
   virtual void HandleKeyboardEvent(
       const content::NativeWebKeyboardEvent& event) = 0;
 
+#if defined(OS_WIN)
+  virtual gfx::NativeView GetHostView() const OVERRIDE = 0;
+  virtual gfx::Point GetDialogPosition(const gfx::Size& size) OVERRIDE = 0;
+  virtual void AddObserver(web_modal::ModalDialogHostObserver* observer) OVERRIDE = 0;
+  virtual void RemoveObserver(web_modal::ModalDialogHostObserver* observer) OVERRIDE = 0;
+  virtual gfx::Size GetMaximumDialogSize() OVERRIDE = 0;
+#endif
   content::Shell* shell() const { return shell_.get(); }
   content::WebContents* web_contents() const;
   bool has_frame() const { return has_frame_; }

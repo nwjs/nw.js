@@ -23,107 +23,134 @@
 #include "base/logging.h"
 #include "base/strings/string16.h"
 #include "base/strings/utf_string_conversions.h"
+#include "components/web_modal/web_contents_modal_dialog_host.h"
+#include "components/web_modal/web_contents_modal_dialog_manager.h"
+#include "components/web_modal/web_contents_modal_dialog_manager_delegate.h"
 #include "content/nw/src/resource.h"
 #include "content/public/browser/browser_thread.h"
+#include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/resource_dispatcher_host.h"
 #include "content/public/browser/resource_request_info.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
+#include "ui/base/l10n/l10n_util.h"
+#include "ui/views/widget/widget.h"
+
+using web_modal::WebContentsModalDialogManager;
+using web_modal::WebContentsModalDialogManagerDelegate;
 
 namespace content {
-
-INT_PTR CALLBACK ShellLoginDialog::DialogProc(HWND dialog,
-                                              UINT message,
-                                              WPARAM wparam,
-                                              LPARAM lparam) {
-  switch (message) {
-    case WM_INITDIALOG: {
-      SetWindowLongPtr(dialog, DWL_USER, static_cast<LONG_PTR>(lparam));
-      ShellLoginDialog* owner = reinterpret_cast<ShellLoginDialog*>(lparam);
-      owner->dialog_win_ = dialog;
-      SetDlgItemText(dialog,
-                     IDC_DIALOG_MESSAGETEXT,
-                     owner->message_text_.c_str());
-      break;
-    }
-    case WM_CLOSE: {
-      ShellLoginDialog* owner = reinterpret_cast<ShellLoginDialog*>(
-          GetWindowLongPtr(dialog, DWL_USER));
-      owner->UserCancelledAuth();
-      DestroyWindow(owner->dialog_win_);
-      break;
-    }
-    case WM_DESTROY: {
-      ShellLoginDialog* owner = reinterpret_cast<ShellLoginDialog*>(
-          GetWindowLongPtr(dialog, DWL_USER));
-      owner->dialog_win_ = NULL;
-      owner->ReleaseSoon();
-	  break;
-    }
-    case WM_COMMAND: {
-      ShellLoginDialog* owner = reinterpret_cast<ShellLoginDialog*>(
-          GetWindowLongPtr(dialog, DWL_USER));
-      if (LOWORD(wparam) == IDOK) {
-        base::string16 username;
-        base::string16 password;
-        size_t length =
-            GetWindowTextLength(GetDlgItem(dialog, IDC_USERNAMEEDIT)) + 1;
-        GetDlgItemText(dialog, IDC_USERNAMEEDIT,
-                       WriteInto(&username, length), length);
-        length = GetWindowTextLength(GetDlgItem(dialog, IDC_PASSWORDEDIT)) + 1;
-        GetDlgItemText(dialog, IDC_PASSWORDEDIT,
-                       WriteInto(&password, length), length);
-        owner->UserAcceptedAuth(username, password);
-      } else if (LOWORD(wparam) == IDCANCEL) {
-        owner->UserCancelledAuth();
-      } else {
-        DLOG(INFO) << "wparam is " << LOWORD(wparam);
-        // NOTREACHED();
-      }
-
-      break;
-    }
-    default:
-      return DefWindowProc(dialog, message, wparam, lparam);
-  }
-
-  return 0;
-}
 
 void ShellLoginDialog::PlatformCreateDialog(const base::string16& message) {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
 
-  WebContents* web_contents = NULL;
-  RenderViewHost* render_view_host =
-      RenderViewHost::FromID(render_process_id_, render_view_id_);
-  if (render_view_host)
-    web_contents = WebContents::FromRenderViewHost(render_view_host);
-  DCHECK(web_contents);
+  login_view_ = new LoginView(message);
 
-  gfx::NativeWindow parent_window =
-      web_contents->GetView()->GetTopLevelNativeWindow();
-  message_text_ = message;
-  dialog_win_ = CreateDialogParam(GetModuleHandle(0),
-                                  MAKEINTRESOURCE(IDD_LOGIN), parent_window,
-                                  DialogProc, reinterpret_cast<LPARAM>(this));
+  // Scary thread safety note: This can potentially be called *after* SetAuth
+  // or CancelAuth (say, if the request was cancelled before the UI thread got
+  // control).  However, that's OK since any UI interaction in those functions
+  // will occur via an InvokeLater on the UI thread, which is guaranteed
+  // to happen after this is called (since this was InvokeLater'd first).
+  content::RenderFrameHost* rfh = content::RenderFrameHost::FromID(
+      render_process_id_, render_frame_id_);
+
+  WebContents* requesting_contents = WebContents::FromRenderFrameHost(rfh);
+  WebContentsModalDialogManager* web_contents_modal_dialog_manager =
+    WebContentsModalDialogManager::FromWebContents(requesting_contents);
+  WebContentsModalDialogManagerDelegate* modal_delegate =
+    web_contents_modal_dialog_manager->delegate();
+  CHECK(modal_delegate);
+  dialog_ = views::Widget::CreateWindowAsFramelessChild(
+        this, modal_delegate->GetWebContentsModalDialogHost()->GetHostView());
+  web_contents_modal_dialog_manager->ShowDialog(dialog_->GetNativeView());
+
 }
 
+#if 0
 void ShellLoginDialog::PlatformShowDialog() {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
-  ShowWindow(dialog_win_, SW_SHOWNORMAL);
 }
+#endif
 
 void ShellLoginDialog::PlatformCleanUp() {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
-  if (dialog_win_) {
-    DestroyWindow(dialog_win_);
-    dialog_win_ = NULL;
-  }
+  if (dialog_)
+    dialog_->Close();
 }
 
 void ShellLoginDialog::PlatformRequestCancelled() {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
+}
+
+
+base::string16 ShellLoginDialog::GetDialogButtonLabel(
+      ui::DialogButton button) const {
+  if (button == ui::DIALOG_BUTTON_OK)
+    return base::ASCIIToUTF16("Log In");
+  return DialogDelegate::GetDialogButtonLabel(button);
+}
+
+base::string16 ShellLoginDialog::GetWindowTitle() const {
+  return base::ASCIIToUTF16("Authentication Required");
+}
+
+void ShellLoginDialog::WindowClosing() {
+  DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
+
+  content::RenderFrameHost* rfh = content::RenderFrameHost::FromID(
+      render_process_id_, render_frame_id_);
+
+  WebContents* tab = WebContents::FromRenderFrameHost(rfh);
+
+  if (tab)
+    tab->GetRenderViewHost()->SetIgnoreInputEvents(false);
+
+  // Reference is no longer valid.
+  dialog_ = NULL;
+
+  // UserCancelledAuth();
+}
+
+void ShellLoginDialog::DeleteDelegate() {
+  DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
+
+  // The widget is going to delete itself; clear our pointer.
+  dialog_ = NULL;
+
+  ReleaseSoon();
+}
+
+ui::ModalType ShellLoginDialog::GetModalType() const {
+  return views::WidgetDelegate::GetModalType();
+}
+
+bool ShellLoginDialog::Cancel() {
+  DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
+
+  UserCancelledAuth();
+  return true;
+}
+
+bool ShellLoginDialog::Accept() {
+  DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
+
+  UserAcceptedAuth(login_view_->GetUsername(), login_view_->GetPassword());
+  return true;
+}
+
+views::View* ShellLoginDialog::GetInitiallyFocusedView() {
+  return login_view_->GetInitiallyFocusedView();
+}
+
+views::View* ShellLoginDialog::GetContentsView() {
+  return login_view_;
+}
+views::Widget* ShellLoginDialog::GetWidget() {
+  return login_view_->GetWidget();
+}
+const views::Widget* ShellLoginDialog::GetWidget() const {
+  return login_view_->GetWidget();
 }
 
 }  // namespace content
