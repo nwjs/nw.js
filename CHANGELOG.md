@@ -1,5 +1,17 @@
+0.10.0-rc2 / 07-18-2014
+=======================
+
+- [API] Implement register/unregister global desktop keyboard shortcut. (#1735, thanks to Chaobin Zhang and Haojian Wu)
+- support for nwsnapshot is back
+- Fix: authentication dialog
+- check invalid URL on navigation
+- [OSX] Fix #1996: resize with flash on 10.9 (upstream #385120)
+- Fix regression: node-main
+- Fix regression: [WIN] resize and drag frameless window
+- Fix: crash on Win XP (#1985)
+
 0.10.0-rc1 / 06-22-2014
-======================
+=======================
 
 - Chromium is updated to 35.0.1916.113
 - Node.js is updated to 0.11.13
