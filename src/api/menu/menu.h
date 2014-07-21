@@ -53,6 +53,10 @@ namespace nw {
 class NativeWindowWin;
 }
 
+namespace nwapi {
+class Menu;
+}
+
 namespace ui {
 
 // A derived class to override |HasIcons| to prevent the |NativeMenuWin| from
@@ -65,6 +69,9 @@ class NwMenuModel : public SimpleMenuModel {
 
   // Overridden from MenuModel:
   virtual bool HasIcons() const OVERRIDE;
+  
+protected:
+  friend class nwapi::Menu;
 };
 
 } // namespace ui
@@ -124,12 +131,14 @@ class Menu : public Base {
   friend class nw::NativeWindowWin;
 
   void Rebuild(const HMENU *parent_menu = NULL);
+  void UpdateStates();
+  void SetWindow(nw::NativeWindowWin* win);
 
   //**Never Try to free this pointer**
   //We get it from top widget
   views::FocusManager *focus_manager_;
   std::vector<MenuItem*> menu_items_;
-
+  nw::NativeWindowWin* window_;
   // Flag to indicate the menu has been modified since last show, so we should
   // rebuild the menu before next show.
   bool is_menu_modified_;

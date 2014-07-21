@@ -40,6 +40,10 @@ namespace views {
 class WebView;
 }
 
+namespace nwapi {
+class Menu;
+}
+
 namespace nw {
 
 class NativeWindowToolbarWin;
@@ -159,6 +163,8 @@ class NativeWindowWin : public NativeWindow,
         const gfx::Point& location) OVERRIDE;
  private:
   friend class content::Shell;
+  friend class nwapi::Menu;
+
   void OnViewWasResized();
   void InstallEasyResizeTargeterOnContainer();
 

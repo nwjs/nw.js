@@ -46,6 +46,7 @@ void MenuItem::Create(const base::DictionaryValue& option) {
   meta_down_flag_ = false;
 
   focus_manager_ = NULL;
+  menu_ = NULL;
 
   option.GetString("type", &type_);
   option.GetString("label", &label_);
@@ -113,6 +114,8 @@ void MenuItem::OnClick() {
 void MenuItem::SetLabel(const std::string& label) {
   is_modified_ = true;
   label_ = base::UTF8ToUTF16(label);
+  if (menu_)
+    menu_->UpdateStates();
 }
 
 void MenuItem::SetIcon(const std::string& icon) {
@@ -130,14 +133,20 @@ void MenuItem::SetIcon(const std::string& icon) {
 
 void MenuItem::SetTooltip(const std::string& tooltip) {
   tooltip_ = base::UTF8ToUTF16(tooltip);
+  if (menu_)
+    menu_->UpdateStates();
 }
 
 void MenuItem::SetEnabled(bool enabled) {
   is_enabled_ = enabled;
+  if (menu_)
+    menu_->UpdateStates();
 }
 
 void MenuItem::SetChecked(bool checked) {
   is_checked_ = checked;
+  if (menu_)
+    menu_->UpdateStates();
 }
 
 void MenuItem::SetSubmenu(Menu* menu) {

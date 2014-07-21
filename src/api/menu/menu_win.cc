@@ -88,6 +88,7 @@ void Menu::Create(const base::DictionaryValue& option) {
   menu_.reset(new views::NativeMenuWin(menu_model_.get(), NULL));
 
   focus_manager_ = NULL;
+  window_ = NULL;
 
   std::string type;
   if (option.GetString("type", &type) && type == "menubar")
@@ -114,6 +115,7 @@ void Menu::Append(MenuItem* menu_item) {
 
   is_menu_modified_ = true;
   menu_items_.push_back(menu_item);
+  menu_item->menu_ = this;
 }
 
 void Menu::Insert(MenuItem* menu_item, int pos) {
@@ -128,11 +130,14 @@ void Menu::Insert(MenuItem* menu_item, int pos) {
     menu_model_->InsertSeparatorAt(pos, ui::NORMAL_SEPARATOR);
 
   is_menu_modified_ = true;
+  menu_item->menu_ = this;
+ 
 }
 
 void Menu::Remove(MenuItem* menu_item, int pos) {
   menu_model_->RemoveItemAt(pos);
   is_menu_modified_ = true;
+  menu_item->menu_ = NULL;
 }
 
 void Menu::Popup(int x, int y, content::Shell* shell) {
@@ -205,6 +210,22 @@ void Menu::UpdateKeys(views::FocusManager *focus_manager){
   }
 }
 
+void Menu::UpdateStates() {
+  if (window_)
+    window_->menu_->menu_->UpdateStates();
+}
 
+void Menu::SetWindow(nw::NativeWindowWin* win) {
+  window_ = win;
+  for (int model_index = 0;
+       model_index < menu_model_->GetItemCount();
+       ++model_index) {
+    int command_id = menu_model_->GetCommandIdAt(model_index);
+    MenuItem* item = dispatcher_host()->GetApiObject<MenuItem>(command_id);
+    if (item != NULL && item->submenu_) {
+      item->submenu_->SetWindow(win);
+    }
+  }
+}
 
 }  // namespace nwapi

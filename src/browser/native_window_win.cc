@@ -544,6 +544,7 @@ void NativeWindowWin::SetMenu(nwapi::Menu* menu) {
 
   // The menu is lazily built.
   menu->Rebuild();
+  menu->SetWindow(this);
 
   // menu is nwapi::Menu, menu->menu_ is NativeMenuWin,
   ::SetMenu(views::HWNDForWidget(window_), menu->menu_->GetNativeMenu());

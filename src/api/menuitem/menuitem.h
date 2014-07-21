@@ -132,6 +132,7 @@ class MenuItem : public Base {
 #elif defined(OS_WIN)
   friend class MenuDelegate;
 
+  Menu* menu_;
   //**Never Try to free this pointer**
   //We get it from top widget
   views::FocusManager *focus_manager_;
