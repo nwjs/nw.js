@@ -18,7 +18,7 @@ describe('Shortcut', function() {
         shortcut = new gui.Shortcut({"key": "Alt+Shift+S"});
       } catch (err) {}
 
-      shortcut.should.be.a('object');
+      shortcut.should.be.a.Object;
       assert.equal(shortcut.key, "Alt+Shift+S");
     });
   });
@@ -37,7 +37,7 @@ describe('Shortcut', function() {
       var onActive = function() {};
       var shortcut = new gui.Shortcut({key: 'Alt+Shift+S', active: onActive});
 
-      shortcut.should.be.a('object');
+      shortcut.should.be.a.Object;
       assert.equal(shortcut.active, onActive);
     });
   });
@@ -56,7 +56,7 @@ describe('Shortcut', function() {
       var onFailed = function() {};
       var shortcut = new gui.Shortcut({key: 'Alt+Shift+S', failed: onFailed});
 
-      shortcut.should.be.a('object');
+      shortcut.should.be.a.Object;
       assert.equal(shortcut.failed, onFailed);
     });
   });
