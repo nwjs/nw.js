@@ -37,6 +37,9 @@
 #include "content/public/browser/web_contents_view.h"
 #include "net/base/net_util.h"
 
+#include "ui/aura/window.h"
+#include "ui/aura/window_tree_host.h"
+
 namespace content {
 
 void ShellDownloadManagerDelegate::ChooseDownloadPath(
@@ -56,7 +59,8 @@ void ShellDownloadManagerDelegate::ChooseDownloadPath(
   OPENFILENAME save_as;
   ZeroMemory(&save_as, sizeof(save_as));
   save_as.lStructSize = sizeof(OPENFILENAME);
-  save_as.hwndOwner = (HWND)item->GetWebContents()->GetView()->GetNativeView();
+  save_as.hwndOwner = (HWND)item->GetWebContents()->GetView()->GetNativeView()->
+      GetHost()->GetAcceleratedWidget();
   save_as.lpstrFile = file_name;
   save_as.nMaxFile = arraysize(file_name);
 
