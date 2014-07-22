@@ -45,6 +45,31 @@ extern const char kKeySeparator[];
 extern const char kKeyShift[];
 extern const char kKeyTab[];
 extern const char kKeyUp[];
+extern const char kKeyF1[];
+extern const char kKeyF2[];
+extern const char kKeyF3[];
+extern const char kKeyF4[];
+extern const char kKeyF5[];
+extern const char kKeyF6[];
+extern const char kKeyF7[];
+extern const char kKeyF8[];
+extern const char kKeyF9[];
+extern const char kKeyF10[];
+extern const char kKeyF11[];
+extern const char kKeyF12[];
+extern const char kKeyF13[];
+extern const char kKeyF14[];
+extern const char kKeyF15[];
+extern const char kKeyF16[];
+extern const char kKeyF17[];
+extern const char kKeyF18[];
+extern const char kKeyF19[];
+extern const char kKeyF20[];
+extern const char kKeyF21[];
+extern const char kKeyF22[];
+extern const char kKeyF23[];
+extern const char kKeyF24[];
+
 
 }  // namespace nwapi
 
