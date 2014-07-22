@@ -1,3 +1,8 @@
+0.10.0 / 07-22-2014
+=======================
+- Fix: [WIN] download dialog
+- Fix: [WIN] MenuItem.enabled and other properties needs to be called twice to work (#1132)
+
 0.10.0-rc2 / 07-18-2014
 =======================
 
