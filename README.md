@@ -116,4 +116,4 @@ You can chat with us on IRC in the ##node-webkit channel on irc.freenode.net
 The work is being sponsored by:  
 * [Intel](http://www.intel.com)
 * [Gnor Tech](http://gnor.net)
-* [eFounders](http://efounder.co)
+* [eFounders](http://efounders.co)
