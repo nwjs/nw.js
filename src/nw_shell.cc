@@ -718,4 +718,8 @@ void Shell::ToggleFullscreenModeForTab(WebContents* web_contents,
   window()->SetFullscreen(enter_fullscreen);
 }
 
+bool Shell::IsFullscreenForTabOrPending(const WebContents* web_contents) const {
+  return window()->IsFullscreen();
+}
+
 }  // namespace content
