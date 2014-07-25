@@ -713,4 +713,9 @@ bool Shell::IsWebContentsVisible(content::WebContents* web_contents) {
 }
 #endif
 
+void Shell::ToggleFullscreenModeForTab(WebContents* web_contents,
+                                       bool enter_fullscreen) {
+  window()->SetFullscreen(enter_fullscreen);
+}
+
 }  // namespace content
