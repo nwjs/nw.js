@@ -70,8 +70,9 @@ Menu.prototype.popup = function(x, y) {
 }
 
 if (require('os').platform() === 'darwin'){
-  Menu.prototype.createMacBuiltin = function (app_name) {
-    var appleMenu = new Menu();
+  Menu.prototype.createMacBuiltin = function (app_name, options) {
+    var appleMenu = new Menu(),
+        options = options || {};
     appleMenu.append(new exports.MenuItem({
         label: nw.getNSStringFWithFixup("IDS_ABOUT_MAC", app_name),
         selector: "orderFrontStandardAboutPanel:"
@@ -104,69 +105,73 @@ if (require('os').platform() === 'darwin'){
     }));
     this.append(new exports.MenuItem({ label:'', submenu: appleMenu}));
 
-    var editMenu = new Menu();
-    editMenu.append(new exports.MenuItem({
-        label: nw.getNSStringWithFixup("IDS_EDIT_UNDO_MAC"),
-        selector: "undo:",
-	key: "z"
-    }));
-    editMenu.append(new exports.MenuItem({
-        label: nw.getNSStringWithFixup("IDS_EDIT_REDO_MAC"),
-        selector: "redo:",
-	key: "z",
-	modifiers: "cmd-shift"
-    }));
-    editMenu.append(new exports.MenuItem({
-        type: "separator"
-    }));
-    editMenu.append(new exports.MenuItem({
-        label: nw.getNSStringWithFixup("IDS_CUT_MAC"),
-        selector: "cut:",
-	key: "x"
-    }));
-    editMenu.append(new exports.MenuItem({
-        label: nw.getNSStringWithFixup("IDS_COPY_MAC"),
-        selector: "copy:",
-	key: "c"
-    }));
-    editMenu.append(new exports.MenuItem({
-        label: nw.getNSStringWithFixup("IDS_PASTE_MAC"),
-        selector: "paste:",
-	key: "v"
-    }));
-    editMenu.append(new exports.MenuItem({
-        label: nw.getNSStringWithFixup("IDS_EDIT_DELETE_MAC"),
-        selector: "delete:",
-	key: ""
-    }));
-    editMenu.append(new exports.MenuItem({
-        label: nw.getNSStringWithFixup("IDS_EDIT_SELECT_ALL_MAC"),
-        selector: "selectAll:",
-	key: "a"
-    }));
-    this.append(new exports.MenuItem({ label: nw.getNSStringWithFixup("IDS_EDIT_MENU_MAC"), 
-                                       submenu: editMenu}));
+    if (!options.hideEdit) {
+      var editMenu = new Menu();
+      editMenu.append(new exports.MenuItem({
+          label: nw.getNSStringWithFixup("IDS_EDIT_UNDO_MAC"),
+          selector: "undo:",
+      key: "z"
+      }));
+      editMenu.append(new exports.MenuItem({
+          label: nw.getNSStringWithFixup("IDS_EDIT_REDO_MAC"),
+          selector: "redo:",
+      key: "z",
+      modifiers: "cmd-shift"
+      }));
+      editMenu.append(new exports.MenuItem({
+          type: "separator"
+      }));
+      editMenu.append(new exports.MenuItem({
+          label: nw.getNSStringWithFixup("IDS_CUT_MAC"),
+          selector: "cut:",
+      key: "x"
+      }));
+      editMenu.append(new exports.MenuItem({
+          label: nw.getNSStringWithFixup("IDS_COPY_MAC"),
+          selector: "copy:",
+      key: "c"
+      }));
+      editMenu.append(new exports.MenuItem({
+          label: nw.getNSStringWithFixup("IDS_PASTE_MAC"),
+          selector: "paste:",
+      key: "v"
+      }));
+      editMenu.append(new exports.MenuItem({
+          label: nw.getNSStringWithFixup("IDS_EDIT_DELETE_MAC"),
+          selector: "delete:",
+      key: ""
+      }));
+      editMenu.append(new exports.MenuItem({
+          label: nw.getNSStringWithFixup("IDS_EDIT_SELECT_ALL_MAC"),
+          selector: "selectAll:",
+      key: "a"
+      }));
+      this.append(new exports.MenuItem({ label: nw.getNSStringWithFixup("IDS_EDIT_MENU_MAC"), 
+                                         submenu: editMenu}));
+    }
 
-    var winMenu = new Menu();
-    winMenu.append(new exports.MenuItem({
-        label: nw.getNSStringWithFixup("IDS_MINIMIZE_WINDOW_MAC"),
-        selector: "performMiniaturize:",
-	key: "m"
-    }));
-    winMenu.append(new exports.MenuItem({
-        label: nw.getNSStringWithFixup("IDS_CLOSE_WINDOW_MAC"),
-        selector: "performClose:",
-	key: "w"
-    }));
-    winMenu.append(new exports.MenuItem({
-        type: "separator"
-    }));
-    winMenu.append(new exports.MenuItem({
-        label: nw.getNSStringWithFixup("IDS_ALL_WINDOWS_FRONT_MAC"),
-        selector: "arrangeInFront:",
-    }));
-    this.append(new exports.MenuItem({ label: nw.getNSStringWithFixup("IDS_WINDOW_MENU_MAC"), 
-                                       submenu: winMenu}));
+    if (!options.hideWindow) {
+      var winMenu = new Menu();
+      winMenu.append(new exports.MenuItem({
+          label: nw.getNSStringWithFixup("IDS_MINIMIZE_WINDOW_MAC"),
+          selector: "performMiniaturize:",
+      key: "m"
+      }));
+      winMenu.append(new exports.MenuItem({
+          label: nw.getNSStringWithFixup("IDS_CLOSE_WINDOW_MAC"),
+          selector: "performClose:",
+      key: "w"
+      }));
+      winMenu.append(new exports.MenuItem({
+          type: "separator"
+      }));
+      winMenu.append(new exports.MenuItem({
+          label: nw.getNSStringWithFixup("IDS_ALL_WINDOWS_FRONT_MAC"),
+          selector: "arrangeInFront:",
+      }));
+      this.append(new exports.MenuItem({ label: nw.getNSStringWithFixup("IDS_WINDOW_MENU_MAC"), 
+                                         submenu: winMenu}));
+    }
   }
 }
 exports.Menu = Menu;
