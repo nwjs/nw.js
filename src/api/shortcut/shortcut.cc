@@ -68,6 +68,30 @@ ui::Accelerator Parse(const std::string& shortcut) {
                tokens[i] == kKeyPgUp ||
                tokens[i] == kKeyPgDwn ||
                tokens[i] == kKeyTab ||
+               tokens[i] == kKeyF1 ||
+               tokens[i] == kKeyF2 ||
+               tokens[i] == kKeyF3 ||
+               tokens[i] == kKeyF4 ||
+               tokens[i] == kKeyF5 ||
+               tokens[i] == kKeyF6 ||
+               tokens[i] == kKeyF7 ||
+               tokens[i] == kKeyF8 ||
+               tokens[i] == kKeyF9 ||
+               tokens[i] == kKeyF10 ||
+               tokens[i] == kKeyF11 ||
+               tokens[i] == kKeyF12 ||
+               tokens[i] == kKeyF13 ||
+               tokens[i] == kKeyF14 ||
+               tokens[i] == kKeyF15 ||
+               tokens[i] == kKeyF16 ||
+               tokens[i] == kKeyF17 ||
+               tokens[i] == kKeyF18 ||
+               tokens[i] == kKeyF19 ||
+               tokens[i] == kKeyF20 ||
+               tokens[i] == kKeyF21 ||
+               tokens[i] == kKeyF22 ||
+               tokens[i] == kKeyF23 ||
+               tokens[i] == kKeyF24 ||
                tokens[i] == kKeyMediaNextTrack ||
                tokens[i] == kKeyMediaPlayPause ||
                tokens[i] == kKeyMediaPrevTrack ||
@@ -104,6 +128,54 @@ ui::Accelerator Parse(const std::string& shortcut) {
         key = ui::VKEY_NEXT;
       } else if (tokens[i] == kKeyTab) {
         key = ui::VKEY_TAB;
+      } else if (tokens[i] == kKeyF1) {
+        key = ui::VKEY_F1;
+      } else if (tokens[i] == kKeyF2) {
+        key = ui::VKEY_F2;
+      } else if (tokens[i] == kKeyF3) {
+        key = ui::VKEY_F3;
+      } else if (tokens[i] == kKeyF4) {
+        key = ui::VKEY_F4;
+      } else if (tokens[i] == kKeyF5) {
+        key = ui::VKEY_F5;
+      } else if (tokens[i] == kKeyF6) {
+        key = ui::VKEY_F6;
+      } else if (tokens[i] == kKeyF7) {
+        key = ui::VKEY_F7;
+      } else if (tokens[i] == kKeyF8) {
+        key = ui::VKEY_F8;
+      } else if (tokens[i] == kKeyF9) {
+        key = ui::VKEY_F9;
+      } else if (tokens[i] == kKeyF10) {
+        key = ui::VKEY_F10;
+      } else if (tokens[i] == kKeyF11) {
+        key = ui::VKEY_F11;
+      } else if (tokens[i] == kKeyF12) {
+        key = ui::VKEY_F12;
+      } else if (tokens[i] == kKeyF13) {
+        key = ui::VKEY_F13;
+      } else if (tokens[i] == kKeyF14) {
+        key = ui::VKEY_F14;
+      } else if (tokens[i] == kKeyF15) {
+        key = ui::VKEY_F15;
+      } else if (tokens[i] == kKeyF16) {
+        key = ui::VKEY_F16;
+      } else if (tokens[i] == kKeyF17) {
+        key = ui::VKEY_F17;
+      } else if (tokens[i] == kKeyF18) {
+        key = ui::VKEY_F18;
+      } else if (tokens[i] == kKeyF19) {
+        key = ui::VKEY_F19;
+      } else if (tokens[i] == kKeyF20) {
+        key = ui::VKEY_F20;
+      } else if (tokens[i] == kKeyF21) {
+        key = ui::VKEY_F21;
+      } else if (tokens[i] == kKeyF22) {
+        key = ui::VKEY_F22;
+      } else if (tokens[i] == kKeyF23) {
+        key = ui::VKEY_F23;
+      } else if (tokens[i] == kKeyF24) {
+        key = ui::VKEY_F24;
       } else if (tokens[i] == kKeyMediaNextTrack) {
         key = ui::VKEY_MEDIA_NEXT_TRACK;
       } else if (tokens[i] == kKeyMediaPlayPause) {
