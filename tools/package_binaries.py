@@ -68,8 +68,17 @@ else:
     print 'Unsupported arch: ' + _arch
     exit(-1)
 
-if platform_name == 'win' or platform_name == 'osx':
+if platform_name == 'win':
     arch = 'ia32'
+
+if platform_name == 'osx':
+    # detect output arch
+    nw_bin = binaries_location + '/node-webkit.app/Contents/MacOS/node-webkit'
+    import subprocess
+    if 'i386' in subprocess.check_output(['file',nw_bin]):
+        arch = 'ia32'
+    else: # should be 'x86_64'
+        arch = 'x64'
 
 nw_ver = getnwversion.nw_version
 if getnwisrelease.release == 0:
