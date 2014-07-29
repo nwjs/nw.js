@@ -215,7 +215,9 @@ void Dispatcher::willHandleNavigationPolicy(
 
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
 
-  v8::Handle<v8::Value> id_val = nwapi::Dispatcher::GetWindowId(web_view->mainFrame());
+  v8::Handle<v8::Value> id_val;
+  if (web_view->mainFrame() && !web_view->mainFrame()->mainWorldScriptContext().IsEmpty())
+    id_val = nwapi::Dispatcher::GetWindowId(web_view->mainFrame());
   if (id_val.IsEmpty())
     return;
   if (id_val->IsUndefined() || id_val->IsNull())
