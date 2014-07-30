@@ -20,11 +20,11 @@ It's created and developed in the Intel Open Source Technology Center.
 * Available on Linux, Mac OS X and Windows
 
 ## Downloads
-* **v0.10.0:** (Jul 22, 2014, based off of Node v0.11.13, Chromium 35.0.1916.113): [release notes](https://groups.google.com/d/msg/node-webkit/x7kYuDO0Cj8/cIxoJ6RFiLsJ)
+* **v0.10.1:** (Jul 30, 2014, based off of Node v0.11.13, Chromium 35.0.1916.113): [release notes](https://groups.google.com/d/msg/node-webkit/7h2lIKrlqAk/weeURSPhfMgJ)
 
- * Linux: [32bit](http://dl.node-webkit.org/v0.10.0/node-webkit-v0.10.0-linux-ia32.tar.gz) / [64bit](http://dl.node-webkit.org/v0.10.0/node-webkit-v0.10.0-linux-x64.tar.gz)
- * Windows: [win32](http://dl.node-webkit.org/v0.10.0/node-webkit-v0.10.0-win-ia32.zip)
- * Mac: [32bit, 10.7+](http://dl.node-webkit.org/v0.10.0/node-webkit-v0.10.0-osx-ia32.zip)
+ * Linux: [32bit](http://dl.node-webkit.org/v0.10.1/node-webkit-v0.10.1-linux-ia32.tar.gz) / [64bit](http://dl.node-webkit.org/v0.10.1/node-webkit-v0.10.1-linux-x64.tar.gz)
+ * Windows: [win32](http://dl.node-webkit.org/v0.10.1/node-webkit-v0.10.1-win-ia32.zip)
+ * Mac: [32bit, 10.7+](http://dl.node-webkit.org/v0.10.1/node-webkit-v0.10.1-osx-ia32.zip)
 
 * **0.8.6:** (Apr 18, 2014, based off of Node v0.10.22, Chrome 30.0.1599.66) **If your native Node module works only with Node v0.10, then you should use node-webkit v0.8.x, which is also a maintained branch. [More info](https://groups.google.com/d/msg/node-webkit/2OJ1cEMPLlA/09BvpTagSA0J)**  
 [release notes](https://groups.google.com/d/msg/node-webkit/CLPkgfV-i7s/hwkkQuJ1kngJ)
