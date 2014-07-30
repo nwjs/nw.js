@@ -1,5 +1,18 @@
+0.10.1 / 07-30-2014
+===================
+- Support Desktop notification (#27 Thanks to Jefry Tedjokusumo)
+- Support Fullscreen API (#55)
+- Official 64bit binary for Mac OS X (#296)
+- Support F-keys in global shortcut (Thanks to Bas Wegh)
+- Option to hide "Edit" and "Window" OS X menus (Thanks to Eric Newport)
+- Fix #2072: [WIN] context menu popup in wrong (screen) position
+- Fix #2136: crash when popup new window in some cases
+- Fix: Linux symbol files are incomplete in 0.10.0
+- Fix #1908: allows redirection to App protocol for OAuth usage
+- Fix: new-win-policy is fired on each navigation
+
 0.10.0 / 07-22-2014
-=======================
+===================
 - Fix: [WIN] download dialog
 - Fix: [WIN] MenuItem.enabled and other properties needs to be called twice to work (#1132)
 
