@@ -28,6 +28,9 @@
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
 #include "skia/ext/image_operations.h"
+#include "ui/aura/client/screen_position_client.h"
+#include "ui/aura/window.h"
+#include "ui/aura/window_tree_host.h"
 #include "ui/gfx/gdi_util.h"
 #include "ui/gfx/icon_util.h"
 #include "ui/views/controls/menu/menu_2.h"
@@ -144,12 +147,20 @@ void Menu::Popup(int x, int y, content::Shell* shell) {
   Rebuild();
 
   // Map point from document to screen.
-  POINT screen_point = { x, y };
-  ClientToScreen((HWND)shell->web_contents()->GetView()->GetNativeView(),
-                 &screen_point);
+  gfx::Point screen_point(x, y);
 
-  menu_->RunMenuAt(gfx::Point(screen_point.x, screen_point.y),
-                   views::Menu2::ALIGN_TOPLEFT);
+  // Convert from content coordinates to window coordinates.
+  // This code copied from chrome_web_contents_view_delegate_views.cc
+  aura::Window* web_contents_window =
+        shell->web_contents()->GetView()->GetNativeView();
+  aura::Window* root_window = web_contents_window->GetRootWindow();
+  aura::client::ScreenPositionClient* screen_position_client =
+        aura::client::GetScreenPositionClient(root_window);
+  if (screen_position_client) {
+    screen_position_client->ConvertPointToScreen(web_contents_window,
+             &screen_point);
+  }
+  menu_->RunMenuAt(screen_point, views::Menu2::ALIGN_TOPLEFT);
 }
 
 void Menu::Rebuild(const HMENU *parent_menu) {
