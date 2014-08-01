@@ -10,6 +10,7 @@ It's created and developed in the Intel Open Source Technology Center.
 [Introduction to node-webkit (slides)](https://speakerdeck.com/u/zcbenz/p/node-webkit-app-runtime-based-on-chromium-and-node-dot-js)   
 [Creating Desktop Applications With node-webkit](http://strongloop.com/strongblog/creating-desktop-applications-with-node-webkit/)     
 [WebApp to DesktopApp with node-webkit (slides)](http://oldgeeksguide.github.io/presentations/html5devconf2013/wtod.html)
+[Essay on the history and internals of the project](http://yedingding.com/2014/08/01/node-webkit-intro-en.html)
 
 ## Features
 
@@ -66,28 +67,12 @@ Create `package.json`:
 }
 ```
 
-Compress `index.html` and `package.json` into a zip archive called `app.nw`:
-
-````bash
-$ zip app.nw index.html package.json
-````
-
-This should create a structure like this:
-
-```
-app.nw
-|-- package.json
-`-- index.html
+Run:  
+```bash
+$ /path/to/nw .  (suppose the current directory contains 'package.json')
 ```
 
-Download the prebuilt binary for your platform and use it to open the
-`app.nw` file:
-
-````bash
-$ ./nw app.nw
-````
-
-Note: on Windows, you can drag the `app.nw` to `nw.exe` to open it.
+Note: on Windows, you can drag the folder containing `package.json` to `nw.exe` to open it.
 
 ## Documents
 
