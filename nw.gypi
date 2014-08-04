@@ -63,6 +63,7 @@
       ],
       'include_dirs': [
         '<(DEPTH)',
+        '<(DEPTH)/third_party',
         '<(DEPTH)/third_party/WebKit/Source',
         '<(DEPTH)/third_party/WebKit/public/web',
         '<(DEPTH)/breakpad/src',
