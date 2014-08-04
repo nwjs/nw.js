@@ -44,7 +44,7 @@ class Shortcut : public Base, public GlobalShortcutListener::Observer {
   void OnFailed(const std::string failed_msg);
 
   // GlobalShortcutListener::Observer implementation.
-  virtual void OnKeyPressed(const ui::Accelerator& accelerator);
+  virtual void OnKeyPressed(const ui::Accelerator& accelerator) OVERRIDE;
 
  private:
   ui::Accelerator accelerator_;

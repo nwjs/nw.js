@@ -52,7 +52,7 @@ class MediaCaptureDevicesDispatcher : public content::MediaObserver,
   // Overridden from content::MediaObserver:
   virtual void OnAudioCaptureDevicesChanged() OVERRIDE;
   virtual void OnVideoCaptureDevicesChanged() OVERRIDE;
-  void OnCreatingAudioStream(int render_process_id,
+  virtual void OnCreatingAudioStream(int render_process_id,
                              int render_view_id) OVERRIDE;
 
   // content::NotificationObserver implementation.
@@ -92,7 +92,7 @@ class MediaCaptureDevicesDispatcher : public content::MediaObserver,
     int page_request_id,
     const GURL& security_origin,
     const content::MediaStreamDevice& device,
-    content::MediaRequestState state) {}
+    content::MediaRequestState state) OVERRIDE {}
 
   // Returns the first available audio or video device, or NULL if no devices
   // are available.

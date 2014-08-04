@@ -131,4 +131,10 @@ bool NotificationManagerLinux::CancelDesktopNotification(int render_process_id, 
   }
   return false;
 }
+
+bool NotificationManagerLinux::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
+                                                      const int render_process_id, const int render_view_id, const bool worker) {
+  return AddDesktopNotification(params, render_process_id, render_view_id, worker, NULL);
+}
+
 } // namespace nw

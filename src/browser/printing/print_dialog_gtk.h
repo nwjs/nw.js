@@ -38,7 +38,7 @@ class PrintDialogGtk
   virtual void UseDefaultSettings() OVERRIDE;
   virtual bool UpdateSettings(const base::DictionaryValue& job_settings,
                               const printing::PageRanges& ranges,
-                              printing::PrintSettings* settings) OVERRIDE;
+                              printing::PrintSettings* settings) ; //FIXME: override
   virtual void ShowDialog(
       gfx::NativeView parent_view,
       bool has_selection,

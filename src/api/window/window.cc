@@ -161,6 +161,8 @@ PopulateCookieObject(const net::CanonicalCookie& canonical_cookie) {
 
 namespace nwapi {
 
+CookieAPIContext::~CookieAPIContext() {}
+
 Window::Window(int id,
                const base::WeakPtr<DispatcherHost>& dispatcher_host,
                const base::DictionaryValue& option)
