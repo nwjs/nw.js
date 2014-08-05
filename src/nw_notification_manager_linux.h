@@ -26,9 +26,19 @@
 namespace nw {
 class NotificationManagerLinux : public NotificationManager {
 
-  std::map<int, NotifyNotification*>  mNotificationIDmap;
-  static void onClose(NotifyNotification *notif);
+  struct NotificationData {
+    NotifyNotification* mNotification;
+    int mRenderProcessId;
+    int mRenderViewId;
+  };
 
+  typedef std::map<int, NotificationData> NotificationMap;
+  NotificationMap  mNotificationIDmap;
+
+  static void onClose(NotifyNotification *notif);
+  bool mForceOneNotification;
+
+  NotificationMap::iterator getNotification(int id);
 
   // internal function for AddDesktopNotification
   virtual bool AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,

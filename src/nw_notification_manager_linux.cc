@@ -32,28 +32,39 @@
 
 #include "ui/gfx/gtk_util.h"
 
-//#define GET_NOTIFICATION(id) mNotificationIDmap.find(id)
-//Ubuntu notify-osd can only show 1 notification, this is the "hack" to do that
-#define GET_NOTIFICATION(id) mNotificationIDmap.begin()
-
 namespace nw {
 
 NotificationManagerLinux::NotificationManagerLinux() {
   notify_init (content::Shell::GetPackage()->GetName().c_str());
+  char* info[4];
+  notify_get_server_info(&info[0], &info[1], &info[2], &info[3]);
+
+  //Ubuntu notify-osd can only show 1 notification, this is the "hack" to do that
+  mForceOneNotification = strcmp(info[0], "notify-osd") == 0;
 }
 
 NotificationManagerLinux::~NotificationManagerLinux() {
   notify_uninit();
 }
 
+NotificationManagerLinux::NotificationMap::iterator NotificationManagerLinux::getNotification(int id) {
+  if (mForceOneNotification) {
+    return mNotificationIDmap.begin();
+  }
+  return mNotificationIDmap.find(id);
+}
+
 void NotificationManagerLinux::onClose(NotifyNotification *notif)
 {
   NotificationManagerLinux* singleton = static_cast<NotificationManagerLinux*>(NotificationManagerLinux::getSingleton());
-  std::map<int, NotifyNotification*>::iterator i;
+  NotificationMap::iterator i;
   for (i = singleton->mNotificationIDmap.begin(); i!=singleton->mNotificationIDmap.end(); i++) {
-    if (i->second == notif)
+    if (i->second.mNotification == notif)
     	break;
   }
+  //int close_reason = notify_notification_get_closed_reason(notif);
+  //printf("close reason %d\n", close_reason);
+  singleton->DesktopNotificationPostClose(i->second.mRenderProcessId, i->second.mRenderViewId, i->first, false);
   singleton->mNotificationIDmap.erase(i);
   g_object_unref(G_OBJECT(notif));
 };
@@ -95,16 +106,31 @@ bool NotificationManagerLinux::AddDesktopNotification(const content::ShowDesktop
   }
 
   NotifyNotification * notif;
-  std::map<int, NotifyNotification*>::iterator i = GET_NOTIFICATION(params.notification_id);
+  NotificationMap::iterator i = getNotification(params.notification_id);
   if (i==mNotificationIDmap.end()) {
     notif = notify_notification_new (
       base::UTF16ToUTF8(params.title).c_str(), base::UTF16ToUTF8(params.body).c_str(), NULL);
-    mNotificationIDmap[params.notification_id] = notif;
+    NotificationData data;
+    data.mNotification = notif;
+    data.mRenderProcessId = render_process_id;
+    data.mRenderViewId = render_view_id;
+    mNotificationIDmap[params.notification_id] = data;
   }
   else {
-    notif = i->second;
+    notif = i->second.mNotification;
     notify_notification_update(notif, base::UTF16ToUTF8(params.title).c_str(),
       base::UTF16ToUTF8(params.body).c_str(), NULL);
+
+    // means this is the notify-osd hack
+    if (i->first != params.notification_id) {
+      NotificationData data;
+      data.mNotification = notif;
+      g_object_ref(G_OBJECT(notif));
+      onClose(notif);
+      data.mRenderProcessId = render_process_id;
+      data.mRenderViewId = render_view_id;
+      mNotificationIDmap[params.notification_id] = data;
+    }
   }
 
   GdkPixbuf* pixbuf = gfx::GdkPixbufFromSkBitmap(bitmap);
@@ -125,9 +151,9 @@ bool NotificationManagerLinux::AddDesktopNotification(const content::ShowDesktop
 }
 
 bool NotificationManagerLinux::CancelDesktopNotification(int render_process_id, int render_view_id, int notification_id) {
-  std::map<int, NotifyNotification*>::const_iterator i = GET_NOTIFICATION(notification_id);
+  NotificationMap::const_iterator i = getNotification(notification_id);
   if (i!=mNotificationIDmap.end()) {
-    return notify_notification_close(i->second, NULL);
+    return notify_notification_close(i->second.mNotification, NULL);
   }
   return false;
 }
