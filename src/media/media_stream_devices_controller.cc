@@ -4,12 +4,16 @@
 
 #include "content/nw/src/media/media_stream_devices_controller.h"
 
+#include "base/command_line.h"
 #include "base/values.h"
+#include "chrome/common/chrome_switches.h"
 #include "content/nw/src/media/media_capture_devices_dispatcher.h"
 #include "content/nw/src/media/media_internals.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/desktop_media_id.h"
 #include "content/public/common/media_stream_request.h"
+
+#include "third_party/webrtc/modules/desktop_capture/desktop_capture_types.h"
 
 using content::BrowserThread;
 
@@ -230,10 +234,26 @@ void MediaStreamDevicesController::HandleTapMediaRequest() {
           content::MEDIA_TAB_AUDIO_CAPTURE, "", ""));
   }
   if (request_.video_type == content::MEDIA_DESKTOP_VIDEO_CAPTURE) {
-    content::DesktopMediaID media_id =
-      content::DesktopMediaID::Parse(request_.requested_video_device_id);
-    devices.push_back(content::MediaStreamDevice(
-          content::MEDIA_DESKTOP_VIDEO_CAPTURE, media_id.ToString(), "Screen"));
+    const bool screen_capture_enabled =
+      CommandLine::ForCurrentProcess()->HasSwitch(
+          switches::kEnableUserMediaScreenCapturing);
+
+    if (screen_capture_enabled) {
+      content::DesktopMediaID media_id;
+      // If the device id wasn't specified then this is a screen capture request
+      // (i.e. chooseDesktopMedia() API wasn't used to generate device id).
+      if (request_.requested_video_device_id.empty()) {
+        media_id =
+            content::DesktopMediaID(content::DesktopMediaID::TYPE_SCREEN,
+                                    webrtc::kFullDesktopScreenId);
+      } else {
+        media_id =
+            content::DesktopMediaID::Parse(request_.requested_video_device_id);
+      }
+
+      devices.push_back(content::MediaStreamDevice(
+            content::MEDIA_DESKTOP_VIDEO_CAPTURE, media_id.ToString(), "Screen"));
+    }
   }
 
   callback_.Run(devices,
