@@ -636,9 +636,9 @@ void NativeWindowCocoa::SetTitle(const std::string& title) {
   [window() setTitle:base::SysUTF8ToNSString(title)];
 }
 
-void NativeWindowCocoa::FlashFrame(bool flash) {
-  if (flash) {
-    attention_request_id_ = [NSApp requestUserAttention:NSInformationalRequest];
+void NativeWindowCocoa::FlashFrame(int count) {
+  if (count != 0) {
+    attention_request_id_ = count < 0 ? [NSApp requestUserAttention:NSInformationalRequest] : [NSApp requestUserAttention:NSCriticalRequest];
   } else {
     [NSApp cancelUserAttentionRequest:attention_request_id_];
     attention_request_id_ = 0;

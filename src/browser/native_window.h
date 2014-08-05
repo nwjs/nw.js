@@ -99,7 +99,7 @@ class NativeWindow {
   virtual void SetPosition(const gfx::Point& position) = 0;
   virtual gfx::Point GetPosition() = 0;
   virtual void SetTitle(const std::string& title) = 0;
-  virtual void FlashFrame(bool flash) = 0;
+  virtual void FlashFrame(int count) = 0;
   virtual void SetBadgeLabel(const std::string& badge) = 0;
   virtual void SetKiosk(bool kiosk) = 0;
   virtual bool IsKiosk() = 0;

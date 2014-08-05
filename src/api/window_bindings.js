@@ -408,7 +408,10 @@ Window.prototype.setShowInTaskbar = function(flag) {
 }
 
 Window.prototype.requestAttention = function(flash) {
-  flash = Boolean(flash);
+  if (typeof flash == 'boolean') {
+    // boolean true is redirected as -1 value
+    flash = flash ? -1 : 0;
+  }
   CallObjectMethod(this, 'RequestAttention', [ flash ]);
 }
 

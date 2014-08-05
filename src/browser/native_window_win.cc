@@ -479,8 +479,19 @@ gfx::Point NativeWindowWin::GetPosition() {
   return window_->GetWindowBoundsInScreen().origin();
 }
 
-void NativeWindowWin::FlashFrame(bool flash) {
-  window_->FlashFrame(flash);
+void NativeWindowWin::FlashFrame(int count) {
+  FLASHWINFO fwi;
+  fwi.cbSize = sizeof(fwi);
+  fwi.hwnd = views::HWNDForWidget(window_);
+  if (count != 0) {
+    fwi.dwFlags = FLASHW_ALL;
+    fwi.uCount = count < 0 ? 4 : count;
+    fwi.dwTimeout = 0;
+  }
+  else {
+    fwi.dwFlags = FLASHW_STOP;
+  }
+  FlashWindowEx(&fwi);
 }
 
 HICON createBadgeIcon(const HWND hWnd, const TCHAR *value, const int sizeX, const int sizeY) {
