@@ -256,6 +256,37 @@ bool ShellContentRendererClient::goodForNode(blink::WebFrame* frame)
   return use_node;
 }
 
+void ShellContentRendererClient::SetupNodeUtil(
+    blink::WebFrame* frame,
+    v8::Handle<v8::Context> context) {
+  RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope scope(isolate);
+
+  std::string root_path = rv->renderer_preferences_.nw_app_root_path.AsUTF8Unsafe();
+#if defined(OS_WIN)
+  base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
+#endif
+  base::ReplaceChars(root_path, "'", "\\'", &root_path);
+  v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate, (
+        // Make node's relative modules work
+        "if (!process.mainModule.filename || process.mainModule.filename === 'blank') {"
+        "  var root = '" + root_path + "';"
+#if defined(OS_WIN)
+        "process.mainModule.filename = decodeURIComponent(window.location.pathname.substr(1));"
+#else
+        "process.mainModule.filename = decodeURIComponent(window.location.pathname);"
+#endif
+        "console.log('process.mainModule.filename: ' + process.mainModule.filename);"
+        "if (window.location.href.indexOf('app://') === 0) {process.mainModule.filename = root + '/' + process.mainModule.filename}"
+        "process.mainModule.paths = global.require('module')._nodeModulePaths(process.cwd());"
+        "process.mainModule.loaded = true;"
+        "}").c_str()),
+                                                       v8::String::NewFromUtf8(isolate, "process_main"));
+  CHECK(*script);
+  script->Run();
+}
+
 bool ShellContentRendererClient::WillSetSecurityToken(
     blink::WebFrame* frame,
     v8::Handle<v8::Context> context) {
@@ -274,7 +305,7 @@ bool ShellContentRendererClient::WillSetSecurityToken(
     int ret = 0;
     RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
     rv->Send(new ViewHostMsg_GrantUniversalPermissions(rv->GetRoutingID(), &ret));
-
+    SetupNodeUtil(frame, context);
     return true;
   }
 
@@ -348,28 +379,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
   }
 
   if (use_node) {
-    RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
-    std::string root_path = rv->renderer_preferences_.nw_app_root_path.AsUTF8Unsafe();
-#if defined(OS_WIN)
-    base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
-#endif
-    base::ReplaceChars(root_path, "'", "\\'", &root_path);
-    v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate, (
-        // Make node's relative modules work
-        "if (!process.mainModule.filename) {"
-        "  var root = '" + root_path + "';"
-#if defined(OS_WIN)
-        "process.mainModule.filename = decodeURIComponent(window.location.pathname.substr(1));"
-#else
-        "process.mainModule.filename = decodeURIComponent(window.location.pathname);"
-#endif
-        "if (window.location.href.indexOf('app://') === 0) {process.mainModule.filename = root + '/' + process.mainModule.filename}"
-        "process.mainModule.paths = global.require('module')._nodeModulePaths(process.cwd());"
-        "process.mainModule.loaded = true;"
-        "}").c_str()),
-                                                       v8::String::NewFromUtf8(isolate, "process_main"));
-    CHECK(*script);
-    script->Run();
+    SetupNodeUtil(frame, context);
   }
 
   if (use_node || is_nw_protocol) {

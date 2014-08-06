@@ -71,6 +71,8 @@ class ShellContentRendererClient : public ContentRendererClient {
                             v8::Handle<v8::Context> context);
   bool goodForNode(blink::WebFrame* frame);
 
+  void SetupNodeUtil(blink::WebFrame* frame, v8::Handle<v8::Context> context);
+
   // Catch node uncaughtException.
   static void ReportException(const v8::FunctionCallbackInfo<v8::Value>&  args);
 
