@@ -5,7 +5,6 @@
 #include "login_view.h"
 
 #include "base/strings/utf_string_conversions.h"
-#include "grit/generated_resources.h"
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/views/controls/label.h"
 #include "ui/views/controls/textfield/textfield.h"
