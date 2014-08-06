@@ -263,6 +263,10 @@ void Window::Call(const std::string& method,
     std::string label;
     if (arguments.GetString(0, &label))
       shell_->window()->SetBadgeLabel(label);
+  } else if (method == "SetProgressBar") {
+    double progress;
+    if (arguments.GetDouble(0, &progress))
+      shell_->window()->SetProgressBar(progress);
   } else if (method == "SetMenu") {
     int id;
     if (arguments.GetInteger(0, &id))

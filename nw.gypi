@@ -104,6 +104,8 @@
         '<(DEPTH)/chrome/browser/ui/base_window.h',
         '<(DEPTH)/chrome/browser/ui/gtk/gtk_window_util.cc',
         '<(DEPTH)/chrome/browser/ui/gtk/gtk_window_util.h',
+        '<(DEPTH)/chrome/browser/ui/gtk/unity_service.cc',
+        '<(DEPTH)/chrome/browser/ui/gtk/unity_service.h',
         '<(DEPTH)/chrome/browser/ui/views/status_icons/status_icon_win.cc',
         '<(DEPTH)/chrome/browser/ui/views/status_icons/status_icon_win.h',
         '<(DEPTH)/chrome/browser/ui/views/status_icons/status_tray_win.cc',
