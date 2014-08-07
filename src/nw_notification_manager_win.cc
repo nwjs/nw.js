@@ -173,8 +173,8 @@ bool NotificationManagerWin::AddDesktopNotification(const content::ShowDesktopNo
   base::string16 body = params.body;
   if (body.empty()) body = L" ";
   
-  //show the baloon
-  bool result = status_icon->DisplayBalloon(icon.IsEmpty() ? gfx::ImageSkia() : *icon.ToImageSkia(), params.title, body);
+  //show the baloon, this only works if iconsize >= 32x32
+  bool result = status_icon->DisplayBalloon(icon.Width() < 32 || icon.Height() < 32 ? gfx::ImageSkia() : *icon.ToImageSkia(), params.title, body);
   if (!result) {
     DesktopNotificationPostError(L"DisplayBalloon fail");
     ReleaseNotification();
