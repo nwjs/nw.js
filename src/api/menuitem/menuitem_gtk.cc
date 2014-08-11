@@ -82,6 +82,11 @@ void MenuItem::Create(const base::DictionaryValue& option) {
         if (modifiers.find("meta") != std::string::npos){
           modifiers_mask = GdkModifierType(modifiers_mask|GDK_META_MASK);
         }
+        
+        if (modifiers.find("shift") != std::string::npos){
+          modifiers_mask = GdkModifierType(modifiers_mask|GDK_SHIFT_MASK);
+        }
+
       }
       keyval = gdk_keyval_from_name(key.c_str());
 
