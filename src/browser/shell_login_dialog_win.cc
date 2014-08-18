@@ -30,6 +30,8 @@
 #include "content/public/browser/resource_request_info.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_view.h"
+#include "grit/nw_strings.h"
+#include "ui/base/l10n/l10n_util.h"
 
 namespace content {
 
@@ -42,9 +44,17 @@ INT_PTR CALLBACK ShellLoginDialog::DialogProc(HWND dialog,
       SetWindowLongPtr(dialog, DWL_USER, static_cast<LONG_PTR>(lparam));
       ShellLoginDialog* owner = reinterpret_cast<ShellLoginDialog*>(lparam);
       owner->dialog_win_ = dialog;
+      SetWindowText(dialog,
+                    l10n_util::GetStringUTF16(IDS_LOGIN_DIALOG_TITLE).c_str());
       SetDlgItemText(dialog,
                      IDC_DIALOG_MESSAGETEXT,
                      owner->message_text_.c_str());
+      SetDlgItemText(dialog,
+                     IDC_DIALOG_USERNAMETEXT,
+                     l10n_util::GetStringUTF16(IDS_LOGIN_DIALOG_USERNAME_FIELD).c_str());
+      SetDlgItemText(dialog,
+                     IDC_DIALOG_PASSWORDTEXT,
+                     l10n_util::GetStringUTF16(IDS_LOGIN_DIALOG_PASSWORD_FIELD).c_str());
       break;
     }
     case WM_CLOSE: {

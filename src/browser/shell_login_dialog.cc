@@ -29,7 +29,7 @@
 #include "content/public/browser/notification_service.h"
 #include "content/public/browser/resource_dispatcher_host.h"
 #include "content/public/browser/resource_request_info.h"
-#include "grit/nw_resources.h"
+#include "grit/nw_strings.h"
 #include "net/base/auth.h"
 #include "net/url_request/url_request.h"
 #include "ui/base/l10n/l10n_util.h"

@@ -115,6 +115,25 @@
   </translations>
   <release seq="1">
     <messages fallback_to_english="true">
+      <!-- Basic Auth Dialog -->
+      <message name="IDS_LOGIN_DIALOG_TITLE" desc="String to be displayed in the title bar of the login prompt dialog">
+        Authentication Required
+      </message>
+      <message name="IDS_LOGIN_DIALOG_DESCRIPTION" desc="String to be displayed in the login prompt dialog to explain what the user needs to do">
+        The server <ph name="DOMAIN">$1<ex>google.com</ex></ph> requires a username and password. The server says: <ph name="REALM">$2<ex>opaque string</ex></ph>.
+      </message>
+      <message name="IDS_LOGIN_DIALOG_DESCRIPTION_NO_REALM" desc="String to be displayed in the login prompt dialog to explain what the user needs to do">
+        The server <ph name="DOMAIN">$1<ex>google.com</ex></ph> requires a username and password.
+      </message>
+      <message name="IDS_LOGIN_DIALOG_USERNAME_FIELD" desc="The label of the username field in the login prompt dialog">
+        User Name:
+      </message>
+      <message name="IDS_LOGIN_DIALOG_PASSWORD_FIELD" desc="The label of the password field in the login prompt dialog">
+        Password:
+      </message>
+      <message name="IDS_LOGIN_DIALOG_OK_BUTTON_LABEL" desc="The label of the 'Log In' button on the login prompt dialog">
+        Log In
+      </message>
       <if expr="is_macosx">
         <message name="IDS_EDIT_MENU_MAC" desc="The menu title of the Mac edit menu.">
           Edit

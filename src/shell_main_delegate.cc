@@ -184,10 +184,9 @@ int ShellMainDelegate::RunProcess(
 }
 
 void ShellMainDelegate::InitializeResourceBundle(const std::string& pref_locale) {
-  FilePath pak_file;
+  FilePath pak_file, locale_file;
 #if defined(OS_MACOSX)
-  FilePath locale_file;
-  if (!GetResourcesPakFilePath(pak_file))
+   if (!GetResourcesPakFilePath(pak_file))
     LOG(FATAL) << "nw.pak file not found.";
   std::string locale = l10n_util::GetApplicationLocale(pref_locale);
   if (!GetLocalePakFilePath(locale, locale_file)) {
@@ -202,7 +201,11 @@ void ShellMainDelegate::InitializeResourceBundle(const std::string& pref_locale)
   PathService::Get(base::DIR_MODULE, &pak_dir);
   pak_file = pak_dir.Append(FILE_PATH_LITERAL("nw.pak"));
   CHECK(base::PathExists(pak_file)) << "nw.pak is missing";
-  ui::ResourceBundle::InitSharedInstanceWithPakPath(pak_file);
+  std::string locale = l10n_util::GetApplicationLocale(pref_locale);
+  locale_file = pak_dir.Append(FILE_PATH_LITERAL("locale")).AppendASCII(locale + ".pak");
+  CHECK(base::PathExists(locale_file));
+
+  ui::ResourceBundle::InitSharedInstanceWithPakPath2(pak_file, locale_file);
 #endif
 }
 
