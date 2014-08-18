@@ -102,6 +102,7 @@ def generate_target_nw(platform_name, arch, version):
                            'nw.pak',
                            'nwsnapshot',
                            'nw',
+                           'locale',
                            ]
     elif platform_name == 'win':
         target['input'] = [
@@ -115,6 +116,7 @@ def generate_target_nw(platform_name, arch, version):
                            'nw.lib',
                            'nwsnapshot.exe',
                            'credits.html',
+                           'locale',
                            ]
     elif platform_name == 'osx':
         target['input'] = [
