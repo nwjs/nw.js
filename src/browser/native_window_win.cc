@@ -46,6 +46,10 @@
 #include "ui/views/widget/native_widget_win.h"
 #include "ui/views/window/native_frame_view.h"
 
+#include <shobjidl.h>
+#include "base/win/scoped_comptr.h"
+#include "base/win/windows_version.h"
+
 namespace nw {
 
 namespace {
@@ -375,6 +379,42 @@ void NativeWindowWin::SetAlwaysOnTop(bool top) {
   // the top-most flag will be removed.
   window_->SetAlwaysOnTop(top);
 }
+
+void NativeWindowWin::SetShowInTaskbar(bool show) {
+  if (show == false && base::win::GetVersion() < base::win::VERSION_VISTA) {
+    // Change the owner of native window. Only needed on Windows XP.
+    ::SetWindowLong(window_->GetNativeView(),
+                    GWL_HWNDPARENT,
+                    (LONG)ui::GetHiddenWindow());
+  }
+
+  base::win::ScopedComPtr<ITaskbarList> taskbar;
+  HRESULT result = taskbar.CreateInstance(CLSID_TaskbarList, NULL,
+                                          CLSCTX_INPROC_SERVER);
+  if (FAILED(result)) {
+    VLOG(1) << "Failed creating a TaskbarList object: " << result;
+    return;
+  }
+
+  result = taskbar->HrInit();
+  if (FAILED(result)) {
+    LOG(ERROR) << "Failed initializing an ITaskbarList interface.";
+    return;
+  }
+
+  if (show)
+    result = taskbar->AddTab(window_->GetNativeWindow());
+  else
+    result = taskbar->DeleteTab(window_->GetNativeWindow());
+
+  if (FAILED(result)) {
+    LOG(ERROR) << "Failed to change the show in taskbar attribute";
+    return;
+  }
+}
+
+
+
 
 void NativeWindowWin::OnWidgetBoundsChanged(views::Widget* widget, const gfx::Rect& new_bounds)  {
   int w = new_bounds.width();

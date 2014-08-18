@@ -30,6 +30,8 @@
 #include "ui/views/widget/widget_delegate.h"
 #include "ui/views/widget/widget_observer.h"
 
+#include "ui/base/win/hidden_window.h"
+
 namespace views {
 class WebView;
 }
@@ -68,6 +70,7 @@ class NativeWindowWin : public NativeWindow,
   virtual void SetMinimumSize(int width, int height) OVERRIDE;
   virtual void SetMaximumSize(int width, int height) OVERRIDE;
   virtual void SetResizable(bool resizable) OVERRIDE;
+  virtual void SetShowInTaskbar(bool show = true) OVERRIDE;
   virtual void SetAlwaysOnTop(bool top) OVERRIDE;
   virtual void SetPosition(const std::string& position) OVERRIDE;
   virtual void SetPosition(const gfx::Point& position) OVERRIDE;
