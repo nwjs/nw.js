@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">ಕುಗ್ಗಿಸು</translation>
 <translation id="3265459715026181080">ವಿಂಡೋ ಮುಚ್ಚು</translation>
 <translation id="6315493146179903667">ಎಲ್ಲವನ್ನೂ ಮುಂದಕ್ಕೆ ಬರಿಸು</translation>
+<translation id="2065985942032347596">ದೃಢೀಕರಣದ ಅವಶ್ಯಕತೆಯಿದೆ</translation>
+<translation id="5986279928654338866">ಸರ್ವರ್ <ph name="DOMAIN"/> ಗೆ ಬಳಕೆದಾರಹೆಸರು ಮತ್ತು ಪಾಸ್‌ವರ್ಡ್ ಅಗತ್ಯವಿದೆ.</translation>
+<translation id="7821009361098626711"><ph name="DOMAIN"/> ಸರ್ವರ್‌ಗೆ ಬಳಕೆದಾರಹೆಸರು ಮತ್ತು ಪಾಸ್‌ವರ್ಡ್‌ನ ಅಗತ್ಯವಿದೆ. ಸರ್ವರ್ ಹೀಗೆಂದು ಹೇಳುತ್ತದೆ: <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">ಬಳಕೆದಾರ ಹೆಸರು :</translation>
+<translation id="3693415264595406141">ಪಾಸ್‌ವರ್ಡ್:</translation>
+<translation id="4304224509867189079">ಲಾಗ್ ಇನ್</translation>
 </translationbundle>

@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">Minimise</translation>
 <translation id="3265459715026181080">Close Window</translation>
 <translation id="6315493146179903667">Bring All to Front</translation>
+<translation id="2065985942032347596">Authentication Required</translation>
+<translation id="5986279928654338866">The server <ph name="DOMAIN"/>  requires a username and password.</translation>
+<translation id="7821009361098626711">The server <ph name="DOMAIN"/> requires a username and password. The server says: <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">User Name:</translation>
+<translation id="3693415264595406141">Password:</translation>
+<translation id="4304224509867189079">Log In</translation>
 </translationbundle>

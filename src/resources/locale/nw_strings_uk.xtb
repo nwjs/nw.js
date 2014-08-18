@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">Згорнути</translation>
 <translation id="3265459715026181080">Закрити вікно</translation>
 <translation id="6315493146179903667">Перемістити все на передній план</translation>
+<translation id="2065985942032347596">Потрібна автентифікація</translation>
+<translation id="5986279928654338866">Сервер <ph name="DOMAIN"/> потребує введення імені користувача та пароля.</translation>
+<translation id="7821009361098626711">Для сервера <ph name="DOMAIN"/> потрібне ім’я користувача та пароль. Повідомлення із сервера <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">Ім’я користувача:</translation>
+<translation id="3693415264595406141">Пароль:</translation>
+<translation id="4304224509867189079">Вхід</translation>
 </translationbundle>

@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">تصغير</translation>
 <translation id="3265459715026181080">إغلاق الإطار</translation>
 <translation id="6315493146179903667">إحضار الكل للمقدمة</translation>
+<translation id="2065985942032347596">يجب إدخال اسم المستخدم وكلمة المرور</translation>
+<translation id="5986279928654338866">يتطلب الخادم <ph name="DOMAIN"/> اسم مستخدم وكلمة مرور.</translation>
+<translation id="7821009361098626711">يتطلب الخادم <ph name="DOMAIN"/> إدخال اسم مستخدم وكلمة مرور. يعرض الخادم: <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">اسم المستخدم:</translation>
+<translation id="3693415264595406141">كلمة المرور:</translation>
+<translation id="4304224509867189079">تسجيل الدخول</translation>
 </translationbundle>

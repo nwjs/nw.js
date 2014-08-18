@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">Riduci a icona</translation>
 <translation id="3265459715026181080">Chiudi finestra</translation>
 <translation id="6315493146179903667">Porta tutto in primo piano</translation>
+<translation id="2065985942032347596">Autenticazione richiesta</translation>
+<translation id="5986279928654338866">Il server <ph name="DOMAIN"/> richiede un nome utente e una password.</translation>
+<translation id="7821009361098626711">Il server <ph name="DOMAIN"/> richiede un nome utente e una password. Il server dichiara: <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">Nome utente:</translation>
+<translation id="3693415264595406141">Password:</translation>
+<translation id="4304224509867189079">Accedi</translation>
 </translationbundle>

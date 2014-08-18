@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">کوچک کردن</translation>
 <translation id="3265459715026181080">بستن پنجره</translation>
 <translation id="6315493146179903667">آوردن همه به جلو</translation>
+<translation id="2065985942032347596">تأیید اعتبار لازم است</translation>
+<translation id="5986279928654338866">سرور <ph name="DOMAIN"/> به نام کاربری و رمز ورود نیاز دارد.</translation>
+<translation id="7821009361098626711">سرور <ph name="DOMAIN"/> به نام کاربری و رمز ورود نیاز دارد. سرور می‌گوید: <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">نام کاربری:</translation>
+<translation id="3693415264595406141">رمز ورود:</translation>
+<translation id="4304224509867189079">ورود به سیستم</translation>
 </translationbundle>

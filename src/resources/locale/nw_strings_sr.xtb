@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">Умањи</translation>
 <translation id="3265459715026181080">Затвори прозор</translation>
 <translation id="6315493146179903667">Премести све напред</translation>
+<translation id="2065985942032347596">Потребна је потврда идентитета</translation>
+<translation id="5986279928654338866">Сервер <ph name="DOMAIN"/> захтева корисничко име и лозинку.</translation>
+<translation id="7821009361098626711">Сервер <ph name="DOMAIN"/> захтева корисничко име и лозинку. Сервер каже: <ph name="REALM"/> .</translation>
+<translation id="4381091992796011497">Име корисника:</translation>
+<translation id="3693415264595406141">Лозинка:</translation>
+<translation id="4304224509867189079">Пријављивање</translation>
 </translationbundle>

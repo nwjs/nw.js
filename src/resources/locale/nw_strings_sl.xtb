@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">Minimiraj</translation>
 <translation id="3265459715026181080">Zapri okno</translation>
 <translation id="6315493146179903667">Postavi vse v ospredje</translation>
+<translation id="2065985942032347596">Zahtevano je preverjanje pristnosti</translation>
+<translation id="5986279928654338866">Strežnik <ph name="DOMAIN"/> zahteva uporabniško ime in geslo.</translation>
+<translation id="7821009361098626711">Strežnik <ph name="DOMAIN"/> zahteva uporabniško ime in geslo. Sporočilo strežnika: <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">Uporabniško ime:</translation>
+<translation id="3693415264595406141">Geslo:</translation>
+<translation id="4304224509867189079">Prijava</translation>
 </translationbundle>

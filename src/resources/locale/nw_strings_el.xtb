@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">Ελαχιστοποίηση</translation>
 <translation id="3265459715026181080">Κλείσιμο Παραθύρου</translation>
 <translation id="6315493146179903667">Μεταφορά Όλων στο Προσκήνιο</translation>
+<translation id="2065985942032347596">Απαιτείται έλεγχος ταυτότητας</translation>
+<translation id="5986279928654338866">Απαιτείται όνομα χρήστη και κωδικός πρόσβασης για το διακομιστή <ph name="DOMAIN"/>.</translation>
+<translation id="7821009361098626711">Ο διακομιστής <ph name="DOMAIN"/> απαιτεί ένα όνομα χρήστη και κωδικό πρόσβασης. Ο διακομιστής αναφέρει: <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">Όνομα χρήστη:</translation>
+<translation id="3693415264595406141">Κωδικός πρόσβασης:</translation>
+<translation id="4304224509867189079">Σύνδεση</translation>
 </translationbundle>

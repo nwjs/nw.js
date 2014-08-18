@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">Minimaliseren</translation>
 <translation id="3265459715026181080">Sluit venster</translation>
 <translation id="6315493146179903667">Alles op voorgrond</translation>
+<translation id="2065985942032347596">Verificatie vereist</translation>
+<translation id="5986279928654338866">Voor de server <ph name="DOMAIN"/> zijn een gebruikersnaam en wachtwoord nodig.</translation>
+<translation id="7821009361098626711">Voor de server <ph name="DOMAIN"/> zijn een gebruikersnaam en wachtwoord vereist. De server geeft aan: <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">Gebruikersnaam:</translation>
+<translation id="3693415264595406141">Wachtwoord:</translation>
+<translation id="4304224509867189079">Inloggen</translation>
 </translationbundle>

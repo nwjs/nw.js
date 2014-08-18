@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">Minimizēt</translation>
 <translation id="3265459715026181080">Aizvērt logu</translation>
 <translation id="6315493146179903667">Parādīt visus</translation>
+<translation id="2065985942032347596">Nepieciešama autentiskuma noteikšana</translation>
+<translation id="5986279928654338866">Lietotājvārds un parole serverī <ph name="DOMAIN"/> ir obligāti.</translation>
+<translation id="7821009361098626711">Serverim <ph name="DOMAIN"/> nepieciešams lietotājvārds un parole. Serverī redzams šāds ziņojums: <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">Lietotājvārds:</translation>
+<translation id="3693415264595406141">Parole:</translation>
+<translation id="4304224509867189079">Pieteikšanās</translation>
 </translationbundle>

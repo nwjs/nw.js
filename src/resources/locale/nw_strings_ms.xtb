@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">Minimize</translation>
 <translation id="3265459715026181080">Tutup Tetingkap</translation>
 <translation id="6315493146179903667">Bring All to Front</translation>
+<translation id="2065985942032347596">Pengesahan Diperlukan</translation>
+<translation id="5986279928654338866">Pelayan <ph name="DOMAIN"/> memerlukan nama pengguna dan kata laluan.</translation>
+<translation id="7821009361098626711">Pelayan <ph name="DOMAIN"/> memerlukan nama pengguna dan kata laluan. Pelayan menyatakan: <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">Nama Pengguna:</translation>
+<translation id="3693415264595406141">Kata laluan:</translation>
+<translation id="4304224509867189079">Log Masuk</translation>
 </translationbundle>

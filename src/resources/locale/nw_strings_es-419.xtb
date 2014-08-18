@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">Minimizar</translation>
 <translation id="3265459715026181080">Cerrar ventana</translation>
 <translation id="6315493146179903667">Traer todo adelante</translation>
+<translation id="2065985942032347596">Se requiere autenticación</translation>
+<translation id="5986279928654338866">El servidor <ph name="DOMAIN"/> requiere un nombre de usuario y una contraseña.</translation>
+<translation id="7821009361098626711">El servidor <ph name="DOMAIN"/> requiere un nombre de usuario y una contraseña. Mensaje del servidor: <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">Nombre de usuario:</translation>
+<translation id="3693415264595406141">Contraseña:</translation>
+<translation id="4304224509867189079">Acceder</translation>
 </translationbundle>

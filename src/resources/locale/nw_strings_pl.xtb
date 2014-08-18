@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">Zminimalizuj</translation>
 <translation id="3265459715026181080">Zamknij okno</translation>
 <translation id="6315493146179903667">Przenieś wszystko na wierzch</translation>
+<translation id="2065985942032347596">Wymagane uwierzytelnienie</translation>
+<translation id="5986279928654338866">Serwer <ph name="DOMAIN"/> wymaga nazwy użytkownika i hasła.</translation>
+<translation id="7821009361098626711">Serwer <ph name="DOMAIN"/> wymaga nazwy użytkownika i hasła. Komunikat serwera: <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">Nazwa użytkownika:</translation>
+<translation id="3693415264595406141">Hasło:</translation>
+<translation id="4304224509867189079">Zaloguj się</translation>
 </translationbundle>
