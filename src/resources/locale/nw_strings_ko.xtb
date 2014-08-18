@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">최소화</translation>
 <translation id="3265459715026181080">윈도우 닫기</translation>
 <translation id="6315493146179903667">앞으로 모두 가져오기</translation>
+<translation id="2065985942032347596">인증 필요</translation>
+<translation id="5986279928654338866"><ph name="DOMAIN"/> 서버에는 사용자 이름 및 비밀번호를 입력해야 합니다.</translation>
+<translation id="7821009361098626711">서버 <ph name="DOMAIN"/>에 사용자 이름과 비밀번호를 입력해야 합니다. 서버 메시지: <ph name="REALM"/></translation>
+<translation id="4381091992796011497">사용자 이름:</translation>
+<translation id="3693415264595406141">비밀번호:</translation>
+<translation id="4304224509867189079">로그인</translation>
 </translationbundle>

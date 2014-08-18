@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">சிறிதாக்கு</translation>
 <translation id="3265459715026181080">சாளரத்தை மூடு</translation>
 <translation id="6315493146179903667">அனைத்தையும் முதலில் வை</translation>
+<translation id="2065985942032347596">அங்கீகாரம் தேவைப்படுகிறது</translation>
+<translation id="5986279928654338866">சர்வர் <ph name="DOMAIN"/> க்கு பயனர் பெயரும் கடவுச்சொல்லும் தேவைப்படுகிறது.</translation>
+<translation id="7821009361098626711"><ph name="DOMAIN"/> சேவையகத்திற்கு பயனர் பெயரும் கடவுச்சொல்லும் அவசியம். சேவையகத்தின் பதில்: <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">பயனர் பெயர்:</translation>
+<translation id="3693415264595406141">கடவுச்சொல்:</translation>
+<translation id="4304224509867189079">உள்நுழை</translation>
 </translationbundle>

@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">አሳንስ</translation>
 <translation id="3265459715026181080">መስኮት ዝጋ</translation>
 <translation id="6315493146179903667">ሁሉንም ወደፊት አምጣቸው</translation>
+<translation id="2065985942032347596">ማረጋገጫ ያስፈልጋል</translation>
+<translation id="5986279928654338866">አገልጋዩ <ph name="DOMAIN"/> የተጠቃሚ ስም እና የይለፈ ቃል ይፈልጋል።</translation>
+<translation id="7821009361098626711">የ<ph name="DOMAIN"/> አገልጋይ የተጠቃሚ ስም እና የይለፍ ቃል ይፈልጋል። አገልጋዩ እንዲህ ይላል፦ <ph name="REALM"/>።</translation>
+<translation id="4381091992796011497">የተጣቃሚ ስም፦</translation>
+<translation id="3693415264595406141">የይለፍ ቃል፦</translation>
+<translation id="4304224509867189079">ይግቡ</translation>
 </translationbundle>

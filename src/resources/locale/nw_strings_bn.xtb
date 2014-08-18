@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">ছোট করুন</translation>
 <translation id="3265459715026181080">উইন্ডো বন্ধ করুন</translation>
 <translation id="6315493146179903667">সমস্ত সামনে আনুন</translation>
+<translation id="2065985942032347596">প্রমাণীকরণ প্রয়োজন</translation>
+<translation id="5986279928654338866"><ph name="DOMAIN"/> সার্ভারটির একটি ব্যবহারকারী নাম এবং পাসওয়ার্ড প্রয়োজন৷</translation>
+<translation id="7821009361098626711"><ph name="DOMAIN"/> সার্ভারের একটি ব্যবহারকারী নাম ও পাসওয়ার্ড দরকার৷ সাভারটি বলে: <ph name="REALM"/>৷</translation>
+<translation id="4381091992796011497">ব্যবহারকারী নাম:</translation>
+<translation id="3693415264595406141">পাসওয়ার্ড:</translation>
+<translation id="4304224509867189079">লগ ইন</translation>
 </translationbundle>

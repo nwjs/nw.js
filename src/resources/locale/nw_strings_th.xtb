@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">ย่อ</translation>
 <translation id="3265459715026181080">ปิดหน้าต่าง</translation>
 <translation id="6315493146179903667">นำขึ้นมาข้างหน้าทั้งหมด</translation>
+<translation id="2065985942032347596">ต้องมีการตรวจสอบความถูกต้อง</translation>
+<translation id="5986279928654338866">เซิร์ฟเวอร์ <ph name="DOMAIN"/> จำเป็นต้องมีชื่อผู้ใช้และรหัสผ่าน</translation>
+<translation id="7821009361098626711">เซิร์ฟเวอร์ <ph name="DOMAIN"/> ต้องการทราบชื่อผู้ใช้และรหัสผ่าน เซิร์ฟเวอร์แจ้งว่า: <ph name="REALM"/></translation>
+<translation id="4381091992796011497">ชื่อผู้ใช้:</translation>
+<translation id="3693415264595406141">รหัสผ่าน:</translation>
+<translation id="4304224509867189079">เข้าสู่ระบบ</translation>
 </translationbundle>

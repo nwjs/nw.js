@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">కనిష్ఠీకరించు</translation>
 <translation id="3265459715026181080">విండో మూసివెయ్యి</translation>
 <translation id="6315493146179903667">అన్నీ ముందుకు తీసుకెళ్లు</translation>
+<translation id="2065985942032347596">ప్రామాణీకరణ అవసరం</translation>
+<translation id="5986279928654338866">సర్వర్‌ <ph name="DOMAIN"/>కు ఒక యూజర్‌పేరు మరియు పాస్‌వర్డ్ అవసరం.</translation>
+<translation id="7821009361098626711">సర్వర్ <ph name="DOMAIN"/>కు వినియోగదారుపేరు మరియు పాస్‌వర్డ్ అవసరం. సర్వర్ ఈ విధంగా చెప్తుంది: <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">యూజర్ పేరు:</translation>
+<translation id="3693415264595406141">పాస్‌వర్డ్:</translation>
+<translation id="4304224509867189079">లాగిన్</translation>
 </translationbundle>

@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">最小化</translation>
 <translation id="3265459715026181080">关闭窗口</translation>
 <translation id="6315493146179903667">前置全部窗口</translation>
+<translation id="2065985942032347596">需要进行身份验证</translation>
+<translation id="5986279928654338866"><ph name="DOMAIN"/> 服务器要求提供用户名和密码。</translation>
+<translation id="7821009361098626711">服务器 <ph name="DOMAIN"/> 要求用户输入用户名和密码。服务器提示：<ph name="REALM"/>。</translation>
+<translation id="4381091992796011497">用户名：</translation>
+<translation id="3693415264595406141">密码：</translation>
+<translation id="4304224509867189079">登录</translation>
 </translationbundle>

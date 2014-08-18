@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">ചെറുതാക്കുക</translation>
 <translation id="3265459715026181080">വിന്‍‌ഡോ അടയ്‌ക്കുക</translation>
 <translation id="6315493146179903667">എല്ലാം മുന്നിലേക്ക് കൊണ്ടുവരുക</translation>
+<translation id="2065985942032347596">ആധികാരികത ആവശ്യമാണ്</translation>
+<translation id="5986279928654338866">സെര്‍വര്‍ <ph name="DOMAIN"/> ന് ഒരു ഉപയോക്തൃനാമവും പാസ്‌വേഡും ആവശ്യമാണ്.</translation>
+<translation id="7821009361098626711"><ph name="DOMAIN"/> എന്ന സെര്‍വറിന് ഒരു ഉപയോക്തൃ നാമവും പാസ്‌വേഡും ആവശ്യമാണ്. സെര്‍വര്‍ പറയുന്നത്: <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">ഉപയോക്തൃ നാമം:</translation>
+<translation id="3693415264595406141">പാസ്‌വേഡ്:</translation>
+<translation id="4304224509867189079">ലോഗ് ഇന്‍ ചെയ്യുക</translation>
 </translationbundle>

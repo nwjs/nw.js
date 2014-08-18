@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">Sumažinti</translation>
 <translation id="3265459715026181080">Uždaryti langą</translation>
 <translation id="6315493146179903667">Viską iškelti į priekį</translation>
+<translation id="2065985942032347596">Reikalingas tapatybės nustatymas</translation>
+<translation id="5986279928654338866">Serveris <ph name="DOMAIN"/> adresu reikalauja naudotojo vardo ir slaptažodžio.</translation>
+<translation id="7821009361098626711">Serveriui <ph name="DOMAIN"/> reikalingas naudotojo vardas ir slaptažodis. Serverio pranešimas: „<ph name="REALM"/>“.</translation>
+<translation id="4381091992796011497">Vartotojo vardas:</translation>
+<translation id="3693415264595406141">Slaptažodis:</translation>
+<translation id="4304224509867189079">Prisijungti</translation>
 </translationbundle>

@@ -29,8 +29,10 @@
 #include "content/public/browser/notification_service.h"
 #include "content/public/browser/resource_dispatcher_host.h"
 #include "content/public/browser/resource_request_info.h"
+#include "grit/nw_resources.h"
 #include "net/base/auth.h"
 #include "net/url_request/url_request.h"
+#include "ui/base/l10n/l10n_util.h"
 #include "ui/base/text/text_elider.h"
 
 using content::BrowserThread;
@@ -143,16 +145,12 @@ void ShellLoginDialog::PrepDialog(const string16& host,
   string16 elided_realm;
   ui::ElideString(realm, 120, &elided_realm);
 
-  string16 explanation =
-      ASCIIToUTF16("The server ") + host +
-      ASCIIToUTF16(" requires a username and password.");
-
-  if (!elided_realm.empty()) {
-    explanation += ASCIIToUTF16(" The server says: ");
-    explanation += elided_realm;
-    explanation += ASCIIToUTF16(".");
-  }
-
+  string16 explanation = elided_realm.empty() ?
+      l10n_util::GetStringFUTF16(IDS_LOGIN_DIALOG_DESCRIPTION_NO_REALM,
+                                 host) :
+      l10n_util::GetStringFUTF16(IDS_LOGIN_DIALOG_DESCRIPTION,
+                                 host,
+                                 elided_realm);
   AddObservers();
   dialog_queue_.push_back(this);
   PlatformCreateDialog(explanation);

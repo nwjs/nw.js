@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">Perkecil</translation>
 <translation id="3265459715026181080">Tutup Jendela</translation>
 <translation id="6315493146179903667">Pindahkan Semua ke Depan</translation>
+<translation id="2065985942032347596">Diperlukan Otentikasi</translation>
+<translation id="5986279928654338866">Server <ph name="DOMAIN"/> memerlukan nama pengguna dan sandi.</translation>
+<translation id="7821009361098626711">Server <ph name="DOMAIN"/> memerlukan nama pengguna dan sandi. Server menyatakan: <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">Nama Pengguna:</translation>
+<translation id="3693415264595406141">Sandi:</translation>
+<translation id="4304224509867189079">Log In</translation>
 </translationbundle>

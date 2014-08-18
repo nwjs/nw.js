@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">Minimizați</translation>
 <translation id="3265459715026181080">Închideți fereastra</translation>
 <translation id="6315493146179903667">Toate în față</translation>
+<translation id="2065985942032347596">Autentificare obligatorie</translation>
+<translation id="5986279928654338866">Pentru a accesa serverul <ph name="DOMAIN"/>, trebuie să introduceți un nume de utilizator și o parolă.</translation>
+<translation id="7821009361098626711">Serverul <ph name="DOMAIN"/> necesită un nume de utilizator și o parolă. Mesaj de la server: <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">Nume utilizator:</translation>
+<translation id="3693415264595406141">Parola:</translation>
+<translation id="4304224509867189079">Conectați-vă</translation>
 </translationbundle>

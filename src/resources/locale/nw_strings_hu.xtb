@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">Kis méret</translation>
 <translation id="3265459715026181080">Ablak bezárása</translation>
 <translation id="6315493146179903667">Összes az előtérbe</translation>
+<translation id="2065985942032347596">Hitelesítés szükséges</translation>
+<translation id="5986279928654338866">A(z) <ph name="DOMAIN"/> szerverhez felhasználónév és jelszó szükséges.</translation>
+<translation id="7821009361098626711">A(z) <ph name="DOMAIN"/> szerver felhasználónevet és jelszót kér. A következőt mondja: <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">Felhasználónév:</translation>
+<translation id="3693415264595406141">Jelszó:</translation>
+<translation id="4304224509867189079">Bejelentkezés</translation>
 </translationbundle>

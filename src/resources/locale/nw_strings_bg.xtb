@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">Намаляване</translation>
 <translation id="3265459715026181080">Затваряне на прозореца</translation>
 <translation id="6315493146179903667">Изнасяне на всичко на преден план</translation>
+<translation id="2065985942032347596">Изисква се удостоверяване на самоличността</translation>
+<translation id="5986279928654338866">Изискват се потребителско име и парола за сървъра <ph name="DOMAIN"/>.</translation>
+<translation id="7821009361098626711">Изискват се потребителско име и парола за сървъра <ph name="DOMAIN"/>. Той казва: <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">Потребителско име:</translation>
+<translation id="3693415264595406141">Парола:</translation>
+<translation id="4304224509867189079">Вход</translation>
 </translationbundle>

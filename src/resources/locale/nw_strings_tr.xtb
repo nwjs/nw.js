@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">Simge durumuna küçült</translation>
 <translation id="3265459715026181080">Pencereyi Kapat</translation>
 <translation id="6315493146179903667">Tümünü Öne Getir</translation>
+<translation id="2065985942032347596">Kimlik Doğrulaması Gerekiyor</translation>
+<translation id="5986279928654338866"><ph name="DOMAIN"/> sunucusu için kullanıcı adı ve şifre gerekiyor.</translation>
+<translation id="7821009361098626711"><ph name="DOMAIN"/> sunucusu bir kullanıcı adı ve şifre gerektiriyor. Sunucudan gelen bilgi: <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">Kullanıcı Adı:</translation>
+<translation id="3693415264595406141">Şifre:</translation>
+<translation id="4304224509867189079">Giriş Yap</translation>
 </translationbundle>

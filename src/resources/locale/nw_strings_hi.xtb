@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">छोटा करें</translation>
 <translation id="3265459715026181080">विंडो बंद करें</translation>
 <translation id="6315493146179903667">सभी को सामने लाएं</translation>
+<translation id="2065985942032347596">प्रमाणीकरण आवश्यक</translation>
+<translation id="5986279928654338866"><ph name="DOMAIN"/> सर्वर के लिए उपयोगकर्ता नाम और पासवर्ड की आवश्यकता है.</translation>
+<translation id="7821009361098626711"><ph name="DOMAIN"/> सर्वर को उपयोगकर्ता नाम और पासवर्ड की आवश्‍यकता है. सर्वर बताता है: <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">उपयोगकर्ता नाम:</translation>
+<translation id="3693415264595406141">पासवर्ड:</translation>
+<translation id="4304224509867189079">प्रवेश करें</translation>
 </translationbundle>

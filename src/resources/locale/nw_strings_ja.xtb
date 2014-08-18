@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">最小化</translation>
 <translation id="3265459715026181080">ウインドウを閉じる</translation>
 <translation id="6315493146179903667">すべてを手前に移動</translation>
+<translation id="2065985942032347596">認証が必要</translation>
+<translation id="5986279928654338866"><ph name="DOMAIN"/> サーバーでは、ユーザー名とパスワードが必要です。</translation>
+<translation id="7821009361098626711"><ph name="DOMAIN"/> サーバーでは、ユーザー名とパスワードが必要です。サーバーからのメッセージ: <ph name="REALM"/></translation>
+<translation id="4381091992796011497">ユーザー名:</translation>
+<translation id="3693415264595406141">パスワード:</translation>
+<translation id="4304224509867189079">ログイン</translation>
 </translationbundle>

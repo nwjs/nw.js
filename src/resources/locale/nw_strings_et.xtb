@@ -19,4 +19,10 @@
 <translation id="2498539833203011245">Minimeerimine</translation>
 <translation id="3265459715026181080">Sulge aken</translation>
 <translation id="6315493146179903667">Too kõik ette</translation>
+<translation id="2065985942032347596">Vajalik autentimine</translation>
+<translation id="5986279928654338866">Server <ph name="DOMAIN"/> nõuab kasutajanime ja parooli.</translation>
+<translation id="7821009361098626711">Server <ph name="DOMAIN"/> nõuab kasutajanime ja parooli. Server ütleb: <ph name="REALM"/>.</translation>
+<translation id="4381091992796011497">Kasutajanimi:</translation>
+<translation id="3693415264595406141">Parool:</translation>
+<translation id="4304224509867189079">Logi sisse</translation>
 </translationbundle>
