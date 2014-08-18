@@ -55,6 +55,12 @@ INT_PTR CALLBACK ShellLoginDialog::DialogProc(HWND dialog,
       SetDlgItemText(dialog,
                      IDC_DIALOG_PASSWORDTEXT,
                      l10n_util::GetStringUTF16(IDS_LOGIN_DIALOG_PASSWORD_FIELD).c_str());
+      SetDlgItemText(dialog,
+                     IDOK,
+                     l10n_util::GetStringUTF16(IDS_LOGIN_DIALOG_OK_BUTTON_LABEL).c_str());
+      SetDlgItemText(dialog,
+                     IDCANCEL,
+                     l10n_util::GetStringUTF16(IDS_CANCEL).c_str());
       break;
     }
     case WM_CLOSE: {

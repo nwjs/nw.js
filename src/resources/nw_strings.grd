@@ -115,6 +115,9 @@
   </translations>
   <release seq="1">
     <messages fallback_to_english="true">
+      <message name="IDS_CANCEL" desc="Used for Cancel on buttons">
+        Cancel
+      </message>
       <!-- Basic Auth Dialog -->
       <message name="IDS_LOGIN_DIALOG_TITLE" desc="String to be displayed in the title bar of the login prompt dialog">
         Authentication Required
