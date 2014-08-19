@@ -28,11 +28,17 @@
 #include "base/strings/sys_string_conversions.h"
 #include "content/public/browser/browser_thread.h"
 #import "ui/base/cocoa/nib_loading.h"
+#include "ui/base/l10n/l10n_util.h"
+#include "ui/base/l10n/l10n_util_mac.h"
+
+#include "grit/nw_strings.h"
 
 namespace {
 
 const int kUsernameFieldTag = 1;
 const int kPasswordFieldTag = 2;
+const int kUsernameTitleTag = 3;
+const int kPasswordTitleTag = 4;
 
 }  // namespace
 
@@ -69,7 +75,9 @@ const int kPasswordFieldTag = 2;
     return nil;
 
   usernameField_ = [accessory_view viewWithTag:kUsernameFieldTag];
+  [[accessory_view viewWithTag:kUsernameTitleTag] setStringValue:l10n_util::GetNSStringWithFixup(IDS_LOGIN_DIALOG_USERNAME_FIELD)];
   passwordField_ = [accessory_view viewWithTag:kPasswordFieldTag];
+  [[accessory_view viewWithTag:kPasswordTitleTag] setStringValue:l10n_util::GetNSStringWithFixup(IDS_LOGIN_DIALOG_PASSWORD_FIELD)];
   return accessory_view;
 }
 
@@ -117,9 +125,9 @@ void ShellLoginDialog::PlatformShowDialog() {
   NSAlert* alert = [helper_ alert];
   [alert setDelegate:helper_];
   [alert setInformativeText:base::SysUTF16ToNSString(message_)];
-  [alert setMessageText:@"Please log in."];
-  [alert addButtonWithTitle:@"OK"];
-  NSButton* other = [alert addButtonWithTitle:@"Cancel"];
+  [alert setMessageText:l10n_util::GetNSStringWithFixup(IDS_LOGIN_DIALOG_TITLE)];
+  [alert addButtonWithTitle:l10n_util::GetNSStringWithFixup(IDS_LOGIN_DIALOG_OK_BUTTON_LABEL)];
+  NSButton* other = [alert addButtonWithTitle:l10n_util::GetNSStringWithFixup(IDS_CANCEL)];
   [other setKeyEquivalent:@"\e"];
   [alert
       beginSheetModalForWindow:nil  // nil here makes it app-modal
