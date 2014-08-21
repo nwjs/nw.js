@@ -204,7 +204,7 @@ void ShellMainDelegate::InitializeResourceBundle(const std::string& pref_locale)
   std::string locale = l10n_util::GetApplicationLocale(pref_locale);
   locale_file = pak_dir.Append(FILE_PATH_LITERAL("locale")).AppendASCII(locale + ".pak");
   if (!base::PathExists(locale_file)) {
-    LOG(WARNING) << "missing file: " << locale_file.AsUTF8Unsafe(); << " locale: " << locale;
+    LOG(WARNING) << "missing file: " << locale_file.AsUTF8Unsafe() << " locale: " << locale;
     locale = "en-US";
     locale_file = pak_dir.Append(FILE_PATH_LITERAL("locale")).AppendASCII(locale + ".pak");
     if (!base::PathExists(locale_file))
