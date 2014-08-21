@@ -44,6 +44,11 @@
 #if defined(OS_MACOSX)
 #include "ui/base/l10n/l10n_util_mac.h"
 #endif
+
+#if defined(OS_WIN)
+#include "ui/base/l10n/l10n_util_win.h"
+#endif
+
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/base/ui_base_paths.h"
 #include "ui/base/ui_base_switches.h"
@@ -148,6 +153,9 @@ void ShellMainDelegate::PreSandboxStartup() {
   OverrideChildProcessPath();
   l10n_util::OverrideLocaleWithUserDefault();
 #endif  // OS_MACOSX
+#if defined(OS_WIN)
+  l10n_util::OverrideLocaleWithUILanguageList();
+#endif
   InitializeResourceBundle(pref_locale);
 
   std::string process_type =
