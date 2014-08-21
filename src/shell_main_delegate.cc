@@ -203,8 +203,13 @@ void ShellMainDelegate::InitializeResourceBundle(const std::string& pref_locale)
   CHECK(base::PathExists(pak_file)) << "nw.pak is missing";
   std::string locale = l10n_util::GetApplicationLocale(pref_locale);
   locale_file = pak_dir.Append(FILE_PATH_LITERAL("locale")).AppendASCII(locale + ".pak");
-  CHECK(base::PathExists(locale_file));
-
+  if (!base::PathExists(locale_file)) {
+    LOG(WARNING) << "missing file: " << locale_file.AsUTF8Unsafe(); << " locale: " << locale;
+    locale = "en-US";
+    locale_file = pak_dir.Append(FILE_PATH_LITERAL("locale")).AppendASCII(locale + ".pak");
+    if (!base::PathExists(locale_file))
+      LOG(ERROR) << "fallback failed. missing " << locale_file.AsUTF8Unsafe();
+  }
   ui::ResourceBundle::InitSharedInstanceWithPakPath2(pak_file, locale_file);
 #endif
 }
