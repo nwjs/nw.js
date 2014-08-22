@@ -46,7 +46,7 @@
           <object class="NSSecureTextField" id="870871897">
             <reference key="NSNextResponder" ref="1005"/>
             <int key="NSvFlags">268</int>
-            <string key="NSFrame">{{99, 20}, {156, 22}}</string>
+            <string key="NSFrame">{{149, 20}, {146, 22}}</string>
             <reference key="NSSuperview" ref="1005"/>
             <string key="NSReuseIdentifierKey">_NS:3407</string>
             <int key="NSTag">2</int>
@@ -90,7 +90,7 @@
           <object class="NSTextField" id="249141654">
             <reference key="NSNextResponder" ref="1005"/>
             <int key="NSvFlags">268</int>
-            <string key="NSFrame">{{99, 52}, {156, 22}}</string>
+            <string key="NSFrame">{{149, 52}, {146, 22}}</string>
             <reference key="NSSuperview" ref="1005"/>
             <string key="NSReuseIdentifierKey">_NS:817</string>
             <int key="NSTag">1</int>
@@ -111,7 +111,7 @@
             <reference key="NSNextResponder" ref="1005"/>
             <int key="NSvFlags">268</int>
             <int key="NSTag">4</int>
-            <string key="NSFrame">{{17, 22}, {77, 17}}</string>
+            <string key="NSFrame">{{0, 22}, {144, 17}}</string>
             <reference key="NSSuperview" ref="1005"/>
             <string key="NSReuseIdentifierKey">_NS:4068</string>
             <bool key="NSEnabled">YES</bool>
@@ -143,7 +143,7 @@
             <reference key="NSNextResponder" ref="1005"/>
             <int key="NSvFlags">268</int>
             <int key="NSTag">3</int>
-            <string key="NSFrame">{{17, 54}, {77, 17}}</string>
+            <string key="NSFrame">{{0, 54}, {144, 17}}</string>
             <reference key="NSSuperview" ref="1005"/>
             <string key="NSReuseIdentifierKey">_NS:4068</string>
             <bool key="NSEnabled">YES</bool>
@@ -159,7 +159,7 @@
             </object>
           </object>
         </object>
-        <string key="NSFrameSize">{275, 94}</string>
+        <string key="NSFrameSize">{300, 94}</string>
         <reference key="NSSuperview"/>
         <string key="NSClassName">NSView</string>
       </object>
@@ -294,7 +294,7 @@
           <string>com.apple.InterfaceBuilder.CocoaPlugin</string>
           <string>com.apple.InterfaceBuilder.CocoaPlugin</string>
           <string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-          <string>{{969, 1048}, {275, 94}}</string>
+          <string>{{969, 1048}, {300, 94}}</string>
           <string>com.apple.InterfaceBuilder.CocoaPlugin</string>
           <string>{628, 654}</string>
           <string>{{357, 416}, {480, 272}}</string>
