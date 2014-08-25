@@ -39,7 +39,9 @@
 #include "content/nw/src/shell_browser_main.h"
 #include "content/nw/src/shell_content_browser_client.h"
 #include "net/cookies/cookie_monster.h"
+#include "third_party/node/src/node_webkit.h"
 #include "third_party/node/src/node_version.h"
+#include "third_party/zlib/google/zip_reader.h"
 #include "ui/base/l10n/l10n_util.h"
 #if defined(OS_MACOSX)
 #include "ui/base/l10n/l10n_util_mac.h"
@@ -124,6 +126,18 @@ ShellMainDelegate::~ShellMainDelegate() {
 }
 
 bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
+  CommandLine* command_line = CommandLine::ForCurrentProcess();
+  const CommandLine::StringVector& args = command_line->GetArgs();
+  if (args.size() > 0) {
+    zip::ZipReader reader;
+    FilePath fp(args[0]);
+    if (!command_line->HasSwitch(switches::kProcessType) &&
+        PathExists(fp) && !DirectoryExists(fp) && !reader.Open(fp)) {
+      *exit_code = node::Start(command_line->argc0(), command_line->argv0());
+      return true;
+    }
+  }
+
 #if defined(OS_WIN)
   // Enable trace control and transport through event tracing for Windows.
   logging::LogEventProvider::Initialize(kContentShellProviderName);
