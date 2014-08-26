@@ -28,15 +28,11 @@ namespace nwapi {
 
 void Tray::Create(const base::DictionaryValue& option) {
   menu_ = NULL;
-  status_item_ = gtk_status_icon_new();
+  srand(time(NULL));
+  status_item_ = app_indicator_new(std::string(rand()).c_str(), "Node-Webkit Icon", APP_INDICATOR_CATEGORY_HARDWARE);
 }
 
 void Tray::ShowAfterCreate() {
-  g_signal_connect(status_item_, "activate",
-                   G_CALLBACK(OnClickThunk), this);
-  g_signal_connect(status_item_, "popup-menu",
-                   G_CALLBACK(OnPopupMenuThunk), this);
-  gtk_status_icon_set_visible(status_item_, TRUE);
 }
 
 void Tray::Destroy() {
@@ -45,37 +41,27 @@ void Tray::Destroy() {
 }
 
 void Tray::SetTitle(const std::string& title) {
-  gtk_status_icon_set_title(status_item_, title.c_str());
+  app_indicator_set_title(status_item_, title.c_str());
 }
 
 void Tray::SetIcon(const std::string& path) {
-  gtk_status_icon_set_from_file(status_item_, path.c_str());
+  char *cwdbuf = malloc(PATH_MAX*sizeof(char));
+  getcwd(cwdbuf, PATH_MAX*sizeof(char)); 
+  std::string fullpath = cwdbuf + path;
+  app_indicator_set_icon_theme_path(status_item_, dirname(fullpath.c_str()));
+  app_indicator_set_icon_full(status_item_, basename(fullpath.c_str()), basename(fullpath.c_str()));
+  free(pathbuf);
 }
 
 void Tray::SetTooltip(const std::string& tooltip) {
-  gtk_status_icon_set_tooltip_text(GTK_STATUS_ICON(status_item_),
-                                   tooltip.c_str());
 }
 
 void Tray::SetMenu(Menu* menu) {
   menu_ = menu;
+  app_indicator_set_menu(status_item_, GTK_MENU(menu_->menu_));
 }
 
 void Tray::Remove() {
-  g_object_unref(G_OBJECT(status_item_));
-}
-
-void Tray::OnClick(GtkWidget* widget) {
-  base::ListValue args;
-  dispatcher_host()->SendEvent(this, "click", args);
-}
-
-void Tray::OnPopupMenu(GtkWidget* widget, guint button, guint time) {
-  if (menu_) {
-    gtk_menu_popup(GTK_MENU(menu_->menu_), NULL, NULL,
-                   gtk_status_icon_position_menu,
-                   status_item_, button, time);
-  }
 }
 
 void Tray::SetAltIcon(const std::string& alticon_path) {
