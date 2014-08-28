@@ -50,7 +50,7 @@ void Tray::SetIcon(const std::string& path) {
   std::string fullpath = cwdbuf + path;
   app_indicator_set_icon_theme_path(status_item_, dirname(fullpath.c_str()));
   app_indicator_set_icon_full(status_item_, basename(fullpath.c_str()), basename(fullpath.c_str()));
-  free(pathbuf);
+  free(cwdbuf);
 }
 
 void Tray::SetTooltip(const std::string& tooltip) {
