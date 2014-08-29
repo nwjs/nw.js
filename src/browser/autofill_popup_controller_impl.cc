@@ -153,13 +153,13 @@ void AutofillPopupControllerImpl::Show(
     names_[i] = gfx::ElideText(names_[i],
                                GetNameFontListForRow(i),
                                name_size,
-                               gfx::ELIDE_AT_END);
+                               gfx::ELIDE_TAIL);
 
     int subtext_size = available_width * subtext_width / total_text_length;
     subtexts_[i] = gfx::ElideText(subtexts_[i],
                                   subtext_font_list(),
                                   subtext_size,
-                                  gfx::ELIDE_AT_END);
+                                  gfx::ELIDE_TAIL);
   }
 #endif
 
@@ -318,15 +318,6 @@ bool AutofillPopupControllerImpl::AcceptSelectedLine() {
 
 void AutofillPopupControllerImpl::SelectionCleared() {
   SetSelectedLine(kNoSelection);
-}
-
-bool AutofillPopupControllerImpl::ShouldRepostEvent(
-    const ui::MouseEvent& event) {
-  return delegate_->ShouldRepostEvent(event);
-}
-
-bool AutofillPopupControllerImpl::ShouldHideOnOutsideClick() const {
-  return hide_on_outside_click_;
 }
 
 void AutofillPopupControllerImpl::AcceptSuggestion(size_t index) {

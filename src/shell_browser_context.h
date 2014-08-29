@@ -49,44 +49,24 @@ class ShellBrowserContext : public BrowserContext {
           const FilePath& partition_path,
           bool in_memory) OVERRIDE;
   virtual ResourceContext* GetResourceContext() OVERRIDE;
-  virtual GeolocationPermissionContext*
-      GetGeolocationPermissionContext() OVERRIDE;
   virtual quota::SpecialStoragePolicy* GetSpecialStoragePolicy() OVERRIDE;
-
-  virtual void RequestMidiSysExPermission(
-      int render_process_id,
-      int render_view_id,
-      int bridge_id,
-      const GURL& requesting_frame,
-      bool user_gesture,
-      const MidiSysExPermissionCallback& callback) OVERRIDE;
-  virtual void CancelMidiSysExPermissionRequest(
-      int render_process_id,
-      int render_view_id,
-      int bridge_id,
-      const GURL& requesting_frame) OVERRIDE;
-  virtual void RequestProtectedMediaIdentifierPermission(
-      int render_process_id,
-      int render_view_id,
-      int bridge_id,
-      int group_id,
-      const GURL& requesting_frame,
-      const ProtectedMediaIdentifierPermissionCallback& callback) OVERRIDE;
-  virtual void CancelProtectedMediaIdentifierPermissionRequests(
-      int group_id) OVERRIDE;
+  virtual BrowserPluginGuestManager* GetGuestManager() OVERRIDE;
+  virtual PushMessagingService* GetPushMessagingService() OVERRIDE;
+  virtual SSLHostStateDelegate* GetSSLHostStateDelegate() OVERRIDE;
 
   nw::NwFormDatabaseService* GetFormDatabaseService();
 
   // Maps to BrowserMainParts::PreMainMessageLoopRun.
   void PreMainMessageLoopRun();
 
-  virtual net::URLRequestContextGetter* CreateRequestContext(
+  net::URLRequestContextGetter* CreateRequestContext(
                                                      ProtocolHandlerMap* protocol_handlers,
-                                                     ProtocolHandlerScopedVector protocol_interceptors);
-  virtual net::URLRequestContextGetter* CreateRequestContextForStoragePartition(
+                                                     URLRequestInterceptorScopedVector request_interceptors);
+  net::URLRequestContextGetter* CreateRequestContextForStoragePartition(
       const base::FilePath& partition_path,
       bool in_memory,
-      ProtocolHandlerMap* protocol_handlers);
+      ProtocolHandlerMap* protocol_handlers,
+      URLRequestInterceptorScopedVector request_interceptors);
 
   bool pinning_renderer() { return !disable_pinning_renderer_; }
   void set_pinning_renderer(bool val) { disable_pinning_renderer_ = !val; }

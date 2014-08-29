@@ -30,8 +30,8 @@ bool HasAnyAvailableDevice() {
   return !audio_devices.empty() || !video_devices.empty();
 };
 
-const char kAudioKey[] = "audio";
-const char kVideoKey[] = "video";
+//const char kAudioKey[] = "audio";
+//const char kVideoKey[] = "video";
 
 }  // namespace
 
@@ -41,7 +41,7 @@ MediaStreamDevicesController::MediaStreamDevicesController(
     :
       request_(request),
       callback_(callback),
-      has_audio_(content::IsAudioMediaType(request.audio_type) &&
+      has_audio_(content::IsAudioInputMediaType(request.audio_type) &&
                  !IsAudioDeviceBlockedByPolicy()),
       has_video_(content::IsVideoMediaType(request.video_type) &&
                  !IsVideoDeviceBlockedByPolicy()) {

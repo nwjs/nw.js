@@ -46,8 +46,6 @@
 #include "content/nw/src/api/dispatcher_host.h"
 #if defined(OS_MACOSX)
 #include "content/nw/src/breakpad_mac.h"
-#elif defined(OS_POSIX)
-#include "content/nw/src/breakpad_linux.h"
 #endif
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/browser/printing/print_job_manager.h"
@@ -66,14 +64,20 @@
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/base/ui_base_switches.h"
 #include "content/common/dom_storage/dom_storage_map.h"
-#include "webkit/common/webpreferences.h"
+#include "content/public/common/web_preferences.h"
 #include "content/public/common/user_agent.h"
 #include "content/common/plugin_list.h"
 #include "content/public/browser/plugin_service.h"
 #include "chrome/common/chrome_switches.h"
 #if defined(OS_LINUX)
 #include "base/linux_util.h"
-#include "content/nw/src/crash_handler_host_linux.h"
+#endif
+
+#if defined(OS_POSIX) && !defined(OS_MACOSX)
+#include "base/debug/leak_annotations.h"
+#include "components/breakpad/app/breakpad_linux.h"
+#include "components/breakpad/browser/crash_handler_host_linux.h"
+#include "content/public/common/content_descriptors.h"
 #endif
 
 using base::FileDescriptor;
@@ -81,21 +85,55 @@ using base::FileDescriptor;
 namespace {
 
 #if defined(OS_POSIX) && !defined(OS_MACOSX)
+breakpad::CrashHandlerHostLinux* CreateCrashHandlerHost(
+    const std::string& process_type) {
+  base::FilePath dumps_path =
+      CommandLine::ForCurrentProcess()->GetSwitchValuePath(
+          switches::kCrashDumpsDir);
+  {
+    ANNOTATE_SCOPED_MEMORY_LEAK;
+    breakpad::CrashHandlerHostLinux* crash_handler =
+        new breakpad::CrashHandlerHostLinux(
+            process_type, dumps_path, false);
+    crash_handler->StartUploaderThread();
+    return crash_handler;
+  }
+}
+
 int GetCrashSignalFD(const CommandLine& command_line) {
+  if (!breakpad::IsCrashReporterEnabled())
+    return -1;
+
   std::string process_type =
       command_line.GetSwitchValueASCII(switches::kProcessType);
 
-  if (process_type == switches::kRendererProcess)
-    return RendererCrashHandlerHostLinux::GetInstance()->GetDeathSignalSocket();
+  if (process_type == switches::kRendererProcess) {
+    static breakpad::CrashHandlerHostLinux* crash_handler = NULL;
+    if (!crash_handler)
+      crash_handler = CreateCrashHandlerHost(process_type);
+    return crash_handler->GetDeathSignalSocket();
+  }
 
-  if (process_type == switches::kPluginProcess)
-    return PluginCrashHandlerHostLinux::GetInstance()->GetDeathSignalSocket();
+  if (process_type == switches::kPluginProcess) {
+    static breakpad::CrashHandlerHostLinux* crash_handler = NULL;
+    if (!crash_handler)
+      crash_handler = CreateCrashHandlerHost(process_type);
+    return crash_handler->GetDeathSignalSocket();
+  }
 
-  if (process_type == switches::kPpapiPluginProcess)
-    return PpapiCrashHandlerHostLinux::GetInstance()->GetDeathSignalSocket();
+  if (process_type == switches::kPpapiPluginProcess) {
+    static breakpad::CrashHandlerHostLinux* crash_handler = NULL;
+    if (!crash_handler)
+      crash_handler = CreateCrashHandlerHost(process_type);
+    return crash_handler->GetDeathSignalSocket();
+  }
 
-  if (process_type == switches::kGpuProcess)
-    return GpuCrashHandlerHostLinux::GetInstance()->GetDeathSignalSocket();
+  if (process_type == switches::kGpuProcess) {
+    static breakpad::CrashHandlerHostLinux* crash_handler = NULL;
+    if (!crash_handler)
+      crash_handler = CreateCrashHandlerHost(process_type);
+    return crash_handler->GetDeathSignalSocket();
+  }
 
   return -1;
 }
@@ -137,7 +175,7 @@ bool ShellContentBrowserClient::GetUserAgentManifest(std::string* agent) {
   return false;
 }
 
-WebContentsViewPort* ShellContentBrowserClient::OverrideCreateWebContentsView(
+void ShellContentBrowserClient::OverrideCreateWebContentsView(
       WebContents* web_contents,
       RenderViewHostDelegateView** render_view_host_delegate_view,
       const WebContents::CreateParams& params) {
@@ -154,7 +192,6 @@ WebContentsViewPort* ShellContentBrowserClient::OverrideCreateWebContentsView(
   prefs->nw_inject_css_fn        = params.nw_inject_css_fn;
   prefs->nw_inject_js_doc_start  = params.nw_inject_js_doc_start;
   prefs->nw_inject_js_doc_end    = params.nw_inject_js_doc_end;
-  return NULL;
 }
 
 std::string ShellContentBrowserClient::GetApplicationLocale() {
@@ -185,8 +222,10 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
   if (command_line->GetSwitchValueASCII("type") != "renderer")
     return;
 
+#if 0
   if (content::IsThreadedCompositingEnabled())
     command_line->AppendSwitch(switches::kEnableThreadedCompositing);
+#endif //FIXME
 
   std::string user_agent;
   if (!command_line->HasSwitch(switches::kUserAgent) &&
@@ -247,8 +286,10 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
   // destory rph immediately. Then the channel error msg is caught by
   // SuicideOnChannelErrorFilter and the renderer is killed
   // immediately
+#if 0 //FIXME
 #if defined(OS_POSIX)
   command_line->AppendSwitch(switches::kChildCleanExit);
+#endif
 #endif
 
 }
@@ -288,7 +329,7 @@ AccessTokenStore* ShellContentBrowserClient::CreateAccessTokenStore() {
 void ShellContentBrowserClient::OverrideWebkitPrefs(
       RenderViewHost* render_view_host,
       const GURL& url,
-      WebPreferences* prefs) {
+      content::WebPreferences* prefs) {
   nw::Package* package = shell_browser_main_parts()->package();
 
   // Disable web security.
@@ -335,10 +376,10 @@ bool ShellContentBrowserClient::IsSuitableHost(RenderProcessHost* process_host,
 net::URLRequestContextGetter* ShellContentBrowserClient::CreateRequestContext(
     BrowserContext* content_browser_context,
     ProtocolHandlerMap* protocol_handlers,
-    ProtocolHandlerScopedVector protocol_interceptors) {
+    URLRequestInterceptorScopedVector request_interceptors) {
   ShellBrowserContext* shell_browser_context =
       ShellBrowserContextForBrowserContext(content_browser_context);
-  return shell_browser_context->CreateRequestContext(protocol_handlers, protocol_interceptors.Pass());
+  return shell_browser_context->CreateRequestContext(protocol_handlers, request_interceptors.Pass());
 }
 
 net::URLRequestContextGetter*
@@ -347,11 +388,11 @@ ShellContentBrowserClient::CreateRequestContextForStoragePartition(
     const base::FilePath& partition_path,
     bool in_memory,
     ProtocolHandlerMap* protocol_handlers,
-    ProtocolHandlerScopedVector protocol_interceptors) {
+    URLRequestInterceptorScopedVector request_interceptors) {
   ShellBrowserContext* shell_browser_context =
       ShellBrowserContextForBrowserContext(content_browser_context);
   return shell_browser_context->CreateRequestContextForStoragePartition(
-      partition_path, in_memory, protocol_handlers);
+                                                                        partition_path, in_memory, protocol_handlers, request_interceptors.Pass());
 }
 
 
@@ -376,7 +417,7 @@ void ShellContentBrowserClient::RenderProcessWillLaunch(
   // Grant file: scheme to the whole process, since we impose
   // per-view access checks.
   content::ChildProcessSecurityPolicy::GetInstance()->GrantScheme(
-      host->GetID(), content::kFileScheme);
+      host->GetID(), "file");
   content::ChildProcessSecurityPolicy::GetInstance()->GrantScheme(
       host->GetID(), "app");
 
@@ -388,12 +429,12 @@ void ShellContentBrowserClient::RenderProcessWillLaunch(
 bool ShellContentBrowserClient::IsHandledURL(const GURL& url) {
   if (!url.is_valid())
     return false;
-  DCHECK_EQ(url.scheme(), StringToLowerASCII(url.scheme()));
+  DCHECK_EQ(url.scheme(), base::StringToLowerASCII(url.scheme()));
   // Keep in sync with ProtocolHandlers added by
   // ShellURLRequestContextGetter::GetURLRequestContext().
   static const char* const kProtocolList[] = {
-    content::kFileSystemScheme,
-    content::kFileScheme,
+    url::kFileSystemScheme,
+    url::kFileScheme,
     "app",
   };
   for (size_t i = 0; i < arraysize(kProtocolList); ++i) {
@@ -403,17 +444,17 @@ bool ShellContentBrowserClient::IsHandledURL(const GURL& url) {
   return false;
 }
 
-void ShellContentBrowserClient::AllowCertificateError(
-    int render_process_id,
-    int render_view_id,
-    int cert_error,
-    const net::SSLInfo& ssl_info,
-    const GURL& request_url,
-    ResourceType::Type resource_type,
-    bool overridable,
-    bool strict_enforcement,
-    const base::Callback<void(bool)>& callback,
-    content::CertificateRequestResultType* result) {
+void ShellContentBrowserClient::AllowCertificateError(int render_process_id,
+                                     int render_frame_id,
+                                     int cert_error,
+                                     const net::SSLInfo& ssl_info,
+                                     const GURL& request_url,
+                                     ResourceType resource_type,
+                                     bool overridable,
+                                     bool strict_enforcement,
+                                     bool expired_previous_decision,
+                                     const base::Callback<void(bool)>& callback,
+                                     CertificateRequestResultType* result) {
   VLOG(1) << "AllowCertificateError: " << request_url;
   CommandLine* cmd_line = CommandLine::ForCurrentProcess();
   if (cmd_line->HasSwitch(switches::kIgnoreCertificateErrors)) {
@@ -450,6 +491,7 @@ ShellContentBrowserClient::CreateQuotaPermissionContext() {
   return new ShellQuotaPermissionContext();
 }
 
+#if 0
 void ShellContentBrowserClient::ShowDesktopNotification(
   const ShowDesktopNotificationHostMsgParams& params,
   int render_process_id,
@@ -482,6 +524,26 @@ void ShellContentBrowserClient::CancelDesktopNotification(
 #else
   NOTIMPLEMENTED();
 #endif
+}
+
+#endif
+
+void ShellContentBrowserClient::RequestMidiSysExPermission(
+      WebContents* web_contents,
+      int bridge_id,
+      const GURL& requesting_frame,
+      bool user_gesture,
+      base::Callback<void(bool)> result_callback,
+      base::Closure* cancel_callback) {
+  result_callback.Run(true);
+}
+
+void ShellContentBrowserClient::RequestProtectedMediaIdentifierPermission(
+      WebContents* web_contents,
+      const GURL& origin,
+      base::Callback<void(bool)> result_callback,
+      base::Closure* cancel_callback) {
+  result_callback.Run(true);
 }
 
 }  // namespace content

@@ -34,10 +34,7 @@
 class NSMenuItem;
 class MenuItemDelegate;
 #endif  // __OBJC__
-#elif defined(TOOLKIT_GTK)
-#include <gtk/gtk.h>
-#include "ui/base/gtk/gtk_signal.h"
-#elif defined(OS_WIN)
+#elif defined(OS_WIN) || defined(OS_LINUX)
 #include "base/strings/string16.h"
 #include "ui/gfx/image/image.h"
 #include "ui/base/accelerators/accelerator.h"
@@ -64,9 +61,9 @@ class MenuItem : public Base {
                     const base::ListValue& arguments) OVERRIDE;
 
 #if defined(OS_LINUX)
-  void UpdateKeys(GtkAccelGroup *gtk_accel_group);
+  void UpdateKeys(views::FocusManager *focus_manager);
 #endif
-  
+
 #if defined(OS_WIN)
   virtual bool AcceleratorPressed(const ui::Accelerator& accelerator) OVERRIDE{
     if (super_down_flag_){
@@ -89,9 +86,7 @@ class MenuItem : public Base {
   void UpdateKeys(views::FocusManager *focus_manager);
 #endif
 
-#if defined(OS_MACOSX) || defined(OS_WIN)
   void OnClick();
-#endif
 
  private:
   friend class Menu;
@@ -107,36 +102,20 @@ class MenuItem : public Base {
   void SetChecked(bool checked);
   void SetSubmenu(Menu* sub_menu);
 
-#if defined(OS_LINUX)
-  GtkAccelGroup *gtk_accel_group;
-  GdkModifierType modifiers_mask;
-  guint keyval;
-  bool  enable_shortcut;
-  Menu* submenu_;
-  std::string label_;
-#endif
-
 #if defined(OS_MACOSX)
   std::string type_;
 
   NSMenuItem* menu_item_;
   MenuItemDelegate* delegate_;
-#elif defined(TOOLKIT_GTK)
-  GtkWidget* menu_item_;
 
-  // Don't send click event on active.
-  bool block_active_;
-
-  // Callback invoked when user left-clicks on the menu item.
-  CHROMEGTK_CALLBACK_0(MenuItem, void, OnClick);
-#elif defined(OS_WIN)
+#elif defined(OS_WIN) || defined(OS_LINUX)
   friend class MenuDelegate;
 
   Menu* menu_;
   //**Never Try to free this pointer**
   //We get it from top widget
   views::FocusManager *focus_manager_;
-  
+
   ui::Accelerator accelerator_;
 
   // Flag to indicate we need refresh.

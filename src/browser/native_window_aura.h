@@ -23,8 +23,11 @@
 
 #include "content/nw/src/browser/native_window.h"
 
+#include "components/web_modal/web_contents_modal_dialog_host.h"
 #include "third_party/skia/include/core/SkRegion.h"
+#if defined(OS_WIN)
 #include "ui/base/win/hidden_window.h"
+#endif
 #include "ui/gfx/image/image_skia.h"
 #include "ui/gfx/rect.h"
 #include "ui/views/focus/widget_focus_manager.h"
@@ -46,19 +49,20 @@ class Menu;
 
 namespace nw {
 
-class NativeWindowToolbarWin;
+class NativeWindowToolbarAura;
 
-class NativeWindowWin : public NativeWindow,
+class NativeWindowAura : public NativeWindow,
+                        public web_modal::WebContentsModalDialogHost,
                         public views::WidgetFocusChangeListener,
                         public views::WidgetDelegateView , 
                         public views::WidgetObserver {
  public:
-  explicit NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
+  explicit NativeWindowAura(const base::WeakPtr<content::Shell>& shell,
                            base::DictionaryValue* manifest);
-  virtual ~NativeWindowWin();
+  virtual ~NativeWindowAura();
 
   SkRegion* draggable_region() { return draggable_region_.get(); }
-  NativeWindowToolbarWin* toolbar() { return toolbar_; }
+  NativeWindowToolbarAura* toolbar() { return toolbar_; }
   views::Widget* window() { return window_; }
 
   // NativeWindow implementation.
@@ -95,7 +99,7 @@ class NativeWindowWin : public NativeWindow,
   virtual void SetToolbarUrlEntry(const std::string& url) OVERRIDE;
   virtual void SetToolbarIsLoading(bool loading) OVERRIDE;
   virtual void SetInitialFocus(bool initial_focus) OVERRIDE;
-  virtual bool InitialFocus() OVERRIDE { return initial_focus_; }
+  virtual bool InitialFocus() OVERRIDE;
 
   // WidgetDelegate implementation.
   virtual void OnWidgetMove() OVERRIDE;
@@ -125,12 +129,10 @@ class NativeWindowWin : public NativeWindow,
   // WidgetObserver implementation
   virtual void OnWidgetBoundsChanged(views::Widget* widget, const gfx::Rect& new_bounds) OVERRIDE;
 
-  virtual bool AcceleratorPressed(const ui::Accelerator& accelerator) OVERRIDE{
-    return true;
-  }
-  virtual bool CanHandleAccelerators() const OVERRIDE{
-    return true;
-  }
+  virtual bool AcceleratorPressed(const ui::Accelerator& accelerator) OVERRIDE;
+
+  virtual bool CanHandleAccelerators() const OVERRIDE;
+
   virtual gfx::NativeView GetHostView() const OVERRIDE;
   virtual gfx::Point GetDialogPosition(const gfx::Size& size) OVERRIDE;
   virtual void AddObserver(web_modal::ModalDialogHostObserver* observer) OVERRIDE;
@@ -149,8 +151,8 @@ class NativeWindowWin : public NativeWindow,
   virtual void Layout() OVERRIDE;
   virtual void ViewHierarchyChanged(
       const ViewHierarchyChangedDetails& details) OVERRIDE;
-  virtual gfx::Size GetMinimumSize() OVERRIDE;
-  virtual gfx::Size GetMaximumSize() OVERRIDE;
+  virtual gfx::Size GetMinimumSize() const OVERRIDE;
+  virtual gfx::Size GetMaximumSize() const OVERRIDE;
   virtual void OnFocus() OVERRIDE;
 
   // views::WidgetDelegate implementation.
@@ -169,7 +171,7 @@ class NativeWindowWin : public NativeWindow,
   void OnViewWasResized();
   void InstallEasyResizeTargeterOnContainer();
 
-  NativeWindowToolbarWin* toolbar_;
+  NativeWindowToolbarAura* toolbar_;
   views::WebView* web_view_;
   views::Widget* window_;
   bool is_fullscreen_;
@@ -197,7 +199,7 @@ class NativeWindowWin : public NativeWindow,
   bool super_down_;
   bool meta_down_;
   ObserverList<web_modal::ModalDialogHostObserver> observer_list_;
-  DISALLOW_COPY_AND_ASSIGN(NativeWindowWin);
+  DISALLOW_COPY_AND_ASSIGN(NativeWindowAura);
 };
 
 }  // namespace nw

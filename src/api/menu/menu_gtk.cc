@@ -128,8 +128,7 @@ void Menu::Remove(MenuItem* menu_item, int pos) {
 }
 
 void Menu::Popup(int x, int y, content::Shell* shell) {
-  GdkEventButton* event = shell->web_contents()->GetRenderWidgetHostView()->
-      GetLastMouseDown();
+  GdkEventButton* event = NULL; //FIXME: shell->web_contents()->GetRenderWidgetHostView()->GetLastMouseDown();
   uint32_t triggering_event_time = event ? event->time : GDK_CURRENT_TIME;
   gfx::Point point;
   if (!event) {

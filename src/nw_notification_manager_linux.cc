@@ -30,7 +30,6 @@
 
 #include "content/nw/src/nw_notification_manager_linux.h"
 
-#include "ui/gfx/gtk_util.h"
 
 namespace nw {
 

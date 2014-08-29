@@ -13,6 +13,7 @@
 #include "base/strings/stringprintf.h"
 #include "base/threading/sequenced_worker_pool.h"
 #include "content/public/browser/browser_thread.h"
+#include "net/base/filename_util.h"
 #include "net/base/mime_util.h"
 #include "net/base/net_errors.h"
 #include "net/base/net_util.h"
@@ -146,12 +147,12 @@ URLRequestJob* AppProtocolHandler::MaybeCreateJob(
     URLRequest* request, NetworkDelegate* network_delegate) const {
   base::FilePath file_path;
   GURL url(request->url());
-  url_canon::Replacements<char> replacements;
-  replacements.SetScheme("file", url_parse::Component(0, 4));
+  url::Replacements<char> replacements;
+  replacements.SetScheme("file", url::Component(0, 4));
   replacements.ClearHost();
   url = url.ReplaceComponents(replacements);
 
-  const bool is_file = FileURLToFilePath(url, &file_path);
+  const bool is_file = net::FileURLToFilePath(url, &file_path);
 
   file_path = root_path_.Append(file_path);
   // Check file access permissions.

@@ -130,31 +130,8 @@ void PrintJobWorker::SetSettings(const base::DictionaryValue* const new_settings
 
 void PrintJobWorker::UpdatePrintSettings(
     const base::DictionaryValue* const new_settings) {
-  // Create new PageRanges based on |new_settings|.
-  PageRanges new_ranges;
-  const base::ListValue* page_range_array;
-  if (new_settings->GetList(kSettingPageRange, &page_range_array)) {
-    for (size_t index = 0; index < page_range_array->GetSize(); ++index) {
-      const base::DictionaryValue* dict;
-      if (!page_range_array->GetDictionary(index, &dict))
-        continue;
-
-      PageRange range;
-      if (!dict->GetInteger(kSettingPageRangeFrom, &range.from) ||
-          !dict->GetInteger(kSettingPageRangeTo, &range.to)) {
-        continue;
-      }
-
-      // Page numbers are 1-based in the dictionary.
-      // Page numbers are 0-based for the printing context.
-      range.from--;
-      range.to--;
-      new_ranges.push_back(range);
-    }
-  }
   PrintingContext::Result result =
-      printing_context_->UpdatePrintSettings(*new_settings, new_ranges);
-  delete new_settings;
+    printing_context_->UpdatePrintSettings(*new_settings);
   GetSettingsDone(result);
 }
 
@@ -274,8 +251,8 @@ void PrintJobWorker::OnNewPage() {
 
   while (true) {
     // Is the page available?
-    scoped_refptr<PrintedPage> page;
-    if (!document_->GetPage(page_number_.ToInt(), &page)) {
+    scoped_refptr<PrintedPage> page = document_->GetPage(page_number_.ToInt());
+    if (!page) {
       // We need to wait for the page to be available.
       MessageLoop::current()->PostDelayedTask(
           FROM_HERE,

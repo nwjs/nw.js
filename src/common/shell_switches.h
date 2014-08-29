@@ -64,6 +64,9 @@ extern const char kmInjectCSS[];
 #if defined(OS_WIN)
 extern const char kPrintRaster[];
 #endif
+
+extern const char kCrashDumpsDir[];
+
 }  // namespace switches
 
 #endif  // CONTENT_NW_SRC_SHELL_SWITCHES_H_

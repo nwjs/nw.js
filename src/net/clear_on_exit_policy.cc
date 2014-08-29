@@ -27,9 +27,9 @@ bool ClearOnExitPolicy::ShouldClearOriginOnExit(const std::string& domain,
     return false;
 
   std::string scheme =
-      scheme_is_secure ? content::kHttpsScheme : content::kHttpScheme;
+      scheme_is_secure ? url::kHttpsScheme : url::kHttpScheme;
   std::string host = domain[0] == '.' ? domain.substr(1) : domain;
-  GURL url(scheme + content::kStandardSchemeSeparator + host);
+  GURL url(scheme + url::kStandardSchemeSeparator + host);
 
   return special_storage_policy_->IsStorageSessionOnly(url);
 }

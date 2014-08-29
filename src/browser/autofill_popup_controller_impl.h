@@ -77,8 +77,6 @@ class AutofillPopupControllerImpl : public AutofillPopupController {
   virtual void SetSelectionAtPoint(const gfx::Point& point) OVERRIDE;
   virtual bool AcceptSelectedLine() OVERRIDE;
   virtual void SelectionCleared() OVERRIDE;
-  virtual bool ShouldRepostEvent(const ui::MouseEvent& event) OVERRIDE;
-  virtual bool ShouldHideOnOutsideClick() const OVERRIDE;
   virtual void AcceptSuggestion(size_t index) OVERRIDE;
   virtual int GetIconResourceID(
       const base::string16& resource_name) const OVERRIDE;

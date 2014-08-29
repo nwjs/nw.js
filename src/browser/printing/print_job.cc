@@ -10,6 +10,7 @@
 #include "base/threading/thread_restrictions.h"
 #include "base/threading/worker_pool.h"
 #include "base/timer/timer.h"
+#include "content/public/browser/browser_thread.h"
 #include "content/nw/src/browser/printing/print_job_worker.h"
 #include "content/public/browser/notification_types.h"
 #include "content/public/browser/notification_service.h"
@@ -70,7 +71,8 @@ void PrintJob::Initialize(PrintJobWorkerOwner* job,
   settings_ = job->settings();
 
   PrintedDocument* new_doc =
-      new PrintedDocument(settings_, source_, job->cookie());
+    new PrintedDocument(settings_, source_, job->cookie(),
+                        content::BrowserThread::GetBlockingPool());
   new_doc->set_page_count(page_count);
   UpdatePrintedDocument(new_doc);
 

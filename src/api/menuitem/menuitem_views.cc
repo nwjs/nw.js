@@ -1,16 +1,16 @@
 // Copyright (c) 2012 Intel Corp
 // Copyright (c) 2012 The Chromium Authors
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy 
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 //  in the Software without restriction, including without limitation the rights
 //  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell co
 // pies of the Software, and to permit persons to whom the Software is furnished
 //  to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in al
 // l copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IM
 // PLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNES
 // S FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
@@ -96,7 +96,7 @@ void MenuItem::Create(const base::DictionaryValue& option) {
   int menu_id;
   if (option.GetInteger("submenu", &menu_id))
     SetSubmenu(dispatcher_host()->GetApiObject<Menu>(menu_id));
-} 
+}
 
 void MenuItem::Destroy() {
 }
@@ -114,8 +114,11 @@ void MenuItem::OnClick() {
 void MenuItem::SetLabel(const std::string& label) {
   is_modified_ = true;
   label_ = base::UTF8ToUTF16(label);
+
+#if 0//FIXME
   if (menu_)
     menu_->UpdateStates();
+#endif
 }
 
 void MenuItem::SetIcon(const std::string& icon) {
@@ -159,10 +162,12 @@ void MenuItem::UpdateKeys(views::FocusManager *focus_manager){
   } else {
     focus_manager_ = focus_manager;
     if (enable_shortcut_){
+#if 0 //FIXME
       focus_manager->RegisterAccelerator(
         accelerator_,
         ui::AcceleratorManager::kHighPriority,
-        this); 
+        this);
+#endif
     }
     if (submenu_ != NULL){
       submenu_->UpdateKeys(focus_manager);

@@ -58,7 +58,7 @@
 #include "third_party/node/src/node_internals.h"
 #include "third_party/node/src/req_wrap.h"
 #include "third_party/WebKit/public/web/WebDocument.h"
-#include "third_party/WebKit/public/web/WebFrame.h"
+#include "third_party/WebKit/public/web/WebLocalFrame.h"
 #include "third_party/WebKit/public/web/WebSecurityOrigin.h"
 #include "third_party/WebKit/public/web/WebSecurityPolicy.h"
 #include "third_party/WebKit/public/web/WebView.h"
@@ -72,6 +72,7 @@ using autofill::PasswordAutofillAgent;
 using autofill::PasswordGenerationAgent;
 using net::ProxyBypassRules;
 using blink::WebFrame;
+using blink::WebLocalFrame;
 using blink::WebView;
 using blink::WebString;
 using blink::WebSecurityPolicy;
@@ -82,7 +83,7 @@ namespace content {
 namespace {
 
 RenderView* GetCurrentRenderView() {
-  WebFrame* frame = WebFrame::frameForCurrentContext();
+  WebLocalFrame* frame = WebLocalFrame::frameForCurrentContext();
   DCHECK(frame);
   if (!frame)
     return NULL;

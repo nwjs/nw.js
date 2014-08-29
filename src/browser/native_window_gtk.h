@@ -26,7 +26,7 @@
 
 #include "content/nw/src/browser/native_window.h"
 #include "third_party/skia/include/core/SkRegion.h"
-#include "ui/base/gtk/gtk_signal.h"
+#include "chrome/browser/ui/libgtk2ui/gtk2_signal.h"
 
 namespace nw {
 

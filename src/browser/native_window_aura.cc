@@ -1,16 +1,16 @@
 // Copyright (c) 2012 Intel Corp
 // Copyright (c) 2012 The Chromium Authors
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy 
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 //  in the Software without restriction, including without limitation the rights
 //  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell co
 // pies of the Software, and to permit persons to whom the Software is furnished
 //  to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in al
 // l copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IM
 // PLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNES
 // S FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
@@ -18,33 +18,41 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/nw/src/browser/native_window_win.h"
+#include "content/nw/src/browser/native_window_aura.h"
 
+#if defined(OS_WIN)
 #include <shobjidl.h>
+#endif
 
 #include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
+
+#if defined(OS_WIN)
 #include "base/win/scoped_comptr.h"
 #include "base/win/windows_version.h"
 #include "base/win/wrapped_window_proc.h"
+#endif
+
 #include "chrome/browser/platform_util.h"
 #include "content/nw/src/api/menu/menu.h"
-#include "content/nw/src/browser/native_window_toolbar_win.h"
+#include "content/nw/src/browser/native_window_toolbar_aura.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/native_web_keyboard_event.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/web_contents.h"
-#include "content/public/browser/web_contents_view.h"
 #include "extensions/common/draggable_region.h"
 #include "third_party/skia/include/core/SkPaint.h"
 #include "ui/base/hit_test.h"
 #include "ui/gfx/native_widget_types.h"
+#if defined(OS_WIN)
 #include "ui/gfx/win/hwnd_util.h"
+#include "ui/gfx/icon_util.h"
+#include "ui/views/win/hwnd_util.h"
+#endif
 #include "ui/gfx/path.h"
 #include "ui/gfx/canvas.h"
-#include "ui/gfx/icon_util.h"
 #include "ui/gfx/font_list.h"
 #include "ui/gfx/platform_font.h"
 #include "ui/gfx/image/image_skia_operations.h"
@@ -53,7 +61,6 @@
 #include "ui/views/views_delegate.h"
 #include "ui/views/widget/widget.h"
 #include "ui/views/window/native_frame_view.h"
-#include "ui/views/win/hwnd_util.h"
 #include "ui/views/widget/native_widget_private.h"
 #include "ui/events/event_handler.h"
 #include "ui/wm/core/easy_resize_window_targeter.h"
@@ -86,7 +93,7 @@ bool IsParent(gfx::NativeView child, gfx::NativeView possible_parent) {
     return true;
 #endif
   gfx::NativeView parent = child;
-  while ((parent = (gfx::NativeView)::GetParent((HWND)parent))) {
+  while ((parent = (gfx::NativeView)platform_util::GetParent(parent))) {
     if (possible_parent == parent)
       return true;
   }
@@ -119,7 +126,7 @@ class NativeWindowFrameView : public views::NonClientFrameView {
  public:
   static const char kViewClassName[];
 
-  explicit NativeWindowFrameView(NativeWindowWin* window);
+  explicit NativeWindowFrameView(NativeWindowAura* window);
   virtual ~NativeWindowFrameView();
 
   void Init(views::Widget* frame);
@@ -136,15 +143,15 @@ class NativeWindowFrameView : public views::NonClientFrameView {
   virtual void UpdateWindowTitle() OVERRIDE {}
 
   // views::View implementation.
-  virtual gfx::Size GetPreferredSize() OVERRIDE;
+  virtual gfx::Size GetPreferredSize() const OVERRIDE;
   virtual void Layout() OVERRIDE;
   virtual const char* GetClassName() const OVERRIDE;
   virtual void OnPaint(gfx::Canvas* canvas) OVERRIDE;
-  virtual gfx::Size GetMinimumSize() OVERRIDE;
-  virtual gfx::Size GetMaximumSize() OVERRIDE;
+  virtual gfx::Size GetMinimumSize() const OVERRIDE;
+  virtual gfx::Size GetMaximumSize() const OVERRIDE;
 
  private:
-  NativeWindowWin* window_;
+  NativeWindowAura* window_;
   views::Widget* frame_;
 
   DISALLOW_COPY_AND_ASSIGN(NativeWindowFrameView);
@@ -153,7 +160,7 @@ class NativeWindowFrameView : public views::NonClientFrameView {
 const char NativeWindowFrameView::kViewClassName[] =
     "content/nw/src/browser/NativeWindowFrameView";
 
-NativeWindowFrameView::NativeWindowFrameView(NativeWindowWin* window)
+NativeWindowFrameView::NativeWindowFrameView(NativeWindowAura* window)
     : window_(window),
       frame_(NULL) {
 }
@@ -230,7 +237,7 @@ void NativeWindowFrameView::GetWindowMask(const gfx::Size& size,
   // We got nothing to say about no window mask.
 }
 
-gfx::Size NativeWindowFrameView::GetPreferredSize() {
+gfx::Size NativeWindowFrameView::GetPreferredSize() const {
   gfx::Size pref = frame_->client_view()->GetPreferredSize();
   gfx::Rect bounds(0, 0, pref.width(), pref.height());
   return frame_->non_client_view()->GetWindowBoundsForClientBounds(
@@ -247,21 +254,21 @@ const char* NativeWindowFrameView::GetClassName() const {
   return kViewClassName;
 }
 
-gfx::Size NativeWindowFrameView::GetMinimumSize() {
+gfx::Size NativeWindowFrameView::GetMinimumSize() const {
   return frame_->client_view()->GetMinimumSize();
 }
 
-gfx::Size NativeWindowFrameView::GetMaximumSize() {
+gfx::Size NativeWindowFrameView::GetMaximumSize() const {
   return frame_->client_view()->GetMaximumSize();
 }
 
 }  // namespace
 
-NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
+NativeWindowAura::NativeWindowAura(const base::WeakPtr<content::Shell>& shell,
                                  base::DictionaryValue* manifest)
     : NativeWindow(shell, manifest),
-      web_view_(NULL),
       toolbar_(NULL),
+      web_view_(NULL),
       is_fullscreen_(false),
       is_minimized_(false),
       is_maximized_(false),
@@ -278,7 +285,6 @@ NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
   window_ = new views::Widget;
   views::Widget::InitParams params(views::Widget::InitParams::TYPE_WINDOW);
   params.delegate = this;
-  params.top_level = true;
   params.remove_standard_frame = !has_frame();
   params.use_system_default_icon = true;
   window_->Init(params);
@@ -290,7 +296,7 @@ NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
   int width, height;
   manifest->GetInteger(switches::kmWidth, &width);
   manifest->GetInteger(switches::kmHeight, &height);
-  gfx::Rect window_bounds = 
+  gfx::Rect window_bounds =
     window_->non_client_view()->GetWindowBoundsForClientBounds(
         gfx::Rect(width,height));
   last_width_  = width;
@@ -305,27 +311,29 @@ NativeWindowWin::NativeWindowWin(const base::WeakPtr<content::Shell>& shell,
   window_->SetInitialFocus(ui::SHOW_STATE_NORMAL);
 }
 
-NativeWindowWin::~NativeWindowWin() {
+NativeWindowAura::~NativeWindowAura() {
+#if defined(OS_WIN)
   FOR_EACH_OBSERVER(web_modal::ModalDialogHostObserver,
                     observer_list_,
                     OnHostDestroying());
+#endif
   views::WidgetFocusManager::GetInstance()->RemoveFocusChangeListener(this);
 }
 
-void NativeWindowWin::Close() {
+void NativeWindowAura::Close() {
   window_->Close();
 }
 
-void NativeWindowWin::Move(const gfx::Rect& bounds) {
+void NativeWindowAura::Move(const gfx::Rect& bounds) {
   window_->SetBounds(bounds);
 }
 
-void NativeWindowWin::Focus(bool focus) {
+void NativeWindowAura::Focus(bool focus) {
   window_->Activate();
 }
 
-void NativeWindowWin::Show() {
-  VLOG(1) << "NativeWindowWin::Show(); initial_focus = " << initial_focus_;
+void NativeWindowAura::Show() {
+  VLOG(1) << "NativeWindowAura::Show(); initial_focus = " << initial_focus_;
   if (is_maximized_)
     window_->native_widget_private()->ShowWithWindowState(ui::SHOW_STATE_MAXIMIZED);
   else if (!initial_focus_) {
@@ -335,27 +343,27 @@ void NativeWindowWin::Show() {
     window_->native_widget_private()->Show();
 }
 
-void NativeWindowWin::Hide() {
+void NativeWindowAura::Hide() {
   window_->Hide();
 }
 
-void NativeWindowWin::Maximize() {
+void NativeWindowAura::Maximize() {
   window_->Maximize();
 }
 
-void NativeWindowWin::Unmaximize() {
+void NativeWindowAura::Unmaximize() {
   window_->Restore();
 }
 
-void NativeWindowWin::Minimize() {
+void NativeWindowAura::Minimize() {
   window_->Minimize();
 }
 
-void NativeWindowWin::Restore() {
+void NativeWindowAura::Restore() {
   window_->Restore();
 }
 
-void NativeWindowWin::SetFullscreen(bool fullscreen) {
+void NativeWindowAura::SetFullscreen(bool fullscreen) {
   is_fullscreen_ = fullscreen;
   window_->SetFullscreen(fullscreen);
   if (shell()) {
@@ -366,31 +374,32 @@ void NativeWindowWin::SetFullscreen(bool fullscreen) {
   }
 }
 
-bool NativeWindowWin::IsFullscreen() {
+bool NativeWindowAura::IsFullscreen() {
   return is_fullscreen_;
 }
 
-void NativeWindowWin::SetSize(const gfx::Size& size) {
+void NativeWindowAura::SetSize(const gfx::Size& size) {
   window_->SetSize(size);
 }
 
-gfx::Size NativeWindowWin::GetSize() {
+gfx::Size NativeWindowAura::GetSize() {
   return window_->GetWindowBoundsInScreen().size();
 }
 
-void NativeWindowWin::SetMinimumSize(int width, int height) {
+void NativeWindowAura::SetMinimumSize(int width, int height) {
   minimum_size_.set_width(width);
   minimum_size_.set_height(height);
 }
 
-void NativeWindowWin::SetMaximumSize(int width, int height) {
+void NativeWindowAura::SetMaximumSize(int width, int height) {
   maximum_size_.set_width(width);
   maximum_size_.set_height(height);
 }
 
-void NativeWindowWin::SetResizable(bool resizable) {
+void NativeWindowAura::SetResizable(bool resizable) {
   resizable_ = resizable;
 
+#if 0 //FIXME
   // Show/Hide the maximize button.
   DWORD style = ::GetWindowLong(views::HWNDForWidget(window_), GWL_STYLE);
   if (resizable)
@@ -398,9 +407,11 @@ void NativeWindowWin::SetResizable(bool resizable) {
   else
     style &= ~WS_MAXIMIZEBOX;
   ::SetWindowLong(views::HWNDForWidget(window_), GWL_STYLE, style);
+#endif
 }
 
-void NativeWindowWin::SetShowInTaskbar(bool show) {
+void NativeWindowAura::SetShowInTaskbar(bool show) {
+#if defined(OS_WIN)
   if (show == false && base::win::GetVersion() < base::win::VERSION_VISTA) {
     // Change the owner of native window. Only needed on Windows XP.
     ::SetWindowLong(views::HWNDForWidget(window_),
@@ -431,16 +442,17 @@ void NativeWindowWin::SetShowInTaskbar(bool show) {
     LOG(ERROR) << "Failed to change the show in taskbar attribute";
     return;
   }
+#endif
 }
 
-void NativeWindowWin::SetAlwaysOnTop(bool top) {
+void NativeWindowAura::SetAlwaysOnTop(bool top) {
   window_->StackAtTop();
   // SetAlwaysOnTop should be called after StackAtTop because otherwise
   // the top-most flag will be removed.
   window_->SetAlwaysOnTop(top);
 }
 
-void NativeWindowWin::OnWidgetBoundsChanged(views::Widget* widget, const gfx::Rect& new_bounds)  {
+void NativeWindowAura::OnWidgetBoundsChanged(views::Widget* widget, const gfx::Rect& new_bounds)  {
   int w = new_bounds.width();
   int h = new_bounds.height();
   if (shell() && (w != last_width_ || h != last_height_)) {
@@ -453,11 +465,12 @@ void NativeWindowWin::OnWidgetBoundsChanged(views::Widget* widget, const gfx::Re
   }
 }
 
-void NativeWindowWin::SetPosition(const std::string& position) {
+void NativeWindowAura::SetPosition(const std::string& position) {
   if (position == "center") {
     gfx::Rect bounds = window_->GetWindowBoundsInScreen();
     window_->CenterWindow(gfx::Size(bounds.width(), bounds.height()));
   } else if (position == "mouse") {
+#if defined(OS_WIN) //FIXME
     gfx::Rect bounds = window_->GetWindowBoundsInScreen();
     POINT pt;
     if (::GetCursorPos(&pt)) {
@@ -467,19 +480,21 @@ void NativeWindowWin::SetPosition(const std::string& position) {
       bounds.set_y(y > 0 ? y : 0);
       window_->SetBoundsConstrained(bounds);
     }
+#endif
   }
 }
 
-void NativeWindowWin::SetPosition(const gfx::Point& position) {
+void NativeWindowAura::SetPosition(const gfx::Point& position) {
   gfx::Rect bounds = window_->GetWindowBoundsInScreen();
   window_->SetBounds(gfx::Rect(position, bounds.size()));
 }
 
-gfx::Point NativeWindowWin::GetPosition() {
+gfx::Point NativeWindowAura::GetPosition() {
   return window_->GetWindowBoundsInScreen().origin();
 }
 
-void NativeWindowWin::FlashFrame(int count) {
+void NativeWindowAura::FlashFrame(int count) {
+#if defined(OS_WIN) //FIXME
   FLASHWINFO fwi;
   fwi.cbSize = sizeof(fwi);
   fwi.hwnd = views::HWNDForWidget(window_);
@@ -492,8 +507,10 @@ void NativeWindowWin::FlashFrame(int count) {
     fwi.dwFlags = FLASHW_STOP;
   }
   FlashWindowEx(&fwi);
+#endif
 }
 
+#if defined(OS_WIN)
 HICON createBadgeIcon(const HWND hWnd, const TCHAR *value, const int sizeX, const int sizeY) {
   // canvas for the overlay icon
   gfx::Canvas canvas(gfx::Size(sizeX, sizeY), 1, false);
@@ -515,8 +532,10 @@ HICON createBadgeIcon(const HWND hWnd, const TCHAR *value, const int sizeX, cons
   // return the canvas as windows native icon handle
   return IconUtil::CreateHICONFromSkBitmap(canvas.ExtractImageRep().sk_bitmap());
 }
+#endif
 
-void NativeWindowWin::SetBadgeLabel(const std::string& badge) {
+void NativeWindowAura::SetBadgeLabel(const std::string& badge) {
+#if defined(OS_WIN)
   base::win::ScopedComPtr<ITaskbarList3> taskbar;
   HRESULT result = taskbar.CreateInstance(CLSID_TaskbarList, NULL,
     CLSCTX_INPROC_SERVER);
@@ -539,28 +558,30 @@ void NativeWindowWin::SetBadgeLabel(const std::string& badge) {
 
   taskbar->SetOverlayIcon(hWnd, icon, L"Status");
   DestroyIcon(icon);
+#endif
 }
 
-void NativeWindowWin::SetProgressBar(double progress) {
+void NativeWindowAura::SetProgressBar(double progress) {
+#if defined(OS_WIN)
   base::win::ScopedComPtr<ITaskbarList3> taskbar;
   HRESULT result = taskbar.CreateInstance(CLSID_TaskbarList, NULL,
                                           CLSCTX_INPROC_SERVER);
-  
+
   if (FAILED(result)) {
     VLOG(1) << "Failed creating a TaskbarList3 object: " << result;
     return;
   }
-  
+
   result = taskbar->HrInit();
   if (FAILED(result)) {
     LOG(ERROR) << "Failed initializing an ITaskbarList3 interface.";
     return;
   }
-  
+
   HWND hWnd = views::HWNDForWidget(window_);
-  
+
   TBPFLAG tbpFlag = TBPF_NOPROGRESS;
-  
+
   if (progress > 1) {
     tbpFlag = TBPF_INDETERMINATE;
   }
@@ -568,23 +589,25 @@ void NativeWindowWin::SetProgressBar(double progress) {
     tbpFlag = TBPF_NORMAL;
     taskbar->SetProgressValue(hWnd, progress * 100, 100);
   }
-  
+
   taskbar->SetProgressState(hWnd, tbpFlag);
+#endif
 }
 
-void NativeWindowWin::SetKiosk(bool kiosk) {
+void NativeWindowAura::SetKiosk(bool kiosk) {
   SetFullscreen(kiosk);
 }
 
-bool NativeWindowWin::IsKiosk() {
+bool NativeWindowAura::IsKiosk() {
   return IsFullscreen();
 }
 
-void NativeWindowWin::SetMenu(nwapi::Menu* menu) {
+void NativeWindowAura::SetMenu(nwapi::Menu* menu) {
   window_->set_has_menu_bar(true);
   menu_ = menu;
 
   // The menu is lazily built.
+#if defined(OS_WIN) //FIXME
   menu->Rebuild();
   menu->SetWindow(this);
 
@@ -592,43 +615,44 @@ void NativeWindowWin::SetMenu(nwapi::Menu* menu) {
   ::SetMenu(views::HWNDForWidget(window_), menu->menu_->GetNativeMenu());
 
   menu->UpdateKeys( window_->GetFocusManager() );
+#endif
 }
 
-void NativeWindowWin::SetTitle(const std::string& title) {
+void NativeWindowAura::SetTitle(const std::string& title) {
   title_ = title;
   window_->UpdateWindowTitle();
 }
 
-void NativeWindowWin::AddToolbar() {
-  toolbar_ = new NativeWindowToolbarWin(shell());
+void NativeWindowAura::AddToolbar() {
+  toolbar_ = new NativeWindowToolbarAura(shell());
   AddChildViewAt(toolbar_, 0);
 }
 
-void NativeWindowWin::SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
+void NativeWindowAura::SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
                                               bool enabled) {
   if (toolbar_)
     toolbar_->SetButtonEnabled(button, enabled);
 }
 
-void NativeWindowWin::SetToolbarUrlEntry(const std::string& url) {
+void NativeWindowAura::SetToolbarUrlEntry(const std::string& url) {
   if (toolbar_)
     toolbar_->SetUrlEntry(url);
 }
-  
-void NativeWindowWin::SetToolbarIsLoading(bool loading) {
+
+void NativeWindowAura::SetToolbarIsLoading(bool loading) {
   if (toolbar_)
     toolbar_->SetIsLoading(loading);
 }
 
-views::View* NativeWindowWin::GetContentsView() {
+views::View* NativeWindowAura::GetContentsView() {
   return this;
 }
 
-views::ClientView* NativeWindowWin::CreateClientView(views::Widget* widget) {
+views::ClientView* NativeWindowAura::CreateClientView(views::Widget* widget) {
   return new NativeWindowClientView(widget, GetContentsView(), shell_);
 }
 
-views::NonClientFrameView* NativeWindowWin::CreateNonClientFrameView(
+views::NonClientFrameView* NativeWindowAura::CreateNonClientFrameView(
     views::Widget* widget) {
   if (has_frame())
     return new views::NativeFrameView(GetWidget());
@@ -638,7 +662,7 @@ views::NonClientFrameView* NativeWindowWin::CreateNonClientFrameView(
   return frame_view;
 }
 
-void NativeWindowWin::OnWidgetMove() {
+void NativeWindowAura::OnWidgetMove() {
   gfx::Point origin = GetPosition();
   if (shell()) {
     base::ListValue args;
@@ -648,39 +672,39 @@ void NativeWindowWin::OnWidgetMove() {
   }
 }
 
-bool NativeWindowWin::CanResize() const {
+bool NativeWindowAura::CanResize() const {
   return resizable_;
 }
 
-bool NativeWindowWin::CanMaximize() const {
+bool NativeWindowAura::CanMaximize() const {
   return resizable_;
 }
 
-views::Widget* NativeWindowWin::GetWidget() {
+views::Widget* NativeWindowAura::GetWidget() {
   return window_;
 }
 
-const views::Widget* NativeWindowWin::GetWidget() const {
+const views::Widget* NativeWindowAura::GetWidget() const {
   return window_;
 }
 
-base::string16 NativeWindowWin::GetWindowTitle() const {
+base::string16 NativeWindowAura::GetWindowTitle() const {
   return base::UTF8ToUTF16(title_);
 }
 
-void NativeWindowWin::DeleteDelegate() {
+void NativeWindowAura::DeleteDelegate() {
   OnNativeWindowDestory();
 }
 
-bool NativeWindowWin::ShouldShowWindowTitle() const {
+bool NativeWindowAura::ShouldShowWindowTitle() const {
   return has_frame();
 }
 
-bool NativeWindowWin::ShouldHandleOnSize() const {
+bool NativeWindowAura::ShouldHandleOnSize() const {
   return true;
 }
 
-void NativeWindowWin::OnNativeFocusChange(gfx::NativeView focused_before,
+void NativeWindowAura::OnNativeFocusChange(gfx::NativeView focused_before,
                                           gfx::NativeView focused_now) {
   gfx::NativeView this_window = GetWidget()->GetNativeView();
   if (IsParent(focused_now, this_window) ||
@@ -700,7 +724,7 @@ void NativeWindowWin::OnNativeFocusChange(gfx::NativeView focused_before,
   }
 }
 
-gfx::ImageSkia NativeWindowWin::GetWindowAppIcon() {
+gfx::ImageSkia NativeWindowAura::GetWindowAppIcon() {
   gfx::Image icon = app_icon();
   if (icon.IsEmpty())
     return gfx::ImageSkia();
@@ -716,7 +740,7 @@ gfx::ImageSkia NativeWindowWin::GetWindowAppIcon() {
 #endif
 }
 
-gfx::ImageSkia NativeWindowWin::GetWindowIcon() {
+gfx::ImageSkia NativeWindowAura::GetWindowIcon() {
   gfx::Image icon = app_icon();
   if (icon.IsEmpty())
     return gfx::ImageSkia();
@@ -724,11 +748,11 @@ gfx::ImageSkia NativeWindowWin::GetWindowIcon() {
   return *icon.ToImageSkia();
 }
 
-views::View* NativeWindowWin::GetInitiallyFocusedView() {
+views::View* NativeWindowAura::GetInitiallyFocusedView() {
   return web_view_;
 }
 
-void NativeWindowWin::UpdateDraggableRegions(
+void NativeWindowAura::UpdateDraggableRegions(
     const std::vector<extensions::DraggableRegion>& regions) {
   // Draggable region is not supported for non-frameless window.
   if (has_frame())
@@ -754,7 +778,7 @@ void NativeWindowWin::UpdateDraggableRegions(
   OnViewWasResized();
 }
 
-void NativeWindowWin::HandleKeyboardEvent(
+void NativeWindowAura::HandleKeyboardEvent(
     const content::NativeWebKeyboardEvent& event) {
   unhandled_keyboard_event_handler_.HandleKeyboardEvent(event,
                                                         GetFocusManager());
@@ -765,7 +789,7 @@ void NativeWindowWin::HandleKeyboardEvent(
   //               event.os_event.wParam, event.os_event.lParam);
 }
 
-void NativeWindowWin::Layout() {
+void NativeWindowAura::Layout() {
   DCHECK(web_view_);
   if (toolbar_) {
     toolbar_->SetBounds(0, 0, width(), 34);
@@ -776,7 +800,7 @@ void NativeWindowWin::Layout() {
   OnViewWasResized();
 }
 
-void NativeWindowWin::ViewHierarchyChanged(
+void NativeWindowAura::ViewHierarchyChanged(
     const ViewHierarchyChangedDetails& details) {
   if (details.is_add && details.child == this) {
     views::BoxLayout* layout = new views::BoxLayout(
@@ -789,23 +813,36 @@ void NativeWindowWin::ViewHierarchyChanged(
   }
 }
 
-gfx::Size NativeWindowWin::GetMinimumSize() {
+gfx::Size NativeWindowAura::GetMinimumSize() const {
   return minimum_size_;
 }
 
-gfx::Size NativeWindowWin::GetMaximumSize() {
+gfx::Size NativeWindowAura::GetMaximumSize() const {
   return maximum_size_;
 }
 
-void NativeWindowWin::OnFocus() {
+void NativeWindowAura::OnFocus() {
   web_view_->RequestFocus();
 }
 
-void NativeWindowWin::SetInitialFocus(bool initial_focus) {
+bool NativeWindowAura::InitialFocus() {
+  return initial_focus_;
+}
+
+bool NativeWindowAura::AcceleratorPressed(const ui::Accelerator& accelerator) {
+  return true;
+}
+
+bool NativeWindowAura::CanHandleAccelerators() const {
+  return true;
+}
+
+void NativeWindowAura::SetInitialFocus(bool initial_focus) {
   initial_focus_ = initial_focus;
 }
 
-bool NativeWindowWin::ExecuteWindowsCommand(int command_id) {
+bool NativeWindowAura::ExecuteWindowsCommand(int command_id) {
+#if defined(OS_WIN)
   // Windows uses the 4 lower order bits of |command_id| for type-specific
   // information so we must exclude this when comparing.
   static const int sc_mask = 0xFFF0;
@@ -823,10 +860,12 @@ bool NativeWindowWin::ExecuteWindowsCommand(int command_id) {
     if (shell())
       shell()->SendEvent("unmaximize");
   }
+#endif
   return false;
 }
 
-bool NativeWindowWin::HandleSize(unsigned int param, const gfx::Size& size) {
+bool NativeWindowAura::HandleSize(unsigned int param, const gfx::Size& size) {
+#if defined(OS_WIN)
   if (param == SIZE_MAXIMIZED) {
     is_maximized_ = true;
     if (shell())
@@ -836,25 +875,28 @@ bool NativeWindowWin::HandleSize(unsigned int param, const gfx::Size& size) {
     if (shell())
       shell()->SendEvent("unmaximize");
   }
+#endif
   return false;
 }
 
-bool NativeWindowWin::ExecuteAppCommand(int command_id) {
+bool NativeWindowAura::ExecuteAppCommand(int command_id) {
+#if defined(OS_WIN)
   if (menu_) {
     menu_->menu_delegate_->ExecuteCommand(command_id, 0);
     menu_->menu_->UpdateStates();
   }
-
+#endif
   return false;
 }
 
-void NativeWindowWin::SaveWindowPlacement(const gfx::Rect& bounds,
+void NativeWindowAura::SaveWindowPlacement(const gfx::Rect& bounds,
                                           ui::WindowShowState show_state) {
   // views::WidgetDelegate::SaveWindowPlacement(bounds, show_state);
 }
 
-void NativeWindowWin::OnViewWasResized() {
+void NativeWindowAura::OnViewWasResized() {
   // Set the window shape of the RWHV.
+#if defined(OS_WIN)
   DCHECK(window_);
   DCHECK(web_view_);
   gfx::Size sz = web_view_->size();
@@ -883,9 +925,10 @@ void NativeWindowWin::OnViewWasResized() {
   if (web_contents()->GetRenderViewHost()->GetView())
     web_contents()->GetRenderViewHost()->GetView()->SetClickthroughRegion(rgn);
 #endif
+#endif
 }
 
-void NativeWindowWin::InstallEasyResizeTargeterOnContainer()  {
+void NativeWindowAura::InstallEasyResizeTargeterOnContainer()  {
   aura::Window* window = window_->GetNativeWindow();
   gfx::Insets inset(kResizeInsideBoundsSize, kResizeInsideBoundsSize,
                     kResizeInsideBoundsSize, kResizeInsideBoundsSize);
@@ -896,11 +939,11 @@ void NativeWindowWin::InstallEasyResizeTargeterOnContainer()  {
      new wm::EasyResizeWindowTargeter(window, inset, inset)));
 }
 
-bool NativeWindowWin::ShouldDescendIntoChildForEventHandling(
+bool NativeWindowAura::ShouldDescendIntoChildForEventHandling(
     gfx::NativeView child,
     const gfx::Point& location) {
 #if defined(USE_AURA)
-  if (child->Contains(web_view_->web_contents()->GetView()->GetNativeView())) {
+  if (child->Contains(web_view_->web_contents()->GetNativeView())) {
     // App window should claim mouse events that fall within the draggable
     // region.
     return !draggable_region_.get() ||
@@ -911,26 +954,26 @@ bool NativeWindowWin::ShouldDescendIntoChildForEventHandling(
   return true;
 }
 
-gfx::NativeView NativeWindowWin::GetHostView() const {
+gfx::NativeView NativeWindowAura::GetHostView() const {
   return window_->GetNativeView();
 }
 
-gfx::Size NativeWindowWin::GetMaximumDialogSize() {
+gfx::Size NativeWindowAura::GetMaximumDialogSize() {
   return window_->GetWindowBoundsInScreen().size();
 }
 
-gfx::Point NativeWindowWin::GetDialogPosition(const gfx::Size& size) {
+gfx::Point NativeWindowAura::GetDialogPosition(const gfx::Size& size) {
   gfx::Size app_window_size = window_->GetWindowBoundsInScreen().size();
   return gfx::Point(app_window_size.width() / 2 - size.width() / 2,
                     app_window_size.height() / 2 - size.height() / 2);
 }
 
-void NativeWindowWin::AddObserver(web_modal::ModalDialogHostObserver* observer) {
+void NativeWindowAura::AddObserver(web_modal::ModalDialogHostObserver* observer) {
   if (observer && !observer_list_.HasObserver(observer))
     observer_list_.AddObserver(observer);
 }
 
-void NativeWindowWin::RemoveObserver(web_modal::ModalDialogHostObserver* observer) {
+void NativeWindowAura::RemoveObserver(web_modal::ModalDialogHostObserver* observer) {
   observer_list_.RemoveObserver(observer);
 }
 

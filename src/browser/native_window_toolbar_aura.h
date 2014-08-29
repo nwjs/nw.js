@@ -18,8 +18,8 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#ifndef CONTENT_NW_SRC_BROWSER_NATIVE_WINDOW_TOOLBAR_WIN_H_
-#define CONTENT_NW_SRC_BROWSER_NATIVE_WINDOW_TOOLBAR_WIN_H_
+#ifndef CONTENT_NW_SRC_BROWSER_NATIVE_WINDOW_TOOLBAR_AURA_H_
+#define CONTENT_NW_SRC_BROWSER_NATIVE_WINDOW_TOOLBAR_AURA_H_
 
 #include "base/basictypes.h"
 #include "content/nw/src/browser/native_window.h"
@@ -37,13 +37,13 @@ class Textfield;
 }
 
 namespace nw {
-  
-class NativeWindowToolbarWin : public views::WidgetDelegateView,
+
+class NativeWindowToolbarAura : public views::WidgetDelegateView,
                                public views::TextfieldController,
                                public views::ButtonListener {
  public:
-  explicit NativeWindowToolbarWin(content::Shell* shell);
-  ~NativeWindowToolbarWin();
+  explicit NativeWindowToolbarAura(content::Shell* shell);
+  virtual ~NativeWindowToolbarAura();
 
   void SetButtonEnabled(NativeWindow::TOOLBAR_BUTTON button,
                         bool enabled);
@@ -81,9 +81,9 @@ class NativeWindowToolbarWin : public views::WidgetDelegateView,
   views::ImageButton* devtools_button_;
   views::ImageButton* dev_reload_button_;
 
-  DISALLOW_COPY_AND_ASSIGN(NativeWindowToolbarWin);
+  DISALLOW_COPY_AND_ASSIGN(NativeWindowToolbarAura);
 };
 
 }  // namespace nw
 
-#endif  // CONTENT_NW_SRC_BROWSER_NATIVE_WINDOW_TOOLBAR_WIN_H_
+#endif  // CONTENT_NW_SRC_BROWSER_NATIVE_WINDOW_TOOLBAR_AURA_H_

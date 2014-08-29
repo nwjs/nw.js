@@ -35,7 +35,6 @@
 #include "content/public/browser/notification_source.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
-#include "content/public/browser/web_contents_view.h"
 #include "grit/nw_resources.h"
 #include "printing/metafile.h"
 #include "printing/metafile_impl.h"
@@ -52,8 +51,10 @@ DEFINE_WEB_CONTENTS_USER_DATA_KEY(printing::PrintViewManager);
 
 namespace {
 
+#if defined(OS_WIN) && !defined(WIN_PDF_METAFILE_FOR_PRINTING)
 // Limits memory usage by raster to 64 MiB.
 const int kMaxRasterSizeInPixels = 16*1024*1024;
+#endif
 
 }  // namespace
 
@@ -219,7 +220,9 @@ void PrintViewManager::OnDidPrintPage(
   // Update the rendered document. It will send notifications to the listener.
   document->SetPage(params.page_number,
                     metafile.release(),
+#if defined(OS_WIN)
                     params.actual_shrink,
+#endif
                     params.page_size,
                     params.content_area);
 

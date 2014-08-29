@@ -42,6 +42,7 @@
 #include "grit/net_resources.h"
 #include "net/base/net_module.h"
 #include "net/proxy/proxy_resolver_v8.h"
+#include "ui/base/ime/input_method_initializer.h"
 #include "ui/base/resource/resource_bundle.h"
 
 #if !defined(OS_WIN)
@@ -155,7 +156,7 @@ void ShellBrowserMainParts::PostMainMessageLoopStart() {
 }
 
 int ShellBrowserMainParts::PreCreateThreads() {
-  net::ProxyResolverV8::RememberDefaultIsolate();
+  net::ProxyResolverV8::EnsureIsolateCreated();
 #if defined(USE_AURA)
   gfx::Screen::SetScreenInstance(gfx::SCREEN_TYPE_NATIVE,
                                  views::CreateDesktopScreen());
@@ -174,7 +175,7 @@ void ShellBrowserMainParts::PostDestroyThreads() {
 
 void ShellBrowserMainParts::ToolkitInitialized() {
 #if defined(USE_AURA)
-  aura::Env::CreateInstance();
+  aura::Env::CreateInstance(true);
 
   DCHECK(!views::ViewsDelegate::views_delegate);
   new views::DesktopTestViewsDelegate;
@@ -280,7 +281,7 @@ void ShellBrowserMainParts::PreEarlyInitialization() {
   // see chrome_browser_main_posix.cc
   CommandLine& command_line = *CommandLine::ForCurrentProcess();
   const std::string fd_limit_string =
-      command_line.GetSwitchValueASCII(switches::kFileDescriptorLimit);
+      command_line.GetSwitchValueASCII("file-descriptor-limit");
   int fd_limit = 0;
   if (!fd_limit_string.empty()) {
     base::StringToInt(fd_limit_string, &fd_limit);
@@ -295,6 +296,10 @@ void ShellBrowserMainParts::PreEarlyInitialization() {
   if (fd_limit > 0)
     SetFileDescriptorLimit(fd_limit);
 #endif // !OS_WIN
+
+#if defined(OS_LINUX)
+  ui::InitializeInputMethodForTesting();
+#endif
 }
 
 }  // namespace content

@@ -87,12 +87,12 @@ class MediaCaptureDevicesDispatcher : public content::MediaObserver,
 
 
   virtual void OnMediaRequestStateChanged(
-    int render_process_id,
-    int render_view_id,
-    int page_request_id,
-    const GURL& security_origin,
-    const content::MediaStreamDevice& device,
-    content::MediaRequestState state) OVERRIDE {}
+      int render_process_id,
+      int render_frame_id,
+      int page_request_id,
+      const GURL& security_origin,
+      content::MediaStreamType stream_type,
+      content::MediaRequestState state) OVERRIDE {}
 
   // Returns the first available audio or video device, or NULL if no devices
   // are available.

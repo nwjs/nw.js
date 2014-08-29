@@ -72,7 +72,7 @@ bool NotificationManager::DesktopNotificationPostClick(int render_process_id, in
   if (host == NULL)
     return false;
 
-  host->DesktopNotificationPostClick(notification_id);
+  // host->DesktopNotificationPostClick(notification_id);
   return true;
 }
 
@@ -81,7 +81,7 @@ bool NotificationManager::DesktopNotificationPostClose(int render_process_id, in
   if (host == NULL)
     return false;
 
-  host->DesktopNotificationPostClose(notification_id, by_user);
+  // host->DesktopNotificationPostClose(notification_id, by_user);
   return true;
 }
 
@@ -90,7 +90,7 @@ bool NotificationManager::DesktopNotificationPostDisplay(int render_process_id, 
   if (host == NULL)
     return false;
 
-  host->DesktopNotificationPostDisplay(notification_id);
+  // host->DesktopNotificationPostDisplay(notification_id);
   return true;
 }
 
@@ -99,7 +99,7 @@ bool NotificationManager::DesktopNotificationPostError(int render_process_id, in
   if (host == NULL)
     return false;
 
-  host->DesktopNotificationPostError(notification_id, message);
+  // host->DesktopNotificationPostError(notification_id, message);
   return true;
 }
 } // namespace nw

@@ -34,9 +34,9 @@
 class NSStatusItem;
 class MacTrayObserver;
 #endif  // __OBJC__
-#elif defined(TOOLKIT_GTK)
+#elif defined(OS_LINUX)
 #include <gtk/gtk.h>
-#include "ui/base/gtk/gtk_signal.h"
+#include "chrome/browser/ui/libgtk2ui/gtk2_signal.h"
 #elif defined(OS_WIN)
 class StatusIcon;
 class StatusTray;
@@ -73,7 +73,7 @@ class Tray : public Base {
 #if defined(OS_MACOSX)
   __block NSStatusItem* status_item_;
   MacTrayObserver* status_observer_;
-#elif defined(TOOLKIT_GTK)
+#elif defined(OS_LINUX)
   GtkStatusIcon* status_item_;
 
   // Reference to the associated menu.

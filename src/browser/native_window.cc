@@ -32,8 +32,8 @@
 
 #if defined(OS_MACOSX)
 #include "content/nw/src/browser/native_window_helper_mac.h"
-#elif defined(TOOLKIT_GTK)
-#include "content/nw/src/browser/native_window_gtk.h"
+#elif defined(OS_LINUX)
+#include "content/nw/src/browser/native_window_aura.h"
 #elif defined(OS_WIN)
 #include "content/nw/src/browser/native_window_win.h"
 #endif
@@ -52,8 +52,8 @@ NativeWindow* NativeWindow::Create(const base::WeakPtr<content::Shell>& shell,
 
   // Create window.
   NativeWindow* window =
-#if defined(TOOLKIT_GTK)
-      new NativeWindowGtk(shell, manifest);
+#if defined(OS_LINUX)
+      new NativeWindowAura(shell, manifest);
 #elif defined(OS_MACOSX)
       CreateNativeWindowCocoa(shell, manifest);
 #elif defined(OS_WIN)

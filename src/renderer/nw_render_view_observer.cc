@@ -30,7 +30,7 @@
 #include "skia/ext/platform_canvas.h"
 #include "third_party/WebKit/public/platform/WebRect.h"
 #include "third_party/WebKit/public/platform/WebSize.h"
-#include "third_party/WebKit/public/web/WebFrame.h"
+#include "third_party/WebKit/public/web/WebLocalFrame.h"
 #include "third_party/WebKit/public/web/WebScriptSource.h"
 #include "third_party/WebKit/public/web/WebView.h"
 
@@ -79,7 +79,7 @@ void NwRenderViewObserver::OnCaptureSnapshot() {
   Send(new NwViewHostMsg_Snapshot(routing_id(), snapshot));
 }
 
-void NwRenderViewObserver::DidFinishDocumentLoad(blink::WebFrame* frame) {
+void NwRenderViewObserver::DidFinishDocumentLoad(blink::WebLocalFrame* frame) {
   RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
   if (!rv)
     return;
@@ -87,7 +87,7 @@ void NwRenderViewObserver::DidFinishDocumentLoad(blink::WebFrame* frame) {
   OnDocumentCallback(rv, js_fn, frame);
 }
 
-void NwRenderViewObserver::DidCreateDocumentElement(blink::WebFrame* frame) {
+void NwRenderViewObserver::DidCreateDocumentElement(blink::WebLocalFrame* frame) {
   RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
   if (!rv)
     return;
@@ -131,7 +131,7 @@ bool NwRenderViewObserver::CaptureSnapshot(blink::WebView* view,
   SkBaseDevice* device = skia::GetTopDevice(*canvas);
 
   const SkBitmap& bitmap = device->accessBitmap(false);
-  if (!bitmap.copyTo(snapshot, SkBitmapConfigToColorType(SkBitmap::kARGB_8888_Config)))
+  if (!bitmap.copyTo(snapshot, kN32_SkColorType))
     return false;
 
   return true;
