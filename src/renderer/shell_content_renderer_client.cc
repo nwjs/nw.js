@@ -273,7 +273,7 @@ void ShellContentRendererClient::SetupNodeUtil(
         "if (!process.mainModule.filename || process.mainModule.filename === 'blank') {"
         "  var root = '" + root_path + "';"
 #if defined(OS_WIN)
-        "process.mainModule.filename = decodeURIComponent(window.location.pathname.substr(1));"
+        "process.mainModule.filename = decodeURIComponent(window.location.pathname === 'blank' ? 'blank': window.location.pathname.substr(1));"
 #else
         "process.mainModule.filename = decodeURIComponent(window.location.pathname);"
 #endif
@@ -282,7 +282,7 @@ void ShellContentRendererClient::SetupNodeUtil(
         "process.mainModule.paths = global.require('module')._nodeModulePaths(process.cwd());"
         "process.mainModule.loaded = true;"
         "}").c_str()),
-                                                       v8::String::NewFromUtf8(isolate, "process_main"));
+  v8::String::NewFromUtf8(isolate, "process_main"));
   CHECK(*script);
   script->Run();
 }
