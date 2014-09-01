@@ -120,11 +120,6 @@ void RelativePathToURI(FilePath root, base::DictionaryValue* manifest) {
                       std::string("file://") + main_path.AsUTF8Unsafe());
 }
 
-std::wstring ASCIIToWide(const std::string& ascii) {
-  DCHECK(IsStringASCII(ascii)) << ascii;
-  return std::wstring(ascii.begin(), ascii.end());
-}
-
 }  // namespace
 
 Package::Package()
