@@ -1,3 +1,8 @@
+0.10.4 / 09-05-2014
+===================
+- Fix: [WIN] child_process.fork() by making nw executable run as node
+- Fix: [WIN] stalling for seconds under threaded composition on some hardware (#1991)
+
 0.10.3 / 09-01-2014
 ===================
 - Fix: child_process.fork() (#213) by making nw executable run as node
