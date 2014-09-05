@@ -2,6 +2,9 @@
 ===================
 - Fix: [WIN] child_process.fork() by making nw executable run as node
 - Fix: [WIN] stalling for seconds under threaded composition on some hardware (#1991)
+- Fix: [OSX] disable File Quarantine (#2294)
+- Fix: [OSX] disable sound for notification
+- support 'chrome://gpu' diagnosic page
 
 0.10.3 / 09-01-2014
 ===================
