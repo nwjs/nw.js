@@ -21,28 +21,6 @@
 
 namespace content {
 
-namespace {
-
-// DevTools frontend path for inspector LayoutTests.
-GURL GetDevToolsPathAsURL() {
-  base::FilePath dir_exe;
-  if (!PathService::Get(base::DIR_EXE, &dir_exe)) {
-    NOTREACHED();
-    return GURL();
-  }
-#if defined(OS_MACOSX)
-  // On Mac, the executable is in
-  // out/Release/Content Shell.app/Contents/MacOS/Content Shell.
-  // We need to go up 3 directories to get to out/Release.
-  dir_exe = dir_exe.AppendASCII("../../..");
-#endif
-  base::FilePath dev_tools_path = dir_exe.AppendASCII(
-      "resources/inspector/devtools.html");
-  return net::FilePathToFileURL(dev_tools_path);
-}
-
-}  // namespace
-
 #if 0
 // static
 ShellDevToolsFrontend* ShellDevToolsFrontend::Show(

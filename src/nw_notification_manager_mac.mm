@@ -132,7 +132,6 @@ bool NotificationManagerMac::AddDesktopNotification(const content::ShowDesktopNo
     @"notification_id" :[NSNumber numberWithInt : params.notification_id],
   };
 
-  [notification setSoundName : @"NSUserNotificationDefaultSoundName"];
 
   [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:[NWUserNotificationCenterDelegate defaultNWUserNotificationCenterDelegate]];
 

@@ -19,13 +19,13 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.10.2</string>
+	<string>0.10.5</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>${MACOSX_DEPLOYMENT_TARGET}.0</string>
 	<key>LSFileQuarantineEnabled</key>
-	<true/>
+	<false/>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
 	<true/>
 	<key>CFBundleDocumentTypes</key>

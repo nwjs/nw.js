@@ -65,26 +65,11 @@ net::HttpResponseHeaders* BuildHttpHeaders(
   return new net::HttpResponseHeaders(raw_headers);
 }
 
-void ReadMimeTypeFromFile(const base::FilePath& filename,
-                          std::string* mime_type,
-                          bool* result) {
-  *result = net::GetMimeTypeFromFile(filename, mime_type);
-}
-
 base::Time GetFileLastModifiedTime(const base::FilePath& filename) {
   if (base::PathExists(filename)) {
     base::File::Info info;
     if (base::GetFileInfo(filename, &info))
       return info.last_modified;
-  }
-  return base::Time();
-}
-
-base::Time GetFileCreationTime(const base::FilePath& filename) {
-  if (base::PathExists(filename)) {
-    base::File::Info info;
-    if (base::GetFileInfo(filename, &info))
-      return info.creation_time;
   }
   return base::Time();
 }
