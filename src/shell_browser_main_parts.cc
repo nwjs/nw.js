@@ -160,6 +160,7 @@ int ShellBrowserMainParts::PreCreateThreads() {
   gfx::Screen::SetScreenInstance(gfx::SCREEN_TYPE_NATIVE,
                                  views::CreateDesktopScreen());
 #endif
+  package_.reset(new nw::Package());
   return 0;
 }
 
@@ -180,7 +181,6 @@ void ShellBrowserMainParts::ToolkitInitialized() {
 }
 
 void ShellBrowserMainParts::Init() {
-  package_.reset(new nw::Package());
   CommandLine& command_line = *CommandLine::ForCurrentProcess();
 
   browser_context_.reset(new ShellBrowserContext(false, package()));
