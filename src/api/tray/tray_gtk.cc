@@ -46,12 +46,14 @@ void Tray::SetTitle(const std::string& title) {
 }
 
 void Tray::SetIcon(const std::string& path) {
-  //char *pathbuf = strdup(path.c_str());
-  //app_indicator_set_icon_theme_path(status_item_, dirname(pathbuf));
+  char *pathbuf = strdup(path.c_str());
+  app_indicator_set_icon_theme_path(status_item_, dirname(pathbuf));
+  std::string file_name(basename(pathbuf));
+  std::string icon_name = file_name.substr(0, file_name.find_last_of("."));
   //app_indicator_set_icon_full(status_item_, basename(pathbuf), basename(pathbuf));
-  //free(pathbuf);
   app_indicator_set_status (status_item_, APP_INDICATOR_STATUS_ACTIVE);
-  app_indicator_set_attention_icon (status_item_, "indicator-messages-new");
+  app_indicator_set_attention_icon (status_item_, icon_name);
+  free(pathbuf);
 }
 
 void Tray::SetTooltip(const std::string& tooltip) {
