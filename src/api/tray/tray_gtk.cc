@@ -30,7 +30,7 @@ void Tray::Create(const base::DictionaryValue& option) {
   menu_ = NULL;
   std::string id;
   option.GetString("id", &id);
-  status_item_ = app_indicator_new(id.c_str(), "Node-Webkit Icon", APP_INDICATOR_CATEGORY_APPLICATION_STATUS);
+  status_item_ = app_indicator_new(id.c_str(), "indicator-messages-new", APP_INDICATOR_CATEGORY_APPLICATION_STATUS);
 }
 
 void Tray::ShowAfterCreate() {
