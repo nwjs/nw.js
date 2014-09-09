@@ -47,7 +47,7 @@ void Tray::SetTitle(const std::string& title) {
 void Tray::SetIcon(const std::string& path) {
   char *pathbuf = strdup(path.c_str());
   char *cwdbuf = get_current_dir_name();
-  char *fullpathbuf = malloc((strlen(pathbuf)+strlen(cwdbuf)+2)*sizeof(char));
+  char *fullpathbuf = (char *)malloc((strlen(pathbuf)+strlen(cwdbuf)+2)*sizeof(char));
   strncpy(fullpathbuf, cwdbuf, strlen(cwdbuf));
   fullpathbuf[strlen(cwdbuf)] = '/'; fullpathbuf[strlen(cwdbuf)+1] = '\0';
   strncat(fullpathbuf, pathbuf, strlen(pathbuf));
