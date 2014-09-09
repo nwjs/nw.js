@@ -42,6 +42,8 @@ function Tray(option) {
     option.alticon = nw.getAbsolutePath(option.alticon);
   }
 
+  option.id = option.id || option.title || (Math.random()*9007199254740992).toString();
+
   if (option.hasOwnProperty('tooltip'))
     option.tooltip = String(option.tooltip);
 

@@ -38,11 +38,6 @@ class MacTrayObserver;
 #include <gtk/gtk.h>
 #include "ui/base/gtk/gtk_signal.h"
 #include <libappindicator/app-indicator.h>
-// The following are needed to generate a unique id for app_indicator_new()
-#include <stdlib.h>
-#include <time.h>
-// The following is for getting the maximum path limit
-#include <linux/limits.h>
 #include <libgen.h> // needed for dirname() and basename()
 #include <cstring>
 #elif defined(OS_WIN)
