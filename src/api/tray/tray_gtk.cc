@@ -29,7 +29,7 @@ namespace nwapi {
 void Tray::Create(const base::DictionaryValue& option) {
   menu_ = NULL;
   srand(time(NULL));
-  status_item_ = app_indicator_new(std::string(rand()).c_str(), "Node-Webkit Icon", APP_INDICATOR_CATEGORY_OTHER);
+  status_item_ = app_indicator_new(std::to_string(rand()).c_str(), "Node-Webkit Icon", APP_INDICATOR_CATEGORY_OTHER);
 }
 
 void Tray::ShowAfterCreate() {
@@ -51,8 +51,8 @@ void Tray::SetIcon(const std::string& path) {
   strncpy(fullpathbuf, cwdbuf, strlen(cwdbuf));
   fullpathbuf[strlen(cwdbuf)] = '/'; fullpathbuf[strlen(cwdbuf)+1] = '\0';
   strncat(fullpathbuf, pathbuf, strlen(pathbuf));
-  app_indicator_set_icon_theme_path(status_item_, dirname(fullpath));
-  app_indicator_set_icon_full(status_item_, basename(fullpath), basename(fullpath));
+  app_indicator_set_icon_theme_path(status_item_, dirname(fullpathbuf));
+  app_indicator_set_icon_full(status_item_, basename(fullpathbuf), basename(fullpathbuf));
   free(fullpathbuf);
   free(cwdbuf);
   free(pathbuf);
