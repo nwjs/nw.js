@@ -45,8 +45,8 @@ void Tray::SetTitle(const std::string& title) {
 }
 
 void Tray::SetIcon(const std::string& path) {
-  char *cwdbuf = malloc(PATH_MAX*sizeof(char));
-  getcwd(cwdbuf, PATH_MAX*sizeof(char)); 
+  char *cwdbuf = (char *)malloc(PATH_MAX*sizeof(char));
+  cwdbuf = getcwd(cwdbuf, PATH_MAX*sizeof(char)); 
   std::string fullpath = cwdbuf + path;
   app_indicator_set_icon_theme_path(status_item_, dirname(fullpath.c_str()));
   app_indicator_set_icon_full(status_item_, basename(fullpath.c_str()), basename(fullpath.c_str()));
