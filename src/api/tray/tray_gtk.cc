@@ -28,6 +28,7 @@ namespace nwapi {
 
 void Tray::Create(const base::DictionaryValue& option) {
   menu_ = NULL;
+  std::string id;
   option.GetString("id", &id);
   status_item_ = app_indicator_new(id.c_str(), "Node-Webkit Icon", APP_INDICATOR_CATEGORY_OTHER);
 }
