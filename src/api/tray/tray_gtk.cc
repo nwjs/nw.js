@@ -30,7 +30,7 @@ void Tray::Create(const base::DictionaryValue& option) {
   menu_ = NULL;
   std::string id;
   option.GetString("id", &id);
-  status_item_ = app_indicator_new(id.c_str(), "Node-Webkit Icon", APP_INDICATOR_CATEGORY_OTHER);
+  status_item_ = app_indicator_new(id.c_str(), "Node-Webkit Icon", APP_INDICATOR_CATEGORY_APPLICATION_STATUS);
 }
 
 void Tray::ShowAfterCreate() {
@@ -50,8 +50,8 @@ void Tray::SetIcon(const std::string& path) {
   //app_indicator_set_icon_theme_path(status_item_, dirname(pathbuf));
   //app_indicator_set_icon_full(status_item_, basename(pathbuf), basename(pathbuf));
   //free(pathbuf);
-  app_indicator_set_icon_theme_path(status_item_, "/usr/share/icons/ubuntu-mono-dark/status/24");
-  app_indicator_set_icon_full(status_item_, "application-email-panel", "application-email-panel");
+  app_indicator_set_status (status_item_, APP_INDICATOR_STATUS_ACTIVE);
+  app_indicator_set_attention_icon (status_item_, "indicator-messages-new");
 }
 
 void Tray::SetTooltip(const std::string& tooltip) {
