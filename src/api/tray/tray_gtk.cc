@@ -29,7 +29,7 @@ namespace nwapi {
 void Tray::Create(const base::DictionaryValue& option) {
   menu_ = NULL;
   srand(time(NULL));
-  status_item_ = app_indicator_new(std::string(rand()).c_str(), "Node-Webkit Icon", APP_INDICATOR_CATEGORY_HARDWARE);
+  status_item_ = app_indicator_new(std::string(rand()).c_str(), "Node-Webkit Icon", APP_INDICATOR_CATEGORY_OTHER);
 }
 
 void Tray::ShowAfterCreate() {
@@ -45,12 +45,17 @@ void Tray::SetTitle(const std::string& title) {
 }
 
 void Tray::SetIcon(const std::string& path) {
-  char *cwdbuf = (char *)malloc(PATH_MAX*sizeof(char));
-  cwdbuf = getcwd(cwdbuf, PATH_MAX*sizeof(char)); 
-  std::string fullpath = cwdbuf + path;
-  app_indicator_set_icon_theme_path(status_item_, dirname(fullpath.c_str()));
-  app_indicator_set_icon_full(status_item_, basename(fullpath.c_str()), basename(fullpath.c_str()));
+  char *pathbuf = strdup(path.c_str());
+  char *cwdbuf = get_current_dir_name();
+  char *fullpathbuf = malloc((strlen(pathbuf)+strlen(cwdbuf)+2)*sizeof(char));
+  strncpy(fullpathbuf, cwdbuf, strlen(cwdbuf));
+  fullpathbuf[strlen(cwdbuf)] = '/'; fullpathbuf[strlen(cwdbuf)+1] = '\0';
+  strncat(fullpathbuf, pathbuf, strlen(pathbuf));
+  app_indicator_set_icon_theme_path(status_item_, dirname(fullpath));
+  app_indicator_set_icon_full(status_item_, basename(fullpath), basename(fullpath));
+  free(fullpathbuf);
   free(cwdbuf);
+  free(pathbuf);
 }
 
 void Tray::SetTooltip(const std::string& tooltip) {

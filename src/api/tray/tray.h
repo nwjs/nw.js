@@ -44,6 +44,7 @@ class MacTrayObserver;
 // The following is for getting the maximum path limit
 #include <linux/limits.h>
 #include <libgen.h> // needed for dirname() and basename()
+#include <cstring>
 #elif defined(OS_WIN)
 class StatusIcon;
 class StatusTray;
