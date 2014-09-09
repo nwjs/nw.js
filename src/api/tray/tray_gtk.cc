@@ -29,7 +29,9 @@ namespace nwapi {
 void Tray::Create(const base::DictionaryValue& option) {
   menu_ = NULL;
   srand(time(NULL));
-  status_item_ = app_indicator_new(std::to_string(rand()).c_str(), "Node-Webkit Icon", APP_INDICATOR_CATEGORY_OTHER);
+  std::stringstream ss;
+  ss << rand();
+  status_item_ = app_indicator_new(ss.str().c_str(), "Node-Webkit Icon", APP_INDICATOR_CATEGORY_OTHER);
 }
 
 void Tray::ShowAfterCreate() {
