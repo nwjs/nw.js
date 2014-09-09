@@ -52,7 +52,7 @@ void Tray::SetIcon(const std::string& path) {
   std::string icon_name = file_name.substr(0, file_name.find_last_of("."));
   //app_indicator_set_icon_full(status_item_, basename(pathbuf), basename(pathbuf));
   app_indicator_set_status (status_item_, APP_INDICATOR_STATUS_ACTIVE);
-  app_indicator_set_attention_icon (status_item_, icon_name);
+  app_indicator_set_attention_icon (status_item_, icon_name.c_str());
   free(pathbuf);
 }
 
