@@ -36,9 +36,10 @@ void Tray::Create(const base::DictionaryValue& option) {
         APP_INDICATOR_CATEGORY_APPLICATION_STATUS);
   }
   else {
-    std::string icon_name = icon.substr(0, icon.find_last_of("."));
-    app_indicator_new_with_path(id.c_str(), basename(icon_name.c_str()), 
-        APP_INDICATOR_CATEGORY_APPLICATION_STATUS, dirname(icon_name.c_str()));
+    char *icon_str = strdup(icon.substr(0, icon.find_last_of(".")).c_str());
+    app_indicator_new_with_path(id.c_str(), basename(icon_str), 
+        APP_INDICATOR_CATEGORY_APPLICATION_STATUS, dirname(icon_str));
+    free(icon_str);
   }
 }
 
