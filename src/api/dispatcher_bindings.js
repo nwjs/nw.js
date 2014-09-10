@@ -38,6 +38,9 @@ var nwDispatcher = nwDispatcher || {};
   native function CrashRenderer();
   native function SetCrashDumpDir();
 
+  native function GetNSStringWithFixup();
+  native function GetNSStringFWithFixup();
+
   nwDispatcher.requireNwGui = RequireNwGui;
 
   // Request a new object from browser
@@ -97,4 +100,8 @@ var nwDispatcher = nwDispatcher || {};
   nwDispatcher.crashRenderer = CrashRenderer;
   nwDispatcher.setCrashDumpDir = SetCrashDumpDir;
   nwDispatcher.allocateId = AllocateId;
+
+  nwDispatcher.getNSStringWithFixup = GetNSStringWithFixup;
+  nwDispatcher.getNSStringFWithFixup = GetNSStringFWithFixup;
+
 })();
