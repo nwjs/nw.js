@@ -99,7 +99,7 @@ RenderView* GetCurrentRenderView() {
 }  // namespace
 
 ShellContentRendererClient::ShellContentRendererClient()
-  :creating_first_context_(true) {
+  :in_nav_cb_(false), creating_first_context_(true) {
 }
 
 ShellContentRendererClient::~ShellContentRendererClient() {
