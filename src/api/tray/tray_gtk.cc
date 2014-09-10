@@ -38,11 +38,13 @@ void Tray::Create(const base::DictionaryValue& option) {
         APP_INDICATOR_CATEGORY_APPLICATION_STATUS);
   }
   else {
-    char *theme_dir = icon.substr(0, icon.find_last_of("/")+1).c_str();
-    char *icon_name = icon.substr(icon.find_last_of("/")+1, icon.find_last_of(".")).c_str();
+    char *theme_dir = strdup(icon.substr(0, icon.find_last_of("/")+1).c_str());
+    char *icon_name = strdup(icon.substr(icon.find_last_of("/")+1, icon.find_last_of(".")).c_str());
     printf("Dirname: %s\nBasename: %s\n", theme_dir , icon_name);
     status_item_ = app_indicator_new_with_path(id.c_str(), icon_name, 
         APP_INDICATOR_CATEGORY_APPLICATION_STATUS, theme_dir);
+    free(icon_name);
+    free(theme_dir);
   }
 }
 
@@ -67,12 +69,14 @@ void Tray::SetIcon(const std::string& path) {
   //app_indicator_set_status (status_item_, APP_INDICATOR_STATUS_ACTIVE);
   //app_indicator_set_attention_icon (status_item_, icon_name.c_str());
   //free(pathbuf);
-  char *theme_dir = path.substr(0, path.find_last_of("/")+1).c_str();
-  char *icon_name = path.substr(path.find_last_of("/")+1, path.find_last_of(".")).c_str();
-  printf("Set Icon: Dirname: %s\nBasename: %s\n", theme_dir , icon_name);
+  char *theme_dir = strdup(path.substr(0, path.find_last_of("/")+1).c_str());
+  char *icon_name = strdup(path.substr(path.find_last_of("/")+1, path.find_last_of(".")).c_str());
+  printf("Set Icon: Dirname: %s\nBasename: %s\n", theme_dir , path_name);
   app_indicator_set_icon_theme_path(status_item_, theme_dir);
   app_indicator_set_status (status_item_, APP_INDICATOR_STATUS_ACTIVE);
   app_indicator_set_icon_full(status_item_, icon_name, icon_name);
+  free(icon_name);
+  free(theme_dir);
 }
 
 void Tray::SetTooltip(const std::string& tooltip) {
