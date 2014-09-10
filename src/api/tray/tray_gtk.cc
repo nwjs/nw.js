@@ -39,6 +39,7 @@ void Tray::Create(const base::DictionaryValue& option) {
   }
   else {
     char *icon_str = strdup(icon.substr(0, icon.find_last_of(".")).c_str());
+    printf("Dirname: %s\nBasename: %s\n", dirname(icon_str), basename(icon_str));
     status_item_ = app_indicator_new_with_path(id.c_str(), basename(icon_str), 
         APP_INDICATOR_CATEGORY_APPLICATION_STATUS, dirname(icon_str));
     free(icon_str);
