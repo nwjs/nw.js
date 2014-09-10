@@ -38,8 +38,8 @@ void Tray::Create(const base::DictionaryValue& option) {
         APP_INDICATOR_CATEGORY_APPLICATION_STATUS);
   }
   else {
-    std::string theme_dir = icon.substr(0, icon.find_last_of("/")+1).c_str();
-    std::string icon_name = icon.substr(icon.find_last_of("/")+1, icon.find_last_of(".")).c_str();
+    char *theme_dir = icon.substr(0, icon.find_last_of("/")+1).c_str();
+    char *icon_name = icon.substr(icon.find_last_of("/")+1, icon.find_last_of(".")).c_str();
     printf("Dirname: %s\nBasename: %s\n", theme_dir , icon_name);
     status_item_ = app_indicator_new_with_path(id.c_str(), icon_name, 
         APP_INDICATOR_CATEGORY_APPLICATION_STATUS, theme_dir);
