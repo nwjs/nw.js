@@ -31,6 +31,7 @@ void Tray::Create(const base::DictionaryValue& option) {
   std::string id, icon;
   option.GetString("id", &id);
   option.GetString("icon", &icon);
+  std::cout << "Icon: " << icon << std::endl;
   if (icon.empty()) {
     status_item_ = app_indicator_new(id.c_str(), "indicator-messages-new", 
         APP_INDICATOR_CATEGORY_APPLICATION_STATUS);
