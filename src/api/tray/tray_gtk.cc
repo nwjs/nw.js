@@ -84,7 +84,7 @@ void Tray::SetAltIcon(const std::string& alticon_path) {
 char *Tray::TrimString(const char *file_name, size_t begin, size_t past_end) {
   int new_length = (int)(past_end - begin);
   char *new_string = new char[new_length];
-  for (size_t i=0; i<new_length; i++) {
+  for (int i=0; i<new_length; i++) {
     new_string[i] = file_name[i+(int)begin];
   }
   return new_string;
