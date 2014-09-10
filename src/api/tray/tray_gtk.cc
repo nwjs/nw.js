@@ -67,8 +67,8 @@ void Tray::SetIcon(const std::string& path) {
   //app_indicator_set_status (status_item_, APP_INDICATOR_STATUS_ACTIVE);
   //app_indicator_set_attention_icon (status_item_, icon_name.c_str());
   //free(pathbuf);
-  std::string theme_dir = path.substr(0, path.find_last_of("/")+1).c_str();
-  std::string icon_name = path.substr(path.find_last_of("/")+1, path.find_last_of(".")).c_str();
+  char *theme_dir = path.substr(0, path.find_last_of("/")+1).c_str();
+  char *icon_name = path.substr(path.find_last_of("/")+1, path.find_last_of(".")).c_str();
   printf("Set Icon: Dirname: %s\nBasename: %s\n", theme_dir , icon_name);
   app_indicator_set_icon_theme_path(status_item_, theme_dir);
   app_indicator_set_status (status_item_, APP_INDICATOR_STATUS_ACTIVE);
