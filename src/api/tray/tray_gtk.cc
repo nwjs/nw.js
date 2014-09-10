@@ -28,9 +28,18 @@ namespace nwapi {
 
 void Tray::Create(const base::DictionaryValue& option) {
   menu_ = NULL;
-  std::string id;
+  std::string id, icon;
   option.GetString("id", &id);
-  status_item_ = app_indicator_new(id.c_str(), "indicator-messages-new", APP_INDICATOR_CATEGORY_APPLICATION_STATUS);
+  option.GetString("icon", &icon);
+  if (icon.empty()) {
+    status_item_ = app_indicator_new(id.c_str(), "indicator-messages-new", 
+        APP_INDICATOR_CATEGORY_APPLICATION_STATUS);
+  }
+  else {
+    std::string icon_name = icon.substr(0, icon.find_last_of("."));
+    app_indicator_new_with_path(id.c_str(), basename(icon_name.c_str()), 
+        APP_INDICATOR_CATEGORY_APPLICATION_STATUS, dirname(icon_name.c_str()));
+  }
 }
 
 void Tray::ShowAfterCreate() {

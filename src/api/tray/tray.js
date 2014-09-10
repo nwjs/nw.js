@@ -36,13 +36,16 @@ function Tray(option) {
     option.shadowIcon = String(option.icon);
     option.icon = nw.getAbsolutePath(option.icon);
   }
+  else {
+    option.icon = ''; // app_indicator_new() requires an image
+  }
 
   if (option.hasOwnProperty('alticon')) {
     option.shadowAlticon = String(option.alticon);
     option.alticon = nw.getAbsolutePath(option.alticon);
   }
 
-  option.id = option.id || option.title || (Math.random()*9007199254740992).toString();
+  option.id = option.title || (Math.random()*9007199254740992).toString(); // This is needed for tray_gtk
 
   if (option.hasOwnProperty('tooltip'))
     option.tooltip = String(option.tooltip);
