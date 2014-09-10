@@ -38,11 +38,11 @@ void Tray::Create(const base::DictionaryValue& option) {
         APP_INDICATOR_CATEGORY_APPLICATION_STATUS);
   }
   else {
-    char *icon_str = strdup(icon.substr(0, icon.find_last_of(".")).c_str());
-    printf("Dirname: %s\nBasename: %s\n", dirname(icon_str), basename(icon_str));
-    status_item_ = app_indicator_new_with_path(id.c_str(), basename(icon_str), 
-        APP_INDICATOR_CATEGORY_APPLICATION_STATUS, dirname(icon_str));
-    free(icon_str);
+    std::string theme_dir = icon.substr(0, icon.find_last_of("/")+1).c_str();
+    std::string icon_name = icon.substr(icon.find_last_of("/")+1, icon.find_last_of(".")).c_str();
+    printf("Dirname: %s\nBasename: %s\n", theme_dir , icon_name);
+    status_item_ = app_indicator_new_with_path(id.c_str(), icon_name, 
+        APP_INDICATOR_CATEGORY_APPLICATION_STATUS, theme_dir);
   }
 }
 
@@ -59,14 +59,20 @@ void Tray::SetTitle(const std::string& title) {
 }
 
 void Tray::SetIcon(const std::string& path) {
-  char *pathbuf = strdup(path.c_str());
-  app_indicator_set_icon_theme_path(status_item_, dirname(pathbuf));
-  std::string file_name(basename(pathbuf));
-  std::string icon_name = file_name.substr(0, file_name.find_last_of("."));
-  //app_indicator_set_icon_full(status_item_, basename(pathbuf), basename(pathbuf));
+  //char *pathbuf = strdup(path.c_str());
+  //app_indicator_set_icon_theme_path(status_item_, dirname(pathbuf));
+  //std::string file_name(basename(pathbuf));
+  //std::string icon_name = file_name.substr(0, file_name.find_last_of("."));
+  ////app_indicator_set_icon_full(status_item_, basename(pathbuf), basename(pathbuf));
+  //app_indicator_set_status (status_item_, APP_INDICATOR_STATUS_ACTIVE);
+  //app_indicator_set_attention_icon (status_item_, icon_name.c_str());
+  //free(pathbuf);
+  std::string theme_dir = path.substr(0, path.find_last_of("/")+1).c_str();
+  std::string icon_name = path.substr(path.find_last_of("/")+1, path.find_last_of(".")).c_str();
+  printf("Set Icon: Dirname: %s\nBasename: %s\n", theme_dir , icon_name);
+  app_indicator_set_icon_theme_path(status_item_, theme_dir);
   app_indicator_set_status (status_item_, APP_INDICATOR_STATUS_ACTIVE);
-  app_indicator_set_attention_icon (status_item_, icon_name.c_str());
-  free(pathbuf);
+  app_indicator_set_icon_full(status_item_, icon_name, icon_name);
 }
 
 void Tray::SetTooltip(const std::string& tooltip) {
