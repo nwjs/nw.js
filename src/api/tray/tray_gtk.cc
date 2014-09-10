@@ -40,8 +40,8 @@ void Tray::Create(const base::DictionaryValue& option) {
     char *icon_name = TrimString(icon.c_str(), icon.find_last_of("/")+1, icon.find_last_of("."));
     status_item_ = app_indicator_new_with_path(id.c_str(), icon_name, 
         APP_INDICATOR_CATEGORY_APPLICATION_STATUS, theme_dir);
-    free(icon_name);
-    free(theme_dir);
+    delete[] icon_name;
+    delete[] theme_dir;
   }
 }
 
@@ -63,8 +63,8 @@ void Tray::SetIcon(const std::string& path) {
   app_indicator_set_icon_theme_path(status_item_, theme_dir);
   app_indicator_set_status (status_item_, APP_INDICATOR_STATUS_ACTIVE);
   app_indicator_set_icon_full(status_item_, icon_name, icon_name);
-  free(icon_name);
-  free(theme_dir);
+  delete[] icon_name;
+  delete[] theme_dir;
 }
 
 void Tray::SetTooltip(const std::string& tooltip) {
