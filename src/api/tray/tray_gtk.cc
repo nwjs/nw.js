@@ -23,7 +23,6 @@
 #include "base/values.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"
-#include <cstdio>
 
 namespace nwapi {
 
@@ -32,17 +31,13 @@ void Tray::Create(const base::DictionaryValue& option) {
   std::string id, icon;
   option.GetString("id", &id);
   option.GetString("icon", &icon);
-  printf("Icon: %s\n", icon.c_str());
   if (icon.empty()) {
     status_item_ = app_indicator_new(id.c_str(), "indicator-messages-new", 
         APP_INDICATOR_CATEGORY_APPLICATION_STATUS);
   }
   else {
-    std::string theme_dir_str = icon.substr(0, icon.find_last_of("/")+1);
-    std::string icon_name_str = icon.substr(icon.find_last_of("/")+1, icon.find_last_of("."));
-    char *theme_dir = strdup(theme_dir_str.c_str());
-    char *icon_name = strdup(icon_name_str.c_str());
-    printf("Dirname: %s\nBasename: %s\n", theme_dir , icon_name);
+    char *theme_dir = TrimString(icon.c_str(), 0, icon.find_last_of("/")+1);
+    char *icon_name = TrimString(icon.c_str(), icon.find_last_of("/")+1, icon.find_last_of("."));
     status_item_ = app_indicator_new_with_path(id.c_str(), icon_name, 
         APP_INDICATOR_CATEGORY_APPLICATION_STATUS, theme_dir);
     free(icon_name);
@@ -63,11 +58,8 @@ void Tray::SetTitle(const std::string& title) {
 }
 
 void Tray::SetIcon(const std::string& path) {
-  std::string theme_dir_str = path.substr(0, path.find_last_of("/")+1);
-  std::string icon_name_str = path.substr(path.find_last_of("/")+1, path.find_last_of("."));
-  char *theme_dir = strdup(theme_dir_str.c_str());
-  char *icon_name = strdup(icon_name_str.c_str());
-  printf("Set Icon: Dirname: %s\nBasename: %s\n", theme_dir , icon_name);
+  char *theme_dir = TrimString(path.c_str(), 0, path.find_last_of("/")+1);
+  char *icon_name = TrimString(path.c_str(), path.find_last_of("/")+1, path.find_last_of("."));
   app_indicator_set_icon_theme_path(status_item_, theme_dir);
   app_indicator_set_status (status_item_, APP_INDICATOR_STATUS_ACTIVE);
   app_indicator_set_icon_full(status_item_, icon_name, icon_name);
@@ -88,5 +80,15 @@ void Tray::Remove() {
 
 void Tray::SetAltIcon(const std::string& alticon_path) {
 }
+
+char *Tray::TrimString(const char *file_name, size_t begin, size_t past_end) {
+  int new_length = (int)(past_end - begin);
+  char *new_string = new char[new_length];
+  for (size_t i=0; i<new_length; i++) {
+    new_string[i] = file_name[i+(int)begin];
+  }
+  return new_string;
+}
+
 
 }  // namespace nwapi

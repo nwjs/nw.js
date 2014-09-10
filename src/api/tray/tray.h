@@ -38,8 +38,6 @@ class MacTrayObserver;
 #include <gtk/gtk.h>
 #include "ui/base/gtk/gtk_signal.h"
 #include <libappindicator/app-indicator.h>
-#include <libgen.h> // needed for dirname() and basename()
-#include <cstring>
 #elif defined(OS_WIN)
 class StatusIcon;
 class StatusTray;
@@ -72,6 +70,7 @@ class Tray : public Base {
   void Remove();
   // Alternate icons only work with Macs
   void SetAltIcon(const std::string& alticon_path);
+  char *TrimString(const char *file_name, size_t begin, size_t end);
 
 #if defined(OS_MACOSX)
   __block NSStatusItem* status_item_;
