@@ -38,8 +38,10 @@ void Tray::Create(const base::DictionaryValue& option) {
         APP_INDICATOR_CATEGORY_APPLICATION_STATUS);
   }
   else {
-    char *theme_dir = strdup(icon.substr(0, icon.find_last_of("/")+1).c_str());
-    char *icon_name = strdup(icon.substr(icon.find_last_of("/")+1, icon.find_last_of(".")).c_str());
+    std::string theme_dir_str = icon.substr(0, icon.find_last_of("/")+1);
+    std::string icon_name_str = icon.substr(icon.find_last_of("/")+1, icon.find_last_of("."));
+    char *theme_dir = strdup(theme_dir_str.c_str());
+    char *icon_name = strdup(icon_name_str.c_str());
     printf("Dirname: %s\nBasename: %s\n", theme_dir , icon_name);
     status_item_ = app_indicator_new_with_path(id.c_str(), icon_name, 
         APP_INDICATOR_CATEGORY_APPLICATION_STATUS, theme_dir);
@@ -61,16 +63,10 @@ void Tray::SetTitle(const std::string& title) {
 }
 
 void Tray::SetIcon(const std::string& path) {
-  //char *pathbuf = strdup(path.c_str());
-  //app_indicator_set_icon_theme_path(status_item_, dirname(pathbuf));
-  //std::string file_name(basename(pathbuf));
-  //std::string icon_name = file_name.substr(0, file_name.find_last_of("."));
-  ////app_indicator_set_icon_full(status_item_, basename(pathbuf), basename(pathbuf));
-  //app_indicator_set_status (status_item_, APP_INDICATOR_STATUS_ACTIVE);
-  //app_indicator_set_attention_icon (status_item_, icon_name.c_str());
-  //free(pathbuf);
-  char *theme_dir = strdup(path.substr(0, path.find_last_of("/")+1).c_str());
-  char *icon_name = strdup(path.substr(path.find_last_of("/")+1, path.find_last_of(".")).c_str());
+  std::string theme_dir_str = path.substr(0, path.find_last_of("/")+1);
+  std::string icon_name_str = path.substr(path.find_last_of("/")+1, path.find_last_of("."));
+  char *theme_dir = strdup(theme_dir_str.c_str());
+  char *icon_name = strdup(icon_name_str.c_str());
   printf("Set Icon: Dirname: %s\nBasename: %s\n", theme_dir , icon_name);
   app_indicator_set_icon_theme_path(status_item_, theme_dir);
   app_indicator_set_status (status_item_, APP_INDICATOR_STATUS_ACTIVE);
