@@ -23,6 +23,7 @@
 #include "base/values.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"
+#include <cstdio>
 
 namespace nwapi {
 
@@ -83,10 +84,12 @@ void Tray::SetAltIcon(const std::string& alticon_path) {
 
 char *Tray::TrimString(const char *file_name, size_t begin, size_t past_end) {
   int new_length = (int)(past_end - begin);
+  printf("%s, %zu, %zu, %d\n", file_name, begin, past_end, new_length);
   char *new_string = new char[new_length];
   for (int i=0; i<new_length; i++) {
     new_string[i] = file_name[i+(int)begin];
   }
+  printf("%s\n", new_string);
   return new_string;
 }
 
