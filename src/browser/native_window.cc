@@ -69,9 +69,11 @@ NativeWindow* NativeWindow::Create(const base::WeakPtr<content::Shell>& shell,
 NativeWindow::NativeWindow(const base::WeakPtr<content::Shell>& shell,
                            base::DictionaryValue* manifest)
     : shell_(shell),
+      transparent_(false),
       has_frame_(true),
       capture_page_helper_(NULL) {
   manifest->GetBoolean(switches::kmFrame, &has_frame_);
+  manifest->GetBoolean(switches::kmTransparent, &transparent_);
 
   LoadAppIconFromPackage(manifest);
 }

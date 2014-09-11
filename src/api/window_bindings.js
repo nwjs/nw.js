@@ -249,6 +249,11 @@ Window.prototype.__defineGetter__('isFullscreen', function() {
   var result = CallObjectMethodSync(this, 'IsFullscreen', []);
   return Boolean(result[0]);
 });
+  
+Window.prototype.__defineGetter__('isTransparent', function() {
+  var result = CallObjectMethodSync(this, 'IsTransparent', []);
+  return Boolean(result[0]);
+});
 
 Window.prototype.__defineSetter__('isKioskMode', function(flag) {
   if (flag)
@@ -424,6 +429,10 @@ Window.prototype.setProgressBar = function(progress) {
   if (typeof progress != "number")
     throw new String('progress must be a number');
   CallObjectMethod(this, 'SetProgressBar', [ progress ]);
+}
+  
+Window.prototype.setTransparent = function(transparent) {
+  CallObjectMethod(this, 'SetTransparent', [ transparent ]);
 }
 
 Window.prototype.setPosition = function(position) {
