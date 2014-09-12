@@ -377,6 +377,14 @@
             '<(DEPTH)/base/allocator/allocator.gyp:allocator',
           ],
         }],
+        ['OS=="win" and target_arch=="ia32"', {
+          'sources': [
+            # TODO(scottmg): This is a workaround for
+            # http://crbug.com/348525 that affects VS2013 before Update 2.
+            # This should be removed once Update 2 is released.
+            '<(DEPTH)/build/win/ftol3.obj',
+          ],
+        }],
         ['OS=="win"', {
           'sources': [
             '<(DEPTH)/chrome/browser/ui/views/constrained_window_views.cc',
