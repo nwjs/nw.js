@@ -625,7 +625,7 @@ void NativeWindowCocoa::SetResizable(bool resizable) {
     [window() setStyleMask:window().styleMask | NSResizableWindowMask];
   } else {
     [[window() standardWindowButton:NSWindowZoomButton] setEnabled:NO];
-    [window() setStyleMask:window().styleMask ^ NSResizableWindowMask];
+    [window() setStyleMask:window().styleMask & ~NSResizableWindowMask];
   }
 }
 
