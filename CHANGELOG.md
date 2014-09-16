@@ -1,3 +1,16 @@
+0.10.5 / 09-16-2014
+===================
+- Fix: support more Chromium command line args (#1743, Thanks to Joachim Bauch)
+- Fix #2171: crash when opening window 
+- Fix #2326: some websites crashes NW in Windows (fixed with the same file as updating to VS2013 Update 2)
+- Fix: win: crash on invalid parameter error (thanks to Mikael Roos)
+- Fix #1991 in a better way: [WIN] stalling for seconds under threaded composition on some hardware (#1991)
+- Fix: [WIN] single-instance crash
+- Fix: autofill crash when filling number in input box (#2310)
+- Fix: CSP is not effective (#1672)
+- Fix: crash when calling console.log() with a cross-domain window object in some cases (#1573)
+- Fix: crash when stepping into a breakpoint set in scripts loaded by require() (#2214)
+
 0.10.4 / 09-05-2014
 ===================
 - Fix: [WIN] child_process.fork() by making nw executable run as node
