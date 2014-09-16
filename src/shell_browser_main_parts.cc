@@ -160,6 +160,7 @@ int ShellBrowserMainParts::PreCreateThreads() {
   gfx::Screen::SetScreenInstance(gfx::SCREEN_TYPE_NATIVE,
                                  views::CreateDesktopScreen());
 #endif
+  base::ThreadRestrictions::ScopedAllowIO allow_io;
   package_.reset(new nw::Package());
   return 0;
 }
@@ -181,6 +182,9 @@ void ShellBrowserMainParts::ToolkitInitialized() {
 }
 
 void ShellBrowserMainParts::Init() {
+  //this will be reset to false before entering the message loop
+  base::ThreadRestrictions::SetIOAllowed(true);
+
   CommandLine& command_line = *CommandLine::ForCurrentProcess();
 
   browser_context_.reset(new ShellBrowserContext(false, package()));
