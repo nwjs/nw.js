@@ -739,9 +739,11 @@ void InitCrashReporter() {
   else if (GetBreakpadClient()->GetShouldDumpLargerDumps(is_per_user_install))
     dump_type = kLargerDumpType;
 
+  int handler_types = google_breakpad::ExceptionHandler::HANDLER_EXCEPTION |
+      google_breakpad::ExceptionHandler::HANDLER_PURECALL;
   g_breakpad = new google_breakpad::ExceptionHandler(temp_dir, &FilterCallback,
                    callback, NULL,
-                   google_breakpad::ExceptionHandler::HANDLER_ALL,
+                   handler_types,
                    dump_type, pipe_name.c_str(), custom_info);
 
   // Now initialize the non crash dump handler.
