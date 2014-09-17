@@ -54,7 +54,7 @@ bool ShellResourceDispatcherHostDelegate::HandleExternalProtocol(
   // Otherwise put this work on the file thread. On Windows ShellExecute may
   // block for a significant amount of time, and it shouldn't hurt on Linux.
   BrowserThread::PostTask(
-      BrowserThread::FILE,
+      BrowserThread::UI,
       FROM_HERE,
       base::Bind(&platform_util::OpenExternal2, url));
 #endif
