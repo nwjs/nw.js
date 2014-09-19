@@ -180,10 +180,11 @@ def generate_target_symbols(platform_name, arch, version):
                                     '-', platform_name,
                                     '-', arch, '.7z'])
     elif platform_name == 'osx':
-        target['compress'] = 'gz'
+        target['compress'] = 'zip'
         target['input'] = [
                           'node-webkit.breakpad.tar'
                           ]
+        target['folder'] = True
     else:
         print 'Unsupported platform: ' + platform_name
         exit(-1)
@@ -262,11 +263,12 @@ def make_packages(targets):
         if len(t['input']) == 0:
             continue
         if t['compress'] == None:
-            if t['output'] != '':
-                os.mkdir(dist_dir + t['output'])
             for f in t['input']:
                 src = os.path.join(binaries_location, f)
-                dest = os.path.join(dist_dir + t['output'], f)
+                if t['output'] != '':
+                    dest = os.path.join(dist_dir, t['output'])
+                else:
+                    dest = os.path.join(dist_dir, f)
                 print "Copying " + f
                 shutil.copy(src, dest)
         elif (t.has_key('folder') and t['folder'] == True) or len(t['input']) > 1:
