@@ -172,6 +172,7 @@ def generate_target_symbols(platform_name, arch, version):
     if platform_name == 'linux':
         target['compress'] = 'tar.gz'
         target['input'] = ['nw.breakpad.' + arch]
+        target['folder'] = True
     elif platform_name == 'win':
         target['input'] = ['nw.sym.7z']
         target['output'] = ''.join(['node-webkit-symbol-',
@@ -186,7 +187,6 @@ def generate_target_symbols(platform_name, arch, version):
     else:
         print 'Unsupported platform: ' + platform_name
         exit(-1)
-    target['folder'] = True
     return target
 
 def generate_target_others(platform_name, arch, version):
