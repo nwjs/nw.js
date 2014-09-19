@@ -174,6 +174,7 @@ def generate_target_symbols(platform_name, arch, version):
         target['input'] = ['nw.breakpad.' + arch]
         target['folder'] = True
     elif platform_name == 'win':
+        target['compress'] = None
         target['input'] = ['nw.sym.7z']
         target['output'] = ''.join(['node-webkit-symbol-',
                                     'v', version,
