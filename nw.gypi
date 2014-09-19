@@ -655,7 +655,7 @@
                 '<(PRODUCT_DIR)/dump_syms',
               ],
               'outputs': [
-                '<(PRODUCT_DIR)/node-webkit.breakpad.tar.bz2',
+                '<(PRODUCT_DIR)/node-webkit.breakpad.tar',
               ],
               'action': ['<(DEPTH)/content/nw/tools/dump_mac_syms',
                          ],
