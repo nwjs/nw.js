@@ -37,6 +37,7 @@ class MacTrayObserver;
 #elif defined(TOOLKIT_GTK)
 #include <gtk/gtk.h>
 #include "ui/base/gtk/gtk_signal.h"
+#include <libappindicator/app-indicator.h>
 #elif defined(OS_WIN)
 class StatusIcon;
 class StatusTray;
@@ -69,20 +70,17 @@ class Tray : public Base {
   void Remove();
   // Alternate icons only work with Macs
   void SetAltIcon(const std::string& alticon_path);
+  char *TrimString(const char *file_name, size_t begin, size_t end);
 
 #if defined(OS_MACOSX)
   __block NSStatusItem* status_item_;
   MacTrayObserver* status_observer_;
 #elif defined(TOOLKIT_GTK)
-  GtkStatusIcon* status_item_;
+  //GtkStatusIcon* status_item_;
+  AppIndicator* status_item_;
 
   // Reference to the associated menu.
   Menu* menu_;
-
-  // Callback invoked when user left-clicks on the status icon.
-  CHROMEGTK_CALLBACK_0(Tray, void, OnClick);
-  // Callback invoked when user right-clicks on the status icon.
-  CHROMEGTK_CALLBACK_2(Tray, void, OnPopupMenu, guint, guint);
 #elif defined(OS_WIN)
   // The global presentation of system tray.
   static StatusTray* status_tray_;

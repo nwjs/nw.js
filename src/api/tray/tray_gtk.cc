@@ -28,15 +28,24 @@ namespace nwapi {
 
 void Tray::Create(const base::DictionaryValue& option) {
   menu_ = NULL;
-  status_item_ = gtk_status_icon_new();
+  std::string id, icon;
+  option.GetString("id", &id);
+  option.GetString("icon", &icon);
+  if (icon.empty()) {
+    status_item_ = app_indicator_new(id.c_str(), "indicator-messages-new", 
+        APP_INDICATOR_CATEGORY_APPLICATION_STATUS);
+  }
+  else {
+    char *theme_dir = TrimString(icon.c_str(), 0, icon.find_last_of("/")+1);
+    char *icon_name = TrimString(icon.c_str(), icon.find_last_of("/")+1, icon.find_last_of("."));
+    status_item_ = app_indicator_new_with_path(id.c_str(), icon_name, 
+        APP_INDICATOR_CATEGORY_APPLICATION_STATUS, theme_dir);
+    delete[] icon_name;
+    delete[] theme_dir;
+  }
 }
 
 void Tray::ShowAfterCreate() {
-  g_signal_connect(status_item_, "activate",
-                   G_CALLBACK(OnClickThunk), this);
-  g_signal_connect(status_item_, "popup-menu",
-                   G_CALLBACK(OnPopupMenuThunk), this);
-  gtk_status_icon_set_visible(status_item_, TRUE);
 }
 
 void Tray::Destroy() {
@@ -45,40 +54,42 @@ void Tray::Destroy() {
 }
 
 void Tray::SetTitle(const std::string& title) {
-  gtk_status_icon_set_title(status_item_, title.c_str());
+  app_indicator_set_title(status_item_, title.c_str());
 }
 
 void Tray::SetIcon(const std::string& path) {
-  gtk_status_icon_set_from_file(status_item_, path.c_str());
+  char *theme_dir = TrimString(path.c_str(), 0, path.find_last_of("/")+1);
+  char *icon_name = TrimString(path.c_str(), path.find_last_of("/")+1, path.find_last_of("."));
+  app_indicator_set_icon_theme_path(status_item_, theme_dir);
+  app_indicator_set_status (status_item_, APP_INDICATOR_STATUS_ACTIVE);
+  app_indicator_set_icon_full(status_item_, icon_name, icon_name);
+  delete[] icon_name;
+  delete[] theme_dir;
 }
 
 void Tray::SetTooltip(const std::string& tooltip) {
-  gtk_status_icon_set_tooltip_text(GTK_STATUS_ICON(status_item_),
-                                   tooltip.c_str());
 }
 
 void Tray::SetMenu(Menu* menu) {
   menu_ = menu;
+  app_indicator_set_menu(status_item_, GTK_MENU(menu_->menu_));
 }
 
 void Tray::Remove() {
-  g_object_unref(G_OBJECT(status_item_));
-}
-
-void Tray::OnClick(GtkWidget* widget) {
-  base::ListValue args;
-  dispatcher_host()->SendEvent(this, "click", args);
-}
-
-void Tray::OnPopupMenu(GtkWidget* widget, guint button, guint time) {
-  if (menu_) {
-    gtk_menu_popup(GTK_MENU(menu_->menu_), NULL, NULL,
-                   gtk_status_icon_position_menu,
-                   status_item_, button, time);
-  }
 }
 
 void Tray::SetAltIcon(const std::string& alticon_path) {
 }
+
+char *Tray::TrimString(const char *file_name, size_t begin, size_t past_end) {
+  int new_length = (int)(past_end - begin + 1);
+  char *new_string = new char[new_length];
+  for (int i=0; i<(new_length-1); i++) {
+    new_string[i] = file_name[i+(int)begin];
+  }
+  new_string[new_length-1] = '\0';
+  return new_string;
+}
+
 
 }  // namespace nwapi
