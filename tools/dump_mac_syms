@@ -46,7 +46,7 @@ BREAKPAD_DUMP_SYMS="${BUILT_PRODUCTS_DIR}/dump_syms"
 #FULL_VERSION="${MAJOR}.${MINOR}.${BUILD}.${PATCH}"
 FULL_VERSION=$1
 
-DSYM_TAR_PATH="${BUILT_PRODUCTS_DIR}/${SRC_APP_NAME}.breakpad.tar.bz2"
+DSYM_TAR_PATH="${BUILT_PRODUCTS_DIR}/${SRC_APP_NAME}.breakpad.tar"
 
 # Starting with an already-dumped symbol file at ${original_sym_path},
 # transforms the MODULE line (which must be the first line) from referring to
@@ -158,5 +158,5 @@ done
 if [ ! -e "${DSYM_TAR_PATH}" ] ; then
   # Change directory so that absolute paths aren't included in the archive.
   (cd "${BUILT_PRODUCTS_DIR}" &&
-   tar -jcf "${DSYM_TAR_PATH}" "${DSYMS[@]}")
+   tar -cf "${DSYM_TAR_PATH}" "${DSYMS[@]}")
 fi

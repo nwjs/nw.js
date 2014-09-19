@@ -173,16 +173,15 @@ def generate_target_symbols(platform_name, arch, version):
         target['compress'] = 'tar.gz'
         target['input'] = ['nw.breakpad.' + arch]
     elif platform_name == 'win':
-        target['compress'] = 'zip'
-#        target['input'] = ['nw.exe.pdb']
-        target['input'] = []
+        target['input'] = ['nw.sym.7z']
+        target['output'] = ''.join(['node-webkit-symbol-',
+                                    'v', version,
+                                    '-', platform_name,
+                                    '-', arch, '.7z'])
     elif platform_name == 'osx':
-        target['compress'] = 'tar.gz'
+        target['compress'] = 'gz'
         target['input'] = [
-#                          'node-webkit.app.dSYM',
-#                          'node-webkit Helper.app.dSYM',
-#                          'node-webkit Framework.framework.dSYM',
-#                          'ffmpegsumo.so.dSYM',
+                          'node-webkit.breakpad.tar'
                           ]
     else:
         print 'Unsupported platform: ' + platform_name
@@ -195,9 +194,9 @@ def generate_target_others(platform_name, arch, version):
     target['output'] = ''
     target['compress'] = None
     if platform_name == 'win':
-        target['input'] = ['nw.exp', 'nw.lib', 'nw.sym.7z']
+        target['input'] = ['nw.exp', 'nw.lib']
     elif platform_name == 'osx' :
-        target['input'] = ['node-webkit.breakpad.tar.bz2']
+        target['input'] = []
     else:
         target['input'] = []
     return target
