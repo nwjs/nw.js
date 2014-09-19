@@ -21,6 +21,7 @@ parser.add_argument('-b','--buildername', help='Builder name, e.g. linux_32bit',
 parser.add_argument('-r','--revision', help='Commit revision',required=True)
 parser.add_argument('-n','--number', help='Build number', required=True)
 parser.add_argument('-t','--bucket', help='AWS bucket name', required=True)
+parser.add_argument('-d','--dlpath', help='AWS bucket path', required=True)
 
 args = parser.parse_args()
 
@@ -31,6 +32,7 @@ builder_name = args.buildername
 got_revision = args.revision
 build_number = args.number
 bucket_name  = args.bucket
+dlpath       = args.dlpath
 date         = datetime.date.today().strftime('%m-%d-%Y')
 
 # If the binaries location is not given, calculate it from script related dir.
@@ -47,8 +49,9 @@ if not os.path.isdir(dist_dir):
 dist_dir = os.path.normpath(dist_dir)
 
 # it's for S3, so always use '/' here
-upload_path = ''.join(['/' + date,
-                       '/' + builder_name + '-build-' + build_number + '-'  + got_revision])
+#upload_path = ''.join(['/' + date,
+#                       '/' + builder_name + '-build-' + build_number + '-'  + got_revision])
+upload_path = '/' + dlpath;
 
 file_list = os.listdir(dist_dir)
 if len(file_list) == 0:
