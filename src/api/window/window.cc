@@ -1,16 +1,16 @@
 // Copyright (c) 2012 Intel Corp
 // Copyright (c) 2012 The Chromium Authors
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy 
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 //  in the Software without restriction, including without limitation the rights
 //  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell co
 // pies of the Software, and to permit persons to whom the Software is furnished
 //  to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in al
 // l copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IM
 // PLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNES
 // S FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
@@ -39,6 +39,9 @@
 #include "net/cookies/cookie_util.h"
 #include "net/url_request/url_request_context.h"
 #include "url/gurl.h"
+#include "content/public/browser/web_contents.h"
+#include "content/public/browser/web_contents_observer.h"
+#include "content/public/browser/web_contents_view.h"
 
 using content::BrowserThread;
 using content::ShellBrowserContext;
@@ -249,6 +252,11 @@ void Window::Call(const std::string& method,
     if (arguments.GetInteger(0, &x) &&
         arguments.GetInteger(1, &y))
       shell_->window()->SetPosition(gfx::Point(x, y));
+  } else if (method == "SimulateClick") {
+    int x, y;
+    if (arguments.GetInteger(0, &x) &&
+        arguments.GetInteger(1, &y))
+      SimulateMouseClickAt(0, WebKit::WebMouseEvent::ButtonLeft, gfx::Point(x, y));
   } else if (method == "RequestAttention") {
     bool flash;
     if (arguments.GetBoolean(0, &flash))
@@ -308,10 +316,47 @@ void Window::CallSync(const std::string& method,
     if (!headless)
       object_id = shell_->WrapDevToolsWindow();
     result->AppendInteger(object_id);
+
+
   } else {
     NOTREACHED() << "Invalid call to Window method:" << method
                  << " arguments:" << arguments;
   }
+}
+
+// WebKit::WebMouseEvent::Button button
+void Window::SimulateMouseClick(int modifiers, WebKit::WebMouseEvent::Button button) {
+  int x = shell_->web_contents()->GetView()->GetContainerSize().width() / 2;
+  int y = shell_->web_contents()->GetView()->GetContainerSize().height() / 2;
+  SimulateMouseClickAt(modifiers, button, gfx::Point(x, y));
+}
+
+void Window::SimulateMouseClickAt(int modifiers, WebKit::WebMouseEvent::Button button,
+                          const gfx::Point& point) {
+  WebKit::WebMouseEvent mouse_event;
+  mouse_event.type = WebKit::WebInputEvent::MouseDown;
+  mouse_event.button = button;
+  mouse_event.x = point.x();
+  mouse_event.y = point.y();
+  mouse_event.modifiers = modifiers;
+  // Mac needs globalX/globalY for events to plugins.
+  gfx::Rect offset;
+  shell_->web_contents()->GetView()->GetContainerBounds(&offset);
+  mouse_event.globalX = point.x() + offset.x();
+  mouse_event.globalY = point.y() + offset.y();
+  mouse_event.clickCount = 1;
+  shell_->web_contents()->GetRenderViewHost()->ForwardMouseEvent(mouse_event);
+  mouse_event.type = WebKit::WebInputEvent::MouseUp;
+  shell_->web_contents()->GetRenderViewHost()->ForwardMouseEvent(mouse_event);
+}
+
+void Window::SimulateMouseEvent(WebKit::WebInputEvent::Type type,
+                        const gfx::Point& point) {
+  WebKit::WebMouseEvent mouse_event;
+  mouse_event.type = type;
+  mouse_event.x = point.x();
+  mouse_event.y = point.y();
+  shell_->web_contents()->GetRenderViewHost()->ForwardMouseEvent(mouse_event);
 }
 
 void Window::CookieRemove(const base::ListValue& arguments) {

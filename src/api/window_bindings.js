@@ -325,6 +325,10 @@ Window.prototype.minimize = function() {
   CallObjectMethod(this, 'Minimize', []);
 }
 
+Window.prototype.simulateClick = function(x, y) {
+  CallObjectMethod(this, 'SimulateClick', [x, y]);
+}
+
 Window.prototype.restore = function() {
   CallObjectMethod(this, 'Restore', []);
 }
