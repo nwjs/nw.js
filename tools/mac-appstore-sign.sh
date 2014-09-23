@@ -57,7 +57,7 @@ echo "==Signing Code=="
 codesign --deep -s $IDENTITY -i $BUNDLEID --entitlements /tmp/entitlements.child "$OUTDIRECTORY/$NAME.app/Contents/Frameworks/$NAME Helper.app"
 codesign --deep -s $IDENTITY -i $BUNDLEID --entitlements /tmp/entitlements.child "$OUTDIRECTORY/$NAME.app/Contents/Frameworks/$NAME Helper EH.app"
 codesign --deep -s $IDENTITY -i $BUNDLEID --entitlements /tmp/entitlements.child "$OUTDIRECTORY/$NAME.app/Contents/Frameworks/$NAME Helper NP.app"
-codesign --deep -s $IDENTITY -i $BUNDLEID --entitlements /tmp/entitlements.parent "$OUTDIRECTORY/$NAME.app"
+codesign --deep -s $IDENTITY -i $BUNDLEID --entitlements /tmp/entitlements.parent "$OUTDIRECTORY/$NAME.app/Contents/MacOS/$NAME"
 
 # validate entitlements
 echo "==Validating entitlements and Mac App Store needs=="

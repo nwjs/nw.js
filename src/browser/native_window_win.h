@@ -95,6 +95,26 @@ class NativeWindowWin : public NativeWindow,
   virtual void SetToolbarIsLoading(bool loading) OVERRIDE;
   virtual void SetInitialFocus(bool initial_focus) OVERRIDE;
   virtual bool InitialFocus() OVERRIDE { return initial_focus_; }
+  virtual void OpenSecureDialog(std::string title,
+                                std::string message,
+                                std::string default_dir,
+                                std::string default_filename,
+                                std::string accept_file_types,
+                                bool canChooseFiles, 
+                                bool canChooseDirs, 
+                                bool allowMultiple,
+                                bool allowOtherFileTypes) OVERRIDE {}; //stub
+
+  virtual void SaveSecureDialog(std::string title,
+                                std::string message,
+                                std::string default_dir,
+                                std::string default_filename,
+                                std::string accept_file_types,
+                                bool canCreateDirs, 
+                                bool allowOtherFileTypes) OVERRIDE {}; //stub
+
+  virtual int OpenSecureBookmark(std::string base64EncodedBookmark) OVERRIDE { return -1 }; //stub
+  virtual bool CloseSecureBookmark(std::string base64EncodedBookmark) OVERRIDE { return false }; //stub
 
   // WidgetDelegate implementation.
   virtual void OnWidgetMove() OVERRIDE;

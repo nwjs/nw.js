@@ -466,6 +466,222 @@ void NativeWindowCocoa::Show() {
   first_show_ = false;
 }
 
+int NativeWindowCocoa::OpenSecureBookmark(std::string base64EncodedBookmark) {
+  NSString *sdata = (base::SysUTF8ToNSString(base64EncodedBookmark));
+  NSData* data = [[NSData alloc] initWithBase64EncodedString:sdata options:0];
+  NSError* error;
+
+  BOOL isStale;
+  NSURL *url = [NSURL URLByResolvingBookmarkData:data 
+    options:NSURLBookmarkResolutionWithSecurityScope
+    relativeToURL:nil 
+    bookmarkDataIsStale:&isStale
+    error:&error];
+
+  if(error != nil) {
+    shell_->SendEvent("secure-bookmark-open-error",base::SysNSStringToUTF8([error localizedDescription]));
+    [data release];
+    return -1;
+  } else {
+    if([url startAccessingSecurityScopedResource]) {
+      NSFileHandle *handle = [NSFileHandle fileHandleForWritingToURL:url error:&error];
+      if(error != nil) {
+        shell_->SendEvent("secure-bookmark-open-error",base::SysNSStringToUTF8([error localizedDescription]));
+        [data release];
+        return -1;
+      } else {
+        int fd = [handle fileDescriptor];
+        std::stringstream ss;
+        ss << fd;
+        shell_->SendEvent("secure-bookmark-open", ss.str());
+        [data release];
+        return fd;
+      }
+    } else {
+      shell_->SendEvent("secure-bookmark-open-error", "Failed to get access to bookmark resource.");
+      [data release];
+      return -1;
+    }
+  }
+
+}
+
+bool NativeWindowCocoa::CloseSecureBookmark(std::string base64EncodedBookmark) {
+  NSString *sdata = (base::SysUTF8ToNSString(base64EncodedBookmark));
+  NSData* data = [[NSData alloc] initWithBase64EncodedString:sdata options:0];
+  NSError* error;
+
+  BOOL isStale;
+  NSURL *url = [NSURL URLByResolvingBookmarkData:data 
+    options:NSURLBookmarkResolutionWithSecurityScope
+    relativeToURL:nil 
+    bookmarkDataIsStale:&isStale
+    error:&error];
+
+  if(error != nil) {
+    shell_->SendEvent("secure-bookmark-close-error",base::SysNSStringToUTF8([error localizedDescription]));
+    [data release];
+    return false;
+  } else {
+    [url stopAccessingSecurityScopedResource];
+    shell_->SendEvent("secure-bookmark-close", base64EncodedBookmark);
+    [data release];
+    return true;
+  }
+  
+}
+
+void NativeWindowCocoa::OpenSecureDialog(std::string title,
+  std::string message,
+  std::string default_dir,
+  std::string default_filename,
+  std::string accept_file_types,
+  bool canChooseFiles, 
+  bool canChooseDirs, 
+  bool allowMultiple,
+  bool allowOtherFileTypes) 
+{
+  NSOpenPanel *dialog = [[NSOpenPanel openPanel] retain];
+  NSString *sdefault_dir = (base::SysUTF8ToNSString(default_dir));
+  
+  [dialog setTitle:base::SysUTF8ToNSString(title)];
+  [dialog setMessage:base::SysUTF8ToNSString(message)];
+  [dialog setDirectoryURL:[NSURL fileURLWithPath:sdefault_dir]];
+  [dialog setAllowedFileTypes:[base::SysUTF8ToNSString(accept_file_types) componentsSeparatedByString:@","]];
+  [dialog setNameFieldStringValue:base::SysUTF8ToNSString(default_filename)];
+
+  if(allowOtherFileTypes)
+    [dialog setAllowsOtherFileTypes:YES];
+  else
+    [dialog setAllowsOtherFileTypes:NO];
+
+  if(allowMultiple)
+    [dialog setAllowsMultipleSelection:YES];
+  else
+    [dialog setAllowsMultipleSelection:NO];
+
+  if(canChooseDirs)
+    [dialog setCanChooseDirectories:YES];
+  else
+    [dialog setCanChooseDirectories:NO];
+
+  if(canChooseFiles)
+    [dialog setCanChooseFiles:YES];
+  else
+    [dialog setCanChooseFiles:NO];
+
+  [dialog beginSheetModalForWindow:window()
+                 completionHandler:^(NSInteger result) 
+  {
+    if(result == NSFileHandlingPanelOKButton) {
+      std::string value = "[";
+      NSArray *urls = [dialog URLs];
+      bool first = true;
+      for (NSURL* url in urls) {
+        if ([url isFileURL]) {
+          // What to do on success.
+          NSError *error = nil;
+          NSData *bookmark = [url bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope
+                           includingResourceValuesForKeys:nil 
+                                            relativeToURL:nil
+                                                    error:&error];
+          if(error != nil)
+            shell_->SendEvent("file-open-error", base::SysNSStringToUTF8([error localizedDescription]));
+
+          std::string data = base::SysNSStringToUTF8([bookmark base64EncodedStringWithOptions:0]);
+          BOOL isDirectory;
+
+          NSString *nsurl = [url path];
+          std::string surl = base::SysNSStringToUTF8(nsurl);
+          [[NSFileManager defaultManager] fileExistsAtPath:nsurl isDirectory:&isDirectory];
+          value = value + "{";
+          value = value + "\"name\":\"" + surl + "\",";
+          value = value + "\"path\":\"" + surl + "\",";
+          value = value + "\"bookmark\":\"" + data + "\",";
+          value = value + "\"directory\":" + ( (isDirectory == YES) ? "\"true\"" : "\"false\"" );
+          value = value + "}";
+          if(first && [urls count] > 1) 
+            value = value + ",";
+          first = false;
+        }
+      }
+
+      value = value + "]";
+      shell_->SendEvent("file-open", value);
+    } else {
+      // what to do on error.
+      shell_->SendEvent("file-open-cancel");
+    }
+    [dialog release];
+  }];
+}
+
+
+void NativeWindowCocoa::SaveSecureDialog(std::string title,
+  std::string message,
+  std::string default_dir,
+  std::string default_filename,
+  std::string accept_file_types,
+  bool canCreateDirs, 
+  bool allowOtherFileTypes) 
+{
+  NSSavePanel *dialog = [[NSSavePanel savePanel] retain];
+  
+  [dialog setTitle:base::SysUTF8ToNSString(title)];
+  [dialog setMessage:base::SysUTF8ToNSString(message)];
+  [dialog setDirectoryURL:[NSURL fileURLWithPath:(base::SysUTF8ToNSString(default_dir))]];
+  [dialog setAllowedFileTypes:[base::SysUTF8ToNSString(accept_file_types) componentsSeparatedByString:@","]];
+  [dialog setNameFieldStringValue:base::SysUTF8ToNSString(default_filename)];
+
+  if(allowOtherFileTypes)
+    [dialog setAllowsOtherFileTypes:YES];
+  else
+    [dialog setAllowsOtherFileTypes:NO];
+
+
+  if(canCreateDirs)
+    [dialog setCanCreateDirectories:YES];
+  else
+    [dialog setCanCreateDirectories:NO];
+
+  [dialog beginSheetModalForWindow:window()
+                 completionHandler:^(NSInteger result) 
+  {
+    if(result == NSFileHandlingPanelOKButton) {
+      std::string value = "[";
+      NSURL *url = [dialog URL];
+      if ([url isFileURL]) {
+        // What to do on success.
+        NSError *error = nil;
+        NSData *bookmark = [url bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope
+                         includingResourceValuesForKeys:nil 
+                                          relativeToURL:nil
+                                                  error:&error];
+        if(error != nil)
+          shell_->SendEvent("file-save-error", base::SysNSStringToUTF8([error localizedDescription]));
+
+        std::string data = base::SysNSStringToUTF8([bookmark base64EncodedStringWithOptions:0]);
+
+        NSString *nsurl = [url path];
+        std::string surl = base::SysNSStringToUTF8(nsurl);
+        value = value + "{";
+        value = value + "\"name\":\"" + surl + "\",";
+        value = value + "\"path\":\"" + surl + "\",";
+        value = value + "\"bookmark\":\"" + data + "\",";
+        value = value + "\"directory\":\"false\"";
+        value = value + "}";
+      }
+      value = value + "]";
+      shell_->SendEvent("file-save", value);
+    } else {
+      // what to do on error.
+      shell_->SendEvent("file-save-cancel");
+    }
+    [dialog release];
+  }];
+}
+
+
 void NativeWindowCocoa::Hide() {
   [window() orderOut:nil];
 }
