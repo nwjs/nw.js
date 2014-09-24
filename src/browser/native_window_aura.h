@@ -49,12 +49,13 @@ class Menu;
 
 namespace nw {
 
+class BrowserViewLayout;
 class NativeWindowToolbarAura;
 
 class NativeWindowAura : public NativeWindow,
                         public web_modal::WebContentsModalDialogHost,
                         public views::WidgetFocusChangeListener,
-                        public views::WidgetDelegateView , 
+                        public views::WidgetDelegateView,
                         public views::WidgetObserver {
  public:
   explicit NativeWindowAura(const base::WeakPtr<content::Shell>& shell,
@@ -64,6 +65,8 @@ class NativeWindowAura : public NativeWindow,
   SkRegion* draggable_region() { return draggable_region_.get(); }
   NativeWindowToolbarAura* toolbar() { return toolbar_; }
   views::Widget* window() { return window_; }
+
+  BrowserViewLayout* GetBrowserViewLayout() const;
 
   // NativeWindow implementation.
   virtual void Close() OVERRIDE;
@@ -148,7 +151,7 @@ class NativeWindowAura : public NativeWindow,
       const content::NativeWebKeyboardEvent& event) OVERRIDE;
 
   // views::View implementation.
-  virtual void Layout() OVERRIDE;
+  // virtual void Layout() OVERRIDE;
   virtual void ViewHierarchyChanged(
       const ViewHierarchyChangedDetails& details) OVERRIDE;
   virtual gfx::Size GetMinimumSize() const OVERRIDE;

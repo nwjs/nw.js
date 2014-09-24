@@ -35,6 +35,8 @@
 
 #include "chrome/browser/platform_util.h"
 #include "content/nw/src/api/menu/menu.h"
+#include "content/nw/src/browser/browser_view_layout.h"
+#include "content/nw/src/browser/menubar_view.h"
 #include "content/nw/src/browser/native_window_toolbar_aura.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_shell.h"
@@ -606,6 +608,13 @@ void NativeWindowAura::SetMenu(nwapi::Menu* menu) {
   window_->set_has_menu_bar(true);
   menu_ = menu;
 
+  MenuBarView* menubar = new MenuBarView();
+  GetBrowserViewLayout()->set_menu_bar(menubar);
+  AddChildView(menubar);
+  menubar->UpdateMenu(menu->model());
+  Layout();
+  SchedulePaint();
+
   // The menu is lazily built.
 #if defined(OS_WIN) //FIXME
   menu->Rebuild();
@@ -618,6 +627,10 @@ void NativeWindowAura::SetMenu(nwapi::Menu* menu) {
 #endif
 }
 
+BrowserViewLayout* NativeWindowAura::GetBrowserViewLayout() const {
+  return static_cast<BrowserViewLayout*>(GetLayoutManager());
+}
+
 void NativeWindowAura::SetTitle(const std::string& title) {
   title_ = title;
   window_->UpdateWindowTitle();
@@ -625,6 +638,7 @@ void NativeWindowAura::SetTitle(const std::string& title) {
 
 void NativeWindowAura::AddToolbar() {
   toolbar_ = new NativeWindowToolbarAura(shell());
+  GetBrowserViewLayout()->set_tool_bar(toolbar_);
   AddChildViewAt(toolbar_, 0);
 }
 
@@ -789,6 +803,7 @@ void NativeWindowAura::HandleKeyboardEvent(
   //               event.os_event.wParam, event.os_event.lParam);
 }
 
+#if 0
 void NativeWindowAura::Layout() {
   DCHECK(web_view_);
   if (toolbar_) {
@@ -799,16 +814,17 @@ void NativeWindowAura::Layout() {
   }
   OnViewWasResized();
 }
+#endif
 
 void NativeWindowAura::ViewHierarchyChanged(
     const ViewHierarchyChangedDetails& details) {
   if (details.is_add && details.child == this) {
-    views::BoxLayout* layout = new views::BoxLayout(
-        views::BoxLayout::kVertical, 0, 0, 0);
+    BrowserViewLayout* layout = new BrowserViewLayout();
     SetLayoutManager(layout);
 
     web_view_ = new views::WebView(NULL);
     web_view_->SetWebContents(web_contents());
+    layout->set_web_view(web_view_);
     AddChildView(web_view_);
   }
 }

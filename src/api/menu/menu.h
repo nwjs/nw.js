@@ -93,6 +93,7 @@ class Menu : public Base {
 
 #if defined(OS_WIN) || defined(OS_LINUX)
   void UpdateKeys(views::FocusManager *focus_manager);
+  ui::NwMenuModel* model() { return menu_model_.get(); }
 #endif
 
  private:
