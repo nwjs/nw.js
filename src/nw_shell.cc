@@ -52,7 +52,7 @@
 #include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/browser/shell_javascript_dialog_creator.h"
-#include "content/nw/src/browser/tab_autofill_manager_delegate.h"
+//#include "content/nw/src/browser/tab_autofill_manager_delegate.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/media/media_stream_devices_controller.h"
 #include "content/nw/src/nw_package.h"
@@ -206,12 +206,15 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   web_modal::WebContentsModalDialogManager::CreateForWebContents(web_contents);
   web_modal::WebContentsModalDialogManager::FromWebContents(web_contents)->SetDelegate(this);
 #endif
+
+#if 0 //FIXME
   autofill::TabAutofillManagerDelegate::CreateForWebContents(web_contents);
   autofill::ContentAutofillDriver::CreateForWebContentsAndDelegate(
       web_contents,
       autofill::TabAutofillManagerDelegate::FromWebContents(web_contents),
       "",
       autofill::AutofillManager::DISABLE_AUTOFILL_DOWNLOAD_MANAGER);
+#endif
 }
 
 Shell::~Shell() {
@@ -341,13 +344,13 @@ void Shell::LoadURL(const GURL& url) {
   //     Referrer(),
   //     PAGE_TRANSITION_TYPED,
   //     std::string());
-  web_contents_->GetView()->Focus();
+  web_contents_->Focus();
   window()->SetToolbarButtonEnabled(nw::NativeWindow::BUTTON_FORWARD, false);
 }
 
 void Shell::GoBackOrForward(int offset) {
   web_contents_->GetController().GoToOffset(offset);
-  web_contents_->GetView()->Focus();
+  web_contents_->Focus();
 }
 
 void Shell::Reload(ReloadType type) {
@@ -373,12 +376,12 @@ void Shell::Reload(ReloadType type) {
       break;
   }
 
-  web_contents_->GetView()->Focus();
+  web_contents_->Focus();
 }
 
 void Shell::Stop() {
   web_contents_->Stop();
-  web_contents_->GetView()->Focus();
+  web_contents_->Focus();
 }
 
 void Shell::ReloadOrStop() {
@@ -419,14 +422,14 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
     return;
   }
 
-  RenderViewHost* inspected_rvh = web_contents()->GetRenderViewHost();
+  // RenderViewHost* inspected_rvh = web_contents()->GetRenderViewHost();
   if (nodejs()) {
     std::string jscript = std::string("require('nw.gui').Window.get().__setDevToolsJail('")
       + (jail_id ? jail_id : "(null)") + "');";
-    inspected_rvh->ExecuteJavascriptInWebFrame(base::string16(), base::UTF8ToUTF16(jscript.c_str()));
+    web_contents()->GetMainFrame()->ExecuteJavaScript(base::UTF8ToUTF16(jscript.c_str()));
   }
 
-  scoped_refptr<DevToolsAgentHost> agent(DevToolsAgentHost::GetOrCreateFor(inspected_rvh));
+  scoped_refptr<DevToolsAgentHost> agent(DevToolsAgentHost::GetOrCreateFor(web_contents()));
   DevToolsManager* manager = DevToolsManager::GetInstance();
 
   if (agent->IsAttached()) {
@@ -436,10 +439,12 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
 
   ShellDevToolsDelegate* delegate =
       browser_client->shell_browser_main_parts()->devtools_delegate();
-  GURL url = delegate->devtools_http_handler()->GetFrontendURL();
+  GURL url = delegate->devtools_http_handler()->GetFrontendURL(agent.get());
+  DevToolsHttpHandlerImpl* http_handler = static_cast<DevToolsHttpHandlerImpl*>(delegate->devtools_http_handler());
+  http_handler->EnumerateTargets();
 
   if (headless) {
-    DevToolsAgentHost* agent_host = DevToolsAgentHost::GetOrCreateFor(inspected_rvh).get();
+    DevToolsAgentHost* agent_host = DevToolsAgentHost::GetOrCreateFor(web_contents()).get();
 
     url = delegate->devtools_http_handler()->GetFrontendURL(agent_host);
     DevToolsHttpHandlerImpl* http_handler = static_cast<DevToolsHttpHandlerImpl*>(delegate->devtools_http_handler());
@@ -469,10 +474,10 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
 
   new ShellDevToolsFrontend(
       shell,
-      DevToolsAgentHost::GetOrCreateFor(inspected_rvh).get());
+      DevToolsAgentHost::GetOrCreateFor(web_contents_.get()).get());
 
   int rh_id = shell->web_contents_->GetRenderProcessHost()->GetID();
-  ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, content::kFileScheme);
+  ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, url::kFileScheme);
   ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, "app");
   shell->is_devtools_ = true;
   shell->devtools_owner_ = weak_ptr_factory_.GetWeakPtr();
@@ -600,12 +605,15 @@ void Shell::WebContentsCreated(WebContents* source_contents,
   web_modal::WebContentsModalDialogManager::CreateForWebContents(new_contents);
   web_modal::WebContentsModalDialogManager::FromWebContents(new_contents)->SetDelegate(this);
 #endif
+
+#if 0 //FIXME
   autofill::TabAutofillManagerDelegate::CreateForWebContents(new_contents);
   autofill::ContentAutofillDriver::CreateForWebContentsAndDelegate(
       new_contents,
       autofill::TabAutofillManagerDelegate::FromWebContents(new_contents),
       "",
       autofill::AutofillManager::ENABLE_AUTOFILL_DOWNLOAD_MANAGER);
+#endif
 }
 
 #if defined(OS_WIN)
@@ -619,7 +627,8 @@ void Shell::WebContentsFocused(content::WebContents* web_contents) {
 content::ColorChooser*
 Shell::OpenColorChooser(content::WebContents* web_contents, SkColor color,
       const std::vector<ColorSuggestion>& suggestions) {
-  return nw::ShowColorChooser(web_contents, color);
+  //FIXME: return nw::ShowColorChooser(web_contents, color);
+  return NULL;
 }
 
 void Shell::RunFileChooser(WebContents* web_contents,

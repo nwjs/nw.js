@@ -29,7 +29,7 @@
 #undef CHECK
 #include "third_party/node/src/req_wrap.h"
 #include "third_party/WebKit/public/web/WebDocument.h"
-#include "third_party/WebKit/public/web/WebFrame.h"
+#include "third_party/WebKit/public/web/WebLocalFrame.h"
 #include "third_party/WebKit/public/web/WebView.h"
 #include "v8/include/v8.h"
 
@@ -43,7 +43,7 @@
 #endif
 #include "third_party/WebKit/Source/config.h"
 #include "third_party/WebKit/Source/core/frame/Frame.h"
-#include "third_party/WebKit/Source/web/WebFrameImpl.h"
+#include "third_party/WebKit/Source/web/WebLocalFrameImpl.h"
 #include "V8HTMLElement.h"
 
 namespace nwapi {
@@ -136,6 +136,7 @@ v8::Handle<v8::Value> Dispatcher::GetWindowId(blink::WebFrame* frame) {
   return val;
 }
 
+#if 0 //FIXME
 void Dispatcher::ZoomLevelChanged() {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::HandleScope scope(isolate);
@@ -160,16 +161,17 @@ void Dispatcher::ZoomLevelChanged() {
 
   node::MakeCallback(isolate, objects_registry, "handleEvent", 3, argv);
 }
+#endif
 
-void Dispatcher::DidCreateDocumentElement(blink::WebFrame* frame) {
+void Dispatcher::DidCreateDocumentElement(blink::WebLocalFrame* frame) {
   documentCallback("document-start", frame);
 }
 
-void Dispatcher::DidFinishDocumentLoad(blink::WebFrame* frame) {
+void Dispatcher::DidFinishDocumentLoad(blink::WebLocalFrame* frame) {
   documentCallback("document-end", frame);
 }
 
-void Dispatcher::documentCallback(const char* ev, blink::WebFrame* frame) {
+void Dispatcher::documentCallback(const char* ev, blink::WebLocalFrame* frame) {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   blink::WebView* web_view = render_view()->GetWebView();
   v8::HandleScope scope(isolate);
@@ -190,9 +192,9 @@ void Dispatcher::documentCallback(const char* ev, blink::WebFrame* frame) {
 
   v8::Local<v8::Array> args = v8::Array::New(isolate);
   v8::Handle<v8::Value> element = v8::Null(isolate);
-  WebCore::LocalFrame* core_frame = blink::toWebFrameImpl(frame)->frame();
-  if (core_frame->ownerElement()) {
-    element = WebCore::toV8((WebCore::HTMLElement*)core_frame->ownerElement(),
+  blink::LocalFrame* core_frame = blink::toWebLocalFrameImpl(frame)->frame();
+  if (core_frame->deprecatedLocalOwner()) {
+    element = blink::toV8((blink::HTMLElement*)core_frame->deprecatedLocalOwner(),
                             frame->mainWorldScriptContext()->Global(),
                             frame->mainWorldScriptContext()->GetIsolate());
   }
@@ -233,9 +235,9 @@ void Dispatcher::willHandleNavigationPolicy(
   v8::Handle<v8::Value> element = v8::Null(isolate);
   v8::Handle<v8::Object> policy_obj = v8::Object::New(isolate);
 
-  WebCore::LocalFrame* core_frame = blink::toWebFrameImpl(frame)->frame();
-  if (core_frame->ownerElement()) {
-    element = WebCore::toV8((WebCore::HTMLElement*)core_frame->ownerElement(),
+  blink::LocalFrame* core_frame = blink::toWebLocalFrameImpl(frame)->frame();
+  if (core_frame->deprecatedLocalOwner()) {
+    element = blink::toV8((blink::HTMLElement*)core_frame->deprecatedLocalOwner(),
                             frame->mainWorldScriptContext()->Global(),
                             frame->mainWorldScriptContext()->GetIsolate());
   }

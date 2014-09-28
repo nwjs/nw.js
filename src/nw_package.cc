@@ -122,7 +122,7 @@ void RelativePathToURI(FilePath root, base::DictionaryValue* manifest) {
 
 #if defined(OS_WIN)
 std::wstring ASCIIToWide(const std::string& ascii) {
-  DCHECK(IsStringASCII(ascii)) << ascii;
+  DCHECK(base::IsStringASCII(ascii)) << ascii;
   return std::wstring(ascii.begin(), ascii.end());
 }
 #endif

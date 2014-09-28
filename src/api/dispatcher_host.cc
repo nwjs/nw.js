@@ -103,7 +103,8 @@ bool DispatcherHost::Send(IPC::Message* message) {
   return render_view_host_->Send(message);
 }
 
-bool DispatcherHost::OnMessageReceived(content::RenderViewHost* render_view_host,
+bool DispatcherHost::OnMessageReceived(
+                                       content::RenderViewHost* render_view_host,
                                        const IPC::Message& message) {
   if (render_view_host != render_view_host_)
     return false;
@@ -160,7 +161,7 @@ void DispatcherHost::OnAllocateObject(int object_id,
   } else if (type == "Shortcut") {
     objects_registry_.AddWithID(new Shortcut(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else if (type == "Screen") {
-    objects_registry_.AddWithID(new EventListener(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
+    //FIXME: objects_registry_.AddWithID(new EventListener(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else {
     LOG(ERROR) << "Allocate an object of unknown type: " << type;
     objects_registry_.AddWithID(new Base(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
@@ -252,7 +253,7 @@ void DispatcherHost::OnCallStaticMethodSync(
     nwapi::App::Call(shell, method, arguments, result);
     return;
   } else if (type == "Screen") {
-    nwapi::Screen::Call(this, method, arguments, result);
+    //FIXME: nwapi::Screen::Call(this, method, arguments, result);
     return;
   }
 

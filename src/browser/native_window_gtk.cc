@@ -24,20 +24,18 @@
 
 #include "base/values.h"
 #include "base/environment.h"
-#include "chrome/browser/ui/gtk/gtk_window_util.h"
-#include "chrome/browser/ui/gtk/unity_service.h"
+//#include "chrome/browser/ui/gtk/gtk_window_util.h"
+//#include "chrome/browser/ui/gtk/unity_service.h"
 #include "extensions/common/draggable_region.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
-#include "content/public/browser/web_contents_view.h"
 #include "content/public/common/renderer_preferences.h"
 #include "ui/base/x/x11_util.h"
-#include "ui/gfx/gtk_util.h"
 #include "ui/gfx/rect.h"
-#include "ui/gfx/skia_utils_gtk.h"
+//#include "ui/gfx/skia_utils_gtk.h"
 
 namespace ShellIntegrationLinux {
 std::string GetDesktopName(base::Environment* env) {
@@ -78,10 +76,12 @@ NativeWindowGtk::NativeWindowGtk(const base::WeakPtr<content::Shell>& shell,
   gtk_widget_show(vbox_);
   gtk_container_add(GTK_CONTAINER(window_), vbox_);
 
+#if 0 //FIXME
   // Set window icon.
   gfx::Image icon = app_icon();
   if (!icon.IsEmpty())
     gtk_window_set_icon(window_, icon.ToGdkPixbuf());
+#endif
 
   // Always create toolbar since we need to create a url entry.
   CreateToolbar();
@@ -93,7 +93,7 @@ NativeWindowGtk::NativeWindowGtk(const base::WeakPtr<content::Shell>& shell,
     gtk_box_pack_start(GTK_BOX(vbox_), toolbar_, FALSE, FALSE, 0);
 
   gfx::NativeView native_view =
-      web_contents()->GetView()->GetNativeView();
+      web_contents()->GetNativeView();
   gtk_widget_show(native_view);
   gtk_container_add(GTK_CONTAINER(vbox_), native_view);
 

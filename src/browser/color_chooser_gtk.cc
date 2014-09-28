@@ -7,9 +7,9 @@
 #include "content/public/browser/color_chooser.h"
 #include "content/public/browser/web_contents.h"
 #include "grit/nw_resources.h"
-#include "ui/base/gtk/gtk_signal.h"
+//#include "ui/base/gtk/gtk_signal.h"
 #include "ui/base/l10n/l10n_util.h"
-#include "ui/gfx/skia_utils_gtk.h"
+//#include "ui/gfx/skia_utils_gtk.h"
 
 class ColorChooserGtk : public content::ColorChooser {
  public:

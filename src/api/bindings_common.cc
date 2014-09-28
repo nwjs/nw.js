@@ -27,18 +27,19 @@
 #include "content/public/renderer/render_thread.h"
 #include "content/public/renderer/v8_value_converter.h"
 #include "third_party/WebKit/public/web/WebView.h"
-#include "third_party/WebKit/public/web/WebFrame.h"
+#include "third_party/WebKit/public/web/WebLocalFrame.h"
 #include "ui/base/resource/resource_bundle.h"
 
 using content::RenderView;
 using content::RenderThread;
 using content::V8ValueConverter;
 using blink::WebFrame;
+using blink::WebLocalFrame;
 using blink::WebView;
 
 namespace {
 RenderView* GetRenderView(v8::Handle<v8::Context> ctx) {
-  WebFrame* frame = WebFrame::frameForContext(ctx);
+  WebLocalFrame* frame = WebLocalFrame::frameForContext(ctx);
   if (!frame)
     return NULL;
 

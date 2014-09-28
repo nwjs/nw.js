@@ -164,7 +164,7 @@ net::URLRequestContextGetter* ShellBrowserContext::GetRequestContext()  {
 
 net::URLRequestContextGetter* ShellBrowserContext::CreateRequestContext(
     ProtocolHandlerMap* protocol_handlers,
-    ProtocolHandlerScopedVector protocol_interceptors) {
+    URLRequestInterceptorScopedVector protocol_interceptors) {
 
   DCHECK(!url_request_getter_);
   CommandLine* cmd_line = CommandLine::ForCurrentProcess();
@@ -198,7 +198,8 @@ net::URLRequestContextGetter*
     ShellBrowserContext::CreateRequestContextForStoragePartition(
         const base::FilePath& partition_path,
         bool in_memory,
-        ProtocolHandlerMap* protocol_handlers) {
+        ProtocolHandlerMap* protocol_handlers,
+        URLRequestInterceptorScopedVector request_interceptors) {
   return NULL;
 }
 
@@ -230,45 +231,20 @@ ResourceContext* ShellBrowserContext::GetResourceContext()  {
   return resource_context_.get();
 }
 
-GeolocationPermissionContext*
-    ShellBrowserContext::GetGeolocationPermissionContext()  {
-  return NULL;
-}
-
 quota::SpecialStoragePolicy* ShellBrowserContext::GetSpecialStoragePolicy() {
   return NULL;
 }
 
-void ShellBrowserContext::RequestMidiSysExPermission(
-      int render_process_id,
-      int render_view_id,
-      int bridge_id,
-      const GURL& requesting_frame,
-      bool user_gesture,
-      const MidiSysExPermissionCallback& callback) {
-  callback.Run(true);
+BrowserPluginGuestManager* ShellBrowserContext::GetGuestManager() {
+  return NULL;
 }
 
-void ShellBrowserContext::CancelMidiSysExPermissionRequest(
-    int render_process_id,
-    int render_view_id,
-    int bridge_id,
-    const GURL& requesting_frame) {
+PushMessagingService* ShellBrowserContext::GetPushMessagingService() {
+  return NULL;
 }
 
-void ShellBrowserContext::RequestProtectedMediaIdentifierPermission(
-    int render_process_id,
-    int render_view_id,
-    int bridge_id,
-    int group_id,
-    const GURL& requesting_frame,
-    const ProtectedMediaIdentifierPermissionCallback& callback) {
-  callback.Run(true);
+SSLHostStateDelegate* ShellBrowserContext::GetSSLHostStateDelegate() {
+  return NULL;
 }
-
-void ShellBrowserContext::CancelProtectedMediaIdentifierPermissionRequests(
-    int group_id) {
-}
-
 
 }  // namespace content

@@ -105,7 +105,11 @@ bool NativeWindowToolbarAura::HandleKeyEvent(views::Textfield* sender,
     if (!url_string.empty()) {
       GURL url(url_string);
       if (!url.has_scheme())
+#if defined(OS_WIN)
         url = GURL(L"http://" + url_string);
+#else
+      url = GURL(base::UTF8ToUTF16("http://") + url_string);
+#endif
       shell_->LoadURL(url);
     }
   }
@@ -146,7 +150,7 @@ void NativeWindowToolbarAura::InitToolbar() {
       rb.GetNativeImageNamed(IDR_NW_BACK_P).ToImageSkia());
   back_button_->SetImage(views::CustomButton::STATE_DISABLED,
       rb.GetNativeImageNamed(IDR_NW_BACK_D).ToImageSkia());
-  back_button_->SetAccessibleName(L"Back");
+  back_button_->SetAccessibleName(base::UTF8ToUTF16("Back"));
   AddChildView(back_button_);
 
   forward_button_ = new views::ImageButton(this);
@@ -158,7 +162,7 @@ void NativeWindowToolbarAura::InitToolbar() {
       rb.GetNativeImageNamed(IDR_NW_FORWARD_P).ToImageSkia());
   forward_button_->SetImage(views::CustomButton::STATE_DISABLED,
       rb.GetNativeImageNamed(IDR_NW_FORWARD_D).ToImageSkia());
-  forward_button_->SetAccessibleName(L"Forward");
+  forward_button_->SetAccessibleName(base::UTF8ToUTF16("Forward"));
   AddChildView(forward_button_);
 
   stop_or_refresh_button_ = new views::ImageButton(this);
@@ -176,7 +180,7 @@ void NativeWindowToolbarAura::InitToolbar() {
       rb.GetNativeImageNamed(IDR_NW_TOOLS_H).ToImageSkia());
   devtools_button_->SetImage(views::CustomButton::STATE_PRESSED,
       rb.GetNativeImageNamed(IDR_NW_TOOLS_P).ToImageSkia());
-  devtools_button_->SetAccessibleName(L"Devtools");
+  devtools_button_->SetAccessibleName(base::UTF8ToUTF16("Devtools"));
   AddChildView(devtools_button_);
 
   dev_reload_button_ = new views::ImageButton(this);
@@ -188,7 +192,7 @@ void NativeWindowToolbarAura::InitToolbar() {
       rb.GetNativeImageNamed(IDR_NW_RELOAD_P).ToImageSkia());
   dev_reload_button_->SetImage(views::CustomButton::STATE_DISABLED,
       rb.GetNativeImageNamed(IDR_NW_RELOAD_D).ToImageSkia());
-  dev_reload_button_->SetAccessibleName(L"Reload render process");
+  dev_reload_button_->SetAccessibleName(base::UTF8ToUTF16("Reload render process"));
   AddChildView(dev_reload_button_);
 }
 
@@ -230,7 +234,7 @@ void NativeWindowToolbarAura::SetIsLoading(bool loading) {
         rb.GetNativeImageNamed(IDR_NW_STOP_P).ToImageSkia());
     stop_or_refresh_button_->SetImage(views::CustomButton::STATE_DISABLED,
         rb.GetNativeImageNamed(IDR_NW_STOP_D).ToImageSkia());
-    stop_or_refresh_button_->SetAccessibleName(L"Stop");
+    stop_or_refresh_button_->SetAccessibleName(base::UTF8ToUTF16("Stop"));
   } else {
     stop_or_refresh_button_->SetImage(views::CustomButton::STATE_NORMAL,
         rb.GetNativeImageNamed(IDR_NW_RELOAD).ToImageSkia());
@@ -240,7 +244,7 @@ void NativeWindowToolbarAura::SetIsLoading(bool loading) {
         rb.GetNativeImageNamed(IDR_NW_RELOAD_P).ToImageSkia());
     stop_or_refresh_button_->SetImage(views::CustomButton::STATE_DISABLED,
         rb.GetNativeImageNamed(IDR_NW_RELOAD_D).ToImageSkia());
-    stop_or_refresh_button_->SetAccessibleName(L"Reload");
+    stop_or_refresh_button_->SetAccessibleName(base::UTF8ToUTF16("Reload"));
   }
 
   // Force refresh

@@ -23,6 +23,7 @@
 #include "chrome/browser/platform_util.h"
 #include "content/nw/src/browser/shell_login_dialog.h"
 #include "content/public/browser/browser_thread.h"
+#include "url/gurl.h"
 
 
 namespace content {

@@ -16,11 +16,8 @@ class ShellQuotaPermissionContext : public QuotaPermissionContext {
 
   // The callback will be dispatched on the IO thread.
   virtual void RequestQuotaPermission(
-      const GURL& origin_url,
-      quota::StorageType type,
-      int64 new_quota,
+      const StorageQuotaParams& params,
       int render_process_id,
-      int render_view_id,
       const PermissionCallback& callback) OVERRIDE;
 
  private:

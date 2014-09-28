@@ -37,10 +37,8 @@
 #include "content/nw/src/nw_shell.h"
 #include "content/nw/src/shell_content_browser_client.h"
 #include "net/cert/cert_verifier.h"
-#include "net/ssl/default_server_bound_cert_store.h"
 #include "net/dns/host_resolver.h"
 #include "net/dns/mapped_host_resolver.h"
-#include "net/ssl/server_bound_cert_service.h"
 #include "net/ssl/ssl_config_service_defaults.h"
 #include "net/cookies/cookie_monster.h"
 #include "net/http/http_auth_filter.h"
@@ -53,8 +51,9 @@
 #include "net/proxy/proxy_script_fetcher_impl.h"
 #include "net/proxy/proxy_service.h"
 #include "net/proxy/proxy_service_v8.h"
+#include "net/ssl/channel_id_service.h"
+#include "net/ssl/default_channel_id_store.h"
 #include "net/url_request/file_protocol_handler.h"
-#include "net/url_request/protocol_intercept_job_factory.h"
 #include "net/url_request/static_http_user_agent_settings.h"
 #include "net/url_request/url_request_context.h"
 #include "net/url_request/url_request_context_storage.h"
@@ -98,6 +97,8 @@ class NWCookieMonsterDelegate : public net::CookieMonster::Delegate {
         BrowserThread::UI, FROM_HERE,
         base::Bind(&NWCookieMonsterDelegate::OnCookieChangedAsyncHelper,
                    this, cookie, removed, cause));
+  }
+  virtual void OnLoaded() OVERRIDE {
   }
 
  private:
@@ -187,8 +188,8 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
     const char* schemes[] = {"http", "https", "file", "app"};
     cookie_store->GetCookieMonster()->SetCookieableSchemes(schemes, 4);
 
-    storage_->set_server_bound_cert_service(new net::ServerBoundCertService(
-        new net::DefaultServerBoundCertStore(NULL),
+    storage_->set_channel_id_service(new net::ChannelIDService(
+        new net::DefaultChannelIDStore(NULL),
         base::WorkerPool::GetTaskRunner(true)));
 
     std::string accept_lang = browser_client->GetApplicationLocale();
@@ -242,8 +243,8 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
         url_request_context_->cert_verifier();
     network_session_params.transport_security_state =
         url_request_context_->transport_security_state();
-    network_session_params.server_bound_cert_service =
-        url_request_context_->server_bound_cert_service();
+    network_session_params.channel_id_service =
+        url_request_context_->channel_id_service();
     network_session_params.proxy_service =
         url_request_context_->proxy_service();
     network_session_params.ssl_config_service =
@@ -270,7 +271,7 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
         new net::URLRequestJobFactoryImpl());
     InstallProtocolHandlers(job_factory.get(), &protocol_handlers_);
     job_factory->SetProtocolHandler(
-         content::kFileScheme,
+         url::kFileScheme,
          new net::FileProtocolHandler(
                content::BrowserThread::GetBlockingPool()->
                GetTaskRunnerWithShutdownBehavior(

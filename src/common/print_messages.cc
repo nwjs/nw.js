@@ -79,3 +79,14 @@ PrintHostMsg_RequestPrintPreview_Params::
 
 PrintHostMsg_RequestPrintPreview_Params::
     ~PrintHostMsg_RequestPrintPreview_Params() {}
+
+PrintHostMsg_SetOptionsFromDocument_Params::
+    PrintHostMsg_SetOptionsFromDocument_Params()
+    : is_scaling_disabled(false),
+      copies(0),
+      duplex(printing::UNKNOWN_DUPLEX_MODE) {
+}
+
+PrintHostMsg_SetOptionsFromDocument_Params::
+    ~PrintHostMsg_SetOptionsFromDocument_Params() {
+}

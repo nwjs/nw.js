@@ -23,6 +23,7 @@
 struct PrintMsg_Print_Params;
 struct PrintMsg_PrintPage_Params;
 struct PrintMsg_PrintPages_Params;
+struct PrintHostMsg_SetOptionsFromDocument_Params;
 
 namespace base {
 class DictionaryValue;
@@ -92,7 +93,7 @@ class PrintWebViewHelper
 
   // RenderViewObserver implementation.
   virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
-  virtual void PrintPage(blink::WebFrame* frame, bool user_initiated) OVERRIDE;
+  virtual void PrintPage(blink::WebLocalFrame* frame, bool user_initiated) OVERRIDE;
 
   // Message handlers ---------------------------------------------------------
 
@@ -169,7 +170,7 @@ class PrintWebViewHelper
 
   // Main printing code -------------------------------------------------------
 
-  void Print(blink::WebFrame* frame, const blink::WebNode& node);
+  void Print(blink::WebLocalFrame* frame, const blink::WebNode& node);
 
   // Notification when printing is done - signal tear-down/free resources.
   void DidFinishPrinting(PrintingResult result);
@@ -181,14 +182,17 @@ class PrintWebViewHelper
   bool InitPrintSettings(bool fit_to_paper_size);
 
   // Calculate number of pages in source document.
-  bool CalculateNumberOfPages(blink::WebFrame* frame,
+  bool CalculateNumberOfPages(blink::WebLocalFrame* frame,
                               const blink::WebNode& node,
                               int* number_of_pages);
 
+  // Set options for print preset from source PDF document.
+  void SetOptionsFromDocument(
+                              PrintHostMsg_SetOptionsFromDocument_Params& params);
   // Update the current print settings with new |passed_job_settings|.
   // |passed_job_settings| dictionary contains print job details such as printer
   // name, number of copies, page range, etc.
-  bool UpdatePrintSettings(blink::WebFrame* frame,
+  bool UpdatePrintSettings(blink::WebLocalFrame* frame,
                            const blink::WebNode& node,
                            const base::DictionaryValue& passed_job_settings);
 
@@ -209,7 +213,7 @@ class PrintWebViewHelper
   void FinishFramePrinting();
 
   // Prints the page listed in |params|.
-#if defined(USE_X11)
+#if defined(OS_LINUX)
   void PrintPageInternal(const PrintMsg_PrintPage_Params& params,
                          const gfx::Size& canvas_size,
                          blink::WebFrame* frame,
@@ -221,7 +225,7 @@ class PrintWebViewHelper
 #endif
 
   // Render the frame for printing.
-  bool RenderPagesForPrint(blink::WebFrame* frame,
+  bool RenderPagesForPrint(blink::WebLocalFrame* frame,
                            const blink::WebNode& node);
 
   // Platform specific helper function for rendering page(s) to |metafile|.
@@ -280,7 +284,7 @@ class PrintWebViewHelper
       const base::DictionaryValue& header_footer_info,
       const PrintMsg_Print_Params& params);
 
-  bool GetPrintFrame(blink::WebFrame** frame);
+  bool GetPrintFrame(blink::WebLocalFrame** frame);
 
   // This reports the current time - |start_time| as the time to render a page.
   void ReportPreviewPageRenderTime(base::TimeTicks start_time);
@@ -353,7 +357,7 @@ class PrintWebViewHelper
 
     // Initializes the print preview context. Need to be called to set
     // the |web_frame| / |web_node| to generate the print preview for.
-    void InitWithFrame(blink::WebFrame* web_frame);
+    void InitWithFrame(blink::WebLocalFrame* web_frame);
     void InitWithNode(const blink::WebNode& web_node);
 
     // Does bookkeeping at the beginning of print preview.
@@ -394,13 +398,13 @@ class PrintWebViewHelper
 
     // Getters
     // Original frame for which preview was requested.
-    blink::WebFrame* source_frame();
+    blink::WebLocalFrame* source_frame();
     // Original node for which preview was requested.
     const blink::WebNode& source_node() const;
 
     // Frame to be use to render preview. May be the same as source_frame(), or
     // generated from it, e.g. copy of selected block.
-    blink::WebFrame* prepared_frame();
+    blink::WebLocalFrame* prepared_frame();
     // Node to be use to render preview. May be the same as source_node(), or
     // generated from it, e.g. copy of selected block.
     const blink::WebNode& prepared_node() const;
@@ -423,7 +427,7 @@ class PrintWebViewHelper
     void ClearContext();
 
     // Specifies what to render for print preview.
-    blink::WebFrame* source_frame_;
+    blink::WebLocalFrame* source_frame_;
     blink::WebNode source_node_;
 
     scoped_ptr<PrepareFrameAndViewForPrint> prep_frame_view_;

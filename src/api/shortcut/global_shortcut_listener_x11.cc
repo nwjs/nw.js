@@ -26,10 +26,8 @@
 #include "ui/gfx/x/x11_error_tracker.h"
 #include "ui/gfx/x/x11_types.h"
 
-#if defined(TOOLKIT_GTK)
+#if defined(OS_LINUX)
 #include <gdk/gdkx.h>
-#else
-#include "base/message_loop/message_pump_x11.h"
 #endif
 
 using content::BrowserThread;
@@ -88,7 +86,7 @@ void GlobalShortcutListenerX11::StartListening() {
   DCHECK(!is_listening_);  // Don't start twice.
   DCHECK(!registered_hot_keys_.empty());  // Also don't start if no hotkey is
                                           // registered.
-#if defined(TOOLKIT_GTK)
+#if defined(OS_LINUX)
   gdk_window_add_filter(gdk_get_default_root_window(),
                         &GlobalShortcutListenerX11::OnXEventThunk,
                         this);
@@ -104,7 +102,7 @@ void GlobalShortcutListenerX11::StopListening() {
   DCHECK(registered_hot_keys_.empty());  // Make sure the set is clean before
                                          // ending.
 
-#if defined(TOOLKIT_GTK)
+#if defined(OS_LINUX)
   gdk_window_remove_filter(NULL,
                            &GlobalShortcutListenerX11::OnXEventThunk,
                            this);
@@ -115,14 +113,12 @@ void GlobalShortcutListenerX11::StopListening() {
   is_listening_ = false;
 }
 
-#if !defined(TOOLKIT_GTK)
 uint32_t GlobalShortcutListenerX11::Dispatch(const base::NativeEvent& event) {
   if (event->type == KeyPress)
     OnXKeyPressEvent(event);
 
   return POST_DISPATCH_NONE;
 }
-#endif
 
 bool GlobalShortcutListenerX11::RegisterAcceleratorImpl(
     const ui::Accelerator& accelerator) {
@@ -170,7 +166,7 @@ void GlobalShortcutListenerX11::UnregisterAcceleratorImpl(
   registered_hot_keys_.erase(accelerator);
 }
 
-#if defined(TOOLKIT_GTK)
+#if defined(OS_LINUX)
 GdkFilterReturn GlobalShortcutListenerX11::OnXEvent(GdkXEvent* gdk_x_event,
                                                     GdkEvent* gdk_event) {
   XEvent* x_event = static_cast<XEvent*>(gdk_x_event);

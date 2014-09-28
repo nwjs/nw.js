@@ -38,19 +38,14 @@ class NSMenu;
 namespace nw {
 class NativeWindowCocoa;
 }
-#elif defined(TOOLKIT_GTK)
-#include <gtk/gtk.h>
 
-namespace nw {
-class NativeWindowGtk;
-}
-#elif defined(OS_WIN)
-#include "content/nw/src/api/menu/menu_delegate_win.h"
-#include "ui/views/controls/menu/native_menu_win.h"
+#elif defined(OS_WIN) || defined(OS_LINUX)
+#include "content/nw/src/api/menu/menu_delegate.h"
+//#include "ui/views/controls/menu/native_menu_win.h"
 #include "chrome/browser/status_icons/status_icon_menu_model.h"
 #include "ui/views/focus/focus_manager.h"
 namespace nw {
-class NativeWindowWin;
+class NativeWindowAura;
 }
 
 namespace nwapi {
@@ -69,7 +64,7 @@ class NwMenuModel : public SimpleMenuModel {
 
   // Overridden from MenuModel:
   virtual bool HasIcons() const OVERRIDE;
-  
+
 protected:
   friend class nwapi::Menu;
 };
@@ -96,12 +91,9 @@ class Menu : public Base {
   virtual void Call(const std::string& method,
                     const base::ListValue& arguments) OVERRIDE;
 
-#if defined(OS_LINUX)
-  void UpdateKeys(GtkAccelGroup *gtk_accel_group);
-#endif
-  
-#if defined(OS_WIN)
+#if defined(OS_WIN) || defined(OS_LINUX)
   void UpdateKeys(views::FocusManager *focus_manager);
+  ui::NwMenuModel* model() { return menu_model_.get(); }
 #endif
 
  private:
@@ -118,15 +110,25 @@ class Menu : public Base {
 
 #if defined(OS_LINUX)
   std::vector<MenuItem*> menu_items;
-  GtkAccelGroup *gtk_accel_group;
 #endif
 
 #if defined(OS_MACOSX)
   friend class nw::NativeWindowCocoa;
   NSMenu* menu_;
-#elif defined(TOOLKIT_GTK)
-  friend class nw::NativeWindowGtk;
-  GtkWidget* menu_;
+#elif defined(OS_LINUX)
+  friend class nw::NativeWindowAura;
+
+  views::FocusManager *focus_manager_;
+  std::vector<MenuItem*> menu_items_;
+  nw::NativeWindowAura* window_;
+  // Flag to indicate the menu has been modified since last show, so we should
+  // rebuild the menu before next show.
+  bool is_menu_modified_;
+
+  scoped_ptr<MenuDelegate> menu_delegate_;
+  scoped_ptr<ui::NwMenuModel> menu_model_;
+  void UpdateStates();
+
 #elif defined(OS_WIN)
   friend class nw::NativeWindowWin;
 

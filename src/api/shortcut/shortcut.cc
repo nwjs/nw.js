@@ -34,7 +34,7 @@ namespace nwapi {
 ui::Accelerator Parse(const std::string& shortcut) {
   // Convert to lower case, see
   // https://github.com/rogerwang/node-webkit/pull/1735.
-  std::string lower_shortcut = StringToLowerASCII(shortcut);
+  std::string lower_shortcut = base::StringToLowerASCII(shortcut);
 
   std::vector<std::string> tokens;
   base::SplitString(lower_shortcut, '+', &tokens);

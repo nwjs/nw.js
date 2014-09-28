@@ -17,7 +17,6 @@ class ChromeBreakpadClient : public breakpad::BreakpadClient {
   virtual ~ChromeBreakpadClient();
 
   // breakpad::BreakpadClient implementation.
-  virtual void SetClientID(const std::string& client_id) OVERRIDE;
 #if defined(OS_WIN)
   virtual bool GetAlternativeCrashDumpLocation(base::FilePath* crash_dir)
       OVERRIDE;

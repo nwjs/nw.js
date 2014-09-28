@@ -31,7 +31,7 @@
 #include "content/public/browser/render_process_host.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/url_constants.h"
-#include "content/nw/src/breakpad_linux.h"
+//#include "content/nw/src/breakpad_linux.h"
 #include "content/nw/src/chrome_breakpad_client.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_version.h"
@@ -62,6 +62,10 @@ using base::FilePath;
 #include "base/logging_win.h"
 #include <initguid.h>
 #include "content/nw/src/breakpad_win.h"
+#endif
+
+#if defined(OS_POSIX) && !defined(OS_MACOSX)
+#include "components/breakpad/app/breakpad_linux.h"
 #endif
 
 #include "ipc/ipc_message.h"  // For IPC_MESSAGE_LOG_ENABLED.
@@ -173,7 +177,7 @@ void ShellMainDelegate::PreSandboxStartup() {
       command_line->GetSwitchValueASCII(switches::kProcessType);
 
   if (process_type != switches::kZygoteProcess)
-    breakpad::InitCrashReporter();
+    breakpad::InitCrashReporter(process_type);
 
   // Just prevent sandbox.
   command_line->AppendSwitch(switches::kNoSandbox);
@@ -237,7 +241,10 @@ ContentRendererClient* ShellMainDelegate::CreateContentRendererClient() {
 void ShellMainDelegate::ZygoteForked() {
   // Needs to be called after we have chrome::DIR_USER_DATA.  BrowserMain sets
   // this up for the browser process in a different manner.
-  breakpad::InitCrashReporter();
+  const CommandLine* command_line = CommandLine::ForCurrentProcess();
+  std::string process_type =
+      command_line->GetSwitchValueASCII(switches::kProcessType);
+  breakpad::InitCrashReporter(process_type);
 }
 #endif
 

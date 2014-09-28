@@ -110,4 +110,5 @@ const char kmInjectCSS[] = "inject-css";
 const char kPrintRaster[] = "print-raster";
 #endif
 
+const char kCrashDumpsDir[] = "crash-dumps-dir";
 }  // namespace switches

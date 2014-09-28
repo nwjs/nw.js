@@ -24,7 +24,6 @@
 
 #include "base/bind.h"
 #include "base/file_util.h"
-#include "base/platform_file.h"
 #include "base/logging.h"
 #include "base/strings/string_util.h"
 #include "base/strings/string_split.h"
@@ -295,7 +294,7 @@ FileSelectHelper::GetFileTypesFromAcceptType(
   //    dialog uses the first extension in the list to form the description,
   //    like "EHTML Files". This is not what we want.
   if (valid_type_count > 1 ||
-      (valid_type_count == 1 && !description_id == 0 && extensions->size() > 1))
+      (valid_type_count == 1 && description_id == 0 && extensions->size() > 1))
     description_id = IDS_CUSTOM_FILES;
 
   if (description_id) {
@@ -478,7 +477,7 @@ bool FileSelectHelper::IsAcceptTypeValid(const std::string& accept_type) {
   // of an extension or a "/" in the case of a MIME type).
   std::string unused;
   if (accept_type.length() <= 1 ||
-      StringToLowerASCII(accept_type) != accept_type ||
+      base::StringToLowerASCII(accept_type) != accept_type ||
       base::TrimWhitespaceASCII(accept_type, base::TRIM_ALL, &unused) != base::TRIM_NONE) {
     return false;
   }

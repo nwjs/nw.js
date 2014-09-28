@@ -11,7 +11,6 @@
 #include "base/compiler_specific.h"
 #include "base/memory/scoped_ptr.h"
 #include "content/public/browser/content_browser_client.h"
-#include "content/public/browser/web_contents_view.h"
 
 namespace printing {
 class PrintJobManager;
@@ -32,7 +31,7 @@ class ShellContentBrowserClient : public ContentBrowserClient {
   // ContentBrowserClient overrides.
   virtual BrowserMainParts* CreateBrowserMainParts(
       const MainFunctionParams& parameters) OVERRIDE;
-  virtual WebContentsViewPort* OverrideCreateWebContentsView(
+  virtual void OverrideCreateWebContentsView(
       WebContents* web_contents,
       RenderViewHostDelegateView** render_view_host_delegate_view,
       const WebContents::CreateParams& params) OVERRIDE;
@@ -65,24 +64,24 @@ class ShellContentBrowserClient : public ContentBrowserClient {
   virtual void RenderProcessWillLaunch(RenderProcessHost* host) OVERRIDE;
   virtual net::URLRequestContextGetter* CreateRequestContext(
       BrowserContext* browser_context,
-      ProtocolHandlerMap* protocol_handlers, ProtocolHandlerScopedVector protocol_interceptors) OVERRIDE;
+      ProtocolHandlerMap* protocol_handlers, URLRequestInterceptorScopedVector request_interceptors) OVERRIDE;
   virtual net::URLRequestContextGetter* CreateRequestContextForStoragePartition(
       BrowserContext* browser_context,
       const base::FilePath& partition_path,
       bool in_memory,
       ProtocolHandlerMap* protocol_handlers,
-      ProtocolHandlerScopedVector protocol_interceptors) OVERRIDE;
-  virtual void AllowCertificateError(
-    int render_process_id,
-    int render_view_id,
-    int cert_error,
-    const net::SSLInfo& ssl_info,
-    const GURL& request_url,
-    ResourceType::Type resource_type,
-    bool overridable,
-    bool strict_enforcement,
-    const base::Callback<void(bool)>& callback,
-    content::CertificateRequestResultType* result) OVERRIDE;
+      URLRequestInterceptorScopedVector request_interceptors) OVERRIDE;
+  virtual void AllowCertificateError(int render_process_id,
+                                     int render_frame_id,
+                                     int cert_error,
+                                     const net::SSLInfo& ssl_info,
+                                     const GURL& request_url,
+                                     ResourceType resource_type,
+                                     bool overridable,
+                                     bool strict_enforcement,
+                                     bool expired_previous_decision,
+                                     const base::Callback<void(bool)>& callback,
+                                     CertificateRequestResultType* result) OVERRIDE;
   virtual void GetAdditionalAllowedSchemesForFileSystem(
       std::vector<std::string>* additional_schemes) OVERRIDE;
 #if defined(OS_POSIX) && !defined(OS_MACOSX)
@@ -93,17 +92,33 @@ class ShellContentBrowserClient : public ContentBrowserClient {
 #endif
   virtual QuotaPermissionContext* CreateQuotaPermissionContext() OVERRIDE;
 
+#if 0
   //Notification
   virtual void ShowDesktopNotification(
     const ShowDesktopNotificationHostMsgParams& params,
     int render_process_id,
     int render_view_id,
-    bool worker) OVERRIDE;
-    
+    bool worker) ; //FIXME
+
    virtual void CancelDesktopNotification(
     int render_process_id,
     int render_view_id,
-    int notification_id) OVERRIDE;
+    int notification_id) ; //FIXME
+#endif
+
+  virtual void RequestMidiSysExPermission(
+      WebContents* web_contents,
+      int bridge_id,
+      const GURL& requesting_frame,
+      bool user_gesture,
+      base::Callback<void(bool)> result_callback,
+      base::Closure* cancel_callback) OVERRIDE;
+
+  virtual void RequestProtectedMediaIdentifierPermission(
+      WebContents* web_contents,
+      const GURL& origin,
+      base::Callback<void(bool)> result_callback,
+      base::Closure* cancel_callback) OVERRIDE;
 
  private:
   ShellBrowserContext* ShellBrowserContextForBrowserContext(

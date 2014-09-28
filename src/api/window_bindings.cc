@@ -18,6 +18,7 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+
 #include "content/nw/src/api/window_bindings.h"
 
 #include "base/values.h"
@@ -26,7 +27,7 @@
 #include "content/renderer/render_view_impl.h"
 #include "grit/nw_resources.h"
 #undef LOG
-using namespace WebCore;
+using namespace blink;
 #if defined(OS_WIN)
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -36,9 +37,10 @@ using namespace WebCore;
 
 #include "third_party/WebKit/Source/config.h"
 #include "third_party/WebKit/Source/core/html/HTMLIFrameElement.h"
+#include "third_party/WebKit/Source/core/frame/LocalFrame.h"
 #include "third_party/WebKit/public/web/WebFrame.h"
 #include "third_party/WebKit/public/web/WebView.h"
-#include "third_party/WebKit/Source/web/WebFrameImpl.h"
+#include "third_party/WebKit/Source/web/WebLocalFrameImpl.h"
 #include "third_party/WebKit/public/web/WebScriptSource.h"
 
 #undef CHECK
@@ -127,8 +129,8 @@ WindowBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args
     if (frm->IsNull()) {
       web_frame = main_frame;
     }else{
-      WebCore::HTMLIFrameElement* iframe = WebCore::V8HTMLIFrameElement::toNative(frm);
-      web_frame = blink::WebFrameImpl::fromFrame(iframe->contentFrame());
+      blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::toNative(frm);
+      web_frame = blink::WebFrame::fromFrame(iframe->contentFrame());
     }
 #if defined(OS_WIN)
     base::string16 jscript((WCHAR*)*v8::String::Value(args[3]));
@@ -145,8 +147,8 @@ WindowBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args
     if (frm->IsNull()) {
       main_frame->setDevtoolsJail(NULL);
     }else{
-      WebCore::HTMLIFrameElement* iframe = WebCore::V8HTMLIFrameElement::toNative(frm);
-      main_frame->setDevtoolsJail(blink::WebFrameImpl::fromFrame(iframe->contentFrame()));
+      blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::toNative(frm);
+      main_frame->setDevtoolsJail(blink::WebFrame::fromFrame(iframe->contentFrame()));
     }
     args.GetReturnValue().Set(v8::Undefined(isolate));
     return;
@@ -183,8 +185,8 @@ WindowBindings::CallObjectMethodSync(const v8::FunctionCallbackInfo<v8::Value>& 
     args.GetReturnValue().Set(scope.Escape(array));
     return;
   }else if (method == "SetZoomLevel") {
-    double zoom_level = args[2]->ToNumber()->Value();
-    render_view->OnSetZoomLevel(zoom_level);
+    // double zoom_level = args[2]->ToNumber()->Value();
+    //FIXME: render_view->OnSetZoomLevel(zoom_level);
     args.GetReturnValue().Set(v8::Undefined(isolate));
     return;
   }

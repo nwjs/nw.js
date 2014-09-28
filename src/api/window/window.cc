@@ -47,10 +47,10 @@ namespace {
 
 const char kCauseKey[] = "cause";
 const char kCookieKey[] = "cookie";
-const char kDomainKey[] = "domain";
-const char kIdKey[] = "id";
+//const char kDomainKey[] = "domain";
+//const char kIdKey[] = "id";
 const char kRemovedKey[] = "removed";
-const char kTabIdsKey[] = "tabIds";
+//const char kTabIdsKey[] = "tabIds";
 
 // Cause Constants
 const char kEvictedChangeCause[] = "evicted";
@@ -65,7 +65,7 @@ GURL GetURLFromCanonicalCookie(const net::CanonicalCookie& cookie) {
     cookie.IsSecure() ? "https" : "http";
   const std::string host =
       domain_key.find('.') != 0 ? domain_key : domain_key.substr(1);
-  return GURL(scheme + content::kStandardSchemeSeparator + host + "/");
+  return GURL(scheme + url::kStandardSchemeSeparator + host + "/");
 }
 
 void GetCookieListFromStore(
@@ -145,7 +145,7 @@ PopulateCookieObject(const net::CanonicalCookie& canonical_cookie) {
   result->SetBoolean("host_only", net::cookie_util::DomainIsHostOnly(
                                                                       canonical_cookie.Domain()));
   // A non-UTF8 path is invalid, so we just replace it with an empty string.
-  result->SetString("path", IsStringUTF8(canonical_cookie.Path()) ? canonical_cookie.Path()
+  result->SetString("path", base::IsStringUTF8(canonical_cookie.Path()) ? canonical_cookie.Path()
                      : std::string());
   result->SetBoolean("secure", canonical_cookie.IsSecure());
   result->SetBoolean("http_only", canonical_cookie.IsHttpOnly());

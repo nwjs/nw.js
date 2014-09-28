@@ -28,9 +28,9 @@
 #include "base/message_loop/message_pump_dispatcher.h"
 #include "content/nw/src/api/shortcut/global_shortcut_listener.h"
 
-#if defined(TOOLKIT_GTK)
+#if defined(OS_LINUX)
 #include <gtk/gtk.h>
-#include "ui/base/gtk/gtk_signal.h"
+#include "chrome/browser/ui/libgtk2ui/gtk2_signal.h"
 #endif  // defined(TOOLKIT_GTK)
 
 namespace nwapi {
@@ -48,10 +48,8 @@ class GlobalShortcutListenerX11
   GlobalShortcutListenerX11();
   virtual ~GlobalShortcutListenerX11();
 
-#if !defined(TOOLKIT_GTK)
   // base::MessagePumpDispatcher implementation.
   virtual uint32_t Dispatch(const base::NativeEvent& event) OVERRIDE;
-#endif
 
  private:
   // GlobalShortcutListener implementation.
@@ -62,7 +60,7 @@ class GlobalShortcutListenerX11
   virtual void UnregisterAcceleratorImpl(
       const ui::Accelerator& accelerator) OVERRIDE;
 
-#if defined(TOOLKIT_GTK)
+#if defined(OS_LINUX)
   // Callback for XEvents of the default root window.
   CHROMEG_CALLBACK_1(GlobalShortcutListenerX11, GdkFilterReturn,
                      OnXEvent, GdkXEvent*, GdkEvent*);

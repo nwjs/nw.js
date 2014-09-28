@@ -21,25 +21,27 @@
 #include "content/nw/src/api/menu/menu.h"
 
 #include "base/values.h"
+#include "base/strings/utf_string_conversions.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
-#include "content/nw/src/browser/native_window_win.h"
+#include "content/nw/src/browser/native_window_aura.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/web_contents.h"
-#include "content/public/browser/web_contents_view.h"
 #include "skia/ext/image_operations.h"
 #include "ui/aura/client/screen_position_client.h"
 #include "ui/aura/window.h"
 #include "ui/aura/window_tree_host.h"
-#include "ui/gfx/gdi_util.h"
-#include "ui/gfx/icon_util.h"
-#include "ui/views/controls/menu/menu_2.h"
+//#include "ui/gfx/gdi_util.h"
+//#include "ui/gfx/icon_util.h"
+//#include "ui/views/controls/menu/menu_2.h"
+#include "ui/views/controls/menu/menu_runner.h"
 #include "ui/views/widget/widget.h"
-
 #include "ui/views/focus/focus_manager.h"
 #include "vector"
 
 namespace {
+
+#if defined(OS_WIN)
 
 HBITMAP GetNativeBitmapFromSkBitmap(const SkBitmap& bitmap) {
   int width = bitmap.width();
@@ -62,6 +64,7 @@ HBITMAP GetNativeBitmapFromSkBitmap(const SkBitmap& bitmap) {
   return native_bitmap;
 }
 
+#endif
 } // namespace
 
 
@@ -79,30 +82,34 @@ bool NwMenuModel::HasIcons() const {
 
 namespace nwapi {
 
+#if defined(OS_WIN)
 // The width of the icon for the menuitem
 static const int kIconWidth = 16;
 // The height of the icon for the menuitem
 static const int kIconHeight = 16;
+#endif
 
 void Menu::Create(const base::DictionaryValue& option) {
   is_menu_modified_ = true;
   menu_delegate_.reset(new MenuDelegate(dispatcher_host()));
   menu_model_.reset(new ui::NwMenuModel(menu_delegate_.get()));
-  menu_.reset(new views::NativeMenuWin(menu_model_.get(), NULL));
+  //menu_.reset(new views::NativeMenuWin(menu_model_.get(), NULL));
 
   focus_manager_ = NULL;
   window_ = NULL;
 
   std::string type;
-  if (option.GetString("type", &type) && type == "menubar")
-    menu_->set_is_popup_menu(false);
+  //if (option.GetString("type", &type) && type == "menubar")
+  //  menu_->set_is_popup_menu(false);
   menu_items_.empty();
 }
 
 void Menu::Destroy() {
+#if defined(OS_WIN)
   for (size_t index = 0; index < icon_bitmaps_.size(); ++index) {
     ::DeleteObject(icon_bitmaps_[index]);
   }
+#endif
 }
 
 void Menu::Append(MenuItem* menu_item) {
@@ -134,7 +141,7 @@ void Menu::Insert(MenuItem* menu_item, int pos) {
 
   is_menu_modified_ = true;
   menu_item->menu_ = this;
- 
+
 }
 
 void Menu::Remove(MenuItem* menu_item, int pos) {
@@ -144,7 +151,7 @@ void Menu::Remove(MenuItem* menu_item, int pos) {
 }
 
 void Menu::Popup(int x, int y, content::Shell* shell) {
-  Rebuild();
+  // Rebuild();
 
   // Map point from document to screen.
   gfx::Point screen_point(x, y);
@@ -152,7 +159,7 @@ void Menu::Popup(int x, int y, content::Shell* shell) {
   // Convert from content coordinates to window coordinates.
   // This code copied from chrome_web_contents_view_delegate_views.cc
   aura::Window* web_contents_window =
-        shell->web_contents()->GetView()->GetNativeView();
+        shell->web_contents()->GetNativeView();
   aura::Window* root_window = web_contents_window->GetRootWindow();
   aura::client::ScreenPositionClient* screen_position_client =
         aura::client::GetScreenPositionClient(root_window);
@@ -160,9 +167,18 @@ void Menu::Popup(int x, int y, content::Shell* shell) {
     screen_position_client->ConvertPointToScreen(web_contents_window,
              &screen_point);
   }
-  menu_->RunMenuAt(screen_point, views::Menu2::ALIGN_TOPLEFT);
+  views::MenuRunner runner(menu_model_.get(), views::MenuRunner::CONTEXT_MENU);
+  if (views::MenuRunner::MENU_DELETED ==
+      runner.RunMenuAt(static_cast<nw::NativeWindowAura*>(shell->window())->window(),
+                       NULL,
+                       gfx::Rect(screen_point, gfx::Size()),
+                       views::MENU_ANCHOR_TOPRIGHT,
+                       ui::MENU_SOURCE_NONE))
+    return;
+  // menu_->RunMenuAt(screen_point, views::Menu2::ALIGN_TOPLEFT);
 }
 
+#if defined(OS_WIN)
 void Menu::Rebuild(const HMENU *parent_menu) {
   if (is_menu_modified_) {
     // Refresh menu before show.
@@ -207,6 +223,7 @@ void Menu::Rebuild(const HMENU *parent_menu) {
     is_menu_modified_ = false;
   }
 }
+#endif
 
 void Menu::UpdateKeys(views::FocusManager *focus_manager){
   if (focus_manager == NULL){
@@ -222,11 +239,14 @@ void Menu::UpdateKeys(views::FocusManager *focus_manager){
 }
 
 void Menu::UpdateStates() {
+#if defined(OS_WIN)
   if (window_)
     window_->menu_->menu_->UpdateStates();
+#endif
 }
 
-void Menu::SetWindow(nw::NativeWindowWin* win) {
+#if defined(OS_WIN)
+void Menu::SetWindow(nw::NativeWindowAura* win) {
   window_ = win;
   for (int model_index = 0;
        model_index < menu_model_->GetItemCount();
@@ -238,5 +258,6 @@ void Menu::SetWindow(nw::NativeWindowWin* win) {
     }
   }
 }
+#endif
 
 }  // namespace nwapi

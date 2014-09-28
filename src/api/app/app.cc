@@ -126,7 +126,7 @@ void App::Call(Shell* shell,
   } else if (method == "SetCrashDumpDir") {
     std::string path;
     arguments.GetString(0, &path);
-    result->AppendBoolean(SetCrashDumpPath(path.c_str()));
+    //FIXME: result->AppendBoolean(SetCrashDumpPath(path.c_str()));
     return;
   } else if (method == "RegisterGlobalHotKey") {
     int object_id = -1;
