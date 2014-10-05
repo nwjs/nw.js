@@ -53,7 +53,6 @@ class BrowserViewLayout;
 class NativeWindowToolbarAura;
 
 class NativeWindowAura : public NativeWindow,
-                        public web_modal::WebContentsModalDialogHost,
                         public views::WidgetFocusChangeListener,
                         public views::WidgetDelegateView,
                         public views::WidgetObserver {

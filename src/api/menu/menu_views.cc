@@ -31,13 +31,16 @@
 #include "ui/aura/client/screen_position_client.h"
 #include "ui/aura/window.h"
 #include "ui/aura/window_tree_host.h"
-//#include "ui/gfx/gdi_util.h"
-//#include "ui/gfx/icon_util.h"
-//#include "ui/views/controls/menu/menu_2.h"
 #include "ui/views/controls/menu/menu_runner.h"
 #include "ui/views/widget/widget.h"
 #include "ui/views/focus/focus_manager.h"
 #include "vector"
+
+#if defined(OS_WIN)
+#include "ui/gfx/gdi_util.h"
+#include "ui/gfx/icon_util.h"
+#include "ui/views/controls/menu/menu_2.h"
+#endif
 
 namespace {
 

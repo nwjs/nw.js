@@ -28,6 +28,10 @@
 #include <string>
 #include <vector>
 
+#if defined(OS_WIN)
+#include "ui/views/controls/menu/native_menu_win.h"
+#endif
+
 #if defined(OS_MACOSX)
 #if __OBJC__
 @class NSMenu;
@@ -41,7 +45,6 @@ class NativeWindowCocoa;
 
 #elif defined(OS_WIN) || defined(OS_LINUX)
 #include "content/nw/src/api/menu/menu_delegate.h"
-//#include "ui/views/controls/menu/native_menu_win.h"
 #include "chrome/browser/status_icons/status_icon_menu_model.h"
 #include "ui/views/focus/focus_manager.h"
 namespace nw {
@@ -130,17 +133,17 @@ class Menu : public Base {
   void UpdateStates();
 
 #elif defined(OS_WIN)
-  friend class nw::NativeWindowWin;
+  friend class nw::NativeWindowAura;
 
   void Rebuild(const HMENU *parent_menu = NULL);
   void UpdateStates();
-  void SetWindow(nw::NativeWindowWin* win);
+  void SetWindow(nw::NativeWindowAura* win);
 
   //**Never Try to free this pointer**
   //We get it from top widget
   views::FocusManager *focus_manager_;
   std::vector<MenuItem*> menu_items_;
-  nw::NativeWindowWin* window_;
+  nw::NativeWindowAura* window_;
   // Flag to indicate the menu has been modified since last show, so we should
   // rebuild the menu before next show.
   bool is_menu_modified_;

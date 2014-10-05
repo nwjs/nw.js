@@ -207,7 +207,6 @@ class PrintWebViewHelper
   void OnFramePreparedForPrintPages();
   void PrintPages();
   bool PrintPagesNative(blink::WebFrame* frame,
-                        const blink::WebNode& node,
                         int page_count,
                         const gfx::Size& canvas_size);
   void FinishFramePrinting();
@@ -218,6 +217,13 @@ class PrintWebViewHelper
                          const gfx::Size& canvas_size,
                          blink::WebFrame* frame,
                          Metafile* metafile);
+#elif defined(WIN_PDF_METAFILE_FOR_PRINTING)
+  void PrintPageInternal(const PrintMsg_PrintPage_Params& params,
+                         const gfx::Size& canvas_size,
+                         blink::WebFrame* frame,
+                         Metafile* metafile,
+                         gfx::Size* page_size_in_dpi,
+                         gfx::Rect* content_area_in_dpi);
 #else
   void PrintPageInternal(const PrintMsg_PrintPage_Params& params,
                          const gfx::Size& canvas_size,

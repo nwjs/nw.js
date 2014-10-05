@@ -62,7 +62,7 @@ void ShellJavaScriptDialogCreator::RunJavaScriptDialog(
   }
 
   gfx::NativeWindow parent_window =
-      web_contents->GetView()->GetTopLevelNativeWindow();
+      web_contents->GetTopLevelNativeWindow();
 
   dialog_.reset(new ShellJavaScriptDialog(this,
                                           parent_window,
@@ -101,7 +101,7 @@ void ShellJavaScriptDialogCreator::RunBeforeUnloadDialog(
       base::ASCIIToUTF16("\n\nIs it OK to leave/reload this page?");
 
   gfx::NativeWindow parent_window =
-      web_contents->GetView()->GetTopLevelNativeWindow();
+      web_contents->GetTopLevelNativeWindow();
 
   dialog_.reset(new ShellJavaScriptDialog(this,
                                           parent_window,

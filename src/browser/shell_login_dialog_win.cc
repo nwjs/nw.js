@@ -23,6 +23,7 @@
 #include "base/logging.h"
 #include "base/strings/string16.h"
 #include "base/strings/utf_string_conversions.h"
+#include "components/web_modal/popup_manager.h"
 #include "components/web_modal/web_contents_modal_dialog_host.h"
 #include "components/web_modal/web_contents_modal_dialog_manager.h"
 #include "components/web_modal/web_contents_modal_dialog_manager_delegate.h"
@@ -33,12 +34,32 @@
 #include "content/public/browser/resource_dispatcher_host.h"
 #include "content/public/browser/resource_request_info.h"
 #include "content/public/browser/web_contents.h"
-#include "content/public/browser/web_contents_view.h"
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/views/widget/widget.h"
 
 using web_modal::WebContentsModalDialogManager;
 using web_modal::WebContentsModalDialogManagerDelegate;
+
+namespace {
+
+// The captive portal dialog is system-modal, but uses the web-content-modal
+// dialog manager (odd) and requires this atypical dialog widget initialization.
+views::Widget* CreateWindowAsFramelessChild(views::WidgetDelegate* delegate,
+                                            gfx::NativeView parent) {
+  views::Widget* widget = new views::Widget;
+
+  views::Widget::InitParams params;
+  params.delegate = delegate;
+  params.child = true;
+  params.parent = parent;
+  params.remove_standard_frame = true;
+  params.opacity = views::Widget::InitParams::TRANSLUCENT_WINDOW;
+
+  widget->Init(params);
+  return widget;
+}
+
+}  // namespace
 
 namespace content {
 
@@ -61,9 +82,11 @@ void ShellLoginDialog::PlatformCreateDialog(const base::string16& message) {
   WebContentsModalDialogManagerDelegate* modal_delegate =
     web_contents_modal_dialog_manager->delegate();
   CHECK(modal_delegate);
-  dialog_ = views::Widget::CreateWindowAsFramelessChild(
+  dialog_ = CreateWindowAsFramelessChild(
         this, modal_delegate->GetWebContentsModalDialogHost()->GetHostView());
-  web_contents_modal_dialog_manager->ShowDialog(dialog_->GetNativeView());
+  web_modal::PopupManager* popup_manager =
+    web_modal::PopupManager::FromWebContents(requesting_contents);
+  popup_manager->ShowModalDialog(dialog_->GetNativeView(), requesting_contents);
 
 }
 

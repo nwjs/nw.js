@@ -1226,7 +1226,7 @@ void PrintWebViewHelper::PrintPages() {
   }
 #endif  // !defined(OS_CHROMEOS)
 
-  if (!PrintPagesNative(prep_frame_view_->frame(), prep_frame_view_->node(),
+  if (!PrintPagesNative(prep_frame_view_->frame(),
                         page_count, prep_frame_view_->GetPrintCanvasSize())) {
     LOG(ERROR) << "Printing failed.";
     return DidFinishPrinting(FAIL_PRINT);
@@ -1237,7 +1237,8 @@ void PrintWebViewHelper::FinishFramePrinting() {
   prep_frame_view_.reset();
 }
 
-#if defined(OS_MACOSX) || defined(OS_WIN)
+#if defined(OS_MACOSX) || \
+    (defined(OS_WIN) && !defined(WIN_PDF_METAFILE_FOR_PRINTING))
 bool PrintWebViewHelper::PrintPagesNative(blink::WebFrame* frame,
                                           const blink::WebNode& node,
                                           int page_count,

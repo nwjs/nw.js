@@ -95,7 +95,7 @@ bool IsParent(gfx::NativeView child, gfx::NativeView possible_parent) {
     return true;
 #endif
   gfx::NativeView parent = child;
-  while ((parent = (gfx::NativeView)platform_util::GetParent(parent))) {
+  while ((parent = (gfx::NativeView)platform_util::GetParent(parent)) != NULL) {
     if (possible_parent == parent)
       return true;
   }
@@ -919,7 +919,7 @@ void NativeWindowAura::OnViewWasResized() {
   int height = sz.height(), width = sz.width();
   gfx::Path path;
   path.addRect(0, 0, width, height);
-  SetWindowRgn((HWND)web_contents()->GetView()->GetNativeView(),
+  SetWindowRgn((HWND)web_contents()->GetNativeView(),
                (HRGN)path.CreateNativeRegion(),
                1);
 

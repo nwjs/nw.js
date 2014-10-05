@@ -6,7 +6,8 @@
 #define CHROME_BROWSER_UI_VIEWS_AUTOFILL_AUTOFILL_POPUP_BASE_VIEW_H_
 
 #include "base/memory/weak_ptr.h"
-#include "content/nw/src/browser/autofill_popup_view_delegate.h"
+#include "chrome/browser/ui/autofill/autofill_popup_view_delegate.h"
+#include "ui/views/focus/widget_focus_manager.h"
 #include "ui/views/widget/widget_delegate.h"
 #include "ui/views/widget/widget_observer.h"
 
@@ -23,7 +24,16 @@ namespace autofill {
 // Class that deals with the event handling for Autofill-style popups. This
 // class should only be instantiated by sub-classes.
 class AutofillPopupBaseView : public views::WidgetDelegateView,
+                              public views::WidgetFocusChangeListener,
                               public views::WidgetObserver {
+ public:
+  static const SkColor kBorderColor;
+  static const SkColor kHoveredBackgroundColor;
+  static const SkColor kItemTextColor;
+  static const SkColor kPopupBackground;
+  static const SkColor kValueTextColor;
+  static const SkColor kWarningTextColor;
+
  protected:
   explicit AutofillPopupBaseView(AutofillPopupViewDelegate* delegate,
                                  views::Widget* observing_widget);
@@ -38,13 +48,6 @@ class AutofillPopupBaseView : public views::WidgetDelegateView,
   // Update size of popup and paint.
   void DoUpdateBoundsAndRedrawPopup();
 
-  static const SkColor kBorderColor;
-  static const SkColor kHoveredBackgroundColor;
-  static const SkColor kItemTextColor;
-  static const SkColor kPopupBackground;
-  static const SkColor kValueTextColor;
-  static const SkColor kWarningTextColor;
-
  private:
   friend class AutofillPopupBaseViewTest;
 
@@ -58,6 +61,10 @@ class AutofillPopupBaseView : public views::WidgetDelegateView,
   virtual void OnGestureEvent(ui::GestureEvent* event) OVERRIDE;
   virtual bool AcceleratorPressed(const ui::Accelerator& accelerator) OVERRIDE;
 
+  // views::WidgetFocusChangeListener implementation.
+  virtual void OnNativeFocusChange(gfx::NativeView focused_before,
+                                   gfx::NativeView focused_now) OVERRIDE;
+
   // views::WidgetObserver implementation.
   virtual void OnWidgetBoundsChanged(views::Widget* widget,
                                      const gfx::Rect& new_bounds) OVERRIDE;
@@ -69,15 +76,9 @@ class AutofillPopupBaseView : public views::WidgetDelegateView,
   void AcceptSelection(const gfx::Point& point);
   void ClearSelection();
 
-  // If the popup should be hidden if the user clicks outside it's bounds.
-  bool ShouldHideOnOutsideClick();
-
   // Hide the controller of this view. This assumes that doing so will
   // eventually hide this view in the process.
   void HideController();
-
-  // Returns true if this event should be passed along.
-  bool ShouldRepostEvent(const ui::MouseEvent& event);
 
   // Must return the container view for this popup.
   gfx::NativeView container_view();

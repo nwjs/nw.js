@@ -145,7 +145,6 @@ bool NotificationManagerWin::AddDesktopNotification(const content::ShowDesktopNo
   // if we reach here, it means the function is called from image download callback
   render_process_id_ = render_process_id;
   render_view_id_ = render_view_id;
-  notification_id_ = params.notification_id;
 
   // set the default notification icon as the app icon
   gfx::Image icon = shell->window()->app_icon();

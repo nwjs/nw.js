@@ -197,7 +197,7 @@ void PrintViewManager::OnDidPrintPage(
     }
   }
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) && !defined(WIN_PDF_METAFILE_FOR_PRINTING)
   bool big_emf = (params.data_size && params.data_size >= kMetafileMaxSize);
   const CommandLine* cmdline = CommandLine::ForCurrentProcess();
   int raster_size = std::min(params.page_size.GetArea(),

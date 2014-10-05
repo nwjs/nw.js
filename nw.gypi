@@ -108,6 +108,8 @@
         '<(DEPTH)/chrome/browser/ui/views/status_icons/status_icon_win.h',
         '<(DEPTH)/chrome/browser/ui/views/status_icons/status_tray_linux.cc',
         '<(DEPTH)/chrome/browser/ui/views/status_icons/status_tray_linux.h',
+        '<(DEPTH)/chrome/browser/ui/views/status_icons/status_tray_state_changer_win.cc',
+        '<(DEPTH)/chrome/browser/ui/views/status_icons/status_tray_state_changer_win.h',
         '<(DEPTH)/chrome/browser/ui/views/status_icons/status_tray_win.cc',
         '<(DEPTH)/chrome/browser/ui/views/status_icons/status_tray_win.h',
         '<(DEPTH)/chrome/common/chrome_constants.cc',
@@ -241,7 +243,6 @@
         'src/browser/shell_download_manager_delegate.cc',
         'src/browser/shell_download_manager_delegate.h',
         'src/browser/shell_download_manager_delegate_win.cc',
-        'src/browser/shell_download_manager_delegate_gtk.cc',
         'src/browser/shell_download_manager_delegate_mac.mm',
         'src/browser/shell_javascript_dialog_creator.cc',
         'src/browser/shell_javascript_dialog_creator.h',
@@ -270,8 +271,6 @@
         'src/breakpad_linux_impl.h',
         'src/breakpad_mac.mm',
         'src/breakpad_mac.h',
-        'src/breakpad_win.cc',
-        'src/breakpad_win.h',
         'src/hard_error_handler_win.cc',
         'src/hard_error_handler_win.h',
         'src/geolocation/shell_access_token_store.cc',
@@ -307,7 +306,6 @@
         'src/renderer/printing/print_web_view_helper.h',
         'src/renderer/printing/print_web_view_helper_linux.cc',
         'src/renderer/printing/print_web_view_helper_mac.mm',
-        'src/renderer/printing/print_web_view_helper_win.cc',
         'src/renderer/nw_render_view_observer.cc',
         'src/renderer/nw_render_view_observer.h',
         'src/renderer/shell_content_renderer_client.cc',
@@ -386,6 +384,15 @@
             '<(DEPTH)/build/win/ftol3.obj',
           ],
         }],
+        ['win_pdf_metafile_for_printing==1', {
+          'sources': [
+            'src/renderer/printing/print_web_view_helper_pdf_win.cc',
+          ],
+        }, {
+          'sources': [
+            'src/renderer/printing/print_web_view_helper_win.cc',
+          ],
+        }],
         ['OS=="win"', {
           'sources': [
             '<(DEPTH)/chrome/browser/ui/views/constrained_window_views.cc',
@@ -445,8 +452,7 @@
           'dependencies': [
             '<(DEPTH)/ui/views/controls/webview/webview.gyp:webview',
             '<(DEPTH)/ui/views/views.gyp:views',
-            '<(DEPTH)/webkit/webkit_resources.gyp:webkit_resources',
-            '<(DEPTH)/webkit/webkit_resources.gyp:webkit_strings',
+            #'<(DEPTH)/webkit/webkit_resources.gyp:webkit_strings',
           ],
           'configurations': {
             'Debug_Base': {
@@ -457,7 +463,7 @@
               },
             },
           },
-          'msvs_disabled_warnings': [ 4800 ],
+          'msvs_disabled_warnings': [ 4800, 4819 ],
         }],  # OS=="win"
       ],
     },
@@ -614,9 +620,9 @@
               '<(SHARED_INTERMEDIATE_DIR)/content/content_resources.pak',
               '<(SHARED_INTERMEDIATE_DIR)/content/nw_resources.pak',
               '<(SHARED_INTERMEDIATE_DIR)/net/net_resources.pak',
-              '<(SHARED_INTERMEDIATE_DIR)/ui/app_locale_settings/app_locale_settings_en-US.pak',
               '<(SHARED_INTERMEDIATE_DIR)/ui/resources/ui_resources_100_percent.pak',
               '<(SHARED_INTERMEDIATE_DIR)/ui/resources/webui_resources.pak',
+              '<(SHARED_INTERMEDIATE_DIR)/ui/strings/app_locale_settings_en-US.pak',
               '<(SHARED_INTERMEDIATE_DIR)/ui/strings/ui_strings_en-US.pak',
               '<(SHARED_INTERMEDIATE_DIR)/webkit/devtools_resources.pak',
               '<(SHARED_INTERMEDIATE_DIR)/blink/public/resources/blink_resources.pak',
@@ -825,9 +831,12 @@
           ],
         }],
         ['OS=="win"', {
+          'dependencies': [
+            '<(DEPTH)/ui/resources/ui_resources.gyp:ui_resources',
+          ],
           'sources': [
             'src/shell.rc',
-            '<(SHARED_INTERMEDIATE_DIR)/ui/ui_resources/ui_unscaled_resources.rc',
+            '<(SHARED_INTERMEDIATE_DIR)/ui/resources/ui_unscaled_resources.rc',
           ],
           'configurations': {
             'Debug_Base': {
