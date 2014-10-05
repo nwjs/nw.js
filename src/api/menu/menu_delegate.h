@@ -24,7 +24,7 @@
 #include "ui/base/models/simple_menu_model.h"
 
 namespace nwapi {
-  
+
 class DispatcherHost;
 
 class MenuDelegate : public ui::SimpleMenuModel::Delegate {

@@ -12,6 +12,7 @@
 
 namespace views {
   class MenuRunner;
+  class MenuButton;
 }
 
 namespace ui {
@@ -44,6 +45,8 @@ class MenuBarView :
 
   void UpdateMenu(ui::MenuModel* model);
   void InitView(ui::MenuModel* model);
+
+  bool GetMenuButtonAtLocation(const gfx::Point& loc, ui::MenuModel** model, views::MenuButton** button);
 
   // views::MenuButtonListener:
   virtual void OnMenuButtonClicked(views::View* view,

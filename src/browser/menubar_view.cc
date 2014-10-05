@@ -3,6 +3,9 @@
 // found in the LICENSE file.
 
 #include "content/nw/src/browser/menubar_view.h"
+
+
+#include "content/nw/src/browser/menubar_controller.h"
 #include "ui/base/models/menu_model.h"
 #include "ui/base/window_open_disposition.h"
 #include "ui/gfx/text_elider.h"
@@ -86,17 +89,37 @@ void MenuBarView::InitView(ui::MenuModel* model) {
   }
 }
 
+bool MenuBarView::GetMenuButtonAtLocation(const gfx::Point& loc, ui::MenuModel** model, views::MenuButton** button) {
+  if (!model_)
+    return false;
+  if (loc.x() < 0 || loc.x() >= width() || loc.y() < 0 || loc.y() >= height())
+    return false;
+  for (int i = 0; i < model_->GetItemCount(); i++) {
+    views::View* child = child_at(i);
+    if (child->bounds().Contains(loc) &&
+        (model_->GetTypeAt(i) == ui::MenuModel::TYPE_SUBMENU)) {
+      *model = model_->GetSubmenuModelAt(i);
+      *button = static_cast<views::MenuButton*>(child);
+      return true;
+    }
+  }
+  return false;
+}
+
 void MenuBarView::OnMenuButtonClicked(views::View* view,
                                       const gfx::Point& point) {
   int button_index = GetIndexOf(view);
   DCHECK_NE(-1, button_index);
   ui::MenuModel::ItemType type = model_->GetTypeAt(button_index);
   if (type == ui::MenuModel::TYPE_SUBMENU) {
-    menu_runner_.reset(new MenuRunner(model_->GetSubmenuModelAt(button_index),
-                                      MenuRunner::HAS_MNEMONICS));
+    views::MenuItemView* menu = MenuBarController::CreateMenu(this, model_->GetSubmenuModelAt(button_index));
+    menu_runner_.reset(new MenuRunner(menu, MenuRunner::HAS_MNEMONICS));
+
+    // menu_runner_.reset(new MenuRunner(model_->GetSubmenuModelAt(button_index),
+    //                                   MenuRunner::HAS_MNEMONICS));
 
     if (menu_runner_->RunMenuAt(GetWidget()->GetTopLevelWidget(),
-                                NULL,
+                                static_cast<views::MenuButton*>(view),
                                 gfx::Rect(point, gfx::Size()),
                                 views::MENU_ANCHOR_TOPRIGHT,
                                 ui::MENU_SOURCE_NONE) ==

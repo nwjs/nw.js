@@ -60,6 +60,14 @@
 #include "ui/views/widget/desktop_aura/desktop_screen.h"
 #endif  // defined(USE_AURA)
 
+#if defined(OS_LINUX)
+#include "chrome/browser/ui/libgtk2ui/gtk2_ui.h"
+#include "ui/aura/window.h"
+#include "ui/base/ime/input_method_initializer.h"
+#include "ui/native_theme/native_theme_aura.h"
+#include "ui/views/linux_ui/linux_ui.h"
+#endif
+
 using base::MessageLoop;
 
 namespace {
@@ -180,6 +188,10 @@ void ShellBrowserMainParts::ToolkitInitialized() {
   DCHECK(!views::ViewsDelegate::views_delegate);
   new views::DesktopTestViewsDelegate;
 #endif
+
+#if defined(OS_LINUX)
+  views::LinuxUI::instance()->Initialize();
+#endif
 }
 
 void ShellBrowserMainParts::Init() {
@@ -298,7 +310,10 @@ void ShellBrowserMainParts::PreEarlyInitialization() {
 #endif // !OS_WIN
 
 #if defined(OS_LINUX)
-  ui::InitializeInputMethodForTesting();
+  views::LinuxUI* gtk2_ui = BuildGtk2UI();
+  // gtk2_ui->SetNativeThemeOverride(base::Bind(&GetNativeThemeForWindow));
+  views::LinuxUI::SetInstance(gtk2_ui);
+  // ui::InitializeInputMethodForTesting();
 #endif
 }
 
