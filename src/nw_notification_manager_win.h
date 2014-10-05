@@ -43,20 +43,20 @@ class NotificationManagerWin : public NotificationManager{
   TrayObserver* status_observer_;
 
   // variable to store the latest notification data, windows can only show 1 notification
-  int render_process_id_, render_view_id_, notification_id_;
+  int render_process_id_, render_view_id_;
 
   // dispatch the events from the latest notification
   bool DesktopNotificationPostClick() {
-    return NotificationManager::DesktopNotificationPostClick(render_process_id_, render_view_id_, notification_id_);
+    return NotificationManager::DesktopNotificationPostClick(render_process_id_, render_view_id_, 0);
   }
   bool DesktopNotificationPostClose(bool by_user) {
-    return NotificationManager::DesktopNotificationPostClose(render_process_id_, render_view_id_, notification_id_, by_user);
+    return NotificationManager::DesktopNotificationPostClose(render_process_id_, render_view_id_, 0, by_user);
   }
   bool DesktopNotificationPostDisplay() {
-    return NotificationManager::DesktopNotificationPostDisplay(render_process_id_, render_view_id_, notification_id_);
+    return NotificationManager::DesktopNotificationPostDisplay(render_process_id_, render_view_id_, 0);
   }
   bool DesktopNotificationPostError(const base::string16& message) {
-    return NotificationManager::DesktopNotificationPostError(render_process_id_, render_view_id_, notification_id_, message);
+    return NotificationManager::DesktopNotificationPostError(render_process_id_, render_view_id_, 0, message);
   }
 
   // internal function for AddDesktopNotification

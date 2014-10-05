@@ -71,9 +71,9 @@
 
 
 #if defined(OS_WIN)
-#include "content/nw/src/browser/native_window_win.h"
+#include "content/nw/src/browser/native_window_aura.h"
 #include "ui/views/controls/webview/webview.h"
-using nw::NativeWindowWin;
+using nw::NativeWindowAura;
 #endif
 
 #include "content/nw/src/browser/printing/print_view_manager.h"
@@ -618,7 +618,7 @@ void Shell::WebContentsCreated(WebContents* source_contents,
 
 #if defined(OS_WIN)
 void Shell::WebContentsFocused(content::WebContents* web_contents) {
-  NativeWindowWin* win = static_cast<NativeWindowWin*>(window_.get());
+  NativeWindowAura* win = static_cast<NativeWindowAura*>(window_.get());
   if (win) // on aura this function is called in the middle of window creation
     win->web_view_->OnWebContentsFocused(web_contents);
 }

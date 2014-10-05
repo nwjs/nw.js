@@ -461,8 +461,8 @@ void DispatcherBindings::CrashRenderer(
 void DispatcherBindings::SetCrashDumpDir(
     const v8::FunctionCallbackInfo<v8::Value>& args) {
 #if defined(OS_WIN) || defined(OS_MACOSX)
-  std::string path = *v8::String::Utf8Value(args[0]);
-  SetCrashDumpPath(path.c_str());
+  //std::string path = *v8::String::Utf8Value(args[0]);
+  //FIXME: SetCrashDumpPath(path.c_str());
 #endif
 }
 

@@ -34,7 +34,6 @@
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/download_manager.h"
 #include "content/public/browser/web_contents.h"
-#include "content/public/browser/web_contents_view.h"
 #include "net/base/net_util.h"
 
 #include "ui/aura/window.h"
@@ -59,7 +58,7 @@ void ShellDownloadManagerDelegate::ChooseDownloadPath(
   OPENFILENAME save_as;
   ZeroMemory(&save_as, sizeof(save_as));
   save_as.lStructSize = sizeof(OPENFILENAME);
-  save_as.hwndOwner = (HWND)item->GetWebContents()->GetView()->GetNativeView()->
+  save_as.hwndOwner = (HWND)item->GetWebContents()->GetNativeView()->
       GetHost()->GetAcceleratedWidget();
   save_as.lpstrFile = file_name;
   save_as.nMaxFile = arraysize(file_name);

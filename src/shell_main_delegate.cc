@@ -61,7 +61,7 @@ using base::FilePath;
 #if defined(OS_WIN)
 #include "base/logging_win.h"
 #include <initguid.h>
-#include "content/nw/src/breakpad_win.h"
+#include "components/breakpad/app/breakpad_win.h"
 #endif
 
 #if defined(OS_POSIX) && !defined(OS_MACOSX)

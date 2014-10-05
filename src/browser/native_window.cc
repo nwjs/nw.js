@@ -35,7 +35,7 @@
 #elif defined(OS_LINUX)
 #include "content/nw/src/browser/native_window_aura.h"
 #elif defined(OS_WIN)
-#include "content/nw/src/browser/native_window_win.h"
+#include "content/nw/src/browser/native_window_aura.h"
 #endif
 
 
@@ -57,7 +57,7 @@ NativeWindow* NativeWindow::Create(const base::WeakPtr<content::Shell>& shell,
 #elif defined(OS_MACOSX)
       CreateNativeWindowCocoa(shell, manifest);
 #elif defined(OS_WIN)
-      new NativeWindowWin(shell, manifest);
+      new NativeWindowAura(shell, manifest);
 #else
       NULL;
   NOTREACHED() << "Cannot create native window on unsupported platform.";
@@ -85,7 +85,7 @@ content::WebContents* NativeWindow::web_contents() const {
 
 void NativeWindow::InitFromManifest(base::DictionaryValue* manifest) {
   // Setup window from manifest.
-  int x, y;
+  int x, y = 0;
   std::string position;
   if (manifest->GetInteger(switches::kmX, &x) &&
       manifest->GetInteger(switches::kmY, &y)) {
