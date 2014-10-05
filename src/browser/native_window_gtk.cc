@@ -339,6 +339,13 @@ void NativeWindowGtk::SetInitialFocus(bool initial_focus) {
   gtk_window_set_focus_on_map(GTK_WINDOW(window_), initial_focus);
 }
 
+void NativeWindowGtk::SetIcon(std::string icon_path) {
+  LoadAppIcon(icon_path);
+
+  if (!app_icon().IsEmpty())
+    gtk_window_set_icon(window_, app_icon().ToGdkPixbuf());
+}
+
 bool NativeWindowGtk::InitialFocus() {
   return gtk_window_get_focus_on_map(GTK_WINDOW(window_));
 }

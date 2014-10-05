@@ -277,6 +277,10 @@ void Window::Call(const std::string& method,
     int type;
     if (arguments.GetInteger(0, &type))
       shell_->Reload(static_cast<content::Shell::ReloadType>(type));
+  } else if (method == "SetIcon") {
+	std::string icon_path;
+	if (arguments.GetString(0, &icon_path))
+	  shell_->window()->SetIcon(icon_path);
   } else if (method == "CapturePage") {
     std::string image_format_str;
     if (arguments.GetString(0, &image_format_str))

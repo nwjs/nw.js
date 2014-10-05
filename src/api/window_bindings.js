@@ -444,6 +444,10 @@ Window.prototype.reloadIgnoringCache = function() {
   this.reload(1);
 }
 
+Window.prototype.setIcon = function(icon) {
+  CallObjectMethod(this, 'SetIcon', [ icon ]);
+}
+
 Window.prototype.reloadOriginalRequestURL = function() {
   this.reload(2);
 }
