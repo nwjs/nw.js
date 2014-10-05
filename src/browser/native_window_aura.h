@@ -23,7 +23,6 @@
 
 #include "content/nw/src/browser/native_window.h"
 
-#include "components/web_modal/web_contents_modal_dialog_host.h"
 #include "third_party/skia/include/core/SkRegion.h"
 #if defined(OS_WIN)
 #include "ui/base/win/hidden_window.h"

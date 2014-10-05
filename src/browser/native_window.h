@@ -34,7 +34,7 @@
 #include "ui/gfx/point.h"
 #include "ui/gfx/size.h"
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) || defined(OS_LINUX)
 #include "components/web_modal/web_contents_modal_dialog_host.h"
 #endif
 
@@ -64,7 +64,7 @@ namespace nw {
 
 class CapturePageHelper;
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) || defined(OS_LINUX)
 class NativeWindow : public web_modal::WebContentsModalDialogHost {
 #else
 class NativeWindow {

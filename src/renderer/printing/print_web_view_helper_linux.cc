@@ -55,7 +55,6 @@ bool PrintWebViewHelper::RenderPreviewPage(
 }
 
 bool PrintWebViewHelper::PrintPagesNative(blink::WebFrame* frame,
-                                          const blink::WebNode& node,
                                           int page_count,
                                           const gfx::Size& canvas_size) {
   NativeMetafile metafile;
