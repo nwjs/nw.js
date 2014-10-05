@@ -108,6 +108,26 @@ class NativeWindow {
   virtual void ClearMenu() {}
   virtual void SetInitialFocus(bool accept_focus) = 0;
   virtual bool InitialFocus() = 0;
+  virtual void OpenSecureDialog(std::string title,
+                                std::string message,
+                                std::string default_dir,
+                                std::string default_filename,
+                                std::string accept_file_types,
+                                bool canChooseFiles, 
+                                bool canChooseDirs, 
+                                bool allowMultiple,
+                                bool allowOtherFileTypes) = 0;
+
+  virtual void SaveSecureDialog(std::string title,
+                                std::string message,
+                                std::string default_dir,
+                                std::string default_filename,
+                                std::string accept_file_types,
+                                bool canCreateDirs, 
+                                bool allowOtherFileTypes) = 0;
+
+  virtual int OpenSecureBookmark(std::string base64EncodedBookmark) = 0;
+  virtual bool CloseSecureBookmark(std::string base64EncodedBookmark) = 0;
 
   // Toolbar related controls.
   enum TOOLBAR_BUTTON {

@@ -190,6 +190,51 @@ void Window::Call(const std::string& method,
                   const base::ListValue& arguments) {
   if (method == "Show") {
     shell_->window()->Show();
+  } else if (method == "OpenSecureDialog") {
+    std::string title;
+    std::string message;
+    std::string default_dir;
+    std::string default_filename;
+    std::string accept_file_types;
+
+    bool canChooseFiles;
+    bool canChooseDirs;
+    bool allowMultiple;
+    bool allowOtherFileTypes;
+
+    arguments.GetString(0, &title);
+    arguments.GetString(1, &message);
+    arguments.GetString(2, &default_dir);
+    arguments.GetString(3, &default_filename);
+    arguments.GetString(4, &accept_file_types);
+
+    arguments.GetBoolean(5, &canChooseFiles);
+    arguments.GetBoolean(6, &canChooseDirs);
+    arguments.GetBoolean(7, &allowMultiple);
+    arguments.GetBoolean(8, &allowOtherFileTypes);
+    
+    shell_->window()->OpenSecureDialog(title,message,default_dir,default_filename,accept_file_types,canChooseFiles,canChooseDirs,allowMultiple,allowOtherFileTypes);
+  } else if (method == "SaveSecureDialog") {
+    std::string title;
+    std::string message;
+    std::string default_dir;
+    std::string default_filename;
+    std::string accept_file_types;
+
+    bool canCreateDirs;
+    bool allowMultiple;
+    bool allowOtherFileTypes;
+
+    arguments.GetString(0, &title);
+    arguments.GetString(1, &message);
+    arguments.GetString(2, &default_dir);
+    arguments.GetString(3, &default_filename);
+    arguments.GetString(4, &accept_file_types);
+
+    arguments.GetBoolean(5, &canCreateDirs);
+    arguments.GetBoolean(6, &allowOtherFileTypes);
+    
+    shell_->window()->SaveSecureDialog(title,message,default_dir,default_filename,accept_file_types,canCreateDirs,allowOtherFileTypes);
   } else if (method == "Close") {
     bool force = false;
     arguments.GetBoolean(0, &force);
@@ -300,6 +345,14 @@ void Window::CallSync(const std::string& method,
                       base::ListValue* result) {
   if (method == "IsFullscreen") {
     result->AppendBoolean(shell_->window()->IsFullscreen());
+  } else if (method == "OpenSecureBookmark") {
+    std::string data;
+    arguments.GetString(0, &data);
+    result->AppendInteger(shell_->window()->OpenSecureBookmark(data));
+  } else if (method == "CloseSecureBookmark") {
+    std::string data;
+    arguments.GetString(0, &data);
+    result->AppendBoolean(shell_->window()->OpenSecureBookmark(data));
   } else if (method == "IsKioskMode") {
     result->AppendBoolean(shell_->window()->IsKiosk());
   } else if (method == "GetSize") {

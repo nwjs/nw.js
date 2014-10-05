@@ -415,6 +415,23 @@ Window.prototype.requestAttention = function(flash) {
   CallObjectMethod(this, 'RequestAttention', [ flash ]);
 }
 
+
+Window.prototype.openSecureDialog = function(title, message, default_dir, default_filename, accept_file_types, canChooseFiles, canChooseDirs, allowMultiple, allowOtherFileTypes) {
+  CallObjectMethod(this, 'OpenSecureDialog', [title, message, default_dir, default_filename, accept_file_types, canChooseFiles, canChooseDirs, allowMultiple, allowOtherFileTypes]);
+}
+
+Window.prototype.saveSecureDialog = function(title, message, default_dir, default_filename, accept_file_types, canCreateDirs, allowOtherFileTypes) {
+  CallObjectMethod(this, 'SaveSecureDialog', [title, message, default_dir, default_filename, accept_file_types, canCreateDirs, allowOtherFileTypes]);
+}
+
+Window.prototype.openSecureBookmark = function(data) {
+  return CallObjectMethodSync(this, 'OpenSecureBookmark', [data]);
+}
+
+Window.prototype.closeSecureBookmark = function(data) {
+  return CallObjectMethodSync(this, 'CloseSecureBookmark', [data]);
+}
+
 Window.prototype.setBadgeLabel = function(label) {
   label = "" + label;
   CallObjectMethod(this, 'SetBadgeLabel', [ label ]);

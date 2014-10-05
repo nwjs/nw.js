@@ -76,6 +76,26 @@ class NativeWindowCocoa : public NativeWindow {
   virtual void SetToolbarIsLoading(bool loading) OVERRIDE;
   virtual void SetInitialFocus(bool accept_focus) OVERRIDE;
   virtual bool InitialFocus() OVERRIDE;
+  virtual void OpenSecureDialog(std::string title,
+                                std::string message,
+                                std::string default_dir,
+                                std::string default_filename,
+                                std::string accept_file_types,
+                                bool canChooseFiles, 
+                                bool canChooseDirs, 
+                                bool allowMultiple,
+                                bool allowOtherFileTypes) OVERRIDE;
+
+  virtual void SaveSecureDialog(std::string title,
+                                std::string message,
+                                std::string default_dir,
+                                std::string default_filename,
+                                std::string accept_file_types,
+                                bool canCreateDirs, 
+                                bool allowOtherFileTypes) OVERRIDE;
+
+  virtual int OpenSecureBookmark(std::string base64EncodedBookmark) OVERRIDE;
+  virtual bool CloseSecureBookmark(std::string base64EncodedBookmark) OVERRIDE;
 
   // Called to handle a mouse event.
   void HandleMouseEvent(NSEvent* event);
