@@ -162,12 +162,10 @@ void MenuItem::UpdateKeys(views::FocusManager *focus_manager){
   } else {
     focus_manager_ = focus_manager;
     if (enable_shortcut_){
-#if 0 //FIXME
       focus_manager->RegisterAccelerator(
         accelerator_,
         ui::AcceleratorManager::kHighPriority,
         this);
-#endif
     }
     if (submenu_ != NULL){
       submenu_->UpdateKeys(focus_manager);
@@ -175,6 +173,31 @@ void MenuItem::UpdateKeys(views::FocusManager *focus_manager){
   }
 }
 
+#if defined(OS_WIN) || defined(OS_LINUX)
+bool MenuItem::AcceleratorPressed(const ui::Accelerator& accelerator) {
+
+#if defined(OS_WIN)
+  if (super_down_flag_){
+    if ( ( (::GetKeyState(VK_LWIN) & 0x8000) != 0x8000)
+         || ( (::GetKeyState(VK_LWIN) & 0x8000) != 0x8000) ){
+      return true;
+    }
+  }
+  if (meta_down_flag_){
+    if ( (::GetKeyState(VK_APPS) & 0x8000) != 0x8000 ){
+      return true;
+    }
+  }
+#endif
+  OnClick();
+  return true;
+}
+
+bool MenuItem::CanHandleAccelerators() const {
+  return true;
+}
+
+#endif
 }  // namespace nwapi
 
 

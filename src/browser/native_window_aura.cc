@@ -623,8 +623,8 @@ void NativeWindowAura::SetMenu(nwapi::Menu* menu) {
   // menu is nwapi::Menu, menu->menu_ is NativeMenuWin,
   ::SetMenu(views::HWNDForWidget(window_), menu->menu_->GetNativeMenu());
 
-  menu->UpdateKeys( window_->GetFocusManager() );
 #endif
+  menu->UpdateKeys( window_->GetFocusManager() );
 }
 
 BrowserViewLayout* NativeWindowAura::GetBrowserViewLayout() const {

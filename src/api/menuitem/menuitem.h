@@ -45,8 +45,8 @@ namespace nwapi {
 
 class Menu;
 
-#if defined(OS_WIN)
-class MenuItem : public Base , 
+#if defined(OS_WIN) || defined(OS_LINUX)
+class MenuItem : public Base ,
                  public ui::AcceleratorTarget {
 #else
 class MenuItem : public Base {
@@ -60,29 +60,9 @@ class MenuItem : public Base {
   virtual void Call(const std::string& method,
                     const base::ListValue& arguments) OVERRIDE;
 
-#if defined(OS_LINUX)
-  void UpdateKeys(views::FocusManager *focus_manager);
-#endif
-
-#if defined(OS_WIN)
-  virtual bool AcceleratorPressed(const ui::Accelerator& accelerator) OVERRIDE{
-    if (super_down_flag_){
-      if ( ( (::GetKeyState(VK_LWIN) & 0x8000) != 0x8000) 
-        || ( (::GetKeyState(VK_LWIN) & 0x8000) != 0x8000) ){
-        return true;
-      }
-    }
-    if (meta_down_flag_){
-      if ( (::GetKeyState(VK_APPS) & 0x8000) != 0x8000 ){
-        return true;
-      }
-    }
-    OnClick();
-    return true;
-  }
-  virtual bool CanHandleAccelerators() const OVERRIDE {
-    return true;
-  }
+#if defined(OS_WIN) || defined(OS_LINUX)
+  virtual bool AcceleratorPressed(const ui::Accelerator& accelerator) OVERRIDE;
+  virtual bool CanHandleAccelerators() const OVERRIDE;
   void UpdateKeys(views::FocusManager *focus_manager);
 #endif
 
