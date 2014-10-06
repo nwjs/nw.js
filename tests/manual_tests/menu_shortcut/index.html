@@ -18,7 +18,6 @@
       var menubar = new gui.Menu({ type: 'menubar' });
 
       var menubar_file = new gui.MenuItem({"label":"File"});
-      menubar.append(menubar_file);
       var file_menu = new gui.Menu();
       var file_quit_item = new gui.MenuItem({
         "label":"Quit",
@@ -50,6 +49,7 @@
       file_menu.insert(file_about_item,0);
 
       menubar_file.submenu = file_menu;
+      menubar.append(menubar_file);
       win.menu = menubar;
 
     </script>
