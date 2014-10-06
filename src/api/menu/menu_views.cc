@@ -96,14 +96,19 @@ void Menu::Create(const base::DictionaryValue& option) {
   is_menu_modified_ = true;
   menu_delegate_.reset(new MenuDelegate(dispatcher_host()));
   menu_model_.reset(new ui::NwMenuModel(menu_delegate_.get()));
-  //menu_.reset(new views::NativeMenuWin(menu_model_.get(), NULL));
+#if defined(OS_WIN)
+  menu_.reset(new views::NativeMenuWin(menu_model_.get(), NULL));
+#endif
 
   focus_manager_ = NULL;
   window_ = NULL;
 
   std::string type;
-  //if (option.GetString("type", &type) && type == "menubar")
-  //  menu_->set_is_popup_menu(false);
+
+#if defined(OS_WIN)
+  if (option.GetString("type", &type) && type == "menubar")
+    menu_->set_is_popup_menu(false);
+#endif
   menu_items_.empty();
 }
 

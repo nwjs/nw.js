@@ -607,14 +607,14 @@ bool NativeWindowAura::IsKiosk() {
 void NativeWindowAura::SetMenu(nwapi::Menu* menu) {
   window_->set_has_menu_bar(true);
   menu_ = menu;
-
+#if defined(OS_LINUX)
   MenuBarView* menubar = new MenuBarView();
   GetBrowserViewLayout()->set_menu_bar(menubar);
   AddChildView(menubar);
   menubar->UpdateMenu(menu->model());
   Layout();
   SchedulePaint();
-
+#endif
   // The menu is lazily built.
 #if defined(OS_WIN) //FIXME
   menu->Rebuild();
