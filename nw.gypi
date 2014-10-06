@@ -242,7 +242,6 @@
         'src/browser/shell_devtools_delegate.h',
         'src/browser/shell_download_manager_delegate.cc',
         'src/browser/shell_download_manager_delegate.h',
-        'src/browser/shell_download_manager_delegate_gtk.cc',
         'src/browser/shell_download_manager_delegate_win.cc',
         'src/browser/shell_download_manager_delegate_mac.mm',
         'src/browser/shell_javascript_dialog_creator.cc',
@@ -422,6 +421,9 @@
             '<(DEPTH)/chrome/browser/ui/libgtk2ui/libgtk2ui.gyp:gtk2ui',
             '<(DEPTH)/build/linux/system.gyp:gio',
             '<(DEPTH)/build/linux/system.gyp:gtk',
+          ],
+          'sources': [
+            'src/browser/shell_download_manager_delegate_gtk.cc',
           ],
         }],
         ['OS == "mac"', {
