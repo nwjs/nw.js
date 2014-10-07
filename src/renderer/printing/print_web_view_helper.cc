@@ -1240,7 +1240,6 @@ void PrintWebViewHelper::FinishFramePrinting() {
 #if defined(OS_MACOSX) || \
     (defined(OS_WIN) && !defined(WIN_PDF_METAFILE_FOR_PRINTING))
 bool PrintWebViewHelper::PrintPagesNative(blink::WebFrame* frame,
-                                          const blink::WebNode& node,
                                           int page_count,
                                           const gfx::Size& canvas_size) {
   const PrintMsg_PrintPages_Params& params = *print_pages_params_;

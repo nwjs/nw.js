@@ -37,7 +37,6 @@
 #include "content/public/browser/native_web_keyboard_event.h"
 #include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/web_contents.h"
-#include "content/public/browser/web_contents_view.h"
 #include "extensions/common/draggable_region.h"
 #include "third_party/skia/include/core/SkRegion.h"
 #import "ui/base/cocoa/underlay_opengl_hosting_window.h"
@@ -120,7 +119,7 @@ enum {
 
 - (void)windowDidBecomeKey:(NSNotification *)notification {
   if (shell_) {
-    shell_->web_contents()->GetView()->Focus();
+    shell_->web_contents()->Focus();
     shell_->SendEvent("focus");
   }
 }
@@ -408,7 +407,7 @@ NativeWindowCocoa::NativeWindowCocoa(
       [window() respondsToSelector:@selector(setBottomCornerRounded:)])
     [window() setBottomCornerRounded:NO];
 
-  NSView* view = web_contents()->GetView()->GetNativeView();
+  NSView* view = web_contents()->GetNativeView();
   [view setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 
   // By default, the whole frameless window is not draggable.
@@ -425,7 +424,7 @@ NativeWindowCocoa::~NativeWindowCocoa() {
 }
 
 void NativeWindowCocoa::InstallView() {
-  NSView* view = web_contents()->GetView()->GetNativeView();
+  NSView* view = web_contents()->GetNativeView();
   if (has_frame_) {
     [view setFrame:[[window() contentView] bounds]];
     [[window() contentView] addSubview:view];
@@ -450,7 +449,7 @@ void NativeWindowCocoa::InstallView() {
 }
 
 void NativeWindowCocoa::UninstallView() {
-  NSView* view = web_contents()->GetView()->GetNativeView();
+  NSView* view = web_contents()->GetNativeView();
   [view removeFromSuperview];
 }
 
@@ -901,7 +900,7 @@ void NativeWindowCocoa::HandleKeyboardEvent(
 void NativeWindowCocoa::UpdateDraggableRegionsForSystemDrag(
     const std::vector<extensions::DraggableRegion>& regions,
     const extensions::DraggableRegion* draggable_area) {
-  NSView* web_view = web_contents()->GetView()->GetNativeView();
+  NSView* web_view = web_contents()->GetNativeView();
   NSInteger web_view_width = NSWidth([web_view bounds]);
   NSInteger web_view_height = NSHeight([web_view bounds]);
 
@@ -971,7 +970,7 @@ void NativeWindowCocoa::UpdateDraggableRegionsForCustomDrag(
     const std::vector<extensions::DraggableRegion>& regions) {
   // We still need one ControlRegionView to cover the whole window such that
   // mouse events could be captured.
-  NSView* web_view = web_contents()->GetView()->GetNativeView();
+  NSView* web_view = web_contents()->GetNativeView();
   gfx::Rect window_bounds(
       0, 0, NSWidth([web_view bounds]), NSHeight([web_view bounds]));
   system_drag_exclude_areas_.clear();
@@ -1001,7 +1000,7 @@ void NativeWindowCocoa::InstallDraggableRegionViews() {
   // All ControlRegionViews should be added as children of the WebContentsView,
   // because WebContentsView will be removed and re-added when entering and
   // leaving fullscreen mode.
-  NSView* webView = web_contents()->GetView()->GetNativeView();
+  NSView* webView = web_contents()->GetNativeView();
   NSInteger webViewHeight = NSHeight([webView bounds]);
 
   // Remove all ControlRegionViews that are added last time.

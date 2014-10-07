@@ -91,7 +91,6 @@
         '<(DEPTH)/chrome/browser/platform_util_win.cc',
         '<(DEPTH)/chrome/browser/platform_util.h',
         '<(DEPTH)/chrome/browser/process_singleton_posix.cc',
-        '<(DEPTH)/chrome/browser/process_singleton_mac.cc',
         '<(DEPTH)/chrome/browser/process_singleton_win.cc',
         '<(DEPTH)/chrome/browser/process_singleton.h',
         '<(DEPTH)/chrome/browser/status_icons/status_icon.cc',
@@ -269,8 +268,6 @@
         'src/common/shell_switches.cc',
         'src/common/shell_switches.h',
         'src/breakpad_linux_impl.h',
-        'src/breakpad_mac.mm',
-        'src/breakpad_mac.h',
         'src/hard_error_handler_win.cc',
         'src/hard_error_handler_win.h',
         'src/geolocation/shell_access_token_store.cc',
@@ -429,6 +426,8 @@
         ['OS == "mac"', {
           'sources!': [
             '<(DEPTH)/chrome/common/child_process_logging_posix.cc',
+            'src/api/menu/menu_delegate.cc',
+            'src/api/menu/menu_delegate.h',
           ],
           'sources': [
             '<(DEPTH)/chrome/browser/ui/cocoa/nsview_additions.h',

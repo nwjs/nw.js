@@ -55,6 +55,7 @@
 using base::FilePath;
 
 #if defined(OS_MACOSX)
+#include "components/breakpad/app/breakpad_mac.h"
 #include "content/nw/src/paths_mac.h"
 #endif  // OS_MACOSX
 

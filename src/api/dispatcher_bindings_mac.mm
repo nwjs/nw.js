@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include "base/containers/hash_tables.h"
 #include "grit/nw_strings.h"
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/base/l10n/l10n_util_mac.h"

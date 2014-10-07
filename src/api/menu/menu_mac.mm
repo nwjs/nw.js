@@ -25,7 +25,6 @@
 #include "base/values.h"
 #import <Cocoa/Cocoa.h>
 #include "content/public/browser/web_contents.h"
-#include "content/public/browser/web_contents_view.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
 #include "content/nw/src/browser/native_window_mac.h"
 #include "content/nw/src/nw_shell.h"
@@ -58,7 +57,7 @@ void Menu::Popup(int x, int y, content::Shell* shell) {
   NSWindow* window =
        static_cast<nw::NativeWindowCocoa*>(shell->window())->window();
   NSEvent* currentEvent = [NSApp currentEvent];
-  NSView* web_view = shell->web_contents()->GetView()->GetNativeView();
+  NSView* web_view = shell->web_contents()->GetNativeView();
   NSPoint position = { x, web_view.bounds.size.height - y };
   NSTimeInterval eventTime = [currentEvent timestamp];
   NSEvent* clickEvent = [NSEvent mouseEventWithType:NSRightMouseDown

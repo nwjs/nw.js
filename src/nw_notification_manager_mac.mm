@@ -59,22 +59,20 @@ static NWUserNotificationCenterDelegate *singleton_ = nil;
 
   NSNumber *render_process_id = [notification.userInfo objectForKey : @"render_process_id"];
   NSNumber *render_view_id = [notification.userInfo objectForKey : @"render_view_id"];
-  NSNumber *notification_id = [notification.userInfo objectForKey : @"notification_id"];
 
   nw::NotificationManager::getSingleton()->DesktopNotificationPostDisplay(render_process_id.intValue,
       render_view_id.intValue,
-      notification_id.intValue);
+      0);
   return YES;
 }
 
 -(void)userNotificationCenter:(NSUserNotificationCenter *)center didActivateNotification : (NSUserNotification *)notification {
   NSNumber *render_process_id = [notification.userInfo objectForKey : @"render_process_id"];
   NSNumber *render_view_id = [notification.userInfo objectForKey : @"render_view_id"];
-  NSNumber *notification_id = [notification.userInfo objectForKey : @"notification_id"];
 
   nw::NotificationManager::getSingleton()->DesktopNotificationPostClick(render_process_id.intValue,
     render_view_id.intValue,
-    notification_id.intValue);
+    0);
 }
 @end
 
@@ -129,7 +127,6 @@ bool NotificationManagerMac::AddDesktopNotification(const content::ShowDesktopNo
 
   notification.userInfo = @{ @"render_process_id" :[NSNumber numberWithInt : render_process_id],
     @"render_view_id" :[NSNumber numberWithInt : render_view_id],
-    @"notification_id" :[NSNumber numberWithInt : params.notification_id],
   };
 
 
@@ -145,10 +142,10 @@ bool NotificationManagerMac::AddDesktopNotification(const content::ShowDesktopNo
 bool NotificationManagerMac::CancelDesktopNotification(int render_process_id, int render_view_id, int notification_id){
   for (NSUserNotification *notification in[[NSUserNotificationCenter defaultUserNotificationCenter] deliveredNotifications]) {
     NSNumber *current_notification_id = [notification.userInfo objectForKey : @"notification_id"];
-    if (current_notification_id.intValue == notification_id){
+    //FIXME: if (current_notification_id.intValue == notification_id){
       [[NSUserNotificationCenter defaultUserNotificationCenter] removeDeliveredNotification:notification];
       return true;
-    }
+    //}
   }
   return false;
 }
