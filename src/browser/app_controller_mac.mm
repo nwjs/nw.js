@@ -80,4 +80,33 @@
   return YES;
 }
 
+-(void)applicationWillFinishLaunching:(NSNotification *)aNotification
+{
+    NSAppleEventManager *appleEventManager = [NSAppleEventManager sharedAppleEventManager];
+    [appleEventManager setEventHandler:self
+                           andSelector:@selector(handleGetURLEvent:withReplyEvent:)
+                         forEventClass:kInternetEventClass andEventID:kAEGetURL];
+}
+
+- (void)handleGetURLEvent:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent
+{
+  NSString *url = [[event paramDescriptorForKeyword:keyDirectObject] stringValue];
+
+  if (content::Shell::windows().size() == 0) {
+    CommandLine::ForCurrentProcess()->AppendArg([url UTF8String]);
+    CommandLine::ForCurrentProcess()->FixOrigArgv4Finder([url UTF8String]);
+    return;
+  }
+
+  // Just pick a shell and get its package.
+  nw::Package* package = content::Shell::windows()[0]->GetPackage();
+
+  if (package->self_extract()) {
+    // Let the app deal with the opening event if it's a standalone app.
+    nwapi::App::EmitOpenEvent([url UTF8String]);
+  } else {
+    // Or open a new app in the runtime mode.
+  }
+}
+
 @end
