@@ -22,6 +22,7 @@
 #include "chrome/browser/ui/views/status_icons/status_tray_win.h"
 
 #include "content/public/browser/web_contents.h"
+#include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/nw_package.h"
@@ -118,9 +119,10 @@ NotificationManagerWin::~NotificationManagerWin() {
 }
 
 bool NotificationManagerWin::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-  const int render_process_id, const int render_view_id, const bool worker, const std::vector<SkBitmap>* bitmaps) {
+  const int render_process_id, const int render_view_id, const int notification_id, 
+  const bool worker, const std::vector<SkBitmap>* bitmaps) {
 
-  content::RenderViewHost* host = content::RenderViewHost::FromID(render_process_id, render_view_id);
+  content::RenderViewHost* host = content::RenderFrameHost::FromID(render_process_id, render_view_id)->GetRenderViewHost();
   if (host == NULL)
     return false;
 

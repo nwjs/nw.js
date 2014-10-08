@@ -61,14 +61,16 @@ class NotificationManagerWin : public NotificationManager{
 
   // internal function for AddDesktopNotification
   virtual bool AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-    const int render_process_id, const int render_view_id, const bool worker, const std::vector<SkBitmap>* bitmaps) OVERRIDE;
+    const int render_process_id, const int render_view_id, const int notification_id, 
+    const bool worker, const std::vector<SkBitmap>* bitmaps) OVERRIDE;
 
 public:
   explicit NotificationManagerWin();
   virtual ~NotificationManagerWin();
   virtual bool AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-    const int render_process_id, const int render_view_id, const bool worker) OVERRIDE{
-    return AddDesktopNotification(params, render_process_id, render_view_id, worker, NULL);
+    const int render_process_id, const int render_view_id, const int notification_id,
+    const bool worker) OVERRIDE{
+    return AddDesktopNotification(params, render_process_id, render_view_id, notification_id, worker, NULL);
   }
   virtual bool CancelDesktopNotification(int render_process_id, int render_view_id, int notification_id) OVERRIDE;
 };
