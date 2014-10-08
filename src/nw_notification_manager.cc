@@ -57,12 +57,16 @@ NotificationManager* NotificationManager::getSingleton() {
 void NotificationManager::ImageDownloadCallback(int id, int http_status, const GURL& image_url, const std::vector<SkBitmap>& bitmaps, const std::vector<gfx::Size>& size) {
   NotificationManager *singleton = getSingleton();
   DesktopNotificationParams params = singleton->desktop_notification_params_[id];
-  singleton->AddDesktopNotification(params.params_, params.render_process_id_, params.render_view_id_, params.worker_, &bitmaps);
+  singleton->AddDesktopNotification(params.params_, params.render_process_id_, params.render_view_id_, id, params.worker_, &bitmaps);
   singleton->desktop_notification_params_.erase(id);
 }
 
 bool NotificationManager::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-  const int render_process_id, const int render_view_id, const bool worker, const std::vector<SkBitmap>* bitmaps) {
+                                                 const int render_process_id,
+                                                 const int render_view_id,
+                                                 const int notification_id,
+                                                 const bool worker,
+                                                 const std::vector<SkBitmap>* bitmaps) {
   NOTIMPLEMENTED();
   return false;
 }

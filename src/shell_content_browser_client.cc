@@ -34,6 +34,7 @@
 #include "content/browser/gpu/compositor_util.h"
 #include "content/nw/src/browser/printing/printing_message_filter.h"
 #include "content/public/browser/browser_url_handler.h"
+#include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/render_widget_host_iterator.h"
@@ -491,42 +492,29 @@ ShellContentBrowserClient::CreateQuotaPermissionContext() {
   return new ShellQuotaPermissionContext();
 }
 
-#if 0
 void ShellContentBrowserClient::ShowDesktopNotification(
-  const ShowDesktopNotificationHostMsgParams& params,
-  int render_process_id,
-  int render_view_id,
-  bool worker) {
+      const ShowDesktopNotificationHostMsgParams& params,
+      RenderFrameHost* render_frame_host,
+      scoped_ptr<DesktopNotificationDelegate> delegate,
+      base::Closure* cancel_callback) {
 #if defined(ENABLE_NOTIFICATIONS)
   nw::NotificationManager *notificationManager = nw::NotificationManager::getSingleton();
   if (notificationManager == NULL) {
     NOTIMPLEMENTED();
     return;
   }
-  notificationManager->AddDesktopNotification(params, render_process_id, render_view_id, worker);
+  content::RenderProcessHost* process = render_frame_host->GetProcess();
+  notificationManager->AddDesktopNotification(params, process->GetID(),
+                                              render_frame_host->GetRoutingID(),
+                                              delegate->notification_id(),
+                                              false);
 #else
   NOTIMPLEMENTED();
 #endif
 
 }
 
-void ShellContentBrowserClient::CancelDesktopNotification(
-  int render_process_id,
-  int render_view_id,
-  int notification_id) {
-#if defined(ENABLE_NOTIFICATIONS)
-  nw::NotificationManager *notificationManager = nw::NotificationManager::getSingleton();
-  if (notificationManager == NULL) {
-    NOTIMPLEMENTED();
-    return;
-  }
-  notificationManager->CancelDesktopNotification(render_process_id, render_view_id, notification_id);
-#else
-  NOTIMPLEMENTED();
-#endif
-}
-
-#endif
+// FIXME: cancel desktop notification
 
 void ShellContentBrowserClient::RequestMidiSysExPermission(
       WebContents* web_contents,

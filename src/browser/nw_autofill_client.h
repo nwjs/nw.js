@@ -1,15 +1,15 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Copyright 2014 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef CHROME_BROWSER_UI_AUTOFILL_TAB_AUTOFILL_MANAGER_DELEGATE_H_
-#define CHROME_BROWSER_UI_AUTOFILL_TAB_AUTOFILL_MANAGER_DELEGATE_H_
+#ifndef NW_BROWSER_UI_AUTOFILL_CHROME_AUTOFILL_CLIENT_H_
+#define NW_BROWSER_UI_AUTOFILL_CHROME_AUTOFILL_CLIENT_H_
 
 #include "base/callback.h"
 #include "base/compiler_specific.h"
 #include "base/i18n/rtl.h"
 #include "base/memory/weak_ptr.h"
-#include "components/autofill/core/browser/autofill_manager_delegate.h"
+#include "components/autofill/core/browser/autofill_client.h"
 #include "content/public/browser/web_contents_observer.h"
 #include "content/public/browser/web_contents_user_data.h"
 
@@ -22,24 +22,24 @@ class WebContents;
 namespace autofill {
 
 class AutofillDialogController;
+class AutofillKeystoneBridgeWrapper;
 class AutofillPopupControllerImpl;
 struct FormData;
 
-// Chrome implementation of AutofillManagerDelegate.
-class TabAutofillManagerDelegate
-    : public AutofillManagerDelegate,
-      public content::WebContentsUserData<TabAutofillManagerDelegate>,
+// Chrome implementation of AutofillClient.
+class NWAutofillClient
+    : public AutofillClient,
+      public content::WebContentsUserData<NWAutofillClient>,
       public content::WebContentsObserver {
  public:
-  virtual ~TabAutofillManagerDelegate();
+  virtual ~NWAutofillClient();
 
   // Called when the tab corresponding to |this| instance is activated.
   void TabActivated();
 
-  // AutofillManagerDelegate implementation.
+  // AutofillClient:
   virtual PersonalDataManager* GetPersonalDataManager() OVERRIDE;
-  virtual scoped_refptr<AutofillWebDataService>
-      GetDatabase() OVERRIDE;
+  virtual scoped_refptr<AutofillWebDataService> GetDatabase() OVERRIDE;
   virtual PrefService* GetPrefs() OVERRIDE;
   virtual void HideRequestAutocompleteDialog() OVERRIDE;
   virtual void ShowAutofillSettings() OVERRIDE;
@@ -49,7 +49,7 @@ class TabAutofillManagerDelegate
   virtual void ShowRequestAutocompleteDialog(
       const FormData& form,
       const GURL& source_url,
-      const base::Callback<void(const FormStructure*)>& callback) OVERRIDE;
+      const ResultCallback& callback) OVERRIDE;
   virtual void ShowAutofillPopup(
       const gfx::RectF& element_bounds,
       base::i18n::TextDirection text_direction,
@@ -70,29 +70,39 @@ class TabAutofillManagerDelegate
       const base::string16& profile_full_name) OVERRIDE;
 
   // content::WebContentsObserver implementation.
-  virtual void WebContentsDestroyed(
-      content::WebContents* web_contents) OVERRIDE;
-
-  // Exposed for testing.
-  AutofillDialogController* GetDialogControllerForTesting() {
-    return dialog_controller_.get();
-  }
-  void SetDialogControllerForTesting(
-      const base::WeakPtr<AutofillDialogController>& dialog_controller) {
-    dialog_controller_ = dialog_controller;
-  }
+  virtual void WebContentsDestroyed() OVERRIDE;
 
  private:
-  explicit TabAutofillManagerDelegate(content::WebContents* web_contents);
-  friend class content::WebContentsUserData<TabAutofillManagerDelegate>;
+#if defined(OS_MACOSX) && !defined(OS_IOS)
+  // Creates |bridge_wrapper_|, which is responsible for dealing with Keystone
+  // notifications.
+  void RegisterForKeystoneNotifications();
+
+  // Deletes |bridge_wrapper_|.
+  void UnregisterFromKeystoneNotifications();
+#endif  // defined(OS_MACOSX) && !defined(OS_IOS)
+
+  explicit NWAutofillClient(content::WebContents* web_contents);
+  friend class content::WebContentsUserData<NWAutofillClient>;
 
   content::WebContents* const web_contents_;
-  base::WeakPtr<AutofillDialogController> dialog_controller_;
+  // base::WeakPtr<AutofillDialogController> dialog_controller_;
   base::WeakPtr<AutofillPopupControllerImpl> popup_controller_;
 
-  DISALLOW_COPY_AND_ASSIGN(TabAutofillManagerDelegate);
+#if defined(OS_MACOSX) && !defined(OS_IOS)
+  // Listens to Keystone notifications and passes relevant ones on to the
+  // PersonalDataManager.
+  //
+  // The class of this member must remain a forward declaration, even in the
+  // .cc implementation file, since the class is defined in a Mac-only
+  // implementation file. This means that the pointer cannot be wrapped in a
+  // scoped_ptr.
+  AutofillKeystoneBridgeWrapper* bridge_wrapper_;
+#endif  // defined(OS_MACOSX) && !defined(OS_IOS)
+
+  DISALLOW_COPY_AND_ASSIGN(NWAutofillClient);
 };
 
 }  // namespace autofill
 
-#endif  // CHROME_BROWSER_UI_AUTOFILL_TAB_AUTOFILL_MANAGER_DELEGATE_H_
+#endif  // CHROME_BROWSER_UI_AUTOFILL_CHROME_AUTOFILL_CLIENT_H_

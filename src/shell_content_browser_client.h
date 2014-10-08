@@ -92,19 +92,12 @@ class ShellContentBrowserClient : public ContentBrowserClient {
 #endif
   virtual QuotaPermissionContext* CreateQuotaPermissionContext() OVERRIDE;
 
-#if 0
   //Notification
   virtual void ShowDesktopNotification(
-    const ShowDesktopNotificationHostMsgParams& params,
-    int render_process_id,
-    int render_view_id,
-    bool worker) ; //FIXME
-
-   virtual void CancelDesktopNotification(
-    int render_process_id,
-    int render_view_id,
-    int notification_id) ; //FIXME
-#endif
+      const ShowDesktopNotificationHostMsgParams& params,
+      RenderFrameHost* render_frame_host,
+      scoped_ptr<DesktopNotificationDelegate> delegate,
+      base::Closure* cancel_callback) OVERRIDE;
 
   virtual void RequestMidiSysExPermission(
       WebContents* web_contents,

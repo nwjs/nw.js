@@ -18,8 +18,10 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "chrome/browser/status_icons/status_icon.h"
+#include "chrome/browser/ui/libgtk2ui/skia_utils_gtk2.h"
 
 #include "content/public/browser/web_contents.h"
+#include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/nw_package.h"
@@ -69,9 +71,13 @@ void NotificationManagerLinux::onClose(NotifyNotification *notif)
 };
 
 bool NotificationManagerLinux::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-  const int render_process_id, const int render_view_id, const bool worker, const std::vector<SkBitmap>* bitmaps) {
+                                                      const int render_process_id,
+                                                      const int render_view_id,
+                                                      const int notification_id,
+                                                      const bool worker,
+                                                      const std::vector<SkBitmap>* bitmaps) {
 
-  content::RenderViewHost* host = content::RenderViewHost::FromID(render_process_id, render_view_id);
+  content::RenderViewHost* host = content::RenderFrameHost::FromID(render_process_id, render_view_id)->GetRenderViewHost();
   if (host == NULL)
     return false;
 
@@ -105,7 +111,7 @@ bool NotificationManagerLinux::AddDesktopNotification(const content::ShowDesktop
   }
 
   NotifyNotification * notif;
-  NotificationMap::iterator i = getNotification(params.notification_id);
+  NotificationMap::iterator i = getNotification(notification_id);
   if (i==mNotificationIDmap.end()) {
     notif = notify_notification_new (
       base::UTF16ToUTF8(params.title).c_str(), base::UTF16ToUTF8(params.body).c_str(), NULL);
@@ -113,7 +119,7 @@ bool NotificationManagerLinux::AddDesktopNotification(const content::ShowDesktop
     data.mNotification = notif;
     data.mRenderProcessId = render_process_id;
     data.mRenderViewId = render_view_id;
-    mNotificationIDmap[params.notification_id] = data;
+    mNotificationIDmap[notification_id] = data;
   }
   else {
     notif = i->second.mNotification;
@@ -121,18 +127,18 @@ bool NotificationManagerLinux::AddDesktopNotification(const content::ShowDesktop
       base::UTF16ToUTF8(params.body).c_str(), NULL);
 
     // means this is the notify-osd hack
-    if (i->first != params.notification_id) {
+    if (i->first != notification_id) {
       NotificationData data;
       data.mNotification = notif;
       g_object_ref(G_OBJECT(notif));
       onClose(notif);
       data.mRenderProcessId = render_process_id;
       data.mRenderViewId = render_view_id;
-      mNotificationIDmap[params.notification_id] = data;
+      mNotificationIDmap[notification_id] = data;
     }
   }
 
-  GdkPixbuf* pixbuf = gfx::GdkPixbufFromSkBitmap(bitmap);
+  GdkPixbuf* pixbuf = libgtk2ui::GdkPixbufFromSkBitmap(bitmap);
   notify_notification_set_image_from_pixbuf(notif, pixbuf);
   g_object_unref(pixbuf);
 
@@ -140,11 +146,11 @@ bool NotificationManagerLinux::AddDesktopNotification(const content::ShowDesktop
 
   GError* error = NULL;
   if (notify_notification_show (notif, &error)) {
-    DesktopNotificationPostDisplay(render_process_id, render_view_id, params.notification_id);
+    DesktopNotificationPostDisplay(render_process_id, render_view_id, notification_id);
   }
   else {
     base::string16 errorMsg = base::UTF8ToUTF16(error->message);
-    DesktopNotificationPostError(render_process_id, render_view_id, params.notification_id, errorMsg);
+    DesktopNotificationPostError(render_process_id, render_view_id, notification_id, errorMsg);
   }
   return error==NULL;
 }
@@ -158,8 +164,11 @@ bool NotificationManagerLinux::CancelDesktopNotification(int render_process_id, 
 }
 
 bool NotificationManagerLinux::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-                                                      const int render_process_id, const int render_view_id, const bool worker) {
-  return AddDesktopNotification(params, render_process_id, render_view_id, worker, NULL);
+                                                      const int render_process_id,
+                                                      const int render_view_id,
+                                                      const int notification_id,
+                                                      const bool worker) {
+  return AddDesktopNotification(params, render_process_id, render_view_id, notification_id, worker, NULL);
 }
 
 } // namespace nw

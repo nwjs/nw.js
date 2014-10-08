@@ -52,7 +52,7 @@
 #include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/browser/shell_javascript_dialog_creator.h"
-//#include "content/nw/src/browser/tab_autofill_manager_delegate.h"
+#include "content/nw/src/browser/nw_autofill_client.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/media/media_stream_devices_controller.h"
 #include "content/nw/src/nw_package.h"
@@ -207,14 +207,12 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   web_modal::WebContentsModalDialogManager::FromWebContents(web_contents)->SetDelegate(this);
 #endif
 
-#if 0 //FIXME
-  autofill::TabAutofillManagerDelegate::CreateForWebContents(web_contents);
+  autofill::NWAutofillClient::CreateForWebContents(web_contents);
   autofill::ContentAutofillDriver::CreateForWebContentsAndDelegate(
       web_contents,
-      autofill::TabAutofillManagerDelegate::FromWebContents(web_contents),
+      autofill::NWAutofillClient::FromWebContents(web_contents),
       "",
       autofill::AutofillManager::DISABLE_AUTOFILL_DOWNLOAD_MANAGER);
-#endif
 }
 
 Shell::~Shell() {

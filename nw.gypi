@@ -190,8 +190,8 @@
         'src/browser/autofill_popup_controller_impl.h',
         'src/browser/browser_view_layout.cc',
         'src/browser/browser_view_layout.h',
-#        'src/browser/tab_autofill_manager_delegate.cc',
-#        'src/browser/tab_autofill_manager_delegate.h',
+        'src/browser/nw_autofill_client.cc',
+        'src/browser/nw_autofill_client.h',
         'src/browser/capture_page_helper.h',
         'src/browser/capture_page_helper.cc',
 #        'src/browser/color_chooser_gtk.cc',
@@ -317,8 +317,8 @@
         'src/nw_notification_manager_win.cc',		
         'src/nw_notification_manager_mac.h',
         'src/nw_notification_manager_mac.mm',
-        #        'src/nw_notification_manager_linux.h',
-        #      'src/nw_notification_manager_linux.cc',
+        'src/nw_notification_manager_linux.h',
+        'src/nw_notification_manager_linux.cc',
         'src/shell_browser_context.cc',
         'src/shell_browser_context.h',
         'src/shell_browser_main.cc',
@@ -390,14 +390,18 @@
             'src/renderer/printing/print_web_view_helper_win.cc',
           ],
         }],
-        ['OS=="win"', {
+        ['OS=="win" or OS=="linux"', {
           'sources': [
-            '<(DEPTH)/chrome/browser/ui/views/constrained_window_views.cc',
-            '<(DEPTH)/chrome/browser/ui/views/web_contents_modal_dialog_manager_views.cc',
             'src/browser/autofill_popup_base_view.cc',
             'src/browser/autofill_popup_base_view.h',
             'src/browser/autofill_popup_view_views.cc',
             'src/browser/autofill_popup_view_views.h',
+          ],
+        }],
+        ['OS=="win"', {
+          'sources': [
+            '<(DEPTH)/chrome/browser/ui/views/constrained_window_views.cc',
+            '<(DEPTH)/chrome/browser/ui/views/web_contents_modal_dialog_manager_views.cc',
             'src/browser/login_view.cc',
             'src/browser/login_view.h',
           ],
