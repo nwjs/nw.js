@@ -386,7 +386,7 @@ NativeWindowCocoa::NativeWindowCocoa(
   }
   window_ = shell_window;
   [shell_window setShell:shell];
-  [[window() contentView] cr_setWantsLayer:YES];
+  [[window() contentView] setWantsLayer:YES];
   [window() setDelegate:[[NativeWindowDelegate alloc] initWithShell:shell]];
 
   // Disable fullscreen button when 'fullscreen' is specified to false.
