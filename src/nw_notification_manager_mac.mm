@@ -22,6 +22,7 @@
 #include "base/strings/sys_string_conversions.h"
 
 #include "content/public/browser/web_contents.h"
+#include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/nw_package.h"
@@ -80,14 +81,14 @@ namespace nw {
 NotificationManagerMac::NotificationManagerMac() {
 }
 
-bool NotificationManagerMac::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams &params, const int render_process_id, const int render_view_id, const bool worker) {
-  return AddDesktopNotification(params, render_process_id, render_view_id, worker, NULL);
+bool NotificationManagerMac::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams &params, const int render_process_id, const int render_view_id, const int notification_id, const bool worker) {
+  return AddDesktopNotification(params, render_process_id, render_view_id, notification_id, worker, NULL);
 }
 
 bool NotificationManagerMac::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-  const int render_process_id, const int render_view_id, const bool worker, const std::vector<SkBitmap>* bitmaps) {
+  const int render_process_id, const int render_view_id, const int notification_id, const bool worker, const std::vector<SkBitmap>* bitmaps) {
 
-  content::RenderViewHost* host = content::RenderViewHost::FromID(render_process_id, render_view_id);
+  content::RenderViewHost* host = content::RenderFrameHost::FromID(render_process_id, render_view_id)->GetRenderViewHost();
   if (host == nullptr)
     return false;
   content::Shell* shell = content::Shell::FromRenderViewHost(host);

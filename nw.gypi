@@ -192,6 +192,7 @@
         'src/browser/browser_view_layout.h',
         'src/browser/nw_autofill_client.cc',
         'src/browser/nw_autofill_client.h',
+        'src/browser/nw_autofill_client_mac.mm',
         'src/browser/capture_page_helper.h',
         'src/browser/capture_page_helper.cc',
 #        'src/browser/color_chooser_gtk.cc',

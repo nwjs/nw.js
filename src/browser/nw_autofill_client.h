@@ -97,7 +97,7 @@ class NWAutofillClient
   // .cc implementation file, since the class is defined in a Mac-only
   // implementation file. This means that the pointer cannot be wrapped in a
   // scoped_ptr.
-  AutofillKeystoneBridgeWrapper* bridge_wrapper_;
+  // AutofillKeystoneBridgeWrapper* bridge_wrapper_;
 #endif  // defined(OS_MACOSX) && !defined(OS_IOS)
 
   DISALLOW_COPY_AND_ASSIGN(NWAutofillClient);

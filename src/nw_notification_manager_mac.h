@@ -28,13 +28,17 @@ class NotificationManagerMac : public NotificationManager {
 
   // internal function for AddDesktopNotification
   virtual bool AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-  const int render_process_id, const int render_view_id, const bool worker, const std::vector<SkBitmap>* bitmaps) OVERRIDE;
+                                      const int render_process_id, const int render_view_id, 
+                                      const int notification_id,
+                                      const bool worker, const std::vector<SkBitmap>* bitmaps) OVERRIDE;
 
 public:
   explicit NotificationManagerMac();
   virtual ~NotificationManagerMac(){}
   virtual bool AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-    const int render_process_id, const int render_view_id, const bool worker) OVERRIDE;
+                                      const int render_process_id, const int render_view_id, 
+                                      const int notification_id,
+                                      const bool worker) OVERRIDE;
   virtual bool CancelDesktopNotification(int render_process_id, int render_view_id, int notification_id) OVERRIDE;
 
 };
