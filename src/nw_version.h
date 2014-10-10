@@ -22,8 +22,8 @@
 #define NW_VERSION_H
 
 #define NW_MAJOR_VERSION 0
-#define NW_MINOR_VERSION 10
-#define NW_PATCH_VERSION 6
+#define NW_MINOR_VERSION 11
+#define NW_PATCH_VERSION 0
 #define NW_VERSION_IS_RELEASE 0
 
 #ifndef NW_STRINGIFY
@@ -43,7 +43,7 @@
 
 #define NW_VERSION "v" NW_VERSION_STRING
 
-#define CHROME_VERSION "35.0.1916.157"
+#define CHROME_VERSION "38.0.2125.104"
 
 #define NW_VERSION_AT_LEAST(major, minor, patch) \
   (( (major) < NW_MAJOR_VERSION) \
