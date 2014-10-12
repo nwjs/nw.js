@@ -625,8 +625,7 @@ void Shell::WebContentsFocused(content::WebContents* web_contents) {
 content::ColorChooser*
 Shell::OpenColorChooser(content::WebContents* web_contents, SkColor color,
       const std::vector<ColorSuggestion>& suggestions) {
-  //FIXME: return nw::ShowColorChooser(web_contents, color);
-  return NULL;
+  return nw::ShowColorChooser(web_contents, color);
 }
 
 void Shell::RunFileChooser(WebContents* web_contents,
