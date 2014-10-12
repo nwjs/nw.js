@@ -417,7 +417,7 @@ void NativeWindowAura::SetShowInTaskbar(bool show) {
   if (show == false && base::win::GetVersion() < base::win::VERSION_VISTA) {
     // Change the owner of native window. Only needed on Windows XP.
     ::SetWindowLong(views::HWNDForWidget(window_),
-                    GWL_HWNDPARENT,
+                    GWLP_HWNDPARENT,
                     (LONG)ui::GetHiddenWindow());
   }
 

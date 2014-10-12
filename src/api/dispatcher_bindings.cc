@@ -117,7 +117,7 @@ DispatcherBindings::DispatcherBindings()
                         IDR_NW_API_DISPATCHER_BINDINGS_JS).data(),
                     0,     // num dependencies.
                     NULL,  // dependencies array.
-                    GetStringResource(
+                    (int)GetStringResource(
                         IDR_NW_API_DISPATCHER_BINDINGS_JS).size()) {
 #if defined(OS_MACOSX)
   InitMsgIDMap();

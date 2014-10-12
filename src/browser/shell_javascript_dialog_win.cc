@@ -35,7 +35,7 @@ INT_PTR CALLBACK ShellJavaScriptDialog::DialogProc(HWND dialog,
                                                    LPARAM lparam) {
   switch (message) {
     case WM_INITDIALOG: {
-      SetWindowLongPtr(dialog, DWL_USER, static_cast<LONG_PTR>(lparam));
+      SetWindowLongPtr(dialog, DWLP_USER, static_cast<LONG_PTR>(lparam));
       ShellJavaScriptDialog* owner =
           reinterpret_cast<ShellJavaScriptDialog*>(lparam);
       owner->dialog_win_ = dialog;
@@ -47,7 +47,7 @@ INT_PTR CALLBACK ShellJavaScriptDialog::DialogProc(HWND dialog,
     }
     case WM_DESTROY: {
       ShellJavaScriptDialog* owner = reinterpret_cast<ShellJavaScriptDialog*>(
-          GetWindowLongPtr(dialog, DWL_USER));
+          GetWindowLongPtr(dialog, DWLP_USER));
       if (owner->dialog_win_) {
         owner->dialog_win_ = 0;
         owner->callback_.Run(false, base::string16());
@@ -57,7 +57,7 @@ INT_PTR CALLBACK ShellJavaScriptDialog::DialogProc(HWND dialog,
     }
     case WM_COMMAND: {
       ShellJavaScriptDialog* owner = reinterpret_cast<ShellJavaScriptDialog*>(
-          GetWindowLongPtr(dialog, DWL_USER));
+          GetWindowLongPtr(dialog, DWLP_USER));
       base::string16 user_input;
       bool finish = false;
       bool result;
