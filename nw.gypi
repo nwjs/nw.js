@@ -741,7 +741,7 @@
             {
               'action_name': 'strip_nw_binaries',
               'inputs': [
-                '<(PRODUCT_DIR)/nwsnapshot',
+                #'<(PRODUCT_DIR)/nwsnapshot',
                 '<(PRODUCT_DIR)/chromedriver',
               ],
               'outputs': [
