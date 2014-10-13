@@ -15,6 +15,7 @@ steps = ['nw', 'chromedriver', 'symbol', 'others']
 # Parse command line args
 parser = argparse.ArgumentParser(description='Package nw binaries.')
 parser.add_argument('-p','--path', help='Where to find the binaries, like out/Release', required=False)
+parser.add_argument('-a','--arch', help='target arch', required=False)
 group = parser.add_mutually_exclusive_group()
 group.add_argument('-s','--step', choices=steps, help='Execute specified step.', required=False)
 group.add_argument('-n','--skip', choices=steps, help='Skip specified step.', required=False)
@@ -79,6 +80,9 @@ if platform_name == 'osx':
         arch = 'ia32'
     else: # should be 'x86_64'
         arch = 'x64'
+
+if args.arch != None:
+    arch = args.arch
 
 nw_ver = getnwversion.nw_version
 if getnwisrelease.release == 0:
