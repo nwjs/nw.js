@@ -23,7 +23,6 @@
 #include "base/logging.h"
 #include "base/strings/string16.h"
 #include "base/strings/utf_string_conversions.h"
-#include "components/web_modal/popup_manager.h"
 #include "components/web_modal/web_contents_modal_dialog_host.h"
 #include "components/web_modal/web_contents_modal_dialog_manager.h"
 #include "components/web_modal/web_contents_modal_dialog_manager_delegate.h"
@@ -82,12 +81,10 @@ void ShellLoginDialog::PlatformCreateDialog(const base::string16& message) {
   WebContentsModalDialogManagerDelegate* modal_delegate =
     web_contents_modal_dialog_manager->delegate();
   CHECK(modal_delegate);
-  dialog_ = CreateWindowAsFramelessChild(
-        this, modal_delegate->GetWebContentsModalDialogHost()->GetHostView());
-  web_modal::PopupManager* popup_manager =
-    web_modal::PopupManager::FromWebContents(requesting_contents);
-  popup_manager->ShowModalDialog(dialog_->GetNativeView(), requesting_contents);
-
+  dialog_ = views::DialogDelegate::CreateDialogWidget(
+                                                      this, NULL, modal_delegate->GetWebContentsModalDialogHost()->GetHostView());
+  web_modal::WebContentsModalDialogManager::FromWebContents(requesting_contents)->
+      ShowModalDialog(dialog_->GetNativeWindow());
 }
 
 #if 0
