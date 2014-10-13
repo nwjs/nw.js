@@ -775,7 +775,7 @@
           'outputs':[
             '<(PRODUCT_DIR)/new_package.re',
           ],
-          'action': ['python', '<(package_script)'],
+          'action': ['python', '<(package_script)', '-p', '<(PRODUCT_DIR)'],
         },
       ],
       'dependencies': [
