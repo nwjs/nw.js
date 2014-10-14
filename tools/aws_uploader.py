@@ -38,7 +38,9 @@ date         = datetime.date.today().strftime('%m-%d-%Y')
 # If the binaries location is not given, calculate it from script related dir.
 if dist_dir == None:
     dist_dir = os.path.join(os.path.dirname(__file__),
-            os.pardir, os.pardir, os.pardir, 'out', 'Release', 'dist')
+            os.pardir, os.pardir, os.pardir, 'out', 'Release')
+
+dist_dir = os.path.join(dist_dir, 'dist')
 
 if not os.path.isabs(dist_dir):
     dist_dir = os.path.join(os.getcwd(), dist_dir)
