@@ -48,7 +48,7 @@ exports.Window = {
     // Conver relative url to full url.
     var protocol = url.match(/^[a-z]+:\/\//i);
     if (protocol == null || protocol.length == 0) {
-      var href = window.location.href;
+      var href = window.location.href.split(/\?|#/)[0];
       url = href.substring(0, href.lastIndexOf('/') + 1) + url;
     }
 
