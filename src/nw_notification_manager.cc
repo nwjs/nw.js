@@ -18,7 +18,9 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "ui/gfx/image/image.h"
-#include "content/public/browser/render_view_host.h"
+#include "content/public/browser/render_frame_host.h"
+#include "content/common/desktop_notification_messages.h"
+
 
 #include "content/nw/src/nw_notification_manager.h"
 #if defined(OS_MACOSX)
@@ -57,13 +59,13 @@ NotificationManager* NotificationManager::getSingleton() {
 void NotificationManager::ImageDownloadCallback(int id, int http_status, const GURL& image_url, const std::vector<SkBitmap>& bitmaps, const std::vector<gfx::Size>& size) {
   NotificationManager *singleton = getSingleton();
   DesktopNotificationParams params = singleton->desktop_notification_params_[id];
-  singleton->AddDesktopNotification(params.params_, params.render_process_id_, params.render_view_id_, id, params.worker_, &bitmaps);
+  singleton->AddDesktopNotification(params.params_, params.render_process_id_, params.render_frame_id_, id, params.worker_, &bitmaps);
   singleton->desktop_notification_params_.erase(id);
 }
 
 bool NotificationManager::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
                                                  const int render_process_id,
-                                                 const int render_view_id,
+                                                 const int render_frame_id,
                                                  const int notification_id,
                                                  const bool worker,
                                                  const std::vector<SkBitmap>* bitmaps) {
@@ -71,39 +73,39 @@ bool NotificationManager::AddDesktopNotification(const content::ShowDesktopNotif
   return false;
 }
 
-bool NotificationManager::DesktopNotificationPostClick(int render_process_id, int render_view_id, int notification_id) {
-  content::RenderViewHost* host = content::RenderViewHost::FromID(render_process_id, render_view_id);
-  if (host == NULL)
+bool NotificationManager::DesktopNotificationPostClick(int render_process_id, int render_frame_id, int notification_id) {
+  content::RenderFrameHost* rfh = content::RenderFrameHost::FromID(render_process_id, render_frame_id);
+  if (!rfh)
     return false;
-
-  // host->DesktopNotificationPostClick(notification_id);
+  
+  rfh->Send(new DesktopNotificationMsg_PostClick(rfh->GetRoutingID(), notification_id));
   return true;
 }
 
-bool NotificationManager::DesktopNotificationPostClose(int render_process_id, int render_view_id, int notification_id, bool by_user) {
-  content::RenderViewHost* host = content::RenderViewHost::FromID(render_process_id, render_view_id);
-  if (host == NULL)
+bool NotificationManager::DesktopNotificationPostClose(int render_process_id, int render_frame_id, int notification_id, bool by_user) {
+  content::RenderFrameHost* rfh = content::RenderFrameHost::FromID(render_process_id, render_frame_id);
+  if (!rfh)
     return false;
 
-  // host->DesktopNotificationPostClose(notification_id, by_user);
+  rfh->Send(new DesktopNotificationMsg_PostClose(rfh->GetRoutingID(), notification_id, by_user));
   return true;
 }
 
-bool NotificationManager::DesktopNotificationPostDisplay(int render_process_id, int render_view_id, int notification_id) {
-  content::RenderViewHost* host = content::RenderViewHost::FromID(render_process_id, render_view_id);
-  if (host == NULL)
+bool NotificationManager::DesktopNotificationPostDisplay(int render_process_id, int render_frame_id, int notification_id) {
+  content::RenderFrameHost* rfh = content::RenderFrameHost::FromID(render_process_id, render_frame_id);
+  if (!rfh)
     return false;
 
-  // host->DesktopNotificationPostDisplay(notification_id);
+  rfh->Send(new DesktopNotificationMsg_PostDisplay(rfh->GetRoutingID(), notification_id));
   return true;
 }
 
-bool NotificationManager::DesktopNotificationPostError(int render_process_id, int render_view_id, int notification_id, const base::string16& message) {
-  content::RenderViewHost* host = content::RenderViewHost::FromID(render_process_id, render_view_id);
-  if (host == NULL)
+bool NotificationManager::DesktopNotificationPostError(int render_process_id, int render_frame_id, int notification_id, const base::string16& message) {
+  content::RenderFrameHost* rfh = content::RenderFrameHost::FromID(render_process_id, render_frame_id);
+  if (!rfh)
     return false;
 
-  // host->DesktopNotificationPostError(notification_id, message);
+  rfh->Send(new DesktopNotificationMsg_PostError(rfh->GetRoutingID(), notification_id));
   return true;
 }
 } // namespace nw
