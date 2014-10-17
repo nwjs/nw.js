@@ -223,7 +223,12 @@ void Window::Call(const std::string& method,
     shell_->window()->SetKiosk(!shell_->window()->IsKiosk());
   } else if (method == "CloseDevTools") {
     shell_->CloseDevTools();
-  }else if (method == "ResizeTo") {
+  } else if (method == "SetPosition") {
+    std::string position;
+    if (arguments.GetString(0, &position)){
+      shell_->window()->SetPosition(position);
+    }
+  } else if (method == "ResizeTo") {
     int width, height;
     if (arguments.GetInteger(0, &width) &&
         arguments.GetInteger(1, &height))
