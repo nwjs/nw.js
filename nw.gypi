@@ -375,14 +375,6 @@
             '<(DEPTH)/base/allocator/allocator.gyp:allocator',
           ],
         }],
-        ['OS=="win" and target_arch=="ia32"', {
-          'sources': [
-            # TODO(scottmg): This is a workaround for
-            # http://crbug.com/348525 that affects VS2013 before Update 2.
-            # This should be removed once Update 2 is released.
-            '<(DEPTH)/build/win/ftol3.obj',
-          ],
-        }],
         ['win_pdf_metafile_for_printing==1', {
           'sources': [
             'src/renderer/printing/print_web_view_helper_pdf_win.cc',
