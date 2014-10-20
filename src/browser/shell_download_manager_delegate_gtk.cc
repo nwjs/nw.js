@@ -50,10 +50,8 @@ void ShellDownloadManagerDelegate::ChooseDownloadPath(
 
   FilePath result;
   GtkWidget *dialog;
-  gfx::NativeWindow parent_window;
   std::string base_name = FilePath(suggested_path).BaseName().value();
 
-  parent_window = item->GetWebContents()->GetTopLevelNativeWindow();
   dialog = gtk_file_chooser_dialog_new("Save File",
                                        NULL,
                                        GTK_FILE_CHOOSER_ACTION_SAVE,
