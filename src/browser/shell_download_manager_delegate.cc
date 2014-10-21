@@ -102,6 +102,12 @@ bool ShellDownloadManagerDelegate::DetermineDownloadTarget(
   return true;
 }
 
+bool ShellDownloadManagerDelegate::ShouldOpenDownload(
+      DownloadItem* item,
+      const DownloadOpenDelayedCallback& callback) {
+  return true;
+}
+
 void ShellDownloadManagerDelegate::GenerateFilename(
     int32 download_id,
     const DownloadTargetCallback& callback,
@@ -140,6 +146,12 @@ void ShellDownloadManagerDelegate::SetDownloadBehaviorForTesting(
     const FilePath& default_download_path) {
   default_download_path_ = default_download_path;
   suppress_prompting_ = true;
+}
+
+void ShellDownloadManagerDelegate::GetNextId(
+    const DownloadIdCallback& callback) {
+  static uint32 next_id = DownloadItem::kInvalidId + 1;
+  callback.Run(next_id++);
 }
 
 }  // namespace content
