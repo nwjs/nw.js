@@ -169,7 +169,7 @@ class Shell : public WebContentsDelegate,
                                           bool enter_fullscreen) OVERRIDE;
   virtual bool IsFullscreenForTabOrPending(
       const WebContents* web_contents) const OVERRIDE;
-#if defined(OS_WIN)
+#if defined(OS_WIN) || defined(OS_LINUX)
   virtual void WebContentsFocused(WebContents* contents) OVERRIDE;
 #endif
   virtual content::ColorChooser* OpenColorChooser(

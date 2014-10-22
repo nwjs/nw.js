@@ -70,7 +70,7 @@
 #include "components/web_modal/web_contents_modal_dialog_manager.h"
 
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) || defined(OS_LINUX)
 #include "content/nw/src/browser/native_window_aura.h"
 #include "ui/views/controls/webview/webview.h"
 using nw::NativeWindowAura;
@@ -614,7 +614,7 @@ void Shell::WebContentsCreated(WebContents* source_contents,
 #endif
 }
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) || defined(OS_LINUX)
 void Shell::WebContentsFocused(content::WebContents* web_contents) {
   NativeWindowAura* win = static_cast<NativeWindowAura*>(window_.get());
   if (win) // on aura this function is called in the middle of window creation
