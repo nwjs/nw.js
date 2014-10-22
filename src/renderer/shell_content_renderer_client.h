@@ -56,6 +56,8 @@ class ShellContentRendererClient : public ContentRendererClient {
                                           const blink::WebURLRequest& request,
                                           blink::WebNavigationPolicy* policy) OVERRIDE;
 
+  virtual void windowOpenBegin(const blink::WebURL& url) OVERRIDE;
+  virtual void windowOpenEnd() OVERRIDE;
  private:
   scoped_ptr<ShellRenderProcessObserver> shell_observer_;
   scoped_ptr<nwapi::WindowBindings> window_bindings_;

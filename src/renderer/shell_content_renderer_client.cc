@@ -502,9 +502,15 @@ void ShellContentRendererClient::willHandleNavigationPolicy(
     const blink::WebURLRequest& request,
     blink::WebNavigationPolicy* policy) {
 
-  in_nav_cb_ = true;
-  in_nav_url_ = request.url().string().utf8();
   nwapi::Dispatcher::willHandleNavigationPolicy(rv, frame, request, policy);
+}
+
+void ShellContentRendererClient::windowOpenBegin(const blink::WebURL& url) {
+  in_nav_cb_ = true;
+  in_nav_url_ =url.string().utf8();
+}
+
+void ShellContentRendererClient::windowOpenEnd() {
   in_nav_cb_ = false;
 }
 
