@@ -283,13 +283,18 @@ NativeWindowAura::NativeWindowAura(const base::WeakPtr<content::Shell>& shell,
       initial_focus_(true),
       last_width_(-1), last_height_(-1) {
   manifest->GetBoolean("focus", &initial_focus_);
+  manifest->GetBoolean("fullscreen", &is_fullscreen_);
 
   window_ = new views::Widget;
   views::Widget::InitParams params(views::Widget::InitParams::TYPE_WINDOW);
   params.delegate = this;
   params.remove_standard_frame = !has_frame();
   params.use_system_default_icon = true;
+  if (is_fullscreen_)
+    params.show_state = ui::SHOW_STATE_FULLSCREEN;
+
   window_->Init(params);
+
   if (!has_frame())
     InstallEasyResizeTargeterOnContainer();
 
@@ -304,6 +309,7 @@ NativeWindowAura::NativeWindowAura(const base::WeakPtr<content::Shell>& shell,
   last_width_  = width;
   last_height_ = height;
   window_->AddObserver(this);
+
   window_->SetSize(window_bounds.size());
   window_->CenterWindow(window_bounds.size());
 
@@ -341,6 +347,8 @@ void NativeWindowAura::Show() {
   else if (!initial_focus_) {
     window_->set_focus_on_creation(false);
     window_->native_widget_private()->ShowWithWindowState(ui::SHOW_STATE_INACTIVE);
+  } else if (is_fullscreen_) {
+    window_->native_widget_private()->ShowWithWindowState(ui::SHOW_STATE_FULLSCREEN);
   } else
     window_->native_widget_private()->Show();
 }
