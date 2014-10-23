@@ -202,7 +202,7 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   // NativeWindow requires the window_ to be non-NULL.
   window_->InitFromManifest(manifest);
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) || defined(OS_LINUX)
   web_modal::WebContentsModalDialogManager::CreateForWebContents(web_contents);
   web_modal::WebContentsModalDialogManager::FromWebContents(web_contents)->SetDelegate(this);
 #endif
@@ -599,7 +599,7 @@ void Shell::WebContentsCreated(WebContents* source_contents,
   printing::PrintViewManager::CreateForWebContents(new_contents);
 #endif
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) || defined(OS_LINUX)
   web_modal::WebContentsModalDialogManager::CreateForWebContents(new_contents);
   web_modal::WebContentsModalDialogManager::FromWebContents(new_contents)->SetDelegate(this);
 #endif
@@ -712,7 +712,7 @@ void Shell::RenderViewCreated(RenderViewHost* render_view_host) {
   new nwapi::DispatcherHost(render_view_host);
 }
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) || defined(OS_LINUX)
 bool Shell::IsWebContentsVisible(content::WebContents* web_contents) {
   //FIXME
   return true;
@@ -726,6 +726,10 @@ void Shell::ToggleFullscreenModeForTab(WebContents* web_contents,
 
 bool Shell::IsFullscreenForTabOrPending(const WebContents* web_contents) const {
   return window()->IsFullscreen();
+}
+
+web_modal::WebContentsModalDialogHost* Shell::GetWebContentsModalDialogHost() {
+  return (web_modal::WebContentsModalDialogHost*)window();
 }
 
 }  // namespace content

@@ -112,13 +112,4 @@ void ShellLoginDialog::ReleaseSoon() {
   BrowserThread::ReleaseSoon(BrowserThread::IO, FROM_HERE, this);
 }
 
-#if defined(OS_LINUX) //FIXME
-// Bogus implementations for linking. They are never called because
-// ResourceDispatcherHostDelegate::CreateLoginDelegate returns NULL.
-// TODO: implement ShellLoginDialog for other platforms, drop this #if
-void ShellLoginDialog::PlatformCreateDialog(const base::string16& message) {}
-void ShellLoginDialog::PlatformCleanUp() {}
-void ShellLoginDialog::PlatformRequestCancelled() {}
-#endif
-
 }  // namespace content

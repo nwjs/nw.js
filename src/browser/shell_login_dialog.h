@@ -13,7 +13,7 @@
 #include "ui/base/gtk/gtk_signal.h"
 #endif
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) || defined(OS_LINUX)
 #include "ui/views/window/dialog_delegate.h"
 #include "login_view.h"
 #endif
@@ -35,7 +35,7 @@ namespace content {
 
 // This class provides a dialog box to ask the user for credentials. Useful in
 // ResourceDispatcherHostDelegate::CreateLoginDelegate.
-#if defined(OS_WIN)
+#if defined(OS_WIN) || defined(OS_LINUX)
 class ShellLoginDialog : public ResourceDispatcherHostLoginDelegate, public views::DialogDelegate {
 #else
 class ShellLoginDialog : public ResourceDispatcherHostLoginDelegate {
@@ -56,7 +56,7 @@ class ShellLoginDialog : public ResourceDispatcherHostLoginDelegate {
                         const base::string16& password);
   void UserCancelledAuth();
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) || defined(OS_LINUX)
   // views::DialogDelegate methods:
   virtual base::string16 GetDialogButtonLabel(ui::DialogButton button) const OVERRIDE;
   virtual base::string16 GetWindowTitle() const OVERRIDE;
@@ -119,7 +119,7 @@ class ShellLoginDialog : public ResourceDispatcherHostLoginDelegate {
   GtkWidget* root_;
   CHROMEGTK_CALLBACK_1(ShellLoginDialog, void, OnResponse, int);
   CHROMEGTK_CALLBACK_0(ShellLoginDialog, void, OnDestroy);
-#elif defined(OS_WIN)
+#elif defined(OS_WIN) || defined(OS_LINUX)
   LoginView* login_view_;
 
   views::Widget* dialog_;

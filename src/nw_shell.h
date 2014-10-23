@@ -30,7 +30,7 @@
 #include "content/public/browser/notification_observer.h"
 #include "content/public/browser/web_contents_delegate.h"
 #include "content/public/browser/web_contents_observer.h"
-#if defined(OS_WIN)
+#if defined(OS_WIN) || defined(OS_LINUX)
 #include "components/web_modal/web_contents_modal_dialog_manager_delegate.h"
 #endif
 #include "ipc/ipc_channel.h"
@@ -64,7 +64,7 @@ using base::FilePath;
 // This represents one window of the Content Shell, i.e. all the UI including
 // buttons and url bar, as well as the web content area.
 class Shell : public WebContentsDelegate,
-#if defined(OS_WIN)
+#if defined(OS_WIN) || defined(OS_LINUX)
               public web_modal::WebContentsModalDialogManagerDelegate,
 #endif
               public content::WebContentsObserver,
@@ -140,10 +140,10 @@ class Shell : public WebContentsDelegate,
   int id() const { return id_; }
 
   virtual void RenderViewCreated(RenderViewHost* render_view_host) OVERRIDE;
-#if defined(OS_WIN)
+#if defined(OS_WIN) || defined(OS_LINUX)
   virtual void SetWebContentsBlocked(content::WebContents* web_contents, bool) OVERRIDE {}
-  virtual bool IsWebContentsVisible(content::WebContents* web_contents);
-  virtual web_modal::WebContentsModalDialogHost* GetWebContentsModalDialogHost() OVERRIDE{ return (web_modal::WebContentsModalDialogHost*)window(); }
+  virtual bool IsWebContentsVisible(content::WebContents* web_contents) OVERRIDE;
+  virtual web_modal::WebContentsModalDialogHost* GetWebContentsModalDialogHost() OVERRIDE;
 #endif
 
  protected:

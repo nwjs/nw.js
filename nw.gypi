@@ -253,7 +253,7 @@
         'src/browser/shell_javascript_dialog.h',
  #       'src/browser/shell_login_dialog_gtk.cc',
         'src/browser/shell_login_dialog_mac.mm',
-        'src/browser/shell_login_dialog_win.cc',
+        'src/browser/shell_login_dialog_views.cc',
         'src/browser/shell_login_dialog.cc',
         'src/browser/shell_login_dialog.h',
         'src/browser/shell_resource_dispatcher_host_delegate.cc',
@@ -361,6 +361,12 @@
           ],
         }],
         ['use_aura==1', {
+          'sources': [
+            '<(DEPTH)/chrome/browser/ui/views/constrained_window_views.cc',
+            '<(DEPTH)/chrome/browser/ui/views/web_contents_modal_dialog_manager_views.cc',
+            'src/browser/login_view.cc',
+            'src/browser/login_view.h',
+          ],
           'dependencies': [
             '<(DEPTH)/components/components.gyp:web_modal',
             '<(DEPTH)/ui/resources/ui_resources.gyp:ui_resources',
@@ -393,12 +399,6 @@
           ],
         }],
         ['OS=="win"', {
-          'sources': [
-            '<(DEPTH)/chrome/browser/ui/views/constrained_window_views.cc',
-            '<(DEPTH)/chrome/browser/ui/views/web_contents_modal_dialog_manager_views.cc',
-            'src/browser/login_view.cc',
-            'src/browser/login_view.h',
-          ],
           'dependencies': [
             '<(DEPTH)/breakpad/breakpad.gyp:breakpad_handler',
             '<(DEPTH)/breakpad/breakpad.gyp:breakpad_sender',

@@ -39,6 +39,7 @@
 using web_modal::WebContentsModalDialogManager;
 using web_modal::WebContentsModalDialogManagerDelegate;
 
+#if 0
 namespace {
 
 // The captive portal dialog is system-modal, but uses the web-content-modal
@@ -59,6 +60,7 @@ views::Widget* CreateWindowAsFramelessChild(views::WidgetDelegate* delegate,
 }
 
 }  // namespace
+#endif
 
 namespace content {
 
@@ -142,7 +144,7 @@ void ShellLoginDialog::DeleteDelegate() {
 }
 
 ui::ModalType ShellLoginDialog::GetModalType() const {
-  return views::WidgetDelegate::GetModalType();
+  return ui::MODAL_TYPE_CHILD;
 }
 
 bool ShellLoginDialog::Cancel() {
