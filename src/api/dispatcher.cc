@@ -216,6 +216,7 @@ void Dispatcher::willHandleNavigationPolicy(
     return;
 
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope handleScope(isolate);
 
   v8::Handle<v8::Value> id_val;
   if (web_view->mainFrame() && !web_view->mainFrame()->mainWorldScriptContext().IsEmpty())
