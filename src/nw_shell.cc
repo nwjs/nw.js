@@ -728,8 +728,10 @@ bool Shell::IsFullscreenForTabOrPending(const WebContents* web_contents) const {
   return window()->IsFullscreen();
 }
 
+#if defined(OS_WIN) || defined(OS_LINUX)
 web_modal::WebContentsModalDialogHost* Shell::GetWebContentsModalDialogHost() {
   return (web_modal::WebContentsModalDialogHost*)window();
 }
+#endif
 
 }  // namespace content
