@@ -24,6 +24,7 @@
 #include "base/command_line.h"
 #include "base/files/file_path.h"
 #include "base/file_util.h"
+#include "base/path_service.h"
 #include "base/strings/string_util.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/threading/thread_restrictions.h"
@@ -91,6 +92,8 @@ breakpad::CrashHandlerHostLinux* CreateCrashHandlerHost(
   base::FilePath dumps_path =
       CommandLine::ForCurrentProcess()->GetSwitchValuePath(
           switches::kCrashDumpsDir);
+  if (dumps_path.value().empty())
+    PathService::Get(base::DIR_TEMP, &dumps_path);
   {
     ANNOTATE_SCOPED_MEMORY_LEAK;
     breakpad::CrashHandlerHostLinux* crash_handler =
