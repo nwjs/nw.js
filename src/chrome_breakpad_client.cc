@@ -21,6 +21,8 @@
 #include "chrome/common/crash_keys.h"
 #include "chrome/common/env_vars.h"
 
+#include "id/commit.h"
+
 #if defined(OS_WIN)
 #include <windows.h>
 
@@ -266,19 +268,10 @@ void ChromeBreakpadClient::GetProductNameAndVersion(std::string* product_name,
                                                     std::string* version) {
   DCHECK(product_name);
   DCHECK(version);
-#if defined(OS_ANDROID)
-  *product_name = "Chrome_Android";
-#elif defined(OS_CHROMEOS)
-  *product_name = "Chrome_ChromeOS";
-#else  // OS_LINUX
-#if !defined(ADDRESS_SANITIZER)
-  *product_name = "Chrome_Linux";
-#else
-  *product_name = "Chrome_Linux_ASan";
-#endif
-#endif
 
-  *version = NW_VERSION_STRING;
+  *product_name = "node-webkit";
+
+  *version = NW_VERSION_STRING " " NW_COMMIT_HASH;
 }
 
 base::FilePath ChromeBreakpadClient::GetReporterLogFilename() {

@@ -65,6 +65,8 @@
 //#include "third_party/WebKit/Source/WebKit/chromium/public/platform/WebString.h"
 #include "content/common/dom_storage/dom_storage_map.h"
 
+#include "id/commit.h"
+
 using content::RenderView;
 using content::RenderViewImpl;
 using autofill::AutofillAgent;
@@ -397,6 +399,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
 
         // Save node-webkit version
         "process.versions['node-webkit'] = '" NW_VERSION_STRING "';"
+        "process.versions['nw-commit-id'] = '" NW_COMMIT_HASH "';"
         "process.versions['chromium'] = '" CHROME_VERSION "';"
                                                                                  ));
       script->Run();

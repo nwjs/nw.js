@@ -6,6 +6,12 @@
   'variables': {
     'nw_product_name': 'node-webkit',
     'mac_strip_release': 1,
+    'nw_gen_path': '<(SHARED_INTERMEDIATE_DIR)/nw',
+    'nw_id_script_base': 'commit_id.py',
+    'nw_id_script': '<(nw_gen_path)/<(nw_id_script_base)',
+    'nw_id_header_base': 'commit.h',
+    'nw_id_header': '<(nw_gen_path)/id/<(nw_id_header_base)',
+    'nw_use_commit_id%': '<!(python <(DEPTH)/content/nw/tools/<(nw_id_script_base) check ..)',
   },
   'target_defaults': {
     'configurations': {
@@ -60,6 +66,7 @@
         '<(DEPTH)/third_party/zlib/zlib.gyp:minizip',
         '<(DEPTH)/third_party/WebKit/public/blink.gyp:blink',
         'nw_resources',
+        'commit_id',
       ],
       'include_dirs': [
         '<(DEPTH)',
@@ -933,7 +940,52 @@
           ],
         }],  # OS=="mac"
       ],
+    }, # target nw
+    {
+      'target_name': 'copy_scripts',
+      'type': 'none',
+      'copies':
+      [
+          {
+              'destination': '<(nw_gen_path)',
+              'files': [ '<(DEPTH)/content/nw/tools/<(nw_id_script_base)' ],
+          },
+      ],
     },
+    {
+        'target_name': 'commit_id',
+        'type': 'none',
+        'dependencies': [ 'copy_scripts', ],
+        'actions':
+        [
+            {
+                'action_name': 'Generate NW Commit ID Header',
+                'message': 'Generating NW Commit ID',
+                # reference the git index as an input, so we rebuild on changes to the index
+                'inputs': [ 
+                      '<(nw_id_script)', 
+                      '<(DEPTH)/content/nw/.git/index',
+                      '<(DEPTH)/.git/index',
+                      '<(DEPTH)/v8/.git/index',
+                      '<(DEPTH)/third_party/node/.git/index',
+                      '<(DEPTH)/third_party/WebKit/.git/index',
+                      '<(DEPTH)/breakpad/src/.git/index' ],
+                'outputs': [ '<(nw_id_header)' ],
+                'msvs_cygwin_shell': 0,
+                'action':
+                [
+                    'python', '<(nw_id_script)', 'gen', '<(DEPTH)', '<(nw_id_header)'
+                ],
+            },
+        ],
+        'direct_dependent_settings':
+        {
+            'include_dirs':
+            [
+                '<(nw_gen_path)',
+            ],
+        },
+    }
   ],
   'conditions': [
     ['OS=="mac"', {
