@@ -734,4 +734,11 @@ web_modal::WebContentsModalDialogHost* Shell::GetWebContentsModalDialogHost() {
 }
 #endif
 
+void Shell::Cleanup() {
+  std::vector<Shell*> list = windows();
+  for (size_t i = 0; i < list.size(); ++i) {
+    delete list[i];
+  }
+}
+
 }  // namespace content
