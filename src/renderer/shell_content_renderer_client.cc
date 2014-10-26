@@ -280,7 +280,6 @@ void ShellContentRendererClient::SetupNodeUtil(
 #else
         "process.mainModule.filename = decodeURIComponent(window.location.pathname);"
 #endif
-        "console.log('process.mainModule.filename: ' + process.mainModule.filename);"
         "if (window.location.href.indexOf('app://') === 0) {process.mainModule.filename = root + '/' + process.mainModule.filename}"
         "process.mainModule.paths = global.require('module')._nodeModulePaths(process.cwd());"
         "process.mainModule.loaded = true;"
