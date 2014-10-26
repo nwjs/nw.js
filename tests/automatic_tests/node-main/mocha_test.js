@@ -5,29 +5,26 @@ var assert = require('assert');
 describe('node-main', function() {
   describe('create http server in node-main', function() {
     it('nw should not close by itself after show devtool',
-      function(done) {
+	  function(done) {
         this.timeout(0);
         var result = false;
-
-        var crontab = undefined;
 
         var child = app_test.createChildProcess({
           execPath: process.execPath,
           appPath: path.join(global.tests_dir,
-            'show_devtool_after_http_server_created_in_node_main'),
+              'show_devtool_after_http_server_created_in_node_main'),
           end: function(data, app) {
-            clearTimeout(crontab);
             app.kill();
             if (data.success) {
               done();
             } else {
               done('erro');
-            }
+            }     
             result = true;
           }
         });
 
-        crontab = setTimeout(function() {
+        setTimeout(function(){
           if (!result) {
             done('nw close by itself')
           }
@@ -38,7 +35,7 @@ describe('node-main', function() {
   });
 
   describe('call require() in app', function() {
-    it('nw should can require modules', function(done) {
+    it('nw should can require modules', function(done){
       this.timeout(0);
 
       var child = app_test.createChildProcess({
@@ -50,7 +47,7 @@ describe('node-main', function() {
             done();
           } else {
             done(data.error);
-          }
+          }  
         }
       });
     })

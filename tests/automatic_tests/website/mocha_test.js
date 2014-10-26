@@ -6,32 +6,31 @@ describe('website', function() {
 
     it('html5test.com should score high (long-to-run)', function(done) {
       this.timeout(0);
-      var win = gui.Window.open('http://html5test.com', { show: true });
+      var win = gui.Window.open('http://html5test.com', { show: false });
       win.on('loaded', function() {
-        //do not read data immediately, it is a RESTful site.
-        //wait 4 seconds
-        setTimeout(function(){
-          var results = win.window.document.querySelectorAll('div.pointsPanel strong');
-          if (results.length === 0){
-            done('Can not connect to the web');
-            return;
-          }
-
-          var score = parseInt(results[0].innerHTML);
+        var results = win.window.document.getElementById('results');
+        if (results == null){
+          done('Can not connect to the web');
+          win.close();
+          return;
+        }
+		    try {
+          var score = results.childNodes[0].childNodes[1].innerHTML;;
           if (score >= 445) {
             done();
           } else {
             done('have a low score');
           }
           win.close();
-        },4000);
+        } catch (e) {
+        }
       });
     });
     
     
     it('should support WebGL at get.webgl.org', function(done) {
       this.timeout(0);
-      var win = gui.Window.open('http://get.webgl.org', { show: true });
+      var win = gui.Window.open('http://get.webgl.org', { show: false });
       win.on('loaded', function() {
         var results = win.window.document.getElementById('webgl-yes');
         if (results.classList.contains('webgl-hidden')) {
