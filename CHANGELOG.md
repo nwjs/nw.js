@@ -1,7 +1,15 @@
+0.11.0-rc1 / 10-27-2014
+=======================
+- Chromium updated to 38.0.2125.104
+- Fix memory leak on navigation
+- Show commit id in 'nw:version' page
+- Fix: fullscreen in manifest (Linux)
+- Fix: #430: handle event when quit from OSX dock
+
 0.10.5 / 09-16-2014
 ===================
 - Fix: support more Chromium command line args (#1743, Thanks to Joachim Bauch)
-- Fix #2171: crash when opening window 
+- Fix #2171: crash when opening window
 - Fix #2326: some websites crashes NW in Windows (fixed with the same file as updating to VS2013 Update 2)
 - Fix: win: crash on invalid parameter error (thanks to Mikael Roos)
 - Fix #1991 in a better way: [WIN] stalling for seconds under threaded composition on some hardware (#1991)
