@@ -83,7 +83,10 @@ def aws_upload(upload_path, file_list):
         print 'Uploading "' + f + '" ...'
         sys.stdout.flush()
         # use '/' for s3
-        key = bucket.new_key(upload_path + '/' + f)
+        path_prefix = ''
+        if builder_name.startswith("win64") and (f == 'nw.lib' or f == 'nw.exp') :
+          path_prefix = 'x64'
+        key = bucket.new_key(upload_path + '/' + path_prefix + '/' + f)
         key.set_contents_from_filename(filename=os.path.join(dist_dir, f), cb=print_progress, num_cb=50, replace=True)
 
 for retry in range(3):
