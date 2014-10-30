@@ -27,6 +27,7 @@
 #include "content/nw/src/nw_notification_manager_mac.h"
 #elif defined(OS_WIN)
 #include "content/nw/src/nw_notification_manager_win.h"
+#include "content/nw/src/nw_notification_manager_toast_win.h"
 #elif defined(OS_LINUX)
 #include "content/nw/src/nw_notification_manager_linux.h"
 #endif
@@ -47,7 +48,10 @@ NotificationManager* NotificationManager::getSingleton() {
 #if defined(OS_MACOSX)
     singleton_ = new NotificationManagerMac();
 #elif defined(OS_WIN)
-    singleton_ = new NotificationManagerWin();
+    if (NotificationManagerToastWin::IsSupported())
+      singleton_ = new NotificationManagerToastWin();
+    else
+      singleton_ = new NotificationManagerWin();
 #elif defined(OS_LINUX)
     singleton_ = new NotificationManagerLinux();
 #endif
@@ -59,7 +63,7 @@ NotificationManager* NotificationManager::getSingleton() {
 void NotificationManager::ImageDownloadCallback(int id, int http_status, const GURL& image_url, const std::vector<SkBitmap>& bitmaps, const std::vector<gfx::Size>& size) {
   NotificationManager *singleton = getSingleton();
   DesktopNotificationParams params = singleton->desktop_notification_params_[id];
-  singleton->AddDesktopNotification(params.params_, params.render_process_id_, params.render_frame_id_, id, params.worker_, &bitmaps);
+  singleton->AddDesktopNotification(params.params_, params.render_process_id_, params.render_frame_id_, params.notification_id_, params.worker_, &bitmaps);
   singleton->desktop_notification_params_.erase(id);
 }
 

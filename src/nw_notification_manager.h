@@ -38,6 +38,7 @@ protected:
     content::ShowDesktopNotificationHostMsgParams params_;
     int render_process_id_;
     int render_frame_id_;
+    int notification_id_;
     bool worker_;
   };
 

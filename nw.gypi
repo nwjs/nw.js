@@ -324,6 +324,8 @@
         'src/nw_notification_manager.cc',
         'src/nw_notification_manager_win.h',
         'src/nw_notification_manager_win.cc',		
+        'src/nw_notification_manager_toast_win.h',
+        'src/nw_notification_manager_toast_win.cc',		
         'src/nw_notification_manager_mac.h',
         'src/nw_notification_manager_mac.mm',
         'src/nw_notification_manager_linux.h',

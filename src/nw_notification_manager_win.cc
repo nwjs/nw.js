@@ -119,10 +119,10 @@ NotificationManagerWin::~NotificationManagerWin() {
 }
 
 bool NotificationManagerWin::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-  const int render_process_id, const int render_view_id, const int notification_id, 
+  const int render_process_id, const int render_frame_id, const int notification_id, 
   const bool worker, const std::vector<SkBitmap>* bitmaps) {
 
-  content::RenderViewHost* host = content::RenderFrameHost::FromID(render_process_id, render_view_id)->GetRenderViewHost();
+  content::RenderViewHost* host = content::RenderFrameHost::FromID(render_process_id, render_frame_id)->GetRenderViewHost();
   if (host == NULL)
     return false;
 
@@ -133,7 +133,8 @@ bool NotificationManagerWin::AddDesktopNotification(const content::ShowDesktopNo
     DesktopNotificationParams desktop_notification_params;
     desktop_notification_params.params_ = params;
     desktop_notification_params.render_process_id_ = render_process_id;
-    desktop_notification_params.render_view_id_ = render_view_id;
+    desktop_notification_params.render_frame_id_ = render_frame_id;
+    desktop_notification_params.notification_id_ = notification_id;
 
     // download the icon image first
     content::WebContents::ImageDownloadCallback imageDownloadCallback = base::Bind(&NotificationManager::ImageDownloadCallback);
@@ -146,7 +147,8 @@ bool NotificationManagerWin::AddDesktopNotification(const content::ShowDesktopNo
 
   // if we reach here, it means the function is called from image download callback
   render_process_id_ = render_process_id;
-  render_view_id_ = render_view_id;
+  render_frame_id_ = render_frame_id;
+  notification_id_ = notification_id;
 
   // set the default notification icon as the app icon
   gfx::Image icon = shell->window()->app_icon();
@@ -184,7 +186,7 @@ bool NotificationManagerWin::AddDesktopNotification(const content::ShowDesktopNo
   return result;
 }
 
-bool NotificationManagerWin::CancelDesktopNotification(int render_process_id, int render_view_id, int notification_id) {
+bool NotificationManagerWin::CancelDesktopNotification(int render_process_id, int render_frame_id, int notification_id) {
   //windows  can only have 1 notification, cannot delete existing notification
   return true;
 }

@@ -24,6 +24,15 @@
 #include "base/logging.h"
 #include "base/message_loop/message_loop.h"
 #include "base/values.h"
+
+#if defined(OS_WIN)
+#include "base/strings/utf_string_conversions.h"
+#include "base/files/file_path.h"
+#include "base/win/shortcut.h"
+#include "base/path_service.h"
+#include "content/nw/src/common/shell_switches.h"
+#endif
+
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/shortcut/global_shortcut_listener.h"
@@ -119,6 +128,26 @@ void App::Call(Shell* shell,
     return;
   } else if (method == "ClearCache") {
     ClearCache(GetRenderProcessHost());
+    return;
+  } else if (method == "CreateShortcut") {
+#if defined(OS_WIN)
+    base::string16 path;
+    arguments.GetString(0, &path);
+
+    base::win::ShortcutProperties props;
+    base::string16 appID;
+    if (content::Shell::GetPackage()->root()->GetString("app-id", &appID) == false)
+      content::Shell::GetPackage()->root()->GetString(switches::kmName, &appID);
+    const std::wstring appName = base::UTF8ToWide(content::Shell::GetPackage()->GetName());
+    props.set_app_id(appID);
+
+    base::FilePath processPath;
+    PathService::Get(base::FILE_EXE, &processPath);
+    props.set_target(processPath);
+    result->AppendBoolean(base::win::CreateOrUpdateShortcutLink(base::FilePath(path), props, base::win::SHORTCUT_CREATE_ALWAYS));
+#else
+    result->AppendBoolean(false);
+#endif
     return;
   } else if (method == "GetPackage") {
     result->AppendString(shell->GetPackage()->package_string());
