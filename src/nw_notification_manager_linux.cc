@@ -72,12 +72,12 @@ void NotificationManagerLinux::onClose(NotifyNotification *notif)
 
 bool NotificationManagerLinux::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
                                                       const int render_process_id,
-                                                      const int render_view_id,
+                                                      const int render_frame_id,
                                                       const int notification_id,
                                                       const bool worker,
                                                       const std::vector<SkBitmap>* bitmaps) {
 
-  content::RenderViewHost* host = content::RenderFrameHost::FromID(render_process_id, render_view_id)->GetRenderViewHost();
+  content::RenderViewHost* host = content::RenderFrameHost::FromID(render_process_id, render_frame_id)->GetRenderViewHost();
   if (host == NULL)
     return false;
 
@@ -88,7 +88,7 @@ bool NotificationManagerLinux::AddDesktopNotification(const content::ShowDesktop
     DesktopNotificationParams desktop_notification_params;
     desktop_notification_params.params_ = params;
     desktop_notification_params.render_process_id_ = render_process_id;
-    desktop_notification_params.render_view_id_ = render_view_id;
+    desktop_notification_params.render_frame_id_ = render_frame_id;
 
     // download the icon image first
     content::WebContents::ImageDownloadCallback imageDownloadCallback = base::Bind(&NotificationManager::ImageDownloadCallback);
@@ -118,7 +118,7 @@ bool NotificationManagerLinux::AddDesktopNotification(const content::ShowDesktop
     NotificationData data;
     data.mNotification = notif;
     data.mRenderProcessId = render_process_id;
-    data.mRenderViewId = render_view_id;
+    data.mRenderViewId = render_frame_id;
     mNotificationIDmap[notification_id] = data;
   }
   else {
@@ -133,7 +133,7 @@ bool NotificationManagerLinux::AddDesktopNotification(const content::ShowDesktop
       g_object_ref(G_OBJECT(notif));
       onClose(notif);
       data.mRenderProcessId = render_process_id;
-      data.mRenderViewId = render_view_id;
+      data.mRenderViewId = render_frame_id;
       mNotificationIDmap[notification_id] = data;
     }
   }
@@ -146,16 +146,16 @@ bool NotificationManagerLinux::AddDesktopNotification(const content::ShowDesktop
 
   GError* error = NULL;
   if (notify_notification_show (notif, &error)) {
-    DesktopNotificationPostDisplay(render_process_id, render_view_id, notification_id);
+    DesktopNotificationPostDisplay(render_process_id, render_frame_id, notification_id);
   }
   else {
     base::string16 errorMsg = base::UTF8ToUTF16(error->message);
-    DesktopNotificationPostError(render_process_id, render_view_id, notification_id, errorMsg);
+    DesktopNotificationPostError(render_process_id, render_frame_id, notification_id, errorMsg);
   }
   return error==NULL;
 }
 
-bool NotificationManagerLinux::CancelDesktopNotification(int render_process_id, int render_view_id, int notification_id) {
+bool NotificationManagerLinux::CancelDesktopNotification(int render_process_id, int render_frame_id, int notification_id) {
   NotificationMap::const_iterator i = getNotification(notification_id);
   if (i!=mNotificationIDmap.end()) {
     return notify_notification_close(i->second.mNotification, NULL);
@@ -165,10 +165,10 @@ bool NotificationManagerLinux::CancelDesktopNotification(int render_process_id, 
 
 bool NotificationManagerLinux::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
                                                       const int render_process_id,
-                                                      const int render_view_id,
+                                                      const int render_frame_id,
                                                       const int notification_id,
                                                       const bool worker) {
-  return AddDesktopNotification(params, render_process_id, render_view_id, notification_id, worker, NULL);
+  return AddDesktopNotification(params, render_process_id, render_frame_id, notification_id, worker, NULL);
 }
 
 } // namespace nw
