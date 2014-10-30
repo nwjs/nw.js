@@ -857,7 +857,7 @@
         }],  # OS=="win"
         ['OS == "linux"', {
           'ldflags': [
-            '-Wl,--whole-archive', 'obj/third_party/node/libnode.a', '-Wl,--no-whole-archive' ],
+            '-Wl,--whole-archive', 'obj/third_party/node/libnode.a', '-Wl,--no-whole-archive', '-static-libgcc', '-static-libstdc++' ],
         }],
         ['OS == "win"', {
           'dependencies': [
