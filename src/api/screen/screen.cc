@@ -57,7 +57,7 @@ class JavaScriptDisplayObserver : BaseEvent, public gfx::DisplayObserver {
   gfx::Screen* screen_;
   
   // Called when the |display|'s bound has changed.
-  virtual void OnDisplayBoundsChanged(const gfx::Display& display) OVERRIDE {
+  virtual void OnDisplayMetricsChanged(const gfx::Display& display, uint32_t changed_metrics) OVERRIDE {
     base::ListValue arguments;
     arguments.AppendString(DisplayToJSON(display));
     object_->dispatcher_host()->SendEvent(object_, "displayBoundsChanged", arguments);

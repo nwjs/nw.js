@@ -161,7 +161,7 @@ void DispatcherHost::OnAllocateObject(int object_id,
   } else if (type == "Shortcut") {
     objects_registry_.AddWithID(new Shortcut(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else if (type == "Screen") {
-    //FIXME: objects_registry_.AddWithID(new EventListener(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
+    objects_registry_.AddWithID(new EventListener(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else {
     LOG(ERROR) << "Allocate an object of unknown type: " << type;
     objects_registry_.AddWithID(new Base(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
@@ -253,7 +253,7 @@ void DispatcherHost::OnCallStaticMethodSync(
     nwapi::App::Call(shell, method, arguments, result);
     return;
   } else if (type == "Screen") {
-    //FIXME: nwapi::Screen::Call(this, method, arguments, result);
+    nwapi::Screen::Call(this, method, arguments, result);
     return;
   }
 
