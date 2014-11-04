@@ -46,6 +46,8 @@ std::string DisplayToJSON(const gfx::Display& display) {
   
   ret << ",\"scaleFactor\":" << display.device_scale_factor();
   ret << ",\"isBuiltIn\":" << (display.IsInternal() ? "true" : "false");
+  ret << ",\"rotation\":" << display.RotationAsDegree();
+  ret << ",\"touchSupport\":" << display.touch_support();
   ret << "}";
   
   return ret.str();
@@ -57,9 +59,10 @@ class JavaScriptDisplayObserver : BaseEvent, public gfx::DisplayObserver {
   gfx::Screen* screen_;
   
   // Called when the |display|'s bound has changed.
-  virtual void OnDisplayBoundsChanged(const gfx::Display& display) OVERRIDE {
+  virtual void OnDisplayMetricsChanged(const gfx::Display& display, uint32_t changed_metrics) OVERRIDE {
     base::ListValue arguments;
     arguments.AppendString(DisplayToJSON(display));
+    arguments.AppendInteger(changed_metrics);
     object_->dispatcher_host()->SendEvent(object_, "displayBoundsChanged", arguments);
   }
   
