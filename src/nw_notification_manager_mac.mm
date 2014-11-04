@@ -105,6 +105,7 @@ bool NotificationManagerMac::AddDesktopNotification(const content::ShowDesktopNo
     desktop_notification_params.params_ = params;
     desktop_notification_params.render_process_id_ = render_process_id;
     desktop_notification_params.render_frame_id_ = render_frame_id;
+    desktop_notification_params.notification_id_ = notification_id;
 
     // download the icon image first
     content::WebContents::ImageDownloadCallback imageDownloadCallback = base::Bind(&NotificationManager::ImageDownloadCallback);
