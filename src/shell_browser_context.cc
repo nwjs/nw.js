@@ -35,6 +35,7 @@
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/net/shell_url_request_context_getter.h"
 #include "content/nw/src/nw_package.h"
+#include "net/cert/x509_certificate.h"
 
 #if defined(OS_WIN)
 #include "base/base_paths_win.h"
@@ -189,6 +190,36 @@ net::URLRequestContextGetter* ShellBrowserContext::CreateRequestContext(
       protocol_handlers, this,
       auth_schemes, auth_server_whitelist, auth_delegate_whitelist,
       gssapi_library_name);
+
+  const base::ListValue *additional_trust_anchors = NULL;
+  if (package_->root()->GetList("additional_trust_anchors", &additional_trust_anchors)) {
+    net::CertificateList trust_anchors;
+    for (size_t i=0; i<additional_trust_anchors->GetSize(); i++) {
+      std::string certificate_string;
+      if (!additional_trust_anchors->GetString(i, &certificate_string)) {
+        LOG(WARNING)
+          << "Could not get string from entry " << i;
+        continue;
+      }
+
+      net::CertificateList loaded =
+          net::X509Certificate::CreateCertificateListFromBytes(
+              certificate_string.c_str(), certificate_string.size(),
+              net::X509Certificate::FORMAT_AUTO);
+      if (loaded.empty() && !certificate_string.empty()) {
+        LOG(WARNING)
+          << "Could not load certificate from entry " << i;
+        continue;
+      }
+
+      trust_anchors.insert(trust_anchors.end(), loaded.begin(), loaded.end());
+    }
+    if (!trust_anchors.empty()) {
+      LOG(INFO)
+        << "Added " << trust_anchors.size() << " certificates to trust anchors.";
+      url_request_getter_->SetAdditionalTrustAnchors(trust_anchors);
+    }
+  }
 
   resource_context_->set_url_request_context_getter(url_request_getter_.get());
   return url_request_getter_.get();
