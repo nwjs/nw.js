@@ -53,6 +53,10 @@ App.prototype.setCrashDumpDir = function(dir) {
   return nw.callStaticMethodSync('App', 'SetCrashDumpDir', [ dir ]);
 }
 
+App.prototype.createShortcut = function(dir) {
+  return nw.callStaticMethodSync('App', 'CreateShortcut', [ dir ]);
+}
+
 App.prototype.clearCache = function() {
   nw.callStaticMethodSync('App', 'ClearCache', [ ]);
 }

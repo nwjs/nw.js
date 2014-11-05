@@ -1,0 +1,68 @@
+<html>
+<head>
+  <title> Notification </title>
+</head>
+<body style="background-color:rgba(0,0,0,0);">
+<p id="output" />
+<script>
+// Load native UI library
+var gui = require('nw.gui');
+// register AppUserModelID from package.json app-id / name to the application short-cut menu (.lnk)
+gui.App.createShortcut(	process.env.APPDATA + "\\Microsoft\\Windows\\Start Menu\\Programs\\node-webkit.lnk");
+
+var notificationMenu = new gui.Menu();
+notificationMenu.append(new gui.MenuItem({
+label: 'display Notification',
+click: function() {
+	var http = require('http');
+	var fs = require('fs');
+	var os = require('os'); 
+	
+	var download = function(url, dest, cb) {
+		var file = fs.createWriteStream(dest);
+		var request = http.get(url, function(response) {
+			response.pipe(file);
+			file.on('finish', function() {
+				file.close(cb);
+			});
+		});
+	}
+	
+	// download the icon to os temp folder, win8 toast notification can only load notification image from file:///
+	download("http://icons.iconarchive.com/icons/icons-land/vista-style-emoticons/256/Study-icon.png", os.tmpdir()+"/notif.png", function(){
+	
+		var path = require('path');
+		var options = {
+		icon: path.resolve(os.tmpdir()+"/notif.png"),
+		body: "Here is the notification text"
+		};
+	
+		var notification = new Notification("webkit notification!",options);
+		notification.onclick = function () {
+			document.getElementById("output").innerHTML += "Notification " + "clicked<br>";
+		}
+	
+		notification.onshow = function () {
+			document.getElementById("output").innerHTML += "Notification " + "show<br>";
+		}
+		
+		notification.onclose = function () {
+			document.getElementById("output").innerHTML += "Notification " + "close<br>";
+		}
+	});
+}
+}));
+
+var menubar = new gui.Menu({ type: 'menubar' });
+
+// You can have submenu!
+menubar.append(new gui.MenuItem({ label: 'Notification', submenu: notificationMenu}));
+
+//assign the menubar to window menu
+var win = gui.Window.get();
+win.menu = menubar;
+
+
+</script>  
+</body>
+</html>

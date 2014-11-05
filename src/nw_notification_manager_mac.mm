@@ -59,21 +59,25 @@ static NWUserNotificationCenterDelegate *singleton_ = nil;
   shouldPresentNotification : (NSUserNotification *)notification {
 
   NSNumber *render_process_id = [notification.userInfo objectForKey : @"render_process_id"];
-  NSNumber *render_view_id = [notification.userInfo objectForKey : @"render_view_id"];
+  NSNumber *render_frame_id = [notification.userInfo objectForKey : @"render_frame_id"];
+  NSNumber *notification_id = [notification.userInfo objectForKey : @"notification_id"];
+  
 
   nw::NotificationManager::getSingleton()->DesktopNotificationPostDisplay(render_process_id.intValue,
-      render_view_id.intValue,
-      0);
+      render_frame_id.intValue,
+      notification_id.intValue);
   return YES;
 }
 
 -(void)userNotificationCenter:(NSUserNotificationCenter *)center didActivateNotification : (NSUserNotification *)notification {
   NSNumber *render_process_id = [notification.userInfo objectForKey : @"render_process_id"];
-  NSNumber *render_view_id = [notification.userInfo objectForKey : @"render_view_id"];
+  NSNumber *render_frame_id = [notification.userInfo objectForKey : @"render_frame_id"];
+  NSNumber *notification_id = [notification.userInfo objectForKey : @"notification_id"];
+  
 
   nw::NotificationManager::getSingleton()->DesktopNotificationPostClick(render_process_id.intValue,
-    render_view_id.intValue,
-    0);
+    render_frame_id.intValue,
+    notification_id.intValue);
 }
 @end
 
@@ -81,14 +85,14 @@ namespace nw {
 NotificationManagerMac::NotificationManagerMac() {
 }
 
-bool NotificationManagerMac::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams &params, const int render_process_id, const int render_view_id, const int notification_id, const bool worker) {
-  return AddDesktopNotification(params, render_process_id, render_view_id, notification_id, worker, NULL);
+bool NotificationManagerMac::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams &params, const int render_process_id, const int render_frame_id, const int notification_id, const bool worker) {
+  return AddDesktopNotification(params, render_process_id, render_frame_id, notification_id, worker, NULL);
 }
 
 bool NotificationManagerMac::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-  const int render_process_id, const int render_view_id, const int notification_id, const bool worker, const std::vector<SkBitmap>* bitmaps) {
+  const int render_process_id, const int render_frame_id, const int notification_id, const bool worker, const std::vector<SkBitmap>* bitmaps) {
 
-  content::RenderViewHost* host = content::RenderFrameHost::FromID(render_process_id, render_view_id)->GetRenderViewHost();
+  content::RenderViewHost* host = content::RenderFrameHost::FromID(render_process_id, render_frame_id)->GetRenderViewHost();
   if (host == nullptr)
     return false;
   content::Shell* shell = content::Shell::FromRenderViewHost(host);
@@ -100,7 +104,8 @@ bool NotificationManagerMac::AddDesktopNotification(const content::ShowDesktopNo
     DesktopNotificationParams desktop_notification_params;
     desktop_notification_params.params_ = params;
     desktop_notification_params.render_process_id_ = render_process_id;
-    desktop_notification_params.render_view_id_ = render_view_id;
+    desktop_notification_params.render_frame_id_ = render_frame_id;
+    desktop_notification_params.notification_id_ = notification_id;
 
     // download the icon image first
     content::WebContents::ImageDownloadCallback imageDownloadCallback = base::Bind(&NotificationManager::ImageDownloadCallback);
@@ -127,7 +132,8 @@ bool NotificationManagerMac::AddDesktopNotification(const content::ShowDesktopNo
   }
 
   notification.userInfo = @{ @"render_process_id" :[NSNumber numberWithInt : render_process_id],
-    @"render_view_id" :[NSNumber numberWithInt : render_view_id],
+    @"render_frame_id" :[NSNumber numberWithInt : render_frame_id],
+    @"notification_id" :[NSNumber numberWithInt : notification_id],
   };
 
 
@@ -140,13 +146,13 @@ bool NotificationManagerMac::AddDesktopNotification(const content::ShowDesktopNo
   return true;
 }
 
-bool NotificationManagerMac::CancelDesktopNotification(int render_process_id, int render_view_id, int notification_id){
+bool NotificationManagerMac::CancelDesktopNotification(int render_process_id, int render_frame_id, int notification_id){
   for (NSUserNotification *notification in[[NSUserNotificationCenter defaultUserNotificationCenter] deliveredNotifications]) {
     NSNumber *current_notification_id = [notification.userInfo objectForKey : @"notification_id"];
-    //FIXME: if (current_notification_id.intValue == notification_id){
+    if (current_notification_id.intValue == notification_id){
       [[NSUserNotificationCenter defaultUserNotificationCenter] removeDeliveredNotification:notification];
       return true;
-    //}
+    }
   }
   return false;
 }

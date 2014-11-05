@@ -17,56 +17,44 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#ifndef CONTENT_NW_NOTIFICATION_MANAGER_WIN_H_
-#define CONTENT_NW_NOTIFICATION_MANAGER_WIN_H_
+#ifndef CONTENT_NW_NOTIFICATION_MANAGER_TOAST_WIN_H_
+#define CONTENT_NW_NOTIFICATION_MANAGER_TOAST_WIN_H_
 
 #include "content/nw/src/nw_notification_manager.h"
-class StatusTrayWin;
-class StatusIcon;
+#include <windows.ui.notifications.h>
 
 namespace nw {
-class NotificationManagerWin : public NotificationManager{
-  // The global presentation of system tray.
-  StatusTrayWin* status_tray_;
+  using namespace ABI::Windows::UI::Notifications;
+  using namespace ABI::Windows::Data::Xml::Dom;
 
-  // StatusIcon pointer created by ME
-  StatusIcon* status_icon_;
-
-  // number of notification in the queue
-  int notification_count_;
-
-  // decrement the status_icon_count_, if the value is 0 remove the status_icon_ from the tray
-  bool ReleaseNotification();
-
-  // Click observer.
-  friend class TrayObserver;
-  TrayObserver* status_observer_;
-
-  // variable to store the latest notification data, windows can only show 1 notification
-  int render_process_id_, render_frame_id_, notification_id_;
-
-  // dispatch the events from the latest notification
-  bool DesktopNotificationPostClick() {
-    return NotificationManager::DesktopNotificationPostClick(render_process_id_, render_frame_id_, notification_id_);
-  }
-  bool DesktopNotificationPostClose(bool by_user) {
-    return NotificationManager::DesktopNotificationPostClose(render_process_id_, render_frame_id_, notification_id_, by_user);
-  }
-  bool DesktopNotificationPostDisplay() {
-    return NotificationManager::DesktopNotificationPostDisplay(render_process_id_, render_frame_id_, notification_id_);
-  }
-  bool DesktopNotificationPostError(const base::string16& message) {
-    return NotificationManager::DesktopNotificationPostError(render_process_id_, render_frame_id_, notification_id_, message);
-  }
+class NotificationManagerToastWin : public NotificationManager{
 
   // internal function for AddDesktopNotification
   virtual bool AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
     const int render_process_id, const int render_frame_id, const int notification_id, 
     const bool worker, const std::vector<SkBitmap>* bitmaps) OVERRIDE;
 
+
+  HRESULT CreateToast(_In_ IToastNotificationManagerStatics *toastManager, _In_ IXmlDocument *xml,
+    const int render_process_id, const int render_frame_id, const int notification_id);
+
+  // Create the toast XML from a template
+  HRESULT CreateToastXml(_In_ IToastNotificationManagerStatics *toastManager,
+    const content::ShowDesktopNotificationHostMsgParams& params, _Outptr_ IXmlDocument** inputXml);
+
+  // Set the value of the "src" attribute of the "image" node
+  HRESULT SetImageSrc(_In_z_ const wchar_t *imagePath, _In_ IXmlDocument *toastXml);
+
+  // Set the values of each of the text nodes
+  HRESULT SetTextValues(_In_reads_(textValuesCount) const wchar_t **textValues, _In_ UINT32 textValuesCount,
+    _In_reads_(textValuesCount) UINT32 *textValuesLengths, _In_ IXmlDocument *toastXml);
+
+  HRESULT SetNodeValueString(_In_ HSTRING inputString, _In_ IXmlNode *node, _In_ IXmlDocument *xml);
+
 public:
-  explicit NotificationManagerWin();
-  virtual ~NotificationManagerWin();
+  static bool IsSupported();
+  explicit NotificationManagerToastWin();
+  virtual ~NotificationManagerToastWin();
   virtual bool AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
     const int render_process_id, const int render_frame_id, const int notification_id,
     const bool worker) OVERRIDE{
