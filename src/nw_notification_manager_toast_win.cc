@@ -39,7 +39,6 @@
 #include <strsafe.h>
 #include <wrl\client.h>
 #include <wrl\implements.h>
-#pragma comment(lib, "runtimeobject.lib")
 
 using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
@@ -54,6 +53,14 @@ public:
   // It fills an HSTRING_HEADER struct with the parameter.      
   // Warning: The caller must ensure the lifetime of the buffer outlives this      
   // object as it does not make a copy of the wide string memory.      
+
+  static bool isSupported()
+  {
+    static char cachedRes = -1;
+    if (cachedRes > -1) return cachedRes;
+    cachedRes = ::LoadLibrary(L"API-MS-WIN-CORE-WINRT-STRING-L1-1-0.DLL") != 0;
+    return cachedRes;
+  }
 
   StringReferenceWrapper(_In_reads_(length) PCWSTR stringRef, _In_ UINT32 length) throw()
   {
@@ -359,9 +366,18 @@ HRESULT NotificationManagerToastWin::CreateToast(_In_ IToastNotificationManagerS
 }
 
 bool NotificationManagerToastWin::IsSupported() {
-  ComPtr<IToastNotificationManagerStatics> toastStatics;
-  HRESULT hr = GetActivationFactory(StringReferenceWrapper(RuntimeClass_Windows_UI_Notifications_ToastNotificationManager).Get(), &toastStatics);
-  return SUCCEEDED(hr);
+  static char cachedRes = -1;
+  
+  if (cachedRes > -1) return cachedRes;
+  cachedRes = 0;
+  
+  if (StringReferenceWrapper::isSupported()) {
+    ComPtr<IToastNotificationManagerStatics> toastStatics;
+    HRESULT hr = GetActivationFactory(StringReferenceWrapper(RuntimeClass_Windows_UI_Notifications_ToastNotificationManager).Get(), &toastStatics);
+    cachedRes = SUCCEEDED(hr);
+  }
+  
+  return cachedRes;
 }
 
 NotificationManagerToastWin::NotificationManagerToastWin() {
