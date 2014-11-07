@@ -838,6 +838,14 @@
       'msvs_settings': {
         'VCLinkerTool': {
           'SubSystem': '2',  # Set /SUBSYSTEM:WINDOWS
+          'AdditionalDependencies': [
+              'runtimeobject.lib',
+            ],
+            'DelayLoadDLLs': [
+              'API-MS-WIN-CORE-WINRT-ERROR-L1-1-0.DLL',
+              'API-MS-WIN-CORE-WINRT-L1-1-0.DLL',
+              'API-MS-WIN-CORE-WINRT-STRING-L1-1-0.DLL',
+            ],
         },
       'VCManifestTool': {
           'AdditionalManifestFiles': [
