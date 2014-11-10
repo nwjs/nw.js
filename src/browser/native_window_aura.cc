@@ -284,6 +284,7 @@ NativeWindowAura::NativeWindowAura(const base::WeakPtr<content::Shell>& shell,
       last_width_(-1), last_height_(-1) {
   manifest->GetBoolean("focus", &initial_focus_);
   manifest->GetBoolean("fullscreen", &is_fullscreen_);
+  manifest->GetBoolean("resizable", &resizable_);
 
   window_ = new views::Widget;
   views::Widget::InitParams params(views::Widget::InitParams::TYPE_WINDOW);
