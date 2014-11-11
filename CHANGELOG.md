@@ -1,3 +1,19 @@
+0.11.0 / 11-11-2014
+===================
+- Fix: notification and screen geometry API
+- Fix: windows printing crash (#2515)
+- Fix: mac: Fix build with 10.9 SDK
+- Fix: enable 'high-dpi-support' for windows (#2524)
+- Fix: 'resizable' is broken in manifest (#2319)
+- Fix: crash on Flash context menu
+- Fix: console.log() changes value (#2431)
+- Fix: various crash cases (#2545, #2549)
+- Fix: 'undefined' network request in devtools (#2529)
+- Fix: devtools - breakpoints do not work (#2538)
+- Fix: Jailed devtools broken in nw 0.11.0-rc1 (#2569)
+- Fix: Window.setResizable(false) twice makes window resizable (#2299)
+- Fix: win.setPosition('center') Invalid (#2307)
+
 0.11.0-rc1 / 10-27-2014
 =======================
 - Chromium updated to 38.0.2125.104
