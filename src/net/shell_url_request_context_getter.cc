@@ -37,6 +37,8 @@
 #include "content/nw/src/nw_shell.h"
 #include "content/nw/src/shell_content_browser_client.h"
 #include "net/cert/cert_verifier.h"
+#include "net/cert/cert_verify_proc.h"
+#include "net/cert/multi_threaded_cert_verifier.h"
 #include "net/dns/host_resolver.h"
 #include "net/dns/mapped_host_resolver.h"
 #include "net/ssl/ssl_config_service_defaults.h"
@@ -205,7 +207,14 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
     scoped_ptr<net::HostResolver> host_resolver(
         net::HostResolver::CreateDefaultResolver(NULL));
 
-    storage_->set_cert_verifier(net::CertVerifier::CreateDefault());
+    net::CertVerifyProc *verify_proc = net::CertVerifyProc::CreateDefault();
+    if (!verify_proc->SupportsAdditionalTrustAnchors()) {
+      LOG(WARNING)
+        << "Additional trust anchors not supported on the current platform!";
+    }
+    net::MultiThreadedCertVerifier *verifier = new net::MultiThreadedCertVerifier(verify_proc);
+    verifier->SetCertTrustAnchorProvider(this);
+    storage_->set_cert_verifier(verifier);
     storage_->set_transport_security_state(new net::TransportSecurityState);
 
     net::ProxyService* proxy_service;
@@ -294,6 +303,17 @@ scoped_refptr<base::SingleThreadTaskRunner>
 
 net::HostResolver* ShellURLRequestContextGetter::host_resolver() {
   return url_request_context_->host_resolver();
+}
+
+void ShellURLRequestContextGetter::SetAdditionalTrustAnchors(const net::CertificateList& trust_anchors)
+{
+  DCHECK(content::BrowserThread::CurrentlyOn(content::BrowserThread::IO));
+  trust_anchors_ = trust_anchors;
+}
+
+const net::CertificateList& ShellURLRequestContextGetter::GetAdditionalTrustAnchors() {
+  DCHECK(content::BrowserThread::CurrentlyOn(content::BrowserThread::IO));
+  return trust_anchors_;
 }
 
 net::HttpAuthHandlerFactory* ShellURLRequestContextGetter::CreateDefaultAuthHandlerFactory(
