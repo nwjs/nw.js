@@ -59,7 +59,6 @@ class MenuBarView :
 
  private:
   ui::MenuModel* model_;
-  scoped_ptr<views::MenuRunner> menu_runner_;
   DISALLOW_COPY_AND_ASSIGN(MenuBarView);
 };
 } //namespace nw

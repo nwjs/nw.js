@@ -2,6 +2,8 @@
 #define NW_BROWSER_MENUBAR_CONTROLLER_H
 
 #include "ui/views/controls/menu/menu_model_adapter.h"
+#include "ui/views/controls/menu/menu_runner.h"
+#include "ui/views/view.h"
 
 #include <map>
 
@@ -14,10 +16,11 @@ class MenuBarView;
 
 class MenuBarController : public views::MenuModelAdapter {
  public:
-  MenuBarController(MenuBarView* menubar, ui::MenuModel* menu_model);
+  MenuBarController(MenuBarView* menubar, ui::MenuModel* menu_model, MenuBarController* master);
   virtual ~MenuBarController();
 
-  static views::MenuItemView* CreateMenu(MenuBarView* menubar, ui::MenuModel* model);
+  static views::MenuItemView* CreateMenu(MenuBarView* menubar, ui::MenuModel* model, MenuBarController* controller);
+  void RunMenuAt(views::View* view, const gfx::Point& point);
 
   virtual views::MenuItemView* GetSiblingMenu(
       views::MenuItemView* menu,
@@ -30,7 +33,10 @@ class MenuBarController : public views::MenuModelAdapter {
   typedef std::map<const ui::MenuModel*, views::MenuItemView*> ModelToMenuMap;
 
   MenuBarView* menubar_;
+  scoped_ptr<views::MenuRunner> menu_runner_;
+  std::vector<MenuBarController*> controllers_;
   static ModelToMenuMap model_to_menu_map_;
+  static MenuBarController* master_;
 
   DISALLOW_COPY_AND_ASSIGN(MenuBarController);
 };

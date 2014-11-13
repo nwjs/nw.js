@@ -10,7 +10,6 @@
 #include "ui/base/window_open_disposition.h"
 #include "ui/gfx/text_elider.h"
 #include "ui/views/controls/button/menu_button.h"
-#include "ui/views/controls/menu/menu_runner.h"
 #include "ui/views/layout/box_layout.h"
 #include "ui/views/widget/widget.h"
 
@@ -112,20 +111,8 @@ void MenuBarView::OnMenuButtonClicked(views::View* view,
   DCHECK_NE(-1, button_index);
   ui::MenuModel::ItemType type = model_->GetTypeAt(button_index);
   if (type == ui::MenuModel::TYPE_SUBMENU) {
-    views::MenuItemView* menu = MenuBarController::CreateMenu(this, model_->GetSubmenuModelAt(button_index));
-    menu_runner_.reset(new MenuRunner(menu, MenuRunner::HAS_MNEMONICS));
-
-    // menu_runner_.reset(new MenuRunner(model_->GetSubmenuModelAt(button_index),
-    //                                   MenuRunner::HAS_MNEMONICS));
-
-    if (menu_runner_->RunMenuAt(GetWidget()->GetTopLevelWidget(),
-                                static_cast<views::MenuButton*>(view),
-                                gfx::Rect(point, gfx::Size()),
-                                views::MENU_ANCHOR_TOPRIGHT,
-                                ui::MENU_SOURCE_NONE) ==
-      MenuRunner::MENU_DELETED) {
-      return;
-    }
+    MenuBarController* controller = new MenuBarController(this, model_->GetSubmenuModelAt(button_index), NULL);
+    controller->RunMenuAt(view, point);
   }
 }
 
