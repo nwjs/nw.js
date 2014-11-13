@@ -136,12 +136,10 @@ v8::Handle<v8::Value> Dispatcher::GetWindowId(blink::WebFrame* frame) {
   return val;
 }
 
-#if 0 //FIXME
-void Dispatcher::ZoomLevelChanged() {
+void Dispatcher::ZoomLevelChanged(blink::WebView* web_view) {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::HandleScope scope(isolate);
 
-  blink::WebView* web_view = render_view()->GetWebView();
   float zoom_level = web_view->zoomLevel();
 
   v8::Handle<v8::Value> val = GetWindowId(web_view->mainFrame());
@@ -161,7 +159,6 @@ void Dispatcher::ZoomLevelChanged() {
 
   node::MakeCallback(isolate, objects_registry, "handleEvent", 3, argv);
 }
-#endif
 
 void Dispatcher::DidCreateDocumentElement(blink::WebLocalFrame* frame) {
   documentCallback("document-start", frame);

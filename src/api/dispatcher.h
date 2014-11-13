@@ -37,6 +37,7 @@ class RenderView;
 namespace blink {
 class WebFrame;
 class WebURLRequest;
+class WebView;
 }
 
 namespace nwapi {
@@ -48,6 +49,7 @@ class Dispatcher : public content::RenderViewObserver {
 
   static v8::Handle<v8::Object> GetObjectRegistry();
   static v8::Handle<v8::Value> GetWindowId(blink::WebFrame* frame);
+  static void ZoomLevelChanged(blink::WebView* web_view);
   static void willHandleNavigationPolicy(
     content::RenderView* rv,
     blink::WebFrame* frame,
@@ -58,7 +60,6 @@ class Dispatcher : public content::RenderViewObserver {
   // RenderViewObserver implementation.
   virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
   virtual void DraggableRegionsChanged(blink::WebFrame* frame) OVERRIDE;
-  //FIXME virtual void ZoomLevelChanged() OVERRIDE;
   virtual void DidFinishDocumentLoad(blink::WebLocalFrame* frame) OVERRIDE;
   virtual void DidCreateDocumentElement(blink::WebLocalFrame* frame) OVERRIDE;
 

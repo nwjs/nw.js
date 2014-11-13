@@ -24,6 +24,7 @@
 #include "base/values.h"
 #include "content/child/child_thread.h"
 #include "content/nw/src/api/bindings_common.h"
+#include "content/nw/src/api/dispatcher.h"
 #include "content/renderer/render_view_impl.h"
 #include "grit/nw_resources.h"
 #undef LOG
@@ -185,8 +186,9 @@ WindowBindings::CallObjectMethodSync(const v8::FunctionCallbackInfo<v8::Value>& 
     args.GetReturnValue().Set(scope.Escape(array));
     return;
   }else if (method == "SetZoomLevel") {
-    // double zoom_level = args[2]->ToNumber()->Value();
-    //FIXME: render_view->OnSetZoomLevel(zoom_level);
+    double zoom_level = args[2]->ToNumber()->Value();
+    render_view->GetWebView()->setZoomLevel(zoom_level);
+    nwapi::Dispatcher::ZoomLevelChanged(render_view->GetWebView());
     args.GetReturnValue().Set(v8::Undefined(isolate));
     return;
   }
