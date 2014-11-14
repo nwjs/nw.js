@@ -755,7 +755,7 @@
             {
               'action_name': 'strip_nw_binaries',
               'inputs': [
-                #'<(PRODUCT_DIR)/nwsnapshot',
+                '<(PRODUCT_DIR)/nwsnapshot',
                 '<(PRODUCT_DIR)/chromedriver',
               ],
               'outputs': [
@@ -767,7 +767,7 @@
             },
           ],
           'dependencies': [
-          #             '<(DEPTH)/v8/tools/gyp/v8.gyp:nwsnapshot',
+             '<(DEPTH)/v8/tools/gyp/v8.gyp:nwsnapshot',
              '<(DEPTH)/chrome/chrome.gyp:chromedriver',
           ],
         }],
