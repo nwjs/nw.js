@@ -22,12 +22,19 @@
 
 #include "content/nw/src/nw_notification_manager.h"
 #include <windows.ui.notifications.h>
+#include <wrl\client.h>
+
 
 namespace nw {
+  using namespace Microsoft::WRL;
   using namespace ABI::Windows::UI::Notifications;
   using namespace ABI::Windows::Data::Xml::Dom;
 
 class NotificationManagerToastWin : public NotificationManager{
+
+  ComPtr<IToastNotificationManagerStatics> toastStatics_;
+  ComPtr<IToastNotifier> notifier_;
+  std::map<int, ComPtr<IToastNotification>> notification_map_;
 
   // internal function for AddDesktopNotification
   virtual bool AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
