@@ -65,6 +65,10 @@ App.prototype.getProxyForURL = function (url) {
   return nw.callStaticMethodSync('App', 'getProxyForURL', [ url ]);
 }
 
+App.prototype.setProxyConfig = function (proxy_config) {
+  return nw.callStaticMethodSync('App', 'SetProxyConfig', [ proxy_config ]);
+}
+
 App.prototype.addOriginAccessWhitelistEntry = function(sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains) {
     return nw.callStaticMethodSync('App', 'AddOriginAccessWhitelistEntry', sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains);
 }

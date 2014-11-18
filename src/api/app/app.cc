@@ -44,10 +44,17 @@
 #include "content/nw/src/nw_shell.h"
 #include "content/nw/src/shell_browser_context.h"
 #include "content/common/view_messages.h"
+#include "content/public/browser/browser_thread.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/render_process_host.h"
+#include "net/proxy/proxy_config.h"
+#include "net/proxy/proxy_config_service_fixed.h"
+#include "net/proxy/proxy_service.h"
+#include "net/url_request/url_request_context.h"
+#include "net/url_request/url_request_context_getter.h"
 
 using base::MessageLoop;
+using content::BrowserThread;
 using content::Shell;
 using content::ShellBrowserContext;
 using content::RenderProcessHost;
@@ -79,6 +86,17 @@ void GetRenderProcessHosts(std::set<RenderProcessHost*>& rphs) {
       rphs.insert(render_process_host);
     }
   }
+}
+
+void SetProxyConfigCallback(
+    base::WaitableEvent* done,
+    net::URLRequestContextGetter* url_request_context_getter,
+    const net::ProxyConfig& proxy_config) {
+  net::ProxyService* proxy_service =
+      url_request_context_getter->GetURLRequestContext()->proxy_service();
+  proxy_service->ResetConfigService(
+      new net::ProxyConfigServiceFixed(proxy_config));
+  done->Signal();
 }
 
 }  // namespace
@@ -177,6 +195,11 @@ void App::Call(Shell* shell,
     GlobalShortcutListener::GetInstance()->UnregisterAccelerator(
         shortcut->GetAccelerator(), shortcut);
     return;
+  } else if (method == "SetProxyConfig") {
+    std::string proxy_config;
+    arguments.GetString(0, &proxy_config);
+    SetProxyConfig(GetRenderProcessHost(), proxy_config);
+    return;
   }
 
   NOTREACHED() << "Calling unknown sync method " << method << " of App";
@@ -266,4 +289,20 @@ void App::ClearCache(content::RenderProcessHost* render_process_host) {
                           render_process_host->GetID());
 }
 
+void App::SetProxyConfig(content::RenderProcessHost* render_process_host,
+                         const std::string& proxy_config) {
+  net::ProxyConfig config;
+  config.proxy_rules().ParseFromString(proxy_config);
+  net::URLRequestContextGetter* context_getter =
+    render_process_host->GetBrowserContext()->
+    GetRequestContextForRenderProcess(render_process_host->GetID());
+
+  base::WaitableEvent done(false, false);
+  BrowserThread::PostTask(
+      BrowserThread::IO, FROM_HERE,
+      base::Bind(&SetProxyConfigCallback, &done,
+                 make_scoped_refptr(context_getter), config));
+  done.Wait();
+
+}
 }  // namespace nwapi
