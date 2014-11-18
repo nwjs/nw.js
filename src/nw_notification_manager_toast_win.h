@@ -31,10 +31,12 @@ namespace nw {
   using namespace ABI::Windows::Data::Xml::Dom;
 
 class NotificationManagerToastWin : public NotificationManager{
+  friend class ToastEventHandler;
 
   ComPtr<IToastNotificationManagerStatics> toastStatics_;
   ComPtr<IToastNotifier> notifier_;
   std::map<int, ComPtr<IToastNotification>> notification_map_;
+  static bool ForceDisable;
 
   // internal function for AddDesktopNotification
   virtual bool AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,

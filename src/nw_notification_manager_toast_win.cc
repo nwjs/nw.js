@@ -201,13 +201,28 @@ IFACEMETHODIMP ToastEventHandler::Invoke(_In_ IToastNotification* /* sender */, 
 }
 
 // DesktopToastFailedEventHandler
-IFACEMETHODIMP ToastEventHandler::Invoke(_In_ IToastNotification* /* sender */, _In_ IToastFailedEventArgs* /* e */)
+IFACEMETHODIMP ToastEventHandler::Invoke(_In_ IToastNotification* /* sender */, _In_ IToastFailedEventArgs* e)
 {
-  BOOL succeeded = nw::NotificationManager::getSingleton()->DesktopNotificationPostError(_render_process_id, _render_frame_id, _notification_id, L"The toast encountered an error.");
+  HRESULT errCode;
+  e->get_ErrorCode(&errCode);
+  nw::NotificationManagerToastWin* nmtw = static_cast<nw::NotificationManagerToastWin*>(nw::NotificationManager::getSingleton());
+  std::wstringstream errMsg; errMsg << L"The toast encountered an error code (0x" << std::hex << errCode <<").";
+  const bool fallBack = errCode == 0x80070490;
+  if (fallBack)
+    errMsg << " Fallback to balloon notification!";
+
+  BOOL succeeded = nmtw->DesktopNotificationPostError(_render_process_id, _render_frame_id, _notification_id, errMsg.str().c_str());
+  nmtw->notification_map_.erase(_notification_id);
+
+  if (fallBack) {
+    NotificationManagerToastWin::ForceDisable = true;
+    delete nmtw;
+  }
   return succeeded ? S_OK : E_FAIL;
 }
 
 // ============= NotificationManagerToastWin Implementation =============
+bool NotificationManagerToastWin::ForceDisable = false;
 
 HRESULT NotificationManagerToastWin::SetNodeValueString(_In_ HSTRING inputString, _In_ IXmlNode *node, _In_ IXmlDocument *xml)
 {
@@ -357,7 +372,7 @@ HRESULT NotificationManagerToastWin::CreateToast(_In_ IToastNotificationManagerS
 
 bool NotificationManagerToastWin::IsSupported() {
   static char cachedRes = -1;
-  
+  if (ForceDisable) return false;
   if (cachedRes > -1) return cachedRes;
   cachedRes = 0;
   
