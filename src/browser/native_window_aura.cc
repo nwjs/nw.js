@@ -296,6 +296,14 @@ NativeWindowAura::NativeWindowAura(const base::WeakPtr<content::Shell>& shell,
 
   window_->Init(params);
 
+  // WS_CAPTION is needed or the size will be miscalculated on maximizing
+  // see upstream issue #224924
+#if defined(OS_WIN)
+  HWND hwnd = views::HWNDForWidget(window_->GetTopLevelWidget());
+  int current_style = ::GetWindowLong(hwnd, GWL_STYLE);
+  ::SetWindowLong(hwnd, GWL_STYLE, current_style | WS_CAPTION);
+#endif
+
   if (!has_frame())
     InstallEasyResizeTargeterOnContainer();
 
