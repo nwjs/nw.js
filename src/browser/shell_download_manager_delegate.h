@@ -56,9 +56,11 @@ class ShellDownloadManagerDelegate
   // Inhibits prompting and sets the default download path.
   void SetDownloadBehaviorForTesting(
                                      const base::FilePath& default_download_path);
+#if defined(OS_WIN)
   virtual void FileSelected(
       const base::FilePath& path, int index, void* params) OVERRIDE;
   virtual void FileSelectionCanceled(void* params) OVERRIDE;
+#endif
 
  protected:
   // To allow subclasses for testing.
