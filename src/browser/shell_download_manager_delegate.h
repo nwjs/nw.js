@@ -25,12 +25,19 @@
 #include "base/memory/ref_counted.h"
 #include "content/public/browser/download_manager_delegate.h"
 
+#if defined(OS_WIN)
+#include "ui/shell_dialogs/select_file_dialog.h"
+#endif
+
 namespace content {
 
 class DownloadManager;
 
 class ShellDownloadManagerDelegate
     : public DownloadManagerDelegate,
+#if defined(OS_WIN)
+      public ui::SelectFileDialog::Listener,
+#endif
       public base::RefCountedThreadSafe<ShellDownloadManagerDelegate> {
  public:
   ShellDownloadManagerDelegate();
@@ -49,6 +56,9 @@ class ShellDownloadManagerDelegate
   // Inhibits prompting and sets the default download path.
   void SetDownloadBehaviorForTesting(
                                      const base::FilePath& default_download_path);
+  virtual void FileSelected(
+      const base::FilePath& path, int index, void* params) OVERRIDE;
+  virtual void FileSelectionCanceled(void* params) OVERRIDE;
 
  protected:
   // To allow subclasses for testing.
@@ -70,10 +80,15 @@ class ShellDownloadManagerDelegate
   void ChooseDownloadPath(int32 download_id,
                           const DownloadTargetCallback& callback,
                           const base::FilePath& suggested_path);
+  void OnFileSelected(const base::FilePath& path);
 
   DownloadManager* download_manager_;
   base::FilePath default_download_path_;
   bool suppress_prompting_;
+#if defined(OS_WIN)
+  DownloadTargetCallback callback_;
+  scoped_refptr<ui::SelectFileDialog> select_file_dialog_;
+#endif
 
   DISALLOW_COPY_AND_ASSIGN(ShellDownloadManagerDelegate);
 };
