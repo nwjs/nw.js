@@ -82,6 +82,9 @@
 #include "ash/accelerators/accelerator_table.h"
 #endif
 
+namespace content {
+  extern bool g_support_transparency;
+}
 
 
 namespace nw {
@@ -296,7 +299,8 @@ NativeWindowAura::NativeWindowAura(const base::WeakPtr<content::Shell>& shell,
   params.delegate = this;
   params.remove_standard_frame = !has_frame();
   params.use_system_default_icon = true;
-  if (transparent_) params.opacity = views::Widget::InitParams::TRANSLUCENT_WINDOW;
+  if (content::g_support_transparency && transparent_)
+    params.opacity = views::Widget::InitParams::TRANSLUCENT_WINDOW;
   if (is_fullscreen_)
     params.show_state = ui::SHOW_STATE_FULLSCREEN;
 
@@ -396,6 +400,8 @@ bool NativeWindowAura::IsFullscreen() {
 }
 
 void NativeWindowAura::SetTransparent(bool transparent) {
+  if (!content::g_support_transparency)
+    return;
 #if defined(OS_WIN)
   // Check for Windows Vista or higher, transparency isn't supported in 
   // anything lower. 

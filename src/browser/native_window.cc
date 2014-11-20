@@ -22,6 +22,7 @@
 
 #include "base/memory/weak_ptr.h"
 #include "base/values.h"
+#include "base/command_line.h"
 #include "content/nw/src/browser/capture_page_helper.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
@@ -38,6 +39,9 @@
 #include "content/nw/src/browser/native_window_aura.h"
 #endif
 
+namespace content {
+  extern bool g_support_transparency;
+}
 
 namespace nw {
 
@@ -73,7 +77,9 @@ NativeWindow::NativeWindow(const base::WeakPtr<content::Shell>& shell,
       has_frame_(true),
       capture_page_helper_(NULL) {
   manifest->GetBoolean(switches::kmFrame, &has_frame_);
-  manifest->GetBoolean(switches::kmTransparent, &transparent_);
+  content::g_support_transparency = !base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kmDisableTransparency);
+  if (content::g_support_transparency)
+    manifest->GetBoolean(switches::kmTransparent, &transparent_);
 
   LoadAppIconFromPackage(manifest);
 }

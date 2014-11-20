@@ -41,6 +41,10 @@
 #include "third_party/skia/include/core/SkRegion.h"
 #import "ui/base/cocoa/underlay_opengl_hosting_window.h"
 
+namespace content {
+  extern bool g_support_transparency;
+}
+
 @interface NSWindow (NSPrivateApis)
 - (void)setBottomCornerRounded:(BOOL)rounded;
 @end
@@ -282,7 +286,7 @@ enum {
   [[NSBezierPath bezierPathWithRoundedRect:[view bounds]
                                    xRadius:cornerRadius
                                    yRadius:cornerRadius] addClip];
-  if ([self isOpaque])
+  if ([self isOpaque] || !content::g_support_transparency)
     [[NSColor whiteColor] set];
   else
     [[NSColor clearColor] set];
@@ -548,6 +552,7 @@ bool NativeWindowCocoa::IsFullscreen() {
 
 void NativeWindowCocoa::SetTransparent(bool transparent) {
   
+  if (!content::g_support_transparency) return;
   if (!transparent_ && transparent) {
     opaque_color_ = [window() backgroundColor];
   }
