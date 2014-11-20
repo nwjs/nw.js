@@ -1,3 +1,16 @@
+0.11.1 / 11-20-2014
+===================
+- add nwsnapshot
+- Support setting additional root certificates on supported platforms (thanks to Joachim Bauch)
+- Support SetProxyConfig API (#916)
+- [WIN] Fix startup crash on high DPI systems (#2649)
+- Fix #1021: maximize frameless window in windows 8
+- Fix #2590: save as Filetypes not populating
+- Fix #2592: zoomLevel
+- Fix #2595: Linux MenuBar crash
+- Fix #2393: link target with "_blank" opens page in current window
+- Fix: Don't activate app unconditionally on window "Show".
+
 0.11.0 / 11-11-2014
 ===================
 - Fix: notification and screen geometry API
