@@ -201,6 +201,8 @@
         'src/api/window/window.h',
         'src/browser/app_controller_mac.h',
         'src/browser/app_controller_mac.mm',
+        'src/browser/autofill_popup_base_view_cocoa.h',
+        'src/browser/autofill_popup_base_view_cocoa.mm',
         'src/browser/autofill_popup_view_cocoa.h',
         'src/browser/autofill_popup_view_cocoa.mm',
         'src/browser/autofill_popup_view_bridge.h',
