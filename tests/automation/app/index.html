@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Test Case for 'App.clearCache'</title>
+  </head>
+  <body onload='fun()'>
+    <p id="wait" style="font-size:1.5em">Please wait to be closed.</p>
+  </body>
+</html>
+<script>
+  var test_done = false;
+  function fun() {
+    var win2 = gui.Window.open('index2.html');
+    setTimeout(function() {
+      test_done = true;
+    }, 1000);
+  }
+</script>
+
+<script src="../res/mocha_util.js"></script>
+<script src="mocha_test.js"></script>

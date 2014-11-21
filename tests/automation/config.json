@@ -1,0 +1,10 @@
+{
+  "format": "xunit-file",
+  "exclude": ["node_modules", "output", "internal", "res", "app", 
+    "document_cookies", "menu", "menu_item", "shortcut"],
+  "single": "",
+  "timeout": "5000",
+  "slow": "200",
+  "quiet": false
+}
+
