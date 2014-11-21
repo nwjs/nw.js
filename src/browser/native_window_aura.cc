@@ -293,7 +293,10 @@ NativeWindowAura::NativeWindowAura(const base::WeakPtr<content::Shell>& shell,
   params.use_system_default_icon = true;
   if (is_fullscreen_)
     params.show_state = ui::SHOW_STATE_FULLSCREEN;
-
+#if defined(OS_WIN)
+  if (has_frame())
+    window_->set_frame_type(views::Widget::FRAME_TYPE_FORCE_NATIVE);
+#endif
   window_->Init(params);
 
   // WS_CAPTION is needed or the size will be miscalculated on maximizing
