@@ -495,6 +495,15 @@ ShellContentBrowserClient::CreateQuotaPermissionContext() {
   return new ShellQuotaPermissionContext();
 }
 
+void CancelDesktopNotification(int render_process_id, int render_frame_id, int notification_id) {
+  nw::NotificationManager *notificationManager = nw::NotificationManager::getSingleton();
+  if (notificationManager == NULL) {
+    NOTIMPLEMENTED();
+    return;
+  }
+  notificationManager->CancelDesktopNotification(render_process_id, render_frame_id, notification_id);
+}
+
 void ShellContentBrowserClient::ShowDesktopNotification(
       const ShowDesktopNotificationHostMsgParams& params,
       RenderFrameHost* render_frame_host,
@@ -511,6 +520,7 @@ void ShellContentBrowserClient::ShowDesktopNotification(
                                               render_frame_host->GetRoutingID(),
                                               delegate->notification_id(),
                                               false);
+  *cancel_callback = base::Bind(&CancelDesktopNotification, process->GetID(), render_frame_host->GetRoutingID(), delegate->notification_id());
 #else
   NOTIMPLEMENTED();
 #endif

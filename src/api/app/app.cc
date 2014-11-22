@@ -28,6 +28,7 @@
 #if defined(OS_WIN)
 #include "base/strings/utf_string_conversions.h"
 #include "base/files/file_path.h"
+#include "base/files/file_util.h"
 #include "base/win/shortcut.h"
 #include "base/path_service.h"
 #include "content/nw/src/common/shell_switches.h"
@@ -162,7 +163,10 @@ void App::Call(Shell* shell,
     base::FilePath processPath;
     PathService::Get(base::FILE_EXE, &processPath);
     props.set_target(processPath);
-    result->AppendBoolean(base::win::CreateOrUpdateShortcutLink(base::FilePath(path), props, base::win::SHORTCUT_CREATE_ALWAYS));
+
+    base::FilePath shortcutPath(path);
+    result->AppendBoolean(base::win::CreateOrUpdateShortcutLink(shortcutPath, props, 
+      base::PathExists(shortcutPath) ? base::win::SHORTCUT_UPDATE_EXISTING : base::win::SHORTCUT_CREATE_ALWAYS));
 #else
     result->AppendBoolean(false);
 #endif

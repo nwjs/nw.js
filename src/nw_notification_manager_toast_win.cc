@@ -37,10 +37,8 @@
 
 #include <intsafe.h>
 #include <strsafe.h>
-#include <wrl\client.h>
 #include <wrl\implements.h>
 
-using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
 
 namespace nw {
@@ -198,17 +196,33 @@ IFACEMETHODIMP ToastEventHandler::Invoke(_In_ IToastNotification* /* sender */, 
     BOOL succeeded = nw::NotificationManager::getSingleton()->DesktopNotificationPostClose(_render_process_id, _render_frame_id, _notification_id, tdr == ToastDismissalReason_UserCanceled);
     hr = succeeded ? S_OK : E_FAIL;
   }
+  nw::NotificationManager::getSingleton()->CancelDesktopNotification(_render_process_id, _render_frame_id, _notification_id);
   return hr;
 }
 
 // DesktopToastFailedEventHandler
-IFACEMETHODIMP ToastEventHandler::Invoke(_In_ IToastNotification* /* sender */, _In_ IToastFailedEventArgs* /* e */)
+IFACEMETHODIMP ToastEventHandler::Invoke(_In_ IToastNotification* /* sender */, _In_ IToastFailedEventArgs* e)
 {
-  BOOL succeeded = nw::NotificationManager::getSingleton()->DesktopNotificationPostError(_render_process_id, _render_frame_id, _notification_id, L"The toast encountered an error.");
+  HRESULT errCode;
+  e->get_ErrorCode(&errCode);
+  nw::NotificationManagerToastWin* nmtw = static_cast<nw::NotificationManagerToastWin*>(nw::NotificationManager::getSingleton());
+  std::wstringstream errMsg; errMsg << L"The toast encountered an error code (0x" << std::hex << errCode <<").";
+  const bool fallBack = errCode == 0x80070490;
+  if (fallBack)
+    errMsg << " Fallback to balloon notification!";
+
+  BOOL succeeded = nmtw->DesktopNotificationPostError(_render_process_id, _render_frame_id, _notification_id, errMsg.str().c_str());
+  nmtw->notification_map_.erase(_notification_id);
+
+  if (fallBack) {
+    NotificationManagerToastWin::ForceDisable = true;
+    delete nmtw;
+  }
   return succeeded ? S_OK : E_FAIL;
 }
 
 // ============= NotificationManagerToastWin Implementation =============
+bool NotificationManagerToastWin::ForceDisable = false;
 
 HRESULT NotificationManagerToastWin::SetNodeValueString(_In_ HSTRING inputString, _In_ IXmlNode *node, _In_ IXmlDocument *xml)
 {
@@ -326,37 +340,28 @@ HRESULT NotificationManagerToastWin::CreateToastXml(_In_ IToastNotificationManag
 HRESULT NotificationManagerToastWin::CreateToast(_In_ IToastNotificationManagerStatics *toastManager, _In_ IXmlDocument *xml, 
   const int render_process_id, const int render_frame_id, const int notification_id)
 {
-  base::string16 appID;
-  if (content::Shell::GetPackage()->root()->GetString("app-id", &appID) == false)
-    content::Shell::GetPackage()->root()->GetString(switches::kmName, &appID);
-
-  ComPtr<IToastNotifier> notifier;
-  HRESULT hr = toastManager->CreateToastNotifierWithId(StringReferenceWrapper(appID.c_str(), appID.length()).Get(), &notifier);
+  ComPtr<IToastNotificationFactory> factory;
+  HRESULT hr = GetActivationFactory(StringReferenceWrapper(RuntimeClass_Windows_UI_Notifications_ToastNotification).Get(), &factory);
   if (SUCCEEDED(hr))
   {
-    ComPtr<IToastNotificationFactory> factory;
-    hr = GetActivationFactory(StringReferenceWrapper(RuntimeClass_Windows_UI_Notifications_ToastNotification).Get(), &factory);
+    ComPtr<IToastNotification>& toast = notification_map_[notification_id];
+    hr = factory->CreateToastNotification(xml, &toast);
     if (SUCCEEDED(hr))
     {
-      ComPtr<IToastNotification> toast;
-      hr = factory->CreateToastNotification(xml, &toast);
+      // Register the event handlers
+      EventRegistrationToken activatedToken, dismissedToken, failedToken;
+      ComPtr<ToastEventHandler> eventHandler = new ToastEventHandler(render_process_id, render_frame_id, notification_id);
+
+      hr = toast->add_Activated(eventHandler.Get(), &activatedToken);
       if (SUCCEEDED(hr))
       {
-        // Register the event handlers
-        EventRegistrationToken activatedToken, dismissedToken, failedToken;
-        ComPtr<ToastEventHandler> eventHandler = new ToastEventHandler(render_process_id, render_frame_id, notification_id);
-
-        hr = toast->add_Activated(eventHandler.Get(), &activatedToken);
+        hr = toast->add_Dismissed(eventHandler.Get(), &dismissedToken);
         if (SUCCEEDED(hr))
         {
-          hr = toast->add_Dismissed(eventHandler.Get(), &dismissedToken);
+          hr = toast->add_Failed(eventHandler.Get(), &failedToken);
           if (SUCCEEDED(hr))
           {
-            hr = toast->add_Failed(eventHandler.Get(), &failedToken);
-            if (SUCCEEDED(hr))
-            {
-              hr = notifier->Show(toast.Get());
-            }
+            hr = notifier_->Show(toast.Get());
           }
         }
       }
@@ -367,7 +372,7 @@ HRESULT NotificationManagerToastWin::CreateToast(_In_ IToastNotificationManagerS
 
 bool NotificationManagerToastWin::IsSupported() {
   static char cachedRes = -1;
-  
+  if (ForceDisable) return false;
   if (cachedRes > -1) return cachedRes;
   cachedRes = 0;
   
@@ -381,6 +386,15 @@ bool NotificationManagerToastWin::IsSupported() {
 }
 
 NotificationManagerToastWin::NotificationManagerToastWin() {
+  HRESULT hr = GetActivationFactory(StringReferenceWrapper(RuntimeClass_Windows_UI_Notifications_ToastNotificationManager).Get(), &toastStatics_);
+  if (SUCCEEDED(hr))
+  {
+    base::string16 appID;
+    if (content::Shell::GetPackage()->root()->GetString("app-id", &appID) == false)
+      content::Shell::GetPackage()->root()->GetString(switches::kmName, &appID);
+
+    HRESULT hr = toastStatics_->CreateToastNotifierWithId(StringReferenceWrapper(appID.c_str(), appID.length()).Get(), &notifier_);
+  }
 }
 
 NotificationManagerToastWin::~NotificationManagerToastWin() {
@@ -395,24 +409,28 @@ bool NotificationManagerToastWin::AddDesktopNotification(const content::ShowDesk
   if (host == NULL)
     return false;
 
-  ComPtr<IToastNotificationManagerStatics> toastStatics;
-  HRESULT hr = GetActivationFactory(StringReferenceWrapper(RuntimeClass_Windows_UI_Notifications_ToastNotificationManager).Get(), &toastStatics);
-  if (SUCCEEDED(hr))
-  {
+  
     ComPtr<IXmlDocument> toastXml;
-    hr = CreateToastXml(toastStatics.Get(), params, &toastXml);
+    HRESULT hr = CreateToastXml(toastStatics_.Get(), params, &toastXml);
     if (SUCCEEDED(hr))
     {
-      hr = CreateToast(toastStatics.Get(), toastXml.Get(), render_process_id, render_frame_id, notification_id);
+      hr = CreateToast(toastStatics_.Get(), toastXml.Get(), render_process_id, render_frame_id, notification_id);
       if (SUCCEEDED(hr))
         DesktopNotificationPostDisplay(render_process_id, render_frame_id, notification_id);
     }
-  }
+  
   
   return SUCCEEDED(hr);
 }
 
 bool NotificationManagerToastWin::CancelDesktopNotification(int render_process_id, int render_frame_id, int notification_id) {
-  return true;
+  std::map<int, ComPtr<IToastNotification>>::iterator i = notification_map_.find(notification_id);
+  if (i == notification_map_.end())
+    return false;
+  
+  ComPtr<IToastNotification> toast = i->second;
+  notification_map_.erase(i);
+
+  return SUCCEEDED(notifier_->Hide(toast.Get()));
 }
 } // namespace nw
