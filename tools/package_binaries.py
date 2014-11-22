@@ -125,6 +125,7 @@ def generate_target_nw(platform_name, arch, version):
                            ]
     elif platform_name == 'win':
         target['input'] = [
+                           'd3dcompiler_46.dll',
                            'ffmpegsumo.dll',
                            'icudtl.dat',
                            'libEGL.dll',

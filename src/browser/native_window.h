@@ -88,6 +88,7 @@ class NativeWindow {
   virtual void Restore() = 0;
   virtual void SetFullscreen(bool fullscreen) = 0;
   virtual bool IsFullscreen() = 0;
+  virtual void SetTransparent(bool transparent) = 0;
   virtual void SetSize(const gfx::Size& size) = 0;
   virtual gfx::Size GetSize() = 0;
   virtual void SetMinimumSize(int width, int height) = 0;
@@ -140,6 +141,7 @@ class NativeWindow {
   bool has_frame() const { return has_frame_; }
   const gfx::Image& app_icon() const { return app_icon_; }
   void CapturePage(const std::string& image_format);
+  bool IsTransparent() { return transparent_; }
 
  protected:
   void OnNativeWindowDestory() {
@@ -151,6 +153,8 @@ class NativeWindow {
 
   // Weak reference to parent.
   base::WeakPtr<content::Shell> shell_;
+  
+  bool transparent_;
 
   bool has_frame_;
 

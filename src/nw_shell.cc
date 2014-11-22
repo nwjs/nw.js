@@ -710,6 +710,7 @@ GURL Shell::OverrideDOMStorageOrigin(const GURL& origin) {
 void Shell::RenderViewCreated(RenderViewHost* render_view_host) {
   //FIXME: handle removal
   new nwapi::DispatcherHost(render_view_host);
+  window()->SetTransparent(window()->IsTransparent());
 }
 
 #if defined(OS_WIN) || defined(OS_LINUX)

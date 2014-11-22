@@ -52,6 +52,7 @@ class NativeWindowCocoa : public NativeWindow {
   virtual void Restore() OVERRIDE;
   virtual void SetFullscreen(bool fullscreen) OVERRIDE;
   virtual bool IsFullscreen() OVERRIDE;
+  virtual void SetTransparent(bool transparent) OVERRIDE;
   virtual void SetSize(const gfx::Size& size) OVERRIDE;
   virtual gfx::Size GetSize() OVERRIDE;
   virtual void SetMinimumSize(int width, int height) OVERRIDE;
@@ -111,6 +112,9 @@ class NativeWindowCocoa : public NativeWindow {
 
   // Delegate to the toolbar.
   base::scoped_nsobject<ShellToolbarDelegate> toolbar_delegate_;
+  
+  // Data for transparency
+  NSColor *opaque_color_;
 
   bool is_fullscreen_;
   bool is_kiosk_;

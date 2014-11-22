@@ -54,6 +54,8 @@ extern const char kmShowInTaskbar[];
 extern const char kmKiosk[];
 extern const char kmAlwaysOnTop[];
 extern const char kmInitialFocus[];
+extern const char kmTransparent[];
+extern const char kmDisableTransparency[];
 
 extern const char kmWebgl[];
 extern const char kmJava[];

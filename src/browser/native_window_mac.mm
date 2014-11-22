@@ -35,11 +35,15 @@
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/native_web_keyboard_event.h"
-#include "content/public/browser/render_widget_host_view.h"
+#include "content/browser/renderer_host/render_widget_host_view_mac.h"
 #include "content/public/browser/web_contents.h"
 #include "extensions/common/draggable_region.h"
 #include "third_party/skia/include/core/SkRegion.h"
 #import "ui/base/cocoa/underlay_opengl_hosting_window.h"
+
+namespace content {
+  extern bool g_support_transparency;
+}
 
 @interface NSWindow (NSPrivateApis)
 - (void)setBottomCornerRounded:(BOOL)rounded;
@@ -282,7 +286,11 @@ enum {
   [[NSBezierPath bezierPathWithRoundedRect:[view bounds]
                                    xRadius:cornerRadius
                                    yRadius:cornerRadius] addClip];
-  [[NSColor whiteColor] set];
+  if ([self isOpaque] || !content::g_support_transparency)
+    [[NSColor whiteColor] set];
+  else
+    [[NSColor clearColor] set];
+
   NSRectFill(rect);
 }
 
@@ -385,9 +393,12 @@ NativeWindowCocoa::NativeWindowCocoa(
                       defer:NO];
   }
   window_ = shell_window;
+  opaque_color_ = [window() backgroundColor];
   [shell_window setShell:shell];
   [[window() contentView] setWantsLayer:YES];
   [window() setDelegate:[[NativeWindowDelegate alloc] initWithShell:shell]];
+
+  SetTransparent(transparent_);
 
   // Disable fullscreen button when 'fullscreen' is specified to false.
   bool fullscreen;
@@ -539,6 +550,27 @@ bool NativeWindowCocoa::IsFullscreen() {
   return is_fullscreen_;
 }
 
+void NativeWindowCocoa::SetTransparent(bool transparent) {
+  
+  if (!content::g_support_transparency) return;
+  if (!transparent_ && transparent) {
+    opaque_color_ = [window() backgroundColor];
+  }
+  
+  [window() setHasShadow:transparent ? NO : YES];
+  [window() setOpaque:transparent ? NO : YES];
+  [window() setBackgroundColor:transparent ? [NSColor clearColor] : opaque_color_];
+
+  content::RenderWidgetHostViewMac* rwhv = static_cast<content::RenderWidgetHostViewMac*>(shell_->web_contents()->GetRenderWidgetHostView());
+
+  if (rwhv) {
+    rwhv->SetBackgroundOpaque(!transparent);
+    [rwhv->background_layer_ setBackgroundColor:CGColorGetConstantColor(transparent ? kCGColorClear : kCGColorWhite)];
+  }
+  
+  transparent_ = transparent;
+  
+}
 void NativeWindowCocoa::SetNonLionFullscreen(bool fullscreen) {
   if (fullscreen == is_fullscreen_)
     return;

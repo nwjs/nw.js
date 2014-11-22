@@ -22,10 +22,12 @@
 
 #if defined(OS_WIN)
 #include <shobjidl.h>
+#include <dwmapi.h>
 #endif
 
 #include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
+#include "base/command_line.h"
 
 #if defined(OS_WIN)
 #include "base/win/scoped_comptr.h"
@@ -44,6 +46,7 @@
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/web_contents.h"
+#include "content/public/common/content_switches.h"
 #include "extensions/common/draggable_region.h"
 #include "third_party/skia/include/core/SkPaint.h"
 #include "ui/base/hit_test.h"
@@ -58,9 +61,11 @@
 #include "ui/gfx/font_list.h"
 #include "ui/gfx/platform_font.h"
 #include "ui/gfx/image/image_skia_operations.h"
+#include "ui/views/background.h"
 #include "ui/views/controls/webview/webview.h"
 #include "ui/views/layout/box_layout.h"
 #include "ui/views/views_delegate.h"
+#include "ui/views/views_switches.h"
 #include "ui/views/widget/widget.h"
 #include "ui/views/window/native_frame_view.h"
 #include "ui/views/widget/native_widget_private.h"
@@ -77,6 +82,9 @@
 #include "ash/accelerators/accelerator_table.h"
 #endif
 
+namespace content {
+  extern bool g_support_transparency;
+}
 
 
 namespace nw {
@@ -291,6 +299,8 @@ NativeWindowAura::NativeWindowAura(const base::WeakPtr<content::Shell>& shell,
   params.delegate = this;
   params.remove_standard_frame = !has_frame();
   params.use_system_default_icon = true;
+  if (content::g_support_transparency && transparent_)
+    params.opacity = views::Widget::InitParams::TRANSLUCENT_WINDOW;
   if (is_fullscreen_)
     params.show_state = ui::SHOW_STATE_FULLSCREEN;
 #if defined(OS_WIN)
@@ -398,6 +408,87 @@ void NativeWindowAura::SetFullscreen(bool fullscreen) {
 
 bool NativeWindowAura::IsFullscreen() {
   return is_fullscreen_;
+}
+
+void NativeWindowAura::SetTransparent(bool transparent) {
+  if (!content::g_support_transparency)
+    return;
+#if defined(OS_WIN)
+  // Check for Windows Vista or higher, transparency isn't supported in 
+  // anything lower. 
+  if (base::win::GetVersion() < base::win::VERSION_VISTA) {
+    NOTREACHED() << "The operating system does not support transparency.";
+    transparent_ = false;
+    return;
+  }
+
+  // Check to see if composition is disabled, if so we have to throw an 
+  // error, there's no graceful recovery, yet. TODO: Graceful recovery.
+  BOOL enabled = FALSE;
+  HRESULT result = ::DwmIsCompositionEnabled(&enabled);
+  if (!enabled || !SUCCEEDED(result)) {
+    NOTREACHED() << "Windows DWM composition is not enabled, transparency is not supported.";
+    transparent_ = false;
+    return;
+  }
+
+  HWND hWnd = views::HWNDForWidget(window_);
+
+  const int marginVal = transparent ? -1 : 0;
+  MARGINS mgMarInset = { marginVal, marginVal, marginVal, marginVal };
+  if (DwmExtendFrameIntoClientArea(hWnd, &mgMarInset) != S_OK) {
+    NOTREACHED() << "Windows DWM extending to client area failed, transparency is not supported.";
+    transparent_ = false;
+    return;
+  }
+
+  // this is needed, or transparency will fail if it defined on startup
+  bool change_window_style = false;
+
+  if (!has_frame_) {
+    const LONG lastStyle = GetWindowLong(hWnd, GWL_STYLE);
+    const LONG style = WS_CAPTION;
+    const LONG newStyle = transparent ? lastStyle | style : lastStyle & ~style;
+    SetWindowLong(hWnd, GWL_STYLE, newStyle);
+    change_window_style |= lastStyle != newStyle;
+  }
+
+  const LONG lastExStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
+  const LONG exStyle = WS_EX_COMPOSITED;
+  const LONG newExStyle = transparent ? lastExStyle | exStyle : lastExStyle & ~exStyle;
+  SetWindowLong(hWnd, GWL_EXSTYLE, newExStyle);
+  change_window_style |= lastExStyle != newExStyle;
+
+  if (change_window_style) {
+    window_->FrameTypeChanged();
+  }
+#elif defined(USE_X11) && !defined(OS_CHROMEOS)
+
+  static char cachedRes = -1;
+  if ( cachedRes<0 ) {
+    const CommandLine& command_line = *CommandLine::ForCurrentProcess();
+    cachedRes = !command_line.HasSwitch(switches::kDisableGpu) ||
+      !command_line.HasSwitch(views::switches::kEnableTransparentVisuals);
+  }
+
+  if (cachedRes && transparent) {
+    LOG(INFO) << "if transparency does not work, try with --enable-transparent-visuals --disable-gpu";
+  }
+
+ #endif
+
+  if (toolbar_) {
+    toolbar_->set_background(transparent ? views::Background::CreateSolidBackground(SK_ColorTRANSPARENT) : 
+      views::Background::CreateStandardPanelBackground());
+    toolbar_->SchedulePaint();
+  }
+
+  content::RenderWidgetHostView* rwhv = shell_->web_contents()->GetRenderWidgetHostView();
+  if (rwhv) {
+    rwhv->SetBackgroundOpaque(!transparent);
+  }
+
+  transparent_ = transparent;
 }
 
 void NativeWindowAura::SetSize(const gfx::Size& size) {
