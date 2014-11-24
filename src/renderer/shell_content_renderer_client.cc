@@ -266,6 +266,8 @@ void ShellContentRendererClient::SetupNodeUtil(
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::HandleScope scope(isolate);
 
+  isolate->NWClearPendingException();
+
   std::string root_path = rv->renderer_preferences_.nw_app_root_path.AsUTF8Unsafe();
 #if defined(OS_WIN)
   base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
@@ -329,6 +331,8 @@ void ShellContentRendererClient::InstallNodeSymbols(
     v8::Local<v8::Context>::New(isolate, node::g_context);
 
   static bool installed_once = false;
+
+  isolate->NWClearPendingException();
 
   v8::Local<v8::Object> nodeGlobal = g_context->Global();
   v8::Local<v8::Object> v8Global = context->Global();
