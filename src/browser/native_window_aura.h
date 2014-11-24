@@ -120,6 +120,8 @@ class NativeWindowAura : public NativeWindow,
   virtual gfx::ImageSkia GetWindowIcon() OVERRIDE;
   virtual bool ShouldShowWindowTitle() const OVERRIDE;
   virtual bool ShouldHandleOnSize()    const OVERRIDE;
+  virtual void HandleWMStateUpdate() OVERRIDE;
+
   views::UnhandledKeyboardEventHandler unhandled_keyboard_event_handler_;
 
 

@@ -991,6 +991,28 @@ bool NativeWindowAura::ExecuteWindowsCommand(int command_id) {
   return false;
 }
 
+void NativeWindowAura::HandleWMStateUpdate() {
+  if (window_->IsMaximized()) {
+    if (!is_maximized_ && shell())
+      shell()->SendEvent("maximize");
+    is_maximized_ = true;
+  }else if (is_maximized_) {
+    if (shell())
+      shell()->SendEvent("unmaximize");
+    is_maximized_ = false;
+  }
+
+  if (window_->IsMinimized()) {
+    if (!is_minimized_ && shell())
+      shell()->SendEvent("minimize");
+    is_minimized_ = true;
+  }else if (is_minimized_) {
+    if (shell())
+      shell()->SendEvent("restore");
+    is_minimized_ = false;
+  }
+}
+
 bool NativeWindowAura::HandleSize(unsigned int param, const gfx::Size& size) {
 #if defined(OS_WIN)
   if (param == SIZE_MAXIMIZED) {
