@@ -132,6 +132,8 @@ class NativeWindowAura : public NativeWindow,
 
   // WidgetObserver implementation
   virtual void OnWidgetBoundsChanged(views::Widget* widget, const gfx::Rect& new_bounds) OVERRIDE;
+  virtual void OnWidgetActivationChanged(views::Widget* widget,
+                                         bool active) OVERRIDE;
 
   virtual bool AcceleratorPressed(const ui::Accelerator& accelerator) OVERRIDE;
 

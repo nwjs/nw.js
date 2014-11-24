@@ -565,6 +565,20 @@ void NativeWindowAura::SetAlwaysOnTop(bool top) {
   window_->SetAlwaysOnTop(top);
 }
 
+void NativeWindowAura::OnWidgetActivationChanged(views::Widget* widget, bool active) {
+  if (active) {
+    if (shell())
+      shell()->SendEvent("focus");
+    is_focus_ = true;
+    is_blur_ = false;
+  }else{
+    if (shell())
+      shell()->SendEvent("blur");
+    is_focus_ = false;
+    is_blur_ = true;
+  }
+}
+
 void NativeWindowAura::OnWidgetBoundsChanged(views::Widget* widget, const gfx::Rect& new_bounds)  {
   int w = new_bounds.width();
   int h = new_bounds.height();
