@@ -1,0 +1,18 @@
+<html>
+<head>
+</head>
+<body>
+hi
+<script>
+  var gui=require('nw.gui');
+  //The test case require crash dump api
+  gui.App.setCrashDumpDir('./internal/tmp');
+  var win = gui.Window.get(window.open('http://www.google.com'))
+  win.close(true);
+  setTimeout(function() {
+      gui.Window.open('http://www.google.com')
+  }, 1000);
+  setTimeout(gui.App.quit, 1500);
+</script>
+</body>
+</html>
