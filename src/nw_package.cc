@@ -204,7 +204,7 @@ bool Package::GetImage(const FilePath& icon_path, gfx::Image* image) {
   if (decoded->empty())
     return false;  // Unable to decode.
 
-  *image = gfx::Image::CreateFrom1xBitmap(*decoded.release());
+  *image = gfx::Image::CreateFrom1xBitmap(*decoded);
   return true;
 }
 
