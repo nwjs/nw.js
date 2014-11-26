@@ -1,3 +1,16 @@
+0.11.2 / 11-26-2014
+===================
+- Support window transparency (#132, Thanks to Jefry Tedjokusumo)
+- Fix: [Linux] broken window events (focus, blur, etc, #2631)
+- Fix: memory leak on setting tray icon (#2666)
+- Fix: child_process.fork() (#2664)
+- Fix: bad Buffer created from strings from DOM (#1669, #2439) (Thank to Liu Cong)
+- Fix: Segmentation fault by starting nw on command line with parameters #2671
+- Fix: crashes if http.request gets blocked with Little Snitch (mac only) #2585
+- Fix: Windows 7 64/32 - frame doesn't show #2657
+- Fix: AutoFill Crashes NodeWebkit #2653
+- Fix "Cancel Desktop Notification" for all platform. and implement it for win8 (toast notification)
+
 0.11.1 / 11-20-2014
 ===================
 - add nwsnapshot
