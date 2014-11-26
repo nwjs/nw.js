@@ -1,0 +1,18 @@
+<html>
+<head>
+</head>
+<body>
+hi
+<script>
+  var gui=require('nw.gui');
+  var win = gui.Window.get(window.open('http://www.google.com'))
+  win.close(true);
+  setTimeout(function() {
+      gui.Window.open('http://www.google.com')
+  }, 1000);
+  setTimeout(gui.App.quit, 1500);
+</script>
+<script src="../res/mocha_util.js"></script>
+<script src="mocha_test.js"></script>
+</body>
+</html>
