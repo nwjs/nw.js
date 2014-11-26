@@ -86,6 +86,7 @@ class NativeWindowAura : public NativeWindow,
   virtual void SetResizable(bool resizable) OVERRIDE;
   virtual void SetAlwaysOnTop(bool top) OVERRIDE;
   virtual void SetShowInTaskbar(bool show = true) OVERRIDE;
+  virtual void SetVisibleOnAllWorkspaces(bool all_workspaces) OVERRIDE;
   virtual void SetPosition(const std::string& position) OVERRIDE;
   virtual void SetPosition(const gfx::Point& position) OVERRIDE;
   virtual gfx::Point GetPosition() OVERRIDE;
@@ -181,6 +182,7 @@ class NativeWindowAura : public NativeWindow,
   views::WebView* web_view_;
   views::Widget* window_;
   bool is_fullscreen_;
+  bool is_visible_on_all_workspaces_;
 
   // Flags used to prevent sending extra events.
   bool is_minimized_;

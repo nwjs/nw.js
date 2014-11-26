@@ -96,6 +96,7 @@ class NativeWindow {
   virtual void SetResizable(bool resizable) = 0;
   virtual void SetAlwaysOnTop(bool top) = 0;
   virtual void SetShowInTaskbar(bool show = true) = 0;
+  virtual void SetVisibleOnAllWorkspaces(bool all_workspaces) = 0;
   virtual void SetPosition(const std::string& position) = 0;
   virtual void SetPosition(const gfx::Point& position) = 0;
   virtual gfx::Point GetPosition() = 0;
