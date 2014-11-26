@@ -136,7 +136,8 @@ bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
   if (args.size() > 0) {
     zip::ZipReader reader;
     FilePath fp(args[0]);
-    if (!command_line->HasSwitch(switches::kProcessType) &&
+    if (fp.MatchesExtension(FILE_PATH_LITERAL(".js")) &&
+        !command_line->HasSwitch(switches::kProcessType) &&
         PathExists(fp) && !DirectoryExists(fp) && !reader.Open(fp)) {
       *exit_code = node::Start(command_line->argc0(), command_line->argv0());
       return true;
