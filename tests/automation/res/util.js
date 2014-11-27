@@ -19,6 +19,29 @@ if (!g_quiet) {
 
 var fs = require('fs');
 var path = require('path');
+var net = require('net');
+var spawn = require('child_process').spawn;
+
+var createTCPServer = function(port, autoClose) {
+  var server = net.createServer();
+  if (autoClose) {
+    process.exit = function() {
+      server.close();
+      process.quit();
+    };
+  }
+  port = port || 13013;
+  server.on('error', function(e) {
+    console.error('Failed to launch TCP server: '+ e.code);
+  });
+  server.listen(port);
+  return server;
+};
+
+var spawnChildProcess = function(appPath) {
+  var child = spawn(process.execPath, [appPath]);
+  return child;
+};
 
 mocha.setup({ui:'bdd'});
 
