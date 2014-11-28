@@ -38,6 +38,20 @@ var createTCPServer = function(port, autoClose) {
   return server;
 };
 
+var connectToTCPServer = function(port, data, keepOpen) {
+  port = port || 13013;
+  var socket = net.connect({port: port});
+  socket.setEncoding('utf8');
+  if (data) {
+    socket.write(JSON.stringify(data));
+  }
+  if (!keepOpen) {
+    socket.end();
+    socket = undefined;
+  }
+  return socket;
+};
+
 var spawnChildProcess = function(appPath) {
   var child = spawn(process.execPath, [appPath]);
   return child;
@@ -89,26 +103,15 @@ var outputAsXML = function() {
   return 0;
 };
 
-window.unitTestApplicationFailed = function() {
-  describe('Manually verify the application', function() {
-    it('Application should succeed', function(done){
-      done('Application failed: ' + appName);
-    });
-  });
-};
+window.assertRunningResult = function(result, errMsg) {
 
-window.unitTestApplicationSucceed = function() {
-  describe('Manually verify the application', function() {
-    it('Application should succeed', function(done){
-      done();
-    });
-  });
-};
-
-window.unitTestApplicationTimeout = function() {
-  describe('Manually verify the application', function() {
-    it('Application should not timeout', function(done){
-      done('Application timeout');
+  describe('Assert test running result', function() {
+    it('the test should succeed', function(done){
+      if (result) {
+        done();
+      } else {
+        done('Assertion failed: ' + errMsg);
+      }
     });
   });
 };
