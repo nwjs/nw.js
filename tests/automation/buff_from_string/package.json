@@ -1,5 +1,4 @@
 {
   "name":"test",
-  "main":"index.html",
-  "dependencies":{}
+  "main":"index.html"
 }
