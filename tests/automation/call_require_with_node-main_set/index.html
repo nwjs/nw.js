@@ -1,0 +1,30 @@
+<html>
+<head>
+</head>
+<body>
+<p> Test require()</p>
+
+<script src="../res/mocha_util.js"></script>
+
+<script>
+  var gui = require('nw.gui');
+  var result = { ok: true }; 
+  
+  try {
+    require('test');
+  }
+  catch (e) {
+    result.ok = false;
+    result.error = e.message;
+  }
+
+  if (result.ok) {
+    assertRunningResult(true);
+  } else {
+    assertRunningResult(false, result.error);
+  }
+</script>
+
+
+</body>
+</html>
