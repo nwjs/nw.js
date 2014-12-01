@@ -9,6 +9,7 @@ describe('inject-js',function(){
   var server, child, result;
 
   before(function(done) {
+    this.timeout(0);
     server = createTCPServer(13013);
     child = spawnChildProcess(path.join(curDir, 'internal'));
     server.on('connection', function(socket) {
