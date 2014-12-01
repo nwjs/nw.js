@@ -130,6 +130,11 @@ void NativeWindow::InitFromManifest(base::DictionaryValue* manifest) {
       !showInTaskbar) {
     SetShowInTaskbar(false);
   }
+  bool all_workspaces;
+  if (manifest->GetBoolean(switches::kmVisibleOnAllWorkspaces, &all_workspaces) 
+    && all_workspaces) {
+    SetVisibleOnAllWorkspaces(true);
+  }
   bool fullscreen;
   if (manifest->GetBoolean(switches::kmFullscreen, &fullscreen) && fullscreen) {
     SetFullscreen(true);

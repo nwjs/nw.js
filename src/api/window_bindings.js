@@ -412,6 +412,10 @@ Window.prototype.setShowInTaskbar = function(flag) {
   CallObjectMethod(this, 'SetShowInTaskbar', [ flag ]);
 }
 
+Window.prototype.setVisibleOnAllWorkspaces = function(flag) {
+  CallObjectMethod(this, 'SetVisibleOnAllWorkspaces', [ Boolean(flag) ]);
+}
+
 Window.prototype.requestAttention = function(flash) {
   if (typeof flash == 'boolean') {
     // boolean true is redirected as -1 value

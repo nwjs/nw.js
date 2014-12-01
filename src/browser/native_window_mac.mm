@@ -665,6 +665,16 @@ void NativeWindowCocoa::SetAlwaysOnTop(bool top) {
   [window() setLevel:(top ? NSFloatingWindowLevel : NSNormalWindowLevel)];
 }
 
+void NativeWindowCocoa::SetVisibleOnAllWorkspaces(bool all_workspaces) {
+  NSUInteger collectionBehavior = [window() collectionBehavior];
+  if (all_workspaces) {
+    collectionBehavior |= NSWindowCollectionBehaviorCanJoinAllSpaces;
+  } else {
+    collectionBehavior &= ~NSWindowCollectionBehaviorCanJoinAllSpaces;
+  }
+  [window() setCollectionBehavior:collectionBehavior];
+}
+
 void NativeWindowCocoa::SetShowInTaskbar(bool show) {
   ProcessSerialNumber psn = { 0, kCurrentProcess };
   if (!show) {

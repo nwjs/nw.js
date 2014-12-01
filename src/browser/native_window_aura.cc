@@ -280,6 +280,7 @@ NativeWindowAura::NativeWindowAura(const base::WeakPtr<content::Shell>& shell,
       toolbar_(NULL),
       web_view_(NULL),
       is_fullscreen_(false),
+      is_visible_on_all_workspaces_(false),
       is_minimized_(false),
       is_maximized_(false),
       is_focus_(false),
@@ -293,6 +294,7 @@ NativeWindowAura::NativeWindowAura(const base::WeakPtr<content::Shell>& shell,
   manifest->GetBoolean("focus", &initial_focus_);
   manifest->GetBoolean("fullscreen", &is_fullscreen_);
   manifest->GetBoolean("resizable", &resizable_);
+  manifest->GetBoolean("visible-on-all-workspaces", &is_visible_on_all_workspaces_);
 
   window_ = new views::Widget;
   views::Widget::InitParams params(views::Widget::InitParams::TYPE_WINDOW);
@@ -303,6 +305,7 @@ NativeWindowAura::NativeWindowAura(const base::WeakPtr<content::Shell>& shell,
     params.opacity = views::Widget::InitParams::TRANSLUCENT_WINDOW;
   if (is_fullscreen_)
     params.show_state = ui::SHOW_STATE_FULLSCREEN;
+  params.visible_on_all_workspaces = is_visible_on_all_workspaces_;
 #if defined(OS_WIN)
   if (has_frame())
     window_->set_frame_type(views::Widget::FRAME_TYPE_FORCE_NATIVE);
@@ -563,6 +566,11 @@ void NativeWindowAura::SetAlwaysOnTop(bool top) {
   // SetAlwaysOnTop should be called after StackAtTop because otherwise
   // the top-most flag will be removed.
   window_->SetAlwaysOnTop(top);
+}
+
+void NativeWindowAura::SetVisibleOnAllWorkspaces(bool all_workspaces) {
+  is_visible_on_all_workspaces_ = all_workspaces;
+  window_->SetVisibleOnAllWorkspaces(all_workspaces);
 }
 
 void NativeWindowAura::OnWidgetActivationChanged(views::Widget* widget, bool active) {
