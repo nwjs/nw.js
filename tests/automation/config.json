@@ -1,6 +1,6 @@
 {
   "format": "xunit-file",
-  "exclude": ["node_modules", "output", "internal", "res", "app", "node-remote",
+  "exclude": ["node_modules", "output", "internal", "res", "app", "node-remote", "save_devtools_settings", "single_instance"
     "call_require_with_node-main_set", "show_devtool_after_http_server_created_in_node_main", "reference-node-main"],
   "single": "",
   "timeout": "5000",
