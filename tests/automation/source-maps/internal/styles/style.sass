@@ -1,0 +1,20 @@
+$main-color: #000
+$secondary-color: #fff
+
+body
+  background-color: lighten($main-color, 85%)
+
+input
+  background-color: transparentize($secondary-color, 0.5)
+  border: 0
+  display: block
+  font-size: 3em
+  margin: 15% auto
+  outline: none
+  padding: 0.4em
+  width: 20%
+
+@media only screen and (max-width: 600px)
+  input
+    font-size: 2em
+    width: 40%

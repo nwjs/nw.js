@@ -1,0 +1,6 @@
+{
+  "name":"nw_1403596464",
+  "main":"index.html",
+  "dependencies":{},
+  "node-main":"./index.js"
+}

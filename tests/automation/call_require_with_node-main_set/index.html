@@ -4,7 +4,7 @@
 <body>
 <p> Test require()</p>
 
-<script src="../res/mocha_util.js"></script>
+<!-- script src="../res/mocha_util.js"></script -->
 
 <script>
   var gui = require('nw.gui');
@@ -18,11 +18,22 @@
     result.error = e.message;
   }
 
+    var report_client = require('net').connect({port: 13013});
+    report_client.end(JSON.stringify(result));
+
+  if (result.ok) {
+    document.getElementById('msg').innerHTML = 'NO';
+  } else {
+    document.getElementById('msg').innerHTML = 'YES ' + result.e;
+  }
+
+/*
   if (result.ok) {
     assertRunningResult(true);
   } else {
     assertRunningResult(false, result.error);
   }
+*/
 </script>
 
 

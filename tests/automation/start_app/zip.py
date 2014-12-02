@@ -1,6 +1,5 @@
 import zipfile
 import os
-print 'Python----by Jingfu'
 curDir = os.path.dirname(os.path.abspath(__file__))
 zip = zipfile.ZipFile(os.path.join(curDir, 'tmp-nw', 'app.nw'), 'w',
                       compression=zipfile.ZIP_DEFLATED)

@@ -1,0 +1,19 @@
+ <!DOCTYPE html>
+<html>
+  <head>
+    <title>Test case for crash dump render!</title>
+  </head>
+  <body>
+    <h1>Hello World!</h1>
+    We are using node.js
+    <script>
+      var gui = require('nw.gui');
+      var path = require('path');
+      var fs = require('fs');
+      var tmpDir = path.join(fs.realpathSync('.'), 'tmp');
+      var App = gui.App;
+      App.setCrashDumpDir(tmpDir);
+      App.crashRenderer();
+    </script>
+  </body>
+</html>
