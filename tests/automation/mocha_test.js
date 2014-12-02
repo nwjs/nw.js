@@ -140,13 +140,14 @@ function performTests(config) {
       curChildProcess = spawTestProcessByNW(testSuites[curIdx]);
       children.push(curChildProcess);
       curChildProcess.on('exit', function(code, signal) {
-        (function(p) {
+        (function(p, c) {
           prefix = (code === 0 ? colors.green('[Success]') : colors.red('[Failure]'));
-          print(prefix + ' : ' + colors.underline(p.testcase) + ' with exit code ' + code);
+          print(prefix + ' : ' + colors.underline(p.testcase) + ' with exit code ' + c);
           clearTimeout(timerId);
           p.removeAllListeners('exit');
+          p.kill('SIGKILL');
           runNextTestByNW();
-        })(curChildProcess);
+        })(curChildProcess, code);
       });
     } else {
       if (timerId) {
@@ -168,6 +169,7 @@ function performTests(config) {
       if (idx || idx >= 0) {
         var p = children[idx];
         print(colors.yellow('[Timeout]') + ' : ' + colors.underline(p.testcase));
+        p.removeAllListeners('exit');
         p.kill('SIGKILL');  // 'SIGKILL', 'SIGTERM'
         p = undefined;
         runNextTestByNW();
