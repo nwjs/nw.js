@@ -103,38 +103,7 @@ function performTests(config) {
   if (Number.isNaN(timeout) || timeout <= 0)
     timeout = 5000;
 
-  var resetTimeout = function() {
-    if (timerId)
-      clearTimeout(timerId);
-    timerId = setTimeout(function() {
-      timerId = undefined;
-      for (var i = 0, len = children.length; i < len; i++) {
-        print(colors.red('[Timeout]: ') + colors.underline(children[i].testcase));
-        children[i].kill('SIGTERM');
-      }
-     }, timeout);
-  };
-
   env['out_dir'] = g_outputDir;
-
-  var bindChildExit = function(child, code, signal) {
-    child.on('exit', function(code, signal) {
-      var prefix = code === 0 ? '[Success]' : '[Failure]';
-      print((code === 0 ? colors.green(prefix) : colors.red(prefix)) 
-          + ': ' + colors.underline(child.testcase) + ' with exit code ' + code);
-      //console.log('Done: ' + child.testcase + ' with exit code ' + code);
-      var idx = children.indexOf(child);
-      if (idx >= 0) {
-        children.splice(idx, 1);
-        resetTimeout();
-      }
-      if (children.length === 0) {
-        if (timerId)
-          clearTimeout(timerId);
-        postTest();
-      }
-    });
-  };
 
   var spawTestProcessByNW = function(testcase) {
     cmd = 'nw';
@@ -156,20 +125,61 @@ function performTests(config) {
     return child;
   };
 
-  for (var i = 0, len = testSuites.length; i < len; i++) {
-    child = spawTestProcessByNW(testSuites[i]);
-    if (child) {
-      child.testcase = testSuites[i];
-      bindChildExit(child);
-      //(function(theChild) {
-      //  theChild.on('exit', function(code, signal) {
-      //    onChildExit(theChild, code, signal);
-      //  });
-      //})(child);
-      children.push(child);
-     }
-   }
-  resetTimeout();
+  var curIdx = -1;
+  var curChildProcess = undefined;
+  var prefix;
+
+//  for (var i =0, len = testSuites.length; i < len; i++ ) {
+//    console.log('Test suite ' + i + ':' + testSuites[i]); 
+//  }
+
+  var runNextTestByNW = function() {
+    curIdx += 1;
+    if (curIdx < testSuites.length) {
+      resetTimeout(curIdx);
+      curChildProcess = spawTestProcessByNW(testSuites[curIdx]);
+      children.push(curChildProcess);
+      curChildProcess.on('exit', function(code, signal) {
+        (function(p) {
+          prefix = (code === 0 ? colors.green('[Success]') : colors.red('[Failure]'));
+          print(prefix + ' : ' + colors.underline(p.testcase) + ' with exit code ' + code);
+          clearTimeout(timerId);
+          p.removeAllListeners('exit');
+          runNextTestByNW();
+        })(curChildProcess);
+      });
+    } else {
+      if (timerId) {
+        clearTimeout(timerId);
+        timerId = undefined;
+      }
+      postTest();
+    }
+  };
+
+  var resetTimeout = function(idx) {
+    if (timerId)
+      clearTimeout(timerId);
+    (function(idx){
+
+    timerId = setTimeout(function() {
+
+      timerId = undefined;
+      if (idx || idx >= 0) {
+        var p = children[idx];
+        print(colors.yellow('[Timeout]') + ' : ' + colors.underline(p.testcase));
+        p.kill('SIGKILL');  // 'SIGKILL', 'SIGTERM'
+        p = undefined;
+        runNextTestByNW();
+      }
+     }, timeout);
+
+    })(idx);
+
+  };
+
+  runNextTestByNW();
+
 }   // end of performTests()
 
 var content = fs.readFileSync('./config.json');
