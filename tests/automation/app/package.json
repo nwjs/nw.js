@@ -1,4 +1,5 @@
 {
-    "name": "nw-gui.App-test", 
-    "main": "index.html"
+  "name":"nw-gui.App-test.wrapper",
+  "main":"index.html"
 }
+

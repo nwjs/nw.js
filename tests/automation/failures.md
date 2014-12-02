@@ -1,7 +1,7 @@
 Failed test cases
 =======================
 
-
+* app
 
 * chromedriver2_server
 
