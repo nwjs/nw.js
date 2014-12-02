@@ -111,12 +111,12 @@ describe('Window.cookies', function() {
     describe('remove', function() {
     	before(function(done) {
     	    this.timeout(0);
-            child = spawnChild(3);
+            child = spawnChild(4);
     server.on('connection', function(socket) {
       socket.setEncoding('utf8');
       socket.on('data', function(data) {
         results = JSON.parse(data);
-        changed = results[1];
+        //changed = results[1];
         child.kill();
         done();
       });

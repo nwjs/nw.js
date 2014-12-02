@@ -10,10 +10,14 @@ describe('crash on reload',function(){
 
     var child = spawnChildProcess(path.join(curDir, 'internal'));
     child.on('exit', function (code){
-      if (code != 0) 
-        return done('nw crashes');
       result = true;
-      done();
+      if (code != 0) {
+        done('nw crashes');
+        child.kill();
+      } else {
+        done();
+      }
+
     });
 
     setTimeout(function(){
@@ -21,6 +25,7 @@ describe('crash on reload',function(){
           child.kill();
           done();
         }
-    }, 7500);
+
+    }, 4500);
   });
 });

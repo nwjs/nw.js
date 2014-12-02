@@ -25,10 +25,10 @@ describe('user-agent-app', function() {
 
       setTimeout(function(){
           if (!result) {
-            child.close();
+            child.kill();
             done('loaded event does not been fired');
           }
-        }, 10000);
+        }, 7000);
     
   });
     
