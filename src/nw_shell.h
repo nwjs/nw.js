@@ -165,7 +165,8 @@ class Shell : public WebContentsDelegate,
                                   int source_frame_id,
                                   const base::string16& frame_name,
                                   const GURL& target_url,
-                                  WebContents* new_contents) OVERRIDE;
+                                  WebContents* new_contents,
+                                  const base::string16& nw_window_manifest) OVERRIDE;
   virtual void ToggleFullscreenModeForTab(WebContents* web_contents,
                                           bool enter_fullscreen) OVERRIDE;
   virtual bool IsFullscreenForTabOrPending(

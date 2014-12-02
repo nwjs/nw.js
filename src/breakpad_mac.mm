@@ -195,7 +195,7 @@ void InitCrashReporter() {
       [resource_path stringByAppendingPathComponent:@"crash_report_sender.app"];
   NSString *reporter_location =
       [[NSBundle bundleWithPath:reporter_bundle_location] executablePath];
-#endif 
+#endif
 
   VLOG(1) << "resource_path: " << [resource_path UTF8String];
   VLOG(1) << "inspector_location: " << [inspector_location UTF8String];
@@ -235,7 +235,7 @@ void InitCrashReporter() {
   // Initialize Breakpad.
   gBreakpadRef = BreakpadCreate(breakpad_config);
   if (!gBreakpadRef) {
-    LOG_IF(ERROR, base::mac::AmIBundled()) << "Breakpad initializaiton failed";
+    LOG_IF(ERROR, base::mac::AmIBundled()) << "Breakpad initialization failed";
     return;
   }
 

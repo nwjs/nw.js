@@ -146,6 +146,7 @@ Window.prototype.handleEvent = function(ev) {
         policy.forceDownload  =  function () { this.val = 'download'; };
         policy.forceNewWindow =  function () { this.val = 'new-window'; };
         policy.forceNewPopup  =  function () { this.val = 'new-popup'; };
+        policy.setNewWindowManifest = function (m) { this.manifest = JSON.stringify(m); };
     }
   // Route events to EventEmitter.
   this.emit.apply(this, arguments);
@@ -412,6 +413,10 @@ Window.prototype.setShowInTaskbar = function(flag) {
   CallObjectMethod(this, 'SetShowInTaskbar', [ flag ]);
 }
 
+Window.prototype.setVisibleOnAllWorkspaces = function(flag) {
+  CallObjectMethod(this, 'SetVisibleOnAllWorkspaces', [ Boolean(flag) ]);
+}
+
 Window.prototype.requestAttention = function(flash) {
   if (typeof flash == 'boolean') {
     // boolean true is redirected as -1 value
@@ -500,8 +505,13 @@ Window.prototype.capturePage = function(callback, image_format_options) {
   CallObjectMethod(this, 'CapturePage', [options.format]);
 };
 
-    Window.prototype.eval = function(frame, script) {
-        return CallObjectMethod(this, 'EvaluateScript', frame, script);
-    };
+Window.prototype.eval = function(frame, script) {
+  return CallObjectMethod(this, 'EvaluateScript', frame, script);
+};
+
+Window.prototype.disableCache = function(flag) {
+  return CallObjectMethod(this, 'setCacheDisabled', flag);
+};
+
 
 }  // function Window.init

@@ -255,6 +255,10 @@ void Window::Call(const std::string& method,
     bool show;
     if (arguments.GetBoolean(0, &show))
       shell_->window()->SetShowInTaskbar(show);
+  } else if (method == "SetVisibleOnAllWorkspaces") {
+    bool all_workspaces;
+    if (arguments.GetBoolean(0, &all_workspaces))
+      shell_->window()->SetVisibleOnAllWorkspaces(all_workspaces);
   } else if (method == "MoveTo") {
     int x, y;
     if (arguments.GetInteger(0, &x) &&

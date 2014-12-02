@@ -21,6 +21,7 @@
 #include "content/nw/src/nw_shell.h"
 
 #include "base/command_line.h"
+#include "base/json/json_reader.h"
 #include "base/message_loop/message_loop.h"
 #include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
@@ -568,10 +569,17 @@ void Shell::WebContentsCreated(WebContents* source_contents,
                                int source_frame_id,
                                const base::string16& frame_name,
                                const GURL& target_url,
-                               WebContents* new_contents) {
+                               WebContents* new_contents,
+                               const base::string16& nw_window_manifest) {
   // Create with package's manifest
   scoped_ptr<base::DictionaryValue> manifest(
       GetPackage()->window()->DeepCopy());
+
+  scoped_ptr<base::Value> val;
+  std::string manifest_str = base::UTF16ToUTF8(nw_window_manifest);
+  val.reset(base::JSONReader().ReadToValue(manifest_str));
+  if (val.get() && val->IsType(base::Value::TYPE_DICTIONARY))
+    manifest.reset(static_cast<base::DictionaryValue*>(val.release()));
 
   // Get window features
   blink::WebWindowFeatures features = new_contents->GetWindowFeatures();

@@ -54,7 +54,8 @@ class Dispatcher : public content::RenderViewObserver {
     content::RenderView* rv,
     blink::WebFrame* frame,
     const blink::WebURLRequest& request,
-    blink::WebNavigationPolicy* policy);
+    blink::WebNavigationPolicy* policy,
+    blink::WebString* manifest);
 
  private:
   // RenderViewObserver implementation.

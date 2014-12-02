@@ -53,6 +53,7 @@ extern const char kmFullscreen[];
 extern const char kmShowInTaskbar[];
 extern const char kmKiosk[];
 extern const char kmAlwaysOnTop[];
+extern const char kmVisibleOnAllWorkspaces[];
 extern const char kmInitialFocus[];
 extern const char kmTransparent[];
 extern const char kmDisableTransparency[];

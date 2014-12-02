@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf8">
+    <title>test</title>
+  </head>
+  <body>
+    <iframe src="http://www.baidu.com" id="iframe0" frameborder="0"  style="width:80%;height:600px;" nwfaketop></iframe>
+    <iframe src="http://www.baidu.com" id="iframe1" frameborder="0"  style="width:80%;height:600px;"></iframe>
+    <script type="text/javascript">
+      //start js code here
+			var gui = require('nw.gui');
+      var if0_loaded = false;
+      var if1_loaded = false;
+      var iframe0 = document.getElementById('iframe0');
+      var iframe1 = document.getElementById('iframe1');
+
+      var server_port = gui.App.argv[0]||13013;
+
+      var RunTest = function(){
+        if (if0_loaded&&if1_loaded){
+          return;
+        } else {
+          var iw0 = iframe0.contentWindow;
+          var iw1 = iframe1.contentWindow;
+          var flag0 = iw0.parent === iw0;
+          var flag1 = iw1.parent === window;
+          var results = [flag0,flag1];
+
+        var client = require('net').connect({port: 13013});
+        client.setEncoding('utf8');
+        client.end(JSON.stringify(results));
+
+        }
+      };
+
+      iframe0.onload = function(){
+        if0_loaded = true;
+        RunTest();
+      };
+      iframe1.onload = function(){
+        if1_loaded = true;
+        RunTest();
+      };
+      
+    </script>
+  </body>
+</html>
+    

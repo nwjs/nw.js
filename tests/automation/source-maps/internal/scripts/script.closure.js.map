@@ -1,0 +1,8 @@
+{
+  "version":3,
+  "file":"script.closure.js",
+  "lineCount":1,
+  "mappings":"AACAA,QAAAC,eAAA,CAAwB,OAAxB,CAAAC,MAAA,EAEAC,EAAA,CAAEH,QAAF,CAAAI,QAAA,CAAoB,QAAQ,CAACC,CAAD,CAAM,CAGb,EAAnB,EAAIA,CAAAC,QAAJ,EAEEH,CAAA,CAAE,MAAF,CAAAI,IAAA,CAAc,kBAAd,CAAkCJ,CAAA,CAAE,QAAF,CAAAK,IAAA,EAAlC,CAL8B,CAAlC;",
+  "sources":["script1.js"],
+  "names":["document","getElementById","focus","$","keydown","evt","keyCode","css","val"]
+}

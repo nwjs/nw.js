@@ -1,0 +1,5 @@
+{
+  "name": "node-main",
+  "main": "index.html",
+  "node-main": "index.js"
+}
