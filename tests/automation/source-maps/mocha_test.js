@@ -6,7 +6,7 @@ var curDir = fs.realpathSync('.');
 
 describe('source maps', function() {
 
-  var server, child, results;
+  var server, child, results, ok = false;
 
   before(function(done) {
     this.timeout(0);
@@ -15,11 +15,19 @@ describe('source maps', function() {
     server.on('connection', function(socket) {
       socket.setEncoding('utf8');
       socket.on('data', function(data) {
+        ok = true;
         results = JSON.parse(data);
         child.kill();
         done();
       });
     });
+
+    setTimeout(function() {
+      if (!ok) {
+        child.kill();
+        done('timeout');
+      }
+    }, 4500);
 
   });
     

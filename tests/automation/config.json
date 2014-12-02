@@ -1,11 +1,7 @@
 {
   "format": "xunit-file",
   "exclude": ["node_modules", "output", "internal", "res", "app", "node-remote", "save_devtools_settings", "single_instance",
-    "source-maps", "temp_dir",
-    "call_require_with_node-main_set", "show_devtool_after_http_server_created_in_node_main", "reference-node-main",
-    "start_app", "chromedriver2_server", "console", "crash_dump", "datapath", "fast_open_and_close_devtools",
-    "loaded_event", "node", "nw-in-mem", "process", "quit_with_secondary_window_on_top", "reload_application"
-],
+    "call_require_with_node-main_set", "show_devtool_after_http_server_created_in_node_main", "reference-node-main"],
   "single": "",
   "timeout": "8000",
   "slow": "200",
