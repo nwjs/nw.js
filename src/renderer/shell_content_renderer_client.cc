@@ -502,9 +502,10 @@ void ShellContentRendererClient::willHandleNavigationPolicy(
     RenderView* rv,
     blink::WebFrame* frame,
     const blink::WebURLRequest& request,
-    blink::WebNavigationPolicy* policy) {
+    blink::WebNavigationPolicy* policy,
+    blink::WebString* manifest) {
 
-  nwapi::Dispatcher::willHandleNavigationPolicy(rv, frame, request, policy);
+  nwapi::Dispatcher::willHandleNavigationPolicy(rv, frame, request, policy, manifest);
 }
 
 void ShellContentRendererClient::windowOpenBegin(const blink::WebURL& url) {

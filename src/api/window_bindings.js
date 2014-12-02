@@ -146,6 +146,7 @@ Window.prototype.handleEvent = function(ev) {
         policy.forceDownload  =  function () { this.val = 'download'; };
         policy.forceNewWindow =  function () { this.val = 'new-window'; };
         policy.forceNewPopup  =  function () { this.val = 'new-popup'; };
+        policy.setNewWindowManifest = function (m) { this.manifest = JSON.stringify(m); };
     }
   // Route events to EventEmitter.
   this.emit.apply(this, arguments);

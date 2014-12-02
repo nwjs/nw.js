@@ -205,7 +205,8 @@ void Dispatcher::willHandleNavigationPolicy(
     content::RenderView* rv,
     blink::WebFrame* frame,
     const blink::WebURLRequest& request,
-    blink::WebNavigationPolicy* policy) {
+    blink::WebNavigationPolicy* policy,
+    blink::WebString* manifest) {
 
   blink::WebView* web_view = rv->GetWebView();
 
@@ -246,6 +247,15 @@ void Dispatcher::willHandleNavigationPolicy(
   v8::Handle<v8::Value> argv[] = {id_val, v8_str("new-win-policy"), args };
 
   node::MakeCallback(isolate, objects_registry, "handleEvent", 3, argv);
+  v8::Local<v8::Value> manifest_val = policy_obj->Get(v8_str("manifest"));
+
+  //TODO: change this to object
+  if (manifest_val->IsString()) {
+    v8::String::Utf8Value manifest_str(manifest_val);
+    if (manifest)
+      *manifest = blink::WebString::fromUTF8(*manifest_str);
+  }
+
   v8::Local<v8::Value> val = policy_obj->Get(v8_str("val"));
   if (!val->IsString())
     return;

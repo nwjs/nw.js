@@ -54,7 +54,8 @@ class ShellContentRendererClient : public ContentRendererClient {
   virtual void willHandleNavigationPolicy(RenderView* rv,
                                           blink::WebFrame* frame,
                                           const blink::WebURLRequest& request,
-                                          blink::WebNavigationPolicy* policy) OVERRIDE;
+                                          blink::WebNavigationPolicy* policy,
+                                          blink::WebString* manifest = NULL) OVERRIDE;
 
   virtual void windowOpenBegin(const blink::WebURL& url) OVERRIDE;
   virtual void windowOpenEnd() OVERRIDE;
