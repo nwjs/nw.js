@@ -38,17 +38,27 @@ using namespace blink;
 
 #include "third_party/WebKit/Source/config.h"
 #include "third_party/WebKit/Source/core/html/HTMLIFrameElement.h"
+#include "third_party/WebKit/Source/core/dom/Document.h"
 #include "third_party/WebKit/Source/core/frame/LocalFrame.h"
 #include "third_party/WebKit/public/web/WebFrame.h"
 #include "third_party/WebKit/public/web/WebView.h"
 #include "third_party/WebKit/Source/web/WebLocalFrameImpl.h"
 #include "third_party/WebKit/public/web/WebScriptSource.h"
 
+#undef BLINK_IMPLEMENTATION
+#define BLINK_IMPLEMENTATION 1
+#include "third_party/WebKit/public/web/WebDocument.h"
+#include "third_party/WebKit/Source/platform/heap/Handle.h"
+#include "third_party/WebKit/Source/core/inspector/InspectorInstrumentation.h"
+#include "third_party/WebKit/Source/core/inspector/InspectorResourceAgent.h"
+
 #undef CHECK
 #include "V8HTMLIFrameElement.h"
 
 using blink::WebScriptSource;
 using blink::WebFrame;
+using blink::InstrumentingAgents;
+using blink::InspectorResourceAgent;
 
 namespace nwapi {
 
@@ -152,6 +162,17 @@ WindowBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args
       main_frame->setDevtoolsJail(blink::WebFrame::fromFrame(iframe->contentFrame()));
     }
     args.GetReturnValue().Set(v8::Undefined(isolate));
+    return;
+  } else if (method == "setCacheDisabled") {
+    RefPtrWillBePersistent<blink::Document> document = static_cast<PassRefPtrWillBeRawPtr<blink::Document> >(main_frame->document());
+    InstrumentingAgents* instrumentingAgents = instrumentationForPage(document->page());
+    if (instrumentingAgents) {
+      bool disable = args[2]->ToBoolean()->Value();
+      InspectorResourceAgent* resAgent = instrumentingAgents->inspectorResourceAgent();
+      resAgent->setCacheDisabled(NULL, disable);
+      args.GetReturnValue().Set(true);
+    } else
+      args.GetReturnValue().Set(false);
     return;
   }
 

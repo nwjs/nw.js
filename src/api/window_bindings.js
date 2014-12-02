@@ -505,8 +505,13 @@ Window.prototype.capturePage = function(callback, image_format_options) {
   CallObjectMethod(this, 'CapturePage', [options.format]);
 };
 
-    Window.prototype.eval = function(frame, script) {
-        return CallObjectMethod(this, 'EvaluateScript', frame, script);
-    };
+Window.prototype.eval = function(frame, script) {
+  return CallObjectMethod(this, 'EvaluateScript', frame, script);
+};
+
+Window.prototype.disableCache = function(flag) {
+  return CallObjectMethod(this, 'setCacheDisabled', flag);
+};
+
 
 }  // function Window.init
