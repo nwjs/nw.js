@@ -190,38 +190,47 @@ describe('performance', function() {
     });
   });
 
+
   describe('IO', function() {
     var fs = require('fs');
     var path = require('path');
     var exec = require('child_process').exec;
     var tar = require('tar');
+    var result = false;
 
     it('file reading should be quick even when we have a child process running', function(done) {
-      this.timeout(100);
-      exec('sleep 1000', function () { });
+      this.timeout(0);
       var mochaPath = path.join(curDir, 'mocha_test.js');
       fs.readFile(mochaPath, 'utf8', function(err, data) {
+        result = true;
         done();
       });
+
+      setTimeout(function() {
+        if (!result) done('timeout');
+      }, 1000);
     });
 
     it('untar a file should be quick', function(done) {
       this.timeout(100);
       var testPath = path.join(curDir, 'test.tar');
       fs.createReadStream(testPath)
-      .pipe(tar.Extract({ path: 'ddtmp' }))
+      .pipe(tar.Extract({ path: 'tmp' }))
       .on('error', function (er) {
         assert.equal(false, true);
       })
       .on('end', function () {
-        var content = fs.readFileSync('ddtmp/text', 'utf8');
-        assert.equal(content, 'I love luyao\n');
-        fs.unlinkSync('ddtmp/text');
-        fs.rmdirSync('ddtmp');
+        var content = fs.readFileSync('tmp/text', 'utf8');
+        assert.equal(content, 'I love luyao\n');   // who is luyao ?
+        fs.unlinkSync('tmp/text');
+        fs.rmdirSync('tmp');
         done();
       });
     });
+
   });
+
+
 });
 
 ///////////////////////////// 5

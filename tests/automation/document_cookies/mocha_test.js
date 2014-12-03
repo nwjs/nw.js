@@ -48,11 +48,11 @@ var server;
         setTimeout(function() {
           results.push(data);
           child.kill();
-          //done();
-        }, 2000);
+          done();
+        }, 1000);
       });
     });
-	    setTimeout(done, 3000);
+	    setTimeout(done, 10000);
 	});
 
     after(function() {
@@ -75,12 +75,12 @@ var server;
         setTimeout(function() {
           results.push(data);
           child.kill();
-          //done();
-        }, 2000);
+          done();
+        }, 1000);
       });
     });
 
-	    setTimeout(done, 3000);
+	    setTimeout(done, 10000);
 	});
 
     after(function() {

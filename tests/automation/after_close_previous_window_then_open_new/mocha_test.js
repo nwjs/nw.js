@@ -19,7 +19,7 @@ describe('after close previous window then open new', function() {
 
     before(function(done) {
       this.timeout(0);
-      if (!fs.exists(dumpDir))
+      if (!fs.existsSync(dumpDir))
 	    fs.mkdirSync(dumpDir);
 
       var appPath = path.join(global.tests_dir, 'internal');

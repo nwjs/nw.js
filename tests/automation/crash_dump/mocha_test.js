@@ -16,10 +16,21 @@ describe('crash dump', function() {
   var server;
   
   before(function(done) {
-    if (!fs.existsSync(tmpDir))
-    	fs.mkdirSync(tmpDir);
+
+    var ready = function() {
+    fs.mkdirSync(tmpDir);
     server = createTCPServer(13013);
 	done();
+    };
+
+    if (fs.existsSync(tmpDir)) {
+      fs_extra.remove(tmpDir, function() {
+        ready();
+      });
+    } else {
+      ready();
+    }
+
   });
     
   after(function () {

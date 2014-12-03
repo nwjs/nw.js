@@ -59,7 +59,7 @@
 	iframe_devtools.width = '1000';
 	
 	function get_results() {
-	    var console_logs = devtools.document.getElementsByClassName('console-log-level');
+	    var console_logs = devtools.getElementsByClassName('console-log-level');
 	    
 	    for (var i = 0; i < console_logs.length; i++)
 		results.push(console_logs[i].childNodes[0].childNodes[0].innerHTML);
@@ -70,7 +70,7 @@
 	}
 	
 	function get_console_logs() {
-            var console_msgs = devtools.document.getElementsByClassName('console');
+            var console_msgs = devtools.getElementsByClassName('console');
 	    
 		<!-- make sure it is complete -->
             if(console_msgs == undefined  || console_msgs[0] == undefined || console_msgs[0].click == undefined)

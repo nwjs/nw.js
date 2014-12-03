@@ -41,7 +41,7 @@ describe('chromium-args', function() {
 
 
     describe('--app=url', function() {
-	  var result2 = false;
+	  var result = false, result2 = false;
 
       var child, server;
 
@@ -57,11 +57,19 @@ describe('chromium-args', function() {
             socket.setEncoding('utf8');
             socket.on('data', function(data) {
               result2 = data;
+              result = true;
               done();
             });
           });
 
           child = spawnChildProcess(path.join(curDir, 'internal'));
+
+          setTimeout(function() {
+            if (!result) {
+              child.kill();
+              done('timeout');
+            }
+          }, 4500);
 
         });
       });

@@ -43,6 +43,10 @@ describe('console.log', function() {
       });
     });
 
+    setTimeout(function() {
+      done('timeout');
+    }, 4500);
+
   });
 
   after(function(done){
