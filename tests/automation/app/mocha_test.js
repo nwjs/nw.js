@@ -1,25 +1,44 @@
 var gui = require('nw.gui');
+var path = require('path');
 var assert = require('assert');
-var app_test = require('../../nw_test_app');
-//var local_server = require('../../server/server');
-var global = require('../globals');
+var fs = require('fs-extra');
+var curDir = fs.realpathSync('.');
 
 describe('gui.App', function() {
-    before(function(done) {
-	this.timeout(0);
-    var checkDone = function() {
-      if (test_done)
-        done();
-      else
-        setTimeout(function() {checkDone();}, 2000);
-    }
-    checkDone();
 
+
+  var server, child, result = false;
+
+  before(function(done) {
+    this.timeout(0);
+    server = createTCPServer(13013);
+    child = spawnChildProcess(path.join(curDir, 'internal'));
+    server.on('connection', function(socket) {
+      socket.setEncoding('utf8');
+      socket.on('data', function(data) {
+        result = true;
+        child.kill();
+        done();
+      });
     });
+
+    setTimeout(function() {
+      if (!result) {
+        child.kill();
+        done('timeout');
+      }
+    }, 4500);
+
+  });
+    
+  after(function () {
+        server.close();
+  });
+
 
     describe('manifest', function() {
 	it('`gui.App.manifest` should equle to value of package.json', function() {
-	    assert.equal(gui.App.manifest.name, 'nw-gui.App-test');       
+	    assert.equal(gui.App.manifest.name, 'nw-gui.App-test.wrapper');       
 	});
 
 	it('have main', function() {
@@ -27,7 +46,7 @@ describe('gui.App', function() {
 	    assert.equal(gui.App.manifest.main, 'index.html');
 	});
 
-/*
+
 	it('have window', function() {
         console.log('====have window:' + typeof gui.App.manifest.window);
 	    assert.equal(typeof gui.App.manifest.window, 'object');       
@@ -36,9 +55,9 @@ describe('gui.App', function() {
 	it('have dependencies', function() {
 	    assert.equal(typeof gui.App.manifest.dependencies, 'object');       
 	});
-*/
+
     });
-/*    
+
     describe('clearCache()', function(done) {
 	it('should clear the HTTP cache in memory and the one on disk', function() {
 	    var res_save = global.local_server.res_save;
@@ -49,7 +68,7 @@ describe('gui.App', function() {
 	    assert.equal(res_save[2].pathname, 'img.jpg');
 	});
     });
-*/
+
 });
 
 
