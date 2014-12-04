@@ -84,6 +84,7 @@
 
 namespace content {
   extern bool g_support_transparency;
+  extern bool g_force_cpu_draw;
 }
 
 
@@ -467,6 +468,13 @@ void NativeWindowAura::SetTransparent(bool transparent) {
   if (change_window_style) {
     window_->FrameTypeChanged();
   }
+
+  if (content::g_force_cpu_draw && transparent) {
+    // Quick FIX where window content is not updated
+    Minimize();
+    Restore();
+  }
+
 #elif defined(USE_X11) && !defined(OS_CHROMEOS)
 
   static char cachedRes = -1;
