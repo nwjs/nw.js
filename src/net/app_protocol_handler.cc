@@ -5,7 +5,7 @@
 #include "content/nw/src/net/app_protocol_handler.h"
 
 #include "base/base64.h"
-#include "base/file_util.h"
+#include "base/files/file_util.h"
 #include "base/files/file_path.h"
 #include "base/format_macros.h"
 #include "base/logging.h"
@@ -102,11 +102,11 @@ class URLRequestNWAppJob : public net::URLRequestFileJob {
     //                                           base::Time());
   }
 
-  virtual void GetResponseInfo(net::HttpResponseInfo* info) OVERRIDE {
+  virtual void GetResponseInfo(net::HttpResponseInfo* info) override {
     *info = response_info_;
   }
 
-  virtual void Start() OVERRIDE {
+  virtual void Start() override {
     base::Time* last_modified_time = new base::Time();
     bool posted = content::BrowserThread::PostBlockingPoolTaskAndReply(
         FROM_HERE,

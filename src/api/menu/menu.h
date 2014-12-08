@@ -66,7 +66,7 @@ class NwMenuModel : public SimpleMenuModel {
   NwMenuModel(Delegate* delegate);
 
   // Overridden from MenuModel:
-  virtual bool HasIcons() const OVERRIDE;
+  virtual bool HasIcons() const override;
 
 protected:
   friend class nwapi::Menu;
@@ -92,7 +92,7 @@ class Menu : public Base {
   virtual ~Menu();
 
   virtual void Call(const std::string& method,
-                    const base::ListValue& arguments) OVERRIDE;
+                    const base::ListValue& arguments) override;
 
 #if defined(OS_WIN) || defined(OS_LINUX)
   void UpdateKeys(views::FocusManager *focus_manager);

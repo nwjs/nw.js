@@ -24,6 +24,7 @@
 #include "base/memory/ref_counted.h"
 #include "base/memory/weak_ptr.h"
 #include "content/public/browser/web_contents_observer.h"
+#include "content/public/browser/readback_types.h"
 
 namespace content {
 class Shell;
@@ -71,13 +72,11 @@ class CapturePageHelper : public base::RefCountedThreadSafe<CapturePageHelper>,
   // Message handler.
   void OnSnapshot(const SkBitmap& bitmap);
 
-  void CopyFromBackingStoreComplete(
-                                    bool succeeded,
-                                    const SkBitmap& bitmap);
+  void CopyFromBackingStoreComplete(const SkBitmap& bitmap, content::ReadbackResponse response);
   void SendResultFromBitmap(const SkBitmap& screen_capture);
 
   // content::WebContentsObserver overrides:
-  virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
+  virtual bool OnMessageReceived(const IPC::Message& message) override;
 
   base::WeakPtr<content::Shell> shell_;
 

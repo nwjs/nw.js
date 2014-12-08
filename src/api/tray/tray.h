@@ -55,7 +55,7 @@ class Tray : public Base {
   virtual ~Tray();
 
   virtual void Call(const std::string& method,
-                    const base::ListValue& arguments) OVERRIDE;
+                    const base::ListValue& arguments) override;
 
  private:
   // Platform-independent implementations

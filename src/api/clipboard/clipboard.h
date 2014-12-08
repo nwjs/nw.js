@@ -34,10 +34,10 @@ class Clipboard : public Base {
   virtual ~Clipboard();
 
   virtual void Call(const std::string& method,
-                    const base::ListValue& arguments) OVERRIDE;
+                    const base::ListValue& arguments) override;
   virtual void CallSync(const std::string& method,
                         const base::ListValue& arguments,
-                        base::ListValue* result) OVERRIDE;
+                        base::ListValue* result) override;
 
  private:
   void SetText(std::string& text);

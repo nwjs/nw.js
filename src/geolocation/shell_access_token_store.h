@@ -25,10 +25,10 @@ class ShellAccessTokenStore : public content::AccessTokenStore {
 
   // AccessTokenStore
   virtual void LoadAccessTokens(
-      const LoadAccessTokensCallbackType& callback) OVERRIDE;
+      const LoadAccessTokensCallbackType& callback) override;
 
   virtual void SaveAccessToken(
-                               const GURL& server_url, const base::string16& access_token) OVERRIDE;
+                               const GURL& server_url, const base::string16& access_token) override;
 
   content::ShellBrowserContext* shell_browser_context_;
   net::URLRequestContextGetter* system_request_context_;

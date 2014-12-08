@@ -1,25 +1,9 @@
-// Copyright (c) 2012 Intel Corp
-// Copyright (c) 2012 The Chromium Authors
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy 
-// of this software and associated documentation files (the "Software"), to deal
-//  in the Software without restriction, including without limitation the rights
-//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell co
-// pies of the Software, and to permit persons to whom the Software is furnished
-//  to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in al
-// l copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IM
-// PLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNES
-// S FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-//  OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WH
-// ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-//  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
-#ifndef CONTENT_NW_SRC_BROWSER_FILE_SELECT_HELPER_H_
-#define CONTENT_NW_SRC_BROWSER_FILE_SELECT_HELPER_H_
+#ifndef CHROME_BROWSER_FILE_SELECT_HELPER_H_
+#define CHROME_BROWSER_FILE_SELECT_HELPER_H_
 
 #include <map>
 #include <vector>
@@ -32,7 +16,10 @@
 #include "net/base/directory_lister.h"
 #include "ui/shell_dialogs/select_file_dialog.h"
 
+class Profile;
+
 namespace content {
+struct FileChooserFileInfo;
 class RenderViewHost;
 class WebContents;
 }
@@ -41,9 +28,6 @@ namespace ui {
 struct SelectedFileInfo;
 }
 
-namespace base {
-class FilePath;
-}
 // This class handles file-selection requests coming from WebUI elements
 // (via the extensions::ExtensionHost class). It implements both the
 // initialisation and listener functions for file-selection dialogs.
@@ -65,8 +49,9 @@ class FileSelectHelper
  private:
   friend class base::RefCountedThreadSafe<FileSelectHelper>;
   FRIEND_TEST_ALL_PREFIXES(FileSelectHelperTest, IsAcceptTypeValid);
+  FRIEND_TEST_ALL_PREFIXES(FileSelectHelperTest, ZipPackage);
   explicit FileSelectHelper();
-  virtual ~FileSelectHelper();
+  ~FileSelectHelper() override;
 
   // Utility class which can listen for directory lister events and relay
   // them to the main object with the correct tracking id.
@@ -76,10 +61,11 @@ class FileSelectHelper
     DirectoryListerDispatchDelegate(FileSelectHelper* parent, int id)
         : parent_(parent),
           id_(id) {}
-    virtual ~DirectoryListerDispatchDelegate() {}
-    virtual void OnListFile(
-        const net::DirectoryLister::DirectoryListerData& data) OVERRIDE;
-    virtual void OnListDone(int error) OVERRIDE;
+    ~DirectoryListerDispatchDelegate() override {}
+    void OnListFile(
+        const net::DirectoryLister::DirectoryListerData& data) override;
+    void OnListDone(int error) override;
+
    private:
     // This FileSelectHelper owns this object.
     FileSelectHelper* parent_;
@@ -89,7 +75,7 @@ class FileSelectHelper
   };
 
   void RunFileChooser(content::RenderViewHost* render_view_host,
-                      content::WebContents* tab_contents,
+                      content::WebContents* web_contents,
                       const content::FileChooserParams& params);
   void RunFileChooserOnFileThread(
       const content::FileChooserParams& params);
@@ -101,23 +87,23 @@ class FileSelectHelper
   void RunFileChooserEnd();
 
   // SelectFileDialog::Listener overrides.
-  virtual void FileSelected(
-      const base::FilePath& path, int index, void* params) OVERRIDE;
-  virtual void FileSelectedWithExtraInfo(
-      const ui::SelectedFileInfo& file,
-      int index,
-      void* params) OVERRIDE;
-  virtual void MultiFilesSelected(const std::vector<base::FilePath>& files,
-                                  void* params) OVERRIDE;
-  virtual void MultiFilesSelectedWithExtraInfo(
+  void FileSelected(const base::FilePath& path,
+                    int index,
+                    void* params) override;
+  void FileSelectedWithExtraInfo(const ui::SelectedFileInfo& file,
+                                 int index,
+                                 void* params) override;
+  void MultiFilesSelected(const std::vector<base::FilePath>& files,
+                          void* params) override;
+  void MultiFilesSelectedWithExtraInfo(
       const std::vector<ui::SelectedFileInfo>& files,
-      void* params) OVERRIDE;
-  virtual void FileSelectionCanceled(void* params) OVERRIDE;
+      void* params) override;
+  void FileSelectionCanceled(void* params) override;
 
   // content::NotificationObserver overrides.
-  virtual void Observe(int type,
-                       const content::NotificationSource& source,
-                       const content::NotificationDetails& details) OVERRIDE;
+  void Observe(int type,
+               const content::NotificationSource& source,
+               const content::NotificationDetails& details) override;
 
   void EnumerateDirectory(int request_id,
                           content::RenderViewHost* render_view_host,
@@ -138,15 +124,45 @@ class FileSelectHelper
   // callback is received from the enumeration code.
   void EnumerateDirectoryEnd();
 
-  bool extract_directory_;
+#if defined(OS_MACOSX) && !defined(OS_IOS)
+  // Must be called on the FILE_USER_BLOCKING thread. Each selected file that is
+  // a package will be zipped, and the zip will be passed to the render view
+  // host in place of the package.
+  void ProcessSelectedFilesMac(const std::vector<ui::SelectedFileInfo>& files);
+
+  // Saves the paths of |zipped_files| for later deletion. Passes |files| to the
+  // render view host.
+  void ProcessSelectedFilesMacOnUIThread(
+      const std::vector<ui::SelectedFileInfo>& files,
+      const std::vector<base::FilePath>& zipped_files);
+
+  // Zips the package at |path| into a temporary destination. Returns the
+  // temporary destination, if the zip was successful. Otherwise returns an
+  // empty path.
+  static base::FilePath ZipPackage(const base::FilePath& path);
+#endif  // defined(OS_MACOSX) && !defined(OS_IOS)
+
+  // Utility method that passes |files| to the render view host, and ends the
+  // file chooser.
+  void NotifyRenderViewHostAndEnd(
+      const std::vector<ui::SelectedFileInfo>& files);
+
+  // Sends the result to the render process, and call |RunFileChooserEnd|.
+  void NotifyRenderViewHostAndEndAfterConversion(
+      const std::vector<content::FileChooserFileInfo>& list);
+
+  // Schedules the deletion of the files in |temporary_files_| and clears the
+  // vector.
+  void DeleteTemporaryFiles();
 
   // Helper method to get allowed extensions for select file dialog from
   // the specified accept types as defined in the spec:
   //   http://whatwg.org/html/number-state.html#attr-input-accept
   // |accept_types| contains only valid lowercased MIME types or file extensions
   // beginning with a period (.).
-  scoped_ptr<ui::SelectFileDialog::FileTypeInfo> GetFileTypesFromAcceptType(
-                                                                            const std::vector<base::string16>& accept_types);
+  static scoped_ptr<ui::SelectFileDialog::FileTypeInfo>
+      GetFileTypesFromAcceptType(
+          const std::vector<base::string16>& accept_types);
 
   // Check the accept type is valid. It is expected to be all lower case with
   // no whitespace.
@@ -176,7 +192,11 @@ class FileSelectHelper
   // Registrar for notifications regarding our RenderViewHost.
   content::NotificationRegistrar notification_registrar_;
 
+  // Temporary files only used on OSX. This class is responsible for deleting
+  // these files when they are no longer needed.
+  std::vector<base::FilePath> temporary_files_;
+
   DISALLOW_COPY_AND_ASSIGN(FileSelectHelper);
 };
 
-#endif  // CONTENT_NW_SRC_BROWSER_FILE_SELECT_HELPER_H_
+#endif  // CHROME_BROWSER_FILE_SELECT_HELPER_H_

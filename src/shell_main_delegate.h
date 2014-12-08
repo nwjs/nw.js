@@ -20,17 +20,17 @@ class ShellMainDelegate : public ContentMainDelegate {
   virtual ~ShellMainDelegate();
 
   // ContentMainDelegate implementation:
-  virtual bool BasicStartupComplete(int* exit_code) OVERRIDE;
-  virtual void PreSandboxStartup() OVERRIDE;
+  virtual bool BasicStartupComplete(int* exit_code) override;
+  virtual void PreSandboxStartup() override;
   virtual int RunProcess(
       const std::string& process_type,
-      const MainFunctionParams& main_function_params) OVERRIDE;
-  virtual ContentBrowserClient* CreateContentBrowserClient() OVERRIDE;
-  virtual ContentRendererClient* CreateContentRendererClient() OVERRIDE;
+      const MainFunctionParams& main_function_params) override;
+  virtual ContentBrowserClient* CreateContentBrowserClient() override;
+  virtual ContentRendererClient* CreateContentRendererClient() override;
 
   static void InitializeResourceBundle(const std::string& pref_locale);
 #if defined(OS_POSIX) && !defined(OS_MACOSX)
-  virtual void ZygoteForked() OVERRIDE;
+  virtual void ZygoteForked() override;
 #endif
 
  private:

@@ -22,10 +22,10 @@ class BrowserViewLayout : public views::LayoutManager {
   virtual ~BrowserViewLayout();
 
   // Overridden from LayoutManager:
-  virtual void Layout(views::View* host) OVERRIDE;
-  virtual gfx::Size GetPreferredSize(const views::View* host) const OVERRIDE;
+  virtual void Layout(views::View* host) override;
+  virtual gfx::Size GetPreferredSize(const views::View* host) const override;
   virtual int GetPreferredHeightForWidth(const views::View* host,
-                                         int width) const OVERRIDE;
+                                         int width) const override;
 
   void set_menu_bar(views::View* menu_bar) { menu_bar_ = menu_bar; }
   views::View* menu_bar() { return menu_bar_; }

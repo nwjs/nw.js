@@ -24,8 +24,8 @@ class AppProtocolHandler :
  public:
   AppProtocolHandler(const base::FilePath& root);
   virtual URLRequestJob* MaybeCreateJob(
-      URLRequest* request, NetworkDelegate* network_delegate) const OVERRIDE;
-  virtual bool IsSafeRedirectTarget(const GURL& location) const OVERRIDE;
+      URLRequest* request, NetworkDelegate* network_delegate) const override;
+  virtual bool IsSafeRedirectTarget(const GURL& location) const override;
 
  private:
   base::FilePath root_path_;

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "content/nw/src/renderer/printing/print_web_view_helper.h"
+#include "chrome/renderer/printing/print_web_view_helper.h"
 
 #import <AppKit/AppKit.h>
 
@@ -10,14 +10,12 @@
 #include "base/mac/scoped_nsautorelease_pool.h"
 #include "base/metrics/histogram.h"
 #include "chrome/common/print_messages.h"
-#include "printing/metafile.h"
-#include "printing/metafile_impl.h"
 #include "printing/metafile_skia_wrapper.h"
 #include "printing/page_size_margins.h"
 #include "skia/ext/platform_device.h"
 #include "skia/ext/vector_canvas.h"
 #include "third_party/WebKit/public/platform/WebCanvas.h"
-#include "third_party/WebKit/public/web/WebFrame.h"
+#include "third_party/WebKit/public/web/WebLocalFrame.h"
 
 namespace printing {
 
@@ -25,9 +23,8 @@ using blink::WebFrame;
 
 void PrintWebViewHelper::PrintPageInternal(
     const PrintMsg_PrintPage_Params& params,
-    const gfx::Size& canvas_size,
     WebFrame* frame) {
-  NativeMetafile metafile;
+  PdfMetafileSkia metafile;
   if (!metafile.Init())
     return;
 
@@ -58,18 +55,18 @@ bool PrintWebViewHelper::RenderPreviewPage(
     int page_number,
     const PrintMsg_Print_Params& print_params) {
   PrintMsg_Print_Params printParams = print_params;
-  scoped_ptr<Metafile> draft_metafile;
-  Metafile* initial_render_metafile = print_preview_context_.metafile();
+  scoped_ptr<PdfMetafileSkia> draft_metafile;
+  PdfMetafileSkia* initial_render_metafile = print_preview_context_.metafile();
 
   bool render_to_draft = print_preview_context_.IsModifiable() &&
                          is_print_ready_metafile_sent_;
 
   if (render_to_draft) {
-    draft_metafile.reset(new PreviewMetafile());
+    draft_metafile.reset(new PdfMetafileSkia());
     if (!draft_metafile->Init()) {
       print_preview_context_.set_error(
           PREVIEW_ERROR_MAC_DRAFT_METAFILE_INIT_FAILED);
-      LOG(ERROR) << "Draft PreviewMetafile Init failed";
+      LOG(ERROR) << "Draft PdfMetafileSkia Init failed";
       return false;
     }
     initial_render_metafile = draft_metafile.get();
@@ -77,7 +74,7 @@ bool PrintWebViewHelper::RenderPreviewPage(
 
   base::TimeTicks begin_time = base::TimeTicks::Now();
   gfx::Size page_size;
-  RenderPage(printParams, page_number, (blink::WebFrame*)print_preview_context_.prepared_frame(),
+  RenderPage(printParams, page_number, print_preview_context_.prepared_frame(),
              true, initial_render_metafile, &page_size, NULL);
   print_preview_context_.RenderedPreviewPage(
       base::TimeTicks::Now() - begin_time);
@@ -88,17 +85,20 @@ bool PrintWebViewHelper::RenderPreviewPage(
     if (print_preview_context_.IsModifiable() &&
         print_preview_context_.generate_draft_pages()) {
       DCHECK(!draft_metafile.get());
-      draft_metafile.reset(
-          print_preview_context_.metafile()->GetMetafileForCurrentPage());
+      draft_metafile =
+          print_preview_context_.metafile()->GetMetafileForCurrentPage();
     }
   }
   return PreviewPageRendered(page_number, draft_metafile.get());
 }
 
-void PrintWebViewHelper::RenderPage(
-    const PrintMsg_Print_Params& params, int page_number, WebFrame* frame,
-    bool is_preview, Metafile* metafile, gfx::Size* page_size,
-    gfx::Rect* content_rect) {
+void PrintWebViewHelper::RenderPage(const PrintMsg_Print_Params& params,
+                                    int page_number,
+                                    WebFrame* frame,
+                                    bool is_preview,
+                                    PdfMetafileSkia* metafile,
+                                    gfx::Size* page_size,
+                                    gfx::Rect* content_rect) {
   double scale_factor = 1.0f;
   double webkit_shrink_factor = frame->getPrintPageShrink(page_number);
   PageSizeMargins page_layout_in_points;
@@ -118,26 +118,24 @@ void PrintWebViewHelper::RenderPage(
       params.display_header_footer ? gfx::Rect(*page_size) : content_area;
 
   {
-    SkBaseDevice* device = metafile->StartPageForVectorCanvas(
+    skia::VectorCanvas* canvas = metafile->GetVectorCanvasForNewPage(
         *page_size, canvas_area, scale_factor);
-    if (!device)
+    if (!canvas)
       return;
 
-    skia::RefPtr<skia::VectorCanvas> canvas =
-        skia::AdoptRef(new skia::VectorCanvas(device));
-    blink::WebCanvas* canvas_ptr = canvas.get();
     MetafileSkiaWrapper::SetMetafileOnCanvas(*canvas, metafile);
     skia::SetIsDraftMode(*canvas, is_print_ready_metafile_sent_);
     skia::SetIsPreviewMetafile(*canvas, is_preview);
-
-    if (print_pages_params_->params.display_header_footer) {
-      PrintHeaderAndFooter(canvas_ptr, page_number + 1,
-                           print_preview_context_.total_page_count(),
-                           scale_factor, page_layout_in_points,
-                           *header_footer_info_, params);
+#if defined(ENABLE_PRINT_PREVIEW)
+    if (params.display_header_footer) {
+      PrintHeaderAndFooter(static_cast<blink::WebCanvas*>(canvas),
+                           page_number + 1,
+                           print_preview_context_.total_page_count(), *frame,
+                           scale_factor, page_layout_in_points, params);
     }
+#endif  // defined(ENABLE_PRINT_PREVIEW)
     RenderPageContent(frame, page_number, canvas_area, content_area,
-                      scale_factor, canvas_ptr);
+                      scale_factor, static_cast<blink::WebCanvas*>(canvas));
   }
 
   // Done printing. Close the device context to retrieve the compiled metafile.

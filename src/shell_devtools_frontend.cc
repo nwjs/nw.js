@@ -6,11 +6,12 @@
 
 #include "base/command_line.h"
 #include "base/json/json_reader.h"
+#include "base/json/json_writer.h"
 #include "base/path_service.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/utf_string_conversions.h"
 #include "content/public/browser/devtools_http_handler.h"
-#include "content/public/browser/devtools_manager.h"
+//#include "content/public/browser/devtools_manager.h"
 #include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/content_client.h"
@@ -18,7 +19,7 @@
 #include "content/nw/src/shell_browser_context.h"
 #include "content/nw/src/shell_browser_main_parts.h"
 #include "content/nw/src/shell_content_browser_client.h"
-#include "content/nw/src/browser/shell_devtools_delegate.h"
+//#include "content/nw/src/browser/shell_devtools_delegate.h"
 
 #include "net/base/net_util.h"
 #include "net/base/filename_util.h"
@@ -79,48 +80,41 @@ void ShellDevToolsFrontend::RenderViewCreated(
 }
 
 void ShellDevToolsFrontend::WebContentsDestroyed() {
-  DevToolsManager::GetInstance()->ClientHostClosing(this);
+  agent_host_->DetachClient();
   delete this;
 }
 
-void ShellDevToolsFrontend::InspectedContentsClosing() {
-}
-
-void ShellDevToolsFrontend::DispatchOnInspectorFrontend(
-    const std::string& message) {
-  std::string code = "InspectorFrontendAPI.dispatchMessage(" + message + ");";
-  base::string16 javascript = base::UTF8ToUTF16(code);
-  web_contents()->GetMainFrame()->ExecuteJavaScript(javascript);
-}
 
 void ShellDevToolsFrontend::HandleMessageFromDevToolsFrontend(
     const std::string& message) {
   std::string method;
-  std::string browser_message;
   int id = 0;
+
 
   base::ListValue* params = NULL;
   base::DictionaryValue* dict = NULL;
   scoped_ptr<base::Value> parsed_message(base::JSONReader::Read(message));
   if (!parsed_message ||
       !parsed_message->GetAsDictionary(&dict) ||
-      !dict->GetString("method", &method) ||
-      !dict->GetList("params", &params)) {
+      !dict->GetString("method", &method)) {
+    return;
+  }
+  dict->GetList("params", &params);
+
+  std::string browser_message;
+  if (method == "sendMessageToBrowser" && params &&
+      params->GetSize() == 1 && params->GetString(0, &browser_message)) {
+    agent_host_->DispatchProtocolMessage(browser_message);
+  } else if (method == "loadCompleted") {
+    web_contents()->GetMainFrame()->ExecuteJavaScript(
+        base::ASCIIToUTF16("DevToolsAPI.setUseSoftMenu(true);"));
+  } else {
     return;
   }
 
-  if (method != "sendMessageToBrowser" ||
-      params->GetSize() != 1 ||
-      !params->GetString(0, &browser_message)) {
-    return;
-  }
   dict->GetInteger("id", &id);
-
-  DevToolsManager::GetInstance()->DispatchOnInspectorBackend(
-      this, browser_message);
-
   if (id) {
-    std::string code = "InspectorFrontendAPI.embedderMessageAck(" +
+    std::string code = "DevToolsAPI.embedderMessageAck(" +
         base::IntToString(id) + ",\"\");";
     base::string16 javascript = base::UTF8ToUTF16(code);
     web_contents()->GetMainFrame()->ExecuteJavaScript(javascript);
@@ -129,8 +123,23 @@ void ShellDevToolsFrontend::HandleMessageFromDevToolsFrontend(
 
 void ShellDevToolsFrontend::HandleMessageFromDevToolsFrontendToBackend(
     const std::string& message) {
-  DevToolsManager::GetInstance()->DispatchOnInspectorBackend(
-      this, message);
+  agent_host_->DispatchProtocolMessage(message);
+}
+
+void ShellDevToolsFrontend::DispatchProtocolMessage(
+    DevToolsAgentHost* agent_host, const std::string& message) {
+  base::StringValue message_value(message);
+  std::string param;
+  base::JSONWriter::Write(&message_value, &param);
+  std::string code = "DevToolsAPI.dispatchMessage(" + param + ");";
+  base::string16 javascript = base::UTF8ToUTF16(code);
+  web_contents()->GetMainFrame()->ExecuteJavaScript(javascript);
+}
+
+void ShellDevToolsFrontend::AgentHostClosed(
+    DevToolsAgentHost* agent_host, bool replaced) {
+  //FIXME
+  //  frontend_shell_->Close();
 }
 
 }  // namespace content

@@ -18,7 +18,7 @@ class ShellQuotaPermissionContext : public QuotaPermissionContext {
   virtual void RequestQuotaPermission(
       const StorageQuotaParams& params,
       int render_process_id,
-      const PermissionCallback& callback) OVERRIDE;
+      const PermissionCallback& callback) override;
 
  private:
   virtual ~ShellQuotaPermissionContext();

@@ -23,17 +23,17 @@
 #include "base/base_switches.h"
 #include "base/command_line.h"
 #include "base/files/file_path.h"
-#include "base/file_util.h"
+#include "base/files/file_util.h"
 #include "base/path_service.h"
 #include "base/strings/string_util.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
 //#include "chrome/common/child_process_logging.h"
-#include "components/breakpad/app/breakpad_client.h"
+#include "components/crash/app/crash_reporter_client.h"
 #include "content/browser/child_process_security_policy_impl.h"
 #include "content/browser/gpu/compositor_util.h"
-#include "content/nw/src/browser/printing/printing_message_filter.h"
+#include "chrome/browser/printing/printing_message_filter.h"
 #include "content/public/browser/browser_url_handler.h"
 #include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/render_process_host.h"
@@ -50,11 +50,11 @@
 #include "content/nw/src/breakpad_mac.h"
 #endif
 #include "content/nw/src/common/shell_switches.h"
-#include "content/nw/src/browser/printing/print_job_manager.h"
-#include "content/nw/src/browser/shell_devtools_delegate.h"
+#include "chrome/browser/printing/print_job_manager.h"
+#include "content/nw/src/browser/shell_devtools_manager_delegate.h"
+//#include "content/nw/src/browser/media_capture_devices_dispatcher.h"
 #include "content/nw/src/shell_quota_permission_context.h"
 #include "content/nw/src/browser/shell_resource_dispatcher_host_delegate.h"
-#include "content/nw/src/media/media_internals.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/nw/src/nw_notification_manager.h"
@@ -77,10 +77,18 @@
 
 #if defined(OS_POSIX) && !defined(OS_MACOSX)
 #include "base/debug/leak_annotations.h"
-#include "components/breakpad/app/breakpad_linux.h"
-#include "components/breakpad/browser/crash_handler_host_linux.h"
+#include "components/crash/app/breakpad_linux.h"
+#include "components/crash/browser/crash_handler_host_linux.h"
 #include "content/public/common/content_descriptors.h"
 #endif
+
+#include "extensions/common/constants.h"
+#include "extensions/common/extension.h"
+#include "extensions/common/switches.h"
+
+#include "content/nw/src/browser/shell_extension_system.h"
+#include "extensions/browser/extension_protocols.h"
+#include "extensions/browser/extension_message_filter.h"
 
 using base::FileDescriptor;
 
@@ -231,6 +239,8 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     command_line->AppendSwitch(switches::kEnableThreadedCompositing);
 #endif //FIXME
 
+  command_line->AppendSwitch(extensions::switches::kExtensionProcess);
+
   std::string user_agent;
   if (!command_line->HasSwitch(switches::kUserAgent) &&
       GetUserAgentManifest(&user_agent)) {
@@ -309,9 +319,11 @@ std::string ShellContentBrowserClient::GetDefaultDownloadName() {
   return "download";
 }
 
+#if 0
 MediaObserver* ShellContentBrowserClient::GetMediaObserver() {
-  return MediaInternals::GetInstance();
+  return MediaCaptureDevicesDispatcher::GetInstance();
 }
+#endif
 
 void ShellContentBrowserClient::BrowserURLHandlerCreated(
     BrowserURLHandler* handler) {
@@ -346,7 +358,7 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
   prefs->css_variables_enabled = true;
 
   // Disable plugins and cache by default.
-  prefs->plugins_enabled = false;
+  prefs->plugins_enabled = true;
   prefs->java_enabled = false;
 
   base::DictionaryValue* webkit;
@@ -366,6 +378,9 @@ bool ShellContentBrowserClient::ShouldTryToUseExistingProcessHost(
       BrowserContext* browser_context, const GURL& url) {
   ShellBrowserContext* shell_browser_context =
     static_cast<ShellBrowserContext*>(browser_context);
+  if (url.SchemeIs(content::kGuestScheme))
+    return false;
+
   if (shell_browser_context->pinning_renderer())
     return true;
   else
@@ -383,6 +398,12 @@ net::URLRequestContextGetter* ShellContentBrowserClient::CreateRequestContext(
     URLRequestInterceptorScopedVector request_interceptors) {
   ShellBrowserContext* shell_browser_context =
       ShellBrowserContextForBrowserContext(content_browser_context);
+  extensions::InfoMap* extension_info_map =
+      shell_browser_main_parts_->extension_system()->info_map();
+  (*protocol_handlers)[extensions::kExtensionScheme] =
+      linked_ptr<net::URLRequestJobFactory::ProtocolHandler>(
+            extensions::CreateExtensionProtocolHandler(false /* is_incognito */,
+                                         extension_info_map));
   return shell_browser_context->CreateRequestContext(protocol_handlers, request_interceptors.Pass());
 }
 
@@ -426,8 +447,10 @@ void ShellContentBrowserClient::RenderProcessWillLaunch(
       host->GetID(), "app");
 
 #if defined(ENABLE_PRINTING)
-  host->AddFilter(new PrintingMessageFilter(id));
+  host->AddFilter(new printing::PrintingMessageFilter(id));
 #endif
+  host->AddFilter(
+                  new extensions::ExtensionMessageFilter(id, browser_context()));
 }
 
 bool ShellContentBrowserClient::IsHandledURL(const GURL& url) {
@@ -440,6 +463,8 @@ bool ShellContentBrowserClient::IsHandledURL(const GURL& url) {
     url::kFileSystemScheme,
     url::kFileScheme,
     "app",
+    extensions::kExtensionScheme,
+    extensions::kExtensionResourceScheme,
   };
   for (size_t i = 0; i < arraysize(kProtocolList); ++i) {
     if (url.scheme() == kProtocolList[i])
@@ -480,12 +505,10 @@ void ShellContentBrowserClient::GetAdditionalAllowedSchemesForFileSystem(
 void ShellContentBrowserClient::GetAdditionalMappedFilesForChildProcess(
     const CommandLine& command_line,
     int child_process_id,
-    std::vector<FileDescriptorInfo>* mappings) {
+    FileDescriptorInfo* mappings) {
   int crash_signal_fd = GetCrashSignalFD(command_line);
   if (crash_signal_fd >= 0) {
-    mappings->push_back(FileDescriptorInfo(kCrashDumpSignal,
-                                           FileDescriptor(crash_signal_fd,
-                                                          false)));
+    mappings->Share(kCrashDumpSignal, crash_signal_fd);
   }
 }
 #endif  // defined(OS_POSIX) && !defined(OS_MACOSX)
@@ -495,6 +518,7 @@ ShellContentBrowserClient::CreateQuotaPermissionContext() {
   return new ShellQuotaPermissionContext();
 }
 
+#if 0
 void CancelDesktopNotification(int render_process_id, int render_frame_id, int notification_id) {
   nw::NotificationManager *notificationManager = nw::NotificationManager::getSingleton();
   if (notificationManager == NULL) {
@@ -503,6 +527,7 @@ void CancelDesktopNotification(int render_process_id, int render_frame_id, int n
   }
   notificationManager->CancelDesktopNotification(render_process_id, render_frame_id, notification_id);
 }
+
 
 void ShellContentBrowserClient::ShowDesktopNotification(
       const ShowDesktopNotificationHostMsgParams& params,
@@ -526,25 +551,29 @@ void ShellContentBrowserClient::ShowDesktopNotification(
 #endif
 
 }
+#endif
 
 // FIXME: cancel desktop notification
 
-void ShellContentBrowserClient::RequestMidiSysExPermission(
-      WebContents* web_contents,
-      int bridge_id,
-      const GURL& requesting_frame,
-      bool user_gesture,
-      base::Callback<void(bool)> result_callback,
-      base::Closure* cancel_callback) {
+void ShellContentBrowserClient::RequestPermission(
+    content::PermissionType permission,
+    content::WebContents* web_contents,
+    int bridge_id,
+    const GURL& requesting_frame,
+    bool user_gesture,
+    const base::Callback<void(bool)>& result_callback) {
   result_callback.Run(true);
 }
 
-void ShellContentBrowserClient::RequestProtectedMediaIdentifierPermission(
-      WebContents* web_contents,
-      const GURL& origin,
-      base::Callback<void(bool)> result_callback,
-      base::Closure* cancel_callback) {
-  result_callback.Run(true);
+DevToolsManagerDelegate*
+ShellContentBrowserClient::GetDevToolsManagerDelegate() {
+  return new ShellDevToolsManagerDelegate(browser_context());
+}
+
+bool ShellContentBrowserClient::ShouldUseProcessPerSite(
+    content::BrowserContext* browser_context,
+    const GURL& effective_url) {
+  return effective_url.SchemeIs(content::kGuestScheme);
 }
 
 }  // namespace content

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "content/nw/src/common/print_messages.h"
+#include "chrome/common/print_messages.h"
 
 #include "base/basictypes.h"
 #include "base/strings/string16.h"

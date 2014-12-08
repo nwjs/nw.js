@@ -59,10 +59,10 @@ class Dispatcher : public content::RenderViewObserver {
 
  private:
   // RenderViewObserver implementation.
-  virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
-  virtual void DraggableRegionsChanged(blink::WebFrame* frame) OVERRIDE;
-  virtual void DidFinishDocumentLoad(blink::WebLocalFrame* frame) OVERRIDE;
-  virtual void DidCreateDocumentElement(blink::WebLocalFrame* frame) OVERRIDE;
+  virtual bool OnMessageReceived(const IPC::Message& message) override;
+  virtual void DraggableRegionsChanged(blink::WebFrame* frame) override;
+  virtual void DidFinishDocumentLoad(blink::WebLocalFrame* frame) override;
+  virtual void DidCreateDocumentElement(blink::WebLocalFrame* frame) override;
 
   void documentCallback(const char* ev, blink::WebLocalFrame* frame);
 

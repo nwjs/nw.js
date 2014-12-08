@@ -2,17 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "content/nw/src/renderer/printing/print_web_view_helper.h"
+#include "chrome/renderer/printing/print_web_view_helper.h"
 
 #include "base/logging.h"
 #include "base/memory/scoped_ptr.h"
 #include "base/process/process_handle.h"
 #include "chrome/common/print_messages.h"
 #include "content/public/renderer/render_thread.h"
-#include "printing/metafile.h"
-#include "printing/metafile_impl.h"
 #include "printing/metafile_skia_wrapper.h"
 #include "printing/page_size_margins.h"
+#include "printing/pdf_metafile_skia.h"
 #include "printing/units.h"
 #include "skia/ext/platform_device.h"
 #include "skia/ext/vector_canvas.h"
@@ -29,16 +28,15 @@ bool PrintWebViewHelper::RenderPreviewPage(
   PrintMsg_PrintPage_Params page_params;
   page_params.params = print_params;
   page_params.page_number = page_number;
-  scoped_ptr<Metafile> draft_metafile;
-  Metafile* initial_render_metafile = print_preview_context_.metafile();
+  scoped_ptr<PdfMetafileSkia> draft_metafile;
+  PdfMetafileSkia* initial_render_metafile = print_preview_context_.metafile();
   if (print_preview_context_.IsModifiable() && is_print_ready_metafile_sent_) {
-    draft_metafile.reset(new PreviewMetafile);
+    draft_metafile.reset(new PdfMetafileSkia);
     initial_render_metafile = draft_metafile.get();
   }
 
   base::TimeTicks begin_time = base::TimeTicks::Now();
   PrintPageInternal(page_params,
-                    print_preview_context_.GetPrintCanvasSize(),
                     print_preview_context_.prepared_frame(),
                     initial_render_metafile,
                     NULL,
@@ -50,16 +48,15 @@ bool PrintWebViewHelper::RenderPreviewPage(
   } else if (print_preview_context_.IsModifiable() &&
              print_preview_context_.generate_draft_pages()) {
     DCHECK(!draft_metafile.get());
-    draft_metafile.reset(
-        print_preview_context_.metafile()->GetMetafileForCurrentPage());
+    draft_metafile =
+        print_preview_context_.metafile()->GetMetafileForCurrentPage();
   }
   return PreviewPageRendered(page_number, draft_metafile.get());
 }
 
 bool PrintWebViewHelper::PrintPagesNative(blink::WebFrame* frame,
-                                          int page_count,
-                                          const gfx::Size& canvas_size) {
-  NativeMetafile metafile;
+                                          int page_count) {
+  PdfMetafileSkia metafile;
   if (!metafile.Init())
     return false;
 
@@ -88,7 +85,6 @@ bool PrintWebViewHelper::PrintPagesNative(blink::WebFrame* frame,
   for (size_t i = 0; i < printed_pages.size(); ++i) {
     page_params.page_number = printed_pages[i];
     PrintPageInternal(page_params,
-                      canvas_size,
                       frame,
                       &metafile,
                       &page_size_in_dpi[i],
@@ -147,9 +143,8 @@ bool PrintWebViewHelper::PrintPagesNative(blink::WebFrame* frame,
 
 void PrintWebViewHelper::PrintPageInternal(
     const PrintMsg_PrintPage_Params& params,
-    const gfx::Size& canvas_size,
     WebFrame* frame,
-    Metafile* metafile,
+    PdfMetafileSkia* metafile,
     gfx::Size* page_size_in_dpi,
     gfx::Rect* content_area_in_dpi) {
   PageSizeMargins page_layout_in_points;
@@ -184,44 +179,35 @@ void PrintWebViewHelper::PrintPageInternal(
       frame->getPrintPageShrink(params.page_number);
   float scale_factor = css_scale_factor * webkit_page_shrink_factor;
 
-  SkBaseDevice* device = metafile->StartPageForVectorCanvas(page_size,
-                                                            canvas_area,
-                                                            scale_factor);
-  if (!device)
+  skia::VectorCanvas* canvas =
+      metafile->GetVectorCanvasForNewPage(page_size, canvas_area, scale_factor);
+  if (!canvas)
     return;
 
-  // The printPage method take a reference to the canvas we pass down, so it
-  // can't be a stack object.
-  skia::RefPtr<skia::VectorCanvas> canvas =
-      skia::AdoptRef(new skia::VectorCanvas(device));
   MetafileSkiaWrapper::SetMetafileOnCanvas(*canvas, metafile);
   skia::SetIsDraftMode(*canvas, is_print_ready_metafile_sent_);
 
+#if defined(ENABLE_PRINT_PREVIEW)
   if (params.params.display_header_footer) {
     // |page_number| is 0-based, so 1 is added.
-    PrintHeaderAndFooter(canvas.get(),
-                         params.page_number + 1,
-                         print_preview_context_.total_page_count(),
-                         scale_factor,
-                         page_layout_in_points,
-                         *header_footer_info_,
-                         params.params);
+    PrintHeaderAndFooter(canvas, params.page_number + 1,
+                         print_preview_context_.total_page_count(), *frame,
+                         scale_factor, page_layout_in_points, params.params);
   }
+#endif  // defined(ENABLE_PRINT_PREVIEW)
 
-  float webkit_scale_factor = RenderPageContent(frame,
-                                                params.page_number,
-                                                canvas_area,
-                                                content_area,
-                                                scale_factor,
-                                                canvas.get());
+  float webkit_scale_factor =
+      RenderPageContent(frame, params.page_number, canvas_area, content_area,
+                        scale_factor, canvas);
   DCHECK_GT(webkit_scale_factor, 0.0f);
-  // Done printing. Close the device context to retrieve the compiled metafile.
+  // Done printing. Close the canvas to retrieve the compiled metafile.
   if (!metafile->FinishPage())
     NOTREACHED() << "metafile failed";
 }
 
 bool PrintWebViewHelper::CopyMetafileDataToSharedMem(
-    Metafile* metafile, base::SharedMemoryHandle* shared_mem_handle) {
+    PdfMetafileSkia* metafile,
+    base::SharedMemoryHandle* shared_mem_handle) {
   uint32 buf_size = metafile->GetDataSize();
   base::SharedMemory shared_buf;
   // Allocate a shared memory buffer to hold the generated metafile data.

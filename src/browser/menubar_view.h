@@ -50,12 +50,12 @@ class MenuBarView :
 
   // views::MenuButtonListener:
   virtual void OnMenuButtonClicked(views::View* view,
-                                   const gfx::Point& point) OVERRIDE;
+                                   const gfx::Point& point) override;
 
   // views::ButtonListener:
   virtual void ButtonPressed(views::Button* sender,
-                             const ui::Event& event) OVERRIDE;
-  virtual void OnNativeThemeChanged(const ui::NativeTheme* theme) OVERRIDE;
+                             const ui::Event& event) override;
+  virtual void OnNativeThemeChanged(const ui::NativeTheme* theme) override;
 
  private:
   ui::MenuModel* model_;

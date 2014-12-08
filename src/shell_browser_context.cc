@@ -22,7 +22,7 @@
 
 #include "base/command_line.h"
 #include "base/environment.h"
-#include "base/file_util.h"
+#include "base/files/file_util.h"
 #include "base/path_service.h"
 #include "base/values.h"
 #include "chrome/common/chrome_switches.h"
@@ -36,6 +36,8 @@
 #include "content/nw/src/net/shell_url_request_context_getter.h"
 #include "content/nw/src/nw_package.h"
 #include "net/cert/x509_certificate.h"
+
+#include "extensions/browser/guest_view/guest_view_manager.h"
 
 #if defined(OS_WIN)
 #include "base/base_paths_win.h"
@@ -52,19 +54,13 @@ class ShellBrowserContext::ShellResourceContext : public ResourceContext {
   virtual ~ShellResourceContext() {}
 
   // ResourceContext implementation:
-  virtual net::HostResolver* GetHostResolver() OVERRIDE {
+  virtual net::HostResolver* GetHostResolver() override {
     CHECK(getter_);
     return getter_->host_resolver();
   }
-  virtual net::URLRequestContext* GetRequestContext() OVERRIDE {
+  virtual net::URLRequestContext* GetRequestContext() override {
     CHECK(getter_);
     return getter_->GetURLRequestContext();
-  }
-  virtual bool AllowMicAccess(const GURL& origin) OVERRIDE {
-    return true;
-  }
-  virtual bool AllowCameraAccess(const GURL& origin) OVERRIDE {
-    return true;
   }
 
   void set_url_request_context_getter(ShellURLRequestContextGetter* getter) {
@@ -262,12 +258,12 @@ ResourceContext* ShellBrowserContext::GetResourceContext()  {
   return resource_context_.get();
 }
 
-quota::SpecialStoragePolicy* ShellBrowserContext::GetSpecialStoragePolicy() {
+storage::SpecialStoragePolicy* ShellBrowserContext::GetSpecialStoragePolicy() {
   return NULL;
 }
 
 BrowserPluginGuestManager* ShellBrowserContext::GetGuestManager() {
-  return NULL;
+  return extensions::GuestViewManager::FromBrowserContext(this);
 }
 
 PushMessagingService* ShellBrowserContext::GetPushMessagingService() {
@@ -276,6 +272,11 @@ PushMessagingService* ShellBrowserContext::GetPushMessagingService() {
 
 SSLHostStateDelegate* ShellBrowserContext::GetSSLHostStateDelegate() {
   return NULL;
+}
+
+scoped_ptr<ZoomLevelDelegate> ShellBrowserContext::CreateZoomLevelDelegate(
+    const base::FilePath&) {
+  return scoped_ptr<ZoomLevelDelegate>();
 }
 
 }  // namespace content

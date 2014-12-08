@@ -49,16 +49,16 @@ using namespace blink;
 #define BLINK_IMPLEMENTATION 1
 #include "third_party/WebKit/public/web/WebDocument.h"
 #include "third_party/WebKit/Source/platform/heap/Handle.h"
-#include "third_party/WebKit/Source/core/inspector/InspectorInstrumentation.h"
-#include "third_party/WebKit/Source/core/inspector/InspectorResourceAgent.h"
+//#include "third_party/WebKit/Source/core/inspector/InspectorInstrumentation.h"
+//#include "third_party/WebKit/Source/core/inspector/InspectorResourceAgent.h"
 
 #undef CHECK
 #include "V8HTMLIFrameElement.h"
 
 using blink::WebScriptSource;
 using blink::WebFrame;
-using blink::InstrumentingAgents;
-using blink::InspectorResourceAgent;
+//using blink::InstrumentingAgents;
+//using blink::InspectorResourceAgent;
 
 namespace nwapi {
 
@@ -140,7 +140,7 @@ WindowBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args
     if (frm->IsNull()) {
       web_frame = main_frame;
     }else{
-      blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::toNative(frm);
+      blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::toImpl(frm);
       web_frame = blink::WebFrame::fromFrame(iframe->contentFrame());
     }
 #if defined(OS_WIN)
@@ -158,12 +158,13 @@ WindowBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args
     if (frm->IsNull()) {
       main_frame->setDevtoolsJail(NULL);
     }else{
-      blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::toNative(frm);
+      blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::toImpl(frm);
       main_frame->setDevtoolsJail(blink::WebFrame::fromFrame(iframe->contentFrame()));
     }
     args.GetReturnValue().Set(v8::Undefined(isolate));
     return;
   } else if (method == "setCacheDisabled") {
+#if 0 //FIXME
     RefPtrWillBePersistent<blink::Document> document = static_cast<PassRefPtrWillBeRawPtr<blink::Document> >(main_frame->document());
     InstrumentingAgents* instrumentingAgents = instrumentationForPage(document->page());
     if (instrumentingAgents) {
@@ -174,6 +175,7 @@ WindowBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args
     } else
       args.GetReturnValue().Set(false);
     return;
+#endif
   }
 
   args.GetReturnValue().Set(remote::CallObjectMethod(render_view->GetRoutingID(),

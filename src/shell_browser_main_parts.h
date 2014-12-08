@@ -29,10 +29,19 @@ namespace printing {
 class PrintJobManager;
 }
 
+namespace extensions {
+
+class ExtensionsBrowserClient;
+class ExtensionsClient;
+class ShellExtensionSystem;
+
+}
+
 namespace content {
 
+class BrowserContext;
 class ShellBrowserContext;
-class ShellDevToolsDelegate;
+class DevToolsHttpHandler;
 struct MainFunctionParams;
 
 class ShellBrowserMainParts : public BrowserMainParts {
@@ -40,21 +49,23 @@ class ShellBrowserMainParts : public BrowserMainParts {
   explicit ShellBrowserMainParts(const MainFunctionParams& parameters);
   virtual ~ShellBrowserMainParts();
 
+  extensions::ShellExtensionSystem* extension_system() { return extension_system_; }
+
   // BrowserMainParts overrides.
-  virtual void PreEarlyInitialization() OVERRIDE;
-  virtual void PreMainMessageLoopStart() OVERRIDE;
-  virtual void PreMainMessageLoopRun() OVERRIDE;
-  virtual void PostMainMessageLoopStart() OVERRIDE;
-  virtual bool MainMessageLoopRun(int* result_code) OVERRIDE;
-  virtual void PostMainMessageLoopRun() OVERRIDE;
-  virtual int  PreCreateThreads() OVERRIDE;
-  virtual void PostDestroyThreads() OVERRIDE;
-  virtual void ToolkitInitialized() OVERRIDE;
+  virtual void PreEarlyInitialization() override;
+  virtual void PreMainMessageLoopStart() override;
+  virtual void PreMainMessageLoopRun() override;
+  virtual void PostMainMessageLoopStart() override;
+  virtual bool MainMessageLoopRun(int* result_code) override;
+  virtual void PostMainMessageLoopRun() override;
+  virtual int  PreCreateThreads() override;
+  virtual void PostDestroyThreads() override;
+  virtual void ToolkitInitialized() override;
 
   // Init browser context and every thing
   void Init();
 
-  ShellDevToolsDelegate* devtools_delegate() { return devtools_delegate_; }
+  DevToolsHttpHandler* devtools_handler() { return devtools_http_handler_.get(); }
 
   ShellBrowserContext* browser_context() { return browser_context_.get(); }
   ShellBrowserContext* off_the_record_browser_context() {
@@ -63,7 +74,13 @@ class ShellBrowserMainParts : public BrowserMainParts {
   nw::Package* package() { return package_.get(); }
   virtual printing::PrintJobManager* print_job_manager();
 
+ protected:
+  virtual extensions::ExtensionsClient* CreateExtensionsClient();
+  virtual extensions::ExtensionsBrowserClient* CreateExtensionsBrowserClient(content::BrowserContext* context);
+
  private:
+  // Creates and initializes the ExtensionSystem.
+  void CreateExtensionSystem();
   bool ProcessSingletonNotificationCallback(const CommandLine& command_line,
                                             const base::FilePath& current_directory);
 
@@ -72,6 +89,8 @@ class ShellBrowserMainParts : public BrowserMainParts {
   scoped_ptr<nw::Package> package_;
 
   scoped_ptr<ProcessSingleton> process_singleton_;
+  scoped_ptr<extensions::ExtensionsClient> extensions_client_;
+  scoped_ptr<extensions::ExtensionsBrowserClient> extensions_browser_client_;
 
   // Ensures that all the print jobs are finished before closing the browser.
   scoped_ptr<printing::PrintJobManager> print_job_manager_;
@@ -80,8 +99,11 @@ class ShellBrowserMainParts : public BrowserMainParts {
   const MainFunctionParams& parameters_;
   bool run_message_loop_;
 
-  ShellDevToolsDelegate* devtools_delegate_;
+  scoped_ptr<DevToolsHttpHandler> devtools_http_handler_;
   ProcessSingleton::NotifyResult notify_result_;
+
+  // Owned by the KeyedService system.
+  extensions::ShellExtensionSystem* extension_system_;
 
   //base::WeakPtrFactory<ShellBrowserMainParts> weak_factory_;
 

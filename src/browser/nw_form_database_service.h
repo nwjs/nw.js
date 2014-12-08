@@ -42,7 +42,7 @@ class NwFormDatabaseService : public WebDataServiceConsumer {
   // WebDataServiceConsumer implementation.
   virtual void OnWebDataServiceRequestDone(
       WebDataServiceBase::Handle h,
-      const WDTypedResult* result) OVERRIDE;
+      const WDTypedResult* result) override;
 
  private:
   struct PendingQuery {

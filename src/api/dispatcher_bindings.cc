@@ -21,7 +21,7 @@
 #include "content/nw/src/api/dispatcher_bindings.h"
 
 #include "base/files/file_path.h"
-#include "base/file_util.h"
+#include "base/files/file_util.h"
 #include "base/logging.h"
 #include "base/values.h"
 #include "base/command_line.h"
@@ -31,7 +31,7 @@
 #include "content/public/renderer/render_view.h"
 #include "content/public/renderer/render_thread.h"
 #include "content/public/renderer/v8_value_converter.h"
-#include "extensions/renderer/static_v8_external_ascii_string_resource.h"
+#include "extensions/renderer/static_v8_external_one_byte_string_resource.h"
 #include "grit/nw_resources.h"
 #include "third_party/node/src/node.h"
 #undef CHECK
@@ -69,7 +69,7 @@ void RequireFromResource(v8::Handle<v8::Object> root,
   v8::HandleScope handle_scope(isolate);
 
   v8::Handle<v8::String> source = v8::String::NewExternal(isolate,
-                                                          new extensions::StaticV8ExternalAsciiStringResource(
+                                                          new extensions::StaticV8ExternalOneByteStringResource(
           GetStringResource(resource_id)));
   v8::Handle<v8::String> wrapped_source = WrapSource(source);
 

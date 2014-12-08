@@ -58,11 +58,11 @@ class MenuItem : public Base {
   virtual ~MenuItem();
 
   virtual void Call(const std::string& method,
-                    const base::ListValue& arguments) OVERRIDE;
+                    const base::ListValue& arguments) override;
 
 #if defined(OS_WIN) || defined(OS_LINUX)
-  virtual bool AcceleratorPressed(const ui::Accelerator& accelerator) OVERRIDE;
-  virtual bool CanHandleAccelerators() const OVERRIDE;
+  virtual bool AcceleratorPressed(const ui::Accelerator& accelerator) override;
+  virtual bool CanHandleAccelerators() const override;
   void UpdateKeys(views::FocusManager *focus_manager);
 #endif
 

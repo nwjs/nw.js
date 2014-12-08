@@ -41,9 +41,9 @@ class NwRenderViewObserver : public content::RenderViewObserver {
   virtual ~NwRenderViewObserver();
 
   // RenderViewObserver implementation.
-  virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
-  virtual void DidCreateDocumentElement(blink::WebLocalFrame* frame) OVERRIDE;
-  virtual void DidFinishDocumentLoad(blink::WebLocalFrame* frame) OVERRIDE;
+  virtual bool OnMessageReceived(const IPC::Message& message) override;
+  virtual void DidCreateDocumentElement(blink::WebLocalFrame* frame) override;
+  virtual void DidFinishDocumentLoad(blink::WebLocalFrame* frame) override;
 
  private:
 

@@ -26,13 +26,13 @@ class AutofillPopupViewViews : public AutofillPopupBaseView,
   virtual ~AutofillPopupViewViews();
 
   // AutofillPopupView implementation.
-  virtual void Show() OVERRIDE;
-  virtual void Hide() OVERRIDE;
-  virtual void InvalidateRow(size_t row) OVERRIDE;
-  virtual void UpdateBoundsAndRedrawPopup() OVERRIDE;
+  virtual void Show() override;
+  virtual void Hide() override;
+  virtual void InvalidateRow(size_t row) override;
+  virtual void UpdateBoundsAndRedrawPopup() override;
 
   // views::Views implementation
-  virtual void OnPaint(gfx::Canvas* canvas) OVERRIDE;
+  virtual void OnPaint(gfx::Canvas* canvas) override;
 
   // Draw the given autofill entry in |entry_rect|.
   void DrawAutofillEntry(gfx::Canvas* canvas,

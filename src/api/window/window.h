@@ -65,10 +65,10 @@ class Window : public Base, public content::NotificationObserver {
   virtual ~Window();
 
   virtual void Call(const std::string& method,
-                    const base::ListValue& arguments) OVERRIDE;
+                    const base::ListValue& arguments) override;
   virtual void CallSync(const std::string& method,
                         const base::ListValue& arguments,
-                        base::ListValue* result) OVERRIDE;
+                        base::ListValue* result) override;
 
   void CookieGet(const base::ListValue& arguments, bool get_all = false);
   void GetCookieOnIOThread(CookieAPIContext*);
@@ -89,7 +89,7 @@ class Window : public Base, public content::NotificationObserver {
   // content::NotificationObserver implementation.
   virtual void Observe(int type,
                        const content::NotificationSource& source,
-                       const content::NotificationDetails& details) OVERRIDE;
+                       const content::NotificationDetails& details) override;
 
   // Handler for the COOKIE_CHANGED event. The method takes the details of such
   // an event and constructs a suitable JSON formatted extension event from it.

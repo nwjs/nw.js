@@ -1,33 +1,27 @@
-// Copyright (c) 2012 Intel Corp
-// Copyright (c) 2012 The Chromium Authors
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy 
-// of this software and associated documentation files (the "Software"), to deal
-//  in the Software without restriction, including without limitation the rights
-//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell co
-// pies of the Software, and to permit persons to whom the Software is furnished
-//  to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in al
-// l copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IM
-// PLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNES
-// S FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-//  OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WH
-// ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-//  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+// Copyright 2013 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
-#include "content/nw/src/net/shell_network_delegate.h"
+#include "content/shell/browser/shell_network_delegate.h"
 
 #include "net/base/net_errors.h"
+#include "net/base/static_cookie_policy.h"
+#include "net/url_request/url_request.h"
 
 namespace content {
+
+namespace {
+bool g_accept_all_cookies = true;
+}
 
 ShellNetworkDelegate::ShellNetworkDelegate() {
 }
 
 ShellNetworkDelegate::~ShellNetworkDelegate() {
+}
+
+void ShellNetworkDelegate::SetAcceptAllCookies(bool accept) {
+  g_accept_all_cookies = accept;
 }
 
 int ShellNetworkDelegate::OnBeforeURLRequest(
@@ -89,13 +83,25 @@ ShellNetworkDelegate::AuthRequiredResponse ShellNetworkDelegate::OnAuthRequired(
 
 bool ShellNetworkDelegate::OnCanGetCookies(const net::URLRequest& request,
                                            const net::CookieList& cookie_list) {
-  return true;
+  net::StaticCookiePolicy::Type policy_type = g_accept_all_cookies ?
+      net::StaticCookiePolicy::ALLOW_ALL_COOKIES :
+      net::StaticCookiePolicy::BLOCK_ALL_THIRD_PARTY_COOKIES;
+  net::StaticCookiePolicy policy(policy_type);
+  int rv = policy.CanGetCookies(
+      request.url(), request.first_party_for_cookies());
+  return rv == net::OK;
 }
 
 bool ShellNetworkDelegate::OnCanSetCookie(const net::URLRequest& request,
                                           const std::string& cookie_line,
                                           net::CookieOptions* options) {
-  return true;
+  net::StaticCookiePolicy::Type policy_type = g_accept_all_cookies ?
+      net::StaticCookiePolicy::ALLOW_ALL_COOKIES :
+      net::StaticCookiePolicy::BLOCK_ALL_THIRD_PARTY_COOKIES;
+  net::StaticCookiePolicy policy(policy_type);
+  int rv = policy.CanSetCookie(
+      request.url(), request.first_party_for_cookies());
+  return rv == net::OK;
 }
 
 bool ShellNetworkDelegate::OnCanAccessFile(const net::URLRequest& request,
@@ -106,12 +112,6 @@ bool ShellNetworkDelegate::OnCanAccessFile(const net::URLRequest& request,
 bool ShellNetworkDelegate::OnCanThrottleRequest(
     const net::URLRequest& request) const {
   return false;
-}
-
-int ShellNetworkDelegate::OnBeforeSocketStreamConnect(
-    net::SocketStream* socket,
-    const net::CompletionCallback& callback) {
-  return net::OK;
 }
 
 }  // namespace content

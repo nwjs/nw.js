@@ -27,19 +27,21 @@
 #include "base/strings/utf_string_conversions.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
+#include "components/keyed_service/content/browser_context_dependency_manager.h"
 #include "chrome/common/chrome_switches.h"
 #include "content/nw/src/api/app/app.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/breakpad_linux.h"
-#include "content/nw/src/browser/printing/print_job_manager.h"
-#include "content/nw/src/browser/shell_devtools_delegate.h"
+#include "chrome/browser/printing/print_job_manager.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/nw/src/shell_browser_context.h"
+#include "content/nw/src/browser/shell_devtools_manager_delegate.h"
+#include "content/public/browser/devtools_http_handler.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/main_function_params.h"
-#include "grit/net_resources.h"
+#include "net/grit/net_resources.h"
 #include "net/base/net_module.h"
 #include "net/proxy/proxy_resolver_v8.h"
 #include "ui/base/ime/input_method_initializer.h"
@@ -67,6 +69,13 @@
 #include "ui/native_theme/native_theme_aura.h"
 #include "ui/views/linux_ui/linux_ui.h"
 #endif
+
+#include "content/nw/src/browser/shell_extension_system.h"
+#include "content/nw/src/browser/shell_extension_system_factory.h"
+#include "content/nw/src/browser/shell_extensions_browser_client.h"
+#include "content/nw/src/common/shell_extensions_client.h"
+
+#include "extensions/browser/browser_context_keyed_service_factories.h"
 
 using base::MessageLoop;
 
@@ -112,7 +121,6 @@ ShellBrowserMainParts::ShellBrowserMainParts(
     : BrowserMainParts(),
       parameters_(parameters),
       run_message_loop_(true),
-      devtools_delegate_(NULL),
       notify_result_(ProcessSingleton::PROCESS_NONE)
 {
 #if defined(ENABLE_PRINTING)
@@ -147,10 +155,19 @@ bool ShellBrowserMainParts::MainMessageLoopRun(int* result_code)  {
 }
 
 void ShellBrowserMainParts::PostMainMessageLoopRun() {
-  if (devtools_delegate_)
-    devtools_delegate_->Stop();
+  //  if (devtools_delegate_)
+  // devtools_delegate_->Stop();
+  // FIXME
   if (notify_result_ == ProcessSingleton::PROCESS_NONE)
     process_singleton_->Cleanup();
+
+  devtools_http_handler_.reset();
+
+  BrowserContextDependencyManager::GetInstance()->DestroyBrowserContextServices(
+      browser_context_.get());
+  extension_system_ = NULL;
+  extensions::ExtensionsBrowserClient::Set(NULL);
+  extensions_browser_client_.reset();
 
   browser_context_.reset();
   off_the_record_browser_context_.reset();
@@ -219,22 +236,36 @@ void ShellBrowserMainParts::Init() {
 
   net::NetModule::SetResourceProvider(PlatformResourceProvider);
 
-  int port = 0;
-  // See if the user specified a port on the command line (useful for
-  // automation). If not, use an ephemeral port by specifying 0.
+  extensions_client_.reset(CreateExtensionsClient());
+  extensions::ExtensionsClient::Set(extensions_client_.get());
 
-  if (command_line.HasSwitch(switches::kRemoteDebuggingPort)) {
-    int temp_port;
-    std::string port_str =
-        command_line.GetSwitchValueASCII(switches::kRemoteDebuggingPort);
-    if (base::StringToInt(port_str, &temp_port) &&
-        temp_port > 0 && temp_port < 65535) {
-      port = temp_port;
-    } else {
-      DLOG(WARNING) << "Invalid http debugger port number " << temp_port;
-    }
-  }
-  devtools_delegate_ = new ShellDevToolsDelegate(browser_context_.get(), port);
+  extensions_browser_client_.reset(
+      CreateExtensionsBrowserClient(browser_context_.get()));
+  extensions::ExtensionsBrowserClient::Set(extensions_browser_client_.get());
+
+  // Create our custom ExtensionSystem first because other
+  // KeyedServices depend on it.
+  // TODO(yoz): Move this after EnsureBrowserContextKeyedServiceFactoriesBuilt.
+  CreateExtensionSystem();
+
+  // Register additional KeyedService factories here. See
+  // ChromeBrowserMainExtraPartsProfiles for details.
+  extensions::EnsureBrowserContextKeyedServiceFactoriesBuilt();
+  extensions::ShellExtensionSystemFactory::GetInstance();
+
+  BrowserContextDependencyManager::GetInstance()->CreateBrowserContextServices(
+      browser_context_.get());
+
+
+  devtools_http_handler_.reset(
+      ShellDevToolsManagerDelegate::CreateHttpHandler(browser_context_.get()));
+
+  extensions::ShellExtensionSystem* extension_system = static_cast<extensions::ShellExtensionSystem*>(
+                                extensions::ExtensionSystem::Get(browser_context_.get()));
+  extension_system->Init();
+  const extensions::Extension* extension = extension_system->LoadInternalApp();
+  if (extension)
+    extension_system->LaunchApp(extension->id());
 
   Shell::Create(browser_context_.get(),
                 package()->GetStartupURL(),
@@ -315,6 +346,22 @@ void ShellBrowserMainParts::PreEarlyInitialization() {
   views::LinuxUI::SetInstance(gtk2_ui);
   // ui::InitializeInputMethodForTesting();
 #endif
+}
+
+extensions::ExtensionsClient* ShellBrowserMainParts::CreateExtensionsClient() {
+  return new extensions::ShellExtensionsClient();
+}
+
+extensions::ExtensionsBrowserClient* ShellBrowserMainParts::CreateExtensionsBrowserClient(
+    content::BrowserContext* context) {
+  return new extensions::ShellExtensionsBrowserClient(context);
+}
+
+void ShellBrowserMainParts::CreateExtensionSystem() {
+  DCHECK(browser_context_);
+  extension_system_ = static_cast<extensions::ShellExtensionSystem*>(
+            extensions::ExtensionSystem::Get(browser_context_.get()));
+  extension_system_->InitForRegularProfile(true);
 }
 
 }  // namespace content

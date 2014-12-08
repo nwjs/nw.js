@@ -45,7 +45,7 @@ class TrayObserver : public StatusIconObserver {
   virtual ~TrayObserver() {
   }
 
-  virtual void OnStatusIconClicked() OVERRIDE {
+  virtual void OnStatusIconClicked() override {
     base::ListValue args;
     tray_->dispatcher_host()->SendEvent(tray_, "click", args);
   }

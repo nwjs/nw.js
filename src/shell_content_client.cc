@@ -28,6 +28,8 @@
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/base/resource/resource_bundle.h"
 
+#include "extensions/common/constants.h"
+
 namespace content {
 
 ShellContentClient::~ShellContentClient() {
@@ -83,6 +85,10 @@ void ShellContentClient::AddAdditionalSchemes(
     std::vector<std::string>* standard_schemes,
     std::vector<std::string>* savable_schemes) {
   standard_schemes->push_back("app");
+  standard_schemes->push_back(extensions::kExtensionScheme);
+  savable_schemes->push_back(extensions::kExtensionScheme);
+  standard_schemes->push_back(extensions::kExtensionResourceScheme);
+  savable_schemes->push_back(extensions::kExtensionResourceScheme);
 }
 
 }  // namespace content

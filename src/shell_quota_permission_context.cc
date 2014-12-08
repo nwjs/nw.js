@@ -4,7 +4,7 @@
 
 #include "content/nw/src/shell_quota_permission_context.h"
 
-#include "webkit/common/quota/quota_types.h"
+#include "storage/common/quota/quota_types.h"
 
 namespace content {
 

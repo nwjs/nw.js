@@ -94,13 +94,13 @@ class NWCookieMonsterDelegate : public net::CookieMonster::Delegate {
   virtual void OnCookieChanged(
       const net::CanonicalCookie& cookie,
       bool removed,
-      net::CookieMonster::Delegate::ChangeCause cause) OVERRIDE {
+      net::CookieMonster::Delegate::ChangeCause cause) override {
     BrowserThread::PostTask(
         BrowserThread::UI, FROM_HERE,
         base::Bind(&NWCookieMonsterDelegate::OnCookieChangedAsyncHelper,
                    this, cookie, removed, cause));
   }
-  virtual void OnLoaded() OVERRIDE {
+  virtual void OnLoaded() override {
   }
 
  private:
@@ -157,7 +157,7 @@ ShellURLRequestContextGetter::ShellURLRequestContextGetter(
   // the URLRequestContextStorage on the IO thread in GetURLRequestContext().
   proxy_config_service_.reset(
       net::ProxyService::CreateSystemProxyConfigService(
-          io_loop_->message_loop_proxy(), file_loop_));
+                                                        io_loop_->message_loop_proxy(), file_loop_->message_loop_proxy()));
 }
 
 ShellURLRequestContextGetter::~ShellURLRequestContextGetter() {
@@ -185,7 +185,7 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
                                              NULL, new NWCookieMonsterDelegate(browser_context_));
     cookie_store = content::CreateCookieStore(cookie_config);
     cookie_store->GetCookieMonster()->SetPersistSessionCookies(true);
-    storage_->set_cookie_store(cookie_store);
+    storage_->set_cookie_store(cookie_store.get());
 
     const char* schemes[] = {"http", "https", "file", "app"};
     cookie_store->GetCookieMonster()->SetCookieableSchemes(schemes, 4);

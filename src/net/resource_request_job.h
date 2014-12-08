@@ -39,11 +39,11 @@ class ResourceRequestJob : public net::URLRequestJob {
                      int resource_id);
 
   // net::URLRequestJob methods.
-  virtual void Start() OVERRIDE;
+  virtual void Start() override;
   virtual bool ReadRawData(net::IOBuffer* dest, int dest_size, int* bytes_read)
-      OVERRIDE;
-  virtual bool GetMimeType(std::string* mime_type) const OVERRIDE;
-  virtual void GetResponseInfo(net::HttpResponseInfo* info) OVERRIDE;
+      override;
+  virtual bool GetMimeType(std::string* mime_type) const override;
+  virtual void GetResponseInfo(net::HttpResponseInfo* info) override;
 
   static ResourceRequestJob* Factory(net::URLRequest* request,
                                      net::NetworkDelegate* network_delegate);
