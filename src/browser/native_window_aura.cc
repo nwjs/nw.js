@@ -121,7 +121,7 @@ class NativeWindowClientView : public views::ClientView {
   }
   virtual ~NativeWindowClientView() {}
 
-  virtual bool CanClose() OVERRIDE {
+  virtual bool CanClose() override {
     if (shell_)
       return shell_->ShouldCloseWindow();
     else
@@ -142,23 +142,24 @@ class NativeWindowFrameView : public views::NonClientFrameView {
   void Init(views::Widget* frame);
 
   // views::NonClientFrameView implementation.
-  virtual gfx::Rect GetBoundsForClientView() const OVERRIDE;
+  virtual gfx::Rect GetBoundsForClientView() const override;
   virtual gfx::Rect GetWindowBoundsForClientBounds(
-      const gfx::Rect& client_bounds) const OVERRIDE;
-  virtual int NonClientHitTest(const gfx::Point& point) OVERRIDE;
+      const gfx::Rect& client_bounds) const override;
+  virtual int NonClientHitTest(const gfx::Point& point) override;
   virtual void GetWindowMask(const gfx::Size& size,
-                             gfx::Path* window_mask) OVERRIDE;
-  virtual void ResetWindowControls() OVERRIDE {}
-  virtual void UpdateWindowIcon() OVERRIDE {}
-  virtual void UpdateWindowTitle() OVERRIDE {}
+                             gfx::Path* window_mask) override;
+  virtual void ResetWindowControls() override {}
+  virtual void UpdateWindowIcon() override {}
+  virtual void UpdateWindowTitle() override {}
+  virtual void SizeConstraintsChanged() override {}
 
   // views::View implementation.
-  virtual gfx::Size GetPreferredSize() const OVERRIDE;
-  virtual void Layout() OVERRIDE;
-  virtual const char* GetClassName() const OVERRIDE;
-  virtual void OnPaint(gfx::Canvas* canvas) OVERRIDE;
-  virtual gfx::Size GetMinimumSize() const OVERRIDE;
-  virtual gfx::Size GetMaximumSize() const OVERRIDE;
+  virtual gfx::Size GetPreferredSize() const override;
+  virtual void Layout() override;
+  virtual const char* GetClassName() const override;
+  virtual void OnPaint(gfx::Canvas* canvas) override;
+  virtual gfx::Size GetMinimumSize() const override;
+  virtual gfx::Size GetMaximumSize() const override;
 
  private:
   NativeWindowAura* window_;
@@ -488,7 +489,8 @@ void NativeWindowAura::SetTransparent(bool transparent) {
 
   content::RenderWidgetHostView* rwhv = shell_->web_contents()->GetRenderWidgetHostView();
   if (rwhv) {
-    rwhv->SetBackgroundOpaque(!transparent);
+    if (transparent)
+      rwhv->SetBackgroundColor(SK_ColorTRANSPARENT);
   }
 
   transparent_ = transparent;

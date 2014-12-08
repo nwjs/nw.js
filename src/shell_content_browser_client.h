@@ -30,28 +30,30 @@ class ShellContentBrowserClient : public ContentBrowserClient {
 
   // ContentBrowserClient overrides.
   virtual BrowserMainParts* CreateBrowserMainParts(
-      const MainFunctionParams& parameters) OVERRIDE;
+      const MainFunctionParams& parameters) override;
   virtual void OverrideCreateWebContentsView(
       WebContents* web_contents,
       RenderViewHostDelegateView** render_view_host_delegate_view,
-      const WebContents::CreateParams& params) OVERRIDE;
-  virtual std::string GetApplicationLocale() OVERRIDE;
+      const WebContents::CreateParams& params) override;
+  virtual std::string GetApplicationLocale() override;
   virtual void AppendExtraCommandLineSwitches(base::CommandLine* command_line,
-                                              int child_process_id) OVERRIDE;
-  virtual void ResourceDispatcherHostCreated() OVERRIDE;
-  virtual AccessTokenStore* CreateAccessTokenStore() OVERRIDE;
+                                              int child_process_id) override;
+  virtual void ResourceDispatcherHostCreated() override;
+  virtual AccessTokenStore* CreateAccessTokenStore() override;
   virtual void OverrideWebkitPrefs(
       RenderViewHost* render_view_host,
       const GURL& url,
-      WebPreferences* prefs) OVERRIDE;
-  virtual std::string GetDefaultDownloadName() OVERRIDE;
-  virtual MediaObserver* GetMediaObserver() OVERRIDE;
-  virtual void BrowserURLHandlerCreated(BrowserURLHandler* handler) OVERRIDE;
-  virtual bool IsHandledURL(const GURL& url) OVERRIDE;
+      WebPreferences* prefs) override;
+  virtual std::string GetDefaultDownloadName() override;
+#if 0
+  virtual MediaObserver* GetMediaObserver() override;
+#endif
+  virtual void BrowserURLHandlerCreated(BrowserURLHandler* handler) override;
+  virtual bool IsHandledURL(const GURL& url) override;
   virtual bool ShouldTryToUseExistingProcessHost(
-      BrowserContext* browser_context, const GURL& url) OVERRIDE;
+      BrowserContext* browser_context, const GURL& url) override;
   virtual bool IsSuitableHost(RenderProcessHost* process_host,
-                              const GURL& site_url) OVERRIDE;
+                              const GURL& site_url) override;
   ShellBrowserContext* browser_context();
   ShellBrowserContext* off_the_record_browser_context();
   ShellResourceDispatcherHostDelegate* resource_dispatcher_host_delegate() {
@@ -61,16 +63,16 @@ class ShellContentBrowserClient : public ContentBrowserClient {
     return shell_browser_main_parts_;
   }
   virtual printing::PrintJobManager* print_job_manager();
-  virtual void RenderProcessWillLaunch(RenderProcessHost* host) OVERRIDE;
+  virtual void RenderProcessWillLaunch(RenderProcessHost* host) override;
   virtual net::URLRequestContextGetter* CreateRequestContext(
       BrowserContext* browser_context,
-      ProtocolHandlerMap* protocol_handlers, URLRequestInterceptorScopedVector request_interceptors) OVERRIDE;
+      ProtocolHandlerMap* protocol_handlers, URLRequestInterceptorScopedVector request_interceptors) override;
   virtual net::URLRequestContextGetter* CreateRequestContextForStoragePartition(
       BrowserContext* browser_context,
       const base::FilePath& partition_path,
       bool in_memory,
       ProtocolHandlerMap* protocol_handlers,
-      URLRequestInterceptorScopedVector request_interceptors) OVERRIDE;
+      URLRequestInterceptorScopedVector request_interceptors) override;
   virtual void AllowCertificateError(int render_process_id,
                                      int render_frame_id,
                                      int cert_error,
@@ -81,37 +83,34 @@ class ShellContentBrowserClient : public ContentBrowserClient {
                                      bool strict_enforcement,
                                      bool expired_previous_decision,
                                      const base::Callback<void(bool)>& callback,
-                                     CertificateRequestResultType* result) OVERRIDE;
+                                     CertificateRequestResultType* result) override;
   virtual void GetAdditionalAllowedSchemesForFileSystem(
-      std::vector<std::string>* additional_schemes) OVERRIDE;
+      std::vector<std::string>* additional_schemes) override;
 #if defined(OS_POSIX) && !defined(OS_MACOSX)
-  virtual void GetAdditionalMappedFilesForChildProcess(
+  void GetAdditionalMappedFilesForChildProcess(
       const base::CommandLine& command_line,
       int child_process_id,
-      std::vector<content::FileDescriptorInfo>* mappings) OVERRIDE;
+      FileDescriptorInfo* mappings) override;
 #endif
-  virtual QuotaPermissionContext* CreateQuotaPermissionContext() OVERRIDE;
+  virtual QuotaPermissionContext* CreateQuotaPermissionContext() override;
+
+  DevToolsManagerDelegate* GetDevToolsManagerDelegate() override;
 
   //Notification
+#if 0 //FIXME
   virtual void ShowDesktopNotification(
       const ShowDesktopNotificationHostMsgParams& params,
       RenderFrameHost* render_frame_host,
       scoped_ptr<DesktopNotificationDelegate> delegate,
-      base::Closure* cancel_callback) OVERRIDE;
-
-  virtual void RequestMidiSysExPermission(
-      WebContents* web_contents,
-      int bridge_id,
-      const GURL& requesting_frame,
-      bool user_gesture,
-      base::Callback<void(bool)> result_callback,
-      base::Closure* cancel_callback) OVERRIDE;
-
-  virtual void RequestProtectedMediaIdentifierPermission(
-      WebContents* web_contents,
-      const GURL& origin,
-      base::Callback<void(bool)> result_callback,
-      base::Closure* cancel_callback) OVERRIDE;
+      base::Closure* cancel_callback) override;
+#endif
+  virtual void RequestPermission(
+                                 content::PermissionType permission,
+                                 content::WebContents* web_contents,
+                                 int bridge_id,
+                                 const GURL& requesting_frame,
+                                 bool user_gesture,
+                                 const base::Callback<void(bool)>& result_callback) override;
 
  private:
   ShellBrowserContext* ShellBrowserContextForBrowserContext(

@@ -32,7 +32,7 @@ class PrintJobManager;
 namespace content {
 
 class ShellBrowserContext;
-class ShellDevToolsDelegate;
+class DevToolsHttpHandler;
 struct MainFunctionParams;
 
 class ShellBrowserMainParts : public BrowserMainParts {
@@ -41,20 +41,20 @@ class ShellBrowserMainParts : public BrowserMainParts {
   virtual ~ShellBrowserMainParts();
 
   // BrowserMainParts overrides.
-  virtual void PreEarlyInitialization() OVERRIDE;
-  virtual void PreMainMessageLoopStart() OVERRIDE;
-  virtual void PreMainMessageLoopRun() OVERRIDE;
-  virtual void PostMainMessageLoopStart() OVERRIDE;
-  virtual bool MainMessageLoopRun(int* result_code) OVERRIDE;
-  virtual void PostMainMessageLoopRun() OVERRIDE;
-  virtual int  PreCreateThreads() OVERRIDE;
-  virtual void PostDestroyThreads() OVERRIDE;
-  virtual void ToolkitInitialized() OVERRIDE;
+  virtual void PreEarlyInitialization() override;
+  virtual void PreMainMessageLoopStart() override;
+  virtual void PreMainMessageLoopRun() override;
+  virtual void PostMainMessageLoopStart() override;
+  virtual bool MainMessageLoopRun(int* result_code) override;
+  virtual void PostMainMessageLoopRun() override;
+  virtual int  PreCreateThreads() override;
+  virtual void PostDestroyThreads() override;
+  virtual void ToolkitInitialized() override;
 
   // Init browser context and every thing
   void Init();
 
-  ShellDevToolsDelegate* devtools_delegate() { return devtools_delegate_; }
+  DevToolsHttpHandler* devtools_handler() { return devtools_http_handler_.get(); }
 
   ShellBrowserContext* browser_context() { return browser_context_.get(); }
   ShellBrowserContext* off_the_record_browser_context() {
@@ -80,7 +80,7 @@ class ShellBrowserMainParts : public BrowserMainParts {
   const MainFunctionParams& parameters_;
   bool run_message_loop_;
 
-  ShellDevToolsDelegate* devtools_delegate_;
+  scoped_ptr<DevToolsHttpHandler> devtools_http_handler_;
   ProcessSingleton::NotifyResult notify_result_;
 
   //base::WeakPtrFactory<ShellBrowserMainParts> weak_factory_;

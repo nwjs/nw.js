@@ -31,15 +31,16 @@
 #include "content/nw/src/api/app/app.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/breakpad_linux.h"
-#include "content/nw/src/browser/printing/print_job_manager.h"
-#include "content/nw/src/browser/shell_devtools_delegate.h"
+#include "chrome/browser/printing/print_job_manager.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/nw/src/shell_browser_context.h"
+#include "content/nw/src/browser/shell_devtools_manager_delegate.h"
+#include "content/public/browser/devtools_http_handler.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/main_function_params.h"
-#include "grit/net_resources.h"
+#include "net/grit/net_resources.h"
 #include "net/base/net_module.h"
 #include "net/proxy/proxy_resolver_v8.h"
 #include "ui/base/ime/input_method_initializer.h"
@@ -112,7 +113,6 @@ ShellBrowserMainParts::ShellBrowserMainParts(
     : BrowserMainParts(),
       parameters_(parameters),
       run_message_loop_(true),
-      devtools_delegate_(NULL),
       notify_result_(ProcessSingleton::PROCESS_NONE)
 {
 #if defined(ENABLE_PRINTING)
@@ -147,11 +147,13 @@ bool ShellBrowserMainParts::MainMessageLoopRun(int* result_code)  {
 }
 
 void ShellBrowserMainParts::PostMainMessageLoopRun() {
-  if (devtools_delegate_)
-    devtools_delegate_->Stop();
+  //  if (devtools_delegate_)
+  // devtools_delegate_->Stop();
+  // FIXME
   if (notify_result_ == ProcessSingleton::PROCESS_NONE)
     process_singleton_->Cleanup();
 
+  devtools_http_handler_.reset();
   browser_context_.reset();
   off_the_record_browser_context_.reset();
 }
@@ -219,22 +221,8 @@ void ShellBrowserMainParts::Init() {
 
   net::NetModule::SetResourceProvider(PlatformResourceProvider);
 
-  int port = 0;
-  // See if the user specified a port on the command line (useful for
-  // automation). If not, use an ephemeral port by specifying 0.
-
-  if (command_line.HasSwitch(switches::kRemoteDebuggingPort)) {
-    int temp_port;
-    std::string port_str =
-        command_line.GetSwitchValueASCII(switches::kRemoteDebuggingPort);
-    if (base::StringToInt(port_str, &temp_port) &&
-        temp_port > 0 && temp_port < 65535) {
-      port = temp_port;
-    } else {
-      DLOG(WARNING) << "Invalid http debugger port number " << temp_port;
-    }
-  }
-  devtools_delegate_ = new ShellDevToolsDelegate(browser_context_.get(), port);
+  devtools_http_handler_.reset(
+      ShellDevToolsManagerDelegate::CreateHttpHandler(browser_context_.get()));
 
   Shell::Create(browser_context_.get(),
                 package()->GetStartupURL(),

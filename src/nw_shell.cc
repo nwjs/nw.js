@@ -27,12 +27,10 @@
 #include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
 #include "content/browser/child_process_security_policy_impl.h"
-#include "content/browser/devtools/devtools_http_handler_impl.h"
 #include "content/browser/renderer_host/render_view_host_impl.h"
 #include "content/browser/web_contents/web_contents_impl.h"
 #include "content/public/browser/devtools_agent_host.h"
 #include "content/public/browser/devtools_http_handler.h"
-#include "content/public/browser/devtools_manager.h"
 #include "content/public/browser/navigation_entry.h"
 #include "content/public/browser/navigation_controller.h"
 #include "content/public/browser/notification_details.h"
@@ -51,7 +49,6 @@
 #include "content/nw/src/browser/browser_dialogs.h"
 #include "content/nw/src/browser/file_select_helper.h"
 #include "content/nw/src/browser/native_window.h"
-#include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/browser/shell_javascript_dialog_creator.h"
 #include "content/nw/src/browser/nw_autofill_client.h"
 #include "content/nw/src/common/shell_switches.h"
@@ -61,6 +58,7 @@
 #include "content/nw/src/shell_browser_main_parts.h"
 #include "content/nw/src/shell_content_browser_client.h"
 #include "content/nw/src/shell_devtools_frontend.h"
+//#include "content/nw/src/browser/shell_devtools_delegate.h"
 
 #include "grit/nw_resources.h"
 #include "net/base/escape.h"
@@ -77,11 +75,10 @@
 using nw::NativeWindowAura;
 #endif
 
-#include "content/nw/src/browser/printing/print_view_manager.h"
+#include "chrome/browser/printing/print_view_manager_basic.h"
 
 using base::MessageLoop;
 
-using content::DevToolsHttpHandlerImpl;
 namespace content {
 
 std::vector<Shell*> Shell::windows_;
@@ -113,7 +110,7 @@ Shell* Shell::Create(BrowserContext* browser_context,
 
   Shell* shell = new Shell(web_contents, GetPackage()->window());
   NavigationController::LoadURLParams params(url);
-  params.transition_type = PageTransitionFromInt(PAGE_TRANSITION_TYPED);
+  params.transition_type = PageTransitionFromInt(ui::PAGE_TRANSITION_TYPED);
   params.override_user_agent = NavigationController::UA_OVERRIDE_TRUE;
   params.frame_name = std::string();
 
@@ -131,7 +128,7 @@ Shell* Shell::Create(WebContents* source_contents,
 
   if (!target_url.is_empty()) {
     NavigationController::LoadURLParams params(target_url);
-    params.transition_type = PageTransitionFromInt(PAGE_TRANSITION_TYPED);
+    params.transition_type = PageTransitionFromInt(ui::PAGE_TRANSITION_TYPED);
     params.override_user_agent = NavigationController::UA_OVERRIDE_TRUE;
     params.frame_name = std::string();
 
@@ -196,7 +193,7 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   window_.reset(nw::NativeWindow::Create(weak_ptr_factory_.GetWeakPtr(), manifest));
 
 #if defined(ENABLE_PRINTING)
-  printing::PrintViewManager::CreateForWebContents(web_contents);
+  printing::PrintViewManagerBasic::CreateForWebContents(web_contents);
 #endif
 
   // Initialize window after we set window_, because some operations of
@@ -208,12 +205,14 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   web_modal::WebContentsModalDialogManager::FromWebContents(web_contents)->SetDelegate(this);
 #endif
 
+#if 0
   autofill::NWAutofillClient::CreateForWebContents(web_contents);
   autofill::ContentAutofillDriver::CreateForWebContentsAndDelegate(
       web_contents,
       autofill::NWAutofillClient::FromWebContents(web_contents),
       "",
       autofill::AutofillManager::DISABLE_AUTOFILL_DOWNLOAD_MANAGER);
+#endif //FIXME
 }
 
 Shell::~Shell() {
@@ -335,8 +334,8 @@ void Shell::LoadURL(const GURL& url) {
     return;
   }
   NavigationController::LoadURLParams params(url);
-  params.transition_type = PageTransitionFromInt(
-      PAGE_TRANSITION_TYPED | PAGE_TRANSITION_FROM_ADDRESS_BAR);
+  params.transition_type = ui::PageTransitionFromInt(
+                                                 ui::PAGE_TRANSITION_TYPED | ui::PAGE_TRANSITION_FROM_ADDRESS_BAR);
   web_contents_->GetController().LoadURLWithParams(params);
   // web_contents_->GetController().LoadURL(
   //     url,
@@ -429,19 +428,18 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
   }
 
   scoped_refptr<DevToolsAgentHost> agent(DevToolsAgentHost::GetOrCreateFor(web_contents()));
-  DevToolsManager* manager = DevToolsManager::GetInstance();
 
   if (agent->IsAttached()) {
     // Break remote debugging debugging session.
-    manager->CloseAllClientHosts();
+    content::DevToolsAgentHost::DetachAllClients();
   }
 
-  ShellDevToolsDelegate* delegate =
-      browser_client->shell_browser_main_parts()->devtools_delegate();
-  GURL url = delegate->devtools_http_handler()->GetFrontendURL(agent.get());
-  DevToolsHttpHandlerImpl* http_handler = static_cast<DevToolsHttpHandlerImpl*>(delegate->devtools_http_handler());
+  DevToolsHttpHandler* http_handler =
+      browser_client->shell_browser_main_parts()->devtools_handler();
+  GURL url = http_handler->GetFrontendURL(agent.get());
   http_handler->EnumerateTargets();
 
+#if 0
   if (headless) {
     DevToolsAgentHost* agent_host = DevToolsAgentHost::GetOrCreateFor(web_contents()).get();
 
@@ -451,7 +449,7 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
     SendEvent("devtools-opened", url.spec());
     return;
   }
-
+#endif
   SendEvent("devtools-opened", url.spec());
   // Use our minimum set manifest
   base::DictionaryValue manifest;
@@ -604,7 +602,7 @@ void Shell::WebContentsCreated(WebContents* source_contents,
   new nwapi::DispatcherHost(new_contents->GetRenderViewHost());
 
 #if defined(ENABLE_PRINTING)
-  printing::PrintViewManager::CreateForWebContents(new_contents);
+  printing::PrintViewManagerBasic::CreateForWebContents(new_contents);
 #endif
 
 #if defined(OS_WIN) || defined(OS_LINUX)
@@ -651,7 +649,7 @@ void Shell::DidNavigateMainFramePostCommit(WebContents* web_contents) {
   window()->SetToolbarUrlEntry(web_contents->GetURL().spec());
 }
 
-JavaScriptDialogManager* Shell::GetJavaScriptDialogManager() {
+JavaScriptDialogManager* Shell::GetJavaScriptDialogManager(WebContents* source) {
   if (!dialog_creator_.get())
     dialog_creator_.reset(new ShellJavaScriptDialogCreator());
   return dialog_creator_.get();
@@ -680,10 +678,6 @@ void Shell::RequestMediaAccessPermission(
       WebContents* web_contents,
       const MediaStreamRequest& request,
       const MediaResponseCallback& callback) {
-  scoped_ptr<MediaStreamDevicesController>
-      controller(new MediaStreamDevicesController(request,
-                                                  callback));
-  controller->DismissInfoBarAndTakeActionOnSettings();
 }
 
 void Shell::Observe(int type,

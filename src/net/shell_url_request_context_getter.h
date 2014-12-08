@@ -64,16 +64,16 @@ class ShellBrowserContext;
       const std::string& gssapi_library_name);
 
   // net::URLRequestContextGetter implementation.
-  virtual net::URLRequestContext* GetURLRequestContext() OVERRIDE;
+  virtual net::URLRequestContext* GetURLRequestContext() override;
   virtual scoped_refptr<base::SingleThreadTaskRunner>
-      GetNetworkTaskRunner() const OVERRIDE;
+      GetNetworkTaskRunner() const override;
 
   net::HostResolver* host_resolver();
 
   void SetAdditionalTrustAnchors(const net::CertificateList& trust_anchors);
 
   // net::CertTrustAnchorProvider implementation.
-  virtual const net::CertificateList& GetAdditionalTrustAnchors() OVERRIDE;
+  virtual const net::CertificateList& GetAdditionalTrustAnchors() override;
 
  protected:
   virtual ~ShellURLRequestContextGetter();

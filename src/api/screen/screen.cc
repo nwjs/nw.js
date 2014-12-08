@@ -30,26 +30,26 @@ namespace nwapi {
 std::string DisplayToJSON(const gfx::Display& display) {
   std::stringstream ret;
   gfx::Rect rect = display.bounds();
-  
+
   ret << "{\"id\":" << display.id();
-  
+
   ret << ",\"bounds\":{\"x\":" << rect.x()
   << ", \"y\":" << rect.y()
   << ", \"width\":" << rect.width()
   << ", \"height\":" << rect.height() << "}";
-  
+
   rect = display.work_area();
   ret << ",\"work_area\":{\"x\":" << rect.x()
   << ", \"y\":" << rect.y()
   << ", \"width\":" << rect.width()
   << ", \"height\":" << rect.height() << "}";
-  
+
   ret << ",\"scaleFactor\":" << display.device_scale_factor();
   ret << ",\"isBuiltIn\":" << (display.IsInternal() ? "true" : "false");
   ret << ",\"rotation\":" << display.RotationAsDegree();
   ret << ",\"touchSupport\":" << display.touch_support();
   ret << "}";
-  
+
   return ret.str();
 }
 
@@ -57,40 +57,40 @@ class JavaScriptDisplayObserver : BaseEvent, public gfx::DisplayObserver {
   friend class EventListener;
   EventListener* object_;
   gfx::Screen* screen_;
-  
+
   // Called when the |display|'s bound has changed.
-  virtual void OnDisplayMetricsChanged(const gfx::Display& display, uint32_t changed_metrics) OVERRIDE {
+  virtual void OnDisplayMetricsChanged(const gfx::Display& display, uint32_t changed_metrics) override {
     base::ListValue arguments;
     arguments.AppendString(DisplayToJSON(display));
     arguments.AppendInteger(changed_metrics);
     object_->dispatcher_host()->SendEvent(object_, "displayBoundsChanged", arguments);
   }
-  
+
   // Called when |new_display| has been added.
-  virtual void OnDisplayAdded(const gfx::Display& new_display) OVERRIDE {
+  virtual void OnDisplayAdded(const gfx::Display& new_display) override {
     base::ListValue arguments;
     arguments.AppendString(DisplayToJSON(new_display));
     object_->dispatcher_host()->SendEvent(object_, "displayAdded", arguments);
-    
+
   }
-  
+
   // Called when |old_display| has been removed.
-  virtual void OnDisplayRemoved(const gfx::Display& old_display) OVERRIDE {
+  virtual void OnDisplayRemoved(const gfx::Display& old_display) override {
     base::ListValue arguments;
     arguments.AppendString(DisplayToJSON(old_display));
     object_->dispatcher_host()->SendEvent(object_, "displayRemoved", arguments);
   }
-  
+
   static const int id;
-  
+
   JavaScriptDisplayObserver(EventListener* object) : object_(object), screen_(NULL){
   }
-  
+
   virtual ~JavaScriptDisplayObserver() {
     if(screen_)
       screen_->RemoveObserver(this);
   }
-  
+
 public:
   void setScreen(gfx::Screen* screen) {
     if(screen_) screen_->RemoveObserver(this);
@@ -100,7 +100,7 @@ public:
 };
 
 const int JavaScriptDisplayObserver::id = EventListener::getUID();
-  
+
   // static
 void Screen::Call(DispatcherHost* dispatcher_host,
                const std::string& method,
@@ -110,12 +110,12 @@ void Screen::Call(DispatcherHost* dispatcher_host,
   if (method == "GetScreens") {
     std::stringstream ret;
     const std::vector<gfx::Display>& displays = gfx::Screen::GetNativeScreen()->GetAllDisplays();
-    
+
     if (displays.size() == 0) {
       result->AppendString("{}");
       return;
     }
-    
+
     for (size_t i=0; i<displays.size(); i++) {
       if(i!=0) ret << ",";
       ret << DisplayToJSON(displays[i]);
@@ -138,7 +138,7 @@ void Screen::Call(DispatcherHost* dispatcher_host,
     result->AppendBoolean(res);
     return;
   }
-  
+
 }
 
 } // namespace nwapi

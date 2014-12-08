@@ -27,7 +27,7 @@ class MenuBarController : public views::MenuModelAdapter {
       const gfx::Point& screen_point,
       views::MenuAnchorPosition* anchor,
       bool* has_mnemonics,
-      views::MenuButton** button) OVERRIDE;
+      views::MenuButton** button) override;
 
  private:
   typedef std::map<const ui::MenuModel*, views::MenuItemView*> ModelToMenuMap;

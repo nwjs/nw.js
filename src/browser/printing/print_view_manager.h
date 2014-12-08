@@ -59,25 +59,25 @@ class PrintViewManager : public content::NotificationObserver,
   void set_observer(PrintViewManagerObserver* observer);
 
   // PrintedPagesSource implementation.
-  virtual base::string16 RenderSourceName() OVERRIDE;
+  virtual base::string16 RenderSourceName() override;
 
   // content::NotificationObserver implementation.
   virtual void Observe(int type,
                        const content::NotificationSource& source,
-                       const content::NotificationDetails& details) OVERRIDE;
+                       const content::NotificationDetails& details) override;
 
   // content::WebContentsObserver implementation.
   virtual void DidStartLoading(
-      content::RenderViewHost* render_view_host) OVERRIDE;
+      content::RenderViewHost* render_view_host) override;
 
   // content::WebContentsObserver implementation.
-  virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
+  virtual bool OnMessageReceived(const IPC::Message& message) override;
 
   // Terminates or cancels the print job if one was pending.
-  virtual void RenderProcessGone(base::TerminationStatus status) OVERRIDE;
+  virtual void RenderProcessGone(base::TerminationStatus status) override;
 
   // Cancels the print job.
-  virtual void NavigationStopped() OVERRIDE;
+  virtual void NavigationStopped() override;
 
  private:
   explicit PrintViewManager(content::WebContents* web_contents);

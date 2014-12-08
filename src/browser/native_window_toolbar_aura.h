@@ -52,22 +52,22 @@ class NativeWindowToolbarAura : public views::WidgetDelegateView,
 
  protected:
   // Overridden from WidgetDelegateView:
-  virtual views::View* GetContentsView() OVERRIDE;
+  virtual views::View* GetContentsView() override;
 
   // Overridden from View:
-  virtual void Layout() OVERRIDE;
+  virtual void Layout() override;
   virtual void ViewHierarchyChanged(
-      const ViewHierarchyChangedDetails& details) OVERRIDE;
+      const ViewHierarchyChangedDetails& details) override;
 
   // Overridden from TextfieldController:
   virtual void ContentsChanged(views::Textfield* sender,
-                               const base::string16& new_contents) OVERRIDE;
+                               const base::string16& new_contents) override;
   virtual bool HandleKeyEvent(views::Textfield* sender,
-                              const ui::KeyEvent& key_event) OVERRIDE;
+                              const ui::KeyEvent& key_event) override;
 
   // Overridden from ButtonListener:
   virtual void ButtonPressed(views::Button* sender,
-                             const ui::Event& event) OVERRIDE;
+                             const ui::Event& event) override;
 
  private:
   void InitToolbar();

@@ -10,7 +10,6 @@
 #include "base/memory/ref_counted.h"
 #include "base/memory/scoped_ptr.h"
 #include "content/public/browser/devtools_agent_host.h"
-#include "content/public/browser/devtools_client_host.h"
 #include "content/public/browser/devtools_frontend_host.h"
 #include "content/public/browser/web_contents_observer.h"
 
@@ -22,7 +21,7 @@ class WebContents;
 
 class ShellDevToolsFrontend : public WebContentsObserver,
   public DevToolsFrontendHost::Delegate,
-  public DevToolsClientHost {
+  public DevToolsAgentHostClient {
  public:
 
     //static ShellDevToolsFrontend* Show(WebContents* inspected_contents);
@@ -36,19 +35,19 @@ class ShellDevToolsFrontend : public WebContentsObserver,
  private:
 
   // WebContentsObserver overrides
-  virtual void RenderViewCreated(RenderViewHost* render_view_host) OVERRIDE;
-  virtual void WebContentsDestroyed() OVERRIDE;
+  virtual void RenderViewCreated(RenderViewHost* render_view_host) override;
+  virtual void WebContentsDestroyed() override;
 
   // content::DevToolsFrontendHost::Delegate implementation.
   virtual void HandleMessageFromDevToolsFrontend(
-      const std::string& message) OVERRIDE;
+      const std::string& message) override;
   virtual void HandleMessageFromDevToolsFrontendToBackend(
-      const std::string& message) OVERRIDE;
+      const std::string& message) override;
 
-  // content::DevToolsClientHost implementation.
-  virtual void DispatchOnInspectorFrontend(const std::string& message) OVERRIDE;
-  virtual void InspectedContentsClosing() OVERRIDE;
-  virtual void ReplacedWithAnotherClient() OVERRIDE {}
+  // content::DevToolsAgentHostClient implementation.
+  void DispatchProtocolMessage(DevToolsAgentHost* agent_host,
+                               const std::string& message) override;
+  void AgentHostClosed(DevToolsAgentHost* agent_host, bool replaced) override;
 
   Shell* frontend_shell_;
   scoped_refptr<DevToolsAgentHost> agent_host_;

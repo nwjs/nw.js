@@ -32,21 +32,21 @@ class MenuDelegate : public ui::SimpleMenuModel::Delegate {
   MenuDelegate(DispatcherHost* dispatcher_host);
   virtual ~MenuDelegate();
 
-  virtual bool IsCommandIdChecked(int command_id) const OVERRIDE;
-  virtual bool IsCommandIdEnabled(int command_id) const OVERRIDE;
+  virtual bool IsCommandIdChecked(int command_id) const override;
+  virtual bool IsCommandIdEnabled(int command_id) const override;
 
   virtual bool GetAcceleratorForCommandId(
       int command_id,
-      ui::Accelerator* accelerator) OVERRIDE;
+      ui::Accelerator* accelerator) override;
 
-  virtual bool IsItemForCommandIdDynamic(int command_id) const OVERRIDE;
-  virtual base::string16 GetLabelForCommandId(int command_id) const OVERRIDE;
+  virtual bool IsItemForCommandIdDynamic(int command_id) const override;
+  virtual base::string16 GetLabelForCommandId(int command_id) const override;
   virtual bool GetIconForCommandId(int command_id,
-                                   gfx::Image* icon) const OVERRIDE;
+                                   gfx::Image* icon) const override;
 
-  virtual void ExecuteCommand(int command_id, int event_flags) OVERRIDE;
+  virtual void ExecuteCommand(int command_id, int event_flags) override;
 
-  virtual bool HasIcon(int command_id) OVERRIDE;
+  virtual bool HasIcon(int command_id) override;
 
  private:
   DispatcherHost* dispatcher_host_;

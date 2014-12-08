@@ -46,7 +46,7 @@ class ShellLoginDialog : public ResourceDispatcherHostLoginDelegate {
 
   // ResourceDispatcherHostLoginDelegate implementation:
   // Threading: IO thread.
-  virtual void OnRequestCancelled() OVERRIDE;
+  virtual void OnRequestCancelled() override;
 
   // Called by the platform specific code when the user responds. Public because
   // the aforementioned platform specific code may not have access to private
@@ -58,17 +58,17 @@ class ShellLoginDialog : public ResourceDispatcherHostLoginDelegate {
 
 #if defined(OS_WIN) || defined(OS_LINUX)
   // views::DialogDelegate methods:
-  virtual base::string16 GetDialogButtonLabel(ui::DialogButton button) const OVERRIDE;
-  virtual base::string16 GetWindowTitle() const OVERRIDE;
-  virtual void WindowClosing() OVERRIDE;
-  virtual void DeleteDelegate() OVERRIDE;
-  virtual ui::ModalType GetModalType() const OVERRIDE;
-  virtual bool Cancel() OVERRIDE;
-  virtual bool Accept() OVERRIDE;
-  virtual views::View* GetInitiallyFocusedView() OVERRIDE;
-  virtual views::View* GetContentsView() OVERRIDE;
-  virtual views::Widget* GetWidget() OVERRIDE;
-  virtual const views::Widget* GetWidget() const OVERRIDE;
+  virtual base::string16 GetDialogButtonLabel(ui::DialogButton button) const override;
+  virtual base::string16 GetWindowTitle() const override;
+  virtual void WindowClosing() override;
+  virtual void DeleteDelegate() override;
+  virtual ui::ModalType GetModalType() const override;
+  virtual bool Cancel() override;
+  virtual bool Accept() override;
+  virtual views::View* GetInitiallyFocusedView() override;
+  virtual views::View* GetContentsView() override;
+  virtual views::Widget* GetWidget() override;
+  virtual const views::Widget* GetWidget() const override;
 #endif
 
  protected:

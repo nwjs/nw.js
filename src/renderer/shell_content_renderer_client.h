@@ -41,24 +41,24 @@ class ShellContentRendererClient : public ContentRendererClient {
  public:
   ShellContentRendererClient();
   virtual ~ShellContentRendererClient();
-  virtual void RenderThreadStarted() OVERRIDE;
-  virtual void RenderViewCreated(RenderView* render_view) OVERRIDE;
+  virtual void RenderThreadStarted() override;
+  virtual void RenderViewCreated(RenderView* render_view) override;
 
   virtual void DidCreateScriptContext(blink::WebFrame* frame,
                                       v8::Handle<v8::Context> context,
                                       int extension_group,
-                                      int world_id) OVERRIDE;
+                                      int world_id) override;
   virtual bool WillSetSecurityToken(blink::WebFrame* frame,
-                                    v8::Handle<v8::Context>) OVERRIDE;
+                                    v8::Handle<v8::Context>) override;
 
   virtual void willHandleNavigationPolicy(RenderView* rv,
                                           blink::WebFrame* frame,
                                           const blink::WebURLRequest& request,
                                           blink::WebNavigationPolicy* policy,
-                                          blink::WebString* manifest = NULL) OVERRIDE;
+                                          blink::WebString* manifest = NULL) override;
 
-  virtual void windowOpenBegin(const blink::WebURL& url) OVERRIDE;
-  virtual void windowOpenEnd() OVERRIDE;
+  virtual void windowOpenBegin(const blink::WebURL& url) override;
+  virtual void windowOpenEnd() override;
  private:
   scoped_ptr<ShellRenderProcessObserver> shell_observer_;
   scoped_ptr<nwapi::WindowBindings> window_bindings_;

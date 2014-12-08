@@ -24,7 +24,7 @@
 
 #include "base/command_line.h"
 #include "base/files/file_path.h"
-#include "base/file_util.h"
+#include "base/files/file_util.h"
 #include "base/logging.h"
 #include "base/posix/global_descriptors.h"
 #include "base/strings/string16.h"
@@ -65,7 +65,7 @@
 //#include "third_party/WebKit/Source/WebKit/chromium/public/platform/WebString.h"
 #include "content/common/dom_storage/dom_storage_map.h"
 
-#include "id/commit.h"
+#include "nw/id/commit.h"
 
 using content::RenderView;
 using content::RenderViewImpl;
