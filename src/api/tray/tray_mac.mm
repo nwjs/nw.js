@@ -72,6 +72,7 @@ void Tray::SetIcon(const std::string& icon) {
   if (!icon.empty()) {
     NSImage* image = [[NSImage alloc]
          initWithContentsOfFile:[NSString stringWithUTF8String:icon.c_str()]];
+    [image setTemplate:iconsAreTemplates];
     [status_item_ setImage:image];
     [image release];
   } else {
@@ -83,10 +84,21 @@ void Tray::SetAltIcon(const std::string& alticon) {
   if (!alticon.empty()) {
     NSImage* image = [[NSImage alloc]
          initWithContentsOfFile:[NSString stringWithUTF8String:alticon.c_str()]];
+    [image setTemplate:iconsAreTemplates];
     [status_item_ setAlternateImage:image];
     [image release];
   } else {
     [status_item_ setAlternateImage:nil];
+  }
+}
+
+void Tray::SetIconsAreTemplates(bool areTemplates) {
+  iconsAreTemplates = areTemplates;
+  if ([status_item_ image] != nil) {
+    [[status_item_ image] setTemplate:areTemplates];
+  }
+  if ([status_item_ alternateImage] != nil) {
+    [[status_item_ alternateImage] setTemplate:areTemplates];
   }
 }
 

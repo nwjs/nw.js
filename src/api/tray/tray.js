@@ -42,6 +42,11 @@ function Tray(option) {
     option.alticon = nw.getAbsolutePath(option.alticon);
   }
 
+  if (option.hasOwnProperty('iconsAreTemplates'))
+    option.iconsAreTemplates = Boolean(option.iconsAreTemplates);
+  else
+    option.iconsAreTemplates = true;
+
   if (option.hasOwnProperty('tooltip'))
     option.tooltip = String(option.tooltip);
 
@@ -101,6 +106,14 @@ Tray.prototype.__defineSetter__('alticon', function(val) {
   v8_util.getHiddenValue(this, 'option').shadowAlticon = String(val);
   var real_path = val == '' ? '' : nw.getAbsolutePath(val);
   this.handleSetter('alticon', 'SetAlticon', String, real_path);
+});
+
+Tray.prototype.__defineGetter__('iconsAreTemplates', function() {
+  return this.handleGetter('iconsAreTemplates');
+});
+
+Tray.prototype.__defineSetter__('iconsAreTemplates', function(val) {
+  this.handleSetter('iconsAreTemplates', 'SetIconsAreTemplates', Boolean, val);
 });
 
 Tray.prototype.__defineGetter__('tooltip', function() {

@@ -69,10 +69,13 @@ class Tray : public Base {
   void Remove();
   // Alternate icons only work with Macs
   void SetAltIcon(const std::string& alticon_path);
+  // Template icons only work with Macs 
+  void SetIconsAreTemplates(bool areTemplates);
 
 #if defined(OS_MACOSX)
   __block NSStatusItem* status_item_;
   MacTrayObserver* status_observer_;
+  bool iconsAreTemplates; 
 #elif 0
   GtkStatusIcon* status_item_;
 

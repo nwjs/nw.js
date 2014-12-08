@@ -37,6 +37,10 @@ Tray::Tray(int id,
   if (option.GetString("title", &title))
     SetTitle(title);
 
+  bool areTemplates;
+  if (option.GetBoolean("iconsAreTemplates", &areTemplates))
+    SetIconsAreTemplates(areTemplates);
+
   std::string icon;
   if (option.GetString("icon", &icon) && !icon.empty())
     SetIcon(icon);
@@ -74,6 +78,10 @@ void Tray::Call(const std::string& method,
     std::string alticon;
     arguments.GetString(0, &alticon);
     SetAltIcon(alticon);
+  } else if (method == "SetIconsAreTemplates") {
+    bool areTemplates;
+    arguments.GetBoolean(0, &areTemplates);
+    SetIconsAreTemplates(areTemplates);
   } else if (method == "SetTooltip") {
     std::string tooltip;
     arguments.GetString(0, &tooltip);

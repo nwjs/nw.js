@@ -83,4 +83,7 @@ void Tray::OnPopupMenu(GtkWidget* widget, guint button, guint time) {
 void Tray::SetAltIcon(const std::string& alticon_path) {
 }
 
+void Tray::SetIconsAreTemplates(bool areTemplates) {
+}
+
 }  // namespace nwapi
