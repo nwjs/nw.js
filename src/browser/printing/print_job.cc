@@ -10,6 +10,7 @@
 #include "base/threading/thread_restrictions.h"
 #include "base/threading/worker_pool.h"
 #include "base/timer/timer.h"
+#include "content/public/browser/browser_thread.h"
 #include "content/nw/src/browser/printing/print_job_worker.h"
 #include "content/public/browser/notification_types.h"
 #include "content/public/browser/notification_service.h"
@@ -38,10 +39,7 @@ PrintJob::PrintJob()
       settings_(),
       is_job_pending_(false),
       is_canceling_(false),
-      is_stopping_(false),
-      is_stopped_(false),
-      quit_factory_(this),
-      weak_ptr_factory_(this) {
+      quit_factory_(this) {
   DCHECK(ui_message_loop_);
   // This is normally a UI message loop, but in unit tests, the message loop is
   // of the 'default' type.
@@ -73,7 +71,8 @@ void PrintJob::Initialize(PrintJobWorkerOwner* job,
   settings_ = job->settings();
 
   PrintedDocument* new_doc =
-      new PrintedDocument(settings_, source_, job->cookie());
+    new PrintedDocument(settings_, source_, job->cookie(),
+                        content::BrowserThread::GetBlockingPool());
   new_doc->set_page_count(page_count);
   UpdatePrintedDocument(new_doc);
 
@@ -164,16 +163,12 @@ void PrintJob::Stop() {
   // Be sure to live long enough.
   scoped_refptr<PrintJob> handle(this);
 
-  MessageLoop* worker_loop = worker_->message_loop();
-  if (worker_loop) {
+  if (worker_->message_loop()) {
     ControlledWorkerShutdown();
-
-    is_job_pending_ = false;
-    registrar_.Remove(this, content::NOTIFICATION_PRINT_JOB_EVENT,
-                      content::Source<PrintJob>(this));
+  } else {
+    // Flush the cached document.
+    UpdatePrintedDocument(NULL);
   }
-  // Flush the cached document.
-  UpdatePrintedDocument(NULL);
 }
 
 void PrintJob::Cancel() {
@@ -223,14 +218,6 @@ void PrintJob::DisconnectSource() {
 
 bool PrintJob::is_job_pending() const {
   return is_job_pending_;
-}
-
-bool PrintJob::is_stopping() const {
-  return is_stopping_;
-}
-
-bool PrintJob::is_stopped() const {
-  return is_stopped_;
 }
 
 PrintedDocument* PrintJob::document() const {
@@ -326,53 +313,32 @@ void PrintJob::ControlledWorkerShutdown() {
   // deadlock is eliminated.
   worker_->StopSoon();
 
-  // Run a tight message loop until the worker terminates. It may seems like a
-  // hack but I see no other way to get it to work flawlessly. The issues here
-  // are:
-  // - We don't want to run tasks while the thread is quitting.
-  // - We want this code path to wait on the thread to quit before continuing.
-  MSG msg;
-  HANDLE thread_handle = worker_->thread_handle().platform_handle();
-  for (; thread_handle;) {
-    // Note that we don't do any kind of message prioritization since we don't
-    // execute any pending task or timer.
-    DWORD result = MsgWaitForMultipleObjects(1, &thread_handle,
-                                             FALSE, INFINITE, QS_ALLINPUT);
-    if (result == WAIT_OBJECT_0 + 1) {
-      while (PeekMessage(&msg, NULL, 0, 0, TRUE) > 0) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-      }
-      // Continue looping.
-    } else if (result == WAIT_OBJECT_0) {
-      // The thread quit.
-      break;
-    } else {
-      // An error occurred. Assume the thread quit.
-      NOTREACHED();
-      break;
-    }
+  // Delay shutdown until the worker terminates.  We want this code path
+  // to wait on the thread to quit before continuing.
+  if (worker_->IsRunning()) {
+    base::MessageLoop::current()->PostDelayedTask(
+        FROM_HERE,
+        base::Bind(&PrintJob::ControlledWorkerShutdown, this),
+        base::TimeDelta::FromMilliseconds(100));
+    return;
   }
 #endif
 
 
   // Now make sure the thread object is cleaned up. Do this on a worker
   // thread because it may block.
-  is_stopping_ = true;
-
   base::WorkerPool::PostTaskAndReply(
       FROM_HERE,
-      base::Bind(&PrintJobWorker::Stop,
-                 base::Unretained(worker_.get())),
-      base::Bind(&PrintJob::HoldUntilStopIsCalled,
-                 weak_ptr_factory_.GetWeakPtr(),
-                 scoped_refptr<PrintJob>(this)),
+      base::Bind(&PrintJobWorker::Stop, base::Unretained(worker_.get())),
+      base::Bind(&PrintJob::HoldUntilStopIsCalled, this),
       false);
+
+  is_job_pending_ = false;
+  registrar_.RemoveAll();
+  UpdatePrintedDocument(NULL);
 }
 
-void PrintJob::HoldUntilStopIsCalled(const scoped_refptr<PrintJob>&) {
-  is_stopped_ = true;
-  is_stopping_ = false;
+void PrintJob::HoldUntilStopIsCalled() {
 }
 
 void PrintJob::Quit() {
@@ -391,12 +357,8 @@ JobEventDetails::JobEventDetails(Type type,
 JobEventDetails::~JobEventDetails() {
 }
 
-PrintedDocument* JobEventDetails::document() const {
-  return document_;
-}
+PrintedDocument* JobEventDetails::document() const { return document_.get(); }
 
-PrintedPage* JobEventDetails::page() const {
-  return page_;
-}
+PrintedPage* JobEventDetails::page() const { return page_.get(); }
 
 }  // namespace printing

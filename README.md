@@ -1,7 +1,7 @@
 ## Introduction
 
 node-webkit is an app runtime based on `Chromium` and `node.js`. You can 
-write native apps in HTML and Javascript with node-webkit. It also lets you
+write native apps in HTML and JavaScript with node-webkit. It also lets you
 call Node.js modules directly from the DOM and enables a new way of writing
 native applications with all Web technologies.
 
@@ -9,7 +9,8 @@ It's created and developed in the Intel Open Source Technology Center.
 
 [Introduction to node-webkit (slides)](https://speakerdeck.com/u/zcbenz/p/node-webkit-app-runtime-based-on-chromium-and-node-dot-js)   
 [Creating Desktop Applications With node-webkit](http://strongloop.com/strongblog/creating-desktop-applications-with-node-webkit/)     
-[WebApp to DesktopApp with node-webkit (slides)](http://oldgeeksguide.github.io/presentations/html5devconf2013/wtod.html)
+[WebApp to DesktopApp with node-webkit (slides)](http://oldgeeksguide.github.io/presentations/html5devconf2013/wtod.html)  
+[Essay on the history and internals of the project](http://yedingding.com/2014/08/01/node-webkit-intro-en.html)
 
 ## Features
 
@@ -17,27 +18,25 @@ It's created and developed in the Intel Open Source Technology Center.
 * Complete support for [Node.js APIs](http://nodejs.org/api/) and all its [third party modules](https://npmjs.org).
 * Good performance: Node and WebKit runs in the same thread: Function calls are made straightforward; objects are in the same heap and can just reference each other;
 * Easy to package and distribute apps.
-* Available on Linux, Mac OSX and Windows
+* Available on Linux, Mac OS X and Windows
 
 ## Downloads
-[v0.9.2 release notes](https://groups.google.com/d/msg/node-webkit/qpBhcWr-hSc/caGjhtl8cEgJ)
+* **v0.11.2:** (Nov 26, 2014, based off of Node v0.11.13, Chromium 38.0.2125.104): [release notes](https://groups.google.com/d/msg/node-webkit/hpG-AgsATTI/Oc-qhC3rMnkJ)
 
-Prebuilt binaries (v0.9.2 - Feb 20, 2014):
+ * Linux: [32bit](http://dl.node-webkit.org/v0.11.2/node-webkit-v0.11.2-linux-ia32.tar.gz) / [64bit](http://dl.node-webkit.org/v0.11.2/node-webkit-v0.11.2-linux-x64.tar.gz)
+ * Windows: [32bit](http://dl.node-webkit.org/v0.11.2/node-webkit-v0.11.2-win-ia32.zip) / [64bit](http://dl.node-webkit.org/v0.11.2/node-webkit-v0.11.2-win-x64.zip)
+ * Mac 10.7+: [32bit](http://dl.node-webkit.org/v0.11.2/node-webkit-v0.11.2-osx-ia32.zip) / [64bit](http://dl.node-webkit.org/v0.11.2/node-webkit-v0.11.2-osx-x64.zip)
 
-* Linux: [32bit](https://s3.amazonaws.com/node-webkit/v0.9.2/node-webkit-v0.9.2-linux-ia32.tar.gz) / [64bit] (https://s3.amazonaws.com/node-webkit/v0.9.2/node-webkit-v0.9.2-linux-x64.tar.gz)
-* Windows: [win32](https://s3.amazonaws.com/node-webkit/v0.9.2/node-webkit-v0.9.2-win-ia32.zip)
-* Mac: [32bit, 10.7+](https://s3.amazonaws.com/node-webkit/v0.9.2/node-webkit-v0.9.2-osx-ia32.zip)
+* **0.8.6:** (Apr 18, 2014, based off of Node v0.10.22, Chrome 30.0.1599.66) **If your native Node module works only with Node v0.10, then you should use node-webkit v0.8.x, which is also a maintained branch. [More info](https://groups.google.com/d/msg/node-webkit/2OJ1cEMPLlA/09BvpTagSA0J)**  
+[release notes](https://groups.google.com/d/msg/node-webkit/CLPkgfV-i7s/hwkkQuJ1kngJ)
 
-**If your native Node module works only with Node v0.10, then you should use node-webkit v0.8.x, which is also a maintained branch. [More info](https://groups.google.com/d/msg/node-webkit/2OJ1cEMPLlA/09BvpTagSA0J)**  
-[v0.8.4 release notes](https://groups.google.com/d/msg/node-webkit/bPjur7aFaQc/4TP6o3SM-8sJ)
+ * Linux: [32bit](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-linux-ia32.tar.gz) / [64bit](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-linux-x64.tar.gz)
+ * Windows: [win32](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-win-ia32.zip)
+ * Mac: [32bit, 10.7+](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-osx-ia32.zip)
 
-Prebuilt binaries (v0.8.4 - Dec 30, 2013):
+* **latest live build**: git tip version; build triggered from every git commit: http://dl.node-webkit.org/live-build/
 
-* Linux: [32bit](https://s3.amazonaws.com/node-webkit/v0.8.4/node-webkit-v0.8.4-linux-ia32.tar.gz) / [64bit] (https://s3.amazonaws.com/node-webkit/v0.8.4/node-webkit-v0.8.4-linux-x64.tar.gz)
-* Windows: [win32](https://s3.amazonaws.com/node-webkit/v0.8.4/node-webkit-v0.8.4-win-ia32.zip)
-* Mac: [32bit, 10.7+](https://s3.amazonaws.com/node-webkit/v0.8.4/node-webkit-v0.8.4-osx-ia32.zip)
-
-[Looking for older versions?](https://github.com/rogerwang/node-webkit/wiki/Downloads-of-old-versions)
+* [Previous versions](https://github.com/rogerwang/node-webkit/wiki/Downloads-of-old-versions)
 
 ###Demos and real apps
 You may also be interested in [our demos repository](https://github.com/zcbenz/nw-sample-apps) and the [List of apps and companies using node-webkit](https://github.com/rogerwang/node-webkit/wiki/List-of-apps-and-companies-using-node-webkit).
@@ -68,29 +67,17 @@ Create `package.json`:
 }
 ```
 
-Compress `index.html` and `package.json` into a zip archive called `app.nw`:
-
-````bash
-$ zip app.nw index.html package.json
-````
-
-This should create a structure like this:
-
-```
-app.nw
-|-- package.json
-`-- index.html
+Run:  
+```bash
+$ /path/to/nw .  (suppose the current directory contains 'package.json')
 ```
 
-Download the prebuilt binary for your platform and use it to open the
-`app.nw` file:
+Note: on Windows, you can drag the folder containing `package.json` to `nw.exe` to open it.
 
-````bash
-$ ./nw app.nw
-````
-
-Note: on Windows, you can drag the `app.nw` to `nw.exe` to open it.
-
+Note: on OSX, the executable binary is in a hidden directory within the .app file. To run node-webkit on OSX, type:
+```bash
+$ /path/to/node-webkit.app/Contents/MacOS/node-webkit .  (suppose the current directory contains 'package.json')
+```
 ## Documents
 
 For more information on how to write/package/run apps, see:
@@ -112,3 +99,10 @@ You can chat with us on IRC in the ##node-webkit channel on irc.freenode.net
 ## License
 
 `node-webkit`'s code in this repo uses the MIT license, see our `LICENSE` file. To redistribute the binary, see [How to package and distribute your apps](https://github.com/rogerwang/node-webkit/wiki/How-to-package-and-distribute-your-apps)
+
+## Sponsors
+
+The work is being sponsored by:  
+* [Intel](http://www.intel.com)
+* [Gnor Tech](http://gnor.net)
+* [eFounders](http://efounders.co)

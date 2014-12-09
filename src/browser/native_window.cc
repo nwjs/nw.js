@@ -22,6 +22,7 @@
 
 #include "base/memory/weak_ptr.h"
 #include "base/values.h"
+#include "base/command_line.h"
 #include "content/nw/src/browser/capture_page_helper.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
@@ -32,12 +33,15 @@
 
 #if defined(OS_MACOSX)
 #include "content/nw/src/browser/native_window_helper_mac.h"
-#elif defined(TOOLKIT_GTK)
-#include "content/nw/src/browser/native_window_gtk.h"
+#elif defined(OS_LINUX)
+#include "content/nw/src/browser/native_window_aura.h"
 #elif defined(OS_WIN)
-#include "content/nw/src/browser/native_window_win.h"
+#include "content/nw/src/browser/native_window_aura.h"
 #endif
 
+namespace content {
+  extern bool g_support_transparency;
+}
 
 namespace nw {
 
@@ -52,12 +56,12 @@ NativeWindow* NativeWindow::Create(const base::WeakPtr<content::Shell>& shell,
 
   // Create window.
   NativeWindow* window =
-#if defined(TOOLKIT_GTK)
-      new NativeWindowGtk(shell, manifest);
+#if defined(OS_LINUX)
+      new NativeWindowAura(shell, manifest);
 #elif defined(OS_MACOSX)
       CreateNativeWindowCocoa(shell, manifest);
 #elif defined(OS_WIN)
-      new NativeWindowWin(shell, manifest);
+      new NativeWindowAura(shell, manifest);
 #else
       NULL;
   NOTREACHED() << "Cannot create native window on unsupported platform.";
@@ -69,9 +73,13 @@ NativeWindow* NativeWindow::Create(const base::WeakPtr<content::Shell>& shell,
 NativeWindow::NativeWindow(const base::WeakPtr<content::Shell>& shell,
                            base::DictionaryValue* manifest)
     : shell_(shell),
+      transparent_(false),
       has_frame_(true),
       capture_page_helper_(NULL) {
   manifest->GetBoolean(switches::kmFrame, &has_frame_);
+  content::g_support_transparency = !base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kmDisableTransparency);
+  if (content::g_support_transparency)
+    manifest->GetBoolean(switches::kmTransparent, &transparent_);
 
   LoadAppIconFromPackage(manifest);
 }
@@ -85,7 +93,7 @@ content::WebContents* NativeWindow::web_contents() const {
 
 void NativeWindow::InitFromManifest(base::DictionaryValue* manifest) {
   // Setup window from manifest.
-  int x, y;
+  int x, y = 0;
   std::string position;
   if (manifest->GetInteger(switches::kmX, &x) &&
       manifest->GetInteger(switches::kmY, &y)) {
@@ -121,6 +129,11 @@ void NativeWindow::InitFromManifest(base::DictionaryValue* manifest) {
   if (manifest->GetBoolean(switches::kmShowInTaskbar, &showInTaskbar) &&
       !showInTaskbar) {
     SetShowInTaskbar(false);
+  }
+  bool all_workspaces;
+  if (manifest->GetBoolean(switches::kmVisibleOnAllWorkspaces, &all_workspaces) 
+    && all_workspaces) {
+    SetVisibleOnAllWorkspaces(true);
   }
   bool fullscreen;
   if (manifest->GetBoolean(switches::kmFullscreen, &fullscreen) && fullscreen) {

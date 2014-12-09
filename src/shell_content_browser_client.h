@@ -11,7 +11,6 @@
 #include "base/compiler_specific.h"
 #include "base/memory/scoped_ptr.h"
 #include "content/public/browser/content_browser_client.h"
-#include "content/public/browser/web_contents_view.h"
 
 namespace printing {
 class PrintJobManager;
@@ -32,12 +31,12 @@ class ShellContentBrowserClient : public ContentBrowserClient {
   // ContentBrowserClient overrides.
   virtual BrowserMainParts* CreateBrowserMainParts(
       const MainFunctionParams& parameters) OVERRIDE;
-  virtual WebContentsViewPort* OverrideCreateWebContentsView(
+  virtual void OverrideCreateWebContentsView(
       WebContents* web_contents,
       RenderViewHostDelegateView** render_view_host_delegate_view,
       const WebContents::CreateParams& params) OVERRIDE;
   virtual std::string GetApplicationLocale() OVERRIDE;
-  virtual void AppendExtraCommandLineSwitches(CommandLine* command_line,
+  virtual void AppendExtraCommandLineSwitches(base::CommandLine* command_line,
                                               int child_process_id) OVERRIDE;
   virtual void ResourceDispatcherHostCreated() OVERRIDE;
   virtual AccessTokenStore* CreateAccessTokenStore() OVERRIDE;
@@ -62,35 +61,57 @@ class ShellContentBrowserClient : public ContentBrowserClient {
     return shell_browser_main_parts_;
   }
   virtual printing::PrintJobManager* print_job_manager();
-  virtual void RenderProcessHostCreated(RenderProcessHost* host) OVERRIDE;
+  virtual void RenderProcessWillLaunch(RenderProcessHost* host) OVERRIDE;
   virtual net::URLRequestContextGetter* CreateRequestContext(
       BrowserContext* browser_context,
-      ProtocolHandlerMap* protocol_handlers) OVERRIDE;
+      ProtocolHandlerMap* protocol_handlers, URLRequestInterceptorScopedVector request_interceptors) OVERRIDE;
   virtual net::URLRequestContextGetter* CreateRequestContextForStoragePartition(
       BrowserContext* browser_context,
       const base::FilePath& partition_path,
       bool in_memory,
-      ProtocolHandlerMap* protocol_handlers) OVERRIDE;
-  virtual void AllowCertificateError(
-    int render_process_id,
-    int render_view_id,
-    int cert_error,
-    const net::SSLInfo& ssl_info,
-    const GURL& request_url,
-    ResourceType::Type resource_type,
-    bool overridable,
-    bool strict_enforcement,
-    const base::Callback<void(bool)>& callback,
-    content::CertificateRequestResultType* result) OVERRIDE;
+      ProtocolHandlerMap* protocol_handlers,
+      URLRequestInterceptorScopedVector request_interceptors) OVERRIDE;
+  virtual void AllowCertificateError(int render_process_id,
+                                     int render_frame_id,
+                                     int cert_error,
+                                     const net::SSLInfo& ssl_info,
+                                     const GURL& request_url,
+                                     ResourceType resource_type,
+                                     bool overridable,
+                                     bool strict_enforcement,
+                                     bool expired_previous_decision,
+                                     const base::Callback<void(bool)>& callback,
+                                     CertificateRequestResultType* result) OVERRIDE;
   virtual void GetAdditionalAllowedSchemesForFileSystem(
       std::vector<std::string>* additional_schemes) OVERRIDE;
 #if defined(OS_POSIX) && !defined(OS_MACOSX)
   virtual void GetAdditionalMappedFilesForChildProcess(
-      const CommandLine& command_line,
+      const base::CommandLine& command_line,
       int child_process_id,
       std::vector<content::FileDescriptorInfo>* mappings) OVERRIDE;
 #endif
   virtual QuotaPermissionContext* CreateQuotaPermissionContext() OVERRIDE;
+
+  //Notification
+  virtual void ShowDesktopNotification(
+      const ShowDesktopNotificationHostMsgParams& params,
+      RenderFrameHost* render_frame_host,
+      scoped_ptr<DesktopNotificationDelegate> delegate,
+      base::Closure* cancel_callback) OVERRIDE;
+
+  virtual void RequestMidiSysExPermission(
+      WebContents* web_contents,
+      int bridge_id,
+      const GURL& requesting_frame,
+      bool user_gesture,
+      base::Callback<void(bool)> result_callback,
+      base::Closure* cancel_callback) OVERRIDE;
+
+  virtual void RequestProtectedMediaIdentifierPermission(
+      WebContents* web_contents,
+      const GURL& origin,
+      base::Callback<void(bool)> result_callback,
+      base::Closure* cancel_callback) OVERRIDE;
 
  private:
   ShellBrowserContext* ShellBrowserContextForBrowserContext(

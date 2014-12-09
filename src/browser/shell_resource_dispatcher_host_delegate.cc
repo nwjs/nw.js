@@ -23,6 +23,7 @@
 #include "chrome/browser/platform_util.h"
 #include "content/nw/src/browser/shell_login_dialog.h"
 #include "content/public/browser/browser_thread.h"
+#include "url/gurl.h"
 
 
 namespace content {
@@ -31,13 +32,6 @@ ShellResourceDispatcherHostDelegate::ShellResourceDispatcherHostDelegate() {
 }
 
 ShellResourceDispatcherHostDelegate::~ShellResourceDispatcherHostDelegate() {
-}
-
-bool ShellResourceDispatcherHostDelegate::AcceptAuthRequest(
-    net::URLRequest* request,
-    net::AuthChallengeInfo* auth_info) {
-  // Why not give it a try?
-  return true;
 }
 
 ResourceDispatcherHostLoginDelegate*
@@ -56,14 +50,14 @@ bool ShellResourceDispatcherHostDelegate::HandleExternalProtocol(
     const GURL& url, int child_id, int route_id) {
 #if defined(OS_MACOSX)
   // This must run on the UI thread on OS X.
-  platform_util::OpenExternal(url);
+  platform_util::OpenExternal2(url);
 #else
   // Otherwise put this work on the file thread. On Windows ShellExecute may
   // block for a significant amount of time, and it shouldn't hurt on Linux.
   BrowserThread::PostTask(
-      BrowserThread::FILE,
+      BrowserThread::UI,
       FROM_HERE,
-      base::Bind(&platform_util::OpenExternal, url));
+      base::Bind(&platform_util::OpenExternal2, url));
 #endif
 
   return true;

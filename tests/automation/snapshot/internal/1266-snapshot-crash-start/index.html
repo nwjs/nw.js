@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>snapshot test</title>
+  <style>
+    #content
+    {
+    font:10px Verdana;
+    }
+  </style>
+</head>
+<body>
+	<div id="content">Data...</div>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+	<script src="script.js"></script>
+	<script>
+	  var fs = require('fs');
+	  fs.openSync('./tmp', 'w')
+	  setTimeout(function() {
+	  var gui = require('nw.gui');
+	  gui.App.quit();
+	  }, 2000);
+	</script>
+</body>
+</html>

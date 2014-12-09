@@ -44,6 +44,8 @@ int ShellBrowserMain(const content::MainFunctionParams& parameters) {
 
   main_runner_->Run();
 
+  content::Shell::Cleanup();
+
   main_runner_->Shutdown();
 
   return content::Shell::exit_code();

@@ -29,13 +29,15 @@
 #if defined(OS_MACOSX)
 #if __OBJC__
 @class NSStatusItem;
+@class MacTrayObserver;
 #else
 class NSStatusItem;
+class MacTrayObserver;
 #endif  // __OBJC__
-#elif defined(TOOLKIT_GTK)
+#elif 0
 #include <gtk/gtk.h>
-#include "ui/base/gtk/gtk_signal.h"
-#elif defined(OS_WIN)
+#include "chrome/browser/ui/libgtk2ui/gtk2_signal.h"
+#elif defined(OS_WIN) || defined(OS_LINUX)
 class StatusIcon;
 class StatusTray;
 #endif  // defined(OS_MACOSX)
@@ -70,7 +72,8 @@ class Tray : public Base {
 
 #if defined(OS_MACOSX)
   __block NSStatusItem* status_item_;
-#elif defined(TOOLKIT_GTK)
+  MacTrayObserver* status_observer_;
+#elif 0
   GtkStatusIcon* status_item_;
 
   // Reference to the associated menu.
@@ -80,7 +83,7 @@ class Tray : public Base {
   CHROMEGTK_CALLBACK_0(Tray, void, OnClick);
   // Callback invoked when user right-clicks on the status icon.
   CHROMEGTK_CALLBACK_2(Tray, void, OnPopupMenu, guint, guint);
-#elif defined(OS_WIN)
+#elif defined(OS_WIN) || defined(OS_LINUX)
   // The global presentation of system tray.
   static StatusTray* status_tray_;
 

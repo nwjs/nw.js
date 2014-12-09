@@ -30,12 +30,15 @@
 #include "base/logging.h"
 #include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
+#include "chrome/browser/platform_util.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/download_manager.h"
 #include "content/public/browser/web_contents.h"
-#include "content/public/browser/web_contents_view.h"
 #include "net/base/net_util.h"
+
+#include "ui/aura/window.h"
+#include "ui/aura/window_tree_host.h"
 
 namespace content {
 
@@ -48,30 +51,47 @@ void ShellDownloadManagerDelegate::ChooseDownloadPath(
   if (!item || (item->GetState() != DownloadItem::IN_PROGRESS))
     return;
 
-  base::FilePath result;
+  WebContents* web_contents = item->GetWebContents();
+  select_file_dialog_ = ui::SelectFileDialog::Create(this, NULL);
+  ui::SelectFileDialog::FileTypeInfo file_type_info;
+  // Platform file pickers, notably on Mac and Windows, tend to break
+  // with double extensions like .tar.gz, so only pass in normal ones.
+  base::FilePath::StringType extension = suggested_path.FinalExtension();
+  if (!extension.empty()) {
+    extension.erase(extension.begin());  // drop the .
+    file_type_info.extensions.resize(1);
+    file_type_info.extensions[0].push_back(extension);
+  }
+  file_type_info.include_all_files = true;
+  file_type_info.support_drive = true;
+  gfx::NativeWindow owning_window = web_contents ?
+      platform_util::GetTopLevel(web_contents->GetNativeView()) : NULL;
 
-  std::wstring file_part = base::FilePath(suggested_path).BaseName().value();
-  wchar_t file_name[MAX_PATH];
-  base::wcslcpy(file_name, file_part.c_str(), arraysize(file_name));
-  OPENFILENAME save_as;
-  ZeroMemory(&save_as, sizeof(save_as));
-  save_as.lStructSize = sizeof(OPENFILENAME);
-  save_as.hwndOwner = item->GetWebContents()->GetView()->GetNativeView();
-  save_as.lpstrFile = file_name;
-  save_as.nMaxFile = arraysize(file_name);
-
-  std::wstring directory;
-  if (!suggested_path.empty())
-    directory = suggested_path.DirName().value();
-
-  save_as.lpstrInitialDir = directory.c_str();
-  save_as.Flags = OFN_OVERWRITEPROMPT | OFN_EXPLORER | OFN_ENABLESIZING |
-                  OFN_NOCHANGEDIR | OFN_PATHMUSTEXIST;
-
-  if (GetSaveFileName(&save_as))
-    result = base::FilePath(std::wstring(save_as.lpstrFile));
-
-  callback.Run(result, DownloadItem::TARGET_DISPOSITION_PROMPT,
-               DOWNLOAD_DANGER_TYPE_NOT_DANGEROUS, result);
+  callback_ = callback;
+  base::FilePath working_path;
+  select_file_dialog_->SelectFile(ui::SelectFileDialog::SELECT_SAVEAS_FILE,
+                                  base::string16(),
+                                  suggested_path,
+                                  &file_type_info,
+                                  0,
+                                  base::FilePath::StringType(),
+                                  owning_window,
+                                  NULL, working_path);
 }
+
+void ShellDownloadManagerDelegate::OnFileSelected(const base::FilePath& path) {
+  callback_.Run(path, DownloadItem::TARGET_DISPOSITION_PROMPT,
+                DOWNLOAD_DANGER_TYPE_NOT_DANGEROUS, path);
+}
+
+void ShellDownloadManagerDelegate::FileSelected(const base::FilePath& path,
+                                      int index,
+                                      void* params) {
+  OnFileSelected(path);
+}
+
+void ShellDownloadManagerDelegate::FileSelectionCanceled(void* params) {
+  OnFileSelected(base::FilePath());
+}
+
 }  // namespace content

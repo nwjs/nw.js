@@ -37,7 +37,7 @@ PrerendererClient::~PrerendererClient() {
 }
 
 void PrerendererClient::willAddPrerender(
-    WebKit::WebPrerender* prerender) {
+    blink::WebPrerender* prerender) {
 }
 
 }  // namespace prerender

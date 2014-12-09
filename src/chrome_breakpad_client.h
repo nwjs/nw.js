@@ -17,7 +17,6 @@ class ChromeBreakpadClient : public breakpad::BreakpadClient {
   virtual ~ChromeBreakpadClient();
 
   // breakpad::BreakpadClient implementation.
-  virtual void SetClientID(const std::string& client_id) OVERRIDE;
 #if defined(OS_WIN)
   virtual bool GetAlternativeCrashDumpLocation(base::FilePath* crash_dir)
       OVERRIDE;
@@ -46,10 +45,6 @@ class ChromeBreakpadClient : public breakpad::BreakpadClient {
 
   virtual bool GetCrashDumpLocation(base::FilePath* crash_dir) OVERRIDE;
 
-#if defined(OS_POSIX)
-  virtual void SetDumpWithoutCrashingFunction(void (*function)()) OVERRIDE;
-#endif
-
   virtual size_t RegisterCrashKeys() OVERRIDE;
 
   virtual bool IsRunningUnattended() OVERRIDE;
@@ -67,6 +62,9 @@ class ChromeBreakpadClient : public breakpad::BreakpadClient {
 #if defined(OS_MACOSX)
   virtual void InstallAdditionalFilters(BreakpadRef breakpad) OVERRIDE;
 #endif
+
+  virtual bool EnableBreakpadForProcess(
+      const std::string& process_type) OVERRIDE;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(ChromeBreakpadClient);

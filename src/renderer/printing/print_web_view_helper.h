@@ -23,12 +23,13 @@
 struct PrintMsg_Print_Params;
 struct PrintMsg_PrintPage_Params;
 struct PrintMsg_PrintPages_Params;
+struct PrintHostMsg_SetOptionsFromDocument_Params;
 
 namespace base {
 class DictionaryValue;
 }
 
-namespace WebKit {
+namespace blink {
 class WebFrame;
 class WebView;
 }
@@ -48,7 +49,7 @@ class PrintWebViewHelper
   explicit PrintWebViewHelper(content::RenderView* render_view);
   virtual ~PrintWebViewHelper();
 
-  void PrintNode(const WebKit::WebNode& node);
+  void PrintNode(const blink::WebNode& node);
 
  private:
   friend class PrintWebViewHelperTestBase;
@@ -92,7 +93,7 @@ class PrintWebViewHelper
 
   // RenderViewObserver implementation.
   virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
-  virtual void PrintPage(WebKit::WebFrame* frame, bool user_initiated) OVERRIDE;
+  virtual void PrintPage(blink::WebLocalFrame* frame, bool user_initiated) OVERRIDE;
 
   // Message handlers ---------------------------------------------------------
 
@@ -129,7 +130,7 @@ class PrintWebViewHelper
   // option is disabled for initiator renderer plugin.
   //
   // In all other cases, we scale the source page to fit the printable area.
-  WebKit::WebPrintScalingOption GetPrintScalingOption(
+  blink::WebPrintScalingOption GetPrintScalingOption(
       bool source_is_html,
       const base::DictionaryValue& job_settings,
       const PrintMsg_Print_Params& params);
@@ -157,9 +158,6 @@ class PrintWebViewHelper
   // Finalize the print ready preview document.
   bool FinalizePrintReadyDocument();
 
-  // Print / preview the node under the context menu.
-  void OnPrintNodeUnderContextMenu();
-
   // Print the pages for print preview. Do not display the native print dialog
   // for user settings. |job_settings| has new print job settings values.
   void OnPrintForPrintPreview(const base::DictionaryValue& job_settings);
@@ -172,7 +170,7 @@ class PrintWebViewHelper
 
   // Main printing code -------------------------------------------------------
 
-  void Print(WebKit::WebFrame* frame, const WebKit::WebNode& node);
+  void Print(blink::WebLocalFrame* frame, const blink::WebNode& node);
 
   // Notification when printing is done - signal tear-down/free resources.
   void DidFinishPrinting(PrintingResult result);
@@ -184,54 +182,63 @@ class PrintWebViewHelper
   bool InitPrintSettings(bool fit_to_paper_size);
 
   // Calculate number of pages in source document.
-  bool CalculateNumberOfPages(WebKit::WebFrame* frame,
-                              const WebKit::WebNode& node,
+  bool CalculateNumberOfPages(blink::WebLocalFrame* frame,
+                              const blink::WebNode& node,
                               int* number_of_pages);
 
+  // Set options for print preset from source PDF document.
+  void SetOptionsFromDocument(
+                              PrintHostMsg_SetOptionsFromDocument_Params& params);
   // Update the current print settings with new |passed_job_settings|.
   // |passed_job_settings| dictionary contains print job details such as printer
   // name, number of copies, page range, etc.
-  bool UpdatePrintSettings(WebKit::WebFrame* frame,
-                           const WebKit::WebNode& node,
+  bool UpdatePrintSettings(blink::WebLocalFrame* frame,
+                           const blink::WebNode& node,
                            const base::DictionaryValue& passed_job_settings);
 
   // Get final print settings from the user.
   // Return false if the user cancels or on error.
-  bool GetPrintSettingsFromUser(WebKit::WebFrame* frame,
-                                const WebKit::WebNode& node,
+  bool GetPrintSettingsFromUser(blink::WebFrame* frame,
+                                const blink::WebNode& node,
                                 int expected_pages_count);
 
   // Page Printing / Rendering ------------------------------------------------
 
   void OnFramePreparedForPrintPages();
   void PrintPages();
-  bool PrintPagesNative(WebKit::WebFrame* frame,
-                        const WebKit::WebNode& node,
+  bool PrintPagesNative(blink::WebFrame* frame,
                         int page_count,
                         const gfx::Size& canvas_size);
   void FinishFramePrinting();
 
   // Prints the page listed in |params|.
-#if defined(USE_X11)
+#if defined(OS_LINUX)
   void PrintPageInternal(const PrintMsg_PrintPage_Params& params,
                          const gfx::Size& canvas_size,
-                         WebKit::WebFrame* frame,
+                         blink::WebFrame* frame,
                          Metafile* metafile);
+#elif defined(WIN_PDF_METAFILE_FOR_PRINTING)
+  void PrintPageInternal(const PrintMsg_PrintPage_Params& params,
+                         const gfx::Size& canvas_size,
+                         blink::WebFrame* frame,
+                         Metafile* metafile,
+                         gfx::Size* page_size_in_dpi,
+                         gfx::Rect* content_area_in_dpi);
 #else
   void PrintPageInternal(const PrintMsg_PrintPage_Params& params,
                          const gfx::Size& canvas_size,
-                         WebKit::WebFrame* frame);
+                         blink::WebFrame* frame);
 #endif
 
   // Render the frame for printing.
-  bool RenderPagesForPrint(WebKit::WebFrame* frame,
-                           const WebKit::WebNode& node);
+  bool RenderPagesForPrint(blink::WebLocalFrame* frame,
+                           const blink::WebNode& node);
 
   // Platform specific helper function for rendering page(s) to |metafile|.
 #if defined(OS_WIN)
   void RenderPage(const PrintMsg_Print_Params& params,
                   int page_number,
-                  WebKit::WebFrame* frame,
+                  blink::WebFrame* frame,
                   bool is_preview,
                   Metafile* metafile,
                   double* scale_factor,
@@ -240,7 +247,7 @@ class PrintWebViewHelper
 #elif defined(OS_MACOSX)
   void RenderPage(const PrintMsg_Print_Params& params,
                   int page_number,
-                  WebKit::WebFrame* frame,
+                  blink::WebFrame* frame,
                   bool is_preview,
                   Metafile* metafile,
                   gfx::Size* page_size,
@@ -251,12 +258,12 @@ class PrintWebViewHelper
   // |page_number| is zero-based.
   // When method is called, canvas should be setup to draw to |canvas_area|
   // with |scale_factor|.
-  static float RenderPageContent(WebKit::WebFrame* frame,
+  static float RenderPageContent(blink::WebFrame* frame,
                                  int page_number,
                                  const gfx::Rect& canvas_area,
                                  const gfx::Rect& content_area,
                                  double scale_factor,
-                                 WebKit::WebCanvas* canvas);
+                                 blink::WebCanvas* canvas);
 
   // Helper methods -----------------------------------------------------------
 
@@ -265,7 +272,7 @@ class PrintWebViewHelper
 
   // Helper method to get page layout in points and fit to page if needed.
   static void ComputePageLayoutInPointsForCss(
-      WebKit::WebFrame* frame,
+      blink::WebFrame* frame,
       int page_index,
       const PrintMsg_Print_Params& default_params,
       bool ignore_css_margins,
@@ -275,7 +282,7 @@ class PrintWebViewHelper
   // Given the |device| and |canvas| to draw on, prints the appropriate headers
   // and footers using strings from |header_footer_info| on to the canvas.
   static void PrintHeaderAndFooter(
-      WebKit::WebCanvas* canvas,
+      blink::WebCanvas* canvas,
       int page_number,
       int total_pages,
       float webkit_scale_factor,
@@ -283,7 +290,7 @@ class PrintWebViewHelper
       const base::DictionaryValue& header_footer_info,
       const PrintMsg_Print_Params& params);
 
-  bool GetPrintFrame(WebKit::WebFrame** frame);
+  bool GetPrintFrame(blink::WebLocalFrame** frame);
 
   // This reports the current time - |start_time| as the time to render a page.
   void ReportPreviewPageRenderTime(base::TimeTicks start_time);
@@ -293,11 +300,11 @@ class PrintWebViewHelper
   // Return true if script initiated printing is currently
   // allowed. |user_initiated| should be true when a user event triggered the
   // script, most likely by pressing a print button on the page.
-  bool IsScriptInitiatedPrintAllowed(WebKit::WebFrame* frame,
+  bool IsScriptInitiatedPrintAllowed(blink::WebFrame* frame,
                                      bool user_initiated);
 
   // Returns true if script initiated printing occurs too often.
-  bool IsScriptInitiatedPrintTooFrequent(WebKit::WebFrame* frame);
+  bool IsScriptInitiatedPrintTooFrequent(blink::WebFrame* frame);
 
   // Reset the counter for script initiated printing.
   // Scripted printing will be allowed to continue.
@@ -356,8 +363,8 @@ class PrintWebViewHelper
 
     // Initializes the print preview context. Need to be called to set
     // the |web_frame| / |web_node| to generate the print preview for.
-    void InitWithFrame(WebKit::WebFrame* web_frame);
-    void InitWithNode(const WebKit::WebNode& web_node);
+    void InitWithFrame(blink::WebLocalFrame* web_frame);
+    void InitWithNode(const blink::WebNode& web_node);
 
     // Does bookkeeping at the beginning of print preview.
     void OnPrintPreview();
@@ -397,16 +404,16 @@ class PrintWebViewHelper
 
     // Getters
     // Original frame for which preview was requested.
-    WebKit::WebFrame* source_frame();
+    blink::WebLocalFrame* source_frame();
     // Original node for which preview was requested.
-    const WebKit::WebNode& source_node() const;
+    const blink::WebNode& source_node() const;
 
     // Frame to be use to render preview. May be the same as source_frame(), or
     // generated from it, e.g. copy of selected block.
-    WebKit::WebFrame* prepared_frame();
+    blink::WebLocalFrame* prepared_frame();
     // Node to be use to render preview. May be the same as source_node(), or
     // generated from it, e.g. copy of selected block.
-    const WebKit::WebNode& prepared_node() const;
+    const blink::WebNode& prepared_node() const;
 
     int total_page_count() const;
     bool generate_draft_pages() const;
@@ -426,8 +433,8 @@ class PrintWebViewHelper
     void ClearContext();
 
     // Specifies what to render for print preview.
-    WebKit::WebFrame* source_frame_;
-    WebKit::WebNode source_node_;
+    blink::WebLocalFrame* source_frame_;
+    blink::WebNode source_node_;
 
     scoped_ptr<PrepareFrameAndViewForPrint> prep_frame_view_;
     scoped_ptr<PreviewMetafile> metafile_;

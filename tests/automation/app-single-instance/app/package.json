@@ -1,0 +1,5 @@
+{
+	"name":"ASI",
+	"main":"index.html",
+	"single-instance":true
+}

@@ -26,6 +26,7 @@
 #include "base/memory/ref_counted.h"
 #include "base/memory/scoped_ptr.h"
 #include "content/public/browser/content_browser_client.h"
+#include "net/cert/cert_trust_anchor_provider.h"
 #include "net/url_request/url_request_context_getter.h"
 #include "net/url_request/url_request_job_factory.h"
 
@@ -47,7 +48,7 @@ namespace content {
 
 class ShellBrowserContext;
 
- class ShellURLRequestContextGetter : public net::URLRequestContextGetter {
+ class ShellURLRequestContextGetter : public net::URLRequestContextGetter, public net::CertTrustAnchorProvider {
  public:
   ShellURLRequestContextGetter(
       bool ignore_certificate_errors,
@@ -69,6 +70,11 @@ class ShellBrowserContext;
 
   net::HostResolver* host_resolver();
 
+  void SetAdditionalTrustAnchors(const net::CertificateList& trust_anchors);
+
+  // net::CertTrustAnchorProvider implementation.
+  virtual const net::CertificateList& GetAdditionalTrustAnchors() OVERRIDE;
+
  protected:
   virtual ~ShellURLRequestContextGetter();
   net::HttpAuthHandlerFactory* CreateDefaultAuthHandlerFactory(net::HostResolver* resolver);
@@ -85,6 +91,7 @@ class ShellBrowserContext;
   std::string auth_delegate_whitelist_;
   std::string gssapi_library_name_;
   // std::vector<GURL> spdyproxy_auth_origins_;
+  net::CertificateList trust_anchors_;
 
   base::MessageLoop* io_loop_;
   base::MessageLoop* file_loop_;

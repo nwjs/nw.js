@@ -77,15 +77,15 @@
   [NSApp setMainMenu:[[[NSMenu alloc] init] autorelease]];
   [[NSApp mainMenu] addItem:[[[NSMenuItem alloc]
       initWithTitle:@"" action:nil keyEquivalent:@""] autorelease]];
+#if 0
   nw::StandardMenusMac standard_menus(
       browser_client->shell_browser_main_parts()->package()->GetName());
   standard_menus.BuildAppleMenu();
   if (!no_edit_menu)
     standard_menus.BuildEditMenu();
   standard_menus.BuildWindowMenu();
-
+#endif
 	self.appReady = TRUE;
-	
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)theApplication
@@ -108,6 +108,16 @@
 			CommandLine::ForCurrentProcess()->FixOrigArgv4Finder([urlString UTF8String]);
 		}
 	}
+}
+
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)app {
+  // The termination procedure is completely and gracefully handled by node-webkit
+  // (triggered by CloseAllWindows, app exits when last window closes) so we
+  // don't need Cocoa to terminate the application immediately (NSTerminateNow)
+  // neither run a special event loop (NSTerminateLater) waiting for a termination
+  // reply
+  nwapi::App::CloseAllWindows(false, true);
+  return NSTerminateCancel;
 }
 
 @end

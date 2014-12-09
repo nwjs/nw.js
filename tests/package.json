@@ -7,6 +7,8 @@
     "show": false
   },
   "dependencies": {
+    "http-auth":"2.1.8",
+    "http-proxy":"1.1.4",
     "tar": "*",
     "commander": "0.6.1",
     "growl": "1.6.x",

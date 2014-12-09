@@ -38,7 +38,7 @@
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/download_manager.h"
 #include "content/public/browser/web_contents.h"
-#include "content/public/browser/web_contents_view.h"
+#include "net/base/filename_util.h"
 #include "net/base/net_util.h"
 
 using base::FilePath;
@@ -87,7 +87,7 @@ bool ShellDownloadManagerDelegate::DetermineDownloadTarget(
   FilePath generated_name = net::GenerateFileName(
       download->GetURL(),
       download->GetContentDisposition(),
-      EmptyString(),
+      base::EmptyString(),
       download->GetSuggestedFilename(),
       download->GetMimeType(),
       "download");
@@ -102,6 +102,12 @@ bool ShellDownloadManagerDelegate::DetermineDownloadTarget(
   return true;
 }
 
+bool ShellDownloadManagerDelegate::ShouldOpenDownload(
+      DownloadItem* item,
+      const DownloadOpenDelayedCallback& callback) {
+  return true;
+}
+
 void ShellDownloadManagerDelegate::GenerateFilename(
     int32 download_id,
     const DownloadTargetCallback& callback,
@@ -109,7 +115,7 @@ void ShellDownloadManagerDelegate::GenerateFilename(
     const FilePath& suggested_directory) {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::FILE));
   if (!base::PathExists(suggested_directory))
-    file_util::CreateDirectory(suggested_directory);
+    base::CreateDirectory(suggested_directory);
 
   FilePath suggested_path(suggested_directory.Append(generated_name));
   BrowserThread::PostTask(
@@ -140,6 +146,12 @@ void ShellDownloadManagerDelegate::SetDownloadBehaviorForTesting(
     const FilePath& default_download_path) {
   default_download_path_ = default_download_path;
   suppress_prompting_ = true;
+}
+
+void ShellDownloadManagerDelegate::GetNextId(
+    const DownloadIdCallback& callback) {
+  static uint32 next_id = DownloadItem::kInvalidId + 1;
+  callback.Run(next_id++);
 }
 
 }  // namespace content

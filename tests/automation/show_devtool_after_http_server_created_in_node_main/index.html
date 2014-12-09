@@ -1,0 +1,49 @@
+<html>
+<head>
+</head>
+<body>
+<script>
+  var gui = require('nw.gui');
+  //gui.Window.get().show(); 
+  
+  
+  function showDevTool() {   
+    gui.Window.get().showDevTools(); 
+  }
+  var result = {
+      success: false
+  };  
+    
+  var client = require('net').connect({port: 13013});
+  setTimeout(function(){
+    client.end(JSON.stringify(result));
+  }, 1100);
+  
+  client.auto = true;
+  
+  if (client.auto) {
+    showDevTool();
+  }
+  //if nw desn't close by itself,
+  //the value of result will be 'ok'
+  setTimeout(function(){
+    result.success = true;
+  }, 800);
+  
+  
+  //we set show=false
+  //so we hope it can be show when we run it by hard. 
+  if (!client.auto) {
+    gui.Window.get().show();
+  }
+  
+  
+  
+
+</script>
+  <p>nw rocks !</p>
+  <p>after launch devtool, nw should not close by itself.</p>
+  <button onclick="showDevTool()">open devtool</button>
+  
+</body>
+</html>

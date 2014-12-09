@@ -23,19 +23,28 @@
 #include <gdk/gdk.h>
 
 #include "base/values.h"
-#include "chrome/browser/ui/gtk/gtk_window_util.h"
+#include "base/environment.h"
+//#include "chrome/browser/ui/gtk/gtk_window_util.h"
+//#include "chrome/browser/ui/gtk/unity_service.h"
 #include "extensions/common/draggable_region.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
-#include "content/public/browser/web_contents_view.h"
 #include "content/public/common/renderer_preferences.h"
 #include "ui/base/x/x11_util.h"
-#include "ui/gfx/gtk_util.h"
 #include "ui/gfx/rect.h"
-#include "ui/gfx/skia_utils_gtk.h"
+//#include "ui/gfx/skia_utils_gtk.h"
+
+namespace ShellIntegrationLinux {
+std::string GetDesktopName(base::Environment* env) {
+  std::string name;
+  if (env->GetVar("NW_DESKTOP", &name) && !name.empty())
+    return name;
+  return "nw.desktop";
+}
+}
 
 namespace nw {
 
@@ -60,14 +69,19 @@ NativeWindowGtk::NativeWindowGtk(const base::WeakPtr<content::Shell>& shell,
 {
   window_ = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
 
+  gtk_accel_group = gtk_accel_group_new();
+  gtk_window_add_accel_group(window_,gtk_accel_group);
+
   vbox_ = gtk_vbox_new(FALSE, 0);
   gtk_widget_show(vbox_);
   gtk_container_add(GTK_CONTAINER(window_), vbox_);
 
+#if 0 //FIXME
   // Set window icon.
   gfx::Image icon = app_icon();
   if (!icon.IsEmpty())
     gtk_window_set_icon(window_, icon.ToGdkPixbuf());
+#endif
 
   // Always create toolbar since we need to create a url entry.
   CreateToolbar();
@@ -79,7 +93,7 @@ NativeWindowGtk::NativeWindowGtk(const base::WeakPtr<content::Shell>& shell,
     gtk_box_pack_start(GTK_BOX(vbox_), toolbar_, FALSE, FALSE, 0);
 
   gfx::NativeView native_view =
-      web_contents()->GetView()->GetNativeView();
+      web_contents()->GetNativeView();
   gtk_widget_show(native_view);
   gtk_container_add(GTK_CONTAINER(vbox_), native_view);
 
@@ -291,8 +305,20 @@ void NativeWindowGtk::SetTitle(const std::string& title) {
   gtk_window_set_title(GTK_WINDOW(window_), title.c_str());
 }
 
-void NativeWindowGtk::FlashFrame(bool flash) {
-  gtk_window_set_urgency_hint(window_, flash);
+void NativeWindowGtk::FlashFrame(int count) {
+  gtk_window_set_urgency_hint(window_, count);
+}
+
+void NativeWindowGtk::SetBadgeLabel(const std::string& badge) {
+  if (unity::IsRunning()) {
+    unity::SetDownloadCount(atoi(badge.c_str()));
+  }
+}
+
+void NativeWindowGtk::SetProgressBar(double progress) {
+  if (unity::IsRunning()) {
+    unity::SetProgressFraction(progress);
+  }
 }
 
 void NativeWindowGtk::SetKiosk(bool kiosk) {
@@ -304,6 +330,7 @@ bool NativeWindowGtk::IsKiosk() {
 }
 
 void NativeWindowGtk::SetMenu(nwapi::Menu* menu) {
+  menu->UpdateKeys(gtk_accel_group);
   gtk_box_pack_start(GTK_BOX(vbox_), menu->menu_, FALSE, FALSE, 0);
   gtk_box_reorder_child(GTK_BOX(vbox_), menu->menu_, 0);
 }

@@ -16,6 +16,7 @@
 
 namespace nw {
 class Package;
+class NwFormDatabaseService;
 }
 
 namespace content {
@@ -48,28 +49,24 @@ class ShellBrowserContext : public BrowserContext {
           const FilePath& partition_path,
           bool in_memory) OVERRIDE;
   virtual ResourceContext* GetResourceContext() OVERRIDE;
-  virtual GeolocationPermissionContext*
-      GetGeolocationPermissionContext() OVERRIDE;
   virtual quota::SpecialStoragePolicy* GetSpecialStoragePolicy() OVERRIDE;
-  virtual void RequestMIDISysExPermission(
-      int render_process_id,
-      int render_view_id,
-      int bridge_id,
-      const GURL& requesting_frame,
-      const MIDISysExPermissionCallback& callback) OVERRIDE;
-  virtual void CancelMIDISysExPermissionRequest(
-    int render_process_id,
-    int render_view_id,
-    int bridge_id,
-    const GURL& requesting_frame) OVERRIDE;
+  virtual BrowserPluginGuestManager* GetGuestManager() OVERRIDE;
+  virtual PushMessagingService* GetPushMessagingService() OVERRIDE;
+  virtual SSLHostStateDelegate* GetSSLHostStateDelegate() OVERRIDE;
 
+  nw::NwFormDatabaseService* GetFormDatabaseService();
+
+  // Maps to BrowserMainParts::PreMainMessageLoopRun.
+  void PreMainMessageLoopRun();
 
   net::URLRequestContextGetter* CreateRequestContext(
-                                                     ProtocolHandlerMap* protocol_handlers);
+                                                     ProtocolHandlerMap* protocol_handlers,
+                                                     URLRequestInterceptorScopedVector request_interceptors);
   net::URLRequestContextGetter* CreateRequestContextForStoragePartition(
       const base::FilePath& partition_path,
       bool in_memory,
-      ProtocolHandlerMap* protocol_handlers);
+      ProtocolHandlerMap* protocol_handlers,
+      URLRequestInterceptorScopedVector request_interceptors);
 
   bool pinning_renderer() { return !disable_pinning_renderer_; }
   void set_pinning_renderer(bool val) { disable_pinning_renderer_ = !val; }
@@ -91,6 +88,7 @@ class ShellBrowserContext : public BrowserContext {
   scoped_ptr<ShellResourceContext> resource_context_;
   scoped_refptr<ShellDownloadManagerDelegate> download_manager_delegate_;
   scoped_refptr<ShellURLRequestContextGetter> url_request_getter_;
+  scoped_ptr<nw::NwFormDatabaseService> form_database_service_;
 
   DISALLOW_COPY_AND_ASSIGN(ShellBrowserContext);
 };

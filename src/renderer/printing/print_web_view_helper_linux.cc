@@ -16,12 +16,12 @@
 #include "printing/page_size_margins.h"
 #include "skia/ext/platform_device.h"
 #include "skia/ext/vector_canvas.h"
-#include "third_party/WebKit/public/web/WebFrame.h"
+#include "third_party/WebKit/public/web/WebLocalFrame.h"
 
 namespace printing {
 
-using WebKit::WebFrame;
-using WebKit::WebNode;
+using blink::WebFrame;
+using blink::WebNode;
 
 bool PrintWebViewHelper::RenderPreviewPage(
     int page_number,
@@ -54,8 +54,7 @@ bool PrintWebViewHelper::RenderPreviewPage(
   return PreviewPageRendered(page_number, draft_metafile.get());
 }
 
-bool PrintWebViewHelper::PrintPagesNative(WebKit::WebFrame* frame,
-                                          const WebKit::WebNode& node,
+bool PrintWebViewHelper::PrintPagesNative(blink::WebFrame* frame,
                                           int page_count,
                                           const gfx::Size& canvas_size) {
   NativeMetafile metafile;
@@ -88,7 +87,7 @@ bool PrintWebViewHelper::PrintPagesNative(WebKit::WebFrame* frame,
     PrintPageInternal(page_params, canvas_size, frame, &metafile);
   }
 
-  // WebKit::printEnd() for PDF should be called before metafile is closed.
+  // blink::printEnd() for PDF should be called before metafile is closed.
   FinishFramePrinting();
 
   metafile.FinishDocument();

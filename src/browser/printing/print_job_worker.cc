@@ -22,6 +22,7 @@
 #include "printing/print_job_constants.h"
 #include "printing/printed_document.h"
 #include "printing/printed_page.h"
+#include "printing/printing_utils.h"
 #include "ui/base/l10n/l10n_util.h"
 
 using content::BrowserThread;
@@ -117,7 +118,7 @@ void PrintJobWorker::GetSettings(
   }
 }
 
-void PrintJobWorker::SetSettings(const DictionaryValue* const new_settings) {
+void PrintJobWorker::SetSettings(const base::DictionaryValue* const new_settings) {
   DCHECK_EQ(message_loop(), MessageLoop::current());
 
   BrowserThread::PostTask(
@@ -128,32 +129,9 @@ void PrintJobWorker::SetSettings(const DictionaryValue* const new_settings) {
 }
 
 void PrintJobWorker::UpdatePrintSettings(
-    const DictionaryValue* const new_settings) {
-  // Create new PageRanges based on |new_settings|.
-  PageRanges new_ranges;
-  const ListValue* page_range_array;
-  if (new_settings->GetList(kSettingPageRange, &page_range_array)) {
-    for (size_t index = 0; index < page_range_array->GetSize(); ++index) {
-      const DictionaryValue* dict;
-      if (!page_range_array->GetDictionary(index, &dict))
-        continue;
-
-      PageRange range;
-      if (!dict->GetInteger(kSettingPageRangeFrom, &range.from) ||
-          !dict->GetInteger(kSettingPageRangeTo, &range.to)) {
-        continue;
-      }
-
-      // Page numbers are 1-based in the dictionary.
-      // Page numbers are 0-based for the printing context.
-      range.from--;
-      range.to--;
-      new_ranges.push_back(range);
-    }
-  }
+    const base::DictionaryValue* const new_settings) {
   PrintingContext::Result result =
-      printing_context_->UpdatePrintSettings(*new_settings, new_ranges);
-  delete new_settings;
+    printing_context_->UpdatePrintSettings(*new_settings);
   GetSettingsDone(result);
 }
 
@@ -216,10 +194,10 @@ void PrintJobWorker::StartPrinting(PrintedDocument* new_document) {
     return;
   }
 
-  string16 document_name =
-      printing::PrintBackend::SimplifyDocumentTitle(document_->name());
+  base::string16 document_name =
+      printing::SimplifyDocumentTitle(document_->name());
   if (document_name.empty()) {
-    document_name = printing::PrintBackend::SimplifyDocumentTitle(
+    document_name = printing::SimplifyDocumentTitle(
         l10n_util::GetStringUTF16(IDS_DEFAULT_PRINT_DOCUMENT_TITLE));
   }
   PrintingContext::Result result =
@@ -273,8 +251,8 @@ void PrintJobWorker::OnNewPage() {
 
   while (true) {
     // Is the page available?
-    scoped_refptr<PrintedPage> page;
-    if (!document_->GetPage(page_number_.ToInt(), &page)) {
+    scoped_refptr<PrintedPage> page = document_->GetPage(page_number_.ToInt());
+    if (!page) {
       // We need to wait for the page to be available.
       MessageLoop::current()->PostDelayedTask(
           FROM_HERE,

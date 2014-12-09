@@ -27,7 +27,7 @@
 
 namespace printing {
 
-using WebKit::WebFrame;
+using blink::WebFrame;
 
 void PrintWebViewHelper::PrintPageInternal(
     const PrintMsg_PrintPage_Params& params,
@@ -102,7 +102,7 @@ bool PrintWebViewHelper::RenderPreviewPage(
   }
 
   base::TimeTicks begin_time = base::TimeTicks::Now();
-  RenderPage(print_params, page_number, print_preview_context_.prepared_frame(),
+  RenderPage(print_params, page_number, (WebFrame*)print_preview_context_.prepared_frame(),
              true, initial_render_metafile, &actual_shrink, NULL, NULL);
   print_preview_context_.RenderedPreviewPage(
       base::TimeTicks::Now() - begin_time);

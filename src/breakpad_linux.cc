@@ -25,10 +25,10 @@
 #include "base/base_switches.h"
 #include "base/command_line.h"
 #include "base/debug/crash_logging.h"
+#include "base/debug/dump_without_crashing.h"
 #include "base/files/file_path.h"
 #include "base/linux_util.h"
 #include "base/path_service.h"
-#include "base/platform_file.h"
 #include "base/posix/eintr_wrapper.h"
 #include "base/posix/global_descriptors.h"
 #include "base/process/memory.h"
@@ -196,27 +196,11 @@ size_t LengthWithoutTrailingSpaces(const char* str, size_t len) {
   return len;
 }
 
-// Populates the passed in allocated string and its size with the distro of
-// the crashing process.
-// The passed string is expected to be at least kDistroSize bytes long.
-void PopulateDistro(char* distro, size_t* distro_len_param) {
-  size_t distro_len = std::min(my_strlen(base::g_linux_distro), kDistroSize);
-  memcpy(distro, base::g_linux_distro, distro_len);
-  if (distro_len_param)
-    *distro_len_param = distro_len;
-}
-
 void SetClientIdFromCommandLine(const CommandLine& command_line) {
   // Get the guid and linux distro from the command line switch.
   std::string switch_value =
       command_line.GetSwitchValueASCII(switches::kEnableCrashReporter);
-  size_t separator = switch_value.find(",");
-  if (separator != std::string::npos) {
-    GetBreakpadClient()->SetClientID(switch_value.substr(0, separator));
-    base::SetLinuxDistro(switch_value.substr(separator + 1));
-  } else {
-    GetBreakpadClient()->SetClientID(switch_value);
-  }
+  GetBreakpadClient()->SetBreakpadClientIdFromGUID(switch_value);
 }
 
 // MIME substrings.
@@ -689,11 +673,8 @@ bool CrashDoneInProcessNoUpload(
   // Start constructing the message to send to the browser.
   char guid[kGuidSize + 1] = {0};
   char crash_url[kMaxActiveURLSize + 1] = {0};
-  char distro[kDistroSize + 1] = {0};
   size_t guid_length = 0;
   size_t crash_url_length = 0;
-  size_t distro_length = 0;
-  PopulateDistro(distro, &distro_length);
   BreakpadInfo info = {0};
   info.filename = NULL;
   info.fd = descriptor.fd();
@@ -701,8 +682,8 @@ bool CrashDoneInProcessNoUpload(
   info.process_type_length = my_strlen(g_process_type);
   info.crash_url = crash_url;
   info.crash_url_length = crash_url_length;
-  info.distro = distro;
-  info.distro_length = distro_length;
+  info.distro = base::g_linux_distro;
+  info.distro_length = my_strlen(base::g_linux_distro);
   info.upload = false;
   info.process_start_time = g_process_start_time;
   HandleCrashDump(info);
@@ -1384,7 +1365,7 @@ void InitCrashReporter() {
 
   SetProcessStartTime();
 
-  breakpad::GetBreakpadClient()->SetDumpWithoutCrashingFunction(&DumpProcess);
+  base::debug::SetDumpWithoutCrashingFunction(&DumpProcess);
 #if defined(ADDRESS_SANITIZER)
   // Register the callback for AddressSanitizer error reporting.
   __asan_set_error_report_callback(AsanLinuxBreakpadCallback);

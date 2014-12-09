@@ -6,7 +6,6 @@
 
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/web_contents.h"
-#include "content/public/browser/web_contents_view.h"
 
 PrintingUIWebContentsObserver::PrintingUIWebContentsObserver(
     content::WebContents* web_contents)
@@ -16,5 +15,5 @@ PrintingUIWebContentsObserver::PrintingUIWebContentsObserver(
 
 gfx::NativeView PrintingUIWebContentsObserver::GetParentView() {
   DCHECK(content::BrowserThread::CurrentlyOn(content::BrowserThread::UI));
-  return web_contents() ? web_contents()->GetView()->GetNativeView() : NULL;
+  return web_contents() ? web_contents()->GetNativeView() : NULL;
 }

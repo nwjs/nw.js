@@ -35,7 +35,6 @@
 #include "content/public/browser/notification_source.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
-#include "content/public/browser/web_contents_view.h"
 #include "grit/nw_resources.h"
 #include "printing/metafile.h"
 #include "printing/metafile_impl.h"
@@ -52,8 +51,10 @@ DEFINE_WEB_CONTENTS_USER_DATA_KEY(printing::PrintViewManager);
 
 namespace {
 
+#if defined(OS_WIN) && !defined(WIN_PDF_METAFILE_FOR_PRINTING)
 // Limits memory usage by raster to 64 MiB.
 const int kMaxRasterSizeInPixels = 16*1024*1024;
+#endif
 
 }  // namespace
 
@@ -136,8 +137,8 @@ void PrintViewManager::RenderProcessGone(base::TerminationStatus status) {
   }
 }
 
-string16 PrintViewManager::RenderSourceName() {
-  string16 name(web_contents()->GetTitle());
+base::string16 PrintViewManager::RenderSourceName() {
+  base::string16 name(web_contents()->GetTitle());
   if (name.empty())
     name = l10n_util::GetStringUTF16(IDS_DEFAULT_PRINT_DOCUMENT_TITLE);
   return name;
@@ -196,12 +197,12 @@ void PrintViewManager::OnDidPrintPage(
     }
   }
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) && !defined(WIN_PDF_METAFILE_FOR_PRINTING)
   bool big_emf = (params.data_size && params.data_size >= kMetafileMaxSize);
   const CommandLine* cmdline = CommandLine::ForCurrentProcess();
   int raster_size = std::min(params.page_size.GetArea(),
                              kMaxRasterSizeInPixels);
-  if (big_emf || (cmdline && cmdline->HasSwitch(switches::kPrintRaster))) {
+  if (big_emf) {
     scoped_ptr<NativeMetafile> raster_metafile(
         metafile->RasterizeMetafile(raster_size));
     if (raster_metafile.get()) {
@@ -219,7 +220,9 @@ void PrintViewManager::OnDidPrintPage(
   // Update the rendered document. It will send notifications to the listener.
   document->SetPage(params.page_number,
                     metafile.release(),
+#if defined(OS_WIN)
                     params.actual_shrink,
+#endif
                     params.page_size,
                     params.content_area);
 

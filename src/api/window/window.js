@@ -18,6 +18,9 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+// OS X and Linux only, Windows does not have a concept of workspaces
+var canSetVisibleOnAllWorkspaces = /(darwin|linux)/.test(require('os').platform());
+
 exports.Window = {
   get: function(other) {
     // Return other window.
@@ -48,7 +51,7 @@ exports.Window = {
     // Conver relative url to full url.
     var protocol = url.match(/^[a-z]+:\/\//i);
     if (protocol == null || protocol.length == 0) {
-      var href = window.location.href;
+      var href = window.location.href.split(/\?|#/)[0];
       url = href.substring(0, href.lastIndexOf('/') + 1) + url;
     }
 
@@ -66,5 +69,8 @@ exports.Window = {
     var routing_id = nw.createShell(url, options);
 
     return new global.Window(routing_id, true, id);
+  },
+  canSetVisibleOnAllWorkspaces: function() {
+    return canSetVisibleOnAllWorkspaces;
   }
 };

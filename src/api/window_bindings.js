@@ -117,6 +117,7 @@ Window.prototype.handleEvent = function(ev) {
     if (v8_util.getConstructorName(original_closure) != 'Window')
       continue;
 
+
     var window_id = v8_util.getHiddenValue(listeners_copy[i], '__nwWindowId');
 
     // Remove callback if original window is closed (not in __nwWindowsStore).
@@ -130,9 +131,11 @@ Window.prototype.handleEvent = function(ev) {
       // Do nothing if nothing is changed.
       if (original_hash == current_hash)
         continue;
+      if (original_closure.window.top === global.__nwWindowsStore[window_id].window) //iframe case
+        continue;
     }
 
-    console.warn('Remove zombie callback for window id ' + window_id);
+    console.warn('Remove zombie callback for window id ' + window_id + " ev: " + ev);
     this.removeListener(ev, listeners_copy[i]);
   }
 
@@ -143,6 +146,7 @@ Window.prototype.handleEvent = function(ev) {
         policy.forceDownload  =  function () { this.val = 'download'; };
         policy.forceNewWindow =  function () { this.val = 'new-window'; };
         policy.forceNewPopup  =  function () { this.val = 'new-popup'; };
+        policy.setNewWindowManifest = function (m) { this.manifest = JSON.stringify(m); };
     }
   // Route events to EventEmitter.
   this.emit.apply(this, arguments);
@@ -212,6 +216,10 @@ Window.prototype.__defineGetter__('zoomLevel', function() {
 });
 
 Window.prototype.__defineSetter__('menu', function(menu) {
+  if(!menu) {
+    CallObjectMethod(this, "ClearMenu", []);
+    return;
+  }
   if (v8_util.getConstructorName(menu) != 'Menu')
     throw new String("'menu' property requries a valid Menu");
 
@@ -240,6 +248,11 @@ Window.prototype.isDevToolsOpen = function () {
 
 Window.prototype.__defineGetter__('isFullscreen', function() {
   var result = CallObjectMethodSync(this, 'IsFullscreen', []);
+  return Boolean(result[0]);
+});
+  
+Window.prototype.__defineGetter__('isTransparent', function() {
+  var result = CallObjectMethodSync(this, 'IsTransparent', []);
   return Boolean(result[0]);
 });
 
@@ -295,10 +308,6 @@ Window.prototype.show = function(flag) {
     CallObjectMethod(this, 'Show', []);
   else
     this.hide();
-}
-
-Window.prototype.hide = function() {
-  CallObjectMethod(this, 'Hide', []);
 }
 
 Window.prototype.hide = function() {
@@ -404,9 +413,31 @@ Window.prototype.setShowInTaskbar = function(flag) {
   CallObjectMethod(this, 'SetShowInTaskbar', [ flag ]);
 }
 
+Window.prototype.setVisibleOnAllWorkspaces = function(flag) {
+  CallObjectMethod(this, 'SetVisibleOnAllWorkspaces', [ Boolean(flag) ]);
+}
+
 Window.prototype.requestAttention = function(flash) {
-  flash = Boolean(flash);
+  if (typeof flash == 'boolean') {
+    // boolean true is redirected as -1 value
+    flash = flash ? -1 : 0;
+  }
   CallObjectMethod(this, 'RequestAttention', [ flash ]);
+}
+
+Window.prototype.setBadgeLabel = function(label) {
+  label = "" + label;
+  CallObjectMethod(this, 'SetBadgeLabel', [ label ]);
+}
+
+Window.prototype.setProgressBar = function(progress) {
+  if (typeof progress != "number")
+    throw new String('progress must be a number');
+  CallObjectMethod(this, 'SetProgressBar', [ progress ]);
+}
+  
+Window.prototype.setTransparent = function(transparent) {
+  CallObjectMethod(this, 'SetTransparent', [ transparent ]);
 }
 
 Window.prototype.setPosition = function(position) {
@@ -435,22 +466,52 @@ Window.prototype.reloadDev = function() {
   this.reload(3);
 }
 
-Window.prototype.capturePage = function(callback, image_format) {
-  if (image_format != 'jpeg' && image_format != 'png') {
-    image_format = 'jpeg';
+var mime_types = {
+  'jpeg' : 'image/jpeg',
+  'png'  : 'image/png'
+}
+
+Window.prototype.capturePage = function(callback, image_format_options) {
+  var options;
+
+  // Be compatible with the old api capturePage(callback, [format string])
+  if (typeof image_format_options == 'string' || image_format_options instanceof String) {
+    options = {
+      format : image_format_options
+    };
+  } else {
+    options = image_format_options || {};
+  }
+
+  if (options.format != 'jpeg' && options.format != 'png') {
+    options.format = 'jpeg';
   }
 
   if (typeof callback == 'function') {
     this.once('__nw_capturepagedone', function(imgdata) {
-      callback(imgdata);
+      switch(options.datatype){
+        case 'buffer' :
+          callback(new Buffer(imgdata, "base64"));
+          break;
+        case 'raw' :
+          callback(imgdata);
+        case 'datauri' :
+        default :
+          callback('data:' + mime_types[options.format] + ';base64,' + imgdata );
+      }
     });
   }
 
-  CallObjectMethod(this, 'CapturePage', [image_format]);
+  CallObjectMethod(this, 'CapturePage', [options.format]);
 };
 
-    Window.prototype.eval = function(frame, script) {
-        return CallObjectMethod(this, 'EvaluateScript', frame, script);
-    };
+Window.prototype.eval = function(frame, script) {
+  return CallObjectMethod(this, 'EvaluateScript', frame, script);
+};
+
+Window.prototype.disableCache = function(flag) {
+  return CallObjectMethod(this, 'setCacheDisabled', flag);
+};
+
 
 }  // function Window.init

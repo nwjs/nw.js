@@ -4,12 +4,16 @@
 
 #include "content/nw/src/media/media_stream_devices_controller.h"
 
+#include "base/command_line.h"
 #include "base/values.h"
+#include "chrome/common/chrome_switches.h"
 #include "content/nw/src/media/media_capture_devices_dispatcher.h"
 #include "content/nw/src/media/media_internals.h"
 #include "content/public/browser/browser_thread.h"
-#include "content/public/common/desktop_media_id.h"
+#include "content/public/browser/desktop_media_id.h"
 #include "content/public/common/media_stream_request.h"
+
+#include "third_party/webrtc/modules/desktop_capture/desktop_capture_types.h"
 
 using content::BrowserThread;
 
@@ -26,8 +30,8 @@ bool HasAnyAvailableDevice() {
   return !audio_devices.empty() || !video_devices.empty();
 };
 
-const char kAudioKey[] = "audio";
-const char kVideoKey[] = "video";
+//const char kAudioKey[] = "audio";
+//const char kVideoKey[] = "video";
 
 }  // namespace
 
@@ -37,7 +41,7 @@ MediaStreamDevicesController::MediaStreamDevicesController(
     :
       request_(request),
       callback_(callback),
-      has_audio_(content::IsAudioMediaType(request.audio_type) &&
+      has_audio_(content::IsAudioInputMediaType(request.audio_type) &&
                  !IsAudioDeviceBlockedByPolicy()),
       has_video_(content::IsVideoMediaType(request.video_type) &&
                  !IsVideoDeviceBlockedByPolicy()) {
@@ -185,11 +189,14 @@ void MediaStreamDevicesController::Accept(bool update_content_setting) {
     break;
   }
 
-  callback_.Run(devices, scoped_ptr<content::MediaStreamUI>());
+  callback_.Run(devices,
+                devices.empty() ?
+                content::MEDIA_DEVICE_NO_HARDWARE : content::MEDIA_DEVICE_OK,
+                scoped_ptr<content::MediaStreamUI>());
 }
 
 void MediaStreamDevicesController::Deny(bool update_content_setting) {
-  callback_.Run(content::MediaStreamDevices(), scoped_ptr<content::MediaStreamUI>());
+  callback_.Run(content::MediaStreamDevices(), content::MEDIA_DEVICE_NO_HARDWARE, scoped_ptr<content::MediaStreamUI>());
 }
 
 bool MediaStreamDevicesController::IsAudioDeviceBlockedByPolicy() const {
@@ -227,13 +234,32 @@ void MediaStreamDevicesController::HandleTapMediaRequest() {
           content::MEDIA_TAB_AUDIO_CAPTURE, "", ""));
   }
   if (request_.video_type == content::MEDIA_DESKTOP_VIDEO_CAPTURE) {
-    content::DesktopMediaID media_id =
-      content::DesktopMediaID::Parse(request_.requested_video_device_id);
-    devices.push_back(content::MediaStreamDevice(
-          content::MEDIA_DESKTOP_VIDEO_CAPTURE, media_id.ToString(), "Screen"));
+    const bool screen_capture_enabled =
+      CommandLine::ForCurrentProcess()->HasSwitch(
+          switches::kEnableUserMediaScreenCapturing);
+
+    if (screen_capture_enabled) {
+      content::DesktopMediaID media_id;
+      // If the device id wasn't specified then this is a screen capture request
+      // (i.e. chooseDesktopMedia() API wasn't used to generate device id).
+      if (request_.requested_video_device_id.empty()) {
+        media_id =
+            content::DesktopMediaID(content::DesktopMediaID::TYPE_SCREEN,
+                                    webrtc::kFullDesktopScreenId);
+      } else {
+        media_id =
+            content::DesktopMediaID::Parse(request_.requested_video_device_id);
+      }
+
+      devices.push_back(content::MediaStreamDevice(
+            content::MEDIA_DESKTOP_VIDEO_CAPTURE, media_id.ToString(), "Screen"));
+    }
   }
 
-  callback_.Run(devices, scoped_ptr<content::MediaStreamUI>());
+  callback_.Run(devices,
+                devices.empty() ?
+                     content::MEDIA_DEVICE_NO_HARDWARE : content::MEDIA_DEVICE_OK,
+                scoped_ptr<content::MediaStreamUI>());
 }
 
 bool MediaStreamDevicesController::IsSchemeSecure() const {

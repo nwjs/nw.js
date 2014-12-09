@@ -1,0 +1,11 @@
+{
+  "name": "nwfaketop",
+  "main": "index.html",
+  "window": {
+    "width": 600,
+    "height": 400,
+    "position": "center",
+    "toolbar": true,
+    "resizable": true
+  }
+}

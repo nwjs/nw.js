@@ -21,11 +21,13 @@
 #include "content/nw/src/nw_shell.h"
 
 #include "base/command_line.h"
+#include "base/json/json_reader.h"
 #include "base/message_loop/message_loop.h"
 #include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
 #include "content/browser/child_process_security_policy_impl.h"
+#include "content/browser/devtools/devtools_http_handler_impl.h"
 #include "content/browser/renderer_host/render_view_host_impl.h"
 #include "content/browser/web_contents/web_contents_impl.h"
 #include "content/public/browser/devtools_agent_host.h"
@@ -51,6 +53,7 @@
 #include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/browser/shell_javascript_dialog_creator.h"
+#include "content/nw/src/browser/nw_autofill_client.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/media/media_stream_devices_controller.h"
 #include "content/nw/src/nw_package.h"
@@ -63,17 +66,22 @@
 #include "net/base/escape.h"
 #include "ui/base/resource/resource_bundle.h"
 
+#include "components/autofill/content/browser/content_autofill_driver.h"
+#include "components/autofill/core/browser/autofill_manager.h"
+#include "components/web_modal/web_contents_modal_dialog_manager.h"
 
-#if defined(OS_WIN)
-#include "content/nw/src/browser/native_window_win.h"
+
+#if defined(OS_WIN) || defined(OS_LINUX)
+#include "content/nw/src/browser/native_window_aura.h"
 #include "ui/views/controls/webview/webview.h"
-using nw::NativeWindowWin;
+using nw::NativeWindowAura;
 #endif
 
 #include "content/nw/src/browser/printing/print_view_manager.h"
 
 using base::MessageLoop;
 
+using content::DevToolsHttpHandlerImpl;
 namespace content {
 
 std::vector<Shell*> Shell::windows_;
@@ -152,7 +160,7 @@ Shell* Shell::FromRenderViewHost(RenderViewHost* rvh) {
       return windows_[i];
     }else{
       WebContentsImpl* impl = static_cast<WebContentsImpl*>(web_contents);
-      RenderViewHostManager* rvhm = impl->GetRenderManagerForTesting();
+      RenderFrameHostManager* rvhm = impl->GetRenderManagerForTesting();
       if (rvhm && static_cast<RenderViewHost*>(rvhm->pending_render_view_host()) == rvh)
         return windows_[i];
     }
@@ -194,6 +202,18 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   // Initialize window after we set window_, because some operations of
   // NativeWindow requires the window_ to be non-NULL.
   window_->InitFromManifest(manifest);
+
+#if defined(OS_WIN) || defined(OS_LINUX)
+  web_modal::WebContentsModalDialogManager::CreateForWebContents(web_contents);
+  web_modal::WebContentsModalDialogManager::FromWebContents(web_contents)->SetDelegate(this);
+#endif
+
+  autofill::NWAutofillClient::CreateForWebContents(web_contents);
+  autofill::ContentAutofillDriver::CreateForWebContentsAndDelegate(
+      web_contents,
+      autofill::NWAutofillClient::FromWebContents(web_contents),
+      "",
+      autofill::AutofillManager::DISABLE_AUTOFILL_DOWNLOAD_MANAGER);
 }
 
 Shell::~Shell() {
@@ -287,9 +307,9 @@ void Shell::PrintCriticalError(const std::string& title,
     error_page_url = "data:text/html;base64,VW5hYmxlIHRvIGZpbmQgbncucGFrLgo=";
   } else {
     std::string content_with_no_newline, content_with_no_space;
-    ReplaceChars(net::EscapeForHTML(content),
+    base::ReplaceChars(net::EscapeForHTML(content),
                  "\n", "<br/>", &content_with_no_newline);
-    ReplaceChars(content_with_no_newline,
+    base::ReplaceChars(content_with_no_newline,
                  " ", "&nbsp;", &content_with_no_space);
 
     std::vector<std::string> subst;
@@ -310,18 +330,26 @@ nw::Package* Shell::GetPackage() {
 }
 
 void Shell::LoadURL(const GURL& url) {
-  web_contents_->GetController().LoadURL(
-      url,
-      Referrer(),
-      PAGE_TRANSITION_TYPED,
-      std::string());
-  web_contents_->GetView()->Focus();
+  if (url.is_empty() || !url.is_valid()) {
+    LOG(ERROR) << "Unable to load URL: " << url;
+    return;
+  }
+  NavigationController::LoadURLParams params(url);
+  params.transition_type = PageTransitionFromInt(
+      PAGE_TRANSITION_TYPED | PAGE_TRANSITION_FROM_ADDRESS_BAR);
+  web_contents_->GetController().LoadURLWithParams(params);
+  // web_contents_->GetController().LoadURL(
+  //     url,
+  //     Referrer(),
+  //     PAGE_TRANSITION_TYPED,
+  //     std::string());
+  web_contents_->Focus();
   window()->SetToolbarButtonEnabled(nw::NativeWindow::BUTTON_FORWARD, false);
 }
 
 void Shell::GoBackOrForward(int offset) {
   web_contents_->GetController().GoToOffset(offset);
-  web_contents_->GetView()->Focus();
+  web_contents_->Focus();
 }
 
 void Shell::Reload(ReloadType type) {
@@ -347,12 +375,12 @@ void Shell::Reload(ReloadType type) {
       break;
   }
 
-  web_contents_->GetView()->Focus();
+  web_contents_->Focus();
 }
 
 void Shell::Stop() {
   web_contents_->Stop();
-  web_contents_->GetView()->Focus();
+  web_contents_->Focus();
 }
 
 void Shell::ReloadOrStop() {
@@ -393,14 +421,14 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
     return;
   }
 
-  RenderViewHost* inspected_rvh = web_contents()->GetRenderViewHost();
+  // RenderViewHost* inspected_rvh = web_contents()->GetRenderViewHost();
   if (nodejs()) {
     std::string jscript = std::string("require('nw.gui').Window.get().__setDevToolsJail('")
       + (jail_id ? jail_id : "(null)") + "');";
-    inspected_rvh->ExecuteJavascriptInWebFrame(string16(), UTF8ToUTF16(jscript.c_str()));
+    web_contents()->GetMainFrame()->ExecuteJavaScript(base::UTF8ToUTF16(jscript.c_str()));
   }
 
-  scoped_refptr<DevToolsAgentHost> agent(DevToolsAgentHost::GetOrCreateFor(inspected_rvh));
+  scoped_refptr<DevToolsAgentHost> agent(DevToolsAgentHost::GetOrCreateFor(web_contents()));
   DevToolsManager* manager = DevToolsManager::GetInstance();
 
   if (agent->IsAttached()) {
@@ -410,14 +438,21 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
 
   ShellDevToolsDelegate* delegate =
       browser_client->shell_browser_main_parts()->devtools_delegate();
-  GURL url = delegate->devtools_http_handler()->GetFrontendURL();
+  GURL url = delegate->devtools_http_handler()->GetFrontendURL(agent.get());
+  DevToolsHttpHandlerImpl* http_handler = static_cast<DevToolsHttpHandlerImpl*>(delegate->devtools_http_handler());
+  http_handler->EnumerateTargets();
 
-  SendEvent("devtools-opened", url.spec());
   if (headless) {
-    // FIXME: DevToolsFrontendHost
+    DevToolsAgentHost* agent_host = DevToolsAgentHost::GetOrCreateFor(web_contents()).get();
+
+    url = delegate->devtools_http_handler()->GetFrontendURL(agent_host);
+    DevToolsHttpHandlerImpl* http_handler = static_cast<DevToolsHttpHandlerImpl*>(delegate->devtools_http_handler());
+    http_handler->EnumerateTargets();
+    SendEvent("devtools-opened", url.spec());
     return;
   }
 
+  SendEvent("devtools-opened", url.spec());
   // Use our minimum set manifest
   base::DictionaryValue manifest;
   manifest.SetBoolean(switches::kmToolbar, false);
@@ -438,10 +473,10 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
 
   new ShellDevToolsFrontend(
       shell,
-      DevToolsAgentHost::GetOrCreateFor(inspected_rvh).get());
+      DevToolsAgentHost::GetOrCreateFor(web_contents_.get()).get());
 
   int rh_id = shell->web_contents_->GetRenderProcessHost()->GetID();
-  ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, chrome::kFileScheme);
+  ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, url::kFileScheme);
   ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, "app");
   shell->is_devtools_ = true;
   shell->devtools_owner_ = weak_ptr_factory_.GetWeakPtr();
@@ -479,7 +514,7 @@ WebContents* Shell::OpenURLFromTab(WebContents* source,
   return source;
 }
 
-void Shell::LoadingStateChanged(WebContents* source) {
+void Shell::LoadingStateChanged(WebContents* source, bool to_different_document) {
   int current_index = web_contents_->GetController().GetCurrentEntryIndex();
   int max_index = web_contents_->GetController().GetEntryCount() - 1;
 
@@ -531,16 +566,23 @@ bool Shell::IsPopupOrPanel(const WebContents* source) const {
 
 // Window opened by window.open
 void Shell::WebContentsCreated(WebContents* source_contents,
-                               int64 source_frame_id,
-                               const string16& frame_name,
+                               int source_frame_id,
+                               const base::string16& frame_name,
                                const GURL& target_url,
-                               WebContents* new_contents) {
+                               WebContents* new_contents,
+                               const base::string16& nw_window_manifest) {
   // Create with package's manifest
   scoped_ptr<base::DictionaryValue> manifest(
       GetPackage()->window()->DeepCopy());
 
+  scoped_ptr<base::Value> val;
+  std::string manifest_str = base::UTF16ToUTF8(nw_window_manifest);
+  val.reset(base::JSONReader().ReadToValue(manifest_str));
+  if (val.get() && val->IsType(base::Value::TYPE_DICTIONARY))
+    manifest.reset(static_cast<base::DictionaryValue*>(val.release()));
+
   // Get window features
-  WebKit::WebWindowFeatures features = new_contents->GetWindowFeatures();
+  blink::WebWindowFeatures features = new_contents->GetWindowFeatures();
   manifest->SetBoolean(switches::kmResizable, features.resizable);
   manifest->SetBoolean(switches::kmFullscreen, features.fullscreen);
   if (features.widthSet)
@@ -560,17 +602,37 @@ void Shell::WebContentsCreated(WebContents* source_contents,
   // in Chromium 32 RenderViewCreated will not be called so the case
   // should be handled here
   new nwapi::DispatcherHost(new_contents->GetRenderViewHost());
+
+#if defined(ENABLE_PRINTING)
+  printing::PrintViewManager::CreateForWebContents(new_contents);
+#endif
+
+#if defined(OS_WIN) || defined(OS_LINUX)
+  web_modal::WebContentsModalDialogManager::CreateForWebContents(new_contents);
+  web_modal::WebContentsModalDialogManager::FromWebContents(new_contents)->SetDelegate(this);
+#endif
+
+#if 0 //FIXME
+  autofill::TabAutofillManagerDelegate::CreateForWebContents(new_contents);
+  autofill::ContentAutofillDriver::CreateForWebContentsAndDelegate(
+      new_contents,
+      autofill::TabAutofillManagerDelegate::FromWebContents(new_contents),
+      "",
+      autofill::AutofillManager::ENABLE_AUTOFILL_DOWNLOAD_MANAGER);
+#endif
 }
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) || defined(OS_LINUX)
 void Shell::WebContentsFocused(content::WebContents* web_contents) {
-  NativeWindowWin* win = static_cast<NativeWindowWin*>(window_.get());
-  win->web_view_->OnWebContentsFocused(web_contents);
+  NativeWindowAura* win = static_cast<NativeWindowAura*>(window_.get());
+  if (win) // on aura this function is called in the middle of window creation
+    win->web_view_->OnWebContentsFocused(web_contents);
 }
 #endif
 
 content::ColorChooser*
-Shell::OpenColorChooser(content::WebContents* web_contents, SkColor color) {
+Shell::OpenColorChooser(content::WebContents* web_contents, SkColor color,
+      const std::vector<ColorSuggestion>& suggestions) {
   return nw::ShowColorChooser(web_contents, color);
 }
 
@@ -597,9 +659,9 @@ JavaScriptDialogManager* Shell::GetJavaScriptDialogManager() {
 
 bool Shell::AddMessageToConsole(WebContents* source,
                                 int32 level,
-                                const string16& message,
+                                const base::string16& message,
                                 int32 line_no,
-                                const string16& source_id) {
+                                const base::string16& source_id) {
   return false;
 }
 
@@ -632,8 +694,8 @@ void Shell::Observe(int type,
         Details<std::pair<NavigationEntry*, bool> >(details).ptr();
 
     if (title->first) {
-      string16 text = title->first->GetTitle();
-      window()->SetTitle(UTF16ToUTF8(text));
+      base::string16 text = title->first->GetTitle();
+      window()->SetTitle(base::UTF16ToUTF8(text));
     }
   } else if (type == NOTIFICATION_RENDERER_PROCESS_CLOSED) {
     exit_code_ =
@@ -656,6 +718,36 @@ GURL Shell::OverrideDOMStorageOrigin(const GURL& origin) {
 void Shell::RenderViewCreated(RenderViewHost* render_view_host) {
   //FIXME: handle removal
   new nwapi::DispatcherHost(render_view_host);
+  window()->SetTransparent(window()->IsTransparent());
+}
+
+#if defined(OS_WIN) || defined(OS_LINUX)
+bool Shell::IsWebContentsVisible(content::WebContents* web_contents) {
+  //FIXME
+  return true;
+}
+#endif
+
+void Shell::ToggleFullscreenModeForTab(WebContents* web_contents,
+                                       bool enter_fullscreen) {
+  window()->SetFullscreen(enter_fullscreen);
+}
+
+bool Shell::IsFullscreenForTabOrPending(const WebContents* web_contents) const {
+  return window()->IsFullscreen();
+}
+
+#if defined(OS_WIN) || defined(OS_LINUX)
+web_modal::WebContentsModalDialogHost* Shell::GetWebContentsModalDialogHost() {
+  return (web_modal::WebContentsModalDialogHost*)window();
+}
+#endif
+
+void Shell::Cleanup() {
+  std::vector<Shell*> list = windows();
+  for (size_t i = 0; i < list.size(); ++i) {
+    delete list[i];
+  }
 }
 
 }  // namespace content

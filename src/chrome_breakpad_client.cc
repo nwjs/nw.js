@@ -21,6 +21,8 @@
 #include "chrome/common/crash_keys.h"
 #include "chrome/common/env_vars.h"
 
+#include "id/commit.h"
+
 #if defined(OS_WIN)
 #include <windows.h>
 
@@ -37,7 +39,7 @@
 #endif
 
 #if defined(OS_POSIX)
-#include "chrome/common/dump_without_crashing.h"
+#include "base/debug/dump_without_crashing.h"
 #endif
 
 #if defined(OS_WIN) || defined(OS_MACOSX)
@@ -77,10 +79,10 @@ ChromeBreakpadClient::ChromeBreakpadClient() {}
 
 ChromeBreakpadClient::~ChromeBreakpadClient() {}
 
-void ChromeBreakpadClient::SetClientID(const std::string& client_id) {
-  crash_keys::SetClientID(client_id);
+void ChromeBreakpadClient::SetBreakpadClientIdFromGUID(
+    const std::string& client_guid) {
+  crash_keys::SetCrashClientIdFromGUID(client_guid);
 }
-
 #if defined(OS_WIN)
 bool ChromeBreakpadClient::GetAlternativeCrashDumpLocation(
     base::FilePath* crash_dir) {
@@ -116,13 +118,7 @@ void ChromeBreakpadClient::GetProductNameAndVersion(
     if (!version_info->is_official_build())
       version->append(base::ASCIIToUTF16("-devel"));
 
-    const CommandLine& command = *CommandLine::ForCurrentProcess();
-    if (command.HasSwitch(switches::kChromeFrame)) {
-      *product_name = base::ASCIIToUTF16("ChromeFrame");
-    } else {
-      *product_name = version_info->product_short_name();
-    }
-
+    *product_name = version_info->product_short_name();
     *special_build = version_info->special_build();
   } else {
     // No version info found. Make up the values.
@@ -272,19 +268,10 @@ void ChromeBreakpadClient::GetProductNameAndVersion(std::string* product_name,
                                                     std::string* version) {
   DCHECK(product_name);
   DCHECK(version);
-#if defined(OS_ANDROID)
-  *product_name = "Chrome_Android";
-#elif defined(OS_CHROMEOS)
-  *product_name = "Chrome_ChromeOS";
-#else  // OS_LINUX
-#if !defined(ADDRESS_SANITIZER)
-  *product_name = "Chrome_Linux";
-#else
-  *product_name = "Chrome_Linux_ASan";
-#endif
-#endif
 
-  *version = NW_VERSION_STRING;
+  *product_name = "node-webkit";
+
+  *version = NW_VERSION_STRING " " NW_COMMIT_HASH;
 }
 
 base::FilePath ChromeBreakpadClient::GetReporterLogFilename() {
@@ -306,12 +293,6 @@ bool ChromeBreakpadClient::GetCrashDumpLocation(base::FilePath* crash_dir) {
   return PathService::Get(chrome::DIR_CRASH_DUMPS, crash_dir);
 }
 
-#if defined(OS_POSIX)
-void ChromeBreakpadClient::SetDumpWithoutCrashingFunction(void (*function)()) {
-  logging::SetDumpWithoutCrashingFunction(function);
-}
-#endif
-
 size_t ChromeBreakpadClient::RegisterCrashKeys() {
   return crash_keys::RegisterChromeCrashKeys();
 }
@@ -331,5 +312,14 @@ int ChromeBreakpadClient::GetAndroidMinidumpDescriptor() {
   return kAndroidMinidumpDescriptor;
 }
 #endif
+
+bool ChromeBreakpadClient::EnableBreakpadForProcess(
+    const std::string& process_type) {
+  return process_type == switches::kRendererProcess ||
+         process_type == switches::kPluginProcess ||
+         process_type == switches::kPpapiPluginProcess ||
+         process_type == switches::kZygoteProcess ||
+         process_type == switches::kGpuProcess;
+}
 
 }  // namespace chrome

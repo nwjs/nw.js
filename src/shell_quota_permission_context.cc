@@ -11,11 +11,8 @@ namespace content {
 ShellQuotaPermissionContext::ShellQuotaPermissionContext() {}
 
 void ShellQuotaPermissionContext::RequestQuotaPermission(
-    const GURL& origin_url,
-    quota::StorageType type,
-    int64 requested_quota,
+    const StorageQuotaParams& params,
     int render_process_id,
-    int render_view_id,
     const PermissionCallback& callback) {
   callback.Run(QUOTA_PERMISSION_RESPONSE_ALLOW);
 }

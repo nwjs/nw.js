@@ -14,7 +14,6 @@
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
-#include "content/public/browser/web_contents_view.h"
 #include "content/public/common/content_client.h"
 
 #if defined(OS_CHROMEOS)
@@ -77,7 +76,7 @@ void RenderParamsFromPrintSettings(const printing::PrintSettings& settings,
 }  // namespace
 
 PrintingMessageFilter::PrintingMessageFilter(int render_process_id)
-  : print_job_manager_(NULL),
+  : BrowserMessageFilter(PrintMsgStart), print_job_manager_(NULL),
     render_process_id_(render_process_id) {
 
   content::ShellContentBrowserClient* browser_client =
@@ -98,10 +97,10 @@ void PrintingMessageFilter::OverrideThreadForMessage(
 #endif
 }
 
-bool PrintingMessageFilter::OnMessageReceived(const IPC::Message& message,
-                                              bool* message_was_ok) {
+bool PrintingMessageFilter::OnMessageReceived(const IPC::Message& message) {
+
   bool handled = true;
-  IPC_BEGIN_MESSAGE_MAP_EX(PrintingMessageFilter, message, *message_was_ok)
+  IPC_BEGIN_MESSAGE_MAP(PrintingMessageFilter, message)
 #if defined(OS_WIN)
     IPC_MESSAGE_HANDLER(PrintHostMsg_DuplicateSection, OnDuplicateSection)
 #endif
@@ -344,8 +343,8 @@ void PrintingMessageFilter::OnScriptedPrintReply(
 }
 
 void PrintingMessageFilter::OnUpdatePrintSettings(
-    int document_cookie, const DictionaryValue& job_settings,
-    IPC::Message* reply_msg) {
+                                                  int document_cookie, const base::DictionaryValue& job_settings,
+                                                  IPC::Message* reply_msg) {
   scoped_refptr<printing::PrinterQuery> printer_query;
 
   print_job_manager_->PopPrinterQuery(document_cookie, &printer_query);

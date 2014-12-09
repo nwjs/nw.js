@@ -1,16 +1,16 @@
 // Copyright (c) 2012 Intel Corp
 // Copyright (c) 2012 The Chromium Authors
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy 
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 //  in the Software without restriction, including without limitation the rights
 //  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell co
 // pies of the Software, and to permit persons to whom the Software is furnished
 //  to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in al
 // l copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IM
 // PLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNES
 // S FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
@@ -43,13 +43,23 @@ void MenuItem::Create(const base::DictionaryValue& option) {
     std::string label;
     option.GetString("label", &label);
 
-    menu_item_ = [[NSMenuItem alloc]
-       initWithTitle:[NSString stringWithUTF8String:label.c_str()]
-       action: @selector(invoke:)
-       keyEquivalent: @""];
+    std::string selector;
+    option.GetString("selector", &selector);
 
-    delegate_ = [[MenuItemDelegate alloc] initWithMenuItem:this];
-    [menu_item_ setTarget:delegate_];
+    if(!selector.empty()) {
+      menu_item_ = [[NSMenuItem alloc]
+                    initWithTitle:[NSString stringWithUTF8String:label.c_str()]
+                    action: NSSelectorFromString([NSString stringWithUTF8String:selector.c_str()])
+                    keyEquivalent: @""];
+      delegate_ = [MenuItemDelegate alloc];
+    } else {
+      menu_item_ = [[NSMenuItem alloc]
+                    initWithTitle:[NSString stringWithUTF8String:label.c_str()]
+                    action: @selector(invoke:)
+                    keyEquivalent: @""];
+      delegate_ = [[MenuItemDelegate alloc] initWithMenuItem:this];
+      [menu_item_ setTarget:delegate_];
+    }
 
     if (type == "checkbox") {
       bool checked = false;
@@ -68,6 +78,25 @@ void MenuItem::Create(const base::DictionaryValue& option) {
     std::string tooltip;
     if (option.GetString("tooltip", &tooltip))
       SetTooltip(tooltip);
+
+    std::string key;
+    if (option.GetString("key", &key))
+      SetKey(key);
+
+    std::string modifiers;
+    if (option.GetString("modifiers", &modifiers)) {
+      NSUInteger mask = 0;
+      NSString* nsmodifiers = [NSString stringWithUTF8String:modifiers.c_str()];
+      if([nsmodifiers rangeOfString:@"shift"].location != NSNotFound)
+        mask = mask|NSShiftKeyMask;
+      if([nsmodifiers rangeOfString:@"cmd"].location != NSNotFound)
+        mask = mask|NSCommandKeyMask;
+      if([nsmodifiers rangeOfString:@"alt"].location != NSNotFound)
+        mask = mask|NSAlternateKeyMask;
+      if([nsmodifiers rangeOfString:@"ctrl"].location != NSNotFound)
+        mask = mask|NSControlKeyMask;
+      [menu_item_ setKeyEquivalentModifierMask:mask];
+    }
 
     int menu_id;
     if (option.GetInteger("submenu", &menu_id))
@@ -92,6 +121,10 @@ void MenuItem::Destroy() {
 
 void MenuItem::SetLabel(const std::string& label) {
   [menu_item_ setTitle:[NSString stringWithUTF8String:label.c_str()]];
+}
+
+void MenuItem::SetKey(const std::string& key) {
+  [menu_item_ setKeyEquivalent:[NSString stringWithUTF8String:key.c_str()]];
 }
 
 void MenuItem::SetIcon(const std::string& icon) {

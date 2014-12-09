@@ -42,26 +42,28 @@ class MediaInternals : public content::MediaObserver {
   static MediaInternals* GetInstance();
 
   // Overridden from content::MediaObserver:
-  virtual void OnAudioCaptureDevicesChanged(
-      const content::MediaStreamDevices& devices) OVERRIDE;
-  virtual void OnVideoCaptureDevicesChanged(
-      const content::MediaStreamDevices& devices) OVERRIDE;
+  virtual void OnAudioCaptureDevicesChanged() OVERRIDE;
+  virtual void OnVideoCaptureDevicesChanged() OVERRIDE;
   virtual void OnMediaRequestStateChanged(
       int render_process_id,
-      int render_view_id,
+      int render_frame_id,
       int page_request_id,
-      const content::MediaStreamDevice& device,
+      const GURL& security_origin,
+      content::MediaStreamType stream_type,
       content::MediaRequestState state) OVERRIDE;
-  virtual void OnAudioStreamPlayingChanged(
-      int render_process_id,
-      int render_view_id,
-      int stream_id,
-      bool playing,
-      float power_dbfs,
-      bool clipped) OVERRIDE;
+
   virtual void OnCreatingAudioStream(int render_process_id,
                                      int render_view_id) OVERRIDE;
 
+  virtual void OnAudioStreamPlaying(
+      int render_process_id,
+      int render_frame_id,
+      int stream_id,
+      const ReadPowerAndClipCallback& power_read_callback) OVERRIDE {}
+  virtual void OnAudioStreamStopped(
+      int render_process_id,
+      int render_frame_id,
+      int stream_id) OVERRIDE {}
   // Methods for observers.
   // Observers should add themselves on construction and remove themselves
   // on destruction.
@@ -70,8 +72,7 @@ class MediaInternals : public content::MediaObserver {
   void SendEverything();
 
   scoped_refptr<MediaStreamCaptureIndicator> GetMediaStreamCaptureIndicator();
-  scoped_refptr<MediaCaptureDevicesDispatcher>
-      GetMediaCaptureDevicesDispatcher();
+  MediaCaptureDevicesDispatcher* GetMediaCaptureDevicesDispatcher();
 
  private:
   friend class MediaInternalsTest;
@@ -83,7 +84,7 @@ class MediaInternals : public content::MediaObserver {
   // (host, stream_id) is a unique id for the audio stream.
   // |host| will never be dereferenced.
   void UpdateAudioStream(void* host, int stream_id,
-                         const std::string& property, Value* value);
+                         const std::string& property, base::Value* value);
 
   // Removes |item| from |data_|.
   void DeleteItem(const std::string& item);
@@ -91,14 +92,14 @@ class MediaInternals : public content::MediaObserver {
   // Sets data_.id.property = value and notifies attached UIs using update_fn.
   // id may be any depth, e.g. "video.decoders.1.2.3"
   void UpdateItem(const std::string& update_fn, const std::string& id,
-                  const std::string& property, Value* value);
+                  const std::string& property, base::Value* value);
 
   // Calls javascript |function|(|value|) on each attached UI.
-  void SendUpdate(const std::string& function, Value* value);
+  void SendUpdate(const std::string& function, base::Value* value);
 
-  DictionaryValue data_;
+  base::DictionaryValue data_;
   ObserverList<MediaInternalsObserver> observers_;
-  scoped_refptr<MediaCaptureDevicesDispatcher> media_devices_dispatcher_;
+  MediaCaptureDevicesDispatcher* media_devices_dispatcher_;
 
   DISALLOW_COPY_AND_ASSIGN(MediaInternals);
 };

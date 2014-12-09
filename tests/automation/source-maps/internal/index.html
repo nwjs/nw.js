@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test case for source maps</title>
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+  <p id="wait" style="font-size:1.5em">Please wait to be closed.</p>
+  <input type="text" id="color" placeholder="css color"/>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+  <script>
+    var gui = require('nw.gui');
+    var win = gui.Window.get();
+    var results = new Array();
+
+    <!-- load devtools into iframe -->
+    win.showDevTools('', true);
+    win.on("devtools-opened", function(url) {
+        var iframe_devtools = document.createElement("iframe");
+	iframe_devtools.id = 'devtools';
+	iframe_devtools.src = url;
+	iframe_devtools.height = '1000';
+	iframe_devtools.width = '1000';
+
+	function get_scripts() {
+            var scripts = devtools.getElementsByClassName('scripts');
+	    
+            <!-- make sure it is complete -->
+            if(scripts == undefined  || scripts[0] == undefined || scripts[0].click == undefined)
+	    	setTimeout(get_scripts, 3000);
+	    else {
+		// open settitng 
+		devtools.WebInspector.SettingsController.prototype.showSettingsScreen();
+		// source map feature  must be enabled first
+		// We cannot to reload it automatically or it  will crash
+		if(!devtools.getElementsByName('Enable JS source maps')[0].checked || !devtools.document.getElementsByName('Enable CSS source maps')[0].checked) {
+		    devtools.getElementsByName('Enable JS source maps')[0].checked = true;
+		    devtools.getElementsByName('Enable CSS source maps')[0].checked = true;
+		}
+		else {
+		    // open scripts panel 
+	    	    scripts[0].click();
+		    
+		    devtools.getElementsByClassName('scripts-navigator-show-hide-button')[0].click();
+		    devtools.getElementsByClassName('parent navigator-folder-tree-item')[1].treeElement.expand();
+		    var scripts_files = devtools.getElementsByClassName('navigator-script-tree-item');
+		    
+		    for (var i = 0; i < scripts_files.length; i++)
+			results.push(scripts_files[i].childNodes[2].innerHTML);
+		    results.sort();
+		}
+					
+		win.showDevTools(); <!-- why? -->
+
+
+            var socket = require('net').connect({port: 13013});
+            socket.setEncoding('utf8');
+            socket.end(JSON.stringify(results));
+
+
+
+	    }
+	}
+	
+	iframe_devtools.onload = get_scripts;
+	document.getElementById("wait").appendChild(iframe_devtools);
+    });
+</script>
+  <!-- Comment the line below and uncomment the Options A to E one at a time -->
+  <!-- <script src="scripts/script.js"></script> -->
+  
+  <!-- Option A: Closure Compile -->
+  <script src="scripts/script.closure.js"></script>
+  
+  <!-- Option B: JSMin and Grunt -->
+  <script src="scripts/script.jsmin-grunt.js"></script>
+  
+  <!-- Option C: Uglifyjs -->
+  <script src="scripts/script.uglify.js"></script>
+  
+  <!-- Option D: CoffeeScript -->
+  <script src="scripts/script.coffee.min.js"></script>
+
+  <!-- Option E: TypeScript -->
+  <script src="scripts/script.typescript.min.js"></script>
+  
+  
+</body>
+</html>

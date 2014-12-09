@@ -21,7 +21,7 @@
 
 namespace printing {
 
-using WebKit::WebFrame;
+using blink::WebFrame;
 
 void PrintWebViewHelper::PrintPageInternal(
     const PrintMsg_PrintPage_Params& params,
@@ -77,7 +77,7 @@ bool PrintWebViewHelper::RenderPreviewPage(
 
   base::TimeTicks begin_time = base::TimeTicks::Now();
   gfx::Size page_size;
-  RenderPage(printParams, page_number, print_preview_context_.prepared_frame(),
+  RenderPage(printParams, page_number, (blink::WebFrame*)print_preview_context_.prepared_frame(),
              true, initial_render_metafile, &page_size, NULL);
   print_preview_context_.RenderedPreviewPage(
       base::TimeTicks::Now() - begin_time);
@@ -125,7 +125,7 @@ void PrintWebViewHelper::RenderPage(
 
     skia::RefPtr<skia::VectorCanvas> canvas =
         skia::AdoptRef(new skia::VectorCanvas(device));
-    WebKit::WebCanvas* canvas_ptr = canvas.get();
+    blink::WebCanvas* canvas_ptr = canvas.get();
     MetafileSkiaWrapper::SetMetafileOnCanvas(*canvas, metafile);
     skia::SetIsDraftMode(*canvas, is_print_ready_metafile_sent_);
     skia::SetIsPreviewMetafile(*canvas, is_preview);
