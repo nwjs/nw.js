@@ -82,11 +82,15 @@ class MenuItem : public Base {
   void SetChecked(bool checked);
   void SetSubmenu(Menu* sub_menu);
 
+  // Template icon works only on Mac OS X
+  void SetIconIsTemplate(bool isTemplate);
+
 #if defined(OS_MACOSX)
   std::string type_;
 
   NSMenuItem* menu_item_;
   MenuItemDelegate* delegate_;
+  bool iconIsTemplate;
 
 #elif defined(OS_WIN) || defined(OS_LINUX)
   friend class MenuDelegate;

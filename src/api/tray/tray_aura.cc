@@ -107,4 +107,7 @@ void Tray::Remove() {
 void Tray::SetAltIcon(const std::string& alticon_path) {
 }
 
+void Tray::SetIconsAreTemplates(bool areTemplates) {
+}
+
 }  // namespace nwapi

@@ -50,6 +50,10 @@ void MenuItem::Call(const std::string& method,
     std::string icon;
     arguments.GetString(0, &icon);
     SetIcon(icon);
+  } else if (method == "SetIconIsTemplate") {
+    bool isTemplate;
+    arguments.GetBoolean(0, &isTemplate);
+    SetIconIsTemplate(isTemplate);
   } else if (method == "SetTooltip") {
     std::string tooltip;
     arguments.GetString(0, &tooltip);

@@ -134,6 +134,9 @@ void MenuItem::SetIcon(const std::string& icon) {
   package->GetImage(base::FilePath::FromUTF8Unsafe(icon), &icon_);
 }
 
+void MenuItem::SetIconIsTemplate(bool isTemplate) {
+}
+
 void MenuItem::SetTooltip(const std::string& tooltip) {
   tooltip_ = base::UTF8ToUTF16(tooltip);
   if (menu_)

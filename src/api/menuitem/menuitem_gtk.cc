@@ -124,6 +124,9 @@ void MenuItem::SetIcon(const std::string& icon) {
   }
 }
 
+void MenuItem::SetIconIsTemplate(bool isTemplate) {
+}
+
 void MenuItem::SetTooltip(const std::string& tooltip) {
   gtk_widget_set_tooltip_text(menu_item_, tooltip.c_str());
 }
