@@ -35,6 +35,8 @@
 #endif
 #include "ipc/ipc_channel.h"
 
+#include "extensions/browser/extension_function_dispatcher.h"
+
 namespace base {
 class DictionaryValue;
 class FilePath;
@@ -42,6 +44,7 @@ class FilePath;
 
 namespace extensions {
 struct DraggableRegion;
+class ExtensionFunctionDispatcher;
 }
 
 class GURL;
@@ -68,6 +71,7 @@ class Shell : public WebContentsDelegate,
               public web_modal::WebContentsModalDialogManagerDelegate,
 #endif
               public content::WebContentsObserver,
+              public extensions::ExtensionFunctionDispatcher::Delegate,
               public NotificationObserver {
  public:
   enum ReloadType {
@@ -204,6 +208,12 @@ class Shell : public WebContentsDelegate,
       const MediaResponseCallback& callback) override;
 
  private:
+  // ExtensionFunctionDispatcher::Delegate
+  extensions::WindowController* GetExtensionWindowController() const override;
+  content::WebContents* GetAssociatedWebContents() const override;
+
+  void OnRequest(const ExtensionHostMsg_Request_Params& params);
+
   void UpdateDraggableRegions(
       const std::vector<extensions::DraggableRegion>& regions);
 
@@ -215,6 +225,7 @@ class Shell : public WebContentsDelegate,
   scoped_ptr<ShellJavaScriptDialogCreator> dialog_creator_;
   scoped_ptr<WebContents> web_contents_;
   scoped_ptr<nw::NativeWindow> window_;
+  scoped_ptr<extensions::ExtensionFunctionDispatcher> extension_function_dispatcher_;
 
   // Notification manager.
   NotificationRegistrar registrar_;

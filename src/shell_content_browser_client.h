@@ -95,6 +95,9 @@ class ShellContentBrowserClient : public ContentBrowserClient {
   virtual QuotaPermissionContext* CreateQuotaPermissionContext() override;
 
   DevToolsManagerDelegate* GetDevToolsManagerDelegate() override;
+  virtual bool ShouldUseProcessPerSite(
+    content::BrowserContext* browser_context,
+    const GURL& effective_url) override;
 
   //Notification
 #if 0 //FIXME

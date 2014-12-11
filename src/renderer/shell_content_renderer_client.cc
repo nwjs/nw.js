@@ -49,6 +49,9 @@
 #include "content/nw/src/renderer/printing/print_web_view_helper.h"
 #include "content/nw/src/renderer/shell_render_process_observer.h"
 #include "content/public/common/content_switches.h"
+#include "content/public/common/content_constants.h"
+#include "content/public/renderer/render_frame_observer_tracker.h"
+#include "content/public/renderer/render_thread.h"
 #include "content/public/renderer/render_view.h"
 #include "content/renderer/render_view_impl.h"
 #include "ipc/ipc_descriptors.h"
@@ -67,6 +70,16 @@
 
 #include "nw/id/commit.h"
 
+#include "extensions/common/extensions_client.h"
+#include "extensions/renderer/default_dispatcher_delegate.h"
+#include "extensions/renderer/dispatcher.h"
+#include "extensions/renderer/extension_helper.h"
+#include "extensions/renderer/guest_view/extensions_guest_view_container.h"
+#include "extensions/renderer/guest_view/mime_handler_view/mime_handler_view_container.h"
+#include "content/nw/src/common/shell_extensions_client.h"
+#include "content/nw/src/renderer/shell_extensions_renderer_client.h"
+
+
 using content::RenderView;
 using content::RenderViewImpl;
 using autofill::AutofillAgent;
@@ -78,11 +91,45 @@ using blink::WebLocalFrame;
 using blink::WebView;
 using blink::WebString;
 using blink::WebSecurityPolicy;
-
+using extensions::ExtensionsClient;
 
 namespace content {
 
 namespace {
+
+// TODO: promote ExtensionFrameHelper to a common place and share with this.
+class ShellFrameHelper
+    : public content::RenderFrameObserver,
+      public content::RenderFrameObserverTracker<ShellFrameHelper> {
+ public:
+  ShellFrameHelper(content::RenderFrame* render_frame,
+                   extensions::Dispatcher* extension_dispatcher);
+  ~ShellFrameHelper() override;
+
+  // RenderFrameObserver implementation.
+  void WillReleaseScriptContext(v8::Handle<v8::Context>, int world_id) override;
+
+ private:
+  extensions::Dispatcher* extension_dispatcher_;
+
+  DISALLOW_COPY_AND_ASSIGN(ShellFrameHelper);
+};
+
+ShellFrameHelper::ShellFrameHelper(content::RenderFrame* render_frame,
+                                   extensions::Dispatcher* extension_dispatcher)
+    : content::RenderFrameObserver(render_frame),
+      content::RenderFrameObserverTracker<ShellFrameHelper>(render_frame),
+      extension_dispatcher_(extension_dispatcher) {
+}
+
+ShellFrameHelper::~ShellFrameHelper() {
+}
+
+void ShellFrameHelper::WillReleaseScriptContext(v8::Handle<v8::Context> context,
+                                                int world_id) {
+  extension_dispatcher_->WillReleaseScriptContext(
+      render_frame()->GetWebFrame(), context, world_id);
+}
 
 RenderView* GetCurrentRenderView() {
   WebLocalFrame* frame = WebLocalFrame::frameForCurrentContext();
@@ -109,32 +156,29 @@ ShellContentRendererClient::~ShellContentRendererClient() {
 }
 
 void ShellContentRendererClient::RenderThreadStarted() {
+  content::RenderThread* thread = content::RenderThread::Get();
+
   // Change working directory.
   CommandLine* command_line = CommandLine::ForCurrentProcess();
   if (command_line->HasSwitch(switches::kWorkingDirectory)) {
     base::SetCurrentDirectory(
         command_line->GetSwitchValuePath(switches::kWorkingDirectory));
   }
+
+  extensions_client_.reset(CreateExtensionsClient());
+  extensions::ExtensionsClient::Set(extensions_client_.get());
+
+  extensions_renderer_client_.reset(new extensions::ShellExtensionsRendererClient);
+  extensions::ExtensionsRendererClient::Set(extensions_renderer_client_.get());
+
+  extension_dispatcher_delegate_.reset(new extensions::DefaultDispatcherDelegate());
+
+  // Must be initialized after ExtensionsRendererClient.
+  extension_dispatcher_.reset(
+                              new extensions::Dispatcher(extension_dispatcher_delegate_.get()));
+  thread->AddObserver(extension_dispatcher_.get());
+
 #if 0
-  int argc = 1;
-  char* argv[] = { const_cast<char*>("node"), NULL, NULL };
-  std::string node_main;
-
-  // Check if there is a 'node-main'.
-  if (command_line->HasSwitch(switches::kNodeMain)) {
-    argc++;
-    node_main = command_line->GetSwitchValueASCII(switches::kNodeMain);
-    argv[1] = const_cast<char*>(node_main.c_str());
-  }
-
-  // Initialize uv.
-  node::SetupUv(argc, argv);
-
-  std::string snapshot_path;
-  if (command_line->HasSwitch(switches::kSnapshot)) {
-    snapshot_path = command_line->GetSwitchValuePath(switches::kSnapshot).AsUTF8Unsafe();
-  }
-
   if (command_line->HasSwitch(switches::kDomStorageQuota)) {
     std::string quota_str = command_line->GetSwitchValueASCII(switches::kDomStorageQuota);
     int quota = 0;
@@ -142,46 +186,6 @@ void ShellContentRendererClient::RenderThreadStarted() {
       content::DOMStorageMap::SetQuotaOverride(quota * 1024 * 1024);
     }
   }
-  // Initialize node after render thread is started.
-  if (!snapshot_path.empty()) {
-    v8::V8::Initialize(); //FIXME
-  }else
-    v8::V8::Initialize();
-  v8::Isolate* isolate = v8::Isolate::GetCurrent();
-  v8::HandleScope scope(isolate);
-
-  // Install window bindings into node. The Window API is implemented in node's
-  // context, so when a Shell changes to a new location and destroy previous
-  // window context, our Window API can still work.
-  window_bindings_.reset(new nwapi::WindowBindings());
-  v8::RegisterExtension(window_bindings_.get());
-  const char* names[] = { "window_bindings.js" };
-  v8::ExtensionConfiguration extension_configuration(1, names);
-
-  node::g_context.Reset(v8::Isolate::GetCurrent(),
-                        v8::Context::New(v8::Isolate::GetCurrent(),
-                                         &extension_configuration));
-  v8::Local<v8::Context> context =
-    v8::Local<v8::Context>::New(isolate, node::g_context);
-  context->SetSecurityToken(v8::String::NewFromUtf8(isolate, "nw-token", v8::String::kInternalizedString));
-  context->Enter();
-
-  context->SetEmbedderData(0, v8::String::NewFromUtf8(isolate, "node", v8::String::kInternalizedString));
-
-  // Setup node.js.
-  node::SetupContext(argc, argv, context);
-
-#if !defined(OS_WIN)
-  v8::Local<v8::Script> script =
-    v8::Script::Compile(v8::String::NewFromUtf8(isolate, (
-      "process.__nwfds_to_close = [" +
-      base::StringPrintf("%d", base::GlobalDescriptors::GetInstance()->Get(kPrimaryIPCChannel)) +
-      "];").c_str()),
-                        v8::String::NewFromUtf8(isolate, "nwfds"));
-  CHECK(*script);
-  script->Run();
-#endif
-
 #endif //0
 
   // Start observers.
@@ -202,6 +206,9 @@ void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
 #if defined(ENABLE_PRINTING)
   new printing::PrintWebViewHelper(render_view);
 #endif
+
+  new extensions::ExtensionHelper(render_view, extension_dispatcher_.get());
+  extension_dispatcher_->OnRenderViewCreated(render_view);
 
   PasswordGenerationAgent* password_generation_agent =
       new PasswordGenerationAgent(render_view);
@@ -231,6 +238,9 @@ void ShellContentRendererClient::DidCreateScriptContext(
   VLOG(1) << "DidCreateScriptContext: " << url;
   InstallNodeSymbols(frame, context, url);
   creating_first_context_ = false;
+
+  extension_dispatcher_->DidCreateScriptContext(
+      frame, context, extension_group, world_id);
 }
 
 bool ShellContentRendererClient::goodForNode(blink::WebFrame* frame)
@@ -420,6 +430,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
       }
     }
   } else {
+#if 0
     int ret;
     RenderViewImpl* render_view = RenderViewImpl::FromWebView(frame->view());
 
@@ -429,6 +440,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
       render_view->Send(new ShellViewHostMsg_SetForceClose(
             render_view->GetRoutingID(), true, &ret));
     }
+#endif
   }
 }
 
@@ -516,5 +528,33 @@ void ShellContentRendererClient::windowOpenBegin(const blink::WebURL& url) {
 void ShellContentRendererClient::windowOpenEnd() {
   in_nav_cb_ = false;
 }
+
+ExtensionsClient* ShellContentRendererClient::CreateExtensionsClient() {
+  return new extensions::ShellExtensionsClient;
+}
+
+void ShellContentRendererClient::RenderFrameCreated(
+    content::RenderFrame* render_frame) {
+  // ShellFrameHelper destroys itself when the RenderFrame is destroyed.
+  new ShellFrameHelper(render_frame, extension_dispatcher_.get());
+
+  // TODO(jamescook): Do we need to add a new PepperHelper(render_frame) here?
+  // It doesn't seem necessary for either Pepper or NaCl.
+  // http://crbug.com/403004
+}
+
+content::BrowserPluginDelegate*
+ShellContentRendererClient::CreateBrowserPluginDelegate(
+    content::RenderFrame* render_frame,
+    const std::string& mime_type,
+    const GURL& original_url) {
+  if (mime_type == content::kBrowserPluginMimeType) {
+    return new extensions::ExtensionsGuestViewContainer(render_frame);
+  } else {
+    return new extensions::MimeHandlerViewContainer(
+        render_frame, mime_type, original_url);
+  }
+}
+
 
 }  // namespace content

@@ -37,6 +37,8 @@
 #include "content/nw/src/nw_package.h"
 #include "net/cert/x509_certificate.h"
 
+#include "extensions/browser/guest_view/guest_view_manager.h"
+
 #if defined(OS_WIN)
 #include "base/base_paths_win.h"
 #elif defined(OS_LINUX)
@@ -261,7 +263,7 @@ storage::SpecialStoragePolicy* ShellBrowserContext::GetSpecialStoragePolicy() {
 }
 
 BrowserPluginGuestManager* ShellBrowserContext::GetGuestManager() {
-  return NULL;
+  return extensions::GuestViewManager::FromBrowserContext(this);
 }
 
 PushMessagingService* ShellBrowserContext::GetPushMessagingService() {

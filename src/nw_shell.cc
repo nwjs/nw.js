@@ -76,6 +76,7 @@ using nw::NativeWindowAura;
 #endif
 
 #include "chrome/browser/printing/print_view_manager_basic.h"
+#include "extensions/common/extension_messages.h"
 
 using base::MessageLoop;
 
@@ -184,6 +185,8 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   enable_nodejs_ = GetPackage()->GetUseNode();
   VLOG(1) << "enable nodejs from manifest: " << enable_nodejs_;
 
+  extension_function_dispatcher_.reset(
+                                       new extensions::ExtensionFunctionDispatcher(web_contents->GetBrowserContext(), this));
   // Add web contents.
   web_contents_.reset(web_contents);
   content::WebContentsObserver::Observe(web_contents);
@@ -498,6 +501,7 @@ bool Shell::OnMessageReceived(const IPC::Message& message) {
   IPC_BEGIN_MESSAGE_MAP(Shell, message)
     IPC_MESSAGE_HANDLER(ShellViewHostMsg_UpdateDraggableRegions,
                         UpdateDraggableRegions)
+    IPC_MESSAGE_HANDLER(ExtensionHostMsg_Request, OnRequest)
     IPC_MESSAGE_UNHANDLED(handled = false)
   IPC_END_MESSAGE_MAP()
   return handled;
@@ -699,7 +703,7 @@ void Shell::Observe(int type,
     if (WIFEXITED(exit_code_))
       exit_code_ = WEXITSTATUS(exit_code_);
 #endif
-    MessageLoop::current()->PostTask(FROM_HERE, MessageLoop::QuitClosure());
+    //MessageLoop::current()->PostTask(FROM_HERE, MessageLoop::QuitClosure());
   }
 }
 
@@ -742,6 +746,20 @@ void Shell::Cleanup() {
   for (size_t i = 0; i < list.size(); ++i) {
     delete list[i];
   }
+}
+
+extensions::WindowController* Shell::GetExtensionWindowController() const {
+  return NULL;
+}
+
+content::WebContents* Shell::GetAssociatedWebContents() const {
+  return web_contents_.get();
+}
+
+void Shell::OnRequest(
+     const ExtensionHostMsg_Request_Params& params) {
+  extension_function_dispatcher_->Dispatch(
+      params, web_contents_->GetRenderViewHost());
 }
 
 }  // namespace content

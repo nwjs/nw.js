@@ -82,6 +82,14 @@
 #include "content/public/common/content_descriptors.h"
 #endif
 
+#include "extensions/common/constants.h"
+#include "extensions/common/extension.h"
+#include "extensions/common/switches.h"
+
+#include "content/nw/src/browser/shell_extension_system.h"
+#include "extensions/browser/extension_protocols.h"
+#include "extensions/browser/extension_message_filter.h"
+
 using base::FileDescriptor;
 
 namespace {
@@ -231,6 +239,8 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     command_line->AppendSwitch(switches::kEnableThreadedCompositing);
 #endif //FIXME
 
+  command_line->AppendSwitch(extensions::switches::kExtensionProcess);
+
   std::string user_agent;
   if (!command_line->HasSwitch(switches::kUserAgent) &&
       GetUserAgentManifest(&user_agent)) {
@@ -348,7 +358,7 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
   prefs->css_variables_enabled = true;
 
   // Disable plugins and cache by default.
-  prefs->plugins_enabled = false;
+  prefs->plugins_enabled = true;
   prefs->java_enabled = false;
 
   base::DictionaryValue* webkit;
@@ -368,6 +378,9 @@ bool ShellContentBrowserClient::ShouldTryToUseExistingProcessHost(
       BrowserContext* browser_context, const GURL& url) {
   ShellBrowserContext* shell_browser_context =
     static_cast<ShellBrowserContext*>(browser_context);
+  if (url.SchemeIs(content::kGuestScheme))
+    return false;
+
   if (shell_browser_context->pinning_renderer())
     return true;
   else
@@ -385,6 +398,12 @@ net::URLRequestContextGetter* ShellContentBrowserClient::CreateRequestContext(
     URLRequestInterceptorScopedVector request_interceptors) {
   ShellBrowserContext* shell_browser_context =
       ShellBrowserContextForBrowserContext(content_browser_context);
+  extensions::InfoMap* extension_info_map =
+      shell_browser_main_parts_->extension_system()->info_map();
+  (*protocol_handlers)[extensions::kExtensionScheme] =
+      linked_ptr<net::URLRequestJobFactory::ProtocolHandler>(
+            extensions::CreateExtensionProtocolHandler(false /* is_incognito */,
+                                         extension_info_map));
   return shell_browser_context->CreateRequestContext(protocol_handlers, request_interceptors.Pass());
 }
 
@@ -430,6 +449,8 @@ void ShellContentBrowserClient::RenderProcessWillLaunch(
 #if defined(ENABLE_PRINTING)
   host->AddFilter(new printing::PrintingMessageFilter(id));
 #endif
+  host->AddFilter(
+                  new extensions::ExtensionMessageFilter(id, browser_context()));
 }
 
 bool ShellContentBrowserClient::IsHandledURL(const GURL& url) {
@@ -442,6 +463,8 @@ bool ShellContentBrowserClient::IsHandledURL(const GURL& url) {
     url::kFileSystemScheme,
     url::kFileScheme,
     "app",
+    extensions::kExtensionScheme,
+    extensions::kExtensionResourceScheme,
   };
   for (size_t i = 0; i < arraysize(kProtocolList); ++i) {
     if (url.scheme() == kProtocolList[i])
@@ -545,6 +568,12 @@ void ShellContentBrowserClient::RequestPermission(
 DevToolsManagerDelegate*
 ShellContentBrowserClient::GetDevToolsManagerDelegate() {
   return new ShellDevToolsManagerDelegate(browser_context());
+}
+
+bool ShellContentBrowserClient::ShouldUseProcessPerSite(
+    content::BrowserContext* browser_context,
+    const GURL& effective_url) {
+  return effective_url.SchemeIs(content::kGuestScheme);
 }
 
 }  // namespace content

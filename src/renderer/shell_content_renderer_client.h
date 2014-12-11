@@ -30,6 +30,16 @@ namespace nwapi {
 class WindowBindings;
 }
 
+namespace extensions {
+
+class Dispatcher;
+class DispatcherDelegate;
+class ExtensionsClient;
+class ShellExtensionsRendererClient;
+class ShellRendererMainDelegate;
+
+}
+
 namespace autofill {
 class PageClickTracker;
 }
@@ -59,7 +69,23 @@ class ShellContentRendererClient : public ContentRendererClient {
 
   virtual void windowOpenBegin(const blink::WebURL& url) override;
   virtual void windowOpenEnd() override;
+  virtual void RenderFrameCreated(content::RenderFrame* render_frame) override;
+  content::BrowserPluginDelegate* CreateBrowserPluginDelegate(
+      content::RenderFrame* render_frame,
+      const std::string& mime_type,
+      const GURL& original_url) override;
+
+ protected:
+  // app_shell embedders may need custom extensions client interfaces.
+  // This class takes ownership of the returned object.
+  virtual extensions::ExtensionsClient* CreateExtensionsClient();
+
  private:
+  scoped_ptr<extensions::ExtensionsClient> extensions_client_;
+  scoped_ptr<extensions::ShellExtensionsRendererClient> extensions_renderer_client_;
+  scoped_ptr<extensions::DispatcherDelegate> extension_dispatcher_delegate_;
+  scoped_ptr<extensions::Dispatcher> extension_dispatcher_;
+
   scoped_ptr<ShellRenderProcessObserver> shell_observer_;
   scoped_ptr<nwapi::WindowBindings> window_bindings_;
 
