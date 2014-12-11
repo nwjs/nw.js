@@ -100,7 +100,7 @@ Tray.prototype.__defineSetter__('icon', function(val) {
 Tray.prototype.__defineSetter__('alticon', function(val) {
   v8_util.getHiddenValue(this, 'option').shadowAlticon = String(val);
   var real_path = val == '' ? '' : nw.getAbsolutePath(val);
-  this.handleSetter('alticon', 'SetAlticon', String, real_path);
+  this.handleSetter('alticon', 'SetAltIcon', String, real_path);
 });
 
 Tray.prototype.__defineGetter__('tooltip', function() {
