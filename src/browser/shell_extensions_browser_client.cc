@@ -19,7 +19,7 @@
 #include "extensions/browser/null_app_sorting.h"
 #include "extensions/browser/updater/null_extension_cache.h"
 #include "extensions/browser/url_request_util.h"
-#include "extensions/shell/browser/api/generated_api_registration.h"
+//#include "extensions/shell/browser/api/generated_api_registration.h"
 #include "extensions/shell/browser/shell_extension_host_delegate.h"
 #include "extensions/shell/browser/shell_extension_system_factory.h"
 #include "extensions/shell/browser/shell_runtime_api_delegate.h"

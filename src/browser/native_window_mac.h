@@ -41,43 +41,43 @@ class NativeWindowCocoa : public NativeWindow {
   virtual ~NativeWindowCocoa();
 
   // NativeWindow implementation.
-  virtual void Close() OVERRIDE;
-  virtual void Move(const gfx::Rect& pos) OVERRIDE;
-  virtual void Focus(bool focus) OVERRIDE;
-  virtual void Show() OVERRIDE;
-  virtual void Hide() OVERRIDE;
-  virtual void Maximize() OVERRIDE;
-  virtual void Unmaximize() OVERRIDE;
-  virtual void Minimize() OVERRIDE;
-  virtual void Restore() OVERRIDE;
-  virtual void SetFullscreen(bool fullscreen) OVERRIDE;
-  virtual bool IsFullscreen() OVERRIDE;
-  virtual void SetTransparent(bool transparent) OVERRIDE;
-  virtual void SetSize(const gfx::Size& size) OVERRIDE;
-  virtual gfx::Size GetSize() OVERRIDE;
-  virtual void SetMinimumSize(int width, int height) OVERRIDE;
-  virtual void SetMaximumSize(int width, int height) OVERRIDE;
-  virtual void SetResizable(bool resizable) OVERRIDE;
-  virtual void SetAlwaysOnTop(bool top) OVERRIDE;
-  virtual void SetShowInTaskbar(bool show = true) OVERRIDE;
-  virtual void SetVisibleOnAllWorkspaces(bool all_workspaces) OVERRIDE;
-  virtual void SetPosition(const std::string& position) OVERRIDE;
-  virtual void SetPosition(const gfx::Point& position) OVERRIDE;
-  virtual gfx::Point GetPosition() OVERRIDE;
-  virtual void SetTitle(const std::string& title) OVERRIDE;
-  virtual void FlashFrame(int count) OVERRIDE;
-  virtual void SetBadgeLabel(const std::string& badge) OVERRIDE;
-  virtual void SetProgressBar(double progress) OVERRIDE;
-  virtual void SetKiosk(bool kiosk) OVERRIDE;
-  virtual bool IsKiosk() OVERRIDE;
-  virtual void SetMenu(nwapi::Menu* menu) OVERRIDE;
-  virtual void ClearMenu() OVERRIDE;
+  virtual void Close() override;
+  virtual void Move(const gfx::Rect& pos) override;
+  virtual void Focus(bool focus) override;
+  virtual void Show() override;
+  virtual void Hide() override;
+  virtual void Maximize() override;
+  virtual void Unmaximize() override;
+  virtual void Minimize() override;
+  virtual void Restore() override;
+  virtual void SetFullscreen(bool fullscreen) override;
+  virtual bool IsFullscreen() override;
+  virtual void SetTransparent(bool transparent) override;
+  virtual void SetSize(const gfx::Size& size) override;
+  virtual gfx::Size GetSize() override;
+  virtual void SetMinimumSize(int width, int height) override;
+  virtual void SetMaximumSize(int width, int height) override;
+  virtual void SetResizable(bool resizable) override;
+  virtual void SetAlwaysOnTop(bool top) override;
+  virtual void SetShowInTaskbar(bool show = true) override;
+  virtual void SetVisibleOnAllWorkspaces(bool all_workspaces) override;
+  virtual void SetPosition(const std::string& position) override;
+  virtual void SetPosition(const gfx::Point& position) override;
+  virtual gfx::Point GetPosition() override;
+  virtual void SetTitle(const std::string& title) override;
+  virtual void FlashFrame(int count) override;
+  virtual void SetBadgeLabel(const std::string& badge) override;
+  virtual void SetProgressBar(double progress) override;
+  virtual void SetKiosk(bool kiosk) override;
+  virtual bool IsKiosk() override;
+  virtual void SetMenu(nwapi::Menu* menu) override;
+  virtual void ClearMenu() override;
   virtual void SetToolbarButtonEnabled(TOOLBAR_BUTTON button,
-                                       bool enabled) OVERRIDE;
-  virtual void SetToolbarUrlEntry(const std::string& url) OVERRIDE;
-  virtual void SetToolbarIsLoading(bool loading) OVERRIDE;
-  virtual void SetInitialFocus(bool accept_focus) OVERRIDE;
-  virtual bool InitialFocus() OVERRIDE;
+                                       bool enabled) override;
+  virtual void SetToolbarUrlEntry(const std::string& url) override;
+  virtual void SetToolbarIsLoading(bool loading) override;
+  virtual void SetInitialFocus(bool accept_focus) override;
+  virtual bool InitialFocus() override;
 
   // Called to handle a mouse event.
   void HandleMouseEvent(NSEvent* event);
@@ -91,11 +91,11 @@ class NativeWindowCocoa : public NativeWindow {
 
  protected:
   // NativeWindow implementation.
-  virtual void AddToolbar() OVERRIDE;
+  virtual void AddToolbar() override;
   virtual void UpdateDraggableRegions(
-      const std::vector<extensions::DraggableRegion>& regions) OVERRIDE;
+      const std::vector<extensions::DraggableRegion>& regions) override;
   virtual void HandleKeyboardEvent(
-      const content::NativeWebKeyboardEvent& event) OVERRIDE;
+      const content::NativeWebKeyboardEvent& event) override;
 
   void SetNonLionFullscreen(bool fullscreen);
 

@@ -24,7 +24,7 @@
 #include "base/strings/sys_string_conversions.h"
 #include "base/values.h"
 #import "chrome/browser/ui/cocoa/custom_frame_view.h"
-#import "chrome/browser/ui/cocoa/nsview_additions.h"
+#import "ui/base/cocoa/nsview_additions.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/app/app.h"
 #include "content/nw/src/browser/chrome_event_processing_window.h"
@@ -36,6 +36,7 @@
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/native_web_keyboard_event.h"
 #include "content/browser/renderer_host/render_widget_host_view_mac.h"
+#include "content/browser/renderer_host/render_view_host_impl.h"
 #include "content/public/browser/web_contents.h"
 #include "extensions/common/draggable_region.h"
 #include "third_party/skia/include/core/SkRegion.h"
@@ -502,11 +503,12 @@ void NativeWindowCocoa::Show() {
     // Chrome assumption is that becoming the first responder = you have focus
     // so we use this trick to refuse to become first responder during orderFrontRegardless
 
-    if (rwhv)
-      rwhv->SetTakesFocusOnlyOnMouseDown(true);
+    // TODO(roger)
+    // if (rwhv)
+    //  rwhv->SetTakesFocusOnlyOnMouseDown(true);
     [window() orderFrontRegardless];
-    if (rwhv)
-      rwhv->SetTakesFocusOnlyOnMouseDown(false);
+    // if (rwhv)
+    //  rwhv->SetTakesFocusOnlyOnMouseDown(false);
   }
   first_show_ = false;
 }
@@ -562,9 +564,10 @@ void NativeWindowCocoa::SetTransparent(bool transparent) {
   [window() setBackgroundColor:transparent ? [NSColor clearColor] : opaque_color_];
 
   content::RenderWidgetHostViewMac* rwhv = static_cast<content::RenderWidgetHostViewMac*>(shell_->web_contents()->GetRenderWidgetHostView());
+  content::RenderViewHostImpl* rvh = static_cast<content::RenderViewHostImpl*>(shell_->web_contents()->GetRenderViewHost());
 
   if (rwhv) {
-    rwhv->SetBackgroundOpaque(!transparent);
+    rvh->SetBackgroundOpaque(!transparent);
     [rwhv->background_layer_ setBackgroundColor:CGColorGetConstantColor(transparent ? kCGColorClear : kCGColorWhite)];
   }
   

@@ -237,6 +237,7 @@
         'src/browser/chrome_event_processing_window.h',
         'src/browser/file_select_helper.cc',
         'src/browser/file_select_helper.h',
+        'src/browser/file_select_helper_mac.mm',
         'src/browser/menubar_controller.cc',
         'src/browser/menubar_controller.h',
         'src/browser/menubar_view.cc',
@@ -478,8 +479,8 @@
             'src/api/menu/menu_delegate.h',
           ],
           'sources': [
-            '<(DEPTH)/chrome/browser/ui/cocoa/nsview_additions.h',
-            '<(DEPTH)/chrome/browser/ui/cocoa/nsview_additions.mm',
+            #'<(DEPTH)/chrome/browser/ui/cocoa/web_contents_modal_dialog_manager_cocoa.mm',
+            'src/browser/shell_web_contents_modal_dialog_manager.cc',
           ],
           'dependencies': [
             '<(DEPTH)/breakpad/breakpad.gyp:breakpad',
@@ -621,6 +622,13 @@
           'action_name': 'nw_components',
           'variables': {
             'grit_grd_file': 'src/resources/component_extension_resources.grd',
+          },
+          'includes': [ '../../build/grit_action.gypi' ],
+        },
+        {
+          'action_name': 'res_from_chrome',
+          'variables': {
+            'grit_grd_file': '../../chrome/app/generated_resources.grd',
           },
           'includes': [ '../../build/grit_action.gypi' ],
         },
