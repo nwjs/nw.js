@@ -20,7 +20,7 @@
 #include "extensions/common/permissions/permissions_info.h"
 #include "extensions/common/permissions/permissions_provider.h"
 #include "extensions/common/url_pattern_set.h"
-#include "extensions/shell/common/api/generated_schemas.h"
+//#include "extensions/shell/common/api/generated_schemas.h"
 //#include "grit/app_shell_resources.h"
 #include "grit/extensions_resources.h"
 

@@ -55,14 +55,14 @@
 using base::FilePath;
 
 #if defined(OS_MACOSX)
-#include "components/breakpad/app/breakpad_mac.h"
+#include "components/crash/app/breakpad_mac.h"
 #include "content/nw/src/paths_mac.h"
 #endif  // OS_MACOSX
 
 #if defined(OS_WIN)
 #include "base/logging_win.h"
 #include <initguid.h>
-#include "components/breakpad/app/breakpad_win.h"
+#include "components/crash/app/breakpad_win.h"
 #endif
 
 #if defined(OS_POSIX) && !defined(OS_MACOSX)

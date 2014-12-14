@@ -31,10 +31,10 @@ class AutofillPopupViewBridge : public AutofillPopupView {
   virtual ~AutofillPopupViewBridge();
 
   // AutofillPopupView implementation.
-  virtual void Hide() OVERRIDE;
-  virtual void Show() OVERRIDE;
-  virtual void InvalidateRow(size_t row) OVERRIDE;
-  virtual void UpdateBoundsAndRedrawPopup() OVERRIDE;
+  virtual void Hide() override;
+  virtual void Show() override;
+  virtual void InvalidateRow(size_t row) override;
+  virtual void UpdateBoundsAndRedrawPopup() override;
 
   // Set the initial bounds of the popup, including its placement.
   void SetInitialBounds();

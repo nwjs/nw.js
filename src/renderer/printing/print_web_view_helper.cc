@@ -19,7 +19,7 @@
 #include "chrome/common/chrome_switches.h"
 #include "chrome/common/print_messages.h"
 #include "chrome/common/render_messages.h"
-#include "chrome/grit/browser_resources.h"
+//#include "chrome/grit/browser_resources.h"
 #include "chrome/renderer/prerender/prerender_helper.h"
 #include "content/public/common/web_preferences.h"
 #include "content/public/renderer/render_frame.h"
