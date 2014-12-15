@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "components/breakpad/app/hard_error_handler_win.h"
+#include "components/crash/app/hard_error_handler_win.h"
 
 #if defined(_WIN32_WINNT_WIN8) && _MSC_VER < 1700
 // The Windows 8 SDK defines FACILITY_VISUALCPP in winerror.h, and in

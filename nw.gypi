@@ -327,8 +327,6 @@
         'src/common/shell_extensions_client.cc',
         'src/common/shell_extensions_client.h',
         'src/breakpad_linux_impl.h',
-        'src/hard_error_handler_win.cc',
-        'src/hard_error_handler_win.h',
         'src/geolocation/shell_access_token_store.cc',
         'src/geolocation/shell_access_token_store.h',
 #        'src/browser/media_capture_devices_dispatcher.cc',
@@ -497,6 +495,7 @@
           'sources': [
             'src/browser/color_chooser_dialog.cc',
             'src/browser/color_chooser_dialog.h',
+            '<(DEPTH)/chrome/browser/printing/pdf_to_emf_converter.cc',
           ],
           'resource_include_dirs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit',
@@ -515,7 +514,7 @@
               },
             },
           },
-          'msvs_disabled_warnings': [ 4267, 4800, 4819 ],
+          'msvs_disabled_warnings': [ 4267, 4800, 4819, 4189 ],
         }],  # OS=="win"
       ],
     },

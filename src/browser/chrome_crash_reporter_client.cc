@@ -30,7 +30,7 @@
 #include "chrome/installer/util/google_chrome_sxs_distribution.h"
 #include "chrome/installer/util/install_util.h"
 #include "chrome/installer/util/util_constants.h"
-#include "policy/policy_constants.h"
+//#include "policy/policy_constants.h"
 #endif
 
 #if defined(OS_POSIX) && !defined(OS_MACOSX) && !defined(OS_IOS)
@@ -128,8 +128,10 @@ void ChromeCrashReporterClient::GetProductNameAndVersion(
     *version = base::ASCIIToUTF16("0.0.0.0-devel");
   }
 
+#if 0
   GoogleUpdateSettings::GetChromeChannelAndModifiers(
       !GetIsPerUserInstall(exe_path), channel_name);
+#endif
 }
 
 bool ChromeCrashReporterClient::ShouldShowRestartDialog(base::string16* title,
@@ -171,22 +173,25 @@ bool ChromeCrashReporterClient::AboutToRestart() {
 
 bool ChromeCrashReporterClient::GetDeferredUploadsSupported(
     bool is_per_user_install) {
+#if 0
   Version update_version = GoogleUpdateSettings::GetGoogleUpdateVersion(
       !is_per_user_install);
   if (!update_version.IsValid() ||
       update_version.IsOlderThan(std::string(kMinUpdateVersion)))
     return false;
-
+#endif
   return true;
 }
 
 bool ChromeCrashReporterClient::GetIsPerUserInstall(
     const base::FilePath& exe_path) {
-  return InstallUtil::IsPerUserInstall(exe_path.value().c_str());
+  return true;
 }
 
 bool ChromeCrashReporterClient::GetShouldDumpLargerDumps(
     bool is_per_user_install) {
+  return true;
+#if 0
   base::string16 channel_name =
       GoogleUpdateSettings::GetChromeChannel(!is_per_user_install);
 
@@ -194,6 +199,7 @@ bool ChromeCrashReporterClient::GetShouldDumpLargerDumps(
   return (channel_name == installer::kChromeChannelDev ||
           channel_name == installer::kChromeChannelBeta ||
           channel_name == GoogleChromeSxSDistribution::ChannelName());
+#endif
 }
 
 int ChromeCrashReporterClient::GetResultCodeRespawnFailed() {
@@ -218,7 +224,7 @@ void ChromeCrashReporterClient::InitBrowserCrashDumpsRegKey() {
   // For now, we're willing to live with that risk.
   if (base::strings::SafeSPrintf(g_browser_crash_dump_prefix,
                                  kBrowserCrashDumpPrefixTemplate,
-                                 chrome::kChromeVersion,
+                                 "version",
                                  ::GetCurrentProcessId(),
                                  ::GetTickCount()) <= 0) {
     NOTREACHED();
@@ -258,6 +264,7 @@ bool ChromeCrashReporterClient::ReportingIsEnforcedByPolicy(
 // point, we read the corresponding registry key directly. The return status
 // indicates whether policy data was successfully read. If it is true,
 // |breakpad_enabled| contains the value set by policy.
+#if 0
   base::string16 key_name =
       base::UTF8ToUTF16(policy::key::kMetricsReportingEnabled);
   DWORD value = 0;
@@ -274,7 +281,7 @@ bool ChromeCrashReporterClient::ReportingIsEnforcedByPolicy(
     *breakpad_enabled = value != 0;
     return true;
   }
-
+#endif
   return false;
 }
 #endif  // defined(OS_WIN)
