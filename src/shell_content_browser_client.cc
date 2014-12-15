@@ -90,7 +90,7 @@
 #include "extensions/browser/extension_protocols.h"
 #include "extensions/browser/extension_message_filter.h"
 
-using base::FileDescriptor;
+//using base::FileDescriptor;
 
 namespace {
 

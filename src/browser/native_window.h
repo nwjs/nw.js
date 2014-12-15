@@ -131,11 +131,11 @@ class NativeWindow {
       const content::NativeWebKeyboardEvent& event) = 0;
 
 #if defined(OS_WIN)
-  virtual gfx::NativeView GetHostView() const OVERRIDE = 0;
-  virtual gfx::Point GetDialogPosition(const gfx::Size& size) OVERRIDE = 0;
-  virtual void AddObserver(web_modal::ModalDialogHostObserver* observer) OVERRIDE = 0;
-  virtual void RemoveObserver(web_modal::ModalDialogHostObserver* observer) OVERRIDE = 0;
-  virtual gfx::Size GetMaximumDialogSize() OVERRIDE = 0;
+  virtual gfx::NativeView GetHostView() const override = 0;
+  virtual gfx::Point GetDialogPosition(const gfx::Size& size) override = 0;
+  virtual void AddObserver(web_modal::ModalDialogHostObserver* observer) override = 0;
+  virtual void RemoveObserver(web_modal::ModalDialogHostObserver* observer) override = 0;
+  virtual gfx::Size GetMaximumDialogSize() override = 0;
 #endif
   content::Shell* shell() const { return shell_.get(); }
   content::WebContents* web_contents() const;
