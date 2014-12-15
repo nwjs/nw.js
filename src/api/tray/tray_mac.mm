@@ -22,6 +22,7 @@
 
 #include "base/values.h"
 #import <Cocoa/Cocoa.h>
+#include "ui/gfx/screen.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"
 
@@ -40,6 +41,15 @@
 }
 - (void)onClick:(id)sender {
     base::ListValue args;
+    base::DictionaryValue* data = new base::DictionaryValue;
+    // Get the position of the frame of the NSStatusItem
+    NSPoint pos = ([[[NSApp currentEvent] window] frame]).origin;
+    // Flip coordinates to gfx (0,0 in top-left corner) using primary screen.
+    NSScreen* screen = [[NSScreen screens] objectAtIndex:0];
+    pos.y = NSMaxY([screen frame]) - pos.y;
+    data->SetInteger("x", pos.x);
+    data->SetInteger("y", pos.y);
+    args.Append(data);
     tray_->dispatcher_host()->SendEvent(tray_,"click",args);
 }
 @end
