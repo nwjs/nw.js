@@ -220,6 +220,8 @@ std::string ShellContentBrowserClient::GetApplicationLocale() {
 void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     CommandLine* command_line,
     int child_process_id) {
+  bool is_isolated_guest = false;
+
 #if defined(OS_MACOSX)
   if (breakpad::IsCrashReporterEnabled()) {
     command_line->AppendSwitch(switches::kEnableCrashReporter);
@@ -269,9 +271,12 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
         }
       }
     }
+    content::RenderProcessHost* process = content::RenderProcessHost::FromID(child_process_id);
+    if (process && process->IsIsolatedGuest())
+      is_isolated_guest = true;
   }
   nw::Package* package = shell_browser_main_parts()->package();
-  if (package && package->GetUseNode()) {
+  if (package && package->GetUseNode() && !is_isolated_guest) {
     // Allow node.js
     command_line->AppendSwitch(switches::kNodejs);
 
