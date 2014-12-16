@@ -40,7 +40,7 @@ using blink::WebView;
 namespace {
 RenderView* GetRenderView(v8::Handle<v8::Context> ctx) {
   WebLocalFrame* frame = WebLocalFrame::frameForContext(ctx);
-  if (!frame)
+  if (!frame || !frame->isNodeJS())
     return NULL;
 
   WebView* view = frame->view();
