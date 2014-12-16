@@ -1,3 +1,15 @@
+0.11.3 / 12-16-2014
+===================
+- new method in 'new-win-policy' event handler to control the options for new popup windows
+- Fix: nw methods cannot be called from normal frames
+- Extend Tray click event with position (Thanks to Marco Fabbri) (#1874)
+- [OSX] Fix Window.focus() not taking focus (#2724)
+- Add API methods and support for styling of icons (Tray, MenuItem) under Mac OS X (Yosemite) Dark Mode (#2775)
+- [OSX] Fix alticon property of Tray not being updated properly (#703)
+- Add Window.setVisibleOnAllWorkspaces API (#2722)
+- Fix #2469: Changed Window.open to ignore slashes in parameters
+- fix crash in window.open in some cases
+
 0.11.2 / 11-26-2014
 ===================
 - Support window transparency (#132, Thanks to Jefry Tedjokusumo)
