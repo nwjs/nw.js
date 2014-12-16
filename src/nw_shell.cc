@@ -696,14 +696,19 @@ void Shell::Observe(int type,
       window()->SetTitle(base::UTF16ToUTF8(text));
     }
   } else if (type == NOTIFICATION_RENDERER_PROCESS_CLOSED) {
+    base::ProcessHandle handle =
+          content::Details<content::RenderProcessHost::RendererClosedDetails>(
+              details)->handle;
     exit_code_ =
-        content::Details<content::RenderProcessHost::RendererClosedDetails>(
-            details)->exit_code;
+      content::Details<content::RenderProcessHost::RendererClosedDetails>(details)->exit_code;
 #if defined(OS_POSIX)
     if (WIFEXITED(exit_code_))
       exit_code_ = WEXITSTATUS(exit_code_);
 #endif
-    //MessageLoop::current()->PostTask(FROM_HERE, MessageLoop::QuitClosure());
+    if (handle == web_contents_->GetRenderProcessHost()->GetHandle()) {
+      set_force_close(true);
+      window()->Close();
+    }
   }
 }
 
