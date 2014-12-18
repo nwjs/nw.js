@@ -245,6 +245,12 @@ bool Package::GetUseNode() {
   return use_node;
 }
 
+bool Package::GetUseExtension() {
+  bool use_ext = true;
+  root()->GetBoolean(switches::kChromeExtension, &use_ext);
+  return use_ext;
+}
+
 base::DictionaryValue* Package::window() {
   base::DictionaryValue* window;
   root()->GetDictionaryWithoutPathExpansion(switches::kmWindow, &window);

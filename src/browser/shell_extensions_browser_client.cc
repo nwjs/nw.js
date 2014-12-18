@@ -25,6 +25,7 @@
 #include "extensions/shell/browser/shell_runtime_api_delegate.h"
 
 #include "content/nw/src/browser/shell_component_extension_resource_manager.h"
+#include "content/nw/src/browser/shell_extensions_api_client.h"
 
 using content::BrowserContext;
 using content::BrowserThread;
@@ -42,7 +43,7 @@ void RegisterPrefs(user_prefs::PrefRegistrySyncable* registry) {
 ShellExtensionsBrowserClient::ShellExtensionsBrowserClient(
     BrowserContext* context)
     : browser_context_(context),
-      api_client_(new ExtensionsAPIClient),
+      api_client_(new ShellExtensionsAPIClient),
       extension_cache_(new NullExtensionCache()) {
   // Set up the preferences service.
   base::PrefServiceFactory factory;

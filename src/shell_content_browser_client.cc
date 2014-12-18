@@ -241,7 +241,9 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     command_line->AppendSwitch(switches::kEnableThreadedCompositing);
 #endif //FIXME
 
-  command_line->AppendSwitch(extensions::switches::kExtensionProcess);
+  nw::Package* package = shell_browser_main_parts()->package();
+  if (package && package->GetUseExtension())
+    command_line->AppendSwitch(extensions::switches::kExtensionProcess);
 
   std::string user_agent;
   if (!command_line->HasSwitch(switches::kUserAgent) &&
@@ -275,7 +277,7 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     if (process && process->IsIsolatedGuest())
       is_isolated_guest = true;
   }
-  nw::Package* package = shell_browser_main_parts()->package();
+
   if (package && package->GetUseNode() && !is_isolated_guest) {
     // Allow node.js
     command_line->AppendSwitch(switches::kNodejs);

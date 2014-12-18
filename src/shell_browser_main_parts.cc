@@ -215,8 +215,6 @@ void ShellBrowserMainParts::Init() {
   //this will be reset to false before entering the message loop
   base::ThreadRestrictions::SetIOAllowed(true);
 
-  CommandLine& command_line = *CommandLine::ForCurrentProcess();
-
   browser_context_.reset(new ShellBrowserContext(false, package()));
   browser_context_->PreMainMessageLoopRun();
 

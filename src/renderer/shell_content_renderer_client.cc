@@ -71,6 +71,7 @@
 #include "nw/id/commit.h"
 
 #include "extensions/common/extensions_client.h"
+#include "extensions/common/switches.h"
 #include "extensions/renderer/default_dispatcher_delegate.h"
 #include "extensions/renderer/dispatcher.h"
 #include "extensions/renderer/extension_helper.h"
@@ -165,18 +166,20 @@ void ShellContentRendererClient::RenderThreadStarted() {
         command_line->GetSwitchValuePath(switches::kWorkingDirectory));
   }
 
-  extensions_client_.reset(CreateExtensionsClient());
-  extensions::ExtensionsClient::Set(extensions_client_.get());
+  if (command_line->HasSwitch(extensions::switches::kExtensionProcess)) {
+    extensions_client_.reset(CreateExtensionsClient());
+    extensions::ExtensionsClient::Set(extensions_client_.get());
 
-  extensions_renderer_client_.reset(new extensions::ShellExtensionsRendererClient);
-  extensions::ExtensionsRendererClient::Set(extensions_renderer_client_.get());
+    extensions_renderer_client_.reset(new extensions::ShellExtensionsRendererClient);
+    extensions::ExtensionsRendererClient::Set(extensions_renderer_client_.get());
 
-  extension_dispatcher_delegate_.reset(new extensions::DefaultDispatcherDelegate());
+    extension_dispatcher_delegate_.reset(new extensions::DefaultDispatcherDelegate());
 
-  // Must be initialized after ExtensionsRendererClient.
-  extension_dispatcher_.reset(
-                              new extensions::Dispatcher(extension_dispatcher_delegate_.get()));
-  thread->AddObserver(extension_dispatcher_.get());
+    // Must be initialized after ExtensionsRendererClient.
+    extension_dispatcher_.reset(
+                                new extensions::Dispatcher(extension_dispatcher_delegate_.get()));
+    thread->AddObserver(extension_dispatcher_.get());
+  }
 
 #if 0
   if (command_line->HasSwitch(switches::kDomStorageQuota)) {
@@ -207,8 +210,10 @@ void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
   new printing::PrintWebViewHelper(render_view);
 #endif
 
-  new extensions::ExtensionHelper(render_view, extension_dispatcher_.get());
-  extension_dispatcher_->OnRenderViewCreated(render_view);
+  if (extension_dispatcher_.get()) {
+    new extensions::ExtensionHelper(render_view, extension_dispatcher_.get());
+    extension_dispatcher_->OnRenderViewCreated(render_view);
+  }
 
   PasswordGenerationAgent* password_generation_agent =
       new PasswordGenerationAgent(render_view);
@@ -239,8 +244,8 @@ void ShellContentRendererClient::DidCreateScriptContext(
   InstallNodeSymbols(frame, context, url);
   creating_first_context_ = false;
 
-  extension_dispatcher_->DidCreateScriptContext(
-      frame, context, extension_group, world_id);
+  if (extension_dispatcher_.get())
+    extension_dispatcher_->DidCreateScriptContext(frame, context, extension_group, world_id);
 }
 
 bool ShellContentRendererClient::goodForNode(blink::WebFrame* frame)
@@ -535,8 +540,10 @@ ExtensionsClient* ShellContentRendererClient::CreateExtensionsClient() {
 
 void ShellContentRendererClient::RenderFrameCreated(
     content::RenderFrame* render_frame) {
-  // ShellFrameHelper destroys itself when the RenderFrame is destroyed.
-  new ShellFrameHelper(render_frame, extension_dispatcher_.get());
+  // ShellFrameHelper destroys itself when the RenderFrame is
+  // destroyed.
+  if (extension_dispatcher_.get())
+    new ShellFrameHelper(render_frame, extension_dispatcher_.get());
 
   // TODO(jamescook): Do we need to add a new PepperHelper(render_frame) here?
   // It doesn't seem necessary for either Pepper or NaCl.
