@@ -525,34 +525,41 @@ ShellContentBrowserClient::CreateQuotaPermissionContext() {
   return new ShellQuotaPermissionContext();
 }
 
-#if 0
-void CancelDesktopNotification(int render_process_id, int render_frame_id, int notification_id) {
+#if 1
+void CancelDesktopNotification(int render_process_id, int notification_id) {
   nw::NotificationManager *notificationManager = nw::NotificationManager::getSingleton();
   if (notificationManager == NULL) {
     NOTIMPLEMENTED();
     return;
   }
-  notificationManager->CancelDesktopNotification(render_process_id, render_frame_id, notification_id);
+  notificationManager->CancelDesktopNotification(render_process_id, notification_id);
 }
 
+blink::WebNotificationPermission
+ShellContentBrowserClient::CheckDesktopNotificationPermission(
+    const GURL& source_origin,
+    content::ResourceContext* context,
+    int render_process_id) {
+  return blink::WebNotificationPermissionAllowed;
+}
 
 void ShellContentBrowserClient::ShowDesktopNotification(
       const ShowDesktopNotificationHostMsgParams& params,
-      RenderFrameHost* render_frame_host,
+      BrowserContext* browser_context,
+      int render_process_id,
       scoped_ptr<DesktopNotificationDelegate> delegate,
       base::Closure* cancel_callback) {
-#if defined(ENABLE_NOTIFICATIONS)
+#if 1
   nw::NotificationManager *notificationManager = nw::NotificationManager::getSingleton();
   if (notificationManager == NULL) {
     NOTIMPLEMENTED();
     return;
   }
-  content::RenderProcessHost* process = render_frame_host->GetProcess();
+  content::RenderProcessHost* process = content::RenderProcessHost::FromID(render_process_id);
   notificationManager->AddDesktopNotification(params, process->GetID(),
-                                              render_frame_host->GetRoutingID(),
                                               delegate->notification_id(),
                                               false);
-  *cancel_callback = base::Bind(&CancelDesktopNotification, process->GetID(), render_frame_host->GetRoutingID(), delegate->notification_id());
+  *cancel_callback = base::Bind(&CancelDesktopNotification, process->GetID(), delegate->notification_id());
 #else
   NOTIMPLEMENTED();
 #endif

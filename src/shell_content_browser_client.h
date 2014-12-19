@@ -100,13 +100,18 @@ class ShellContentBrowserClient : public ContentBrowserClient {
     const GURL& effective_url) override;
 
   //Notification
-#if 0 //FIXME
+  blink::WebNotificationPermission CheckDesktopNotificationPermission(
+      const GURL& source_origin,
+      content::ResourceContext* context,
+      int render_process_id) override;
+
   virtual void ShowDesktopNotification(
       const ShowDesktopNotificationHostMsgParams& params,
-      RenderFrameHost* render_frame_host,
+      BrowserContext* browser_context,
+      int render_process_id,
       scoped_ptr<DesktopNotificationDelegate> delegate,
       base::Closure* cancel_callback) override;
-#endif
+
   virtual void RequestPermission(
                                  content::PermissionType permission,
                                  content::WebContents* web_contents,

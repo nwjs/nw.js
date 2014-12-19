@@ -45,27 +45,20 @@ protected:
   // map used to stored desktop notification params used by ImageDownloadCallback
   std::map<int, DesktopNotificationParams> desktop_notification_params_;
 
-  // internal function for AddDesktopNotification
-  virtual bool AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-                                      const int render_process_id, const int render_frame_id,
-                                      const int notification_id, const bool worker,
-                                      const std::vector<SkBitmap>* bitmaps);
-
 public:
   virtual ~NotificationManager();
   static NotificationManager* getSingleton();
   virtual bool AddDesktopNotification(
                                       const content::ShowDesktopNotificationHostMsgParams& params,
                                       const int render_process_id,
-                                      const int render_frame_id,
                                       const int notification_id,
                                       const bool worker) = 0;
-  virtual bool CancelDesktopNotification(int render_process_id, int render_frame_id, int notification_id) = 0;
+  virtual bool CancelDesktopNotification(int render_process_id, int notification_id) = 0;
 
-  bool DesktopNotificationPostClick(int render_process_id, int render_frame_id, int notification_id);
-  bool DesktopNotificationPostClose(int render_process_id, int render_frame_id, int notification_id, bool by_user);
-  bool DesktopNotificationPostDisplay(int render_process_id, int render_frame_id, int notification_id);
-  bool DesktopNotificationPostError(int render_process_id, int render_frame_id, int notification_id, const base::string16& message);
+  bool DesktopNotificationPostClick(int render_process_id, int notification_id);
+  bool DesktopNotificationPostClose(int render_process_id, int notification_id, bool by_user);
+  bool DesktopNotificationPostDisplay(int render_process_id, int notification_id);
+  bool DesktopNotificationPostError(int render_process_id, int notification_id, const base::string16& message);
 
 };
 
