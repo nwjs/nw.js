@@ -51,7 +51,7 @@ Tray::Tray(int id,
 
   std::string tooltip;
   if (option.GetString("tooltip", &tooltip))
-    SetTitle(tooltip);
+    SetTooltip(tooltip);
 
   int menu_id;
   if (option.GetInteger("menu", &menu_id))

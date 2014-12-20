@@ -64,7 +64,7 @@ class Tray : public Base {
   void Destroy();
   void SetTitle(const std::string& title);
   void SetIcon(const std::string& icon_path);
-  void SetTooltip(const std::string& title);
+  void SetTooltip(const std::string& tooltip);
   void SetMenu(Menu* menu);
   void Remove();
   // Alternate icons only work with Macs
