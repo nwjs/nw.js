@@ -22,6 +22,8 @@
 #include "chrome/common/env_vars.h"
 #include "chrome/installer/util/google_update_settings.h"
 
+#include "content/nw/src/nw_version.h"
+
 #if defined(OS_WIN)
 #include <windows.h>
 
@@ -35,7 +37,7 @@
 
 #if defined(OS_POSIX) && !defined(OS_MACOSX) && !defined(OS_IOS)
 #include "chrome/browser/crash_upload_list.h"
-#include "chrome/common/chrome_version_info_values.h"
+//#include "chrome/common/chrome_version_info_values.h"
 #endif
 
 #if defined(OS_POSIX)
@@ -292,19 +294,8 @@ void ChromeCrashReporterClient::GetProductNameAndVersion(
     const char** version) {
   DCHECK(product_name);
   DCHECK(version);
-#if defined(OS_ANDROID)
-  *product_name = "Chrome_Android";
-#elif defined(OS_CHROMEOS)
-  *product_name = "Chrome_ChromeOS";
-#else  // OS_LINUX
-#if !defined(ADDRESS_SANITIZER)
-  *product_name = "Chrome_Linux";
-#else
-  *product_name = "Chrome_Linux_ASan";
-#endif
-#endif
-
-  *version = PRODUCT_VERSION;
+  *product_name = "NW.JS";
+  *version = NW_VERSION_STRING;
 }
 
 base::FilePath ChromeCrashReporterClient::GetReporterLogFilename() {
