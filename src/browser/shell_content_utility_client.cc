@@ -36,9 +36,11 @@ bool Send(IPC::Message* message) {
   return content::UtilityThread::Get()->Send(message);
 }
 
+#if 0
 void ReleaseProcessIfNeeded() {
   content::UtilityThread::Get()->ReleaseProcessIfNeeded();
 }
+#endif
 
 }  // namespace
 

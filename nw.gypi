@@ -325,10 +325,6 @@
         'src/browser/chrome_crash_reporter_client.cc',
         'src/browser/chrome_crash_reporter_client.h',
         'src/browser/chrome_crash_reporter_client_mac.mm',
-        'src/browser/shell_content_utility_client.cc',
-        'src/browser/shell_content_utility_client.h',
-        'src/browser/printing_handler.cc',
-        'src/browser/printing_handler.h',
         'src/common/print_messages.cc',
         'src/common/print_messages.h',
         'src/common/shell_switches.cc',
@@ -504,6 +500,10 @@
           'sources': [
             'src/browser/color_chooser_dialog.cc',
             'src/browser/color_chooser_dialog.h',
+            'src/browser/printing_handler.cc',
+            'src/browser/printing_handler.h',
+            'src/browser/shell_content_utility_client.cc',
+            'src/browser/shell_content_utility_client.h',
             '<(DEPTH)/chrome/browser/printing/pdf_to_emf_converter.cc',
           ],
           'resource_include_dirs': [

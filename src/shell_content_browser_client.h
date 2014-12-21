@@ -48,6 +48,10 @@ class ShellContentBrowserClient : public ContentBrowserClient {
 #if 0
   virtual MediaObserver* GetMediaObserver() override;
 #endif
+  virtual bool CheckMediaAccessPermission(BrowserContext* browser_context,
+                                        const GURL& security_origin,
+                                        MediaStreamType type) override;
+
   virtual void BrowserURLHandlerCreated(BrowserURLHandler* handler) override;
   virtual bool IsHandledURL(const GURL& url) override;
   virtual bool ShouldTryToUseExistingProcessHost(

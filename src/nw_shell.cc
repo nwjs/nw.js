@@ -74,11 +74,33 @@
 #include "ui/views/controls/webview/webview.h"
 using nw::NativeWindowAura;
 #endif
+#include "content/public/browser/media_capture_devices.h"
 
 #include "chrome/browser/printing/print_view_manager_basic.h"
 #include "extensions/common/extension_messages.h"
 
 using base::MessageLoop;
+
+using content::MediaCaptureDevices;
+using content::MediaStreamDevice;
+using content::MediaStreamDevices;
+using content::MediaStreamUI;
+
+namespace {
+
+const MediaStreamDevice* GetRequestedDeviceOrDefault(
+    const MediaStreamDevices& devices,
+    const std::string& requested_device_id) {
+  if (!requested_device_id.empty())
+    return devices.FindById(requested_device_id);
+
+  if (!devices.empty())
+    return &devices[0];
+
+  return NULL;
+}
+
+}
 
 namespace content {
 
@@ -682,6 +704,30 @@ void Shell::RequestMediaAccessPermission(
       WebContents* web_contents,
       const MediaStreamRequest& request,
       const MediaResponseCallback& callback) {
+  MediaStreamDevices devices;
+
+  if (request.audio_type == content::MEDIA_DEVICE_AUDIO_CAPTURE) {
+    const MediaStreamDevice* device = GetRequestedDeviceOrDefault(
+        MediaCaptureDevices::GetInstance()->GetAudioCaptureDevices(),
+        request.requested_audio_device_id);
+    if (device)
+      devices.push_back(*device);
+  }
+
+  if (request.video_type == content::MEDIA_DEVICE_VIDEO_CAPTURE) {
+    const MediaStreamDevice* device = GetRequestedDeviceOrDefault(
+        MediaCaptureDevices::GetInstance()->GetVideoCaptureDevices(),
+        request.requested_video_device_id);
+    if (device)
+      devices.push_back(*device);
+  }
+
+  // TODO(jamescook): Should we show a recording icon somewhere? If so, where?
+  scoped_ptr<MediaStreamUI> ui;
+  callback.Run(devices,
+               devices.empty() ? content::MEDIA_DEVICE_INVALID_STATE
+                               : content::MEDIA_DEVICE_OK,
+               ui.Pass());
 }
 
 void Shell::Observe(int type,
@@ -765,6 +811,12 @@ void Shell::OnRequest(
      const ExtensionHostMsg_Request_Params& params) {
   extension_function_dispatcher_->Dispatch(
       params, web_contents_->GetRenderViewHost());
+}
+
+bool Shell::CheckMediaAccessPermission(WebContents* web_contents,
+                                       const GURL& security_origin,
+                                       MediaStreamType type) {
+  return true;
 }
 
 }  // namespace content

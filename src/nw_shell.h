@@ -150,7 +150,9 @@ class Shell : public WebContentsDelegate,
   virtual bool IsWebContentsVisible(content::WebContents* web_contents) override;
   virtual web_modal::WebContentsModalDialogHost* GetWebContentsModalDialogHost() override;
 #endif
-
+  virtual bool CheckMediaAccessPermission(WebContents* web_contents,
+                                          const GURL& security_origin,
+                                          MediaStreamType type) override;
  protected:
   // content::WebContentsObserver implementation.
   virtual bool OnMessageReceived(const IPC::Message& message) override;
