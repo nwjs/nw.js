@@ -32,14 +32,16 @@ nw_readme_md = os.path.join(os.path.dirname(__file__), '..', 'README.md')
 f = open(nw_readme_md)
 
 for line in f:
-  if re.match('\[v\d*.\d*.\d*[\s\S]*\]', line):
-    target = line.split()[0][2:]
+  version = re.search('v\d+.\d+.\d+', line)
+  if version:
+    target = version.group()
     break
+
 
 import optparse
 parser = optparse.OptionParser()
 parser.add_option('-t','--target',
-                  help='the node-webkit verison')
+                  help='the node-webkit version')
 opts, args = parser.parse_args()
 if opts.target:
   target = opts.target
