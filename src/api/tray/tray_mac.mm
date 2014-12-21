@@ -75,11 +75,9 @@ void Tray::Destroy() {
 }
 
 void Tray::SetTitle(const std::string& title) {
-  // note: this is kind of mad but the first time we set the title property 
-  // we have to call setTitle twice or it won't get the right dimensions
-  if ([status_item_ title] != nil) {
-    [status_item_ setTitle:[NSString stringWithUTF8String:title.c_str()]];
-  }
+  // note: this is kind of mad but we have to call setTitle twice or 
+  // it won't get the dimensions right
+  [status_item_ setTitle:[NSString stringWithUTF8String:title.c_str()]];
   [status_item_ setTitle:[NSString stringWithUTF8String:title.c_str()]];
 }
 
