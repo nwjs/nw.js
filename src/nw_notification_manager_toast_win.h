@@ -38,14 +38,8 @@ class NotificationManagerToastWin : public NotificationManager{
   std::map<int, ComPtr<IToastNotification>> notification_map_;
   static bool ForceDisable;
 
-  // internal function for AddDesktopNotification
-  virtual bool AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-    const int render_process_id, const int render_frame_id, const int notification_id, 
-    const bool worker, const std::vector<SkBitmap>* bitmaps) OVERRIDE;
-
-
   HRESULT CreateToast(_In_ IToastNotificationManagerStatics *toastManager, _In_ IXmlDocument *xml,
-    const int render_process_id, const int render_frame_id, const int notification_id);
+    const int render_process_id, const int notification_id);
 
   // Create the toast XML from a template
   HRESULT CreateToastXml(_In_ IToastNotificationManagerStatics *toastManager,
@@ -65,11 +59,8 @@ public:
   explicit NotificationManagerToastWin();
   virtual ~NotificationManagerToastWin();
   virtual bool AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-    const int render_process_id, const int render_frame_id, const int notification_id,
-    const bool worker) OVERRIDE{
-    return AddDesktopNotification(params, render_process_id, render_frame_id, notification_id, worker, NULL);
-  }
-  virtual bool CancelDesktopNotification(int render_process_id, int render_frame_id, int notification_id) OVERRIDE;
+    const int render_process_id, const int notification_id, const bool worker) override;
+  virtual bool CancelDesktopNotification(int render_process_id, int notification_id) override;
 };
 
 } // namespace nw

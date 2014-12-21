@@ -27,6 +27,7 @@ class ShellMainDelegate : public ContentMainDelegate {
       const MainFunctionParams& main_function_params) override;
   virtual ContentBrowserClient* CreateContentBrowserClient() override;
   virtual ContentRendererClient* CreateContentRendererClient() override;
+  virtual content::ContentUtilityClient* CreateContentUtilityClient() override;
 
   static void InitializeResourceBundle(const std::string& pref_locale);
 #if defined(OS_POSIX) && !defined(OS_MACOSX)

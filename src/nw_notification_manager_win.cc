@@ -43,10 +43,10 @@ public:
   virtual ~TrayObserver() {
   }
 
-  virtual void OnStatusIconClicked() OVERRIDE {
+  virtual void OnStatusIconClicked() override {
   }
 
-  virtual void OnBalloonEvent(int event) OVERRIDE {
+  virtual void OnBalloonEvent(int event) override {
     switch (event) {
     case NIN_BALLOONHIDE:
       tray_->DesktopNotificationPostClose(true);
@@ -62,7 +62,7 @@ public:
     }
   }
 
-  virtual void OnBalloonClicked() OVERRIDE {
+  virtual void OnBalloonClicked() override {
     tray_->DesktopNotificationPostClick();
     tray_->ReleaseNotification();
   }
@@ -119,35 +119,12 @@ NotificationManagerWin::~NotificationManagerWin() {
 }
 
 bool NotificationManagerWin::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-  const int render_process_id, const int render_frame_id, const int notification_id, 
-  const bool worker, const std::vector<SkBitmap>* bitmaps) {
+  const int render_process_id, const int notification_id, const bool worker) {
 
-  content::RenderViewHost* host = content::RenderFrameHost::FromID(render_process_id, render_frame_id)->GetRenderViewHost();
-  if (host == NULL)
-    return false;
-
-  content::Shell* shell = content::Shell::FromRenderViewHost(host);
-
-  if (bitmaps == NULL) {
-    // called from public function, save the params
-    DesktopNotificationParams desktop_notification_params;
-    desktop_notification_params.params_ = params;
-    desktop_notification_params.render_process_id_ = render_process_id;
-    desktop_notification_params.render_frame_id_ = render_frame_id;
-    desktop_notification_params.notification_id_ = notification_id;
-
-    // download the icon image first
-    content::WebContents::ImageDownloadCallback imageDownloadCallback = base::Bind(&NotificationManager::ImageDownloadCallback);
-    int id = shell->web_contents()->DownloadImage(params.icon_url, true, 0, imageDownloadCallback);
-    desktop_notification_params_[id] = desktop_notification_params;
-
-    // wait for the image download callback
-    return true;
-  }
+  content::Shell* shell = content::Shell::windows()[0];
 
   // if we reach here, it means the function is called from image download callback
   render_process_id_ = render_process_id;
-  render_frame_id_ = render_frame_id;
   notification_id_ = notification_id;
 
   // set the default notification icon as the app icon
@@ -169,8 +146,8 @@ bool NotificationManagerWin::AddDesktopNotification(const content::ShowDesktopNo
   // add the counter
   notification_count_++;
   // try to get the notification icon image given by image download callback
-  if (bitmaps->size())
-    icon = gfx::Image::CreateFrom1xBitmap(bitmaps->at(0));
+  if (params.icon.width())
+    icon = gfx::Image::CreateFrom1xBitmap(params.icon);
 
   //if body is empty string, the baloon won't shown
   base::string16 body = params.body;
@@ -186,7 +163,7 @@ bool NotificationManagerWin::AddDesktopNotification(const content::ShowDesktopNo
   return result;
 }
 
-bool NotificationManagerWin::CancelDesktopNotification(int render_process_id, int render_frame_id, int notification_id) {
+bool NotificationManagerWin::CancelDesktopNotification(int render_process_id, int notification_id) {
   //windows  can only have 1 notification, cannot delete existing notification
   return true;
 }

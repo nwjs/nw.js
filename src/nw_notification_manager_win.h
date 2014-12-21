@@ -43,36 +43,28 @@ class NotificationManagerWin : public NotificationManager{
   TrayObserver* status_observer_;
 
   // variable to store the latest notification data, windows can only show 1 notification
-  int render_process_id_, render_frame_id_, notification_id_;
+  int render_process_id_, notification_id_;
 
   // dispatch the events from the latest notification
   bool DesktopNotificationPostClick() {
-    return NotificationManager::DesktopNotificationPostClick(render_process_id_, render_frame_id_, notification_id_);
+    return NotificationManager::DesktopNotificationPostClick(render_process_id_, notification_id_);
   }
   bool DesktopNotificationPostClose(bool by_user) {
-    return NotificationManager::DesktopNotificationPostClose(render_process_id_, render_frame_id_, notification_id_, by_user);
+    return NotificationManager::DesktopNotificationPostClose(render_process_id_, notification_id_, by_user);
   }
   bool DesktopNotificationPostDisplay() {
-    return NotificationManager::DesktopNotificationPostDisplay(render_process_id_, render_frame_id_, notification_id_);
+    return NotificationManager::DesktopNotificationPostDisplay(render_process_id_, notification_id_);
   }
   bool DesktopNotificationPostError(const base::string16& message) {
-    return NotificationManager::DesktopNotificationPostError(render_process_id_, render_frame_id_, notification_id_, message);
+    return NotificationManager::DesktopNotificationPostError(render_process_id_, notification_id_, message);
   }
-
-  // internal function for AddDesktopNotification
-  virtual bool AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-    const int render_process_id, const int render_frame_id, const int notification_id, 
-    const bool worker, const std::vector<SkBitmap>* bitmaps) OVERRIDE;
 
 public:
   explicit NotificationManagerWin();
   virtual ~NotificationManagerWin();
   virtual bool AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-    const int render_process_id, const int render_frame_id, const int notification_id,
-    const bool worker) OVERRIDE{
-    return AddDesktopNotification(params, render_process_id, render_frame_id, notification_id, worker, NULL);
-  }
-  virtual bool CancelDesktopNotification(int render_process_id, int render_frame_id, int notification_id) OVERRIDE;
+    const int render_process_id, const int notification_id, const bool worker) override;
+  virtual bool CancelDesktopNotification(int render_process_id, int notification_id) override;
 };
 
 } // namespace nw

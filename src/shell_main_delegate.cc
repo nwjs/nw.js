@@ -80,6 +80,10 @@ using base::FilePath;
 #include "components/autofill/content/common/autofill_messages.h"
 #endif
 
+#if defined(OS_WIN)
+#include "content/nw/src/browser/shell_content_utility_client.h"
+#endif
+
 namespace {
 
 #if defined(OS_WIN)
@@ -101,6 +105,11 @@ const GUID kContentShellProviderName = {
 
 base::LazyInstance<chrome::ChromeCrashReporterClient>::Leaky
     g_chrome_crash_client = LAZY_INSTANCE_INITIALIZER;
+
+#if defined(OS_WIN)
+base::LazyInstance<ShellContentUtilityClient>
+    g_chrome_content_utility_client = LAZY_INSTANCE_INITIALIZER;
+#endif
 
 void InitLogging() {
   base::FilePath log_filename;
@@ -195,6 +204,10 @@ void ShellMainDelegate::PreSandboxStartup() {
 
   // Allow file:// URIs can read other file:// URIs by default.
   command_line->AppendSwitch(switches::kAllowFileAccessFromFiles);
+#if defined(OS_WIN)
+  if (process_type == switches::kUtilityProcess)
+    ShellContentUtilityClient::PreSandboxStartup();
+#endif
 }
 
 int ShellMainDelegate::RunProcess(
@@ -237,6 +250,13 @@ ContentBrowserClient* ShellMainDelegate::CreateContentBrowserClient() {
 ContentRendererClient* ShellMainDelegate::CreateContentRendererClient() {
   renderer_client_.reset(new ShellContentRendererClient);
   return renderer_client_.get();
+}
+
+content::ContentUtilityClient*
+ShellMainDelegate::CreateContentUtilityClient() {
+#if defined(OS_WIN)
+  return g_chrome_content_utility_client.Pointer();
+#endif
 }
 
 #if defined(OS_POSIX) && !defined(OS_MACOSX)

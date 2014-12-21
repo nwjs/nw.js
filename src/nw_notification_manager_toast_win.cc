@@ -120,7 +120,7 @@ class ToastEventHandler :
   public Microsoft::WRL::Implements<DesktopToastActivatedEventHandler, DesktopToastDismissedEventHandler, DesktopToastFailedEventHandler>
 {
 public:
-  ToastEventHandler::ToastEventHandler(const int render_process_id, const int render_frame_id, const int notification_id);
+  ToastEventHandler::ToastEventHandler(const int render_process_id, const int notification_id);
   ~ToastEventHandler();
 
   // DesktopToastActivatedEventHandler 
@@ -163,13 +163,13 @@ public:
 
 private:
   ULONG _ref;
-  const int _render_process_id, _render_frame_id, _notification_id;
+  const int _render_process_id, _notification_id;
 };
 
 // ============= ToastEventHandler Implementation =============
 
-ToastEventHandler::ToastEventHandler(const int render_process_id, const int render_frame_id, const int notification_id) : 
-_ref(0), _render_process_id(render_process_id), _render_frame_id(render_frame_id), _notification_id(notification_id)
+ToastEventHandler::ToastEventHandler(const int render_process_id, const int notification_id) : 
+_ref(0), _render_process_id(render_process_id), _notification_id(notification_id)
 {
 
 }
@@ -182,7 +182,7 @@ ToastEventHandler::~ToastEventHandler()
 // DesktopToastActivatedEventHandler
 IFACEMETHODIMP ToastEventHandler::Invoke(_In_ IToastNotification* /* sender */, _In_ IInspectable* /* args */)
 {
-  BOOL succeeded = nw::NotificationManager::getSingleton()->DesktopNotificationPostClick(_render_process_id, _render_frame_id, _notification_id);
+  BOOL succeeded = nw::NotificationManager::getSingleton()->DesktopNotificationPostClick(_render_process_id, _notification_id);
   return succeeded ? S_OK : E_FAIL;
 }
 
@@ -193,10 +193,10 @@ IFACEMETHODIMP ToastEventHandler::Invoke(_In_ IToastNotification* /* sender */, 
   HRESULT hr = e->get_Reason(&tdr);
   if (SUCCEEDED(hr))
   {
-    BOOL succeeded = nw::NotificationManager::getSingleton()->DesktopNotificationPostClose(_render_process_id, _render_frame_id, _notification_id, tdr == ToastDismissalReason_UserCanceled);
+    BOOL succeeded = nw::NotificationManager::getSingleton()->DesktopNotificationPostClose(_render_process_id, _notification_id, tdr == ToastDismissalReason_UserCanceled);
     hr = succeeded ? S_OK : E_FAIL;
   }
-  nw::NotificationManager::getSingleton()->CancelDesktopNotification(_render_process_id, _render_frame_id, _notification_id);
+  nw::NotificationManager::getSingleton()->CancelDesktopNotification(_render_process_id, _notification_id);
   return hr;
 }
 
@@ -211,7 +211,7 @@ IFACEMETHODIMP ToastEventHandler::Invoke(_In_ IToastNotification* /* sender */, 
   if (fallBack)
     errMsg << " Fallback to balloon notification!";
 
-  BOOL succeeded = nmtw->DesktopNotificationPostError(_render_process_id, _render_frame_id, _notification_id, errMsg.str().c_str());
+  BOOL succeeded = nmtw->DesktopNotificationPostError(_render_process_id, _notification_id, errMsg.str().c_str());
   nmtw->notification_map_.erase(_notification_id);
 
   if (fallBack) {
@@ -313,15 +313,18 @@ HRESULT NotificationManagerToastWin::SetImageSrc(_In_z_ const wchar_t *imagePath
 HRESULT NotificationManagerToastWin::CreateToastXml(_In_ IToastNotificationManagerStatics *toastManager, 
   const content::ShowDesktopNotificationHostMsgParams& params, _Outptr_ IXmlDocument** inputXml)
 {
-  const bool bImage = params.icon_url.is_valid() && params.icon_url.spec().find("file:///") == 0;
+  const bool bImage = params.icon.width() > 0;
   // Retrieve the template XML
   HRESULT hr = toastManager->GetTemplateContent(bImage ? ToastTemplateType_ToastImageAndText03 : ToastTemplateType_ToastText03, inputXml);
   if (SUCCEEDED(hr))
   {
     if (SUCCEEDED(hr))
     {
+      //FIXME
+#if 0
       hr = bImage ? SetImageSrc(base::UTF8ToWide(params.icon_url.spec()).c_str(), *inputXml) : S_OK;
       if (SUCCEEDED(hr))
+#endif
       {
         const wchar_t* textValues[] = {
           params.title.c_str(),
@@ -338,7 +341,7 @@ HRESULT NotificationManagerToastWin::CreateToastXml(_In_ IToastNotificationManag
 }
 
 HRESULT NotificationManagerToastWin::CreateToast(_In_ IToastNotificationManagerStatics *toastManager, _In_ IXmlDocument *xml, 
-  const int render_process_id, const int render_frame_id, const int notification_id)
+  const int render_process_id, const int notification_id)
 {
   ComPtr<IToastNotificationFactory> factory;
   HRESULT hr = GetActivationFactory(StringReferenceWrapper(RuntimeClass_Windows_UI_Notifications_ToastNotification).Get(), &factory);
@@ -350,7 +353,7 @@ HRESULT NotificationManagerToastWin::CreateToast(_In_ IToastNotificationManagerS
     {
       // Register the event handlers
       EventRegistrationToken activatedToken, dismissedToken, failedToken;
-      ComPtr<ToastEventHandler> eventHandler = new ToastEventHandler(render_process_id, render_frame_id, notification_id);
+      ComPtr<ToastEventHandler> eventHandler = new ToastEventHandler(render_process_id, notification_id);
 
       hr = toast->add_Activated(eventHandler.Get(), &activatedToken);
       if (SUCCEEDED(hr))
@@ -402,28 +405,22 @@ NotificationManagerToastWin::~NotificationManagerToastWin() {
 }
 
 bool NotificationManagerToastWin::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-  const int render_process_id, const int render_frame_id, const int notification_id, 
-  const bool worker, const std::vector<SkBitmap>* bitmaps) {
-
-  content::RenderViewHost* host = content::RenderFrameHost::FromID(render_process_id, render_frame_id)->GetRenderViewHost();
-  if (host == NULL)
-    return false;
-
+  const int render_process_id, const int notification_id, const bool worker) {
   
     ComPtr<IXmlDocument> toastXml;
     HRESULT hr = CreateToastXml(toastStatics_.Get(), params, &toastXml);
     if (SUCCEEDED(hr))
     {
-      hr = CreateToast(toastStatics_.Get(), toastXml.Get(), render_process_id, render_frame_id, notification_id);
+      hr = CreateToast(toastStatics_.Get(), toastXml.Get(), render_process_id, notification_id);
       if (SUCCEEDED(hr))
-        DesktopNotificationPostDisplay(render_process_id, render_frame_id, notification_id);
+        DesktopNotificationPostDisplay(render_process_id, notification_id);
     }
   
   
   return SUCCEEDED(hr);
 }
 
-bool NotificationManagerToastWin::CancelDesktopNotification(int render_process_id, int render_frame_id, int notification_id) {
+bool NotificationManagerToastWin::CancelDesktopNotification(int render_process_id, int notification_id) {
   std::map<int, ComPtr<IToastNotification>>::iterator i = notification_map_.find(notification_id);
   if (i == notification_map_.end())
     return false;
