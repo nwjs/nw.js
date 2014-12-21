@@ -256,6 +256,8 @@ content::ContentUtilityClient*
 ShellMainDelegate::CreateContentUtilityClient() {
 #if defined(OS_WIN)
   return g_chrome_content_utility_client.Pointer();
+#else
+  return NULL;
 #endif
 }
 
