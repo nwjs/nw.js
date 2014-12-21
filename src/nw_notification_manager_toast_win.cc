@@ -378,13 +378,13 @@ bool NotificationManagerToastWin::IsSupported() {
   if (ForceDisable) return false;
   if (cachedRes > -1) return cachedRes;
   cachedRes = 0;
-  
+
   if (StringReferenceWrapper::isSupported()) {
     ComPtr<IToastNotificationManagerStatics> toastStatics;
     HRESULT hr = GetActivationFactory(StringReferenceWrapper(RuntimeClass_Windows_UI_Notifications_ToastNotificationManager).Get(), &toastStatics);
     cachedRes = SUCCEEDED(hr);
   }
-  
+
   return cachedRes;
 }
 
@@ -415,8 +415,8 @@ bool NotificationManagerToastWin::AddDesktopNotification(const content::ShowDesk
       if (SUCCEEDED(hr))
         DesktopNotificationPostDisplay(render_process_id, notification_id);
     }
-  
-  
+
+
   return SUCCEEDED(hr);
 }
 
@@ -424,7 +424,7 @@ bool NotificationManagerToastWin::CancelDesktopNotification(int render_process_i
   std::map<int, ComPtr<IToastNotification>>::iterator i = notification_map_.find(notification_id);
   if (i == notification_map_.end())
     return false;
-  
+
   ComPtr<IToastNotification> toast = i->second;
   notification_map_.erase(i);
 
