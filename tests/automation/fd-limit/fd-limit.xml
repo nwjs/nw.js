@@ -1,0 +1,11 @@
+<div xmlns="http://www.w3.org/1999/xhtml" id="mocha"><ul id="mocha-stats"><li class="progress"><canvas width="40" height="40"></canvas></li><li class="passes"><a href="#">passes:</a> <em>2</em></li><li class="failures"><a href="#">failures:</a> <em>0</em></li><li class="duration">duration: <em>3.20</em>s</li></ul><ul id="mocha-report"><li class="suite"><h1><a href="?grep=fd-limit">fd-limit</a></h1><ul><li class="suite"><h1><a href="?grep=fd-limit file descriptor limit">file descriptor limit</a></h1><ul><li class="test pass slow"><h2>fetches 2k files via XHR should succeed with --file-descriptor-limit=8192<span class="duration">1579ms</span> <a href="?grep=fd-limit file descriptor limit fetches 2k files via XHR should succeed with --file-descriptor-limit=8192" class="replay">‣</a></h2><pre style="display: none;"><code>this.timeout(5000);
+nw.spawn(['test_app', '--file-descriptor-limit=8192'], function(err, data) {
+    if (err) throw err;
+    assert.equal(data.ok, true);
+    done();
+});</code></pre></li><li class="test pass slow"><h2>fetches 2k files via XHR should fail with --file-descriptor-limit=100<span class="duration">679ms</span> <a href="?grep=fd-limit file descriptor limit fetches 2k files via XHR should fail with --file-descriptor-limit=100" class="replay">‣</a></h2><pre style="display: none;"><code>this.timeout(5000);
+nw.spawn(['test_app', '--file-descriptor-limit=100'], function(err, data) {
+    if (err) throw err;
+    assert.equal(data.ok, false);
+    done();
+});</code></pre></li></ul></li></ul></li></ul></div>
