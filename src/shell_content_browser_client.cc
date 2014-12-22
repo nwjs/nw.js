@@ -223,6 +223,7 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
   bool is_isolated_guest = false;
 
 #if defined(OS_MACOSX)
+  command_line->AppendSwitch(switches::kDisableRemoteCoreAnimation);
   if (breakpad::IsCrashReporterEnabled()) {
     command_line->AppendSwitch(switches::kEnableCrashReporter);
   }
