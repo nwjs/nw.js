@@ -80,6 +80,10 @@ using base::FilePath;
 #include "components/autofill/content/common/autofill_messages.h"
 #endif
 
+#if defined(OS_WIN)
+#include "content/nw/src/browser/shell_content_utility_client.h"
+#endif
+
 namespace {
 
 #if defined(OS_WIN)
@@ -101,6 +105,11 @@ const GUID kContentShellProviderName = {
 
 base::LazyInstance<chrome::ChromeBreakpadClient>::Leaky
     g_chrome_breakpad_client = LAZY_INSTANCE_INITIALIZER;
+
+#if defined(OS_WIN)
+base::LazyInstance<ShellContentUtilityClient>
+    g_chrome_content_utility_client = LAZY_INSTANCE_INITIALIZER;
+#endif
 
 void InitLogging() {
   base::FilePath log_filename;
@@ -195,6 +204,11 @@ void ShellMainDelegate::PreSandboxStartup() {
 
   // Allow file:// URIs can read other file:// URIs by default.
   command_line->AppendSwitch(switches::kAllowFileAccessFromFiles);
+
+#if defined(OS_WIN)
+  if (process_type == switches::kUtilityProcess)
+    ShellContentUtilityClient::PreSandboxStartup();
+#endif
 }
 
 int ShellMainDelegate::RunProcess(
@@ -249,5 +263,15 @@ void ShellMainDelegate::ZygoteForked() {
   breakpad::InitCrashReporter(process_type);
 }
 #endif
+
+content::ContentUtilityClient*
+ShellMainDelegate::CreateContentUtilityClient() {
+#if defined(OS_WIN)
+  return g_chrome_content_utility_client.Pointer();
+#else
+  return NULL;
+#endif
+}
+
 
 }  // namespace content

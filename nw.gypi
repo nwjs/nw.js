@@ -258,6 +258,8 @@
         'src/browser/printing/printer_query.h',
         'src/browser/printing/print_view_manager.cc',
         'src/browser/printing/print_view_manager.h',
+        'src/browser/printing/print_view_manager_base.cc',
+        'src/browser/printing/print_view_manager_base.h',
         'src/browser/shell_application_mac.h',
         'src/browser/shell_application_mac.mm',
         'src/browser/shell_devtools_delegate.cc',
@@ -468,6 +470,15 @@
           'sources': [
             'src/browser/color_chooser_dialog.cc',
             'src/browser/color_chooser_dialog.h',
+            'src/browser/printing_handler.cc',
+            'src/browser/printing_handler.h',
+            'src/browser/shell_content_utility_client.cc',
+            'src/browser/shell_content_utility_client.h',
+            '<(DEPTH)/chrome/browser/printing/pdf_to_emf_converter.cc',
+            '<(DEPTH)/chrome/utility/cloud_print/bitmap_image.cc',
+            '<(DEPTH)/chrome/utility/cloud_print/bitmap_image.h',
+            '<(DEPTH)/chrome/utility/cloud_print/pwg_encoder.cc',
+            '<(DEPTH)/chrome/utility/cloud_print/pwg_encoder.h',
           ],
           'resource_include_dirs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit',
@@ -816,6 +827,7 @@
       'dependencies': [
         'nw_lib',
         'nw_pak',
+        '<(DEPTH)/pdf/pdf.gyp:pdf',
       ],
       'include_dirs': [
         '<(DEPTH)',

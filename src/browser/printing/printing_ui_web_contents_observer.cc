@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "content/nw/src/browser/printing/printing_ui_web_contents_observer.h"
+#include "chrome/browser/printing/printing_ui_web_contents_observer.h"
 
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/web_contents.h"

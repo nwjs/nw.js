@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "content/nw/src/renderer/printing/print_web_view_helper.h"
+#include "chrome/renderer/printing/print_web_view_helper.h"
 
 #import <AppKit/AppKit.h>
 
@@ -17,7 +17,7 @@
 #include "skia/ext/platform_device.h"
 #include "skia/ext/vector_canvas.h"
 #include "third_party/WebKit/public/platform/WebCanvas.h"
-#include "third_party/WebKit/public/web/WebFrame.h"
+#include "third_party/WebKit/public/web/WebLocalFrame.h"
 
 namespace printing {
 
@@ -77,7 +77,7 @@ bool PrintWebViewHelper::RenderPreviewPage(
 
   base::TimeTicks begin_time = base::TimeTicks::Now();
   gfx::Size page_size;
-  RenderPage(printParams, page_number, (blink::WebFrame*)print_preview_context_.prepared_frame(),
+  RenderPage(printParams, page_number, print_preview_context_.prepared_frame(),
              true, initial_render_metafile, &page_size, NULL);
   print_preview_context_.RenderedPreviewPage(
       base::TimeTicks::Now() - begin_time);

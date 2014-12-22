@@ -8,10 +8,10 @@
 #include "base/callback.h"
 #include "base/compiler_specific.h"
 #include "base/memory/scoped_ptr.h"
-#include "content/nw/src/browser/printing/print_job_worker_owner.h"
-#include "content/nw/src/browser/printing/printing_ui_web_contents_observer.h"
+#include "chrome/browser/printing/print_job_worker_owner.h"
 #include "printing/print_job_constants.h"
-#include "ui/gfx/native_widget_types.h"
+
+class PrintingUIWebContentsObserver;
 
 namespace base {
 class DictionaryValue;
@@ -20,8 +20,8 @@ class MessageLoop;
 
 namespace printing {
 
-  class PrintDestinationInterface;
-  class PrintJobWorker;
+class PrintDestinationInterface;
+class PrintJobWorker;
 
 // Query the printer for settings.
 class PrinterQuery : public PrintJobWorkerOwner {
@@ -43,8 +43,8 @@ class PrinterQuery : public PrintJobWorkerOwner {
   virtual int cookie() const OVERRIDE;
 
   // Initializes the printing context. It is fine to call this function multiple
-  // times to reinitialize the settings. |parent_view| parameter's window will
-  // be the owner of the print setting dialog box. It is unused when
+  // times to reinitialize the settings. |web_contents_observer| can be queried
+  // to find the owner of the print setting dialog box. It is unused when
   // |ask_for_user_settings| is DEFAULTS.
   void GetSettings(
       GetSettingsAskParam ask_user_for_settings,

@@ -2,12 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "content/nw/src/renderer/printing/print_web_view_helper.h"
+#include "chrome/renderer/printing/print_web_view_helper.h"
 
-#include "base/file_descriptor_posix.h"
 #include "base/logging.h"
 #include "base/memory/scoped_ptr.h"
-#include "base/metrics/histogram.h"
 #include "chrome/common/print_messages.h"
 #include "content/public/renderer/render_thread.h"
 #include "printing/metafile.h"
@@ -18,10 +16,15 @@
 #include "skia/ext/vector_canvas.h"
 #include "third_party/WebKit/public/web/WebLocalFrame.h"
 
+#if !defined(OS_CHROMEOS) && !defined(OS_ANDROID)
+#include "base/process/process_handle.h"
+#else
+#include "base/file_descriptor_posix.h"
+#endif  // !defined(OS_CHROMEOS) && !defined(OS_ANDROID)
+
 namespace printing {
 
 using blink::WebFrame;
-using blink::WebNode;
 
 bool PrintWebViewHelper::RenderPreviewPage(
     int page_number,
@@ -96,12 +99,14 @@ bool PrintWebViewHelper::PrintPagesNative(blink::WebFrame* frame,
   uint32 buf_size = metafile.GetDataSize();
   DCHECK_GT(buf_size, 0u);
 
-#if defined(OS_CHROMEOS)
+#if defined(OS_CHROMEOS) || defined(OS_ANDROID)
   int sequence_number = -1;
   base::FileDescriptor fd;
 
   // Ask the browser to open a file for us.
-  Send(new PrintHostMsg_AllocateTempFileForPrinting(&fd, &sequence_number));
+  Send(new PrintHostMsg_AllocateTempFileForPrinting(routing_id(),
+                                                    &fd,
+                                                    &sequence_number));
   if (!metafile.SaveToFD(fd))
     return false;
 
@@ -160,8 +165,9 @@ void PrintWebViewHelper::PrintPageInternal(
   gfx::Rect canvas_area =
       params.params.display_header_footer ? gfx::Rect(page_size) : content_area;
 
-  SkBaseDevice* device = metafile->StartPageForVectorCanvas(page_size, canvas_area,
-                                                        scale_factor);
+  SkBaseDevice* device = metafile->StartPageForVectorCanvas(page_size,
+                                                            canvas_area,
+                                                            scale_factor);
   if (!device)
     return;
 

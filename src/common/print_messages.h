@@ -15,11 +15,12 @@
 #include "printing/page_size_margins.h"
 #include "printing/print_job_constants.h"
 #include "third_party/WebKit/public/web/WebPrintScalingOption.h"
+#include "ui/gfx/ipc/gfx_param_traits.h"
 #include "ui/gfx/native_widget_types.h"
 #include "ui/gfx/rect.h"
 
-#ifndef NW_COMMON_PRINT_MESSAGES_H_
-#define NW_COMMON_PRINT_MESSAGES_H_
+#ifndef CHROME_COMMON_PRINT_MESSAGES_H_
+#define CHROME_COMMON_PRINT_MESSAGES_H_
 
 struct PrintMsg_Print_Params {
   PrintMsg_Print_Params();
@@ -179,24 +180,6 @@ IPC_STRUCT_TRAITS_BEGIN(PrintHostMsg_RequestPrintPreview_Params)
   IPC_STRUCT_TRAITS_MEMBER(selection_only)
 IPC_STRUCT_TRAITS_END()
 
-IPC_STRUCT_TRAITS_BEGIN(printing::PageSizeMargins)
-  IPC_STRUCT_TRAITS_MEMBER(content_width)
-  IPC_STRUCT_TRAITS_MEMBER(content_height)
-  IPC_STRUCT_TRAITS_MEMBER(margin_left)
-  IPC_STRUCT_TRAITS_MEMBER(margin_right)
-  IPC_STRUCT_TRAITS_MEMBER(margin_top)
-  IPC_STRUCT_TRAITS_MEMBER(margin_bottom)
-IPC_STRUCT_TRAITS_END()
-
-IPC_STRUCT_TRAITS_BEGIN(PrintMsg_PrintPages_Params)
-  // Parameters to render the page as a printed page. It must always be the same
-  // value for all the document.
-  IPC_STRUCT_TRAITS_MEMBER(params)
-
-  // If empty, this means a request to render all the printed pages.
-  IPC_STRUCT_TRAITS_MEMBER(pages)
-IPC_STRUCT_TRAITS_END()
-
 IPC_STRUCT_TRAITS_BEGIN(printing::PageRange)
   IPC_STRUCT_TRAITS_MEMBER(from)
   IPC_STRUCT_TRAITS_MEMBER(to)
@@ -216,12 +199,26 @@ IPC_STRUCT_TRAITS_BEGIN(PrintHostMsg_SetOptionsFromDocument_Params)
   IPC_STRUCT_TRAITS_MEMBER(page_ranges)
 IPC_STRUCT_TRAITS_END()
 
+IPC_STRUCT_TRAITS_BEGIN(printing::PageSizeMargins)
+  IPC_STRUCT_TRAITS_MEMBER(content_width)
+  IPC_STRUCT_TRAITS_MEMBER(content_height)
+  IPC_STRUCT_TRAITS_MEMBER(margin_left)
+  IPC_STRUCT_TRAITS_MEMBER(margin_right)
+  IPC_STRUCT_TRAITS_MEMBER(margin_top)
+  IPC_STRUCT_TRAITS_MEMBER(margin_bottom)
+IPC_STRUCT_TRAITS_END()
+
+IPC_STRUCT_TRAITS_BEGIN(PrintMsg_PrintPages_Params)
+  // Parameters to render the page as a printed page. It must always be the same
+  // value for all the document.
+  IPC_STRUCT_TRAITS_MEMBER(params)
+
+  // If empty, this means a request to render all the printed pages.
+  IPC_STRUCT_TRAITS_MEMBER(pages)
+IPC_STRUCT_TRAITS_END()
+
 // Parameters to describe a rendered document.
 IPC_STRUCT_BEGIN(PrintHostMsg_DidPreviewDocument_Params)
-  // True when we can reuse existing preview data. |metafile_data_handle| and
-  // |data_size| should not be used when this is true.
-  IPC_STRUCT_MEMBER(bool, reuse_existing_data)
-
   // A shared memory handle to metafile data.
   IPC_STRUCT_MEMBER(base::SharedMemoryHandle, metafile_data_handle)
 
@@ -290,8 +287,10 @@ IPC_STRUCT_BEGIN(PrintHostMsg_DidPrintPage_Params)
   // Page number.
   IPC_STRUCT_MEMBER(int, page_number)
 
+#if defined(OS_WIN) && !defined(WIN_PDF_METAFILE_FOR_PRINTING)
   // Shrink factor used to render this page.
   IPC_STRUCT_MEMBER(double, actual_shrink)
+#endif  // OS_WIN && !WIN_PDF_METAFILE_FOR_PRINTING
 
   // The size of the page the page author specified.
   IPC_STRUCT_MEMBER(gfx::Size, page_size)
@@ -314,8 +313,8 @@ IPC_STRUCT_END()
 // Tells the render view to initiate print preview for the entire document.
 IPC_MESSAGE_ROUTED1(PrintMsg_InitiatePrintPreview, bool /* selection_only */)
 
-// Tells the render view to initiate printing or print preview for a particular
-// node, depending on which mode the render view is in.
+// Tells the render frame to initiate printing or print preview for a particular
+// node, depending on which mode the render frame is in.
 IPC_MESSAGE_ROUTED0(PrintMsg_PrintNodeUnderContextMenu)
 
 // Tells the renderer to print the print preview tab's PDF plugin without
@@ -358,6 +357,10 @@ IPC_SYNC_MESSAGE_ROUTED1_1(PrintHostMsg_DuplicateSection,
                            base::SharedMemoryHandle /* browser handle */)
 #endif
 
+// Check if printing is enabled.
+IPC_SYNC_MESSAGE_ROUTED0_1(PrintHostMsg_IsPrintingEnabled,
+                           bool /* is_enabled */)
+
 // Tells the browser that the renderer is done calculating the number of
 // rendered pages according to the specified settings.
 IPC_MESSAGE_ROUTED2(PrintHostMsg_DidGetPrintedPagesCount,
@@ -397,15 +400,16 @@ IPC_SYNC_MESSAGE_ROUTED1_1(PrintHostMsg_ScriptedPrint,
                            PrintMsg_PrintPages_Params
                                /* settings chosen by the user*/)
 
-#if defined(USE_X11)
+#if defined(OS_CHROMEOS) || defined(OS_ANDROID)
 // Asks the browser to create a temporary file for the renderer to fill
 // in resulting NativeMetafile in printing.
-IPC_SYNC_MESSAGE_CONTROL0_2(PrintHostMsg_AllocateTempFileForPrinting,
+IPC_SYNC_MESSAGE_CONTROL1_2(PrintHostMsg_AllocateTempFileForPrinting,
+                            int /* render_view_id */,
                             base::FileDescriptor /* temp file fd */,
-                            int /* fd in browser*/)
+                            int /* fd in browser*/) // Used only by Chrome OS.
 IPC_MESSAGE_CONTROL2(PrintHostMsg_TempFileForPrintingWritten,
                      int /* render_view_id */,
-                     int /* fd in browser */)
+                     int /* fd in browser */) // Used only by Chrome OS.
 #endif
 
 // Asks the browser to do print preview.
@@ -465,16 +469,12 @@ IPC_MESSAGE_ROUTED1(PrintHostMsg_PrintPreviewInvalidPrinterSettings,
 
 // Run a nested message loop in the renderer until print preview for
 // window.print() finishes.
-IPC_SYNC_MESSAGE_ROUTED1_0(PrintHostMsg_ScriptedPrintPreview,
-                           bool /* is_modifiable */)
+IPC_SYNC_MESSAGE_ROUTED0_0(PrintHostMsg_SetupScriptedPrintPreview)
 
-// Notify the browser that the PDF in the initiator renderer has disabled print
-// scaling option.
-IPC_MESSAGE_ROUTED0(PrintHostMsg_PrintPreviewScalingDisabled)
-
-// Check if printing is enabled.
-IPC_SYNC_MESSAGE_ROUTED0_1(PrintHostMsg_IsPrintingEnabled,
-                           bool /* is_enabled */)
+// Tell the browser to show the print preview, when the document is sufficiently
+// loaded such that the renderer can determine whether it is modifiable or not.
+IPC_MESSAGE_ROUTED1(PrintHostMsg_ShowScriptedPrintPreview,
+                    bool /* is_modifiable */)
 
 // Notify the browser to set print presets based on source PDF document.
 IPC_MESSAGE_ROUTED1(PrintHostMsg_SetOptionsFromDocument,

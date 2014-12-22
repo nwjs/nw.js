@@ -2,11 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "content/nw/src/renderer/printing/print_web_view_helper.h"
+#include "chrome/renderer/printing/print_web_view_helper.h"
 
 #include "base/logging.h"
 #include "base/memory/scoped_ptr.h"
 #include "base/metrics/histogram.h"
+#include "base/process/process_handle.h"
 #include "base/win/scoped_gdi_object.h"
 #include "base/win/scoped_hdc.h"
 #include "base/win/scoped_select_object.h"
@@ -19,7 +20,7 @@
 #include "skia/ext/platform_device.h"
 #include "skia/ext/refptr.h"
 #include "skia/ext/vector_canvas.h"
-#include "third_party/WebKit/public/web/WebFrame.h"
+#include "third_party/WebKit/public/web/WebLocalFrame.h"
 #include "ui/gfx/gdi_util.h"
 #include "ui/gfx/point.h"
 #include "ui/gfx/rect.h"
@@ -102,7 +103,7 @@ bool PrintWebViewHelper::RenderPreviewPage(
   }
 
   base::TimeTicks begin_time = base::TimeTicks::Now();
-  RenderPage(print_params, page_number, (WebFrame*)print_preview_context_.prepared_frame(),
+  RenderPage(print_params, page_number, print_preview_context_.prepared_frame(),
              true, initial_render_metafile, &actual_shrink, NULL, NULL);
   print_preview_context_.RenderedPreviewPage(
       base::TimeTicks::Now() - begin_time);

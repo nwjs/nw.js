@@ -2,33 +2,105 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "content/nw/src/browser/printing/print_job_manager.h"
+#include "chrome/browser/printing/print_job_manager.h"
 
-#include "content/nw/src/browser/printing/print_job.h"
-#include "content/nw/src/browser/printing/printer_query.h"
-#include "content/public/browser/notification_types.h"
+#include "chrome/browser/chrome_notification_types.h"
+#include "chrome/browser/printing/print_job.h"
+#include "chrome/browser/printing/printer_query.h"
+#include "content/public/browser/browser_thread.h"
 #include "content/public/browser/notification_service.h"
 #include "printing/printed_document.h"
 #include "printing/printed_page.h"
 
 namespace printing {
 
-PrintJobManager::PrintJobManager() {
-  registrar_.Add(this, content::NOTIFICATION_PRINT_JOB_EVENT,
-                 content::NotificationService::AllSources());
+PrintQueriesQueue::PrintQueriesQueue() {
 }
 
-PrintJobManager::~PrintJobManager() {
+PrintQueriesQueue::~PrintQueriesQueue() {
   base::AutoLock lock(lock_);
   queued_queries_.clear();
 }
 
-void PrintJobManager::OnQuit() {
-  StopJobs(true);
+void PrintQueriesQueue::SetDestination(PrintDestinationInterface* destination) {
+  base::AutoLock lock(lock_);
+  destination_ = destination;
+}
+
+void PrintQueriesQueue::QueuePrinterQuery(PrinterQuery* job) {
+  base::AutoLock lock(lock_);
+  DCHECK(job);
+  queued_queries_.push_back(make_scoped_refptr(job));
+  DCHECK(job->is_valid());
+}
+
+scoped_refptr<PrinterQuery> PrintQueriesQueue::PopPrinterQuery(
+    int document_cookie) {
+  base::AutoLock lock(lock_);
+  for (PrinterQueries::iterator itr = queued_queries_.begin();
+       itr != queued_queries_.end(); ++itr) {
+    if ((*itr)->cookie() == document_cookie && !(*itr)->is_callback_pending()) {
+      scoped_refptr<printing::PrinterQuery> current_query(*itr);
+      queued_queries_.erase(itr);
+      DCHECK(current_query->is_valid());
+      return current_query;
+    }
+  }
+  return NULL;
+}
+
+scoped_refptr<PrinterQuery> PrintQueriesQueue::CreatePrinterQuery() {
+  scoped_refptr<PrinterQuery> job = new printing::PrinterQuery;
+  base::AutoLock lock(lock_);
+  job->SetWorkerDestination(destination_);
+  return job;
+}
+
+void PrintQueriesQueue::Shutdown() {
+  PrinterQueries queries_to_stop;
+  {
+    base::AutoLock lock(lock_);
+    queued_queries_.swap(queries_to_stop);
+    destination_ = NULL;
+  }
+  // Stop all pending queries, requests to generate print preview do not have
+  // corresponding PrintJob, so any pending preview requests are not covered
+  // by PrintJobManager::StopJobs and should be stopped explicitly.
+  for (PrinterQueries::iterator itr = queries_to_stop.begin();
+       itr != queries_to_stop.end(); ++itr) {
+    (*itr)->message_loop()->PostTask(
+        FROM_HERE, base::Bind(&PrinterQuery::StopWorker, *itr));
+  }
+}
+
+PrintJobManager::PrintJobManager() : is_shutdown_(false) {
+  registrar_.Add(this, chrome::NOTIFICATION_PRINT_JOB_EVENT,
+                 content::NotificationService::AllSources());
+}
+
+PrintJobManager::~PrintJobManager() {
+}
+
+scoped_refptr<PrintQueriesQueue> PrintJobManager::queue() {
+  DCHECK(content::BrowserThread::CurrentlyOn(content::BrowserThread::UI));
+  if (!queue_)
+    queue_ = new PrintQueriesQueue();
+  return queue_;
+}
+
+void PrintJobManager::Shutdown() {
+  DCHECK(content::BrowserThread::CurrentlyOn(content::BrowserThread::UI));
+  DCHECK(!is_shutdown_);
+  is_shutdown_ = true;
   registrar_.RemoveAll();
+  StopJobs(true);
+  if (queue_)
+    queue_->Shutdown();
+  queue_ = NULL;
 }
 
 void PrintJobManager::StopJobs(bool wait_for_finish) {
+  DCHECK(content::BrowserThread::CurrentlyOn(content::BrowserThread::UI));
   // Copy the array since it can be modified in transit.
   PrintJobs to_stop;
   to_stop.swap(current_jobs_);
@@ -42,40 +114,12 @@ void PrintJobManager::StopJobs(bool wait_for_finish) {
   }
 }
 
-void PrintJobManager::SetPrintDestination(
-    PrintDestinationInterface* destination) {
-  destination_ = destination;
-}
-
-void PrintJobManager::QueuePrinterQuery(PrinterQuery* job) {
-  base::AutoLock lock(lock_);
-  DCHECK(job);
-  queued_queries_.push_back(make_scoped_refptr(job));
-  DCHECK(job->is_valid());
-}
-
-void PrintJobManager::PopPrinterQuery(int document_cookie,
-                                      scoped_refptr<PrinterQuery>* job) {
-  base::AutoLock lock(lock_);
-  for (PrinterQueries::iterator itr = queued_queries_.begin();
-       itr != queued_queries_.end();
-       ++itr) {
-    PrinterQuery* current_query = *itr;
-    if (current_query->cookie() == document_cookie &&
-        !current_query->is_callback_pending()) {
-      *job = current_query;
-      queued_queries_.erase(itr);
-      DCHECK(current_query->is_valid());
-      return;
-    }
-  }
-}
-
 void PrintJobManager::Observe(int type,
                               const content::NotificationSource& source,
                               const content::NotificationDetails& details) {
+  DCHECK(content::BrowserThread::CurrentlyOn(content::BrowserThread::UI));
   switch (type) {
-    case content::NOTIFICATION_PRINT_JOB_EVENT: {
+    case chrome::NOTIFICATION_PRINT_JOB_EVENT: {
       OnPrintJobEvent(content::Source<PrintJob>(source).ptr(),
                       *content::Details<JobEventDetails>(details).ptr());
       break;

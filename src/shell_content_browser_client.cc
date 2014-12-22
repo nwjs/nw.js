@@ -426,7 +426,7 @@ void ShellContentBrowserClient::RenderProcessWillLaunch(
       host->GetID(), "app");
 
 #if defined(ENABLE_PRINTING)
-  host->AddFilter(new PrintingMessageFilter(id));
+  host->AddFilter(new PrintingMessageFilter(id, NULL));
 #endif
 }
 
