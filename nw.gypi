@@ -4,7 +4,7 @@
 
 {
   'variables': {
-    'nw_product_name': 'node-webkit',
+    'nw_product_name': 'nwjs',
     'mac_strip_release': 1,
     'nw_gen_path': '<(SHARED_INTERMEDIATE_DIR)/nw',
     'nw_id_script_base': 'commit_id.py',
@@ -736,7 +736,7 @@
                 '<(PRODUCT_DIR)/dump_syms',
               ],
               'outputs': [
-                '<(PRODUCT_DIR)/node-webkit.breakpad.tar',
+                '<(PRODUCT_DIR)/nwjs.breakpad.tar',
               ],
               'action': ['<(DEPTH)/content/nw/tools/dump_mac_syms',
                          ],

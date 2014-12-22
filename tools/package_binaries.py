@@ -74,7 +74,7 @@ if platform_name == 'win':
 
 if platform_name == 'osx':
     # detect output arch
-    nw_bin = binaries_location + '/node-webkit.app/Contents/MacOS/node-webkit'
+    nw_bin = binaries_location + '/nwjs.app/Contents/MacOS/nwjs'
     import subprocess
     if 'i386' in subprocess.check_output(['file',nw_bin]):
         arch = 'ia32'
@@ -94,7 +94,7 @@ if getnwisrelease.release == 0:
 # target example:
 # {
 #    'input'    : [ 'nw', 'nw.pak', ... ]
-#    'output'   : 'node-webkit-v0.9.2-linux-x64'
+#    'output'   : 'nwjs-v0.9.2-linux-x64'
 #    'compress' : 'tar.gz'
 #    'folder'   : True   # Optional. More than 2 files will be put into a seprate folder
 #                        # normally, if you want do to this for only 1 file, set this flag.
@@ -103,7 +103,7 @@ def generate_target_nw(platform_name, arch, version):
     target = {}
     # Output
     target['output'] = ''.join([
-                       'node-webkit-',
+                       'nwjs-',
                        'v', version,
                        '-', platform_name,
                        '-', arch])
@@ -138,7 +138,7 @@ def generate_target_nw(platform_name, arch, version):
                            ]
     elif platform_name == 'osx':
         target['input'] = [
-                           'node-webkit.app',
+                           'nwjs.app',
                            'nwsnapshot',
                            'credits.html',
                           ]
@@ -170,7 +170,7 @@ def generate_target_chromedriver(platform_name, arch, version):
 
 def generate_target_symbols(platform_name, arch, version):
     target = {}
-    target['output'] = ''.join(['node-webkit-symbol-',
+    target['output'] = ''.join(['nwjs-symbol-',
                                 'v', version,
                                 '-', platform_name,
                                 '-', arch])
@@ -181,14 +181,14 @@ def generate_target_symbols(platform_name, arch, version):
     elif platform_name == 'win':
         target['compress'] = None
         target['input'] = ['nw.sym.7z']
-        target['output'] = ''.join(['node-webkit-symbol-',
+        target['output'] = ''.join(['nwjs-symbol-',
                                     'v', version,
                                     '-', platform_name,
                                     '-', arch, '.7z'])
     elif platform_name == 'osx':
         target['compress'] = 'zip'
         target['input'] = [
-                          'node-webkit.breakpad.tar'
+                          'nwjs.breakpad.tar'
                           ]
         target['folder'] = True
     else:
