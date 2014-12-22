@@ -29,6 +29,7 @@
 #include "content/browser/child_process_security_policy_impl.h"
 #include "content/browser/renderer_host/render_view_host_impl.h"
 #include "content/browser/web_contents/web_contents_impl.h"
+#include "content/public/browser/desktop_media_id.h"
 #include "content/public/browser/devtools_agent_host.h"
 #include "content/public/browser/devtools_http_handler.h"
 #include "content/public/browser/navigation_entry.h"
@@ -59,7 +60,7 @@
 #include "content/nw/src/shell_content_browser_client.h"
 #include "content/nw/src/shell_devtools_frontend.h"
 //#include "content/nw/src/browser/shell_devtools_delegate.h"
-
+#include "third_party/webrtc/modules/desktop_capture/desktop_capture_types.h"
 #include "grit/nw_resources.h"
 #include "net/base/escape.h"
 #include "ui/base/resource/resource_bundle.h"
@@ -722,6 +723,22 @@ void Shell::RequestMediaAccessPermission(
       devices.push_back(*device);
   }
 
+  if (request.video_type == content::MEDIA_DESKTOP_VIDEO_CAPTURE) {
+    content::DesktopMediaID media_id;
+    // If the device id wasn't specified then this is a screen capture request
+    // (i.e. chooseDesktopMedia() API wasn't used to generate device id).
+    if (request.requested_video_device_id.empty()) {
+      media_id =
+        content::DesktopMediaID(content::DesktopMediaID::TYPE_SCREEN,
+                                webrtc::kFullDesktopScreenId);
+    } else {
+      media_id =
+        content::DesktopMediaID::Parse(request.requested_video_device_id);
+    }
+
+    devices.push_back(content::MediaStreamDevice(
+                      content::MEDIA_DESKTOP_VIDEO_CAPTURE, media_id.ToString(), "Screen"));
+  }
   // TODO(jamescook): Should we show a recording icon somewhere? If so, where?
   scoped_ptr<MediaStreamUI> ui;
   callback.Run(devices,
