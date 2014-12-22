@@ -63,7 +63,6 @@ static NWUserNotificationCenterDelegate *singleton_ = nil;
   
 
   nw::NotificationManager::getSingleton()->DesktopNotificationPostDisplay(render_process_id.intValue,
-      render_frame_id.intValue,
       notification_id.intValue);
   return YES;
 }
@@ -80,10 +79,6 @@ static NWUserNotificationCenterDelegate *singleton_ = nil;
 
 namespace nw {
 NotificationManagerMac::NotificationManagerMac() {
-}
-
-bool NotificationManagerMac::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams &params, const int render_process_id, const int notification_id, const bool worker) {
-  return AddDesktopNotification(params, render_process_id, notification_id, worker);
 }
 
 bool NotificationManagerMac::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
