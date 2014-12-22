@@ -7,6 +7,12 @@ var net = require('net');
 var server = global.server;
 var port = global.port;
 var program = require('commander');
+// HACK: do not quit for unknown options
+program.unknownOption = function(flag) {
+  console.error();
+  console.error("  error: unknown option `%s'", flag);
+  console.error();
+};
 
 
 /*
