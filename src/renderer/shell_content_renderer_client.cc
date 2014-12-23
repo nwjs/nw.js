@@ -166,6 +166,14 @@ void ShellContentRendererClient::RenderThreadStarted() {
         command_line->GetSwitchValuePath(switches::kWorkingDirectory));
   }
 
+  if (command_line->HasSwitch(switches::kDomStorageQuota)) {
+    std::string quota_str = command_line->GetSwitchValueASCII(switches::kDomStorageQuota);
+    int quota = 0;
+    if (base::StringToInt(quota_str, &quota) && quota > 0) {
+      content::DOMStorageMap::SetQuotaOverride(quota * 1024 * 1024);
+    }
+  }
+
   if (command_line->HasSwitch(extensions::switches::kExtensionProcess)) {
     extensions_client_.reset(CreateExtensionsClient());
     extensions::ExtensionsClient::Set(extensions_client_.get());
@@ -180,16 +188,6 @@ void ShellContentRendererClient::RenderThreadStarted() {
                                 new extensions::Dispatcher(extension_dispatcher_delegate_.get()));
     thread->AddObserver(extension_dispatcher_.get());
   }
-
-#if 0
-  if (command_line->HasSwitch(switches::kDomStorageQuota)) {
-    std::string quota_str = command_line->GetSwitchValueASCII(switches::kDomStorageQuota);
-    int quota = 0;
-    if (base::StringToInt(quota_str, &quota) && quota > 0) {
-      content::DOMStorageMap::SetQuotaOverride(quota * 1024 * 1024);
-    }
-  }
-#endif //0
 
   // Start observers.
   shell_observer_.reset(new ShellRenderProcessObserver());
