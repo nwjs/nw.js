@@ -115,6 +115,15 @@ void ShellContentRendererClient::RenderThreadStarted() {
     base::SetCurrentDirectory(
         command_line->GetSwitchValuePath(switches::kWorkingDirectory));
   }
+
+  if (command_line->HasSwitch(switches::kDomStorageQuota)) {
+    std::string quota_str = command_line->GetSwitchValueASCII(switches::kDomStorageQuota);
+    int quota = 0;
+    if (base::StringToInt(quota_str, &quota) && quota > 0) {
+      content::DOMStorageMap::SetQuotaOverride(quota * 1024 * 1024);
+    }
+  }
+
 #if 0
   int argc = 1;
   char* argv[] = { const_cast<char*>("node"), NULL, NULL };
@@ -135,13 +144,6 @@ void ShellContentRendererClient::RenderThreadStarted() {
     snapshot_path = command_line->GetSwitchValuePath(switches::kSnapshot).AsUTF8Unsafe();
   }
 
-  if (command_line->HasSwitch(switches::kDomStorageQuota)) {
-    std::string quota_str = command_line->GetSwitchValueASCII(switches::kDomStorageQuota);
-    int quota = 0;
-    if (base::StringToInt(quota_str, &quota) && quota > 0) {
-      content::DOMStorageMap::SetQuotaOverride(quota * 1024 * 1024);
-    }
-  }
   // Initialize node after render thread is started.
   if (!snapshot_path.empty()) {
     v8::V8::Initialize(); //FIXME
