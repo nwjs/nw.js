@@ -11,7 +11,7 @@
 #include "base/compiler_specific.h"
 #include "base/mac/scoped_nsobject.h"
 #include "chrome/browser/ui/autofill/autofill_popup_view.h"
-#include "content/nw/src/browser/autofill_popup_view_cocoa.h"
+#include "chrome/browser/ui/cocoa/autofill/autofill_popup_view_cocoa.h"
 
 @class AutofillPopupViewCocoa;
 @class NSWindow;
@@ -28,13 +28,13 @@ class AutofillPopupViewBridge : public AutofillPopupView {
   explicit AutofillPopupViewBridge(AutofillPopupController* controller);
 
  private:
-  virtual ~AutofillPopupViewBridge();
+  ~AutofillPopupViewBridge() override;
 
   // AutofillPopupView implementation.
-  virtual void Hide() override;
-  virtual void Show() override;
-  virtual void InvalidateRow(size_t row) override;
-  virtual void UpdateBoundsAndRedrawPopup() override;
+  void Hide() override;
+  void Show() override;
+  void InvalidateRow(size_t row) override;
+  void UpdateBoundsAndRedrawPopup() override;
 
   // Set the initial bounds of the popup, including its placement.
   void SetInitialBounds();

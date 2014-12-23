@@ -222,9 +222,6 @@ void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
   new AutofillAgent(render_view,
                     password_autofill_agent,
                     password_generation_agent);
-  // FIXME:
-  // nw::AutofillAgent* autofill_agent = new nw::AutofillAgent(render_view);
-
   // The PageClickTracker is a RenderViewObserver, and hence will be freed when
   // the RenderView is destroyed.
   // FIXME: new autofill::PageClickTracker(render_view, autofill_agent);

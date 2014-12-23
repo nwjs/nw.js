@@ -136,4 +136,12 @@ void NWAutofillClient::DidFillOrPreviewField(
     const base::string16& profile_full_name) {
 }
 
+bool NWAutofillClient::HasCreditCardScanFeature() {
+  return false;
+}
+
+void NWAutofillClient::ScanCreditCard(const CreditCardScanCallback& callback) {
+  NOTIMPLEMENTED();
+}
+
 }  // namespace autofill

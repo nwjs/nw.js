@@ -9,7 +9,7 @@
 #include "base/i18n/rtl.h"
 #include "base/memory/weak_ptr.h"
 #include "base/strings/string16.h"
-#include "chrome/browser/ui/autofill/autofill_popup_controller.h"
+#include "content/nw/src/browser/autofill_popup_controller.h"
 #include "chrome/browser/ui/autofill/popup_controller_common.h"
 #include "ui/gfx/font_list.h"
 #include "ui/gfx/rect.h"
@@ -49,10 +49,10 @@ class AutofillPopupControllerImpl : public AutofillPopupController {
 
   // Hides the popup and destroys the controller. This also invalidates
   // |delegate_|.
-  virtual void Hide() override;
+  void Hide() override;
 
   // Invoked when the view was destroyed by by someone other than this class.
-  virtual void ViewDestroyed() override;
+  void ViewDestroyed() override;
 
   bool HandleKeyPressEvent(const content::NativeWebKeyboardEvent& event);
 
@@ -70,35 +70,33 @@ class AutofillPopupControllerImpl : public AutofillPopupController {
                               gfx::NativeView container_view,
                               const gfx::RectF& element_bounds,
                               base::i18n::TextDirection text_direction);
-  virtual ~AutofillPopupControllerImpl();
+  ~AutofillPopupControllerImpl() override;
 
   // AutofillPopupController implementation.
-  virtual void UpdateBoundsAndRedrawPopup() override;
-  virtual void SetSelectionAtPoint(const gfx::Point& point) override;
-  virtual bool AcceptSelectedLine() override;
-  virtual void SelectionCleared() override;
-  virtual void AcceptSuggestion(size_t index) override;
-  virtual int GetIconResourceID(
-      const base::string16& resource_name) const override;
-  virtual bool CanDelete(size_t index) const override;
-  virtual bool IsWarning(size_t index) const override;
-  virtual gfx::Rect GetRowBounds(size_t index) override;
-  virtual void SetPopupBounds(const gfx::Rect& bounds) override;
-  virtual const gfx::Rect& popup_bounds() const override;
-  virtual gfx::NativeView container_view() override;
-  virtual const gfx::RectF& element_bounds() const override;
-  virtual bool IsRTL() const override;
+  void UpdateBoundsAndRedrawPopup() override;
+  void SetSelectionAtPoint(const gfx::Point& point) override;
+  bool AcceptSelectedLine() override;
+  void SelectionCleared() override;
+  void AcceptSuggestion(size_t index) override;
+  int GetIconResourceID(const base::string16& resource_name) const override;
+  bool CanDelete(size_t index) const override;
+  bool IsWarning(size_t index) const override;
+  gfx::Rect GetRowBounds(size_t index) override;
+  void SetPopupBounds(const gfx::Rect& bounds) override;
+  const gfx::Rect& popup_bounds() const override;
+  gfx::NativeView container_view() override;
+  const gfx::RectF& element_bounds() const override;
+  bool IsRTL() const override;
 
-  virtual const std::vector<base::string16>& names() const override;
-  virtual const std::vector<base::string16>& subtexts() const override;
-  virtual const std::vector<base::string16>& icons() const override;
-  virtual const std::vector<int>& identifiers() const override;
+  const std::vector<base::string16>& names() const override;
+  const std::vector<base::string16>& subtexts() const override;
+  const std::vector<base::string16>& icons() const override;
+  const std::vector<int>& identifiers() const override;
 #if !defined(OS_ANDROID)
-  virtual const gfx::FontList& GetNameFontListForRow(
-      size_t index) const override;
-  virtual const gfx::FontList& subtext_font_list() const override;
+  const gfx::FontList& GetNameFontListForRow(size_t index) const override;
+  const gfx::FontList& subtext_font_list() const override;
 #endif
-  virtual int selected_line() const override;
+  int selected_line() const override;
 
   content::WebContents* web_contents();
 
@@ -199,9 +197,6 @@ class AutofillPopupControllerImpl : public AutofillPopupController {
   // The line that is currently selected by the user.
   // |kNoSelection| indicates that no line is currently selected.
   int selected_line_;
-
-  // Whether the popup view should hide on mouse presses outside of it.
-  bool hide_on_outside_click_;
 
   base::WeakPtrFactory<AutofillPopupControllerImpl> weak_ptr_factory_;
 };

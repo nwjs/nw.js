@@ -43,6 +43,8 @@ class NWAutofillClient
   virtual PrefService* GetPrefs() override;
   virtual void HideRequestAutocompleteDialog() override;
   virtual void ShowAutofillSettings() override;
+  virtual bool HasCreditCardScanFeature() override;
+  virtual void ScanCreditCard(const CreditCardScanCallback& callback) override;
   virtual void ConfirmSaveCreditCard(
       const AutofillMetrics& metric_logger,
       const base::Closure& save_card_callback) override;

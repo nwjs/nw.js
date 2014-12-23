@@ -122,22 +122,21 @@ std::pair<int,int> PopupControllerCommon::CalculatePopupYAndHeight(
   }
 }
 
-gfx::Rect PopupControllerCommon::GetPopupBounds(
-    int popup_required_height,
-    int popup_required_width) const {
+gfx::Rect PopupControllerCommon::GetPopupBounds(int desired_width,
+                                                int desired_height) const {
   // This is the top left point of the popup if the popup is above the element
   // and grows to the left (since that is the highest and furthest left the
   // popup go could).
   gfx::Point top_left_corner_of_popup = RoundedElementBounds().origin() +
-      gfx::Vector2d(RoundedElementBounds().width() - popup_required_width,
-                    -popup_required_height);
+      gfx::Vector2d(RoundedElementBounds().width() - desired_width,
+                    -desired_height);
 
   // This is the bottom right point of the popup if the popup is below the
   // element and grows to the right (since the is the lowest and furthest right
   // the popup could go).
   gfx::Point bottom_right_corner_of_popup = RoundedElementBounds().origin() +
-      gfx::Vector2d(popup_required_width,
-                    RoundedElementBounds().height() + popup_required_height);
+      gfx::Vector2d(desired_width,
+                    RoundedElementBounds().height() + desired_height);
 
   gfx::Display top_left_display = GetDisplayNearestPoint(
       top_left_corner_of_popup);
@@ -147,11 +146,11 @@ gfx::Rect PopupControllerCommon::GetPopupBounds(
   std::pair<int, int> popup_x_and_width =
       CalculatePopupXAndWidth(top_left_display,
                               bottom_right_display,
-                              popup_required_width);
+                              desired_width);
   std::pair<int, int> popup_y_and_height =
       CalculatePopupYAndHeight(top_left_display,
                                bottom_right_display,
-                               popup_required_height);
+                               desired_height);
 
   return gfx::Rect(popup_x_and_width.first,
                    popup_y_and_height.first,

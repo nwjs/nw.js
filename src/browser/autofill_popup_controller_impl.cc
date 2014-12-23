@@ -14,7 +14,7 @@
 #include "components/autofill/core/browser/autofill_popup_delegate.h"
 #include "components/autofill/core/browser/popup_item_ids.h"
 #include "content/public/browser/native_web_keyboard_event.h"
-#include "grit/component_scaled_resources.h"
+#include "grit/components_scaled_resources.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/events/event.h"
 #include "ui/gfx/rect_conversions.h"
@@ -59,6 +59,9 @@ const DataResource kDataResources[] = {
   { "jcbCC", IDR_AUTOFILL_CC_JCB },
   { "masterCardCC", IDR_AUTOFILL_CC_MASTERCARD },
   { "visaCC", IDR_AUTOFILL_CC_VISA },
+#if defined(OS_MACOSX) && !defined(OS_IOS)
+  { "macContactsIcon", IDR_AUTOFILL_MAC_CONTACTS_ICON },
+#endif  // defined(OS_MACOSX) && !defined(OS_IOS)
 };
 
 }  // namespace
@@ -102,7 +105,6 @@ AutofillPopupControllerImpl::AutofillPopupControllerImpl(
       view_(NULL),
       delegate_(delegate),
       text_direction_(text_direction),
-      hide_on_outside_click_(false),
       weak_ptr_factory_(this) {
   ClearState();
   controller_common_->SetKeyPressCallback(
@@ -148,18 +150,14 @@ void AutofillPopupControllerImpl::Show(
 
     int available_width = popup_width - RowWidthWithoutText(i);
 
-    // Each field recieves space in proportion to its length.
+    // Each field receives space in proportion to its length.
     int name_size = available_width * name_width / total_text_length;
-    names_[i] = gfx::ElideText(names_[i],
-                               GetNameFontListForRow(i),
-                               name_size,
-                               gfx::ELIDE_TAIL);
+    names_[i] = gfx::ElideText(names_[i], GetNameFontListForRow(i),
+                               name_size, gfx::ELIDE_TAIL);
 
     int subtext_size = available_width * subtext_width / total_text_length;
-    subtexts_[i] = gfx::ElideText(subtexts_[i],
-                                  subtext_font_list(),
-                                  subtext_size,
-                                  gfx::ELIDE_TAIL);
+    subtexts_[i] = gfx::ElideText(subtexts_[i], subtext_font_list(),
+                                  subtext_size, gfx::ELIDE_TAIL);
   }
 #endif
 
@@ -178,8 +176,8 @@ void AutofillPopupControllerImpl::Show(
     UpdateBoundsAndRedrawPopup();
   }
 
-  delegate_->OnPopupShown();
   controller_common_->RegisterKeyPressCallback();
+  delegate_->OnPopupShown();
 }
 
 void AutofillPopupControllerImpl::UpdateDataListValues(
@@ -236,7 +234,7 @@ void AutofillPopupControllerImpl::UpdateDataListValues(
 
 void AutofillPopupControllerImpl::Hide() {
   controller_common_->RemoveKeyPressCallback();
-  if (delegate_.get())
+  if (delegate_)
     delegate_->OnPopupHidden();
 
   if (view_)
@@ -419,11 +417,6 @@ int AutofillPopupControllerImpl::selected_line() const {
   return selected_line_;
 }
 
-void AutofillPopupControllerImpl::set_hide_on_outside_click(
-    bool hide_on_outside_click) {
-  hide_on_outside_click_ = hide_on_outside_click;
-}
-
 void AutofillPopupControllerImpl::SetSelectedLine(int selected_line) {
   if (selected_line_ == selected_line)
     return;
@@ -537,7 +530,8 @@ bool AutofillPopupControllerImpl::HasSuggestions() {
          (identifiers_[0] > 0 ||
           identifiers_[0] == POPUP_ITEM_ID_AUTOCOMPLETE_ENTRY ||
           identifiers_[0] == POPUP_ITEM_ID_PASSWORD_ENTRY ||
-          identifiers_[0] == POPUP_ITEM_ID_DATALIST_ENTRY);
+          identifiers_[0] == POPUP_ITEM_ID_DATALIST_ENTRY ||
+          identifiers_[0] == POPUP_ITEM_ID_MAC_ACCESS_CONTACTS);
 }
 
 void AutofillPopupControllerImpl::SetValues(
@@ -611,11 +605,11 @@ int AutofillPopupControllerImpl::RowWidthWithoutText(int row) const {
 }
 
 void AutofillPopupControllerImpl::UpdatePopupBounds() {
-  int popup_required_width = GetDesiredPopupWidth();
+  int popup_width = GetDesiredPopupWidth();
   int popup_height = GetDesiredPopupHeight();
 
-  popup_bounds_ = controller_common_->GetPopupBounds(popup_height,
-                                                     popup_required_width);
+  popup_bounds_ = controller_common_->GetPopupBounds(popup_width,
+                                                     popup_height);
 }
 #endif  // !defined(OS_ANDROID)
 

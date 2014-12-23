@@ -2,13 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "content/nw/src/browser/autofill_popup_view_cocoa.h"
+#import "chrome/browser/ui/cocoa/autofill/autofill_popup_view_cocoa.h"
 
 #include "base/logging.h"
 #include "base/strings/sys_string_conversions.h"
 #include "chrome/browser/ui/autofill/autofill_popup_controller.h"
 #include "chrome/browser/ui/autofill/popup_constants.h"
-#include "content/nw/src/browser/autofill_popup_view_bridge.h"
+#include "chrome/browser/ui/cocoa/autofill/autofill_popup_view_bridge.h"
 #include "components/autofill/core/browser/popup_item_ids.h"
 #include "ui/base/cocoa/window_size_constants.h"
 #include "ui/base/resource/resource_bundle.h"

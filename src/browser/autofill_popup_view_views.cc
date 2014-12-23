@@ -6,7 +6,6 @@
 
 #include "content/nw/src/browser/autofill_popup_controller.h"
 #include "components/autofill/core/browser/popup_item_ids.h"
-#include "grit/ui_resources.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/events/keycodes/keyboard_codes.h"
 #include "ui/gfx/canvas.h"
@@ -53,7 +52,7 @@ void AutofillPopupViewViews::OnPaint(gfx::Canvas* canvas) {
     gfx::Rect line_rect = controller_->GetRowBounds(i);
 
     if (controller_->identifiers()[i] == POPUP_ITEM_ID_SEPARATOR) {
-      canvas->DrawRect(line_rect, kItemTextColor);
+      canvas->FillRect(line_rect, kItemTextColor);
     } else {
       DrawAutofillEntry(canvas, i, line_rect);
     }

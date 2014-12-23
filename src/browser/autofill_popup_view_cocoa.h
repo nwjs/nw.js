@@ -7,7 +7,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "content/nw/src/browser/autofill_popup_base_view_cocoa.h"
+#import "chrome/browser/ui/cocoa/autofill/autofill_popup_base_view_cocoa.h"
 
 namespace autofill {
 class AutofillPopupController;

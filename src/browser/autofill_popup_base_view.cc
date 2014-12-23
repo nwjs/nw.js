@@ -10,7 +10,6 @@
 #include "chrome/browser/ui/autofill/popup_constants.h"
 #include "ui/views/border.h"
 #include "ui/views/widget/widget.h"
-#include "ui/wm/core/window_animations.h"
 
 namespace autofill {
 
@@ -68,8 +67,7 @@ void AutofillPopupBaseView::DoShow() {
     widget->SetContentsView(this);
 
     // No animation for popup appearance (too distracting).
-    wm::SetWindowVisibilityAnimationTransition(
-        widget->GetNativeView(), wm::ANIMATE_HIDE);
+    widget->SetVisibilityAnimationTransition(views::Widget::ANIMATE_HIDE);
   }
 
   SetBorder(views::Border::CreateSolidBorder(kPopupBorderThickness,

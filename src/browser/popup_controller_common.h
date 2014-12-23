@@ -42,7 +42,7 @@ class PopupControllerCommon {
   // Returns the bounds that the popup should be placed at, given the desired
   // width and height. By default this places the popup below |element_bounds|
   // but it will be placed above if there isn't enough space.
-  gfx::Rect GetPopupBounds(int desired_height, int desired_width) const;
+  gfx::Rect GetPopupBounds(int desired_width, int desired_height) const;
 
   // Callback used to register with RenderViewHost. This can only be set once,
   // or else a callback may be registered that will not be removed

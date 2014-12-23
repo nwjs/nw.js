@@ -231,7 +231,7 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
   web_modal::WebContentsModalDialogManager::FromWebContents(web_contents)->SetDelegate(this);
 #endif
 
-#if 0
+#if 1
   autofill::NWAutofillClient::CreateForWebContents(web_contents);
   autofill::ContentAutofillDriver::CreateForWebContentsAndDelegate(
       web_contents,
