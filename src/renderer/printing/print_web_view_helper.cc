@@ -291,6 +291,7 @@ bool PrintingNodeOrPdfFrame(const blink::WebFrame* frame,
   return plugin && plugin->supportsPaginatedPrint();
 }
 
+#if 0
 bool PrintingFrameHasPageSizeStyle(blink::WebFrame* frame,
                                    int total_page_count) {
   if (!frame)
@@ -304,6 +305,7 @@ bool PrintingFrameHasPageSizeStyle(blink::WebFrame* frame,
   }
   return frame_has_custom_page_size_style;
 }
+#endif
 
 MarginType GetMarginsForPdf(blink::WebFrame* frame,
                             const blink::WebNode& node) {

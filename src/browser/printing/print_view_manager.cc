@@ -31,8 +31,10 @@ namespace {
 // No locking, only access on the UI thread.
 typedef std::map<content::RenderProcessHost*, base::Closure>
     ScriptedPrintPreviewClosureMap;
+#if 0
 static base::LazyInstance<ScriptedPrintPreviewClosureMap>
     g_scripted_print_preview_closure_map = LAZY_INSTANCE_INITIALIZER;
+#endif
 
 }  // namespace
 

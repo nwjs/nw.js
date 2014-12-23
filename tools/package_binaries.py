@@ -130,6 +130,7 @@ def generate_target_nw(platform_name, arch, version):
                            'icudtl.dat',
                            'libEGL.dll',
                            'libGLESv2.dll',
+                           'pdf.dll',
                            'nw.exe',
                            'nw.pak',
                            'locales',
