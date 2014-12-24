@@ -84,6 +84,7 @@
 
 namespace content {
   extern bool g_support_transparency;
+  extern bool g_force_cpu_draw;
 }
 
 
@@ -447,15 +448,6 @@ void NativeWindowAura::SetTransparent(bool transparent) {
 
   // this is needed, or transparency will fail if it defined on startup
   bool change_window_style = false;
-
-  if (!has_frame_) {
-    const LONG lastStyle = GetWindowLong(hWnd, GWL_STYLE);
-    const LONG style = WS_CAPTION;
-    const LONG newStyle = transparent ? lastStyle | style : lastStyle & ~style;
-    SetWindowLong(hWnd, GWL_STYLE, newStyle);
-    change_window_style |= lastStyle != newStyle;
-  }
-
   const LONG lastExStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
   const LONG exStyle = WS_EX_COMPOSITED;
   const LONG newExStyle = transparent ? lastExStyle | exStyle : lastExStyle & ~exStyle;
@@ -465,6 +457,13 @@ void NativeWindowAura::SetTransparent(bool transparent) {
   if (change_window_style) {
     window_->FrameTypeChanged();
   }
+
+  if (content::g_force_cpu_draw && transparent) {
+    // Quick FIX where window content is not updated
+    Minimize();
+    Restore();
+  }
+
 #elif defined(USE_X11) && !defined(OS_CHROMEOS)
 
   static char cachedRes = -1;

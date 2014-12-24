@@ -43,6 +43,7 @@
 
 namespace content {
   extern bool g_support_transparency;
+  extern bool g_force_cpu_draw;
 }
 
 @interface NSWindow (NSPrivateApis)
@@ -395,7 +396,7 @@ NativeWindowCocoa::NativeWindowCocoa(
   window_ = shell_window;
   opaque_color_ = [window() backgroundColor];
   [shell_window setShell:shell];
-  [[window() contentView] setWantsLayer:YES];
+  [[window() contentView] setWantsLayer:!content::g_force_cpu_draw];
   [window() setDelegate:[[NativeWindowDelegate alloc] initWithShell:shell]];
 
   SetTransparent(transparent_);
@@ -568,6 +569,7 @@ void NativeWindowCocoa::SetTransparent(bool transparent) {
   if (rwhv) {
     rwhv->SetBackgroundOpaque(!transparent);
     [rwhv->background_layer_ setBackgroundColor:CGColorGetConstantColor(transparent ? kCGColorClear : kCGColorWhite)];
+    [rwhv->software_layer_ setBackgroundColor:transparent ? [NSColor clearColor] : [NSColor whiteColor]];
   }
   
   transparent_ = transparent;
