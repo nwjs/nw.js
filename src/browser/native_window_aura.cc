@@ -458,15 +458,6 @@ void NativeWindowAura::SetTransparent(bool transparent) {
 
   // this is needed, or transparency will fail if it defined on startup
   bool change_window_style = false;
-
-  if (!has_frame_) {
-    const LONG lastStyle = GetWindowLong(hWnd, GWL_STYLE);
-    const LONG style = WS_CAPTION;
-    const LONG newStyle = transparent ? lastStyle | style : lastStyle & ~style;
-    SetWindowLong(hWnd, GWL_STYLE, newStyle);
-    change_window_style |= lastStyle != newStyle;
-  }
-
   const LONG lastExStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
   const LONG exStyle = WS_EX_COMPOSITED;
   const LONG newExStyle = transparent ? lastExStyle | exStyle : lastExStyle & ~exStyle;
