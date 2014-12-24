@@ -1,3 +1,13 @@
+0.11.4 / 12-24-2014
+===================
+- support click-through with window transparency on OSX & Win (Thanks to Jefry Tedjokusumo)
+- Fix Windows printing
+- Fix --file-descriptor-limit (Thanks to Liu Cong)
+- Fix Window.reloadDev()
+- Fix dom_storage_quota (#2854)
+- Fix: maximizing frameless window enters fullscreen (#1021)
+- Fix tray title/tooltip issues on Mac OS X (#2796 Thanks to Marco Fabbri)
+
 0.11.3 / 12-16-2014
 ===================
 - new method in 'new-win-policy' event handler to control the options for new popup windows

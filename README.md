@@ -21,11 +21,11 @@ It's created and developed in the Intel Open Source Technology Center.
 * Available on Linux, Mac OS X and Windows
 
 ## Downloads
-* **v0.11.3:** (Dec 16, 2014, based off of Node v0.11.13, Chromium 38.0.2125.104): [release notes](https://groups.google.com/d/msg/node-webkit/7zl5_LcPhFk/R3YjrZUqepIJ)
+* **v0.11.4:** (Dec 24, 2014, based off of Node v0.11.13, Chromium 38.0.2125.104): [release notes](https://groups.google.com/d/msg/node-webkit/2MXhBGjnavM/_DoQcY62xxkJ)
 
- * Linux: [32bit](http://dl.node-webkit.org/v0.11.3/node-webkit-v0.11.3-linux-ia32.tar.gz) / [64bit](http://dl.node-webkit.org/v0.11.3/node-webkit-v0.11.3-linux-x64.tar.gz)
- * Windows: [32bit](http://dl.node-webkit.org/v0.11.3/node-webkit-v0.11.3-win-ia32.zip) / [64bit](http://dl.node-webkit.org/v0.11.3/node-webkit-v0.11.3-win-x64.zip)
- * Mac 10.7+: [32bit](http://dl.node-webkit.org/v0.11.3/node-webkit-v0.11.3-osx-ia32.zip) / [64bit](http://dl.node-webkit.org/v0.11.3/node-webkit-v0.11.3-osx-x64.zip)
+ * Linux: [32bit](http://dl.node-webkit.org/v0.11.4/node-webkit-v0.11.4-linux-ia32.tar.gz) / [64bit](http://dl.node-webkit.org/v0.11.4/node-webkit-v0.11.4-linux-x64.tar.gz)
+ * Windows: [32bit](http://dl.node-webkit.org/v0.11.4/node-webkit-v0.11.4-win-ia32.zip) / [64bit](http://dl.node-webkit.org/v0.11.4/node-webkit-v0.11.4-win-x64.zip)
+ * Mac 10.7+: [32bit](http://dl.node-webkit.org/v0.11.4/node-webkit-v0.11.4-osx-ia32.zip) / [64bit](http://dl.node-webkit.org/v0.11.4/node-webkit-v0.11.4-osx-x64.zip)
 
 * **0.8.6:** (Apr 18, 2014, based off of Node v0.10.22, Chrome 30.0.1599.66) **If your native Node module works only with Node v0.10, then you should use node-webkit v0.8.x, which is also a maintained branch. [More info](https://groups.google.com/d/msg/node-webkit/2OJ1cEMPLlA/09BvpTagSA0J)**  
 [release notes](https://groups.google.com/d/msg/node-webkit/CLPkgfV-i7s/hwkkQuJ1kngJ)
