@@ -320,32 +320,7 @@ bool Shell::ShouldCloseWindow(bool quit) {
 
 void Shell::PrintCriticalError(const std::string& title,
                                const std::string& content) {
-  const base::StringPiece template_html(
-      ResourceBundle::GetSharedInstance().GetRawDataResource(
-          IDR_NW_FATAL_ERROR));
-
-  std::string error_page_url;
-
-  if (template_html.empty()) {
-    // Print hand written error info if nw.pak doesn't exist.
-    NOTREACHED() << "Unable to load error template.";
-    error_page_url = "data:text/html;base64,VW5hYmxlIHRvIGZpbmQgbncucGFrLgo=";
-  } else {
-    std::string content_with_no_newline, content_with_no_space;
-    base::ReplaceChars(net::EscapeForHTML(content),
-                 "\n", "<br/>", &content_with_no_newline);
-    base::ReplaceChars(content_with_no_newline,
-                 " ", "&nbsp;", &content_with_no_space);
-
-    std::vector<std::string> subst;
-    subst.push_back(title);
-    subst.push_back(content_with_no_space);
-    error_page_url = "data:text/html;charset=utf-8," +
-        net::EscapeQueryParamValue(
-            ReplaceStringPlaceholders(template_html, subst, NULL), false);
-  }
-
-  LoadURL(GURL(error_page_url));
+  LOG(ERROR) << content;
 }
 
 nw::Package* Shell::GetPackage() {
