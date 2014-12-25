@@ -7,13 +7,19 @@
 
 #include "base/basictypes.h"
 #include "base/compiler_specific.h"
+#include "extensions/browser/info_map.h"
 #include "net/base/network_delegate.h"
+namespace extensions {
+
+class InfoMap;
+
+}
 
 namespace content {
 
 class ShellNetworkDelegate : public net::NetworkDelegate {
  public:
-  ShellNetworkDelegate();
+  ShellNetworkDelegate(void* browser_context, extensions::InfoMap* extension_info_map);
   ~ShellNetworkDelegate() override;
 
   static void SetAcceptAllCookies(bool accept);
@@ -54,6 +60,9 @@ class ShellNetworkDelegate : public net::NetworkDelegate {
   bool OnCanAccessFile(const net::URLRequest& request,
                        const base::FilePath& path) const override;
   bool OnCanThrottleRequest(const net::URLRequest& request) const override;
+
+  void* browser_context_;
+  scoped_refptr<extensions::InfoMap> extension_info_map_;
 
   DISALLOW_COPY_AND_ASSIGN(ShellNetworkDelegate);
 };

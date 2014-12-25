@@ -161,7 +161,7 @@ ShellExtensionsClient::GetScriptingWhitelist() const {
 URLPatternSet ShellExtensionsClient::GetPermittedChromeSchemeHosts(
     const Extension* extension,
     const APIPermissionSet& api_permissions) const {
-  NOTIMPLEMENTED();
+  // NOTIMPLEMENTED();
   return URLPatternSet();
 }
 
@@ -204,9 +204,7 @@ std::string ShellExtensionsClient::GetWebstoreUpdateURL() const {
 }
 
 bool ShellExtensionsClient::IsBlacklistUpdateURL(const GURL& url) const {
-  // TODO(rockot): Maybe we want to do something else here. For now we accept
-  // any URL as a blacklist URL because we don't really care.
-  return true;
+  return false;
 }
 
 std::set<base::FilePath> ShellExtensionsClient::GetBrowserImagePaths(

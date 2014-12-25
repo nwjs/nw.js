@@ -35,6 +35,7 @@
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/net/shell_url_request_context_getter.h"
 #include "content/nw/src/nw_package.h"
+#include "extensions/browser/info_map.h"
 #include "net/cert/x509_certificate.h"
 
 #include "extensions/browser/guest_view/guest_view_manager.h"
@@ -161,7 +162,8 @@ net::URLRequestContextGetter* ShellBrowserContext::GetRequestContext()  {
 
 net::URLRequestContextGetter* ShellBrowserContext::CreateRequestContext(
     ProtocolHandlerMap* protocol_handlers,
-    URLRequestInterceptorScopedVector protocol_interceptors) {
+    URLRequestInterceptorScopedVector protocol_interceptors,
+    extensions::InfoMap* extension_info_map) {
 
   DCHECK(!url_request_getter_);
   CommandLine* cmd_line = CommandLine::ForCurrentProcess();
@@ -185,7 +187,7 @@ net::URLRequestContextGetter* ShellBrowserContext::CreateRequestContext(
       BrowserThread::UnsafeGetMessageLoopForThread(BrowserThread::FILE),
       protocol_handlers, this,
       auth_schemes, auth_server_whitelist, auth_delegate_whitelist,
-      gssapi_library_name);
+      gssapi_library_name, extension_info_map);
 
   const base::ListValue *additional_trust_anchors = NULL;
   if (package_->root()->GetList("additional_trust_anchors", &additional_trust_anchors)) {

@@ -57,6 +57,9 @@ const Extension* ShellExtensionSystem::LoadInternalApp() {
 
   base::ListValue* permission_list = new base::ListValue;
   permission_list->Append(new base::StringValue("webview"));
+  permission_list->Append(new base::StringValue("webRequest"));
+  permission_list->Append(new base::StringValue("webRequestBlocking"));
+  permission_list->Append(new base::StringValue("<all_urls>"));
   manifest.Set(extensions::manifest_keys::kPermissions, permission_list);
 
   std::string error;

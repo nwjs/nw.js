@@ -19,6 +19,10 @@ class Package;
 class NwFormDatabaseService;
 }
 
+namespace extensions {
+  class InfoMap;
+}
+
 namespace content {
 
 using base::FilePath;
@@ -62,8 +66,9 @@ class ShellBrowserContext : public BrowserContext {
   void PreMainMessageLoopRun();
 
   net::URLRequestContextGetter* CreateRequestContext(
-                                                     ProtocolHandlerMap* protocol_handlers,
-                                                     URLRequestInterceptorScopedVector request_interceptors);
+        ProtocolHandlerMap* protocol_handlers,
+        URLRequestInterceptorScopedVector request_interceptors,
+        extensions::InfoMap*);
   net::URLRequestContextGetter* CreateRequestContextForStoragePartition(
       const base::FilePath& partition_path,
       bool in_memory,

@@ -411,7 +411,7 @@ net::URLRequestContextGetter* ShellContentBrowserClient::CreateRequestContext(
       linked_ptr<net::URLRequestJobFactory::ProtocolHandler>(
             extensions::CreateExtensionProtocolHandler(false /* is_incognito */,
                                          extension_info_map));
-  return shell_browser_context->CreateRequestContext(protocol_handlers, request_interceptors.Pass());
+  return shell_browser_context->CreateRequestContext(protocol_handlers, request_interceptors.Pass(), extension_info_map);
 }
 
 net::URLRequestContextGetter*
