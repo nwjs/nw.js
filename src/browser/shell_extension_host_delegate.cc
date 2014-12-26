@@ -2,9 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "extensions/shell/browser/shell_extension_host_delegate.h"
+#include "content/nw/src/browser/shell_extension_host_delegate.h"
 
 #include "base/logging.h"
+#include "content/nw/src/api/dispatcher_host.h"
+#include "extensions/browser/extension_host.h"
 #include "extensions/shell/browser/media_capture_util.h"
 #include "extensions/shell/browser/shell_extension_web_contents_observer.h"
 
@@ -23,6 +25,7 @@ void ShellExtensionHostDelegate::OnExtensionHostCreated(
 
 void ShellExtensionHostDelegate::OnRenderViewCreatedForBackgroundPage(
     ExtensionHost* host) {
+  new nwapi::DispatcherHost(host->render_view_host());
 }
 
 content::JavaScriptDialogManager*

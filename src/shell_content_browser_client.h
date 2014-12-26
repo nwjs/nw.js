@@ -16,6 +16,10 @@ namespace printing {
 class PrintJobManager;
 }
 
+namespace extensions {
+class Extension;
+}
+
 namespace content {
 
 class ShellBrowserContext;
@@ -54,6 +58,8 @@ class ShellContentBrowserClient : public ContentBrowserClient {
 
   virtual void BrowserURLHandlerCreated(BrowserURLHandler* handler) override;
   virtual bool IsHandledURL(const GURL& url) override;
+  void SiteInstanceGotProcess(content::SiteInstance* site_instance) override;
+  void SiteInstanceDeleting(content::SiteInstance* site_instance) override;
   virtual bool ShouldTryToUseExistingProcessHost(
       BrowserContext* browser_context, const GURL& url) override;
   virtual bool IsSuitableHost(RenderProcessHost* process_host,
@@ -128,6 +134,8 @@ class ShellContentBrowserClient : public ContentBrowserClient {
   ShellBrowserContext* ShellBrowserContextForBrowserContext(
       BrowserContext* content_browser_context);
   bool GetUserAgentManifest(std::string* agent);
+  // Returns the extension or app associated with |site_instance| or NULL.
+  const extensions::Extension* GetExtension(content::SiteInstance* site_instance);
   scoped_ptr<ShellResourceDispatcherHostDelegate>
       resource_dispatcher_host_delegate_;
 

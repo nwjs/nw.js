@@ -29,6 +29,9 @@
 
 #include "components/crx_file/id_util.h"
 
+#include "content/nw/src/nw_shell.h"
+#include "content/nw/src/nw_package.h"
+
 using content::BrowserContext;
 using content::BrowserThread;
 
@@ -53,6 +56,11 @@ const Extension* ShellExtensionSystem::LoadInternalApp() {
 
   scoped_ptr<base::ListValue> scripts(new base::ListValue);
   scripts->AppendString("nwapp/background.js");
+  nw::Package* package = content::Shell::GetPackage();
+  std::string bg_script;
+  if (package->root()->GetString("bg-script", &bg_script))
+    scripts->AppendString(bg_script);
+
   manifest.Set(extensions::manifest_keys::kPlatformAppBackgroundScripts, scripts.release());
 
   base::ListValue* permission_list = new base::ListValue;
@@ -63,8 +71,8 @@ const Extension* ShellExtensionSystem::LoadInternalApp() {
   manifest.Set(extensions::manifest_keys::kPermissions, permission_list);
 
   std::string error;
-  base::FilePath path;
-  PathService::Get(base::FILE_EXE, &path);
+  base::FilePath path = package->path();
+  //PathService::Get(base::FILE_EXE, &path);
   scoped_refptr<const Extension> extension(Extension::Create(
       path, Manifest::INTERNAL, manifest, Extension::NO_FLAGS,
       //      crx_file::id_util::GenerateId("io-blink"),

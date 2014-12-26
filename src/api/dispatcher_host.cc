@@ -275,8 +275,7 @@ void DispatcherHost::OnGetShellId(int* id) {
 void DispatcherHost::OnCreateShell(const std::string& url,
                                    const base::DictionaryValue& manifest,
                                    int* routing_id) {
-  WebContents* base_web_contents =
-      content::Shell::FromRenderViewHost(render_view_host())->web_contents();
+  WebContents* base_web_contents = web_contents();
   ShellBrowserContext* browser_context =
       static_cast<ShellBrowserContext*>(base_web_contents->GetBrowserContext());
   scoped_ptr<base::DictionaryValue> new_manifest(manifest.DeepCopy());

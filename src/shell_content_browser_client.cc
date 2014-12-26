@@ -40,6 +40,7 @@
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/render_widget_host_iterator.h"
 #include "content/public/browser/resource_dispatcher_host.h"
+#include "content/public/browser/site_instance.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/content_descriptors.h"
 #include "content/public/common/content_switches.h"
@@ -89,8 +90,16 @@
 #include "content/nw/src/browser/shell_extension_system.h"
 #include "extensions/browser/extension_protocols.h"
 #include "extensions/browser/extension_message_filter.h"
+#include "extensions/browser/extension_registry.h"
+#include "extensions/browser/info_map.h"
+#include "extensions/browser/process_map.h"
 
 //using base::FileDescriptor;
+
+using extensions::Extension;
+using extensions::ProcessMap;
+using extensions::ExtensionRegistry;
+using extensions::InfoMap;
 
 namespace {
 
@@ -594,6 +603,58 @@ bool ShellContentBrowserClient::CheckMediaAccessPermission(BrowserContext* brows
                                                            const GURL& security_origin,
                                                            MediaStreamType type) {
   return true;
+}
+
+void ShellContentBrowserClient::SiteInstanceGotProcess(
+    content::SiteInstance* site_instance) {
+  // If this isn't an extension renderer there's nothing to do.
+  const Extension* extension = GetExtension(site_instance);
+  if (!extension)
+    return;
+
+  ProcessMap::Get(shell_browser_main_parts_->browser_context())
+      ->Insert(extension->id(),
+               site_instance->GetProcess()->GetID(),
+               site_instance->GetId());
+
+  BrowserThread::PostTask(
+      BrowserThread::IO,
+      FROM_HERE,
+      base::Bind(&InfoMap::RegisterExtensionProcess,
+                 shell_browser_main_parts_->extension_system()->info_map(),
+                 extension->id(),
+                 site_instance->GetProcess()->GetID(),
+                 site_instance->GetId()));
+}
+
+void ShellContentBrowserClient::SiteInstanceDeleting(
+    content::SiteInstance* site_instance) {
+  // If this isn't an extension renderer there's nothing to do.
+  const Extension* extension = GetExtension(site_instance);
+  if (!extension)
+    return;
+
+  ProcessMap::Get(shell_browser_main_parts_->browser_context())
+      ->Remove(extension->id(),
+               site_instance->GetProcess()->GetID(),
+               site_instance->GetId());
+
+  BrowserThread::PostTask(
+      BrowserThread::IO,
+      FROM_HERE,
+      base::Bind(&InfoMap::UnregisterExtensionProcess,
+                 shell_browser_main_parts_->extension_system()->info_map(),
+                 extension->id(),
+                 site_instance->GetProcess()->GetID(),
+                 site_instance->GetId()));
+}
+
+const Extension* ShellContentBrowserClient::GetExtension(
+    content::SiteInstance* site_instance) {
+  ExtensionRegistry* registry =
+      ExtensionRegistry::Get(site_instance->GetBrowserContext());
+  return registry->enabled_extensions().GetExtensionOrAppByURL(
+      site_instance->GetSiteURL());
 }
 
 }  // namespace content

@@ -267,7 +267,9 @@ bool ShellContentRendererClient::goodForNode(blink::WebFrame* frame)
   bool use_node =
     CommandLine::ForCurrentProcess()->HasSwitch(switches::kNodejs) &&
     !frame->isNwDisabledChildFrame() &&
-    (force_on || url.SchemeIsFile() || is_nw_protocol || url.SchemeIs("app"));
+    (force_on || url.SchemeIsFile() || is_nw_protocol
+     || url.SchemeIs("chrome-extension")
+     || url.SchemeIs("app"));
   return use_node;
 }
 
@@ -356,7 +358,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
   // test for 'about:blank' is also here becuase window.open would
   // open 'about:blank' first // FIXME
   bool is_nw_protocol = url.SchemeIs("nw") || !url.is_valid();
-
+  bool is_ext_protocol = url.SchemeIs("chrome-extension");
   if (use_node || is_nw_protocol) {
     frame->setNodeJS(true);
 
@@ -419,7 +421,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
         LOG(FATAL) << *v8::String::Utf8Value(message->Get());
       }
     }
-    {
+    if (!is_ext_protocol) {
       v8::TryCatch try_catch;
       v8::Local<v8::Script> script2 = v8::Script::Compile(v8::String::NewFromUtf8(isolate,
         "  nwDispatcher.requireNwGui().Window.get();"
