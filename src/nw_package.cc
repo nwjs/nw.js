@@ -303,7 +303,6 @@ bool Package::InitFromPath() {
 
   // Check fields
   const char* required_fields[] = {
-    switches::kmMain,
     switches::kmName
   };
   for (unsigned i = 0; i < arraysize(required_fields); i++)

@@ -265,7 +265,10 @@ void ShellBrowserMainParts::Init() {
   if (extension)
     extension_system->LaunchApp(extension->id());
 
-  Shell::Create(browser_context_.get(),
+  std::string dummy;
+  if (!package()->root()->GetString("bg-script", &dummy) ||
+      package()->root()->GetString(switches::kmMain, &dummy))
+    Shell::Create(browser_context_.get(),
                 package()->GetStartupURL(),
                 NULL,
                 MSG_ROUTING_NONE,
