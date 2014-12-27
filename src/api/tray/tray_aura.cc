@@ -30,6 +30,7 @@
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
+#include "ui/gfx/screen.h"
 #include "ui/gfx/image/image.h"
 
 namespace nwapi {
@@ -47,6 +48,12 @@ class TrayObserver : public StatusIconObserver {
 
   virtual void OnStatusIconClicked() override {
     base::ListValue args;
+    base::DictionaryValue* data = new base::DictionaryValue;
+    gfx::Point cursor_pos(
+      gfx::Screen::GetNativeScreen()->GetCursorScreenPoint());
+    data->SetInteger("x", cursor_pos.x());
+    data->SetInteger("y", cursor_pos.y());
+    args.Append(data);
     tray_->dispatcher_host()->SendEvent(tray_, "click", args);
   }
 
@@ -105,6 +112,9 @@ void Tray::Remove() {
 }
 
 void Tray::SetAltIcon(const std::string& alticon_path) {
+}
+
+void Tray::SetIconsAreTemplates(bool areTemplates) {
 }
 
 }  // namespace nwapi

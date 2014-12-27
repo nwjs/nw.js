@@ -16,16 +16,16 @@ It's created and developed in the Intel Open Source Technology Center.
 
 * Apps written in modern HTML5, CSS3, JS and WebGL.
 * Complete support for [Node.js APIs](http://nodejs.org/api/) and all its [third party modules](https://npmjs.org).
-* Good performance: Node and WebKit runs in the same thread: Function calls are made straightforward; objects are in the same heap and can just reference each other;
+* Good performance: Node and WebKit run in the same thread: Function calls are made straightforward; objects are in the same heap and can just reference each other;
 * Easy to package and distribute apps.
 * Available on Linux, Mac OS X and Windows
 
 ## Downloads
-* **v0.11.2:** (Nov 26, 2014, based off of Node v0.11.13, Chromium 38.0.2125.104): [release notes](https://groups.google.com/d/msg/node-webkit/hpG-AgsATTI/Oc-qhC3rMnkJ)
+* **v0.11.3:** (Dec 16, 2014, based off of Node v0.11.13, Chromium 38.0.2125.104): [release notes](https://groups.google.com/d/msg/node-webkit/7zl5_LcPhFk/R3YjrZUqepIJ)
 
- * Linux: [32bit](http://dl.node-webkit.org/v0.11.2/node-webkit-v0.11.2-linux-ia32.tar.gz) / [64bit](http://dl.node-webkit.org/v0.11.2/node-webkit-v0.11.2-linux-x64.tar.gz)
- * Windows: [32bit](http://dl.node-webkit.org/v0.11.2/node-webkit-v0.11.2-win-ia32.zip) / [64bit](http://dl.node-webkit.org/v0.11.2/node-webkit-v0.11.2-win-x64.zip)
- * Mac 10.7+: [32bit](http://dl.node-webkit.org/v0.11.2/node-webkit-v0.11.2-osx-ia32.zip) / [64bit](http://dl.node-webkit.org/v0.11.2/node-webkit-v0.11.2-osx-x64.zip)
+ * Linux: [32bit](http://dl.node-webkit.org/v0.11.3/node-webkit-v0.11.3-linux-ia32.tar.gz) / [64bit](http://dl.node-webkit.org/v0.11.3/node-webkit-v0.11.3-linux-x64.tar.gz)
+ * Windows: [32bit](http://dl.node-webkit.org/v0.11.3/node-webkit-v0.11.3-win-ia32.zip) / [64bit](http://dl.node-webkit.org/v0.11.3/node-webkit-v0.11.3-win-x64.zip)
+ * Mac 10.7+: [32bit](http://dl.node-webkit.org/v0.11.3/node-webkit-v0.11.3-osx-ia32.zip) / [64bit](http://dl.node-webkit.org/v0.11.3/node-webkit-v0.11.3-osx-x64.zip)
 
 * **0.8.6:** (Apr 18, 2014, based off of Node v0.10.22, Chrome 30.0.1599.66) **If your native Node module works only with Node v0.10, then you should use node-webkit v0.8.x, which is also a maintained branch. [More info](https://groups.google.com/d/msg/node-webkit/2OJ1cEMPLlA/09BvpTagSA0J)**  
 [release notes](https://groups.google.com/d/msg/node-webkit/CLPkgfV-i7s/hwkkQuJ1kngJ)

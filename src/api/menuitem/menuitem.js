@@ -46,6 +46,11 @@ function MenuItem(option) {
       option.icon = nw.getAbsolutePath(option.icon);
     }
 
+    if (option.hasOwnProperty('iconIsTemplate'))
+      option.iconIsTemplate = Boolean(option.iconIsTemplate);
+    else
+      option.iconIsTemplate = true;
+
     if (option.hasOwnProperty('tooltip'))
       option.tooltip = String(option.tooltip);
 
@@ -114,6 +119,14 @@ MenuItem.prototype.__defineSetter__('icon', function(val) {
   v8_util.getHiddenValue(this, 'option').shadowIcon = String(val);
   var real_path = val == '' ? '' : nw.getAbsolutePath(val);
   this.handleSetter('icon', 'SetIcon', String, real_path);
+});
+
+MenuItem.prototype.__defineGetter__('iconIsTemplate', function() {
+  return this.handleGetter('iconIsTemplate');
+});
+
+MenuItem.prototype.__defineSetter__('iconIsTemplate', function(val) {
+  this.handleSetter('iconIsTemplate', 'SetIconIsTemplate', Boolean, val);
 });
 
 MenuItem.prototype.__defineGetter__('tooltip', function() {

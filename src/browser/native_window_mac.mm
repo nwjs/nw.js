@@ -482,6 +482,8 @@ void NativeWindowCocoa::Move(const gfx::Rect& pos) {
 }
 
 void NativeWindowCocoa::Focus(bool focus) {
+  NSApplication *myApp = [NSApplication sharedApplication];
+  [myApp activateIgnoringOtherApps:YES];
   if (focus && [window() isVisible])
     [window() makeKeyAndOrderFront:nil];
   else

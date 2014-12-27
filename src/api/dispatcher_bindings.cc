@@ -453,6 +453,13 @@ void DispatcherBindings::CallStaticMethod(
 // static
 void DispatcherBindings::CrashRenderer(
     const v8::FunctionCallbackInfo<v8::Value>& args) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  RenderView* render_view = GetCurrentRenderView();
+  if (!render_view) {
+    args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
+                                     "Unable to get render view in CallObjectMethod"))));
+    return;
+  }
   int* ptr = NULL;
   *ptr = 1;
 }

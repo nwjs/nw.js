@@ -71,6 +71,10 @@ void MenuItem::Create(const base::DictionaryValue& option) {
     if (option.GetBoolean("enabled", &enabled))
       SetEnabled(enabled);
 
+    bool isTemplate;
+    if (option.GetBoolean("iconIsTemplate", &isTemplate))
+      SetIconIsTemplate(isTemplate);
+
     std::string icon;
     if (option.GetString("icon", &icon) && !icon.empty())
       SetIcon(icon);
@@ -131,11 +135,18 @@ void MenuItem::SetIcon(const std::string& icon) {
   if (!icon.empty()) {
     NSImage* image = [[NSImage alloc]
          initWithContentsOfFile:[NSString stringWithUTF8String:icon.c_str()]];
+    [image setTemplate:iconIsTemplate];
     [menu_item_ setImage:image];
     [image release];
   } else {
     [menu_item_ setImage:nil];
   }
+}
+
+void MenuItem::SetIconIsTemplate(bool isTemplate) {
+  iconIsTemplate = isTemplate;
+  if ([menu_item_ image] != nil)
+    [[menu_item_ image] setTemplate:isTemplate];
 }
 
 void MenuItem::SetTooltip(const std::string& tooltip) {
