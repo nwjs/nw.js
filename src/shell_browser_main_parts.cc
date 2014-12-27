@@ -76,6 +76,7 @@
 #include "content/nw/src/common/shell_extensions_client.h"
 
 #include "extensions/browser/browser_context_keyed_service_factories.h"
+#include "extensions/browser/process_manager.h"
 
 using base::MessageLoop;
 
@@ -262,8 +263,10 @@ void ShellBrowserMainParts::Init() {
                                 extensions::ExtensionSystem::Get(browser_context_.get()));
   extension_system->Init();
   const extensions::Extension* extension = extension_system->LoadInternalApp();
-  if (extension)
+  if (extension) {
     extension_system->LaunchApp(extension->id());
+    extensions::ProcessManager::Get(browser_context_.get())->IncrementLazyKeepaliveCount(extension);
+  }
 
   std::string dummy;
   if (!package()->root()->GetString("bg-script", &dummy) ||
