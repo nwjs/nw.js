@@ -1,3 +1,8 @@
+0.11.5 / 12-28-2014
+===================
+- Fix: Normal frame should not simulate user input events (File input dialog)
+- Fix: crash in debug session of WebStorm (WEB-14378)
+
 0.11.4 / 12-24-2014
 ===================
 - support click-through with window transparency on OSX & Win (Thanks to Jefry Tedjokusumo)
@@ -11,7 +16,7 @@
 0.11.3 / 12-16-2014
 ===================
 - new method in 'new-win-policy' event handler to control the options for new popup windows
-- Fix: nw methods cannot be called from normal frames
+- Fix: nw methods cannot be called from normal frames (Thanks to Insighti <research@insighti.org>)
 - Extend Tray click event with position (Thanks to Marco Fabbri) (#1874)
 - [OSX] Fix Window.focus() not taking focus (#2724)
 - Add API methods and support for styling of icons (Tray, MenuItem) under Mac OS X (Yosemite) Dark Mode (#2775)
