@@ -51,16 +51,16 @@ FilePath GetFrameworksPath() {
 
 void OverrideFrameworkBundlePath() {
   FilePath helper_path =
-      GetFrameworksPath().Append("node-webkit Framework.framework");
+      GetFrameworksPath().Append("nwjs Framework.framework");
 
   base::mac::SetOverrideFrameworkBundlePath(helper_path);
 }
 
 void OverrideChildProcessPath() {
-  FilePath helper_path = GetFrameworksPath().Append("node-webkit Helper.app")
+  FilePath helper_path = GetFrameworksPath().Append("nwjs Helper.app")
                                             .Append("Contents")
                                             .Append("MacOS")
-                                            .Append("node-webkit Helper");
+                                            .Append("nwjs Helper");
 
   PathService::Override(content::CHILD_PROCESS_EXE, helper_path);
 }
