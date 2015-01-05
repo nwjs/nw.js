@@ -269,9 +269,9 @@ google_breakpad::CustomClientInfo* GetCustomInfo(const std::wstring& exe_path,
 
   // Common g_custom_entries.
   g_custom_entries->push_back(
-      google_breakpad::CustomInfoEntry(L"ver", UTF16ToWide(version).c_str()));
+      google_breakpad::CustomInfoEntry(L"ver", base::UTF16ToWide(version).c_str()));
   g_custom_entries->push_back(
-      google_breakpad::CustomInfoEntry(L"prod", UTF16ToWide(product).c_str()));
+      google_breakpad::CustomInfoEntry(L"prod", base::UTF16ToWide(product).c_str()));
   g_custom_entries->push_back(
       google_breakpad::CustomInfoEntry(L"plat", L"Win32"));
   g_custom_entries->push_back(
@@ -287,7 +287,7 @@ google_breakpad::CustomClientInfo* GetCustomInfo(const std::wstring& exe_path,
 
   if (!special_build.empty())
     g_custom_entries->push_back(google_breakpad::CustomInfoEntry(
-        L"special", UTF16ToWide(special_build).c_str()));
+        L"special", base::UTF16ToWide(special_build).c_str()));
 
   if (type == L"plugin" || type == L"ppapi") {
     std::wstring plugin_path =
@@ -659,7 +659,7 @@ static void InitPipeNameEnvVar(bool is_per_user_install) {
     pipe_name = kGoogleUpdatePipeName;
     pipe_name += user_sid;
   }
-  env->SetVar(kPipeNameVar, WideToASCII(pipe_name));
+  env->SetVar(kPipeNameVar, base::UTF16ToASCII(pipe_name));
 }
 
 void InitDefaultCrashCallback(LPTOP_LEVEL_EXCEPTION_FILTER filter) {
@@ -717,7 +717,7 @@ void InitCrashReporter() {
       InitDefaultCrashCallback(default_filter);
     return;
   }
-  std::wstring pipe_name = ASCIIToWide(pipe_name_ascii);
+  std::wstring pipe_name = base::ASCIIToWide(pipe_name_ascii);
 
 #ifdef _WIN64
   // The protocol for connecting to the out-of-process Breakpad crash
@@ -739,9 +739,11 @@ void InitCrashReporter() {
   else if (GetBreakpadClient()->GetShouldDumpLargerDumps(is_per_user_install))
     dump_type = kLargerDumpType;
 
+  int handler_types = google_breakpad::ExceptionHandler::HANDLER_EXCEPTION |
+      google_breakpad::ExceptionHandler::HANDLER_PURECALL;
   g_breakpad = new google_breakpad::ExceptionHandler(temp_dir, &FilterCallback,
                    callback, NULL,
-                   google_breakpad::ExceptionHandler::HANDLER_ALL,
+                   handler_types,
                    dump_type, pipe_name.c_str(), custom_info);
 
   // Now initialize the non crash dump handler.

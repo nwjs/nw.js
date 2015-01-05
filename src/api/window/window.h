@@ -51,6 +51,9 @@ public:
   GURL url_;
   int req_id_;
   bool success_;
+private:
+  friend class base::RefCountedThreadSafe<CookieAPIContext>;
+  ~CookieAPIContext();
 };
 
 

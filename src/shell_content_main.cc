@@ -27,6 +27,9 @@
 int ContentMain(int argc,
                 const char** argv) {
   content::ShellMainDelegate delegate;
-  return content::ContentMain(argc, argv, &delegate);
+  content::ContentMainParams params(&delegate);
+  params.argc = argc;
+  params.argv = argv;
+  return content::ContentMain(params);
 }
 #endif  // OS_MACOSX

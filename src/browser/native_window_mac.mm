@@ -24,6 +24,7 @@
 #include "base/strings/sys_string_conversions.h"
 #include "base/values.h"
 #import "chrome/browser/ui/cocoa/custom_frame_view.h"
+#import "chrome/browser/ui/cocoa/nsview_additions.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/app/app.h"
 #include "content/nw/src/browser/chrome_event_processing_window.h"
@@ -34,12 +35,16 @@
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/native_web_keyboard_event.h"
-#include "content/public/browser/render_widget_host_view.h"
+#include "content/browser/renderer_host/render_widget_host_view_mac.h"
 #include "content/public/browser/web_contents.h"
-#include "content/public/browser/web_contents_view.h"
 #include "extensions/common/draggable_region.h"
 #include "third_party/skia/include/core/SkRegion.h"
 #import "ui/base/cocoa/underlay_opengl_hosting_window.h"
+
+namespace content {
+  extern bool g_support_transparency;
+  extern bool g_force_cpu_draw;
+}
 
 @interface NSWindow (NSPrivateApis)
 - (void)setBottomCornerRounded:(BOOL)rounded;
@@ -119,7 +124,7 @@ enum {
 
 - (void)windowDidBecomeKey:(NSNotification *)notification {
   if (shell_) {
-    shell_->web_contents()->GetView()->Focus();
+    shell_->web_contents()->Focus();
     shell_->SendEvent("focus");
   }
 }
@@ -282,7 +287,11 @@ enum {
   [[NSBezierPath bezierPathWithRoundedRect:[view bounds]
                                    xRadius:cornerRadius
                                    yRadius:cornerRadius] addClip];
-  [[NSColor whiteColor] set];
+  if ([self isOpaque] || !content::g_support_transparency)
+    [[NSColor whiteColor] set];
+  else
+    [[NSColor clearColor] set];
+
   NSRectFill(rect);
 }
 
@@ -305,6 +314,41 @@ enum {
 }
 
 @end
+
+@interface NWProgressBar : NSProgressIndicator
+@end
+
+@implementation NWProgressBar
+
+// override the drawing, so we can give color to the progress bar
+- (void)drawRect:(NSRect)dirtyRect {
+  
+  [super drawRect:dirtyRect];
+  
+  if(self.style != NSProgressIndicatorBarStyle)
+    return;
+  
+  NSRect sliceRect, remainderRect;
+  double progressFraction = ([self doubleValue] - [self minValue]) /
+  ([self maxValue] - [self minValue]);
+  
+  NSDivideRect(dirtyRect, &sliceRect, &remainderRect,
+               NSWidth(dirtyRect) * progressFraction, NSMinXEdge);
+  
+  const int kProgressBarCornerRadius = 3;
+  
+  if (progressFraction == 0.0)
+    return;
+  
+  NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:sliceRect
+                                                       xRadius:kProgressBarCornerRadius
+                                                       yRadius:kProgressBarCornerRadius];
+  // blue color with alpha blend 0.5
+  [[NSColor colorWithCalibratedRed:0 green:0 blue:1 alpha:0.5] set];
+  [path fill];
+}
+@end
+
 
 namespace nw {
 
@@ -350,8 +394,12 @@ NativeWindowCocoa::NativeWindowCocoa(
                       defer:NO];
   }
   window_ = shell_window;
+  opaque_color_ = [window() backgroundColor];
   [shell_window setShell:shell];
+  [[window() contentView] setWantsLayer:!content::g_force_cpu_draw];
   [window() setDelegate:[[NativeWindowDelegate alloc] initWithShell:shell]];
+
+  SetTransparent(transparent_);
 
   // Disable fullscreen button when 'fullscreen' is specified to false.
   bool fullscreen;
@@ -371,7 +419,7 @@ NativeWindowCocoa::NativeWindowCocoa(
       [window() respondsToSelector:@selector(setBottomCornerRounded:)])
     [window() setBottomCornerRounded:NO];
 
-  NSView* view = web_contents()->GetView()->GetNativeView();
+  NSView* view = web_contents()->GetNativeView();
   [view setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 
   // By default, the whole frameless window is not draggable.
@@ -388,7 +436,7 @@ NativeWindowCocoa::~NativeWindowCocoa() {
 }
 
 void NativeWindowCocoa::InstallView() {
-  NSView* view = web_contents()->GetView()->GetNativeView();
+  NSView* view = web_contents()->GetNativeView();
   if (has_frame_) {
     [view setFrame:[[window() contentView] bounds]];
     [[window() contentView] addSubview:view];
@@ -413,7 +461,7 @@ void NativeWindowCocoa::InstallView() {
 }
 
 void NativeWindowCocoa::UninstallView() {
-  NSView* view = web_contents()->GetView()->GetNativeView();
+  NSView* view = web_contents()->GetNativeView();
   [view removeFromSuperview];
 }
 
@@ -434,6 +482,8 @@ void NativeWindowCocoa::Move(const gfx::Rect& pos) {
 }
 
 void NativeWindowCocoa::Focus(bool focus) {
+  NSApplication *myApp = [NSApplication sharedApplication];
+  [myApp activateIgnoringOtherApps:YES];
   if (focus && [window() isVisible])
     [window() makeKeyAndOrderFront:nil];
   else
@@ -442,7 +492,7 @@ void NativeWindowCocoa::Focus(bool focus) {
 
 void NativeWindowCocoa::Show() {
   NSApplication *myApp = [NSApplication sharedApplication];
-  [myApp activateIgnoringOtherApps:YES];
+  [myApp activateIgnoringOtherApps:NO];
   content::RenderWidgetHostView* rwhv =
       shell_->web_contents()->GetRenderWidgetHostView();
 
@@ -503,6 +553,28 @@ bool NativeWindowCocoa::IsFullscreen() {
   return is_fullscreen_;
 }
 
+void NativeWindowCocoa::SetTransparent(bool transparent) {
+  
+  if (!content::g_support_transparency) return;
+  if (!transparent_ && transparent) {
+    opaque_color_ = [window() backgroundColor];
+  }
+  
+  [window() setHasShadow:transparent ? NO : YES];
+  [window() setOpaque:transparent ? NO : YES];
+  [window() setBackgroundColor:transparent ? [NSColor clearColor] : opaque_color_];
+
+  content::RenderWidgetHostViewMac* rwhv = static_cast<content::RenderWidgetHostViewMac*>(shell_->web_contents()->GetRenderWidgetHostView());
+
+  if (rwhv) {
+    rwhv->SetBackgroundOpaque(!transparent);
+    [rwhv->background_layer_ setBackgroundColor:CGColorGetConstantColor(transparent ? kCGColorClear : kCGColorWhite)];
+    [rwhv->software_layer_ setBackgroundColor:transparent ? [NSColor clearColor] : [NSColor whiteColor]];
+  }
+  
+  transparent_ = transparent;
+  
+}
 void NativeWindowCocoa::SetNonLionFullscreen(bool fullscreen) {
   if (fullscreen == is_fullscreen_)
     return;
@@ -589,12 +661,22 @@ void NativeWindowCocoa::SetResizable(bool resizable) {
     [window() setStyleMask:window().styleMask | NSResizableWindowMask];
   } else {
     [[window() standardWindowButton:NSWindowZoomButton] setEnabled:NO];
-    [window() setStyleMask:window().styleMask ^ NSResizableWindowMask];
+    [window() setStyleMask:window().styleMask & ~NSResizableWindowMask];
   }
 }
 
 void NativeWindowCocoa::SetAlwaysOnTop(bool top) {
   [window() setLevel:(top ? NSFloatingWindowLevel : NSNormalWindowLevel)];
+}
+
+void NativeWindowCocoa::SetVisibleOnAllWorkspaces(bool all_workspaces) {
+  NSUInteger collectionBehavior = [window() collectionBehavior];
+  if (all_workspaces) {
+    collectionBehavior |= NSWindowCollectionBehaviorCanJoinAllSpaces;
+  } else {
+    collectionBehavior &= ~NSWindowCollectionBehaviorCanJoinAllSpaces;
+  }
+  [window() setCollectionBehavior:collectionBehavior];
 }
 
 void NativeWindowCocoa::SetShowInTaskbar(bool show) {
@@ -634,9 +716,9 @@ void NativeWindowCocoa::SetTitle(const std::string& title) {
   [window() setTitle:base::SysUTF8ToNSString(title)];
 }
 
-void NativeWindowCocoa::FlashFrame(bool flash) {
-  if (flash) {
-    attention_request_id_ = [NSApp requestUserAttention:NSInformationalRequest];
+void NativeWindowCocoa::FlashFrame(int count) {
+  if (count != 0) {
+    attention_request_id_ = count < 0 ? [NSApp requestUserAttention:NSInformationalRequest] : [NSApp requestUserAttention:NSCriticalRequest];
   } else {
     [NSApp cancelUserAttentionRequest:attention_request_id_];
     attention_request_id_ = 0;
@@ -647,11 +729,65 @@ void NativeWindowCocoa::SetBadgeLabel(const std::string& badge) {
   [[NSApp dockTile] setBadgeLabel:base::SysUTF8ToNSString(badge)];
 }
 
+
+void NativeWindowCocoa::SetProgressBar(double progress){
+  NSDockTile *dockTile = [NSApp dockTile];
+  NWProgressBar *progressIndicator = NULL;
+  
+  if (dockTile.contentView == NULL && progress >= 0) {
+    
+    // create image view to draw application icon
+    NSImageView *iv = [[NSImageView alloc] init];
+    [iv setImage:[NSApp applicationIconImage]];
+    
+    // set dockTile content view to app icon
+    [dockTile setContentView:iv];
+    
+    progressIndicator = [[NWProgressBar alloc]
+                         initWithFrame:NSMakeRect(0.0f, 0.0f, dockTile.size.width, 15.)];
+    
+    [progressIndicator setStyle:NSProgressIndicatorBarStyle];
+    
+    [progressIndicator setBezeled:YES];
+    [progressIndicator setMinValue:0];
+    [progressIndicator setMaxValue:1];
+    [progressIndicator setHidden:NO];
+    [progressIndicator setUsesThreadedAnimation:false];
+    
+    // add progress indicator to image view
+    [iv addSubview:progressIndicator];
+  }
+  
+  progressIndicator = (NWProgressBar*)[dockTile.contentView.subviews objectAtIndex:0];
+  
+  if(progress >= 0) {
+    [progressIndicator setIndeterminate:progress > 1];
+    if(progress > 1) {
+      // progress Indicator is indeterminate
+      // [progressIndicator startAnimation:window_];
+      [progressIndicator setDoubleValue:1];
+    }
+    else {
+      //[progressIndicator stopAnimation:window_];
+      [progressIndicator setDoubleValue:progress];
+    }
+  }
+  else {
+    // progress indicator < 0, destroy it
+    [[dockTile.contentView.subviews objectAtIndex:0]release];
+    [dockTile.contentView release];
+    dockTile.contentView = NULL;
+  }
+  
+  [dockTile display];
+  
+}
+
 void NativeWindowCocoa::SetKiosk(bool kiosk) {
   if (kiosk) {
     NSApplicationPresentationOptions options =
         NSApplicationPresentationHideDock +
-        NSApplicationPresentationHideMenuBar + 
+        NSApplicationPresentationHideMenuBar +
         NSApplicationPresentationDisableAppleMenu +
         NSApplicationPresentationDisableProcessSwitching +
         NSApplicationPresentationDisableForceQuit +
@@ -672,15 +808,17 @@ bool NativeWindowCocoa::IsKiosk() {
 }
 
 void NativeWindowCocoa::SetMenu(nwapi::Menu* menu) {
-  bool no_edit_menu = false;
-  shell_->GetPackage()->root()->GetBoolean("no-edit-menu", &no_edit_menu);
+  if(menu == nil) {
+    NSMenu *menu = [[NSMenu alloc] initWithTitle:@""];
+    [NSApp setMainMenu:menu];
+  } else {
+    [NSApp setMainMenu:menu->menu_];
+  }
+}
 
-  StandardMenusMac standard_menus(shell_->GetPackage()->GetName());
-  [NSApp setMainMenu:menu->menu_];
-  standard_menus.BuildAppleMenu();
-  if (!no_edit_menu)
-    standard_menus.BuildEditMenu();
-  standard_menus.BuildWindowMenu();
+void NativeWindowCocoa::ClearMenu() {
+  NSMenu *menu = [[NSMenu alloc] initWithTitle:@""];
+  [NSApp setMainMenu:menu];
 }
 
 void NativeWindowCocoa::SetInitialFocus(bool accept_focus) {
@@ -738,7 +876,7 @@ void NativeWindowCocoa::SetToolbarUrlEntry(const std::string& url) {
   if (toolbar_delegate_)
     [toolbar_delegate_ setUrl:base::SysUTF8ToNSString(url)];
 }
-  
+
 void NativeWindowCocoa::SetToolbarIsLoading(bool loading) {
   if (toolbar_delegate_)
     [toolbar_delegate_ setIsLoading:loading];
@@ -792,7 +930,7 @@ void NativeWindowCocoa::HandleKeyboardEvent(
       event.type == content::NativeWebKeyboardEvent::Char)
     return;
 
-  
+
   DVLOG(1) << "NativeWindowCocoa::HandleKeyboardEvent - redispatch";
 
   // // The event handling to get this strictly right is a tangle; cheat here a bit
@@ -808,7 +946,7 @@ void NativeWindowCocoa::HandleKeyboardEvent(
 void NativeWindowCocoa::UpdateDraggableRegionsForSystemDrag(
     const std::vector<extensions::DraggableRegion>& regions,
     const extensions::DraggableRegion* draggable_area) {
-  NSView* web_view = web_contents()->GetView()->GetNativeView();
+  NSView* web_view = web_contents()->GetNativeView();
   NSInteger web_view_width = NSWidth([web_view bounds]);
   NSInteger web_view_height = NSHeight([web_view bounds]);
 
@@ -878,7 +1016,7 @@ void NativeWindowCocoa::UpdateDraggableRegionsForCustomDrag(
     const std::vector<extensions::DraggableRegion>& regions) {
   // We still need one ControlRegionView to cover the whole window such that
   // mouse events could be captured.
-  NSView* web_view = web_contents()->GetView()->GetNativeView();
+  NSView* web_view = web_contents()->GetNativeView();
   gfx::Rect window_bounds(
       0, 0, NSWidth([web_view bounds]), NSHeight([web_view bounds]));
   system_drag_exclude_areas_.clear();
@@ -908,7 +1046,7 @@ void NativeWindowCocoa::InstallDraggableRegionViews() {
   // All ControlRegionViews should be added as children of the WebContentsView,
   // because WebContentsView will be removed and re-added when entering and
   // leaving fullscreen mode.
-  NSView* webView = web_contents()->GetView()->GetNativeView();
+  NSView* webView = web_contents()->GetNativeView();
   NSInteger webViewHeight = NSHeight([webView bounds]);
 
   // Remove all ControlRegionViews that are added last time.
@@ -932,6 +1070,7 @@ void NativeWindowCocoa::InstallDraggableRegionViews() {
                                        webViewHeight - iter->bottom(),
                                        iter->width(),
                                        iter->height())];
+    [controlRegion setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
     [webView addSubview:controlRegion];
   }
 }

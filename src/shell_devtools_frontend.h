@@ -11,7 +11,7 @@
 #include "base/memory/scoped_ptr.h"
 #include "content/public/browser/devtools_agent_host.h"
 #include "content/public/browser/devtools_client_host.h"
-#include "content/public/browser/devtools_frontend_host_delegate.h"
+#include "content/public/browser/devtools_frontend_host.h"
 #include "content/public/browser/web_contents_observer.h"
 
 namespace content {
@@ -21,10 +21,11 @@ class Shell;
 class WebContents;
 
 class ShellDevToolsFrontend : public WebContentsObserver,
-                              public DevToolsFrontendHostDelegate {
+  public DevToolsFrontendHost::Delegate,
+  public DevToolsClientHost {
  public:
 
-                                // static ShellDevToolsFrontend* Show(WebContents* inspected_contents);
+    //static ShellDevToolsFrontend* Show(WebContents* inspected_contents);
   void Focus();
   void Close();
 
@@ -36,15 +37,22 @@ class ShellDevToolsFrontend : public WebContentsObserver,
 
   // WebContentsObserver overrides
   virtual void RenderViewCreated(RenderViewHost* render_view_host) OVERRIDE;
-  virtual void WebContentsDestroyed(WebContents* web_contents) OVERRIDE;
+  virtual void WebContentsDestroyed() OVERRIDE;
 
-  // DevToolsFrontendHostDelegate implementation
-  virtual void DispatchOnEmbedder(const std::string& message) OVERRIDE {}
+  // content::DevToolsFrontendHost::Delegate implementation.
+  virtual void HandleMessageFromDevToolsFrontend(
+      const std::string& message) OVERRIDE;
+  virtual void HandleMessageFromDevToolsFrontendToBackend(
+      const std::string& message) OVERRIDE;
+
+  // content::DevToolsClientHost implementation.
+  virtual void DispatchOnInspectorFrontend(const std::string& message) OVERRIDE;
   virtual void InspectedContentsClosing() OVERRIDE;
+  virtual void ReplacedWithAnotherClient() OVERRIDE {}
 
   Shell* frontend_shell_;
   scoped_refptr<DevToolsAgentHost> agent_host_;
-  scoped_ptr<DevToolsClientHost> frontend_host_;
+  scoped_ptr<DevToolsFrontendHost> frontend_host_;
 
   DISALLOW_COPY_AND_ASSIGN(ShellDevToolsFrontend);
 };

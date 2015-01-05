@@ -1,0 +1,5 @@
+{
+    "name": "fd-limit-test-app",
+    "main": "index.html",
+    "single-instance": false
+}

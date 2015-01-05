@@ -36,15 +36,15 @@ void Shell::Call(const std::string& method,
   if (method == "OpenExternal") {
     std::string uri;
     arguments.GetString(0, &uri);
-    platform_util::OpenExternal(GURL(uri));
+    platform_util::OpenExternal(NULL, GURL(uri));
   } else if (method == "OpenItem") {
     std::string full_path;
     arguments.GetString(0, &full_path);
-    platform_util::OpenItem(FilePath::FromUTF8Unsafe(full_path));
+    platform_util::OpenItem(NULL, FilePath::FromUTF8Unsafe(full_path));
   } else if (method == "ShowItemInFolder") {
     std::string full_path;
     arguments.GetString(0, &full_path);
-    platform_util::ShowItemInFolder(FilePath::FromUTF8Unsafe(full_path));
+    platform_util::ShowItemInFolder(NULL, FilePath::FromUTF8Unsafe(full_path));
   } else {
     NOTREACHED() << "Calling unknown method " << method << " of Shell";
   }

@@ -20,7 +20,7 @@
 
 #include "content/nw/src/browser/shell_download_manager_delegate.h"
 
-#if defined(TOOLKIT_GTK)
+#if defined(OS_LINUX)
 #include <gtk/gtk.h>
 #endif
 
@@ -33,7 +33,6 @@
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/download_manager.h"
 #include "content/public/browser/web_contents.h"
-#include "content/public/browser/web_contents_view.h"
 #include "net/base/net_util.h"
 
 using base::FilePath;
@@ -51,12 +50,10 @@ void ShellDownloadManagerDelegate::ChooseDownloadPath(
 
   FilePath result;
   GtkWidget *dialog;
-  gfx::NativeWindow parent_window;
   std::string base_name = FilePath(suggested_path).BaseName().value();
 
-  parent_window = item->GetWebContents()->GetView()->GetTopLevelNativeWindow();
   dialog = gtk_file_chooser_dialog_new("Save File",
-                                       parent_window,
+                                       NULL,
                                        GTK_FILE_CHOOSER_ACTION_SAVE,
                                        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                        GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,

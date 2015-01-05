@@ -22,6 +22,7 @@
 
 #include "base/values.h"
 #import <Cocoa/Cocoa.h>
+#include "ui/gfx/screen.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"
 
@@ -40,6 +41,15 @@
 }
 - (void)onClick:(id)sender {
     base::ListValue args;
+    base::DictionaryValue* data = new base::DictionaryValue;
+    // Get the position of the frame of the NSStatusItem
+    NSPoint pos = ([[[NSApp currentEvent] window] frame]).origin;
+    // Flip coordinates to gfx (0,0 in top-left corner) using primary screen.
+    NSScreen* screen = [[NSScreen screens] objectAtIndex:0];
+    pos.y = NSMaxY([screen frame]) - pos.y;
+    data->SetInteger("x", pos.x);
+    data->SetInteger("y", pos.y);
+    args.Append(data);
     tray_->dispatcher_host()->SendEvent(tray_,"click",args);
 }
 @end
@@ -65,6 +75,11 @@ void Tray::Destroy() {
 }
 
 void Tray::SetTitle(const std::string& title) {
+  // note: this is kind of mad but the first time we set the title property 
+  // we have to call setTitle twice or it won't get the right dimensions
+  if ([status_item_ title] != nil) {
+    [status_item_ setTitle:[NSString stringWithUTF8String:title.c_str()]];
+  }
   [status_item_ setTitle:[NSString stringWithUTF8String:title.c_str()]];
 }
 
@@ -72,6 +87,7 @@ void Tray::SetIcon(const std::string& icon) {
   if (!icon.empty()) {
     NSImage* image = [[NSImage alloc]
          initWithContentsOfFile:[NSString stringWithUTF8String:icon.c_str()]];
+    [image setTemplate:iconsAreTemplates];
     [status_item_ setImage:image];
     [image release];
   } else {
@@ -83,10 +99,21 @@ void Tray::SetAltIcon(const std::string& alticon) {
   if (!alticon.empty()) {
     NSImage* image = [[NSImage alloc]
          initWithContentsOfFile:[NSString stringWithUTF8String:alticon.c_str()]];
+    [image setTemplate:iconsAreTemplates];
     [status_item_ setAlternateImage:image];
     [image release];
   } else {
     [status_item_ setAlternateImage:nil];
+  }
+}
+
+void Tray::SetIconsAreTemplates(bool areTemplates) {
+  iconsAreTemplates = areTemplates;
+  if ([status_item_ image] != nil) {
+    [[status_item_ image] setTemplate:areTemplates];
+  }
+  if ([status_item_ alternateImage] != nil) {
+    [[status_item_ alternateImage] setTemplate:areTemplates];
   }
 }
 

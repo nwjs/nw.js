@@ -10,14 +10,14 @@
 #include "base/threading/thread_restrictions.h"
 #include "base/threading/worker_pool.h"
 #include "base/timer/timer.h"
-#include "content/nw/src/browser/printing/print_job_worker.h"
-#include "content/public/browser/notification_types.h"
+#include "chrome/browser/chrome_notification_types.h"
+#include "chrome/browser/printing/print_job_worker.h"
+#include "content/public/browser/browser_thread.h"
 #include "content/public/browser/notification_service.h"
 #include "printing/printed_document.h"
 #include "printing/printed_page.h"
 
 using base::TimeDelta;
-using base::MessageLoop;
 
 namespace {
 
@@ -32,21 +32,18 @@ void HoldRefCallback(const scoped_refptr<printing::PrintJobWorkerOwner>& owner,
 namespace printing {
 
 PrintJob::PrintJob()
-    : ui_message_loop_(MessageLoop::current()),
+    : ui_message_loop_(base::MessageLoop::current()),
       source_(NULL),
       worker_(),
       settings_(),
       is_job_pending_(false),
       is_canceling_(false),
-      is_stopping_(false),
-      is_stopped_(false),
-      quit_factory_(this),
-      weak_ptr_factory_(this) {
+      quit_factory_(this) {
   DCHECK(ui_message_loop_);
   // This is normally a UI message loop, but in unit tests, the message loop is
   // of the 'default' type.
-  DCHECK(ui_message_loop_->type() == MessageLoop::TYPE_UI ||
-         ui_message_loop_->type() == MessageLoop::TYPE_DEFAULT);
+  DCHECK(base::MessageLoopForUI::IsCurrent() ||
+         ui_message_loop_->type() == base::MessageLoop::TYPE_DEFAULT);
   ui_message_loop_->AddDestructionObserver(this);
 }
 
@@ -57,7 +54,7 @@ PrintJob::~PrintJob() {
   DCHECK(!is_canceling_);
   if (worker_.get())
     DCHECK(worker_->message_loop() == NULL);
-  DCHECK_EQ(ui_message_loop_, MessageLoop::current());
+  DCHECK_EQ(ui_message_loop_, base::MessageLoop::current());
 }
 
 void PrintJob::Initialize(PrintJobWorkerOwner* job,
@@ -73,21 +70,24 @@ void PrintJob::Initialize(PrintJobWorkerOwner* job,
   settings_ = job->settings();
 
   PrintedDocument* new_doc =
-      new PrintedDocument(settings_, source_, job->cookie());
+      new PrintedDocument(settings_,
+                          source_,
+                          job->cookie(),
+                          content::BrowserThread::GetBlockingPool());
   new_doc->set_page_count(page_count);
   UpdatePrintedDocument(new_doc);
 
   // Don't forget to register to our own messages.
-  registrar_.Add(this, content::NOTIFICATION_PRINT_JOB_EVENT,
+  registrar_.Add(this, chrome::NOTIFICATION_PRINT_JOB_EVENT,
                  content::Source<PrintJob>(this));
 }
 
 void PrintJob::Observe(int type,
                        const content::NotificationSource& source,
                        const content::NotificationDetails& details) {
-  DCHECK_EQ(ui_message_loop_, MessageLoop::current());
+  DCHECK_EQ(ui_message_loop_, base::MessageLoop::current());
   switch (type) {
-    case content::NOTIFICATION_PRINT_JOB_EVENT: {
+    case chrome::NOTIFICATION_PRINT_JOB_EVENT: {
       OnNotifyPrintJobEvent(*content::Details<JobEventDetails>(details).ptr());
       break;
     }
@@ -107,7 +107,7 @@ PrintJobWorker* PrintJob::DetachWorker(PrintJobWorkerOwner* new_owner) {
   return NULL;
 }
 
-MessageLoop* PrintJob::message_loop() {
+base::MessageLoop* PrintJob::message_loop() {
   return ui_message_loop_;
 }
 
@@ -127,7 +127,7 @@ void PrintJob::WillDestroyCurrentMessageLoop() {
 }
 
 void PrintJob::StartPrinting() {
-  DCHECK_EQ(ui_message_loop_, MessageLoop::current());
+  DCHECK_EQ(ui_message_loop_, base::MessageLoop::current());
   DCHECK(worker_->message_loop());
   DCHECK(!is_job_pending_);
   if (!worker_->message_loop() || is_job_pending_)
@@ -146,13 +146,13 @@ void PrintJob::StartPrinting() {
   scoped_refptr<JobEventDetails> details(
       new JobEventDetails(JobEventDetails::NEW_DOC, document_.get(), NULL));
   content::NotificationService::current()->Notify(
-      content::NOTIFICATION_PRINT_JOB_EVENT,
+      chrome::NOTIFICATION_PRINT_JOB_EVENT,
       content::Source<PrintJob>(this),
       content::Details<JobEventDetails>(details.get()));
 }
 
 void PrintJob::Stop() {
-  DCHECK_EQ(ui_message_loop_, MessageLoop::current());
+  DCHECK_EQ(ui_message_loop_, base::MessageLoop::current());
 
   if (quit_factory_.HasWeakPtrs()) {
     // In case we're running a nested message loop to wait for a job to finish,
@@ -164,16 +164,12 @@ void PrintJob::Stop() {
   // Be sure to live long enough.
   scoped_refptr<PrintJob> handle(this);
 
-  MessageLoop* worker_loop = worker_->message_loop();
-  if (worker_loop) {
+  if (worker_->message_loop()) {
     ControlledWorkerShutdown();
-
-    is_job_pending_ = false;
-    registrar_.Remove(this, content::NOTIFICATION_PRINT_JOB_EVENT,
-                      content::Source<PrintJob>(this));
+  } else {
+    // Flush the cached document.
+    UpdatePrintedDocument(NULL);
   }
-  // Flush the cached document.
-  UpdatePrintedDocument(NULL);
 }
 
 void PrintJob::Cancel() {
@@ -184,8 +180,9 @@ void PrintJob::Cancel() {
   // Be sure to live long enough.
   scoped_refptr<PrintJob> handle(this);
 
-  DCHECK_EQ(ui_message_loop_, MessageLoop::current());
-  MessageLoop* worker_loop = worker_.get() ? worker_->message_loop() : NULL;
+  DCHECK_EQ(ui_message_loop_, base::MessageLoop::current());
+  base::MessageLoop* worker_loop =
+      worker_.get() ? worker_->message_loop() : NULL;
   if (worker_loop) {
     // Call this right now so it renders the context invalid. Do not use
     // InvokeLater since it would take too much time.
@@ -195,7 +192,7 @@ void PrintJob::Cancel() {
   scoped_refptr<JobEventDetails> details(
       new JobEventDetails(JobEventDetails::FAILED, NULL, NULL));
   content::NotificationService::current()->Notify(
-      content::NOTIFICATION_PRINT_JOB_EVENT,
+      chrome::NOTIFICATION_PRINT_JOB_EVENT,
       content::Source<PrintJob>(this),
       content::Details<JobEventDetails>(details.get()));
   Stop();
@@ -206,11 +203,12 @@ bool PrintJob::FlushJob(base::TimeDelta timeout) {
   // Make sure the object outlive this message loop.
   scoped_refptr<PrintJob> handle(this);
 
-  MessageLoop::current()->PostDelayedTask(FROM_HERE,
+  base::MessageLoop::current()->PostDelayedTask(FROM_HERE,
       base::Bind(&PrintJob::Quit, quit_factory_.GetWeakPtr()), timeout);
 
-  MessageLoop::ScopedNestableTaskAllower allow(MessageLoop::current());
-  MessageLoop::current()->Run();
+  base::MessageLoop::ScopedNestableTaskAllower allow(
+      base::MessageLoop::current());
+  base::MessageLoop::current()->Run();
 
   return true;
 }
@@ -223,14 +221,6 @@ void PrintJob::DisconnectSource() {
 
 bool PrintJob::is_job_pending() const {
   return is_job_pending_;
-}
-
-bool PrintJob::is_stopping() const {
-  return is_stopping_;
-}
-
-bool PrintJob::is_stopped() const {
-  return is_stopped_;
 }
 
 PrintedDocument* PrintJob::document() const {
@@ -282,7 +272,7 @@ void PrintJob::OnNotifyPrintJobEvent(const JobEventDetails& event_details) {
     }
     case JobEventDetails::DOC_DONE: {
       // This will call Stop() and broadcast a JOB_DONE message.
-      MessageLoop::current()->PostTask(
+      base::MessageLoop::current()->PostTask(
           FROM_HERE, base::Bind(&PrintJob::OnDocumentDone, this));
       break;
     }
@@ -304,13 +294,13 @@ void PrintJob::OnDocumentDone() {
   scoped_refptr<JobEventDetails> details(
       new JobEventDetails(JobEventDetails::JOB_DONE, document_.get(), NULL));
   content::NotificationService::current()->Notify(
-      content::NOTIFICATION_PRINT_JOB_EVENT,
+      chrome::NOTIFICATION_PRINT_JOB_EVENT,
       content::Source<PrintJob>(this),
       content::Details<JobEventDetails>(details.get()));
 }
 
 void PrintJob::ControlledWorkerShutdown() {
-  DCHECK_EQ(ui_message_loop_, MessageLoop::current());
+  DCHECK_EQ(ui_message_loop_, base::MessageLoop::current());
 
   // The deadlock this code works around is specific to window messaging on
   // Windows, so we aren't likely to need it on any other platforms.
@@ -326,57 +316,36 @@ void PrintJob::ControlledWorkerShutdown() {
   // deadlock is eliminated.
   worker_->StopSoon();
 
-  // Run a tight message loop until the worker terminates. It may seems like a
-  // hack but I see no other way to get it to work flawlessly. The issues here
-  // are:
-  // - We don't want to run tasks while the thread is quitting.
-  // - We want this code path to wait on the thread to quit before continuing.
-  MSG msg;
-  HANDLE thread_handle = worker_->thread_handle().platform_handle();
-  for (; thread_handle;) {
-    // Note that we don't do any kind of message prioritization since we don't
-    // execute any pending task or timer.
-    DWORD result = MsgWaitForMultipleObjects(1, &thread_handle,
-                                             FALSE, INFINITE, QS_ALLINPUT);
-    if (result == WAIT_OBJECT_0 + 1) {
-      while (PeekMessage(&msg, NULL, 0, 0, TRUE) > 0) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-      }
-      // Continue looping.
-    } else if (result == WAIT_OBJECT_0) {
-      // The thread quit.
-      break;
-    } else {
-      // An error occurred. Assume the thread quit.
-      NOTREACHED();
-      break;
-    }
+  // Delay shutdown until the worker terminates.  We want this code path
+  // to wait on the thread to quit before continuing.
+  if (worker_->IsRunning()) {
+    base::MessageLoop::current()->PostDelayedTask(
+        FROM_HERE,
+        base::Bind(&PrintJob::ControlledWorkerShutdown, this),
+        base::TimeDelta::FromMilliseconds(100));
+    return;
   }
 #endif
 
 
   // Now make sure the thread object is cleaned up. Do this on a worker
   // thread because it may block.
-  is_stopping_ = true;
-
   base::WorkerPool::PostTaskAndReply(
       FROM_HERE,
-      base::Bind(&PrintJobWorker::Stop,
-                 base::Unretained(worker_.get())),
-      base::Bind(&PrintJob::HoldUntilStopIsCalled,
-                 weak_ptr_factory_.GetWeakPtr(),
-                 scoped_refptr<PrintJob>(this)),
+      base::Bind(&PrintJobWorker::Stop, base::Unretained(worker_.get())),
+      base::Bind(&PrintJob::HoldUntilStopIsCalled, this),
       false);
+
+  is_job_pending_ = false;
+  registrar_.RemoveAll();
+  UpdatePrintedDocument(NULL);
 }
 
-void PrintJob::HoldUntilStopIsCalled(const scoped_refptr<PrintJob>&) {
-  is_stopped_ = true;
-  is_stopping_ = false;
+void PrintJob::HoldUntilStopIsCalled() {
 }
 
 void PrintJob::Quit() {
-  MessageLoop::current()->Quit();
+  base::MessageLoop::current()->Quit();
 }
 
 // Takes settings_ ownership and will be deleted in the receiving thread.
@@ -391,12 +360,8 @@ JobEventDetails::JobEventDetails(Type type,
 JobEventDetails::~JobEventDetails() {
 }
 
-PrintedDocument* JobEventDetails::document() const {
-  return document_;
-}
+PrintedDocument* JobEventDetails::document() const { return document_.get(); }
 
-PrintedPage* JobEventDetails::page() const {
-  return page_;
-}
+PrintedPage* JobEventDetails::page() const { return page_.get(); }
 
 }  // namespace printing

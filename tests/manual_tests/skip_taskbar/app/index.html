@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf8">
+    <title>test</title>
+  </head>
+  <body>
+    <div> <h1 id="message"></h1></div>
+    <script type="text/javascript">
+      var gui = require('nw.gui');
+      var message = gui.App.argv[0];
+      document.getElementById('message').innerHTML = message;
+    </script>
+  </body>
+</html>
+    

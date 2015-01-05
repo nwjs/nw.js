@@ -18,7 +18,7 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/nw/src/browser/native_window_toolbar_win.h"
+#include "content/nw/src/browser/native_window_toolbar_aura.h"
 
 #include "base/logging.h"
 #include "base/strings/string16.h"
@@ -36,18 +36,18 @@ namespace nw {
 
 const int kButtonMargin = 2;
 
-NativeWindowToolbarWin::NativeWindowToolbarWin(content::Shell* shell)
+NativeWindowToolbarAura::NativeWindowToolbarAura(content::Shell* shell)
     : shell_(shell) {
 }
 
-NativeWindowToolbarWin::~NativeWindowToolbarWin() {
+NativeWindowToolbarAura::~NativeWindowToolbarAura() {
 }
 
-views::View* NativeWindowToolbarWin::GetContentsView() {
+views::View* NativeWindowToolbarAura::GetContentsView() {
   return this;
 }
 
-void NativeWindowToolbarWin::Layout() {
+void NativeWindowToolbarAura::Layout() {
   int panel_width = width();
   int x = kButtonMargin;
 
@@ -87,21 +87,21 @@ void NativeWindowToolbarWin::Layout() {
                         24);
 }
 
-void NativeWindowToolbarWin::ViewHierarchyChanged(
+void NativeWindowToolbarAura::ViewHierarchyChanged(
     const ViewHierarchyChangedDetails& details) {
   if (details.is_add && details.child == this)
     InitToolbar();
 }
 
-void NativeWindowToolbarWin::ContentsChanged(
+void NativeWindowToolbarAura::ContentsChanged(
     views::Textfield* sender,
-    const string16& new_contents) {
+    const base::string16& new_contents) {
 }
 
-bool NativeWindowToolbarWin::HandleKeyEvent(views::Textfield* sender,
+bool NativeWindowToolbarAura::HandleKeyEvent(views::Textfield* sender,
                                             const ui::KeyEvent& key_event) {
   if (key_event.key_code() == ui::VKEY_RETURN) {
-    string16 url_string = url_entry_->text();
+    base::string16 url_string = url_entry_->text();
     if (!url_string.empty()) {
       GURL url(url_string);
       if (!url.has_scheme())
@@ -113,7 +113,7 @@ bool NativeWindowToolbarWin::HandleKeyEvent(views::Textfield* sender,
   return false;
 }
 
-void NativeWindowToolbarWin::ButtonPressed(views::Button* sender,
+void NativeWindowToolbarAura::ButtonPressed(views::Button* sender,
                                            const ui::Event& event) {
   if (sender == back_button_)
     shell_->GoBackOrForward(-1);
@@ -129,7 +129,7 @@ void NativeWindowToolbarWin::ButtonPressed(views::Button* sender,
     NOTREACHED() << "Click on unkown toolbar button.";
 }
 
-void NativeWindowToolbarWin::InitToolbar() {
+void NativeWindowToolbarAura::InitToolbar() {
   set_background(views::Background::CreateStandardPanelBackground());
 
   views::BoxLayout* layout = new views::BoxLayout(
@@ -165,8 +165,8 @@ void NativeWindowToolbarWin::InitToolbar() {
   SetIsLoading(true);
   AddChildView(stop_or_refresh_button_);
 
-  url_entry_ = new views::Textfield(views::Textfield::STYLE_DEFAULT);
-  url_entry_->SetController(this);
+  url_entry_ = new views::Textfield();
+  url_entry_->set_controller(this);
   AddChildView(url_entry_);
 
   devtools_button_ = new views::ImageButton(this);
@@ -192,7 +192,7 @@ void NativeWindowToolbarWin::InitToolbar() {
   AddChildView(dev_reload_button_);
 }
 
-void NativeWindowToolbarWin::SetButtonEnabled(
+void NativeWindowToolbarAura::SetButtonEnabled(
     NativeWindow::TOOLBAR_BUTTON button,
     bool enabled) {
   switch (button) {
@@ -214,11 +214,11 @@ void NativeWindowToolbarWin::SetButtonEnabled(
   }
 }
 
-void NativeWindowToolbarWin::SetUrlEntry(const std::string& url) {
-  url_entry_->SetText(UTF8ToUTF16(url));
+void NativeWindowToolbarAura::SetUrlEntry(const std::string& url) {
+  url_entry_->SetText(base::UTF8ToUTF16(url));
 }
 
-void NativeWindowToolbarWin::SetIsLoading(bool loading) {
+void NativeWindowToolbarAura::SetIsLoading(bool loading) {
   ui::ResourceBundle& rb = ui::ResourceBundle::GetSharedInstance();
 
   if (loading) {

@@ -52,12 +52,13 @@ class DispatcherHost : public content::WebContentsObserver {
   virtual ~DispatcherHost();
 
   // Get C++ object from its id.
-  Base* GetApiObject(int id);
+  static Base* GetApiObject(int id);
 
   static int AllocateId();
+
   // Helper function to convert type.
   template<class T>
-  T* GetApiObject(int id) {
+  static T* GetApiObject(int id) {
     return static_cast<T*>(GetApiObject(id));
   }
 
@@ -89,7 +90,10 @@ class DispatcherHost : public content::WebContentsObserver {
 
   // RenderViewHostObserver implementation.
   // WebContentsObserver implementation:
-  virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
+  virtual bool OnMessageReceived(
+                                 content::RenderViewHost* render_view_host,
+                                 const IPC::Message& message) OVERRIDE;
+
 
   void OnAllocateObject(int object_id,
                         const std::string& type,

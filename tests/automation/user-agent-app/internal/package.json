@@ -1,0 +1,5 @@
+{
+  "name": "user agent app",
+  "main": "index.html",
+  "user-agent": "%name/%nwver/%ver/%webkit_ver/%osinfo"
+}

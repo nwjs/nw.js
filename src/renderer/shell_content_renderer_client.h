@@ -44,27 +44,37 @@ class ShellContentRendererClient : public ContentRendererClient {
   virtual void RenderThreadStarted() OVERRIDE;
   virtual void RenderViewCreated(RenderView* render_view) OVERRIDE;
 
-  virtual void DidCreateScriptContext(WebKit::WebFrame* frame,
+  virtual void DidCreateScriptContext(blink::WebFrame* frame,
                                       v8::Handle<v8::Context> context,
                                       int extension_group,
                                       int world_id) OVERRIDE;
-  virtual bool WillSetSecurityToken(WebKit::WebFrame* frame,
+  virtual bool WillSetSecurityToken(blink::WebFrame* frame,
                                     v8::Handle<v8::Context>) OVERRIDE;
 
   virtual void willHandleNavigationPolicy(RenderView* rv,
-                                          WebKit::WebFrame* frame,
-                                          const WebKit::WebURLRequest& request,
-                                          WebKit::WebNavigationPolicy* policy) OVERRIDE;
+                                          blink::WebFrame* frame,
+                                          const blink::WebURLRequest& request,
+                                          blink::WebNavigationPolicy* policy,
+                                          blink::WebString* manifest = NULL) OVERRIDE;
 
+  virtual void windowOpenBegin(const blink::WebURL& url) OVERRIDE;
+  virtual void windowOpenEnd() OVERRIDE;
  private:
   scoped_ptr<ShellRenderProcessObserver> shell_observer_;
   scoped_ptr<nwapi::WindowBindings> window_bindings_;
 
-  void InstallNodeSymbols(WebKit::WebFrame* frame,
+  bool in_nav_cb_;
+  std::string in_nav_url_;
+
+  bool creating_first_context_;
+
+  void InstallNodeSymbols(blink::WebFrame* frame,
                           v8::Handle<v8::Context> context, const GURL& url);
-  void UninstallNodeSymbols(WebKit::WebFrame* frame,
+  void UninstallNodeSymbols(blink::WebFrame* frame,
                             v8::Handle<v8::Context> context);
-  bool goodForNode(WebKit::WebFrame* frame);
+  bool goodForNode(blink::WebFrame* frame);
+
+  void SetupNodeUtil(blink::WebFrame* frame, v8::Handle<v8::Context> context);
 
   // Catch node uncaughtException.
   static void ReportException(const v8::FunctionCallbackInfo<v8::Value>&  args);

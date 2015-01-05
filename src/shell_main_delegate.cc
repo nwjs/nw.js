@@ -31,7 +31,7 @@
 #include "content/public/browser/render_process_host.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/url_constants.h"
-#include "content/nw/src/breakpad_linux.h"
+//#include "content/nw/src/breakpad_linux.h"
 #include "content/nw/src/chrome_breakpad_client.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_version.h"
@@ -39,7 +39,9 @@
 #include "content/nw/src/shell_browser_main.h"
 #include "content/nw/src/shell_content_browser_client.h"
 #include "net/cookies/cookie_monster.h"
+#include "third_party/node/src/node_webkit.h"
 #include "third_party/node/src/node_version.h"
+#include "third_party/zlib/google/zip_reader.h"
 #include "ui/base/l10n/l10n_util.h"
 #if defined(OS_MACOSX)
 #include "ui/base/l10n/l10n_util_mac.h"
@@ -53,13 +55,18 @@
 using base::FilePath;
 
 #if defined(OS_MACOSX)
+#include "components/breakpad/app/breakpad_mac.h"
 #include "content/nw/src/paths_mac.h"
 #endif  // OS_MACOSX
 
 #if defined(OS_WIN)
 #include "base/logging_win.h"
 #include <initguid.h>
-#include "content/nw/src/breakpad_win.h"
+#include "components/breakpad/app/breakpad_win.h"
+#endif
+
+#if defined(OS_POSIX) && !defined(OS_MACOSX)
+#include "components/breakpad/app/breakpad_linux.h"
 #endif
 
 #include "ipc/ipc_message.h"  // For IPC_MESSAGE_LOG_ENABLED.
@@ -70,7 +77,11 @@ using base::FilePath;
 #define IPC_LOG_TABLE_ADD_ENTRY(msg_id, logger) \
     content::RegisterIPCLogger(msg_id, logger)
 #include "content/nw/src/common/common_message_generator.h"
-#include "components/autofill/core/common/autofill_messages.h"
+#include "components/autofill/content/common/autofill_messages.h"
+#endif
+
+#if defined(OS_WIN)
+#include "content/nw/src/browser/shell_content_utility_client.h"
 #endif
 
 namespace {
@@ -94,6 +105,11 @@ const GUID kContentShellProviderName = {
 
 base::LazyInstance<chrome::ChromeBreakpadClient>::Leaky
     g_chrome_breakpad_client = LAZY_INSTANCE_INITIALIZER;
+
+#if defined(OS_WIN)
+base::LazyInstance<ShellContentUtilityClient>
+    g_chrome_content_utility_client = LAZY_INSTANCE_INITIALIZER;
+#endif
 
 void InitLogging() {
   base::FilePath log_filename;
@@ -124,13 +140,35 @@ ShellMainDelegate::~ShellMainDelegate() {
 }
 
 bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
+  CommandLine* command_line = CommandLine::ForCurrentProcess();
+  const CommandLine::StringVector& args = command_line->GetArgs();
+  if (args.size() > 0) {
+    zip::ZipReader reader;
+    FilePath fp(args[0]);
+    if (fp.MatchesExtension(FILE_PATH_LITERAL(".js")) &&
+        !command_line->HasSwitch(switches::kProcessType) &&
+        PathExists(fp) && !DirectoryExists(fp) && !reader.Open(fp)) {
+      *exit_code = node::Start(command_line->argc0(), command_line->argv0());
+      return true;
+    }
+  }
+
 #if defined(OS_WIN)
   // Enable trace control and transport through event tracing for Windows.
   logging::LogEventProvider::Initialize(kContentShellProviderName);
 #endif
 
+#if defined(OS_MACOSX)
+  // Needs to happen before InitializeResourceBundle() and before
+  // WebKitTestPlatformInitialize() are called.
+  OverrideFrameworkBundlePath();
+  OverrideChildProcessPath();
+  // FIXME: EnsureCorrectResolutionSettings();
+  l10n_util::OverrideLocaleWithUserDefault();
+#endif  // OS_MACOSX
+
   InitLogging();
-  net::CookieMonster::EnableFileScheme();
+  // FIXME: net::CookieMonster::EnableFileScheme();
 
   SetContentClient(&content_client_);
   return false;
@@ -144,18 +182,13 @@ void ShellMainDelegate::PreSandboxStartup() {
     pref_locale = command_line->GetSwitchValueASCII(switches::kLang);
   }
 
-#if defined(OS_MACOSX)
-  OverrideFrameworkBundlePath();
-  OverrideChildProcessPath();
-  l10n_util::OverrideLocaleWithUserDefault();
-#endif  // OS_MACOSX
   InitializeResourceBundle(pref_locale);
 
   std::string process_type =
       command_line->GetSwitchValueASCII(switches::kProcessType);
 
   if (process_type != switches::kZygoteProcess)
-    breakpad::InitCrashReporter();
+    breakpad::InitCrashReporter(process_type);
 
   // Just prevent sandbox.
   command_line->AppendSwitch(switches::kNoSandbox);
@@ -171,6 +204,11 @@ void ShellMainDelegate::PreSandboxStartup() {
 
   // Allow file:// URIs can read other file:// URIs by default.
   command_line->AppendSwitch(switches::kAllowFileAccessFromFiles);
+
+#if defined(OS_WIN)
+  if (process_type == switches::kUtilityProcess)
+    ShellContentUtilityClient::PreSandboxStartup();
+#endif
 }
 
 int ShellMainDelegate::RunProcess(
@@ -219,8 +257,21 @@ ContentRendererClient* ShellMainDelegate::CreateContentRendererClient() {
 void ShellMainDelegate::ZygoteForked() {
   // Needs to be called after we have chrome::DIR_USER_DATA.  BrowserMain sets
   // this up for the browser process in a different manner.
-  breakpad::InitCrashReporter();
+  const CommandLine* command_line = CommandLine::ForCurrentProcess();
+  std::string process_type =
+      command_line->GetSwitchValueASCII(switches::kProcessType);
+  breakpad::InitCrashReporter(process_type);
 }
 #endif
+
+content::ContentUtilityClient*
+ShellMainDelegate::CreateContentUtilityClient() {
+#if defined(OS_WIN)
+  return g_chrome_content_utility_client.Pointer();
+#else
+  return NULL;
+#endif
+}
+
 
 }  // namespace content

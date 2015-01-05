@@ -1,3 +1,168 @@
+0.11.5 / 12-28-2014
+===================
+- Fix: Normal frame should not simulate user input events (File input dialog)
+- Fix: crash in debug session of WebStorm (WEB-14378)
+
+0.11.4 / 12-24-2014
+===================
+- support click-through with window transparency on OSX & Win (Thanks to Jefry Tedjokusumo)
+- Fix Windows printing
+- Fix --file-descriptor-limit (Thanks to Liu Cong)
+- Fix Window.reloadDev()
+- Fix dom_storage_quota (#2854)
+- Fix: maximizing frameless window enters fullscreen (#1021)
+- Fix tray title/tooltip issues on Mac OS X (#2796 Thanks to Marco Fabbri)
+
+0.11.3 / 12-16-2014
+===================
+- new method in 'new-win-policy' event handler to control the options for new popup windows
+- Fix: nw methods cannot be called from normal frames (Thanks to Insighti <research@insighti.org>)
+- Extend Tray click event with position (Thanks to Marco Fabbri) (#1874)
+- [OSX] Fix Window.focus() not taking focus (#2724)
+- Add API methods and support for styling of icons (Tray, MenuItem) under Mac OS X (Yosemite) Dark Mode (#2775)
+- [OSX] Fix alticon property of Tray not being updated properly (#703)
+- Add Window.setVisibleOnAllWorkspaces API (#2722)
+- Fix #2469: Changed Window.open to ignore slashes in parameters
+- fix crash in window.open in some cases
+
+0.11.2 / 11-26-2014
+===================
+- Support window transparency (#132, Thanks to Jefry Tedjokusumo)
+- Fix: [Linux] broken window events (focus, blur, etc, #2631)
+- Fix: memory leak on setting tray icon (#2666)
+- Fix: child_process.fork() (#2664)
+- Fix: bad Buffer created from strings from DOM (#1669, #2439) (Thank to Liu Cong)
+- Fix: Segmentation fault by starting nw on command line with parameters #2671
+- Fix: crashes if http.request gets blocked with Little Snitch (mac only) #2585
+- Fix: Windows 7 64/32 - frame doesn't show #2657
+- Fix: AutoFill Crashes NodeWebkit #2653
+- Fix "Cancel Desktop Notification" for all platform. and implement it for win8 (toast notification)
+
+0.11.1 / 11-20-2014
+===================
+- add nwsnapshot
+- Support setting additional root certificates on supported platforms (thanks to Joachim Bauch)
+- Support SetProxyConfig API (#916)
+- [WIN] Fix startup crash on high DPI systems (#2649)
+- Fix #1021: maximize frameless window in windows 8
+- Fix #2590: save as Filetypes not populating
+- Fix #2592: zoomLevel
+- Fix #2595: Linux MenuBar crash
+- Fix #2393: link target with "_blank" opens page in current window
+- Fix: Don't activate app unconditionally on window "Show".
+
+0.11.0 / 11-11-2014
+===================
+- Fix: notification and screen geometry API
+- Fix: windows printing crash (#2515)
+- Fix: mac: Fix build with 10.9 SDK
+- Fix: enable 'high-dpi-support' for windows (#2524)
+- Fix: 'resizable' is broken in manifest (#2319)
+- Fix: crash on Flash context menu
+- Fix: console.log() changes value (#2431)
+- Fix: various crash cases (#2545, #2549)
+- Fix: 'undefined' network request in devtools (#2529)
+- Fix: devtools - breakpoints do not work (#2538)
+- Fix: Jailed devtools broken in nw 0.11.0-rc1 (#2569)
+- Fix: Window.setResizable(false) twice makes window resizable (#2299)
+- Fix: win.setPosition('center') Invalid (#2307)
+
+0.11.0-rc1 / 10-27-2014
+=======================
+- Chromium updated to 38.0.2125.104
+- Fix memory leak on navigation
+- Show commit id in 'nw:version' page
+- Fix: fullscreen in manifest (Linux)
+- Fix: #430: handle event when quit from OSX dock
+
+0.10.5 / 09-16-2014
+===================
+- Fix: support more Chromium command line args (#1743, Thanks to Joachim Bauch)
+- Fix #2171: crash when opening window
+- Fix #2326: some websites crashes NW in Windows (fixed with the same file as updating to VS2013 Update 2)
+- Fix: win: crash on invalid parameter error (thanks to Mikael Roos)
+- Fix #1991 in a better way: [WIN] stalling for seconds under threaded composition on some hardware (#1991)
+- Fix: [WIN] single-instance crash
+- Fix: autofill crash when filling number in input box (#2310)
+- Fix: CSP is not effective (#1672)
+- Fix: crash when calling console.log() with a cross-domain window object in some cases (#1573)
+- Fix: crash when stepping into a breakpoint set in scripts loaded by require() (#2214)
+
+0.10.4 / 09-05-2014
+===================
+- Fix: [WIN] child_process.fork() by making nw executable run as node
+- Fix: [WIN] stalling for seconds under threaded composition on some hardware (#1991)
+- Fix: [OSX] disable File Quarantine (#2294)
+- Fix: [OSX] disable sound for notification
+- support 'chrome://gpu' diagnosic page
+
+0.10.3 / 09-01-2014
+===================
+- Fix: child_process.fork() (#213) by making nw executable run as node
+- Fix: [OSX] process.nextTick() blocked in some cases (#2170)
+
+0.10.2 / 08-12-2014
+===================
+- Support screen geometry API (#2178 Thanks to Jefry Tedjokusumo
+- Support progress bar (#2175 Thanks to Jefry Tedjokusumo)
+- Window.requestAttention() now accepts an integer parameter [4]
+- Fix: JS source code snapshot is now working
+- Fix: Linux: shift modifier not working for window menu
+- Fix: Win: window.navigator.language is empty
+- Fix: require works in wrong path in new-instance window (#2167)
+- Fix: support for screencapture media requests (Thanks to Joachim Bauch)
+- Fix: Win: cursor not loaded in some cases (#2150, #2152)
+- Fix: crash on some cases (#2155, #2148)
+- Fix: Large combo-box does not scroll properly and values overlaps on each other (#2161; upstream #357480)
+
+0.10.1 / 07-30-2014
+===================
+- Support Desktop notification (#27 Thanks to Jefry Tedjokusumo)
+- Support Fullscreen API (#55)
+- Official 64bit binary for Mac OS X (#296)
+- Support F-keys in global shortcut (Thanks to Bas Wegh)
+- Option to hide "Edit" and "Window" OS X menus (Thanks to Eric Newport)
+- Fix #2072: [WIN] context menu popup in wrong (screen) position
+- Fix #2136: crash when popup new window in some cases
+- Fix: Linux symbol files are incomplete in 0.10.0
+- Fix #1908: allows redirection to App protocol for OAuth usage
+- Fix: new-win-policy is fired on each navigation
+
+0.10.0 / 07-22-2014
+===================
+- Fix: [WIN] download dialog
+- Fix: [WIN] MenuItem.enabled and other properties needs to be called twice to work (#1132)
+
+0.10.0-rc2 / 07-18-2014
+=======================
+
+- [API] Implement register/unregister global desktop keyboard shortcut. (#1735, thanks to Chaobin Zhang and Haojian Wu)
+- support for nwsnapshot is back
+- Fix: authentication dialog
+- check invalid URL on navigation
+- [OSX] Fix #1996: resize with flash on 10.9 (upstream #385120)
+- Fix regression: node-main
+- Fix regression: [WIN] resize and drag frameless window
+- Fix: crash on Win XP (#1985)
+
+0.10.0-rc1 / 06-22-2014
+=======================
+
+- Chromium is updated to 35.0.1916.113
+- Node.js is updated to 0.11.13
+- Window event listeners in iframe works now
+- New API: App.addOriginAccessWhitelistEntry & App.removeOriginAccessWhitelistEntry (#1016, #1514)
+- API to set Menu item shortcut
+- [OSX] Create & access to built-in menu from JS
+- SetBadgeLabel support on OSX and Win
+- Support for 'single-instance' when app is started in folder
+- better handling of MIME types and dataURI in capture page API
+
+
+0.8.6 / 04-18-2014
+==================
+- Fix: new instance window is force closed and cannot receive 'close' event on App.closeAllWindows() (Cmd-Q) (#1713, #1778)
+
 0.8.5 / 02-26-2014
 ==================
 Backport 0.9 features to 0.8 branch

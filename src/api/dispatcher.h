@@ -34,9 +34,10 @@ namespace content {
 class RenderView;
 }
 
-namespace WebKit {
+namespace blink {
 class WebFrame;
 class WebURLRequest;
+class WebView;
 }
 
 namespace nwapi {
@@ -47,22 +48,23 @@ class Dispatcher : public content::RenderViewObserver {
   virtual ~Dispatcher();
 
   static v8::Handle<v8::Object> GetObjectRegistry();
-  static v8::Handle<v8::Value> GetWindowId(WebKit::WebFrame* frame);
+  static v8::Handle<v8::Value> GetWindowId(blink::WebFrame* frame);
+  static void ZoomLevelChanged(blink::WebView* web_view);
   static void willHandleNavigationPolicy(
     content::RenderView* rv,
-    WebKit::WebFrame* frame,
-    const WebKit::WebURLRequest& request,
-    WebKit::WebNavigationPolicy* policy);
+    blink::WebFrame* frame,
+    const blink::WebURLRequest& request,
+    blink::WebNavigationPolicy* policy,
+    blink::WebString* manifest);
 
  private:
   // RenderViewObserver implementation.
   virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
-  virtual void DraggableRegionsChanged(WebKit::WebFrame* frame) OVERRIDE;
-  virtual void ZoomLevelChanged() OVERRIDE;
-  virtual void DidFinishDocumentLoad(WebKit::WebFrame* frame) OVERRIDE;
-  virtual void DidCreateDocumentElement(WebKit::WebFrame* frame) OVERRIDE;
+  virtual void DraggableRegionsChanged(blink::WebFrame* frame) OVERRIDE;
+  virtual void DidFinishDocumentLoad(blink::WebLocalFrame* frame) OVERRIDE;
+  virtual void DidCreateDocumentElement(blink::WebLocalFrame* frame) OVERRIDE;
 
-  void documentCallback(const char* ev, WebKit::WebFrame* frame);
+  void documentCallback(const char* ev, blink::WebLocalFrame* frame);
 
   void OnEvent(int object_id,
                std::string event,

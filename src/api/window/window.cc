@@ -47,10 +47,10 @@ namespace {
 
 const char kCauseKey[] = "cause";
 const char kCookieKey[] = "cookie";
-const char kDomainKey[] = "domain";
-const char kIdKey[] = "id";
+//const char kDomainKey[] = "domain";
+//const char kIdKey[] = "id";
 const char kRemovedKey[] = "removed";
-const char kTabIdsKey[] = "tabIds";
+//const char kTabIdsKey[] = "tabIds";
 
 // Cause Constants
 const char kEvictedChangeCause[] = "evicted";
@@ -65,7 +65,7 @@ GURL GetURLFromCanonicalCookie(const net::CanonicalCookie& cookie) {
     cookie.IsSecure() ? "https" : "http";
   const std::string host =
       domain_key.find('.') != 0 ? domain_key : domain_key.substr(1);
-  return GURL(scheme + content::kStandardSchemeSeparator + host + "/");
+  return GURL(scheme + url::kStandardSchemeSeparator + host + "/");
 }
 
 void GetCookieListFromStore(
@@ -139,13 +139,13 @@ PopulateCookieObject(const net::CanonicalCookie& canonical_cookie) {
   base::DictionaryValue* result = new base::DictionaryValue();
   // A cookie is a raw byte sequence. By explicitly parsing it as UTF-8, we
   // apply error correction, so the string can be safely passed to the renderer.
-  result->SetString("name", UTF16ToUTF8(UTF8ToUTF16(canonical_cookie.Name())));
-  result->SetString("value", UTF16ToUTF8(UTF8ToUTF16(canonical_cookie.Value())));
+  result->SetString("name", base::UTF16ToUTF8(base::UTF8ToUTF16(canonical_cookie.Name())));
+  result->SetString("value", base::UTF16ToUTF8(base::UTF8ToUTF16(canonical_cookie.Value())));
   result->SetString("domain", canonical_cookie.Domain());
   result->SetBoolean("host_only", net::cookie_util::DomainIsHostOnly(
                                                                       canonical_cookie.Domain()));
   // A non-UTF8 path is invalid, so we just replace it with an empty string.
-  result->SetString("path", IsStringUTF8(canonical_cookie.Path()) ? canonical_cookie.Path()
+  result->SetString("path", base::IsStringUTF8(canonical_cookie.Path()) ? canonical_cookie.Path()
                      : std::string());
   result->SetBoolean("secure", canonical_cookie.IsSecure());
   result->SetBoolean("http_only", canonical_cookie.IsHttpOnly());
@@ -160,6 +160,8 @@ PopulateCookieObject(const net::CanonicalCookie& canonical_cookie) {
 } // namespace
 
 namespace nwapi {
+
+CookieAPIContext::~CookieAPIContext() {}
 
 Window::Window(int id,
                const base::WeakPtr<DispatcherHost>& dispatcher_host,
@@ -221,7 +223,12 @@ void Window::Call(const std::string& method,
     shell_->window()->SetKiosk(!shell_->window()->IsKiosk());
   } else if (method == "CloseDevTools") {
     shell_->CloseDevTools();
-  }else if (method == "ResizeTo") {
+  } else if (method == "SetPosition") {
+    std::string position;
+    if (arguments.GetString(0, &position)){
+      shell_->window()->SetPosition(position);
+    }
+  } else if (method == "ResizeTo") {
     int width, height;
     if (arguments.GetInteger(0, &width) &&
         arguments.GetInteger(1, &height))
@@ -248,23 +255,37 @@ void Window::Call(const std::string& method,
     bool show;
     if (arguments.GetBoolean(0, &show))
       shell_->window()->SetShowInTaskbar(show);
+  } else if (method == "SetVisibleOnAllWorkspaces") {
+    bool all_workspaces;
+    if (arguments.GetBoolean(0, &all_workspaces))
+      shell_->window()->SetVisibleOnAllWorkspaces(all_workspaces);
   } else if (method == "MoveTo") {
     int x, y;
     if (arguments.GetInteger(0, &x) &&
         arguments.GetInteger(1, &y))
       shell_->window()->SetPosition(gfx::Point(x, y));
   } else if (method == "RequestAttention") {
-    bool flash;
-    if (arguments.GetBoolean(0, &flash))
-      shell_->window()->FlashFrame(flash);
+    int count;
+    if (arguments.GetInteger(0, &count))
+      shell_->window()->FlashFrame(count);
   } else if (method == "SetBadgeLabel") {
     std::string label;
     if (arguments.GetString(0, &label))
       shell_->window()->SetBadgeLabel(label);
+  } else if (method == "SetTransparent") {
+    bool transparent;
+    if (arguments.GetBoolean(0, &transparent))
+      shell_->window()->SetTransparent(transparent);
+  } else if (method == "SetProgressBar") {
+    double progress;
+    if (arguments.GetDouble(0, &progress))
+      shell_->window()->SetProgressBar(progress);
   } else if (method == "SetMenu") {
     int id;
     if (arguments.GetInteger(0, &id))
       shell_->window()->SetMenu(dispatcher_host()->GetApiObject<Menu>(id));
+  } else if (method == "ClearMenu") {
+    shell_->window()->ClearMenu();
   } else if (method == "Reload") {
     int type;
     if (arguments.GetInteger(0, &type))
@@ -302,6 +323,9 @@ void Window::CallSync(const std::string& method,
     gfx::Point position = shell_->window()->GetPosition();
     result->AppendInteger(position.x());
     result->AppendInteger(position.y());
+  } else if (method == "IsTransparent") {
+    bool transparent = shell_->window()->IsTransparent();
+    result->AppendBoolean(transparent);
   } else if (method == "IsDevToolsOpen") {
     result->AppendBoolean(shell_->devToolsOpen());
   } else if (method == "ShowDevTools") {

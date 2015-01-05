@@ -42,6 +42,7 @@
 #include "grit/net_resources.h"
 #include "net/base/net_module.h"
 #include "net/proxy/proxy_resolver_v8.h"
+#include "ui/base/ime/input_method_initializer.h"
 #include "ui/base/resource/resource_bundle.h"
 
 #if !defined(OS_WIN)
@@ -50,6 +51,21 @@
 
 #if defined(TOOLKIT_GTK)
 #include "content/nw/src/browser/printing/print_dialog_gtk.h"
+#endif
+
+#if defined(USE_AURA)
+#include "ui/aura/env.h"
+#include "ui/gfx/screen.h"
+#include "ui/views/test/desktop_test_views_delegate.h"
+#include "ui/views/widget/desktop_aura/desktop_screen.h"
+#endif  // defined(USE_AURA)
+
+#if defined(OS_LINUX)
+#include "chrome/browser/ui/libgtk2ui/gtk2_ui.h"
+#include "ui/aura/window.h"
+#include "ui/base/ime/input_method_initializer.h"
+#include "ui/native_theme/native_theme_aura.h"
+#include "ui/views/linux_ui/linux_ui.h"
 #endif
 
 using base::MessageLoop;
@@ -114,6 +130,7 @@ void ShellBrowserMainParts::PreMainMessageLoopStart() {
 #endif
 
 void ShellBrowserMainParts::PreMainMessageLoopRun() {
+
 #if !defined(OS_MACOSX)
   Init();
 #endif
@@ -141,21 +158,51 @@ void ShellBrowserMainParts::PostMainMessageLoopRun() {
 
 void ShellBrowserMainParts::PostMainMessageLoopStart() {
 #if defined(TOOLKIT_GTK)
-  printing::PrintingContextGtk::SetCreatePrintDialogFunction(
+  printing::PrintingContextLinux::SetCreatePrintDialogFunction(
       &PrintDialogGtk::CreatePrintDialog);
 #endif
 }
 
 int ShellBrowserMainParts::PreCreateThreads() {
-  net::ProxyResolverV8::RememberDefaultIsolate();
+  net::ProxyResolverV8::EnsureIsolateCreated();
+#if defined(USE_AURA)
+  gfx::Screen::SetScreenInstance(gfx::SCREEN_TYPE_NATIVE,
+                                 views::CreateDesktopScreen());
+#endif
+  base::ThreadRestrictions::ScopedAllowIO allow_io;
+  package_.reset(new nw::Package());
   return 0;
 }
 
+void ShellBrowserMainParts::PostDestroyThreads() {
+#if defined(USE_AURA)
+  aura::Env::DeleteInstance();
+  delete views::ViewsDelegate::views_delegate;
+#endif
+}
+
+void ShellBrowserMainParts::ToolkitInitialized() {
+#if defined(USE_AURA)
+  aura::Env::CreateInstance(true);
+
+  DCHECK(!views::ViewsDelegate::views_delegate);
+  new views::DesktopTestViewsDelegate;
+#endif
+
+#if defined(OS_LINUX)
+  views::LinuxUI::instance()->Initialize();
+#endif
+}
+
 void ShellBrowserMainParts::Init() {
-  package_.reset(new nw::Package());
+  //this will be reset to false before entering the message loop
+  base::ThreadRestrictions::SetIOAllowed(true);
+
   CommandLine& command_line = *CommandLine::ForCurrentProcess();
 
   browser_context_.reset(new ShellBrowserContext(false, package()));
+  browser_context_->PreMainMessageLoopRun();
+
   off_the_record_browser_context_.reset(
       new ShellBrowserContext(true, package()));
 
@@ -199,10 +246,6 @@ void ShellBrowserMainParts::Init() {
 bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(
     const CommandLine& command_line,
     const base::FilePath& current_directory) {
-  if (!package_->self_extract()) {
-    // We're in runtime mode, create the new app.
-    return false;
-  }
 
   // Don't reuse current instance if 'single-instance' is specified to false.
   bool single_instance;
@@ -212,7 +255,7 @@ bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(
     return false;
 
 #if defined(OS_WIN)
-  std::string cmd = UTF16ToUTF8(command_line.GetCommandLineString());
+  std::string cmd = base::UTF16ToUTF8(command_line.GetCommandLineString());
 #else
   std::string cmd = command_line.GetCommandLineString();
 #endif
@@ -250,7 +293,7 @@ void ShellBrowserMainParts::PreEarlyInitialization() {
   // see chrome_browser_main_posix.cc
   CommandLine& command_line = *CommandLine::ForCurrentProcess();
   const std::string fd_limit_string =
-      command_line.GetSwitchValueASCII(switches::kFileDescriptorLimit);
+      command_line.GetSwitchValueASCII("file-descriptor-limit");
   int fd_limit = 0;
   if (!fd_limit_string.empty()) {
     base::StringToInt(fd_limit_string, &fd_limit);
@@ -265,6 +308,13 @@ void ShellBrowserMainParts::PreEarlyInitialization() {
   if (fd_limit > 0)
     SetFileDescriptorLimit(fd_limit);
 #endif // !OS_WIN
+
+#if defined(OS_LINUX)
+  views::LinuxUI* gtk2_ui = BuildGtk2UI();
+  // gtk2_ui->SetNativeThemeOverride(base::Bind(&GetNativeThemeForWindow));
+  views::LinuxUI::SetInstance(gtk2_ui);
+  // ui::InitializeInputMethodForTesting();
+#endif
 }
 
 }  // namespace content

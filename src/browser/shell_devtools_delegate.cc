@@ -40,7 +40,7 @@ ShellDevToolsDelegate::ShellDevToolsDelegate(BrowserContext* browser_context,
   devtools_http_handler_ = DevToolsHttpHandler::Start(
       new net::TCPListenSocketFactory("127.0.0.1", port),
       "",
-      this);
+      this, base::FilePath());
 }
 
 ShellDevToolsDelegate::~ShellDevToolsDelegate() {
@@ -82,11 +82,12 @@ class Target : public content::DevToolsTarget {
   explicit Target(WebContents* web_contents);
 
   virtual std::string GetId() const OVERRIDE { return id_; }
+  virtual std::string GetParentId() const OVERRIDE { return std::string(); }
   virtual std::string GetType() const OVERRIDE { return kTargetTypePage; }
   virtual std::string GetTitle() const OVERRIDE { return title_; }
   virtual std::string GetDescription() const OVERRIDE { return description_; }
-  virtual GURL GetUrl() const OVERRIDE { return url_; }
-  virtual GURL GetFaviconUrl() const OVERRIDE { return GURL(); }
+  virtual GURL GetURL() const OVERRIDE { return url_; }
+  virtual GURL GetFaviconURL() const OVERRIDE { return GURL(); }
   virtual base::TimeTicks GetLastActivityTime() const OVERRIDE {
     return last_activity_time_;
   }
@@ -110,18 +111,15 @@ class Target : public content::DevToolsTarget {
 
 Target::Target(WebContents* web_contents) {
   agent_host_ =
-      DevToolsAgentHost::GetOrCreateFor(web_contents->GetRenderViewHost());
+      DevToolsAgentHost::GetOrCreateFor(web_contents);
   id_ = agent_host_->GetId();
-  title_ = UTF16ToUTF8(web_contents->GetTitle());
+  title_ = base::UTF16ToUTF8(web_contents->GetTitle());
   url_ = web_contents->GetURL();
-  last_activity_time_ = web_contents->GetLastSelectedTime();
+  last_activity_time_ = web_contents->GetLastActiveTime();
 }
 
 bool Target::Activate() const {
-  RenderViewHost* rvh = agent_host_->GetRenderViewHost();
-  if (!rvh)
-    return false;
-  WebContents* web_contents = WebContents::FromRenderViewHost(rvh);
+  WebContents* web_contents = agent_host_->GetWebContents();
   if (!web_contents)
     return false;
   web_contents->GetDelegate()->ActivateContents(web_contents);
@@ -129,22 +127,21 @@ bool Target::Activate() const {
 }
 
 bool Target::Close() const {
-  RenderViewHost* rvh = agent_host_->GetRenderViewHost();
-  if (!rvh)
+  WebContents* web_contents = agent_host_->GetWebContents();
+  if (!web_contents)
     return false;
-  rvh->ClosePage();
+  web_contents->GetRenderViewHost()->ClosePage();
   return true;
 }
 
 void ShellDevToolsDelegate::EnumerateTargets(TargetCallback callback) {
   TargetList targets;
-  std::vector<RenderViewHost*> rvh_list =
-    content::DevToolsAgentHost::GetValidRenderViewHosts();
-  for (std::vector<RenderViewHost*>::iterator it = rvh_list.begin();
-       it != rvh_list.end(); ++it) {
-    WebContents* web_contents = WebContents::FromRenderViewHost(*it);
-    if (web_contents)
-      targets.push_back(new Target(web_contents));
+  std::vector<WebContents*> wc_list =
+      content::DevToolsAgentHost::GetInspectableWebContents();
+  for (std::vector<WebContents*>::iterator it = wc_list.begin();
+       it != wc_list.end();
+       ++it) {
+    targets.push_back(new Target(*it));
   }
   callback.Run(targets);
 }

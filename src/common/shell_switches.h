@@ -7,6 +7,11 @@
 #ifndef CONTENT_NW_SRC_SHELL_SWITCHES_H_
 #define CONTENT_NW_SRC_SHELL_SWITCHES_H_
 
+namespace nw {
+  const int kMenuHeight = 25;
+  const int kToolbarHeight = 34;
+}
+
 namespace switches {
 
 extern const char kContentShellDataPath[];
@@ -48,7 +53,10 @@ extern const char kmFullscreen[];
 extern const char kmShowInTaskbar[];
 extern const char kmKiosk[];
 extern const char kmAlwaysOnTop[];
+extern const char kmVisibleOnAllWorkspaces[];
 extern const char kmInitialFocus[];
+extern const char kmTransparent[];
+extern const char kmDisableTransparency[];
 
 extern const char kmWebgl[];
 extern const char kmJava[];
@@ -64,6 +72,9 @@ extern const char kmInjectCSS[];
 #if defined(OS_WIN)
 extern const char kPrintRaster[];
 #endif
+
+extern const char kCrashDumpsDir[];
+
 }  // namespace switches
 
 #endif  // CONTENT_NW_SRC_SHELL_SWITCHES_H_

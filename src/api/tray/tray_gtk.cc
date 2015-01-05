@@ -71,14 +71,19 @@ void Tray::OnClick(GtkWidget* widget) {
 }
 
 void Tray::OnPopupMenu(GtkWidget* widget, guint button, guint time) {
+#if 0//FIXME
   if (menu_) {
     gtk_menu_popup(GTK_MENU(menu_->menu_), NULL, NULL,
                    gtk_status_icon_position_menu,
                    status_item_, button, time);
   }
+#endif
 }
 
 void Tray::SetAltIcon(const std::string& alticon_path) {
+}
+
+void Tray::SetIconsAreTemplates(bool areTemplates) {
 }
 
 }  // namespace nwapi

@@ -122,12 +122,12 @@ class GtkPrinterList {
 
 // static
 printing::PrintDialogGtkInterface* PrintDialogGtk::CreatePrintDialog(
-    PrintingContextGtk* context) {
+    PrintingContextLinux* context) {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
   return new PrintDialogGtk(context);
 }
 
-PrintDialogGtk::PrintDialogGtk(PrintingContextGtk* context)
+PrintDialogGtk::PrintDialogGtk(PrintingContextLinux* context)
     : context_(context),
       dialog_(NULL),
       gtk_settings_(NULL),
@@ -232,7 +232,7 @@ bool PrintDialogGtk::UpdateSettings(printing::PrintSettings* settings) {
 void PrintDialogGtk::ShowDialog(
     gfx::NativeView parent_view,
     bool has_selection,
-    const PrintingContextGtk::PrintSettingsCallback& callback) {
+    const PrintingContextLinux::PrintSettingsCallback& callback) {
   callback_ = callback;
 
   GtkWindow* parent = GTK_WINDOW(gtk_widget_get_toplevel(parent_view));
@@ -266,7 +266,7 @@ void PrintDialogGtk::ShowDialog(
 }
 
 void PrintDialogGtk::PrintDocument(const printing::Metafile* metafile,
-                                   const string16& document_name) {
+                                   const base::string16& document_name) {
   // This runs on the print worker thread, does not block the UI thread.
   DCHECK(!BrowserThread::CurrentlyOn(BrowserThread::UI));
 
@@ -275,7 +275,7 @@ void PrintDialogGtk::PrintDocument(const printing::Metafile* metafile,
   AddRef();
 
   bool error = false;
-  if (!file_util::CreateTemporaryFile(&path_to_pdf_)) {
+  if (!base::CreateTemporaryFile(&path_to_pdf_)) {
     LOG(ERROR) << "Creating temporary file failed";
     error = true;
   }
@@ -365,13 +365,13 @@ void PrintDialogGtk::OnResponse(GtkWidget* dialog, int response_id) {
       printing::PrintSettingsInitializerGtk::InitPrintSettings(
           gtk_settings_, page_setup_, &settings);
       context_->InitWithSettings(settings);
-      callback_.Run(PrintingContextGtk::OK);
+      callback_.Run(PrintingContextLinux::OK);
       callback_.Reset();
       return;
     }
     case GTK_RESPONSE_DELETE_EVENT:  // Fall through.
     case GTK_RESPONSE_CANCEL: {
-      callback_.Run(PrintingContextGtk::CANCEL);
+      callback_.Run(PrintingContextLinux::CANCEL);
       callback_.Reset();
       return;
     }
@@ -382,7 +382,7 @@ void PrintDialogGtk::OnResponse(GtkWidget* dialog, int response_id) {
   }
 }
 
-void PrintDialogGtk::SendDocumentToPrinter(const string16& document_name) {
+void PrintDialogGtk::SendDocumentToPrinter(const base::string16& document_name) {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
 
   // If |printer_| is NULL then somehow the GTK printer list changed out under

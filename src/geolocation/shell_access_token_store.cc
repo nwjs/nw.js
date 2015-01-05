@@ -44,12 +44,12 @@ void ShellAccessTokenStore::RespondOnOriginatingThread(
   // Since content_shell is a test executable, rather than an end user program,
   // we provide a dummy access_token set to avoid hitting the server.
   AccessTokenSet access_token_set;
-  access_token_set[GURL()] = ASCIIToUTF16("chromium_content_shell");
+  access_token_set[GURL()] = base::ASCIIToUTF16("chromium_content_shell");
   callback.Run(access_token_set, system_request_context_);
 }
 
 void ShellAccessTokenStore::SaveAccessToken(
-    const GURL& server_url, const string16& access_token) {
+                                            const GURL& server_url, const base::string16& access_token) {
 }
 
 }  // namespace content

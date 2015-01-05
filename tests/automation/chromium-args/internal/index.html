@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>test case for chromium-args</title>
+  </head>
+  <body>
+    <h1>Hello World!</h1>
+    <script>
+      var gui = require('nw.gui')
+      var fs = require('fs');
+      fs.openSync('./hi', 'w');
+      var results = false;
+      if (location.href == 'http://www.baidu.com')
+	    results = true;
+
+      var client = require('net').connect({port: 13013});
+      client.setEncoding('utf8');
+      client.end(JSON.stringify(results));
+
+    </script>
+  </body>
+</html>

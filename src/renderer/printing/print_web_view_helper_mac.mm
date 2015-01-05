@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "content/nw/src/renderer/printing/print_web_view_helper.h"
+#include "chrome/renderer/printing/print_web_view_helper.h"
 
 #import <AppKit/AppKit.h>
 
@@ -17,11 +17,11 @@
 #include "skia/ext/platform_device.h"
 #include "skia/ext/vector_canvas.h"
 #include "third_party/WebKit/public/platform/WebCanvas.h"
-#include "third_party/WebKit/public/web/WebFrame.h"
+#include "third_party/WebKit/public/web/WebLocalFrame.h"
 
 namespace printing {
 
-using WebKit::WebFrame;
+using blink::WebFrame;
 
 void PrintWebViewHelper::PrintPageInternal(
     const PrintMsg_PrintPage_Params& params,
@@ -125,7 +125,7 @@ void PrintWebViewHelper::RenderPage(
 
     skia::RefPtr<skia::VectorCanvas> canvas =
         skia::AdoptRef(new skia::VectorCanvas(device));
-    WebKit::WebCanvas* canvas_ptr = canvas.get();
+    blink::WebCanvas* canvas_ptr = canvas.get();
     MetafileSkiaWrapper::SetMetafileOnCanvas(*canvas, metafile);
     skia::SetIsDraftMode(*canvas, is_print_ready_metafile_sent_);
     skia::SetIsPreviewMetafile(*canvas, is_preview);

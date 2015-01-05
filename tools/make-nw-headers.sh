@@ -10,8 +10,10 @@ rm -rf $tmpdir/node/deps/v8/test
 rm -rf $tmpdir/node/deps/v8/out
 rm -rf $tmpdir/node/deps/npm/node_modules
 
-cat $tmpdir/node/src/node.h | sed -e 's|third_party/node/deps/uv/include/uv.h|uv.h|' > tmp_node.h && mv tmp_node.h $tmpdir/node/src/node.h
+for h in env.h env-inl.h node.h; do
+cat $tmpdir/node/src/$h | sed -e 's|third_party/node/deps/uv/include/uv.h|uv.h|' > tmp_$h && mv tmp_$h $tmpdir/node/src/$h
+done
 
 pushd tmp
-tar czf ../nw-headers-v0.6.1.tar.gz node
+tar czf ../nw-headers-v0.11.0-rc1.tar.gz node
 popd

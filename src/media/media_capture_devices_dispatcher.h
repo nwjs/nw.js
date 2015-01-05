@@ -8,12 +8,16 @@
 #include "base/memory/ref_counted.h"
 #include "base/memory/scoped_ptr.h"
 #include "base/observer_list.h"
+#include "content/public/browser/media_observer.h"
+#include "content/public/browser/notification_observer.h"
+#include "content/public/browser/notification_registrar.h"
+#include "content/public/browser/web_contents_delegate.h"
 #include "content/public/common/media_stream_request.h"
 
 // This observer is owned by MediaInternals and deleted when MediaInternals
 // is deleted.
-class MediaCaptureDevicesDispatcher
-    : public base::RefCountedThreadSafe<MediaCaptureDevicesDispatcher> {
+class MediaCaptureDevicesDispatcher : public content::MediaObserver,
+                                      public content::NotificationObserver {
  public:
   class Observer {
    public:
@@ -27,6 +31,13 @@ class MediaCaptureDevicesDispatcher
     virtual void OnUpdateVideoDevices(
         const content::MediaStreamDevices& devices) {}
 
+    // Handle an information update related to a media stream request.
+    virtual void OnRequestUpdate(
+        int render_process_id,
+        int render_view_id,
+        const content::MediaStreamDevice& device,
+        const content::MediaRequestState state) {}
+
     virtual void OnCreatingAudioStream(int render_process_id,
                                        int render_view_id) {}
 
@@ -36,15 +47,29 @@ class MediaCaptureDevicesDispatcher
   MediaCaptureDevicesDispatcher();
   virtual ~MediaCaptureDevicesDispatcher();
 
-  // Called on IO thread when one audio device is plugged in or unplugged.
-  void AudioCaptureDevicesChanged(const content::MediaStreamDevices& devices);
+  void NotifyAudioDevicesChangedOnUIThread();
+  void NotifyVideoDevicesChangedOnUIThread();
+  // Overridden from content::MediaObserver:
+  virtual void OnAudioCaptureDevicesChanged() OVERRIDE;
+  virtual void OnVideoCaptureDevicesChanged() OVERRIDE;
+  virtual void OnCreatingAudioStream(int render_process_id,
+                             int render_view_id) OVERRIDE;
 
-  // Called on IO thread when one video device is plugged in or unplugged.
-  void VideoCaptureDevicesChanged(const content::MediaStreamDevices& devices);
-  void OnCreatingAudioStream(int render_process_id,
-                             int render_view_id);
+  // content::NotificationObserver implementation.
+  virtual void Observe(int type,
+                       const content::NotificationSource& source,
+                       const content::NotificationDetails& details) OVERRIDE;
 
 
+  virtual void OnAudioStreamPlaying(
+      int render_process_id,
+      int render_frame_id,
+      int stream_id,
+      const ReadPowerAndClipCallback& power_read_callback) OVERRIDE {}
+  virtual void OnAudioStreamStopped(
+      int render_process_id,
+      int render_frame_id,
+      int stream_id) OVERRIDE {}
   // Methods for observers. Called on UI thread.
   // Observers should add themselves on construction and remove themselves
   // on destruction.
@@ -59,6 +84,15 @@ class MediaCaptureDevicesDispatcher
   GetRequestedAudioDevice(const std::string& requested_audio_device_id);
   const content::MediaStreamDevice*
   GetRequestedVideoDevice(const std::string& requested_video_device_id);
+
+
+  virtual void OnMediaRequestStateChanged(
+      int render_process_id,
+      int render_frame_id,
+      int page_request_id,
+      const GURL& security_origin,
+      content::MediaStreamType stream_type,
+      content::MediaRequestState state) OVERRIDE {}
 
   // Returns the first available audio or video device, or NULL if no devices
   // are available.

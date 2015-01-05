@@ -11,14 +11,16 @@
 #include "base/memory/shared_memory.h"
 #include "base/values.h"
 #include "ipc/ipc_message_macros.h"
+#include "printing/page_range.h"
 #include "printing/page_size_margins.h"
 #include "printing/print_job_constants.h"
 #include "third_party/WebKit/public/web/WebPrintScalingOption.h"
+#include "ui/gfx/ipc/gfx_param_traits.h"
 #include "ui/gfx/native_widget_types.h"
 #include "ui/gfx/rect.h"
 
-#ifndef NW_COMMON_PRINT_MESSAGES_H_
-#define NW_COMMON_PRINT_MESSAGES_H_
+#ifndef CHROME_COMMON_PRINT_MESSAGES_H_
+#define CHROME_COMMON_PRINT_MESSAGES_H_
 
 struct PrintMsg_Print_Params {
   PrintMsg_Print_Params();
@@ -42,11 +44,11 @@ struct PrintMsg_Print_Params {
   int32 preview_ui_id;
   int preview_request_id;
   bool is_first_request;
-  WebKit::WebPrintScalingOption print_scaling_option;
+  blink::WebPrintScalingOption print_scaling_option;
   bool print_to_pdf;
   bool display_header_footer;
-  string16 title;
-  string16 url;
+  base::string16 title;
+  base::string16 url;
   bool should_print_backgrounds;
 };
 
@@ -70,12 +72,27 @@ struct PrintHostMsg_RequestPrintPreview_Params {
   bool selection_only;
 };
 
+struct PrintHostMsg_SetOptionsFromDocument_Params {
+  PrintHostMsg_SetOptionsFromDocument_Params();
+  ~PrintHostMsg_SetOptionsFromDocument_Params();
+
+  bool is_scaling_disabled;
+  int copies;
+  printing::DuplexMode duplex;
+  printing::PageRanges page_ranges;
+};
+
 #endif  // CHROME_COMMON_PRINT_MESSAGES_H_
 
 #define IPC_MESSAGE_START PrintMsgStart
 
-IPC_ENUM_TRAITS(printing::MarginType)
-IPC_ENUM_TRAITS(WebKit::WebPrintScalingOption)
+IPC_ENUM_TRAITS_MAX_VALUE(printing::MarginType,
+                          printing::MARGIN_TYPE_LAST)
+IPC_ENUM_TRAITS_MAX_VALUE(blink::WebPrintScalingOption,
+                          blink::WebPrintScalingOptionLast)
+IPC_ENUM_TRAITS_MIN_MAX_VALUE(printing::DuplexMode,
+                              printing::UNKNOWN_DUPLEX_MODE,
+                              printing::SHORT_EDGE)
 
 // Parameters for a render request.
 IPC_STRUCT_TRAITS_BEGIN(PrintMsg_Print_Params)
@@ -163,6 +180,25 @@ IPC_STRUCT_TRAITS_BEGIN(PrintHostMsg_RequestPrintPreview_Params)
   IPC_STRUCT_TRAITS_MEMBER(selection_only)
 IPC_STRUCT_TRAITS_END()
 
+IPC_STRUCT_TRAITS_BEGIN(printing::PageRange)
+  IPC_STRUCT_TRAITS_MEMBER(from)
+  IPC_STRUCT_TRAITS_MEMBER(to)
+IPC_STRUCT_TRAITS_END()
+
+IPC_STRUCT_TRAITS_BEGIN(PrintHostMsg_SetOptionsFromDocument_Params)
+  // Specifies whether print scaling is enabled or not.
+  IPC_STRUCT_TRAITS_MEMBER(is_scaling_disabled)
+
+  // Specifies number of copies to be printed.
+  IPC_STRUCT_TRAITS_MEMBER(copies)
+
+  // Specifies paper handling option.
+  IPC_STRUCT_TRAITS_MEMBER(duplex)
+
+  // Specifies page range to be printed.
+  IPC_STRUCT_TRAITS_MEMBER(page_ranges)
+IPC_STRUCT_TRAITS_END()
+
 IPC_STRUCT_TRAITS_BEGIN(printing::PageSizeMargins)
   IPC_STRUCT_TRAITS_MEMBER(content_width)
   IPC_STRUCT_TRAITS_MEMBER(content_height)
@@ -183,10 +219,6 @@ IPC_STRUCT_TRAITS_END()
 
 // Parameters to describe a rendered document.
 IPC_STRUCT_BEGIN(PrintHostMsg_DidPreviewDocument_Params)
-  // True when we can reuse existing preview data. |metafile_data_handle| and
-  // |data_size| should not be used when this is true.
-  IPC_STRUCT_MEMBER(bool, reuse_existing_data)
-
   // A shared memory handle to metafile data.
   IPC_STRUCT_MEMBER(base::SharedMemoryHandle, metafile_data_handle)
 
@@ -255,8 +287,10 @@ IPC_STRUCT_BEGIN(PrintHostMsg_DidPrintPage_Params)
   // Page number.
   IPC_STRUCT_MEMBER(int, page_number)
 
+#if defined(OS_WIN) && !defined(WIN_PDF_METAFILE_FOR_PRINTING)
   // Shrink factor used to render this page.
   IPC_STRUCT_MEMBER(double, actual_shrink)
+#endif  // OS_WIN && !WIN_PDF_METAFILE_FOR_PRINTING
 
   // The size of the page the page author specified.
   IPC_STRUCT_MEMBER(gfx::Size, page_size)
@@ -279,15 +313,15 @@ IPC_STRUCT_END()
 // Tells the render view to initiate print preview for the entire document.
 IPC_MESSAGE_ROUTED1(PrintMsg_InitiatePrintPreview, bool /* selection_only */)
 
-// Tells the render view to initiate printing or print preview for a particular
-// node, depending on which mode the render view is in.
+// Tells the render frame to initiate printing or print preview for a particular
+// node, depending on which mode the render frame is in.
 IPC_MESSAGE_ROUTED0(PrintMsg_PrintNodeUnderContextMenu)
 
 // Tells the renderer to print the print preview tab's PDF plugin without
 // showing the print dialog. (This is the final step in the print preview
 // workflow.)
 IPC_MESSAGE_ROUTED1(PrintMsg_PrintForPrintPreview,
-                    DictionaryValue /* settings */)
+                    base::DictionaryValue /* settings */)
 
 // Tells the render view to switch the CSS to print media type, renders every
 // requested pages and switch back the CSS to display media type.
@@ -305,7 +339,7 @@ IPC_MESSAGE_ROUTED1(PrintMsg_SetScriptedPrintingBlocked,
 // requested pages for print preview using the given |settings|. This gets
 // called multiple times as the user updates settings.
 IPC_MESSAGE_ROUTED1(PrintMsg_PrintPreview,
-                    DictionaryValue /* settings */)
+                    base::DictionaryValue /* settings */)
 
 // Like PrintMsg_PrintPages, but using the print preview document's frame/node.
 IPC_MESSAGE_ROUTED0(PrintMsg_PrintForSystemDialog)
@@ -322,6 +356,10 @@ IPC_SYNC_MESSAGE_ROUTED1_1(PrintHostMsg_DuplicateSection,
                            base::SharedMemoryHandle /* renderer handle */,
                            base::SharedMemoryHandle /* browser handle */)
 #endif
+
+// Check if printing is enabled.
+IPC_SYNC_MESSAGE_ROUTED0_1(PrintHostMsg_IsPrintingEnabled,
+                           bool /* is_enabled */)
 
 // Tells the browser that the renderer is done calculating the number of
 // rendered pages according to the specified settings.
@@ -350,7 +388,7 @@ IPC_SYNC_MESSAGE_ROUTED0_1(PrintHostMsg_GetDefaultPrintSettings,
 // |job_settings|.
 IPC_SYNC_MESSAGE_ROUTED2_1(PrintHostMsg_UpdatePrintSettings,
                            int /* document_cookie */,
-                           DictionaryValue /* job_settings */,
+                           base::DictionaryValue /* job_settings */,
                            PrintMsg_PrintPages_Params /* current_settings */)
 
 // It's the renderer that controls the printing process when it is generated
@@ -362,15 +400,16 @@ IPC_SYNC_MESSAGE_ROUTED1_1(PrintHostMsg_ScriptedPrint,
                            PrintMsg_PrintPages_Params
                                /* settings chosen by the user*/)
 
-#if defined(USE_X11)
+#if defined(OS_CHROMEOS) || defined(OS_ANDROID)
 // Asks the browser to create a temporary file for the renderer to fill
 // in resulting NativeMetafile in printing.
-IPC_SYNC_MESSAGE_CONTROL0_2(PrintHostMsg_AllocateTempFileForPrinting,
+IPC_SYNC_MESSAGE_CONTROL1_2(PrintHostMsg_AllocateTempFileForPrinting,
+                            int /* render_view_id */,
                             base::FileDescriptor /* temp file fd */,
-                            int /* fd in browser*/)
+                            int /* fd in browser*/) // Used only by Chrome OS.
 IPC_MESSAGE_CONTROL2(PrintHostMsg_TempFileForPrintingWritten,
                      int /* render_view_id */,
-                     int /* fd in browser */)
+                     int /* fd in browser */) // Used only by Chrome OS.
 #endif
 
 // Asks the browser to do print preview.
@@ -401,6 +440,9 @@ IPC_SYNC_MESSAGE_ROUTED2_1(PrintHostMsg_CheckForCancel,
                            int /* request id */,
                            bool /* print preview cancelled */)
 
+// This is sent when there are invalid printer settings.
+IPC_MESSAGE_ROUTED0(PrintHostMsg_ShowInvalidPrinterSettingsError)
+
 // Sends back to the browser the complete rendered document (non-draft mode,
 // used for printing) that was requested by a PrintMsg_PrintPreview message.
 // The memory handle in this message is already valid in the browser process.
@@ -427,13 +469,13 @@ IPC_MESSAGE_ROUTED1(PrintHostMsg_PrintPreviewInvalidPrinterSettings,
 
 // Run a nested message loop in the renderer until print preview for
 // window.print() finishes.
-IPC_SYNC_MESSAGE_ROUTED1_0(PrintHostMsg_ScriptedPrintPreview,
-                           bool /* is_modifiable */)
+IPC_SYNC_MESSAGE_ROUTED0_0(PrintHostMsg_SetupScriptedPrintPreview)
 
-// Notify the browser that the PDF in the initiator renderer has disabled print
-// scaling option.
-IPC_MESSAGE_ROUTED0(PrintHostMsg_PrintPreviewScalingDisabled)
+// Tell the browser to show the print preview, when the document is sufficiently
+// loaded such that the renderer can determine whether it is modifiable or not.
+IPC_MESSAGE_ROUTED1(PrintHostMsg_ShowScriptedPrintPreview,
+                    bool /* is_modifiable */)
 
-// Check if printing is enabled.
-IPC_SYNC_MESSAGE_ROUTED0_1(PrintHostMsg_IsPrintingEnabled,
-                           bool /* is_enabled */)
+// Notify the browser to set print presets based on source PDF document.
+IPC_MESSAGE_ROUTED1(PrintHostMsg_SetOptionsFromDocument,
+                    PrintHostMsg_SetOptionsFromDocument_Params /* params */)

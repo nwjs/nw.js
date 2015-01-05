@@ -12,6 +12,7 @@
 #import "base/basictypes.h"
 #include "base/command_line.h"
 #include "base/debug/crash_logging.h"
+#include "base/debug/dump_without_crashing.h"
 #include "base/file_util.h"
 #include "base/files/file_path.h"
 #import "base/logging.h"
@@ -28,6 +29,7 @@
 #include "components/breakpad/app/breakpad_client.h"
 #include "content/nw/src/paths_mac.h"
 //#include "policy/policy_constants.h"
+
 
 namespace {
 
@@ -147,6 +149,8 @@ bool IsCrashReporterEnabled() {
   return gBreakpadRef != NULL;
 }
 
+namespace breakpad {
+
 // Only called for a branded build of Chrome.app.
 void InitCrashReporter() {
   DCHECK(!gBreakpadRef);
@@ -191,7 +195,7 @@ void InitCrashReporter() {
       [resource_path stringByAppendingPathComponent:@"crash_report_sender.app"];
   NSString *reporter_location =
       [[NSBundle bundleWithPath:reporter_bundle_location] executablePath];
-#endif 
+#endif
 
   VLOG(1) << "resource_path: " << [resource_path UTF8String];
   VLOG(1) << "inspector_location: " << [inspector_location UTF8String];
@@ -231,7 +235,7 @@ void InitCrashReporter() {
   // Initialize Breakpad.
   gBreakpadRef = BreakpadCreate(breakpad_config);
   if (!gBreakpadRef) {
-    LOG_IF(ERROR, base::mac::AmIBundled()) << "Breakpad initializaiton failed";
+    LOG_IF(ERROR, base::mac::AmIBundled()) << "Breakpad initialization failed";
     return;
   }
 
@@ -254,7 +258,7 @@ void InitCrashReporter() {
   }
 
   logging::SetLogMessageHandler(&FatalMessageHandler);
-  breakpad::GetBreakpadClient()->SetDumpWithoutCrashingFunction(
+  base::debug::SetDumpWithoutCrashingFunction(
       &DumpHelper::DumpWithoutCrashing);
 
   // abort() sends SIGABRT, which breakpad does not intercept.
@@ -265,6 +269,8 @@ void InitCrashReporter() {
   sigact.sa_handler = SIGABRTHandler;
   CHECK(0 == sigaction(SIGABRT, &sigact, NULL));
 }
+
+} //namespace breakpad
 
 void InitCrashProcessInfo() {
   if (gBreakpadRef == NULL) {
@@ -292,3 +298,5 @@ bool SetCrashDumpPath(const char* path) {
   BreakpadSetKeyValue(gBreakpadRef, @BREAKPAD_DUMP_DIRECTORY, base::SysUTF8ToNSString(path));
   return true;
 }
+
+

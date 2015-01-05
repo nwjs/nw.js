@@ -46,6 +46,11 @@ function MenuItem(option) {
       option.icon = nw.getAbsolutePath(option.icon);
     }
 
+    if (option.hasOwnProperty('iconIsTemplate'))
+      option.iconIsTemplate = Boolean(option.iconIsTemplate);
+    else
+      option.iconIsTemplate = true;
+
     if (option.hasOwnProperty('tooltip'))
       option.tooltip = String(option.tooltip);
 
@@ -83,6 +88,10 @@ function MenuItem(option) {
     option.tooltip = '';
   if (!option.hasOwnProperty('enabled'))
     option.enabled = true;
+  if (!option.hasOwnProperty('key'))
+    option.key = "";
+  if (!option.hasOwnProperty('modifiers'))
+    option.modifiers = "";
 }
 require('util').inherits(MenuItem, exports.Base);
 
@@ -112,6 +121,14 @@ MenuItem.prototype.__defineSetter__('icon', function(val) {
   this.handleSetter('icon', 'SetIcon', String, real_path);
 });
 
+MenuItem.prototype.__defineGetter__('iconIsTemplate', function() {
+  return this.handleGetter('iconIsTemplate');
+});
+
+MenuItem.prototype.__defineSetter__('iconIsTemplate', function(val) {
+  this.handleSetter('iconIsTemplate', 'SetIconIsTemplate', Boolean, val);
+});
+
 MenuItem.prototype.__defineGetter__('tooltip', function() {
   return this.handleGetter('tooltip');
 });
@@ -123,14 +140,14 @@ MenuItem.prototype.__defineSetter__('tooltip', function(val) {
 MenuItem.prototype.__defineGetter__('checked', function() {
   if (this.type != 'checkbox')
     return undefined;
-    
+
   return this.handleGetter('checked');
 });
 
 MenuItem.prototype.__defineSetter__('checked', function(val) {
   if (this.type != 'checkbox')
     throw new String("'checked' property is only available for checkbox");
-    
+
   this.handleSetter('checked', 'SetChecked', Boolean, val);
 });
 

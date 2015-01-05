@@ -89,28 +89,23 @@ MediaInternals* MediaInternals::GetInstance() {
 
 MediaInternals::~MediaInternals() {}
 
-void MediaInternals::OnAudioCaptureDevicesChanged(
-    const content::MediaStreamDevices& devices) {
+void MediaInternals::OnAudioCaptureDevicesChanged() {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::IO));
-  media_devices_dispatcher_->AudioCaptureDevicesChanged(devices);
+  media_devices_dispatcher_->OnAudioCaptureDevicesChanged();
 }
 
-void MediaInternals::OnVideoCaptureDevicesChanged(
-    const content::MediaStreamDevices& devices) {
+void MediaInternals::OnVideoCaptureDevicesChanged() {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::IO));
-  media_devices_dispatcher_->VideoCaptureDevicesChanged(devices);
+  media_devices_dispatcher_->OnVideoCaptureDevicesChanged();
 }
 
 void MediaInternals::OnMediaRequestStateChanged(
-    int render_process_id,
-    int render_view_id,
-    int page_request_id,
-    const content::MediaStreamDevice& device,
-    content::MediaRequestState state) {
-}
-
-void MediaInternals::OnAudioStreamPlayingChanged(
-                                                 int render_process_id, int render_view_id, int stream_id, bool playing, float power_dbfs, bool clipped) {
+      int render_process_id,
+      int render_frame_id,
+      int page_request_id,
+      const GURL& security_origin,
+      content::MediaStreamType stream_type,
+      content::MediaRequestState state) {
 }
 
 void MediaInternals::OnCreatingAudioStream(
@@ -119,7 +114,7 @@ void MediaInternals::OnCreatingAudioStream(
   media_devices_dispatcher_->OnCreatingAudioStream(render_process_id, render_view_id);
 }
 
-scoped_refptr<MediaCaptureDevicesDispatcher>
+MediaCaptureDevicesDispatcher*
 MediaInternals::GetMediaCaptureDevicesDispatcher() {
   return media_devices_dispatcher_;
 }

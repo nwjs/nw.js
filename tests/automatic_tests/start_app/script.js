@@ -5,20 +5,9 @@ var cp = require('child_process');
 var exec = cp.exec;
 var sqawn = cp.sqawn;
 
-var required_file_win = [
-   'ffmpegsumo.dll',
-   'icudt.dll',
-   'libEGL.dll',
-   'libGLESv2.dll',
-   'nw.exe',
-   'nw.pak'
-];
-
-var required_file_linux = [
-  'nw',
-  'nw.pak',
-  'libffmpegsumo.so'
-];
+var required_file_win_linux = fs.readdirSync(path.dirname(process.execPath));
+var required_file_win = required_file_win_linux;
+var required_file_linux = required_file_win_linux;
 
 var required_file_macox = [
   'node-webkit.app'

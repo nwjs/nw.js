@@ -19,7 +19,11 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "content/public/common/common_param_traits.h"
+#include "ipc/ipc_message.h"
+#include "ipc/ipc_message_macros.h"
+#include "ipc/ipc_param_traits.h"
 #include "third_party/skia/include/core/SkBitmap.h"
+#include "ui/gfx/ipc/gfx_param_traits.h"
 
 // Singly-included section
 #ifndef CONTENT_NW_SRC_RENDERER_COMMON_RENDER_MESSAGES_H_

@@ -1,224 +1,320 @@
 #!/usr/bin/env python
-import os
-import shutil
-import tarfile
-import sys
-
-
-script_dir = os.path.dirname(__file__)
-nw_root  = os.path.normpath(os.path.join(script_dir, os.pardir))
-project_root = os.path.normpath(os.path.join(nw_root, os.pardir, os.pardir)); 
-#default project path
-project_root = os.path.join(project_root, 'out', 'Release')
-required_file = []
-tarname = []
-binary_name = []
-binary_tar = []
-binary_store_path = []
-binary_full_path = []
-binary_tar_full_path = []
-
-#parse command line arguments
-"""
--p <path>, the absolute path of executable files
-""" 
-if '-p' in sys.argv:
-  tmp = sys.argv[sys.argv.index('-p') + 1]
-  if not os.path.isabs(tmp):
-    print 'the path is not an absolute path.\n'
-    exit()
-
-  if not os.path.exists(tmp):
-    print 'the directory does not exist.\n'
-    exit()
-        
-  project_root = tmp
-
-
-
-#get platform information
-if sys.platform.startswith('linux'):
-  platform_name = 'linux'
-  
-if sys.platform in ('win32', 'cygwin'):
-  platform_name = 'win'
-  
-if sys.platform == 'darwin':
-  platform_name = 'osx'
-
-#judge whether the target exist or not   
-if platform_name == 'linux' and not os.path.exists(
-    os.path.join(project_root, 'nw')):
-  print 'nw file does not exist.\n'
-  exit()  
-
-if platform_name == 'win' and not os.path.exists(
-    os.path.join(project_root, 'nw.exe')):
-  print 'nw file does not exist.\n'
-  exit() 
-  
-if platform_name == 'osx' and not os.path.exists(
-    os.path.join(project_root, 'node-webkit.app')):
-  print 'nw file does not exist.\n'
-  exit()
-
-if platform_name != 'win' and not os.path.exists(
-  os.path.join(project_root, 'chromedriver2_server')):
-  print 'chromedriver2_server file does not exist.\n'
-  exit()
-
-if platform_name == 'win' and not os.path.exists(
-  os.path.join(project_root, 'chromedriver2_server.exe')):
-  print 'chromedriver2_server file does not exist.\n'
-  exit()
-
-
-required_file_linux = (
-  'nw',
-  'nw.pak',
-  'libffmpegsumo.so',
-  'nwsnapshot',
-  'credits.html',
-)
-
-required_file_win = (
-  'ffmpegsumo.dll',
-  'icudt.dll',
-  'libEGL.dll',
-  'libGLESv2.dll',
-  'nw.exe',
-  'nw.pak',
-  'nwsnapshot.exe',
-  'credits.html',
-)
-
-required_file_mac = (
-  'node-webkit.app',
-  'nwsnapshot',
-  'credits.html',
-)
-
-required_chromedriver2_file_win = (
-  'chromedriver2_server.exe',
-)
-
-required_chromedriver2_file_others = (
-  'chromedriver2_server',
-)
-
-if (platform_name == 'linux'):
-  required_file.append(required_file_linux)
-  required_file.append(required_chromedriver2_file_others)
-
-if (platform_name == 'win'):
-  required_file.append(required_file_win)
-  required_file.append(required_chromedriver2_file_win);
-
-if (platform_name == 'osx'):
-  required_file.append(required_file_mac)
-  required_file.append(required_chromedriver2_file_others)
-
-
-#generate binary tar name
+import argparse
 import getnwisrelease
 import getnwversion
+import gzip
+import os
 import platform
+import shutil
+import sys
+import tarfile
+import zipfile
 
-nw_version = 'v' + getnwversion.nw_version
-is_release = getnwisrelease.release
-if is_release == 0:
-  nw_version += getnwisrelease.postfix
+steps = ['nw', 'chromedriver', 'symbol', 'others']
+################################
+# Parse command line args
+parser = argparse.ArgumentParser(description='Package nw binaries.')
+parser.add_argument('-p','--path', help='Where to find the binaries, like out/Release', required=False)
+parser.add_argument('-a','--arch', help='target arch', required=False)
+group = parser.add_mutually_exclusive_group()
+group.add_argument('-s','--step', choices=steps, help='Execute specified step.', required=False)
+group.add_argument('-n','--skip', choices=steps, help='Skip specified step.', required=False)
+args = parser.parse_args()
 
-bits = platform.architecture()[0]
+################################
+# Init variables.
+binaries_location = None        # .../out/Release
+platform_name = None            # win/linux/osx
+arch = None                     # ia32/x64
+step = None                     # nw/chromedriver/symbol
+skip = None
+nw_ver = None                   # x.xx
+dist_dir = None                 # .../out/Release/dist
 
-if bits == '64bit':
-  arch = 'x64'
+step = args.step
+skip = args.skip
+binaries_location = args.path
+# If the binaries location is not given, calculate it from script related dir.
+if binaries_location == None:
+    binaries_location = os.path.join(os.path.dirname(__file__),
+            os.pardir, os.pardir, os.pardir, 'out', 'Release')
+
+if not os.path.isabs(binaries_location):
+    binaries_location = os.path.join(os.getcwd(), binaries_location)
+
+if not os.path.isdir(binaries_location):
+    print 'Invalid path: ' + binaries_location
+    exit(-1)
+binaries_location = os.path.normpath(binaries_location)
+dist_dir = os.path.join(binaries_location, 'dist')
+
+print 'Working on ' + binaries_location
+
+if sys.platform.startswith('linux'):
+    platform_name = 'linux'
+elif sys.platform in ('win32', 'cygwin'):
+    platform_name = 'win'
+elif sys.platform == 'darwin':
+    platform_name = 'osx'
 else:
-  arch = 'ia32'
+    print 'Unsupported platform: ' + sys.platform
+    exit(-1)
 
-if (platform_name == 'win' or platform_name == 'osx'):
-  arch = 'ia32'
-
-tarname.append('node-webkit-' + nw_version)
-tarname.append('chromedriver2-nw-' + nw_version)
-for index in range(len(tarname)):
-  binary_name.append(tarname[index] + '-' + platform_name + '-' + arch);
-  binary_tar.append(binary_name[index] + '.tar.gz')
-
-#use zip in mac and windows
-if platform_name in ('win', 'osx'):
-  for index in range(len(binary_name)):
-    binary_tar[index] = binary_name[index] + '.zip'
-
-
-#make directory for binary_tar
-binary_store_path.append(os.path.join(project_root,                                 
-                                 'node-webkit-binaries'))
-binary_store_path.append(os.path.join(project_root,                                 
-                                 'chromedriver2-binaries'))
-
-for index in range(len(binary_store_path)):
-  if not os.path.exists(binary_store_path[index]):
-    os.mkdir(binary_store_path[index])
-
-for index in range(len(binary_store_path)):
-  binary_full_path.append(os.path.join(binary_store_path[index], binary_name[index]))
-  binary_tar_full_path.append(os.path.join(binary_store_path[index], binary_tar[index]))
-
-for index in range(len(binary_full_path)):
-  if os.path.exists(binary_full_path[index]):
-    shutil.rmtree(binary_full_path[index])
-
-for index in range(len(binary_full_path)):
-  os.mkdir(binary_full_path[index])
-
-
-#copy file to binary
-print 'Begin copy file.'
-for index in range(len(required_file)):
-  for file in required_file[index]:
-    try:
-      shutil.copy(os.path.join(project_root, file),
-                  os.path.join(binary_full_path[index], file))
-    except:
-      shutil.copytree(os.path.join(project_root, file),
-                      os.path.join(binary_full_path[index], file))
-    
-print 'copy file end.\n'
-
-for index in range(len(binary_tar_full_path)):
-  if (os.path.isfile(binary_tar_full_path[index])):
-    os.remove(binary_tar_full_path[index])
-  
-print 'Begin compress file'
-
-if platform_name in ('win', 'osx'):
-  """
-  If there are sub directors, this should be modified  
-  """
-  import zipfile
-  for index in range(len(binary_tar_full_path)):                     
-    zip = zipfile.ZipFile(binary_tar_full_path[index], 'w',
-                        compression=zipfile.ZIP_DEFLATED)
-
-    for dirpath, dirnames, filenames in os.walk(binary_full_path[index]):
-      for name in filenames:
-        path = os.path.normpath(os.path.join(dirpath, name))
-        zip.write(path, path.replace(binary_full_path[index] + os.sep, ''))
-
-    zip.close()
-
+_arch = platform.architecture()[0]
+if _arch == '64bit':
+    arch = 'x64'
+elif _arch == '32bit':
+    arch = 'ia32'
 else:
-  for index in range(len(binary_tar_full_path)):                       
-    tar = tarfile.open(binary_tar_full_path[index], 'w:gz')
-    tar.add(binary_full_path[index], os.path.basename(binary_full_path[index]))
-    tar.close()
+    print 'Unsupported arch: ' + _arch
+    exit(-1)
 
-  
-print 'compress file end.\n'
+if platform_name == 'win':
+    arch = 'ia32'
 
-for index in range(len(binary_store_path)):
-  print 'the binaries files store in path:', os.path.normpath(
-      os.path.join(os.getcwd(), binary_store_path[index]))
+if platform_name == 'osx':
+    # detect output arch
+    nw_bin = binaries_location + '/node-webkit.app/Contents/MacOS/node-webkit'
+    import subprocess
+    if 'i386' in subprocess.check_output(['file',nw_bin]):
+        arch = 'ia32'
+    else: # should be 'x86_64'
+        arch = 'x64'
+
+if args.arch != None:
+    arch = args.arch
+
+nw_ver = getnwversion.nw_version
+if getnwisrelease.release == 0:
+    nw_ver += getnwisrelease.postfix
+
+################################
+# Generate targets
+#
+# target example:
+# {
+#    'input'    : [ 'nw', 'nw.pak', ... ]
+#    'output'   : 'node-webkit-v0.9.2-linux-x64'
+#    'compress' : 'tar.gz'
+#    'folder'   : True   # Optional. More than 2 files will be put into a seprate folder
+#                        # normally, if you want do to this for only 1 file, set this flag.
+# }
+def generate_target_nw(platform_name, arch, version):
+    target = {}
+    # Output
+    target['output'] = ''.join([
+                       'node-webkit-',
+                       'v', version,
+                       '-', platform_name,
+                       '-', arch])
+    # Compress type
+    if platform_name == 'linux':
+        target['compress'] = 'tar.gz'
+    else:
+        target['compress'] = 'zip'
+    # Input
+    if platform_name == 'linux':
+        target['input'] = [
+                           'credits.html',
+                           'libffmpegsumo.so',
+                           'nw.pak',
+                           'nwsnapshot',
+                           'nw',
+                           'icudtl.dat',
+                           'locales',
+                           ]
+    elif platform_name == 'win':
+        target['input'] = [
+                           'd3dcompiler_46.dll',
+                           'ffmpegsumo.dll',
+                           'icudtl.dat',
+                           'libEGL.dll',
+                           'libGLESv2.dll',
+                           'pdf.dll',
+                           'nw.exe',
+                           'nw.pak',
+                           'locales',
+                           'nwsnapshot.exe',
+                           'credits.html',
+                           ]
+    elif platform_name == 'osx':
+        target['input'] = [
+                           'node-webkit.app',
+                           'nwsnapshot',
+                           'credits.html',
+                          ]
+    else:
+        print 'Unsupported platform: ' + platform_name
+        exit(-1)
+    return target
+
+def generate_target_chromedriver(platform_name, arch, version):
+    target = {}
+    # Output
+    target['output'] = ''.join([
+                       'chromedriver-nw-',
+                       'v', version,
+                       '-', platform_name,
+                       '-', arch])
+    # Compress type
+    if platform_name == 'linux':
+        target['compress'] = 'tar.gz'
+    else:
+        target['compress'] = 'zip'
+    # Input
+    if platform_name == 'win':
+        target['input'] = ['chromedriver.exe']
+    else:
+        target['input'] = ['chromedriver']
+    target['folder'] = True # always create a folder
+    return target
+
+def generate_target_symbols(platform_name, arch, version):
+    target = {}
+    target['output'] = ''.join(['node-webkit-symbol-',
+                                'v', version,
+                                '-', platform_name,
+                                '-', arch])
+    if platform_name == 'linux':
+        target['compress'] = 'tar.gz'
+        target['input'] = ['nw.breakpad.' + arch]
+        target['folder'] = True
+    elif platform_name == 'win':
+        target['compress'] = None
+        target['input'] = ['nw.sym.7z']
+        target['output'] = ''.join(['node-webkit-symbol-',
+                                    'v', version,
+                                    '-', platform_name,
+                                    '-', arch, '.7z'])
+    elif platform_name == 'osx':
+        target['compress'] = 'zip'
+        target['input'] = [
+                          'node-webkit.breakpad.tar'
+                          ]
+        target['folder'] = True
+    else:
+        print 'Unsupported platform: ' + platform_name
+        exit(-1)
+    return target
+
+def generate_target_others(platform_name, arch, version):
+    target = {}
+    target['output'] = ''
+    target['compress'] = None
+    if platform_name == 'win':
+        target['input'] = ['nw.exp', 'nw.lib']
+    elif platform_name == 'osx' :
+        target['input'] = []
+    else:
+        target['input'] = []
+    return target
 
 
+################################
+# Make packages
+def compress(from_dir, to_dir, fname, compress):
+    from_dir = os.path.normpath(from_dir)
+    to_dir = os.path.normpath(to_dir)
+    _from = os.path.join(from_dir, fname)
+    _to = os.path.join(to_dir, fname)
+    if compress == 'zip':
+        z = zipfile.ZipFile(_to + '.zip', 'w', compression=zipfile.ZIP_DEFLATED)
+        if os.path.isdir(_from):
+            for root, dirs, files in os.walk(_from):
+                for f in files:
+                    _path = os.path.join(root, f)
+                    z.write(_path, _path.replace(from_dir+os.sep, ''))
+        else:
+            z.write(_from, fname)
+        z.close()
+    elif compress == 'tar.gz': # only for folders
+        if not os.path.isdir(_from):
+            print 'Will not create tar.gz for a single file: ' + _from
+            exit(-1)
+        with tarfile.open(_to + '.tar.gz', 'w:gz') as tar:
+            tar.add(_from, arcname=os.path.basename(_from))
+    elif compress == 'gz': # only for single file
+        if os.path.isdir(_from):
+            print 'Will not create gz for a folder: ' + _from
+            exit(-1)
+        f_in = open(_from, 'rb')
+        f_out = gzip.open(_to + '.gz', 'wb')
+        f_out.writelines(f_in)
+        f_out.close()
+        f_in.close()
+    else:
+        print 'Unsupported compression format: ' + compress
+        exit(-1)
+
+
+def make_packages(targets):
+    # check file existance
+    for t in targets:
+        for f in t['input']:
+            src = os.path.join(binaries_location, f)
+            if not os.path.exists(src):
+                print 'File does not exist: ', src
+                exit(-1)
+
+    # clear the output folder
+    if os.path.exists(dist_dir):
+        if not os.path.isdir(dist_dir):
+            print 'Invalid path: ' + dist_dir
+            exit(-1)
+        else:
+            shutil.rmtree(dist_dir)
+
+    # now let's do it
+    os.mkdir(dist_dir)
+    for t in targets:
+        if len(t['input']) == 0:
+            continue
+        if t['compress'] == None:
+            for f in t['input']:
+                src = os.path.join(binaries_location, f)
+                if t['output'] != '':
+                    dest = os.path.join(dist_dir, t['output'])
+                else:
+                    dest = os.path.join(dist_dir, f)
+                print "Copying " + f
+                shutil.copy(src, dest)
+        elif (t.has_key('folder') and t['folder'] == True) or len(t['input']) > 1:
+            print 'Making "' + t['output'] + '.' + t['compress'] + '"'
+            # copy files into a folder then pack
+            folder = os.path.join(dist_dir, t['output'])
+            os.mkdir(folder)
+            for f in t['input']:
+                src = os.path.join(binaries_location, f)
+                dest = os.path.join(folder, f)
+                if os.path.isdir(src): # like nw.app
+                    shutil.copytree(src, dest)
+                else:
+                    shutil.copy(src, dest)
+            compress(dist_dir, dist_dir, t['output'], t['compress'])
+            # remove temp folders
+            shutil.rmtree(folder)
+        else:
+            # single file
+            print 'Making "' + t['output'] + '.' + t['compress'] + '"'
+            compress(binaries_location, dist_dir, t['input'][0], t['compress'])
+
+# must be aligned with steps
+generators = {}
+generators['nw'] = generate_target_nw
+generators['chromedriver'] = generate_target_chromedriver
+generators['symbol'] = generate_target_symbols
+generators['others'] = generate_target_others
+################################
+# Process targets
+targets = []
+for s in steps:
+    if (step != None) and (s != step):
+            continue
+    if (skip != None) and (s == skip):
+            continue
+    targets.append(generators[s](platform_name, arch, nw_ver))
+
+print 'Creating packages...'
+make_packages(targets)
+
+# vim: et:ts=4:sw=4

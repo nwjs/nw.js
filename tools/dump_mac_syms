@@ -1,0 +1,162 @@
+#!/bin/bash
+
+# Copyright (c) 2012 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This script expects the following environment variables to be set.  Xcode
+# normally sets them:
+#
+# CONFIGURATION - Release or Debug; this script only operates when Release.
+# SRCROOT - /path/to/chrome/src/chrome
+# BUILT_PRODUTS_DIR - /path/to/chrome/src/xcodebuild/Release
+#
+# The script also takes a single argument defining the branding type.
+#
+# To test this script without running an entire build:
+#
+# cd /path/to/chrome/src/chrome
+# CONFIGURATION=Release \
+#     SRCROOT=$(pwd) \
+#     BUILT_PRODUCTS_DIR=$(pwd)/../xcodebuild/Release \
+#     tools/build/mac/dump_app_syms Chromium
+
+# Make sure we got the header to write into passed to us
+#if [ $# -ne 1 ]; then
+  #echo "error: missing branding as an argument" >&2
+  #exit 1
+#fi
+
+set -ex
+
+# Skip out if we're aren't in Release mode, no need for dump_syms on debug runs.
+if [ "${CONFIGURATION}" != "Release" ] ; then
+  exit 0
+fi
+
+TOP="${SRCROOT}/.."
+#BUILD_BRANDING=$1
+
+#BRAND_SCRIPT="${TOP}/build/branding_value.sh"
+#SRC_APP_NAME=$("${BRAND_SCRIPT}" "${BUILD_BRANDING}" PRODUCT_FULLNAME)
+SRC_APP_NAME=node-webkit
+#. "${TOP}/chrome/VERSION"
+
+BREAKPAD_DUMP_SYMS="${BUILT_PRODUCTS_DIR}/dump_syms"
+#FULL_VERSION="${MAJOR}.${MINOR}.${BUILD}.${PATCH}"
+FULL_VERSION=$1
+
+DSYM_TAR_PATH="${BUILT_PRODUCTS_DIR}/${SRC_APP_NAME}.breakpad.tar"
+
+# Starting with an already-dumped symbol file at ${original_sym_path},
+# transforms the MODULE line (which must be the first line) from referring to
+# ${original_stem} to refer to ${variant_stem}. The transformed symbol file
+# is written to a symbol file at the same location that a symbol file would
+# be written to if ${variant_name} were in the SRC_NAMES array below.
+#
+# If the transformed symbol file already appears more recent than
+# ${original_sym_path}, it is left alone.
+redump_syms_variant() {
+  local original_sym_path="${1}"
+  local original_stem="${2}"
+  local variant_stem="${3}"
+  local variant_name="${4}"
+  local arch="${5}"
+
+  local variant_sym_name="${variant_name}-${FULL_VERSION}-${arch}.breakpad"
+  local variant_sym_path="${BUILT_PRODUCTS_DIR}/${variant_sym_name}"
+
+  if [[ "${original_sym_path}" -nt "${variant_sym_path}" ]]; then
+    local pattern="\
+1s/^(MODULE [^ ]+ [^ ]+ [0-9a-fA-F]{33}) ${original_stem}\$/\1 ${variant_stem}/"
+    sed -E -e "${pattern}" < "${original_sym_path}" > "${variant_sym_path}"
+  fi
+}
+
+declare -a DSYMS
+
+# Everything in SRC_NAMES is required. It's an error for any of these files
+# to be missing.
+SRC_NAMES=(
+    "${SRC_APP_NAME}.app"
+    "${SRC_APP_NAME} Framework.framework"
+    "${SRC_APP_NAME} Helper.app"
+    "crash_inspector"
+    "crash_report_sender.app"
+    "ffmpegsumo.so"
+)
+
+# PDF.plugin is optional. Only include it if present.
+if [[ -e "${BUILT_PRODUCTS_DIR}/PDF.plugin" ]]; then
+  SRC_NAMES[${#SRC_NAMES[@]}]="PDF.plugin"
+fi
+
+# libpeerconnection.so is optional. Only include it if present.
+if [[ -e "${BUILT_PRODUCTS_DIR}/libpeerconnection.so" ]]; then
+  SRC_NAMES[${#SRC_NAMES[@]}]="libpeerconnection.so"
+fi
+
+for SRC_NAME in "${SRC_NAMES[@]}"; do
+  # SRC_STEM is the name of the file within the DWARF directory of the .dSYM
+  # bundle, which comes from the on-disk name of an executable or dylib within
+  # its enclosing .app, .framework or .plugin bundle.  This is the bundle name
+  # without .app, .framework or .plugin appended.  For non-bundled types, the
+  # stem is just the name of the singular file on disk.
+  SRC_STEM=$(echo "${SRC_NAME}" | sed -Ee 's/\.(app|framework|plugin)$//')
+  DSYM_NAME="${SRC_NAME}.dSYM"
+  DSYM_PATH="${BUILT_PRODUCTS_DIR}/${DSYM_NAME}"
+  DWARF_PATH="${DSYM_PATH}/Contents/Resources/DWARF/${SRC_STEM}"
+
+  ARCHS=$(file "${DWARF_PATH}" | sed -Ene 's/^.*(i386|x86_64)$/\1/p')
+  if [[ -z "${ARCHS}" ]]; then
+    echo "${0}: expected something dumpable in ${DWARF_PATH}" >& 2
+    exit 1
+  fi
+
+  for ARCH in ${ARCHS}; do
+    BPAD_SYM_NAME="${SRC_NAME}-${FULL_VERSION}-${ARCH}.breakpad"
+    BPAD_SYM_PATH="${BUILT_PRODUCTS_DIR}/${BPAD_SYM_NAME}"
+
+    # Only run dump_syms if the file has changed since the last dump. Use -c
+    # to avoid dumping CFI, because the Breakpad stackwalk is incompatible
+    # with CFI produced by clang.
+    # http://code.google.com/p/google-breakpad/issues/detail?id=443
+    if [ "${DWARF_PATH}" -nt "${BPAD_SYM_PATH}" ] ; then
+      "${BREAKPAD_DUMP_SYMS}" -a "${ARCH}" -c "${DWARF_PATH}" > \
+          "${BPAD_SYM_PATH}"
+    fi
+
+    # Some executables will show up with variant names. The Breakpad symbol
+    # server looks up modules based on a combination of the module name and
+    # identifier (UUID). Produce symbol files for these variant names so that
+    # the Breakpad symbol server will have something to return for stacks that
+    # travel through these modules.
+    case "${SRC_NAME}" in
+      "${SRC_APP_NAME} Helper.app")
+        # Google Chrome Helper EH and Google Chrome Helper NP are produced by
+        # build/mac/make_more_helpers.sh.
+        redump_syms_variant "${BPAD_SYM_PATH}" "${SRC_STEM}" \
+                            "${SRC_STEM} EH" "${SRC_STEM} EH.app" "${ARCH}"
+        redump_syms_variant "${BPAD_SYM_PATH}" "${SRC_STEM}" \
+                            "${SRC_STEM} NP" "${SRC_STEM} NP.app" "${ARCH}"
+        ;;
+    esac
+  done
+
+  # Remove the .dSYM archive if the file has changed since the archive was
+  # last generated.  This will cause a new .dSYM archive to be created.
+  if [ "${DWARF_PATH}" -nt "${DSYM_TAR_PATH}" ] ; then
+    rm -f "${DSYM_TAR_PATH}"
+  fi
+
+  # Push the .dSYM bundle onto the DSYMS array so that it will be included in
+  # the .dSYM archive if a new one is needed
+  DSYMS[${#DSYMS[@]}]="${BPAD_SYM_NAME}"
+done
+
+# Create the archive of .dSYM bundles.
+if [ ! -e "${DSYM_TAR_PATH}" ] ; then
+  # Change directory so that absolute paths aren't included in the archive.
+  (cd "${BUILT_PRODUCTS_DIR}" &&
+   tar -cf "${DSYM_TAR_PATH}" "${DSYMS[@]}")
+fi

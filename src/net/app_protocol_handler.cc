@@ -13,6 +13,7 @@
 #include "base/strings/stringprintf.h"
 #include "base/threading/sequenced_worker_pool.h"
 #include "content/public/browser/browser_thread.h"
+#include "net/base/filename_util.h"
 #include "net/base/mime_util.h"
 #include "net/base/net_errors.h"
 #include "net/base/net_util.h"
@@ -51,41 +52,25 @@ net::HttpResponseHeaders* BuildHttpHeaders(
                                           last_modified_time.ToInternalValue());
     hash = base::SHA1HashString(hash);
     std::string etag;
-    if (base::Base64Encode(hash, &etag)) {
-      raw_headers.append(1, '\0');
-      raw_headers.append("ETag: \"");
-      raw_headers.append(etag);
-      raw_headers.append("\"");
-      // Also force revalidation.
-      raw_headers.append(1, '\0');
-      raw_headers.append("cache-control: no-cache");
-    }
+    base::Base64Encode(hash, &etag);
+    raw_headers.append(1, '\0');
+    raw_headers.append("ETag: \"");
+    raw_headers.append(etag);
+    raw_headers.append("\"");
+    // Also force revalidation.
+    raw_headers.append(1, '\0');
+    raw_headers.append("cache-control: no-cache");
   }
 
   raw_headers.append(2, '\0');
   return new net::HttpResponseHeaders(raw_headers);
 }
 
-void ReadMimeTypeFromFile(const base::FilePath& filename,
-                          std::string* mime_type,
-                          bool* result) {
-  *result = net::GetMimeTypeFromFile(filename, mime_type);
-}
-
 base::Time GetFileLastModifiedTime(const base::FilePath& filename) {
   if (base::PathExists(filename)) {
-    base::PlatformFileInfo info;
-    if (file_util::GetFileInfo(filename, &info))
+    base::File::Info info;
+    if (base::GetFileInfo(filename, &info))
       return info.last_modified;
-  }
-  return base::Time();
-}
-
-base::Time GetFileCreationTime(const base::FilePath& filename) {
-  if (base::PathExists(filename)) {
-    base::PlatformFileInfo info;
-    if (file_util::GetFileInfo(filename, &info))
-      return info.creation_time;
   }
   return base::Time();
 }
@@ -162,12 +147,12 @@ URLRequestJob* AppProtocolHandler::MaybeCreateJob(
     URLRequest* request, NetworkDelegate* network_delegate) const {
   base::FilePath file_path;
   GURL url(request->url());
-  url_canon::Replacements<char> replacements;
-  replacements.SetScheme("file", url_parse::Component(0, 4));
+  url::Replacements<char> replacements;
+  replacements.SetScheme("file", url::Component(0, 4));
   replacements.ClearHost();
   url = url.ReplaceComponents(replacements);
 
-  const bool is_file = FileURLToFilePath(url, &file_path);
+  const bool is_file = net::FileURLToFilePath(url, &file_path);
 
   file_path = root_path_.Append(file_path);
   // Check file access permissions.

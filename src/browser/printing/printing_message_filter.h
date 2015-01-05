@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef NW_BROWSER_PRINTING_PRINTING_MESSAGE_FILTER_H_
-#define NW_BROWSER_PRINTING_PRINTING_MESSAGE_FILTER_H_
+#ifndef CHROME_BROWSER_PRINTING_PRINTING_MESSAGE_FILTER_H_
+#define CHROME_BROWSER_PRINTING_PRINTING_MESSAGE_FILTER_H_
 
 #include <string>
 
@@ -15,6 +15,8 @@
 #endif
 
 struct PrintHostMsg_ScriptedPrint_Params;
+class Profile;
+class ProfileIOData;
 
 namespace base {
 class DictionaryValue;
@@ -28,20 +30,20 @@ class WebContents;
 namespace printing {
 class PrinterQuery;
 class PrintJobManager;
+class PrintQueriesQueue;
 }
 
 // This class filters out incoming printing related IPC messages for the
 // renderer process on the IPC thread.
 class PrintingMessageFilter : public content::BrowserMessageFilter {
  public:
-  PrintingMessageFilter(int render_process_id);
+  PrintingMessageFilter(int render_process_id, void* profile);
 
   // content::BrowserMessageFilter methods.
   virtual void OverrideThreadForMessage(
       const IPC::Message& message,
       content::BrowserThread::ID* thread) OVERRIDE;
-  virtual bool OnMessageReceived(const IPC::Message& message,
-                                 bool* message_was_ok) OVERRIDE;
+  virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
 
  private:
   virtual ~PrintingMessageFilter();
@@ -52,13 +54,23 @@ class PrintingMessageFilter : public content::BrowserMessageFilter {
                           base::SharedMemoryHandle* browser_handle);
 #endif
 
-#if defined(OS_CHROMEOS)
+#if defined(OS_CHROMEOS) || defined(OS_ANDROID)
   // Used to ask the browser allocate a temporary file for the renderer
   // to fill in resulting PDF in renderer.
-  void OnAllocateTempFileForPrinting(base::FileDescriptor* temp_file_fd,
+  void OnAllocateTempFileForPrinting(int render_view_id,
+                                     base::FileDescriptor* temp_file_fd,
                                      int* sequence_number);
   void OnTempFileForPrintingWritten(int render_view_id, int sequence_number);
+#endif
+
+#if defined(OS_CHROMEOS)
   void CreatePrintDialogForFile(int render_view_id, const base::FilePath& path);
+#endif
+
+#if defined(OS_ANDROID)
+  // Updates the file descriptor for the PrintViewManagerBasic of a given
+  // render_view_id.
+  void UpdateFileDescriptor(int render_view_id, int fd);
 #endif
 
   // Given a render_view_id get the corresponding WebContents.
@@ -111,14 +123,17 @@ class PrintingMessageFilter : public content::BrowserMessageFilter {
       scoped_refptr<printing::PrinterQuery> printer_query,
       IPC::Message* reply_msg);
 
+#if defined(ENABLE_FULL_PRINTING)
   // Check to see if print preview has been cancelled.
   void OnCheckForCancel(int32 preview_ui_id,
                         int preview_request_id,
                         bool* cancel);
+#endif
 
-  printing::PrintJobManager* print_job_manager_;
 
-  int render_process_id_;
+  const int render_process_id_;
+
+  scoped_refptr<printing::PrintQueriesQueue> queue_;
 
   DISALLOW_COPY_AND_ASSIGN(PrintingMessageFilter);
 };

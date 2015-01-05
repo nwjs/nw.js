@@ -88,7 +88,7 @@ void CapturePageHelper::StartCapturePage(const std::string& image_format_str) {
       gfx::Rect(),
       view->GetViewBounds().size(),
       base::Bind(&CapturePageHelper::CopyFromBackingStoreComplete,
-                 this));
+                 this), kN32_SkColorType);
 }
 
 void CapturePageHelper::CopyFromBackingStoreComplete(

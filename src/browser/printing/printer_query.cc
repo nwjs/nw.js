@@ -2,26 +2,25 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "content/nw/src/browser/printing/printer_query.h"
+#include "chrome/browser/printing/printer_query.h"
 
 #include "base/bind.h"
 #include "base/bind_helpers.h"
 #include "base/message_loop/message_loop.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
-#include "content/nw/src/browser/printing/print_job_worker.h"
-
-using base::MessageLoop;
+#include "chrome/browser/printing/print_job_worker.h"
+#include "chrome/browser/printing/printing_ui_web_contents_observer.h"
 
 namespace printing {
 
 PrinterQuery::PrinterQuery()
-    : io_message_loop_(MessageLoop::current()),
+    : io_message_loop_(base::MessageLoop::current()),
       worker_(new PrintJobWorker(this)),
       is_print_dialog_box_shown_(false),
       cookie_(PrintSettings::NewCookie()),
       last_status_(PrintingContext::FAILED) {
-  DCHECK_EQ(io_message_loop_->type(), MessageLoop::TYPE_IO);
+  DCHECK(base::MessageLoopForIO::IsCurrent());
 }
 
 PrinterQuery::~PrinterQuery() {
@@ -58,7 +57,7 @@ PrintJobWorker* PrinterQuery::DetachWorker(PrintJobWorkerOwner* new_owner) {
   return worker_.release();
 }
 
-MessageLoop* PrinterQuery::message_loop() {
+base::MessageLoop* PrinterQuery::message_loop() {
   return io_message_loop_;
 }
 
@@ -77,12 +76,12 @@ void PrinterQuery::GetSettings(
     bool has_selection,
     MarginType margin_type,
     const base::Closure& callback) {
-  DCHECK_EQ(io_message_loop_, MessageLoop::current());
+  DCHECK_EQ(io_message_loop_, base::MessageLoop::current());
   DCHECK(!is_print_dialog_box_shown_);
 
   StartWorker(callback);
 
-  // Real work is done in PrintJobWorker::Init().
+  // Real work is done in PrintJobWorker::GetSettings().
   is_print_dialog_box_shown_ = ask_user_for_settings == ASK_USER;
   worker_->message_loop()->PostTask(
       FROM_HERE,
@@ -95,7 +94,7 @@ void PrinterQuery::GetSettings(
                  margin_type));
 }
 
-void PrinterQuery::SetSettings(const DictionaryValue& new_settings,
+void PrinterQuery::SetSettings(const base::DictionaryValue& new_settings,
                                const base::Closure& callback) {
   StartWorker(callback);
 
