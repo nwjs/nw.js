@@ -32,27 +32,14 @@ private:
 protected:
   explicit NotificationManager();
 
-  // icon image download callback
-  static void ImageDownloadCallback(int id, int http_status, const GURL& image_url, const std::vector<SkBitmap>& bitmaps, const std::vector<gfx::Size>& size);
-  struct DesktopNotificationParams {
-    content::ShowDesktopNotificationHostMsgParams params_;
-    int render_process_id_;
-    int render_frame_id_;
-    int notification_id_;
-    bool worker_;
-  };
-
-  // map used to stored desktop notification params used by ImageDownloadCallback
-  std::map<int, DesktopNotificationParams> desktop_notification_params_;
-
 public:
   virtual ~NotificationManager();
   static NotificationManager* getSingleton();
-  virtual bool AddDesktopNotification(
-                                      const content::ShowDesktopNotificationHostMsgParams& params,
-                                      const int render_process_id,
-                                      const int notification_id,
-                                      const bool worker) = 0;
+  virtual bool AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
+    const int render_process_id,
+    const int notification_id,
+    const bool worker) = 0;
+  
   virtual bool CancelDesktopNotification(int render_process_id, int notification_id) = 0;
 
   bool DesktopNotificationPostClick(int render_process_id, int notification_id);

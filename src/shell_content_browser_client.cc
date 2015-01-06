@@ -535,7 +535,6 @@ ShellContentBrowserClient::CreateQuotaPermissionContext() {
   return new ShellQuotaPermissionContext();
 }
 
-#if 1
 void CancelDesktopNotification(int render_process_id, int notification_id) {
   nw::NotificationManager *notificationManager = nw::NotificationManager::getSingleton();
   if (notificationManager == NULL) {
@@ -559,7 +558,7 @@ void ShellContentBrowserClient::ShowDesktopNotification(
       int render_process_id,
       scoped_ptr<DesktopNotificationDelegate> delegate,
       base::Closure* cancel_callback) {
-#if 1
+#if ENABLE_NOTIFICATIONS
   nw::NotificationManager *notificationManager = nw::NotificationManager::getSingleton();
   if (notificationManager == NULL) {
     NOTIMPLEMENTED();
@@ -575,9 +574,6 @@ void ShellContentBrowserClient::ShowDesktopNotification(
 #endif
 
 }
-#endif
-
-// FIXME: cancel desktop notification
 
 void ShellContentBrowserClient::RequestPermission(
     content::PermissionType permission,

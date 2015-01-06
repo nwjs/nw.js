@@ -29,8 +29,10 @@ class NotificationManagerMac : public NotificationManager {
 public:
   explicit NotificationManagerMac();
   virtual ~NotificationManagerMac(){}
+  
   virtual bool AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-                                      const int render_process_id, const int notification_id, const bool worker) override;
+    const int render_process_id, const int notification_id, const bool worker) override;
+  
   virtual bool CancelDesktopNotification(int render_process_id, int notification_id) override;
 
 };
