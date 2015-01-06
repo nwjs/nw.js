@@ -59,6 +59,7 @@ class NativeWindowAura : public NativeWindow,
   explicit NativeWindowAura(const base::WeakPtr<content::Shell>& shell,
                            base::DictionaryValue* manifest);
   virtual ~NativeWindowAura();
+  static NativeWindowAura* GetBrowserViewForNativeWindow(gfx::NativeWindow window);
 
   SkRegion* draggable_region() { return draggable_region_.get(); }
   NativeWindowToolbarAura* toolbar() { return toolbar_; }

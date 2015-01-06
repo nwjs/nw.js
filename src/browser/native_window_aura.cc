@@ -275,6 +275,14 @@ gfx::Size NativeWindowFrameView::GetMaximumSize() const {
 
 }  // namespace
 
+NativeWindowAura* NativeWindowAura::GetBrowserViewForNativeWindow(
+    gfx::NativeWindow window) {
+  views::Widget* widget = views::Widget::GetWidgetForNativeWindow(window);
+  return widget ?
+      reinterpret_cast<NativeWindowAura*>(widget->GetNativeWindowProperty(
+          "__BROWSER_VIEW__")) : nullptr;
+}
+
 NativeWindowAura::NativeWindowAura(const base::WeakPtr<content::Shell>& shell,
                                  base::DictionaryValue* manifest)
     : NativeWindow(shell, manifest),
@@ -343,6 +351,8 @@ NativeWindowAura::NativeWindowAura(const base::WeakPtr<content::Shell>& shell,
 
   OnViewWasResized();
   window_->SetInitialFocus(ui::SHOW_STATE_NORMAL);
+
+  window_->SetNativeWindowProperty("__BROWSER_VIEW__", this);
 }
 
 NativeWindowAura::~NativeWindowAura() {
