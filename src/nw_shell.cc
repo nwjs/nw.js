@@ -69,6 +69,7 @@
 #include "components/autofill/core/browser/autofill_manager.h"
 #include "components/web_modal/web_contents_modal_dialog_manager.h"
 
+#include "components/app_modal/javascript_dialog_manager.h"
 
 #if defined(OS_WIN) || defined(OS_LINUX)
 #include "content/nw/src/browser/native_window_aura.h"
@@ -652,9 +653,13 @@ void Shell::DidNavigateMainFramePostCommit(WebContents* web_contents) {
 }
 
 JavaScriptDialogManager* Shell::GetJavaScriptDialogManager(WebContents* source) {
+#if defined(OS_LINUX)
+  return app_modal::JavaScriptDialogManager::GetInstance();
+#else
   if (!dialog_creator_.get())
     dialog_creator_.reset(new ShellJavaScriptDialogCreator());
   return dialog_creator_.get();
+#endif
 }
 
 bool Shell::AddMessageToConsole(WebContents* source,
