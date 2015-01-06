@@ -30,7 +30,7 @@ namespace nwapi {
 Menu::Menu(int id,
            const base::WeakPtr<DispatcherHost>& dispatcher_host,
            const base::DictionaryValue& option)
-  : enable_show_event_(false), Base(id, dispatcher_host, option) {
+  : Base(id, dispatcher_host, option), enable_show_event_(false)  {
   Create(option);
 }
 
