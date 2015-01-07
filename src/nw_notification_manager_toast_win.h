@@ -30,7 +30,7 @@ namespace nw {
   using namespace ABI::Windows::UI::Notifications;
   using namespace ABI::Windows::Data::Xml::Dom;
 
-class NotificationManagerToastWin : public NotificationManager{
+class NotificationManagerToastWin : public NotificationManager {
   friend class ToastEventHandler;
 
   ComPtr<IToastNotificationManagerStatics> toastStatics_;

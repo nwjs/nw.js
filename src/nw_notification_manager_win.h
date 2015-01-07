@@ -25,7 +25,7 @@ class StatusTrayWin;
 class StatusIcon;
 
 namespace nw {
-class NotificationManagerWin : public NotificationManager{
+class NotificationManagerWin : public NotificationManager {
   // The global presentation of system tray.
   StatusTrayWin* status_tray_;
 

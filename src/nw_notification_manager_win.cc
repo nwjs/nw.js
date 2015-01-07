@@ -146,7 +146,7 @@ bool NotificationManagerWin::AddDesktopNotification(const content::ShowDesktopNo
   // add the counter
   notification_count_++;
   // try to get the notification icon image given by image download callback
-  if (params.icon.width())
+  if (params.icon.getSize())
     icon = gfx::Image::CreateFrom1xBitmap(params.icon);
 
   //if body is empty string, the baloon won't shown
