@@ -44,9 +44,9 @@ public:
   explicit NotificationManagerLinux();
   virtual ~NotificationManagerLinux();
   virtual bool AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-                                      const int render_process_id,
-                                      const int notification_id,
-                                      const bool worker) override;
+    const int render_process_id,
+    const int notification_id,
+    const bool worker) override;
   virtual bool CancelDesktopNotification(int render_process_id, int notification_id) override;
 };
 
