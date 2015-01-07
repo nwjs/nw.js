@@ -37,7 +37,6 @@
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/nw/src/shell_browser_context.h"
-#include "content/nw/src/browser/nw_constrained_window_views_client.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/main_function_params.h"
 #include "grit/net_resources.h"
@@ -68,8 +67,6 @@
 #include "ui/native_theme/native_theme_aura.h"
 #include "ui/views/linux_ui/linux_ui.h"
 #endif
-
-#include "chrome/browser/ui/app_modal/chrome_javascript_native_dialog_factory.h"
 
 using base::MessageLoop;
 
@@ -244,9 +241,6 @@ void ShellBrowserMainParts::Init() {
                 NULL,
                 MSG_ROUTING_NONE,
                 NULL);
-
-  InstallChromeJavaScriptNativeDialogFactory();
-  nw::InstallConstrainedWindowViewsClient();
 }
 
 bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(
