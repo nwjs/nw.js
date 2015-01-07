@@ -280,8 +280,10 @@ void ShellBrowserMainParts::Init() {
                 MSG_ROUTING_NONE,
                 NULL);
 
+#if defined(OS_LINUX)
   InstallChromeJavaScriptNativeDialogFactory();
   nw::InstallConstrainedWindowViewsClient();
+#endif
 }
 
 bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(
