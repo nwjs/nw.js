@@ -438,19 +438,19 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
 
   ShellDevToolsDelegate* delegate =
       browser_client->shell_browser_main_parts()->devtools_delegate();
-  GURL url = delegate->devtools_http_handler()->GetFrontendURL();
   DevToolsHttpHandlerImpl* http_handler = static_cast<DevToolsHttpHandlerImpl*>(delegate->devtools_http_handler());
   http_handler->EnumerateTargets();
 
+  GURL url;
   if (headless) {
-    url = delegate->devtools_http_handler()->GetFrontendURL();
-    DevToolsHttpHandlerImpl* http_handler = static_cast<DevToolsHttpHandlerImpl*>(delegate->devtools_http_handler());
-    http_handler->EnumerateTargets();
+    url = delegate->devtools_http_handler()->GetFrontendURL(agent.get());
     SendEvent("devtools-opened", url.spec());
     return;
+  } else {
+    url = delegate->devtools_http_handler()->GetFrontendURL();
+    SendEvent("devtools-opened", url.spec());
   }
 
-  SendEvent("devtools-opened", url.spec());
   // Use our minimum set manifest
   base::DictionaryValue manifest;
   manifest.SetBoolean(switches::kmToolbar, false);
