@@ -44,7 +44,7 @@
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/native_web_keyboard_event.h"
 #include "content/public/browser/render_view_host.h"
-#include "content/public/browser/render_widget_host_view.h"
+#include "content/browser/renderer_host/render_view_host_impl.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/content_switches.h"
 #include "extensions/common/draggable_region.h"
@@ -497,10 +497,9 @@ void NativeWindowAura::SetTransparent(bool transparent) {
     toolbar_->SchedulePaint();
   }
 
-  content::RenderWidgetHostView* rwhv = shell_->web_contents()->GetRenderWidgetHostView();
-  if (rwhv) {
-    if (transparent)
-      rwhv->SetBackgroundColor(SK_ColorTRANSPARENT);
+  content::RenderViewHostImpl* rvh = static_cast<content::RenderViewHostImpl*>(shell_->web_contents()->GetRenderViewHost());
+  if (rvh) {
+    rvh->SetBackgroundOpaque(!transparent);
   }
 
   transparent_ = transparent;
