@@ -438,14 +438,12 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
 
   ShellDevToolsDelegate* delegate =
       browser_client->shell_browser_main_parts()->devtools_delegate();
-  GURL url = delegate->devtools_http_handler()->GetFrontendURL(agent.get());
+  GURL url = delegate->devtools_http_handler()->GetFrontendURL();
   DevToolsHttpHandlerImpl* http_handler = static_cast<DevToolsHttpHandlerImpl*>(delegate->devtools_http_handler());
   http_handler->EnumerateTargets();
 
   if (headless) {
-    DevToolsAgentHost* agent_host = DevToolsAgentHost::GetOrCreateFor(web_contents()).get();
-
-    url = delegate->devtools_http_handler()->GetFrontendURL(agent_host);
+    url = delegate->devtools_http_handler()->GetFrontendURL();
     DevToolsHttpHandlerImpl* http_handler = static_cast<DevToolsHttpHandlerImpl*>(delegate->devtools_http_handler());
     http_handler->EnumerateTargets();
     SendEvent("devtools-opened", url.spec());
@@ -473,7 +471,7 @@ void Shell::ShowDevTools(const char* jail_id, bool headless) {
 
   new ShellDevToolsFrontend(
       shell,
-      DevToolsAgentHost::GetOrCreateFor(web_contents_.get()).get());
+      agent.get());
 
   int rh_id = shell->web_contents_->GetRenderProcessHost()->GetID();
   ChildProcessSecurityPolicyImpl::GetInstance()->GrantScheme(rh_id, url::kFileScheme);
