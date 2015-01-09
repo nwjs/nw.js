@@ -192,8 +192,8 @@ void Dispatcher::documentCallback(const char* ev, blink::WebLocalFrame* frame) {
   blink::LocalFrame* core_frame = blink::toWebLocalFrameImpl(frame)->frame();
   if (core_frame->deprecatedLocalOwner()) {
     element = blink::toV8((blink::HTMLElement*)core_frame->deprecatedLocalOwner(),
-                            frame->mainWorldScriptContext()->Global(),
-                            frame->mainWorldScriptContext()->GetIsolate());
+                          web_view->mainFrame()->mainWorldScriptContext()->Global(),
+                          web_view->mainFrame()->mainWorldScriptContext()->GetIsolate());
   }
   args->Set(0, element);
   v8::Handle<v8::Value> argv[] = {val, v8_str(ev), args };
