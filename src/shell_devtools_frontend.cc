@@ -69,13 +69,16 @@ ShellDevToolsFrontend::~ShellDevToolsFrontend() {
 
 void ShellDevToolsFrontend::RenderViewCreated(
     RenderViewHost* render_view_host) {
-#if 0
   if (!frontend_host_) {
     frontend_host_.reset(DevToolsFrontendHost::Create(render_view_host, this));
     DevToolsManager::GetInstance()->RegisterDevToolsClientHostFor(
         agent_host_.get(), this);
   }
-#endif
+}
+
+void ShellDevToolsFrontend::DocumentOnLoadCompletedInMainFrame() {
+  web_contents()->GetMainFrame()->ExecuteJavaScript(
+      base::ASCIIToUTF16("InspectorFrontendAPI.setUseSoftMenu(true);"));
 }
 
 void ShellDevToolsFrontend::WebContentsDestroyed() {
