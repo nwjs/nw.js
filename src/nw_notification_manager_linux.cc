@@ -70,13 +70,16 @@ void NotificationManagerLinux::onClose(NotifyNotification *notif)
 };
 
 bool NotificationManagerLinux::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-                                                      const int render_process_id,
-                                                      const int notification_id,
-                                                      const bool worker) {
-
+  const int render_process_id,
+  const int notification_id,
+  const bool worker) {
+  content::Shell* shell = content::Shell::windows()[0];
   SkBitmap bitmap;
-
-  bitmap = params.icon;
+  if(params.icon.getSize()) {
+    bitmap = params.icon;
+  } else {
+    bitmap = shell->window()->app_icon().AsBitmap();
+  }
 
   NotifyNotification * notif;
   NotificationMap::iterator i = getNotification(notification_id);

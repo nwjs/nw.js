@@ -123,12 +123,12 @@ class ShellContentBrowserClient : public ContentBrowserClient {
       base::Closure* cancel_callback) override;
 
   virtual void RequestPermission(
-                                 content::PermissionType permission,
-                                 content::WebContents* web_contents,
-                                 int bridge_id,
-                                 const GURL& requesting_frame,
-                                 bool user_gesture,
-                                 const base::Callback<void(bool)>& result_callback) override;
+      content::PermissionType permission,
+      content::WebContents* web_contents,
+      int bridge_id,
+      const GURL& requesting_frame,
+      bool user_gesture,
+      const base::Callback<void(bool)>& result_callback) override;
 
  private:
   ShellBrowserContext* ShellBrowserContextForBrowserContext(

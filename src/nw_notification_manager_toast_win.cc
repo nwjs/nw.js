@@ -18,6 +18,7 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+#include "config.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/render_view_host.h"
@@ -29,6 +30,7 @@
 #include "base/strings/utf_string_conversions.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_notification_manager_toast_win.h"
+#include "platform/image-encoders/skia/PNGImageEncoder.h"
 
 #include <Psapi.h>
 #include <ShObjIdl.h>
@@ -43,69 +45,53 @@ using namespace Windows::Foundation;
 
 namespace nw {
 
-class StringReferenceWrapper
-{
+class StringReferenceWrapper {
 public:
-
   // Constructor which takes an existing string buffer and its length as the parameters.
   // It fills an HSTRING_HEADER struct with the parameter.      
   // Warning: The caller must ensure the lifetime of the buffer outlives this      
   // object as it does not make a copy of the wide string memory.      
 
-  static bool isSupported()
-  {
+  static bool isSupported() {
     static char cachedRes = -1;
     if (cachedRes > -1) return cachedRes;
     cachedRes = ::LoadLibrary(L"API-MS-WIN-CORE-WINRT-STRING-L1-1-0.DLL") != 0;
     return cachedRes;
   }
 
-  StringReferenceWrapper(_In_reads_(length) PCWSTR stringRef, _In_ UINT32 length) throw()
-  {
+  StringReferenceWrapper(_In_reads_(length) PCWSTR stringRef, _In_ UINT32 length) throw() {
     HRESULT hr = WindowsCreateStringReference(stringRef, length, &_header, &_hstring);
-
-    if (FAILED(hr))
-    {
+    if (FAILED(hr)) {
       RaiseException(static_cast<DWORD>(STATUS_INVALID_PARAMETER), EXCEPTION_NONCONTINUABLE, 0, nullptr);
     }
   }
 
-  ~StringReferenceWrapper()
-  {
+  ~StringReferenceWrapper() {
     WindowsDeleteString(_hstring);
   }
 
   template <size_t N>
-  StringReferenceWrapper(_In_reads_(N) wchar_t const (&stringRef)[N]) throw()
-  {
+  StringReferenceWrapper(_In_reads_(N) wchar_t const (&stringRef)[N]) throw() {
     UINT32 length = N - 1;
     HRESULT hr = WindowsCreateStringReference(stringRef, length, &_header, &_hstring);
-
-    if (FAILED(hr))
-    {
+    if (FAILED(hr)) {
       RaiseException(static_cast<DWORD>(STATUS_INVALID_PARAMETER), EXCEPTION_NONCONTINUABLE, 0, nullptr);
     }
   }
 
   template <size_t _>
-  StringReferenceWrapper(_In_reads_(_) wchar_t(&stringRef)[_]) throw()
-  {
+  StringReferenceWrapper(_In_reads_(_) wchar_t(&stringRef)[_]) throw() {
     UINT32 length;
     HRESULT hr = SizeTToUInt32(wcslen(stringRef), &length);
-
-    if (FAILED(hr))
-    {
+    if (FAILED(hr)) {
       RaiseException(static_cast<DWORD>(STATUS_INVALID_PARAMETER), EXCEPTION_NONCONTINUABLE, 0, nullptr);
     }
-
     WindowsCreateStringReference(stringRef, length, &_header, &_hstring);
   }
 
-  HSTRING Get() const throw()
-  {
+  HSTRING Get() const throw() {
     return _hstring;
   }
-
 
 private:
   HSTRING             _hstring;
@@ -117,8 +103,7 @@ typedef ABI::Windows::Foundation::ITypedEventHandler<ABI::Windows::UI::Notificat
 typedef ABI::Windows::Foundation::ITypedEventHandler<ABI::Windows::UI::Notifications::ToastNotification *, ABI::Windows::UI::Notifications::ToastFailedEventArgs *> DesktopToastFailedEventHandler;
 
 class ToastEventHandler :
-  public Microsoft::WRL::Implements<DesktopToastActivatedEventHandler, DesktopToastDismissedEventHandler, DesktopToastFailedEventHandler>
-{
+  public Microsoft::WRL::Implements<DesktopToastActivatedEventHandler, DesktopToastDismissedEventHandler, DesktopToastFailedEventHandler> {
 public:
   ToastEventHandler::ToastEventHandler(const int render_process_id, const int notification_id);
   ~ToastEventHandler();
@@ -169,30 +154,23 @@ private:
 // ============= ToastEventHandler Implementation =============
 
 ToastEventHandler::ToastEventHandler(const int render_process_id, const int notification_id) : 
-_ref(0), _render_process_id(render_process_id), _notification_id(notification_id)
-{
-
+_ref(0), _render_process_id(render_process_id), _notification_id(notification_id) {
 }
 
-ToastEventHandler::~ToastEventHandler()
-{
-
+ToastEventHandler::~ToastEventHandler() {
 }
 
 // DesktopToastActivatedEventHandler
-IFACEMETHODIMP ToastEventHandler::Invoke(_In_ IToastNotification* /* sender */, _In_ IInspectable* /* args */)
-{
+IFACEMETHODIMP ToastEventHandler::Invoke(_In_ IToastNotification* /* sender */, _In_ IInspectable* /* args */) {
   BOOL succeeded = nw::NotificationManager::getSingleton()->DesktopNotificationPostClick(_render_process_id, _notification_id);
   return succeeded ? S_OK : E_FAIL;
 }
 
 // DesktopToastDismissedEventHandler
-IFACEMETHODIMP ToastEventHandler::Invoke(_In_ IToastNotification* /* sender */, _In_ IToastDismissedEventArgs* e)
-{
+IFACEMETHODIMP ToastEventHandler::Invoke(_In_ IToastNotification* /* sender */, _In_ IToastDismissedEventArgs* e) {
   ToastDismissalReason tdr;
   HRESULT hr = e->get_Reason(&tdr);
-  if (SUCCEEDED(hr))
-  {
+  if (SUCCEEDED(hr)) {
     BOOL succeeded = nw::NotificationManager::getSingleton()->DesktopNotificationPostClose(_render_process_id, _notification_id, tdr == ToastDismissalReason_UserCanceled);
     hr = succeeded ? S_OK : E_FAIL;
   }
@@ -201,8 +179,7 @@ IFACEMETHODIMP ToastEventHandler::Invoke(_In_ IToastNotification* /* sender */, 
 }
 
 // DesktopToastFailedEventHandler
-IFACEMETHODIMP ToastEventHandler::Invoke(_In_ IToastNotification* /* sender */, _In_ IToastFailedEventArgs* e)
-{
+IFACEMETHODIMP ToastEventHandler::Invoke(_In_ IToastNotification* /* sender */, _In_ IToastFailedEventArgs* e) {
   HRESULT errCode;
   e->get_ErrorCode(&errCode);
   nw::NotificationManagerToastWin* nmtw = static_cast<nw::NotificationManagerToastWin*>(nw::NotificationManager::getSingleton());
@@ -224,18 +201,14 @@ IFACEMETHODIMP ToastEventHandler::Invoke(_In_ IToastNotification* /* sender */, 
 // ============= NotificationManagerToastWin Implementation =============
 bool NotificationManagerToastWin::ForceDisable = false;
 
-HRESULT NotificationManagerToastWin::SetNodeValueString(_In_ HSTRING inputString, _In_ IXmlNode *node, _In_ IXmlDocument *xml)
-{
+HRESULT NotificationManagerToastWin::SetNodeValueString(_In_ HSTRING inputString, _In_ IXmlNode *node, _In_ IXmlDocument *xml) {
   ComPtr<IXmlText> inputText;
 
   HRESULT hr = xml->CreateTextNode(inputString, &inputText);
-  if (SUCCEEDED(hr))
-  {
+  if (SUCCEEDED(hr)) {
     ComPtr<IXmlNode> inputTextNode;
-
     hr = inputText.As(&inputTextNode);
-    if (SUCCEEDED(hr))
-    {
+    if (SUCCEEDED(hr)) {
       ComPtr<IXmlNode> pAppendedChild;
       hr = node->AppendChild(inputTextNode.Get(), &pAppendedChild);
     }
@@ -245,28 +218,21 @@ HRESULT NotificationManagerToastWin::SetNodeValueString(_In_ HSTRING inputString
 }
 
 HRESULT NotificationManagerToastWin::SetTextValues(_In_reads_(textValuesCount) const wchar_t **textValues, _In_ UINT32 textValuesCount, 
-  _In_reads_(textValuesCount) UINT32 *textValuesLengths, _In_ IXmlDocument *toastXml)
-{
+  _In_reads_(textValuesCount) UINT32 *textValuesLengths, _In_ IXmlDocument *toastXml) {
   HRESULT hr = textValues != nullptr && textValuesCount > 0 ? S_OK : E_INVALIDARG;
-  if (SUCCEEDED(hr))
-  {
+  if (SUCCEEDED(hr)) {
     ComPtr<IXmlNodeList> nodeList;
     hr = toastXml->GetElementsByTagName(StringReferenceWrapper(L"text").Get(), &nodeList);
-    if (SUCCEEDED(hr))
-    {
+    if (SUCCEEDED(hr)) {
       UINT32 nodeListLength;
       hr = nodeList->get_Length(&nodeListLength);
-      if (SUCCEEDED(hr))
-      {
+      if (SUCCEEDED(hr)) {
         hr = textValuesCount <= nodeListLength ? S_OK : E_INVALIDARG;
-        if (SUCCEEDED(hr))
-        {
-          for (UINT32 i = 0; i < textValuesCount; i++)
-          {
+        if (SUCCEEDED(hr)) {
+          for (UINT32 i = 0; i < textValuesCount; i++) {
             ComPtr<IXmlNode> textNode;
             hr = nodeList->Item(i, &textNode);
-            if (SUCCEEDED(hr))
-            {
+            if (SUCCEEDED(hr)) {
               hr = SetNodeValueString(StringReferenceWrapper(textValues[i], textValuesLengths[i]).Get(), textNode.Get(), toastXml);
             }
           }
@@ -277,30 +243,22 @@ HRESULT NotificationManagerToastWin::SetTextValues(_In_reads_(textValuesCount) c
   return hr;
 }
 
-HRESULT NotificationManagerToastWin::SetImageSrc(_In_z_ const wchar_t *imagePath, _In_ IXmlDocument *toastXml)
-{
+HRESULT NotificationManagerToastWin::SetImageSrc(_In_z_ const wchar_t *imagePath, _In_ IXmlDocument *toastXml) {
   wchar_t imageSrc[MAX_PATH] = L"";
   HRESULT hr = StringCchCat(imageSrc, ARRAYSIZE(imageSrc), imagePath);
-  if (SUCCEEDED(hr))
-  {
+  if (SUCCEEDED(hr)) {
     ComPtr<IXmlNodeList> nodeList;
     hr = toastXml->GetElementsByTagName(StringReferenceWrapper(L"image").Get(), &nodeList);
-    if (SUCCEEDED(hr))
-    {
+    if (SUCCEEDED(hr)) {
       ComPtr<IXmlNode> imageNode;
       hr = nodeList->Item(0, &imageNode);
-      if (SUCCEEDED(hr))
-      {
+      if (SUCCEEDED(hr)) {
         ComPtr<IXmlNamedNodeMap> attributes;
-
         hr = imageNode->get_Attributes(&attributes);
-        if (SUCCEEDED(hr))
-        {
+        if (SUCCEEDED(hr)) {
           ComPtr<IXmlNode> srcAttribute;
-
           hr = attributes->GetNamedItem(StringReferenceWrapper(L"src").Get(), &srcAttribute);
-          if (SUCCEEDED(hr))
-          {
+          if (SUCCEEDED(hr)) {
             hr = SetNodeValueString(StringReferenceWrapper(imageSrc).Get(), srcAttribute.Get(), toastXml);
           }
         }
@@ -311,59 +269,59 @@ HRESULT NotificationManagerToastWin::SetImageSrc(_In_z_ const wchar_t *imagePath
 }
 
 HRESULT NotificationManagerToastWin::CreateToastXml(_In_ IToastNotificationManagerStatics *toastManager, 
-  const content::ShowDesktopNotificationHostMsgParams& params, _Outptr_ IXmlDocument** inputXml)
-{
-  const bool bImage = params.icon.width() > 0;
+  const content::ShowDesktopNotificationHostMsgParams& params, _Outptr_ IXmlDocument** inputXml) {
+  bool bImage = params.icon.getSize() > 0;
+  char tempFileName[MAX_PATH];
+  
+  if (bImage) {
+    char temp[MAX_PATH];
+    GetTempPathA(MAX_PATH, tempFileName);
+    GetTempFileNameA(tempFileName, "NTF", 0, temp);
+
+    Vector<char> encodedImage;
+    bImage = blink::PNGImageEncoder::encode(params.icon, reinterpret_cast<Vector<unsigned char>*>(&encodedImage));
+
+    FILE *f = fopen(temp, "wb");
+    fwrite(encodedImage.data(), sizeof(char), encodedImage.size(), f);
+    fclose(f);
+
+    sprintf_s(tempFileName, "file:///%s", temp);
+  }
+
   // Retrieve the template XML
   HRESULT hr = toastManager->GetTemplateContent(bImage ? ToastTemplateType_ToastImageAndText03 : ToastTemplateType_ToastText03, inputXml);
-  if (SUCCEEDED(hr))
-  {
-    if (SUCCEEDED(hr))
-    {
-      //FIXME
-#if 0
-      hr = bImage ? SetImageSrc(base::UTF8ToWide(params.icon_url.spec()).c_str(), *inputXml) : S_OK;
-      if (SUCCEEDED(hr))
-#endif
-      {
-        const wchar_t* textValues[] = {
-          params.title.c_str(),
-          params.body.c_str()
-        };
-
-        UINT32 textLengths[] = { params.title.length(), params.body.length() };
-
-        hr = SetTextValues(textValues, 2, textLengths, *inputXml);
-      }
+  if (SUCCEEDED(hr)) {
+    hr = bImage ? SetImageSrc(base::UTF8ToWide(tempFileName).c_str(), *inputXml) : S_OK;
+    if (SUCCEEDED(hr)) {
+      const wchar_t* textValues[] = {
+        params.title.c_str(),
+        params.body.c_str()
+      };
+      UINT32 textLengths[] = { params.title.length(), params.body.length() };
+      hr = SetTextValues(textValues, 2, textLengths, *inputXml);
     }
   }
   return hr;
 }
 
 HRESULT NotificationManagerToastWin::CreateToast(_In_ IToastNotificationManagerStatics *toastManager, _In_ IXmlDocument *xml, 
-  const int render_process_id, const int notification_id)
-{
+  const int render_process_id, const int notification_id) {
   ComPtr<IToastNotificationFactory> factory;
   HRESULT hr = GetActivationFactory(StringReferenceWrapper(RuntimeClass_Windows_UI_Notifications_ToastNotification).Get(), &factory);
-  if (SUCCEEDED(hr))
-  {
+  if (SUCCEEDED(hr)) {
     ComPtr<IToastNotification>& toast = notification_map_[notification_id];
     hr = factory->CreateToastNotification(xml, &toast);
-    if (SUCCEEDED(hr))
-    {
+    if (SUCCEEDED(hr)) {
       // Register the event handlers
       EventRegistrationToken activatedToken, dismissedToken, failedToken;
       ComPtr<ToastEventHandler> eventHandler = new ToastEventHandler(render_process_id, notification_id);
 
       hr = toast->add_Activated(eventHandler.Get(), &activatedToken);
-      if (SUCCEEDED(hr))
-      {
+      if (SUCCEEDED(hr)) {
         hr = toast->add_Dismissed(eventHandler.Get(), &dismissedToken);
-        if (SUCCEEDED(hr))
-        {
+        if (SUCCEEDED(hr)) {
           hr = toast->add_Failed(eventHandler.Get(), &failedToken);
-          if (SUCCEEDED(hr))
-          {
+          if (SUCCEEDED(hr)) {
             hr = notifier_->Show(toast.Get());
           }
         }
@@ -390,8 +348,7 @@ bool NotificationManagerToastWin::IsSupported() {
 
 NotificationManagerToastWin::NotificationManagerToastWin() {
   HRESULT hr = GetActivationFactory(StringReferenceWrapper(RuntimeClass_Windows_UI_Notifications_ToastNotificationManager).Get(), &toastStatics_);
-  if (SUCCEEDED(hr))
-  {
+  if (SUCCEEDED(hr)) {
     base::string16 appID;
     if (content::Shell::GetPackage()->root()->GetString("app-id", &appID) == false)
       content::Shell::GetPackage()->root()->GetString(switches::kmName, &appID);
@@ -401,21 +358,18 @@ NotificationManagerToastWin::NotificationManagerToastWin() {
 }
 
 NotificationManagerToastWin::~NotificationManagerToastWin() {
-
 }
 
 bool NotificationManagerToastWin::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
   const int render_process_id, const int notification_id, const bool worker) {
   
-    ComPtr<IXmlDocument> toastXml;
-    HRESULT hr = CreateToastXml(toastStatics_.Get(), params, &toastXml);
+  ComPtr<IXmlDocument> toastXml;
+  HRESULT hr = CreateToastXml(toastStatics_.Get(), params, &toastXml);
+  if (SUCCEEDED(hr)) {
+    hr = CreateToast(toastStatics_.Get(), toastXml.Get(), render_process_id, notification_id);
     if (SUCCEEDED(hr))
-    {
-      hr = CreateToast(toastStatics_.Get(), toastXml.Get(), render_process_id, notification_id);
-      if (SUCCEEDED(hr))
-        DesktopNotificationPostDisplay(render_process_id, notification_id);
-    }
-
+      DesktopNotificationPostDisplay(render_process_id, notification_id);
+  }
 
   return SUCCEEDED(hr);
 }

@@ -89,7 +89,7 @@ bool NotificationManagerMac::AddDesktopNotification(const content::ShowDesktopNo
   [notification setInformativeText : base::SysUTF16ToNSString(params.body)];
   notification.hasActionButton = YES;
 
-  if (params.icon.width() > 0) {
+  if (params.icon.getSize() > 0 && base::mac::IsOSMavericksOrLater()) {
     // try to get the notification icon image given by image download callback
     gfx::Image icon = gfx::Image::CreateFrom1xBitmap(params.icon);
 

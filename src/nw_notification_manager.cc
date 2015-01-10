@@ -59,24 +59,6 @@ NotificationManager* NotificationManager::getSingleton() {
   return singleton_;
 }
 
-
-#if 0
-void NotificationManager::ImageDownloadCallback(int id, int http_status, const GURL& image_url, const std::vector<SkBitmap>& bitmaps, const std::vector<gfx::Size>& size) {
-  NotificationManager *singleton = getSingleton();
-  DesktopNotificationParams params = singleton->desktop_notification_params_[id];
-  singleton->AddDesktopNotification(params.params_, params.render_process_id_, params.render_frame_id_, params.notification_id_, params.worker_, &bitmaps);
-  singleton->desktop_notification_params_.erase(id);
-}
-#endif
-
-bool NotificationManager::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-                                                 const int render_process_id,
-                                                 const int notification_id,
-                                                 const bool worker) {
-  NOTIMPLEMENTED();
-  return false;
-}
-
 bool NotificationManager::DesktopNotificationPostClick(int render_process_id, int notification_id) {
   content::RenderProcessHost* rfh = content::RenderProcessHost::FromID(render_process_id);
   if (!rfh)
@@ -110,6 +92,7 @@ bool NotificationManager::DesktopNotificationPostError(int render_process_id, in
   if (!rfh)
     return false;
 
+  // Google remove the error notification messaging !!
   rfh->Send(new PlatformNotificationMsg_DidError(rfh->GetRoutingID(), notification_id));
 #endif
   return true;
