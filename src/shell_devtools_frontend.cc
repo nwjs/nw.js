@@ -9,6 +9,7 @@
 #include "base/path_service.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/utf_string_conversions.h"
+#include "base/strings/stringprintf.h"
 #include "content/public/browser/devtools_http_handler.h"
 #include "content/public/browser/devtools_manager.h"
 #include "content/public/browser/render_frame_host.h"
@@ -100,6 +101,7 @@ void ShellDevToolsFrontend::HandleMessageFromDevToolsFrontend(
     const std::string& message) {
   std::string method;
   std::string browser_message;
+  std::string url;
   int id = 0;
 
   base::ListValue* params = NULL;
@@ -112,22 +114,38 @@ void ShellDevToolsFrontend::HandleMessageFromDevToolsFrontend(
     return;
   }
 
-  if (method != "sendMessageToBrowser" ||
-      params->GetSize() != 1 ||
-      !params->GetString(0, &browser_message)) {
+  // handle sendMessageToBrowser
+  if (method == "sendMessageToBrowser" &&
+      params->GetSize() == 1 &&
+      params->GetString(0, &browser_message)) {
+    DevToolsManager::GetInstance()->DispatchOnInspectorBackend(
+      this, browser_message);
+  // handle inspectedURLChanged
+  } else if (method == "inspectedURLChanged" &&
+    params->GetSize() == 1 &&
+    params->GetString(0, &url)) {
+    InspectedURLChanged(url);
+  // ignore others
+  } else {
     return;
   }
+
   dict->GetInteger("id", &id);
-
-  DevToolsManager::GetInstance()->DispatchOnInspectorBackend(
-      this, browser_message);
-
+  
   if (id) {
     std::string code = "InspectorFrontendAPI.embedderMessageAck(" +
         base::IntToString(id) + ",\"\");";
     base::string16 javascript = base::UTF8ToUTF16(code);
     web_contents()->GetMainFrame()->ExecuteJavaScript(javascript);
   }
+}
+
+void ShellDevToolsFrontend::InspectedURLChanged(const std::string& url) {
+  std::string title = base::StringPrintf("Developer Tools - %s", url.c_str());
+  base::ReplaceChars(title, "\\", "\\\\", &title);
+  base::ReplaceChars(title, "\"", "\\\"", &title);
+  base::string16 javascript = base::UTF8ToUTF16(base::StringPrintf("document.title = \"%s\"", title.c_str()));
+  web_contents()->GetMainFrame()->ExecuteJavaScript(javascript);
 }
 
 void ShellDevToolsFrontend::HandleMessageFromDevToolsFrontendToBackend(
