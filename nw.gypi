@@ -516,6 +516,10 @@
             'src/browser/shell_content_utility_client.cc',
             'src/browser/shell_content_utility_client.h',
             '<(DEPTH)/chrome/browser/printing/pdf_to_emf_converter.cc',
+            '<(DEPTH)/chrome/utility/cloud_print/bitmap_image.cc',
+            '<(DEPTH)/chrome/utility/cloud_print/bitmap_image.h',
+            '<(DEPTH)/chrome/utility/cloud_print/pwg_encoder.cc',
+            '<(DEPTH)/chrome/utility/cloud_print/pwg_encoder.h',
           ],
           'resource_include_dirs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit',
