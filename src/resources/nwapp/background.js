@@ -1,1 +1,1 @@
-console.log("nwapp/background.js");
+//console.log("nwapp/background.js");

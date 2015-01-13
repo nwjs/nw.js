@@ -52,6 +52,8 @@ const Extension* ShellExtensionSystem::LoadInternalApp() {
   base::ListValue* list = new base::ListValue();
   list->Append(new base::StringValue("nw:*"));
   list->Append(new base::StringValue("file://*"));
+  list->Append(new base::StringValue("app://*"));
+
   manifest.Set(extensions::manifest_keys::kWebURLs, list);
 
   scoped_ptr<base::ListValue> scripts(new base::ListValue);
