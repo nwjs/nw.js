@@ -84,7 +84,7 @@ bool ShellContentUtilityClient::OnMessageReceived(
 
 // static
 void ShellContentUtilityClient::PreSandboxStartup() {
-  base::debug::WaitForDebugger(120, false);
+  //base::debug::WaitForDebugger(120, false);
 #if defined(ENABLE_PRINT_PREVIEW) || defined(OS_WIN)
   PrintingHandler::PreSandboxStartup();
 #endif

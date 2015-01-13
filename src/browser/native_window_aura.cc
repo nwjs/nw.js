@@ -837,6 +837,10 @@ bool NativeWindowAura::CanMaximize() const {
   return resizable_;
 }
 
+bool NativeWindowAura::CanMinimize() const {
+  return true;
+}
+
 views::Widget* NativeWindowAura::GetWidget() {
   return window_;
 }

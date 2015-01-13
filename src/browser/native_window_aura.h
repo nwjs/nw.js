@@ -113,6 +113,7 @@ class NativeWindowAura : public NativeWindow,
       views::Widget* widget) override;
   virtual bool CanResize() const override;
   virtual bool CanMaximize() const override;
+  virtual bool CanMinimize() const override;
   virtual views::Widget* GetWidget() override;
   virtual const views::Widget* GetWidget() const override;
   virtual base::string16 GetWindowTitle() const override;
