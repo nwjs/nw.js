@@ -45,6 +45,7 @@
 
 namespace content {
   extern bool g_support_transparency;
+  extern bool g_force_cpu_draw;
 }
 
 @interface NSWindow (NSPrivateApis)
@@ -397,7 +398,7 @@ NativeWindowCocoa::NativeWindowCocoa(
   window_ = shell_window;
   opaque_color_ = [window() backgroundColor];
   [shell_window setShell:shell];
-  [[window() contentView] setWantsLayer:YES];
+  [[window() contentView] setWantsLayer:!content::g_force_cpu_draw];
   [window() setDelegate:[[NativeWindowDelegate alloc] initWithShell:shell]];
 
   SetTransparent(transparent_);
@@ -555,6 +556,23 @@ bool NativeWindowCocoa::IsFullscreen() {
   return is_fullscreen_;
 }
 
+//debug function to iterate all the sublayers
+void SetTransparent (CALayer* layer, const bool transparent) {
+  if (layer == NULL) return;
+  [layer setBackgroundColor:CGColorGetConstantColor(transparent ? kCGColorClear : kCGColorWhite)];
+  for (CALayer* l in layer.sublayers) {
+    SetTransparent(l, transparent);
+  }
+}
+
+//debug function to iterate all the subviews
+void SetTransparent (NSView * view, const bool transparent) {
+  if (view == NULL) return;
+  SetTransparent(view.layer, transparent);
+  for (NSView* v in view.subviews)
+    SetTransparent(v, transparent);
+}
+  
 void NativeWindowCocoa::SetTransparent(bool transparent) {
   
   if (!content::g_support_transparency) return;
@@ -570,9 +588,15 @@ void NativeWindowCocoa::SetTransparent(bool transparent) {
   content::RenderViewHostImpl* rvh = static_cast<content::RenderViewHostImpl*>(shell_->web_contents()->GetRenderViewHost());
 
   if (rwhv) {
-    rvh->SetBackgroundOpaque(!transparent);
     [rwhv->background_layer_ setBackgroundColor:CGColorGetConstantColor(transparent ? kCGColorClear : kCGColorWhite)];
   }
+  
+  if (rvh) {
+    rvh->SetBackgroundOpaque(!transparent);
+  }
+  
+  //this is for debugging, iterate all the subviews / sublayers
+  //nw::SetTransparent((NSView*)[window()contentView], transparent);
   
   transparent_ = transparent;
   

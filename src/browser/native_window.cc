@@ -27,6 +27,7 @@
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
+#include "content/public/common/content_switches.h"
 #include "grit/nw_resources.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/gfx/rect.h"
@@ -41,6 +42,7 @@
 
 namespace content {
   extern bool g_support_transparency;
+  extern bool g_force_cpu_draw;
 }
 
 namespace nw {
@@ -78,9 +80,16 @@ NativeWindow::NativeWindow(const base::WeakPtr<content::Shell>& shell,
       capture_page_helper_(NULL) {
   manifest->GetBoolean(switches::kmFrame, &has_frame_);
   content::g_support_transparency = !base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kmDisableTransparency);
-  if (content::g_support_transparency)
+  if (content::g_support_transparency) {
+    content::g_force_cpu_draw = base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kForceCpuDraw);
+    if (content::g_force_cpu_draw) {
+      if (!base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kDisableGpu)) {
+        content::g_force_cpu_draw = false;
+        LOG(WARNING) << "switch " << switches::kForceCpuDraw << " must be used with switch " << switches::kDisableGpu;
+      }
+    }
     manifest->GetBoolean(switches::kmTransparent, &transparent_);
-
+  }
   LoadAppIconFromPackage(manifest);
 }
 
