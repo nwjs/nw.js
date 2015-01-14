@@ -1,4 +1,6 @@
 ## node-webkit is renamed NW.js
+
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/nwjs/nw.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Official site: http://nwjs.io
 
 ## Introduction
