@@ -96,11 +96,9 @@ And our [Wiki](https://github.com/rogerwang/node-webkit/wiki) for much more.
 
 ## Community
 
-We use the [node-webkit group](http://groups.google.com/group/node-webkit) as
-our mailing list (use English only). Subscribe via [node-webkit+subscribe@googlegroups.com](mailto:node-webkit+subscribe@googlegroups.com).
+We use the [google group](https://groups.google.com/d/forum/nwjs-general) as
+our mailing list (use English only). Subscribe via [nwjs-general+subscribe@googlegroups.com](mailto:nwjs-general+subscribe@googlegroups.com).
 Issues are being tracked here on GitHub.
-
-You can chat with us on IRC in the ##node-webkit channel on irc.freenode.net  
 
 ## License
 
