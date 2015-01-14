@@ -1,3 +1,6 @@
+## node-webkit is renamed NW.js
+Official site: http://nwjs.io
+
 ## Introduction
 
 node-webkit is an app runtime based on `Chromium` and `node.js`. You can 
@@ -5,7 +8,7 @@ write native apps in HTML and JavaScript with node-webkit. It also lets you
 call Node.js modules directly from the DOM and enables a new way of writing
 native applications with all Web technologies.
 
-It's created and developed in the Intel Open Source Technology Center.
+It was created in the Intel Open Source Technology Center.
 
 [Introduction to node-webkit (slides)](https://speakerdeck.com/u/zcbenz/p/node-webkit-app-runtime-based-on-chromium-and-node-dot-js)   
 [Creating Desktop Applications With node-webkit](http://strongloop.com/strongblog/creating-desktop-applications-with-node-webkit/)     
@@ -105,4 +108,3 @@ You can chat with us on IRC in the ##node-webkit channel on irc.freenode.net
 The work is being sponsored by:  
 * [Intel](http://www.intel.com)
 * [Gnor Tech](http://gnor.net)
-* [eFounders](http://efounders.co)
