@@ -241,9 +241,11 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
     net::HttpCache::DefaultBackend* main_backend =
         new net::HttpCache::DefaultBackend(
             net::DISK_CACHE,
-            net::CACHE_BACKEND_SIMPLE,
+            // switched to CACHE_BACKEND_DEFAULT to prevent random cache crashes
+            // on Windows
+            net::CACHE_BACKEND_DEFAULT,
             cache_path,
-            10 * 1024 * 1024,  // 10M
+            0, // system determin the cache size
             BrowserThread::GetMessageLoopProxyForThread(
                 BrowserThread::CACHE));
 
