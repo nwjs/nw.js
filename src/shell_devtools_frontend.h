@@ -51,6 +51,8 @@ class ShellDevToolsFrontend : public WebContentsObserver,
   virtual void InspectedContentsClosing() OVERRIDE;
   virtual void ReplacedWithAnotherClient() OVERRIDE {}
 
+  virtual void InspectedURLChanged(const std::string& url);
+
   Shell* frontend_shell_;
   scoped_refptr<DevToolsAgentHost> agent_host_;
   scoped_ptr<DevToolsFrontendHost> frontend_host_;
