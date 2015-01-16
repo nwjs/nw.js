@@ -219,7 +219,9 @@ void ShellBrowserMainParts::Init() {
 
   net::NetModule::SetResourceProvider(PlatformResourceProvider);
 
-  int port = 0;
+  // FIXME: This is a workaround to fix #2206 by setting default port to non-zero.
+  // The real fix would be enabling chrome-devtools:// schema.
+  int port = 9222;
   // See if the user specified a port on the command line (useful for
   // automation). If not, use an ephemeral port by specifying 0.
 
@@ -227,8 +229,9 @@ void ShellBrowserMainParts::Init() {
     int temp_port;
     std::string port_str =
         command_line.GetSwitchValueASCII(switches::kRemoteDebuggingPort);
+    // FIXME: should revert to `temp_port > 0` when chrome-devtools:// is enabled
     if (base::StringToInt(port_str, &temp_port) &&
-        temp_port > 0 && temp_port < 65535) {
+        temp_port >= 0 && temp_port < 65535) {
       port = temp_port;
     } else {
       DLOG(WARNING) << "Invalid http debugger port number " << temp_port;
