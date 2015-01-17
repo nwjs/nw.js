@@ -397,13 +397,8 @@ void FileSelectHelper::RunFileChooserOnUIThread(
   FilePath default_file_name = params.default_file_name;
   FilePath working_path      = params.initial_path;
 
-#if defined(OS_WIN)
-  gfx::NativeWindow owning_window =
-      (gfx::NativeWindow)::GetAncestor((HWND)render_view_host_->GetView()->GetNativeView(), GA_ROOT);
-#else
   gfx::NativeWindow owning_window =
       platform_util::GetTopLevel(render_view_host_->GetView()->GetNativeView());
-#endif
 
   select_file_dialog_->SelectFile(
       dialog_type_,
