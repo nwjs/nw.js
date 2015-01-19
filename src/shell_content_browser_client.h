@@ -130,6 +130,9 @@ class ShellContentBrowserClient : public ContentBrowserClient {
       bool user_gesture,
       const base::Callback<void(bool)>& result_callback) override;
 
+  content::SpeechRecognitionManagerDelegate*
+  CreateSpeechRecognitionManagerDelegate() override;
+
  private:
   ShellBrowserContext* ShellBrowserContextForBrowserContext(
       BrowserContext* content_browser_context);

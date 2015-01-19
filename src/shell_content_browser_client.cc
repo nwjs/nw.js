@@ -83,6 +83,8 @@
 #include "content/public/common/content_descriptors.h"
 #endif
 
+#include "content/nw/src/browser/shell_speech_recognition_manager_delegate.h"
+
 #include "extensions/common/constants.h"
 #include "extensions/common/extension.h"
 #include "extensions/common/switches.h"
@@ -652,6 +654,11 @@ const Extension* ShellContentBrowserClient::GetExtension(
       ExtensionRegistry::Get(site_instance->GetBrowserContext());
   return registry->enabled_extensions().GetExtensionOrAppByURL(
       site_instance->GetSiteURL());
+}
+
+content::SpeechRecognitionManagerDelegate*
+ShellContentBrowserClient::CreateSpeechRecognitionManagerDelegate() {
+  return new speech::ShellSpeechRecognitionManagerDelegate();
 }
 
 }  // namespace content

@@ -301,6 +301,8 @@
         'src/browser/shell_extension_host_delegate.h',
         'src/browser/shell_extension_web_contents_observer.cc',
         'src/browser/shell_extension_web_contents_observer.h',
+        'src/browser/shell_speech_recognition_manager_delegate.cc',
+        'src/browser/shell_speech_recognition_manager_delegate.h',
         'src/browser/shell_web_view_guest_delegate.cc',
         'src/browser/shell_web_view_guest_delegate.h',
         'src/browser/shell_display_info_provider.cc',
