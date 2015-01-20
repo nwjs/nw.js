@@ -87,6 +87,8 @@ namespace content {
   extern bool g_force_cpu_draw;
 }
 
+using base::WeakPtr;
+using base::WeakPtrFactory;
 
 namespace nw {
 
@@ -137,7 +139,7 @@ class NativeWindowFrameView : public views::NonClientFrameView {
  public:
   static const char kViewClassName[];
 
-  explicit NativeWindowFrameView(NativeWindowAura* window);
+  explicit NativeWindowFrameView(const WeakPtr<NativeWindowAura>& window);
   virtual ~NativeWindowFrameView();
 
   void Init(views::Widget* frame);
@@ -162,7 +164,7 @@ class NativeWindowFrameView : public views::NonClientFrameView {
   virtual gfx::Size GetMaximumSize() const OVERRIDE;
 
  private:
-  NativeWindowAura* window_;
+  WeakPtr<NativeWindowAura> window_;
   views::Widget* frame_;
 
   DISALLOW_COPY_AND_ASSIGN(NativeWindowFrameView);
@@ -171,7 +173,7 @@ class NativeWindowFrameView : public views::NonClientFrameView {
 const char NativeWindowFrameView::kViewClassName[] =
     "content/nw/src/browser/NativeWindowFrameView";
 
-NativeWindowFrameView::NativeWindowFrameView(NativeWindowAura* window)
+NativeWindowFrameView::NativeWindowFrameView(const WeakPtr<NativeWindowAura>& window)
     : window_(window),
       frame_(NULL) {
 }
@@ -201,7 +203,7 @@ gfx::Rect NativeWindowFrameView::GetWindowBoundsForClientBounds(
 }
 
 int NativeWindowFrameView::NonClientHitTest(const gfx::Point& point) {
-  if (frame_->IsFullscreen())
+  if (!window_ || frame_->IsFullscreen())
     return HTCLIENT;
 
   // Check the frame first, as we allow a small area overlapping the contents
@@ -291,7 +293,8 @@ NativeWindowAura::NativeWindowAura(const base::WeakPtr<content::Shell>& shell,
       minimum_size_(0, 0),
       maximum_size_(),
       initial_focus_(true),
-      last_width_(-1), last_height_(-1) {
+      last_width_(-1), last_height_(-1),
+      weak_factory_(this) {
   manifest->GetBoolean("focus", &initial_focus_);
   manifest->GetBoolean("fullscreen", &is_fullscreen_);
   manifest->GetBoolean("resizable", &resizable_);
@@ -803,7 +806,7 @@ views::NonClientFrameView* NativeWindowAura::CreateNonClientFrameView(
   if (has_frame())
     return new views::NativeFrameView(GetWidget());
 
-  NativeWindowFrameView* frame_view = new NativeWindowFrameView(this);
+  NativeWindowFrameView* frame_view = new NativeWindowFrameView(weak_factory_.GetWeakPtr());
   frame_view->Init(window_);
   return frame_view;
 }
