@@ -6,8 +6,8 @@ Official site: http://nwjs.io
 [new v0.12.0 test release](https://groups.google.com/d/msg/nwjs-general/qWJczc-E92E/9lmIiMfysU8J)  
 ## Introduction
 
-node-webkit is an app runtime based on `Chromium` and `node.js`. You can 
-write native apps in HTML and JavaScript with node-webkit. It also lets you
+NW.js is an app runtime based on `Chromium` and `io.js`. You can 
+write native apps in HTML and JavaScript with NW.js. It also lets you
 call Node.js modules directly from the DOM and enables a new way of writing
 native applications with all Web technologies.
 
@@ -29,23 +29,23 @@ It was created in the Intel Open Source Technology Center.
 ## Downloads
 * **v0.11.5:** (Dec 28, 2014, based off of Node v0.11.13, Chromium 38.0.2125.104): [release notes](https://groups.google.com/d/msg/nwjs-general/ZjxFVdgWxKE/UevinvOIqzEJ)
 
- * Linux: [32bit](http://dl.node-webkit.org/v0.11.5/node-webkit-v0.11.5-linux-ia32.tar.gz) / [64bit](http://dl.node-webkit.org/v0.11.5/node-webkit-v0.11.5-linux-x64.tar.gz)
- * Windows: [32bit](http://dl.node-webkit.org/v0.11.5/node-webkit-v0.11.5-win-ia32.zip) / [64bit](http://dl.node-webkit.org/v0.11.5/node-webkit-v0.11.5-win-x64.zip)
- * Mac 10.7+: [32bit](http://dl.node-webkit.org/v0.11.5/node-webkit-v0.11.5-osx-ia32.zip) / [64bit](http://dl.node-webkit.org/v0.11.5/node-webkit-v0.11.5-osx-x64.zip)
+ * Linux: [32bit](http://dl.nwjs.io/v0.11.5/node-webkit-v0.11.5-linux-ia32.tar.gz) / [64bit](http://dl.nwjs.io/v0.11.5/node-webkit-v0.11.5-linux-x64.tar.gz)
+ * Windows: [32bit](http://dl.nwjs.io/v0.11.5/node-webkit-v0.11.5-win-ia32.zip) / [64bit](http://dl.nwjs.io/v0.11.5/node-webkit-v0.11.5-win-x64.zip)
+ * Mac 10.7+: [32bit](http://dl.nwjs.io/v0.11.5/node-webkit-v0.11.5-osx-ia32.zip) / [64bit](http://dl.nwjs.io/v0.11.5/node-webkit-v0.11.5-osx-x64.zip)
 
 * **0.8.6:** (Apr 18, 2014, based off of Node v0.10.22, Chrome 30.0.1599.66) **If your native Node module works only with Node v0.10, then you should use node-webkit v0.8.x, which is also a maintained branch. [More info](https://groups.google.com/d/msg/nwjs-general/2OJ1cEMPLlA/09BvpTagSA0J)**  
 [release notes](https://groups.google.com/d/msg/nwjs-general/CLPkgfV-i7s/hwkkQuJ1kngJ)
 
- * Linux: [32bit](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-linux-ia32.tar.gz) / [64bit](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-linux-x64.tar.gz)
- * Windows: [win32](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-win-ia32.zip)
- * Mac: [32bit, 10.7+](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-osx-ia32.zip)
+ * Linux: [32bit](http://dl.nwjs.io/v0.8.6/node-webkit-v0.8.6-linux-ia32.tar.gz) / [64bit](http://dl.nwjs.io/v0.8.6/node-webkit-v0.8.6-linux-x64.tar.gz)
+ * Windows: [win32](http://dl.nwjs.io/v0.8.6/node-webkit-v0.8.6-win-ia32.zip)
+ * Mac: [32bit, 10.7+](http://dl.nwjs.io/v0.8.6/node-webkit-v0.8.6-osx-ia32.zip)
 
-* **latest live build**: git tip version; build triggered from every git commit: http://dl.node-webkit.org/live-build/
+* **latest live build**: git tip version; build triggered from every git commit: http://dl.nwjs.io/live-build/
 
-* [Previous versions](https://github.com/rogerwang/node-webkit/wiki/Downloads-of-old-versions)
+* [Previous versions](https://github.com/nwjs/nw.js/wiki/Downloads-of-old-versions)
 
 ###Demos and real apps
-You may also be interested in [our demos repository](https://github.com/zcbenz/nw-sample-apps) and the [List of apps and companies using node-webkit](https://github.com/rogerwang/node-webkit/wiki/List-of-apps-and-companies-using-node-webkit).
+You may also be interested in [our demos repository](https://github.com/zcbenz/nw-sample-apps) and the [List of apps and companies using node-webkit](https://github.com/nwjs/nw.js/wiki/List-of-apps-and-companies-using-node-webkit).
 
 ## Quick Start
 
@@ -88,11 +88,11 @@ $ /path/to/node-webkit.app/Contents/MacOS/node-webkit .  (suppose the current di
 
 For more information on how to write/package/run apps, see:
 
-* [How to run apps](https://github.com/rogerwang/node-webkit/wiki/How-to-run-apps)
-* [How to package and distribute your apps](https://github.com/rogerwang/node-webkit/wiki/How-to-package-and-distribute-your-apps)
-* [How to use Node.js modules in node-webkit](https://github.com/rogerwang/node-webkit/wiki/Using-Node-modules)
+* [How to run apps](https://github.com/nwjs/nw.js/wiki/How-to-run-apps)
+* [How to package and distribute your apps](https://github.com/nwjs/nw.js/wiki/How-to-package-and-distribute-your-apps)
+* [How to use Node.js modules in node-webkit](https://github.com/nwjs/nw.js/wiki/Using-Node-modules)
 
-And our [Wiki](https://github.com/rogerwang/node-webkit/wiki) for much more.
+And our [Wiki](https://github.com/nwjs/nw.js/wiki) for much more.
 
 ## Community
 
@@ -102,7 +102,7 @@ Issues are being tracked here on GitHub.
 
 ## License
 
-`node-webkit`'s code in this repo uses the MIT license, see our `LICENSE` file. To redistribute the binary, see [How to package and distribute your apps](https://github.com/rogerwang/node-webkit/wiki/How-to-package-and-distribute-your-apps)
+`node-webkit`'s code in this repo uses the MIT license, see our `LICENSE` file. To redistribute the binary, see [How to package and distribute your apps](https://github.com/nwjs/nw.js/wiki/How-to-package-and-distribute-your-apps)
 
 ## Sponsors
 
