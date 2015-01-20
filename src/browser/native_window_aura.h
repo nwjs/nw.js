@@ -23,6 +23,7 @@
 
 #include "content/nw/src/browser/native_window.h"
 
+#include "base/memory/weak_ptr.h"
 #include "third_party/skia/include/core/SkRegion.h"
 #if defined(OS_WIN)
 #include "ui/base/win/hidden_window.h"
@@ -207,6 +208,8 @@ class NativeWindowAura : public NativeWindow,
   bool super_down_;
   bool meta_down_;
   ObserverList<web_modal::ModalDialogHostObserver> observer_list_;
+
+  base::WeakPtrFactory<NativeWindowAura> weak_factory_;
   DISALLOW_COPY_AND_ASSIGN(NativeWindowAura);
 };
 
