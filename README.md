@@ -3,7 +3,7 @@
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/nwjs/nw.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  
 Official site: http://nwjs.io  
 [Announcement](https://groups.google.com/d/msg/nwjs-general/V1FhvfaFIzQ/720xKVd0jNkJ)  
-[new v0.12.0 test release](https://groups.google.com/d/msg/nwjs-general/qWJczc-E92E/9lmIiMfysU8J)  
+[new v0.12.0 test release](https://groups.google.com/d/msg/nwjs-general/pu3hhxH5zvY/yOtp4IYz4g4J)  
 ## Introduction
 
 node-webkit is an app runtime based on `Chromium` and `node.js`. You can 
@@ -27,11 +27,11 @@ It was created in the Intel Open Source Technology Center.
 * Available on Linux, Mac OS X and Windows
 
 ## Downloads
-* **v0.11.5:** (Dec 28, 2014, based off of Node v0.11.13, Chromium 38.0.2125.104): [release notes](https://groups.google.com/d/msg/nwjs-general/ZjxFVdgWxKE/UevinvOIqzEJ)
+* **v0.11.6:** (Jan 21, 2015, based off of Node v0.11.13, Chromium 38.0.2125.104): [release notes](https://groups.google.com/d/msg/nwjs-general/ADFYPzjpo8Q/R6U7I18oirUJ)
 
- * Linux: [32bit](http://dl.node-webkit.org/v0.11.5/node-webkit-v0.11.5-linux-ia32.tar.gz) / [64bit](http://dl.node-webkit.org/v0.11.5/node-webkit-v0.11.5-linux-x64.tar.gz)
- * Windows: [32bit](http://dl.node-webkit.org/v0.11.5/node-webkit-v0.11.5-win-ia32.zip) / [64bit](http://dl.node-webkit.org/v0.11.5/node-webkit-v0.11.5-win-x64.zip)
- * Mac 10.7+: [32bit](http://dl.node-webkit.org/v0.11.5/node-webkit-v0.11.5-osx-ia32.zip) / [64bit](http://dl.node-webkit.org/v0.11.5/node-webkit-v0.11.5-osx-x64.zip)
+ * Linux: [32bit](http://dl.node-webkit.org/v0.11.6/node-webkit-v0.11.6-linux-ia32.tar.gz) / [64bit](http://dl.node-webkit.org/v0.11.6/node-webkit-v0.11.6-linux-x64.tar.gz)
+ * Windows: [32bit](http://dl.node-webkit.org/v0.11.6/node-webkit-v0.11.6-win-ia32.zip) / [64bit](http://dl.node-webkit.org/v0.11.6/node-webkit-v0.11.6-win-x64.zip)
+ * Mac 10.7+: [32bit](http://dl.node-webkit.org/v0.11.6/node-webkit-v0.11.6-osx-ia32.zip) / [64bit](http://dl.node-webkit.org/v0.11.6/node-webkit-v0.11.6-osx-x64.zip)
 
 * **0.8.6:** (Apr 18, 2014, based off of Node v0.10.22, Chrome 30.0.1599.66) **If your native Node module works only with Node v0.10, then you should use node-webkit v0.8.x, which is also a maintained branch. [More info](https://groups.google.com/d/msg/nwjs-general/2OJ1cEMPLlA/09BvpTagSA0J)**  
 [release notes](https://groups.google.com/d/msg/nwjs-general/CLPkgfV-i7s/hwkkQuJ1kngJ)

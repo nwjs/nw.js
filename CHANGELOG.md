@@ -1,3 +1,15 @@
+0.11.6 / 01-21-2015
+===================
+- Fix: crash when use App.quit() on Windows in some cases
+- Fix: Make file dialog modal on Windows
+- Fix: title for devtools
+- Fix: set default port of devtools to 9222 (workaround for #2206, settins can be saved)
+- Fix: random http cache crash on quit (Windows)
+- Fix: 'copy' doesn't work in devtools (#2660)
+- Fix: devtools shows empty page on win7 (#2603)
+- Fix: listeners iframe.addEventListener('load') not trigger (#2867)
+- Fix: devtools timetime exception in some cases
+
 0.11.5 / 12-28-2014
 ===================
 - Fix: Normal frame should not simulate user input events (File input dialog)
