@@ -45,6 +45,7 @@
 #include "content/public/browser/native_web_keyboard_event.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/browser/renderer_host/render_view_host_impl.h"
+#include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/content_switches.h"
 #include "extensions/common/draggable_region.h"
@@ -494,6 +495,15 @@ void NativeWindowAura::SetTransparent(bool transparent) {
     toolbar_->set_background(transparent ? views::Background::CreateSolidBackground(SK_ColorTRANSPARENT) : 
       views::Background::CreateStandardPanelBackground());
     toolbar_->SchedulePaint();
+  }
+
+  // this is needed to prevent white popup on startup
+  content::RenderWidgetHostView* rwhv = shell_->web_contents()->GetRenderWidgetHostView();
+  if (rwhv) {
+    if (transparent)
+      rwhv->SetBackgroundColor(SK_ColorTRANSPARENT);
+    else
+      rwhv->SetBackgroundColorToDefault();
   }
 
   content::RenderViewHostImpl* rvh = static_cast<content::RenderViewHostImpl*>(shell_->web_contents()->GetRenderViewHost());
