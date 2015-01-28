@@ -47,20 +47,20 @@ struct MainFunctionParams;
 class ShellBrowserMainParts : public BrowserMainParts {
  public:
   explicit ShellBrowserMainParts(const MainFunctionParams& parameters);
-  virtual ~ShellBrowserMainParts();
+  ~ShellBrowserMainParts() final;
 
   extensions::ShellExtensionSystem* extension_system() { return extension_system_; }
 
   // BrowserMainParts overrides.
-  virtual void PreEarlyInitialization() override;
-  virtual void PreMainMessageLoopStart() override;
-  virtual void PreMainMessageLoopRun() override;
-  virtual void PostMainMessageLoopStart() override;
-  virtual bool MainMessageLoopRun(int* result_code) override;
-  virtual void PostMainMessageLoopRun() override;
-  virtual int  PreCreateThreads() override;
-  virtual void PostDestroyThreads() override;
-  virtual void ToolkitInitialized() override;
+   void PreEarlyInitialization() override;
+   void PreMainMessageLoopStart() override;
+   void PreMainMessageLoopRun() override;
+   void PostMainMessageLoopStart() override;
+   bool MainMessageLoopRun(int* result_code) override;
+   void PostMainMessageLoopRun() override;
+   int  PreCreateThreads() override;
+   void PostDestroyThreads() override;
+   void ToolkitInitialized() override;
 
   // Init browser context and every thing
   void Init();
@@ -72,16 +72,16 @@ class ShellBrowserMainParts : public BrowserMainParts {
     return off_the_record_browser_context_.get();
   }
   nw::Package* package() { return package_.get(); }
-  virtual printing::PrintJobManager* print_job_manager();
+   printing::PrintJobManager* print_job_manager();
 
  protected:
-  virtual extensions::ExtensionsClient* CreateExtensionsClient();
-  virtual extensions::ExtensionsBrowserClient* CreateExtensionsBrowserClient(content::BrowserContext* context);
+   extensions::ExtensionsClient* CreateExtensionsClient();
+   extensions::ExtensionsBrowserClient* CreateExtensionsBrowserClient(content::BrowserContext* context);
 
  private:
   // Creates and initializes the ExtensionSystem.
   void CreateExtensionSystem();
-  bool ProcessSingletonNotificationCallback(const CommandLine& command_line,
+  bool ProcessSingletonNotificationCallback(const base::CommandLine& command_line,
                                             const base::FilePath& current_directory);
 
   scoped_ptr<ShellBrowserContext> browser_context_;

@@ -15,18 +15,18 @@ namespace content {
 
 class ShellContentClient : public ContentClient {
  public:
-  virtual ~ShellContentClient();
+  ~ShellContentClient() final;
 
-  virtual std::string GetUserAgent() const override;
-  virtual base::string16 GetLocalizedString(int message_id) const override;
-  virtual base::StringPiece GetDataResource(
+   std::string GetUserAgent() const override;
+   base::string16 GetLocalizedString(int message_id) const override;
+   base::StringPiece GetDataResource(
       int resource_id,
       ui::ScaleFactor scale_factor) const override;
-  virtual base::RefCountedStaticMemory* GetDataResourceBytes(
+   base::RefCountedStaticMemory* GetDataResourceBytes(
       int resource_id) const override;
-  virtual gfx::Image& GetNativeImageNamed(int resource_id) const override;
-  virtual bool CanHandleWhileSwappedOut(const IPC::Message& msg) override;
-  virtual void AddAdditionalSchemes(
+   gfx::Image& GetNativeImageNamed(int resource_id) const override;
+   bool CanHandleWhileSwappedOut(const IPC::Message& msg) override;
+   void AddAdditionalSchemes(
       std::vector<std::string>* standard_schemes,
       std::vector<std::string>* saveable_shemes) override;
 };

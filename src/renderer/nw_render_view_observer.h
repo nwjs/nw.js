@@ -38,12 +38,12 @@ namespace nw {
 class NwRenderViewObserver : public content::RenderViewObserver {
  public:
   NwRenderViewObserver(content::RenderView* render_view);
-  virtual ~NwRenderViewObserver();
+  ~NwRenderViewObserver() final;
 
   // RenderViewObserver implementation.
-  virtual bool OnMessageReceived(const IPC::Message& message) override;
-  virtual void DidCreateDocumentElement(blink::WebLocalFrame* frame) override;
-  virtual void DidFinishDocumentLoad(blink::WebLocalFrame* frame) override;
+   bool OnMessageReceived(const IPC::Message& message) override;
+   void DidCreateDocumentElement(blink::WebLocalFrame* frame) override;
+   void DidFinishDocumentLoad(blink::WebLocalFrame* frame) override;
 
  private:
 

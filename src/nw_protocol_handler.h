@@ -32,12 +32,12 @@ class URLRequestJob;
 }
 
 namespace nw {
-  
+
 class NwProtocolHandler :
     public net::URLRequestJobFactory::ProtocolHandler {
  public:
   NwProtocolHandler();
-  virtual net::URLRequestJob* MaybeCreateJob(
+  net::URLRequestJob* MaybeCreateJob(
       net::URLRequest* request,
       net::NetworkDelegate* network_delegate) const override;
 

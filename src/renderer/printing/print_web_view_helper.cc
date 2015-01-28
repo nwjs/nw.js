@@ -7,7 +7,6 @@
 #include <string>
 
 #include "base/auto_reset.h"
-#include "base/command_line.h"
 #include "base/json/json_writer.h"
 #include "base/logging.h"
 #include "base/message_loop/message_loop.h"
@@ -16,11 +15,8 @@
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/stringprintf.h"
 #include "base/strings/utf_string_conversions.h"
-#include "chrome/common/chrome_switches.h"
 #include "chrome/common/print_messages.h"
-#include "chrome/common/render_messages.h"
-//#include "chrome/grit/browser_resources.h"
-#include "chrome/renderer/prerender/prerender_helper.h"
+#include "chrome/grit/browser_resources.h"
 #include "content/public/common/web_preferences.h"
 #include "content/public/renderer/render_frame.h"
 #include "content/public/renderer/render_thread.h"
@@ -45,11 +41,6 @@
 #include "third_party/WebKit/public/web/WebView.h"
 #include "third_party/WebKit/public/web/WebViewClient.h"
 #include "ui/base/resource/resource_bundle.h"
-
-#if defined(ENABLE_EXTENSIONS)
-#include "chrome/common/extensions/extension_constants.h"
-#include "extensions/common/constants.h"
-#endif  // defined(ENABLE_EXTENSIONS)
 
 using content::WebPreferences;
 
@@ -410,24 +401,6 @@ PrintMsg_Print_Params CalculatePrintParamsForCss(
   return result_params;
 }
 
-// Return the PDF object element if |frame| is the out of process PDF extension.
-blink::WebElement GetPdfElement(blink::WebLocalFrame* frame) {
-#if 0
-  GURL url = frame->document().url();
-  if (url.SchemeIs(extensions::kExtensionScheme) &&
-      url.host() == extension_misc::kPdfExtensionId) {
-    // <object> with id="plugin" is created in
-    // chrome/browser/resources/pdf/pdf.js.
-    auto plugin_element = frame->document().getElementById("plugin");
-    if (!plugin_element.isNull()) {
-      return plugin_element;
-    }
-    NOTREACHED();
-  }
-#endif  // defined(ENABLE_EXTENSIONS)
-  return blink::WebElement();
-}
-
 }  // namespace
 
 FrameReference::FrameReference(blink::WebLocalFrame* frame) {
@@ -607,8 +580,6 @@ class PrepareFrameAndViewForPrint : public blink::WebViewClient,
   void RestoreSize();
   void CopySelection(const WebPreferences& preferences);
 
-  base::WeakPtrFactory<PrepareFrameAndViewForPrint> weak_ptr_factory_;
-
   FrameReference frame_;
   blink::WebNode node_to_print_;
   bool owns_web_view_;
@@ -621,6 +592,8 @@ class PrepareFrameAndViewForPrint : public blink::WebViewClient,
   bool should_print_selection_only_;
   bool is_printing_started_;
 
+  base::WeakPtrFactory<PrepareFrameAndViewForPrint> weak_ptr_factory_;
+
   DISALLOW_COPY_AND_ASSIGN(PrepareFrameAndViewForPrint);
 };
 
@@ -629,14 +602,14 @@ PrepareFrameAndViewForPrint::PrepareFrameAndViewForPrint(
     blink::WebLocalFrame* frame,
     const blink::WebNode& node,
     bool ignore_css_margins)
-    : weak_ptr_factory_(this),
-      frame_(frame),
+    : frame_(frame),
       node_to_print_(node),
       owns_web_view_(false),
       expected_pages_count_(0),
       should_print_backgrounds_(params.should_print_backgrounds),
       should_print_selection_only_(params.selection_only),
-      is_printing_started_(false) {
+      is_printing_started_(false),
+      weak_ptr_factory_(this) {
   PrintMsg_Print_Params print_params = params;
   if (!should_print_selection_only_ ||
       !PrintingNodeOrPdfFrame(frame, node_to_print_)) {
@@ -790,7 +763,11 @@ void PrepareFrameAndViewForPrint::FinishPrinting() {
   on_ready_.Reset();
 }
 
-PrintWebViewHelper::PrintWebViewHelper(content::RenderView* render_view)
+PrintWebViewHelper::PrintWebViewHelper(
+    content::RenderView* render_view,
+    bool out_of_process_pdf_enabled,
+    bool print_preview_disabled,
+    scoped_ptr<Delegate> delegate)
     : content::RenderViewObserver(render_view),
       content::RenderViewObserverTracker<PrintWebViewHelper>(render_view),
       reset_prep_frame_view_(false),
@@ -799,14 +776,14 @@ PrintWebViewHelper::PrintWebViewHelper(content::RenderView* render_view)
       is_scripted_printing_blocked_(false),
       notify_browser_of_print_failure_(true),
       print_for_preview_(false),
+      out_of_process_pdf_enabled_(out_of_process_pdf_enabled),
+      delegate_(delegate.Pass()),
       print_node_in_progress_(false),
       is_loading_(false),
       is_scripted_preview_delayed_(false),
       weak_ptr_factory_(this) {
-  if (CommandLine::ForCurrentProcess()->HasSwitch(
-          switches::kDisablePrintPreview)) {
+  if (print_preview_disabled)
     DisablePreview();
-  }
 }
 
 PrintWebViewHelper::~PrintWebViewHelper() {}
@@ -818,9 +795,6 @@ void PrintWebViewHelper::DisablePreview() {
 
 bool PrintWebViewHelper::IsScriptInitiatedPrintAllowed(
     blink::WebFrame* frame, bool user_initiated) {
-#if defined(OS_ANDROID)
-  return false;
-#endif  // defined(OS_ANDROID)
   // If preview is enabled, then the print dialog is tab modal, and the user
   // can always close the tab on a mis-behaving page (the system print dialog
   // is app modal). If the print was initiated through user action, don't
@@ -847,19 +821,15 @@ void PrintWebViewHelper::PrintPage(blink::WebLocalFrame* frame,
                                    bool user_initiated) {
   DCHECK(frame);
 
-#if 0
   // Allow Prerendering to cancel this print request if necessary.
-  if (prerender::PrerenderHelper::IsPrerendering(
-          render_view()->GetMainRenderFrame())) {
-    Send(new ChromeViewHostMsg_CancelPrerenderForPrinting(routing_id()));
+  if (delegate_->CancelPrerender(render_view(), routing_id()))
     return;
-  }
-#endif
+
   if (!IsScriptInitiatedPrintAllowed(frame, user_initiated))
     return;
 
   if (!g_is_preview_enabled_) {
-    Print(frame, blink::WebNode());
+    Print(frame, blink::WebNode(), true);
   } else {
     print_preview_context_.InitWithFrame(frame);
     RequestPrintPreview(PRINT_PREVIEW_SCRIPTED);
@@ -905,16 +875,14 @@ void PrintWebViewHelper::OnPrintForPrintPreview(
     return;
   }
 
-  // The out-of-process plugin element is nested within a frame.
+  // The out-of-process plugin element is nested within a frame. In tests, there
+  // may not be an iframe containing the out-of-process plugin, so continue with
+  // the element with ID "pdf-viewer" if it isn't an iframe.
   blink::WebLocalFrame* plugin_frame = pdf_element.document().frame();
   blink::WebElement plugin_element = pdf_element;
-  if (switches::OutOfProcessPdfEnabled()) {
-    if (!pdf_element.hasHTMLTagName("iframe")) {
-      NOTREACHED();
-      return;
-    }
+  if (out_of_process_pdf_enabled_ && pdf_element.hasHTMLTagName("iframe")) {
     plugin_frame = blink::WebLocalFrame::fromFrameOwnerElement(pdf_element);
-    plugin_element = GetPdfElement(plugin_frame);
+    plugin_element = delegate_->GetPdfElement(plugin_frame);
     if (plugin_element.isNull()) {
       NOTREACHED();
       return;
@@ -974,8 +942,8 @@ void PrintWebViewHelper::OnPrintPages() {
     return;
   // If we are printing a PDF extension frame, find the plugin node and print
   // that instead.
-  auto plugin = GetPdfElement(frame);
-  Print(frame, plugin);
+  auto plugin = delegate_->GetPdfElement(frame);
+  Print(frame, plugin, false);
 }
 
 void PrintWebViewHelper::OnPrintForSystemDialog() {
@@ -984,7 +952,7 @@ void PrintWebViewHelper::OnPrintForSystemDialog() {
     NOTREACHED();
     return;
   }
-  Print(frame, print_preview_context_.source_node());
+  Print(frame, print_preview_context_.source_node(), false);
 }
 #endif  // ENABLE_BASIC_PRINTING
 
@@ -1229,7 +1197,7 @@ void PrintWebViewHelper::OnInitiatePrintPreview(bool selection_only) {
   DCHECK(frame);
   // If we are printing a PDF extension frame, find the plugin node and print
   // that instead.
-  auto plugin = GetPdfElement(frame);
+  auto plugin = delegate_->GetPdfElement(frame);
   if (!plugin.isNull()) {
     PrintNode(plugin);
     return;
@@ -1266,7 +1234,7 @@ void PrintWebViewHelper::PrintNode(const blink::WebNode& node) {
   // its |context_menu_node_|.
   if (!g_is_preview_enabled_) {
     blink::WebNode duplicate_node(node);
-    Print(duplicate_node.document().frame(), duplicate_node);
+    Print(duplicate_node.document().frame(), duplicate_node, false);
   } else {
     print_preview_context_.InitWithNode(node);
     RequestPrintPreview(PRINT_PREVIEW_USER_INITIATED_CONTEXT_NODE);
@@ -1276,7 +1244,8 @@ void PrintWebViewHelper::PrintNode(const blink::WebNode& node) {
 }
 
 void PrintWebViewHelper::Print(blink::WebLocalFrame* frame,
-                               const blink::WebNode& node) {
+                               const blink::WebNode& node,
+                               bool is_scripted) {
   // If still not finished with earlier print request simply ignore.
   if (prep_frame_view_)
     return;
@@ -1297,7 +1266,8 @@ void PrintWebViewHelper::Print(blink::WebLocalFrame* frame,
 
   // Ask the browser to show UI to retrieve the final print settings.
   if (!GetPrintSettingsFromUser(frame_ref.GetFrame(), node,
-                                expected_page_count)) {
+                                expected_page_count,
+                                is_scripted)) {
     DidFinishPrinting(OK);  // Release resources and fail silently.
     return;
   }
@@ -1572,9 +1542,10 @@ bool PrintWebViewHelper::UpdatePrintSettings(
   return true;
 }
 
-bool PrintWebViewHelper::GetPrintSettingsFromUser(blink::WebFrame* frame,
+bool PrintWebViewHelper::GetPrintSettingsFromUser(blink::WebLocalFrame* frame,
                                                   const blink::WebNode& node,
-                                                  int expected_pages_count) {
+                                                  int expected_pages_count,
+                                                  bool is_scripted) {
   PrintHostMsg_ScriptedPrint_Params params;
   PrintMsg_PrintPages_Params print_settings;
 
@@ -1585,6 +1556,7 @@ bool PrintWebViewHelper::GetPrintSettingsFromUser(blink::WebFrame* frame,
   if (PrintingNodeOrPdfFrame(frame, node))
     margin_type = GetMarginsForPdf(frame, node);
   params.margin_type = margin_type;
+  params.is_scripted = is_scripted;
 
   Send(new PrintHostMsg_DidShowPrintDialog(routing_id()));
 

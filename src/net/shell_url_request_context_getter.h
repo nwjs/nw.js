@@ -69,8 +69,8 @@ class ShellBrowserContext;
       extensions::InfoMap* extension_info_map);
 
   // net::URLRequestContextGetter implementation.
-  virtual net::URLRequestContext* GetURLRequestContext() override;
-  virtual scoped_refptr<base::SingleThreadTaskRunner>
+   net::URLRequestContext* GetURLRequestContext() override;
+   scoped_refptr<base::SingleThreadTaskRunner>
       GetNetworkTaskRunner() const override;
 
   net::HostResolver* host_resolver();
@@ -78,10 +78,10 @@ class ShellBrowserContext;
   void SetAdditionalTrustAnchors(const net::CertificateList& trust_anchors);
 
   // net::CertTrustAnchorProvider implementation.
-  virtual const net::CertificateList& GetAdditionalTrustAnchors() override;
+   const net::CertificateList& GetAdditionalTrustAnchors() override;
 
  protected:
-  virtual ~ShellURLRequestContextGetter();
+   ~ShellURLRequestContextGetter() final;
   net::HttpAuthHandlerFactory* CreateDefaultAuthHandlerFactory(net::HostResolver* resolver);
 
  private:

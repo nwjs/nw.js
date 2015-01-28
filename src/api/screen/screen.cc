@@ -59,7 +59,7 @@ class JavaScriptDisplayObserver : BaseEvent, public gfx::DisplayObserver {
   gfx::Screen* screen_;
 
   // Called when the |display|'s bound has changed.
-  virtual void OnDisplayMetricsChanged(const gfx::Display& display, uint32_t changed_metrics) override {
+   void OnDisplayMetricsChanged(const gfx::Display& display, uint32_t changed_metrics) override {
     base::ListValue arguments;
     arguments.AppendString(DisplayToJSON(display));
     arguments.AppendInteger(changed_metrics);
@@ -67,7 +67,7 @@ class JavaScriptDisplayObserver : BaseEvent, public gfx::DisplayObserver {
   }
 
   // Called when |new_display| has been added.
-  virtual void OnDisplayAdded(const gfx::Display& new_display) override {
+   void OnDisplayAdded(const gfx::Display& new_display) override {
     base::ListValue arguments;
     arguments.AppendString(DisplayToJSON(new_display));
     object_->dispatcher_host()->SendEvent(object_, "displayAdded", arguments);
@@ -75,7 +75,7 @@ class JavaScriptDisplayObserver : BaseEvent, public gfx::DisplayObserver {
   }
 
   // Called when |old_display| has been removed.
-  virtual void OnDisplayRemoved(const gfx::Display& old_display) override {
+   void OnDisplayRemoved(const gfx::Display& old_display) override {
     base::ListValue arguments;
     arguments.AppendString(DisplayToJSON(old_display));
     object_->dispatcher_host()->SendEvent(object_, "displayRemoved", arguments);
@@ -86,7 +86,7 @@ class JavaScriptDisplayObserver : BaseEvent, public gfx::DisplayObserver {
   JavaScriptDisplayObserver(EventListener* object) : object_(object), screen_(NULL){
   }
 
-  virtual ~JavaScriptDisplayObserver() {
+   ~JavaScriptDisplayObserver() override {
     if(screen_)
       screen_->RemoveObserver(this);
   }

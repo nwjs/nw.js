@@ -62,11 +62,11 @@ class Window : public Base, public content::NotificationObserver {
   Window(int id,
          const base::WeakPtr<DispatcherHost>& dispatcher_host,
          const base::DictionaryValue& option);
-  virtual ~Window();
+  ~Window() override;
 
-  virtual void Call(const std::string& method,
+   void Call(const std::string& method,
                     const base::ListValue& arguments) override;
-  virtual void CallSync(const std::string& method,
+   void CallSync(const std::string& method,
                         const base::ListValue& arguments,
                         base::ListValue* result) override;
 
@@ -87,7 +87,7 @@ class Window : public Base, public content::NotificationObserver {
 
  private:
   // content::NotificationObserver implementation.
-  virtual void Observe(int type,
+   void Observe(int type,
                        const content::NotificationSource& source,
                        const content::NotificationDetails& details) override;
 

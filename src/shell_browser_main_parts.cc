@@ -82,6 +82,7 @@
 #include "chrome/browser/ui/app_modal/chrome_javascript_native_dialog_factory.h"
 
 using base::MessageLoop;
+using base::CommandLine;
 
 namespace {
 

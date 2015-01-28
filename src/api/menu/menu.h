@@ -68,7 +68,7 @@ class NwMenuModel : public SimpleMenuModel {
   NwMenuModel(Delegate* delegate);
 
   // Overridden from MenuModel:
-  virtual bool HasIcons() const override;
+   bool HasIcons() const override;
 
 protected:
   friend class nwapi::Menu;
@@ -91,9 +91,9 @@ class Menu : public Base {
   Menu(int id,
        const base::WeakPtr<DispatcherHost>& dispatcher_host,
        const base::DictionaryValue& option);
-  virtual ~Menu();
+   ~Menu() override;
 
-  virtual void Call(const std::string& method,
+   void Call(const std::string& method,
                     const base::ListValue& arguments) override;
 
 #if defined(OS_WIN) || defined(OS_LINUX)

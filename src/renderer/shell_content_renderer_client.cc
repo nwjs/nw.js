@@ -160,7 +160,7 @@ void ShellContentRendererClient::RenderThreadStarted() {
   content::RenderThread* thread = content::RenderThread::Get();
 
   // Change working directory.
-  CommandLine* command_line = CommandLine::ForCurrentProcess();
+  base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
   if (command_line->HasSwitch(switches::kWorkingDirectory)) {
     base::SetCurrentDirectory(
         command_line->GetSwitchValuePath(switches::kWorkingDirectory));
@@ -205,7 +205,7 @@ void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
   new nw::NwRenderViewObserver(render_view);
   new prerender::PrerendererClient(render_view);
 #if defined(ENABLE_PRINTING)
-  new printing::PrintWebViewHelper(render_view);
+  new printing::PrintWebViewHelper(render_view, true, true, NULL);
 #endif
 
   if (extension_dispatcher_.get()) {
@@ -213,13 +213,6 @@ void ShellContentRendererClient::RenderViewCreated(RenderView* render_view) {
     extension_dispatcher_->OnRenderViewCreated(render_view);
   }
 
-  PasswordGenerationAgent* password_generation_agent =
-      new PasswordGenerationAgent(render_view);
-  PasswordAutofillAgent* password_autofill_agent =
-      new PasswordAutofillAgent(render_view);
-  new AutofillAgent(render_view,
-                    password_autofill_agent,
-                    password_generation_agent);
   // The PageClickTracker is a RenderViewObserver, and hence will be freed when
   // the RenderView is destroyed.
   // FIXME: new autofill::PageClickTracker(render_view, autofill_agent);
@@ -263,7 +256,7 @@ bool ShellContentRendererClient::goodForNode(blink::WebFrame* frame)
   bool force_on = rules.Matches(url);
   bool is_nw_protocol = url.SchemeIs("nw") || !url.is_valid();
   bool use_node =
-    CommandLine::ForCurrentProcess()->HasSwitch(switches::kNodejs) &&
+    base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kNodejs) &&
     !frame->isNwDisabledChildFrame() &&
     (force_on || url.SchemeIsFile() || is_nw_protocol
      || url.SchemeIs("chrome-extension")
@@ -285,7 +278,7 @@ void ShellContentRendererClient::SetupNodeUtil(
   base::ReplaceChars(root_path, "'", "\\'", &root_path);
   v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate, (
         // Make node's relative modules work
-        "if (!process.mainModule.filename || process.mainModule.filename === 'blank') {"
+        "if (typeof process != 'undefined' && (!process.mainModule.filename || process.mainModule.filename === 'blank')) {"
         "  var root = '" + root_path + "';"
 #if defined(OS_WIN)
         "process.mainModule.filename = decodeURIComponent(window.location.pathname === 'blank' ? 'blank': window.location.pathname.substr(1));"
@@ -541,6 +534,14 @@ void ShellContentRendererClient::RenderFrameCreated(
   // destroyed.
   if (extension_dispatcher_.get())
     new ShellFrameHelper(render_frame, extension_dispatcher_.get());
+
+  PasswordGenerationAgent* password_generation_agent =
+      new PasswordGenerationAgent(render_frame);
+  PasswordAutofillAgent* password_autofill_agent =
+      new PasswordAutofillAgent(render_frame);
+  new AutofillAgent(render_frame,
+                    password_autofill_agent,
+                    password_generation_agent);
 
   // TODO(jamescook): Do we need to add a new PepperHelper(render_frame) here?
   // It doesn't seem necessary for either Pepper or NaCl.

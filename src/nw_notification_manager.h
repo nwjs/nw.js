@@ -21,7 +21,7 @@
 #define CONTENT_NW_NOTIFICATION_MANAGER_H_
 
 #include "base/basictypes.h"
-#include "content/public/common/show_desktop_notification_params.h"
+#include "content/public/common/platform_notification_data.h"
 
 namespace nw {
 

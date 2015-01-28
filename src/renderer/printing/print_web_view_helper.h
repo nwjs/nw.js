@@ -19,7 +19,7 @@
 #include "third_party/WebKit/public/platform/WebCanvas.h"
 #include "third_party/WebKit/public/web/WebNode.h"
 #include "third_party/WebKit/public/web/WebPrintParams.h"
-#include "ui/gfx/size.h"
+#include "ui/gfx/geometry/size.h"
 
 struct PrintMsg_Print_Params;
 struct PrintMsg_PrintPage_Params;
@@ -66,7 +66,25 @@ class PrintWebViewHelper
     : public content::RenderViewObserver,
       public content::RenderViewObserverTracker<PrintWebViewHelper> {
  public:
-  explicit PrintWebViewHelper(content::RenderView* render_view);
+
+  class Delegate {
+   public:
+    virtual ~Delegate() {}
+
+    // Cancels prerender if it's currently in progress and returns |true| if
+    // the cancellation was done with success.
+    virtual bool CancelPrerender(content::RenderView* render_view,
+                                 int routing_id) = 0;
+
+    // Returns the element to be printed. Returns a null WebElement if
+    // a pdf plugin element can't be extracted from the frame.
+    virtual blink::WebElement GetPdfElement(blink::WebLocalFrame* frame) = 0;
+  };
+
+  PrintWebViewHelper(content::RenderView* render_view,
+                     bool out_of_process_pdf_enabled,
+                     bool print_preview_disabled,
+                     scoped_ptr<Delegate> delegate);
   ~PrintWebViewHelper() override;
 
   // Disable print preview and switch to system dialog printing even if full
@@ -169,7 +187,10 @@ class PrintWebViewHelper
 
   // Main printing code -------------------------------------------------------
 
-  void Print(blink::WebLocalFrame* frame, const blink::WebNode& node);
+  // |is_scripted| should be true when the call is coming from window.print()
+  void Print(blink::WebLocalFrame* frame,
+             const blink::WebNode& node,
+             bool is_scripted);
 
   // Notification when printing is done - signal tear-down/free resources.
   void DidFinishPrinting(PrintingResult result);
@@ -200,7 +221,8 @@ class PrintWebViewHelper
   // Return false if the user cancels or on error.
   bool GetPrintSettingsFromUser(blink::WebFrame* frame,
                                 const blink::WebNode& node,
-                                int expected_pages_count);
+                                int expected_pages_count,
+                                bool is_scripted);
 
   // Page Printing / Rendering ------------------------------------------------
 
@@ -322,6 +344,12 @@ class PrintWebViewHelper
 
   // True, when printing from print preview.
   bool print_for_preview_;
+
+  // Whether the content to print could be nested in an iframe.
+  const bool out_of_process_pdf_enabled_;
+
+  // Used to check the prerendering status.
+  const scoped_ptr<Delegate> delegate_;
 
   // Keeps track of the state of print preview between messages.
   // TODO(vitalybuka): Create PrintPreviewContext when needed and delete after

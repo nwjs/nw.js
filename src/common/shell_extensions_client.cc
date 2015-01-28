@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "extensions/shell/common/shell_extensions_client.h"
+#include "content/nw/src/common/shell_extensions_client.h"
 
 #include "base/lazy_instance.h"
 #include "base/logging.h"
@@ -144,6 +144,13 @@ void ShellExtensionsClient::FilterHostPermissions(
     const URLPatternSet& hosts,
     URLPatternSet* new_hosts,
     std::set<PermissionMessage>* messages) const {
+  NOTIMPLEMENTED();
+}
+
+void ShellExtensionsClient::FilterHostPermissions(
+    const URLPatternSet& hosts,
+    URLPatternSet* new_hosts,
+    PermissionIDSet* permissions) const {
   NOTIMPLEMENTED();
 }
 

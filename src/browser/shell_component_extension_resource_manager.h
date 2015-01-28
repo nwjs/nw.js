@@ -24,7 +24,7 @@ class ShellComponentExtensionResourceManager
   // Overridden from ComponentExtensionResourceManager:
   bool IsComponentExtensionResource(const base::FilePath& extension_path,
                                     const base::FilePath& resource_path,
-                                    int* resource_id) override;
+                                    int* resource_id) const override;
 
  private:
   void AddComponentResourceEntries(const GritResourceMap* entries, size_t size);

@@ -53,6 +53,7 @@
 #include <stdio.h>
 
 using base::FilePath;
+using base::CommandLine;
 
 #if defined(OS_MACOSX)
 #include "components/crash/app/breakpad_mac.h"

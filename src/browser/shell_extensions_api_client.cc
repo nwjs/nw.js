@@ -33,13 +33,6 @@ AppViewGuestDelegate* ShellExtensionsAPIClient::CreateAppViewGuestDelegate()
   return NULL;
 }
 
-double ShellWebViewGuestDelegate::GetZoom() {
-  return 1.0;
-}
-
-void ShellWebViewGuestDelegate::OnSetZoom(double zoom_factor) {
-}
-
 void ShellWebViewGuestDelegate::OnShowContextMenu(
     int request_id,
     const MenuItemVector* items) {

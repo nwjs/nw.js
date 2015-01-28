@@ -32,47 +32,49 @@ class NWAutofillClient
       public content::WebContentsUserData<NWAutofillClient>,
       public content::WebContentsObserver {
  public:
-  virtual ~NWAutofillClient();
+  ~NWAutofillClient() final;
 
   // Called when the tab corresponding to |this| instance is activated.
   void TabActivated();
 
   // AutofillClient:
-  virtual PersonalDataManager* GetPersonalDataManager() override;
-  virtual scoped_refptr<AutofillWebDataService> GetDatabase() override;
-  virtual PrefService* GetPrefs() override;
-  virtual void HideRequestAutocompleteDialog() override;
-  virtual void ShowAutofillSettings() override;
-  virtual bool HasCreditCardScanFeature() override;
-  virtual void ScanCreditCard(const CreditCardScanCallback& callback) override;
-  virtual void ConfirmSaveCreditCard(
-      const AutofillMetrics& metric_logger,
+   PersonalDataManager* GetPersonalDataManager() override;
+   scoped_refptr<AutofillWebDataService> GetDatabase() override;
+   PrefService* GetPrefs() override;
+   void HideRequestAutocompleteDialog() override;
+   void ShowAutofillSettings() override;
+   bool HasCreditCardScanFeature() override;
+   void ScanCreditCard(const CreditCardScanCallback& callback) override;
+   void ConfirmSaveCreditCard(
       const base::Closure& save_card_callback) override;
-  virtual void ShowRequestAutocompleteDialog(
+  void ShowRequestAutocompleteDialog(
       const FormData& form,
-      const GURL& source_url,
+      content::RenderFrameHost* render_frame_host,
       const ResultCallback& callback) override;
-  virtual void ShowAutofillPopup(
+  void ShowAutofillPopup(
       const gfx::RectF& element_bounds,
       base::i18n::TextDirection text_direction,
-      const std::vector<base::string16>& values,
-      const std::vector<base::string16>& labels,
-      const std::vector<base::string16>& icons,
-      const std::vector<int>& identifiers,
+      const std::vector<autofill::Suggestion>& suggestions,
       base::WeakPtr<AutofillPopupDelegate> delegate) override;
-  virtual void UpdateAutofillPopupDataListValues(
+   void UpdateAutofillPopupDataListValues(
       const std::vector<base::string16>& values,
       const std::vector<base::string16>& labels) override;
-  virtual void HideAutofillPopup() override;
-  virtual bool IsAutocompleteEnabled() override;
-  virtual void DetectAccountCreationForms(
+   void HideAutofillPopup() override;
+   bool IsAutocompleteEnabled() override;
+  void DetectAccountCreationForms(
+      content::RenderFrameHost* rfh,
       const std::vector<autofill::FormStructure*>& forms) override;
-  virtual void DidFillOrPreviewField(
+   void DidFillOrPreviewField(
       const base::string16& autofilled_value,
       const base::string16& profile_full_name) override;
 
   // content::WebContentsObserver implementation.
-  virtual void WebContentsDestroyed() override;
+   void WebContentsDestroyed() override;
+   void ShowUnmaskPrompt(
+      const autofill::CreditCard& card,
+      base::WeakPtr<autofill::CardUnmaskDelegate> delegate) override;
+   void OnUnmaskVerificationResult(bool success) override;
+   void OnFirstUserGestureObserved() override;
 
  private:
 #if defined(OS_MACOSX) && !defined(OS_IOS)

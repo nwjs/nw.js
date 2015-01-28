@@ -47,8 +47,6 @@ void ShellWebViewGuestDelegate::OnDocumentLoadedInFrame(
     content::RenderFrameHost* render_frame_host) {
 }
 
-void ShellWebViewGuestDelegate::OnEmbedderWillBeDestroyed() {
-}
 
 void ShellWebViewGuestDelegate::OnGuestDestroyed() {
 }

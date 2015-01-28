@@ -31,8 +31,8 @@
 #include "content/nw/src/nw_shell.h"
 #include "ui/gfx/image/image.h"
 #include "ui/gfx/native_widget_types.h"
-#include "ui/gfx/point.h"
-#include "ui/gfx/size.h"
+#include "ui/gfx/geometry/point.h"
+#include "ui/gfx/geometry/size.h"
 
 #if defined(OS_WIN) || defined(OS_LINUX)
 #include "components/web_modal/web_contents_modal_dialog_host.h"
@@ -70,7 +70,7 @@ class NativeWindow : public web_modal::WebContentsModalDialogHost {
 class NativeWindow {
 #endif
  public:
-  virtual ~NativeWindow();
+  ~NativeWindow() override;
 
   static NativeWindow* Create(const base::WeakPtr<content::Shell>& shell,
                               base::DictionaryValue* manifest);

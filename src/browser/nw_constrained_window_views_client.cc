@@ -14,6 +14,8 @@
 #include "ui/aura/window_observer.h"
 #include "ui/aura/window_property.h"
 
+DECLARE_WINDOW_PROPERTY_TYPE(web_modal::ModalDialogHost*);
+
 namespace nw {
 namespace {
 

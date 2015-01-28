@@ -55,6 +55,7 @@
 #include "net/url_request/url_request_context_getter.h"
 
 using base::MessageLoop;
+using base::CommandLine;
 using content::BrowserThread;
 using content::Shell;
 using content::ShellBrowserContext;

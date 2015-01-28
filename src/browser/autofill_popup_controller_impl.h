@@ -9,11 +9,11 @@
 #include "base/i18n/rtl.h"
 #include "base/memory/weak_ptr.h"
 #include "base/strings/string16.h"
-#include "content/nw/src/browser/autofill_popup_controller.h"
+#include "chrome/browser/ui/autofill/autofill_popup_controller.h"
 #include "chrome/browser/ui/autofill/popup_controller_common.h"
 #include "ui/gfx/font_list.h"
-#include "ui/gfx/rect.h"
-#include "ui/gfx/rect_f.h"
+#include "ui/gfx/geometry/rect.h"
+#include "ui/gfx/geometry/rect_f.h"
 
 namespace autofill {
 
@@ -38,10 +38,7 @@ class AutofillPopupControllerImpl : public AutofillPopupController {
       base::i18n::TextDirection text_direction);
 
   // Shows the popup, or updates the existing popup with the given values.
-  void Show(const std::vector<base::string16>& names,
-            const std::vector<base::string16>& subtexts,
-            const std::vector<base::string16>& icons,
-            const std::vector<int>& identifiers);
+  void Show(const std::vector<autofill::Suggestion>& suggestions);
 
   // Updates the data list values currently shown with the popup.
   void UpdateDataListValues(const std::vector<base::string16>& values,
@@ -88,13 +85,13 @@ class AutofillPopupControllerImpl : public AutofillPopupController {
   const gfx::RectF& element_bounds() const override;
   bool IsRTL() const override;
 
-  const std::vector<base::string16>& names() const override;
-  const std::vector<base::string16>& subtexts() const override;
-  const std::vector<base::string16>& icons() const override;
-  const std::vector<int>& identifiers() const override;
+  size_t GetLineCount() const override;
+  const autofill::Suggestion& GetSuggestionAt(size_t row) const override;
+  const base::string16& GetElidedValueAt(size_t row) const override;
+  const base::string16& GetElidedLabelAt(size_t row) const override;
 #if !defined(OS_ANDROID)
-  const gfx::FontList& GetNameFontListForRow(size_t index) const override;
-  const gfx::FontList& subtext_font_list() const override;
+  const gfx::FontList& GetValueFontListForRow(size_t index) const override;
+  const gfx::FontList& GetLabelFontList() const override;
 #endif
   int selected_line() const override;
 
@@ -126,10 +123,7 @@ class AutofillPopupControllerImpl : public AutofillPopupController {
 
   // Set the Autofill entry values. Exposed to allow tests to set these values
   // without showing the popup.
-  void SetValues(const std::vector<base::string16>& names,
-                 const std::vector<base::string16>& subtexts,
-                 const std::vector<base::string16>& icons,
-                 const std::vector<int>& identifier);
+  void SetValues(const std::vector<autofill::Suggestion>& suggestions);
 
   AutofillPopupView* view() { return view_; }
 
@@ -178,20 +172,19 @@ class AutofillPopupControllerImpl : public AutofillPopupController {
   base::i18n::TextDirection text_direction_;
 
   // The current Autofill query values.
-  std::vector<base::string16> names_;
-  std::vector<base::string16> subtexts_;
-  std::vector<base::string16> icons_;
-  std::vector<int> identifiers_;
+  std::vector<autofill::Suggestion> suggestions_;
 
-  // Since names_ can be elided to ensure that it fits on the screen, we need to
-  // keep an unelided copy of the names to be able to pass to the delegate.
-  std::vector<base::string16> full_names_;
+  // Elided values and labels corresponding to the suggestions_ vector to
+  // ensure that it fits on the screen.
+  std::vector<base::string16> elided_values_;
+  std::vector<base::string16> elided_labels_;
 
 #if !defined(OS_ANDROID)
   // The fonts for the popup text.
-  gfx::FontList name_font_list_;
-  gfx::FontList subtext_font_list_;
+  gfx::FontList value_font_list_;
+  gfx::FontList label_font_list_;
   gfx::FontList warning_font_list_;
+  gfx::FontList title_font_list_;
 #endif
 
   // The line that is currently selected by the user.

@@ -30,10 +30,10 @@ namespace nwapi {
 class WindowBindings : public v8::Extension {
  public:
   WindowBindings();
-  virtual ~WindowBindings();
+  ~WindowBindings() override;
 
   // v8::Extension implementation.
-  virtual v8::Handle<v8::FunctionTemplate>
+  v8::Handle<v8::FunctionTemplate>
       GetNativeFunctionTemplate(
                         v8::Isolate* isolate,
                         v8::Handle<v8::String> name) override;

@@ -102,11 +102,11 @@ class URLRequestNWAppJob : public net::URLRequestFileJob {
     //                                           base::Time());
   }
 
-  virtual void GetResponseInfo(net::HttpResponseInfo* info) override {
+  void GetResponseInfo(net::HttpResponseInfo* info) override {
     *info = response_info_;
   }
 
-  virtual void Start() override {
+  void Start() override {
     base::Time* last_modified_time = new base::Time();
     bool posted = content::BrowserThread::PostBlockingPoolTaskAndReply(
         FROM_HERE,
@@ -120,7 +120,7 @@ class URLRequestNWAppJob : public net::URLRequestFileJob {
   }
 
  private:
-  virtual ~URLRequestNWAppJob() {}
+  ~URLRequestNWAppJob() override {}
 
   void OnFilePathAndLastModifiedTimeRead(base::Time* last_modified_time) {
     response_info_.headers = BuildHttpHeaders(

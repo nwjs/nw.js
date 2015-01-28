@@ -41,7 +41,7 @@ class MenuBarView :
 
   // |browser_view| can be NULL during tests.
   MenuBarView();
-  virtual ~MenuBarView();
+  ~MenuBarView() override;
 
   void UpdateMenu(ui::MenuModel* model);
   void InitView(ui::MenuModel* model);
@@ -49,13 +49,13 @@ class MenuBarView :
   bool GetMenuButtonAtLocation(const gfx::Point& loc, ui::MenuModel** model, views::MenuButton** button);
 
   // views::MenuButtonListener:
-  virtual void OnMenuButtonClicked(views::View* view,
+   void OnMenuButtonClicked(views::View* view,
                                    const gfx::Point& point) override;
 
   // views::ButtonListener:
-  virtual void ButtonPressed(views::Button* sender,
+   void ButtonPressed(views::Button* sender,
                              const ui::Event& event) override;
-  virtual void OnNativeThemeChanged(const ui::NativeTheme* theme) override;
+   void OnNativeThemeChanged(const ui::NativeTheme* theme) override;
 
  private:
   ui::MenuModel* model_;

@@ -66,6 +66,7 @@
 #include "ui/base/resource/resource_bundle.h"
 
 #include "components/autofill/content/browser/content_autofill_driver.h"
+#include "components/autofill/content/browser/content_autofill_driver_factory.h"
 #include "components/autofill/core/browser/autofill_manager.h"
 #include "components/web_modal/web_contents_modal_dialog_manager.h"
 
@@ -234,7 +235,7 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
 
 #if 1
   autofill::NWAutofillClient::CreateForWebContents(web_contents);
-  autofill::ContentAutofillDriver::CreateForWebContentsAndDelegate(
+  autofill::ContentAutofillDriverFactory::CreateForWebContentsAndDelegate(
       web_contents,
       autofill::NWAutofillClient::FromWebContents(web_contents),
       "",
@@ -739,16 +740,16 @@ void Shell::Observe(int type,
       window()->SetTitle(base::UTF16ToUTF8(text));
     }
   } else if (type == NOTIFICATION_RENDERER_PROCESS_CLOSED) {
-    base::ProcessHandle handle =
-          content::Details<content::RenderProcessHost::RendererClosedDetails>(
-              details)->handle;
-    exit_code_ =
-      content::Details<content::RenderProcessHost::RendererClosedDetails>(details)->exit_code;
+    content::RenderProcessHost::RendererClosedDetails* process_details =
+      content::Details<content::RenderProcessHost::RendererClosedDetails>(details).ptr();
+    content::RenderProcessHost* host =
+      content::Source<content::RenderProcessHost>(source).ptr();
+    exit_code_ = process_details->exit_code;
 #if defined(OS_POSIX)
     if (WIFEXITED(exit_code_))
       exit_code_ = WEXITSTATUS(exit_code_);
 #endif
-    if (handle == web_contents_->GetRenderProcessHost()->GetHandle()) {
+    if (host->GetHandle() == web_contents_->GetRenderProcessHost()->GetHandle()) {
       set_force_close(true);
       window()->Close();
     }

@@ -31,17 +31,17 @@ class ShellDevToolsFrontend : public WebContentsObserver,
   Shell* frontend_shell() const { return frontend_shell_; }
 
   ShellDevToolsFrontend(Shell* frontend_shell, DevToolsAgentHost* agent_host);
-  virtual ~ShellDevToolsFrontend();
+  ~ShellDevToolsFrontend() final;
  private:
 
   // WebContentsObserver overrides
-  virtual void RenderViewCreated(RenderViewHost* render_view_host) override;
-  virtual void WebContentsDestroyed() override;
+   void RenderViewCreated(RenderViewHost* render_view_host) override;
+   void WebContentsDestroyed() override;
 
   // content::DevToolsFrontendHost::Delegate implementation.
-  virtual void HandleMessageFromDevToolsFrontend(
+   void HandleMessageFromDevToolsFrontend(
       const std::string& message) override;
-  virtual void HandleMessageFromDevToolsFrontendToBackend(
+   void HandleMessageFromDevToolsFrontendToBackend(
       const std::string& message) override;
 
   // content::DevToolsAgentHostClient implementation.

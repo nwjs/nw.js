@@ -8,7 +8,7 @@
 #include "base/basictypes.h"
 #include "base/compiler_specific.h"
 #include "extensions/browser/info_map.h"
-#include "net/base/network_delegate.h"
+#include "net/base/network_delegate_impl.h"
 namespace extensions {
 
 class InfoMap;
@@ -17,7 +17,7 @@ class InfoMap;
 
 namespace content {
 
-class ShellNetworkDelegate : public net::NetworkDelegate {
+class ShellNetworkDelegate : public net::NetworkDelegateImpl {
  public:
   ShellNetworkDelegate(void* browser_context, extensions::InfoMap* extension_info_map);
   ~ShellNetworkDelegate() override;

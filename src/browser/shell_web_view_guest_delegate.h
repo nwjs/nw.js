@@ -17,7 +17,6 @@ class ShellWebViewGuestDelegate : public WebViewGuestDelegate {
   ~ShellWebViewGuestDelegate() override;
 
   // WebViewGuestDelegate implementation.
-  double GetZoom() override;
   bool HandleContextMenu(const content::ContextMenuParams& params) override;
   void OnAttachWebViewHelpers(content::WebContents* contents) override;
   void OnDidAttachToEmbedder() override;
@@ -25,9 +24,7 @@ class ShellWebViewGuestDelegate : public WebViewGuestDelegate {
   void OnDidInitialize() override;
   void OnDocumentLoadedInFrame(
       content::RenderFrameHost* render_frame_host) override;
-  void OnEmbedderWillBeDestroyed() override;
   void OnGuestDestroyed() override;
-  void OnSetZoom(double zoom_factor) override;
   void OnShowContextMenu(int request_id, const MenuItemVector* items) override;
 
   WebViewGuest* web_view_guest() const { return web_view_guest_; }

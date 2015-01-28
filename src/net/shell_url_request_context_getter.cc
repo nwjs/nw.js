@@ -92,7 +92,7 @@ class NWCookieMonsterDelegate : public net::CookieMonster::Delegate {
   }
 
   // net::CookieMonster::Delegate implementation.
-  virtual void OnCookieChanged(
+  void OnCookieChanged(
       const net::CanonicalCookie& cookie,
       bool removed,
       net::CookieMonster::Delegate::ChangeCause cause) override {
@@ -101,11 +101,11 @@ class NWCookieMonsterDelegate : public net::CookieMonster::Delegate {
         base::Bind(&NWCookieMonsterDelegate::OnCookieChangedAsyncHelper,
                    this, cookie, removed, cause));
   }
-  virtual void OnLoaded() override {
+  void OnLoaded() override {
   }
 
  private:
-  virtual ~NWCookieMonsterDelegate() {}
+  ~NWCookieMonsterDelegate() final {}
 
   void OnCookieChangedAsyncHelper(
       const net::CanonicalCookie& cookie,

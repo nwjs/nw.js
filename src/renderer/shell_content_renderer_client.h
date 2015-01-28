@@ -50,26 +50,26 @@ class ShellRenderProcessObserver;
 class ShellContentRendererClient : public ContentRendererClient {
  public:
   ShellContentRendererClient();
-  virtual ~ShellContentRendererClient();
-  virtual void RenderThreadStarted() override;
-  virtual void RenderViewCreated(RenderView* render_view) override;
+  ~ShellContentRendererClient() final;
+   void RenderThreadStarted() override;
+   void RenderViewCreated(RenderView* render_view) override;
 
-  virtual void DidCreateScriptContext(blink::WebFrame* frame,
+   void DidCreateScriptContext(blink::WebFrame* frame,
                                       v8::Handle<v8::Context> context,
                                       int extension_group,
                                       int world_id) override;
-  virtual bool WillSetSecurityToken(blink::WebFrame* frame,
+   bool WillSetSecurityToken(blink::WebFrame* frame,
                                     v8::Handle<v8::Context>) override;
 
-  virtual void willHandleNavigationPolicy(RenderView* rv,
+   void willHandleNavigationPolicy(RenderView* rv,
                                           blink::WebFrame* frame,
                                           const blink::WebURLRequest& request,
                                           blink::WebNavigationPolicy* policy,
                                           blink::WebString* manifest = NULL) override;
 
-  virtual void windowOpenBegin(const blink::WebURL& url) override;
-  virtual void windowOpenEnd() override;
-  virtual void RenderFrameCreated(content::RenderFrame* render_frame) override;
+   void windowOpenBegin(const blink::WebURL& url) override;
+   void windowOpenEnd() override;
+   void RenderFrameCreated(content::RenderFrame* render_frame) override;
   content::BrowserPluginDelegate* CreateBrowserPluginDelegate(
       content::RenderFrame* render_frame,
       const std::string& mime_type,
@@ -78,7 +78,7 @@ class ShellContentRendererClient : public ContentRendererClient {
  protected:
   // app_shell embedders may need custom extensions client interfaces.
   // This class takes ownership of the returned object.
-  virtual extensions::ExtensionsClient* CreateExtensionsClient();
+   extensions::ExtensionsClient* CreateExtensionsClient();
 
  private:
   scoped_ptr<extensions::ExtensionsClient> extensions_client_;

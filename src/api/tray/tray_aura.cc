@@ -43,10 +43,10 @@ class TrayObserver : public StatusIconObserver {
       : tray_(tray) {
   }
 
-  virtual ~TrayObserver() {
+  ~TrayObserver() final {
   }
 
-  virtual void OnStatusIconClicked() override {
+  void OnStatusIconClicked() override {
     base::ListValue args;
     base::DictionaryValue* data = new base::DictionaryValue;
     gfx::Point cursor_pos(

@@ -50,7 +50,7 @@ class Base;
 class DispatcherHost : public content::WebContentsObserver {
  public:
   explicit DispatcherHost(content::RenderViewHost* render_view_host);
-  virtual ~DispatcherHost();
+  ~DispatcherHost() final;
 
   // Get C++ object from its id.
   static Base* GetApiObject(int id);
@@ -70,8 +70,8 @@ class DispatcherHost : public content::WebContentsObserver {
                  const std::string& event,
                  const base::ListValue& arguments);
 
-  virtual bool Send(IPC::Message* message) override;
-  virtual void RenderViewHostChanged(content::RenderViewHost* old_host,
+  bool Send(IPC::Message* message) override;
+  void RenderViewHostChanged(content::RenderViewHost* old_host,
                                      content::RenderViewHost* new_host) override;
   content::RenderViewHost* render_view_host() const {
     return render_view_host_;
@@ -97,9 +97,9 @@ class DispatcherHost : public content::WebContentsObserver {
 
   // RenderViewHostObserver implementation.
   // WebContentsObserver implementation:
-  virtual bool OnMessageReceived(
-                                 content::RenderViewHost* render_view_host,
-                                 const IPC::Message& message) override;
+  bool OnMessageReceived(
+                         content::RenderViewHost* render_view_host,
+                         const IPC::Message& message) override;
 
 
   void OnAllocateObject(int object_id,

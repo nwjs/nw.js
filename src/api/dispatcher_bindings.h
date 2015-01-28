@@ -30,10 +30,10 @@ namespace nwapi {
 class DispatcherBindings : public v8::Extension {
  public:
   DispatcherBindings();
-  virtual ~DispatcherBindings();
+  ~DispatcherBindings() final;
 
   // v8::Extension implementation.
-  virtual v8::Handle<v8::FunctionTemplate>
+  v8::Handle<v8::FunctionTemplate>
       GetNativeFunctionTemplate(
                         v8::Isolate* isolate,
                         v8::Handle<v8::String> name) override;

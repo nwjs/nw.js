@@ -182,6 +182,11 @@ SharedUserScriptMaster* ShellExtensionSystem::shared_user_script_master() {
   return NULL;
 }
 
+DeclarativeUserScriptManager*
+ShellExtensionSystem::declarative_user_script_manager() {
+  return nullptr;
+}
+
 StateStore* ShellExtensionSystem::state_store() {
   return NULL;
 }
@@ -244,12 +249,6 @@ ContentVerifier* ShellExtensionSystem::content_verifier() {
 scoped_ptr<ExtensionSet> ShellExtensionSystem::GetDependentExtensions(
     const Extension* extension) {
   return make_scoped_ptr(new ExtensionSet());
-}
-
-DeclarativeUserScriptMaster*
-ShellExtensionSystem::GetDeclarativeUserScriptMasterByExtension(
-    const ExtensionId& extension_id) {
-  return NULL;
 }
 
 }  // namespace extensions

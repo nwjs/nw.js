@@ -31,6 +31,9 @@ class ShellExtensionsClient : public ExtensionsClient {
       const URLPatternSet& hosts,
       URLPatternSet* new_hosts,
       std::set<PermissionMessage>* messages) const override;
+  void FilterHostPermissions(const URLPatternSet& hosts,
+                                     URLPatternSet* new_hosts,
+                                     PermissionIDSet* permissions) const override;
   void SetScriptingWhitelist(const ScriptingWhitelist& whitelist) override;
   const ScriptingWhitelist& GetScriptingWhitelist() const override;
   URLPatternSet GetPermittedChromeSchemeHosts(

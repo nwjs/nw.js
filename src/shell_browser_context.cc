@@ -52,14 +52,14 @@ namespace content {
 class ShellBrowserContext::ShellResourceContext : public ResourceContext {
  public:
   ShellResourceContext() : getter_(NULL) {}
-  virtual ~ShellResourceContext() {}
+  ~ShellResourceContext() final {}
 
   // ResourceContext implementation:
-  virtual net::HostResolver* GetHostResolver() override {
+  net::HostResolver* GetHostResolver() override {
     CHECK(getter_);
     return getter_->host_resolver();
   }
-  virtual net::URLRequestContext* GetRequestContext() override {
+  net::URLRequestContext* GetRequestContext() override {
     CHECK(getter_);
     return getter_->GetURLRequestContext();
   }
@@ -100,7 +100,7 @@ nw::NwFormDatabaseService* ShellBrowserContext::GetFormDatabaseService() {
 }
 
 void ShellBrowserContext::InitWhileIOAllowed() {
-  CommandLine* cmd_line = CommandLine::ForCurrentProcess();
+  base::CommandLine* cmd_line = base::CommandLine::ForCurrentProcess();
   if (cmd_line->HasSwitch(switches::kIgnoreCertificateErrors)) {
     ignore_certificate_errors_ = true;
   }
@@ -166,15 +166,15 @@ net::URLRequestContextGetter* ShellBrowserContext::CreateRequestContext(
     extensions::InfoMap* extension_info_map) {
 
   DCHECK(!url_request_getter_);
-  CommandLine* cmd_line = CommandLine::ForCurrentProcess();
+  base::CommandLine* cmd_line = base::CommandLine::ForCurrentProcess();
   std::string auth_server_whitelist =
-    cmd_line->GetSwitchValueASCII(switches::kAuthServerWhitelist);
+    cmd_line->GetSwitchValueASCII("auth-server-whitelist");
   std::string auth_delegate_whitelist =
-    cmd_line->GetSwitchValueASCII(switches::kAuthNegotiateDelegateWhitelist);
+    cmd_line->GetSwitchValueASCII("auth-negotiate-delegate-whitelist");
   std::string gssapi_library_name =
     cmd_line->GetSwitchValueASCII(switches::kGSSAPILibraryName);
   std::string auth_schemes =
-    cmd_line->GetSwitchValueASCII(switches::kAuthSchemes);
+    cmd_line->GetSwitchValueASCII("auth-schemes");
 
   if (auth_schemes.empty())
     auth_schemes = "basic,digest,ntlm,negotiate";

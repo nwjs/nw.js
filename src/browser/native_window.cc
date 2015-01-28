@@ -30,7 +30,7 @@
 #include "content/public/common/content_switches.h"
 #include "grit/nw_resources.h"
 #include "ui/base/resource/resource_bundle.h"
-#include "ui/gfx/rect.h"
+#include "ui/gfx/geometry/rect.h"
 
 #if defined(OS_MACOSX)
 #include "content/nw/src/browser/native_window_helper_mac.h"

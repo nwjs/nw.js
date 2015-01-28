@@ -46,18 +46,18 @@ class GlobalShortcutListenerX11
       public GlobalShortcutListener {
  public:
   GlobalShortcutListenerX11();
-  virtual ~GlobalShortcutListenerX11();
+  ~GlobalShortcutListenerX11() final;
 
   // base::MessagePumpDispatcher implementation.
-  virtual uint32_t Dispatch(const base::NativeEvent& event) override;
+   uint32_t Dispatch(const base::NativeEvent& event) override;
 
  private:
   // GlobalShortcutListener implementation.
-  virtual void StartListening() override;
-  virtual void StopListening() override;
-  virtual bool RegisterAcceleratorImpl(
+   void StartListening() override;
+   void StopListening() override;
+   bool RegisterAcceleratorImpl(
       const ui::Accelerator& accelerator) override;
-  virtual void UnregisterAcceleratorImpl(
+   void UnregisterAcceleratorImpl(
       const ui::Accelerator& accelerator) override;
 
 #if defined(OS_LINUX)

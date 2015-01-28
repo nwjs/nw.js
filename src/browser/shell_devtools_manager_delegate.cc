@@ -32,6 +32,8 @@
 #include "net/socket/unix_domain_server_socket_posix.h"
 #endif
 
+using base::CommandLine;
+
 namespace content {
 
 namespace {

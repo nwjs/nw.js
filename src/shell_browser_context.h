@@ -36,27 +36,27 @@ class ShellBrowserContext : public BrowserContext {
  public:
   explicit ShellBrowserContext(bool off_the_record,
                                nw::Package* package);
-  virtual ~ShellBrowserContext();
+   ~ShellBrowserContext() final;
 
   // BrowserContext implementation.
-  virtual FilePath GetPath() const override;
-  virtual bool IsOffTheRecord() const override;
-  virtual DownloadManagerDelegate* GetDownloadManagerDelegate() override;
-  virtual net::URLRequestContextGetter* GetRequestContext() override;
-  virtual net::URLRequestContextGetter* GetRequestContextForRenderProcess(
+   FilePath GetPath() const override;
+   bool IsOffTheRecord() const override;
+   DownloadManagerDelegate* GetDownloadManagerDelegate() override;
+   net::URLRequestContextGetter* GetRequestContext() override;
+   net::URLRequestContextGetter* GetRequestContextForRenderProcess(
       int renderer_child_id) override;
-  virtual net::URLRequestContextGetter* GetMediaRequestContext() override;
-  virtual net::URLRequestContextGetter* GetMediaRequestContextForRenderProcess(
+   net::URLRequestContextGetter* GetMediaRequestContext() override;
+   net::URLRequestContextGetter* GetMediaRequestContextForRenderProcess(
       int renderer_child_id) override;
-  virtual net::URLRequestContextGetter*
+   net::URLRequestContextGetter*
       GetMediaRequestContextForStoragePartition(
           const FilePath& partition_path,
           bool in_memory) override;
-  virtual ResourceContext* GetResourceContext() override;
-  virtual storage::SpecialStoragePolicy* GetSpecialStoragePolicy() override;
-  virtual BrowserPluginGuestManager* GetGuestManager() override;
-  virtual PushMessagingService* GetPushMessagingService() override;
-  virtual SSLHostStateDelegate* GetSSLHostStateDelegate() override;
+   ResourceContext* GetResourceContext() override;
+   storage::SpecialStoragePolicy* GetSpecialStoragePolicy() override;
+   BrowserPluginGuestManager* GetGuestManager() override;
+   PushMessagingService* GetPushMessagingService() override;
+   SSLHostStateDelegate* GetSSLHostStateDelegate() override;
   scoped_ptr<ZoomLevelDelegate> CreateZoomLevelDelegate(
       const base::FilePath& partition_path) override;
 

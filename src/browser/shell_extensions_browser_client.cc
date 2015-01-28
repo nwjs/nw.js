@@ -318,7 +318,7 @@ ShellExtensionsBrowserClient::CreateRuntimeAPIDelegate(
   return scoped_ptr<RuntimeAPIDelegate>(new ShellRuntimeAPIDelegate());
 }
 
-ComponentExtensionResourceManager*
+const ComponentExtensionResourceManager*
 ShellExtensionsBrowserClient::GetComponentExtensionResourceManager() {
   if (!resource_manager_)
     resource_manager_.reset(new ShellComponentExtensionResourceManager());

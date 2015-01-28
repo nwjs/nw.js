@@ -15,14 +15,14 @@ class ShellResourceDispatcherHostDelegate
     : public ResourceDispatcherHostDelegate {
  public:
   ShellResourceDispatcherHostDelegate();
-  virtual ~ShellResourceDispatcherHostDelegate();
+  ~ShellResourceDispatcherHostDelegate() final;
 
   // ResourceDispatcherHostDelegate implementation.
-  virtual ResourceDispatcherHostLoginDelegate* CreateLoginDelegate(
+  ResourceDispatcherHostLoginDelegate* CreateLoginDelegate(
       net::AuthChallengeInfo* auth_info, net::URLRequest* request) override;
-  virtual bool HandleExternalProtocol(const GURL& url,
-                                      int child_id,
-                                      int route_id) override;
+  bool HandleExternalProtocol(const GURL& url,
+                              int child_id,
+                              int route_id) override;
 
   // Used for content_browsertests.
   void set_login_request_callback(

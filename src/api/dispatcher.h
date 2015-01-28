@@ -45,7 +45,7 @@ namespace nwapi {
 class Dispatcher : public content::RenderViewObserver {
  public:
   explicit Dispatcher(content::RenderView* render_view);
-  virtual ~Dispatcher();
+  ~Dispatcher() final;
 
   static v8::Handle<v8::Object> GetObjectRegistry();
   static v8::Handle<v8::Value> GetWindowId(blink::WebFrame* frame);
@@ -59,10 +59,10 @@ class Dispatcher : public content::RenderViewObserver {
 
  private:
   // RenderViewObserver implementation.
-  virtual bool OnMessageReceived(const IPC::Message& message) override;
-  virtual void DraggableRegionsChanged(blink::WebFrame* frame) override;
-  virtual void DidFinishDocumentLoad(blink::WebLocalFrame* frame) override;
-  virtual void DidCreateDocumentElement(blink::WebLocalFrame* frame) override;
+   bool OnMessageReceived(const IPC::Message& message) override;
+   void DraggableRegionsChanged(blink::WebFrame* frame) override;
+   void DidFinishDocumentLoad(blink::WebLocalFrame* frame) override;
+   void DidCreateDocumentElement(blink::WebLocalFrame* frame) override;
 
   void documentCallback(const char* ev, blink::WebLocalFrame* frame);
 

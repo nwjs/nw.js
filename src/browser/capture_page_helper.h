@@ -65,7 +65,7 @@ class CapturePageHelper : public base::RefCountedThreadSafe<CapturePageHelper>,
 
  private:
   CapturePageHelper(const base::WeakPtr<content::Shell>& shell);
-  virtual ~CapturePageHelper();
+  ~CapturePageHelper() override;
 
   // Internal helpers ----------------------------------------------------------
 
@@ -76,7 +76,7 @@ class CapturePageHelper : public base::RefCountedThreadSafe<CapturePageHelper>,
   void SendResultFromBitmap(const SkBitmap& screen_capture);
 
   // content::WebContentsObserver overrides:
-  virtual bool OnMessageReceived(const IPC::Message& message) override;
+  bool OnMessageReceived(const IPC::Message& message) override;
 
   base::WeakPtr<content::Shell> shell_;
 

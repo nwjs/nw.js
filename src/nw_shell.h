@@ -84,7 +84,7 @@ class Shell : public WebContentsDelegate,
   };
 
   explicit Shell(WebContents* web_contents, base::DictionaryValue* manifest);
-  virtual ~Shell();
+  ~Shell() final;
 
   // Create a new shell.
   static Shell* Create(BrowserContext* browser_context,
@@ -144,67 +144,67 @@ class Shell : public WebContentsDelegate,
   void set_id(int id) { id_ = id; }
   int id() const { return id_; }
 
-  virtual void RenderViewCreated(RenderViewHost* render_view_host) override;
+   void RenderViewCreated(RenderViewHost* render_view_host) override;
 #if defined(OS_WIN) || defined(OS_LINUX)
-  virtual void SetWebContentsBlocked(content::WebContents* web_contents, bool) override {}
-  virtual bool IsWebContentsVisible(content::WebContents* web_contents) override;
-  virtual web_modal::WebContentsModalDialogHost* GetWebContentsModalDialogHost() override;
+   void SetWebContentsBlocked(content::WebContents* web_contents, bool) override {}
+   bool IsWebContentsVisible(content::WebContents* web_contents) override;
+   web_modal::WebContentsModalDialogHost* GetWebContentsModalDialogHost() override;
 #endif
-  virtual bool CheckMediaAccessPermission(WebContents* web_contents,
+   bool CheckMediaAccessPermission(WebContents* web_contents,
                                           const GURL& security_origin,
                                           MediaStreamType type) override;
  protected:
   // content::WebContentsObserver implementation.
-  virtual bool OnMessageReceived(const IPC::Message& message) override;
+   bool OnMessageReceived(const IPC::Message& message) override;
 
   // content::WebContentsDelegate implementation.
-  virtual WebContents* OpenURLFromTab(WebContents* source,
+   WebContents* OpenURLFromTab(WebContents* source,
                                       const OpenURLParams& params) override;
-  virtual void LoadingStateChanged(WebContents* source,
+   void LoadingStateChanged(WebContents* source,
                                    bool to_different_document) override;
-  virtual void ActivateContents(content::WebContents* contents) override;
-  virtual void DeactivateContents(content::WebContents* contents) override;
-  virtual void CloseContents(WebContents* source) override;
-  virtual void MoveContents(WebContents* source, const gfx::Rect& pos) override;
-  virtual bool IsPopupOrPanel(const WebContents* source) const override;
-  virtual void WebContentsCreated(WebContents* source_contents,
+   void ActivateContents(content::WebContents* contents) override;
+   void DeactivateContents(content::WebContents* contents) override;
+   void CloseContents(WebContents* source) override;
+   void MoveContents(WebContents* source, const gfx::Rect& pos) override;
+   bool IsPopupOrPanel(const WebContents* source) const override;
+   void WebContentsCreated(WebContents* source_contents,
                                   int source_frame_id,
                                   const base::string16& frame_name,
                                   const GURL& target_url,
                                   WebContents* new_contents,
                                   const base::string16& nw_window_manifest) override;
-  virtual void ToggleFullscreenModeForTab(WebContents* web_contents,
+   void ToggleFullscreenModeForTab(WebContents* web_contents,
                                           bool enter_fullscreen) override;
-  virtual bool IsFullscreenForTabOrPending(
+   bool IsFullscreenForTabOrPending(
       const WebContents* web_contents) const override;
 #if defined(OS_WIN) || defined(OS_LINUX)
-  virtual void WebContentsFocused(WebContents* contents) override;
+   void WebContentsFocused(WebContents* contents) override;
 #endif
-  virtual content::ColorChooser* OpenColorChooser(
+   content::ColorChooser* OpenColorChooser(
       content::WebContents* web_contents,
       SkColor color,
       const std::vector<ColorSuggestion>& suggestions) override;
-  virtual void RunFileChooser(
+   void RunFileChooser(
       content::WebContents* web_contents,
       const content::FileChooserParams& params) override;
-  virtual void EnumerateDirectory(content::WebContents* web_contents,
+   void EnumerateDirectory(content::WebContents* web_contents,
                                   int request_id,
                                   const FilePath& path) override;
-  virtual void DidNavigateMainFramePostCommit(
+   void DidNavigateMainFramePostCommit(
       WebContents* web_contents) override;
-  virtual JavaScriptDialogManager* GetJavaScriptDialogManager(WebContents* source) override;
-  virtual void RequestToLockMouse(WebContents* web_contents,
+   JavaScriptDialogManager* GetJavaScriptDialogManager(WebContents* source) override;
+   void RequestToLockMouse(WebContents* web_contents,
                                   bool user_gesture,
                                   bool last_unlocked_by_target) override;
-  virtual void HandleKeyboardEvent(
+   void HandleKeyboardEvent(
       WebContents* source,
       const NativeWebKeyboardEvent& event) override;
-  virtual bool AddMessageToConsole(WebContents* source,
+   bool AddMessageToConsole(WebContents* source,
                                    int32 level,
                                    const base::string16& message,
                                    int32 line_no,
                                    const base::string16& source_id) override;
-  virtual void RequestMediaAccessPermission(
+   void RequestMediaAccessPermission(
       WebContents* web_contents,
       const MediaStreamRequest& request,
       const MediaResponseCallback& callback) override;
@@ -220,7 +220,7 @@ class Shell : public WebContentsDelegate,
       const std::vector<extensions::DraggableRegion>& regions);
 
   // NotificationObserver
-  virtual void Observe(int type,
+   void Observe(int type,
                        const NotificationSource& source,
                        const NotificationDetails& details) override;
 

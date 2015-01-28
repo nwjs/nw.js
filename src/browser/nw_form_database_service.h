@@ -25,7 +25,7 @@ class NwFormDatabaseService : public WebDataServiceConsumer {
  public:
   NwFormDatabaseService(const base::FilePath path);
 
-  virtual ~NwFormDatabaseService();
+  ~NwFormDatabaseService() final;
 
   void Shutdown();
 
@@ -40,7 +40,7 @@ class NwFormDatabaseService : public WebDataServiceConsumer {
       get_autofill_webdata_service();
 
   // WebDataServiceConsumer implementation.
-  virtual void OnWebDataServiceRequestDone(
+  void OnWebDataServiceRequestDone(
       WebDataServiceBase::Handle h,
       const WDTypedResult* result) override;
 
