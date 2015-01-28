@@ -16,7 +16,7 @@
 #include "base/strings/stringprintf.h"
 #include "base/strings/utf_string_conversions.h"
 #include "chrome/common/print_messages.h"
-#include "chrome/grit/browser_resources.h"
+//#include "chrome/grit/browser_resources.h"
 #include "content/public/common/web_preferences.h"
 #include "content/public/renderer/render_frame.h"
 #include "content/public/renderer/render_thread.h"

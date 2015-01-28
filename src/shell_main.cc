@@ -35,6 +35,8 @@
 #include "shell_content_main.h"
 #endif
 
+using base::CommandLine;
+
 #if defined(OS_WIN)
 
 int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE, wchar_t*, int) {

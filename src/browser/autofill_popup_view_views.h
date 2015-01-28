@@ -5,8 +5,8 @@
 #ifndef CHROME_BROWSER_UI_VIEWS_AUTOFILL_AUTOFILL_POPUP_VIEW_VIEWS_H_
 #define CHROME_BROWSER_UI_VIEWS_AUTOFILL_AUTOFILL_POPUP_VIEW_VIEWS_H_
 
-#include "content/nw/src/browser/autofill_popup_view.h"
-#include "content/nw/src/browser/autofill_popup_base_view.h"
+#include "chrome/browser/ui/autofill/autofill_popup_view.h"
+#include "chrome/browser/ui/views/autofill/autofill_popup_base_view.h"
 
 class AutofillPopupController;
 
