@@ -33,10 +33,6 @@ Tray::Tray(int id,
     : Base(id, dispatcher_host, option) {
   Create(option);
 
-  std::string title;
-  if (option.GetString("title", &title))
-    SetTitle(title);
-
   bool areTemplates;
   if (option.GetBoolean("iconsAreTemplates", &areTemplates))
     SetIconsAreTemplates(areTemplates);
@@ -52,6 +48,10 @@ Tray::Tray(int id,
   std::string tooltip;
   if (option.GetString("tooltip", &tooltip))
     SetTooltip(tooltip);
+
+  std::string title;
+  if (option.GetString("title", &title))
+    SetTitle(title);
 
   int menu_id;
   if (option.GetInteger("menu", &menu_id))
