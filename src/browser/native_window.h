@@ -66,11 +66,13 @@ class CapturePageHelper;
 
 #if defined(OS_WIN) || defined(OS_LINUX)
 class NativeWindow : public web_modal::WebContentsModalDialogHost {
+public:
+  ~NativeWindow() override;
 #else
 class NativeWindow {
+public:
+  virtual ~NativeWindow();
 #endif
- public:
-  ~NativeWindow() override;
 
   static NativeWindow* Create(const base::WeakPtr<content::Shell>& shell,
                               base::DictionaryValue* manifest);

@@ -10,7 +10,6 @@
 #include "chrome/browser/ui/autofill/autofill_popup_controller.h"
 #include "chrome/browser/ui/autofill/autofill_popup_view_delegate.h"
 #import "chrome/browser/ui/cocoa/autofill/autofill_popup_view_cocoa.h"
-#include "ui/gfx/rect.h"
 
 namespace autofill {
 
