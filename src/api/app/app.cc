@@ -38,7 +38,6 @@
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/shortcut/global_shortcut_listener.h"
 #include "content/nw/src/api/shortcut/shortcut.h"
-#include "content/nw/src/breakpad_linux.h"
 #include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/browser/net_disk_cache_remover.h"
 #include "content/nw/src/nw_package.h"
