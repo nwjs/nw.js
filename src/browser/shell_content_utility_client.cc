@@ -22,7 +22,7 @@
 #include "third_party/skia/include/core/SkBitmap.h"
 #include "third_party/zlib/google/zip.h"
 #include "ui/gfx/codec/jpeg_codec.h"
-#include "ui/gfx/size.h"
+#include "ui/gfx/geometry/size.h"
 
 #include "base/debug/debugger.h"
 
