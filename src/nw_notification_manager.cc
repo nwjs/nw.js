@@ -18,6 +18,7 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "ui/gfx/image/image.h"
+#include "content/public/browser/desktop_notification_delegate.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/common/platform_notification_messages.h"
 
@@ -97,4 +98,45 @@ bool NotificationManager::DesktopNotificationPostError(int render_process_id, in
 #endif
   return true;
 }
+  
+blink::WebNotificationPermission NotificationManager::CheckPermission(ResourceContext* resource_context,
+                                                                      const GURL& origin,
+                                                                      int render_process_id) {
+  return blink::WebNotificationPermissionAllowed;
+}
+
+void CancelDesktopNotification(int notification_id) {
+  nw::NotificationManager *notificationManager = nw::NotificationManager::getSingleton();
+  if (notificationManager == NULL) {
+    NOTIMPLEMENTED();
+    return;
+  }
+  notificationManager->CancelDesktopNotification(notification_id);
+}
+
+void NotificationManager::DisplayNotification(BrowserContext* browser_context,
+                                              const GURL& origin,
+                                              const SkBitmap& icon,
+                                              const PlatformNotificationData& notification_data,
+                                              scoped_ptr<DesktopNotificationDelegate> delegate,
+                                              int render_process_id,
+                                              base::Closure* cancel_callback) {
+  if (AddDesktopNotification(notification_data, render_process_id, delegate->notification_id(), icon))
+    *cancel_callback = base::Bind(&nw::CancelDesktopNotification, delegate->notification_id());
+}
+  
+void NotificationManager::DisplayPersistentNotification(BrowserContext* browser_context,
+                                                        int64 service_worker_registration_id,
+                                                        const GURL& origin,
+                                                        const SkBitmap& icon,
+                                                        const PlatformNotificationData& notification_data,
+                                                        int render_process_id) {
+  NOTIMPLEMENTED();
+}
+
+void NotificationManager::ClosePersistentNotification(BrowserContext* browser_context,
+                                                      const std::string& persistent_notification_id) {
+  NOTIMPLEMENTED();
+}
+  
 } // namespace nw

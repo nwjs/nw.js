@@ -23,6 +23,7 @@
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/render_view_host.h"
+#include "content/public/common/platform_notification_data.h"
 #include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
@@ -69,14 +70,14 @@ void NotificationManagerLinux::onClose(NotifyNotification *notif)
   g_object_unref(G_OBJECT(notif));
 };
 
-bool NotificationManagerLinux::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
+bool NotificationManagerLinux::AddDesktopNotification(const content::PlatformNotificationData& params,
   const int render_process_id,
   const int notification_id,
-  const bool worker) {
+  const SkBitmap& icon) {
   content::Shell* shell = content::Shell::windows()[0];
   SkBitmap bitmap;
-  if(params.icon.getSize()) {
-    bitmap = params.icon;
+  if(icon.getSize()) {
+    bitmap = icon;
   } else {
     bitmap = shell->window()->app_icon().AsBitmap();
   }
@@ -126,7 +127,7 @@ bool NotificationManagerLinux::AddDesktopNotification(const content::ShowDesktop
   return error==NULL;
 }
 
-bool NotificationManagerLinux::CancelDesktopNotification(int render_process_id, int notification_id) {
+bool NotificationManagerLinux::CancelDesktopNotification(int notification_id) {
   NotificationMap::const_iterator i = getNotification(notification_id);
   if (i!=mNotificationIDmap.end()) {
     return notify_notification_close(i->second.mNotification, NULL);

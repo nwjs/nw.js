@@ -24,6 +24,7 @@
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/render_view_host.h"
+#include "content/public/common/platform_notification_data.h"
 #include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
@@ -118,8 +119,8 @@ NotificationManagerWin::~NotificationManagerWin() {
   }
 }
 
-bool NotificationManagerWin::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-  const int render_process_id, const int notification_id, const bool worker) {
+bool NotificationManagerWin::AddDesktopNotification(const content::PlatformNotificationData& params,
+  const int render_process_id, const int notification_id, const SkBitmap& bitmap_icon) {
 
   content::Shell* shell = content::Shell::windows()[0];
 
@@ -146,8 +147,8 @@ bool NotificationManagerWin::AddDesktopNotification(const content::ShowDesktopNo
   // add the counter
   notification_count_++;
   // try to get the notification icon image given by image download callback
-  if (params.icon.getSize())
-    icon = gfx::Image::CreateFrom1xBitmap(params.icon);
+  if (bitmap_icon.getSize())
+    icon = gfx::Image::CreateFrom1xBitmap(bitmap_icon);
 
   //if body is empty string, the baloon won't shown
   base::string16 body = params.body;
@@ -163,7 +164,7 @@ bool NotificationManagerWin::AddDesktopNotification(const content::ShowDesktopNo
   return result;
 }
 
-bool NotificationManagerWin::CancelDesktopNotification(int render_process_id, int notification_id) {
+bool NotificationManagerWin::CancelDesktopNotification(int notification_id) {
   //windows  can only have 1 notification, cannot delete existing notification
   return true;
 }

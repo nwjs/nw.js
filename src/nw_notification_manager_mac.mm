@@ -24,6 +24,7 @@
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/render_view_host.h"
+#include "content/public/common/platform_notification_data.h"
 #include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
@@ -80,21 +81,19 @@ static NWUserNotificationCenterDelegate *singleton_ = nil;
 namespace nw {
 NotificationManagerMac::NotificationManagerMac() {
 }
-
-bool NotificationManagerMac::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-  const int render_process_id, const int notification_id, const bool worker) {
-
+  
+bool NotificationManagerMac::AddDesktopNotification(const content::PlatformNotificationData &params,
+                                                    const int render_process_id, const int notification_id, const SkBitmap& icon) {
+  
   NSUserNotification *notification = [[NSUserNotification alloc] init];
   [notification setTitle : base::SysUTF16ToNSString(params.title)];
   [notification setInformativeText : base::SysUTF16ToNSString(params.body)];
   notification.hasActionButton = YES;
-
-  if (params.icon.getSize() > 0 && base::mac::IsOSMavericksOrLater()) {
-    // try to get the notification icon image given by image download callback
-    gfx::Image icon = gfx::Image::CreateFrom1xBitmap(params.icon);
-
+  
+  if (base::mac::IsOSMavericksOrLater() && icon.getSize()) {
+    gfx::Image image = gfx::Image::CreateFrom1xBitmap(icon);
     // this function only runs on Mavericks or later
-    [notification setContentImage : icon.ToNSImage()];
+    [notification setContentImage : image.ToNSImage()];
   }
 
   notification.userInfo = @{ @"render_process_id" :[NSNumber numberWithInt : render_process_id],
@@ -111,7 +110,7 @@ bool NotificationManagerMac::AddDesktopNotification(const content::ShowDesktopNo
   return true;
 }
 
-bool NotificationManagerMac::CancelDesktopNotification(int render_process_id, int notification_id){
+bool NotificationManagerMac::CancelDesktopNotification(int notification_id){
   for (NSUserNotification *notification in[[NSUserNotificationCenter defaultUserNotificationCenter] deliveredNotifications]) {
     NSNumber *current_notification_id = [notification.userInfo objectForKey : @"notification_id"];
     if (current_notification_id.intValue == notification_id){
