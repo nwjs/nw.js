@@ -14,7 +14,7 @@
     var customTrayMenu = gui.Window.open('custom-tray-menu.html', {
       width: 100, height: 120,
       frame: false, toolbar: false, 
-      show: false
+      show: false, 'visible-on-all-workspaces': true
     });
     var iconWidth = 13;
     var translate = require('os').platform() == 'darwin' ?
