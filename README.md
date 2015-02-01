@@ -98,6 +98,9 @@ And our [Wiki](https://github.com/rogerwang/node-webkit/wiki) for much more.
 
 We use the [google group](https://groups.google.com/d/forum/nwjs-general) as
 our mailing list (use English only). Subscribe via [nwjs-general+subscribe@googlegroups.com](mailto:nwjs-general+subscribe@googlegroups.com).
+
+*NOTE*: Links to the old google group (e.g. `https://groups.google.com/forum/#!msg/node-webkit/doRWZ07LgWQ/4fheV8FF8zsJ`) that are no more working can be fixed by replacing `node-webkit` with `nwjs-general` (e.g `https://groups.google.com/forum/#!msg/nwjs-general/doRWZ07LgWQ/4fheV8FF8zsJ`).
+
 Issues are being tracked here on GitHub.
 
 ## License
