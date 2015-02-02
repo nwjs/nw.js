@@ -58,7 +58,7 @@
 #include "content/nw/src/browser/shell_resource_dispatcher_host_delegate.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
-//#include "content/nw/src/nw_notification_manager.h"
+#include "content/nw/src/nw_notification_manager.h"
 #include "content/nw/src/nw_version.h"
 #include "content/nw/src/shell_browser_context.h"
 #include "content/nw/src/shell_browser_main_parts.h"
@@ -537,60 +537,16 @@ ShellContentBrowserClient::CreateQuotaPermissionContext() {
   return new ShellQuotaPermissionContext();
 }
 
-void CancelDesktopNotification(int render_process_id, int notification_id) {
-#if 0
-  nw::NotificationManager *notificationManager = nw::NotificationManager::getSingleton();
-  if (notificationManager == NULL) {
-    NOTIMPLEMENTED();
-    return;
-  }
-  notificationManager->CancelDesktopNotification(render_process_id, notification_id);
-#endif
-}
-
-#if 0
-blink::WebNotificationPermission
-ShellContentBrowserClient::CheckDesktopNotificationPermission(
-    const GURL& source_origin,
-    content::ResourceContext* context,
-    int render_process_id) {
-  return blink::WebNotificationPermissionAllowed;
-}
-
-void ShellContentBrowserClient::ShowDesktopNotification(
-      const ShowDesktopNotificationHostMsgParams& params,
-      BrowserContext* browser_context,
-      int render_process_id,
-      scoped_ptr<DesktopNotificationDelegate> delegate,
-      base::Closure* cancel_callback) {
+PlatformNotificationService* ShellContentBrowserClient::GetPlatformNotificationService() {
 #if ENABLE_NOTIFICATIONS
   nw::NotificationManager *notificationManager = nw::NotificationManager::getSingleton();
-  if (notificationManager == NULL) {
-    NOTIMPLEMENTED();
-    return;
+  if (notificationManager) {
+    return notificationManager;
   }
-  content::RenderProcessHost* process = content::RenderProcessHost::FromID(render_process_id);
-  notificationManager->AddDesktopNotification(params, process->GetID(),
-                                              delegate->notification_id(),
-                                              false);
-  *cancel_callback = base::Bind(&CancelDesktopNotification, process->GetID(), delegate->notification_id());
-#else
+#endif
   NOTIMPLEMENTED();
-#endif
-
+  return NULL;
 }
-
-
-void ShellContentBrowserClient::RequestPermission(
-    content::PermissionType permission,
-    content::WebContents* web_contents,
-    int bridge_id,
-    const GURL& requesting_frame,
-    bool user_gesture,
-    const base::Callback<void(bool)>& result_callback) {
-  result_callback.Run(true);
-}
-#endif
 
 DevToolsManagerDelegate*
 ShellContentBrowserClient::GetDevToolsManagerDelegate() {

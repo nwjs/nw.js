@@ -22,6 +22,7 @@
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/render_view_host.h"
+#include "content/public/common/platform_notification_data.h"
 #include "content/nw/src/browser/native_window.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
@@ -174,7 +175,7 @@ IFACEMETHODIMP ToastEventHandler::Invoke(_In_ IToastNotification* /* sender */, 
     BOOL succeeded = nw::NotificationManager::getSingleton()->DesktopNotificationPostClose(_render_process_id, _notification_id, tdr == ToastDismissalReason_UserCanceled);
     hr = succeeded ? S_OK : E_FAIL;
   }
-  nw::NotificationManager::getSingleton()->CancelDesktopNotification(_render_process_id, _notification_id);
+  nw::NotificationManager::getSingleton()->CancelDesktopNotification(_notification_id);
   return hr;
 }
 
@@ -269,17 +270,21 @@ HRESULT NotificationManagerToastWin::SetImageSrc(_In_z_ const wchar_t *imagePath
 }
 
 HRESULT NotificationManagerToastWin::CreateToastXml(_In_ IToastNotificationManagerStatics *toastManager, 
-  const content::ShowDesktopNotificationHostMsgParams& params, _Outptr_ IXmlDocument** inputXml) {
-  bool bImage = params.icon.getSize() > 0;
+  const content::PlatformNotificationData& params, const SkBitmap& icon, _Outptr_ IXmlDocument** inputXml) {
+  bool bImage = icon.getSize() > 0;
   char tempFileName[MAX_PATH];
   
-  if (bImage) {
+  if (params.icon.SchemeIsFile()) {
+    strcpy_s(tempFileName, params.icon.spec().data());
+  } 
+  else if (bImage) {
+     
     char temp[MAX_PATH];
     GetTempPathA(MAX_PATH, tempFileName);
     GetTempFileNameA(tempFileName, "NTF", 0, temp);
 
     Vector<char> encodedImage;
-    bImage = blink::PNGImageEncoder::encode(params.icon, reinterpret_cast<Vector<unsigned char>*>(&encodedImage));
+    bImage = blink::PNGImageEncoder::encode(icon, reinterpret_cast<Vector<unsigned char>*>(&encodedImage));
 
     FILE *f = fopen(temp, "wb");
     fwrite(encodedImage.data(), sizeof(char), encodedImage.size(), f);
@@ -347,6 +352,15 @@ bool NotificationManagerToastWin::IsSupported() {
 }
 
 NotificationManagerToastWin::NotificationManagerToastWin() {
+  Init();
+}
+
+bool NotificationManagerToastWin::Init() {
+  if (!content::BrowserThread::CurrentlyOn(BrowserThread::UI))
+    return false;
+  
+  DCHECK(toastStatics_.Get() == NULL);
+
   HRESULT hr = GetActivationFactory(StringReferenceWrapper(RuntimeClass_Windows_UI_Notifications_ToastNotificationManager).Get(), &toastStatics_);
   if (SUCCEEDED(hr)) {
     base::string16 appID;
@@ -355,16 +369,20 @@ NotificationManagerToastWin::NotificationManagerToastWin() {
 
     HRESULT hr = toastStatics_->CreateToastNotifierWithId(StringReferenceWrapper(appID.c_str(), appID.length()).Get(), &notifier_);
   }
+  return SUCCEEDED(hr);
 }
 
 NotificationManagerToastWin::~NotificationManagerToastWin() {
 }
 
-bool NotificationManagerToastWin::AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-  const int render_process_id, const int notification_id, const bool worker) {
+bool NotificationManagerToastWin::AddDesktopNotification(const content::PlatformNotificationData& params,
+  const int render_process_id, const int notification_id, const SkBitmap& icon) {
+
+  if (toastStatics_ == NULL)
+    if (!Init()) return false;
   
   ComPtr<IXmlDocument> toastXml;
-  HRESULT hr = CreateToastXml(toastStatics_.Get(), params, &toastXml);
+  HRESULT hr = CreateToastXml(toastStatics_.Get(), params, icon, &toastXml);
   if (SUCCEEDED(hr)) {
     hr = CreateToast(toastStatics_.Get(), toastXml.Get(), render_process_id, notification_id);
     if (SUCCEEDED(hr))
@@ -374,7 +392,7 @@ bool NotificationManagerToastWin::AddDesktopNotification(const content::ShowDesk
   return SUCCEEDED(hr);
 }
 
-bool NotificationManagerToastWin::CancelDesktopNotification(int render_process_id, int notification_id) {
+bool NotificationManagerToastWin::CancelDesktopNotification(int notification_id) {
   std::map<int, ComPtr<IToastNotification>>::iterator i = notification_map_.find(notification_id);
   if (i == notification_map_.end())
     return false;

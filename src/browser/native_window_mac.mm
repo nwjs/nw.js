@@ -495,8 +495,6 @@ void NativeWindowCocoa::Focus(bool focus) {
 void NativeWindowCocoa::Show() {
   NSApplication *myApp = [NSApplication sharedApplication];
   [myApp activateIgnoringOtherApps:NO];
-  content::RenderWidgetHostView* rwhv =
-      shell_->web_contents()->GetRenderWidgetHostView();
 
   if (first_show_ && initial_focus_) {
     [window() makeKeyAndOrderFront:nil];

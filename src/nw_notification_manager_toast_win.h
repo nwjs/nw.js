@@ -43,7 +43,7 @@ class NotificationManagerToastWin : public NotificationManager {
 
   // Create the toast XML from a template
   HRESULT CreateToastXml(_In_ IToastNotificationManagerStatics *toastManager,
-    const content::ShowDesktopNotificationHostMsgParams& params, _Outptr_ IXmlDocument** inputXml);
+    const content::PlatformNotificationData& params, const SkBitmap& icon, _Outptr_ IXmlDocument** inputXml);
 
   // Set the value of the "src" attribute of the "image" node
   HRESULT SetImageSrc(_In_z_ const wchar_t *imagePath, _In_ IXmlDocument *toastXml);
@@ -54,13 +54,15 @@ class NotificationManagerToastWin : public NotificationManager {
 
   HRESULT SetNodeValueString(_In_ HSTRING inputString, _In_ IXmlNode *node, _In_ IXmlDocument *xml);
 
+  bool Init();
+
 public:
   static bool IsSupported();
   explicit NotificationManagerToastWin();
   virtual ~NotificationManagerToastWin();
-  virtual bool AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-    const int render_process_id, const int notification_id, const bool worker) override;
-  virtual bool CancelDesktopNotification(int render_process_id, int notification_id) override;
+  virtual bool AddDesktopNotification(const content::PlatformNotificationData& params,
+    const int render_process_id, const int notification_id, const SkBitmap& icon) override;
+  virtual bool CancelDesktopNotification(int notification_id) override;
 };
 
 } // namespace nw

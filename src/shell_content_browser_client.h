@@ -110,28 +110,7 @@ class ShellContentBrowserClient : public ContentBrowserClient {
     content::BrowserContext* browser_context,
     const GURL& effective_url) override;
 
-  //Notification
-#if 0
-   blink::WebNotificationPermission CheckDesktopNotificationPermission(
-      const GURL& source_origin,
-      content::ResourceContext* context,
-      int render_process_id) override;
-
-   void ShowDesktopNotification(
-      const ShowDesktopNotificationHostMsgParams& params,
-      BrowserContext* browser_context,
-      int render_process_id,
-      scoped_ptr<DesktopNotificationDelegate> delegate,
-      base::Closure* cancel_callback) override;
-
-   void RequestPermission(
-      content::PermissionType permission,
-      content::WebContents* web_contents,
-      int bridge_id,
-      const GURL& requesting_frame,
-      bool user_gesture,
-      const base::Callback<void(bool)>& result_callback) override;
-#endif
+  PlatformNotificationService* GetPlatformNotificationService() override;
 
   content::SpeechRecognitionManagerDelegate*
   CreateSpeechRecognitionManagerDelegate() override;
