@@ -30,7 +30,6 @@
 #include "chrome/common/chrome_switches.h"
 #include "content/nw/src/api/app/app.h"
 #include "content/nw/src/api/dispatcher_host.h"
-#include "content/nw/src/breakpad_linux.h"
 #include "content/nw/src/browser/printing/print_job_manager.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
 #include "content/nw/src/common/shell_switches.h"

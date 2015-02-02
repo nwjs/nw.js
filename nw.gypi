@@ -363,6 +363,7 @@
         'src/shell_main_delegate.h',
         'src/shell_quota_permission_context.cc',
         'src/shell_quota_permission_context.h',
+        'src/breakpad.h',
       ],
       'msvs_settings': {
         'VCLinkerTool': {

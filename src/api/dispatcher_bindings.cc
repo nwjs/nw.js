@@ -19,13 +19,13 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "content/nw/src/api/dispatcher_bindings.h"
+#include "content/nw/src/breakpad.h"
 
 #include "base/files/file_path.h"
 #include "base/file_util.h"
 #include "base/logging.h"
 #include "base/values.h"
 #include "base/command_line.h"
-#include "content/nw/src/breakpad_linux.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/bindings_common.h"
 #include "content/public/renderer/render_view.h"
@@ -467,9 +467,9 @@ void DispatcherBindings::CrashRenderer(
 // static
 void DispatcherBindings::SetCrashDumpDir(
     const v8::FunctionCallbackInfo<v8::Value>& args) {
-#if defined(OS_WIN) || defined(OS_MACOSX)
-  //std::string path = *v8::String::Utf8Value(args[0]);
-  //FIXME: SetCrashDumpPath(path.c_str());
+#if defined(OS_WIN) || defined(OS_LINUX)
+  std::string path = *v8::String::Utf8Value(args[0]);
+  breakpad::SetCrashDumpPath(path.c_str());
 #endif
 }
 
