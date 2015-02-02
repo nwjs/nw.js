@@ -611,6 +611,9 @@ void ShellContentBrowserClient::SiteInstanceDeleting(
 
 const Extension* ShellContentBrowserClient::GetExtension(
     content::SiteInstance* site_instance) {
+  GURL url = site_instance->GetSiteURL();
+  if (url.SchemeIs("nw"))
+    return NULL;
   ExtensionRegistry* registry =
       ExtensionRegistry::Get(site_instance->GetBrowserContext());
   return registry->enabled_extensions().GetExtensionOrAppByURL(
