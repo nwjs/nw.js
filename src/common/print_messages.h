@@ -296,10 +296,11 @@ IPC_STRUCT_END()
 
 // Parameters for the IPC message ViewHostMsg_ScriptedPrint
 IPC_STRUCT_BEGIN(PrintHostMsg_ScriptedPrint_Params)
-  IPC_STRUCT_MEMBER(int, cookie)
-  IPC_STRUCT_MEMBER(int, expected_pages_count)
-  IPC_STRUCT_MEMBER(bool, has_selection)
-  IPC_STRUCT_MEMBER(printing::MarginType, margin_type)
+IPC_STRUCT_MEMBER(int, cookie)
+IPC_STRUCT_MEMBER(int, expected_pages_count)
+IPC_STRUCT_MEMBER(bool, has_selection)
+IPC_STRUCT_MEMBER(bool, is_scripted)
+IPC_STRUCT_MEMBER(printing::MarginType, margin_type)
 IPC_STRUCT_END()
 
 

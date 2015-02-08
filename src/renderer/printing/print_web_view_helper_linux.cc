@@ -6,7 +6,7 @@
 
 #include "base/logging.h"
 #include "base/memory/scoped_ptr.h"
-#include "chrome/common/print_messages.h"
+#include "content/nw/src/common/print_messages.h"
 #include "content/public/renderer/render_thread.h"
 #include "printing/metafile_skia_wrapper.h"
 #include "printing/page_size_margins.h"

@@ -15,7 +15,7 @@
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/stringprintf.h"
 #include "base/strings/utf_string_conversions.h"
-#include "chrome/common/print_messages.h"
+#include "content/nw/src/common/print_messages.h"
 //#include "chrome/grit/browser_resources.h"
 #include "content/public/common/web_preferences.h"
 #include "content/public/renderer/render_frame.h"
@@ -822,7 +822,7 @@ void PrintWebViewHelper::PrintPage(blink::WebLocalFrame* frame,
   DCHECK(frame);
 
   // Allow Prerendering to cancel this print request if necessary.
-  if (delegate_->CancelPrerender(render_view(), routing_id()))
+  if (delegate_ && delegate_->CancelPrerender(render_view(), routing_id()))
     return;
 
   if (!IsScriptInitiatedPrintAllowed(frame, user_initiated))
@@ -880,7 +880,7 @@ void PrintWebViewHelper::OnPrintForPrintPreview(
   // the element with ID "pdf-viewer" if it isn't an iframe.
   blink::WebLocalFrame* plugin_frame = pdf_element.document().frame();
   blink::WebElement plugin_element = pdf_element;
-  if (out_of_process_pdf_enabled_ && pdf_element.hasHTMLTagName("iframe")) {
+  if (delegate_ && out_of_process_pdf_enabled_ && pdf_element.hasHTMLTagName("iframe")) {
     plugin_frame = blink::WebLocalFrame::fromFrameOwnerElement(pdf_element);
     plugin_element = delegate_->GetPdfElement(plugin_frame);
     if (plugin_element.isNull()) {
@@ -942,7 +942,7 @@ void PrintWebViewHelper::OnPrintPages() {
     return;
   // If we are printing a PDF extension frame, find the plugin node and print
   // that instead.
-  auto plugin = delegate_->GetPdfElement(frame);
+  auto plugin = delegate_ ? delegate_->GetPdfElement(frame) : blink::WebElement();
   Print(frame, plugin, false);
 }
 
@@ -1197,7 +1197,7 @@ void PrintWebViewHelper::OnInitiatePrintPreview(bool selection_only) {
   DCHECK(frame);
   // If we are printing a PDF extension frame, find the plugin node and print
   // that instead.
-  auto plugin = delegate_->GetPdfElement(frame);
+  auto plugin = delegate_ ? delegate_->GetPdfElement(frame) : blink::WebElement();
   if (!plugin.isNull()) {
     PrintNode(plugin);
     return;

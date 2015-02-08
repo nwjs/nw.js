@@ -9,7 +9,7 @@
 #include "base/logging.h"
 #include "base/mac/scoped_nsautorelease_pool.h"
 #include "base/metrics/histogram.h"
-#include "chrome/common/print_messages.h"
+#include "content/nw/src/common/print_messages.h"
 #include "printing/metafile_skia_wrapper.h"
 #include "printing/page_size_margins.h"
 #include "skia/ext/platform_device.h"
