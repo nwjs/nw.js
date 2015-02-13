@@ -1,3 +1,23 @@
+0.12.0-alpha3 / 02-13-2014
+==========================
+- Chromium updated to 41.0.2272.32
+- io.js updated to 1.2.0
+
+0.12.0-alpha2 / 01-18-2014
+==========================
+- Fix: -webkit-app-region: drag; stopped working in version 0.12.0-alpha1 #2963
+- Fix: [WIN] ReferrenceError in native module function createWritableDummyStream #2933
+- support bypassing frame-ancestors CSP in Node frame #2967
+
+0.12.0-alpha1 / 01-15-2014
+==========================
+- renamed NW.js
+- Chromium is updated to 41.0.2236.2
+- migrated to io.js 1.0.0
+- new chrome.webrequest API
+- new 'webview' tag from Chrome extensions
+- new 'bg-script' field in the manifest
+
 0.11.3 / 12-16-2014
 ===================
 - new method in 'new-win-policy' event handler to control the options for new popup windows
