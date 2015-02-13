@@ -152,7 +152,7 @@ void NWAutofillClient::OnUnmaskVerificationResult(bool success) {
 }
 
 void NWAutofillClient::OnFirstUserGestureObserved() {
-  NOTIMPLEMENTED();
+  //NOTIMPLEMENTED();
 }
 
 }  // namespace autofill
