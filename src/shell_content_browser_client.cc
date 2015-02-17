@@ -96,6 +96,10 @@
 #include "extensions/browser/info_map.h"
 #include "extensions/browser/process_map.h"
 
+#include "content/public/browser/browser_ppapi_host.h"
+#include "content/nw/src/browser/pepper/chrome_browser_pepper_host_factory.h"
+#include "ppapi/host/ppapi_host.h"
+
 using base::CommandLine;
 
 using extensions::Extension;
@@ -623,6 +627,15 @@ const Extension* ShellContentBrowserClient::GetExtension(
 content::SpeechRecognitionManagerDelegate*
 ShellContentBrowserClient::CreateSpeechRecognitionManagerDelegate() {
   return new speech::ShellSpeechRecognitionManagerDelegate();
+}
+
+void ShellContentBrowserClient::DidCreatePpapiPlugin(
+                       content::BrowserPpapiHost* browser_host) {
+#if defined(ENABLE_PLUGINS)
+  browser_host->GetPpapiHost()->AddHostFactoryFilter(
+      scoped_ptr<ppapi::host::HostFactory>(
+      new chrome::ChromeBrowserPepperHostFactory(browser_host)));
+#endif
 }
 
 }  // namespace content

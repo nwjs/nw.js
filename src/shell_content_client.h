@@ -29,6 +29,8 @@ class ShellContentClient : public ContentClient {
    void AddAdditionalSchemes(
       std::vector<std::string>* standard_schemes,
       std::vector<std::string>* saveable_shemes) override;
+   void AddPepperPlugins(
+      std::vector<content::PepperPluginInfo>* plugins) override;
 };
 
 }  // namespace content

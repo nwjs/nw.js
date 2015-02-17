@@ -45,6 +45,7 @@
 #include "components/autofill/content/renderer/autofill_agent.h"
 #include "components/autofill/content/renderer/password_autofill_agent.h"
 #include "content/nw/src/renderer/nw_render_view_observer.h"
+#include "chrome/renderer/pepper/pepper_helper.h"
 #include "content/nw/src/renderer/prerenderer/prerenderer_client.h"
 #include "content/nw/src/renderer/printing/print_web_view_helper.h"
 #include "content/nw/src/renderer/shell_render_process_observer.h"
@@ -534,6 +535,9 @@ void ShellContentRendererClient::RenderFrameCreated(
   // destroyed.
   if (extension_dispatcher_.get())
     new ShellFrameHelper(render_frame, extension_dispatcher_.get());
+#if defined(ENABLE_PLUGINS)
+  new PepperHelper(render_frame);
+#endif
 
   PasswordGenerationAgent* password_generation_agent =
       new PasswordGenerationAgent(render_frame);

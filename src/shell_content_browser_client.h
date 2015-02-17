@@ -114,6 +114,7 @@ class ShellContentBrowserClient : public ContentBrowserClient {
 
   content::SpeechRecognitionManagerDelegate*
   CreateSpeechRecognitionManagerDelegate() override;
+  void DidCreatePpapiPlugin(content::BrowserPpapiHost* browser_host) override;
 
  private:
   ShellBrowserContext* ShellBrowserContextForBrowserContext(
