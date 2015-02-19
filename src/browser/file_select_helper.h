@@ -196,6 +196,8 @@ class FileSelectHelper
   // these files when they are no longer needed.
   std::vector<base::FilePath> temporary_files_;
 
+  bool extract_directory_;
+
   DISALLOW_COPY_AND_ASSIGN(FileSelectHelper);
 };
 

@@ -131,7 +131,8 @@ void FileSelectHelper::FileSelectedWithExtraInfo(
   }
 
   const base::FilePath& path = file.local_path;
-  if (dialog_type_ == ui::SelectFileDialog::SELECT_UPLOAD_FOLDER) {
+  if (dialog_type_ == ui::SelectFileDialog::SELECT_UPLOAD_FOLDER &&
+      extract_directory_) {
     StartNewEnumeration(path, kFileSelectEnumerationId, render_view_host_);
     return;
   }
@@ -359,6 +360,7 @@ void FileSelectHelper::RunFileChooser(content::WebContents* tab,
   // FileSelectHelper will keep itself alive until it sends the result message.
   scoped_refptr<FileSelectHelper> file_select_helper(
       new FileSelectHelper());
+  file_select_helper->extract_directory_ = params.extract_directory;
   file_select_helper->RunFileChooser(tab->GetRenderViewHost(), tab, params);
 }
 
@@ -437,7 +439,7 @@ void FileSelectHelper::RunFileChooserOnUIThread(
       dialog_type_ = ui::SelectFileDialog::SELECT_OPEN_MULTI_FILE;
       break;
     case FileChooserParams::UploadFolder:
-      dialog_type_ = ui::SelectFileDialog::SELECT_UPLOAD_FOLDER;
+      dialog_type_ = ui::SelectFileDialog::SELECT_FOLDER;
       break;
     case FileChooserParams::Save:
       dialog_type_ = ui::SelectFileDialog::SELECT_SAVEAS_FILE;
