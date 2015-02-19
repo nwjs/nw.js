@@ -1,15 +1,15 @@
-0.12.0-alpha3 / 02-13-2014
+0.12.0-alpha3 / 02-13-2015
 ==========================
 - Chromium updated to 41.0.2272.32
 - io.js updated to 1.2.0
 
-0.12.0-alpha2 / 01-18-2014
+0.12.0-alpha2 / 01-18-2015
 ==========================
 - Fix: -webkit-app-region: drag; stopped working in version 0.12.0-alpha1 #2963
 - Fix: [WIN] ReferrenceError in native module function createWritableDummyStream #2933
 - support bypassing frame-ancestors CSP in Node frame #2967
 
-0.12.0-alpha1 / 01-15-2014
+0.12.0-alpha1 / 01-15-2015
 ==========================
 - renamed NW.js
 - Chromium is updated to 41.0.2236.2
