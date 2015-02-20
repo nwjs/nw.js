@@ -66,6 +66,9 @@
 #include "third_party/WebKit/public/web/WebSecurityOrigin.h"
 #include "third_party/WebKit/public/web/WebSecurityPolicy.h"
 #include "third_party/WebKit/public/web/WebView.h"
+#include "gin/public/context_holder.h"
+#include "gin/public/gin_embedders.h"
+
 //#include "third_party/WebKit/Source/WebKit/chromium/public/platform/WebString.h"
 #include "content/common/dom_storage/dom_storage_map.h"
 
@@ -232,6 +235,16 @@ void ShellContentRendererClient::DidCreateScriptContext(
   VLOG(1) << "DidCreateScriptContext: " << url;
   InstallNodeSymbols(frame, context, url);
   creating_first_context_ = false;
+
+#if 1 //defined(NW_IMPLEMENTATION)
+    v8::Local<v8::Context> node_context =
+        v8::Local<v8::Context>::New(context->GetIsolate(), node::g_context);
+    //need to stay sync with V8PerContextData.h
+    int v8ContextPerContextDataIndex = static_cast<int>(gin::kPerContextDataStartIndex + gin::kEmbedderBlink);
+    node_context->SetAlignedPointerInEmbedderData(v8ContextPerContextDataIndex,
+                                                  context->GetAlignedPointerFromEmbedderData(v8ContextPerContextDataIndex));
+#endif
+
 
   if (extension_dispatcher_.get())
     extension_dispatcher_->DidCreateScriptContext(frame, context, extension_group, world_id);
