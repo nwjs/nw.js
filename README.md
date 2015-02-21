@@ -45,7 +45,7 @@ It was created in the Intel Open Source Technology Center.
 * [Previous versions](https://github.com/rogerwang/node-webkit/wiki/Downloads-of-old-versions)
 
 ###Demos and real apps
-You may also be interested in [our demos repository](https://github.com/zcbenz/nw-sample-apps) and the [List of apps and companies using node-webkit](https://github.com/rogerwang/node-webkit/wiki/List-of-apps-and-companies-using-node-webkit).
+You may also be interested in [our demos repository](https://github.com/zcbenz/nw-sample-apps) and the [List of apps and companies using nw.js](https://github.com/nwjs/nw.js/wiki/List-of-apps-and-companies-using-nw.js).
 
 ## Quick Start
 
