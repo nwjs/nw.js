@@ -906,6 +906,7 @@
       ],
       'dependencies': [
         '<(DEPTH)/chrome/chrome.gyp:chromedriver',
+        '<(DEPTH)/v8/tools/gyp/v8.gyp:nwsnapshot',
         'nw_strip_symbol',
       ],
       'conditions': [
