@@ -25,6 +25,7 @@
 #include "content/public/renderer/render_view_observer.h"
 #include "third_party/WebKit/public/web/WebNavigationPolicy.h"
 #include <v8.h>
+#include <string>
 
 namespace base {
 class ListValue;

@@ -23,6 +23,8 @@
 
 #include "content/public/renderer/render_view_observer.h"
 
+#include <string>
+
 class SkBitmap;
 
 namespace content {

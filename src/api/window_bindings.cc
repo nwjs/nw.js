@@ -159,7 +159,11 @@ WindowBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args
     args.GetReturnValue().Set(result);
     return;
   } else if (method == "EvaluateNWBin") {
+#if defined(OS_WIN)
+    base::FilePath path((WCHAR*)*v8::String::Value(args[3]));
+#else
     base::FilePath path(*v8::String::Utf8Value(args[3]));
+#endif
     base::File file(path, base::File::FLAG_OPEN | base::File::FLAG_READ);
     if (file.IsValid()) {
       int64 length = file.GetLength();

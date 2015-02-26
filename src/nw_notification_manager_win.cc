@@ -34,6 +34,8 @@
 
 #include "content/nw/src/nw_notification_manager_win.h"
 
+#include <shellapi.h>
+
 namespace nw {
 class TrayObserver : public StatusIconObserver {
 public:

@@ -579,7 +579,7 @@
               },
             },
           },
-          'msvs_disabled_warnings': [ 4267, 4800, 4819, 4189 ],
+          'msvs_disabled_warnings': [ 4267, 4800, 4819, 4189, 4245, 4324 ],
         }],  # OS=="win"
       ],
     },
