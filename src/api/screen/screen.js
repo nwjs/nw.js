@@ -28,7 +28,7 @@ require('util').inherits(Screen, exports.Base);
 
 // Override the addListener method.
 Screen.prototype.on = Screen.prototype.addListener = function(ev, callback) {
-  if ( ev != "displayBoundsChanged" && ev != "displayAdded" && ev != "displayRemoved" )
+  if ( ev != "displayBoundsChanged" && ev != "displayAdded" && ev != "displayRemoved" && ev != "chooseDesktopMedia")
     throw new String('only following event can be listened: displayBoundsChanged, displayAdded, displayRemoved');
   
   var onRemoveListener = function (type, listener) {
@@ -42,7 +42,7 @@ Screen.prototype.on = Screen.prototype.addListener = function(ev, callback) {
   };
 
   if(this._numListener == 0) {
-    if (nw.callStaticMethodSync('Screen', 'AddScreenChangeCallback', [ this.id ]) == false ) {
+    if (nw.callStaticMethodSync('Screen', 'AddScreenChangeCallback', [ this.id ])[0] == false ) {
       throw new String('nw.callStaticMethodSync(Screen, AddScreenChangeCallback) fails');
       return;
     }
@@ -56,7 +56,8 @@ Screen.prototype.on = Screen.prototype.addListener = function(ev, callback) {
 
 // Route events.
 Screen.prototype.handleEvent = function(ev) {
-  arguments[1] = JSON.parse(arguments[1]);
+  if (ev != "chooseDesktopMedia")
+    arguments[1] = JSON.parse(arguments[1]);
   // Call parent.
   this.emit.apply(this, arguments);
 }
@@ -65,6 +66,13 @@ Screen.prototype.__defineGetter__('screens', function() {
   return JSON.parse(nw.callStaticMethodSync('Screen', 'GetScreens', [ ]));
 });
 
+Screen.prototype.chooseDesktopMedia = function(array, callback) {
+  if(nw.callStaticMethodSync('Screen', 'ChooseDesktopMedia', [ this.id, array ])[0]) {
+    this.once('chooseDesktopMedia', callback);
+    return true;
+  }
+  return false;
+}
 
 // ======== Screen functions End ========
 

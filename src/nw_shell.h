@@ -31,6 +31,7 @@
 #include "content/public/browser/web_contents_delegate.h"
 #include "content/public/browser/web_contents_observer.h"
 #if defined(OS_WIN) || defined(OS_LINUX)
+#include "components/web_modal/popup_manager.h"
 #include "components/web_modal/web_contents_modal_dialog_manager_delegate.h"
 #endif
 #include "ipc/ipc_channel.h"
@@ -228,6 +229,10 @@ class Shell : public WebContentsDelegate,
   scoped_ptr<WebContents> web_contents_;
   scoped_ptr<nw::NativeWindow> window_;
   scoped_ptr<extensions::ExtensionFunctionDispatcher> extension_function_dispatcher_;
+
+#if defined(OS_WIN) || defined(OS_LINUX)
+  scoped_ptr<web_modal::PopupManager> popup_manager_;
+#endif
 
   // Notification manager.
   NotificationRegistrar registrar_;

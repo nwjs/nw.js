@@ -20,6 +20,7 @@
 
 #include "base/values.h"
 #include "content/nw/src/api/screen/screen.h"
+#include "content/nw/src/api/screen/desktop_capture_api.h"
 #include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/event/event.h"
 #include "content/nw/src/nw_shell.h"
@@ -101,6 +102,16 @@ public:
 
 const int JavaScriptDisplayObserver::id = EventListener::getUID();
 
+scoped_refptr<DesktopCaptureChooseDesktopMediaFunction> gpDCCDMF;
+  
+void ChooseDesktopMediaCallback(EventListener* event_listener,
+  ExtensionFunction::ResponseType type,
+  const base::ListValue& results,
+  const std::string& error) {
+  
+  event_listener->dispatcher_host()->SendEvent(event_listener, "chooseDesktopMedia", results);
+  gpDCCDMF = NULL;
+}
   // static
 void Screen::Call(DispatcherHost* dispatcher_host,
                const std::string& method,
@@ -137,6 +148,22 @@ void Screen::Call(DispatcherHost* dispatcher_host,
     bool res = event_listener->RemoveListener<JavaScriptDisplayObserver>();
     result->AppendBoolean(res);
     return;
+  } else if (method == "ChooseDesktopMedia") {
+    if (gpDCCDMF == NULL) {
+      gpDCCDMF = new DesktopCaptureChooseDesktopMediaFunction();
+      gpDCCDMF->SetArgs(&arguments);
+      gpDCCDMF->SetRenderViewHost(dispatcher_host->render_view_host());
+    
+      int object_id = 0;
+      arguments.GetInteger(0, &object_id);
+      EventListener* event_listener = dispatcher_host->GetApiObject<EventListener>(object_id);
+      ExtensionFunction::ResponseCallback callback = base::Bind(&ChooseDesktopMediaCallback, event_listener);
+      gpDCCDMF->set_response_callback(callback);
+      result->AppendBoolean(gpDCCDMF->RunSync());
+    } else {
+      // Screen Picker GUI is still active, return false;
+      result->AppendBoolean(false);
+    }
   }
 
 }
