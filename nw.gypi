@@ -102,6 +102,7 @@
       ],
       'include_dirs': [
         '<(DEPTH)',
+        '<(DEPTH)/v8',
         '<(DEPTH)/third_party',
         '<(DEPTH)/third_party/WebKit/Source',
         '<(DEPTH)/third_party/WebKit/public/web',
@@ -206,6 +207,7 @@
         'src/api/screen/screen.cc',
         'src/api/window_bindings.cc',
         'src/api/window_bindings.h',
+        'src/api/v8_internal_helper.cc',
         'src/api/menu/menu.cc',
         'src/api/menu/menu.h',
         'src/api/menu/menu_delegate.cc',
@@ -866,7 +868,7 @@
             {
               'action_name': 'strip_nw_binaries',
               'inputs': [
-                #'<(PRODUCT_DIR)/nwsnapshot',
+                '<(PRODUCT_DIR)/nwsnapshot',
                 '<(PRODUCT_DIR)/chromedriver',
               ],
               'outputs': [
@@ -878,7 +880,7 @@
             },
           ],
           'dependencies': [
-             #'<(DEPTH)/v8/tools/gyp/v8.gyp:nwsnapshot',
+             '<(DEPTH)/v8/tools/gyp/v8.gyp:nwsnapshot',
              '<(DEPTH)/chrome/chrome.gyp:chromedriver',
           ],
         }],

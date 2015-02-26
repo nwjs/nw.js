@@ -509,6 +509,10 @@ Window.prototype.eval = function(frame, script) {
   return CallObjectMethod(this, 'EvaluateScript', frame, script);
 };
 
+Window.prototype.evalNWBin = function(frame, script) {
+  return CallObjectMethod(this, 'EvaluateNWBin', frame, script);
+};
+
 Window.prototype.disableCache = function(flag) {
   return CallObjectMethod(this, 'setCacheDisabled', flag);
 };
