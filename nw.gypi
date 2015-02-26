@@ -451,6 +451,8 @@
           'SubSystem': '2',  # Set /SUBSYSTEM:WINDOWS
         },
       },
+      'msvs_precompiled_header': '',
+      'msvs_precompiled_source': '',
       'configurations': {
         'Debug': {
           'defines': [ 'DEBUG' ],
