@@ -3,7 +3,7 @@
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/nwjs/nw.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  
 Official site: http://nwjs.io  
 [Announcement](https://groups.google.com/d/msg/nwjs-general/V1FhvfaFIzQ/720xKVd0jNkJ)  
-[new v0.12.0 test release](https://groups.google.com/d/msg/nwjs-general/heM9DRTLx5U/bHLpq7Lr9P8J)  
+[new v0.12.0 test release](https://groups.google.com/d/msg/nwjs-general/Sykci3Qhgus/AoF0zT7TEIoJ)  
 ## Introduction
 
 node-webkit is an app runtime based on `Chromium` and `node.js`. You can 
