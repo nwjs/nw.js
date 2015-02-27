@@ -118,7 +118,7 @@ def generate_target_nw(platform_name, arch, version):
                            'credits.html',
                            'libffmpegsumo.so',
                            'nw.pak',
-                           'nwsnapshot',
+                           'nwjc',
                            'nw',
                            'icudtl.dat',
                            'locales',
@@ -134,13 +134,13 @@ def generate_target_nw(platform_name, arch, version):
                            'nw.exe',
                            'nw.pak',
                            'locales',
-                           'nwsnapshot.exe',
+                           'nwjc.exe',
                            'credits.html',
                            ]
     elif platform_name == 'osx':
         target['input'] = [
                            'nwjs.app',
-                           'nwsnapshot',
+                           'nwjc',
                            'credits.html',
                           ]
     else:

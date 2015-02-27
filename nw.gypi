@@ -870,7 +870,7 @@
             {
               'action_name': 'strip_nw_binaries',
               'inputs': [
-                '<(PRODUCT_DIR)/nwsnapshot',
+                '<(PRODUCT_DIR)/nwjc',
                 '<(PRODUCT_DIR)/chromedriver',
               ],
               'outputs': [
@@ -882,7 +882,7 @@
             },
           ],
           'dependencies': [
-             '<(DEPTH)/v8/tools/gyp/v8.gyp:nwsnapshot',
+             '<(DEPTH)/v8/tools/gyp/v8.gyp:nwjc',
              '<(DEPTH)/chrome/chrome.gyp:chromedriver',
           ],
         }],
@@ -908,7 +908,7 @@
       ],
       'dependencies': [
         '<(DEPTH)/chrome/chrome.gyp:chromedriver',
-        '<(DEPTH)/v8/tools/gyp/v8.gyp:nwsnapshot',
+        '<(DEPTH)/v8/tools/gyp/v8.gyp:nwjc',
         'nw_strip_symbol',
       ],
       'conditions': [
