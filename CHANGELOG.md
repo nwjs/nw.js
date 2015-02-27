@@ -1,3 +1,11 @@
+0.12.0-rc1 / 02-27-2015
+=======================
+- new 'nwjc' tool replaces 'nwsnapshot'; size limit removed
+- add Window.evalNWBin() to work with nwjc
+- Fix #2923: support pepper flash plugin on Linux
+- Fix #2961: nwdirectory file dialog
+- Fix #2996: setting breakpoints in Node context in devtools
+
 0.12.0-alpha3 / 02-13-2015
 ==========================
 - Chromium updated to 41.0.2272.32
