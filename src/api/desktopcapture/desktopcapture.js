@@ -1,0 +1,62 @@
+// Copyright (c) 2012 Intel Corp
+// Copyright (c) 2012 The Chromium Authors
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell co
+// pies of the Software, and to permit persons to whom the Software is furnished
+// to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in al
+// l copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IM
+// PLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNES
+// S FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WH
+// ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+// CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+var desktopCaptureInstance = null;
+
+function DesktopCapture() {
+    nw.allocateObject(this, {});
+    this.callback = null;
+}
+require('util').inherits(DesktopCapture, exports.Base);
+
+/*
+DesktopCapture.prototype.getDefault = function(screens, windows) {
+	var result = nw.callObjectMethodSync(this, 'getDefault', [ ]);
+	return String(result);
+ }
+ */
+
+DesktopCapture.prototype.start = function (windows, screens) {
+    nw.callObjectMethod(this, 'start', [windows, screens, ]);
+}
+
+DesktopCapture.prototype.stop = function () {
+    nw.callObjectMethod(this, 'stop', []);
+}
+ 
+DesktopCapture.prototype.on('__nw_desktopcapture_listner', function (data) {
+    if (this.callback != null)
+        this.callback(data);
+});
+
+ DesktopCapture.prototype.setSourceListenter = function(sourceCallback) {
+     this.callback = sourceCallback;
+ }
+ 
+exports.DesktopCapture = {
+  get: function() {
+    if (desktopCaptureInstance == null) {
+      desktopCaptureInstance = new DesktopCapture();
+    }
+
+    return desktopCaptureInstance;
+  }
+};
