@@ -32,7 +32,6 @@ namespace nwapi {
 				const base::DictionaryValue& option);
 			virtual ~DesktopCapture();
 			virtual void CallSync(const std::string& method, const base::ListValue& arguments, base::ListValue* result) OVERRIDE;
-			virtual void Call(const std::string& method, const base::ListValue& arguments) OVERRIDE;
 			virtual void OnSourceAdded(int index);
 			virtual void OnSourceRemoved(int index);
 			virtual void OnSourceMoved(int old_index, int new_index);
@@ -41,10 +40,10 @@ namespace nwapi {
 		private:
 			DesktopCapture();
 			DISALLOW_COPY_AND_ASSIGN(DesktopCapture);
-			std::string GetDefault();
 			void Start(bool screens, bool windows);
 			void Stop();
-			std::string GetSourceId(int sourceId, int processId, int routingId);
+			
+			std::string GetStringId(DesktopMediaList::Source * id);
 			scoped_ptr<DesktopMediaList> media_list;
 	};
 } // namespace api

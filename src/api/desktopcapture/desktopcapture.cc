@@ -40,32 +40,17 @@
 namespace nwapi {
 
 DesktopCapture::DesktopCapture(int id,
-           const base::WeakPtr<DispatcherHost>& dispatcher_host,
-           const base::DictionaryValue& option)
-    : Base(id, dispatcher_host, option) {
+	const base::WeakPtr<DispatcherHost>& dispatcher_host,
+	const base::DictionaryValue& option)
+	: Base(id, dispatcher_host, option) {
 }
 
 DesktopCapture::~DesktopCapture() {
+	media_list.reset();
 }
 
 
-void DesktopCapture::CallSync(const std::string& method,
-                         const base::ListValue& arguments,
-                         base::ListValue* result) {
-	/*
-  if (method == "getSourceId") {
-	  int sourceid = -1, processid = -1, routingid = -1;
-	  if (arguments.GetInteger(0, &sourceid) && arguments.GetInteger(1, &processid) && arguments.GetInteger(2, &routingid))
-		  result->AppendString(GetSourceId(sourceid, processid, routingid));
-  } else {
-    NOTREACHED() << "Invalid call to DesktopCapture method:" << method
-                 << " arguments:" << arguments;
-  }
-  */
-}
-
-void DesktopCapture::Call(const std::string& method, const base::ListValue& arguments) {
-
+void DesktopCapture::CallSync(const std::string& method, const base::ListValue& arguments, base::ListValue* result){
 	if (method == "start") {
 		bool screens, windows;
 		if (arguments.GetBoolean(0, &screens) && arguments.GetBoolean(1, &windows))
@@ -80,7 +65,6 @@ void DesktopCapture::Call(const std::string& method, const base::ListValue& argu
 }
 
 void DesktopCapture::Start(bool screens, bool windows) {
-	
 	webrtc::DesktopCaptureOptions options = webrtc::DesktopCaptureOptions::CreateDefault();
 	options.set_disable_effects(false);
 	scoped_ptr<webrtc::ScreenCapturer> screen_capturer(screens ? webrtc::ScreenCapturer::Create(options) : NULL);
@@ -95,33 +79,40 @@ void DesktopCapture::Stop() {
 	media_list.reset();
 }
 
+//note: I dont see any reason for ToString() not to have const declared, but it is not, so we have to remove const here
+std::string DesktopCapture::GetStringId(DesktopMediaList::Source * id){
+	return const_cast<content::DesktopMediaID*>(&(id->id))->ToString();
+}
+
 void DesktopCapture::OnSourceAdded(int index){
 	DesktopMediaList::Source src = media_list->GetSource(index);
 	
 	base::ListValue param;
-	param.AppendInteger(index);
-	param.AppendString(const_cast<content::DesktopMediaID*>(&src.id)->ToString()); //note: I dont see any reason for ToString() not to have const declared, but it is not, so we have to remove const here
+	param.AppendString(GetStringId(&src));
 	param.AppendString(src.name);
-	this->dispatcher_host()->SendEvent(this, "added", param);
+	param.AppendInteger(index);
+	this->dispatcher_host()->SendEvent(this, "__nw_desktopcapture_listner_added", param);
 }
 void DesktopCapture::OnSourceRemoved(int index){
 	base::ListValue param;
-	param.AppendInteger(index);
-	this->dispatcher_host()->SendEvent(this, "removed", param);
+	param.AppendInteger(index); //Note: pass by index here, because the information about which ID was at that index is lost before the removed callback is called.  Its saved in the javascript though, so we can look it up there
+	this->dispatcher_host()->SendEvent(this, "__nw_desktopcapture_listner_removed", param);
 }
 void DesktopCapture::OnSourceMoved(int old_index, int new_index){
+	DesktopMediaList::Source src = media_list->GetSource(new_index);
 	base::ListValue param;
-	param.AppendInteger(old_index);
+	param.AppendString(GetStringId(&src));
 	param.AppendInteger(new_index);
-	this->dispatcher_host()->SendEvent(this, "moved", param);
+	param.AppendInteger(old_index);
+	this->dispatcher_host()->SendEvent(this, "__nw_desktopcapture_listner_moved", param);
 }
 void DesktopCapture::OnSourceNameChanged(int index){
 	DesktopMediaList::Source src = media_list->GetSource(index);
 
 	base::ListValue param;
-	param.AppendInteger(index);
+	param.AppendString(GetStringId(&src));
 	param.AppendString(src.name);
-	this->dispatcher_host()->SendEvent(this, "namechanged", param);
+	this->dispatcher_host()->SendEvent(this, "__nw_desktopcapture_listner_namechanged", param);
 }
 
 void DesktopCapture::OnSourceThumbnailChanged(int index){
@@ -137,9 +128,9 @@ void DesktopCapture::OnSourceThumbnailChanged(int index){
 		base::Base64Encode(raw_str, &base64);
 	}
 	base::ListValue param;
-	param.AppendInteger(index);
+	param.AppendString(GetStringId(&src));
 	param.AppendString(base64);
-	this->dispatcher_host()->SendEvent(this, "thumbnailchanged", param);
+	this->dispatcher_host()->SendEvent(this, "__nw_desktopcapture_listner_thumbnailchanged", param);
 }
 
 }  // namespace nwapi
