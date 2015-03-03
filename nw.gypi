@@ -154,7 +154,7 @@
         '<(DEPTH)/chrome/browser/ui/views/status_icons/status_tray_win.h',
 		'<(DEPTH)/chrome/browser/media/native_desktop_media_list.cc',
         '<(DEPTH)/chrome/browser/media/native_desktop_media_list.h',		
-		'<(DEPTH)/chrome/browser/media/desktop_media_list.h',		
+		'<(DEPTH)/chrome/browser/media/desktop_media_list.h',
         '<(DEPTH)/chrome/common/chrome_constants.cc',
         '<(DEPTH)/chrome/common/chrome_constants.h',
         '<(DEPTH)/chrome/common/chrome_switches.cc',

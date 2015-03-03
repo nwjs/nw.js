@@ -23,33 +23,24 @@ var desktopCaptureInstance = null;
 
 function DesktopCapture() {
     nw.allocateObject(this, {});
-    this.callback = null;
 }
 require('util').inherits(DesktopCapture, exports.Base);
 
-/*
-DesktopCapture.prototype.getDefault = function(screens, windows) {
-	var result = nw.callObjectMethodSync(this, 'getDefault', [ ]);
-	return String(result);
- }
- */
-
-DesktopCapture.prototype.start = function (windows, screens) {
-    nw.callObjectMethod(this, 'start', [windows, screens, ]);
+DesktopCapture.prototype.start = function (screens, windows) {
+    nw.callObjectMethod(this, 'start', [screens, windows]);
 }
 
 DesktopCapture.prototype.stop = function () {
     nw.callObjectMethod(this, 'stop', []);
 }
- 
-DesktopCapture.prototype.on('__nw_desktopcapture_listner', function (data) {
-    if (this.callback != null)
-        this.callback(data);
-});
 
- DesktopCapture.prototype.setSourceListenter = function(sourceCallback) {
-     this.callback = sourceCallback;
- }
+DesktopCapture.prototype.on = DesktopCapture.prototype.addListener = function (ev, callback) {
+    //throw except if unsupported event
+    if (ev != "added" && ev != "removed" && ev != "moved" && ev != "namechanged" && ev != "thumbnailchanged")
+        throw new String("only following events can be listened: added, removed, moved, namechanged, thumbnailchanged");
+
+    process.EventEmitter.prototype.addListener.apply(this, arguments);
+}
  
 exports.DesktopCapture = {
   get: function() {

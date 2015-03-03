@@ -24,10 +24,17 @@
 #include "base/strings/utf_string_conversions.h"
 #include "base/strings/string16.h"
 #include "content/nw/src/api/dispatcher_host.h"
+#include "chrome/browser/media/desktop_streams_registry.h"
+#include "chrome/browser/media/media_capture_devices_dispatcher.h"
 
 #include "third_party/webrtc/modules/desktop_capture/desktop_capture_options.h"
 #include "third_party/webrtc/modules/desktop_capture/screen_capturer.h"
 #include "third_party/webrtc/modules/desktop_capture/window_capturer.h"
+
+#include "base/base64.h"
+#include "ui/gfx/codec/png_codec.h"
+#include "ui/gfx/image/image.h"
+#include "ui/gfx/image/image_skia.h"
 
 
 namespace nwapi {
@@ -45,21 +52,24 @@ DesktopCapture::~DesktopCapture() {
 void DesktopCapture::CallSync(const std::string& method,
                          const base::ListValue& arguments,
                          base::ListValue* result) {
-	
-  if (method == "getDefault") {
-    result->AppendString(GetDefault());
+	/*
+  if (method == "getSourceId") {
+	  int sourceid = -1, processid = -1, routingid = -1;
+	  if (arguments.GetInteger(0, &sourceid) && arguments.GetInteger(1, &processid) && arguments.GetInteger(2, &routingid))
+		  result->AppendString(GetSourceId(sourceid, processid, routingid));
   } else {
     NOTREACHED() << "Invalid call to DesktopCapture method:" << method
                  << " arguments:" << arguments;
   }
+  */
 }
 
 void DesktopCapture::Call(const std::string& method, const base::ListValue& arguments) {
 
 	if (method == "start") {
-		bool windows, screens;
-		if (arguments.GetBoolean(0, &windows) && arguments.GetBoolean(1, &screens))
-			Start(windows, screens);
+		bool screens, windows;
+		if (arguments.GetBoolean(0, &screens) && arguments.GetBoolean(1, &windows))
+			Start(screens, windows);
 	}else if (method == "stop") {
 		Stop();
 	}
@@ -69,7 +79,7 @@ void DesktopCapture::Call(const std::string& method, const base::ListValue& argu
 	}
 }
 
-void DesktopCapture::Start(bool windows, bool screens) {
+void DesktopCapture::Start(bool screens, bool windows) {
 	
 	webrtc::DesktopCaptureOptions options = webrtc::DesktopCaptureOptions::CreateDefault();
 	options.set_disable_effects(false);
@@ -85,33 +95,51 @@ void DesktopCapture::Stop() {
 	media_list.reset();
 }
 
-std::string DesktopCapture::GetDefault() {
-	//this->dispatcher_host()->SendEvent(this, "click", *result);
-	//retstream << media_list->GetSourceCount();
-	//return std::string(retstream.str());
-	return std::string();
-}
-
 void DesktopCapture::OnSourceAdded(int index){
-	const content::DesktopMediaID id = media_list->GetSource(index).id;
-	std::stringstream stream;
-	stream << id.id;
-	std::string idStr = std::string(stream.str());
-	base::ListValue source;
-	source.AppendString(idStr);
-	this->dispatcher_host()->SendEvent(this, "__nw_desktopcapture_listner", source);
+	DesktopMediaList::Source src = media_list->GetSource(index);
+	
+	base::ListValue param;
+	param.AppendInteger(index);
+	param.AppendString(const_cast<content::DesktopMediaID*>(&src.id)->ToString()); //note: I dont see any reason for ToString() not to have const declared, but it is not, so we have to remove const here
+	param.AppendString(src.name);
+	this->dispatcher_host()->SendEvent(this, "added", param);
 }
 void DesktopCapture::OnSourceRemoved(int index){
-
+	base::ListValue param;
+	param.AppendInteger(index);
+	this->dispatcher_host()->SendEvent(this, "removed", param);
 }
 void DesktopCapture::OnSourceMoved(int old_index, int new_index){
-
+	base::ListValue param;
+	param.AppendInteger(old_index);
+	param.AppendInteger(new_index);
+	this->dispatcher_host()->SendEvent(this, "moved", param);
 }
 void DesktopCapture::OnSourceNameChanged(int index){
+	DesktopMediaList::Source src = media_list->GetSource(index);
 
+	base::ListValue param;
+	param.AppendInteger(index);
+	param.AppendString(src.name);
+	this->dispatcher_host()->SendEvent(this, "namechanged", param);
 }
-void DesktopCapture::OnSourceThumbnailChanged(int index){
 
+void DesktopCapture::OnSourceThumbnailChanged(int index){
+	std::string base64;
+
+	DesktopMediaList::Source src = media_list->GetSource(index);
+	SkBitmap bitmap = src.thumbnail.GetRepresentation(1).sk_bitmap();
+	SkAutoLockPixels lock_image(bitmap);
+	std::vector<unsigned char> data;
+	bool success = gfx::PNGCodec::EncodeBGRASkBitmap(bitmap, false, &data);
+	if (success){
+		base::StringPiece raw_str(reinterpret_cast<const char*>(&data[0]), data.size());
+		base::Base64Encode(raw_str, &base64);
+	}
+	base::ListValue param;
+	param.AppendInteger(index);
+	param.AppendString(base64);
+	this->dispatcher_host()->SendEvent(this, "thumbnailchanged", param);
 }
 
 }  // namespace nwapi

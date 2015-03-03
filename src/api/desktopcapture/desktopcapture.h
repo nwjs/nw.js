@@ -42,8 +42,9 @@ namespace nwapi {
 			DesktopCapture();
 			DISALLOW_COPY_AND_ASSIGN(DesktopCapture);
 			std::string GetDefault();
-			void Start(bool windows, bool screens);
+			void Start(bool screens, bool windows);
 			void Stop();
+			std::string GetSourceId(int sourceId, int processId, int routingId);
 			scoped_ptr<DesktopMediaList> media_list;
 	};
 } // namespace api
