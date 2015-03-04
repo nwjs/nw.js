@@ -31,7 +31,7 @@ namespace nwapi {
 				const base::WeakPtr<DispatcherHost>& dispatcher_host,
 				const base::DictionaryValue& option);
 			virtual ~DesktopCapture();
-			virtual void CallSync(const std::string& method, const base::ListValue& arguments, base::ListValue* result) OVERRIDE;
+			virtual void CallSync(const std::string& method, const base::ListValue& arguments, base::ListValue* result) override;
 			virtual void OnSourceAdded(int index);
 			virtual void OnSourceRemoved(int index);
 			virtual void OnSourceMoved(int old_index, int new_index);

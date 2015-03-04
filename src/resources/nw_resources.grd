@@ -45,7 +45,6 @@
       <include name="IDR_NW_API_MENU_JS" file="../api/menu/menu.js" type="BINDATA" />
       <include name="IDR_NW_API_TRAY_JS" file="../api/tray/tray.js" type="BINDATA" />
       <include name="IDR_NW_API_CLIPBOARD_JS" file="../api/clipboard/clipboard.js" type="BINDATA" />
-	  <include name="IDR_NW_API_DESKTOPCAPTURE_JS" file="../api/desktopcapture/desktopcapture.js" type="BINDATA" />
       <include name="IDR_NW_API_WINDOW_JS" file="../api/window/window.js" type="BINDATA" />
       <include name="IDR_NW_API_SHELL_JS" file="../api/shell/shell.js" type="BINDATA" />
       <include name="IDR_NW_API_APP_JS" file="../api/app/app.js" type="BINDATA" />

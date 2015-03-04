@@ -209,8 +209,6 @@ DispatcherBindings::RequireNwGui(const v8::FunctionCallbackInfo<v8::Value>& args
   RequireFromResource(args.This(),
                       NwGui, global, v8::String::NewFromUtf8(isolate, "clipboard.js"), IDR_NW_API_CLIPBOARD_JS);
   RequireFromResource(args.This(),
-                      NwGui, global, v8::String::NewFromUtf8(isolate, "desktopcapture.js"), IDR_NW_API_DESKTOPCAPTURE_JS);
-  RequireFromResource(args.This(),
                       NwGui, global, v8::String::NewFromUtf8(isolate, "window.js"), IDR_NW_API_WINDOW_JS);
   RequireFromResource(args.This(),
                       NwGui, global, v8::String::NewFromUtf8(isolate, "shell.js"), IDR_NW_API_SHELL_JS);
