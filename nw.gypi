@@ -198,8 +198,8 @@
         'src/api/base/base.h',
         'src/api/clipboard/clipboard.cc',
         'src/api/clipboard/clipboard.h',
-		'src/api/desktopcapture/desktopcapture.cc',
-        'src/api/desktopcapture/desktopcapture.h',
+		'src/api/screen/desktopcapture.cc',
+        'src/api/screen/desktopcapture.h',
         'src/api/dispatcher.cc',
         'src/api/dispatcher.h',
         'src/api/dispatcher_bindings.cc',
@@ -770,6 +770,7 @@
               '<(SHARED_INTERMEDIATE_DIR)/extensions/extensions_renderer_resources.pak',
               '<(SHARED_INTERMEDIATE_DIR)/extensions/extensions_resources.pak',
               '<(SHARED_INTERMEDIATE_DIR)/extensions/strings/extensions_strings_en-US.pak',
+			  '<(SHARED_INTERMEDIATE_DIR)/chrome/generated_resources_en-US.pak',
             ],
           },
           'inputs': [
