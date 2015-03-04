@@ -29,12 +29,12 @@
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/app/app.h"
 #include "content/nw/src/api/base/base.h"
-#include "content/nw/src/api/desktopcapture/desktopcapture.h"
 #include "content/nw/src/api/clipboard/clipboard.h"
 #include "content/nw/src/api/event/event.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
 #include "content/nw/src/api/screen/screen.h"
+#include "content/nw/src/api/screen/desktopcapture.h"
 #include "content/nw/src/api/shell/shell.h"
 #include "content/nw/src/api/shortcut/shortcut.h"
 #include "content/nw/src/api/tray/tray.h"
@@ -172,6 +172,9 @@ void DispatcherHost::OnAllocateObject(int object_id,
     objects_registry_.AddWithID(new Shortcut(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else if (type == "Screen") {
     objects_registry_.AddWithID(new EventListener(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
+  }else if (type == "DesktopCapture") {
+	  VLOG(1) << "Initing DesktopCapture object";
+	  objects_registry_.AddWithID(new DesktopCapture(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else {
     LOG(ERROR) << "Allocate an object of unknown type: " << type;
     objects_registry_.AddWithID(new Base(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);

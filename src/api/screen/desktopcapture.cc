@@ -18,7 +18,7 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "content/nw/src/api/desktopcapture/desktopcapture.h"
+#include "content/nw/src/api/screen/desktopcapture.h"
 
 #include "base/values.h"
 #include "base/strings/utf_string_conversions.h"
