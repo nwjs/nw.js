@@ -81,6 +81,8 @@
         '<(DEPTH)/ui/resources/ui_resources.gyp:ui_resources',
         '<(DEPTH)/url/url.gyp:url_lib',
         '<(DEPTH)/v8/tools/gyp/v8.gyp:v8',
+        '<(DEPTH)/third_party/libyuv/libyuv.gyp:libyuv',
+        '<(DEPTH)/third_party/webrtc/modules/modules.gyp:desktop_capture',
         '<(DEPTH)/third_party/zlib/zlib.gyp:minizip',
         '<(DEPTH)/third_party/WebKit/public/blink.gyp:blink',
         '<(DEPTH)/extensions/browser/api/api_registration.gyp:extensions_api_registration',
@@ -203,6 +205,13 @@
         'src/api/dispatcher_host.h',
         'src/api/event/event.h',
         'src/api/event/event.cc',
+        'src/api/screen/desktop_capture_api.h',
+        'src/api/screen/desktop_capture_api.cc',
+        '<(DEPTH)/chrome/browser/media/desktop_media_list.h',
+        '<(DEPTH)/chrome/browser/media/desktop_media_list_observer.h',
+        '<(DEPTH)/chrome/browser/media/desktop_media_picker.h',
+        '<(DEPTH)/chrome/browser/media/native_desktop_media_list.h',
+        '<(DEPTH)/chrome/browser/media/native_desktop_media_list.cc',
         'src/api/screen/screen.h',
         'src/api/screen/screen.cc',
         'src/api/window_bindings.cc',
@@ -471,6 +480,8 @@
         }],
         ['use_aura==1', {
           'sources': [
+            '<(DEPTH)/chrome/browser/ui/views/desktop_media_picker_views.cc',
+            '<(DEPTH)/chrome/browser/ui/views/desktop_media_picker_views.h',
             '<(DEPTH)/chrome/browser/ui/views/web_contents_modal_dialog_manager_views.cc',
             'src/browser/login_view.cc',
             'src/browser/login_view.h',
@@ -536,11 +547,20 @@
           ],
           'sources': [
             #'<(DEPTH)/chrome/browser/ui/cocoa/web_contents_modal_dialog_manager_cocoa.mm',
+            '<(DEPTH)/chrome/browser/ui/cocoa/media_picker/desktop_media_picker_bridge.h',
+            '<(DEPTH)/chrome/browser/ui/cocoa/media_picker/desktop_media_picker_bridge.mm',
+            '<(DEPTH)/chrome/browser/ui/cocoa/media_picker/desktop_media_picker_cocoa.h',
+            '<(DEPTH)/chrome/browser/ui/cocoa/media_picker/desktop_media_picker_cocoa.mm',
+            '<(DEPTH)/chrome/browser/ui/cocoa/media_picker/desktop_media_picker_controller.h',
+            '<(DEPTH)/chrome/browser/ui/cocoa/media_picker/desktop_media_picker_controller.mm',
+            '<(DEPTH)/chrome/browser/ui/cocoa/media_picker/desktop_media_picker_item.h',
+            '<(DEPTH)/chrome/browser/ui/cocoa/media_picker/desktop_media_picker_item.mm',
             'src/browser/shell_web_contents_modal_dialog_manager.cc',
           ],
           'dependencies': [
             '<(DEPTH)/breakpad/breakpad.gyp:breakpad',
             '<(DEPTH)/components/components.gyp:crash_component',
+            '<(DEPTH)/third_party/google_toolbox_for_mac/google_toolbox_for_mac.gyp:google_toolbox_for_mac',
           ],
           'link_settings': {
             'libraries': [
@@ -747,6 +767,7 @@
           'action_name': 'repack_nw_pack',
           'variables': {
             'pak_inputs': [
+              '<(SHARED_INTERMEDIATE_DIR)/chrome/generated_resources_en-US.pak',
               '<(SHARED_INTERMEDIATE_DIR)/content/content_resources.pak',
               '<(SHARED_INTERMEDIATE_DIR)/content/nw_resources.pak',
               '<(SHARED_INTERMEDIATE_DIR)/content/nw_components.pak',
@@ -1195,6 +1216,13 @@
             'src/shell_content_main.h',
           ],
           'xcode_settings': { 'OTHER_LDFLAGS': [ '-Wl,-force_load,libnode.a' ], },
+          'link_settings': {
+            'xcode_settings': {
+              'OTHER_LDFLAGS': [
+                '-framework Quartz',
+              ],
+            },
+          },
           'copies': [
             {
               # Copy FFmpeg binaries for audio/video support.

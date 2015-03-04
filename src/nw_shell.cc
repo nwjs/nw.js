@@ -89,6 +89,12 @@ using content::MediaStreamDevice;
 using content::MediaStreamDevices;
 using content::MediaStreamUI;
 
+namespace chrome {
+  bool IsNativeWindowInAsh(gfx::NativeWindow native_window) {
+    return false;
+  }
+}
+
 namespace {
 
 const MediaStreamDevice* GetRequestedDeviceOrDefault(
@@ -231,6 +237,10 @@ Shell::Shell(WebContents* web_contents, base::DictionaryValue* manifest)
 #if defined(OS_WIN) || defined(OS_LINUX)
   web_modal::WebContentsModalDialogManager::CreateForWebContents(web_contents);
   web_modal::WebContentsModalDialogManager::FromWebContents(web_contents)->SetDelegate(this);
+  
+  popup_manager_.reset(
+    new web_modal::PopupManager(GetWebContentsModalDialogHost()));
+  popup_manager_->RegisterWith(web_contents);
 #endif
 
 #if 1
@@ -704,18 +714,10 @@ void Shell::RequestMediaAccessPermission(
       devices.push_back(*device);
   }
 
-  if (request.video_type == content::MEDIA_DESKTOP_VIDEO_CAPTURE) {
-    content::DesktopMediaID media_id;
-    // If the device id wasn't specified then this is a screen capture request
-    // (i.e. chooseDesktopMedia() API wasn't used to generate device id).
-    if (request.requested_video_device_id.empty()) {
-      media_id =
-        content::DesktopMediaID(content::DesktopMediaID::TYPE_SCREEN,
-                                webrtc::kFullDesktopScreenId);
-    } else {
-      media_id =
+  if (request.video_type == content::MEDIA_DESKTOP_VIDEO_CAPTURE &&
+      !request.requested_video_device_id.empty()) {
+    content::DesktopMediaID media_id =
         content::DesktopMediaID::Parse(request.requested_video_device_id);
-    }
 
     devices.push_back(content::MediaStreamDevice(
                       content::MEDIA_DESKTOP_VIDEO_CAPTURE, media_id.ToString(), "Screen"));
