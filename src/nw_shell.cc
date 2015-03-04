@@ -569,27 +569,36 @@ void Shell::WebContentsCreated(WebContents* source_contents,
                                const GURL& target_url,
                                WebContents* new_contents,
                                const base::string16& nw_window_manifest) {
+
+  bool overwrite_manifest = true;
+
   // Create with package's manifest
   scoped_ptr<base::DictionaryValue> manifest(
-      GetPackage()->window()->DeepCopy());
+      GetPackage()->GetNewWindow());
 
   scoped_ptr<base::Value> val;
   std::string manifest_str = base::UTF16ToUTF8(nw_window_manifest);
   val.reset(base::JSONReader().ReadToValue(manifest_str));
-  if (val.get() && val->IsType(base::Value::TYPE_DICTIONARY))
+  if (val.get() && val->IsType(base::Value::TYPE_DICTIONARY)) {
     manifest.reset(static_cast<base::DictionaryValue*>(val.release()));
+    overwrite_manifest = false;
+  }
 
   // Get window features
   blink::WebWindowFeatures features = new_contents->GetWindowFeatures();
-  manifest->SetBoolean(switches::kmResizable, features.resizable);
-  manifest->SetBoolean(switches::kmFullscreen, features.fullscreen);
-  if (features.widthSet)
+  if (overwrite_manifest || !manifest->HasKey(switches::kmResizable))
+    manifest->SetBoolean(switches::kmResizable, features.resizable);
+  if (overwrite_manifest || !manifest->HasKey(switches::kmFullscreen))
+    manifest->SetBoolean(switches::kmFullscreen, features.fullscreen);
+  if (overwrite_manifest || !manifest->HasKey(switches::kmToolbar))
+    manifest->SetBoolean(switches::kmToolbar, features.toolBarVisible);
+  if (features.widthSet && (overwrite_manifest || !manifest->HasKey(switches::kmWidth)))
     manifest->SetInteger(switches::kmWidth, features.width);
-  if (features.heightSet)
+  if (features.heightSet && (overwrite_manifest || !manifest->HasKey(switches::kmHeight)))
     manifest->SetInteger(switches::kmHeight, features.height);
-  if (features.xSet)
+  if (features.xSet && (overwrite_manifest || !manifest->HasKey(switches::kmX)))
     manifest->SetInteger(switches::kmX, features.x);
-  if (features.ySet)
+  if (features.ySet && (overwrite_manifest || !manifest->HasKey(switches::kmY)))
     manifest->SetInteger(switches::kmY, features.y);
   // window.open should show the window by default.
   manifest->SetBoolean(switches::kmShow, true);

@@ -132,6 +132,7 @@ std::wstring ASCIIToWide(const std::string& ascii) {
 Package::Package()
     : path_(GetSelfPath()),
       self_extract_(true) {
+
   // First try to extract self.
   if (InitFromPath())
     return;
@@ -338,8 +339,11 @@ void Package::InitWithDefault() {
   root_.reset(new base::DictionaryValue());
   root()->SetString(switches::kmName, "node-webkit");
   root()->SetString(switches::kmMain, "nw:blank");
+  root()->Set(switches::kmWindow, GetNewWindow());
+}
+
+base::DictionaryValue* Package::GetNewWindow() {
   base::DictionaryValue* window = new base::DictionaryValue();
-  root()->Set(switches::kmWindow, window);
 
   // Hide toolbar if specifed in the command line.
   if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kNoToolbar))
@@ -347,6 +351,8 @@ void Package::InitWithDefault() {
 
   // Window should show in center by default.
   window->SetString(switches::kmPosition, "center");
+
+  return window;
 }
 
 bool Package::ExtractPath() {

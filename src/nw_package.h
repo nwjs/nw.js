@@ -81,6 +81,8 @@ class Package {
   // Manifest string.
   std::string package_string() { return package_string_; }
 
+  base::DictionaryValue* GetNewWindow();
+
  private:
   bool InitFromPath();
   void InitWithDefault();
