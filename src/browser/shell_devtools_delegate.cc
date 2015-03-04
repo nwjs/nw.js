@@ -148,7 +148,7 @@ void ShellDevToolsDelegate::EnumerateTargets(TargetCallback callback) {
 
 scoped_ptr<DevToolsTarget> ShellDevToolsDelegate::CreateNewTarget(const GURL& url) {
   Shell* shell = Shell::Create(browser_context_,
-                               GURL("nw:blank"),
+                               url != GURL(url::kAboutBlankURL) ? url : GURL("nw:blank"),
                                NULL,
                                MSG_ROUTING_NONE,
                                NULL);
