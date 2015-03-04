@@ -6,8 +6,8 @@ Official site: http://nwjs.io
 [new v0.12.0 test release](https://groups.google.com/d/msg/nwjs-general/Sykci3Qhgus/AoF0zT7TEIoJ)  
 ## Introduction
 
-node-webkit is an app runtime based on `Chromium` and `node.js`. You can 
-write native apps in HTML and JavaScript with node-webkit. It also lets you
+NW.js is an app runtime based on `Chromium` and `node.js`. You can 
+write native apps in HTML and JavaScript with NW.js. It also lets you
 call Node.js modules directly from the DOM and enables a new way of writing
 native applications with all Web technologies.
 
@@ -27,6 +27,12 @@ It was created in the Intel Open Source Technology Center.
 * Available on Linux, Mac OS X and Windows
 
 ## Downloads
+* **v0.12.0-rc1:** (Feb 27, 2015, based off of IO.js v1.2.0, Chromium 41.0.2272.32): [release notes](https://groups.google.com/d/msg/nwjs-general/Sykci3Qhgus/AoF0zT7TEIoJ)
+
+ * Linux: [32bit](http://dl.nwjs.io/v0.12.0-rc1/nwjs-v0.12.0-rc1-linux-ia32.tar.gz) / [64bit](http://dl.nwjs.io/v0.12.0-rc1/nwjs-v0.12.0-rc1-linux-x64.tar.gz)
+ * Windows: [32bit](http://dl.nwjs.io/v0.12.0-rc1/nwjs-v0.12.0-rc1-win-ia32.zip) / [64bit](http://dl.nwjs.io/v0.12.0-rc1/nwjs-v0.12.0-rc1-win-x64.zip)
+ * Mac 10.7+: [32bit](http://dl.nwjs.io/v0.12.0-rc1/nwjs-v0.12.0-rc1-osx-ia32.zip) / [64bit](http://dl.nwjs.io/v0.12.0-rc1/nwjs-v0.12.0-rc1-osx-x64.zip)
+
 * **v0.11.6:** (Jan 21, 2015, based off of Node v0.11.13, Chromium 38.0.2125.104): [release notes](https://groups.google.com/d/msg/nwjs-general/ADFYPzjpo8Q/R6U7I18oirUJ)
 
  * Linux: [32bit](http://dl.node-webkit.org/v0.11.6/node-webkit-v0.11.6-linux-ia32.tar.gz) / [64bit](http://dl.node-webkit.org/v0.11.6/node-webkit-v0.11.6-linux-x64.tar.gz)
