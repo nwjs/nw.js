@@ -73,6 +73,7 @@
         '<(DEPTH)/third_party/node/node.gyp:node',
         '<(DEPTH)/ui/base/ui_base.gyp:ui_base',
         '<(DEPTH)/ui/resources/ui_resources.gyp:ui_resources',
+        '<(DEPTH)/ui/snapshot/snapshot.gyp:snapshot',
         '<(DEPTH)/url/url.gyp:url_lib',
         '<(DEPTH)/v8/tools/gyp/v8.gyp:v8',
         '<(DEPTH)/third_party/zlib/zlib.gyp:minizip',

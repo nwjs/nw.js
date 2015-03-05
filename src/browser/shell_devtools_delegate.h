@@ -21,10 +21,14 @@
 #ifndef CONTENT_NW_SRC_BROWSER_SHELL_DEVTOOLS_DELEGATE_H_
 #define CONTENT_NW_SRC_BROWSER_SHELL_DEVTOOLS_DELEGATE_H_
 
+#include <map>
+#include <string>
 #include <vector>
 
 #include "base/basictypes.h"
 #include "base/compiler_specific.h"
+#include "base/memory/ref_counted_memory.h"
+#include "base/memory/weak_ptr.h"
 #include "content/public/browser/devtools_agent_host.h"
 #include "content/public/browser/devtools_http_handler_delegate.h"
 #include "content/public/browser/render_view_host.h"
@@ -63,9 +67,12 @@ class ShellDevToolsDelegate : public DevToolsHttpHandlerDelegate {
   }
 
  private:
+  void ProcessAndSaveThumbnail(scoped_refptr<base::RefCountedBytes> png);
+
+  std::string thumbnail_;
   BrowserContext* browser_context_;
   DevToolsHttpHandler* devtools_http_handler_;
-
+  base::WeakPtrFactory<ShellDevToolsDelegate> weak_factory_;
   DISALLOW_COPY_AND_ASSIGN(ShellDevToolsDelegate);
 };
 

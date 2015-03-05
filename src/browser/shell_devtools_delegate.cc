@@ -22,21 +22,28 @@
 
 #include "base/files/file_path.h"
 #include "base/strings/utf_string_conversions.h"
+#include "base/thread_task_runner_handle.h"
 #include "content/nw/src/nw_shell.h"
+#include "content/public/browser/devtools_agent_host.h"
 #include "content/public/browser/devtools_http_handler.h"
 #include "content/public/browser/devtools_target.h"
+#include "content/public/browser/render_view_host.h"
+#include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/web_contents.h"
 #include "grit/nw_resources.h"
 #include "net/socket/tcp_listen_socket.h"
 #include "net/url_request/url_request_context_getter.h"
 #include "ui/base/layout.h"
 #include "ui/base/resource/resource_bundle.h"
+#include "ui/snapshot/snapshot.h"
 
 namespace content {
 
 ShellDevToolsDelegate::ShellDevToolsDelegate(BrowserContext* browser_context,
                                              int port)
-    : browser_context_(browser_context) {
+    : thumbnail_(std::string()),
+      browser_context_(browser_context),
+      weak_factory_(this) {
   devtools_http_handler_ = DevToolsHttpHandler::Start(
       new net::TCPListenSocketFactory("127.0.0.1", port),
       "",
@@ -56,6 +63,16 @@ std::string ShellDevToolsDelegate::GetDiscoveryPageHTML() {
       IDR_NW_DEVTOOLS_DISCOVERY_PAGE).as_string();
 }
 
+void ShellDevToolsDelegate::ProcessAndSaveThumbnail(
+    scoped_refptr<base::RefCountedBytes> png) {
+  if (!png.get())
+    return;
+  const std::vector<unsigned char>& png_data = png->data();
+  std::string png_string_data(reinterpret_cast<const char*>(&png_data[0]),
+                              png_data.size());
+  thumbnail_ = png_string_data;
+}
+
 bool ShellDevToolsDelegate::BundlesFrontendResources() {
   return true;
 }
@@ -65,7 +82,27 @@ base::FilePath ShellDevToolsDelegate::GetDebugFrontendDir() {
 }
 
 std::string ShellDevToolsDelegate::GetPageThumbnailData(const GURL& url) {
-  return "";
+  std::vector<WebContents*> wc_list =
+      DevToolsAgentHost::GetInspectableWebContents();
+  for (std::vector<WebContents*>::iterator it = wc_list.begin();
+      it != wc_list.end(); ++it) {
+    if ((*it) && (*it)->GetURL() == url) {
+      RenderWidgetHostView* render_widget_host_view =
+          (*it)->GetRenderWidgetHostView();
+      if (!render_widget_host_view)
+        continue;
+      gfx::Rect snapshot_bounds(
+          render_widget_host_view->GetViewBounds().size());
+      ui::GrabViewSnapshotAsync(
+          render_widget_host_view->GetNativeView(),
+          snapshot_bounds,
+          base::ThreadTaskRunnerHandle::Get(),
+          base::Bind(&ShellDevToolsDelegate::ProcessAndSaveThumbnail,
+                     weak_factory_.GetWeakPtr()));
+          break;
+    }
+  }
+  return thumbnail_;
 }
 
 scoped_ptr<net::StreamListenSocket>
