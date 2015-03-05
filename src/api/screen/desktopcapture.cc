@@ -68,13 +68,13 @@ void DesktopCapture::Start(bool screens, bool windows) {
 	scoped_ptr<webrtc::ScreenCapturer> screen_capturer(screens ? webrtc::ScreenCapturer::Create(options) : NULL);
 	scoped_ptr<webrtc::WindowCapturer> window_capturer(windows ? webrtc::WindowCapturer::Create(options) : NULL);
 
-	media_list.reset(new NativeDesktopMediaList(screen_capturer.Pass(), window_capturer.Pass()));
+	media_list_.reset(new NativeDesktopMediaList(screen_capturer.Pass(), window_capturer.Pass()));
 
-	media_list->StartUpdating(this);
+	media_list_->StartUpdating(this);
 }
 
 void DesktopCapture::Stop() {
-	media_list.reset();
+	media_list_.reset();
 }
 
 //note: I dont see any reason for ToString() not to have const declared, but it is not, so we have to remove const here
@@ -83,7 +83,7 @@ std::string DesktopCapture::GetStringId(DesktopMediaList::Source * id){
 }
 
 void DesktopCapture::OnSourceAdded(int index){
-	DesktopMediaList::Source src = media_list->GetSource(index);
+	DesktopMediaList::Source src = media_list_->GetSource(index);
 	
 	std::string type;
 	if (src.id.type == content::DesktopMediaID::TYPE_AURA_WINDOW || src.id.type == content::DesktopMediaID::TYPE_WINDOW){
@@ -112,7 +112,7 @@ void DesktopCapture::OnSourceRemoved(int index){
 	this->dispatcher_host()->SendEvent(this, "__nw_desktopcapture_listner_removed", param);
 }
 void DesktopCapture::OnSourceMoved(int old_index, int new_index){
-	DesktopMediaList::Source src = media_list->GetSource(new_index);
+	DesktopMediaList::Source src = media_list_->GetSource(new_index);
 	base::ListValue param;
 	param.AppendString(GetStringId(&src));
 	param.AppendInteger(new_index);
@@ -120,7 +120,7 @@ void DesktopCapture::OnSourceMoved(int old_index, int new_index){
 	this->dispatcher_host()->SendEvent(this, "__nw_desktopcapture_listner_moved", param);
 }
 void DesktopCapture::OnSourceNameChanged(int index){
-	DesktopMediaList::Source src = media_list->GetSource(index);
+	DesktopMediaList::Source src = media_list_->GetSource(index);
 
 	base::ListValue param;
 	param.AppendString(GetStringId(&src));
@@ -131,7 +131,7 @@ void DesktopCapture::OnSourceNameChanged(int index){
 void DesktopCapture::OnSourceThumbnailChanged(int index){
 	std::string base64;
 
-	DesktopMediaList::Source src = media_list->GetSource(index);
+	DesktopMediaList::Source src = media_list_->GetSource(index);
 	SkBitmap bitmap = src.thumbnail.GetRepresentation(1).sk_bitmap();
 	SkAutoLockPixels lock_image(bitmap);
 	std::vector<unsigned char> data;

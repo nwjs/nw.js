@@ -44,7 +44,7 @@ namespace nwapi {
 			void Stop();
 			
 			std::string GetStringId(DesktopMediaList::Source * id);
-			scoped_ptr<DesktopMediaList> media_list;
+			scoped_ptr<DesktopMediaList> media_list_;
 	};
 } // namespace api
 #endif // CONTENT_NW_SRC_API_DESKTOPCAPTURE_H_
