@@ -28,7 +28,7 @@
     <output filename="hu.pak" type="data_package" lang="hu" />
     <output filename="id.pak" type="data_package" lang="id" />
     <output filename="it.pak" type="data_package" lang="it" />
-    <output filename="iw.pak" type="data_package" lang="he" />
+    <output filename="he.pak" type="data_package" lang="he" />
     <output filename="ja.pak" type="data_package" lang="ja" />
     <output filename="kn.pak" type="data_package" lang="kn" />
     <output filename="ko.pak" type="data_package" lang="ko" />
@@ -38,7 +38,7 @@
     <output filename="mr.pak" type="data_package" lang="mr" />
     <output filename="ms.pak" type="data_package" lang="ms" />
     <output filename="nl.pak" type="data_package" lang="nl" />
-    <output filename="no.pak" type="data_package" lang="no" />
+    <output filename="nb.pak" type="data_package" lang="no" />
     <output filename="pl.pak" type="data_package" lang="pl" />
     <output filename="pt-BR.pak" type="data_package" lang="pt-BR" />
     <output filename="pt-PT.pak" type="data_package" lang="pt-PT" />
