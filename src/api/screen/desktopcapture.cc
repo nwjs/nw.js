@@ -45,9 +45,7 @@ DesktopCapture::DesktopCapture(int id,
 	: Base(id, dispatcher_host, option) {
 }
 
-DesktopCapture::~DesktopCapture() {
-	media_list.reset();
-}
+DesktopCapture::~DesktopCapture() {}
 
 
 void DesktopCapture::CallSync(const std::string& method, const base::ListValue& arguments, base::ListValue* result){
@@ -87,10 +85,25 @@ std::string DesktopCapture::GetStringId(DesktopMediaList::Source * id){
 void DesktopCapture::OnSourceAdded(int index){
 	DesktopMediaList::Source src = media_list->GetSource(index);
 	
+	std::string type;
+	if (src.id.type == content::DesktopMediaID::TYPE_AURA_WINDOW || src.id.type == content::DesktopMediaID::TYPE_WINDOW){
+		type = "window";
+	}
+	else if (src.id.type == content::DesktopMediaID::TYPE_SCREEN){
+		type = "screen";
+	}
+	else if (src.id.type == content::DesktopMediaID::TYPE_NONE){
+		type = "none";
+	}
+	else{
+		type = "unknown";
+	}
+
 	base::ListValue param;
 	param.AppendString(GetStringId(&src));
 	param.AppendString(src.name);
 	param.AppendInteger(index);
+	param.AppendString(type);
 	this->dispatcher_host()->SendEvent(this, "__nw_desktopcapture_listner_added", param);
 }
 void DesktopCapture::OnSourceRemoved(int index){
