@@ -7,6 +7,17 @@ import shutil
 import distutils.core
 import re
 
+def update_uvh(tmp_dir, header_files):
+  for file in header_files:
+    header_f = os.path.join(tmp_dir, 'node', 'src', file)
+    rfile = open(header_f, 'r')
+    old = rfile.read()
+    new = re.sub('third_party/node/deps/uv/include/uv.h', 'uv.h', old, 0)
+    wfile = open(header_f, 'w')
+    wfile.write(new)
+    wfile.close()
+  return
+
 script_dir = os.path.dirname(__file__)
 nw_root  = os.path.normpath(os.path.join(script_dir, os.pardir))
 project_root = os.path.normpath(os.path.join(nw_root, os.pardir, os.pardir)) 
@@ -21,7 +32,7 @@ nw_version = getnwversion.nw_version
 '''
 if '-t' in sys.argv:
   nw_version = sys.argv[sys.argv.index('-t') + 1]
-tarname = 'node-v' + nw_version + '.tar.gz'
+tarname = 'nw-headers-v' + nw_version + '.tar.gz'
 tarpath = os.path.join(tmp_dir, tarname)
 
 #make tmpdir
@@ -71,21 +82,13 @@ if os.path.exists(os.path.join(tmp_dir, 'node', 'deps', 'v8', 'out')):
 if os.path.exists(os.path.join(tmp_dir, 'node', 'deps', 'npm', 'node_modules')):
   shutil.rmtree(os.path.join(tmp_dir, 'node', 'deps', 'npm', 'node_modules'))
 
-rfile = open(os.path.join(tmp_dir, 'node', 'src', 'node.h'), 'r')
-filer = rfile.read()
-sub = re.sub('third_party/node/deps/uv/include/uv.h', 'uv.h', filer, 0)
-rfile.close()
-wfile = open(os.path.join(tmp_dir, 'node', 'src', 'node.h'), 'w')
-wfile.write(sub)
-wfile.close()
+header_files = ['node.h', 'env.h', 'env-inl.h']
+update_uvh(tmp_dir, header_files)
 
 print 'copy file end'
 print 'Begin compress file'
 
-tar = tarfile.open(tarpath, 'w:gz')
-for dirpath, dirnames, filenames in os.walk(tmp_dir):
-  for name in filenames:
-    path = os.path.normpath(os.path.join(dirpath, name))
-    tar.add(path, path.replace(tmp_dir + os.sep, ''))
-tar.close()
+with tarfile.open(tarpath, 'w:gz') as tar:
+  tar.add(os.path.join(tmp_dir, 'node'), arcname='node')
+
 print 'compress end'
