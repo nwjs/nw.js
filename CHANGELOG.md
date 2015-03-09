@@ -1,7 +1,7 @@
 0.12.0 / 03-05-2015
 =======================
 - Chromium updated to 41.0.2272.76
-- [Screen Selection] OSX and Win implementation (Thanks to Jefry <jefry.ted@vcube.co.jp>)
+- [Screen Selection] OSX and Win implementation (Thanks to Jefry)
 - Fix #3165: crash on auth in webview
 
 0.12.0-rc1 / 02-27-2015
