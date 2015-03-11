@@ -71,6 +71,20 @@ Menu.prototype.popup = function(x, y) {
   nw.callObjectMethod(this, 'Popup', [ x, y ]);
 }
 
+Menu.prototype.getItemByLabel = function(label) {
+  var items = this.items,
+      result = null;
+
+  items.forEach(function(item) {
+    if (item.label && item.label === label) {
+      result = item;
+      return;
+    }
+  });
+  
+  return result;
+};
+
 if (require('os').platform() === 'darwin'){
   Menu.prototype.on = Menu.prototype.addListener = function(ev, callback) {
     if (ev == 'show') {
