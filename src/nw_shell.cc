@@ -78,6 +78,7 @@
 using nw::NativeWindowAura;
 #endif
 #include "content/public/browser/media_capture_devices.h"
+#include "media/audio/audio_manager_base.h"
 
 #include "chrome/browser/printing/print_view_manager_basic.h"
 #include "extensions/common/extension_messages.h"
@@ -722,6 +723,11 @@ void Shell::RequestMediaAccessPermission(
     devices.push_back(content::MediaStreamDevice(
                       content::MEDIA_DESKTOP_VIDEO_CAPTURE, media_id.ToString(), "Screen"));
   }
+#if defined(OS_WIN)
+  if (request.audio_type == content::MEDIA_DESKTOP_AUDIO_CAPTURE) {
+	  devices.push_back(content::MediaStreamDevice(content::MEDIA_DESKTOP_AUDIO_CAPTURE, media::AudioManagerBase::kLoopbackInputDeviceId, "System Audio"));
+  }
+#endif
   // TODO(jamescook): Should we show a recording icon somewhere? If so, where?
   scoped_ptr<MediaStreamUI> ui;
   callback.Run(devices,
