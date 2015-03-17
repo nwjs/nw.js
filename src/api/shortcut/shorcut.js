@@ -22,7 +22,7 @@ var v8_util = process.binding('v8_util');
 
 function Shortcut(option) {
   if (typeof option != 'object')
-    throw new String('Invalid option.');
+    throw new TypeError('Invalid option.');
 
   if (!option.hasOwnProperty('key'))
     throw new TypeError("Shortcut requires 'key' to specify key combinations.");

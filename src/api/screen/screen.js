@@ -29,7 +29,7 @@ require('util').inherits(Screen, exports.Base);
 // Override the addListener method.
 Screen.prototype.on = Screen.prototype.addListener = function(ev, callback) {
   if ( ev != "displayBoundsChanged" && ev != "displayAdded" && ev != "displayRemoved" && ev != "chooseDesktopMedia")
-    throw new String('only following event can be listened: displayBoundsChanged, displayAdded, displayRemoved');
+    throw new TypeError('only following event can be listened: displayBoundsChanged, displayAdded, displayRemoved');
   
   var onRemoveListener = function (type, listener) {
     if (this._numListener > 0) {
@@ -43,7 +43,7 @@ Screen.prototype.on = Screen.prototype.addListener = function(ev, callback) {
 
   if(this._numListener == 0) {
     if (nw.callStaticMethodSync('Screen', 'AddScreenChangeCallback', [ this.id ])[0] == false ) {
-      throw new String('nw.callStaticMethodSync(Screen, AddScreenChangeCallback) fails');
+      throw new Error('nw.callStaticMethodSync(Screen, AddScreenChangeCallback) fails');
       return;
     }
     process.EventEmitter.prototype.addListener.apply(this, ["removeListener", onRemoveListener]);
