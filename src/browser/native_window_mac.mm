@@ -587,6 +587,7 @@ void NativeWindowCocoa::SetTransparent(bool transparent) {
 
   if (rwhv) {
     [rwhv->background_layer_ setBackgroundColor:CGColorGetConstantColor(transparent ? kCGColorClear : kCGColorWhite)];
+    [rwhv->software_layer_ setBackgroundColor:transparent ? [NSColor clearColor] : [NSColor whiteColor]];
   }
   
   if (rvh) {

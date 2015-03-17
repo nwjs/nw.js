@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>iframe</title>
+  <script src="jquery.min.js"></script>
+  <script>
+  // var url = "https://appcenter-staging.html5tools-software.intel.com/Account/xdklogin.aspx?xdk=true&xdkvariant=xdk&xdkversion=release-2014-ww51";
+  // var url = '#';
+  var url = "http://www.baidu.com/";
+  function createIframejq() {
+    var html = '<iframe style="width:100%;height:100%;"></iframe>';
+    var $out = $('#out').append(html);
+    var $iframe = $out.find('iframe');
+    $iframe.hide();
+
+    $iframe[0].onload = function(){
+      console.log('onload');
+    };
+
+    $iframe.on('load', function() {
+      console.log('addEventListener(load)');
+      $iframe.show();
+    }, false);
+
+    $iframe.attr('src', url);
+  }
+  function createIframe() {
+    var html = '<iframe style="width:100%;height:100%;"></iframe>';
+    document.getElementById('out').innerHTML = html;
+    var $iframe = document.getElementsByTagName('iframe')[0];
+    $iframe.style.display = 'none';
+
+    $iframe.onload = function(){
+      console.log('onload');
+    };
+
+    $iframe.addEventListener('load', function() {
+      console.log('addEventListener(load)');
+      $iframe.style.display = 'block';
+    }, false);
+
+    $iframe.src = url;
+  }
+  </script>
+</head>
+<body style="width:100%;height:100%;margin:0px;">
+  <button onclick="createIframe()">Create</button>
+  <button onclick="createIframe()">CreateJQ</button>
+  <div id="out"></div>
+</body>
+</html>

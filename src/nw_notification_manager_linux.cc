@@ -85,8 +85,18 @@ bool NotificationManagerLinux::AddDesktopNotification(const content::PlatformNot
   NotifyNotification * notif;
   NotificationMap::iterator i = getNotification(notification_id);
   if (i==mNotificationIDmap.end()) {
+#ifdef NOTIFY_CHECK_VERSION
+#if NOTIFY_CHECK_VERSION(0,7,0)
     notif = notify_notification_new (
       base::UTF16ToUTF8(params.title).c_str(), base::UTF16ToUTF8(params.body).c_str(), NULL);
+#else
+    notif = notify_notification_new (
+      base::UTF16ToUTF8(params.title).c_str(), base::UTF16ToUTF8(params.body).c_str(), NULL, NULL);
+#endif
+#else
+    notif = notify_notification_new (
+      base::UTF16ToUTF8(params.title).c_str(), base::UTF16ToUTF8(params.body).c_str(), NULL, NULL);
+#endif
     NotificationData data;
     data.mNotification = notif;
     data.mRenderProcessId = render_process_id;

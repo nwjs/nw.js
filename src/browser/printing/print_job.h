@@ -27,7 +27,7 @@ class PrintJobWorker;
 class PrinterQuery;
 
 // Manages the print work for a specific document. Talks to the printer through
-// PrintingContext though PrintJob::Worker. Hides access to PrintingContext in a
+// PrintingContext through PrintJobWorker. Hides access to PrintingContext in a
 // worker thread so the caller never blocks. PrintJob will send notifications on
 // any state change. While printing, the PrintJobManager instance keeps a
 // reference to the job to be sure it is kept alive. All the code in this class
