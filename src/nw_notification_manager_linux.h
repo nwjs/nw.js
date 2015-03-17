@@ -29,7 +29,6 @@ class NotificationManagerLinux : public NotificationManager {
   struct NotificationData {
     NotifyNotification* mNotification;
     int mRenderProcessId;
-    int mRenderViewId;
   };
 
   typedef std::map<int, NotificationData> NotificationMap;
@@ -40,23 +39,14 @@ class NotificationManagerLinux : public NotificationManager {
 
   NotificationMap::iterator getNotification(int id);
 
-  // internal function for AddDesktopNotification
-  virtual bool AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-                                      const int render_process_id,
-                                      const int render_frame_id,
-                                      const int notification_id,
-                                      const bool worker,
-                                      const std::vector<SkBitmap>* bitmaps) OVERRIDE;
-
 public:
   explicit NotificationManagerLinux();
-  virtual ~NotificationManagerLinux();
-  virtual bool AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-                                      const int render_process_id,
-                                      const int render_frame_id,
-                                      const int notification_id,
-                                      const bool worker) OVERRIDE;
-  virtual bool CancelDesktopNotification(int render_process_id, int render_frame_id, int notification_id) OVERRIDE;
+  ~NotificationManagerLinux() override;
+  bool AddDesktopNotification(const content::PlatformNotificationData& params,
+    const int render_process_id,
+    const int notification_id,
+    const SkBitmap& icon) override;
+  bool CancelDesktopNotification(int notification_id) override;
 };
 
 } // namespace nw

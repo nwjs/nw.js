@@ -24,8 +24,9 @@
 #include "base/strings/sys_string_conversions.h"
 #include "base/values.h"
 #import "chrome/browser/ui/cocoa/custom_frame_view.h"
-#import "chrome/browser/ui/cocoa/nsview_additions.h"
+#import "ui/base/cocoa/nsview_additions.h"
 #include "content/nw/src/api/menu/menu.h"
+#include "content/nw/src/api/menu/menu_delegate_mac.h"
 #include "content/nw/src/api/app/app.h"
 #include "content/nw/src/browser/chrome_event_processing_window.h"
 #include "content/nw/src/browser/native_window_helper_mac.h"
@@ -36,6 +37,7 @@
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/native_web_keyboard_event.h"
 #include "content/browser/renderer_host/render_widget_host_view_mac.h"
+#include "content/browser/renderer_host/render_view_host_impl.h"
 #include "content/public/browser/web_contents.h"
 #include "extensions/common/draggable_region.h"
 #include "third_party/skia/include/core/SkRegion.h"
@@ -493,8 +495,6 @@ void NativeWindowCocoa::Focus(bool focus) {
 void NativeWindowCocoa::Show() {
   NSApplication *myApp = [NSApplication sharedApplication];
   [myApp activateIgnoringOtherApps:NO];
-  content::RenderWidgetHostView* rwhv =
-      shell_->web_contents()->GetRenderWidgetHostView();
 
   if (first_show_ && initial_focus_) {
     [window() makeKeyAndOrderFront:nil];
@@ -505,11 +505,12 @@ void NativeWindowCocoa::Show() {
     // Chrome assumption is that becoming the first responder = you have focus
     // so we use this trick to refuse to become first responder during orderFrontRegardless
 
-    if (rwhv)
-      rwhv->SetTakesFocusOnlyOnMouseDown(true);
+    // TODO(roger)
+    // if (rwhv)
+    //  rwhv->SetTakesFocusOnlyOnMouseDown(true);
     [window() orderFrontRegardless];
-    if (rwhv)
-      rwhv->SetTakesFocusOnlyOnMouseDown(false);
+    // if (rwhv)
+    //  rwhv->SetTakesFocusOnlyOnMouseDown(false);
   }
   first_show_ = false;
 }
@@ -553,6 +554,23 @@ bool NativeWindowCocoa::IsFullscreen() {
   return is_fullscreen_;
 }
 
+//debug function to iterate all the sublayers
+void SetTransparent (CALayer* layer, const bool transparent) {
+  if (layer == NULL) return;
+  [layer setBackgroundColor:CGColorGetConstantColor(transparent ? kCGColorClear : kCGColorWhite)];
+  for (CALayer* l in layer.sublayers) {
+    SetTransparent(l, transparent);
+  }
+}
+
+//debug function to iterate all the subviews
+void SetTransparent (NSView * view, const bool transparent) {
+  if (view == NULL) return;
+  SetTransparent(view.layer, transparent);
+  for (NSView* v in view.subviews)
+    SetTransparent(v, transparent);
+}
+  
 void NativeWindowCocoa::SetTransparent(bool transparent) {
   
   if (!content::g_support_transparency) return;
@@ -565,12 +583,19 @@ void NativeWindowCocoa::SetTransparent(bool transparent) {
   [window() setBackgroundColor:transparent ? [NSColor clearColor] : opaque_color_];
 
   content::RenderWidgetHostViewMac* rwhv = static_cast<content::RenderWidgetHostViewMac*>(shell_->web_contents()->GetRenderWidgetHostView());
+  content::RenderViewHostImpl* rvh = static_cast<content::RenderViewHostImpl*>(shell_->web_contents()->GetRenderViewHost());
 
   if (rwhv) {
-    rwhv->SetBackgroundOpaque(!transparent);
     [rwhv->background_layer_ setBackgroundColor:CGColorGetConstantColor(transparent ? kCGColorClear : kCGColorWhite)];
     [rwhv->software_layer_ setBackgroundColor:transparent ? [NSColor clearColor] : [NSColor whiteColor]];
   }
+  
+  if (rvh) {
+    rvh->SetBackgroundOpaque(!transparent);
+  }
+  
+  //this is for debugging, iterate all the subviews / sublayers
+  //nw::SetTransparent((NSView*)[window()contentView], transparent);
   
   transparent_ = transparent;
   

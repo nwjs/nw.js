@@ -1,52 +1,55 @@
-// Copyright (c) 2012 Intel Corp
-// Copyright (c) 2012 The Chromium Authors
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy 
-// of this software and associated documentation files (the "Software"), to deal
-//  in the Software without restriction, including without limitation the rights
-//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell co
-// pies of the Software, and to permit persons to whom the Software is furnished
-//  to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in al
-// l copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IM
-// PLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNES
-// S FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-//  OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WH
-// ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-//  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+// Copyright 2013 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
 #include "content/nw/src/net/shell_network_delegate.h"
 
+#include "extensions/browser/info_map.h"
+#include "extensions/browser/api/web_request/web_request_api.h"
 #include "net/base/net_errors.h"
+#include "net/base/static_cookie_policy.h"
+#include "net/url_request/url_request.h"
 
 namespace content {
 
-ShellNetworkDelegate::ShellNetworkDelegate() {
+namespace {
+bool g_accept_all_cookies = true;
+}
+
+ShellNetworkDelegate::ShellNetworkDelegate(
+    void* browser_context, extensions::InfoMap* extension_info_map) {
+  browser_context_ = browser_context;
+  extension_info_map_ = extension_info_map;
 }
 
 ShellNetworkDelegate::~ShellNetworkDelegate() {
+}
+
+void ShellNetworkDelegate::SetAcceptAllCookies(bool accept) {
+  g_accept_all_cookies = accept;
 }
 
 int ShellNetworkDelegate::OnBeforeURLRequest(
     net::URLRequest* request,
     const net::CompletionCallback& callback,
     GURL* new_url) {
-  return net::OK;
+  return ExtensionWebRequestEventRouter::GetInstance()->OnBeforeRequest(
+      browser_context_, extension_info_map_.get(), request, callback, new_url);
 }
 
 int ShellNetworkDelegate::OnBeforeSendHeaders(
     net::URLRequest* request,
     const net::CompletionCallback& callback,
     net::HttpRequestHeaders* headers) {
-  return net::OK;
+  return ExtensionWebRequestEventRouter::GetInstance()->OnBeforeSendHeaders(
+      browser_context_, extension_info_map_.get(), request, callback, headers);
 }
 
 void ShellNetworkDelegate::OnSendHeaders(
     net::URLRequest* request,
     const net::HttpRequestHeaders& headers) {
+  ExtensionWebRequestEventRouter::GetInstance()->OnSendHeaders(
+      browser_context_, extension_info_map_.get(), request, headers);
 }
 
 int ShellNetworkDelegate::OnHeadersReceived(
@@ -55,14 +58,25 @@ int ShellNetworkDelegate::OnHeadersReceived(
     const net::HttpResponseHeaders* original_response_headers,
     scoped_refptr<net::HttpResponseHeaders>* override_response_headers,
     GURL* allowed_unsafe_redirect_url) {
-  return net::OK;
+  return ExtensionWebRequestEventRouter::GetInstance()->OnHeadersReceived(
+      browser_context_,
+      extension_info_map_.get(),
+      request,
+      callback,
+      original_response_headers,
+      override_response_headers,
+      allowed_unsafe_redirect_url);
 }
 
 void ShellNetworkDelegate::OnBeforeRedirect(net::URLRequest* request,
                                             const GURL& new_location) {
+  ExtensionWebRequestEventRouter::GetInstance()->OnBeforeRedirect(
+      browser_context_, extension_info_map_.get(), request, new_location);
 }
 
 void ShellNetworkDelegate::OnResponseStarted(net::URLRequest* request) {
+  ExtensionWebRequestEventRouter::GetInstance()->OnResponseStarted(
+      browser_context_, extension_info_map_.get(), request);
 }
 
 void ShellNetworkDelegate::OnRawBytesRead(const net::URLRequest& request,
@@ -70,9 +84,30 @@ void ShellNetworkDelegate::OnRawBytesRead(const net::URLRequest& request,
 }
 
 void ShellNetworkDelegate::OnCompleted(net::URLRequest* request, bool started) {
+  if (request->status().status() == net::URLRequestStatus::SUCCESS) {
+    bool is_redirect = request->response_headers() &&
+        net::HttpResponseHeaders::IsRedirectResponseCode(
+            request->response_headers()->response_code());
+    if (!is_redirect) {
+      ExtensionWebRequestEventRouter::GetInstance()->OnCompleted(
+          browser_context_, extension_info_map_.get(), request);
+    }
+    return;
+  }
+
+  if (request->status().status() == net::URLRequestStatus::FAILED ||
+      request->status().status() == net::URLRequestStatus::CANCELED) {
+    ExtensionWebRequestEventRouter::GetInstance()->OnErrorOccurred(
+        browser_context_, extension_info_map_.get(), request, started);
+    return;
+  }
+
+  NOTREACHED();
 }
 
 void ShellNetworkDelegate::OnURLRequestDestroyed(net::URLRequest* request) {
+  ExtensionWebRequestEventRouter::GetInstance()->OnURLRequestDestroyed(
+      browser_context_, request);
 }
 
 void ShellNetworkDelegate::OnPACScriptError(int line_number,
@@ -84,18 +119,32 @@ ShellNetworkDelegate::AuthRequiredResponse ShellNetworkDelegate::OnAuthRequired(
     const net::AuthChallengeInfo& auth_info,
     const AuthCallback& callback,
     net::AuthCredentials* credentials) {
-  return AUTH_REQUIRED_RESPONSE_NO_ACTION;
+  return ExtensionWebRequestEventRouter::GetInstance()->OnAuthRequired(
+      browser_context_, extension_info_map_.get(), request, auth_info, callback,
+      credentials);
 }
 
 bool ShellNetworkDelegate::OnCanGetCookies(const net::URLRequest& request,
                                            const net::CookieList& cookie_list) {
-  return true;
+  net::StaticCookiePolicy::Type policy_type = g_accept_all_cookies ?
+      net::StaticCookiePolicy::ALLOW_ALL_COOKIES :
+      net::StaticCookiePolicy::BLOCK_ALL_THIRD_PARTY_COOKIES;
+  net::StaticCookiePolicy policy(policy_type);
+  int rv = policy.CanGetCookies(
+      request.url(), request.first_party_for_cookies());
+  return rv == net::OK;
 }
 
 bool ShellNetworkDelegate::OnCanSetCookie(const net::URLRequest& request,
                                           const std::string& cookie_line,
                                           net::CookieOptions* options) {
-  return true;
+  net::StaticCookiePolicy::Type policy_type = g_accept_all_cookies ?
+      net::StaticCookiePolicy::ALLOW_ALL_COOKIES :
+      net::StaticCookiePolicy::BLOCK_ALL_THIRD_PARTY_COOKIES;
+  net::StaticCookiePolicy policy(policy_type);
+  int rv = policy.CanSetCookie(
+      request.url(), request.first_party_for_cookies());
+  return rv == net::OK;
 }
 
 bool ShellNetworkDelegate::OnCanAccessFile(const net::URLRequest& request,
@@ -106,12 +155,6 @@ bool ShellNetworkDelegate::OnCanAccessFile(const net::URLRequest& request,
 bool ShellNetworkDelegate::OnCanThrottleRequest(
     const net::URLRequest& request) const {
   return false;
-}
-
-int ShellNetworkDelegate::OnBeforeSocketStreamConnect(
-    net::SocketStream* socket,
-    const net::CompletionCallback& callback) {
-  return net::OK;
 }
 
 }  // namespace content

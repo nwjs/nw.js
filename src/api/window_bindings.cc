@@ -27,6 +27,7 @@
 #include "content/nw/src/api/dispatcher.h"
 #include "content/renderer/render_view_impl.h"
 #include "grit/nw_resources.h"
+
 #undef LOG
 using namespace blink;
 #if defined(OS_WIN)
@@ -49,16 +50,18 @@ using namespace blink;
 #define BLINK_IMPLEMENTATION 1
 #include "third_party/WebKit/public/web/WebDocument.h"
 #include "third_party/WebKit/Source/platform/heap/Handle.h"
-#include "third_party/WebKit/Source/core/inspector/InspectorInstrumentation.h"
-#include "third_party/WebKit/Source/core/inspector/InspectorResourceAgent.h"
+//#include "third_party/WebKit/Source/core/inspector/InspectorInstrumentation.h"
+//#include "third_party/WebKit/Source/core/inspector/InspectorResourceAgent.h"
 
 #undef CHECK
 #include "V8HTMLIFrameElement.h"
 
+extern void FixSourceNWBin(v8::Isolate* v8_isolate, v8::Handle<v8::UnboundScript> script);
+
 using blink::WebScriptSource;
 using blink::WebFrame;
-using blink::InstrumentingAgents;
-using blink::InspectorResourceAgent;
+//using blink::InstrumentingAgents;
+//using blink::InspectorResourceAgent;
 
 namespace nwapi {
 
@@ -117,6 +120,8 @@ WindowBindings::AllocateId(const v8::FunctionCallbackInfo<v8::Value>& args) {
 void
 WindowBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args) {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::EscapableHandleScope scope(isolate);
+
   v8::Local<v8::Object> self = args[0]->ToObject();
   int routing_id = self->Get(v8::String::NewFromUtf8(isolate, "routing_id"))->Int32Value();
   int object_id = self->Get(v8::String::NewFromUtf8(isolate, "id"))->Int32Value();
@@ -140,7 +145,7 @@ WindowBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args
     if (frm->IsNull()) {
       web_frame = main_frame;
     }else{
-      blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::toNative(frm);
+      blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::toImpl(frm);
       web_frame = blink::WebFrame::fromFrame(iframe->contentFrame());
     }
 #if defined(OS_WIN)
@@ -153,17 +158,59 @@ WindowBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args
     }
     args.GetReturnValue().Set(result);
     return;
+  } else if (method == "EvaluateNWBin") {
+#if defined(OS_WIN)
+    base::FilePath path((WCHAR*)*v8::String::Value(args[3]));
+#else
+    base::FilePath path(*v8::String::Utf8Value(args[3]));
+#endif
+    base::File file(path, base::File::FLAG_OPEN | base::File::FLAG_READ);
+    if (file.IsValid()) {
+      int64 length = file.GetLength();
+      if (length > 0 && length < INT_MAX) {
+        int size = static_cast<int>(length);
+        std::vector<unsigned char> raw_data;
+        raw_data.resize(size);
+        uint8_t* data = reinterpret_cast<uint8_t*>(&(raw_data.front()));
+        if (file.ReadAtCurrentPos((char*)data, size) == length) {
+          v8::Handle<v8::String> source_string = v8::String::NewFromUtf8(isolate, "");
+          v8::ScriptCompiler::CachedData* cache;
+          cache = new v8::ScriptCompiler::CachedData(
+                                                     data, length, v8::ScriptCompiler::CachedData::BufferNotOwned);
+          v8::ScriptCompiler::Source source(source_string, cache);
+          v8::Local<v8::UnboundScript> script;
+          script = v8::ScriptCompiler::CompileUnbound(
+                                                      isolate, &source, v8::ScriptCompiler::kConsumeCodeCache);
+          ASSERT(!cache->rejected);
+          v8::Handle<v8::Value> result;
+          v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[2]);
+          WebFrame* web_frame = NULL;
+          if (frm->IsNull()) {
+            web_frame = main_frame;
+          }else{
+            blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::toImpl(frm);
+            web_frame = blink::WebFrame::fromFrame(iframe->contentFrame());
+          }
+          v8::Context::Scope cscope (web_frame->mainWorldScriptContext());
+          FixSourceNWBin(isolate, script);
+          result = script->BindToCurrentContext()->Run();
+          args.GetReturnValue().Set(result);
+        }
+      }
+    }
+    return;
   } else if (method == "setDevToolsJail") {
     v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[2]);
     if (frm->IsNull()) {
       main_frame->setDevtoolsJail(NULL);
     }else{
-      blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::toNative(frm);
+      blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::toImpl(frm);
       main_frame->setDevtoolsJail(blink::WebFrame::fromFrame(iframe->contentFrame()));
     }
     args.GetReturnValue().Set(v8::Undefined(isolate));
     return;
   } else if (method == "setCacheDisabled") {
+#if 0 //FIXME
     RefPtrWillBePersistent<blink::Document> document = static_cast<PassRefPtrWillBeRawPtr<blink::Document> >(main_frame->document());
     InstrumentingAgents* instrumentingAgents = instrumentationForPage(document->page());
     if (instrumentingAgents) {
@@ -174,6 +221,7 @@ WindowBindings::CallObjectMethod(const v8::FunctionCallbackInfo<v8::Value>& args
     } else
       args.GetReturnValue().Set(false);
     return;
+#endif
   }
 
   args.GetReturnValue().Set(remote::CallObjectMethod(render_view->GetRoutingID(),

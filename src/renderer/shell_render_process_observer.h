@@ -32,12 +32,12 @@ namespace content {
 class ShellRenderProcessObserver : public RenderProcessObserver {
  public:
   ShellRenderProcessObserver();
-  virtual ~ShellRenderProcessObserver();
+   ~ShellRenderProcessObserver() final;
 
   // RenderProcessObserver implementation.
-  virtual bool OnControlMessageReceived(const IPC::Message& message) OVERRIDE;
-  virtual void OnRenderProcessWillShutdown() OVERRIDE;
-  virtual void WebKitInitialized() OVERRIDE;
+   bool OnControlMessageReceived(const IPC::Message& message) override;
+   void OnRenderProcessWillShutdown() override;
+   void WebKitInitialized() override;
  private:
   void OnOpen(const std::string& path);
   void OnReopen();

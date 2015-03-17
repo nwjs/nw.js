@@ -17,21 +17,21 @@ class ShellContentRendererClient;
 class ShellMainDelegate : public ContentMainDelegate {
  public:
   ShellMainDelegate();
-  virtual ~ShellMainDelegate();
+  ~ShellMainDelegate() final;
 
   // ContentMainDelegate implementation:
-  virtual bool BasicStartupComplete(int* exit_code) OVERRIDE;
-  virtual void PreSandboxStartup() OVERRIDE;
-  virtual int RunProcess(
+   bool BasicStartupComplete(int* exit_code) override;
+   void PreSandboxStartup() override;
+   int RunProcess(
       const std::string& process_type,
-      const MainFunctionParams& main_function_params) OVERRIDE;
-  virtual ContentBrowserClient* CreateContentBrowserClient() OVERRIDE;
-  virtual ContentRendererClient* CreateContentRendererClient() OVERRIDE;
-  virtual content::ContentUtilityClient* CreateContentUtilityClient() OVERRIDE;
+      const MainFunctionParams& main_function_params) override;
+   ContentBrowserClient* CreateContentBrowserClient() override;
+   ContentRendererClient* CreateContentRendererClient() override;
+   content::ContentUtilityClient* CreateContentUtilityClient() override;
 
   static void InitializeResourceBundle(const std::string& pref_locale);
 #if defined(OS_POSIX) && !defined(OS_MACOSX)
-  virtual void ZygoteForked() OVERRIDE;
+   void ZygoteForked() override;
 #endif
 
  private:

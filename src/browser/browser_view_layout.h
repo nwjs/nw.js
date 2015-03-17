@@ -19,13 +19,13 @@ namespace nw {
 class BrowserViewLayout : public views::LayoutManager {
  public:
   BrowserViewLayout();
-  virtual ~BrowserViewLayout();
+  ~BrowserViewLayout() override;
 
   // Overridden from LayoutManager:
-  virtual void Layout(views::View* host) OVERRIDE;
-  virtual gfx::Size GetPreferredSize(const views::View* host) const OVERRIDE;
-  virtual int GetPreferredHeightForWidth(const views::View* host,
-                                         int width) const OVERRIDE;
+   void Layout(views::View* host) override;
+   gfx::Size GetPreferredSize(const views::View* host) const override;
+   int GetPreferredHeightForWidth(const views::View* host,
+                                         int width) const override;
 
   void set_menu_bar(views::View* menu_bar) { menu_bar_ = menu_bar; }
   views::View* menu_bar() { return menu_bar_; }

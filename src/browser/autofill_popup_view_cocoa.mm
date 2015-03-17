@@ -2,20 +2,19 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "content/nw/src/browser/autofill_popup_view_cocoa.h"
+#import "chrome/browser/ui/cocoa/autofill/autofill_popup_view_cocoa.h"
 
 #include "base/logging.h"
 #include "base/strings/sys_string_conversions.h"
 #include "chrome/browser/ui/autofill/autofill_popup_controller.h"
 #include "chrome/browser/ui/autofill/popup_constants.h"
-#include "content/nw/src/browser/autofill_popup_view_bridge.h"
+#include "chrome/browser/ui/cocoa/autofill/autofill_popup_view_bridge.h"
 #include "components/autofill/core/browser/popup_item_ids.h"
+#include "components/autofill/core/browser/suggestion.h"
 #include "ui/base/cocoa/window_size_constants.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/gfx/font_list.h"
 #include "ui/gfx/image/image.h"
-#include "ui/gfx/point.h"
-#include "ui/gfx/rect.h"
 
 using autofill::AutofillPopupView;
 
@@ -97,14 +96,14 @@ using autofill::AutofillPopupView;
 
   [self drawBackgroundAndBorder];
 
-  for (size_t i = 0; i < controller_->names().size(); ++i) {
+  for (size_t i = 0; i < controller_->GetLineCount(); ++i) {
     // Skip rows outside of the dirty rect.
     NSRect rowBounds =
         NSRectFromCGRect(controller_->GetRowBounds(i).ToCGRect());
     if (!NSIntersectsRect(rowBounds, dirtyRect))
       continue;
 
-    if (controller_->identifiers()[i] == autofill::POPUP_ITEM_ID_SEPARATOR) {
+    if (controller_->GetSuggestionAt(i).frontend_id == autofill::POPUP_ITEM_ID_SEPARATOR) {
       [self drawSeparatorWithBounds:rowBounds];
       continue;
     }
@@ -112,7 +111,7 @@ using autofill::AutofillPopupView;
     // Additional offset applied to the text in the vertical direction.
     CGFloat textYOffset = 0;
     BOOL imageFirst = NO;
-    if (controller_->identifiers()[i] ==
+    if (controller_->GetSuggestionAt(i).frontend_id ==
         autofill::POPUP_ITEM_ID_MAC_ACCESS_CONTACTS) {
       // Due to the weighting of the asset used for this autofill entry, the
       // text needs to be bumped up by 1 pt to make it look vertically aligned.
@@ -120,8 +119,8 @@ using autofill::AutofillPopupView;
       imageFirst = YES;
     }
 
-    NSString* name = SysUTF16ToNSString(controller_->names()[i]);
-    NSString* subtext = SysUTF16ToNSString(controller_->subtexts()[i]);
+    NSString* name = SysUTF16ToNSString(controller_->GetElidedValueAt(i));
+    NSString* subtext = SysUTF16ToNSString(controller_->GetElidedLabelAt(i));
     BOOL isSelected = static_cast<int>(i) == controller_->selected_line();
     [self drawSuggestionWithName:name
                          subtext:subtext
@@ -203,7 +202,7 @@ using autofill::AutofillPopupView;
       controller_->IsWarning(index) ? [self warningColor] : [self nameColor];
   NSDictionary* nameAttributes =
       [NSDictionary dictionaryWithObjectsAndKeys:
-           controller_->GetNameFontListForRow(index).GetPrimaryFont().
+           controller_->GetValueFontListForRow(index).GetPrimaryFont().
                GetNativeFont(),
            NSFontAttributeName, nameColor, NSForegroundColorAttributeName,
            nil];
@@ -247,7 +246,7 @@ using autofill::AutofillPopupView;
            textYOffset:(CGFloat)textYOffset {
   NSDictionary* subtextAttributes =
       [NSDictionary dictionaryWithObjectsAndKeys:
-           controller_->subtext_font_list().GetPrimaryFont().GetNativeFont(),
+           controller_->GetLabelFontList().GetPrimaryFont().GetNativeFont(),
            NSFontAttributeName,
            [self subtextColor],
            NSForegroundColorAttributeName,
@@ -263,10 +262,10 @@ using autofill::AutofillPopupView;
 }
 
 - (NSImage*)iconAtIndex:(size_t)index {
-  if (controller_->icons()[index].empty())
+  if (controller_->GetSuggestionAt(index).icon.empty())
     return nil;
 
-  int iconId = controller_->GetIconResourceID(controller_->icons()[index]);
+  int iconId = controller_->GetIconResourceID(controller_->GetSuggestionAt(index).icon);
   DCHECK_NE(-1, iconId);
 
   ui::ResourceBundle& rb = ui::ResourceBundle::GetSharedInstance();

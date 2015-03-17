@@ -3,11 +3,10 @@
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/nwjs/nw.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  
 Official site: http://nwjs.io  
 [Announcement](https://groups.google.com/d/msg/nwjs-general/V1FhvfaFIzQ/720xKVd0jNkJ)  
-[new v0.12.0 test release](https://groups.google.com/d/msg/nwjs-general/qWJczc-E92E/9lmIiMfysU8J)  
 ## Introduction
 
-node-webkit is an app runtime based on `Chromium` and `node.js`. You can 
-write native apps in HTML and JavaScript with node-webkit. It also lets you
+NW.js is an app runtime based on `Chromium` and `node.js`. You can 
+write native apps in HTML and JavaScript with NW.js. It also lets you
 call Node.js modules directly from the DOM and enables a new way of writing
 native applications with all Web technologies.
 
@@ -27,11 +26,10 @@ It was created in the Intel Open Source Technology Center.
 * Available on Linux, Mac OS X and Windows
 
 ## Downloads
-* **v0.11.5:** (Dec 28, 2014, based off of Node v0.11.13, Chromium 38.0.2125.104): [release notes](https://groups.google.com/d/msg/nwjs-general/ZjxFVdgWxKE/UevinvOIqzEJ)
-
- * Linux: [32bit](http://dl.node-webkit.org/v0.11.5/node-webkit-v0.11.5-linux-ia32.tar.gz) / [64bit](http://dl.node-webkit.org/v0.11.5/node-webkit-v0.11.5-linux-x64.tar.gz)
- * Windows: [32bit](http://dl.node-webkit.org/v0.11.5/node-webkit-v0.11.5-win-ia32.zip) / [64bit](http://dl.node-webkit.org/v0.11.5/node-webkit-v0.11.5-win-x64.zip)
- * Mac 10.7+: [32bit](http://dl.node-webkit.org/v0.11.5/node-webkit-v0.11.5-osx-ia32.zip) / [64bit](http://dl.node-webkit.org/v0.11.5/node-webkit-v0.11.5-osx-x64.zip)
+* **v0.12.0:** (Mar 5, 2015, based off of IO.js v1.2.0, Chromium 41.0.2272.76): [release notes](https://groups.google.com/d/msg/nwjs-general/NJA-Up4MFug/1jmBPjzklSUJ)  
+ * Linux: [32bit](http://dl.nwjs.io/v0.12.0/nwjs-v0.12.0-linux-ia32.tar.gz) / [64bit](http://dl.nwjs.io/v0.12.0/nwjs-v0.12.0-linux-x64.tar.gz)
+ * Windows: [32bit](http://dl.nwjs.io/v0.12.0/nwjs-v0.12.0-win-ia32.zip) / [64bit](http://dl.nwjs.io/v0.12.0/nwjs-v0.12.0-win-x64.zip)
+ * Mac 10.7+: [32bit](http://dl.nwjs.io/v0.12.0/nwjs-v0.12.0-osx-ia32.zip) / [64bit](http://dl.nwjs.io/v0.12.0/nwjs-v0.12.0-osx-x64.zip)
 
 * **0.8.6:** (Apr 18, 2014, based off of Node v0.10.22, Chrome 30.0.1599.66) **If your native Node module works only with Node v0.10, then you should use node-webkit v0.8.x, which is also a maintained branch. [More info](https://groups.google.com/d/msg/nwjs-general/2OJ1cEMPLlA/09BvpTagSA0J)**  
 [release notes](https://groups.google.com/d/msg/nwjs-general/CLPkgfV-i7s/hwkkQuJ1kngJ)
@@ -45,7 +43,7 @@ It was created in the Intel Open Source Technology Center.
 * [Previous versions](https://github.com/rogerwang/node-webkit/wiki/Downloads-of-old-versions)
 
 ###Demos and real apps
-You may also be interested in [our demos repository](https://github.com/zcbenz/nw-sample-apps) and the [List of apps and companies using node-webkit](https://github.com/rogerwang/node-webkit/wiki/List-of-apps-and-companies-using-node-webkit).
+You may also be interested in [our demos repository](https://github.com/zcbenz/nw-sample-apps) and the [List of apps and companies using nw.js](https://github.com/nwjs/nw.js/wiki/List-of-apps-and-companies-using-nw.js).
 
 ## Quick Start
 
@@ -98,6 +96,9 @@ And our [Wiki](https://github.com/rogerwang/node-webkit/wiki) for much more.
 
 We use the [google group](https://groups.google.com/d/forum/nwjs-general) as
 our mailing list (use English only). Subscribe via [nwjs-general+subscribe@googlegroups.com](mailto:nwjs-general+subscribe@googlegroups.com).
+
+*NOTE*: Links to the old google group (e.g. `https://groups.google.com/forum/#!msg/node-webkit/doRWZ07LgWQ/4fheV8FF8zsJ`) that are no more working can be fixed by replacing `node-webkit` with `nwjs-general` (e.g `https://groups.google.com/forum/#!msg/nwjs-general/doRWZ07LgWQ/4fheV8FF8zsJ`).
+
 Issues are being tracked here on GitHub.
 
 ## License

@@ -44,6 +44,10 @@ namespace base{
 class MessageLoop;
 }
 
+namespace extensions {
+  class InfoMap;
+}
+
 namespace content {
 
 class ShellBrowserContext;
@@ -61,22 +65,23 @@ class ShellBrowserContext;
       const std::string& auth_schemes,
       const std::string& auth_server_whitelist,
       const std::string& auth_delegate_whitelist,
-      const std::string& gssapi_library_name);
+      const std::string& gssapi_library_name,
+      extensions::InfoMap* extension_info_map);
 
   // net::URLRequestContextGetter implementation.
-  virtual net::URLRequestContext* GetURLRequestContext() OVERRIDE;
-  virtual scoped_refptr<base::SingleThreadTaskRunner>
-      GetNetworkTaskRunner() const OVERRIDE;
+   net::URLRequestContext* GetURLRequestContext() override;
+   scoped_refptr<base::SingleThreadTaskRunner>
+      GetNetworkTaskRunner() const override;
 
   net::HostResolver* host_resolver();
 
   void SetAdditionalTrustAnchors(const net::CertificateList& trust_anchors);
 
   // net::CertTrustAnchorProvider implementation.
-  virtual const net::CertificateList& GetAdditionalTrustAnchors() OVERRIDE;
+   const net::CertificateList& GetAdditionalTrustAnchors() override;
 
  protected:
-  virtual ~ShellURLRequestContextGetter();
+   ~ShellURLRequestContextGetter() final;
   net::HttpAuthHandlerFactory* CreateDefaultAuthHandlerFactory(net::HostResolver* resolver);
 
  private:
@@ -103,6 +108,7 @@ class ShellBrowserContext;
   scoped_ptr<net::URLSecurityManager> url_security_manager_;
   ProtocolHandlerMap protocol_handlers_;
   ShellBrowserContext* browser_context_;
+  extensions::InfoMap* extension_info_map_;
 
   DISALLOW_COPY_AND_ASSIGN(ShellURLRequestContextGetter);
 };

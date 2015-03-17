@@ -23,7 +23,7 @@
 #include <vector>
 
 #include "base/command_line.h"
-#include "base/file_util.h"
+#include "base/files/file_util.h"
 #include "base/files/scoped_temp_dir.h"
 #include "base/json/json_file_value_serializer.h"
 #include "base/json/json_string_value_serializer.h"
@@ -86,7 +86,7 @@ bool MakePathAbsolute(FilePath* file_path) {
 }
 
 FilePath GetSelfPath() {
-  CommandLine* command_line = CommandLine::ForCurrentProcess();
+  base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
 
   FilePath path;
 
@@ -151,8 +151,8 @@ Package::Package()
     return;
 
   // Then see if we have arguments and extract it.
-  CommandLine* command_line = CommandLine::ForCurrentProcess();
-  const CommandLine::StringVector& args = command_line->GetArgs();
+  base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
+  const base::CommandLine::StringVector& args = command_line->GetArgs();
   if (args.size() > 0) {
     self_extract_ = false;
     path_ = FilePath(args[0]);
@@ -211,7 +211,7 @@ bool Package::GetImage(const FilePath& icon_path, gfx::Image* image) {
 GURL Package::GetStartupURL() {
   std::string url;
   // Specify URL in --url
-  CommandLine* command_line = CommandLine::ForCurrentProcess();
+  base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
   if (command_line->HasSwitch(switches::kUrl)) {
     url = command_line->GetSwitchValueASCII(switches::kUrl);
     GURL gurl(url);
@@ -243,6 +243,12 @@ bool Package::GetUseNode() {
   bool use_node = true;
   root()->GetBoolean(switches::kNodejs, &use_node);
   return use_node;
+}
+
+bool Package::GetUseExtension() {
+  bool use_ext = true;
+  root()->GetBoolean(switches::kChromeExtension, &use_ext);
+  return use_ext;
 }
 
 base::DictionaryValue* Package::window() {
@@ -297,7 +303,6 @@ bool Package::InitFromPath() {
 
   // Check fields
   const char* required_fields[] = {
-    switches::kmMain,
     switches::kmName
   };
   for (unsigned i = 0; i < arraysize(required_fields); i++)
@@ -319,7 +324,7 @@ bool Package::InitFromPath() {
   if (root_->GetString(switches::kAudioBufferSize, &bufsz_str)) {
     int buffer_size = 0;
     if (base::StringToInt(bufsz_str, &buffer_size) && buffer_size > 0) {
-      CommandLine* command_line = CommandLine::ForCurrentProcess();
+      base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
       command_line->AppendSwitchASCII(switches::kAudioBufferSize, bufsz_str);
     }
   }
@@ -342,7 +347,7 @@ void Package::InitWithDefault() {
   root()->Set(switches::kmWindow, window);
 
   // Hide toolbar if specifed in the command line.
-  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kNoToolbar))
+  if (base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kNoToolbar))
     window->SetBoolean(switches::kmToolbar, false);
 
   // Window should show in center by default.
@@ -420,10 +425,10 @@ void Package::ReadChromiumArgs() {
     chromium_args.push_back(token);
   }
 
-  CommandLine* command_line = CommandLine::ForCurrentProcess();
+  base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
 
   for (unsigned i = 0; i < chromium_args.size(); ++i) {
-    CommandLine::StringType key, value;
+    base::CommandLine::StringType key, value;
 #if defined(OS_WIN)
     // Note:: On Windows, the |CommandLine::StringType| will be |std::wstring|,
     // so the chromium_args[i] is not compatible. We convert the wstring to
@@ -448,7 +453,7 @@ void Package::ReadJsFlags() {
   if (!root()->GetStringASCII(switches::kmJsFlags, &flags))
     return;
 
-  CommandLine* command_line = CommandLine::ForCurrentProcess();
+  base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
   command_line->AppendSwitchASCII("js-flags", flags);
 }
 

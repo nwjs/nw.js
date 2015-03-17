@@ -23,6 +23,8 @@
 
 #include "content/public/renderer/render_view_observer.h"
 
+#include <string>
+
 class SkBitmap;
 
 namespace content {
@@ -38,12 +40,12 @@ namespace nw {
 class NwRenderViewObserver : public content::RenderViewObserver {
  public:
   NwRenderViewObserver(content::RenderView* render_view);
-  virtual ~NwRenderViewObserver();
+  ~NwRenderViewObserver() final;
 
   // RenderViewObserver implementation.
-  virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
-  virtual void DidCreateDocumentElement(blink::WebLocalFrame* frame) OVERRIDE;
-  virtual void DidFinishDocumentLoad(blink::WebLocalFrame* frame) OVERRIDE;
+   bool OnMessageReceived(const IPC::Message& message) override;
+   void DidCreateDocumentElement(blink::WebLocalFrame* frame) override;
+   void DidFinishDocumentLoad(blink::WebLocalFrame* frame) override;
 
  private:
 

@@ -35,8 +35,10 @@
 #if defined(OS_MACOSX)
 #if __OBJC__
 @class NSMenu;
+@class NWMenuDelegate;
 #else
 class NSMenu;
+class NWMenuDelegate;
 #endif  // __OBJC__
 
 namespace nw {
@@ -66,7 +68,7 @@ class NwMenuModel : public SimpleMenuModel {
   NwMenuModel(Delegate* delegate);
 
   // Overridden from MenuModel:
-  virtual bool HasIcons() const OVERRIDE;
+   bool HasIcons() const override;
 
 protected:
   friend class nwapi::Menu;
@@ -89,15 +91,19 @@ class Menu : public Base {
   Menu(int id,
        const base::WeakPtr<DispatcherHost>& dispatcher_host,
        const base::DictionaryValue& option);
-  virtual ~Menu();
+   ~Menu() override;
 
-  virtual void Call(const std::string& method,
-                    const base::ListValue& arguments) OVERRIDE;
+   void Call(const std::string& method,
+                    const base::ListValue& arguments) override;
 
 #if defined(OS_WIN) || defined(OS_LINUX)
   void UpdateKeys(views::FocusManager *focus_manager);
   ui::NwMenuModel* model() { return menu_model_.get(); }
 #endif
+
+  bool enable_show_event() { return enable_show_event_; }
+ protected:
+  bool enable_show_event_;
 
  private:
   friend class MenuItem;
@@ -118,6 +124,7 @@ class Menu : public Base {
 #if defined(OS_MACOSX)
   friend class nw::NativeWindowCocoa;
   NSMenu* menu_;
+  NWMenuDelegate* menu_delegate_;
 #elif defined(OS_LINUX)
   friend class nw::NativeWindowAura;
 

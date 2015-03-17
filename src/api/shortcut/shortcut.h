@@ -34,7 +34,7 @@ class Shortcut : public Base, public GlobalShortcutListener::Observer {
   Shortcut(int id,
            const base::WeakPtr<DispatcherHost>& dispatcher_host,
            const base::DictionaryValue& option);
-  virtual ~Shortcut();
+  ~Shortcut() override;
 
   const ui::Accelerator& GetAccelerator() const {
     return accelerator_;
@@ -44,7 +44,7 @@ class Shortcut : public Base, public GlobalShortcutListener::Observer {
   void OnFailed(const std::string failed_msg);
 
   // GlobalShortcutListener::Observer implementation.
-  virtual void OnKeyPressed(const ui::Accelerator& accelerator) OVERRIDE;
+   void OnKeyPressed(const ui::Accelerator& accelerator) override;
 
  private:
   ui::Accelerator accelerator_;

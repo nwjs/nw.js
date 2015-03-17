@@ -52,10 +52,10 @@ class Tray : public Base {
   Tray(int id,
        const base::WeakPtr<DispatcherHost>& dispatcher_host,
        const base::DictionaryValue& option);
-  virtual ~Tray();
+  ~Tray() override;
 
-  virtual void Call(const std::string& method,
-                    const base::ListValue& arguments) OVERRIDE;
+  void Call(const std::string& method,
+                    const base::ListValue& arguments) override;
 
  private:
   // Platform-independent implementations

@@ -36,6 +36,7 @@
 #include "content/nw/src/nw_protocol_handler.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/nw/src/shell_content_browser_client.h"
+#include "extensions/browser/info_map.h"
 #include "net/cert/cert_verifier.h"
 #include "net/cert/cert_verify_proc.h"
 #include "net/cert/multi_threaded_cert_verifier.h"
@@ -91,20 +92,20 @@ class NWCookieMonsterDelegate : public net::CookieMonster::Delegate {
   }
 
   // net::CookieMonster::Delegate implementation.
-  virtual void OnCookieChanged(
+  void OnCookieChanged(
       const net::CanonicalCookie& cookie,
       bool removed,
-      net::CookieMonster::Delegate::ChangeCause cause) OVERRIDE {
+      net::CookieMonster::Delegate::ChangeCause cause) override {
     BrowserThread::PostTask(
         BrowserThread::UI, FROM_HERE,
         base::Bind(&NWCookieMonsterDelegate::OnCookieChangedAsyncHelper,
                    this, cookie, removed, cause));
   }
-  virtual void OnLoaded() OVERRIDE {
+  void OnLoaded() override {
   }
 
  private:
-  virtual ~NWCookieMonsterDelegate() {}
+  ~NWCookieMonsterDelegate() final {}
 
   void OnCookieChangedAsyncHelper(
       const net::CanonicalCookie& cookie,
@@ -134,7 +135,8 @@ ShellURLRequestContextGetter::ShellURLRequestContextGetter(
     const std::string& auth_schemes,
     const std::string& auth_server_whitelist,
     const std::string& auth_delegate_whitelist,
-    const std::string& gssapi_library_name)
+    const std::string& gssapi_library_name,
+    extensions::InfoMap* extension_info_map)
     : ignore_certificate_errors_(ignore_certificate_errors),
       data_path_(data_path),
       root_path_(root_path),
@@ -146,7 +148,8 @@ ShellURLRequestContextGetter::ShellURLRequestContextGetter(
       gssapi_library_name_(gssapi_library_name),
       io_loop_(io_loop),
       file_loop_(file_loop),
-      browser_context_(browser_context) {
+      browser_context_(browser_context),
+      extension_info_map_(extension_info_map){
   // Must first be created on the UI thread.
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
 
@@ -157,7 +160,7 @@ ShellURLRequestContextGetter::ShellURLRequestContextGetter(
   // the URLRequestContextStorage on the IO thread in GetURLRequestContext().
   proxy_config_service_.reset(
       net::ProxyService::CreateSystemProxyConfigService(
-          io_loop_->message_loop_proxy(), file_loop_));
+                                                        io_loop_->message_loop_proxy(), file_loop_->message_loop_proxy()));
 }
 
 ShellURLRequestContextGetter::~ShellURLRequestContextGetter() {
@@ -172,9 +175,9 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
           GetContentClient()->browser());
 
   url_request_context_.reset(new net::URLRequestContext());
-    network_delegate_.reset(new ShellNetworkDelegate);
-    url_request_context_->set_network_delegate(network_delegate_.get());
-    storage_.reset(
+  network_delegate_.reset(new ShellNetworkDelegate(browser_context_, extension_info_map_));
+  url_request_context_->set_network_delegate(network_delegate_.get());
+  storage_.reset(
         new net::URLRequestContextStorage(url_request_context_.get()));
 
     FilePath cookie_path = data_path_.Append(FILE_PATH_LITERAL("cookies"));
@@ -185,7 +188,7 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
                                              NULL, new NWCookieMonsterDelegate(browser_context_));
     cookie_store = content::CreateCookieStore(cookie_config);
     cookie_store->GetCookieMonster()->SetPersistSessionCookies(true);
-    storage_->set_cookie_store(cookie_store);
+    storage_->set_cookie_store(cookie_store.get());
 
     const char* schemes[] = {"http", "https", "file", "app"};
     cookie_store->GetCookieMonster()->SetCookieableSchemes(schemes, 4);

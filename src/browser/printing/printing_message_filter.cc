@@ -2,22 +2,22 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "content/nw/src/browser/printing/printing_message_filter.h"
+#include "chrome/browser/printing/printing_message_filter.h"
 
 #include <string>
 
 #include "base/bind.h"
 #include "chrome/browser/browser_process.h"
-#include "chrome/browser/printing/printer_query.h"
 #include "chrome/browser/printing/print_job_manager.h"
-#include "chrome/browser/printing/printing_ui_web_contents_observer.h"
-#include "chrome/common/print_messages.h"
+#include "chrome/browser/printing/printer_query.h"
+#include "content/nw/src/common/print_messages.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
+#include "content/public/common/child_process_host.h"
 #include "content/nw/src/shell_content_browser_client.h"
 
-#if defined(ENABLE_FULL_PRINTING)
+#if defined(ENABLE_PRINT_PREVIEW)
 #include "chrome/browser/ui/webui/print_preview/print_preview_ui.h"
 #endif
 
@@ -26,18 +26,21 @@
 
 #include <map>
 
-#include "base/file_util.h"
+#include "base/files/file_util.h"
 #include "base/lazy_instance.h"
 #include "chrome/browser/printing/print_dialog_cloud.h"
 #endif
 
 #if defined(OS_ANDROID)
 #include "base/strings/string_number_conversions.h"
+#include "chrome/browser/android/tab_android.h"
 #include "chrome/browser/printing/print_view_manager_basic.h"
 #include "printing/printing_context_android.h"
 #endif
 
 using content::BrowserThread;
+
+namespace printing {
 
 namespace {
 
@@ -54,7 +57,7 @@ static base::LazyInstance<PrintingSequencePathMap>
     g_printing_file_descriptor_map = LAZY_INSTANCE_INITIALIZER;
 #endif
 
-void RenderParamsFromPrintSettings(const printing::PrintSettings& settings,
+void RenderParamsFromPrintSettings(const PrintSettings& settings,
                                    PrintMsg_Print_Params* params) {
   params->page_size = settings.page_setup_device_units().physical_size();
   params->content_size.SetSize(
@@ -86,13 +89,14 @@ void RenderParamsFromPrintSettings(const printing::PrintSettings& settings,
 
 }  // namespace
 
-PrintingMessageFilter::PrintingMessageFilter(int render_process_id,
-                                             void* profile)
+PrintingMessageFilter::PrintingMessageFilter(int render_process_id)
     : BrowserMessageFilter(PrintMsgStart),
       render_process_id_(render_process_id) {
   content::ShellContentBrowserClient* browser_client =
     static_cast<content::ShellContentBrowserClient*>(content::GetContentClient()->browser());
   queue_ = browser_client->print_job_manager()->queue();
+
+  DCHECK(queue_.get());
 }
 
 PrintingMessageFilter::~PrintingMessageFilter() {
@@ -131,7 +135,7 @@ bool PrintingMessageFilter::OnMessageReceived(const IPC::Message& message) {
     IPC_MESSAGE_HANDLER_DELAY_REPLY(PrintHostMsg_ScriptedPrint, OnScriptedPrint)
     IPC_MESSAGE_HANDLER_DELAY_REPLY(PrintHostMsg_UpdatePrintSettings,
                                     OnUpdatePrintSettings)
-#if defined(ENABLE_FULL_PRINTING)
+#if defined(ENABLE_PRINT_PREVIEW)
     IPC_MESSAGE_HANDLER(PrintHostMsg_CheckForCancel, OnCheckForCancel)
 #endif
     IPC_MESSAGE_UNHANDLED(handled = false)
@@ -184,8 +188,8 @@ void PrintingMessageFilter::OnAllocateTempFileForPrinting(
   content::WebContents* wc = GetWebContentsForRenderView(render_view_id);
   if (!wc)
     return;
-  printing::PrintViewManagerBasic* print_view_manager =
-      printing::PrintViewManagerBasic::FromWebContents(wc);
+  PrintViewManagerBasic* print_view_manager =
+      PrintViewManagerBasic::FromWebContents(wc);
   // The file descriptor is originally created in & passed from the Android
   // side, and it will handle the closing.
   const base::FileDescriptor& file_descriptor =
@@ -218,11 +222,11 @@ void PrintingMessageFilter::OnTempFileForPrintingWritten(int render_view_id,
   content::WebContents* wc = GetWebContentsForRenderView(render_view_id);
   if (!wc)
     return;
-  printing::PrintViewManagerBasic* print_view_manager =
-      printing::PrintViewManagerBasic::FromWebContents(wc);
+  PrintViewManagerBasic* print_view_manager =
+      PrintViewManagerBasic::FromWebContents(wc);
   const base::FileDescriptor& file_descriptor =
       print_view_manager->file_descriptor();
-  printing::PrintingContextAndroid::PdfWritingDone(file_descriptor.fd, true);
+  PrintingContextAndroid::PdfWritingDone(file_descriptor.fd, true);
   // Invalidate the file descriptor so it doesn't accidentally get reused.
   print_view_manager->set_file_descriptor(base::FileDescriptor(-1, false));
 #endif
@@ -254,46 +258,6 @@ content::WebContents* PrintingMessageFilter::GetWebContentsForRenderView(
   return view ? content::WebContents::FromRenderViewHost(view) : NULL;
 }
 
-struct PrintingMessageFilter::GetPrintSettingsForRenderViewParams {
-  printing::PrinterQuery::GetSettingsAskParam ask_user_for_settings;
-  int expected_page_count;
-  bool has_selection;
-  printing::MarginType margin_type;
-};
-
-void PrintingMessageFilter::GetPrintSettingsForRenderView(
-    int render_view_id,
-    GetPrintSettingsForRenderViewParams params,
-    const base::Closure& callback,
-    scoped_refptr<printing::PrinterQuery> printer_query) {
-  DCHECK_CURRENTLY_ON(BrowserThread::UI);
-  content::WebContents* wc = GetWebContentsForRenderView(render_view_id);
-  if (wc) {
-    scoped_ptr<PrintingUIWebContentsObserver> wc_observer(
-        new PrintingUIWebContentsObserver(wc));
-    BrowserThread::PostTask(
-        BrowserThread::IO, FROM_HERE,
-        base::Bind(&printing::PrinterQuery::GetSettings, printer_query,
-                   params.ask_user_for_settings, base::Passed(&wc_observer),
-                   params.expected_page_count, params.has_selection,
-                   params.margin_type, callback));
-  } else {
-    BrowserThread::PostTask(
-        BrowserThread::IO, FROM_HERE,
-        base::Bind(&PrintingMessageFilter::OnGetPrintSettingsFailed, this,
-                   callback, printer_query));
-  }
-}
-
-void PrintingMessageFilter::OnGetPrintSettingsFailed(
-    const base::Closure& callback,
-    scoped_refptr<printing::PrinterQuery> printer_query) {
-  DCHECK_CURRENTLY_ON(BrowserThread::IO);
-  printer_query->GetSettingsDone(printing::PrintSettings(),
-                                 printing::PrintingContext::FAILED);
-  callback.Run();
-}
-
 void PrintingMessageFilter::OnIsPrintingEnabled(bool* is_enabled) {
   DCHECK_CURRENTLY_ON(BrowserThread::IO);
   *is_enabled = true;
@@ -301,40 +265,33 @@ void PrintingMessageFilter::OnIsPrintingEnabled(bool* is_enabled) {
 
 void PrintingMessageFilter::OnGetDefaultPrintSettings(IPC::Message* reply_msg) {
   DCHECK_CURRENTLY_ON(BrowserThread::IO);
-  scoped_refptr<printing::PrinterQuery> printer_query;
-#if 0
-  if (!profile_io_data_->printing_enabled()->GetValue()) {
-    // Reply with NULL query.
-    OnGetDefaultPrintSettingsReply(printer_query, reply_msg);
-    return;
-  }
-#endif
+  scoped_refptr<PrinterQuery> printer_query;
   printer_query = queue_->PopPrinterQuery(0);
-  if (!printer_query)
-    printer_query = queue_->CreatePrinterQuery();
+  if (!printer_query.get()) {
+    printer_query =
+        queue_->CreatePrinterQuery(render_process_id_, reply_msg->routing_id());
+  }
 
   // Loads default settings. This is asynchronous, only the IPC message sender
   // will hang until the settings are retrieved.
-  GetPrintSettingsForRenderViewParams params;
-  params.ask_user_for_settings = printing::PrinterQuery::DEFAULTS;
-  params.expected_page_count = 0;
-  params.has_selection = false;
-  params.margin_type = printing::DEFAULT_MARGINS;
-  BrowserThread::PostTask(
-      BrowserThread::UI, FROM_HERE,
-      base::Bind(&PrintingMessageFilter::GetPrintSettingsForRenderView, this,
-          reply_msg->routing_id(), params,
-          base::Bind(&PrintingMessageFilter::OnGetDefaultPrintSettingsReply,
-              this, printer_query, reply_msg),
-          printer_query));
+  printer_query->GetSettings(
+      PrinterQuery::GetSettingsAskParam::DEFAULTS,
+      0,
+      false,
+      DEFAULT_MARGINS,
+      false,
+      base::Bind(&PrintingMessageFilter::OnGetDefaultPrintSettingsReply,
+                 this,
+                 printer_query,
+                 reply_msg));
 }
 
 void PrintingMessageFilter::OnGetDefaultPrintSettingsReply(
-    scoped_refptr<printing::PrinterQuery> printer_query,
+    scoped_refptr<PrinterQuery> printer_query,
     IPC::Message* reply_msg) {
   PrintMsg_Print_Params params;
   if (!printer_query.get() ||
-      printer_query->last_status() != printing::PrintingContext::OK) {
+      printer_query->last_status() != PrintingContext::OK) {
     params.Reset();
   } else {
     RenderParamsFromPrintSettings(printer_query->settings(), &params);
@@ -356,27 +313,26 @@ void PrintingMessageFilter::OnGetDefaultPrintSettingsReply(
 void PrintingMessageFilter::OnScriptedPrint(
     const PrintHostMsg_ScriptedPrint_Params& params,
     IPC::Message* reply_msg) {
-  scoped_refptr<printing::PrinterQuery> printer_query =
+  scoped_refptr<PrinterQuery> printer_query =
       queue_->PopPrinterQuery(params.cookie);
-  if (!printer_query)
-    printer_query = queue_->CreatePrinterQuery();
-  GetPrintSettingsForRenderViewParams settings_params;
-  settings_params.ask_user_for_settings = printing::PrinterQuery::ASK_USER;
-  settings_params.expected_page_count = params.expected_pages_count;
-  settings_params.has_selection = params.has_selection;
-  settings_params.margin_type = params.margin_type;
-
-  BrowserThread::PostTask(
-      BrowserThread::UI, FROM_HERE,
-      base::Bind(&PrintingMessageFilter::GetPrintSettingsForRenderView, this,
-                 reply_msg->routing_id(), settings_params,
-                 base::Bind(&PrintingMessageFilter::OnScriptedPrintReply, this,
-                            printer_query, reply_msg),
-                 printer_query));
+  if (!printer_query.get()) {
+    printer_query =
+        queue_->CreatePrinterQuery(render_process_id_, reply_msg->routing_id());
+  }
+  printer_query->GetSettings(
+      PrinterQuery::GetSettingsAskParam::ASK_USER,
+      params.expected_pages_count,
+      params.has_selection,
+      params.margin_type,
+      params.is_scripted,
+      base::Bind(&PrintingMessageFilter::OnScriptedPrintReply,
+                 this,
+                 printer_query,
+                 reply_msg));
 }
 
 void PrintingMessageFilter::OnScriptedPrintReply(
-    scoped_refptr<printing::PrinterQuery> printer_query,
+    scoped_refptr<PrinterQuery> printer_query,
     IPC::Message* reply_msg) {
   PrintMsg_PrintPages_Params params;
 #if defined(OS_ANDROID)
@@ -384,14 +340,13 @@ void PrintingMessageFilter::OnScriptedPrintReply(
   // |reply_msg| before we can get the routing ID for the Android code.
   int routing_id = reply_msg->routing_id();
 #endif
-  if (printer_query->last_status() != printing::PrintingContext::OK ||
+  if (printer_query->last_status() != PrintingContext::OK ||
       !printer_query->settings().dpi()) {
     params.Reset();
   } else {
     RenderParamsFromPrintSettings(printer_query->settings(), &params.params);
     params.params.document_cookie = printer_query->cookie();
-    params.pages =
-        printing::PageRange::GetPages(printer_query->settings().ranges());
+    params.pages = PageRange::GetPages(printer_query->settings().ranges());
   }
   PrintHostMsg_ScriptedPrint::WriteReplyParams(reply_msg, params);
   Send(reply_msg);
@@ -418,8 +373,8 @@ void PrintingMessageFilter::UpdateFileDescriptor(int render_view_id, int fd) {
   content::WebContents* wc = GetWebContentsForRenderView(render_view_id);
   if (!wc)
     return;
-  printing::PrintViewManagerBasic* print_view_manager =
-      printing::PrintViewManagerBasic::FromWebContents(wc);
+  PrintViewManagerBasic* print_view_manager =
+      PrintViewManagerBasic::FromWebContents(wc);
   print_view_manager->set_file_descriptor(base::FileDescriptor(fd, false));
 }
 #endif
@@ -427,37 +382,46 @@ void PrintingMessageFilter::UpdateFileDescriptor(int render_view_id, int fd) {
 void PrintingMessageFilter::OnUpdatePrintSettings(
     int document_cookie, const base::DictionaryValue& job_settings,
     IPC::Message* reply_msg) {
-  scoped_refptr<printing::PrinterQuery> printer_query;
-#if 0
-  if (!profile_io_data_->printing_enabled()->GetValue()) {
-    // Reply with NULL query.
-    OnUpdatePrintSettingsReply(printer_query, reply_msg);
-    return;
-  }
-#endif
+  scoped_ptr<base::DictionaryValue> new_settings(job_settings.DeepCopy());
+
+  scoped_refptr<PrinterQuery> printer_query;
+
   printer_query = queue_->PopPrinterQuery(document_cookie);
-  if (!printer_query)
-    printer_query = queue_->CreatePrinterQuery();
+  if (!printer_query.get()) {
+    int host_id = render_process_id_;
+    int routing_id = reply_msg->routing_id();
+    if (!new_settings->GetInteger(printing::kPreviewInitiatorHostId,
+                                  &host_id) ||
+        !new_settings->GetInteger(printing::kPreviewInitiatorRoutingId,
+                                  &routing_id)) {
+      host_id = content::ChildProcessHost::kInvalidUniqueID;
+      routing_id = content::ChildProcessHost::kInvalidUniqueID;
+    }
+    printer_query = queue_->CreatePrinterQuery(host_id, routing_id);
+  }
   printer_query->SetSettings(
-      job_settings,
+      new_settings.Pass(),
       base::Bind(&PrintingMessageFilter::OnUpdatePrintSettingsReply, this,
                  printer_query, reply_msg));
 }
 
 void PrintingMessageFilter::OnUpdatePrintSettingsReply(
-    scoped_refptr<printing::PrinterQuery> printer_query,
+    scoped_refptr<PrinterQuery> printer_query,
     IPC::Message* reply_msg) {
   PrintMsg_PrintPages_Params params;
   if (!printer_query.get() ||
-      printer_query->last_status() != printing::PrintingContext::OK) {
+      printer_query->last_status() != PrintingContext::OK) {
     params.Reset();
   } else {
     RenderParamsFromPrintSettings(printer_query->settings(), &params.params);
     params.params.document_cookie = printer_query->cookie();
-    params.pages =
-        printing::PageRange::GetPages(printer_query->settings().ranges());
+    params.pages = PageRange::GetPages(printer_query->settings().ranges());
   }
-  PrintHostMsg_UpdatePrintSettings::WriteReplyParams(reply_msg, params);
+  PrintHostMsg_UpdatePrintSettings::WriteReplyParams(
+      reply_msg,
+      params,
+      printer_query.get() &&
+          (printer_query->last_status() == printing::PrintingContext::CANCEL));
   Send(reply_msg);
   // If user hasn't cancelled.
   if (printer_query.get()) {
@@ -469,14 +433,14 @@ void PrintingMessageFilter::OnUpdatePrintSettingsReply(
   }
 }
 
-#if defined(ENABLE_FULL_PRINTING)
+#if defined(ENABLE_PRINT_PREVIEW)
 void PrintingMessageFilter::OnCheckForCancel(int32 preview_ui_id,
                                              int preview_request_id,
                                              bool* cancel) {
-#if 0
   PrintPreviewUI::GetCurrentPrintPreviewStatus(preview_ui_id,
                                                preview_request_id,
                                                cancel);
-#endif
 }
 #endif
+
+}  // namespace printing

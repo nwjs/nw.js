@@ -13,7 +13,7 @@
 #include "content/nw/src/browser/nw_form_database_service.h"
 #include "content/nw/src/shell_browser_context.h"
 #include "content/public/browser/render_view_host.h"
-#include "ui/gfx/rect.h"
+#include "ui/gfx/geometry/rect.h"
 
 #if defined(OS_ANDROID)
 #include "chrome/browser/ui/android/autofill/autofill_logger_android.h"
@@ -65,14 +65,13 @@ void NWAutofillClient::ShowAutofillSettings() {
 }
 
 void NWAutofillClient::ConfirmSaveCreditCard(
-    const AutofillMetrics& metric_logger,
     const base::Closure& save_card_callback) {
   NOTIMPLEMENTED();
 }
 
 void NWAutofillClient::ShowRequestAutocompleteDialog(
     const FormData& form,
-    const GURL& source_url,
+    content::RenderFrameHost* render_frame_host,
     const ResultCallback& callback) {
   NOTIMPLEMENTED();
 }
@@ -80,10 +79,7 @@ void NWAutofillClient::ShowRequestAutocompleteDialog(
 void NWAutofillClient::ShowAutofillPopup(
     const gfx::RectF& element_bounds,
     base::i18n::TextDirection text_direction,
-    const std::vector<base::string16>& values,
-    const std::vector<base::string16>& labels,
-    const std::vector<base::string16>& icons,
-    const std::vector<int>& identifiers,
+    const std::vector<autofill::Suggestion>& suggestions,
     base::WeakPtr<AutofillPopupDelegate> delegate) {
   // Convert element_bounds to be in screen space.
   gfx::Rect client_area = web_contents_->GetContainerBounds();
@@ -99,7 +95,7 @@ void NWAutofillClient::ShowAutofillPopup(
                                                element_bounds_in_screen_space,
                                                text_direction);
 
-  popup_controller_->Show(values, labels, icons, identifiers);
+  popup_controller_->Show(suggestions);
 }
 
 void NWAutofillClient::UpdateAutofillPopupDataListValues(
@@ -127,13 +123,36 @@ void NWAutofillClient::WebContentsDestroyed() {
 }
 
 void NWAutofillClient::DetectAccountCreationForms(
-    const std::vector<autofill::FormStructure*>& forms) {
+      content::RenderFrameHost* rfh,
+      const std::vector<autofill::FormStructure*>& forms) {
   NOTIMPLEMENTED();
 }
 
 void NWAutofillClient::DidFillOrPreviewField(
     const base::string16& autofilled_value,
     const base::string16& profile_full_name) {
+}
+
+bool NWAutofillClient::HasCreditCardScanFeature() {
+  return false;
+}
+
+void NWAutofillClient::ScanCreditCard(const CreditCardScanCallback& callback) {
+  NOTIMPLEMENTED();
+}
+
+void NWAutofillClient::ShowUnmaskPrompt(
+    const autofill::CreditCard& card,
+    base::WeakPtr<autofill::CardUnmaskDelegate> delegate) {
+  NOTIMPLEMENTED();
+}
+
+void NWAutofillClient::OnUnmaskVerificationResult(bool success) {
+  NOTIMPLEMENTED();
+}
+
+void NWAutofillClient::OnFirstUserGestureObserved() {
+  //NOTIMPLEMENTED();
 }
 
 }  // namespace autofill

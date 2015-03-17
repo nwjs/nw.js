@@ -19,6 +19,8 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 var v8_util = process.binding('v8_util');
+var EventEmitter = process.EventEmitter;
+
 
 function Menu(option) {
   if (typeof option != 'object')
@@ -70,9 +72,26 @@ Menu.prototype.popup = function(x, y) {
 }
 
 if (require('os').platform() === 'darwin'){
+  Menu.prototype.on = Menu.prototype.addListener = function(ev, callback) {
+    if (ev == 'show') {
+        nw.callObjectMethod(this, 'EnableShowEvent', [ true ]);
+    }
+    // Call parent.
+    EventEmitter.prototype.addListener.apply(this, arguments);
+  }
+
+  Menu.prototype.removeListener = function(ev, callback) {
+    // Call parent.
+    EventEmitter.prototype.removeListener.apply(this, arguments);
+    if (ev == 'show' && EventEmitter.listenerCount(this, 'show') === 0) {
+        nw.callObjectMethod(this, 'EnableShowEvent', [ false ]);
+    }
+  }
+
   Menu.prototype.createMacBuiltin = function (app_name, options) {
     var appleMenu = new Menu(),
         options = options || {};
+
     appleMenu.append(new exports.MenuItem({
         label: nw.getNSStringFWithFixup("IDS_ABOUT_MAC", app_name),
         selector: "orderFrontStandardAboutPanel:"

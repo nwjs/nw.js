@@ -66,6 +66,8 @@ class Package {
   // Return if we enable node.js.
   bool GetUseNode();
 
+  bool GetUseExtension();
+
   // Root path of package.
   FilePath path() const { return path_; }
 

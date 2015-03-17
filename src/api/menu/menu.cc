@@ -30,7 +30,7 @@ namespace nwapi {
 Menu::Menu(int id,
            const base::WeakPtr<DispatcherHost>& dispatcher_host,
            const base::DictionaryValue& option)
-    : Base(id, dispatcher_host, option) {
+  : Base(id, dispatcher_host, option), enable_show_event_(false)  {
   Create(option);
 }
 
@@ -63,6 +63,8 @@ void Menu::Call(const std::string& method,
     arguments.GetInteger(1, &y);
     Popup(x, y, content::Shell::FromRenderViewHost(
           dispatcher_host()->render_view_host()));
+  } else if (method == "EnableShowEvent") {
+    arguments.GetBoolean(0, &enable_show_event_);
   } else {
     NOTREACHED() << "Invalid call to Menu method:" << method
                  << " arguments:" << arguments;

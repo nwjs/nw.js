@@ -9,16 +9,17 @@
 
 #include "base/compiler_specific.h"
 #include "base/strings/string16.h"
-#include "content/nw/src/browser/autofill_popup_view_delegate.h"
+#include "chrome/browser/ui/autofill/autofill_popup_view_delegate.h"
 
 namespace gfx {
 class FontList;
 class Point;
 class Rect;
-class RectF;
 }
 
 namespace autofill {
+
+struct Suggestion;
 
 // This interface provides data to an AutofillPopupView.
 class AutofillPopupController : public AutofillPopupViewDelegate {
@@ -47,32 +48,19 @@ class AutofillPopupController : public AutofillPopupViewDelegate {
   // the top left of the popup.
   virtual gfx::Rect GetRowBounds(size_t index) = 0;
 
-  // The bounds of the form field element (screen coordinates).
-  virtual const gfx::RectF& element_bounds() const = 0;
+  // Returns the number of lines of data that there are.
+  virtual size_t GetLineCount() const = 0;
 
-  // If the current popup should be displayed in RTL mode.
-  virtual bool IsRTL() const = 0;
-
-  // TODO(csharp): The names, subtexts and icon getters can probably be adjusted
-  // to take in the row index and return a single element, instead of the
-  // whole vector.
-  // The main labels for each autofill item.
-  virtual const std::vector<base::string16>& names() const = 0;
-
-  // Smaller labels for each autofill item.
-  virtual const std::vector<base::string16>& subtexts() const = 0;
-
-  // A string which identifies the icon to be shown for each autofill item.
-  virtual const std::vector<base::string16>& icons() const = 0;
-
-  // Identifier for the row.
-  virtual const std::vector<int>& identifiers() const = 0;
+  // Returns the suggestion or pre-elided string at the given row index.
+  virtual const autofill::Suggestion& GetSuggestionAt(size_t row) const = 0;
+  virtual const base::string16& GetElidedValueAt(size_t row) const = 0;
+  virtual const base::string16& GetElidedLabelAt(size_t row) const = 0;
 
 #if !defined(OS_ANDROID)
   // The same font can vary based on the type of data it is showing,
   // so we need to know the row.
-  virtual const gfx::FontList& GetNameFontListForRow(size_t index) const = 0;
-  virtual const gfx::FontList& subtext_font_list() const = 0;
+  virtual const gfx::FontList& GetValueFontListForRow(size_t index) const = 0;
+  virtual const gfx::FontList& GetLabelFontList() const = 0;
 #endif
 
   // Returns the index of the selected line. A line is "selected" when it is
@@ -80,7 +68,7 @@ class AutofillPopupController : public AutofillPopupViewDelegate {
   virtual int selected_line() const = 0;
 
  protected:
-  virtual ~AutofillPopupController() {}
+  ~AutofillPopupController() override {}
 };
 
 }  // namespace autofill

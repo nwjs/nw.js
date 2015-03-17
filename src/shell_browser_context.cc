@@ -22,7 +22,7 @@
 
 #include "base/command_line.h"
 #include "base/environment.h"
-#include "base/file_util.h"
+#include "base/files/file_util.h"
 #include "base/path_service.h"
 #include "base/values.h"
 #include "chrome/common/chrome_switches.h"
@@ -35,7 +35,10 @@
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/net/shell_url_request_context_getter.h"
 #include "content/nw/src/nw_package.h"
+#include "extensions/browser/info_map.h"
 #include "net/cert/x509_certificate.h"
+
+#include "extensions/browser/guest_view/guest_view_manager.h"
 
 #if defined(OS_WIN)
 #include "base/base_paths_win.h"
@@ -49,22 +52,16 @@ namespace content {
 class ShellBrowserContext::ShellResourceContext : public ResourceContext {
  public:
   ShellResourceContext() : getter_(NULL) {}
-  virtual ~ShellResourceContext() {}
+  ~ShellResourceContext() final {}
 
   // ResourceContext implementation:
-  virtual net::HostResolver* GetHostResolver() OVERRIDE {
+  net::HostResolver* GetHostResolver() override {
     CHECK(getter_);
     return getter_->host_resolver();
   }
-  virtual net::URLRequestContext* GetRequestContext() OVERRIDE {
+  net::URLRequestContext* GetRequestContext() override {
     CHECK(getter_);
     return getter_->GetURLRequestContext();
-  }
-  virtual bool AllowMicAccess(const GURL& origin) OVERRIDE {
-    return true;
-  }
-  virtual bool AllowCameraAccess(const GURL& origin) OVERRIDE {
-    return true;
   }
 
   void set_url_request_context_getter(ShellURLRequestContextGetter* getter) {
@@ -103,7 +100,7 @@ nw::NwFormDatabaseService* ShellBrowserContext::GetFormDatabaseService() {
 }
 
 void ShellBrowserContext::InitWhileIOAllowed() {
-  CommandLine* cmd_line = CommandLine::ForCurrentProcess();
+  base::CommandLine* cmd_line = base::CommandLine::ForCurrentProcess();
   if (cmd_line->HasSwitch(switches::kIgnoreCertificateErrors)) {
     ignore_certificate_errors_ = true;
   }
@@ -165,18 +162,19 @@ net::URLRequestContextGetter* ShellBrowserContext::GetRequestContext()  {
 
 net::URLRequestContextGetter* ShellBrowserContext::CreateRequestContext(
     ProtocolHandlerMap* protocol_handlers,
-    URLRequestInterceptorScopedVector protocol_interceptors) {
+    URLRequestInterceptorScopedVector protocol_interceptors,
+    extensions::InfoMap* extension_info_map) {
 
   DCHECK(!url_request_getter_);
-  CommandLine* cmd_line = CommandLine::ForCurrentProcess();
+  base::CommandLine* cmd_line = base::CommandLine::ForCurrentProcess();
   std::string auth_server_whitelist =
-    cmd_line->GetSwitchValueASCII(switches::kAuthServerWhitelist);
+    cmd_line->GetSwitchValueASCII("auth-server-whitelist");
   std::string auth_delegate_whitelist =
-    cmd_line->GetSwitchValueASCII(switches::kAuthNegotiateDelegateWhitelist);
+    cmd_line->GetSwitchValueASCII("auth-negotiate-delegate-whitelist");
   std::string gssapi_library_name =
     cmd_line->GetSwitchValueASCII(switches::kGSSAPILibraryName);
   std::string auth_schemes =
-    cmd_line->GetSwitchValueASCII(switches::kAuthSchemes);
+    cmd_line->GetSwitchValueASCII("auth-schemes");
 
   if (auth_schemes.empty())
     auth_schemes = "basic,digest,ntlm,negotiate";
@@ -189,7 +187,7 @@ net::URLRequestContextGetter* ShellBrowserContext::CreateRequestContext(
       BrowserThread::UnsafeGetMessageLoopForThread(BrowserThread::FILE),
       protocol_handlers, this,
       auth_schemes, auth_server_whitelist, auth_delegate_whitelist,
-      gssapi_library_name);
+      gssapi_library_name, extension_info_map);
 
   const base::ListValue *additional_trust_anchors = NULL;
   if (package_->root()->GetList("additional_trust_anchors", &additional_trust_anchors)) {
@@ -262,12 +260,12 @@ ResourceContext* ShellBrowserContext::GetResourceContext()  {
   return resource_context_.get();
 }
 
-quota::SpecialStoragePolicy* ShellBrowserContext::GetSpecialStoragePolicy() {
+storage::SpecialStoragePolicy* ShellBrowserContext::GetSpecialStoragePolicy() {
   return NULL;
 }
 
 BrowserPluginGuestManager* ShellBrowserContext::GetGuestManager() {
-  return NULL;
+  return extensions::GuestViewManager::FromBrowserContext(this);
 }
 
 PushMessagingService* ShellBrowserContext::GetPushMessagingService() {
@@ -276,6 +274,11 @@ PushMessagingService* ShellBrowserContext::GetPushMessagingService() {
 
 SSLHostStateDelegate* ShellBrowserContext::GetSSLHostStateDelegate() {
   return NULL;
+}
+
+scoped_ptr<ZoomLevelDelegate> ShellBrowserContext::CreateZoomLevelDelegate(
+    const base::FilePath&) {
+  return scoped_ptr<ZoomLevelDelegate>();
 }
 
 }  // namespace content

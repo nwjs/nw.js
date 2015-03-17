@@ -90,7 +90,7 @@ void ResourceRequestJob::DataAvailable(base::RefCountedMemory* bytes) {
     int bytes_read;
     if (pending_buf_.get()) {
       CHECK(pending_buf_->data());
-      CompleteRead(pending_buf_, pending_buf_size_, &bytes_read);
+      CompleteRead(pending_buf_.get(), pending_buf_size_, &bytes_read);
       pending_buf_ = NULL;
       NotifyReadComplete(bytes_read);
     }

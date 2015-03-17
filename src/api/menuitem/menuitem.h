@@ -55,14 +55,14 @@ class MenuItem : public Base {
   MenuItem(int id,
            const base::WeakPtr<DispatcherHost>& dispatcher_host,
            const base::DictionaryValue& option);
-  virtual ~MenuItem();
+  ~MenuItem() override;
 
-  virtual void Call(const std::string& method,
-                    const base::ListValue& arguments) OVERRIDE;
+   void Call(const std::string& method,
+                    const base::ListValue& arguments) override;
 
 #if defined(OS_WIN) || defined(OS_LINUX)
-  virtual bool AcceleratorPressed(const ui::Accelerator& accelerator) OVERRIDE;
-  virtual bool CanHandleAccelerators() const OVERRIDE;
+   bool AcceleratorPressed(const ui::Accelerator& accelerator) override;
+   bool CanHandleAccelerators() const override;
   void UpdateKeys(views::FocusManager *focus_manager);
 #endif
 
@@ -78,6 +78,7 @@ class MenuItem : public Base {
   void SetIcon(const std::string& icon);
   void SetTooltip(const std::string& tooltip);
   void SetKey(const std::string& key);
+  void SetModifiers(const std::string& modifiers);
   void SetEnabled(bool enabled);
   void SetChecked(bool checked);
   void SetSubmenu(Menu* sub_menu);

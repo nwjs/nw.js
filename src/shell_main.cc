@@ -35,12 +35,16 @@
 #include "shell_content_main.h"
 #endif
 
+using base::CommandLine;
+
 #if defined(OS_WIN)
 
 int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE, wchar_t*, int) {
   CommandLine::Init(0, NULL);
+#if 0 //FIXME
   if (base::win::GetVersion() > base::win::VERSION_VISTA)
     gfx::EnableHighDPISupport();
+#endif
 
 
   sandbox::SandboxInterfaceInfo sandbox_info = {0};

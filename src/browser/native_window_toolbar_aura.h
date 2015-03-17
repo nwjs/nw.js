@@ -43,7 +43,7 @@ class NativeWindowToolbarAura : public views::WidgetDelegateView,
                                public views::ButtonListener {
  public:
   explicit NativeWindowToolbarAura(content::Shell* shell);
-  virtual ~NativeWindowToolbarAura();
+  ~NativeWindowToolbarAura() override;
 
   void SetButtonEnabled(NativeWindow::TOOLBAR_BUTTON button,
                         bool enabled);
@@ -52,22 +52,22 @@ class NativeWindowToolbarAura : public views::WidgetDelegateView,
 
  protected:
   // Overridden from WidgetDelegateView:
-  virtual views::View* GetContentsView() OVERRIDE;
+   views::View* GetContentsView() override;
 
   // Overridden from View:
-  virtual void Layout() OVERRIDE;
-  virtual void ViewHierarchyChanged(
-      const ViewHierarchyChangedDetails& details) OVERRIDE;
+   void Layout() override;
+   void ViewHierarchyChanged(
+      const ViewHierarchyChangedDetails& details) override;
 
   // Overridden from TextfieldController:
-  virtual void ContentsChanged(views::Textfield* sender,
-                               const base::string16& new_contents) OVERRIDE;
-  virtual bool HandleKeyEvent(views::Textfield* sender,
-                              const ui::KeyEvent& key_event) OVERRIDE;
+   void ContentsChanged(views::Textfield* sender,
+                               const base::string16& new_contents) override;
+   bool HandleKeyEvent(views::Textfield* sender,
+                              const ui::KeyEvent& key_event) override;
 
   // Overridden from ButtonListener:
-  virtual void ButtonPressed(views::Button* sender,
-                             const ui::Event& event) OVERRIDE;
+   void ButtonPressed(views::Button* sender,
+                             const ui::Event& event) override;
 
  private:
   void InitToolbar();

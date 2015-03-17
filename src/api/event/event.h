@@ -30,31 +30,31 @@
 #include <map>
 
 namespace nwapi {
-  
+
 class BaseEvent {
   friend class EventListener;
   DISALLOW_COPY_AND_ASSIGN(BaseEvent);
-  
+
 protected:
   BaseEvent(){}
   virtual ~BaseEvent(){}
 };
-  
+
 class EventListener : public Base {
   std::map<int, BaseEvent*> listerners_;
-  
+
 public:
   EventListener(int id,
                 const base::WeakPtr<DispatcherHost>& dispatcher_host,
                 const base::DictionaryValue& option);
-  
-  virtual ~EventListener();
-  
+
+  ~EventListener() override;
+
   static int getUID() {
     static int id = 0;
     return ++id;
   }
-  
+
   template<typename T> T* AddListener() {
     std::map<int, BaseEvent*>::iterator i = listerners_.find(T::id);
     if (i==listerners_.end()) {
@@ -64,7 +64,7 @@ public:
     }
     return NULL;
   }
-  
+
   template<typename T> bool RemoveListener() {
     std::map<int, BaseEvent*>::iterator i = listerners_.find(T::id);
     if (i!=listerners_.end()) {

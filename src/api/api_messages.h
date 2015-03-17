@@ -29,10 +29,12 @@
 
 #define IPC_MESSAGE_START ShellMsgStart
 
+#if 0
 IPC_STRUCT_TRAITS_BEGIN(extensions::DraggableRegion)
   IPC_STRUCT_TRAITS_MEMBER(draggable)
   IPC_STRUCT_TRAITS_MEMBER(bounds)
 IPC_STRUCT_TRAITS_END()
+#endif
 
 IPC_MESSAGE_ROUTED3(ShellViewHostMsg_Allocate_Object,
                     int /* object id */,

@@ -23,23 +23,24 @@
 #include "base/base_switches.h"
 #include "base/command_line.h"
 #include "base/files/file_path.h"
-#include "base/file_util.h"
+#include "base/files/file_util.h"
 #include "base/path_service.h"
 #include "base/strings/string_util.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
 //#include "chrome/common/child_process_logging.h"
-#include "components/breakpad/app/breakpad_client.h"
+#include "components/crash/app/crash_reporter_client.h"
 #include "content/browser/child_process_security_policy_impl.h"
 #include "content/browser/gpu/compositor_util.h"
-#include "content/nw/src/browser/printing/printing_message_filter.h"
+#include "chrome/browser/printing/printing_message_filter.h"
 #include "content/public/browser/browser_url_handler.h"
 #include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/render_widget_host_iterator.h"
 #include "content/public/browser/resource_dispatcher_host.h"
+#include "content/public/browser/site_instance.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/content_descriptors.h"
 #include "content/public/common/content_switches.h"
@@ -50,11 +51,11 @@
 #include "content/nw/src/breakpad_mac.h"
 #endif
 #include "content/nw/src/common/shell_switches.h"
-#include "content/nw/src/browser/printing/print_job_manager.h"
-#include "content/nw/src/browser/shell_devtools_delegate.h"
+#include "chrome/browser/printing/print_job_manager.h"
+#include "content/nw/src/browser/shell_devtools_manager_delegate.h"
+//#include "content/nw/src/browser/media_capture_devices_dispatcher.h"
 #include "content/nw/src/shell_quota_permission_context.h"
 #include "content/nw/src/browser/shell_resource_dispatcher_host_delegate.h"
-#include "content/nw/src/media/media_internals.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/nw/src/nw_notification_manager.h"
@@ -77,12 +78,34 @@
 
 #if defined(OS_POSIX) && !defined(OS_MACOSX)
 #include "base/debug/leak_annotations.h"
-#include "components/breakpad/app/breakpad_linux.h"
-#include "components/breakpad/browser/crash_handler_host_linux.h"
+#include "components/crash/app/breakpad_linux.h"
+#include "components/crash/browser/crash_handler_host_linux.h"
 #include "content/public/common/content_descriptors.h"
 #endif
 
-using base::FileDescriptor;
+#include "content/nw/src/browser/shell_speech_recognition_manager_delegate.h"
+
+#include "extensions/common/constants.h"
+#include "extensions/common/extension.h"
+#include "extensions/common/switches.h"
+
+#include "content/nw/src/browser/shell_extension_system.h"
+#include "extensions/browser/extension_protocols.h"
+#include "extensions/browser/extension_message_filter.h"
+#include "extensions/browser/extension_registry.h"
+#include "extensions/browser/info_map.h"
+#include "extensions/browser/process_map.h"
+
+#include "content/public/browser/browser_ppapi_host.h"
+#include "content/nw/src/browser/pepper/chrome_browser_pepper_host_factory.h"
+#include "ppapi/host/ppapi_host.h"
+
+using base::CommandLine;
+
+using extensions::Extension;
+using extensions::ProcessMap;
+using extensions::ExtensionRegistry;
+using extensions::InfoMap;
 
 namespace {
 
@@ -212,7 +235,10 @@ std::string ShellContentBrowserClient::GetApplicationLocale() {
 void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
     CommandLine* command_line,
     int child_process_id) {
+  bool is_isolated_guest = false;
+
 #if defined(OS_MACOSX)
+  command_line->AppendSwitch(switches::kDisableRemoteCoreAnimation);
   if (breakpad::IsCrashReporterEnabled()) {
     command_line->AppendSwitch(switches::kEnableCrashReporter);
   }
@@ -230,6 +256,10 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
   if (content::IsThreadedCompositingEnabled())
     command_line->AppendSwitch(switches::kEnableThreadedCompositing);
 #endif //FIXME
+
+  nw::Package* package = shell_browser_main_parts()->package();
+  if (package && package->GetUseExtension())
+    command_line->AppendSwitch(extensions::switches::kExtensionProcess);
 
   std::string user_agent;
   if (!command_line->HasSwitch(switches::kUserAgent) &&
@@ -259,9 +289,12 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
         }
       }
     }
+    content::RenderProcessHost* process = content::RenderProcessHost::FromID(child_process_id);
+    if (process && process->IsIsolatedGuest())
+      is_isolated_guest = true;
   }
-  nw::Package* package = shell_browser_main_parts()->package();
-  if (package && package->GetUseNode()) {
+
+  if (package && package->GetUseNode() && !is_isolated_guest) {
     // Allow node.js
     command_line->AppendSwitch(switches::kNodejs);
 
@@ -309,9 +342,11 @@ std::string ShellContentBrowserClient::GetDefaultDownloadName() {
   return "download";
 }
 
+#if 0
 MediaObserver* ShellContentBrowserClient::GetMediaObserver() {
-  return MediaInternals::GetInstance();
+  return MediaCaptureDevicesDispatcher::GetInstance();
 }
+#endif
 
 void ShellContentBrowserClient::BrowserURLHandlerCreated(
     BrowserURLHandler* handler) {
@@ -346,7 +381,7 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
   prefs->css_variables_enabled = true;
 
   // Disable plugins and cache by default.
-  prefs->plugins_enabled = false;
+  prefs->plugins_enabled = true;
   prefs->java_enabled = false;
 
   base::DictionaryValue* webkit;
@@ -366,6 +401,9 @@ bool ShellContentBrowserClient::ShouldTryToUseExistingProcessHost(
       BrowserContext* browser_context, const GURL& url) {
   ShellBrowserContext* shell_browser_context =
     static_cast<ShellBrowserContext*>(browser_context);
+  if (url.SchemeIs(content::kGuestScheme))
+    return false;
+
   if (shell_browser_context->pinning_renderer())
     return true;
   else
@@ -383,7 +421,13 @@ net::URLRequestContextGetter* ShellContentBrowserClient::CreateRequestContext(
     URLRequestInterceptorScopedVector request_interceptors) {
   ShellBrowserContext* shell_browser_context =
       ShellBrowserContextForBrowserContext(content_browser_context);
-  return shell_browser_context->CreateRequestContext(protocol_handlers, request_interceptors.Pass());
+  extensions::InfoMap* extension_info_map =
+      shell_browser_main_parts_->extension_system()->info_map();
+  (*protocol_handlers)[extensions::kExtensionScheme] =
+      linked_ptr<net::URLRequestJobFactory::ProtocolHandler>(
+            extensions::CreateExtensionProtocolHandler(false /* is_incognito */,
+                                         extension_info_map));
+  return shell_browser_context->CreateRequestContext(protocol_handlers, request_interceptors.Pass(), extension_info_map);
 }
 
 net::URLRequestContextGetter*
@@ -426,8 +470,10 @@ void ShellContentBrowserClient::RenderProcessWillLaunch(
       host->GetID(), "app");
 
 #if defined(ENABLE_PRINTING)
-  host->AddFilter(new PrintingMessageFilter(id, NULL));
+  host->AddFilter(new printing::PrintingMessageFilter(id));
 #endif
+  host->AddFilter(
+                  new extensions::ExtensionMessageFilter(id, browser_context()));
 }
 
 bool ShellContentBrowserClient::IsHandledURL(const GURL& url) {
@@ -440,6 +486,8 @@ bool ShellContentBrowserClient::IsHandledURL(const GURL& url) {
     url::kFileSystemScheme,
     url::kFileScheme,
     "app",
+    extensions::kExtensionScheme,
+    extensions::kExtensionResourceScheme,
   };
   for (size_t i = 0; i < arraysize(kProtocolList); ++i) {
     if (url.scheme() == kProtocolList[i])
@@ -480,12 +528,10 @@ void ShellContentBrowserClient::GetAdditionalAllowedSchemesForFileSystem(
 void ShellContentBrowserClient::GetAdditionalMappedFilesForChildProcess(
     const CommandLine& command_line,
     int child_process_id,
-    std::vector<FileDescriptorInfo>* mappings) {
+    FileDescriptorInfo* mappings) {
   int crash_signal_fd = GetCrashSignalFD(command_line);
   if (crash_signal_fd >= 0) {
-    mappings->push_back(FileDescriptorInfo(kCrashDumpSignal,
-                                           FileDescriptor(crash_signal_fd,
-                                                          false)));
+    mappings->Share(kCrashDumpSignal, crash_signal_fd);
   }
 }
 #endif  // defined(OS_POSIX) && !defined(OS_MACOSX)
@@ -495,56 +541,101 @@ ShellContentBrowserClient::CreateQuotaPermissionContext() {
   return new ShellQuotaPermissionContext();
 }
 
-void CancelDesktopNotification(int render_process_id, int render_frame_id, int notification_id) {
+PlatformNotificationService* ShellContentBrowserClient::GetPlatformNotificationService() {
+#if ENABLE_NOTIFICATIONS
   nw::NotificationManager *notificationManager = nw::NotificationManager::getSingleton();
-  if (notificationManager == NULL) {
-    NOTIMPLEMENTED();
-    return;
+  if (notificationManager) {
+    return notificationManager;
   }
-  notificationManager->CancelDesktopNotification(render_process_id, render_frame_id, notification_id);
-}
-
-void ShellContentBrowserClient::ShowDesktopNotification(
-      const ShowDesktopNotificationHostMsgParams& params,
-      RenderFrameHost* render_frame_host,
-      scoped_ptr<DesktopNotificationDelegate> delegate,
-      base::Closure* cancel_callback) {
-#if defined(ENABLE_NOTIFICATIONS)
-  nw::NotificationManager *notificationManager = nw::NotificationManager::getSingleton();
-  if (notificationManager == NULL) {
-    NOTIMPLEMENTED();
-    return;
-  }
-  content::RenderProcessHost* process = render_frame_host->GetProcess();
-  notificationManager->AddDesktopNotification(params, process->GetID(),
-                                              render_frame_host->GetRoutingID(),
-                                              delegate->notification_id(),
-                                              false);
-  *cancel_callback = base::Bind(&CancelDesktopNotification, process->GetID(), render_frame_host->GetRoutingID(), delegate->notification_id());
-#else
-  NOTIMPLEMENTED();
 #endif
-
+  NOTIMPLEMENTED();
+  return NULL;
 }
 
-// FIXME: cancel desktop notification
-
-void ShellContentBrowserClient::RequestMidiSysExPermission(
-      WebContents* web_contents,
-      int bridge_id,
-      const GURL& requesting_frame,
-      bool user_gesture,
-      base::Callback<void(bool)> result_callback,
-      base::Closure* cancel_callback) {
-  result_callback.Run(true);
+DevToolsManagerDelegate*
+ShellContentBrowserClient::GetDevToolsManagerDelegate() {
+  return new ShellDevToolsManagerDelegate(browser_context());
 }
 
-void ShellContentBrowserClient::RequestProtectedMediaIdentifierPermission(
-      WebContents* web_contents,
-      const GURL& origin,
-      base::Callback<void(bool)> result_callback,
-      base::Closure* cancel_callback) {
-  result_callback.Run(true);
+bool ShellContentBrowserClient::ShouldUseProcessPerSite(
+    content::BrowserContext* browser_context,
+    const GURL& effective_url) {
+  return effective_url.SchemeIs(content::kGuestScheme);
+}
+
+bool ShellContentBrowserClient::CheckMediaAccessPermission(BrowserContext* browser_context,
+                                                           const GURL& security_origin,
+                                                           MediaStreamType type) {
+  return true;
+}
+
+void ShellContentBrowserClient::SiteInstanceGotProcess(
+    content::SiteInstance* site_instance) {
+  // If this isn't an extension renderer there's nothing to do.
+  const Extension* extension = GetExtension(site_instance);
+  if (!extension)
+    return;
+
+  ProcessMap::Get(shell_browser_main_parts_->browser_context())
+      ->Insert(extension->id(),
+               site_instance->GetProcess()->GetID(),
+               site_instance->GetId());
+
+  BrowserThread::PostTask(
+      BrowserThread::IO,
+      FROM_HERE,
+      base::Bind(&InfoMap::RegisterExtensionProcess,
+                 shell_browser_main_parts_->extension_system()->info_map(),
+                 extension->id(),
+                 site_instance->GetProcess()->GetID(),
+                 site_instance->GetId()));
+}
+
+void ShellContentBrowserClient::SiteInstanceDeleting(
+    content::SiteInstance* site_instance) {
+  // If this isn't an extension renderer there's nothing to do.
+  const Extension* extension = GetExtension(site_instance);
+  if (!extension)
+    return;
+
+  ProcessMap::Get(shell_browser_main_parts_->browser_context())
+      ->Remove(extension->id(),
+               site_instance->GetProcess()->GetID(),
+               site_instance->GetId());
+
+  BrowserThread::PostTask(
+      BrowserThread::IO,
+      FROM_HERE,
+      base::Bind(&InfoMap::UnregisterExtensionProcess,
+                 shell_browser_main_parts_->extension_system()->info_map(),
+                 extension->id(),
+                 site_instance->GetProcess()->GetID(),
+                 site_instance->GetId()));
+}
+
+const Extension* ShellContentBrowserClient::GetExtension(
+    content::SiteInstance* site_instance) {
+  GURL url = site_instance->GetSiteURL();
+  if (url.SchemeIs("nw"))
+    return NULL;
+  ExtensionRegistry* registry =
+      ExtensionRegistry::Get(site_instance->GetBrowserContext());
+  return registry->enabled_extensions().GetExtensionOrAppByURL(
+      site_instance->GetSiteURL());
+}
+
+content::SpeechRecognitionManagerDelegate*
+ShellContentBrowserClient::CreateSpeechRecognitionManagerDelegate() {
+  return new speech::ShellSpeechRecognitionManagerDelegate();
+}
+
+void ShellContentBrowserClient::DidCreatePpapiPlugin(
+                       content::BrowserPpapiHost* browser_host) {
+#if defined(ENABLE_PLUGINS)
+  browser_host->GetPpapiHost()->AddHostFactoryFilter(
+      scoped_ptr<ppapi::host::HostFactory>(
+      new chrome::ChromeBrowserPepperHostFactory(browser_host)));
+#endif
 }
 
 }  // namespace content

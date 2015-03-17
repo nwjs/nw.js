@@ -30,7 +30,7 @@ namespace nw {
   using namespace ABI::Windows::UI::Notifications;
   using namespace ABI::Windows::Data::Xml::Dom;
 
-class NotificationManagerToastWin : public NotificationManager{
+class NotificationManagerToastWin : public NotificationManager {
   friend class ToastEventHandler;
 
   ComPtr<IToastNotificationManagerStatics> toastStatics_;
@@ -38,18 +38,12 @@ class NotificationManagerToastWin : public NotificationManager{
   std::map<int, ComPtr<IToastNotification>> notification_map_;
   static bool ForceDisable;
 
-  // internal function for AddDesktopNotification
-  virtual bool AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-    const int render_process_id, const int render_frame_id, const int notification_id, 
-    const bool worker, const std::vector<SkBitmap>* bitmaps) OVERRIDE;
-
-
   HRESULT CreateToast(_In_ IToastNotificationManagerStatics *toastManager, _In_ IXmlDocument *xml,
-    const int render_process_id, const int render_frame_id, const int notification_id);
+    const int render_process_id, const int notification_id);
 
   // Create the toast XML from a template
   HRESULT CreateToastXml(_In_ IToastNotificationManagerStatics *toastManager,
-    const content::ShowDesktopNotificationHostMsgParams& params, _Outptr_ IXmlDocument** inputXml);
+    const content::PlatformNotificationData& params, const SkBitmap& icon, _Outptr_ IXmlDocument** inputXml);
 
   // Set the value of the "src" attribute of the "image" node
   HRESULT SetImageSrc(_In_z_ const wchar_t *imagePath, _In_ IXmlDocument *toastXml);
@@ -60,16 +54,15 @@ class NotificationManagerToastWin : public NotificationManager{
 
   HRESULT SetNodeValueString(_In_ HSTRING inputString, _In_ IXmlNode *node, _In_ IXmlDocument *xml);
 
+  bool Init();
+
 public:
   static bool IsSupported();
   explicit NotificationManagerToastWin();
   virtual ~NotificationManagerToastWin();
-  virtual bool AddDesktopNotification(const content::ShowDesktopNotificationHostMsgParams& params,
-    const int render_process_id, const int render_frame_id, const int notification_id,
-    const bool worker) OVERRIDE{
-    return AddDesktopNotification(params, render_process_id, render_frame_id, notification_id, worker, NULL);
-  }
-  virtual bool CancelDesktopNotification(int render_process_id, int render_frame_id, int notification_id) OVERRIDE;
+  virtual bool AddDesktopNotification(const content::PlatformNotificationData& params,
+    const int render_process_id, const int notification_id, const SkBitmap& icon) override;
+  virtual bool CancelDesktopNotification(int notification_id) override;
 };
 
 } // namespace nw

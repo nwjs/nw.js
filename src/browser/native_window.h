@@ -31,8 +31,8 @@
 #include "content/nw/src/nw_shell.h"
 #include "ui/gfx/image/image.h"
 #include "ui/gfx/native_widget_types.h"
-#include "ui/gfx/point.h"
-#include "ui/gfx/size.h"
+#include "ui/gfx/geometry/point.h"
+#include "ui/gfx/geometry/size.h"
 
 #if defined(OS_WIN) || defined(OS_LINUX)
 #include "components/web_modal/web_contents_modal_dialog_host.h"
@@ -66,11 +66,13 @@ class CapturePageHelper;
 
 #if defined(OS_WIN) || defined(OS_LINUX)
 class NativeWindow : public web_modal::WebContentsModalDialogHost {
+public:
+  ~NativeWindow() override;
 #else
 class NativeWindow {
-#endif
- public:
+public:
   virtual ~NativeWindow();
+#endif
 
   static NativeWindow* Create(const base::WeakPtr<content::Shell>& shell,
                               base::DictionaryValue* manifest);
@@ -131,11 +133,11 @@ class NativeWindow {
       const content::NativeWebKeyboardEvent& event) = 0;
 
 #if defined(OS_WIN)
-  virtual gfx::NativeView GetHostView() const OVERRIDE = 0;
-  virtual gfx::Point GetDialogPosition(const gfx::Size& size) OVERRIDE = 0;
-  virtual void AddObserver(web_modal::ModalDialogHostObserver* observer) OVERRIDE = 0;
-  virtual void RemoveObserver(web_modal::ModalDialogHostObserver* observer) OVERRIDE = 0;
-  virtual gfx::Size GetMaximumDialogSize() OVERRIDE = 0;
+  virtual gfx::NativeView GetHostView() const override = 0;
+  virtual gfx::Point GetDialogPosition(const gfx::Size& size) override = 0;
+  virtual void AddObserver(web_modal::ModalDialogHostObserver* observer) override = 0;
+  virtual void RemoveObserver(web_modal::ModalDialogHostObserver* observer) override = 0;
+  virtual gfx::Size GetMaximumDialogSize() override = 0;
 #endif
   content::Shell* shell() const { return shell_.get(); }
   content::WebContents* web_contents() const;

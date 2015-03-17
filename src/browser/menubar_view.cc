@@ -40,14 +40,14 @@ class MenuBarButton : public views::MenuButton {
     SetElideBehavior(kElideBehavior);
   }
 
-  virtual bool GetTooltipText(const gfx::Point& p,
-                              base::string16* tooltip) const OVERRIDE {
+  bool GetTooltipText(const gfx::Point& p,
+                              base::string16* tooltip) const override {
     if (label()->GetPreferredSize().width() > label()->size().width())
       *tooltip = GetText();
     return !tooltip->empty();
   }
 
-  virtual bool IsTriggerableEvent(const ui::Event& e) OVERRIDE {
+  bool IsTriggerableEvent(const ui::Event& e) override {
     // Left clicks and taps should show the menu contents and right clicks
     // should show the context menu. They should not trigger the opening of
     // underlying urls.

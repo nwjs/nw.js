@@ -1,25 +1,74 @@
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
-<title>node-webkit</title>
+<title>nw.js</title>
+<style>
+body, div, h1, h2, h3, h4, h5, h6, p, ul, ol, li, dl, dt, dd, img, form, fieldset, blockquote {
+	margin: 0; padding: 0; border: 0;
+}
+
+body {
+	background: #eee;
+}
+
+#ver {
+    background: #474747; display: table; color: #ccc;
+    text-align: right;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+#inset {
+	width: 100%; height: 100%; background: #474747; display: table;
+}
+
+#inset h1 {
+	text-align: center;
+	vertical-align: middle;
+	font-family: "League-Gothic", Courier;
+	font-size: 100px; text-transform: uppercase;
+	text-shadow: 0px 2px 3px #222;
+        display: table-cell;
+
+}
+
+.shimmer {
+  text-align: center;
+  color: rgba(55,55,55,0.1);
+  background: -webkit-gradient(linear, left top, right top, from(#222), to(#222), color-stop(0.5, #fff));
+  -webkit-background-size: 125px 100%;
+  -webkit-background-clip: text;
+  -webkit-animation-name: shimmer;
+  -webkit-animation-duration: 10s;
+  -webkit-animation-iteration-count: infinite;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-color: #222;
+}
+
+@-webkit-keyframes shimmer {
+  0% {
+    background-position: top left;
+  }
+  20% {
+    background-position: top right;
+  }
+  100% {
+    background-position: top right;
+  }
+}
+</style>
 </head>
 <body>
-<div style="width: 100%; height: 100%; display: table;">
-<pre style="text-align: center; margin: 0 auto; display: table-cell; vertical-align: middle">
-    .__   __.   ______    _______   _______         
-    |  \ |  |  /  __  \  |       \ |   ____|        
-    |   \|  | |  |  |  | |  .--.  ||  |__    ______ 
-    |  . `  | |  |  |  | |  |  |  ||   __|  |______|
-    |  |\   | |  `--'  | |  '--'  ||  |____         
-    |__| \__|  \______/  |_______/ |_______|        
-                                                        
-____    __    ____  _______ .______    __  ___  __  .___________.
-\   \  /  \  /   / |   ____||   _  \  |  |/  / |  | |           |
- \   \/    \/   /  |  |__   |  |_)  | |  '  /  |  | `---|  |----`
-  \            /   |   __|  |   _  &lt;  |    &lt;   |  |     |  |     
-   \    /\    /    |  |____ |  |_)  | |  .  \  |  |     |  |     
-    \__/  \__/     |_______||______/  |__|\__\ |__|     |__|     
-</pre>
+<div id="inset">
+	<h1 class="shimmer">NW.js</h1>
+</div>
+<div id="ver">
+  nw.js v<script>document.write(process.versions['node-webkit']);</script><br/>
+  io.js v<script>document.write(process.versions['node']);</script><br/>
+  Chromium <script>document.write(process.versions['chromium']);</script><br/>
+  commit hash: <script>document.write(process.versions['nw-commit-id']);</script><br/>
 </div>
 </body>
 </html>

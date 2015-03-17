@@ -5,8 +5,8 @@
 #ifndef CHROME_BROWSER_UI_VIEWS_AUTOFILL_AUTOFILL_POPUP_VIEW_VIEWS_H_
 #define CHROME_BROWSER_UI_VIEWS_AUTOFILL_AUTOFILL_POPUP_VIEW_VIEWS_H_
 
-#include "content/nw/src/browser/autofill_popup_view.h"
-#include "content/nw/src/browser/autofill_popup_base_view.h"
+#include "chrome/browser/ui/autofill/autofill_popup_view.h"
+#include "chrome/browser/ui/views/autofill/autofill_popup_base_view.h"
 
 class AutofillPopupController;
 
@@ -23,16 +23,16 @@ class AutofillPopupViewViews : public AutofillPopupBaseView,
                          views::Widget* observing_widget);
 
  private:
-  virtual ~AutofillPopupViewViews();
+  ~AutofillPopupViewViews() override;
 
   // AutofillPopupView implementation.
-  virtual void Show() OVERRIDE;
-  virtual void Hide() OVERRIDE;
-  virtual void InvalidateRow(size_t row) OVERRIDE;
-  virtual void UpdateBoundsAndRedrawPopup() OVERRIDE;
+  void Show() override;
+  void Hide() override;
+  void InvalidateRow(size_t row) override;
+  void UpdateBoundsAndRedrawPopup() override;
 
   // views::Views implementation
-  virtual void OnPaint(gfx::Canvas* canvas) OVERRIDE;
+  void OnPaint(gfx::Canvas* canvas) override;
 
   // Draw the given autofill entry in |entry_rect|.
   void DrawAutofillEntry(gfx::Canvas* canvas,

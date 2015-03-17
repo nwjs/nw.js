@@ -39,7 +39,7 @@ TOP="${SRCROOT}/.."
 
 #BRAND_SCRIPT="${TOP}/build/branding_value.sh"
 #SRC_APP_NAME=$("${BRAND_SCRIPT}" "${BUILD_BRANDING}" PRODUCT_FULLNAME)
-SRC_APP_NAME=node-webkit
+SRC_APP_NAME=nwjs
 #. "${TOP}/chrome/VERSION"
 
 BREAKPAD_DUMP_SYMS="${BUILT_PRODUCTS_DIR}/dump_syms"

@@ -44,6 +44,7 @@
 #include "content/nw/src/nw_shell.h"
 #include "content/public/browser/native_web_keyboard_event.h"
 #include "content/public/browser/render_view_host.h"
+#include "content/browser/renderer_host/render_view_host_impl.h"
 #include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/content_switches.h"
@@ -81,6 +82,8 @@
 #if defined(USE_ASH)
 #include "ash/accelerators/accelerator_table.h"
 #endif
+
+using base::CommandLine;
 
 namespace content {
   extern bool g_support_transparency;
@@ -120,9 +123,9 @@ class NativeWindowClientView : public views::ClientView {
       : views::ClientView(widget, contents_view),
         shell_(shell) {
   }
-  virtual ~NativeWindowClientView() {}
+  ~NativeWindowClientView() override {}
 
-  virtual bool CanClose() OVERRIDE {
+   bool CanClose() override {
     if (shell_)
       return shell_->ShouldCloseWindow();
     else
@@ -138,28 +141,29 @@ class NativeWindowFrameView : public views::NonClientFrameView {
   static const char kViewClassName[];
 
   explicit NativeWindowFrameView(NativeWindowAura* window);
-  virtual ~NativeWindowFrameView();
+   ~NativeWindowFrameView() override;
 
   void Init(views::Widget* frame);
 
   // views::NonClientFrameView implementation.
-  virtual gfx::Rect GetBoundsForClientView() const OVERRIDE;
-  virtual gfx::Rect GetWindowBoundsForClientBounds(
-      const gfx::Rect& client_bounds) const OVERRIDE;
-  virtual int NonClientHitTest(const gfx::Point& point) OVERRIDE;
-  virtual void GetWindowMask(const gfx::Size& size,
-                             gfx::Path* window_mask) OVERRIDE;
-  virtual void ResetWindowControls() OVERRIDE {}
-  virtual void UpdateWindowIcon() OVERRIDE {}
-  virtual void UpdateWindowTitle() OVERRIDE {}
+   gfx::Rect GetBoundsForClientView() const override;
+   gfx::Rect GetWindowBoundsForClientBounds(
+      const gfx::Rect& client_bounds) const override;
+   int NonClientHitTest(const gfx::Point& point) override;
+   void GetWindowMask(const gfx::Size& size,
+                             gfx::Path* window_mask) override;
+   void ResetWindowControls() override {}
+   void UpdateWindowIcon() override {}
+   void UpdateWindowTitle() override {}
+   void SizeConstraintsChanged() override {}
 
   // views::View implementation.
-  virtual gfx::Size GetPreferredSize() const OVERRIDE;
-  virtual void Layout() OVERRIDE;
-  virtual const char* GetClassName() const OVERRIDE;
-  virtual void OnPaint(gfx::Canvas* canvas) OVERRIDE;
-  virtual gfx::Size GetMinimumSize() const OVERRIDE;
-  virtual gfx::Size GetMaximumSize() const OVERRIDE;
+   gfx::Size GetPreferredSize() const override;
+   void Layout() override;
+   const char* GetClassName() const override;
+   void OnPaint(gfx::Canvas* canvas) override;
+   gfx::Size GetMinimumSize() const override;
+   gfx::Size GetMaximumSize() const override;
 
  private:
   NativeWindowAura* window_;
@@ -275,6 +279,14 @@ gfx::Size NativeWindowFrameView::GetMaximumSize() const {
 
 }  // namespace
 
+NativeWindowAura* NativeWindowAura::GetBrowserViewForNativeWindow(
+    gfx::NativeWindow window) {
+  views::Widget* widget = views::Widget::GetWidgetForNativeWindow(window);
+  return widget ?
+      reinterpret_cast<NativeWindowAura*>(widget->GetNativeWindowProperty(
+          "__BROWSER_VIEW__")) : nullptr;
+}
+
 NativeWindowAura::NativeWindowAura(const base::WeakPtr<content::Shell>& shell,
                                  base::DictionaryValue* manifest)
     : NativeWindow(shell, manifest),
@@ -343,6 +355,8 @@ NativeWindowAura::NativeWindowAura(const base::WeakPtr<content::Shell>& shell,
 
   OnViewWasResized();
   window_->SetInitialFocus(ui::SHOW_STATE_NORMAL);
+
+  window_->SetNativeWindowProperty("__BROWSER_VIEW__", this);
 }
 
 NativeWindowAura::~NativeWindowAura() {
@@ -485,9 +499,18 @@ void NativeWindowAura::SetTransparent(bool transparent) {
     toolbar_->SchedulePaint();
   }
 
+  // this is needed to prevent white popup on startup
   content::RenderWidgetHostView* rwhv = shell_->web_contents()->GetRenderWidgetHostView();
   if (rwhv) {
-    rwhv->SetBackgroundOpaque(!transparent);
+    if (transparent)
+      rwhv->SetBackgroundColor(SK_ColorTRANSPARENT);
+    else
+      rwhv->SetBackgroundColorToDefault();
+  }
+
+  content::RenderViewHostImpl* rvh = static_cast<content::RenderViewHostImpl*>(shell_->web_contents()->GetRenderViewHost());
+  if (rvh) {
+    rvh->SetBackgroundOpaque(!transparent);
   }
 
   transparent_ = transparent;
@@ -824,6 +847,10 @@ bool NativeWindowAura::CanResize() const {
 
 bool NativeWindowAura::CanMaximize() const {
   return resizable_;
+}
+
+bool NativeWindowAura::CanMinimize() const {
+  return true;
 }
 
 views::Widget* NativeWindowAura::GetWidget() {

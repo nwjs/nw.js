@@ -31,13 +31,13 @@ class Clipboard : public Base {
   Clipboard(int id,
             const base::WeakPtr<DispatcherHost>& dispatcher_host,
             const base::DictionaryValue& option);
-  virtual ~Clipboard();
+  ~Clipboard() override;
 
-  virtual void Call(const std::string& method,
-                    const base::ListValue& arguments) OVERRIDE;
-  virtual void CallSync(const std::string& method,
+   void Call(const std::string& method,
+                    const base::ListValue& arguments) override;
+   void CallSync(const std::string& method,
                         const base::ListValue& arguments,
-                        base::ListValue* result) OVERRIDE;
+                        base::ListValue* result) override;
 
  private:
   void SetText(std::string& text);

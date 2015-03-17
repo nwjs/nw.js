@@ -1,22 +1,41 @@
-0.11.5 / 12-28-2014
-===================
-- Fix: Normal frame should not simulate user input events (File input dialog)
-- Fix: crash in debug session of WebStorm (WEB-14378)
+0.12.0 / 03-05-2015
+=======================
+- Chromium updated to 41.0.2272.76
+- [Screen Selection] OSX and Win implementation (Thanks to Jefry)
+- Fix #3165: crash on auth in webview
 
-0.11.4 / 12-24-2014
-===================
-- support click-through with window transparency on OSX & Win (Thanks to Jefry Tedjokusumo)
-- Fix Windows printing
-- Fix --file-descriptor-limit (Thanks to Liu Cong)
-- Fix Window.reloadDev()
-- Fix dom_storage_quota (#2854)
-- Fix: maximizing frameless window enters fullscreen (#1021)
-- Fix tray title/tooltip issues on Mac OS X (#2796 Thanks to Marco Fabbri)
+0.12.0-rc1 / 02-27-2015
+=======================
+- new 'nwjc' tool replaces 'nwsnapshot'; size limit removed
+- add Window.evalNWBin() to work with nwjc
+- Fix #2923: support pepper flash plugin on Linux
+- Fix #2961: nwdirectory file dialog
+- Fix #2996: setting breakpoints in Node context in devtools
+
+0.12.0-alpha3 / 02-13-2015
+==========================
+- Chromium updated to 41.0.2272.32
+- io.js updated to 1.2.0
+
+0.12.0-alpha2 / 01-18-2015
+==========================
+- Fix: -webkit-app-region: drag; stopped working in version 0.12.0-alpha1 #2963
+- Fix: [WIN] ReferrenceError in native module function createWritableDummyStream #2933
+- support bypassing frame-ancestors CSP in Node frame #2967
+
+0.12.0-alpha1 / 01-15-2015
+==========================
+- renamed NW.js
+- Chromium is updated to 41.0.2236.2
+- migrated to io.js 1.0.0
+- new chrome.webrequest API
+- new 'webview' tag from Chrome extensions
+- new 'bg-script' field in the manifest
 
 0.11.3 / 12-16-2014
 ===================
 - new method in 'new-win-policy' event handler to control the options for new popup windows
-- Fix: nw methods cannot be called from normal frames (Thanks to Insighti <research@insighti.org>)
+- Fix: nw methods cannot be called from normal frames
 - Extend Tray click event with position (Thanks to Marco Fabbri) (#1874)
 - [OSX] Fix Window.focus() not taking focus (#2724)
 - Add API methods and support for styling of icons (Tray, MenuItem) under Mac OS X (Yosemite) Dark Mode (#2775)

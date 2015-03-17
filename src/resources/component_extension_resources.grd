@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This comment is only here because changes to resources are not picked up
+     without changes to the corresponding grd file.  -->
+<grit latest_public_release="0" current_release="1">
+  <outputs>
+    <output filename="grit/nw_component_resources.h" type="rc_header">
+      <emit emit_type='prepend'></emit>
+    </output>
+    <output filename="grit/nw_component_resources_map.cc" type="resource_file_map_source" />
+    <output filename="grit/nw_component_resources_map.h" type="resource_map_header" />
+    <output filename="nw_components.pak" type="data_package" />
+  </outputs>
+  <release seq="1">
+    <includes>
+      <if expr="enable_extensions">
+        <include name="IDR_NWAPP_BACKGROUND_JS" file="nwapp/background.js" type="BINDATA" />
+      </if>
+    </includes>
+  </release>
+</grit>

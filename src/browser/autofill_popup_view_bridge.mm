@@ -4,13 +4,12 @@
 
 #import <Cocoa/Cocoa.h>
 
-#include "content/nw/src/browser/autofill_popup_view_bridge.h"
+#include "chrome/browser/ui/cocoa/autofill/autofill_popup_view_bridge.h"
 
 #include "base/logging.h"
 #include "chrome/browser/ui/autofill/autofill_popup_controller.h"
 #include "chrome/browser/ui/autofill/autofill_popup_view_delegate.h"
-#import "content/nw/src/browser/autofill_popup_view_cocoa.h"
-#include "ui/gfx/rect.h"
+#import "chrome/browser/ui/cocoa/autofill/autofill_popup_view_cocoa.h"
 
 namespace autofill {
 

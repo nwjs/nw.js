@@ -44,27 +44,27 @@ class ShellDownloadManagerDelegate
 
   void SetDownloadManager(DownloadManager* manager);
 
-  virtual void Shutdown() OVERRIDE;
-  virtual bool DetermineDownloadTarget(
+  void Shutdown() override;
+  bool DetermineDownloadTarget(
       DownloadItem* download,
-      const DownloadTargetCallback& callback) OVERRIDE;
-  virtual bool ShouldOpenDownload(
+      const DownloadTargetCallback& callback) override;
+  bool ShouldOpenDownload(
       DownloadItem* item,
-      const DownloadOpenDelayedCallback& callback) OVERRIDE;
-  virtual void GetNextId(const DownloadIdCallback& callback) OVERRIDE;
+      const DownloadOpenDelayedCallback& callback) override;
+  void GetNextId(const DownloadIdCallback& callback) override;
 
   // Inhibits prompting and sets the default download path.
   void SetDownloadBehaviorForTesting(
                                      const base::FilePath& default_download_path);
 #if defined(OS_WIN)
   virtual void FileSelected(
-      const base::FilePath& path, int index, void* params) OVERRIDE;
-  virtual void FileSelectionCanceled(void* params) OVERRIDE;
+      const base::FilePath& path, int index, void* params) override;
+  virtual void FileSelectionCanceled(void* params) override;
 #endif
 
  protected:
   // To allow subclasses for testing.
-  virtual ~ShellDownloadManagerDelegate();
+  ~ShellDownloadManagerDelegate() final;
 
  private:
   friend class base::RefCountedThreadSafe<ShellDownloadManagerDelegate>;

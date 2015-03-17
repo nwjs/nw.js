@@ -8,6 +8,7 @@
 #include <string>
 
 #include "base/compiler_specific.h"
+#include "base/prefs/pref_member.h"
 #include "content/public/browser/browser_message_filter.h"
 
 #if defined(OS_WIN)
@@ -28,25 +29,24 @@ class WebContents;
 }
 
 namespace printing {
-class PrinterQuery;
+
 class PrintJobManager;
 class PrintQueriesQueue;
-}
+class PrinterQuery;
 
 // This class filters out incoming printing related IPC messages for the
 // renderer process on the IPC thread.
 class PrintingMessageFilter : public content::BrowserMessageFilter {
  public:
-  PrintingMessageFilter(int render_process_id, void* profile);
+  PrintingMessageFilter(int render_process_id);
 
   // content::BrowserMessageFilter methods.
-  virtual void OverrideThreadForMessage(
-      const IPC::Message& message,
-      content::BrowserThread::ID* thread) OVERRIDE;
-  virtual bool OnMessageReceived(const IPC::Message& message) OVERRIDE;
+  void OverrideThreadForMessage(const IPC::Message& message,
+                                content::BrowserThread::ID* thread) override;
+  bool OnMessageReceived(const IPC::Message& message) override;
 
  private:
-  virtual ~PrintingMessageFilter();
+  ~PrintingMessageFilter() override;
 
 #if defined(OS_WIN)
   // Used to pass resulting EMF from renderer to browser in printing.
@@ -83,35 +83,21 @@ class PrintingMessageFilter : public content::BrowserMessageFilter {
   // to base::Bind.
   struct GetPrintSettingsForRenderViewParams;
 
-  // Retrieve print settings.  Uses |render_view_id| to get a parent
-  // for any UI created if needed.
-  void GetPrintSettingsForRenderView(
-      int render_view_id,
-      GetPrintSettingsForRenderViewParams params,
-      const base::Closure& callback,
-      scoped_refptr<printing::PrinterQuery> printer_query);
-
-  void OnGetPrintSettingsFailed(
-      const base::Closure& callback,
-      scoped_refptr<printing::PrinterQuery> printer_query);
-
   // Checks if printing is enabled.
   void OnIsPrintingEnabled(bool* is_enabled);
 
   // Get the default print setting.
   void OnGetDefaultPrintSettings(IPC::Message* reply_msg);
-  void OnGetDefaultPrintSettingsReply(
-      scoped_refptr<printing::PrinterQuery> printer_query,
-      IPC::Message* reply_msg);
+  void OnGetDefaultPrintSettingsReply(scoped_refptr<PrinterQuery> printer_query,
+                                      IPC::Message* reply_msg);
 
   // The renderer host have to show to the user the print dialog and returns
   // the selected print settings. The task is handled by the print worker
   // thread and the UI thread. The reply occurs on the IO thread.
   void OnScriptedPrint(const PrintHostMsg_ScriptedPrint_Params& params,
                        IPC::Message* reply_msg);
-  void OnScriptedPrintReply(
-      scoped_refptr<printing::PrinterQuery> printer_query,
-      IPC::Message* reply_msg);
+  void OnScriptedPrintReply(scoped_refptr<PrinterQuery> printer_query,
+                            IPC::Message* reply_msg);
 
   // Modify the current print settings based on |job_settings|. The task is
   // handled by the print worker thread and the UI thread. The reply occurs on
@@ -119,23 +105,23 @@ class PrintingMessageFilter : public content::BrowserMessageFilter {
   void OnUpdatePrintSettings(int document_cookie,
                              const base::DictionaryValue& job_settings,
                              IPC::Message* reply_msg);
-  void OnUpdatePrintSettingsReply(
-      scoped_refptr<printing::PrinterQuery> printer_query,
-      IPC::Message* reply_msg);
+  void OnUpdatePrintSettingsReply(scoped_refptr<PrinterQuery> printer_query,
+                                  IPC::Message* reply_msg);
 
-#if defined(ENABLE_FULL_PRINTING)
+#if defined(ENABLE_PRINT_PREVIEW)
   // Check to see if print preview has been cancelled.
   void OnCheckForCancel(int32 preview_ui_id,
                         int preview_request_id,
                         bool* cancel);
 #endif
 
-
   const int render_process_id_;
 
-  scoped_refptr<printing::PrintQueriesQueue> queue_;
+  scoped_refptr<PrintQueriesQueue> queue_;
 
   DISALLOW_COPY_AND_ASSIGN(PrintingMessageFilter);
 };
+
+}  // namespace printing
 
 #endif  // CHROME_BROWSER_PRINTING_PRINTING_MESSAGE_FILTER_H_

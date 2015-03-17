@@ -15,20 +15,22 @@ namespace content {
 
 class ShellContentClient : public ContentClient {
  public:
-  virtual ~ShellContentClient();
+  ~ShellContentClient() final;
 
-  virtual std::string GetUserAgent() const OVERRIDE;
-  virtual base::string16 GetLocalizedString(int message_id) const OVERRIDE;
-  virtual base::StringPiece GetDataResource(
+   std::string GetUserAgent() const override;
+   base::string16 GetLocalizedString(int message_id) const override;
+   base::StringPiece GetDataResource(
       int resource_id,
-      ui::ScaleFactor scale_factor) const OVERRIDE;
-  virtual base::RefCountedStaticMemory* GetDataResourceBytes(
-      int resource_id) const OVERRIDE;
-  virtual gfx::Image& GetNativeImageNamed(int resource_id) const OVERRIDE;
-  virtual bool CanHandleWhileSwappedOut(const IPC::Message& msg) OVERRIDE;
-  virtual void AddAdditionalSchemes(
+      ui::ScaleFactor scale_factor) const override;
+   base::RefCountedStaticMemory* GetDataResourceBytes(
+      int resource_id) const override;
+   gfx::Image& GetNativeImageNamed(int resource_id) const override;
+   bool CanHandleWhileSwappedOut(const IPC::Message& msg) override;
+   void AddAdditionalSchemes(
       std::vector<std::string>* standard_schemes,
-      std::vector<std::string>* saveable_shemes) OVERRIDE;
+      std::vector<std::string>* saveable_shemes) override;
+   void AddPepperPlugins(
+      std::vector<content::PepperPluginInfo>* plugins) override;
 };
 
 }  // namespace content

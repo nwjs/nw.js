@@ -39,11 +39,11 @@ class ResourceRequestJob : public net::URLRequestJob {
                      int resource_id);
 
   // net::URLRequestJob methods.
-  virtual void Start() OVERRIDE;
-  virtual bool ReadRawData(net::IOBuffer* dest, int dest_size, int* bytes_read)
-      OVERRIDE;
-  virtual bool GetMimeType(std::string* mime_type) const OVERRIDE;
-  virtual void GetResponseInfo(net::HttpResponseInfo* info) OVERRIDE;
+   void Start() override;
+   bool ReadRawData(net::IOBuffer* dest, int dest_size, int* bytes_read)
+      override;
+   bool GetMimeType(std::string* mime_type) const override;
+   void GetResponseInfo(net::HttpResponseInfo* info) override;
 
   static ResourceRequestJob* Factory(net::URLRequest* request,
                                      net::NetworkDelegate* network_delegate);
@@ -53,7 +53,7 @@ class ResourceRequestJob : public net::URLRequestJob {
   void DataAvailable(base::RefCountedMemory* bytes);
 
  private:
-  virtual ~ResourceRequestJob();
+   ~ResourceRequestJob() override;
 
   // Helper for Start(), to let us start asynchronously.
   // (This pattern is shared by most net::URLRequestJob implementations.)

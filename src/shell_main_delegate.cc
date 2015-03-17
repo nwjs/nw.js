@@ -22,7 +22,7 @@
 
 #include "base/command_line.h"
 #include "base/files/file_path.h"
-#include "base/file_util.h"
+#include "base/files/file_util.h"
 #include "base/lazy_instance.h"
 #include "base/logging.h"
 #include "base/path_service.h"
@@ -32,7 +32,7 @@
 #include "content/public/common/content_switches.h"
 #include "content/public/common/url_constants.h"
 //#include "content/nw/src/breakpad_linux.h"
-#include "content/nw/src/chrome_breakpad_client.h"
+#include "content/nw/src/browser/chrome_crash_reporter_client.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_version.h"
 #include "content/nw/src/renderer/shell_content_renderer_client.h"
@@ -53,20 +53,21 @@
 #include <stdio.h>
 
 using base::FilePath;
+using base::CommandLine;
 
 #if defined(OS_MACOSX)
-#include "components/breakpad/app/breakpad_mac.h"
+#include "components/crash/app/breakpad_mac.h"
 #include "content/nw/src/paths_mac.h"
 #endif  // OS_MACOSX
 
 #if defined(OS_WIN)
 #include "base/logging_win.h"
 #include <initguid.h>
-#include "components/breakpad/app/breakpad_win.h"
+#include "components/crash/app/breakpad_win.h"
 #endif
 
 #if defined(OS_POSIX) && !defined(OS_MACOSX)
-#include "components/breakpad/app/breakpad_linux.h"
+#include "components/crash/app/breakpad_linux.h"
 #endif
 
 #include "ipc/ipc_message.h"  // For IPC_MESSAGE_LOG_ENABLED.
@@ -103,8 +104,8 @@ const GUID kContentShellProviderName = {
         { 0x84, 0x13, 0xec, 0x94, 0xd8, 0xc2, 0xa4, 0xb6 } };
 #endif
 
-base::LazyInstance<chrome::ChromeBreakpadClient>::Leaky
-    g_chrome_breakpad_client = LAZY_INSTANCE_INITIALIZER;
+base::LazyInstance<chrome::ChromeCrashReporterClient>::Leaky
+    g_chrome_crash_client = LAZY_INSTANCE_INITIALIZER;
 
 #if defined(OS_WIN)
 base::LazyInstance<ShellContentUtilityClient>
@@ -175,7 +176,7 @@ bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
 }
 
 void ShellMainDelegate::PreSandboxStartup() {
-  breakpad::SetBreakpadClient(g_chrome_breakpad_client.Pointer());
+  crash_reporter::SetCrashReporterClient(g_chrome_crash_client.Pointer());
   CommandLine* command_line = CommandLine::ForCurrentProcess();
   std::string pref_locale;
   if (command_line->HasSwitch(switches::kLang)) {
@@ -204,7 +205,6 @@ void ShellMainDelegate::PreSandboxStartup() {
 
   // Allow file:// URIs can read other file:// URIs by default.
   command_line->AppendSwitch(switches::kAllowFileAccessFromFiles);
-
 #if defined(OS_WIN)
   if (process_type == switches::kUtilityProcess)
     ShellContentUtilityClient::PreSandboxStartup();
@@ -253,6 +253,15 @@ ContentRendererClient* ShellMainDelegate::CreateContentRendererClient() {
   return renderer_client_.get();
 }
 
+content::ContentUtilityClient*
+ShellMainDelegate::CreateContentUtilityClient() {
+#if defined(OS_WIN)
+  return g_chrome_content_utility_client.Pointer();
+#else
+  return NULL;
+#endif
+}
+
 #if defined(OS_POSIX) && !defined(OS_MACOSX)
 void ShellMainDelegate::ZygoteForked() {
   // Needs to be called after we have chrome::DIR_USER_DATA.  BrowserMain sets
@@ -263,15 +272,5 @@ void ShellMainDelegate::ZygoteForked() {
   breakpad::InitCrashReporter(process_type);
 }
 #endif
-
-content::ContentUtilityClient*
-ShellMainDelegate::CreateContentUtilityClient() {
-#if defined(OS_WIN)
-  return g_chrome_content_utility_client.Pointer();
-#else
-  return NULL;
-#endif
-}
-
 
 }  // namespace content

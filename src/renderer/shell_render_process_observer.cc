@@ -21,7 +21,7 @@
 
 #include "content/nw/src/renderer/shell_render_process_observer.h"
 
-#include "base/file_util.h"
+#include "base/files/file_util.h"
 #include "content/public/renderer/render_thread.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/dispatcher_bindings.h"

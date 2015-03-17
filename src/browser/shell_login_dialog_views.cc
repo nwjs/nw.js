@@ -67,8 +67,6 @@ namespace content {
 void ShellLoginDialog::PlatformCreateDialog(const base::string16& message) {
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
 
-  login_view_ = new LoginView(message);
-
   // Scary thread safety note: This can potentially be called *after* SetAuth
   // or CancelAuth (say, if the request was cancelled before the UI thread got
   // control).  However, that's OK since any UI interaction in those functions
@@ -80,6 +78,15 @@ void ShellLoginDialog::PlatformCreateDialog(const base::string16& message) {
   WebContents* requesting_contents = WebContents::FromRenderFrameHost(rfh);
   WebContentsModalDialogManager* web_contents_modal_dialog_manager =
     WebContentsModalDialogManager::FromWebContents(requesting_contents);
+
+  if (!web_contents_modal_dialog_manager) {
+    UserCancelledAuth();
+    DeleteDelegate();
+    return;
+  }
+
+  login_view_ = new LoginView(message);
+
   WebContentsModalDialogManagerDelegate* modal_delegate =
     web_contents_modal_dialog_manager->delegate();
   CHECK(modal_delegate);

@@ -17,17 +17,17 @@ class MenuBarView;
 class MenuBarController : public views::MenuModelAdapter {
  public:
   MenuBarController(MenuBarView* menubar, ui::MenuModel* menu_model, MenuBarController* master);
-  virtual ~MenuBarController();
+  ~MenuBarController() override;
 
   static views::MenuItemView* CreateMenu(MenuBarView* menubar, ui::MenuModel* model, MenuBarController* controller);
   void RunMenuAt(views::View* view, const gfx::Point& point);
 
-  virtual views::MenuItemView* GetSiblingMenu(
+  views::MenuItemView* GetSiblingMenu(
       views::MenuItemView* menu,
       const gfx::Point& screen_point,
       views::MenuAnchorPosition* anchor,
       bool* has_mnemonics,
-      views::MenuButton** button) OVERRIDE;
+      views::MenuButton** button) override;
 
  private:
   typedef std::map<const ui::MenuModel*, views::MenuItemView*> ModelToMenuMap;
