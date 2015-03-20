@@ -221,10 +221,10 @@ Window.prototype.__defineSetter__('menu', function(menu) {
     return;
   }
   if (v8_util.getConstructorName(menu) != 'Menu')
-    throw new String("'menu' property requries a valid Menu");
+    throw new TypeError("'menu' property requries a valid Menu");
 
   if (menu.type != 'menubar')
-    throw new String('Only menu of type "menubar" can be used as this.window menu');
+    throw new TypeError('Only menu of type "menubar" can be used as this.window menu');
 
   v8_util.setHiddenValue(this, 'menu', menu);
   CallObjectMethod(this, 'SetMenu', [ menu.id ]);
@@ -432,7 +432,7 @@ Window.prototype.setBadgeLabel = function(label) {
 
 Window.prototype.setProgressBar = function(progress) {
   if (typeof progress != "number")
-    throw new String('progress must be a number');
+    throw new TypeError('progress must be a number');
   CallObjectMethod(this, 'SetProgressBar', [ progress ]);
 }
   
@@ -442,7 +442,7 @@ Window.prototype.setTransparent = function(transparent) {
 
 Window.prototype.setPosition = function(position) {
   if (position != 'center' && position != 'mouse')
-    throw new String('Invalid postion');
+    throw new TypeError('Invalid postion');
   CallObjectMethod(this, 'SetPosition', [ position ]);
 }
 

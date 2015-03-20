@@ -30,7 +30,7 @@ Clipboard.prototype.set = function(data, type) {
     type = 'text';
 
   if (type != 'text')
-    throw new String("Type of '" + type + "' is not supported");
+    throw new TypeError("Type of '" + type + "' is not supported");
 
   nw.callObjectMethod(this, 'Set', [ data, type ]);
 }
@@ -40,7 +40,7 @@ Clipboard.prototype.get = function(type) {
     type = 'text';
 
   if (type != 'text')
-    throw new String('Only support getting plain text from Clipboard');
+    throw new TypeError('Only support getting plain text from Clipboard');
 
   var result = nw.callObjectMethodSync(this, 'Get', [ type ]);
   if (type == 'text')

@@ -27,7 +27,7 @@ function Menu(option) {
     option = { type: 'contextmenu' };
 
   if (option.type != 'contextmenu' && option.type != 'menubar')
-    throw new String('Invalid menu type: ' + option.type);
+    throw new TypeError('Invalid menu type: ' + option.type);
 
   this.type = option.type;
   v8_util.setHiddenValue(this, 'items', []);
@@ -40,12 +40,12 @@ Menu.prototype.__defineGetter__('items', function() {
 });
 
 Menu.prototype.__defineSetter__('items', function(val) {
-  throw new String('Menu.items is immutable');
+  throw new Error('Menu.items is immutable');
 });
 
 Menu.prototype.append = function(menu_item) {
   if (v8_util.getConstructorName(menu_item) != 'MenuItem')
-    throw new String("Menu.append() requires a valid MenuItem");
+    throw new TypeError("Menu.append() requires a valid MenuItem");
     
   this.items.push(menu_item);
   nw.callObjectMethod(this, 'Append', [ menu_item.id ]);
