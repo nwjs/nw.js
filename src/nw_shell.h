@@ -163,6 +163,8 @@ class Shell : public WebContentsDelegate,
                                       const OpenURLParams& params) override;
    void LoadingStateChanged(WebContents* source,
                                    bool to_different_document) override;
+   void LoadProgressChanged(content::WebContents* source,
+                                   double progress) override;
    void ActivateContents(content::WebContents* contents) override;
    void DeactivateContents(content::WebContents* contents) override;
    void CloseContents(WebContents* source) override;

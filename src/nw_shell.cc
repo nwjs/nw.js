@@ -545,6 +545,10 @@ void Shell::LoadingStateChanged(WebContents* source, bool to_different_document)
     SendEvent("loaded");
 }
 
+void Shell::LoadProgressChanged(content::WebContents* source, double progress) {
+  SendEvent("progress", std::to_string(progress));
+}
+
 void Shell::ActivateContents(content::WebContents* contents) {
   window()->Focus(true);
 }
