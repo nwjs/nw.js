@@ -73,7 +73,14 @@ private:
   NotificationManagerWin* tray_;
 };
 
-NotificationManagerWin::NotificationManagerWin() : status_icon_(NULL) {
+NotificationManagerWin::NotificationManagerWin() : status_icon_(NULL), status_tray_(NULL) {
+  Init();
+}
+
+bool NotificationManagerWin::Init() {
+  if (!content::BrowserThread::CurrentlyOn(BrowserThread::UI))
+    return false;
+
   status_tray_ = static_cast<StatusTrayWin*>(StatusTray::GetSingleton());
 
   // check if status icon is already created
@@ -85,6 +92,7 @@ NotificationManagerWin::NotificationManagerWin() : status_icon_(NULL) {
     status_observer_ = new TrayObserver(this);
     status_icon->AddObserver(status_observer_);
   }
+  return true;
 }
 
 bool NotificationManagerWin::ReleaseNotification() {
@@ -123,6 +131,8 @@ NotificationManagerWin::~NotificationManagerWin() {
 
 bool NotificationManagerWin::AddDesktopNotification(const content::PlatformNotificationData& params,
   const int render_process_id, const int notification_id, const SkBitmap& bitmap_icon) {
+  
+  if (status_tray_ == NULL) Init();
 
   content::Shell* shell = content::Shell::windows()[0];
 
