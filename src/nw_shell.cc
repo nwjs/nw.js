@@ -546,7 +546,9 @@ void Shell::LoadingStateChanged(WebContents* source, bool to_different_document)
 }
 
 void Shell::LoadProgressChanged(content::WebContents* source, double progress) {
-  SendEvent("progress", std::to_string(progress));
+  std::ostringstream oss;
+  oss << progress;
+  SendEvent("progress", oss.str());
 }
 
 void Shell::ActivateContents(content::WebContents* contents) {
