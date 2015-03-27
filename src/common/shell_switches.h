@@ -18,6 +18,7 @@ extern const char kContentShellDataPath[];
 extern const char kDeveloper[];
 extern const char kNoToolbar[];
 extern const char kUrl[];
+extern const char kAppPath[];
 extern const char kWorkingDirectory[];
 extern const char kNodeMain[];
 extern const char kSnapshot[];

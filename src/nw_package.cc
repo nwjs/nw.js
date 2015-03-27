@@ -152,7 +152,15 @@ Package::Package()
     return;
 
   // Then see if we have arguments and extract it.
-  CommandLine* command_line = CommandLine::ForCurrentProcess();
+  // check --app-path first
+  base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
+  if(command_line->HasSwitch(switches::kAppPath)) {
+    path_ = command_line->GetSwitchValuePath(switches::kAppPath);
+  }
+  if (InitFromPath())
+    return;
+
+  // then treat first argument as path
   const CommandLine::StringVector& args = command_line->GetArgs();
   if (args.size() > 0) {
     self_extract_ = false;
