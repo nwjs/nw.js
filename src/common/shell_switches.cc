@@ -34,6 +34,9 @@ const char kNoToolbar[] = "no-toolbar";
 // Open specified url
 const char kUrl[] = "url";
 
+// Specified app location
+const char kAppPath[] = "app-path";
+
 // Set current working directory.
 const char kWorkingDirectory[] = "working-directory";
 
