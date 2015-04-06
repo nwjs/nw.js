@@ -23,7 +23,7 @@
 #include "content/public/common/url_constants.h"
 #include "content/public/common/user_agent.h"
 #include "content/nw/src/nw_shell.h"
-#include "grit/shell_resources.h"
+#include "grit/nw_resources.h"
 #include "net/socket/tcp_server_socket.h"
 #include "ui/base/resource/resource_bundle.h"
 
@@ -202,7 +202,7 @@ std::string ShellDevToolsDelegate::GetDiscoveryPageHTML() {
   return std::string();
 #else
   return ResourceBundle::GetSharedInstance().GetRawDataResource(
-      IDR_CONTENT_SHELL_DEVTOOLS_DISCOVERY_PAGE).as_string();
+      IDR_NW_DEVTOOLS_DISCOVERY_PAGE).as_string();
 #endif
 }
 
