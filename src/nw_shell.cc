@@ -356,12 +356,18 @@ void Shell::LoadURL(const GURL& url) {
   //     PAGE_TRANSITION_TYPED,
   //     std::string());
   web_contents_->Focus();
+  std::string title = UTF16ToUTF8(
+      web_contents_->GetController().GetActiveEntry()->GetTitle());
+  window()->SetTitle(title.empty() ? "Untitled" : title);
   window()->SetToolbarButtonEnabled(nw::NativeWindow::BUTTON_FORWARD, false);
 }
 
 void Shell::GoBackOrForward(int offset) {
   web_contents_->GetController().GoToOffset(offset);
   web_contents_->Focus();
+  std::string title = UTF16ToUTF8(
+      web_contents_->GetController().GetActiveEntry()->GetTitle());
+  window()->SetTitle(title.empty() ? "Untitled" : title);
 }
 
 void Shell::Reload(ReloadType type) {
