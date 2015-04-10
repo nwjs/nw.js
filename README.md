@@ -38,7 +38,7 @@ It was created in the Intel Open Source Technology Center.
  * Windows: [win32](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-win-ia32.zip)
  * Mac: [32bit, 10.7+](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-osx-ia32.zip)
 
-* **latest live build**: git tip version; build triggered from every git commit: http://dl.node-webkit.org/live-build/
+* **latest live build**: git tip version; build triggered from every git commit: http://dl.nwjs.io/live-build/
 
 * [Previous versions](https://github.com/rogerwang/node-webkit/wiki/Downloads-of-old-versions)
 
