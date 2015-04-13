@@ -26,10 +26,10 @@ It was created in the Intel Open Source Technology Center.
 * Available on Linux, Mac OS X and Windows
 
 ## Downloads
-* **v0.12.0:** (Mar 5, 2015, based off of IO.js v1.2.0, Chromium 41.0.2272.76): [release notes](https://groups.google.com/d/msg/nwjs-general/NJA-Up4MFug/1jmBPjzklSUJ)  
- * Linux: [32bit](http://dl.nwjs.io/v0.12.0/nwjs-v0.12.0-linux-ia32.tar.gz) / [64bit](http://dl.nwjs.io/v0.12.0/nwjs-v0.12.0-linux-x64.tar.gz)
- * Windows: [32bit](http://dl.nwjs.io/v0.12.0/nwjs-v0.12.0-win-ia32.zip) / [64bit](http://dl.nwjs.io/v0.12.0/nwjs-v0.12.0-win-x64.zip)
- * Mac 10.7+: [32bit](http://dl.nwjs.io/v0.12.0/nwjs-v0.12.0-osx-ia32.zip) / [64bit](http://dl.nwjs.io/v0.12.0/nwjs-v0.12.0-osx-x64.zip)
+* **v0.12.1:** (Apr 13, 2015, based off of IO.js v1.2.0, Chromium 41.0.2272.76): [release notes](https://groups.google.com/d/msg/nwjs-general/bvdnDJAx91U/0womlMli4FUJ)  
+ * Linux: [32bit](http://dl.nwjs.io/v0.12.1/nwjs-v0.12.1-linux-ia32.tar.gz) / [64bit](http://dl.nwjs.io/v0.12.1/nwjs-v0.12.1-linux-x64.tar.gz)
+ * Windows: [32bit](http://dl.nwjs.io/v0.12.1/nwjs-v0.12.1-win-ia32.zip) / [64bit](http://dl.nwjs.io/v0.12.1/nwjs-v0.12.1-win-x64.zip)
+ * Mac 10.7+: [32bit](http://dl.nwjs.io/v0.12.1/nwjs-v0.12.1-osx-ia32.zip) / [64bit](http://dl.nwjs.io/v0.12.1/nwjs-v0.12.1-osx-x64.zip)
 
 * **0.8.6:** (Apr 18, 2014, based off of Node v0.10.22, Chrome 30.0.1599.66) **If your native Node module works only with Node v0.10, then you should use node-webkit v0.8.x, which is also a maintained branch. [More info](https://groups.google.com/d/msg/nwjs-general/2OJ1cEMPLlA/09BvpTagSA0J)**  
 [release notes](https://groups.google.com/d/msg/nwjs-general/CLPkgfV-i7s/hwkkQuJ1kngJ)
