@@ -1,3 +1,14 @@
+0.12.1 / 04-13-2015
+===================
+- Fix crash dump generation
+- [WIN] Fix blurry text with High DPI display
+- Fix: Webview : contentWindow not available at this time (#3126)
+- More precise RegExp for App.argv filtering (Thanks to Anton Khlynovskiy)
+- Fix #3143: remote debugging devtools page blank (Thanks to Yuehang Wu)
+- [Notification][Win] fix for missing windows events
+- add Window 'progress' event (Thanks to vadim-kudr <x.kydrik.x@gmail.com>)
+- nw-headers is built automatically now in buildbot (Thanks to Xue Yang)
+
 0.12.0 / 03-05-2015
 =======================
 - Chromium updated to 41.0.2272.76
