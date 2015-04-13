@@ -187,8 +187,8 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
     cookie_store->GetCookieMonster()->SetPersistSessionCookies(true);
     storage_->set_cookie_store(cookie_store);
 
-    const char* schemes[] = {"http", "https", "file", "app"};
-    cookie_store->GetCookieMonster()->SetCookieableSchemes(schemes, 4);
+    const char* schemes[] = {"http", "https", "ws", "wss", "app", "file"};
+    cookie_store->GetCookieMonster()->SetCookieableSchemes(schemes, 6);
 
     storage_->set_channel_id_service(new net::ChannelIDService(
         new net::DefaultChannelIDStore(NULL),
