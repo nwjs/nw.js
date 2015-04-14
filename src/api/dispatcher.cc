@@ -217,8 +217,10 @@ void Dispatcher::willHandleNavigationPolicy(
   v8::HandleScope handleScope(isolate);
 
   v8::Handle<v8::Value> id_val;
-  if (web_view->mainFrame() && !web_view->mainFrame()->mainWorldScriptContext().IsEmpty())
+  if (web_view->mainFrame() && !web_view->mainFrame()->mainWorldScriptContext().IsEmpty()) {
+    v8::Context::Scope cscope (web_view->mainFrame()->mainWorldScriptContext());
     id_val = nwapi::Dispatcher::GetWindowId(web_view->mainFrame());
+  }
   if (id_val.IsEmpty())
     return;
   if (id_val->IsUndefined() || id_val->IsNull())
