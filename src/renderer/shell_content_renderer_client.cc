@@ -287,7 +287,7 @@ void ShellContentRendererClient::SetupNodeUtil(
   base::ReplaceChars(root_path, "'", "\\'", &root_path);
   v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate, (
         // Make node's relative modules work
-        "if (!process.mainModule.filename || process.mainModule.filename === 'blank') {"
+        "if (typeof process != 'undefined' && (!process.mainModule.filename || process.mainModule.filename === 'blank')) {"
         "  var root = '" + root_path + "';"
 #if defined(OS_WIN)
         "process.mainModule.filename = decodeURIComponent(window.location.pathname === 'blank' ? 'blank': window.location.pathname.substr(1));"
