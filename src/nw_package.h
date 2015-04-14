@@ -84,9 +84,9 @@ class Package {
   std::string package_string() { return package_string_; }
 
  private:
-  bool InitFromPath();
+  bool InitFromPath(const base::FilePath&);
   void InitWithDefault();
-  bool ExtractPath();
+  bool ExtractPath(const base::FilePath&);
   bool ExtractPackage(const FilePath& zip_file, FilePath* where);
 
   // Read chromium command line args from the package.json if specifed.

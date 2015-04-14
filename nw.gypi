@@ -99,7 +99,6 @@
         '<(DEPTH)/ppapi/ppapi_internal.gyp:ppapi_proxy',
         '<(DEPTH)/ppapi/ppapi_internal.gyp:ppapi_ipc',
         '<(DEPTH)/ppapi/ppapi_internal.gyp:ppapi_shared',
-        'nw_resources',
         'commit_id',
       ],
       'include_dirs': [
@@ -473,7 +472,7 @@
             '<(DEPTH)/base/allocator/allocator.gyp:allocator',
           ],
         }],
-        ['os_posix == 1 and OS != "mac" and android_webview_build != 1', {
+        ['os_posix == 1 and OS != "mac"', {
           'dependencies': [
             '../components/components.gyp:breakpad_host',
           ],
@@ -604,118 +603,31 @@
       ],
     },
     {
-      'target_name': 'nw_resources',
-      'type': 'none',
+      'target_name': 'nw_content',
+      'type': 'static_library',
       'dependencies': [
-        'generate_nw_resources',
-        'about_credits',
+        '<(DEPTH)/base/base.gyp:base',
+        '<(DEPTH)/third_party/node/node.gyp:node',
+        '<(DEPTH)/third_party/zlib/zlib.gyp:minizip',
+        '<(DEPTH)/skia/skia.gyp:skia',
+        'commit_id',
+        'nw/src/api/api.gyp:nw_api',
+        'nw/src/api/api_registration.gyp:nw_api_registration',
       ],
-      'variables': {
-        'grit_out_dir': '<(SHARED_INTERMEDIATE_DIR)/content',
-      },
-      'includes': [ '../../build/grit_target.gypi' ],
-      'copies': [
-        {
-          'destination': '<(PRODUCT_DIR)',
-          'files': [
-            '<(SHARED_INTERMEDIATE_DIR)/content/nw_resources.pak',
-          ],
-        },
-        {
-          'destination': '<(PRODUCT_DIR)/locales',
-          'files': [
-            '<(SHARED_INTERMEDIATE_DIR)/content/en-US.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/am.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/ar.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/bg.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/bn.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/ca.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/cs.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/da.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/de.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/el.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/en-GB.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/es.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/es-419.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/et.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/fa.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/fi.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/fil.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/fr.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/gu.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/hi.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/hr.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/hu.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/id.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/it.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/iw.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/ja.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/kn.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/ko.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/lt.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/lv.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/ml.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/mr.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/ms.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/nl.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/no.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/pl.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/pt-BR.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/pt-PT.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/ro.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/ru.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/sk.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/sl.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/sr.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/sv.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/sw.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/ta.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/te.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/th.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/tr.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/uk.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/vi.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/zh-CN.pak',
-            '<(SHARED_INTERMEDIATE_DIR)/content/zh-TW.pak',
-          ],
-        },
+      'include_dirs': [
+        '<(DEPTH)/third_party/mojo/src',
       ],
-    },
-    {
-      'target_name': 'generate_nw_resources',
-      'type': 'none',
-      'variables': {
-        'grit_out_dir': '<(SHARED_INTERMEDIATE_DIR)/content',
-      },
-      'actions': [
-        {
-          'action_name': 'nw_resources',
-          'variables': {
-            'grit_grd_file': 'src/resources/nw_resources.grd',
-          },
-          'includes': [ '../../build/grit_action.gypi' ],
-        },
-        {
-          'action_name': 'nw_strings',
-          'variables': {
-            'grit_grd_file': 'src/resources/nw_strings.grd',
-          },
-          'includes': [ '../../build/grit_action.gypi' ],
-        },
-        {
-          'action_name': 'nw_components',
-          'variables': {
-            'grit_grd_file': 'src/resources/component_extension_resources.grd',
-          },
-          'includes': [ '../../build/grit_action.gypi' ],
-        },
-        {
-          'action_name': 'res_from_chrome',
-          'variables': {
-            'grit_grd_file': '../../chrome/app/generated_resources.grd',
-          },
-          'includes': [ '../../build/grit_action.gypi' ],
-        },
+      'sources': [
+        'src/api/nw_window_api.cc',
+        'src/api/nw_window_api.h',
+        'src/nw_package.cc',
+        'src/nw_package.h',
+        'src/nw_content.cc',
+        'src/nw_content.h',
+        'src/nw_custom_bindings.cc',
+        'src/nw_custom_bindings.h',
+        'src/common/shell_switches.cc',
+        'src/common/shell_switches.h',
       ],
     },
     {
@@ -741,7 +653,7 @@
                      'credits',
                      '<(about_credits_file)',
           ],
-          'message': 'Generating about:credits.',
+          'message': 'Generating NW credits html.',
         },
       ],
     },
@@ -757,7 +669,6 @@
         '<(DEPTH)/third_party/WebKit/public/blink_resources.gyp:blink_resources',
         '<(DEPTH)/ui/strings/ui_strings.gyp:ui_strings',
         '<(DEPTH)/content/app/resources/content_resources.gyp:content_resources',
-        'nw_resources',
       ],
       'variables': {
         'repack_path': '<(DEPTH)/tools/grit/grit/format/repack.py',
@@ -823,7 +734,7 @@
             },
           ],
           'dependencies': [
-            'nw',
+            'nwlegacy',
             '../breakpad/breakpad.gyp:dump_syms',
           ],
         }],
@@ -848,7 +759,7 @@
             },
           ],
           'dependencies': [
-            'nw',
+            'nwlegacy',
           ],
         }],
         ['OS=="linux"', {
@@ -874,9 +785,27 @@
               'message': 'Dumping breakpad symbols to <(_outputs)',
               'process_outputs_as_sources': 1,
             },
+            {
+              'action_name': 'dump_symbol_and_strip_ffmpeg',
+              'inputs': [
+                '<(DEPTH)/content/nw/tools/dump_app_syms',
+                '<(PRODUCT_DIR)/dump_syms',
+                '<(PRODUCT_DIR)/libffmpegsumo.so',
+              ],
+              'outputs': [
+                '<(PRODUCT_DIR)/libffmpegsumo.breakpad.<(target_arch)',
+              ],
+              'action': ['<(DEPTH)/content/nw/tools/dump_app_syms',
+                         '<(PRODUCT_DIR)/dump_syms',
+                         '<(linux_strip_binary)',
+                         '<(PRODUCT_DIR)/libffmpegsumo.so',
+                         '<@(_outputs)'],
+              'message': 'Dumping breakpad symbols to <(_outputs)',
+              'process_outputs_as_sources': 1,
+            },
           ],
           'dependencies': [
-            'nw',
+            '<(DEPTH)/chrome/chrome.gyp:nw',
             '../breakpad/breakpad.gyp:dump_syms',
           ],
         }],
@@ -891,7 +820,6 @@
             {
               'action_name': 'strip_nw_binaries',
               'inputs': [
-                '<(PRODUCT_DIR)/nwjc',
                 '<(PRODUCT_DIR)/chromedriver',
               ],
               'outputs': [
@@ -903,7 +831,6 @@
             },
           ],
           'dependencies': [
-             '<(DEPTH)/v8/tools/gyp/v8.gyp:nwjc',
              '<(DEPTH)/chrome/chrome.gyp:chromedriver',
           ],
         }],
@@ -912,6 +839,17 @@
     {
       'target_name': 'dist',
       'type': 'none',
+      'variables': {
+        'conditions': [
+          ['nwjs_sdk==1', {
+            'package_mode': 'sdk',
+            'icudat_path': '<(DEPTH)/third_party/icu/source/data/in/icudtl.dat',
+          }, {
+            'package_mode': 'nosdk',
+            'icudat_path': '<(DEPTH)/third_party/icu/android/icudtl.dat',
+          }],
+        ],  # conditions
+      },  # variables
       'actions': [
         {
           'action_name': 'package_nw_binaries',
@@ -924,13 +862,10 @@
           'outputs':[
             '<(PRODUCT_DIR)/new_package.re',
           ],
-          'action': ['python', '<(package_script)', '-p', '<(PRODUCT_DIR)', '-a', '<(target_arch)'],
+          'action': ['python', '<(package_script)', '-p', '<(PRODUCT_DIR)',
+                     '-a', '<(target_arch)', '-m', '<(package_mode)',
+                     '-i', '<(icudat_path)'],
         },
-      ],
-      'dependencies': [
-        '<(DEPTH)/chrome/chrome.gyp:chromedriver',
-        '<(DEPTH)/v8/tools/gyp/v8.gyp:nwjc',
-        'nw_strip_symbol',
       ],
       'conditions': [
         ['OS == "linux"', {
@@ -939,9 +874,14 @@
           ],
         }],
       ],
+      'dependencies': [
+        '<(DEPTH)/chrome/chrome.gyp:chromedriver',
+        'nw_strip_symbol',
+        'about_credits',
+      ],
     },
     {
-      'target_name': 'nw',
+      'target_name': 'nwlegacy',
       'type': 'executable',
       'mac_bundle': 1,
       'defines!': ['CONTENT_IMPLEMENTATION'],
@@ -1016,11 +956,6 @@
             '<(DEPTH)/sandbox/sandbox.gyp:sandbox',
           ],
         }],  # OS=="win" or (toolkit_uses_gtk == 1 and selinux == 0)
-        ['OS=="linux"', {
-          'dependencies': [
-            '<(DEPTH)/build/linux/system.gyp:notify',
-          ],
-        }],  # OS=="linux"
         ['OS=="mac"', {
           'product_name': '<(nw_product_name)',
           'dependencies!': [

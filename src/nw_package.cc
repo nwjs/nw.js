@@ -37,7 +37,7 @@
 #include "content/nw/src/common/shell_switches.h"
 #include "content/public/common/content_switches.h"
 #include "url/gurl.h"
-#include "grit/nw_resources.h"
+//#include "grit/nw_resources.h"
 #include "media/base/media_switches.h"
 #include "net/base/escape.h"
 #include "third_party/node/deps/uv/include/uv.h"
@@ -46,10 +46,54 @@
 #include "ui/gfx/image/image_skia_rep.h"
 #include "ui/gfx/codec/png_codec.h"
 
+using base::CommandLine;
+
 namespace base {
+
+namespace {
+//const CommandLine::CharType kSwitchTerminator[] = FILE_PATH_LITERAL("--");
+const CommandLine::CharType kSwitchValueSeparator[] = FILE_PATH_LITERAL("=");
+
+// Since we use a lazy match, make sure that longer versions (like "--") are
+// listed before shorter versions (like "-") of similar prefixes.
+#if defined(OS_WIN)
+// By putting slash last, we can control whether it is treaded as a switch
+// value by changing the value of switch_prefix_count to be one less than
+// the array size.
+const CommandLine::CharType* const kSwitchPrefixes[] = {L"--", L"-", L"/"};
+#elif defined(OS_POSIX)
+// Unixes don't use slash as a switch.
+const CommandLine::CharType* const kSwitchPrefixes[] = {"--", "-"};
+#endif
+
+size_t switch_prefix_count = arraysize(kSwitchPrefixes);
+
+size_t GetSwitchPrefixLength(const CommandLine::StringType& string) {
+  for (size_t i = 0; i < switch_prefix_count; ++i) {
+    CommandLine::StringType prefix(kSwitchPrefixes[i]);
+    if (string.compare(0, prefix.length(), prefix) == 0)
+      return prefix.length();
+  }
+  return 0;
+}
+
+}
+
 bool IsSwitch(const CommandLine::StringType& string,
               CommandLine::StringType* switch_string,
-              CommandLine::StringType* switch_value);
+              CommandLine::StringType* switch_value) {
+  switch_string->clear();
+  switch_value->clear();
+  size_t prefix_length = GetSwitchPrefixLength(string);
+  if (prefix_length == 0 || prefix_length == string.length())
+    return false;
+
+  const size_t equals_position = string.find(kSwitchValueSeparator);
+  *switch_string = string.substr(0, equals_position);
+  if (equals_position != CommandLine::StringType::npos)
+    *switch_value = string.substr(equals_position + 1);
+  return true;
+}
 }
 
 namespace nw {
@@ -130,34 +174,39 @@ std::wstring ASCIIToWide(const std::string& ascii) {
 }  // namespace
 
 Package::Package()
-    : path_(GetSelfPath()),
+    : path_(),
       self_extract_(true) {
-  // First try to extract self.
-  if (InitFromPath())
-    return;
-
+  CommandLine* command_line = CommandLine::ForCurrentProcess();
+  LOG(INFO) << command_line->GetCommandLineString();
   // Try to load from the folder where the exe resides.
   // Note: self_extract_ is true here, otherwise a 'Invalid Package' error
   // would be triggered.
-  path_ = GetSelfPath().DirName();
+  base::FilePath path = GetSelfPath().DirName();
 #if defined(OS_MACOSX)
-  path_ = path_.DirName().DirName().DirName();
+  path = path_.DirName().DirName().DirName();
 #endif
-  if (InitFromPath())
+  if (InitFromPath(path))
     return;
 
-  path_ = path_.AppendASCII("package.nw");
-  if (InitFromPath())
+  path = path.AppendASCII("package.nw");
+  if (InitFromPath(path))
     return;
 
   // Then see if we have arguments and extract it.
   base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
   const base::CommandLine::StringVector& args = command_line->GetArgs();
+
   if (args.size() > 0) {
     self_extract_ = false;
-    path_ = FilePath(args[0]);
+    path = FilePath(args[0]);
+    if (InitFromPath(path))
+      return;
   }
-  if (InitFromPath())
+
+  self_extract_ = true;
+  // Try to extract self.
+  path = GetSelfPath();
+  if (InitFromPath(path))
     return;
 
   // Finally we init with default settings.
@@ -166,9 +215,9 @@ Package::Package()
 }
 
 Package::Package(FilePath path)
-    : path_(path),
+    : path_(),
       self_extract_(false) {
-  if (!InitFromPath())
+  if (!InitFromPath(path))
     InitWithDefault();
 }
 
@@ -234,7 +283,7 @@ GURL Package::GetStartupURL() {
 }
 
 std::string Package::GetName() {
-  std::string name("node-webkit");
+  std::string name("nwjs");
   root()->GetString(switches::kmName, &name);
   return name;
 }
@@ -257,26 +306,30 @@ base::DictionaryValue* Package::window() {
   return window;
 }
 
-bool Package::InitFromPath() {
+bool Package::InitFromPath(const base::FilePath& path) {
   base::ThreadRestrictions::SetIOAllowed(true);
 
-  if (!ExtractPath())
+  if (!ExtractPath(path))
     return false;
 
   // path_/package.json
   FilePath manifest_path = path_.AppendASCII("package.json");
   manifest_path = MakeAbsoluteFilePath(manifest_path);
   if (!base::PathExists(manifest_path)) {
-    if (!self_extract())
-      ReportError("Invalid package",
-                  "There is no 'package.json' in the package, please make "
-                  "sure the 'package.json' is in the root of the package.");
-    return false;
+    manifest_path = path_.AppendASCII("manifest.json");
+    manifest_path = MakeAbsoluteFilePath(manifest_path);
+    if (!base::PathExists(manifest_path)) {
+      if (!self_extract())
+        ReportError("Invalid package",
+                    "There is no 'package.json' in the package, please make "
+                    "sure the 'package.json' is in the root of the package.");
+      return false;
+    }
   }
 
   // Parse file.
   std::string error;
-  JSONFileValueSerializer serializer(manifest_path);
+  JSONFileValueDeserializer serializer(manifest_path);
   scoped_ptr<base::Value> root(serializer.Deserialize(NULL, &error));
   if (!root.get()) {
     ReportError("Unable to parse package.json",
@@ -341,7 +394,7 @@ bool Package::InitFromPath() {
 
 void Package::InitWithDefault() {
   root_.reset(new base::DictionaryValue());
-  root()->SetString(switches::kmName, "node-webkit");
+  root()->SetString(switches::kmName, "nwjs");
   root()->SetString(switches::kmMain, "nw:blank");
   base::DictionaryValue* window = new base::DictionaryValue();
   root()->Set(switches::kmWindow, window);
@@ -354,29 +407,30 @@ void Package::InitWithDefault() {
   window->SetString(switches::kmPosition, "center");
 }
 
-bool Package::ExtractPath() {
+bool Package::ExtractPath(const base::FilePath& path_to_extract) {
+  base::FilePath path = path_to_extract;
   // Convert to absoulute path.
-  if (!MakePathAbsolute(&path_)) {
+  if (!MakePathAbsolute(&path)) {
     ReportError("Cannot extract package",
-                "Path is invalid: " + path_.AsUTF8Unsafe());
+                "Path is invalid: " + path.AsUTF8Unsafe());
     return false;
   }
 
   // Read symbolic link.
 #if defined(OS_POSIX)
   FilePath target;
-  if (base::ReadSymbolicLink(path_, &target))
-    path_ = target;
+  if (base::ReadSymbolicLink(path, &target))
+    path = target;
 #endif
 
   // If it's a file then try to extract from it.
-  if (!base::DirectoryExists(path_)) {
+  if (!base::DirectoryExists(path)) {
     FilePath extracted_path;
-    if (ExtractPackage(path_, &extracted_path)) {
+    if (ExtractPackage(path, &extracted_path)) {
       path_ = extracted_path;
     } else if (!self_extract()) {
       ReportError("Cannot extract package",
-                  "Failed to unzip the package file: " + path_.AsUTF8Unsafe());
+                  "Failed to unzip the package file: " + path.AsUTF8Unsafe());
       return false;
     }
   }
@@ -459,6 +513,7 @@ void Package::ReadJsFlags() {
 
 void Package::ReportError(const std::string& title,
                           const std::string& content) {
+#if 0
   if (!error_page_url_.empty())
     return;
 
@@ -476,9 +531,10 @@ void Package::ReportError(const std::string& title,
   std::vector<std::string> subst;
   subst.push_back(title);
   subst.push_back(content);
-  error_page_url_ = "data:text/html;charset=utf-8," + 
+  error_page_url_ = "data:text/html;charset=utf-8," +
       net::EscapeQueryParamValue(
           ReplaceStringPlaceholders(template_html, subst, NULL), false);
+#endif
 }
 
 }  // namespace nw

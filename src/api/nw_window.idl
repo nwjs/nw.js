@@ -1,0 +1,11 @@
+// nw Window API
+namespace nw.Window {
+  [noinline_doc] dictionary NWWindow {
+    // show devtools for the current window
+    static void showDevTools();
+  };
+  interface Functions {
+    // get the current window
+    [nocompile] static NWWindow get();
+  };
+};
