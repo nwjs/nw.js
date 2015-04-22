@@ -3,12 +3,14 @@
 
 #include "base/command_line.h"
 #include "base/strings/string_number_conversions.h"
+#include "base/strings/string_util.h"
 #include "base/threading/thread_restrictions.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/result_codes.h"
 
 #include "extensions/renderer/script_context.h"
+#include "extensions/common/extension.h"
 #include "extensions/common/feature_switch.h"
 #include "extensions/common/features/feature.h"
 #include "extensions/common/manifest.h"
@@ -155,6 +157,34 @@ void ContextCreationHook(ScriptContext* context) {
   if (node::g_dom_context.IsEmpty()) {
     node::g_dom_context.Reset(isolate, context->v8_context());
   }
+
+  {
+    blink::WebScopedMicrotaskSuppression suppression;
+    v8::Context::Scope cscope(g_context);
+    // Make node's relative modules work
+    std::string root_path = context->extension()->path().AsUTF8Unsafe();
+#if defined(OS_WIN)
+    base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
+#endif
+    base::ReplaceChars(root_path, "'", "\\'", &root_path);
+    v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate, (
+        // Make node's relative modules work
+        "if (typeof process != 'undefined' && (!process.mainModule.filename || process.mainModule.filename === 'blank')) {"
+        "  var root = '" + root_path + "';"
+#if defined(OS_WIN)
+        "process.mainModule.filename = decodeURIComponent(window.location.pathname === 'blank' ? 'blank': window.location.pathname.substr(1));"
+#else
+        "process.mainModule.filename = decodeURIComponent(window.location.pathname);"
+#endif
+        "if (window.location.href.indexOf('app://') === 0) {process.mainModule.filename = root + '/' + process.mainModule.filename}"
+        "process.mainModule.paths = global.require('module')._nodeModulePaths(process.cwd());"
+        "process.mainModule.loaded = true;"
+        "}").c_str()),
+    v8::String::NewFromUtf8(isolate, "process_main"));
+    CHECK(*script);
+    script->Run();
+  }
+
 }
 
 void AmendManifestStringList(base::DictionaryValue* manifest,
@@ -171,7 +201,8 @@ void AmendManifestStringList(base::DictionaryValue* manifest,
     pattern_list = new base::ListValue();
 
   pattern_list->Append(new base::StringValue(string_value));
-  manifest->Set(path, pattern_list);
+  if (!amend)
+    manifest->Set(path, pattern_list);
 }
 
 void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest) {

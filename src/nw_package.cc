@@ -193,7 +193,6 @@ Package::Package()
     return;
 
   // Then see if we have arguments and extract it.
-  base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
   const base::CommandLine::StringVector& args = command_line->GetArgs();
 
   if (args.size() > 0) {
