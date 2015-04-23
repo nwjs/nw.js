@@ -12,7 +12,7 @@ import zipfile
 
 from subprocess import call
 
-steps = ['nw', 'chromedriver', 'symbol', 'others']
+steps = ['nw', 'chromedriver', 'symbol', 'headers', 'others']
 ################################
 # Parse command line args
 parser = argparse.ArgumentParser(description='Package nw binaries.')
@@ -32,8 +32,6 @@ step = None                     # nw/chromedriver/symbol
 skip = None
 nw_ver = None                   # x.xx
 dist_dir = None                 # .../out/Release/dist
-
-is_headers_ok = False           # record whether nw-headers generated
 
 step = args.step
 skip = args.skip
@@ -201,6 +199,40 @@ def generate_target_symbols(platform_name, arch, version):
         exit(-1)
     return target
 
+def generate_target_headers(platform_name, arch, version):
+    # here, call make_nw_header tool to generate headers
+    # then, move to binaries_location
+    target = {}
+    target['output'] = ''
+    target['compress'] = None
+    if platform_name == 'osx':
+        target['input'] = []
+        # here , call make-nw-headers.py to generate nw headers
+        make_nw_header = os.path.join(os.path.dirname(__file__), \
+                'make-nw-headers.py')
+        print make_nw_header
+        res = call(['python', make_nw_header])
+        if res == 0:
+            print 'nw-headers generated'
+            nw_headers_name = 'nw-headers-v' + version + '.tar.gz'
+            nw_headers_path = os.path.join(os.path.dirname(__file__), \
+                    os.pardir, 'tmp', nw_headers_name)
+            if os.path.isfile(os.path.join(binaries_location, nw_headers_name)):
+                os.remove(os.path.join(binaries_location, nw_headers_name))
+            shutil.move(nw_headers_path, binaries_location)
+            target['input'].append(nw_headers_name)
+        else:
+            #TODO, handle err
+            print 'nw-headers generate failed'
+    elif platform_name == 'win':
+        target['input'] = []
+    elif platform_name == 'linux':
+        target['input'] = []
+    else:
+        print 'Unsupported platform: ' + platform_name
+        exit(-1)
+    return target
+
 def generate_target_others(platform_name, arch, version):
     target = {}
     target['output'] = ''
@@ -209,18 +241,6 @@ def generate_target_others(platform_name, arch, version):
         target['input'] = ['nw.exp', 'nw.lib']
     elif platform_name == 'linux' :
         target['input'] = []
-        # here , call make-nw-headers.py to generate nw headers
-        # after generated, move to dist_dir
-        make_nw_header = os.path.join(os.path.dirname(__file__), \
-                'make-nw-headers.py')
-        print make_nw_header
-        res = call(['python', make_nw_header])
-        if res == 0:
-            global is_headers_ok
-            is_headers_ok = True
-            print 'nw-headers generated'
-        else:
-            print 'nw-headers generate failed'
     else:
         target['input'] = []
     return target
@@ -282,14 +302,6 @@ def make_packages(targets):
 
     # now let's do it
     os.mkdir(dist_dir)
-    # here check whether nw headers generated
-    # if generated, mv to dist_dir
-    if is_headers_ok:
-        nw_headers_name = 'nw-headers-v' + nw_ver + '.tar.gz'
-        nw_headers_path = os.path.join(os.path.dirname(__file__), \
-                os.pardir, 'tmp', nw_headers_name)
-        print 'Moving "' + nw_headers_name + '"'
-        shutil.move(nw_headers_path, dist_dir)
     for t in targets:
         if len(t['input']) == 0:
             continue
@@ -327,6 +339,7 @@ generators = {}
 generators['nw'] = generate_target_nw
 generators['chromedriver'] = generate_target_chromedriver
 generators['symbol'] = generate_target_symbols
+generators['headers'] = generate_target_headers
 generators['others'] = generate_target_others
 ################################
 # Process targets
