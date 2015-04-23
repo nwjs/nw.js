@@ -512,28 +512,7 @@ void Package::ReadJsFlags() {
 
 void Package::ReportError(const std::string& title,
                           const std::string& content) {
-#if 0
-  if (!error_page_url_.empty())
-    return;
-
-  const base::StringPiece template_html(
-      ResourceBundle::GetSharedInstance().GetRawDataResource(
-          IDR_NW_PACKAGE_ERROR));
-
-  if (template_html.empty()) {
-    // Print hand written error info if nw.pak doesn't exist.
-    NOTREACHED() << "Unable to load error template.";
-    error_page_url_ = "data:text/html;base64,VW5hYmxlIHRvIGZpbmQgbncucGFrLgo=";
-    return;
-  }
-
-  std::vector<std::string> subst;
-  subst.push_back(title);
-  subst.push_back(content);
-  error_page_url_ = "data:text/html;charset=utf-8," +
-      net::EscapeQueryParamValue(
-          ReplaceStringPlaceholders(template_html, subst, NULL), false);
-#endif
+  cached_error_content_ = content;
 }
 
 }  // namespace nw

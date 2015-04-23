@@ -16,7 +16,7 @@ class NwCurrentWindowInternalShowDevToolsFunction : public AsyncExtensionFunctio
 
   // ExtensionFunction:
   bool RunAsync() override;
-  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.showDevTools", NW_CURRENTWINDOWINTERNAL_SHOWDEVTOOLS)
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.showDevTools", UNKNOWN)
  private:
   void Callback();
 };

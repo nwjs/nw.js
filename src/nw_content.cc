@@ -16,6 +16,10 @@
 #include "extensions/common/manifest.h"
 #include "extensions/common/manifest_constants.h"
 
+#include "third_party/WebKit/public/web/WebDocument.h"
+#include "third_party/WebKit/public/web/WebFrame.h"
+#include "third_party/WebKit/public/web/WebLocalFrame.h"
+#include "third_party/WebKit/public/web/WebSecurityPolicy.h"
 
 #include "chrome/common/chrome_version_info_values.h"
 
@@ -97,6 +101,12 @@ Package* package() {
   return g_package;
 }
 
+void DocumentElementHook(blink::WebFrame* frame,
+                         const extensions::Extension* extension,
+                         const GURL& effective_document_url) {
+  frame->document().securityOrigin().grantUniversalAccess();
+}
+
 void ContextCreationHook(ScriptContext* context) {
   v8::Isolate* isolate = context->isolate();
   if (node::g_context.IsEmpty()) {
@@ -160,7 +170,7 @@ void ContextCreationHook(ScriptContext* context) {
 
   {
     blink::WebScopedMicrotaskSuppression suppression;
-    v8::Context::Scope cscope(g_context);
+    v8::Context::Scope cscope(context->v8_context());
     // Make node's relative modules work
     std::string root_path = context->extension()->path().AsUTF8Unsafe();
 #if defined(OS_WIN)
@@ -174,7 +184,7 @@ void ContextCreationHook(ScriptContext* context) {
 #if defined(OS_WIN)
         "process.mainModule.filename = decodeURIComponent(window.location.pathname === 'blank' ? 'blank': window.location.pathname.substr(1));"
 #else
-        "process.mainModule.filename = decodeURIComponent(window.location.pathname);"
+        "process.mainModule.filename = root + '/index.html';"
 #endif
         "if (window.location.href.indexOf('app://') === 0) {process.mainModule.filename = root + '/' + process.mainModule.filename}"
         "process.mainModule.paths = global.require('module')._nodeModulePaths(process.cwd());"
@@ -205,9 +215,18 @@ void AmendManifestStringList(base::DictionaryValue* manifest,
     manifest->Set(path, pattern_list);
 }
 
-void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest) {
+void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* error) {
+  if (!manifest)
+    return;
+
   std::string main_url, bg_script, icon_path, node_remote;
+
   manifest->SetBoolean(manifest_keys::kNWJSFlag, true);
+  if (error && !g_package->cached_error_content().empty()) {
+    *error = g_package->cached_error_content();
+    return;
+  }
+
   if (manifest->GetString(manifest_keys::kNWJSMain, &main_url)) {
     AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, "nwjs/default.js");
 

@@ -83,6 +83,8 @@ class Package {
   // Manifest string.
   std::string package_string() { return package_string_; }
 
+  std::string cached_error_content() { return cached_error_content_; }
+
  private:
   bool InitFromPath(const base::FilePath&);
   void InitWithDefault();
@@ -112,6 +114,8 @@ class Package {
 
   // Stored url for error page.
   std::string error_page_url_;
+
+  std::string cached_error_content_;
 
   // Auto clean our temporary directory
   base::ScopedTempDir scoped_temp_dir_;

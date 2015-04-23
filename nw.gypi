@@ -608,6 +608,7 @@
       'dependencies': [
         '<(DEPTH)/base/base.gyp:base',
         '<(DEPTH)/third_party/node/node.gyp:node',
+        '<(DEPTH)/third_party/WebKit/public/blink.gyp:blink',
         '<(DEPTH)/third_party/zlib/zlib.gyp:minizip',
         '<(DEPTH)/skia/skia.gyp:skia',
         'commit_id',
