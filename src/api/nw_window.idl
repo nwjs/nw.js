@@ -1,11 +1,58 @@
 // nw Window API
 namespace nw.Window {
+  callback CreateWindowCallback =
+      void ([instanceOf=NWWindow] object createdWindow);
+  callback EventCallback = void();
+
+  [noinline_doc] dictionary CreateWindowOptions {
+    [nodoc] long? x;
+    [nodoc] long? y;
+    [nodoc] long? width;
+    [nodoc] long? height;
+    [nodoc] long? min_width;
+    [nodoc] long? min_height;
+    [nodoc] long? max_width;
+    [nodoc] long? max_height;
+    [nodoc] boolean? frame;
+    [nodoc] boolean? resizable;
+    [nodoc] boolean? fullscreen;
+    [nodoc] boolean? show;
+    [nodoc] boolean? always_on_top;
+    [nodoc] boolean? visible_on_all_workspaces;
+  };
+
   [noinline_doc] dictionary NWWindow {
     // show devtools for the current window
     static void showDevTools();
+    static void show();
+    static void hide();
+    static void focus();
+    static void blur();
+    static void close();
+    static void minimize();
+    static void maximize();
+    static void unmaximize();
+    static void restore();
+    static void setMaximumSize(long width, long height);
+    static void setMinimumSize(long width, long height);
+    static void setResizable(boolean resizable);
+    static void enterFullscreen();
+    static void leaveFullscreen();
+    static void toggleFullscreen();
+    static void on(DOMString event,
+                   EventCallback callback);
+
+    object appWindow;
+    object window;
+    long x;
+    long y;
   };
   interface Functions {
     // get the current window
     [nocompile] static NWWindow get();
+    [nocompile] static void open(DOMString url,
+                                 optional CreateWindowOptions options,
+                                 optional CreateWindowCallback callback);
+
   };
 };
