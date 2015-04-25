@@ -603,6 +603,25 @@
       ],
     },
     {
+      'target_name': 'nw_base',
+      'type': 'static_library',
+      'dependencies': [
+        '<(DEPTH)/base/base.gyp:base',
+        '<(DEPTH)/third_party/zlib/zlib.gyp:minizip',
+        'commit_id',
+      ],
+      'include_dirs': [
+      ],
+      'sources': [
+        'src/nw_base.cc',
+        'src/nw_base.h',
+        'src/nw_package.cc',
+        'src/nw_package.h',
+        'src/common/shell_switches.cc',
+        'src/common/shell_switches.h',
+      ],
+    },
+    {
       'target_name': 'nw_content',
       'type': 'static_library',
       'dependencies': [
@@ -611,7 +630,7 @@
         '<(DEPTH)/third_party/WebKit/public/blink.gyp:blink',
         '<(DEPTH)/third_party/zlib/zlib.gyp:minizip',
         '<(DEPTH)/skia/skia.gyp:skia',
-        'commit_id',
+        'nw_base',
         'nw/src/api/api.gyp:nw_api',
         'nw/src/api/api_registration.gyp:nw_api_registration',
       ],
@@ -621,14 +640,10 @@
       'sources': [
         'src/api/nw_window_api.cc',
         'src/api/nw_window_api.h',
-        'src/nw_package.cc',
-        'src/nw_package.h',
         'src/nw_content.cc',
         'src/nw_content.h',
         'src/nw_custom_bindings.cc',
         'src/nw_custom_bindings.h',
-        'src/common/shell_switches.cc',
-        'src/common/shell_switches.h',
       ],
     },
     {

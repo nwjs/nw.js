@@ -54,9 +54,6 @@ class Package {
   // Convert path to absoulte path.
   FilePath ConvertToAbsoutePath(const FilePath& path);
 
-  // Get image from icon path.
-  bool GetImage(const FilePath& path, gfx::Image* image);
-
   // Get startup url.
   GURL GetStartupURL();
 

@@ -17,10 +17,8 @@ namespace extensions {
 }
 
 namespace nw {
-class Package;
 int MainPartsPreCreateThreadsHook();
 void MainPartsPostDestroyThreadsHook();
-Package* package();
 void ContextCreationHook(extensions::ScriptContext* context);
 void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* error);
 void DocumentElementHook(blink::WebFrame* frame,
