@@ -607,7 +607,8 @@
       'type': 'static_library',
       'dependencies': [
         '<(DEPTH)/base/base.gyp:base',
-        '<(DEPTH)/third_party/zlib/zlib.gyp:minizip',
+        '<(DEPTH)/third_party/zlib/google/zip.gyp:zip',
+        '<(DEPTH)/url/url.gyp:url_lib',
         'commit_id',
       ],
       'include_dirs': [
@@ -637,6 +638,7 @@
       'include_dirs': [
         '<(DEPTH)/third_party/mojo/src',
       ],
+      'defines!': ['CONTENT_IMPLEMENTATION'],
       'sources': [
         'src/api/nw_window_api.cc',
         'src/api/nw_window_api.h',
@@ -750,7 +752,7 @@
             },
           ],
           'dependencies': [
-            'nwlegacy',
+            '<(DEPTH)/chrome/chrome.gyp:nw',
             '../breakpad/breakpad.gyp:dump_syms',
           ],
         }],
@@ -775,7 +777,7 @@
             },
           ],
           'dependencies': [
-            'nwlegacy',
+            '<(DEPTH)/chrome/chrome.gyp:nw',
           ],
         }],
         ['OS=="linux"', {

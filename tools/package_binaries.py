@@ -141,16 +141,21 @@ def generate_target_nw(platform_name, arch, version):
                            ]
     elif platform_name == 'win':
         target['input'] = [
+                           'snapshot_blob.bin',
+                           'natives_blob.bin',
                            'd3dcompiler_47.dll',
                            'ffmpegsumo.dll',
                            'libEGL.dll',
                            'libGLESv2.dll',
-                           'pdf.dll',
+                           'nw.dll',
+                           'nw_elf.dll',
                            'nw.exe',
-                           'nw.pak',
                            'locales',
                            'icudtl.dat',
                            'credits.html',
+                           'resources.pak',
+                           'nw_100_percent.pak',
+                           'nw_200_percent.pak',
                           
                            ]
     elif platform_name == 'osx':
@@ -252,7 +257,8 @@ def generate_target_others(platform_name, arch, version):
     target['output'] = ''
     target['compress'] = None
     if platform_name == 'win':
-        target['input'] = ['nw.exp', 'nw.lib']
+        #target['input'] = ['nw.exp', 'nw.lib']
+        target['input'] = []
     elif platform_name == 'linux' :
         target['input'] = []
     else:

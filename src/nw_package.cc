@@ -27,6 +27,7 @@
 #include "base/files/scoped_temp_dir.h"
 #include "base/json/json_file_value_serializer.h"
 #include "base/json/json_string_value_serializer.h"
+#include "base/path_service.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_tokenizer.h"
 #include "base/strings/string_util.h"
@@ -131,11 +132,7 @@ FilePath GetSelfPath() {
 
   FilePath path;
 
-  size_t size = 2*PATH_MAX;
-  char* execPath = new char[size];
-  if (uv_exepath(execPath, &size) == 0) {
-    path = FilePath::FromUTF8Unsafe(std::string(execPath, size));
-  } else {
+  if (!PathService::Get(base::FILE_EXE, &path)) {
     path = FilePath(command_line->GetProgram());
   }
 
@@ -180,7 +177,7 @@ Package::Package()
   // would be triggered.
   base::FilePath path = GetSelfPath().DirName();
 #if defined(OS_MACOSX)
-  path = path_.DirName().DirName().DirName();
+  path = path.DirName().DirName().DirName();
 #endif
   if (InitFromPath(path))
     return;
@@ -276,17 +273,18 @@ base::DictionaryValue* Package::window() {
   return window;
 }
 
-bool Package::InitFromPath(const base::FilePath& path) {
+bool Package::InitFromPath(const base::FilePath& path_in) {
   base::ThreadRestrictions::SetIOAllowed(true);
-
-  if (!ExtractPath(path))
+  FilePath extracted_path, path(path_in);
+  if (!ExtractPath(path, &extracted_path))
     return false;
-
+  if (!extracted_path.empty())
+	path = extracted_path;
   // path_/package.json
-  FilePath manifest_path = path_.AppendASCII("package.json");
+  FilePath manifest_path = path.AppendASCII("package.json");
   manifest_path = MakeAbsoluteFilePath(manifest_path);
   if (!base::PathExists(manifest_path)) {
-    manifest_path = path_.AppendASCII("manifest.json");
+    manifest_path = path.AppendASCII("manifest.json");
     manifest_path = MakeAbsoluteFilePath(manifest_path);
     if (!base::PathExists(manifest_path)) {
       if (!self_extract())
@@ -296,7 +294,7 @@ bool Package::InitFromPath(const base::FilePath& path) {
       return false;
     }
   }
-
+  path_ = path;
   // Parse file.
   std::string error;
   JSONFileValueDeserializer serializer(manifest_path);
@@ -343,6 +341,7 @@ bool Package::InitFromPath(const base::FilePath& path) {
     root_->Set(switches::kmWindow, window);
   }
 
+#if 0
   std::string bufsz_str;
   if (root_->GetString(switches::kAudioBufferSize, &bufsz_str)) {
     int buffer_size = 0;
@@ -351,6 +350,7 @@ bool Package::InitFromPath(const base::FilePath& path) {
       command_line->AppendSwitchASCII(switches::kAudioBufferSize, bufsz_str);
     }
   }
+#endif
 
   // Read chromium command line args.
   ReadChromiumArgs();
@@ -377,7 +377,8 @@ void Package::InitWithDefault() {
   window->SetString(switches::kmPosition, "center");
 }
 
-bool Package::ExtractPath(const base::FilePath& path_to_extract) {
+bool Package::ExtractPath(const base::FilePath& path_to_extract, 
+	                      base::FilePath* extracted_path_out) {
   base::FilePath path = path_to_extract;
   // Convert to absoulute path.
   if (!MakePathAbsolute(&path)) {
@@ -397,7 +398,7 @@ bool Package::ExtractPath(const base::FilePath& path_to_extract) {
   if (!base::DirectoryExists(path)) {
     FilePath extracted_path;
     if (ExtractPackage(path, &extracted_path)) {
-      path_ = extracted_path;
+      *extracted_path_out = extracted_path;
     } else if (!self_extract()) {
       ReportError("Cannot extract package",
                   "Failed to unzip the package file: " + path.AsUTF8Unsafe());
