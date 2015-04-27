@@ -39,7 +39,7 @@ class NotificationManagerToastWin : public NotificationManager {
   static bool ForceDisable;
 
   HRESULT CreateToast(_In_ IToastNotificationManagerStatics *toastManager, _In_ IXmlDocument *xml,
-    const int render_process_id, const int notification_id);
+    const int render_process_id, const int notification_id, const content::PlatformNotificationData& params, const SkBitmap& icon);
 
   // Create the toast XML from a template
   HRESULT CreateToastXml(_In_ IToastNotificationManagerStatics *toastManager,
@@ -47,6 +47,9 @@ class NotificationManagerToastWin : public NotificationManager {
 
   // Set the value of the "src" attribute of the "image" node
   HRESULT SetImageSrc(_In_z_ const wchar_t *imagePath, _In_ IXmlDocument *toastXml);
+
+  // Set the value of the "silent" attribute of the "audio" node
+  HRESULT SilentAudio( _In_ IXmlDocument *toastXml);
 
   // Set the values of each of the text nodes
   HRESULT SetTextValues(_In_reads_(textValuesCount) const wchar_t **textValues, _In_ UINT32 textValuesCount,

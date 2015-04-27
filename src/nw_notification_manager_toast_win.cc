@@ -106,7 +106,7 @@ typedef ABI::Windows::Foundation::ITypedEventHandler<ABI::Windows::UI::Notificat
 class ToastEventHandler :
   public Microsoft::WRL::Implements<DesktopToastActivatedEventHandler, DesktopToastDismissedEventHandler, DesktopToastFailedEventHandler> {
 public:
-  ToastEventHandler::ToastEventHandler(const int render_process_id, const int notification_id);
+  ToastEventHandler::ToastEventHandler(const int render_process_id, const int notification_id, const content::PlatformNotificationData& params, const SkBitmap& icon);
   ~ToastEventHandler();
 
   // DesktopToastActivatedEventHandler 
@@ -150,12 +150,15 @@ public:
 private:
   ULONG _ref;
   const int _render_process_id, _notification_id;
+  // _params and _icon is stored for fallback to bubble notification
+  const content::PlatformNotificationData _params;
+  const SkBitmap _icon;
 };
 
 // ============= ToastEventHandler Implementation =============
 
-ToastEventHandler::ToastEventHandler(const int render_process_id, const int notification_id) : 
-_ref(0), _render_process_id(render_process_id), _notification_id(notification_id) {
+ToastEventHandler::ToastEventHandler(const int render_process_id, const int notification_id, const content::PlatformNotificationData& params, const SkBitmap& icon) :
+_ref(0), _render_process_id(render_process_id), _notification_id(notification_id), _params(params), _icon(icon) {
 }
 
 ToastEventHandler::~ToastEventHandler() {
@@ -195,6 +198,7 @@ IFACEMETHODIMP ToastEventHandler::Invoke(_In_ IToastNotification* /* sender */, 
   if (fallBack) {
     NotificationManagerToastWin::ForceDisable = true;
     delete nmtw;
+    NotificationManager::getSingleton()->AddDesktopNotification(_params, _render_process_id, _notification_id, _icon);
   }
   return succeeded ? S_OK : E_FAIL;
 }
@@ -236,6 +240,30 @@ HRESULT NotificationManagerToastWin::SetTextValues(_In_reads_(textValuesCount) c
             if (SUCCEEDED(hr)) {
               hr = SetNodeValueString(StringReferenceWrapper(textValues[i], textValuesLengths[i]).Get(), textNode.Get(), toastXml);
             }
+          }
+        }
+      }
+    }
+  }
+  return hr;
+}
+
+HRESULT NotificationManagerToastWin::SilentAudio(_In_ IXmlDocument *toastXml) {
+  ComPtr<IXmlNodeList> nodeList;
+  HRESULT hr = toastXml->GetElementsByTagName(StringReferenceWrapper(L"toast").Get(), &nodeList);
+  if (SUCCEEDED(hr)) {
+    ComPtr<IXmlNode> toastNode;
+    hr = nodeList->Item(0, &toastNode);
+    if (SUCCEEDED(hr)) {
+      ComPtr<IXmlElement> soundElement;
+      hr = toastXml->CreateElement(StringReferenceWrapper(L"audio").Get(), &soundElement);
+      if (SUCCEEDED(hr)) {
+        hr = soundElement->SetAttribute(StringReferenceWrapper(L"silent").Get(), StringReferenceWrapper(L"true").Get());
+        if (SUCCEEDED(hr)) {
+          ComPtr<IXmlNode> soundNode, appendedSoundNode;
+          hr = soundElement.As<IXmlNode>(&soundNode);
+          if (SUCCEEDED(hr)) {
+            hr = toastNode->AppendChild(soundNode.Get(), &appendedSoundNode);
           }
         }
       }
@@ -304,13 +332,16 @@ HRESULT NotificationManagerToastWin::CreateToastXml(_In_ IToastNotificationManag
       };
       UINT32 textLengths[] = { params.title.length(), params.body.length() };
       hr = SetTextValues(textValues, 2, textLengths, *inputXml);
+      if (SUCCEEDED(hr)) {
+        hr = SilentAudio(*inputXml);
+      }
     }
   }
   return hr;
 }
 
 HRESULT NotificationManagerToastWin::CreateToast(_In_ IToastNotificationManagerStatics *toastManager, _In_ IXmlDocument *xml, 
-  const int render_process_id, const int notification_id) {
+  const int render_process_id, const int notification_id, const content::PlatformNotificationData& params, const SkBitmap& icon) {
   ComPtr<IToastNotificationFactory> factory;
   HRESULT hr = GetActivationFactory(StringReferenceWrapper(RuntimeClass_Windows_UI_Notifications_ToastNotification).Get(), &factory);
   if (SUCCEEDED(hr)) {
@@ -319,7 +350,7 @@ HRESULT NotificationManagerToastWin::CreateToast(_In_ IToastNotificationManagerS
     if (SUCCEEDED(hr)) {
       // Register the event handlers
       EventRegistrationToken activatedToken, dismissedToken, failedToken;
-      ComPtr<ToastEventHandler> eventHandler = new ToastEventHandler(render_process_id, notification_id);
+      ComPtr<ToastEventHandler> eventHandler = new ToastEventHandler(render_process_id, notification_id, params, icon);
 
       hr = toast->add_Activated(eventHandler.Get(), &activatedToken);
       if (SUCCEEDED(hr)) {
@@ -384,7 +415,7 @@ bool NotificationManagerToastWin::AddDesktopNotification(const content::Platform
   ComPtr<IXmlDocument> toastXml;
   HRESULT hr = CreateToastXml(toastStatics_.Get(), params, icon, &toastXml);
   if (SUCCEEDED(hr)) {
-    hr = CreateToast(toastStatics_.Get(), toastXml.Get(), render_process_id, notification_id);
+    hr = CreateToast(toastStatics_.Get(), toastXml.Get(), render_process_id, notification_id, params, icon);
     if (SUCCEEDED(hr))
       DesktopNotificationPostDisplay(render_process_id, notification_id);
   }
