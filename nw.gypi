@@ -632,8 +632,8 @@
         '<(DEPTH)/third_party/zlib/zlib.gyp:minizip',
         '<(DEPTH)/skia/skia.gyp:skia',
         'nw_base',
-        'nw/src/api/api.gyp:nw_api',
-        'nw/src/api/api_registration.gyp:nw_api_registration',
+        '<(DEPTH)/content/nw/src/api/api.gyp:nw_api',
+        '<(DEPTH)/content/nw/src/api/api_registration.gyp:nw_api_registration',
       ],
       'include_dirs': [
         '<(DEPTH)/third_party/mojo/src',
@@ -649,7 +649,7 @@
       ],
     },
     {
-      'target_name': 'about_credits',
+      'target_name': 'about_credits_nw',
       'type': 'none',
       'actions': [
         {
@@ -895,7 +895,7 @@
       'dependencies': [
         '<(DEPTH)/chrome/chrome.gyp:chromedriver',
         'nw_strip_symbol',
-        'about_credits',
+        'about_credits_nw',
       ],
     },
     {
