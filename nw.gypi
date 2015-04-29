@@ -4,7 +4,7 @@
 
 {
   'variables': {
-    'nw_product_name': 'nwjs',
+    'nw_product_name': 'nwlegacy',
     'mac_strip_release': 1,
     'nw_gen_path': '<(SHARED_INTERMEDIATE_DIR)/nw',
     'nw_id_script_base': 'commit_id.py',
