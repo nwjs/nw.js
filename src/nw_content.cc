@@ -133,9 +133,15 @@ void ContextCreationHook(ScriptContext* context) {
     {
       int argc = 1;
       char argv0[] = "node";
-      char* argv[2];
+      char* argv[3];
       argv[0] = argv0;
-      argv[1] = nullptr;
+      argv[1] = argv[2] = nullptr;
+      std::string main_fn;
+
+      if (context->extension()->manifest()->GetString(manifest_keys::kNWJSInternalMainFilename, &main_fn)) {
+        argc = 2;
+        argv[1] = strdup(main_fn.c_str());
+      }
 
       v8::Isolate* isolate = v8::Isolate::GetCurrent();
       v8::HandleScope scope(isolate);
@@ -149,13 +155,29 @@ void ContextCreationHook(ScriptContext* context) {
       dom_context->SetEmbedderData(0, v8::String::NewFromUtf8(isolate, "node"));
 
       node::StartNWInstance(argc, argv, dom_context);
-      v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate,
-                                                                                 "process.versions['nwjs'] = '" NW_VERSION_STRING "';"
-                                                                                 "process.versions['node-webkit'] = '" NW_VERSION_STRING "';"
-                                                                                 "process.versions['nw-commit-id'] = '" NW_COMMIT_HASH "';"
-                                                                                 "process.versions['chromium'] = '" PRODUCT_VERSION "';"
-                                                                                 ));
-      script->Run();
+      {
+        v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate,
+           "process.versions['nwjs'] = '" NW_VERSION_STRING "';"
+           "process.versions['node-webkit'] = '" NW_VERSION_STRING "';"
+           "process.versions['nw-commit-id'] = '" NW_COMMIT_HASH "';"
+           "process.versions['chromium'] = '" PRODUCT_VERSION "';"
+         ));
+        script->Run();
+      }
+
+      if (context->extension()->manifest()->GetString(manifest_keys::kNWJSInternalMainFilename, &main_fn)) {
+        std::string root_path = context->extension()->path().AsUTF8Unsafe();
+#if defined(OS_WIN)
+        base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
+#endif
+        base::ReplaceChars(root_path, "'", "\\'", &root_path);
+        v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate,
+         ("global.__filename = '" + main_fn + "';" +
+           "global.__dirname = '" + root_path + "';"
+          ).c_str()));
+        script->Run();
+      }
+
       dom_context->Exit();
     }
   }
@@ -241,14 +263,18 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* erro
   std::string main_url, bg_script, icon_path, node_remote;
 
   nw::Package* package = nw::package();
-  manifest->SetBoolean(manifest_keys::kNWJSFlag, true);
+  manifest->SetBoolean(manifest_keys::kNWJSInternalFlag, true);
   if (error && !package->cached_error_content().empty()) {
     *error = package->cached_error_content();
     return;
   }
 
   if (manifest->GetString(manifest_keys::kNWJSMain, &main_url)) {
-    AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, "nwjs/default.js");
+    if (EndsWith(main_url, ".js", false)) {
+      AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, main_url);
+      manifest->SetString(manifest_keys::kNWJSInternalMainFilename, main_url);
+    }else
+      AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, "nwjs/default.js");
 
     std::string bg_script;
     if (manifest->GetString("bg-script", &bg_script))
