@@ -169,6 +169,9 @@ def generate_target_nw(platform_name, arch, version):
     return target
 
 def generate_target_chromedriver(platform_name, arch, version):
+    if args.mode != 'sdk':
+        return generate_target_empty(platform_name, arch, version)
+
     target = {}
     # Output
     target['output'] = ''.join([
@@ -249,6 +252,18 @@ def generate_target_headers(platform_name, arch, version):
     else:
         print 'Unsupported platform: ' + platform_name
         exit(-1)
+    return target
+
+def generate_target_empty(platform_name, arch, version):
+    target = {}
+    target['output'] = ''
+    target['compress'] = None
+    if platform_name == 'win':
+        target['input'] = []
+    elif platform_name == 'linux' :
+        target['input'] = []
+    else:
+        target['input'] = []
     return target
 
 def generate_target_others(platform_name, arch, version):
