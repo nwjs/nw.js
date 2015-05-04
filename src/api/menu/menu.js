@@ -80,6 +80,9 @@ Menu.prototype.getItemByLabel = function(label) {
       result = item;
       return;
     }
+    else if (item.submenu) {
+      result = item.submenu.getItemByLabel(label) || null;
+    }
   });
   
   return result;
