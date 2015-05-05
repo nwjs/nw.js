@@ -54,9 +54,6 @@ class Package {
   // Convert path to absoulte path.
   FilePath ConvertToAbsoutePath(const FilePath& path);
 
-  // Get image from icon path.
-  bool GetImage(const FilePath& path, gfx::Image* image);
-
   // Get startup url.
   GURL GetStartupURL();
 
@@ -83,10 +80,12 @@ class Package {
   // Manifest string.
   std::string package_string() { return package_string_; }
 
+  std::string cached_error_content() { return cached_error_content_; }
+
  private:
-  bool InitFromPath();
+  bool InitFromPath(const base::FilePath&);
   void InitWithDefault();
-  bool ExtractPath();
+  bool ExtractPath(const base::FilePath&, FilePath* out);
   bool ExtractPackage(const FilePath& zip_file, FilePath* where);
 
   // Read chromium command line args from the package.json if specifed.
@@ -112,6 +111,8 @@ class Package {
 
   // Stored url for error page.
   std::string error_page_url_;
+
+  std::string cached_error_content_;
 
   // Auto clean our temporary directory
   base::ScopedTempDir scoped_temp_dir_;

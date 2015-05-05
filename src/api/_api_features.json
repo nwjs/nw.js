@@ -1,0 +1,24 @@
+// Copyright 2014 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// This file defines extension APIs implemented under src/extensions/shell.
+// See extensions/common/features/* to understand this file, in particular
+// feature.h, simple_feature.h, and base_feature_provider.h.
+
+{
+  "nw.App": {
+    "channel": "stable",
+    "contexts": ["blessed_extension"]
+  },
+  "nw.Window": {
+    "channel": "stable",
+    "contexts": ["blessed_extension"]
+  },
+  "nw.currentWindowInternal": {
+    "noparent": true,
+    "internal": true,
+    "channel": "stable",
+    "contexts": ["blessed_extension"]
+  }
+}

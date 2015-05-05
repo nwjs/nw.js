@@ -18,6 +18,8 @@ steps = ['nw', 'chromedriver', 'symbol', 'headers', 'others']
 parser = argparse.ArgumentParser(description='Package nw binaries.')
 parser.add_argument('-p','--path', help='Where to find the binaries, like out/Release', required=False)
 parser.add_argument('-a','--arch', help='target arch', required=False)
+parser.add_argument('-m','--mode', help='package mode', required=False)
+parser.add_argument('-i','--icudat', help='icudat override', required=False)
 group = parser.add_mutually_exclusive_group()
 group.add_argument('-s','--step', choices=steps, help='Execute specified step.', required=False)
 group.add_argument('-n','--skip', choices=steps, help='Skip specified step.', required=False)
@@ -33,6 +35,12 @@ skip = None
 nw_ver = None                   # x.xx
 dist_dir = None                 # .../out/Release/dist
 
+is_headers_ok = False           # record whether nw-headers generated
+package_name = 'nwjs'
+
+if args.mode == 'sdk':
+    package_name = 'nwjs-sdk'
+
 step = args.step
 skip = args.skip
 binaries_location = args.path
@@ -41,6 +49,7 @@ if binaries_location == None:
     binaries_location = os.path.join(os.path.dirname(__file__),
             os.pardir, os.pardir, os.pardir, 'out', 'Release')
 
+    
 if not os.path.isabs(binaries_location):
     binaries_location = os.path.join(os.getcwd(), binaries_location)
 
@@ -51,6 +60,9 @@ binaries_location = os.path.normpath(binaries_location)
 dist_dir = os.path.join(binaries_location, 'dist')
 
 print 'Working on ' + binaries_location
+
+if args.icudat != None:
+    shutil.copy(args.icudat, binaries_location)
 
 if sys.platform.startswith('linux'):
     platform_name = 'linux'
@@ -76,7 +88,7 @@ if platform_name == 'win':
 
 if platform_name == 'osx':
     # detect output arch
-    nw_bin = binaries_location + '/nwjs.app/Contents/MacOS/nwjs'
+    nw_bin = binaries_location + '/nw.app/Contents/MacOS/nw'
     import subprocess
     if 'i386' in subprocess.check_output(['file',nw_bin]):
         arch = 'ia32'
@@ -105,7 +117,7 @@ def generate_target_nw(platform_name, arch, version):
     target = {}
     # Output
     target['output'] = ''.join([
-                       'nwjs-',
+                       package_name, '-',
                        'v', version,
                        '-', platform_name,
                        '-', arch])
@@ -119,30 +131,36 @@ def generate_target_nw(platform_name, arch, version):
         target['input'] = [
                            'credits.html',
                            'libffmpegsumo.so',
-                           'nw.pak',
-                           'nwjc',
+                           'resources.pak',
+                           'nw_100_percent.pak',
                            'nw',
                            'icudtl.dat',
                            'locales',
+                           'snapshot_blob.bin',
+                           'natives_blob.bin',
                            ]
     elif platform_name == 'win':
         target['input'] = [
+                           'snapshot_blob.bin',
+                           'natives_blob.bin',
                            'd3dcompiler_47.dll',
                            'ffmpegsumo.dll',
-                           'icudtl.dat',
                            'libEGL.dll',
                            'libGLESv2.dll',
-                           'pdf.dll',
+                           'nw.dll',
+                           'nw_elf.dll',
                            'nw.exe',
-                           'nw.pak',
                            'locales',
-                           'nwjc.exe',
+                           'icudtl.dat',
                            'credits.html',
+                           'resources.pak',
+                           'nw_100_percent.pak',
+                           'nw_200_percent.pak',
+                          
                            ]
     elif platform_name == 'osx':
         target['input'] = [
-                           'nwjs.app',
-                           'nwjc',
+                           'nw.app',
                            'credits.html',
                           ]
     else:
@@ -151,6 +169,9 @@ def generate_target_nw(platform_name, arch, version):
     return target
 
 def generate_target_chromedriver(platform_name, arch, version):
+    if args.mode != 'sdk':
+        return generate_target_empty(platform_name, arch, version)
+
     target = {}
     # Output
     target['output'] = ''.join([
@@ -173,7 +194,7 @@ def generate_target_chromedriver(platform_name, arch, version):
 
 def generate_target_symbols(platform_name, arch, version):
     target = {}
-    target['output'] = ''.join(['nwjs-symbol-',
+    target['output'] = ''.join([package_name, '-symbol-',
                                 'v', version,
                                 '-', platform_name,
                                 '-', arch])
@@ -184,7 +205,7 @@ def generate_target_symbols(platform_name, arch, version):
     elif platform_name == 'win':
         target['compress'] = None
         target['input'] = ['nw.sym.7z']
-        target['output'] = ''.join(['nwjs-symbol-',
+        target['output'] = ''.join([package_name, '-symbol-',
                                     'v', version,
                                     '-', platform_name,
                                     '-', arch, '.7z'])
@@ -233,12 +254,25 @@ def generate_target_headers(platform_name, arch, version):
         exit(-1)
     return target
 
+def generate_target_empty(platform_name, arch, version):
+    target = {}
+    target['output'] = ''
+    target['compress'] = None
+    if platform_name == 'win':
+        target['input'] = []
+    elif platform_name == 'linux' :
+        target['input'] = []
+    else:
+        target['input'] = []
+    return target
+
 def generate_target_others(platform_name, arch, version):
     target = {}
     target['output'] = ''
     target['compress'] = None
     if platform_name == 'win':
-        target['input'] = ['nw.exp', 'nw.lib']
+        #target['input'] = ['nw.exp', 'nw.lib']
+        target['input'] = []
     elif platform_name == 'linux' :
         target['input'] = []
     else:

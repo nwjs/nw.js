@@ -22,7 +22,8 @@ extern const char kWorkingDirectory[];
 extern const char kNodeMain[];
 extern const char kSnapshot[];
 extern const char kDomStorageQuota[];
-
+extern const char kNodejs[];
+extern const char kChromeExtension[];
 // Manifest settings
 extern const char kmMain[];
 extern const char kmName[];

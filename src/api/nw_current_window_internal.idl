@@ -1,0 +1,12 @@
+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// This is used by the NW window API internally to pass through messages to
+// the shell window.
+[implemented_in="content/nw/src/api/nw_window_api.h"]
+namespace nw.currentWindowInternal {
+  interface Functions {
+    static void showDevTools();
+  };
+};

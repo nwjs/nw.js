@@ -1,0 +1,7 @@
+// nw APP API
+namespace nw.App {
+  interface Functions {
+    // crash the renderer for testing
+    [nocompile] static void crashRenderer();
+  };
+};
