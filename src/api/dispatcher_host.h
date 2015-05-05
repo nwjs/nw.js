@@ -72,6 +72,8 @@ class DispatcherHost : public content::WebContentsObserver {
   virtual bool Send(IPC::Message* message) OVERRIDE;
   virtual void RenderViewHostChanged(content::RenderViewHost* old_host,
                                      content::RenderViewHost* new_host) OVERRIDE;
+  virtual void RenderViewDeleted(content::RenderViewHost* host) OVERRIDE;
+  virtual void RenderProcessGone(base::TerminationStatus status) OVERRIDE;
   content::RenderViewHost* render_view_host() const {
     return render_view_host_;
   }

@@ -62,6 +62,7 @@ DispatcherHost::DispatcherHost(content::RenderViewHost* host)
 
 DispatcherHost::~DispatcherHost() {
   g_dispatcher_host_map.erase(render_view_host());
+  render_view_host_ = NULL;
   std::set<int>::iterator it;
   for (it = objects_.begin(); it != objects_.end(); it++) {
     if (objects_registry_.Lookup(*it))
@@ -137,6 +138,15 @@ void DispatcherHost::RenderViewHostChanged(content::RenderViewHost* old_host,
   // LOG(INFO) << "RenderViewHostChanged(" << this << "): " << old_host << " --> " << new_host << " ; " << render_view_host_;
   if (render_view_host_ != new_host)
     delete this;
+}
+
+void DispatcherHost::RenderViewDeleted(content::RenderViewHost* host) {
+  if (render_view_host_ == host)
+    delete this;
+}
+
+void DispatcherHost::RenderProcessGone(base::TerminationStatus status) {
+  delete this;
 }
 
 void DispatcherHost::OnAllocateObject(int object_id,
