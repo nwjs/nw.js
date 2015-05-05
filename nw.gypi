@@ -305,8 +305,6 @@
         'src/media/media_stream_devices_controller.h',
         'src/net/app_protocol_handler.cc',
         'src/net/app_protocol_handler.h',
-        'src/net/clear_on_exit_policy.h',
-        'src/net/clear_on_exit_policy.cc',
         'src/net/resource_request_job.cc',
         'src/net/resource_request_job.h',
         'src/net/shell_network_delegate.cc',
