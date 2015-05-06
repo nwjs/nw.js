@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef CHROME_BROWSER_UI_VIEWS_COLOR_CHOOSER_DIALOG_H_
-#define CHROME_BROWSER_UI_VIEWS_COLOR_CHOOSER_DIALOG_H_
+#ifndef NW_BROWSER_COLOR_CHOOSER_DIALOG_H_
+#define NW_BROWSER_COLOR_CHOOSER_DIALOG_H_
 
 #include "base/memory/ref_counted.h"
 #include "content/nw/src/browser/color_chooser_dialog.h"
@@ -70,4 +70,4 @@ class ColorChooserDialog
   DISALLOW_COPY_AND_ASSIGN(ColorChooserDialog);
 };
 
-#endif  // CHROME_BROWSER_UI_VIEWS_COLOR_CHOOSER_DIALOG_H_
+#endif  // NW_BROWSER_COLOR_CHOOSER_DIALOG_H_

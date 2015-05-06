@@ -24,7 +24,7 @@ class ColorChooserWin : public content::ColorChooser,
   ~ColorChooserWin();
 
   // content::ColorChooser overrides:
-  virtual void End() OVERRIDE {}
+  virtual void End() OVERRIDE;
   virtual void SetSelectedColor(SkColor color) OVERRIDE {}
 
   // views::ColorChooserListener overrides:
@@ -46,8 +46,9 @@ ColorChooserWin* ColorChooserWin::current_color_chooser_ = NULL;
 
 ColorChooserWin* ColorChooserWin::Open(content::WebContents* web_contents,
                                        SkColor initial_color) {
-  if (!current_color_chooser_)
-    current_color_chooser_ = new ColorChooserWin(web_contents, initial_color);
+  if (current_color_chooser_)
+    return NULL;
+  current_color_chooser_ = new ColorChooserWin(web_contents, initial_color);
   return current_color_chooser_;
 }
 
@@ -64,6 +65,16 @@ ColorChooserWin::ColorChooserWin(content::WebContents* web_contents,
 ColorChooserWin::~ColorChooserWin() {
   // Always call End() before destroying.
   DCHECK(!color_chooser_dialog_);
+}
+
+void ColorChooserWin::End() {
+  // The ColorChooserDialog's listener is going away.  Ideally we'd
+  // programmatically close the dialog at this point.  Since that's impossible,
+  // we instead tell the dialog its listener is going away, so that the dialog
+  // doesn't try to communicate with a destroyed listener later.  (We also tell
+  // the renderer the dialog is closed, since from the renderer's perspective
+  // it effectively is.)
+  OnColorChooserDialogClosed();
 }
 
 void ColorChooserWin::OnColorChosen(SkColor color) {
