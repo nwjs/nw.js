@@ -62,6 +62,8 @@ dist_dir = os.path.join(binaries_location, 'dist')
 print 'Working on ' + binaries_location
 
 if args.icudat != None:
+    #FIXME: for some reason they are the same file (hard link) and copy will fail
+    os.remove(os.path.join(binaries_location, 'icudtl.dat'))
     shutil.copy(args.icudat, binaries_location)
 
 if sys.platform.startswith('linux'):
