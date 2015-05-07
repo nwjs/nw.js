@@ -1,7 +1,9 @@
 // nw APP API
+[implemented_in="content/nw/src/api/nw_app_api.h"]
 namespace nw.App {
   interface Functions {
     // crash the renderer for testing
     [nocompile] static void crashRenderer();
+    static void quit();
   };
 };

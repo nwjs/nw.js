@@ -11,6 +11,7 @@
       'nw_app.idl',
       'nw_window.idl',
       'nw_current_window_internal.idl',
+      'nw_test.idl',
     ],
     'non_compiled_schema_files': [
     ],

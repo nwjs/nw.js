@@ -63,7 +63,7 @@ if len(file_list) == 0:
 # move node-webkit- to the top of the list.
 for i in range(len(file_list)):
     fname = file_list[i]
-    if fname.startswith('node-webkit-v'):
+    if fname.startswith('nwjs-v') or fname.startswith('nwjs-sdk-v'):
         del file_list[i]
         file_list.insert(0,fname)
         break

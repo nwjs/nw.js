@@ -11,6 +11,11 @@ namespace blink {
   class WebFrame;
 }
 
+namespace content {
+  class RenderProcessHost;
+  class NotificationDetails;
+}
+
 namespace extensions {
   class Extension;
   class ScriptContext;
@@ -24,6 +29,9 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* erro
 void DocumentElementHook(blink::WebFrame* frame,
                          const extensions::Extension* extension,
                          const GURL& effective_document_url);
+ void RendererProcessTerminatedHook(content::RenderProcessHost* process,
+                                    const content::NotificationDetails& details);
+ void OnRenderProcessShutdownHook(extensions::ScriptContext* context);
 }
 
 #endif

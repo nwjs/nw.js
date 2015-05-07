@@ -7,6 +7,8 @@
 #ifndef CONTENT_NW_SRC_SHELL_SWITCHES_H_
 #define CONTENT_NW_SRC_SHELL_SWITCHES_H_
 
+#include "content/nw/src/nw_export.h"
+
 namespace nw {
   const int kMenuHeight = 25;
   const int kToolbarHeight = 34;
@@ -64,7 +66,7 @@ extern const char kmJava[];
 extern const char kmPlugin[];
 extern const char kmPageCache[];
 extern const char kmUserAgent[];
-extern const char kmRemotePages[];
+extern NW_EXPORT const char kmRemotePages[];
 extern const char kmNewInstance[];
 extern const char kmInjectJSDocStart[];
 extern const char kmInjectJSDocEnd[];

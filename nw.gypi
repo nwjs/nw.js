@@ -604,7 +604,7 @@
     },
     {
       'target_name': 'nw_base',
-      'type': 'static_library',
+      'type': '<(component)',
       'dependencies': [
         '<(DEPTH)/base/base.gyp:base',
         '<(DEPTH)/third_party/zlib/google/zip.gyp:zip',
@@ -613,6 +613,7 @@
       ],
       'include_dirs': [
       ],
+      'defines': ['NW_IMPLEMENTATION'],
       'sources': [
         'src/nw_base.cc',
         'src/nw_base.h',
@@ -640,6 +641,8 @@
       ],
       'defines!': ['CONTENT_IMPLEMENTATION'],
       'sources': [
+        'src/api/nw_app_api.cc',
+        'src/api/nw_app_api.h',
         'src/api/nw_window_api.cc',
         'src/api/nw_window_api.h',
         'src/nw_content.cc',

@@ -7,6 +7,9 @@
 #include "base/strings/string_util.h"
 #include "base/threading/thread_restrictions.h"
 #include "content/nw/src/common/shell_switches.h"
+#include "content/public/browser/notification_service.h"
+#include "content/public/browser/notification_types.h"
+#include "content/public/browser/render_process_host.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/result_codes.h"
 
@@ -298,4 +301,22 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* erro
   }
 }
 
+void RendererProcessTerminatedHook(content::RenderProcessHost* process,
+                                   const content::NotificationDetails& details) {
+  content::RenderProcessHost::RendererClosedDetails* process_details =
+    content::Details<content::RenderProcessHost::RendererClosedDetails>(details).ptr();
+  int exit_code = process_details->exit_code;
+#if defined(OS_POSIX)
+  if (WIFEXITED(exit_code))
+    exit_code = WEXITSTATUS(exit_code);
+#endif
+  SetExitCode(exit_code);
+}
+
+void OnRenderProcessShutdownHook(extensions::ScriptContext* context) {
+  blink::WebScopedMicrotaskSuppression suppression;
+  node::Environment* env = node::GetCurrentEnvironment(context->v8_context());
+  node::EmitExit(env);
+  node::RunAtExit(env);
+}
 } //namespace nw

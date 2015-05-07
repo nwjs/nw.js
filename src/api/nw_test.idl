@@ -1,0 +1,10 @@
+// nw APP API
+namespace nw.test {
+  interface Functions {
+    // crash the renderer for testing
+    [nocompile] static void crashRenderer();
+    [nocompile] static void done();
+    [nocompile] static void fail();
+    [nocompile] static void assert();
+  };
+};

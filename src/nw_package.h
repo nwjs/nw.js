@@ -26,6 +26,8 @@
 #include "base/memory/scoped_ptr.h"
 #include "base/files/scoped_temp_dir.h"
 
+#include "content/nw/src/nw_export.h"
+
 #include <string>
 
 class GURL;
@@ -42,7 +44,7 @@ class Image;
 namespace nw {
 
 using base::FilePath;
-class Package {
+class NW_EXPORT Package {
  public:
   // Init package from command line parameters.
   Package();
