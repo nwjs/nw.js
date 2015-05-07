@@ -90,7 +90,7 @@ if platform_name == 'win':
 
 if platform_name == 'osx':
     # detect output arch
-    nw_bin = binaries_location + '/nw.app/Contents/MacOS/nw'
+    nw_bin = binaries_location + '/nwjs.app/Contents/MacOS/nwjs'
     import subprocess
     if 'i386' in subprocess.check_output(['file',nw_bin]):
         arch = 'ia32'
@@ -162,7 +162,7 @@ def generate_target_nw(platform_name, arch, version):
                            ]
     elif platform_name == 'osx':
         target['input'] = [
-                           'nw.app',
+                           'nwjs.app',
                            'credits.html',
                           ]
     else:
