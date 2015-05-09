@@ -1,0 +1,5 @@
+{
+  "name":"test",
+  "expect_exit_code":1,
+  "main": "index.html"
+}

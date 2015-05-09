@@ -1,0 +1,20 @@
+<html>
+<head>
+<title></title>
+<script>
+var fs = nw.require('fs');
+nw.process.on('exit', function() {
+  fs.mkdirSync('exited');
+});
+window.onunload = function() {
+ console.log("unload");
+ fs.mkdirSync('unload');
+};
+//window.close();
+nw.App.quit();
+</script>
+</head>
+<body>
+
+</body>
+</html>
