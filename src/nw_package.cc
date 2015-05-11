@@ -196,7 +196,7 @@ Package::Package()
       return;
   }
 
-#if 0
+#if defined(OS_MACOSX)
   self_extract_ = true;
   // Try to extract self.
   path = GetSelfPath();
