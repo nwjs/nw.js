@@ -74,6 +74,9 @@ Screen.prototype.chooseDesktopMedia = function(array, callback) {
   return false;
 }
 
+Screen.prototype.cancelChooseDesktopMedia = function() {
+  return nw.callStaticMethodSync('Screen', 'CancelChooseDesktopMedia', [ this.id ])[0];
+}
 // ======== Screen functions End ========
 
 // Store App object in node's context.

@@ -12,6 +12,8 @@
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
+#include "content/nw/src/nw_package.h"
+#include "content/nw/src/nw_shell.h"
 #include "net/base/net_util.h"
 #include "third_party/webrtc/modules/desktop_capture/desktop_capture_options.h"
 #include "third_party/webrtc/modules/desktop_capture/screen_capturer.h"
@@ -68,7 +70,8 @@ bool DesktopCaptureChooseDesktopMediaFunction::RunSync() {
   // also be used to determine where to show the picker's UI.
   content::WebContents* web_contents = content::WebContents::FromRenderViewHost(render_view_host());
   DCHECK(web_contents);
-  base::string16 target_name;
+  content::Shell* shell = content::Shell::windows()[0];
+  base::string16 app_name = base::UTF8ToUTF16(shell->GetPackage()->GetName());
 
   // Register to be notified when the tab is closed.
   Observe(web_contents);
@@ -136,8 +139,8 @@ bool DesktopCaptureChooseDesktopMediaFunction::RunSync() {
   picker_->Show(web_contents,
                 parent_window,
                 parent_window,
-                target_name,
-                target_name,
+                app_name,
+                app_name,
                 media_list.Pass(),
                 callback);
   return true;
