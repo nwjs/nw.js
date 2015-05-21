@@ -1,3 +1,22 @@
+0.11.7-rc3 / 03-31-2015
+===================
+- Upgraded Node.js to 0.12.0
+- New CLI parameter `--app-path`
+- [Win] Enable BREAKPAD_DUMP_LOCATION env on Windows
+- [OSX] Do not resolve symbolic link in file selector
+
+0.11.7-rc2 / 03-05-2015
+===================
+- Fix: window size not working when using window.open
+- Fix: breakpoint doesn't work for scripts in node context
+- Fix: another crash with devtools timeline
+- Fix: Issue 667423002: DevTools: failure of loading internal requests should not be reported.
+- Fix: ScriptState used by EventListener::handleEvent() is wrong
+
+0.11.7-rc1 / 02-09-2015
+===================
+- Fix: uncaughtException should not catch browser exception
+
 0.11.6 / 01-21-2015
 ===================
 - Fix: crash when use App.quit() on Windows in some cases
