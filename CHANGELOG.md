@@ -1,3 +1,15 @@
+0.12.2 / 05-22-2015
+===================
+- Fix #2723: [OSX] cpu hog in some cases
+- Fix #3361: application cache
+- Fix #2720: [Linux] launching sudo hits error: effective uid is not 0
+- Fix #2819: enable cookie support for web sockets
+- Fix #2713: crash with 'new-win-policy' and opening window from iframe
+- Fix #3123: support no-displaying-insecure-content and allow-running-insecure-content
+- [Screen Selection] add application name to the UI; cancelChooseDesktopMedia implementation
+- [Notification] [WIN] disable audio for toast notification, better fallback for toast notification
+- Change cache backend from "simple" to "blockfile"
+
 0.12.1 / 04-13-2015
 ===================
 - Fix crash dump generation
