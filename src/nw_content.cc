@@ -126,10 +126,36 @@ void MainPartsPostDestroyThreadsHook() {
 void DocumentElementHook(blink::WebFrame* frame,
                          const extensions::Extension* extension,
                          const GURL& effective_document_url) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope hscope(isolate);
   frame->document().securityOrigin().grantUniversalAccess();
+  std::string path = effective_document_url.path();
+  v8::Local<v8::Context> v8_context = frame->mainWorldScriptContext();
+  {
+    blink::WebScopedMicrotaskSuppression suppression;
+    v8::Context::Scope cscope(v8_context);
+    // Make node's relative modules work
+    std::string root_path = extension->path().AsUTF8Unsafe();
+#if defined(OS_WIN)
+    base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
+#endif
+    base::ReplaceChars(root_path, "'", "\\'", &root_path);
+
+    v8::Local<v8::Script> script2 = v8::Script::Compile(v8::String::NewFromUtf8(isolate, (
+        "if (typeof __filename == 'undefined') {"
+        "  var root = '" + root_path + "';"
+        "  var path = '" + path      + "';"
+        "nw.__filename = root + path;"
+        "nw.__dirname = root;"
+        "}").c_str()),
+    v8::String::NewFromUtf8(isolate, "process_main2"));
+    CHECK(*script2);
+    script2->Run();
+  }
+
 }
 
-void ContextCreationHook(ScriptContext* context) {
+void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   v8::Isolate* isolate = context->isolate();
   if (node::g_context.IsEmpty()) {
     node::SetupNWNode(0, nullptr);
@@ -223,16 +249,16 @@ void ContextCreationHook(ScriptContext* context) {
     base::ReplaceChars(root_path, "'", "\\'", &root_path);
     v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate, (
         // Make node's relative modules work
-        "if (typeof process != 'undefined' && (!process.mainModule.filename || process.mainModule.filename === 'blank')) {"
+        "if (typeof nw.process != 'undefined' && (!nw.process.mainModule.filename || nw.process.mainModule.filename === 'blank')) {"
         "  var root = '" + root_path + "';"
 #if defined(OS_WIN)
-        "process.mainModule.filename = decodeURIComponent(window.location.pathname === 'blank' ? 'blank': window.location.pathname.substr(1));"
+        "nw.process.mainModule.filename = decodeURIComponent(window.location.pathname === 'blank' ? 'blank': window.location.pathname.substr(1));"
 #else
-        "process.mainModule.filename = root + '/index.html';"
+        "nw.process.mainModule.filename = root + '/index.html';"
 #endif
-        "if (window.location.href.indexOf('app://') === 0) {process.mainModule.filename = root + '/' + process.mainModule.filename}"
-        "process.mainModule.paths = global.require('module')._nodeModulePaths(process.cwd());"
-        "process.mainModule.loaded = true;"
+        "if (window.location.href.indexOf('app://') === 0) {nw.process.mainModule.filename = root + '/' + process.mainModule.filename}"
+        "nw.process.mainModule.paths = nw.global.require('module')._nodeModulePaths(nw.process.cwd());"
+        "nw.process.mainModule.loaded = true;"
         "}").c_str()),
     v8::String::NewFromUtf8(isolate, "process_main"));
     CHECK(*script);

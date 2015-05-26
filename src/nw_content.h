@@ -9,6 +9,7 @@ namespace base {
 
 namespace blink {
   class WebFrame;
+  class WebLocalFrame;
 }
 
 namespace content {
@@ -24,7 +25,7 @@ namespace extensions {
 namespace nw {
 int MainPartsPreCreateThreadsHook();
 void MainPartsPostDestroyThreadsHook();
-void ContextCreationHook(extensions::ScriptContext* context);
+void ContextCreationHook(blink::WebLocalFrame* frame, extensions::ScriptContext* context);
 void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* error);
 void DocumentElementHook(blink::WebFrame* frame,
                          const extensions::Extension* extension,
