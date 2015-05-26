@@ -1,3 +1,16 @@
+0.11.7-rc4 / 05-26-2015
+===================
+- Fix: console object missing issue in some scenario
+- Fix: enable cookie support for web sockets nwjs/nw-js#2819
+- Fix: enter parent frame context when called from iframe nwjs/nw-js#2713
+- Fix: ColorChooserWin::End should act like the dialog has closed
+- Delete DispatcherHost when RVH deleted
+- [Win] Remove force lowercase commandline parameters for Windows
+- Fix: [OSX] Fix cpu hog while idle in some cases
+- Fix: support bypassing frame-ancestors CSP in Node frame nwjs/nw.js#2967
+- Fix: window.close() failed for node frame because of sandbox restrictions
+- Fix: access win.parent cause crash if win is closed nwjs/nw.js#3492
+
 0.11.7-rc3 / 03-31-2015
 ===================
 - Upgraded Node.js to 0.12.0
