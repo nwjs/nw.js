@@ -49,6 +49,7 @@ class SimpleTestCase(test.TestCase):
     self.mode = mode
     self.tmpdir = join(dirname(self.config.root), 'tmp')
     self.additional_flags = additional
+    self.expected_quit_dir = ''
 
   def GetTmpDir(self):
     return "%s.%d" % (self.tmpdir, self.thread_id)
@@ -66,6 +67,16 @@ class SimpleTestCase(test.TestCase):
     except:
       pass
 
+    if self.expected_quit_dir :
+      if not os.path.exists(os.path.join(self.file, self.expected_quit_dir)):
+        print "expected_quit_dir:", self.expected_quit_dir
+        self.expected_quit_dir_fail = True
+      else:
+        try:
+          rmtree(os.path.join(self.file, self.expected_quit_dir))
+        except:
+          pass
+
   def BeforeRun(self):
     # delete the whole tmp dir
     try:
@@ -79,6 +90,16 @@ class SimpleTestCase(test.TestCase):
         mkdir(self.GetTmpDir())
       except:
         pass
+
+    manifest = json.loads(open(os.path.join(self.file, 'package.json')).read(), 'utf-8')
+    if manifest.get('expect_dir_exists'):
+      self.expected_quit_dir = manifest['expect_dir_exists']
+      try:
+        rmtree(os.path.join(self.file, self.expected_quit_dir))
+      except:
+        pass
+    else:
+      self.expected_quit_dir = ''
   
   def GetLabel(self):
     return "%s %s" % (self.mode, self.GetName())
@@ -99,7 +120,7 @@ class SimpleTestCase(test.TestCase):
     return result
 
   def IsFailureOutput(self, output):
-    return output.exit_code != self.expected_exit_code
+    return output.exit_code != self.expected_exit_code or hasattr(self, 'expected_quit_dir_fail')
 
   def GetSource(self):
     return open(self.file).read()

@@ -9,3 +9,4 @@ tests/tmp-nw
 .pydevproject
 tags
 Thumbs.db
+/tmp

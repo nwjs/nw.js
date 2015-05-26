@@ -1,4 +1,5 @@
 {
-  "name":"test",
-  "main": "index.html"
+    "name":"test",
+    "main": "index.html",
+    "expect_dir_exists": "exited"
 }
