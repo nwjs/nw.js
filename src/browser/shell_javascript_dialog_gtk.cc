@@ -91,7 +91,7 @@ ShellJavaScriptDialog::ShellJavaScriptDialog(
                    "delete-event",
                    G_CALLBACK(gtk_widget_hide_on_delete),
                    NULL);
-  gtk_window_set_title(GTK_WINDOW(gtk_dialog_), "JavaScript");
+  gtk_window_set_title(GTK_WINDOW(gtk_dialog_), "");
 
   GtkWidget* ok_button = gtk_dialog_add_button(GTK_DIALOG(gtk_dialog_),
                                                GTK_STOCK_OK,
