@@ -2,6 +2,7 @@ var Binding = require('binding').Binding;
 var nw_binding = require('binding').Binding.create('nw.Window');
 var nwNatives = requireNative('nw_natives');
 var forEach = require('utils').forEach;
+var Event = require('event_bindings').Event;
 
 var currentNWWindow = null;
 var currentNWWindowInternal = null;
@@ -21,10 +22,29 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       NWWindow.prototype[key] = value;
     });
 
+    NWWindow.prototype.onNewWinPolicy = new Event();
+    NWWindow.prototype.onNavigation = new Event();
     NWWindow.prototype.on = function (event, callback) {
       switch (event) {
       case 'closed':
         this.appWindow.onClosed.addListener(callback);
+        break;
+      case 'new-win-policy':
+        this.onNewWinPolicy.addListener(function(frame, url, policy) {
+          policy.ignore         =  function () { this.val = 'ignore'; };
+          policy.forceCurrent   =  function () { this.val = 'current'; };
+          policy.forceDownload  =  function () { this.val = 'download'; };
+          policy.forceNewWindow =  function () { this.val = 'new-window'; };
+          policy.forceNewPopup  =  function () { this.val = 'new-popup'; };
+          policy.setNewWindowManifest = function (m) { this.manifest = JSON.stringify(m); };
+          callback(frame, url, policy);
+        });
+        break;
+      case 'navigation':
+        this.onNavigation.addListener(function(frame, url, policy, context) {
+          policy.ignore         =  function () { this.val = 'ignore'; };
+          callback(frame, url, policy, context);
+        });
         break;
       }
     };
@@ -140,5 +160,30 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
 
 });
 
-exports.binding = nw_binding.generate();
+function dispatchEventIfExists(target, name, varargs) {
+  // Sometimes apps like to put their own properties on the window which
+  // break our assumptions.
+  var event = target[name];
+  if (event && (typeof event.dispatch == 'function'))
+    $Function.apply(event.dispatch, event, varargs);
+  else
+    console.warn('Could not dispatch ' + name + ', event has been clobbered');
+}
 
+function onNewWinPolicy(frame, url, policy) {
+  //console.log("onNewWinPolicy called: " + url + ", " + policy);
+  if (!currentNWWindow)
+    return;
+  dispatchEventIfExists(currentNWWindow, "onNewWinPolicy", [frame, url, policy]);
+}
+
+function onNavigation(frame, url, policy, context) {
+  //console.log("onNavigation called: " + url + ", " + context);
+  if (!currentNWWindow)
+    return;
+  dispatchEventIfExists(currentNWWindow, "onNavigation", [frame, url, policy, context]);
+}
+
+exports.binding = nw_binding.generate();
+exports.onNewWinPolicy = onNewWinPolicy;
+exports.onNavigation = onNavigation;

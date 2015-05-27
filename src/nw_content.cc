@@ -12,7 +12,9 @@
 #include "content/public/browser/render_process_host.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/result_codes.h"
+#include "content/public/renderer/render_view.h"
 
+#include "extensions/renderer/dispatcher.h"
 #include "extensions/renderer/script_context.h"
 #include "extensions/common/extension.h"
 #include "extensions/common/feature_switch.h"
@@ -24,6 +26,9 @@
 #include "third_party/WebKit/public/web/WebFrame.h"
 #include "third_party/WebKit/public/web/WebLocalFrame.h"
 #include "third_party/WebKit/public/web/WebSecurityPolicy.h"
+#include "third_party/WebKit/public/web/WebView.h"
+#include "third_party/WebKit/public/web/WebDocument.h"
+#include "third_party/WebKit/public/web/WebLocalFrame.h"
 
 #include "chrome/common/chrome_version_info_values.h"
 
@@ -41,6 +46,19 @@
 #include "nw/id/commit.h"
 #include "content/nw/src/nw_version.h"
 
+#undef LOG
+#undef ASSERT
+#undef FROM_HERE
+
+#if defined(OS_WIN)
+#define _USE_MATH_DEFINES
+#include <math.h>
+#endif
+#include "third_party/WebKit/Source/config.h"
+#include "third_party/WebKit/Source/core/frame/Frame.h"
+#include "third_party/WebKit/Source/web/WebLocalFrameImpl.h"
+#include "V8HTMLElement.h"
+
 using extensions::ScriptContext;
 using extensions::Manifest;
 using extensions::Feature;
@@ -49,7 +67,16 @@ namespace manifest_keys = extensions::manifest_keys;
 
 namespace nw {
 
+
 namespace {
+
+extensions::Dispatcher* g_dispatcher = NULL;
+
+static inline v8::Local<v8::String> v8_str(const char* x) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  return v8::String::NewFromUtf8(isolate, x);
+}
+
 v8::Handle<v8::Value> CallNWTickCallback(node::Environment* env, const v8::Handle<v8::Value> ret) {
   blink::WebScopedMicrotaskSuppression suppression;
   return node::CallTickCallback(env, ret);
@@ -345,4 +372,88 @@ void OnRenderProcessShutdownHook(extensions::ScriptContext* context) {
   node::EmitExit(env);
   node::RunAtExit(env);
 }
+
+void willHandleNavigationPolicy(content::RenderView* rv,
+                                blink::WebFrame* frame,
+                                const blink::WebURLRequest& request,
+                                blink::WebNavigationPolicy* policy,
+                                blink::WebString* manifest,
+                                bool new_win) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope scope(isolate);
+  v8::Handle<v8::Context> v8_context =
+      rv->GetWebView()->mainFrame()->mainWorldScriptContext();
+  ScriptContext* script_context =
+      g_dispatcher->script_context_set().GetByV8Context(v8_context);
+  //check extension for remote pages, which doesn't have appWindow object
+  if (!script_context || !script_context->extension())
+    return;
+  v8::Context::Scope cscope (v8_context);
+  v8::Handle<v8::Value> element = v8::Null(isolate);
+  v8::Handle<v8::Object> policy_obj = v8::Object::New(isolate);
+#if 0
+  blink::LocalFrame* core_frame = blink::toWebLocalFrameImpl(frame)->frame();
+  if (core_frame->deprecatedLocalOwner()) {
+    element = blink::toV8((blink::HTMLElement*)core_frame->deprecatedLocalOwner(),
+                            frame->mainWorldScriptContext()->Global(),
+                            frame->mainWorldScriptContext()->GetIsolate());
+  }
+#endif
+  std::vector<v8::Handle<v8::Value> > arguments;
+  arguments.push_back(element);
+  arguments.push_back(v8_str(request.url().string().utf8().c_str()));
+  arguments.push_back(policy_obj);
+  if (new_win) {
+    script_context->module_system()->CallModuleMethod("nw.Window",
+                                                      "onNewWinPolicy", &arguments);
+  } else {
+    const char* req_context = nullptr;
+    switch (request.requestContext()) {
+    case blink::WebURLRequest::RequestContextHyperlink:
+      req_context = "hyperlink";
+      break;
+    case blink::WebURLRequest::RequestContextFrame:
+      req_context = "form";
+      break;
+    case blink::WebURLRequest::RequestContextLocation:
+      req_context = "location";
+      break;
+    default:
+      break;
+    }
+    if (req_context) {
+      arguments.push_back(v8_str(req_context));
+      script_context->module_system()->CallModuleMethod("nw.Window",
+                                                        "onNavigation", &arguments);
+    }
+  }
+  v8::Local<v8::Value> manifest_val = policy_obj->Get(v8_str("manifest"));
+
+  //TODO: change this to object
+  if (manifest_val->IsString()) {
+    v8::String::Utf8Value manifest_str(manifest_val);
+    if (manifest)
+      *manifest = blink::WebString::fromUTF8(*manifest_str);
+  }
+
+  v8::Local<v8::Value> val = policy_obj->Get(v8_str("val"));
+  if (!val->IsString())
+    return;
+  v8::String::Utf8Value policy_str(val);
+  if (!strcmp(*policy_str, "ignore"))
+    *policy = blink::WebNavigationPolicyIgnore;
+  else if (!strcmp(*policy_str, "download"))
+    *policy = blink::WebNavigationPolicyDownload;
+  else if (!strcmp(*policy_str, "current"))
+    *policy = blink::WebNavigationPolicyCurrentTab;
+  else if (!strcmp(*policy_str, "new-window"))
+    *policy = blink::WebNavigationPolicyNewWindow;
+  else if (!strcmp(*policy_str, "new-popup"))
+    *policy = blink::WebNavigationPolicyNewPopup;
+}
+
+void ExtensionDispatcherCreated(extensions::Dispatcher* dispatcher) {
+  g_dispatcher = dispatcher;
+}
+
 } //namespace nw

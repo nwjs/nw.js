@@ -638,6 +638,8 @@
       ],
       'include_dirs': [
         '<(DEPTH)/third_party/mojo/src',
+        '<(SHARED_INTERMEDIATE_DIR)/blink',
+        '<(SHARED_INTERMEDIATE_DIR)/blink/bindings/core/v8/',
       ],
       'defines!': ['CONTENT_IMPLEMENTATION'],
       'sources': [

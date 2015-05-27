@@ -55,4 +55,7 @@ namespace nw.Window {
                                  optional CreateWindowCallback callback);
 
   };
+  interface Events {
+    [nocompile] static void onNewWinPolicy();
+  };
 };
