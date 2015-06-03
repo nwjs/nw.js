@@ -370,6 +370,7 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
       const GURL& url,
       content::WebPreferences* prefs) {
   nw::Package* package = shell_browser_main_parts()->package();
+  CommandLine* cmd_line = CommandLine::ForCurrentProcess();
 
   // Disable web security.
   prefs->dom_paste_enabled = true;
@@ -383,6 +384,11 @@ void ShellContentBrowserClient::OverrideWebkitPrefs(
   // Disable plugins and cache by default.
   prefs->plugins_enabled = true;
   prefs->java_enabled = false;
+
+  prefs->allow_displaying_insecure_content =
+    !(cmd_line->HasSwitch(switches::kNoDisplayingInsecureContent));
+  prefs->allow_running_insecure_content =
+    cmd_line->HasSwitch(switches::kAllowRunningInsecureContent);
 
   base::DictionaryValue* webkit;
   if (package->root()->GetDictionary(switches::kmWebkit, &webkit)) {

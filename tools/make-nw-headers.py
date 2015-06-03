@@ -2,6 +2,7 @@
 import os
 import tarfile
 import sys
+import getnwisrelease
 import getnwversion
 import shutil
 import distutils.core
@@ -22,9 +23,11 @@ script_dir = os.path.dirname(__file__)
 nw_root  = os.path.normpath(os.path.join(script_dir, os.pardir))
 project_root = os.path.normpath(os.path.join(nw_root, os.pardir, os.pardir)) 
 third_party_dir = os.path.normpath(os.path.join(project_root, 'third_party'))
-tmp_dir = tmp_dir = os.path.normpath(os.path.join(nw_root, 'tmp'))
+tmp_dir = os.path.normpath(os.path.join(nw_root, 'tmp'))
 
 nw_version = getnwversion.nw_version
+if getnwisrelease.release == 0:
+    nw_version += getnwisrelease.postfix
 
 #parse command line arguments
 '''

@@ -185,7 +185,7 @@ net::URLRequestContextGetter* ShellBrowserContext::CreateRequestContext(
       package_->path(),
       BrowserThread::UnsafeGetMessageLoopForThread(BrowserThread::IO),
       BrowserThread::UnsafeGetMessageLoopForThread(BrowserThread::FILE),
-      protocol_handlers, this,
+      protocol_handlers, this, protocol_interceptors.Pass(),
       auth_schemes, auth_server_whitelist, auth_delegate_whitelist,
       gssapi_library_name, extension_info_map);
 

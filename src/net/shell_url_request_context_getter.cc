@@ -60,6 +60,7 @@
 #include "net/url_request/static_http_user_agent_settings.h"
 #include "net/url_request/url_request_context.h"
 #include "net/url_request/url_request_context_storage.h"
+#include "net/url_request/url_request_intercepting_job_factory.h"
 #include "net/url_request/url_request_job_factory_impl.h"
 #include "ui/base/l10n/l10n_util.h"
 
@@ -132,6 +133,7 @@ ShellURLRequestContextGetter::ShellURLRequestContextGetter(
     MessageLoop* file_loop,
     ProtocolHandlerMap* protocol_handlers,
     ShellBrowserContext* browser_context,
+    URLRequestInterceptorScopedVector request_interceptors,
     const std::string& auth_schemes,
     const std::string& auth_server_whitelist,
     const std::string& auth_delegate_whitelist,
@@ -149,6 +151,7 @@ ShellURLRequestContextGetter::ShellURLRequestContextGetter(
       io_loop_(io_loop),
       file_loop_(file_loop),
       browser_context_(browser_context),
+      request_interceptors_(request_interceptors.Pass()),
       extension_info_map_(extension_info_map){
   // Must first be created on the UI thread.
   DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
@@ -190,8 +193,8 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
     cookie_store->GetCookieMonster()->SetPersistSessionCookies(true);
     storage_->set_cookie_store(cookie_store.get());
 
-    const char* schemes[] = {"http", "https", "file", "app"};
-    cookie_store->GetCookieMonster()->SetCookieableSchemes(schemes, 4);
+    const char* schemes[] = {"http", "https", "ws", "wss", "app", "file"};
+    cookie_store->GetCookieMonster()->SetCookieableSchemes(schemes, 6);
 
     storage_->set_channel_id_service(new net::ChannelIDService(
         new net::DefaultChannelIDStore(NULL),
@@ -244,7 +247,7 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
     net::HttpCache::DefaultBackend* main_backend =
         new net::HttpCache::DefaultBackend(
             net::DISK_CACHE,
-            net::CACHE_BACKEND_SIMPLE,
+            net::CACHE_BACKEND_BLOCKFILE,
             cache_path,
             10 * 1024 * 1024,  // 10M
             BrowserThread::GetMessageLoopProxyForThread(
@@ -292,8 +295,19 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
                                     new net::AppProtocolHandler(root_path_));
     job_factory->SetProtocolHandler("nw", new nw::NwProtocolHandler());
 
-    storage_->set_job_factory(job_factory.release());
+    // Set up interceptors in the reverse order.
+    scoped_ptr<net::URLRequestJobFactory> top_job_factory =
+        job_factory.Pass();
+    for (URLRequestInterceptorScopedVector::reverse_iterator i =
+             request_interceptors_.rbegin();
+         i != request_interceptors_.rend();
+         ++i) {
+      top_job_factory.reset(new net::URLRequestInterceptingJobFactory(
+          top_job_factory.Pass(), make_scoped_ptr(*i)));
+    }
+    request_interceptors_.weak_clear();
 
+    storage_->set_job_factory(top_job_factory.release());
   }
 
   return url_request_context_.get();

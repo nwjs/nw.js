@@ -164,6 +164,14 @@ void Screen::Call(DispatcherHost* dispatcher_host,
       // Screen Picker GUI is still active, return false;
       result->AppendBoolean(false);
     }
+  } else if (method == "CancelChooseDesktopMedia") {
+    if (gpDCCDMF) {
+      gpDCCDMF->Cancel();
+      gpDCCDMF = NULL;
+      result->AppendBoolean(true);
+    } else {
+      result->AppendBoolean(false);
+    }
   }
 
 }

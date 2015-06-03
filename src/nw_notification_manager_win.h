@@ -45,6 +45,8 @@ class NotificationManagerWin : public NotificationManager {
   // variable to store the latest notification data, windows can only show 1 notification
   int render_process_id_, notification_id_;
 
+  bool Init();
+
   // dispatch the events from the latest notification
   bool DesktopNotificationPostClick() {
     return NotificationManager::DesktopNotificationPostClick(render_process_id_, notification_id_);

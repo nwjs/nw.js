@@ -26,10 +26,10 @@ function App() {
 require('util').inherits(App, exports.Base);
 
 App.filteredArgv = [
-  /--no-toolbar/,
-  /--url=.*/,
-  /--remote-debugging-port=.*/,
-  /--renderer-cmd-prefix.*/,
+  /^--no-toolbar$/,
+  /^--url=/,
+  /^--remote-debugging-port=/,
+  /^--renderer-cmd-prefix/,
 ];
 
 App.prototype.quit = function() {

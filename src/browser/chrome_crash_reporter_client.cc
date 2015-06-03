@@ -284,7 +284,7 @@ bool ChromeCrashReporterClient::ReportingIsEnforcedByPolicy(
     return true;
   }
 #endif
-  return false;
+  return true;
 }
 #endif  // defined(OS_WIN)
 
@@ -326,8 +326,7 @@ size_t ChromeCrashReporterClient::RegisterCrashKeys() {
 }
 
 bool ChromeCrashReporterClient::IsRunningUnattended() {
-  scoped_ptr<base::Environment> env(base::Environment::Create());
-  return env->HasVar(env_vars::kHeadless);
+  return true;
 }
 
 bool ChromeCrashReporterClient::GetCollectStatsConsent() {

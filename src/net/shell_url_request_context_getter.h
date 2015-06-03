@@ -62,6 +62,7 @@ class ShellBrowserContext;
       base::MessageLoop* file_loop,
       ProtocolHandlerMap* protocol_handlers,
       ShellBrowserContext*,
+      URLRequestInterceptorScopedVector request_interceptors,
       const std::string& auth_schemes,
       const std::string& auth_server_whitelist,
       const std::string& auth_delegate_whitelist,
@@ -108,6 +109,7 @@ class ShellBrowserContext;
   scoped_ptr<net::URLSecurityManager> url_security_manager_;
   ProtocolHandlerMap protocol_handlers_;
   ShellBrowserContext* browser_context_;
+  URLRequestInterceptorScopedVector request_interceptors_;
   extensions::InfoMap* extension_info_map_;
 
   DISALLOW_COPY_AND_ASSIGN(ShellURLRequestContextGetter);
