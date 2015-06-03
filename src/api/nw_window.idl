@@ -57,5 +57,6 @@ namespace nw.Window {
   };
   interface Events {
     [nocompile] static void onNewWinPolicy();
+    [nocompile] static void onNavigation();
   };
 };
