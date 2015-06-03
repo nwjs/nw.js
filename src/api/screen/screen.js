@@ -25,6 +25,7 @@ function DesktopCaptureMonitor() {
 }
 require('util').inherits(DesktopCaptureMonitor, exports.Base);
 
+
 DesktopCaptureMonitor.prototype.start = function (screens, windows) {
     if (this.started)
         return false;
@@ -43,6 +44,11 @@ DesktopCaptureMonitor.prototype.stop = function () {
 }
 
 DesktopCaptureMonitor.prototype.on('__nw_desktop_capture_monitor_listner_added', function (id, name, order, type) {
+	if(this.sources.indexOf(id)!=-1)
+	{
+		//TODO: Find out what this event comes twice on some platforms
+		return;
+	}
     this.sources.splice(order, 0, id);
     this.emit("added", id, name, order, type);
     for (var i = order + 1; i <= this.sources.length - 1; i++) {
@@ -79,6 +85,7 @@ DesktopCaptureMonitor.prototype.on('__nw_desktop_capture_monitor_listner_thumbna
     this.emit("thumbnailchanged", id, thumbnail);
 });
 
+var listenerCount=0;
 DesktopCaptureMonitor.prototype.on = DesktopCaptureMonitor.prototype.addListener = function (ev, callback) {
     //throw except if unsupported event
     if (ev != "added" && ev != "removed" && ev != "orderchanged" && ev != "namechanged" && ev != "thumbnailchanged")
@@ -86,6 +93,9 @@ DesktopCaptureMonitor.prototype.on = DesktopCaptureMonitor.prototype.addListener
 
     process.EventEmitter.prototype.addListener.apply(this, arguments);
 }
+
+
+exports.DesktopCaptureMonitor=DesktopCaptureMonitor;
 
 var screenInstance = null;
 

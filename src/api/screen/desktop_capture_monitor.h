@@ -30,7 +30,7 @@ namespace nwapi {
 			DesktopCaptureMonitor(int id,
 				const base::WeakPtr<DispatcherHost>& dispatcher_host,
 				const base::DictionaryValue& option);
-			virtual ~DesktopCaptureMonitor();
+			virtual ~DesktopCaptureMonitor() override;
 			virtual void CallSync(const std::string& method, const base::ListValue& arguments, base::ListValue* result) override;
 			virtual void OnSourceAdded(int index);
 			virtual void OnSourceRemoved(int index);

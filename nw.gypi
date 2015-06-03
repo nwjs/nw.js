@@ -207,7 +207,7 @@
         'src/api/event/event.cc',
         'src/api/screen/desktop_capture_api.h',
         'src/api/screen/desktop_capture_api.cc',
-		'src/api/screen/desktop_capture_monitor.cc',
+        'src/api/screen/desktop_capture_monitor.cc',
         'src/api/screen/desktop_capture_monitor.h',
         '<(DEPTH)/chrome/browser/media/desktop_media_list.h',
         '<(DEPTH)/chrome/browser/media/desktop_media_list_observer.h',
