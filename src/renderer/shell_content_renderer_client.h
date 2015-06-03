@@ -74,6 +74,7 @@ class ShellContentRendererClient : public ContentRendererClient {
       content::RenderFrame* render_frame,
       const std::string& mime_type,
       const GURL& original_url) override;
+  bool ShouldForwardToGuestContainer(const IPC::Message& msg) override;
 
  protected:
   // app_shell embedders may need custom extensions client interfaces.

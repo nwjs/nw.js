@@ -578,5 +578,10 @@ ShellContentRendererClient::CreateBrowserPluginDelegate(
   }
 }
 
+bool ShellContentRendererClient::ShouldForwardToGuestContainer(
+    const IPC::Message& msg) {
+  return extensions::GuestViewContainer::HandlesMessage(msg);
+}
+
 
 }  // namespace content
