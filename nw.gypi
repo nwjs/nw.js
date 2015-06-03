@@ -645,6 +645,8 @@
       'sources': [
         'src/api/nw_app_api.cc',
         'src/api/nw_app_api.h',
+        'src/api/nw_clipboard_api.cc',
+        'src/api/nw_clipboard_api.h',
         'src/api/nw_window_api.cc',
         'src/api/nw_window_api.h',
         'src/nw_content.cc',

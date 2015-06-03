@@ -15,6 +15,10 @@
     "channel": "stable",
     "contexts": ["blessed_extension"]
   },
+  "nw.Clipboard": {
+    "channel": "stable",
+    "contexts": ["blessed_extension"]
+  },
   "nw.test": {
     "channel": "stable",
     "contexts": ["blessed_extension"]

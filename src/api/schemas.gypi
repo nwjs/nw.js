@@ -10,6 +10,7 @@
     'schema_files': [
       'nw_app.idl',
       'nw_window.idl',
+      'nw_clipboard.idl',
       'nw_current_window_internal.idl',
       'nw_test.idl',
     ],

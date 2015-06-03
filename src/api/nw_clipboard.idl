@@ -1,0 +1,13 @@
+// nw Clipboard API
+[implemented_in="content/nw/src/api/nw_clipboard_api.h"]
+namespace nw.Clipboard {
+  [noinline_doc] dictionary NWClipboard {
+    static DOMString get(DOMString type);
+    static void set(DOMString content, DOMString type);
+  };
+  interface Functions {
+    [nocompile] static NWClipboard get();
+    static DOMString getSync(DOMString type);
+    static void setSync(DOMString content, DOMString type);
+  };
+};
