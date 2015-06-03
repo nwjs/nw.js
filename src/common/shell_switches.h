@@ -77,7 +77,7 @@ extern const char kPrintRaster[];
 #endif
 
 extern const char kCrashDumpsDir[];
-
+extern NW_EXPORT const char kEnableSpellChecking[];
 }  // namespace switches
 
 #endif  // CONTENT_NW_SRC_SHELL_SWITCHES_H_
