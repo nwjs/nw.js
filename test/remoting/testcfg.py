@@ -1,0 +1,92 @@
+import test
+import os
+from os.path import join, dirname, exists, basename, isdir
+import re
+import utils
+
+class RemotingTestCase(test.TestCase):
+
+  def __init__(self, path, file, arch, mode, context, config, additional=[]):
+    super(RemotingTestCase, self).__init__(context, path, arch, mode)
+    self.file = file
+    self.config = config
+    self.arch = arch
+    self.mode = mode
+    self.additional_flags = additional
+
+  def GetTmpDir(self):
+    return "%s.%d" % (self.tmpdir, self.thread_id)
+
+  def GetChromeDriver(self, arch, mode):
+    if arch == 'none':
+      name = 'out/Debug/chromedriver' if mode == 'debug' else 'out/Release/chromedriver'
+    else:
+      name = 'out/%s_%s/chromedriver' % (mode, arch)
+    # Currently GYP does not support output_dir for MSVS.
+    # http://code.google.com/p/gyp/issues/detail?id=40
+    # It will put the builds into Release/iojs.exe or Debug/iojs.exe
+    if utils.IsWindows():
+        name = os.path.abspath(name + '.exe')
+
+    return name
+  
+  def AfterRun(self, result):
+      return
+
+  def BeforeRun(self):
+      return
+
+  def GetLabel(self):
+    return "%s %s" % (self.mode, self.GetName())
+
+  def GetName(self):
+    return self.path[-1]
+
+  def GetEnv(self):
+      libpath = join(self.file, '..', '..', '..', '..', '..', 'third_party/webdriver/pylib')
+      return {'PYTHONPATH': libpath, 'CHROMEDRIVER': self.GetChromeDriver(self.arch, self.mode)}
+
+  def GetCommand(self):
+    result = ['python']
+    result += [self.file + '/test.py']
+
+    return result
+
+  def IsFailureOutput(self, output):
+    return output.exit_code != 0
+
+  def GetSource(self):
+    return open(self.file).read()
+
+class RemotingTestConfiguration(test.TestConfiguration):
+
+  def __init__(self, context, root, section, additional=[]):
+    super(RemotingTestConfiguration, self).__init__(context, root)
+    self.section = section
+    self.additional_flags = additional
+
+  def Ls(self, path):
+    def SelectTest(name):
+      return os.path.isdir(os.path.join(path, name))
+    return [f[0:] for f in os.listdir(path) if SelectTest(f)]
+
+  def ListTests(self, current_path, path, arch, mode):
+    all_tests = [current_path + [t] for t in self.Ls(join(self.root))]
+    result = []
+    for test in all_tests:
+      if self.Contains(path, test):
+        file_path = join(self.root, reduce(join, test[1:], ""))
+        result.append(RemotingTestCase(test, file_path, arch, mode, self.context,
+                                     self, self.additional_flags))
+    return result
+
+  def GetBuildRequirements(self):
+    return ['sample', 'sample=shell']
+
+  def GetTestStatus(self, sections, defs):
+    status_file = join(self.root, '%s.status' % (self.section))
+    if exists(status_file):
+      test.ReadConfigurationInto(status_file, sections, defs)
+
+def GetConfiguration(context, root):
+  return RemotingTestConfiguration(context, root, 'remoting')

@@ -422,6 +422,9 @@ class TestCase(object):
                       output,
                       self.context.store_unexpected_output)
 
+  def GetEnv(self):
+    return {}
+
   def BeforeRun(self):
     pass
 
@@ -432,9 +435,9 @@ class TestCase(object):
     self.BeforeRun()
 
     try:
-      result = self.RunCommand(self.GetCommand(), {
-        "TEST_THREAD_ID": "%d" % self.thread_id
-      })
+      env = self.GetEnv()
+      env.update({"TEST_THREAD_ID": "%d" % self.thread_id})
+      result = self.RunCommand(self.GetCommand(), env)
     finally:
       # Tests can leave the tty in non-blocking mode. If the test runner
       # tries to print to stdout/stderr after that and the tty buffer is
@@ -749,13 +752,13 @@ class Context(object):
     if arch == 'none':
       name = 'out/Debug/nw' if mode == 'debug' else 'out/Release/nw'
     else:
-      name = 'out/%s.%s/iojs' % (arch, mode)
+      name = 'out/%s_%s/nw' % (mode, arch)
 
     # Currently GYP does not support output_dir for MSVS.
     # http://code.google.com/p/gyp/issues/detail?id=40
     # It will put the builds into Release/iojs.exe or Debug/iojs.exe
     if utils.IsWindows():
-      out_dir = os.path.join(dirname(__file__), "..", "out")
+      out_dir = os.path.join(dirname(__file__), "..", "..", "..", "out")
       if not exists(out_dir):
         if mode == 'debug':
           name = os.path.abspath('Debug/nw.exe')
