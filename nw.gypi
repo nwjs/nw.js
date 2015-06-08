@@ -642,6 +642,7 @@
         '<(SHARED_INTERMEDIATE_DIR)/blink/bindings/core/v8/',
       ],
       'defines!': ['CONTENT_IMPLEMENTATION'],
+      'msvs_disabled_warnings': [ 4267, 4800 ],
       'sources': [
         'src/api/nw_app_api.cc',
         'src/api/nw_app_api.h',
