@@ -43,14 +43,14 @@ DesktopCaptureMonitor.prototype.stop = function () {
     return true;
 }
 
-DesktopCaptureMonitor.prototype.on('__nw_desktop_capture_monitor_listner_added', function (id, name, order, type) {
+DesktopCaptureMonitor.prototype.on('__nw_desktop_capture_monitor_listner_added', function (id, name, order, type, primaryindex) {
 	if(this.sources.indexOf(id)!=-1)
 	{
 		//TODO: Find out what this event comes twice on some platforms
 		return;
 	}
     this.sources.splice(order, 0, id);
-    this.emit("added", id, name, order, type);
+    this.emit("added", id, name, order, type, primaryindex);
     for (var i = order + 1; i <= this.sources.length - 1; i++) {
         this.emit("orderchanged", this.sources[i], i, i - 1);
     }

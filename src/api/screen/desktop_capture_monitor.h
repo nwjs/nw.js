@@ -40,6 +40,7 @@ namespace nwapi {
 		private:
 			DesktopCaptureMonitor();
 			DISALLOW_COPY_AND_ASSIGN(DesktopCaptureMonitor);
+			int GetPrimaryMonitorIndex();
 			void Start(bool screens, bool windows);
 			void Stop();
 			

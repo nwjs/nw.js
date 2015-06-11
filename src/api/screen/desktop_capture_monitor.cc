@@ -36,6 +36,9 @@
 #include "ui/gfx/image/image.h"
 #include "ui/gfx/image/image_skia.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 namespace nwapi {
 
@@ -47,6 +50,25 @@ DesktopCaptureMonitor::DesktopCaptureMonitor(int id,
 
 DesktopCaptureMonitor::~DesktopCaptureMonitor() {}
 
+int DesktopCaptureMonitor::GetPrimaryMonitorIndex(){
+#ifdef _WIN32	
+	int count=0;
+	for (int i = 0;; ++i) {
+		DISPLAY_DEVICE device;
+		device.cb = sizeof(device);
+		BOOL ret = EnumDisplayDevices(NULL, i, &device, 0);
+		if(!ret)
+			break;
+		if (device.StateFlags & DISPLAY_DEVICE_ACTIVE){
+			if (device.StateFlags & DISPLAY_DEVICE_PRIMARY_DEVICE){
+				return count;
+			}
+			count++;
+		}
+	}
+#endif
+	return -1;
+}
 
 void DesktopCaptureMonitor::CallSync(const std::string& method, const base::ListValue& arguments, base::ListValue* result){
 	if (method == "start") {
@@ -99,6 +121,9 @@ void DesktopCaptureMonitor::OnSourceAdded(int index){
 	param.AppendString(src.name);
 	param.AppendInteger(index);
 	param.AppendString(type);
+	if(src.id.type == content::DesktopMediaID::TYPE_SCREEN){
+		param.AppendBoolean(GetPrimaryMonitorIndex()==index);
+	}
 	this->dispatcher_host()->SendEvent(this, "__nw_desktop_capture_monitor_listner_added", param);
 }
 void DesktopCaptureMonitor::OnSourceRemoved(int index){
