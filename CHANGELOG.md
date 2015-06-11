@@ -13,7 +13,7 @@
 - 'new-win-policy' event ported (setting manifest in the callback is yet supported)
 - chromedriver fixed
 - don't rewrite process title
-- support 'on-navigation' event
+- support 'Window.navigation' event
 - support JS dialogs (alert(), etc)
 - allow all API permission in NW.js app
 - Clipboard API ported
