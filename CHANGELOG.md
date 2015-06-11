@@ -1,3 +1,34 @@
+0.13.0-alpha1 / 06-11-2015
+==========================
+- [nw12] Fix OSX cpu hog in some cases
+- [nw12] support sudo in Linux
+- Fix: (windows) need to specify full path to the package directory as the command line argument
+- use current process on navigation
+- support Spell checking with '--enable-spell-checking' switch
+- support extension API chrome.proxy
+- command line switch '--url' ported
+- enable local storage in NW.js app
+- save/restore application window geometry between sessions
+- don't open URL with external program
+- 'new-win-policy' event ported (setting manifest in the callback is yet supported)
+- chromedriver fixed
+- don't rewrite process title
+- support 'on-navigation' event
+- support JS dialogs (alert(), etc)
+- allow all API permission in NW.js app
+- Clipboard API ported
+- Fix "__filename" and "__dirname" in "nw" object for Node compatibility
+- Fix OSX packaging way of putting files in 'app.nw' dir
+- New test framework
+
+0.13.0-alpha0 / 05-10-2015
+==========================
+- Change to a slightly new architecture
+- Support more chrome.* APIs
+- Support Chrome App manifest
+- Enable more features like print preview, client certificate, etc.
+- Support message center based notifications
+
 0.12.2 / 05-22-2015
 ===================
 - Fix #2723: [OSX] cpu hog in some cases
