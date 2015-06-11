@@ -384,7 +384,7 @@ class CommandOutput(object):
 
 class TestCase(object):
 
-  def __init__(self, context, path, arch, mode):
+  def __init__(self, context, path, arch, mode, nwdir):
     self.path = path
     self.context = context
     self.duration = None
@@ -392,6 +392,7 @@ class TestCase(object):
     self.mode = mode
     self.parallel = False
     self.thread_id = 0
+    self.nwdir = nwdir
 
   def IsNegative(self):
     return False
@@ -683,10 +684,10 @@ class TestRepository(TestSuite):
   def GetBuildRequirements(self, path, context):
     return self.GetConfiguration(context).GetBuildRequirements()
 
-  def AddTestsToList(self, result, current_path, path, context, arch, mode):
+  def AddTestsToList(self, result, current_path, path, context, arch, mode, nwdir):
     for v in VARIANT_FLAGS:
       tests = self.GetConfiguration(context).ListTests(current_path, path,
-                                                       arch, mode)
+                                                       arch, mode, nwdir)
       for t in tests: t.variant_flags = v
       result += tests
 
@@ -709,14 +710,14 @@ class LiteralTestSuite(TestSuite):
         result += test.GetBuildRequirements(rest, context)
     return result
 
-  def ListTests(self, current_path, path, context, arch, mode):
+  def ListTests(self, current_path, path, context, arch, mode, nwdir):
     (name, rest) = CarCdr(path)
     result = [ ]
     for test in self.tests:
       test_name = test.GetName()
       if not name or name.match(test_name):
         full_path = current_path + [test_name]
-        test.AddTestsToList(result, full_path, path, context, arch, mode)
+        test.AddTestsToList(result, full_path, path, context, arch, mode, nwdir)
     result.sort(cmp=lambda a, b: cmp(a.GetName(), b.GetName()))
     return result
 
@@ -748,26 +749,12 @@ class Context(object):
     self.suppress_dialogs = suppress_dialogs
     self.store_unexpected_output = store_unexpected_output
 
-  def GetVm(self, arch, mode):
-    if arch == 'none':
-      name = 'out/Debug/nw' if mode == 'debug' else 'out/Release/nw'
-    else:
-      name = 'out/%s_%s/nw' % (mode, arch)
-
-    # Currently GYP does not support output_dir for MSVS.
-    # http://code.google.com/p/gyp/issues/detail?id=40
-    # It will put the builds into Release/iojs.exe or Debug/iojs.exe
+  def GetVm(self, arch, mode, nwdir):
+    if utils.GuessOS() == 'linux':
+      return os.path.join(nwdir, "nw")
     if utils.IsWindows():
-      out_dir = os.path.join(dirname(__file__), "..", "..", "..", "out")
-      if not exists(out_dir):
-        if mode == 'debug':
-          name = os.path.abspath('Debug/nw.exe')
-        else:
-          name = os.path.abspath('Release/nw.exe')
-      else:
-        name = os.path.abspath(name + '.exe')
-
-    return name
+      return os.path.join(nwdir, "nw.exe")
+    return os.path.join(nwdir, "nwjs.app/Contents/MacOS/nwjs")
 
   def GetVmFlags(self, testcase, mode):
     return testcase.variant_flags + FLAGS[mode]
@@ -1218,7 +1205,9 @@ ARCH_GUESS = utils.GuessArchitecture()
 
 def BuildOptions():
   result = optparse.OptionParser()
-  result.add_option("-m", "--mode", help="The test modes in which to run (comma-separated)",
+  result.add_option("-d", "--nwdir", help="The directory where the binary resides",
+      default='.')
+  result.add_option("-m", "--mode", help="test mode",
       default='release')
   result.add_option("-v", "--verbose", help="Verbose output",
       default=False, action="store_true")
@@ -1436,7 +1425,7 @@ def Main():
   for path in paths:
     for arch in options.arch:
       for mode in options.mode:
-        vm = context.GetVm(arch, mode)
+        vm = context.GetVm(arch, mode, options.nwdir)
         if not exists(vm):
           print "Can't find shell executable: '%s'" % vm
           continue
@@ -1445,7 +1434,7 @@ def Main():
           'system': utils.GuessOS(),
           'arch': arch,
         }
-        test_list = root.ListTests([], path, context, arch, mode)
+        test_list = root.ListTests([], path, context, arch, mode, options.nwdir)
         unclassified_tests += test_list
         (cases, unused_rules, all_outcomes) = (
             config.ClassifyTests(test_list, env))

@@ -913,6 +913,29 @@
       ],
     },
     {
+      'target_name': 'test',
+      'type': 'none',
+      'dependencies': [
+        '<(DEPTH)/chrome/chrome.gyp:chromedriver',
+      ],
+      'actions': [
+        {
+          'action_name': 'run_tests',
+          'variables':{
+            'test_script': '<(DEPTH)/content/nw/test/test.py',
+          },
+          'inputs': [
+            '<(test_script)',
+          ],
+          'outputs':[
+            '<(PRODUCT_DIR)/run_tests.re',
+          ],
+          'action': ['python', '<(test_script)', '-d', '<(PRODUCT_DIR)',
+                     'remoting'],
+        },
+      ],
+    },
+    {
       'target_name': 'nwlegacy',
       'type': 'executable',
       'mac_bundle': 1,

@@ -6,29 +6,23 @@ import utils
 
 class RemotingTestCase(test.TestCase):
 
-  def __init__(self, path, file, arch, mode, context, config, additional=[]):
-    super(RemotingTestCase, self).__init__(context, path, arch, mode)
+  def __init__(self, path, file, arch, mode, nwdir, context, config, additional=[]):
+    super(RemotingTestCase, self).__init__(context, path, arch, mode, nwdir)
     self.file = file
     self.config = config
     self.arch = arch
     self.mode = mode
     self.additional_flags = additional
+    self.nwdir = nwdir
 
   def GetTmpDir(self):
     return "%s.%d" % (self.tmpdir, self.thread_id)
 
-  def GetChromeDriver(self, arch, mode):
-    if arch == 'none':
-      name = 'out/Debug/chromedriver' if mode == 'debug' else 'out/Release/chromedriver'
-    else:
-      name = 'out/%s_%s/chromedriver' % (mode, arch)
-    # Currently GYP does not support output_dir for MSVS.
-    # http://code.google.com/p/gyp/issues/detail?id=40
-    # It will put the builds into Release/iojs.exe or Debug/iojs.exe
+  def GetChromeDriver(self, arch, mode, nwdir):
     if utils.IsWindows():
-        name = os.path.abspath(name + '.exe')
+        return os.path.abspath(join(nwdir, 'chromedriver.exe'))
 
-    return name
+    return os.path.abspath(join(nwdir, 'chromedriver'))
   
   def AfterRun(self, result):
       return
@@ -44,7 +38,7 @@ class RemotingTestCase(test.TestCase):
 
   def GetEnv(self):
       libpath = join(self.file, '..', '..', '..', '..', '..', 'third_party/webdriver/pylib')
-      return {'PYTHONPATH': libpath, 'CHROMEDRIVER': self.GetChromeDriver(self.arch, self.mode)}
+      return {'PYTHONPATH': libpath, 'CHROMEDRIVER': self.GetChromeDriver(self.arch, self.mode, self.nwdir)}
 
   def GetCommand(self):
     result = ['python']
@@ -70,13 +64,13 @@ class RemotingTestConfiguration(test.TestConfiguration):
       return os.path.isdir(os.path.join(path, name))
     return [f[0:] for f in os.listdir(path) if SelectTest(f)]
 
-  def ListTests(self, current_path, path, arch, mode):
+  def ListTests(self, current_path, path, arch, mode, nwdir):
     all_tests = [current_path + [t] for t in self.Ls(join(self.root))]
     result = []
     for test in all_tests:
       if self.Contains(path, test):
         file_path = join(self.root, reduce(join, test[1:], ""))
-        result.append(RemotingTestCase(test, file_path, arch, mode, self.context,
+        result.append(RemotingTestCase(test, file_path, arch, mode, nwdir, self.context,
                                      self, self.additional_flags))
     return result
 
