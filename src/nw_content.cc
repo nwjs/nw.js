@@ -294,6 +294,40 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
 
 }
 
+void AmendManifestContentScriptList(base::DictionaryValue* manifest,
+                                    const std::string& name,
+                                    const std::string& run_at) {
+  base::ListValue* scripts = NULL;
+  base::Value* temp_value = NULL;
+  bool amend = false;
+
+  if (manifest->Get(manifest_keys::kContentScripts, &temp_value))
+      if (temp_value->GetAsList(&scripts))
+        amend = true;
+  if (!scripts)
+    scripts = new base::ListValue();
+
+  std::string js;
+  if (manifest->GetString(name, &js)) {
+    base::ListValue* js_list = new base::ListValue();
+    js_list->Append(new base::StringValue(js));
+
+    base::ListValue* matches = new base::ListValue();
+    matches->Append(new base::StringValue("<all_urls>"));
+
+    base::DictionaryValue* content_script = new base::DictionaryValue();
+    content_script->Set("js", js_list);
+    content_script->Set("matches", matches);
+    content_script->SetString("run_at", run_at);
+    content_script->SetBoolean("in_main_world", true);
+
+    scripts->Append(content_script);
+
+    if (!amend)
+      manifest->Set(manifest_keys::kContentScripts, scripts);
+  }
+}
+
 void AmendManifestStringList(base::DictionaryValue* manifest,
                    const std::string& path,
                    const std::string& string_value) {
@@ -338,8 +372,11 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* erro
 
     AmendManifestStringList(manifest, manifest_keys::kPermissions, "developerPrivate");
     AmendManifestStringList(manifest, manifest_keys::kPermissions, "management");
-
   }
+
+  AmendManifestContentScriptList(manifest, "inject-js-start", "document_start");
+  AmendManifestContentScriptList(manifest, "inject-js-end",   "document_end");
+
   if (manifest->GetString("window.icon", &icon_path)) {
     gfx::Image app_icon;
     if (GetPackageImage(package, base::FilePath::FromUTF8Unsafe(icon_path), &app_icon)) {
