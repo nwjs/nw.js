@@ -1,15 +1,20 @@
+#include "extensions/browser/app_window/app_window.h"
+
 #include "nw_content.h"
 #include "nw_base.h"
 
 #include "base/command_line.h"
 #include "base/files/file_util.h"
+#include "base/json/json_reader.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_util.h"
+#include "base/strings/utf_string_conversions.h"
 #include "base/threading/thread_restrictions.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/public/browser/notification_service.h"
 #include "content/public/browser/notification_types.h"
 #include "content/public/browser/render_process_host.h"
+#include "content/public/browser/web_contents.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/result_codes.h"
 #include "content/public/renderer/render_view.h"
@@ -29,9 +34,11 @@
 #include "third_party/WebKit/public/web/WebView.h"
 #include "third_party/WebKit/public/web/WebDocument.h"
 #include "third_party/WebKit/public/web/WebLocalFrame.h"
+#include "third_party/WebKit/public/web/WebScriptSource.h"
 
 #include "chrome/common/chrome_version_info_values.h"
 
+#include "ui/base/ui_base_types.h"
 #include "ui/gfx/image/image.h"
 #include "ui/gfx/image/image_skia_rep.h"
 #include "ui/gfx/codec/png_codec.h"
@@ -59,9 +66,14 @@
 #include "third_party/WebKit/Source/web/WebLocalFrameImpl.h"
 #include "V8HTMLElement.h"
 
+#include "content/renderer/render_view_impl.h"
+
+using content::RenderView;
+using content::RenderViewImpl;
 using extensions::ScriptContext;
 using extensions::Manifest;
 using extensions::Feature;
+using blink::WebScriptSource;
 
 namespace manifest_keys = extensions::manifest_keys;
 
@@ -150,6 +162,36 @@ void MainPartsPostDestroyThreadsHook() {
   ReleaseNWPackage();
 }
 
+void DocumentFinishHook(blink::WebFrame* frame,
+                         const extensions::Extension* extension,
+                         const GURL& effective_document_url) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope hscope(isolate);
+  std::string path = effective_document_url.path();
+  v8::Local<v8::Context> v8_context = frame->mainWorldScriptContext();
+  std::string root_path = extension->path().AsUTF8Unsafe();
+  base::FilePath root(root_path);
+  RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
+  if (!rv)
+    return;
+  std::string js_fn = rv->renderer_preferences().nw_inject_js_doc_end;
+  if (js_fn.empty())
+    return;
+  base::FilePath js_file = root.AppendASCII(js_fn);
+  std::string content;
+  if (!base::ReadFileToString(js_file, &content)) {
+    //LOG(WARNING) << "Failed to load js script file: " << js_file.value();
+    return;
+  }
+  base::string16 jscript = base::UTF8ToUTF16(content);
+  {
+    blink::WebScopedMicrotaskSuppression suppression;
+    v8::Context::Scope cscope(v8_context);
+    // v8::Handle<v8::Value> result;
+    frame->executeScriptAndReturnValue(WebScriptSource(jscript));
+  }
+}
+
 void DocumentElementHook(blink::WebFrame* frame,
                          const extensions::Extension* extension,
                          const GURL& effective_document_url) {
@@ -158,11 +200,12 @@ void DocumentElementHook(blink::WebFrame* frame,
   frame->document().securityOrigin().grantUniversalAccess();
   std::string path = effective_document_url.path();
   v8::Local<v8::Context> v8_context = frame->mainWorldScriptContext();
+  std::string root_path = extension->path().AsUTF8Unsafe();
+  base::FilePath root(root_path);
   {
     blink::WebScopedMicrotaskSuppression suppression;
     v8::Context::Scope cscope(v8_context);
     // Make node's relative modules work
-    std::string root_path = extension->path().AsUTF8Unsafe();
 #if defined(OS_WIN)
     base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
 #endif
@@ -179,7 +222,25 @@ void DocumentElementHook(blink::WebFrame* frame,
     CHECK(*script2);
     script2->Run();
   }
-
+  RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
+  if (!rv)
+    return;
+  std::string js_fn = rv->renderer_preferences().nw_inject_js_doc_start;
+  if (js_fn.empty())
+    return;
+  base::FilePath js_file = root.AppendASCII(js_fn);
+  std::string content;
+  if (!base::ReadFileToString(js_file, &content)) {
+    //LOG(WARNING) << "Failed to load js script file: " << js_file.value();
+    return;
+  }
+  base::string16 jscript = base::UTF8ToUTF16(content);
+  {
+    blink::WebScopedMicrotaskSuppression suppression;
+    v8::Context::Scope cscope(v8_context);
+    // v8::Handle<v8::Value> result;
+    frame->executeScriptAndReturnValue(WebScriptSource(jscript));
+  }
 }
 
 void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
@@ -491,6 +552,70 @@ void willHandleNavigationPolicy(content::RenderView* rv,
 
 void ExtensionDispatcherCreated(extensions::Dispatcher* dispatcher) {
   g_dispatcher = dispatcher;
+}
+
+void CalcNewWinParams(content::WebContents* new_contents, void* params,
+                      std::string* nw_inject_js_doc_start,
+                      std::string* nw_inject_js_doc_end) {
+  extensions::AppWindow::CreateParams ret;
+  scoped_ptr<base::Value> val;
+  scoped_ptr<base::DictionaryValue> manifest;
+  std::string manifest_str = base::UTF16ToUTF8(nw::GetCurrentNewWinManifest());
+  val.reset(base::JSONReader().ReadToValue(manifest_str));
+  if (val.get() && val->IsType(base::Value::TYPE_DICTIONARY))
+    manifest.reset(static_cast<base::DictionaryValue*>(val.release()));
+  else
+    manifest.reset(new base::DictionaryValue());
+
+  bool resizable;
+  if (manifest->GetBoolean(switches::kmResizable, &resizable)) {
+    ret.resizable = resizable;
+  }
+  bool fullscreen;
+  if (manifest->GetBoolean(switches::kmFullscreen, &fullscreen) && fullscreen) {
+    ret.state = ui::SHOW_STATE_FULLSCREEN;
+  }
+  int width = 0, height = 0;
+  if (manifest->GetInteger(switches::kmWidth, &width))
+    ret.content_spec.bounds.set_width(width);
+  if (manifest->GetInteger(switches::kmHeight, &height))
+    ret.content_spec.bounds.set_height(height);
+
+  int x = 0, y = 0;
+  if (manifest->GetInteger(switches::kmX, &x))
+    ret.window_spec.bounds.set_x(x);
+  if (manifest->GetInteger(switches::kmY, &y))
+    ret.window_spec.bounds.set_y(y);
+  bool top;
+  if (manifest->GetBoolean(switches::kmAlwaysOnTop, &top) && top) {
+    ret.always_on_top = true;
+  }
+  bool frame;
+  if (manifest->GetBoolean(switches::kmFrame, &frame) && !frame) {
+    ret.frame = extensions::AppWindow::FRAME_NONE;
+  }
+  bool all_workspaces;
+  if (manifest->GetBoolean(switches::kmVisibleOnAllWorkspaces, &all_workspaces)
+    && all_workspaces) {
+    ret.visible_on_all_workspaces = true;
+  }
+  gfx::Size& minimum_size = ret.content_spec.minimum_size;
+  int min_height = 0, min_width = 0;
+  if (manifest->GetInteger(switches::kmMinWidth, &min_width))
+    minimum_size.set_width(min_width);
+  if (manifest->GetInteger(switches::kmMinHeight, &min_height))
+    minimum_size.set_height(min_height);
+  int max_height = 0, max_width = 0;
+  gfx::Size& maximum_size = ret.content_spec.maximum_size;
+  if (manifest->GetInteger(switches::kmMaxWidth, &max_width))
+    maximum_size.set_width(max_width);
+  if (manifest->GetInteger(switches::kmMaxHeight, &max_height))
+    maximum_size.set_height(max_height);
+
+  *(extensions::AppWindow::CreateParams*)params = ret;
+
+  manifest->GetString(switches::kmInjectJSDocStart, nw_inject_js_doc_start);
+  manifest->GetString(switches::kmInjectJSDocEnd, nw_inject_js_doc_end);
 }
 
 } //namespace nw

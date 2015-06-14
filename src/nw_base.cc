@@ -7,6 +7,7 @@ namespace nw {
 namespace {
 Package* g_package;
 int exit_code;
+base::string16 g_current_new_win_manifest;
 }
 
 Package* package() {
@@ -34,5 +35,14 @@ void SetExitCode(int code) {
 int ExitCodeHook() {
   return exit_code;
 }
+
+void SetCurrentNewWinManifest(const base::string16& manifest) {
+  g_current_new_win_manifest = manifest;
+}
+
+const base::string16& GetCurrentNewWinManifest() {
+  return g_current_new_win_manifest;
+}
+
 
 } //namespace nw
