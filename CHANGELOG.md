@@ -1,3 +1,11 @@
+0.11.7-rc5 / 06-14-2015
+===================
+- Upgraded Node.js to 0.12.4
+- Upgraded V8 to 3.28.71.19 + Node.js Patches
+- Backport: DevTools: [SSP] show links for matched styles with spaces in source URL
+- Fix: new-win-policy doesn't handle middle button click properly
+- Fix: fs.createReadStream with utf8 crashes on some binaries
+
 0.11.7-rc4 / 05-26-2015
 ===================
 - Fix: console object missing issue in some scenario
