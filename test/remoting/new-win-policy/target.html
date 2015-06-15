@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf8">
+	<title></title>
+<script>
+var result = result||[];
+window.onload = function() {
+  result.push("onload-dom");
+  document.getElementById('output').value = (JSON.stringify(result));
+}
+</script>
+</head>
+<body>
+	<script type="text/javascript">
+		var result = result||[];
+		result.push("body-start");
+	</script>
+<textarea id="output" rows="12" cols="80" style="font-family: monospace;"></textarea>
+</body>
+</html>
