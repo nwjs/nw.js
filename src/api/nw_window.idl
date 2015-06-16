@@ -4,6 +4,12 @@ namespace nw.Window {
       void ([instanceOf=NWWindow] object createdWindow);
   callback EventCallback = void();
 
+  callback CapturePageCallback = void (DOMString dataUrl);
+  [noinline_doc] dictionary CapturePageOptions {
+    [nodoc] DOMString? format;
+    [nodoc] DOMString? datatype;
+    [nodoc] long? quality;
+  };
   [noinline_doc] dictionary CreateWindowOptions {
     [nodoc] long? x;
     [nodoc] long? y;
@@ -24,6 +30,7 @@ namespace nw.Window {
   [noinline_doc] dictionary NWWindow {
     // show devtools for the current window
     static void showDevTools();
+    static void capturePage(optional CapturePageCallback callback, optional CapturePageOptions options);
     static void show();
     static void hide();
     static void focus();
@@ -60,5 +67,6 @@ namespace nw.Window {
   interface Events {
     [nocompile] static void onNewWinPolicy();
     [nocompile] static void onNavigation();
+    [nocompile] static void LoadingStateChanged();
   };
 };

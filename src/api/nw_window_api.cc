@@ -36,19 +36,19 @@ bool NwCurrentWindowInternalShowDevToolsFunction::RunAsync() {
   return true;
 }
 
-NwCurrentWindowInternalCapturePageFunction::NwCurrentWindowInternalCapturePageFunction() {
+NwCurrentWindowInternalCapturePageInternalFunction::NwCurrentWindowInternalCapturePageInternalFunction() {
 }
 
-NwCurrentWindowInternalCapturePageFunction::~NwCurrentWindowInternalCapturePageFunction() {
+NwCurrentWindowInternalCapturePageInternalFunction::~NwCurrentWindowInternalCapturePageInternalFunction() {
 }
 
-bool NwCurrentWindowInternalCapturePageFunction::RunAsync() {
+bool NwCurrentWindowInternalCapturePageInternalFunction::RunAsync() {
   EXTENSION_FUNCTION_VALIDATE(args_);
 
   scoped_ptr<ImageDetails> image_details;
-  if (args_->GetSize() > 0) {
+  if (args_->GetSize() > 1) {
     base::Value* spec = NULL;
-    EXTENSION_FUNCTION_VALIDATE(args_->Get(0, &spec) && spec);
+    EXTENSION_FUNCTION_VALIDATE(args_->Get(1, &spec) && spec);
     image_details = ImageDetails::FromValue(*spec);
   }
 
@@ -94,13 +94,13 @@ bool NwCurrentWindowInternalCapturePageFunction::RunAsync() {
   host->CopyFromBackingStore(
       gfx::Rect(view_size),
       bitmap_size,
-      base::Bind(&NwCurrentWindowInternalCapturePageFunction::CopyFromBackingStoreComplete,
+      base::Bind(&NwCurrentWindowInternalCapturePageInternalFunction::CopyFromBackingStoreComplete,
                  this),
       kN32_SkColorType);
   return true;
 }
 
-void NwCurrentWindowInternalCapturePageFunction::CopyFromBackingStoreComplete(
+void NwCurrentWindowInternalCapturePageInternalFunction::CopyFromBackingStoreComplete(
     const SkBitmap& bitmap,
     content::ReadbackResponse response) {
   if (response == content::READBACK_SUCCESS) {
@@ -110,7 +110,7 @@ void NwCurrentWindowInternalCapturePageFunction::CopyFromBackingStoreComplete(
   OnCaptureFailure(FAILURE_REASON_UNKNOWN);
 }
 
-void NwCurrentWindowInternalCapturePageFunction::OnCaptureSuccess(const SkBitmap& bitmap) {
+void NwCurrentWindowInternalCapturePageInternalFunction::OnCaptureSuccess(const SkBitmap& bitmap) {
   std::vector<unsigned char> data;
   SkAutoLockPixels screen_capture_lock(bitmap);
   bool encoded = false;
@@ -154,7 +154,7 @@ void NwCurrentWindowInternalCapturePageFunction::OnCaptureSuccess(const SkBitmap
   SendResponse(true);
 }
 
-void NwCurrentWindowInternalCapturePageFunction::OnCaptureFailure(FailureReason reason) {
+void NwCurrentWindowInternalCapturePageInternalFunction::OnCaptureFailure(FailureReason reason) {
   const char* reason_description = "internal error";
   switch (reason) {
     case FAILURE_REASON_UNKNOWN:

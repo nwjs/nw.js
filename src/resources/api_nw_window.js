@@ -22,12 +22,17 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       NWWindow.prototype[key] = value;
     });
 
-    NWWindow.prototype.onNewWinPolicy = new Event();
-    NWWindow.prototype.onNavigation = new Event();
+    NWWindow.prototype.onNewWinPolicy      = new Event();
+    NWWindow.prototype.onNavigation        = new Event();
+    NWWindow.prototype.LoadingStateChanged = new Event();
+
     NWWindow.prototype.on = function (event, callback) {
       switch (event) {
       case 'closed':
         this.appWindow.onClosed.addListener(callback);
+        break;
+      case 'loaded':
+        this.LoadingStateChanged.addListener(function(status) { callback(status); });
         break;
       case 'new-win-policy':
         this.onNewWinPolicy.addListener(function(frame, url, policy) {
@@ -47,6 +52,28 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         });
         break;
       }
+    };
+    NWWindow.prototype.capturePage = function (callback, options) {
+      var cb = callback;
+      if (!options)
+        options = {'format':'jpeg', 'datatype':'datauri'};
+      if (typeof options == 'string')
+        options = {'format':options, 'datatype':'datauri'};
+      if (options.datatype != 'datauri') {
+        cb = function (format, datauri) {
+          var raw = datauri.replace(/^data:[^;]*;base64,/, '');
+          switch(format){
+          case 'buffer' :
+            callback(new nw.Buffer(raw, "base64"));
+            break;
+          case 'raw' :
+            callback(raw);
+            break;
+          }
+        };
+        cb = cb.bind(undefined, options.datatype);
+      }
+      currentNWWindowInternal.capturePageInternal(options, cb);
     };
     NWWindow.prototype.eval = function (frame, script) {
       nwNatives.evalScript(frame, script);
@@ -131,34 +158,36 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     //FIXME: unify this conversion code with nwjs/default.js
     options.innerBounds = {};
     options.outerBounds = {};
-    if (params.frame === false)
-      options.frame = 'none';
-    if (params.resizable === false)
-      options.resizable = false;
-    if (params.x)
-      options.outerBounds.left = params.x;
-    if (params.y)
-      options.outerBounds.top = params.y;
-    if (params.height)
-      options.innerBounds.height = params.height;
-    if (params.width)
-      options.innerBounds.width = params.width;
-    if (params.min_width)
-      options.innerBounds.minWidth = params.min_width;
-    if (params.max_width)
-      options.innerBounds.maxWidth = params.max_width;
-    if (params.min_height)
-      options.innerBounds.minHeight = params.min_height;
-    if (params.max_height)
-      options.innerBounds.maxHeight = params.max_height;
-    if (params.fullscreen === true)
-      options.state = 'fullscreen';
-    if (params.show === false)
-      options.hidden = true;
-    if (params['always_on_top'] === true)
-      options.alwaysOnTop = true;
-    if (params['visible_on_all_workspaces'] === true)
-      options.visibleOnAllWorkspaces = true;
+    if (params) {
+      if (params.frame === false)
+        options.frame = 'none';
+      if (params.resizable === false)
+        options.resizable = false;
+      if (params.x)
+        options.outerBounds.left = params.x;
+      if (params.y)
+        options.outerBounds.top = params.y;
+      if (params.height)
+        options.innerBounds.height = params.height;
+      if (params.width)
+        options.innerBounds.width = params.width;
+      if (params.min_width)
+        options.innerBounds.minWidth = params.min_width;
+      if (params.max_width)
+        options.innerBounds.maxWidth = params.max_width;
+      if (params.min_height)
+        options.innerBounds.minHeight = params.min_height;
+      if (params.max_height)
+        options.innerBounds.maxHeight = params.max_height;
+      if (params.fullscreen === true)
+        options.state = 'fullscreen';
+      if (params.show === false)
+        options.hidden = true;
+      if (params['always_on_top'] === true)
+        options.alwaysOnTop = true;
+      if (params['visible_on_all_workspaces'] === true)
+        options.visibleOnAllWorkspaces = true;
+    }
     chrome.app.window.create(url, options, function(appWin) {
       callback(appWin.contentWindow.nw.Window.get());
     });
@@ -190,6 +219,14 @@ function onNavigation(frame, url, policy, context) {
   dispatchEventIfExists(currentNWWindow, "onNavigation", [frame, url, policy, context]);
 }
 
+function onLoadingStateChanged(status) {
+  console.log("onLoadingStateChanged: " + status);
+  if (!currentNWWindow)
+    return;
+  dispatchEventIfExists(currentNWWindow, "LoadingStateChanged", [status]);
+}
+
 exports.binding = nw_binding.generate();
 exports.onNewWinPolicy = onNewWinPolicy;
 exports.onNavigation = onNavigation;
+exports.LoadingStateChanged = onLoadingStateChanged;

@@ -29,12 +29,12 @@ class NwCurrentWindowInternalShowDevToolsFunction : public AsyncExtensionFunctio
   void Callback();
 };
 
-class NwCurrentWindowInternalCapturePageFunction : public AsyncExtensionFunction {
+class NwCurrentWindowInternalCapturePageInternalFunction : public AsyncExtensionFunction {
  public:
-  NwCurrentWindowInternalCapturePageFunction();
+  NwCurrentWindowInternalCapturePageInternalFunction();
 
  protected:
-  ~NwCurrentWindowInternalCapturePageFunction() override;
+  ~NwCurrentWindowInternalCapturePageInternalFunction() override;
 
   // ExtensionFunction:
   bool RunAsync() override;
@@ -44,7 +44,7 @@ class NwCurrentWindowInternalCapturePageFunction : public AsyncExtensionFunction
     FAILURE_REASON_VIEW_INVISIBLE
   };
   virtual void OnCaptureFailure(FailureReason reason);
-  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.capturePage", UNKNOWN)
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.capturePageInternal", UNKNOWN)
 
  private:
   typedef core_api::extension_types::ImageDetails ImageDetails;
@@ -59,7 +59,7 @@ class NwCurrentWindowInternalCapturePageFunction : public AsyncExtensionFunction
   // Quality setting to use when encoding jpegs.  Set in RunAsync().
   int image_quality_;
 
-  DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalCapturePageFunction);
+  DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalCapturePageInternalFunction);
 };
 
 } // namespace extensions
