@@ -32,7 +32,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         this.appWindow.onClosed.addListener(callback);
         break;
       case 'loaded':
-        this.LoadingStateChanged.addListener(function(status) { callback(status); });
+        this.LoadingStateChanged.addListener(function(status) { if (status == 'loaded') callback(); });
         break;
       case 'new-win-policy':
         this.onNewWinPolicy.addListener(function(frame, url, policy) {
