@@ -6,7 +6,13 @@
 // the shell window.
 [implemented_in="content/nw/src/api/nw_window_api.h"]
 namespace nw.currentWindowInternal {
+  callback CapturePageCallback = void (DOMString dataUrl);
+  [noinline_doc] dictionary CapturePageOptions {
+    [nodoc] DOMString? format;
+    [nodoc] long? quality;
+  };
   interface Functions {
     static void showDevTools();
+    static void capturePage(optional CapturePageOptions options, optional CapturePageCallback callback);
   };
 };
