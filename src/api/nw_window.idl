@@ -42,6 +42,8 @@ namespace nw.Window {
     static void on(DOMString event,
                    EventCallback callback);
 
+    static void eval(object frame, DOMString script);
+    static void evalNWBin(object frame, DOMString path);
     object appWindow;
     object window;
     long x;

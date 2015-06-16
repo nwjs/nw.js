@@ -48,6 +48,12 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         break;
       }
     };
+    NWWindow.prototype.eval = function (frame, script) {
+      nwNatives.evalScript(frame, script);
+    };
+    NWWindow.prototype.evalNWBin = function (frame, path) {
+      nwNatives.evalScript(frame, path);
+    };
     NWWindow.prototype.show = function () {
       this.appWindow.show();
     };
