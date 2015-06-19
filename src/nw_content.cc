@@ -170,7 +170,7 @@ void DocumentFinishHook(blink::WebFrame* frame,
   std::string path = effective_document_url.path();
   v8::Local<v8::Context> v8_context = frame->mainWorldScriptContext();
   std::string root_path = extension->path().AsUTF8Unsafe();
-  base::FilePath root(root_path);
+  base::FilePath root(extension->path());
   RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
   if (!rv)
     return;
@@ -201,7 +201,7 @@ void DocumentElementHook(blink::WebFrame* frame,
   std::string path = effective_document_url.path();
   v8::Local<v8::Context> v8_context = frame->mainWorldScriptContext();
   std::string root_path = extension->path().AsUTF8Unsafe();
-  base::FilePath root(root_path);
+  base::FilePath root(extension->path());
   {
     blink::WebScopedMicrotaskSuppression suppression;
     v8::Context::Scope cscope(v8_context);
