@@ -189,7 +189,9 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         options.visibleOnAllWorkspaces = true;
     }
     chrome.app.window.create(url, options, function(appWin) {
-      callback(appWin.contentWindow.nw.Window.get());
+      if (callback) {
+        callback(appWin.contentWindow.nw.Window.get());
+      }
     });
   });
 
@@ -220,7 +222,7 @@ function onNavigation(frame, url, policy, context) {
 }
 
 function onLoadingStateChanged(status) {
-  console.log("onLoadingStateChanged: " + status);
+  // console.log("onLoadingStateChanged: " + status);
   if (!currentNWWindow)
     return;
   dispatchEventIfExists(currentNWWindow, "LoadingStateChanged", [status]);
