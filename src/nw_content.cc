@@ -245,8 +245,12 @@ void DocumentElementHook(blink::WebFrame* frame,
 
 void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   v8::Isolate* isolate = context->isolate();
-  if (node::g_context.IsEmpty()) {
+  if (!node::is_node_initialized())
     node::SetupNWNode(0, nullptr);
+
+  bool mixed_context = false;
+  context->extension()->manifest()->GetBoolean(manifest_keys::kNWJSMixedContext, &mixed_context);
+  if (node::g_context.IsEmpty() || mixed_context) {
     {
       int argc = 1;
       char argv0[] = "node";
@@ -266,7 +270,8 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
 
       node::SetNWTickCallback(CallNWTickCallback);
       v8::Local<v8::Context> dom_context = context->v8_context();
-      node::g_context.Reset(isolate, dom_context);
+      if (!mixed_context)
+        node::g_context.Reset(isolate, dom_context);
       dom_context->SetSecurityToken(v8::String::NewFromUtf8(isolate, "nw-token"));
       dom_context->Enter();
       dom_context->SetEmbedderData(0, v8::String::NewFromUtf8(isolate, "node"));
@@ -298,34 +303,37 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
       dom_context->Exit();
     }
   }
-  v8::Local<v8::Context> g_context =
-    v8::Local<v8::Context>::New(isolate, node::g_context);
-  v8::Local<v8::Object> node_global = g_context->Global();
 
-  context->v8_context()->SetAlignedPointerInEmbedderData(NODE_CONTEXT_EMBEDDER_DATA_INDEX, node::g_env);
-  context->v8_context()->SetSecurityToken(g_context->GetSecurityToken());
+  if (!mixed_context) {
+    v8::Local<v8::Context> g_context =
+      v8::Local<v8::Context>::New(isolate, node::g_context);
+    v8::Local<v8::Object> node_global = g_context->Global();
 
-  v8::Handle<v8::Object> nw = AsObjectOrEmpty(CreateNW(context, node_global, g_context));
+    context->v8_context()->SetAlignedPointerInEmbedderData(NODE_CONTEXT_EMBEDDER_DATA_INDEX, node::g_env);
+    context->v8_context()->SetSecurityToken(g_context->GetSecurityToken());
+
+    v8::Handle<v8::Object> nw = AsObjectOrEmpty(CreateNW(context, node_global, g_context));
 #if 1
-  v8::Local<v8::Array> symbols = v8::Array::New(isolate, 5);
-  symbols->Set(0, v8::String::NewFromUtf8(isolate, "global"));
-  symbols->Set(1, v8::String::NewFromUtf8(isolate, "process"));
-  symbols->Set(2, v8::String::NewFromUtf8(isolate, "Buffer"));
-  symbols->Set(3, v8::String::NewFromUtf8(isolate, "root"));
-  symbols->Set(4, v8::String::NewFromUtf8(isolate, "require"));
+    v8::Local<v8::Array> symbols = v8::Array::New(isolate, 5);
+    symbols->Set(0, v8::String::NewFromUtf8(isolate, "global"));
+    symbols->Set(1, v8::String::NewFromUtf8(isolate, "process"));
+    symbols->Set(2, v8::String::NewFromUtf8(isolate, "Buffer"));
+    symbols->Set(3, v8::String::NewFromUtf8(isolate, "root"));
+    symbols->Set(4, v8::String::NewFromUtf8(isolate, "require"));
 
-  g_context->Enter();
-  for (unsigned i = 0; i < symbols->Length(); ++i) {
-    v8::Local<v8::Value> key = symbols->Get(i);
-    v8::Local<v8::Value> val = node_global->Get(key);
-    nw->Set(key, val);
-  }
-  g_context->Exit();
+    g_context->Enter();
+    for (unsigned i = 0; i < symbols->Length(); ++i) {
+      v8::Local<v8::Value> key = symbols->Get(i);
+      v8::Local<v8::Value> val = node_global->Get(key);
+      nw->Set(key, val);
+    }
+    g_context->Exit();
 #endif
-  if (node::g_dom_context.IsEmpty()) {
-    node::g_dom_context.Reset(isolate, context->v8_context());
   }
 
+  std::string set_nw_script;
+  if (mixed_context)
+    set_nw_script = "var nw = global;";
   {
     blink::WebScopedMicrotaskSuppression suppression;
     v8::Context::Scope cscope(context->v8_context());
@@ -336,6 +344,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
 #endif
     base::ReplaceChars(root_path, "'", "\\'", &root_path);
     v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate, (
+        set_nw_script +
         // Make node's relative modules work
         "if (typeof nw.process != 'undefined' && (!nw.process.mainModule.filename || nw.process.mainModule.filename === 'blank')) {"
         "  var root = '" + root_path + "';"
@@ -344,7 +353,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
 #else
         "nw.process.mainModule.filename = root + '/index.html';"
 #endif
-        "if (window.location.href.indexOf('app://') === 0) {nw.process.mainModule.filename = root + '/' + process.mainModule.filename}"
+        "if (window.location.href.indexOf('app://') === 0) { nw.process.mainModule.filename = root + '/' + process.mainModule.filename}"
         "nw.process.mainModule.paths = nw.global.require('module')._nodeModulePaths(nw.process.cwd());"
         "nw.process.mainModule.loaded = true;"
         "}").c_str()),
