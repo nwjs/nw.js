@@ -1,3 +1,11 @@
+0.13.0-alpha2 / 06-23-2015
+==========================
+- support Mixed Context mode (#3107)
+- Window.capturePage, eval and evalNWBin ported
+- 'inject-js-start' and 'inject-js-end' ported
+- support setting manifest in 'new-win-policy' callback
+- Window 'loading' and 'loaded' event ported
+
 0.13.0-alpha1 / 06-11-2015
 ==========================
 - [nw12] Fix OSX cpu hog in some cases
