@@ -153,7 +153,7 @@ int MainPartsPreCreateThreadsHook() {
   if (package && !package->path().empty()) {
     base::FilePath path = package->path().NormalizePathSeparators();
 
-    command_line->AppendArgPath(path);
+    command_line->AppendSwitchPath("nwapp", path);
   }
   return content::RESULT_CODE_NORMAL_EXIT;
 }
