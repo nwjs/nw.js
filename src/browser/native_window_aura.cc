@@ -53,6 +53,7 @@
 #include "ui/base/hit_test.h"
 #include "ui/gfx/native_widget_types.h"
 #if defined(OS_WIN)
+#include "ui/gfx/win/dpi.h"
 #include "ui/gfx/win/hwnd_util.h"
 #include "ui/gfx/icon_util.h"
 #include "ui/views/win/hwnd_util.h"
@@ -710,8 +711,9 @@ void NativeWindowAura::SetBadgeLabel(const std::string& badge) {
 
   HICON icon = NULL;
   HWND hWnd = views::HWNDForWidget(window_);
+  const float scale = gfx::GetDPIScale();
   if (badge.size())
-    icon = createBadgeIcon(hWnd, base::UTF8ToUTF16(badge).c_str(), 32, 32);
+    icon = createBadgeIcon(hWnd, base::UTF8ToUTF16(badge).c_str(), 16*scale, 16*scale);
 
   taskbar->SetOverlayIcon(hWnd, icon, L"Status");
   DestroyIcon(icon);
