@@ -5,9 +5,13 @@
 #include "content/public/browser/render_widget_host.h"
 #include "chrome/browser/devtools/devtools_window.h"
 #include "chrome/browser/extensions/devtools_util.h"
+#include "content/nw/src/api/menu/menu.h"
+#include "content/nw/src/api/object_manager.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/web_contents.h"
+#include "extensions/browser/app_window/app_window_registry.h"
+#include "extensions/components/native_app_window/native_app_window_views.h"
 #include "extensions/common/error_utils.h"
 #include "extensions/common/constants.h"
 #include "ui/gfx/codec/jpeg_codec.h"
@@ -16,11 +20,24 @@
 #include "ui/gfx/geometry/size_conversions.h"
 #include "ui/gfx/screen.h"
 
+#if defined(OS_WIN)
+#include "ui/views/win/hwnd_util.h"
+#endif
+
 using content::RenderWidgetHost;
 using content::RenderWidgetHostView;
 using content::WebContents;
 
+using nw::Menu;
+
 namespace extensions {
+namespace {
+
+const char kNoAssociatedAppWindow[] =
+    "The context from which the function was called did not have an "
+    "associated app window.";
+}
+
 NwCurrentWindowInternalShowDevToolsFunction::NwCurrentWindowInternalShowDevToolsFunction() {
 
 }
@@ -58,14 +75,16 @@ bool NwCurrentWindowInternalCapturePageInternalFunction::RunAsync() {
     return false;
 
   // The default format and quality setting used when encoding jpegs.
-  const ImageDetails::Format kDefaultFormat = ImageDetails::FORMAT_JPEG;
+  const core_api::extension_types::ImageFormat kDefaultFormat =
+      core_api::extension_types::IMAGE_FORMAT_JPEG;
   const int kDefaultQuality = 90;
 
   image_format_ = kDefaultFormat;
   image_quality_ = kDefaultQuality;
 
   if (image_details) {
-    if (image_details->format != ImageDetails::FORMAT_NONE)
+    if (image_details->format !=
+        core_api::extension_types::IMAGE_FORMAT_NONE)
       image_format_ = image_details->format;
     if (image_details->quality.get())
       image_quality_ = *image_details->quality;
@@ -116,7 +135,7 @@ void NwCurrentWindowInternalCapturePageInternalFunction::OnCaptureSuccess(const 
   bool encoded = false;
   std::string mime_type;
   switch (image_format_) {
-    case ImageDetails::FORMAT_JPEG:
+    case core_api::extension_types::IMAGE_FORMAT_JPEG:
       encoded = gfx::JPEGCodec::Encode(
           reinterpret_cast<unsigned char*>(bitmap.getAddr32(0, 0)),
           gfx::JPEGCodec::FORMAT_SkBitmap,
@@ -127,7 +146,7 @@ void NwCurrentWindowInternalCapturePageInternalFunction::OnCaptureSuccess(const 
           &data);
       mime_type = kMimeTypeJpeg;
       break;
-    case ImageDetails::FORMAT_PNG:
+    case core_api::extension_types::IMAGE_FORMAT_PNG:
       encoded =
           gfx::PNGCodec::EncodeBGRASkBitmap(bitmap,
                                             true,  // Discard transparency.
@@ -170,6 +189,71 @@ void NwCurrentWindowInternalCapturePageInternalFunction::OnCaptureFailure(Failur
   error_ = ErrorUtils::FormatErrorMessage("Failed to capture tab: *",
                                           reason_description);
   SendResponse(false);
+}
+
+NwCurrentWindowInternalClearMenuFunction::NwCurrentWindowInternalClearMenuFunction() {
+}
+
+NwCurrentWindowInternalClearMenuFunction::~NwCurrentWindowInternalClearMenuFunction() {
+}
+
+bool NwCurrentWindowInternalClearMenuFunction::RunAsync() {
+  return true;
+}
+
+NwCurrentWindowInternalSetMenuFunction::NwCurrentWindowInternalSetMenuFunction() {
+}
+
+NwCurrentWindowInternalSetMenuFunction::~NwCurrentWindowInternalSetMenuFunction() {
+}
+
+bool NwCurrentWindowInternalSetMenuFunction::RunAsync() {
+  int id = 0;
+  EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &id));
+
+  AppWindowRegistry* registry = AppWindowRegistry::Get(browser_context());
+  DCHECK(registry);
+  content::RenderViewHost* rvh = render_view_host();
+  if (!rvh)
+    // No need to set an error, since we won't return to the caller anyway if
+    // there's no RVH.
+    return false;
+  AppWindow* window = registry->GetAppWindowForRenderViewHost(rvh);
+  if (!window) {
+    error_ = kNoAssociatedAppWindow;
+    return false;
+  }
+  nw::ObjectManager* obj_manager = nw::ObjectManager::Get(browser_context());
+  Menu* menu = (Menu*)obj_manager->GetApiObject(id);
+
+  window->menu_ = menu;
+#if defined(OS_LINUX)
+  MenuBarView* menubar = new MenuBarView();
+  GetBrowserViewLayout()->set_menu_bar(menubar);
+  AddChildView(menubar);
+  menubar->UpdateMenu(menu->model());
+  Layout();
+  SchedulePaint();
+#endif
+  // The menu is lazily built.
+#if defined(OS_WIN) //FIXME
+  menu->Rebuild();
+  menu->SetWindow(window);
+
+  native_app_window::NativeAppWindowViews* native_app_window_views =
+      static_cast<native_app_window::NativeAppWindowViews*>(
+          window->GetBaseWindow());
+
+  // menu is nwapi::Menu, menu->menu_ is NativeMenuWin,
+  BOOL ret = ::SetMenu(views::HWNDForWidget(native_app_window_views->widget()->GetTopLevelWidget()), menu->menu_->GetNativeMenu());
+  if (!ret)
+	  LOG(ERROR) << "error setting menu";
+
+  ::DrawMenuBar(views::HWNDForWidget(native_app_window_views->widget()->GetTopLevelWidget()));
+  native_app_window_views->SchedulePaint();
+#endif
+  //FIXME menu->UpdateKeys( native_app_window_views->widget()->GetFocusManager() );
+  return true;
 }
 
 } // namespace extensions

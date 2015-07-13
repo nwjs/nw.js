@@ -17,6 +17,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         Binding.create('nw.currentWindowInternal').generate();
     var NWWindow = function() {
       this.appWindow = chrome.app.window.current();
+      privates(this).menu = null;
     };
     forEach(currentNWWindowInternal, function(key, value) {
       NWWindow.prototype[key] = value;
@@ -142,6 +143,23 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       },
       set: function(y) {
         this.appWindow.outerBounds.top = y;
+      }
+    });
+    Object.defineProperty(NWWindow.prototype, 'menu', {
+      get: function() {
+        var ret = privates(this).menu || {};
+        return ret;
+      },
+      set: function(menu) {
+        if(!menu) {
+          currentNWWindowInternal.clearMenu();
+          return;
+        }
+        if (menu.type != 'menubar')
+          throw new TypeError('Only menu of type "menubar" can be used as this.window menu');
+
+        privates(this).menu =  menu;
+        currentNWWindowInternal.setMenu(menu.id);
       }
     });
     Object.defineProperty(NWWindow.prototype, 'window', {

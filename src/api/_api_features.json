@@ -19,6 +19,18 @@
     "channel": "stable",
     "contexts": ["blessed_extension"]
   },
+  "nw.Menu": {
+    "channel": "stable",
+    "contexts": ["blessed_extension"]
+  },
+  "nw.Shell": {
+    "channel": "stable",
+    "contexts": ["blessed_extension"]
+  },
+  "nw.Object": {
+    "channel": "stable",
+    "contexts": ["blessed_extension"]
+  },
   "nw.test": {
     "channel": "stable",
     "contexts": ["blessed_extension"]

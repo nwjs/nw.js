@@ -23,10 +23,11 @@
 #include "base/files/file_path.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
-#include "content/nw/src/api/dispatcher_host.h"
+#include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/api/menu/menu.h"
+#include "content/nw/src/nw_base.h"
+#include "content/nw/src/nw_content.h"
 #include "content/nw/src/nw_package.h"
-#include "content/nw/src/nw_shell.h"
 #include "ui/base/accelerators/accelerator.h"
 #include "ui/events/event_constants.h"//for modifier key code
 #include "ui/events/keycodes/keyboard_codes.h"//for keycode
@@ -34,7 +35,7 @@
 
 ui::KeyboardCode GetKeycodeFromText(std::string text);
 
-namespace nwapi {
+namespace nw {
 
 void MenuItem::Create(const base::DictionaryValue& option) {
   is_modified_ = false;
@@ -95,7 +96,7 @@ void MenuItem::Create(const base::DictionaryValue& option) {
 
   int menu_id;
   if (option.GetInteger("submenu", &menu_id))
-    SetSubmenu(dispatcher_host()->GetApiObject<Menu>(menu_id));
+    SetSubmenu(object_manager()->GetApiObject<Menu>(menu_id));
 }
 
 void MenuItem::Destroy() {
@@ -108,7 +109,7 @@ void MenuItem::OnClick() {
 
   // Send event.
   base::ListValue args;
-  dispatcher_host()->SendEvent(this, "click", args);
+  object_manager()->SendEvent(this, "click", args);
 }
 
 void MenuItem::SetLabel(const std::string& label) {
@@ -128,10 +129,8 @@ void MenuItem::SetIcon(const std::string& icon) {
     return;
   }
 
-  content::Shell* shell = content::Shell::FromRenderViewHost(
-      dispatcher_host()->render_view_host());
-  nw::Package* package = shell->GetPackage();
-  package->GetImage(base::FilePath::FromUTF8Unsafe(icon), &icon_);
+  nw::Package* package = nw::InitNWPackage();
+  nw::GetImage(package, base::FilePath::FromUTF8Unsafe(icon), &icon_);
 }
 
 void MenuItem::SetIconIsTemplate(bool isTemplate) {

@@ -15,5 +15,7 @@ namespace nw.currentWindowInternal {
   interface Functions {
     static void showDevTools();
     static void capturePageInternal(optional CapturePageOptions options, optional CapturePageCallback callback);
+    static void clearMenu();
+    static void setMenu(long id);
   };
 };

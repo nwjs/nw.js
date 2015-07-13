@@ -23,13 +23,13 @@
 
 #include "ui/base/models/simple_menu_model.h"
 
-namespace nwapi {
+namespace nw {
 
-class DispatcherHost;
+class ObjectManager;
 
 class MenuDelegate : public ui::SimpleMenuModel::Delegate {
  public:
-  MenuDelegate(DispatcherHost* dispatcher_host);
+  MenuDelegate(ObjectManager* object_manager);
   ~MenuDelegate() override;
 
    bool IsCommandIdChecked(int command_id) const override;
@@ -49,11 +49,11 @@ class MenuDelegate : public ui::SimpleMenuModel::Delegate {
    bool HasIcon(int command_id) override;
 
  private:
-  DispatcherHost* dispatcher_host_;
+  ObjectManager* object_manager_;
 
   DISALLOW_COPY_AND_ASSIGN(MenuDelegate);
 };
 
-}  // namespace nwapi
+}  // namespace nw
 
 #endif  // CONTENT_NW_SRC_API_MENU_MENU_DELEGATE_H_

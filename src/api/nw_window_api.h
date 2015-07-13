@@ -54,12 +54,44 @@ class NwCurrentWindowInternalCapturePageInternalFunction : public AsyncExtension
   void OnCaptureSuccess(const SkBitmap& bitmap);
 
   // The format (JPEG vs PNG) of the resulting image.  Set in RunAsync().
-  ImageDetails::Format image_format_;
+  core_api::extension_types::ImageFormat image_format_;
 
   // Quality setting to use when encoding jpegs.  Set in RunAsync().
   int image_quality_;
 
   DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalCapturePageInternalFunction);
+};
+
+class NwCurrentWindowInternalClearMenuFunction : public AsyncExtensionFunction {
+ public:
+  NwCurrentWindowInternalClearMenuFunction();
+
+ protected:
+  ~NwCurrentWindowInternalClearMenuFunction() override;
+
+  // ExtensionFunction:
+  bool RunAsync() override;
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.clearMenu", UNKNOWN)
+
+ private:
+
+  DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalClearMenuFunction);
+};
+
+class NwCurrentWindowInternalSetMenuFunction : public AsyncExtensionFunction {
+ public:
+  NwCurrentWindowInternalSetMenuFunction();
+
+ protected:
+  ~NwCurrentWindowInternalSetMenuFunction() override;
+
+  // ExtensionFunction:
+  bool RunAsync() override;
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setMenu", UNKNOWN)
+
+ private:
+
+  DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalSetMenuFunction);
 };
 
 } // namespace extensions

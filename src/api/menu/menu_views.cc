@@ -22,11 +22,10 @@
 
 #include "base/values.h"
 #include "base/strings/utf_string_conversions.h"
-#include "content/nw/src/api/dispatcher_host.h"
+#include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
-#include "content/nw/src/browser/native_window_aura.h"
-#include "content/nw/src/nw_shell.h"
 #include "content/public/browser/web_contents.h"
+#include "extensions/browser/app_window/app_window.h"
 #include "skia/ext/image_operations.h"
 #include "ui/aura/client/screen_position_client.h"
 #include "ui/aura/window.h"
@@ -83,7 +82,7 @@ bool NwMenuModel::HasIcons() const {
 
 } // namespace ui
 
-namespace nwapi {
+namespace nw {
 
 #if defined(OS_WIN)
 // The width of the icon for the menuitem
@@ -94,7 +93,7 @@ static const int kIconHeight = 16;
 
 void Menu::Create(const base::DictionaryValue& option) {
   is_menu_modified_ = true;
-  menu_delegate_.reset(new MenuDelegate(dispatcher_host()));
+  menu_delegate_.reset(new MenuDelegate(object_manager()));
   menu_model_.reset(new ui::NwMenuModel(menu_delegate_.get()));
 #if defined(OS_WIN)
   menu_.reset(new views::NativeMenuWin(menu_model_.get(), NULL));
@@ -158,6 +157,7 @@ void Menu::Remove(MenuItem* menu_item, int pos) {
   menu_item->menu_ = NULL;
 }
 
+#if 0 //FIXME
 void Menu::Popup(int x, int y, content::Shell* shell) {
   // Rebuild();
 
@@ -185,13 +185,14 @@ void Menu::Popup(int x, int y, content::Shell* shell) {
     return;
   // menu_->RunMenuAt(screen_point, views::Menu2::ALIGN_TOPLEFT);
 }
-
+#endif
 #if defined(OS_WIN)
 void Menu::Rebuild(const HMENU *parent_menu) {
   if (is_menu_modified_) {
     // Refresh menu before show.
     menu_->Rebuild(NULL);
     menu_->UpdateStates();
+#if 0
     for (size_t index = 0; index < icon_bitmaps_.size(); ++index) {
       ::DeleteObject(icon_bitmaps_[index]);
     }
@@ -222,12 +223,12 @@ void Menu::Rebuild(const HMENU *parent_menu) {
         }
       }
 
-      MenuItem* item = dispatcher_host()->GetApiObject<MenuItem>(command_id);
+      MenuItem* item = object_manager()->GetApiObject<MenuItem>(command_id);
       if (item != NULL && item->submenu_) {
         item->submenu_->Rebuild(&native_menu);
       }
     }
-
+#endif
     is_menu_modified_ = false;
   }
 }
@@ -254,13 +255,13 @@ void Menu::UpdateStates() {
 }
 
 #if defined(OS_WIN)
-void Menu::SetWindow(nw::NativeWindowAura* win) {
+void Menu::SetWindow(extensions::AppWindow* win) {
   window_ = win;
   for (int model_index = 0;
        model_index < menu_model_->GetItemCount();
        ++model_index) {
     int command_id = menu_model_->GetCommandIdAt(model_index);
-    MenuItem* item = dispatcher_host()->GetApiObject<MenuItem>(command_id);
+    MenuItem* item = object_manager()->GetApiObject<MenuItem>(command_id);
     if (item != NULL && item->submenu_) {
       item->submenu_->SetWindow(win);
     }
@@ -268,4 +269,4 @@ void Menu::SetWindow(nw::NativeWindowAura* win) {
 }
 #endif
 
-}  // namespace nwapi
+}  // namespace nw

@@ -23,31 +23,36 @@
 #include "base/files/file_path.h"
 #include "base/logging.h"
 #include "base/values.h"
+#include "content/public/browser/browser_context.h"
 #include "chrome/browser/platform_util.h"
+#include "chrome/browser/profiles/profile.h"
 #include "url/gurl.h"
 
 using base::FilePath;
 
-namespace nwapi {
+namespace nw {
 
 // static
 void Shell::Call(const std::string& method,
-                 const base::ListValue& arguments) {
+                 const base::ListValue& arguments,
+                 content::BrowserContext* context) {
+  Profile* profile = Profile::FromBrowserContext(context);
   if (method == "OpenExternal") {
     std::string uri;
     arguments.GetString(0, &uri);
-    platform_util::OpenExternal(NULL, GURL(uri));
+    platform_util::OpenExternal(profile, GURL(uri));
   } else if (method == "OpenItem") {
     std::string full_path;
     arguments.GetString(0, &full_path);
-    platform_util::OpenItem(NULL, FilePath::FromUTF8Unsafe(full_path));
+    platform_util::OpenItem(profile, FilePath::FromUTF8Unsafe(full_path),
+                            platform_util::OPEN_FILE, platform_util::OpenOperationCallback());
   } else if (method == "ShowItemInFolder") {
     std::string full_path;
     arguments.GetString(0, &full_path);
-    platform_util::ShowItemInFolder(NULL, FilePath::FromUTF8Unsafe(full_path));
+    platform_util::ShowItemInFolder(profile, FilePath::FromUTF8Unsafe(full_path));
   } else {
     NOTREACHED() << "Calling unknown method " << method << " of Shell";
   }
 }
 
-}  // namespace nwapi
+}  // namespace nw

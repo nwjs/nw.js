@@ -21,16 +21,16 @@
 #include "content/nw/src/api/menu/menu.h"
 
 #include "base/values.h"
-#include "content/nw/src/api/dispatcher_host.h"
+#include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
-#include "content/nw/src/nw_shell.h"
 
-namespace nwapi {
+namespace nw {
 
 Menu::Menu(int id,
-           const base::WeakPtr<DispatcherHost>& dispatcher_host,
-           const base::DictionaryValue& option)
-  : Base(id, dispatcher_host, option), enable_show_event_(false)  {
+           const base::WeakPtr<ObjectManager>& object_manager,
+           const base::DictionaryValue& option,
+           const std::string& extension_id)
+  : Base(id, object_manager, option, extension_id), enable_show_event_(false)  {
   Create(option);
 }
 
@@ -43,26 +43,26 @@ void Menu::Call(const std::string& method,
   if (method == "Append") {
     int object_id = 0;
     arguments.GetInteger(0, &object_id);
-    Append(dispatcher_host()->GetApiObject<MenuItem>(object_id));
+    Append(object_manager()->GetApiObject<MenuItem>(object_id));
   } else if (method == "Insert") {
     int object_id = 0;
     arguments.GetInteger(0, &object_id);
     int pos = 0;
     arguments.GetInteger(1, &pos);
-    Insert(dispatcher_host()->GetApiObject<MenuItem>(object_id), pos);
+    Insert(object_manager()->GetApiObject<MenuItem>(object_id), pos);
   } else if (method == "Remove") {
     int object_id = 0;
     arguments.GetInteger(0, &object_id);
     int pos = 0;
     arguments.GetInteger(1, &pos);
-    Remove(dispatcher_host()->GetApiObject<MenuItem>(object_id), pos);
+    Remove(object_manager()->GetApiObject<MenuItem>(object_id), pos);
   } else if (method == "Popup") {
     int x = 0;
     arguments.GetInteger(0, &x);
     int y = 0;
     arguments.GetInteger(1, &y);
-    Popup(x, y, content::Shell::FromRenderViewHost(
-          dispatcher_host()->render_view_host()));
+    // Popup(x, y, content::Shell::FromRenderViewHost(
+    //       object_manager()->render_view_host()));
   } else if (method == "EnableShowEvent") {
     arguments.GetBoolean(0, &enable_show_event_);
   } else {
@@ -71,4 +71,4 @@ void Menu::Call(const std::string& method,
   }
 }
 
-}  // namespace nwapi
+}  // namespace nw

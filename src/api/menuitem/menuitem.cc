@@ -22,17 +22,18 @@
 
 #include "base/logging.h"
 #include "base/values.h"
-#include "content/nw/src/api/dispatcher_host.h"
+#include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/api/menu/menu.h"
 
 #include <string.h>
 
-namespace nwapi {
+namespace nw {
 
 MenuItem::MenuItem(int id,
-                   const base::WeakPtr<DispatcherHost>& dispatcher_host,
-                   const base::DictionaryValue& option)
-    : Base(id, dispatcher_host, option) {
+                   const base::WeakPtr<ObjectManager>& object_manager,
+                   const base::DictionaryValue& option,
+                   const std::string& extension_id)
+  : Base(id, object_manager, option, extension_id) {
   Create(option);
 }
 
@@ -69,7 +70,7 @@ void MenuItem::Call(const std::string& method,
   } else if (method == "SetSubmenu") {
     int object_id = 0;
     arguments.GetInteger(0, &object_id);
-    SetSubmenu(dispatcher_host()->GetApiObject<Menu>(object_id));
+    SetSubmenu(object_manager()->GetApiObject<Menu>(object_id));
 #if defined(OS_MACOSX)
   } else if (method == "SetKey") {
     std::string key;

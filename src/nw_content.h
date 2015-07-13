@@ -53,7 +53,8 @@ void DocumentFinishHook(blink::WebFrame* frame,
  void CalcNewWinParams(content::WebContents* new_contents, void* params,
                        std::string* nw_inject_js_doc_start,
                        std::string* nw_inject_js_doc_end);
-
+ bool GetImage(Package* package, const FilePath& icon_path, gfx::Image* image);
+ bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window);
 }
 
 #endif

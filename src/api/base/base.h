@@ -31,15 +31,16 @@ class DictionaryValue;
 class ListValue;
 }
 
-namespace nwapi {
+namespace nw {
 
-class DispatcherHost;
+class ObjectManager;
 
 class Base {
  public:
   Base(int id,
-       const base::WeakPtr<DispatcherHost>& dispatcher_host,
-       const base::DictionaryValue& option);
+       const base::WeakPtr<ObjectManager>& manager,
+       const base::DictionaryValue& option,
+       const std::string& extension_id);
   virtual ~Base();
 
   virtual void Call(const std::string& method,
@@ -49,11 +50,12 @@ class Base {
                         base::ListValue* result);
 
   int id() const { return id_; }
-  DispatcherHost* dispatcher_host() const { return dispatcher_host_.get(); }
+  std::string extension_id_;
+  ObjectManager* object_manager() const { return object_manager_.get(); }
 
  private:
   int id_;
-  base::WeakPtr<DispatcherHost> dispatcher_host_;
+  base::WeakPtr<ObjectManager> object_manager_;
 
   DISALLOW_COPY_AND_ASSIGN(Base);
 };

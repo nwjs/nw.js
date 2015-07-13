@@ -29,12 +29,17 @@ namespace base {
 class ListValue;
 }
 
-namespace nwapi {
+namespace content {
+class BrowserContext;
+}
+
+namespace nw {
   
 class Shell {
  public:
   static void Call(const std::string& method,
-                   const base::ListValue& arguments);
+                   const base::ListValue& arguments,
+		   content::BrowserContext* context);
 
  private:
   Shell();
@@ -42,6 +47,6 @@ class Shell {
   DISALLOW_COPY_AND_ASSIGN(Shell);
 };
 
-}  // namespace nwapi
+}  // namespace nw
 
 #endif  // CONTENT_NW_SRC_API_SHELL_SHELL_H_

@@ -41,7 +41,7 @@ class MenuItemDelegate;
 #include "ui/views/focus/focus_manager.h"
 #endif  // defined(OS_MACOSX)
 
-namespace nwapi {
+namespace nw {
 
 class Menu;
 
@@ -53,8 +53,9 @@ class MenuItem : public Base {
 #endif
  public:
   MenuItem(int id,
-           const base::WeakPtr<DispatcherHost>& dispatcher_host,
-           const base::DictionaryValue& option);
+           const base::WeakPtr<ObjectManager>& dispatcher_host,
+           const base::DictionaryValue& option,
+           const std::string& extension_id);
   ~MenuItem() override;
 
    void Call(const std::string& method,
@@ -124,6 +125,6 @@ class MenuItem : public Base {
   DISALLOW_COPY_AND_ASSIGN(MenuItem);
 };
 
-}  // namespace nwapi
+}  // namespace nw
 
 #endif  // CONTENT_NW_SRC_API_MENUITEM_MENUITEM_H_

@@ -22,13 +22,13 @@
 
 #include "base/logging.h"
 #include "base/strings/string16.h"
-#include "content/nw/src/api/dispatcher_host.h"
+#include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
 
-namespace nwapi {
+namespace nw {
 
-MenuDelegate::MenuDelegate(DispatcherHost* dispatcher_host)
-    : dispatcher_host_(dispatcher_host) {
+MenuDelegate::MenuDelegate(ObjectManager* object_manager)
+    : object_manager_(object_manager) {
 }
 
 MenuDelegate::~MenuDelegate() {
@@ -38,7 +38,7 @@ bool MenuDelegate::IsCommandIdChecked(int command_id) const {
   if (command_id < 0)
     return false;
 
-  MenuItem* item = dispatcher_host_->GetApiObject<MenuItem>(command_id);
+  MenuItem* item = object_manager_->GetApiObject<MenuItem>(command_id);
   return item->is_checked_;
 }
 
@@ -46,7 +46,7 @@ bool MenuDelegate::IsCommandIdEnabled(int command_id) const {
   if (command_id < 0)
     return false;
 
-  MenuItem* item = dispatcher_host_->GetApiObject<MenuItem>(command_id);
+  MenuItem* item = object_manager_->GetApiObject<MenuItem>(command_id);
   if (!item)
     return false;
   return item->is_enabled_;
@@ -56,14 +56,14 @@ bool MenuDelegate::IsItemForCommandIdDynamic(int command_id) const {
   if (command_id < 0)
     return false;
 
-  MenuItem* item = dispatcher_host_->GetApiObject<MenuItem>(command_id);
+  MenuItem* item = object_manager_->GetApiObject<MenuItem>(command_id);
   if (!item)
     return false;
   return item->is_modified_;
 }
 
 base::string16 MenuDelegate::GetLabelForCommandId(int command_id) const {
-  MenuItem* item = dispatcher_host_->GetApiObject<MenuItem>(command_id);
+  MenuItem* item = object_manager_->GetApiObject<MenuItem>(command_id);
   return item->label_;
 }
 
@@ -76,7 +76,7 @@ bool MenuDelegate::GetAcceleratorForCommandId(
 
 bool MenuDelegate::GetIconForCommandId(int command_id,
                                        gfx::Image* icon) const {
-  MenuItem* item = dispatcher_host_->GetApiObject<MenuItem>(command_id);
+  MenuItem* item = object_manager_->GetApiObject<MenuItem>(command_id);
   if (!item)
     return false;
   if (item->icon_.IsEmpty())
@@ -90,7 +90,7 @@ void MenuDelegate::ExecuteCommand(int command_id, int event_flags) {
   if (command_id < 0)
     return;
 
-  MenuItem* item = dispatcher_host_->GetApiObject<MenuItem>(command_id);
+  MenuItem* item = object_manager_->GetApiObject<MenuItem>(command_id);
   if (!item)
     return;
   item->OnClick();
@@ -100,7 +100,7 @@ bool MenuDelegate::HasIcon(int command_id) {
   if (command_id < 0)
     return false;
 
-  MenuItem* item = dispatcher_host_->GetApiObject<MenuItem>(command_id);
+  MenuItem* item = object_manager_->GetApiObject<MenuItem>(command_id);
   if (!item)
     return false;
   return !item->icon_.IsEmpty();

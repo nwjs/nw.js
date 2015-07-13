@@ -8,15 +8,20 @@
   ],
   'variables': {
     'schema_files': [
+      'nw_object.idl',
       'nw_app.idl',
       'nw_window.idl',
       'nw_clipboard.idl',
+      'nw_menu.idl',
+      'nw_shell.idl',
       'nw_current_window_internal.idl',
       'nw_test.idl',
     ],
     'non_compiled_schema_files': [
     ],
-    
+    'schema_dependencies': [
+      '<(DEPTH)/extensions/common/api/api.gyp:extensions_api',
+    ],
     'chromium_code': 1,
     'cc_dir': 'content/nw/src/api',
     'root_namespace': 'extensions::nwapi::%(namespace)s',
