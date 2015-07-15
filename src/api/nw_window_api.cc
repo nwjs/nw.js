@@ -24,11 +24,18 @@
 #include "ui/views/win/hwnd_util.h"
 #endif
 
+#if defined(OS_LINUX)
+#include "content/nw/src/browser/menubar_view.h"
+#include "content/nw/src/browser/browser_view_layout.h"
+using nw::BrowserViewLayout;
+#endif
+
 using content::RenderWidgetHost;
 using content::RenderWidgetHostView;
 using content::WebContents;
 
 using nw::Menu;
+using nw::MenuBarView;
 
 namespace extensions {
 namespace {
@@ -228,12 +235,16 @@ bool NwCurrentWindowInternalSetMenuFunction::RunAsync() {
 
   window->menu_ = menu;
 #if defined(OS_LINUX)
+  native_app_window::NativeAppWindowViews* native_app_window_views =
+      static_cast<native_app_window::NativeAppWindowViews*>(
+          window->GetBaseWindow());
+
   MenuBarView* menubar = new MenuBarView();
-  GetBrowserViewLayout()->set_menu_bar(menubar);
-  AddChildView(menubar);
+  static_cast<BrowserViewLayout*>(native_app_window_views->GetLayoutManager())->set_menu_bar(menubar);
+  native_app_window_views->AddChildView(menubar);
   menubar->UpdateMenu(menu->model());
-  Layout();
-  SchedulePaint();
+  native_app_window_views->layout_();
+  native_app_window_views->SchedulePaint();
 #endif
   // The menu is lazily built.
 #if defined(OS_WIN) //FIXME

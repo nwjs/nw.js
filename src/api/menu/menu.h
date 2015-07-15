@@ -118,15 +118,13 @@ class Menu : public Base {
 #endif
 
 #if defined(OS_MACOSX)
-  friend class nw::NativeWindowCocoa;
   NSMenu* menu_;
   NWMenuDelegate* menu_delegate_;
 #elif defined(OS_LINUX)
-  friend class nw::NativeWindowAura;
 
   views::FocusManager *focus_manager_;
   std::vector<MenuItem*> menu_items_;
-  nw::NativeWindowAura* window_;
+  extensions::AppWindow* window_;
   // Flag to indicate the menu has been modified since last show, so we should
   // rebuild the menu before next show.
   bool is_menu_modified_;

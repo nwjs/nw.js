@@ -29,8 +29,8 @@ Base::Base(int id,
            const base::WeakPtr<ObjectManager>& object_manager,
            const base::DictionaryValue& option,
 	   const std::string& extension_id)
-    : id_(id),
-      extension_id_(extension_id),
+    : extension_id_(extension_id),
+      id_(id),
       object_manager_(object_manager) {
 }
 
