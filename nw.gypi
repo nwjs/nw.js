@@ -914,6 +914,15 @@
     {
       'target_name': 'dist',
       'type': 'none',
+      'variables': {
+        'conditions': [
+          ['nwjs_mas==1', {
+            'package_mode': 'mas',
+          }, {
+            'package_mode': 'regular',
+          }],
+        ],  # conditions
+      },  # variables
       'actions': [
         {
           'action_name': 'package_nw_binaries',
@@ -926,7 +935,7 @@
           'outputs':[
             '<(PRODUCT_DIR)/new_package.re',
           ],
-          'action': ['python', '<(package_script)', '-p', '<(PRODUCT_DIR)', '-a', '<(target_arch)'],
+          'action': ['python', '<(package_script)', '-p', '<(PRODUCT_DIR)', '-a', '<(target_arch)', '-m', '<(package_mode)'],
         },
       ],
       'dependencies': [

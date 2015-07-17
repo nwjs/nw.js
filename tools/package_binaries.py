@@ -18,6 +18,7 @@ steps = ['nw', 'chromedriver', 'symbol', 'headers', 'others']
 parser = argparse.ArgumentParser(description='Package nw binaries.')
 parser.add_argument('-p','--path', help='Where to find the binaries, like out/Release', required=False)
 parser.add_argument('-a','--arch', help='target arch', required=False)
+parser.add_argument('-m','--mode', help='package mode', required=False)
 group = parser.add_mutually_exclusive_group()
 group.add_argument('-s','--step', choices=steps, help='Execute specified step.', required=False)
 group.add_argument('-n','--skip', choices=steps, help='Skip specified step.', required=False)
@@ -32,6 +33,11 @@ step = None                     # nw/chromedriver/symbol
 skip = None
 nw_ver = None                   # x.xx
 dist_dir = None                 # .../out/Release/dist
+
+package_name = 'nwjs'
+
+if args.mode == 'mas':
+    package_name = 'nwjs-macappstore'
 
 step = args.step
 skip = args.skip
@@ -105,7 +111,7 @@ def generate_target_nw(platform_name, arch, version):
     target = {}
     # Output
     target['output'] = ''.join([
-                       'nwjs-',
+                       package_name, '-',
                        'v', version,
                        '-', platform_name,
                        '-', arch])
@@ -151,6 +157,9 @@ def generate_target_nw(platform_name, arch, version):
     return target
 
 def generate_target_chromedriver(platform_name, arch, version):
+    if args.mode == 'mas':
+        return generate_target_empty(platform_name, arch, version)
+
     target = {}
     # Output
     target['output'] = ''.join([
@@ -173,7 +182,7 @@ def generate_target_chromedriver(platform_name, arch, version):
 
 def generate_target_symbols(platform_name, arch, version):
     target = {}
-    target['output'] = ''.join(['nwjs-symbol-',
+    target['output'] = ''.join([package_name, '-symbol-',
                                 'v', version,
                                 '-', platform_name,
                                 '-', arch])
@@ -184,7 +193,7 @@ def generate_target_symbols(platform_name, arch, version):
     elif platform_name == 'win':
         target['compress'] = None
         target['input'] = ['nw.sym.7z']
-        target['output'] = ''.join(['nwjs-symbol-',
+        target['output'] = ''.join([package_name, '-symbol-',
                                     'v', version,
                                     '-', platform_name,
                                     '-', arch, '.7z'])
@@ -231,6 +240,18 @@ def generate_target_headers(platform_name, arch, version):
     else:
         print 'Unsupported platform: ' + platform_name
         exit(-1)
+    return target
+
+def generate_target_empty(platform_name, arch, version):
+    target = {}
+    target['output'] = ''
+    target['compress'] = None
+    if platform_name == 'win':
+        target['input'] = []
+    elif platform_name == 'linux' :
+        target['input'] = []
+    else:
+        target['input'] = []
     return target
 
 def generate_target_others(platform_name, arch, version):
