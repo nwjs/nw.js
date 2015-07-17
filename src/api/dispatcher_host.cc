@@ -34,6 +34,7 @@
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
 #include "content/nw/src/api/screen/screen.h"
+#include "content/nw/src/api/screen/desktop_capture_monitor.h"
 #include "content/nw/src/api/shell/shell.h"
 #include "content/nw/src/api/shortcut/shortcut.h"
 #include "content/nw/src/api/tray/tray.h"
@@ -171,6 +172,8 @@ void DispatcherHost::OnAllocateObject(int object_id,
     objects_registry_.AddWithID(new Shortcut(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else if (type == "Screen") {
     objects_registry_.AddWithID(new EventListener(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
+  }else if (type == "DesktopCaptureMonitor") {
+	  objects_registry_.AddWithID(new DesktopCaptureMonitor(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else {
     LOG(ERROR) << "Allocate an object of unknown type: " << type;
     objects_registry_.AddWithID(new Base(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
