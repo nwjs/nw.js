@@ -1,0 +1,13 @@
+diff --git a/libsrtp.gyp b/libsrtp.gyp
+index 27e6476..6c92165 100644
+--- libsrtp.gyp
++++ libsrtp.gyp
+@@ -5,7 +5,7 @@
+ {
+   'variables': {
+     'use_system_libsrtp%': 0,
+-    'use_openssl': 1,
++    'use_openssl': 0,
+   },
+   'target_defaults': {
+     'defines': [
