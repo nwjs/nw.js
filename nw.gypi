@@ -844,24 +844,6 @@
               'message': 'Dumping breakpad symbols to <(_outputs)',
               'process_outputs_as_sources': 1,
             },
-            {
-              'action_name': 'dump_symbol_and_strip_ffmpeg',
-              'inputs': [
-                '<(DEPTH)/content/nw/tools/dump_app_syms',
-                '<(PRODUCT_DIR)/dump_syms',
-                '<(PRODUCT_DIR)/libffmpegsumo.so',
-              ],
-              'outputs': [
-                '<(PRODUCT_DIR)/libffmpegsumo.breakpad.<(target_arch)',
-              ],
-              'action': ['<(DEPTH)/content/nw/tools/dump_app_syms',
-                         '<(PRODUCT_DIR)/dump_syms',
-                         '<(linux_strip_binary)',
-                         '<(PRODUCT_DIR)/libffmpegsumo.so',
-                         '<@(_outputs)'],
-              'message': 'Dumping breakpad symbols to <(_outputs)',
-              'process_outputs_as_sources': 1,
-            },
           ],
           'dependencies': [
             '<(DEPTH)/chrome/chrome.gyp:nw',
