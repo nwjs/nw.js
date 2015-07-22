@@ -148,7 +148,6 @@ def generate_target_nw(platform_name, arch, version):
     if platform_name == 'linux':
         target['input'] = [
                            'credits.html',
-                           'libffmpegsumo.so',
                            'resources.pak',
                            'nw_100_percent.pak',
                            'nw',
@@ -162,7 +161,6 @@ def generate_target_nw(platform_name, arch, version):
                            'snapshot_blob.bin',
                            'natives_blob.bin',
                            'd3dcompiler_47.dll',
-                           'ffmpegsumo.dll',
                            'libEGL.dll',
                            'libGLESv2.dll',
                            'nw.dll',
