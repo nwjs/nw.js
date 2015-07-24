@@ -34,12 +34,12 @@ step = None                     # nw/chromedriver/symbol
 skip = None
 nw_ver = None                   # x.xx
 dist_dir = None                 # .../out/Release/dist
-
+flavor = args.mode
 is_headers_ok = False           # record whether nw-headers generated
 package_name = 'nwjs'
 
-if args.mode == 'sdk':
-    package_name = 'nwjs-sdk'
+if flavor in ['sdk', 'nacl']:
+    package_name = 'nwjs-' + args.mode
 
 step = args.step
 skip = args.skip
@@ -156,6 +156,13 @@ def generate_target_nw(platform_name, arch, version):
                            'snapshot_blob.bin',
                            'natives_blob.bin',
                            ]
+        if flavor in ['nacl','sdk'] :
+            target['input'] += ['nacl_helper', 'nacl_helper_bootstrap']
+            if arch == 'x64':
+                target['input'].append('nacl_irt_x86_64.nexe')
+            else:
+                target['input'].append('nacl_irt_x86_32.nexe')
+            
     elif platform_name == 'win':
         target['input'] = [
                            'snapshot_blob.bin',
@@ -172,8 +179,12 @@ def generate_target_nw(platform_name, arch, version):
                            'resources.pak',
                            'nw_100_percent.pak',
                            'nw_200_percent.pak',
-                          
                            ]
+        if flavor in ['nacl','sdk'] :
+            if arch == 'x64':
+                target['input'].append('nacl_irt_x86_64.nexe')
+            else:
+                target['input'].append('nacl_irt_x86_32.nexe')
     elif platform_name == 'osx':
         target['input'] = [
                            'nwjs.app',

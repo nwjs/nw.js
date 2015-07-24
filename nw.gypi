@@ -889,6 +889,9 @@
             'package_mode': 'nosdk',
             'icudat_path': '<(DEPTH)/third_party/icu/android/icudtl.dat',
           }],
+          ['disable_nacl==0 and nwjs_sdk==0', {
+            'package_mode': 'nacl',
+          }],
         ],  # conditions
       },  # variables
       'actions': [
