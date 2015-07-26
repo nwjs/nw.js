@@ -1,0 +1,13 @@
+diff --git a/base/base.gyp b/base/base.gyp
+index 76d85a7..a99893e 100644
+--- a/base/base.gyp
++++ b/base/base.gyp
+@@ -558,7 +558,7 @@
+               'conditions': [
+                 # On some platforms, the rest of NSS is bundled. On others,
+                 # it's pulled from the system.
+-                ['OS == "mac" or OS == "ios"', {
++                ['OS == "mac" or OS == "ios" or OS == "win"', {
+                   'dependencies': [
+                     '<(DEPTH)/net/third_party/nss/ssl.gyp:libssl',
+                     '<(DEPTH)/third_party/nss/nss.gyp:nspr',
