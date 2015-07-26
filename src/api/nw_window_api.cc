@@ -35,7 +35,9 @@ using content::RenderWidgetHostView;
 using content::WebContents;
 
 using nw::Menu;
+#if defined(OS_LINUX)
 using nw::MenuBarView;
+#endif
 
 namespace extensions {
 namespace {
