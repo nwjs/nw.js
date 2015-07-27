@@ -22,11 +22,11 @@
 
 #include "base/values.h"
 #import <Cocoa/Cocoa.h>
-#include "content/nw/src/api/dispatcher_host.h"
+#include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/menuitem/menuitem_delegate_mac.h"
 
-namespace nwapi {
+namespace nw{
 
 void MenuItem::Create(const base::DictionaryValue& option) {
   std::string type;
@@ -94,7 +94,7 @@ void MenuItem::Create(const base::DictionaryValue& option) {
 
     int menu_id;
     if (option.GetInteger("submenu", &menu_id))
-      SetSubmenu(dispatcher_host()->GetApiObject<Menu>(menu_id));
+      SetSubmenu(object_manager()->GetApiObject<Menu>(menu_id));
   }
 }
 
@@ -174,4 +174,4 @@ void MenuItem::SetSubmenu(Menu* sub_menu) {
   [menu_item_ setSubmenu:sub_menu->menu_];
 }
 
-}  // namespace nwapi
+}  // namespace nw

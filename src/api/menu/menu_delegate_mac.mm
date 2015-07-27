@@ -19,15 +19,14 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "base/run_loop.h"
-#include "content/nw/src/api/dispatcher_host.h"
+#include "base/values.h"
+#include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/menu/menu_delegate_mac.h"
-#include "content/nw/src/browser/native_window.h"
-#include "content/nw/src/nw_shell.h"
 
 @implementation NWMenuDelegate
 
-- (id)initWithMenu:(nwapi::Menu*) menu {
+- (id)initWithMenu:(nw::Menu*) menu {
   if ((self = [super init])) {
     nwmenu_ = menu;
   }
@@ -40,7 +39,7 @@
 
 - (void)menuNeedsUpdate:(NSMenu*)menu {
 
-  if (!nwmenu_->enable_show_event() || nwmenu_->dispatcher_host()->run_loop())
+  if (!nwmenu_->enable_show_event() || nwmenu_->object_manager()->run_loop())
     return;
 
   // NSEvent* event = [NSApp currentEvent];
@@ -56,8 +55,8 @@
 
   base::ListValue args;
   base::RunLoop run_loop;
-  nwmenu_->dispatcher_host()->set_run_loop(&run_loop);
-  nwmenu_->dispatcher_host()->SendEvent(nwmenu_, "show", args);
+  nwmenu_->object_manager()->set_run_loop(&run_loop);
+  nwmenu_->object_manager()->SendEvent(nwmenu_, "show", args);
   run_loop.Run();
 }
 

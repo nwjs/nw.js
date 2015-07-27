@@ -25,13 +25,11 @@
 #include "base/values.h"
 #import <Cocoa/Cocoa.h>
 #include "content/public/browser/web_contents.h"
-#include "content/nw/src/api/dispatcher_host.h"
+#include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/api/menu/menu_delegate_mac.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
-#include "content/nw/src/browser/native_window_mac.h"
-#include "content/nw/src/nw_shell.h"
 
-namespace nwapi {
+namespace nw {
 
 void Menu::Create(const base::DictionaryValue& option) {
   menu_ = [[NSMenu alloc] initWithTitle:@"NW Menu"];
@@ -57,6 +55,7 @@ void Menu::Remove(MenuItem* menu_item, int pos) {
   [menu_ removeItem:menu_item->menu_item_];
 }
 
+#if 0
 void Menu::Popup(int x, int y, content::Shell* shell) {
   // Fake out a context menu event for our menu
   NSWindow* window =
@@ -92,5 +91,6 @@ void Menu::Popup(int x, int y, content::Shell* shell) {
                      forView:web_view];
   }
 }
+#endif
 
-}  // namespace nwapi
+}  // namespace nw

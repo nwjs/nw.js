@@ -657,6 +657,9 @@ bool GetImage(Package* package, const FilePath& icon_path, gfx::Image* image) {
 }
 
 bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window) {
+#if defined(OS_MACOSX)
+  return false;
+#else
   //nw::ObjectManager* obj_manager = nw::ObjectManager::Get(app_window->browser_context());
   //Menu* menu = (Menu*)obj_manager->GetApiObject(command_id);
   Menu* menu = app_window->menu_;
@@ -667,6 +670,7 @@ bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window) {
   menu->menu_->UpdateStates();
 #endif
   return true;
+#endif //OSX
 }
 
 } //namespace nw

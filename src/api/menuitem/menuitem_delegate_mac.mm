@@ -21,12 +21,12 @@
 #import "content/nw/src/api/menuitem/menuitem_delegate_mac.h"
 
 #include "base/values.h"
-#include "content/nw/src/api/dispatcher_host.h"
+#include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
 
 @implementation MenuItemDelegate
 
--(id)initWithMenuItem: (nwapi::MenuItem*)item {
+-(id)initWithMenuItem: (nw::MenuItem*)item {
   if ([super init]) {
     menu_item_ = item;
   }
@@ -39,7 +39,7 @@
 
   // Send event.
   base::ListValue args;
-  menu_item_->dispatcher_host()->SendEvent(menu_item_, "click", args);
+  menu_item_->object_manager()->SendEvent(menu_item_, "click", args);
 }
 
 @end

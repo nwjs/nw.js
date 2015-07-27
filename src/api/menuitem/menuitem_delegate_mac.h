@@ -20,15 +20,15 @@
 
 #import <Foundation/Foundation.h>
 
-namespace nwapi {
+namespace nw {
 class MenuItem;
 }
 
 @interface MenuItemDelegate : NSObject {
-  nwapi::MenuItem* menu_item_;
+  nw::MenuItem* menu_item_;
 }
 
--(id)initWithMenuItem: (nwapi::MenuItem*)item;
+-(id)initWithMenuItem: (nw::MenuItem*)item;
 -(void)invoke: (id)sender;
 
 @end

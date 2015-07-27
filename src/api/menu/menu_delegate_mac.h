@@ -23,16 +23,16 @@
 
 #import <Cocoa/Cocoa.h>
 
-namespace nwapi {
+namespace nw {
 class Menu;
 }
 
 @interface NWMenuDelegate : NSObject<NSMenuDelegate> {
  @private
-  nwapi::Menu* nwmenu_;
+  nw::Menu* nwmenu_;
 }
 
-- (id)initWithMenu:(nwapi::Menu*)menu;
+- (id)initWithMenu:(nw::Menu*)menu;
 
 @end
 #endif // CONTENT_NW_SRC_API_MENU_MENU_DELEGATE_MAC_H_ 

@@ -58,7 +58,7 @@ ObjectManager* ObjectManager::Get(content::BrowserContext* context) {
 }
 
 ObjectManager::ObjectManager(content::BrowserContext* context)
-  : browser_context_(context), weak_ptr_factory_(this) {
+  : run_loop_(nullptr), browser_context_(context), weak_ptr_factory_(this) {
 }
 
 ObjectManager::~ObjectManager() {

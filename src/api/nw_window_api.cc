@@ -30,11 +30,16 @@
 using nw::BrowserViewLayout;
 #endif
 
+#if defined(OS_MACOSX)
+#include "content/nw/src/nw_content_mac.h"
+#endif
+
 using content::RenderWidgetHost;
 using content::RenderWidgetHostView;
 using content::WebContents;
 
 using nw::Menu;
+
 #if defined(OS_LINUX)
 using nw::MenuBarView;
 #endif
@@ -236,6 +241,10 @@ bool NwCurrentWindowInternalSetMenuFunction::RunAsync() {
   Menu* menu = (Menu*)obj_manager->GetApiObject(id);
 
   window->menu_ = menu;
+#if defined(OS_MACOSX)
+  NWChangeAppMenu(menu);
+#endif
+
 #if defined(OS_LINUX)
   native_app_window::NativeAppWindowViews* native_app_window_views =
       static_cast<native_app_window::NativeAppWindowViews*>(

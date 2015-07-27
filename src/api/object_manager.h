@@ -67,6 +67,9 @@ class ObjectManager : public KeyedService {
 
   static void ClearObjectRegistry();
 
+  void set_run_loop(base::RunLoop* run_loop) { run_loop_ = run_loop; }
+  base::RunLoop* run_loop() { return run_loop_; }
+
   // Send event to C++ object's corresponding js object.
   void SendEvent(Base* object,
                  const std::string& event,
@@ -96,6 +99,8 @@ class ObjectManager : public KeyedService {
  private:
   static IDMap<Base, IDMapOwnPointer> objects_registry_;
   static int next_object_id_;
+
+  base::RunLoop* run_loop_;
 
   std::set<int> objects_;
 
