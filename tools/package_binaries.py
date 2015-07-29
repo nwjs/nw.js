@@ -157,7 +157,7 @@ def generate_target_nw(platform_name, arch, version):
                            'natives_blob.bin',
                            ]
         if flavor in ['nacl','sdk'] :
-            target['input'] += ['nacl_helper', 'nacl_helper_bootstrap']
+            target['input'] += ['nacl_helper', 'nacl_helper_bootstrap', 'pnacl']
             if arch == 'x64':
                 target['input'].append('nacl_irt_x86_64.nexe')
             else:
@@ -181,6 +181,7 @@ def generate_target_nw(platform_name, arch, version):
                            'nw_200_percent.pak',
                            ]
         if flavor in ['nacl','sdk'] :
+            target['input'].append('pnacl')
             if arch == 'x64':
                 target['input'].append('nacl_irt_x86_64.nexe')
             else:
