@@ -30,13 +30,13 @@ namespace nwapi {
 			DesktopCaptureMonitor(int id,
 				const base::WeakPtr<DispatcherHost>& dispatcher_host,
 				const base::DictionaryValue& option);
-			virtual ~DesktopCaptureMonitor() override;
-			virtual void CallSync(const std::string& method, const base::ListValue& arguments, base::ListValue* result) override;
-			virtual void OnSourceAdded(int index);
-			virtual void OnSourceRemoved(int index);
-			virtual void OnSourceMoved(int old_index, int new_index);
-			virtual void OnSourceNameChanged(int index);
-			virtual void OnSourceThumbnailChanged(int index);
+			~DesktopCaptureMonitor() override;
+			void CallSync(const std::string& method, const base::ListValue& arguments, base::ListValue* result) override;
+			void OnSourceAdded(int index) override;
+			void OnSourceRemoved(int index) override;
+			void OnSourceMoved(int old_index, int new_index) override;
+			void OnSourceNameChanged(int index) override;
+			void OnSourceThumbnailChanged(int index) override;
 		private:
 			DesktopCaptureMonitor();
 			DISALLOW_COPY_AND_ASSIGN(DesktopCaptureMonitor);
