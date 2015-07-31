@@ -1,3 +1,9 @@
+0.12.3 / 07-31-2015
+===================
+- Support Mac App Store with the 'macappstore' flavor
+- [WIN] Screen.DesktopCaptureMonitor API: https://github.com/nwjs/nw.js/wiki/Screen#screendesktopcapturemonitor (Thanks to Rick Edgecombe)
+- [HighDPI][WIN] fix for Tray menu is huge on High-DPI Windows machine (#2847) (Thanks to Jefry)
+
 0.13.0-alpha2 / 06-23-2015
 ==========================
 - support Mixed Context mode (#3107)
