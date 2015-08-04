@@ -21,6 +21,7 @@
 #include "content/nw/src/shell_main_delegate.h"
 
 #include "base/command_line.h"
+#include "base/environment.h"
 #include "base/files/file_path.h"
 #include "base/file_util.h"
 #include "base/lazy_instance.h"
@@ -111,10 +112,26 @@ base::LazyInstance<ShellContentUtilityClient>
     g_chrome_content_utility_client = LAZY_INSTANCE_INITIALIZER;
 #endif
 
+base::FilePath GetLogFileName() {
+  std::string filename;
+  scoped_ptr<base::Environment> env(base::Environment::Create());
+  if (env->GetVar("NWJS_LOG_FILE", &filename) && !filename.empty())
+    return base::FilePath::FromUTF8Unsafe(filename);
+
+  const base::FilePath log_filename(FILE_PATH_LITERAL("debug.log"));
+  base::FilePath log_path;
+
+  if (PathService::Get(base::DIR_EXE, &log_path)) {
+    log_path = log_path.Append(log_filename);
+    return log_path;
+  } else {
+    // error with path service, just use some default file somewhere
+    return log_filename;
+  }
+}
+
 void InitLogging() {
-  base::FilePath log_filename;
-  PathService::Get(base::DIR_EXE, &log_filename);
-  log_filename = log_filename.AppendASCII("debug.log");
+  base::FilePath log_filename = GetLogFileName();
   logging::LoggingSettings settings;
   if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kEnableLogging)) {
     settings.logging_dest = logging::LOG_TO_ALL;
