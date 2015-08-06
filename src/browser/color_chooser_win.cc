@@ -4,7 +4,7 @@
 
 #include <windows.h>
 
-//#include "chrome/browser/platform_util.h"
+#include "chrome/browser/platform_util.h"
 #include "content/nw/src/browser/browser_dialogs.h"
 #include "content/nw/src/browser/color_chooser_dialog.h"
 #include "content/public/browser/color_chooser.h"
@@ -55,8 +55,8 @@ ColorChooserWin* ColorChooserWin::Open(content::WebContents* web_contents,
 ColorChooserWin::ColorChooserWin(content::WebContents* web_contents,
                                  SkColor initial_color)
     : web_contents_(web_contents) {
-  gfx::NativeWindow owning_window = (gfx::NativeWindow)::GetAncestor(
-      (HWND)web_contents->GetRenderViewHost()->GetView()->GetNativeView(), GA_ROOT);
+  gfx::NativeWindow owning_window = platform_util::GetTopLevel(
+      web_contents->GetRenderViewHost()->GetView()->GetNativeView());
   color_chooser_dialog_ = new ColorChooserDialog(this,
                                                  initial_color,
                                                  owning_window);
@@ -100,4 +100,4 @@ content::ColorChooser* ShowColorChooser(content::WebContents* web_contents,
   return ColorChooserWin::Open(web_contents, initial_color);
 }
 
-}  // namespace chrome
+}  // namespace nw

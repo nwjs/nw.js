@@ -64,7 +64,7 @@ ColorChooserMac* ColorChooserMac::Open(content::WebContents* web_contents,
                                        SkColor initial_color) {
   if (current_color_chooser_)
     current_color_chooser_->End();
-  CHECK(!current_color_chooser_);
+  DCHECK(!current_color_chooser_);
   current_color_chooser_ =
       new ColorChooserMac(web_contents, initial_color);
   return current_color_chooser_;
@@ -80,7 +80,7 @@ ColorChooserMac::ColorChooserMac(content::WebContents* web_contents,
 
 ColorChooserMac::~ColorChooserMac() {
   // Always call End() before destroying.
-  CHECK(!panel_);
+  DCHECK(!panel_);
 }
 
 void ColorChooserMac::DidChooseColorInColorPanel(SkColor color) {
@@ -94,7 +94,7 @@ void ColorChooserMac::DidCloseColorPabel() {
 
 void ColorChooserMac::End() {
   panel_.reset();
-  CHECK(current_color_chooser_ == this);
+  DCHECK(current_color_chooser_ == this);
   current_color_chooser_ = NULL;
   if (web_contents_)
       web_contents_->DidEndColorChooser();
@@ -130,8 +130,8 @@ void ColorChooserMac::SetSelectedColor(SkColor color) {
 }
 
 - (void)windowWillClose:(NSNotification*)notification {
-  nonUserChange_ = NO;
   chooser_->DidCloseColorPabel();
+  nonUserChange_ = NO;
 }
 
 - (void)didChooseColor:(NSColorPanel*)panel {
@@ -156,6 +156,6 @@ content::ColorChooser* ShowColorChooser(content::WebContents* web_contents,
   return ColorChooserMac::Open(web_contents, initial_color);
 }
 
-}  // namepace chrome
+}  // namepace nw
 
 @end
