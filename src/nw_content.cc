@@ -205,7 +205,7 @@ void DocumentElementHook(blink::WebFrame* frame,
   v8::Local<v8::Context> v8_context = frame->mainWorldScriptContext();
   std::string root_path = extension->path().AsUTF8Unsafe();
   base::FilePath root(extension->path());
-  {
+  if (!v8_context.IsEmpty()) {
     blink::WebScopedMicrotaskSuppression suppression;
     v8::Context::Scope cscope(v8_context);
     // Make node's relative modules work
@@ -215,7 +215,7 @@ void DocumentElementHook(blink::WebFrame* frame,
     base::ReplaceChars(root_path, "'", "\\'", &root_path);
 
     v8::Local<v8::Script> script2 = v8::Script::Compile(v8::String::NewFromUtf8(isolate, (
-        "if (typeof __filename == 'undefined') {"
+        "if (typeof nw != 'undefined' && typeof __filename == 'undefined') {"
         "  var root = '" + root_path + "';"
         "  var path = '" + path      + "';"
         "nw.__filename = root + path;"
@@ -238,7 +238,7 @@ void DocumentElementHook(blink::WebFrame* frame,
     return;
   }
   base::string16 jscript = base::UTF8ToUTF16(content);
-  {
+  if (!v8_context.IsEmpty()) {
     blink::WebScopedMicrotaskSuppression suppression;
     v8::Context::Scope cscope(v8_context);
     // v8::Handle<v8::Value> result;
