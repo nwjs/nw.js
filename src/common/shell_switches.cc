@@ -37,6 +37,9 @@ const char kUrl[] = "url";
 // Specified app location
 const char kAppPath[] = "app-path";
 
+// Specified log file
+const char kNwjsLogFile[] = "nwjs-log-file";
+
 // Set current working directory.
 const char kWorkingDirectory[] = "working-directory";
 

@@ -114,12 +114,21 @@ base::LazyInstance<ShellContentUtilityClient>
 
 base::FilePath GetLogFileName() {
   std::string filename;
+  base::FilePath log_path;
+  // 1. get log file from --nwjs-log-file CLI argument first
+  CommandLine* command_line = CommandLine::ForCurrentProcess();
+  if (command_line->HasSwitch(switches::kNwjsLogFile)) {
+    log_path = command_line->GetSwitchValuePath(switches::kNwjsLogFile);
+    if (!log_path.empty())
+      return log_path;
+  }
+
+  // 2. get log file from NWJS_LOG_FILE environment
   scoped_ptr<base::Environment> env(base::Environment::Create());
   if (env->GetVar("NWJS_LOG_FILE", &filename) && !filename.empty())
     return base::FilePath::FromUTF8Unsafe(filename);
 
   const base::FilePath log_filename(FILE_PATH_LITERAL("debug.log"));
-  base::FilePath log_path;
 
   if (PathService::Get(base::DIR_EXE, &log_path)) {
     log_path = log_path.Append(log_filename);
