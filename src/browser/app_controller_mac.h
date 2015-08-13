@@ -24,7 +24,11 @@
 #import <Cocoa/Cocoa.h>
 
 @interface AppController : NSObject<NSApplicationDelegate> {
+	BOOL appReady;
 }
+
+@property(nonatomic) BOOL appReady;
+
 @end
 
 #endif  // CONTENT_NW_SRC_BROWSER_APP_CONTROLLER_MAC_H_
