@@ -146,6 +146,17 @@ void DispatcherHost::RenderViewDeleted(content::RenderViewHost* host) {
 }
 
 void DispatcherHost::RenderProcessGone(base::TerminationStatus status) {
+  switch(status) {
+    case base::TerminationStatus::TERMINATION_STATUS_PROCESS_CRASHED:
+    LOG(INFO) << "[NW.JS]RenderProcessCrashed";
+    break;
+    case base::TerminationStatus::TERMINATION_STATUS_PROCESS_WAS_KILLED:
+    LOG(INFO) << "[NW.JS]RenderProcessWasKilled";
+    break;
+    default:
+    LOG(INFO) << "[NW.JS]RenderProcessGone";
+    break;
+  }
   delete this;
 }
 
