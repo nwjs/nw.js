@@ -63,7 +63,8 @@ class App {
 
   static void ClearCache(content::RenderProcessHost* render_view_host);
   static void SetProxyConfig(content::RenderProcessHost* render_process_host,
-                             const std::string& proxy_config);
+                             const std::string& proxy_config,
+                             const std::string& pac_url);
 
  private:
   App();

@@ -202,9 +202,10 @@ void App::Call(Shell* shell,
         shortcut->GetAccelerator(), shortcut);
     return;
   } else if (method == "SetProxyConfig") {
-    std::string proxy_config;
+    std::string proxy_config, pac_url;
     arguments.GetString(0, &proxy_config);
-    SetProxyConfig(GetRenderProcessHost(), proxy_config);
+    arguments.GetString(1, &pac_url);
+    SetProxyConfig(GetRenderProcessHost(), proxy_config, pac_url);
     return;
   } else if (method == "DoneMenuShow") {
     dispatcher_host->quit_run_loop();
@@ -299,9 +300,18 @@ void App::ClearCache(content::RenderProcessHost* render_process_host) {
 }
 
 void App::SetProxyConfig(content::RenderProcessHost* render_process_host,
-                         const std::string& proxy_config) {
+                         const std::string& proxy_config,
+                         const std::string& pac_url) {
   net::ProxyConfig config;
-  config.proxy_rules().ParseFromString(proxy_config);
+  if (!pac_url.empty()) {
+    if (pac_url == "<direct>")
+      config = net::ProxyConfig::CreateDirect();
+    else if (pac_url == "<auto>")
+      config = net::ProxyConfig::CreateAutoDetect();
+    else
+      config = net::ProxyConfig::CreateFromCustomPacURL(GURL(pac_url));
+  } else
+    config.proxy_rules().ParseFromString(proxy_config);
   net::URLRequestContextGetter* context_getter =
     render_process_host->GetBrowserContext()->
     GetRequestContextForRenderProcess(render_process_host->GetID());
