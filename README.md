@@ -116,3 +116,5 @@ Issues are being tracked here on GitHub.
 The work is being sponsored by:  
 * [Intel](http://www.intel.com)
 * [Gnor Tech](http://gnor.net)
+## Books
+- [NW.js in Action](http://manning.com/jensen/) by Paul B. Jensen  (Manning Publications). [Chapter 1](http://manning.com/jensen/NWjsinAction_MEAP_ch1.pdf)
