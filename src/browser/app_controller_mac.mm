@@ -115,8 +115,8 @@
 		// App is not ready yet, add the URL to the command line arguments.
 		// This happens when the app is started by opening a link with the registered URL.
 		if (content::Shell::windows().size() == 0) {
-			CommandLine::ForCurrentProcess()->AppendArg([urlString UTF8String]);
-			CommandLine::ForCurrentProcess()->FixOrigArgv4Finder([urlString UTF8String]);
+			base::CommandLine::ForCurrentProcess()->AppendArg([urlString UTF8String]);
+			base::CommandLine::ForCurrentProcess()->FixOrigArgv4Finder([urlString UTF8String]);
 		}
 	}
 }
