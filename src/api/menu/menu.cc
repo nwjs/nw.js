@@ -39,7 +39,8 @@ Menu::~Menu() {
 }
 
 void Menu::Call(const std::string& method,
-                const base::ListValue& arguments) {
+                const base::ListValue& arguments,
+                content::RenderViewHost* rvh) {
   if (method == "Append") {
     int object_id = 0;
     arguments.GetInteger(0, &object_id);
@@ -61,8 +62,7 @@ void Menu::Call(const std::string& method,
     arguments.GetInteger(0, &x);
     int y = 0;
     arguments.GetInteger(1, &y);
-    // Popup(x, y, content::Shell::FromRenderViewHost(
-    //       object_manager()->render_view_host()));
+    Popup(x, y, rvh);
   } else if (method == "EnableShowEvent") {
     arguments.GetBoolean(0, &enable_show_event_);
   } else {

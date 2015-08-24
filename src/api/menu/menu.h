@@ -78,8 +78,13 @@ protected:
 
 #endif
 
+namespace aura {
+class Window;
+}
+
 namespace content {
-class Shell;
+class RenderViewHost;
+class RenderFrameHost;
 }
 
 namespace nw {
@@ -95,11 +100,13 @@ class Menu : public Base {
    ~Menu() override;
 
    void Call(const std::string& method,
-                    const base::ListValue& arguments) override;
+             const base::ListValue& arguments,
+             content::RenderViewHost* rvh = nullptr) override;
 
 #if defined(OS_WIN) || defined(OS_LINUX)
   void UpdateKeys(views::FocusManager *focus_manager);
   ui::NwMenuModel* model() { return menu_model_.get(); }
+  aura::Window* GetActiveNativeView(content::RenderFrameHost* rfh);
 #endif
 
   bool enable_show_event() { return enable_show_event_; }
@@ -111,7 +118,7 @@ class Menu : public Base {
   void Append(MenuItem* menu_item);
   void Insert(MenuItem* menu_item, int pos);
   void Remove(MenuItem* menu_item, int pos);
-  //void Popup(int x, int y, content::Shell*);
+  void Popup(int x, int y, content::RenderViewHost*);
 
 #if defined(OS_LINUX)
   std::vector<MenuItem*> menu_items;

@@ -1,6 +1,7 @@
 var Binding = require('binding').Binding;
 var forEach = require('utils').forEach;
 var nw_binding = require('binding').Binding.create('nw.Menu');
+var nwNative = requireNative('nw_natives');
 var sendRequest = require('sendRequest');
 var contextMenuNatives = requireNative('context_menus');
 var messagingNatives = requireNative('messaging_natives');
@@ -74,7 +75,7 @@ function MenuItem(id, option) {
 
     if (option.hasOwnProperty('icon')) {
       option.shadowIcon = String(option.icon);
-      option.icon = nw.getAbsolutePath(option.icon);
+      option.icon = nwNative.getAbsolutePath(option.icon);
     }
 
     if (option.hasOwnProperty('iconIsTemplate'))
@@ -123,6 +124,16 @@ function MenuItem(id, option) {
     option.modifiers = "";
 }
 
+MenuItem.prototype.handleGetter = function(name) {
+  return privates(this).option[name];
+};
+
+MenuItem.prototype.handleSetter = function(name, setter, type, value) {
+  value = type(value);
+  privates(this).option[name] = value;
+  nw.Object.callObjectMethod(this.id, 'MenuItem', setter, [ value ]);
+};
+
 MenuItem.prototype.__defineGetter__('type', function() {
   return this.handleGetter('type');
 });
@@ -144,8 +155,8 @@ MenuItem.prototype.__defineGetter__('icon', function() {
 });
 
 MenuItem.prototype.__defineSetter__('icon', function(val) {
-  prvates(this).option.shadowIcon = String(val);
-  var real_path = val == '' ? '' : nw.getAbsolutePath(val); //FIXME
+  privates(this).option.shadowIcon = String(val);
+  var real_path = val == '' ? '' : nwNative.getAbsolutePath(val); //FIXME
   this.handleSetter('icon', 'SetIcon', String, real_path);
 });
 

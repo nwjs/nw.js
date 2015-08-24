@@ -24,6 +24,9 @@
 #include "base/strings/utf_string_conversions.h"
 #include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
+#include "content/public/browser/render_frame_host.h"
+#include "content/public/browser/render_view_host.h"
+#include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/web_contents.h"
 #include "extensions/browser/app_window/app_window.h"
 #include "skia/ext/image_operations.h"
@@ -157,8 +160,7 @@ void Menu::Remove(MenuItem* menu_item, int pos) {
   menu_item->menu_ = NULL;
 }
 
-#if 0 //FIXME
-void Menu::Popup(int x, int y, content::Shell* shell) {
+void Menu::Popup(int x, int y, content::RenderViewHost* rvh) {
   // Rebuild();
 
   // Map point from document to screen.
@@ -166,18 +168,19 @@ void Menu::Popup(int x, int y, content::Shell* shell) {
 
   // Convert from content coordinates to window coordinates.
   // This code copied from chrome_web_contents_view_delegate_views.cc
-  aura::Window* web_contents_window =
-        shell->web_contents()->GetNativeView();
-  aura::Window* root_window = web_contents_window->GetRootWindow();
+  aura::Window* target_window = GetActiveNativeView(rvh->GetMainFrame());
+  aura::Window* root_window = target_window->GetRootWindow();
+  views::Widget* top_level_widget =
+    views::Widget::GetTopLevelWidgetForNativeView(target_window);
   aura::client::ScreenPositionClient* screen_position_client =
         aura::client::GetScreenPositionClient(root_window);
   if (screen_position_client) {
-    screen_position_client->ConvertPointToScreen(web_contents_window,
+    screen_position_client->ConvertPointToScreen(target_window,
              &screen_point);
   }
   views::MenuRunner runner(menu_model_.get(), views::MenuRunner::CONTEXT_MENU);
   if (views::MenuRunner::MENU_DELETED ==
-      runner.RunMenuAt(static_cast<nw::NativeWindowAura*>(shell->window())->window(),
+      runner.RunMenuAt(top_level_widget,
                        NULL,
                        gfx::Rect(screen_point, gfx::Size()),
                        views::MENU_ANCHOR_TOPRIGHT,
@@ -185,7 +188,7 @@ void Menu::Popup(int x, int y, content::Shell* shell) {
     return;
   // menu_->RunMenuAt(screen_point, views::Menu2::ALIGN_TOPLEFT);
 }
-#endif
+
 #if defined(OS_WIN)
 void Menu::Rebuild(const HMENU *parent_menu) {
   if (is_menu_modified_) {
@@ -268,5 +271,18 @@ void Menu::SetWindow(extensions::AppWindow* win) {
   }
 }
 #endif
+
+aura::Window* Menu::GetActiveNativeView(content::RenderFrameHost* rfh) {
+  content::WebContents* web_contents =
+    content::WebContents::FromRenderFrameHost(rfh);
+  if (!web_contents) {
+    LOG(ERROR) << "Menu: couldn't find WebContents";
+    return NULL;
+  }
+  return web_contents->GetFullscreenRenderWidgetHostView()
+             ? web_contents->GetFullscreenRenderWidgetHostView()
+                   ->GetNativeView()
+             : web_contents->GetNativeView();
+}
 
 }  // namespace nw

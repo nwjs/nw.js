@@ -22,6 +22,7 @@
 
 #include "base/files/file_path.h"
 #include "base/strings/utf_string_conversions.h"
+#include "base/threading/thread_restrictions.h"
 #include "base/values.h"
 #include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/api/menu/menu.h"
@@ -123,6 +124,7 @@ void MenuItem::SetLabel(const std::string& label) {
 }
 
 void MenuItem::SetIcon(const std::string& icon) {
+  base::ThreadRestrictions::ScopedAllowIO allow_io;
   is_modified_ = true;
   if (icon.empty()) {
     icon_ = gfx::Image();

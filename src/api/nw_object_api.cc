@@ -62,7 +62,7 @@ bool NwObjectCallObjectMethodFunction::RunNWSync(base::ListValue* response, std:
   EXTENSION_FUNCTION_VALIDATE(args_->GetList(3, &arguments));
 
   nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
-  manager->OnCallObjectMethod(id, type, method, *arguments);
+  manager->OnCallObjectMethod(render_view_host(), id, type, method, *arguments);
   return true;
 }
 
@@ -82,7 +82,7 @@ bool NwObjectCallObjectMethodSyncFunction::RunNWSync(base::ListValue* response, 
   EXTENSION_FUNCTION_VALIDATE(args_->GetList(3, &arguments));
 
   nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
-  manager->OnCallObjectMethodSync(id, type, method, *arguments, response);
+  manager->OnCallObjectMethodSync(render_view_host(), id, type, method, *arguments, response);
   return true;
 }
 

@@ -19,6 +19,7 @@ class NWCustomBindings : public ObjectBackedNativeHandler {
   void CrashRenderer(const v8::FunctionCallbackInfo<v8::Value>& args);
   void EvalScript(const v8::FunctionCallbackInfo<v8::Value>& args);
   void EvalNWBin(const v8::FunctionCallbackInfo<v8::Value>& args);
+  void GetAbsolutePath(const v8::FunctionCallbackInfo<v8::Value>& args);
 };
 
 }  // namespace extensions

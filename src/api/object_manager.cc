@@ -126,6 +126,7 @@ void ObjectManager::OnDeallocateObject(int object_id) {
 }
 
 void ObjectManager::OnCallObjectMethod(
+    content::RenderViewHost* rvh,
     int object_id,
     const std::string& type,
     const std::string& method,
@@ -137,7 +138,7 @@ void ObjectManager::OnCallObjectMethod(
 
   Base* object = GetApiObject(object_id);
   if (object)
-    object->Call(method, arguments);
+    object->Call(method, arguments, rvh);
   else
     DLOG(WARNING) << "Unknown object: " << object_id
              << " type:" << type
@@ -146,6 +147,7 @@ void ObjectManager::OnCallObjectMethod(
 }
 
 void ObjectManager::OnCallObjectMethodSync(
+    content::RenderViewHost* rvh,
     int object_id,
     const std::string& type,
     const std::string& method,
@@ -167,6 +169,7 @@ void ObjectManager::OnCallObjectMethodSync(
 }
 
 void ObjectManager::OnCallStaticMethod(
+    content::RenderViewHost* rvh,
     const std::string& type,
     const std::string& method,
     const base::ListValue& arguments) {
@@ -188,6 +191,7 @@ void ObjectManager::OnCallStaticMethod(
 }
 
 void ObjectManager::OnCallStaticMethodSync(
+    content::RenderViewHost* rvh,
     const std::string& type,
     const std::string& method,
     const base::ListValue& arguments,

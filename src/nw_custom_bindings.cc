@@ -45,6 +45,30 @@ using blink::WebFrame;
 
 namespace extensions {
 
+namespace {
+bool MakePathAbsolute(base::FilePath* file_path) {
+  DCHECK(file_path);
+
+  base::FilePath current_directory;
+  if (!base::GetCurrentDirectory(&current_directory))
+    return false;
+
+  if (file_path->IsAbsolute())
+    return true;
+
+  if (current_directory.empty()) {
+    *file_path = base::MakeAbsoluteFilePath(*file_path);
+    return true;
+  }
+
+  if (!current_directory.IsAbsolute())
+    return false;
+
+  *file_path = current_directory.Append(*file_path);
+  return true;
+}
+
+} // namespace
 NWCustomBindings::NWCustomBindings(ScriptContext* context)
     : ObjectBackedNativeHandler(context) {
   RouteFunction("crashRenderer",
@@ -55,6 +79,9 @@ NWCustomBindings::NWCustomBindings(ScriptContext* context)
                            base::Unretained(this)));
   RouteFunction("evalNWBin",
                 base::Bind(&NWCustomBindings::EvalScript,
+                           base::Unretained(this)));
+  RouteFunction("getAbsolutePath",
+                base::Bind(&NWCustomBindings::GetAbsolutePath,
                            base::Unretained(this)));
 }
 
@@ -139,6 +166,18 @@ void NWCustomBindings::EvalNWBin(
     }
   }
   return;
+}
+
+void NWCustomBindings::GetAbsolutePath(
+    const v8::FunctionCallbackInfo<v8::Value>& args) {
+  v8::Isolate* isolate = args.GetIsolate();
+  base::FilePath path = base::FilePath::FromUTF8Unsafe(*v8::String::Utf8Value(args[0]));
+  MakePathAbsolute(&path);
+#if defined(OS_POSIX)
+  args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, path.value().c_str()));
+#else
+  args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, path.AsUTF8Unsafe().c_str()));
+#endif
 }
 
 }  // namespace extensions

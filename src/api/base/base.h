@@ -31,6 +31,10 @@ class DictionaryValue;
 class ListValue;
 }
 
+namespace content {
+class RenderViewHost;
+}
+
 namespace nw {
 
 class ObjectManager;
@@ -44,7 +48,8 @@ class Base {
   virtual ~Base();
 
   virtual void Call(const std::string& method,
-                    const base::ListValue& arguments);
+                    const base::ListValue& arguments,
+                    content::RenderViewHost* rvh = nullptr);
   virtual void CallSync(const std::string& method,
                         const base::ListValue& arguments,
                         base::ListValue* result);

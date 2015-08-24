@@ -42,6 +42,7 @@ class WebFrame;
 
 namespace content {
 class BrowserContext;
+class RenderViewHost;
 }
 
 namespace nw {
@@ -80,19 +81,23 @@ class ObjectManager : public KeyedService {
                         const base::DictionaryValue& option,
                         const std::string& extension_id);
   void OnDeallocateObject(int object_id);
-  void OnCallObjectMethod(int object_id,
+  void OnCallObjectMethod(content::RenderViewHost* rvh,
+                          int object_id,
                           const std::string& type,
                           const std::string& method,
                           const base::ListValue& arguments);
-  void OnCallObjectMethodSync(int object_id,
+  void OnCallObjectMethodSync(content::RenderViewHost* rvh,
+                              int object_id,
                               const std::string& type,
                               const std::string& method,
                               const base::ListValue& arguments,
                               base::ListValue* result);
-  void OnCallStaticMethod(const std::string& type,
+  void OnCallStaticMethod(content::RenderViewHost* rvh,
+                          const std::string& type,
                           const std::string& method,
                           const base::ListValue& arguments);
-  void OnCallStaticMethodSync(const std::string& type,
+  void OnCallStaticMethodSync(content::RenderViewHost* rvh,
+                              const std::string& type,
                               const std::string& method,
                               const base::ListValue& arguments,
                               base::ListValue* result);
