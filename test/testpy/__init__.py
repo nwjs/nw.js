@@ -41,8 +41,8 @@ FILES_PATTERN = re.compile(r"//\s+Files:(.*)")
 
 class SimpleTestCase(test.TestCase):
 
-  def __init__(self, path, file, arch, mode, context, config, additional=[]):
-    super(SimpleTestCase, self).__init__(context, path, arch, mode)
+  def __init__(self, path, file, arch, mode, nwdir, context, config, additional=[]):
+    super(SimpleTestCase, self).__init__(context, path, arch, mode, nwdir)
     self.file = file
     self.config = config
     self.arch = arch
@@ -108,7 +108,7 @@ class SimpleTestCase(test.TestCase):
     return self.path[-1]
 
   def GetCommand(self):
-    result = [self.config.context.GetVm(self.arch, self.mode)]
+    result = [self.config.context.GetVm(self.arch, self.mode, self.nwdir)]
     manifest = json.loads(open(os.path.join(self.file, 'package.json')).read(), 'utf-8')
     if manifest.get('expect_exit_code'):
       self.expected_exit_code = manifest['expect_exit_code']
@@ -137,13 +137,13 @@ class SimpleTestConfiguration(test.TestConfiguration):
       return os.path.isdir(os.path.join(path, name))
     return [f[0:] for f in os.listdir(path) if SelectTest(f)]
 
-  def ListTests(self, current_path, path, arch, mode):
+  def ListTests(self, current_path, path, arch, mode, nwdir):
     all_tests = [current_path + [t] for t in self.Ls(join(self.root))]
     result = []
     for test in all_tests:
       if self.Contains(path, test):
         file_path = join(self.root, reduce(join, test[1:], ""))
-        result.append(SimpleTestCase(test, file_path, arch, mode, self.context,
+        result.append(SimpleTestCase(test, file_path, arch, mode, nwdir, self.context,
                                      self, self.additional_flags))
     return result
 
@@ -160,9 +160,9 @@ class ParallelTestConfiguration(SimpleTestConfiguration):
     super(ParallelTestConfiguration, self).__init__(context, root, section,
                                                     additional)
 
-  def ListTests(self, current_path, path, arch, mode):
+  def ListTests(self, current_path, path, arch, mode, nwdir):
     result = super(ParallelTestConfiguration, self).ListTests(
-         current_path, path, arch, mode)
+         current_path, path, arch, mode, nwdir)
     for test in result:
       test.parallel = True
     return result
@@ -183,12 +183,12 @@ class AddonTestConfiguration(SimpleTestConfiguration):
             result.append([subpath, f[:-3]])
     return result
 
-  def ListTests(self, current_path, path, arch, mode):
+  def ListTests(self, current_path, path, arch, mode, nwdir):
     all_tests = [current_path + t for t in self.Ls(join(self.root))]
     result = []
     for test in all_tests:
       if self.Contains(path, test):
         file_path = join(self.root, reduce(join, test[1:], "") + ".js")
         result.append(
-            SimpleTestCase(test, file_path, arch, mode, self.context, self))
+            SimpleTestCase(test, file_path, arch, mode, nwdir, self.context, self))
     return result
