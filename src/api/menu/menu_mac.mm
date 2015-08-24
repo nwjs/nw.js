@@ -25,6 +25,8 @@
 #include "base/values.h"
 #import <Cocoa/Cocoa.h>
 #include "content/public/browser/web_contents.h"
+#include "content/public/browser/render_widget_host_view.h"
+#include "content/public/browser/render_view_host.h"
 #include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/api/menu/menu_delegate_mac.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
@@ -55,13 +57,12 @@ void Menu::Remove(MenuItem* menu_item, int pos) {
   [menu_ removeItem:menu_item->menu_item_];
 }
 
-#if 0
-void Menu::Popup(int x, int y, content::Shell* shell) {
+void Menu::Popup(int x, int y, content::RenderViewHost* rvh) {
   // Fake out a context menu event for our menu
-  NSWindow* window =
-       static_cast<nw::NativeWindowCocoa*>(shell->window())->window();
+  NSView* web_view =
+        rvh->GetView()->GetNativeView();
+  NSWindow* window = [web_view window];
   NSEvent* currentEvent = [NSApp currentEvent];
-  NSView* web_view = shell->web_contents()->GetNativeView();
   NSPoint position = { x, web_view.bounds.size.height - y };
   NSTimeInterval eventTime = [currentEvent timestamp];
   NSEvent* clickEvent = [NSEvent mouseEventWithType:NSRightMouseDown
@@ -91,6 +92,5 @@ void Menu::Popup(int x, int y, content::Shell* shell) {
                      forView:web_view];
   }
 }
-#endif
 
 }  // namespace nw
