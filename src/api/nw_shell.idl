@@ -2,8 +2,8 @@
 [implemented_in="content/nw/src/api/nw_shell_api.h"]
 namespace nw.Shell {
   interface Functions {
-    [nocompile] static void openExternal(DOMString uri);
-    [nocompile] static void openItem(DOMString filePath);
-    [nocompile] static void showItemInFolder(DOMString filePath);
+    static void openExternal(DOMString uri);
+    static void openItem(DOMString filePath);
+    static void showItemInFolder(DOMString filePath);
   };
 };
