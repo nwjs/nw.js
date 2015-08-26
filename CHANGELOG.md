@@ -1,3 +1,11 @@
+0.11.7-rc6 / 08-14-2015
+===================
+- [Win] Make color chooser a modal dialog
+- Added "nwcheckxframe" attribute for iframe
+- New CLI parameter `--nwjs-log-file` and environment `NWJS_LOG_FILE`
+- Log termination status for render process
+- Fix: backport libuv/libuv@c0c26a0 to prevent potential memory allocation issue
+
 0.11.7-rc5 / 06-14-2015
 ===================
 - Upgraded Node.js to 0.12.4
