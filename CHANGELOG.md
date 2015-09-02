@@ -1,3 +1,9 @@
+0.11.7-rc7 / 09-01-2015
+===================
+- Fix: WeakPtrFactory should always be the last member of the class that owns it
+- [Mac] `Shell.openItem()` should show Finder in front
+- Fix: Updated skia to chrome/m38_2125 to fix CJK character rendering issue on Windows
+
 0.11.7-rc6 / 08-14-2015
 ===================
 - [Win] Make color chooser a modal dialog
