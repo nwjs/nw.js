@@ -14,6 +14,7 @@
       'nw_clipboard.idl',
       'nw_menu.idl',
       'nw_shell.idl',
+      'nw_tray.idl',
       'nw_current_window_internal.idl',
       'nw_test.idl',
     ],

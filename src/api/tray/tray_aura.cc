@@ -26,14 +26,15 @@
 #include "chrome/browser/status_icons/status_icon.h"
 #include "chrome/browser/status_icons/status_icon_observer.h"
 #include "chrome/browser/status_icons/status_tray.h"
-#include "content/nw/src/api/dispatcher_host.h"
+#include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/api/menu/menu.h"
+#include "content/nw/src/nw_base.h"
+#include "content/nw/src/nw_content.h"
 #include "content/nw/src/nw_package.h"
-#include "content/nw/src/nw_shell.h"
 #include "ui/gfx/screen.h"
 #include "ui/gfx/image/image.h"
 
-namespace nwapi {
+namespace nw {
 
 StatusTray* Tray::status_tray_ = NULL;
 
@@ -54,7 +55,7 @@ class TrayObserver : public StatusIconObserver {
     data->SetInteger("x", cursor_pos.x());
     data->SetInteger("y", cursor_pos.y());
     args.Append(data);
-    tray_->dispatcher_host()->SendEvent(tray_, "click", args);
+    tray_->object_manager()->SendEvent(tray_, "click", args);
   }
 
  private:
@@ -63,7 +64,7 @@ class TrayObserver : public StatusIconObserver {
 
 void Tray::Create(const base::DictionaryValue& option) {
   if (!status_tray_)
-    status_tray_ = StatusTray::GetSingleton();
+    status_tray_ = StatusTray::Create();
 
   status_icon_ = status_tray_->CreateStatusIcon(StatusTray::NOTIFICATION_TRAY_ICON,
                                                 gfx::ImageSkia(), base::string16());
@@ -84,10 +85,8 @@ void Tray::SetTitle(const std::string& title) {
 
 void Tray::SetIcon(const std::string& path) {
   gfx::Image icon;
-  content::Shell* shell = content::Shell::FromRenderViewHost(
-      dispatcher_host()->render_view_host());
-  nw::Package* package = shell->GetPackage();
-  package->GetImage(base::FilePath::FromUTF8Unsafe(path), &icon);
+  nw::Package* package = nw::InitNWPackage();
+  nw::GetImage(package, base::FilePath::FromUTF8Unsafe(path), &icon);
 
   if (!icon.IsEmpty())
     status_icon_->SetImage(*icon.ToImageSkia());
@@ -117,4 +116,4 @@ void Tray::SetAltIcon(const std::string& alticon_path) {
 void Tray::SetIconsAreTemplates(bool areTemplates) {
 }
 
-}  // namespace nwapi
+}  // namespace nw

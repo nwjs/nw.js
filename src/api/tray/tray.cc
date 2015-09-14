@@ -22,15 +22,16 @@
 
 #include "base/values.h"
 #include "chrome/browser/status_icons/status_tray.h"
-#include "content/nw/src/api/dispatcher_host.h"
+#include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/api/menu/menu.h"
 
-namespace nwapi {
+namespace nw {
 
 Tray::Tray(int id,
-           const base::WeakPtr<DispatcherHost>& dispatcher_host,
-           const base::DictionaryValue& option)
-    : Base(id, dispatcher_host, option) {
+           const base::WeakPtr<ObjectManager>& object_manager,
+           const base::DictionaryValue& option,
+           const std::string& extension_id)
+  : Base(id, object_manager, option, extension_id) {
   Create(option);
 
   std::string title;
@@ -55,7 +56,7 @@ Tray::Tray(int id,
 
   int menu_id;
   if (option.GetInteger("menu", &menu_id))
-    SetMenu(dispatcher_host->GetApiObject<Menu>(menu_id));
+    SetMenu(object_manager->GetApiObject<Menu>(menu_id));
 
   ShowAfterCreate();
 }
@@ -65,7 +66,8 @@ Tray::~Tray() {
 }
 
 void Tray::Call(const std::string& method,
-                const base::ListValue& arguments) {
+                const base::ListValue& arguments,
+                content::RenderFrameHost* rvh) {
   if (method == "SetTitle") {
     std::string title;
     arguments.GetString(0, &title);
@@ -89,7 +91,7 @@ void Tray::Call(const std::string& method,
   } else if (method == "SetMenu") {
     int object_id = 0;
     arguments.GetInteger(0, &object_id);
-    SetMenu(dispatcher_host()->GetApiObject<Menu>(object_id));
+    SetMenu(object_manager()->GetApiObject<Menu>(object_id));
   } else if (method == "Remove") {
     Remove();
   } else {

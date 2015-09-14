@@ -670,6 +670,8 @@
         'src/api/menuitem/menuitem.h',
         'src/api/shell/shell.cc',
         'src/api/shell/shell.h',
+        'src/api/tray/tray.cc',
+        'src/api/tray/tray.h',
         'src/nw_content.cc',
         'src/nw_content.h',
         'src/nw_custom_bindings.cc',
@@ -678,6 +680,7 @@
       'conditions': [
         ['OS=="win" or OS=="linux"', {
           'sources': [
+            'src/api/tray/tray_aura.cc',
             'src/api/menu/menu_delegate.cc',
             'src/api/menu/menu_delegate.h',
             'src/api/menu/menu_views.cc',

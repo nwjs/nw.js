@@ -42,7 +42,7 @@ class StatusIcon;
 class StatusTray;
 #endif  // defined(OS_MACOSX)
 
-namespace nwapi {
+namespace nw {
 
 class Menu;
 class TrayObserver;
@@ -50,12 +50,14 @@ class TrayObserver;
 class Tray : public Base {
  public:
   Tray(int id,
-       const base::WeakPtr<DispatcherHost>& dispatcher_host,
-       const base::DictionaryValue& option);
+       const base::WeakPtr<ObjectManager>& object_manager,
+       const base::DictionaryValue& option,
+       const std::string& extension_id);
   ~Tray() override;
 
   void Call(const std::string& method,
-                    const base::ListValue& arguments) override;
+            const base::ListValue& arguments,
+            content::RenderFrameHost* rvh = nullptr) override;
 
  private:
   // Platform-independent implementations
@@ -100,6 +102,6 @@ class Tray : public Base {
   DISALLOW_COPY_AND_ASSIGN(Tray);
 };
 
-}  // namespace nwapi
+}  // namespace nw
 
 #endif  // CONTENT_NW_SRC_API_TRAY_TRAY_H_
