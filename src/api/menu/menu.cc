@@ -40,7 +40,7 @@ Menu::~Menu() {
 
 void Menu::Call(const std::string& method,
                 const base::ListValue& arguments,
-                content::RenderViewHost* rvh) {
+                content::RenderFrameHost* rvh) {
   if (method == "Append") {
     int object_id = 0;
     arguments.GetInteger(0, &object_id);

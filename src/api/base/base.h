@@ -32,7 +32,7 @@ class ListValue;
 }
 
 namespace content {
-class RenderViewHost;
+class RenderFrameHost;
 }
 
 namespace nw {
@@ -49,7 +49,7 @@ class Base {
 
   virtual void Call(const std::string& method,
                     const base::ListValue& arguments,
-                    content::RenderViewHost* rvh = nullptr);
+                    content::RenderFrameHost* rvh = nullptr);
   virtual void CallSync(const std::string& method,
                         const base::ListValue& arguments,
                         base::ListValue* result);

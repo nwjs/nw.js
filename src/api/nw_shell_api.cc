@@ -4,7 +4,7 @@
 #include "chrome/browser/extensions/devtools_util.h"
 #include "chrome/browser/extensions/extension_service.h"
 #include "content/nw/src/api/object_manager.h"
-#include "content/public/browser/render_view_host.h"
+#include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/web_contents.h"
 #include "extensions/browser/extension_system.h"
 #include "extensions/common/error_utils.h"
@@ -19,7 +19,7 @@ NwShellOpenItemFunction::~NwShellOpenItemFunction() {
 
 bool NwShellOpenItemFunction::RunNWSync(base::ListValue* response, std::string* error) {
   nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
-  manager->OnCallStaticMethod(render_view_host(), "Shell", "OpenItem", *args_);
+  manager->OnCallStaticMethod(render_frame_host(), "Shell", "OpenItem", *args_);
   return true;
 }
 
@@ -31,7 +31,7 @@ NwShellOpenExternalFunction::~NwShellOpenExternalFunction() {
 
 bool NwShellOpenExternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
   nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
-  manager->OnCallStaticMethod(render_view_host(), "Shell", "OpenExternal", *args_);
+  manager->OnCallStaticMethod(render_frame_host(), "Shell", "OpenExternal", *args_);
   return true;
 }
 
@@ -43,7 +43,7 @@ NwShellShowItemInFolderFunction::~NwShellShowItemInFolderFunction() {
 
 bool NwShellShowItemInFolderFunction::RunNWSync(base::ListValue* response, std::string* error) {
   nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
-  manager->OnCallStaticMethod(render_view_host(), "Shell", "ShowItemInFolder", *args_);
+  manager->OnCallStaticMethod(render_frame_host(), "Shell", "ShowItemInFolder", *args_);
   return true;
 }
 

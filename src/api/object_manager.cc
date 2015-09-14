@@ -126,7 +126,7 @@ void ObjectManager::OnDeallocateObject(int object_id) {
 }
 
 void ObjectManager::OnCallObjectMethod(
-    content::RenderViewHost* rvh,
+    content::RenderFrameHost* rvh,
     int object_id,
     const std::string& type,
     const std::string& method,
@@ -147,7 +147,7 @@ void ObjectManager::OnCallObjectMethod(
 }
 
 void ObjectManager::OnCallObjectMethodSync(
-    content::RenderViewHost* rvh,
+    content::RenderFrameHost* rvh,
     int object_id,
     const std::string& type,
     const std::string& method,
@@ -169,7 +169,7 @@ void ObjectManager::OnCallObjectMethodSync(
 }
 
 void ObjectManager::OnCallStaticMethod(
-    content::RenderViewHost* rvh,
+    content::RenderFrameHost* rvh,
     const std::string& type,
     const std::string& method,
     const base::ListValue& arguments) {
@@ -191,7 +191,7 @@ void ObjectManager::OnCallStaticMethod(
 }
 
 void ObjectManager::OnCallStaticMethodSync(
-    content::RenderViewHost* rvh,
+    content::RenderFrameHost* rvh,
     const std::string& type,
     const std::string& method,
     const base::ListValue& arguments,
@@ -203,7 +203,7 @@ void ObjectManager::OnCallStaticMethodSync(
 #if 0
   if (type == "App") {
     content::Shell* shell =
-        content::Shell::FromRenderViewHost(render_view_host());
+        content::Shell::FromRenderFrameHost(render_view_host());
     nwapi::App::Call(shell, method, arguments, result, this);
     return;
   } else if (type == "Screen") {
@@ -223,7 +223,7 @@ void ObjectManager::SendEvent(Base* object,
     return;
   scoped_ptr<base::ListValue> arguments(args.DeepCopy());
   arguments->Insert(0, new base::FundamentalValue(object->id()));
-  scoped_ptr<Event> event(new Event("NWObject" + event_name, arguments.Pass()));
+  scoped_ptr<Event> event(new Event(extensions::events::UNKNOWN, "NWObject" + event_name, arguments.Pass()));
   event->restrict_to_browser_context = browser_context_;
   event->user_gesture = EventRouter::USER_GESTURE_ENABLED;
   event_router->DispatchEventToExtension(object->extension_id_, event.Pass());

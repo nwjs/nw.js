@@ -28,6 +28,7 @@
 #include "base/json/json_file_value_serializer.h"
 #include "base/json/json_string_value_serializer.h"
 #include "base/path_service.h"
+#include "base/strings/pattern.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_tokenizer.h"
 #include "base/strings/string_util.h"
@@ -150,7 +151,7 @@ void RelativePathToURI(FilePath root, base::DictionaryValue* manifest) {
     return;
 
   // Don't append path if there is already a prefix
-  if (MatchPattern(old, "*://*"))
+  if (base::MatchPattern(old, "*://*"))
     return;
 
   FilePath main_path = root.Append(FilePath::FromUTF8Unsafe(old));

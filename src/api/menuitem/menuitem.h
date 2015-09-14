@@ -60,7 +60,7 @@ class MenuItem : public Base {
 
    void Call(const std::string& method,
              const base::ListValue& arguments,
-             content::RenderViewHost* rvh = nullptr) override;
+             content::RenderFrameHost* rvh = nullptr) override;
 
 #if defined(OS_WIN) || defined(OS_LINUX)
    bool AcceleratorPressed(const ui::Accelerator& accelerator) override;

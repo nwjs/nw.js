@@ -83,7 +83,7 @@ class Window;
 }
 
 namespace content {
-class RenderViewHost;
+class RenderFrameHost;
 class RenderFrameHost;
 }
 
@@ -101,7 +101,7 @@ class Menu : public Base {
 
    void Call(const std::string& method,
              const base::ListValue& arguments,
-             content::RenderViewHost* rvh = nullptr) override;
+             content::RenderFrameHost* rvh = nullptr) override;
 
 #if defined(OS_WIN) || defined(OS_LINUX)
   void UpdateKeys(views::FocusManager *focus_manager);
@@ -118,7 +118,7 @@ class Menu : public Base {
   void Append(MenuItem* menu_item);
   void Insert(MenuItem* menu_item, int pos);
   void Remove(MenuItem* menu_item, int pos);
-  void Popup(int x, int y, content::RenderViewHost*);
+  void Popup(int x, int y, content::RenderFrameHost*);
 
 #if defined(OS_LINUX)
   std::vector<MenuItem*> menu_items;

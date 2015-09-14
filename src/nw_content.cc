@@ -94,7 +94,7 @@ static inline v8::Local<v8::String> v8_str(const char* x) {
 
 v8::Handle<v8::Value> CallNWTickCallback(node::Environment* env, const v8::Handle<v8::Value> ret) {
   blink::WebScopedMicrotaskSuppression suppression;
-  return node::CallTickCallback(env, ret);
+  return node::CallTickCallback(env);
 }
 
 v8::Handle<v8::Value> CreateNW(ScriptContext* context,
@@ -433,7 +433,7 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* erro
   }
 
   if (manifest->GetString(manifest_keys::kNWJSMain, &main_url)) {
-    if (EndsWith(main_url, ".js", false)) {
+    if (base::EndsWith(main_url, ".js", false)) {
       AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, main_url);
       manifest->SetString(manifest_keys::kNWJSInternalMainFilename, main_url);
     }else
@@ -573,7 +573,7 @@ void CalcNewWinParams(content::WebContents* new_contents, void* params,
   scoped_ptr<base::Value> val;
   scoped_ptr<base::DictionaryValue> manifest;
   std::string manifest_str = base::UTF16ToUTF8(nw::GetCurrentNewWinManifest());
-  val.reset(base::JSONReader().ReadToValue(manifest_str));
+  val = base::JSONReader().ReadToValue(manifest_str);
   if (val.get() && val->IsType(base::Value::TYPE_DICTIONARY))
     manifest.reset(static_cast<base::DictionaryValue*>(val.release()));
   else

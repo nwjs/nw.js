@@ -60,9 +60,9 @@ NwCurrentWindowInternalShowDevToolsFunction::~NwCurrentWindowInternalShowDevTool
 }
 
 bool NwCurrentWindowInternalShowDevToolsFunction::RunAsync() {
-  content::RenderViewHost* rvh = render_view_host();
+  content::RenderFrameHost* rfh = render_frame_host();
   DevToolsWindow::OpenDevToolsWindow(
-      content::WebContents::FromRenderViewHost(rvh));
+      content::WebContents::FromRenderFrameHost(rfh));
   SendResponse(true);
   return true;
 }
@@ -83,8 +83,8 @@ bool NwCurrentWindowInternalCapturePageInternalFunction::RunAsync() {
     image_details = ImageDetails::FromValue(*spec);
   }
 
-  content::RenderViewHost* rvh = render_view_host();
-  WebContents* contents = content::WebContents::FromRenderViewHost(rvh);
+  content::RenderFrameHost* rfh = render_frame_host();
+  WebContents* contents = content::WebContents::FromRenderFrameHost(rfh);
   if (!contents)
     return false;
 
@@ -227,12 +227,12 @@ bool NwCurrentWindowInternalSetMenuFunction::RunAsync() {
 
   AppWindowRegistry* registry = AppWindowRegistry::Get(browser_context());
   DCHECK(registry);
-  content::RenderViewHost* rvh = render_view_host();
-  if (!rvh)
+  content::WebContents* web_contents = GetSenderWebContents();
+  if (!web_contents)
     // No need to set an error, since we won't return to the caller anyway if
     // there's no RVH.
     return false;
-  AppWindow* window = registry->GetAppWindowForRenderViewHost(rvh);
+  AppWindow* window = registry->GetAppWindowForWebContents(web_contents);
   if (!window) {
     error_ = kNoAssociatedAppWindow;
     return false;

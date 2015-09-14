@@ -160,7 +160,7 @@ void Menu::Remove(MenuItem* menu_item, int pos) {
   menu_item->menu_ = NULL;
 }
 
-void Menu::Popup(int x, int y, content::RenderViewHost* rvh) {
+void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
   // Rebuild();
 
   // Map point from document to screen.
@@ -168,7 +168,7 @@ void Menu::Popup(int x, int y, content::RenderViewHost* rvh) {
 
   // Convert from content coordinates to window coordinates.
   // This code copied from chrome_web_contents_view_delegate_views.cc
-  aura::Window* target_window = GetActiveNativeView(rvh->GetMainFrame());
+  aura::Window* target_window = GetActiveNativeView(rfh);
   aura::Window* root_window = target_window->GetRootWindow();
   views::Widget* top_level_widget =
     views::Widget::GetTopLevelWidgetForNativeView(target_window);

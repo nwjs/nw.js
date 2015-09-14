@@ -95,10 +95,10 @@ void NWCustomBindings::CrashRenderer(
 
 void NWCustomBindings::EvalScript(
     const v8::FunctionCallbackInfo<v8::Value>& args) {
-  content::RenderView* render_view = context()->GetRenderView();
-  if (!render_view)
+  content::RenderFrame* render_frame = context()->GetRenderFrame();
+  if (!render_frame)
     return;
-  WebFrame* main_frame = render_view->GetWebView()->mainFrame();
+  WebFrame* main_frame = render_frame->GetWebFrame();
   v8::Handle<v8::Value> result;
   v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[0]);
   WebFrame* web_frame = NULL;
@@ -123,8 +123,8 @@ void NWCustomBindings::EvalScript(
 void NWCustomBindings::EvalNWBin(
     const v8::FunctionCallbackInfo<v8::Value>& args) {
   v8::Isolate* isolate = args.GetIsolate();
-  content::RenderView* render_view = context()->GetRenderView();
-  if (!render_view)
+  content::RenderFrame* render_frame = context()->GetRenderFrame();
+  if (!render_frame)
     return;
 #if defined(OS_WIN)
   base::FilePath path((WCHAR*)*v8::String::Value(args[1]));
@@ -140,7 +140,7 @@ void NWCustomBindings::EvalNWBin(
       raw_data.resize(size);
       uint8_t* data = reinterpret_cast<uint8_t*>(&(raw_data.front()));
       if (file.ReadAtCurrentPos((char*)data, size) == length) {
-        WebFrame* main_frame = render_view->GetWebView()->mainFrame();
+        WebFrame* main_frame = render_frame->GetWebFrame();
         v8::Handle<v8::String> source_string = v8::String::NewFromUtf8(isolate, "");
         v8::ScriptCompiler::CachedData* cache;
         cache = new v8::ScriptCompiler::CachedData(

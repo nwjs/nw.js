@@ -43,7 +43,7 @@ MenuItem::~MenuItem() {
 
 void MenuItem::Call(const std::string& method,
                     const base::ListValue& arguments,
-                    content::RenderViewHost* rvh) {
+                    content::RenderFrameHost* rvh) {
   if (method == "SetLabel") {
     std::string label;
     arguments.GetString(0, &label);
