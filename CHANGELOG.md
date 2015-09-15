@@ -1,3 +1,9 @@
+0.11.7-rc8 / 09-14-2015
+===================
+- Upgrade Node.js to 0.12.7
+- Upgrade Chromium to 38.0.2125.122
+- Fix: backport blink@5be2e7f
+
 0.11.7-rc7 / 09-01-2015
 ===================
 - Fix: WeakPtrFactory should always be the last member of the class that owns it
