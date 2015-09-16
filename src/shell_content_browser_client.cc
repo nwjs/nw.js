@@ -223,6 +223,16 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
 
 #endif  // OS_MACOSX
 
+
+  static const char* const kSwitchNames[] = {
+	  switches::kNwjsLogFile
+  };
+
+  const base::CommandLine& browser_command_line =
+	  *base::CommandLine::ForCurrentProcess();
+  command_line->CopySwitchesFrom(browser_command_line, kSwitchNames,
+	  arraysize(kSwitchNames));
+
   if (command_line->GetSwitchValueASCII("type") != "renderer")
     return;
 
@@ -284,6 +294,7 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
       command_line->AppendSwitchASCII(switches::kDomStorageQuota, base::IntToString(dom_storage_quota_mb));
     }
   }
+
 
   // without the switch, the destructor of the shell object will
   // shutdown renderwidgethost (RenderWidgetHostImpl::Shutdown) and

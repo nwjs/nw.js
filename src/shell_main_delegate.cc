@@ -143,9 +143,10 @@ void InitLogging() {
   base::FilePath log_filename = GetLogFileName();
   logging::LoggingSettings settings;
   if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kEnableLogging)) {
+    std::string process_type = CommandLine::ForCurrentProcess()->GetSwitchValueASCII(switches::kProcessType);
     settings.logging_dest = logging::LOG_TO_ALL;
     settings.log_file = log_filename.value().c_str();
-    settings.delete_old = logging::DELETE_OLD_LOG_FILE;
+    settings.delete_old = process_type.empty() ? logging::DELETE_OLD_LOG_FILE : logging::APPEND_TO_OLD_LOG_FILE;
   }else{
 #if defined(OS_WIN)
     settings.logging_dest = logging::LOG_NONE;
