@@ -167,6 +167,8 @@ class Shell : public WebContentsDelegate,
                                   const GURL& target_url,
                                   WebContents* new_contents,
                                   const base::string16& nw_window_manifest) OVERRIDE;
+  virtual void RendererUnresponsive(WebContents* source) OVERRIDE;
+  virtual void RendererResponsive(WebContents* source) OVERRIDE;
   virtual void ToggleFullscreenModeForTab(WebContents* web_contents,
                                           bool enter_fullscreen) OVERRIDE;
   virtual bool IsFullscreenForTabOrPending(

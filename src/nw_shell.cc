@@ -629,6 +629,14 @@ void Shell::WebContentsCreated(WebContents* source_contents,
 #endif
 }
 
+void Shell::RendererUnresponsive(WebContents* source) {
+  LOG(INFO) << "[NW.JS]RendererUnresponsive";
+}
+
+void Shell::RendererResponsive(WebContents* source) {
+  LOG(INFO) << "[NW.JS]RendererResponsive";
+}
+
 #if defined(OS_WIN) || defined(OS_LINUX)
 void Shell::WebContentsFocused(content::WebContents* web_contents) {
   NativeWindowAura* win = static_cast<NativeWindowAura*>(window_.get());
