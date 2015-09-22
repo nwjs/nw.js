@@ -36,6 +36,9 @@
 #endif
 
 #include "chrome/browser/platform_util.h"
+#ifdef OS_LINUX
+#include "chrome/browser/ui/libgtk2ui/gtk2_ui.h"
+#endif
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/browser/browser_view_layout.h"
 #include "content/nw/src/browser/menubar_view.h"
@@ -114,6 +117,24 @@ bool IsParent(gfx::NativeView child, gfx::NativeView possible_parent) {
 
   return false;
 }
+
+#ifdef OS_LINUX
+static void SetDeskopEnvironment() {
+  static bool runOnce = false;
+  if (runOnce) return;
+  runOnce = true;
+
+  scoped_ptr<base::Environment> env(base::Environment::Create());
+  std::string name;
+  //if (env->GetVar("CHROME_DESKTOP", &name) && !name.empty())
+  //  return;
+
+  if (!env->GetVar("NW_DESKTOP", &name) || name.empty())
+    name = "nw.desktop";
+
+  env->SetVar("CHROME_DESKTOP", name);
+}
+#endif
 
 class NativeWindowClientView : public views::ClientView {
  public:
@@ -357,6 +378,10 @@ NativeWindowAura::NativeWindowAura(const base::WeakPtr<content::Shell>& shell,
   window_->SetInitialFocus(ui::SHOW_STATE_NORMAL);
 
   window_->SetNativeWindowProperty("__BROWSER_VIEW__", this);
+
+#ifdef OS_LINUX
+  SetDeskopEnvironment();
+#endif
 }
 
 NativeWindowAura::~NativeWindowAura() {
@@ -664,6 +689,8 @@ void NativeWindowAura::FlashFrame(int count) {
     fwi.dwFlags = FLASHW_STOP;
   }
   FlashWindowEx(&fwi);
+#elif defined(OS_LINUX)
+  window_->FlashFrame(count);
 #endif
 }
 
@@ -715,6 +742,8 @@ void NativeWindowAura::SetBadgeLabel(const std::string& badge) {
 
   taskbar->SetOverlayIcon(hWnd, icon, L"Status");
   DestroyIcon(icon);
+#elif defined(OS_LINUX)
+  views::LinuxUI::instance()->SetDownloadCount(atoi(badge.c_str()));
 #endif
 }
 
@@ -748,6 +777,8 @@ void NativeWindowAura::SetProgressBar(double progress) {
   }
 
   taskbar->SetProgressState(hWnd, tbpFlag);
+#elif defined(OS_LINUX)
+  views::LinuxUI::instance()->SetProgressFraction(progress);
 #endif
 }
 
