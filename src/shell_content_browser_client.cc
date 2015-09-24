@@ -46,9 +46,6 @@
 #include "content/public/common/renderer_preferences.h"
 #include "content/public/common/url_constants.h"
 #include "content/nw/src/api/dispatcher_host.h"
-#if defined(OS_MACOSX)
-#include "content/nw/src/breakpad_mac.h"
-#endif
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/browser/printing/print_job_manager.h"
 #include "content/nw/src/browser/shell_devtools_delegate.h"
@@ -80,6 +77,10 @@
 #include "components/breakpad/app/breakpad_linux.h"
 #include "components/breakpad/browser/crash_handler_host_linux.h"
 #include "content/public/common/content_descriptors.h"
+#endif
+
+#if defined(OS_MACOSX)
+#include "components/breakpad/app/breakpad_mac.h"
 #endif
 
 using base::FileDescriptor;

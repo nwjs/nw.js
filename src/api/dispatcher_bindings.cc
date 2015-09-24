@@ -25,7 +25,6 @@
 #include "base/logging.h"
 #include "base/values.h"
 #include "base/command_line.h"
-#include "content/nw/src/breakpad_linux.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/bindings_common.h"
 #include "content/public/renderer/render_view.h"
