@@ -31,11 +31,11 @@ It was created in the Intel Open Source Technology Center.
  * Windows: [32bit](http://dl.nwjs.io/v0.12.3/nwjs-v0.12.3-win-ia32.zip) / [64bit](http://dl.nwjs.io/v0.12.3/nwjs-v0.12.3-win-x64.zip)
  * Mac 10.7+: [32bit](http://dl.nwjs.io/v0.12.3/nwjs-v0.12.3-osx-ia32.zip) / [64bit](http://dl.nwjs.io/v0.12.3/nwjs-v0.12.3-osx-x64.zip)
 
-* **v0.13.0-alpha2:** (Jun 23, 2015, based off of IO.js v1.5.1, Chromium 43.0.2357.45): [release notes](https://groups.google.com/d/msg/nwjs-general/zeC6SedUSFY/BlumrYJeVHYJ)  
+* **v0.13.0-alpha3:** (Aug 25, 2015, based off of IO.js v3.0.0, Chromium 44.0.2403.130): [release notes](https://groups.google.com/d/msg/nwjs-general/wYi5D8SvQ_E/UZ3h0fGDAgAJ)  
  **NOTE** You might want the **SDK build**. Please read the release notes  
- * Linux: [32bit](http://dl.nwjs.io/v0.13.0/alpha2/nwjs-v0.13.0-alpha2-linux-ia32.tar.gz) / [64bit](http://dl.nwjs.io/v0.13.0/alpha2/nwjs-v0.13.0-alpha2-linux-x64.tar.gz)
- * Windows: [32bit](http://dl.nwjs.io/v0.13.0/alpha2/nwjs-v0.13.0-alpha2-win-ia32.zip) / [64bit](http://dl.nwjs.io/v0.13.0/alpha2/nwjs-v0.13.0-alpha2-win-x64.zip)
- * Mac 10.7+: [32bit](http://dl.nwjs.io/v0.13.0/alpha2/nwjs-v0.13.0-alpha2-osx-ia32.zip) / [64bit](http://dl.nwjs.io/v0.13.0/alpha2/nwjs-v0.13.0-alpha2-osx-x64.zip)
+ * Linux: [32bit](http://dl.nwjs.io/v0.13.0/alpha3/nwjs-v0.13.0-alpha3-linux-ia32.tar.gz) / [64bit](http://dl.nwjs.io/v0.13.0/alpha3/nwjs-v0.13.0-alpha3-linux-x64.tar.gz)
+ * Windows: [32bit](http://dl.nwjs.io/v0.13.0/alpha3/nwjs-v0.13.0-alpha3-win-ia32.zip) / [64bit](http://dl.nwjs.io/v0.13.0/alpha3/nwjs-v0.13.0-alpha3-win-x64.zip)
+ * Mac 10.7+: [64bit](http://dl.nwjs.io/v0.13.0/alpha3/nwjs-v0.13.0-alpha3-osx-x64.zip)
 
 * **0.8.6:** (Apr 18, 2014, based off of Node v0.10.22, Chrome 30.0.1599.66) **If your native Node module works only with Node v0.10, then you should use node-webkit v0.8.x, which is also a maintained branch. [More info](https://groups.google.com/d/msg/nwjs-general/2OJ1cEMPLlA/09BvpTagSA0J)**  
 [release notes](https://groups.google.com/d/msg/nwjs-general/CLPkgfV-i7s/hwkkQuJ1kngJ)
