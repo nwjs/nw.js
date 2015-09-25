@@ -80,6 +80,18 @@ using blink::WebScriptSource;
 
 namespace manifest_keys = extensions::manifest_keys;
 
+CallTickCallbackFn g_call_tick_callback_fn = nullptr;
+SetupNWNodeFn g_setup_nwnode_fn = nullptr;
+IsNodeInitializedFn g_is_node_initialized_fn = nullptr;
+SetNWTickCallbackFn g_set_nw_tick_callback_fn = nullptr;
+StartNWInstanceFn g_start_nw_instance_fn = nullptr;
+GetNodeContextFn g_get_node_context_fn = nullptr;
+SetNodeContextFn g_set_node_context_fn = nullptr;
+GetNodeEnvFn g_get_node_env_fn = nullptr;
+GetCurrentEnvironmentFn g_get_current_env_fn = nullptr;
+EmitExitFn g_emit_exit_fn = nullptr;
+RunAtExitFn g_run_at_exit_fn = nullptr;
+
 namespace nw {
 
 
@@ -92,9 +104,10 @@ static inline v8::Local<v8::String> v8_str(const char* x) {
   return v8::String::NewFromUtf8(isolate, x);
 }
 
-v8::Handle<v8::Value> CallNWTickCallback(node::Environment* env, const v8::Handle<v8::Value> ret) {
+v8::Handle<v8::Value> CallNWTickCallback(void* env, const v8::Handle<v8::Value> ret) {
   blink::WebScopedMicrotaskSuppression suppression;
-  return node::CallTickCallback(env);
+  g_call_tick_callback_fn(env);
+  return Undefined(v8::Isolate::GetCurrent());
 }
 
 v8::Handle<v8::Value> CreateNW(ScriptContext* context,
@@ -248,12 +261,14 @@ void DocumentElementHook(blink::WebFrame* frame,
 
 void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   v8::Isolate* isolate = context->isolate();
-  if (!node::is_node_initialized())
-    node::SetupNWNode(0, nullptr);
+  if (!g_is_node_initialized_fn())
+    g_setup_nwnode_fn(0, nullptr);
 
   bool mixed_context = false;
   context->extension()->manifest()->GetBoolean(manifest_keys::kNWJSMixedContext, &mixed_context);
-  if (node::g_context.IsEmpty() || mixed_context) {
+  v8::Local<v8::Context> node_context;
+  g_get_node_context_fn(&node_context);
+  if (node_context.IsEmpty() || mixed_context) {
     {
       int argc = 1;
       char argv0[] = "node";
@@ -271,15 +286,15 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
       v8::HandleScope scope(isolate);
       blink::WebScopedMicrotaskSuppression suppression;
 
-      node::SetNWTickCallback(CallNWTickCallback);
+      g_set_nw_tick_callback_fn(&CallNWTickCallback);
       v8::Local<v8::Context> dom_context = context->v8_context();
       if (!mixed_context)
-        node::g_context.Reset(isolate, dom_context);
+        g_set_node_context_fn(isolate, &dom_context);
       dom_context->SetSecurityToken(v8::String::NewFromUtf8(isolate, "nw-token"));
       dom_context->Enter();
       dom_context->SetEmbedderData(0, v8::String::NewFromUtf8(isolate, "node"));
 
-      node::StartNWInstance(argc, argv, dom_context);
+      g_start_nw_instance_fn(argc, argv, dom_context);
       {
         v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate,
            "process.versions['nwjs'] = '" NW_VERSION_STRING "';"
@@ -307,12 +322,14 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
     }
   }
 
+  v8::Local<v8::Context> node_context2;
+  g_get_node_context_fn(&node_context2);
   if (!mixed_context) {
     v8::Local<v8::Context> g_context =
-      v8::Local<v8::Context>::New(isolate, node::g_context);
+      v8::Local<v8::Context>::New(isolate, node_context2);
     v8::Local<v8::Object> node_global = g_context->Global();
 
-    context->v8_context()->SetAlignedPointerInEmbedderData(NODE_CONTEXT_EMBEDDER_DATA_INDEX, node::g_env);
+    context->v8_context()->SetAlignedPointerInEmbedderData(NODE_CONTEXT_EMBEDDER_DATA_INDEX, g_get_node_env_fn());
     context->v8_context()->SetSecurityToken(g_context->GetSecurityToken());
 
     v8::Handle<v8::Object> nw = AsObjectOrEmpty(CreateNW(context, node_global, g_context));
@@ -478,9 +495,9 @@ void RendererProcessTerminatedHook(content::RenderProcessHost* process,
 
 void OnRenderProcessShutdownHook(extensions::ScriptContext* context) {
   blink::WebScopedMicrotaskSuppression suppression;
-  node::Environment* env = node::GetCurrentEnvironment(context->v8_context());
-  node::EmitExit(env);
-  node::RunAtExit(env);
+  void* env = g_get_current_env_fn(context->v8_context());
+  g_emit_exit_fn(env);
+  g_run_at_exit_fn(env);
 }
 
 void willHandleNavigationPolicy(content::RenderView* rv,

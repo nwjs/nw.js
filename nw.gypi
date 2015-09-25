@@ -628,7 +628,7 @@
       'type': 'static_library',
       'dependencies': [
         '<(DEPTH)/base/base.gyp:base',
-        '<(DEPTH)/third_party/node/node.gyp:node',
+        #'<(DEPTH)/third_party/node/node.gyp:node',
         '<(DEPTH)/third_party/WebKit/public/blink.gyp:blink',
         '<(DEPTH)/third_party/WebKit/Source/wtf/wtf.gyp:wtf',
         '<(DEPTH)/third_party/zlib/zlib.gyp:minizip',
