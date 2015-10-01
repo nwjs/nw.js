@@ -87,6 +87,9 @@ class DispatcherHost : public content::WebContentsObserver {
 
   std::set<int> objects_;
 
+  // Factory to generate weak pointer
+  base::WeakPtrFactory<DispatcherHost> weak_ptr_factory_;
+
   // RenderViewHostObserver implementation.
   // WebContentsObserver implementation:
   virtual bool OnMessageReceived(
@@ -122,8 +125,6 @@ class DispatcherHost : public content::WebContentsObserver {
   void OnAllocateId(int* ret);
   void OnSetForceClose(bool force, int* ret);
 
-  // Factory to generate weak pointer
-  base::WeakPtrFactory<DispatcherHost> weak_ptr_factory_;
   DISALLOW_COPY_AND_ASSIGN(DispatcherHost);
 };
 
