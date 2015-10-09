@@ -1,7 +1,7 @@
-diff --git a/base/base.gyp b/base/base.gyp
+diff --git base/base.gyp base/base.gyp
 index 7bfa3e3..4685b0b 100644
---- a/base/base.gyp
-+++ b/base/base.gyp
+--- base/base.gyp
++++ base/base.gyp
 @@ -548,7 +548,7 @@
                'conditions': [
                  # On some platforms, the rest of NSS is bundled. On others,

@@ -26,7 +26,7 @@
 #import <Cocoa/Cocoa.h>
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/render_widget_host_view.h"
-#include "content/public/browser/render_view_host.h"
+#include "content/public/browser/render_frame_host.h"
 #include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/api/menu/menu_delegate_mac.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
@@ -57,10 +57,9 @@ void Menu::Remove(MenuItem* menu_item, int pos) {
   [menu_ removeItem:menu_item->menu_item_];
 }
 
-void Menu::Popup(int x, int y, content::RenderViewHost* rvh) {
+void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
   // Fake out a context menu event for our menu
-  NSView* web_view =
-        rvh->GetView()->GetNativeView();
+  NSView* web_view = rfh->GetNativeView();
   NSWindow* window = [web_view window];
   NSEvent* currentEvent = [NSApp currentEvent];
   NSPoint position = { x, web_view.bounds.size.height - y };
