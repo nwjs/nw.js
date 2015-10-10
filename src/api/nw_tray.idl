@@ -1,0 +1,21 @@
+// nw Tray API
+[implemented_in="content/nw/src/api/nw_tray_api.h"]
+namespace nw.Tray {
+  callback EventCallback = void();
+  [noinline_doc] dictionary Tray {
+    [nodoc] DOMString? title;
+    DOMString tooltip;
+    DOMString icon;
+    DOMString alticon;
+    boolean iconsAreTemplates;
+    object menu;
+    object click;
+    static void remove();
+    static void on(DOMString event,
+                   EventCallback callback);
+  };
+  interface Functions {
+    [nocompile] static object create(optional object options);
+    [nocompile] static void destroy(long id);
+  };
+};
