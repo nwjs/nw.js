@@ -155,6 +155,8 @@ def generate_target_nw(platform_name, arch, version):
                            'locales',
                            'snapshot_blob.bin',
                            'natives_blob.bin',
+                           'lib/libnw.so',
+                           'lib/libnode.so',
                            ]
         if flavor in ['nacl','sdk'] :
             target['input'] += ['nacl_helper', 'nacl_helper_bootstrap', 'pnacl']
@@ -171,6 +173,7 @@ def generate_target_nw(platform_name, arch, version):
                            'libEGL.dll',
                            'libGLESv2.dll',
                            'nw.dll',
+                           'node.dll',
                            'nw_elf.dll',
                            'nw.exe',
                            'locales',
