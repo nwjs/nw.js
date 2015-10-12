@@ -52,6 +52,121 @@ Menu.prototype.popup = function(x, y) {
   nw.Object.callObjectMethod(this.id, 'Menu', 'Popup', [ x, y ]);
 }
 
+Menu.prototype.createMacBuiltin = function (app_name, options) {
+  var appleMenu = nw.Menu.createMenu({type:'menubar'}),
+  options = options || {};
+  
+  appleMenu.append(nw.Menu.createItem({
+    label: nw.Menu.getNSStringFWithFixup("IDS_ABOUT_MAC", app_name),
+    selector: "orderFrontStandardAboutPanel:"
+  }));
+  appleMenu.append(nw.Menu.createItem({
+    type: "separator"
+  }));
+  appleMenu.append(nw.Menu.createItem({
+    label: nw.Menu.getNSStringFWithFixup("IDS_HIDE_APP_MAC", app_name),
+    selector: "hide:",
+    modifiers: "cmd",
+    key: "h"
+  }));
+  appleMenu.append(nw.Menu.createItem({
+    label: nw.Menu.getNSStringWithFixup("IDS_HIDE_OTHERS_MAC"),
+    selector: "hideOtherApplications:",
+    key: "h",
+    modifiers: "cmd-alt"
+  }));
+  appleMenu.append(nw.Menu.createItem({
+    label: nw.Menu.getNSStringWithFixup("IDS_SHOW_ALL_MAC"),
+    selector: "unhideAllApplications:",
+  }));
+  appleMenu.append(nw.Menu.createItem({
+    type: "separator"
+  }));
+  appleMenu.append(nw.Menu.createItem({
+    label: nw.Menu.getNSStringFWithFixup("IDS_EXIT_MAC", app_name),
+    selector: "closeAllWindowsQuit:",
+    modifiers: "cmd",
+    key: "q"
+  }));
+  this.append(nw.Menu.createItem({ label:'', submenu: appleMenu}));
+  
+  if (!options.hideEdit) {
+    var editMenu = nw.Menu.createMenu({type:'menubar'});
+    editMenu.append(nw.Menu.createItem({
+      label: nw.Menu.getNSStringWithFixup("IDS_EDIT_UNDO_MAC"),
+      selector: "undo:",
+      modifiers: "cmd",
+      key: "z"
+    }));
+    editMenu.append(nw.Menu.createItem({
+      label: nw.Menu.getNSStringWithFixup("IDS_EDIT_REDO_MAC"),
+      selector: "redo:",
+      key: "z",
+      modifiers: "cmd-shift"
+    }));
+    editMenu.append(nw.Menu.createItem({
+      type: "separator"
+    }));
+    editMenu.append(nw.Menu.createItem({
+      label: nw.Menu.getNSStringWithFixup("IDS_CUT_MAC"),
+      selector: "cut:",
+      modifiers: "cmd",
+      key: "x"
+    }));
+    editMenu.append(nw.Menu.createItem({
+      label: nw.Menu.getNSStringWithFixup("IDS_COPY_MAC"),
+      selector: "copy:",
+      modifiers: "cmd",
+      key: "c"
+    }));
+    editMenu.append(nw.Menu.createItem({
+      label: nw.Menu.getNSStringWithFixup("IDS_PASTE_MAC"),
+      selector: "paste:",
+      modifiers: "cmd",
+      key: "v"
+    }));
+    editMenu.append(nw.Menu.createItem({
+      label: nw.Menu.getNSStringWithFixup("IDS_EDIT_DELETE_MAC"),
+      selector: "delete:",
+      key: ""
+    }));
+    editMenu.append(nw.Menu.createItem({
+      label: nw.Menu.getNSStringWithFixup("IDS_EDIT_SELECT_ALL_MAC"),
+      selector: "selectAll:",
+      modifiers: "cmd",
+      key: "a"
+    }));
+    this.append(nw.Menu.createItem({ label: nw.Menu.getNSStringWithFixup("IDS_EDIT_MENU_MAC"),
+      submenu: editMenu}));
+  }
+  
+  if (!options.hideWindow) {
+    var winMenu = nw.Menu.createMenu({type:'menubar'});
+    winMenu.append(nw.Menu.createItem({
+      label: nw.Menu.getNSStringWithFixup("IDS_MINIMIZE_WINDOW_MAC"),
+      selector: "performMiniaturize:",
+      modifiers: "cmd",
+      key: "m"
+    }));
+    winMenu.append(nw.Menu.createItem({
+      label: nw.Menu.getNSStringWithFixup("IDS_CLOSE_WINDOW_MAC"),
+      selector: "performClose:",
+      modifiers: "cmd",
+      key: "w"
+    }));
+    winMenu.append(nw.Menu.createItem({
+      type: "separator"
+    }));
+    winMenu.append(nw.Menu.createItem({
+      label: nw.Menu.getNSStringWithFixup("IDS_ALL_WINDOWS_FRONT_MAC"),
+      selector: "arrangeInFront:",
+    }));
+    this.append(nw.Menu.createItem({ label: nw.Menu.getNSStringWithFixup("IDS_WINDOW_MENU_MAC"),
+      submenu: winMenu}));
+  }
+}
+
+
 function MenuItem(id, option) {
   if (typeof option != 'object')
     throw new TypeError('Invalid option.');
@@ -236,7 +351,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     option.generatedId = id;
     var ret = new MenuItem(id, option);
     sendRequest.sendRequestSync('nw.Menu.createItem', [option], this.definition.parameters, {});
-    messagingNatives.BindToGC(ret, nw.Menu.destroy.bind(undefined, id));
+    messagingNatives.BindToGC(ret, nw.Menu.destroy.bind(undefined, id), -1);
     return ret;
   });
   apiFunctions.setHandleRequest('destroy', function(id) {
@@ -250,8 +365,14 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     option.generatedId = id;
     var ret = new Menu(id, option);
     sendRequest.sendRequestSync('nw.Object.create', [id, 'Menu', option], this.definition.parameters, {});
-    messagingNatives.BindToGC(ret, nw.Menu.destroy.bind(undefined, id));
+    messagingNatives.BindToGC(ret, nw.Menu.destroy.bind(undefined, id), -1);
     return ret;
+  });
+  apiFunctions.setHandleRequest('getNSStringWithFixup', function(msg) {
+    return sendRequest.sendRequestSync('nw.Menu.getNSStringWithFixup', [msg], this.definition.parameters, {})[0];
+  });
+  apiFunctions.setHandleRequest('getNSStringFWithFixup', function(msg, appName) {
+    return sendRequest.sendRequestSync('nw.Menu.getNSStringFWithFixup', [msg, appName], this.definition.parameters, {})[0];
   });
 });
 
