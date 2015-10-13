@@ -25,11 +25,13 @@ namespace nw.Menu {
     static void remove([instanceOf=MenuItem] object item);
     static void removeAt(long index);
     static void popup(long x, long y);
-    //static void createMacBuiltin(DOMString appname);
+    static void createMacBuiltin(DOMString appname);
   };
   interface Functions {
     static object createItem(optional object options);
     [nocompile] static object createMenu(optional object options);
     [nocompile] static void destroy(long id);
+    static DOMString getNSStringWithFixup(DOMString msg);
+    static DOMString getNSStringFWithFixup(DOMString msg, DOMString appName);
   };
 };
