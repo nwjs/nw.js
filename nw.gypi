@@ -812,7 +812,7 @@
             },
           ],
           'dependencies': [
-            'nw',
+            'nwjs',
             '../breakpad/breakpad.gyp:dump_syms',
           ],
         }],
@@ -839,7 +839,7 @@
             },
           ],
           'dependencies': [
-            'nw',
+            'nwjs',
           ],
         }],
         ['OS=="linux"', {
@@ -903,8 +903,33 @@
             },
           ],
           'dependencies': [
-            'nw',
+            'nwjs',
             '../breakpad/breakpad.gyp:dump_syms',
+          ],
+        }],
+        ['OS=="linux" and disable_nacl==0', {
+          'variables': {
+            'linux_strip_binary': 1,
+          },
+          'actions': [
+            {
+              'action_name': 'dump_symbol_and_strip_4',
+              'inputs': [
+                '<(DEPTH)/content/nw/tools/dump_app_syms',
+                '<(PRODUCT_DIR)/dump_syms',
+                '<(PRODUCT_DIR)/nacl_helper',
+              ],
+              'outputs': [
+                '<(PRODUCT_DIR)/nacl_helper.breakpad.<(target_arch)',
+              ],
+              'action': ['<(DEPTH)/content/nw/tools/dump_app_syms',
+                         '<(PRODUCT_DIR)/dump_syms',
+                         '<(linux_strip_binary)',
+                         '<(PRODUCT_DIR)/nacl_helper',
+                         '<@(_outputs)'],
+              'message': 'Dumping breakpad symbols to <(_outputs)',
+              'process_outputs_as_sources': 1,
+            },
           ],
         }],
       ],
@@ -935,7 +960,7 @@
       ],
     },
     {
-      'target_name': 'nw',
+      'target_name': 'nwjs',
       'type': 'none',
       'dependencies': [
          '<(DEPTH)/chrome/chrome.gyp:chrome',
