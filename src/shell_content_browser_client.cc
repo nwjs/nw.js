@@ -56,6 +56,8 @@
 //#include "content/nw/src/browser/media_capture_devices_dispatcher.h"
 #include "content/nw/src/shell_quota_permission_context.h"
 #include "content/nw/src/browser/shell_resource_dispatcher_host_delegate.h"
+#include "content/nw/src/browser/ssl/ssl_error_handler.h"
+#include "content/nw/src/browser/ssl/ssl_blocking_page.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/nw/src/nw_notification_manager.h"
@@ -518,8 +520,38 @@ void ShellContentBrowserClient::AllowCertificateError(int render_process_id,
   if (cmd_line->HasSwitch(switches::kIgnoreCertificateErrors)) {
     *result = content::CERTIFICATE_REQUEST_RESULT_TYPE_CONTINUE;
   }
-  else
-    *result = content::CERTIFICATE_REQUEST_RESULT_TYPE_DENY;
+  else {
+    if (resource_type != content::RESOURCE_TYPE_MAIN_FRAME) {
+      // A sub-resource has a certificate error.  The user doesn't really
+      // have a context for making the right decision, so block the
+      // request hard, without an info bar to allow showing the insecure
+      // content.
+      *result = content::CERTIFICATE_REQUEST_RESULT_TYPE_DENY;
+      return;
+    }
+
+    // If the tab is being prerendered, cancel the prerender and the request.
+    content::RenderFrameHost* render_frame_host =
+        content::RenderFrameHost::FromID(render_process_id, render_frame_id);
+    WebContents* tab = WebContents::FromRenderFrameHost(render_frame_host);
+    if (!tab) {
+      NOTREACHED();
+      return;
+    }
+
+    // Otherwise, display an SSL blocking page. The interstitial page takes
+    // ownership of ssl_blocking_page.
+    int options_mask = 0;
+    if (overridable)
+      options_mask |= SSLBlockingPage::OVERRIDABLE;
+    if (strict_enforcement)
+      options_mask |= SSLBlockingPage::STRICT_ENFORCEMENT;
+    if (expired_previous_decision)
+      options_mask |= SSLBlockingPage::EXPIRED_BUT_PREVIOUSLY_ALLOWED;
+
+    SSLErrorHandler::HandleSSLError(
+        tab, cert_error, ssl_info, request_url, options_mask, callback);
+  }
   return;
 }
 

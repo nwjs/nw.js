@@ -53,6 +53,7 @@
       <if expr="pp_ifdef('enable_printing')">
         <include name="IDR_PRINT_PREVIEW_PAGE" file="pages/print_preview_page.html" flattenhtml="true" allowexternalscript="false" type="BINDATA" />
       </if>
+      <include name="IDR_SECURITY_INTERSTITIAL_HTML" file="pages/security_warnings/interstitial_v2.html" flattenhtml="true" allowexternalscript="false" type="BINDATA" />
     </includes>
     <messages fallback_to_english="true">
       <message name="IDS_PRINT_PREVIEW_INVALID_PRINTER_SETTINGS" desc="Message to display when selected printer is not reachable or its settings are invalid.">
@@ -83,6 +84,152 @@
       </message>
       <message name="IDS_CUSTOM_FILES" desc="The description of the custom file extensions in the select file dialog.">
         Custom Files
+      </message>
+      <message name="IDS_SSL_NONOVERRIDABLE_MORE_INVALID_SP3" desc="Body text for the explanation shown if the user clicks on the details windows, the certificate is invalid and the user has an old version of Windows (before WINDOWS XP SP3) running.">
+      Your computer is running an old version of Microsoft Windows that cannot process this website's security certificate. Because of this problem, Chromium can't tell whether the certificate came from <ph name="SITE">$1<ex>google.com</ex></ph> or from someone on your network pretending to be <ph name="SITE">$1<ex>google.com</ex></ph>. Please update your computer to a more recent version of Windows.
+      </message>
+      <message name="IDS_SSL_NONOVERRIDABLE_MORE" desc="Body text for the explanation shown if user clicks on the Details button.">
+        <ph name="SITE">$1<ex>google.com</ex></ph> normally uses encryption to protect your information. When Chromium tried to connect to <ph name="SITE">$1<ex>google.com</ex></ph> this time, the website sent back unusual
+and incorrect credentials. Either an attacker is trying to pretend to be <ph name="SITE">$1<ex>google.com</ex></ph>, or a Wi-Fi sign-in screen has interrupted the connection. Your information is still secure because Chromium stopped the connection before any data was exchanged.
+      </message>
+      <message name="IDS_SSL_NONOVERRIDABLE_INVALID" desc="A sentence to explain why the user can't proceed.">
+      You cannot visit <ph name="SITE">$1<ex>google.com</ex></ph> right now because the website sent scrambled credentials that Chromium cannot process. Network errors and attacks are usually temporary, so this page will probably work later.
+      </message>
+
+            <!-- SSL Interstitial V2 -->
+      <message name="IDS_SSL_V2_TITLE" desc="The tab title for the SSL interstitial.">
+        Privacy error
+      </message>
+      <message name="IDS_SSL_V2_HEADING" desc="The large heading at the top of the SSL interstitial.">
+        Your connection is not private
+      </message>
+      <message name="IDS_SSL_V2_PRIMARY_PARAGRAPH" desc="The primary explanatory paragraph for the SSL interstitial.">
+        Attackers might be trying to steal your information from <ph name="BEGIN_BOLD">&lt;strong&gt;</ph><ph name="SITE">$1<ex>google.com</ex></ph><ph name="END_BOLD">&lt;/strong&gt;</ph> (for example, passwords, messages, or credit cards).
+      </message>
+      <message name="IDS_SSL_V2_OPEN_DETAILS_BUTTON" desc="The text for the button that expands the details.">
+        Advanced
+      </message>
+      <message name="IDS_SSL_V2_CLOSE_DETAILS_BUTTON" desc="The text for the button that hides the details.">
+        Hide advanced
+      </message>
+
+      <!-- SSL Interstitial V2: Overridable -->
+      <message name="IDS_SSL_OVERRIDABLE_SAFETY_BUTTON" desc="The text for the button that takes the user back to the previous page.">
+        Back to safety
+      </message>
+      <message name="IDS_SSL_OVERRIDABLE_PROCEED_PARAGRAPH" desc="The text for the paragraph at the bottom with the proceed link.">
+        <ph name="BEGIN_LINK">&lt;a href="#" id="proceed-link"&gt;</ph>Proceed to <ph name="SITE">$1<ex>example.com</ex></ph> (unsafe)<ph name="END_LINK">&lt;/a&gt;</ph>
+      </message>
+
+      <!-- SSL Interstitial V2: Non-overridable -->
+      <message name="IDS_SSL_RELOAD" desc="The text for the button that reloads the page.">
+        Reload
+      </message>
+      <message name="IDS_SSL_NONOVERRIDABLE_PINNED" desc="A sentence to explain why the user can't proceed, plus a link to a help page about certificate pinning.">
+      You cannot visit <ph name="SITE">$1<ex>google.com</ex></ph> right now because the website <ph name="BEGIN_LINK">&lt;a href="#" id="help-link"&gt;</ph>uses certificate pinning<ph name="END_LINK">&lt;/a&gt;</ph>. Network errors and attacks are usually temporary, so this page will probably work later.
+      </message>
+      <message name="IDS_SSL_NONOVERRIDABLE_HSTS" desc="A sentence to explain why the user can't proceed, plus a link to a help page about HSTS.">
+      You cannot visit <ph name="SITE">$1<ex>google.com</ex></ph> right now because the website <ph name="BEGIN_LINK">&lt;a href="#" id="help-link"&gt;</ph>uses HSTS<ph name="END_LINK">&lt;/a&gt;</ph>. Network errors and attacks are usually temporary, so this page will probably work later.
+      </message>
+      <message name="IDS_SSL_NONOVERRIDABLE_REVOKED" desc="A sentence to explain why the user can't proceed, plus a link to a help page about certificate revocation.">
+      You cannot visit <ph name="SITE">$1<ex>google.com</ex></ph> right now because <ph name="BEGIN_LINK">&lt;a href="#" id="help-link"&gt;</ph>this certificate has been revoked<ph name="END_LINK">&lt;/a&gt;</ph>. Network errors and attacks are usually temporary, so this page will probably work later.
+      </message>
+
+      <!-- Certificate error strings -->
+      <message name="IDS_CERT_ERROR_COMMON_NAME_INVALID_DETAILS" desc="Details for an unsafe common name in an X509 certificate">
+        This server could not prove that it is <ph name="DOMAIN">&lt;strong&gt;$1<ex>paypal.com</ex>&lt;/strong&gt;</ph>; its security certificate is from <ph name="DOMAIN2">&lt;strong&gt;$2<ex>fakepaypal.com</ex>&lt;/strong&gt;</ph>. This may be caused by a misconfiguration or an attacker intercepting your connection.
+      </message>
+      <message name="IDS_CERT_ERROR_COMMON_NAME_INVALID_DESCRIPTION" desc="Description for an unsafe common name in an X509 certificate">
+        Server's certificate does not match the URL.
+      </message>
+
+      <message name="IDS_CERT_ERROR_EXPIRED_DETAILS" desc="Details for an expired X509 certificate">
+        This server could not prove that it is <ph name="DOMAIN">&lt;strong&gt;$1<ex>paypal.com</ex>&lt;/strong&gt;</ph>; its security certificate expired <ph name="DAYS">$2<ex>3</ex></ph> day(s) ago. This may be caused by a misconfiguration or an attacker intercepting your connection. Your computer's clock is currently set to <ph name="CURRENT_TIME">$3<ex>July 18, 2012</ex></ph>. Does that look right? If not, you should correct your system's clock and then refresh this page.
+      </message>
+      <message name="IDS_CERT_ERROR_EXPIRED_DESCRIPTION" desc="Description for an expired X509 certificate">
+        Server's certificate has expired.
+      </message>
+
+      <message name="IDS_CERT_ERROR_NOT_YET_VALID_DETAILS" desc="Details for an X509 certificate that is not yet valid">
+        This server could not prove that it is <ph name="DOMAIN">&lt;strong&gt;$1<ex>paypal.com</ex>&lt;/strong&gt;</ph>; its security certificate is supposedly from <ph name="DAYS">$2<ex>3</ex></ph> day(s) in the future. This may be caused by a misconfiguration or an attacker intercepting your connection.
+      </message>
+      <message name="IDS_CERT_ERROR_NOT_YET_VALID_DESCRIPTION" desc="Description for an X509 certificate that is not yet valid">
+        Server's certificate is not yet valid.
+      </message>
+
+      <message name="IDS_CERT_ERROR_CHAIN_EXPIRED_DETAILS" desc="Details for an expired root or intermediate cert in chain">
+        This server could not prove that it is <ph name="DOMAIN">&lt;strong&gt;$1<ex>paypal.com</ex>&lt;/strong&gt;</ph>; its security certificate expired. This may be caused by a misconfiguration or an attacker intercepting your connection. Your computer's clock is currently set to <ph name="CURRENT_TIME">$3<ex>July 18, 2012</ex></ph>. Does that look right? If not, you should correct your system's clock and then refresh this page.
+      </message>
+      <message name="IDS_CERT_ERROR_CHAIN_EXPIRED_DESCRIPTION" desc="Description for an expired intermediate/root certificate in chain">
+        A root or intermediate certificate has expired.
+      </message>
+
+      <message name="IDS_CERT_ERROR_AUTHORITY_INVALID_DESCRIPTION" desc="Description for an X509 certificate with an invalid authority">
+        Server's certificate is not trusted.
+      </message>
+
+      <message name="IDS_CERT_ERROR_CONTAINS_ERRORS_DETAILS" desc="Details of the error page for an X509 certificate that contains errors">
+        This server could not prove that it is <ph name="DOMAIN">&lt;strong&gt;$1<ex>paypal.com</ex>&lt;/strong&gt;</ph>; its security certificate contains errors. This may be caused by a misconfiguration or an attacker intercepting your connection.
+      </message>
+      <message name="IDS_CERT_ERROR_CONTAINS_ERRORS_DESCRIPTION" desc="Description of the error page for an X509 certificate that contains errors">
+        Server's certificate contains errors.
+      </message>
+
+      <message name="IDS_CERT_ERROR_NO_REVOCATION_MECHANISM_DETAILS" desc="Details for not finding a revocation mechanism in an X509 certificate">
+        This server could not prove that it is <ph name="DOMAIN">&lt;strong&gt;$1<ex>paypal.com</ex>&lt;/strong&gt;</ph>; its security certificate might be revoked. This may be caused by a misconfiguration or an attacker intercepting your connection.
+      </message>
+      <message name="IDS_CERT_ERROR_NO_REVOCATION_MECHANISM_DESCRIPTION" desc="Description for not finding a revocation mechanism in an X509 certificate">
+        No revocation mechanism found.
+      </message>
+
+      <message name="IDS_CERT_ERROR_REVOKED_CERT_DETAILS" desc="Details of the error page for a revoked certificate">
+        You attempted to reach <ph name="DOMAIN">&lt;strong&gt;$1<ex>paypal.com</ex>&lt;/strong&gt;</ph>, but the certificate that the server presented has been revoked by its issuer. This means that the security credentials the server presented absolutely should not be trusted. You may be communicating with an attacker.
+      </message>
+      <message name="IDS_CERT_ERROR_REVOKED_CERT_DESCRIPTION" desc="Description of the error page for a revoked certificate">
+        Server's certificate has been revoked.
+      </message>
+
+      <message name="IDS_CERT_ERROR_INVALID_CERT_DETAILS" desc="Details of the error page for an X509 certificate that is invalid">
+        You attempted to reach <ph name="DOMAIN">&lt;strong&gt;$1<ex>paypal.com</ex>&lt;/strong&gt;</ph>, but the server presented an invalid certificate.
+      </message>
+      <message name="IDS_CERT_ERROR_INVALID_CERT_DESCRIPTION" desc="Description of the error page for an X509 certificate that is invalid">
+        Server's certificate is invalid.
+      </message>
+
+      <message name="IDS_CERT_ERROR_WEAK_SIGNATURE_ALGORITHM_DETAILS" desc="Details of the error page for a certificate signed using a weak signature algorithm">
+        You attempted to reach <ph name="DOMAIN">&lt;strong&gt;$1<ex>paypal.com</ex>&lt;/strong&gt;</ph>, but the server presented a certificate signed using a weak signature algorithm. This means that the security credentials the server presented could have been forged, and the server may not be the server you expected (you may be communicating with an attacker).
+      </message>
+      <message name="IDS_CERT_ERROR_WEAK_SIGNATURE_ALGORITHM_DESCRIPTION" desc="Description of the error page for a certificate signed using a weak signature algorithm">
+        Server's certificate is signed using a weak signature algorithm.
+      </message>
+
+      <message name="IDS_CERT_ERROR_WEAK_KEY_DETAILS" desc="Details of the error page for a certificate containing a weak key">
+        You attempted to reach <ph name="DOMAIN">&lt;strong&gt;$1<ex>paypal.com</ex>&lt;/strong&gt;</ph>, but the server presented a certificate containing a weak key. An attacker could have broken the private key, and the server may not be the server you expected (you may be communicating with an attacker).
+      </message>
+      <message name="IDS_CERT_ERROR_WEAK_KEY_DESCRIPTION" desc="Description of the error page for a certificate containing a weak key">
+        The server certificate contains a weak cryptographic key.
+      </message>
+
+      <message name="IDS_CERT_ERROR_NAME_CONSTRAINT_VIOLATION_DETAILS" desc="Details of the error page for a certificate that contains a name outside of its scope">
+        This server could not prove that it is <ph name="DOMAIN">&lt;strong&gt;$1<ex>paypal.com</ex>&lt;/strong&gt;</ph>; its security certificate might have been issued fraudulently. This may be caused by a misconfiguration or an attacker intercepting your connection.
+      </message>
+      <message name="IDS_CERT_ERROR_NAME_CONSTRAINT_VIOLATION_DESCRIPTION" desc="Description of the error page for a certificate that contains a name outside of its scope">
+        Server's certificate violates name constraints.
+      </message>
+
+      <message name="IDS_CERT_ERROR_UNKNOWN_ERROR_DETAILS" desc="Details of the error page for an unknown ssl error">
+        An unknown error has occurred.
+      </message>
+      <message name="IDS_CERT_ERROR_UNKNOWN_ERROR_DESCRIPTION" desc="Description of the error page for an unknown ssl error">
+        Unknown server certificate error.
+      </message>
+
+      <!-- Error pages -->
+      <message name="IDS_ERRORPAGES_SUMMARY_PINNING_FAILURE" desc="Details of the error page for a certificate which doesn't match the built-in pins for that name">
+        The server presented a certificate that doesn't match built-in expectations. These expectations are included for certain, high-security websites in order to protect you.
+      </message>
+      <message name="IDS_ERRORPAGES_DETAILS_PINNING_FAILURE" desc="Description of the error page for a certificate which doesn't match the built-in pins for that name">
+        The server's certificate appears to be a forgery.
       </message>
     </messages>
   </release>

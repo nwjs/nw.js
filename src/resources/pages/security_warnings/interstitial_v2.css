@@ -1,0 +1,279 @@
+/* Copyright 2014 The Chromium Authors. All rights reserved.
+   Use of this source code is governed by a BSD-style license that can be
+   found in the LICENSE file. */
+
+a {
+  color: #585858;
+}
+
+.bad-clock .icon {
+  background-image: -webkit-image-set(
+      url(images/1x/clock.png) 1x,
+      url(images/2x/clock.png) 2x);
+}
+
+body {
+  background-color: #f7f7f7;
+  color: #585858;
+}
+
+body.safe-browsing {
+  background-color: rgb(206, 52, 38);
+  color: white;
+}
+
+button {
+  background: rgb(76, 142, 250);
+  border: 0;
+  border-radius: 2px;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  float: right;
+  font-size: .875em;
+  height: 36px;
+  margin: -6px 0 0;
+  padding: 8px 24px;
+  transition: box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[dir='rtl'] button {
+  float: left;
+}
+
+button:active {
+  background: rgb(50, 102, 213);
+  outline: 0;
+}
+
+button:hover {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .50);
+}
+
+.debugging-content {
+  line-height: 1em;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.debugging-title {
+  font-weight: bold;
+}
+
+#details {
+  color: #696969;
+  margin: 45px 0 50px;
+}
+
+#details p:not(:first-of-type) {
+  margin-top: 20px;
+}
+
+#error-code {
+  color: black;
+  opacity: .35;
+  text-transform: uppercase;
+}
+
+#error-debugging-info {
+  font-size: 0.8em;
+}
+
+h1 {
+  color: #585858;
+  font-size: 1.6em;
+  font-weight: normal;
+  line-height: 1.25em;
+  margin-bottom: 16px;
+}
+
+h2 {
+  font-size: 1.2em;
+  font-weight: normal;
+}
+
+.hidden {
+  display: none;
+}
+
+html {
+  font-size: 125%;
+}
+
+.icon {
+  background-repeat: no-repeat;
+  background-size: 100%;
+  height: 72px;
+  margin: 0 0 40px;
+  width: 72px;
+}
+
+input[type=checkbox] {
+  visibility: hidden;
+}
+
+.interstitial-wrapper {
+  box-sizing: border-box;
+  font-size: 1em;
+  line-height: 1.6em;
+  margin: 100px auto 0;
+  max-width: 600px;
+  width: 100%;
+}
+
+#malware-opt-in {
+  font-size: .875em;
+  margin-top: 39px;
+}
+
+.nav-wrapper {
+  margin-top: 51px;
+}
+
+.nav-wrapper::after {
+  clear: both;
+  content: '';
+  display: table;
+  width: 100%;
+}
+
+#opt-in-label {
+  -webkit-margin-start: 32px;
+}
+
+.safe-browsing :-webkit-any(
+    a, #details, #details-button, h1, h2, p, .small-link) {
+  color: white;
+}
+
+.safe-browsing button {
+  background-color: rgb(206, 52, 38);
+  border: 1px solid white;
+}
+
+.safe-browsing button:active {
+  background-color: rgb(206, 52, 38);
+  border-color: rgba(255, 255, 255, .6);
+}
+
+.safe-browsing button:hover {
+  box-shadow: 0 2px 3px rgba(0, 0, 0, .5);
+}
+
+.safe-browsing .icon {
+  background-image: -webkit-image-set(
+      url(images/1x/stop_sign.png) 1x,
+      url(images/2x/stop_sign.png) 2x);
+}
+
+.small-link {
+  color: #696969;
+  font-size: .875em;
+}
+
+.ssl .icon {
+  background-image: -webkit-image-set(
+      url(images/1x/brokenssl_red.png) 1x,
+      url(images/2x/brokenssl_red.png) 2x);
+}
+
+.captive-portal .icon {
+  background-image: -webkit-image-set(
+      url(images/1x/captive_portal_page_icon.png) 1x,
+      url(images/2x/captive_portal_page_icon.png) 2x);
+}
+
+.styled-checkbox {
+  float: left;
+  height: 16px;
+  margin-top: .36em;
+  position: relative;
+  width: 16px;
+}
+
+[dir='rtl'] .styled-checkbox {
+  float: right;
+}
+
+.styled-checkbox label {
+  background: transparent;
+  border: white solid 1px;
+  border-radius: 2px;
+  height: 14px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 14px;
+}
+
+.styled-checkbox label::after {
+  background: transparent;
+  border: 2px solid white;
+  border-right-width: 0;
+  border-top-width: 0;
+  content: '';
+  height: 4px;
+  left: 2px;
+  opacity: 0.3;
+  position: absolute;
+  top: 3px;
+  transform: rotate(-45deg);
+  width: 9px;
+}
+
+.styled-checkbox input[type=checkbox]:checked + label::after {
+  opacity: 1;
+}
+
+@media (max-width: 700px) {
+  .interstitial-wrapper {
+    padding: 0 10%;
+  }
+}
+
+@media (max-height: 600px) {
+  .interstitial-wrapper {
+    margin-top: 13%;
+  }
+}
+
+@media (max-width: 400px) {
+  button,
+  [dir='rtl'] button {
+    float: none;
+    font-size: 1em;
+    width: 100%;
+  }
+
+  #details {
+    margin: 20px 0 20px 0;
+  }
+
+  #details p:not(:first-of-type) {
+    margin-top: 10px;
+  }
+
+  #details-button {
+    display: block;
+    padding-top: 14px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .interstitial-wrapper {
+    padding: 0 5%;
+  }
+
+  #malware-opt-in {
+    margin-top: 24px;
+  }
+
+  .nav-wrapper {
+    margin-top: 30px;
+  }
+
+  .small-link {
+    font-size: 1em;
+  }
+}
