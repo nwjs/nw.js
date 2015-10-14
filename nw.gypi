@@ -696,6 +696,7 @@
         }],
         ['OS=="mac"', {
           'sources': [
+            'src/api/nw_window_api_mac.mm',
             'src/api/nw_menu_api_mac.mm',
             'src/api/menuitem/menuitem_mac.mm',
             'src/api/menu/menu_mac.mm',

@@ -2,6 +2,7 @@
 
 #include "base/base64.h"
 #include "base/strings/stringprintf.h"
+#include "base/strings/utf_string_conversions.h"
 #include "content/public/browser/render_widget_host.h"
 #include "chrome/browser/devtools/devtools_window.h"
 #include "chrome/browser/extensions/devtools_util.h"
@@ -21,10 +22,19 @@
 #include "ui/gfx/screen.h"
 
 #if defined(OS_WIN)
+#include <shobjidl.h>
+#include <dwmapi.h>
+
+#include "ui/gfx/canvas.h"
+#include "ui/gfx/icon_util.h"
+#include "ui/gfx/font_list.h"
+#include "ui/gfx/platform_font.h"
+#include "ui/gfx/win/dpi.h"
 #include "ui/views/win/hwnd_util.h"
 #endif
 
 #if defined(OS_LINUX)
+#include "chrome/browser/ui/libgtk2ui/gtk2_ui.h"
 #include "content/nw/src/browser/menubar_view.h"
 #include "content/nw/src/browser/browser_view_layout.h"
 using nw::BrowserViewLayout;
@@ -42,6 +52,22 @@ using nw::Menu;
 
 #if defined(OS_LINUX)
 using nw::MenuBarView;
+static void SetDeskopEnvironment() {
+  static bool runOnce = false;
+  if (runOnce) return;
+  runOnce = true;
+
+  scoped_ptr<base::Environment> env(base::Environment::Create());
+  std::string name;
+  //if (env->GetVar("CHROME_DESKTOP", &name) && !name.empty())
+  //  return;
+
+  if (!env->GetVar("NW_DESKTOP", &name) || name.empty())
+    name = "nw.desktop";
+
+  env->SetVar("CHROME_DESKTOP", name);
+}
+
 #endif
 
 namespace extensions {
@@ -51,6 +77,28 @@ const char kNoAssociatedAppWindow[] =
     "The context from which the function was called did not have an "
     "associated app window.";
 }
+
+static AppWindow* getAppWindow(AsyncExtensionFunction* func) {
+  AppWindowRegistry* registry = AppWindowRegistry::Get(func->browser_context());
+  DCHECK(registry);
+  content::WebContents* web_contents = func->GetSenderWebContents();
+  if (!web_contents) {
+    // No need to set an error, since we won't return to the caller anyway if
+    // there's no RVH.
+    return NULL;
+  }
+  return registry->GetAppWindowForWebContents(web_contents);
+}
+
+#ifdef OS_WIN
+static HWND getHWND(AppWindow* window) {
+  if (window == NULL) return NULL;
+  native_app_window::NativeAppWindowViews* native_app_window_views =
+    static_cast<native_app_window::NativeAppWindowViews*>(
+    window->GetBaseWindow());
+  return views::HWNDForWidget(native_app_window_views->widget()->GetTopLevelWidget());
+}
+#endif
 
 NwCurrentWindowInternalShowDevToolsFunction::NwCurrentWindowInternalShowDevToolsFunction() {
 
@@ -224,15 +272,7 @@ NwCurrentWindowInternalSetMenuFunction::~NwCurrentWindowInternalSetMenuFunction(
 bool NwCurrentWindowInternalSetMenuFunction::RunAsync() {
   int id = 0;
   EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &id));
-
-  AppWindowRegistry* registry = AppWindowRegistry::Get(browser_context());
-  DCHECK(registry);
-  content::WebContents* web_contents = GetSenderWebContents();
-  if (!web_contents)
-    // No need to set an error, since we won't return to the caller anyway if
-    // there's no RVH.
-    return false;
-  AppWindow* window = registry->GetAppWindowForWebContents(web_contents);
+  AppWindow* window = getAppWindow(this);
   if (!window) {
     error_ = kNoAssociatedAppWindow;
     return false;
@@ -277,5 +317,174 @@ bool NwCurrentWindowInternalSetMenuFunction::RunAsync() {
   //FIXME menu->UpdateKeys( native_app_window_views->widget()->GetFocusManager() );
   return true;
 }
+  
+#if defined(OS_WIN)
+static HICON createBadgeIcon(const HWND hWnd, const TCHAR *value, const int sizeX, const int sizeY) {
+  // canvas for the overlay icon
+  gfx::Canvas canvas(gfx::Size(sizeX, sizeY), 1, false);
+
+  // drawing red circle
+  SkPaint paint;
+  paint.setColor(SK_ColorRED);
+  canvas.DrawCircle(gfx::Point(sizeX / 2, sizeY / 2), sizeX / 2, paint);
+
+  // drawing the text
+  gfx::PlatformFont *platform_font = gfx::PlatformFont::CreateDefault();
+  const int fontSize = sizeY * 0.65f;
+  gfx::Font font(platform_font->GetFontName(), fontSize);
+  platform_font->Release();
+  platform_font = NULL;
+  const int yMargin = (sizeY - fontSize) / 2;
+  canvas.DrawStringRectWithFlags(value, gfx::FontList(font), SK_ColorWHITE, gfx::Rect(sizeX, fontSize + yMargin + 1), gfx::Canvas::TEXT_ALIGN_CENTER);
+
+  // return the canvas as windows native icon handle
+  return IconUtil::CreateHICONFromSkBitmap(canvas.ExtractImageRep().sk_bitmap());
+}
+#endif
+
+#ifndef OS_MACOSX
+bool NwCurrentWindowInternalSetBadgeLabelFunction::RunAsync() {
+  EXTENSION_FUNCTION_VALIDATE(args_);
+  std::string badge;
+  EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &badge));
+#if defined(OS_WIN)
+  base::win::ScopedComPtr<ITaskbarList3> taskbar;
+  HRESULT result = taskbar.CreateInstance(CLSID_TaskbarList, NULL,
+    CLSCTX_INPROC_SERVER);
+
+  if (FAILED(result)) {
+    error_ = "Failed creating a TaskbarList3 object: ";
+    LOG(ERROR) << error_ << result;
+    return false;
+  }
+
+  result = taskbar->HrInit();
+  if (FAILED(result)) {
+    error_ = "Failed initializing an ITaskbarList3 interface.";
+    LOG(ERROR) << error_;
+    return false;
+  }
+
+  HICON icon = NULL;
+  HWND hWnd = getHWND(getAppWindow(this));
+  if (hWnd == NULL) {
+    error_ = kNoAssociatedAppWindow;
+    LOG(ERROR) << error_;
+    return false;
+  }
+  const float scale = gfx::GetDPIScale();
+  if (badge.size())
+    icon = createBadgeIcon(hWnd, base::UTF8ToUTF16(badge).c_str(), 16 * scale, 16 * scale);
+
+  taskbar->SetOverlayIcon(hWnd, icon, L"Status");
+  DestroyIcon(icon);
+#elif defined(OS_LINUX)
+  views::LinuxUI* linuxUI = views::LinuxUI::instance();
+  if (linuxUI == NULL) {
+    error_ = "LinuxUI::instance() is NULL";
+    return false;
+  }
+  SetDeskopEnvironment();
+  linuxUI->SetDownloadCount(atoi(badge.c_str()));
+#else
+  error_ = "NwCurrentWindowInternalSetBadgeLabelFunction NOT Implemented"
+  NOTIMPLEMENTED() << error_;
+  return false;
+#endif
+  return true;
+}
+  
+bool NwCurrentWindowInternalRequestAttentionFunction::RunAsync() {
+  EXTENSION_FUNCTION_VALIDATE(args_);
+  int count;
+  EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &count));
+#if defined(OS_WIN)
+  FLASHWINFO fwi;
+  fwi.cbSize = sizeof(fwi);
+  fwi.hwnd = getHWND(getAppWindow(this));
+  if (fwi.hwnd == NULL) {
+    error_ = kNoAssociatedAppWindow;
+    LOG(ERROR) << error_;
+    return false;
+  }
+  if (count != 0) {
+    fwi.dwFlags = FLASHW_ALL;
+    fwi.uCount = count < 0 ? 4 : count;
+    fwi.dwTimeout = 0;
+  }
+  else {
+    fwi.dwFlags = FLASHW_STOP;
+  }
+  FlashWindowEx(&fwi);
+#elif defined(OS_LINUX)
+  AppWindow* window = getAppWindow(this);
+  if (!window) {
+    error_ = kNoAssociatedAppWindow;
+    return false;
+  }
+  window->GetBaseWindow()->FlashFrame(count);
+#else
+  error_ = "NwCurrentWindowInternalRequestAttentionFunction NOT Implemented"
+  NOTIMPLEMENTED() << error_;
+  return false;
+#endif
+  return true;
+}
+  
+bool NwCurrentWindowInternalSetProgressBarFunction::RunAsync() {
+  EXTENSION_FUNCTION_VALIDATE(args_);
+  double progress;
+  EXTENSION_FUNCTION_VALIDATE(args_->GetDouble(0, &progress));
+#if defined(OS_WIN)
+  base::win::ScopedComPtr<ITaskbarList3> taskbar;
+  HRESULT result = taskbar.CreateInstance(CLSID_TaskbarList, NULL,
+    CLSCTX_INPROC_SERVER);
+
+  if (FAILED(result)) {
+    error_ = "Failed creating a TaskbarList3 object: ";
+    LOG(ERROR) <<  error_ << result;
+    return false;
+  }
+
+  result = taskbar->HrInit();
+  if (FAILED(result)) {
+    error_ = "Failed initializing an ITaskbarList3 interface.";
+    LOG(ERROR) << error_;
+    return false;
+  }
+
+  HWND hWnd = getHWND(getAppWindow(this));
+  if (hWnd == NULL) {
+    error_ = kNoAssociatedAppWindow;
+    LOG(ERROR) << error_;
+    return false;
+  }
+  TBPFLAG tbpFlag = TBPF_NOPROGRESS;
+
+  if (progress > 1) {
+    tbpFlag = TBPF_INDETERMINATE;
+  }
+  else if (progress >= 0) {
+    tbpFlag = TBPF_NORMAL;
+    taskbar->SetProgressValue(hWnd, progress * 100, 100);
+  }
+
+  taskbar->SetProgressState(hWnd, tbpFlag);
+#elif defined(OS_LINUX)
+  views::LinuxUI* linuxUI = views::LinuxUI::instance();
+  if (linuxUI == NULL) {
+    error_ = "LinuxUI::instance() is NULL";
+    return false;
+  }
+  SetDeskopEnvironment();
+  linuxUI->SetProgressFraction(progress);
+#else
+  error_ = "NwCurrentWindowInternalSetProgressBarFunction NOT Implemented"
+  NOTIMPLEMENTED() << error_;
+  return false;
+#endif
+  return true;
+}
+#endif
 
 } // namespace extensions
