@@ -30,6 +30,7 @@
 #include "content/public/browser/resource_context.h"
 #include "content/public/browser/storage_partition.h"
 #include "content/public/common/content_switches.h"
+#include "content/nw/src/browser/ssl/nw_ssl_host_state_delegate.h"
 #include "content/nw/src/browser/shell_download_manager_delegate.h"
 #include "content/nw/src/browser/nw_form_database_service.h"
 #include "content/nw/src/common/shell_switches.h"
@@ -70,6 +71,7 @@ class ShellBrowserContext::ShellResourceContext : public ResourceContext {
 
  private:
   ShellURLRequestContextGetter* getter_;
+  SSLHostStateDelegate* hostStateDelegate_;
 
   DISALLOW_COPY_AND_ASSIGN(ShellResourceContext);
 };
@@ -154,6 +156,15 @@ DownloadManagerDelegate* ShellBrowserContext::GetDownloadManagerDelegate()  {
   }
 
   return download_manager_delegate_.get();
+}
+
+SSLHostStateDelegate* ShellBrowserContext::GetSSLHostStateDelegate() {
+  if (!ssl_host_state_delegate_) {
+    ssl_host_state_delegate_ = new NWSSLHostStateDelegate(
+        this);
+  }
+
+  return ssl_host_state_delegate_;
 }
 
 net::URLRequestContextGetter* ShellBrowserContext::GetRequestContext()  {
@@ -269,10 +280,6 @@ BrowserPluginGuestManager* ShellBrowserContext::GetGuestManager() {
 }
 
 PushMessagingService* ShellBrowserContext::GetPushMessagingService() {
-  return NULL;
-}
-
-SSLHostStateDelegate* ShellBrowserContext::GetSSLHostStateDelegate() {
   return NULL;
 }
 

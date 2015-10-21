@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef NWJS_BROWSER_INTERSTITIALS_SECURITY_INTERSTITIAL_PAGE_H_
-#define NWJS_BROWSER_INTERSTITIALS_SECURITY_INTERSTITIAL_PAGE_H_
+#ifndef CHROME_BROWSER_INTERSTITIALS_SECURITY_INTERSTITIAL_PAGE_H_
+#define CHROME_BROWSER_INTERSTITIALS_SECURITY_INTERSTITIAL_PAGE_H_
 
 #include "base/strings/string16.h"
 #include "content/public/browser/interstitial_page_delegate.h"
@@ -63,4 +63,4 @@ class SecurityInterstitialPage : public content::InterstitialPageDelegate {
   DISALLOW_COPY_AND_ASSIGN(SecurityInterstitialPage);
 };
 
-#endif  // NWJS_BROWSER_INTERSTITIALS_SECURITY_INTERSTITIAL_PAGE_H_
+#endif  // CHROME_BROWSER_INTERSTITIALS_SECURITY_INTERSTITIAL_PAGE_H_

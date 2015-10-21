@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef NWJS_BROWSER_SSL_SSL_ERROR_INFO_H_
-#define NWJS_BROWSER_SSL_SSL_ERROR_INFO_H_
+#ifndef CHROME_BROWSER_SSL_SSL_ERROR_INFO_H_
+#define CHROME_BROWSER_SSL_SSL_ERROR_INFO_H_
 
 #include <string>
 #include <vector>
@@ -71,4 +71,4 @@ class SSLErrorInfo {
   base::string16 short_description_;
 };
 
-#endif  // NWJS_BROWSER_SSL_SSL_ERROR_INFO_H_
+#endif  // CHROME_BROWSER_SSL_SSL_ERROR_INFO_H_

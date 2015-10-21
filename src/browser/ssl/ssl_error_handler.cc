@@ -4,8 +4,8 @@
 
 #include "content/nw/src/browser/ssl/ssl_error_handler.h"
 
+#include "base/metrics/field_trial.h"
 #include "base/time/time.h"
-#include "chrome/browser/profiles/profile.h"
 #include "content/nw/src/browser/ssl/ssl_blocking_page.h"
 #include "content/public/browser/web_contents.h"
 
