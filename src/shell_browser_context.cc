@@ -71,7 +71,6 @@ class ShellBrowserContext::ShellResourceContext : public ResourceContext {
 
  private:
   ShellURLRequestContextGetter* getter_;
-  SSLHostStateDelegate* hostStateDelegate_;
 
   DISALLOW_COPY_AND_ASSIGN(ShellResourceContext);
 };
@@ -82,7 +81,8 @@ ShellBrowserContext::ShellBrowserContext(bool off_the_record,
     off_the_record_(off_the_record),
     ignore_certificate_errors_(false),
     package_(package),
-    resource_context_(new ShellResourceContext) {
+    resource_context_(new ShellResourceContext),
+    ssl_host_state_delegate_(NULL) {
   InitWhileIOAllowed();
 }
 
@@ -160,8 +160,7 @@ DownloadManagerDelegate* ShellBrowserContext::GetDownloadManagerDelegate()  {
 
 SSLHostStateDelegate* ShellBrowserContext::GetSSLHostStateDelegate() {
   if (!ssl_host_state_delegate_) {
-    ssl_host_state_delegate_ = new NWSSLHostStateDelegate(
-        this);
+    ssl_host_state_delegate_ = new NWSSLHostStateDelegate(this);
   }
 
   return ssl_host_state_delegate_;

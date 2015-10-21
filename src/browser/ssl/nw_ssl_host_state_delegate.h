@@ -11,10 +11,7 @@
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/ssl_host_state_delegate.h"
 
-class Profile;
-
 namespace base {
-class Clock;
 class DictionaryValue;
 }  //  namespace base
 

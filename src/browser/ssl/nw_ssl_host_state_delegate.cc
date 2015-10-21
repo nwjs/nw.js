@@ -116,11 +116,13 @@ base::DictionaryValue* NWSSLHostStateDelegate::GetValidCertDecisionsDict(
 
 NWSSLHostStateDelegate::NWSSLHostStateDelegate(
     content::BrowserContext *browser_context) {
-  base::FilePath path = browser_context->GetPath().Append("HostContentSettings");
+  base::FilePath path = browser_context->GetPath()
+      .Append("HostContentSettings");
 
   scoped_refptr<base::SequencedTaskRunner> sequenced_task_runner =
-      JsonPrefStore::GetTaskRunnerForFile(path,
-                                          content::BrowserThread::GetBlockingPool());
+      JsonPrefStore::GetTaskRunnerForFile(
+          path,
+          content::BrowserThread::GetBlockingPool());
 
     ssl_prefs_store_ = new JsonPrefStore(
         path,
@@ -134,7 +136,7 @@ NWSSLHostStateDelegate::NWSSLHostStateDelegate(
     //It will block a lot as it's using the blocking IO pool.
     readError = ssl_prefs_store_->ReadPrefs();
 
-    LOG(ERROR) << "Pref read error?: " << readError;
+    //what to do here?
 }
 
 NWSSLHostStateDelegate::~NWSSLHostStateDelegate() {
@@ -168,9 +170,11 @@ void NWSSLHostStateDelegate::AllowCert(const std::string& host,
   //^ var value = file["ssl_cert_decisions"] || {};
 
   base::DictionaryValue* entry;
+  bool entryIsNew = false;
 
   if(!dict->GetDictionaryWithoutPathExpansion(url.spec(), &entry)) {
     entry = new base::DictionaryValue();
+    entryIsNew = true;
   }
 
   //^ var entry = value[hostname] || {};
@@ -185,18 +189,22 @@ void NWSSLHostStateDelegate::AllowCert(const std::string& host,
     return;
 
   int decision;
-  if(entry->GetIntegerWithoutPathExpansion(kSSLCertDecisionVersionKey, &decision)
+  std::string errorKey = GetKey(cert, error);
+  if(entry->GetIntegerWithoutPathExpansion(errorKey, &decision)
       && decision == ALLOWED) {
     return;
   }
 
   entry->SetIntegerWithoutPathExpansion(kSSLCertDecisionVersionKey,
                                        kDefaultSSLCertDecisionVersion);
-  cert_dict->SetIntegerWithoutPathExpansion(GetKey(cert, error), ALLOWED);  
+  cert_dict->SetIntegerWithoutPathExpansion(errorKey, ALLOWED);  
 
   // The map takes ownership of the value, so it is released in the call to
   // SetValue.
-  dict->SetWithoutPathExpansion(url.spec(), entry);
+  if(entryIsNew) {
+    // TODO I don't understand why yet, but setting this to itself breaks stuff.
+    dict->SetWithoutPathExpansion(url.spec(), entry);
+  }
 
   ssl_prefs_store_->SetValue(kSSLCertDecisionsKey, value.release());
 
