@@ -128,9 +128,13 @@ NWSSLHostStateDelegate::NWSSLHostStateDelegate(
         NULL
       );
 
+    int readError = 0;
+
     //bad bad bad I think? What thread are we going to block?
     //It will block a lot as it's using the blocking IO pool.
-    ssl_prefs_store_->ReadPrefs();
+    readError = ssl_prefs_store_->ReadPrefs();
+
+    LOG(ERROR) << "Pref read error?: " << readError;
 }
 
 NWSSLHostStateDelegate::~NWSSLHostStateDelegate() {
@@ -145,14 +149,12 @@ void NWSSLHostStateDelegate::AllowCert(const std::string& host,
                                        net::CertStatus error) {
   GURL url = GetSecureGURLForHost(host);
 
-  LOG(ERROR) << "url.GetOrigin(): " << url.GetOrigin();
-
   const base::Value *valuePtr;
   ssl_prefs_store_->GetValue(kSSLCertDecisionsKey, &valuePtr);
 
   scoped_ptr<base::Value> value;
 
-  if (!value.get() || !value->IsType(base::Value::TYPE_DICTIONARY)) {
+  if (valuePtr == NULL || !valuePtr->IsType(base::Value::TYPE_DICTIONARY)) {
     value.reset(new base::DictionaryValue());
   } else {
     value.reset(valuePtr->DeepCopy());
@@ -167,7 +169,7 @@ void NWSSLHostStateDelegate::AllowCert(const std::string& host,
 
   base::DictionaryValue* entry;
 
-  if(!dict->GetDictionaryWithoutPathExpansion(url.GetOrigin().spec(), &entry)) {
+  if(!dict->GetDictionaryWithoutPathExpansion(url.spec(), &entry)) {
     entry = new base::DictionaryValue();
   }
 
@@ -182,21 +184,25 @@ void NWSSLHostStateDelegate::AllowCert(const std::string& host,
   if (!cert_dict)
     return;
 
+  int decision;
+  if(entry->GetIntegerWithoutPathExpansion(kSSLCertDecisionVersionKey, &decision)
+      && decision == ALLOWED) {
+    return;
+  }
+
   entry->SetIntegerWithoutPathExpansion(kSSLCertDecisionVersionKey,
                                        kDefaultSSLCertDecisionVersion);
-  cert_dict->SetIntegerWithoutPathExpansion(GetKey(cert, error), ALLOWED);
+  cert_dict->SetIntegerWithoutPathExpansion(GetKey(cert, error), ALLOWED);  
 
   // The map takes ownership of the value, so it is released in the call to
-  // SetWebsiteSetting.
-  //map->SetWebsiteSetting(pattern, value.release());
-
+  // SetValue.
   dict->SetWithoutPathExpansion(url.spec(), entry);
 
   ssl_prefs_store_->SetValue(kSSLCertDecisionsKey, value.release());
 
-  ssl_prefs_store_->CommitPendingWrite();
-
   //^ file["ssl_cert_decisions"] = value;
+
+  ssl_prefs_store_->CommitPendingWrite();
 }
 
 void NWSSLHostStateDelegate::Clear() {
@@ -208,13 +214,14 @@ NWSSLHostStateDelegate::QueryPolicy(const std::string& host,
                                     const net::X509Certificate& cert,
                                     net::CertStatus error,
                                     bool* expired_previous_decision) {
-  return DENIED;
-
   GURL url = GetSecureGURLForHost(host);
 
-  const base::Value *valuePtr;
+  const base::Value *valuePtr = NULL;
 
-  ssl_prefs_store_->GetValue(url.spec(), &valuePtr);
+  ssl_prefs_store_->GetValue(kSSLCertDecisionsKey, &valuePtr);
+
+  if(valuePtr == NULL)
+    return DENIED;
 
   scoped_ptr<base::Value> value(valuePtr->DeepCopy());
 
@@ -226,9 +233,14 @@ NWSSLHostStateDelegate::QueryPolicy(const std::string& host,
   bool success = value->GetAsDictionary(&dict);
   DCHECK(success);
 
+  base::DictionaryValue* entry;
+
+  if(!dict->GetDictionaryWithoutPathExpansion(url.spec(), &entry))
+    return DENIED;
+
   base::DictionaryValue* cert_error_dict;  // Owned by value
   cert_error_dict = GetValidCertDecisionsDict(
-      dict,
+      entry,
       DO_NOT_CREATE_DICTIONARY_ENTRIES);
   if (!cert_error_dict) {
     return DENIED;
