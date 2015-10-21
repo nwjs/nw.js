@@ -13,7 +13,8 @@ try:
     print link.text
     link.click()
     #raw_input("Press Enter to continue...")
-    #print driver.window_handles
+    time.sleep(2)
+    print driver.window_handles
     driver.switch_to_window(driver.window_handles[-1])
     output = driver.find_element_by_id('output')
     assert(output.get_attribute('value') == '["inject-js-start","body-start","inject-js-end","onload-dom"]')
