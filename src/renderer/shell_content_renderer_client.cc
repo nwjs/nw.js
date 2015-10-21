@@ -236,15 +236,6 @@ void ShellContentRendererClient::DidCreateScriptContext(
   VLOG(1) << "DidCreateScriptContext: " << url;
   InstallNodeSymbols(frame, context, url);
   creating_first_context_ = false;
-
-#if 1 //defined(NW_IMPLEMENTATION)
-    v8::Local<v8::Context> node_context =
-        v8::Local<v8::Context>::New(context->GetIsolate(), node::g_context);
-    //need to stay sync with V8PerContextData.h
-    int v8ContextPerContextDataIndex = static_cast<int>(gin::kPerContextDataStartIndex + gin::kEmbedderBlink);
-    node_context->SetAlignedPointerInEmbedderData(v8ContextPerContextDataIndex,
-                                                  context->GetAlignedPointerFromEmbedderData(v8ContextPerContextDataIndex));
-#endif
 }
 
 bool ShellContentRendererClient::goodForNode(blink::WebFrame* frame)
