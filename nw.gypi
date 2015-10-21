@@ -704,6 +704,7 @@
             'src/api/menu/menu_delegate_mac.mm',
             'src/api/menuitem/menuitem_delegate_mac.h',
             'src/api/menuitem/menuitem_delegate_mac.mm',
+            'src/api/tray/tray_mac.mm',
             'src/nw_content_mac.h',
             'src/nw_content_mac.mm',
           ],

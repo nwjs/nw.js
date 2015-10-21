@@ -22,6 +22,7 @@
 
 #include "base/files/file_path.h"
 #include "base/strings/utf_string_conversions.h"
+#include "base/threading/thread_restrictions.h"
 #include "base/values.h"
 #include "chrome/browser/status_icons/status_icon.h"
 #include "chrome/browser/status_icons/status_icon_observer.h"
@@ -55,7 +56,7 @@ class TrayObserver : public StatusIconObserver {
     data->SetInteger("x", cursor_pos.x());
     data->SetInteger("y", cursor_pos.y());
     args.Append(data);
-    tray_->object_manager()->SendEvent(tray_, "click", args);
+    tray_->object_manager()->SendEvent(tray_, "TrayClick", args);
   }
 
  private:
@@ -86,6 +87,7 @@ void Tray::SetTitle(const std::string& title) {
 void Tray::SetIcon(const std::string& path) {
   gfx::Image icon;
   nw::Package* package = nw::InitNWPackage();
+  base::ThreadRestrictions::ScopedAllowIO allowIO;
   nw::GetImage(package, base::FilePath::FromUTF8Unsafe(path), &icon);
 
   if (!icon.IsEmpty())

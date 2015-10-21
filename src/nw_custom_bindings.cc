@@ -65,6 +65,12 @@ bool MakePathAbsolute(base::FilePath* file_path) {
   if (!current_directory.IsAbsolute())
     return false;
 
+#ifdef OS_LINUX
+  //linux might gives "/" as current_directory, return false
+  if (current_directory.value().length() <= 1)
+	return false;
+#endif
+
   *file_path = current_directory.Append(*file_path);
   return true;
 }
