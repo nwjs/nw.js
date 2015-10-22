@@ -1,0 +1,73 @@
+{
+  "name": "graceful-fs",
+  "description": "A drop-in replacement for fs, making various improvements.",
+  "version": "4.1.2",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/isaacs/node-graceful-fs.git"
+  },
+  "main": "graceful-fs.js",
+  "engines": {
+    "node": ">=0.4.0"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test.js | tap -"
+  },
+  "keywords": [
+    "fs",
+    "module",
+    "reading",
+    "retry",
+    "retries",
+    "queue",
+    "error",
+    "errors",
+    "handling",
+    "EMFILE",
+    "EAGAIN",
+    "EINVAL",
+    "EPERM",
+    "EACCESS"
+  ],
+  "license": "ISC",
+  "devDependencies": {
+    "mkdirp": "^0.5.0",
+    "rimraf": "^2.2.8",
+    "tap": "^1.2.0"
+  },
+  "files": [
+    "fs.js",
+    "graceful-fs.js",
+    "legacy-streams.js",
+    "polyfills.js"
+  ],
+  "gitHead": "c286080071b6be9aa9ba108b0bb9b44ff122926d",
+  "bugs": {
+    "url": "https://github.com/isaacs/node-graceful-fs/issues"
+  },
+  "homepage": "https://github.com/isaacs/node-graceful-fs#readme",
+  "_id": "graceful-fs@4.1.2",
+  "_shasum": "fe2239b7574972e67e41f808823f9bfa4a991e37",
+  "_from": "graceful-fs@>=4.1.2 <5.0.0",
+  "_npmVersion": "3.0.0",
+  "_nodeVersion": "2.2.1",
+  "_npmUser": {
+    "name": "isaacs",
+    "email": "isaacs@npmjs.com"
+  },
+  "dist": {
+    "shasum": "fe2239b7574972e67e41f808823f9bfa4a991e37",
+    "tarball": "http://registry.npmjs.org/graceful-fs/-/graceful-fs-4.1.2.tgz"
+  },
+  "maintainers": [
+    {
+      "name": "isaacs",
+      "email": "i@izs.me"
+    }
+  ],
+  "_resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.1.2.tgz",
+  "readme": "ERROR: No README data found!"
+}

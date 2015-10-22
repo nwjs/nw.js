@@ -1,0 +1,5 @@
+{
+    "name":"test-tar",
+    "main":"index.html",
+    "dependencies":{ "tar" : "latest" }
+}

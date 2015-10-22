@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf8">
+    <title>tar test</title>
+  </head>
+  <body>
+    <h1 id='result'>tar test</h1>
+    <script type="text/javascript">
+      var tar = nw.require("tar")
+      , fs = nw.require("fs")
+
+      var walk = function(dir, done) {
+        var results = [];
+        fs.readdir(dir, function(err, list) {
+          if (err) return done(err);
+          var i = 0;
+          (function next() {
+            var file = list[i++];
+            if (!file) return done(null, results);
+            file = dir + '/' + file;
+            fs.stat(file, function(err, stat) {
+              if (stat && stat.isDirectory()) {
+                walk(file, function(err, res) {
+                  results = results.concat(res);
+                  next();
+                });
+              } else {
+                results.push(file);
+                next();
+              }
+            });
+          })();
+        });
+      };
+
+      function onError(err) {
+        console.error('An error occurred:', err)
+      }
+
+      function onEnd() {
+        document.getElementById('result').innerHTML = 'extracted';
+        walk(nw.__dirname + "/extract", function(err, results) {
+          if (results.length > 180)
+            document.getElementById('result').innerHTML = 'success';
+        }); 
+ 
+        //window.console.log('Extracted!')
+      }
+
+      var extractor = tar.Extract({path: nw.__dirname + "/extract"})
+      .on('error', onError)
+      .on('end', onEnd);
+
+      fs.createReadStream(nw.__dirname + "/test.tar")
+      .on('error', onError)
+      .pipe(extractor);
+      
+    </script>
+  </body>
+</html>
+    
