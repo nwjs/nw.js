@@ -1050,7 +1050,7 @@
             '<(PRODUCT_DIR)/run_tests.re',
           ],
           'action': ['python', '<(test_script)', '-d', '<(PRODUCT_DIR)',
-                     'remoting'],
+                     '-t', '120', 'remoting'],
         },
       ],
     },
