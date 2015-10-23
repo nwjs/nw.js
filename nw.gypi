@@ -1035,6 +1035,7 @@
       'type': 'none',
       'dependencies': [
         '<(DEPTH)/chrome/chrome.gyp:chromedriver',
+        'dist',
       ],
       'actions': [
         {
