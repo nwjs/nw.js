@@ -1,3 +1,13 @@
+0.11.7-rc9 / 09-24-2015
+===================
+- Turn off `proprietary_codecs` build switch by default (nwjs/chromium.src@c412b0e)
+- Log unresponsive / responsive information
+- Fix: `postMessage` may fail due to accessing incorrect `ScriptState` from blink (nwjs/blink@78036b2, nwjs/nw.js@5187a57)
+- Fix: [Mac] crash dump generation
+- Fix: [Linux] log files overwritten by multiple processes
+- Fix: [Linux] crash dump file formats
+- Fix: chromium version in `process.versions`
+
 0.11.7-rc8 / 09-14-2015
 ===================
 - Upgrade Node.js to 0.12.7
