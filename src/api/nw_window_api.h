@@ -94,5 +94,45 @@ class NwCurrentWindowInternalSetMenuFunction : public AsyncExtensionFunction {
   DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalSetMenuFunction);
 };
 
+class NwCurrentWindowInternalSetBadgeLabelFunction : public AsyncExtensionFunction {
+ public:
+  NwCurrentWindowInternalSetBadgeLabelFunction(){}
+
+ protected:
+  ~NwCurrentWindowInternalSetBadgeLabelFunction() override {}
+
+  // ExtensionFunction:
+  bool RunAsync() override;
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setBadgeLabel", UNKNOWN)
+};
+
+class NwCurrentWindowInternalRequestAttentionFunction : public AsyncExtensionFunction {
+ public:
+  NwCurrentWindowInternalRequestAttentionFunction(){}
+
+ protected:
+  ~NwCurrentWindowInternalRequestAttentionFunction() override {}
+
+  // ExtensionFunction:
+  bool RunAsync() override;
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.requestAttention", UNKNOWN)
+ private:
+  DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalRequestAttentionFunction);
+};
+  
+class NwCurrentWindowInternalSetProgressBarFunction : public AsyncExtensionFunction {
+ public:
+  NwCurrentWindowInternalSetProgressBarFunction(){}
+
+ protected:
+  ~NwCurrentWindowInternalSetProgressBarFunction() override {}
+
+  // ExtensionFunction:
+  bool RunAsync() override;
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setProgressBar", UNKNOWN)
+ private:
+  void Callback();
+};
+
 } // namespace extensions
 #endif
