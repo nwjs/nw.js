@@ -47,14 +47,14 @@ class NwCurrentWindowInternalCapturePageInternalFunction : public AsyncExtension
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.capturePageInternal", UNKNOWN)
 
  private:
-  typedef core_api::extension_types::ImageDetails ImageDetails;
+  typedef api::extension_types::ImageDetails ImageDetails;
 
   void CopyFromBackingStoreComplete(const SkBitmap& bitmap,
                                     content::ReadbackResponse response);
   void OnCaptureSuccess(const SkBitmap& bitmap);
 
   // The format (JPEG vs PNG) of the resulting image.  Set in RunAsync().
-  core_api::extension_types::ImageFormat image_format_;
+  api::extension_types::ImageFormat image_format_;
 
   // Quality setting to use when encoding jpegs.  Set in RunAsync().
   int image_quality_;

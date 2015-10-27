@@ -39,7 +39,7 @@
 #include "third_party/WebKit/public/web/WebLocalFrame.h"
 #include "third_party/WebKit/public/web/WebScriptSource.h"
 
-#include "chrome/common/chrome_version_info_values.h"
+#include "chrome/common/chrome_constants.h"
 
 #include "ui/base/ui_base_types.h"
 #include "ui/gfx/image/image.h"
@@ -296,11 +296,12 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
 
       g_start_nw_instance_fn(argc, argv, dom_context);
       {
-        v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate,
-           "process.versions['nwjs'] = '" NW_VERSION_STRING "';"
-           "process.versions['node-webkit'] = '" NW_VERSION_STRING "';"
-           "process.versions['nw-commit-id'] = '" NW_COMMIT_HASH "';"
-           "process.versions['chromium'] = '" PRODUCT_VERSION "';"
+        v8::Local<v8::Script> script =
+          v8::Script::Compile(v8::String::NewFromUtf8(isolate,
+                                                      (std::string("process.versions['nwjs'] = '" NW_VERSION_STRING "';") +
+                                                       "process.versions['node-webkit'] = '" NW_VERSION_STRING "';"
+                                                       "process.versions['nw-commit-id'] = '" NW_COMMIT_HASH "';"
+                                                       "process.versions['chromium'] = '" + chrome::kChromeVersion + "';").c_str()
          ));
         script->Run();
       }
@@ -450,7 +451,7 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* erro
   }
 
   if (manifest->GetString(manifest_keys::kNWJSMain, &main_url)) {
-    if (base::EndsWith(main_url, ".js", false)) {
+    if (base::EndsWith(main_url, ".js", base::CompareCase::INSENSITIVE_ASCII)) {
       AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, main_url);
       manifest->SetString(manifest_keys::kNWJSInternalMainFilename, main_url);
     }else

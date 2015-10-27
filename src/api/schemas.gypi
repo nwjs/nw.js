@@ -26,6 +26,7 @@
     'chromium_code': 1,
     'cc_dir': 'content/nw/src/api',
     'root_namespace': 'extensions::nwapi::%(namespace)s',
+    'bundle_name': 'nwjs',
     'impl_dir_': 'content/nw/src/api',
   },
 }

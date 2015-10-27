@@ -10,7 +10,7 @@ def grab_output(command, cwd):
 
 operation = sys.argv[1]
 cwd = sys.argv[2]
-repos = ['content/nw', '.', 'third_party/WebKit', 'v8', 'third_party/node', 'breakpad/src' ]
+repos = ['content/nw', '.', 'v8', 'third_party/node']
 
 if operation == 'check':
     for repo in repos:

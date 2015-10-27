@@ -137,8 +137,8 @@ bool NwCurrentWindowInternalCapturePageInternalFunction::RunAsync() {
     return false;
 
   // The default format and quality setting used when encoding jpegs.
-  const core_api::extension_types::ImageFormat kDefaultFormat =
-      core_api::extension_types::IMAGE_FORMAT_JPEG;
+  const api::extension_types::ImageFormat kDefaultFormat =
+      api::extension_types::IMAGE_FORMAT_JPEG;
   const int kDefaultQuality = 90;
 
   image_format_ = kDefaultFormat;
@@ -146,7 +146,7 @@ bool NwCurrentWindowInternalCapturePageInternalFunction::RunAsync() {
 
   if (image_details) {
     if (image_details->format !=
-        core_api::extension_types::IMAGE_FORMAT_NONE)
+        api::extension_types::IMAGE_FORMAT_NONE)
       image_format_ = image_details->format;
     if (image_details->quality.get())
       image_quality_ = *image_details->quality;
@@ -197,7 +197,7 @@ void NwCurrentWindowInternalCapturePageInternalFunction::OnCaptureSuccess(const 
   bool encoded = false;
   std::string mime_type;
   switch (image_format_) {
-    case core_api::extension_types::IMAGE_FORMAT_JPEG:
+    case api::extension_types::IMAGE_FORMAT_JPEG:
       encoded = gfx::JPEGCodec::Encode(
           reinterpret_cast<unsigned char*>(bitmap.getAddr32(0, 0)),
           gfx::JPEGCodec::FORMAT_SkBitmap,
@@ -208,7 +208,7 @@ void NwCurrentWindowInternalCapturePageInternalFunction::OnCaptureSuccess(const 
           &data);
       mime_type = kMimeTypeJpeg;
       break;
-    case core_api::extension_types::IMAGE_FORMAT_PNG:
+    case api::extension_types::IMAGE_FORMAT_PNG:
       encoded =
           gfx::PNGCodec::EncodeBGRASkBitmap(bitmap,
                                             true,  // Discard transparency.

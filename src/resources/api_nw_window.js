@@ -240,7 +240,7 @@ function onNavigation(frame, url, policy, context) {
 }
 
 function onLoadingStateChanged(status) {
-  // console.log("onLoadingStateChanged: " + status);
+  //console.log("onLoadingStateChanged: " + status);
   if (!currentNWWindow)
     return;
   dispatchEventIfExists(currentNWWindow, "LoadingStateChanged", [status]);

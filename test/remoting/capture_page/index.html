@@ -31,18 +31,19 @@
             setTimeout(function(){
               if (png_flag && jpg_flag){
                 gui.Window.open('popup.html', function(win) {
-                win.on('loaded',function(){
-                  console.log('loaded called');
-                  win.window.document.getElementById('png').src=png_data;
-                  win.window.document.getElementById('jpg').src=jpg_data;
-                });
+                  console.log("open cb");
+                  win.on('loaded',function(){
+                    console.log('loaded called');
+                    win.window.document.getElementById('png').src=png_data;
+                    win.window.document.getElementById('jpg').src=jpg_data;
+                  });
                 });
               }
             },2000);
         };
 
         nw.process.on('exit',function(){
-          var fs = require('fs');
+          var fs = nw.require('fs');
           if ( fs.existsSync(file_name) ){
             fs.unlinkSync(file_name);
           }

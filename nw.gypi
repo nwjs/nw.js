@@ -1229,9 +1229,7 @@
                       '<(DEPTH)/content/nw/.git/index',
                       '<(DEPTH)/.git/index',
                       '<(DEPTH)/v8/.git/index',
-                      '<(DEPTH)/third_party/node/.git/index',
-                      '<(DEPTH)/third_party/WebKit/.git/index',
-                      '<(DEPTH)/breakpad/src/.git/index' ],
+                      '<(DEPTH)/third_party/node/.git/index'],
                 'outputs': [ '<(nw_id_header)' ],
                 'msvs_cygwin_shell': 0,
                 'action':
