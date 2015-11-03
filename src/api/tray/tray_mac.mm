@@ -23,20 +23,20 @@
 #include "base/values.h"
 #import <Cocoa/Cocoa.h>
 #include "ui/gfx/screen.h"
-#include "content/nw/src/api/dispatcher_host.h"
 #include "content/nw/src/api/menu/menu.h"
+#include "content/nw/src/api/object_manager.h"
 
 
 @interface MacTrayObserver : NSObject {
 @private
-    nwapi::Tray* tray_;
+    nw::Tray* tray_;
 }
-- (void)setBacking:(nwapi::Tray*)tray_;
+- (void)setBacking:(nw::Tray*)tray_;
 - (void)onClick:(id)sender;
 @end
 
 @implementation MacTrayObserver
-- (void)setBacking:(nwapi::Tray*)newTray {
+- (void)setBacking:(nw::Tray*)newTray {
     tray_ = newTray;
 }
 - (void)onClick:(id)sender {
@@ -50,11 +50,11 @@
     data->SetInteger("x", pos.x);
     data->SetInteger("y", pos.y);
     args.Append(data);
-    tray_->dispatcher_host()->SendEvent(tray_,"click",args);
+    tray_->object_manager()->SendEvent(tray_,"TrayClick",args);
 }
 @end
 
-namespace nwapi {
+namespace nw {
     
 void Tray::Create(const base::DictionaryValue& option) {
   NSStatusBar *status_bar = [NSStatusBar systemStatusBar];
@@ -131,4 +131,4 @@ void Tray::Remove() {
   [[NSStatusBar systemStatusBar] removeStatusItem:status_item_];
 }
 
-}  // namespace nwapi
+}  // namespace nw

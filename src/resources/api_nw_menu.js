@@ -9,7 +9,7 @@ var Event = require('event_bindings').Event;
 
 var menuItems = { objs : {}, clickEvent: {} };
 
-var Menu = function(id, option) {
+var Menu = function Menu (id, option) {
   if (option.type != 'contextmenu' && option.type != 'menubar')
     throw new TypeError('Invalid menu type: ' + option.type);
 

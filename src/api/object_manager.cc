@@ -37,7 +37,7 @@
 //#include "content/nw/src/api/screen/screen.h"
 #include "content/nw/src/api/shell/shell.h"
 //#include "content/nw/src/api/shortcut/shortcut.h"
-//#include "content/nw/src/api/tray/tray.h"
+#include "content/nw/src/api/tray/tray.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/render_view_host.h"
@@ -96,11 +96,11 @@ void ObjectManager::OnAllocateObject(int object_id,
   } else if (type == "MenuItem") {
     objects_registry_.AddWithID(
        new MenuItem(object_id, weak_ptr_factory_.GetWeakPtr(), option, extension_id), object_id);
+  } else if (type == "Tray") {
+    objects_registry_.AddWithID(new Tray(object_id, weak_ptr_factory_.GetWeakPtr(), option, extension_id), object_id);
   }
 #if 0
-  else if (type == "Tray") {
-    objects_registry_.AddWithID(new Tray(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
-  } else if (type == "Clipboard") {
+  else if (type == "Clipboard") {
     objects_registry_.AddWithID(
         new Clipboard(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else if (type == "Window") {

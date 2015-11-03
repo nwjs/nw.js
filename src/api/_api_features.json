@@ -35,6 +35,10 @@
     "channel": "stable",
     "contexts": ["blessed_extension"]
   },
+  "nw.Tray": {
+    "channel": "stable",
+    "contexts": ["blessed_extension"]
+  },
   "nw.currentWindowInternal": {
     "noparent": true,
     "internal": true,
