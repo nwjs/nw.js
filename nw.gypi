@@ -1020,6 +1020,7 @@
         ['nwjs_sdk==1', {
           'dependencies': [
             '<(DEPTH)/chrome/chrome.gyp:chromedriver',
+            '<(DEPTH)/v8/tools/gyp/v8.gyp:nwjc',
           ],
         }],
         ['OS == "linux"', {

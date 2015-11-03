@@ -158,6 +158,8 @@ def generate_target_nw(platform_name, arch, version):
                            'lib/libnw.so',
                            'lib/libnode.so',
                            ]
+        if flavor == 'sdk':
+            target['input'].append('nwjc')
         if flavor in ['nacl','sdk'] :
             target['input'] += ['nacl_helper', 'nacl_helper_bootstrap', 'pnacl']
             if arch == 'x64':
@@ -183,6 +185,8 @@ def generate_target_nw(platform_name, arch, version):
                            'nw_100_percent.pak',
                            'nw_200_percent.pak',
                            ]
+        if flavor == 'sdk':
+            target['input'].append('nwjc.exe')
         if flavor in ['nacl','sdk'] :
             target['input'].append('pnacl')
             if arch == 'x64':
@@ -194,6 +198,8 @@ def generate_target_nw(platform_name, arch, version):
                            'nwjs.app',
                            'credits.html',
                           ]
+        if flavor == 'sdk':
+            target['input'].append('nwjc')
     else:
         print 'Unsupported platform: ' + platform_name
         exit(-1)
