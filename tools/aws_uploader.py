@@ -6,6 +6,8 @@ import json
 import os
 import sys
 import time
+import getnwisrelease
+import getnwversion
 
 
 # Set timeout, for retry
@@ -50,10 +52,14 @@ if not os.path.isdir(dist_dir):
     exit(-1)
 dist_dir = os.path.normpath(dist_dir)
 
+nw_ver = getnwversion.nw_version
+if getnwisrelease.release == 0:
+    nw_ver += getnwisrelease.postfix
+
 # it's for S3, so always use '/' here
 #upload_path = ''.join(['/' + date,
 #                       '/' + builder_name + '-build-' + build_number + '-'  + got_revision])
-upload_path = '/live-build/' + dlpath;
+upload_path = '/live-build/' + dlpath + '/' + nw_ver;
 
 file_list = os.listdir(dist_dir)
 if len(file_list) == 0:
@@ -90,7 +96,7 @@ def aws_upload(upload_path, file_list):
           if builder_name == 'nw13_win64' :
               path_prefix = 'x64'
 
-        if f.startswith('nw-headers') and builder_name != 'nw13_mac64' :
+        if (f.startswith('node-v') or f == 'SHASUMS256.txt') and builder_name != 'nw13_mac64' :
             continue
 
         if f.startswith('chromedriver') and 'sdk' not in builder_name :
