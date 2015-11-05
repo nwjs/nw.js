@@ -947,6 +947,7 @@
               'action_name': 'strip_nw_binaries',
               'inputs': [
                 '<(PRODUCT_DIR)/chromedriver',
+                '<(PRODUCT_DIR)/nwjc',
               ],
               'outputs': [
                 '<(PRODUCT_DIR)/strip_binaries.stamp',
