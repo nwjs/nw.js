@@ -10,7 +10,10 @@ testdir = os.path.dirname(os.path.abspath(__file__))
 chrome_options.add_argument("nwapp=" + testdir)
 binfile = os.path.join(testdir, "mytest.bin")
 nwjc = os.path.join(os.path.dirname(os.environ['CHROMEDRIVER']), "nwjc.exe" if os.name == "nt" else "nwjc")
-os.remove(binfile)
+try:
+  os.remove(binfile)
+except:
+  pass
 assert(False == os.path.isfile(binfile))
 subprocess.call([nwjc, "mytest.js", "mytest.bin"])
 assert(os.path.isfile(binfile))
