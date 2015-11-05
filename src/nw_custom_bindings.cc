@@ -85,7 +85,7 @@ NWCustomBindings::NWCustomBindings(ScriptContext* context)
                 base::Bind(&NWCustomBindings::EvalScript,
                            base::Unretained(this)));
   RouteFunction("evalNWBin",
-                base::Bind(&NWCustomBindings::EvalScript,
+                base::Bind(&NWCustomBindings::EvalNWBin,
                            base::Unretained(this)));
   RouteFunction("getAbsolutePath",
                 base::Bind(&NWCustomBindings::GetAbsolutePath,

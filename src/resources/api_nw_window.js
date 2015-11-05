@@ -80,7 +80,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       nwNatives.evalScript(frame, script);
     };
     NWWindow.prototype.evalNWBin = function (frame, path) {
-      nwNatives.evalScript(frame, path);
+      nwNatives.evalNWBin(frame, path);
     };
     NWWindow.prototype.show = function () {
       this.appWindow.show();
