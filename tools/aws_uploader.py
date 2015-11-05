@@ -53,7 +53,7 @@ dist_dir = os.path.normpath(dist_dir)
 # it's for S3, so always use '/' here
 #upload_path = ''.join(['/' + date,
 #                       '/' + builder_name + '-build-' + build_number + '-'  + got_revision])
-upload_path = '/' + dlpath;
+upload_path = '/live-build/' + dlpath;
 
 file_list = os.listdir(dist_dir)
 if len(file_list) == 0:
