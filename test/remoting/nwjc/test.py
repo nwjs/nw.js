@@ -10,6 +10,7 @@ testdir = os.path.dirname(os.path.abspath(__file__))
 chrome_options.add_argument("nwapp=" + testdir)
 binfile = os.path.join(testdir, "mytest.bin")
 nwjc = os.path.join(os.path.dirname(os.environ['CHROMEDRIVER']), "nwjc.exe" if os.name == "nt" else "nwjc")
+os.chdir(testdir)
 try:
   os.remove(binfile)
 except:
