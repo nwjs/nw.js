@@ -17,6 +17,7 @@
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/result_codes.h"
+#include "content/public/common/user_agent.h"
 #include "content/public/renderer/render_view.h"
 
 #include "content/nw/src/api/menu/menu.h"
@@ -261,6 +262,13 @@ void DocumentElementHook(blink::WebFrame* frame,
 
 void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   v8::Isolate* isolate = context->isolate();
+
+  bool nodejs_enabled = true;
+  context->extension()->manifest()->GetBoolean(manifest_keys::kNWJSEnableNode, &nodejs_enabled);
+
+  if (!nodejs_enabled)
+    return;
+
   if (!g_is_node_initialized_fn())
     g_setup_nwnode_fn(0, nullptr);
 
@@ -497,8 +505,10 @@ void RendererProcessTerminatedHook(content::RenderProcessHost* process,
 void OnRenderProcessShutdownHook(extensions::ScriptContext* context) {
   blink::WebScopedMicrotaskSuppression suppression;
   void* env = g_get_current_env_fn(context->v8_context());
-  g_emit_exit_fn(env);
-  g_run_at_exit_fn(env);
+  if (g_is_node_initialized_fn()) {
+    g_emit_exit_fn(env);
+    g_run_at_exit_fn(env);
+  }
 }
 
 void willHandleNavigationPolicy(content::RenderView* rv,
@@ -689,6 +699,32 @@ bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window) {
 #endif
   return true;
 #endif //OSX
+}
+
+bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_line,
+                                              const base::FilePath& current_directory) {
+  nw::Package* package = nw::package();
+  bool single_instance = true;
+  package->root()->GetBoolean(switches::kmSingleInstance, &single_instance);
+  return single_instance;
+}
+
+bool GetUserAgentFromManifest(std::string* agent) {
+  std::string user_agent;
+  nw::Package* package = nw::package();
+  if (package->root()->GetString(switches::kmUserAgent, &user_agent)) {
+    std::string name, version;
+    package->root()->GetString(switches::kmName, &name);
+    package->root()->GetString("version", &version);
+    base::ReplaceSubstringsAfterOffset(&user_agent, 0, "%name", name);
+    base::ReplaceSubstringsAfterOffset(&user_agent, 0, "%ver", version);
+    base::ReplaceSubstringsAfterOffset(&user_agent, 0, "%nwver", NW_VERSION_STRING);
+    base::ReplaceSubstringsAfterOffset(&user_agent, 0, "%webkit_ver", content::GetWebKitVersion());
+    base::ReplaceSubstringsAfterOffset(&user_agent, 0, "%osinfo", content::BuildOSInfo());
+    *agent = user_agent;
+    return true;
+  }
+  return false;
 }
 
 } //namespace nw

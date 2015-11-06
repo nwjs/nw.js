@@ -6,6 +6,7 @@
 
 namespace base {
   class DictionaryValue;
+  class CommandLine;
 }
 
 namespace blink {
@@ -55,6 +56,9 @@ void DocumentFinishHook(blink::WebFrame* frame,
                        std::string* nw_inject_js_doc_end);
  bool GetImage(Package* package, const FilePath& icon_path, gfx::Image* image);
  bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window);
+ bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_line,
+                                               const base::FilePath& current_directory);
+ bool GetUserAgentFromManifest(std::string* agent);
 }
 
 #endif
