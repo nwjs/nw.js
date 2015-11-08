@@ -1,0 +1,5 @@
+{
+  "name":"test-user-agent",
+  "main":"index.html",
+  "user-agent": "test-agent"
+}
