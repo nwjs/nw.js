@@ -59,6 +59,10 @@ void DocumentFinishHook(blink::WebFrame* frame,
  bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_line,
                                                const base::FilePath& current_directory);
  bool GetUserAgentFromManifest(std::string* agent);
+ void SetUserAgentOverride(const std::string& agent,
+                           const std::string& name,
+                           const std::string& version);
+
 }
 
 #endif
