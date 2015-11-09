@@ -728,6 +728,8 @@ bool GetUserAgentFromManifest(std::string* agent) {
     return true;
   }
   nw::Package* package = nw::package();
+  if (!package)
+    return false;
   if (package->root()->GetString(switches::kmUserAgent, &g_user_agent)) {
     std::string name, version;
     package->root()->GetString(switches::kmName, &name);
