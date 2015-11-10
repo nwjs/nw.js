@@ -676,6 +676,8 @@
         'src/nw_content.h',
         'src/nw_custom_bindings.cc',
         'src/nw_custom_bindings.h',
+        'src/policy_cert_verifier.cc',
+        'src/policy_cert_verifier.h',
       ],
       'conditions': [
         ['OS=="win" or OS=="linux"', {

@@ -4,12 +4,18 @@
 #include "nw_base.h"
 
 #include "base/command_line.h"
+#include "base/logging.h"
 #include "base/files/file_util.h"
 #include "base/json/json_reader.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/threading/thread_restrictions.h"
+
+#include "chrome/browser/browser_process.h"
+#include "chrome/browser/io_thread.h"
+
+#include "content/common/dom_storage/dom_storage_map.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/public/browser/notification_service.h"
 #include "content/public/browser/notification_types.h"
@@ -22,6 +28,7 @@
 
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/object_manager.h"
+#include "content/nw/src/policy_cert_verifier.h"
 
 #include "extensions/renderer/dispatcher.h"
 #include "extensions/renderer/script_context.h"
@@ -30,6 +37,8 @@
 #include "extensions/common/features/feature.h"
 #include "extensions/common/manifest.h"
 #include "extensions/common/manifest_constants.h"
+
+#include "net/cert/x509_certificate.h"
 
 #include "third_party/WebKit/public/web/WebDocument.h"
 #include "third_party/WebKit/public/web/WebFrame.h"
@@ -171,6 +180,42 @@ int MainPartsPreCreateThreadsHook() {
     base::FilePath path = package->path().NormalizePathSeparators();
 
     command_line->AppendSwitchPath("nwapp", path);
+    int dom_storage_quota_mb;
+    if (package->root()->GetInteger("dom_storage_quota", &dom_storage_quota_mb)) {
+      content::DOMStorageMap::SetQuotaOverride(dom_storage_quota_mb * 1024 * 1024);
+    }
+
+    const base::ListValue *additional_trust_anchors = NULL;
+    if (package->root()->GetList("additional_trust_anchors", &additional_trust_anchors)) {
+      net::CertificateList trust_anchors;
+      for (size_t i=0; i<additional_trust_anchors->GetSize(); i++) {
+        std::string certificate_string;
+        if (!additional_trust_anchors->GetString(i, &certificate_string)) {
+          // LOG(WARNING)
+          //   << "Could not get string from entry " << i;
+          continue;
+        }
+
+        net::CertificateList loaded =
+          net::X509Certificate::CreateCertificateListFromBytes(
+              certificate_string.c_str(), certificate_string.size(),
+              net::X509Certificate::FORMAT_AUTO);
+        if (loaded.empty() && !certificate_string.empty()) {
+          // LOG(WARNING)
+          //   << "Could not load certificate from entry " << i;
+          continue;
+        }
+
+        trust_anchors.insert(trust_anchors.end(), loaded.begin(), loaded.end());
+      }
+      if (!trust_anchors.empty()) {
+        // LOG(INFO)
+        //   << "Added " << trust_anchors.size() << " certificates to trust anchors.";
+        PolicyCertVerifier* verifier =
+          (PolicyCertVerifier*)g_browser_process->io_thread()->globals()->cert_verifier.get();
+        verifier->SetTrustAnchors(trust_anchors);
+      }
+    }
   }
   return content::RESULT_CODE_NORMAL_EXIT;
 }
