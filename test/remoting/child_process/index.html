@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf8">
+    <title>child_process test</title>
+  </head>
+  <body>
+    <h1 id='result'>child_process test</h1>
+    <script type="text/javascript">
+      var childprocess = nw.require('child_process');
+      var worker = childprocess.fork('worker.js', [], {silent:true});
+      worker.stdout.on('data', function(data) { console.log(String(data)); });
+      worker.stderr.on('data', function(data) { console.error(String(data)); });
+      worker.on('error', function(err) { console.error(err); });
+      worker.on('message', function(msg) { console.log(msg); document.getElementById('result').innerHTML = msg; });
+      worker.send('message from main.js');
+    </script>
+  </body>
+</html>
+    

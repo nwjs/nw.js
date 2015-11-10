@@ -1,0 +1,1 @@
+process.on('message', function(msg) { process.send('success: message from worker'); });
