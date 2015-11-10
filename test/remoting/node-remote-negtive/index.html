@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf8">
+    <title>node-remote negative test</title>
+  </head>
+  <body>
+    <h1 id='result'>node-remote negative test</h1>
+    <script>
+      if (typeof nw === 'undefined') {
+        document.getElementById('result').innerHTML = 'success';
+      } else {
+        document.getElementById('result').innerHTML = 'fail: ' + typeof nw;
+      }
+    </script>
+  </body>
+</html>
+    
