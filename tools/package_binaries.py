@@ -238,7 +238,7 @@ def generate_target_others(platform_name, arch, version):
     target['output'] = ''
     target['compress'] = None
     if platform_name == 'win':
-        target['input'] = ['nw.exp', 'nw.lib']
+        target['input'] = ['nw.exp', 'nw.lib', 'nw.exe.pdb']
     elif platform_name == 'linux' :
         target['input'] = []
     else:
