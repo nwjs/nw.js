@@ -139,6 +139,7 @@ std::set<base::FilePath> NWContentVerifierDelegate::GetBrowserImagePaths(
 
 void NWContentVerifierDelegate::VerifyFailed(
     const std::string& extension_id,
+    const base::FilePath& relative_path,
     ContentVerifyJob::FailureReason reason) {
   ExtensionRegistry* registry = ExtensionRegistry::Get(context_);
   const Extension* extension =
@@ -148,11 +149,11 @@ void NWContentVerifierDelegate::VerifyFailed(
   ExtensionSystem* system = ExtensionSystem::Get(context_);
   Mode mode = ShouldBeVerified(*extension);
   if (mode >= ContentVerifierDelegate::ENFORCE) {
+    ExtensionErrorReporter::GetInstance()->
+      ReportLoadError(extension->path(), "Extension file corrupted: " + relative_path.AsUTF8Unsafe(),
+                      system->extension_service()->profile(), true);
     system->extension_service()->DisableExtension(extension_id,
                                                   Extension::DISABLE_CORRUPTED);
-    ExtensionErrorReporter::GetInstance()->
-      ReportLoadError(extension->path(), "Extension file corrupted",
-                      system->extension_service()->profile(), true);
   }
 }
 
