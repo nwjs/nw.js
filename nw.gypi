@@ -678,6 +678,8 @@
         'src/nw_custom_bindings.h',
         'src/policy_cert_verifier.cc',
         'src/policy_cert_verifier.h',
+        'src/nw_content_verifier_delegate.cc',
+        'src/nw_content_verifier_delegate.h',
       ],
       'conditions': [
         ['OS=="win" or OS=="linux"', {
