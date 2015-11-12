@@ -285,6 +285,7 @@ def generate_target_headers(platform_name, arch, version):
                 checksum_file.write('%s %s' % (sha256(f.read()).hexdigest(), nw_headers_name))
             shutil.move(nw_headers_path, binaries_location)
             target['input'].append(nw_headers_name)
+            target['input'].append('SHASUMS256.txt')
         else:
             #TODO, handle err
             print 'nw-headers generate failed'
