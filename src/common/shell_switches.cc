@@ -45,6 +45,7 @@ const char kSnapshot[] = "snapshot";
 const char kDomStorageQuota[] = "ds-quota";
 const char kNodejs[] = "nodejs";
 const char kChromeExtension[] = "extension";
+const char kVerifyContent[] = "verify-content";
 
 const char kmMain[]   = "main";
 const char kmName[]   = "name";

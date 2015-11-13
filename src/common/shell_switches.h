@@ -26,6 +26,8 @@ extern NW_EXPORT const char kSnapshot[];
 extern NW_EXPORT const char kDomStorageQuota[];
 extern NW_EXPORT const char kNodejs[];
 extern NW_EXPORT const char kChromeExtension[];
+extern NW_EXPORT const char kVerifyContent[];
+
 // Manifest settings
 extern NW_EXPORT const char kmMain[];
 extern NW_EXPORT const char kmName[];

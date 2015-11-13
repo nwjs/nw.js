@@ -25,6 +25,8 @@
 #include "extensions/common/manifest_url_handlers.h"
 #include "net/base/escape.h"
 
+#include "content/nw/src/common/shell_switches.h"
+
 #if defined(OS_CHROMEOS)
 #include "chrome/browser/extensions/extension_assets_manager_chromeos.h"
 #endif
@@ -79,9 +81,9 @@ ContentVerifierDelegate::Mode NWContentVerifierDelegate::GetDefaultMode() {
     experiment_value = ContentVerifierDelegate::BOOTSTRAP;
 
   Mode cmdline_value = NONE;
-  if (command_line->HasSwitch(switches::kExtensionContentVerification)) {
+  if (command_line->HasSwitch(switches::kVerifyContent)) {
     std::string switch_value = command_line->GetSwitchValueASCII(
-        switches::kExtensionContentVerification);
+        switches::kVerifyContent);
     if (switch_value == switches::kExtensionContentVerificationBootstrap)
       cmdline_value = ContentVerifierDelegate::BOOTSTRAP;
     else if (switch_value == switches::kExtensionContentVerificationEnforce)
