@@ -174,7 +174,6 @@ bool GetPackageImage(nw::Package* package,
 int MainPartsPreCreateThreadsHook() {
   base::ThreadRestrictions::ScopedAllowIO allow_io;
   base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
-  command_line->AppendSwitch(switches::kNoSandbox);
   nw::Package* package = InitNWPackage();
   if (package && !package->path().empty()) {
     base::FilePath path = package->path().NormalizePathSeparators();
