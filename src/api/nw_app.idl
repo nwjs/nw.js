@@ -5,5 +5,8 @@ namespace nw.App {
     // crash the renderer for testing
     [nocompile] static void crashRenderer();
     static void quit();
+    static void clearCache();
+    [nocompile] static DOMString[] argv();
+    static DOMString[] getArgvSync();
   };
 };

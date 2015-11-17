@@ -15,6 +15,17 @@
       ],
       'dependencies': [
         'api.gyp:nw_api',
+        # Different APIs include headers from these targets.
+        "<(DEPTH)/content/content.gyp:content_browser",
+
+        # Different APIs include some headers from chrome/common that in turn
+        # include generated headers from these targets.
+        # TODO(brettw) this should be made unnecessary if possible.
+        '<(DEPTH)/components/components.gyp:component_metrics_proto',
+        '<(DEPTH)/components/components.gyp:copresence_proto',
+        '<(DEPTH)/skia/skia.gyp:skia',
+        '<(DEPTH)/sync/sync.gyp:sync',
+        '<(DEPTH)/ui/accessibility/accessibility.gyp:ax_gen',
       ],
     },
   ],

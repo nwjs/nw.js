@@ -637,6 +637,8 @@
         '<(DEPTH)/content/nw/src/api/api.gyp:nw_api',
         '<(DEPTH)/content/nw/src/api/api_registration.gyp:nw_api_registration',
         '<(DEPTH)/extensions/browser/api/api_registration.gyp:extensions_api_registration',
+        '<(DEPTH)/components/components.gyp:policy',
+        '<(DEPTH)/third_party/protobuf/protobuf.gyp:protobuf_lite',
       ],
       'include_dirs': [
         '<(DEPTH)/third_party/mojo/src',
