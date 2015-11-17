@@ -6,6 +6,7 @@ namespace nw.App {
     [nocompile] static void crashRenderer();
     static void quit();
     static void clearCache();
+    static void setProxyConfig(DOMString config);
     [nocompile] static DOMString[] argv();
     static DOMString[] getArgvSync();
   };

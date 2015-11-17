@@ -53,5 +53,19 @@ class NwAppClearCacheFunction : public NWSyncExtensionFunction, public BrowsingD
   DISALLOW_COPY_AND_ASSIGN(NwAppClearCacheFunction);
 };
 
+class NwAppSetProxyConfigFunction : public NWSyncExtensionFunction {
+ public:
+  NwAppSetProxyConfigFunction();
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
+
+ protected:
+  ~NwAppSetProxyConfigFunction() override;
+
+
+  DECLARE_EXTENSION_FUNCTION("nw.App.setProxyConfig", UNKNOWN)
+ private:
+  DISALLOW_COPY_AND_ASSIGN(NwAppSetProxyConfigFunction);
+};
+
 } // namespace extensions
 #endif
