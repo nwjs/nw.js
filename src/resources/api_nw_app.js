@@ -16,7 +16,13 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     return argv;
   });
   apiFunctions.setHandleRequest('getArgvSync', function() {
-      return sendRequest.sendRequestSync('nw.App.getArgvSync', [], this.definition.parameters, {});
+    return sendRequest.sendRequestSync('nw.App.getArgvSync', [], this.definition.parameters, {});
+  });
+  apiFunctions.setHandleRequest('addOriginAccessWhitelistEntry', function() {
+    nwNatives.addOriginAccessWhitelistEntry.apply(this, arguments);
+  });
+  apiFunctions.setHandleRequest('removeOriginAccessWhitelistEntry', function() {
+    nwNatives.removeOriginAccessWhitelistEntry.apply(this, arguments);
   });
 });
 

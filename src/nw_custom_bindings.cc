@@ -35,6 +35,7 @@ using namespace blink;
 #define BLINK_IMPLEMENTATION 1
 
 #include "third_party/WebKit/public/web/WebDocument.h"
+#include "third_party/WebKit/public/web/WebSecurityPolicy.h"
 #include "third_party/WebKit/Source/platform/heap/Handle.h"
 //#include "third_party/WebKit/Source/core/inspector/InspectorInstrumentation.h"
 //#include "third_party/WebKit/Source/core/inspector/InspectorResourceAgent.h"
@@ -89,6 +90,12 @@ NWCustomBindings::NWCustomBindings(ScriptContext* context)
                            base::Unretained(this)));
   RouteFunction("getAbsolutePath",
                 base::Bind(&NWCustomBindings::GetAbsolutePath,
+                           base::Unretained(this)));
+  RouteFunction("addOriginAccessWhitelistEntry",
+                base::Bind(&NWCustomBindings::AddOriginAccessWhitelistEntry,
+                           base::Unretained(this)));
+  RouteFunction("removeOriginAccessWhitelistEntry",
+                base::Bind(&NWCustomBindings::RemoveOriginAccessWhitelistEntry,
                            base::Unretained(this)));
 }
 
@@ -185,6 +192,38 @@ void NWCustomBindings::GetAbsolutePath(
 #else
   args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, path.AsUTF8Unsafe().c_str()));
 #endif
+}
+
+void NWCustomBindings::AddOriginAccessWhitelistEntry(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  v8::Isolate* isolate = args.GetIsolate();
+
+  std::string sourceOrigin        = *v8::String::Utf8Value(args[0]);
+  std::string destinationProtocol = *v8::String::Utf8Value(args[1]);
+  std::string destinationHost     = *v8::String::Utf8Value(args[2]);
+  bool allowDestinationSubdomains = args[3]->ToBoolean()->Value();
+
+  blink::WebSecurityPolicy::addOriginAccessWhitelistEntry(GURL(sourceOrigin),
+                                                          blink::WebString::fromUTF8(destinationProtocol),
+                                                          blink::WebString::fromUTF8(destinationHost),
+                                                          allowDestinationSubdomains);
+  args.GetReturnValue().Set(v8::Undefined(isolate));
+  return;
+}
+
+void NWCustomBindings::RemoveOriginAccessWhitelistEntry(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  v8::Isolate* isolate = args.GetIsolate();
+
+  std::string sourceOrigin        = *v8::String::Utf8Value(args[0]);
+  std::string destinationProtocol = *v8::String::Utf8Value(args[1]);
+  std::string destinationHost     = *v8::String::Utf8Value(args[2]);
+  bool allowDestinationSubdomains = args[3]->ToBoolean()->Value();
+
+  blink::WebSecurityPolicy::removeOriginAccessWhitelistEntry(GURL(sourceOrigin),
+                                                          blink::WebString::fromUTF8(destinationProtocol),
+                                                          blink::WebString::fromUTF8(destinationHost),
+                                                          allowDestinationSubdomains);
+  args.GetReturnValue().Set(v8::Undefined(isolate));
+  return;
 }
 
 }  // namespace extensions
