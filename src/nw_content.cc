@@ -14,6 +14,7 @@
 
 #include "chrome/browser/browser_process.h"
 #include "chrome/browser/io_thread.h"
+#include "chrome/browser/profiles/profile_manager.h"
 
 #include "content/common/dom_storage/dom_storage_map.h"
 #include "content/nw/src/common/shell_switches.h"
@@ -30,6 +31,9 @@
 #include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/policy_cert_verifier.h"
 
+#include "extensions/browser/event_router.h"
+#include "extensions/browser/extension_prefs.h"
+#include "extensions/browser/extension_registry.h"
 #include "extensions/renderer/dispatcher.h"
 #include "extensions/renderer/script_context.h"
 #include "extensions/common/extension.h"
@@ -84,8 +88,12 @@
 using content::RenderView;
 using content::RenderViewImpl;
 using extensions::ScriptContext;
+using extensions::Extension;
+using extensions::EventRouter;
 using extensions::Manifest;
 using extensions::Feature;
+using extensions::ExtensionPrefs;
+using extensions::ExtensionRegistry;
 using blink::WebScriptSource;
 
 namespace manifest_keys = extensions::manifest_keys;
@@ -750,6 +758,28 @@ bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_l
   nw::Package* package = nw::package();
   bool single_instance = true;
   package->root()->GetBoolean(switches::kmSingleInstance, &single_instance);
+  if (single_instance) {
+    Profile* profile = ProfileManager::GetActiveUserProfile();
+    const extensions::ExtensionSet& extensions =
+      ExtensionRegistry::Get(profile)->enabled_extensions();
+    ExtensionPrefs* extension_prefs = ExtensionPrefs::Get(profile);
+
+    for (extensions::ExtensionSet::const_iterator it = extensions.begin();
+         it != extensions.end(); ++it) {
+      const Extension* extension = it->get();
+      if (extension_prefs->IsExtensionRunning(extension->id()) &&
+          extension->location() == extensions::Manifest::COMMAND_LINE) {
+        scoped_ptr<base::ListValue> arguments(new base::ListValue());
+        scoped_ptr<extensions::Event> event(new extensions::Event(extensions::events::UNKNOWN,
+                                          "nw.App.onOpen",
+                                          arguments.Pass()));
+        event->restrict_to_browser_context = profile;
+        EventRouter::Get(profile)
+          ->DispatchEventToExtension(extension->id(), event.Pass());
+      }
+    }
+  }
+    
   return single_instance;
 }
 

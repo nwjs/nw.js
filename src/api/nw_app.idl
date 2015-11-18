@@ -1,9 +1,15 @@
+// Copyright 2015 The NW.js Authors. All rights reserved.
+// Use of this source code is governed by a MIT-style license that can be
+// found in the LICENSE file.
+
 // nw APP API
 [implemented_in="content/nw/src/api/nw_app_api.h"]
 namespace nw.App {
+  callback EventCallback = void();
   interface Functions {
     // crash the renderer for testing
     [nocompile] static void crashRenderer();
+    [nocompile] static void on(DOMString event, EventCallback callback);
     static void quit();
     static void clearCache();
     static void setProxyConfig(DOMString config);
@@ -11,5 +17,8 @@ namespace nw.App {
     [nocompile] static void removeOriginAccessWhitelistEntry(DOMString sourceOrigin, DOMString destinationProtocol, DOMString destinationHost, boolean allowDestinationSubdomains);
     [nocompile] static DOMString[] argv();
     static DOMString[] getArgvSync();
+  };
+  interface Events {
+    static void onOpen();
   };
 };

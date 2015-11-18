@@ -24,6 +24,13 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
   apiFunctions.setHandleRequest('removeOriginAccessWhitelistEntry', function() {
     nwNatives.removeOriginAccessWhitelistEntry.apply(this, arguments);
   });
+  apiFunctions.setHandleRequest('on', function(event, callback) {
+      switch (event) {
+      case 'open':
+        nw.App.onOpen.addListener(callback);
+        break;
+      }
+  });
 });
 
 exports.binding = nw_binding.generate();
