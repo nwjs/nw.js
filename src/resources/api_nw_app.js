@@ -18,6 +18,12 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
   apiFunctions.setHandleRequest('getArgvSync', function() {
     return sendRequest.sendRequestSync('nw.App.getArgvSync', [], this.definition.parameters, {});
   });
+  apiFunctions.setHandleRequest('setProxyConfig', function() {
+    sendRequest.sendRequestSync('nw.App.setProxyConfig', arguments, this.definition.parameters, {});
+  });
+  apiFunctions.setHandleRequest('getProxyForURL', function() {
+    return nwNatives.getProxyForURL.apply(this, arguments);
+  });
   apiFunctions.setHandleRequest('addOriginAccessWhitelistEntry', function() {
     nwNatives.addOriginAccessWhitelistEntry.apply(this, arguments);
   });

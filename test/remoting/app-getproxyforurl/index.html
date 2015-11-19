@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>App.getProxyForURL</title>
+</head>
+<body>
+	<script>
+	nw.App.setProxyConfig('dummy:8080');
+	var proxy = nw.App.getProxyForURL('http://www.example.com/');
+	var expect = 'PROXY dummy:8080';
+	if (proxy === expect) {
+		document.write('<h1 id="result">success</h1>');
+	} else {
+		document.write('<h1 id="result">failure: expect "' + expect + '" but get ' + proxy +'</h1>');
+	}
+	</script>
+</body>
+</html>
