@@ -5,6 +5,7 @@
 #include "content/nw/src/nw_custom_bindings.h"
 
 #include "content/renderer/render_view_impl.h"
+#include "content/public/renderer/render_thread.h"
 
 #include <string>
 
@@ -96,6 +97,9 @@ NWCustomBindings::NWCustomBindings(ScriptContext* context)
                            base::Unretained(this)));
   RouteFunction("removeOriginAccessWhitelistEntry",
                 base::Bind(&NWCustomBindings::RemoveOriginAccessWhitelistEntry,
+                           base::Unretained(this)));
+  RouteFunction("getProxyForURL",
+                base::Bind(&NWCustomBindings::GetProxyForURL,
                            base::Unretained(this)));
 }
 
@@ -223,6 +227,26 @@ void NWCustomBindings::RemoveOriginAccessWhitelistEntry(const v8::FunctionCallba
                                                           blink::WebString::fromUTF8(destinationHost),
                                                           allowDestinationSubdomains);
   args.GetReturnValue().Set(v8::Undefined(isolate));
+  return;
+}
+
+void NWCustomBindings::GetProxyForURL(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  v8::Isolate* isolate = args.GetIsolate();
+
+  std::string url = *v8::String::Utf8Value(args[0]);
+  GURL gurl(url);
+  if (!gurl.is_valid()) {
+    args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
+                                     "Invalid URL passed to App.getProxyForURL()"))));
+    return;
+  }
+  std::string proxy;
+  bool result = content::RenderThread::Get()->ResolveProxy(gurl, &proxy);
+  if (!result) {
+    args.GetReturnValue().Set(v8::Undefined(isolate));
+    return;
+  }
+  args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, proxy.c_str()));
   return;
 }
 
