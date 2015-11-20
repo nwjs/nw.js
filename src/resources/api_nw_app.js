@@ -10,7 +10,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
   apiFunctions.setHandleRequest('crashRenderer', function() {
     nwNatives.crashRenderer();
   });
-  apiFunctions.setHandleRequest('argv', function() {
+  bindingsAPI.compiledApi.__defineGetter__('argv', function() {
     if (argv)
       return argv;
     argv = nw.App.getArgvSync();
