@@ -67,5 +67,18 @@ class NwAppSetProxyConfigFunction : public NWSyncExtensionFunction {
   DISALLOW_COPY_AND_ASSIGN(NwAppSetProxyConfigFunction);
 };
 
+class NwAppGetDataPathFunction : public NWSyncExtensionFunction {
+ public:
+  NwAppGetDataPathFunction(){}
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
+    
+ protected:
+  ~NwAppGetDataPathFunction() override {}
+    
+  DECLARE_EXTENSION_FUNCTION("nw.App.getDataPath", UNKNOWN)
+ private:
+  DISALLOW_COPY_AND_ASSIGN(NwAppGetDataPathFunction);
+};
+
 } // namespace extensions
 #endif

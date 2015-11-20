@@ -18,6 +18,7 @@ namespace nw.App {
     [nocompile] static void removeOriginAccessWhitelistEntry(DOMString sourceOrigin, DOMString destinationProtocol, DOMString destinationHost, boolean allowDestinationSubdomains);
     [nocompile] static DOMString[] argv();
     static DOMString[] getArgvSync();
+    static DOMString getDataPath();
   };
   interface Events {
     static void onOpen();

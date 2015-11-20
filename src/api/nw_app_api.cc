@@ -124,4 +124,9 @@ bool NwAppSetProxyConfigFunction::RunNWSync(base::ListValue* response, std::stri
   return true;
 }
 
+bool NwAppGetDataPathFunction::RunNWSync(base::ListValue* response, std::string* error) {
+  response->AppendString(browser_context()->GetPath().value());
+  return true;
+}
+
 } // namespace extensions

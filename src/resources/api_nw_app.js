@@ -3,6 +3,7 @@ var nwNatives = requireNative('nw_natives');
 var sendRequest = require('sendRequest');
 
 var argv = null;
+var dataPath;
 
 nw_binding.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
@@ -37,6 +38,15 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         break;
       }
   });
+  apiFunctions.setHandleRequest('getDataPath', function() {
+    return sendRequest.sendRequestSync('nw.App.getDataPath', [], this.definition.parameters, {})[0];
+  });
+  bindingsAPI.compiledApi.__defineGetter__('dataPath', function() {
+    if (!dataPath)
+      dataPath = nw.App.getDataPath();
+    return dataPath;
+  });
+
 });
 
 exports.binding = nw_binding.generate();
