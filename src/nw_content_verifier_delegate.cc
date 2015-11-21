@@ -71,14 +71,6 @@ ContentVerifierDelegate::Mode NWContentVerifierDelegate::GetDefaultMode() {
   base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
 
   Mode experiment_value = NONE;
-  const std::string group =
-      base::FieldTrialList::FindFullName(kContentVerificationExperimentName);
-  if (group == "EnforceStrict")
-    experiment_value = ContentVerifierDelegate::ENFORCE_STRICT;
-  else if (group == "Enforce")
-    experiment_value = ContentVerifierDelegate::ENFORCE;
-  else if (group == "Bootstrap")
-    experiment_value = ContentVerifierDelegate::BOOTSTRAP;
 
   Mode cmdline_value = NONE;
   if (command_line->HasSwitch(switches::kVerifyContent)) {
