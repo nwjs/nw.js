@@ -100,6 +100,9 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     NWWindow.prototype.blur = function () {
       this.appWindow.contentWindow.blur();
     };
+    NWWindow.prototype.reload = function() {
+      this.appWindow
+    };
     NWWindow.prototype.minimize = function () {
       this.appWindow.minimize();
     };
