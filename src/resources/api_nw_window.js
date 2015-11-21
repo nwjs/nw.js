@@ -130,6 +130,12 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       this.appWindow.outerBounds.minWidth = width;
       this.appWindow.outerBounds.minHeight = height;
     };
+    NWWindow.prototype.resizeTo = function (width, height) {
+      this.appWindow.resizeTo(width, height);
+    };
+    NWWindow.prototype.resizeBy = function (width, height) {
+      this.appWindow.resizeBy(width, height);
+    };
     NWWindow.prototype.setResizable = function (resizable) {
     };
     Object.defineProperty(NWWindow.prototype, 'x', {

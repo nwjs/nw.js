@@ -44,6 +44,8 @@ namespace nw.Window {
     static void maximize();
     static void unmaximize();
     static void restore();
+    static void resizeTo(long width, long height);
+    static void resizeBy(long width, long height);
     static void setMaximumSize(long width, long height);
     static void setMinimumSize(long width, long height);
     static void setResizable(boolean resizable);
