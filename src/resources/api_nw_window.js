@@ -35,6 +35,9 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       case 'loaded':
         this.LoadingStateChanged.addListener(function(status) { if (status == 'loaded') callback(); });
         break;
+      case 'loading':
+        this.LoadingStateChanged.addListener(function(status) { if (status == 'loading') callback(); });
+        break;
       case 'new-win-policy':
         this.onNewWinPolicy.addListener(function(frame, url, policy) {
           policy.ignore         =  function () { this.val = 'ignore'; };
