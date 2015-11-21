@@ -108,6 +108,8 @@ bool NwAppSetProxyConfigFunction::RunNWSync(base::ListValue* response, std::stri
   std::string proxy_config;
   EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &proxy_config));
 
+  base::ThreadRestrictions::ScopedAllowWait allow_wait;
+
   net::ProxyConfig config;
   config.proxy_rules().ParseFromString(proxy_config);
   content::RenderProcessHost* render_process_host = GetSenderWebContents()->GetRenderProcessHost();
