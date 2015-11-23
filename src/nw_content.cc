@@ -4,9 +4,9 @@
 #include "nw_base.h"
 
 #include "base/command_line.h"
-#include "base/logging.h"
 #include "base/files/file_util.h"
 #include "base/json/json_reader.h"
+#include "base/path_service.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
@@ -15,7 +15,11 @@
 #include "chrome/browser/browser_process.h"
 #include "chrome/browser/io_thread.h"
 #include "chrome/browser/profiles/profile_manager.h"
+#include "chrome/common/chrome_paths.h"
 
+#include "components/crx_file/id_util.h"
+
+#include "content/browser/dom_storage/dom_storage_area.h"
 #include "content/common/dom_storage/dom_storage_map.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/public/browser/notification_service.h"
@@ -84,6 +88,7 @@
 #include "V8HTMLElement.h"
 
 #include "content/renderer/render_view_impl.h"
+#include "base/logging.h"
 
 using content::RenderView;
 using content::RenderViewImpl;
@@ -190,6 +195,30 @@ int MainPartsPreCreateThreadsHook() {
     int dom_storage_quota_mb;
     if (package->root()->GetInteger("dom_storage_quota", &dom_storage_quota_mb)) {
       content::DOMStorageMap::SetQuotaOverride(dom_storage_quota_mb * 1024 * 1024);
+    }
+
+    base::FilePath user_data_dir;
+    std::string name;
+    package->root()->GetString("name", &name);
+    if (!name.empty() && PathService::Get(chrome::DIR_USER_DATA, &user_data_dir)) {
+      base::FilePath old_dom_storage = user_data_dir
+        .Append(FILE_PATH_LITERAL("Local Storage"))
+        .Append(FILE_PATH_LITERAL("file__0.localstorage"));
+      if (base::PathExists(old_dom_storage)) {
+        std::string id = crx_file::id_util::GenerateId(name);
+        GURL origin("chrome-extension://" + id + "/");
+        base::FilePath new_storage_dir = user_data_dir.Append(FILE_PATH_LITERAL("Default"))
+          .Append(FILE_PATH_LITERAL("Local Storage"));
+        base::CreateDirectory(new_storage_dir);
+
+        base::FilePath new_dom_storage = new_storage_dir
+          .Append(content::DOMStorageArea::DatabaseFileNameFromOrigin(origin));
+        base::FilePath new_dom_journal = new_dom_storage.ReplaceExtension(FILE_PATH_LITERAL("localstorage-journal"));
+        base::FilePath old_dom_journal = old_dom_storage.ReplaceExtension(FILE_PATH_LITERAL("localstorage-journal"));
+        base::Move(old_dom_journal, new_dom_journal);
+        base::Move(old_dom_storage, new_dom_storage);
+        LOG_IF(INFO, true) << "Migrate DOM storage from " << old_dom_storage.AsUTF8Unsafe() << " to " << new_dom_storage.AsUTF8Unsafe();
+      }
     }
 
     const base::ListValue *additional_trust_anchors = NULL;
