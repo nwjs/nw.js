@@ -190,6 +190,13 @@ Package::Package()
   // Then see if we have arguments and extract it.
   const base::CommandLine::StringVector& args = command_line->GetArgs();
 
+  if (command_line->HasSwitch("nwapp")) {
+    path = command_line->GetSwitchValuePath("nwapp");
+    self_extract_ = false;
+    if (InitFromPath(path))
+      return;
+  }
+
   if (args.size() > 0) {
     self_extract_ = false;
     path = FilePath(args[0]);
