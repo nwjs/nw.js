@@ -96,7 +96,7 @@ def aws_upload(upload_path, file_list):
           if builder_name == 'nw13_win64' :
               path_prefix = 'x64'
 
-        if (f.startswith('node-v') or f == 'SHASUMS256.txt') and builder_name != 'nw13_mac64' :
+        if (f.startswith('node-v') or f.startswith('nw-header') or f == 'SHASUMS256.txt') and builder_name != 'nw13_sdk_mac64' :
             continue
 
         if f.startswith('chromedriver') and 'sdk' not in builder_name :

@@ -35,7 +35,7 @@ if getnwisrelease.release == 0:
 '''
 if '-t' in sys.argv:
   nw_version = sys.argv[sys.argv.index('-t') + 1]
-tarname = 'node-v' + nw_version + '.tar.gz'
+tarname = 'nw-headers-v' + nw_version + '.tar.gz'
 tarpath = os.path.join(tmp_dir, tarname)
 
 #make tmpdir
