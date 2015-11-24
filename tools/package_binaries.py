@@ -89,8 +89,13 @@ else:
 if platform_name == 'win':
     libfile = os.path.join(binaries_location, 'nw.lib')
     expfile = os.path.join(binaries_location, 'nw.exp')
+    libfile2 = os.path.join(binaries_location, 'node.lib')
+    expfile2 = os.path.join(binaries_location, 'node.exp')
+
     shutil.copy(os.path.join(binaries_location, 'nw.dll.lib'), libfile)
     shutil.copy(os.path.join(binaries_location, 'nw.dll.exp'), expfile)
+    shutil.copy(os.path.join(binaries_location, 'node.dll.lib'), libfile2)
+    shutil.copy(os.path.join(binaries_location, 'node.dll.exp'), expfile2)
 
 if platform_name == 'win':
     arch = 'ia32'
@@ -273,7 +278,7 @@ def generate_target_headers(platform_name, arch, version):
         res = call(['python', make_nw_header])
         if res == 0:
             print 'nw-headers generated'
-            nw_headers_name = 'node-v' + version + '.tar.gz'
+            nw_headers_name = 'nw-headers-v' + version + '.tar.gz'
             nw_headers_path = os.path.join(os.path.dirname(__file__), \
                     os.pardir, 'tmp', nw_headers_name)
             if os.path.isfile(os.path.join(binaries_location, nw_headers_name)):
@@ -315,7 +320,7 @@ def generate_target_others(platform_name, arch, version):
     target['output'] = ''
     target['compress'] = None
     if platform_name == 'win':
-        target['input'] = ['nw.exp', 'nw.lib']
+        target['input'] = ['nw.exp', 'nw.lib', 'node.exp', 'node.lib']
     elif platform_name == 'linux' :
         target['input'] = []
     else:
