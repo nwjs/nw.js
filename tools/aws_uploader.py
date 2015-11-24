@@ -90,7 +90,7 @@ def aws_upload(upload_path, file_list):
         sys.stdout.flush()
         # use '/' for s3
         path_prefix = ''
-        if (f == 'nw.lib' or f == 'nw.exp') :
+        if (f in ['nw.lib', 'nw.exp', 'node.lib', 'node.exp'] ) :
           if builder_name != 'nw13_win64' and builder_name != 'nw13_win32' :
               continue
           if builder_name == 'nw13_win64' :
