@@ -134,5 +134,16 @@ class NwCurrentWindowInternalSetProgressBarFunction : public AsyncExtensionFunct
   void Callback();
 };
 
+class NwCurrentWindowInternalReloadIgnoringCacheFunction : public AsyncExtensionFunction {
+ public:
+   NwCurrentWindowInternalReloadIgnoringCacheFunction() {}
+
+ protected:
+   ~NwCurrentWindowInternalReloadIgnoringCacheFunction() override {}
+
+   // ExtensionFunction:
+   bool RunAsync() override;
+   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.reloadIgnoringCache", UNKNOWN)
+};
 } // namespace extensions
 #endif

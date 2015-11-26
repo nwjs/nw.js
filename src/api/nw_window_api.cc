@@ -487,4 +487,11 @@ bool NwCurrentWindowInternalSetProgressBarFunction::RunAsync() {
 }
 #endif
 
+bool NwCurrentWindowInternalReloadIgnoringCacheFunction::RunAsync() {
+  content::WebContents* web_contents = GetSenderWebContents();
+  web_contents->GetController().ReloadIgnoringCache(false);
+  SendResponse(true);
+  return true;
+}
+
 } // namespace extensions

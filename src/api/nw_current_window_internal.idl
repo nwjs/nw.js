@@ -20,5 +20,6 @@ namespace nw.currentWindowInternal {
     static void capturePageInternal(optional CapturePageOptions options, optional CapturePageCallback callback);
     static void clearMenu();
     static void setMenu(long id);
+    static void reloadIgnoringCache();
   };
 };

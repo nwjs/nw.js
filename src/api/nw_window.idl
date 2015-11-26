@@ -52,6 +52,8 @@ namespace nw.Window {
     static void toggleFullscreen();
     static void on(DOMString event,
                    EventCallback callback);
+    static void reload();
+    static void reloadIgnoringCache();
 
     static void eval(object frame, DOMString script);
     static void evalNWBin(object frame, DOMString path);

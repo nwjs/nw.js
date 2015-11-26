@@ -76,6 +76,12 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       }
       currentNWWindowInternal.capturePageInternal(options, cb);
     };
+    NWWindow.prototype.reload = function () {
+      this.appWindow.contentWindow.location.reload();
+    };
+    NWWindow.prototype.reloadIgnoringCache = function () {
+      currentNWWindowInternal.reloadIgnoringCache();
+    };
     NWWindow.prototype.eval = function (frame, script) {
       nwNatives.evalScript(frame, script);
     };
