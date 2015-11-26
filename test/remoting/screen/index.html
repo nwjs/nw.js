@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Screen</title>
+</head>
+<body>
+  <script>
+  var EventEmitter = nw.require('events').EventEmitter;
+  if (nw.Screen instanceof EventEmitter) {
+    document.write('<h1 id="result">success</h1>');
+  } else {
+    document.write('<h1 id="result">failure: expect nw.Screen to be instance of EventEmitter</h1>');
+  }
+  </script>
+</body>
+</html>

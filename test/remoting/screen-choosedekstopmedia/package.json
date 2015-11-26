@@ -1,0 +1,8 @@
+{
+  "name": "screen-chooseDesktopMedia",
+  "main": "index.html",
+  "window": {
+    "width": 600,
+    "height": 600
+  }
+}
