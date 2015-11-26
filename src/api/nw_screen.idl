@@ -1,0 +1,52 @@
+// Copyright 2015 The NW.js Authors. All rights reserved.
+// Use of this source code is governed by a MIT-style license that can be
+// found in the LICENSE file.
+
+// nw Screen API
+[implemented_in="content/nw/src/api/nw_screen_api.h"]
+namespace nw.Screen {
+
+  dictionary DisplayGeometry {
+    long x;
+    long y;
+    long width;
+    long height;
+  };
+
+  dictionary Display {
+    long id;
+    double scaleFactor;
+    boolean isBuiltIn;
+    long rotation;
+    long touchSupport;
+
+    DisplayGeometry bounds;
+    DisplayGeometry work_area;
+  };
+
+  callback ChooseDesktopMediaCallback = void (DOMString stream_id);
+
+  interface Events {
+    static void onDisplayAdded(Display display);
+    static void onDisplayRemoved(Display display);
+    static void onDisplayBoundsChanged(Display display, long metrics);
+
+    static void onSourceAdded(DOMString id, DOMString string, long order, DOMString type, optional boolean primary);
+    static void onSourceRemoved(long old_order);
+    static void onSourceOrderChanged(DOMString id, long new_order, long old_order);
+    static void onSourceNameChanged(DOMString id, DOMString name);
+    static void onSourceThumbnailChanged(DOMString id, DOMString thumbnail);
+  };
+
+  interface Functions {
+    static Display[] getScreens();
+    static void initEventListeners();
+    [nocompile] static long chooseDesktopMedia(DOMString[] sources,
+                                   ChooseDesktopMediaCallback callback);
+    [nocompile] static long cancelChooseDesktopMedia(long request_id);
+    static void startMonitor(boolean screens, boolean windows);
+    static void stopMonitor();
+    static boolean isMonitorStarted();
+  };
+
+};
