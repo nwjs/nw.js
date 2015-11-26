@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Screen events</title>
+</head>
+<body>
+  <script>
+  try{
+    nw.Screen.Init();
+    nw.Screen.on('displayAdded', function() {
+    });
+    nw.Screen.on('displayRemoved', function() {
+    });
+    nw.Screen.on('displayBoundsChanged', function() {
+    });
+    document.write('<h1 id="result">success</h1>');
+  } catch (e) {
+    document.write('<h1 id="result">failure: get exception when binding events</h1>');
+  }
+  </script>
+</body>
+</html>

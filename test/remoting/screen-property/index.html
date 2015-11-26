@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Screen property</title>
+</head>
+<body>
+  <script>
+  nw.Screen.Init();
+  if (nw.Screen.screens && nw.Screen.screens.length > 0) {
+    document.write('<h1 id="result">success</h1>');
+  } else {
+    document.write('<h1 id="result">failure: expect nw.Screen.screens to have non-zero length</h1>');
+  }
+  </script>
+</body>
+</html>
