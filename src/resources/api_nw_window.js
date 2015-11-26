@@ -35,6 +35,9 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       case 'loaded':
         this.LoadingStateChanged.addListener(function(status) { if (status == 'loaded') callback(); });
         break;
+      case 'loading':
+        this.LoadingStateChanged.addListener(function(status) { if (status == 'loading') callback(); });
+        break;
       case 'new-win-policy':
         this.onNewWinPolicy.addListener(function(frame, url, policy) {
           policy.ignore         =  function () { this.val = 'ignore'; };
@@ -119,6 +122,9 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       else
         this.appWindow.fullscreen();
     };
+    NWWindow.prototype.isFullscreen = function () {
+      return this.appWindow.isFullscreen();
+    };
     NWWindow.prototype.setMaximumSize = function (width, height) {
       this.appWindow.outerBounds.maxWidth = width;
       this.appWindow.outerBounds.maxHeight = height;
@@ -126,6 +132,12 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     NWWindow.prototype.setMinimumSize = function (width, height) {
       this.appWindow.outerBounds.minWidth = width;
       this.appWindow.outerBounds.minHeight = height;
+    };
+    NWWindow.prototype.resizeTo = function (width, height) {
+      this.appWindow.resizeTo(width, height);
+    };
+    NWWindow.prototype.resizeBy = function (width, height) {
+      this.appWindow.resizeBy(width, height);
     };
     NWWindow.prototype.setResizable = function (resizable) {
     };

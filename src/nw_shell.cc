@@ -408,6 +408,7 @@ void Shell::CloseDevTools() {
   devtools_window_->window()->Close();
   devtools_window_.reset();
   devtools_window_id_ = 0;
+  devtools_window_->SendEvent("devtools-closed");
 }
 
 int Shell::WrapDevToolsWindow() {
