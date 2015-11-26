@@ -63,6 +63,7 @@ namespace nw.Window {
     long y;
     long width;
     long height;
+    DOMString title;
   };
   interface Functions {
     // get the current window

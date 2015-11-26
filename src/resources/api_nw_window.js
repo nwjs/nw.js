@@ -161,6 +161,14 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         this.appWindow.innerBounds.height = val;
       }
     });
+    Object.defineProperty(NWWindow.prototype, 'title', {
+      get: function() {
+        return this.appWindow.contentWindow.document.title;
+      },
+      set: function(val) {
+        this.appWindow.contentWindow.document.title = val;
+      }
+    });
     Object.defineProperty(NWWindow.prototype, 'menu', {
       get: function() {
         var ret = privates(this).menu || {};
