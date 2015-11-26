@@ -145,6 +145,22 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         this.appWindow.outerBounds.top = y;
       }
     });
+    Object.defineProperty(NWWindow.prototype, 'width', {
+      get: function() {
+        return this.appWindow.innerBounds.width;
+      },
+      set: function(val) {
+        this.appWindow.innerBounds.width = val;
+      }
+    });
+    Object.defineProperty(NWWindow.prototype, 'height', {
+      get: function() {
+        return this.appWindow.innerBounds.height;
+      },
+      set: function(val) {
+        this.appWindow.innerBounds.height = val;
+      }
+    });
     Object.defineProperty(NWWindow.prototype, 'menu', {
       get: function() {
         var ret = privates(this).menu || {};

@@ -61,6 +61,8 @@ namespace nw.Window {
     object menu;
     long x;
     long y;
+    long width;
+    long height;
   };
   interface Functions {
     // get the current window
