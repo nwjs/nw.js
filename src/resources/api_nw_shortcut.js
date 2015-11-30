@@ -14,7 +14,7 @@ var UNABLE_UNREGISTER_HOTKEY = "Unable to unregister the hotkey";
 // Build alias maps of all acceptable key code for nw.Shortcut API
 // The list is polled from http://www.w3.org/TR/DOM-Level-3-Events-code/. And 
 // it also contains easy to type aliases. For example, you can use either 
-// "ctrl-`" or "ctrl-backquote" to register a shortcut.
+// "ctrl+`" or "ctrl+backquote" to register a shortcut.
 // It is also backward compatible with NW12.
 var ALIAS_MAP = (function() {
   var map = {
@@ -24,6 +24,7 @@ var ALIAS_MAP = (function() {
     ']' : 'BracketRight',
     ',' : 'Comma',
     '=' : 'Equal',
+    '-' : 'Minus',
     '.' : 'Period',
     '\'': 'Quote',
     ';' : 'Semicolon',
@@ -100,7 +101,7 @@ var handlers = {};
 
 function keyToAccelerator(key) {
   key = key.toString();
-  var parts = key.split('-');
+  var parts = key.split('+');
   var maybeKey = parts.pop();
   var maybeModifiers = parts;
 
