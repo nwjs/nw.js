@@ -26,6 +26,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     NWWindow.prototype.onNewWinPolicy      = new Event();
     NWWindow.prototype.onNavigation        = new Event();
     NWWindow.prototype.LoadingStateChanged = new Event();
+    NWWindow.prototype.onDocumentStart     = new Event();
+    NWWindow.prototype.onDocumentEnd       = new Event();
 
     NWWindow.prototype.on = function (event, callback) {
       switch (event) {
@@ -51,6 +53,12 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
           policy.ignore         =  function () { this.val = 'ignore'; };
           callback(frame, url, policy, context);
         });
+        break;
+      case 'document-start':
+        this.onDocumentStart.addListener(callback);
+        break;
+      case 'document-end':
+        this.onDocumentEnd.addListener(callback);
         break;
       }
     };
@@ -276,7 +284,17 @@ function onLoadingStateChanged(status) {
   dispatchEventIfExists(currentNWWindow, "LoadingStateChanged", [status]);
 }
 
+function onDocumentStartEnd(start, frame) {
+  if (!currentNWWindow)
+    return;
+  if (start)
+    dispatchEventIfExists(currentNWWindow, "onDocumentStart", [frame]);
+  else
+    dispatchEventIfExists(currentNWWindow, "onDocumentEnd", [frame]);
+}
+
 exports.binding = nw_binding.generate();
 exports.onNewWinPolicy = onNewWinPolicy;
 exports.onNavigation = onNavigation;
 exports.LoadingStateChanged = onLoadingStateChanged;
+exports.onDocumentStartEnd = onDocumentStartEnd;

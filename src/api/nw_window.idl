@@ -79,5 +79,7 @@ namespace nw.Window {
     [nocompile] static void onNewWinPolicy();
     [nocompile] static void onNavigation();
     [nocompile] static void LoadingStateChanged();
+    [nocompile] static void onDocumentStart();
+    [nocompile] static void onDocumentEnd();
   };
 };

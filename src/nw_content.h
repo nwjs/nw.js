@@ -17,6 +17,7 @@ namespace blink {
 }
 
 namespace content {
+  class RenderFrame;
   class RenderProcessHost;
   class NotificationDetails;
   class RenderView;
@@ -24,6 +25,7 @@ namespace content {
 }
 
 namespace extensions {
+  class Dispatcher;
   class Extension;
   class ScriptContext;
   class Dispatcher;
@@ -41,6 +43,7 @@ void DocumentElementHook(blink::WebFrame* frame,
 void DocumentFinishHook(blink::WebFrame* frame,
                          const extensions::Extension* extension,
                          const GURL& effective_document_url);
+ void DocumentHook2(bool start, content::RenderFrame* frame, extensions::Dispatcher* dispatcher);
  void RendererProcessTerminatedHook(content::RenderProcessHost* process,
                                     const content::NotificationDetails& details);
  void OnRenderProcessShutdownHook(extensions::ScriptContext* context);
