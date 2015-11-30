@@ -143,6 +143,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     };
     NWWindow.prototype.setResizable = function (resizable) {
     };
+    NWWindow.prototype.cookies = chrome.cookies;
+
     Object.defineProperty(NWWindow.prototype, 'x', {
       get: function() {
         return this.appWindow.outerBounds.left;
