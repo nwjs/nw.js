@@ -664,6 +664,8 @@
         'src/api/nw_shell_api.h',
         'src/api/nw_screen_api.cc',
         'src/api/nw_screen_api.h',
+        'src/api/nw_shortcut_api.cc',
+        'src/api/nw_shortcut_api.h',
         'src/api/object_manager.cc',
         'src/api/object_manager.h',
         'src/api/object_manager_factory.cc',

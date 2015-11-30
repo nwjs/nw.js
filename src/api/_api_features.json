@@ -43,6 +43,10 @@
     "channel": "stable",
     "contexts": ["blessed_extension"]
   },
+  "nw.Shortcut": {
+    "channel": "stable",
+    "contexts": ["blessed_extension"]
+  },
   "nw.currentWindowInternal": {
     "noparent": true,
     "internal": true,

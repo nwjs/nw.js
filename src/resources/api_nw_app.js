@@ -46,6 +46,12 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       dataPath = nw.App.getDataPath();
     return dataPath;
   });
+  bindingsAPI.compiledApi.registerGlobalHotkey = function() {
+    return nw.Shortcut.registerGlobalHotkey.apply(nw.Shortcut, arguments);
+  };
+  bindingsAPI.compiledApi.unregisterGlobalHotkey = function() {
+    return nw.Shortcut.unregisterGlobalHotkey.apply(nw.Shortcut, arguments);
+  };
 
 });
 
