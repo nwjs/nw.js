@@ -65,6 +65,7 @@ namespace nw.Window {
     long y;
     long width;
     long height;
+    double zoomLevel;
     DOMString title;
   };
   interface Functions {

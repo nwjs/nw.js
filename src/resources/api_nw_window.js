@@ -3,9 +3,22 @@ var nw_binding = require('binding').Binding.create('nw.Window');
 var nwNatives = requireNative('nw_natives');
 var forEach = require('utils').forEach;
 var Event = require('event_bindings').Event;
+var sendRequest = require('sendRequest');
 
 var currentNWWindow = null;
 var currentNWWindowInternal = null;
+
+var nw_internal = require('binding').Binding.create('nw.currentWindowInternal');
+
+nw_internal.registerCustomHook(function(bindingsAPI) {
+  var apiFunctions = bindingsAPI.apiFunctions;
+  apiFunctions.setHandleRequest('getZoom', function() {
+    return sendRequest.sendRequestSync('nw.currentWindowInternal.getZoom', arguments, this.definition.parameters, {})[0];
+  });
+  apiFunctions.setHandleRequest('setZoom', function() {
+    return sendRequest.sendRequestSync('nw.currentWindowInternal.setZoom', arguments, this.definition.parameters, {});
+  });
+});
 
 nw_binding.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
@@ -13,8 +26,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     if (currentNWWindow)
       return currentNWWindow;
 
-    currentNWWindowInternal =
-        Binding.create('nw.currentWindowInternal').generate();
+    currentNWWindowInternal = nw_internal.generate();
     var NWWindow = function() {
       this.appWindow = chrome.app.window.current();
       privates(this).menu = null;
@@ -183,6 +195,14 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       },
       set: function(val) {
         this.appWindow.contentWindow.document.title = val;
+      }
+    });
+    Object.defineProperty(NWWindow.prototype, 'zoomLevel', {
+      get: function() {
+        return currentNWWindowInternal.getZoom();
+      },
+      set: function(val) {
+        currentNWWindowInternal.setZoom(val);
       }
     });
     Object.defineProperty(NWWindow.prototype, 'menu', {
