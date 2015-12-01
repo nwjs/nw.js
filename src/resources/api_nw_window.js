@@ -40,9 +40,37 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     NWWindow.prototype.LoadingStateChanged = new Event();
     NWWindow.prototype.onDocumentStart     = new Event();
     NWWindow.prototype.onDocumentEnd       = new Event();
+    NWWindow.prototype.onZoom              = new Event();
 
     NWWindow.prototype.on = function (event, callback) {
       switch (event) {
+      case 'focus':
+        this.appWindow.contentWindow.onfocus = callback;
+        break;
+      case 'blur':
+        this.appWindow.contentWindow.onblur = callback;
+        break;
+      case 'minimize':
+        this.appWindow.onMinimized.addListener(callback);
+        break;
+      case 'maximize':
+        this.appWindow.onMaximized.addListener(callback);
+        break;
+      case 'restore':
+        this.appWindow.onRestored.addListener(callback);
+        break;
+      case 'resize':
+        this.appWindow.onResized.addListener(callback);
+        break;
+      case 'move':
+        this.appWindow.onMoved.addListener(callback);
+        break;
+      case 'enter-fullscreen':
+        this.appWindow.onFullscreened.addListener(callback);
+        break;
+      case 'zoom':
+        this.onZoom.addListener(callback);
+        break;
       case 'closed':
         this.appWindow.onClosed.addListener(callback);
         break;
@@ -315,8 +343,15 @@ function onDocumentStartEnd(start, frame) {
     dispatchEventIfExists(currentNWWindow, "onDocumentEnd", [frame]);
 }
 
+function updateAppWindowZoom(old_level, new_level) {
+  if (!currentNWWindow)
+    return;
+  dispatchEventIfExists(currentNWWindow, "onZoom", [new_level]);
+}
+
 exports.binding = nw_binding.generate();
 exports.onNewWinPolicy = onNewWinPolicy;
 exports.onNavigation = onNavigation;
 exports.LoadingStateChanged = onLoadingStateChanged;
 exports.onDocumentStartEnd = onDocumentStartEnd;
+exports.updateAppWindowZoom = updateAppWindowZoom;

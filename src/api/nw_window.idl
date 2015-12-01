@@ -82,5 +82,6 @@ namespace nw.Window {
     [nocompile] static void LoadingStateChanged();
     [nocompile] static void onDocumentStart();
     [nocompile] static void onDocumentEnd();
+    [nocompile] static void onZoom();
   };
 };
