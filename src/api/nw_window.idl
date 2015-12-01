@@ -65,6 +65,7 @@ namespace nw.Window {
     long y;
     long width;
     long height;
+    double zoomLevel;
     DOMString title;
   };
   interface Functions {
@@ -79,5 +80,8 @@ namespace nw.Window {
     [nocompile] static void onNewWinPolicy();
     [nocompile] static void onNavigation();
     [nocompile] static void LoadingStateChanged();
+    [nocompile] static void onDocumentStart();
+    [nocompile] static void onDocumentEnd();
+    [nocompile] static void onZoom();
   };
 };

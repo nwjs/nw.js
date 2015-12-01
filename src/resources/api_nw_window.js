@@ -3,9 +3,22 @@ var nw_binding = require('binding').Binding.create('nw.Window');
 var nwNatives = requireNative('nw_natives');
 var forEach = require('utils').forEach;
 var Event = require('event_bindings').Event;
+var sendRequest = require('sendRequest');
 
 var currentNWWindow = null;
 var currentNWWindowInternal = null;
+
+var nw_internal = require('binding').Binding.create('nw.currentWindowInternal');
+
+nw_internal.registerCustomHook(function(bindingsAPI) {
+  var apiFunctions = bindingsAPI.apiFunctions;
+  apiFunctions.setHandleRequest('getZoom', function() {
+    return sendRequest.sendRequestSync('nw.currentWindowInternal.getZoom', arguments, this.definition.parameters, {})[0];
+  });
+  apiFunctions.setHandleRequest('setZoom', function() {
+    return sendRequest.sendRequestSync('nw.currentWindowInternal.setZoom', arguments, this.definition.parameters, {});
+  });
+});
 
 nw_binding.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
@@ -13,8 +26,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     if (currentNWWindow)
       return currentNWWindow;
 
-    currentNWWindowInternal =
-        Binding.create('nw.currentWindowInternal').generate();
+    currentNWWindowInternal = nw_internal.generate();
     var NWWindow = function() {
       this.appWindow = chrome.app.window.current();
       privates(this).menu = null;
@@ -26,9 +38,39 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     NWWindow.prototype.onNewWinPolicy      = new Event();
     NWWindow.prototype.onNavigation        = new Event();
     NWWindow.prototype.LoadingStateChanged = new Event();
+    NWWindow.prototype.onDocumentStart     = new Event();
+    NWWindow.prototype.onDocumentEnd       = new Event();
+    NWWindow.prototype.onZoom              = new Event();
 
     NWWindow.prototype.on = function (event, callback) {
       switch (event) {
+      case 'focus':
+        this.appWindow.contentWindow.onfocus = callback;
+        break;
+      case 'blur':
+        this.appWindow.contentWindow.onblur = callback;
+        break;
+      case 'minimize':
+        this.appWindow.onMinimized.addListener(callback);
+        break;
+      case 'maximize':
+        this.appWindow.onMaximized.addListener(callback);
+        break;
+      case 'restore':
+        this.appWindow.onRestored.addListener(callback);
+        break;
+      case 'resize':
+        this.appWindow.onResized.addListener(callback);
+        break;
+      case 'move':
+        this.appWindow.onMoved.addListener(callback);
+        break;
+      case 'enter-fullscreen':
+        this.appWindow.onFullscreened.addListener(callback);
+        break;
+      case 'zoom':
+        this.onZoom.addListener(callback);
+        break;
       case 'closed':
         this.appWindow.onClosed.addListener(callback);
         break;
@@ -51,6 +93,12 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
           policy.ignore         =  function () { this.val = 'ignore'; };
           callback(frame, url, policy, context);
         });
+        break;
+      case 'document-start':
+        this.onDocumentStart.addListener(callback);
+        break;
+      case 'document-end':
+        this.onDocumentEnd.addListener(callback);
         break;
       }
     };
@@ -135,6 +183,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     };
     NWWindow.prototype.setResizable = function (resizable) {
     };
+    NWWindow.prototype.cookies = chrome.cookies;
+
     Object.defineProperty(NWWindow.prototype, 'x', {
       get: function() {
         return this.appWindow.outerBounds.left;
@@ -173,6 +223,14 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       },
       set: function(val) {
         this.appWindow.contentWindow.document.title = val;
+      }
+    });
+    Object.defineProperty(NWWindow.prototype, 'zoomLevel', {
+      get: function() {
+        return currentNWWindowInternal.getZoom();
+      },
+      set: function(val) {
+        currentNWWindowInternal.setZoom(val);
       }
     });
     Object.defineProperty(NWWindow.prototype, 'menu', {
@@ -276,7 +334,24 @@ function onLoadingStateChanged(status) {
   dispatchEventIfExists(currentNWWindow, "LoadingStateChanged", [status]);
 }
 
+function onDocumentStartEnd(start, frame) {
+  if (!currentNWWindow)
+    return;
+  if (start)
+    dispatchEventIfExists(currentNWWindow, "onDocumentStart", [frame]);
+  else
+    dispatchEventIfExists(currentNWWindow, "onDocumentEnd", [frame]);
+}
+
+function updateAppWindowZoom(old_level, new_level) {
+  if (!currentNWWindow)
+    return;
+  dispatchEventIfExists(currentNWWindow, "onZoom", [new_level]);
+}
+
 exports.binding = nw_binding.generate();
 exports.onNewWinPolicy = onNewWinPolicy;
 exports.onNavigation = onNavigation;
 exports.LoadingStateChanged = onLoadingStateChanged;
+exports.onDocumentStartEnd = onDocumentStartEnd;
+exports.updateAppWindowZoom = updateAppWindowZoom;

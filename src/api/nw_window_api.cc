@@ -6,12 +6,14 @@
 #include "content/public/browser/render_widget_host.h"
 #include "chrome/browser/devtools/devtools_window.h"
 #include "chrome/browser/extensions/devtools_util.h"
+#include "components/ui/zoom/zoom_controller.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/object_manager.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/web_contents.h"
 #include "extensions/browser/app_window/app_window_registry.h"
+#include "extensions/browser/extension_zoom_request_client.h"
 #include "extensions/components/native_app_window/native_app_window_views.h"
 #include "extensions/common/error_utils.h"
 #include "extensions/common/constants.h"
@@ -47,6 +49,7 @@ using nw::BrowserViewLayout;
 using content::RenderWidgetHost;
 using content::RenderWidgetHostView;
 using content::WebContents;
+using ui_zoom::ZoomController;
 
 using nw::Menu;
 
@@ -491,6 +494,33 @@ bool NwCurrentWindowInternalReloadIgnoringCacheFunction::RunAsync() {
   content::WebContents* web_contents = GetSenderWebContents();
   web_contents->GetController().ReloadIgnoringCache(false);
   SendResponse(true);
+  return true;
+}
+
+bool NwCurrentWindowInternalGetZoomFunction::RunNWSync(base::ListValue* response, std::string* error) {
+  content::WebContents* web_contents = GetSenderWebContents();
+  if (!web_contents)
+    return false;
+  double zoom_level =
+      ZoomController::FromWebContents(web_contents)->GetZoomLevel();
+  response->AppendDouble(zoom_level);
+  return true;
+}
+
+bool NwCurrentWindowInternalSetZoomFunction::RunNWSync(base::ListValue* response, std::string* error) {
+  double zoom_level;
+
+  EXTENSION_FUNCTION_VALIDATE(args_->GetDouble(0, &zoom_level));
+  content::WebContents* web_contents = GetSenderWebContents();
+  if (!web_contents)
+    return false;
+  ZoomController* zoom_controller =
+      ZoomController::FromWebContents(web_contents);
+  scoped_refptr<ExtensionZoomRequestClient> client(
+      new ExtensionZoomRequestClient(extension()));
+  if (!zoom_controller->SetZoomLevelByClient(zoom_level, client)) {
+    return false;
+  }
   return true;
 }
 

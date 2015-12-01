@@ -145,5 +145,26 @@ class NwCurrentWindowInternalReloadIgnoringCacheFunction : public AsyncExtension
    bool RunAsync() override;
    DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.reloadIgnoringCache", UNKNOWN)
 };
+
+class NwCurrentWindowInternalGetZoomFunction : public NWSyncExtensionFunction {
+ public:
+  NwCurrentWindowInternalGetZoomFunction() {}
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
+
+ protected:
+  ~NwCurrentWindowInternalGetZoomFunction() override {}
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.getZoom", UNKNOWN)
+};
+
+class NwCurrentWindowInternalSetZoomFunction : public NWSyncExtensionFunction {
+ public:
+  NwCurrentWindowInternalSetZoomFunction() {}
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
+
+ protected:
+  ~NwCurrentWindowInternalSetZoomFunction() override {}
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setZoom", UNKNOWN)
+};
+
 } // namespace extensions
 #endif

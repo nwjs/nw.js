@@ -99,6 +99,7 @@ using extensions::Manifest;
 using extensions::Feature;
 using extensions::ExtensionPrefs;
 using extensions::ExtensionRegistry;
+using extensions::Dispatcher;
 using blink::WebScriptSource;
 
 namespace manifest_keys = extensions::manifest_keys;
@@ -288,6 +289,24 @@ void DocumentFinishHook(blink::WebFrame* frame,
     // v8::Handle<v8::Value> result;
     frame->executeScriptAndReturnValue(WebScriptSource(jscript));
   }
+}
+
+void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatcher) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope scope(isolate);
+  v8::Local<v8::Context> v8_context = frame->GetRenderView()
+      ->GetWebView()->mainFrame()->mainWorldScriptContext();
+  ScriptContext* script_context =
+      dispatcher->script_context_set().GetByV8Context(v8_context);
+  if (!script_context)
+    return;
+  std::vector<v8::Handle<v8::Value> > arguments;
+  blink::WebLocalFrame* web_frame = frame->GetWebFrame();
+  v8::Local<v8::Value> window =
+      web_frame->mainWorldScriptContext()->Global();
+  arguments.push_back(v8::Boolean::New(isolate, start));
+  arguments.push_back(window);
+  script_context->module_system()->CallModuleMethod("nw.Window", "onDocumentStartEnd", &arguments);
 }
 
 void DocumentElementHook(blink::WebFrame* frame,
