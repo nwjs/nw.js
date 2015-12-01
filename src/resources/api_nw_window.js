@@ -184,6 +184,10 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       this.appWindow.outerBounds.minWidth = width;
       this.appWindow.outerBounds.minHeight = height;
     };
+    NWWindow.prototype.resizeTo = function (width, height) {
+      this.appWindow.outerBounds.width = width;
+      this.appWindow.outerBounds.height = height;
+    };
     NWWindow.prototype.setResizable = function (resizable) {
     };
     NWWindow.prototype.cookies = chrome.cookies;
