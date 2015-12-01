@@ -188,6 +188,18 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       this.appWindow.outerBounds.width = width;
       this.appWindow.outerBounds.height = height;
     };
+    NWWindow.prototype.resizeBy = function (width, height) {
+      this.appWindow.outerBounds.width += width;
+      this.appWindow.outerBounds.height += height;
+    };
+    NWWindow.prototype.moveTo = function (x, y) {
+      this.appWindow.outerBounds.top = x;
+      this.appWindow.outerBounds.left = y;
+    };
+    NWWindow.prototype.moveBy = function (x, y) {
+      this.appWindow.outerBounds.top += x;
+      this.appWindow.outerBounds.left += y;
+    };
     NWWindow.prototype.setResizable = function (resizable) {
     };
     NWWindow.prototype.cookies = chrome.cookies;
