@@ -173,6 +173,9 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       else
         this.appWindow.fullscreen();
     };
+    NWWindow.prototype.isFullscreen = function () {
+      return this.appWindow.isFullscreen();
+    };
     NWWindow.prototype.setMaximumSize = function (width, height) {
       this.appWindow.outerBounds.maxWidth = width;
       this.appWindow.outerBounds.maxHeight = height;
