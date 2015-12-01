@@ -173,6 +173,9 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       else
         this.appWindow.fullscreen();
     };
+    NWWindow.prototype.setAlwaysOnTop = function (top) {
+      this.appWindow.setAlwaysOnTop(top);
+    };
     NWWindow.prototype.isFullscreen = function () {
       return this.appWindow.isFullscreen();
     };
