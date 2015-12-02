@@ -48,4 +48,18 @@ bool NwClipboardSetSyncFunction::RunNWSync(base::ListValue* response, std::strin
   return true;
 }
 
+NwClipboardClearSyncFunction::NwClipboardClearSyncFunction() {
+
+}
+
+NwClipboardClearSyncFunction::~NwClipboardClearSyncFunction() {
+
+}
+
+bool NwClipboardClearSyncFunction::RunNWSync(base::ListValue* response, std::string* error) {
+  ui::Clipboard* clipboard = ui::Clipboard::GetForCurrentThread();
+  clipboard->Clear(ui::CLIPBOARD_TYPE_COPY_PASTE);
+  return true;
+}
+
 } // namespace extensions
