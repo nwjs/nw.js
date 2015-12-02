@@ -41,6 +41,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     NWWindow.prototype.onDocumentStart     = new Event();
     NWWindow.prototype.onDocumentEnd       = new Event();
     NWWindow.prototype.onZoom              = new Event();
+    NWWindow.prototype.onClose             = new Event("nw.Window.onClose");
 
     NWWindow.prototype.on = function (event, callback) {
       switch (event) {
@@ -70,6 +71,9 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         break;
       case 'zoom':
         this.onZoom.addListener(callback);
+        break;
+      case 'close':
+        this.onClose.addListener(callback);
         break;
       case 'closed':
         this.appWindow.onClosed.addListener(callback);
@@ -350,9 +354,16 @@ function updateAppWindowZoom(old_level, new_level) {
   dispatchEventIfExists(currentNWWindow, "onZoom", [new_level]);
 }
 
+function onClose() {
+  if (!currentNWWindow)
+    return;
+  dispatchEventIfExists(currentNWWindow, "onClose", []);
+}
+
 exports.binding = nw_binding.generate();
 exports.onNewWinPolicy = onNewWinPolicy;
 exports.onNavigation = onNavigation;
 exports.LoadingStateChanged = onLoadingStateChanged;
 exports.onDocumentStartEnd = onDocumentStartEnd;
+exports.onClose = onClose;
 exports.updateAppWindowZoom = updateAppWindowZoom;
