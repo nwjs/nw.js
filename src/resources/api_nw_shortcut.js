@@ -64,7 +64,7 @@ var ALIAS_MAP = (function() {
 
   // (Arrow)Down, (Arrow)Left, (Arrow)Right, (Arrow)Up
   'Down|Left|Right|Up'.split('|').forEach(function(a) {
-    var arrow = 'Arrow' + arrow;
+    var arrow = 'Arrow' + a;
     map[a.toLowerCase()] = arrow;
     map[arrow.toLowerCase()] = arrow;
   });

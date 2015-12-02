@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Shortcut</title>
+</head>
+<body>
+  <script>
+  function writeSuccess(id, msg) {
+    var h1 = document.createElement('h1');
+    h1.setAttribute('id', id);
+    h1.innerHTML = 'success' + (msg ? ': ' + msg : '');
+    document.body.appendChild(h1);
+  }
+  function writeFailure(id, msg) {
+    var h1 = document.createElement('h1');
+    h1.setAttribute('id', id);
+    h1.innerHTML = 'failure' + (msg ? ': ' + msg : '');
+    document.body.appendChild(h1);
+  }
+  function createShortcut(id, key) {
+    try{
+      var shortcut = new nw.Shortcut({key: key});
+      writeSuccess(id, key);
+    } catch (e) {
+      writeFailure(id, key);
+    }
+  }
+  </script>
+</body>
+</html>

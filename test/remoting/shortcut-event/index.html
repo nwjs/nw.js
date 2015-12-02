@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Shortcut</title>
+  <script>
+  function reg(id, key) {
+    var shortcut = new nw.Shortcut({key: key});
+    shortcut.on('active', function() {
+      writeSuccess(id, key);
+    });
+    shortcut.on('failed', function(e) {
+      writeFailure(id,e);
+    });
+    nw.App.registerGlobalHotkey(shortcut);
+  }
+  function unreg(id, key) {
+    var shortcut = new nw.Shortcut({key: key, failed: function() {
+      clearTimeout(timer);
+      writeFailure(id, key);
+    }});
+    nw.App.unregisterGlobalHotkey(shortcut);
+    var timer = setTimeout(function() {
+      writeSuccess(id, key);
+    }, 100);
+  }
+  function writeSuccess(id, msg) {
+    var h1 = document.createElement('h1');
+    h1.setAttribute('id', id);
+    h1.innerHTML = 'success' + (msg ? ': ' + msg : '');
+    document.body.appendChild(h1);
+  }
+  function writeFailure(id, msg) {
+    var h1 = document.createElement('h1');
+    h1.setAttribute('id', id);
+    h1.innerHTML = 'failure' + (msg ? ': ' + msg : '');
+    document.body.appendChild(h1);
+  }
+  </script>
+</head>
+<body>
+  <button id="single-a" onclick="reg(this.id, 'a')">a</button>
+  <button id="single-keyb" onclick="reg(this.id, 'keyb')">keyb</button>
+  <button id="single-upper-keyc" onclick="reg(this.id, 'KeyC')">KeyC</button>
+  <button id="ctrl-b" onclick="reg(this.id, 'ctrl+b')">ctrl+b</button>
+  <button id="ctrl-shift-b" onclick="reg(this.id, 'ctrl+shift+b')">ctrl+shift+b</button>
+  <button id="ctrl-shift-alt-b" onclick="reg(this.id, 'ctrl+shift+alt+b')">ctrl+shift+alt+b</button>
+  <button id="ctrl-shift-alt-command-b" onclick="reg(this.id, 'ctrl+shift+alt+command+b')">ctrl+shift+alt+command+b</button>
+
+</body>
+</html>
