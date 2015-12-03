@@ -26,7 +26,7 @@ class ObjectManagerFactory : public BrowserContextKeyedServiceFactory {
       content::BrowserContext* context);
 
  private:
-  friend struct DefaultSingletonTraits<ObjectManagerFactory>;
+  friend struct base::DefaultSingletonTraits<ObjectManagerFactory>;
 
   ObjectManagerFactory();
   ~ObjectManagerFactory() override;

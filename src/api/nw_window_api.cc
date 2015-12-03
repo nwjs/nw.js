@@ -173,7 +173,7 @@ bool NwCurrentWindowInternalCapturePageInternalFunction::RunAsync() {
   const float scale =
       screen->GetDisplayNearestWindow(native_view).device_scale_factor();
   if (scale > 1.0f)
-    bitmap_size = gfx::ToCeiledSize(gfx::ScaleSize(view_size, scale));
+    bitmap_size = gfx::ScaleToCeiledSize(view_size, scale);
 
   host->CopyFromBackingStore(
       gfx::Rect(view_size),

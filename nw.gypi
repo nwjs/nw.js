@@ -524,8 +524,6 @@
         ['OS=="linux"', {
           'dependencies': [
             '<(DEPTH)/chrome/browser/ui/libgtk2ui/libgtk2ui.gyp:gtk2ui',
-            '<(DEPTH)/build/linux/system.gyp:gio',
-            '<(DEPTH)/build/linux/system.gyp:gtk',
           ],
           'sources': [
             'src/browser/shell_download_manager_delegate_gtk.cc',

@@ -21,7 +21,7 @@ ObjectManager* ObjectManagerFactory::GetForBrowserContext(
 
 // static
 ObjectManagerFactory* ObjectManagerFactory::GetInstance() {
-  return Singleton<ObjectManagerFactory>::get();
+  return base::Singleton<ObjectManagerFactory>::get();
 }
 
 // static
