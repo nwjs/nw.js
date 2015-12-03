@@ -117,10 +117,8 @@ void MenuItem::SetLabel(const std::string& label) {
   is_modified_ = true;
   label_ = base::UTF8ToUTF16(label);
 
-#if 0//FIXME
   if (menu_)
     menu_->UpdateStates();
-#endif
 }
 
 void MenuItem::SetIcon(const std::string& icon) {
