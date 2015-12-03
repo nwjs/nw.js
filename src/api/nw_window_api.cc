@@ -103,18 +103,23 @@ static HWND getHWND(AppWindow* window) {
 }
 #endif
 
-NwCurrentWindowInternalShowDevToolsFunction::NwCurrentWindowInternalShowDevToolsFunction() {
-
-}
-
-NwCurrentWindowInternalShowDevToolsFunction::~NwCurrentWindowInternalShowDevToolsFunction() {
-}
-
-bool NwCurrentWindowInternalShowDevToolsFunction::RunAsync() {
-  content::RenderFrameHost* rfh = render_frame_host();
-  DevToolsWindow::OpenDevToolsWindow(
-      content::WebContents::FromRenderFrameHost(rfh));
+void NwCurrentWindowInternalShowDevToolsInternalFunction::OnOpened() {
   SendResponse(true);
+}
+
+bool NwCurrentWindowInternalShowDevToolsInternalFunction::RunAsync() {
+  content::RenderFrameHost* rfh = render_frame_host();
+  content::WebContents* web_contents = content::WebContents::FromRenderFrameHost(rfh);
+  scoped_refptr<content::DevToolsAgentHost> agent(
+      content::DevToolsAgentHost::GetOrCreateFor(web_contents));
+  DevToolsWindow::OpenDevToolsWindow(web_contents);
+  DevToolsWindow* devtools_window =
+      DevToolsWindow::FindDevToolsWindow(agent.get());
+  if (devtools_window)
+    devtools_window->SetLoadCompletedCallback(base::Bind(&NwCurrentWindowInternalShowDevToolsInternalFunction::OnOpened, this));
+  else
+    OnOpened();
+
   return true;
 }
 

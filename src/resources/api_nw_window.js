@@ -106,6 +106,10 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         break;
       }
     };
+    NWWindow.prototype.showDevTools = function(frm, headless, callback) {
+      nwNatives.setDevToolsJail(frm);
+      currentNWWindowInternal.showDevToolsInternal(callback);
+    };
     NWWindow.prototype.capturePage = function (callback, options) {
       var cb = callback;
       if (!options)

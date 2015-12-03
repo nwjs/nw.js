@@ -101,6 +101,9 @@ NWCustomBindings::NWCustomBindings(ScriptContext* context)
   RouteFunction("getProxyForURL",
                 base::Bind(&NWCustomBindings::GetProxyForURL,
                            base::Unretained(this)));
+  RouteFunction("setDevToolsJail",
+                base::Bind(&NWCustomBindings::SetDevToolsJail,
+                           base::Unretained(this)));
 }
 
 void NWCustomBindings::CrashRenderer(
@@ -247,6 +250,25 @@ void NWCustomBindings::GetProxyForURL(const v8::FunctionCallbackInfo<v8::Value>&
     return;
   }
   args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, proxy.c_str()));
+  return;
+}
+
+void NWCustomBindings::SetDevToolsJail(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  v8::Isolate* isolate = args.GetIsolate();
+  if (!args.Length())
+    return;
+  v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[0]);
+  content::RenderFrame* render_frame = context()->GetRenderFrame();
+  if (!render_frame)
+    return;
+  WebFrame* main_frame = render_frame->GetWebFrame();
+  if (frm->IsNull() || frm->IsUndefined()) {
+    main_frame->setDevtoolsJail(NULL);
+  }else{
+    blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::toImpl(frm);
+    main_frame->setDevtoolsJail(blink::WebFrame::fromFrame(iframe->contentFrame()));
+  }
+  args.GetReturnValue().Set(v8::Undefined(isolate));
   return;
 }
 

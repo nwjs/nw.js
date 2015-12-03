@@ -7,13 +7,14 @@
 [implemented_in="content/nw/src/api/nw_window_api.h"]
 namespace nw.currentWindowInternal {
   callback CapturePageCallback = void (DOMString dataUrl);
+  callback ShowDevToolsCallback = void ();
   [noinline_doc] dictionary CapturePageOptions {
     [nodoc] DOMString? format;
     [nodoc] DOMString? datatype;
     [nodoc] long? quality;
   };
   interface Functions {
-    static void showDevTools();
+    static void showDevToolsInternal(optional ShowDevToolsCallback callback);
     static void setBadgeLabel(DOMString badge);
     static void requestAttention(long count);
     static void setProgressBar(double progress);

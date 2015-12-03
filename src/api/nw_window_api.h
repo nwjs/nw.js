@@ -15,18 +15,18 @@ class WebContents;
 
 namespace extensions {
 
-class NwCurrentWindowInternalShowDevToolsFunction : public AsyncExtensionFunction {
+class NwCurrentWindowInternalShowDevToolsInternalFunction : public AsyncExtensionFunction {
  public:
-  NwCurrentWindowInternalShowDevToolsFunction();
+  NwCurrentWindowInternalShowDevToolsInternalFunction() {};
 
  protected:
-  ~NwCurrentWindowInternalShowDevToolsFunction() override;
+  ~NwCurrentWindowInternalShowDevToolsInternalFunction() override {};
 
   // ExtensionFunction:
   bool RunAsync() override;
-  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.showDevTools", UNKNOWN)
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.showDevToolsInternal", UNKNOWN)
  private:
-  void Callback();
+  void OnOpened();
 };
 
 class NwCurrentWindowInternalCapturePageInternalFunction : public AsyncExtensionFunction {
