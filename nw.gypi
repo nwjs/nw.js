@@ -982,6 +982,11 @@
          '<(DEPTH)/v8/tools/gyp/v8.gyp:nwjc',
       ],
       'conditions': [
+        ['disable_nacl==0', {
+          'dependencies': [
+            '<(DEPTH)/components/nacl.gyp:nacl',
+          ]
+        }],
         [ 'OS=="mac"', {
           'copies': [
             {
