@@ -13,5 +13,6 @@ namespace nw.Clipboard {
     [nocompile] static NWClipboard get();
     static DOMString getSync(DOMString type);
     static void setSync(DOMString content, DOMString type);
+    static void clearSync();
   };
 };

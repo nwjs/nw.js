@@ -181,6 +181,12 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       else
         this.appWindow.fullscreen();
     };
+    NWWindow.prototype.setAlwaysOnTop = function (top) {
+      this.appWindow.setAlwaysOnTop(top);
+    };
+    NWWindow.prototype.isFullscreen = function () {
+      return this.appWindow.isFullscreen();
+    };
     NWWindow.prototype.setMaximumSize = function (width, height) {
       this.appWindow.outerBounds.maxWidth = width;
       this.appWindow.outerBounds.maxHeight = height;
@@ -188,6 +194,22 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     NWWindow.prototype.setMinimumSize = function (width, height) {
       this.appWindow.outerBounds.minWidth = width;
       this.appWindow.outerBounds.minHeight = height;
+    };
+    NWWindow.prototype.resizeTo = function (width, height) {
+      this.appWindow.outerBounds.width = width;
+      this.appWindow.outerBounds.height = height;
+    };
+    NWWindow.prototype.resizeBy = function (width, height) {
+      this.appWindow.outerBounds.width += width;
+      this.appWindow.outerBounds.height += height;
+    };
+    NWWindow.prototype.moveTo = function (x, y) {
+      this.appWindow.outerBounds.top = x;
+      this.appWindow.outerBounds.left = y;
+    };
+    NWWindow.prototype.moveBy = function (x, y) {
+      this.appWindow.outerBounds.top += x;
+      this.appWindow.outerBounds.left += y;
     };
     NWWindow.prototype.setResizable = function (resizable) {
       this.appWindow.setResizable(resizable);
