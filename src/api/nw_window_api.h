@@ -29,6 +29,18 @@ class NwCurrentWindowInternalShowDevToolsInternalFunction : public AsyncExtensio
   void OnOpened();
 };
 
+class NwCurrentWindowInternalCloseDevToolsFunction : public AsyncExtensionFunction {
+ public:
+  NwCurrentWindowInternalCloseDevToolsFunction() {};
+
+ protected:
+  ~NwCurrentWindowInternalCloseDevToolsFunction() override {};
+
+  // ExtensionFunction:
+  bool RunAsync() override;
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.closeDevTools", UNKNOWN)
+};
+
 class NwCurrentWindowInternalCapturePageInternalFunction : public AsyncExtensionFunction {
  public:
   NwCurrentWindowInternalCapturePageInternalFunction();

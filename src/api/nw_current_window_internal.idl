@@ -15,6 +15,7 @@ namespace nw.currentWindowInternal {
   };
   interface Functions {
     static void showDevToolsInternal(optional ShowDevToolsCallback callback);
+    static void closeDevTools();
     static void setBadgeLabel(DOMString badge);
     static void requestAttention(long count);
     static void setProgressBar(double progress);
