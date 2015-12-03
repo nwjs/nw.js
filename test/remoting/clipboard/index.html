@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Screen</title>
+</head>
+<body>
+  <button id="get-text-btn" onclick="getText(this.id)">Get Text</button>
+  <button id="set-text-abc-btn" onclick="setText(this.id, 'abc')">Set Text to 'abc'</button>
+  <button id="set-text-def-btn" onclick="setText(this.id, 'def')">Set Text to 'def'</button>
+  <button id="clear-btn" onclick="clearClipboard(this.id)">Clear</button>
+  <script>
+  function writeSuccess(id, msg) {
+    var h1 = document.createElement('h1');
+    h1.setAttribute('id', id);
+    h1.innerHTML = 'success' + (msg ? ': ' + msg : '');
+    document.body.appendChild(h1);
+  }
+  function writeFailure(id, msg) {
+    var h1 = document.createElement('h1');
+    h1.setAttribute('id', id);
+    h1.innerHTML = 'failure' + (msg ? ': ' + msg : '');
+    document.body.appendChild(h1);
+  }
+  function getText(id) {
+    try {
+      var clipboard = nw.Clipboard.get();
+      var text = clipboard.get('text');
+      writeSuccess(id, text);
+    } catch (e) {
+      writeFailure(id, e);
+    }
+  }
+  function setText(id, text) {
+    try {
+      var clipboard = nw.Clipboard.get();
+      clipboard.set(text, 'text');
+      writeSuccess(id);
+    } catch (e) {
+      writeFailure(id, e);
+    }
+  }
+  function clearClipboard(id) {
+    try {
+      var clipboard = nw.Clipboard.get();
+      clipboard.clear();
+      writeSuccess(id);
+    } catch (e) {
+      writeFailure(id, e);
+    }
+  }
+  </script>
+</body>
+</html>
