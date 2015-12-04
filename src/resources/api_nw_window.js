@@ -150,9 +150,6 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     NWWindow.prototype.hide = function () {
       this.appWindow.hide();
     };
-    NWWindow.prototype.close = function () {
-      this.appWindow.close();
-    };
     NWWindow.prototype.focus = function () {
       this.appWindow.focus();
     };

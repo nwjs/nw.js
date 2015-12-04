@@ -14,6 +14,7 @@ namespace nw.currentWindowInternal {
     [nodoc] long? quality;
   };
   interface Functions {
+    static void close(optional boolean force);
     static void showDevToolsInternal(optional ShowDevToolsCallback callback);
     static void closeDevTools();
     static void setBadgeLabel(DOMString badge);

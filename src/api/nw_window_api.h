@@ -15,6 +15,19 @@ class WebContents;
 
 namespace extensions {
 
+class NwCurrentWindowInternalCloseFunction : public AsyncExtensionFunction {
+ public:
+  NwCurrentWindowInternalCloseFunction() {};
+
+ protected:
+  ~NwCurrentWindowInternalCloseFunction() override {};
+
+  // ExtensionFunction:
+  bool RunAsync() override;
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.close", UNKNOWN)
+};
+
+
 class NwCurrentWindowInternalShowDevToolsInternalFunction : public AsyncExtensionFunction {
  public:
   NwCurrentWindowInternalShowDevToolsInternalFunction() {};

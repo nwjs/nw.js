@@ -23,6 +23,8 @@
 #include "ui/gfx/geometry/size_conversions.h"
 #include "ui/gfx/screen.h"
 
+#include "content/nw/src/api/nw_current_window_internal.h"
+
 #if defined(OS_WIN)
 #include <shobjidl.h>
 #include <dwmapi.h>
@@ -102,6 +104,23 @@ static HWND getHWND(AppWindow* window) {
   return views::HWNDForWidget(native_app_window_views->widget()->GetTopLevelWidget());
 }
 #endif
+
+
+bool NwCurrentWindowInternalCloseFunction::RunAsync() {
+  scoped_ptr<nwapi::nw_current_window_internal::Close::Params> params(
+      nwapi::nw_current_window_internal::Close::Params::Create(*args_));
+  EXTENSION_FUNCTION_VALIDATE(params.get());
+
+  bool force = params->force.get() ? *params->force : false;
+  AppWindow* window = getAppWindow(this);
+  if (force)
+    window->GetBaseWindow()->Close();
+  else if (window->NWCanClose())
+    window->GetBaseWindow()->Close();
+
+  SendResponse(true);
+  return true;
+}
 
 void NwCurrentWindowInternalShowDevToolsInternalFunction::OnOpened() {
   SendResponse(true);

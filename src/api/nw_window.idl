@@ -39,7 +39,7 @@ namespace nw.Window {
     static void hide();
     static void focus();
     static void blur();
-    static void close();
+    static void close(optional boolean force);
     static void minimize();
     static void maximize();
     static void unmaximize();
