@@ -558,6 +558,8 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* erro
     return;
   }
 
+  manifest->MergeDictionary(package->root());
+
   if (manifest->GetString(manifest_keys::kNWJSMain, &main_url)) {
     if (base::EndsWith(main_url, ".js", base::CompareCase::INSENSITIVE_ASCII)) {
       AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, main_url);

@@ -11,6 +11,7 @@ namespace nw.App {
     [nocompile] static void crashRenderer();
     [nocompile] static void on(DOMString event, EventCallback callback);
     static void quit();
+    static void closeAllWindows();
     static void clearCache();
     static void setProxyConfig(DOMString config);
     [nocompile] static DOMString getProxyForURL(DOMString url);

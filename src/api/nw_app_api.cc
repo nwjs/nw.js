@@ -9,6 +9,9 @@
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
+#include "extensions/browser/app_window/app_window.h"
+#include "extensions/browser/app_window/app_window_registry.h"
+#include "extensions/browser/app_window/native_app_window.h"
 #include "extensions/browser/extension_system.h"
 #include "extensions/common/error_utils.h"
 #include "net/proxy/proxy_config.h"
@@ -45,6 +48,22 @@ bool NwAppQuitFunction::RunAsync() {
         base::Bind(&ExtensionService::TerminateExtension,
                    service->AsWeakPtr(),
                    extension_id()));
+  return true;
+}
+
+bool NwAppCloseAllWindowsFunction::RunAsync() {
+  AppWindowRegistry* registry = AppWindowRegistry::Get(browser_context());
+  if (!registry)
+    return false;
+
+  AppWindowRegistry::AppWindowList windows =
+    registry->GetAppWindowsForApp(extension()->id());
+
+  for (AppWindow* window : windows) {
+    if (window->NWCanClose())
+      window->GetBaseWindow()->Close();
+  }
+  SendResponse(true);
   return true;
 }
 
