@@ -20,6 +20,9 @@ namespace nw.currentWindowInternal {
     static void setBadgeLabel(DOMString badge);
     static void requestAttention(long count);
     static void setProgressBar(double progress);
+    static void enterKioskMode();
+    static void leaveKioskMode();
+    static void toggleKioskMode();
     static void capturePageInternal(optional CapturePageOptions options, optional CapturePageCallback callback);
     static void clearMenu();
     static void setMenu(long id);

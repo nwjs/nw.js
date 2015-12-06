@@ -191,5 +191,42 @@ class NwCurrentWindowInternalSetZoomFunction : public NWSyncExtensionFunction {
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setZoom", UNKNOWN)
 };
 
+class NwCurrentWindowInternalEnterKioskModeFunction : public AsyncExtensionFunction {
+ public:
+   NwCurrentWindowInternalEnterKioskModeFunction() {}
+
+ protected:
+   ~NwCurrentWindowInternalEnterKioskModeFunction() override {}
+
+   // ExtensionFunction:
+   bool RunAsync() override;
+   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.enterKioskMode", UNKNOWN)
+};
+
+class NwCurrentWindowInternalLeaveKioskModeFunction : public AsyncExtensionFunction {
+ public:
+   NwCurrentWindowInternalLeaveKioskModeFunction() {}
+
+ protected:
+   ~NwCurrentWindowInternalLeaveKioskModeFunction() override {}
+
+   // ExtensionFunction:
+   bool RunAsync() override;
+   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.leaveKioskMode", UNKNOWN)
+};
+
+class NwCurrentWindowInternalToggleKioskModeFunction : public AsyncExtensionFunction {
+ public:
+   NwCurrentWindowInternalToggleKioskModeFunction() {}
+
+ protected:
+   ~NwCurrentWindowInternalToggleKioskModeFunction() override {}
+
+   // ExtensionFunction:
+   bool RunAsync() override;
+   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.toggleKioskMode", UNKNOWN)
+};
+
+
 } // namespace extensions
 #endif

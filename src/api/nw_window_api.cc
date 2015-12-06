@@ -561,4 +561,29 @@ bool NwCurrentWindowInternalSetZoomFunction::RunNWSync(base::ListValue* response
   return true;
 }
 
+bool NwCurrentWindowInternalEnterKioskModeFunction::RunAsync() {
+  AppWindow* window = getAppWindow(this);
+  window->ForcedFullscreen();
+  SendResponse(true);
+  return true;
+}
+
+bool NwCurrentWindowInternalLeaveKioskModeFunction::RunAsync() {
+  AppWindow* window = getAppWindow(this);
+  window->Restore();
+  SendResponse(true);
+  return true;
+}
+
+bool NwCurrentWindowInternalToggleKioskModeFunction::RunAsync() {
+  AppWindow* window = getAppWindow(this);
+  if (window->IsFullscreen() || window->IsForcedFullscreen())
+    window->Restore();
+  else
+    window->ForcedFullscreen();
+  SendResponse(true);
+  return true;
+}
+
 } // namespace extensions
+
