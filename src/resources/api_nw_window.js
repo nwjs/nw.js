@@ -7,6 +7,7 @@ var sendRequest = require('sendRequest');
 
 var currentNWWindow = null;
 var currentNWWindowInternal = null;
+var canSetVisibleOnAllWorkspaces = /(darwin|linux)/.test(nw.require('os').platform());
 
 var nw_internal = require('binding').Binding.create('nw.currentWindowInternal');
 
@@ -184,6 +185,12 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     NWWindow.prototype.isFullscreen = function () {
       return this.appWindow.isFullscreen();
     };
+    NWWindow.prototype.setVisibleOnAllWorkspaces = function(all_visible) {
+      this.appWindow.setVisibleOnAllWorkspaces(all_visible);
+    };
+    NWWindow.prototype.canSetVisibleOnAllWorkspaces = function() {
+      return canSetVisibleOnAllWorkspaces;
+    };
     NWWindow.prototype.setMaximumSize = function (width, height) {
       this.appWindow.outerBounds.maxWidth = width;
       this.appWindow.outerBounds.maxHeight = height;
@@ -259,6 +266,11 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       },
       set: function(val) {
         currentNWWindowInternal.setZoom(val);
+      }
+    });
+    Object.defineProperty(NWWindow.prototype, 'isTransparent', {
+      get: function() {
+        return this.appWindow.alphaEnabled;
       }
     });
     Object.defineProperty(NWWindow.prototype, 'isKioskMode', {

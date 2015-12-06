@@ -50,6 +50,8 @@ namespace nw.Window {
     static void enterFullscreen();
     static void leaveFullscreen();
     static void toggleFullscreen();
+    static void setVisibleOnAllWorkspaces(boolean all_visible);
+    static bool canSetVisibleOnAllWorkspaces();
     static void on(DOMString event,
                    EventCallback callback);
     static void reload();
