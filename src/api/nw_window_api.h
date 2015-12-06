@@ -227,6 +227,16 @@ class NwCurrentWindowInternalToggleKioskModeFunction : public AsyncExtensionFunc
    DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.toggleKioskMode", UNKNOWN)
 };
 
+class NwCurrentWindowInternalIsKioskInternalFunction : public NWSyncExtensionFunction {
+ public:
+  NwCurrentWindowInternalIsKioskInternalFunction() {}
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
+
+ protected:
+  ~NwCurrentWindowInternalIsKioskInternalFunction() override {}
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.isKioskInternal", UNKNOWN)
+};
+
 
 } // namespace extensions
 #endif

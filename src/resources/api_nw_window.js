@@ -261,6 +261,17 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         currentNWWindowInternal.setZoom(val);
       }
     });
+    Object.defineProperty(NWWindow.prototype, 'isKioskMode', {
+      get: function() {
+        return currentNWWindowInternal.isKioskInternal();
+      },
+      set: function(val) {
+        if (val)
+          currentNWWindowInternal.enterKioskMode();
+        else
+          currentNWWindowInternal.leaveKioskMode();
+      }
+    });
     Object.defineProperty(NWWindow.prototype, 'menu', {
       get: function() {
         var ret = privates(this).menu || {};

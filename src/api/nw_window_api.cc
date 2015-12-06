@@ -83,7 +83,7 @@ const char kNoAssociatedAppWindow[] =
     "associated app window.";
 }
 
-static AppWindow* getAppWindow(AsyncExtensionFunction* func) {
+static AppWindow* getAppWindow(UIThreadExtensionFunction* func) {
   AppWindowRegistry* registry = AppWindowRegistry::Get(func->browser_context());
   DCHECK(registry);
   content::WebContents* web_contents = func->GetSenderWebContents();
@@ -584,6 +584,16 @@ bool NwCurrentWindowInternalToggleKioskModeFunction::RunAsync() {
   SendResponse(true);
   return true;
 }
+
+bool NwCurrentWindowInternalIsKioskInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
+  AppWindow* window = getAppWindow(this);
+  if (window->IsFullscreen() || window->IsForcedFullscreen())
+    response->AppendBoolean(true);
+  else
+    response->AppendBoolean(false);
+  return true;
+}
+
 
 } // namespace extensions
 
