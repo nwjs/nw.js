@@ -46,6 +46,8 @@
 #include "extensions/common/manifest.h"
 #include "extensions/common/manifest_constants.h"
 
+#include "extensions/grit/extensions_renderer_resources.h"
+
 #include "net/cert/x509_certificate.h"
 
 #include "third_party/WebKit/public/web/WebDocument.h"
@@ -59,6 +61,7 @@
 
 #include "chrome/common/chrome_constants.h"
 
+#include "ui/base/resource/resource_bundle.h"
 #include "ui/base/ui_base_types.h"
 #include "ui/gfx/image/image.h"
 #include "ui/gfx/image/image_skia_rep.h"
@@ -359,6 +362,18 @@ void DocumentElementHook(blink::WebFrame* frame,
     blink::WebScopedMicrotaskSuppression suppression;
     v8::Context::Scope cscope(v8_context);
     // v8::Handle<v8::Value> result;
+    frame->executeScriptAndReturnValue(WebScriptSource(jscript));
+  }
+
+  ui::ResourceBundle* resource_bundle = &ResourceBundle::GetSharedInstance();
+  base::StringPiece resource =
+      resource_bundle->GetRawDataResource(IDR_NW_PRE13_SHIM_JS);
+  if (resource.empty())
+    return;
+  jscript = base::UTF8ToUTF16(resource.as_string());
+  if (!v8_context.IsEmpty()) {
+    blink::WebScopedMicrotaskSuppression suppression;
+    v8::Context::Scope cscope(v8_context);
     frame->executeScriptAndReturnValue(WebScriptSource(jscript));
   }
 }
