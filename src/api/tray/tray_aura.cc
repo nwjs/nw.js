@@ -24,6 +24,7 @@
 #include "base/strings/utf_string_conversions.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
+#include "chrome/browser/browser_process.h"
 #include "chrome/browser/status_icons/status_icon.h"
 #include "chrome/browser/status_icons/status_icon_observer.h"
 #include "chrome/browser/status_icons/status_tray.h"
@@ -65,7 +66,7 @@ class TrayObserver : public StatusIconObserver {
 
 void Tray::Create(const base::DictionaryValue& option) {
   if (!status_tray_)
-    status_tray_ = StatusTray::Create();
+    status_tray_ = g_browser_process->status_tray();
 
   status_icon_ = status_tray_->CreateStatusIcon(StatusTray::NOTIFICATION_TRAY_ICON,
                                                 gfx::ImageSkia(), base::string16());
