@@ -1,6 +1,6 @@
 var Binding = require('binding').Binding;
 var forEach = require('utils').forEach;
-var nw_binding = require('binding').Binding.create('nw.Object');
+var nw_binding = require('binding').Binding.create('nw.Obj');
 var sendRequest = require('sendRequest');
 
 nw_binding.registerCustomHook(function(bindingsAPI) {

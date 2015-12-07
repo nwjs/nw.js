@@ -75,7 +75,7 @@ Tray.prototype.handleGetter = function(name) {
 Tray.prototype.handleSetter = function(name, setter, type, value) {
   value = type(value);
   privates(this).option[name] = value;
-  nw.Object.callObjectMethod(this.id, 'Tray', setter, [ value ]);
+  nw.Obj.callObjectMethod(this.id, 'Tray', setter, [ value ]);
 };
 
 Tray.prototype.__defineGetter__('title', function() {
@@ -131,13 +131,13 @@ Tray.prototype.__defineSetter__('menu', function(val) {
     throw new TypeError("'menu' property requries a valid Menu");
 
   privates(this).menu = val;
-  nw.Object.callObjectMethod(this.id, 'Tray', 'SetMenu', [ val.id ]);
+  nw.Obj.callObjectMethod(this.id, 'Tray', 'SetMenu', [ val.id ]);
 });
 
 Tray.prototype.remove = function() {
   if (trayEvents.objs[this.id])
     this.removeListener('click');
-  nw.Object.callObjectMethod(this.id, 'Tray', 'Remove', []);
+  nw.Obj.callObjectMethod(this.id, 'Tray', 'Remove', []);
 }
 
 Tray.prototype.on = function (event, callback) {
@@ -163,7 +163,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     trayEvents.objs[id]._onclick();
   });
   apiFunctions.setHandleRequest('destroy', function(id) {
-    sendRequest.sendRequestSync('nw.Object.destroy', [id], this.definition.parameters, {});
+    sendRequest.sendRequestSync('nw.Obj.destroy', [id], this.definition.parameters, {});
   });
   apiFunctions.setHandleRequest('create', function(option) {
     var id = contextMenuNatives.GetNextContextMenuId();
@@ -172,7 +172,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
 
     option.generatedId = id;
     var ret = new Tray(id, option);
-    sendRequest.sendRequestSync('nw.Object.create', [id, 'Tray', option], this.definition.parameters, {});
+    sendRequest.sendRequestSync('nw.Obj.create', [id, 'Tray', option], this.definition.parameters, {});
     messagingNatives.BindToGC(ret, nw.Tray.destroy.bind(undefined, id), -1);
     return ret;
   });

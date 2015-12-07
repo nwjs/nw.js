@@ -12,13 +12,13 @@
 
 namespace extensions {
 
-NwObjectCreateFunction::NwObjectCreateFunction() {
+NwObjCreateFunction::NwObjCreateFunction() {
 }
 
-NwObjectCreateFunction::~NwObjectCreateFunction() {
+NwObjCreateFunction::~NwObjCreateFunction() {
 }
 
-bool NwObjectCreateFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwObjCreateFunction::RunNWSync(base::ListValue* response, std::string* error) {
   base::DictionaryValue* options = nullptr;
   int id = 0;
   std::string type;
@@ -31,13 +31,13 @@ bool NwObjectCreateFunction::RunNWSync(base::ListValue* response, std::string* e
   return true;
 }
 
-NwObjectDestroyFunction::NwObjectDestroyFunction() {
+NwObjDestroyFunction::NwObjDestroyFunction() {
 }
 
-NwObjectDestroyFunction::~NwObjectDestroyFunction() {
+NwObjDestroyFunction::~NwObjDestroyFunction() {
 }
 
-bool NwObjectDestroyFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwObjDestroyFunction::RunNWSync(base::ListValue* response, std::string* error) {
   int id = 0;
   EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &id));
 
@@ -46,13 +46,13 @@ bool NwObjectDestroyFunction::RunNWSync(base::ListValue* response, std::string* 
   return true;
 }
 
-NwObjectCallObjectMethodFunction::NwObjectCallObjectMethodFunction() {
+NwObjCallObjectMethodFunction::NwObjCallObjectMethodFunction() {
 }
 
-NwObjectCallObjectMethodFunction::~NwObjectCallObjectMethodFunction() {
+NwObjCallObjectMethodFunction::~NwObjCallObjectMethodFunction() {
 }
 
-bool NwObjectCallObjectMethodFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwObjCallObjectMethodFunction::RunNWSync(base::ListValue* response, std::string* error) {
   base::ListValue* arguments = nullptr;
   int id = 0;
   std::string type, method;
@@ -66,13 +66,13 @@ bool NwObjectCallObjectMethodFunction::RunNWSync(base::ListValue* response, std:
   return true;
 }
 
-NwObjectCallObjectMethodSyncFunction::NwObjectCallObjectMethodSyncFunction() {
+NwObjCallObjectMethodSyncFunction::NwObjCallObjectMethodSyncFunction() {
 }
 
-NwObjectCallObjectMethodSyncFunction::~NwObjectCallObjectMethodSyncFunction() {
+NwObjCallObjectMethodSyncFunction::~NwObjCallObjectMethodSyncFunction() {
 }
 
-bool NwObjectCallObjectMethodSyncFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwObjCallObjectMethodSyncFunction::RunNWSync(base::ListValue* response, std::string* error) {
   base::ListValue* arguments = nullptr;
   int id = 0;
   std::string type, method;
