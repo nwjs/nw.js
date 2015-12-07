@@ -348,6 +348,19 @@ void DocumentElementHook(blink::WebFrame* frame,
   RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
   if (!rv)
     return;
+
+  ui::ResourceBundle* resource_bundle = &ResourceBundle::GetSharedInstance();
+  base::StringPiece resource =
+      resource_bundle->GetRawDataResource(IDR_NW_PRE13_SHIM_JS);
+  if (resource.empty())
+    return;
+  base::string16 jscript = base::UTF8ToUTF16(resource.as_string());
+  if (!v8_context.IsEmpty()) {
+    blink::WebScopedMicrotaskSuppression suppression;
+    v8::Context::Scope cscope(v8_context);
+    frame->executeScriptAndReturnValue(WebScriptSource(jscript));
+  }
+
   std::string js_fn = rv->renderer_preferences().nw_inject_js_doc_start;
   if (js_fn.empty())
     return;
@@ -357,23 +370,11 @@ void DocumentElementHook(blink::WebFrame* frame,
     //LOG(WARNING) << "Failed to load js script file: " << js_file.value();
     return;
   }
-  base::string16 jscript = base::UTF8ToUTF16(content);
+  jscript = base::UTF8ToUTF16(content);
   if (!v8_context.IsEmpty()) {
     blink::WebScopedMicrotaskSuppression suppression;
     v8::Context::Scope cscope(v8_context);
     // v8::Handle<v8::Value> result;
-    frame->executeScriptAndReturnValue(WebScriptSource(jscript));
-  }
-
-  ui::ResourceBundle* resource_bundle = &ResourceBundle::GetSharedInstance();
-  base::StringPiece resource =
-      resource_bundle->GetRawDataResource(IDR_NW_PRE13_SHIM_JS);
-  if (resource.empty())
-    return;
-  jscript = base::UTF8ToUTF16(resource.as_string());
-  if (!v8_context.IsEmpty()) {
-    blink::WebScopedMicrotaskSuppression suppression;
-    v8::Context::Scope cscope(v8_context);
     frame->executeScriptAndReturnValue(WebScriptSource(jscript));
   }
 }
