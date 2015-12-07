@@ -29,27 +29,27 @@ Menu.prototype.__defineSetter__('items', function(val) {
 
 Menu.prototype.append = function(menu_item) {
   privates(this).items.push(menu_item);
-  nw.Object.callObjectMethod(this.id, 'Menu', 'Append', [ menu_item.id ]);
+  nw.Obj.callObjectMethod(this.id, 'Menu', 'Append', [ menu_item.id ]);
 };
 
 Menu.prototype.insert = function(menu_item, i) {
   privates(this).items.splice(i, 0, menu_item);
-  nw.Object.callObjectMethod(this.id, 'Menu', 'Insert', [ menu_item.id, i ]);
+  nw.Obj.callObjectMethod(this.id, 'Menu', 'Insert', [ menu_item.id, i ]);
 }
 
 Menu.prototype.remove = function(menu_item) {
   var pos_hint = privates(this).items.indexOf(menu_item);
-  nw.Object.callObjectMethod(this.id, 'Menu', 'Remove', [ menu_item.id, pos_hint ]);
+  nw.Obj.callObjectMethod(this.id, 'Menu', 'Remove', [ menu_item.id, pos_hint ]);
   privates(this).items.splice(pos_hint, 1);
 }
 
 Menu.prototype.removeAt = function(i) {
-  nw.Object.callObjectMethod(this.id, 'Menu', 'Remove', [ privates(this).items[i].id, i ]);
+  nw.Obj.callObjectMethod(this.id, 'Menu', 'Remove', [ privates(this).items[i].id, i ]);
   privates(this).items.splice(i, 1);
 }
 
 Menu.prototype.popup = function(x, y) {
-  nw.Object.callObjectMethod(this.id, 'Menu', 'Popup', [ x, y ]);
+  nw.Obj.callObjectMethod(this.id, 'Menu', 'Popup', [ x, y ]);
 }
 
 Menu.prototype.createMacBuiltin = function (app_name, options) {
@@ -246,7 +246,7 @@ MenuItem.prototype.handleGetter = function(name) {
 MenuItem.prototype.handleSetter = function(name, setter, type, value) {
   value = type(value);
   privates(this).option[name] = value;
-  nw.Object.callObjectMethod(this.id, 'MenuItem', setter, [ value ]);
+  nw.Obj.callObjectMethod(this.id, 'MenuItem', setter, [ value ]);
 };
 
 MenuItem.prototype.__defineGetter__('type', function() {
@@ -335,7 +335,7 @@ MenuItem.prototype.__defineGetter__('submenu', function() {
 
 MenuItem.prototype.__defineSetter__('submenu', function(val) {
   privates(this).submenu = val;
-  nw.Object.callObjectMethod(this.id, 'MenuItem', 'SetSubmenu', [ val.id ]);
+  nw.Obj.callObjectMethod(this.id, 'MenuItem', 'SetSubmenu', [ val.id ]);
 });
 
 nw_binding.registerCustomHook(function(bindingsAPI) {
@@ -355,7 +355,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     return ret;
   });
   apiFunctions.setHandleRequest('destroy', function(id) {
-    sendRequest.sendRequestSync('nw.Object.destroy', [id], this.definition.parameters, {});
+    sendRequest.sendRequestSync('nw.Obj.destroy', [id], this.definition.parameters, {});
   });
   apiFunctions.setHandleRequest('createMenu', function(option) {
     var id = contextMenuNatives.GetNextContextMenuId();
@@ -364,7 +364,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
 
     option.generatedId = id;
     var ret = new Menu(id, option);
-    sendRequest.sendRequestSync('nw.Object.create', [id, 'Menu', option], this.definition.parameters, {});
+    sendRequest.sendRequestSync('nw.Obj.create', [id, 'Menu', option], this.definition.parameters, {});
     messagingNatives.BindToGC(ret, nw.Menu.destroy.bind(undefined, id), -1);
     return ret;
   });
