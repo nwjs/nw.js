@@ -1009,7 +1009,7 @@
             'icudat_path': '<(DEPTH)/third_party/icu/source/data/in/icudtl.dat',
           }, {
             'package_mode': 'nosdk',
-            'icudat_path': '<(DEPTH)/third_party/icu/android/icudtl.dat',
+            'icudat_path': '<(DEPTH)/third_party/icu/source/data/in/icudtl.dat',
           }],
           ['disable_nacl==0 and nwjs_sdk==0', {
             'package_mode': 'nacl',
