@@ -1051,6 +1051,17 @@
       ],
     },
     {
+      'target_name': 'payload',
+      'type': 'executable',
+      'sources': [
+        'tools/payload.cc',
+      ],
+      'dependencies': [
+        '<(DEPTH)/base/base.gyp:base',
+        '<(DEPTH)/extensions/extensions.gyp:extensions_browser',
+      ],
+    },
+    {
       'target_name': 'test',
       'type': 'none',
       'dependencies': [
