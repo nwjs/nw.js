@@ -38,7 +38,7 @@
 #else
 # define NW_VERSION_STRING  NW_STRINGIFY(NW_MAJOR_VERSION) "." \
                               NW_STRINGIFY(NW_MINOR_VERSION) "." \
-                              NW_STRINGIFY(NW_PATCH_VERSION) "-alpha7"
+                              NW_STRINGIFY(NW_PATCH_VERSION) "-alpha8"
 #endif
 
 #define NW_VERSION "v" NW_VERSION_STRING
