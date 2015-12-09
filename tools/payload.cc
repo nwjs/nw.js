@@ -27,11 +27,11 @@ using crypto::SecureHash;
 
 namespace {
 const char kBlockHashesKey[] = "root_hash";
-const char kBlockSizeKey[] = "block_size";
+//const char kBlockSizeKey[] = "block_size";
 const char kFileHashesKey[] = "files";
 const char kPathKey[] = "path";
-const char kVersionKey[] = "version";
-const int kVersion = 2;
+//const char kVersionKey[] = "version";
+//const int kVersion = 2;
 
 typedef std::set<base::FilePath> SortedFilePathSet;
 
