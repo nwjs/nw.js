@@ -118,7 +118,6 @@ class MenuItem : public Base {
   Menu* submenu_;
   bool enable_shortcut_;
 
-  bool super_down_flag_;
   bool meta_down_flag_;
 
 #endif

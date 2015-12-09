@@ -344,8 +344,8 @@ bool NwCurrentWindowInternalSetMenuFunction::RunAsync() {
   menubar->UpdateMenu(menu->model());
   native_app_window_views->layout_();
   native_app_window_views->SchedulePaint();
+  menu->UpdateKeys( native_app_window_views->widget()->GetFocusManager() );
 #endif
-  //FIXME menu->UpdateKeys( native_app_window_views->widget()->GetFocusManager() );
   return true;
 }
   
