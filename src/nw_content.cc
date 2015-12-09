@@ -31,6 +31,7 @@
 #include "content/public/common/user_agent.h"
 #include "content/public/renderer/render_view.h"
 
+#include "content/nw/src/nw_content_verifier_delegate.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/policy_cert_verifier.h"
@@ -103,6 +104,8 @@ using extensions::Feature;
 using extensions::ExtensionPrefs;
 using extensions::ExtensionRegistry;
 using extensions::Dispatcher;
+using extensions::ContentVerifierDelegate;
+using extensions::NWContentVerifierDelegate;
 using blink::WebScriptSource;
 
 namespace manifest_keys = extensions::manifest_keys;
@@ -434,18 +437,28 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
       }
 
       if (context->extension()->manifest()->GetString(manifest_keys::kNWJSInternalMainFilename, &main_fn)) {
+        v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate,
+         ("global.__filename = '" + main_fn + "';").c_str()));
+        script->Run();
+      }
+
+      bool content_verification = false;
+      if (context->extension()->manifest()->GetBoolean(manifest_keys::kNWJSContentVerifyFlag,
+                                                       &content_verification) && content_verification) {
         std::string root_path = context->extension()->path().AsUTF8Unsafe();
 #if defined(OS_WIN)
         base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
 #endif
         base::ReplaceChars(root_path, "'", "\\'", &root_path);
-        v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate,
-         ("global.__filename = '" + main_fn + "';" +
-           "global.__dirname = '" + root_path + "';"
-          ).c_str()));
+        v8::Local<v8::Script> script =
+          v8::Script::Compile(v8::String::NewFromUtf8(isolate,
+                                                      (std::string("global.__nwjs_cv = true;") +
+                                                       "global.__dirname = '" + root_path + "';" +
+                                                       "global.__nwjs_ext_id = '" + context->extension()->id() + "';").c_str()));
+
         script->Run();
       }
-
+      
       dom_context->Exit();
     }
   }
@@ -493,6 +506,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
     base::ReplaceChars(root_path, "'", "\\'", &root_path);
     v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate, (
         set_nw_script +
+        "nw.global.XMLHttpRequest = XMLHttpRequest;" +
         // Make node's relative modules work
         "if (typeof nw.process != 'undefined' && (!nw.process.mainModule.filename || nw.process.mainModule.filename === 'blank')) {"
         "  var root = '" + root_path + "';"
@@ -609,6 +623,9 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* erro
     //FIXME: node-remote spec different with kWebURLs
     AmendManifestStringList(manifest, manifest_keys::kWebURLs, node_remote);
   }
+
+  if (NWContentVerifierDelegate::GetDefaultMode() == ContentVerifierDelegate::ENFORCE_STRICT)
+    manifest->SetBoolean(manifest_keys::kNWJSContentVerifyFlag, true);
 }
 
 void RendererProcessTerminatedHook(content::RenderProcessHost* process,
