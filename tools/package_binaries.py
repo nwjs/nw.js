@@ -166,6 +166,7 @@ def generate_target_nw(platform_name, arch, version):
                            ]
         if flavor == 'sdk':
             target['input'].append('nwjc')
+            target['input'].append('payload')
         if flavor in ['nacl','sdk'] :
             target['input'] += ['nacl_helper', 'nacl_helper_bootstrap', 'pnacl']
             if arch == 'x64':
@@ -193,6 +194,7 @@ def generate_target_nw(platform_name, arch, version):
                            ]
         if flavor == 'sdk':
             target['input'].append('nwjc.exe')
+            target['input'].append('payload.exe')
         if flavor in ['nacl','sdk'] :
             target['input'].append('pnacl')
             if arch == 'x64':
@@ -206,6 +208,7 @@ def generate_target_nw(platform_name, arch, version):
                           ]
         if flavor == 'sdk':
             target['input'].append('nwjc')
+            target['input'].append('payload')
     else:
         print 'Unsupported platform: ' + platform_name
         exit(-1)

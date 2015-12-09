@@ -958,6 +958,7 @@
               'inputs': [
                 '<(PRODUCT_DIR)/chromedriver',
                 '<(PRODUCT_DIR)/nwjc',
+                '<(PRODUCT_DIR)/payload',
               ],
               'outputs': [
                 '<(PRODUCT_DIR)/strip_binaries.stamp',
@@ -980,6 +981,7 @@
          '<(DEPTH)/chrome/chrome.gyp:chrome',
          '<(DEPTH)/third_party/node/node.gyp:node',
          '<(DEPTH)/v8/tools/gyp/v8.gyp:nwjc',
+         'payload',
       ],
       'conditions': [
         ['disable_nacl==0', {
