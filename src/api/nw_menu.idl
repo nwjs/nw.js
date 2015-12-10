@@ -32,7 +32,6 @@ namespace nw.Menu {
     static void createMacBuiltin(DOMString appname);
   };
   interface Functions {
-    static object createItem(optional object options);
     [nocompile] static object createMenu(optional object options);
     [nocompile] static void destroy(long id);
     static DOMString getNSStringWithFixup(DOMString msg);

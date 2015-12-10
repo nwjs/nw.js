@@ -7,19 +7,6 @@
 
 namespace extensions {
 
-class NwMenuCreateItemFunction : public NWSyncExtensionFunction {
- public:
-  NwMenuCreateItemFunction();
-  bool RunNWSync(base::ListValue* response, std::string* error) override;
-
- protected:
-  ~NwMenuCreateItemFunction() override;
-
-  DECLARE_EXTENSION_FUNCTION("nw.Menu.createItem", UNKNOWN)
- private:
-  DISALLOW_COPY_AND_ASSIGN(NwMenuCreateItemFunction);
-};
-
 class NwMenuGetNSStringWithFixupFunction : public NWSyncExtensionFunction {
  public:
   NwMenuGetNSStringWithFixupFunction(){}

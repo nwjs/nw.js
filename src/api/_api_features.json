@@ -23,6 +23,10 @@
     "channel": "stable",
     "contexts": ["blessed_extension"]
   },
+  "nw.MenuItem": {
+    "channel": "stable",
+    "contexts": ["blessed_extension"]
+  },
   "nw.Shell": {
     "channel": "stable",
     "contexts": ["blessed_extension"]
