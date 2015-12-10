@@ -31,6 +31,7 @@
 #include "content/nw/src/nw_content.h"
 #include "content/nw/src/nw_package.h"
 #include "ui/base/accelerators/accelerator.h"
+#include "ui/gfx/image/image_skia_operations.h"
 #include "ui/events/event_constants.h"//for modifier key code
 #include "ui/events/keycodes/dom/keycode_converter.h"
 #include "ui/events/keycodes/keyboard_codes.h"//for keycode
@@ -40,6 +41,9 @@
 namespace nw {
 
 namespace {
+
+static const int kIconWidth = 16;
+static const int kIconHeight = 16;
 
 typedef std::map<std::string,std::string> KeyMap;
 
@@ -188,8 +192,15 @@ void MenuItem::SetIcon(const std::string& icon) {
     return;
   }
 
+  gfx::Image originImage;
   nw::Package* package = nw::InitNWPackage();
-  nw::GetImage(package, base::FilePath::FromUTF8Unsafe(icon), &icon_);
+  if (nw::GetImage(package, base::FilePath::FromUTF8Unsafe(icon), &originImage)) {
+    const gfx::ImageSkia* originImageSkia = originImage.ToImageSkia();
+    gfx::ImageSkia resizedImageSkia = gfx::ImageSkiaOperations::CreateResizedImage(*originImageSkia,
+                                                                                   skia::ImageOperations::RESIZE_GOOD,
+                                                                                   gfx::Size(kIconWidth, kIconHeight));
+    icon_ = gfx::Image(resizedImageSkia);
+  }
 }
 
 void MenuItem::SetIconIsTemplate(bool isTemplate) {
