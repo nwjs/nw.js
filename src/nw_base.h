@@ -11,6 +11,7 @@ namespace nw {
   NW_EXPORT void SetExitCode(int);
   NW_EXPORT void SetCurrentNewWinManifest(const base::string16& manifest);
   NW_EXPORT const base::string16& GetCurrentNewWinManifest();
+  NW_EXPORT bool gcm_enabled();
 }
 
 #endif

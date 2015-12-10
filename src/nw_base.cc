@@ -1,6 +1,7 @@
 #include "nw_base.h"
 
 #include "nw_package.h"
+#include "base/command_line.h"
 
 namespace nw {
 
@@ -42,6 +43,11 @@ void SetCurrentNewWinManifest(const base::string16& manifest) {
 
 const base::string16& GetCurrentNewWinManifest() {
   return g_current_new_win_manifest;
+}
+
+bool gcm_enabled() {
+  base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
+  return command_line->HasSwitch("enable-gcm");
 }
 
 
