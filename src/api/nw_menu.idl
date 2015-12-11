@@ -5,34 +5,7 @@
 // nw Menu API
 [implemented_in="content/nw/src/api/nw_menu_api.h"]
 namespace nw.Menu {
-  callback EventCallback = void();
-  [noinline_doc] dictionary MenuItem {
-    [nodoc] DOMString? type;
-    [nodoc] DOMString? title;
-    DOMString icon;
-    boolean iconIsTemplate;
-    DOMString tooltip;
-    boolean checked;
-    boolean enabled;
-    object submenu;
-    DOMString key;
-    DOMString modifiers;
-    object click;
-    static void on(DOMString event,
-                   EventCallback callback);
-  };
-  [noinline_doc] dictionary Menu {
-    [nodoc] MenuItem[] items;
-
-    static void append([instanceOf=MenuItem] object item);
-    static void insert([instanceOf=MenuItem] object item, long index);
-    static void remove([instanceOf=MenuItem] object item);
-    static void removeAt(long index);
-    static void popup(long x, long y);
-    static void createMacBuiltin(DOMString appname);
-  };
   interface Functions {
-    [nocompile] static void destroy(long id);
     static DOMString getNSStringWithFixup(DOMString msg);
     static DOMString getNSStringFWithFixup(DOMString msg, DOMString appName);
   };

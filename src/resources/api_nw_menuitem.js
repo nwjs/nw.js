@@ -96,7 +96,7 @@ function MenuItem(option) {
     option.modifiers = "";
 
   nw.Obj.create(id, 'MenuItem', option);
-  messagingNatives.BindToGC(this, nw.Menu.destroy.bind(undefined, id), -1);
+  messagingNatives.BindToGC(this, nw.Obj.destroy.bind(undefined, id), -1);
 
 }
 

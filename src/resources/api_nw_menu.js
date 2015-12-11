@@ -26,7 +26,7 @@ function Menu (option) {
   privates(this).option = option;
 
   nw.Obj.create(id, 'Menu', option);
-  messagingNatives.BindToGC(this, nw.Menu.destroy.bind(undefined, id), -1);
+  messagingNatives.BindToGC(this, nw.Obj.destroy.bind(undefined, id), -1);
 };
 
 Menu.prototype.__defineGetter__('items', function() {
@@ -178,9 +178,6 @@ Menu.prototype.createMacBuiltin = function (app_name, options) {
 
 nw_binding.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
-  apiFunctions.setHandleRequest('destroy', function(id) {
-    sendRequest.sendRequestSync('nw.Obj.destroy', arguments, this.definition.parameters, {});
-  });
   apiFunctions.setHandleRequest('getNSStringWithFixup', function(msg) {
     return sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {})[0];
   });
@@ -190,7 +187,6 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
 });
 
 var nwMenuBinding = nw_binding.generate();
-Menu.destroy = nwMenuBinding.destroy;
 Menu.getNSStringWithFixup = nwMenuBinding.getNSStringWithFixup;
 Menu.getNSStringFWithFixup = nwMenuBinding.getNSStringFWithFixup;
 
