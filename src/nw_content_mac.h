@@ -5,6 +5,10 @@ namespace nw {
 class Menu;
 }
 
-void NWChangeAppMenu(nw::Menu* menu);
+namespace extensions {
+class NativeAppWindow;
+}
 
+void NWChangeAppMenu(nw::Menu* menu);
+void NWSetNSWindowShowInTaskbar(extensions::NativeAppWindow* win, bool show);
 #endif

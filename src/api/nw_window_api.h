@@ -237,6 +237,17 @@ class NwCurrentWindowInternalIsKioskInternalFunction : public NWSyncExtensionFun
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.isKioskInternal", UNKNOWN)
 };
 
+class NwCurrentWindowInternalSetShowInTaskbarFunction : public AsyncExtensionFunction {
+ public:
+  NwCurrentWindowInternalSetShowInTaskbarFunction() {}
+
+ protected:
+  ~NwCurrentWindowInternalSetShowInTaskbarFunction() override {}
+  
+   // ExtensionFunction:
+   bool RunAsync() override;
+   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setShowInTaskbar", UNKNOWN)
+};
 
 } // namespace extensions
 #endif

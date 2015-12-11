@@ -29,6 +29,8 @@
 #include <shobjidl.h>
 #include <dwmapi.h>
 
+#include "base/win/windows_version.h"
+#include "ui/base/win/hidden_window.h"
 #include "ui/gfx/canvas.h"
 #include "ui/gfx/icon_util.h"
 #include "ui/gfx/font_list.h"
@@ -594,6 +596,60 @@ bool NwCurrentWindowInternalIsKioskInternalFunction::RunNWSync(base::ListValue* 
   return true;
 }
 
+bool NwCurrentWindowInternalSetShowInTaskbarFunction::RunAsync() {
+  EXTENSION_FUNCTION_VALIDATE(args_);
+  bool show;
+  EXTENSION_FUNCTION_VALIDATE(args_->GetBoolean(0, &show));
+#if defined(OS_WIN)
+  AppWindow* window = getAppWindow(this);
+
+  native_app_window::NativeAppWindowViews* native_app_window_views =
+      static_cast<native_app_window::NativeAppWindowViews*>(
+          window->GetBaseWindow());
+
+  views::Widget* widget = native_app_window_views->widget()->GetTopLevelWidget();
+
+  if (show == false && base::win::GetVersion() < base::win::VERSION_VISTA) {
+    // Change the owner of native window. Only needed on Windows XP.
+    ::SetWindowLong(views::HWNDForWidget(widget),
+                    GWLP_HWNDPARENT,
+                    (LONG)ui::GetHiddenWindow());
+  }
+
+  base::win::ScopedComPtr<ITaskbarList> taskbar;
+  HRESULT result = taskbar.CreateInstance(CLSID_TaskbarList, NULL,
+                                          CLSCTX_INPROC_SERVER);
+  if (FAILED(result)) {
+    VLOG(1) << "Failed creating a TaskbarList object: " << result;
+    SendResponse(true);
+    return true;
+  }
+
+  result = taskbar->HrInit();
+  if (FAILED(result)) {
+    LOG(ERROR) << "Failed initializing an ITaskbarList interface.";
+    SendResponse(true);
+    return true;
+  }
+
+  if (show)
+    result = taskbar->AddTab(views::HWNDForWidget(widget));
+  else
+    result = taskbar->DeleteTab(views::HWNDForWidget(widget));
+
+  if (FAILED(result)) {
+    LOG(ERROR) << "Failed to change the show in taskbar attribute";
+    SendResponse(true);
+    return true;
+  }
+#elif defined(OS_MACOSX)
+  AppWindow* app_window = getAppWindow(this);
+  extensions::NativeAppWindow* native_window = app_window->GetBaseWindow();
+  NWSetNSWindowShowInTaskbar(native_window, show);
+#endif
+  SendResponse(true);
+  return true;
+}
 
 } // namespace extensions
 

@@ -30,5 +30,6 @@ namespace nw.currentWindowInternal {
     static void reloadIgnoringCache();
     static double getZoom();
     static void setZoom(double level);
+    static void setShowInTaskbar(boolean show);
   };
 };
