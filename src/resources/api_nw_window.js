@@ -33,7 +33,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       privates(this).menu = null;
     };
     forEach(currentNWWindowInternal, function(key, value) {
-      NWWindow.prototype[key] = value;
+      if (!key.endsWith('Internal'))
+        NWWindow.prototype[key] = value;
     });
 
     NWWindow.prototype.onNewWinPolicy      = new Event();
