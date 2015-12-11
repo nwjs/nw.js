@@ -436,7 +436,7 @@ bool NwCurrentWindowInternalSetBadgeLabelFunction::RunAsync() {
   return true;
 }
   
-bool NwCurrentWindowInternalRequestAttentionFunction::RunAsync() {
+bool NwCurrentWindowInternalRequestAttentionInternalFunction::RunAsync() {
   EXTENSION_FUNCTION_VALIDATE(args_);
   int count;
   EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &count));
@@ -458,17 +458,13 @@ bool NwCurrentWindowInternalRequestAttentionFunction::RunAsync() {
     fwi.dwFlags = FLASHW_STOP;
   }
   FlashWindowEx(&fwi);
-#elif defined(OS_LINUX)
+#elif defined(OS_LINUX) || defined(OS_MACOSX)
   AppWindow* window = getAppWindow(this);
   if (!window) {
     error_ = kNoAssociatedAppWindow;
     return false;
   }
   window->GetBaseWindow()->FlashFrame(count);
-#else
-  error_ = "NwCurrentWindowInternalRequestAttentionFunction NOT Implemented"
-  NOTIMPLEMENTED() << error_;
-  return false;
 #endif
   return true;
 }

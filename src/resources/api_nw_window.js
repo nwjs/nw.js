@@ -229,6 +229,11 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     NWWindow.prototype.setResizable = function (resizable) {
       this.appWindow.setResizable(resizable);
     };
+    NWWindow.prototype.requestAttention = function (flash) {
+      if (typeof flash == 'boolean')
+        flash = flash ? -1 : 0;
+      currentWindowInternal.requestAttentionInternal(flash);
+    };
     NWWindow.prototype.cookies = chrome.cookies;
 
     Object.defineProperty(NWWindow.prototype, 'x', {

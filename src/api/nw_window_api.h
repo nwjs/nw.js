@@ -131,18 +131,18 @@ class NwCurrentWindowInternalSetBadgeLabelFunction : public AsyncExtensionFuncti
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setBadgeLabel", UNKNOWN)
 };
 
-class NwCurrentWindowInternalRequestAttentionFunction : public AsyncExtensionFunction {
+class NwCurrentWindowInternalRequestAttentionInternalFunction : public AsyncExtensionFunction {
  public:
-  NwCurrentWindowInternalRequestAttentionFunction(){}
+  NwCurrentWindowInternalRequestAttentionInternalFunction(){}
 
  protected:
-  ~NwCurrentWindowInternalRequestAttentionFunction() override {}
+  ~NwCurrentWindowInternalRequestAttentionInternalFunction() override {}
 
   // ExtensionFunction:
   bool RunAsync() override;
-  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.requestAttention", UNKNOWN)
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.requestAttentionInternal", UNKNOWN)
  private:
-  DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalRequestAttentionFunction);
+  DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalRequestAttentionInternalFunction);
 };
   
 class NwCurrentWindowInternalSetProgressBarFunction : public AsyncExtensionFunction {
