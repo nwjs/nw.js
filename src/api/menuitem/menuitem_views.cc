@@ -21,6 +21,7 @@
 #include "content/nw/src/api/menuitem/menuitem.h"
 
 #include "base/files/file_path.h"
+#include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
@@ -30,13 +31,77 @@
 #include "content/nw/src/nw_content.h"
 #include "content/nw/src/nw_package.h"
 #include "ui/base/accelerators/accelerator.h"
+#include "ui/gfx/image/image_skia_operations.h"
 #include "ui/events/event_constants.h"//for modifier key code
+#include "ui/events/keycodes/dom/keycode_converter.h"
 #include "ui/events/keycodes/keyboard_codes.h"//for keycode
+#include "ui/events/keycodes/keyboard_code_conversion.h"
 #include "base/logging.h"
 
-ui::KeyboardCode GetKeycodeFromText(std::string text);
-
 namespace nw {
+
+namespace {
+
+static const int kIconWidth = 16;
+static const int kIconHeight = 16;
+
+typedef std::map<std::string,std::string> KeyMap;
+
+static KeyMap keymap = {
+  {"`"    , "Backquote"},
+  {"\\"   , "Backslash"},
+  {"["    , "BracketLeft"},
+  {"]"    , "BracketRight"},
+  {","    , "Comma"},
+  {"="    , "Equal"},
+  {"-"    , "Minus"},
+  {"."    , "Period"},
+  {"'"    , "Quote"},
+  {";"    , "Semicolon"},
+  {"/"    , "Slash"},
+  {"\n"   , "Enter"},
+  {"\t"   , "Tab"},
+  {"UP"   , "ArrowUp"},
+  {"DOWN" , "ArrowDown"},
+  {"LEFT" , "ArrowLeft"},
+  {"RIGHT", "ArrowRight"},
+  {"ESC"  , "Escape"},
+  {"MEDIANEXTTRACK", "MediaTrackNext"},
+  {"MEDIAPREVTRACK", "MediaTrackPrevious"}
+};
+
+ui::KeyboardCode GetKeycodeFromText(std::string text){
+  ui::KeyboardCode retval = ui::VKEY_UNKNOWN;
+  if (text.size() != 0){
+    std::string upperText = base::ToUpperASCII(text);
+    std::string keyName = text;
+    bool found = false;
+    if (upperText.size() == 1){
+      char key = upperText[0];
+      if (key>='0' && key<='9'){//handle digital
+        keyName = "Digit" + upperText;
+        found = true;
+      } else if (key>='A'&&key<='Z'){//handle alphabet
+        keyName = "Key" + upperText;
+        found = true;
+      }
+    }
+
+    if (!found) {
+      KeyMap::iterator it = keymap.find(upperText);
+      if (it != keymap.end()) {
+        keyName = it->second;
+        found = true;
+      }
+    }
+
+    // build keyboard code
+    ui::DomCode domCode = ui::KeycodeConverter::CodeStringToDomCode(keyName.c_str());
+    retval = ui::DomCodeToUsLayoutKeyboardCode(domCode);
+  }
+  return retval;
+}
+} // namespace
 
 void MenuItem::Create(const base::DictionaryValue& option) {
   is_modified_ = false;
@@ -44,7 +109,6 @@ void MenuItem::Create(const base::DictionaryValue& option) {
   is_enabled_ = true;
   type_ = "normal";
   submenu_ = NULL;
-  super_down_flag_ = false;
   meta_down_flag_ = false;
 
   focus_manager_ = NULL;
@@ -63,33 +127,32 @@ void MenuItem::Create(const base::DictionaryValue& option) {
 
   ui::KeyboardCode keyval = ui::VKEY_UNKNOWN;
 
-
-  if (key.size() == 0){
+  keyval = GetKeycodeFromText(key);
+  if (keyval == ui::VKEY_UNKNOWN){
     enable_shortcut_ = false;
   } else {
     enable_shortcut_ = true;
-    keyval = ::GetKeycodeFromText(key);
+    //only code for ctrl, shift, alt, super and meta modifiers
+    int modifiers_value = ui::EF_NONE;
+    if (modifiers.find("ctrl")!=std::string::npos){
+      modifiers_value |= ui::EF_CONTROL_DOWN;
+    }
+    if (modifiers.find("shift")!=std::string::npos){
+      modifiers_value |= ui::EF_SHIFT_DOWN ;
+    }
+    if (modifiers.find("alt")!=std::string::npos){
+      modifiers_value |= ui::EF_ALT_DOWN;
+    }
+    if (modifiers.find("super")!=std::string::npos
+     || modifiers.find("cmd")!=std::string::npos
+     || modifiers.find("command")!=std::string::npos){
+      modifiers_value |= ui::EF_COMMAND_DOWN;
+    }
+    if (modifiers.find("meta")!=std::string::npos){
+      meta_down_flag_ = true;
+    }
+    accelerator_ = ui::Accelerator(keyval,modifiers_value);
   }
-
-  //only code for ctrl, shift, alt, super and meta modifiers
-  int modifiers_value = ui::EF_NONE;
-  if (modifiers.find("ctrl")!=std::string::npos){
-    modifiers_value = modifiers_value | ui::EF_CONTROL_DOWN;
-  }
-  if (modifiers.find("shift")!=std::string::npos){
-    modifiers_value = modifiers_value | ui::EF_SHIFT_DOWN ;
-  }
-  if (modifiers.find("alt")!=std::string::npos){
-    modifiers_value = modifiers_value | ui::EF_ALT_DOWN;
-  }
-  if (modifiers.find("super")!=std::string::npos){
-    super_down_flag_ = true;
-  }
-  if (modifiers.find("meta")!=std::string::npos){
-    meta_down_flag_ = true;
-  }
-  accelerator_ = ui::Accelerator(keyval,modifiers_value);
-
 
   std::string icon;
   if (option.GetString("icon", &icon) && !icon.empty())
@@ -117,10 +180,8 @@ void MenuItem::SetLabel(const std::string& label) {
   is_modified_ = true;
   label_ = base::UTF8ToUTF16(label);
 
-#if 0//FIXME
   if (menu_)
     menu_->UpdateStates();
-#endif
 }
 
 void MenuItem::SetIcon(const std::string& icon) {
@@ -131,14 +192,22 @@ void MenuItem::SetIcon(const std::string& icon) {
     return;
   }
 
+  gfx::Image originImage;
   nw::Package* package = nw::InitNWPackage();
-  nw::GetImage(package, base::FilePath::FromUTF8Unsafe(icon), &icon_);
+  if (nw::GetImage(package, base::FilePath::FromUTF8Unsafe(icon), &originImage)) {
+    const gfx::ImageSkia* originImageSkia = originImage.ToImageSkia();
+    gfx::ImageSkia resizedImageSkia = gfx::ImageSkiaOperations::CreateResizedImage(*originImageSkia,
+                                                                                   skia::ImageOperations::RESIZE_GOOD,
+                                                                                   gfx::Size(kIconWidth, kIconHeight));
+    icon_ = gfx::Image(resizedImageSkia);
+  }
 }
 
 void MenuItem::SetIconIsTemplate(bool isTemplate) {
 }
 
 void MenuItem::SetTooltip(const std::string& tooltip) {
+  is_modified_ = true;
   tooltip_ = base::UTF8ToUTF16(tooltip);
   if (menu_)
     menu_->UpdateStates();
@@ -160,6 +229,10 @@ void MenuItem::SetSubmenu(Menu* menu) {
   submenu_ = menu;
 }
 
+bool MenuItem::GetChecked() {
+  return is_checked_;
+}
+
 void MenuItem::UpdateKeys(views::FocusManager *focus_manager){
   if (focus_manager == NULL){
     return ;
@@ -179,16 +252,9 @@ void MenuItem::UpdateKeys(views::FocusManager *focus_manager){
 
 #if defined(OS_WIN) || defined(OS_LINUX)
 bool MenuItem::AcceleratorPressed(const ui::Accelerator& accelerator) {
-
 #if defined(OS_WIN)
-  if (super_down_flag_){
-    if ( ( (::GetKeyState(VK_LWIN) & 0x8000) != 0x8000)
-         || ( (::GetKeyState(VK_LWIN) & 0x8000) != 0x8000) ){
-      return true;
-    }
-  }
-  if (meta_down_flag_){
-    if ( (::GetKeyState(VK_APPS) & 0x8000) != 0x8000 ){
+  if (meta_down_flag_) {
+    if ((::GetKeyState(VK_APPS) & 0x8000) != 0x8000) {
       return true;
     }
   }
@@ -204,94 +270,3 @@ bool MenuItem::CanHandleAccelerators() const {
 #endif
 }  // namespace nwapi
 
-
-
-ui::KeyboardCode GetKeycodeFromText(std::string text){
-  ui::KeyboardCode retval = ui::VKEY_UNKNOWN;
-  if (text.size() != 0){
-    for (unsigned int i=0;i<text.size();++i){
-      text[i] = ::toupper(text[i]);
-    }
-    if (text.size() == 1){
-      char key = text[0];
-      if (key>='0' && key<='9'){//handle digital
-        retval = (ui::KeyboardCode)(ui::VKEY_0 + key - '0');
-      } else if (key>='A'&&key<='Z'){//handle alphabet
-        retval = (ui::KeyboardCode)(ui::VKEY_A + key - 'A');
-      } else if (key == '`'){//handle all special symbols
-        retval = ui::VKEY_OEM_3;
-      } else if (key == ','){
-        retval = ui::VKEY_OEM_COMMA;
-      } else if (key == '.'){
-        retval = ui::VKEY_OEM_PERIOD;
-      } else if (key == '/'){
-        retval = ui::VKEY_OEM_2;
-      } else if (key == ';'){
-        retval = ui::VKEY_OEM_1;
-      } else if (key == '\''){
-        retval = ui::VKEY_OEM_7;
-      } else if (key == '['){
-        retval = ui::VKEY_OEM_4;
-      } else if (key == ']'){
-        retval = ui::VKEY_OEM_6;
-      } else if (key == '\\'){
-        retval = ui::VKEY_OEM_5;
-      } else if (key == '-'){
-        retval = ui::VKEY_OEM_MINUS;
-      } else if (key == '='){
-        retval = ui::VKEY_OEM_PLUS;
-      }
-    } else {//handle long key name
-      if (!text.compare("ESC")){
-        retval = ui::VKEY_ESCAPE;
-      } else if (!text.compare("BACKSPACE")){
-        retval = ui::VKEY_BACK;
-      } else if (!text.compare("F1")){
-        retval = ui::VKEY_F1;
-      } else if (!text.compare("F2")){
-        retval = ui::VKEY_F2;
-      } else if (!text.compare("F3")){
-        retval = ui::VKEY_F3;
-      } else if (!text.compare("F4")){
-        retval = ui::VKEY_F4;
-      } else if (!text.compare("F5")){
-        retval = ui::VKEY_F5;
-      } else if (!text.compare("F6")){
-        retval = ui::VKEY_F6;
-      } else if (!text.compare("F7")){
-        retval = ui::VKEY_F7;
-      } else if (!text.compare("F8")){
-        retval = ui::VKEY_F8;
-      } else if (!text.compare("F9")){
-        retval = ui::VKEY_F9;
-      } else if (!text.compare("F10")){
-        retval = ui::VKEY_F10;
-      } else if (!text.compare("F11")){
-        retval = ui::VKEY_F11;
-      } else if (!text.compare("F12")){
-        retval = ui::VKEY_F12;
-      } else if (!text.compare("INSERT")){
-        retval = ui::VKEY_INSERT;
-      } else if (!text.compare("HOME")){
-        retval = ui::VKEY_HOME;
-      } else if (!text.compare("DELETE")){
-        retval = ui::VKEY_DELETE;
-      } else if (!text.compare("END")){
-        retval = ui::VKEY_END;
-      } else if (!text.compare("PAGEUP")){
-        retval = ui::VKEY_PRIOR;
-      } else if (!text.compare("PAGEDOWN")){
-        retval = ui::VKEY_NEXT;
-      } else if (!text.compare("UP")){
-        retval = ui::VKEY_UP;
-      } else if (!text.compare("LEFT")){
-        retval = ui::VKEY_LEFT;
-      } else if (!text.compare("DOWN")){
-        retval = ui::VKEY_DOWN;
-      } else if (!text.compare("RIGHT")){
-        retval = ui::VKEY_RIGHT;
-      }
-    }
-  }
-  return retval;
-}

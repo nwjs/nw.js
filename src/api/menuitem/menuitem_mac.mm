@@ -174,4 +174,8 @@ void MenuItem::SetSubmenu(Menu* sub_menu) {
   [menu_item_ setSubmenu:sub_menu->menu_];
 }
 
+bool MenuItem::GetChecked() {
+  return menu_item_.state == NSOnState;
+}
+
 }  // namespace nw

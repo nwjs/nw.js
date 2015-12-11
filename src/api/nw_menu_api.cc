@@ -11,24 +11,6 @@ using nw::MenuItem;
 
 namespace extensions {
 
-NwMenuCreateItemFunction::NwMenuCreateItemFunction() {
-}
-
-NwMenuCreateItemFunction::~NwMenuCreateItemFunction() {
-}
-
-bool NwMenuCreateItemFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  base::DictionaryValue* props = nullptr;
-  int id = 0;
-  EXTENSION_FUNCTION_VALIDATE(args_->GetDictionary(0, &props));
-  EXTENSION_FUNCTION_VALIDATE(
-        props->GetInteger("generatedId", &id));
-
-  nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
-  manager->OnAllocateObject(id, "MenuItem", *props, extension_id());
-  return true;
-}
-
 #ifndef OS_MACOSX
 bool NwMenuGetNSStringWithFixupFunction::RunNWSync(base::ListValue* response, std::string* error) {
   error_ = "NwMenuGetNSStringWithFixupFunction is only for OSX";

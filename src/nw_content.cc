@@ -835,9 +835,6 @@ bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window) {
   if (!menu)
     return false;
   menu->menu_delegate_->ExecuteCommand(command_id, 0);
-#if defined(OS_WIN)
-  menu->menu_->UpdateStates();
-#endif
   return true;
 #endif //OSX
 }
