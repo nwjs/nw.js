@@ -182,6 +182,16 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     NWWindow.prototype.setAlwaysOnTop = function (top) {
       this.appWindow.setAlwaysOnTop(top);
     };
+    NWWindow.prototype.setPosition = function (pos) {
+      if (pos == "center") {
+        var screenWidth = screen.availWidth;
+        var screenHeight = screen.availHeight;
+        var width  = this.appWindow.outerBounds.width;
+        var height = this.appWindow.outerBounds.height;
+        this.appWindow.outerBounds.setPosition(Math.round((screenWidth-width)/2),
+                                               Math.round((screenHeight-height)/2));
+      }
+    };
     NWWindow.prototype.isFullscreen = function () {
       return this.appWindow.isFullscreen();
     };
