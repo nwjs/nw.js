@@ -88,4 +88,15 @@ void MenuItem::Call(const std::string& method,
   }
 }
 
+void MenuItem::CallSync(const std::string& method,
+                        const base::ListValue& arguments,
+                        base::ListValue* result) {
+  if (method == "GetChecked") {
+    result->AppendBoolean(GetChecked());
+  } else {
+    NOTREACHED() << "Invalid call to MenuItem method:" << method
+                 << " arguments:" << arguments;
+  }
+}
+
 }  // namespace nwapi

@@ -58,9 +58,12 @@ class MenuItem : public Base {
            const std::string& extension_id);
   ~MenuItem() override;
 
-   void Call(const std::string& method,
+  void Call(const std::string& method,
              const base::ListValue& arguments,
              content::RenderFrameHost* rvh = nullptr) override;
+  void CallSync(const std::string& method,
+                        const base::ListValue& arguments,
+                        base::ListValue* result) override;
 
 #if defined(OS_WIN) || defined(OS_LINUX)
    bool AcceleratorPressed(const ui::Accelerator& accelerator) override;
@@ -84,6 +87,8 @@ class MenuItem : public Base {
   void SetEnabled(bool enabled);
   void SetChecked(bool checked);
   void SetSubmenu(Menu* sub_menu);
+
+  bool GetChecked();
 
   // Template icon works only on Mac OS X
   void SetIconIsTemplate(bool isTemplate);

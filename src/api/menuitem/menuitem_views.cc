@@ -229,6 +229,10 @@ void MenuItem::SetSubmenu(Menu* menu) {
   submenu_ = menu;
 }
 
+bool MenuItem::GetChecked() {
+  return is_checked_;
+}
+
 void MenuItem::UpdateKeys(views::FocusManager *focus_manager){
   if (focus_manager == NULL){
     return ;

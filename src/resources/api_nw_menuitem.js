@@ -174,7 +174,7 @@ MenuItem.prototype.__defineGetter__('checked', function() {
   if (this.type != 'checkbox')
     return undefined;
 
-  return this.handleGetter('checked');
+  return nw.Obj.callObjectMethodSync(this.id, 'MenuItem', 'GetChecked', [])[0];
 });
 
 MenuItem.prototype.__defineSetter__('checked', function(val) {
