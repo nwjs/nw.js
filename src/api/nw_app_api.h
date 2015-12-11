@@ -92,5 +92,17 @@ class NwAppGetDataPathFunction : public NWSyncExtensionFunction {
   DISALLOW_COPY_AND_ASSIGN(NwAppGetDataPathFunction);
 };
 
+class NwAppCrashBrowserFunction : public AsyncExtensionFunction {
+ public:
+  NwAppCrashBrowserFunction() {}
+
+ protected:
+  ~NwAppCrashBrowserFunction() override {}
+
+  // ExtensionFunction:
+  bool RunAsync() override;
+  DECLARE_EXTENSION_FUNCTION("nw.App.crashBrowser", UNKNOWN)
+};
+
 } // namespace extensions
 #endif

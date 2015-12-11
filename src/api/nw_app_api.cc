@@ -149,4 +149,11 @@ bool NwAppGetDataPathFunction::RunNWSync(base::ListValue* response, std::string*
   return true;
 }
 
+bool NwAppCrashBrowserFunction::RunAsync() {
+  int* ptr = nullptr;
+  *ptr = 1;
+  return true;
+}
+
+
 } // namespace extensions
