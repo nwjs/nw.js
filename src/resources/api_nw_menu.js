@@ -7,14 +7,26 @@ var contextMenuNatives = requireNative('context_menus');
 var messagingNatives = requireNative('messaging_natives');
 var Event = require('event_bindings').Event;
 
-var Menu = function Menu (id, option) {
+function Menu (option) {
+  if (!(this instanceof Menu)) {
+    return new Menu(option);
+  }
+
+  if (typeof option != 'object' || !option)
+    option = { type: 'contextmenu' };
   if (option.type != 'contextmenu' && option.type != 'menubar')
     throw new TypeError('Invalid menu type: ' + option.type);
+
+  var id = contextMenuNatives.GetNextContextMenuId();
+  option.generatedId = id;
 
   this.id = id;
   this.type = option.type;
   privates(this).items = [];
   privates(this).option = option;
+
+  nw.Obj.create(id, 'Menu', option);
+  messagingNatives.BindToGC(this, nw.Menu.destroy.bind(undefined, id), -1);
 };
 
 Menu.prototype.__defineGetter__('items', function() {
@@ -51,7 +63,7 @@ Menu.prototype.popup = function(x, y) {
 }
 
 Menu.prototype.createMacBuiltin = function (app_name, options) {
-  var appleMenu = nw.Menu.createMenu({type:'menubar'}),
+  var appleMenu = new nw.Menu({type:'menubar'}),
   options = options || {};
   
   appleMenu.append(new nw.MenuItem({
@@ -89,7 +101,7 @@ Menu.prototype.createMacBuiltin = function (app_name, options) {
   this.append(new nw.MenuItem({ label:'', submenu: appleMenu}));
   
   if (!options.hideEdit) {
-    var editMenu = nw.Menu.createMenu({type:'menubar'});
+    var editMenu = new nw.Menu({type:'menubar'});
     editMenu.append(new nw.MenuItem({
       label: nw.Menu.getNSStringWithFixup("IDS_EDIT_UNDO_MAC"),
       selector: "undo:",
@@ -139,7 +151,7 @@ Menu.prototype.createMacBuiltin = function (app_name, options) {
   }
   
   if (!options.hideWindow) {
-    var winMenu = nw.Menu.createMenu({type:'menubar'});
+    var winMenu = new nw.Menu({type:'menubar'});
     winMenu.append(new nw.MenuItem({
       label: nw.Menu.getNSStringWithFixup("IDS_MINIMIZE_WINDOW_MAC"),
       selector: "performMiniaturize:",
@@ -169,17 +181,6 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
   apiFunctions.setHandleRequest('destroy', function(id) {
     sendRequest.sendRequestSync('nw.Obj.destroy', arguments, this.definition.parameters, {});
   });
-  apiFunctions.setHandleRequest('createMenu', function(option) {
-    var id = contextMenuNatives.GetNextContextMenuId();
-    if (typeof option != 'object' || !option)
-      option = { type: 'contextmenu' };
-
-    option.generatedId = id;
-    var ret = new Menu(id, option);
-    sendRequest.sendRequestSync('nw.Obj.create', [id, 'Menu', option], this.definition.parameters, {});
-    messagingNatives.BindToGC(ret, nw.Menu.destroy.bind(undefined, id), -1);
-    return ret;
-  });
   apiFunctions.setHandleRequest('getNSStringWithFixup', function(msg) {
     return sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {})[0];
   });
@@ -188,4 +189,9 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
   });
 });
 
-exports.binding = nw_binding.generate();
+var nwMenuBinding = nw_binding.generate();
+Menu.destroy = nwMenuBinding.destroy;
+Menu.getNSStringWithFixup = nwMenuBinding.getNSStringWithFixup;
+Menu.getNSStringFWithFixup = nwMenuBinding.getNSStringFWithFixup;
+
+exports.binding = Menu;
