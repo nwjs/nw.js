@@ -183,6 +183,9 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     NWWindow.prototype.setAlwaysOnTop = function (top) {
       this.appWindow.setAlwaysOnTop(top);
     };
+    NWWindow.prototype.isAlwaysOnTop = function () {
+      return this.appWindow.isAlwaysOnTop();
+    };
     NWWindow.prototype.setPosition = function (pos) {
       if (pos == "center") {
         var screenWidth = screen.availWidth;
