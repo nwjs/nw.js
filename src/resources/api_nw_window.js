@@ -232,7 +232,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     NWWindow.prototype.requestAttention = function (flash) {
       if (typeof flash == 'boolean')
         flash = flash ? -1 : 0;
-      currentWindowInternal.requestAttentionInternal(flash);
+      currentNWWindowInternal.requestAttentionInternal(flash);
     };
     NWWindow.prototype.cookies = chrome.cookies;
 
