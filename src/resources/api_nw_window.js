@@ -360,6 +360,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         options.alwaysOnTop = true;
       if (params['visible_on_all_workspaces'] === true)
         options.visibleOnAllWorkspaces = true;
+      if (params.transparent)
+        options.alphaEnabled = true;
     }
     chrome.app.window.create(url, options, function(appWin) {
       if (callback) {
