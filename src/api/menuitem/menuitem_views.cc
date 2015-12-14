@@ -21,7 +21,6 @@
 #include "content/nw/src/api/menuitem/menuitem.h"
 
 #include "base/files/file_path.h"
-#include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
@@ -33,9 +32,6 @@
 #include "ui/base/accelerators/accelerator.h"
 #include "ui/gfx/image/image_skia_operations.h"
 #include "ui/events/event_constants.h"//for modifier key code
-#include "ui/events/keycodes/dom/keycode_converter.h"
-#include "ui/events/keycodes/keyboard_codes.h"//for keycode
-#include "ui/events/keycodes/keyboard_code_conversion.h"
 #include "base/logging.h"
 
 namespace nw {
@@ -45,62 +41,6 @@ namespace {
 static const int kIconWidth = 16;
 static const int kIconHeight = 16;
 
-typedef std::map<std::string,std::string> KeyMap;
-
-static KeyMap keymap = {
-  {"`"    , "Backquote"},
-  {"\\"   , "Backslash"},
-  {"["    , "BracketLeft"},
-  {"]"    , "BracketRight"},
-  {","    , "Comma"},
-  {"="    , "Equal"},
-  {"-"    , "Minus"},
-  {"."    , "Period"},
-  {"'"    , "Quote"},
-  {";"    , "Semicolon"},
-  {"/"    , "Slash"},
-  {"\n"   , "Enter"},
-  {"\t"   , "Tab"},
-  {"UP"   , "ArrowUp"},
-  {"DOWN" , "ArrowDown"},
-  {"LEFT" , "ArrowLeft"},
-  {"RIGHT", "ArrowRight"},
-  {"ESC"  , "Escape"},
-  {"MEDIANEXTTRACK", "MediaTrackNext"},
-  {"MEDIAPREVTRACK", "MediaTrackPrevious"}
-};
-
-ui::KeyboardCode GetKeycodeFromText(std::string text){
-  ui::KeyboardCode retval = ui::VKEY_UNKNOWN;
-  if (text.size() != 0){
-    std::string upperText = base::ToUpperASCII(text);
-    std::string keyName = text;
-    bool found = false;
-    if (upperText.size() == 1){
-      char key = upperText[0];
-      if (key>='0' && key<='9'){//handle digital
-        keyName = "Digit" + upperText;
-        found = true;
-      } else if (key>='A'&&key<='Z'){//handle alphabet
-        keyName = "Key" + upperText;
-        found = true;
-      }
-    }
-
-    if (!found) {
-      KeyMap::iterator it = keymap.find(upperText);
-      if (it != keymap.end()) {
-        keyName = it->second;
-        found = true;
-      }
-    }
-
-    // build keyboard code
-    ui::DomCode domCode = ui::KeycodeConverter::CodeStringToDomCode(keyName.c_str());
-    retval = ui::DomCodeToUsLayoutKeyboardCode(domCode);
-  }
-  return retval;
-}
 } // namespace
 
 void MenuItem::Create(const base::DictionaryValue& option) {
