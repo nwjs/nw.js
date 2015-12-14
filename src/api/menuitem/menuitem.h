@@ -23,6 +23,9 @@
 
 #include "base/compiler_specific.h"
 #include "content/nw/src/api/base/base.h"
+#include "ui/events/keycodes/dom/keycode_converter.h"
+#include "ui/events/keycodes/keyboard_codes.h"//for keycode
+#include "ui/events/keycodes/keyboard_code_conversion.h"
 
 #include <string>
 
@@ -42,6 +45,8 @@ class MenuItemDelegate;
 #endif  // defined(OS_MACOSX)
 
 namespace nw {
+
+ui::KeyboardCode GetKeycodeFromText(std::string text);
 
 class Menu;
 

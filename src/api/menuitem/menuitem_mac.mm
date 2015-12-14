@@ -25,6 +25,7 @@
 #include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/menuitem/menuitem_delegate_mac.h"
+#include "ui/events/keycodes/keyboard_code_conversion_mac.h"
 
 namespace nw{
 
@@ -118,7 +119,17 @@ void MenuItem::SetLabel(const std::string& label) {
 }
 
 void MenuItem::SetKey(const std::string& key) {
-  [menu_item_ setKeyEquivalent:[NSString stringWithUTF8String:key.c_str()]];
+  ui::KeyboardCode key_code = GetKeycodeFromText(key);
+  NSString* key_equivalent;
+  if (ui::VKEY_UNKNOWN == key_code) { // legacy key code support
+    key_equivalent = [NSString stringWithUTF8String:key.c_str()];
+  } else {
+    unichar shifted_character;
+    int result = ui::MacKeyCodeForWindowsKeyCode(key_code, 0, &shifted_character, NULL);
+    DCHECK(result != -1);
+    key_equivalent = [NSString stringWithFormat:@"%C", shifted_character];
+  }
+  [menu_item_ setKeyEquivalent:key_equivalent];
   VLOG(1) << "setkey: " << key;
 }
 
