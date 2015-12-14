@@ -246,7 +246,12 @@ def generate_target_symbols(platform_name, arch, version):
                                 '-', arch])
     if platform_name == 'linux':
         target['compress'] = 'tar.gz'
-        target['input'] = ['nw.breakpad.' + arch]
+        target['input'] = [
+            'nw.breakpad.' + arch,
+            'node.so.breakpad.' + arch,
+            'nw.so.breakpad.' + arch,
+            'nacl_helper.breakpad.' + arch
+        ]
         target['folder'] = True
     elif platform_name == 'win':
         target['compress'] = None

@@ -82,6 +82,7 @@ SRC_NAMES=(
     "${SRC_APP_NAME} Framework.framework"
     "${SRC_APP_NAME} Helper.app"
     "crashpad_handler"
+    "libnode.dylib"
 )
 
 # PDF.plugin is optional. Only include it if present.
