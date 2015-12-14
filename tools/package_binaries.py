@@ -13,7 +13,7 @@ from hashlib import sha256
 
 from subprocess import call
 
-steps = ['nw', 'chromedriver', 'symbol', 'headers', 'others']
+steps = ['nw', 'symbol', 'headers', 'others']
 ################################
 # Parse command line args
 parser = argparse.ArgumentParser(description='Package nw binaries.')
@@ -167,6 +167,7 @@ def generate_target_nw(platform_name, arch, version):
         if flavor == 'sdk':
             target['input'].append('nwjc')
             target['input'].append('payload')
+            target['input'].append('chromedriver')
         if flavor in ['nacl','sdk'] :
             target['input'] += ['nacl_helper', 'nacl_helper_bootstrap', 'pnacl']
             if arch == 'x64':
@@ -195,6 +196,7 @@ def generate_target_nw(platform_name, arch, version):
         if flavor == 'sdk':
             target['input'].append('nwjc.exe')
             target['input'].append('payload.exe')
+            target['input'].append('chromedriver.exe')
         if flavor in ['nacl','sdk'] :
             target['input'].append('pnacl')
             if arch == 'x64':
@@ -209,6 +211,7 @@ def generate_target_nw(platform_name, arch, version):
         if flavor == 'sdk':
             target['input'].append('nwjc')
             target['input'].append('payload')
+            target['input'].append('chromedriver')
     else:
         print 'Unsupported platform: ' + platform_name
         exit(-1)
