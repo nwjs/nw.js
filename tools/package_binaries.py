@@ -252,9 +252,11 @@ def generate_target_symbols(platform_name, arch, version):
         target['input'] = [
             'nw.breakpad.' + arch,
             'node.so.breakpad.' + arch,
-            'nw.so.breakpad.' + arch,
-            'nacl_helper.breakpad.' + arch
+            'nw.so.breakpad.' + arch
         ]
+        if flavor in ['sdk', 'nacl']:
+            target['input'].append('nacl_helper.breakpad.' + arch)
+
         target['folder'] = True
     elif platform_name == 'win':
         target['compress'] = None
