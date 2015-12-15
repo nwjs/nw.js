@@ -29,6 +29,7 @@ namespace nw.Window {
     [nodoc] boolean? show;
     [nodoc] boolean? always_on_top;
     [nodoc] boolean? visible_on_all_workspaces;
+    [nodoc] boolean? transparent;
   };
 
   [noinline_doc] dictionary NWWindow {
