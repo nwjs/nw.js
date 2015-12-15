@@ -6,8 +6,8 @@
 [implemented_in="content/nw/src/api/nw_object_api.h"]
 namespace nw.Obj {
   interface Functions {
-    static object create(long id, DOMString type, object options);
-    static object destroy(long id);
+    static void create(long id, DOMString type, object options);
+    static void destroy(long id);
     static void callObjectMethod(long id, DOMString type, DOMString method, any[] arguments);
     static object callObjectMethodSync(long id, DOMString type, DOMString method, any[] arguments);
   };
