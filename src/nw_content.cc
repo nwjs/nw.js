@@ -321,9 +321,12 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
 void DocumentElementHook(blink::WebFrame* frame,
                          const extensions::Extension* extension,
                          const GURL& effective_document_url) {
+  if (frame->isNwDisabledChildFrame())
+    return;
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::HandleScope hscope(isolate);
   frame->document().securityOrigin().grantUniversalAccess();
+  frame->setNodeJS(true);
   std::string path = effective_document_url.path();
   v8::Local<v8::Context> v8_context = frame->mainWorldScriptContext();
   std::string root_path = extension->path().AsUTF8Unsafe();
@@ -384,6 +387,9 @@ void DocumentElementHook(blink::WebFrame* frame,
 
 void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   v8::Isolate* isolate = context->isolate();
+
+  if (frame->isNwDisabledChildFrame())
+    return;
 
   bool nodejs_enabled = true;
   context->extension()->manifest()->GetBoolean(manifest_keys::kNWJSEnableNode, &nodejs_enabled);
