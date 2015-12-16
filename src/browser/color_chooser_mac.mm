@@ -130,8 +130,8 @@ void ColorChooserMac::SetSelectedColor(SkColor color) {
 }
 
 - (void)windowWillClose:(NSNotification*)notification {
-  chooser_->DidCloseColorPabel();
   nonUserChange_ = NO;
+  chooser_->DidCloseColorPabel();
 }
 
 - (void)didChooseColor:(NSColorPanel*)panel {
