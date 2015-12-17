@@ -1,0 +1,5 @@
+{
+  "name":"test-iframe-nw",
+  "main":"index.html",
+  "dependencies":{}
+}

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf8">
+    <title>iframe nw test</title>
+  </head>
+  <body>
+    <h1 id='result'>iframe nw test</h1>
+    <h1 id='result2'>iframe nw test</h1>
+    <iframe id="iframe" src="iframe.html"></iframe>
+    <iframe id="iframe2" src="iframe.html" nwdisable></iframe>
+    <script type="text/javascript">
+       iframe.onload = function() {
+          document.getElementById('result').innerHTML = iframe.contentWindow.nw_type;
+       };
+       iframe2.onload = function() {
+          document.getElementById('result2').innerHTML = iframe2.contentWindow.nw_type;
+       };
+    </script>
+  </body>
+</html>
+    
