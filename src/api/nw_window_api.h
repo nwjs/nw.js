@@ -14,10 +14,12 @@ class WebContents;
 }
 
 namespace extensions {
+class AppWindow;
 
 class NwCurrentWindowInternalCloseFunction : public AsyncExtensionFunction {
  public:
   NwCurrentWindowInternalCloseFunction() {};
+  static void DoClose(AppWindow*);
 
  protected:
   ~NwCurrentWindowInternalCloseFunction() override {};
