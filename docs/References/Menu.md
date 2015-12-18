@@ -1,9 +1,6 @@
 # Menu {: .doctitle}
 ---
 
-!!! important "Available"
-    Since 0.3.0
-
 [TOC]
 
 `Menu` represents a menubar or a context menu. And `MenuItem` is item inside a menu. Please read the document of [`MenuItem`](MenuItem.md) for more details.
@@ -55,9 +52,6 @@ nw.Window.get().menu = menu;
 
 ## new Menu([option])
 
-!!! important "Available"
-    Since 0.3.0
-
 * `option` `{Object}` _Optional_
     - `type` `{String}` _Optional_ two types are accepted by this method: "menubar" or "contextmenu". The value is set to "contextmenu" by default.
 
@@ -65,24 +59,15 @@ Create a `Menu` object.
 
 ## menu.items
 
-!!! important "Available"
-    Since 0.3.0
-
 Get an array that contains all items of a menu. Each item is an instance of `MenuItem`. See [MenuItem](MenuItem.md) for detailed information.
 
 ## menu.append(item)
-
-!!! important "Available"
-    Since 0.3.0
 
 * `item` `{MenuItem}` the item to be appended to the tail of the menu
 
 Append `item` to the tail of the menu.
 
 ## menu.insert(item, i)
-
-!!! important "Available"
-    Since 0.3.0
 
 * `item` `{MenuItem}` the item to be inserted into the menu
 * `i` `{Integer}` the index in the menu list to insert the the item
@@ -91,26 +76,17 @@ Insert the `item` at `i`th position of the menu. The index is started from 0.
 
 ## menu.remove(item)
 
-!!! important "Available"
-    Since 0.3.0
-
 * `item` `{MenuItem}` the item to be removed
 
 Remove `item` from the menu. This method requires you to keep the `MenuItem` outside the `Menu`.
 
 ## menu.removeAt(i)
 
-!!! important "Available"
-    Since 0.3.0
-
 * `i` `{Integer}` the index of the item to be removed from the menu
 
 Remove the `i`th item form the menu.
 
 ## menu.popup(x, y)
-
-!!! important "Available"
-    Since 0.3.0
 
 * `x` `{Integer}` the x position of the anchor
 * `y` `{Integer}` the y position of the anchor
@@ -131,16 +107,10 @@ In this way, you can precisely choose which menu to show for different elements,
 
 ## menu.createMacBuiltin(appname, [options]) (Mac)
 
-!!! important "Available"
-    Since 0.10.0
-
 * `appname` `{String}` The application name
 * `options` `{Object}` _Optional_
     - `hideEdit` `{Boolean}` _Optional_ do not populate the Edit menu
     - `hideWindow` `{Boolean}` _Optional_ do not populate the Window menu
-
-!!! note
-    `options` is available since 0.10.1.
 
 Creates the builtin menus (App, Edit and Window) within the menubar on Mac. The items can be manipulated with the `items` property. The argument `appname` is used for the title of App menu.
 

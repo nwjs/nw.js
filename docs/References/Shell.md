@@ -1,9 +1,6 @@
 # Shell {: .doctitle}
 ---
 
-!!! important "Available"
-    Since 0.3.0
-
 [TOC]
 
 `Shell` is a collection of APIs that do desktop related jobs.
@@ -23,26 +20,17 @@ nw.Shell.showItemInFolder('test.txt');
 
 ## Shell.openExternal(uri)
 
-!!! important "Available"
-    Since 0.3.0
-
 * `uri` `{String}` A URL to open in system default manner.
 
 Open the given external URI in the desktop's default manner. For example, mailto: URLs in the default mail user agent.
 
 ## Shell.openItem(file_path)
 
-!!! important "Available"
-    Since 0.3.0
-
 * `file_path` `{String}` path to a local file
 
 Open the given `file_path` in the desktop's default manner.
 
 ## Shell.showItemInFolder(file_path)
-
-!!! important "Available"
-    Since 0.3.0
 
 * `file_path` `{String}` path to a local file
 
