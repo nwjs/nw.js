@@ -365,6 +365,10 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         options.visibleOnAllWorkspaces = true;
       if (params.transparent)
         options.alphaEnabled = true;
+      if (params.kiosk === true)
+        options.kiosk = true;
+      if (params.position)
+        options.position = params.position;
     }
     chrome.app.window.create(url, options, function(appWin) {
       if (callback) {
