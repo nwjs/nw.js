@@ -1,0 +1,6 @@
+
+{
+  "name":"test-iframe-remote",
+  "node-remote":"<all_urls>",
+  "main":"index.html"
+}
