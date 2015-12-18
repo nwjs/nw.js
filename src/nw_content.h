@@ -37,7 +37,7 @@ int MainPartsPreCreateThreadsHook();
 void MainPartsPostDestroyThreadsHook();
 void ContextCreationHook(blink::WebLocalFrame* frame, extensions::ScriptContext* context);
 void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* error);
-void DocumentElementHook(blink::WebFrame* frame,
+void DocumentElementHook(blink::WebLocalFrame* frame,
                          const extensions::Extension* extension,
                          const GURL& effective_document_url);
 void DocumentFinishHook(blink::WebFrame* frame,

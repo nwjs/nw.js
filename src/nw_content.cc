@@ -298,6 +298,13 @@ void DocumentFinishHook(blink::WebFrame* frame,
 }
 
 void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatcher) {
+  // ignore the first invocation of this hook for iframe
+  // or we'll trigger creating a context with invalid type
+  // there will follow another one with valid url
+  blink::WebLocalFrame* web_frame = frame->GetWebFrame();
+  GURL frame_url = ScriptContext::GetDataSourceURLForFrame(web_frame);
+  if (web_frame->parent() && (!frame_url.is_valid() || frame_url.is_empty()))
+    return;
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::HandleScope scope(isolate);
   v8::Local<v8::Context> v8_context = frame->GetRenderView()
@@ -309,7 +316,6 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
   if (script_context->extension()->GetType() == Manifest::TYPE_NWJS_APP &&
       script_context->context_type() == Feature::BLESSED_EXTENSION_CONTEXT) {
     std::vector<v8::Handle<v8::Value> > arguments;
-    blink::WebLocalFrame* web_frame = frame->GetWebFrame();
     v8::Local<v8::Value> window =
       web_frame->mainWorldScriptContext()->Global();
     arguments.push_back(v8::Boolean::New(isolate, start));
@@ -318,9 +324,15 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
   }
 }
 
-void DocumentElementHook(blink::WebFrame* frame,
+void DocumentElementHook(blink::WebLocalFrame* frame,
                          const extensions::Extension* extension,
                          const GURL& effective_document_url) {
+  // ignore the first invocation of this hook for iframe
+  // or we'll trigger creating a context with invalid type
+  // there will follow another one with valid url
+  GURL frame_url = ScriptContext::GetDataSourceURLForFrame(frame);
+  if (frame->parent() && (!frame_url.is_valid() || frame_url.is_empty()))
+    return;
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::HandleScope hscope(isolate);
   frame->document().securityOrigin().grantUniversalAccess();
