@@ -7,9 +7,39 @@ var sendRequest = require('sendRequest');
 
 var currentNWWindow = null;
 var currentNWWindowInternal = null;
-var canSetVisibleOnAllWorkspaces = /(darwin|linux)/.test(nw.require('os').platform());
 
 var nw_internal = require('binding').Binding.create('nw.currentWindowInternal');
+
+var try_hidden = function (view) {
+  if (view.chrome.app.window)
+    return view;
+  return privates(view);
+};
+
+var try_nw = function (view) {
+  if (view.nw)
+    return view;
+  return privates(view);
+};
+
+function getPlatform() {
+  var platforms = [
+    [/CrOS Touch/, "chromeos touch"],
+    [/CrOS/, "chromeos"],
+    [/Linux/, "linux"],
+    [/Mac/, "mac"],
+    [/Win/, "win"],
+  ];
+
+  for (var i = 0; i < platforms.length; i++) {
+    if ($RegExp.test(platforms[i][0], navigator.appVersion)) {
+      return platforms[i][1];
+    }
+  }
+  return "unknown";
+}
+
+var canSetVisibleOnAllWorkspaces = /(mac|linux)/.test(getPlatform());
 
 nw_internal.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
@@ -29,7 +59,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
 
     currentNWWindowInternal = nw_internal.generate();
     var NWWindow = function() {
-      this.appWindow = chrome.app.window.current();
+      this.appWindow = try_hidden(window).chrome.app.window.current();
       privates(this).menu = null;
     };
     forEach(currentNWWindowInternal, function(key, value) {
@@ -370,9 +400,9 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       if (params.position)
         options.position = params.position;
     }
-    chrome.app.window.create(url, options, function(appWin) {
+    try_hidden(window).chrome.app.window.create(url, options, function(appWin) {
       if (callback) {
-        callback(appWin.contentWindow.nw.Window.get());
+        callback(try_nw(appWin.contentWindow).nw.Window.get());
       }
     });
   });

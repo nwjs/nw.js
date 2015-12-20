@@ -55,6 +55,7 @@
     "noparent": true,
     "internal": true,
     "channel": "stable",
-    "contexts": ["blessed_extension"]
+    "matches": ["<all_urls>"],
+    "contexts": ["blessed_extension", "web_page"]
   }
 }
