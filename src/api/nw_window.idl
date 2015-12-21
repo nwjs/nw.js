@@ -30,6 +30,8 @@ namespace nw.Window {
     [nodoc] boolean? always_on_top;
     [nodoc] boolean? visible_on_all_workspaces;
     [nodoc] boolean? transparent;
+    [nodoc] boolean? kiosk;
+    [nodoc] boolean? focus;
     [nodoc] DOMString? position;
   };
 
@@ -75,7 +77,7 @@ namespace nw.Window {
   };
   interface Functions {
     // get the current window
-    [nocompile] static NWWindow get();
+    [nocompile] static NWWindow get(optional object domWindow);
     [nocompile] static void open(DOMString url,
                                  optional CreateWindowOptions options,
                                  optional CreateWindowCallback callback);

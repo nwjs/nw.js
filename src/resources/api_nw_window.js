@@ -53,7 +53,9 @@ nw_internal.registerCustomHook(function(bindingsAPI) {
 
 nw_binding.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
-  apiFunctions.setHandleRequest('get', function() {
+  apiFunctions.setHandleRequest('get', function(domWindow) {
+    if (domWindow)
+      return try_nw(domWindow).nw.Window.get();
     if (currentNWWindow)
       return currentNWWindow;
 
@@ -369,6 +371,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         options.frame = 'none';
       if (params.resizable === false)
         options.resizable = false;
+      if (params.focus === false)
+        options.focused = false;
       if (params.x)
         options.outerBounds.left = params.x;
       if (params.y)
