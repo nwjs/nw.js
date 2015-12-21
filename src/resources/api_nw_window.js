@@ -402,7 +402,10 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     }
     try_hidden(window).chrome.app.window.create(url, options, function(appWin) {
       if (callback) {
-        callback(try_nw(appWin.contentWindow).nw.Window.get());
+        if (appWin)
+          callback(try_nw(appWin.contentWindow).nw.Window.get());
+        else
+          callback();
       }
     });
   });
