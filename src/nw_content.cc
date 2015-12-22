@@ -161,6 +161,8 @@ v8::Handle<v8::Object> AsObjectOrEmpty(v8::Handle<v8::Value> value) {
   return value->IsObject() ? value.As<v8::Object>() : v8::Handle<v8::Object>();
 }
 
+} //namespace
+
 bool GetPackageImage(nw::Package* package,
                      const FilePath& icon_path,
                      gfx::Image* image) {
@@ -189,7 +191,6 @@ bool GetPackageImage(nw::Package* package,
   return true;
 }
 
-} //namespace
 
 int MainPartsPreCreateThreadsHook() {
   base::ThreadRestrictions::ScopedAllowIO allow_io;

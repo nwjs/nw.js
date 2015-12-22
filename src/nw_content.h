@@ -66,6 +66,9 @@ void DocumentFinishHook(blink::WebFrame* frame,
                            const std::string& name,
                            const std::string& version);
 
+ bool GetPackageImage(nw::Package* package,
+                      const base::FilePath& icon_path,
+                      gfx::Image* image);
 }
 
 #endif

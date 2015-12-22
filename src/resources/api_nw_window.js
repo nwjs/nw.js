@@ -414,6 +414,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         options.position = params.position;
       if (params.title)
         options.title = params.title;
+      if (params.icon)
+        options.icon = params.icon;
     }
     try_hidden(window).chrome.app.window.create(url, options, function(appWin) {
       if (callback) {
