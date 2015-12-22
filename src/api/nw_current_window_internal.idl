@@ -31,5 +31,7 @@ namespace nw.currentWindowInternal {
     static double getZoom();
     static void setZoom(double level);
     static void setShowInTaskbar(boolean show);
+    static DOMString getTitleInternal();
+    static void setTitleInternal(DOMString title);
   };
 };

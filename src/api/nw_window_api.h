@@ -251,5 +251,25 @@ class NwCurrentWindowInternalSetShowInTaskbarFunction : public AsyncExtensionFun
    DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setShowInTaskbar", UNKNOWN)
 };
 
+class NwCurrentWindowInternalSetTitleInternalFunction : public NWSyncExtensionFunction {
+ public:
+  NwCurrentWindowInternalSetTitleInternalFunction() {}
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
+
+ protected:
+  ~NwCurrentWindowInternalSetTitleInternalFunction() override {}
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setTitleInternal", UNKNOWN)
+};
+
+class NwCurrentWindowInternalGetTitleInternalFunction : public NWSyncExtensionFunction {
+ public:
+  NwCurrentWindowInternalGetTitleInternalFunction() {}
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
+
+ protected:
+  ~NwCurrentWindowInternalGetTitleInternalFunction() override {}
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.getTitleInternal", UNKNOWN)
+};
+
 } // namespace extensions
 #endif

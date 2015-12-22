@@ -49,6 +49,15 @@ nw_internal.registerCustomHook(function(bindingsAPI) {
   apiFunctions.setHandleRequest('setZoom', function() {
     return sendRequest.sendRequestSync('nw.currentWindowInternal.setZoom', arguments, this.definition.parameters, {});
   });
+  apiFunctions.setHandleRequest('getTitleInternal', function() {
+    return sendRequest.sendRequestSync('nw.currentWindowInternal.getTitleInternal', arguments, this.definition.parameters, {})[0];
+  });
+  apiFunctions.setHandleRequest('setTitleInternal', function() {
+    return sendRequest.sendRequestSync('nw.currentWindowInternal.setTitleInternal', arguments, this.definition.parameters, {});
+  });
+  apiFunctions.setHandleRequest('isKioskInternal', function() {
+    return sendRequest.sendRequestSync('nw.currentWindowInternal.isKioskInternal', arguments, this.definition.parameters, {})[0];
+  });
 });
 
 nw_binding.registerCustomHook(function(bindingsAPI) {
@@ -305,10 +314,10 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     });
     Object.defineProperty(NWWindow.prototype, 'title', {
       get: function() {
-        return this.appWindow.contentWindow.document.title;
+        return currentNWWindowInternal.getTitleInternal();
       },
       set: function(val) {
-        this.appWindow.contentWindow.document.title = val;
+        currentNWWindowInternal.setTitleInternal(val);
       }
     });
     Object.defineProperty(NWWindow.prototype, 'zoomLevel', {
@@ -403,6 +412,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         options.kiosk = true;
       if (params.position)
         options.position = params.position;
+      if (params.title)
+        options.title = params.title;
     }
     try_hidden(window).chrome.app.window.create(url, options, function(appWin) {
       if (callback) {

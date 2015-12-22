@@ -586,6 +586,22 @@ bool NwCurrentWindowInternalIsKioskInternalFunction::RunNWSync(base::ListValue* 
   return true;
 }
 
+bool NwCurrentWindowInternalGetTitleInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
+  AppWindow* window = getAppWindow(this);
+  response->AppendString(window->title_override());
+  return true;
+}
+
+bool NwCurrentWindowInternalSetTitleInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
+  EXTENSION_FUNCTION_VALIDATE(args_);
+  std::string title;
+  EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &title));
+  AppWindow* window = getAppWindow(this);
+  window->set_title_override(title);
+  window->GetBaseWindow()->UpdateWindowTitle();
+  return true;
+}
+
 bool NwCurrentWindowInternalSetShowInTaskbarFunction::RunAsync() {
   EXTENSION_FUNCTION_VALIDATE(args_);
   bool show;
