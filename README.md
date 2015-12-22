@@ -63,7 +63,7 @@ Create `index.html`:
   </head>
   <body>
     <h1>Hello World!</h1>
-    We are using node.js <script>document.write(process.version)</script>.
+    We are using IO.js <script>document.write(process.version)</script>.
   </body>
 </html>
 ```
