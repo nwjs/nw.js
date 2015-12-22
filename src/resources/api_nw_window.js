@@ -402,6 +402,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         options.state = 'fullscreen';
       if (params.show === false)
         options.hidden = true;
+      if (params.show_in_taskbar === false)
+        options.show_in_taskbar = false;
       if (params['always_on_top'] === true)
         options.alwaysOnTop = true;
       if (params['visible_on_all_workspaces'] === true)
