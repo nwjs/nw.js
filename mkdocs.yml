@@ -1,8 +1,7 @@
 site_name: NW.js Documentation
 theme: readthedocs
 markdown_extensions:
-    - markdown.extensions.toc:
-        slugify: !!python/name:pymdownx.headeranchor.uslugify
+    - markdown.extensions.toc
     - markdown.extensions.admonition
     - markdown.extensions.smarty
     - markdown.extensions.nl2br
@@ -17,8 +16,7 @@ markdown_extensions:
     - pymdownx.githubemoji
     - pymdownx.tasklist
     - pymdownx.progressbar
-    - pymdownx.headeranchor:
-        slugify: !!python/name:pymdownx.headeranchor.uslugify
+    - pymdownx.headeranchor
     - pymdownx.arithmatex
     - pymdownx.mark
     - pymdownx.critic
