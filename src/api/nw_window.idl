@@ -61,6 +61,11 @@ namespace nw.Window {
     static bool canSetVisibleOnAllWorkspaces();
     static void on(DOMString event,
                    EventCallback callback);
+    static void once(DOMString event,
+                     EventCallback callback);
+    static void removeListener(DOMString event,
+                               EventCallback callback);
+    static void removeAllListeners(DOMString event);
     static void reload();
     static void reloadIgnoringCache();
 

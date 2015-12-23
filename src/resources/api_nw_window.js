@@ -40,6 +40,28 @@ function getPlatform() {
 }
 
 var canSetVisibleOnAllWorkspaces = /(mac|linux)/.test(getPlatform());
+var appWinEventsMap = {
+  'minimize':         'onMinimized',
+  'maximize':         'onMaximized',
+  'restore':          'onRestored',
+  'resize':           'onResized',
+  'move':             'onMoved',
+  'enter-fullscreen': 'onFullscreened',
+  'closed':           'onClosed'
+};
+
+var nwWinEventsMap = {
+  'zoom':             'onZoom',
+  'close':            'onClose',
+  'document-start':   'onDocumentStart',
+  'document-end':     'onDocumentEnd'
+};
+
+var nwWrapEventsMap = {
+  'loaded':           'LoadingStateChanged',
+  'new-win-policy':   'onNewWinPolicy',
+  'navigation':       'onNavigation'
+};
 
 nw_internal.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
@@ -86,7 +108,31 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     NWWindow.prototype.onZoom              = new Event();
     NWWindow.prototype.onClose             = new Event("nw.Window.onClose");
 
+    NWWindow.prototype.once = function (event, listener) {
+      if (typeof listener !== 'function')
+        throw new TypeError('listener must be a function');
+      var fired = false;
+      var self = this;
+
+      function g() {
+        self.removeListener(event, g);
+        if (!fired) {
+          fired = true;
+          listener.apply(self, arguments);
+        }
+      }
+      this.on(event, g);
+      return this;
+    };
     NWWindow.prototype.on = function (event, callback) {
+      if (appWinEventsMap.hasOwnProperty(event)) {
+        this.appWindow[appWinEventsMap[event]].addListener(callback);
+        return this;
+      }
+      if (nwWinEventsMap.hasOwnProperty(event)) {
+        this[nwWinEventsMap[event]].addListener(callback);
+        return this;
+      }
       switch (event) {
       case 'focus':
         this.appWindow.contentWindow.onfocus = callback;
@@ -94,38 +140,16 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       case 'blur':
         this.appWindow.contentWindow.onblur = callback;
         break;
-      case 'minimize':
-        this.appWindow.onMinimized.addListener(callback);
-        break;
-      case 'maximize':
-        this.appWindow.onMaximized.addListener(callback);
-        break;
-      case 'restore':
-        this.appWindow.onRestored.addListener(callback);
-        break;
-      case 'resize':
-        this.appWindow.onResized.addListener(callback);
-        break;
-      case 'move':
-        this.appWindow.onMoved.addListener(callback);
-        break;
-      case 'enter-fullscreen':
-        this.appWindow.onFullscreened.addListener(callback);
-        break;
-      case 'zoom':
-        this.onZoom.addListener(callback);
-        break;
-      case 'close':
-        this.onClose.addListener(callback);
-        break;
-      case 'closed':
-        this.appWindow.onClosed.addListener(callback);
-        break;
       case 'loaded':
-        this.LoadingStateChanged.addListener(function(status) { if (status == 'loaded') callback(); });
+        function g(status) {
+          if (status == 'loaded')
+            callback();
+        }
+        g.listener = callback;
+        this.LoadingStateChanged.addListener(g);
         break;
       case 'new-win-policy':
-        this.onNewWinPolicy.addListener(function(frame, url, policy) {
+        function h(frame, url, policy) {
           policy.ignore         =  function () { this.val = 'ignore'; };
           policy.forceCurrent   =  function () { this.val = 'current'; };
           policy.forceDownload  =  function () { this.val = 'download'; };
@@ -133,22 +157,83 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
           policy.forceNewPopup  =  function () { this.val = 'new-popup'; };
           policy.setNewWindowManifest = function (m) { this.manifest = JSON.stringify(m); };
           callback(frame, url, policy);
-        });
+        }
+        h.listener = callback;
+        this.onNewWinPolicy.addListener(h);
         break;
       case 'navigation':
-        this.onNavigation.addListener(function(frame, url, policy, context) {
+        function j(frame, url, policy, context) {
           policy.ignore         =  function () { this.val = 'ignore'; };
           callback(frame, url, policy, context);
-        });
-        break;
-      case 'document-start':
-        this.onDocumentStart.addListener(callback);
-        break;
-      case 'document-end':
-        this.onDocumentEnd.addListener(callback);
+        }
+        j.listener = callback;
+        this.onNavigation.addListener(j);
         break;
       }
+      return this;
     };
+    NWWindow.prototype.removeListener = function (event, callback) {
+      if (appWinEventsMap.hasOwnProperty(event)) {
+        this.appWindow[appWinEventsMap[event]].removeListener(callback);
+        return this;
+      }
+      if (nwWinEventsMap.hasOwnProperty(event)) {
+        this[nwWinEventsMap[event]].removeListener(callback);
+        return this;
+      }
+      if (nwWrapEventsMap.hasOwnProperty(event)) {
+        for (let l of this[nwWrapEventsMap[event]].getListeners()) {
+          if (l.callback.listener && l.callback.listener === callback) {
+            this[nwWrapEventsMap[event]].removeListener(l.callback);
+            return this;
+          }
+        }
+      }
+      switch (event) {
+      case 'focus':
+        if (this.appWindow.contentWindow.onfocus === callback)
+          this.appWindow.contentWindow.onfocus = null;
+        break;
+      case 'blur':
+        if (this.appWindow.contentWindow.onblur === callback)
+          this.appWindow.contentWindow.onblur = null;
+        break;
+      }
+      return this;
+    };
+
+    NWWindow.prototype.removeAllListeners = function (event) {
+      if (appWinEventsMap.hasOwnProperty(event)) {
+        for (let l of
+             this.appWindow[appWinEventsMap[event]].getListeners()) {
+          this.appWindow[appWinEventsMap[event]].removeListener(l.callback);
+        }
+        return this;
+      }
+      if (nwWinEventsMap.hasOwnProperty(event)) {
+        for (let l of
+             this[nwWinEventsMap[event]].getListeners()) {
+          this[nwWinEventsMap[event]].removeListener(l.callback);
+        }
+        return this;
+      }
+      if (nwWrapEventsMap.hasOwnProperty(event)) {
+        for (let l of this[nwWrapEventsMap[event]].getListeners()) {
+            this[nwWrapEventsMap[event]].removeListener(l.callback);
+            return this;
+        }
+      }
+      switch (event) {
+      case 'focus':
+          this.appWindow.contentWindow.onfocus = null;
+        break;
+      case 'blur':
+          this.appWindow.contentWindow.onblur = null;
+        break;
+      }
+      return this;
+    };
+
     NWWindow.prototype.showDevTools = function(frm, headless, callback) {
       nwNatives.setDevToolsJail(frm);
       currentNWWindowInternal.showDevToolsInternal(callback);
