@@ -2,29 +2,17 @@
 
 ---
 
-!!! important "Available"
-    Since 0.3.1
-
 [TOC]
 
 ## App.argv
-
-!!! important "Available"
-    Since 0.3.1
 
 Get the command line arguments when starting the app.
 
 ## App.fullArgv
 
-!!! important "Available"
-    Since 0.3.1
-
 Get all the command line arguments when starting the app. Because NW.js itself used switches like `--no-sandbox` and `--process-per-tab`, it would confuse the app when the switches were meant to be given to NW.js, so `App.argv` just filtered such switches (arguments' precedence were kept). You can get the switches to be filtered with `App.filteredArgv`.
 
 ## App.dataPath
-
-!!! important "Available"
-    Since 0.6.1
 
 Get the application's data path in user's directory.
 
@@ -36,46 +24,28 @@ Get the application's data path in user's directory.
 
 ## App.manifest
 
-!!! important "Available"
-    Since 0.7.0
-
 Get the JSON object of the manifest file.
 
 ## App.clearCache()
 
-!!! important "Available"
-    Since 0.6.0
-
 Clear the HTTP cache in memory and the one on disk. This method call is synchronized.
 
 ## App.closeAllWindows()
-
-!!! important "Available"
-    Since 0.3.2
 
 Send the `close` event to all windows of current app, if no window is blocking the `close` event, then the app will quit after all windows have done shutdown. Use this method to quit an app will give windows a chance to save data.
 
 ## App.crashBrowser()
 ## App.crashRenderer()
 
-!!! important "Available"
-    Since 0.8.0
-
 These 2 functions crashes the browser process and the renderer process respectively, to test the [Crash dump](../For Developers/Understanding Crash Dump.md) feature.
 
 ## App.getProxyForURL(url)
-
-!!! important "Available"
-    Since 0.6.3
 
 * `url` `{String}` the URL to query for proxy
 
 Query the proxy to be used for loading `url` in DOM. The return value is in the same format used in [PAC](http://en.wikipedia.org/wiki/Proxy_auto-config) (e.g. "DIRECT", "PROXY localhost:8080").
 
 ## App.setProxyConfig(config)
-
-!!! important "Available"
-    Since 0.11.1
 
 * `config` `{String}` Proxy rules
 
@@ -134,9 +104,6 @@ Rule (copied from [`net/proxy/proxy_config.h`](https://github.com/nwjs/chromium.
 
 ## App.quit()
 
-!!! important "Available"
-    Since 0.3.1
-
 Quit current app. This method will **not** send `close` event to windows and app will just quit quietly.
 
 ## App.setCrashDumpDir(dir)
@@ -152,26 +119,20 @@ This API was **deprecated** since 0.11.0.
 
 ## App.addOriginAccessWhitelistEntry(sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains)
 
-!!! important "Available"
-    Since 0.10.0
-
 * `sourceOrigin` `{String}` The source origin. e.g. `http://github.com/`
 * `destinationProtocol` `{String}` The destination protocol where the `sourceOrigin` can access to. e.g. `app`
 * `destinationHost` `{String}` The destination host where the `sourceOrigin` can access to. e.g. `myapp`
 * `allowDestinationSubdomains` `{Boolean}` If set to true, the `sourceOrigin` is allowed to access subdomains of destinations.
 
-Add an entry to the whitelist used for controlling cross-origin access. Suppose you want to allow HTTP redirecting from `github.com` to the page of your app, use something like this with the [App protocol](../For Users/Advanced/App Protocol.md):
+Add an entry to the whitelist used for controlling cross-origin access. Suppose you want to allow HTTP redirecting from `github.com` to the page of your app, use something like this:
 
 ```javascript
-App.addOriginAccessWhitelistEntry('http://github.com/', 'app', 'myapp', true);
+App.addOriginAccessWhitelistEntry('http://github.com/', 'chrome-extension', location.host, true);
 ```
 
 Use `App.removeOriginAccessWhitelistEntry` with exactly the same arguments to do the contrary.
 
 ## App.removeOriginAccessWhitelistEntry(sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains)
-
-!!! important "Available"
-    Since 0.10.0
 
 * `sourceOrigin` `{String}` The source origin. e.g. `http://github.com/`
 * `destinationProtocol` `{String}` The destination protocol where the `sourceOrigin` can access to. e.g. `app`
@@ -182,9 +143,6 @@ Remove an entry from the whitelist used for controlling cross-origin access. See
 
 ## App.registerGlobalHotKey(shortcut)
 
-!!! important "Available"
-    Since 0.10.0
-
 * `shortcut` `{Shortcut}` the `Shortcut` object to register.
 
 Register a global keyboard shortcut (also known as system-wide hot key) to the system.
@@ -192,9 +150,6 @@ Register a global keyboard shortcut (also known as system-wide hot key) to the s
 See [Shortcut](Shortcut.md) for more information.
 
 ## App.unregisterGlobalHotKey(shortcut)
-
-!!! important "Available"
-    Since 0.10.0
 
 * `shortcut` `{Shortcut}` the `Shortcut` object to unregister.
 
@@ -204,19 +159,10 @@ See [Shortcut](Shortcut.md) for more information.
 
 ## Event: open(args)
 
-!!! important "Available"
-    Since 0.3.2
-
 * `args` `{String}` the full command line of the program.
 
 Emitted when users opened a file with your app. For more on this, see [Handle CLI Arguments](../For Users/Advanced/Handle CLI Arguments.md).
 
-!!! note
-    Before 0.7.0, `args` is the argument in the command line and the event is sent multiple times for each of the arguments.
-
 ## Event: reopen
-
-!!! important "Available"
-    Since 0.7.3
 
 This is a Mac specific feature. This event is sent when the user clicks the dock icon for an already running application.

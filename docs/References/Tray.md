@@ -1,9 +1,6 @@
 # Tray {: doctitle}
 ---
 
-!!! important "Available"
-    Since 0.3.0
-
 [TOC]
 
 `Tray` is an abstraction of different controls on different platforms, usually it's a small icon shown on the OS's notification area. On Mac OS X it's called `Status Item`, on GTK it's `Status Icon`, and on Windows it's `System Tray Icon`.
@@ -26,9 +23,6 @@ tray = null;
 
 ## new Tray(option)
 
-!!! important "Available"
-    Since 0.3.0
-
 * `option` `{Object}`
     - `title` `{String}` title
     - `tooltip` `{String}` tooltip
@@ -39,38 +33,13 @@ tray = null;
 
 Create a new `Tray`, `option` is an object contains initial settings for the `Tray`. Every field has its own property in the `Tray`, see documentation of each property for details.
 
-!!! note
-    When you assign `new Tray(option)` to a variable/property take care about visibility and GC. 
-
-    This is the **wrong** example:
-    ```javascript
-    function init(){
-     var tray = new nw.Tray({ title: 'Tray', icon: 'img/icon.png' });
-     // In this case tray will be collected by GC after some time and icon will disappear
-    }
-    ```
-    
-    This is the **correct** one:
-    ```javascript
-    var tray;
-    function init(){
-     tray = new nw.Tray({ title: 'Tray', icon: 'img/icon.png' });
-    }
-    ```
-
 ## tray.title
-
-!!! important "Available"
-    Since 0.3.0
 
 Get or set the `title` of the tray.
 
 On Mac OS X `title` will be showed on status bar along with its `icon`, but it doesn't have effects on GTK and Windows, since the latter two platforms only support tray to be showed as icons.
 
 ## tray.tooltip
-
-!!! important "Available"
-    Since 0.3.0
 
 Get or set the `tooltip` of the tray. `tooltip` shows when you hover the `Tray` with mouse.
 
@@ -79,9 +48,6 @@ Get or set the `tooltip` of the tray. `tooltip` shows when you hover the `Tray` 
 
 ## tray.icon
 
-!!! important "Available"
-    Since 0.3.0
-
 Get or set the `icon` of the tray, `icon` must a path to your icon file. It can be a relative path which points to an icon in your app, or an absolute path pointing to a file in user's system.
 
 !!! note "Mac"
@@ -89,22 +55,13 @@ Get or set the `icon` of the tray, `icon` must a path to your icon file. It can 
 
 ## tray.alticon (Mac)
 
-!!! important "Available"
-    Since 0.4.2
-
 Get or set the alternate (active) tray icon.
 
 ## tray.iconsAreTemplates (Mac)
 
-!!! important "Available"
-    Since 0.11.3
-
 Get or set whether `icon` and `alticon` images are treated as "templates" (`true` by default). When the property is set to `true` the images are treated as "templates" and the system automatically ensures proper styling according to the various states of the status item (e.g. dark menu, light menu, etc.). Template images should consist only of black and clear colours and can use the alpha channel in the image to adjust the opacity of black content.
 
 ## tray.menu
-
-!!! important "Available"
-    Since 0.3.0
 
 Get or set the `menu` of the tray, `menu` will be showed when you click on the tray icon.
 

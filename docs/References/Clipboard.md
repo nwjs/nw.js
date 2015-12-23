@@ -2,9 +2,6 @@
 
 ---
 
-!!! important "Available"
-    Since 0.3.0
-
 [TOC]
 
 `Clipboard` is an abstraction of clipboard for Windows, Linux and Mac.
@@ -28,18 +25,12 @@ clipboard.clear();
 
 ## Clipboard.get()
 
-!!! important "Available"
-    Since 0.3.0
-
 * Returns `{Clipboard}` the clipboard object
 
 !!! note
     The Selection Clipboard in X11 is not supported.
 
 ## clip.set(data, [type])
-
-!!! important "Available"
-    Since 0.3.0
 
 * `data` `{String}` the data to write to the clipboard
 * `type` `{String}` _Optional_ the type of the data. Currently only `"text"` (plain text) is support. By default, `type` is set to `"text"`.
@@ -48,17 +39,11 @@ Write `data` of `type` to the clipboard.
 
 ## clip.get([type])
 
-!!! important "Available"
-    Since 0.3.0
-
 * `type` `{String}` _Optional_ the type of the data. Currently only `"text"` (plain text) is support. By default, `type` is set to `"text"`.
 * Returns `{String}` the data retrieved from the clipboard
 
 Get the data of `type` from clipboard.
 
 ## clip.clear()
-
-!!! important "Available"
-    Since 0.3.0
 
 Clear the clipboard.
