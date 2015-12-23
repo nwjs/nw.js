@@ -17,7 +17,10 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     return argv;
   });
   bindingsAPI.compiledApi.__defineGetter__('manifest', function() {
-    return chrome.runtime.getManifest();
+    var ret= chrome.runtime.getManifest();
+    if (ret.hasOwnProperty('__nwjs_manifest'))
+      return ret['__nwjs_manifest'];
+    return ret;
   });
   apiFunctions.setHandleRequest('getArgvSync', function() {
     return sendRequest.sendRequestSync('nw.App.getArgvSync', [], this.definition.parameters, {});
