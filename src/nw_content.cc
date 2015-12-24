@@ -853,35 +853,46 @@ bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window) {
 #endif //OSX
 }
 
+void SendEventToApp(const std::string& event_name) {
+  Profile* profile = ProfileManager::GetActiveUserProfile();
+  const extensions::ExtensionSet& extensions =
+    ExtensionRegistry::Get(profile)->enabled_extensions();
+  ExtensionPrefs* extension_prefs = ExtensionPrefs::Get(profile);
+
+  for (extensions::ExtensionSet::const_iterator it = extensions.begin();
+       it != extensions.end(); ++it) {
+    const Extension* extension = it->get();
+    if (extension_prefs->IsExtensionRunning(extension->id()) &&
+        extension->location() == extensions::Manifest::COMMAND_LINE) {
+      scoped_ptr<base::ListValue> arguments(new base::ListValue());
+      scoped_ptr<extensions::Event> event(new extensions::Event(extensions::events::UNKNOWN,
+                                                                event_name,
+                                                                arguments.Pass()));
+      event->restrict_to_browser_context = profile;
+      EventRouter::Get(profile)
+        ->DispatchEventToExtension(extension->id(), event.Pass());
+    }
+  }
+}
+
 bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_line,
                                               const base::FilePath& current_directory) {
   nw::Package* package = nw::package();
   bool single_instance = true;
   package->root()->GetBoolean(switches::kmSingleInstance, &single_instance);
   if (single_instance) {
-    Profile* profile = ProfileManager::GetActiveUserProfile();
-    const extensions::ExtensionSet& extensions =
-      ExtensionRegistry::Get(profile)->enabled_extensions();
-    ExtensionPrefs* extension_prefs = ExtensionPrefs::Get(profile);
-
-    for (extensions::ExtensionSet::const_iterator it = extensions.begin();
-         it != extensions.end(); ++it) {
-      const Extension* extension = it->get();
-      if (extension_prefs->IsExtensionRunning(extension->id()) &&
-          extension->location() == extensions::Manifest::COMMAND_LINE) {
-        scoped_ptr<base::ListValue> arguments(new base::ListValue());
-        scoped_ptr<extensions::Event> event(new extensions::Event(extensions::events::UNKNOWN,
-                                          "nw.App.onOpen",
-                                          arguments.Pass()));
-        event->restrict_to_browser_context = profile;
-        EventRouter::Get(profile)
-          ->DispatchEventToExtension(extension->id(), event.Pass());
-      }
-    }
+    SendEventToApp("nw.App.onOpen");
   }
     
   return single_instance;
 }
+
+#if defined(OS_MACOSX)
+bool ApplicationShouldHandleReopenHook(bool hasVisibleWindows) {
+  SendEventToApp("nw.App.onReopen");
+  return true;
+}
+#endif
 
 static std::string g_user_agent;
 

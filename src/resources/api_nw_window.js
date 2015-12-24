@@ -124,6 +124,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       this.on(event, g);
       return this;
     };
+
     NWWindow.prototype.on = function (event, callback) {
       if (appWinEventsMap.hasOwnProperty(event)) {
         this.appWindow[appWinEventsMap[event]].addListener(callback);

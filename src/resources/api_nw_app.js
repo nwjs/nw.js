@@ -5,6 +5,11 @@ var sendRequest = require('sendRequest');
 var argv = null;
 var dataPath;
 
+var eventsMap = {
+  'open':             'onOpen',
+  'reopen':           'onReopen'
+};
+
 nw_binding.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
   apiFunctions.setHandleRequest('crashRenderer', function() {
@@ -37,12 +42,39 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
   apiFunctions.setHandleRequest('removeOriginAccessWhitelistEntry', function() {
     nwNatives.removeOriginAccessWhitelistEntry.apply(this, arguments);
   });
-  apiFunctions.setHandleRequest('on', function(event, callback) {
-      switch (event) {
-      case 'open':
-        nw.App.onOpen.addListener(callback);
-        break;
+  apiFunctions.setHandleRequest('once', function(event, listener) { //FIXME: unify with nw.Window
+    if (typeof listener !== 'function')
+      throw new TypeError('listener must be a function');
+    var fired = false;
+    var self = this;
+
+    function g() {
+      self.removeListener(event, g);
+      if (!fired) {
+        fired = true;
+        listener.apply(self, arguments);
       }
+    }
+    this.on(event, g);
+    return this;
+  });
+  apiFunctions.setHandleRequest('on', function(event, callback) {
+      if (eventsMap.hasOwnProperty(event)) {
+        nw.App[eventsMap[event]].addListener(callback);
+      }
+  });
+  apiFunctions.setHandleRequest('removeListener', function(event, callback) {
+      if (eventsMap.hasOwnProperty(event)) {
+        nw.App[eventsMap[event]].removeListener(callback);
+      }
+  });
+  apiFunctions.setHandleRequest('removeAllListeners', function(event) {
+    if (eventsMap.hasOwnProperty(event)) {
+      for (let l of
+           nw.App[eventsMap[event]].getListeners()) {
+        nw.App[eventsMap[event]].removeListener(l.callback);
+      }
+    }
   });
   apiFunctions.setHandleRequest('getDataPath', function() {
     return sendRequest.sendRequestSync('nw.App.getDataPath', [], this.definition.parameters, {})[0];

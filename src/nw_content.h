@@ -69,6 +69,9 @@ void DocumentFinishHook(blink::WebFrame* frame,
  bool GetPackageImage(nw::Package* package,
                       const base::FilePath& icon_path,
                       gfx::Image* image);
+#if defined(OS_MACOSX)
+ bool ApplicationShouldHandleReopenHook(bool hasVisibleWindows);
+#endif
 }
 
 #endif
