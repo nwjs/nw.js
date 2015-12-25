@@ -42,7 +42,10 @@ class RemotingTestCase(test.TestCase):
 
   def GetCommand(self):
     if utils.IsWindows() and "BB_PYTHON" in os.environ:
-        result = [os.environ["BB_PYTHON"]]
+        bbpython = os.environ["BB_PYTHON"]
+        if bbpython.startswith('"') and bbpython.endswith('"'):
+            bbpython = bbpython[1:-1]
+        result = [bbpython]
     else:
         result = ['python']
     result += [self.file + '/test.py']
