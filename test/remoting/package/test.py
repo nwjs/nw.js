@@ -12,8 +12,13 @@ nwdist = os.path.join(os.path.dirname(os.environ['CHROMEDRIVER']), 'nwdist')
 
 appdir =  os.path.join(testdir, 'app')
 pkg1 = os.path.join(testdir, 'pkg1')
+pkg2 = os.path.join(testdir, 'pkg2')
+pkg3 = os.path.join(testdir, 'pkg3')
+
 try:
     shutil.rmtree(pkg1)
+    shutil.rmtree(pkg2)
+    shutil.rmtree(pkg3)
 except:
     pass
 
@@ -63,3 +68,56 @@ try:
 finally:
     driver.quit()
 
+
+######## test compressed package
+
+os.mkdir(pkg2)
+print "copying %s to %s" % (nwdist, pkg2)
+copytree(nwdist, pkg2)
+if platform.system() == 'Darwin':
+    appnw = os.path.join(pkg2, 'nwjs.app', 'Contents', 'Resources', 'app.nw')
+    print "compressing %s to %s" % (appdir, appnw)
+    compress(appdir, appnw)
+else:
+    package_nw = os.path.join(pkg2, 'package.nw')
+    print "compressing %s to %s" % (appdir, package_nw)
+    compress(appdir, package_nw)
+
+driver_path=os.path.join(pkg2, 'chromedriver')
+driver2 = webdriver.Chrome(executable_path=driver_path)
+time.sleep(1)
+try:
+    print driver2.current_url
+    result = driver2.find_element_by_id('result')
+    print result.get_attribute('innerHTML')
+    assert("success" in result.get_attribute('innerHTML'))
+finally:
+    driver2.quit()
+
+######## test appending-to-binary package
+
+if platform.system() != 'Darwin':
+    os.mkdir(pkg3)
+    print "copying %s to %s" % (nwdist, pkg3)
+    copytree(nwdist, pkg3)
+    package_nw = os.path.join(pkg3, 'package.nw')
+    print "compressing %s to %s" % (appdir, package_nw)
+    compress(appdir, package_nw)
+    if platform.system() == 'Linux':
+        nwbin = os.path.join(pkg3, 'nw')
+    else:
+        nwbin = os.path.join(pkg3, 'nw.exe')
+    with open(nwbin, "ab") as myfile, open(package_nw, "rb") as file2:
+            myfile.write(file2.read())
+    os.remove(package_nw)
+
+    driver_path=os.path.join(pkg3, 'chromedriver')
+    driver3 = webdriver.Chrome(executable_path=driver_path)
+    time.sleep(1)
+    try:
+        print driver3.current_url
+        result = driver3.find_element_by_id('result')
+        print result.get_attribute('innerHTML')
+        assert("success" in result.get_attribute('innerHTML'))
+    finally:
+        driver3.quit()
