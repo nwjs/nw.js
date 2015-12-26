@@ -62,6 +62,12 @@ dist_dir = os.path.join(binaries_location, 'dist')
 
 print 'Working on ' + binaries_location
 
+nwfolder = os.path.join(dist_dir, '..', 'nwdist')
+try:
+    shutil.rmtree(nwfolder)
+except:
+    pass
+
 if args.icudat != None:
     #FIXME: for some reason they are the same file (hard link) and copy will fail
     os.remove(os.path.join(binaries_location, 'icudtl.dat'))
@@ -145,6 +151,7 @@ def generate_target_nw(platform_name, arch, version):
                        'v', version,
                        '-', platform_name,
                        '-', arch])
+    target['keep4test'] = 'nwdist'
     # Compress type
     if platform_name == 'linux':
         target['compress'] = 'tar.gz'
@@ -425,6 +432,9 @@ def make_packages(targets):
                     shutil.copy(src, dest)
             compress(dist_dir, dist_dir, t['output'], t['compress'])
             # remove temp folders
+            if (t.has_key('keep4test')) :
+                shutil.copytree(folder, nwfolder)
+            
             shutil.rmtree(folder)
         else:
             # single file

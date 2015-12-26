@@ -101,7 +101,7 @@ def aws_upload(upload_path, file_list):
 
         if f.startswith('chromedriver') and 'sdk' not in builder_name :
             continue
-        
+
         key = bucket.new_key(upload_path + '/' + path_prefix + '/' + f)
         key.set_contents_from_filename(filename=os.path.join(dist_dir, f), cb=print_progress, num_cb=50, replace=True)
 
