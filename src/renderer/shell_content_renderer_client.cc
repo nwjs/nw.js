@@ -415,8 +415,8 @@ void ShellContentRendererClient::InstallNodeSymbols(
         "  return global.require(name); \n"
         "}; \n"
 
-        // Save node-webkit version
-        "process.versions['node-webkit'] = '" NW_VERSION_STRING "';"
+        // Save NW.js version
+        "process.versions['nw'] = '" NW_VERSION_STRING "';"
         "process.versions['nw-commit-id'] = '" NW_COMMIT_HASH "';"
         "process.versions['chromium'] = '" CHROME_VERSION "';"
                                                                                  ));
