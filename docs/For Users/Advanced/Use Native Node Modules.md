@@ -36,5 +36,3 @@ See https://github.com/mapbox/node-pre-gyp for more details.
 
 So far, you have to rebuild **each native module** with tools above including thoses are indirectly depended modules. Since `binding.gyp` is required for building native modules, you can easily locate all native modules by finding `binding.gyp` file.
 
-On Windows, the executable file `nw.exe` cannot be renamed, or the native module cannot be loaded since it will try to find `nw.exe`. See https://github.com/nwjs/nw.js/issues/199
-

@@ -16,6 +16,7 @@ Following is a minimal manifest:
 ```
 
 You only need at least these two fields to start with an NW.js app. Here is the quick explanation of them:
+
 * `main`: tell NW.js to open `index.html` in the same folder as `package.json` at start
 * `name`: gives the application a unique name called `nw-demo`
 
@@ -79,50 +80,24 @@ The following placeholders are available to composite the user agent dynamically
 
 ### node-remote
 
-* `{String}` Enable calling Node in remote pages. The value controls for which sites this feature should be turned on.
+!!! warning "Behavior Changed"
+    This feature is changed in 0.13.0. See [Migration Notes from 0.12 to 0.13](../../For Users/Migration/From 0.12 to 0.13.md).
 
-The format is the same with the "proxy bypass rules" of the browser. It's a rule set, which rules are separated by `,` or `;`. Each rule can be any of the following:
+* `{Array}` Enable calling Node in remote pages. The value controls for which sites this feature should be turned on. Each item in the array follows the [match patterns](https://developer.chrome.com/extensions/match_patterns) used in Chrome extension.
+
+A match pattern is essentially a URL that begins with a permitted scheme (`http`, `https`, `file`, or `ftp`, and that can contain `'*'` characters. The special pattern `<all_urls>` matches any URL that starts with a permitted scheme. Each match pattern has 3 parts:
+
+* `scheme` — for example, `http` or `file` or `*`
+* `host` — for example, `www.google.com` or `*.google.com` or `*`; if the scheme is file, there is no host part
+* `path` — for example, `/*`, `/foo*`, or `/foo/bar`. The path must be present in a host permission, but is always treated as `/*`.
+
+Here's the basic syntax:
 
 ```none
-  // (1) [ URL_SCHEME "://" ] HOSTNAME_PATTERN [ ":" <port> ]
-  //
-  //   Match all hostnames that match the pattern HOSTNAME_PATTERN.
-  //
-  //   Examples:
-  //     "foobar.com", "*foobar.com", "*.foobar.com", "*foobar.com:99",
-  //     "https://x.*.y.com:99"
-  //
-  // (2) "." HOSTNAME_SUFFIX_PATTERN [ ":" PORT ]
-  //
-  //   Match a particular domain suffix.
-  //
-  //   Examples:
-  //     ".google.com", ".com", "http://.google.com"
-  //
-  // (3) [ SCHEME "://" ] IP_LITERAL [ ":" PORT ]
-  //
-  //   Match URLs which are IP address literals.
-  //
-  //   Conceptually this is the similar to (1), but with special cases
-  //   to handle IP literal canonicalization. For example matching
-  //   on "[0:0:0::1]" would be the same as matching on "[::1]" since
-  //   the IPv6 canonicalization is done internally.
-  //
-  //   Examples:
-  //     "127.0.1", "[0:0::1]", "[::1]", "http://[::1]:99"
-  //
-  // (4)  IP_LITERAL "/" PREFIX_LENGHT_IN_BITS
-  //
-  //   Match any URL that is to an IP literal that falls between the
-  //   given range. IP range is specified using CIDR notation.
-  //
-  //   Examples:
-  //     "192.168.1.1/16", "fefe:13::abc/33".
-  //
-  // (5)  "<local>"
-  //
-  //   Match local addresses. The meaning of "<local>" is whether the
-  //   host matches one of: "127.0.0.1", "::1", "localhost".
+<url-pattern> := <scheme>://<host><path>
+<scheme> := '*' | 'http' | 'https' | 'file' | 'ftp'
+<host> := '*' | '*.' <any char except '/' and '*'>+
+<path> := '/' <any chars>
 ```
 
 ### chromium-args
@@ -131,8 +106,7 @@ The format is the same with the "proxy bypass rules" of the browser. It's a rule
 
 It will be useful if you want to distribute the app with some custom chromium args. For example, if you want to disable the GPU accelerated video display, just add `"chromium-args" : "--disable-accelerated-video"`. If you want to add multiple arguments, separate each two arguments by space. This field can take a number of flags in one argument as well, via enclosing them in single quotation marks.
 
-A list of Chromium's command line arguments is available at 
-http://peter.sh/experiments/chromium-command-line-switches/
+See [Command Line Options](Command Line Options.md) for more information.
 
 ### js-flags
 
@@ -168,11 +142,9 @@ These certificates are used as additional root certificates for validation, to a
 ### no-edit-menu (Mac)
 
 !!! warning "Deprecated"
-    Since 0.13.0
+    This property is deprecated since 0.13.0. See [Migration Notes from 0.12 to 0.13](../For Users/Migration/From 0.12 to 0.13.md).
 
 * `{Boolean}` whether the default `Edit` menu should be disabled on Mac OS X. The default value is `false`. Only effective on Mac OS X.
-
-This property is **deprecated** since 0.13.0.
 
 ## Window Subfields
 
@@ -188,11 +160,9 @@ This property is **deprecated** since 0.13.0.
 ### toolbar
 
 !!! warning "Deprecated"
-    Since 0.13.0
+    This property is deprecated since 0.13.0. See [Migration Notes from 0.12 to 0.13](../For Users/Migration/From 0.12 to 0.13.md).
 
 * `{Boolean}` should the navigation toolbar be showed.
-
-This field is **deprecated in 0.13.0**.
 
 ### icon
 

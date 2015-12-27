@@ -67,7 +67,7 @@ Scripts running in the Node context can use [JS builtin objects]() like browse
 #### Create New Node Context
 **All node modules shares a same Node context in separate context mode**. But you have several ways to create new Node contexts:
 
-* Set `new-instance` option to `true` when creating window with [`Window.open()`](../../References/Window.md#windowopen)
+* Set `new-instance` option to `true` when creating window with [`Window.open()`](../../References/Window.md#windowopenurl-options-callback)
 * Start NW.js with `--mixed-context` CLI option to turn NW.js into [Mixed Context mode](#mixed-context)
 
 #### Access Browser and NW.js API in Node Context
@@ -108,7 +108,7 @@ Mixed context is introduced in NW.js 0.13. When running NW.js with [`--mixed-con
 
 ### Load Script in Mixed Context Mode
 
-To enable Mixed context, add `--mixed-context` when starting NW.js or add it to [`chromium-args` in Manifest file](../../References/Manifest Files.md#chromium-args).
+To enable Mixed context, add `--mixed-context` when starting NW.js or add it to [`chromium-args` in Manifest file](../../References/Manifest Format.md#chromium-args).
 
 Any scripts loaded using web ways or `require()` in Node.js are running in a same context.
 

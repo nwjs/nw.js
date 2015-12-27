@@ -8,6 +8,7 @@ Since NW.js supports GUI applications instead of console applications, the out
 
 ## process
 A couple of new fields is added to the global `process` object:
+
 * `process.versions['nwjs']` is set with NW.js's version.
 * `process.versions['chromium']` is set with the chromium version which NW.js is based on.
 * `process.mainModule` is set for the start page (such as `index.html`) as specified in the manifest's [`main`](Manifest Format.md#main) field. However, when the [`node-main`](Manifest Format.md#node-main) field is also specified in the manifest, `process.mainModule` points to the file specified in the `node-main` field.

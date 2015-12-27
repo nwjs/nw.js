@@ -16,20 +16,20 @@ The document is structured in three major parts:
 * **References** - NW.js API references
 
 ## Table of Contents
+
 * [Homepage](index.md)
 * For Users
     - [Getting Started](For Users/Getting Started.md)
-    - [Node API and NPM](For Users/Node API and NPM.md)
     - [Debugging with DevTools](For Users/Debugging with DevTools.md)
-    - [Package and Redistribute](For Users/Package and Redistribute.md)
-    - [FAQ](FAQ.md)
+    - [Package and Distribute](For Users/Package and Distribute.md)
+    - [FAQ](For Users/FAQ.md)
     - Advanced
         + [Build Flavors](For Users/Advanced/Build Flavors.md)
-        + [Handle CLI Arguments](For Users/Advanced/Handle CLI Arguments.md)
         + [JavaScript Contexts in NW.js](For Users/Advanced/JavaScript Contexts in NW.js.md)
         + [Protect JavaScript Source Code](For Users/Advanced/Protect JavaScript Source Code.md)
         + [Security in NW.js](For Users/Advanced/Security in NW.js.md)
         + [Test with ChromeDriver](For Users/Advanced/Test with ChromeDriver.md)
+        + [Use NaCl in NW.js](For Users/Advanced/Use NaCl in NW.js.md)
         + [Use Native Node Modules](For Users/Advanced/Use Native Node Modules.md)
     - Migration
         + [From 0.12 to 0.13](For Users/Migration/From 0.12 to 0.13.md)

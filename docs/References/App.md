@@ -109,13 +109,11 @@ Quit current app. This method will **not** send `close` event to windows and app
 ## App.setCrashDumpDir(dir)
 
 !!! warning "Deprecated"
-    Since 0.11.0
+    This API was deprecated since 0.11.0.
 
 * `dir` `{String}` path to generate the crash dump
 
 Set the directory where the minidump file will be saved on crash. For more information, see [Crash dump](../For Developers/Understanding Crash Dump.md).
-
-This API was **deprecated** since 0.11.0.
 
 ## App.addOriginAccessWhitelistEntry(sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains)
 
@@ -161,7 +159,7 @@ See [Shortcut](Shortcut.md) for more information.
 
 * `args` `{String}` the full command line of the program.
 
-Emitted when users opened a file with your app. For more on this, see [Handle CLI Arguments](../For Users/Advanced/Handle CLI Arguments.md).
+Emitted when users opened a file with your app.
 
 ## Event: reopen
 
