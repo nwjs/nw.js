@@ -14,6 +14,7 @@
 
 #include "chrome/browser/browser_process.h"
 #include "chrome/browser/io_thread.h"
+#include "chrome/browser/lifetime/application_lifetime.h"
 #include "chrome/browser/profiles/profile_manager.h"
 #include "chrome/common/chrome_paths.h"
 
@@ -128,6 +129,7 @@ namespace nw {
 namespace {
 
 extensions::Dispatcher* g_dispatcher = NULL;
+bool g_reloading_app = false;
 
 static inline v8::Local<v8::String> v8_str(const char* x) {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
@@ -924,6 +926,21 @@ bool GetUserAgentFromManifest(std::string* agent) {
     return true;
   }
   return false;
+}
+
+void ReloadExtensionHook(const extensions::Extension* extension) {
+  g_reloading_app = true;
+  chrome::IncrementKeepAliveCount(); //keep alive count is paired with
+                                     //appwindow's lifetime, so it's
+                                     //needed to keep alive during
+                                     //reload
+}
+
+void CreateAppWindowHook(extensions::AppWindow* app_window) {
+  if (g_reloading_app) {
+    g_reloading_app = false;
+    chrome::DecrementKeepAliveCount();
+  }
 }
 
 } //namespace nw

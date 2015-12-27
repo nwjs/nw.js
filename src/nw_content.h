@@ -72,6 +72,8 @@ void DocumentFinishHook(blink::WebFrame* frame,
 #if defined(OS_MACOSX)
  bool ApplicationShouldHandleReopenHook(bool hasVisibleWindows);
 #endif
+ void CreateAppWindowHook(extensions::AppWindow*);
+ void ReloadExtensionHook(const extensions::Extension*);
 }
 
 #endif
