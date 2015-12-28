@@ -19,7 +19,7 @@ try:
     print 'require path: %s' % result
     assert(public_path == result)
 
-    driver.find_element_by_tag('a').click()
+    driver.find_element_by_id('lnk').click()
     print 'current url: %s' % driver.current_url
     time.sleep(1)
     btn = driver.find_element_by_id('btn')
