@@ -519,6 +519,8 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
     v8::Context::Scope cscope(context->v8_context());
     // Make node's relative modules work
     std::string root_path = context->extension()->path().AsUTF8Unsafe();
+    GURL frame_url = ScriptContext::GetDataSourceURLForFrame(frame);
+    std::string url_path = frame_url.path();
 #if defined(OS_WIN)
     base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
 #endif
@@ -527,14 +529,12 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
         set_nw_script +
         "nw.global.XMLHttpRequest = XMLHttpRequest;" +
         // Make node's relative modules work
-        "if (typeof nw.process != 'undefined' && (!nw.process.mainModule.filename || nw.process.mainModule.filename === 'blank')) {"
+        "if (typeof nw.process != 'undefined' && "
+        "(!nw.process.mainModule.filename || nw.process.mainModule.filename === 'blank' ||"
+        "nw.process.mainModule.filename.indexOf('_generated_background_page.html') >= 0)) {"
         "  var root = '" + root_path + "';"
-#if defined(OS_WIN)
-        "nw.process.mainModule.filename = decodeURIComponent(window.location.pathname === 'blank' ? 'blank': window.location.pathname.substr(1));"
-#else
-        "nw.process.mainModule.filename = root + '/index.html';"
-#endif
-        "if (window.location.href.indexOf('app://') === 0) { nw.process.mainModule.filename = root + '/' + process.mainModule.filename}"
+        "  var p = '" + url_path + "';"
+        "nw.process.mainModule.filename = root + p;"
         "nw.process.mainModule.paths = nw.global.require('module')._nodeModulePaths(nw.process.cwd());"
         "nw.process.mainModule.loaded = true;"
         "}").c_str()),
