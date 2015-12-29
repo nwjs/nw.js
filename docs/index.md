@@ -3,12 +3,6 @@
 
 > [NW.js](http://nwjs.io) lets you call all [Node.js](https://nodejs.org/) [modules](https://www.npmjs.org/) directly from DOM and enables a new way of writing applications with all Web technologies. It was previously known as "node-webkit" project.
 
-## 0.13.0 Release
-
-NW.js 0.13.0 is based on Chromium 47.0.2526.73 and Node.js 5.1.0.
-
-## Structure of Document
-
 The document is structured in three major parts:
 
 * **For Users** - Documents for developing apps based on NW.js
@@ -23,6 +17,7 @@ The document is structured in three major parts:
     - [Debugging with DevTools](For Users/Debugging with DevTools.md)
     - [Package and Distribute](For Users/Package and Distribute.md)
     - [FAQ](For Users/FAQ.md)
+    - [From 0.12 to 0.13](For Users/Migration/From 0.12 to 0.13.md)
     - Advanced
         + [Build Flavors](For Users/Advanced/Build Flavors.md)
         + [JavaScript Contexts in NW.js](For Users/Advanced/JavaScript Contexts in NW.js.md)
@@ -31,9 +26,6 @@ The document is structured in three major parts:
         + [Test with ChromeDriver](For Users/Advanced/Test with ChromeDriver.md)
         + [Use NaCl in NW.js](For Users/Advanced/Use NaCl in NW.js.md)
         + [Use Native Node Modules](For Users/Advanced/Use Native Node Modules.md)
-    - Migration
-        + [From 0.12 to 0.13](For Users/Migration/From 0.12 to 0.13.md)
-        + [From Chrome Apps to 0.13](For Users/Migration/From Chrome Apps to 0.13.md)
 * For Developers
     - [Building NW.js](For Developers/Building NW.js.md)
     - [Contributing to NW.js](For Developers/Contributing to NW.js.md)

@@ -5,7 +5,11 @@
 
 ## Architecture Changes
 
-1. If NW.js is running under [Mixed Context Mode](../Advanced/JavaScript Contexts in NW.js.md#mixed-context-mode) (boot NW.js with `--mixed-context` argument), `nw.*` is kind of mirror of `window.*`. In this mode, you **CANNOT** share variables among frames or windows by assigning it to Node context. So do **NOT** turn on Mixed Context mode if your application is heavily depending on this variable sharing feature.
++ NW.js application is running as a Chrome App internally. All chrome.* platform APIs and features can be used in NW application now. The default protocol is changed from 'file://' to 'chrome-extension://', where the host part of the URL is the generated id. The 'app://' protocol in 0.12 is replaced by 'chrome-extension://' protocol.
++ All NW specific APIs, including 'require()' is moved into a 'nw' object from the 'nw.gui' library. However, we provided a builtin wrapper library to provide compatibility for 0.12 apps. You can use 'nw.gui' library for some time before we deprecate it in 0.14 or later.
++ The Node.js context is put in the DOM context of the background page, which is shared between opening windows as in 0.12 and before. The difference is you have access to all DOM features and chrome.* platform APIs in the Node context in 0.13.
++ The entry of the application is either JS or HTML as in 0.12, but as the application is internally a Chrome App, the first window is supposed to be launched by JS from the background page. If you specify a HTML file as the entry with "main" field in package.json, NW will use a default JS to open the first window and load it.
++ If NW.js is running under [Mixed Context Mode](../Advanced/JavaScript Contexts in NW.js.md#mixed-context-mode) (boot NW.js with `--mixed-context` argument), `nw.*` is kind of mirror of `window.*`. In this mode, you **CANNOT** share variables among frames or windows by assigning it to Node context. So do **NOT** turn on Mixed Context mode if your application is heavily depending on this variable sharing feature.
 
 ## Node.js Changes
 
@@ -36,4 +40,6 @@
 3. [Window.showDevtools](../../References/Window.md#winshowdevtoolsiframe-headless-callback) is changed to passing the created window as the argument of the callback.
 4. [win.setTransparent](../../References/Window.md#winsettransparent) is **deprecated**. You can't change the transparency after window is created.
 5. [unmaximize](../../References/Window.md#event-unmaximize) and [leave-fullscreen](../../References/Window.md#event-leave-fullscreen) events of `Window` object is **deprecated** and replaced by [restore](../../References/Window.md#event-restore). When window is restored from minimized, maximized or fullscreen, `restore` event is triggered instead.
+6. Window options 'always-on-top' and 'visible-on-all-workspaces' is renamed 'always_on_top' and 'visible_on_all_workspaces' respectively in package.json or as argument of Window.open().
+7. Window is not inherited from EventEmitter anymore, but the methods on(), once(), removeListener() and removeAllListeners() are still supported.
 
