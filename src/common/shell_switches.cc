@@ -86,10 +86,10 @@ const char kmShowInTaskbar[] = "show_in_taskbar";
 const char kmKiosk[] = "kiosk";
 
 // Make windows stays on the top of all other windows.
-const char kmAlwaysOnTop[] = "always-on-top";
+const char kmAlwaysOnTop[] = "always_on_top";
 
 // Make window visible on all workspaces.
-const char kmVisibleOnAllWorkspaces[] = "visible-on-all-workspaces";
+const char kmVisibleOnAllWorkspaces[] = "visible_on_all_workspaces";
 
 // Whether we should support WebGL.
 const char kmWebgl[] = "webgl";
