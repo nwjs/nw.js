@@ -444,7 +444,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
       {
         v8::Local<v8::Script> script =
           v8::Script::Compile(v8::String::NewFromUtf8(isolate,
-                                                      (std::string("process.versions['nwjs'] = '" NW_VERSION_STRING "';") +
+                                                      (std::string("process.versions['nw'] = '" NW_VERSION_STRING "';") +
                                                        "process.versions['node-webkit'] = '" NW_VERSION_STRING "';"
                                                        "process.versions['nw-commit-id'] = '" NW_COMMIT_HASH "';"
                                                        "process.versions['chromium'] = '" + chrome::kChromeVersion + "';").c_str()
