@@ -47,6 +47,7 @@
 
 ### Known issues
 
++ Appending zip to the executable is currently not supported. Please use plain files or a separate zip file.
 + The following window options passed to nw.Window.open() is not effective on Linux: min_width, min_height, max_width, max_height, resizable for now; try to set them in the callback.
 + nw.Window.get(window_object) is not working as expected when passing the argument; use window_object.nw.Window.get() as a workaround.
 + nw.Window.reloadDev() is not supported for now
