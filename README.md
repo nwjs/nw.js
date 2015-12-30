@@ -31,11 +31,11 @@ It was created in the Intel Open Source Technology Center.
  * Windows: [32bit](http://dl.nwjs.io/v0.12.3/nwjs-v0.12.3-win-ia32.zip) / [64bit](http://dl.nwjs.io/v0.12.3/nwjs-v0.12.3-win-x64.zip)
  * Mac 10.7+: [32bit](http://dl.nwjs.io/v0.12.3/nwjs-v0.12.3-osx-ia32.zip) / [64bit](http://dl.nwjs.io/v0.12.3/nwjs-v0.12.3-osx-x64.zip)
 
-* **v0.13.0-alpha7:** (Dec 8, 2015, based off of Node.js v5.1.0, Chromium 47.0.2526.73): [release notes](https://groups.google.com/d/msg/nwjs-general/HF7InrhFxqw/4v7SdZWOBwAJ)  
+* **v0.13.0-beta1:** (Dec 30, 2015, based off of Node.js v5.1.0, Chromium 47.0.2526.73): [release notes](https://groups.google.com/d/msg/nwjs-general/JeA3qITmqTg/r2pSEl2IDAAJ)  
  **NOTE** You might want the **SDK build**. Please read the release notes  
- * Linux: [32bit](http://dl.nwjs.io/v0.13.0-alpha7/nwjs-v0.13.0-alpha7-linux-ia32.tar.gz) / [64bit](http://dl.nwjs.io/v0.13.0-alpha7/nwjs-v0.13.0-alpha7-linux-x64.tar.gz)
- * Windows: [32bit](http://dl.nwjs.io/v0.13.0-alpha7/nwjs-v0.13.0-alpha7-win-ia32.zip) / [64bit](http://dl.nwjs.io/v0.13.0-alpha7/nwjs-v0.13.0-alpha7-win-x64.zip)
- * Mac 10.7+: [64bit](http://dl.nwjs.io/v0.13.0-alpha7/nwjs-v0.13.0-alpha7-osx-x64.zip)
+ * Linux: [32bit](http://dl.nwjs.io/v0.13.0-beta1/nwjs-v0.13.0-beta1-linux-ia32.tar.gz) / [64bit](http://dl.nwjs.io/v0.13.0-beta1/nwjs-v0.13.0-beta1-linux-x64.tar.gz)
+ * Windows: [32bit](http://dl.nwjs.io/v0.13.0-beta1/nwjs-v0.13.0-beta1-win-ia32.zip) / [64bit](http://dl.nwjs.io/v0.13.0-beta1/nwjs-v0.13.0-beta1-win-x64.zip)
+ * Mac 10.7+: [64bit](http://dl.nwjs.io/v0.13.0-beta1/nwjs-v0.13.0-beta1-osx-x64.zip)
 
 * **0.8.6:** (Apr 18, 2014, based off of Node v0.10.22, Chrome 30.0.1599.66) **If your native Node module works only with Node v0.10, then you should use node-webkit v0.8.x, which is also a maintained branch. [More info](https://groups.google.com/d/msg/nwjs-general/2OJ1cEMPLlA/09BvpTagSA0J)**  
 [release notes](https://groups.google.com/d/msg/nwjs-general/CLPkgfV-i7s/hwkkQuJ1kngJ)
