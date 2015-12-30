@@ -26,6 +26,7 @@ The document is structured in three major parts:
         + [Test with ChromeDriver](For Users/Advanced/Test with ChromeDriver.md)
         + [Use NaCl in NW.js](For Users/Advanced/Use NaCl in NW.js.md)
         + [Use Native Node Modules](For Users/Advanced/Use Native Node Modules.md)
+        + [Content Verification](For Users/Advanced/Content Verification.md)
 * For Developers
     - [Building NW.js](For Developers/Building NW.js.md)
     - [Contributing to NW.js](For Developers/Contributing to NW.js.md)
