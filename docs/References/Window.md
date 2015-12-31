@@ -375,14 +375,14 @@ win.capturePage(function(buffer){
 
 * `progress` `{Float}` valid values within [0, 1]. Setting to negative value (<0) removes the progress bar.
 
-!!! note Linux
+!!! note "Linux"
     Only Ubuntu is supported, and you'll need to specify the application `.desktop` file through `NW_DESKTOP` env. If `NW_DESKTOP` env variable is not found, it uses `nw.desktop` by default.
 
 ## win.setBadgeLabel(label)
 
 Set the badge label on the window icon in taskbar or dock.
 
-!!! note Linux
+!!! note "Linux"
     This API is only supported on Ubuntu and the label is restricted to a string number only. You'll also need to specify the `.desktop` file for your application (see the note on [`setProgressBar`](#winsetprogressbar))
 
 ## win.eval(frame, script)

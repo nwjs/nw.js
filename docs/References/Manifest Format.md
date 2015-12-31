@@ -81,7 +81,7 @@ The following placeholders are available to composite the user agent dynamically
 ### node-remote
 
 !!! warning "Behavior Changed"
-    This feature is changed in 0.13.0. See [Migration Notes from 0.12 to 0.13](../../For Users/Migration/From 0.12 to 0.13.md).
+    This feature is changed in 0.13.0. See [Migration Notes from 0.12 to 0.13](../For Users/Migration/From 0.12 to 0.13.md).
 
 * `{Array}` Enable calling Node in remote pages. The value controls for which sites this feature should be turned on. Each item in the array follows the [match patterns](https://developer.chrome.com/extensions/match_patterns) used in Chrome extension.
 
@@ -192,11 +192,17 @@ These certificates are used as additional root certificates for validation, to a
 
 Beware, if resizable is set to false on OS X and frame is set to true, the user will still be able to make the window fullscreen. Set fullscreen to false to disable the fullscreen control.
 
-### always-on-top
+### always_on_top
+
+!!! warning "Behavior Changed"
+    This feature is changed in 0.13.0. See [Migration Notes from 0.12 to 0.13](../For Users/Migration/From 0.12 to 0.13.md).
 
 * `{Boolean}` whether the window should always stay on top of other windows.
 
-### visible-on-all-workspaces (Mac & Linux)
+### visible_on_all_workspaces (Mac & Linux)
+
+!!! warning "Behavior Changed"
+    This feature is changed in 0.13.0. See [Migration Notes from 0.12 to 0.13](../For Users/Migration/From 0.12 to 0.13.md).
 
 * `{Boolean}` whether the window should be visible on all workspaces simultaneously (on platforms that support multiple workspaces, currently Mac OS X and Linux).
 
