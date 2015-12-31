@@ -37,6 +37,7 @@
 
 ### Window
 
++ There is an id to identify each window. This will be used to remember the size and position of the window and restore that geometry when a window with the same id is later opened. The default id is `.main`. It could be specified in [Window.open](../../References/Window.md#windowopenurl-options-callback)
 + Event `capturepagedone` of [`Window` API](../../References/Window.md#event-capturepagedone) is **deprecated**.Use the callback with the [`win.capturePage(callback [, config ])`](../../References/Window.md#wincapturepagecallback--config-) instead.
 + [Window.open](../../References/Window.md#windowopenurl-options-callback) is changed to passing the created window as the argument of the callback.
 + [Window.showDevtools](../../References/Window.md#winshowdevtoolsiframe-headless-callback) is changed to passing the created window as the argument of the callback.
