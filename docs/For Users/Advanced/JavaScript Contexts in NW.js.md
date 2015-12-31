@@ -19,7 +19,7 @@ When a script accessing to an object / function defined in another context, JS e
 
 Besides the contexts created by browsers, NW.js introduced additional Node context for running Node modules by default. So NW.js has two types of JavaScript contexts: **Browser Context** and **Node Context**.
 
-!!! note Web Worker
+!!! note "Web Worker"
     Actually Web Workers are running in a separate JavaScript context which is neither browser context nor node context. But you can't access Web or Node.js or NW.js APIs in Web Worker's context.
 
 ### Browser Context

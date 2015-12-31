@@ -164,7 +164,7 @@ The `DesktopCaptureMonitor` will start monitoring the system and trigger the the
 
 The `DesktopCaptureMonitor` will stop monitoring the system. The `id` provided can be passed into `chromeMediaSourceId` in `getUserMedia` constraints. `DesktopCaptureMonitor` should be stopped after a stream is selected.
 
-#### Event: added (id, name, order, type, primary)
+### Event: added (id, name, order, type, primary)
 
 * `id` `{String}` is unique id that can be passed as chromeMediaSourceId
 * `name` `{String}` is the title of the window or screen
@@ -174,13 +174,13 @@ The `DesktopCaptureMonitor` will stop monitoring the system. The `id` provided c
 
 Emit when a new source was added.
 
-#### Event: removed (id)
+### Event: removed (id)
 
 * `id` `{String}` is the chromeMediaSourceId of the screen or monitor that is no longer capturable
 
 Emit when a source was removed.
 
-#### Event: orderchanged (id, new_order, old_order)
+### Event: orderchanged (id, new_order, old_order)
 
 * `id` `{String}` is the chromeMediaSourceId of the screen or window that has changed z-order
 * `new_order` `{Integer}` is the new z-order
@@ -188,14 +188,14 @@ Emit when a source was removed.
 
 Emit when the Z-order of a source changed (this may change for windows as others are focused).
 
-#### Event: namechanged (id, name)
+### Event: namechanged (id, name)
 
 * `id` `{String}` is the chromeMediaSourceId of the screen or window that has a name changed
 * `name` `{String}` is the new new name of the screen or window
 
 Emit when the name of the source has changed. This can happen when a window changes title.
 
-#### thumbnailchanged (id, thumbnail)
+### Event: thumbnailchanged (id, thumbnail)
 
 * `id` `{String}` is the chromeMediaSourceId of the screen or window that has an updated thumbnail
 * `thumbnail` `{String}` is the base64 encoded png of the thumbnail
