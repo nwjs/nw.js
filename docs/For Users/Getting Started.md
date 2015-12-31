@@ -73,22 +73,24 @@ This example shows how to create a native context menu in your NW.js app. You ca
 <head>
   <title>Context Menu</title>
 </head>
-<body>
+<body style="width: 100%; height: 100%;">
+
+<p>'Right click' to show context menu.</p>
+
 <script>
 // Create an empty context menu
 var menu = new nw.Menu();
 
 // Add some items with label
-menu.append(new gui.MenuItem({
+menu.append(new nw.MenuItem({
   label: 'Item A',
-  click: function() {
-    // `click` callback will be executed when the item is clicked
-    alert('You clicked "Item A"');
+  click: function(){
+    alert('You have clicked at "Item A"');
   }
 }));
-menu.append(new gui.MenuItem({ label: 'Item B' }));
-menu.append(new gui.MenuItem({ type: 'separator' }));
-menu.append(new gui.MenuItem({ label: 'Item C' }));
+menu.append(new nw.MenuItem({ label: 'Item B' }));
+menu.append(new nw.MenuItem({ type: 'separator' }));
+menu.append(new nw.MenuItem({ label: 'Item C' }));
 
 // Hooks the "contextmenu" event
 document.body.addEventListener('contextmenu', function(ev) {
