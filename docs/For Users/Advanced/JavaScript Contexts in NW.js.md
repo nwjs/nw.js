@@ -149,13 +149,9 @@ myscript.showAlert(); // I'm running in Node module!
 
 ### Comparing with Separate Context
 
-There are some pros and cons of Mixed Context mode comparing to Separate Context mode.
+The advantage of MultiContext mode is that you will not encounter many [type checking issue](#working-with-multiple-contexts) as below.
 
-The first advantage is that Node context is merged with browser context. So you will not encounter many [type checking issue](#working-with-multiple-contexts) as below.
-
-Another advantage of using Mixed context is having better memory management. In separate context mode, it easily to get a whole `window` object or a DOM node or a closure referenced by the Node context which is shared among all windows. And the implicit variable copying from Browser context to Node context, such as `window`, `console`, will also cause Node context holding objects from browser. Since Node context is usually never released during the life cycle of the app, those objects are not released as well even the corresponding windows were destroyed. That will cause memory leaks. In Mixed context mode, the variables are not implicitly copied between contexts and there will be no shared context among windows. When a window is destroyed, the entire Mixed context is released as well.
-
-The bad side is that in Mixed context mode, you can't share variable easily as before. To share variables among contexts, you should put variables in a common context that can be accessed from the contexts you want to share with. Or you can use [`window.postMessage()` API](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage) to send and receive messages between contexts.
+The cons is that in Mixed context mode, you can't share variable easily as before. To share variables among contexts, you should put variables in a common context that can be accessed from the contexts you want to share with. Or you can use [`window.postMessage()` API](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage) to send and receive messages between contexts.
 
 ## Working with Multiple Contexts
 
