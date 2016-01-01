@@ -83,7 +83,7 @@ The following placeholders are available to composite the user agent dynamically
 !!! warning "Behavior Changed"
     This feature is changed in 0.13.0. See [Migration Notes from 0.12 to 0.13](../For Users/Migration/From 0.12 to 0.13.md).
 
-* `{Array}` Enable calling Node in remote pages. The value controls for which sites this feature should be turned on. Each item in the array follows the [match patterns](https://developer.chrome.com/extensions/match_patterns) used in Chrome extension.
+* `{Array}` or `{String}` Enable calling Node in remote pages. The value controls for which sites this feature should be turned on. Each item in the array follows the [match patterns](https://developer.chrome.com/extensions/match_patterns) used in Chrome extension.
 
 A match pattern is essentially a URL that begins with a permitted scheme (`http`, `https`, `file`, or `ftp`, and that can contain `'*'` characters. The special pattern `<all_urls>` matches any URL that starts with a permitted scheme. Each match pattern has 3 parts:
 

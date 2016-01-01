@@ -597,11 +597,28 @@ void AmendManifestStringList(base::DictionaryValue* manifest,
     manifest->Set(path, pattern_list);
 }
 
+void AmendManifestList(base::DictionaryValue* manifest,
+                   const std::string& path,
+                   const base::ListValue& list_value) {
+  base::ListValue* pattern_list = NULL;
+
+  if (manifest->GetList(path, &pattern_list)) {
+    base::ListValue::const_iterator it;
+    for(it = list_value.begin(); it != list_value.end(); ++it) {
+      pattern_list->Append(*it);
+    }
+  } else {
+    pattern_list = list_value.DeepCopy();
+    manifest->Set(path, pattern_list);
+  }
+}
+
 void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* error) {
   if (!manifest)
     return;
 
-  std::string main_url, bg_script, icon_path, node_remote;
+  std::string main_url, bg_script, icon_path;
+  base::Value *node_remote = NULL;
 
   nw::Package* package = nw::package();
   manifest->SetBoolean(manifest_keys::kNWJSInternalFlag, true);
@@ -638,9 +655,18 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* erro
       manifest->SetString(key, icon_path);
     }
   }
-  if (manifest->GetString(switches::kmRemotePages, &node_remote)) {
+  if (manifest->Get(switches::kmRemotePages, &node_remote)) {
     //FIXME: node-remote spec different with kWebURLs
-    AmendManifestStringList(manifest, manifest_keys::kWebURLs, node_remote);
+    std::string node_remote_string;
+    base::ListValue* node_remote_list = NULL;
+    if (node_remote->GetAsString(&node_remote_string)) {
+      node_remote_list = new base::ListValue();
+      node_remote_list->Append(new base::StringValue(node_remote_string));
+    } else if (node_remote->GetAsList(&node_remote_list)) {
+      // do nothing
+    }
+    if (node_remote_list)
+      AmendManifestList(manifest, manifest_keys::kWebURLs, *node_remote_list);
   }
 
   if (NWContentVerifierDelegate::GetDefaultMode() == ContentVerifierDelegate::ENFORCE_STRICT)
