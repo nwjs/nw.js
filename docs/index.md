@@ -9,6 +9,8 @@ The document is structured in three major parts:
 * **For Developers** - Documents for developers who want to extend NW.js
 * **References** - NW.js API references
 
+The source of the document is in [our git repo](https://github.com/nwjs/nw.js/tree/nw13/docs). PRs are welcome.
+
 ## Table of Contents
 
 * [Homepage](index.md)
