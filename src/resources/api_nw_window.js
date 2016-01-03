@@ -349,12 +349,12 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       this.appWindow.outerBounds.height += height;
     };
     NWWindow.prototype.moveTo = function (x, y) {
-      this.appWindow.outerBounds.top = x;
-      this.appWindow.outerBounds.left = y;
+      this.appWindow.outerBounds.left = x;
+      this.appWindow.outerBounds.top = y;
     };
     NWWindow.prototype.moveBy = function (x, y) {
-      this.appWindow.outerBounds.top += x;
-      this.appWindow.outerBounds.left += y;
+      this.appWindow.outerBounds.left += x;
+      this.appWindow.outerBounds.top += y;
     };
     NWWindow.prototype.setResizable = function (resizable) {
       this.appWindow.setResizable(resizable);
