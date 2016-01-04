@@ -50,6 +50,9 @@ Following fields control which features NW.js should provide and how NW.js shoul
 
 ### single-instance
 
+!!! warning "Deprecated"
+    This property is deprecated since 0.13.0. See [Migration Notes from 0.12 to 0.13](../For Users/Migration/From 0.12 to 0.13.md).
+
 * `{Boolean}` Specify whether to start up single instance of your app. It's set to `true` by default.
 
 By default NW.js only allows one instance of your app. If you want to allow multiple instances of your app running at the same time, set this to `false`.
