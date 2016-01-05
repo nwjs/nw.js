@@ -11,6 +11,9 @@
       return realrequire.apply(self, [].slice.call(arguments, 0));
     }
   };
+  self.require.cache = realrequire.cache;
+  self.require.extensions = realrequire.extensions;
+  self.require.resolve = realrequire.resolve;
 
   // Following items exist when running with `--mixed-context`.
   // Copy them from `nw` to browser context

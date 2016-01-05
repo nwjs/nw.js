@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>require-methods</title>
+</head>
+<body>
+    <script>
+    function out(id, msg) {
+        var result = document.createElement('h1');
+        result.setAttribute('id', id);
+        result.innerHTML = 'success';
+        document.body.appendChild(result);
+    }
+
+    function testRequireResolve() {
+        out('require-resolve', require.resolve ? 'success': 'failed');
+    }
+
+    function testRequireCache() {
+        out('require-cache', require.cache ? 'success': 'failed');
+    }
+
+    function testRequireExtensions() {
+        out('require-extensions', require.extensions ? 'success': 'failed');
+    }
+
+    testRequireResolve();
+    testRequireCache();
+    testRequireExtensions();
+    </script>
+</body>
+</html>
