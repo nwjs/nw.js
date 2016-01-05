@@ -31,8 +31,12 @@
 + [`single-instance`](../../References/Manifest Format.md#single-instance) is **deprecated** and it's always `true`. You **CANNOT** have multiple instances for your app.
 + [`toolbar`](../../References/Manifest Format.md#toolbar) is **deprecated** and it's always `false`. The traditional toolbar will **NOT** be supported including the reload buttons, location bar and DevTools buttons. As a workaround, you can open / close DevTools with <kbd>F12</kbd> (Windows & Linux) or <kbd>&#8984;</kbd>+<kbd>&#8997;</kbd>+<kbd>i</kbd> (Mac). And use [`win.reload()`](../../References/Window.md#winreload) and [`win.reloadDev()`](../../References/Window.md#winreloaddev) to simulate the reload buttons.
 + [`no-edit-menu`](../../References/Manifest Format.md#no-edit-menu-mac) is **deprecated**.
++ [`node-main`](../../References/Manifest Format.md#node-main) is **deprecated**. You can use `bg-script` or simply use js file as `main` in manifest file. See document for [`main`](../../References/Manifest Format.md#main) and [`bg-script`](../../References/Manifest Format.md#bg-script).
 + [`snapshot`](../../References/Manifest Format.md#snapshot) is **deprecated**. Use [`win.evalNWBin()`](../../References/Window.md#winevalnwbin) instead.
-+ The format of [`node-remote`](../../References/Manifest Format.md#node-remote) is changed to array of [match patterns](https://developer.chrome.com/extensions/match_patterns) used by Chrome extension.
++ The format of [`node-remote`](../../References/Manifest Format.md#node-remote) is changed to array of [match patterns](https://developer.chrome.com/extensions/match_patterns) used by Chrome extension. Here is a map from previous format to match patterns:
+	- `"<local>"`: `["http://localhost/*", "http://127.0.0.1/*", "http://::1/*"]`
+	- `"192.168.1.1/16"`: `"http://192.168.*/*"`
+	- `"*"`: `"<all_urls>"`
 + Window options `always-on-top` and `visible-on-all-workspaces` is renamed to [`always_on_top`](../../References/Manifest Format.md#always_on_top) and [`visible_on_all_workspaces`](../../References/Manifest Format.md#visible_on_all_workspaces) respectively in `package.json` or as argument of `Window.open()`.
 
 ### Window
