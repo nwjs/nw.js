@@ -1,0 +1,1 @@
+nw.Window.open('index.html');
