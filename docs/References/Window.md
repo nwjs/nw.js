@@ -548,12 +548,12 @@ See [`win.closeDevTools()` method](#winclosedevtools) for more details.
 * `frame` `{HTMLIFrameElement}` is the object of the child iframe where the request is from, or `null` if it's from the top window.
 * `url` `{String}` is the address of the requested link
 * `policy` `{Object}` is an object with the following methods:
- * `ignore()` : ignore the request, navigation won't happen.
- * `forceCurrent()` : force the link to be opened in the same frame
- * `forceDownload()` : force the link to be a downloadable, or open by external program
- * `forceNewWindow()` : force the link to be opened in a new window
- * `forceNewPopup()` : force the link to be opened in a new popup window
- * `setNewWindowManifest(m)` : control the options for the new popup window. The object `m` is in the same format as the [Window subfields](Manifest Format.md#window-subfields) in manifest format.
+    * `ignore()` : ignore the request, navigation won't happen.
+    * `forceCurrent()` : force the link to be opened in the same frame
+    * `forceDownload()` : force the link to be a downloadable, or open by external program
+    * `forceNewWindow()` : force the link to be opened in a new window
+    * `forceNewPopup()` : force the link to be opened in a new popup window
+    * `setNewWindowManifest(m)` : control the options for the new popup window. The object `m` is in the same format as the [Window subfields](Manifest Format.md#window-subfields) in manifest format.
 
 Emitted when a new window is requested from this window or a child iframe. You can call `policy.*` methods in the callback to change the default behavior of opening new windows.
 
@@ -568,3 +568,14 @@ nw.Window.get().on('new-win-policy', function(frame, url, policy) {
 });
 
 ```
+
+## Event: navigation (frame, url, policy)
+
+* `frame` `{HTMLIFrameElement}` is the object of the child iframe where the request is from, or `null` if it's from the top window.
+* `url` `{String}` is the address of the requested link
+* `policy` `{Object}` is an object with the following methods:
+    * `ignore()` : ignore the request, navigation won't happen.
+
+Emitted when navigating to another page. Similar to [`new-win-policy`](#event-new-win-policy-frame-url-policy), you can call `policy.ignore()` within the callback to ignore the navigation.
+
+
