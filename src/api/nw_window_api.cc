@@ -9,6 +9,7 @@
 #include "components/ui/zoom/zoom_controller.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/object_manager.h"
+#include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/web_contents.h"
@@ -599,6 +600,24 @@ bool NwCurrentWindowInternalSetTitleInternalFunction::RunNWSync(base::ListValue*
   AppWindow* window = getAppWindow(this);
   window->set_title_override(title);
   window->GetBaseWindow()->UpdateWindowTitle();
+  return true;
+}
+
+bool NwCurrentWindowInternalGetWinParamInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
+  AppWindow* app_window = getAppWindow(this);
+
+  //from app_window_api.cc
+  content::RenderFrameHost* created_frame =
+      app_window->web_contents()->GetMainFrame();
+  int frame_id = created_frame->GetRoutingID();
+
+  base::DictionaryValue* result = new base::DictionaryValue;
+  result->Set("frameId", new base::FundamentalValue(frame_id));
+  result->Set("id", new base::StringValue(app_window->window_key()));
+  app_window->GetSerializedState(result);
+
+  response->Append(result);
+
   return true;
 }
 

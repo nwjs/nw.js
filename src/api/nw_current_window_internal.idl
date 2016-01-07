@@ -33,5 +33,6 @@ namespace nw.currentWindowInternal {
     static void setShowInTaskbar(boolean show);
     static DOMString getTitleInternal();
     static void setTitleInternal(DOMString title);
+    static object getWinParamInternal();
   };
 };

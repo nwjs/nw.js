@@ -80,6 +80,9 @@ nw_internal.registerCustomHook(function(bindingsAPI) {
   apiFunctions.setHandleRequest('isKioskInternal', function() {
     return sendRequest.sendRequestSync('nw.currentWindowInternal.isKioskInternal', arguments, this.definition.parameters, {})[0];
   });
+  apiFunctions.setHandleRequest('getWinParamInternal', function() {
+    return sendRequest.sendRequestSync('nw.currentWindowInternal.getWinParamInternal', arguments, this.definition.parameters, {})[0];
+  });
 });
 
 nw_binding.registerCustomHook(function(bindingsAPI) {
@@ -93,6 +96,14 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     currentNWWindowInternal = nw_internal.generate();
     var NWWindow = function() {
       this.appWindow = try_hidden(window).chrome.app.window.current();
+      if (!this.appWindow) {
+        var winParam = currentNWWindowInternal.getWinParamInternal();
+        try_hidden(window).chrome.app.window.initializeAppWindow(winParam);
+        this.appWindow = try_hidden(window).chrome.app.window.current();
+        if (!this.appWindow)
+          console.error('The JavaScript context calling ' +
+                        'nw.Window.get() has no associated AppWindow.');
+      }
       privates(this).menu = null;
     };
     forEach(currentNWWindowInternal, function(key, value) {

@@ -271,5 +271,15 @@ class NwCurrentWindowInternalGetTitleInternalFunction : public NWSyncExtensionFu
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.getTitleInternal", UNKNOWN)
 };
 
+class NwCurrentWindowInternalGetWinParamInternalFunction : public NWSyncExtensionFunction {
+ public:
+  NwCurrentWindowInternalGetWinParamInternalFunction() {}
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
+
+ protected:
+  ~NwCurrentWindowInternalGetWinParamInternalFunction() override {}
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.getWinParamInternal", UNKNOWN)
+};
+
 } // namespace extensions
 #endif
