@@ -438,7 +438,6 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
         g_set_node_context_fn(isolate, &dom_context);
       dom_context->SetSecurityToken(v8::String::NewFromUtf8(isolate, "nw-token"));
       dom_context->Enter();
-      dom_context->SetEmbedderData(0, v8::String::NewFromUtf8(isolate, "node"));
 
       g_start_nw_instance_fn(argc, argv, dom_context);
       {
