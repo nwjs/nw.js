@@ -44,6 +44,8 @@ const char kNodeMain[] = "node-main";
 const char kSnapshot[] = "snapshot";
 const char kDomStorageQuota[] = "ds-quota";
 
+const char kVerifyContent[] = "verify-content";
+
 const char kmMain[]   = "main";
 const char kmName[]   = "name";
 const char kmWebkit[] = "webkit";
@@ -74,6 +76,7 @@ const char kmFullscreen[] = "fullscreen";
 const char kmInitialFocus[] = "focus";
 const char kmTransparent[] = "transparent";
 const char kmDisableTransparency[] = "disable-transparency";
+
 
 // Make windows icon hide show or hide in taskbar.
 const char kmShowInTaskbar[] = "show_in_taskbar";

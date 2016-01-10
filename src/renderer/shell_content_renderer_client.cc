@@ -347,6 +347,9 @@ void ShellContentRendererClient::InstallNodeSymbols(
   v8::Local<v8::Context> g_context =
     v8::Local<v8::Context>::New(isolate, node::g_context);
 
+  RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
+  std::string root_path = rv->renderer_preferences_.nw_app_root_path.AsUTF8Unsafe();
+
   static bool installed_once = false;
 
   v8::Local<v8::Object> nodeGlobal = g_context->Global();
@@ -409,6 +412,7 @@ void ShellContentRendererClient::InstallNodeSymbols(
       v8::TryCatch try_catch;
       v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate,
         // Overload require
+        "global.XMLHttpRequest = XMLHttpRequest;"
         "window.require = function(name) { \n"
         "  if (name == 'nw.gui') \n"
         "    return nwDispatcher.requireNwGui(); \n"
@@ -426,6 +430,22 @@ void ShellContentRendererClient::InstallNodeSymbols(
         LOG(FATAL) << *v8::String::Utf8Value(message->Get());
       }
     }
+      {
+#if defined(OS_WIN)
+        base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
+#endif
+        base::ReplaceChars(root_path, "'", "\\'", &root_path);
+        v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate,
+         ("global.__dirname = '" + root_path + "';").c_str()));
+        script->Run();
+      }
+      base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
+      if (command_line->HasSwitch(switches::kVerifyContent)) {
+        v8::Local<v8::Script> script =
+          v8::Script::Compile(v8::String::NewFromUtf8(isolate, "global.__nwjs_cv = true;"));
+
+        script->Run();
+      }
     if (!is_ext_protocol) {
       v8::TryCatch try_catch;
       v8::Local<v8::Script> script2 = v8::Script::Compile(v8::String::NewFromUtf8(isolate,

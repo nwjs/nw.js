@@ -71,6 +71,9 @@
 #include "ui/views/linux_ui/linux_ui.h"
 #endif
 
+#include "content/nw/src/browser/content_verifier.h"
+#include "content/nw/src/browser/content_verifier_delegate.h"
+#include "content/nw/src/browser/nw_content_verifier_delegate.h"
 #include "content/nw/src/browser/shell_extension_system.h"
 #include "content/nw/src/browser/shell_extension_system_factory.h"
 #include "content/nw/src/browser/shell_extensions_browser_client.h"
@@ -285,6 +288,9 @@ void ShellBrowserMainParts::Init() {
   InstallChromeJavaScriptNativeDialogFactory();
   nw::InstallConstrainedWindowViewsClient();
 #endif
+  content_verifier_ = new nw::ContentVerifier(browser_context_.get(),
+                                              new nw::NWContentVerifierDelegate(browser_context_.get()), package()->path());
+  content_verifier_->OnExtensionLoaded(browser_context_.get());
 }
 
 bool ShellBrowserMainParts::ProcessSingletonNotificationCallback(

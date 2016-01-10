@@ -31,6 +31,7 @@
 #include "content/public/browser/notification_service.h"
 #include "content/public/common/url_constants.h"
 #include "content/nw/src/net/shell_network_delegate.h"
+#include "content/nw/src/browser/file_protocol.h"
 #include "content/public/browser/cookie_store_factory.h"
 #include "content/nw/src/net/app_protocol_handler.h"
 #include "content/nw/src/nw_protocol_handler.h"
@@ -287,10 +288,7 @@ net::URLRequestContext* ShellURLRequestContextGetter::GetURLRequestContext() {
     InstallProtocolHandlers(job_factory.get(), &protocol_handlers_);
     job_factory->SetProtocolHandler(
          url::kFileScheme,
-         new net::FileProtocolHandler(
-               content::BrowserThread::GetBlockingPool()->
-               GetTaskRunnerWithShutdownBehavior(
-                    base::SequencedWorkerPool::SKIP_ON_SHUTDOWN)));
+         nw::CreateNWFileProtocolHandler(false));
     job_factory->SetProtocolHandler("app",
                                     new net::AppProtocolHandler(root_path_));
     job_factory->SetProtocolHandler("nw", new nw::NwProtocolHandler());

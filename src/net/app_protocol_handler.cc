@@ -25,6 +25,18 @@
 #include "net/url_request/url_request_file_dir_job.h"
 #include "net/url_request/url_request_file_job.h"
 
+#include "content/nw/src/browser/file_protocol.h"
+#include "content/nw/src/browser/content_verifier.h"
+
+#include "content/nw/src/nw_package.h"
+#include "content/nw/src/nw_shell.h"
+#include "content/nw/src/shell_browser_main_parts.h"
+#include "content/nw/src/shell_content_browser_client.h"
+
+using nw::URLRequestNWFileJob;
+using nw::ContentVerifyJob;
+using nw::ContentVerifier;
+
 namespace net {
 
 namespace {
@@ -81,22 +93,21 @@ void ReadResourceFilePathAndLastModifiedTime(
   *last_modified_time = GetFileLastModifiedTime(file_path);
 }
 
-class URLRequestNWAppJob : public net::URLRequestFileJob {
+class URLRequestNWAppJob : public URLRequestNWFileJob {
  public:
   URLRequestNWAppJob(net::URLRequest* request,
-                         net::NetworkDelegate* network_delegate,
-                         const base::FilePath& file_path,
-                         const std::string& content_security_policy,
-                         bool send_cors_header)
-    : net::URLRequestFileJob(
-          request, network_delegate, base::FilePath(),
-          content::BrowserThread::GetBlockingPool()->
-              GetTaskRunnerWithShutdownBehavior(
-                  base::SequencedWorkerPool::SKIP_ON_SHUTDOWN)),
+                     net::NetworkDelegate* network_delegate,
+                     const base::FilePath& directory_path,
+                     const base::FilePath& relative_path,
+                     const std::string& content_security_policy,
+                     bool send_cors_header,
+                     ContentVerifyJob* verify_job)
+    : URLRequestNWFileJob(
+                          request, network_delegate, directory_path, relative_path, verify_job),
       content_security_policy_(content_security_policy),
       send_cors_header_(send_cors_header),
       weak_factory_(this) {
-    file_path_ = file_path;
+    file_path_ = directory_path.Append(relative_path);
     // response_info_.headers = BuildHttpHeaders(content_security_policy,
     //                                           send_cors_header,
     //                                           base::Time());
@@ -127,7 +138,7 @@ class URLRequestNWAppJob : public net::URLRequestFileJob {
         content_security_policy_,
         send_cors_header_,
         *last_modified_time);
-    URLRequestFileJob::Start();
+    URLRequestNWFileJob::Start();
   }
 
   net::HttpResponseInfo response_info_;
@@ -145,16 +156,21 @@ AppProtocolHandler::AppProtocolHandler(const base::FilePath& root)
 
 URLRequestJob* AppProtocolHandler::MaybeCreateJob(
     URLRequest* request, NetworkDelegate* network_delegate) const {
-  base::FilePath file_path;
+  base::FilePath file_path, relative_path;
   GURL url(request->url());
+
   url::Replacements<char> replacements;
   replacements.SetScheme("file", url::Component(0, 4));
   replacements.ClearHost();
   url = url.ReplaceComponents(replacements);
 
-  const bool is_file = net::FileURLToFilePath(url, &file_path);
-
-  file_path = root_path_.Append(file_path);
+  const bool is_file = net::FileURLToFilePath(url, &relative_path);
+  std::string path = relative_path.AsUTF8Unsafe();
+  if (path[0] == '/') {
+    path.erase(0, 1);
+    relative_path = base::FilePath::FromUTF8Unsafe(path);
+  }
+  file_path = root_path_.Append(relative_path);
   // Check file access permissions.
   if (!network_delegate ||
       !network_delegate->CanAccessFile(*request, file_path)) {
@@ -175,7 +191,25 @@ URLRequestJob* AppProtocolHandler::MaybeCreateJob(
 
   // Use a regular file request job for all non-directories (including invalid
   // file names).
-  return new URLRequestNWAppJob(request, network_delegate, file_path, "", false);
+  ContentVerifyJob* verify_job = NULL;
+  content::ShellContentBrowserClient* browser_client = 
+      static_cast<content::ShellContentBrowserClient*>(
+          content::GetContentClient()->browser());
+  ContentVerifier* verifier =
+    browser_client->shell_browser_main_parts()->content_verifier();
+  if (verifier) {
+    verify_job =
+        verifier->CreateJobFor("", root_path_, relative_path);
+  }
+
+  URLRequestNWAppJob* job = new URLRequestNWAppJob(request, network_delegate, root_path_, relative_path, "", false, verify_job);
+  if (verify_job) {
+    verify_job->SetSuccessCallback(base::Bind(&URLRequestNWFileJob::CanStart, base::Unretained(job)));
+    verify_job->Start();
+  } else {
+    job->set_can_start(true);
+  }
+  return job;
 }
 
 bool AppProtocolHandler::IsSafeRedirectTarget(const GURL& location) const {

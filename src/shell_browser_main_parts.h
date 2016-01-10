@@ -18,6 +18,7 @@ class Thread;
 
 namespace nw {
 class Package;
+class ContentVerifier;
 }
 
 namespace base {
@@ -66,6 +67,7 @@ class ShellBrowserMainParts : public BrowserMainParts {
   void Init();
 
   DevToolsHttpHandler* devtools_handler() { return devtools_http_handler_.get(); }
+  nw::ContentVerifier* content_verifier() { return content_verifier_.get(); }
 
   ShellBrowserContext* browser_context() { return browser_context_.get(); }
   ShellBrowserContext* off_the_record_browser_context() {
@@ -100,6 +102,7 @@ class ShellBrowserMainParts : public BrowserMainParts {
   bool run_message_loop_;
 
   scoped_ptr<DevToolsHttpHandler> devtools_http_handler_;
+  scoped_refptr<nw::ContentVerifier> content_verifier_;
   ProcessSingleton::NotifyResult notify_result_;
 
   // Owned by the KeyedService system.
