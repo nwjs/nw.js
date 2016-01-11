@@ -1,0 +1,5 @@
+{
+  "name": "form-post",
+  "main": "index.html",
+  "bg-script": "server.js"
+}
