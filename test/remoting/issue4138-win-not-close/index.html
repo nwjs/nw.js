@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>window not closed</title>
+</head>
+<body>
+  <button onclick="openwin()">Open</button>
+  <script>
+  nw.Window.get().on('close', function() {
+    nw.App.closeAllWindows();
+    nw.App.quit();
+  });
+
+  function openwin() {
+    open('child.html', 'child');
+  }
+  </script>
+</body>
+</html>
