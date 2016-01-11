@@ -1062,6 +1062,13 @@
         '<(DEPTH)/base/base.gyp:base',
         '<(DEPTH)/extensions/extensions.gyp:extensions_browser',
       ],
+      'conditions': [
+        ['OS=="win" and win_use_allocator_shim==1', {
+          'dependencies': [
+            '<(DEPTH)/base/allocator/allocator.gyp:allocator',
+          ],
+        }],
+      ],
     },
     {
       'target_name': 'test',
