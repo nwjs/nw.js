@@ -453,13 +453,18 @@ void ContentHashFetcher::DoFetch(bool force) {
   // to fetch signatures by extension id, and use exponential backoff to avoid
   // hammering the server when we aren't successful in getting them.
   // crbug.com/373397
+  base::FilePath directory_path = content::Shell::GetPackage()->path();
+  base::File::Info info;
+  base::GetFileInfo(directory_path, &info);
+  if (info.is_directory)
+    directory_path = directory_path.DirName();
 
   GURL url =
     delegate_->GetSignatureFetchUrl();
   ContentHashFetcherJob* job =
       new ContentHashFetcherJob(context_->GetRequestContext(),
                                 delegate_->PublicKey(),
-                                content::Shell::GetPackage()->path(),
+                                directory_path,
                                 url,
                                 force,
                                 base::Bind(&ContentHashFetcher::JobFinished,

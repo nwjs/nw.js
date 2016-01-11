@@ -259,6 +259,11 @@ NWFileProtocoHandler::MaybeCreateJob(
   }
 
   base::FilePath directory_path = content::Shell::GetPackage()->path();
+  base::File::Info info;
+  base::GetFileInfo(directory_path, &info);
+  if (info.is_directory)
+    directory_path = directory_path.DirName();
+
   if (!directory_path.IsParent(file_path)) {
     return new net::URLRequestFileJob(request, network_delegate, file_path,
                                  BrowserThread::GetBlockingPool()->GetTaskRunnerWithShutdownBehavior(

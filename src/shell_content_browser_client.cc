@@ -56,6 +56,7 @@
 //#include "content/nw/src/browser/media_capture_devices_dispatcher.h"
 #include "content/nw/src/shell_quota_permission_context.h"
 #include "content/nw/src/browser/shell_resource_dispatcher_host_delegate.h"
+#include "content/nw/src/browser/nw_content_verifier_delegate.h"
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_shell.h"
 #include "content/nw/src/nw_notification_manager.h"
@@ -316,6 +317,10 @@ void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
       content::DOMStorageMap::SetQuotaOverride(dom_storage_quota_mb * 1024 * 1024);
       command_line->AppendSwitchASCII(switches::kDomStorageQuota, base::IntToString(dom_storage_quota_mb));
     }
+  }
+  nw::NWContentVerifierDelegate::Mode mode = nw::NWContentVerifierDelegate::GetDefaultMode();
+  if (mode > nw::ContentVerifierDelegate::ENFORCE) {
+      command_line->AppendSwitchASCII(switches::kVerifyContent, "enforce_strict");
   }
 
   // without the switch, the destructor of the shell object will
