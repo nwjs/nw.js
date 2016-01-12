@@ -14,7 +14,7 @@ try:
     time.sleep(2) # wait for window open
     print driver.window_handles
     print 'switch_to'
-    driver.switch_to.window('child')
+    driver.switch_to_window('child')
     print 'try close'
     driver.close()
     time.sleep(2) # wait for window close
