@@ -257,11 +257,11 @@ NWFileProtocoHandler::MaybeCreateJob(
       file_path.IsAbsolute()) {
     return new net::URLRequestFileDirJob(request, network_delegate, file_path);
   }
-
+  base::ThreadRestrictions::ScopedAllowIO allow_io;
   base::FilePath directory_path = content::Shell::GetPackage()->path();
   base::File::Info info;
   base::GetFileInfo(directory_path, &info);
-  if (info.is_directory)
+  if (!info.is_directory)
     directory_path = directory_path.DirName();
 
   if (!directory_path.IsParent(file_path)) {

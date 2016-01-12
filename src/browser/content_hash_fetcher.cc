@@ -14,6 +14,7 @@
 #include "base/metrics/histogram.h"
 #include "base/synchronization/lock.h"
 #include "base/task_runner_util.h"
+#include "base/threading/thread_restrictions.h"
 #include "base/timer/elapsed_timer.h"
 #include "base/version.h"
 #include "content/public/browser/browser_context.h"
@@ -449,6 +450,7 @@ void ContentHashFetcher::DoFetch(bool force) {
     }
   }
 
+  base::ThreadRestrictions::ScopedAllowIO allow_io;
   // TODO(asargent) - we should do something here to remember recent attempts
   // to fetch signatures by extension id, and use exponential backoff to avoid
   // hammering the server when we aren't successful in getting them.
@@ -456,7 +458,7 @@ void ContentHashFetcher::DoFetch(bool force) {
   base::FilePath directory_path = content::Shell::GetPackage()->path();
   base::File::Info info;
   base::GetFileInfo(directory_path, &info);
-  if (info.is_directory)
+  if (!info.is_directory)
     directory_path = directory_path.DirName();
 
   GURL url =
