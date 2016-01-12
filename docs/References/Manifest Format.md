@@ -134,7 +134,7 @@ See [Command Line Options](Command Line Options.md) for more information.
 
 ### additional_trust_anchors
 
-* `{String}` Containing a list of PEM-encoded certificates (i.e. `"-----BEGIN CERTIFICATE-----\n...certificate data...\n-----END CERTIFICATE-----\n"`).
+* `{Array}` Containing a list of PEM-encoded certificates (i.e. `"-----BEGIN CERTIFICATE-----\n...certificate data...\n-----END CERTIFICATE-----\n"`).
 
 These certificates are used as additional root certificates for validation, to allow connecting to services using a self-signed certificate or certificates issued by custom CAs.
 

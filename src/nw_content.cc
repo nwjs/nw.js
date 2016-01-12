@@ -27,6 +27,7 @@
 #include "content/browser/dom_storage/dom_storage_area.h"
 #include "content/common/dom_storage/dom_storage_map.h"
 #include "content/nw/src/common/shell_switches.h"
+#include "content/public/browser/browser_thread.h"
 #include "content/public/browser/child_process_security_policy.h"
 #include "content/public/browser/notification_service.h"
 #include "content/public/browser/notification_types.h"
@@ -213,6 +214,47 @@ bool GetPackageImage(nw::Package* package,
   return true;
 }
 
+void SetTrustAnchors(IOThread* io_thread, const net::CertificateList& trust_anchors) {
+  PolicyCertVerifier* verifier =
+    (PolicyCertVerifier*)io_thread->globals()->cert_verifier.get();
+  verifier->SetTrustAnchors(trust_anchors);
+}
+
+void MainPartsPreMainMessageLoopRunHook() {
+  nw::Package* package = nw::package();
+  const base::ListValue *additional_trust_anchors = NULL;
+  if (package->root()->GetList("additional_trust_anchors", &additional_trust_anchors)) {
+    net::CertificateList trust_anchors;
+    for (size_t i = 0; i<additional_trust_anchors->GetSize(); i++) {
+      std::string certificate_string;
+      if (!additional_trust_anchors->GetString(i, &certificate_string)) {
+        // LOG(WARNING)
+        //   << "Could not get string from entry " << i;
+        continue;
+      }
+
+      net::CertificateList loaded =
+        net::X509Certificate::CreateCertificateListFromBytes(
+        certificate_string.c_str(), certificate_string.size(),
+        net::X509Certificate::FORMAT_AUTO);
+      if (loaded.empty() && !certificate_string.empty()) {
+        // LOG(WARNING)
+        //   << "Could not load certificate from entry " << i;
+        continue;
+      }
+
+      trust_anchors.insert(trust_anchors.end(), loaded.begin(), loaded.end());
+    }
+    if (!trust_anchors.empty()) {
+      // LOG(INFO)
+      //   << "Added " << trust_anchors.size() << " certificates to trust anchors.";
+      content::BrowserThread::PostTask(
+        content::BrowserThread::IO,
+        FROM_HERE,
+        base::Bind(SetTrustAnchors, g_browser_process->io_thread(), trust_anchors));
+    }
+  }
+}
 
 int MainPartsPreCreateThreadsHook() {
   base::ThreadRestrictions::ScopedAllowIO allow_io;
@@ -267,37 +309,6 @@ int MainPartsPreCreateThreadsHook() {
       }
     }
 
-    const base::ListValue *additional_trust_anchors = NULL;
-    if (package->root()->GetList("additional_trust_anchors", &additional_trust_anchors)) {
-      net::CertificateList trust_anchors;
-      for (size_t i=0; i<additional_trust_anchors->GetSize(); i++) {
-        std::string certificate_string;
-        if (!additional_trust_anchors->GetString(i, &certificate_string)) {
-          // LOG(WARNING)
-          //   << "Could not get string from entry " << i;
-          continue;
-        }
-
-        net::CertificateList loaded =
-          net::X509Certificate::CreateCertificateListFromBytes(
-              certificate_string.c_str(), certificate_string.size(),
-              net::X509Certificate::FORMAT_AUTO);
-        if (loaded.empty() && !certificate_string.empty()) {
-          // LOG(WARNING)
-          //   << "Could not load certificate from entry " << i;
-          continue;
-        }
-
-        trust_anchors.insert(trust_anchors.end(), loaded.begin(), loaded.end());
-      }
-      if (!trust_anchors.empty()) {
-        // LOG(INFO)
-        //   << "Added " << trust_anchors.size() << " certificates to trust anchors.";
-        PolicyCertVerifier* verifier =
-          (PolicyCertVerifier*)g_browser_process->io_thread()->globals()->cert_verifier.get();
-        verifier->SetTrustAnchors(trust_anchors);
-      }
-    }
   }
   return content::RESULT_CODE_NORMAL_EXIT;
 }
