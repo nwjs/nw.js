@@ -104,6 +104,15 @@ NWCustomBindings::NWCustomBindings(ScriptContext* context)
   RouteFunction("setDevToolsJail",
                 base::Bind(&NWCustomBindings::SetDevToolsJail,
                            base::Unretained(this)));
+  RouteFunction("getRoutingID",
+                base::Bind(&NWCustomBindings::GetRoutingID,
+                           base::Unretained(this)));
+}
+
+void NWCustomBindings::GetRoutingID(
+    const v8::FunctionCallbackInfo<v8::Value>& args) {
+  int routing_id = context()->GetRenderFrame()->GetRenderView()->GetRoutingID();
+  args.GetReturnValue().Set(v8::Integer::New(GetIsolate(), routing_id));
 }
 
 void NWCustomBindings::CrashRenderer(

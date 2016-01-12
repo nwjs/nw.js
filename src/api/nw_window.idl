@@ -97,6 +97,6 @@ namespace nw.Window {
     [nocompile] static void onDocumentStart();
     [nocompile] static void onDocumentEnd();
     [nocompile] static void onZoom();
-    static void onClose();
+    [supportsFilters=true] static void onClose();
   };
 };

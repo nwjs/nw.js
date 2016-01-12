@@ -3,10 +3,12 @@ var nw_binding = require('binding').Binding.create('nw.Window');
 var nwNatives = requireNative('nw_natives');
 var forEach = require('utils').forEach;
 var Event = require('event_bindings').Event;
+var dispatchEvent = require('event_bindings').dispatchEvent;
 var sendRequest = require('sendRequest');
 
 var currentNWWindow = null;
 var currentNWWindowInternal = null;
+var currentRoutingID = nwNatives.getRoutingID();
 
 var nw_internal = require('binding').Binding.create('nw.currentWindowInternal');
 
@@ -117,7 +119,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     NWWindow.prototype.onDocumentStart     = new Event();
     NWWindow.prototype.onDocumentEnd       = new Event();
     NWWindow.prototype.onZoom              = new Event();
-    NWWindow.prototype.onClose             = new Event("nw.Window.onClose");
+    NWWindow.prototype.onClose             = new Event("nw.Window.onClose", undefined, {supportsFilters: true});
 
     NWWindow.prototype.once = function (event, listener) {
       if (typeof listener !== 'function')
@@ -137,6 +139,10 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     };
 
     NWWindow.prototype.on = function (event, callback) {
+      if (event === 'close') {
+        this.onClose.addListener(callback, {instanceId: currentRoutingID});
+        return this;
+      }
       if (appWinEventsMap.hasOwnProperty(event)) {
         this.appWindow[appWinEventsMap[event]].addListener(callback);
         return this;
@@ -577,7 +583,7 @@ function updateAppWindowZoom(old_level, new_level) {
 function onClose() {
   if (!currentNWWindow)
     return;
-  dispatchEventIfExists(currentNWWindow, "onClose", []);
+  dispatchEvent("nw.Window.onClose", [], {instanceId: currentRoutingID});
 }
 
 exports.binding = nw_binding.generate();
