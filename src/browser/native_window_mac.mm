@@ -182,10 +182,9 @@ enum {
 }
 
 - (void)cleanup:(id)window {
-  if (shell_)
+  if (shell_) {
     delete shell_.get();
-
-  [self release];
+  }
 }
 
 @end
