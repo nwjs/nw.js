@@ -1,0 +1,5 @@
+{
+	"name": "issue4180-remote-win-open",
+	"main": "index.html",
+	"node-remote": "*://domain-not-match.com/*"
+}
