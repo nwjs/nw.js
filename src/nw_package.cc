@@ -66,22 +66,10 @@ namespace {
 bool MakePathAbsolute(FilePath* file_path) {
   DCHECK(file_path);
 
-  FilePath current_directory;
-  if (!base::GetCurrentDirectory(&current_directory))
-    return false;
-
   if (file_path->IsAbsolute())
     return true;
 
-  if (current_directory.empty()) {
-    *file_path = MakeAbsoluteFilePath(*file_path);
-    return true;
-  }
-
-  if (!current_directory.IsAbsolute())
-    return false;
-
-  *file_path = current_directory.Append(*file_path);
+  *file_path = MakeAbsoluteFilePath(*file_path);
   return true;
 }
 
