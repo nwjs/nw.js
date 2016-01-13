@@ -1,0 +1,7 @@
+{
+  "name": "issue4114-show-false-crash",
+  "main": "index.html",
+  "window": {
+    "show": false
+  }
+}
