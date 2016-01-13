@@ -40,7 +40,8 @@ class URLRequestNWFileJob : public net::URLRequestFileJob {
                       net::NetworkDelegate* network_delegate,
                       const base::FilePath& directory_path,
                       const base::FilePath& relative_path,
-                      ContentVerifyJob* verify_job);
+                      ContentVerifyJob* verify_job,
+                      const scoped_refptr<base::TaskRunner>& file_task_runner);
   void GetResponseInfo(net::HttpResponseInfo* info) override;
 
   void Start() override;
@@ -73,6 +74,7 @@ class URLRequestNWFileJob : public net::URLRequestFileJob {
   net::HttpResponseInfo response_info_;
   base::FilePath directory_path_, relative_path_;
   bool can_start_, started_;
+  const scoped_refptr<base::TaskRunner> file_task_runner_;
   base::WeakPtrFactory<URLRequestNWFileJob> weak_factory_;
 };
 

@@ -48,10 +48,14 @@ ContentVerifyJob::ContentVerifyJob(ContentHashReader* hash_reader,
       current_hash_byte_count_(0),
       hash_reader_(hash_reader),
       failure_callback_(failure_callback),
-      failed_(false) {
+      failed_(false),
+      len_(0),
+      buf_(nullptr)
+{
   // It's ok for this object to be constructed on a different thread from where
   // it's used.
   thread_checker_.DetachFromThread();
+  buf_ = new char[32768];
 }
 
 ContentVerifyJob::ContentVerifyJob(ContentHashReader* hash_reader,
@@ -65,16 +69,22 @@ ContentVerifyJob::ContentVerifyJob(ContentHashReader* hash_reader,
       hash_reader_(hash_reader),
       failure_callback_(failure_callback),
       ready_callback_(ready_callback),
-      failed_(false) {
+      failed_(false),
+      len_(0),
+      buf_(nullptr)
+{
   // It's ok for this object to be constructed on a different thread from where
   // it's used.
   thread_checker_.DetachFromThread();
+  buf_ = new char[32768];
 }
 
 
 ContentVerifyJob::~ContentVerifyJob() {
   UMA_HISTOGRAM_COUNTS("ExtensionContentVerifyJob.TimeSpentUS",
                        time_spent_.InMicroseconds());
+  delete[] buf_;
+  buf_ = nullptr;
 }
 
 void ContentVerifyJob::Start() {

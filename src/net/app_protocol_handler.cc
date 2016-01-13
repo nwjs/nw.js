@@ -103,7 +103,7 @@ class URLRequestNWAppJob : public URLRequestNWFileJob {
                      bool send_cors_header,
                      ContentVerifyJob* verify_job)
     : URLRequestNWFileJob(
-                          request, network_delegate, directory_path, relative_path, verify_job),
+                          request, network_delegate, directory_path, relative_path, verify_job, content::BrowserThread::GetBlockingPool()->GetTaskRunnerWithShutdownBehavior(base::SequencedWorkerPool::SKIP_ON_SHUTDOWN)),
       content_security_policy_(content_security_policy),
       send_cors_header_(send_cors_header),
       weak_factory_(this) {

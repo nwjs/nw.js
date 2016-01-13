@@ -105,16 +105,16 @@ void ReadResourceFilePathAndLastModifiedTime(
 }  // namespace
 
 URLRequestNWFileJob::URLRequestNWFileJob(net::URLRequest* request,
-                      net::NetworkDelegate* network_delegate,
-                      const base::FilePath& directory_path,
-                      const base::FilePath& relative_path,
-                      ContentVerifyJob* verify_job)
+                                         net::NetworkDelegate* network_delegate,
+                                         const base::FilePath& directory_path,
+                                         const base::FilePath& relative_path,
+                                         ContentVerifyJob* verify_job,
+                                         const scoped_refptr<base::TaskRunner>& file_task_runner)
       : net::URLRequestFileJob(
             request,
             network_delegate,
             base::FilePath(),
-            BrowserThread::GetBlockingPool()->GetTaskRunnerWithShutdownBehavior(
-                base::SequencedWorkerPool::SKIP_ON_SHUTDOWN)),
+            file_task_runner),
         verify_job_(verify_job),
         seek_position_(0),
         bytes_read_(0),
@@ -124,6 +124,7 @@ URLRequestNWFileJob::URLRequestNWFileJob(net::URLRequest* request,
         // break when updating on Linux.
         can_start_(false),
         started_(false),
+        file_task_runner_(file_task_runner),
         weak_factory_(this) {
 }
 
@@ -226,8 +227,9 @@ void URLRequestNWFileJob::OnFilePathAndLastModifiedTimeRead(base::FilePath* read
 class NWFileProtocoHandler
     : public net::URLRequestJobFactory::ProtocolHandler {
  public:
-  NWFileProtocoHandler(bool is_incognito)
-    : is_incognito_(is_incognito) {}
+  NWFileProtocoHandler(
+      const scoped_refptr<base::TaskRunner>& file_task_runner)
+    : file_task_runner_(file_task_runner) {}
 
   ~NWFileProtocoHandler() override {}
 
@@ -236,7 +238,7 @@ class NWFileProtocoHandler
       net::NetworkDelegate* network_delegate) const override;
 
  private:
-  const bool is_incognito_;
+  const scoped_refptr<base::TaskRunner> file_task_runner_;
   DISALLOW_COPY_AND_ASSIGN(NWFileProtocoHandler);
 };
 
@@ -257,17 +259,10 @@ NWFileProtocoHandler::MaybeCreateJob(
       file_path.IsAbsolute()) {
     return new net::URLRequestFileDirJob(request, network_delegate, file_path);
   }
-  base::ThreadRestrictions::ScopedAllowIO allow_io;
   base::FilePath directory_path = content::Shell::GetPackage()->path();
-  base::File::Info info;
-  base::GetFileInfo(directory_path, &info);
-  if (!info.is_directory)
-    directory_path = directory_path.DirName();
 
   if (!directory_path.IsParent(file_path)) {
-    return new net::URLRequestFileJob(request, network_delegate, file_path,
-                                 BrowserThread::GetBlockingPool()->GetTaskRunnerWithShutdownBehavior(
-                                                    base::SequencedWorkerPool::SKIP_ON_SHUTDOWN));
+    return new net::URLRequestFileJob(request, network_delegate, file_path, file_task_runner_);
   }
   base::FilePath relative_path;
   directory_path.AppendRelativePath(file_path, &relative_path);
@@ -284,10 +279,11 @@ NWFileProtocoHandler::MaybeCreateJob(
   }
 
   URLRequestNWFileJob* job = new URLRequestNWFileJob(request,
-                                 network_delegate,
-                                 directory_path,
-                                 relative_path,
-                                 verify_job);
+                                                     network_delegate,
+                                                     directory_path,
+                                                     relative_path,
+                                                     verify_job,
+                                                     file_task_runner_);
   if (verify_job) {
     verify_job->SetSuccessCallback(base::Bind(&URLRequestNWFileJob::CanStart, base::Unretained(job)));
     verify_job->Start();
@@ -337,7 +333,7 @@ net::HttpResponseHeaders* BuildHttpHeaders(
 }
 
 net::URLRequestJobFactory::ProtocolHandler* CreateNWFileProtocolHandler(bool is_incognito) {
-  return new NWFileProtocoHandler(is_incognito);
+  return new NWFileProtocoHandler(BrowserThread::GetBlockingPool()->GetTaskRunnerWithShutdownBehavior(base::SequencedWorkerPool::SKIP_ON_SHUTDOWN));
 }
 
 }  // namespace nw

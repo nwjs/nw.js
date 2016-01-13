@@ -58,6 +58,18 @@ class ContentVerifier : public base::RefCountedThreadSafe<ContentVerifier> {
                    const base::FilePath& extension_root,
                    const base::FilePath& relative_path,
                    ContentVerifyJob* verify_job);
+  void BytesRead(const base::FilePath& extension_root,
+                 const base::FilePath& relative_path,
+                 ContentVerifyJob* job);
+  void ReadFile(const base::FilePath& extension_root,
+                const base::FilePath& relative_path,
+                ContentVerifyJob* job);
+  void OpenFile(const base::FilePath& extension_root,
+                const base::FilePath& relative_path,
+                ContentVerifyJob* job);
+  void OnFileReady(const base::FilePath& extension_root,
+                   const base::FilePath& relative_path,
+                   ContentVerifyJob* job);
 
   void OnExtensionLoaded(content::BrowserContext* browser_context);
   void OnExtensionUnloaded(content::BrowserContext* browser_context);

@@ -84,20 +84,50 @@ void ContentVerifier::OnHashReady(const std::string& extension_id,
                                   const base::FilePath& extension_root,
                                   const base::FilePath& relative_path,
                                   ContentVerifyJob* verify_job) {
-  base::ThreadRestrictions::ScopedAllowIO allow_io;
-  int size = 32768;
-  int len = 0;
-  scoped_ptr<char[]> buf(new char[size]);
-  base::File file(extension_root.Append(relative_path), base::File::FLAG_OPEN | base::File::FLAG_READ);
-  if (file.IsValid()) {
-    while (true) {
-      len = file.ReadAtCurrentPos(buf.get(), size);
-      if (len <= 0)
-        break;
-      verify_job->BytesRead(len, buf.get());
-    }
+  content::BrowserThread::GetBlockingPool()->PostTaskAndReply(
+      FROM_HERE,
+      base::Bind(&ContentVerifier::OpenFile, this, extension_root, relative_path, make_scoped_refptr(verify_job)),
+      base::Bind(&ContentVerifier::OnFileReady, this, extension_root, relative_path, make_scoped_refptr(verify_job)));
+}
+
+void ContentVerifier::OpenFile(const base::FilePath& extension_root,
+                               const base::FilePath& relative_path,
+                               ContentVerifyJob* job) {
+  job->file_.Initialize(extension_root.Append(relative_path), base::File::FLAG_OPEN | base::File::FLAG_READ);
+}
+
+void ContentVerifier::OnFileReady(const base::FilePath& extension_root,
+                                  const base::FilePath& relative_path,
+                                  ContentVerifyJob* job) {
+  if (!job->file_.IsValid())
+    job->DoneReading();
+
+  content::BrowserThread::GetBlockingPool()->PostTaskAndReply(
+      FROM_HERE,
+      base::Bind(&ContentVerifier::ReadFile, this, extension_root, relative_path, make_scoped_refptr(job)),
+      base::Bind(&ContentVerifier::BytesRead, this, extension_root, relative_path, make_scoped_refptr(job)));
+}
+
+void ContentVerifier::ReadFile(const base::FilePath& extension_root,
+                               const base::FilePath& relative_path,
+                               ContentVerifyJob* job) {
+  job->len_ = job->file_.ReadAtCurrentPos(job->buf_, 32768);
+  if (job->len_ <= 0)
+    job->file_.Close();
+}
+
+void ContentVerifier::BytesRead(const base::FilePath& extension_root,
+                                const base::FilePath& relative_path,
+                                ContentVerifyJob* job) {
+  if (job->len_ <= 0) {
+    job->DoneReading();
+  } else {
+    job->BytesRead(job->len_, job->buf_);
+    content::BrowserThread::GetBlockingPool()->PostTaskAndReply(
+      FROM_HERE,
+      base::Bind(&ContentVerifier::ReadFile, this, extension_root, relative_path, make_scoped_refptr(job)),
+      base::Bind(&ContentVerifier::BytesRead, this, extension_root, relative_path, make_scoped_refptr(job)));
   }
-  verify_job->DoneReading();
 }
 
 void ContentVerifier::VerifyFailed(const std::string& extension_id,
