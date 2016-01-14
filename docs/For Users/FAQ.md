@@ -17,4 +17,19 @@ myApp.config(['$compileProvider',
   }]);
 ```
 
+## 3. How to leave fullscreen mode with ESC key?
+Usually users expect to use ESC key to quit fullscreen mode. By default, NW.js don't bind ESC shortcut for leaving fullscreen mode, but providing APIs for entering and leaving fullscreen mode. It will give developers more control on fullscreen mode.
+
+To enable ESC key for leaving fullscreen mode, you can use [Shortcut API](../References/Shortcut.md):
+
+```javascript
+nw.App.registerGlobalHotKey(new nw.Shortcut({
+  key: "Esc",
+  active: function () {
+    // decide whether to leave fullscreen mode
+    // then ...
+    nw.Window.get().leaveFullscreen();
+  })
+}));
+```
 
