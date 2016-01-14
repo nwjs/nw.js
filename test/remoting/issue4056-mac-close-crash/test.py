@@ -1,6 +1,7 @@
 import time
 import os
 import platform
+import sys
 
 if platform.system() != 'Darwin':
     print 'Skipped for non Mac platform'
