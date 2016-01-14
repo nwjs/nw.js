@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>open</title>
+</head>
+<body>
+  <iframe id="child" src="child.html"></iframe>
+  <button id="showdevtools" onclick="showJailedDevTools()">Show Jailed DevTools</button>
+  <script>
+  function showJailedDevTools() {
+    nw.Window.get().showDevTools(document.getElementById('child'))
+  };
+  </script>
+</body>
+</html>
