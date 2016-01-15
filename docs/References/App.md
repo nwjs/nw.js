@@ -6,11 +6,24 @@
 
 ## App.argv
 
-Get the command line arguments when starting the app.
+Get the filtered command line arguments when starting the app. In NW.js, some command line arguments are used by NW.js, which should not be interested of your app. `App.argv` will filter out those arguments and return the ones left. You can get filtered patterns from `App.filteredArgv` and the full arguments from `App.fullArgv`.
 
 ## App.fullArgv
 
-Get all the command line arguments when starting the app. Because NW.js itself used switches like `--no-sandbox` and `--process-per-tab`, it would confuse the app when the switches were meant to be given to NW.js, so `App.argv` just filtered such switches (arguments' precedence were kept). You can get the switches to be filtered with `App.filteredArgv`.
+Get all the command line arguments when starting the app. The return values contains the arguments used by NW.js, such as `--nwapp`, `--remote-debugging-port` etc.
+
+## App.filteredArgv
+
+Get a list of patterns of filtered command line arguments used by `App.argv`. By default, following patterns are used to filter the arguments:
+
+```javascript
+[
+  /^--url=/,
+  /^--remote-debugging-port=/,
+  /^--renderer-cmd-prefix=/,
+  /^--nwapp=/
+]
+```
 
 ## App.dataPath
 

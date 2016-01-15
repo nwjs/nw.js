@@ -2,7 +2,7 @@ var nw_binding = require('binding').Binding.create('nw.App');
 var nwNatives = requireNative('nw_natives');
 var sendRequest = require('sendRequest');
 
-var argv = null;
+var fullArgv = null;
 var dataPath;
 
 var eventsMap = {
@@ -10,16 +10,39 @@ var eventsMap = {
   'reopen':           'onReopen'
 };
 
+var filteredArgv = [
+  /^--url=/,
+  /^--remote-debugging-port=/,
+  /^--renderer-cmd-prefix=/,
+  /^--nwapp=/
+];
+
 nw_binding.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
   apiFunctions.setHandleRequest('crashRenderer', function() {
     nwNatives.crashRenderer();
   });
   bindingsAPI.compiledApi.__defineGetter__('argv', function() {
-    if (argv)
-      return argv;
-    argv = nw.App.getArgvSync();
+    var fullArgv = this.fullArgv;
+    var argv = fullArgv.filter(function(arg) {
+      return !filteredArgv.some(function(f) {
+        return f.test(arg);
+      });
+    });
+
     return argv;
+  });
+  bindingsAPI.compiledApi.__defineGetter__('fullArgv', function() {
+    if (fullArgv)
+      return fullArgv;
+    fullArgv = nw.App.getArgvSync();
+    return fullArgv;
+  });
+  bindingsAPI.compiledApi.__defineGetter__('filteredArgv', function() {
+    return filteredArgv;
+  });
+  bindingsAPI.compiledApi.__defineSetter__('filteredArgv', function(newFilteredArgv) {
+    return filteredArgv = newFilteredArgv;
   });
   bindingsAPI.compiledApi.__defineGetter__('manifest', function() {
     var ret= chrome.runtime.getManifest();
