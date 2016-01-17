@@ -968,4 +968,8 @@ void CreateAppWindowHook(extensions::AppWindow* app_window) {
   }
 }
 
+bool IsReloadingApp() {
+  return g_reloading_app;
+}
+
 } //namespace nw

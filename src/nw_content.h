@@ -74,6 +74,7 @@ void DocumentFinishHook(blink::WebFrame* frame,
 #endif
  void CreateAppWindowHook(extensions::AppWindow*);
  void ReloadExtensionHook(const extensions::Extension*);
+ bool IsReloadingApp();
 }
 
 #endif
