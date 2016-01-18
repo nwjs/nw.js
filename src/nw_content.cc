@@ -693,6 +693,13 @@ void OnRenderProcessShutdownHook(extensions::ScriptContext* context) {
   }
 }
 
+void KickNextTick() {
+  blink::WebScopedMicrotaskSuppression suppression;
+  void* env = g_get_node_env_fn();
+  if (env)
+    g_call_tick_callback_fn(env);
+}
+
 void willHandleNavigationPolicy(content::RenderView* rv,
                                 blink::WebFrame* frame,
                                 const blink::WebURLRequest& request,
