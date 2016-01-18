@@ -1,3 +1,47 @@
+0.13.0-beta4 / 01-18-2015
+=========================
+- Update Chromium to 48.0.2564.82
+- Update Node.js to 5.4.1
+- [OSX] Fix process.nextTick in some cases
+- [OSX] Fix hidden window title (#4186)
+- ported nw.App.fullArgv
+- Fix: nw.App.quit() does nothing when use JS file as main (#4227)
+
+0.13.0-beta3 / 01-13-2015
+=========================
+- Fix: save as... dialog not working (#4142)
+- Fix: app with hidden window will quit on start on osx
+- Fix: chrome socket api permission in NW app (#4143)
+- Fix: some Node core modules not working after close window (#4130, #4140)
+- Fix: chrome.fileSystem.restoreEntry breaks retainID on app reload (#4150)
+- Fix: oauth not working due to browser side naviagation (#4179, #4131, #4184)
+- Fix: Exception in nw.dll when running native module serialport (#4152)
+- Fix: window.open not loaded using node-remote (#4180)
+- Fix: POST form not working on navigation
+- Fix: nwjs Helper process not closed (#4118)
+- Fix: NW.js doesn't quit if DevTools has opened once (#4164)
+- Fix: window not closed when listen to 'close' event in another window (#4138)
+- Fix: [WIN] debug build of 'payload' tool
+- Fix: Crash when using devtools to view some source (#4121)
+- Fix: nw.Window.get() returns null after navigation (#4157, #4007)
+- Fix: requrie() function in the shim for nw12 compatibility (#4141)
+- Fix: Reversed x and y in win.moveTo and win.moveBy (#4136)
+- Accept array of matched patterns in node-remote (#4132)
+- [doc] Added docs for win.navigation event
+- [doc] Updated docs for single-instance
+- [doc] add hint for document contribution
+- [doc] update for Multiple Context mode
+- [doc] For Users > Getting Started. Revise example 2 sample code to cater new NW.JS API for Menu
+- [doc] update for Window.id
+
+0.13.0-beta2 / 12-31-2015
+=========================
+- Fix: application window is opened out of the screen on Windows.
+
+0.13.0-beta1 / 12-30-2015
+=========================
+- Most of nw.gui API ported
+
 0.12.3 / 07-31-2015
 ===================
 - Support Mac App Store with the 'macappstore' flavor
