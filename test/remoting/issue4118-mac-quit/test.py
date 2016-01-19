@@ -19,7 +19,7 @@ driver.implicitly_wait(10)
 time.sleep(1)
 try:
     print driver.current_url
-    pyautogui.hotkey('command', 'q')
+    pyautogui.hotkey('command', 'q', interval=0.1)
     print 'key sent'
     time.sleep(3) # wait for quit
     pgrep = subprocess.Popen(['pgrep', '-P', str(driver.service.process.pid)], stdout=subprocess.PIPE)
