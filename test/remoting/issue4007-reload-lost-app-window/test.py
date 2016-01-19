@@ -13,9 +13,10 @@ try:
     result = driver.find_element_by_id('result').get_attribute('innerHTML')
     print result
     assert("success" in result)
+    old_handle = driver.current_window_handle
     driver.find_element_by_id('reloadapp').click()
     print 'wait for app reload'
-    while len(driver.window_handles) == 0:
+    while len(driver.window_handles) == 0 or driver.window_handles[0] == old_handle:
         time.sleep(1)
     # devtools will be opened as the first window handle
     print driver.window_handles
