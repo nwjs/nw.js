@@ -1,5 +1,8 @@
 import time
 import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from nw_util import *
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -16,16 +19,14 @@ try:
     old_handle = driver.current_window_handle
     driver.find_element_by_id('reloadapp').click()
     print 'wait for app reload'
-    while len(driver.window_handles) == 0 or driver.window_handles[0] == old_handle:
-        time.sleep(1)
+    wait_window_handles(driver, lambda handles: len(handles) != 0 and handles[0] != old_handle)
     # devtools will be opened as the first window handle
     print driver.window_handles
-    print 'wait for devtools window ready'
-    driver.switch_to_window(driver.window_handles[0])
-    while driver.execute_script('return document.readyState') != 'complete':
-        time.sleep(1)
+    print 'switch to devtools'
+    switch_to_devtools(driver, devtools_window=driver.window_handles[0])
     print 'close devtools'
     driver.close()
+    wait_window_handles(driver, 1)
     print driver.window_handles
     print 'switch to main window'
     driver.switch_to_window(driver.window_handles[0])

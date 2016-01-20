@@ -1,6 +1,9 @@
 import time
 import os
 import subprocess
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from nw_util import *
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -35,6 +38,7 @@ try:
     result = driver.find_element_by_id('res').get_attribute('innerHTML')
     print result
     assert("object" in result)
+    wait_window_handles(driver, 2)
     driver.switch_to_window(driver.window_handles[-1])
     for id in ['res', 'res2', 'res3']:
         result = driver.find_element_by_id(id).get_attribute('innerHTML')
