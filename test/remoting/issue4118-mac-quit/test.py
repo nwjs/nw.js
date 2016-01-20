@@ -2,8 +2,9 @@ import time
 import os
 import pyautogui
 import platform
-import subprocess
 import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from nw_util import *
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -22,11 +23,6 @@ try:
     pyautogui.hotkey('command', 'q', interval=0.1)
     print 'key sent'
     time.sleep(3) # wait for quit
-    pgrep = subprocess.Popen(['pgrep', '-P', str(driver.service.process.pid)], stdout=subprocess.PIPE)
-    out, err = pgrep.communicate()
-    print 'live chrome processes:\n%s' % out
-    print 'pgrep exit with %s' % pgrep.returncode
-    # expect exit 1 from pgrep, which means no chrome process alive
-    assert(pgrep.returncode == 1)
+    assert(no_live_process(driver))
 finally:
     driver.quit()

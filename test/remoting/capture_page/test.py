@@ -1,5 +1,8 @@
 import time
 import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from nw_util import *
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -10,7 +13,7 @@ driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_opt
 time.sleep(1)
 try:
     print driver.current_url
-    time.sleep(5)
+    wait_window_handles(driver, 2)
     driver.switch_to_window(driver.window_handles[-1])
     img = driver.find_element_by_id('png')
     assert(img.size['width'] > 50 and img.size['height'] > 50)

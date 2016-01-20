@@ -1,6 +1,9 @@
 import time
 import os
 import subprocess
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from nw_util import *
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -30,9 +33,9 @@ try:
     print driver.current_url
     driver.implicitly_wait(10)
     driver.find_element_by_id('open-win').click()
-    time.sleep(2)
+    wait_window_handles(driver, 2)
     driver.find_element_by_id('close-win').click()
-    time.sleep(2)
+    wait_window_handles(driver, 1)
     driver.find_element_by_id('test-request').click()
     result = driver.find_element_by_id('result').get_attribute('innerHTML')
     print result
