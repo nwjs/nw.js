@@ -109,8 +109,8 @@ const char kmUserAgent[] = "user-agent";
 const char kmRemotePages[] = "node-remote";
 
 const char kmNewInstance[] = "new-instance";
-const char kmInjectJSDocStart[]  = "inject-js-start";
-const char kmInjectJSDocEnd[]  = "inject-js-end";
+const char kmInjectJSDocStart[]  = "inject_js_start";
+const char kmInjectJSDocEnd[]  = "inject_js_end";
 const char kmInjectCSS[] = "inject-css";
 
 #if defined(OS_WIN)

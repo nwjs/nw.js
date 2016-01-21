@@ -59,8 +59,8 @@ nw.Window.open('https://github.com/nwjs/nw.js', {}, function(new_win) {
 * `url` `{String}` URL to be loaded in the opened window
 * `options` `{Object}` _Optional_ see [Window subfields](Manifest Format.md#window-subfields) in manifest format. And following extra fields can also be used in options.
     - `new-instance` `{Boolean}` _Optional_ whether to open a new window in a separate render process.
-    - `inject-js-start` `{String}` _Optional_ the script to be injected before document loaded. See [Manifest format](Manifest Format.md#inject-js-start)
-    - `inject-js-end` `{String}` _Optional_ the script to be injected before document unloaded. See [Manifest format](Manifest Format.md#inject-js-end)
+    - `inject_js_start` `{String}` _Optional_ the script to be injected before document loaded. See [Manifest format](Manifest Format.md#inject_js_start)
+    - `inject_js_end` `{String}` _Optional_ the script to be injected before document unloaded. See [Manifest format](Manifest Format.md#inject_js_end)
     - `id` `{String}` _Optional_ the ID used to identify the window. This will be used to remember the size and position of the window and restore that geometry when a window with the same id is later opened. [See also the Chrome App documentation](https://developer.chrome.com/apps/app_window#type-CreateWindowOptions)
 * `callback(win)` `{Function}` _Optional_ callback when with the opened native `Window` object
 

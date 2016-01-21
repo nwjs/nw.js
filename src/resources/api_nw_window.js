@@ -511,6 +511,10 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         options.alwaysOnTop = true;
       if (params['visible_on_all_workspaces'] === true)
         options.visibleOnAllWorkspaces = true;
+      if (typeof params['inject_js_start'] == 'string')
+        options.inject_js_start = params['inject_js_start'];
+      if (typeof params['inject_js_end'] == 'string')
+        options.inject_js_end = params['inject_js_end'];
       if (params.transparent)
         options.alphaEnabled = true;
       if (params.kiosk === true)

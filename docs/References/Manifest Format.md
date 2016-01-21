@@ -123,14 +123,14 @@ See [Command Line Options](Command Line Options.md) for more information.
 }
 ```
 
-### inject-js-start
-### inject-js-end
+### inject_js_start
+### inject_js_end
 
 * `{String}` a local filename, relative to the application path, used to specify a JavaScript file to inject to the window.
 
-`inject-js-start`: The injecting JavaScript code is to be executed after any files from css, but before any other DOM is constructed or any other script is run.
+`inject_js_start`: The injecting JavaScript code is to be executed after any files from css, but before any other DOM is constructed or any other script is run.
 
-`inject-js-end`: The injecting JavaScript code is to be executed after the document object is loaded, before `onload` event is fired. This is mainly to be used as an option of `Window.open()` to inject JS in a new window. 
+`inject_js_end`: The injecting JavaScript code is to be executed after the document object is loaded, before `onload` event is fired. This is mainly to be used as an option of `Window.open()` to inject JS in a new window. 
 
 ### additional_trust_anchors
 

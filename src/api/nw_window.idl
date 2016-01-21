@@ -35,6 +35,8 @@ namespace nw.Window {
     [nodoc] DOMString? title;
     [nodoc] DOMString? position;
     [nodoc] DOMString? icon;
+    [nodoc] DOMString? inject_js_start;
+    [nodoc] DOMString? inject_js_end;
   };
 
   [noinline_doc] dictionary NWWindow {

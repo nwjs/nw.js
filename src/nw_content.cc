@@ -643,8 +643,8 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* erro
     AmendManifestStringList(manifest, manifest_keys::kPermissions, "management");
   }
 
-  AmendManifestContentScriptList(manifest, "inject-js-start", "document_start");
-  AmendManifestContentScriptList(manifest, "inject-js-end",   "document_end");
+  AmendManifestContentScriptList(manifest, "inject_js_start", "document_start");
+  AmendManifestContentScriptList(manifest, "inject_js_end",   "document_end");
 
   if (manifest->GetString("window.icon", &icon_path)) {
     gfx::Image app_icon;

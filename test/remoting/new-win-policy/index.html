@@ -5,7 +5,7 @@
 var win = nw.Window.get();
 win.on('new-win-policy', function(frame, url, policy) { 
   console.log("new-win-policy called: " + url); 
-  policy.setNewWindowManifest({'frame': false, 'inject-js-start': 'start.js', 'inject-js-end':'end.js'});
+  policy.setNewWindowManifest({'frame': false, 'inject_js_start': 'start.js', 'inject_js_end':'end.js'});
   //policy.forceCurrent();
 });
 win.on('navigation', function(frame, url, policy, context) { 
