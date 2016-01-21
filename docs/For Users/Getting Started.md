@@ -78,6 +78,7 @@ This example shows how to create a native context menu in your NW.js app. You ca
 <p>'Right click' to show context menu.</p>
 
 <script>
+var nw = require('nw.gui');
 // Create an empty context menu
 var menu = new nw.Menu();
 
