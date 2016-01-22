@@ -525,6 +525,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         options.title = params.title;
       if (params.icon)
         options.icon = params.icon;
+      if (params.id)
+        options.id = params.id;
     }
     try_hidden(window).chrome.app.window.create(url, options, function(appWin) {
       if (callback) {

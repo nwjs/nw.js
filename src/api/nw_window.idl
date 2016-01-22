@@ -15,6 +15,7 @@ namespace nw.Window {
     [nodoc] long? quality;
   };
   [noinline_doc] dictionary CreateWindowOptions {
+    [nodoc] DOMString? id;
     [nodoc] long? x;
     [nodoc] long? y;
     [nodoc] long? width;
