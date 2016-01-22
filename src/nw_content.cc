@@ -641,6 +641,7 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* erro
 
     AmendManifestStringList(manifest, manifest_keys::kPermissions, "developerPrivate");
     AmendManifestStringList(manifest, manifest_keys::kPermissions, "management");
+    AmendManifestStringList(manifest, manifest_keys::kPermissions, "<all_urls>");
   }
 
   AmendManifestContentScriptList(manifest, "inject_js_start", "document_start");
