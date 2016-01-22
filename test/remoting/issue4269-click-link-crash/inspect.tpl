@@ -7,7 +7,7 @@
 </head>
 <body>
   <script>
-  console.log('https://www.google.com/');
+  console.log('http://localhost:{port}/inspect.html');
   </script>
 </body>
 </html>
