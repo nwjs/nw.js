@@ -199,6 +199,7 @@ def generate_target_nw(platform_name, arch, version):
                            'resources.pak',
                            'nw_100_percent.pak',
                            'nw_200_percent.pak',
+                           'dbghelp.dll'
                            ]
         if flavor == 'sdk':
             target['input'].append('nwjc.exe')
