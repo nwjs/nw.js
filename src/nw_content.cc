@@ -980,4 +980,14 @@ bool IsReloadingApp() {
   return g_reloading_app;
 }
 
+void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, content::WebPreferences* web_prefs) {
+  nw::Package* package = nw::package();
+  if (!package)
+    return;
+  base::DictionaryValue* webkit;
+  if (package->root()->GetDictionary(switches::kmWebkit, &webkit)) {
+    webkit->GetBoolean("double_tap_to_zoom_enabled", &web_prefs->double_tap_to_zoom_enabled);
+  }
+}
+
 } //namespace nw

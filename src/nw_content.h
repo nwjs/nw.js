@@ -19,9 +19,11 @@ namespace blink {
 namespace content {
   class RenderFrame;
   class RenderProcessHost;
+  class RenderViewHost;
   class NotificationDetails;
   class RenderView;
   class WebContents;
+  struct WebPreferences;
 }
 
 namespace extensions {
@@ -76,6 +78,7 @@ void DocumentFinishHook(blink::WebFrame* frame,
  void ReloadExtensionHook(const extensions::Extension*);
  bool IsReloadingApp();
  void KickNextTick();
+ void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, content::WebPreferences* web_prefs);
 }
 
 #endif
