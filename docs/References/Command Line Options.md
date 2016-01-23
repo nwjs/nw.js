@@ -23,6 +23,10 @@ Specify the data directory for your app, which contains the stored data, caches 
 
 Where `<name-in-manifest>` is the [`name` field in manifest](Manifest Format.md#name).
 
+## `--enable-gcm`
+
+Enable the chrome.gcm API.
+
 ## `--enable-transparent-visuals`
 ## `--disable-transparency`
 ## `--disable-gpu`
