@@ -243,6 +243,10 @@ There is experimental support for "click-through" on the transparent region: add
 
 ## WebKit Subfields
 
+### double_tap_to_zoom_enabled
+
+* `{Boolean}` enable zooming with double tapping on mac with 2 fingers, default is false.
+
 ### plugin
 
 * `{Boolean}` whether to load external browser plugins like Flash, default to false.
