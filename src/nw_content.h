@@ -3,6 +3,7 @@
 
 #include "nw_package.h"
 #include "third_party/WebKit/public/web/WebNavigationPolicy.h"
+#include "third_party/WebKit/public/platform/WebPageVisibilityState.h"
 
 namespace base {
   class DictionaryValue;
@@ -18,6 +19,7 @@ namespace blink {
 
 namespace content {
   class RenderFrame;
+  class RenderFrameHost;
   class RenderProcessHost;
   class RenderViewHost;
   class NotificationDetails;

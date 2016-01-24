@@ -249,15 +249,7 @@ There is experimental support for "click-through" on the transparent region: add
 
 ### plugin
 
-* `{Boolean}` whether to load external browser plugins like Flash, default to false.
-
-### java
-
-* `{Boolean}` whether to load Java applets, default to false.
-
-### page-cache
-
-* `{Boolean}` whether to enable page cache, default to false.
+* `{Boolean}` whether to load external browser plugins like Flash, default to true.
 
 ## Other Fields
 

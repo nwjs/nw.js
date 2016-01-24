@@ -25,6 +25,7 @@
 #include "content/nw/src/common/shell_switches.h"
 #include "content/public/browser/notification_service.h"
 #include "content/public/browser/notification_types.h"
+#include "content/public/browser/plugin_service.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/content_switches.h"
@@ -985,9 +986,17 @@ void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, content::WebPreferenc
   if (!package)
     return;
   base::DictionaryValue* webkit;
+  web_prefs->plugins_enabled = true;
   if (package->root()->GetDictionary(switches::kmWebkit, &webkit)) {
     webkit->GetBoolean("double_tap_to_zoom_enabled", &web_prefs->double_tap_to_zoom_enabled);
+    webkit->GetBoolean("plugin",                     &web_prefs->plugins_enabled);
   }
+  FilePath plugins_dir = package->path();
+
+  plugins_dir = plugins_dir.AppendASCII("plugins");
+
+  content::PluginService* plugin_service = content::PluginService::GetInstance();
+  plugin_service->AddExtraPluginDir(plugins_dir);
 }
 
 } //namespace nw
