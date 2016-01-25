@@ -63,7 +63,7 @@ By default NW.js only allows one instance of your app. If you want to allow mult
 
 ### window
 
-* `{Object}` controls how the main window looks, see [Window Subfields](#window-subfields) below.
+* `{Object}` controls how the window looks, see [Window Subfields](#window-subfields) below.
 
 ### webkit
 
@@ -150,6 +150,16 @@ These certificates are used as additional root certificates for validation, to a
 * `{Boolean}` whether the default `Edit` menu should be disabled on Mac OS X. The default value is `false`. Only effective on Mac OS X.
 
 ## Window Subfields
+
+Most of window subfields are inherited by sub windows opened by `window.open()` or links (`<a target="_blank">`) by default. The exception list of non inherited subfields are as following. They will be set to default value for opened window:
+
+* `fullscreen` -> `false`
+* `kiosk` -> `false`
+* `position` -> `null`
+* `resizable` -> `true`
+* `show` -> `true`
+
+All of the window subfields can be overwritten by using [`new-win-policy` event](Window.md#event-new-win-policy-frame-url-policy).
 
 ### title
 
