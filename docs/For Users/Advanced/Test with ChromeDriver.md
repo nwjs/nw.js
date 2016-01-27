@@ -51,7 +51,7 @@ driver.quit()
 
 See http://selenium-python.readthedocs.org/ for detailed documents of `selenium-python`.
 
-### Modifications on the upstream chromedriver
+## Modifications on the upstream chromedriver
 
 * chromedriver is modified to find NW executable in the same directory by default
 
