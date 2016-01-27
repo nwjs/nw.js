@@ -27,7 +27,7 @@ namespace nw.App {
     static void crashBrowser();
   };
   interface Events {
-    static void onOpen();
+    static void onOpen(DOMString cmdline);
     static void onReopen();
   };
 };

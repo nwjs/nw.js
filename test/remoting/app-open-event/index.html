@@ -7,8 +7,8 @@
   <body>
     <h1 id='result'>App.open event test</h1>
     <script type="text/javascript">
-      nw.App.on('open', function(){
-            document.getElementById('result').innerHTML = 'success';
+      nw.App.on('open', function(cmd){
+            document.getElementById('result').innerHTML = cmd;
         });
     </script>
   </body>

@@ -889,7 +889,7 @@ bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window) {
 #endif //OSX
 }
 
-void SendEventToApp(const std::string& event_name) {
+void SendEventToApp(const std::string& event_name, scoped_ptr<base::ListValue> event_args) {
   Profile* profile = ProfileManager::GetActiveUserProfile();
   const extensions::ExtensionSet& extensions =
     ExtensionRegistry::Get(profile)->enabled_extensions();
@@ -900,10 +900,9 @@ void SendEventToApp(const std::string& event_name) {
     const Extension* extension = it->get();
     if (extension_prefs->IsExtensionRunning(extension->id()) &&
         extension->location() == extensions::Manifest::COMMAND_LINE) {
-      scoped_ptr<base::ListValue> arguments(new base::ListValue());
       scoped_ptr<extensions::Event> event(new extensions::Event(extensions::events::UNKNOWN,
                                                                 event_name,
-                                                                arguments.Pass()));
+                                                                event_args.Pass()));
       event->restrict_to_browser_context = profile;
       EventRouter::Get(profile)
         ->DispatchEventToExtension(extension->id(), event.Pass());
@@ -917,7 +916,14 @@ bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_l
   bool single_instance = true;
   package->root()->GetBoolean(switches::kmSingleInstance, &single_instance);
   if (single_instance) {
-    SendEventToApp("nw.App.onOpen");
+#if defined(OS_WIN)
+    std::string cmd = base::UTF16ToUTF8(command_line.GetCommandLineString());
+#else
+    std::string cmd = command_line.GetCommandLineString();
+#endif
+    scoped_ptr<base::ListValue> arguments(new base::ListValue());
+    arguments->AppendString(cmd);
+    SendEventToApp("nw.App.onOpen", arguments.Pass());
   }
     
   return single_instance;
@@ -925,7 +931,8 @@ bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_l
 
 #if defined(OS_MACOSX)
 bool ApplicationShouldHandleReopenHook(bool hasVisibleWindows) {
-  SendEventToApp("nw.App.onReopen");
+  scoped_ptr<base::ListValue> arguments(new base::ListValue());
+  SendEventToApp("nw.App.onReopen",arguments.Pass());
   return true;
 }
 #endif
