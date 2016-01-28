@@ -20,6 +20,17 @@ myApp.config(['$compileProvider',
   }]);
 ```
 
+## Can't see exception reporting in AngularJS 2
+AngularJS 2 tries to register exception handlers in global variable `global`. However it's already existed in NW.js environment, which prevents exception reporting shown in DevTools. The workaround is to rename `global` to something else before loading any AngularJS libraries. For example,
+
+```html
+<script>
+window.nw_global = window.global;
+window.global = undefined;
+</script>
+<!-- Angular 2 Dependencies -->
+```
+
 ## How to leave fullscreen mode with ESC key?
 Usually users expect to use ESC key to quit fullscreen mode. By default, NW.js don't bind ESC shortcut for leaving fullscreen mode, but providing APIs for entering and leaving fullscreen mode. It will give developers more control on fullscreen mode.
 
