@@ -1,0 +1,46 @@
+diff --git a/selenium/webdriver/chrome/options.py b/selenium/webdriver/chrome/options.py
+index 102ecb8..36e6025 100644
+--- a/selenium/webdriver/chrome/options.py
++++ b/selenium/webdriver/chrome/options.py
+@@ -25,6 +25,7 @@ class Options(object):
+     def __init__(self):
+         self._binary_location = ''
+         self._arguments = []
++        self._nw_arguments = []
+         self._extension_files = []
+         self._experimental_options = {}
+ 
+@@ -65,6 +66,25 @@ class Options(object):
+             raise ValueError("argument can not be null")
+ 
+     @property
++    def nw_arguments(self):
++        """
++        Returns a list of arguments needed for the browser
++        """
++        return self._nw_arguments
++
++    def add_nw_argument(self, argument):
++        """
++        Adds an argument to the list
++
++        :Args:
++         - Sets the arguments
++        """
++        if argument:
++            self._nw_arguments.append(argument)
++        else:
++            raise ValueError("argument can not be null")
++
++    @property
+     def extensions(self):
+         """
+         Returns a list of encoded extensions that will be loaded into chrome
+@@ -126,6 +146,7 @@ class Options(object):
+         chrome_options["extensions"] = self.extensions
+         chrome_options["binary"] = self.binary_location
+         chrome_options["args"] = self.arguments
++        chrome_options["nwargs"] = self.nw_arguments
+ 
+         chrome["chromeOptions"] = chrome_options
+ 
