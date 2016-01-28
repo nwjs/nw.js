@@ -55,7 +55,7 @@ Create new `Shortcut`, `option` is an object contains initial settings for the `
 
 ## shortcut.key
 
-Get the `key` of a `Shortcut`. It is a string to specify the shortcut key, like `"Ctrl+Alt+A"`. The key is consisted of zero or more _modifiers_ and a _key_ on your keyboard. Only one key code is supported.
+Get the `key` of a `Shortcut`. It is a string to specify the shortcut key, like `"Ctrl+Alt+A"`. The key is consisted of zero or more _modifiers_ and a _key_ on your keyboard. Only one key code is supported. Key code is case insensitive.
 
 List of supported modifiers:
 
