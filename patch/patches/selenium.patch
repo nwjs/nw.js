@@ -1,7 +1,7 @@
 diff --git a/selenium/webdriver/chrome/options.py b/selenium/webdriver/chrome/options.py
 index 102ecb8..36e6025 100644
---- a/selenium/webdriver/chrome/options.py
-+++ b/selenium/webdriver/chrome/options.py
+--- selenium/webdriver/chrome/options.py
++++ selenium/webdriver/chrome/options.py
 @@ -25,6 +25,7 @@ class Options(object):
      def __init__(self):
          self._binary_location = ''
