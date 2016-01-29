@@ -13,14 +13,14 @@
     shortcut.on('failed', function(e) {
       writeFailure(id,e);
     });
-    nw.App.registerGlobalHotkey(shortcut);
+    nw.App.registerGlobalHotKey(shortcut);
   }
   function unreg(id, key) {
     var shortcut = new nw.Shortcut({key: key, failed: function() {
       clearTimeout(timer);
       writeFailure(id, key);
     }});
-    nw.App.unregisterGlobalHotkey(shortcut);
+    nw.App.unregisterGlobalHotKey(shortcut);
     var timer = setTimeout(function() {
       writeSuccess(id, key);
     }, 100);
