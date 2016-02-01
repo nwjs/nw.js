@@ -5,12 +5,82 @@ var forEach = require('utils').forEach;
 var Event = require('event_bindings').Event;
 var dispatchEvent = require('event_bindings').dispatchEvent;
 var sendRequest = require('sendRequest');
+var runtimeNatives = requireNative('runtime');
+var renderFrameObserverNatives = requireNative('renderFrameObserverNatives');
+var appWindowNatives = requireNative('app_window_natives');
+
+var GetExtensionViews = runtimeNatives.GetExtensionViews;
 
 var currentNWWindow = null;
 var currentNWWindowInternal = null;
 var currentRoutingID = nwNatives.getRoutingID();
+var currentWidgetRoutingID = nwNatives.getWidgetRoutingID();
 
 var nw_internal = require('binding').Binding.create('nw.currentWindowInternal');
+
+var bgPage = GetExtensionViews(-1, 'BACKGROUND')[0];
+
+if (bgPage == window) {
+  window.__nw_initwindow = function (routingId, self) {
+    if (!bgPage.__nw_windows)
+      bgPage.__nw_windows = {};
+    if (routingId in bgPage.__nw_windows) {
+      Object.setPrototypeOf(bgPage.__nw_windows[routingId][0], self);
+      var eventCBs = bgPage.__nw_windows[routingId][1];
+      self.outerEventCBs = eventCBs;
+      for (var event in eventCBs) {
+        for (var i in eventCBs[event]) {
+          if (eventCBs[event][i].once)
+            self.once(event, eventCBs[event][i].callback, false);
+          else
+            self.on(event, eventCBs[event][i].callback, false);
+        }
+      }
+    } else {
+      bgPage.__nw_windows[routingId] = [Object.create(self), {}];
+      renderFrameObserverNatives.OnDocumentElementCreated(routingId, bgPage.__nw_ondocumentcreated, true);
+      renderFrameObserverNatives.OnDestruct(routingId, bgPage.__nw_ondestruct);
+    }
+    self.outerWindow = bgPage.__nw_windows[routingId][0];
+    self.outerEventCBs = bgPage.__nw_windows[routingId][1];
+  };
+  window.__nw_ondocumentcreated = function (succeed, routingId) {
+    if (!succeed)
+      return;
+    // OnDocumentElementCreated is one-off
+    renderFrameObserverNatives.OnDocumentElementCreated(routingId, bgPage.__nw_ondocumentcreated, true);
+    if (routingId in window.__nw_windows) {
+      var view = appWindowNatives.GetFrame(routingId, false);
+      try_nw(view).nw.Window.get();
+    }
+  };
+  window.__nw_ondestruct = function (routingId) {
+    delete window.__nw_windows[routingId];
+  };
+  window.__nw_removeOuterEventCB = function (self, event, listener) {
+    if (!(event in self.outerEventCBs))
+      return;
+    var index = -1;
+    for (var i in self.outerEventCBs[event])
+      if (self.outerEventCBs[event][i].callback === listener) {
+        index = i;
+        break;
+      }
+    if (index > -1)
+      $Array.splice(self.outerEventCBs[event], index, 1);
+  };
+  window.__nw_record_event = function (self, event, listener, is_once) {
+    if (!(event in self.outerEventCBs))
+      self.outerEventCBs[event] = [];
+    $Array.push(self.outerEventCBs[event], {callback: listener, once: is_once});
+  };
+  window.__nw_remove_all_listeners = function (self, event) {
+    if (event in self.outerEventCBs) {
+      delete self.outerEventCBs[event];
+    }
+  };
+  window.__nw_windows = {};
+}
 
 var try_hidden = function (view) {
   if (view.chrome.app.window)
@@ -93,7 +163,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     if (domWindow)
       return try_nw(domWindow).nw.Window.get();
     if (currentNWWindow)
-      return currentNWWindow;
+      return currentNWWindow.outerWindow;
 
     currentNWWindowInternal = nw_internal.generate();
     var NWWindow = function() {
@@ -107,6 +177,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
                         'nw.Window.get() has no associated AppWindow.');
       }
       privates(this).menu = null;
+      nwNatives.callInWindow(bgPage, "__nw_initwindow", currentRoutingID, this);
     };
     forEach(currentNWWindowInternal, function(key, value) {
       if (!key.endsWith('Internal'))
@@ -121,26 +192,34 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     NWWindow.prototype.onZoom              = new Event();
     NWWindow.prototype.onClose             = new Event("nw.Window.onClose", undefined, {supportsFilters: true});
 
-    NWWindow.prototype.once = function (event, listener) {
+    NWWindow.prototype.once = function (event, listener, record) {
       if (typeof listener !== 'function')
         throw new TypeError('listener must be a function');
       var fired = false;
       var self = this;
 
+      if (typeof record === 'undefined') {
+        nwNatives.callInWindow(bgPage, "__nw_record_event", this, event, listener, true);
+      }
+
       function g() {
+        nwNatives.callInWindow(bgPage, "__nw_removeOuterEventCB", self, event, listener);
         self.removeListener(event, g);
         if (!fired) {
           fired = true;
           listener.apply(self, arguments);
         }
       }
-      this.on(event, g);
+      this.on(event, g, false);
       return this;
     };
 
-    NWWindow.prototype.on = function (event, callback) {
+    NWWindow.prototype.on = function (event, callback, record) {
+      if (typeof record === 'undefined') {
+        nwNatives.callInWindow(bgPage, "__nw_record_event", this, event, callback, false);
+      }
       if (event === 'close') {
-        this.onClose.addListener(callback, {instanceId: currentRoutingID});
+        this.onClose.addListener(callback, {instanceId: currentWidgetRoutingID});
         return this;
       }
       if (appWinEventsMap.hasOwnProperty(event)) {
@@ -191,6 +270,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       return this;
     };
     NWWindow.prototype.removeListener = function (event, callback) {
+      nwNatives.callInWindow(bgPage, "__nw_removeOuterEventCB", this, event, callback);
       if (appWinEventsMap.hasOwnProperty(event)) {
         this.appWindow[appWinEventsMap[event]].removeListener(callback);
         return this;
@@ -221,6 +301,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     };
 
     NWWindow.prototype.removeAllListeners = function (event) {
+      nwNatives.callInWindow(bgPage, "__nw_remove_all_listeners", this, event);
       if (appWinEventsMap.hasOwnProperty(event)) {
         for (let l of
              this.appWindow[appWinEventsMap[event]].getListeners()) {
@@ -469,8 +550,13 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         return this.appWindow.contentWindow;
       }
     });
+    Object.defineProperty(NWWindow.prototype, 'frameId', {
+      get: function() {
+        return currentRoutingID;
+      }
+    });
     currentNWWindow = new NWWindow;
-    return currentNWWindow;
+    return currentNWWindow.outerWindow;
   });
 
   apiFunctions.setHandleRequest('open', function(url, params, callback) {
@@ -589,7 +675,7 @@ function updateAppWindowZoom(old_level, new_level) {
 function onClose() {
   if (!currentNWWindow)
     return;
-  dispatchEvent("nw.Window.onClose", [], {instanceId: currentRoutingID});
+  dispatchEvent("nw.Window.onClose", [], {instanceId: currentWidgetRoutingID});
 }
 
 exports.binding = nw_binding.generate();

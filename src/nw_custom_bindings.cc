@@ -43,6 +43,7 @@ using namespace blink;
 
 #undef CHECK
 #include "V8HTMLIFrameElement.h"
+#include "extensions/renderer/script_context_set.h"
 
 using blink::WebFrame;
 
@@ -104,12 +105,39 @@ NWCustomBindings::NWCustomBindings(ScriptContext* context)
   RouteFunction("setDevToolsJail",
                 base::Bind(&NWCustomBindings::SetDevToolsJail,
                            base::Unretained(this)));
+  RouteFunction("getWidgetRoutingID",
+                base::Bind(&NWCustomBindings::GetWidgetRoutingID,
+                           base::Unretained(this)));
   RouteFunction("getRoutingID",
                 base::Bind(&NWCustomBindings::GetRoutingID,
                            base::Unretained(this)));
+  RouteFunction("callInWindow",
+                base::Bind(&NWCustomBindings::CallInWindow,
+                           base::Unretained(this)));
+}
+
+void NWCustomBindings::CallInWindow(
+    const v8::FunctionCallbackInfo<v8::Value>& args) {
+  v8::Local<v8::Context> target_context = args[0]->ToObject()->CreationContext();
+  v8::Local<v8::String> method   = args[1]->ToString();
+  ScriptContext* context = ScriptContextSet::GetContextByV8Context(target_context);
+  v8::Context::Scope cscope(target_context);
+  v8::MaybeLocal<v8::Value> val = args[0]->ToObject()->Get(target_context, method);
+  v8::Local<v8::Function> func = val.ToLocalChecked().As<v8::Function>();
+  v8::Local<v8::Value>* argv = new v8::Local<v8::Value>[args.Length() - 2];
+  for (int i = 0; i < args.Length() - 2; i++)
+    argv[i] = args[i + 2];
+  context->CallFunction(func, args.Length() - 2, argv);
+  delete[] argv;
 }
 
 void NWCustomBindings::GetRoutingID(
+    const v8::FunctionCallbackInfo<v8::Value>& args) {
+  int routing_id = context()->GetRenderFrame()->GetRenderView()->GetMainRenderFrame()->GetRoutingID();
+  args.GetReturnValue().Set(v8::Integer::New(GetIsolate(), routing_id));
+}
+
+void NWCustomBindings::GetWidgetRoutingID(
     const v8::FunctionCallbackInfo<v8::Value>& args) {
   int routing_id = context()->GetRenderFrame()->GetRenderView()->GetRoutingID();
   args.GetReturnValue().Set(v8::Integer::New(GetIsolate(), routing_id));

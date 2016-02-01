@@ -84,6 +84,7 @@ namespace nw.Window {
     long height;
     double zoomLevel;
     DOMString title;
+    long frameId;
   };
   interface Functions {
     // get the current window
