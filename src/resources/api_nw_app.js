@@ -107,11 +107,11 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       dataPath = nw.App.getDataPath();
     return dataPath;
   });
-  bindingsAPI.compiledApi.registerGlobalHotkey = function() {
-    return nw.Shortcut.registerGlobalHotkey.apply(nw.Shortcut, arguments);
+  bindingsAPI.compiledApi.registerGlobalHotKey = function() {
+    return nw.Shortcut.registerGlobalHotKey.apply(nw.Shortcut, arguments);
   };
-  bindingsAPI.compiledApi.unregisterGlobalHotkey = function() {
-    return nw.Shortcut.unregisterGlobalHotkey.apply(nw.Shortcut, arguments);
+  bindingsAPI.compiledApi.unregisterGlobalHotKey = function() {
+    return nw.Shortcut.unregisterGlobalHotKey.apply(nw.Shortcut, arguments);
   };
 
 });

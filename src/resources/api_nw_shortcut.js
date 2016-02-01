@@ -193,7 +193,7 @@ function Shortcut(option) {
 
 nw.require('util').inherits(Shortcut, EventEmitter);
 
-Shortcut.registerGlobalHotkey = function(shortcut) {
+Shortcut.registerGlobalHotKey = function(shortcut) {
   if (!(shortcut instanceof Shortcut)) {
     throw new TypeError(ARUGMENT_NOT_SHORTCUT);
   }
@@ -205,7 +205,7 @@ Shortcut.registerGlobalHotkey = function(shortcut) {
   }
 };
 
-Shortcut.unregisterGlobalHotkey = function(shortcut) {
+Shortcut.unregisterGlobalHotKey = function(shortcut) {
   if (!(shortcut instanceof Shortcut)) {
     throw new TypeError(ARUGMENT_NOT_SHORTCUT);
   }
