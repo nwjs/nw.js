@@ -1,3 +1,31 @@
+0.13.0-beta5 / 02-01-2015
+=========================
+- Update Chromium to 48.0.2564.97
+- Add back transparency support which is missing in beta4
+- support program args in chromedriver
+- port App.open argument (#4289)
+- support webkit.plugin field in manifest
+- Fix package script to support Win XP (#4181)
+- [OSX] disable double tap with 2 fingers by default and add option for it (#4249)
+- Fix: support window id in Window.open() (#4268)
+- Fix: permission for webRequest API (#4220)
+- rename 'inject-js-start' with 'inject_js_start' and add it to Window.open options (#4286)
+- rename 'always-on-top' with 'always_on_top', and 'visible-on-all-workspaces' with 'visible_on_all_workspaces'
+- Fix: infinite loop in nw.Window.close(true) (#4171)
+- Fix: Window title not changed by setting document.title (#3589)
+- Fix: startup slow because of scanning for invalid file name (#4303)
+- Fix: [OSX] suppress warning when opening devtools
+- Fix: conflict between promise rejection callbacks from Blink and Node (#4300)
+- Fix: Taking heap snapshot crashes webkit (#3678)
+- Fix: [OSX] App quits when closing window if window.show is false in manifest (#4187)
+- Fix: crash when opening external links with browser in devtools (#4269, #4121)
+- Fix: crash when opening external links with browser in print preview (#4270)
+- Fix: cookies API (#4199)
+- [docs] add enable-gcm
+- [docs] add double_tap_to_zoom_enabled
+- [docs] add FAQ for console.log
+- [docs] Updated FAQ for AnuglarJS 2
+
 0.13.0-beta4 / 01-18-2015
 =========================
 - Update Chromium to 48.0.2564.82
