@@ -165,7 +165,7 @@ For example, in different browser contexts, the global objects are not identical
 // `window` is the global object of current browser context
 // `myframe.contentWindow` is the global object of the `<iframe>`'s browser context
 var currentContext = window;
-var iframeContext = document.getElementbyId('myframe').contentWindow;
+var iframeContext = document.getElementById('myframe').contentWindow;
 
 // `myfunc` is defined in current context
 function myfunc() {
@@ -177,7 +177,7 @@ console.log(currentContext.Function === iframeContext.Function); // false
 console.log(myfunc instanceof currentContext.Function); // true
 console.log(myfunc instanceof iframeContext.Function); // false
 console.log(myfunc.constructor === currentContext.Function); // true
-console.log(myfunc.constructor === iframeContext.Function); // true
+console.log(myfunc.constructor === iframeContext.Function); // false
 </script>
 ```
 
