@@ -548,6 +548,7 @@ bool NwCurrentWindowInternalSetZoomFunction::RunNWSync(base::ListValue* response
       ZoomController::FromWebContents(web_contents);
   scoped_refptr<ExtensionZoomRequestClient> client(
       new ExtensionZoomRequestClient(extension()));
+  zoom_controller->SetZoomMode(ui_zoom::ZoomController::ZOOM_MODE_ISOLATED);
   if (!zoom_controller->SetZoomLevelByClient(zoom_level, client)) {
     return false;
   }
