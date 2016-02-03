@@ -355,9 +355,10 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
     base::ReplaceChars(root_path, "'", "\\'", &root_path);
 
     v8::Local<v8::Script> script2 = v8::Script::Compile(v8::String::NewFromUtf8(isolate, (
+        "'use strict';"
         "if (typeof nw != 'undefined' && typeof __filename == 'undefined') {"
-        "  var root = '" + root_path + "';"
-        "  var path = '" + path      + "';"
+        "  let root = '" + root_path + "';"
+        "  let path = '" + path      + "';"
         "nw.__filename = root + path;"
         "nw.__dirname = root;"
         "}").c_str()),
@@ -511,9 +512,9 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
 #endif
   }
 
-  std::string set_nw_script;
+  std::string set_nw_script = "'use strict';";
   if (mixed_context)
-    set_nw_script = "var nw = global;";
+    set_nw_script += "var nw = global;";
   {
     blink::WebScopedMicrotaskSuppression suppression;
     v8::Context::Scope cscope(context->v8_context());
@@ -532,8 +533,8 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
         "if (typeof nw.process != 'undefined' && "
         "(!nw.process.mainModule.filename || nw.process.mainModule.filename === 'blank' ||"
         "nw.process.mainModule.filename.indexOf('_generated_background_page.html') >= 0)) {"
-        "  var root = '" + root_path + "';"
-        "  var p = '" + url_path + "';"
+        "  let root = '" + root_path + "';"
+        "  let p = '" + url_path + "';"
         "nw.process.mainModule.filename = root + p;"
         "nw.process.mainModule.paths = nw.global.require('module')._nodeModulePaths(nw.process.cwd());"
         "nw.process.mainModule.loaded = true;"
