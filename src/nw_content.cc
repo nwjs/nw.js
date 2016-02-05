@@ -131,6 +131,7 @@ namespace {
 
 extensions::Dispatcher* g_dispatcher = NULL;
 bool g_reloading_app = false;
+bool g_pinning_renderer = true;
 
 static inline v8::Local<v8::String> v8_str(const char* x) {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
@@ -1005,6 +1006,14 @@ void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, content::WebPreferenc
 
   content::PluginService* plugin_service = content::PluginService::GetInstance();
   plugin_service->AddExtraPluginDir(plugins_dir);
+}
+
+bool PinningRenderer() {
+  return g_pinning_renderer;
+}
+
+void SetPinningRenderer(bool pin) {
+  g_pinning_renderer = pin;
 }
 
 } //namespace nw

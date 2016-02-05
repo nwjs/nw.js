@@ -605,6 +605,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         options.alphaEnabled = true;
       if (params.kiosk === true)
         options.kiosk = true;
+      if (params.new_instance === true)
+        options.new_instance = true;
       if (params.position)
         options.position = params.position;
       if (params.title)

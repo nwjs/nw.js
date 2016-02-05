@@ -33,6 +33,7 @@ namespace nw.Window {
     [nodoc] boolean? transparent;
     [nodoc] boolean? kiosk;
     [nodoc] boolean? focus;
+    [nodoc] boolean? new_instance;
     [nodoc] DOMString? title;
     [nodoc] DOMString? position;
     [nodoc] DOMString? icon;
