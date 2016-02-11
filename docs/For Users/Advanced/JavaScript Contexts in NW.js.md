@@ -28,6 +28,8 @@ Besides the contexts created by browsers, NW.js introduced additional Node conte
 
 Scripts loaded or embedded by traditional web ways, such as using `<script>` element or jQuery's [`$.getScript()`](http://api.jquery.com/jQuery.getScript/) or [RequireJS](http://requirejs.org/), are running in browser context.
 
+Scripts specified by [`main`](../../References/Manifest Format.md#main) and [`bg-script`](../../References/Manifest Format.md#bg-script) in manifest will be loaded and executed in the browser context in background page.
+
 #### Global Objects in Browser Context
 
 In browser context, there are some global objects including [JS builtin objects](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects) (such as `Date` or `Error` or `TypedArray`) and [Web API](https://developer.mozilla.org/en-US/docs/Web/Reference/API) (such as DOM API).
@@ -56,7 +58,6 @@ Relative paths in Browser context are resolved according to path of main HTML fi
 Scripts loaded with following ways are running in Node context:
 
 * Scripts loaded by `require()` of Node.js API
-* Scripts loaded by [`node-main` in Manifest file](../../References/Manifest Format.md#node-main)
 
 #### Global Objects in Node Context
 Scripts running in the Node context can use [JS builtin objects]() like browser context. In addition, you can also use [global objects defined by Node.js](https://nodejs.org/api/globals.html), such as `__dirname`, `process`, `Buffer` etc.

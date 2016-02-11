@@ -26,9 +26,13 @@ Each package must provide all the following fields in its package descriptor fil
 
 ### main
 
-* `{String}` which page should be opened when NW.js starts.
+* `{String}` the page or script should be loaded when NW.js starts.
 
-You can specify a URL here. You can also specify just a filename (such as `index.html`) or a path (relative to the directory where your `package.json` resides).
+You can specify a filename to HTML file (such as `index.html`) or a path relative to the directory where your `package.json` resides (such as `inside/index.html`). The HTML file will be loaded and shown in a window.
+
+You can specify a URL to website to load a remote page at start. For security reasons, remote pages in NW.js is restricted to be running in [normal frame](../For Users/Advanced/Security in NW.js.md#node-and-normal-frames), which doesn't have access to Node.js and NW.js API. To enable Node.js and NW.js API, you have to set `node-remote` in manifest to include your site. See [`node-remote` field](#node-remote) for details.
+
+You can also specify path to a script file (.js). This script will be loaded and executed in the hidden background page in Browser context just like [`bg-script`](#bg-script). A difference from `bg-script` is that if you do this to `main`, you will not see a window show up. However, since Node.js and NW.js APIs are available in background page, you can still use NW.js API in the script to open a new window if you wish.
 
 ### name
 
@@ -46,7 +50,14 @@ Following fields control which features NW.js should provide and how NW.js shoul
 
 ### node-main
 
+!!! warning "Deprecated"
+    This property is deprecated since 0.13.0. See [Migration Notes from 0.12 to 0.13](../For Users/Migration/From 0.12 to 0.13.md).
+
 * `{String}` Specify the path to a node.js script file. And it will be executed on startup in Node context before the first DOM window load.
+
+### bg-script
+
+* `{String}` Specify the path to a Node.js script file. This script will be loaded and executed in the hidden background page in Browser context.
 
 ### single-instance
 
