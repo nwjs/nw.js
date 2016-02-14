@@ -20,6 +20,9 @@ var nw_internal = require('binding').Binding.create('nw.currentWindowInternal');
 
 var bgPage = GetExtensionViews(-1, 'BACKGROUND')[0];
 
+if (typeof bgPage === 'undefined') //new instance window
+  bgPage = window;
+
 if (bgPage == window) {
   window.__nw_initwindow = function (routingId, self) {
     if (!bgPage.__nw_windows)
