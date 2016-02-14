@@ -65,7 +65,7 @@ Menu.prototype.popup = function(x, y) {
 Menu.prototype.createMacBuiltin = function (app_name, options) {
   var appleMenu = new nw.Menu({type:'menubar'}),
   options = options || {};
-  
+
   appleMenu.append(new nw.MenuItem({
     label: nw.Menu.getNSStringFWithFixup("IDS_ABOUT_MAC", app_name),
     selector: "orderFrontStandardAboutPanel:"
@@ -99,7 +99,7 @@ Menu.prototype.createMacBuiltin = function (app_name, options) {
     key: "q"
   }));
   this.append(new nw.MenuItem({ label:'', submenu: appleMenu}));
-  
+
   if (!options.hideEdit) {
     var editMenu = new nw.Menu({type:'menubar'});
     editMenu.append(new nw.MenuItem({
@@ -149,7 +149,7 @@ Menu.prototype.createMacBuiltin = function (app_name, options) {
     this.append(new nw.MenuItem({ label: nw.Menu.getNSStringWithFixup("IDS_EDIT_MENU_MAC"),
       submenu: editMenu}));
   }
-  
+
   if (!options.hideWindow) {
     var winMenu = new nw.Menu({type:'menubar'});
     winMenu.append(new nw.MenuItem({
