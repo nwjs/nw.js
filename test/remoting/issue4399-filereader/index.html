@@ -1,0 +1,23 @@
+<html>
+<body>
+<div id='result'>FileReader test</div>
+<script>
+var file = new File('image.jpg', 'foo');
+console.log(file);
+
+var fileReader = new FileReader();
+fileReader.readAsDataURL(file);
+
+fileReader.onload = function(e)
+{
+  console.log('load complete');
+  document.getElementById('result').innerHTML = 'success';
+};
+
+fileReader.onerror = function(e)
+{
+  console.log(e);
+};
+</script>
+</body>
+</html>
