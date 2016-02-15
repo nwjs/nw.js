@@ -94,3 +94,30 @@ try:
 finally:
     driver2.quit()
 
+######## test appending-to-binary package
+
+if platform.system() != 'Darwin':
+    os.mkdir(pkg3)
+    print "copying %s to %s" % (nwdist, pkg3)
+    copytree(nwdist, pkg3)
+    package_nw = os.path.join(pkg3, 'package.nw')
+    print "compressing %s to %s" % (appdir, package_nw)
+    compress(appdir, package_nw)
+    if platform.system() == 'Linux':
+        nwbin = os.path.join(pkg3, 'nw')
+    else:
+        nwbin = os.path.join(pkg3, 'nw.exe')
+    with open(nwbin, "ab") as myfile, open(package_nw, "rb") as file2:
+            myfile.write(file2.read())
+    os.remove(package_nw)
+
+    driver_path=os.path.join(pkg3, 'chromedriver')
+    driver3 = webdriver.Chrome(executable_path=driver_path)
+    time.sleep(1)
+    try:
+        print driver3.current_url
+        result = driver3.find_element_by_id('result')
+        print result.get_attribute('innerHTML')
+        assert("success" in result.get_attribute('innerHTML'))
+    finally:
+        driver3.quit()
