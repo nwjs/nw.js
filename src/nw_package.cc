@@ -204,13 +204,12 @@ Package::Package()
       return;
   }
 
-#if defined(OS_MACOSX)
   self_extract_ = true;
   // Try to extract self.
   path = GetSelfPath();
   if (InitFromPath(path))
     return;
-#endif
+
   // Finally we init with default settings.
   self_extract_ = false;
   InitWithDefault();
