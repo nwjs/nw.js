@@ -120,7 +120,7 @@ cd /path/to/your/app
 
 You can call node.js and modules directly from the DOM. So it enables endless possibilities for writing apps with nw.js.
 
-This example shows how to query the OS platform with `os` module of Node.js. Simpley create the `index.html` file with following content and run it with NW.js.
+This example shows how to query the OS platform with `os` module of Node.js. Simply create the `index.html` file with following content and run it with NW.js.
 
 ```html
 <!DOCTYPE html>
@@ -147,7 +147,7 @@ You could also use the modules installed by [`npm`](https://www.npmjs.com/) with
 
 See [Debugging with DevTools](Debugging with DevTools.md) for debugging NW.js apps.
 
-See [Package and Distribute](Package and Distribute.md) for packaging and reditribute your app in production.
+See [Package and Distribute](Package and Distribute.md) for packaging and redistribute your app in production.
 
 See [FAQ](FAQ.md) for issues you may encounter.
 
