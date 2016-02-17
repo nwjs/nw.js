@@ -75,6 +75,7 @@ void DocumentFinishHook(blink::WebFrame* frame,
                       gfx::Image* image);
 #if defined(OS_MACOSX)
  bool ApplicationShouldHandleReopenHook(bool hasVisibleWindows);
+ void OSXOpenURLsHook(const std::vector<GURL>& startup_urls);
 #endif
  void CreateAppWindowHook(extensions::AppWindow*);
  void ReloadExtensionHook(const extensions::Extension*);
