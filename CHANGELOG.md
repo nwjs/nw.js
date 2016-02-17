@@ -1,3 +1,22 @@
+0.13.0-beta6 / 02-17-2015
+=========================
+- Update Chromium to 48.0.2564.109
+- Update Node.js to 5.6.0
+- support controlling window with external page
+- Fix: enable self extraction (#4071)
+- Fix: crash when using native modules in OSX (#4338)
+- Fix: FileReader not working (#4399)
+- Fix: console tab with DevTools jail not working until switch frame manually
+- Fix: OSX menu support broken (#4374)
+- Fix: JavaScript dialogs text (#4190)
+- Fix: Typo: rename `App.(un)registerGlobalHotkey` to `App.(un)registerGlobalHotKey`
+- Fix: Window.zoomLevel changes all windows (#4352)
+- Fix: avoid polluting global namespace with 'path' etc. (#4350)
+- add URL scheme support for MAC (#4240)
+- support 'new_instance' option for Window.open
+- support native modules built by node-gyp
+- [docs] update for new_instance etc
+
 0.13.0-beta5 / 02-01-2015
 =========================
 - Update Chromium to 48.0.2564.97
