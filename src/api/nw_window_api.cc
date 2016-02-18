@@ -280,7 +280,7 @@ void NwCurrentWindowInternalCapturePageInternalFunction::OnCaptureSuccess(const 
 
   std::string base64_result;
   base::StringPiece stream_as_string(
-      reinterpret_cast<const char*>(vector_as_array(&data)), data.size());
+                                     reinterpret_cast<const char*>(data.data()), data.size());
 
   base::Base64Encode(stream_as_string, &base64_result);
   base64_result.insert(

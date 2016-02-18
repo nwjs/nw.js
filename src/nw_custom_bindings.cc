@@ -23,7 +23,7 @@ using namespace blink;
 
 #undef FROM_HERE
 
-#include "third_party/WebKit/Source/config.h"
+//#include "third_party/WebKit/Source/config.h"
 #include "third_party/WebKit/Source/core/html/HTMLIFrameElement.h"
 #include "third_party/WebKit/Source/core/dom/Document.h"
 #include "third_party/WebKit/Source/core/frame/LocalFrame.h"
@@ -190,7 +190,7 @@ void NWCustomBindings::EvalNWBin(
 #endif
   base::File file(path, base::File::FLAG_OPEN | base::File::FLAG_READ);
   if (file.IsValid()) {
-    int64 length = file.GetLength();
+    int64_t length = file.GetLength();
     if (length > 0 && length < INT_MAX) {
       int size = static_cast<int>(length);
       std::vector<unsigned char> raw_data;
@@ -204,8 +204,8 @@ void NWCustomBindings::EvalNWBin(
                                                    data, length, v8::ScriptCompiler::CachedData::BufferNotOwned);
         v8::ScriptCompiler::Source source(source_string, cache);
         v8::Local<v8::UnboundScript> script;
-        script = v8::ScriptCompiler::CompileUnbound(
-                                                    isolate, &source, v8::ScriptCompiler::kConsumeCodeCache);
+        script = v8::ScriptCompiler::CompileUnboundScript(
+                                                          isolate, &source, v8::ScriptCompiler::kConsumeCodeCache).ToLocalChecked();
         ASSERT(!cache->rejected);
         v8::Handle<v8::Value> result;
         v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[0]);

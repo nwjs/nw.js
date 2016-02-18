@@ -21,7 +21,6 @@
 #ifndef CONTENT_NW_SRC_NW_PACKAGE_H
 #define CONTENT_NW_SRC_NW_PACKAGE_H
 
-#include "base/basictypes.h"
 #include "base/files/file_path.h"
 #include "base/memory/scoped_ptr.h"
 #include "base/files/scoped_temp_dir.h"

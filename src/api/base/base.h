@@ -21,7 +21,6 @@
 #ifndef CONTENT_NW_SRC_API_BASE_BASE_H_
 #define CONTENT_NW_SRC_API_BASE_BASE_H_
 
-#include "base/basictypes.h"
 #include "base/memory/weak_ptr.h"
 
 #include <string>

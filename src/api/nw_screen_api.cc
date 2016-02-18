@@ -90,7 +90,7 @@ namespace extensions {
       work_area.width = rect.width();
       work_area.height = rect.height();
 
-      return displayResult.Pass();
+      return displayResult;
     }
 
     void DispatchEvent(
@@ -99,7 +99,7 @@ namespace extensions {
         scoped_ptr<base::ListValue> args) {
       DCHECK_CURRENTLY_ON(BrowserThread::UI);
       ExtensionsBrowserClient::Get()->BroadcastEventToRenderers(
-        histogram_value, event_name, args.Pass());
+                                                                histogram_value, event_name, std::move(args));
     }
 
     // Lazy initialize screen event listeners until first call
@@ -139,7 +139,7 @@ namespace extensions {
     DispatchEvent(
       events::HistogramValue::UNKNOWN, 
       nwapi::nw__screen::OnDisplayBoundsChanged::kEventName,
-      args.Pass());
+      std::move(args));
   }
 
   // Called when |new_display| has been added.
@@ -149,7 +149,7 @@ namespace extensions {
     DispatchEvent(
       events::HistogramValue::UNKNOWN,
       nwapi::nw__screen::OnDisplayAdded::kEventName,
-      args.Pass());
+      std::move(args));
   }
 
   // Called when |old_display| has been removed.
@@ -159,7 +159,7 @@ namespace extensions {
     DispatchEvent(
       events::HistogramValue::UNKNOWN,
       nwapi::nw__screen::OnDisplayRemoved::kEventName,
-      args.Pass());
+      std::move(args));
   }
 
   NwScreenGetScreensFunction::NwScreenGetScreensFunction() {}
@@ -202,7 +202,7 @@ namespace extensions {
     scoped_ptr<webrtc::ScreenCapturer> screenCapturer(screens ? webrtc::ScreenCapturer::Create(options) : nullptr);
     scoped_ptr<webrtc::WindowCapturer> windowCapturer(windows ? webrtc::WindowCapturer::Create(options) : nullptr);
 
-    media_list_.reset(new NativeDesktopMediaList(screenCapturer.Pass(), windowCapturer.Pass()));
+    media_list_.reset(new NativeDesktopMediaList(std::move(screenCapturer), std::move(windowCapturer)));
 
     media_list_->StartUpdating(this);
   }
@@ -265,7 +265,7 @@ namespace extensions {
     DispatchEvent(
       events::HistogramValue::UNKNOWN, 
       nwapi::nw__screen::OnSourceAdded::kEventName,
-      args.Pass());
+      std::move(args));
   }
 
   void NwDesktopCaptureMonitor::OnSourceRemoved(int index) {
@@ -273,7 +273,7 @@ namespace extensions {
     DispatchEvent(
       events::HistogramValue::UNKNOWN, 
       nwapi::nw__screen::OnSourceRemoved::kEventName,
-      args.Pass());
+      std::move(args));
   }
 
   void NwDesktopCaptureMonitor::OnSourceMoved(int old_index, int new_index) {
@@ -285,7 +285,7 @@ namespace extensions {
     DispatchEvent(
       events::HistogramValue::UNKNOWN, 
       nwapi::nw__screen::OnSourceOrderChanged::kEventName,
-      args.Pass());    
+      std::move(args));    
   }
 
   void NwDesktopCaptureMonitor::OnSourceNameChanged(int index) {
@@ -296,7 +296,7 @@ namespace extensions {
     DispatchEvent(
       events::HistogramValue::UNKNOWN, 
       nwapi::nw__screen::OnSourceNameChanged::kEventName,
-      args.Pass());    
+      std::move(args));    
   }
 
   void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(int index) {
@@ -318,7 +318,7 @@ namespace extensions {
     DispatchEvent(
       events::HistogramValue::UNKNOWN, 
       nwapi::nw__screen::OnSourceThumbnailChanged::kEventName,
-      args.Pass());
+      std::move(args));
   }
 
   NwScreenStartMonitorFunction::NwScreenStartMonitorFunction() {}
