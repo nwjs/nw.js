@@ -52,7 +52,7 @@ namespace {
 
     scoped_ptr<ui::Accelerator> uiAccelerator(new ui::Accelerator(keyboardCode, modifiers));
 
-    return uiAccelerator.Pass();
+    return uiAccelerator;
   }
 
   scoped_ptr<nwapi::nw__shortcut::Accelerator> UIAcceleratorToAccelerator(const ui::Accelerator &uiAccelerator) {
@@ -72,7 +72,7 @@ namespace {
     if (modifiers & ui::EF_SHIFT_DOWN) {
       accelerator->modifiers.shift = true;
     }
-    return accelerator.Pass();
+    return accelerator;
   }
 
   void DispatchEvent(
@@ -81,7 +81,7 @@ namespace {
       scoped_ptr<base::ListValue> args) {
     DCHECK_CURRENTLY_ON(BrowserThread::UI);
     ExtensionsBrowserClient::Get()->BroadcastEventToRenderers(
-      histogram_value, event_name, args.Pass());
+                                                              histogram_value, event_name, std::move(args));
   }
 
   base::LazyInstance<NWShortcutObserver>::Leaky
@@ -101,7 +101,7 @@ void NWShortcutObserver::OnKeyPressed (const ui::Accelerator& uiAccelerator) {
   DispatchEvent(
     events::HistogramValue::UNKNOWN, 
     nwapi::nw__shortcut::OnKeyPressed::kEventName,
-    args.Pass());
+    std::move(args));
 }
 
 bool NwShortcutRegisterAcceleratorFunction::RunNWSync(base::ListValue* response, std::string* error) {

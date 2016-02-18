@@ -223,10 +223,10 @@ void ObjectManager::SendEvent(Base* object,
     return;
   scoped_ptr<base::ListValue> arguments(args.DeepCopy());
   arguments->Insert(0, new base::FundamentalValue(object->id()));
-  scoped_ptr<Event> event(new Event(extensions::events::UNKNOWN, "NWObject" + event_name, arguments.Pass()));
+  scoped_ptr<Event> event(new Event(extensions::events::UNKNOWN, "NWObject" + event_name, std::move(arguments)));
   event->restrict_to_browser_context = browser_context_;
   event->user_gesture = EventRouter::USER_GESTURE_ENABLED;
-  event_router->DispatchEventToExtension(object->extension_id_, event.Pass());
+  event_router->DispatchEventToExtension(object->extension_id_, std::move(event));
   
 }
 }  // namespace nw

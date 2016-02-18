@@ -2,6 +2,7 @@
 
 #include "base/command_line.h"
 #include "chrome/browser/browsing_data/browsing_data_helper.h"
+#include "chrome/browser/browsing_data/browsing_data_remover_factory.h"
 #include "chrome/browser/devtools/devtools_window.h"
 #include "chrome/browser/extensions/devtools_util.h"
 #include "chrome/browser/extensions/extension_service.h"
@@ -100,11 +101,12 @@ NwAppClearCacheFunction::~NwAppClearCacheFunction() {
 }
 
 bool NwAppClearCacheFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  BrowsingDataRemover* remover = BrowsingDataRemover::CreateForUnboundedRange(
+  BrowsingDataRemover* remover = BrowsingDataRemoverFactory::GetForBrowserContext(
       Profile::FromBrowserContext(context_));
 
   remover->AddObserver(this);
-  remover->Remove(BrowsingDataRemover::REMOVE_CACHE,
+  remover->Remove(BrowsingDataRemover::Unbounded(),
+                  BrowsingDataRemover::REMOVE_CACHE,
                   BrowsingDataHelper::ALL);
   // BrowsingDataRemover deletes itself.
   run_loop_.Run();

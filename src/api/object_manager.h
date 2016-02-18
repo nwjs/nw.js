@@ -21,7 +21,6 @@
 #ifndef CONTENT_NW_SRC_API_OBJECT_MANAGER_H_
 #define CONTENT_NW_SRC_API_OBJECT_MANAGER_H_
 
-#include "base/basictypes.h"
 #include "base/id_map.h"
 #include "base/memory/weak_ptr.h"
 #include "components/keyed_service/core/keyed_service.h"

@@ -88,13 +88,13 @@
 
 #undef LOG
 #undef ASSERT
-#undef FROM_HERE
+//#undef FROM_HERE
 
 #if defined(OS_WIN)
 #define _USE_MATH_DEFINES
 #include <math.h>
 #endif
-#include "third_party/WebKit/Source/config.h"
+//#include "third_party/WebKit/Source/config.h"
 #include "third_party/WebKit/Source/core/frame/Frame.h"
 #include "third_party/WebKit/Source/web/WebLocalFrameImpl.h"
 #include "V8HTMLElement.h"
@@ -917,10 +917,10 @@ void SendEventToApp(const std::string& event_name, scoped_ptr<base::ListValue> e
         extension->location() == extensions::Manifest::COMMAND_LINE) {
       scoped_ptr<extensions::Event> event(new extensions::Event(extensions::events::UNKNOWN,
                                                                 event_name,
-                                                                event_args.Pass()));
+                                                                std::move(event_args)));
       event->restrict_to_browser_context = profile;
       EventRouter::Get(profile)
-        ->DispatchEventToExtension(extension->id(), event.Pass());
+        ->DispatchEventToExtension(extension->id(), std::move(event));
     }
   }
 }
@@ -938,7 +938,7 @@ bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_l
 #endif
     scoped_ptr<base::ListValue> arguments(new base::ListValue());
     arguments->AppendString(cmd);
-    SendEventToApp("nw.App.onOpen", arguments.Pass());
+    SendEventToApp("nw.App.onOpen", std::move(arguments));
   }
     
   return single_instance;
