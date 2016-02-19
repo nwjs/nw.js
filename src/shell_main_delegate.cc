@@ -165,7 +165,8 @@ bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
   OverrideFrameworkBundlePath();
   OverrideChildProcessPath();
   // FIXME: EnsureCorrectResolutionSettings();
-  l10n_util::OverrideLocaleWithUserDefault();
+  if (!command_line->HasSwitch(switches::kLang))
+    l10n_util::OverrideLocaleWithUserDefault();
 #endif  // OS_MACOSX
 
   InitLogging();
@@ -235,11 +236,11 @@ void ShellMainDelegate::InitializeResourceBundle(const std::string& pref_locale)
   }
   ui::ResourceBundle::InitSharedInstanceWithPakPath2(pak_file, locale_file);
 #else
-  FilePath pak_dir;
-  PathService::Get(base::DIR_MODULE, &pak_dir);
-  pak_file = pak_dir.Append(FILE_PATH_LITERAL("nw.pak"));
+  ui::ResourceBundle::InitSharedInstanceWithLocale(pref_locale, NULL, ui::ResourceBundle::DO_NOT_LOAD_COMMON_RESOURCES);
+  PathService::Get(base::DIR_MODULE, &pak_file);
+  pak_file = pak_file.Append(FILE_PATH_LITERAL("nw.pak"));
   CHECK(base::PathExists(pak_file)) << "nw.pak is missing";
-  ui::ResourceBundle::InitSharedInstanceWithPakPath(pak_file);
+  ui::ResourceBundle::GetSharedInstance().AddDataPackFromPath(pak_file, ui::GetSupportedScaleFactors()[0]);
 #endif
 }
 
