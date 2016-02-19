@@ -1,0 +1,45 @@
+<!doctype html>
+<html i18n-values="dir:textdirection;">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="initial-scale=1, minimum-scale=1, width=device-width">
+    <title i18n-content="tabTitle"></title>
+    <link rel="stylesheet" href="interstitial_v2.css">
+    <script src="../../../../../../ui/webui/resources/js/util.js"></script>
+    <script src="ssl.js"></script>
+    <script src="safe_browsing.js"></script>
+    <script src="interstitial_v2.js"></script>
+  </head>
+<!-- TODO(jshin): Get rid of i18n-values and import default_text.css instead
+     once interstitial page loading does not use data url any more. -->
+<body id="body" i18n-values=".style.fontFamily:fontfamily;.style.fontSize:fontsize">
+  <div class="interstitial-wrapper">
+    <div class="icon" id="icon"></div>
+    <div id="main-message">
+      <h1 i18n-content="heading"></h1>
+      <p i18n-values=".innerHTML:primaryParagraph"></p>
+    </div>
+    <div id="malware-opt-in" class="hidden">
+      <div class="styled-checkbox">
+        <input type="checkbox" id="opt-in-checkbox">
+        <label for="opt-in-checkbox"></label>
+      </div>
+      <div id="opt-in-label"></div>
+    </div>
+    <div class="nav-wrapper">
+      <button i18n-content="primaryButtonText" id="primary-button"></button>
+      <a href="#" id="details-button" class="small-link"
+          i18n-content="openDetails"></a>
+    </div>
+    <div id="details" class="hidden">
+      <p i18n-values=".innerHTML:explanationParagraph"></p>
+      <p i18n-values=".innerHTML:finalParagraph" id="final-paragraph"></p>
+    </div>
+    <div id="debugging">
+      <p id="error-code"></p>
+      <div id="error-debugging-info" class="hidden"></div>
+    </div>
+  </div>
+</body>
+</html>

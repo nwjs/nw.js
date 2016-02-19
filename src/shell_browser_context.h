@@ -31,6 +31,7 @@ class DownloadManagerDelegate;
 class ResourceContext;
 class ShellDownloadManagerDelegate;
 class ShellURLRequestContextGetter;
+class SSLHostStateDelegate;
 
 class ShellBrowserContext : public BrowserContext {
  public:
@@ -94,6 +95,7 @@ class ShellBrowserContext : public BrowserContext {
   FilePath path_;
   scoped_ptr<ShellResourceContext> resource_context_;
   scoped_refptr<ShellDownloadManagerDelegate> download_manager_delegate_;
+  SSLHostStateDelegate* ssl_host_state_delegate_;
   scoped_refptr<ShellURLRequestContextGetter> url_request_getter_;
   scoped_ptr<nw::NwFormDatabaseService> form_database_service_;
 

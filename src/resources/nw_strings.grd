@@ -169,6 +169,9 @@
         <message name="IDS_ALL_WINDOWS_FRONT_MAC" desc="The Mac menu item for bring all to front the window menu.">
           Bring All to Front
         </message>
+        <message name="IDS_CERT_ERROR_AUTHORITY_INVALID_DETAILS" desc="Details for an X509 certificate with an invalid authority">
+          This server could not prove that it is <ph name="DOMAIN">&lt;strong&gt;$1<ex>paypal.com</ex>&lt;/strong&gt;</ph>; its security certificate is not trusted by your computer's operating system. This may be caused by a misconfiguration or an attacker intercepting your connection.
+        </message>
       </if>
     </messages>
   </release>
