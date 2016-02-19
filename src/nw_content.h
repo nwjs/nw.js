@@ -84,6 +84,7 @@ void DocumentFinishHook(blink::WebFrame* frame,
  void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, content::WebPreferences* web_prefs);
  bool PinningRenderer();
  void SetPinningRenderer(bool pin);
+ void ShowDevtools(bool show, content::RenderFrameHost* rfh);
 }
 
 #endif

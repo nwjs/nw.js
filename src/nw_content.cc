@@ -13,6 +13,7 @@
 #include "base/threading/thread_restrictions.h"
 
 #include "chrome/browser/browser_process.h"
+#include "chrome/browser/devtools/devtools_window.h"
 #include "chrome/browser/io_thread.h"
 #include "chrome/browser/lifetime/application_lifetime.h"
 #include "chrome/browser/profiles/profile_manager.h"
@@ -98,6 +99,7 @@
 
 using content::RenderView;
 using content::RenderViewImpl;
+using content::DevToolsAgentHost;
 using extensions::ScriptContext;
 using extensions::Extension;
 using extensions::EventRouter;
@@ -1013,6 +1015,18 @@ void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, content::WebPreferenc
 
   content::PluginService* plugin_service = content::PluginService::GetInstance();
   plugin_service->AddExtraPluginDir(plugins_dir);
+}
+
+void ShowDevtools(bool show, content::RenderFrameHost* rfh) {
+  if (show) {
+    DevToolsWindow::InspectElement(rfh, 0, 0);
+    return;
+  }
+  scoped_refptr<DevToolsAgentHost> agent(
+      DevToolsAgentHost::GetOrCreateFor(rfh));
+  DevToolsWindow* window = DevToolsWindow::FindDevToolsWindow(agent.get());
+  if (window)
+    window->InspectedContentsClosing();
 }
 
 bool PinningRenderer() {
