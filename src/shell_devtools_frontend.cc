@@ -26,6 +26,10 @@
 
 namespace content {
 
+// This constant should be in sync with
+// the constant at devtools_ui_bindings.cc.
+const size_t kMaxMessageChunkSize = IPC::Channel::kMaximumMessageSize / 4;
+
 #if 0
 // static
 ShellDevToolsFrontend* ShellDevToolsFrontend::Show(
@@ -70,17 +74,16 @@ ShellDevToolsFrontend::~ShellDevToolsFrontend() {
 
 void ShellDevToolsFrontend::RenderViewCreated(
     RenderViewHost* render_view_host) {
-#if 0
   if (!frontend_host_) {
-    frontend_host_.reset(DevToolsFrontendHost::Create(render_view_host, this));
-    DevToolsManager::GetInstance()->RegisterDevToolsClientHostFor(
-        agent_host_.get(), this);
+    frontend_host_.reset(
+        DevToolsFrontendHost::Create(web_contents()->GetMainFrame(), this));
+    agent_host_->AttachClient(this);
   }
-#endif
 }
 
 void ShellDevToolsFrontend::WebContentsDestroyed() {
-  agent_host_->DetachClient();
+  if (agent_host_)
+    agent_host_->DetachClient();
   delete this;
 }
 
@@ -128,12 +131,22 @@ void ShellDevToolsFrontend::HandleMessageFromDevToolsFrontendToBackend(
 
 void ShellDevToolsFrontend::DispatchProtocolMessage(
     DevToolsAgentHost* agent_host, const std::string& message) {
-  base::StringValue message_value(message);
-  std::string param;
-  base::JSONWriter::Write(&message_value, &param);
-  std::string code = "DevToolsAPI.dispatchMessage(" + param + ");";
-  base::string16 javascript = base::UTF8ToUTF16(code);
-  web_contents()->GetMainFrame()->ExecuteJavaScript(javascript);
+  if (message.length() < kMaxMessageChunkSize) {
+    base::string16 javascript = base::UTF8ToUTF16(
+        "DevToolsAPI.dispatchMessage(" + message + ");");
+    web_contents()->GetMainFrame()->ExecuteJavaScript(javascript);
+    return;
+  }
+
+  base::FundamentalValue total_size(static_cast<int>(message.length()));
+  for (size_t pos = 0; pos < message.length(); pos += kMaxMessageChunkSize) {
+    base::StringValue message_value(message.substr(pos, kMaxMessageChunkSize));
+    std::string param;
+    base::JSONWriter::Write(&message_value, &param);
+    std::string code = "DevToolsAPI.dispatchMessageChunk(" + param + ");";
+    base::string16 javascript = base::UTF8ToUTF16(code);
+    web_contents()->GetMainFrame()->ExecuteJavaScript(javascript);
+  }
 }
 
 void ShellDevToolsFrontend::AgentHostClosed(
