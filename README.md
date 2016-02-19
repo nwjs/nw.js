@@ -46,7 +46,7 @@ It was created in the Intel Open Source Technology Center.
 
 * **latest live build**: git tip version; build triggered from every git commit: http://dl.nwjs.io/live-build/
 
-* [Previous versions](https://github.com/rogerwang/node-webkit/wiki/Downloads-of-old-versions)
+* [Previous versions](https://github.com/nwjs/nw.js/wiki/Downloads-of-old-versions)
 
 ###Demos and real apps
 You may also be interested in [our demos repository](https://github.com/zcbenz/nw-sample-apps) and the [List of apps and companies using nw.js](https://github.com/nwjs/nw.js/wiki/List-of-apps-and-companies-using-nw.js).
@@ -92,11 +92,11 @@ Note: on OSX, the executable binary is in a hidden directory within the .app fil
 
 For more information on how to write/package/run apps, see:
 
-* [How to run apps](https://github.com/rogerwang/node-webkit/wiki/How-to-run-apps)
-* [How to package and distribute your apps](https://github.com/rogerwang/node-webkit/wiki/How-to-package-and-distribute-your-apps)
-* [How to use Node.js modules in node-webkit](https://github.com/rogerwang/node-webkit/wiki/Using-Node-modules)
+* [How to run apps](https://github.com/nwjs/nw.js/wiki/How-to-run-apps)
+* [How to package and distribute your apps](https://github.com/nwjs/nw.js/wiki/How-to-package-and-distribute-your-apps)
+* [How to use Node.js modules in node-webkit](https://github.com/nwjs/nw.js/wiki/Using-Node-modules)
 
-And our [Wiki](https://github.com/rogerwang/node-webkit/wiki) for much more.
+And our [Wiki](https://github.com/nwjs/nw.js/wiki) for much more.
 
 ## Community
 
@@ -109,7 +109,7 @@ Issues are being tracked here on GitHub.
 
 ## License
 
-`node-webkit`'s code in this repo uses the MIT license, see our `LICENSE` file. To redistribute the binary, see [How to package and distribute your apps](https://github.com/rogerwang/node-webkit/wiki/How-to-package-and-distribute-your-apps)
+`node-webkit`'s code in this repo uses the MIT license, see our `LICENSE` file. To redistribute the binary, see [How to package and distribute your apps](https://github.com/nwjs/nw.js/wiki/How-to-package-and-distribute-your-apps)
 
 ## Sponsors
 
