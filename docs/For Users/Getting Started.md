@@ -60,7 +60,7 @@ cd /path/to/your/app
 `/path/to/nw` is the binary file of NW.js. On Windows, it's `nw.exe`; On Linux, it's `nw`; On Mac, it's `nwjs.app/Contents/MacOS/nwjs`.
 
 !!! tip "Drag &amp; Drop on Windows"
-    On Windows, you can drag the `package.json` to `nw.exe` to run your app.
+    On Windows, you can drag the `folder containing package.json` to `nw.exe` to run your app.
 
 ### Example 2 - Using NW.js APIs
 
