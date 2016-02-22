@@ -336,7 +336,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       return this;
     };
 
-    NWWindow.prototype.showDevTools = function(frm, headless, callback) {
+    NWWindow.prototype.showDevTools = function(frm, callback) {
       nwNatives.setDevToolsJail(frm);
       currentNWWindowInternal.showDevToolsInternal(callback);
     };

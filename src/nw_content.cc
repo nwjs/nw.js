@@ -20,10 +20,12 @@
 #include "chrome/common/chrome_paths.h"
 
 #include "components/crx_file/id_util.h"
+#include "components/content_settings/core/browser/content_settings_utils.h"
 
 #include "content/browser/dom_storage/dom_storage_area.h"
 #include "content/common/dom_storage/dom_storage_map.h"
 #include "content/nw/src/common/shell_switches.h"
+#include "content/public/browser/child_process_security_policy.h"
 #include "content/public/browser/notification_service.h"
 #include "content/public/browser/notification_types.h"
 #include "content/public/browser/plugin_service.h"
@@ -134,6 +136,7 @@ namespace {
 extensions::Dispatcher* g_dispatcher = NULL;
 bool g_reloading_app = false;
 bool g_pinning_renderer = true;
+int g_cdt_process_id = -1;
 
 static inline v8::Local<v8::String> v8_str(const char* x) {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
@@ -1017,7 +1020,29 @@ void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, content::WebPreferenc
   plugin_service->AddExtraPluginDir(plugins_dir);
 }
 
-void ShowDevtools(bool show, content::RenderFrameHost* rfh) {
+bool CheckStoragePartitionMatches(int render_process_id, const GURL& url) {
+  return render_process_id == g_cdt_process_id && url.SchemeIs(content_settings::kChromeDevToolsScheme);
+}
+
+void ShowDevtools(bool show, content::WebContents* web_contents, content::WebContents* container) {
+  content::RenderFrameHost* rfh = web_contents->GetMainFrame();
+  if (container) {
+    scoped_refptr<DevToolsAgentHost> agent_host(DevToolsAgentHost::GetOrCreateFor(rfh));
+    g_cdt_process_id = container->GetRenderProcessHost()->GetID();
+    content::ChildProcessSecurityPolicy::GetInstance()->GrantAll(g_cdt_process_id);
+    
+    DevToolsWindow* window = DevToolsWindow::FindDevToolsWindow(agent_host.get());
+    if (!window) {
+      Profile* profile = Profile::FromBrowserContext(
+             web_contents->GetBrowserContext());
+      window = DevToolsWindow::Create(profile, GURL(), nullptr, false, std::string(), false, std::string(), container);
+      if (!window)
+        return;
+      window->bindings_->AttachTo(agent_host);
+    }
+    return;
+  }
+
   if (show) {
     DevToolsWindow::InspectElement(rfh, 0, 0);
     return;

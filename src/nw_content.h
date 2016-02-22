@@ -84,7 +84,8 @@ void DocumentFinishHook(blink::WebFrame* frame,
  void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, content::WebPreferences* web_prefs);
  bool PinningRenderer();
  void SetPinningRenderer(bool pin);
- void ShowDevtools(bool show, content::RenderFrameHost* rfh);
+ void ShowDevtools(bool show, content::WebContents* web_contents, content::WebContents* container = nullptr);
+ bool CheckStoragePartitionMatches(int render_process_id, const GURL& url);
 }
 
 #endif

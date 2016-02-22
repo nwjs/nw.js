@@ -105,3 +105,7 @@ This attribute is usually used with `nwdisable`.
 ### Attribute: nwUserAgent
 
 Override the default user-agent when loading the web page in the frame and sub frames. See [`user-agent` in manifest](Manifest Format.md#user-agent) for details.
+
+## webview tag
+
+added some methods to [webview tag]((webview Tag.md)

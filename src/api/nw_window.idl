@@ -43,7 +43,7 @@ namespace nw.Window {
 
   [noinline_doc] dictionary NWWindow {
     // show devtools for the current window
-    static void showDevTools(optional any frm, optional boolean headless, optional EventCallback callback);
+    static void showDevTools(optional any frm, optional EventCallback callback);
     static void capturePage(optional CapturePageCallback callback, optional CapturePageOptions options);
     static void show();
     static void hide();

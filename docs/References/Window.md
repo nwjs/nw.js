@@ -252,7 +252,7 @@ Toggle the kiosk mode.
 
 Turn on/off the transparency support. See more info on [Transparent Window](../For Users/Advanced/Transparent Window.md).
 
-## win.showDevTools([iframe], [headless], [callback])
+## win.showDevTools([iframe], [callback])
 
 !!! note
     This API is only available on SDK build flavor.
@@ -261,8 +261,7 @@ Turn on/off the transparency support. See more info on [Transparent Window](../F
     The behavior of the function is changed since 0.13.0. Please see [Migration Notes from 0.12 to 0.13](../For Users/Migration/From 0.12 to 0.13.md).
 
 * `iframe` `{String} or {HTMLIFrameElement}` _Optional_ the id or the element of the `<iframe>` to be jailed on. By default, the DevTools is shown for entire window.
-* `headless` `{Boolean}` _Optional_ whether show DevTools in headless mode. If ignored, it's set to `false` by default.
-* `callback(dev_win)` `{Function}` callback with the native window of the DevTools window when `headless` is false.
+* `callback(dev_win)` `{Function}` callback with the native window of the DevTools window.
 
 Open the devtools to inspect the window.
 
@@ -270,9 +269,9 @@ The optional `iframe` as `String` should be the value of `id` attribute of any `
 
 The optional `iframe` as `HTMLIFrameElement` should be the iframe object. And it serves the same purpose with the `id` argument.
 
-When `headless` is `true`, the Devtools window will not be opened. Instead, a `devtools-opened` event will be emitted to the `Window` object after Devtools is ready.
+This function returns a `Window` object via the callback. You can use any properties and methods of `Window` except the events.
 
-This function returns a `Window` object when `headless` is `false`. You can use any properties and methods of `Window` except the events.
+See also in [webview reference](webview Tag.md) on how to open DevTools for webview or open DevTools in a webview.
 
 ## win.closeDevTools()
 
@@ -288,7 +287,7 @@ Close the devtools window.
 
 Query the status of devtools window.
 
-This will always return `false` if the `headless` option was `true` when calling [`win.showDevTools()`](#winshowdevtoolsiframe-headless-callback).
+See also [`win.showDevTools()`](#winshowdevtoolsiframe-callback).
 
 ## win.setMaximumSize(width, height)
 
@@ -531,11 +530,9 @@ Emitted after the capturePage method is called and image data is ready. See `win
 ## Event: devtools-opened(url)
 
 !!! warning "Deprecated"
-    This feature is deprecated since 0.13.0. Use the `callback` passed to [`win.showDevtools`](#winshowdevtoolsiframe-headless-callback) instead. See [Migration Notes from 0.12 to 0.13](../For Users/Migration/From 0.12 to 0.13.md).
+    This feature is deprecated since 0.13.0. Use the `callback` passed to [`win.showDevtools`](#winshowdevtoolsiframe-callback) instead. See [Migration Notes from 0.12 to 0.13](../For Users/Migration/From 0.12 to 0.13.md).
 
-Emitted after Devtools is opened by any means, or ready after calling `win.showDevTools(id, headless)` with `headless` is `true`. The event callback has an `url` argument, which is the URL to load Devtools UI.
-
-See [`win.showDevTools()` method](#winshowdevtoolsiframe-headless-callback) for more details.
+See [`win.showDevTools()` method](#winshowdevtoolsiframe-callback) for more details.
 
 ## Event: devtools-closed
 
