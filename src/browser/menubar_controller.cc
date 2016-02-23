@@ -2,6 +2,7 @@
 
 #include "base/stl_util.h"
 #include "content/nw/src/browser/menubar_view.h"
+#include "ui/base/models/menu_model.h"
 #include "ui/views/controls/button/menu_button.h"
 #include "ui/views/controls/menu/menu_item_view.h"
 #include "ui/views/widget/widget.h"
@@ -12,7 +13,7 @@ MenuBarController::ModelToMenuMap MenuBarController::model_to_menu_map_;
 MenuBarController* MenuBarController::master_;
 
 MenuBarController::MenuBarController(MenuBarView* menubar, ui::MenuModel* menu_model, MenuBarController* master)
-  :MenuModelAdapter(menu_model), menubar_(menubar) {
+  :MenuModelAdapter(menu_model), menubar_(menubar), active_menu_model_(menu_model) {
 
   views::MenuItemView* menu = MenuBarController::CreateMenu(menubar, menu_model, this);
   if (!master) {
@@ -44,6 +45,7 @@ views::MenuItemView* MenuBarController::GetSiblingMenu(
 
   *has_mnemonics = false;
   *anchor = views::MENU_ANCHOR_TOPLEFT;
+  active_menu_model_ = model;
   if (!model_to_menu_map_[model]) {
     MenuBarController* controller = new MenuBarController(menubar_, model, master_);
     CreateMenu(menubar_, model, controller);
@@ -51,6 +53,28 @@ views::MenuItemView* MenuBarController::GetSiblingMenu(
   }
 
   return model_to_menu_map_[model];
+}
+
+void MenuBarController::ExecuteCommand(int id) {
+  ui::MenuModel* model = active_menu_model_;
+  int index = 0;
+  if (ui::MenuModel::GetModelAndIndexForCommandId(id, &model, &index)) {
+    model->ActivatedAt(index);
+    return;
+  }
+
+  NOTREACHED();
+}
+
+void MenuBarController::ExecuteCommand(int id, int mouse_event_flags) {
+  ui::MenuModel* model = active_menu_model_;
+  int index = 0;
+  if (ui::MenuModel::GetModelAndIndexForCommandId(id, &model, &index)) {
+    model->ActivatedAt(index, mouse_event_flags);
+    return;
+  }
+
+  NOTREACHED();
 }
 
 views::MenuItemView* MenuBarController::CreateMenu(MenuBarView* menubar,
@@ -66,10 +90,10 @@ views::MenuItemView* MenuBarController::CreateMenu(MenuBarView* menubar,
 void MenuBarController::RunMenuAt(views::View* view, const gfx::Point& point) {
 
   ignore_result(menu_runner_->RunMenuAt(view->GetWidget()->GetTopLevelWidget(),
-                              static_cast<views::MenuButton*>(view),
-                              gfx::Rect(point, gfx::Size()),
-                              views::MENU_ANCHOR_TOPRIGHT,
-                                        ui::MENU_SOURCE_NONE));
+                                       static_cast<views::MenuButton*>(view),
+                                       gfx::Rect(point, gfx::Size()),
+                                       views::MENU_ANCHOR_TOPRIGHT,
+                                       ui::MENU_SOURCE_NONE));
   delete this;
 }
 
