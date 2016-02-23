@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>cookie</title>
+</head>
+<body>
+  <div>Cookie value: "<span id="cookie"></span>"</div>
+  <script>
+    nw.Window.get().cookies.set({
+      url: 'http://www.test.com',
+      name: 'testcookie',
+      domain: 'test.com',
+      path: '/',
+      value: 'Hi there!'
+    });      
+    var details = {name: 'testcookie', url: "http://www.test.com"};
+    nw.Window.get().cookies.get(details, function(cookie) {
+      document.getElementById('cookie').innerHTML = cookie.value;
+    });
+  </script>
+</body>
+</html>
