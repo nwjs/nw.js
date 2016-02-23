@@ -29,10 +29,14 @@ class MenuBarController : public views::MenuModelAdapter {
       bool* has_mnemonics,
       views::MenuButton** button) override;
 
+  void ExecuteCommand(int id) override;
+  void ExecuteCommand(int id, int mouse_event_flags) override;
+
  private:
   typedef std::map<const ui::MenuModel*, views::MenuItemView*> ModelToMenuMap;
 
   MenuBarView* menubar_;
+  ui::MenuModel* active_menu_model_;
   scoped_ptr<views::MenuRunner> menu_runner_;
   std::vector<MenuBarController*> controllers_;
   static ModelToMenuMap model_to_menu_map_;
