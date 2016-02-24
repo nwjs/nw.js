@@ -41,6 +41,8 @@
 #include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/policy_cert_verifier.h"
 
+#include "extensions/browser/guest_view/web_view/web_view_renderer_state.h"
+#include "extensions/browser/guest_view/web_view/web_view_guest.h"
 #include "extensions/browser/event_router.h"
 #include "extensions/browser/extension_prefs.h"
 #include "extensions/browser/extension_registry.h"
@@ -51,6 +53,7 @@
 #include "extensions/common/features/feature.h"
 #include "extensions/common/manifest.h"
 #include "extensions/common/manifest_constants.h"
+#include "extensions/common/manifest_handlers/webview_info.h"
 
 #include "extensions/grit/extensions_renderer_resources.h"
 
@@ -102,6 +105,9 @@
 using content::RenderView;
 using content::RenderViewImpl;
 using content::DevToolsAgentHost;
+using content::RenderFrameHost;
+using content::RenderProcessHost;
+using content::WebContents;
 using extensions::ScriptContext;
 using extensions::Extension;
 using extensions::EventRouter;
@@ -112,6 +118,8 @@ using extensions::ExtensionRegistry;
 using extensions::Dispatcher;
 using extensions::ContentVerifierDelegate;
 using extensions::NWContentVerifierDelegate;
+using extensions::WebviewInfo;
+using extensions::WebViewGuest;
 using blink::WebScriptSource;
 
 namespace manifest_keys = extensions::manifest_keys;
@@ -1022,6 +1030,37 @@ void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, content::WebPreferenc
 
 bool CheckStoragePartitionMatches(int render_process_id, const GURL& url) {
   return render_process_id == g_cdt_process_id && url.SchemeIs(content_settings::kChromeDevToolsScheme);
+}
+
+bool RphGuestFilterURLHook(RenderProcessHost* rph, const GURL* url)  {
+  extensions::WebViewRendererState* renderer_state =
+      extensions::WebViewRendererState::GetInstance();
+  std::string owner_extension;
+  int process_id = rph->GetID();
+  if (!renderer_state->GetOwnerInfo(process_id, nullptr, &owner_extension))
+    return false;
+  const Extension* extension =
+    ExtensionRegistry::Get(rph->GetBrowserContext())->enabled_extensions().GetByID(owner_extension);
+  if (!extension)
+    return false;
+  bool file_scheme = false;
+  if (WebviewInfo::IsURLWebviewAccessible(extension,
+                                          WebViewGuest::GetPartitionID(rph),
+                                          *url, &file_scheme)) {
+    if (file_scheme) {
+      content::ChildProcessSecurityPolicy::GetInstance()->GrantScheme(
+          process_id, url::kFileScheme);
+    }
+    return true;
+  }
+  return false;
+}
+
+bool ShouldServiceRequestHook(int child_id, const GURL& url) {
+  RenderProcessHost* rph = RenderProcessHost::FromID(child_id);
+  if (!rph)
+    return false;
+  return RphGuestFilterURLHook(rph, &url);
 }
 
 void ShowDevtools(bool show, content::WebContents* web_contents, content::WebContents* container) {

@@ -86,6 +86,8 @@ void DocumentFinishHook(blink::WebFrame* frame,
  void SetPinningRenderer(bool pin);
  void ShowDevtools(bool show, content::WebContents* web_contents, content::WebContents* container = nullptr);
  bool CheckStoragePartitionMatches(int render_process_id, const GURL& url);
+ bool RphGuestFilterURLHook(content::RenderProcessHost* rph, const GURL* url);
+ bool ShouldServiceRequestHook(int child_id, const GURL& url);
 }
 
 #endif
