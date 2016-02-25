@@ -1,3 +1,13 @@
+0.13.0-beta7 / 02-25-2015
+=========================
+- Update Chromium to 48.0.2564.116
+- Support loading devtools in/for webview by adding webview.showDevTools (#4411)
+- Fully support for devtools extensions (#612)
+- support loading local file in webview (#4425)
+- Fix: add URL scheme support for MAC (#4240)
+- Fix: alert/prompt dialog with nwjs style (#4413)
+- Fix: menubar button not found when navigate to another menu (#4371)
+
 0.13.0-beta6 / 02-17-2015
 =========================
 - Update Chromium to 48.0.2564.109
