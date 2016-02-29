@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+    <div id='result'>zoom level</div>
+    <script>
+      function test(val) {
+      document.getElementById('result').innerHTML = val;
+      }
+    </script>
+    <button id='set-zoom' onclick="nw.Window.get().zoomLevel = 2;">set zoom level</button>
+    <button id='get-zoom' onclick="test(window.devicePixelRatio);">get zoom level</button>
+    <script>
+      var win = null;
+      nw.Window.open('popup.html', {}, function(w) {
+        win = w;
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+    <div id='result'>zoom level</div>
+    <script>
+      nw.Window.get().zoomLevel = 2;
+      setTimeout(function() {
+        document.getElementById('result').innerHTML = window.devicePixelRatio;
+      }, 1000);
+    </script>
+  </body>
+</html>
