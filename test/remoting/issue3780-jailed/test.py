@@ -25,7 +25,7 @@ try:
     print 'click Console panel'
     driver.execute_script('return document.querySelector(".inspector-view-tabbed-pane").shadowRoot.getElementById("tab-console")').click()
     print 'send_keys "location.pathname<enter>"'
-    driver.switch_to_active_element().send_keys('location.pathname\n')
+    driver.find_element_by_id('console-prompt').send_keys('location.pathname\n')
     pathname = driver.find_element_by_css_selector('.console-user-command-result .console-message-text .object-value-string').get_attribute('textContent')
     print pathname
     assert (pathname == '/child.html')

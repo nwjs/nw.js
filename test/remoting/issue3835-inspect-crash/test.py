@@ -21,7 +21,7 @@ try:
     print 'switch to devtools'
     switch_to_devtools(driver, devtools_window=driver.window_handles[-1])
     driver.execute_script('return document.querySelector(".inspector-view-tabbed-pane").shadowRoot.getElementById("tab-console")').click()
-    driver.switch_to_active_element().send_keys('chrome\n')
+    driver.find_element_by_id('console-prompt').send_keys('chrome\n')
     driver.find_element_by_class_name('console-object-preview').click()
     time.sleep(1) # wait for crash!
     expanded = driver.find_element_by_css_selector('.console-view-object-properties-section.expanded')
