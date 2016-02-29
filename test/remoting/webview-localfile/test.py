@@ -10,6 +10,8 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 testdir = os.path.dirname(os.path.abspath(__file__))
+os.chdir(testdir)
+
 chrome_options = Options()
 chrome_options.add_argument("nwapp=" + testdir)
 chrome_options.add_experimental_option("windowTypes", ["webview"])
