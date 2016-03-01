@@ -119,34 +119,35 @@ This API behaves similar functions as `Screen.chooseDesktopMedia`. But it doesn'
 ### Synopsis
 
 ```javascript
+var dcm = nw.Screen.DesktopCaptureMonitor;
 nw.Screen.Init();
-nw.Screen.DesktopCaptureMonitor.on("added", function (id, name, order, type) {
+dcm.on("added", function (id, name, order, type) {
    //select first stream and shutdown
    var constraints = {
       audio: {
          mandatory: {
              chromeMediaSource: "system",
-             chromeMediaSourceId: id
+             chromeMediaSourceId: dcm.registerStream(id)
           }
       },
       video: {
          mandatory: {
              chromeMediaSource: 'desktop',
-             chromeMediaSourceId: id,
+             chromeMediaSourceId: dcm.registerStream(id)
          }
       }
   };
 
   // TODO: call getUserMedia with contraints
 
-  nw.Screen.DesktopCaptureMonitor.stop();
+  dcm.stop();
 });
 
-nw.Screen.DesktopCaptureMonitor.on("removed", function (id) { });
-nw.Screen.DesktopCaptureMonitor.on("orderchanged", function (id, new_order, old_order) { });
-nw.Screen.DesktopCaptureMonitor.on("namechanged", function (id, name) { });
-nw.Screen.DesktopCaptureMonitor.on("thumbnailchanged", function (id, thumbnail) { });
-nw.Screen.DesktopCaptureMonitor.start(true, true);
+dcm.on("removed", function (id) { });
+dcm.on("orderchanged", function (id, new_order, old_order) { });
+dcm.on("namechanged", function (id, name) { });
+dcm.on("thumbnailchanged", function (id, thumbnail) { });
+dcm.start(true, true);
 ```
 
 ### Screen.DesktopCaptureMonitor.started
@@ -162,11 +163,18 @@ The `DesktopCaptureMonitor` will start monitoring the system and trigger the the
 
 ### Screen.DesktopCaptureMonitor.stop()
 
-The `DesktopCaptureMonitor` will stop monitoring the system. The `id` provided can be passed into `chromeMediaSourceId` in `getUserMedia` constraints. `DesktopCaptureMonitor` should be stopped after a stream is selected.
+The `DesktopCaptureMonitor` will stop monitoring the system. `DesktopCaptureMonitor` should be stopped after a stream is selected.
+
+### Screen.DesktopCaptureMonitor.registerStream(id)
+
+Register and return a valid stream id passed into `chromeMediaSourceId` in `getUserMedia` constraints. See [Synopsis](#synopsis_1) for the usage.
 
 ### Event: added (id, name, order, type, primary)
 
-* `id` `{String}` is unique id that can be passed as chromeMediaSourceId
+!!! warning "Behavior Changed"
+    This feature is changed in 0.13.0. See [Migration Notes from 0.12 to 0.13](../For Users/Migration/From 0.12 to 0.13.md).
+
+* `id` `{String}` is the media id. Use `registerStream(id)` to obtain a valid stream id used with `getUserMedia()`. See [registerStream](#screendesktopcapturemonitorregisterstreamid)
 * `name` `{String}` is the title of the window or screen
 * `order` `{Integer}` is the z-order of the windows, if screens are selected they will appear first
 * `type` `{String}` type of the stream: "screen", "window", "other" or "unknown"
@@ -174,15 +182,18 @@ The `DesktopCaptureMonitor` will stop monitoring the system. The `id` provided c
 
 Emit when a new source was added.
 
-### Event: removed (id)
+### Event: removed (order)
 
-* `id` `{String}` is the chromeMediaSourceId of the screen or monitor that is no longer capturable
+* `order` `{Integer}` is the order of the media source that is no longer capturable
 
 Emit when a source was removed.
 
 ### Event: orderchanged (id, new_order, old_order)
 
-* `id` `{String}` is the chromeMediaSourceId of the screen or window that has changed z-order
+!!! warning "Behavior Changed"
+    This feature is changed in 0.13.0. See [Migration Notes from 0.12 to 0.13](../For Users/Migration/From 0.12 to 0.13.md).
+
+* `id` `{String}` is the media id of the screen or window that has changed z-order
 * `new_order` `{Integer}` is the new z-order
 * `old_order` `{Integer}` is the old z-order
 
@@ -190,14 +201,20 @@ Emit when the Z-order of a source changed (this may change for windows as others
 
 ### Event: namechanged (id, name)
 
-* `id` `{String}` is the chromeMediaSourceId of the screen or window that has a name changed
+!!! warning "Behavior Changed"
+    This feature is changed in 0.13.0. See [Migration Notes from 0.12 to 0.13](../For Users/Migration/From 0.12 to 0.13.md).
+
+* `id` `{String}` is the media id of the screen or window that has a name changed
 * `name` `{String}` is the new new name of the screen or window
 
 Emit when the name of the source has changed. This can happen when a window changes title.
 
 ### Event: thumbnailchanged (id, thumbnail)
 
-* `id` `{String}` is the chromeMediaSourceId of the screen or window that has an updated thumbnail
+!!! warning "Behavior Changed"
+    This feature is changed in 0.13.0. See [Migration Notes from 0.12 to 0.13](../For Users/Migration/From 0.12 to 0.13.md).
+
+* `id` `{String}` is the media id of the screen or window that has an updated thumbnail
 * `thumbnail` `{String}` is the base64 encoded png of the thumbnail
 
 Emit when the thumbnail of a source changed.

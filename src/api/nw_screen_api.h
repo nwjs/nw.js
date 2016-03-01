@@ -74,6 +74,20 @@ namespace extensions {
   private:
     DISALLOW_COPY_AND_ASSIGN(NwScreenIsMonitorStartedFunction);
   };
+
+  // implement nw.Screen.registerStream()
+  class NwScreenRegisterStreamFunction : public NWSyncExtensionFunction {
+  public:
+    NwScreenRegisterStreamFunction();
+    bool RunNWSync(base::ListValue* response, std::string* error) override;
+
+  protected:
+    ~NwScreenRegisterStreamFunction() override {}
+    DECLARE_EXTENSION_FUNCTION("nw.Screen.registerStream", UNKNOWN)
+
+  private:
+    DISALLOW_COPY_AND_ASSIGN(NwScreenRegisterStreamFunction);
+  };
 } // extensions
 
 #endif //NW_SRC_API_NW_SCREEN_API_H_
