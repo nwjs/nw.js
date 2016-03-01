@@ -356,7 +356,7 @@ bool NwCurrentWindowInternalSetMenuFunction::RunAsync() {
 }
   
 #if defined(OS_WIN)
-static HICON createBadgeIcon(const HWND hWnd, const TCHAR *value, const int sizeX, const int sizeY) {
+static base::win::ScopedHICON createBadgeIcon(const HWND hWnd, const TCHAR *value, const int sizeX, const int sizeY) {
   // canvas for the overlay icon
   gfx::Canvas canvas(gfx::Size(sizeX, sizeY), 1, false);
 
@@ -375,7 +375,7 @@ static HICON createBadgeIcon(const HWND hWnd, const TCHAR *value, const int size
   canvas.DrawStringRectWithFlags(value, gfx::FontList(font), SK_ColorWHITE, gfx::Rect(sizeX, fontSize + yMargin + 1), gfx::Canvas::TEXT_ALIGN_CENTER);
 
   // return the canvas as windows native icon handle
-  return IconUtil::CreateHICONFromSkBitmap(canvas.ExtractImageRep().sk_bitmap());
+  return IconUtil::CreateHICONFromSkBitmap(canvas.ExtractImageRep().sk_bitmap()).Pass();
 }
 #endif
 
@@ -402,7 +402,7 @@ bool NwCurrentWindowInternalSetBadgeLabelFunction::RunAsync() {
     return false;
   }
 
-  HICON icon = NULL;
+  base::win::ScopedHICON icon;
   HWND hWnd = getHWND(getAppWindow(this));
   if (hWnd == NULL) {
     error_ = kNoAssociatedAppWindow;
@@ -413,8 +413,7 @@ bool NwCurrentWindowInternalSetBadgeLabelFunction::RunAsync() {
   if (badge.size())
     icon = createBadgeIcon(hWnd, base::UTF8ToUTF16(badge).c_str(), 16 * scale, 16 * scale);
 
-  taskbar->SetOverlayIcon(hWnd, icon, L"Status");
-  DestroyIcon(icon);
+  taskbar->SetOverlayIcon(hWnd, icon.get(), L"Status");
 #elif defined(OS_LINUX)
   views::LinuxUI* linuxUI = views::LinuxUI::instance();
   if (linuxUI == NULL) {
