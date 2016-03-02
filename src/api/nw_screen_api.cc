@@ -12,7 +12,12 @@
 #include "base/strings/string16.h"
 #include "base/strings/utf_string_conversions.h"
 #include "chrome/browser/media/desktop_media_list_observer.h"
+#include "chrome/browser/media/desktop_streams_registry.h"
+#include "chrome/browser/media/media_capture_devices_dispatcher.h"
 #include "chrome/browser/media/native_desktop_media_list.h"
+#include "content/public/browser/render_frame_host.h"
+#include "content/public/browser/render_process_host.h"
+#include "content/public/browser/web_contents.h"
 #include "third_party/webrtc/modules/desktop_capture/desktop_capture_options.h"
 #include "third_party/webrtc/modules/desktop_capture/screen_capturer.h"
 #include "third_party/webrtc/modules/desktop_capture/window_capturer.h"
@@ -342,6 +347,38 @@ namespace extensions {
 
   bool NwScreenIsMonitorStartedFunction::RunNWSync(base::ListValue* response, std::string* error) {
     response->AppendBoolean(NwDesktopCaptureMonitor::GetInstance()->IsStarted());
+    return true;
+  }
+
+  NwScreenRegisterStreamFunction::NwScreenRegisterStreamFunction() {}
+
+  bool NwScreenRegisterStreamFunction::RunNWSync(base::ListValue* response, std::string* error) {
+    std::string id;
+    EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &id));
+
+    // following code is modified from `DesktopCaptureChooseDesktopMediaFunctionBase::OnPickerDialogResults`
+    // in chrome/browser/extensions/api/desktop_capture/desktop_capture_base.cc
+
+    content::DesktopMediaID source = content::DesktopMediaID::Parse(id);
+    content::WebContents* web_contents = GetSenderWebContents();
+    if (!source.is_null() && web_contents) {
+      std::string result;
+      DesktopStreamsRegistry* registry =
+        MediaCaptureDevicesDispatcher::GetInstance()->
+        GetDesktopStreamsRegistry();
+      // TODO(miu): Once render_frame_host() is being set, we should register the
+      // exact RenderFrame requesting the stream, not the main RenderFrame.  With
+      // that change, also update
+      // MediaCaptureDevicesDispatcher::ProcessDesktopCaptureAccessRequest().
+      // http://crbug.com/304341
+      content::RenderFrameHost* const main_frame = web_contents->GetMainFrame();
+      result = registry->RegisterStream(main_frame->GetProcess()->GetID(),
+                                        main_frame->GetRoutingID(),
+                                        extension()->url(),
+                                        source,
+                                        extension()->name());
+      response->AppendString(result);
+    }
     return true;
   }
 

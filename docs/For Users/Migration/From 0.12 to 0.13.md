@@ -46,6 +46,10 @@
 + Window options `always-on-top` and `visible-on-all-workspaces` is renamed to [`always_on_top`](../../References/Manifest Format.md#always_on_top) and [`visible_on_all_workspaces`](../../References/Manifest Format.md#visible_on_all_workspaces) respectively in `package.json` or as argument of `Window.open()`.
 + Window is not inherited from `EventEmitter` anymore, but the methods `on()`, `once()`, `removeListener()` and `removeAllListeners()` are still supported.
 
+### Screen
+
++ The `id` obtained by `added`, `orderchanged`, `namechanged`, `thumbnailchanged` should be registered and use the stream id returned by [`registerStream(id)`](../../References/Screen.md#screendesktopcapturemonitorregisterstreamid) before passing to `getUserMedia`. See [Synopsis](../../References/Screen.md#synopsis_1) for the usage.
+
 ### Known issues
 
 + The following window options passed to nw.Window.open() is not effective on Linux: `min_width`, `min_height`, `max_width`, `max_height`, `resizable` for now; try to set them in the callback.
