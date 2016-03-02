@@ -1,0 +1,1 @@
+opener.out('inject_start', 'success');
