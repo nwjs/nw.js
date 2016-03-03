@@ -1,3 +1,11 @@
+0.13.0-rc1 / 03-03-2015
+=======================
+- Update Chromium to 49.0.2623.75
+- Update Node.js to 5.7.0
+- Add `nw.Screen.DesktopCaptureMonitor.registerStream()` for using stream id in `getUserMedia()` (#4459)
+- Fix: Wrong "restore" window size after click on the app in the taskbar on windows 10 (#4323)
+- [docs] chromedriver: a better way to arguments of nw app
+
 0.13.0-beta7 / 02-25-2015
 =========================
 - Update Chromium to 48.0.2564.116
