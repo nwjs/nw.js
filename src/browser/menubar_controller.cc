@@ -89,10 +89,17 @@ views::MenuItemView* MenuBarController::CreateMenu(MenuBarView* menubar,
 
 void MenuBarController::RunMenuAt(views::View* view, const gfx::Point& point) {
 
+  views::MenuButton* menu_button = static_cast<views::MenuButton*>(view);
+  gfx::Point screen_loc;
+  views::View::ConvertPointToScreen(menu_button, &screen_loc);
+  // Subtract 1 from the height to make the popup flush with the button border.
+  gfx::Rect bounds(screen_loc.x(), screen_loc.y(), menu_button->width(),
+                   menu_button->height() - 1);
+
   ignore_result(menu_runner_->RunMenuAt(view->GetWidget()->GetTopLevelWidget(),
-                                       static_cast<views::MenuButton*>(view),
-                                       gfx::Rect(point, gfx::Size()),
-                                       views::MENU_ANCHOR_TOPRIGHT,
+                                       menu_button,
+                                       bounds,
+                                       views::MENU_ANCHOR_TOPLEFT,
                                        ui::MENU_SOURCE_NONE));
   delete this;
 }

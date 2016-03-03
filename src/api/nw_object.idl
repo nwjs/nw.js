@@ -9,6 +9,6 @@ namespace nw.Obj {
     static void create(long id, DOMString type, object options);
     static void destroy(long id);
     static void callObjectMethod(long id, DOMString type, DOMString method, any[] arguments);
-    static object callObjectMethodSync(long id, DOMString type, DOMString method, any[] arguments);
+    static any callObjectMethodSync(long id, DOMString type, DOMString method, any[] arguments);
   };
 };

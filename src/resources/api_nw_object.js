@@ -15,7 +15,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     return sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {});
   });
   apiFunctions.setHandleRequest('callObjectMethodSync', function() {
-    return sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {});
+    return sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {})[0];
   });
 });
 
