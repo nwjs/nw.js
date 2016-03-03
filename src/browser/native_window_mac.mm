@@ -391,7 +391,7 @@ NativeWindowCocoa::NativeWindowCocoa(
   } else {
     shell_window = [[ShellFramelessNSWindow alloc]
         initWithContentRect:cocoa_bounds
-                  styleMask:style_mask
+                  styleMask:0
                     backing:NSBackingStoreBuffered
                       defer:NO];
   }
