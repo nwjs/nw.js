@@ -1,0 +1,13 @@
+diff --git a/ffmpeg.gyp b/ffmpeg.gyp
+index 5c21675..ee09dfe 100755
+--- ffmpeg.gyp
++++ ffmpeg.gyp
+@@ -84,7 +84,7 @@
+       }],
+     ],
+ 
+-    'ffmpeg_component%': '<(component)',
++    'ffmpeg_component%': 'shared_library',
+ 
+     # Locations for generated artifacts.
+     'shared_generated_dir': '<(SHARED_INTERMEDIATE_DIR)/third_party/ffmpeg',
