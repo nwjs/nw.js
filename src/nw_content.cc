@@ -439,7 +439,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
       argv[1] = argv[2] = nullptr;
       std::string main_fn;
 
-      if (context->extension()->manifest()->GetString(manifest_keys::kNWJSInternalMainFilename, &main_fn)) {
+      if (context->extension()->manifest()->GetString("node-main", &main_fn)) {
         argc = 2;
         argv[1] = strdup(main_fn.c_str());
       }
