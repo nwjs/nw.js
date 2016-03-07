@@ -255,7 +255,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
           policy.forceDownload  =  function () { this.val = 'download'; };
           policy.forceNewWindow =  function () { this.val = 'new-window'; };
           policy.forceNewPopup  =  function () { this.val = 'new-popup'; };
-          policy.setNewWindowManifest = function (m) { this.manifest = JSON.stringify(m); };
+          policy.setNewWindowManifest = function (m) { this.manifest = m; };
           callback(frame, url, policy);
         }
         h.listener = callback;

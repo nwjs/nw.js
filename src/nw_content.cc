@@ -6,6 +6,7 @@
 #include "base/command_line.h"
 #include "base/files/file_util.h"
 #include "base/json/json_reader.h"
+#include "base/json/json_writer.h"
 #include "base/path_service.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_util.h"
@@ -31,6 +32,7 @@
 #include "content/public/browser/plugin_service.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/web_contents.h"
+#include "content/public/child/v8_value_converter.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/result_codes.h"
 #include "content/public/common/user_agent.h"
@@ -735,6 +737,7 @@ void willHandleNavigationPolicy(content::RenderView* rv,
   v8::Context::Scope cscope (v8_context);
   v8::Handle<v8::Value> element = v8::Null(isolate);
   v8::Handle<v8::Object> policy_obj = v8::Object::New(isolate);
+
 #if 0
   blink::LocalFrame* core_frame = blink::toWebLocalFrameImpl(frame)->frame();
   if (core_frame->deprecatedLocalOwner()) {
@@ -771,13 +774,13 @@ void willHandleNavigationPolicy(content::RenderView* rv,
                                                         "onNavigation", &arguments);
     }
   }
-  v8::Local<v8::Value> manifest_val = policy_obj->Get(v8_str("manifest"));
 
-  //TODO: change this to object
-  if (manifest_val->IsString()) {
-    v8::String::Utf8Value manifest_str(manifest_val);
-    if (manifest)
-      *manifest = blink::WebString::fromUTF8(*manifest_str);
+  scoped_ptr<content::V8ValueConverter> converter(content::V8ValueConverter::create());
+  v8::Local<v8::Value> manifest_v8 = policy_obj->Get(v8_str("manifest"));
+  scoped_ptr<base::Value> manifest_val(converter->FromV8Value(manifest_v8, v8_context));
+  std::string manifest_str;
+  if (manifest_val.get() && base::JSONWriter::Write(*manifest_val, &manifest_str)) {
+    *manifest = blink::WebString::fromUTF8(manifest_str.c_str());
   }
 
   v8::Local<v8::Value> val = policy_obj->Get(v8_str("val"));
@@ -805,13 +808,7 @@ void CalcNewWinParams(content::WebContents* new_contents, void* params,
                       std::string* nw_inject_js_doc_end) {
   extensions::AppWindow::CreateParams ret;
   scoped_ptr<base::Value> val;
-  scoped_ptr<base::DictionaryValue> manifest;
-  std::string manifest_str = base::UTF16ToUTF8(nw::GetCurrentNewWinManifest());
-  val = base::JSONReader().ReadToValue(manifest_str);
-  if (val.get() && val->IsType(base::Value::TYPE_DICTIONARY))
-    manifest.reset(static_cast<base::DictionaryValue*>(val.release()));
-  else
-    manifest.reset(new base::DictionaryValue());
+  scoped_ptr<base::DictionaryValue> manifest = MergeManifest();
 
   bool resizable;
   if (manifest->GetBoolean(switches::kmResizable, &resizable)) {
@@ -888,6 +885,47 @@ bool GetImage(Package* package, const FilePath& icon_path, gfx::Image* image) {
 
   *image = gfx::Image::CreateFrom1xBitmap(*decoded);
   return true;
+}
+
+scoped_ptr<base::DictionaryValue> MergeManifest() {
+  // Following attributes will not be inherited from package.json 
+  // Keep this list consistent with documents in `Manifest Format.md`
+  static std::vector<const char*> non_inherited_attrs = {
+                                                    switches::kmFullscreen,
+                                                    switches::kmKiosk,
+                                                    switches::kmPosition,
+                                                    switches::kmResizable,
+                                                    switches::kmShow
+                                                    };
+  scoped_ptr<base::DictionaryValue> manifest;
+
+  // retrieve `window` manifest set by `new-win-policy`
+  std::string manifest_str = base::UTF16ToUTF8(nw::GetCurrentNewWinManifest());
+  scoped_ptr<base::Value> val = base::JSONReader().ReadToValue(manifest_str);
+  if (val && val->IsType(base::Value::Type::TYPE_DICTIONARY)) {
+    manifest.reset(static_cast<base::DictionaryValue*>(val.release()));
+  } else {
+    manifest.reset(new base::DictionaryValue());
+  }
+
+  // merge with default `window` manifest in package.json if exists
+  nw::Package* pkg = nw::package();
+  if (pkg) {
+    base::DictionaryValue* manifest_window = pkg->window();
+    if (manifest_window) {
+      scoped_ptr<base::DictionaryValue> manifest_window_cloned = manifest_window->DeepCopyWithoutEmptyChildren();
+      // filter out non inherited attributes
+      std::vector<const char*>::iterator it;
+      for(it = non_inherited_attrs.begin(); it != non_inherited_attrs.end(); it++) {
+        manifest_window_cloned->RemoveWithoutPathExpansion(*it, NULL);
+      }
+      // overwrite default `window` manifest with the one passed by `new-win-policy`
+      manifest_window_cloned->MergeDictionary(manifest.get());
+      return manifest_window_cloned;
+    }
+  }
+
+  return manifest;
 }
 
 bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window) {
