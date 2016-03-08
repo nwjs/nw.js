@@ -21,7 +21,7 @@
     window.open('index.html');
   }
   function getwinsize() {
-    out('result', [window.outerWidth, window.outerHeight].join(','));
+    out('result', [window.innerWidth, window.innerHeight].join(','));
   }
   function bindNewWinPolicy() {
     nw.Window.get().on('new-win-policy', function(frame, url, policy) {
