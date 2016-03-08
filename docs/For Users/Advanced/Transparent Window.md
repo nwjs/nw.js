@@ -23,7 +23,7 @@ In the HTML body, specify the alpha of the background colour:
 <body style="background-color:rgba(0,0,0,0);">
 ```
 
-and specify [`transparent` field](../../References/Manifest Format.md#transparent) to `ture` in manifest:
+and specify [`transparent` field](../../References/Manifest Format.md#transparent) to `true` in manifest:
 ```json
   "window": {
     "transparent": true

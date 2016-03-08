@@ -46,7 +46,7 @@ Some objects of Node context are copied to Browser context so that scripts runni
 * `process` -- the [process module](https://nodejs.org/api/globals.html#globals_process) of Node.js; same as `nw.process`
 * `Buffer` -- the [Buffer class](https://nodejs.org/api/globals.html#globals_class_buffer) of Node.js
 
-#### Relative Path Resovling of `require()` in Browser Context
+#### Relative Path Resolving of `require()` in Browser Context
 
 Relative paths in Browser context are resolved according to path of main HTML file (like all browsers do).
 
