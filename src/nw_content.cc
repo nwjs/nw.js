@@ -61,6 +61,8 @@
 
 #include "net/cert/x509_certificate.h"
 
+#include "storage/common/database/database_identifier.h"
+
 #include "third_party/WebKit/public/web/WebDocument.h"
 #include "third_party/WebKit/public/web/WebFrame.h"
 #include "third_party/WebKit/public/web/WebLocalFrame.h"
@@ -245,6 +247,21 @@ int MainPartsPreCreateThreadsHook() {
         base::Move(old_dom_journal, new_dom_journal);
         base::Move(old_dom_storage, new_dom_storage);
         LOG_IF(INFO, true) << "Migrate DOM storage from " << old_dom_storage.AsUTF8Unsafe() << " to " << new_dom_storage.AsUTF8Unsafe();
+      }
+      base::FilePath old_indexeddb = user_data_dir
+        .Append(FILE_PATH_LITERAL("IndexedDB"))
+        .Append(FILE_PATH_LITERAL("file__0.indexeddb.leveldb"));
+      if (base::PathExists(old_indexeddb)) {
+        std::string id = crx_file::id_util::GenerateId(name);
+        GURL origin("chrome-extension://" + id + "/");
+        base::FilePath new_indexeddb_dir = user_data_dir.Append(FILE_PATH_LITERAL("Default"))
+          .Append(FILE_PATH_LITERAL("IndexedDB"))
+          .AppendASCII(storage::GetIdentifierFromOrigin(origin))
+          .AddExtension(FILE_PATH_LITERAL(".indexeddb.leveldb"));
+        base::CreateDirectory(new_indexeddb_dir.DirName());
+        base::CopyDirectory(old_indexeddb, new_indexeddb_dir.DirName(), true);
+        base::Move(new_indexeddb_dir.DirName().Append(FILE_PATH_LITERAL("file__0.indexeddb.leveldb")), new_indexeddb_dir);
+        LOG_IF(INFO, true) << "Migrated IndexedDB from " << old_indexeddb.AsUTF8Unsafe() << " to " << new_indexeddb_dir.AsUTF8Unsafe();
       }
     }
 
