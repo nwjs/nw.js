@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>issue4313-menu-after-nav</title>
+</head>
+<body>
+  <script> 
+  var win = getWindow();
+  win.menu = createMenubar();
+
+  function createMenubar() {
+    var menubar = new nw.Menu({ type: 'menubar' });
+    var itemLoc = new nw.MenuItem({ label: 'Location' });
+    var menuLoc = new nw.Menu();
+
+    menuLoc.append( new nw.MenuItem({ label: 'Click Me', click: function() {win.window.alert('click from index.html')}, modifiers: 'cmd+ctrl', key: 'y' }) );
+    menuLoc.append( new nw.MenuItem({ label: 'To Google.com', click: function() {alert(win.window.location.toString());win.window.location='https://www.google.com/'}, modifiers: 'cmd+ctrl', key: 'g'  }) );
+    menuLoc.append( new nw.MenuItem({ label: 'To next.html', click: function() {alert(win.window.location.toString());win.window.location='next.html'}, modifiers: 'cmd+ctrl', key: 'n'  }) );
+    menuLoc.append( new nw.MenuItem({ label: 'Forward', click: function() {alert(win.window.location.toString());win.window.history.forward()}, modifiers: 'cmd+ctrl', key: 'f'  }) );
+    menuLoc.append( new nw.MenuItem({ label: 'Back', click: function() {alert(win.window.location.toString());win.window.history.back()}, modifiers: 'cmd+ctrl', key: 'b'  }) );
+
+    itemLoc.submenu = menuLoc;
+    menubar.append(itemLoc);
+    return menubar;
+  }
+
+  function getWindow() {
+    return nw.Window.get();
+  }
+  </script>
+</body>
+</html>
