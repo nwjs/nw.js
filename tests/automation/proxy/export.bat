@@ -1,1 +1,0 @@
-reg export "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" c:\test.reg
