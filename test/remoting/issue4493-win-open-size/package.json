@@ -1,0 +1,8 @@
+{
+  "name": "issue4493-win-open-size",
+  "main": "index.html",
+  "window": {
+    "width": 666,
+    "height": 333
+  }
+}

@@ -161,6 +161,10 @@ Most of window subfields are inherited by sub windows opened by `window.open()` 
 
 All of the window subfields can be overwritten by using [`new-win-policy` event](Window.md#event-new-win-policy-frame-url-policy).
 
+### id
+
+* `{String}` the `id` used to identify the window. This will be used to remember the size and position of the window and restore that geometry when a window with the same id is later opened. [See also the Chrome App documentation](https://developer.chrome.com/apps/app_window#type-CreateWindowOptions)
+
 ### title
 
 * `{String}` the default title of window created by NW.js, it's very useful if you want to show your own title when the app is starting.
