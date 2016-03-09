@@ -26,6 +26,10 @@
 
 + `Shortcut` API does **NOT** map <kbd>Ctrl</kbd> modifier to <kbd>&#8984;</kbd> on Mac OS X. However 0.13.0 supports `Command` modifier in cross platform way. So it's your responsible to detect the OS and choose the right modifier when registering hotkeys. See [Shortcut.key](../../References/Shortcut.md#shortcutkey) for details.
 
+### Menu
++ Menus on Mac is created with default menubar, including `app-name`, `Edit` and `Window`, instead of minimal menubar in 0.12.
++ To fix the name of application menu, you will need to modify  `nwjs.app/Contents/Resources/en.lproj/InfoPlist.strings` instead of `nwjs.app/Contents/Info.plist`. See [Customize Menubar](../Advanced/Customize Menubar.md#mac-os-x).
+
 ### Manifest Format
 
 + [`single-instance`](../../References/Manifest Format.md#single-instance) is **deprecated** and it's always `true`. You **CANNOT** have multiple instances for your app unless you're using different user data directory (by `--user-data-dir`). You may also want to use the [open event](../../References/App.md#event-openargs): the first instance will be notified with this event when user tries to launch the second instance.

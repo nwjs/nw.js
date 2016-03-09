@@ -29,6 +29,7 @@ The source of the document is in [our git repo](https://github.com/nwjs/nw.js/tr
         + [Use NaCl in NW.js](For Users/Advanced/Use NaCl in NW.js.md)
         + [Use Native Node Modules](For Users/Advanced/Use Native Node Modules.md)
         + [Content Verification](For Users/Advanced/Content Verification.md)
+        + [Customize Menubar](For Users/Advanced/Customize Menubar.md)
 * For Developers
     - [Building NW.js](For Developers/Building NW.js.md)
     - [Contributing to NW.js](For Developers/Contributing to NW.js.md)
