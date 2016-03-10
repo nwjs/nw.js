@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>issue4493-win-open-size</title>
+</head>
+<body>
+  <button id="resize-window" onclick="resizeWindow()">Resize to 777x555</button>
+  <script>
+    function out(id, msg) {
+      var h1 = document.createElement('h1');
+      h1.setAttribute('id', id);
+      h1.innerHTML = msg;
+      document.body.appendChild(h1);
+    }
+    function resizeWindow() {
+      resizeTo(777,555);
+    }
+    window.onresize = function() {
+      out('resize', innerWidth + 'x' + innerHeight);
+    };
+    out('size', innerWidth + 'x' + innerHeight);
+  </script>
+</body>
+</html>
