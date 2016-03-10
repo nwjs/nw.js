@@ -2,6 +2,7 @@
 
 #include "nw_content.h"
 #include "nw_base.h"
+#include "base/files/file_enumerator.h"
 
 #include "base/command_line.h"
 #include "base/files/file_util.h"
@@ -230,10 +231,11 @@ int MainPartsPreCreateThreadsHook() {
     std::string name;
     package->root()->GetString("name", &name);
     if (!name.empty() && PathService::Get(chrome::DIR_USER_DATA, &user_data_dir)) {
-      base::FilePath old_dom_storage = user_data_dir
-        .Append(FILE_PATH_LITERAL("Local Storage"))
-        .Append(FILE_PATH_LITERAL("file__0.localstorage"));
-      if (base::PathExists(old_dom_storage)) {
+      base::FilePath old_dom_storage_dir = user_data_dir
+        .Append(FILE_PATH_LITERAL("Local Storage"));
+      base::FileEnumerator enum0(old_dom_storage_dir, false, base::FileEnumerator::FILES, FILE_PATH_LITERAL("*_0.localstorage"));
+      base::FilePath old_dom_storage = enum0.Next();
+      if (!old_dom_storage.empty()) {
         std::string id = crx_file::id_util::GenerateId(name);
         GURL origin("chrome-extension://" + id + "/");
         base::FilePath new_storage_dir = user_data_dir.Append(FILE_PATH_LITERAL("Default"))
