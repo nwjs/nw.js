@@ -50,6 +50,8 @@ menu.append(new nw.MenuItem({
 nw.Window.get().menu = menu;
 ```
 
+See [Customize Menubar](../For Users/Advanced/Customize Menubar.md) for detailed usages.
+
 ## new Menu([option])
 
 * `option` `{Object}` _Optional_
@@ -112,7 +114,8 @@ In this way, you can precisely choose which menu to show for different elements,
     - `hideEdit` `{Boolean}` _Optional_ do not populate the Edit menu
     - `hideWindow` `{Boolean}` _Optional_ do not populate the Window menu
 
-Creates the builtin menus (App, Edit and Window) within the menubar on Mac. The items can be manipulated with the `items` property. The argument `appname` is used for the title of App menu.
+Creates the builtin menus (*App*, *Edit* and *Window*) within the menubar on Mac. The items can be manipulated with the `items` property. The argument `appname` is used for the title of *App* menu.
 
 You can still use builtin menus with other menu items. i.e. append or insert items to the menu is still valid.
 
+See also [Customize Menubar](../For Users/Advanced/Customize Menubar.md#mac-os-x) for detailed usage.
