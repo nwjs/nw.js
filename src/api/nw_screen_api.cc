@@ -42,11 +42,11 @@ namespace extensions {
   private:
     int GetPrimaryMonitorIndex();
     // DesktopMediaListObserver implementation.
-    void OnSourceAdded(int index) override;
-    void OnSourceRemoved(int index) override;
-    void OnSourceMoved(int old_index, int new_index) override;
-    void OnSourceNameChanged(int index) override;
-    void OnSourceThumbnailChanged(int index) override;
+    void OnSourceAdded(DesktopMediaList* list, int index) override;
+    void OnSourceRemoved(DesktopMediaList* list, int index) override;
+    void OnSourceMoved(DesktopMediaList* list, int old_index, int new_index) override;
+    void OnSourceNameChanged(DesktopMediaList* list, int index) override;
+    void OnSourceThumbnailChanged(DesktopMediaList* list, int index) override;
 
     bool started_;
     scoped_ptr<DesktopMediaList> media_list_;
@@ -122,14 +122,14 @@ namespace extensions {
   }
 
   NwScreenDisplayObserver::NwScreenDisplayObserver() {
-    gfx::Screen* screen = gfx::Screen::GetNativeScreen();
+    gfx::Screen* screen = gfx::Screen::GetScreen();
     if (screen) {
       screen->AddObserver(this);
     }
   }
 
   NwScreenDisplayObserver::~NwScreenDisplayObserver() {
-    gfx::Screen* screen = gfx::Screen::GetNativeScreen();
+    gfx::Screen* screen = gfx::Screen::GetScreen();
     if (screen) {
       screen->RemoveObserver(this);
     }
@@ -170,7 +170,7 @@ namespace extensions {
   NwScreenGetScreensFunction::NwScreenGetScreensFunction() {}
 
   bool NwScreenGetScreensFunction::RunNWSync(base::ListValue* response, std::string* error) {
-    const std::vector<gfx::Display>& displays = gfx::Screen::GetNativeScreen()->GetAllDisplays();
+    const std::vector<gfx::Display>& displays = gfx::Screen::GetScreen()->GetAllDisplays();
 
     for (size_t i=0; i<displays.size(); i++) {
       response->Append(ConvertGfxDisplay(displays[i])->ToValue());
@@ -241,7 +241,7 @@ namespace extensions {
     return -1;
   }
 
-  void NwDesktopCaptureMonitor::OnSourceAdded(int index) {
+void NwDesktopCaptureMonitor::OnSourceAdded(DesktopMediaList* list, int index) {
     DesktopMediaList::Source src = media_list_->GetSource(index);
     
     std::string type;
@@ -273,7 +273,7 @@ namespace extensions {
       std::move(args));
   }
 
-  void NwDesktopCaptureMonitor::OnSourceRemoved(int index) {
+void NwDesktopCaptureMonitor::OnSourceRemoved(DesktopMediaList* list, int index) {
     scoped_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceRemoved::Create(index);
     DispatchEvent(
       events::HistogramValue::UNKNOWN, 
@@ -281,7 +281,7 @@ namespace extensions {
       std::move(args));
   }
 
-  void NwDesktopCaptureMonitor::OnSourceMoved(int old_index, int new_index) {
+void NwDesktopCaptureMonitor::OnSourceMoved(DesktopMediaList* list, int old_index, int new_index) {
     DesktopMediaList::Source src = media_list_->GetSource(new_index);
     scoped_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceOrderChanged::Create(
       src.id.ToString(),
@@ -293,7 +293,7 @@ namespace extensions {
       std::move(args));    
   }
 
-  void NwDesktopCaptureMonitor::OnSourceNameChanged(int index) {
+void NwDesktopCaptureMonitor::OnSourceNameChanged(DesktopMediaList* list, int index) {
     DesktopMediaList::Source src = media_list_->GetSource(index);
     scoped_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceNameChanged::Create(
       src.id.ToString(),
@@ -304,7 +304,7 @@ namespace extensions {
       std::move(args));    
   }
 
-  void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(int index) {
+void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(DesktopMediaList* list, int index) {
     std::string base64;
 
     DesktopMediaList::Source src = media_list_->GetSource(index);

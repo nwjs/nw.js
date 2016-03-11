@@ -32,11 +32,10 @@ const char MenuBarView::kViewClassName[] = "BookmarkBarView";
 
 class MenuBarButton : public views::MenuButton {
  public:
-  MenuBarButton(views::ButtonListener* listener,
-                const base::string16& title,
+  MenuBarButton(const base::string16& title,
                 views::MenuButtonListener* menu_button_listener,
                 bool show_menu_marker)
-      : MenuButton(listener, title, menu_button_listener, show_menu_marker) {
+      : MenuButton(title, menu_button_listener, show_menu_marker) {
     SetElideBehavior(kElideBehavior);
   }
 
@@ -84,7 +83,7 @@ void MenuBarView::UpdateMenu(ui::MenuModel* model) {
 void MenuBarView::InitView(ui::MenuModel* model) {
   model_ = model;
   for (int i = 0; i < model_->GetItemCount(); i++) {
-    AddChildView(new MenuBarButton(this, model_->GetLabelAt(i), this, false));
+    AddChildView(new MenuBarButton(model_->GetLabelAt(i), this, false));
   }
 }
 
@@ -105,8 +104,9 @@ bool MenuBarView::GetMenuButtonAtLocation(const gfx::Point& loc, ui::MenuModel**
   return false;
 }
 
-void MenuBarView::OnMenuButtonClicked(views::View* view,
-                                      const gfx::Point& point) {
+void MenuBarView::OnMenuButtonClicked(views::MenuButton* view,
+                                          const gfx::Point& point,
+                                          const ui::Event* event) {
   int button_index = GetIndexOf(view);
   DCHECK_NE(-1, button_index);
   ui::MenuModel::ItemType type = model_->GetTypeAt(button_index);

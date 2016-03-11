@@ -49,8 +49,9 @@ class MenuBarView :
   bool GetMenuButtonAtLocation(const gfx::Point& loc, ui::MenuModel** model, views::MenuButton** button);
 
   // views::MenuButtonListener:
-   void OnMenuButtonClicked(views::View* view,
-                                   const gfx::Point& point) override;
+  void OnMenuButtonClicked(views::MenuButton* source,
+                           const gfx::Point& point,
+                           const ui::Event* event) override;
 
   // views::ButtonListener:
    void ButtonPressed(views::Button* sender,

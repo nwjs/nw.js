@@ -53,7 +53,7 @@ class TrayObserver : public StatusIconObserver {
     base::ListValue args;
     base::DictionaryValue* data = new base::DictionaryValue;
     gfx::Point cursor_pos(
-      gfx::Screen::GetNativeScreen()->GetCursorScreenPoint());
+      gfx::Screen::GetScreen()->GetCursorScreenPoint());
     data->SetInteger("x", cursor_pos.x());
     data->SetInteger("y", cursor_pos.y());
     args.Append(data);

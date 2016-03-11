@@ -220,7 +220,7 @@ bool NwCurrentWindowInternalCapturePageInternalFunction::RunAsync() {
   const gfx::Size view_size = view->GetViewBounds().size();
   gfx::Size bitmap_size = view_size;
   const gfx::NativeView native_view = view->GetNativeView();
-  gfx::Screen* const screen = gfx::Screen::GetScreenFor(native_view);
+  gfx::Screen* const screen = gfx::Screen::GetScreen();
   const float scale =
       screen->GetDisplayNearestWindow(native_view).device_scale_factor();
   if (scale > 1.0f)
