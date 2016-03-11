@@ -15,7 +15,7 @@
   var win;
 
   function openWindow() {
-    nw.Window.open('index.html', function(w) {
+    nw.Window.open('index.html', {id: 'new-win'}, function(w) {
       win = w;
     });
   }
