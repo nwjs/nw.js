@@ -1,3 +1,26 @@
+0.13.0-rc2 / 03-11-2015
+=======================
+- Update Chromium to 49.0.2623.87
+- Update Node.js to 5.8.0
+- Ship .pak files for non-English languages in SDK build
+- Build ffmpeg as Dll (#4492)
+- Disable notification of screen sharing (#4484)
+- Migrate indexed db files in user data dir (#4469)
+- Migrate local storage files for app protocol in user data dir (#4527)
+- Fix: node-main is broken (#4495)
+- Fix: app asks for confidential information for NWJS Safe Storage in keychain (#4458)
+- Fix: crash when navigate in some sites (#4422)
+- Fix: Use window subfields in manifest for newly created windows (#4221)
+- Fix: After press the “command+h” to minimize, but unable to recover (#4296)
+- Fix: crashpad handler error in windows (debug build unable to start)
+- Fix: Window title still shows with frame set to false on OSX (#4507)
+- Fix: The 'width' and 'height' in the manifest file does not work properly on OSX (#4493)
+- Fix: crash in chrome.app.window.create(url) without 2nd argument
+- Fix: nw.Window broken on 0.13.0-rc1 with --mixed-context (#4498)
+- Fix: Make menu callback work after navigation (#4313)
+- Fix: Show menubar menus from top-left anchor (#4473)
+- [docs] add 'Customize menubar' (#4416)
+
 0.13.0-rc1 / 03-03-2015
 =======================
 - Update Chromium to 49.0.2623.75
