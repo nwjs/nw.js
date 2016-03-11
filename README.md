@@ -27,23 +27,16 @@ It was created in the Intel Open Source Technology Center.
 * Available on Linux, Mac OS X and Windows
 
 ## Downloads
+* **v0.13.0-rc2:** (Mar 11, 2016, based off of Node.js v5.8.0, Chromium 49.0.2623.87): [release notes](http://nwjs.io/blog/v0.13.0-rc2)  
+ **NOTE** You might want the **SDK build**. Please read the release notes  
+ * Linux: [32bit](http://dl.nwjs.io/v0.13.0-rc2/nwjs-v0.13.0-rc2-linux-ia32.tar.gz) / [64bit](http://dl.nwjs.io/v0.13.0-rc2/nwjs-v0.13.0-rc2-linux-x64.tar.gz)
+ * Windows: [32bit](http://dl.nwjs.io/v0.13.0-rc2/nwjs-v0.13.0-rc2-win-ia32.zip) / [64bit](http://dl.nwjs.io/v0.13.0-rc2/nwjs-v0.13.0-rc2-win-x64.zip)
+ * Mac 10.7+: [64bit](http://dl.nwjs.io/v0.13.0-rc2/nwjs-v0.13.0-rc2-osx-x64.zip)
+
 * **v0.12.3:** (Jul 31, 2015, based off of IO.js v1.2.0, Chromium 41.0.2272.76): [release notes](https://groups.google.com/d/msg/nwjs-general/hhXCS4aXGV0/TUQmcu5XDwAJ)  
  * Linux: [32bit](http://dl.nwjs.io/v0.12.3/nwjs-v0.12.3-linux-ia32.tar.gz) / [64bit](http://dl.nwjs.io/v0.12.3/nwjs-v0.12.3-linux-x64.tar.gz)
  * Windows: [32bit](http://dl.nwjs.io/v0.12.3/nwjs-v0.12.3-win-ia32.zip) / [64bit](http://dl.nwjs.io/v0.12.3/nwjs-v0.12.3-win-x64.zip)
  * Mac 10.7+: [32bit](http://dl.nwjs.io/v0.12.3/nwjs-v0.12.3-osx-ia32.zip) / [64bit](http://dl.nwjs.io/v0.12.3/nwjs-v0.12.3-osx-x64.zip)
-
-* **v0.13.0-rc1:** (Mar 3, 2016, based off of Node.js v5.7.0, Chromium 49.0.2623.75): [release notes](https://groups.google.com/d/msg/nwjs-general/3M812Nol_ZE/YA-FkrGJAgAJ)  
- **NOTE** You might want the **SDK build**. Please read the release notes  
- * Linux: [32bit](http://dl.nwjs.io/v0.13.0-rc1/nwjs-v0.13.0-rc1-linux-ia32.tar.gz) / [64bit](http://dl.nwjs.io/v0.13.0-rc1/nwjs-v0.13.0-rc1-linux-x64.tar.gz)
- * Windows: [32bit](http://dl.nwjs.io/v0.13.0-rc1/nwjs-v0.13.0-rc1-win-ia32.zip) / [64bit](http://dl.nwjs.io/v0.13.0-rc1/nwjs-v0.13.0-rc1-win-x64.zip)
- * Mac 10.7+: [64bit](http://dl.nwjs.io/v0.13.0-rc1/nwjs-v0.13.0-rc1-osx-x64.zip)
-
-* **0.8.6:** (Apr 18, 2014, based off of Node v0.10.22, Chrome 30.0.1599.66) **If your native Node module works only with Node v0.10, then you should use node-webkit v0.8.x, which is also a maintained branch. [More info](https://groups.google.com/d/msg/nwjs-general/2OJ1cEMPLlA/09BvpTagSA0J)**  
-[release notes](https://groups.google.com/d/msg/nwjs-general/CLPkgfV-i7s/hwkkQuJ1kngJ)
-
- * Linux: [32bit](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-linux-ia32.tar.gz) / [64bit](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-linux-x64.tar.gz)
- * Windows: [win32](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-win-ia32.zip)
- * Mac: [32bit, 10.7+](http://dl.node-webkit.org/v0.8.6/node-webkit-v0.8.6-osx-ia32.zip)
 
 * **latest live build**: git tip version; build triggered from every git commit: http://dl.nwjs.io/live-build/
 
