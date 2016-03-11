@@ -10,7 +10,7 @@ Starting from 0.13.0, native modules built by node-gyp or npm in upstream can be
 In Linux and OSX you can just load the native module directly. In windows you'll need to replace the file
 %APPDATA%\npm\node_modules\node-gyp\src\win_delay_load_hook.c with the one at https://github.com/nwjs/nw.js/blob/nw13/tools/win_delay_load_hook.c 
 
-Before 0.13.0, the V8 version and Node ABI in NW.js is different from official Node.js. To use native Node.js modules with NW.js, you have to rebuild the modules with one of following tools.
+Before 0.13.0, the V8 version and Node API in NW.js is different from official Node.js. To use native Node.js modules with NW.js, you have to rebuild the modules with one of following tools.
 
 ## nw-gyp
 
