@@ -59,7 +59,7 @@ By default NW.js only allows one instance of your app. If you want to allow mult
 
 ### bg-script
 
-* `{String}` background script
+* `{String}` background script. The script is executed in the background page at the start of application.
 
 ### window
 
