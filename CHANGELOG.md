@@ -1,3 +1,15 @@
+0.13.0-rc3 / 03-15-2015
+=======================
+- Enable auth password dialog
+- Enable notification permission for all origin (#4521, #4533)
+- Support chrome.contentSettings API (#4521)
+- Fix: wrong version and info for Pepper Flash plugin in registry (#4530)
+- Fix: [WIN] fix: window title and icon not shown
+- Fix: [WIN] start up fail where crashpad path is not found
+- Fix: nwjs 0.13.0 showed as chromium in taskbar on Linux (#4537)
+- [docs] more info on bg-script
+- [docs] transparecy needs frameless
+
 0.13.0-rc2 / 03-11-2015
 =======================
 - Update Chromium to 49.0.2623.87
