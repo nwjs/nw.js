@@ -837,6 +837,7 @@
                 '<(DEPTH)/content/nw/tools/dump_win_syms.py',
                 '<(PRODUCT_DIR)/nw.exe',
                 '<(PRODUCT_DIR)/nw.dll',
+                '<(PRODUCT_DIR)/node.dll',
               ],
               'outputs': [
                 '<(PRODUCT_DIR)/nw.sym.7z',
@@ -845,6 +846,7 @@
                          '<(DEPTH)/content/nw/tools/dump_win_syms.py',
                          '<(PRODUCT_DIR)/nw.exe',
                          '<(PRODUCT_DIR)/nw.dll',
+                         '<(PRODUCT_DIR)/node.dll',
                          '<(PRODUCT_DIR)/nw.sym.7z',
                          ],
               'message': 'Dumping breakpad symbols to <(_outputs)',
