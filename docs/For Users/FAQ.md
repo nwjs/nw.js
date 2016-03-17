@@ -4,7 +4,7 @@
 [TOC]
 
 ## console.log doesn't output to Linux terminal
-`--enable-logging=stderr` should be used in the command line
+`--enable-logging=stderr` should be used in the command line; See more here: https://www.chromium.org/for-testers/enable-logging
 
 ## `var crypto = require('crypto')` gets a wrong object
 Chromium has its own global `crypto` object which can't be overwritten. So you can't use the same variable name `crypto`. Changing your variable name to something else, like `nodeCrypto`, will work.
