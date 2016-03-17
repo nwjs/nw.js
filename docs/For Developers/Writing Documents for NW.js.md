@@ -59,6 +59,7 @@ Details about the the method.
 ## Checklist for Pull Request
 
 * [ ] Comply with the [Template for API Reference Page](#template-for-api-reference-page) above
+* [ ] Make sure the new page is added to `mkdocs.yml`
 * [ ] Make sure the document is readable on GitHub
 * [ ] Make sure the links are not broken
 * [ ] Add your name and email to [Contributors of Documents.md](Contributors of Documents.md)
