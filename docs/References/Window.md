@@ -410,7 +410,7 @@ And if the shutdown work takes some time, users may feel that the app is exiting
 See example code of [`win.close(true)` above](#wincloseforce) for the usage of `close` event.
 
 !!! note "Mac"
-    On Mac, there is an argument passed to the callback indicating whether it's being closed by <kbd>&#8984;</kbd>+<kbd>Q</kbd>.
+    On Mac, there is an argument passed to the callback indicating whether it's being closed by <kbd>&#8984;</kbd>+<kbd>Q</kbd>. It will be set to string `quit` if that's true, otherwise `undefined`.
 
 ## Event: closed
 

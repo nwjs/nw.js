@@ -677,10 +677,10 @@ function updateAppWindowZoom(old_level, new_level) {
   dispatchEventIfExists(currentNWWindow, "onZoom", [new_level]);
 }
 
-function onClose() {
+function onClose(user_force) {
   if (!currentNWWindow)
     return;
-  dispatchEvent("nw.Window.onClose", [], {instanceId: currentWidgetRoutingID});
+  dispatchEvent("nw.Window.onClose", [user_force], {instanceId: currentWidgetRoutingID});
 }
 
 exports.binding = nw_binding.generate();

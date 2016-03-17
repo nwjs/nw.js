@@ -59,7 +59,6 @@
 + The following window options passed to nw.Window.open() is not effective on Linux: `min_width`, `min_height`, `max_width`, `max_height`, `resizable` for now; try to set them in the callback.
 + `nw.Window.get(window_object)` is not working as expected when passing the argument; use `window_object.nw.Window.get()` as a workaround.
 + `nw.Window.reloadDev()` is not supported for now
-+ `close` event of `nw.Window`: <kbd>&#8984;</kbd>+<kbd>Q</kbd> does not pass `true` as the first argument to the event.
 + `closed` event of `nw.Window`: `App.quit()` doesn't trigger this event.
 + `devtools-closed` event of nw.Window is not supported for now.
 + `as_desktop` option is not supported for now
@@ -67,5 +66,4 @@
 + `nwUserAgent` attribute of `<iframe>` is not supported for now.
 + `--data-path` command line argument is not supported for now.
 + `tooltip` of `MenuItem` is not supported for now.
-+ `nw.App.fullArgv` is not supported for now.
 + `nw.App.setCrashDumpDir()` is not supported; crash dump is stored in `app-data-path/Crash Reports`
