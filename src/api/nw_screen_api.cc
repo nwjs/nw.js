@@ -374,7 +374,7 @@ namespace extensions {
       content::RenderFrameHost* const main_frame = web_contents->GetMainFrame();
       result = registry->RegisterStream(main_frame->GetProcess()->GetID(),
                                         main_frame->GetRoutingID(),
-                                        extension()->url(),
+                                        web_contents->GetURL().GetOrigin(),
                                         source,
                                         extension()->name());
       response->AppendString(result);
