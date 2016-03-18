@@ -59,5 +59,18 @@ class NwObjCallObjectMethodSyncFunction : public NWSyncExtensionFunction {
   DISALLOW_COPY_AND_ASSIGN(NwObjCallObjectMethodSyncFunction);
 };
 
+class NwObjCallObjectMethodAsyncFunction : public AsyncExtensionFunction {
+ public:
+  NwObjCallObjectMethodAsyncFunction();
+  bool RunAsync() override;
+
+ protected:
+  ~NwObjCallObjectMethodAsyncFunction() override;
+
+  DECLARE_EXTENSION_FUNCTION("nw.Obj.callObjectMethodAsync", UNKNOWN)
+ private:
+  DISALLOW_COPY_AND_ASSIGN(NwObjCallObjectMethodAsyncFunction);
+};
+
 } // namespace extensions
 #endif

@@ -59,7 +59,7 @@ Menu.prototype.removeAt = function(i) {
 }
 
 Menu.prototype.popup = function(x, y) {
-  nw.Obj.callObjectMethod(this.id, 'Menu', 'Popup', [ x, y ]);
+  nw.Obj.callObjectMethodAsync(this.id, 'Menu', 'Popup', [ x, y ]);
 }
 
 Menu.prototype.createMacBuiltin = function (app_name, options) {

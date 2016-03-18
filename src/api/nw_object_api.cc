@@ -86,4 +86,27 @@ bool NwObjCallObjectMethodSyncFunction::RunNWSync(base::ListValue* response, std
   return true;
 }
 
+NwObjCallObjectMethodAsyncFunction::NwObjCallObjectMethodAsyncFunction() {
+}
+
+NwObjCallObjectMethodAsyncFunction::~NwObjCallObjectMethodAsyncFunction() {
+}
+
+bool NwObjCallObjectMethodAsyncFunction::RunAsync() {
+  EXTENSION_FUNCTION_VALIDATE(args_);
+  base::ListValue* arguments = nullptr;
+  int id = 0;
+  std::string type, method;
+  EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &id));
+  EXTENSION_FUNCTION_VALIDATE(args_->GetString(1, &type));
+  EXTENSION_FUNCTION_VALIDATE(args_->GetString(2, &method));
+  EXTENSION_FUNCTION_VALIDATE(args_->GetList(3, &arguments));
+
+  nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
+  manager->OnCallObjectMethod(render_frame_host(), id, type, method, *arguments);
+  SendResponse(true);
+  return true;
+}
+
+
 } // namespace extensions

@@ -14,6 +14,12 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
   apiFunctions.setHandleRequest('callObjectMethod', function() {
     return sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {});
   });
+  // for some reason callObjectMethod is changed to sync behaviour when being ported from nw12
+  // in order not to bring side effects before release when fix this for #4593, I introduce the
+  // new method as a workaround. Please see removing it later.
+  apiFunctions.setHandleRequest('callObjectMethodAsync', function() {
+    return sendRequest.sendRequest(this.name, arguments, this.definition.parameters, {});
+  });
   apiFunctions.setHandleRequest('callObjectMethodSync', function() {
     return sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {})[0];
   });

@@ -10,5 +10,6 @@ namespace nw.Obj {
     static void destroy(long id);
     static void callObjectMethod(long id, DOMString type, DOMString method, any[] arguments);
     static any callObjectMethodSync(long id, DOMString type, DOMString method, any[] arguments);
+    static any callObjectMethodAsync(long id, DOMString type, DOMString method, any[] arguments);
   };
 };
