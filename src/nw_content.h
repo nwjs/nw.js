@@ -40,6 +40,7 @@ namespace extensions {
 namespace nw {
 int MainPartsPreCreateThreadsHook();
 void MainPartsPostDestroyThreadsHook();
+void MainPartsPreMainMessageLoopRunHook();
 void ContextCreationHook(blink::WebLocalFrame* frame, extensions::ScriptContext* context);
 void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* error);
 void DocumentElementHook(blink::WebLocalFrame* frame,
