@@ -119,10 +119,10 @@ var appWinEventsMap = {
   'minimize':         'onMinimized',
   'maximize':         'onMaximized',
   'restore':          'onRestored',
-  'resize':           'onResized',
-  'move':             'onMoved',
   'enter-fullscreen': 'onFullscreened',
-  'closed':           'onClosed'
+  'closed':           'onClosed',
+  'move':             'onMoved',
+  'resize':           'onResized'
 };
 
 var nwWinEventsMap = {
@@ -218,19 +218,12 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     };
 
     NWWindow.prototype.on = function (event, callback, record) {
+      var self = this;
       if (typeof record === 'undefined') {
         nwNatives.callInWindow(bgPage, "__nw_record_event", this, event, callback, false);
       }
       if (event === 'close') {
         this.onClose.addListener(callback, {instanceId: currentWidgetRoutingID});
-        return this;
-      }
-      if (appWinEventsMap.hasOwnProperty(event)) {
-        this.appWindow[appWinEventsMap[event]].addListener(callback);
-        return this;
-      }
-      if (nwWinEventsMap.hasOwnProperty(event)) {
-        this[nwWinEventsMap[event]].addListener(callback);
         return this;
       }
       switch (event) {
@@ -269,6 +262,30 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         j.listener = callback;
         this.onNavigation.addListener(j);
         break;
+      case 'move':
+        function cb() {
+          callback(self.x, self.y);
+        }
+        cb.listener = callback;
+        this.appWindow.onMoved.addListener(cb);
+        return this; //return early
+        break;
+      case 'resize':
+        function cb2() {
+          callback(self.width, self.height);
+        }
+        cb2.listener = callback;
+        this.appWindow.onResized.addListener(cb2);
+        return this; //return early
+        break;
+      }
+      if (appWinEventsMap.hasOwnProperty(event)) {
+        this.appWindow[appWinEventsMap[event]].addListener(callback);
+        return this;
+      }
+      if (nwWinEventsMap.hasOwnProperty(event)) {
+        this[nwWinEventsMap[event]].addListener(callback);
+        return this;
       }
       return this;
     };
