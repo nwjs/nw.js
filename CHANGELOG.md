@@ -1,3 +1,27 @@
+0.13.0-rc4 / 03-20-2015
+=======================
+- Update Node.js to 5.9.0
+- Fix: [WIN] unable to launch on XP 64bit system (#4600)
+- Fix: Crash when using `additional_trust_anchors`
+- Fix: Screen capture does not work in remote domain (#4579)
+- Fix: webview events not firing in remote page (#4590)
+- Fix: Crash when adding folder to workspace in devtools (#4602)
+- Fix: [OSX] Crash when using nw.Menu with chrome.identity.launchWebAuthFlow (#4591)
+- Fix: Crash when trying to open tabbed browser window (#4587, #4540)
+- Fix: Only top left corner of window icon is shown (#4581)
+- Fix: [OSX] Crash dumps doesn't match hashes of symbol files (#4450)
+- Fix: Crash on promise rejection handler (#4577)
+- Fix: Menu.popup blocks program (#4593)
+- Fix: [OSX] Cmd-Q does not pass true as the first argument to the event (#4580)
+- Fix: capturePage always return PNG (#4609)
+- [WIN] dump node.dll symbols
+- Remove context menu of notification (#4598)
+- Remove settings button of notification (#4582)
+- [docs] update crash dump location
+- [docs] add link for enable logging in FAQ
+- [docs] Reorder the navigation pane (#4576)
+- [docs] Multiple language resources in SDK build
+
 0.13.0-rc3 / 03-15-2015
 =======================
 - Enable auth password dialog
