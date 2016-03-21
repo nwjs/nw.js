@@ -45,6 +45,7 @@ The source of the document is in [our git repo](https://github.com/nwjs/nw.js/tr
     - [Changes to Node](References/Changes to Node.md)
     - [Clipboard](References/Clipboard.md)
     - [Command Line Options](References/Command Line Options.md)
+    - [Chrome Extension APIs](References/Chrome Extension APIs.md)
     - [Manifest Format](References/Manifest Format.md)
     - [Menu](References/Menu.md)
     - [MenuItem](References/MenuItem.md)
