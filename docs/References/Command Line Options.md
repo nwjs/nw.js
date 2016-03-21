@@ -36,6 +36,6 @@ These options are related to the transparent window feature. See [Transparent Wi
 
 ## Other Chromium Options
 
-You can also use Chromium options listed in https://github.com/nwjs/chromium.src/blob/nw13/chrome/common/chrome_switches.cc.
+You can also use Chromium options listed in https://github.com/nwjs/chromium.src/blob/nw13/chrome/common/chrome_switches.cc and https://github.com/nwjs/chromium.src/blob/nw13/content/public/common/content_switches.cc . See also http://peter.sh/experiments/chromium-command-line-switches/
 
 These options can be put into [`chromium-args` in manifest](Manifest Format.md#chromium-args) to get NW.js running with them each time.
