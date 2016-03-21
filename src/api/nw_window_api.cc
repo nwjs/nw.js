@@ -179,9 +179,9 @@ bool NwCurrentWindowInternalCapturePageInternalFunction::RunAsync() {
   EXTENSION_FUNCTION_VALIDATE(args_);
 
   scoped_ptr<ImageDetails> image_details;
-  if (args_->GetSize() > 1) {
+  if (args_->GetSize() > 0) {
     base::Value* spec = NULL;
-    EXTENSION_FUNCTION_VALIDATE(args_->Get(1, &spec) && spec);
+    EXTENSION_FUNCTION_VALIDATE(args_->Get(0, &spec) && spec);
     image_details = ImageDetails::FromValue(*spec);
   }
 
