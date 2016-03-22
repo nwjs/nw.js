@@ -1,4 +1,5 @@
-0.13.0-rc4 / 03-20-2015
+
+0.13.0-rc4 / 03-21-2016
 =======================
 - Update Node.js to 5.9.0
 - Fix: [WIN] unable to launch on XP 64bit system (#4600)
@@ -22,7 +23,7 @@
 - [docs] Reorder the navigation pane (#4576)
 - [docs] Multiple language resources in SDK build
 
-0.13.0-rc3 / 03-15-2015
+0.13.0-rc3 / 03-15-2016
 =======================
 - Enable auth password dialog
 - Enable notification permission for all origin (#4521, #4533)
@@ -34,7 +35,7 @@
 - [docs] more info on bg-script
 - [docs] transparecy needs frameless
 
-0.13.0-rc2 / 03-11-2015
+0.13.0-rc2 / 03-11-2016
 =======================
 - Update Chromium to 49.0.2623.87
 - Update Node.js to 5.8.0
@@ -57,7 +58,7 @@
 - Fix: Show menubar menus from top-left anchor (#4473)
 - [docs] add 'Customize menubar' (#4416)
 
-0.13.0-rc1 / 03-03-2015
+0.13.0-rc1 / 03-03-2016
 =======================
 - Update Chromium to 49.0.2623.75
 - Update Node.js to 5.7.0
@@ -65,7 +66,7 @@
 - Fix: Wrong "restore" window size after click on the app in the taskbar on windows 10 (#4323)
 - [docs] chromedriver: a better way to arguments of nw app
 
-0.13.0-beta7 / 02-25-2015
+0.13.0-beta7 / 02-25-2016
 =========================
 - Update Chromium to 48.0.2564.116
 - Support loading devtools in/for webview by adding webview.showDevTools (#4411)
@@ -75,7 +76,7 @@
 - Fix: alert/prompt dialog with nwjs style (#4413)
 - Fix: menubar button not found when navigate to another menu (#4371)
 
-0.13.0-beta6 / 02-17-2015
+0.13.0-beta6 / 02-17-2016
 =========================
 - Update Chromium to 48.0.2564.109
 - Update Node.js to 5.6.0
@@ -94,7 +95,7 @@
 - support native modules built by node-gyp
 - [docs] update for new_instance etc
 
-0.13.0-beta5 / 02-01-2015
+0.13.0-beta5 / 02-01-2016
 =========================
 - Update Chromium to 48.0.2564.97
 - Add back transparency support which is missing in beta4
@@ -122,7 +123,7 @@
 - [docs] add FAQ for console.log
 - [docs] Updated FAQ for AnuglarJS 2
 
-0.13.0-beta4 / 01-18-2015
+0.13.0-beta4 / 01-18-2016
 =========================
 - Update Chromium to 48.0.2564.82
 - Update Node.js to 5.4.1
@@ -131,7 +132,7 @@
 - ported nw.App.fullArgv
 - Fix: nw.App.quit() does nothing when use JS file as main (#4227)
 
-0.13.0-beta3 / 01-13-2015
+0.13.0-beta3 / 01-13-2016
 =========================
 - Fix: save as... dialog not working (#4142)
 - Fix: app with hidden window will quit on start on osx
