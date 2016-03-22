@@ -1,6 +1,7 @@
 import time
 import os
 import urlparse, urllib
+from nw_util import *
 
 def path2url(path):
         return urlparse.urljoin(
@@ -32,7 +33,7 @@ driver.implicitly_wait(5)
 time.sleep(1)
 try:
     print driver.current_url
-    driver.switch_to_window('webview1')
+    wait_switch_window_name(driver, 'webview1')
     result = driver.find_element_by_id('result').get_attribute('innerHTML')
     print result
     assert('success' in result)

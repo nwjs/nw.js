@@ -3,7 +3,7 @@ import platform
 import subprocess
 
 # wait for window handles
-def wait_window_handles(driver, until, timeout=-1):
+def wait_window_handles(driver, until, timeout=60):
     if not hasattr(until, '__call__'):
         cond = lambda handles: len(handles) == until
     else:
@@ -12,6 +12,18 @@ def wait_window_handles(driver, until, timeout=-1):
         time.sleep(1)
         timeout = timeout - 1
         if timeout == 0:
+            raise Exception('Timeout when waiting for window handles')
+
+def wait_switch_window_name(driver, name, timeout=60):
+    while timeout > 0:
+        try:
+            driver.switch_to_window(name)
+            break
+        except selenium.common.exceptions.NoSuchWindowException:
+            pass
+        time.sleep(1)
+        timeout = timeout - 1
+        if timeout <= 0:
             raise Exception('Timeout when waiting for window handles')
 
 def switch_to_devtools(driver, devtools_window=None):
