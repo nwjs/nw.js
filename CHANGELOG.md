@@ -1,3 +1,9 @@
+0.13.0 / 03-23-2016
+===================
+- Fix: [OSX] Cmd-Q does not pass true as the first argument to the event after createMacBuiltin() (#4580)
+- Fix: Window event 'move'/'resize' callback arguments undefined (#4610)
+- [docs] Update Command Line options with full list
+- [docs] List Chrome Extension APIs
 
 0.13.0-rc4 / 03-21-2016
 =======================
