@@ -1,3 +1,8 @@
+0.13.1 / 03-25-2016
+===================
+- Update Chromium to 49.0.2623.108
+- Fix: Performance degradation in constructing typed array from node buffer (#4614)
+
 0.13.0 / 03-23-2016
 ===================
 - Fix: [OSX] Cmd-Q does not pass true as the first argument to the event after createMacBuiltin() (#4580)
