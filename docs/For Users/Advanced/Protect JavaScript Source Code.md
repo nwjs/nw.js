@@ -7,7 +7,7 @@ The JavaScript source code of your application can be protected by compiling to 
 
 ### Compilation
 
-JS source code is compiled to native code with the tool `nwjc` , which is provided in the binary download.
+JS source code is compiled to native code with the tool `nwjc` , which is provided in the SDK build.
 
 To use it:
 ```bash
