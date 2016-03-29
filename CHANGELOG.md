@@ -1,3 +1,10 @@
+0.13.2 / 03-29-2016
+===================
+- Update Chromium to 49.0.2623.110
+- Fix: crashes in CloseWatcher::CallbackAndDie sometimes (#4636)
+- Fix: nwsaveas is ignored when nwworkingdir is specified in nw13 (#4630)
+- Fix: "Inspect" Entry in Non-SDK PDF Viewer's Context Menu (#4642)
+
 0.13.1 / 03-25-2016
 ===================
 - Update Chromium to 49.0.2623.108
