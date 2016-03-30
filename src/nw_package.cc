@@ -172,7 +172,7 @@ Package::Package()
     : path_(),
       self_extract_(true) {
   CommandLine* command_line = CommandLine::ForCurrentProcess();
-  LOG(INFO) << command_line->GetCommandLineString();
+  // LOG(INFO) << command_line->GetCommandLineString();
   // Try to load from the folder where the exe resides.
   // Note: self_extract_ is true here, otherwise a 'Invalid Package' error
   // would be triggered.
