@@ -74,6 +74,7 @@
 #include "third_party/WebKit/public/web/WebDocument.h"
 #include "third_party/WebKit/public/web/WebLocalFrame.h"
 #include "third_party/WebKit/public/web/WebScriptSource.h"
+#include "third_party/WebKit/public/web/WebPluginScriptForbiddenScope.h"
 
 #include "chrome/common/chrome_constants.h"
 
@@ -104,6 +105,7 @@
 //#include "third_party/WebKit/Source/config.h"
 #include "third_party/WebKit/Source/core/frame/Frame.h"
 #include "third_party/WebKit/Source/web/WebLocalFrameImpl.h"
+#include "third_party/WebKit/Source/platform/ScriptForbiddenScope.h"
 #include "V8HTMLElement.h"
 
 #include "content/renderer/render_view_impl.h"
@@ -352,6 +354,7 @@ void DocumentFinishHook(blink::WebFrame* frame,
   base::string16 jscript = base::UTF8ToUTF16(content);
   {
     blink::WebScopedMicrotaskSuppression suppression;
+    blink::ScriptForbiddenScope::AllowUserAgentScript script;
     v8::Context::Scope cscope(v8_context);
     // v8::Handle<v8::Value> result;
     frame->executeScriptAndReturnValue(WebScriptSource(jscript));
@@ -362,6 +365,7 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
   // ignore the first invocation of this hook for iframe
   // or we'll trigger creating a context with invalid type
   // there will follow another one with valid url
+  blink::ScriptForbiddenScope::AllowUserAgentScript script;
   blink::WebLocalFrame* web_frame = frame->GetWebFrame();
   GURL frame_url = ScriptContext::GetDataSourceURLForFrame(web_frame);
   if (web_frame->parent() && (!frame_url.is_valid() || frame_url.is_empty()))
@@ -391,6 +395,7 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
   // ignore the first invocation of this hook for iframe
   // or we'll trigger creating a context with invalid type
   // there will follow another one with valid url
+  blink::ScriptForbiddenScope::AllowUserAgentScript script;
   GURL frame_url = ScriptContext::GetDataSourceURLForFrame(frame);
   if (frame->parent() && (!frame_url.is_valid() || frame_url.is_empty()))
     return;
@@ -748,6 +753,7 @@ void RendererProcessTerminatedHook(content::RenderProcessHost* process,
 
 void OnRenderProcessShutdownHook(extensions::ScriptContext* context) {
   blink::WebScopedMicrotaskSuppression suppression;
+  blink::ScriptForbiddenScope::AllowUserAgentScript script;
   void* env = g_get_current_env_fn(context->v8_context());
   if (g_is_node_initialized_fn()) {
     g_emit_exit_fn(env);
