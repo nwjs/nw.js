@@ -26,6 +26,7 @@ The source of the document is in [our git repo](https://github.com/nwjs/nw.js/tr
         + [Protect JavaScript Source Code](For Users/Advanced/Protect JavaScript Source Code.md)
         + [Security in NW.js](For Users/Advanced/Security in NW.js.md)
         + [Test with ChromeDriver](For Users/Advanced/Test with ChromeDriver.md)
+        + [Use Flash Plugin](For Users/Advanced/Use Flash Plugin.md)
         + [Use NaCl in NW.js](For Users/Advanced/Use NaCl in NW.js.md)
         + [Use Native Node Modules](For Users/Advanced/Use Native Node Modules.md)
         + [Content Verification](For Users/Advanced/Content Verification.md)

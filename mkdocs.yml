@@ -38,6 +38,7 @@ pages:
             - 'Security in NW.js': 'For Users/Advanced/Security in NW.js.md'
             - 'Test with ChromeDriver': 'For Users/Advanced/Test with ChromeDriver.md'
             - 'Transparent Window': 'For Users/Advanced/Transparent Window.md'
+            - 'Use Flash Plugin': 'For Users/Advanced/Use Flash Plugin.md'
             - 'Use NaCl in NW.js': 'For Users/Advanced/Use NaCl in NW.js.md'
             - 'Use Native Node Modules': 'For Users/Advanced/Use Native Node Modules.md'
     - 'References':
