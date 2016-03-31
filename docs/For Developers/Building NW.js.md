@@ -5,6 +5,7 @@
 
 !!! important
     This document is written for latest **NW 0.13**. For legacy build instructions, please read the [wiki page](https://github.com/nwjs/nw.js/wiki/Building-nw.js) on GitHub.
+    See our buildbot for official build configuration and steps: http://buildbot-master.nwjs.io:8010/waterfall
 
 ## Prerequisites
 
