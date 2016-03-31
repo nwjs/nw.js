@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>issue2261-disable-menu-hotkey</title>
+</head>
+<body>
+  <button id="disable-item" type="button" onclick="disableItem()">Disable</button>
+  <button id="enable-item" type="button" onclick="enableItem()">Enable</button>
+  <script>
+  createMenu();
+  var g_menu;
+  var g_test_item;
+  var g_count;
+
+  function out(id, msg) {
+    var h1 = document.createElement('h1');
+    h1.setAttribute('id', id);
+    h1.innerHTML = msg;
+    document.body.appendChild(h1);
+  }
+
+  function createMenu() {
+    var g_menu = new nw.Menu({type: 'menubar'});
+    if (nw.process.platform == 'darwin') {
+      g_menu.createMacBuiltin('My App');
+    }
+
+    g_count = 0;
+
+    var testMenu = new nw.Menu();
+    g_test_item = new nw.MenuItem({label: 'Trigger Me', key: 'f', modifiers: 'ctrl+alt', click: function() {
+      out('result_' + (++g_count), 'success');
+    }});
+    testMenu.append(g_test_item);
+    g_menu.append(new nw.MenuItem({label: 'Test', submenu: testMenu}));
+
+    nw.Window.get().menu = g_menu;
+  }
+
+  function disableItem() {
+    g_test_item.enabled = false;
+  }
+
+  function enableItem() {
+    g_test_item.enabled = true;
+  }
+  </script>
+</body>
+</html>

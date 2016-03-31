@@ -204,7 +204,7 @@ bool MenuItem::AcceleratorPressed(const ui::Accelerator& accelerator) {
 }
 
 bool MenuItem::CanHandleAccelerators() const {
-  return true;
+  return is_enabled_;
 }
 
 #endif
