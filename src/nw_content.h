@@ -93,6 +93,7 @@ void DocumentFinishHook(blink::WebFrame* frame,
  bool RphGuestFilterURLHook(content::RenderProcessHost* rph, const GURL* url);
  bool ShouldServiceRequestHook(int child_id, const GURL& url);
  bool RenderWidgetWasHiddenHook(content::RenderWidget* rw);
+ void LoadNodeSymbols();
 }
 
 #endif

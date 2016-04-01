@@ -8,11 +8,13 @@
 #include "base/files/file_util.h"
 #include "base/json/json_reader.h"
 #include "base/json/json_writer.h"
+#include "base/native_library.h"
 #include "base/path_service.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/threading/thread_restrictions.h"
+
 
 #include "chrome/browser/browser_process.h"
 #include "chrome/browser/devtools/devtools_window.h"
@@ -110,6 +112,7 @@
 
 #include "content/renderer/render_view_impl.h"
 #include "base/logging.h"
+#include "third_party/node/src/node_webkit.h"
 
 using content::RenderView;
 using content::RenderViewImpl;
@@ -145,6 +148,40 @@ GetNodeEnvFn g_get_node_env_fn = nullptr;
 GetCurrentEnvironmentFn g_get_current_env_fn = nullptr;
 EmitExitFn g_emit_exit_fn = nullptr;
 RunAtExitFn g_run_at_exit_fn = nullptr;
+
+extern VoidHookFn g_msg_pump_ctor_fn;
+extern VoidHookFn g_msg_pump_dtor_fn;
+extern VoidHookFn g_msg_pump_sched_work_fn, g_msg_pump_nest_leave_fn, g_msg_pump_need_work_fn;
+extern VoidHookFn g_msg_pump_did_work_fn, g_msg_pump_pre_loop_fn, g_msg_pump_nest_enter_fn;
+extern VoidIntHookFn g_msg_pump_delay_work_fn;
+extern VoidHookFn g_msg_pump_clean_ctx_fn;
+extern GetPointerFn g_uv_default_loop_fn;
+extern NodeStartFn g_node_start_fn;
+extern UVRunFn g_uv_run_fn;
+extern SetUVRunFn g_set_uv_run_fn;
+
+extern CallTickCallbackFn g_call_tick_callback_fn;
+extern SetupNWNodeFn g_setup_nwnode_fn;
+extern IsNodeInitializedFn g_is_node_initialized_fn;
+extern SetNWTickCallbackFn g_set_nw_tick_callback_fn;
+extern StartNWInstanceFn g_start_nw_instance_fn;
+extern GetNodeContextFn g_get_node_context_fn;
+extern SetNodeContextFn g_set_node_context_fn;
+extern GetNodeEnvFn g_get_node_env_fn;
+extern GetCurrentEnvironmentFn g_get_current_env_fn;
+extern EmitExitFn g_emit_exit_fn;
+extern RunAtExitFn g_run_at_exit_fn;
+extern VoidHookFn g_promise_reject_callback_fn;
+
+#if defined(OS_MACOSX)
+#include "base/mac/bundle_locations.h"
+
+extern VoidHookFn g_msg_pump_dtor_osx_fn, g_uv_sem_post_fn, g_uv_sem_wait_fn;
+extern VoidPtr4Fn g_msg_pump_ctor_osx_fn;
+extern IntVoidFn g_nw_uvrun_nowait_fn, g_uv_runloop_once_fn;
+extern IntVoidFn g_uv_backend_timeout_fn;
+extern IntVoidFn g_uv_backend_fd_fn;
+#endif
 
 namespace nw {
 
@@ -1194,6 +1231,70 @@ void SetPinningRenderer(bool pin) {
 
 bool RenderWidgetWasHiddenHook(content::RenderWidget* rw) {
   return g_skip_render_widget_hidden;
+}
+
+void LoadNodeSymbols() {
+  struct SymbolDefinition {
+    const char* name;
+    VoidHookFn* fn;
+  };
+  const SymbolDefinition kSymbols[] = {
+#if defined(OS_MACOSX)
+    {"g_msg_pump_dtor_osx", &g_msg_pump_dtor_osx_fn },
+    {"g_uv_sem_post", &g_uv_sem_post_fn },
+    {"g_uv_sem_wait", &g_uv_sem_wait_fn },
+#endif
+    { "g_msg_pump_ctor", &g_msg_pump_ctor_fn },
+    { "g_msg_pump_dtor", &g_msg_pump_dtor_fn },
+    { "g_msg_pump_sched_work", &g_msg_pump_sched_work_fn },
+    { "g_msg_pump_nest_leave", &g_msg_pump_nest_leave_fn },
+    { "g_msg_pump_nest_enter", &g_msg_pump_nest_enter_fn },
+    { "g_msg_pump_need_work", &g_msg_pump_need_work_fn },
+    { "g_msg_pump_did_work", &g_msg_pump_did_work_fn },
+    { "g_msg_pump_pre_loop", &g_msg_pump_pre_loop_fn },
+    { "g_msg_pump_clean_ctx", &g_msg_pump_clean_ctx_fn },
+    { "g_promise_reject_callback", &g_promise_reject_callback_fn}
+  };
+  base::NativeLibraryLoadError error;
+#if defined(OS_MACOSX)
+  base::FilePath node_dll_path = base::mac::FrameworkBundlePath().Append(base::FilePath::FromUTF16Unsafe(base::GetNativeLibraryName(base::UTF8ToUTF16("libnode"))));
+#else
+  base::FilePath node_dll_path = base::FilePath::FromUTF16Unsafe(base::GetNativeLibraryName(base::UTF8ToUTF16("node")));
+#endif
+  base::NativeLibrary node_dll = base::LoadNativeLibrary(node_dll_path, &error);
+  if(!node_dll)
+    LOG_IF(FATAL, true) << "Failed to load node library (error: " << error.ToString() << ")";
+  else {
+    for (size_t i = 0; i < sizeof(kSymbols) / sizeof(kSymbols[0]); ++i) {
+      *(kSymbols[i].fn) = (VoidHookFn)base::GetFunctionPointerFromNativeLibrary(node_dll, kSymbols[i].name);
+      DCHECK(*kSymbols[i].fn) << "Unable to find symbol for "
+                              << kSymbols[i].name;
+    }
+    g_msg_pump_delay_work_fn = (VoidIntHookFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_msg_pump_delay_work");
+    g_node_start_fn = (NodeStartFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_node_start");
+    g_uv_run_fn = (UVRunFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_uv_run");
+    g_set_uv_run_fn = (SetUVRunFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_set_uv_run");
+    g_uv_default_loop_fn = (GetPointerFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_uv_default_loop");
+
+    g_call_tick_callback_fn = (CallTickCallbackFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_call_tick_callback");
+    g_setup_nwnode_fn = (SetupNWNodeFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_setup_nwnode");
+    g_is_node_initialized_fn = (IsNodeInitializedFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_is_node_initialized");
+    g_set_nw_tick_callback_fn = (SetNWTickCallbackFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_set_nw_tick_callback");
+    g_start_nw_instance_fn = (StartNWInstanceFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_start_nw_instance");
+    g_get_node_context_fn = (GetNodeContextFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_get_node_context");
+    g_set_node_context_fn = (SetNodeContextFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_set_node_context");
+    g_get_node_env_fn = (GetNodeEnvFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_get_node_env");
+    g_get_current_env_fn = (GetCurrentEnvironmentFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_get_current_env");
+    g_emit_exit_fn = (EmitExitFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_emit_exit");
+    g_run_at_exit_fn = (RunAtExitFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_run_at_exit");
+#if defined(OS_MACOSX)
+    g_msg_pump_ctor_osx_fn = (VoidPtr4Fn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_msg_pump_ctor_osx");
+    g_nw_uvrun_nowait_fn = (IntVoidFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_nw_uvrun_nowait");
+    g_uv_runloop_once_fn = (IntVoidFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_uv_runloop_once");
+    g_uv_backend_timeout_fn = (IntVoidFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_uv_backend_timeout");
+    g_uv_backend_fd_fn = (IntVoidFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_uv_backend_fd");
+#endif
+  }
 }
 
 } //namespace nw
