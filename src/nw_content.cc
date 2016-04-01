@@ -51,6 +51,7 @@
 #include "extensions/browser/extension_prefs.h"
 #include "extensions/browser/extension_registry.h"
 #include "extensions/renderer/dispatcher.h"
+#include "extensions/renderer/renderer_extension_registry.h"
 #include "extensions/renderer/script_context.h"
 #include "extensions/common/extension.h"
 #include "extensions/common/feature_switch.h"
@@ -121,6 +122,7 @@ using extensions::Manifest;
 using extensions::Feature;
 using extensions::ExtensionPrefs;
 using extensions::ExtensionRegistry;
+using extensions::RendererExtensionRegistry;
 using extensions::Dispatcher;
 using extensions::ContentVerifierDelegate;
 using extensions::NWContentVerifierDelegate;
@@ -151,6 +153,7 @@ extensions::Dispatcher* g_dispatcher = NULL;
 bool g_reloading_app = false;
 bool g_pinning_renderer = true;
 int g_cdt_process_id = -1;
+std::string g_extension_id;
 
 static inline v8::Local<v8::String> v8_str(const char* x) {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
@@ -324,11 +327,18 @@ void DocumentFinishHook(blink::WebFrame* frame,
   v8::HandleScope hscope(isolate);
   std::string path = effective_document_url.path();
   v8::Local<v8::Context> v8_context = frame->mainWorldScriptContext();
-  std::string root_path = extension->path().AsUTF8Unsafe();
-  base::FilePath root(extension->path());
   RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
   if (!rv)
     return;
+  if (!extension) {
+    extension = RendererExtensionRegistry::Get()->GetByID(g_extension_id);
+    if (!extension)
+      return;
+  }
+  if (!(extension->is_extension() || extension->is_platform_app()))
+    return;
+  std::string root_path = extension->path().AsUTF8Unsafe();
+  base::FilePath root(extension->path());
   std::string js_fn = rv->renderer_preferences().nw_inject_js_doc_end;
   if (js_fn.empty())
     return;
@@ -448,6 +458,9 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
 
 void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   v8::Isolate* isolate = context->isolate();
+
+  if (g_extension_id.empty())
+    g_extension_id = context->extension()->id();
 
   bool nodejs_enabled = true;
   context->extension()->manifest()->GetBoolean(manifest_keys::kNWJSEnableNode, &nodejs_enabled);
