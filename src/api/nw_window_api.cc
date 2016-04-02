@@ -606,6 +606,10 @@ bool NwCurrentWindowInternalSetTitleInternalFunction::RunNWSync(base::ListValue*
 bool NwCurrentWindowInternalGetWinParamInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
   AppWindow* app_window = getAppWindow(this);
 
+  if (!app_window) {
+    *error = "cannot get current window; are you in background page/node context?";
+    return false;
+  }
   //from app_window_api.cc
   content::RenderFrameHost* created_frame =
       app_window->web_contents()->GetMainFrame();
