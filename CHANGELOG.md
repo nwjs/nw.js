@@ -1,3 +1,21 @@
+0.13.3 / 04-04-2016
+===================
+- Update Node.js to 5.10.0
+- support --disable-raf-throttling to enable RequestAnimationFrame for background apps (#4664)
+- Fix: App will crash if CFBundleIdentifier in plist longer than 30 chrs (#4638)
+- Fix: Crash when open a pdf file in webview. (#4644)
+- Fix: [WIN] window restore size is changed when aero glass is on (#4323)
+- Fix: inject_js_end not working on remote pages (#4656)
+- Fix: Queries were sent to Google to update plugin metadata (#4669)
+- Fix: [WIN] Window size includes title bar (#4627)
+- Fix: Crash when bg-script calls nw.Window.get() (#4368)
+- Fix: Disabled menu item, still accessible via hotkey (#2261)
+- Fix: Unable to turn off / disable debug.log (#4637)
+- [docs] data-path -> user-data-dir
+- [docs] add link to buildbot
+- [docs] using flash plugin
+- [docs] location of nwjc and chromedriver
+
 0.13.2 / 03-29-2016
 ===================
 - Update Chromium to 49.0.2623.110
