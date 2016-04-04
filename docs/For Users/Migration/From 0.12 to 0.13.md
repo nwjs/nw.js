@@ -38,6 +38,7 @@
 + [`snapshot`](../../References/Manifest Format.md#snapshot) is **deprecated**. Use [`win.evalNWBin()`](../../References/Window.md#winevalnwbin) instead.
 + The format of [`node-remote`](../../References/Manifest Format.md#node-remote) is changed to array of [match patterns](https://developer.chrome.com/extensions/match_patterns) used by Chrome extension.
 + Window options `always-on-top`, `visible-on-all-workspaces`, `new-instance`, `inject-js-start` and `inject-js-end` is renamed to [`always_on_top`](../../References/Manifest Format.md#always_on_top), [`visible_on_all_workspaces`](../../References/Manifest Format.md#visible_on_all_workspaces), `new_instance`, `inject_js_start` and `inject_js_end` respectively in `package.json` or as argument of `Window.open()`.
++ `--data-path` command line argument is replaced by `--user-data-dir`.
 
 ### Window
 
@@ -64,6 +65,5 @@
 + `as_desktop` option is not supported for now
 + `webkit.{plugin|java|page-cache}` option in `package.json` is not supported for now: plugins are enabled by default.
 + `nwUserAgent` attribute of `<iframe>` is not supported for now.
-+ `--data-path` command line argument is not supported for now.
 + `tooltip` of `MenuItem` is not supported for now.
 + `nw.App.setCrashDumpDir()` is not supported; crash dump is stored in `app-data-path/Crash Reports`
