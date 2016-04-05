@@ -13,7 +13,7 @@ Run NW.js in [Mixed Context Mode](../For Users/Advanced/JavaScript Contexts in N
 
 An alternative way to specify the path of the app. This parameter is especially useful when [testing with ChromeDriver](../For Users/Advanced/Test with ChromeDriver.md).
 
-## `--data-path`
+## `--user-data-dir`
 
 Specify the data directory for your app, which contains the stored data, caches and crash dumps etc. By default the data directory is in following directories according to your platform:
 
@@ -22,6 +22,10 @@ Specify the data directory for your app, which contains the stored data, caches 
 * Linux: `~/.config/<name-in-manifest>`
 
 Where `<name-in-manifest>` is the [`name` field in manifest](Manifest Format.md#name).
+
+## `--disable-raf-throttling`
+
+When it's used, requestAnimationFrame() callback will continue to fire when window is minimized or hidden. It's pretty useful for game developer. When the argument is not used, it behaves in the same way as Chrome browser and has no side effects.
 
 ## `--enable-gcm`
 
