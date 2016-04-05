@@ -19,6 +19,7 @@ namespace blink {
 }
 
 namespace content {
+  class RenderWidget;
   class RenderFrame;
   class RenderFrameHost;
   class RenderProcessHost;
@@ -91,6 +92,7 @@ void DocumentFinishHook(blink::WebFrame* frame,
  bool CheckStoragePartitionMatches(int render_process_id, const GURL& url);
  bool RphGuestFilterURLHook(content::RenderProcessHost* rph, const GURL* url);
  bool ShouldServiceRequestHook(int child_id, const GURL& url);
+ bool RenderWidgetWasHiddenHook(content::RenderWidget* rw);
 }
 
 #endif
