@@ -40,7 +40,7 @@ Before packaging, you should prepare all necessary files on hands. Check out fol
 
 You have to redistribute NW.js with your app to get your app running. NW.js provided multiple [build flavors](Advanced/Build Flavors.md) for different requirements and package size. Choose the proper build flavor for your product or [build it from source code](../For Developers/Building NW.js.md).
 
-All files in the downloaded package should be redistributed with your product, except `nwjc` or `nwjc.exe` in SDK flavor.
+All files in the downloaded package should be redistributed with your product, except tools in SDK flavor including `nwjc`, `payload` and `chromedriver`.
 
 ## Package Your App
 
