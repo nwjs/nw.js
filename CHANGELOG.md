@@ -1,3 +1,12 @@
+0.13.4 / 04-08-2016
+===================
+- Update Chromium to 49.0.2623.112
+- Fix: webview local file issue [(#4668)](https://github.com/nwjs/nw.js/issues/4668)
+- Fix: Custom app icon with incorrect size under volume mixer [(#4649)](https://github.com/nwjs/nw.js/issues/4649)
+- Fix: process Event: 'uncaughtException' not working in 0.13 [(#4679)](https://github.com/nwjs/nw.js/issues/4679)
+- [docs] data-path -> user-data-dir; --disable-raf-throttling
+- [docs] Clarify files can be safely removed during packaging [(#4676)](https://github.com/nwjs/nw.js/issues/4676)
+
 0.13.3 / 04-04-2016
 ===================
 - Update Node.js to 5.10.0
