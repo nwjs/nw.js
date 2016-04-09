@@ -109,7 +109,10 @@ bool NwAppClearCacheFunction::RunNWSync(base::ListValue* response, std::string* 
                   BrowsingDataRemover::REMOVE_CACHE,
                   BrowsingDataHelper::ALL);
   // BrowsingDataRemover deletes itself.
+  base::MessageLoop::ScopedNestableTaskAllower allow(
+        base::MessageLoop::current());
   run_loop_.Run();
+  remover->RemoveObserver(this);
   return true;
 }
 
