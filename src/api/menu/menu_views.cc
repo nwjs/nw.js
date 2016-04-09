@@ -124,15 +124,17 @@ void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
     screen_position_client->ConvertPointToScreen(target_window,
              &screen_point);
   }
+  set_delay_destruction(true);
   views::MenuRunner runner(menu_model_.get(), views::MenuRunner::CONTEXT_MENU);
-  if (views::MenuRunner::MENU_DELETED ==
+  ignore_result(
       runner.RunMenuAt(top_level_widget,
                        NULL,
                        gfx::Rect(screen_point, gfx::Size()),
                        views::MENU_ANCHOR_TOPRIGHT,
-                       ui::MENU_SOURCE_NONE))
-    return;
-  // menu_->RunMenuAt(screen_point, views::Menu2::ALIGN_TOPLEFT);
+                       ui::MENU_SOURCE_NONE));
+  set_delay_destruction(false);
+  if (pending_destruction())
+    object_manager_->OnDeallocateObject(id_);
 }
 
 void Menu::UpdateKeys(views::FocusManager *focus_manager){

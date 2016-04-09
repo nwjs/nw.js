@@ -57,8 +57,14 @@ class Base {
   std::string extension_id_;
   ObjectManager* object_manager() const { return object_manager_.get(); }
 
- private:
+  bool delay_destruction() { return delay_destruction_; }
+  void set_delay_destruction(bool val) { delay_destruction_ = val; }
+  bool pending_destruction() { return pending_destruction_; }
+  void set_pending_destruction (bool val) { pending_destruction_ = val; }
+ protected:
   int id_;
+  bool delay_destruction_;
+  bool pending_destruction_;
   base::WeakPtr<ObjectManager> object_manager_;
 
   DISALLOW_COPY_AND_ASSIGN(Base);

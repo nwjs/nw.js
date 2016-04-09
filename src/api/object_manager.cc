@@ -120,8 +120,14 @@ void ObjectManager::OnAllocateObject(int object_id,
 
 void ObjectManager::OnDeallocateObject(int object_id) {
   DLOG(INFO) << "OnDeallocateObject: object_id:" << object_id;
-  if (objects_registry_.Lookup(object_id))
+  Base* obj = objects_registry_.Lookup(object_id);
+  if (obj) {
+    if (obj->delay_destruction()) {
+      obj->set_pending_destruction(true);
+      return;
+    }
     objects_registry_.Remove(object_id);
+  }
   objects_.erase(object_id);
 }
 
