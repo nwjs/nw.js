@@ -428,9 +428,6 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     NWWindow.prototype.setAlwaysOnTop = function (top) {
       this.appWindow.setAlwaysOnTop(top);
     };
-    NWWindow.prototype.isAlwaysOnTop = function () {
-      return this.appWindow.isAlwaysOnTop();
-    };
     NWWindow.prototype.setPosition = function (pos) {
       if (pos == "center") {
         var screenWidth = screen.availWidth;
@@ -440,9 +437,6 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         this.appWindow.outerBounds.setPosition(Math.round((screenWidth-width)/2),
                                                Math.round((screenHeight-height)/2));
       }
-    };
-    NWWindow.prototype.isFullscreen = function () {
-      return this.appWindow.isFullscreen();
     };
     NWWindow.prototype.setVisibleOnAllWorkspaces = function(all_visible) {
       this.appWindow.setVisibleOnAllWorkspaces(all_visible);
@@ -546,6 +540,16 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
           currentNWWindowInternal.enterKioskMode();
         else
           currentNWWindowInternal.leaveKioskMode();
+      }
+    });
+    Object.defineProperty(NWWindow.prototype, 'isFullscreen', {
+      get: function() {
+        return this.appWindow.isFullscreen();
+      }
+    });
+    Object.defineProperty(NWWindow.prototype, 'isAlwaysOnTop', {
+      get: function() {
+        return this.appWindow.isAlwaysOnTop();
       }
     });
     Object.defineProperty(NWWindow.prototype, 'menu', {
