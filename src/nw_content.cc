@@ -25,6 +25,8 @@
 #include "chrome/browser/lifetime/application_lifetime.h"
 #include "chrome/browser/profiles/profile_manager.h"
 #include "chrome/common/chrome_paths.h"
+#include "chrome/browser/lifetime/keep_alive_registry.h"
+#include "chrome/browser/lifetime/keep_alive_types.h"
 
 #include "components/crx_file/id_util.h"
 #include "components/content_settings/core/browser/content_settings_utils.h"
@@ -95,11 +97,10 @@
 #endif
 
 #include "third_party/node/src/node_webkit.h"
-#include "third_party/WebKit/public/web/WebScopedMicrotaskSuppression.h"
 #include "nw/id/commit.h"
 #include "content/nw/src/nw_version.h"
 
-#undef LOG
+//#undef LOG
 #undef ASSERT
 //#undef FROM_HERE
 
@@ -210,7 +211,7 @@ static inline v8::Local<v8::String> v8_str(const char* x) {
 }
 
 v8::Handle<v8::Value> CallNWTickCallback(void* env, const v8::Handle<v8::Value> ret) {
-  blink::WebScopedMicrotaskSuppression suppression;
+  v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
   g_call_tick_callback_fn(env);
   return Undefined(v8::Isolate::GetCurrent());
 }
@@ -399,7 +400,7 @@ void TryInjectStartScript(blink::WebLocalFrame* frame, const Extension* extensio
   }
   base::string16 jscript = base::UTF8ToUTF16(content);
   if (!v8_context.IsEmpty()) {
-    blink::WebScopedMicrotaskSuppression suppression;
+    v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
     blink::ScriptForbiddenScope::AllowUserAgentScript script;
     v8::Context::Scope cscope(v8_context);
     // v8::Handle<v8::Value> result;
@@ -455,14 +456,14 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
     return;
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::HandleScope hscope(isolate);
-  frame->document().securityOrigin().grantUniversalAccess();
+  frame->document().getSecurityOrigin().grantUniversalAccess();
   frame->setNodeJS(true);
   std::string path = effective_document_url.path();
   v8::Local<v8::Context> v8_context = frame->mainWorldScriptContext();
   std::string root_path = extension->path().AsUTF8Unsafe();
   base::FilePath root(extension->path());
   if (!v8_context.IsEmpty()) {
-    blink::WebScopedMicrotaskSuppression suppression;
+    v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
     v8::Context::Scope cscope(v8_context);
     // Make node's relative modules work
 #if defined(OS_WIN)
@@ -493,7 +494,7 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
     return;
   base::string16 jscript = base::UTF8ToUTF16(resource.as_string());
   if (!v8_context.IsEmpty()) {
-    blink::WebScopedMicrotaskSuppression suppression;
+    v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
     v8::Context::Scope cscope(v8_context);
     frame->executeScriptAndReturnValue(WebScriptSource(jscript));
   }
@@ -534,7 +535,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
 
       v8::Isolate* isolate = v8::Isolate::GetCurrent();
       v8::HandleScope scope(isolate);
-      blink::WebScopedMicrotaskSuppression suppression;
+      v8::MicrotasksScope microtasks(isolate, v8::MicrotasksScope::kDoNotRunMicrotasks);
 
       g_set_nw_tick_callback_fn(&CallNWTickCallback);
       v8::Local<v8::Context> dom_context = context->v8_context();
@@ -617,7 +618,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
 
   std::string set_nw_script = "'use strict';";
   {
-    blink::WebScopedMicrotaskSuppression suppression;
+    v8::MicrotasksScope microtasks(isolate, v8::MicrotasksScope::kDoNotRunMicrotasks);
     v8::Context::Scope cscope(context->v8_context());
     // Make node's relative modules work
     std::string root_path = context->extension()->path().AsUTF8Unsafe();
@@ -758,11 +759,11 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* erro
       manifest->SetString(key, icon_path);
 #if defined(OS_WIN)
       g_window_hicon =
-        IconUtil::CreateHICONFromSkBitmapSizedTo(*g_app_icon.AsImageSkia().bitmap(),
-          GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON)).Pass();
+        std::move(IconUtil::CreateHICONFromSkBitmapSizedTo(*g_app_icon.AsImageSkia().bitmap(),
+                      GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON)));
       g_app_hicon =
-        IconUtil::CreateHICONFromSkBitmapSizedTo(*g_app_icon.AsImageSkia().bitmap(),
-          GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON)).Pass();
+        std::move(IconUtil::CreateHICONFromSkBitmapSizedTo(*g_app_icon.AsImageSkia().bitmap(),
+                      GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON)));
 #endif
     }
   }
@@ -797,7 +798,7 @@ void RendererProcessTerminatedHook(content::RenderProcessHost* process,
 }
 
 void OnRenderProcessShutdownHook(extensions::ScriptContext* context) {
-  blink::WebScopedMicrotaskSuppression suppression;
+  v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
   blink::ScriptForbiddenScope::AllowUserAgentScript script;
   void* env = g_get_current_env_fn(context->v8_context());
   if (g_is_node_initialized_fn()) {
@@ -807,7 +808,7 @@ void OnRenderProcessShutdownHook(extensions::ScriptContext* context) {
 }
 
 void KickNextTick() {
-  blink::WebScopedMicrotaskSuppression suppression;
+  v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
   void* env = g_get_node_env_fn();
   if (env)
     g_call_tick_callback_fn(env);
@@ -849,7 +850,7 @@ void willHandleNavigationPolicy(content::RenderView* rv,
                                                       "onNewWinPolicy", &arguments);
   } else {
     const char* req_context = nullptr;
-    switch (request.requestContext()) {
+    switch (request.getRequestContext()) {
     case blink::WebURLRequest::RequestContextHyperlink:
       req_context = "hyperlink";
       break;
@@ -1129,16 +1130,17 @@ bool GetUserAgentFromManifest(std::string* agent) {
 
 void ReloadExtensionHook(const extensions::Extension* extension) {
   g_reloading_app = true;
-  chrome::IncrementKeepAliveCount(); //keep alive count is paired with
-                                     //appwindow's lifetime, so it's
-                                     //needed to keep alive during
-                                     //reload
+  KeepAliveRegistry::GetInstance()->Register(KeepAliveOrigin::APP_CONTROLLER, KeepAliveRestartOption::ENABLED);
+  //keep alive count is paired with
+  //appwindow's lifetime, so it's
+  //needed to keep alive during
+  //reload
 }
 
 void CreateAppWindowHook(extensions::AppWindow* app_window) {
   if (g_reloading_app) {
     g_reloading_app = false;
-    chrome::DecrementKeepAliveCount();
+    KeepAliveRegistry::GetInstance()->Unregister(KeepAliveOrigin::APP_CONTROLLER, KeepAliveRestartOption::ENABLED);
   }
 }
 
@@ -1156,12 +1158,14 @@ void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, content::WebPreferenc
     webkit->GetBoolean("double_tap_to_zoom_enabled", &web_prefs->double_tap_to_zoom_enabled);
     webkit->GetBoolean("plugin",                     &web_prefs->plugins_enabled);
   }
+#if 0
   FilePath plugins_dir = package->path();
 
   plugins_dir = plugins_dir.AppendASCII("plugins");
 
   content::PluginService* plugin_service = content::PluginService::GetInstance();
   plugin_service->AddExtraPluginDir(plugins_dir);
+#endif
 }
 
 bool CheckStoragePartitionMatches(int render_process_id, const GURL& url) {

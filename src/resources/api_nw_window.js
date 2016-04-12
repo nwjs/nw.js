@@ -107,14 +107,14 @@ function getPlatform() {
   ];
 
   for (var i = 0; i < platforms.length; i++) {
-    if ($RegExp.test(platforms[i][0], navigator.appVersion)) {
+    if ($RegExp.exec(platforms[i][0], navigator.appVersion)) {
       return platforms[i][1];
     }
   }
   return "unknown";
 }
 
-var canSetVisibleOnAllWorkspaces = /(mac|linux)/.test(getPlatform());
+var canSetVisibleOnAllWorkspaces = /(mac|linux)/.exec(getPlatform());
 var appWinEventsMap = {
   'minimize':         'onMinimized',
   'maximize':         'onMaximized',

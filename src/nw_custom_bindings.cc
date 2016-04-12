@@ -14,7 +14,6 @@
 #include "extensions/renderer/script_context.h"
 #include "v8/include/v8.h"
 
-#undef LOG
 using namespace blink;
 #if defined(OS_WIN)
 #define _USE_MATH_DEFINES
@@ -41,7 +40,7 @@ using namespace blink;
 //#include "third_party/WebKit/Source/core/inspector/InspectorInstrumentation.h"
 //#include "third_party/WebKit/Source/core/inspector/InspectorResourceAgent.h"
 
-#undef CHECK
+//#undef CHECK
 #include "V8HTMLIFrameElement.h"
 #include "extensions/renderer/script_context_set.h"
 

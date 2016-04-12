@@ -9,6 +9,7 @@
 #include "content/nw/src/nw_base.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/render_view_host.h"
+#include "content/public/browser/storage_partition.h"
 #include "content/public/browser/web_contents.h"
 #include "extensions/browser/app_window/app_window.h"
 #include "extensions/browser/app_window/app_window_registry.h"
@@ -24,7 +25,7 @@
 namespace {
 void SetProxyConfigCallback(
     base::WaitableEvent* done,
-    net::URLRequestContextGetter* url_request_context_getter,
+    const scoped_refptr<net::URLRequestContextGetter>& url_request_context_getter,
     const net::ProxyConfig& proxy_config) {
   net::ProxyService* proxy_service =
       url_request_context_getter->GetURLRequestContext()->proxy_service();
@@ -137,8 +138,7 @@ bool NwAppSetProxyConfigFunction::RunNWSync(base::ListValue* response, std::stri
   config.proxy_rules().ParseFromString(proxy_config);
   content::RenderProcessHost* render_process_host = GetSenderWebContents()->GetRenderProcessHost();
   net::URLRequestContextGetter* context_getter =
-    render_process_host->GetBrowserContext()->
-    GetRequestContextForRenderProcess(render_process_host->GetID());
+    render_process_host->GetStoragePartition()->GetURLRequestContext();
 
   base::WaitableEvent done(false, false);
   content::BrowserThread::PostTask(
