@@ -190,10 +190,8 @@ def generate_target_nw(platform_name, arch, version):
                            'resources.pak',
                            'nw_100_percent.pak',
                            'nw_200_percent.pak',
-                           'dbghelp.dll',
                            'ffmpeg.dll',
                             # To be removed in CR51
-                           'libexif.dll',
                            ]
         if flavor == 'sdk':
             target['input'].append('nwjc.exe')

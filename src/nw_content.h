@@ -1,7 +1,7 @@
 #ifndef NWJS_CONTENT_HOOKS_H
 #define NWJS_CONTENT_HOOKS_H
 
-#if defined(OS_WIN)
+#if defined(WIN32)
 #include <windows.h>
 #endif
 

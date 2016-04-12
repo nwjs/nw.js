@@ -425,10 +425,10 @@
         'conditions': [
           ['nwjs_sdk==1', {
             'package_mode': 'sdk',
-            'icudat_path': '<(DEPTH)/third_party/icu/source/data/in/icudtl.dat',
+            'icudat_path': '<(DEPTH)/third_party/icu/common/icudtl.dat',
           }, {
             'package_mode': 'nosdk',
-            'icudat_path': '<(DEPTH)/third_party/icu/source/data/in/icudtl.dat',
+            'icudat_path': '<(DEPTH)/third_party/icu/common/icudtl.dat',
           }],
           ['disable_nacl==0 and nwjs_sdk==0', {
             'package_mode': 'nacl',
