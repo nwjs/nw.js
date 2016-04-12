@@ -399,7 +399,7 @@ static base::win::ScopedHICON createBadgeIcon(const HWND hWnd, const TCHAR *valu
   canvas.DrawStringRectWithFlags(value, gfx::FontList(font), SK_ColorWHITE, gfx::Rect(sizeX, fontSize + yMargin + 1), gfx::Canvas::TEXT_ALIGN_CENTER);
 
   // return the canvas as windows native icon handle
-  return IconUtil::CreateHICONFromSkBitmap(canvas.ExtractImageRep().sk_bitmap()).Pass();
+  return std::move(IconUtil::CreateHICONFromSkBitmap(canvas.ExtractImageRep().sk_bitmap()));
 }
 #endif
 
@@ -545,7 +545,7 @@ bool NwCurrentWindowInternalSetProgressBarFunction::RunAsync() {
 
 bool NwCurrentWindowInternalReloadIgnoringCacheFunction::RunAsync() {
   content::WebContents* web_contents = GetSenderWebContents();
-  web_contents->GetController().ReloadIgnoringCache(false);
+  web_contents->GetController().ReloadBypassingCache(false);
   SendResponse(true);
   return true;
 }
