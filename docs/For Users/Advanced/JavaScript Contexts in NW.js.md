@@ -96,7 +96,7 @@ myscript.setText(document.getElementbyId('el'));
 ```
 
 !!! note "`window` in Node Context"
-    There is a `window` object in Node context pointing to the main window as set in `main` field of Manifest file.
+    There is a `window` object in Node context pointing to the DOM window object of the background page.
 
 #### Relative Paths Resolving of `require()` in Node Context
 
