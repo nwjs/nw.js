@@ -1,3 +1,14 @@
+0.14.0 / 04-14-2016
+===================
+- Update Chromium to 50.0.2661.75
+- Fix: AlwaysOnTop does not work with Fullscreen or overlapping toolbar [(#4554)](https://github.com/nwjs/nw.js/issues/4554)
+- Fix: Window object from `nw.Window.open` is `null` after an `new_instance` window was opened [(#4691)](https://github.com/nwjs/nw.js/issues/4691)
+- Fix: Linux Fedora application menu says 'nwjs' instead of package.json name [(#4693)](https://github.com/nwjs/nw.js/issues/4693)
+- Fix: Shortcut not work in devtools while it placed in a webview [(#4709)](https://github.com/nwjs/nw.js/issues/4709)
+- Fix: nw.App.clearCache hang and it should be sync [(#4674)](https://github.com/nwjs/nw.js/issues/4674)
+- Fix: Crashes sometimes when using menu.popup and GC happens [(#4697)](https://github.com/nwjs/nw.js/issues/4697)
+- Fix: Win.isFullscreen and isAlwaysOnTop should not be function [(#4446)](https://github.com/nwjs/nw.js/issues/4446)
+
 0.13.4 / 04-08-2016
 ===================
 - Update Chromium to 49.0.2623.112
@@ -6,6 +17,13 @@
 - Fix: process Event: 'uncaughtException' not working in 0.13 [(#4679)](https://github.com/nwjs/nw.js/issues/4679)
 - [docs] data-path -> user-data-dir; --disable-raf-throttling
 - [docs] Clarify files can be safely removed during packaging [(#4676)](https://github.com/nwjs/nw.js/issues/4676)
+
+0.14.0-rc3 / 04-07-2016
+=======================
+- Update Chromium to 50.0.2661.66
+- Update Node.js to 5.10.0
+- Fix XP support again (32bit)
+- Port all the fixes released in 0.13.3
 
 0.13.3 / 04-04-2016
 ===================
@@ -24,6 +42,17 @@
 - [docs] add link to buildbot
 - [docs] using flash plugin
 - [docs] location of nwjc and chromedriver
+
+0.14.0-rc2 / 03-31-2016
+=======================
+- Update Chromium to 50.0.2661.57
+- Update Node.js to 5.9.1
+- Fix XP support
+- [WIN] fix restore size when aero glass is on [(#4323)](https://github.com/nwjs/nw.js/issues/4323)
+
+0.14.0-rc1 / 03-29-2016
+=======================
+- Update Chromium to 50.0.2661.49
 
 0.13.2 / 03-29-2016
 ===================
