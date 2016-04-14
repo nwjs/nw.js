@@ -1,4 +1,4 @@
-# NW.js 0.13.0 Documentation
+# NW.js Documentation for 0.13 and later
 ---
 
 > [NW.js](http://nwjs.io) lets you call all [Node.js](https://nodejs.org/) [modules](https://www.npmjs.org/) directly from DOM and enables a new way of writing applications with all Web technologies. It was previously known as "node-webkit" project.
