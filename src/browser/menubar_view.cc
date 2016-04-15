@@ -46,20 +46,6 @@ class MenuBarButton : public views::MenuButton {
     return !tooltip->empty();
   }
 
-  bool IsTriggerableEvent(const ui::Event& e) override {
-    // Left clicks and taps should show the menu contents and right clicks
-    // should show the context menu. They should not trigger the opening of
-    // underlying urls.
-    if (e.type() == ui::ET_GESTURE_TAP ||
-        (e.IsMouseEvent() && (e.flags() &
-             (ui::EF_LEFT_MOUSE_BUTTON | ui::EF_RIGHT_MOUSE_BUTTON))))
-      return false;
-
-    if (e.IsMouseEvent())
-      return ui::DispositionFromEventFlags(e.flags()) != CURRENT_TAB;
-    return false;
-  }
-
  private:
 
   DISALLOW_COPY_AND_ASSIGN(MenuBarButton);
