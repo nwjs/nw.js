@@ -1,6 +1,10 @@
 #ifndef NWJS_CONTENT_HOOKS_H
 #define NWJS_CONTENT_HOOKS_H
 
+#if defined(OS_WIN)
+#include <windows.h>
+#endif
+
 #include "nw_package.h"
 #include "base/memory/scoped_ptr.h"
 #include "third_party/WebKit/public/web/WebNavigationPolicy.h"
@@ -16,6 +20,10 @@ namespace blink {
   class WebLocalFrame;
   class WebURLRequest;
   class WebString;
+}
+
+namespace gfx {
+  class ImageSkia;
 }
 
 namespace content {
@@ -94,6 +102,11 @@ void DocumentFinishHook(blink::WebFrame* frame,
  bool ShouldServiceRequestHook(int child_id, const GURL& url);
  bool RenderWidgetWasHiddenHook(content::RenderWidget* rw);
  void LoadNodeSymbols();
+ gfx::ImageSkia* GetAppIcon();
+#if defined(OS_WIN)
+ HICON GetAppHIcon();
+ HICON GetWindowHIcon();
+#endif
 }
 
 #endif

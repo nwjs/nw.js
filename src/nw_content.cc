@@ -14,7 +14,10 @@
 #include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/threading/thread_restrictions.h"
-
+#if defined(OS_WIN)
+#include "base/win/scoped_gdi_object.h"
+#include "ui/gfx/icon_util.h"
+#endif
 
 #include "chrome/browser/browser_process.h"
 #include "chrome/browser/devtools/devtools_window.h"
@@ -194,6 +197,12 @@ bool g_pinning_renderer = true;
 int g_cdt_process_id = -1;
 std::string g_extension_id;
 bool g_skip_render_widget_hidden = false;
+gfx::Image g_app_icon;
+
+#if defined(OS_WIN)
+base::win::ScopedHICON g_window_hicon;
+base::win::ScopedHICON g_app_hicon;
+#endif
 
 static inline v8::Local<v8::String> v8_str(const char* x) {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
@@ -751,11 +760,18 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* erro
   AmendManifestContentScriptList(manifest, "inject_js_end",   "document_end");
 
   if (manifest->GetString("window.icon", &icon_path)) {
-    gfx::Image app_icon;
-    if (GetPackageImage(package, base::FilePath::FromUTF8Unsafe(icon_path), &app_icon)) {
-      int width = app_icon.Width();
+    if (GetPackageImage(package, base::FilePath::FromUTF8Unsafe(icon_path), &g_app_icon)) {
+      int width = g_app_icon.Width();
       std::string key = "icons." + base::IntToString(width);
       manifest->SetString(key, icon_path);
+#if defined(OS_WIN)
+      g_window_hicon =
+        IconUtil::CreateHICONFromSkBitmapSizedTo(*g_app_icon.AsImageSkia().bitmap(),
+          GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON)).Pass();
+      g_app_hicon =
+        IconUtil::CreateHICONFromSkBitmapSizedTo(*g_app_icon.AsImageSkia().bitmap(),
+          GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON)).Pass();
+#endif
     }
   }
   if (manifest->Get(switches::kmRemotePages, &node_remote)) {
@@ -1232,6 +1248,22 @@ void SetPinningRenderer(bool pin) {
 bool RenderWidgetWasHiddenHook(content::RenderWidget* rw) {
   return g_skip_render_widget_hidden;
 }
+
+gfx::ImageSkia* GetAppIcon() {
+  if (g_app_icon.IsEmpty())
+    return nullptr;
+  return const_cast<gfx::ImageSkia*>(g_app_icon.ToImageSkia());
+}
+
+#if defined(OS_WIN)
+HICON GetAppHIcon() {
+  return g_app_hicon.get();
+}
+
+HICON GetWindowHIcon() {
+  return g_window_hicon.get();
+}
+#endif
 
 void LoadNodeSymbols() {
   struct SymbolDefinition {
