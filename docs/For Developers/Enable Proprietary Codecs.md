@@ -25,7 +25,7 @@ ogg,matroska,wav
     MP3 and H.264 codecs are licensed under the GPL in `ffmpeg` used by NW.js. Make sure your app are released with compatible license of GPL. And you also have to pay patent licensing royalties for using them. Consult a lawyer if you do not understand the licensing constraints and using patented media formats in your application.
 
 !!! warning "Warning"
-    If you do **NOT** have the license or **NOT** pay the patent fee properly, using this tip below or moving to other solutions does **NOT** make you eligible to redistribute the codecs.
+    If you do **NOT** have the license, using this tip below or moving to other solutions does **NOT** make you eligible to redistribute the codecs.
 
 ### Get FFmpeg DLL from Community
 
