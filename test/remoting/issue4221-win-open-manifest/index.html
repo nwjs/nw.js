@@ -8,7 +8,7 @@
 <body>
   <a id="linkopen" href="index.html" target="_blank">Open new window with link</a>
   <button id="winopen" onclick="winopen()">Open new window</button>
-  <button id="bindnewwinpolicy" onclick="bindNewWinPolicy()">Bind new-win-policy to force new window with width 488</button>
+  <button id="bindnewwinpolicy" onclick="bindNewWinPolicy()">Bind new-win-policy to force new window with width 388</button>
   <button id="getwinsize" onclick="getwinsize()">Get current window size</button>
   <script>
   function out(id, msg) {
@@ -25,7 +25,7 @@
   }
   function bindNewWinPolicy() {
     nw.Window.get().on('new-win-policy', function(frame, url, policy) {
-      policy.setNewWindowManifest({width: 488});
+      policy.setNewWindowManifest({width: 388});
     });
   }
   </script>

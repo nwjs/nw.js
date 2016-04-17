@@ -30,14 +30,14 @@ try:
     print driver.current_url
     driver.implicitly_wait(10)
     print 'open new window with `window.open()`'
-    click_and_assert(driver, 'winopen', '800,600')
+    click_and_assert(driver, 'winopen', '400,300')
     print 'open new window with <a target="_blank">'
-    click_and_assert(driver, 'winopen', '800,600')
-    print 'bind new-win-policy and newly opened window should have size of 488,600'
+    click_and_assert(driver, 'winopen', '400,300')
+    print 'bind new-win-policy and newly opened window should have size of 388,300'
     driver.find_element_by_id('bindnewwinpolicy').click()
     print 'open new window with `window.open()` after new-win-policy'
-    click_and_assert(driver, 'winopen', '488,600')
+    click_and_assert(driver, 'winopen', '388,300')
     print 'open new window with <a target="_blank"> after new-win-policy'
-    click_and_assert(driver, 'winopen', '488,600')
+    click_and_assert(driver, 'winopen', '388,300')
 finally:
     driver.quit()
