@@ -7,7 +7,15 @@
 #import  "ui/gfx/mac/nswindow_frame_controls.h"
 
 void NWChangeAppMenu(nw::Menu* menu) {
-  [NSApp setMainMenu:menu->menu_];
+  NSMenu *main_menu;
+
+  if (menu == nil) {
+    main_menu = [[NSMenu alloc] initWithTitle:@""];
+  } else {
+    main_menu = menu->menu_;
+  }
+  
+  [NSApp setMainMenu:main_menu];
 }
 
 void NWSetNSWindowShowInTaskbar(extensions::NativeAppWindow* win, bool show) {

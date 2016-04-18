@@ -41,6 +41,9 @@ See both [Menu](../../References/Menu.md) and [Window](../../References/Window.m
 
 On Windows and Linux, the menubars behave exactly the same. Each window can have one menubar and they all reside bellow the titlebar.
 
+!!! tip "Menubar in Fullscreen / Kiosk Mode"
+    In fullscreen or kiosk mode, menubar is visible on top of the window on Windows and Linux. Setting `win.menu` to `null` can completely remove the menubar. See also [`win.menu`](../../References/Window.md#winmenu).
+
 ### Mac OS X
 
 !!! warning "Behavior Changed"
