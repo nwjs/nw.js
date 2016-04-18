@@ -1,3 +1,13 @@
+0.14.1 / 04-18-2016
+===================
+- Fix: Menu not working in Windows and Linux [(#4727)](https://github.com/nwjs/nw.js/issues/4727)
+- Fix: Crash with exceptions in some remote pages [(#4729)](https://github.com/nwjs/nw.js/issues/4729)
+- Fix: [WIN] ship libexif.dll [(#4637)](https://github.com/nwjs/nw.js/issues/4637)
+- Fix: Packaged application with command line parameter won't start; Reordered package path finding for backward compatible with nw12 [(#4681)](https://github.com/nwjs/nw.js/issues/4681)
+- Fix: use icon in manifest for devtools window icon [(#4707)](https://github.com/nwjs/nw.js/issues/4707)
+- [docs]  building proprietary codecs easier [(#4595)](https://github.com/nwjs/nw.js/issues/4595)
+- [docs] Fix: window object in the Node context
+
 0.14.0 / 04-14-2016
 ===================
 - Update Chromium to 50.0.2661.75
