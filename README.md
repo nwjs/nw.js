@@ -31,7 +31,7 @@ It was created in the Intel Open Source Technology Center.
  **NOTE** You might want the **SDK build**. Please read the release notes  
  * Linux: [32bit](http://dl.nwjs.io/v0.14.1/nwjs-v0.14.1-linux-ia32.tar.gz) / [64bit](http://dl.nwjs.io/v0.14.1/nwjs-v0.14.1-linux-x64.tar.gz)
  * Windows: [32bit](http://dl.nwjs.io/v0.14.1/nwjs-v0.14.1-win-ia32.zip) / [64bit](http://dl.nwjs.io/v0.14.1/nwjs-v0.14.1-win-x64.zip)
- * Mac 10.7+: [64bit](http://dl.nwjs.io/v0.14.1/nwjs-v0.14.1-osx-x64.zip)
+ * Mac 10.9+: [64bit](http://dl.nwjs.io/v0.14.1/nwjs-v0.14.1-osx-x64.zip)
 
 * **latest live build**: git tip version; build triggered from every git commit: http://dl.nwjs.io/live-build/
 
