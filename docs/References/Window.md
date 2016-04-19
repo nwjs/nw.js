@@ -92,7 +92,9 @@ Get or set window's title.
 
 ## win.menu
 
-Get or set window's menubar. Set with a Menu with type `menubar`. See [Menu](Menu.md).
+Get or set window's menubar. Set with a Menu with type `menubar`. When `win.menu` is set to `null`, the menubar is completely removed for Windows and Linux, and the menubar is cleared out on Mac.
+
+See [Customize Menubar](../For Users/Advanced/Customize Menubar.md) for the usage of menubars. And see [Menu](Menu.md) and [MenuItem](MenuItem.md) for detailed APIs.
 
 ## win.isFullscreen
 

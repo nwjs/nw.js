@@ -314,6 +314,30 @@ NwCurrentWindowInternalClearMenuFunction::~NwCurrentWindowInternalClearMenuFunct
 }
 
 bool NwCurrentWindowInternalClearMenuFunction::RunAsync() {
+  AppWindow* window = getAppWindow(this);
+  if (!window) {
+    error_ = kNoAssociatedAppWindow;
+    return false;
+  }
+
+#if defined(OS_MACOSX)
+  NWChangeAppMenu(NULL);
+#endif
+
+#if defined(OS_LINUX) || defined(OS_WIN)
+  native_app_window::NativeAppWindowViews* native_app_window_views =
+      static_cast<native_app_window::NativeAppWindowViews*>(
+          window->GetBaseWindow());
+
+  BrowserViewLayout *browser_view_layout = static_cast<BrowserViewLayout*>(native_app_window_views->GetLayoutManager());
+  views::View* menubar = browser_view_layout->menu_bar();
+  if (menubar) {
+    native_app_window_views->RemoveChildView(menubar);
+  }
+  browser_view_layout->set_menu_bar(NULL);
+  native_app_window_views->layout_();
+  native_app_window_views->SchedulePaint();
+#endif
   return true;
 }
 
