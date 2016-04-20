@@ -6,9 +6,15 @@
 
 ## Open Developer Tools
 
-DevTools can be opened with keyboard shortcut <kbd>F12</kbd> for Windows and Linux or <kbd>&#8984;</kbd>+<kbd>&#8997;</kbd>+<kbd>i</kbd>.
+DevTools can be opened with keyboard shortcut <kbd>F12</kbd> on Windows and Linux or <kbd>&#8984;</kbd>+<kbd>&#8997;</kbd>+<kbd>i</kbd> on Mac.
 
 Alternatively, you may open DevTools programmatically using NW.js API [win.showDevTools()`](../References/Window.md##winshowdevtoolsiframe-headless-callback) for a window.
+
+## Node.js Modules Debugging
+
+NW.js is running in [Separate Context Mode](Advanced/JavaScript Contexts in NW.js.md#separate-context-mode) by default. To debug Node.jd modules, you can right click the app and choose "Inspect Background Page". When stepping into Node.js modules in the debugger, the DevTools for background page is automatically focused and stopped at certain statement.
+
+If your app is running under [Mixed Context Mode](Advanced/JavaScript Contexts in NW.js.md#mixed-context-mode), Node.js modules can be directly debugged within the same DevTools window of the window. See [JavaScript Contexts in NW.js](Advanced/JavaScript Contexts in NW.js.md) for the differences.
 
 ## Remote Debugging
 

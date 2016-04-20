@@ -13,11 +13,17 @@ That's common practice among web browsers and it's a good thing because, for�
 * when a programmer makes a mistake (such as [missing `new` before a poorly written constructor](http://ejohn.org/blog/simple-class-instantiation/)) and the bug affects (pollutes) the global scope, it still cannot affect larger areas (several windows);
 * malicious applications cannot access confidential data structures in other windows.
 
-When a script accessing to an object / function defined in another context, JS engine will temporarily enter the target context and leave it once finished. 
+When a script accessing to an object / function defined in another context, JS engine will temporarily enter the target context and leave it once finished.
+
+## Contexts in NW.js
+
+NW.js is based on the architecture of Chrome Apps. Thus an invisible background page is loaded automatically at start. And when a new window is created, a JavaScript context is created as well.
+
+In NW.js, Node.js modules can be loaded in the context running in background page, which is the default behavior. Also they can be loaded within the context of each window or frame when running as Mixed Context Mode. Continue to read following sections to see the differences between [Separate Context Mode](#separate-context-mode) and [Mixed Context Mode](#mixed-context-mode).
 
 ## Separate Context Mode
 
-Besides the contexts created by browsers, NW.js introduced additional Node context for running Node modules by default. So NW.js has two types of JavaScript contexts: **Browser Context** and **Node Context**.
+Besides the contexts created by browsers, NW.js introduced additional Node context for running Node modules in the background page by default. So NW.js has two types of JavaScript contexts: **Browser Context** and **Node Context**.
 
 !!! note "Web Worker"
     Actually Web Workers are running in a separate JavaScript context which is neither browser context nor node context. But you can't access Web or Node.js or NW.js APIs in Web Worker's context.
@@ -149,9 +155,9 @@ myscript.showAlert(); // I'm running in Node module!
 
 ### Comparing with Separate Context
 
-The advantage of MultiContext mode is that you will not encounter many [type checking issue](#working-with-multiple-contexts) as below.
+The advantage of Separate Context Mode is that you will not encounter many [type checking issue](#working-with-multiple-contexts) as below.
 
-The cons is that in Mixed context mode, you can't share variable easily as before. To share variables among contexts, you should put variables in a common context that can be accessed from the contexts you want to share with. Or you can use [`window.postMessage()` API](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage) to send and receive messages between contexts.
+The cons is that in Mixed Context Mode, you can't share variable easily as before. To share variables among contexts, you should put variables in a common context that can be accessed from the contexts you want to share with. Or you can use [`window.postMessage()` API](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage) to send and receive messages between contexts.
 
 ## Working with Multiple Contexts
 
