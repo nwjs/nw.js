@@ -36,7 +36,7 @@ NwClipboardSetSyncFunction::~NwClipboardSetSyncFunction() {
 
 
 bool NwClipboardSetSyncFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  base::string16 text;
+  std::string text;
   args_->GetString(0, &text);
 
   ui::Clipboard* clipboard = ui::Clipboard::GetForCurrentThread();
