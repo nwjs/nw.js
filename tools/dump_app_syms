@@ -21,7 +21,8 @@ if [ $# -ne 4 ]; then
 fi
 
 SCRIPTDIR="$(readlink -f "$(dirname "$0")")"
-DUMPSYMS="$1"
+#DUMPSYMS="$1"
+DUMPSYMS="$SCRIPTDIR"/dump_syms
 STRIP_BINARY="$2"
 INFILE="$3"
 OUTFILE="$4"
