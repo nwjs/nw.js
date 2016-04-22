@@ -664,9 +664,8 @@ bool NwCurrentWindowInternalSetShowInTaskbarFunction::RunAsync() {
 
   if (show == false && base::win::GetVersion() < base::win::VERSION_VISTA) {
     // Change the owner of native window. Only needed on Windows XP.
-    ::SetWindowLong(views::HWNDForWidget(widget),
-                    GWLP_HWNDPARENT,
-                    (LONG)ui::GetHiddenWindow());
+    ::SetParent(views::HWNDForWidget(widget),
+                ui::GetHiddenWindow());
   }
 
   base::win::ScopedComPtr<ITaskbarList> taskbar;
