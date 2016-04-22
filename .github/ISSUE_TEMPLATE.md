@@ -1,5 +1,6 @@
 Read the following before submitting your issue, thank you.
 
+* Please use English so all users can read, or the issue will be closed directly.
 * Use our mailing list to ask questions which don't imply bug or feature request: https://groups.google.com/forum/#!forum/nwjs-general
 * State which version are you using
 * State which OS version are you running with
