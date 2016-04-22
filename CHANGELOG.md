@@ -1,3 +1,16 @@
+0.14.2 / 04-21-2016
+===================
+- Update Chromium to 50.0.2661.86
+- Update Node.js to 5.10.1
+- Add: support 'oncancel' event of File dialog [(#4501)](https://github.com/nwjs/nw.js/issues/4501)
+- Add: implemented `win.menu=null` to remove menubar [(#4725)](https://github.com/nwjs/nw.js/issues/4725)
+- Fix: Shell.openItem() does not open directories [(#4713)](https://github.com/nwjs/nw.js/issues/4713)
+- Fix: [WIN] Invisible eventless area around all sides of window [(#4749)](https://github.com/nwjs/nw.js/issues/4749)
+- Fix: [WIN] Windows loading icon stays visible after launching app [(#4685)](https://github.com/nwjs/nw.js/issues/4685)
+- Fix: [OSX] Support 10.8-10.7
+- Fix: Font size issue in v0.14.0 [(#4717)](https://github.com/nwjs/nw.js/issues/4717)
+- Fix: Weird popup in custom URL protocol [(#4746)](https://github.com/nwjs/nw.js/issues/4746)
+
 0.14.1 / 04-18-2016
 ===================
 - Fix: Menu not working in Windows and Linux [(#4727)](https://github.com/nwjs/nw.js/issues/4727)
