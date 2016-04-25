@@ -11,6 +11,12 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       return sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {})[0];
     });
   });
+
+  ['readAvailableTypes'].forEach(function(nwSyncAPIName) {
+    apiFunctions.setHandleRequest(nwSyncAPIName, function() {
+      return sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {});
+    });
+  });
 });
 
 var nwClipboardBinding = nw_binding.generate();
@@ -28,14 +34,17 @@ NWClipboard.get = function() {
   return clipboard;
 };
 
-NWClipboard.prototype.get = function (type) {
-  return nwClipboardBinding.getSync(type || 'text');
+NWClipboard.prototype.get = function (type, raw) {
+  return nwClipboardBinding.getSync(type || 'text', !!raw);
 };
-NWClipboard.prototype.set = function (content, type) {
-  return nwClipboardBinding.setSync(content, type || 'text');
+NWClipboard.prototype.set = function (content, type, raw) {
+  return nwClipboardBinding.setSync(content, type || 'text', !!raw);
 };
 NWClipboard.prototype.clear = function () {
   return nwClipboardBinding.clearSync();
+};
+NWClipboard.prototype.readAvailableTypes = function() {
+  return nwClipboardBinding.readAvailableTypes();
 };
 
 exports.binding = NWClipboard;
