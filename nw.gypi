@@ -506,7 +506,7 @@
             '<(PRODUCT_DIR)/run_tests.re',
           ],
           'action': ['python', '<(test_script)', '-d', '<(PRODUCT_DIR)',
-                     '-t', '80', 'remoting'],
+                     '-t', '80', 'sanity'],
         },
       ],
     },
