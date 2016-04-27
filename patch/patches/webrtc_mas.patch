@@ -1,0 +1,134 @@
+diff --git a/media/media.gyp b/media/media.gyp
+index e4960e1..1c32bfa 100644
+--- media/media.gyp
++++ media/media.gyp
+@@ -226,6 +226,15 @@
+                 },
+               },
+             }],
++            ['nwjs_mas==1', {
++              'link_settings': {
++                'xcode_settings': {
++                  'OTHER_LDFLAGS!': [
++                    '-framework QTKit',
++                  ],
++                },
++              },
++            }],
+           ],
+           'xcode_settings': {
+             'WARNING_CFLAGS': [
+diff --git a/modules/video_capture/mac/video_capture_mac.mm b/modules/video_capture/mac/video_capture_mac.mm
+index a9dab96..819928b 100644
+--- modules/video_capture/mac/video_capture_mac.mm
++++ modules/video_capture/mac/video_capture_mac.mm
+@@ -21,6 +21,7 @@
+ #include "webrtc/system_wrappers/include/ref_count.h"
+ #include "webrtc/system_wrappers/include/trace.h"
+ 
++#if !defined(NWJS_MAS)
+ // 10.4 support must be decided runtime. We will just decide which framework to
+ // use at compile time "work" classes. One for QTKit, one for QuickTime
+ #if __MAC_OS_X_VERSION_MIN_REQUIRED == __MAC_10_4 // QuickTime version
+@@ -30,6 +31,7 @@
+ #include "webrtc/modules/video_capture/mac/qtkit/video_capture_qtkit.h"
+ #include "webrtc/modules/video_capture/mac/qtkit/video_capture_qtkit_info.h"
+ #endif
++#endif // !defined(NWJS_MAS)
+ 
+ namespace webrtc
+ {
+@@ -113,6 +115,12 @@ VideoCaptureModule* VideoCaptureImpl::Create(
+     const int32_t id, const char* deviceUniqueIdUTF8)
+ {
+ 
++#if defined(NWJS_MAS)
++    WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, id,
++                     "QTKit is disabled in MAS. Could not create video capture "
++                     "module. Returning NULL");
++    return NULL;
++#else
+     if (webrtc::videocapturemodule::CheckOSVersion() == false)
+     {
+         WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, id,
+@@ -194,6 +202,7 @@ VideoCaptureModule* VideoCaptureImpl::Create(
+                  "framework",deviceUniqueIdUTF8);
+     return newCaptureModule;
+ #endif
++#endif // defined(NWJS_MAS)
+ }
+ 
+ /**************************************************************************
+@@ -205,8 +214,12 @@ VideoCaptureModule* VideoCaptureImpl::Create(
+ VideoCaptureModule::DeviceInfo*
+ VideoCaptureImpl::CreateDeviceInfo(const int32_t id)
+ {
+-
+-
++#if defined(NWJS_MAS)
++    WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, id,
++                     "QTKit is disabled in MAS. Could not create video capture "
++                     "module. Returning NULL");
++    return NULL;
++#else
+     if (webrtc::videocapturemodule::CheckOSVersion() == false)
+     {
+         WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, id,
+@@ -259,7 +272,7 @@ VideoCaptureImpl::CreateDeviceInfo(const int32_t id)
+     return newCaptureInfoModule;
+ 
+ #endif
+-
++#endif // defined(NWJS_MAS)
+ }
+ 
+ /**************************************************************************
+diff --git a/modules/video_capture/video_capture.gypi b/modules/video_capture/video_capture.gypi
+index c80f2bf..f9b251d 100644
+--- modules/video_capture/video_capture.gypi
++++ modules/video_capture/video_capture.gypi
+@@ -70,6 +70,7 @@
+             }],  # linux
+             ['OS=="mac"', {
+               'sources': [
++                'mac/video_capture_mac.mm',
+                 'mac/qtkit/video_capture_qtkit.h',
+                 'mac/qtkit/video_capture_qtkit.mm',
+                 'mac/qtkit/video_capture_qtkit_info.h',
+@@ -79,7 +80,6 @@
+                 'mac/qtkit/video_capture_qtkit_objc.h',
+                 'mac/qtkit/video_capture_qtkit_objc.mm',
+                 'mac/qtkit/video_capture_qtkit_utility.h',
+-                'mac/video_capture_mac.mm',
+               ],
+               'link_settings': {
+                 'xcode_settings': {
+@@ -90,6 +90,28 @@
+                   ],
+                 },
+               },
++              'conditions': [
++                ['nwjs_mas==1', {
++                  'sources!': [
++                    'mac/qtkit/video_capture_qtkit.h',
++                    'mac/qtkit/video_capture_qtkit.mm',
++                    'mac/qtkit/video_capture_qtkit_info.h',
++                    'mac/qtkit/video_capture_qtkit_info.mm',
++                    'mac/qtkit/video_capture_qtkit_info_objc.h',
++                    'mac/qtkit/video_capture_qtkit_info_objc.mm',
++                    'mac/qtkit/video_capture_qtkit_objc.h',
++                    'mac/qtkit/video_capture_qtkit_objc.mm',
++                    'mac/qtkit/video_capture_qtkit_utility.h',
++                  ],
++                  'link_settings': {
++                    'xcode_settings': {
++                      'OTHER_LDFLAGS!': [
++                        '-framework QTKit',
++                      ],
++                    },
++                  },
++                }]
++              ]
+             }],  # mac
+             ['OS=="win"', {
+               'dependencies': [
