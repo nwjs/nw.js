@@ -6,6 +6,7 @@ import gzip
 import os
 import platform
 import shutil
+import stat
 import sys
 import tarfile
 import zipfile
@@ -39,7 +40,7 @@ flavor = args.mode
 is_headers_ok = False           # record whether nw-headers generated
 package_name = 'nwjs'
 
-if flavor in ['sdk', 'nacl']:
+if flavor in ['sdk', 'nacl', 'mas']:
     package_name = 'nwjs-' + args.mode
 
 step = args.step
@@ -348,6 +349,20 @@ def generate_target_others(platform_name, arch, version):
 ################################
 # Make packages
 def compress(from_dir, to_dir, fname, compress):
+
+    def zipOneFile(z, filename, root):
+        _path = os.path.join(root, filename)
+        _arcname = _path.replace(from_dir+os.sep, '')
+        _mode = os.lstat(_path).st_mode
+        if stat.S_ISLNK(_mode): # deal with symbolic links
+            _zipInfo = zipfile.ZipInfo(_arcname)
+            _zipInfo.create_system = 3 # 0 - Windows, 3 - Unix
+            _zipInfo.compress_type = zipfile.ZIP_STORED
+            _zipInfo.external_attr = _mode << 16L
+            z.writestr(_zipInfo, os.readlink(_path))
+        elif stat.S_ISREG(_mode): # regular file
+            z.write(_path, _arcname)
+
     from_dir = os.path.normpath(from_dir)
     to_dir = os.path.normpath(to_dir)
     _from = os.path.join(from_dir, fname)
@@ -355,10 +370,11 @@ def compress(from_dir, to_dir, fname, compress):
     if compress == 'zip':
         z = zipfile.ZipFile(_to + '.zip', 'w', compression=zipfile.ZIP_DEFLATED)
         if os.path.isdir(_from):
-            for root, dirs, files in os.walk(_from):
+            for root, dirs, files in os.walk(_from, followlinks=False):
                 for f in files:
-                    _path = os.path.join(root, f)
-                    z.write(_path, _path.replace(from_dir+os.sep, ''))
+                    zipOneFile(z, f, root)
+                for d in dirs:
+                    zipOneFile(z, d, root)
         else:
             z.write(_from, fname)
         z.close()
@@ -424,13 +440,13 @@ def make_packages(targets):
                 src = os.path.join(binaries_location, f)
                 dest = os.path.join(folder, f)
                 if os.path.isdir(src): # like nw.app
-                    shutil.copytree(src, dest)
+                    shutil.copytree(src, dest, symlinks=True)
                 else:
                     shutil.copy(src, dest)
             compress(dist_dir, dist_dir, t['output'], t['compress'])
             # remove temp folders
             if (t.has_key('keep4test')) :
-                shutil.copytree(folder, nwfolder)
+                shutil.copytree(folder, nwfolder, symlinks=True)
             
             shutil.rmtree(folder)
         else:
