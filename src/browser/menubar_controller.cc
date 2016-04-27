@@ -45,7 +45,7 @@ views::MenuItemView* MenuBarController::GetSiblingMenu(
 
   *has_mnemonics = false;
   *anchor = views::MENU_ANCHOR_TOPLEFT;
-  active_menu_model_ = model;
+  master_->active_menu_model_ = model;
   if (!model_to_menu_map_[model]) {
     MenuBarController* controller = new MenuBarController(menubar_, model, master_);
     CreateMenu(menubar_, model, controller);
@@ -56,7 +56,7 @@ views::MenuItemView* MenuBarController::GetSiblingMenu(
 }
 
 void MenuBarController::ExecuteCommand(int id) {
-  ui::MenuModel* model = active_menu_model_;
+  ui::MenuModel* model = master_->active_menu_model_;
   int index = 0;
   if (ui::MenuModel::GetModelAndIndexForCommandId(id, &model, &index)) {
     model->ActivatedAt(index);
@@ -67,7 +67,7 @@ void MenuBarController::ExecuteCommand(int id) {
 }
 
 void MenuBarController::ExecuteCommand(int id, int mouse_event_flags) {
-  ui::MenuModel* model = active_menu_model_;
+  ui::MenuModel* model = master_->active_menu_model_;
   int index = 0;
   if (ui::MenuModel::GetModelAndIndexForCommandId(id, &model, &index)) {
     model->ActivatedAt(index, mouse_event_flags);
