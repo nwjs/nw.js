@@ -107,6 +107,8 @@ void DocumentFinishHook(blink::WebFrame* frame,
  HICON GetAppHIcon();
  HICON GetWindowHIcon();
 #endif
+ void SetMainExtensionId(const std::string& id);
+ const std::string& GetMainExtensionId();
 }
 
 #endif

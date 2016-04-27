@@ -1329,4 +1329,12 @@ void LoadNodeSymbols() {
   }
 }
 
+void SetMainExtensionId(const std::string& id) {
+  g_extension_id = id;
+}
+
+const std::string& GetMainExtensionId() {
+  return g_extension_id;
+}
+
 } //namespace nw
