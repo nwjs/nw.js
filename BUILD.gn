@@ -250,7 +250,11 @@ action("commit_id") {
 if (is_mac) {
   copy("copy_ffmpeg") {
     sources = [ "$root_out_dir/libffmpeg.dylib" ]
-    outputs = [ "$root_out_dir/$chrome_product_full_name.app/Contents/Versions/$chrome_version_full/$chrome_framework_name.framework/libffmpeg.dylib" ]
+    if (nwjs_mas) {
+      outputs = [ "$root_out_dir/$chrome_product_full_name.app/Contents/Versions/$chrome_version_full/$chrome_framework_name.framework/Versions/A/libffmpeg.dylib" ]
+    } else {
+      outputs = [ "$root_out_dir/$chrome_product_full_name.app/Contents/Versions/$chrome_version_full/$chrome_framework_name.framework/libffmpeg.dylib" ]
+    }
     deps = [
       "//chrome",
       "//third_party/ffmpeg:ffmpeg"
@@ -270,7 +274,11 @@ copy("copy_node") {
   }
   if (is_mac) {
     sources = [ "$node_dir" + "../libnode.dylib" ]
-    outputs = [ "$root_out_dir/nwjs.app/Contents/Versions/$chrome_version_full/nwjs Framework.framework/libnode.dylib" ]
+    if (nwjs_mas) {
+      outputs = [ "$root_out_dir/nwjs.app/Contents/Versions/$chrome_version_full/$chrome_framework_name.framework/Versions/A/libnode.dylib" ]
+    } else {
+      outputs = [ "$root_out_dir/nwjs.app/Contents/Versions/$chrome_version_full/$chrome_framework_name.framework/libnode.dylib" ]
+    }
   }
   if (is_win) {
     suffix=""
@@ -388,7 +396,9 @@ executable("payload") {
 if (!is_component_build) {
   action("dist") {
     script = "tools/package_binaries.py"
-    if (nwjs_sdk) {
+    if (is_mac && nwjs_mas) {
+      package_mode = "mas"
+    } else if (nwjs_sdk) {
       package_mode = "sdk"
     } else {
       package_mode = "nosdk"
