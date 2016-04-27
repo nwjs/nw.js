@@ -421,7 +421,17 @@
             '<(DEPTH)/components/nacl.gyp:nacl',
           ]
         }],
-        [ 'OS=="mac"', {
+        [ 'OS=="mac" and nwjs_mas==1', {
+          'copies': [
+            {
+              'destination': '<(PRODUCT_DIR)/<(mac_product_name).app/Contents/Versions/<(version_full)/<(mac_product_name) Framework.framework/Versions/Current/',
+              'files': [
+                '<(PRODUCT_DIR)/libnode.dylib',
+              ],
+            },
+          ],
+        }],
+        [ 'OS=="mac" and nwjs_mas!=1', {
           'copies': [
             {
               'destination': '<(PRODUCT_DIR)/<(mac_product_name).app/Contents/Versions/<(version_full)/<(mac_product_name) Framework.framework/',
@@ -447,6 +457,9 @@
           }],
           ['disable_nacl==0 and nwjs_sdk==0', {
             'package_mode': 'nacl',
+          }],
+          ['nwjs_mas==1 and OS=="mac"', {
+            'package_mode': 'mas',
           }],
         ],  # conditions
       },  # variables
