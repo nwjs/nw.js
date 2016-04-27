@@ -39,7 +39,11 @@ namespace nw {
 void LoadNodeSymbols() {
   base::NativeLibraryLoadError error;
 #if defined(OS_MACOSX)
+#if defined(NWJS_MAS)
+  base::FilePath node_dll_path = base::mac::FrameworkBundlePath().Append("Versions").Append("Current").Append(base::FilePath::FromUTF8Unsafe(base::GetNativeLibraryName("node")));
+#else
   base::FilePath node_dll_path = base::mac::FrameworkBundlePath().Append(base::FilePath::FromUTF8Unsafe(base::GetNativeLibraryName("node")));
+#endif
 #else
   base::FilePath node_dll_path = base::FilePath::FromUTF8Unsafe(base::GetNativeLibraryName("node"));
 #endif
