@@ -81,7 +81,9 @@ For example, following code enables the file dialog opening in `/home/path/` by 
 ```html
 <input type="file" nwworkingdir="/home/path/">
 ```
+### `oncancel` event
 
+This event is fired after user cancels the file dialog.
 
 ## &lt;iframe&gt;
 
