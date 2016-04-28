@@ -677,9 +677,13 @@ void AmendManifestContentScriptList(base::DictionaryValue* manifest,
     base::ListValue* matches = new base::ListValue();
     matches->Append(new base::StringValue("<all_urls>"));
 
+    base::ListValue* exclude_matches = new base::ListValue();
+    exclude_matches->Append(new base::StringValue("*://*/_generated_background_page.html"));
+
     base::DictionaryValue* content_script = new base::DictionaryValue();
     content_script->Set("js", js_list);
     content_script->Set("matches", matches);
+    content_script->Set("exclude_matches", exclude_matches);
     content_script->SetString("run_at", run_at);
     content_script->SetBoolean("in_main_world", true);
 
