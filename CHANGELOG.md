@@ -1,3 +1,14 @@
+0.14.3 / 04-29-2016
+===================
+- Update Chromium to 50.0.2661.94
+- Update Node.js to 5.11.1
+- Fix: failed to start after reload with package name starting with underline (#4779)
+- Fix: [OSX] crashes when calling native module in inject_js_start script (#4772)
+- Fix: Content of file included via "inject_js_start" is executing twice (#4705)
+- Fix: undefined windows object returned from nw.Window.open in some cases
+- Fix: window menubar click event handler (#4777)
+- [docs] oncancel event of File dialog
+
 0.14.2 / 04-21-2016
 ===================
 - Update Chromium to 50.0.2661.86
