@@ -47,5 +47,19 @@ class NwClipboardClearSyncFunction : public NWSyncExtensionFunction {
   DISALLOW_COPY_AND_ASSIGN(NwClipboardClearSyncFunction);
 };
 
+class NwClipboardReadAvailableTypesFunction : public NWSyncExtensionFunction {
+ public:
+  NwClipboardReadAvailableTypesFunction();
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
+
+ protected:
+  ~NwClipboardReadAvailableTypesFunction() override;
+
+  DECLARE_EXTENSION_FUNCTION("nw.Clipboard.readAvailableTypes", UNKNOWN)
+ private:
+  DISALLOW_COPY_AND_ASSIGN(NwClipboardReadAvailableTypesFunction);
+};
+
+
 } // namespace extensions
 #endif
