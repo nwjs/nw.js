@@ -422,17 +422,14 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
       ->GetWebView()->mainFrame()->mainWorldScriptContext();
   ScriptContext* script_context =
       dispatcher->script_context_set().GetByV8Context(v8_context);
-  if (!script_context || !script_context->extension())
+  if (!script_context)
     return;
-  if (script_context->extension()->GetType() == Manifest::TYPE_NWJS_APP &&
-      script_context->context_type() == Feature::BLESSED_EXTENSION_CONTEXT) {
-    std::vector<v8::Handle<v8::Value> > arguments;
-    v8::Local<v8::Value> window =
-      web_frame->mainWorldScriptContext()->Global();
-    arguments.push_back(v8::Boolean::New(isolate, start));
-    arguments.push_back(window);
-    script_context->module_system()->CallModuleMethod("nw.Window", "onDocumentStartEnd", &arguments);
-  }
+  std::vector<v8::Handle<v8::Value> > arguments;
+  v8::Local<v8::Value> window =
+    web_frame->mainWorldScriptContext()->Global();
+  arguments.push_back(v8::Boolean::New(isolate, start));
+  arguments.push_back(window);
+  script_context->module_system()->CallModuleMethod("nw.Window", "onDocumentStartEnd", &arguments);
 }
 
 void DocumentElementHook(blink::WebLocalFrame* frame,
