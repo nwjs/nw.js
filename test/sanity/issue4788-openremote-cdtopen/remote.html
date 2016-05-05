@@ -1,0 +1,13 @@
+<script>
+document.write('<h1 id="res">Node is ' + (typeof nw === 'undefined' ? 'DISABLED': 'ENABLED') + '</h1>');
+document.write('<h1 id="res2">chrome.app.window is ' + (typeof chrome.app.window === 'undefined' ? 'DISABLED': 'ENABLED') + '</h1>');
+document.write('<h1 id="res3">chrome.runtime is ' + (typeof chrome.runtime === 'undefined' ? 'DISABLED': 'ENABLED') + '</h1>');
+document.write('<h1>chrome objects:</h1>');
+for (var key in chrome) {
+  document.write('<p>' + key + '</p>');
+}
+document.write('<h1>chrome.app objects:</h1>');
+for (var key in chrome.app) {
+  document.write('<p>' + key + '</p>');
+}
+</script>
