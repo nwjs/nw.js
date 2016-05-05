@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- [REQUIRED] Sandbox -->
+  <key>com.apple.security.app-sandbox</key>
+  <true/>
+  <!-- [REQUIRED] IPC and Crash Reporter -->
+  <key>com.apple.security.temporary-exception.mach-lookup.global-name</key>
+  <array>
+    <string>$BUNDLEID.rohitfork</string>
+    <string>$BUNDLEID.crashpad.child_port_handshake</string>
+    <string>com.apple.ReportCrash</string>
+  </array>
+
+  <!-- [OPTIONAL] Network -->
+  <key>com.apple.security.network.client</key>
+  <true/>
+  <key>com.apple.security.network.server</key>
+  <true/>
+  <!-- [OPTIONAL] Read system hotkey defines for event process -->
+  <key>com.apple.security.temporary-exception.shared-preference.read-only</key>
+  <array>
+    <string>com.apple.symbolichotkeys</string>
+  </array>
+  <!-- [OPTIONAL] Get location -->
+  <key>com.apple.security.personal-information.location</key>
+  <true/>
+  <!-- [OPTIONAL] Print -->
+  <key>com.apple.security.print</key>
+  <true/>
+  <!-- [OPTIONAL] File dialogs -->
+  <key>com.apple.security.files.user-selected.read-write</key>
+  <true/>
+  <!-- [OPTIONAL] Bluetooth -->
+  <key>com.apple.security.device.bluetooth</key>
+  <true/>
+  </dict>
+</plist>
