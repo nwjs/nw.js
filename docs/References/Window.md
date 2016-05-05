@@ -458,6 +458,7 @@ Emitted when the window is fully loaded, this event behaves the same with `windo
 * `frame` `{HTMLIFrameElement}` is the iframe object, or `null` if the event is for the window. 
 
 Emitted when the document object in this window or a child iframe is available, after all files are loaded, but before DOM is constructed or any script is run.
+It will not be fired on the new window being created with nw.Window.open(): the callback of that function will be fired at the same point of this event.
 
 See `inject-js-start` in [Manifest-format](Manifest Format.md#inject-js-start).
 
