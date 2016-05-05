@@ -757,9 +757,6 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* erro
     AmendManifestStringList(manifest, manifest_keys::kPermissions, "<all_urls>");
   }
 
-  AmendManifestContentScriptList(manifest, "inject_js_start", "document_start");
-  AmendManifestContentScriptList(manifest, "inject_js_end",   "document_end");
-
   if (manifest->GetString("window.icon", &icon_path)) {
     if (GetPackageImage(package, base::FilePath::FromUTF8Unsafe(icon_path), &g_app_icon)) {
       int width = g_app_icon.Width();
