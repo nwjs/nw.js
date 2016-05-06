@@ -443,6 +443,9 @@
           ['disable_nacl==0 and nwjs_sdk==0', {
             'package_mode': 'nacl',
           }],
+          ['nwjs_mas==1 and OS=="mac"', {
+            'package_mode': 'mas',
+          }],
         ],  # conditions
       },  # variables
       'actions': [
