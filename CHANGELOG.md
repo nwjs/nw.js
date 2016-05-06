@@ -1,7 +1,18 @@
+0.14.4 / 05-06-2016
+===================
+- Update Node.js to 5.11.1
+- Extended `nw.Clipboard` to support multiple data types
+- Fix: nw.Window.open returns undefined in callback when devtools is opened [(#4188)](https://github.com/nwjs/nw.js/issues/4188)
+- Fix: ALT+ENTER causes NW.js to crash when using --in-process-gpu [(#4741)](https://github.com/nwjs/nw.js/issues/4741)
+- Fix: 'document-end' and 'loaded' event not working with remote pages [(#4788)](https://github.com/nwjs/nw.js/issues/4788)
+- Fix: inject_js_start not working with iframes in 0.14.3 [(#4791)](https://github.com/nwjs/nw.js/issues/4791)
+- Fix: nw.Menu.popup works only once [(#4721)](https://github.com/nwjs/nw.js/issues/4721)
+- [docs] document-start event and nw.Window.open()
+
 0.14.3 / 04-29-2016
 ===================
 - Update Chromium to 50.0.2661.94
-- Update Node.js to 5.11.1
+- Update Node.js to 5.11.0
 - Fix: failed to start after reload with package name starting with underline (#4779)
 - Fix: [OSX] crashes when calling native module in inject_js_start script (#4772)
 - Fix: Content of file included via "inject_js_start" is executing twice (#4705)
