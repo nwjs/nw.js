@@ -20,9 +20,5 @@ try:
     result = driver.find_element_by_id('res1').get_attribute('innerHTML')
     print result
     assert("success" in result)
-    driver.find_element(By.XPATH, '//button[text()="setTimeout"]').click()
-    result = driver.find_element_by_id('res2').get_attribute('innerHTML')
-    print result
-    assert("success" in result)
 finally:
     driver.quit()
