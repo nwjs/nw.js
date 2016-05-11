@@ -493,13 +493,6 @@ Emitted when window is restored from minimize, maximize and fullscreen state.
 
 Emitted when window is maximized.
 
-## Event: unmaximize
-
-Emitted when window is restored from maximize state.
-
-!!! note
-    On some platforms window can be resized even when maximized. The `unmaximize` may not be emitted when a maximized window is resized instead of being unmaximized
-
 ## Event: move(x, y)
 
 Emitted after window is moved. The callback is called with 2 arguments: `(x, y)` for the new location of the left / top corner of the window.
