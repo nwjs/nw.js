@@ -1,3 +1,12 @@
+0.14.5 / 05-12-2016
+===================
+- Update Chromium to [50.0.2661.102](http://googlechromereleases.blogspot.com/2016/05/stable-channel-update.html)
+- Fix: process.nextTick() not working after uncaught exception [(#4822)](https://github.com/nwjs/nw.js/issues/4822)
+- Fix: [OSX] Adobe flash support
+- Fix: [OSX] nw.Screen.DesktopCaptureMonitor
+- [docs] remove deprecated 'unmaximize' event
+- [docs] verifying flash plugin
+
 0.14.4 / 05-06-2016
 ===================
 - Update Node.js to 5.11.1
