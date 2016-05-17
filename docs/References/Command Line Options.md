@@ -23,6 +23,10 @@ Specify the data directory for your app, which contains the stored data, caches 
 
 Where `<name-in-manifest>` is the [`name` field in manifest](Manifest Format.md#name).
 
+## `--disable-devtools`
+
+Disable user's access to devtools feature in SDK build.
+
 ## `--disable-raf-throttling`
 
 When it's used, requestAnimationFrame() callback will continue to fire when window is minimized or hidden. It's pretty useful for game developer. When the argument is not used, it behaves in the same way as Chrome browser and has no side effects.
