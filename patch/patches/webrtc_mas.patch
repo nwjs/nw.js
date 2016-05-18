@@ -1,0 +1,98 @@
+diff --git a/modules/video_capture/mac/video_capture_mac.mm b/modules/video_capture/mac/video_capture_mac.mm
+index 08b2aeb..ebbf9a6 100644
+--- modules/video_capture/mac/video_capture_mac.mm
++++ modules/video_capture/mac/video_capture_mac.mm
+@@ -22,6 +22,7 @@
+ #include "webrtc/modules/video_capture/video_capture_impl.h"
+ #include "webrtc/system_wrappers/include/trace.h"
+ 
++#if !defined(NWJS_MAS)
+ // 10.4 support must be decided runtime. We will just decide which framework to
+ // use at compile time "work" classes. One for QTKit, one for QuickTime
+ #if __MAC_OS_X_VERSION_MIN_REQUIRED == __MAC_10_4 // QuickTime version
+@@ -31,6 +32,7 @@
+ #include "webrtc/modules/video_capture/mac/qtkit/video_capture_qtkit.h"
+ #include "webrtc/modules/video_capture/mac/qtkit/video_capture_qtkit_info.h"
+ #endif
++#endif // !defined(NWJS_MAS)
+ 
+ namespace webrtc
+ {
+@@ -113,6 +115,12 @@ bool CheckQTVersion()
+ rtc::scoped_refptr<VideoCaptureModule> VideoCaptureImpl::Create(
+     const int32_t id,
+     const char* deviceUniqueIdUTF8) {
++#if defined(NWJS_MAS)
++    WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, id,
++                     "QTKit is disabled in MAS. Could not create video capture "
++                     "module. Returning NULL");
++    return nullptr;
++#else
+     if (!CheckOSVersion()) {
+         WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, id,
+                      "OS version is too old. Could not create video capture "
+@@ -175,6 +183,7 @@ bool CheckQTVersion()
+                  "framework",deviceUniqueIdUTF8);
+     return newCaptureModule;
+ #endif
++#endif // defined(NWJS_MAS)
+ }
+ 
+ /**************************************************************************
+@@ -186,8 +195,12 @@ bool CheckQTVersion()
+ VideoCaptureModule::DeviceInfo*
+ VideoCaptureImpl::CreateDeviceInfo(const int32_t id)
+ {
+-
+-
++#if defined(NWJS_MAS)
++    WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, id,
++                     "QTKit is disabled in MAS. Could not create video capture "
++                     "module. Returning NULL");
++    return NULL;
++#else
+     if (webrtc::videocapturemodule::CheckOSVersion() == false)
+     {
+         WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, id,
+@@ -240,7 +253,7 @@ bool CheckQTVersion()
+     return newCaptureInfoModule;
+ 
+ #endif
+-
++#endif // defined(NWJS_MAS)
+ }
+ 
+ /**************************************************************************
+diff --git a/modules/video_capture/video_capture.gypi b/modules/video_capture/video_capture.gypi
+index c80f2bf..3c7bafd 100644
+--- modules/video_capture/video_capture.gypi
++++ modules/video_capture/video_capture.gypi
+@@ -90,6 +90,28 @@
+                   ],
+                 },
+               },
++              'conditions': [
++                ['nwjs_mas==1', {
++                  'sources!': [
++                    'mac/qtkit/video_capture_qtkit.h',
++                    'mac/qtkit/video_capture_qtkit.mm',
++                    'mac/qtkit/video_capture_qtkit_info.h',
++                    'mac/qtkit/video_capture_qtkit_info.mm',
++                    'mac/qtkit/video_capture_qtkit_info_objc.h',
++                    'mac/qtkit/video_capture_qtkit_info_objc.mm',
++                    'mac/qtkit/video_capture_qtkit_objc.h',
++                    'mac/qtkit/video_capture_qtkit_objc.mm',
++                    'mac/qtkit/video_capture_qtkit_utility.h',
++                  ],
++                  'link_settings': {
++                    'xcode_settings': {
++                      'OTHER_LDFLAGS!': [
++                        '-framework QTKit',
++                      ],
++                    },
++                  },
++                }]
++              ]
+             }],  # mac
+             ['OS=="win"', {
+               'dependencies': [
