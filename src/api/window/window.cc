@@ -327,7 +327,7 @@ void Window::CallSync(const std::string& method,
     bool transparent = shell_->window()->IsTransparent();
     result->AppendBoolean(transparent);
   } else if (method == "IsDevToolsOpen") {
-    result->AppendBoolean(shell_->devToolsOpen());
+    result->AppendBoolean(shell_->IsDevToolsOpen());
   } else if (method == "ShowDevTools") {
     std::string jail_id;
     bool headless = false;
