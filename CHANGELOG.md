@@ -18,6 +18,13 @@
 - Fix: nw.Menu.popup works only once [(#4721)](https://github.com/nwjs/nw.js/issues/4721)
 - [docs] document-start event and nw.Window.open()
 
+0.15.0-beta2 / 05-03-2016
+=========================
+- Update Chromium to 51.0.2704.29
+- Extended `nw.Clipboard` to support multiple data types
+- Fix: nw.Window.open returns undefined in callback when devtools is opened [(#4188)](https://github.com/nwjs/nw.js/issues/4188)
+- ALT+ENTER causes NW.js to crash when using --in-process-gpu [(#4741)](https://github.com/nwjs/nw.js/issues/4741)
+
 0.14.3 / 04-29-2016
 ===================
 - Update Chromium to 50.0.2661.94
