@@ -12,10 +12,11 @@ var EventEmitter = nw.require('events').EventEmitter;
 var menuItems = { objs : {}, clickEvent: {} };
 menuItems.clickEvent = new Event("NWObjectclick");
 menuItems.clickEvent.addListener(function(id) {
-  if (!menuItems.objs[id])
+  var obj = menuItems.objs[id];
+  if (!obj)
     return;
-  menuItems.objs[id].click();
-  menuItems.objs[id].emit('click');
+  try{obj.click && obj.click()}catch(e){console.error(e)}
+  try{obj.emit('click')}catch(e){console.error(e)}
 });
 
 function MenuItem(option) {
