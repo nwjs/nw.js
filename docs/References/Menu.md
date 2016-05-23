@@ -52,7 +52,7 @@ nw.Window.get().menu = menu;
 
 See [Customize Menubar](../For Users/Advanced/Customize Menubar.md) for detailed usages.
 
-!!! warning "Do NOT Use Menus in the Page Can Be Navigated"
+!!! warning "Using Menu With Page Navigation"
   Menus created in the page that can be navigated will not be functional after a reload or navigation. The reason is that the menus and even the web page will be garbage collected by JS engine after navigation to prevent memory leak. So it's recommended to use menus in **background page**, which is existed for the life cycle of your app. See [`bg-script`](Manifest Format.md#bg-script) and [`main`](Manifest Format.md#main) for how to execute scripts in the background page.
 
 ## new Menu([option])
