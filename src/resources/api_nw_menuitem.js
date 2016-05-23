@@ -8,29 +8,15 @@ var messagingNatives = requireNative('messaging_natives');
 var Event = require('event_bindings').Event;
 var util = nw.require('util');
 var EventEmitter = nw.require('events').EventEmitter;
-var runtimeNatives = requireNative('runtime');
 
-var GetExtensionViews = runtimeNatives.GetExtensionViews;
-
-var bgPage = GetExtensionViews(-1, 'BACKGROUND')[0];
-if (typeof bgPage === 'undefined') //new instance window
-  bgPage = window;
-
-if (bgPage === window) {
-
-if (bgPage.__nw_menuitems) {
-  var menuItems = bgPage.__nw_menuitems;
-} else {
-  var menuItems = bgPage.__nw_menuitems = { objs : {}, clickEvent: {} };
-  menuItems.clickEvent = new Event("NWObjectclick");
-  menuItems.clickEvent.addListener(function(id) {
-    var item = menuItems.objs[id];
-    if (!item)
-      return;
-    try{item.click()}catch(e){console.error(e)};
-    try{item.emit('click')}catch(e){console.error(e)};
-  });
-}
+var menuItems = { objs : {}, clickEvent: {} };
+menuItems.clickEvent = new Event("NWObjectclick");
+menuItems.clickEvent.addListener(function(id) {
+  if (!menuItems.objs[id])
+    return;
+  menuItems.objs[id].click();
+  menuItems.objs[id].emit('click');
+});
 
 function MenuItem(option) {
   if (!(this instanceof MenuItem)) {
@@ -216,7 +202,3 @@ MenuItem.prototype.__defineSetter__('submenu', function(val) {
 });
 
 exports.binding = MenuItem;
-
-} else {
-exports.binding = bgPage.nw.MenuItem;
-}
