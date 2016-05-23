@@ -30,7 +30,7 @@ for (var i = 0; i < menu.items.length; ++i) {
 }
 ```
 
-To create a menubar, usually you have to create a 2-level menu and assign it to `window.menu`. Here is the example of creating a menubar:
+To create a menubar, usually you have to create a 2-level menu and assign it to `win.menu`. Here is the example of creating a menubar:
 ```javascript
 // Create an empty menubar
 var menu = new nw.Menu({type: 'menubar'});
@@ -51,6 +51,9 @@ nw.Window.get().menu = menu;
 ```
 
 See [Customize Menubar](../For Users/Advanced/Customize Menubar.md) for detailed usages.
+
+!!! warning "Do NOT Use Menus in the Page Can Be Navigated"
+  Menus created in the page that can be navigated will not be functional after a reload or navigation. The reason is that the menus and even the web page will be garbage collected by JS engine after navigation to prevent memory leak. So it's recommended to use menus in **background page**, which is existed for the life cycle of your app. See [`bg-script`](Manifest Format.md#bg-script) and [`main`](Manifest Format.md#main) for how to execute scripts in the background page.
 
 ## new Menu([option])
 

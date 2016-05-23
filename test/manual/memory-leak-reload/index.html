@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>memory leak test</title>
+</head>
+<body>
+  <ol>
+    <li>Create a Menu by clicking <button onclick="createMenu()">this button</button></li>
+    <li>Open Profile tab on devtools and take a heap snapshot, then filter with "Containment". You will see 2 Windows (bg page + current window).</li>
+    <li>Reload the page with <button onclick="reloadPage()">location.reload()</button> more than 1 times</li>
+    <li>Take a heap snapshot again.</li>
+  </ol>
+  <h4>Expected: You should see 2 Windows as well.</h4>
+  <script>
+  function createMenu() {
+    var menu = new nw.Menu();
+    menu.append(new nw.MenuItem({label: 'Item A'}));
+  }
+  function reloadPage() {
+    location.reload();
+  }
+  </script>
+</body>
+</html>
