@@ -55,7 +55,7 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* erro
 void DocumentElementHook(blink::WebLocalFrame* frame,
                          const extensions::Extension* extension,
                          const GURL& effective_document_url);
-void DocumentFinishHook(blink::WebFrame* frame,
+void DocumentFinishHook(blink::WebLocalFrame* frame,
                          const extensions::Extension* extension,
                          const GURL& effective_document_url);
  void DocumentHook2(bool start, content::RenderFrame* frame, extensions::Dispatcher* dispatcher);
