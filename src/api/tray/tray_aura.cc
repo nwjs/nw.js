@@ -33,7 +33,7 @@
 #include "content/nw/src/nw_base.h"
 #include "content/nw/src/nw_content.h"
 #include "content/nw/src/nw_package.h"
-#include "ui/gfx/screen.h"
+#include "ui/display/screen.h"
 #include "ui/gfx/image/image.h"
 
 namespace nw {
@@ -53,7 +53,7 @@ class TrayObserver : public StatusIconObserver {
     base::ListValue args;
     base::DictionaryValue* data = new base::DictionaryValue;
     gfx::Point cursor_pos(
-      gfx::Screen::GetScreen()->GetCursorScreenPoint());
+      display::Screen::GetScreen()->GetCursorScreenPoint());
     data->SetInteger("x", cursor_pos.x());
     data->SetInteger("y", cursor_pos.y());
     args.Append(data);

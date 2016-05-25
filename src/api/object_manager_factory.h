@@ -5,7 +5,6 @@
 #ifndef NWJS_OBJECT_MANAGER_FACTORY_H_
 #define NWJS_OBJECT_MANAGER_FACTORY_H_
 
-#include "base/memory/scoped_ptr.h"
 #include "base/memory/singleton.h"
 #include "components/keyed_service/content/browser_context_keyed_service_factory.h"
 

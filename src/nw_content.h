@@ -6,7 +6,7 @@
 #endif
 
 #include "nw_package.h"
-#include "base/memory/scoped_ptr.h"
+#include "base/memory/ptr_util.h"
 #include "third_party/WebKit/public/web/WebNavigationPolicy.h"
 #include "third_party/WebKit/public/platform/WebPageVisibilityState.h"
 
@@ -73,7 +73,7 @@ void DocumentFinishHook(blink::WebLocalFrame* frame,
                        std::string* nw_inject_js_doc_start,
                        std::string* nw_inject_js_doc_end);
  bool GetImage(Package* package, const FilePath& icon_path, gfx::Image* image);
- scoped_ptr<base::DictionaryValue> MergeManifest();
+ std::unique_ptr<base::DictionaryValue> MergeManifest();
  bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window);
  bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_line,
                                                const base::FilePath& current_directory);

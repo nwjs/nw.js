@@ -8,7 +8,6 @@
 #include "base/logging.h"
 #include "base/process/memory.h"
 #include "base/strings/string_util.h"
-#include "base/memory/scoped_ptr.h"
 #include "base/stl_util.h"
 #include "crypto/secure_hash.h"
 #include "crypto/sha2.h"
@@ -83,7 +82,7 @@ class MyComputedHashes {
    private:
     // Each element of this list contains the path and block hashes for one
     // file.
-    scoped_ptr<base::ListValue> file_list_;
+    std::unique_ptr<base::ListValue> file_list_;
   };
 
   // Computes the SHA256 hash of each |block_size| chunk in |contents|, placing
@@ -144,7 +143,7 @@ void MyComputedHashes::ComputeHashesForContent(const std::string& contents,
     const char* block_start = contents.data() + offset;
     DCHECK(offset <= contents.size());
     size_t bytes_to_read = std::min(contents.size() - offset, block_size);
-    scoped_ptr<crypto::SecureHash> hash(
+    std::unique_ptr<crypto::SecureHash> hash(
         crypto::SecureHash::Create(crypto::SecureHash::SHA256));
     hash->Update(block_start, bytes_to_read);
 

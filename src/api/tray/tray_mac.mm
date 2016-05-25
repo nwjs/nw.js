@@ -22,7 +22,7 @@
 
 #include "base/values.h"
 #import <Cocoa/Cocoa.h>
-#include "ui/gfx/screen.h"
+#include "ui/display/screen.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/object_manager.h"
 

@@ -10,7 +10,6 @@
 #include "base/callback.h"
 #include "base/compiler_specific.h"
 #include "base/memory/ref_counted.h"
-#include "base/memory/scoped_ptr.h"
 #include "net/base/completion_callback.h"
 #include "net/cert/cert_trust_anchor_provider.h"
 #include "net/cert/cert_verifier.h"
@@ -53,7 +52,7 @@ class PolicyCertVerifier : public net::CertVerifier,
              net::CRLSet* crl_set,
              net::CertVerifyResult* verify_result,
              const net::CompletionCallback& callback,
-             scoped_ptr<Request>* out_req,
+             std::unique_ptr<Request>* out_req,
              const net::BoundNetLog& net_log) override;
 
   // CertTrustAnchorProvider:
@@ -61,7 +60,7 @@ class PolicyCertVerifier : public net::CertVerifier,
 
  private:
   net::CertificateList trust_anchors_;
-  scoped_ptr<CertVerifier> delegate_;
+  std::unique_ptr<CertVerifier> delegate_;
 
   DISALLOW_COPY_AND_ASSIGN(PolicyCertVerifier);
 };

@@ -22,7 +22,7 @@
 #define CONTENT_NW_SRC_NW_PACKAGE_H
 
 #include "base/files/file_path.h"
-#include "base/memory/scoped_ptr.h"
+#include "base/memory/ptr_util.h"
 #include "base/files/scoped_temp_dir.h"
 
 #include "content/nw/src/nw_export.h"
@@ -105,7 +105,7 @@ class NW_EXPORT Package {
   bool self_extract_;
 
   // The parsed package.json.
-  scoped_ptr<base::DictionaryValue> root_;
+  std::unique_ptr<base::DictionaryValue> root_;
 
   // The origin JSON string package.json.
   std::string package_string_;
