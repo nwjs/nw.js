@@ -4,8 +4,9 @@
 #include "base/values.h"
 #include "content/nw/src/api/nw_screen.h"
 #include "extensions/browser/extensions_browser_client.h"
-#include "ui/gfx/display_observer.h"
-#include "ui/gfx/screen.h"
+#include "ui/display/display_observer.h"
+#include "ui/display/display.h"
+#include "ui/display/screen.h"
 
 // For desktop capture APIs
 #include "base/base64.h"
@@ -49,12 +50,12 @@ namespace extensions {
     void OnSourceThumbnailChanged(DesktopMediaList* list, int index) override;
 
     bool started_;
-    scoped_ptr<DesktopMediaList> media_list_;
+    std::unique_ptr<DesktopMediaList> media_list_;
 
     DISALLOW_COPY_AND_ASSIGN(NwDesktopCaptureMonitor);
   };
 
-  class NwScreenDisplayObserver: public gfx::DisplayObserver {
+  class NwScreenDisplayObserver: public display::DisplayObserver {
   public:
     static NwScreenDisplayObserver* GetInstance();
     NwScreenDisplayObserver();
@@ -62,18 +63,18 @@ namespace extensions {
   private:
     ~NwScreenDisplayObserver() override;
     // gfx::DisplayObserver implementation.
-    void OnDisplayMetricsChanged(const gfx::Display& display, uint32_t changed_metrics) override;
-    void OnDisplayAdded(const gfx::Display& new_display) override;
-    void OnDisplayRemoved(const gfx::Display& old_display) override;
+    void OnDisplayMetricsChanged(const display::Display& display, uint32_t changed_metrics) override;
+    void OnDisplayAdded(const display::Display& new_display) override;
+    void OnDisplayRemoved(const display::Display& old_display) override;
 
     DISALLOW_COPY_AND_ASSIGN(NwScreenDisplayObserver);
   };
 
   namespace {
 
-    // Helper function to convert gfx::Display to nwapi::nw__screen::Display
-    scoped_ptr<nwapi::nw__screen::Display> ConvertGfxDisplay(const gfx::Display& gfx_display) {
-      scoped_ptr<nwapi::nw__screen::Display> displayResult(new nwapi::nw__screen::Display);
+    // Helper function to convert display::Display to nwapi::nw__screen::Display
+    std::unique_ptr<nwapi::nw__screen::Display> ConvertGfxDisplay(const display::Display& gfx_display) {
+      std::unique_ptr<nwapi::nw__screen::Display> displayResult(new nwapi::nw__screen::Display);
 
       displayResult->id = gfx_display.id();
       displayResult->scale_factor = gfx_display.device_scale_factor();
@@ -101,7 +102,7 @@ namespace extensions {
     void DispatchEvent(
         events::HistogramValue histogram_value,
         const std::string& event_name,
-        scoped_ptr<base::ListValue> args) {
+        std::unique_ptr<base::ListValue> args) {
       DCHECK_CURRENTLY_ON(BrowserThread::UI);
       ExtensionsBrowserClient::Get()->BroadcastEventToRenderers(
                                                                 histogram_value, event_name, std::move(args));
@@ -122,23 +123,23 @@ namespace extensions {
   }
 
   NwScreenDisplayObserver::NwScreenDisplayObserver() {
-    gfx::Screen* screen = gfx::Screen::GetScreen();
+    display::Screen* screen = display::Screen::GetScreen();
     if (screen) {
       screen->AddObserver(this);
     }
   }
 
   NwScreenDisplayObserver::~NwScreenDisplayObserver() {
-    gfx::Screen* screen = gfx::Screen::GetScreen();
+    display::Screen* screen = display::Screen::GetScreen();
     if (screen) {
       screen->RemoveObserver(this);
     }
   }
 
   // Called when the |display|'s bound has changed.
-  void NwScreenDisplayObserver::OnDisplayMetricsChanged(const gfx::Display& display,
+  void NwScreenDisplayObserver::OnDisplayMetricsChanged(const display::Display& display,
     uint32_t changed_metrics) {
-    scoped_ptr<base::ListValue> args = 
+    std::unique_ptr<base::ListValue> args = 
       nwapi::nw__screen::OnDisplayBoundsChanged::Create(*ConvertGfxDisplay(display),
                                                         changed_metrics);
     DispatchEvent(
@@ -148,8 +149,8 @@ namespace extensions {
   }
 
   // Called when |new_display| has been added.
-  void NwScreenDisplayObserver::OnDisplayAdded(const gfx::Display& new_display) {
-    scoped_ptr<base::ListValue> args =
+  void NwScreenDisplayObserver::OnDisplayAdded(const display::Display& new_display) {
+    std::unique_ptr<base::ListValue> args =
       nwapi::nw__screen::OnDisplayAdded::Create(*ConvertGfxDisplay(new_display));
     DispatchEvent(
       events::HistogramValue::UNKNOWN,
@@ -158,8 +159,8 @@ namespace extensions {
   }
 
   // Called when |old_display| has been removed.
-  void NwScreenDisplayObserver::OnDisplayRemoved(const gfx::Display& old_display) {
-    scoped_ptr<base::ListValue> args =
+  void NwScreenDisplayObserver::OnDisplayRemoved(const display::Display& old_display) {
+    std::unique_ptr<base::ListValue> args =
       nwapi::nw__screen::OnDisplayRemoved::Create(*ConvertGfxDisplay(old_display));
     DispatchEvent(
       events::HistogramValue::UNKNOWN,
@@ -170,7 +171,7 @@ namespace extensions {
   NwScreenGetScreensFunction::NwScreenGetScreensFunction() {}
 
   bool NwScreenGetScreensFunction::RunNWSync(base::ListValue* response, std::string* error) {
-    const std::vector<gfx::Display>& displays = gfx::Screen::GetScreen()->GetAllDisplays();
+    const std::vector<display::Display>& displays = display::Screen::GetScreen()->GetAllDisplays();
 
     for (size_t i=0; i<displays.size(); i++) {
       response->Append(ConvertGfxDisplay(displays[i])->ToValue());
@@ -204,8 +205,8 @@ namespace extensions {
 
     webrtc::DesktopCaptureOptions options = webrtc::DesktopCaptureOptions::CreateDefault();
     options.set_disable_effects(false);
-    scoped_ptr<webrtc::ScreenCapturer> screenCapturer(screens ? webrtc::ScreenCapturer::Create(options) : nullptr);
-    scoped_ptr<webrtc::WindowCapturer> windowCapturer(windows ? webrtc::WindowCapturer::Create(options) : nullptr);
+    std::unique_ptr<webrtc::ScreenCapturer> screenCapturer(screens ? webrtc::ScreenCapturer::Create(options) : nullptr);
+    std::unique_ptr<webrtc::WindowCapturer> windowCapturer(windows ? webrtc::WindowCapturer::Create(options) : nullptr);
 
     media_list_.reset(new NativeDesktopMediaList(std::move(screenCapturer), std::move(windowCapturer)));
 
@@ -260,7 +261,7 @@ void NwDesktopCaptureMonitor::OnSourceAdded(DesktopMediaList* list, int index) {
       break;
     }
 
-    scoped_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceAdded::Create(
+    std::unique_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceAdded::Create(
       src.id.ToString(),
       base::UTF16ToUTF8(src.name),
       index,
@@ -274,7 +275,7 @@ void NwDesktopCaptureMonitor::OnSourceAdded(DesktopMediaList* list, int index) {
   }
 
 void NwDesktopCaptureMonitor::OnSourceRemoved(DesktopMediaList* list, int index) {
-    scoped_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceRemoved::Create(index);
+    std::unique_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceRemoved::Create(index);
     DispatchEvent(
       events::HistogramValue::UNKNOWN, 
       nwapi::nw__screen::OnSourceRemoved::kEventName,
@@ -283,7 +284,7 @@ void NwDesktopCaptureMonitor::OnSourceRemoved(DesktopMediaList* list, int index)
 
 void NwDesktopCaptureMonitor::OnSourceMoved(DesktopMediaList* list, int old_index, int new_index) {
     DesktopMediaList::Source src = media_list_->GetSource(new_index);
-    scoped_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceOrderChanged::Create(
+    std::unique_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceOrderChanged::Create(
       src.id.ToString(),
       new_index,
       old_index);
@@ -295,7 +296,7 @@ void NwDesktopCaptureMonitor::OnSourceMoved(DesktopMediaList* list, int old_inde
 
 void NwDesktopCaptureMonitor::OnSourceNameChanged(DesktopMediaList* list, int index) {
     DesktopMediaList::Source src = media_list_->GetSource(index);
-    scoped_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceNameChanged::Create(
+    std::unique_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceNameChanged::Create(
       src.id.ToString(),
       base::UTF16ToUTF8(src.name));
     DispatchEvent(
@@ -317,7 +318,7 @@ void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(DesktopMediaList* list, i
       base::Base64Encode(raw_str, &base64);
     }
 
-    scoped_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceThumbnailChanged::Create(
+    std::unique_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceThumbnailChanged::Create(
       src.id.ToString(),
       base64);
     DispatchEvent(

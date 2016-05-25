@@ -36,7 +36,7 @@ NwClipboardGetSyncFunction::~NwClipboardGetSyncFunction() {
 }
 
 bool NwClipboardGetSyncFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  scoped_ptr<GetSync::Params> params(GetSync::Params::Create(*args_));
+  std::unique_ptr<GetSync::Params> params(GetSync::Params::Create(*args_));
   ui::Clipboard* clipboard = ui::Clipboard::GetForCurrentThread();
 
   if (params->type == TYPE_TEXT) {
@@ -118,7 +118,7 @@ NwClipboardSetSyncFunction::~NwClipboardSetSyncFunction() {
 
 
 bool NwClipboardSetSyncFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  scoped_ptr<SetSync::Params> params(SetSync::Params::Create(*args_));
+  std::unique_ptr<SetSync::Params> params(SetSync::Params::Create(*args_));
   ui::ScopedClipboardWriter scw(ui::CLIPBOARD_TYPE_COPY_PASTE);
 
   if (params->type == TYPE_TEXT) {
@@ -145,18 +145,17 @@ bool NwClipboardSetSyncFunction::RunNWSync(base::ListValue* response, std::strin
       return false;
     }
 
-    scoped_ptr<SkBitmap> bitmap(new SkBitmap());
+    std::unique_ptr<SkBitmap> bitmap(new SkBitmap());
     if (params->type == TYPE_PNG &&
       !gfx::PNGCodec::Decode(reinterpret_cast<const unsigned char*>(decoded_str.c_str()), decoded_str.size(), bitmap.get())) {
       *error = "Failed to decode as PNG";
       return false;
     } else if (params->type == TYPE_JPEG) {
-      SkBitmap* tmp_bitmap = gfx::JPEGCodec::Decode(reinterpret_cast<const unsigned char*>(decoded_str.c_str()), decoded_str.size());
-      if (tmp_bitmap == NULL) {
+      bitmap = gfx::JPEGCodec::Decode(reinterpret_cast<const unsigned char*>(decoded_str.c_str()), decoded_str.size());
+      if (!bitmap) {
         *error = "Failed to decode as JPEG";
         return false;
       }
-      bitmap.reset(tmp_bitmap);
     }
 
     scw.WriteImage(*bitmap);
