@@ -1,6 +1,5 @@
 #include "nw_shortcut_api.h"
 #include "base/lazy_instance.h"
-#include "base/memory/scoped_ptr.h"
 #include "base/values.h"
 #include "chrome/browser/extensions/global_shortcut_listener.h"
 #include "content/nw/src/api/nw_shortcut.h"
@@ -27,7 +26,7 @@ public:
 
 namespace {
 
-  scoped_ptr<ui::Accelerator> dictionaryToUIAccelerator(const base::DictionaryValue *acceleratorDict) {
+  std::unique_ptr<ui::Accelerator> dictionaryToUIAccelerator(const base::DictionaryValue *acceleratorDict) {
     nwapi::nw__shortcut::Accelerator accelerator;
     nwapi::nw__shortcut::Accelerator::Populate(*acceleratorDict, &accelerator);
 
@@ -50,13 +49,13 @@ namespace {
       modifiers |= ui::EF_SHIFT_DOWN;
     }
 
-    scoped_ptr<ui::Accelerator> uiAccelerator(new ui::Accelerator(keyboardCode, modifiers));
+    std::unique_ptr<ui::Accelerator> uiAccelerator(new ui::Accelerator(keyboardCode, modifiers));
 
     return uiAccelerator;
   }
 
-  scoped_ptr<nwapi::nw__shortcut::Accelerator> UIAcceleratorToAccelerator(const ui::Accelerator &uiAccelerator) {
-    scoped_ptr<nwapi::nw__shortcut::Accelerator> accelerator(new Accelerator());
+  std::unique_ptr<nwapi::nw__shortcut::Accelerator> UIAcceleratorToAccelerator(const ui::Accelerator &uiAccelerator) {
+    std::unique_ptr<nwapi::nw__shortcut::Accelerator> accelerator(new Accelerator());
     ui::DomCode domCode = ui::UsLayoutKeyboardCodeToDomCode(uiAccelerator.key_code());
     accelerator->key = ui::KeycodeConverter::DomCodeToCodeString(domCode);
     int modifiers = uiAccelerator.modifiers();
@@ -78,7 +77,7 @@ namespace {
   void DispatchEvent(
       events::HistogramValue histogram_value,
       const std::string& event_name,
-      scoped_ptr<base::ListValue> args) {
+      std::unique_ptr<base::ListValue> args) {
     DCHECK_CURRENTLY_ON(BrowserThread::UI);
     ExtensionsBrowserClient::Get()->BroadcastEventToRenderers(
                                                               histogram_value, event_name, std::move(args));
@@ -95,8 +94,8 @@ NWShortcutObserver* NWShortcutObserver::GetInstance() {
 }
 
 void NWShortcutObserver::OnKeyPressed (const ui::Accelerator& uiAccelerator) {
-  scoped_ptr<nwapi::nw__shortcut::Accelerator> accelerator = UIAcceleratorToAccelerator(uiAccelerator);
-  scoped_ptr<base::ListValue> args = 
+  std::unique_ptr<nwapi::nw__shortcut::Accelerator> accelerator = UIAcceleratorToAccelerator(uiAccelerator);
+  std::unique_ptr<base::ListValue> args = 
     nwapi::nw__shortcut::OnKeyPressed::Create(*accelerator);
   DispatchEvent(
     events::HistogramValue::UNKNOWN, 
@@ -107,7 +106,7 @@ void NWShortcutObserver::OnKeyPressed (const ui::Accelerator& uiAccelerator) {
 bool NwShortcutRegisterAcceleratorFunction::RunNWSync(base::ListValue* response, std::string* error) {
   const base::DictionaryValue *acceleratorDict = nullptr;
   EXTENSION_FUNCTION_VALIDATE(args_->GetDictionary(0, &acceleratorDict));
-  scoped_ptr<ui::Accelerator> uiAccelerator = dictionaryToUIAccelerator(acceleratorDict);
+  std::unique_ptr<ui::Accelerator> uiAccelerator = dictionaryToUIAccelerator(acceleratorDict);
 
   if (!GlobalShortcutListener::GetInstance()->RegisterAccelerator(*uiAccelerator, NWShortcutObserver::GetInstance())) {
     response->AppendBoolean(false);
@@ -121,7 +120,7 @@ bool NwShortcutRegisterAcceleratorFunction::RunNWSync(base::ListValue* response,
 bool NwShortcutUnregisterAcceleratorFunction::RunNWSync(base::ListValue* response, std::string* error) {
   const base::DictionaryValue *acceleratorDict = nullptr;
   EXTENSION_FUNCTION_VALIDATE(args_->GetDictionary(0, &acceleratorDict));
-  scoped_ptr<ui::Accelerator> uiAccelerator = dictionaryToUIAccelerator(acceleratorDict);
+  std::unique_ptr<ui::Accelerator> uiAccelerator = dictionaryToUIAccelerator(acceleratorDict);
 
   GlobalShortcutListener::GetInstance()->UnregisterAccelerator(*uiAccelerator, NWShortcutObserver::GetInstance());
   response->AppendBoolean(true);

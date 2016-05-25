@@ -20,9 +20,9 @@
 #include "extensions/common/constants.h"
 #include "ui/gfx/codec/jpeg_codec.h"
 #include "ui/gfx/codec/png_codec.h"
-#include "ui/gfx/display.h"
+#include "ui/display/display.h"
 #include "ui/gfx/geometry/size_conversions.h"
-#include "ui/gfx/screen.h"
+#include "ui/display/screen.h"
 
 #include "content/nw/src/api/nw_current_window_internal.h"
 
@@ -36,7 +36,7 @@
 #include "ui/gfx/icon_util.h"
 #include "ui/gfx/font_list.h"
 #include "ui/gfx/platform_font.h"
-#include "ui/gfx/win/dpi.h"
+#include "ui/display/win/dpi.h"
 #include "ui/views/win/hwnd_util.h"
 #endif
 
@@ -71,7 +71,7 @@ static void SetDeskopEnvironment() {
   if (runOnce) return;
   runOnce = true;
 
-  scoped_ptr<base::Environment> env(base::Environment::Create());
+  std::unique_ptr<base::Environment> env(base::Environment::Create());
   std::string name;
   //if (env->GetVar("CHROME_DESKTOP", &name) && !name.empty())
   //  return;
@@ -119,7 +119,7 @@ void NwCurrentWindowInternalCloseFunction::DoClose(AppWindow* window) {
 }
 
 bool NwCurrentWindowInternalCloseFunction::RunAsync() {
-  scoped_ptr<nwapi::nw_current_window_internal::Close::Params> params(
+  std::unique_ptr<nwapi::nw_current_window_internal::Close::Params> params(
       nwapi::nw_current_window_internal::Close::Params::Create(*args_));
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
@@ -178,7 +178,7 @@ NwCurrentWindowInternalCapturePageInternalFunction::~NwCurrentWindowInternalCapt
 bool NwCurrentWindowInternalCapturePageInternalFunction::RunAsync() {
   EXTENSION_FUNCTION_VALIDATE(args_);
 
-  scoped_ptr<ImageDetails> image_details;
+  std::unique_ptr<ImageDetails> image_details;
   if (args_->GetSize() > 0) {
     base::Value* spec = NULL;
     EXTENSION_FUNCTION_VALIDATE(args_->Get(0, &spec) && spec);
@@ -220,7 +220,7 @@ bool NwCurrentWindowInternalCapturePageInternalFunction::RunAsync() {
   const gfx::Size view_size = view->GetViewBounds().size();
   gfx::Size bitmap_size = view_size;
   const gfx::NativeView native_view = view->GetNativeView();
-  gfx::Screen* const screen = gfx::Screen::GetScreen();
+  display::Screen* const screen = display::Screen::GetScreen();
   const float scale =
       screen->GetDisplayNearestWindow(native_view).device_scale_factor();
   if (scale > 1.0f)
@@ -433,7 +433,7 @@ bool NwCurrentWindowInternalSetBadgeLabelFunction::RunAsync() {
     LOG(ERROR) << error_;
     return false;
   }
-  const float scale = gfx::GetDPIScale();
+  const float scale = display::win::GetDPIScale();
   if (badge.size())
     icon = createBadgeIcon(hWnd, base::UTF8ToUTF16(badge).c_str(), 16 * scale, 16 * scale);
 

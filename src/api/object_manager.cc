@@ -227,9 +227,9 @@ void ObjectManager::SendEvent(Base* object,
   EventRouter* event_router = EventRouter::Get(browser_context_);
   if (!event_router)
     return;
-  scoped_ptr<base::ListValue> arguments(args.DeepCopy());
+  std::unique_ptr<base::ListValue> arguments(args.DeepCopy());
   arguments->Insert(0, new base::FundamentalValue(object->id()));
-  scoped_ptr<Event> event(new Event(extensions::events::UNKNOWN, "NWObject" + event_name, std::move(arguments)));
+  std::unique_ptr<Event> event(new Event(extensions::events::UNKNOWN, "NWObject" + event_name, std::move(arguments)));
   event->restrict_to_browser_context = browser_context_;
   event->user_gesture = EventRouter::USER_GESTURE_ENABLED;
   event_router->DispatchEventToExtension(object->extension_id_, std::move(event));

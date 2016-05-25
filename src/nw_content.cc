@@ -252,7 +252,7 @@ bool GetPackageImage(nw::Package* package,
   // Decode the bitmap using WebKit's image decoder.
   const unsigned char* data =
       reinterpret_cast<const unsigned char*>(file_contents.data());
-  scoped_ptr<SkBitmap> decoded(new SkBitmap());
+  std::unique_ptr<SkBitmap> decoded(new SkBitmap());
   // Note: This class only decodes bitmaps from extension resources. Chrome
   // doesn't (for security reasons) directly load extension resources provided
   // by the extension author, but instead decodes them in a separate
@@ -875,9 +875,9 @@ void willHandleNavigationPolicy(content::RenderView* rv,
     }
   }
 
-  scoped_ptr<content::V8ValueConverter> converter(content::V8ValueConverter::create());
+  std::unique_ptr<content::V8ValueConverter> converter(content::V8ValueConverter::create());
   v8::Local<v8::Value> manifest_v8 = policy_obj->Get(v8_str("manifest"));
-  scoped_ptr<base::Value> manifest_val(converter->FromV8Value(manifest_v8, v8_context));
+  std::unique_ptr<base::Value> manifest_val(converter->FromV8Value(manifest_v8, v8_context));
   std::string manifest_str;
   if (manifest_val.get() && base::JSONWriter::Write(*manifest_val, &manifest_str)) {
     *manifest = blink::WebString::fromUTF8(manifest_str.c_str());
@@ -911,8 +911,8 @@ void CalcNewWinParams(content::WebContents* new_contents, void* params,
                       std::string* nw_inject_js_doc_start,
                       std::string* nw_inject_js_doc_end) {
   extensions::AppWindow::CreateParams ret;
-  scoped_ptr<base::Value> val;
-  scoped_ptr<base::DictionaryValue> manifest = MergeManifest();
+  std::unique_ptr<base::Value> val;
+  std::unique_ptr<base::DictionaryValue> manifest = MergeManifest();
 
   bool resizable;
   if (manifest->GetBoolean(switches::kmResizable, &resizable)) {
@@ -976,7 +976,7 @@ bool GetImage(Package* package, const FilePath& icon_path, gfx::Image* image) {
   // Decode the bitmap using WebKit's image decoder.
   const unsigned char* data =
       reinterpret_cast<const unsigned char*>(file_contents.data());
-  scoped_ptr<SkBitmap> decoded(new SkBitmap());
+  std::unique_ptr<SkBitmap> decoded(new SkBitmap());
   // Note: This class only decodes bitmaps from extension resources. Chrome
   // doesn't (for security reasons) directly load extension resources provided
   // by the extension author, but instead decodes them in a separate
@@ -991,7 +991,7 @@ bool GetImage(Package* package, const FilePath& icon_path, gfx::Image* image) {
   return true;
 }
 
-scoped_ptr<base::DictionaryValue> MergeManifest() {
+std::unique_ptr<base::DictionaryValue> MergeManifest() {
   // Following attributes will not be inherited from package.json 
   // Keep this list consistent with documents in `Manifest Format.md`
   static std::vector<const char*> non_inherited_attrs = {
@@ -1001,11 +1001,11 @@ scoped_ptr<base::DictionaryValue> MergeManifest() {
                                                     switches::kmResizable,
                                                     switches::kmShow
                                                     };
-  scoped_ptr<base::DictionaryValue> manifest;
+  std::unique_ptr<base::DictionaryValue> manifest;
 
   // retrieve `window` manifest set by `new-win-policy`
   std::string manifest_str = base::UTF16ToUTF8(nw::GetCurrentNewWinManifest());
-  scoped_ptr<base::Value> val = base::JSONReader().ReadToValue(manifest_str);
+  std::unique_ptr<base::Value> val = base::JSONReader().ReadToValue(manifest_str);
   if (val && val->IsType(base::Value::Type::TYPE_DICTIONARY)) {
     manifest.reset(static_cast<base::DictionaryValue*>(val.release()));
   } else {
@@ -1017,7 +1017,7 @@ scoped_ptr<base::DictionaryValue> MergeManifest() {
   if (pkg) {
     base::DictionaryValue* manifest_window = pkg->window();
     if (manifest_window) {
-      scoped_ptr<base::DictionaryValue> manifest_window_cloned = manifest_window->DeepCopyWithoutEmptyChildren();
+      std::unique_ptr<base::DictionaryValue> manifest_window_cloned = manifest_window->DeepCopyWithoutEmptyChildren();
       // filter out non inherited attributes
       std::vector<const char*>::iterator it;
       for(it = non_inherited_attrs.begin(); it != non_inherited_attrs.end(); it++) {
@@ -1046,7 +1046,7 @@ bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window) {
 #endif //OSX
 }
 
-void SendEventToApp(const std::string& event_name, scoped_ptr<base::ListValue> event_args) {
+void SendEventToApp(const std::string& event_name, std::unique_ptr<base::ListValue> event_args) {
   Profile* profile = ProfileManager::GetActiveUserProfile();
   const extensions::ExtensionSet& extensions =
     ExtensionRegistry::Get(profile)->enabled_extensions();
@@ -1057,7 +1057,7 @@ void SendEventToApp(const std::string& event_name, scoped_ptr<base::ListValue> e
     const Extension* extension = it->get();
     if (extension_prefs->IsExtensionRunning(extension->id()) &&
         extension->location() == extensions::Manifest::COMMAND_LINE) {
-      scoped_ptr<extensions::Event> event(new extensions::Event(extensions::events::UNKNOWN,
+      std::unique_ptr<extensions::Event> event(new extensions::Event(extensions::events::UNKNOWN,
                                                                 event_name,
                                                                 std::move(event_args)));
       event->restrict_to_browser_context = profile;
@@ -1078,7 +1078,7 @@ bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_l
 #else
     std::string cmd = command_line.GetCommandLineString();
 #endif
-    scoped_ptr<base::ListValue> arguments(new base::ListValue());
+    std::unique_ptr<base::ListValue> arguments(new base::ListValue());
     arguments->AppendString(cmd);
     SendEventToApp("nw.App.onOpen", std::move(arguments));
   }
@@ -1088,13 +1088,13 @@ bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_l
 
 #if defined(OS_MACOSX)
 bool ApplicationShouldHandleReopenHook(bool hasVisibleWindows) {
-  scoped_ptr<base::ListValue> arguments(new base::ListValue());
+  std::unique_ptr<base::ListValue> arguments(new base::ListValue());
   SendEventToApp("nw.App.onReopen",std::move(arguments));
   return true;
 }
 
 void OSXOpenURLsHook(const std::vector<GURL>& startup_urls) {
-  scoped_ptr<base::ListValue> arguments(new base::ListValue());
+  std::unique_ptr<base::ListValue> arguments(new base::ListValue());
   for (size_t i = 0; i < startup_urls.size(); i++)
     arguments->AppendString(startup_urls[i].spec());
   SendEventToApp("nw.App.onOpen", std::move(arguments));

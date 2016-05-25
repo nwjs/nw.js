@@ -397,7 +397,7 @@
       'dependencies': [
          '<(DEPTH)/chrome/chrome.gyp:chrome',
          '<(DEPTH)/third_party/node/node.gyp:node',
-         '<(DEPTH)/v8/tools/gyp/v8.gyp:nwjc',
+         '<(DEPTH)/v8/src/v8.gyp:nwjc',
          'payload',
       ],
       'conditions': [
