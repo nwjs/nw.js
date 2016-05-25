@@ -22,7 +22,6 @@
 #define CONTENT_NW_SRC_API_MENU_MENU_H_ 
 
 #include "base/compiler_specific.h"
-#include "base/memory/scoped_ptr.h"
 #include "content/nw/src/api/base/base.h"
 
 #include <string>
@@ -132,8 +131,8 @@ class Menu : public Base {
   // rebuild the menu before next show.
   bool is_menu_modified_;
 
-  scoped_ptr<MenuDelegate> menu_delegate_;
-  scoped_ptr<ui::NwMenuModel> menu_model_;
+  std::unique_ptr<MenuDelegate> menu_delegate_;
+  std::unique_ptr<ui::NwMenuModel> menu_model_;
 #endif
 
   DISALLOW_COPY_AND_ASSIGN(Menu);

@@ -1,6 +1,7 @@
 #include "content/nw/src/api/nw_app_api.h"
 
 #include "base/command_line.h"
+#include "base/memory/ptr_util.h"
 #include "chrome/browser/browsing_data/browsing_data_helper.h"
 #include "chrome/browser/browsing_data/browsing_data_remover_factory.h"
 #include "chrome/browser/devtools/devtools_window.h"
@@ -29,7 +30,7 @@ void SetProxyConfigCallback(
     const net::ProxyConfig& proxy_config) {
   net::ProxyService* proxy_service =
       url_request_context_getter->GetURLRequestContext()->proxy_service();
-  proxy_service->ResetConfigService(make_scoped_ptr(new net::ProxyConfigServiceFixed(proxy_config)));
+  proxy_service->ResetConfigService(base::WrapUnique(new net::ProxyConfigServiceFixed(proxy_config)));
   done->Signal();
 }
 } // namespace

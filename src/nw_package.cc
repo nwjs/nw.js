@@ -312,7 +312,7 @@ bool Package::InitFromPath(const base::FilePath& path_in) {
   // Parse file.
   std::string error;
   JSONFileValueDeserializer serializer(manifest_path);
-  scoped_ptr<base::Value> root(serializer.Deserialize(NULL, &error));
+  std::unique_ptr<base::Value> root(serializer.Deserialize(NULL, &error));
   if (!root.get()) {
     ReportError("Unable to parse package.json",
                 error.empty() ?
