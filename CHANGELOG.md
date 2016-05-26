@@ -1,3 +1,16 @@
+0.15.0 / 05-25-2016
+===================
+- Update Chromium to [51.0.2704.63](http://googlechromereleases.blogspot.com/2016/05/stable-channel-update_25.html)
+- Update Node.js to 6.2.0
+- Add: '--disable-devtools' command line for SDK build (#4839)
+- Fix: inject_js in webview and remote pages (#4877)
+- Fix: Transparency + Click-through clicks through floated elements (#4846)
+- Fix: disable tray icon "NW.js is using your microphone" (#4852)
+- Fix: Memory leak in Menu API (#4860)
+- Fix: Error in Tray in background context (#4862)
+- [docs] disable-devtools switch
+- [docs] using Menu API and navigation
+
 0.14.5 / 05-12-2016
 ===================
 - Update Chromium to [50.0.2661.102](http://googlechromereleases.blogspot.com/2016/05/stable-channel-update.html)
