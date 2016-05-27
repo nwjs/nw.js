@@ -5,6 +5,10 @@
 
 You use following command line options when starting NW.js to change some default behaviors.
 
+## `--url`
+
+Load URL with the default app: `--url=http://nwjs.io`
+
 ## `--mixed-context`
 
 Run NW.js in [Mixed Context Mode](../For Users/Advanced/JavaScript Contexts in NW.js.md#mixed-context-mode) instead of Separate Context Mode.
