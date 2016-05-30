@@ -341,9 +341,11 @@ int MainPartsPreCreateThreadsHook() {
           .Append(content::DOMStorageArea::DatabaseFileNameFromOrigin(origin));
         base::FilePath new_dom_journal = new_dom_storage.ReplaceExtension(FILE_PATH_LITERAL("localstorage-journal"));
         base::FilePath old_dom_journal = old_dom_storage.ReplaceExtension(FILE_PATH_LITERAL("localstorage-journal"));
-        base::Move(old_dom_journal, new_dom_journal);
-        base::Move(old_dom_storage, new_dom_storage);
-        LOG_IF(INFO, true) << "Migrate DOM storage from " << old_dom_storage.AsUTF8Unsafe() << " to " << new_dom_storage.AsUTF8Unsafe();
+        if (!base::PathExists(new_dom_journal) && !base::PathExists(new_dom_storage)) {
+          base::Move(old_dom_journal, new_dom_journal);
+          base::Move(old_dom_storage, new_dom_storage);
+          LOG_IF(INFO, true) << "Migrate DOM storage from " << old_dom_storage.AsUTF8Unsafe() << " to " << new_dom_storage.AsUTF8Unsafe();
+        }
       }
       base::FilePath old_indexeddb = user_data_dir
         .Append(FILE_PATH_LITERAL("IndexedDB"))
@@ -355,10 +357,12 @@ int MainPartsPreCreateThreadsHook() {
           .Append(FILE_PATH_LITERAL("IndexedDB"))
           .AppendASCII(storage::GetIdentifierFromOrigin(origin))
           .AddExtension(FILE_PATH_LITERAL(".indexeddb.leveldb"));
-        base::CreateDirectory(new_indexeddb_dir.DirName());
-        base::CopyDirectory(old_indexeddb, new_indexeddb_dir.DirName(), true);
-        base::Move(new_indexeddb_dir.DirName().Append(FILE_PATH_LITERAL("file__0.indexeddb.leveldb")), new_indexeddb_dir);
-        LOG_IF(INFO, true) << "Migrated IndexedDB from " << old_indexeddb.AsUTF8Unsafe() << " to " << new_indexeddb_dir.AsUTF8Unsafe();
+        if (!base::PathExists(new_indexeddb_dir.DirName())) {
+          base::CreateDirectory(new_indexeddb_dir.DirName());
+          base::CopyDirectory(old_indexeddb, new_indexeddb_dir.DirName(), true);
+          base::Move(new_indexeddb_dir.DirName().Append(FILE_PATH_LITERAL("file__0.indexeddb.leveldb")), new_indexeddb_dir);
+          LOG_IF(INFO, true) << "Migrated IndexedDB from " << old_indexeddb.AsUTF8Unsafe() << " to " << new_indexeddb_dir.AsUTF8Unsafe();
+        }
       }
     }
 
