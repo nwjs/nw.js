@@ -322,15 +322,16 @@ int MainPartsPreCreateThreadsHook() {
     }
 
     base::FilePath user_data_dir;
-    std::string name;
+    std::string name, domain;
     package->root()->GetString("name", &name);
+    package->root()->GetString("domain", &domain);
     if (!name.empty() && PathService::Get(chrome::DIR_USER_DATA, &user_data_dir)) {
       base::FilePath old_dom_storage_dir = user_data_dir
         .Append(FILE_PATH_LITERAL("Local Storage"));
       base::FileEnumerator enum0(old_dom_storage_dir, false, base::FileEnumerator::FILES, FILE_PATH_LITERAL("*_0.localstorage"));
       base::FilePath old_dom_storage = enum0.Next();
       if (!old_dom_storage.empty()) {
-        std::string id = crx_file::id_util::GenerateId(name);
+        std::string id = domain.empty() ? crx_file::id_util::GenerateId(name) : domain;
         GURL origin("chrome-extension://" + id + "/");
         base::FilePath new_storage_dir = user_data_dir.Append(FILE_PATH_LITERAL("Default"))
           .Append(FILE_PATH_LITERAL("Local Storage"));
@@ -350,7 +351,7 @@ int MainPartsPreCreateThreadsHook() {
         .Append(FILE_PATH_LITERAL("IndexedDB"))
         .Append(FILE_PATH_LITERAL("file__0.indexeddb.leveldb"));
       if (base::PathExists(old_indexeddb)) {
-        std::string id = crx_file::id_util::GenerateId(name);
+        std::string id = domain.empty() ? crx_file::id_util::GenerateId(name) : domain;
         GURL origin("chrome-extension://" + id + "/");
         base::FilePath new_indexeddb_dir = user_data_dir.Append(FILE_PATH_LITERAL("Default"))
           .Append(FILE_PATH_LITERAL("IndexedDB"))
