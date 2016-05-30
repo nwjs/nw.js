@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>localstorage</title>
+</head>
+<body>
+  <h1 id='result'>localstorage migration test</h1>
+	<script>
+          var val = localStorage.getItem('myCat');
+          if (val == 'Tom')
+             document.getElementById('result').innerHTML = 'success';
+          //localStorage.setItem('myCat', 'Tom');
+	</script>
+</body>
+</html>
