@@ -282,6 +282,10 @@ See also in [webview reference](webview Tag.md) on how to open DevTools for webv
 
 Close the devtools window.
 
+## win.getPrinters(callback)
+
+Enumerate the printers in the system. The callback function will receive an array of JSON objects for the printer information. The device name of the JSON object can be used as parameter in `nw.Window.print()`.
+
 ## win.isDevToolsOpen()
 
 !!! note
@@ -290,6 +294,19 @@ Close the devtools window.
 Query the status of devtools window.
 
 See also [`win.showDevTools()`](#winshowdevtoolsiframe-callback).
+
+## win.print(options)
+
+Print the web contents in the window without the need for user's interaction. `options` is a JSON object with the following fields:
+
+* `printer` `{String}` the device name of the printer returned by `nw.Window.getPrinters()`; No need to set this when printing to PDF
+* `pdf_path` `{String}` the path of the output PDF when printing to PDF
+* `headerFooterEnabled` `{Boolean}` whether to enable header and footer
+* `landscape` `{Boolean}` whether to use landscape or portrait
+* `mediaSize` `{JSON Object}` the paper size spec
+* `shouldPrintBackgrounds` `{Boolean}` whether to print CSS backgrounds
+
+`mediaSize` example: `'mediaSize':{'name': 'CUSTOM', 'width_microns': 279400, 'height_microns': 215900, 'custom_display_name':'Letter', 'is_default': true}`
 
 ## win.setMaximumSize(width, height)
 
