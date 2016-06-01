@@ -48,6 +48,10 @@ Following fields control which features NW.js should provide and how NW.js shoul
 
 * `{String}` Specify the path to a node.js script file. And it will be executed on startup in Node context before the first DOM window load.
 
+### domain
+
+* `{String}` Specify the host in the chrome-extension:// protocol URL used for the application. The web engine will share the same cookies between your application and the website under the same domain.
+
 ### single-instance
 
 !!! warning "Deprecated"
