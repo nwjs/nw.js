@@ -7,4 +7,5 @@ Thank you to everyone who backed our [Bountysource campaign](https://salt.bounty
 - Ashley Gullen (https://www.scirra.com/)
 - Murray Hopkins
 - Anatoly Pashin
+- James Krot
 
