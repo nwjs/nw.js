@@ -158,6 +158,9 @@ nw_internal.registerCustomHook(function(bindingsAPI) {
   apiFunctions.setHandleRequest('getWinParamInternal', function() {
     return sendRequest.sendRequestSync('nw.currentWindowInternal.getWinParamInternal', arguments, this.definition.parameters, {})[0];
   });
+  apiFunctions.setHandleRequest('setPrintSettingsInternal', function() {
+    return sendRequest.sendRequestSync('nw.currentWindowInternal.setPrintSettingsInternal', arguments, this.definition.parameters, {})[0];
+  });
 });
 
 nw_binding.registerCustomHook(function(bindingsAPI) {
@@ -488,6 +491,16 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     };
     NWWindow.prototype.cookies = chrome.cookies;
 
+    NWWindow.prototype.print = function(option) {
+      var _option = JSON.parse(JSON.stringify(option));
+      _option["autoprint"] = true;
+      if (option.pdf_path)
+        _option["printer"] = "Save as PDF";
+      currentNWWindowInternal.setPrintSettingsInternal(_option);
+      window.print();
+      _option = { "autoprint": false };
+      currentNWWindowInternal.setPrintSettingsInternal(_option);
+    };
     Object.defineProperty(NWWindow.prototype, 'x', {
       get: function() {
         return this.appWindow.outerBounds.left;

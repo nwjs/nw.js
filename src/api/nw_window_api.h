@@ -281,5 +281,24 @@ class NwCurrentWindowInternalGetWinParamInternalFunction : public NWSyncExtensio
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.getWinParamInternal", UNKNOWN)
 };
 
+class NwCurrentWindowInternalGetPrintersFunction : public AsyncExtensionFunction {
+ public:
+  NwCurrentWindowInternalGetPrintersFunction() {}
+  bool RunAsync() override;
+  void OnGetPrinterList(base::ListValue* results);
+ protected:
+  ~NwCurrentWindowInternalGetPrintersFunction() override {}
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.getPrinters", UNKNOWN)
+};
+
+class NwCurrentWindowInternalSetPrintSettingsInternalFunction : public NWSyncExtensionFunction {
+ public:
+   NwCurrentWindowInternalSetPrintSettingsInternalFunction() {}
+   bool RunNWSync(base::ListValue* response, std::string* error) override;
+
+ protected:
+   ~NwCurrentWindowInternalSetPrintSettingsInternalFunction() override {}
+   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setPrintSettingsInternal", UNKNOWN)
+};
 } // namespace extensions
 #endif
