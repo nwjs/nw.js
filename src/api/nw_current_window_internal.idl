@@ -8,6 +8,7 @@
 namespace nw.currentWindowInternal {
   callback CapturePageCallback = void (DOMString dataUrl);
   callback ShowDevToolsCallback = void ();
+  callback GetPrintersCallback = void (object[] printers);
   [noinline_doc] dictionary CapturePageOptions {
     [nodoc] DOMString? format;
     [nodoc] DOMString? datatype;
@@ -34,5 +35,7 @@ namespace nw.currentWindowInternal {
     static DOMString getTitleInternal();
     static void setTitleInternal(DOMString title);
     static object getWinParamInternal();
+    static void getPrinters(GetPrintersCallback callback);
+    static void setPrintSettingsInternal(optional object options);
   };
 };
