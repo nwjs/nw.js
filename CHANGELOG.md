@@ -1,3 +1,24 @@
+0.14.6 / 06-01-2016
+===================
+- Custom Print API [(#4911)](https://github.com/nwjs/nw.js/issues/4911)
+- Add: '--disable-devtools' command line for SDK build [(#4839)](https://github.com/nwjs/nw.js/issues/4839)
+- Add: Support custom domain of nwjs app
+- Add switch to disable the remote debugging server [(#3620)](https://github.com/nwjs/nw.js/issues/3620)
+- Fix: make `this` in event listener reference to `nw.Window` [(#4901)](https://github.com/nwjs/nw.js/issues/4901)
+- Fix: Don't migrate the data if new version is there to prevent data loss [(#4853)](https://github.com/nwjs/nw.js/issues/4853)
+- Fix: Menu item key not working when key is 0 [(#4837)](https://github.com/nwjs/nw.js/issues/4837)
+- Fix: inject_js in webview and remote pages [(#4877)](https://github.com/nwjs/nw.js/issues/4877)
+- Fix: Transparency + Click-through clicks through floated elements [(#4846)](https://github.com/nwjs/nw.js/issues/4846)
+- Fix: disable tray icon "NW.js is using your microphone" [(#4852)](https://github.com/nwjs/nw.js/issues/4852)
+- Fix: Memory leak in Menu API [(#4860)](https://github.com/nwjs/nw.js/issues/4860)
+- Fix: Error in Tray in background context [(#4862)](https://github.com/nwjs/nw.js/issues/4862)
+- Fix: cookies support of chrome-extension protocol
+- [docs] disable-devtools switch
+- [docs] using Menu API and navigation
+- [docs] usage of tray when page can be navigated [(#4816)](https://github.com/nwjs/nw.js/issues/4816)
+- [docs] Custom Print API
+- [docs] Manifest: Using custom domain
+
 0.14.5 / 05-12-2016
 ===================
 - Update Chromium to [50.0.2661.102](http://googlechromereleases.blogspot.com/2016/05/stable-channel-update.html)
