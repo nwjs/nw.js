@@ -12,7 +12,7 @@ Alternatively, you may open DevTools programmatically using NW.js API [win.sho
 
 ## Node.js Modules Debugging
 
-NW.js is running in [Separate Context Mode](Advanced/JavaScript Contexts in NW.js.md#separate-context-mode) by default. To debug Node.jd modules, you can right click the app and choose "Inspect Background Page". When stepping into Node.js modules in the debugger, the DevTools for background page is automatically focused and stopped at certain statement.
+NW.js is running in [Separate Context Mode](Advanced/JavaScript Contexts in NW.js.md#separate-context-mode) by default. To debug Node.js modules, you can right click the app and choose "Inspect Background Page". When stepping into Node.js modules in the debugger, the DevTools for background page is automatically focused and stopped at certain statement.
 
 If your app is running under [Mixed Context Mode](Advanced/JavaScript Contexts in NW.js.md#mixed-context-mode), Node.js modules can be directly debugged within the same DevTools window of the window. See [JavaScript Contexts in NW.js](Advanced/JavaScript Contexts in NW.js.md) for the differences.
 
