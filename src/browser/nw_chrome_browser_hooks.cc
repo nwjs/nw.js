@@ -91,7 +91,7 @@ bool IsReloadingApp() {
   return g_reloading_app;
 }
 
-void SendEventToApp(const std::string& event_name, scoped_ptr<base::ListValue> event_args) {
+void SendEventToApp(const std::string& event_name, std::unique_ptr<base::ListValue> event_args) {
   Profile* profile = ProfileManager::GetActiveUserProfile();
   const extensions::ExtensionSet& extensions =
     ExtensionRegistry::Get(profile)->enabled_extensions();
@@ -102,7 +102,7 @@ void SendEventToApp(const std::string& event_name, scoped_ptr<base::ListValue> e
     const Extension* extension = it->get();
     if (extension_prefs->IsExtensionRunning(extension->id()) &&
         extension->location() == extensions::Manifest::COMMAND_LINE) {
-      scoped_ptr<extensions::Event> event(new extensions::Event(extensions::events::UNKNOWN,
+      std::unique_ptr<extensions::Event> event(new extensions::Event(extensions::events::UNKNOWN,
                                                                 event_name,
                                                                 std::move(event_args)));
       event->restrict_to_browser_context = profile;
