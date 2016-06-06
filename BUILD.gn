@@ -1,0 +1,146 @@
+group("nwjs") {
+  deps = [
+    "//chrome",
+    #"//third_party/node",
+  ]
+}
+
+component("nw_base") {
+  deps = [
+    "//base",
+    "//third_party/zlib",
+    "//url",
+    ":commit_id"
+  ]
+
+  defines = ["NW_IMPLEMENTATION"]
+  sources = [
+        "src/nw_base.cc",
+        "src/nw_base.h",
+        "src/nw_package.cc",
+        "src/nw_package.h",
+        "src/common/shell_switches.cc",
+        "src/common/shell_switches.h",
+  ]
+}
+
+static_library("nw_content") {
+  deps = [
+    "//base",
+    "//third_party/WebKit/public:blink",
+    "//third_party/WebKit/Source/wtf",
+    "//third_party/zlib:minizip",
+    "//skia",
+    ":nw_base",
+    "//content/nw/src/api:nw_api",
+    "//content/nw/src/api:nw_api_registration",
+    "//third_party/protobuf:protobuf_lite",
+    "//third_party/webrtc/modules/desktop_capture",
+  ]
+  include_dirs = [
+    "//third_party",
+    "//third_party/WebKit/Source",
+    "//third_party/mojo/src",
+    "$target_gen_dir/../../blink",
+    "$target_gen_dir/../../blink/bindings/core/v8",
+  ]
+  sources = [
+        "src/api/nw_app_api.cc",
+        "src/api/nw_app_api.h",
+        "src/api/nw_clipboard_api.cc",
+        "src/api/nw_clipboard_api.h",
+        "src/api/nw_window_api.cc",
+        "src/api/nw_window_api.h",
+        "src/api/nw_menu_api.cc",
+        "src/api/nw_menu_api.h",
+        "src/api/nw_object_api.cc",
+        "src/api/nw_object_api.h",
+        "src/api/nw_shell_api.cc",
+        "src/api/nw_shell_api.h",
+        "src/api/nw_screen_api.cc",
+        "src/api/nw_screen_api.h",
+        "src/api/nw_shortcut_api.cc",
+        "src/api/nw_shortcut_api.h",
+        "src/api/object_manager.cc",
+        "src/api/object_manager.h",
+        "src/api/object_manager_factory.cc",
+        "src/api/object_manager_factory.h",
+        "src/api/base/base.cc",
+        "src/api/base/base.h",
+        "src/api/menu/menu.cc",
+        "src/api/menu/menu.h",
+        "src/api/menuitem/menuitem.cc",
+        "src/api/menuitem/menuitem.h",
+        "src/api/shell/shell.cc",
+        "src/api/shell/shell.h",
+        "src/api/tray/tray.cc",
+        "src/api/tray/tray.h",
+        "src/nw_content.cc",
+        "src/nw_content.h",
+        "src/nw_custom_bindings.cc",
+        "src/nw_custom_bindings.h",
+        "src/policy_cert_verifier.cc",
+        "src/policy_cert_verifier.h",
+        "src/nw_content_verifier_delegate.cc",
+        "src/nw_content_verifier_delegate.h",
+  ]
+  if (is_win || is_linux) {
+    sources += [
+            "src/api/tray/tray_aura.cc",
+            "src/api/menu/menu_delegate.cc",
+            "src/api/menu/menu_delegate.h",
+            "src/api/menu/menu_views.cc",
+            "src/api/menu/menu_views.h",
+            "src/browser/menubar_view.cc",
+            "src/browser/menubar_view.h",
+            "src/api/menuitem/menuitem_views.cc",
+            "src/browser/browser_view_layout.cc",
+            "src/browser/browser_view_layout.h",
+            "src/browser/menubar_controller.cc",
+            "src/browser/menubar_controller.h",
+    ]
+  }
+  if (is_mac) {
+    sources += [
+            "src/api/nw_window_api_mac.mm",
+            "src/api/nw_menu_api_mac.mm",
+            "src/api/menuitem/menuitem_mac.mm",
+            "src/api/menu/menu_mac.mm",
+            "src/api/menu/menu_delegate_mac.h",
+            "src/api/menu/menu_delegate_mac.mm",
+            "src/api/menuitem/menuitem_delegate_mac.h",
+            "src/api/menuitem/menuitem_delegate_mac.mm",
+            "src/api/tray/tray_mac.mm",
+            "src/nw_content_mac.h",
+            "src/nw_content_mac.mm",
+    ]
+  }
+}
+
+config("commit_id_config") {
+  include_dirs = [ "$root_gen_dir/nw" ]
+}
+
+commit_id_output_file = "$root_gen_dir/nw/id/commit.h"
+
+action("commit_id") {
+    script = "tools/commit_id.py"
+    inputs = [
+       "//content/nw/.git/index",
+       "//.git/index",
+       "//v8/.git/index",
+       "//third_party/node/.git/index"
+    ]
+    outputs = [
+      commit_id_output_file,
+    ]
+
+    args = [
+      "gen",
+      rebase_path("../..", root_build_dir),
+      rebase_path(commit_id_output_file, root_build_dir),
+    ]
+
+    public_configs = [ ":commit_id_config" ]
+}
+
