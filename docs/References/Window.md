@@ -336,7 +336,7 @@ Sets the widget to be on top of all other windows in the window system.
 
 ## win.setVisibleOnAllWorkspaces(visible) (Mac and Linux)
 
-* `top` `{Boolean}` whether the window should be visible on all workspaces
+* `visible` `{Boolean}` whether the window should be visible on all workspaces
 
 For platforms that support multiple workspaces (currently Mac OS X and Linux), this allows NW.js windows to be visible on all workspaces simultaneously.
 
