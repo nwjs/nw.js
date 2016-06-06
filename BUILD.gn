@@ -24,11 +24,9 @@ component("nw_base") {
   ]
 }
 
-static_library("nw_content") {
+static_library("nw_browser") {
   deps = [
     "//base",
-    "//third_party/WebKit/public:blink",
-    "//third_party/WebKit/Source/wtf",
     "//third_party/zlib:minizip",
     "//skia",
     ":nw_base",
@@ -39,10 +37,7 @@ static_library("nw_content") {
   ]
   include_dirs = [
     "//third_party",
-    "//third_party/WebKit/Source",
     "//third_party/mojo/src",
-    "$target_gen_dir/../../blink",
-    "$target_gen_dir/../../blink/bindings/core/v8",
   ]
   sources = [
         "src/api/nw_app_api.cc",
@@ -75,10 +70,14 @@ static_library("nw_content") {
         "src/api/shell/shell.h",
         "src/api/tray/tray.cc",
         "src/api/tray/tray.h",
-        "src/nw_content.cc",
-        "src/nw_content.h",
-        "src/nw_custom_bindings.cc",
-        "src/nw_custom_bindings.h",
+        "src/browser/nw_chrome_browser_hooks.cc",
+        "src/browser/nw_chrome_browser_hooks.h",
+        "src/browser/nw_content_browser_hooks.cc",
+        "src/browser/nw_content_browser_hooks.h",
+        "src/browser/nw_extensions_browser_hooks.cc",
+        "src/browser/nw_extensions_browser_hooks.h",
+        "src/common/nw_content_common_hooks.cc",
+        "src/common/nw_content_common_hooks.h",
         "src/policy_cert_verifier.cc",
         "src/policy_cert_verifier.h",
         "src/nw_content_verifier_delegate.cc",
@@ -115,6 +114,34 @@ static_library("nw_content") {
             "src/nw_content_mac.mm",
     ]
   }
+}
+
+static_library("nw_renderer") {
+  deps = [
+    "//base",
+    "//third_party/WebKit/public:blink",
+    "//third_party/WebKit/Source/wtf",
+    "//skia",
+    ":nw_base",
+    "//third_party/protobuf:protobuf_lite",
+    "//third_party/webrtc/modules/desktop_capture",
+  ]
+  include_dirs = [
+    "//third_party",
+    "//third_party/WebKit/Source",
+    "//third_party/mojo/src",
+    "$target_gen_dir/../../blink",
+    "$target_gen_dir/../../blink/bindings/core/v8",
+  ]
+  sources = [
+        "src/renderer/nw_chrome_renderer_hooks.h",
+        "src/renderer/nw_content_renderer_hooks.cc",
+        "src/renderer/nw_content_renderer_hooks.h",
+        "src/renderer/nw_extensions_renderer_hooks.cc",
+        "src/renderer/nw_extensions_renderer_hooks.h",
+        "src/nw_custom_bindings.cc",
+        "src/nw_custom_bindings.h",
+  ]
 }
 
 config("commit_id_config") {
