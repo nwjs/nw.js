@@ -4,7 +4,7 @@
 [TOC]
 
 !!! important
-    This document is written for latest **NW 0.13**. For legacy build instructions, please read the [wiki page](https://github.com/nwjs/nw.js/wiki/Building-nw.js) on GitHub.
+    This document is written for latest **NW 0.13** or later. For legacy build instructions, please read the [wiki page](https://github.com/nwjs/nw.js/wiki/Building-nw.js) on GitHub.
     See our buildbot for official build configuration and steps: http://buildbot-master.nwjs.io:8010/waterfall
 
 ## Prerequisites
@@ -29,7 +29,7 @@ NW.js use same build tools and similar steps as Chromium. Read the instructions 
 ```bash
 mkdir -p $HOME/nwjs
 cd $HOME/nwjs
-gclient config --name=src https://github.com/nwjs/chromium.src.git@origin/nw13
+gclient config --name=src https://github.com/nwjs/chromium.src.git@origin/nw15
 ```
 
 Generally if you are not interested in running Chromium tests, you don't have to sync the test cases and reference builds, which saves you lot of time. Open the `.gclient` file you just created and replace `custom_deps` section with followings:
@@ -45,6 +45,14 @@ Generally if you are not interested in running Chromium tests, you don't have to
     "src/chrome/tools/test/reference_build/chrome_win": None,
 }
 ```
+
+Manually clone and checkout correct branches for following repositories:
+
+| path | repo |
+|:---- |:---- |
+| src/content/nw | https://github.com/nwjs/nw.js |
+| src/third_party/node | https://github.com/nwjs/node |
+| src/v8 | https://github.com/nwjs/v8 |
 
 **Step 2.** Run following command in your terminal:
 ```
