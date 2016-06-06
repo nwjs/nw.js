@@ -5,6 +5,7 @@
 #include "base/files/file_enumerator.h"
 #include "base/files/file_util.h"
 #include "base/logging.h"
+#include "base/threading/thread_restrictions.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/utf_string_conversions.h"
 
@@ -21,8 +22,7 @@
 #include "content/public/browser/render_view_host.h"
 #include "content/public/child/v8_value_converter.h"
 #include "content/public/common/result_codes.h"
-#include "content/public/renderer/render_view.h"
-#include "content/renderer/render_view_impl.h"
+#include "content/public/common/web_preferences.h"
 
 // content/nw
 #include "content/nw/src/nw_base.h"
@@ -30,18 +30,6 @@
 
 #include "net/cert/x509_certificate.h"
 #include "storage/common/database/database_identifier.h"
-
-// third_party/WebKit
-#include "third_party/WebKit/public/web/WebDocument.h"
-#include "third_party/WebKit/public/web/WebFrame.h"
-#include "third_party/WebKit/public/web/WebSecurityPolicy.h"
-#include "third_party/WebKit/public/web/WebView.h"
-#include "third_party/WebKit/public/web/WebDocument.h"
-#include "third_party/WebKit/public/web/WebLocalFrame.h"
-#include "third_party/WebKit/public/web/WebPluginScriptForbiddenScope.h"
-#include "third_party/WebKit/Source/core/frame/Frame.h"
-#include "third_party/WebKit/Source/platform/ScriptForbiddenScope.h"
-#include "third_party/WebKit/Source/web/WebLocalFrameImpl.h"
 
 // ui
 #include "ui/base/resource/resource_bundle.h"
@@ -72,7 +60,7 @@ bool g_pinning_renderer = true;
 
 } //namespace
 
-void SendEventToApp(const std::string& event_name, scoped_ptr<base::ListValue> event_args);
+void SendEventToApp(const std::string& event_name, std::unique_ptr<base::ListValue> event_args);
 
 bool GetDirUserData(base::FilePath*);
 
@@ -93,15 +81,16 @@ int MainPartsPreCreateThreadsHook() {
     }
 
     base::FilePath user_data_dir;
-    std::string name;
+    std::string name, domain;
     package->root()->GetString("name", &name);
+    package->root()->GetString("domain", &domain);
     if (!name.empty() && GetDirUserData(&user_data_dir)) {
       base::FilePath old_dom_storage_dir = user_data_dir
         .Append(FILE_PATH_LITERAL("Local Storage"));
       base::FileEnumerator enum0(old_dom_storage_dir, false, base::FileEnumerator::FILES, FILE_PATH_LITERAL("*_0.localstorage"));
       base::FilePath old_dom_storage = enum0.Next();
       if (!old_dom_storage.empty()) {
-        std::string id = crx_file::id_util::GenerateId(name);
+        std::string id = domain.empty() ? crx_file::id_util::GenerateId(name) : domain;
         GURL origin("chrome-extension://" + id + "/");
         base::FilePath new_storage_dir = user_data_dir.Append(FILE_PATH_LITERAL("Default"))
           .Append(FILE_PATH_LITERAL("Local Storage"));
@@ -111,24 +100,28 @@ int MainPartsPreCreateThreadsHook() {
           .Append(content::DOMStorageArea::DatabaseFileNameFromOrigin(origin));
         base::FilePath new_dom_journal = new_dom_storage.ReplaceExtension(FILE_PATH_LITERAL("localstorage-journal"));
         base::FilePath old_dom_journal = old_dom_storage.ReplaceExtension(FILE_PATH_LITERAL("localstorage-journal"));
-        base::Move(old_dom_journal, new_dom_journal);
-        base::Move(old_dom_storage, new_dom_storage);
-        LOG_IF(INFO, true) << "Migrate DOM storage from " << old_dom_storage.AsUTF8Unsafe() << " to " << new_dom_storage.AsUTF8Unsafe();
+        if (!base::PathExists(new_dom_journal) && !base::PathExists(new_dom_storage)) {
+          base::Move(old_dom_journal, new_dom_journal);
+          base::Move(old_dom_storage, new_dom_storage);
+          LOG_IF(INFO, true) << "Migrate DOM storage from " << old_dom_storage.AsUTF8Unsafe() << " to " << new_dom_storage.AsUTF8Unsafe();
+        }
       }
       base::FilePath old_indexeddb = user_data_dir
         .Append(FILE_PATH_LITERAL("IndexedDB"))
         .Append(FILE_PATH_LITERAL("file__0.indexeddb.leveldb"));
       if (base::PathExists(old_indexeddb)) {
-        std::string id = crx_file::id_util::GenerateId(name);
+        std::string id = domain.empty() ? crx_file::id_util::GenerateId(name) : domain;
         GURL origin("chrome-extension://" + id + "/");
         base::FilePath new_indexeddb_dir = user_data_dir.Append(FILE_PATH_LITERAL("Default"))
           .Append(FILE_PATH_LITERAL("IndexedDB"))
           .AppendASCII(storage::GetIdentifierFromOrigin(origin))
           .AddExtension(FILE_PATH_LITERAL(".indexeddb.leveldb"));
-        base::CreateDirectory(new_indexeddb_dir.DirName());
-        base::CopyDirectory(old_indexeddb, new_indexeddb_dir.DirName(), true);
-        base::Move(new_indexeddb_dir.DirName().Append(FILE_PATH_LITERAL("file__0.indexeddb.leveldb")), new_indexeddb_dir);
-        LOG_IF(INFO, true) << "Migrated IndexedDB from " << old_indexeddb.AsUTF8Unsafe() << " to " << new_indexeddb_dir.AsUTF8Unsafe();
+        if (!base::PathExists(new_indexeddb_dir.DirName())) {
+          base::CreateDirectory(new_indexeddb_dir.DirName());
+          base::CopyDirectory(old_indexeddb, new_indexeddb_dir.DirName(), true);
+          base::Move(new_indexeddb_dir.DirName().Append(FILE_PATH_LITERAL("file__0.indexeddb.leveldb")), new_indexeddb_dir);
+          LOG_IF(INFO, true) << "Migrated IndexedDB from " << old_indexeddb.AsUTF8Unsafe() << " to " << new_indexeddb_dir.AsUTF8Unsafe();
+        }
       }
     }
 
@@ -180,7 +173,7 @@ bool GetPackageImage(nw::Package* package,
   // Decode the bitmap using WebKit's image decoder.
   const unsigned char* data =
       reinterpret_cast<const unsigned char*>(file_contents.data());
-  scoped_ptr<SkBitmap> decoded(new SkBitmap());
+  std::unique_ptr<SkBitmap> decoded(new SkBitmap());
   // Note: This class only decodes bitmaps from extension resources. Chrome
   // doesn't (for security reasons) directly load extension resources provided
   // by the extension author, but instead decodes them in a separate
@@ -222,7 +215,7 @@ bool GetImage(Package* package, const FilePath& icon_path, gfx::Image* image) {
   // Decode the bitmap using WebKit's image decoder.
   const unsigned char* data =
       reinterpret_cast<const unsigned char*>(file_contents.data());
-  scoped_ptr<SkBitmap> decoded(new SkBitmap());
+  std::unique_ptr<SkBitmap> decoded(new SkBitmap());
   // Note: This class only decodes bitmaps from extension resources. Chrome
   // doesn't (for security reasons) directly load extension resources provided
   // by the extension author, but instead decodes them in a separate
@@ -248,7 +241,7 @@ bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_l
 #else
     std::string cmd = command_line.GetCommandLineString();
 #endif
-    scoped_ptr<base::ListValue> arguments(new base::ListValue());
+    std::unique_ptr<base::ListValue> arguments(new base::ListValue());
     arguments->AppendString(cmd);
     SendEventToApp("nw.App.onOpen", std::move(arguments));
   }
@@ -258,13 +251,13 @@ bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_l
 
 #if defined(OS_MACOSX)
 bool ApplicationShouldHandleReopenHook(bool hasVisibleWindows) {
-  scoped_ptr<base::ListValue> arguments(new base::ListValue());
+  std::unique_ptr<base::ListValue> arguments(new base::ListValue());
   SendEventToApp("nw.App.onReopen",std::move(arguments));
   return true;
 }
 
 void OSXOpenURLsHook(const std::vector<GURL>& startup_urls) {
-  scoped_ptr<base::ListValue> arguments(new base::ListValue());
+  std::unique_ptr<base::ListValue> arguments(new base::ListValue());
   for (size_t i = 0; i < startup_urls.size(); i++)
     arguments->AppendString(startup_urls[i].spec());
   SendEventToApp("nw.App.onOpen", std::move(arguments));

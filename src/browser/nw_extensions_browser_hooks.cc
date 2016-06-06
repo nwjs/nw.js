@@ -123,7 +123,7 @@ void AmendManifestList(base::DictionaryValue* manifest,
   }
 }
 
-scoped_ptr<base::DictionaryValue> MergeManifest() {
+std::unique_ptr<base::DictionaryValue> MergeManifest() {
   // Following attributes will not be inherited from package.json 
   // Keep this list consistent with documents in `Manifest Format.md`
   static std::vector<const char*> non_inherited_attrs = {
@@ -133,11 +133,11 @@ scoped_ptr<base::DictionaryValue> MergeManifest() {
                                                     switches::kmResizable,
                                                     switches::kmShow
                                                     };
-  scoped_ptr<base::DictionaryValue> manifest;
+  std::unique_ptr<base::DictionaryValue> manifest;
 
   // retrieve `window` manifest set by `new-win-policy`
   std::string manifest_str = base::UTF16ToUTF8(nw::GetCurrentNewWinManifest());
-  scoped_ptr<base::Value> val = base::JSONReader().ReadToValue(manifest_str);
+  std::unique_ptr<base::Value> val = base::JSONReader().ReadToValue(manifest_str);
   if (val && val->IsType(base::Value::Type::TYPE_DICTIONARY)) {
     manifest.reset(static_cast<base::DictionaryValue*>(val.release()));
   } else {
@@ -149,7 +149,7 @@ scoped_ptr<base::DictionaryValue> MergeManifest() {
   if (pkg) {
     base::DictionaryValue* manifest_window = pkg->window();
     if (manifest_window) {
-      scoped_ptr<base::DictionaryValue> manifest_window_cloned = manifest_window->DeepCopyWithoutEmptyChildren();
+      std::unique_ptr<base::DictionaryValue> manifest_window_cloned = manifest_window->DeepCopyWithoutEmptyChildren();
       // filter out non inherited attributes
       std::vector<const char*>::iterator it;
       for(it = non_inherited_attrs.begin(); it != non_inherited_attrs.end(); it++) {
@@ -243,8 +243,8 @@ void CalcNewWinParams(content::WebContents* new_contents, void* params,
                       std::string* nw_inject_js_doc_start,
                       std::string* nw_inject_js_doc_end) {
   extensions::AppWindow::CreateParams ret;
-  scoped_ptr<base::Value> val;
-  scoped_ptr<base::DictionaryValue> manifest = MergeManifest();
+  std::unique_ptr<base::Value> val;
+  std::unique_ptr<base::DictionaryValue> manifest = MergeManifest();
 
   bool resizable;
   if (manifest->GetBoolean(switches::kmResizable, &resizable)) {
