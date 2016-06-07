@@ -7,31 +7,31 @@
 
 namespace extensions {
 
-class NwClipboardGetSyncFunction : public NWSyncExtensionFunction {
+class NwClipboardGetListSyncFunction : public NWSyncExtensionFunction {
  public:
-  NwClipboardGetSyncFunction();
+  NwClipboardGetListSyncFunction();
   bool RunNWSync(base::ListValue* response, std::string* error) override;
 
  protected:
-  ~NwClipboardGetSyncFunction() override;
+  ~NwClipboardGetListSyncFunction() override;
 
 
-  DECLARE_EXTENSION_FUNCTION("nw.Clipboard.getSync", UNKNOWN)
+  DECLARE_EXTENSION_FUNCTION("nw.Clipboard.getListSync", UNKNOWN)
  private:
-  DISALLOW_COPY_AND_ASSIGN(NwClipboardGetSyncFunction);
+  DISALLOW_COPY_AND_ASSIGN(NwClipboardGetListSyncFunction);
 };
 
-class NwClipboardSetSyncFunction : public NWSyncExtensionFunction {
+class NwClipboardSetListSyncFunction : public NWSyncExtensionFunction {
  public:
-  NwClipboardSetSyncFunction();
+  NwClipboardSetListSyncFunction();
   bool RunNWSync(base::ListValue* response, std::string* error) override;
 
  protected:
-  ~NwClipboardSetSyncFunction() override;
+  ~NwClipboardSetListSyncFunction() override;
 
-  DECLARE_EXTENSION_FUNCTION("nw.Clipboard.setSync", UNKNOWN)
+  DECLARE_EXTENSION_FUNCTION("nw.Clipboard.setListSync", UNKNOWN)
  private:
-  DISALLOW_COPY_AND_ASSIGN(NwClipboardSetSyncFunction);
+  DISALLOW_COPY_AND_ASSIGN(NwClipboardSetListSyncFunction);
 };
 
 class NwClipboardClearSyncFunction : public NWSyncExtensionFunction {
