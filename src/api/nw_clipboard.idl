@@ -14,9 +14,15 @@ namespace nw.Clipboard {
     rtf
   };
 
+  dictionary ClipboardData {
+    Type type;
+    boolean? raw;
+    DOMString? data;
+  };
+
   interface Functions {
-    static DOMString getSync(Type type, boolean raw);
-    static void setSync(DOMString content, Type type, boolean raw);
+    static ClipboardData[] getListSync(ClipboardData[] data);
+    static void setListSync(ClipboardData[] data);
     static void clearSync();
     static DOMString[] readAvailableTypes();
   };
