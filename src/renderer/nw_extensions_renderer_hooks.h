@@ -29,7 +29,7 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
                          const extensions::Extension* extension,
                          const GURL& effective_document_url);
 // ref in extensions/renderer/dispatcher.cc
-void DocumentFinishHook(blink::WebFrame* frame,
+void DocumentFinishHook(blink::WebLocalFrame* frame,
                          const extensions::Extension* extension,
                          const GURL& effective_document_url);
 // ref in extensions/renderer/extension_frame_helper.cc

@@ -174,7 +174,36 @@ void SetWindowHIcon(base::win::ScopedHICON icon);
 #endif // OS_WIN
 
 // browser
+
+bool RphGuestFilterURLHook(RenderProcessHost* rph, const GURL* url)  {
+  extensions::WebViewRendererState* renderer_state =
+      extensions::WebViewRendererState::GetInstance();
+  std::string owner_extension;
+  int process_id = rph->GetID();
+  if (!renderer_state->GetOwnerInfo(process_id, nullptr, &owner_extension))
+    return false;
+  const Extension* extension =
+    ExtensionRegistry::Get(rph->GetBrowserContext())->enabled_extensions().GetByID(owner_extension);
+  if (!extension)
+    return false;
+  bool file_scheme = false;
+  if (WebviewInfo::IsURLWebviewAccessible(extension,
+                                          WebViewGuest::GetPartitionID(rph),
+                                          *url, &file_scheme)) {
+    if (file_scheme) {
+      content::ChildProcessSecurityPolicy::GetInstance()->GrantScheme(
+          process_id, url::kFileScheme);
+    }
+    return true;
+  }
+  return false;
+}
+
+typedef bool (*RphGuestFilterURLHookFn)(content::RenderProcessHost* rph, const GURL* url);
+CONTENT_EXPORT extern RphGuestFilterURLHookFn gRphGuestFilterURLHook;
+
 void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* error) {
+  gRphGuestFilterURLHook = RphGuestFilterURLHook;
   if (!manifest)
     return;
 
@@ -309,30 +338,6 @@ bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window) {
   menu->menu_delegate_->ExecuteCommand(command_id, 0);
   return true;
 #endif //OSX
-}
-
-bool RphGuestFilterURLHook(RenderProcessHost* rph, const GURL* url)  {
-  extensions::WebViewRendererState* renderer_state =
-      extensions::WebViewRendererState::GetInstance();
-  std::string owner_extension;
-  int process_id = rph->GetID();
-  if (!renderer_state->GetOwnerInfo(process_id, nullptr, &owner_extension))
-    return false;
-  const Extension* extension =
-    ExtensionRegistry::Get(rph->GetBrowserContext())->enabled_extensions().GetByID(owner_extension);
-  if (!extension)
-    return false;
-  bool file_scheme = false;
-  if (WebviewInfo::IsURLWebviewAccessible(extension,
-                                          WebViewGuest::GetPartitionID(rph),
-                                          *url, &file_scheme)) {
-    if (file_scheme) {
-      content::ChildProcessSecurityPolicy::GetInstance()->GrantScheme(
-          process_id, url::kFileScheme);
-    }
-    return true;
-  }
-  return false;
 }
 
 } // namespace nw

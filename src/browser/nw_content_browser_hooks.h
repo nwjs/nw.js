@@ -1,10 +1,13 @@
 #ifndef NW_CONTENT_BROWSER_HOOKS_H_
 #define NW_CONTENT_BROWSER_HOOKS_H_
 
+#include "content/common/content_export.h"
+
 class GURL;
 
 namespace base {
   class FilePath;
+  class CommandLine;
 }
 
 namespace gfx {
@@ -13,16 +16,57 @@ namespace gfx {
 
 namespace content {
   class RenderProcessHost;
+  class NotificationDetails;
+  class WebContents;
+  struct WebPreferences;
+  class RenderProcessHost;
+  class RenderViewHost;
 }
 
 namespace nw {
 
 class Package;
 
+//
+// implemented in nw_content_browser_hooks.cc
+//
+// ref in chrome/browser/chrome_browser_main.cc
+CONTENT_EXPORT int MainPartsPreCreateThreadsHook();
+// ref in chrome/browser/chrome_browser_main.cc
+CONTENT_EXPORT void MainPartsPreMainMessageLoopRunHook();
+// ref in chrome/browser/chrome_browser_main.cc
+CONTENT_EXPORT void MainPartsPostDestroyThreadsHook();
+// ref in chrome/browser/extensions/extension_service.cc
+CONTENT_EXPORT void RendererProcessTerminatedHook(content::RenderProcessHost* process,
+                                  const content::NotificationDetails& details);
+// ref in chrome/browser/chrome_browser_main.cc
+CONTENT_EXPORT bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_line,
+                                             const base::FilePath& current_directory);
+// ref in chrome/browser/chrome_content_browser_client.cc
+CONTENT_EXPORT void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, content::WebPreferences* web_prefs);
+// ref in chrome/browser/chrome_content_browser_client.cc
+// content/browser/renderer_host/render_process_host_impl.cc
+// content/browser/site_instance_impl.cc
+CONTENT_EXPORT bool PinningRenderer();
+
+#if defined(OS_MACOSX)
+// ref in chrome/browser/app_controller_mac.mm
+CONTENT_EXPORT bool ApplicationShouldHandleReopenHook(bool hasVisibleWindows);
+// ref in chrome/browser/app_controller_mac.mm
+CONTENT_EXPORT void OSXOpenURLsHook(const std::vector<GURL>& startup_urls);
+#endif
+
+// ref in extensions/browser/api/app_window/app_window_api.cc
+CONTENT_EXPORT bool GetPackageImage(nw::Package* package,
+                    const base::FilePath& icon_path,
+                    gfx::Image* image);
+// ref in extensions/browser/api/app_window/app_window_api.cc
+CONTENT_EXPORT void SetPinningRenderer(bool pin);
+
 // browser
 // ref in content/nw/src/api/tray/tray_aura.cc
 // content/nw/src/api/menuitem/menuitem_views.cc
-bool GetImage(Package* package, const base::FilePath& icon_path, gfx::Image* image);
+CONTENT_EXPORT bool GetImage(Package* package, const base::FilePath& icon_path, gfx::Image* image);
 
 //
 // implemented in nw_extensions_browser_hooks.cc

@@ -256,41 +256,51 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   }
 }
 
-void TryInjectStartScript(blink::WebLocalFrame* frame, ScriptContext* script_context, Dispatcher* dispatcher) {
+void TryInjectStartScript(blink::WebLocalFrame* frame, const Extension* extension, bool start) {
   RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
   if (!rv)
     return;
 
-  std::string js_fn = rv->renderer_preferences().nw_inject_js_doc_start;
+  std::string js_fn = start ? rv->renderer_preferences().nw_inject_js_doc_start :
+                              rv->renderer_preferences().nw_inject_js_doc_end;
   if (js_fn.empty())
     return;
-  const Extension* extension = nullptr;
-  if (script_context)
-    extension = script_context->extension();
-  if (!extension) {
-    extension = RendererExtensionRegistry::Get()->GetByID(g_extension_id);
-    if (!extension)
+  base::FilePath fpath = base::FilePath::FromUTF8Unsafe(js_fn);
+  if (!fpath.IsAbsolute()) {
+    const Extension* extension = nullptr;
+    if (!extension) {
+      extension = RendererExtensionRegistry::Get()->GetByID(g_extension_id);
+      if (!extension)
+        return;
+    }
+    if (!(extension->is_extension() || extension->is_platform_app()))
       return;
+    base::FilePath root(extension->path());
+    fpath = root.AppendASCII(js_fn);
   }
-  if (!(extension->is_extension() || extension->is_platform_app()))
-    return;
   v8::Local<v8::Context> v8_context = frame->mainWorldScriptContext();
-  std::string root_path = extension->path().AsUTF8Unsafe();
-  base::FilePath root(extension->path());
-
-  base::FilePath js_file = root.AppendASCII(js_fn);
   std::string content;
-  if (!base::ReadFileToString(js_file, &content)) {
+  if (!base::ReadFileToString(fpath, &content)) {
     //LOG(WARNING) << "Failed to load js script file: " << js_file.value();
     return;
   }
   base::string16 jscript = base::UTF8ToUTF16(content);
   if (!v8_context.IsEmpty()) {
-    blink::WebScopedMicrotaskSuppression suppression;
+    v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
+    blink::ScriptForbiddenScope::AllowUserAgentScript script;
     v8::Context::Scope cscope(v8_context);
     // v8::Handle<v8::Value> result;
     frame->executeScriptAndReturnValue(WebScriptSource(jscript));
   }
+}
+
+void DocumentFinishHook(blink::WebLocalFrame* frame,
+                         const extensions::Extension* extension,
+                         const GURL& effective_document_url) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope hscope(isolate);
+
+  TryInjectStartScript(frame, extension, false);
 }
 
 void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatcher) {
@@ -309,7 +319,7 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
   ScriptContext* script_context =
       dispatcher->script_context_set().GetByV8Context(v8_context);
   if (start)
-    TryInjectStartScript(web_frame, script_context, dispatcher);
+    TryInjectStartScript(web_frame, script_context ? script_context->extension() : nullptr, true);
   if (!script_context)
     return;
   std::vector<v8::Handle<v8::Value> > arguments;
@@ -456,54 +466,20 @@ void willHandleNavigationPolicy(content::RenderView* rv,
     *policy = blink::WebNavigationPolicyNewPopup;
 }
 
+typedef bool (*RenderWidgetWasHiddenHookFn)(content::RenderWidget*);
+extern RenderWidgetWasHiddenHookFn gRenderWidgetWasHiddenHook;
+
+bool RenderWidgetWasHiddenHook(content::RenderWidget* rw) {
+  return g_skip_render_widget_hidden;
+}
+
 void ExtensionDispatcherCreated(extensions::Dispatcher* dispatcher) {
   g_dispatcher = dispatcher;
   const base::CommandLine& command_line =
       *base::CommandLine::ForCurrentProcess();
   if (command_line.HasSwitch(switches::kDisableRAFThrottling))
     g_skip_render_widget_hidden = true;
-}
-
-bool RenderWidgetWasHiddenHook(content::RenderWidget* rw) {
-  return g_skip_render_widget_hidden;
-}
-
-void DocumentFinishHook(blink::WebFrame* frame,
-                         const extensions::Extension* extension,
-                         const GURL& effective_document_url) {
-  v8::Isolate* isolate = v8::Isolate::GetCurrent();
-  v8::HandleScope hscope(isolate);
-  std::string path = effective_document_url.path();
-  v8::Local<v8::Context> v8_context = frame->mainWorldScriptContext();
-  RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
-  if (!rv)
-    return;
-  if (!extension) {
-    extension = RendererExtensionRegistry::Get()->GetByID(g_extension_id);
-    if (!extension)
-      return;
-  }
-  if (!(extension->is_extension() || extension->is_platform_app()))
-    return;
-  std::string root_path = extension->path().AsUTF8Unsafe();
-  base::FilePath root(extension->path());
-  std::string js_fn = rv->renderer_preferences().nw_inject_js_doc_end;
-  if (js_fn.empty())
-    return;
-  base::FilePath js_file = root.AppendASCII(js_fn);
-  std::string content;
-  if (!base::ReadFileToString(js_file, &content)) {
-    //LOG(WARNING) << "Failed to load js script file: " << js_file.value();
-    return;
-  }
-  base::string16 jscript = base::UTF8ToUTF16(content);
-  {
-    v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
-    blink::ScriptForbiddenScope::AllowUserAgentScript script;
-    v8::Context::Scope cscope(v8_context);
-    // v8::Handle<v8::Value> result;
-    frame->executeScriptAndReturnValue(WebScriptSource(jscript));
-  }
+  nw::gRenderWidgetWasHiddenHook = RenderWidgetWasHiddenHook;
 }
 
 void OnRenderProcessShutdownHook(extensions::ScriptContext* context) {
