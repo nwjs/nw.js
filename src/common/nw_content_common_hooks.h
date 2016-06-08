@@ -3,15 +3,17 @@
 
 #include <string>
 
+#include "content/common/content_export.h"
+
 namespace nw {
  
 // common
 // ref in chrome/browser/renderer_preferences_util.cc
 // content/renderer/render_frame_impl.cc
 // extensions/browser/app_window/app_window_contents.cc
-bool GetUserAgentFromManifest(std::string* agent);
+CONTENT_EXPORT bool GetUserAgentFromManifest(std::string* agent);
 // ref in extensions/renderer/dispatcher.cc
-void SetUserAgentOverride(const std::string& agent,
+CONTENT_EXPORT void SetUserAgentOverride(const std::string& agent,
                          const std::string& name,
                          const std::string& version);
 

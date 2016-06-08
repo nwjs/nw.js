@@ -1,14 +1,13 @@
 group("nwjs") {
   deps = [
     "//chrome",
-    #"//third_party/node",
   ]
 }
 
 component("nw_base") {
   deps = [
     "//base",
-    "//third_party/zlib",
+    "//third_party/zlib:zip",
     "//url",
     ":commit_id"
   ]
@@ -24,22 +23,43 @@ component("nw_base") {
   ]
 }
 
-static_library("nw_browser") {
-  deps = [
-    "//base",
-    "//third_party/zlib:minizip",
-    "//skia",
-    ":nw_base",
-    "//content/nw/src/api:nw_api",
-    "//content/nw/src/api:nw_api_registration",
-    "//third_party/protobuf:protobuf_lite",
-    "//third_party/webrtc/modules/desktop_capture",
-  ]
-  include_dirs = [
-    "//third_party",
-    "//third_party/mojo/src",
-  ]
-  sources = [
+nw_content_browser_sources = [
+        "src/browser/nw_content_browser_hooks.cc",
+        "src/browser/nw_content_browser_hooks.h",
+        "src/common/nw_content_common_hooks.cc",
+        "src/common/nw_content_common_hooks.h",
+]
+
+nw_content_renderer_sources = [
+        "src/renderer/nw_content_renderer_hooks.cc",
+        "src/renderer/nw_content_renderer_hooks.h",
+]
+
+if (is_component_build) {
+  static_library("nw_content") {
+    sources = nw_content_browser_sources + nw_content_renderer_sources
+    defines = [ "CONTENT_IMPLEMENTATION" ]
+    deps = [
+      "//base",
+      "//third_party/zlib:minizip",
+      "//skia",
+      ":nw_base",
+      "//third_party/WebKit/public:blink",
+      "//third_party/WebKit/Source/wtf",
+      "//third_party/protobuf:protobuf_lite",
+      "//third_party/webrtc/modules/desktop_capture",
+    ]
+    include_dirs = [
+      "//third_party",
+      "//third_party/mojo/src",
+      "//third_party/WebKit/Source",
+      "$target_gen_dir/../../blink",
+      "$target_gen_dir/../../blink/bindings/core/v8",
+    ]
+  }
+}
+
+nw_chrome_browser_sources = [
         "src/api/nw_app_api.cc",
         "src/api/nw_app_api.h",
         "src/api/nw_clipboard_api.cc",
@@ -72,17 +92,40 @@ static_library("nw_browser") {
         "src/api/tray/tray.h",
         "src/browser/nw_chrome_browser_hooks.cc",
         "src/browser/nw_chrome_browser_hooks.h",
-        "src/browser/nw_content_browser_hooks.cc",
-        "src/browser/nw_content_browser_hooks.h",
         "src/browser/nw_extensions_browser_hooks.cc",
         "src/browser/nw_extensions_browser_hooks.h",
-        "src/common/nw_content_common_hooks.cc",
-        "src/common/nw_content_common_hooks.h",
         "src/policy_cert_verifier.cc",
         "src/policy_cert_verifier.h",
         "src/nw_content_verifier_delegate.cc",
         "src/nw_content_verifier_delegate.h",
+]
+
+
+static_library("nw_browser") {
+  deps = [
+    "//base",
+    "//extensions/browser",
+    "//extensions/common",
+    "//third_party/zlib:minizip",
+    "//skia",
+    ":nw_base",
+    "//content/nw/src/api:nw_api",
+    "//content/nw/src/api:nw_api_registration",
+    "//third_party/protobuf:protobuf_lite",
+    "//third_party/webrtc/modules/desktop_capture",
   ]
+  include_dirs = [
+    "//third_party",
+    "//third_party/mojo/src",
+  ]
+  sources = nw_chrome_browser_sources
+
+  if (!is_component_build) {
+    sources += nw_content_browser_sources
+  } else {
+    deps += ["//content"]
+  }
+
   if (is_win || is_linux) {
     sources += [
             "src/api/tray/tray_aura.cc",
@@ -119,6 +162,8 @@ static_library("nw_browser") {
 static_library("nw_renderer") {
   deps = [
     "//base",
+    "//extensions/common",
+    "//extensions/renderer",
     "//third_party/WebKit/public:blink",
     "//third_party/WebKit/Source/wtf",
     "//skia",
@@ -135,13 +180,18 @@ static_library("nw_renderer") {
   ]
   sources = [
         "src/renderer/nw_chrome_renderer_hooks.h",
-        "src/renderer/nw_content_renderer_hooks.cc",
-        "src/renderer/nw_content_renderer_hooks.h",
         "src/renderer/nw_extensions_renderer_hooks.cc",
         "src/renderer/nw_extensions_renderer_hooks.h",
         "src/nw_custom_bindings.cc",
         "src/nw_custom_bindings.h",
   ]
+
+  if (!is_component_build) {
+    sources += nw_content_renderer_sources
+  } else {
+    deps += ["//content"]
+  }
+
 }
 
 config("commit_id_config") {

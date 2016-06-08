@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "content/common/content_export.h"
+
 class GURL;
 
 namespace base {
@@ -49,35 +51,6 @@ const std::string& GetMainExtensionId();
 HICON GetAppHIcon();
 // ref in chrome/browser/app_icon_win.cc
 HICON GetWindowHIcon();
-#endif
-
-//
-// implemented in nw_content_browser_hooks.cc
-//
-// ref in chrome/browser/chrome_browser_main.cc
-int MainPartsPreCreateThreadsHook();
-// ref in chrome/browser/chrome_browser_main.cc
-void MainPartsPreMainMessageLoopRunHook();
-// ref in chrome/browser/chrome_browser_main.cc
-void MainPartsPostDestroyThreadsHook();
-// ref in chrome/browser/extensions/extension_service.cc
-void RendererProcessTerminatedHook(content::RenderProcessHost* process,
-                                  const content::NotificationDetails& details);
-// ref in chrome/browser/chrome_browser_main.cc
-bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_line,
-                                             const base::FilePath& current_directory);
-// ref in chrome/browser/chrome_content_browser_client.cc
-void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, content::WebPreferences* web_prefs);
-// ref in chrome/browser/chrome_content_browser_client.cc
-// content/browser/renderer_host/render_process_host_impl.cc
-// content/browser/site_instance_impl.cc
-bool PinningRenderer();
-
-#if defined(OS_MACOSX)
-// ref in chrome/browser/app_controller_mac.mm
-bool ApplicationShouldHandleReopenHook(bool hasVisibleWindows);
-// ref in chrome/browser/app_controller_mac.mm
-void OSXOpenURLsHook(const std::vector<GURL>& startup_urls);
 #endif
 
 }

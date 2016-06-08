@@ -5,6 +5,8 @@
 #include <windows.h>
 #endif
 
+#include "content/common/content_export.h"
+
 #include "nw_package.h"
 #include "base/memory/ptr_util.h"
 #include "third_party/WebKit/public/web/WebNavigationPolicy.h"

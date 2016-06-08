@@ -44,17 +44,6 @@ void CalcNewWinParams(content::WebContents* new_contents, void* params,
 // ref in extensions/components/native_app_window/native_app_window_views.cc
 bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window);
 
-//
-// implemented in nw_content_browser_hooks.cc
-//
-class Package;
-// ref in extensions/browser/api/app_window/app_window_api.cc
-bool GetPackageImage(nw::Package* package,
-                    const base::FilePath& icon_path,
-                    gfx::Image* image);
-// ref in extensions/browser/api/app_window/app_window_api.cc
-void SetPinningRenderer(bool pin);
-
 
 //
 // implemented in nw_chrome_browser_hooks.cc
