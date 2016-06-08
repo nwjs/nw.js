@@ -2,6 +2,7 @@
 
 // base
 #include "base/command_line.h"
+#include "base/files/file_enumerator.h"
 #include "base/files/file_util.h"
 #include "base/path_service.h"
 #include "base/threading/thread_restrictions.h"
@@ -22,12 +23,17 @@
 #include "chrome/common/chrome_paths.h"
 
 #include "components/content_settings/core/browser/content_settings_utils.h"
+#include "components/crx_file/id_util.h"
 
 // content
+#include "content/common/dom_storage/dom_storage_map.h"
+#include "content/browser/dom_storage/dom_storage_area.h"
+#include "content/nw/src/common/shell_switches.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/child_process_security_policy.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/web_contents.h"
+#include "content/public/common/result_codes.h"
 
 // content/nw
 #include "content/nw/src/nw_base.h"
@@ -41,6 +47,7 @@
 #include "extensions/common/extension.h"
 
 #include "net/cert/x509_certificate.h"
+#include "storage/common/database/database_identifier.h"
 
 #if defined(OS_WIN)
 #define _USE_MATH_DEFINES
@@ -111,6 +118,9 @@ void SendEventToApp(const std::string& event_name, std::unique_ptr<base::ListVal
     }
   }
 }
+
+typedef bool (*CheckStoragePartitionMatchesFn)(int render_process_id, const GURL& url);
+CONTENT_EXPORT extern CheckStoragePartitionMatchesFn gCheckStoragePartitionMatches;
 
 bool CheckStoragePartitionMatches(int render_process_id, const GURL& url) {
   return render_process_id == g_cdt_process_id && url.SchemeIs(content_settings::kChromeDevToolsScheme);
@@ -205,5 +215,118 @@ void SetWindowHIcon(base::win::ScopedHICON icon) {
 }
 
 #endif
+
+int MainPartsPreCreateThreadsHook() {
+  gCheckStoragePartitionMatches = CheckStoragePartitionMatches;
+  base::ThreadRestrictions::ScopedAllowIO allow_io;
+  base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
+  nw::Package* package = InitNWPackage();
+  if (package && !package->path().empty()) {
+    base::FilePath path = package->path().NormalizePathSeparators();
+
+    command_line->AppendSwitchPath("nwapp", path);
+    int dom_storage_quota_mb;
+    if (package->root()->GetInteger("dom_storage_quota", &dom_storage_quota_mb)) {
+      content::DOMStorageMap::SetQuotaOverride(dom_storage_quota_mb * 1024 * 1024);
+    }
+
+    base::FilePath user_data_dir;
+    std::string name, domain;
+    package->root()->GetString("name", &name);
+    package->root()->GetString("domain", &domain);
+    if (!name.empty() && GetDirUserData(&user_data_dir)) {
+      base::FilePath old_dom_storage_dir = user_data_dir
+        .Append(FILE_PATH_LITERAL("Local Storage"));
+      base::FileEnumerator enum0(old_dom_storage_dir, false, base::FileEnumerator::FILES, FILE_PATH_LITERAL("*_0.localstorage"));
+      base::FilePath old_dom_storage = enum0.Next();
+      if (!old_dom_storage.empty()) {
+        std::string id = domain.empty() ? crx_file::id_util::GenerateId(name) : domain;
+        GURL origin("chrome-extension://" + id + "/");
+        base::FilePath new_storage_dir = user_data_dir.Append(FILE_PATH_LITERAL("Default"))
+          .Append(FILE_PATH_LITERAL("Local Storage"));
+        base::CreateDirectory(new_storage_dir);
+
+        base::FilePath new_dom_storage = new_storage_dir
+          .Append(content::DOMStorageArea::DatabaseFileNameFromOrigin(origin));
+        base::FilePath new_dom_journal = new_dom_storage.ReplaceExtension(FILE_PATH_LITERAL("localstorage-journal"));
+        base::FilePath old_dom_journal = old_dom_storage.ReplaceExtension(FILE_PATH_LITERAL("localstorage-journal"));
+        if (!base::PathExists(new_dom_journal) && !base::PathExists(new_dom_storage)) {
+          base::Move(old_dom_journal, new_dom_journal);
+          base::Move(old_dom_storage, new_dom_storage);
+          LOG_IF(INFO, true) << "Migrate DOM storage from " << old_dom_storage.AsUTF8Unsafe() << " to " << new_dom_storage.AsUTF8Unsafe();
+        }
+      }
+      base::FilePath old_indexeddb = user_data_dir
+        .Append(FILE_PATH_LITERAL("IndexedDB"))
+        .Append(FILE_PATH_LITERAL("file__0.indexeddb.leveldb"));
+      if (base::PathExists(old_indexeddb)) {
+        std::string id = domain.empty() ? crx_file::id_util::GenerateId(name) : domain;
+        GURL origin("chrome-extension://" + id + "/");
+        base::FilePath new_indexeddb_dir = user_data_dir.Append(FILE_PATH_LITERAL("Default"))
+          .Append(FILE_PATH_LITERAL("IndexedDB"))
+          .AppendASCII(storage::GetIdentifierFromOrigin(origin))
+          .AddExtension(FILE_PATH_LITERAL(".indexeddb.leveldb"));
+        if (!base::PathExists(new_indexeddb_dir.DirName())) {
+          base::CreateDirectory(new_indexeddb_dir.DirName());
+          base::CopyDirectory(old_indexeddb, new_indexeddb_dir.DirName(), true);
+          base::Move(new_indexeddb_dir.DirName().Append(FILE_PATH_LITERAL("file__0.indexeddb.leveldb")), new_indexeddb_dir);
+          LOG_IF(INFO, true) << "Migrated IndexedDB from " << old_indexeddb.AsUTF8Unsafe() << " to " << new_indexeddb_dir.AsUTF8Unsafe();
+        }
+      }
+    }
+
+  }
+  return content::RESULT_CODE_NORMAL_EXIT;
+}
+
+void MainPartsPreMainMessageLoopRunHook() {
+  nw::Package* package = nw::package();
+  const base::ListValue *additional_trust_anchors = NULL;
+  if (package->root()->GetList("additional_trust_anchors", &additional_trust_anchors)) {
+    net::CertificateList trust_anchors;
+    for (size_t i = 0; i<additional_trust_anchors->GetSize(); i++) {
+      std::string certificate_string;
+      if (!additional_trust_anchors->GetString(i, &certificate_string)) {
+        // LOG(WARNING)
+        //   << "Could not get string from entry " << i;
+        continue;
+      }
+
+      net::CertificateList loaded =
+        net::X509Certificate::CreateCertificateListFromBytes(
+        certificate_string.c_str(), certificate_string.size(),
+        net::X509Certificate::FORMAT_AUTO);
+      if (loaded.empty() && !certificate_string.empty()) {
+        // LOG(WARNING)
+        //   << "Could not load certificate from entry " << i;
+        continue;
+      }
+
+      trust_anchors.insert(trust_anchors.end(), loaded.begin(), loaded.end());
+    }
+    if (!trust_anchors.empty()) {
+      SetTrustAnchors(trust_anchors);
+    }
+  }
+}
+
+bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_line,
+                                              const base::FilePath& current_directory) {
+  nw::Package* package = nw::package();
+  bool single_instance = true;
+  package->root()->GetBoolean(switches::kmSingleInstance, &single_instance);
+  if (single_instance) {
+#if defined(OS_WIN)
+    std::string cmd = base::UTF16ToUTF8(command_line.GetCommandLineString());
+#else
+    std::string cmd = command_line.GetCommandLineString();
+#endif
+    std::unique_ptr<base::ListValue> arguments(new base::ListValue());
+    arguments->AppendString(cmd);
+    SendEventToApp("nw.App.onOpen", std::move(arguments));
+  }
+    
+  return single_instance;
+}
 
 } // namespace nw

@@ -10,6 +10,9 @@
 #include "base/mac/bundle_locations.h"
 #endif
 
+#define CONTENT_IMPLEMENTATION 1
+#include "content/common/content_export.h"
+
 // v8
 #include "v8/include/v8.h"
 
@@ -23,8 +26,10 @@
 #endif
 
 #define NW_HOOK_MAP(type, sym, fn) extern type fn;
-#define NW_HOOK_INIT(type, sym, fn) type fn = nullptr;
+#define NW_HOOK_INIT(type, sym, fn) CONTENT_EXPORT type fn = nullptr;
+#define NODE_HOOK_INIT(type, sym, fn) CONTENT_EXPORT type fn = nullptr;
 #include "content/nw/src/common/node_hooks.h"
+#undef NODE_HOOK_INIT
 #undef NW_HOOK_INIT
 #undef NW_HOOK_MAP
 
