@@ -205,7 +205,7 @@ Emit when the Z-order of a source changed (this may change for windows as others
     This feature is changed in 0.13.0. See [Migration Notes from 0.12 to 0.13](../For Users/Migration/From 0.12 to 0.13.md).
 
 * `id` `{String}` is the media id of the screen or window that has a name changed
-* `name` `{String}` is the new new name of the screen or window
+* `name` `{String}` is the new name of the screen or window
 
 Emit when the name of the source has changed. This can happen when a window changes title.
 
