@@ -26,9 +26,9 @@ Each package must provide all the following fields in its package descriptor fil
 
 ### main
 
-* `{String}` which page should be opened when NW.js starts.
+* `{String}` which HTML page should be opened or which JavaScript file should be executed when NW.js starts.
 
-You can specify a URL here. You can also specify just a filename (such as `index.html`) or a path (relative to the directory where your `package.json` resides).
+You can specify a URL here. You can also specify just a filename (such as `index.html` or `script.js`) or a path (relative to the directory where your `package.json` resides).
 
 ### name
 
