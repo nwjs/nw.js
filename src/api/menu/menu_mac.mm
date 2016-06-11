@@ -36,6 +36,7 @@ namespace nw {
 void Menu::Create(const base::DictionaryValue& option) {
   menu_ = [[NSMenu alloc] initWithTitle:@"NW Menu"];
   [menu_ setAutoenablesItems:NO];
+  [menu_ setAllowsContextMenuPlugIns:NO];
   menu_delegate_ = [[NWMenuDelegate alloc] initWithMenu:this];
   [menu_ setDelegate:menu_delegate_];
 }
