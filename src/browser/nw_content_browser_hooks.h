@@ -31,16 +31,16 @@ class Package;
 // implemented in nw_content_browser_hooks.cc
 //
 // ref in chrome/browser/chrome_browser_main.cc
-CONTENT_EXPORT int MainPartsPreCreateThreadsHook();
+int MainPartsPreCreateThreadsHook();
 // ref in chrome/browser/chrome_browser_main.cc
-CONTENT_EXPORT void MainPartsPreMainMessageLoopRunHook();
+void MainPartsPreMainMessageLoopRunHook();
 // ref in chrome/browser/chrome_browser_main.cc
 CONTENT_EXPORT void MainPartsPostDestroyThreadsHook();
 // ref in chrome/browser/extensions/extension_service.cc
 CONTENT_EXPORT void RendererProcessTerminatedHook(content::RenderProcessHost* process,
                                   const content::NotificationDetails& details);
 // ref in chrome/browser/chrome_browser_main.cc
-CONTENT_EXPORT bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_line,
+bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_line,
                                              const base::FilePath& current_directory);
 // ref in chrome/browser/chrome_content_browser_client.cc
 CONTENT_EXPORT void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, content::WebPreferences* web_prefs);
