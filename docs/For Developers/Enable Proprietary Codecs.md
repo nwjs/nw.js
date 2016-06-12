@@ -27,9 +27,9 @@ ogg,matroska,wav
 !!! warning "Warning"
     If you do **NOT** have the license, using this tip below or moving to other solutions does **NOT** make you eligible to redistribute the codecs.
 
-### Get FFmpeg DLL from Community
+### Get FFmpeg Binaries from the Community
 
-In recent versions of Chromium project, ffmpeg was changed to be builtin. So you can't get ffmpeg dll any more from official Chrome. But you can get DLL [from the community](https://github.com/nwjs/nw.js/issues/4492). Or build FFmpeg yourself by following instructions below.
+In recent versions of the Chromium project, FFmpeg was changed to be built-in. So, you can't get the FFmpeg DLL from the official Chrome distribution anymore. However, you can get [precompiled binaries](https://github.com/iteufel/nwjs-ffmpeg-prebuilt/releases) from the community. Another alternative would be to build FFmpeg yourself by following the instructions below.
 
 ### Build FFmpeg DLL without Building NW.js
 
