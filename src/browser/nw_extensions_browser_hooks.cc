@@ -7,6 +7,7 @@
 #include "base/values.h"
 
 #if defined(OS_WIN)
+#include "base/win/scoped_gdi_object.h"
 #include "ui/gfx/icon_util.h"
 #endif
 

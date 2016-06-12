@@ -4,6 +4,7 @@
 #include "base/command_line.h"
 #include "base/files/file_enumerator.h"
 #include "base/files/file_util.h"
+#include "base/strings/utf_string_conversions.h"
 #include "base/path_service.h"
 #include "base/threading/thread_restrictions.h"
 
@@ -207,11 +208,11 @@ HICON GetWindowHIcon() {
 }
 
 void SetAppHIcon(base::win::ScopedHICON icon) {
-  g_app_hicon.reset(icon);
+  g_app_hicon = std::move(icon);
 }
 
 void SetWindowHIcon(base::win::ScopedHICON icon) {
-  g_window_hicon.reset(icon);
+  g_window_hicon = std::move(icon);
 }
 
 #endif

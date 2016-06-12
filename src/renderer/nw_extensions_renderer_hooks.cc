@@ -61,7 +61,11 @@ using blink::WebScriptSource;
 
 namespace manifest_keys = extensions::manifest_keys;
 
+#if defined(COMPONENT_BUILD) && defined(WIN32)
+#define NW_HOOK_MAP(type, sym, fn) CONTENT_EXPORT type fn;
+#else
 #define NW_HOOK_MAP(type, sym, fn) extern type fn;
+#endif
 #include "content/nw/src/common/node_hooks.h"
 #undef NW_HOOK_MAP
 
@@ -467,7 +471,11 @@ void willHandleNavigationPolicy(content::RenderView* rv,
 }
 
 typedef bool (*RenderWidgetWasHiddenHookFn)(content::RenderWidget*);
+#if defined(COMPONENT_BUILD)
+CONTENT_EXPORT RenderWidgetWasHiddenHookFn gRenderWidgetWasHiddenHook;
+#else
 extern RenderWidgetWasHiddenHookFn gRenderWidgetWasHiddenHook;
+#endif
 
 bool RenderWidgetWasHiddenHook(content::RenderWidget* rw) {
   return g_skip_render_widget_hidden;
