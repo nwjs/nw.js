@@ -1,3 +1,9 @@
+0.15.2 / 06-07-2016
+===================
+- Update Chromium to [51.0.2704.84](http://googlechromereleases.blogspot.com/2016/06/stable-channel-update_6.html)
+- Update Node.js to [v6.2.1](https://github.com/nodejs/node/blob/v6.2.1/CHANGELOG.md)
+- Fix: "Print to PDF" in the Privew dialog broken after using nw.Window.print() [(#4911)](https://github.com/nwjs/nw.js/issues/4911)
+
 0.15.1 / 06-02-2016
 ===================
 - Update Chromium to [51.0.2704.79](http://googlechromereleases.blogspot.com/2016/06/stable-channel-update.html)
