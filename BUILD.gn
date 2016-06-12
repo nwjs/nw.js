@@ -119,6 +119,9 @@ static_library("nw_browser") {
     "//third_party/mojo/src",
   ]
   sources = nw_chrome_browser_sources
+  if (is_win) {
+    cflags = [ "/wd4189", "/wd4800", "/wd4267" ]
+  }
 
   if (!is_component_build) {
     sources += nw_content_browser_sources
@@ -186,10 +189,18 @@ static_library("nw_renderer") {
         "src/nw_custom_bindings.h",
   ]
 
+  if (is_win) {
+    cflags = [ "/wd4189", "/wd4800", "/wd4267" ]
+  }
+
   if (!is_component_build) {
     sources += nw_content_renderer_sources
   } else {
+    #deps += ["//content", "//third_party/WebKit/Source/core:core"]
     deps += ["//content"]
+    if (is_win) {
+      libs = ["blink_core.dll.lib"]
+    }
   }
 
 }

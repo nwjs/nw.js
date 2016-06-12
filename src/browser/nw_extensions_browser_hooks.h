@@ -3,11 +3,7 @@
 
 #if defined(WIN32)
 #include <windows.h>
-namespace base {
-  namespace win {
-    class ScopedHICON;
-  }
-}
+#include "base/win/scoped_gdi_object.h"
 #endif
 
 #include <string>
