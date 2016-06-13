@@ -99,6 +99,9 @@ bool IsReloadingApp() {
   return g_reloading_app;
 }
 
+typedef void (*SendEventToAppFn)(const std::string& event_name, std::unique_ptr<base::ListValue> event_args);
+CONTENT_EXPORT extern SendEventToAppFn gSendEventToApp;
+
 void SendEventToApp(const std::string& event_name, std::unique_ptr<base::ListValue> event_args) {
   Profile* profile = ProfileManager::GetActiveUserProfile();
   const extensions::ExtensionSet& extensions =
@@ -219,6 +222,9 @@ void SetWindowHIcon(base::win::ScopedHICON icon) {
 
 int MainPartsPreCreateThreadsHook() {
   gCheckStoragePartitionMatches = CheckStoragePartitionMatches;
+#if defined(OS_MACOSX)
+  gSendEventToApp = SendEventToApp;
+#endif
   base::ThreadRestrictions::ScopedAllowIO allow_io;
   base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
   nw::Package* package = InitNWPackage();
