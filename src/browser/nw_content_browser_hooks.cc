@@ -56,8 +56,9 @@ bool g_pinning_renderer = true;
 
 } //namespace
 
-#if 0
-void SendEventToApp(const std::string& event_name, std::unique_ptr<base::ListValue> event_args);
+#if defined(OS_MACOSX)
+typedef void (*SendEventToAppFn)(const std::string& event_name, std::unique_ptr<base::ListValue> event_args);
+CONTENT_EXPORT SendEventToAppFn gSendEventToApp = nullptr;
 
 bool GetDirUserData(base::FilePath*);
 
@@ -136,17 +137,19 @@ bool GetImage(Package* package, const FilePath& icon_path, gfx::Image* image) {
 }
 
 #if defined(OS_MACOSX)
-bool ApplicationShouldHandleReopenHook(bool hasVisibleWindows) {
+CONTENT_EXPORT bool ApplicationShouldHandleReopenHook(bool hasVisibleWindows) {
   std::unique_ptr<base::ListValue> arguments(new base::ListValue());
-  SendEventToApp("nw.App.onReopen",std::move(arguments));
+  if (gSendEventToApp)
+    gSendEventToApp("nw.App.onReopen",std::move(arguments));
   return true;
 }
 
-void OSXOpenURLsHook(const std::vector<GURL>& startup_urls) {
+CONTENT_EXPORT void OSXOpenURLsHook(const std::vector<GURL>& startup_urls) {
   std::unique_ptr<base::ListValue> arguments(new base::ListValue());
   for (size_t i = 0; i < startup_urls.size(); i++)
     arguments->AppendString(startup_urls[i].spec());
-  SendEventToApp("nw.App.onOpen", std::move(arguments));
+  if (gSendEventToApp)
+    gSendEventToApp("nw.App.onOpen", std::move(arguments));
 }
 #endif
 
