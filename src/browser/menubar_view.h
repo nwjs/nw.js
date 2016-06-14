@@ -21,6 +21,8 @@ namespace ui {
 
 namespace nw {
 
+class Menu;
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 //  copied from chrome/browser/ui/views/bookmarks/bookmark_bar_view.h
@@ -43,8 +45,8 @@ class MenuBarView :
   MenuBarView();
   ~MenuBarView() override;
 
-  void UpdateMenu(ui::MenuModel* model);
-  void InitView(ui::MenuModel* model);
+  void UpdateMenu(Menu* menu);
+  void InitView(Menu* menu);
 
   bool GetMenuButtonAtLocation(const gfx::Point& loc, ui::MenuModel** model, views::MenuButton** button);
 

@@ -41,6 +41,7 @@ class MenuItemDelegate;
 #include "base/strings/string16.h"
 #include "ui/gfx/image/image.h"
 #include "ui/base/accelerators/accelerator.h"
+#include "ui/views/controls/button/menu_button.h"
 #include "ui/views/focus/focus_manager.h"
 #endif  // defined(OS_MACOSX)
 
@@ -79,6 +80,7 @@ class MenuItem : public Base {
    bool AcceleratorPressed(const ui::Accelerator& accelerator) override;
    bool CanHandleAccelerators() const override;
   void UpdateKeys(views::FocusManager *focus_manager);
+  void SetMenuBarButton(views::MenuButton* menubar_button);
 #endif
 
   void OnClick();
@@ -120,6 +122,9 @@ class MenuItem : public Base {
   views::FocusManager *focus_manager_;
 
   ui::Accelerator accelerator_;
+  ui::Accelerator accelerator_mnemonic_;
+
+  views::MenuButton* menubar_button_;
 
   // Flag to indicate we need refresh.
   bool is_modified_;
@@ -133,6 +138,7 @@ class MenuItem : public Base {
   base::string16 tooltip_;
   Menu* submenu_;
   bool enable_shortcut_;
+  bool enable_mnemonic_;
 
   bool meta_down_flag_;
 

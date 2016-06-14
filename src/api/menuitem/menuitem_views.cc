@@ -32,7 +32,9 @@
 #include "content/nw/src/nw_package.h"
 #include "ui/base/accelerators/accelerator.h"
 #include "ui/gfx/image/image_skia_operations.h"
+#include "ui/gfx/text_utils.h"
 #include "ui/events/event_constants.h"//for modifier key code
+#include "ui/events/keycodes/keyboard_codes.h"
 #include "base/logging.h"
 
 namespace nw {
@@ -41,6 +43,21 @@ namespace {
 
 static const int kIconWidth = 16;
 static const int kIconHeight = 16;
+
+bool GetAcceleratorFromLabel(const base::string16& label, ui::Accelerator* accelerator) {
+  int pos = -1;
+  int span = 0;
+  base::string16 new_label = gfx::RemoveAcceleratorChar(label, '&', &pos, &span);
+  if (span) {
+    base::char16 ch = base::ToUpperASCII(new_label[pos]);
+    if ((ch >= ui::KeyboardCode::VKEY_0 && ch <= ui::KeyboardCode::VKEY_9)
+      || (ch >= ui::KeyboardCode::VKEY_A && ch <= ui::KeyboardCode::VKEY_Z)) {
+      *accelerator = ui::Accelerator((ui::KeyboardCode)ch, ui::EF_ALT_DOWN);
+      return true;
+    }
+  }
+  return false;
+}
 
 } // namespace
 
@@ -54,6 +71,8 @@ void MenuItem::Create(const base::DictionaryValue& option) {
 
   focus_manager_ = NULL;
   menu_ = NULL;
+
+  menubar_button_ = NULL;
 
   option.GetString("type", &type_);
   option.GetString("label", &label_);
@@ -94,6 +113,12 @@ void MenuItem::Create(const base::DictionaryValue& option) {
       meta_down_flag_ = true;
     }
     accelerator_ = ui::Accelerator(keyval,modifiers_value);
+  }
+
+  if (GetAcceleratorFromLabel(label_, &accelerator_mnemonic_)) {
+    enable_mnemonic_ = true;
+  } else {
+    enable_mnemonic_ = false;
   }
 
   std::string icon;
@@ -186,6 +211,12 @@ void MenuItem::UpdateKeys(views::FocusManager *focus_manager){
         ui::AcceleratorManager::kHighPriority,
         this);
     }
+    if (enable_mnemonic_ && menubar_button_) {
+      focus_manager->RegisterAccelerator(
+        accelerator_mnemonic_,
+        ui::AcceleratorManager::kHighPriority,
+        this);
+    }
     if (submenu_ != NULL){
       submenu_->UpdateKeys(focus_manager);
     }
@@ -194,6 +225,12 @@ void MenuItem::UpdateKeys(views::FocusManager *focus_manager){
 
 #if defined(OS_WIN) || defined(OS_LINUX)
 bool MenuItem::AcceleratorPressed(const ui::Accelerator& accelerator) {
+  if (menubar_button_) {
+    ui::KeyEvent event(accelerator.type(), accelerator.key_code(), accelerator.modifiers());
+    if (menubar_button_->request_focus_on_press())
+      menubar_button_->RequestFocus();
+    menubar_button_->Activate(&event);
+  }
 #if defined(OS_WIN)
   if (meta_down_flag_) {
     if ((::GetKeyState(VK_APPS) & 0x8000) != 0x8000) {
@@ -206,7 +243,11 @@ bool MenuItem::AcceleratorPressed(const ui::Accelerator& accelerator) {
 }
 
 bool MenuItem::CanHandleAccelerators() const {
-  return enable_shortcut_ && is_enabled_;
+  return (enable_shortcut_ || enable_mnemonic_) && is_enabled_;
+}
+
+void MenuItem::SetMenuBarButton(views::MenuButton* menubar_button) {
+  menubar_button_ = menubar_button;
 }
 
 #endif
