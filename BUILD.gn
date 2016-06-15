@@ -314,7 +314,7 @@ if (is_linux && !is_component_build) {
 
 executable("payload") {
   sources = ["tools/payload.cc"]
-  deps = [ "//base", "//extensions/browser" ]
+  deps = [ "//base", "//crypto" ]
 }
 
 action("dist") {
