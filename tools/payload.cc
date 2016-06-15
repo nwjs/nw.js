@@ -11,8 +11,8 @@
 #include "base/stl_util.h"
 #include "crypto/secure_hash.h"
 #include "crypto/sha2.h"
-#include "extensions/browser/content_hash_tree.h"
-#include "extensions/browser/computed_hashes.h"
+//#include "extensions/browser/content_hash_tree.h"
+//#include "extensions/browser/computed_hashes.h"
 
 #include "base/base64.h"
 #include "base/json/json_reader.h"
@@ -160,6 +160,46 @@ void MyComputedHashes::ComputeHashesForContent(const std::string& contents,
   } while (offset < contents.size());
 }
 
+std::string ComputeTreeHashRoot(const std::vector<std::string>& leaf_hashes,
+                                int branch_factor) {
+  if (leaf_hashes.empty() || branch_factor < 2)
+    return std::string();
+
+  // The nodes of the tree we're currently operating on.
+  std::vector<std::string> current_nodes;
+
+  // We avoid having to copy all of the input leaf nodes into |current_nodes|
+  // by using a pointer. So the first iteration of the loop this points at
+  // |leaf_hashes|, but thereafter it points at |current_nodes|.
+  const std::vector<std::string>* current = &leaf_hashes;
+
+  // Where we're inserting new hashes computed from the current level.
+  std::vector<std::string> parent_nodes;
+
+  while (current->size() > 1) {
+    // Iterate over the current level of hashes, computing the hash of up to
+    // |branch_factor| elements to form the hash of each parent node.
+    std::vector<std::string>::const_iterator i = current->begin();
+    while (i != current->end()) {
+      std::unique_ptr<crypto::SecureHash> hash(
+          crypto::SecureHash::Create(crypto::SecureHash::SHA256));
+      for (int j = 0; j < branch_factor && i != current->end(); j++) {
+        DCHECK_EQ(i->size(), crypto::kSHA256Length);
+        hash->Update(i->data(), i->size());
+        ++i;
+      }
+      parent_nodes.push_back(std::string(crypto::kSHA256Length, 0));
+      std::string* output = &(parent_nodes.back());
+      hash->Finish(string_as_array(output), output->size());
+    }
+    current_nodes.swap(parent_nodes);
+    parent_nodes.clear();
+    current = &current_nodes;
+  }
+  DCHECK_EQ(1u, current->size());
+  return (*current)[0];
+}
+
 bool CreateHashes(const base::FilePath& hashes_file, const base::FilePath& work_path) {
   // Make sure the directory exists.
   if (!base::CreateDirectoryAndGetError(hashes_file.DirName(), NULL))
@@ -199,7 +239,7 @@ bool CreateHashes(const base::FilePath& hashes_file, const base::FilePath& work_
     std::vector<std::string> hashes;
     MyComputedHashes::ComputeHashesForContent(contents, 4096, &hashes);
     std::string root =
-      extensions::ComputeTreeHashRoot(hashes, 4096 / crypto::kSHA256Length);
+      ComputeTreeHashRoot(hashes, 4096 / crypto::kSHA256Length);
     writer.AddHash(relative_path, 4096, root);
   }
   bool result = writer.WriteToFile(hashes_file);
@@ -212,7 +252,7 @@ int wmain(int argc, wchar_t* argv[]) {
 int main(int argc, char* argv[]) {
 #endif
   base::AtExitManager exit_manager;
-  base::i18n::InitializeICU();
+  //base::i18n::InitializeICU();
 
   return CreateHashes(base::FilePath(FILE_PATH_LITERAL("payload.json")),
                       base::FilePath(FILE_PATH_LITERAL("."))) ? 1 : 0;
