@@ -1,3 +1,5 @@
+import("//build/toolchain/toolchain.gni")
+
 group("nwjs") {
   deps = [
     "//chrome",
@@ -232,3 +234,103 @@ action("commit_id") {
     public_configs = [ ":commit_id_config" ]
 }
 
+copy("copy_node") {
+  if (is_debug) {
+     node_dir = "$root_out_dir/../Debug/lib/"
+  } else {
+     node_dir = "$root_out_dir/../Release/lib/"
+  }
+  sources = [ "$node_dir" + "/libnode.so" ]
+  outputs = [ "$root_shlib_dir/libnode.so" ]
+}
+
+if (is_win && !is_component_build) {
+  action("dump_symbol_and_strip") {
+    script = "tools/dump_win_syms.py"
+    inputs = [ "$root_build_dir/nw.exe",
+               "$root_build_dir/nw.dll",
+               "$root_build_dir/node.dll",
+             ]
+
+    deps = [ "//breakpad:dump_syms",
+             "//chrome:chrome_initial",
+             "//chrome:main_dll",
+             ":copy_node",
+             ":payload",
+             "//v8:nwjc",
+             "//chrome/test/chromedriver:chromedriver",
+             "//third_party/ffmpeg:ffmpeg"
+             ]
+    outputs = [
+      "$root_build_dir/nw.sym.7z"
+    ]
+    args = [
+      rebase_path("$root_build_dir/nw.exe", root_build_dir),
+      rebase_path("$root_build_dir/nw.dll", root_build_dir),
+      rebase_path("$root_build_dir/node.dll", root_build_dir),
+      rebase_path("$root_build_dir/nw.sym.7z", root_build_dir),
+    ]
+  }
+}
+
+if (is_linux && !is_component_build) {
+  linux_strip_binary = 1
+  action_foreach("dump_symbol_and_strip") {
+    script = "//build/linux/dump_app_syms.py"
+    sources = [ "$root_build_dir/nw",
+                "$root_shlib_dir/libnw.so",
+                "$root_shlib_dir/libnode.so",
+                "$root_shlib_dir/libffmpeg.so",
+                "$root_build_dir/chromedriver",
+                "$root_build_dir/nwjc",
+                "$root_build_dir/payload"]
+    deps = [ "//breakpad:dump_syms",
+             "//chrome:chrome_initial",
+             "//chrome:main_dll",
+             ":copy_node",
+             ":payload",
+             "//v8:nwjc",
+             "//chrome/test/chromedriver:chromedriver",
+             "//third_party/ffmpeg:ffmpeg"
+             ]
+    if (enable_nacl) {
+      sources += [ "$root_build_dir/nacl_helper" ]
+      deps += [ "//components/nacl/loader:nacl_helper" ]
+    }
+    inputs = [
+      "$root_build_dir/dump_syms",
+    ]
+    outputs = [
+      "$root_build_dir/{{source_name_part}}.breakpad.$target_cpu"
+    ]
+    args = [
+      "./" + rebase_path("$root_out_dir/dump_syms", root_build_dir),
+      "$linux_strip_binary",
+      "{{source}}",
+      rebase_path("$root_out_dir/{{source_name_part}}.breakpad.$current_cpu", root_build_dir)
+    ]
+  }
+}
+
+executable("payload") {
+  sources = ["tools/payload.cc"]
+  deps = [ "//base", "//extensions/browser" ]
+}
+
+action("dist") {
+  script = "tools/package_binaries.py"
+  if (nwjs_sdk) {
+    package_mode = "sdk"
+  } else {
+    package_mode = "nosdk"
+  }
+  icudat_path = rebase_path("../../third_party/icu/common/icudtl.dat")
+  outputs = [ "$root_build_dir/new_package.re" ]
+  args = [
+    "-p", rebase_path("$root_build_dir"),
+    "-a", "$target_cpu",
+    "-m", "$package_mode",
+    "-i", "$icudat_path"
+  ]
+  deps = [ "//components/resources:about_credits_nw" ]
+}
