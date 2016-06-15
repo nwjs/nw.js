@@ -482,7 +482,7 @@
       ],
       'dependencies': [
         '<(DEPTH)/base/base.gyp:base',
-        '<(DEPTH)/extensions/extensions.gyp:extensions_browser',
+        '<(DEPTH)/crypto/crypto.gyp:crypto',
       ],
       'conditions': [
         ['OS=="win" and win_use_allocator_shim==1', {
