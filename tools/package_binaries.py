@@ -276,7 +276,7 @@ def generate_target_symbols(platform_name, arch, version):
     elif platform_name == 'osx':
         target['compress'] = 'zip'
         target['input'] = [
-                          'nwjs.breakpad.tar'
+                          #'nwjs.breakpad.tar'
                           ]
         target['folder'] = True
     else:
