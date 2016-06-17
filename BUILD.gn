@@ -1,4 +1,5 @@
 import("//build/toolchain/toolchain.gni")
+import("//build/util/version.gni")
 
 group("nwjs") {
   deps = [
@@ -240,8 +241,14 @@ copy("copy_node") {
   } else {
      node_dir = "$root_out_dir/../Release/lib/"
   }
-  sources = [ "$node_dir" + "/libnode.so" ]
-  outputs = [ "$root_shlib_dir/libnode.so" ]
+  if (is_linux) {
+    sources = [ "$node_dir" + "/libnode.so" ]
+    outputs = [ "$root_shlib_dir/libnode.so" ]
+  }
+  if (is_mac) {
+    sources = [ "$node_dir" + "../libnode.dylib" ]
+    outputs = [ "$root_out_dir/nwjs.app/Contents/Versions/$chrome_version_full/nwjs Framework.framework/libnode.dylib" ]
+  }
 }
 
 if (is_win && !is_component_build) {
@@ -270,6 +277,19 @@ if (is_win && !is_component_build) {
       rebase_path("$root_build_dir/node.dll", root_build_dir),
       rebase_path("$root_build_dir/nw.sym.7z", root_build_dir),
     ]
+  }
+}
+
+if (is_mac && !is_component_build) {
+  group("dump") {
+    deps = [ "//breakpad:dump_syms",
+             "//chrome",
+             ":copy_node",
+             ":payload",
+             "//v8:nwjc",
+             "//chrome/test/chromedriver:chromedriver",
+             "//third_party/ffmpeg:ffmpeg"
+             ]
   }
 }
 
@@ -332,5 +352,5 @@ action("dist") {
     "-m", "$package_mode",
     "-i", "$icudat_path"
   ]
-  deps = [ "//components/resources:about_credits_nw" ]
+  deps = [ "//components/resources:about_credits_nw", ":dump" ]
 }
