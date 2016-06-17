@@ -492,8 +492,10 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     NWWindow.prototype.cookies = chrome.cookies;
 
     NWWindow.prototype.print = function(option) {
+      if (!option) {
+        option = {'autoprint': false};
+      }
       var _option = JSON.parse(JSON.stringify(option));
-      _option["autoprint"] = true;
       if (option.pdf_path)
         _option["printer"] = "Save as PDF";
       currentNWWindowInternal.setPrintSettingsInternal(_option);
