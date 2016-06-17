@@ -311,6 +311,8 @@ Print the web contents in the window without the need for user's interaction. `o
 `marginsCustom` example: `"marginsCustom":{"marginBottom":54,"marginLeft":70,"marginRight":28,"marginTop":32}`  
 `mediaSize` example: `'mediaSize':{'name': 'CUSTOM', 'width_microns': 279400, 'height_microns': 215900, 'custom_display_name':'Letter', 'is_default': true}`
 
+*NOTE: If no options are being passed, `win.print({})` is what should be called.*
+
 ## win.setMaximumSize(width, height)
 
 * `width` `{Integer}` the maximum width of the window
