@@ -245,7 +245,7 @@ copy("copy_node") {
 }
 
 if (is_win && !is_component_build) {
-  action("dump_symbol_and_strip") {
+  action("dump") {
     script = "tools/dump_win_syms.py"
     inputs = [ "$root_build_dir/nw.exe",
                "$root_build_dir/nw.dll",
@@ -275,7 +275,7 @@ if (is_win && !is_component_build) {
 
 if (is_linux && !is_component_build) {
   linux_strip_binary = 1
-  action_foreach("dump_symbol_and_strip") {
+  action_foreach("dump") {
     script = "//build/linux/dump_app_syms.py"
     sources = [ "$root_build_dir/nw",
                 "$root_shlib_dir/libnw.so",
