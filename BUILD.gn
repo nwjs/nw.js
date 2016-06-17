@@ -249,6 +249,18 @@ copy("copy_node") {
     sources = [ "$node_dir" + "../libnode.dylib" ]
     outputs = [ "$root_out_dir/nwjs.app/Contents/Versions/$chrome_version_full/nwjs Framework.framework/libnode.dylib" ]
   }
+  if (is_win) {
+    if (target_cpu == "x64") {
+      suffix="_x64"
+    }
+    if (is_debug) {
+       node_dir = "$root_out_dir/../Debug" + suffix
+    } else {
+       node_dir = "$root_out_dir/../Release" + suffix
+    }
+    sources = [ "$node_dir" + "/node.dll" ]
+    outputs = [ "$root_out_dir/node.dll" ]
+  }
 }
 
 if (is_win && !is_component_build) {
@@ -259,8 +271,8 @@ if (is_win && !is_component_build) {
                "$root_build_dir/node.dll",
              ]
 
-    deps = [ "//breakpad:dump_syms",
-             "//chrome:chrome_initial",
+    deps = [
+             "//chrome:reorder_imports",
              "//chrome:main_dll",
              ":copy_node",
              ":payload",
