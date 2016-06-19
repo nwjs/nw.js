@@ -1,6 +1,7 @@
 import time
 import os
 import shutil
+import platform
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -17,6 +18,10 @@ try:
 except:
     pass
 shutil.copytree(user_data_tmpl, user_data_dir)
+
+if platform.system() == 'Windows':
+    user_data_dir = os.path.join(user_data_dir, 'User Data')
+    os.mkdir(user_data_dir)
 
 chrome_options.add_argument("user-data-dir=" + user_data_dir)
 
