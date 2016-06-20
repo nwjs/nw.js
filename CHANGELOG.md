@@ -1,3 +1,17 @@
+0.15.2 / 06-18-2016
+===================
+- Update Chromium to [51.0.2704.103](http://googlechromereleases.blogspot.com/2016/06/stable-channel-update_16.html)
+- Update Node.js to [v6.2.2](https://github.com/nodejs/node/blob/v6.2.2/CHANGELOG.md)
+- Fix: [WIN] user data migration from 0.12
+- Fix: FileList object in dragover event callback is not set correctly
+- Fix: crash on JSON.stringify(window) [(#4959)](https://github.com/nwjs/nw.js/issues/4959)
+- Fix: open mini browser for links in PDF [(#4915)](https://github.com/nwjs/nw.js/issues/4915)
+- Fix: possible race condition in content verfication
+- Fix: protect package.json from hacking for content verification
+- Fix: Disabled contextual menu plug-in items on mac
+- [doc] changed link for FFmpeg precompiled binaries
+- [doc] dded JS file as possibility for the "main" field
+
 0.15.2 / 06-07-2016
 ===================
 - Update Chromium to [51.0.2704.84](http://googlechromereleases.blogspot.com/2016/06/stable-channel-update_6.html)
