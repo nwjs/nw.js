@@ -399,10 +399,10 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       currentNWWindowInternal.reloadIgnoringCache();
     };
     NWWindow.prototype.eval = function (frame, script) {
-      nwNatives.evalScript(frame, script);
+      return nwNatives.evalScript(frame, script);
     };
     NWWindow.prototype.evalNWBin = function (frame, path) {
-      nwNatives.evalNWBin(frame, path);
+      return nwNatives.evalNWBin(frame, path);
     };
     NWWindow.prototype.show = function () {
       this.appWindow.show();
