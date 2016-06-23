@@ -69,6 +69,9 @@
 
 #include "net/cert/x509_certificate.h"
 
+#include "sql/connection.h"
+#include "sql/meta_table.h"
+#include "sql/transaction.h"
 #include "storage/common/database/database_identifier.h"
 
 #include "third_party/WebKit/public/web/WebDocument.h"
@@ -350,6 +353,38 @@ int MainPartsPreCreateThreadsHook() {
           base::Move(old_dom_journal, new_dom_journal);
           base::Move(old_dom_storage, new_dom_storage);
           LOG_IF(INFO, true) << "Migrate DOM storage from " << old_dom_storage.AsUTF8Unsafe() << " to " << new_dom_storage.AsUTF8Unsafe();
+        }
+      }
+#if defined(OS_WIN)
+      base::FilePath old_websqldir = user_data_dir.DirName()
+        .Append(FILE_PATH_LITERAL("databases"));
+#else
+      base::FilePath old_websqldir = user_data_dir
+        .Append(FILE_PATH_LITERAL("databases"));
+#endif
+      base::FileEnumerator enum1(old_websqldir, false, base::FileEnumerator::DIRECTORIES, FILE_PATH_LITERAL("app_*"));
+      base::FilePath app_websql_dir = enum1.Next();
+      std::string old_id("file__0");
+      if (!app_websql_dir.empty())
+        old_id = app_websql_dir.BaseName().AsUTF8Unsafe();
+      if (base::PathExists(old_websqldir)) {
+        std::string id = domain.empty() ? crx_file::id_util::GenerateId(name) : domain;
+        GURL origin("chrome-extension://" + id + "/");
+        base::FilePath new_websql_dir = user_data_dir.Append(FILE_PATH_LITERAL("Default"))
+          .Append(FILE_PATH_LITERAL("databases"))
+          .AppendASCII(storage::GetIdentifierFromOrigin(origin));
+        if (!base::PathExists(new_websql_dir.DirName())) {
+          base::CreateDirectory(new_websql_dir.DirName());
+          base::CopyDirectory(old_websqldir, new_websql_dir.DirName().DirName(), true);
+          base::Move(new_websql_dir.DirName().Append(FILE_PATH_LITERAL(old_id)), new_websql_dir);
+          base::FilePath metadb_path = new_websql_dir.DirName().Append(FILE_PATH_LITERAL("Databases.db"));
+          sql::Connection metadb;
+          if (metadb.Open(metadb_path) && sql::MetaTable::DoesTableExist(&metadb)) {
+            std::string stmt = "UPDATE Databases SET origin='" + storage::GetIdentifierFromOrigin(origin) + "' WHERE origin='" + old_id + "'";
+            if (!metadb.Execute(stmt.c_str()))
+              LOG_IF(INFO, true) << "Fail to execute migrate SQL.";
+          }
+          LOG_IF(INFO, true) << "Migrated WebSql DB from " << old_websqldir.AsUTF8Unsafe() << " to " << new_websql_dir.AsUTF8Unsafe();
         }
       }
 #if defined(OS_WIN)
