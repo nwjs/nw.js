@@ -458,6 +458,11 @@
             '<(DEPTH)/chrome/chrome.gyp:chromedriver',
           ],
         }],
+        ['nwjs_sdk==1 and (OS=="linux" or OS=="mac")', {
+          'dependencies': [
+            '<(DEPTH)/breakpad/breakpad.gyp:minidump_stackwalk',
+          ],
+        }],
         ['OS == "linux"', {
           'dependencies': [
             'strip_binaries',

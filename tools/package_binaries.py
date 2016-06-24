@@ -169,6 +169,7 @@ def generate_target_nw(platform_name, arch, version):
             target['input'].append('nwjc')
             target['input'].append('payload')
             target['input'].append('chromedriver')
+            target['input'].append('minidump_stackwalk')
         if flavor in ['nacl','sdk'] :
             target['input'] += ['nacl_helper', 'nacl_helper_bootstrap', 'pnacl']
             if arch == 'x64':
@@ -217,6 +218,7 @@ def generate_target_nw(platform_name, arch, version):
             target['input'].append('nwjc')
             target['input'].append('payload')
             target['input'].append('chromedriver')
+            target['input'].append('minidump_stackwalk')
     else:
         print 'Unsupported platform: ' + platform_name
         exit(-1)
