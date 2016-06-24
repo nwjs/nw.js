@@ -1,4 +1,16 @@
-0.15.2 / 06-18-2016
+0.15.4 / 06-24-2016
+===================
+- Update Chromium to [51.0.2704.106](http://googlechromereleases.blogspot.com/2016/06/stable-channel-update_23.html)
+- Include minidump_stackwalk in Linux and OSX sdk build [(#5023)](https://github.com/nwjs/nw.js/issues/5023)
+- Added new APIs for read/write multiple types of data to clipboard [(#4929)](https://github.com/nwjs/nw.js/issues/4929)
+- Fix: 'loaded' event shouldn't be fired when using history API [(#5001)](https://github.com/nwjs/nw.js/issues/5001)
+- Fix: DeprecationWarning: 'root' is deprecated, use 'global' [(#4938)](https://github.com/nwjs/nw.js/issues/4938)
+- Fix: Migrate websql data from 0.12 [(#5018)](https://github.com/nwjs/nw.js/issues/5018)
+- Fix: content verficiation of package.json in Node modules
+- Fix: [Linux] foreground colors for menubar [(#5007)](https://github.com/nwjs/nw.js/issues/5007)
+- Make Window.eval() and Window.evalNWBin() return result
+
+0.15.3 / 06-18-2016
 ===================
 - Update Chromium to [51.0.2704.103](http://googlechromereleases.blogspot.com/2016/06/stable-channel-update_16.html)
 - Update Node.js to [v6.2.2](https://github.com/nodejs/node/blob/v6.2.2/CHANGELOG.md)
