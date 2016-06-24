@@ -376,7 +376,7 @@ int MainPartsPreCreateThreadsHook() {
         if (!base::PathExists(new_websql_dir.DirName())) {
           base::CreateDirectory(new_websql_dir.DirName());
           base::CopyDirectory(old_websqldir, new_websql_dir.DirName().DirName(), true);
-          base::Move(new_websql_dir.DirName().Append(FILE_PATH_LITERAL(old_id)), new_websql_dir);
+          base::Move(new_websql_dir.DirName().Append(base::FilePath::FromUTF8Unsafe(old_id)), new_websql_dir);
           base::FilePath metadb_path = new_websql_dir.DirName().Append(FILE_PATH_LITERAL("Databases.db"));
           sql::Connection metadb;
           if (metadb.Open(metadb_path) && sql::MetaTable::DoesTableExist(&metadb)) {
