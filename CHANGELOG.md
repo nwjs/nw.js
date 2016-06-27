@@ -69,12 +69,12 @@
 ===================
 - Update Chromium to [51.0.2704.63](http://googlechromereleases.blogspot.com/2016/05/stable-channel-update_25.html)
 - Update Node.js to 6.2.0
-- Add: '--disable-devtools' command line for SDK build (#4839)
-- Fix: inject_js in webview and remote pages (#4877)
-- Fix: Transparency + Click-through clicks through floated elements (#4846)
-- Fix: disable tray icon "NW.js is using your microphone" (#4852)
-- Fix: Memory leak in Menu API (#4860)
-- Fix: Error in Tray in background context (#4862)
+- Add: '--disable-devtools' command line for SDK build [(#4839)](https://github.com/nwjs/nw.js/issues/4839)
+- Fix: inject_js in webview and remote pages [(#4877)](https://github.com/nwjs/nw.js/issues/4877)
+- Fix: Transparency + Click-through clicks through floated elements [(#4846)](https://github.com/nwjs/nw.js/issues/4846)
+- Fix: disable tray icon "NW.js is using your microphone" [(#4852)](https://github.com/nwjs/nw.js/issues/4852)
+- Fix: Memory leak in Menu API [(#4860)](https://github.com/nwjs/nw.js/issues/4860)
+- Fix: Error in Tray in background context [(#4862)](https://github.com/nwjs/nw.js/issues/4862)
 - [docs] disable-devtools switch
 - [docs] using Menu API and navigation
 
@@ -109,11 +109,11 @@
 ===================
 - Update Chromium to 50.0.2661.94
 - Update Node.js to 5.11.0
-- Fix: failed to start after reload with package name starting with underline (#4779)
-- Fix: [OSX] crashes when calling native module in inject_js_start script (#4772)
-- Fix: Content of file included via "inject_js_start" is executing twice (#4705)
+- Fix: failed to start after reload with package name starting with underline [(#4779)](https://github.com/nwjs/nw.js/issues/4779)
+- Fix: [OSX] crashes when calling native module in inject_js_start script [(#4772)](https://github.com/nwjs/nw.js/issues/4772)
+- Fix: Content of file included via "inject_js_start" is executing twice [(#4705)](https://github.com/nwjs/nw.js/issues/4705)
 - Fix: undefined windows object returned from nw.Window.open in some cases
-- Fix: window menubar click event handler (#4777)
+- Fix: window menubar click event handler [(#4777)](https://github.com/nwjs/nw.js/issues/4777)
 - [docs] oncancel event of File dialog
 
 0.14.2 / 04-21-2016
