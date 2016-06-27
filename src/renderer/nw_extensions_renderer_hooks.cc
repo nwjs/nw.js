@@ -214,12 +214,11 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   }
   v8::Handle<v8::Object> nw = AsObjectOrEmpty(CreateNW(context, node_global, g_context));
 
-  v8::Local<v8::Array> symbols = v8::Array::New(isolate, 5);
+  v8::Local<v8::Array> symbols = v8::Array::New(isolate, 4);
   symbols->Set(0, v8::String::NewFromUtf8(isolate, "global"));
   symbols->Set(1, v8::String::NewFromUtf8(isolate, "process"));
   symbols->Set(2, v8::String::NewFromUtf8(isolate, "Buffer"));
-  symbols->Set(3, v8::String::NewFromUtf8(isolate, "root"));
-  symbols->Set(4, v8::String::NewFromUtf8(isolate, "require"));
+  symbols->Set(3, v8::String::NewFromUtf8(isolate, "require"));
 
   g_context->Enter();
   for (unsigned i = 0; i < symbols->Length(); ++i) {
