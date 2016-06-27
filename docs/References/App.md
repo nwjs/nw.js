@@ -43,6 +43,10 @@ Get the JSON object of the manifest file.
 
 Clear the HTTP cache in memory and the one on disk. This method call is synchronized.
 
+## App.clearAppCache(manifest_url)
+
+Mark the Application cache group specified by manifest_url obsolete. This method call is synchronized.
+
 ## App.closeAllWindows()
 
 Send the `close` event to all windows of current app, if no window is blocking the `close` event, then the app will quit after all windows have done shutdown. Use this method to quit an app will give windows a chance to save data.
