@@ -65,6 +65,19 @@ class NwAppClearCacheFunction : public NWSyncExtensionFunction, public BrowsingD
   DISALLOW_COPY_AND_ASSIGN(NwAppClearCacheFunction);
 };
 
+class NwAppClearAppCacheFunction : public NWSyncExtensionFunction {
+ public:
+  NwAppClearAppCacheFunction();
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
+
+ protected:
+  ~NwAppClearAppCacheFunction() override;
+
+  DECLARE_EXTENSION_FUNCTION("nw.App.clearAppCache", UNKNOWN)
+ private:
+  DISALLOW_COPY_AND_ASSIGN(NwAppClearAppCacheFunction);
+};
+
 class NwAppSetProxyConfigFunction : public NWSyncExtensionFunction {
  public:
   NwAppSetProxyConfigFunction();

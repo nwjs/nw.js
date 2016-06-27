@@ -59,6 +59,9 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
   apiFunctions.setHandleRequest('clearCache', function() {
     sendRequest.sendRequestSync('nw.App.clearCache', arguments, this.definition.parameters, {});
   });
+  apiFunctions.setHandleRequest('clearAppCache', function() {
+    sendRequest.sendRequestSync('nw.App.clearAppCache', arguments, this.definition.parameters, {});
+  });
   apiFunctions.setHandleRequest('getProxyForURL', function() {
     return nwNatives.getProxyForURL.apply(this, arguments);
   });

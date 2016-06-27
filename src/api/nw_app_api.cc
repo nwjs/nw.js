@@ -2,6 +2,7 @@
 
 #include "base/command_line.h"
 #include "base/memory/ptr_util.h"
+#include "chrome/browser/browsing_data/browsing_data_appcache_helper.h"
 #include "chrome/browser/browsing_data/browsing_data_helper.h"
 #include "chrome/browser/browsing_data/browsing_data_remover_factory.h"
 #include "chrome/browser/devtools/devtools_window.h"
@@ -93,6 +94,24 @@ bool NwAppGetArgvSyncFunction::RunNWSync(base::ListValue* response, std::string*
 
     response->AppendString(argv[i]);
   }
+  return true;
+}
+
+NwAppClearAppCacheFunction::NwAppClearAppCacheFunction() {
+}
+
+NwAppClearAppCacheFunction::~NwAppClearAppCacheFunction() {
+}
+
+bool NwAppClearAppCacheFunction::RunNWSync(base::ListValue* response, std::string* error) {
+  std::string manifest;
+  EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &manifest));
+
+  GURL manifest_url(manifest);
+  scoped_refptr<CannedBrowsingDataAppCacheHelper> helper(
+        new CannedBrowsingDataAppCacheHelper(Profile::FromBrowserContext(context_)));
+
+  helper->DeleteAppCacheGroup(manifest_url);
   return true;
 }
 
