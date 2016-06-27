@@ -242,8 +242,13 @@ int MainPartsPreCreateThreadsHook() {
     package->root()->GetString("name", &name);
     package->root()->GetString("domain", &domain);
     if (!name.empty() && GetDirUserData(&user_data_dir)) {
+#if defined(OS_WIN)
+      base::FilePath old_dom_storage_dir = user_data_dir.DirName()
+        .Append(FILE_PATH_LITERAL("Local Storage"));
+#else
       base::FilePath old_dom_storage_dir = user_data_dir
         .Append(FILE_PATH_LITERAL("Local Storage"));
+#endif
       base::FileEnumerator enum0(old_dom_storage_dir, false, base::FileEnumerator::FILES, FILE_PATH_LITERAL("*_0.localstorage"));
       base::FilePath old_dom_storage = enum0.Next();
       if (!old_dom_storage.empty()) {
@@ -263,9 +268,15 @@ int MainPartsPreCreateThreadsHook() {
           LOG_IF(INFO, true) << "Migrate DOM storage from " << old_dom_storage.AsUTF8Unsafe() << " to " << new_dom_storage.AsUTF8Unsafe();
         }
       }
+#if defined(OS_WIN)
+      base::FilePath old_indexeddb = user_data_dir.DirName()
+        .Append(FILE_PATH_LITERAL("IndexedDB"))
+        .Append(FILE_PATH_LITERAL("file__0.indexeddb.leveldb"));
+#else
       base::FilePath old_indexeddb = user_data_dir
         .Append(FILE_PATH_LITERAL("IndexedDB"))
         .Append(FILE_PATH_LITERAL("file__0.indexeddb.leveldb"));
+#endif
       if (base::PathExists(old_indexeddb)) {
         std::string id = domain.empty() ? crx_file::id_util::GenerateId(name) : domain;
         GURL origin("chrome-extension://" + id + "/");
