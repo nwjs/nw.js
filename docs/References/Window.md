@@ -306,7 +306,7 @@ Print the web contents in the window without the need for user's interaction. `o
 * `mediaSize` `{JSON Object}` the paper size spec
 * `shouldPrintBackgrounds` `{Boolean}` whether to print CSS backgrounds
 * `marginsType` `{Integer}` 0 - Default; 1 - No margins; 2 - minimum; 3 - Custom, see `marginsCustom`.
-* `marginsCustom` `{JSON Object}` the custom margin setting
+* `marginsCustom` `{JSON Object}` the custom margin setting; units are points.
 
 `marginsCustom` example: `"marginsCustom":{"marginBottom":54,"marginLeft":70,"marginRight":28,"marginTop":32}`  
 `mediaSize` example: `'mediaSize':{'name': 'CUSTOM', 'width_microns': 279400, 'height_microns': 215900, 'custom_display_name':'Letter', 'is_default': true}`
