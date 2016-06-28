@@ -498,8 +498,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         _option["printer"] = "Save as PDF";
       currentNWWindowInternal.setPrintSettingsInternal(_option);
       window.print();
-      _option = { "autoprint": false };
-      currentNWWindowInternal.setPrintSettingsInternal(_option);
+      // autoprint will be set to false in print_preview_handler.cc after printing is done
+      // window.print will return immediately for PDF window #5002
     };
     Object.defineProperty(NWWindow.prototype, 'x', {
       get: function() {
