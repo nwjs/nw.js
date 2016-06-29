@@ -12,9 +12,12 @@ var trayEvents = { objs: {}, clickEvent: {} };
 
 trayEvents.clickEvent = new Event("NWObjectTrayClick");
 trayEvents.clickEvent.addListener(function(id) {
-  if (!trayEvents.objs[id])
+  var tray = trayEvents.objs[id];
+  if (!tray)
     return;
-  trayEvents.objs[id].emit('click');
+  var args = Array.prototype.slice.call(arguments, 1);
+  args.unshift('click');
+  tray.emit.apply(tray, args);
 });
 
 function Tray(option) {
