@@ -363,6 +363,7 @@ void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(DesktopMediaList* list, i
     content::WebContents* web_contents = GetSenderWebContents();
     if (!source.is_null() && web_contents) {
       std::string result;
+      source.audio_share = true;
       DesktopStreamsRegistry* registry =
         MediaCaptureDevicesDispatcher::GetInstance()->
         GetDesktopStreamsRegistry();
