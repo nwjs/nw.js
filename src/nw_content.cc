@@ -762,7 +762,7 @@ void AmendManifestList(base::DictionaryValue* manifest,
   if (manifest->GetList(path, &pattern_list)) {
     base::ListValue::const_iterator it;
     for(it = list_value.begin(); it != list_value.end(); ++it) {
-      pattern_list->Append(*it);
+      pattern_list->Append((*it)->DeepCopy());
     }
   } else {
     pattern_list = list_value.DeepCopy();
@@ -1337,7 +1337,7 @@ void LoadNodeSymbols() {
 #if defined(OS_MACOSX)
   base::FilePath node_dll_path = base::mac::FrameworkBundlePath().Append(base::FilePath::FromUTF16Unsafe(base::GetNativeLibraryName(base::UTF8ToUTF16("libnode"))));
 #else
-  base::FilePath node_dll_path = base::FilePath::FromUTF16Unsafe(base::GetNativeLibraryName(base::UTF8ToUTF16("node")));
+  base::FilePath node_dll_path = base::FilePath::FromUTF8Unsafe(base::GetNativeLibraryName("node"));
 #endif
   base::NativeLibrary node_dll = base::LoadNativeLibrary(node_dll_path, &error);
   if(!node_dll)

@@ -6,7 +6,7 @@
 #include "content/public/browser/render_widget_host.h"
 #include "chrome/browser/devtools/devtools_window.h"
 #include "chrome/browser/extensions/devtools_util.h"
-#include "components/ui/zoom/zoom_controller.h"
+#include "components/zoom/zoom_controller.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/object_manager.h"
 #include "content/public/browser/render_frame_host.h"
@@ -59,7 +59,7 @@ using nw::BrowserViewLayout;
 using content::RenderWidgetHost;
 using content::RenderWidgetHostView;
 using content::WebContents;
-using ui_zoom::ZoomController;
+using zoom::ZoomController;
 
 using nw::Menu;
 
@@ -287,7 +287,7 @@ void NwCurrentWindowInternalCapturePageInternalFunction::OnCaptureSuccess(const 
   base::Base64Encode(stream_as_string, &base64_result);
   base64_result.insert(
       0, base::StringPrintf("data:%s;base64,", mime_type.c_str()));
-  SetResult(new base::StringValue(base64_result));
+  SetResult(base::MakeUnique<base::StringValue>(base64_result.c_str()));
   SendResponse(true);
 }
 
@@ -573,7 +573,7 @@ bool NwCurrentWindowInternalSetZoomFunction::RunNWSync(base::ListValue* response
       ZoomController::FromWebContents(web_contents);
   scoped_refptr<ExtensionZoomRequestClient> client(
       new ExtensionZoomRequestClient(extension()));
-  zoom_controller->SetZoomMode(ui_zoom::ZoomController::ZOOM_MODE_ISOLATED);
+  zoom_controller->SetZoomMode(zoom::ZoomController::ZOOM_MODE_ISOLATED);
   if (!zoom_controller->SetZoomLevelByClient(zoom_level, client)) {
     return false;
   }
@@ -633,7 +633,7 @@ bool NwCurrentWindowInternalGetPrintersFunction::RunAsync() {
   base::ListValue* results = new base::ListValue;
   content::BrowserThread::PostTaskAndReply(
       content::BrowserThread::FILE, FROM_HERE,
-      base::Bind(&chrome::EnumeratePrintersOnFileThread,
+      base::Bind(&chrome::EnumeratePrintersOnBlockingPoolThread,
                  base::Unretained(results)),
       base::Bind(&NwCurrentWindowInternalGetPrintersFunction::OnGetPrinterList,
                  this,
@@ -642,7 +642,8 @@ bool NwCurrentWindowInternalGetPrintersFunction::RunAsync() {
 }
 
 void NwCurrentWindowInternalGetPrintersFunction::OnGetPrinterList(base::ListValue* results) {
-  SetResult(results);
+  std::unique_ptr<base::ListValue> printers(results);
+  SetResult(std::move(printers));
   SendResponse(true);
 }
 

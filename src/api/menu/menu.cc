@@ -21,7 +21,7 @@
 #include "content/nw/src/api/menu/menu.h"
 
 #include "base/values.h"
-#include "components/ui/zoom/zoom_controller.h"
+#include "components/zoom/zoom_controller.h"
 #include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
 #include "content/public/browser/web_contents.h"
@@ -68,7 +68,7 @@ void Menu::Call(const std::string& method,
     content::WebContents* web_contents = content::WebContents::FromRenderFrameHost(rvh);
     DCHECK(web_contents);
     double zoom_factor = content::ZoomLevelToZoomFactor(
-      ui_zoom::ZoomController::FromWebContents(web_contents)->GetZoomLevel());
+      zoom::ZoomController::FromWebContents(web_contents)->GetZoomLevel());
     if (zoom_factor > content::kMaximumZoomFactor) {
       zoom_factor = content::kMaximumZoomFactor;
     }
