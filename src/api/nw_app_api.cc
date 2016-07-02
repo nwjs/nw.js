@@ -160,7 +160,8 @@ bool NwAppSetProxyConfigFunction::RunNWSync(base::ListValue* response, std::stri
   net::URLRequestContextGetter* context_getter =
     render_process_host->GetStoragePartition()->GetURLRequestContext();
 
-  base::WaitableEvent done(false, false);
+  base::WaitableEvent done(base::WaitableEvent::ResetPolicy::AUTOMATIC,
+                           base::WaitableEvent::InitialState::NOT_SIGNALED);
   content::BrowserThread::PostTask(
       content::BrowserThread::IO, FROM_HERE,
       base::Bind(&SetProxyConfigCallback, &done,
