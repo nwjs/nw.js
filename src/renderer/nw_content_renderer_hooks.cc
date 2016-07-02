@@ -41,7 +41,7 @@ void LoadNodeSymbols() {
 #if defined(OS_MACOSX)
   base::FilePath node_dll_path = base::mac::FrameworkBundlePath().Append(base::FilePath::FromUTF16Unsafe(base::GetNativeLibraryName(base::UTF8ToUTF16("libnode"))));
 #else
-  base::FilePath node_dll_path = base::FilePath::FromUTF16Unsafe(base::GetNativeLibraryName(base::UTF8ToUTF16("node")));
+  base::FilePath node_dll_path = base::FilePath::FromUTF8Unsafe(base::GetNativeLibraryName("node"));
 #endif
   base::NativeLibrary node_dll = base::LoadNativeLibrary(node_dll_path, &error);
   if(!node_dll)
