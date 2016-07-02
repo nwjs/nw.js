@@ -1,3 +1,4 @@
+import("//build/config/features.gni")
 import("//build/toolchain/toolchain.gni")
 import("//build/util/version.gni")
 
@@ -119,6 +120,7 @@ static_library("nw_browser") {
   ]
   include_dirs = [
     "//third_party",
+    "//third_party/WebKit",
     "//third_party/mojo/src",
   ]
   sources = nw_chrome_browser_sources
@@ -349,6 +351,7 @@ executable("payload") {
   deps = [ "//base", "//crypto" ]
 }
 
+if (!is_component_build) {
 action("dist") {
   script = "tools/package_binaries.py"
   if (nwjs_sdk) {
@@ -365,4 +368,5 @@ action("dist") {
     "-i", "$icudat_path"
   ]
   deps = [ "//components/resources:about_credits_nw", ":dump" ]
+}
 }

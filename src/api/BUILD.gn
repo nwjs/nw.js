@@ -40,11 +40,4 @@ json_schema_api("nw_api_registration") {
   ]
 
   deps += schema_dependencies
-
-  # This must be a static library because the generated schemas have
-  # dependencies into both the browser and child processes, and this won't link
-  # in the multi DLL build. In the child DLL, only some files are needed, and
-  # these have no dependencies into the browser, so a static library solves the
-  # problem.
-  generate_static_library = true
 }
