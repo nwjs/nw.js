@@ -204,7 +204,7 @@ bool MenuItem::AcceleratorPressed(const ui::Accelerator& accelerator) {
 }
 
 bool MenuItem::CanHandleAccelerators() const {
-  return is_enabled_;
+  return enable_shortcut_ && is_enabled_;
 }
 
 #endif
