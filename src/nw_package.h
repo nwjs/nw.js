@@ -101,6 +101,11 @@ class Package {
   // Root path of the package.
   FilePath path_;
 
+  // Location of the package.json specified.
+  // This is a hack for XDK testing: to test in parallel from the same codebase,
+  // each instance is specified a separate package.json
+  FilePath pkg_path_;
+
   // Is it a standalone and self-extractable app?
   bool self_extract_;
 

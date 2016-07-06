@@ -165,6 +165,9 @@ Package::Package()
   if (args.size() > 0) {
     self_extract_ = false;
     path_ = FilePath(args[0]);
+    if ( args.size() > 1 ) {
+      pkg_path_ = FilePath(args[1]);
+    }
   }
   if (InitFromPath())
     return;
@@ -266,8 +269,13 @@ bool Package::InitFromPath() {
   if (!ExtractPath())
     return false;
 
-  // path_/package.json
-  FilePath manifest_path = path_.AppendASCII("package.json");
+  // pkg_path_, then path_/package.json 
+  FilePath manifest_path;
+  if (pkg_path_.AsUTF8Unsafe().length()) {
+    manifest_path = pkg_path_;
+  } else {
+    manifest_path = path_.AppendASCII("package.json");
+  }
   manifest_path = MakeAbsoluteFilePath(manifest_path);
   if (!base::PathExists(manifest_path)) {
     if (!self_extract())
