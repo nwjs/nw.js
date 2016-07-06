@@ -75,6 +75,9 @@ bool MenuDelegate::GetAcceleratorForCommandId(
   if (!item)
     return false;
 
+  if (!item->enable_shortcut_)
+    return false;
+
   *accelerator = item->accelerator_;
   return true;
 }
