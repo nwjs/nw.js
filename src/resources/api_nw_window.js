@@ -267,7 +267,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       case 'navigation':
         var j = wrap(function(frame, url, policy, context) {
           policy.ignore         =  function () { this.val = 'ignore'; };
-          callback.call(this, frame, url, policy, context);
+          callback.call(self, frame, url, policy, context);
         });
         this.onNavigation.addListener(j);
         break;
@@ -280,7 +280,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         break;
       case 'resize':
         var l = wrap(function() {
-          callback.call(self.width, self.height);
+          callback.call(self, self.width, self.height);
         });
         this.appWindow.onResized.addListener(l);
         return this; //return early
