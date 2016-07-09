@@ -252,6 +252,7 @@ copy("copy_node") {
     outputs = [ "$root_out_dir/nwjs.app/Contents/Versions/$chrome_version_full/nwjs Framework.framework/libnode.dylib" ]
   }
   if (is_win) {
+    suffix=""
     if (target_cpu == "x64") {
       suffix="_x64"
     }
