@@ -1,3 +1,27 @@
+0.16.0-rc1 / 07-13-2016
+=======================
+- Update Chromium to 52.0.2743.73
+- Update Node to [6.3.0](https://nodejs.org/en/blog/release/v6.3.0/)
+- Add App.clearAppCache(manifest_url) for clearing Application Cache [(#4991)](https://github.com/nwjs/nw.js/issues/4991)
+- Enable password autosaving for http auth dialog [(#4966)](https://github.com/nwjs/nw.js/issues/4966)
+- Margin option support for printer api [(#5033)](https://github.com/nwjs/nw.js/issues/5033)
+- Fix: finding bundled pepper flash plugin [(#5068)](https://github.com/nwjs/nw.js/issues/5068)
+- Fix: Silent printing with win.print() for pdfs [(#5002)](https://github.com/nwjs/nw.js/issues/5002)
+- Fix: Permission Denied error when using chrome.bluetoothLowEnergy API [(#5010)](https://github.com/nwjs/nw.js/issues/5010)
+- Fix: [OSX] Choose directory dialog shows "Upload" instead of "Select" [(#5058)](https://github.com/nwjs/nw.js/issues/5058)
+- Fix: menu bar background [(#4851)](https://github.com/nwjs/nw.js/issues/4851)
+- Fix: send positions arguments to click event handler of Tray [(#1874)](https://github.com/nwjs/nw.js/issues/1874)
+- Fix: DesktopCaptureMonitor desktop stream does not get AudioTrack [(#5029)](https://github.com/nwjs/nw.js/issues/5029)
+- Fix: crash in win.showDevTools() with string id [(#5061)](https://github.com/nwjs/nw.js/issues/5061)
+- Fix: webview.clearData crash [(#5087)](https://github.com/nwjs/nw.js/issues/5087)
+- Fix: Buffer encoding handling with input from DOM elements [(#5069)](https://github.com/nwjs/nw.js/issues/5069)
+- Fix: Window resize event returns undefined for height [(#4993)](https://github.com/nwjs/nw.js/issues/4993)
+- Fix: can not remove shortcut key at menuItem [(#5026)](https://github.com/nwjs/nw.js/issues/5026)
+- Fix: win.showDevTools crash with empty string id [(#5061)](https://github.com/nwjs/nw.js/issues/5061)
+-  Updated win_delay_load_hook.c to work with node-gyp@3.4.0 [(#5088)](https://github.com/nwjs/nw.js/issues/5088)
+- [docs] margins for Window.print()
+- [docs] Native Module building in nw15 and later
+
 0.15.4 / 06-24-2016
 ===================
 - Update Chromium to [51.0.2704.106](http://googlechromereleases.blogspot.com/2016/06/stable-channel-update_23.html)
