@@ -526,6 +526,7 @@ def RunProcess(context, timeout, args, **rest):
   if context.verbose: print "#", " ".join(args)
   popen_args = args
   prev_error_mode = SEM_INVALID_VALUE;
+  process = None
   if utils.IsWindows():
     if context.suppress_dialogs:
       # Try to change the error mode to avoid dialogs on fatal errors. Don't
@@ -534,11 +535,17 @@ def RunProcess(context, timeout, args, **rest):
       error_mode = SEM_NOGPFAULTERRORBOX;
       prev_error_mode = Win32SetErrorMode(error_mode);
       Win32SetErrorMode(error_mode | prev_error_mode);
-  process = subprocess.Popen(
-    shell = utils.IsWindows(),
-    args = popen_args,
-    **rest
-  )
+    process = subprocess.Popen(
+        shell = utils.IsWindows(),
+        args = popen_args,
+        **rest)
+  else:
+    process = subprocess.Popen(
+        shell = utils.IsWindows(),
+        args = popen_args,
+        preexec_fn=os.setsid,
+        **rest)
+
   if utils.IsWindows() and context.suppress_dialogs and prev_error_mode != SEM_INVALID_VALUE:
     Win32SetErrorMode(prev_error_mode)
   # Compute the end time - if the process crosses this limit we
@@ -553,7 +560,12 @@ def RunProcess(context, timeout, args, **rest):
   while exit_code is None:
     if (not end_time is None) and (time.time() >= end_time):
       # Kill the process and wait for it to exit.
+      pgid = None
+      if not utils.IsWindows():
+        pgid = os.getpgid(process.pid)
       KillProcessWithID(process.pid)
+      if not utils.IsWindows():
+        os.killpg(pgid, signal.SIGTERM)
       exit_code = process.wait()
       timed_out = True
     else:
