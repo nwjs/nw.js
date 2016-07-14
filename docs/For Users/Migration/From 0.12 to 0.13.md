@@ -14,7 +14,7 @@
 
 ## Node.js Changes
 
-+ Node.js is bumped to 5.x in latest build. Check your NPM modules to make sure they support Node.js 5.x **especially for native modules**. There is [a list of native modules](https://github.com/nodejs/node/issues/2798) which should be migrated to latest NaN 2.
++ Node.js is bumped to 6.x in latest build. Check your NPM modules to make sure they support Node.js 6.x **especially for native modules**. There is [a list of native modules](https://github.com/nodejs/node/issues/2798) which should be migrated to latest [NaN 2](https://github.com/nodejs/nan).
 + Add NW version information to process.versions[`nw`]. process.versions[`node-webkit`] will be deprecated later.
 
 ## API Changes
