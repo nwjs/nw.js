@@ -154,8 +154,6 @@ def generate_target_nw(platform_name, arch, version):
                            'resources.pak',
                            'nw_100_percent.pak',
                            'nw_200_percent.pak',
-                           'nw_material_100_percent.pak',
-                           'nw_material_200_percent.pak',
                            'nw',
                            'icudtl.dat',
                            'locales',
@@ -194,8 +192,6 @@ def generate_target_nw(platform_name, arch, version):
                            'resources.pak',
                            'nw_100_percent.pak',
                            'nw_200_percent.pak',
-                           'nw_material_100_percent.pak',
-                           'nw_material_200_percent.pak',
                            'ffmpeg.dll',
                             # To be removed in CR51
                            ]
