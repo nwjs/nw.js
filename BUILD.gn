@@ -369,5 +369,8 @@ action("dist") {
     "-i", "$icudat_path"
   ]
   deps = [ "//components/resources:about_credits_nw", ":dump" ]
+  if (nwjs_sdk && (is_mac || is_linux)) {
+    deps += [ "//breakpad:minidump_stackwalk" ]
+  }
 }
 }
