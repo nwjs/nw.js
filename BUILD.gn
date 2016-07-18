@@ -319,7 +319,7 @@ if (is_linux && !is_component_build) {
                 "$root_build_dir/chromedriver",
                 "$root_build_dir/nwjc",
                 "$root_build_dir/payload"]
-    deps = [ "//breakpad:dump_syms",
+    deps = [
              "//chrome:chrome_initial",
              "//chrome:main_dll",
              ":copy_node",
@@ -328,13 +328,20 @@ if (is_linux && !is_component_build) {
              "//chrome/test/chromedriver:chromedriver",
              "//third_party/ffmpeg:ffmpeg"
              ]
+    if (target_cpu == "x64") {
+      inputs = [
+        "$root_build_dir/dump_syms",
+      ]
+      deps += [ "//breakpad:dump_syms" ]
+    } else {
+      inputs = [
+        "tools/dump_syms",
+      ]
+    }
     if (enable_nacl) {
       sources += [ "$root_build_dir/nacl_helper" ]
       deps += [ "//components/nacl/loader:nacl_helper" ]
     }
-    inputs = [
-      "$root_build_dir/dump_syms",
-    ]
     outputs = [
       "$root_build_dir/{{source_name_part}}.breakpad.$target_cpu"
     ]
