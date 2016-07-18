@@ -360,24 +360,32 @@ executable("payload") {
 }
 
 if (!is_component_build) {
-action("dist") {
-  script = "tools/package_binaries.py"
+  action("dist") {
+    script = "tools/package_binaries.py"
+    if (nwjs_sdk) {
+      package_mode = "sdk"
+    } else {
+      package_mode = "nosdk"
+    }
+    icudat_path = rebase_path("../../third_party/icu/common/icudtl.dat")
+    outputs = [ "$root_build_dir/new_package.re" ]
+    args = [
+      "-p", rebase_path("$root_build_dir"),
+      "-a", "$target_cpu",
+      "-m", "$package_mode",
+      "-i", "$icudat_path"
+    ]
+    deps = [ "//components/resources:about_credits_nw", ":dump" ]
+    if (nwjs_sdk && (is_mac || is_linux)) {
+      deps += [ "//breakpad:minidump_stackwalk" ]
+    }
+  }
   if (nwjs_sdk) {
-    package_mode = "sdk"
-  } else {
-    package_mode = "nosdk"
+    action("nwtest") {
+      script = "test/test.py"
+      outputs = [ "$root_build_dir/run_tests.re" ]
+      args = [ "-d", rebase_path("$root_build_dir"), "-t", "60", "sanity" ]
+      deps = [ "//chrome/test/chromedriver:chromedriver" ]
+    }
   }
-  icudat_path = rebase_path("../../third_party/icu/common/icudtl.dat")
-  outputs = [ "$root_build_dir/new_package.re" ]
-  args = [
-    "-p", rebase_path("$root_build_dir"),
-    "-a", "$target_cpu",
-    "-m", "$package_mode",
-    "-i", "$icudat_path"
-  ]
-  deps = [ "//components/resources:about_credits_nw", ":dump" ]
-  if (nwjs_sdk && (is_mac || is_linux)) {
-    deps += [ "//breakpad:minidump_stackwalk" ]
-  }
-}
 }
