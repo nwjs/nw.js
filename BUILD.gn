@@ -346,7 +346,7 @@ if (is_linux && !is_component_build) {
       "$root_build_dir/{{source_name_part}}.breakpad.$target_cpu"
     ]
     args = [
-      "./" + rebase_path("$root_out_dir/dump_syms", root_build_dir),
+      "./" + rebase_path("tools/dump_syms", root_build_dir),
       "$linux_strip_binary",
       "{{source}}",
       rebase_path("$root_out_dir/{{source_name_part}}.breakpad.$current_cpu", root_build_dir)
