@@ -261,8 +261,8 @@ copy("copy_node") {
     } else {
        node_dir = "$root_out_dir/../Release" + suffix
     }
-    sources = [ "$node_dir" + "/node.dll" ]
-    outputs = [ "$root_out_dir/node.dll" ]
+    sources = [ "$node_dir/node.dll", "$node_dir/node.dll.lib", "$node_dir/node.dll.exp" ]
+    outputs = [ "$root_out_dir/{{source_file_part}}" ]
   }
 }
 
