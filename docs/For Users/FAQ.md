@@ -38,12 +38,12 @@ To enable ESC key for leaving fullscreen mode, you can use [Shortcut API](../Ref
 
 ```javascript
 nw.App.registerGlobalHotKey(new nw.Shortcut({
-  key: "Esc",
+  key: "Escape",
   active: function () {
     // decide whether to leave fullscreen mode
     // then ...
     nw.Window.get().leaveFullscreen();
-  })
+  }
 }));
 ```
 
