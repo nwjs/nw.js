@@ -7,13 +7,12 @@ This document guides you how to package and distribute NW.js based app.
 
 ## Quick Start
 
-You can use [`nw-builder`](https://github.com/nwjs/nw-builder) to quickly generate a package for you.
+You can use following tools to automatically package your NW.js based app for distribution.
 
-1. [Prepare your app](#prepare-your-app) as below.
-2. Install `nw-builder` with `npm install -g nw-builder`
-3. Package your app with `nwbuild -p linux64 /path/to/your/app`
+* [nwjs-builder](https://github.com/evshiron/nwjs-builder)
+* [nw-builder](https://github.com/nwjs/nw-builder)
 
-Your app can be found in `./build` folder.
+Or your can build your app manually with the instructions below.
 
 ## Prepare Your App
 
