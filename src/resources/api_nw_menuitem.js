@@ -3,7 +3,6 @@ var forEach = require('utils').forEach;
 var nw_binding = require('binding').Binding.create('nw.Menu');
 var nwNative = requireNative('nw_natives');
 var sendRequest = require('sendRequest');
-var contextMenuNatives = requireNative('context_menus');
 var messagingNatives = requireNative('messaging_natives');
 var Event = require('event_bindings').Event;
 var util = nw.require('util');
@@ -79,7 +78,7 @@ function MenuItem(option) {
     };
   }
 
-  var id = contextMenuNatives.GetNextContextMenuId();
+  var id = option.id || nw.Obj.allocateId();
   this.id = id;
   privates(this).option = option;
 
@@ -96,7 +95,8 @@ function MenuItem(option) {
   if (!option.hasOwnProperty('modifiers'))
     option.modifiers = "";
 
-  nw.Obj.create(id, 'MenuItem', option);
+  if (!option.native)
+    nw.Obj.create(id, 'MenuItem', option);
   messagingNatives.BindToGC(this, nw.Obj.destroy.bind(undefined, id), -1);
 
 }
@@ -200,6 +200,10 @@ MenuItem.prototype.__defineGetter__('submenu', function() {
 MenuItem.prototype.__defineSetter__('submenu', function(val) {
   privates(this).submenu = val;
   nw.Obj.callObjectMethod(this.id, 'MenuItem', 'SetSubmenu', [ val.id ]);
+});
+
+MenuItem.prototype.__defineGetter__('native', function() {
+  return this.handleGetter('native');
 });
 
 exports.binding = MenuItem;

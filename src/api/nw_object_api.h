@@ -7,6 +7,19 @@
 
 namespace extensions {
 
+class NwObjAllocateIdFunction : public NWSyncExtensionFunction {
+ public:
+  NwObjAllocateIdFunction();
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
+
+ protected:
+  ~NwObjAllocateIdFunction() override;
+
+  DECLARE_EXTENSION_FUNCTION("nw.Obj.allocateId", UNKNOWN)
+ private:
+  DISALLOW_COPY_AND_ASSIGN(NwObjAllocateIdFunction);
+};
+
 class NwObjCreateFunction : public NWSyncExtensionFunction {
  public:
   NwObjCreateFunction();

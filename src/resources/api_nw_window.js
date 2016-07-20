@@ -161,6 +161,9 @@ nw_internal.registerCustomHook(function(bindingsAPI) {
   apiFunctions.setHandleRequest('setPrintSettingsInternal', function() {
     return sendRequest.sendRequestSync('nw.currentWindowInternal.setPrintSettingsInternal', arguments, this.definition.parameters, {})[0];
   });
+  apiFunctions.setHandleRequest('setMenu', function() {
+    return sendRequest.sendRequestSync('nw.currentWindowInternal.setMenu', arguments, this.definition.parameters, {})[0];
+  });
 });
 
 nw_binding.registerCustomHook(function(bindingsAPI) {
@@ -590,6 +593,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       },
       set: function(menu) {
         if(!menu) {
+          privates(this).menu = null;
           currentNWWindowInternal.clearMenu();
           return;
         }
@@ -597,7 +601,17 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
           throw new TypeError('Only menu of type "menubar" can be used as this.window menu');
 
         privates(this).menu =  menu;
-        currentNWWindowInternal.setMenu(menu.id);
+        var menuPatch = currentNWWindowInternal.setMenu(menu.id);
+        if (menuPatch.length) {
+          menuPatch.forEach((patch)=>{
+            let menuIndex = patch.menu;
+            let itemIndex = patch.index;
+            let menuToPatch = menu.items[menuIndex];
+            if (menuToPatch && menuToPatch.submenu) {
+              menuToPatch.submenu.insert(new nw.MenuItem(patch.option), itemIndex);
+            }
+          });
+        }
       }
     });
     Object.defineProperty(NWWindow.prototype, 'window', {
