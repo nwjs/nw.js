@@ -51,7 +51,7 @@ using extensions::EventRouter;
 namespace nw {
 
 IDMap<Base, IDMapOwnPointer> nw::ObjectManager::objects_registry_;
-int nw::ObjectManager::next_object_id_ = 1;
+int nw::ObjectManager::next_object_id_ = 0;
 
 ObjectManager* ObjectManager::Get(content::BrowserContext* context) {
   return ObjectManagerFactory::GetForBrowserContext(context);
@@ -80,7 +80,7 @@ Base* ObjectManager::GetApiObject(int id) {
 
 // static
 int ObjectManager::AllocateId() {
-  return next_object_id_++;
+  return ++next_object_id_;
 }
 
 void ObjectManager::OnAllocateObject(int object_id,

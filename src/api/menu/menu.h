@@ -99,6 +99,10 @@ class Menu : public Base {
              const base::ListValue& arguments,
              content::RenderFrameHost* rvh = nullptr) override;
 
+#if defined(OS_MACOSX)
+  static Menu* GetMenuFromNative(NSMenu* menu);
+#endif
+
 #if defined(OS_WIN) || defined(OS_LINUX)
   void UpdateKeys(views::FocusManager *focus_manager);
   ui::NwMenuModel* model() { return menu_model_.get(); }
