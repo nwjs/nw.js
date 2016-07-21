@@ -1,3 +1,15 @@
+0.16.0 / 07-21-2016
+=======================
+- Update Chromium to [52.0.2743.82](http://googlechromereleases.blogspot.com/2016/07/stable-channel-update.html)
+- [docs] updated Quick Start section for "Package and Distribute" [(#5054)](https://github.com/nwjs/nw.js/issues/5054)
+
+0.16.0-rc2 / 07-15-2016
+=======================
+- Update Chromium to 52.0.2743.75
+- Update Node.js to [6.3.0](https://nodejs.org/en/blog/release/v6.3.0/)
+- Fix: nw is creating a file with the first command line argument it's opened with [(#5097)](https://github.com/nwjs/nw.js/issues/5097)
+- [doc] fixed typos for docs [(#5091)](https://github.com/nwjs/nw.js/issues/5091)
+
 0.16.0-rc1 / 07-13-2016
 =======================
 - Update Chromium to 52.0.2743.73
