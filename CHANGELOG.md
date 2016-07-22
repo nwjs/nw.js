@@ -1,3 +1,46 @@
+0.14.7 / 07-22-2016
+===================
+- Include minidump_stackwalk in Linux and OSX sdk build [(#5023)](https://github.com/nwjs/nw.js/issues/5023)
+- Added new APIs for read/write multiple types of data to clipboard [(#4929)](https://github.com/nwjs/nw.js/issues/4929)
+- Add App.clearAppCache(manifest_url) for clearing Application Cache [(#4991)](https://github.com/nwjs/nw.js/issues/4991)
+- Enable password autosaving for http auth dialog [(#4966)](https://github.com/nwjs/nw.js/issues/4966)
+- Margin option support for printer api [(#5033)](https://github.com/nwjs/nw.js/issues/5033)
+- Updated win_delay_load_hook.c to work with node-gyp@3.4.0 [(#5088)](https://github.com/nwjs/nw.js/issues/5088)
+- Make Window.eval() and Window.evalNWBin() return result
+- Fix: "Print to PDF" in the Privew dialog broken after using nw.Window.print() [(#4911)](https://github.com/nwjs/nw.js/issues/4911)
+- Fix: [WIN] user data migration from 0.12
+- Fix: FileList object in dragover event callback is not set correctly
+- Fix: crash on JSON.stringify(window) [(#4959)](https://github.com/nwjs/nw.js/issues/4959)
+- Fix: open mini browser for links in PDF [(#4915)](https://github.com/nwjs/nw.js/issues/4915)
+- Fix: possible race condition in content verfication
+- Fix: protect package.json from hacking for content verification
+- Fix: Disabled contextual menu plug-in items on mac
+- Fix: 'loaded' event shouldn't be fired when using history API [(#5001)](https://github.com/nwjs/nw.js/issues/5001)
+- Fix: DeprecationWarning: 'root' is deprecated, use 'global' [(#4938)](https://github.com/nwjs/nw.js/issues/4938)
+- Fix: Migrate websql data from 0.12 [(#5018)](https://github.com/nwjs/nw.js/issues/5018)
+- Fix: content verficiation of package.json in Node modules
+- Fix: [Linux] foreground colors for menubar [(#5007)](https://github.com/nwjs/nw.js/issues/5007)
+- Fix: finding bundled pepper flash plugin [(#5068)](https://github.com/nwjs/nw.js/issues/5068)
+- Fix: Silent printing with win.print() for pdfs [(#5002)](https://github.com/nwjs/nw.js/issues/5002)
+- Fix: Permission Denied error when using chrome.bluetoothLowEnergy API [(#5010)](https://github.com/nwjs/nw.js/issues/5010)
+- Fix: [OSX] Choose directory dialog shows "Upload" instead of "Select" [(#5058)](https://github.com/nwjs/nw.js/issues/5058)
+- Fix: menu bar background [(#4851)](https://github.com/nwjs/nw.js/issues/4851)
+- Fix: send positions arguments to click event handler of Tray [(#1874)](https://github.com/nwjs/nw.js/issues/1874)
+- Fix: DesktopCaptureMonitor desktop stream does not get AudioTrack [(#5029)](https://github.com/nwjs/nw.js/issues/5029)
+- Fix: crash in win.showDevTools() with string id [(#5061)](https://github.com/nwjs/nw.js/issues/5061)
+- Fix: webview.clearData crash [(#5087)](https://github.com/nwjs/nw.js/issues/5087)
+- Fix: Buffer encoding handling with input from DOM elements [(#5069)](https://github.com/nwjs/nw.js/issues/5069)
+- Fix: Window resize event returns undefined for height [(#4993)](https://github.com/nwjs/nw.js/issues/4993)
+- Fix: can not remove shortcut key at menuItem [(#5026)](https://github.com/nwjs/nw.js/issues/5026)
+- Fix: win.showDevTools crash with empty string id [(#5061)](https://github.com/nwjs/nw.js/issues/5061)
+- Fix: nw is creating a file with the first command line argument it's opened with [(#5097)](https://github.com/nwjs/nw.js/issues/5097)
+- [doc] margins for Window.print()
+- [doc] changed link for FFmpeg precompiled binaries
+- [doc] dded JS file as possibility for the "main" field
+- [doc] fixed typos for docs [(#5091)](https://github.com/nwjs/nw.js/issues/5091)
+- [doc] updated Quick Start section for "Package and Distribute" [(#5054)](https://github.com/nwjs/nw.js/issues/5054)
+- [doc] Fix two errors with the fullscreen FAQ
+
 0.14.6 / 06-01-2016
 ===================
 - Custom Print API [(#4911)](https://github.com/nwjs/nw.js/issues/4911)
