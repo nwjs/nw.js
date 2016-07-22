@@ -293,15 +293,15 @@ void NWCustomBindings::SetDevToolsJail(const v8::FunctionCallbackInfo<v8::Value>
   v8::Isolate* isolate = args.GetIsolate();
   if (!args.Length())
     return;
-  v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[0]);
   content::RenderFrame* render_frame = context()->GetRenderFrame();
   if (!render_frame)
     return;
   WebFrame* main_frame = render_frame->GetWebFrame();
-  if (frm->IsNull() || frm->IsUndefined()) {
+  if (args[0]->IsNull() || args[0]->IsUndefined()) {
     main_frame->setDevtoolsJail(NULL);
   }else{
-    blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::toImpl(frm);
+	  v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[0]);
+	  blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::toImpl(frm);
     main_frame->setDevtoolsJail(blink::WebFrame::fromFrame(iframe->contentFrame()));
   }
   args.GetReturnValue().Set(v8::Undefined(isolate));
