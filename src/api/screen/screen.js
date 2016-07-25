@@ -18,11 +18,81 @@
 // ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+function DesktopCapture() {
+    nw.allocateObject(this, {});
+    this.sources = new Array();
+    this.started = false;
+}
+require('util').inherits(DesktopCapture, exports.Base);
+
+DesktopCapture.prototype.start = function (screens, windows) {
+    if (this.started)
+        return false;
+    this.started = true;
+    nw.callObjectMethodSync(this, 'start', [screens, windows]);
+    return true;
+}
+
+DesktopCapture.prototype.stop = function () {
+    if (!this.started)
+        return false;
+    nw.callObjectMethodSync(this, 'stop', []);
+    this.started = false;
+    this.sources = new Array();
+    return true;
+}
+
+DesktopCapture.prototype.on('__nw_desktopcapture_listner_added', function (id, name, order, type) {
+    this.sources.splice(order, 0, id);
+    this.emit("added", id, name, order, type);
+    for (var i = order + 1; i <= this.sources.length - 1; i++) {
+        this.emit("orderchanged", this.sources[i], i, i - 1);
+    }
+});
+
+
+DesktopCapture.prototype.on('__nw_desktopcapture_listner_removed', function (index) {
+    var id = this.sources[index];
+    if (index != -1) {
+        this.sources.splice(index, 1);
+        this.emit("removed", id);
+        for (var i = index; i <= this.sources.length - 1; i++) {
+            this.emit("orderchanged", this.sources[i], i, i + 1);
+        }
+    }
+});
+
+DesktopCapture.prototype.on('__nw_desktopcapture_listner_moved', function (id, new_index, old_index) {
+    var temp = this.sources[old_index];
+    this.sources.splice(old_index, 1);
+    this.sources.splice(new_index, 0, temp);
+    this.emit("orderchanged", temp, new_index, old_index);
+    for (var i = new_index; i < old_index; i++)
+        this.emit("orderchanged", this.sources[i + 1], i + 1, i);
+});
+
+DesktopCapture.prototype.on('__nw_desktopcapture_listner_namechanged', function (id, name) {
+    this.emit("namechanged", id, name);
+});
+
+DesktopCapture.prototype.on('__nw_desktopcapture_listner_thumbnailchanged', function (id, thumbnail) {
+    this.emit("thumbnailchanged", id, thumbnail);
+});
+
+DesktopCapture.prototype.on = DesktopCapture.prototype.addListener = function (ev, callback) {
+    //throw except if unsupported event
+    if (ev != "added" && ev != "removed" && ev != "orderchanged" && ev != "namechanged" && ev != "thumbnailchanged")
+        throw new String("only following events can be listened: added, removed, moved, namechanged, thumbnailchanged");
+
+    process.EventEmitter.prototype.addListener.apply(this, arguments);
+}
+
 var screenInstance = null;
 
 function Screen() {
   nw.allocateObject(this, {});
   this._numListener = 0;
+  this.DesktopCapture = new DesktopCapture();
 }
 require('util').inherits(Screen, exports.Base);
 

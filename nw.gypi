@@ -112,6 +112,7 @@
         '<(SHARED_INTERMEDIATE_DIR)/blink',
         '<(SHARED_INTERMEDIATE_DIR)/blink/bindings/core/v8/',
         '<(SHARED_INTERMEDIATE_DIR)/chrome',
+		'<(DEPTH)/third_party/libyuv/include',
       ],
       'cflags_cc': [
         '-Wno-error=c++0x-compat',
@@ -153,6 +154,9 @@
         '<(DEPTH)/chrome/browser/ui/views/status_icons/status_tray_state_changer_win.h',
         '<(DEPTH)/chrome/browser/ui/views/status_icons/status_tray_win.cc',
         '<(DEPTH)/chrome/browser/ui/views/status_icons/status_tray_win.h',
+		'<(DEPTH)/chrome/browser/media/native_desktop_media_list.cc',
+        '<(DEPTH)/chrome/browser/media/native_desktop_media_list.h',		
+		'<(DEPTH)/chrome/browser/media/desktop_media_list.h',
         '<(DEPTH)/chrome/common/chrome_constants.cc',
         '<(DEPTH)/chrome/common/chrome_constants.h',
         '<(DEPTH)/chrome/common/chrome_switches.cc',
@@ -196,6 +200,8 @@
         'src/api/base/base.h',
         'src/api/clipboard/clipboard.cc',
         'src/api/clipboard/clipboard.h',
+		'src/api/screen/desktopcapture.cc',
+        'src/api/screen/desktopcapture.h',
         'src/api/dispatcher.cc',
         'src/api/dispatcher.h',
         'src/api/dispatcher_bindings.cc',
@@ -785,6 +791,7 @@
               '<(SHARED_INTERMEDIATE_DIR)/extensions/extensions_renderer_resources.pak',
               '<(SHARED_INTERMEDIATE_DIR)/extensions/extensions_resources.pak',
               '<(SHARED_INTERMEDIATE_DIR)/extensions/strings/extensions_strings_en-US.pak',
+			  '<(SHARED_INTERMEDIATE_DIR)/chrome/generated_resources_en-US.pak',
             ],
           },
           'inputs': [
@@ -905,6 +912,8 @@
           'dependencies': [
              '<(DEPTH)/v8/tools/gyp/v8.gyp:nwjc',
              '<(DEPTH)/chrome/chrome.gyp:chromedriver',
+			 '<(DEPTH)/chrome/chrome_resources.gyp:chrome_strings'
+			 '<(DEPTH)/third_party/libyuv/libyuv.gyp:libyuv',
           ],
         }],
       ],
