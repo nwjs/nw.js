@@ -1,6 +1,8 @@
 #ifndef _CONTENT_NW_CONTENT_MAC_H
 #define _CONTENT_NW_CONTENT_MAC_H
 
+#include "base/values.h"
+
 namespace nw {
 class Menu;
 }
@@ -9,6 +11,6 @@ namespace extensions {
 class NativeAppWindow;
 }
 
-void NWChangeAppMenu(nw::Menu* menu);
+std::unique_ptr<base::ListValue> NWChangeAppMenu(nw::Menu* menu);
 void NWSetNSWindowShowInTaskbar(extensions::NativeAppWindow* win, bool show);
 #endif

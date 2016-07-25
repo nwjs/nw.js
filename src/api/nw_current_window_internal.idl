@@ -14,6 +14,13 @@ namespace nw.currentWindowInternal {
     [nodoc] DOMString? datatype;
     [nodoc] long? quality;
   };
+
+  dictionary MenuPatch {
+    long menu;
+    long index;
+    object option;
+  };
+
   interface Functions {
     static void close(optional boolean force);
     static void showDevToolsInternal(optional ShowDevToolsCallback callback);
@@ -27,7 +34,7 @@ namespace nw.currentWindowInternal {
     static bool isKioskInternal();
     static void capturePageInternal(optional CapturePageOptions options, optional CapturePageCallback callback);
     static void clearMenu();
-    static void setMenu(long id);
+    static MenuPatch[] setMenu(long id);
     static void reloadIgnoringCache();
     static double getZoom();
     static void setZoom(double level);

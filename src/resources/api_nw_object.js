@@ -5,6 +5,9 @@ var sendRequest = require('sendRequest');
 
 nw_binding.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
+  apiFunctions.setHandleRequest('allocateId', function() {
+    return sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {})[0];
+  });
   apiFunctions.setHandleRequest('create', function() {
     return sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {});
   });

@@ -12,6 +12,17 @@
 
 namespace extensions {
 
+NwObjAllocateIdFunction::NwObjAllocateIdFunction() {
+}
+
+NwObjAllocateIdFunction::~NwObjAllocateIdFunction() {
+}
+
+bool NwObjAllocateIdFunction::RunNWSync(base::ListValue* response, std::string* error) {
+  response->AppendInteger(nw::ObjectManager::AllocateId());
+  return true;
+}
+
 NwObjCreateFunction::NwObjCreateFunction() {
 }
 
