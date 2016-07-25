@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Console</title>
+  </head>
+  <body>
+    <p style="font-size:1.5em">Open devtools console to see whether console.log outputs like below</p>
+    <div>
+      <p>New York</p>
+      <p>18</p>
+      <p>true</p>
+      <p>false</p>
+      <p>Array[3]</p>
+      <p>Object</p>
+      <p>undefined</p>
+      <p>null</p>
+      <p>Node count:2</p>
+      <p>Node count: 2 Done</p>
+      <p>Sam has 100 points and 2 pencils.He carrys 12.23 kg of water</p>
+      <p>&ltbody&gt...&lt/body&gt</p>
+      <p>&ltbody&gt...&lt/body&gt, body</p>
+      <p style = "color:orange;background: blue; font-size: 16pt">Sam has 100 points and 2 pencils.He carrys 12.23 kg of water</p>
+    </div>
+
+    <script>
+      <!-- string, number, boolean, array, object, undefined, null -->
+      var city = "New York";
+      var number = 18;
+      var bool = true;
+      var cars = new Array("Saab","Volvo","BMW");
+      var person = {
+      firstname : "John", 
+      lastname : "Doe", 
+      id : 5566
+      };
+      var country;
+      var street = null;
+
+      console.log(city);
+      console.log(number);
+      console.log(bool);
+      console.log(!bool);
+      console.log(cars);
+      console.log(person);
+      console.log(country);
+      console.log(street);
+      
+      <!-- concatenate expressions -->
+      <!-- String substitution and formatting -->
+      console.log("Node count:" + document.childNodes.length);
+      console.log("Node count:", document.childNodes.length, "Done");
+      console.log("%s has %d points and %i pencils.He carrys %f kg of water", "Sam", 100, 2, 12.23);
+      console.log(document.body);
+      console.log("%o, %O", document.body, document.body);
+      console.log("%c %s has %d points and %i pencils.He carrys %f kg of water",  "color:orange; background: blue; font-size: 16pt", "Sam", 100, 2, 12.23);
+    </script>
+  </body>
+</html>
