@@ -93,7 +93,7 @@ nw.Screen.chooseDesktopMedia(["window","screen"],
       }, 
       optional: []
     };
-    navigator.webkitGetUserMedia({audio: false, video: constraint}, success_func, fallback_func);
+    navigator.webkitGetUserMedia({audio: false, video: vid_constraint}, success_func, fallback_func);
   }
 );
 ```
