@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>win close event</title>
+</head>
+<body>
+  <h1>Try Close</h1>
+  <script>
+  var count = 3;
+  var win = nw.Window.get();
+  win.on('close', function() {
+    if (--count === 0) {
+      win.close(true);
+    } else {
+      out('result-' + count, 'success:' + count);
+    }
+  });
+
+  function out(id, msg) {
+    var h1 = document.createElement('h1');
+    h1.setAttribute('id', id);
+    h1.innerHTML = msg;
+    document.body.appendChild(h1);
+  }
+
+  function pos() {
+    return [win.x, win.y, win.width, win.height].join(',')
+  }
+  </script>
+</body>
+</html>
