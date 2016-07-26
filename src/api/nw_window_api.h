@@ -105,7 +105,7 @@ class NwCurrentWindowInternalClearMenuFunction : public AsyncExtensionFunction {
   DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalClearMenuFunction);
 };
 
-class NwCurrentWindowInternalSetMenuFunction : public AsyncExtensionFunction {
+class NwCurrentWindowInternalSetMenuFunction : public NWSyncExtensionFunction {
  public:
   NwCurrentWindowInternalSetMenuFunction();
 
@@ -113,7 +113,7 @@ class NwCurrentWindowInternalSetMenuFunction : public AsyncExtensionFunction {
   ~NwCurrentWindowInternalSetMenuFunction() override;
 
   // ExtensionFunction:
-  bool RunAsync() override;
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setMenu", UNKNOWN)
 
  private:

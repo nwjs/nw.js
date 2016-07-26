@@ -349,7 +349,7 @@ NwCurrentWindowInternalSetMenuFunction::NwCurrentWindowInternalSetMenuFunction()
 NwCurrentWindowInternalSetMenuFunction::~NwCurrentWindowInternalSetMenuFunction() {
 }
 
-bool NwCurrentWindowInternalSetMenuFunction::RunAsync() {
+bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::ListValue* response, std::string* error) {
   int id = 0;
   EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &id));
   AppWindow* window = getAppWindow(this);
@@ -362,7 +362,7 @@ bool NwCurrentWindowInternalSetMenuFunction::RunAsync() {
 
   window->menu_ = menu;
 #if defined(OS_MACOSX)
-  NWChangeAppMenu(menu);
+  response->Append(NWChangeAppMenu(menu).release());
 #endif
 
 #if defined(OS_LINUX) || defined(OS_WIN)
@@ -377,6 +377,7 @@ bool NwCurrentWindowInternalSetMenuFunction::RunAsync() {
   native_app_window_views->layout_();
   native_app_window_views->SchedulePaint();
   menu->UpdateKeys( native_app_window_views->widget()->GetFocusManager() );
+  response->Append(new base::ListValue());
 #endif
   return true;
 }

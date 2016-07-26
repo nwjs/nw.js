@@ -6,6 +6,7 @@
 [implemented_in="content/nw/src/api/nw_object_api.h"]
 namespace nw.Obj {
   interface Functions {
+    static long allocateId();
     static void create(long id, DOMString type, object options);
     static void destroy(long id);
     static void callObjectMethod(long id, DOMString type, DOMString method, any[] arguments);
