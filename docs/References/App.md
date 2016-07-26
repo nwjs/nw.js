@@ -152,7 +152,7 @@ Use `App.removeOriginAccessWhitelistEntry` with exactly the same arguments to do
 
 Remove an entry from the whitelist used for controlling cross-origin access. See `addOriginAccessWhitelistEntry` above.
 
-## App.registerGlobalHotKey(shortcut)
+## App.registerGlobalHotkey(shortcut)
 
 * `shortcut` `{Shortcut}` the `Shortcut` object to register.
 
@@ -160,7 +160,7 @@ Register a global keyboard shortcut (also known as system-wide hot key) to the s
 
 See [Shortcut](Shortcut.md) for more information.
 
-## App.unregisterGlobalHotKey(shortcut)
+## App.unregisterGlobalHotkey(shortcut)
 
 * `shortcut` `{Shortcut}` the `Shortcut` object to unregister.
 
