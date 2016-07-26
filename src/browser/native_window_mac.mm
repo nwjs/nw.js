@@ -186,6 +186,8 @@ enum {
 - (void)cleanup:(id)window {
   if (shell_)
     delete shell_.get();
+  if ([window isKindOfClass:[NSWindow class]])
+    ((NSWindow *)window).delegate = nil;
 
   [self release];
 }
