@@ -17,9 +17,9 @@
 
   // Following items exist when running with `--mixed-context`.
   // Copy them from `nw` to browser context
+  if (!self.global) self.global = self.nw;
   if (!self.process) self.process = self.nw.process;
   if (!self.Buffer) self.Buffer = self.nw.Buffer;
-  if (!self.global) self.global = self.nw.global;
   if (!self.root) self.root = self.nw.root;
 
 }());
