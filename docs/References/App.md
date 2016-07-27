@@ -31,9 +31,9 @@ Get the application's data path in user's directory.
 
 * Windows: `%LOCALAPPDATA%/<name>`
 * Linux: `~/.config/<name>`
-* OSX: `~/Library/Application Support/<name>`
+* OS X: `~/Library/Application Support/<name>/Default` (was `~/Library/Application Support/<name>` in v0.12.3 and below)
 
-`<name>` is the field in the manifest.
+`<name>` is the **name** field in the `package.json` manifest.
 
 ## App.manifest
 
