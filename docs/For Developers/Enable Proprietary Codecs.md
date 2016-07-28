@@ -22,7 +22,7 @@ ogg,matroska,wav
 ## Enable Proprietary Codecs in NW.js
 
 !!! warning "License and Patent Fee"
-    MP3 and H.264 codecs are licensed under the GPL in `ffmpeg` used by NW.js. Make sure your app are released with compatible license of GPL. And you also have to pay patent licensing royalties for using them. Consult a lawyer if you do not understand the licensing constraints and using patented media formats in your application.
+    Using MP3 and H.264 codecs requires you to pay attention to the patent royalties and the license of the source code. Consult a lawyer if you do not understand the licensing constraints and using patented media formats in your application. For more information about the license of the source code, check [here](https://chromium.googlesource.com/chromium/third_party/ffmpeg.git/+/master/CREDITS.chromium)
 
 !!! warning "Warning"
     If you do **NOT** have the license, using this tip below or moving to other solutions does **NOT** make you eligible to redistribute the codecs.
