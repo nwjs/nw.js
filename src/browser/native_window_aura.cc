@@ -330,7 +330,7 @@ NativeWindowAura::NativeWindowAura(const base::WeakPtr<content::Shell>& shell,
 #if defined(OS_WIN)
   HWND hwnd = views::HWNDForWidget(window_->GetTopLevelWidget());
   int current_style = ::GetWindowLong(hwnd, GWL_STYLE);
-  ::SetWindowLong(hwnd, GWL_STYLE, current_style | WS_CAPTION);
+  ::SetWindowLong(hwnd, GWL_STYLE, current_style | WS_CAPTION | WS_EX_TOOLWINDOW);
 #endif
 
   if (!has_frame())
