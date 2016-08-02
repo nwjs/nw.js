@@ -105,6 +105,7 @@ void MenuBarView::OnMenuButtonClicked(views::MenuButton* view,
     MenuBarController* controller = new MenuBarController(this, model_->GetSubmenuModelAt(button_index), NULL);
     controller->RunMenuAt(view, point);
   }
+  model_->ActivatedAt(button_index, event->flags());
 }
 
 void MenuBarView::ButtonPressed(views::Button* sender,
