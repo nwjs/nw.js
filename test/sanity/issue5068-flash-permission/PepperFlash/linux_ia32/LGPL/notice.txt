@@ -1,0 +1,1 @@
+﻿This product links to certain Linux system libraries licensed under LGPL.
