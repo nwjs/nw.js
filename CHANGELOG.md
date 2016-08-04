@@ -1,3 +1,11 @@
+0.16.1 / 08-04-2016
+=======================
+- Update Chromium to [52.0.2743.116](http://googlechromereleases.blogspot.com/2016/08/stable-channel-update-for-desktop.html)
+- Update Node to [6.3.1](https://nodejs.org/en/blog/release/v6.3.1/)
+- Fix: [osx] update menuitems after setting main menu [(#2812)](https://github.com/nwjs/nw.js/issues/2812)
+- Fix: Crashes if iframe has JavaScript error [(#5148)](https://github.com/nwjs/nw.js/issues/5148)
+- [docs] update license information about enabling Proprietary Codecs
+
 0.16.0 / 07-21-2016
 =======================
 - Update Chromium to [52.0.2743.82](http://googlechromereleases.blogspot.com/2016/07/stable-channel-update.html)
