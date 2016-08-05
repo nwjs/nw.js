@@ -1,11 +1,19 @@
 import("//build/config/features.gni")
 import("//build/toolchain/toolchain.gni")
+if (is_mac) {
+  import("//build/util/branding.gni")
+  chrome_framework_name = chrome_product_full_name + " Framework"
+}
 import("//build/util/version.gni")
 
 group("nwjs") {
   deps = [
     "//chrome",
+    "//third_party/ffmpeg:ffmpeg"
   ]
+  if (is_mac) {
+    deps += [ ":copy_ffmpeg" ]
+  }
 }
 
 component("nw_base") {
@@ -235,6 +243,17 @@ action("commit_id") {
     ]
 
     public_configs = [ ":commit_id_config" ]
+}
+
+if (is_mac) {
+  copy("copy_ffmpeg") {
+    sources = [ "$root_out_dir/libffmpeg.dylib" ]
+    outputs = [ "$root_out_dir/$chrome_product_full_name.app/Contents/Versions/$chrome_version_full/$chrome_framework_name.framework/libffmpeg.dylib" ]
+    deps = [
+      "//chrome",
+      "//third_party/ffmpeg:ffmpeg"
+    ]
+  }
 }
 
 copy("copy_node") {
