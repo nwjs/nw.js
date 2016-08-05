@@ -1,13 +1,16 @@
-diff --git a/ffmpeg.gyp b/ffmpeg.gyp
-index 5c21675..ee09dfe 100755
---- ffmpeg.gyp
-+++ ffmpeg.gyp
-@@ -84,7 +84,7 @@
-       }],
-     ],
+diff --git a/BUILD.gn b/BUILD.gn
+index 3de1449..4e2eeb2 100755
+--- BUILD.gn
++++ BUILD.gn
+@@ -356,6 +356,11 @@ if (is_component_ffmpeg) {
+     # So we can append below and assume they're defined.
+     ldflags = []
  
--    'ffmpeg_component%': '<(component)',
-+    'ffmpeg_component%': 'shared_library',
- 
-     # Locations for generated artifacts.
-     'shared_generated_dir': '<(SHARED_INTERMEDIATE_DIR)/third_party/ffmpeg',
++    if (is_mac) {
++      ldflags += [
++        "-Wl,-install_name,@loader_path/libffmpeg.dylib"
++      ]
++    }
+     if (is_posix && !is_mac) {
+       # Fixes warnings PIC relocation when building as component.
+       ldflags += [
