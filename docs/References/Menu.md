@@ -59,6 +59,7 @@ See [Customize Menubar](../For Users/Advanced/Customize Menubar.md) for detailed
 
 * `option` `{Object}` _Optional_
     - `type` `{String}` _Optional_ two types are accepted by this method: "menubar" or "contextmenu". The value is set to "contextmenu" by default.
+    - `global` `{Boolean}` _Optional_ *(Linux Only)* specify if using global menubar on Ubuntu. It will fallback to local window based menubar if no global menubar available. The value is set to `false` by default.
 
 Create a `Menu` object.
 
