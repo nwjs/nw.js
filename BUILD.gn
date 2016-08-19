@@ -322,7 +322,8 @@ if (is_mac && !is_component_build) {
              ":payload",
              "//v8:nwjc",
              "//chrome/test/chromedriver:chromedriver",
-             "//third_party/ffmpeg:ffmpeg"
+             "//third_party/ffmpeg:ffmpeg",
+             "//chrome:nw_sym_archive"
              ]
   }
 }
