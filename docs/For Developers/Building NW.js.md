@@ -4,6 +4,7 @@
 [TOC]
 
 !!! important
+    Starting from 0.17, we switched to the new build configuration system GN and Ninja in Chromium upstream. The Node.js in NW is still build with GYP/Ninja
     This document is written for latest **NW 0.13** or later. For legacy build instructions, please read the [wiki page](https://github.com/nwjs/nw.js/wiki/Building-nw.js) on GitHub.
     See our buildbot for official build configuration and steps: http://buildbot-master.nwjs.io:8010/waterfall
 
@@ -29,7 +30,7 @@ NW.js use same build tools and similar steps as Chromium. Read the instructions 
 ```bash
 mkdir -p $HOME/nwjs
 cd $HOME/nwjs
-gclient config --name=src https://github.com/nwjs/chromium.src.git@origin/nw15
+gclient config --name=src https://github.com/nwjs/chromium.src.git@origin/nw17
 ```
 
 Generally if you are not interested in running Chromium tests, you don't have to sync the test cases and reference builds, which saves you lot of time. Open the `.gclient` file you just created and replace `custom_deps` section with followings:
@@ -66,30 +67,35 @@ When finished, you will see a `src` folder created in the same folder as `.gclie
 !!! note "First Build on Linux"
     If you are building on Linux **for the first time**, you need to run `gclient sync --with_branch_heads --nohooks` and then run `./build/install-build-deps.sh` to install dependencies on Ubuntu. See [Chromium document](http://dev.chromium.org/developers/how-tos/get-the-code) for detailed instructions of getting the source code.
 
-!!! note "First Build on Windows"
-    On Windows, you have to install [DirectX SDK](https://www.microsoft.com/en-us/download/details.aspx?id=6812) and copy the files into the source folder manually using following bash command:
-
-```bash
-mkdir -p $HOME/nwjs/src/third_party/directxsdk/files
-cp -r /c/Program\ Files\ \(x86\)/Microsoft\ DirectX\ SDK\ \(June\ 2010\)/* \
-$HOME/nwjs/src/third_party/directxsdk/files/
-```
-
-## Build
-
-Build files are generated in `out/` folder during `gclient sync`. Run following command in your terminal will generate the Debug build of standard NW.js binaries in `out/Debug` folder:
+## Generate ninja build files with GN for Chromium
 
 ```bash
 cd src
-ninja -C out/Debug nwjs
+gn gen out/nw  (changing the 'nw' part of the path is not supported. You'd better not changing the 'out' part if you're new to this)
 ```
 
-!!! tip "Build Time"
-    Generally a full build takes hours of time depending on the performance of your machine. Recommended configuration is to build on a PC with multicore CPU (>=8 cores), SSD and large memory (>= 8G). And you can read [Build Faster](#build-faster) section below for some tips to speed up the build.
+Use flags like our official build:
+````
+is_debug=false
+is_component_ffmpeg=true
+target_cpu="x64"
+````
+We support component build: `is_component_build = true` for faster development cycle
 
-To generate Release build, switch the second command to `ninja -C out/Release nwjs`.
+See the upstream documentation for the mapping between GN and GYP flags: https://chromium.googlesource.com/chromium/src/+/master/tools/gn/docs/cookbook.md#Variable-mappings
 
-To build 32-bit/64-bit binaries or non-standard build flavors, you need to setup `GYP_DEFINES` variable in your environment and run `gclient runhooks --force` to generate build files. And then re-run the commands above to generate binaries. Continue to read following sections to find out how to setup `GYP_DEFINES`.
+## Generate ninja build files with GYP for Node
+
+```bash
+cd src
+GYP_CHROMIUM_NO_ACTION=0 ./build/gyp_chromium third_party/node/node.gyp
+```
+
+or use the following if you're doing a component build:
+```bash
+./build/gyp_chromium -D component=shared_library third_party/node/node.gyp
+```
+To change the build configuration for Node, you need to setup the GYP_DEFINES environment variable:
 
 ### 32-bit/64-bit Build
 
@@ -103,11 +109,38 @@ To build 32-bit/64-bit binaries or non-standard build flavors, you need to setup
     - 32-bit: `export GYP_DEFINES="host_arch=ia32 target_arch=ia32"` and rebuild in `out/Debug` or `out/Release` folder
     - 64-bit: is the default build target
 
+## Build nwjs
+
+ninja build files are generated in `out/nw` folder after you run GN. Run following command in your terminal will generate the Debug build of standard NW.js binaries in `out/nw` folder:
+
+```bash
+cd src
+ninja -C out/nw nwjs
+```
+
+!!! tip "Build Time"
+    Generally a full build takes hours of time depending on the performance of your machine. Recommended configuration is to build on a PC with multicore CPU (>=8 cores), SSD and large memory (>= 8G). And you can read [Build Faster](#build-faster) section below for some tips to speed up the build.
+
+To build 32-bit/64-bit binaries or non-standard build flavors, you need to edit out/nw/args.gn file And then re-run the commands above to generate binaries.
+
+## Build Node
+
+```bash
+cd src
+ninja -C out/Release node
+```
+
+After building Node, the final step is to copy the build Node library to the nwjs binary folder:
+
+```bash
+cd src
+ninja -C out/nw copy_node
+```
+
 ### Build Flavors
 
-* Standard: it's generated by default. Same as `GYP_DEFINES="nwjs_sdk=0 disable_nacl=1"`.
-* SDK: `GYP_DEFINES="nwjs_sdk=1 disable_nacl=0"`
-* NaCl: `GYP_DEFINES="disable_nacl=0"`
+* Standard: 'nwjs_sdk=false'
+* SDK: `enable_nacl=true`
 
 See [Build Flavors](../For Users/Advanced/Build Flavors.md) for the differences of all supported build flavors.
 
