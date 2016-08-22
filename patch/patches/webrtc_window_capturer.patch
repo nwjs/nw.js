@@ -1,5 +1,5 @@
 diff --git a/modules/desktop_capture/window_capturer_mac.mm b/modules/desktop_capture/window_capturer_mac.mm
-index 22061ed..e2cedcc 100644
+index cbdf14b..f853a72 100644
 --- modules/desktop_capture/window_capturer_mac.mm
 +++ modules/desktop_capture/window_capturer_mac.mm
 @@ -42,6 +42,60 @@ bool IsWindowValid(CGWindowID id) {
@@ -63,7 +63,7 @@ index 22061ed..e2cedcc 100644
  class WindowCapturerMac : public WindowCapturer {
   public:
    explicit WindowCapturerMac(rtc::scoped_refptr<FullScreenChromeWindowDetector>
-@@ -123,6 +177,9 @@ explicit WindowCapturerMac(rtc::scoped_refptr<FullScreenChromeWindowDetector>
+@@ -120,6 +174,9 @@ explicit WindowCapturerMac(rtc::scoped_refptr<FullScreenChromeWindowDetector>
        windows->push_back(window);
      }
    }
@@ -73,3 +73,4 @@ index 22061ed..e2cedcc 100644
  
    CFRelease(window_array);
    return true;
+
