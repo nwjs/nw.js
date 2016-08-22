@@ -1,3 +1,16 @@
+0.17.0-beta2 / 08-20-2016
+=========================
+- Update Chromium to [53.0.2785.70](http://blog.chromium.org/2016/08/chrome-53-beta-shadow-dom.html)
+- Update Node.js to [6.4.0](https://nodejs.org/en/blog/release/v6.4.0/)
+- Fix: nwjs 0.17 beta - crash at boot [(#5193)](https://github.com/nwjs/nw.js/issues/5193)
+- Fix: multiple evalNWBin always execute just the first *.bin [(#5168)](https://github.com/nwjs/nw.js/issues/5168)
+- Fix: regression - Shortcut not work in devtools while it placed in a webview [(#4709)](https://github.com/nwjs/nw.js/issues/4709)
+- Fix: [GN] mac symbol generation
+
+0.17.0-beta1 / 08-05-2016
+=========================
+- Update Chromium to [53.0.2785.46](http://blog.chromium.org/2016/08/chrome-53-beta-shadow-dom.html)
+
 0.16.0 / 07-21-2016
 =======================
 - Update Chromium to [52.0.2743.82](http://googlechromereleases.blogspot.com/2016/07/stable-channel-update.html)
