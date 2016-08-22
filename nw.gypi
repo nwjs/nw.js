@@ -143,6 +143,14 @@
             'src/browser/menubar_controller.h',
           ],
         }],
+        ['OS=="linux"', {
+          'sources': [
+            'src/browser/global_menu_bar_registrar_x11.cc',
+            'src/browser/global_menu_bar_registrar_x11.h',
+            'src/browser/global_menu_bar_x11.cc',
+            'src/browser/global_menu_bar_x11.h',
+          ],
+        }],
         ['OS=="mac"', {
           'sources': [
             'src/api/base/base_mac.h',
