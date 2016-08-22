@@ -2,7 +2,6 @@ var Binding = require('binding').Binding;
 var forEach = require('utils').forEach;
 var nwNative = requireNative('nw_natives');
 var sendRequest = require('sendRequest');
-var contextMenuNatives = requireNative('context_menus');
 var messagingNatives = requireNative('messaging_natives');
 var Event = require('event_bindings').Event;
 var util = nw.require('util');
@@ -72,7 +71,7 @@ function Tray(option) {
     option.menu = option.menu.id;
   }
   
-  var id = contextMenuNatives.GetNextContextMenuId();
+  var id = nw.Obj.allocateId();
   this.id = id;
   privates(this).option = option;
 
