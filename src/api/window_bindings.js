@@ -241,10 +241,10 @@ Window.prototype.__defineSetter__('isFullscreen', function(flag) {
     this.leaveFullscreen();
 });
 
-Window.prototype.isDevToolsOpen = function () {
+Window.prototype.__defineGetter__('isDevToolsOpen' = function () {
     var result = CallObjectMethodSync(this, 'IsDevToolsOpen', []);
     return Boolean(result[0]);
-}
+});
 
 Window.prototype.__defineGetter__('isFullscreen', function() {
   var result = CallObjectMethodSync(this, 'IsFullscreen', []);

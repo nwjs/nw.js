@@ -171,6 +171,20 @@ bool NwCurrentWindowInternalCloseDevToolsFunction::RunAsync() {
   return true;
 }
 
+bool NwCurrentWindowInternalIsDevToolsOpenFunction::RunNWSync(base::ListValue* response, std::string* error) {
+  content::RenderFrameHost* rfh = render_frame_host();
+  content::WebContents* web_contents = content::WebContents::FromRenderFrameHost(rfh);
+  scoped_refptr<content::DevToolsAgentHost> agent(
+      content::DevToolsAgentHost::GetOrCreateFor(web_contents));
+  DevToolsWindow* devtools_window =
+      DevToolsWindow::FindDevToolsWindow(agent.get());
+  if (devtools_window)
+    response->AppendBoolean(true);
+  else
+    response->AppendBoolean(false);
+  return true;
+}
+
 NwCurrentWindowInternalCapturePageInternalFunction::NwCurrentWindowInternalCapturePageInternalFunction() {
 }
 
