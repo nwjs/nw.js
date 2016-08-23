@@ -38,16 +38,4 @@
   return wrapper == nil ? nil : [wrapper obj];
 }
 
-// - (void)setAssociatedCppObject:(void*)obj {
-//   [self setAssociatedObject: [CppWrapper createFromCppObject:obj]];
-// }
-
-// - (void*)associatedCppObject {
-//   id obj = [self associatedObject];
-//   if ([obj isKindOfClass: [CppWrapper class]]) {
-//     return [(CppWrapper*)obj obj];
-//   }
-//   return nullptr;
-// }
-
 @end
