@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>index</title>
+</head>
+<body>
+  <h1>index.html</h1>
+  <button id="new-inst" onclick="openNewInstance()" type="button">new-instance</button>
+  <button id="same-inst" onclick="openSameInstance()" type="button">same-instance</button>
+  <script>
+    function out(id, message) {
+      var h1 = document.createElement('h1');
+      h1.setAttribute('id', id);
+      h1.innerHTML = message;
+      document.body.appendChild(h1);
+    }
+
+    function openNewInstance() {
+      nw.Window.open('new-instance.html', {'new_instance': true}, function(w) {
+        out('new-inst-result', (!w ? 'success': 'failed') + ': ' + w);
+      });
+    }
+    function openSameInstance() {
+      nw.Window.open('same-instance.html', {}, function(w) {
+        out('same-inst-result', (w ? 'success': 'failed') + ': ' + w);
+      });
+    }  </script>
+</body>
+</html>
