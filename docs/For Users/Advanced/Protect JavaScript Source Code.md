@@ -23,6 +23,21 @@ nw.Window.get().evalNWBin(frame, 'binary.bin');
 ```
 The arguments of the [win.evalNWBin()](../../References/Window.md#winevalnwbin) method are similar with the `Window.eval()` method, where the first parameter is the target iframe (`null` for main frame), and the 2nd parameter is the binary code file.
 
+### Load Compiled JavaScript from Remote
+
+Compiled JavaScript can be fetched from remote (e.g. with AJAX) and executed on the fly.
+
+```javascript
+var xhr = new XMLHttpRequest();
+xhr.responseType = 'arraybuffer'; // make response as ArrayBuffer
+xhr.open('GET', url, true);
+xhr.send();
+xhr.onload = () => {
+  // xhr.response contains compiled JavaScript as ArrayBuffer
+  nw.Window.get().evalNWBin(null, xhr.response);
+}
+```
+
 !!! note
     The compiled code is executed in [Browser Context](JavaScript Contexts in NW.js.md#browser-context). You can use any Web APIs (such as DOM) and [access NW.js API and Node API](JavaScript Contexts in NW.js.md#access-nodejs-and-nwjs-api-in-browser-context) like other scripts running in browser context.
 

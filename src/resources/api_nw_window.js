@@ -413,7 +413,19 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       return nwNatives.evalScript(frame, script);
     };
     NWWindow.prototype.evalNWBin = function (frame, path) {
-      return nwNatives.evalNWBin(frame, path);
+      var ab;
+      if (Buffer.isBuffer(path)) {
+        let buf = path;
+        ab = new global.ArrayBuffer(path.length);
+        path.copy(Buffer.from(ab));
+      } else if ($Object.prototype.toString.apply(path) === '[object ArrayBuffer]') {
+        ab = path;
+      } else {
+        let buf = global.require('fs').readFileSync(path);
+        ab = new global.ArrayBuffer(buf.length);
+        buf.copy(Buffer.from(ab));
+      }
+      return nwNatives.evalNWBin(frame, ab);
     };
     NWWindow.prototype.show = function () {
       this.appWindow.show();
