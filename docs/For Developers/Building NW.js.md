@@ -18,7 +18,6 @@ NW.js use same build tools and similar steps as Chromium. Read the instructions 
 
 !!! note "Windows"
     As suggested by Chromium document, you need to run `set DEPOT_TOOLS_WIN_TOOLCHAIN=0` or set the variable in your global environment.
-    CLang is the build tool used by non-Windows platforms. On Windows, it's not supported yet. You need to run `set GYP_DEFINES="clang=0"` to disable CLang on Windows before going to next steps.
 
 !!! note "Xcode 7"
     Mac SDK 10.11 as part of Xcode 7 is not supported yet. If you have upgraded to Xcode 7, either downgrade to Xcode 6 or copy Mac SDK 10.10 from other machines under ```xcode-select -p`/Platforms/MacOSX.platform/Developer/SDKs`` as suggested by [Chromium document](https://chromium.googlesource.com/chromium/src/+/master/docs/mac_build_instructions.md).
@@ -137,14 +136,14 @@ cd src
 ninja -C out/nw copy_node
 ```
 
-### Build Flavors
+## Build Flavors
 
 * Standard: 'nwjs_sdk=false'
 * SDK: `enable_nacl=true`
 
 See [Build Flavors](../For Users/Advanced/Build Flavors.md) for the differences of all supported build flavors.
 
-### Enable Proprietary Codecs
+## Enable Proprietary Codecs
 
 Due to the license issue, the prebuilt binaries of NW.js doesn't support proprietary codecs, like H.264. So you can't play MP3/MP4 with `<audio>` and `<video>` tags with prebuilt NW.js. To enable those medias, you have to build NW.js from source code by following the document of [Enable Proprietary Codecs](Enable Proprietary Codecs.md).
 
