@@ -1,3 +1,13 @@
+0.17.0 / 08-31-2016
+===================
+- Update Chromium to [53.0.2785.89](http://googlechromereleases.blogspot.com/2016/08/stable-channel-update-for-desktop_31.html)
+- Update Node.js to [6.5.0](https://nodejs.org/en/blog/release/v6.5.0/)
+- Fix: new_instance does not create new renderer process [(#5163)](https://github.com/nwjs/nw.js/issues/5163)
+- Fix: [OSX] crash on setting menubar in 0.17 beta [(#5229)](https://github.com/nwjs/nw.js/issues/5229)
+- Fix: Tray Icon Menu not working [(#5202)](https://github.com/nwjs/nw.js/issues/5202)
+- Fix: Crashing on link open in webview [(#5226)](https://github.com/nwjs/nw.js/issues/5226)
+- [docs] new build documentation for GN
+
 0.17.0-beta2 / 08-20-2016
 =========================
 - Update Chromium to [53.0.2785.70](http://blog.chromium.org/2016/08/chrome-53-beta-shadow-dom.html)
@@ -10,6 +20,14 @@
 0.17.0-beta1 / 08-05-2016
 =========================
 - Update Chromium to [53.0.2785.46](http://blog.chromium.org/2016/08/chrome-53-beta-shadow-dom.html)
+
+0.16.1 / 08-04-2016
+=======================
+- Update Chromium to [52.0.2743.116](http://googlechromereleases.blogspot.com/2016/08/stable-channel-update-for-desktop.html)
+- Update Node to [6.3.1](https://nodejs.org/en/blog/release/v6.3.1/)
+- Fix: [osx] update menuitems after setting main menu [(#2812)](https://github.com/nwjs/nw.js/issues/2812)
+- Fix: Crashes if iframe has JavaScript error [(#5148)](https://github.com/nwjs/nw.js/issues/5148)
+- [docs] update license information about enabling Proprietary Codecs
 
 0.16.0 / 07-21-2016
 =======================
