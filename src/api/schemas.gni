@@ -8,7 +8,7 @@ import("//build/config/ui.gni")
 assert(enable_extensions)
 
 # Common sources that are both bundled and compiled.
-sources = [
+schema_sources = [
       "nw_object.idl",
       "nw_app.idl",
       "nw_window.idl",
