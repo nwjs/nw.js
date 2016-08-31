@@ -3,11 +3,13 @@
 # found in the LICENSE file.
 
 import("//build/json_schema_api.gni")
+import("//tools/json_schema_compiler/json_features.gni")
 import("schemas.gni")
 
 assert(enable_extensions)
 
 json_schema_api("nw_api") {
+  sources = schema_sources
   schemas = true
   bundle = true
   configs = [ "//build/config:precompiled_headers" ]
@@ -18,6 +20,7 @@ json_schema_api("nw_api") {
 
 # GYP version: chrome/browser/extensions/api/api.gyp:chrome_api_registration
 json_schema_api("nw_api_registration") {
+  sources = schema_sources
   impl_dir = "//content/nw/src/api"
   bundle_registration = true
   configs = [ "//build/config:precompiled_headers" ]
@@ -32,12 +35,12 @@ json_schema_api("nw_api_registration") {
     # include generated headers from these targets.
     # TODO(brettw) this should be made unnecessary if possible.
     ":nw_api",
-    "//components/copresence/proto",
     "//components/metrics/proto",
     "//skia",
-    "//sync",
+    "//components/sync",
     "//ui/accessibility:ax_gen",
   ]
 
   deps += schema_dependencies
 }
+

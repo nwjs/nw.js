@@ -47,7 +47,7 @@ NwAppQuitFunction::~NwAppQuitFunction() {
 bool NwAppQuitFunction::RunAsync() {
   ExtensionService* service =
     ExtensionSystem::Get(browser_context())->extension_service();
-  base::MessageLoop::current()->PostTask(
+  base::MessageLoop::current()->task_runner()->PostTask(
         FROM_HERE,
         base::Bind(&ExtensionService::TerminateExtension,
                    service->AsWeakPtr(),
