@@ -18,7 +18,7 @@ var currentWidgetRoutingID = nwNatives.getWidgetRoutingID();
 
 var nw_internal = require('binding').Binding.create('nw.currentWindowInternal');
 
-var bgPage = GetExtensionViews(-1, 'BACKGROUND')[0];
+var bgPage = GetExtensionViews(-1, -1, 'BACKGROUND')[0];
 
 if (typeof bgPage === 'undefined') //new instance window
   bgPage = window;

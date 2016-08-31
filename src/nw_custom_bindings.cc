@@ -1,6 +1,9 @@
 // Copyright 2014 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+#include "base/compiler_specific.h"
+
+MSVC_PUSH_DISABLE_WARNING(4305)
 
 #include "content/nw/src/nw_custom_bindings.h"
 
@@ -21,7 +24,37 @@ using namespace blink;
 #endif
 
 #undef FROM_HERE
-
+#undef TRACE_EVENT0
+#undef TRACE_EVENT1
+#undef TRACE_EVENT2
+#undef TRACE_EVENT_WITH_FLOW0
+#undef TRACE_EVENT_WITH_FLOW1
+#undef TRACE_EVENT_WITH_FLOW2
+#undef TRACE_EVENT_MARK_WITH_TIMESTAMP1
+#undef TRACE_EVENT_COPY_MARK_WITH_TIMESTAMP
+#undef TRACE_EVENT_COPY_NESTABLE_ASYNC_BEGIN_WITH_TIMESTAMP0
+#undef TRACE_EVENT_COPY_NESTABLE_ASYNC_END_WITH_TIMESTAMP0
+#undef TRACE_EVENT_ENTER_CONTEXT
+#undef TRACE_EVENT_LEAVE_CONTEXT
+#undef TRACE_STR_COPY
+#undef TRACE_ID_MANGLE
+#undef TRACE_ID_DONT_MANGLE
+#undef TRACE_ID_WITH_SCOPE
+#undef TRACE_EVENT_SCOPED_SAMPLING_STATE_FOR_BUCKET
+#undef TRACE_EVENT_GET_SAMPLING_STATE_FOR_BUCKET
+#undef TRACE_EVENT_SET_SAMPLING_STATE_FOR_BUCKET
+#undef TRACE_EVENT_API_GET_CATEGORY_GROUP_ENABLED
+#undef TRACE_EVENT_API_ADD_TRACE_EVENT
+#undef TRACE_EVENT_API_UPDATE_TRACE_EVENT_DURATION
+#undef INTERNAL_TRACE_EVENT_UID2
+#undef INTERNAL_TRACE_EVENT_GET_CATEGORY_INFO
+#undef INTERNAL_TRACE_EVENT_ADD
+#undef INTERNAL_TRACE_EVENT_ADD_SCOPED
+#undef INTERNAL_TRACE_EVENT_ADD_SCOPED_WITH_FLOW
+#undef INTERNAL_TRACE_EVENT_ADD_WITH_ID
+#undef INTERNAL_TRACE_EVENT_ADD_WITH_TIMESTAMP
+#undef INTERNAL_TRACE_EVENT_SCOPED_CONTEXT
+#undef INTERNAL_TRACE_EVENT_CATEGORY_GROUP_ENABLED_FOR_RECORDING_MODE
 //#include "third_party/WebKit/Source/config.h"
 #include "third_party/WebKit/Source/core/html/HTMLIFrameElement.h"
 #include "third_party/WebKit/Source/core/dom/Document.h"
@@ -309,3 +342,4 @@ void NWCustomBindings::SetDevToolsJail(const v8::FunctionCallbackInfo<v8::Value>
 }
 
 }  // namespace extensions
+MSVC_POP_WARNING()

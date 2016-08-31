@@ -24,7 +24,7 @@ MenuBarController::MenuBarController(MenuBarView* menubar, ui::MenuModel* menu_m
 
 MenuBarController::~MenuBarController() {
   if (master_ == this) {
-    STLDeleteElements(&controllers_);
+    base::STLDeleteElements(&controllers_);
     model_to_menu_map_.clear();
   }
 }
