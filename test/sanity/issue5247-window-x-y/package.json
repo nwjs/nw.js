@@ -1,0 +1,8 @@
+{
+  "name": "issue5247-window-x-y",
+  "main": "index.html",
+  "window": {
+    "x": 200,
+    "y": 100
+  }
+}
