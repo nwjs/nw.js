@@ -389,11 +389,15 @@ if (!is_component_build) {
     } else {
       package_mode = "nosdk"
     }
+    arch_pkgname = target_cpu
+    if (target_cpu == "x86") {
+      arch_pkgname = "ia32"
+    }
     icudat_path = rebase_path("../../third_party/icu/common/icudtl.dat")
     outputs = [ "$root_build_dir/new_package.re" ]
     args = [
       "-p", rebase_path("$root_build_dir"),
-      "-a", "$target_cpu",
+      "-a", "$arch_pkgname",
       "-m", "$package_mode",
       "-i", "$icudat_path"
     ]
