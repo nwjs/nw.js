@@ -370,11 +370,7 @@ bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_l
   bool single_instance = true;
   package->root()->GetBoolean(switches::kmSingleInstance, &single_instance);
   if (single_instance) {
-#if defined(OS_WIN)
-    std::string cmd = base::UTF16ToUTF8(command_line.GetCommandLineString());
-#else
-    std::string cmd = command_line.GetCommandLineString();
-#endif
+    auto cmd = command_line.GetCommandLineString();
     std::unique_ptr<base::ListValue> arguments(new base::ListValue());
     arguments->AppendString(cmd);
     SendEventToApp("nw.App.onOpen", std::move(arguments));
