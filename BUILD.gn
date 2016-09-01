@@ -332,6 +332,10 @@ if (is_mac && !is_component_build) {
 
 if (is_linux && !is_component_build) {
   linux_strip_binary = 1
+  arch_pkgname = target_cpu
+  if (target_cpu == "x86") {
+    arch_pkgname = "ia32"
+  }
   action_foreach("dump") {
     script = "//build/linux/dump_app_syms.py"
     sources = [ "$root_build_dir/nw",
@@ -371,7 +375,7 @@ if (is_linux && !is_component_build) {
       "./" + rebase_path("tools/dump_syms", root_build_dir),
       "$linux_strip_binary",
       "{{source}}",
-      rebase_path("$root_out_dir/{{source_name_part}}.breakpad.$current_cpu", root_build_dir)
+      rebase_path("$root_out_dir/{{source_name_part}}.breakpad.$arch_pkgname", root_build_dir)
     ]
   }
 }
