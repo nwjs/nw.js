@@ -83,26 +83,12 @@ You will find the DLL in `out/Release` folder. The path and file name varies bet
 
 ### Build Entire NW.js with Proprietary Codecs
 
-If you don't use official pre-built NW.js, you can build entire NW.js with proprietary codecs enabled by following the instructions below.
+If you don't use official pre-built NW.js, you can build entire NW.js with proprietary codecs enabled by following the instructions below. See [Building NW.js](Building NW.js.md) for details of each steps.
 
 **Step 1.** Install prerequists and fetch the source code of NW.js. See *Prerequisits* and *Get the Code* sections in [Building NW.js](Building NW.js.md).
 
-**Step 2.** Apply following patch to `third_party/ffmpeg/ffmpeg.gyp` to make `ffmpeg` include the codecs:
-```diff
-diff --git a/ffmpeg.gyp b/ffmpeg.gyp                   
-index 294dd2e..7dfcd3a 100755                          
---- a/ffmpeg.gyp
-+++ b/ffmpeg.gyp
-@@ -72,7 +72,7 @@ 
-       ['chromeos == 1', {
-         'ffmpeg_branding%': '<(branding)OS',
-       }, {  # otherwise, assume Chrome/Chromium.
--        'ffmpeg_branding%': '<(branding)',
-+        'ffmpeg_branding%': 'Chrome'
-       }],
-     ],
-```
+**Step 2.** Set `ffmpeg_branding` to `Chrome` when you configure GN.
 
-**Step 3.** Regenerate the gyp files again with `gclient runhooks`.
+**Step 3.** Regenerate the ninj files again.
 
-**Step 4.** Rebuild NW.js with `ninja -C out/Release nwjs`. Then you will get NW.js as well as FFmpeg DLL with proprietary codecs. If you just want to rebuild the DLL, running `ninja -C out/Release ffmpeg` will do. The generated binaries can be found in `out/Release`.
+**Step 4.** Rebuild NW.js.
