@@ -41,35 +41,73 @@ If you are using pre-built NW.js, you can just only rebuild FFmpeg DLL and repla
 
 Since you are not building entire NW.js, you have to fetch following dependencies manually.
 
-* `build/linux/*-sysroot`: This is Linux only. Use `build/linux/sysroot_scripts/install-sysroot.py --running-as-hook` to install the dependencies.
-* `tools/gyp`: See `DEPS` file in the source folder for the repo and commit for this folder.
-* `third_party/yasm/sources/patched-yasm`: See `DEPS` file in the source folder for the repo and commit for this folder.
-* `third_party/ffmpeg`: see DEPS for commit and repo
-* `third_party/llvm-build`: Mac and Linux only. Use `tools/clang/scripts/update.py --if-needed` to download.
-
-**Step 3.** Generate build targets with GYP
+* Git clone following folders with corresponding commits as in `DEPS` file:
+    - `buildtools`
+    - `tools/gyp`
+    - `third_party/yasm/sources/patched-yasm`
+    - `third_party/ffmpeg`
+* Download `gn` tools in `buildtools/<os>` by
+```bash
+download_from_google_storage --no_resume \
+                             --platform=<platform> \
+                             --no_auth \
+                             --bucket chromium-gn \
+                             -s buildtools/<os>/<gn-exe>.sha1
+```
+    - `<platform>`: `win32` for Windows; `darwin` for Mac; `linux*` for Linux
+    - `<os>`: `win` for Windows; `mac` for Mac; `linux64` for Linux
+    - `<gn-exe>`: `gn.exe` for Windows; `gn` for Mac and Linux
+* **[Mac and Linux]** Download `clang` tools in `third_party/llvm-build` by
+```bash
+python tools/clang/scripts/update.py --if-needed
+```
+* **[Linux]** Download libraries in `build/linux/*-sysroot` by
+```bash
+python build/linux/sysroot_scripts/install-sysroot.py --running-as-hook
+```
+* **[Mac]** Download **libc++-static** library in `third_party/libc++-static` by
+```bash
+download_from_google_storage --no_resume \
+                             --platform=darwin \
+                             --no_auth \
+                             --bucket chromium-libcpp \
+                             -s third_party/libc++-static/libc++.a.sha1
+```
 
 !!! tip "For Linux Developers"
     Please run `build/install-build-deps.sh` for the first time building FFmpeg DLL or NW.js before proceeding to the instructions below. You only have to run it once. This script will install the build dependencies automatically for you.
 
-!!! tip "For Windows Developers"
-    Please include `clang=0` in `GYP_DEFINES` below because Clang build is not enabled on Windows.
+**Step 3.** Replace BUILD.gn
+
+Replace `BUILD.gn` in the root of the source code with following:
+
+```
+action("dummy") {
+  deps = [
+    "//third_party/ffmpeg"
+  ]
+  script = "dummy"
+  outputs = ["$target_gen_dir/dummy.txt"]
+}
+```
+
+**Step 4.** Generate Ninja Files with GN Tools
 
 ```bash
 cd path/to/nw/source/folder
-export GYP_GENERATORS=ninja
-export GYP_DEFINES="branding=Chrome ffmpeg_component=shared_library"
-export PYTHONPATH="$PWD/build"
-./tools/gyp/gyp -I build/common.gypi --depth=. ./third_party/ffmpeg/ffmpeg.gyp
+gn gen //out/nw \
+ --args='is_debug=false is_component_ffmpeg=true target_cpu="<target_cpu>" is_official_build=true ffmpeg_branding="Chrome"'
 ```
+
+**NOTE**: `<target_cpu>` should be set to `x86` or `x64` for 32-bit or 64-bit build.
 
 **Step 4.** Build ffmpeg DLL
 
 ```bash
-ninja -C out/Release ffmpeg
+ninja -C out/nw ffmpeg
 ```
 
-You will find the DLL in `out/Release` folder. The path and file name varies between platforms:
+You will find the DLL in `out/nw` folder. The path and file name varies between platforms:
 
 * Windows: `ffmpeg.dll`
 * Mac OS X: `libffmpeg.dylib`
@@ -89,6 +127,6 @@ If you don't use official pre-built NW.js, you can build entire NW.js with propr
 
 **Step 2.** Set `ffmpeg_branding` to `Chrome` when you configure GN.
 
-**Step 3.** Regenerate the ninj files again.
+**Step 3.** Regenerate the ninja files again.
 
 **Step 4.** Rebuild NW.js.
