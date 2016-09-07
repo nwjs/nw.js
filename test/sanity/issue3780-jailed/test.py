@@ -23,7 +23,7 @@ try:
     print 'switch to devtools'
     switch_to_devtools(driver, devtools_window=driver.window_handles[-1])
     print 'click Console panel'
-    driver.execute_script('return document.querySelector(".inspector-view-tabbed-pane").shadowRoot.getElementById("tab-console")').click()
+    driver.execute_script('return document.querySelector(".tabbed-pane").shadowRoot.getElementById("tab-console")').click()
     print 'send_keys "location.pathname<enter>"'
     driver.find_element_by_id('console-prompt').send_keys('location.pathname\n')
     pathname = driver.find_element_by_css_selector('.console-user-command-result .console-message-text .object-value-string').get_attribute('textContent')
