@@ -8,9 +8,11 @@
 <script>
   var thiswin = nw.Window.get();
   var is_top = true;
+  var start_fired = false;
   thiswin.on('document-start', function(frame) {
-    if (frame.is_top) return;
+      if (frame.is_top || start_fired) return;
       document.getElementById('result2').innerHTML = 'start';
+      start_fired = true;
     });
     thiswin.on('document-end', function(frame) {
       if (frame.is_top) return;
