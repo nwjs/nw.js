@@ -1,3 +1,11 @@
+0.17.1 / 09-08-2016
+===================
+- Update Chromium to [53.0.2785.101](https://googlechromereleases.blogspot.com/2016/09/stable-channel-update-for-desktop.html)
+- Fix: Failed to load node library (liblibnode.dylib) on child_process.fork [(#5269)](https://github.com/nwjs/nw.js/issues/5269)
+- Fix: ia32 package file name [(#5258)](https://github.com/nwjs/nw.js/issues/5258)
+- Fix: typos in common.gypi to prevent nw-gyp failure
+- [docs] new ffmpeg dll build docs for GN [(#5263)](https://github.com/nwjs/nw.js/issues/5263)
+
 0.17.0 / 08-31-2016
 ===================
 - Update Chromium to [53.0.2785.89](http://googlechromereleases.blogspot.com/2016/08/stable-channel-update-for-desktop_31.html)
