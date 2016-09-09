@@ -30,6 +30,7 @@ void willHandleNavigationPolicy(content::RenderView* rv,
                                bool new_win);
 // ref in chrome/renderer/extensions/chrome_extensions_renderer_client.cc
 void ExtensionDispatcherCreated(extensions::Dispatcher* dispatcher);
+const std::string& get_main_extension_id();
 }
 
 #endif // NW_CHROME_RENDERER_HOOKS_H_

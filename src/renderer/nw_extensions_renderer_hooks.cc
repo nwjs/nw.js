@@ -110,6 +110,10 @@ v8::Handle<v8::Object> AsObjectOrEmpty(v8::Handle<v8::Value> value) {
 
 }
 
+const std::string& get_main_extension_id() {
+  return g_extension_id;
+}
+
 const char* GetChromiumVersion();
 
 // renderer
