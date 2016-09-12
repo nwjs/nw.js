@@ -12,6 +12,8 @@ from selenium.webdriver.common import utils
 chrome_options = Options()
 chrome_options.add_argument("nwapp=" + os.path.dirname(os.path.abspath(__file__)))
 
+capabilities = {"pageLoadStrategy": "none"}
+
 testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
 
@@ -30,7 +32,7 @@ nw.Window.open('http://localhost:%s/remote.html', function(win) {
     
 html.close()
 
-driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
+driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, desired_capabilities = capabilities)
 time.sleep(1)
 try:
     wait_window_handles(driver, 2)
