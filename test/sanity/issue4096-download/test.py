@@ -9,6 +9,8 @@ from selenium.webdriver.common import utils
 chrome_options = Options()
 chrome_options.add_argument("nwapp=" + os.path.dirname(os.path.abspath(__file__)))
 
+capabilities = {"pageLoadStrategy": "none"}
+
 testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
 
@@ -36,7 +38,7 @@ var req = http.get("http://localhost:%s/g.png", function (res) {
     
 html.close()
 
-driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
+driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, desired_capabilities = capabilities, service_log_path="log", service_args=["--verbose"])
 time.sleep(1)
 try:
     print driver.current_url

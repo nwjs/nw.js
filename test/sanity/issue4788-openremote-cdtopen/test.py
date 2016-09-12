@@ -13,6 +13,8 @@ from selenium.common.exceptions import NoSuchElementException
 chrome_options = Options()
 chrome_options.add_argument("nwapp=" + os.path.dirname(os.path.abspath(__file__)))
 
+capabilities = {"pageLoadStrategy": "none"}
+
 testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
 
@@ -42,7 +44,7 @@ run_counter = 6
 try:
     while run_counter > 0 :
         run_counter = run_counter - 1
-        driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
+        driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, desired_capabilities = capabilities)
         time.sleep(1)
         try:
             print driver.current_url
