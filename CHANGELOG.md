@@ -1,3 +1,8 @@
+0.18.0-beta1 / 09-13-2016
+=========================
+- Update Chromium to [54.0.2840.16](https://googlechromereleases.blogspot.com/2016/09/the-chrome-team-is-excited-to-announce.html)
+- Fix: chrome.app.window.getall() broken with remote pages windows [(#5181)](https://github.com/nwjs/nw.js/issues/5181)
+
 0.17.4 / 09-20-2016
 ===================
 - Update Node.js to [6.6.0](https://nodejs.org/en/blog/release/v6.6.0/)
