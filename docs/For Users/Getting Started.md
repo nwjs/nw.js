@@ -47,9 +47,6 @@ This the basic example shows how to write an NW.js app.
 
 This is the normal HTML file. You can use any web technologies supported by latest browsers.
 
-!!! note "Chromium Specific Features"
-    NW.js is based on Chromium, which also enables you to use Chrome specific features. Such as [File System API](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API), experimental CSS styles with `-webkit-` prefix. **Be careful with these non-standard features since they may be deprecated shortly.**
-
 **Step 3.** Run your app
 
 ```bash
