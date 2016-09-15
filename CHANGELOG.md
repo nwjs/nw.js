@@ -1,3 +1,7 @@
+0.17.3 / 09-15-2016
+===================
+- Update Chromium to [53.0.2785.116](https://googlechromereleases.blogspot.com/2016/09/stable-channel-update-for-desktop_14.html)
+
 0.17.2 / 09-14-2016
 ===================
 - Update Chromium to [53.0.2785.113](https://googlechromereleases.blogspot.com/2016/09/stable-channel-update-for-desktop_13.html)
