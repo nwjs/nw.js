@@ -21,5 +21,12 @@ try:
     result = driver.find_element_by_id('method').get_attribute('innerHTML')
     print result
     assert('POST' in result)
+    driver.find_element_by_id('submit').click()
+    result = driver.find_element_by_id('method').get_attribute('innerHTML')
+    print result
+    assert('POST' in result)
+    result = driver.find_element_by_id('data').get_attribute('innerHTML')
+    print result
+    assert('myvalue2' in result)
 finally:
     driver.quit()
