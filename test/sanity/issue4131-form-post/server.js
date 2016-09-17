@@ -11,9 +11,13 @@ function startServer(port, cb) {
       res.write('<html><body>');
       res.write('<h1 id="method">method: ' + req.method + '</h1>');
       req.on('data', function(data) {
-        res.write('<div>' + data + '</div>');
+        res.write('<div id="data">' + data + '</div>');
       });
       req.on('end', function() {
+        res.write('<form method="POST" action="http://localhost:' + port + '/post.html">');
+        res.write('<input type="text" name="myfield" value="myvalue2">');
+        res.write('<button id="submit" type="submit">Submit</button>');
+        res.write('</form>');
         res.end('</body></html>');
       });
     } else {
