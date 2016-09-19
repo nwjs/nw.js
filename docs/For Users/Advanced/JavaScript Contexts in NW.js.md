@@ -80,7 +80,7 @@ Scripts running in the Node context can use [JS builtin objects]() like browse
 
 In Node context, there are no browser side or NW.js APIs, such as `alert()` or `document.*` or `nw.Clipboard` etc. To access browser APIs, you have to pass the corresponding objects, such as `window` object, to functions in Node context.
 
-See following example for how to achive this.
+See following example for how to achieve this.
 
 Following script are running in Node context (myscript.js):
 ```javascript
