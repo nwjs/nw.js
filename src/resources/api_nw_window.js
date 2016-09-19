@@ -749,6 +749,14 @@ function onClose(user_force) {
   dispatchEvent("nw.Window.onClose", [user_force], {instanceId: currentWidgetRoutingID});
 }
 
+function get_nw() {
+  try_nw(window).nw.Window.get();
+}
+
+if (bgPage !== window) {
+  renderFrameObserverNatives.OnDocumentElementCreated(currentRoutingID, get_nw);
+}
+
 exports.binding = nw_binding.generate();
 exports.onNewWinPolicy = onNewWinPolicy;
 exports.onNavigation = onNavigation;
