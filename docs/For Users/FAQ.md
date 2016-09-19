@@ -16,7 +16,7 @@ AngularJS added `unsafe:` prefix for unknown scheme to prevent XSS attack. URLs 
 myApp.config(['$compileProvider',
   function($compileProvider) {
     $compileProvider.imgSrcSanitizationWhitelist(/^\s*((https?|ftp|file|blob|chrome-extension):|data:image\/)/);
-    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file:chrome-extension):/);
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|chrome-extension):/);
   }]);
 ```
 
