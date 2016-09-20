@@ -1,3 +1,12 @@
+0.17.4 / 09-20-2016
+===================
+- Update Node.js to [6.6.0](https://nodejs.org/en/blog/release/v6.6.0/)
+- Fix: Remove dialog when running on read only volumes (.dmg) [(#5309)](https://github.com/nwjs/nw.js/issues/5309)
+- Fix: window events on remote pages not firing after reloading [(#5312)](https://github.com/nwjs/nw.js/issues/5312)
+- Fix: remove limitation of dom storage quota
+- Fix: chrome.app.window reference lost after reload [(#5294)](https://github.com/nwjs/nw.js/issues/5294)
+- [doc] fix a typo in FAQ for AngularJS
+
 0.17.3 / 09-15-2016
 ===================
 - Update Chromium to [53.0.2785.116](https://googlechromereleases.blogspot.com/2016/09/stable-channel-update-for-desktop_14.html)
