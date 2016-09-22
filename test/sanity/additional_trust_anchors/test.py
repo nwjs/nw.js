@@ -1,6 +1,7 @@
 import time
 import os
 import subprocess
+import platform
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -19,6 +20,9 @@ server = subprocess.Popen(['python', 'https-server.py', port])
 def read_ca_cert():
     return read_and_replace_file('ca.cert.pem', '\n', '')
 
+def read_server_cert():
+    return read_and_replace_file('cert.pem', '\n', '')
+
 def read_and_replace_file(filename, old, new):
     with open(filename, 'r') as fd:
         content = fd.read().replace(old, new)
@@ -32,14 +36,18 @@ index_html = read_and_replace_file('index.tpl', '{port}', port)
 write_file('index.html', index_html)
 
 # test with trust anchors
-ca = read_ca_cert()
+if platform.system() == 'Windows':
+  cert = read_server_cert()
+else:
+  cert = read_ca_cert()
+
 pkg_with_trust_anchors = '''
 {
   "name": "test_additional_trust_anchors",
   "main": "index.html",
   "additional_trust_anchors": ["%s"]
 }
-''' % ca
+''' % cert
 write_file('package.json', pkg_with_trust_anchors)
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
