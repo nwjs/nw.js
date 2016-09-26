@@ -49,6 +49,7 @@ try:
     print 'driver.title: ' + driver.title
     assert('title of 1.html' != driver.title)
     driver.switch_to_window(driver.window_handles[1])
+    time.sleep(2)
     print 'click Elements panel'
     driver.execute_script('return document.querySelector(".tabbed-pane").shadowRoot.getElementById("tab-elements")').click()
     print 'find h1'
