@@ -45,3 +45,4 @@ try:
     assert(len(elems) == 1)
 finally:
     driver.quit()
+    server.terminate()
