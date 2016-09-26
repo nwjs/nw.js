@@ -1,6 +1,7 @@
 import time
 import platform
 import subprocess
+import selenium
 
 # wait for window handles
 def wait_window_handles(driver, until, timeout=60):
