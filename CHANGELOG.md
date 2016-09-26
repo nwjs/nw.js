@@ -1,7 +1,6 @@
-0.18.0-beta1 / 09-13-2016
+0.18.0-rc1 / 09-13-2016
 =========================
-- Update Chromium to [54.0.2840.16](https://googlechromereleases.blogspot.com/2016/09/the-chrome-team-is-excited-to-announce.html)
-- Fix: chrome.app.window.getall() broken with remote pages windows [(#5181)](https://github.com/nwjs/nw.js/issues/5181)
+- Update Chromium to [54.0.2840.34](https://googlechromereleases.blogspot.com/2016/09/beta-channel-update-for-desktop_21.html)
 
 0.17.4 / 09-20-2016
 ===================
@@ -21,6 +20,11 @@
 - Update Chromium to [53.0.2785.113](https://googlechromereleases.blogspot.com/2016/09/stable-channel-update-for-desktop_13.html)
 - Fix: chrome.app.window.getall() broken with remote pages windows [(#5181)](https://github.com/nwjs/nw.js/issues/5181)
 - Fix: background page was destroyed when "main" points to remote pages [(#5282)](https://github.com/nwjs/nw.js/issues/5282)
+
+0.18.0-beta1 / 09-13-2016
+=========================
+- Update Chromium to [54.0.2840.16](https://googlechromereleases.blogspot.com/2016/09/the-chrome-team-is-excited-to-announce.html)
+- Fix: chrome.app.window.getall() broken with remote pages windows [(#5181)](https://github.com/nwjs/nw.js/issues/5181)
 
 0.17.1 / 09-08-2016
 ===================
