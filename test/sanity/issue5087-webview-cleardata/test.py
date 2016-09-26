@@ -44,3 +44,4 @@ try:
     assert('success' in result)
 finally:
     driver.quit()
+    server.terminate()
