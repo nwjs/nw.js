@@ -1,3 +1,9 @@
+0.17.5 / 09-28-2016
+===================
+- Update Node.js to [6.7.0](https://nodejs.org/en/blog/release/v6.7.0/)
+- Fix: Segfault when using additional_trust_anchors [(#5279)](https://github.com/nwjs/nw.js/issues/5279)
+- [doc] update known issues (removed fixed items)
+
 0.17.4 / 09-20-2016
 ===================
 - Update Node.js to [6.6.0](https://nodejs.org/en/blog/release/v6.6.0/)
