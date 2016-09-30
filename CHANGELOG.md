@@ -1,3 +1,8 @@
+0.17.6 / 09-30-2016
+===================
+- Update Chromium to [53.0.2785.143](https://googlechromereleases.blogspot.com/2016/09/stable-channel-update-for-desktop_29.html)
+- Fix: [WIN] 2nd instance shows a popup warning if the first instance starts with higher privilege
+
 0.17.5 / 09-28-2016
 ===================
 - Update Node.js to [6.7.0](https://nodejs.org/en/blog/release/v6.7.0/)
