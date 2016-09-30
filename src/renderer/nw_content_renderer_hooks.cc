@@ -25,12 +25,12 @@
 #include <math.h>
 #endif
 
+#if defined(COMPONENT_BUILD) && defined(WIN32)
+#define NW_HOOK_MAP(type, sym, fn) BASE_EXPORT type fn;
+#else
 #define NW_HOOK_MAP(type, sym, fn) extern type fn;
-#define NW_HOOK_INIT(type, sym, fn) CONTENT_EXPORT type fn = nullptr;
-#define NODE_HOOK_INIT(type, sym, fn) CONTENT_EXPORT type fn = nullptr;
+#endif
 #include "content/nw/src/common/node_hooks.h"
-#undef NODE_HOOK_INIT
-#undef NW_HOOK_INIT
 #undef NW_HOOK_MAP
 
 namespace nw {

@@ -49,11 +49,13 @@ namespace extensions {
 }
 
 namespace nw {
+base::FilePath GetRootPathRenderer();
 int MainPartsPreCreateThreadsHook();
 void MainPartsPostDestroyThreadsHook();
 void MainPartsPreMainMessageLoopRunHook();
 void ContextCreationHook(blink::WebLocalFrame* frame, extensions::ScriptContext* context);
 void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* error);
+
 void DocumentElementHook(blink::WebLocalFrame* frame,
                          const extensions::Extension* extension,
                          const GURL& effective_document_url);
