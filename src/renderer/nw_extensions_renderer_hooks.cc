@@ -34,6 +34,7 @@
 #include "third_party/WebKit/public/web/WebScriptSource.h"
 #include "third_party/WebKit/public/web/WebView.h"
 #include "third_party/WebKit/Source/platform/ScriptForbiddenScope.h"
+#include "third_party/WebKit/public/web/WebKit.h"
 
 #include "third_party/node/src/node_webkit.h"
 
@@ -63,8 +64,12 @@ namespace manifest_keys = extensions::manifest_keys;
 
 #if defined(COMPONENT_BUILD) && defined(WIN32)
 #define NW_HOOK_MAP(type, sym, fn) BASE_EXPORT type fn;
+#define BLINK_HOOK_MAP(type, sym, fn) BLINK_EXPORT type fn;
+#define PLATFORM_HOOK_MAP(type, sym, fn) PLATFORM_EXPORT type fn;
 #else
 #define NW_HOOK_MAP(type, sym, fn) extern type fn;
+#define BLINK_HOOK_MAP(type, sym, fn) extern type fn;
+#define PLATFORM_HOOK_MAP(type, sym, fn) extern type fn;
 #endif
 #include "content/nw/src/common/node_hooks.h"
 #undef NW_HOOK_MAP
@@ -117,6 +122,52 @@ const std::string& get_main_extension_id() {
 const char* GetChromiumVersion();
 
 // renderer
+
+void WebWorkerNewThreadHook(const char* name, base::Thread::Options* options) {
+  const base::CommandLine& command_line =
+      *base::CommandLine::ForCurrentProcess();
+  if (!command_line.HasSwitch(switches::kEnableNodeWorker))
+    return;
+  if (!strcmp(name, "DedicatedWorker Thread") || !strcmp(name, "SharedWorker Thread"))
+    options->message_loop_type = base::MessageLoop::TYPE_NODE;
+}
+
+void WebWorkerStartThreadHook(blink::Frame* frame, const char* path, std::string* script, bool* isNodeJS) {
+  std::string root_path;
+  const base::CommandLine& command_line =
+      *base::CommandLine::ForCurrentProcess();
+  if (!command_line.HasSwitch(switches::kEnableNodeWorker)) {
+    *isNodeJS = false;
+    return;
+  }
+  if (frame) {
+    v8::Isolate* isolate = v8::Isolate::GetCurrent();
+    v8::HandleScope scope(isolate);
+    blink::WebFrame* web_frame = blink::WebFrame::fromFrame(frame);
+    v8::Local<v8::Context> v8_context = web_frame->mainWorldScriptContext();
+    ScriptContext* script_context =
+      g_dispatcher->script_context_set().GetByV8Context(v8_context);
+    if (!script_context || !script_context->extension())
+      return;
+    root_path = script_context->extension()->path().AsUTF8Unsafe();
+  } else {
+    root_path = *script;
+  }
+  std::string url_path(path);
+#if defined(OS_WIN)
+    base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
+#endif
+    base::ReplaceChars(root_path, "'", "\\'", &root_path);
+  *script  = "global.__filename = '" + url_path + "';";
+  *script += "global.__dirname  = '" + root_path + "';";
+  *script += "{ let root = '" + root_path + "';"
+    "  let p = '" + url_path + "';"
+    "process.mainModule.filename = root + p;"
+    "process.mainModule.paths = global.require('module')._nodeModulePaths(process.cwd());"
+    "process.mainModule.loaded = true;"
+    "}";
+}
+
 void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   v8::Isolate* isolate = context->isolate();
 
@@ -129,8 +180,14 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   if (!nodejs_enabled)
     return;
 
+  const base::CommandLine& command_line =
+      *base::CommandLine::ForCurrentProcess();
+  bool worker_support = command_line.HasSwitch(switches::kEnableNodeWorker);
+
+  blink::set_web_worker_hooks((void*)WebWorkerStartThreadHook);
+  g_web_worker_thread_new_fn = (VoidPtr2Fn)WebWorkerNewThreadHook;
   if (!g_is_node_initialized_fn())
-    g_setup_nwnode_fn(0, nullptr);
+    g_setup_nwnode_fn(0, nullptr, worker_support);
 
   bool mixed_context = false;
   context->extension()->manifest()->GetBoolean(manifest_keys::kNWJSMixedContext, &mixed_context);
@@ -261,6 +318,16 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
     CHECK(*script);
     script->Run();
   }
+}
+
+base::FilePath GetRootPathRenderer() {
+  base::FilePath ret;
+  const Extension* extension = RendererExtensionRegistry::Get()->GetByID(g_extension_id);
+  if (!extension)
+    return ret;
+  if (!(extension->is_extension() || extension->is_platform_app()))
+    return ret;
+  return extension->path();
 }
 
 void TryInjectStartScript(blink::WebLocalFrame* frame, const Extension* extension, bool start) {
