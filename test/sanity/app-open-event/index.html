@@ -5,11 +5,13 @@
     <title>App.open event test</title>
   </head>
   <body>
-    <h1 id='result'>App.open event test</h1>
     <script type="text/javascript">
       nw.App.on('open', function(cmd){
-            document.getElementById('result').innerHTML = cmd;
-        });
+        var h1 = document.createElement('h1');
+        h1.setAttribute('id', 'result');
+        h1.innerHTML = cmd;
+        document.body.appendChild(h1);
+      });
     </script>
   </body>
 </html>
