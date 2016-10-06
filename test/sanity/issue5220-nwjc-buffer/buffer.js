@@ -1,0 +1,1 @@
+out('buffer-result', 'success:buffer');
