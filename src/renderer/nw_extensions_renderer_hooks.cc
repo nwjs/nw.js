@@ -9,6 +9,7 @@
 #include "base/json/json_writer.h"
 #include "base/logging.h"
 #include "base/strings/utf_string_conversions.h"
+#include "base/threading/thread.h"
 #include "base/values.h"
 #include "ui/base/resource/resource_bundle.h"
 
