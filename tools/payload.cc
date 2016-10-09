@@ -6,6 +6,7 @@
 #include "base/files/file_enumerator.h"
 #include "base/i18n/icu_util.h"
 #include "base/logging.h"
+#include "base/memory/ptr_util.h"
 #include "base/process/memory.h"
 #include "base/strings/string_util.h"
 #include "base/stl_util.h"
@@ -102,7 +103,7 @@ void MyComputedHashes::Writer::AddHash(const base::FilePath& relative_path,
                                        int block_size,
                                        const std::string& root) {
   base::DictionaryValue* dict = new base::DictionaryValue();
-  file_list_->Append(dict);
+  file_list_->Append(base::WrapUnique(dict));
   dict->SetString(kPathKey,
                   relative_path.NormalizePathSeparatorsTo('/').AsUTF8Unsafe());
   //dict->SetInteger(kBlockSizeKey, block_size);

@@ -441,7 +441,7 @@ bool Package::ExtractPackage(const FilePath& zip_file, FilePath* where) {
       return false;
     }
   }else{
-    *where = scoped_temp_dir_.path();
+    *where = scoped_temp_dir_.GetPath();
   }
 
   return zip::Unzip(zip_file, *where);
