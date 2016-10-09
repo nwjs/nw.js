@@ -51,12 +51,12 @@ class TrayObserver : public StatusIconObserver {
 
   void OnStatusIconClicked() override {
     base::ListValue args;
-    base::DictionaryValue* data = new base::DictionaryValue;
+    std::unique_ptr<base::DictionaryValue> data(new base::DictionaryValue);
     gfx::Point cursor_pos(
       display::Screen::GetScreen()->GetCursorScreenPoint());
     data->SetInteger("x", cursor_pos.x());
     data->SetInteger("y", cursor_pos.y());
-    args.Append(data);
+    args.Append(std::move(data));
     tray_->object_manager()->SendEvent(tray_, "TrayClick", args);
   }
 

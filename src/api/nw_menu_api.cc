@@ -13,12 +13,12 @@ namespace extensions {
 
 #ifndef OS_MACOSX
 bool NwMenuGetNSStringWithFixupFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  error_ = "NwMenuGetNSStringWithFixupFunction is only for OSX";
+  SetError("NwMenuGetNSStringWithFixupFunction is only for OSX");
   return false;
 }
 
 bool NwMenuGetNSStringFWithFixupFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  error_ = "NwMenuGetNSStringFWithFixupFunction is only for OSX";
+  SetError("NwMenuGetNSStringFWithFixupFunction is only for OSX");
   return false;
 }
 #endif

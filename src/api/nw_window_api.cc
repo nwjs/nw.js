@@ -687,7 +687,7 @@ bool NwCurrentWindowInternalGetWinParamInternalFunction::RunNWSync(base::ListVal
   result->Set("id", new base::StringValue(app_window->window_key()));
   app_window->GetSerializedState(result);
 
-  response->Append(result);
+  response->Append(base::WrapUnique(result));
 
   return true;
 }
