@@ -82,7 +82,7 @@ try:
     driver.switch_to_frame(driver.find_element_by_id('test-frame'))
     title = driver.execute_script('return document.title')
     print title
-    assert('not available' in title)
+    assert(not 'test.html' in title)
     driver.close()
 finally:
     server.terminate()
