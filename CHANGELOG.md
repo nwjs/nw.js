@@ -1,6 +1,9 @@
-0.18.0-rc1 / 09-13-2016
-=========================
-- Update Chromium to [54.0.2840.34](https://googlechromereleases.blogspot.com/2016/09/beta-channel-update-for-desktop_21.html)
+0.18.0 / 10-13-2016
+===================
+- Update Chromium to [54.0.2840.59](https://googlechromereleases.blogspot.com/2016/10/stable-channel-update-for-desktop.html)
+- Update Node.js to [6.8.0](https://nodejs.org/en/blog/release/v6.8.0/)
+- Fix: [WIN] wrong icon used in windows opened by window.open()
+- Fix: support sign-in UI for Chrome Apps (#5351)
 
 0.17.6 / 09-30-2016
 ===================
@@ -12,6 +15,10 @@
 - Update Node.js to [6.7.0](https://nodejs.org/en/blog/release/v6.7.0/)
 - Fix: Segfault when using additional_trust_anchors [(#5279)](https://github.com/nwjs/nw.js/issues/5279)
 - [doc] update known issues (removed fixed items)
+
+0.18.0-rc1 / 09-22-2016
+=========================
+- Update Chromium to [54.0.2840.34](https://googlechromereleases.blogspot.com/2016/09/beta-channel-update-for-desktop_21.html)
 
 0.17.4 / 09-20-2016
 ===================
