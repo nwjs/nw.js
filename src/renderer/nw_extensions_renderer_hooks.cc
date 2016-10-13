@@ -62,7 +62,7 @@ using blink::WebScriptSource;
 namespace manifest_keys = extensions::manifest_keys;
 
 #if defined(COMPONENT_BUILD) && defined(WIN32)
-#define NW_HOOK_MAP(type, sym, fn) CONTENT_EXPORT type fn;
+#define NW_HOOK_MAP(type, sym, fn) BASE_EXPORT type fn;
 #else
 #define NW_HOOK_MAP(type, sym, fn) extern type fn;
 #endif
