@@ -112,6 +112,7 @@ const char kmNewInstance[] = "new-instance";
 const char kmInjectJSDocStart[]  = "inject_js_start";
 const char kmInjectJSDocEnd[]  = "inject_js_end";
 const char kmInjectCSS[] = "inject-css";
+const char kmAppUserModelID[] = "app_user_model_id";
 
 #if defined(OS_WIN)
 // Enable conversion from vector to raster for any page.

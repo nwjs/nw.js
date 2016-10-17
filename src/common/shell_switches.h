@@ -35,6 +35,7 @@ extern NW_EXPORT const char kmWebkit[];
 extern NW_EXPORT const char kmWindow[];
 extern NW_EXPORT const char kmChromiumArgs[];
 extern NW_EXPORT const char kmJsFlags[];
+extern NW_EXPORT const char kmAppUserModelID[];
 
 extern NW_EXPORT const char kmSingleInstance[];
 

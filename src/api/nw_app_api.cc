@@ -2,12 +2,16 @@
 
 #include "base/command_line.h"
 #include "base/memory/ptr_util.h"
+#include "base/strings/utf_string_conversions.h"
 #include "chrome/browser/browsing_data/browsing_data_appcache_helper.h"
 #include "chrome/browser/browsing_data/browsing_data_helper.h"
 #include "chrome/browser/browsing_data/browsing_data_remover_factory.h"
 #include "chrome/browser/devtools/devtools_window.h"
 #include "chrome/browser/extensions/devtools_util.h"
 #include "chrome/browser/extensions/extension_service.h"
+#include "chrome/browser/profiles/profile.h"
+#include "chrome/browser/web_applications/web_app.h"
+#include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_base.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/render_view_host.h"
@@ -23,6 +27,10 @@
 #include "net/proxy/proxy_service.h"
 #include "net/url_request/url_request_context.h"
 #include "net/url_request/url_request_context_getter.h"
+
+#if defined(OS_WIN)
+#include "chrome/browser/shell_integration_win.h"
+#endif
 
 namespace {
 void SetProxyConfigCallback(
@@ -182,5 +190,35 @@ bool NwAppCrashBrowserFunction::RunAsync() {
   return true;
 }
 
+bool NwAppGetDefaultAppUserModelIDFunction::RunNWSync(base::ListValue* response, std::string* error) {
+#if defined(OS_WIN)
+  base::string16 app_id;
+  nw::Package* package = nw::package();
+  if (package->root()->GetString(::switches::kmAppUserModelID, &app_id)) {
+    response->AppendString(app_id);
+  } else {
+    std::string app_name =
+        web_app::GenerateApplicationNameFromExtensionId(extension_id());
+    base::string16 app_name_wide = base::UTF8ToWide(app_name);
+    Profile* profile =
+        Profile::FromBrowserContext(browser_context());
+    app_id = shell_integration::win::GetAppModelIdForProfile(
+        app_name_wide, profile->GetPath());
+    response->AppendString(app_id);
+  }
+#endif
+  return true;
+}
+
+bool NwAppSetDefaultAppUserModelIDFunction::RunNWSync(base::ListValue* response, std::string* error) {
+#if defined(OS_WIN)
+  std::string app_id;
+  EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &app_id));
+
+  nw::Package* package = nw::package();
+  package->root()->SetString(::switches::kmAppUserModelID, app_id);
+#endif
+  return true;
+}
 
 } // namespace extensions

@@ -71,6 +71,12 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
   apiFunctions.setHandleRequest('removeOriginAccessWhitelistEntry', function() {
     nwNatives.removeOriginAccessWhitelistEntry.apply(this, arguments);
   });
+  apiFunctions.setHandleRequest('getDefaultAppUserModelID', function() {
+    return sendRequest.sendRequestSync('nw.App.getDefaultAppUserModelID', arguments, this.definition.parameters, {})[0];
+  });
+  apiFunctions.setHandleRequest('setDefaultAppUserModelID', function() {
+    sendRequest.sendRequestSync('nw.App.setDefaultAppUserModelID', arguments, this.definition.parameters, {});
+  });
   apiFunctions.setHandleRequest('once', function(event, listener) { //FIXME: unify with nw.Window
     if (typeof listener !== 'function')
       throw new TypeError('listener must be a function');
@@ -119,7 +125,6 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
   bindingsAPI.compiledApi.unregisterGlobalHotKey = function() {
     return nw.Shortcut.unregisterGlobalHotKey.apply(nw.Shortcut, arguments);
   };
-
 });
 
 exports.binding = nw_binding.generate();

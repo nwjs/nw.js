@@ -164,6 +164,12 @@ nw_internal.registerCustomHook(function(bindingsAPI) {
   apiFunctions.setHandleRequest('setMenu', function() {
     return sendRequest.sendRequestSync('nw.currentWindowInternal.setMenu', arguments, this.definition.parameters, {})[0];
   });
+  apiFunctions.setHandleRequest('getAppUserModelID', function() {
+    return sendRequest.sendRequestSync('nw.currentWindowInternal.getAppUserModelID', arguments, this.definition.parameters, {})[0];
+  });
+  apiFunctions.setHandleRequest('setAppUserModelID', function() {
+    return sendRequest.sendRequestSync('nw.currentWindowInternal.setAppUserModelID', arguments, this.definition.parameters, {})[0];
+  });
 });
 
 nw_binding.registerCustomHook(function(bindingsAPI) {
@@ -408,6 +414,12 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     };
     NWWindow.prototype.reloadIgnoringCache = function () {
       currentNWWindowInternal.reloadIgnoringCache();
+    };
+    NWWindow.prototype.getAppUserModelID = function() {
+      return currentNWWindowInternal.getAppUserModelID();
+    };
+    NWWindow.prototype.setAppUserModelID = function(app_id) {
+      return currentNWWindowInternal.setAppUserModelID(app_id);
     };
     NWWindow.prototype.eval = function (frame, script) {
       return nwNatives.evalScript(frame, script);
@@ -670,6 +682,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         options.inject_js_start = params['inject_js_start'];
       if (typeof params['inject_js_end'] == 'string')
         options.inject_js_end = params['inject_js_end'];
+      if (typeof params['app_user_model_id'] == 'string')
+        options.app_user_model_id = params['app_user_model_id'];
       if (params.transparent)
         options.alphaEnabled = true;
       if (params.kiosk === true)
