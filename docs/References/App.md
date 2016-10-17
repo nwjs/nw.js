@@ -172,6 +172,21 @@ Unregisters a global keyboard shortcut.
 
 See [Shortcut](Shortcut.md) for more information.
 
+## App.getDefaultAppUserModelID() (Windows)
+
+* Returns `{String}` the default application wide AUMID.
+
+Get the default application wide AUMID (App User Model ID). See also [`app_user_model_id`](Manifest Format.md#app_user_model_id-windows) field in Manifest Format.
+
+## App.setDefaultAppUserModelID(app_id) (Windows)
+
+* `app_id` `{String}` the default application wide AUMID. 
+
+Overwrite the default application wide AUMID (App User Model ID) for newly opened windows. See also [`app_user_model_id`](Manifest Format.md#app_user_model_id-windows) field in Manifest Format.
+
+!!! warning "No Change for Previous Opened Windows"
+    This API will only affect the newly opened windows. It will **NOT** change the AUMID for previous opened windows. To change them, you need to iterate all windows and call [`win.setAppUserModelID(app_id)`](Window.md#winsetappusermodelid-app_id-windows) for each.
+
 ## Event: open(args)
 
 * `args` `{String}` the full command line of the program.

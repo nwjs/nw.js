@@ -153,6 +153,16 @@ These certificates are used as additional root certificates for validation, to a
 
 * `{Boolean}` whether the default `Edit` menu should be disabled on Mac OS X. The default value is `false`. Only effective on Mac OS X.
 
+### app_user_model_id (Windows)
+
+* `{String}` Default application wide AUMID ([App User Model ID](https://msdn.microsoft.com/en-us/library/windows/desktop/dd378459(v=vs.85).aspx)). Only effective on Windows.
+
+This property is a fallback when [window specific AUMID](#app_user_model_id-windows_1) is not set.
+
+If this property is not set, NW.js will use a auto generated AUMID.
+
+This property can be overwritten by [`nw.App.setDefaultAppUserModelID(app_id)`](App.md##appsetdefaultappusermodelidapp_id-windows) at runtime.
+
 ## Window Subfields
 
 Most of window subfields are inherited by sub windows opened by `window.open()` or links (`<a target="_blank">`) by default. The exception list of non inherited subfields are as following. They will be set to default value for opened window:
@@ -258,6 +268,12 @@ Beware, if frame is set to false in fullscreen it will prevent the mouse from be
 Control the transparency with rgba background value in CSS. Use command line option `--disable-transparency` to disable this feature completely.
 
 There is experimental support for "click-through" on the transparent region: add `--disable-gpu` option to the command line.
+
+### app_user_model_id (Windows)
+
+* `{String}` window specific AUMID ([App User Model ID](https://msdn.microsoft.com/en-us/library/windows/desktop/dd378459(v=vs.85).aspx)). Only effective on Windows.
+
+The AUMID of the window can be changed at runtime by [`win.setAppUserModelID(app_id)`](Window.md#winsetappusermodelidapp_id-windows).
 
 ## WebKit Subfields
 
