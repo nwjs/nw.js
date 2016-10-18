@@ -1,3 +1,11 @@
+0.18.1 / 10-18-2016
+===================
+- Update Node.js to [6.8.1](https://nodejs.org/en/blog/release/v6.8.1/)
+- Fix: [WIN] Cannot rename nw.exe with 0.18.0 [(#5362)](https://github.com/nwjs/nw.js/issues/5362)
+- Support --single-process mode for Steam platform [(#4982)](https://github.com/nwjs/nw.js/issues/4982)
+- Fix: Crash on close Mac OS X when using audio streams [(#5318)](https://github.com/nwjs/nw.js/issues/5318)
+- Fix: nw.App.clearCache() freez apllication nwjs 0.18.0 [(#5368)](https://github.com/nwjs/nw.js/issues/5368)
+
 0.18.0 / 10-13-2016
 ===================
 - Update Chromium to [54.0.2840.59](https://googlechromereleases.blogspot.com/2016/10/stable-channel-update-for-desktop.html)
