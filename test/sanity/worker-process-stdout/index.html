@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>worker-process-stdout</title>
+</head>
+<body>
+  <script>
+
+  function out(id, msg) {
+    var h1 = document.createElement('h1');
+    h1.setAttribute('id', id);
+    h1.innerHTML = msg;
+    document.body.appendChild(h1);
+  }
+
+  function checkObjects() {
+    // access process.stdout first in worker
+    new Worker('worker.js');
+    // wait for worker quit
+    setTimeout(()=>{
+      try{
+        // access process.stdout again in DOM
+        process.stdout;
+        out('result', 'success');
+      } catch(e) {
+        out('result', e);
+      }
+    }, 100);
+  }
+
+  checkObjects();
+
+  </script>
+</body>
+</html>
