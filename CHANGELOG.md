@@ -1,3 +1,8 @@
+0.18.2 / 10-21-2016
+===================
+- Update Chromium to [54.0.2840.71](https://googlechromereleases.blogspot.com/2016/10/stable-channel-update-for-desktop_20.html)
+- Fix: [WIN] Error in chrome_elf_main.cc after package with Enigma VB [(#5392)](https://github.com/nwjs/nw.js/issues/5392)
+
 0.18.1 / 10-18-2016
 ===================
 - Update Node.js to [6.8.1](https://nodejs.org/en/blog/release/v6.8.1/)
