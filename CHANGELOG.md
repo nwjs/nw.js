@@ -1,3 +1,7 @@
+0.18.3 / 10-26-2016
+===================
+- Update Node.js to [7.0.0](https://nodejs.org/en/blog/release/v7.0.0/)
+
 0.18.2 / 10-21-2016
 ===================
 - Update Chromium to [54.0.2840.71](https://googlechromereleases.blogspot.com/2016/10/stable-channel-update-for-desktop_20.html)
