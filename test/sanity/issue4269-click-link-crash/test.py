@@ -36,7 +36,7 @@ try:
     print driver.window_handles
     print 'switch to devtools window'
     switch_to_devtools(driver, devtools_window=driver.window_handles[1]) # devtools comes to the 2nd
-    driver.execute_script('return document.querySelector(".tabbed-pane").shadowRoot.getElementById("tab-console")').click()
+    devtools_click_tab(driver, 'console')
     driver.find_element_by_css_selector('.console-message-text .webkit-html-external-link').click()
     wait_window_handles(driver, 4)
     driver.switch_to_window(driver.window_handles[3])
