@@ -2,6 +2,7 @@ import time
 import platform
 import subprocess
 import selenium
+from selenium.webdriver.common.action_chains import ActionChains
 
 # wait for window handles
 def wait_window_handles(driver, until, timeout=60):
@@ -40,6 +41,13 @@ def switch_to_devtools(driver, devtools_window=None):
     # wait for devtools is completely loaded
     while driver.execute_script('return document.readyState') != 'complete':
         time.sleep(1)
+
+def devtools_click_tab(driver, tab_name):
+    driver.execute_script('return document.querySelector(".tabbed-pane").shadowRoot.getElementById("tab-%s")' % tab_name).click()
+
+def devtools_type_in_console(driver, keys):
+    console_prompt = driver.find_element_by_id('console-prompt')
+    ActionChains(driver).click(console_prompt).send_keys(keys).perform()
 
 def no_live_process(driver, print_if_fail=True):
     if platform.system() == 'Windows':
