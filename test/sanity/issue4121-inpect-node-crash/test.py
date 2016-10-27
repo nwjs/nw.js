@@ -20,7 +20,7 @@ try:
     wait_window_handles(driver, 2)
     print 'switch to devtools'
     switch_to_devtools(driver, devtools_window=driver.window_handles[-1])
-    driver.execute_script('return document.querySelector(".tabbed-pane").shadowRoot.getElementById("tab-console")').click()
+    devtools_click_tab(driver, 'console')
     driver.find_element_by_class_name('console-message-url').click()
     sources_panel = driver.find_element_by_css_selector('.panel.sources')
     assert(sources_panel is not None)
