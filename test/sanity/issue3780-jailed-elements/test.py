@@ -23,7 +23,7 @@ try:
     print 'switch to devtools'
     switch_to_devtools(driver, devtools_window=driver.window_handles[-1])
     print 'click Elements panel'
-    driver.execute_script('return document.querySelector(".tabbed-pane").shadowRoot.getElementById("tab-elements")').click()
+    devtools_click_tab(driver, 'elements')
     print 'find h1'
     h1 = driver.execute_script('return document.getElementById("elements-content").firstChild.shadowRoot.querySelectorAll(".webkit-html-text-node")[1]').get_attribute('textContent')
     print h1
