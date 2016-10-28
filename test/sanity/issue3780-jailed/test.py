@@ -23,9 +23,9 @@ try:
     print 'switch to devtools'
     switch_to_devtools(driver, devtools_window=driver.window_handles[-1])
     print 'click Console panel'
-    driver.execute_script('return document.querySelector(".tabbed-pane").shadowRoot.getElementById("tab-console")').click()
+    devtools_click_tab(driver, 'console')
     print 'send_keys "location.pathname<enter>"'
-    driver.find_element_by_id('console-prompt').send_keys('location.pathname\n')
+    devtools_type_in_console(driver, 'location.pathname\n')
     pathname = driver.find_element_by_css_selector('.console-user-command-result .console-message-text .object-value-string').get_attribute('textContent')
     print pathname
     assert (pathname == '/child.html')
