@@ -30,12 +30,13 @@ driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_opt
 driver.implicitly_wait(2)
 time.sleep(1)
 try:
+    switch_to_app(driver)
     print driver.current_url
     print 'wait for devtools window'
     wait_window_handles(driver, 3)
     print driver.window_handles
     print 'switch to devtools window'
-    switch_to_devtools(driver, devtools_window=driver.window_handles[1]) # devtools comes to the 2nd
+    switch_to_devtools(driver)
     devtools_click_tab(driver, 'console')
     driver.find_element_by_css_selector('.console-message-text .webkit-html-external-link').click()
     wait_window_handles(driver, 4)
