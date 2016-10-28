@@ -28,19 +28,55 @@ def wait_switch_window_name(driver, name, timeout=60):
         if timeout <= 0:
             raise Exception('Timeout when waiting for window handles')
 
+
+def switch_to_app(driver, window_handle=None):
+    def is_app_url(url):
+        return url.startswith('chrome-extension://') or url.startswith('file://') or url.startswith('http://') or url.startswith('https://')
+
+    if window_handle is not None:
+        driver.switch_to_window(window_handle)
+
+    if is_app_url(driver.current_url):
+        return
+
+    elif window_handle is not None: # raise exception when given window is a devtools window
+        raise Exception('Provided window handle is not an app window. %s' % driver.current_url)
+
+    for handle in driver.window_handles:
+        driver.switch_to_window(handle)
+        if is_app_url(driver.current_url):
+            return
+
+    raise Exception('No app window found.')
+
 def switch_to_devtools(driver, devtools_window=None):
-    if devtools_window:
+    def wait_for_devtools_ready():
+        # necessary compatible for older alphaN
+        # where devtools is loaded in an iframe
+        inspector_frames = driver.find_elements_by_id('inspector-app-iframe')
+        if inspector_frames:
+            driver.switch_to_frame(inspector_frames[0])
+
+        # wait for devtools is completely loaded
+        while driver.execute_script('return document.readyState') != 'complete':
+            time.sleep(1)
+
+    if devtools_window is not None:
         driver.switch_to_window(devtools_window)
 
-    # necessary compatible for older alphaN
-    # where devtools is loaded in an iframe
-    inspector_frames = driver.find_elements_by_id('inspector-app-iframe')
-    if inspector_frames:
-        driver.switch_to_frame(inspector_frames[0])
+    if driver.current_url.startswith('chrome-devtools://'):
+        wait_for_devtools_ready()
+        return
+    elif devtools_window is not None: # raise exception when given window is not a devtools
+        raise Exception('Provided window handle is not a devtools window. %s' % driver.current_url)
 
-    # wait for devtools is completely loaded
-    while driver.execute_script('return document.readyState') != 'complete':
-        time.sleep(1)
+    for handle in driver.window_handles:
+        driver.switch_to_window(handle)
+        if driver.current_url.startswith('chrome-devtools://'):
+            wait_for_devtools_ready()
+            return
+
+    raise Exception('No devtools window found.')
 
 def devtools_click_tab(driver, tab_name):
     driver.execute_script('return document.querySelector(".tabbed-pane").shadowRoot.getElementById("tab-%s")' % tab_name).click()
