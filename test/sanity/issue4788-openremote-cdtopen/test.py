@@ -27,6 +27,7 @@ html.write('''
 <body>
 <script>
 chrome.developerPrivate.openDevTools({renderViewId: -1, renderProcessId: -1, extensionId: chrome.runtime.id});
+window.name = "main";
 setTimeout(function() { 
   nw.Window.open('http://localhost:%s/remote.html', function(win) {
     document.write('<h1 id="res">returned window is ' + typeof win + '</h1>');
@@ -47,7 +48,9 @@ try:
         driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, desired_capabilities = capabilities)
         time.sleep(1)
         try:
+            driver.switch_to_window("main")
             print driver.current_url
+            result = ''
             wait_counter = 10
             while wait_counter > 0 :
                 try:
