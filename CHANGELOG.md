@@ -1,3 +1,8 @@
+0.18.4 / 10-31-2016
+===================
+- Support Node.js in Web Workers [(#494)](https://github.com/nwjs/nw.js/issues/494)
+- [docs] --enable-node-worker in Command Line Options
+
 0.18.3 / 10-26-2016
 ===================
 - Update Node.js to [7.0.0](https://nodejs.org/en/blog/release/v7.0.0/)
