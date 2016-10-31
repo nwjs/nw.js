@@ -6,13 +6,17 @@
   <title>worker-sharedworker</title>
 </head>
 <body>
+  <button id="start" onclick="startWorker()">Shart SharedWorker</button>
   <script>
-  var worker = new SharedWorker('sharedworker.js');
-  worker.port.onmessage = function(e) {
-    var h1 = document.createElement('h1');
-    h1.setAttribute('id', 'result');
-    h1.innerHTML = e.data;
-    document.body.appendChild(h1);
+
+  function startWorker() {
+    var worker = new SharedWorker('sharedworker.js');
+    worker.port.onmessage = function(e) {
+      var h1 = document.createElement('h1');
+      h1.setAttribute('id', 'result');
+      h1.innerHTML = e.data;
+      document.body.appendChild(h1);
+    }
   }
   </script>
 </body>
