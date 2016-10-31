@@ -36,6 +36,10 @@
 - Fix: Gamepad API not working [(#5377)](https://github.com/nwjs/nw.js/issues/5377)
 - Fix: --single-process Seg Fault [(#5382)](https://github.com/nwjs/nw.js/issues/5382)
 
+0.19.0-beta1 / 10-31-2016
+=========================
+- Update Chromium to [55.0.2883.28](https://googlechromereleases.blogspot.com/2016/10/beta-channel-update-for-desktop_26.html)
+
 0.18.4 / 10-31-2016
 ===================
 - Support Node.js in Web Workers [(#494)](https://github.com/nwjs/nw.js/issues/494)
