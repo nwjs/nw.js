@@ -12,6 +12,7 @@ driver.implicitly_wait(5)
 time.sleep(1)
 try:
     print driver.current_url
+    driver.find_element_by_id('start').click()
     result = driver.find_element_by_id('result').get_attribute('innerHTML')
     print result
     assert('success' in result)
