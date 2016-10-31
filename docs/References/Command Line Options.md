@@ -31,6 +31,12 @@ Where `<name-in-manifest>` is the [`name` field in manifest](Manifest Format.md#
 
 Disable user's access to devtools feature in SDK build.
 
+## `--enable-node-worker`
+
+Enable the Node.js integration in Web Workers. This will help you offload CPU hogging tasks with new threads, while [exchange large amount of data](https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage) with DOM efficiently with the [structured clone](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm) algorithm.
+
+Please note that binary modules of Node.js need to be thread-safe to be used in this way. We've made modifications to Node.js core to make sure core APIs are thread-safe, while we can not promise this with 3rd party binary modules. Pure JS modules are thread safe as long as they depends on thread-safe modules only. And there shouldn't be any side effect when the feature is not turned on.
+
 ## `--disable-raf-throttling`
 
 When it's used, requestAnimationFrame() callback will continue to fire when window is minimized or hidden. It's pretty useful for game developer. When the argument is not used, it behaves in the same way as Chrome browser and has no side effects.
@@ -48,6 +54,6 @@ These options are related to the transparent window feature. See [Transparent Wi
 
 ## Other Chromium Options
 
-You can also use Chromium options listed in https://github.com/nwjs/chromium.src/blob/nw13/chrome/common/chrome_switches.cc and https://github.com/nwjs/chromium.src/blob/nw13/content/public/common/content_switches.cc . See also http://peter.sh/experiments/chromium-command-line-switches/
+You can also use Chromium options listed in https://github.com/nwjs/chromium.src/blob/nw18/chrome/common/chrome_switches.cc and https://github.com/nwjs/chromium.src/blob/nw18/content/public/common/content_switches.cc . See also http://peter.sh/experiments/chromium-command-line-switches/
 
 These options can be put into [`chromium-args` in manifest](Manifest Format.md#chromium-args) to get NW.js running with them each time.
