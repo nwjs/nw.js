@@ -3,16 +3,19 @@
 
 [TOC]
 
-`npm` tool provided by Node.js builds the native modules, i.e. [C/C++ Addons](https://nodejs.org/api/addons.html), at the time of installation.
+## For LTS Releases
 
-In 0.14.x LTS release, native modules built by node-gyp or npm in upstream can be supported.
+If you are using LTS release, native modules installed by `npm` can be supported after hacking as below:
 
-In Linux and OSX you can just load the native module directly. In windows you'll need to replace the file
-%APPDATA%\npm\node_modules\node-gyp\src\win_delay_load_hook.c with the one at https://github.com/nwjs/nw.js/blob/nw13/tools/win_delay_load_hook.c 
+* On Linux and Mac, no hacking is required.
+* On Windows, you need to replace the file
+`<npm-path>\node_modules\node-gyp\src\win_delay_load_hook.cc` with the one at https://github.com/nwjs/nw.js/blob/nw18/tools/win_delay_load_hook.cc before installing modules with node-gyp or npm.
 
-Before 0.13.0, the V8 version and Node API in NW.js is different from official Node.js. To use native Node.js modules with NW.js, you have to rebuild the modules with one of following tools. Starting from 0.15.0, rebuild with the following tools is also needed due to [ABI change in v8](https://github.com/nwjs/nw.js/issues/5025)
+## For non-LTS Releases
 
-## nw-gyp
+If you are using non-LTS release, you have to rebuild the modules with one of following tools due to [ABI differences in V8](https://github.com/nwjs/nw.js/issues/5025).
+
+### nw-gyp
 
 [`nw-gyp`](https://github.com/nwjs/nw-gyp) is a hack on `node-gyp` to support NW.js specific headers and libraries. 
 
@@ -26,7 +29,7 @@ nw-gyp rebuild --target=0.13.0 --arch=x64
 
 See https://github.com/nwjs/nw-gyp for more details.
 
-## node-pre-gyp
+### node-pre-gyp
 
 Some packages uses [node-pre-gyp](https://github.com/mapbox/node-pre-gyp), which supports building for both Node.js and NW.js by using either `node-gyp` or `nw-gyp`.
 
@@ -39,7 +42,7 @@ node-pre-gyp build --runtime=node-webkit --target=0.13.0 --target_arch=x64
 
 See https://github.com/mapbox/node-pre-gyp for more details.
 
-## Known Issues
+### Known Issues
 
 So far, you have to rebuild **each native module** with tools above including thoses are indirectly depended modules. Since `binding.gyp` is required for building native modules, you can easily locate all native modules by finding `binding.gyp` file.
 
