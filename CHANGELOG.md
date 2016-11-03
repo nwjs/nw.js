@@ -1,3 +1,11 @@
+0.18.5 / 11-03-2016
+===================
+- Update Chromium to [54.0.2840.90](https://googlechromereleases.blogspot.com/2016/11/stable-channel-update-for-desktop.html)
+- Fix: node worker Uncaught Error: No such module: url [(#5422)](https://github.com/nwjs/nw.js/issues/5422)
+- Fix: Crashed when exiting nw without --enable-node-worker [(#5420)](https://github.com/nwjs/nw.js/issues/5420)
+- Fix: Gamepad API not working [(#5377)](https://github.com/nwjs/nw.js/issues/5377)
+- Fix: --single-process Seg Fault [(#5382)](https://github.com/nwjs/nw.js/issues/5382)
+
 0.18.4 / 10-31-2016
 ===================
 - Support Node.js in Web Workers [(#494)](https://github.com/nwjs/nw.js/issues/494)
