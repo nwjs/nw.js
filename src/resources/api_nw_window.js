@@ -750,6 +750,7 @@ function onClose(user_force) {
 }
 
 function get_nw() {
+  appWindowNatives.FixGamePadAPI();
   try_nw(window).nw.Window.get();
 }
 
