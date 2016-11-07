@@ -751,7 +751,9 @@ function onClose(user_force) {
 
 function get_nw() {
   appWindowNatives.FixGamePadAPI();
-  try_nw(window).nw.Window.get();
+  var nw0 = try_nw(window).nw;
+  if (nw0)
+    nw0.Window.get();
 }
 
 if (bgPage !== window) {
