@@ -366,21 +366,12 @@ void MainPartsPreMainMessageLoopRunHook() {
 
 bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_line,
                                               const base::FilePath& current_directory) {
-  nw::Package* package = nw::package();
-  bool single_instance = true;
-  package->root()->GetBoolean(switches::kmSingleInstance, &single_instance);
-  if (single_instance) {
-#if defined(OS_WIN)
-    std::string cmd = base::UTF16ToUTF8(command_line.GetCommandLineString());
-#else
-    std::string cmd = command_line.GetCommandLineString();
-#endif
-    std::unique_ptr<base::ListValue> arguments(new base::ListValue());
-    arguments->AppendString(cmd);
-    SendEventToApp("nw.App.onOpen", std::move(arguments));
-  }
+  auto cmd = base::UTF16ToUTF8(command_line.GetCommandLineString());
+  std::unique_ptr<base::ListValue> arguments(new base::ListValue());
+  arguments->AppendString(cmd);
+  SendEventToApp("nw.App.onOpen", std::move(arguments));
     
-  return single_instance;
+  return true;
 }
 
 } // namespace nw
