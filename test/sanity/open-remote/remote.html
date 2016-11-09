@@ -1,4 +1,5 @@
 <script>
+window.name = 'remote';
 document.write('<h1 id="res">Node is ' + (typeof nw === 'undefined' ? 'DISABLED': 'ENABLED') + '</h1>');
 document.write('<h1 id="res2">chrome.app.window is ' + (typeof chrome.app.window === 'undefined' ? 'DISABLED': 'ENABLED') + '</h1>');
 document.write('<h1 id="res3">chrome.runtime is ' + (typeof chrome.runtime === 'undefined' ? 'DISABLED': 'ENABLED') + '</h1>');

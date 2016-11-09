@@ -23,6 +23,7 @@ server = subprocess.Popen(['python', 'http-server.py', port])
 html = open('index.html', 'w')
 html.write('''
 <script>
+window.name = 'local';
 nw.Window.open('http://localhost:%s/remote.html', function(win) {
   document.write('<h1 id="res">returned window is ' + typeof win + '</h1>');
   win.y = 0;
@@ -35,16 +36,14 @@ html.close()
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, desired_capabilities = capabilities)
 time.sleep(1)
 try:
-    wait_window_handles(driver, 2)
-    driver.switch_to_window(driver.window_handles[0])
+    wait_switch_window_name(driver, 'local')
     print driver.current_url
-    time.sleep(1)
-    result = driver.find_element_by_id('res').get_attribute('innerHTML')
-    print result
+    result = wait_for_element_id(driver, 'res')
+    print 'result=' + result
     assert("object" in result)
-    driver.switch_to_window(driver.window_handles[-1])
+    wait_switch_window_name(driver, 'remote')
     for id in ['res', 'res2', 'res3']:
-        result = driver.find_element_by_id(id).get_attribute('innerHTML')
+        result = wait_for_element_id(driver, id)
         print result
         assert("DISABLED" in result)
 finally:
