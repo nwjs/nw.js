@@ -18,6 +18,21 @@ def wait_for_element_id(driver, elem_id, timeout=10):
              raise Exception('Timeout when waiting for element' + elem_id)
     return ret
 
+def wait_for_element_id_content(driver, elem_id, content, timeout=10):
+    ret = ''
+    while timeout > 0:
+        try:
+            ret = driver.find_element_by_id(elem_id).get_attribute('innerHTML')
+            if content in ret:
+              break
+        except selenium.common.exceptions.NoSuchElementException:
+            pass
+        time.sleep(1)
+        timeout = timeout - 1
+        if timeout <= 0:
+             raise Exception('Timeout when waiting for element: ' + elem_id + " content: " + content)
+    return ret
+
 # wait for window handles
 def wait_window_handles(driver, until, timeout=60):
     if not hasattr(until, '__call__'):

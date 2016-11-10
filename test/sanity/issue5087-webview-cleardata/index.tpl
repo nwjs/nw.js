@@ -10,6 +10,7 @@
   <button id="clear">clear data</button>
   <p id="result"></p>
   <script type="text/javascript">
+  window.name = 'index';
   window.onload = () => {
     var webview = document.getElementById('webview')
     var clear = document.getElementById('clear')
