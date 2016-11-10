@@ -33,15 +33,14 @@ driver.implicitly_wait(5)
 time.sleep(1)
 try:
     wait_window_handles(driver, 2)
+    wait_switch_window_name(driver, 'index')
     print driver.current_url
     driver.find_element_by_id('clear').click()
-    result = driver.find_element_by_id('result').get_attribute('innerHTML')
+    result = wait_for_element_id_content(driver, 'result', 'success')
     print result
-    assert('success' in result)
     driver.find_element_by_id('clear').click()
-    result = driver.find_element_by_id('result').get_attribute('innerHTML')
+    result = wait_for_element_id_content(driver, 'result', 'success')
     print result
-    assert('success' in result)
 finally:
     driver.quit()
     server.terminate()
