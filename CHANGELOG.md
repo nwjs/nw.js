@@ -1,3 +1,20 @@
+0.18.6 / 11-10-2016
+===================
+- Update Chromium to [54.0.2840.99](https://googlechromereleases.blogspot.com/2016/11/stable-channel-update-for-desktop_9.html)
+- Update Node.js to [7.1.0](https://nodejs.org/en/blog/release/v7.1.0/)
+- Fix: registerGlobalHotKey and alert [(#4992)](https://github.com/nwjs/nw.js/issues/4992)
+- Fix: `nwworkingdir` attribute for multiple file input [(#5327)](https://github.com/nwjs/nw.js/issues/5327)
+- Fix: Take heap snapshot crash Mac OS X - nwjs 0.18.0 [(#5375)](https://github.com/nwjs/nw.js/issues/5375)
+- Fix: WebUSB API not working [(#5418)](https://github.com/nwjs/nw.js/issues/5418)
+- Fix: --single-process not working in manifest [(#5389)](https://github.com/nwjs/nw.js/issues/5389)
+- Fix: window minimize event bug [(#5388)](https://github.com/nwjs/nw.js/issues/5388)
+- Fix: Linux Fedora application menu says 'nwjs' instead of package.json name [(#4693)](https://github.com/nwjs/nw.js/issues/4693)
+- Fix: PNaCl not working in OSX
+- Fix: Devtools extension load throws error [(#5428)](https://github.com/nwjs/nw.js/issues/5428)
+- Fix: Icon is broken when launched with relative path to parent folder [(#5402)](https://github.com/nwjs/nw.js/issues/5402)
+- Fix: Node worker crash when being closed in some cases
+- [doc] rebuilding native modules with npm
+
 0.18.5 / 11-03-2016
 ===================
 - Update Chromium to [54.0.2840.90](https://googlechromereleases.blogspot.com/2016/11/stable-channel-update-for-desktop.html)
