@@ -64,6 +64,8 @@ V(IntVoidFn, "g_nw_uvrun_nowait", g_nw_uvrun_nowait_fn)
 V(IntVoidFn, "g_uv_runloop_once", g_uv_runloop_once_fn)
 V(IntVoidFn, "g_uv_backend_timeout", g_uv_backend_timeout_fn)
 V(IntVoidFn, "g_uv_backend_fd", g_uv_backend_fd_fn)
+V(BoolVoidFn, "g_nw_enter_dom", g_nw_enter_dom_fn)
+V(VoidBoolFn, "g_nw_leave_dom", g_nw_leave_dom_fn)
 #endif
 
 #undef V
