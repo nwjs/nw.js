@@ -7,11 +7,14 @@
 </head>
 <body>
 <script>
+function test() {
 nw.Window.open('inspect.html', {}, function(win) {
   win.on('loaded', function() {
     win.showDevTools();
   });
 })
+}
 </script>
+<button id='test' onclick="test()">test</button>
 </body>
 </html>

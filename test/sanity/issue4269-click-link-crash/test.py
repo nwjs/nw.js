@@ -26,12 +26,13 @@ html = open('inspect.html', 'w')
 html.write(content)
 html.close()
 
-driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
+driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
 driver.implicitly_wait(2)
 time.sleep(1)
 try:
     switch_to_app(driver)
     print driver.current_url
+    driver.find_element_by_id('test').click()
     print 'wait for devtools window'
     wait_window_handles(driver, 3)
     print driver.window_handles
