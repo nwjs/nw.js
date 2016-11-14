@@ -29,7 +29,15 @@ This the basic example shows how to write an NW.js app.
 }
 ```
 
-`package.json` is the manifest file in your app. It is written in [JSON format](http://www.json.org/). The `main` field figures out the first page opened by the NW.js, i.e. `"index.html"` in this example. And the `name` field is the unique name used among NW.js apps. See [Manifest Format](../References/Manifest Format.md) for more details.
+`package.json` is the manifest file in your app. It is written in [JSON format](http://www.json.org/). The `main` field figures out the first page opened by the NW.js if referenced to an HTML file, `"index.html"` in this example. And the `name` field is the unique name used among NW.js apps. See [Manifest Format](../References/Manifest Format.md) for more details.
+
+!!! tip "Use JS File as Main"
+    You can set JS file as in `"main"` field as well, like `"main.js"`. Then the JS file will be loaded in the background page on start and no window is opened by default. Usually you can do some initialization and open the window manually later. For example,
+    ```javascript
+    // initialize your app
+    // and ...
+    nw.Window.open('index.html', {}, function(win) {});
+    ```
 
 **Step 2.** Create `index.html`:
 
