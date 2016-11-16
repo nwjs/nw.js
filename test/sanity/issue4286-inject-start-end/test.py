@@ -15,10 +15,10 @@ time.sleep(1)
 try:
     print driver.current_url
     wait_window_handles(driver, 2)
-    result = driver.find_element_by_id('inject_start').get_attribute('innerHTML')
+    result = wait_for_element_id(driver, 'inject_start')
     print 'inject_js_start: %s' % result
     assert('success' in result)
-    result = driver.find_element_by_id('inject_end').get_attribute('innerHTML')
+    result = wait_for_element_id(driver, 'inject_end')
     print 'inject_js_end: %s' % result
     assert('success' in result)
 finally:
