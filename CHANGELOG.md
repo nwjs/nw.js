@@ -1,3 +1,9 @@
+0.18.7 / 11-16-2016
+===================
+- Fix: [OSX] Regression in Debugging [(#5469)](https://github.com/nwjs/nw.js/issues/5469)
+- Fix: [OSX] Regression in --disable-raf-throttling feature [(5466)](https://github.com/nwjs/nw.js/issues/5466)
+- [docs] adding Getting Started example to use JS as entrance [(#5471)](https://github.com/nwjs/nw.js/issues/5471)
+
 0.18.6 / 11-10-2016
 ===================
 - Update Chromium to [54.0.2840.99](https://googlechromereleases.blogspot.com/2016/11/stable-channel-update-for-desktop_9.html)
