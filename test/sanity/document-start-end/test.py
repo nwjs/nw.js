@@ -11,8 +11,8 @@ chrome_options = Options()
 chrome_options.add_argument("nwapp=" + os.path.dirname(os.path.abspath(__file__)))
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
-time.sleep(1)
 try:
+    wait_switch_window_name(driver, 'index')
     print driver.current_url
     result = wait_for_element_id(driver, 'result')
     result2 = wait_for_element_id(driver, 'result2')
