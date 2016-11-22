@@ -21,6 +21,7 @@
 #include "content/nw/src/api/menuitem/menuitem.h"
 
 #include "base/files/file_path.h"
+#include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
@@ -74,6 +75,7 @@ void MenuItem::Create(const base::DictionaryValue& option) {
     enable_shortcut_ = true;
     //only code for ctrl, shift, alt, super and meta modifiers
     int modifiers_value = ui::EF_NONE;
+    modifiers = base::ToLowerASCII(modifiers);
     if (modifiers.find("ctrl")!=std::string::npos){
       modifiers_value |= ui::EF_CONTROL_DOWN;
     }

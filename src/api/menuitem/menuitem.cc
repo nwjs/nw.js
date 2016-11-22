@@ -33,8 +33,8 @@ namespace nw {
 namespace {
 
 typedef std::map<std::string,std::string> KeyMap;
-/*
-{
+
+static KeyMap keymap = {
   {"`"    , "Backquote"},
   {"\\"   , "Backslash"},
   {"["    , "BracketLeft"},
@@ -56,34 +56,6 @@ typedef std::map<std::string,std::string> KeyMap;
   {"MEDIANEXTTRACK", "MediaTrackNext"},
   {"MEDIAPREVTRACK", "MediaTrackPrevious"}
 };
-*/
-
-static KeyMap InitKeyMap() {
-  KeyMap result;
-  result["`"] = "Backquote";
-  result["\\"] = "Backslash";
-  result["["] = "BracketLeft";
-  result["]"] = "BracketRight";
-  result[","] = "Comma";
-  result["="] = "Equal";
-  result["-"] = "Minus";
-  result["."] = "Period";
-  result["'"] = "Quote";
-  result[";"] = "Semicolon";
-  result["/"] = "Slash";
-  result["\n"] = "Enter";
-  result["\t"] = "Tab";
-  result["UP"] = "ArrowUp";
-  result["DOWN"] = "ArrowDown";
-  result["LEFT"] = "ArrowLeft";
-  result["RIGHT"] = "ArrowRight";
-  result["ESC"] = "Escape";
-  result["MEDIANEXTTRACK"] = "MediaTrackNext";
-  result["MEDIAPREVTRACK"] = "MediaTrackPrevious";
-  return result;
-}
-
-static KeyMap keymap = InitKeyMap();
 
 }
 
