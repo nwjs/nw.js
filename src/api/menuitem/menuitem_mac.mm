@@ -208,10 +208,12 @@ void MenuItem::SetKey(const std::string& key) {
 
 void MenuItem::SetModifiers(const std::string& modifiers) {
   NSUInteger mask = 0;
-  NSString* nsmodifiers = [NSString stringWithUTF8String:modifiers.c_str()];
+  NSString* nsmodifiers = [NSString stringWithUTF8String:modifiers.c_str()].lowercaseString;
   if([nsmodifiers rangeOfString:@"shift"].location != NSNotFound)
     mask = mask|NSShiftKeyMask;
-  if([nsmodifiers rangeOfString:@"cmd"].location != NSNotFound)
+  if([nsmodifiers rangeOfString:@"cmd"].location != NSNotFound
+    || [nsmodifiers rangeOfString:@"command"].location != NSNotFound
+    || [nsmodifiers rangeOfString:@"super"].location != NSNotFound)
     mask = mask|NSCommandKeyMask;
   if([nsmodifiers rangeOfString:@"alt"].location != NSNotFound)
     mask = mask|NSAlternateKeyMask;
