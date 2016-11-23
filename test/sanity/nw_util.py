@@ -60,7 +60,7 @@ def wait_switch_window_name(driver, name, timeout=60):
 
 def switch_to_app(driver, window_handle=None):
     def is_app_url(url):
-        return url.startswith('chrome-extension://') or url.startswith('file://') or url.startswith('http://') or url.startswith('https://')
+        return (url.startswith('chrome-extension://') or url.startswith('file://') or url.startswith('http://') or url.startswith('https://')) and not url.endswith('/_generated_background_page.html')
 
     if window_handle is not None:
         driver.switch_to_window(window_handle)
