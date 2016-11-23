@@ -1,3 +1,10 @@
+0.18.8 / 11-23-2016
+===================
+- Update Node.js to [7.2.0](https://nodejs.org/en/blog/release/v7.2.0/)
+- Fix: closing devtools window clears session cookies
+- Fix: disable symbolication of "adding an unknown subview" for frameless window [(#5435)](https://github.com/nwjs/nw.js/issues/5435)
+- Fix: bugs of modifiers of nw.MenuItem [(#5451)](https://github.com/nwjs/nw.js/issues/5451)
+
 0.18.7 / 11-16-2016
 ===================
 - Fix: [OSX] Regression in Debugging [(#5469)](https://github.com/nwjs/nw.js/issues/5469)
