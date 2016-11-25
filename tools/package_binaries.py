@@ -216,6 +216,8 @@ def generate_target_nw(platform_name, arch, version):
             target['input'].append('payload')
             target['input'].append('chromedriver')
             target['input'].append('minidump_stackwalk')
+        elif flavor == 'mas':
+            target['input'].append('mas')
     else:
         print 'Unsupported platform: ' + platform_name
         exit(-1)
