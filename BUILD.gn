@@ -262,6 +262,13 @@ if (is_mac) {
   }
 }
 
+if (nwjs_mas) {
+  copy("copy_mas") {
+    sources = [ "tools/mas" ]
+    outputs = [ "$root_out_dir/mas" ]
+  }
+}
+
 copy("copy_node") {
   if (is_debug) {
      node_dir = "$root_out_dir/../Debug/lib/"
@@ -418,6 +425,9 @@ if (!is_component_build) {
     deps = [ "//components/resources:about_credits_nw", ":dump" ]
     if (nwjs_sdk && (is_mac || is_linux)) {
       deps += [ "//breakpad:minidump_stackwalk" ]
+    }
+    if (nwjs_mas) {
+      deps += [ ":copy_mas" ]
     }
   }
   if (nwjs_sdk) {
