@@ -90,33 +90,15 @@ void FileSelectHelper::ProcessSelectedFilesMac(
     const std::vector<ui::SelectedFileInfo>& files) {
   DCHECK_CURRENTLY_ON(content::BrowserThread::FILE_USER_BLOCKING);
 
-  // Make a mutable copy of the input files.
-  std::vector<ui::SelectedFileInfo> files_out(files);
   std::vector<base::FilePath> temporary_files;
 
-  for (auto& file_info : files_out) {
-    NSString* filename = base::mac::FilePathToNSString(file_info.local_path);
-    BOOL isPackage =
-        [[NSWorkspace sharedWorkspace] isFilePackageAtPath:filename];
-    if (isPackage && base::DirectoryExists(file_info.local_path)) {
-      base::FilePath result = ZipPackage(file_info.local_path);
-
-      if (!result.empty()) {
-        temporary_files.push_back(result);
-        file_info.local_path = result;
-        file_info.file_path = result;
-        file_info.display_name.append(".zip");
-      }
-    }
-  }
-
+  // The call was not removed from file_select_helper.cc (line: 166), to use this structure in other features
   content::BrowserThread::PostTask(
       content::BrowserThread::UI,
       FROM_HERE,
       base::Bind(&FileSelectHelper::ProcessSelectedFilesMacOnUIThread,
                  base::Unretained(this),
-                 files_out,
-                 temporary_files));
+                 files, temporary_files));
 }
 
 void FileSelectHelper::ProcessSelectedFilesMacOnUIThread(
