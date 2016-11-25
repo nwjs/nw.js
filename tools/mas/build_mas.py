@@ -83,9 +83,9 @@ def read_config(args):
   config = ConfigParser.SafeConfigParser()
   config.optionxform = str # set to str to prevent transforming into lower cases
   config.read(args.config_file)
-  check_options(config, 'Sign', ['ApplicationIdentity', 'ParentEntitlements', 'ChildEntitlements'], 'Missed options in [%s]: %s')
+  check_options(config, 'Sign', ['ApplicationIdentity'], 'Missed options in [%s]: %s')
   if args.pkg:
-    check_options(config, 'Sign', ['InstallerIdentity'], 'Missed options for --pkg in [%s]: %s')
+    check_options(config, 'Package', ['InstallerIdentity'], 'Missed options for --pkg in [%s]: %s')
   return config
 
 def copy_to_output(args):
@@ -161,19 +161,21 @@ def codesign_app(config, args):
   bundleid  = get_bundle_id(args)
 
   identity  = config.get('Sign', 'ApplicationIdentity')
-  parent    = config.get('Sign', 'ParentEntitlements')
-  child     = config.get('Sign', 'ChildEntitlements')
+  sandbox = True
+  if config.has_option('Sign', 'Sandbox'):
+    sandbox = config.getboolean('Sign', 'Sandbox')
 
-  (_, tmp_parent_entitlements) = tempfile.mkstemp()
-  parent_entitlements = plistlib.readPlist(parent)
-  teamid = get_from_info_plist(args, 'NWTeamID', default=None)
-  if teamid is None:
-    groupid = bundleid
-  else:
-    groupid = '%s.%s' % (teamid, bundleid)
-
+  ## sign child frameworks and helpers
   (_, tmp_child_entitlements) = tempfile.mkstemp()
-  child_entitlements = plistlib.readPlist(child)
+  if config.has_option('Sign', 'ChildEntitlements'):
+    child   = config.get('Sign', 'ChildEntitlements')
+    child_entitlements = plistlib.readPlist(child)
+  else:
+    child_entitlements = {
+      'com.apple.security.app-sandbox'  : sandbox,
+      'com.apple.security.inherit'      : True
+    }
+
   plistlib.writePlist(child_entitlements, tmp_child_entitlements)
   info('Child entitlements: %s' % tmp_child_entitlements)
   framework = glob(args.output, 'nwjs Framework.framework', returnOnFound=True)
@@ -181,16 +183,30 @@ def codesign_app(config, args):
   helperApp = glob(args.output, 'nwjs Helper.app', returnOnFound=True)
   system('codesign -f --verbose -s "%s" --entitlements %s --deep "%s"' % (identity, tmp_child_entitlements, helperApp))
 
+  ## sign parent app
+  (_, tmp_parent_entitlements) = tempfile.mkstemp()
+  if config.has_option('Sign', 'ParentEntitlements'):
+    parent    = config.get('Sign', 'ParentEntitlements')
+    parent_entitlements = plistlib.readPlist(parent)
+  else:
+    parent_entitlements = {}
+  teamid = get_from_info_plist(args, 'NWTeamID', default=None)
+  if teamid is None:
+    groupid = bundleid
+  else:
+    groupid = '%s.%s' % (teamid, bundleid)
+  parent_entitlements['com.apple.security.app-sandbox'] = sandbox
   parent_entitlements['com.apple.security.application-groups'] = [groupid]
   plistlib.writePlist(parent_entitlements, tmp_parent_entitlements)
+
   info('Parent entitlements: %s' % tmp_parent_entitlements)
   system('codesign -f --verbose -s "%s" --entitlements %s --deep "%s"' % (identity, tmp_parent_entitlements, args.output))
 
 def productbuild(config, args):
   print '\nRunning productbuild'
-  installer_identity = config.get('Sign', 'InstallerIdentity')
-  if config.has_option('Sign', 'InstallPath'):
-    install_path = config.get('Sign', 'InstallPath')
+  installer_identity = config.get('Package', 'InstallerIdentity')
+  if config.has_option('Package', 'InstallPath'):
+    install_path = config.get('Package', 'InstallPath')
   else:
     install_path = '/Applications'
   system('productbuild --component "%s" "%s" --sign "%s" "%s"' % (args.output, install_path, installer_identity, args.pkg))
@@ -200,7 +216,7 @@ def main():
   parser.add_argument('-C', '--config-file', default='build.cfg', help='config file. (default: build.cfg)')
   parser.add_argument('-I', '--input', default='nwjs.app', help='path to input app. (default: nwjs.app)')
   parser.add_argument('-O', '--output', default='nwjs_output.app', help='path to output app. (default: nwjs_output.app)')
-  parser.add_argument('-S', '--sign-only', default=False, help='run codesign without patching the app. (default: False)', action='store_true')
+  parser.add_argument('-S', '--skip-patching', default=False, help='run codesign without patching the app. (default: False)', action='store_true')
   parser.add_argument('-P', '--pkg', default=None, help='run productbuild to generate .pkg after codesign. (default: None)')
   parser.add_argument('-V', '--verbose', default=False, help='display detailed information. (default: False)', action='store_true')
   args = parser.parse_args()
@@ -208,20 +224,13 @@ def main():
   global verbose
   verbose = args.verbose
 
-  if args.sign_only:
-    info('Running in Sign Only mode. Only [Sign] section is used in config file')
-
-    if args.pkg:
-      info('--pkg is ignored in Sign Only mode.')
-
-
   # read config file
   config = read_config(args)
 
   # make a copy
   copy_to_output(args)
 
-  if not args.sign_only:
+  if not args.skip_patching:
     # patch Info.plist
     patch_info_plist(config, args)
 
@@ -235,7 +244,7 @@ def main():
   # codesign
   codesign_app(config, args)
 
-  if not args.sign_only and args.pkg:
+  if args.pkg:
     productbuild(config, args)
 
   print '\nDone.'
