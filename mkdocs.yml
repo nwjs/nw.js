@@ -37,6 +37,7 @@ pages:
             - 'JavaScript Contexts in NW.js': 'For Users/Advanced/JavaScript Contexts in NW.js.md'
             - 'Protect JavaScript Source Code': 'For Users/Advanced/Protect JavaScript Source Code.md'
             - 'Security in NW.js': 'For Users/Advanced/Security in NW.js.md'
+            - 'Support for Mac App Store': 'For Users/Advanced/Support for Mac App Store.md'
             - 'Test with ChromeDriver': 'For Users/Advanced/Test with ChromeDriver.md'
             - 'Transparent Window': 'For Users/Advanced/Transparent Window.md'
             - 'Use Flash Plugin': 'For Users/Advanced/Use Flash Plugin.md'
