@@ -56,6 +56,18 @@ class NwCurrentWindowInternalCloseDevToolsFunction : public AsyncExtensionFuncti
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.closeDevTools", UNKNOWN)
 };
 
+class NwCurrentWindowInternalIsDevToolsOpenFunction : public NWSyncExtensionFunction {
+ public:
+  NwCurrentWindowInternalIsDevToolsOpenFunction() {};
+
+ protected:
+  ~NwCurrentWindowInternalIsDevToolsOpenFunction() override {};
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
+
+  // ExtensionFunction:
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.isDevToolsOpen", UNKNOWN)
+};
+
 class NwCurrentWindowInternalCapturePageInternalFunction : public AsyncExtensionFunction {
  public:
   NwCurrentWindowInternalCapturePageInternalFunction();
@@ -146,7 +158,7 @@ class NwCurrentWindowInternalRequestAttentionInternalFunction : public AsyncExte
  private:
   DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalRequestAttentionInternalFunction);
 };
-  
+
 class NwCurrentWindowInternalSetProgressBarFunction : public AsyncExtensionFunction {
  public:
   NwCurrentWindowInternalSetProgressBarFunction(){}
@@ -245,7 +257,7 @@ class NwCurrentWindowInternalSetShowInTaskbarFunction : public AsyncExtensionFun
 
  protected:
   ~NwCurrentWindowInternalSetShowInTaskbarFunction() override {}
-  
+
    // ExtensionFunction:
    bool RunAsync() override;
    DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setShowInTaskbar", UNKNOWN)
