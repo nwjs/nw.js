@@ -20,8 +20,7 @@
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/web_contents.h"
 #include "third_party/webrtc/modules/desktop_capture/desktop_capture_options.h"
-#include "third_party/webrtc/modules/desktop_capture/screen_capturer.h"
-#include "third_party/webrtc/modules/desktop_capture/window_capturer.h"
+#include "third_party/webrtc/modules/desktop_capture/desktop_capturer.h"
 #include "ui/gfx/codec/png_codec.h"
 #include "ui/gfx/image/image.h"
 #include "ui/gfx/image/image_skia.h"
@@ -205,8 +204,8 @@ namespace extensions {
 
     webrtc::DesktopCaptureOptions options = webrtc::DesktopCaptureOptions::CreateDefault();
     options.set_disable_effects(false);
-    std::unique_ptr<webrtc::ScreenCapturer> screenCapturer(screens ? webrtc::ScreenCapturer::Create(options) : nullptr);
-    std::unique_ptr<webrtc::WindowCapturer> windowCapturer(windows ? webrtc::WindowCapturer::Create(options) : nullptr);
+    std::unique_ptr<webrtc::DesktopCapturer> screenCapturer(screens ? webrtc::DesktopCapturer::CreateScreenCapturer(options) : nullptr);
+    std::unique_ptr<webrtc::DesktopCapturer> windowCapturer(windows ? webrtc::DesktopCapturer::CreateWindowCapturer(options) : nullptr);
 
     media_list_.reset(new NativeDesktopMediaList(std::move(screenCapturer), std::move(windowCapturer)));
 
