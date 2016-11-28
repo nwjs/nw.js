@@ -424,7 +424,7 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
     web_frame->mainWorldScriptContext()->Global();
   arguments.push_back(v8::Boolean::New(isolate, start));
   arguments.push_back(window);
-  script_context->module_system()->CallModuleMethod("nw.Window", "onDocumentStartEnd", &arguments);
+  script_context->module_system()->CallModuleMethodSafe("nw.Window", "onDocumentStartEnd", &arguments);
 }
 
 void DocumentElementHook(blink::WebLocalFrame* frame,
@@ -514,7 +514,7 @@ void willHandleNavigationPolicy(content::RenderView* rv,
   arguments.push_back(v8_str(request.url().string().utf8().c_str()));
   arguments.push_back(policy_obj);
   if (new_win) {
-    script_context->module_system()->CallModuleMethod("nw.Window",
+    script_context->module_system()->CallModuleMethodSafe("nw.Window",
                                                       "onNewWinPolicy", &arguments);
   } else {
     const char* req_context = nullptr;
@@ -533,7 +533,7 @@ void willHandleNavigationPolicy(content::RenderView* rv,
     }
     if (req_context) {
       arguments.push_back(v8_str(req_context));
-      script_context->module_system()->CallModuleMethod("nw.Window",
+      script_context->module_system()->CallModuleMethodSafe("nw.Window",
                                                         "onNavigation", &arguments);
     }
   }
