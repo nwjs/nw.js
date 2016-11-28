@@ -6,6 +6,7 @@
 #include "content/public/browser/render_widget_host.h"
 #include "chrome/browser/devtools/devtools_window.h"
 #include "chrome/browser/extensions/devtools_util.h"
+#include "chrome/browser/ui/webui/print_preview/printer_backend_proxy.h"
 #include "components/zoom/zoom_controller.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/object_manager.h"
@@ -23,7 +24,6 @@
 #include "ui/display/display.h"
 #include "ui/gfx/geometry/size_conversions.h"
 #include "ui/display/screen.h"
-
 #include "content/nw/src/api/nw_current_window_internal.h"
 
 #if defined(OS_WIN)
@@ -41,7 +41,7 @@
 #endif
 
 #if defined(OS_LINUX)
-#include "chrome/browser/ui/libgtk2ui/gtk2_ui.h"
+#include "chrome/browser/ui/libgtkui/gtk_ui.h"
 #endif
 
 #if defined(OS_LINUX) || defined(OS_WIN)
@@ -631,20 +631,16 @@ bool NwCurrentWindowInternalSetTitleInternalFunction::RunNWSync(base::ListValue*
 }
 
 bool NwCurrentWindowInternalGetPrintersFunction::RunAsync() {
-  base::ListValue* results = new base::ListValue;
-  content::BrowserThread::PostTaskAndReply(
-      content::BrowserThread::FILE, FROM_HERE,
-      base::Bind(&chrome::EnumeratePrintersOnBlockingPoolThread,
-                 base::Unretained(results)),
+  printing::EnumeratePrinters(Profile::FromBrowserContext(browser_context()),
       base::Bind(&NwCurrentWindowInternalGetPrintersFunction::OnGetPrinterList,
-                 this,
-                 base::Unretained(results)));
+                 this));
   return true;
 }
 
-void NwCurrentWindowInternalGetPrintersFunction::OnGetPrinterList(base::ListValue* results) {
-  std::unique_ptr<base::ListValue> printers(results);
-  SetResult(std::move(printers));
+void NwCurrentWindowInternalGetPrintersFunction::OnGetPrinterList(const printing::PrinterList& printer_list) {
+  base::ListValue* printers = new base::ListValue();
+  chrome::PrintersToValues(printer_list, printers);
+  SetResult(base::WrapUnique(printers));
   SendResponse(true);
 }
 

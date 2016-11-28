@@ -4,6 +4,7 @@
 
 import("//build/config/features.gni")
 import("//build/config/ui.gni")
+import("//extensions/features/features.gni")
 
 assert(enable_extensions)
 
