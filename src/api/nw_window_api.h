@@ -6,6 +6,7 @@
 #include "content/public/browser/readback_types.h"
 #include "extensions/browser/extension_function.h"
 #include "extensions/common/api/extension_types.h"
+#include "printing/backend/print_backend.h"
 
 class SkBitmap;
 
@@ -285,7 +286,7 @@ class NwCurrentWindowInternalGetPrintersFunction : public AsyncExtensionFunction
  public:
   NwCurrentWindowInternalGetPrintersFunction() {}
   bool RunAsync() override;
-  void OnGetPrinterList(base::ListValue* results);
+  void OnGetPrinterList(const printing::PrinterList& printer_list);
  protected:
   ~NwCurrentWindowInternalGetPrintersFunction() override {}
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.getPrinters", UNKNOWN)
