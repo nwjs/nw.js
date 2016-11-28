@@ -88,6 +88,16 @@ Note: on Windows, you can drag the folder containing `package.json` to `nw.exe` 
 Note: on OSX, the executable binary is in a hidden directory within the .app file. To run node-webkit on OSX, type:  
 `/path/to/nwjs.app/Contents/MacOS/nwjs .` *(suppose the current directory contains 'package.json')*   
 
+On Linux, if you receive the message:
+````
+./nw: error while loading shared libraries: libudev.so.0: cannot open shared object file: No such file or directory
+````
+Run the following (or see [this page](https://github.com/rogerwang/node-webkit/wiki/The-solution-of-lacking-libudev.so.0)):
+````bash
+$ sed -i 's/\x75\x64\x65\x76\x2E\x73\x6F\x2E\x30/\x75\x64\x65\x76\x2E\x73\x6F\x2E\x31/g' nw
+````
+
+
 ## Documents
 
 For more information on how to write/package/run apps, see:
