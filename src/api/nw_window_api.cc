@@ -116,25 +116,12 @@ static HWND getHWND(AppWindow* window) {
 }
 #endif
 
-void NwCurrentWindowInternalCloseFunction::DoClose(AppWindow* window) {
-  window->GetBaseWindow()->ForceClose();
-}
-
-bool NwCurrentWindowInternalCloseFunction::RunAsync() {
-  std::unique_ptr<nwapi::nw_current_window_internal::Close::Params> params(
-      nwapi::nw_current_window_internal::Close::Params::Create(*args_));
-  EXTENSION_FUNCTION_VALIDATE(params.get());
-
-  bool force = params->force.get() ? *params->force : false;
+bool NwCurrentWindowInternalForceCloseInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
   AppWindow* window = getAppWindow(this);
-  if (force)
-    base::MessageLoop::current()->task_runner()->PostTask(FROM_HERE,
-         base::Bind(&NwCurrentWindowInternalCloseFunction::DoClose, window));
-  else if (window->NWCanClose())
-    base::MessageLoop::current()->task_runner()->PostTask(FROM_HERE,
-         base::Bind(&NwCurrentWindowInternalCloseFunction::DoClose, window));
+  if (window) {
+    window->GetBaseWindow()->ForceClose();
+  }
 
-  SendResponse(true);
   return true;
 }
 

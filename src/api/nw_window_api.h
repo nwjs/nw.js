@@ -16,17 +16,16 @@ class WebContents;
 namespace extensions {
 class AppWindow;
 
-class NwCurrentWindowInternalCloseFunction : public AsyncExtensionFunction {
+class NwCurrentWindowInternalForceCloseInternalFunction : public NWSyncExtensionFunction {
  public:
-  NwCurrentWindowInternalCloseFunction() {};
-  static void DoClose(AppWindow*);
+  NwCurrentWindowInternalForceCloseInternalFunction() {};
 
  protected:
-  ~NwCurrentWindowInternalCloseFunction() override {};
+  ~NwCurrentWindowInternalForceCloseInternalFunction() override {};
 
   // ExtensionFunction:
-  bool RunAsync() override;
-  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.close", UNKNOWN)
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.forceCloseInternal", UNKNOWN)
 };
 
 
