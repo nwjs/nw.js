@@ -1,9 +1,19 @@
+0.19.0 / 12-02-2016
+===================
+- Update Chromium to [55.0.2883.75](https://googlechromereleases.blogspot.com/2016/12/stable-channel-update-for-desktop.html)
+- Fix: 'show_in_taskbar' option for 'nw.Window.open' (#4970)
+- Fix: process.uptime() (#5481)
+
 0.18.8 / 11-23-2016
 ===================
 - Update Node.js to [7.2.0](https://nodejs.org/en/blog/release/v7.2.0/)
 - Fix: closing devtools window clears session cookies
 - Fix: disable symbolication of "adding an unknown subview" for frameless window [(#5435)](https://github.com/nwjs/nw.js/issues/5435)
 - Fix: bugs of modifiers of nw.MenuItem [(#5451)](https://github.com/nwjs/nw.js/issues/5451)
+
+0.19.0-rc1 / 11-17-2016
+=======================
+- Update Chromium to [55.0.2883.52](https://googlechromereleases.blogspot.com/2016/11/beta-channel-update-for-desktop_16.html)
 
 0.18.7 / 11-16-2016
 ===================
