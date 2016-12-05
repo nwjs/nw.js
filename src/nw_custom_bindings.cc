@@ -23,7 +23,7 @@ using namespace blink;
 #include <math.h>
 #endif
 
-#undef FROM_HERE
+//#undef FROM_HERE
 #undef TRACE_EVENT0
 #undef TRACE_EVENT1
 #undef TRACE_EVENT2
