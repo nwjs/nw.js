@@ -201,10 +201,10 @@ def generate_target_nw(platform_name, arch, version):
             target['input'].append('chromedriver.exe')
         if flavor in ['nacl','sdk'] :
             target['input'].append('pnacl')
-            if arch == 'x64':
-                target['input'].append('nacl_irt_x86_64.nexe')
-            else:
+            target['input'].append('nacl_irt_x86_64.nexe')
+            if arch == 'ia32':
                 target['input'].append('nacl_irt_x86_32.nexe')
+                target['input'].append('nacl64.exe')
     elif platform_name == 'osx':
         target['input'] = [
                            'nwjs.app',
