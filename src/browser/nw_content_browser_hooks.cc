@@ -35,7 +35,7 @@
 // gen
 #include "nw/id/commit.h"
 
-#include "third_party/node/src/node_webkit.h"
+#include "third_party/node-nw/src/node_webkit.h"
 
 #if defined(OS_WIN)
 #define _USE_MATH_DEFINES

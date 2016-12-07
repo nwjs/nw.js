@@ -126,7 +126,7 @@ bool NwAppClearCacheFunction::RunNWSync(base::ListValue* response, std::string* 
       Profile::FromBrowserContext(context_));
 
   remover->AddObserver(this);
-  remover->RemoveAndReply(BrowsingDataRemover::Unbounded(),
+  remover->RemoveAndReply(base::Time(), base::Time::Max(),
                           BrowsingDataRemover::REMOVE_CACHE,
                           BrowsingDataHelper::ALL,
                           this);

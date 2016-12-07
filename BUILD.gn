@@ -232,7 +232,7 @@ action("commit_id") {
        "//content/nw/.git/index",
        "//.git/index",
        "//v8/.git/index",
-       "//third_party/node/.git/index"
+       "//third_party/node-nw/.git/index"
     ]
     outputs = [
       commit_id_output_file,

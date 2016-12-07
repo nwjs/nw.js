@@ -42,7 +42,7 @@
 //#include "grit/nw_resources.h"
 #include "media/base/media_switches.h"
 #include "net/base/escape.h"
-#include "third_party/node/deps/uv/include/uv.h"
+#include "third_party/node-nw/deps/uv/include/uv.h"
 #include "ui/base/resource/resource_bundle.h"
 
 using base::CommandLine;
@@ -320,7 +320,7 @@ bool Package::InitFromPath(const base::FilePath& path_in) {
                         manifest_path.AsUTF8Unsafe() :
                     error);
     return false;
-  } else if (!root->IsType(base::Value::TYPE_DICTIONARY)) {
+  } else if (!root->IsType(base::Value::Type::DICTIONARY)) {
     ReportError("Invalid package.json",
                 "package.json's content should be a object type.");
     return false;

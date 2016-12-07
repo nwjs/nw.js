@@ -22,7 +22,7 @@ try:
     print 'switch to devtools'
     switch_to_devtools(driver)
     devtools_click_tab(driver, 'console')
-    driver.find_element_by_class_name('console-message-url').click()
+    driver.find_element_by_class_name('devtools-link').click()
     sources_panel = driver.find_element_by_css_selector('.panel.sources')
     assert(sources_panel is not None)
 finally:

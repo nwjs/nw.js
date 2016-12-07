@@ -37,7 +37,7 @@
 #include "third_party/WebKit/Source/platform/ScriptForbiddenScope.h"
 #include "third_party/WebKit/public/web/WebKit.h"
 
-#include "third_party/node/src/node_webkit.h"
+#include "third_party/node-nw/src/node_webkit.h"
 
 // gen
 #include "nw/id/commit.h"
