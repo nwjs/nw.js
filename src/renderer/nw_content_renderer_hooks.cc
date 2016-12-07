@@ -18,7 +18,7 @@
 
 // third_party/node
 // FIXME: node_webkit.h should include v8 headers
-#include "third_party/node/src/node_webkit.h"
+#include "third_party/node-nw/src/node_webkit.h"
 
 #if defined(OS_WIN)
 #define _USE_MATH_DEFINES

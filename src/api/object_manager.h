@@ -101,7 +101,7 @@ class ObjectManager : public KeyedService {
                               const base::ListValue& arguments,
                               base::ListValue* result);
  private:
-  static IDMap<Base, IDMapOwnPointer> objects_registry_;
+  static IDMap<std::unique_ptr<Base>> objects_registry_;
   static int next_object_id_;
 
   base::RunLoop* run_loop_;
