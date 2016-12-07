@@ -50,7 +50,7 @@ using extensions::EventRouter;
 
 namespace nw {
 
-IDMap<Base, IDMapOwnPointer> nw::ObjectManager::objects_registry_;
+IDMap<std::unique_ptr<Base>> nw::ObjectManager::objects_registry_;
 int nw::ObjectManager::next_object_id_ = 0;
 
 ObjectManager* ObjectManager::Get(content::BrowserContext* context) {
@@ -92,28 +92,28 @@ void ObjectManager::OnAllocateObject(int object_id,
              << " option:" << option;
 
   if (type == "Menu") {
-    objects_registry_.AddWithID(new Menu(object_id, weak_ptr_factory_.GetWeakPtr(), option, extension_id), object_id);
+    objects_registry_.AddWithID(base::MakeUnique<Menu>(object_id, weak_ptr_factory_.GetWeakPtr(), option, extension_id), object_id);
   } else if (type == "MenuItem") {
     objects_registry_.AddWithID(
-       new MenuItem(object_id, weak_ptr_factory_.GetWeakPtr(), option, extension_id), object_id);
+                                base::MakeUnique<MenuItem>(object_id, weak_ptr_factory_.GetWeakPtr(), option, extension_id), object_id);
   } else if (type == "Tray") {
-    objects_registry_.AddWithID(new Tray(object_id, weak_ptr_factory_.GetWeakPtr(), option, extension_id), object_id);
+    objects_registry_.AddWithID(base::MakeUnique<Tray>(object_id, weak_ptr_factory_.GetWeakPtr(), option, extension_id), object_id);
   }
 #if 0
   else if (type == "Clipboard") {
     objects_registry_.AddWithID(
-        new Clipboard(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
+                                base::MakeUnique<Clipboard>(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else if (type == "Window") {
-    objects_registry_.AddWithID(new Window(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
+    objects_registry_.AddWithID(base::MakeUnique<Window>(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else if (type == "Shortcut") {
-    objects_registry_.AddWithID(new Shortcut(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
+    objects_registry_.AddWithID(base::MakeUnique<Shortcut>(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else if (type == "Screen") {
-    objects_registry_.AddWithID(new EventListener(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
+    objects_registry_.AddWithID(base::MakeUnique<EventListener>(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   }
 #endif
   else {
     LOG(ERROR) << "Allocate an object of unknown type: " << type;
-    objects_registry_.AddWithID(new Base(object_id, weak_ptr_factory_.GetWeakPtr(), option, extension_id), object_id);
+    objects_registry_.AddWithID(base::MakeUnique<Base>(object_id, weak_ptr_factory_.GetWeakPtr(), option, extension_id), object_id);
   }
   objects_.insert(object_id);
 }

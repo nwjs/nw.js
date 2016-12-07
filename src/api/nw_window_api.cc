@@ -86,6 +86,21 @@ static void SetDeskopEnvironment() {
 
 #endif
 
+namespace {
+
+printing::PrinterList EnumeratePrintersOnBlockingPoolThread() {
+  DCHECK(content::BrowserThread::GetBlockingPool()->RunsTasksOnCurrentThread());
+
+  scoped_refptr<printing::PrintBackend> print_backend(
+        printing::PrintBackend::CreateInstance(nullptr));
+
+  printing::PrinterList printer_list;
+  print_backend->EnumeratePrinters(&printer_list);
+
+  return printer_list;
+}
+}
+
 namespace extensions {
 namespace {
 
@@ -556,7 +571,7 @@ bool NwCurrentWindowInternalSetProgressBarFunction::RunAsync() {
 
 bool NwCurrentWindowInternalReloadIgnoringCacheFunction::RunAsync() {
   content::WebContents* web_contents = GetSenderWebContents();
-  web_contents->GetController().ReloadBypassingCache(false);
+  web_contents->GetController().Reload(content::ReloadType::BYPASSING_CACHE, false);
   SendResponse(true);
   return true;
 }
@@ -639,9 +654,13 @@ bool NwCurrentWindowInternalSetTitleInternalFunction::RunNWSync(base::ListValue*
 }
 
 bool NwCurrentWindowInternalGetPrintersFunction::RunAsync() {
-  printing::EnumeratePrinters(Profile::FromBrowserContext(browser_context()),
-      base::Bind(&NwCurrentWindowInternalGetPrintersFunction::OnGetPrinterList,
-                 this));
+  DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
+
+  base::PostTaskAndReplyWithResult(
+        content::BrowserThread::GetBlockingPool(), FROM_HERE,
+        base::Bind(&EnumeratePrintersOnBlockingPoolThread),
+        base::Bind(&NwCurrentWindowInternalGetPrintersFunction::OnGetPrinterList,
+                   this));
   return true;
 }
 
@@ -659,7 +678,7 @@ bool NwCurrentWindowInternalSetPrintSettingsInternalFunction::RunNWSync(base::Li
     return false;
   base::Value* spec = NULL;
   EXTENSION_FUNCTION_VALIDATE(args_->Get(0, &spec) && spec);
-  if (!spec->IsType(base::Value::TYPE_DICTIONARY))
+  if (!spec->IsType(base::Value::Type::DICTIONARY))
     return false;
   const base::DictionaryValue* dict = static_cast<const base::DictionaryValue*>(spec);
   bool auto_print;
