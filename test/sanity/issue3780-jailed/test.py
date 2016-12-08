@@ -28,6 +28,6 @@ try:
     devtools_type_in_console(driver, 'location.pathname\n')
     pathname = driver.find_element_by_css_selector('.console-user-command-result .console-message-text .object-value-string').get_attribute('textContent')
     print pathname
-    assert (pathname == '/child.html')
+    assert ('/child.html' in pathname)
 finally:
     driver.quit()
