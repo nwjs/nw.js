@@ -7,6 +7,7 @@
     Starting from 0.17, we switched to the new build configuration system GN and Ninja in Chromium upstream. The Node.js in NW is still build with GYP/Ninja
     This document is written for latest **NW 0.13** or later. For legacy build instructions, please read the [wiki page](https://github.com/nwjs/nw.js/wiki/Building-nw.js) on GitHub.
     See our buildbot for official build configuration and steps: http://buildbot-master.nwjs.io:8010/waterfall
+    Debug version should be built with component build configuration. See the [discussion in upstream](https://groups.google.com/a/chromium.org/d/msg/chromium-dev/LWRR3fMlvQ4/qos4EaBtBgAJ).
 
 ## Prerequisites
 
@@ -79,7 +80,7 @@ is_debug=false
 is_component_ffmpeg=true
 target_cpu="x64"
 ````
-We support component build: `is_component_build = true` for faster development cycle
+We support component build: `is_component_build = true` for faster development cycle. It should be used when you are trying to build debug version.
 
 See the upstream documentation for the mapping between GN and GYP flags: https://chromium.googlesource.com/chromium/src/+/master/tools/gn/docs/cookbook.md#Variable-mappings
 
