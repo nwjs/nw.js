@@ -1,3 +1,11 @@
+0.19.1 / 12-09-2016
+===================
+- Update Node.js to [7.2.1](https://nodejs.org/en/blog/release/v7.2.1/)
+- Fix: Screen flickering in fullscreen [(#5477)](https://github.com/nwjs/nw.js/issues/5477)
+- Fix: ship nacl_irt_x86_64.nexe and nacl64.exe for win-ia32 [(#5524)](https://github.com/nwjs/nw.js/issues/5524)
+- Fix: nw-gyp build failure with UNICODE set [(nw-gyp#100)](https://github.com/nwjs/nw-gyp/issues/100)
+- [docs] building Node in nw19
+
 0.19.0 / 12-02-2016
 ===================
 - Update Chromium to [55.0.2883.75](https://googlechromereleases.blogspot.com/2016/12/stable-channel-update-for-desktop.html)
