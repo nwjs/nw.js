@@ -17,10 +17,11 @@ time.sleep(1)
 try:
     print driver.current_url
     wait_window_handles(driver, 2)
-    print 'close windows in reversed order'
-    for handle in reversed(driver.window_handles):
-        driver.switch_to_window(handle)
-        driver.close()
+    switch_to_devtools(driver, None, True)
+    driver.close()
+    wait_window_handles(driver, 1)
+    driver.switch_to_window(driver.window_handles[0])
+    driver.close()
         
     time.sleep(3) # wait for quit
     assert(no_live_process(driver))
