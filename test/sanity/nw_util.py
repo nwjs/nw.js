@@ -78,7 +78,7 @@ def switch_to_app(driver, window_handle=None):
 
     raise Exception('No app window found.')
 
-def switch_to_devtools(driver, devtools_window=None):
+def switch_to_devtools(driver, devtools_window=None, skip_exception=False):
     def wait_for_devtools_ready():
         # necessary compatible for older alphaN
         # where devtools is loaded in an iframe
@@ -100,10 +100,14 @@ def switch_to_devtools(driver, devtools_window=None):
         raise Exception('Provided window handle is not a devtools window. %s' % driver.current_url)
 
     for handle in driver.window_handles:
-        driver.switch_to_window(handle)
-        if driver.current_url.startswith('chrome-devtools://'):
-            wait_for_devtools_ready()
-            return
+        try:
+            driver.switch_to_window(handle)
+            if driver.current_url.startswith('chrome-devtools://'):
+                wait_for_devtools_ready()
+                return
+        except selenium.common.exceptions.WebDriverException:
+            if skip_exception:
+                pass
 
     raise Exception('No devtools window found.')
 

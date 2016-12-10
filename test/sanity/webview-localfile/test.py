@@ -41,15 +41,30 @@ try:
     result = driver.find_element_by_id('result').get_attribute('innerHTML')
     print result
     assert('success' in result)
+    time.sleep(1)
+    print 'checking titles to ensure 1.html is not loaded in untrusted webview'
+    counter = 0
+    for handle in driver.window_handles:
+        driver.switch_to_window(handle)
+        title = driver.title
+        print 'title: ' + title
+        if 'title of 1.html' in title:
+            counter = counter + 1
+    assert(counter == 1)
+    print 'launch cdt'
     driver.switch_to_window('main')
     driver.find_element_by_tag_name('button').click() #launch cdt
-    time.sleep(3)
-    print 'switching to wv2'
-    driver.switch_to_window(driver.window_handles[2]) #switch to wv2
-    print 'driver.title: ' + driver.title
-    assert('title of 1.html' != driver.title)
-    driver.switch_to_window(driver.window_handles[1])
-    time.sleep(2)
+    counter = 15
+    while counter > 0:
+        try:
+            print 'switch to cdt'
+            switch_to_devtools(driver, None, True)
+            break
+        except selenium.common.exceptions.WebDriverException:
+            pass
+        time.sleep(1)
+        counter = counter - 1
+
     print 'click Elements panel'
     devtools_click_tab(driver, 'elements')
     print 'find h1'
