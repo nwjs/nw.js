@@ -10,6 +10,7 @@
     'schema_files': [
       'nw_object.idl',
       'nw_app.idl',
+      'nw_auto_updater.idl',
       'nw_window.idl',
       'nw_clipboard.idl',
       'nw_menu.idl',

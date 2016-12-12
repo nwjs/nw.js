@@ -37,8 +37,46 @@
         },
       },
     },
+    'conditions': [
+      ['OS=="mac"', {
+        'mac_framework_dirs': [
+            '<(DEPTH)/../content/nw/external_binaries',
+        ],
+      }],
+    ],
+
   },
   'targets': [
+    {
+      'target_name': 'nw_autoupdater',
+      'type': 'static_library',
+      'dependencies': [
+        '<(DEPTH)/base/base.gyp:base',
+      ],
+      'sources': [
+        'src/browser/auto_updater.h',
+        'src/browser/auto_updater.cc',
+        'src/browser/auto_updater_mac.mm',
+      ],
+      'conditions': [
+        ['OS == "mac"', {
+          'link_settings': {
+            'libraries': [
+              'external_binaries/Squirrel.framework',
+              'external_binaries/ReactiveCocoa.framework',
+              'external_binaries/Mantle.framework',
+            ],
+          },
+          'xcode_settings': {
+            'OTHER_CFLAGS': [
+              '-Wno-error=unused-command-line-argument',
+              '-fobjc-runtime=macosx-10.8',
+              '-fobjc-weak',
+            ],
+          },
+        }],
+      ],
+    },
     {
       'target_name': 'nw_base',
       'type': '<(component)',
@@ -71,6 +109,7 @@
         '<(DEPTH)/third_party/zlib/zlib.gyp:minizip',
         '<(DEPTH)/skia/skia.gyp:skia',
         'nw_base',
+        'nw_autoupdater',
         '<(DEPTH)/content/nw/src/api/api.gyp:nw_api',
         '<(DEPTH)/content/nw/src/api/api_registration.gyp:nw_api_registration',
         '<(DEPTH)/extensions/browser/api/api_registration.gyp:extensions_api_registration',
@@ -107,6 +146,8 @@
         'src/api/object_manager.h',
         'src/api/object_manager_factory.cc',
         'src/api/object_manager_factory.h',
+        'src/api/auto_updater/api_auto_updater.cc',
+        'src/api/auto_updater/api_auto_updater.h',
         'src/api/base/base.cc',
         'src/api/base/base.h',
         'src/api/menu/menu.cc',
@@ -574,5 +615,10 @@
         },
     }
   ],
+  'xcode_settings': {
+    'LD_RUNPATH_SEARCH_PATHS': [
+      '@loader_path/..',
+    ],
+  },
 }
 

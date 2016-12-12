@@ -3,6 +3,10 @@ import("//build/toolchain/toolchain.gni")
 if (is_mac) {
   import("//build/util/branding.gni")
   chrome_framework_name = chrome_product_full_name + " Framework"
+  cflags = [
+    "-F",
+    "../../content/nw/external_binaries",
+  ]
 }
 import("//build/util/version.gni")
 
@@ -12,7 +16,30 @@ group("nwjs") {
     "//third_party/ffmpeg:ffmpeg"
   ]
   if (is_mac) {
-    deps += [ ":copy_ffmpeg" ]
+    deps += [ ":copy_ffmpeg", ":copy_external_binaries" ]
+  }
+}
+
+static_library("nw_autoupdater") {
+  deps = [
+    "//base",
+  ]
+  sources = [
+    "src/browser/auto_updater.h",
+    "src/browser/auto_updater.cc",
+    "src/browser/auto_updater_mac.mm",
+  ]
+  if (is_mac) {
+    libs = [
+      "Squirrel.framework",
+      "ReactiveCocoa.framework",
+      "Mantle.framework",
+    ]
+    cflags_objcc = [
+      "-Wno-error=unused-command-line-argument",
+      "-fobjc-runtime=macosx-10.8",
+      "-fobjc-weak",
+    ]
   }
 }
 
@@ -92,6 +119,8 @@ nw_chrome_browser_sources = [
         "src/api/object_manager.h",
         "src/api/object_manager_factory.cc",
         "src/api/object_manager_factory.h",
+        "src/api/auto_updater/api_auto_updater.cc",
+        "src/api/auto_updater/api_auto_updater.h",
         "src/api/base/base.cc",
         "src/api/base/base.h",
         "src/api/menu/menu.cc",
@@ -121,6 +150,7 @@ static_library("nw_browser") {
     "//third_party/zlib:minizip",
     "//skia",
     ":nw_base",
+    ":nw_autoupdater",
     "//content/nw/src/api:nw_api",
     "//content/nw/src/api:nw_api_registration",
     "//third_party/protobuf:protobuf_lite",
@@ -255,6 +285,14 @@ if (is_mac) {
       "//chrome",
       "//third_party/ffmpeg:ffmpeg"
     ]
+  }
+  copy("copy_external_binaries") {
+    sources = [
+      "external_binaries/Squirrel.framework",
+      "external_binaries/ReactiveCocoa.framework",
+      "external_binaries/Mantle.framework",
+    ]
+    outputs = [ "$root_out_dir/$chrome_product_full_name.app/Contents/Versions/$chrome_version_full/{{source_file_part}}" ]
   }
 }
 

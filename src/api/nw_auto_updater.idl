@@ -1,0 +1,19 @@
+// Copyright 2016 The NW.js Authors. All rights reserved.
+// Use of this source code is governed by a MIT-style license that can be
+// found in the LICENSE file.
+
+// nw AutoUpdater API
+[implemented_in="content/nw/src/api/auto_updater/api_auto_updater.h"]
+namespace nw.AutoUpdater {
+  interface Events {
+    static void onError(DOMString msg);
+    static void onCheckingForUpdate();
+    static void onUpdateAvailable();
+    static void onUpdateNotAvailable();
+    static void onUpdateDownloaded(DOMString releaseNotes, DOMString releaseName, double releaseDate, DOMString updateURL);
+  };
+
+  interface Functions {
+    static DOMString[] NativeCallSync(DOMString method, DOMString param);
+  };
+};

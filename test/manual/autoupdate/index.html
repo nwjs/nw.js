@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>nwjs autoupdate</title>
+</head>
+<body>
+  <script>
+
+
+  function write(msg) {
+    document.getElementById("output").innerHTML += msg;
+  }
+  
+  function writeSuccess(id) {
+    var result = document.createElement('p');
+    result.setAttribute('id', 'result' + id);
+    result.innerHTML = 'success '+ id;
+    document.body.appendChild(result);
+  }
+  
+  function writeFailure(e, id) {
+    var result = document.createElement('p');
+    result.setAttribute('id', 'result' + id);
+    result.innerHTML = 'failure ' + id + ' [' + e + ']';
+    document.body.appendChild(result);
+  }
+
+  
+  function test1() {
+    const testId = 1;
+    nw.AutoUpdater.Init();
+    nw.AutoUpdater.on('error', function(msg){writeFailure(msg, testId)});
+    nw.AutoUpdater.on('update-downloaded', function(releaseNotes, releaseName, releaseDate, updateURL){
+	    write(releaseNotes);
+	    write(releaseName);
+	    write(releaseDate);
+	    write(updateURL);
+      nw.AutoUpdater.QuitAndInstall();
+    });
+    var fs = require('fs');
+    fs.writeFile("/tmp/nwjs.autoupdate.json", "{\"url\": \"file://"+nw.__dirname+"/nwjs.dummy.zip\",\"name\": \"nwjs autoupdate\",\"notes\": \"nwjs autoupdate\",\"pub_date\": \"2013-09-18T12:29:53+01:00\"}", function(err) {
+      if(err) {
+        writeFailure(err, testId);
+        return;
+      }
+      nw.AutoUpdater.SetFeedURL('file:///tmp/nwjs.autoupdate.json');
+      nw.AutoUpdater.CheckForUpdates();
+    });
+    
+  }
+  </script>
+  <button id="test1" onclick="test1()">test1</button>
+  <p id="output" />
+</body>
+</html>

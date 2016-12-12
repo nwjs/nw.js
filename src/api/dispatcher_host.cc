@@ -28,6 +28,7 @@
 #include "content/browser/web_contents/web_contents_impl.h"
 #include "content/nw/src/api/api_messages.h"
 #include "content/nw/src/api/app/app.h"
+#include "content/nw/src/api/auto_updater/api_auto_updater.h"
 #include "content/nw/src/api/base/base.h"
 #include "content/nw/src/api/clipboard/clipboard.h"
 #include "content/nw/src/api/event/event.h"
@@ -171,6 +172,8 @@ void DispatcherHost::OnAllocateObject(int object_id,
     objects_registry_.AddWithID(new Shortcut(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else if (type == "Screen") {
     objects_registry_.AddWithID(new EventListener(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
+  } else if (type == "AutoUpdater") {
+    objects_registry_.AddWithID(new EventListener(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else {
     LOG(ERROR) << "Allocate an object of unknown type: " << type;
     objects_registry_.AddWithID(new Base(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
@@ -263,6 +266,9 @@ void DispatcherHost::OnCallStaticMethodSync(
     return;
   } else if (type == "Screen") {
     nwapi::Screen::Call(this, method, arguments, result);
+    return;
+  } else if (type == "AutoUpdater") {
+    nwapi::AutoUpdater::Call(this, method, arguments, result);
     return;
   }
 

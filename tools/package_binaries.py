@@ -9,6 +9,7 @@ import shutil
 import sys
 import tarfile
 import zipfile
+import sys
 from hashlib import sha256
 
 from subprocess import call
@@ -353,15 +354,21 @@ def compress(from_dir, to_dir, fname, compress):
     _from = os.path.join(from_dir, fname)
     _to = os.path.join(to_dir, fname)
     if compress == 'zip':
-        z = zipfile.ZipFile(_to + '.zip', 'w', compression=zipfile.ZIP_DEFLATED)
-        if os.path.isdir(_from):
-            for root, dirs, files in os.walk(_from):
-                for f in files:
-                    _path = os.path.join(root, f)
-                    z.write(_path, _path.replace(from_dir+os.sep, ''))
+        if sys.platform.startswith('darwin'):
+            cwd = os.getcwd()
+            os.chdir(from_dir)
+            subprocess.check_output(['zip', '-r', '-y',  _to+'.zip', fname], stderr=subprocess.STDOUT, env=os.environ)
+            os.chdir(cwd)
         else:
-            z.write(_from, fname)
-        z.close()
+            z = zipfile.ZipFile(_to + '.zip', 'w', compression=zipfile.ZIP_DEFLATED)
+            if os.path.isdir(_from):
+                for root, dirs, files in os.walk(_from):
+                    for f in files:
+                        _path = os.path.join(root, f)
+                        z.write(_path, _path.replace(from_dir+os.sep, ''))
+            else:
+                z.write(_from, fname)
+            z.close()
     elif compress == 'tar.gz': # only for folders
         if not os.path.isdir(_from):
             print 'Will not create tar.gz for a single file: ' + _from
@@ -424,13 +431,13 @@ def make_packages(targets):
                 src = os.path.join(binaries_location, f)
                 dest = os.path.join(folder, f)
                 if os.path.isdir(src): # like nw.app
-                    shutil.copytree(src, dest)
+                    shutil.copytree(src, dest, True)
                 else:
                     shutil.copy(src, dest)
             compress(dist_dir, dist_dir, t['output'], t['compress'])
             # remove temp folders
             if (t.has_key('keep4test')) :
-                shutil.copytree(folder, nwfolder)
+                shutil.copytree(folder, nwfolder, True)
             
             shutil.rmtree(folder)
         else:
