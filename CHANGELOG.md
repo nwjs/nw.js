@@ -1,3 +1,8 @@
+0.19.2 / 12-12-2016
+===================
+- Update Chromium to [55.0.2883.87](https://googlechromereleases.blogspot.com/2016/12/stable-channel-update-for-desktop_9.html)
+- Fix crash when worker with Node support is closed
+
 0.19.1 / 12-09-2016
 ===================
 - Update Node.js to [7.2.1](https://nodejs.org/en/blog/release/v7.2.1/)
