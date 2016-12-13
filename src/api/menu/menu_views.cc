@@ -60,8 +60,7 @@ void Menu::Create(const base::DictionaryValue& option) {
   focus_manager_ = NULL;
   window_ = NULL;
 
-  is_global_menu_bar_ = false;
-  option.GetBoolean("global", &is_global_menu_bar_);
+  std::string type;
 
   menu_items_.empty();
 }

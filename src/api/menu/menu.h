@@ -135,8 +135,6 @@ class Menu : public Base {
   // rebuild the menu before next show.
   bool is_menu_modified_;
 
-  bool is_global_menu_bar_;
-
   std::unique_ptr<MenuDelegate> menu_delegate_;
   std::unique_ptr<ui::NwMenuModel> menu_model_;
 #endif
