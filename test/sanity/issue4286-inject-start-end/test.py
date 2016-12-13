@@ -13,8 +13,9 @@ driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_opt
 driver.implicitly_wait(5)
 time.sleep(1)
 try:
-    print driver.current_url
     wait_window_handles(driver, 2)
+    wait_switch_window_name(driver, 'index')
+    print driver.current_url
     result = wait_for_element_id(driver, 'inject_start')
     print 'inject_js_start: %s' % result
     assert('success' in result)
