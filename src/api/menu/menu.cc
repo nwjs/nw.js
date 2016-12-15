@@ -67,16 +67,20 @@ void Menu::Call(const std::string& method,
     arguments.GetInteger(1, &y);
     content::WebContents* web_contents = content::WebContents::FromRenderFrameHost(rvh);
     DCHECK(web_contents);
-    double zoom_factor = content::ZoomLevelToZoomFactor(
-      zoom::ZoomController::FromWebContents(web_contents)->GetZoomLevel());
-    if (zoom_factor > content::kMaximumZoomFactor) {
-      zoom_factor = content::kMaximumZoomFactor;
+    zoom::ZoomController* zoom_controller = zoom::ZoomController::FromWebContents(web_contents);
+
+    if (zoom_controller) {
+      double zoom_factor = content::ZoomLevelToZoomFactor(zoom_controller->GetZoomLevel());
+      if (zoom_factor > content::kMaximumZoomFactor) {
+        zoom_factor = content::kMaximumZoomFactor;
+      }
+      if (zoom_factor < content::kMinimumZoomFactor) {
+        zoom_factor = content::kMinimumZoomFactor;
+      }
+      x *= zoom_factor;
+      y *= zoom_factor;
     }
-    if (zoom_factor < content::kMinimumZoomFactor) {
-      zoom_factor = content::kMinimumZoomFactor;
-    }
-    x *= zoom_factor;
-    y *= zoom_factor;
+    
     Popup(x, y, rvh);
   } else if (method == "EnableShowEvent") {
     arguments.GetBoolean(0, &enable_show_event_);
