@@ -2,6 +2,9 @@ import time
 import os
 import subprocess
 import platform
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from nw_util import *
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -55,12 +58,24 @@ driver.implicitly_wait(5)
 time.sleep(1)
 try:
     print driver.current_url
-    driver.switch_to_frame(driver.find_element_by_id('test-frame'))
+    timeout = 10
+    ret = ''
+    elem_id = 'result'
+    while timeout > 0:
+        try:
+            driver.switch_to_frame(driver.find_element_by_tag_name("iframe"))
+            ret = driver.find_element_by_id(elem_id).get_attribute('innerHTML')
+            break
+        except selenium.common.exceptions.NoSuchElementException:
+            pass
+        time.sleep(1)
+        timeout = timeout - 1
+        if timeout <= 0:
+             raise Exception('Timeout when waiting for element' + elem_id)
     title = driver.execute_script('return document.title')
     print title
-    result = driver.find_element_by_id('result').get_attribute('innerHTML')
-    print result
-    assert('success' in result)
+    print ret
+    assert('success' in ret)
     driver.close()
 finally:
     driver.quit()
