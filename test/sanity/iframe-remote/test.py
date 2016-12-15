@@ -44,10 +44,22 @@ try:
     result = driver.find_element_by_id('res1').get_attribute('innerHTML')
     print result
     assert("ENABLED" in result)
-    driver.switch_to_frame(driver.find_element_by_tag_name("iframe"))
-    result2 = wait_for_element_id(driver, 'res2')
-    print result2
-    assert("ENABLED" in result2)
+    timeout = 10
+    ret = ''
+    elem_id = 'res2'
+    while timeout > 0:
+        try:
+            driver.switch_to_frame(driver.find_element_by_tag_name("iframe"))
+            ret = driver.find_element_by_id(elem_id).get_attribute('innerHTML')
+            break
+        except selenium.common.exceptions.NoSuchElementException:
+            pass
+        time.sleep(1)
+        timeout = timeout - 1
+        if timeout <= 0:
+             raise Exception('Timeout when waiting for element' + elem_id)
+    print ret
+    assert("ENABLED" in ret)
 finally:
     server.terminate()
     driver.quit()
