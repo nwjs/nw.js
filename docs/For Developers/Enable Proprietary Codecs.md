@@ -65,14 +65,6 @@ python tools/clang/scripts/update.py --if-needed
 ```bash
 python build/linux/sysroot_scripts/install-sysroot.py --running-as-hook
 ```
-* **[Mac]** Download **libc++-static** library in `third_party/libc++-static` by
-```bash
-download_from_google_storage --no_resume \
-                             --platform=darwin \
-                             --no_auth \
-                             --bucket chromium-libcpp \
-                             -s third_party/libc++-static/libc++.a.sha1
-```
 
 !!! tip "For Linux Developers"
     Please run `build/install-build-deps.sh` for the first time building FFmpeg DLL or NW.js before proceeding to the instructions below. You only have to run it once. This script will install the build dependencies automatically for you.
@@ -82,12 +74,10 @@ download_from_google_storage --no_resume \
 Replace `BUILD.gn` in the root of the source code with following:
 
 ```
-action("dummy") {
+group("dummy") {
   deps = [
     "//third_party/ffmpeg"
   ]
-  script = "dummy"
-  outputs = ["$target_gen_dir/dummy.txt"]
 }
 ```
 
