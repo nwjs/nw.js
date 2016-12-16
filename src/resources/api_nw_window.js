@@ -562,7 +562,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     });
     Object.defineProperty(NWWindow.prototype, 'isTransparent', {
       get: function() {
-        return this.appWindow.alphaEnabled;
+        return this.appWindow.alphaEnabled();
       }
     });
     Object.defineProperty(NWWindow.prototype, 'isKioskMode', {
