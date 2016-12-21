@@ -1,3 +1,15 @@
+0.19.3 / 12-21-2016
+===================
+- Update Node.js to [7.3.0](https://nodejs.org/en/blog/release/v7.3.0/)
+- Fix: Hang when https website with cert. error is loaded [(#5544)](https://github.com/nwjs/nw.js/issues/5544)
+- Fix: Webview freezes on almost any invalid certificate [(#5564)](https://github.com/nwjs/nw.js/issues/5564)
+- Fix: Flash needs manual intervention and control-click not working [(#5548)](https://github.com/nwjs/nw.js/issues/5548)
+- Fix: permission warning and crash of chrome identity app [(#5552)](https://github.com/nwjs/nw.js/issues/5552)
+- Fix: popup menu in background page crashes nw [(#5513)](https://github.com/nwjs/nw.js/issues/5513)
+- Fix: nw.Window.isTransparent should be boolean [(#5561)](https://github.com/nwjs/nw.js/issues/5561)
+- Fix: [test] race condition in chromedriver
+- [docs] Add a recent tutorial
+
 0.19.2 / 12-12-2016
 ===================
 - Update Chromium to [55.0.2883.87](https://googlechromereleases.blogspot.com/2016/12/stable-channel-update-for-desktop_9.html)
