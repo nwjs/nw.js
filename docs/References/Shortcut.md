@@ -86,7 +86,7 @@ List of supported keys:
 * `Semicolon` or `;`
 * `Quote` or `'`
 * `BracketLeft` or `[`
-* `BracketRight` or `[`
+* `BracketRight` or `]`
 * `Escape`
 * [DOM Level 3 W3C KeyboardEvent Code Values](http://www.w3.org/TR/DOM-Level-3-Events-code/)
 
