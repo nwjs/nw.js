@@ -6,13 +6,16 @@ if (is_mac) {
 }
 import("//build/util/version.gni")
 
-group("nwjs") {
-  deps = [
-    "//chrome",
-    "//third_party/ffmpeg:ffmpeg"
-  ]
-  if (is_mac) {
-    deps += [ ":copy_ffmpeg" ]
+if (is_mac) {
+  group("nwjs") {
+    deps = [ ":copy_ffmpeg" ]
+  }
+} else {
+  group("nwjs") {
+    deps = [
+      "//chrome",
+      "//third_party/ffmpeg:ffmpeg"
+    ]
   }
 }
 
