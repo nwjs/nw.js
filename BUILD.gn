@@ -6,13 +6,16 @@ if (is_mac) {
 }
 import("//build/util/version.gni")
 
-group("nwjs") {
-  deps = [
-    "//chrome",
-    "//third_party/ffmpeg:ffmpeg"
-  ]
-  if (is_mac) {
-    deps += [ ":copy_ffmpeg" ]
+if (is_mac) {
+  group("nwjs") {
+    deps = [ ":copy_ffmpeg" ]
+  }
+} else {
+  group("nwjs") {
+    deps = [
+      "//chrome",
+      "//third_party/ffmpeg:ffmpeg"
+    ]
   }
 }
 
@@ -340,7 +343,8 @@ if (is_mac && !is_component_build) {
              "//v8:nwjc",
              "//chrome/test/chromedriver:chromedriver",
              "//third_party/ffmpeg:ffmpeg",
-             "//chrome:nw_sym_archive"
+             "//chrome:nw_sym_archive",
+             ":nwjs"
              ]
   }
 }
@@ -422,7 +426,7 @@ if (!is_component_build) {
       "-m", "$package_mode",
       "-i", "$icudat_path"
     ]
-    deps = [ "//components/resources:about_credits_nw", ":dump" ]
+    deps = [ "//components/resources:about_credits_nw", ":dump", ":nwjs" ]
     if (nwjs_sdk && (is_mac || is_linux)) {
       deps += [ "//breakpad:minidump_stackwalk" ]
     }
