@@ -1,3 +1,7 @@
+0.19.4 / 12-30-2016
+===================
+- Fix: crash in ServiceWorker in webview
+
 0.19.3 / 12-21-2016
 ===================
 - Update Node.js to [7.3.0](https://nodejs.org/en/blog/release/v7.3.0/)
