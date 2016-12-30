@@ -347,7 +347,8 @@ if (is_mac && !is_component_build) {
              "//v8:nwjc",
              "//chrome/test/chromedriver:chromedriver",
              "//third_party/ffmpeg:ffmpeg",
-             "//chrome:nw_sym_archive"
+             "//chrome:nw_sym_archive",
+             ":nwjs"
              ]
   }
 }
@@ -433,7 +434,7 @@ if (!is_component_build) {
       "-m", "$package_mode",
       "-i", "$icudat_path"
     ]
-    deps = [ "//components/resources:about_credits_nw" ]
+    deps = [ "//components/resources:about_credits_nw", ":dump", ":nwjs" ]
     if (nwjs_sdk && (is_mac || is_linux)) {
       deps += [ "//third_party/breakpad:minidump_stackwalk" ]
     }
