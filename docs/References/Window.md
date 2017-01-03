@@ -480,7 +480,7 @@ Emitted when the window is fully loaded, this event behaves the same with `windo
 Emitted when the document object in this window or a child iframe is available, after all files are loaded, but before DOM is constructed or any script is run.
 It will not be fired on the new window being created with nw.Window.open(): the callback of that function will be fired at the same point of this event.
 
-See `inject-js-start` in [Manifest-format](Manifest Format.md#inject-js-start).
+See `inject_js_start` in [Manifest-format](Manifest Format.md#inject_js_start).
 
 ## Event: document-end(frame)
 
@@ -488,7 +488,7 @@ See `inject-js-start` in [Manifest-format](Manifest Format.md#inject-js-start).
  
 Emitted when the document object in this window or a child iframe is unloaded, but before the `onunload` event is emitted.
 
-See `inject-js-end` in [[Manifest-format]]
+See `inject_js_end` in [Manifest-format](Manifest Format.md#inject_js_end)
 
 ## Event: focus
 
