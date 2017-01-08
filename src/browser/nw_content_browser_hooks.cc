@@ -53,7 +53,8 @@ namespace nw {
 namespace {
 
 bool g_pinning_renderer = true;
-
+bool g_in_webview_apply_attr = false;
+bool g_in_webview_apply_attr_allow_nw = false;
 } //namespace
 
 #if defined(OS_MACOSX)
@@ -188,6 +189,17 @@ bool PinningRenderer() {
 
 void SetPinningRenderer(bool pin) {
   g_pinning_renderer = pin;
+}
+
+void SetInWebViewApplyAttr(bool flag, bool allow_nw) {
+  g_in_webview_apply_attr = flag;
+  g_in_webview_apply_attr_allow_nw = allow_nw;
+}
+
+bool GetInWebViewApplyAttr(bool* allow_nw) {
+  if (allow_nw)
+    *allow_nw = g_in_webview_apply_attr_allow_nw;
+  return g_in_webview_apply_attr;
 }
 
 } //namespace nw

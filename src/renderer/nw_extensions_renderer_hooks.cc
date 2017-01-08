@@ -78,7 +78,7 @@ namespace manifest_keys = extensions::manifest_keys;
 namespace nw {
 
 namespace {
-std::string g_extension_id;
+std::string g_extension_id, g_extension_root;
 extensions::Dispatcher* g_dispatcher = NULL;
 bool g_skip_render_widget_hidden = false;
 
@@ -150,7 +150,7 @@ void WebWorkerStartThreadHook(blink::Frame* frame, const char* path, std::string
       g_dispatcher->script_context_set().GetByV8Context(v8_context);
     if (!script_context || !script_context->extension())
       return;
-    root_path = script_context->extension()->path().AsUTF8Unsafe();
+    root_path = g_extension_root;
   } else {
     root_path = *script;
   }
@@ -172,18 +172,27 @@ void WebWorkerStartThreadHook(blink::Frame* frame, const char* path, std::string
 void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   v8::Isolate* isolate = context->isolate();
 
-  if (g_extension_id.empty())
-    g_extension_id = context->extension()->id();
+  const Extension* extension = context->extension();
+  std::string extension_root;
+
+  if (g_extension_id.empty() && extension)
+    g_extension_id = extension->id();
 
   bool nodejs_enabled = true;
-  context->extension()->manifest()->GetBoolean(manifest_keys::kNWJSEnableNode, &nodejs_enabled);
+  const base::CommandLine& command_line =
+    *base::CommandLine::ForCurrentProcess();
+  bool worker_support = command_line.HasSwitch(switches::kEnableNodeWorker);
+
+  if (extension) {
+    extension->manifest()->GetBoolean(manifest_keys::kNWJSEnableNode, &nodejs_enabled);
+    extension_root = extension->path().AsUTF8Unsafe();
+  } else {
+    extension_root = command_line.GetSwitchValuePath(switches::kNWAppPath).AsUTF8Unsafe();
+  }
+  g_extension_root = extension_root;
 
   if (!nodejs_enabled)
     return;
-
-  const base::CommandLine& command_line =
-      *base::CommandLine::ForCurrentProcess();
-  bool worker_support = command_line.HasSwitch(switches::kEnableNodeWorker);
 
   blink::set_web_worker_hooks((void*)WebWorkerStartThreadHook);
   g_web_worker_thread_new_fn = (VoidPtr2Fn)WebWorkerNewThreadHook;
@@ -191,10 +200,15 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
     g_setup_nwnode_fn(0, nullptr, worker_support);
 
   bool mixed_context = false;
-  context->extension()->manifest()->GetBoolean(manifest_keys::kNWJSMixedContext, &mixed_context);
+  bool node_init_run = false;
+  bool nwjs_guest = nwjs_guest = command_line.HasSwitch("nwjs-guest");
+  
+  if (extension)
+    extension->manifest()->GetBoolean(manifest_keys::kNWJSMixedContext, &mixed_context);
   v8::Local<v8::Context> node_context;
   g_get_node_context_fn(&node_context);
   if (node_context.IsEmpty() || mixed_context) {
+    node_init_run = true;
     {
       int argc = 1;
       char argv0[] = "node";
@@ -203,7 +217,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
       argv[1] = argv[2] = nullptr;
       std::string main_fn;
 
-      if (context->extension()->manifest()->GetString("node-main", &main_fn)) {
+      if (extension && extension->manifest()->GetString("node-main", &main_fn)) {
         argc = 2;
         argv[1] = strdup(main_fn.c_str());
       }
@@ -231,13 +245,13 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
         script->Run();
       }
 
-      if (context->extension()->manifest()->GetString(manifest_keys::kNWJSInternalMainFilename, &main_fn)) {
+      if (extension && extension->manifest()->GetString(manifest_keys::kNWJSInternalMainFilename, &main_fn)) {
         v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate,
          ("global.__filename = '" + main_fn + "';").c_str()));
         script->Run();
       }
       {
-        std::string root_path = context->extension()->path().AsUTF8Unsafe();
+        std::string root_path = extension_root;
 #if defined(OS_WIN)
         base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
 #endif
@@ -247,12 +261,12 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
         script->Run();
       }
       bool content_verification = false;
-      if (context->extension()->manifest()->GetBoolean(manifest_keys::kNWJSContentVerifyFlag,
+      if (extension && extension->manifest()->GetBoolean(manifest_keys::kNWJSContentVerifyFlag,
                                                        &content_verification) && content_verification) {
         v8::Local<v8::Script> script =
           v8::Script::Compile(v8::String::NewFromUtf8(isolate,
                                                       (std::string("global.__nwjs_cv = true;") +
-                                                       "global.__nwjs_ext_id = '" + context->extension()->id() + "';").c_str()));
+                                                       "global.__nwjs_ext_id = '" + extension->id() + "';").c_str()));
 
         script->Run();
       }
@@ -287,6 +301,11 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
     v8::Local<v8::Value> key = symbols->Get(i);
     v8::Local<v8::Value> val = node_global->Get(key);
     nw->Set(key, val);
+    if (nwjs_guest && !node_init_run) {
+      //running in nwjs webview and node was initialized in
+      //chromedriver automation extension
+      context->v8_context()->Global()->Set(key, val);
+    }
   }
   g_context->Exit();
 
@@ -295,7 +314,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
     v8::MicrotasksScope microtasks(isolate, v8::MicrotasksScope::kDoNotRunMicrotasks);
     v8::Context::Scope cscope(context->v8_context());
     // Make node's relative modules work
-    std::string root_path = context->extension()->path().AsUTF8Unsafe();
+    std::string root_path = extension_root;
     GURL frame_url = ScriptContext::GetDataSourceURLForFrame(frame);
     std::string url_path = frame_url.path();
 #if defined(OS_WIN)
@@ -421,8 +440,7 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
   frame->setNodeJS(true);
   std::string path = effective_document_url.path();
   v8::Local<v8::Context> v8_context = frame->mainWorldScriptContext();
-  std::string root_path = extension->path().AsUTF8Unsafe();
-  base::FilePath root(extension->path());
+  std::string root_path = g_extension_root;
   if (!v8_context.IsEmpty()) {
     v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
     v8::Context::Scope cscope(v8_context);

@@ -113,6 +113,8 @@ void DocumentFinishHook(blink::WebLocalFrame* frame,
 #endif
  void SetMainExtensionId(const std::string& id);
  const std::string& GetMainExtensionId();
+ void SetInWebViewApplyAttr(bool, bool);
+ bool GetInWebViewApplyAttr(bool* allow_nw);
 }
 
 #endif

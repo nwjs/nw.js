@@ -68,6 +68,9 @@ CONTENT_EXPORT void SetPinningRenderer(bool pin);
 // content/nw/src/api/menuitem/menuitem_views.cc
 CONTENT_EXPORT bool GetImage(Package* package, const base::FilePath& icon_path, gfx::Image* image);
 
+CONTENT_EXPORT void SetInWebViewApplyAttr(bool, bool);
+CONTENT_EXPORT bool GetInWebViewApplyAttr(bool* allow_nw);
+
 //
 // implemented in nw_extensions_browser_hooks.cc
 //
