@@ -30,7 +30,7 @@ idx = 1
 def click_expect(expected):
     global idx
     driver.find_element_by_id('get-cookie').click()
-    result = driver.find_element_by_id('result-%s' % idx).get_attribute('innerHTML')
+    result = wait_for_element_id(driver, 'result-%s' % idx)
     idx += 1
     print result
     assert(expected in result)
