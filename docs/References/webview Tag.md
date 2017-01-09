@@ -39,3 +39,7 @@ Add the following permission to the manifest:
 ```
 
 and add 'partition="trusted"' attribute to the webview tag.
+
+### Node.js support in webview
+
+To enable Node.js support in WebView, add the `allownw` attribute to the webview tag. Then Node.js will be turned on, no matter it loads local file or remote site. Use this feature with caution because webview is normally supposed to load untrusted contents.
