@@ -1,0 +1,19 @@
+{
+  "name": "Furious Scrolling",
+  "description": "Test app for webview element.",
+  "version": "0.1",
+
+  "main": "background.js",
+
+  "window": {
+    "show": false
+  },
+  "webview": {
+    "partitions": [
+      {
+          "name": "trusted*",
+          "accessible_resources": ["*"]
+      }
+    ]
+  } 
+}
