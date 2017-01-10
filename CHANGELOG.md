@@ -1,3 +1,11 @@
+0.19.5 / 01-10-2017
+===================
+- Update Node.js to [7.4.0](https://nodejs.org/en/blog/release/v7.4.0/)
+- Node.js integration is supported in webview [(#4780)](https://github.com/nwjs/nw.js/issues/4780)
+- Fix: Crash when accessing HTMLElement properties from node's vm module [(#4018)](https://github.com/nwjs/nw.js/issues/4018)
+- Fix: Linux wrong file permissions [(#5611)](https://github.com/nwjs/nw.js/issues/5611)
+- [docs] Node.js support in webview
+
 0.19.4 / 12-30-2016
 ===================
 - Fix: crash in ServiceWorker in webview
