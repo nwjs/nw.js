@@ -36,10 +36,10 @@ driver.implicitly_wait(5)
 time.sleep(1)
 try:
     print driver.current_url
-    #time.sleep(1000)
     wait_switch_window_name(driver, 'webview0')
     result = driver.find_element_by_id('ret').get_attribute('innerHTML')
     print result
     assert('version = v' in result)
 finally:
+    server.terminate()
     driver.quit()
