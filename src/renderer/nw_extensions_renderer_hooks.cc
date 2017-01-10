@@ -205,6 +205,9 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   
   if (extension)
     extension->manifest()->GetBoolean(manifest_keys::kNWJSMixedContext, &mixed_context);
+  // handle navigation in webview #5622
+  if (nwjs_guest)
+    mixed_context = true;
   v8::Local<v8::Context> node_context;
   g_get_node_context_fn(&node_context);
   if (node_context.IsEmpty() || mixed_context) {
