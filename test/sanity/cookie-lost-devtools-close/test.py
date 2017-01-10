@@ -48,7 +48,7 @@ try:
     wait_window_handles(driver, 2)
     click_expect('sid=1')
     print 'close devtools'
-    switch_to_devtools(driver, devtools_window=driver.window_handles[-1])
+    switch_to_devtools(driver)
     driver.close()
     driver.switch_to_window(driver.window_handles[0])
     wait_window_handles(driver, 1)
