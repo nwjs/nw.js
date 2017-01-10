@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>cookie-lost-remote-page</title>
+</head>
+<body>
+<button id="get-cookie" onclick="getcookie()">Get Cookie</button>
+<script>
+function getcookie() {
+  var h1 = document.createElement('h1');
+  h1.setAttribute('id', 'result');
+  h1.innerHTML = document.cookie;
+  document.body.appendChild(h1);
+}
+</script>  
+</body>
+</html>
