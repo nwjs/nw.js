@@ -54,36 +54,39 @@ driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_opt
 driver.implicitly_wait(5)
 time.sleep(1)
 try:
-    print driver.current_url
-    driver.switch_to_frame(driver.find_element_by_id('test-frame'))
-    title = driver.execute_script('return document.title')
-    print title
-    result = driver.find_element_by_id('result').get_attribute('innerHTML')
-    print result
-    assert('success' in result)
-    driver.close()
-finally:
-    driver.quit()
+    try:
+        print driver.current_url
+        driver.switch_to_frame(driver.find_element_by_id('test-frame'))
+        title = driver.execute_script('return document.title')
+        print title
+        result = driver.find_element_by_id('result').get_attribute('innerHTML')
+        print result
+        assert('success' in result)
+        driver.close()
+    finally:
+        driver.quit()
 
-# test without trust anchors
-pkg_without_trust_anchors = '''
+    # test without trust anchors
+    pkg_without_trust_anchors = '''
 {
-  "name": "test_additional_trust_anchors",
-  "main": "index.html"
+    "name": "test_additional_trust_anchors",
+    "main": "index.html"
 }
 '''
-write_file('package.json', pkg_without_trust_anchors)
+    write_file('package.json', pkg_without_trust_anchors)
 
-driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
-driver.implicitly_wait(5)
-time.sleep(1)
-try:
-    print driver.current_url
-    driver.switch_to_frame(driver.find_element_by_id('test-frame'))
-    title = driver.execute_script('return document.title')
-    print title
-    assert(not 'test.html' in title)
-    driver.close()
+    driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
+    driver.implicitly_wait(5)
+    time.sleep(1)
+    try:
+        print driver.current_url
+        driver.switch_to_frame(driver.find_element_by_id('test-frame'))
+        title = driver.execute_script('return document.title')
+        print title
+        assert(not 'test.html' in title)
+        driver.close()
+    finally:
+        driver.quit()
+
 finally:
     server.terminate()
-    driver.quit()
