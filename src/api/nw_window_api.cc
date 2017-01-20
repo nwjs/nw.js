@@ -26,6 +26,8 @@
 
 #include "content/nw/src/api/nw_current_window_internal.h"
 
+#include "chrome/browser/ui/webui/print_preview/print_preview_handler.h"
+
 #if defined(OS_WIN)
 #include <shobjidl.h>
 #include <dwmapi.h>
@@ -42,6 +44,9 @@
 
 #if defined(OS_LINUX)
 #include "chrome/browser/ui/libgtk2ui/gtk2_ui.h"
+#include "ui/views/widget/desktop_aura/desktop_window_tree_host_x11.h"
+#include "ui/aura/window.h"
+#include "content/nw/src/browser/global_menu_bar_x11.h"
 #endif
 
 #if defined(OS_LINUX) || defined(OS_WIN)
@@ -53,8 +58,6 @@ using nw::BrowserViewLayout;
 #if defined(OS_MACOSX)
 #include "content/nw/src/nw_content_mac.h"
 #endif
-
-#include "chrome/browser/ui/webui/print_preview/print_preview_handler.h"
 
 using content::RenderWidgetHost;
 using content::RenderWidgetHostView;
@@ -319,6 +322,7 @@ bool NwCurrentWindowInternalClearMenuFunction::RunAsync() {
   AppWindow* window = getAppWindow(this);
   if (!window) {
     error_ = kNoAssociatedAppWindow;
+    SendResponse(true);
     return false;
   }
 
@@ -327,6 +331,14 @@ bool NwCurrentWindowInternalClearMenuFunction::RunAsync() {
 #endif
 
 #if defined(OS_LINUX) || defined(OS_WIN)
+
+#if defined(OS_LINUX)
+  if (nw::GlobalMenuBarX11::IsGlobalMenuBarEnabled()) {
+    views::DesktopWindowTreeHostX11 *host = static_cast<views::DesktopWindowTreeHostX11*>(window->GetNativeWindow()->GetHost());
+    host->SetGlobalMenu(nullptr);
+  }
+#endif
+
   native_app_window::NativeAppWindowViews* native_app_window_views =
       static_cast<native_app_window::NativeAppWindowViews*>(
           window->GetBaseWindow());
@@ -340,6 +352,7 @@ bool NwCurrentWindowInternalClearMenuFunction::RunAsync() {
   native_app_window_views->layout_();
   native_app_window_views->SchedulePaint();
 #endif
+  SendResponse(true);
   return true;
 }
 
@@ -369,6 +382,16 @@ bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::ListValue* response
   native_app_window::NativeAppWindowViews* native_app_window_views =
       static_cast<native_app_window::NativeAppWindowViews*>(
           window->GetBaseWindow());
+  menu->UpdateKeys( native_app_window_views->widget()->GetFocusManager() );
+
+#if defined(OS_LINUX)
+  if (menu->is_global_menu_bar_ && nw::GlobalMenuBarX11::IsGlobalMenuBarEnabled()) {
+    views::DesktopWindowTreeHostX11 *host = static_cast<views::DesktopWindowTreeHostX11*>(window->GetNativeWindow()->GetHost());
+    host->SetGlobalMenu(menu->model());
+    response->Append(std::unique_ptr<base::ListValue>(new base::ListValue()));
+    return true;
+  }
+#endif
 
   MenuBarView* menubar = new MenuBarView();
   static_cast<BrowserViewLayout*>(native_app_window_views->GetLayoutManager())->set_menu_bar(menubar);
@@ -376,9 +399,9 @@ bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::ListValue* response
   menubar->UpdateMenu(menu->model());
   native_app_window_views->layout_();
   native_app_window_views->SchedulePaint();
-  menu->UpdateKeys( native_app_window_views->widget()->GetFocusManager() );
   response->Append(std::unique_ptr<base::ListValue>(new base::ListValue()));
 #endif
+
   return true;
 }
   
