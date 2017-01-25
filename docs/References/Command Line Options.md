@@ -41,6 +41,10 @@ Please note that binary modules of Node.js need to be thread-safe to be used in 
 
 When it's used, requestAnimationFrame() callback will continue to fire when window is minimized or hidden. It's pretty useful for game developer. When the argument is not used, it behaves in the same way as Chrome browser and has no side effects.
 
+## `--disable-cookie-encryption`
+
+By default, the cookie store on disk is encrypted in Chromium. Use this switch to disable the encryption for testing purpose (e.g. sharing the cookie store between different systems).
+
 ## `--enable-gcm`
 
 Enable the chrome.gcm API.
