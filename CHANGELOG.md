@@ -1,3 +1,14 @@
+0.20.0 / 01-26-2017
+===================
+- Update Chromium to [56.0.2924.76](https://chromereleases.googleblog.com/2017/01/stable-channel-update-for-desktop.html)
+- support disabling cookie encryption with '--disable-cookie-encryption'
+- Added copies option to print API [(#5482)](https://github.com/nwjs/nw.js/issues/5482)
+- Fix: session lost after open the develop tool and close it [(#5355)](https://github.com/nwjs/nw.js/issues/5355)
+- Fix: DOM setTimeout callbacks not running from Node vm context in webview [(#5622)](https://github.com/nwjs/nw.js/issues/5622)
+- [docs] Added documentation for the copies option in the printing API
+- [docs] Added docs for "Support for Mac App Store"
+- [docs] Added docs for '--disable-cookie-encryption'
+
 0.19.5 / 01-10-2017
 ===================
 - Update Node.js to [7.4.0](https://nodejs.org/en/blog/release/v7.4.0/)
