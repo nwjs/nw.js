@@ -1,3 +1,10 @@
+0.20.1 / 02-02-2017
+===================
+- Update Chromium to [56.0.2924.87](https://chromereleases.googleblog.com/2017/02/stable-channel-update-for-desktop.html)
+- Update Node.js to [v7.5.0](https://nodejs.org/en/blog/release/v7.5.0/)
+- Support disabling crash handler for single process mode with `--disable-crash-handler=true' [(#5624)](https://github.com/nwjs/nw.js/issues/5624)
+- [docs] Added documentation for `disable-crash-handler' switch
+
 0.20.0 / 01-26-2017
 ===================
 - Update Chromium to [56.0.2924.76](https://chromereleases.googleblog.com/2017/01/stable-channel-update-for-desktop.html)
