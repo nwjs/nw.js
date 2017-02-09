@@ -1,0 +1,5 @@
+{
+  "name": "issue5354-deprecate-single-instance",
+  "main": "index.html",
+  "single-instance": false
+}
