@@ -43,7 +43,7 @@ views::MenuItemView* MenuBarController::GetSiblingMenu(
   if (!menubar_->GetMenuButtonAtLocation(menubar_loc, &model, button))
     return NULL;
 
-  *has_mnemonics = false;
+  *has_mnemonics = true;
   *anchor = views::MENU_ANCHOR_TOPLEFT;
   master_->active_menu_model_ = model;
   if (!model_to_menu_map_[model]) {

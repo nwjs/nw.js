@@ -373,7 +373,7 @@ bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::ListValue* response
   MenuBarView* menubar = new MenuBarView();
   static_cast<BrowserViewLayout*>(native_app_window_views->GetLayoutManager())->set_menu_bar(menubar);
   native_app_window_views->AddChildView(menubar);
-  menubar->UpdateMenu(menu->model());
+  menubar->UpdateMenu(menu);
   native_app_window_views->layout_();
   native_app_window_views->SchedulePaint();
   menu->UpdateKeys( native_app_window_views->widget()->GetFocusManager() );

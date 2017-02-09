@@ -4,14 +4,22 @@
 
 #include "content/nw/src/browser/menubar_view.h"
 
-
+#include "content/nw/src/api/menuitem/menuitem.h"
+#include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/browser/menubar_controller.h"
 #include "ui/base/models/menu_model.h"
 #include "ui/base/window_open_disposition.h"
+#include "ui/gfx/canvas.h"
 #include "ui/gfx/text_elider.h"
+#include "ui/gfx/text_utils.h"
 #include "ui/views/controls/button/menu_button.h"
+#include "ui/views/controls/label.h"
 #include "ui/views/layout/box_layout.h"
 #include "ui/views/widget/widget.h"
+
+#if defined(OS_WIN)
+#include "ui/events/win/system_event_state_lookup.h"
+#endif
 
 using views::MenuRunner;
 
@@ -24,7 +32,7 @@ static const gfx::ElideBehavior kElideBehavior = gfx::ELIDE_TAIL;
 
 namespace nw {
 
-const char MenuBarView::kViewClassName[] = "BookmarkBarView";
+const char MenuBarView::kViewClassName[] = "MenuBarView";
 
 // MenuBarButton  -------------------------------------------------------
 
@@ -35,8 +43,14 @@ class MenuBarButton : public views::MenuButton {
   MenuBarButton(const base::string16& title,
                 views::MenuButtonListener* menu_button_listener,
                 bool show_menu_marker)
-      : MenuButton(title, menu_button_listener, show_menu_marker) {
+      : MenuButton(base::string16(), menu_button_listener, show_menu_marker),
+      title_(title) {
+    int pos, span;
+    SetText(gfx::RemoveAcceleratorChar(title, '&', &pos, &span));
+
     SetElideBehavior(kElideBehavior);
+    set_request_focus_on_press(true);
+    SetFocusForPlatform();
   }
 
   bool GetTooltipText(const gfx::Point& p,
@@ -51,8 +65,35 @@ class MenuBarButton : public views::MenuButton {
     SetEnabledTextColors(theme->GetSystemColor(ui::NativeTheme::kColorId_EnabledMenuItemForegroundColor));
   }
 
+  void OnPaint(gfx::Canvas* canvas) override {
+#if defined(OS_WIN)
+    bool paint_mnemonic = ui::win::IsAltPressed();
+#else
+    bool paint_mnemonic = true;
+#endif
+    if(paint_mnemonic)
+      PaintWithMnemonic(canvas);
+    else
+      views::MenuButton::OnPaint(canvas);
+  }
+
  private:
 
+  void PaintWithMnemonic(gfx::Canvas* canvas) {
+    // make labels rendering nothing
+    SkColor text_color = label()->enabled_color();
+    SetEnabledTextColors(SK_ColorTRANSPARENT);
+    views::MenuButton::OnPaint(canvas);
+    SetEnabledTextColors(text_color);
+
+    // draw text with underlines if ALT is down
+    canvas->DrawStringRectWithFlags(title_,
+                                    GetFontList(),
+                                    text_color,
+                                    GetContentsBounds(),
+                                    gfx::Canvas::TEXT_ALIGN_CENTER | gfx::Canvas::SHOW_PREFIX);
+  }
+  base::string16 title_;
   DISALLOW_COPY_AND_ASSIGN(MenuBarButton);
 };
 
@@ -63,18 +104,20 @@ MenuBarView::MenuBarView() {
 MenuBarView::~MenuBarView() {
 }
 
-void MenuBarView::UpdateMenu(ui::MenuModel* model) {
+void MenuBarView::UpdateMenu(Menu* menu) {
   RemoveAllChildViews(true);
-  InitView(model);
+  InitView(menu);
   Layout();
   PreferredSizeChanged();
   SchedulePaint();
 }
 
-void MenuBarView::InitView(ui::MenuModel* model) {
-  model_ = model;
+void MenuBarView::InitView(Menu* menu) {
+  model_ = menu->model();
   for (int i = 0; i < model_->GetItemCount(); i++) {
-    AddChildView(new MenuBarButton(model_->GetLabelAt(i), this, false));
+    MenuBarButton* button = new MenuBarButton(model_->GetLabelAt(i), this, false);
+    menu->menu_items_[i]->SetMenuBarButton(button);
+    AddChildView(button);
   }
 }
 
