@@ -140,6 +140,9 @@ var nwWrapEventsMap = {
 
 nw_internal.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
+  apiFunctions.setHandleRequest('forceCloseInternal', function() {
+    sendRequest.sendRequestSync('nw.currentWindowInternal.forceCloseInternal', arguments, this.definition.parameters, {})[0];
+  });
   apiFunctions.setHandleRequest('getZoom', function() {
     return sendRequest.sendRequestSync('nw.currentWindowInternal.getZoom', arguments, this.definition.parameters, {})[0];
   });
@@ -512,6 +515,11 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       // autoprint will be set to false in print_preview_handler.cc after printing is done
       // window.print will return immediately for PDF window #5002
     };
+    NWWindow.prototype.close = function(force) {
+      if (force) currentNWWindowInternal.forceCloseInternal();
+      this.appWindow.contentWindow.close();
+    };
+
     Object.defineProperty(NWWindow.prototype, 'x', {
       get: function() {
         return this.appWindow.outerBounds.left;
