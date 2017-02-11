@@ -11,7 +11,12 @@ int exit_code;
 base::string16 g_current_new_win_manifest;
 }
 
-Package* package() {
+Package* package(const base::FilePath* path) {
+  if (path) {
+    if (g_package)
+      delete g_package;
+    g_package = new Package(*path);
+  }
   return g_package;
 }
 

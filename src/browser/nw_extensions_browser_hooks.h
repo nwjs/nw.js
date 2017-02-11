@@ -32,7 +32,9 @@ namespace gfx {
 namespace nw {
 // browser
 // ref in extensions/common/file_util.cc
-void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* error);
+void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
+                              const base::FilePath& extension_path,
+                              std::string* error);
 // ref in extensions/browser/app_window/app_window.cc 
 void CalcNewWinParams(content::WebContents* new_contents, void* params,
                      std::string* nw_inject_js_doc_start,

@@ -203,7 +203,9 @@ bool RphGuestFilterURLHook(RenderProcessHost* rph, const GURL* url)  {
 typedef bool (*RphGuestFilterURLHookFn)(content::RenderProcessHost* rph, const GURL* url);
 CONTENT_EXPORT extern RphGuestFilterURLHookFn gRphGuestFilterURLHook;
 
-void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* error) {
+void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
+                              const base::FilePath& extension_path,
+                              std::string* error) {
   gRphGuestFilterURLHook = RphGuestFilterURLHook;
   if (!manifest)
     return;
@@ -211,7 +213,9 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* erro
   std::string main_url, bg_script, icon_path;
   base::Value *node_remote = NULL;
 
-  nw::Package* package = nw::package();
+  const base::CommandLine* cmdline = base::CommandLine::ForCurrentProcess();
+  nw::Package* package = cmdline->HasSwitch("nwjs-test-mode") ?
+    nw::package(&extension_path) : nw::package();
   manifest->SetBoolean(manifest_keys::kNWJSInternalFlag, true);
   if (error && !package->cached_error_content().empty()) {
     *error = package->cached_error_content();

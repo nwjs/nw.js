@@ -1,0 +1,28 @@
+{
+  "name": "PDFtest2",
+  "version": "1.0.0",
+  "main": "index.html",
+  "dependencies": {
+    "mime": "^1.3.4",
+    "wcjs-player": "^0.5.7"
+  },
+  "window": {
+    "icon": "fv.png",
+    "width": 1020,
+    "height": 900
+  },
+  "webkit": {
+    "plugins": true
+  },
+  "chromium-args": "--enable-logging --v=1",
+  "webview": {
+    "partitions": [
+      {
+        "name": "trusted",
+        "accessible_resources": [
+          "<all_urls>"
+        ]
+      }
+    ]
+  } 
+}
