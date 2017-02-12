@@ -39,6 +39,9 @@ void SetExitCode(int code) {
 }
 
 int ExitCodeHook() {
+  const base::CommandLine* cmdline = base::CommandLine::ForCurrentProcess();
+  if (cmdline->HasSwitch("nwjs-test-mode"))
+    return 0;
   return exit_code;
 }
 

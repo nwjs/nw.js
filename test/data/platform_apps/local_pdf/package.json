@@ -14,7 +14,6 @@
   "webkit": {
     "plugins": true
   },
-  "chromium-args": "--enable-logging --v=1",
   "webview": {
     "partitions": [
       {
