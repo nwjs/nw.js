@@ -8,7 +8,6 @@
 #include "chrome/browser/devtools/devtools_window.h"
 #include "chrome/browser/extensions/devtools_util.h"
 #include "chrome/browser/extensions/extension_service.h"
-#include "content/nw/src/api/nw_app.h"
 #include "content/nw/src/nw_base.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/render_view_host.h"
@@ -24,8 +23,6 @@
 #include "net/proxy/proxy_service.h"
 #include "net/url_request/url_request_context.h"
 #include "net/url_request/url_request_context_getter.h"
-
-using namespace extensions::nwapi::nw__app;
 
 namespace {
 void SetProxyConfigCallback(
@@ -153,27 +150,13 @@ NwAppSetProxyConfigFunction::~NwAppSetProxyConfigFunction() {
 }
 
 bool NwAppSetProxyConfigFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  net::ProxyConfig config;
-  std::unique_ptr<nwapi::nw__app::SetProxyConfig::Params> params(
-      nwapi::nw__app::SetProxyConfig::Params::Create(*args_));
-  EXTENSION_FUNCTION_VALIDATE(params.get());
-
-  std::string pac_url = params->pac_url.get() ? *params->pac_url : "";
-  if (!pac_url.empty()) {
-    if (pac_url == "<direct>")
-      config = net::ProxyConfig::CreateDirect();
-    else if (pac_url == "<auto>")
-      config = net::ProxyConfig::CreateAutoDetect();
-    else
-      config = net::ProxyConfig::CreateFromCustomPacURL(GURL(pac_url));
-  } else {
-    std::string proxy_config;
-    EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &proxy_config));
-    config.proxy_rules().ParseFromString(proxy_config);
-  }
+  std::string proxy_config;
+  EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &proxy_config));
 
   base::ThreadRestrictions::ScopedAllowWait allow_wait;
 
+  net::ProxyConfig config;
+  config.proxy_rules().ParseFromString(proxy_config);
   content::RenderProcessHost* render_process_host = GetSenderWebContents()->GetRenderProcessHost();
   net::URLRequestContextGetter* context_getter =
     render_process_host->GetStoragePartition()->GetURLRequestContext();

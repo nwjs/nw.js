@@ -62,12 +62,11 @@ These 2 functions crashes the browser process and the renderer process respectiv
 
 Query the proxy to be used for loading `url` in DOM. The return value is in the same format used in [PAC](http://en.wikipedia.org/wiki/Proxy_auto-config) (e.g. "DIRECT", "PROXY localhost:8080").
 
-## App.setProxyConfig(config, pac_url)
+## App.setProxyConfig(config)
 
 * `config` `{String}` Proxy rules
-* `pac_url` `{String}` PAC url
 
-Set the proxy config which the web engine will be used to request network resources or PAC url to detect proxy automatically.
+Set the proxy config which the web engine will be used to request network resources.
 
 Rule (copied from [`net/proxy/proxy_config.h`](https://github.com/nwjs/chromium.src/blob/nw13/net/proxy/proxy_config.h))
 

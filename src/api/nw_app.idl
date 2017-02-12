@@ -19,7 +19,7 @@ namespace nw.App {
     static void closeAllWindows();
     static void clearCache();
     static void clearAppCache(DOMString manifest_url);
-    static void setProxyConfig(DOMString config, optional DOMString pac_url);
+    static void setProxyConfig(DOMString config);
     [nocompile] static DOMString getProxyForURL(DOMString url);
     [nocompile] static void addOriginAccessWhitelistEntry(DOMString sourceOrigin, DOMString destinationProtocol, DOMString destinationHost, boolean allowDestinationSubdomains);
     [nocompile] static void removeOriginAccessWhitelistEntry(DOMString sourceOrigin, DOMString destinationProtocol, DOMString destinationHost, boolean allowDestinationSubdomains);
