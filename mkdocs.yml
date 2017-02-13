@@ -43,6 +43,7 @@ pages:
             - 'Use Flash Plugin': 'For Users/Advanced/Use Flash Plugin.md'
             - 'Use NaCl in NW.js': 'For Users/Advanced/Use NaCl in NW.js.md'
             - 'Use Native Node Modules': 'For Users/Advanced/Use Native Node Modules.md'
+            - 'Autoupdates': 'For Users/Advanced/Autoupdates.md'
     - 'References':
         - 'App': 'References/App.md'
         - 'Changes to DOM': 'References/Changes to DOM.md'
