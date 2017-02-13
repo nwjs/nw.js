@@ -1,3 +1,12 @@
+0.20.2 / 02-13-2017
+===================
+- Fix: Crash on right click after opening devtools by F12 [(#5659)](https://github.com/nwjs/nw.js/issues/5659)
+- Fix: nwsaveas attribute regression [(#5667)](https://github.com/nwjs/nw.js/issues/5667)
+- Fix: local pdf in webview not loading, gives ERR_BLOCKED_BY_CLIENT [(#5682)](https://github.com/nwjs/nw.js/issues/5682)
+- Fix: disable-crash-handler not working [(#5624)](https://github.com/nwjs/nw.js/issues/5624)
+- Fix: Signal app does not get rendered [(#5528)](https://github.com/nwjs/nw.js/issues/5528)
+- [doc] correct path of crash dumps in Windows [(#5669)](https://github.com/nwjs/nw.js/issues/5669)
+
 0.20.1 / 02-02-2017
 ===================
 - Update Chromium to [56.0.2924.87](https://chromereleases.googleblog.com/2017/02/stable-channel-update-for-desktop.html)
