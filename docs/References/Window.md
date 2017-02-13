@@ -297,8 +297,9 @@ See also [`win.showDevTools()`](#winshowdevtoolsiframe-callback).
 
 ## win.print(options)
 
-Print the web contents in the window without the need for user's interaction. `options` is a JSON object with the following fields:
+Print the web contents in the window with or without the need for user's interaction. `options` is a JSON object with the following fields:
 
+* `autoprint` `{Boolean}` whether to print without the need for user's interaction; optional, true by default
 * `printer` `{String}` the device name of the printer returned by `nw.Window.getPrinters()`; No need to set this when printing to PDF
 * `pdf_path` `{String}` the path of the output PDF when printing to PDF
 * `headerFooterEnabled` `{Boolean}` whether to enable header and footer
@@ -308,6 +309,7 @@ Print the web contents in the window without the need for user's interaction. `o
 * `marginsType` `{Integer}` 0 - Default; 1 - No margins; 2 - minimum; 3 - Custom, see `marginsCustom`.
 * `marginsCustom` `{JSON Object}` the custom margin setting; units are points.
 * `copies` `{Integer}` the number of copies to print.
+* `footerString` `{String}` string to replace the URL in the footer.
 
 `marginsCustom` example: `"marginsCustom":{"marginBottom":54,"marginLeft":70,"marginRight":28,"marginTop":32}`  
 `mediaSize` example: `'mediaSize':{'name': 'CUSTOM', 'width_microns': 279400, 'height_microns': 215900, 'custom_display_name':'Letter', 'is_default': true}`

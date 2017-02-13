@@ -504,7 +504,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
 
     NWWindow.prototype.print = function(option) {
       var _option = JSON.parse(JSON.stringify(option));
-      _option["autoprint"] = true;
+      if (!("autoprint" in _option))
+        _option["autoprint"] = true;
       if (option.pdf_path)
         _option["printer"] = "Save as PDF";
       currentNWWindowInternal.setPrintSettingsInternal(_option);
