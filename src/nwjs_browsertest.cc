@@ -227,35 +227,7 @@ class EmbedderWebContentsObserver : public content::WebContentsObserver {
   DISALLOW_COPY_AND_ASSIGN(EmbedderWebContentsObserver);
 };
 
-void ExecuteScriptWaitForTitle(content::WebContents* web_contents,
-                               const char* script,
-                               const char* title) {
-  base::string16 expected_title(base::ASCIIToUTF16(title));
-  base::string16 error_title(base::ASCIIToUTF16("error"));
-
-  content::TitleWatcher title_watcher(web_contents, expected_title);
-  title_watcher.AlsoWaitForTitle(error_title);
-  EXPECT_TRUE(content::ExecuteScript(web_contents, script));
-  EXPECT_EQ(expected_title, title_watcher.WaitAndGetTitle());
-}
-
 #if defined (USE_AURA)
-views::View* FindWebView(views::View* view) {
-  std::queue<views::View*> queue;
-  queue.push(view);
-  while (!queue.empty()) {
-    views::View* current = queue.front();
-    queue.pop();
-    if (std::string(current->GetClassName()).find("WebView") !=
-        std::string::npos) {
-      return current;
-    }
-
-    for (int i = 0; i < current->child_count(); ++i)
-      queue.push(current->child_at(i));
-  }
-  return nullptr;
-}
 
 // Waits for select control shown/closed.
 class SelectControlWaiter : public aura::WindowObserver,
@@ -302,11 +274,15 @@ class SelectControlWaiter : public aura::WindowObserver,
   DISALLOW_COPY_AND_ASSIGN(SelectControlWaiter);
 };
 
-// Simulate real click with delay between mouse down and up.
 class LeftMouseClick {
  public:
   explicit LeftMouseClick(content::WebContents* web_contents)
-      : web_contents_(web_contents) {}
+      : web_contents_(web_contents),
+        mouse_event_(blink::WebInputEvent::MouseDown,
+                     blink::WebInputEvent::NoModifiers,
+                     blink::WebInputEvent::TimeStampForTesting) {
+    mouse_event_.button = blink::WebMouseEvent::Button::Left;
+  }
 
   ~LeftMouseClick() {
     DCHECK(click_completed_);
@@ -315,11 +291,9 @@ class LeftMouseClick {
   void Click(const gfx::Point& point, int duration_ms) {
     DCHECK(click_completed_);
     click_completed_ = false;
-    mouse_event_.type = blink::WebInputEvent::MouseDown;
-    mouse_event_.button = blink::WebMouseEvent::Button::Left;
+    mouse_event_.setType(blink::WebInputEvent::MouseDown);
     mouse_event_.x = point.x();
     mouse_event_.y = point.y();
-    mouse_event_.modifiers = 0;
     const gfx::Rect offset = web_contents_->GetContainerBounds();
     mouse_event_.globalX = point.x() + offset.x();
     mouse_event_.globalY = point.y() + offset.y();
@@ -344,7 +318,7 @@ class LeftMouseClick {
 
  private:
   void SendMouseUp() {
-    mouse_event_.type = blink::WebInputEvent::MouseUp;
+    mouse_event_.setType(blink::WebInputEvent::MouseUp);
     web_contents_->GetRenderViewHost()->GetWidget()->ForwardMouseEvent(
         mouse_event_);
     click_completed_ = true;
@@ -789,14 +763,15 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
   }
 
   void OpenContextMenu(content::WebContents* web_contents) {
-    blink::WebMouseEvent mouse_event;
-    mouse_event.type = blink::WebInputEvent::MouseDown;
+    blink::WebMouseEvent mouse_event(blink::WebInputEvent::MouseDown,
+                                     blink::WebInputEvent::NoModifiers,
+                                     blink::WebInputEvent::TimeStampForTesting);
     mouse_event.button = blink::WebMouseEvent::Button::Right;
     mouse_event.x = 1;
     mouse_event.y = 1;
     web_contents->GetRenderViewHost()->GetWidget()->ForwardMouseEvent(
         mouse_event);
-    mouse_event.type = blink::WebInputEvent::MouseUp;
+    mouse_event.setType(blink::WebInputEvent::MouseUp);
     web_contents->GetRenderViewHost()->GetWidget()->ForwardMouseEvent(
         mouse_event);
   }
