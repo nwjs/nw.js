@@ -309,6 +309,7 @@ Print the web contents in the window with or without the need for user's interac
 * `marginsType` `{Integer}` 0 - Default; 1 - No margins; 2 - minimum; 3 - Custom, see `marginsCustom`.
 * `marginsCustom` `{JSON Object}` the custom margin setting; units are points.
 * `copies` `{Integer}` the number of copies to print.
+* `headerString` `{String}` string to replace the URL in the header.
 * `footerString` `{String}` string to replace the URL in the footer.
 
 `marginsCustom` example: `"marginsCustom":{"marginBottom":54,"marginLeft":70,"marginRight":28,"marginTop":32}`  
