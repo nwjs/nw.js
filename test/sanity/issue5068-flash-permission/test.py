@@ -61,14 +61,14 @@ copytree(nwdist, pkg1)
 if platform.system() == 'Darwin':
     # check nwjs version
     versions = subprocess.check_output([os.path.join(pkg1, 'nwjs.app', 'Contents', 'MacOS', 'nwjs'), '--version'])
-    pluginsrc = os.path.join(testdir, 'PepperFlash/mac')
+    pluginsrc = os.path.join(testdir, '../../data/PepperFlash/mac')
     appdest = os.path.join(pkg1, 'nwjs.app', 'Contents', 'Resources', 'app.nw')
     plugindest = os.path.join(pkg1, 'nwjs.app', 'Contents', 'Versions', versions.split()[1], 'nwjs Framework.framework', 'Internet Plug-Ins', 'PepperFlash')
 else:
     if platform.system() == 'Linux':
-        pluginsrc = os.path.join(testdir, "PepperFlash/linux_%s" % nw_arch())
+        pluginsrc = os.path.join(testdir, "../../data/PepperFlash/linux_%s" % nw_arch())
     else:
-        pluginsrc = os.path.join(testdir, "PepperFlash/win_%s" % nw_arch())
+        pluginsrc = os.path.join(testdir, "../../data/PepperFlash/win_%s" % nw_arch())
     appdest = pkg1
     plugindest = os.path.join(pkg1, 'PepperFlash')
 print "copying %s to %s" % (appdir, appdest)

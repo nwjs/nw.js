@@ -54,6 +54,9 @@
 #include "components/guest_view/browser/guest_view_manager_factory.h"
 #include "components/guest_view/browser/test_guest_view_manager.h"
 #include "content/public/browser/ax_event_notification_details.h"
+#include "content/public/browser/browser_child_process_host_iterator.h"
+#include "content/public/browser/child_process_data.h"
+#include "content/public/common/process_type.h"
 #include "content/public/browser/gpu_data_manager.h"
 #include "content/public/browser/interstitial_page.h"
 #include "content/public/browser/interstitial_page_delegate.h"
@@ -118,6 +121,7 @@ using task_manager::browsertest_util::MatchBackground;
 using task_manager::browsertest_util::MatchWebView;
 using task_manager::browsertest_util::WaitForTaskManagerRows;
 using ui::MenuModel;
+using content::BrowserThread;
 
 namespace {
 const char kEmptyResponsePath[] = "/close-socket";
@@ -862,9 +866,61 @@ protected:
 
 INSTANTIATE_TEST_CASE_P(NWJSWebViewTests, NWJSWebViewTest, testing::Bool());
 
+class NWAppTest : public extensions::PlatformAppBrowserTest {
+public:
+  NWAppTest() {}
+  ~NWAppTest() override {}
+  void SetUpCommandLine(base::CommandLine* command_line) override {
+    extensions::PlatformAppBrowserTest::SetUpCommandLine(command_line);
+    PathService::Get(base::DIR_SOURCE_ROOT, &test_data_dir_);
+    test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("content"));
+    test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("nw"));
+    test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("test"));
+    test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("data"));
+  }
+  static void CountPluginProcesses(int* count, const base::Closure& quit_task) {
+    for (content::BrowserChildProcessHostIterator iter; !iter.Done(); ++iter) {
+      if (iter.GetData().process_type == content::PROCESS_TYPE_PPAPI_PLUGIN)
+        (*count)++;
+    }
+    BrowserThread::PostTask(BrowserThread::UI, FROM_HERE, quit_task);
+  }
+  static void EnsureFlashProcessCount(int expected) {
+    int actual = 0;
+    scoped_refptr<content::MessageLoopRunner> runner =
+        new content::MessageLoopRunner;
+    BrowserThread::PostTask(
+        BrowserThread::IO,
+        FROM_HERE,
+        base::Bind(&CountPluginProcesses, &actual, runner->QuitClosure()));
+    runner->Run();
+    ASSERT_EQ(expected, actual);
+  }
+
+};
 
 void NWTimeoutCallback(const std::string& timeout_message) {
   base::MessageLoop::current()->QuitWhenIdle();
+}
+
+IN_PROC_BROWSER_TEST_F(NWAppTest, LocalFlash) {
+  std::string contents;
+  base::FilePath test_dir = test_data_dir_.Append(FILE_PATH_LITERAL("platform_apps")).Append(FILE_PATH_LITERAL("local_flash"));
+  base::FilePath tpl_path = test_dir.Append(FILE_PATH_LITERAL("index.tpl"));
+  base::FilePath swf_path = test_dir.Append(FILE_PATH_LITERAL("test.swf"));
+  base::FilePath index_html = test_dir.Append(FILE_PATH_LITERAL("index.html"));
+  ASSERT_TRUE(base::ReadFileToString(tpl_path, &contents));
+  GURL swf_url = net::FilePathToFileURL(swf_path);
+  base::ReplaceSubstringsAfterOffset(&contents, 0, "<swf_path>", swf_url.spec());
+  EXPECT_GT(base::WriteFile(index_html, contents.c_str(), contents.size()), 0);
+
+  LoadAndLaunchPlatformApp("local_flash", "Launched");
+  content::WebContents* web_contents = GetFirstAppWindowWebContents();
+  ASSERT_TRUE(web_contents);
+  base::string16 expected_title(base::ASCIIToUTF16("Loaded"));
+  content::TitleWatcher title_watcher(web_contents, expected_title);
+
+  EXPECT_EQ(expected_title, title_watcher.WaitAndGetTitle());
 }
 
 IN_PROC_BROWSER_TEST_P(NWJSWebViewTest, LocalPDF) {
