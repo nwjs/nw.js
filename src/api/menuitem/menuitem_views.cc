@@ -168,6 +168,8 @@ void MenuItem::SetChecked(bool checked) {
 }
 
 void MenuItem::SetSubmenu(Menu* menu) {
+  if (submenu_) submenu_->RemoveKeys();
+
   submenu_ = menu;
 }
 
@@ -190,6 +192,18 @@ void MenuItem::UpdateKeys(views::FocusManager *focus_manager){
       submenu_->UpdateKeys(focus_manager);
     }
   }
+}
+
+void MenuItem::RemoveKeys() {
+  if (!focus_manager_) return;
+
+  if (enable_shortcut_) {
+    focus_manager_->UnregisterAccelerator(accelerator_, this);
+  }
+  if (submenu_) {
+    submenu_->RemoveKeys();
+  }
+  focus_manager_ = NULL;
 }
 
 #if defined(OS_WIN) || defined(OS_LINUX)

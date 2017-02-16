@@ -85,6 +85,8 @@ void Menu::Append(MenuItem* menu_item) {
 }
 
 void Menu::Insert(MenuItem* menu_item, int pos) {
+  if (pos < 0 || pos > menu_items_.size()) return;
+
   if (menu_item->submenu_)
     menu_model_->InsertSubMenuAt(pos, menu_item->id(), menu_item->label_,
                                  menu_item->submenu_->menu_model_.get());
@@ -97,13 +99,17 @@ void Menu::Insert(MenuItem* menu_item, int pos) {
 
   is_menu_modified_ = true;
   menu_item->menu_ = this;
-
+  menu_items_.insert(menu_items_.begin() + pos, menu_item);
 }
 
 void Menu::Remove(MenuItem* menu_item, int pos) {
+  if (pos < 0 || pos >= menu_items_.size()) return;
+
   menu_model_->RemoveItemAt(pos);
+  menu_items_.erase(menu_items_.begin() + pos);
   is_menu_modified_ = true;
   menu_item->menu_ = NULL;
+  menu_item->RemoveKeys();
 }
 
 void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
@@ -142,12 +148,20 @@ void Menu::UpdateKeys(views::FocusManager *focus_manager){
     return ;
   } else {
     focus_manager_ = focus_manager;
-    std::vector<MenuItem*>::iterator it = menu_items_.begin();
-    while(it!=menu_items_.end()){
-      (*it)->UpdateKeys(focus_manager);
-      ++it;
+    for(auto item : menu_items_) {
+      item->UpdateKeys(focus_manager);
     }
   }
+}
+
+void Menu::RemoveKeys() {
+  if (!focus_manager_) return;
+
+  for(auto item: menu_items_) {
+    item->RemoveKeys();
+  }
+
+  focus_manager_ = NULL;
 }
 
 void Menu::UpdateStates() {

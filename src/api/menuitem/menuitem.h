@@ -76,9 +76,10 @@ class MenuItem : public Base {
 #endif
 
 #if defined(OS_WIN) || defined(OS_LINUX)
-   bool AcceleratorPressed(const ui::Accelerator& accelerator) override;
-   bool CanHandleAccelerators() const override;
+  bool AcceleratorPressed(const ui::Accelerator& accelerator) override;
+  bool CanHandleAccelerators() const override;
   void UpdateKeys(views::FocusManager *focus_manager);
+  void RemoveKeys();
 #endif
 
   void OnClick();
