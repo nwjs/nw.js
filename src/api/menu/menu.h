@@ -104,7 +104,6 @@ class Menu : public Base {
 
 #if defined(OS_WIN) || defined(OS_LINUX)
   void UpdateKeys(views::FocusManager *focus_manager);
-  void RemoveKeys();
   ui::NwMenuModel* model() { return menu_model_.get(); }
   aura::Window* GetActiveNativeView(content::RenderFrameHost* rfh);
 #endif

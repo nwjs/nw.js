@@ -339,8 +339,6 @@ bool NwCurrentWindowInternalClearMenuFunction::RunAsync() {
   browser_view_layout->set_menu_bar(NULL);
   native_app_window_views->layout_();
   native_app_window_views->SchedulePaint();
-  window->menu_->RemoveKeys();
-  window->menu_ = NULL;
 #endif
   return true;
 }
@@ -362,7 +360,6 @@ bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::ListValue* response
   nw::ObjectManager* obj_manager = nw::ObjectManager::Get(browser_context());
   Menu* menu = (Menu*)obj_manager->GetApiObject(id);
 
-  Menu* old_menu = window->menu_;
   window->menu_ = menu;
 #if defined(OS_MACOSX)
   response->Append(NWChangeAppMenu(menu));
@@ -379,7 +376,6 @@ bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::ListValue* response
   menubar->UpdateMenu(menu->model());
   native_app_window_views->layout_();
   native_app_window_views->SchedulePaint();
-  if (old_menu) old_menu->RemoveKeys();
   menu->UpdateKeys( native_app_window_views->widget()->GetFocusManager() );
   response->Append(std::unique_ptr<base::ListValue>(new base::ListValue()));
 #endif
