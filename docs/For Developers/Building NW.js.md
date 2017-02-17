@@ -13,7 +13,7 @@
 
 NW.js use same build tools and similar steps as Chromium. Read the instructions according to your platform to install `depot_tools` and other prerequistes:
 
-* [Windows](http://www.chromium.org/developers/how-tos/build-instructions-windows)
+* [Windows](https://chromium.googlesource.com/chromium/src/+/master/docs/windows_build_instructions.md)
 * [Mac OS X](https://chromium.googlesource.com/chromium/src/+/master/docs/mac_build_instructions.md)
 * [Linux](https://chromium.googlesource.com/chromium/src/+/master/docs/linux_build_instructions.md)
 
