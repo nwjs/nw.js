@@ -54,6 +54,7 @@
 #include "components/guest_view/browser/guest_view_manager_factory.h"
 #include "components/guest_view/browser/test_guest_view_manager.h"
 #include "content/public/browser/ax_event_notification_details.h"
+#include "content/public/browser/browser_accessibility_state.h"
 #include "content/public/browser/browser_child_process_host_iterator.h"
 #include "content/public/browser/child_process_data.h"
 #include "content/public/common/process_type.h"
@@ -97,6 +98,9 @@
 #include "ui/views/view.h"
 #include "ui/views/widget/widget.h"
 
+#include "chrome/browser/printing/print_preview_dialog_controller.h"
+#include "content/browser/frame_host/render_frame_host_impl.h"
+
 #if defined(ENABLE_PLUGINS)
 #include "content/public/browser/plugin_service.h"
 #include "content/public/common/webplugininfo.h"
@@ -122,6 +126,7 @@ using task_manager::browsertest_util::MatchWebView;
 using task_manager::browsertest_util::WaitForTaskManagerRows;
 using ui::MenuModel;
 using content::BrowserThread;
+using content::WebContents;
 
 namespace {
 const char kEmptyResponsePath[] = "/close-socket";
@@ -899,6 +904,8 @@ public:
 
 };
 
+class NWJSAppTest : public NWAppTest {};
+
 void NWTimeoutCallback(const std::string& timeout_message) {
   base::MessageLoop::current()->QuitWhenIdle();
 }
@@ -921,6 +928,121 @@ IN_PROC_BROWSER_TEST_F(NWAppTest, LocalFlash) {
   content::TitleWatcher title_watcher(web_contents, expected_title);
 
   EXPECT_EQ(expected_title, title_watcher.WaitAndGetTitle());
+}
+
+namespace {
+class PrintDialogWaiter {
+public:
+  PrintDialogWaiter(content::WebContents* web_contents)
+    : web_contents_(web_contents) {}
+
+  WebContents* Wait() {
+    WebContents* ret;
+    if ((ret = CheckDlg()))
+      return ret;
+
+    base::RepeatingTimer check_timer;
+    check_timer.Start(
+        FROM_HERE,
+        base::TimeDelta::FromMilliseconds(200),
+        this,
+        &PrintDialogWaiter::OnTimer);
+
+    runner_ = new content::MessageLoopRunner;
+    runner_->Run();
+    return CheckDlg();
+  }
+
+ private:
+  WebContents* CheckDlg() {
+    printing::PrintPreviewDialogController* dialog_controller =
+        printing::PrintPreviewDialogController::GetInstance();
+    return dialog_controller->GetPrintPreviewForContents(web_contents_);
+  }
+
+  void OnTimer() {
+    DCHECK(runner_.get());
+    if (CheckDlg())
+      runner_->Quit();
+  }
+  content::WebContents* web_contents_;
+  scoped_refptr<content::MessageLoopRunner> runner_;
+
+  DISALLOW_COPY_AND_ASSIGN(PrintDialogWaiter);
+};
+
+static std::string DumpPdfAccessibilityTree(const ui::AXTreeUpdate& ax_tree) {
+  // Create a string representation of the tree starting with the embedded
+  // object.
+  std::string ax_tree_dump;
+  base::hash_map<int32_t, int> id_to_indentation;
+  //bool found_embedded_object = false;
+  for (auto& node : ax_tree.nodes) {
+#if 0
+    if (node.role == ui::AX_ROLE_EMBEDDED_OBJECT)
+      found_embedded_object = true;
+    if (!found_embedded_object)
+      continue;
+#endif
+    int indent = id_to_indentation[node.id];
+    ax_tree_dump += std::string(2 * indent, ' ');
+    ax_tree_dump += ui::ToString(node.role);
+
+    std::string name = node.GetStringAttribute(ui::AX_ATTR_NAME);
+    base::ReplaceChars(name, "\r", "\\r", &name);
+    base::ReplaceChars(name, "\n", "\\n", &name);
+    if (!name.empty())
+      ax_tree_dump += " '" + name + "'";
+    ax_tree_dump += "\n";
+    for (size_t j = 0; j < node.child_ids.size(); ++j)
+      id_to_indentation[node.child_ids[j]] = indent + 1;
+  }
+
+  return ax_tree_dump;
+}
+
+void CountFrames(int* frame_count,
+                 content::RenderFrameHost* frame) {
+  ++(*frame_count);
+}
+
+std::string g_tree_dump;
+void CheckPdfPluginForRenderFrame(content::RenderFrameHost* frame) {
+  content::RenderFrameHostImpl* f = static_cast<content::RenderFrameHostImpl*>(frame);
+  content::BrowserAccessibilityManager* manager = f->GetOrCreateBrowserAccessibilityManager();
+  ui::AXTreeUpdate ax_tree = manager->SnapshotAXTreeForTesting();
+  std::string ax_tree_dump = DumpPdfAccessibilityTree(ax_tree);
+  g_tree_dump += ax_tree_dump;
+}
+
+} //namespace
+
+IN_PROC_BROWSER_TEST_F(NWJSAppTest, PrintChangeFooter) {
+  content::BrowserAccessibilityState::GetInstance()->EnableAccessibility();
+  LoadAndLaunchPlatformApp("print_test", "Launched");
+  content::WebContents* web_contents = GetFirstAppWindowWebContents();
+  ASSERT_TRUE(web_contents);
+  ASSERT_TRUE(content::ExecuteScript(web_contents, "document.getElementById('testbtn').click()"));
+  LOG(INFO) << "waiting for print dialog";
+  WebContents* preview_dialog = PrintDialogWaiter(web_contents).Wait();
+  LOG(INFO) << "done";
+  const int kExpectedFrameCount = 2;
+  int frame_count;
+  do {
+    base::RunLoop run_loop;
+    base::ThreadTaskRunnerHandle::Get()->PostDelayedTask(
+        FROM_HERE, run_loop.QuitClosure(), base::TimeDelta::FromSeconds(1));
+    run_loop.Run();
+
+    frame_count = 0;
+    preview_dialog->ForEachFrame(
+        base::Bind(&CountFrames, base::Unretained(&frame_count)));
+  } while (frame_count < kExpectedFrameCount);
+  ASSERT_EQ(kExpectedFrameCount, frame_count);
+  WaitForAccessibilityTreeToContainNodeWithName(preview_dialog, "hello world\r\n");
+  // Make sure all the frames in the dialog has access to the PDF plugin.
+  preview_dialog->ForEachFrame(base::Bind(&CheckPdfPluginForRenderFrame));
+  EXPECT_TRUE(g_tree_dump.find("nwtestfooter") != std::string::npos);
 }
 
 IN_PROC_BROWSER_TEST_P(NWJSWebViewTest, LocalPDF) {
