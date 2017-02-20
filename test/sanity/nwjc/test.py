@@ -34,8 +34,8 @@ try:
     result = driver.find_element_by_id('result')
     print result.get_attribute('innerHTML')
     assert("44" == result.get_attribute('innerHTML'))
-    result2 = driver.find_element_by_id('result2')
-    print result2.get_attribute('innerHTML')
+    result2 = driver.find_element_by_id('result2').get_attribute('innerHTML')
+    print result2
     assert("native code" in result2)
 finally:
     driver.quit()
