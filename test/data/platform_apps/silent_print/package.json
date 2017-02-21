@@ -1,0 +1,12 @@
+{
+  "name": "nw-demo",
+  "webview": {
+    "partitions": [
+      {
+       "name": "trusted",
+       "accessible_resources": [ "<all_urls>" ]
+      }
+    ]
+  },
+  "main": "index.html"
+}
