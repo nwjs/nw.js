@@ -533,6 +533,11 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
     command_line->AppendSwitchASCII(switches::kJavaScriptFlags, "--expose-gc");
 
     extensions::PlatformAppBrowserTest::SetUpCommandLine(command_line);
+    PathService::Get(base::DIR_SOURCE_ROOT, &test_data_dir_);
+    test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("content"));
+    test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("nw"));
+    test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("test"));
+    test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("data"));
   }
 
   // Handles |request| by serving a redirect response if the |User-Agent| is
@@ -857,11 +862,6 @@ class NWJSWebViewTest : public NWWebViewTestBase, public testing::WithParamInter
 
   void SetUpCommandLine(base::CommandLine* command_line) override {
     NWWebViewTestBase::SetUpCommandLine(command_line);
-    PathService::Get(base::DIR_SOURCE_ROOT, &test_data_dir_);
-    test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("content"));
-    test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("nw"));
-    test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("test"));
-    test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("data"));
 
     trusted_ = GetParam();
   }
@@ -870,6 +870,8 @@ protected:
 };
 
 INSTANTIATE_TEST_CASE_P(NWJSWebViewTests, NWJSWebViewTest, testing::Bool());
+
+class NWJSWebViewTestF: public NWWebViewTestBase {};
 
 class NWAppTest : public extensions::PlatformAppBrowserTest {
 public:
@@ -1006,16 +1008,44 @@ void CountFrames(int* frame_count,
   ++(*frame_count);
 }
 
-std::string g_tree_dump;
-void CheckPdfPluginForRenderFrame(content::RenderFrameHost* frame) {
+void DumpAxTree(std::string* dump_output, content::RenderFrameHost* frame) {
   content::RenderFrameHostImpl* f = static_cast<content::RenderFrameHostImpl*>(frame);
   content::BrowserAccessibilityManager* manager = f->GetOrCreateBrowserAccessibilityManager();
   ui::AXTreeUpdate ax_tree = manager->SnapshotAXTreeForTesting();
   std::string ax_tree_dump = DumpPdfAccessibilityTree(ax_tree);
-  g_tree_dump += ax_tree_dump;
+  *dump_output += ax_tree_dump;
 }
 
 } //namespace
+
+IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, SilentPrintChangeFooter) {
+  content::BrowserAccessibilityState::GetInstance()->EnableAccessibility();
+  LoadAndLaunchPlatformApp("silent_print", "Launched");
+  content::WebContents* web_contents = GetFirstAppWindowWebContents();
+  ASSERT_TRUE(web_contents);
+  ExtensionTestMessageListener listener("Loaded", false);
+  ASSERT_TRUE(content::ExecuteScript(web_contents, "document.getElementById('testbtn').click()"));
+  EXPECT_TRUE(listener.WaitUntilSatisfied()) << "'" << listener.message()
+                                             << "' message was not receieved";
+
+  std::vector<content::WebContents*> guest_web_contents_list;
+  unsigned long n_guests = 2;
+  LOG(WARNING) << "WaitForNumGuestsCreated";
+  GetGuestViewManager()->WaitForNumGuestsCreated(n_guests);
+  GetGuestViewManager()->GetGuestWebContentsList(&guest_web_contents_list);
+  ASSERT_EQ(n_guests, guest_web_contents_list.size());
+
+  content::WebContents* web_view_contents = guest_web_contents_list[0];
+  bool load_success = pdf_extension_test_util::EnsurePDFHasLoaded(
+      web_view_contents);
+  EXPECT_TRUE(load_success);
+  WaitForAccessibilityTreeToContainNodeWithName(web_view_contents, "hello world\r\n");
+  std::string tree_dump;
+  // Make sure all the frames in the dialog has access to the PDF plugin.
+  guest_web_contents_list[1]->ForEachFrame(base::Bind(&DumpAxTree, base::Unretained(&tree_dump)));
+  LOG(INFO) << "ax tree: " << tree_dump;
+  EXPECT_TRUE(tree_dump.find("nwtestfooter") != std::string::npos);
+}
 
 IN_PROC_BROWSER_TEST_F(NWJSAppTest, PrintChangeFooter) {
   content::BrowserAccessibilityState::GetInstance()->EnableAccessibility();
@@ -1040,9 +1070,10 @@ IN_PROC_BROWSER_TEST_F(NWJSAppTest, PrintChangeFooter) {
   } while (frame_count < kExpectedFrameCount);
   ASSERT_EQ(kExpectedFrameCount, frame_count);
   WaitForAccessibilityTreeToContainNodeWithName(preview_dialog, "hello world\r\n");
+  std::string tree_dump;
   // Make sure all the frames in the dialog has access to the PDF plugin.
-  preview_dialog->ForEachFrame(base::Bind(&CheckPdfPluginForRenderFrame));
-  EXPECT_TRUE(g_tree_dump.find("nwtestfooter") != std::string::npos);
+  preview_dialog->ForEachFrame(base::Bind(&DumpAxTree, base::Unretained(&tree_dump)));
+  EXPECT_TRUE(tree_dump.find("nwtestfooter") != std::string::npos);
 }
 
 IN_PROC_BROWSER_TEST_P(NWJSWebViewTest, LocalPDF) {
