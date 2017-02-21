@@ -1020,6 +1020,10 @@ void DumpAxTree(std::string* dump_output, content::RenderFrameHost* frame) {
 
 IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, SilentPrintChangeFooter) {
   content::BrowserAccessibilityState::GetInstance()->EnableAccessibility();
+  base::FilePath test_dir = test_data_dir_.Append(FILE_PATH_LITERAL("platform_apps")).Append(FILE_PATH_LITERAL("silent_print"));
+  base::FilePath output_pdf = test_data_dir_.Append(FILE_PATH_LITERAL("output.pdf"));
+  ASSERT_TRUE(base::SetCurrentDirectory(test_dir));
+  ASSERT_TRUE(base::DeleteFile(output_pdf, false));
   LoadAndLaunchPlatformApp("silent_print", "Launched");
   content::WebContents* web_contents = GetFirstAppWindowWebContents();
   ASSERT_TRUE(web_contents);
