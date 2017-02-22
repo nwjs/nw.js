@@ -52,7 +52,7 @@ Manually clone and checkout correct branches for following repositories:
 | path | repo |
 |:---- |:---- |
 | src/content/nw | https://github.com/nwjs/nw.js |
-| src/third_party/node | https://github.com/nwjs/node |
+| src/third_party/node-nw | https://github.com/nwjs/node |
 | src/v8 | https://github.com/nwjs/v8 |
 
 **Step 2.** Run following command in your terminal:
@@ -88,12 +88,12 @@ See the upstream documentation for the mapping between GN and GYP flags: https:/
 
 ```bash
 cd src
-GYP_CHROMIUM_NO_ACTION=0 ./build/gyp_chromium -I third_party/node/common.gypi third_party/node/node.gyp
+GYP_CHROMIUM_NO_ACTION=0 ./build/gyp_chromium -I third_party/node-nw/common.gypi third_party/node-nw/node.gyp
 ```
 
 or use the following if you're doing a component build:
 ```bash
-./build/gyp_chromium -D component=shared_library -I third_party/node/common.gypi third_party/node/node.gyp
+./build/gyp_chromium -D component=shared_library -I third_party/node-nw/common.gypi third_party/node-nw/node.gyp
 ```
 To change the build configuration for Node, you need to setup the GYP_DEFINES environment variable:
 
