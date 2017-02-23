@@ -6,6 +6,8 @@
   <title>cookie-lost-remote-page</title>
 </head>
 <body>
+<button id="open-cdt" onclick="nw.Window.get().showDevTools()">open cdt</button>
+<button id="close-cdt" onclick="nw.Window.get().closeDevTools()">close cdt</button>
 <button id="get-cookie" onclick="getcookie()">Get Cookie</button>
 <script>
 function getcookie() {
