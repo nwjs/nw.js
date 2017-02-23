@@ -1,3 +1,16 @@
+0.20.3 / 02-23-2017
+===================
+- Update Node.js to [v7.6.0](https://nodejs.org/en/blog/release/v7.6.0/)
+- Support passing Buffer or ArrayBuffer to evalNWBin [(#5220)](https://github.com/nwjs/nw.js/issues/5220)
+- Support pac_url and auto proxy detection[ (#916)](https://github.com/nwjs/nw.js/issues/916)
+- New print options: autoprint, headerString, footerString [(#5702)](https://github.com/nwjs/nw.js/issues/5702)
+- Fix: nwuseragent not working after 0.13 [(#5397)](https://github.com/nwjs/nw.js/issues/5397)
+- Fix: flash in embed or object tag not working using file protocol [(#5706)](https://github.com/nwjs/nw.js/issues/5706)
+- Fix: multiple menu shortcuts issues [(#5657)](https://github.com/nwjs/nw.js/issues/5657)
+- Disable resolving www.google.com in DNS predictor on startup
+- [docs] upstream Windows build instructions has moved
+- [docs] update for new features
+
 0.20.2 / 02-13-2017
 ===================
 - Fix: Crash on right click after opening devtools by F12 [(#5659)](https://github.com/nwjs/nw.js/issues/5659)
