@@ -12,6 +12,8 @@ def wait_for_element_id(driver, elem_id, timeout=10):
             break
         except selenium.common.exceptions.NoSuchElementException:
             pass
+        except selenium.common.exceptions.WebDriverException:
+            pass
         time.sleep(1)
         timeout = timeout - 1
         if timeout <= 0:

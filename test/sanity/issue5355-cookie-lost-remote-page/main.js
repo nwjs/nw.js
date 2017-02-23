@@ -3,8 +3,8 @@ const http = require('http');
 let id = 1;
 
 nw.Window.open(`http://localhost:${nw.App.manifest.port}/`, (w)=>{
-  w.showDevTools();
-  w.closeDevTools();
+  //w.showDevTools();
+  //w.closeDevTools();
 });
 
 // Create an HTTP server

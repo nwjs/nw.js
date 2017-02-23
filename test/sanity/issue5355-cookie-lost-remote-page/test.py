@@ -18,6 +18,7 @@ pkgjson = '''
 {
   "name": "cookie-lost-remote-page",
   "main": "main.js",
+  "node-remote": "http://localhost/*",
   "port": "%s"
 }
 ''' % port
@@ -32,6 +33,10 @@ try:
     wait_window_handles(driver, 1)
     switch_to_app(driver)
     print driver.current_url
+    driver.find_element_by_id('open-cdt').click()
+    time.sleep(1)
+    driver.find_element_by_id('close-cdt').click()
+    time.sleep(1)
     driver.find_element_by_id('get-cookie').click()
     result = driver.find_element_by_id('result').get_attribute('innerHTML')
     print result
