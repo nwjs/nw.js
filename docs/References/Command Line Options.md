@@ -47,7 +47,7 @@ By default, the cookie store on disk is encrypted in Chromium. Use this switch t
 
 ## `--disable-crash-handler=true`
 
-Disable the crash handler process for single process mode. NOTE: you should explictly set it to 'true'. When using it and `--single-process` together, there will be only one NW process for your application. The crash dumping feature will be disabled with this switch. This switch must be put in the command line (not in package.json) to be effective.
+Disable the crash handler process for single process mode. NOTE: you should explicitly set it to 'true'. When using it and `--single-process` together, there will be only one NW process for your application. The crash dumping feature will be disabled with this switch. This switch must be put in the command line (not in package.json) to be effective.
 
 ## `--enable-gcm`
 
