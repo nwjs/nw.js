@@ -26,6 +26,7 @@ if platform.system() == 'Linux':
     out, err = proc.communicate()
     print out
     assert("42" not in out)
+    assert("foo" not in out)
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
 try:
@@ -36,6 +37,10 @@ try:
     assert("44" == result.get_attribute('innerHTML'))
     result2 = driver.find_element_by_id('result2').get_attribute('innerHTML')
     print result2
-    assert("native code" in result2)
+    assert("function mytest() { [native code] }" == result2)
+    result3 = driver.find_element_by_id('result3').get_attribute('innerHTML')
+    result4 = driver.find_element_by_id('result4').get_attribute('innerHTML')
+    assert("44" == result3)
+    assert("function testinner() { [native code] }" == result4)
 finally:
     driver.quit()
