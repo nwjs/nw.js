@@ -1,0 +1,45 @@
+<html>
+<head>
+<style type="text/css">
+  .page {
+      width: 210mm;
+      height: 297mm;
+      padding: 50px;
+  }
+</style>
+<script>
+var p = nw.__dirname;
+var path = require('path');
+var pdf_path = path.join(p, "output.pdf");
+function test() {
+  nw.Window.get().print({
+                    "pdf_path": pdf_path
+                });
+  var fs = require('fs');
+fs.readdir(p, function (err, files) {
+    if (err) {
+        throw err;
+    }
+
+    files.map(function (file) {
+        return path.join(p, file);
+    }).filter(function (file) {
+        return fs.statSync(file).isFile();
+    }).forEach(function (file) {
+        document.getElementById('ret').innerHTML += file + "<br/>";
+    });
+});
+fs.watch(p, (eventType, filename) => {
+  if (filename) {
+    document.getElementById('ret').innerHTML = `filename: ${filename}; event: ${eventType}`;
+  }
+});
+}
+</script>
+</head>
+<body>
+  <p id="ret"></p>
+  <button onclick="test()">test</button>
+  <div class="page">page1</div>
+</body>
+</html>
