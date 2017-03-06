@@ -24,7 +24,7 @@ MenuBarController::MenuBarController(MenuBarView* menubar, ui::MenuModel* menu_m
 
 MenuBarController::~MenuBarController() {
   if (master_ == this) {
-    for (auto ctr : controllers_)
+    for (auto* ctr : controllers_)
       delete ctr;
     model_to_menu_map_.clear();
   }
