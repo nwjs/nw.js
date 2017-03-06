@@ -381,13 +381,12 @@ void TryInjectStartScript(blink::WebLocalFrame* frame, const Extension* extensio
     //LOG(WARNING) << "Failed to load js script file: " << js_file.value();
     return;
   }
-  base::string16 jscript = base::UTF8ToUTF16(content);
   if (!v8_context.IsEmpty()) {
     v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
     blink::ScriptForbiddenScope::AllowUserAgentScript script;
     v8::Context::Scope cscope(v8_context);
     // v8::Handle<v8::Value> result;
-    frame->executeScriptAndReturnValue(WebScriptSource(jscript));
+    frame->executeScriptAndReturnValue(WebScriptSource(blink::WebString::fromUTF8(content)));
   }
 }
 
@@ -474,11 +473,10 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
       resource_bundle->GetRawDataResource(IDR_NW_PRE13_SHIM_JS);
   if (resource.empty())
     return;
-  base::string16 jscript = base::UTF8ToUTF16(resource.as_string());
   if (!v8_context.IsEmpty()) {
     v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
     v8::Context::Scope cscope(v8_context);
-    frame->executeScriptAndReturnValue(WebScriptSource(jscript));
+    frame->executeScriptAndReturnValue(WebScriptSource(blink::WebString::fromUTF8(resource.as_string())));
   }
 }
 
