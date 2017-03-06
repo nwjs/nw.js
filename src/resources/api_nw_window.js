@@ -339,6 +339,15 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     };
 
     NWWindow.prototype.removeAllListeners = function (event) {
+      if (arguments.length === 0) {
+        var obj = Object.assign({}, appWinEventsMap, nwWinEventsMap, nwWrapEventsMap);
+        var keys = Object.keys(obj);
+        for (var i = 0, key; i < keys.length; ++i) {
+          key = keys[i];
+          this.removeAllListeners(key);
+        }
+        return this;
+      }
       nwNatives.callInWindow(bgPage, "__nw_remove_all_listeners", this, event);
       if (appWinEventsMap.hasOwnProperty(event)) {
         for (let l of this.appWindow[appWinEventsMap[event]].getListeners()) {

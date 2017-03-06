@@ -427,6 +427,10 @@ Execute a piece of JavaScript in the frame.
 
 Load and execute the compiled binary in the frame. See [Protect JavaScript Source Code](../For Users/Advanced/Protect JavaScript Source Code.md).
 
+## win.removeAllListeners([eventName])
+
+Removes all listeners, or those of the specified `eventName`.
+
 ## Event: close
 
 The `close` event is a special event that will affect the result of the `Window.close()` function. If developer is listening to the `close` event of a window, the `Window.close()` emit the `close` event without closing the window.
