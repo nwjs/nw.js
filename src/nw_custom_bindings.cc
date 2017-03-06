@@ -203,7 +203,7 @@ void NWCustomBindings::EvalScript(
   base::string16 jscript = *v8::String::Value(args[1]);
 #endif
   if (web_frame) {
-    result = web_frame->executeScriptAndReturnValue(blink::WebScriptSource(jscript));
+    result = web_frame->executeScriptAndReturnValue(blink::WebScriptSource(blink::WebString::fromUTF16(jscript)));
   }
   args.GetReturnValue().Set(result);
   return;

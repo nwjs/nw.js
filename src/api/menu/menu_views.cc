@@ -148,7 +148,7 @@ void Menu::UpdateKeys(views::FocusManager *focus_manager){
     return ;
   } else {
     focus_manager_ = focus_manager;
-    for(auto item : menu_items_) {
+    for(auto* item : menu_items_) {
       item->UpdateKeys(focus_manager);
     }
   }
@@ -157,7 +157,7 @@ void Menu::UpdateKeys(views::FocusManager *focus_manager){
 void Menu::RemoveKeys() {
   if (!focus_manager_) return;
 
-  for(auto item: menu_items_) {
+  for(auto* item: menu_items_) {
     item->RemoveKeys();
   }
 

@@ -3,6 +3,7 @@
 #include "base/base64.h"
 #include "base/strings/stringprintf.h"
 #include "base/strings/utf_string_conversions.h"
+#include "base/threading/sequenced_worker_pool.h"
 #include "content/public/browser/render_widget_host.h"
 #include "chrome/browser/devtools/devtools_window.h"
 #include "chrome/browser/extensions/devtools_util.h"
@@ -225,27 +226,13 @@ bool NwCurrentWindowInternalCapturePageInternalFunction::RunAsync() {
 
   // TODO(miu): Account for fullscreen render widget?  http://crbug.com/419878
   RenderWidgetHostView* const view = contents->GetRenderWidgetHostView();
-  RenderWidgetHost* const host = view ? view->GetRenderWidgetHost() : nullptr;
-  if (!view || !host) {
+  if (!view) {
     OnCaptureFailure(FAILURE_REASON_VIEW_INVISIBLE);
     return false;
   }
 
-  // By default, the requested bitmap size is the view size in screen
-  // coordinates.  However, if there's more pixel detail available on the
-  // current system, increase the requested bitmap size to capture it all.
-  const gfx::Size view_size = view->GetViewBounds().size();
-  gfx::Size bitmap_size = view_size;
-  const gfx::NativeView native_view = view->GetNativeView();
-  display::Screen* const screen = display::Screen::GetScreen();
-  const float scale =
-      screen->GetDisplayNearestWindow(native_view).device_scale_factor();
-  if (scale > 1.0f)
-    bitmap_size = gfx::ScaleToCeiledSize(view_size, scale);
-
-  host->CopyFromBackingStore(
-      gfx::Rect(view_size),
-      bitmap_size,
+  view->CopyFromSurface(gfx::Rect(),  // Copy entire surface area.
+                        gfx::Size(),  // Result contains device-level detail.
       base::Bind(&NwCurrentWindowInternalCapturePageInternalFunction::CopyFromBackingStoreComplete,
                  this),
       kN32_SkColorType);
@@ -708,7 +695,7 @@ bool NwCurrentWindowInternalGetWinParamInternalFunction::RunNWSync(base::ListVal
   int frame_id = created_frame->GetRoutingID();
 
   base::DictionaryValue* result = new base::DictionaryValue;
-  result->Set("frameId", new base::FundamentalValue(frame_id));
+  result->Set("frameId", new base::Value(frame_id));
   result->Set("id", new base::StringValue(app_window->window_key()));
   app_window->GetSerializedState(result);
 
