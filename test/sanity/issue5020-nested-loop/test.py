@@ -24,6 +24,7 @@ try:
     wait_for_element_id_content(driver, 'ret', 'output.pdf', 20)
     time.sleep(2)
     os.remove('output.pdf')
+    time.sleep(0.1)
     result = driver.find_element_by_id('ret').get_attribute('innerHTML')
     print result
     assert("filename: output.pdf; event: rename" == result)
