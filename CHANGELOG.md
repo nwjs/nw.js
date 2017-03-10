@@ -1,4 +1,8 @@
-0.21.0 / 03-07-2017
+0.21.1 / 03-10-2017
+===================
+- Fix: NW is not using the package.json *name* parm as part of folder *path* any longer [(#5762)](https://github.com/nwjs/nw.js/issues/5762)
+
+0.21.0 / 03-10-2017
 ===================
 - Update Chromium to [57.0.2987.98](https://chromereleases.googleblog.com/2017/03/stable-channel-update-for-desktop.html)
 - Update Node.js to [v7.7.2](https://nodejs.org/en/blog/release/v7.7.2/)
