@@ -1,3 +1,14 @@
+0.21.0 / 03-07-2017
+===================
+- Update Chromium to [57.0.2987.98](https://chromereleases.googleblog.com/2017/03/stable-channel-update-for-desktop.html)
+- Update Node.js to [v7.7.2](https://nodejs.org/en/blog/release/v7.7.2/)
+- Fix: Print cancel close app (#5742)
+- Fix: Helper renderer process hangs on opening and closing print window several times (#5020)
+- Fix: Microtasks in Blink are executed in different cycles with Chrome (#5730)
+- Fix: Debug component build on OSX
+- [docs] Building NW: directory name change of third_party/node
+- [docs] Added "Autoupdates.md" for node-webkit-updater and nwjs-autoupdater
+
 0.20.3 / 02-23-2017
 ===================
 - Update Node.js to [v7.6.0](https://nodejs.org/en/blog/release/v7.6.0/)
