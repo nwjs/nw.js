@@ -347,21 +347,53 @@ def generate_target_others(platform_name, arch, version):
 
 ################################
 # Make packages
+
+#https://gist.github.com/kgn/610907
+def ZipDir(inputDir, outputZip):
+    '''Zip up a directory and preserve symlinks and empty directories'''
+    zipOut = zipfile.ZipFile(outputZip, 'w', compression=zipfile.ZIP_DEFLATED)
+    
+    rootLen = len(os.path.dirname(inputDir))
+    def _ArchiveDirectory(parentDirectory):
+        contents = os.listdir(parentDirectory)
+        #store empty directories
+        if not contents:
+            #http://www.velocityreviews.com/forums/t318840-add-empty-directory-using-zipfile.html
+            archiveRoot = parentDirectory[rootLen:].replace('\\', '/').lstrip('/')
+            zipInfo = zipfile.ZipInfo(archiveRoot+'/')
+            zipOut.writestr(zipInfo, '')
+        for item in contents:
+            fullPath = os.path.join(parentDirectory, item)
+            if os.path.isdir(fullPath) and not os.path.islink(fullPath):
+                _ArchiveDirectory(fullPath)
+            else:
+                archiveRoot = fullPath[rootLen:].replace('\\', '/').lstrip('/')
+                if os.path.islink(fullPath):
+                    # http://www.mail-archive.com/python-list@python.org/msg34223.html
+                    zipInfo = zipfile.ZipInfo(archiveRoot)
+                    zipInfo.create_system = 3
+                    # long type of hex val of '0xA1ED0000L',
+                    # say, symlink attr magic...
+                    zipInfo.external_attr = 2716663808L
+                    zipOut.writestr(zipInfo, os.readlink(fullPath))
+                else:
+                    zipOut.write(fullPath, archiveRoot, zipfile.ZIP_DEFLATED)
+    _ArchiveDirectory(inputDir)
+    
+    zipOut.close()
+
 def compress(from_dir, to_dir, fname, compress):
     from_dir = os.path.normpath(from_dir)
     to_dir = os.path.normpath(to_dir)
     _from = os.path.join(from_dir, fname)
     _to = os.path.join(to_dir, fname)
     if compress == 'zip':
-        z = zipfile.ZipFile(_to + '.zip', 'w', compression=zipfile.ZIP_DEFLATED)
-        if os.path.isdir(_from):
-            for root, dirs, files in os.walk(_from):
-                for f in files:
-                    _path = os.path.join(root, f)
-                    z.write(_path, _path.replace(from_dir+os.sep, ''))
+        if os.path.isdir(_from): 
+            ZipDir(_from, _to + '.zip')
         else:
+            z = zipfile.ZipFile(_to + '.zip', 'w', compression=zipfile.ZIP_DEFLATED)
             z.write(_from, fname)
-        z.close()
+            z.close()
     elif compress == 'tar.gz': # only for folders
         if not os.path.isdir(_from):
             print 'Will not create tar.gz for a single file: ' + _from
@@ -424,13 +456,13 @@ def make_packages(targets):
                 src = os.path.join(binaries_location, f)
                 dest = os.path.join(folder, f)
                 if os.path.isdir(src): # like nw.app
-                    shutil.copytree(src, dest)
+                    shutil.copytree(src, dest, symlinks=True)
                 else:
                     shutil.copy(src, dest)
             compress(dist_dir, dist_dir, t['output'], t['compress'])
             # remove temp folders
             if (t.has_key('keep4test')) :
-                shutil.copytree(folder, nwfolder)
+                shutil.copytree(folder, nwfolder, symlinks=True)
             
             shutil.rmtree(folder)
         else:
