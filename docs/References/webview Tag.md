@@ -43,3 +43,8 @@ and add 'partition="trusted"' attribute to the webview tag.
 ### Node.js support in webview
 
 To enable Node.js support in WebView, add the `allownw` attribute to the webview tag. Then Node.js will be turned on, no matter it loads local file or remote site. Use this feature with caution because webview is normally supposed to load untrusted contents.
+
+### Navigation history in webview
+Webview is keepeng its navigation history so you can navigate throught it via `back`, `forward`, `go`, eventually `canGoBack` and `canGoForward` functions (see API references above). To see navigation history use: 
+* `webview.getPagesHistory()` returns array of objects with `url`, `favicon` and `title` (favicons and titles are available only for non-current navigation).
+* `webview.getCurrentHistoryIndex()` returns current index in getPagesHistory array (if you navigate back you can be in middle of navigation history).
