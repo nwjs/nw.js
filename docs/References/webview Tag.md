@@ -43,3 +43,17 @@ and add 'partition="trusted"' attribute to the webview tag.
 ### Node.js support in webview
 
 To enable Node.js support in WebView, add the `allownw` attribute to the webview tag. Then Node.js will be turned on, no matter it loads local file or remote site. Use this feature with caution because webview is normally supposed to load untrusted contents.
+
+### Title and favicon change event
+Events for title and favicon change:
+* `titlechange` event with `title` string attribute.
+* `faviconchange` event with `faviconUrl` string attribute.
+
+##### Example:
+Have webview with listener to event e.g.:
+```html
+webview.addEventListener("titlechange",function(){
+    console.log(name,"titlechange",arguments)
+});
+```
+Navigate to new page with title. Event is fired.
