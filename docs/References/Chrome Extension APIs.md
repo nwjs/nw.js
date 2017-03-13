@@ -8,3 +8,4 @@ In addition, we supported some chrome.* API in the [extension platform](https://
 * [chrome.contentSettings](https://developer.chrome.com/extensions/contentSettings) : used to control notfication settings.
 * [chrome.tabs](https://developer.chrome.com/extensions/tabs) : used to support fully DevTools extensions
 * [chrome.proxy](https://developer.chrome.com/extensions/proxy) : manage proxy settings
+* [chrome.cookies](https://developer.chrome.com/extensions/cookies) : functions `get`, `getAll`, `set` and `remove` are supported for webview with webview storeId (`webview.getCookieStoreId()`)
