@@ -1,3 +1,14 @@
+0.21.2 / 03-15-2017
+===================
+- Update Node.js to [v7.7.3](https://nodejs.org/en/blog/release/v7.7.3/)
+- Support webview cookie API [(#5750)](https://github.com/nwjs/nw.js/issues/5750)
+- Fix: Crash on opening new window with an icon [(#5767)](https://github.com/nwjs/nw.js/issues/5767)
+- Fix: chrome.runtime.onInstalled is firing on each start [(#5704)](https://github.com/nwjs/nw.js/issues/5704)
+- Fix: disable security warning for passwd autofill on NW.js pages [(#5766)](https://github.com/nwjs/nw.js/issues/5766)
+- Fix: Warning about RapperRecorder in console [(#5671)](https://github.com/nwjs/nw.js/issues/5671)
+- Fix: Support nw.Window.removeAllListeners() with no parameter [(#5649)](https://github.com/nwjs/nw.js/issues/5649)
+- [docs] webview cookie API
+
 0.21.1 / 03-10-2017
 ===================
 - Fix: NW is not using the package.json *name* parm as part of folder *path* any longer [(#5762)](https://github.com/nwjs/nw.js/issues/5762)
