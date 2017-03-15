@@ -354,8 +354,10 @@ bool NwCurrentWindowInternalClearMenuFunction::RunAsync() {
   browser_view_layout->set_menu_bar(NULL);
   native_app_window_views->layout_();
   native_app_window_views->SchedulePaint();
-  window->menu_->RemoveKeys();
-  window->menu_ = NULL;
+  if (window->menu_) {
+    window->menu_->RemoveKeys();
+    window->menu_ = NULL;
+  }
 #endif
   return true;
 }
