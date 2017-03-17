@@ -1,3 +1,9 @@
+0.21.3 / 03-17-2017
+===================
+- Update Chromium to [57.0.2987.110](https://chromereleases.googleblog.com/2017/03/stable-channel-update-for-desktop_16.html)
+- Enable DOM mutation events in Chrome App and NW App [(#4778)](https://github.com/nwjs/nw.js/issues/4778)
+- Fix: crash of opening new window without menu [(#5737)](https://github.com/nwjs/nw.js/issues/5737)
+
 0.21.2 / 03-15-2017
 ===================
 - Update Node.js to [v7.7.3](https://nodejs.org/en/blog/release/v7.7.3/)
