@@ -170,7 +170,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
   apiFunctions.setHandleRequest('get', function(domWindow) {
     if (domWindow)
-      return try_nw(domWindow).nw.Window.get();
+      return try_nw(domWindow.top).nw.Window.get();
     if (currentNWWindow)
       return currentNWWindow.outerWindow;
 

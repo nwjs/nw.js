@@ -3,9 +3,12 @@
 
 [TOC]
 
-`Window` is a wrapper of the DOM's `window` object. It has extended operations and can receive various window events.
+`Window` is a wrapper of the DOM's topmost `window` object. It has extended operations and can receive various window events.
 
 Every `Window` is an instance of the EventEmitter class, and you're able to use `Window.on(...)` to respond to native window's events.
+
+!!! warning "Behavior Changed"
+    There are some changes of `Window` since 0.13.0. Please see [Migration Notes from 0.12 to 0.13](../For Users/Migration/From 0.12 to 0.13.md).
 
 ## Synopsis
 
@@ -41,9 +44,18 @@ nw.Window.open('https://github.com', {}, function(new_win) {
 
 If `window_object` is not specifed, then return current window's `Window` object, otherwise return `window_object`'s `Window` object.
 
+!!! note
+    If `window_object` is `iframe`'s, the function will still return topmost window's `Window` object.
+
 ```javascript
 // Get the current window
 var win = nw.Window.get();
+
+// Get iframe's window
+var iframeWin = nw.Window.get(iframe.contentWindow);
+
+//This will return true
+console.log(iframeWin === win);
 
 // Create a new window and get it
 nw.Window.open('https://github.com/nwjs/nw.js', {}, function(new_win) {
