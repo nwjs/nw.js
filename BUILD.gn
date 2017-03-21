@@ -369,13 +369,13 @@ if (is_linux && !is_component_build) {
       deps += [ "//components/nacl/loader:nacl_helper" ]
     }
     outputs = [
-      "$root_build_dir/{{source_name_part}}.breakpad.$target_cpu"
+      "$root_build_dir/{{source_name_part}}.sym"
     ]
     args = [
       "./" + rebase_path("tools/dump_syms", root_build_dir),
       "$linux_strip_binary",
       "{{source}}",
-      rebase_path("$root_out_dir/{{source_name_part}}.breakpad.$arch_pkgname", root_build_dir)
+      rebase_path("$root_out_dir/{{source_name_part}}.sym", root_build_dir)
     ]
   }
 }

@@ -253,13 +253,13 @@ def generate_target_symbols(platform_name, arch, version):
     if platform_name == 'linux':
         target['compress'] = 'tar.gz'
         target['input'] = [
-            'nw.breakpad.' + arch,
-            'libnode.breakpad.' + arch,
-            'libnw.breakpad.' + arch,
-            'libffmpeg.breakpad.' + arch
+            'nw.sym',
+            'libnode.sym',
+            'libnw.sym',
+            'libffmpeg.sym'
         ]
         if flavor in ['sdk', 'nacl']:
-            target['input'].append('nacl_helper.breakpad.' + arch)
+            target['input'].append('nacl_helper.sym')
 
         target['folder'] = True
     elif platform_name == 'win':
