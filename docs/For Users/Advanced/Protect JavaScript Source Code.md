@@ -43,6 +43,6 @@ xhr.onload = () => {
 
 ### Known Issues
 
-The compiled code runs **slower than normal JS**: ~30% performance according to v8bench. Other non-compiled JS source code will not be affected.
+Before 0.22, the compiled code runs **slower than normal JS**: ~30% performance according to v8bench. Other non-compiled JS source code will not be affected. In 0.22.0-beta1, this issue has been fixed. Please check our blog post: https://nwjs.io/blog/js-src-protect-perf/
 
 The compiled code is **not cross-platform nor compatible between versions** of NW.js. So you'll need to run `nwjc` for each of the platforms when you package your application.
