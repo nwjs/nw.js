@@ -405,7 +405,7 @@ if (!is_component_build) {
       "-m", "$package_mode",
       "-i", "$icudat_path"
     ]
-    deps = [ "//components/resources:about_credits_nw", ":dump" ]
+    deps = [ "//components/resources:about_credits_nw" ]
     if (nwjs_sdk && (is_mac || is_linux)) {
       deps += [ "//breakpad:minidump_stackwalk" ]
     }
