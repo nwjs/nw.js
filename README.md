@@ -37,7 +37,7 @@ It was created in the Intel Open Source Technology Center.
 
 * [Previous versions](https://dl.nwjs.io)
 
-###Demos and real apps
+### Demos and real apps
 You may also be interested in [our demos repository](https://github.com/zcbenz/nw-sample-apps) and the [List of apps and companies using nw.js](https://github.com/nwjs/nw.js/wiki/List-of-apps-and-companies-using-nw.js).
 
 ## Quick Start
