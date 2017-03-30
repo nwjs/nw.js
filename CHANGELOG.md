@@ -1,3 +1,20 @@
+0.21.4 / 03-30-2017
+===================
+- Update Chromium to [57.0.2987.133](https://chromereleases.googleblog.com/2017/03/stable-channel-update-for-desktop_29.html)
+- Update Node.js to [v7.8.0](https://nodejs.org/en/blog/release/v7.8.0/)
+- Fix: linux symbol files are almost empty
+- Fix: Blank window is not closed after download [(#5734)](https://github.com/nwjs/nw.js/issues/5734)
+- Fix: When flash was first used on Windows then console windows with "echo NOT SANDBOXED" flickered [(#5278)](https://github.com/nwjs/nw.js/issues/5278)
+- Fix: crash when showing WebUSB chooser window [(#5808)](https://github.com/nwjs/nw.js/issues/5808)
+- Fix: allow html fs quota by default [(#5177)](https://github.com/nwjs/nw.js/issues/5177)
+- Fix: reload app breaks the "global" object with --load-extension [(#5483)](https://github.com/nwjs/nw.js/issues/5483)
+- Fix: opening external url from iframe works only once [(#5680)](https://github.com/nwjs/nw.js/issues/5680)
+- Fix: iframe should not have independent NWWindow object [(#5043)](https://github.com/nwjs/nw.js/issues/5043)
+- Fix: use .sym filename extension for linux symbol files [(#5608)](https://github.com/nwjs/nw.js/issues/5608)
+- [docs] Fix quote in documentation of Flash
+- [docs] add nw-autoupdater
+- [docs] add link to js src protection performance fix
+
 0.21.3 / 03-17-2017
 ===================
 - Update Chromium to [57.0.2987.110](https://chromereleases.googleblog.com/2017/03/stable-channel-update-for-desktop_16.html)
