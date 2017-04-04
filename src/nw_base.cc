@@ -21,8 +21,16 @@ Package* package(const base::FilePath* path) {
 }
 
 Package* InitNWPackage() {
-  if (!g_package)
-    g_package = new Package();
+  if (!g_package) {
+    const base::CommandLine& command_line =
+      *base::CommandLine::ForCurrentProcess();
+    std::string process_type = command_line.GetSwitchValueASCII("type");
+    if (process_type == "renderer") {
+      base::FilePath pkg_path = command_line.GetSwitchValuePath("nwapp-path");
+      g_package = new Package(pkg_path);
+    } else
+      g_package = new Package();
+  }
   exit_code = 0;
   return g_package;
 }
