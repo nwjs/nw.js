@@ -1,0 +1,5 @@
+{
+    "name": "crash-report-test",
+    "crash_report_url": "http://localhost:2345/reportloooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooongurl",
+    "main": "index.html"
+}
