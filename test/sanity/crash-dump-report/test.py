@@ -91,20 +91,23 @@ for arg in ['--test-browser-crash', '--test-renderer-crash']:
 ''' % (pkgname, server.port))
         manifest.close()
     
+        if os.path.exists(user_data_dir):
+            time.sleep(7)
+            shutil.rmtree(user_data_dir)
         assert not os.path.exists(user_data_dir), "'%s' should not be existed before testing" % user_data_dir
 
         p = subprocess.Popen([exe, arg])
         _LOGGER.info('Waiting for crash report')
         try:
-            if not server.wait_for_report(10):
+            if not server.wait_for_report(18):
                 raise Exception('No report received.')
         finally:
             p.terminate()
-            r = server.crash(0)
-            report.LogCrashKeys(r)
-            ptype = r['ptype'][0]
-            assert(ptype == 'browser' and arg == '--test-browser-crash' or ptype in ['renderer', 'extension'] and arg == '--test-renderer-crash')
-            assert(pkgname == r['prod'][0])
-            assert(r['ver'][0] == "0.0.12")
-            assert(len(r['upload_file_minidump'][0]) > 100000)
+        r = server.crash(0)
+        report.LogCrashKeys(r)
+        ptype = r['ptype'][0]
+        assert(ptype == 'browser' and arg == '--test-browser-crash' or ptype in ['renderer', 'extension'] and arg == '--test-renderer-crash')
+        assert(pkgname == r['prod'][0])
+        assert(r['ver'][0] == "0.0.12")
+        assert(len(r['upload_file_minidump'][0]) > 100000)
 
