@@ -115,6 +115,19 @@ It will be useful if you want to distribute the app with some custom chromium ar
 
 See [Command Line Options](Command Line Options.md) for more information.
 
+### crash_report_url
+
+* `{String}` URL of the crash report server
+
+Once the app crashed, the crash dump file and information about the runtime environment will be sent to the crash server. It's sent in the same way as in Chromium browser: a HTTP POST request with `multipart/form-data` as the content type. In theory, any breakpad/crashpad server could handle the request, since breakpad/crashpad work in the same way in NW as they do in Chromium. See [a very simple server](https://github.com/nwjs/nw.js/blob/nw21/test/sanity/crash-dump-report/crash_server.py) used in our test case, or [simple-breakpad-server](https://github.com/acrisci/simple-breakpad-server).
+
+The request contains the following field at least:
+
+* `prod` - the `name` field in the manifest of your application
+* `ver` - the `version` field in the manifest of your application
+* `upload_file_minidump` - the binary contents of the minidump file
+* `switch-n` - the command line switches of the crashing process. There are multiple fields for each switch where `n` is a number starting from 1.
+
 ### js-flags
 
 * `{String}` Specify the flags passed to JS engine (v8). e.g. turn on Harmony Proxies and Collections feature:
