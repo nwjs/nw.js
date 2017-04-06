@@ -25,7 +25,7 @@ Package* InitNWPackage() {
     const base::CommandLine& command_line =
       *base::CommandLine::ForCurrentProcess();
     std::string process_type = command_line.GetSwitchValueASCII("type");
-    if (process_type == "renderer") {
+    if (!process_type.empty()) {
       base::FilePath pkg_path = command_line.GetSwitchValuePath("nwapp-path");
       g_package = new Package(pkg_path);
     } else
