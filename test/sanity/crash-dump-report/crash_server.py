@@ -125,8 +125,14 @@ class CrashServer(object):
           raise Exception('Unsupported Content-Type: ' + content_type)
         if self.headers.getheader('content-encoding') == 'gzip':
           self.log_message('GZIP');
-          readsize = self.headers.getheader('content-length')
-          buffer = StringIO(self.rfile.read(int(readsize)))
+          if self.headers.get('Transfer-Encoding', '').lower() == 'chunked':
+            if 'Content-Length' in self.headers:
+              raise AssertionError
+            body = self.handle_chunked_encoding()
+            buffer = StringIO(body)
+          else:
+            readsize = self.headers.getheader('content-length')
+            buffer = StringIO(self.rfile.read(int(readsize)))
           with gzip.GzipFile(fileobj=buffer, mode="r") as f:
             post_multipart = cgi.parse_multipart(f, parameters)
         else:
@@ -147,6 +153,39 @@ class CrashServer(object):
         self.send_header("Content-Type", "text/plain")
         self.end_headers()
         self.wfile.write(report_id)
+
+      def handle_chunked_encoding(self):
+        body = ''
+        chunk_size = self.read_chunk_size()
+        while chunk_size > 0:
+          # Read the body.
+          data = self.rfile.read(chunk_size)
+          chunk_size -= len(data)
+          body += data
+
+          # Finished reading this chunk.
+          if chunk_size == 0:
+            # Read through any trailer fields.
+            trailer_line = self.rfile.readline()
+            while trailer_line.strip() != '':
+              trailer_line = self.rfile.readline()
+
+            # Read the chunk size.
+            chunk_size = self.read_chunk_size()
+        return body
+
+      def read_chunk_size(self):
+        # Read the whole line, including the \r\n.
+        chunk_size_and_ext_line = self.rfile.readline()
+        # Look for a chunk extension.
+        chunk_size_end = chunk_size_and_ext_line.find(';')
+        if chunk_size_end == -1:
+          # No chunk extensions; just encounter the end of line.
+          chunk_size_end = chunk_size_and_ext_line.find('\r')
+        if chunk_size_end == -1:
+          self.send_response(400)  # Bad request.
+          return -1
+        return int(chunk_size_and_ext_line[:chunk_size_end], base=16)
 
     return MultipartFormHandler
 
