@@ -1,3 +1,12 @@
+0.21.5 / 04-06-2017
+===================
+- support crash dump uploading
+- Fix: spell check for windows [(#4954)](https://github.com/nwjs/nw.js/issues/4954)
+- Fix: crash on remote pages
+- Fix: [WIN] crash dump generated in the wrong location [(#5248)](https://github.com/nwjs/nw.js/issues/5248)
+- [docs] replace nwjs-builder with nwjs-builder-phoenix
+- [docs] add crash_report_url in manifest
+
 0.21.4 / 03-30-2017
 ===================
 - Update Chromium to [57.0.2987.133](https://chromereleases.googleblog.com/2017/03/stable-channel-update-for-desktop_29.html)
