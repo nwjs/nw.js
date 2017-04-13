@@ -8,6 +8,7 @@
 <body>
   <a id="linkopen" href="index.html" target="_blank">Open new window with link</a>
   <button id="winopen" onclick="winopen()">Open new window</button>
+  <button id="winopenwithsize" onclick="winopenwithsize()">Open new window with width and height</button>
   <button id="bindnewwinpolicy" onclick="bindNewWinPolicy()">Bind new-win-policy to force new window with width 388</button>
   <button id="getwinsize" onclick="getwinsize()">Get current window size</button>
   <script>
@@ -19,6 +20,9 @@
   }
   function winopen() {
     window.open('index.html');
+  }
+  function winopenwithsize() {
+    window.open('index.html', "_blank", "width=600, height=800");
   }
   function getwinsize() {
     out('result', [window.innerWidth, window.innerHeight].join(','));
