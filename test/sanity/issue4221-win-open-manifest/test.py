@@ -32,8 +32,8 @@ try:
     print 'open new window with `window.open()`'
     click_and_assert(driver, 'winopen', '400,300')
     print 'open new window by `window.open()` with width and height'
-    print 'newly opended window should have size of 600,800'
-    click_and_assert(driver, 'winopenwithsize', '600,800')
+    print 'newly opended window should have size of 320,350'
+    click_and_assert(driver, 'winopenwithsize', '320,350')
     print 'open new window with <a target="_blank">'
     click_and_assert(driver, 'linkopen', '400,300')
     print 'bind new-win-policy and newly opened window should have size of 388,300'
