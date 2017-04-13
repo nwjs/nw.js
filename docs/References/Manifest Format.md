@@ -272,6 +272,10 @@ Control the transparency with rgba background value in CSS. Use command line opt
 
 There is experimental support for "click-through" on the transparent region: add `--disable-gpu` option to the command line.
 
+### background_color
+
+* `{String}` Specify the background color of window before loading page in order to avoid a flash of white screen if the loaded page uses a dark background.
+
 ## WebKit Subfields
 
 ### double_tap_to_zoom_enabled
