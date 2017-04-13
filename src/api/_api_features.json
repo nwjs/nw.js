@@ -11,6 +11,10 @@
     "channel": "stable",
     "contexts": ["blessed_extension"]
   },
+  "nw.AutoUpdater": {
+    "channel": "stable",
+    "contexts": ["blessed_extension"]
+  },
   "nw.Window": {
     "channel": "stable",
     "contexts": ["blessed_extension"]
