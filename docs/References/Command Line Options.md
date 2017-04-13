@@ -5,6 +5,13 @@
 
 You use following command line options when starting NW.js to change some default behaviors.
 
+## About command line arguments
+
+When a user uses your app to open a file under command line, like `your-app file.txt file2.txt`, the `file.txt file2.txt` will be recorded and you can use [nw.App.argv](App.md) to get the array of command line arguments.  If there is already one running instance of your app, the full command line of the second instance will be passed to the existing instance by sending `open` event to the `App` object.
+
+!!! note
+    For now there is a limitation: if the command line argument is the filename of .js file on disk, NW will just run it as upstream Node.js. This is for supporting `child_process.fork()` API.
+
 ## `--url`
 
 Load URL with the default app: `--url=http://nwjs.io`
