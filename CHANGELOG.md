@@ -1,3 +1,9 @@
+0.21.6 / 04-13-2017
+===================
+- Update Node.js to [v7.9.0](https://nodejs.org/en/blog/release/v7.9.0/)
+- Fix: Unable to open a file as argument with an NWjs app [(#5242)](https://github.com/nwjs/nw.js/issues/5242)
+- [docs] command line argument handling
+
 0.21.5 / 04-06-2017
 ===================
 - support crash dump uploading
