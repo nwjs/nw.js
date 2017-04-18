@@ -40,7 +40,19 @@ npm install
 ```
 
 !!! warning "Note for Windows"
-    On Windows, `npm_config_node_gyp` have to be set to `path\to\global\node_modules\nw-gyp\bin\nw-gyp.js` instead of its batch script `nw-gyp.cmd`. This should be a [bug of npm](https://github.com/npm/npm/issues/14543).
+    You will need to have a compiler installed. You can get one by installing the [Visual C++ Build Tools](http://landinghub.visualstudio.com/visual-cpp-build-tools). You will also need Python 2.7 (version 3.x is not supported).
+    The `npm_config_node_gyp` environment variable has to be set to `path\to\global\node_modules\nw-gyp\bin\nw-gyp.js` instead of the `nw-gyp.cmd` batch script. This is a [bug of npm](https://github.com/npm/npm/issues/14543).
+    You must use `set` instead of `export` to set environment variables in Windows. Here is a full example (Windows 10, Visual C++ Build Tool v2015): 
+    
+```Batchfile
+set PYTHON=C:\Python27\python.exe
+set npm_config_target=0.21.6
+set npm_config_arch=x64
+set npm_config_runtime=node-webkit
+set npm_config_build_from_source=true
+set npm_config_node_gyp=C:\Users\xxxxxxxxx\AppData\Roaming\npm\node_modules\nw-gyp\bin\nw-gyp.js
+npm install --msvs_version=2015
+```
 
 ## Manually Rebuild
 
