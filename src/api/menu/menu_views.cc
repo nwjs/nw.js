@@ -133,14 +133,13 @@ void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
              &screen_point);
   }
   set_delay_destruction(true);
-  menu_runner_.reset(new views::MenuRunner(menu_model_.get(), views::MenuRunner::CONTEXT_MENU | views::MenuRunner::ASYNC,
+  menu_runner_.reset(new views::MenuRunner(menu_model_.get(), views::MenuRunner::CONTEXT_MENU,
                                            base::Bind(&Menu::OnMenuClosed, base::Unretained(this))));
-  ignore_result(
-      menu_runner_->RunMenuAt(top_level_widget,
+  menu_runner_->RunMenuAt(top_level_widget,
                        nullptr,
                        gfx::Rect(screen_point, gfx::Size()),
                        views::MENU_ANCHOR_TOPRIGHT,
-                       ui::MENU_SOURCE_NONE));
+                       ui::MENU_SOURCE_NONE);
   // It is possible for the same MenuMessageLoopAura to start a nested
   // message-loop while it is already running a nested loop. So make
   // sure the quit-closure gets reset to the outer loop's quit-closure

@@ -251,7 +251,6 @@ void NwCurrentWindowInternalCapturePageInternalFunction::CopyFromBackingStoreCom
 
 void NwCurrentWindowInternalCapturePageInternalFunction::OnCaptureSuccess(const SkBitmap& bitmap) {
   std::vector<unsigned char> data;
-  SkAutoLockPixels screen_capture_lock(bitmap);
   bool encoded = false;
   std::string mime_type;
   switch (image_format_) {
@@ -414,7 +413,7 @@ static base::win::ScopedHICON createBadgeIcon(const HWND hWnd, const TCHAR *valu
   canvas.DrawStringRectWithFlags(value, gfx::FontList(font), SK_ColorWHITE, gfx::Rect(sizeX, fontSize + yMargin + 1), gfx::Canvas::TEXT_ALIGN_CENTER);
 
   // return the canvas as windows native icon handle
-  return std::move(IconUtil::CreateHICONFromSkBitmap(canvas.ExtractImageRep().sk_bitmap()));
+  return std::move(IconUtil::CreateHICONFromSkBitmap(canvas.GetBitmap()));
 }
 #endif
 
@@ -425,8 +424,8 @@ bool NwCurrentWindowInternalSetBadgeLabelFunction::RunAsync() {
   EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &badge));
 #if defined(OS_WIN)
   base::win::ScopedComPtr<ITaskbarList3> taskbar;
-  HRESULT result = taskbar.CreateInstance(CLSID_TaskbarList, NULL,
-    CLSCTX_INPROC_SERVER);
+  HRESULT result = ::CoCreateInstance(CLSID_TaskbarList, nullptr,
+    CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&taskbar));
 
   if (FAILED(result)) {
     error_ = "Failed creating a TaskbarList3 object: ";
@@ -508,8 +507,8 @@ bool NwCurrentWindowInternalSetProgressBarFunction::RunAsync() {
   EXTENSION_FUNCTION_VALIDATE(args_->GetDouble(0, &progress));
 #if defined(OS_WIN)
   base::win::ScopedComPtr<ITaskbarList3> taskbar;
-  HRESULT result = taskbar.CreateInstance(CLSID_TaskbarList, NULL,
-    CLSCTX_INPROC_SERVER);
+  HRESULT result = ::CoCreateInstance(CLSID_TaskbarList, nullptr,
+    CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&taskbar));
 
   if (FAILED(result)) {
     error_ = "Failed creating a TaskbarList3 object: ";
@@ -724,8 +723,8 @@ bool NwCurrentWindowInternalSetShowInTaskbarFunction::RunAsync() {
   }
 
   base::win::ScopedComPtr<ITaskbarList> taskbar;
-  HRESULT result = taskbar.CreateInstance(CLSID_TaskbarList, NULL,
-                                          CLSCTX_INPROC_SERVER);
+  HRESULT result = ::CoCreateInstance(CLSID_TaskbarList, nullptr,
+                                          CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&taskbar));
   if (FAILED(result)) {
     VLOG(1) << "Failed creating a TaskbarList object: " << result;
     SendResponse(true);

@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "base/run_loop.h"
-#include "chrome/browser/browsing_data/browsing_data_remover.h"
+#include "content/public/browser/browsing_data_remover.h"
 #include "extensions/browser/extension_function.h"
 
 namespace extensions {
@@ -49,7 +49,7 @@ class NwAppGetArgvSyncFunction : public NWSyncExtensionFunction {
   DISALLOW_COPY_AND_ASSIGN(NwAppGetArgvSyncFunction);
 };
 
-class NwAppClearCacheFunction : public NWSyncExtensionFunction, public BrowsingDataRemover::Observer {
+class NwAppClearCacheFunction : public NWSyncExtensionFunction, public content::BrowsingDataRemover::Observer {
  public:
   NwAppClearCacheFunction();
   bool RunNWSync(base::ListValue* response, std::string* error) override;

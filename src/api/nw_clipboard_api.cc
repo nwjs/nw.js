@@ -92,7 +92,6 @@ namespace {
       DCHECK(data.type == TYPE_PNG || data.type == TYPE_JPEG);
       std::vector<unsigned char> encoded_image;
       SkBitmap bitmap = clipboard_->ReadImage(ui::CLIPBOARD_TYPE_COPY_PASTE);
-      SkAutoLockPixels lock(bitmap);
 
       if (bitmap.isNull()) {
         return true;
