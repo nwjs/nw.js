@@ -144,8 +144,8 @@ void WebWorkerStartThreadHook(blink::Frame* frame, const char* path, std::string
   if (frame) {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
     v8::HandleScope scope(isolate);
-    blink::WebFrame* web_frame = blink::WebFrame::fromFrame(frame);
-    v8::Local<v8::Context> v8_context = web_frame->mainWorldScriptContext();
+    blink::WebFrame* web_frame = blink::WebFrame::FromFrame(frame);
+    v8::Local<v8::Context> v8_context = web_frame->MainWorldScriptContext();
     ScriptContext* script_context =
       g_dispatcher->script_context_set().GetByV8Context(v8_context);
     if (!script_context || !script_context->extension())
@@ -354,7 +354,7 @@ base::FilePath GetRootPathRenderer() {
 }
 
 void TryInjectStartScript(blink::WebLocalFrame* frame, const Extension* extension, bool start) {
-  RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
+  RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->View());
   if (!rv)
     return;
 
@@ -375,7 +375,7 @@ void TryInjectStartScript(blink::WebLocalFrame* frame, const Extension* extensio
     base::FilePath root(extension->path());
     fpath = root.AppendASCII(js_fn);
   }
-  v8::Local<v8::Context> v8_context = frame->mainWorldScriptContext();
+  v8::Local<v8::Context> v8_context = frame->MainWorldScriptContext();
   std::string content;
   if (!base::ReadFileToString(fpath, &content)) {
     //LOG(WARNING) << "Failed to load js script file: " << js_file.value();
@@ -386,7 +386,7 @@ void TryInjectStartScript(blink::WebLocalFrame* frame, const Extension* extensio
     blink::ScriptForbiddenScope::AllowUserAgentScript script;
     v8::Context::Scope cscope(v8_context);
     // v8::Handle<v8::Value> result;
-    frame->executeScriptAndReturnValue(WebScriptSource(blink::WebString::fromUTF8(content)));
+    frame->ExecuteScriptAndReturnValue(WebScriptSource(blink::WebString::FromUTF8(content)));
   }
 }
 
@@ -406,12 +406,12 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
   blink::ScriptForbiddenScope::AllowUserAgentScript script;
   blink::WebLocalFrame* web_frame = frame->GetWebFrame();
   GURL frame_url = ScriptContext::GetDataSourceURLForFrame(web_frame);
-  if (web_frame->parent() && (!frame_url.is_valid() || frame_url.is_empty()))
+  if (web_frame->Parent() && (!frame_url.is_valid() || frame_url.is_empty()))
     return;
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::HandleScope scope(isolate);
   v8::Local<v8::Context> v8_context = frame->GetRenderView()
-      ->GetWebView()->mainFrame()->mainWorldScriptContext();
+      ->GetWebView()->MainFrame()->MainWorldScriptContext();
   ScriptContext* script_context =
       dispatcher->script_context_set().GetByV8Context(v8_context);
   if (start)
@@ -420,7 +420,7 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
     return;
   std::vector<v8::Handle<v8::Value> > arguments;
   v8::Local<v8::Value> window =
-    web_frame->mainWorldScriptContext()->Global();
+    web_frame->MainWorldScriptContext()->Global();
   arguments.push_back(v8::Boolean::New(isolate, start));
   arguments.push_back(window);
   script_context->module_system()->CallModuleMethodSafe("nw.Window", "onDocumentStartEnd", &arguments);
@@ -434,14 +434,14 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
   // there will follow another one with valid url
   blink::ScriptForbiddenScope::AllowUserAgentScript script;
   GURL frame_url = ScriptContext::GetDataSourceURLForFrame(frame);
-  if (frame->parent() && (!frame_url.is_valid() || frame_url.is_empty()))
+  if (frame->Parent() && (!frame_url.is_valid() || frame_url.is_empty()))
     return;
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::HandleScope hscope(isolate);
-  frame->document().getSecurityOrigin().grantUniversalAccess();
+  frame->GetDocument().GetSecurityOrigin().grantUniversalAccess();
   frame->setNodeJS(true);
   std::string path = effective_document_url.path();
-  v8::Local<v8::Context> v8_context = frame->mainWorldScriptContext();
+  v8::Local<v8::Context> v8_context = frame->MainWorldScriptContext();
   std::string root_path = g_extension_root;
   if (!v8_context.IsEmpty()) {
     v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
@@ -464,7 +464,7 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
     CHECK(*script2);
     script2->Run();
   }
-  RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
+  RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->View());
   if (!rv)
     return;
 
@@ -476,7 +476,7 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
   if (!v8_context.IsEmpty()) {
     v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
     v8::Context::Scope cscope(v8_context);
-    frame->executeScriptAndReturnValue(WebScriptSource(blink::WebString::fromUTF8(resource.as_string())));
+    frame->ExecuteScriptAndReturnValue(WebScriptSource(blink::WebString::FromUTF8(resource.as_string())));
   }
 }
 
@@ -489,7 +489,7 @@ void willHandleNavigationPolicy(content::RenderView* rv,
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::HandleScope scope(isolate);
   v8::Handle<v8::Context> v8_context =
-      rv->GetWebView()->mainFrame()->mainWorldScriptContext();
+      rv->GetWebView()->MainFrame()->MainWorldScriptContext();
   ScriptContext* script_context =
       g_dispatcher->script_context_set().GetByV8Context(v8_context);
   //check extension for remote pages, which doesn't have appWindow object
@@ -509,21 +509,21 @@ void willHandleNavigationPolicy(content::RenderView* rv,
 #endif
   std::vector<v8::Handle<v8::Value> > arguments;
   arguments.push_back(element);
-  arguments.push_back(v8_str(request.url().string().utf8().c_str()));
+  arguments.push_back(v8_str(request.Url().GetString().Utf8().c_str()));
   arguments.push_back(policy_obj);
   if (new_win) {
     script_context->module_system()->CallModuleMethodSafe("nw.Window",
                                                       "onNewWinPolicy", &arguments);
   } else {
     const char* req_context = nullptr;
-    switch (request.getRequestContext()) {
-    case blink::WebURLRequest::RequestContextHyperlink:
+    switch (request.GetRequestContext()) {
+    case blink::WebURLRequest::kRequestContextHyperlink:
       req_context = "hyperlink";
       break;
-    case blink::WebURLRequest::RequestContextFrame:
+    case blink::WebURLRequest::kRequestContextFrame:
       req_context = "form";
       break;
-    case blink::WebURLRequest::RequestContextLocation:
+    case blink::WebURLRequest::kRequestContextLocation:
       req_context = "location";
       break;
     default:
@@ -541,7 +541,7 @@ void willHandleNavigationPolicy(content::RenderView* rv,
   std::unique_ptr<base::Value> manifest_val(converter->FromV8Value(manifest_v8, v8_context));
   std::string manifest_str;
   if (manifest_val.get() && base::JSONWriter::Write(*manifest_val, &manifest_str)) {
-    *manifest = blink::WebString::fromUTF8(manifest_str.c_str());
+    *manifest = blink::WebString::FromUTF8(manifest_str.c_str());
   }
 
   v8::Local<v8::Value> val = policy_obj->Get(v8_str("val"));
@@ -549,15 +549,15 @@ void willHandleNavigationPolicy(content::RenderView* rv,
     return;
   v8::String::Utf8Value policy_str(val);
   if (!strcmp(*policy_str, "ignore"))
-    *policy = blink::WebNavigationPolicyIgnore;
+    *policy = blink::kWebNavigationPolicyIgnore;
   else if (!strcmp(*policy_str, "download"))
-    *policy = blink::WebNavigationPolicyDownload;
+    *policy = blink::kWebNavigationPolicyDownload;
   else if (!strcmp(*policy_str, "current"))
-    *policy = blink::WebNavigationPolicyCurrentTab;
+    *policy = blink::kWebNavigationPolicyCurrentTab;
   else if (!strcmp(*policy_str, "new-window"))
-    *policy = blink::WebNavigationPolicyNewWindow;
+    *policy = blink::kWebNavigationPolicyNewWindow;
   else if (!strcmp(*policy_str, "new-popup"))
-    *policy = blink::WebNavigationPolicyNewPopup;
+    *policy = blink::kWebNavigationPolicyNewPopup;
 }
 
 typedef bool (*RenderWidgetWasHiddenHookFn)(content::RenderWidget*);

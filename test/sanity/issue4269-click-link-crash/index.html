@@ -7,14 +7,23 @@
 </head>
 <body>
 <script>
+var newwin;
 function test() {
 nw.Window.open('inspect.html', {}, function(win) {
   win.on('loaded', function() {
-    win.showDevTools();
+    newwin = win;
+    document.getElementById('progress').innerHTML = 'loaded';
   });
 })
 }
+
+function opendev() {
+  newwin.showDevTools();
+}
+
 </script>
 <button id='test' onclick="test()">test</button>
+<button id='opendev' onclick="opendev()">opendev</button>
+<div id='progress'></div>
 </body>
 </html>

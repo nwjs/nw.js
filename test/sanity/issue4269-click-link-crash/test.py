@@ -33,11 +33,16 @@ try:
     switch_to_app(driver)
     print driver.current_url
     driver.find_element_by_id('test').click()
+    wait_for_element_id_content(driver, 'progress', 'loaded')
+    print driver.window_handles
+    handles = driver.window_handles
+    driver.find_element_by_id('opendev').click()
     print 'wait for devtools window'
     wait_window_handles(driver, 3)
     print driver.window_handles
-    print 'switch to devtools window'
-    switch_to_devtools(driver)
+    devwin = list(set(driver.window_handles) - set(handles))[0]
+    print 'switch to devtools window ' + devwin
+    driver.switch_to_window(devwin)
     devtools_click_tab(driver, 'console')
     driver.find_element_by_css_selector('.console-message-text .devtools-link').click()
     wait_window_handles(driver, 4)

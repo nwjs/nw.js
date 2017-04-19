@@ -130,8 +130,8 @@ bool NwAppClearCacheFunction::RunNWSync(base::ListValue* response, std::string* 
 
   remover->AddObserver(this);
   remover->RemoveAndReply(base::Time(), base::Time::Max(),
-                          BrowsingDataRemover::REMOVE_CACHE,
-                          BrowsingDataHelper::ALL,
+                          BrowsingDataRemover::DATA_TYPE_CACHE,
+                          BrowsingDataRemover::ORIGIN_TYPE_UNPROTECTED_WEB,
                           this);
   // BrowsingDataRemover deletes itself.
   base::MessageLoop::ScopedNestableTaskAllower allow(

@@ -278,10 +278,10 @@ class LeftMouseClick {
  public:
   explicit LeftMouseClick(content::WebContents* web_contents)
       : web_contents_(web_contents),
-        mouse_event_(blink::WebInputEvent::MouseDown,
-                     blink::WebInputEvent::NoModifiers,
-                     blink::WebInputEvent::TimeStampForTesting) {
-    mouse_event_.button = blink::WebMouseEvent::Button::Left;
+        mouse_event_(blink::WebInputEvent::kMouseDown,
+                     blink::WebInputEvent::kNoModifiers,
+                     blink::WebInputEvent::kTimeStampForTesting) {
+    mouse_event_.button = blink::WebMouseEvent::Button::kLeft;
   }
 
   ~LeftMouseClick() {
@@ -291,13 +291,12 @@ class LeftMouseClick {
   void Click(const gfx::Point& point, int duration_ms) {
     DCHECK(click_completed_);
     click_completed_ = false;
-    mouse_event_.setType(blink::WebInputEvent::MouseDown);
-    mouse_event_.x = point.x();
-    mouse_event_.y = point.y();
+    mouse_event_.SetType(blink::WebInputEvent::kMouseDown);
+    mouse_event_.SetPositionInWidget(point.x(), point.y());
     const gfx::Rect offset = web_contents_->GetContainerBounds();
-    mouse_event_.globalX = point.x() + offset.x();
-    mouse_event_.globalY = point.y() + offset.y();
-    mouse_event_.clickCount = 1;
+    mouse_event_.SetPositionInScreen(point.x() + offset.x(),
+                                     point.y() + offset.y());
+    mouse_event_.click_count = 1;
     web_contents_->GetRenderViewHost()->GetWidget()->ForwardMouseEvent(
         mouse_event_);
 
@@ -318,7 +317,7 @@ class LeftMouseClick {
 
  private:
   void SendMouseUp() {
-    mouse_event_.setType(blink::WebInputEvent::MouseUp);
+    mouse_event_.SetType(blink::WebInputEvent::kMouseUp);
     web_contents_->GetRenderViewHost()->GetWidget()->ForwardMouseEvent(
         mouse_event_);
     click_completed_ = true;
@@ -763,15 +762,14 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
   }
 
   void OpenContextMenu(content::WebContents* web_contents) {
-    blink::WebMouseEvent mouse_event(blink::WebInputEvent::MouseDown,
-                                     blink::WebInputEvent::NoModifiers,
-                                     blink::WebInputEvent::TimeStampForTesting);
-    mouse_event.button = blink::WebMouseEvent::Button::Right;
-    mouse_event.x = 1;
-    mouse_event.y = 1;
+    blink::WebMouseEvent mouse_event(blink::WebInputEvent::kMouseDown,
+                                     blink::WebInputEvent::kNoModifiers,
+                                     blink::WebInputEvent::kTimeStampForTesting);
+    mouse_event.button = blink::WebMouseEvent::Button::kRight;
+    mouse_event.SetPositionInWidget(1, 1);
     web_contents->GetRenderViewHost()->GetWidget()->ForwardMouseEvent(
         mouse_event);
-    mouse_event.setType(blink::WebInputEvent::MouseUp);
+    mouse_event.SetType(blink::WebInputEvent::kMouseUp);
     web_contents->GetRenderViewHost()->GetWidget()->ForwardMouseEvent(
         mouse_event);
   }
@@ -809,7 +807,7 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
   ~NWWebViewTestBase() override {}
 
  protected:
-  scoped_refptr<content::FrameWatcher> frame_watcher_;
+  content::FrameWatcher frame_watcher_;
 
  private:
   bool UsesFakeSpeech() {

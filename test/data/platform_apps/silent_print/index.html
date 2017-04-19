@@ -3,14 +3,18 @@
 </head>
 <body>
 <script>
-  chrome.test.sendMessage("Launched");
+  if (chrome.test) {
+    chrome.test.sendMessage("Launched");
+  }
   function test0() {
     nw.Window.get().print({pdf_path: 'output.pdf', footerString: 'nwtestfooter'});
     webview = document.getElementById('output');
     webview.src = 'output.pdf';
     webview.addEventListener('contentload', function() {
       console.log("done");
-      chrome.test.sendMessage("Loaded");
+      if (chrome.test) {
+        chrome.test.sendMessage("Loaded");
+      }
     });
   }
   function test() {
