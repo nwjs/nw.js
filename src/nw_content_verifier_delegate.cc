@@ -148,4 +148,7 @@ void NWContentVerifierDelegate::VerifyFailed(
   }
 }
 
+void NWContentVerifierDelegate::Shutdown() {
+}
+
 }  // namespace extensions

@@ -289,7 +289,7 @@ void NwCurrentWindowInternalCapturePageInternalFunction::OnCaptureSuccess(const 
   base::Base64Encode(stream_as_string, &base64_result);
   base64_result.insert(
       0, base::StringPrintf("data:%s;base64,", mime_type.c_str()));
-  SetResult(base::MakeUnique<base::StringValue>(base64_result.c_str()));
+  SetResult(base::MakeUnique<base::Value>(base64_result.c_str()));
   SendResponse(true);
 }
 
@@ -400,9 +400,9 @@ static base::win::ScopedHICON createBadgeIcon(const HWND hWnd, const TCHAR *valu
   gfx::Canvas canvas(gfx::Size(sizeX, sizeY), 1, false);
 
   // drawing red circle
-  SkPaint paint;
-  paint.setColor(SK_ColorRED);
-  canvas.DrawCircle(gfx::Point(sizeX / 2, sizeY / 2), sizeX / 2, paint);
+  cc::PaintFlags flags;
+  flags.setColor(SK_ColorRED);
+  canvas.DrawCircle(gfx::Point(sizeX / 2, sizeY / 2), sizeX / 2, flags);
 
   // drawing the text
   gfx::PlatformFont *platform_font = gfx::PlatformFont::CreateDefault();
@@ -696,7 +696,7 @@ bool NwCurrentWindowInternalGetWinParamInternalFunction::RunNWSync(base::ListVal
 
   base::DictionaryValue* result = new base::DictionaryValue;
   result->Set("frameId", new base::Value(frame_id));
-  result->Set("id", new base::StringValue(app_window->window_key()));
+  result->Set("id", new base::Value(app_window->window_key()));
   app_window->GetSerializedState(result);
 
   response->Append(base::WrapUnique(result));

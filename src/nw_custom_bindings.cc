@@ -195,7 +195,7 @@ void NWCustomBindings::EvalScript(
     web_frame = main_frame;
   }else{
     blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::toImpl(frm);
-    web_frame = blink::WebFrame::fromFrame(iframe->contentFrame());
+    web_frame = blink::WebFrame::FromFrame(iframe->ContentFrame());
   }
 #if defined(OS_WIN)
   base::string16 jscript((WCHAR*)*v8::String::Value(args[1]));
@@ -203,7 +203,7 @@ void NWCustomBindings::EvalScript(
   base::string16 jscript = *v8::String::Value(args[1]);
 #endif
   if (web_frame) {
-    result = web_frame->executeScriptAndReturnValue(blink::WebScriptSource(blink::WebString::fromUTF16(jscript)));
+    result = web_frame->ExecuteScriptAndReturnValue(blink::WebScriptSource(blink::WebString::FromUTF16(jscript)));
   }
   args.GetReturnValue().Set(result);
   return;
@@ -242,9 +242,9 @@ void NWCustomBindings::EvalNWBin(
     web_frame = main_frame;
   }else{
     blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::toImpl(frm);
-    web_frame = blink::WebFrame::fromFrame(iframe->contentFrame());
+    web_frame = blink::WebFrame::FromFrame(iframe->ContentFrame());
   }
-  v8::Context::Scope cscope (web_frame->mainWorldScriptContext());
+  v8::Context::Scope cscope (web_frame->MainWorldScriptContext());
   v8::FixSourceNWBin(isolate, script);
   result = script->BindToCurrentContext()->Run();
   args.GetReturnValue().Set(result);
@@ -270,9 +270,9 @@ void NWCustomBindings::AddOriginAccessWhitelistEntry(const v8::FunctionCallbackI
   std::string destinationHost     = *v8::String::Utf8Value(args[2]);
   bool allowDestinationSubdomains = args[3]->ToBoolean()->Value();
 
-  blink::WebSecurityPolicy::addOriginAccessWhitelistEntry(GURL(sourceOrigin),
-                                                          blink::WebString::fromUTF8(destinationProtocol),
-                                                          blink::WebString::fromUTF8(destinationHost),
+  blink::WebSecurityPolicy::AddOriginAccessWhitelistEntry(GURL(sourceOrigin),
+                                                          blink::WebString::FromUTF8(destinationProtocol),
+                                                          blink::WebString::FromUTF8(destinationHost),
                                                           allowDestinationSubdomains);
   args.GetReturnValue().Set(v8::Undefined(isolate));
   return;
@@ -286,9 +286,9 @@ void NWCustomBindings::RemoveOriginAccessWhitelistEntry(const v8::FunctionCallba
   std::string destinationHost     = *v8::String::Utf8Value(args[2]);
   bool allowDestinationSubdomains = args[3]->ToBoolean()->Value();
 
-  blink::WebSecurityPolicy::removeOriginAccessWhitelistEntry(GURL(sourceOrigin),
-                                                          blink::WebString::fromUTF8(destinationProtocol),
-                                                          blink::WebString::fromUTF8(destinationHost),
+  blink::WebSecurityPolicy::RemoveOriginAccessWhitelistEntry(GURL(sourceOrigin),
+                                                          blink::WebString::FromUTF8(destinationProtocol),
+                                                          blink::WebString::FromUTF8(destinationHost),
                                                           allowDestinationSubdomains);
   args.GetReturnValue().Set(v8::Undefined(isolate));
   return;
@@ -327,7 +327,7 @@ void NWCustomBindings::SetDevToolsJail(const v8::FunctionCallbackInfo<v8::Value>
   }else{
 	  v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[0]);
 	  blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::toImpl(frm);
-    main_frame->setDevtoolsJail(blink::WebFrame::fromFrame(iframe->contentFrame()));
+    main_frame->setDevtoolsJail(blink::WebFrame::FromFrame(iframe->ContentFrame()));
   }
   args.GetReturnValue().Set(v8::Undefined(isolate));
   return;

@@ -144,7 +144,7 @@ void ShowDevtools(bool show, content::WebContents* web_contents, content::WebCon
     if (!window) {
       Profile* profile = Profile::FromBrowserContext(
              web_contents->GetBrowserContext());
-      window = DevToolsWindow::Create(profile, GURL(), nullptr, false, false, false, std::string(), false, std::string(), std::string(), container);
+      window = DevToolsWindow::Create(profile, nullptr, DevToolsWindow::kFrontendDefault, std::string(), false, std::string(), std::string(), container);
       if (!window)
         return;
       window->bindings_->AttachTo(agent_host);

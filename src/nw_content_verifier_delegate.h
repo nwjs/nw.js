@@ -31,7 +31,7 @@ class NWContentVerifierDelegate : public ContentVerifierDelegate {
   void VerifyFailed(const std::string& extension_id,
                     const base::FilePath& relative_path,
                     ContentVerifyJob::FailureReason reason) override;
-
+  void Shutdown() override;
   content::BrowserContext* context_;
   ContentVerifierDelegate::Mode default_mode_;
 
