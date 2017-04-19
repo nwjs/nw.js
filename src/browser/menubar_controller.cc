@@ -20,7 +20,10 @@ MenuBarController::MenuBarController(MenuBarView* menubar, ui::MenuModel* menu_m
   MenuBarController::CreateMenu(menubar, menu_model, this);
   if (!master) {
     master_ = this;
-    menu_runner_.reset(new views::MenuRunner(menu_model, views::MenuRunner::HAS_MNEMONICS | views::MenuRunner::ASYNC, base::Bind(&MenuBarController::OnMenuClose, base::Unretained(this))));
+    menu_runner_.reset(new views::MenuRunner(menu_model,
+                                             views::MenuRunner::HAS_MNEMONICS,
+                                             base::Bind(&MenuBarController::OnMenuClose,
+                                                        base::Unretained(this))));
   }
 }
 
@@ -99,11 +102,11 @@ void MenuBarController::RunMenuAt(views::View* view, const gfx::Point& point) {
   gfx::Rect bounds(screen_loc.x(), screen_loc.y(), menu_button->width(),
                    menu_button->height() - 1);
 
-  ignore_result(menu_runner_->RunMenuAt(view->GetWidget()->GetTopLevelWidget(),
+  menu_runner_->RunMenuAt(view->GetWidget()->GetTopLevelWidget(),
                                        menu_button,
                                        bounds,
                                        views::MENU_ANCHOR_TOPLEFT,
-                                       ui::MENU_SOURCE_NONE));
+                                       ui::MENU_SOURCE_NONE);
   {
     base::AutoReset<base::Closure> reset_quit_closure(&message_loop_quit_,
                                                       base::Closure());

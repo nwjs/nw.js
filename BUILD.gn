@@ -19,7 +19,7 @@ group("nwjs") {
 component("nw_base") {
   deps = [
     "//base",
-    "//third_party/zlib:zip",
+    "//third_party/zlib/google:zip",
     "//url",
     ":commit_id"
   ]
@@ -57,7 +57,7 @@ if (is_component_build) {
       "//skia",
       ":nw_base",
       "//third_party/WebKit/public:blink",
-      "//third_party/WebKit/Source/wtf",
+      "//third_party/WebKit/Source/platform/wtf",
       "//third_party/protobuf:protobuf_lite",
       "//third_party/webrtc/modules/desktop_capture",
     ]
@@ -183,7 +183,7 @@ static_library("nw_renderer") {
     "//extensions/common",
     "//extensions/renderer",
     "//third_party/WebKit/public:blink",
-    "//third_party/WebKit/Source/wtf",
+    "//third_party/WebKit/Source/platform/wtf",
     "//skia",
     ":nw_base",
     "//third_party/protobuf:protobuf_lite",

@@ -4,7 +4,6 @@
 #include "base/memory/ptr_util.h"
 #include "chrome/browser/browsing_data/browsing_data_appcache_helper.h"
 #include "chrome/browser/browsing_data/browsing_data_helper.h"
-#include "chrome/browser/browsing_data/browsing_data_remover_factory.h"
 #include "chrome/browser/devtools/devtools_window.h"
 #include "chrome/browser/extensions/devtools_util.h"
 #include "chrome/browser/extensions/extension_service.h"
@@ -125,13 +124,13 @@ NwAppClearCacheFunction::~NwAppClearCacheFunction() {
 }
 
 bool NwAppClearCacheFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  BrowsingDataRemover* remover = BrowsingDataRemoverFactory::GetForBrowserContext(
+  content::BrowsingDataRemover* remover = content::BrowserContext::GetBrowsingDataRemover(
       Profile::FromBrowserContext(context_));
 
   remover->AddObserver(this);
   remover->RemoveAndReply(base::Time(), base::Time::Max(),
-                          BrowsingDataRemover::DATA_TYPE_CACHE,
-                          BrowsingDataRemover::ORIGIN_TYPE_UNPROTECTED_WEB,
+                          content::BrowsingDataRemover::DATA_TYPE_CACHE,
+                          content::BrowsingDataRemover::ORIGIN_TYPE_UNPROTECTED_WEB,
                           this);
   // BrowsingDataRemover deletes itself.
   base::MessageLoop::ScopedNestableTaskAllower allow(

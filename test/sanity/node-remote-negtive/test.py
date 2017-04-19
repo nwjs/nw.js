@@ -1,5 +1,8 @@
 import time
 import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from nw_util import *
 import subprocess
 
 from selenium import webdriver
@@ -28,9 +31,8 @@ driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_opt
 try:
     print driver.current_url
     time.sleep(1)
-    result = driver.find_element_by_id('result')
-    print result.get_attribute('innerHTML')
-    assert("success" in result.get_attribute('innerHTML'))
+    result = wait_for_element_id_content(driver, 'result', 'success')
+    print result
 finally:
     server.terminate()
     driver.quit()
