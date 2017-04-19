@@ -25,6 +25,7 @@
 #include "base/bind.h"
 #include "base/logging.h"
 #include "base/values.h"
+#include "base/task_scheduler/post_task.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/browser_thread.h"
 #include "chrome/browser/platform_util.h"
@@ -62,8 +63,9 @@ void Shell::Call(const std::string& method,
     arguments.GetString(0, &full_path);
     FilePath path = FilePath::FromUTF8Unsafe(full_path);
     platform_util::OpenItemType *item_type = new platform_util::OpenItemType();
-    content::BrowserThread::PostBlockingPoolTaskAndReply(
+    base::PostTaskWithTraitsAndReply(
       FROM_HERE,
+      {base::MayBlock(), base::TaskPriority::BACKGROUND},
       base::Bind(&VerifyItemType, path, base::Unretained(item_type)),
       base::Bind(&OnItemTypeVerified, profile, path, base::Owned(item_type))
       );

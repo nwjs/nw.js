@@ -234,7 +234,7 @@ void NWCustomBindings::EvalNWBin(
   v8::Local<v8::UnboundScript> script;
   script = v8::ScriptCompiler::CompileUnboundScript(
                                                     isolate, &source, v8::ScriptCompiler::kConsumeCodeCache).ToLocalChecked();
-  ASSERT(!cache->rejected);
+  CHECK(!cache->rejected);
   v8::Handle<v8::Value> result;
   v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[0]);
   WebFrame* web_frame = NULL;
