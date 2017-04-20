@@ -1,3 +1,8 @@
+0.22.0 / 04-20-2017
+===================
+- Update Chromium to [58.0.3029.81](https://chromereleases.googleblog.com/2017/04/stable-channel-update-for-desktop.html)
+- Fix: New window created using window.open not honouring height and width [(#5517)](https://github.com/nwjs/nw.js/issues/5517)
+
 0.21.6 / 04-13-2017
 ===================
 - Update Node.js to [v7.9.0](https://nodejs.org/en/blog/release/v7.9.0/)
