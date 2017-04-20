@@ -16,7 +16,6 @@ markdown_extensions:
     - pymdownx.smartsymbols
     - pymdownx.tasklist
     - pymdownx.progressbar
-    - pymdownx.headeranchor
     - pymdownx.arithmatex
     - pymdownx.mark
     - pymdownx.critic
