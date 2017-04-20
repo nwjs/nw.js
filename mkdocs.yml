@@ -14,7 +14,6 @@ markdown_extensions:
     - pymdownx.tilde
     - pymdownx.caret
     - pymdownx.smartsymbols
-    - pymdownx.githubemoji
     - pymdownx.tasklist
     - pymdownx.progressbar
     - pymdownx.headeranchor
