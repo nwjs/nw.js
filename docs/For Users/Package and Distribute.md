@@ -55,7 +55,7 @@ It's the recommended way to pack your app.
 
 ### Package Option 2. Zip File
 
-You can package all the files into a zip file and rename it as `package.nw`. And put it along with NW.js binaries for Windows and Linux. For Mac, put `package.nw` in `nwjs.app/Contents/Resources/`.
+You can package all the files into a zip file and rename it as `package.nw`. And put it along with NW.js binaries for Windows and Linux. For Mac, name it `app.nw` and put it in `nwjs.app/Contents/Resources/`.
 
 !!! warning "Start Slow with Big Package or Too Many Files"
     At starting time, NW.js will unzip the package into temp folder and load it from there. So it will start slower if your package is big or contains too many files.
