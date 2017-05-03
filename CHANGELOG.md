@@ -1,3 +1,13 @@
+0.22.1 / 05-03-2017
+===================
+- Update Chromium to [58.0.3029.96](https://chromereleases.googleblog.com/2017/05/stable-channel-update-for-desktop.html)
+- Include MP3 decoder in the official build [(#4149)](https://github.com/nwjs/nw.js/issues/4149)
+- Fix: [OSX] nothing rendered using --force-cpu-redraw on OSX [(#5866)](https://github.com/nwjs/nw.js/issues/5866)
+- Fix: [OSX] crash after resuming from breakpoint in Node [(#5882)](https://github.com/nwjs/nw.js/issues/5882)
+- Fix: crash when calling setAlwaysOnTop in created window with remote url [(#5738)](https://github.com/nwjs/nw.js/issues/5738)
+- [docs] package.nw -> app.nw for macOS [(#5883)](https://github.com/nwjs/nw.js/issues/5883)
+- [docs] not recommending nw-builder since it's not in active maintained state
+
 0.22.0 / 04-20-2017
 ===================
 - Update Chromium to [58.0.3029.81](https://chromereleases.googleblog.com/2017/04/stable-channel-update-for-desktop.html)
