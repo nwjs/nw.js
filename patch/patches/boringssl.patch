@@ -1,0 +1,38 @@
+diff --git a/include/openssl/base.h b/include/openssl/base.h
+index a9d1ec58..d121b6fb 100644
+--- include/openssl/base.h
++++ include/openssl/base.h
+@@ -65,6 +65,10 @@
+ #include <stdio.h>
+ #endif
+ 
++/* Include a BoringSSL-only header so consumers including this header without
++ * setting up include paths do not accidentally pick up the system
++ * opensslconf.h. */
++#include <openssl/is_boringssl.h>
+ #include <openssl/opensslconf.h>
+ 
+ #if defined(BORINGSSL_PREFIX)
+diff --git a/include/openssl/is_boringssl.h b/include/openssl/is_boringssl.h
+new file mode 100644
+index 00000000..def6e82b
+--- include/openssl/is_boringssl.h
++++ include/openssl/is_boringssl.h
+@@ -0,0 +1,16 @@
++/* Copyright (c) 2017, Google Inc.
++ *
++ * Permission to use, copy, modify, and/or distribute this software for any
++ * purpose with or without fee is hereby granted, provided that the above
++ * copyright notice and this permission notice appear in all copies.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
++ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
++ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
++ * SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
++ * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
++ * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
++
++/* This header is provided in order to catch include path errors in consuming
++ * BoringSSL. */
+
