@@ -1,3 +1,8 @@
+0.22.2 / 05-09-2017
+===================
+- Update Node.js to [v7.10.0](https://nodejs.org/en/blog/release/v7.10.0/)
+- Add support for chrome://profiler [(#5901)](https://github.com/nwjs/nw.js/issues/5901)
+
 0.22.1 / 05-03-2017
 ===================
 - Update Chromium to [58.0.3029.96](https://chromereleases.googleblog.com/2017/05/stable-channel-update-for-desktop.html)
