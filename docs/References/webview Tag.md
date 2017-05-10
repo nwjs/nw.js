@@ -55,3 +55,10 @@ Show all cookies for e.g. http://docs.nwjs.io in console (to have some cookies t
 ```html
 chrome.cookies.getAll({url:"http://docs.nwjs.io", storeId:webview.getCookieStoreId()}, console.log.bind(console));
 ```
+
+### Audio management support in webview
+
+To find out whether webview has (or has not) audio output and to (un)mute it there is following API:
+- `audiblechange` event which is invoked when audio output is changed (audio starts to play or stops to play)
+- `setAudioMuted(bool mute)` method to (un)set audio mute
+- `isAudioMuted(function callback)` method to find out in callback whether mute is set.
