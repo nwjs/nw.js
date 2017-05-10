@@ -17,8 +17,8 @@ plugindir = os.path.join(builddir, 'PepperFlash')
 
 arch = os.path.join(testdir, 'arch')
 
-if platform.system() != 'Linux':
-    print 'Skipped for non Linux platform'
+if platform.system() != 'Linux' or platform.architecture()[0] == '32bit':
+    print 'Skipped for non Linux64 platform'
     sys.exit(0)
 
 try:
