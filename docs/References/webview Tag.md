@@ -55,3 +55,10 @@ Show all cookies for e.g. http://docs.nwjs.io in console (to have some cookies t
 ```html
 chrome.cookies.getAll({url:"http://docs.nwjs.io", storeId:webview.getCookieStoreId()}, console.log.bind(console));
 ```
+
+### Custom invalid certificate handling support in webview
+By default NW.js Webview handle invalid certificates the same way as chromium - it shows chrome-like invalid certificate page to user. This is sufficient for most use cases. If you need to handle them in you code (or you just want to provide custom UI for user) you can create webview with `useautomaticcerthandling` attribute. Then you need to take care of `certificateerror` event on webview with information about certificate which you get when invalid certificate occur. To decide what to do with invalid certificate you need to call `allowCertificate(boolean allow)` function on webview.
+
+- `useautomaticcerthandling` - attribute on webview. For custom handling of invalid certificates create webview with `useautomaticcerthandling` set to true
+- `certificateerror` - event on webview with information about certificate
+- `allowCertificate(boolean allow)` function on webview to decide whether accept or deny certificate
