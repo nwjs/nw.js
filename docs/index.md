@@ -38,6 +38,7 @@ The source of the document is in [our git repo](https://github.com/nwjs/nw.js/tr
     - [Enable Proprietary Codecs](For Developers/Enable Proprietary Codecs.md)
     - [Repositories](For Developers/Repositories.md)
     - [Understanding Crash Dump](For Developers/Understanding Crash Dump.md)
+    - [Using Tracing Tool](For Developers/Using Tracing Tool.md)
     - [Writing Documents for NW.js](For Developers/Writing Documents for NW.js.md)
     - [Writing Test Cases for NW.js](For Developers/Writing Test Cases for NW.js.md)
     - [Contributors of Documents](For Developers/Contributors of Documents.md)
