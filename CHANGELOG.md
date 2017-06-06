@@ -1,3 +1,10 @@
+0.23.0 / 06-06-2017
+===================
+- Update Chromium to [59.0.3071.86](https://blog.chromium.org/2017/05/chrome-59-beta-headless-chromium-native.html)
+- Update Node.js to [v8.0.0](https://nodejs.org/en/blog/release/v8.0.0/)
+- Add support for chrome://extensions WebUI in SDK flavor
+- Fix: Cannot require 'https' module in Web Worker [(#5918)](https://github.com/nwjs/nw.js/issues/5918)
+
 0.22.3 / 05-10-2017
 ===================
 - Update Chromium to [58.0.3029.110](https://chromereleases.googleblog.com/2017/05/stable-channel-update-for-desktop_9.html)
