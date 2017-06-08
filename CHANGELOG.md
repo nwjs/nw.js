@@ -1,3 +1,8 @@
+0.23.1 / 06-08-2017
+===================
+- Fix: Crash in blink::V8StringToWebCoreString [(#5947)](https://github.com/nwjs/nw.js/issues/5947)
+- Fix: Menu not working [(#5953)](https://github.com/nwjs/nw.js/issues/5953)
+
 0.23.0 / 06-06-2017
 ===================
 - Update Chromium to [59.0.3071.86](https://blog.chromium.org/2017/05/chrome-59-beta-headless-chromium-native.html)
