@@ -1,8 +1,10 @@
 #include "content/nw/src/browser/menubar_controller.h"
 
+#include "base/run_loop.h"
 #include "base/stl_util.h"
 #include "content/nw/src/browser/menubar_view.h"
 #include "ui/base/models/menu_model.h"
+#include "ui/events/platform/platform_event_source.h"
 #include "ui/views/controls/button/menu_button.h"
 #include "ui/views/controls/menu/menu_item_view.h"
 #include "ui/views/widget/widget.h"
@@ -15,10 +17,10 @@ MenuBarController* MenuBarController::master_;
 MenuBarController::MenuBarController(MenuBarView* menubar, ui::MenuModel* menu_model, MenuBarController* master)
   :MenuModelAdapter(menu_model), menubar_(menubar), active_menu_model_(menu_model) {
 
-  views::MenuItemView* menu = MenuBarController::CreateMenu(menubar, menu_model, this);
+  MenuBarController::CreateMenu(menubar, menu_model, this);
   if (!master) {
     master_ = this;
-    menu_runner_.reset(new views::MenuRunner(menu, views::MenuRunner::HAS_MNEMONICS));
+    menu_runner_.reset(new views::MenuRunner(menu_model, views::MenuRunner::HAS_MNEMONICS | views::MenuRunner::ASYNC, base::Bind(&MenuBarController::OnMenuClose, base::Unretained(this))));
   }
 }
 
@@ -102,7 +104,32 @@ void MenuBarController::RunMenuAt(views::View* view, const gfx::Point& point) {
                                        bounds,
                                        views::MENU_ANCHOR_TOPLEFT,
                                        ui::MENU_SOURCE_NONE));
+  {
+    base::AutoReset<base::Closure> reset_quit_closure(&message_loop_quit_,
+                                                      base::Closure());
+  
+    base::MessageLoop* loop = base::MessageLoop::current();
+    base::MessageLoop::ScopedNestableTaskAllower allow(loop);
+    base::RunLoop run_loop;
+    message_loop_quit_ = run_loop.QuitClosure();
+  
+    run_loop.Run();
+  }
   delete this;
+}
+
+void MenuBarController::OnMenuClose() {
+  CHECK(!message_loop_quit_.is_null());
+  message_loop_quit_.Run();
+  
+#if !defined(OS_WIN)
+  // Ask PlatformEventSource to stop dispatching
+  // events in this message loop
+  // iteration. We want our menu's loop to return
+  // before the next event.
+  if (ui::PlatformEventSource::GetInstance())
+    ui::PlatformEventSource::GetInstance()->StopCurrentEventStream();
+#endif
 }
 
 } //namespace nw

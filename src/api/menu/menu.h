@@ -21,6 +21,7 @@
 #ifndef CONTENT_NW_SRC_API_MENU_MENU_H_
 #define CONTENT_NW_SRC_API_MENU_MENU_H_ 
 
+#include "base/callback.h"
 #include "base/compiler_specific.h"
 #include "content/nw/src/api/base/base.h"
 
@@ -82,6 +83,10 @@ class RenderFrameHost;
 class RenderFrameHost;
 }
 
+namespace views {
+class MenuRunner;
+}
+
 namespace nw {
 
 class MenuItem;
@@ -127,6 +132,8 @@ class Menu : public Base {
 
   void UpdateStates();
 
+  void OnMenuClosed();
+
   //**Never Try to free this pointer**
   //We get it from top widget
   views::FocusManager *focus_manager_;
@@ -138,6 +145,8 @@ class Menu : public Base {
 
   std::unique_ptr<MenuDelegate> menu_delegate_;
   std::unique_ptr<ui::NwMenuModel> menu_model_;
+  std::unique_ptr<views::MenuRunner> menu_runner_;
+  base::Closure message_loop_quit_;
 #endif
 
   DISALLOW_COPY_AND_ASSIGN(Menu);

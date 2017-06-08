@@ -20,6 +20,7 @@
 
 #include "content/nw/src/api/menu/menu.h"
 
+#include "base/run_loop.h"
 #include "base/values.h"
 #include "base/strings/utf_string_conversions.h"
 #include "content/nw/src/api/object_manager.h"
@@ -33,6 +34,7 @@
 #include "ui/aura/client/screen_position_client.h"
 #include "ui/aura/window.h"
 #include "ui/aura/window_tree_host.h"
+#include "ui/events/platform/platform_event_source.h"
 #include "ui/views/controls/menu/menu_runner.h"
 #include "ui/views/widget/widget.h"
 #include "ui/views/focus/focus_manager.h"
@@ -131,16 +133,46 @@ void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
              &screen_point);
   }
   set_delay_destruction(true);
-  views::MenuRunner runner(menu_model_.get(), views::MenuRunner::CONTEXT_MENU);
+  menu_runner_.reset(new views::MenuRunner(menu_model_.get(), views::MenuRunner::CONTEXT_MENU | views::MenuRunner::ASYNC,
+                                           base::Bind(&Menu::OnMenuClosed, base::Unretained(this))));
   ignore_result(
-      runner.RunMenuAt(top_level_widget,
-                       NULL,
+      menu_runner_->RunMenuAt(top_level_widget,
+                       nullptr,
                        gfx::Rect(screen_point, gfx::Size()),
                        views::MENU_ANCHOR_TOPRIGHT,
                        ui::MENU_SOURCE_NONE));
+  // It is possible for the same MenuMessageLoopAura to start a nested
+  // message-loop while it is already running a nested loop. So make
+  // sure the quit-closure gets reset to the outer loop's quit-closure
+  // once the innermost loop terminates.
+  {
+    base::AutoReset<base::Closure> reset_quit_closure(&message_loop_quit_,
+                                                      base::Closure());
+  
+    base::MessageLoop* loop = base::MessageLoop::current();
+    base::MessageLoop::ScopedNestableTaskAllower allow(loop);
+    base::RunLoop run_loop;
+    message_loop_quit_ = run_loop.QuitClosure();
+  
+    run_loop.Run();
+  }
   set_delay_destruction(false);
   if (pending_destruction())
     object_manager_->OnDeallocateObject(id_);
+}
+
+void Menu::OnMenuClosed() {
+  CHECK(!message_loop_quit_.is_null());
+  message_loop_quit_.Run();
+  
+#if !defined(OS_WIN)
+  // Ask PlatformEventSource to stop dispatching
+  // events in this message loop
+  // iteration. We want our menu's loop to return
+  // before the next event.
+  if (ui::PlatformEventSource::GetInstance())
+    ui::PlatformEventSource::GetInstance()->StopCurrentEventStream();
+#endif
 }
 
 void Menu::UpdateKeys(views::FocusManager *focus_manager){

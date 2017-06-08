@@ -26,6 +26,7 @@
 #include "content/nw/src/api/menuitem/menuitem.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/page_zoom.h"
+#include "ui/views/controls/menu/menu_runner.h"
 
 namespace nw {
 

@@ -1,6 +1,7 @@
 #ifndef NW_BROWSER_MENUBAR_CONTROLLER_H
 #define NW_BROWSER_MENUBAR_CONTROLLER_H
 
+#include "base/callback.h"
 #include "ui/views/controls/menu/menu_model_adapter.h"
 #include "ui/views/controls/menu/menu_runner.h"
 #include "ui/views/view.h"
@@ -32,6 +33,8 @@ class MenuBarController : public views::MenuModelAdapter {
   void ExecuteCommand(int id) override;
   void ExecuteCommand(int id, int mouse_event_flags) override;
 
+  void OnMenuClose();
+
  private:
   typedef std::map<const ui::MenuModel*, views::MenuItemView*> ModelToMenuMap;
 
@@ -41,6 +44,7 @@ class MenuBarController : public views::MenuModelAdapter {
   std::vector<MenuBarController*> controllers_;
   static ModelToMenuMap model_to_menu_map_;
   static MenuBarController* master_;
+  base::Closure message_loop_quit_;
 
   DISALLOW_COPY_AND_ASSIGN(MenuBarController);
 };
