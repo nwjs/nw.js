@@ -1,3 +1,9 @@
+0.23.2 / 06-13-2017
+===================
+- Update Node.js to [v8.1.0](https://nodejs.org/en/blog/release/v8.1.0/)
+- Fix: upstream issue - crashes when calling video.play() while devtools is open [(#5958)](https://github.com/nwjs/nw.js/issues/5958)
+- Fix: incorrect commit hash in welcome screen [(#5955)](https://github.com/nwjs/nw.js/issues/5955)
+
 0.23.1 / 06-08-2017
 ===================
 - Fix: Crash in blink::V8StringToWebCoreString [(#5947)](https://github.com/nwjs/nw.js/issues/5947)
