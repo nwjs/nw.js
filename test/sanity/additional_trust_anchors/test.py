@@ -53,10 +53,10 @@ pkg_with_trust_anchors = '''
 ''' % cert
 write_file('package.json', pkg_with_trust_anchors)
 
-driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
-driver.implicitly_wait(5)
-time.sleep(1)
 try:
+    driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
+    driver.implicitly_wait(5)
+    time.sleep(1)
     try:
         print driver.current_url
         timeout = 10
@@ -104,4 +104,5 @@ try:
         driver.quit()
 
 finally:
-    server.terminate()
+    print "killing child process", server.pid
+    server.kill()
