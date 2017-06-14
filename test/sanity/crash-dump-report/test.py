@@ -99,7 +99,7 @@ for arg in ['--test-browser-crash', '--test-renderer-crash']:
         p = subprocess.Popen([exe, arg])
         _LOGGER.info('Waiting for crash report')
         try:
-            if not server.wait_for_report(18):
+            if not server.wait_for_report(120):
                 raise Exception('No report received.')
         finally:
             p.terminate()
