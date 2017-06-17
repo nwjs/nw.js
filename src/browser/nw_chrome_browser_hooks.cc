@@ -136,7 +136,7 @@ bool CheckStoragePartitionMatches(int render_process_id, const GURL& url) {
 void ShowDevtools(bool show, content::WebContents* web_contents, content::WebContents* container) {
   content::RenderFrameHost* rfh = web_contents->GetMainFrame();
   if (container) {
-    scoped_refptr<DevToolsAgentHost> agent_host(DevToolsAgentHost::GetOrCreateFor(rfh));
+    scoped_refptr<DevToolsAgentHost> agent_host(DevToolsAgentHost::GetOrCreateFor(web_contents));
     g_cdt_process_id = container->GetRenderProcessHost()->GetID();
     content::ChildProcessSecurityPolicy::GetInstance()->GrantAll(g_cdt_process_id);
     
@@ -157,7 +157,7 @@ void ShowDevtools(bool show, content::WebContents* web_contents, content::WebCon
     return;
   }
   scoped_refptr<DevToolsAgentHost> agent(
-      DevToolsAgentHost::GetOrCreateFor(rfh));
+      DevToolsAgentHost::GetOrCreateFor(web_contents));
   DevToolsWindow* window = DevToolsWindow::FindDevToolsWindow(agent.get());
   if (window)
     window->InspectedContentsClosing();
