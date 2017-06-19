@@ -1,3 +1,9 @@
+0.23.3 / 06-19-2017
+===================
+- Update Chromium to [59.0.3071.104](https://chromereleases.googleblog.com/2017/06/stable-channel-update-for-desktop_15.html)
+- Update Node.js to [v8.1.2](https://nodejs.org/en/blog/release/v8.1.2/)
+- Fix: crash when start with user data dir from higher version [(#5964)](https://github.com/nwjs/nw.js/issues/5964)
+
 0.23.2 / 06-13-2017
 ===================
 - Update Node.js to [v8.1.0](https://nodejs.org/en/blog/release/v8.1.0/)
