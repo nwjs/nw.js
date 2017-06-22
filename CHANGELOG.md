@@ -1,3 +1,8 @@
+0.23.4 / 06-22-2017
+===================
+- Update Chromium to [59.0.3071.109](https://chromereleases.googleblog.com/2017/06/stable-channel-update-for-desktop_20.html)
+- Fix: macOS Notification settings link opens up a blank screen in a new window on 0.23.0 [(#5948)](https://github.com/nwjs/nw.js/issues/5948)
+
 0.23.3 / 06-19-2017
 ===================
 - Update Chromium to [59.0.3071.104](https://chromereleases.googleblog.com/2017/06/stable-channel-update-for-desktop_15.html)
