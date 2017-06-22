@@ -220,13 +220,22 @@ static_library("nw_renderer") {
 
 }
 
+nw_git_is_present = exec_script("tools/commit_id.py",
+                                [
+                                  "check",
+                                  rebase_path("../..", root_build_dir),
+                                ],
+                                "value")
+
+nw_use_commit_id = nw_git_is_present == 1
+
 config("commit_id_config") {
   include_dirs = [ "$root_gen_dir/nw" ]
 }
 
 commit_id_output_file = "$root_gen_dir/nw/id/commit.h"
-
-action("commit_id") {
+if (nw_use_commit_id) {
+  action("commit_id") {
     script = "tools/commit_id.py"
     inputs = [
        "//content/nw/.git/index",
@@ -245,6 +254,17 @@ action("commit_id") {
     ]
 
     public_configs = [ ":commit_id_config" ]
+  }
+} else {
+  copy("commit_id") {
+    sources = [
+      "src/commit.h",
+    ]
+    outputs = [
+      commit_id_output_file,
+    ]
+    public_configs = [ ":commit_id_config" ]
+  }
 }
 
 if (is_mac) {
