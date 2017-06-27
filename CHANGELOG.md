@@ -1,3 +1,9 @@
+0.23.5 / 06-27-2017
+===================
+- Update Chromium to [59.0.3071.115](https://chromereleases.googleblog.com/2017/06/stable-channel-update-for-desktop_26.html)
+- Fix: [WIN] hang in application start in edge cases
+- Fix: [WIN] window transparent not work on v0.23.2 [(#5973)](https://github.com/nwjs/nw.js/issues/5973)
+
 0.23.4 / 06-22-2017
 ===================
 - Update Chromium to [59.0.3071.109](https://chromereleases.googleblog.com/2017/06/stable-channel-update-for-desktop_20.html)
