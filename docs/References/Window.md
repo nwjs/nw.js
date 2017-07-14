@@ -556,7 +556,7 @@ Emitted when window leaves fullscreen state.
 
 ## Event: zoom
 
-Emitted when window zooming changed. It has a parameter indicating the new zoom level. See [`win.zoom()` method](#winzoom) for the parameter's value definition.
+Emitted when window zooming changed. It has a parameter indicating the new zoom level. See [`win.zoomLevel` ](#winzoomlevel) for the parameter's value definition.
 
 ## Event: capturepagedone
 
