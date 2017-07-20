@@ -1,3 +1,9 @@
+0.23.6 / 07-12-2017
+===================
+- Update Node.js to [v8.1.4](https://nodejs.org/en/blog/release/v8.1.4/)
+- Fix: Crash on opening Devtools with compiled JS binary [(#6001)](https://github.com/nwjs/nw.js/issues/6001)
+- Fix: flickering titlebar on transparent window [(#5989)](https://github.com/nwjs/nw.js/issues/5989)
+
 0.23.5 / 06-27-2017
 ===================
 - Update Chromium to [59.0.3071.115](https://chromereleases.googleblog.com/2017/06/stable-channel-update-for-desktop_26.html)
