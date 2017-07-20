@@ -39,7 +39,7 @@ You can enable transparency clickthrough on Windows and Mac. This feature enable
 
 To enable transparency clickthrough, you need following command line options:
 ```params
---disable-gpu --force-cpu-draw
+--disable-gpu-compositing --force-cpu-draw
 ```
 
 !!! note
