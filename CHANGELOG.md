@@ -1,3 +1,10 @@
+0.23.7 / 07-21-2017
+===================
+- Fix: alert message is not visible in windows 7 [(#6019)](https://github.com/nwjs/nw.js/issues/6019)
+- Fix: Changing css not reflecting in kiosk mode. Transparency [(#6021)](https://github.com/nwjs/nw.js/issues/6021)
+- Fix: Notifications not clickable [(#6040)](https://github.com/nwjs/nw.js/issues/6040)
+- [doc] transparency switch change
+
 0.23.6 / 07-12-2017
 ===================
 - Update Node.js to [v8.1.4](https://nodejs.org/en/blog/release/v8.1.4/)
