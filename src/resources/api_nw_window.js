@@ -4,6 +4,7 @@ var nwNatives = requireNative('nw_natives');
 var forEach = require('utils').forEach;
 var Event = require('event_bindings').Event;
 var dispatchEvent = require('event_bindings').dispatchEvent;
+var dispatchEventNW = require('event_bindings').dispatchEventNW;
 var sendRequest = require('sendRequest');
 var runtimeNatives = requireNative('runtime');
 var renderFrameObserverNatives = requireNative('renderFrameObserverNatives');
@@ -768,7 +769,7 @@ function updateAppWindowZoom(old_level, new_level) {
 function onClose(user_force) {
   if (!currentNWWindow)
     return;
-  dispatchEvent("nw.Window.onClose", [user_force], {instanceId: currentWidgetRoutingID});
+  dispatchEventNW("nw.Window.onClose", [user_force], {instanceId: currentWidgetRoutingID});
 }
 
 function get_nw() {
