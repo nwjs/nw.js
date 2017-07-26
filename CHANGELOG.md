@@ -1,3 +1,9 @@
+0.24.0 / 07-26-2017
+===================
+- Update Chromium to [60.0.3112.78](https://chromereleases.googleblog.com/2017/07/stable-channel-update-for-desktop.html)
+- Update Node.js to [v8.2.1](https://nodejs.org/en/blog/release/v8.2.1/)
+- Fix: DevTools extension panel not working in webview [(#6004)](https://github.com/nwjs/nw.js/issues/6004)
+
 0.23.7 / 07-21-2017
 ===================
 - Fix: alert message is not visible in windows 7 [(#6019)](https://github.com/nwjs/nw.js/issues/6019)
