@@ -24,6 +24,7 @@ using namespace blink;
 #endif
 
 //#undef FROM_HERE
+#if 0
 #undef TRACE_EVENT0
 #undef TRACE_EVENT1
 #undef TRACE_EVENT2
@@ -43,18 +44,19 @@ using namespace blink;
 #undef TRACE_EVENT_SCOPED_SAMPLING_STATE_FOR_BUCKET
 #undef TRACE_EVENT_GET_SAMPLING_STATE_FOR_BUCKET
 #undef TRACE_EVENT_SET_SAMPLING_STATE_FOR_BUCKET
-#undef TRACE_EVENT_API_GET_CATEGORY_GROUP_ENABLED
+//#undef TRACE_EVENT_API_GET_CATEGORY_GROUP_ENABLED
 #undef TRACE_EVENT_API_ADD_TRACE_EVENT
 #undef TRACE_EVENT_API_UPDATE_TRACE_EVENT_DURATION
 #undef INTERNAL_TRACE_EVENT_UID2
-#undef INTERNAL_TRACE_EVENT_GET_CATEGORY_INFO
+//#undef INTERNAL_TRACE_EVENT_GET_CATEGORY_INFO
 #undef INTERNAL_TRACE_EVENT_ADD
 #undef INTERNAL_TRACE_EVENT_ADD_SCOPED
 #undef INTERNAL_TRACE_EVENT_ADD_SCOPED_WITH_FLOW
 #undef INTERNAL_TRACE_EVENT_ADD_WITH_ID
 #undef INTERNAL_TRACE_EVENT_ADD_WITH_TIMESTAMP
 #undef INTERNAL_TRACE_EVENT_SCOPED_CONTEXT
-#undef INTERNAL_TRACE_EVENT_CATEGORY_GROUP_ENABLED_FOR_RECORDING_MODE
+//#undef INTERNAL_TRACE_EVENT_CATEGORY_GROUP_ENABLED_FOR_RECORDING_MODE
+#endif
 //#include "third_party/WebKit/Source/config.h"
 #include "third_party/WebKit/Source/core/html/HTMLIFrameElement.h"
 #include "third_party/WebKit/Source/core/dom/Document.h"
@@ -159,7 +161,7 @@ void NWCustomBindings::CallInWindow(
   v8::Local<v8::Value>* argv = new v8::Local<v8::Value>[args.Length() - 2];
   for (int i = 0; i < args.Length() - 2; i++)
     argv[i] = args[i + 2];
-  context->CallFunction(func, args.Length() - 2, argv);
+  context->SafeCallFunction(func, args.Length() - 2, argv);
   delete[] argv;
 }
 
@@ -203,7 +205,8 @@ void NWCustomBindings::EvalScript(
   base::string16 jscript = *v8::String::Value(args[1]);
 #endif
   if (web_frame) {
-    result = web_frame->ExecuteScriptAndReturnValue(blink::WebScriptSource(blink::WebString::FromUTF16(jscript)));
+    blink::WebLocalFrame* local_frame = web_frame->ToWebLocalFrame();
+    result = local_frame->ExecuteScriptAndReturnValue(blink::WebScriptSource(blink::WebString::FromUTF16(jscript)));
   }
   args.GetReturnValue().Set(result);
   return;
@@ -244,7 +247,8 @@ void NWCustomBindings::EvalNWBin(
     blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::toImpl(frm);
     web_frame = blink::WebFrame::FromFrame(iframe->ContentFrame());
   }
-  v8::Context::Scope cscope (web_frame->MainWorldScriptContext());
+  blink::WebLocalFrame* local_frame = web_frame->ToWebLocalFrame();
+  v8::Context::Scope cscope (local_frame->MainWorldScriptContext());
   v8::FixSourceNWBin(isolate, script);
   result = script->BindToCurrentContext()->Run();
   args.GetReturnValue().Set(result);

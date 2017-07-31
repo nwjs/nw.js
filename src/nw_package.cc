@@ -350,9 +350,9 @@ bool Package::InitFromPath(const base::FilePath& path_in) {
 
   // Force window field no empty.
   if (!root_->HasKey(switches::kmWindow)) {
-    base::DictionaryValue* window = new base::DictionaryValue();
+    auto window =  base::MakeUnique<base::DictionaryValue>();
     window->SetString(switches::kmPosition, "center");
-    root_->Set(switches::kmWindow, window);
+    root_->Set(switches::kmWindow, std::move(window));
   }
 
 #if 0
@@ -380,8 +380,7 @@ void Package::InitWithDefault() {
   root_.reset(new base::DictionaryValue());
   root()->SetString(switches::kmName, "nwjs");
   root()->SetString(switches::kmMain, "nw:blank");
-  base::DictionaryValue* window = new base::DictionaryValue();
-  root()->Set(switches::kmWindow, window);
+  auto window = base::MakeUnique<base::DictionaryValue>();
 
   // Hide toolbar if specifed in the command line.
   if (base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kNoToolbar))
@@ -389,6 +388,7 @@ void Package::InitWithDefault() {
 
   // Window should show in center by default.
   window->SetString(switches::kmPosition, "center");
+  root()->Set(switches::kmWindow, std::move(window));
 }
 
 bool Package::ExtractPath(const base::FilePath& path_to_extract, 

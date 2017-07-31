@@ -26,7 +26,7 @@ namespace extensions {
 namespace {
   const char* kPNGDataUriPrefix = "data:image/png;base64,";
   const char* kJPEGDataUriPrefix = "data:image/jpeg;base64,";
-  const int   kQulity = 100;
+  const int   kQuality = 100;
 
   class ClipboardReader {
   public:
@@ -103,13 +103,7 @@ namespace {
         error_ = "Failed to encode as PNG";
         return false;
       } else if (data.type == TYPE_JPEG &&
-                 !gfx::JPEGCodec::Encode(reinterpret_cast<const unsigned char*>(bitmap.getPixels()),
-                                        gfx::JPEGCodec::FORMAT_SkBitmap,
-                                        bitmap.width(),
-                                        bitmap.height(),
-                                        bitmap.rowBytes(),
-                                        kQulity,
-                                        &encoded_image)) {
+                 !gfx::JPEGCodec::Encode(bitmap, kQuality, &encoded_image)) {
         LOG(INFO) << "NwClipboardGetSyncFunction::RunSync(" << nwapi::nw__clipboard::ToString(data.type) << ") failed when converting to JPEG";
         error_ = "Failed to encode as JPEG";
         return false;

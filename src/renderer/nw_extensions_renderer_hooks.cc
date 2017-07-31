@@ -145,7 +145,8 @@ void WebWorkerStartThreadHook(blink::Frame* frame, const char* path, std::string
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
     v8::HandleScope scope(isolate);
     blink::WebFrame* web_frame = blink::WebFrame::FromFrame(frame);
-    v8::Local<v8::Context> v8_context = web_frame->MainWorldScriptContext();
+    blink::WebLocalFrame* local_frame = web_frame->ToWebLocalFrame();
+    v8::Local<v8::Context> v8_context = local_frame->MainWorldScriptContext();
     ScriptContext* script_context =
       g_dispatcher->script_context_set().GetByV8Context(v8_context);
     if (!script_context || !script_context->extension())
@@ -410,8 +411,11 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
     return;
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::HandleScope scope(isolate);
-  v8::Local<v8::Context> v8_context = frame->GetRenderView()
-      ->GetWebView()->MainFrame()->MainWorldScriptContext();
+  blink::WebFrame* f = frame->GetRenderView()->GetWebView()->MainFrame();
+  if (!f->IsWebLocalFrame())
+    return;
+  blink::WebLocalFrame* local_frame = f->ToWebLocalFrame();
+  v8::Local<v8::Context> v8_context = local_frame->MainWorldScriptContext();
   ScriptContext* script_context =
       dispatcher->script_context_set().GetByV8Context(v8_context);
   if (start)
@@ -423,7 +427,13 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
     web_frame->MainWorldScriptContext()->Global();
   arguments.push_back(v8::Boolean::New(isolate, start));
   arguments.push_back(window);
-  script_context->module_system()->CallModuleMethodSafe("nw.Window", "onDocumentStartEnd", &arguments);
+  // need require in m61 since the following CallModuleMethodSafe
+  // won't load it anymore: fedbe848f3024dd690f93545a337a2a6fb2aa81f
+  {
+    extensions::ModuleSystem::NativesEnabledScope natives_enabled(script_context->module_system());
+    script_context->module_system()->Require("nw.Window");
+    script_context->module_system()->CallModuleMethodSafe("nw.Window", "onDocumentStartEnd", &arguments);
+  }
 }
 
 void DocumentElementHook(blink::WebLocalFrame* frame,
@@ -488,8 +498,10 @@ void willHandleNavigationPolicy(content::RenderView* rv,
                                 bool new_win) {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::HandleScope scope(isolate);
+  blink::WebFrame* f = rv->GetWebView()->MainFrame();
+  blink::WebLocalFrame* local_frame = f->ToWebLocalFrame();
   v8::Handle<v8::Context> v8_context =
-      rv->GetWebView()->MainFrame()->MainWorldScriptContext();
+      local_frame->MainWorldScriptContext();
   ScriptContext* script_context =
       g_dispatcher->script_context_set().GetByV8Context(v8_context);
   //check extension for remote pages, which doesn't have appWindow object
@@ -536,7 +548,7 @@ void willHandleNavigationPolicy(content::RenderView* rv,
     }
   }
 
-  std::unique_ptr<content::V8ValueConverter> converter(content::V8ValueConverter::create());
+  std::unique_ptr<content::V8ValueConverter> converter(content::V8ValueConverter::Create());
   v8::Local<v8::Value> manifest_v8 = policy_obj->Get(v8_str("manifest"));
   std::unique_ptr<base::Value> manifest_val(converter->FromV8Value(manifest_v8, v8_context));
   std::string manifest_str;

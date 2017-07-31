@@ -48,6 +48,7 @@
 #include "extensions/common/extension.h"
 
 #include "net/cert/x509_certificate.h"
+#include "net/url_request/url_request_context.h"
 #include "sql/connection.h"
 #include "sql/meta_table.h"
 #include "sql/transaction.h"
@@ -173,7 +174,7 @@ bool GetDirUserData(base::FilePath *user_data_dir) {
 
 void SetTrustAnchorsOnIOThread(IOThread* io_thread, const net::CertificateList& trust_anchors) {
   PolicyCertVerifier* verifier =
-    (PolicyCertVerifier*)io_thread->globals()->cert_verifier.get();
+    (PolicyCertVerifier*)io_thread->globals()->system_request_context->cert_verifier();
   verifier->SetTrustAnchors(trust_anchors);
 }
 

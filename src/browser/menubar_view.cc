@@ -57,7 +57,7 @@ class MenuBarButton : public views::MenuButton {
 };
 
 MenuBarView::MenuBarView() {
-  SetLayoutManager(new views::BoxLayout(views::BoxLayout::kHorizontal, 0, 0, 0));
+  SetLayoutManager(new views::BoxLayout(views::BoxLayout::kHorizontal, gfx::Insets(), 0));
 }
 
 MenuBarView::~MenuBarView() {
@@ -114,7 +114,7 @@ void MenuBarView::ButtonPressed(views::Button* sender,
 
 void MenuBarView::OnNativeThemeChanged(const ui::NativeTheme* theme) {
   // Use menu background color for menubar
-  set_background(views::Background::CreateSolidBackground(theme->
+  SetBackground(views::CreateSolidBackground(theme->
        GetSystemColor(ui::NativeTheme::kColorId_MenuBackgroundColor)));
   // Force to repaint the menubar
   SchedulePaint();
