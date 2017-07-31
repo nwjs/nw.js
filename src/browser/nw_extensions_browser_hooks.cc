@@ -106,7 +106,7 @@ void AmendManifestStringList(base::DictionaryValue* manifest,
 
   pattern_list->Append(base::WrapUnique(new base::Value(string_value)));
   if (!amend)
-    manifest->Set(path, pattern_list);
+    manifest->Set(path, base::WrapUnique(pattern_list));
 }
 
 void AmendManifestList(base::DictionaryValue* manifest,
@@ -121,7 +121,7 @@ void AmendManifestList(base::DictionaryValue* manifest,
     }
   } else {
     pattern_list = list_value.DeepCopy();
-    manifest->Set(path, pattern_list);
+    manifest->Set(path, base::WrapUnique(pattern_list));
   }
 }
 
@@ -223,7 +223,7 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
     return;
   }
 
-  manifest->Set(manifest_keys::kNWJSInternalManifest, package->root()->DeepCopy());
+  manifest->Set(manifest_keys::kNWJSInternalManifest, base::WrapUnique(package->root()->DeepCopy()));
 
   if (manifest->GetString(manifest_keys::kNWJSMain, &main_url)) {
     if (base::EndsWith(main_url, ".js", base::CompareCase::INSENSITIVE_ASCII)) {

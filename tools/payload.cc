@@ -121,7 +121,7 @@ bool MyComputedHashes::Writer::WriteToFile(const base::FilePath& path) {
   top_dictionary.SetInteger("block_size", 4096);
   top_dictionary.SetInteger("hash_block_size", 4096);
   top_dictionary.SetString("format", "treehash");
-  top_dictionary.Set(kFileHashesKey, file_list_.release());
+  top_dictionary.Set(kFileHashesKey, std::move(file_list_));
 
   if (!base::JSONWriter::Write(top_dictionary, &json))
     return false;

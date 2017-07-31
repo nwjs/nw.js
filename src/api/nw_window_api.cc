@@ -255,14 +255,7 @@ void NwCurrentWindowInternalCapturePageInternalFunction::OnCaptureSuccess(const 
   std::string mime_type;
   switch (image_format_) {
     case api::extension_types::IMAGE_FORMAT_JPEG:
-      encoded = gfx::JPEGCodec::Encode(
-          reinterpret_cast<unsigned char*>(bitmap.getAddr32(0, 0)),
-          gfx::JPEGCodec::FORMAT_SkBitmap,
-          bitmap.width(),
-          bitmap.height(),
-          static_cast<int>(bitmap.rowBytes()),
-          image_quality_,
-          &data);
+      encoded = gfx::JPEGCodec::Encode(bitmap, image_quality_, &data);
       mime_type = kMimeTypeJpeg;
       break;
     case api::extension_types::IMAGE_FORMAT_PNG:
@@ -694,8 +687,8 @@ bool NwCurrentWindowInternalGetWinParamInternalFunction::RunNWSync(base::ListVal
   int frame_id = created_frame->GetRoutingID();
 
   base::DictionaryValue* result = new base::DictionaryValue;
-  result->Set("frameId", new base::Value(frame_id));
-  result->Set("id", new base::Value(app_window->window_key()));
+  result->Set("frameId", base::MakeUnique<base::Value>(frame_id));
+  result->Set("id", base::MakeUnique<base::Value>(app_window->window_key()));
   app_window->GetSerializedState(result);
 
   response->Append(base::WrapUnique(result));

@@ -204,10 +204,8 @@ namespace extensions {
 
     webrtc::DesktopCaptureOptions options = webrtc::DesktopCaptureOptions::CreateDefault();
     options.set_disable_effects(false);
-    std::unique_ptr<webrtc::DesktopCapturer> screenCapturer(screens ? webrtc::DesktopCapturer::CreateScreenCapturer(options) : nullptr);
-    std::unique_ptr<webrtc::DesktopCapturer> windowCapturer(windows ? webrtc::DesktopCapturer::CreateWindowCapturer(options) : nullptr);
 
-    media_list_.reset(new NativeDesktopMediaList(std::move(screenCapturer), std::move(windowCapturer)));
+    media_list_.reset(new NativeDesktopMediaList(content::DesktopMediaID::TYPE_SCREEN, webrtc::DesktopCapturer::CreateScreenCapturer(options)));
 
     media_list_->StartUpdating(this);
   }
