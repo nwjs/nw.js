@@ -1,7 +1,7 @@
 ## node-webkit is renamed NW.js
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/nwjs/nw.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  
-Official site: http://nwjs.io  
+Official site: https://nwjs.io  
 Official documentation: http://docs.nwjs.io/  
 ## Introduction
 
@@ -21,9 +21,9 @@ It was created in the Intel Open Source Technology Center.
 
 * Apps written in modern HTML5, CSS3, JS and WebGL.
 * Complete support for [Node.js APIs](https://nodejs.org/api/) and all its [third party modules](https://www.npmjs.com/).
-* Good performance: Node and WebKit run in the same thread: Function calls are made straightforward; objects are in the same heap and can just reference each other;
+* Good performance: Node and WebKit run in the same thread: Function calls are made straightforward; objects are in the same heap and can just reference each other.
 * Easy to package and distribute apps.
-* Available on Linux, Mac OS X and Windows
+* Available on Linux, Mac OS X and Windows.
 
 ## Downloads
 * **v0.24.0:** (Jul 26, 2017, based off of Node.js v8.2.1, Chromium 60.0.3112.78): [release notes](https://nwjs.io/blog/v0.24.0/)  
@@ -103,5 +103,5 @@ Issues are being tracked here on GitHub.
 ## Sponsors
 
 The work is being sponsored by:  
-* [Intel](http://www.intel.com/content/www/us/en/homepage.html)
+* [Intel](https://www.intel.com/content/www/us/en/homepage.html)
 * [Gnor Tech](http://gnor.net)
