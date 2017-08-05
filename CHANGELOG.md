@@ -1,3 +1,9 @@
+0.24.1 / 08-05-2017
+===================
+- Update Chromium to [60.0.3112.90](https://chromereleases.googleblog.com/2017/08/stable-channel-update-for-desktop.html)
+- Fix: [OSX] Transparency regression [(#6055)](https://github.com/nwjs/nw.js/issues/6055)
+- Fix: [DevTools] Uncaught Error during filtering network requests [(#6060)](https://github.com/nwjs/nw.js/issues/6060)
+
 0.24.0 / 07-26-2017
 ===================
 - Update Chromium to [60.0.3112.78](https://chromereleases.googleblog.com/2017/07/stable-channel-update-for-desktop.html)
