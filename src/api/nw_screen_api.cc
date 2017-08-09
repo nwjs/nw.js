@@ -205,7 +205,10 @@ namespace extensions {
     webrtc::DesktopCaptureOptions options = webrtc::DesktopCaptureOptions::CreateDefault();
     options.set_disable_effects(false);
 
-    media_list_.reset(new NativeDesktopMediaList(content::DesktopMediaID::TYPE_SCREEN, webrtc::DesktopCapturer::CreateScreenCapturer(options)));
+    if (screens)
+      media_list_.reset(new NativeDesktopMediaList(content::DesktopMediaID::TYPE_SCREEN, webrtc::DesktopCapturer::CreateScreenCapturer(options)));
+    else if (windows)
+      media_list_.reset(new NativeDesktopMediaList(content::DesktopMediaID::TYPE_WINDOW, webrtc::DesktopCapturer::CreateWindowCapturer(options)));
 
     media_list_->StartUpdating(this);
   }

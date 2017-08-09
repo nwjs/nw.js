@@ -23,7 +23,7 @@
           writeSuccess(eventName);
         })
       });
-      nw.Screen.DesktopCaptureMonitor.start(true, true);
+      nw.Screen.DesktopCaptureMonitor.start(false, true);
     } catch(e) {
       writeFailure(e);
     }
