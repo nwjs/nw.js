@@ -6,6 +6,7 @@ import json
 import os
 import sys
 import time
+import re
 import getnwisrelease
 import getnwversion
 
@@ -85,18 +86,19 @@ def aws_upload(upload_path, file_list):
     sys.stdout.flush()
     bucket = conn.get_bucket(bucket_name)
     print 'Uploading to: ' + upload_path
+    win_non_sdk = re.compile('nw\d+_win\d+')
     for f in file_list:
         print 'Uploading "' + f + '" ...'
         sys.stdout.flush()
         # use '/' for s3
         path_prefix = ''
         if (f in ['nw.lib', 'nw.exp', 'node.lib', 'node.exp'] ) :
-          if not builder_name in ['nw24_win64', 'nw24_win32'] :
+          if not win_non_sdk.match(builder_name) :
               continue
-          if builder_name in ['nw24_win64'] :
+          if 'win64' in builder_name :
               path_prefix = 'x64'
 
-        if (f.startswith('node-v') or f.startswith('nw-header') or f == 'SHASUMS256.txt') and not builder_name in ['nw24_sdk_mac64'] :
+        if (f.startswith('node-v') or f.startswith('nw-header') or f == 'SHASUMS256.txt') and not ('_sdk_mac64' in builder_name) :
             continue
 
         if f.startswith('chromedriver') and 'sdk' not in builder_name :
