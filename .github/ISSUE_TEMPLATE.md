@@ -1,10 +1,33 @@
-Read the following before submitting your issue, thank you.
 
-* Please use English so all users can read, or the issue will be closed directly.
-* Use our mailing list to ask questions which don't imply bug or feature request: https://groups.google.com/forum/#!forum/nwjs-general
-* State which version are you using
-* State which OS version are you running with
-* Provide a reproducible case if possible
-* Attach the crash dump file if it's a crash: http://docs.nwjs.io/en/latest/For%20Developers/Understanding%20Crash%20Dump/#find-minidump-file
+Thanks for reporting an issue! Spend 60 seconds reading this...
 
-Issues meet the checklist above will be processed before those don't.
+1. Before reporting, try reproducing against the latest version of NWJS.
+2. Issue tracker is only for bugs and feature requests, in English only.
+  
+  Anything else? Use our mailing list for questions: 
+  https://groups.google.com/forum/#!forum/nwjs-general
+
+======== TEMPLATE BUG FORM ========
+
+NWJS Version :
+Operating System :
+
+### Expected behavior
+
+<!- What do you think should happen? ->
+
+### Actual behavior
+
+<!- What actually happens? ->
+
+### How to reproduce
+
+<!- 
+
+- Detail a step by step guide to reproduce the issue
+- A copy of your code would help. Include: JS, HTML. 
+- If you have a crash report, copy it in. 
+- Test your steps on a fresh environment to see if you still have an issue
+- Post!
+
+->
