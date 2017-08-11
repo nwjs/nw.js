@@ -1,3 +1,11 @@
+0.25.0-beta1 / 08-11-2017
+=========================
+- Update Chromium to [61.0.3163.39](https://chromereleases.googleblog.com/2017/08/beta-channel-update-for-desktop_9.html)
+
+0.24.2 / 08-11-2017
+===================
+- Update Node.js to [v8.3.0](https://nodejs.org/en/blog/release/v8.3.0/)
+
 0.24.1 / 08-05-2017
 ===================
 - Update Chromium to [60.0.3112.90](https://chromereleases.googleblog.com/2017/08/stable-channel-update-for-desktop.html)
