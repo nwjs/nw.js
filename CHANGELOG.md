@@ -1,3 +1,10 @@
+0.24.3 / 08-16-2017
+===================
+- Update Node.js to [v8.4.0](https://nodejs.org/en/blog/release/v8.4.0/)
+- Update Chromium to [60.0.3112.101](https://chromereleases.googleblog.com/2017/08/stable-channel-update-for-desktop_14.html)
+- Fix: input nwsaveas in mac missing extensionName [(#6091)](https://github.com/nwjs/nw.js/issues/6091)
+- Fix: labels of menu items with F1 ~ F12 shortcuts missing in menu under Windows [(#6090)](https://github.com/nwjs/nw.js/issues/6090)
+
 0.25.0-beta1 / 08-11-2017
 =========================
 - Update Chromium to [61.0.3163.39](https://chromereleases.googleblog.com/2017/08/beta-channel-update-for-desktop_9.html)
