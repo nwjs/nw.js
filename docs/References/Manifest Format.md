@@ -40,6 +40,10 @@ You can specify a URL here. You can also specify just a filename (such as `in
 
 Following fields control which features NW.js should provide and how NW.js should open the main window.
 
+### product_string
+
+* `{String}` Use it to [rename the Helper application under macOS](http://docs.nwjs.io/en/latest/For%20Users/Package%20and%20Distribute/#mac-os-x).
+
 ### nodejs
 
 * `{Boolean}` set `nodejs` to false will disable Node support in NW.js.
