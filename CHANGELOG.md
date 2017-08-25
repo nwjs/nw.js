@@ -1,3 +1,12 @@
+0.24.4 / 08-25-2017
+===================
+- Update Chromium to [60.0.3112.113](https://chromereleases.googleblog.com/2017/08/stable-channel-update-for-desktop_24.html)
+- Support rebranding the Helper app on macOS [(#6103)](https://github.com/nwjs/nw.js/issues/6103)
+- Partly support loading Node inspector module in forked process [(#6115)](https://github.com/nwjs/nw.js/issues/6115)
+- Fix: crash on macOS : chrome.windows.create() [(#6113)](https://github.com/nwjs/nw.js/issues/6113)
+- Fix: crash on start in macOS 10.9 [(#6108)](https://github.com/nwjs/nw.js/issues/6108)
+- [docs] support renaming the helper application under macOS.
+
 0.24.3 / 08-16-2017
 ===================
 - Update Node.js to [v8.4.0](https://nodejs.org/en/blog/release/v8.4.0/)
