@@ -250,7 +250,7 @@ action("commit_id") {
 if (is_mac) {
   copy("copy_ffmpeg") {
     sources = [ "$root_out_dir/libffmpeg.dylib" ]
-    outputs = [ "$root_out_dir/$chrome_product_full_name.app/Contents/Versions/$chrome_version_full/$chrome_framework_name.framework/libffmpeg.dylib" ]
+    outputs = [ "$root_out_dir/$chrome_product_full_name.app/Contents/Versions/$chrome_version_full/libffmpeg.dylib" ]
     deps = [
       "//chrome",
       "//third_party/ffmpeg:ffmpeg"

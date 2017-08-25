@@ -8,7 +8,7 @@ index 42d85c9651..0adeafc712 100755
  
 +    if (is_mac) {
 +      ldflags += [
-+        "-Wl,-install_name,@loader_path/libffmpeg.dylib"
++        "-Wl,-install_name,@loader_path/../libffmpeg.dylib"
 +      ]
 +    }
 +
