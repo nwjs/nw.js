@@ -2,7 +2,7 @@ import("//build/config/features.gni")
 import("//build/toolchain/toolchain.gni")
 if (is_mac) {
   import("//build/util/branding.gni")
-  chrome_framework_name = chrome_product_full_name + " Framework"
+  #chrome_framework_name = chrome_product_full_name + " Framework"
 }
 import("//build/util/version.gni")
 
