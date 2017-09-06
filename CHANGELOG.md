@@ -1,3 +1,8 @@
+0.25.0 / 09-06-2017
+===================
+- Update Chromium to [61.0.3163.79](https://chromereleases.googleblog.com/2017/09/stable-channel-update-for-desktop.html)
+- Fix: hyperlink "download" attribute doesn't seem to work [(#6094)](https://github.com/nwjs/nw.js/issues/6094)
+
 0.24.4 / 08-25-2017
 ===================
 - Update Chromium to [60.0.3112.113](https://chromereleases.googleblog.com/2017/08/stable-channel-update-for-desktop_24.html)
