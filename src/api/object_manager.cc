@@ -50,7 +50,7 @@ using extensions::EventRouter;
 
 namespace nw {
 
-IDMap<std::unique_ptr<Base>> nw::ObjectManager::objects_registry_;
+base::IDMap<std::unique_ptr<Base>> nw::ObjectManager::objects_registry_;
 int nw::ObjectManager::next_object_id_ = 0;
 
 ObjectManager* ObjectManager::Get(content::BrowserContext* context) {

@@ -90,7 +90,7 @@ static void SetDeskopEnvironment() {
 namespace {
 
 printing::PrinterList EnumeratePrintersOnBlockingPoolThread() {
-  DCHECK(content::BrowserThread::GetBlockingPool()->RunsTasksOnCurrentThread());
+  DCHECK(content::BrowserThread::GetBlockingPool()->RunsTasksInCurrentSequence());
 
   scoped_refptr<printing::PrintBackend> print_backend(
         printing::PrintBackend::CreateInstance(nullptr));

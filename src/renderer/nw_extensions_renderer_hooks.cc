@@ -319,7 +319,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
     v8::Context::Scope cscope(context->v8_context());
     // Make node's relative modules work
     std::string root_path = extension_root;
-    GURL frame_url = ScriptContext::GetDataSourceURLForFrame(frame);
+    GURL frame_url = ScriptContext::GetDocumentLoaderURLForFrame(frame);
     std::string url_path = frame_url.path();
 #if defined(OS_WIN)
     base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
@@ -406,7 +406,7 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
   // there will follow another one with valid url
   blink::ScriptForbiddenScope::AllowUserAgentScript script;
   blink::WebLocalFrame* web_frame = frame->GetWebFrame();
-  GURL frame_url = ScriptContext::GetDataSourceURLForFrame(web_frame);
+  GURL frame_url = ScriptContext::GetDocumentLoaderURLForFrame(web_frame);
   if (web_frame->Parent() && (!frame_url.is_valid() || frame_url.is_empty()))
     return;
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
@@ -443,7 +443,7 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
   // or we'll trigger creating a context with invalid type
   // there will follow another one with valid url
   blink::ScriptForbiddenScope::AllowUserAgentScript script;
-  GURL frame_url = ScriptContext::GetDataSourceURLForFrame(frame);
+  GURL frame_url = ScriptContext::GetDocumentLoaderURLForFrame(frame);
   if (frame->Parent() && (!frame_url.is_valid() || frame_url.is_empty()))
     return;
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
