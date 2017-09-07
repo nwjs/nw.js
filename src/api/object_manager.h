@@ -21,7 +21,7 @@
 #ifndef CONTENT_NW_SRC_API_OBJECT_MANAGER_H_
 #define CONTENT_NW_SRC_API_OBJECT_MANAGER_H_
 
-#include "base/id_map.h"
+#include "base/containers/id_map.h"
 #include "base/memory/weak_ptr.h"
 #include "components/keyed_service/core/keyed_service.h"
 #include "content/public/browser/web_contents_observer.h"
@@ -101,7 +101,7 @@ class ObjectManager : public KeyedService {
                               const base::ListValue& arguments,
                               base::ListValue* result);
  private:
-  static IDMap<std::unique_ptr<Base>> objects_registry_;
+  static base::IDMap<std::unique_ptr<Base>> objects_registry_;
   static int next_object_id_;
 
   base::RunLoop* run_loop_;

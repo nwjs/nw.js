@@ -882,7 +882,7 @@ public:
 class NWJSAppTest : public NWAppTest {};
 
 void NWTimeoutCallback(const std::string& timeout_message) {
-  base::MessageLoop::current()->QuitWhenIdle();
+  base::RunLoop::QuitCurrentWhenIdleDeprecated();
 }
 
 IN_PROC_BROWSER_TEST_F(NWAppTest, LocalFlash) {

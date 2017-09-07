@@ -63,7 +63,7 @@ using namespace blink;
 #include "third_party/WebKit/Source/core/frame/LocalFrame.h"
 #include "third_party/WebKit/public/web/WebFrame.h"
 #include "third_party/WebKit/public/web/WebView.h"
-#include "third_party/WebKit/Source/web/WebLocalFrameImpl.h"
+#include "third_party/WebKit/Source/core/frame/WebLocalFrameImpl.h"
 #include "third_party/WebKit/public/web/WebScriptSource.h"
 
 #undef BLINK_IMPLEMENTATION
