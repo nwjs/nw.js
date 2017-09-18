@@ -1,3 +1,7 @@
+0.25.2 / 09-18-2017
+===================
+- Update Chromium to [61.0.3163.91](https://chromereleases.googleblog.com/2017/09/stable-channel-update-for-desktop_14.html)
+
 0.25.1 / 09-15-2017
 ===================
 - Update Node.js to [v8.5.0](https://nodejs.org/en/blog/release/v8.5.0/)
