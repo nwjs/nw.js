@@ -78,8 +78,8 @@ bool NwCurrentWindowInternalSetProgressBarFunction::RunAsync() {
   EXTENSION_FUNCTION_VALIDATE(args_->GetDouble(0, &progress));
   NSDockTile *dockTile = [NSApp dockTile];
   NWProgressBar *progressIndicator = NULL;
-  
-  if (dockTile.contentView == NULL && progress >= 0) {
+
+  if ((dockTile.contentView == NULL || [dockTile.contentView.subviews count] == 0 )&& progress >= 0) {
     
     // create image view to draw application icon
     NSImageView *iv = [[NSImageView alloc] init];
@@ -125,6 +125,7 @@ bool NwCurrentWindowInternalSetProgressBarFunction::RunAsync() {
   }
   
   [dockTile display];
+  SendResponse(true);
   return true;
 }
 
