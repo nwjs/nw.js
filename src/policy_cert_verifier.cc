@@ -83,7 +83,7 @@ int PolicyCertVerifier::Verify(
                  completion_callback,
                  verify_result);
 
-  net::CertificateList merged_trust_anchors(params.additional_trust_anchors());
+  net::CertificateList merged_trust_anchors(*params.additional_trust_anchors());
   merged_trust_anchors.insert(merged_trust_anchors.begin(),
                               trust_anchors_.begin(), trust_anchors_.end());
   net::CertVerifier::RequestParams new_params(
