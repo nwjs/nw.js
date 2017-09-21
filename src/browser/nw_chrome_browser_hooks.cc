@@ -48,6 +48,7 @@
 #include "extensions/common/extension.h"
 
 #include "net/cert/x509_certificate.h"
+#include "net/cert/test_root_certs.h"
 #include "net/url_request/url_request_context.h"
 #include "sql/connection.h"
 #include "sql/meta_table.h"
@@ -75,6 +76,7 @@ gfx::Image g_app_icon;
 int g_cdt_process_id = -1;
 std::string g_extension_id;
 bool g_reloading_app = false;
+net::CertificateList trust_anchors;
 
 #if defined(OS_WIN)
 base::win::ScopedHICON g_window_hicon;
@@ -338,7 +340,6 @@ void MainPartsPreMainMessageLoopRunHook() {
   nw::Package* package = nw::package();
   const base::ListValue *additional_trust_anchors = NULL;
   if (package->root()->GetList("additional_trust_anchors", &additional_trust_anchors)) {
-    net::CertificateList trust_anchors;
     for (size_t i = 0; i<additional_trust_anchors->GetSize(); i++) {
       std::string certificate_string;
       if (!additional_trust_anchors->GetString(i, &certificate_string)) {
@@ -360,7 +361,13 @@ void MainPartsPreMainMessageLoopRunHook() {
       trust_anchors.insert(trust_anchors.end(), loaded.begin(), loaded.end());
     }
     if (!trust_anchors.empty()) {
+#if !defined(OS_MACOSX)
       SetTrustAnchors(trust_anchors);
+#else
+      net::TestRootCerts* certs = net::TestRootCerts::GetInstance();
+      for (size_t i = 0; i < trust_anchors.size(); i++)
+        certs->Add(trust_anchors[i].get());
+#endif
     }
   }
 }
