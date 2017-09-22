@@ -162,6 +162,8 @@ def generate_target_nw(platform_name, arch, version):
                            'lib/libnw.so',
                            'lib/libnode.so',
                            'lib/libffmpeg.so',
+                           'swiftshader/libEGL.so',
+                           'swiftshader/libGLESv2.so'
                            ]
         if flavor == 'sdk':
             target['input'].append('nwjc')
@@ -452,6 +454,7 @@ def make_packages(targets):
             os.mkdir(folder)
             if platform_name == 'linux':
                 os.mkdir(os.path.join(folder, 'lib'))
+                os.mkdir(os.path.join(folder, 'swiftshader'))
             for f in t['input']:
                 src = os.path.join(binaries_location, f)
                 dest = os.path.join(folder, f)
