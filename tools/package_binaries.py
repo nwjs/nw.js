@@ -195,6 +195,8 @@ def generate_target_nw(platform_name, arch, version):
                            'nw_100_percent.pak',
                            'nw_200_percent.pak',
                            'ffmpeg.dll',
+                           'swiftshader\libEGL.dll',
+                           'swiftshader\libGLESv2.dll'
                             # To be removed in CR51
                            ]
         if flavor == 'sdk':
@@ -454,6 +456,7 @@ def make_packages(targets):
             os.mkdir(folder)
             if platform_name == 'linux':
                 os.mkdir(os.path.join(folder, 'lib'))
+            if platform_name in ['linux', 'win']:
                 os.mkdir(os.path.join(folder, 'swiftshader'))
             for f in t['input']:
                 src = os.path.join(binaries_location, f)
