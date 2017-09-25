@@ -1,3 +1,12 @@
+0.25.3 / 09-23-2017
+===================
+- Update Chromium to [61.0.3163.100](https://chromereleases.googleblog.com/2017/09/stable-channel-update-for-desktop_21.html)
+- Ship swiftshader on Linux & Win; Fix Failed to load libGLESv2.so [(#6142)](https://github.com/nwjs/nw.js/issues/6142)
+- Fix: [macOS] crash if additional_trust_anchors provided [(#6135)](https://github.com/nwjs/nw.js/issues/6135)
+- Fix: [macOS] Crash when called window nw.Window.get().setProgessBar() [(#6143)](https://github.com/nwjs/nw.js/issues/6143)
+- Fix: Second instance hang with '--in-process-gpu' [(#6059)](https://github.com/nwjs/nw.js/issues/6059)
+- Fix: crash with some compiled JS binary [(#6061)](https://github.com/nwjs/nw.js/issues/6061)
+
 0.25.2 / 09-18-2017
 ===================
 - Update Chromium to [61.0.3163.91](https://chromereleases.googleblog.com/2017/09/stable-channel-update-for-desktop_14.html)
