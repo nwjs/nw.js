@@ -5,6 +5,7 @@ if (is_mac) {
   #chrome_framework_name = chrome_product_full_name + " Framework"
 }
 import("//build/util/version.gni")
+import("//components/nacl/features.gni")
 
 group("nwjs") {
   deps = [
@@ -13,6 +14,9 @@ group("nwjs") {
   ]
   if (is_mac) {
     deps += [ ":copy_ffmpeg" ]
+  }
+  if (is_linux) {
+    deps += [ "//chrome:xdg_mime" ]
   }
 }
 
@@ -358,7 +362,7 @@ if (is_linux && !is_component_build) {
       inputs = [
         "$root_build_dir/dump_syms",
       ]
-      deps += [ "//breakpad:dump_syms" ]
+      deps += [ "//third_party/breakpad:dump_syms" ]
     } else {
       inputs = [
         "tools/dump_syms",
@@ -407,7 +411,7 @@ if (!is_component_build) {
     ]
     deps = [ "//components/resources:about_credits_nw" ]
     if (nwjs_sdk && (is_mac || is_linux)) {
-      deps += [ "//breakpad:minidump_stackwalk" ]
+      deps += [ "//third_party/breakpad:minidump_stackwalk" ]
     }
   }
   if (nwjs_sdk) {

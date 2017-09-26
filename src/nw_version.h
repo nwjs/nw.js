@@ -22,7 +22,7 @@
 #define NW_VERSION_H
 
 #define NW_MAJOR_VERSION 0
-#define NW_MINOR_VERSION 26
+#define NW_MINOR_VERSION 27
 #define NW_PATCH_VERSION 0
 
 #define NW_VERSION_IS_RELEASE 0
@@ -39,7 +39,7 @@
 #else
 # define NW_VERSION_STRING  NW_STRINGIFY(NW_MAJOR_VERSION) "." \
                               NW_STRINGIFY(NW_MINOR_VERSION) "." \
-                              NW_STRINGIFY(NW_PATCH_VERSION) "-beta1"
+                              NW_STRINGIFY(NW_PATCH_VERSION) "-canary"
 #endif
 
 #define NW_VERSION "v" NW_VERSION_STRING

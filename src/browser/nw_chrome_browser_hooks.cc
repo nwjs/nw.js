@@ -18,8 +18,9 @@
 #include "chrome/browser/io_thread.h"
 #include "chrome/browser/lifetime/application_lifetime.h"
 #include "chrome/browser/profiles/profile_manager.h"
-#include "chrome/browser/lifetime/keep_alive_registry.h"
-#include "chrome/browser/lifetime/keep_alive_types.h"
+#include "components/keep_alive_registry/keep_alive_types.h"
+#include "components/keep_alive_registry/scoped_keep_alive.h"
+#include "components/keep_alive_registry/keep_alive_registry.h"
 #include "chrome/common/chrome_constants.h"
 #include "chrome/common/chrome_paths.h"
 
@@ -32,6 +33,7 @@
 #include "content/nw/src/common/shell_switches.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/child_process_security_policy.h"
+#include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/result_codes.h"
@@ -138,7 +140,7 @@ void ShowDevtools(bool show, content::WebContents* web_contents, content::WebCon
   content::RenderFrameHost* rfh = web_contents->GetMainFrame();
   if (container) {
     scoped_refptr<DevToolsAgentHost> agent_host(DevToolsAgentHost::GetOrCreateFor(web_contents));
-    g_cdt_process_id = container->GetRenderProcessHost()->GetID();
+    g_cdt_process_id = container->GetMainFrame()->GetProcess()->GetID();
     content::ChildProcessSecurityPolicy::GetInstance()->GrantAll(g_cdt_process_id);
     
     DevToolsWindow* window = DevToolsWindow::FindDevToolsWindow(agent_host.get());

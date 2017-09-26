@@ -669,7 +669,7 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
     guest_observer.Wait();
     content::Source<content::NavigationController> source =
         guest_observer.source();
-    EXPECT_TRUE(source->GetWebContents()->GetRenderProcessHost()->
+    EXPECT_TRUE(source->GetWebContents()->GetRenderViewHost()->GetProcess()->
         IsForGuestsOnly());
 
     content::WebContents* guest_web_contents = source->GetWebContents();
@@ -701,7 +701,7 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
     // Wait for interstitial page to be shown in guest.
     content::WebContents* guest_web_contents =
         GetGuestViewManager()->WaitForSingleGuestCreated();
-    ASSERT_TRUE(guest_web_contents->GetRenderProcessHost()->IsForGuestsOnly());
+    ASSERT_TRUE(guest_web_contents->GetRenderViewHost()->GetProcess()->IsForGuestsOnly());
     content::WaitForInterstitialAttach(guest_web_contents);
   }
 
