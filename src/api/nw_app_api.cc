@@ -9,6 +9,7 @@
 #include "chrome/browser/extensions/extension_service.h"
 #include "content/nw/src/api/nw_app.h"
 #include "content/nw/src/nw_base.h"
+#include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/storage_partition.h"
@@ -173,7 +174,7 @@ bool NwAppSetProxyConfigFunction::RunNWSync(base::ListValue* response, std::stri
 
   base::ThreadRestrictions::ScopedAllowWait allow_wait;
 
-  content::RenderProcessHost* render_process_host = GetSenderWebContents()->GetRenderProcessHost();
+  content::RenderProcessHost* render_process_host = GetSenderWebContents()->GetMainFrame()->GetProcess();
   net::URLRequestContextGetter* context_getter =
     render_process_host->GetStoragePartition()->GetURLRequestContext();
 
@@ -182,7 +183,7 @@ bool NwAppSetProxyConfigFunction::RunNWSync(base::ListValue* response, std::stri
   content::BrowserThread::PostTask(
       content::BrowserThread::IO, FROM_HERE,
       base::Bind(&SetProxyConfigCallback, &done,
-                 make_scoped_refptr(context_getter), config));
+                 base::WrapRefCounted(context_getter), config));
   done.Wait();
   return true;
 }
