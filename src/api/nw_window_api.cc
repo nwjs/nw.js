@@ -3,11 +3,12 @@
 #include "base/base64.h"
 #include "base/strings/stringprintf.h"
 #include "base/strings/utf_string_conversions.h"
+#include "base/task_scheduler/post_task.h"
 #include "base/threading/sequenced_worker_pool.h"
 #include "content/public/browser/render_widget_host.h"
 #include "chrome/browser/devtools/devtools_window.h"
 #include "chrome/browser/extensions/devtools_util.h"
-#include "chrome/browser/ui/webui/print_preview/printer_backend_proxy.h"
+//#include "chrome/browser/ui/webui/print_preview/printer_backend_proxy.h"
 #include "components/zoom/zoom_controller.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/object_manager.h"
@@ -89,8 +90,8 @@ static void SetDeskopEnvironment() {
 
 namespace {
 
-printing::PrinterList EnumeratePrintersOnBlockingPoolThread() {
-  DCHECK(content::BrowserThread::GetBlockingPool()->RunsTasksInCurrentSequence());
+printing::PrinterList EnumeratePrintersAsync() {
+  base::ThreadRestrictions::AssertIOAllowed();
 
   scoped_refptr<printing::PrintBackend> print_backend(
         printing::PrintBackend::CreateInstance(nullptr));
@@ -637,9 +638,9 @@ bool NwCurrentWindowInternalSetTitleInternalFunction::RunNWSync(base::ListValue*
 bool NwCurrentWindowInternalGetPrintersFunction::RunAsync() {
   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
 
-  base::PostTaskAndReplyWithResult(
-        content::BrowserThread::GetBlockingPool(), FROM_HERE,
-        base::Bind(&EnumeratePrintersOnBlockingPoolThread),
+  base::PostTaskWithTraitsAndReplyWithResult(
+        FROM_HERE, {base::MayBlock(), base::TaskPriority::BACKGROUND},
+        base::Bind(&EnumeratePrintersAsync),
         base::Bind(&NwCurrentWindowInternalGetPrintersFunction::OnGetPrinterList,
                    this));
   return true;

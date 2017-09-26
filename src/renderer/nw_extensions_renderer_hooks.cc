@@ -453,8 +453,8 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
   frame->GetDocument().GetSecurityOrigin().grantUniversalAccess();
   frame->setNodeJS(true);
   content::RenderFrameImpl* render_frame = content::RenderFrameImpl::FromWebFrame(frame);
-  content::mojom::FrameHostAssociatedPtr frame_host_ptr = render_frame->GetFrameHost();
-  frame_host_ptr->SetNodeJS(true);
+  auto* frame_host = render_frame->GetFrameHost();
+  frame_host->SetNodeJS(true);
   std::string path = effective_document_url.path();
   v8::Local<v8::Context> v8_context = frame->MainWorldScriptContext();
   std::string root_path = g_extension_root;
