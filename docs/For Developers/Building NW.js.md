@@ -20,20 +20,20 @@ NW.js use same build tools and similar steps as Chromium. Read the instructions 
 !!! note "Windows"
     As suggested by Chromium document, you need to run `set DEPOT_TOOLS_WIN_TOOLCHAIN=0` or set the variable in your global environment.
 
-!!! note "Xcode 7"
-    Mac SDK 10.11 as part of Xcode 7 is not supported yet. If you have upgraded to Xcode 7, either downgrade to Xcode 6 or copy Mac SDK 10.10 from other machines under ```xcode-select -p`/Platforms/MacOSX.platform/Developer/SDKs`` as suggested by [Chromium document](https://chromium.googlesource.com/chromium/src/+/master/docs/mac_build_instructions.md).
-
 ## Get the Code
 
 **Step 1.** Create a folder for holding NW.js source code, like `$HOME/nwjs`, and run following command in the folder to generate `.gclient` file:
 
 ```bash
+# there is one branch per major version number of nw.js, in this case we're using nw25
+export $BRANCH=nw25
 mkdir -p $HOME/nwjs
 cd $HOME/nwjs
-gclient config --name=src https://github.com/nwjs/chromium.src.git@origin/nw17
+gclient config --name=src https://github.com/nwjs/chromium.src.git@origin/$BRANCH
 ```
 
-Generally if you are not interested in running Chromium tests, you don't have to sync the test cases and reference builds, which saves you lot of time. Open the `.gclient` file you just created and replace `custom_deps` section with followings:
+To save some time with syncing you can skip Chrome's test code by opening the
+`.gclient` file and replacing the `custom_deps` section with the following:
 
 ```python
 "custom_deps" : {
@@ -47,13 +47,13 @@ Generally if you are not interested in running Chromium tests, you don't have to
 }
 ```
 
-Manually clone and checkout correct branches for following repositories:
+Now manually clone all the nwjs sub-projects, and check out the correct version:
 
-| path | repo |
-|:---- |:---- |
-| src/content/nw | https://github.com/nwjs/nw.js |
-| src/third_party/node-nw | https://github.com/nwjs/node |
-| src/v8 | https://github.com/nwjs/v8 |
+```bash
+git clone https://github.com/nwjs/v8 src/v8 -b $BRANCH
+git clone https://github.com/nwjs/node src/third_party/node-nw -b $BRANCH
+git clone https://github.com/nwjs/nw.js src/content/nw -b $BRANCH
+```
 
 **Step 2.** Run following command in your terminal:
 ```
@@ -67,6 +67,9 @@ When finished, you will see a `src` folder created in the same folder as `.gclie
 !!! note "First Build on Linux"
     If you are building on Linux **for the first time**, you need to run `gclient sync --with_branch_heads --nohooks` and then run `./build/install-build-deps.sh` to install dependencies on Ubuntu. See [Chromium document](http://dev.chromium.org/developers/how-tos/get-the-code) for detailed instructions of getting the source code.
 
+!!! note "First Build on Mac"
+    gclient sync may fail because it is missing build_tools/mac/gn. You need to run `cd src; download_from_google_storage --no_resume --platform=darwin --no_auth --bucket chromium-gn -s buildtools/mac/gn.sha1`
+
 ## Generate ninja build files with GN for Chromium
 
 ```bash
@@ -74,28 +77,52 @@ cd src
 gn gen out/nw  (changing the 'nw' part of the path is not supported. You'd better not changing the 'out' part if you're new to this)
 ```
 
-Use flags like our official build:
-````
+Then set your build configuration with:
+
+```bash
+gn args out/nw
+```
+
+To build a production build we recommend the same configuration as nwjs:
+
+```
+# Build arguments go here.
+# See "gn args <out_dir> --list" for available build arguments.
+#
 is_debug=false
 is_component_ffmpeg=true
 target_cpu="x64"
 ````
-We support component build: `is_component_build = true` for faster development cycle. It should be used when you are trying to build debug version.
 
-See the upstream documentation for the mapping between GN and GYP flags: https://chromium.googlesource.com/chromium/src/+/master/tools/gn/docs/cookbook.md#Variable-mappings
+For debugging/development you probably want to set is_debug=true and also is_component_build=true.
+
+```
+# Build arguments go here.
+# See "gn args <out_dir> --list" for available build arguments.
+#
+is_debug=true
+is_component_build=true
+is_component_ffmpeg=true
+target_cpu="x64"
+```
+
+See the upstream documentation for the [mapping between GN and GYP flags](https://chromium.googlesource.com/chromium/src/+/master/tools/gn/docs/cookbook.md#Variable-mappings) and on using [gn args](https://www.chromium.org/developers/gn-build-configuration).
 
 ## Generate ninja build files with GYP for Node
+
+For production:
 
 ```bash
 cd src
 GYP_CHROMIUM_NO_ACTION=0 ./build/gyp_chromium -I third_party/node-nw/common.gypi third_party/node-nw/node.gyp
 ```
 
-or use the following if you're doing a component build:
+Or if you're doing a component build:
+
 ```bash
 ./build/gyp_chromium -D component=shared_library -I third_party/node-nw/common.gypi third_party/node-nw/node.gyp
 ```
-To change the build configuration for Node, you need to setup the GYP_DEFINES environment variable:
+To change the build configuration for Node, you need to setup the GYP_DEFINES environment variable.
 
 ### 32-bit/64-bit Build
 
