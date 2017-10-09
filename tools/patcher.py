@@ -109,10 +109,6 @@ parser.add_option(
     dest='patchdir',
     metavar='DIR',
     help='patch target directory')
-# NWJS: Path of config file has been hard-coded in this script, so this option
-# is for compatibility purpose only, and it will be removed once it's no longer
-# used by the hook in //src/DEPS.
-parser.add_option('--patch-config', help='DEPRECATED: this is a no-op')
 (options, args) = parser.parse_args()
 
 if not options.patchfile is None:
