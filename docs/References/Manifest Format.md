@@ -11,7 +11,7 @@ Following is a minimal manifest:
 ```json
 {
   "main": "index.html",
-  "name": "nw-demo",
+  "name": "nw-demo"
 }
 ```
 
