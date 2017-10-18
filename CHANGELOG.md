@@ -1,3 +1,10 @@
+0.26.0 / 10-18-2017
+===================
+- Update Chromium to [62.0.3202.62](https://chromereleases.googleblog.com/2017/10/stable-channel-update-for-desktop.html)
+- Update Node.js to [v8.7.0](https://nodejs.org/en/blog/release/v8.7.0/)
+- Support scale option for printing [(#6166)](https://github.com/nwjs/nw.js/issues/6166)
+- Fix: Maximizing an always on top transparent frameless window causes the bottom to overflow under the taskbar [(#6204)](https://github.com/nwjs/nw.js/issues/6204)
+
 0.25.4 / 09-29-2017
 ===================
 - Update Node.js to [v8.6.0](https://nodejs.org/en/blog/release/v8.6.0/)
