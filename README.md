@@ -19,7 +19,7 @@ It was created in the Intel Open Source Technology Center.
 
 ## Features
 
-* Apps written in modern HTML5, CSS3, JS and WebGL.
+* The Apps written in modern HTML5, CSS3, JS and WebGL.
 * Complete support for [Node.js APIs](https://nodejs.org/api/) and all its [third party modules](https://www.npmjs.com/).
 * Good performance: Node and WebKit run in the same thread: Function calls are made straightforward; objects are in the same heap and can just reference each other.
 * Easy to package and distribute apps.
