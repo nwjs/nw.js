@@ -1,3 +1,14 @@
+0.26.1 / 10-26-2017
+===================
+- Update Node.js to [v8.8.1](https://nodejs.org/en/blog/release/v8.8.1/)
+- Fix: WebSocket and resource loader throttling [(#6231)](https://github.com/nwjs/nw.js/issues/6231)
+- Fix: Rendering glitches in High Sierra [(upstream bug #773705)](https://bugs.chromium.org/p/chromium/issues/detail?id=773705)
+- Fix: Maximized frameless transparent window maintains right resize area exposed [(#6221)](https://github.com/nwjs/nw.js/issues/6221)
+- Fix: Windows snap is lost with frameless transparent window and webkit-app-region drag [(#6219)](https://github.com/nwjs/nw.js/issues/6219)
+- Fix: The frame border will be displayed when it is started [(#6217)](https://github.com/nwjs/nw.js/issues/6217)
+- Fix: Remove settings button from native notifications on Linux [(#6194)](https://github.com/nwjs/nw.js/issues/6194)
+- Fix: Cross-origin iframe doesn't have accessible "parent" and "top" properties in "window.parent" [(#6144)](https://github.com/nwjs/nw.js/issues/6144)
+
 0.26.0 / 10-18-2017
 ===================
 - Update Chromium to [62.0.3202.62](https://chromereleases.googleblog.com/2017/10/stable-channel-update-for-desktop.html)
