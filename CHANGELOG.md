@@ -1,3 +1,7 @@
+0.26.2 / 10-28-2017
+===================
+- Update Chromium to [62.0.3202.75](https://chromereleases.googleblog.com/2017/10/stable-channel-update-for-desktop_26.html)
+
 0.26.1 / 10-26-2017
 ===================
 - Update Node.js to [v8.8.1](https://nodejs.org/en/blog/release/v8.8.1/)
