@@ -1,0 +1,10 @@
+src/*
+test/*
+benchmark/*
+template/*
+node_modules/*
+build/*.amd.js
+Makefile
+index.html
+.gitignore
+.travis.yml
