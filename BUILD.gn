@@ -14,6 +14,7 @@ group("nwjs") {
   if (is_mac) {
     deps += [ ":copy_ffmpeg" ]
   }
+  
 }
 
 component("nw_base") {
@@ -34,6 +35,10 @@ component("nw_base") {
         "src/common/shell_switches.h",
   ]
 }
+
+
+
+
 
 nw_content_browser_sources = [
         "src/browser/nw_content_browser_hooks.cc",
