@@ -21,8 +21,6 @@
 #ifndef CONTENT_NW_SRC_API_SHELL_SHELL_H_
 #define CONTENT_NW_SRC_API_SHELL_SHELL_H_
 
-#include "base/basictypes.h"
-
 #include <string>
 
 namespace base {
@@ -44,7 +42,6 @@ class Shell {
  private:
   Shell();
 
-  DISALLOW_COPY_AND_ASSIGN(Shell);
 };
 
 }  // namespace nw

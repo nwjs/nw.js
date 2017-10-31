@@ -37,7 +37,7 @@ class MenuDelegate : public ui::SimpleMenuModel::Delegate {
 
    bool GetAcceleratorForCommandId(
       int command_id,
-      ui::Accelerator* accelerator) override;
+      ui::Accelerator* accelerator) const override;
 
    bool IsItemForCommandIdDynamic(int command_id) const override;
    base::string16 GetLabelForCommandId(int command_id) const override;

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>index.html</title>
+</head>
+<body>
+  <h1>Index</h1>
+  <button id="open-devtools" onclick="openDevTools()">Open DevTools</button>
+  <script>
+    let button = document.createElement('button');
+    let id = 1;
+    button.onclick=()=>{
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', `http://localhost:${nw.App.manifest.port}/`, true);
+      xhr.send();
+      xhr.onload = ()=>{
+        let output = document.createElement('h1');
+        output.setAttribute('id', 'result-' + (id++));
+        output.innerHTML = xhr.responseText;
+        document.body.appendChild(output);
+      };
+    };
+    button.setAttribute('id', 'get-cookie');
+    button.innerHTML = 'Get Cookies';
+    document.body.appendChild(button);
+
+    function openDevTools() {
+      chrome.developerPrivate.openDevTools({renderProcessId: -1, renderViewId: -1, extensionId: chrome.runtime.id});
+    }
+  </script>
+</body>
+</html>

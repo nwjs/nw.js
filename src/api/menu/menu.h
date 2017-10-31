@@ -22,15 +22,10 @@
 #define CONTENT_NW_SRC_API_MENU_MENU_H_ 
 
 #include "base/compiler_specific.h"
-#include "base/memory/scoped_ptr.h"
 #include "content/nw/src/api/base/base.h"
 
 #include <string>
 #include <vector>
-
-#if defined(OS_WIN)
-#include "ui/views/controls/menu/native_menu_win.h"
-#endif
 
 #if defined(OS_MACOSX)
 #if __OBJC__
@@ -103,8 +98,13 @@ class Menu : public Base {
              const base::ListValue& arguments,
              content::RenderFrameHost* rvh = nullptr) override;
 
+#if defined(OS_MACOSX)
+  static Menu* GetMenuFromNative(NSMenu* menu);
+#endif
+
 #if defined(OS_WIN) || defined(OS_LINUX)
   void UpdateKeys(views::FocusManager *focus_manager);
+  void RemoveKeys();
   ui::NwMenuModel* model() { return menu_model_.get(); }
   aura::Window* GetActiveNativeView(content::RenderFrameHost* rfh);
 #endif
@@ -120,31 +120,12 @@ class Menu : public Base {
   void Remove(MenuItem* menu_item, int pos);
   void Popup(int x, int y, content::RenderFrameHost*);
 
-#if defined(OS_LINUX)
-  std::vector<MenuItem*> menu_items;
-#endif
-
 #if defined(OS_MACOSX)
   NSMenu* menu_;
   NWMenuDelegate* menu_delegate_;
-#elif defined(OS_LINUX)
+#elif defined(OS_LINUX) || defined(OS_WIN)
 
-  views::FocusManager *focus_manager_;
-  std::vector<MenuItem*> menu_items_;
-  extensions::AppWindow* window_;
-  // Flag to indicate the menu has been modified since last show, so we should
-  // rebuild the menu before next show.
-  bool is_menu_modified_;
-
-  scoped_ptr<MenuDelegate> menu_delegate_;
-  scoped_ptr<ui::NwMenuModel> menu_model_;
   void UpdateStates();
-
-#elif defined(OS_WIN)
-
-  void Rebuild(const HMENU *parent_menu = NULL);
-  void UpdateStates();
-  void SetWindow(extensions::AppWindow* win);
 
   //**Never Try to free this pointer**
   //We get it from top widget
@@ -155,12 +136,8 @@ class Menu : public Base {
   // rebuild the menu before next show.
   bool is_menu_modified_;
 
-  scoped_ptr<MenuDelegate> menu_delegate_;
-  scoped_ptr<ui::NwMenuModel> menu_model_;
-  scoped_ptr<views::NativeMenuWin> menu_;
-
-  // A container for the handles of the icon bitmap.
-  std::vector<HBITMAP> icon_bitmaps_;
+  std::unique_ptr<MenuDelegate> menu_delegate_;
+  std::unique_ptr<ui::NwMenuModel> menu_model_;
 #endif
 
   DISALLOW_COPY_AND_ASSIGN(Menu);

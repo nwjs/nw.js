@@ -1,0 +1,5 @@
+{
+	"name": "issue4184-no-opener",
+	"main": "index.html",
+	"chromium-args": "--ignore-certificate-errors"
+}

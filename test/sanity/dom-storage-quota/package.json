@@ -1,0 +1,5 @@
+{
+	"name": "test-localstorage",
+        "dom_storage_quota": 100,
+	"main": "index.html"
+}

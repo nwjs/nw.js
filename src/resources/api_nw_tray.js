@@ -1,17 +1,32 @@
 var Binding = require('binding').Binding;
 var forEach = require('utils').forEach;
-var nw_binding = require('binding').Binding.create('nw.Tray');
 var nwNative = requireNative('nw_natives');
 var sendRequest = require('sendRequest');
-var contextMenuNatives = requireNative('context_menus');
 var messagingNatives = requireNative('messaging_natives');
 var Event = require('event_bindings').Event;
+var util = nw.require('util');
+var EventEmitter = nw.require('events').EventEmitter;
 
 var trayEvents = { objs: {}, clickEvent: {} };
 
-function Tray(id, option) {
+trayEvents.clickEvent = new Event("NWObjectTrayClick");
+trayEvents.clickEvent.addListener(function(id) {
+  var tray = trayEvents.objs[id];
+  if (!tray)
+    return;
+  var args = Array.prototype.slice.call(arguments, 1);
+  args.unshift('click');
+  tray.emit.apply(tray, args);
+});
+
+function Tray(option) {
+  if (!(this instanceof Tray)) {
+    return new Tray(option);
+  }
+  EventEmitter.apply(this);
+  
   if (typeof option != 'object')
-    throw new TypeError('Invalid option');
+    throw new TypeError('Invalid option.');
 
   if (!option.hasOwnProperty('title') && !option.hasOwnProperty('icon'))
     throw new TypeError("Must set 'title' or 'icon' field in option");
@@ -56,6 +71,7 @@ function Tray(id, option) {
     option.menu = option.menu.id;
   }
   
+  var id = nw.Obj.allocateId();
   this.id = id;
   privates(this).option = option;
 
@@ -66,7 +82,13 @@ function Tray(id, option) {
     option.shadowAlticon = '';
   if (!option.hasOwnProperty('tooltip'))
     option.tooltip = '';
+  
+  nw.Obj.create(id, 'Tray', option);
+  messagingNatives.BindToGC(this, nw.Obj.destroy.bind(undefined, id), -1);
+  trayEvents.objs[this.id] = this;
 }
+
+util.inherits(Tray, EventEmitter);
 
 Tray.prototype.handleGetter = function(name) {
   return privates(this).option[name];
@@ -75,7 +97,7 @@ Tray.prototype.handleGetter = function(name) {
 Tray.prototype.handleSetter = function(name, setter, type, value) {
   value = type(value);
   privates(this).option[name] = value;
-  nw.Object.callObjectMethod(this.id, 'Tray', setter, [ value ]);
+  nw.Obj.callObjectMethod(this.id, 'Tray', setter, [ value ]);
 };
 
 Tray.prototype.__defineGetter__('title', function() {
@@ -131,52 +153,13 @@ Tray.prototype.__defineSetter__('menu', function(val) {
     throw new TypeError("'menu' property requries a valid Menu");
 
   privates(this).menu = val;
-  nw.Object.callObjectMethod(this.id, 'Tray', 'SetMenu', [ val.id ]);
+  nw.Obj.callObjectMethod(this.id, 'Tray', 'SetMenu', [ val.id ]);
 });
 
 Tray.prototype.remove = function() {
-  if (trayEvents.objs[this.id])
-    this.removeListener('click');
-  nw.Object.callObjectMethod(this.id, 'Tray', 'Remove', []);
+  nw.Obj.callObjectMethod(this.id, 'Tray', 'Remove', []);
+  delete trayEvents.objs[this.id];
 }
 
-Tray.prototype.on = function (event, callback) {
-  if (event == 'click') {
-    trayEvents.objs[this.id] = this;
-    this._onclick = callback;
-  }
-}
-
-Tray.prototype.removeListener = function (event) {
-  if (event == 'click') {
-    delete trayEvents.objs[this.id];
-    delete this._onclick;
-  }
-}
-
-nw_binding.registerCustomHook(function(bindingsAPI) {
-  var apiFunctions = bindingsAPI.apiFunctions;
-  trayEvents.clickEvent = new Event("NWObjectTrayClick");
-  trayEvents.clickEvent.addListener(function(id) {
-    if (!trayEvents.objs[id])
-      return;
-    trayEvents.objs[id]._onclick();
-  });
-  apiFunctions.setHandleRequest('destroy', function(id) {
-    sendRequest.sendRequestSync('nw.Object.destroy', [id], this.definition.parameters, {});
-  });
-  apiFunctions.setHandleRequest('create', function(option) {
-    var id = contextMenuNatives.GetNextContextMenuId();
-    if (typeof option != 'object' || !option)
-      option = { };
-
-    option.generatedId = id;
-    var ret = new Tray(id, option);
-    sendRequest.sendRequestSync('nw.Object.create', [id, 'Tray', option], this.definition.parameters, {});
-    messagingNatives.BindToGC(ret, nw.Tray.destroy.bind(undefined, id), -1);
-    return ret;
-  });
-});
-
-exports.binding = nw_binding.generate();
+exports.binding = Tray;
 

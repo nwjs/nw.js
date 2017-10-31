@@ -1,3 +1,659 @@
+0.20.3 / 02-23-2017
+===================
+- Update Node.js to [v7.6.0](https://nodejs.org/en/blog/release/v7.6.0/)
+- Support passing Buffer or ArrayBuffer to evalNWBin [(#5220)](https://github.com/nwjs/nw.js/issues/5220)
+- Support pac_url and auto proxy detection[ (#916)](https://github.com/nwjs/nw.js/issues/916)
+- New print options: autoprint, headerString, footerString [(#5702)](https://github.com/nwjs/nw.js/issues/5702)
+- Fix: nwuseragent not working after 0.13 [(#5397)](https://github.com/nwjs/nw.js/issues/5397)
+- Fix: flash in embed or object tag not working using file protocol [(#5706)](https://github.com/nwjs/nw.js/issues/5706)
+- Fix: multiple menu shortcuts issues [(#5657)](https://github.com/nwjs/nw.js/issues/5657)
+- Disable resolving www.google.com in DNS predictor on startup
+- [docs] upstream Windows build instructions has moved
+- [docs] update for new features
+
+0.20.2 / 02-13-2017
+===================
+- Fix: Crash on right click after opening devtools by F12 [(#5659)](https://github.com/nwjs/nw.js/issues/5659)
+- Fix: nwsaveas attribute regression [(#5667)](https://github.com/nwjs/nw.js/issues/5667)
+- Fix: local pdf in webview not loading, gives ERR_BLOCKED_BY_CLIENT [(#5682)](https://github.com/nwjs/nw.js/issues/5682)
+- Fix: disable-crash-handler not working [(#5624)](https://github.com/nwjs/nw.js/issues/5624)
+- Fix: Signal app does not get rendered [(#5528)](https://github.com/nwjs/nw.js/issues/5528)
+- [doc] correct path of crash dumps in Windows [(#5669)](https://github.com/nwjs/nw.js/issues/5669)
+
+0.20.1 / 02-02-2017
+===================
+- Update Chromium to [56.0.2924.87](https://chromereleases.googleblog.com/2017/02/stable-channel-update-for-desktop.html)
+- Update Node.js to [v7.5.0](https://nodejs.org/en/blog/release/v7.5.0/)
+- Support disabling crash handler for single process mode with `--disable-crash-handler=true' [(#5624)](https://github.com/nwjs/nw.js/issues/5624)
+- [docs] Added documentation for `disable-crash-handler' switch
+
+0.20.0 / 01-26-2017
+===================
+- Update Chromium to [56.0.2924.76](https://chromereleases.googleblog.com/2017/01/stable-channel-update-for-desktop.html)
+- support disabling cookie encryption with '--disable-cookie-encryption'
+- Added copies option to print API [(#5482)](https://github.com/nwjs/nw.js/issues/5482)
+- Fix: session lost after open the develop tool and close it [(#5355)](https://github.com/nwjs/nw.js/issues/5355)
+- Fix: DOM setTimeout callbacks not running from Node vm context in webview [(#5622)](https://github.com/nwjs/nw.js/issues/5622)
+- [docs] Added documentation for the copies option in the printing API
+- [docs] Added docs for "Support for Mac App Store"
+- [docs] Added docs for '--disable-cookie-encryption'
+
+0.19.5 / 01-10-2017
+===================
+- Update Node.js to [7.4.0](https://nodejs.org/en/blog/release/v7.4.0/)
+- Node.js integration is supported in webview [(#4780)](https://github.com/nwjs/nw.js/issues/4780)
+- Fix: Crash when accessing HTMLElement properties from node's vm module [(#4018)](https://github.com/nwjs/nw.js/issues/4018)
+- Fix: Linux wrong file permissions [(#5611)](https://github.com/nwjs/nw.js/issues/5611)
+- [docs] Node.js support in webview
+
+0.19.4 / 12-30-2016
+===================
+- Fix: crash in ServiceWorker in webview
+
+0.19.3 / 12-21-2016
+===================
+- Update Node.js to [7.3.0](https://nodejs.org/en/blog/release/v7.3.0/)
+- Fix: Hang when https website with cert. error is loaded [(#5544)](https://github.com/nwjs/nw.js/issues/5544)
+- Fix: Webview freezes on almost any invalid certificate [(#5564)](https://github.com/nwjs/nw.js/issues/5564)
+- Fix: Flash needs manual intervention and control-click not working [(#5548)](https://github.com/nwjs/nw.js/issues/5548)
+- Fix: permission warning and crash of chrome identity app [(#5552)](https://github.com/nwjs/nw.js/issues/5552)
+- Fix: popup menu in background page crashes nw [(#5513)](https://github.com/nwjs/nw.js/issues/5513)
+- Fix: nw.Window.isTransparent should be boolean [(#5561)](https://github.com/nwjs/nw.js/issues/5561)
+- Fix: [test] race condition in chromedriver
+- [docs] Add a recent tutorial
+
+0.19.2 / 12-12-2016
+===================
+- Update Chromium to [55.0.2883.87](https://googlechromereleases.blogspot.com/2016/12/stable-channel-update-for-desktop_9.html)
+- Fix crash when worker with Node support is closed
+
+0.19.1 / 12-09-2016
+===================
+- Update Node.js to [7.2.1](https://nodejs.org/en/blog/release/v7.2.1/)
+- Fix: Screen flickering in fullscreen [(#5477)](https://github.com/nwjs/nw.js/issues/5477)
+- Fix: ship nacl_irt_x86_64.nexe and nacl64.exe for win-ia32 [(#5524)](https://github.com/nwjs/nw.js/issues/5524)
+- Fix: nw-gyp build failure with UNICODE set [(nw-gyp#100)](https://github.com/nwjs/nw-gyp/issues/100)
+- [docs] building Node in nw19
+
+0.19.0 / 12-02-2016
+===================
+- Update Chromium to [55.0.2883.75](https://googlechromereleases.blogspot.com/2016/12/stable-channel-update-for-desktop.html)
+- Fix: 'show_in_taskbar' option for 'nw.Window.open' (#4970)
+- Fix: process.uptime() (#5481)
+
+0.18.8 / 11-23-2016
+===================
+- Update Node.js to [7.2.0](https://nodejs.org/en/blog/release/v7.2.0/)
+- Fix: closing devtools window clears session cookies
+- Fix: disable symbolication of "adding an unknown subview" for frameless window [(#5435)](https://github.com/nwjs/nw.js/issues/5435)
+- Fix: bugs of modifiers of nw.MenuItem [(#5451)](https://github.com/nwjs/nw.js/issues/5451)
+
+0.19.0-rc1 / 11-17-2016
+=======================
+- Update Chromium to [55.0.2883.52](https://googlechromereleases.blogspot.com/2016/11/beta-channel-update-for-desktop_16.html)
+
+0.18.7 / 11-16-2016
+===================
+- Fix: [OSX] Regression in Debugging [(#5469)](https://github.com/nwjs/nw.js/issues/5469)
+- Fix: [OSX] Regression in --disable-raf-throttling feature [(5466)](https://github.com/nwjs/nw.js/issues/5466)
+- [docs] adding Getting Started example to use JS as entrance [(#5471)](https://github.com/nwjs/nw.js/issues/5471)
+
+0.18.6 / 11-10-2016
+===================
+- Update Chromium to [54.0.2840.99](https://googlechromereleases.blogspot.com/2016/11/stable-channel-update-for-desktop_9.html)
+- Update Node.js to [7.1.0](https://nodejs.org/en/blog/release/v7.1.0/)
+- Fix: registerGlobalHotKey and alert [(#4992)](https://github.com/nwjs/nw.js/issues/4992)
+- Fix: `nwworkingdir` attribute for multiple file input [(#5327)](https://github.com/nwjs/nw.js/issues/5327)
+- Fix: Take heap snapshot crash Mac OS X - nwjs 0.18.0 [(#5375)](https://github.com/nwjs/nw.js/issues/5375)
+- Fix: WebUSB API not working [(#5418)](https://github.com/nwjs/nw.js/issues/5418)
+- Fix: --single-process not working in manifest [(#5389)](https://github.com/nwjs/nw.js/issues/5389)
+- Fix: window minimize event bug [(#5388)](https://github.com/nwjs/nw.js/issues/5388)
+- Fix: Linux Fedora application menu says 'nwjs' instead of package.json name [(#4693)](https://github.com/nwjs/nw.js/issues/4693)
+- Fix: PNaCl not working in OSX
+- Fix: Devtools extension load throws error [(#5428)](https://github.com/nwjs/nw.js/issues/5428)
+- Fix: Icon is broken when launched with relative path to parent folder [(#5402)](https://github.com/nwjs/nw.js/issues/5402)
+- Fix: Node worker crash when being closed in some cases
+- [doc] rebuilding native modules with npm
+
+0.18.5 / 11-03-2016
+===================
+- Update Chromium to [54.0.2840.90](https://googlechromereleases.blogspot.com/2016/11/stable-channel-update-for-desktop.html)
+- Fix: node worker Uncaught Error: No such module: url [(#5422)](https://github.com/nwjs/nw.js/issues/5422)
+- Fix: Crashed when exiting nw without --enable-node-worker [(#5420)](https://github.com/nwjs/nw.js/issues/5420)
+- Fix: Gamepad API not working [(#5377)](https://github.com/nwjs/nw.js/issues/5377)
+- Fix: --single-process Seg Fault [(#5382)](https://github.com/nwjs/nw.js/issues/5382)
+
+0.19.0-beta1 / 10-31-2016
+=========================
+- Update Chromium to [55.0.2883.28](https://googlechromereleases.blogspot.com/2016/10/beta-channel-update-for-desktop_26.html)
+
+0.18.4 / 10-31-2016
+===================
+- Support Node.js in Web Workers [(#494)](https://github.com/nwjs/nw.js/issues/494)
+- [docs] --enable-node-worker in Command Line Options
+
+0.18.3 / 10-26-2016
+===================
+- Update Node.js to [7.0.0](https://nodejs.org/en/blog/release/v7.0.0/)
+
+0.18.2 / 10-21-2016
+===================
+- Update Chromium to [54.0.2840.71](https://googlechromereleases.blogspot.com/2016/10/stable-channel-update-for-desktop_20.html)
+- Fix: [WIN] Error in chrome_elf_main.cc after package with Enigma VB [(#5392)](https://github.com/nwjs/nw.js/issues/5392)
+
+0.18.1 / 10-18-2016
+===================
+- Update Node.js to [6.8.1](https://nodejs.org/en/blog/release/v6.8.1/)
+- Fix: [WIN] Cannot rename nw.exe with 0.18.0 [(#5362)](https://github.com/nwjs/nw.js/issues/5362)
+- Support --single-process mode for Steam platform [(#4982)](https://github.com/nwjs/nw.js/issues/4982)
+- Fix: Crash on close Mac OS X when using audio streams [(#5318)](https://github.com/nwjs/nw.js/issues/5318)
+- Fix: nw.App.clearCache() freez apllication nwjs 0.18.0 [(#5368)](https://github.com/nwjs/nw.js/issues/5368)
+
+0.18.0 / 10-13-2016
+===================
+- Update Chromium to [54.0.2840.59](https://googlechromereleases.blogspot.com/2016/10/stable-channel-update-for-desktop.html)
+- Update Node.js to [6.8.0](https://nodejs.org/en/blog/release/v6.8.0/)
+- Fix: [WIN] wrong icon used in windows opened by window.open()
+- Fix: support sign-in UI for Chrome Apps (#5351)
+
+0.17.6 / 09-30-2016
+===================
+- Update Chromium to [53.0.2785.143](https://googlechromereleases.blogspot.com/2016/09/stable-channel-update-for-desktop_29.html)
+- Fix: [WIN] 2nd instance shows a popup warning if the first instance starts with higher privilege
+
+0.17.5 / 09-28-2016
+===================
+- Update Node.js to [6.7.0](https://nodejs.org/en/blog/release/v6.7.0/)
+- Fix: Segfault when using additional_trust_anchors [(#5279)](https://github.com/nwjs/nw.js/issues/5279)
+- [doc] update known issues (removed fixed items)
+
+0.18.0-rc1 / 09-22-2016
+=========================
+- Update Chromium to [54.0.2840.34](https://googlechromereleases.blogspot.com/2016/09/beta-channel-update-for-desktop_21.html)
+
+0.17.4 / 09-20-2016
+===================
+- Update Node.js to [6.6.0](https://nodejs.org/en/blog/release/v6.6.0/)
+- Fix: Remove dialog when running on read only volumes (.dmg) [(#5309)](https://github.com/nwjs/nw.js/issues/5309)
+- Fix: window events on remote pages not firing after reloading [(#5312)](https://github.com/nwjs/nw.js/issues/5312)
+- Fix: remove limitation of dom storage quota
+- Fix: chrome.app.window reference lost after reload [(#5294)](https://github.com/nwjs/nw.js/issues/5294)
+- [doc] fix a typo in FAQ for AngularJS
+
+0.17.3 / 09-15-2016
+===================
+- Update Chromium to [53.0.2785.116](https://googlechromereleases.blogspot.com/2016/09/stable-channel-update-for-desktop_14.html)
+
+0.17.2 / 09-14-2016
+===================
+- Update Chromium to [53.0.2785.113](https://googlechromereleases.blogspot.com/2016/09/stable-channel-update-for-desktop_13.html)
+- Fix: chrome.app.window.getall() broken with remote pages windows [(#5181)](https://github.com/nwjs/nw.js/issues/5181)
+- Fix: background page was destroyed when "main" points to remote pages [(#5282)](https://github.com/nwjs/nw.js/issues/5282)
+
+0.18.0-beta1 / 09-13-2016
+=========================
+- Update Chromium to [54.0.2840.16](https://googlechromereleases.blogspot.com/2016/09/the-chrome-team-is-excited-to-announce.html)
+- Fix: chrome.app.window.getall() broken with remote pages windows [(#5181)](https://github.com/nwjs/nw.js/issues/5181)
+
+0.17.1 / 09-08-2016
+===================
+- Update Chromium to [53.0.2785.101](https://googlechromereleases.blogspot.com/2016/09/stable-channel-update-for-desktop.html)
+- Fix: Failed to load node library (liblibnode.dylib) on child_process.fork [(#5269)](https://github.com/nwjs/nw.js/issues/5269)
+- Fix: ia32 package file name [(#5258)](https://github.com/nwjs/nw.js/issues/5258)
+- Fix: typos in common.gypi to prevent nw-gyp failure
+- [docs] new ffmpeg dll build docs for GN [(#5263)](https://github.com/nwjs/nw.js/issues/5263)
+
+0.17.0 / 08-31-2016
+===================
+- Update Chromium to [53.0.2785.89](http://googlechromereleases.blogspot.com/2016/08/stable-channel-update-for-desktop_31.html)
+- Update Node.js to [6.5.0](https://nodejs.org/en/blog/release/v6.5.0/)
+- Fix: new_instance does not create new renderer process [(#5163)](https://github.com/nwjs/nw.js/issues/5163)
+- Fix: [OSX] crash on setting menubar in 0.17 beta [(#5229)](https://github.com/nwjs/nw.js/issues/5229)
+- Fix: Tray Icon Menu not working [(#5202)](https://github.com/nwjs/nw.js/issues/5202)
+- Fix: Crashing on link open in webview [(#5226)](https://github.com/nwjs/nw.js/issues/5226)
+- [docs] new build documentation for GN
+
+0.17.0-beta2 / 08-20-2016
+=========================
+- Update Chromium to [53.0.2785.70](http://blog.chromium.org/2016/08/chrome-53-beta-shadow-dom.html)
+- Update Node.js to [6.4.0](https://nodejs.org/en/blog/release/v6.4.0/)
+- Fix: nwjs 0.17 beta - crash at boot [(#5193)](https://github.com/nwjs/nw.js/issues/5193)
+- Fix: multiple evalNWBin always execute just the first *.bin [(#5168)](https://github.com/nwjs/nw.js/issues/5168)
+- Fix: regression - Shortcut not work in devtools while it placed in a webview [(#4709)](https://github.com/nwjs/nw.js/issues/4709)
+- Fix: [GN] mac symbol generation
+
+0.17.0-beta1 / 08-05-2016
+=========================
+- Update Chromium to [53.0.2785.46](http://blog.chromium.org/2016/08/chrome-53-beta-shadow-dom.html)
+
+0.16.1 / 08-04-2016
+=======================
+- Update Chromium to [52.0.2743.116](http://googlechromereleases.blogspot.com/2016/08/stable-channel-update-for-desktop.html)
+- Update Node to [6.3.1](https://nodejs.org/en/blog/release/v6.3.1/)
+- Fix: [osx] update menuitems after setting main menu [(#2812)](https://github.com/nwjs/nw.js/issues/2812)
+- Fix: Crashes if iframe has JavaScript error [(#5148)](https://github.com/nwjs/nw.js/issues/5148)
+- [docs] update license information about enabling Proprietary Codecs
+
+0.16.0 / 07-21-2016
+=======================
+- Update Chromium to [52.0.2743.82](http://googlechromereleases.blogspot.com/2016/07/stable-channel-update.html)
+- [docs] updated Quick Start section for "Package and Distribute" [(#5054)](https://github.com/nwjs/nw.js/issues/5054)
+
+0.16.0-rc2 / 07-15-2016
+=======================
+- Update Chromium to 52.0.2743.75
+- Update Node.js to [6.3.0](https://nodejs.org/en/blog/release/v6.3.0/)
+- Fix: nw is creating a file with the first command line argument it's opened with [(#5097)](https://github.com/nwjs/nw.js/issues/5097)
+- [doc] fixed typos for docs [(#5091)](https://github.com/nwjs/nw.js/issues/5091)
+
+0.16.0-rc1 / 07-13-2016
+=======================
+- Update Chromium to 52.0.2743.73
+- Update Node to [6.3.0](https://nodejs.org/en/blog/release/v6.3.0/)
+- Add App.clearAppCache(manifest_url) for clearing Application Cache [(#4991)](https://github.com/nwjs/nw.js/issues/4991)
+- Enable password autosaving for http auth dialog [(#4966)](https://github.com/nwjs/nw.js/issues/4966)
+- Margin option support for printer api [(#5033)](https://github.com/nwjs/nw.js/issues/5033)
+- Fix: finding bundled pepper flash plugin [(#5068)](https://github.com/nwjs/nw.js/issues/5068)
+- Fix: Silent printing with win.print() for pdfs [(#5002)](https://github.com/nwjs/nw.js/issues/5002)
+- Fix: Permission Denied error when using chrome.bluetoothLowEnergy API [(#5010)](https://github.com/nwjs/nw.js/issues/5010)
+- Fix: [OSX] Choose directory dialog shows "Upload" instead of "Select" [(#5058)](https://github.com/nwjs/nw.js/issues/5058)
+- Fix: menu bar background [(#4851)](https://github.com/nwjs/nw.js/issues/4851)
+- Fix: send positions arguments to click event handler of Tray [(#1874)](https://github.com/nwjs/nw.js/issues/1874)
+- Fix: DesktopCaptureMonitor desktop stream does not get AudioTrack [(#5029)](https://github.com/nwjs/nw.js/issues/5029)
+- Fix: crash in win.showDevTools() with string id [(#5061)](https://github.com/nwjs/nw.js/issues/5061)
+- Fix: webview.clearData crash [(#5087)](https://github.com/nwjs/nw.js/issues/5087)
+- Fix: Buffer encoding handling with input from DOM elements [(#5069)](https://github.com/nwjs/nw.js/issues/5069)
+- Fix: Window resize event returns undefined for height [(#4993)](https://github.com/nwjs/nw.js/issues/4993)
+- Fix: can not remove shortcut key at menuItem [(#5026)](https://github.com/nwjs/nw.js/issues/5026)
+- Fix: win.showDevTools crash with empty string id [(#5061)](https://github.com/nwjs/nw.js/issues/5061)
+-  Updated win_delay_load_hook.c to work with node-gyp@3.4.0 [(#5088)](https://github.com/nwjs/nw.js/issues/5088)
+- [docs] margins for Window.print()
+- [docs] Native Module building in nw15 and later
+
+0.15.4 / 06-24-2016
+===================
+- Update Chromium to [51.0.2704.106](http://googlechromereleases.blogspot.com/2016/06/stable-channel-update_23.html)
+- Include minidump_stackwalk in Linux and OSX sdk build [(#5023)](https://github.com/nwjs/nw.js/issues/5023)
+- Added new APIs for read/write multiple types of data to clipboard [(#4929)](https://github.com/nwjs/nw.js/issues/4929)
+- Fix: 'loaded' event shouldn't be fired when using history API [(#5001)](https://github.com/nwjs/nw.js/issues/5001)
+- Fix: DeprecationWarning: 'root' is deprecated, use 'global' [(#4938)](https://github.com/nwjs/nw.js/issues/4938)
+- Fix: Migrate websql data from 0.12 [(#5018)](https://github.com/nwjs/nw.js/issues/5018)
+- Fix: content verficiation of package.json in Node modules
+- Fix: [Linux] foreground colors for menubar [(#5007)](https://github.com/nwjs/nw.js/issues/5007)
+- Make Window.eval() and Window.evalNWBin() return result
+
+0.15.3 / 06-18-2016
+===================
+- Update Chromium to [51.0.2704.103](http://googlechromereleases.blogspot.com/2016/06/stable-channel-update_16.html)
+- Update Node.js to [v6.2.2](https://github.com/nodejs/node/blob/v6.2.2/CHANGELOG.md)
+- Fix: [WIN] user data migration from 0.12
+- Fix: FileList object in dragover event callback is not set correctly
+- Fix: crash on JSON.stringify(window) [(#4959)](https://github.com/nwjs/nw.js/issues/4959)
+- Fix: open mini browser for links in PDF [(#4915)](https://github.com/nwjs/nw.js/issues/4915)
+- Fix: possible race condition in content verfication
+- Fix: protect package.json from hacking for content verification
+- Fix: Disabled contextual menu plug-in items on mac
+- [doc] changed link for FFmpeg precompiled binaries
+- [doc] dded JS file as possibility for the "main" field
+
+0.15.2 / 06-07-2016
+===================
+- Update Chromium to [51.0.2704.84](http://googlechromereleases.blogspot.com/2016/06/stable-channel-update_6.html)
+- Update Node.js to [v6.2.1](https://github.com/nodejs/node/blob/v6.2.1/CHANGELOG.md)
+- Fix: "Print to PDF" in the Privew dialog broken after using nw.Window.print() [(#4911)](https://github.com/nwjs/nw.js/issues/4911)
+
+0.15.1 / 06-02-2016
+===================
+- Update Chromium to [51.0.2704.79](http://googlechromereleases.blogspot.com/2016/06/stable-channel-update.html)
+- Custom Print API [(#4911)](https://github.com/nwjs/nw.js/issues/4911)
+- Add: Support custom domain of nwjs app
+- Add switch to disable the remote debugging server [(#3620)](https://github.com/nwjs/nw.js/issues/3620)
+- Fix: make `this` in event listener reference to `nw.Window` [(#4901)](https://github.com/nwjs/nw.js/issues/4901)
+- Fix: Don't migrate the data if new version is there to prevent data loss [(#4853)](https://github.com/nwjs/nw.js/issues/4853)
+- Fix: Menu item key not working when key is 0 [(#4837)](https://github.com/nwjs/nw.js/issues/4837)
+- Fix: cookies support of chrome-extension protocol
+- [docs] usage of tray when page can be navigated [(#4816)](https://github.com/nwjs/nw.js/issues/4816)
+- [docs] Custom Print API
+- [docs] Manifest: Using custom domain
+
+0.14.6 / 06-01-2016
+===================
+- Custom Print API [(#4911)](https://github.com/nwjs/nw.js/issues/4911)
+- Add: '--disable-devtools' command line for SDK build [(#4839)](https://github.com/nwjs/nw.js/issues/4839)
+- Add: Support custom domain of nwjs app
+- Add switch to disable the remote debugging server [(#3620)](https://github.com/nwjs/nw.js/issues/3620)
+- Fix: make `this` in event listener reference to `nw.Window` [(#4901)](https://github.com/nwjs/nw.js/issues/4901)
+- Fix: Don't migrate the data if new version is there to prevent data loss [(#4853)](https://github.com/nwjs/nw.js/issues/4853)
+- Fix: Menu item key not working when key is 0 [(#4837)](https://github.com/nwjs/nw.js/issues/4837)
+- Fix: inject_js in webview and remote pages [(#4877)](https://github.com/nwjs/nw.js/issues/4877)
+- Fix: Transparency + Click-through clicks through floated elements [(#4846)](https://github.com/nwjs/nw.js/issues/4846)
+- Fix: disable tray icon "NW.js is using your microphone" [(#4852)](https://github.com/nwjs/nw.js/issues/4852)
+- Fix: Memory leak in Menu API [(#4860)](https://github.com/nwjs/nw.js/issues/4860)
+- Fix: Error in Tray in background context [(#4862)](https://github.com/nwjs/nw.js/issues/4862)
+- Fix: cookies support of chrome-extension protocol
+- [docs] disable-devtools switch
+- [docs] using Menu API and navigation
+- [docs] usage of tray when page can be navigated [(#4816)](https://github.com/nwjs/nw.js/issues/4816)
+- [docs] Custom Print API
+- [docs] Manifest: Using custom domain
+
+0.15.0 / 05-25-2016
+===================
+- Update Chromium to [51.0.2704.63](http://googlechromereleases.blogspot.com/2016/05/stable-channel-update_25.html)
+- Update Node.js to 6.2.0
+- Add: '--disable-devtools' command line for SDK build [(#4839)](https://github.com/nwjs/nw.js/issues/4839)
+- Fix: inject_js in webview and remote pages [(#4877)](https://github.com/nwjs/nw.js/issues/4877)
+- Fix: Transparency + Click-through clicks through floated elements [(#4846)](https://github.com/nwjs/nw.js/issues/4846)
+- Fix: disable tray icon "NW.js is using your microphone" [(#4852)](https://github.com/nwjs/nw.js/issues/4852)
+- Fix: Memory leak in Menu API [(#4860)](https://github.com/nwjs/nw.js/issues/4860)
+- Fix: Error in Tray in background context [(#4862)](https://github.com/nwjs/nw.js/issues/4862)
+- [docs] disable-devtools switch
+- [docs] using Menu API and navigation
+
+0.14.5 / 05-12-2016
+===================
+- Update Chromium to [50.0.2661.102](http://googlechromereleases.blogspot.com/2016/05/stable-channel-update.html)
+- Fix: process.nextTick() not working after uncaught exception [(#4822)](https://github.com/nwjs/nw.js/issues/4822)
+- Fix: [OSX] Adobe flash support
+- Fix: [OSX] nw.Screen.DesktopCaptureMonitor
+- [docs] remove deprecated 'unmaximize' event
+- [docs] verifying flash plugin
+
+0.14.4 / 05-06-2016
+===================
+- Update Node.js to 5.11.1
+- Extended `nw.Clipboard` to support multiple data types
+- Fix: nw.Window.open returns undefined in callback when devtools is opened [(#4188)](https://github.com/nwjs/nw.js/issues/4188)
+- Fix: ALT+ENTER causes NW.js to crash when using --in-process-gpu [(#4741)](https://github.com/nwjs/nw.js/issues/4741)
+- Fix: 'document-end' and 'loaded' event not working with remote pages [(#4788)](https://github.com/nwjs/nw.js/issues/4788)
+- Fix: inject_js_start not working with iframes in 0.14.3 [(#4791)](https://github.com/nwjs/nw.js/issues/4791)
+- Fix: nw.Menu.popup works only once [(#4721)](https://github.com/nwjs/nw.js/issues/4721)
+- [docs] document-start event and nw.Window.open()
+
+0.15.0-beta2 / 05-03-2016
+=========================
+- Update Chromium to 51.0.2704.29
+- Extended `nw.Clipboard` to support multiple data types
+- Fix: nw.Window.open returns undefined in callback when devtools is opened [(#4188)](https://github.com/nwjs/nw.js/issues/4188)
+- ALT+ENTER causes NW.js to crash when using --in-process-gpu [(#4741)](https://github.com/nwjs/nw.js/issues/4741)
+
+0.14.3 / 04-29-2016
+===================
+- Update Chromium to 50.0.2661.94
+- Update Node.js to 5.11.0
+- Fix: failed to start after reload with package name starting with underline [(#4779)](https://github.com/nwjs/nw.js/issues/4779)
+- Fix: [OSX] crashes when calling native module in inject_js_start script [(#4772)](https://github.com/nwjs/nw.js/issues/4772)
+- Fix: Content of file included via "inject_js_start" is executing twice [(#4705)](https://github.com/nwjs/nw.js/issues/4705)
+- Fix: undefined windows object returned from nw.Window.open in some cases
+- Fix: window menubar click event handler [(#4777)](https://github.com/nwjs/nw.js/issues/4777)
+- [docs] oncancel event of File dialog
+
+0.14.2 / 04-21-2016
+===================
+- Update Chromium to 50.0.2661.86
+- Update Node.js to 5.10.1
+- Add: support 'oncancel' event of File dialog [(#4501)](https://github.com/nwjs/nw.js/issues/4501)
+- Add: implemented `win.menu=null` to remove menubar [(#4725)](https://github.com/nwjs/nw.js/issues/4725)
+- Fix: Shell.openItem() does not open directories [(#4713)](https://github.com/nwjs/nw.js/issues/4713)
+- Fix: [WIN] Invisible eventless area around all sides of window [(#4749)](https://github.com/nwjs/nw.js/issues/4749)
+- Fix: [WIN] Windows loading icon stays visible after launching app [(#4685)](https://github.com/nwjs/nw.js/issues/4685)
+- Fix: [OSX] Support 10.8-10.7
+- Fix: Font size issue in v0.14.0 [(#4717)](https://github.com/nwjs/nw.js/issues/4717)
+- Fix: Weird popup in custom URL protocol [(#4746)](https://github.com/nwjs/nw.js/issues/4746)
+
+0.14.1 / 04-18-2016
+===================
+- Fix: Menu not working in Windows and Linux [(#4727)](https://github.com/nwjs/nw.js/issues/4727)
+- Fix: Crash with exceptions in some remote pages [(#4729)](https://github.com/nwjs/nw.js/issues/4729)
+- Fix: [WIN] ship libexif.dll [(#4637)](https://github.com/nwjs/nw.js/issues/4637)
+- Fix: Packaged application with command line parameter won't start; Reordered package path finding for backward compatible with nw12 [(#4681)](https://github.com/nwjs/nw.js/issues/4681)
+- Fix: use icon in manifest for devtools window icon [(#4707)](https://github.com/nwjs/nw.js/issues/4707)
+- [docs]  building proprietary codecs easier [(#4595)](https://github.com/nwjs/nw.js/issues/4595)
+- [docs] Fix: window object in the Node context
+
+0.14.0 / 04-14-2016
+===================
+- Update Chromium to 50.0.2661.75
+- Fix: AlwaysOnTop does not work with Fullscreen or overlapping toolbar [(#4554)](https://github.com/nwjs/nw.js/issues/4554)
+- Fix: Window object from `nw.Window.open` is `null` after an `new_instance` window was opened [(#4691)](https://github.com/nwjs/nw.js/issues/4691)
+- Fix: Linux Fedora application menu says 'nwjs' instead of package.json name [(#4693)](https://github.com/nwjs/nw.js/issues/4693)
+- Fix: Shortcut not work in devtools while it placed in a webview [(#4709)](https://github.com/nwjs/nw.js/issues/4709)
+- Fix: nw.App.clearCache hang and it should be sync [(#4674)](https://github.com/nwjs/nw.js/issues/4674)
+- Fix: Crashes sometimes when using menu.popup and GC happens [(#4697)](https://github.com/nwjs/nw.js/issues/4697)
+- Fix: Win.isFullscreen and isAlwaysOnTop should not be function [(#4446)](https://github.com/nwjs/nw.js/issues/4446)
+
+0.13.4 / 04-08-2016
+===================
+- Update Chromium to 49.0.2623.112
+- Fix: webview local file issue [(#4668)](https://github.com/nwjs/nw.js/issues/4668)
+- Fix: Custom app icon with incorrect size under volume mixer [(#4649)](https://github.com/nwjs/nw.js/issues/4649)
+- Fix: process Event: 'uncaughtException' not working in 0.13 [(#4679)](https://github.com/nwjs/nw.js/issues/4679)
+- [docs] data-path -> user-data-dir; --disable-raf-throttling
+- [docs] Clarify files can be safely removed during packaging [(#4676)](https://github.com/nwjs/nw.js/issues/4676)
+
+0.14.0-rc3 / 04-07-2016
+=======================
+- Update Chromium to 50.0.2661.66
+- Update Node.js to 5.10.0
+- Fix XP support again (32bit)
+- Port all the fixes released in 0.13.3
+
+0.13.3 / 04-04-2016
+===================
+- Update Node.js to 5.10.0
+- support --disable-raf-throttling to enable RequestAnimationFrame for background apps (#4664)
+- Fix: App will crash if CFBundleIdentifier in plist longer than 30 chrs (#4638)
+- Fix: Crash when open a pdf file in webview. (#4644)
+- Fix: [WIN] window restore size is changed when aero glass is on (#4323)
+- Fix: inject_js_end not working on remote pages (#4656)
+- Fix: Queries were sent to Google to update plugin metadata (#4669)
+- Fix: [WIN] Window size includes title bar (#4627)
+- Fix: Crash when bg-script calls nw.Window.get() (#4368)
+- Fix: Disabled menu item, still accessible via hotkey (#2261)
+- Fix: Unable to turn off / disable debug.log (#4637)
+- [docs] data-path -> user-data-dir
+- [docs] add link to buildbot
+- [docs] using flash plugin
+- [docs] location of nwjc and chromedriver
+
+0.14.0-rc2 / 03-31-2016
+=======================
+- Update Chromium to 50.0.2661.57
+- Update Node.js to 5.9.1
+- Fix XP support
+- [WIN] fix restore size when aero glass is on [(#4323)](https://github.com/nwjs/nw.js/issues/4323)
+
+0.14.0-rc1 / 03-29-2016
+=======================
+- Update Chromium to 50.0.2661.49
+
+0.13.2 / 03-29-2016
+===================
+- Update Chromium to 49.0.2623.110
+- Fix: crashes in CloseWatcher::CallbackAndDie sometimes (#4636)
+- Fix: nwsaveas is ignored when nwworkingdir is specified in nw13 (#4630)
+- Fix: "Inspect" Entry in Non-SDK PDF Viewer's Context Menu (#4642)
+
+0.13.1 / 03-25-2016
+===================
+- Update Chromium to 49.0.2623.108
+- Fix: Performance degradation in constructing typed array from node buffer (#4614)
+
+0.13.0 / 03-23-2016
+===================
+- Fix: [OSX] Cmd-Q does not pass true as the first argument to the event after createMacBuiltin() (#4580)
+- Fix: Window event 'move'/'resize' callback arguments undefined (#4610)
+- [docs] Update Command Line options with full list
+- [docs] List Chrome Extension APIs
+
+0.13.0-rc4 / 03-21-2016
+=======================
+- Update Node.js to 5.9.0
+- Fix: [WIN] unable to launch on XP 64bit system (#4600)
+- Fix: Crash when using `additional_trust_anchors`
+- Fix: Screen capture does not work in remote domain (#4579)
+- Fix: webview events not firing in remote page (#4590)
+- Fix: Crash when adding folder to workspace in devtools (#4602)
+- Fix: [OSX] Crash when using nw.Menu with chrome.identity.launchWebAuthFlow (#4591)
+- Fix: Crash when trying to open tabbed browser window (#4587, #4540)
+- Fix: Only top left corner of window icon is shown (#4581)
+- Fix: [OSX] Crash dumps doesn't match hashes of symbol files (#4450)
+- Fix: Crash on promise rejection handler (#4577)
+- Fix: Menu.popup blocks program (#4593)
+- Fix: [OSX] Cmd-Q does not pass true as the first argument to the event (#4580)
+- Fix: capturePage always return PNG (#4609)
+- [WIN] dump node.dll symbols
+- Remove context menu of notification (#4598)
+- Remove settings button of notification (#4582)
+- [docs] update crash dump location
+- [docs] add link for enable logging in FAQ
+- [docs] Reorder the navigation pane (#4576)
+- [docs] Multiple language resources in SDK build
+
+0.13.0-rc3 / 03-15-2016
+=======================
+- Enable auth password dialog
+- Enable notification permission for all origin (#4521, #4533)
+- Support chrome.contentSettings API (#4521)
+- Fix: wrong version and info for Pepper Flash plugin in registry (#4530)
+- Fix: [WIN] fix: window title and icon not shown
+- Fix: [WIN] start up fail where crashpad path is not found
+- Fix: nwjs 0.13.0 showed as chromium in taskbar on Linux (#4537)
+- [docs] more info on bg-script
+- [docs] transparecy needs frameless
+
+0.13.0-rc2 / 03-11-2016
+=======================
+- Update Chromium to 49.0.2623.87
+- Update Node.js to 5.8.0
+- Ship .pak files for non-English languages in SDK build
+- Build ffmpeg as Dll (#4492)
+- Disable notification of screen sharing (#4484)
+- Migrate indexed db files in user data dir (#4469)
+- Migrate local storage files for app protocol in user data dir (#4527)
+- Fix: node-main is broken (#4495)
+- Fix: app asks for confidential information for NWJS Safe Storage in keychain (#4458)
+- Fix: crash when navigate in some sites (#4422)
+- Fix: Use window subfields in manifest for newly created windows (#4221)
+- Fix: After press the “command+h” to minimize, but unable to recover (#4296)
+- Fix: crashpad handler error in windows (debug build unable to start)
+- Fix: Window title still shows with frame set to false on OSX (#4507)
+- Fix: The 'width' and 'height' in the manifest file does not work properly on OSX (#4493)
+- Fix: crash in chrome.app.window.create(url) without 2nd argument
+- Fix: nw.Window broken on 0.13.0-rc1 with --mixed-context (#4498)
+- Fix: Make menu callback work after navigation (#4313)
+- Fix: Show menubar menus from top-left anchor (#4473)
+- [docs] add 'Customize menubar' (#4416)
+
+0.13.0-rc1 / 03-03-2016
+=======================
+- Update Chromium to 49.0.2623.75
+- Update Node.js to 5.7.0
+- Add `nw.Screen.DesktopCaptureMonitor.registerStream()` for using stream id in `getUserMedia()` (#4459)
+- Fix: Wrong "restore" window size after click on the app in the taskbar on windows 10 (#4323)
+- [docs] chromedriver: a better way to arguments of nw app
+
+0.13.0-beta7 / 02-25-2016
+=========================
+- Update Chromium to 48.0.2564.116
+- Support loading devtools in/for webview by adding webview.showDevTools (#4411)
+- Fully support for devtools extensions (#612)
+- support loading local file in webview (#4425)
+- Fix: add URL scheme support for MAC (#4240)
+- Fix: alert/prompt dialog with nwjs style (#4413)
+- Fix: menubar button not found when navigate to another menu (#4371)
+
+0.13.0-beta6 / 02-17-2016
+=========================
+- Update Chromium to 48.0.2564.109
+- Update Node.js to 5.6.0
+- support controlling window with external page
+- Fix: enable self extraction (#4071)
+- Fix: crash when using native modules in OSX (#4338)
+- Fix: FileReader not working (#4399)
+- Fix: console tab with DevTools jail not working until switch frame manually
+- Fix: OSX menu support broken (#4374)
+- Fix: JavaScript dialogs text (#4190)
+- Fix: Typo: rename `App.(un)registerGlobalHotkey` to `App.(un)registerGlobalHotKey`
+- Fix: Window.zoomLevel changes all windows (#4352)
+- Fix: avoid polluting global namespace with 'path' etc. (#4350)
+- add URL scheme support for MAC (#4240)
+- support 'new_instance' option for Window.open
+- support native modules built by node-gyp
+- [docs] update for new_instance etc
+
+0.13.0-beta5 / 02-01-2016
+=========================
+- Update Chromium to 48.0.2564.97
+- Add back transparency support which is missing in beta4
+- support program args in chromedriver
+- port App.open argument (#4289)
+- support webkit.plugin field in manifest
+- Fix package script to support Win XP (#4181)
+- [OSX] disable double tap with 2 fingers by default and add option for it (#4249)
+- Fix: support window id in Window.open() (#4268)
+- Fix: permission for webRequest API (#4220)
+- rename 'inject-js-start' with 'inject_js_start' and add it to Window.open options (#4286)
+- rename 'always-on-top' with 'always_on_top', and 'visible-on-all-workspaces' with 'visible_on_all_workspaces'
+- Fix: infinite loop in nw.Window.close(true) (#4171)
+- Fix: Window title not changed by setting document.title (#3589)
+- Fix: startup slow because of scanning for invalid file name (#4303)
+- Fix: [OSX] suppress warning when opening devtools
+- Fix: conflict between promise rejection callbacks from Blink and Node (#4300)
+- Fix: Taking heap snapshot crashes webkit (#3678)
+- Fix: [OSX] App quits when closing window if window.show is false in manifest (#4187)
+- Fix: crash when opening external links with browser in devtools (#4269, #4121)
+- Fix: crash when opening external links with browser in print preview (#4270)
+- Fix: cookies API (#4199)
+- [docs] add enable-gcm
+- [docs] add double_tap_to_zoom_enabled
+- [docs] add FAQ for console.log
+- [docs] Updated FAQ for AnuglarJS 2
+
+0.13.0-beta4 / 01-18-2016
+=========================
+- Update Chromium to 48.0.2564.82
+- Update Node.js to 5.4.1
+- [OSX] Fix process.nextTick in some cases
+- [OSX] Fix hidden window title (#4186)
+- ported nw.App.fullArgv
+- Fix: nw.App.quit() does nothing when use JS file as main (#4227)
+
+0.13.0-beta3 / 01-13-2016
+=========================
+- Fix: save as... dialog not working (#4142)
+- Fix: app with hidden window will quit on start on osx
+- Fix: chrome socket api permission in NW app (#4143)
+- Fix: some Node core modules not working after close window (#4130, #4140)
+- Fix: chrome.fileSystem.restoreEntry breaks retainID on app reload (#4150)
+- Fix: oauth not working due to browser side naviagation (#4179, #4131, #4184)
+- Fix: Exception in nw.dll when running native module serialport (#4152)
+- Fix: window.open not loaded using node-remote (#4180)
+- Fix: POST form not working on navigation
+- Fix: nwjs Helper process not closed (#4118)
+- Fix: NW.js doesn't quit if DevTools has opened once (#4164)
+- Fix: window not closed when listen to 'close' event in another window (#4138)
+- Fix: [WIN] debug build of 'payload' tool
+- Fix: Crash when using devtools to view some source (#4121)
+- Fix: nw.Window.get() returns null after navigation (#4157, #4007)
+- Fix: requrie() function in the shim for nw12 compatibility (#4141)
+- Fix: Reversed x and y in win.moveTo and win.moveBy (#4136)
+- Accept array of matched patterns in node-remote (#4132)
+- [doc] Added docs for win.navigation event
+- [doc] Updated docs for single-instance
+- [doc] add hint for document contribution
+- [doc] update for Multiple Context mode
+- [doc] For Users > Getting Started. Revise example 2 sample code to cater new NW.JS API for Menu
+- [doc] update for Window.id
+
+0.13.0-beta2 / 12-31-2015
+=========================
+- Fix: application window is opened out of the screen on Windows.
+
+0.13.0-beta1 / 12-30-2015
+=========================
+- Most of nw.gui API ported
+
 0.12.3 / 07-31-2015
 ===================
 - Support Mac App Store with the 'macappstore' flavor

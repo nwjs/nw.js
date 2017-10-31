@@ -6,9 +6,11 @@
 #include "content/public/browser/render_widget_host.h"
 #include "chrome/browser/devtools/devtools_window.h"
 #include "chrome/browser/extensions/devtools_util.h"
-#include "components/ui/zoom/zoom_controller.h"
+#include "chrome/browser/ui/webui/print_preview/printer_backend_proxy.h"
+#include "components/zoom/zoom_controller.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/object_manager.h"
+#include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/web_contents.h"
@@ -19,24 +21,30 @@
 #include "extensions/common/constants.h"
 #include "ui/gfx/codec/jpeg_codec.h"
 #include "ui/gfx/codec/png_codec.h"
-#include "ui/gfx/display.h"
+#include "ui/display/display.h"
 #include "ui/gfx/geometry/size_conversions.h"
-#include "ui/gfx/screen.h"
+#include "ui/display/screen.h"
+#include "content/nw/src/api/nw_current_window_internal.h"
 
 #if defined(OS_WIN)
 #include <shobjidl.h>
 #include <dwmapi.h>
 
+#include "base/win/windows_version.h"
+#include "ui/base/win/hidden_window.h"
 #include "ui/gfx/canvas.h"
 #include "ui/gfx/icon_util.h"
 #include "ui/gfx/font_list.h"
 #include "ui/gfx/platform_font.h"
-#include "ui/gfx/win/dpi.h"
+#include "ui/display/win/dpi.h"
 #include "ui/views/win/hwnd_util.h"
 #endif
 
 #if defined(OS_LINUX)
-#include "chrome/browser/ui/libgtk2ui/gtk2_ui.h"
+#include "chrome/browser/ui/libgtkui/gtk_ui.h"
+#endif
+
+#if defined(OS_LINUX) || defined(OS_WIN)
 #include "content/nw/src/browser/menubar_view.h"
 #include "content/nw/src/browser/browser_view_layout.h"
 using nw::BrowserViewLayout;
@@ -46,21 +54,26 @@ using nw::BrowserViewLayout;
 #include "content/nw/src/nw_content_mac.h"
 #endif
 
+#include "chrome/browser/ui/webui/print_preview/print_preview_handler.h"
+
 using content::RenderWidgetHost;
 using content::RenderWidgetHostView;
 using content::WebContents;
-using ui_zoom::ZoomController;
+using zoom::ZoomController;
 
 using nw::Menu;
 
-#if defined(OS_LINUX)
+#if defined(OS_LINUX) || defined(OS_WIN)
 using nw::MenuBarView;
+#endif
+
+#if defined(OS_LINUX)
 static void SetDeskopEnvironment() {
   static bool runOnce = false;
   if (runOnce) return;
   runOnce = true;
 
-  scoped_ptr<base::Environment> env(base::Environment::Create());
+  std::unique_ptr<base::Environment> env(base::Environment::Create());
   std::string name;
   //if (env->GetVar("CHROME_DESKTOP", &name) && !name.empty())
   //  return;
@@ -81,7 +94,7 @@ const char kNoAssociatedAppWindow[] =
     "associated app window.";
 }
 
-static AppWindow* getAppWindow(AsyncExtensionFunction* func) {
+static AppWindow* getAppWindow(UIThreadExtensionFunction* func) {
   AppWindowRegistry* registry = AppWindowRegistry::Get(func->browser_context());
   DCHECK(registry);
   content::WebContents* web_contents = func->GetSenderWebContents();
@@ -103,18 +116,58 @@ static HWND getHWND(AppWindow* window) {
 }
 #endif
 
-NwCurrentWindowInternalShowDevToolsFunction::NwCurrentWindowInternalShowDevToolsFunction() {
-
+void NwCurrentWindowInternalCloseFunction::DoClose(AppWindow* window) {
+  window->GetBaseWindow()->ForceClose();
 }
 
-NwCurrentWindowInternalShowDevToolsFunction::~NwCurrentWindowInternalShowDevToolsFunction() {
-}
+bool NwCurrentWindowInternalCloseFunction::RunAsync() {
+  std::unique_ptr<nwapi::nw_current_window_internal::Close::Params> params(
+      nwapi::nw_current_window_internal::Close::Params::Create(*args_));
+  EXTENSION_FUNCTION_VALIDATE(params.get());
 
-bool NwCurrentWindowInternalShowDevToolsFunction::RunAsync() {
-  content::RenderFrameHost* rfh = render_frame_host();
-  DevToolsWindow::OpenDevToolsWindow(
-      content::WebContents::FromRenderFrameHost(rfh));
+  bool force = params->force.get() ? *params->force : false;
+  AppWindow* window = getAppWindow(this);
+  if (force)
+    base::MessageLoop::current()->task_runner()->PostTask(FROM_HERE,
+         base::Bind(&NwCurrentWindowInternalCloseFunction::DoClose, window));
+  else if (window->NWCanClose())
+    base::MessageLoop::current()->task_runner()->PostTask(FROM_HERE,
+         base::Bind(&NwCurrentWindowInternalCloseFunction::DoClose, window));
+
   SendResponse(true);
+  return true;
+}
+
+void NwCurrentWindowInternalShowDevToolsInternalFunction::OnOpened() {
+  SendResponse(true);
+}
+
+bool NwCurrentWindowInternalShowDevToolsInternalFunction::RunAsync() {
+  content::RenderFrameHost* rfh = render_frame_host();
+  content::WebContents* web_contents = content::WebContents::FromRenderFrameHost(rfh);
+  scoped_refptr<content::DevToolsAgentHost> agent(
+      content::DevToolsAgentHost::GetOrCreateFor(web_contents));
+  DevToolsWindow::OpenDevToolsWindow(web_contents);
+  DevToolsWindow* devtools_window =
+      DevToolsWindow::FindDevToolsWindow(agent.get());
+  if (devtools_window)
+    devtools_window->SetLoadCompletedCallback(base::Bind(&NwCurrentWindowInternalShowDevToolsInternalFunction::OnOpened, this));
+  else
+    OnOpened();
+
+  return true;
+}
+
+bool NwCurrentWindowInternalCloseDevToolsFunction::RunAsync() {
+  content::RenderFrameHost* rfh = render_frame_host();
+  content::WebContents* web_contents = content::WebContents::FromRenderFrameHost(rfh);
+  scoped_refptr<content::DevToolsAgentHost> agent(
+      content::DevToolsAgentHost::GetOrCreateFor(web_contents));
+  DevToolsWindow* devtools_window =
+      DevToolsWindow::FindDevToolsWindow(agent.get());
+  if (devtools_window) {
+    devtools_window->Close();
+  }
   return true;
 }
 
@@ -127,10 +180,10 @@ NwCurrentWindowInternalCapturePageInternalFunction::~NwCurrentWindowInternalCapt
 bool NwCurrentWindowInternalCapturePageInternalFunction::RunAsync() {
   EXTENSION_FUNCTION_VALIDATE(args_);
 
-  scoped_ptr<ImageDetails> image_details;
-  if (args_->GetSize() > 1) {
+  std::unique_ptr<ImageDetails> image_details;
+  if (args_->GetSize() > 0) {
     base::Value* spec = NULL;
-    EXTENSION_FUNCTION_VALIDATE(args_->Get(1, &spec) && spec);
+    EXTENSION_FUNCTION_VALIDATE(args_->Get(0, &spec) && spec);
     image_details = ImageDetails::FromValue(*spec);
   }
 
@@ -169,7 +222,7 @@ bool NwCurrentWindowInternalCapturePageInternalFunction::RunAsync() {
   const gfx::Size view_size = view->GetViewBounds().size();
   gfx::Size bitmap_size = view_size;
   const gfx::NativeView native_view = view->GetNativeView();
-  gfx::Screen* const screen = gfx::Screen::GetScreenFor(native_view);
+  display::Screen* const screen = display::Screen::GetScreen();
   const float scale =
       screen->GetDisplayNearestWindow(native_view).device_scale_factor();
   if (scale > 1.0f)
@@ -229,12 +282,12 @@ void NwCurrentWindowInternalCapturePageInternalFunction::OnCaptureSuccess(const 
 
   std::string base64_result;
   base::StringPiece stream_as_string(
-      reinterpret_cast<const char*>(vector_as_array(&data)), data.size());
+                                     reinterpret_cast<const char*>(data.data()), data.size());
 
   base::Base64Encode(stream_as_string, &base64_result);
   base64_result.insert(
       0, base::StringPrintf("data:%s;base64,", mime_type.c_str()));
-  SetResult(new base::StringValue(base64_result));
+  SetResult(base::MakeUnique<base::StringValue>(base64_result.c_str()));
   SendResponse(true);
 }
 
@@ -263,6 +316,32 @@ NwCurrentWindowInternalClearMenuFunction::~NwCurrentWindowInternalClearMenuFunct
 }
 
 bool NwCurrentWindowInternalClearMenuFunction::RunAsync() {
+  AppWindow* window = getAppWindow(this);
+  if (!window) {
+    error_ = kNoAssociatedAppWindow;
+    return false;
+  }
+
+#if defined(OS_MACOSX)
+  NWChangeAppMenu(NULL);
+#endif
+
+#if defined(OS_LINUX) || defined(OS_WIN)
+  native_app_window::NativeAppWindowViews* native_app_window_views =
+      static_cast<native_app_window::NativeAppWindowViews*>(
+          window->GetBaseWindow());
+
+  BrowserViewLayout *browser_view_layout = static_cast<BrowserViewLayout*>(native_app_window_views->GetLayoutManager());
+  views::View* menubar = browser_view_layout->menu_bar();
+  if (menubar) {
+    native_app_window_views->RemoveChildView(menubar);
+  }
+  browser_view_layout->set_menu_bar(NULL);
+  native_app_window_views->layout_();
+  native_app_window_views->SchedulePaint();
+  window->menu_->RemoveKeys();
+  window->menu_ = NULL;
+#endif
   return true;
 }
 
@@ -272,7 +351,7 @@ NwCurrentWindowInternalSetMenuFunction::NwCurrentWindowInternalSetMenuFunction()
 NwCurrentWindowInternalSetMenuFunction::~NwCurrentWindowInternalSetMenuFunction() {
 }
 
-bool NwCurrentWindowInternalSetMenuFunction::RunAsync() {
+bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::ListValue* response, std::string* error) {
   int id = 0;
   EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &id));
   AppWindow* window = getAppWindow(this);
@@ -283,12 +362,17 @@ bool NwCurrentWindowInternalSetMenuFunction::RunAsync() {
   nw::ObjectManager* obj_manager = nw::ObjectManager::Get(browser_context());
   Menu* menu = (Menu*)obj_manager->GetApiObject(id);
 
-  window->menu_ = menu;
-#if defined(OS_MACOSX)
-  NWChangeAppMenu(menu);
+#if defined(OS_LINUX) || defined(OS_WIN)
+  Menu* old_menu = window->menu_;
 #endif
 
-#if defined(OS_LINUX)
+  window->menu_ = menu;
+  
+#if defined(OS_MACOSX)
+  response->Append(NWChangeAppMenu(menu));
+#endif
+
+#if defined(OS_LINUX) || defined(OS_WIN)
   native_app_window::NativeAppWindowViews* native_app_window_views =
       static_cast<native_app_window::NativeAppWindowViews*>(
           window->GetBaseWindow());
@@ -299,30 +383,15 @@ bool NwCurrentWindowInternalSetMenuFunction::RunAsync() {
   menubar->UpdateMenu(menu->model());
   native_app_window_views->layout_();
   native_app_window_views->SchedulePaint();
+  if (old_menu) old_menu->RemoveKeys();
+  menu->UpdateKeys( native_app_window_views->widget()->GetFocusManager() );
+  response->Append(std::unique_ptr<base::ListValue>(new base::ListValue()));
 #endif
-  // The menu is lazily built.
-#if defined(OS_WIN) //FIXME
-  menu->Rebuild();
-  menu->SetWindow(window);
-
-  native_app_window::NativeAppWindowViews* native_app_window_views =
-      static_cast<native_app_window::NativeAppWindowViews*>(
-          window->GetBaseWindow());
-
-  // menu is nwapi::Menu, menu->menu_ is NativeMenuWin,
-  BOOL ret = ::SetMenu(views::HWNDForWidget(native_app_window_views->widget()->GetTopLevelWidget()), menu->menu_->GetNativeMenu());
-  if (!ret)
-	  LOG(ERROR) << "error setting menu";
-
-  ::DrawMenuBar(views::HWNDForWidget(native_app_window_views->widget()->GetTopLevelWidget()));
-  native_app_window_views->SchedulePaint();
-#endif
-  //FIXME menu->UpdateKeys( native_app_window_views->widget()->GetFocusManager() );
   return true;
 }
   
 #if defined(OS_WIN)
-static HICON createBadgeIcon(const HWND hWnd, const TCHAR *value, const int sizeX, const int sizeY) {
+static base::win::ScopedHICON createBadgeIcon(const HWND hWnd, const TCHAR *value, const int sizeX, const int sizeY) {
   // canvas for the overlay icon
   gfx::Canvas canvas(gfx::Size(sizeX, sizeY), 1, false);
 
@@ -341,7 +410,7 @@ static HICON createBadgeIcon(const HWND hWnd, const TCHAR *value, const int size
   canvas.DrawStringRectWithFlags(value, gfx::FontList(font), SK_ColorWHITE, gfx::Rect(sizeX, fontSize + yMargin + 1), gfx::Canvas::TEXT_ALIGN_CENTER);
 
   // return the canvas as windows native icon handle
-  return IconUtil::CreateHICONFromSkBitmap(canvas.ExtractImageRep().sk_bitmap());
+  return std::move(IconUtil::CreateHICONFromSkBitmap(canvas.ExtractImageRep().sk_bitmap()));
 }
 #endif
 
@@ -368,19 +437,18 @@ bool NwCurrentWindowInternalSetBadgeLabelFunction::RunAsync() {
     return false;
   }
 
-  HICON icon = NULL;
+  base::win::ScopedHICON icon;
   HWND hWnd = getHWND(getAppWindow(this));
   if (hWnd == NULL) {
     error_ = kNoAssociatedAppWindow;
     LOG(ERROR) << error_;
     return false;
   }
-  const float scale = gfx::GetDPIScale();
+  const float scale = display::win::GetDPIScale();
   if (badge.size())
     icon = createBadgeIcon(hWnd, base::UTF8ToUTF16(badge).c_str(), 16 * scale, 16 * scale);
 
-  taskbar->SetOverlayIcon(hWnd, icon, L"Status");
-  DestroyIcon(icon);
+  taskbar->SetOverlayIcon(hWnd, icon.get(), L"Status");
 #elif defined(OS_LINUX)
   views::LinuxUI* linuxUI = views::LinuxUI::instance();
   if (linuxUI == NULL) {
@@ -397,7 +465,7 @@ bool NwCurrentWindowInternalSetBadgeLabelFunction::RunAsync() {
   return true;
 }
   
-bool NwCurrentWindowInternalRequestAttentionFunction::RunAsync() {
+bool NwCurrentWindowInternalRequestAttentionInternalFunction::RunAsync() {
   EXTENSION_FUNCTION_VALIDATE(args_);
   int count;
   EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &count));
@@ -419,17 +487,13 @@ bool NwCurrentWindowInternalRequestAttentionFunction::RunAsync() {
     fwi.dwFlags = FLASHW_STOP;
   }
   FlashWindowEx(&fwi);
-#elif defined(OS_LINUX)
+#elif defined(OS_LINUX) || defined(OS_MACOSX)
   AppWindow* window = getAppWindow(this);
   if (!window) {
     error_ = kNoAssociatedAppWindow;
     return false;
   }
   window->GetBaseWindow()->FlashFrame(count);
-#else
-  error_ = "NwCurrentWindowInternalRequestAttentionFunction NOT Implemented"
-  NOTIMPLEMENTED() << error_;
-  return false;
 #endif
   return true;
 }
@@ -492,7 +556,7 @@ bool NwCurrentWindowInternalSetProgressBarFunction::RunAsync() {
 
 bool NwCurrentWindowInternalReloadIgnoringCacheFunction::RunAsync() {
   content::WebContents* web_contents = GetSenderWebContents();
-  web_contents->GetController().ReloadIgnoringCache(false);
+  web_contents->GetController().ReloadBypassingCache(false);
   SendResponse(true);
   return true;
 }
@@ -518,10 +582,173 @@ bool NwCurrentWindowInternalSetZoomFunction::RunNWSync(base::ListValue* response
       ZoomController::FromWebContents(web_contents);
   scoped_refptr<ExtensionZoomRequestClient> client(
       new ExtensionZoomRequestClient(extension()));
+  zoom_controller->SetZoomMode(zoom::ZoomController::ZOOM_MODE_ISOLATED);
   if (!zoom_controller->SetZoomLevelByClient(zoom_level, client)) {
     return false;
   }
   return true;
 }
 
+bool NwCurrentWindowInternalEnterKioskModeFunction::RunAsync() {
+  AppWindow* window = getAppWindow(this);
+  window->ForcedFullscreen();
+  SendResponse(true);
+  return true;
+}
+
+bool NwCurrentWindowInternalLeaveKioskModeFunction::RunAsync() {
+  AppWindow* window = getAppWindow(this);
+  window->Restore();
+  SendResponse(true);
+  return true;
+}
+
+bool NwCurrentWindowInternalToggleKioskModeFunction::RunAsync() {
+  AppWindow* window = getAppWindow(this);
+  if (window->IsFullscreen() || window->IsForcedFullscreen())
+    window->Restore();
+  else
+    window->ForcedFullscreen();
+  SendResponse(true);
+  return true;
+}
+
+bool NwCurrentWindowInternalIsKioskInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
+  AppWindow* window = getAppWindow(this);
+  if (window->IsFullscreen() || window->IsForcedFullscreen())
+    response->AppendBoolean(true);
+  else
+    response->AppendBoolean(false);
+  return true;
+}
+
+bool NwCurrentWindowInternalGetTitleInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
+  AppWindow* window = getAppWindow(this);
+  response->AppendString(window->title_override());
+  return true;
+}
+
+bool NwCurrentWindowInternalSetTitleInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
+  EXTENSION_FUNCTION_VALIDATE(args_);
+  std::string title;
+  EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &title));
+  AppWindow* window = getAppWindow(this);
+  window->set_title_override(title);
+  window->GetBaseWindow()->UpdateWindowTitle();
+  return true;
+}
+
+bool NwCurrentWindowInternalGetPrintersFunction::RunAsync() {
+  printing::EnumeratePrinters(Profile::FromBrowserContext(browser_context()),
+      base::Bind(&NwCurrentWindowInternalGetPrintersFunction::OnGetPrinterList,
+                 this));
+  return true;
+}
+
+void NwCurrentWindowInternalGetPrintersFunction::OnGetPrinterList(const printing::PrinterList& printer_list) {
+  base::ListValue* printers = new base::ListValue();
+  chrome::PrintersToValues(printer_list, printers);
+  SetResult(base::WrapUnique(printers));
+  SendResponse(true);
+}
+
+bool NwCurrentWindowInternalSetPrintSettingsInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
+  EXTENSION_FUNCTION_VALIDATE(args_);
+
+  if (!args_->GetSize())
+    return false;
+  base::Value* spec = NULL;
+  EXTENSION_FUNCTION_VALIDATE(args_->Get(0, &spec) && spec);
+  if (!spec->IsType(base::Value::TYPE_DICTIONARY))
+    return false;
+  const base::DictionaryValue* dict = static_cast<const base::DictionaryValue*>(spec);
+  bool auto_print;
+  std::string printer_name, pdf_path;
+  if (dict->GetBoolean("autoprint", &auto_print))
+    chrome::NWPrintSetCustomPrinting(auto_print);
+  if (dict->GetString("printer", &printer_name))
+    chrome::NWPrintSetDefaultPrinter(printer_name);
+  if (dict->GetString("pdf_path", &pdf_path))
+    chrome::NWPrintSetPDFPath(base::FilePath::FromUTF8Unsafe(pdf_path));
+  chrome::NWPrintSetOptions(dict);
+  return true;
+}
+
+bool NwCurrentWindowInternalGetWinParamInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
+  AppWindow* app_window = getAppWindow(this);
+
+  if (!app_window) {
+    *error = "cannot get current window; are you in background page/node context?";
+    return false;
+  }
+  //from app_window_api.cc
+  content::RenderFrameHost* created_frame =
+      app_window->web_contents()->GetMainFrame();
+  int frame_id = created_frame->GetRoutingID();
+
+  base::DictionaryValue* result = new base::DictionaryValue;
+  result->Set("frameId", new base::FundamentalValue(frame_id));
+  result->Set("id", new base::StringValue(app_window->window_key()));
+  app_window->GetSerializedState(result);
+
+  response->Append(base::WrapUnique(result));
+
+  return true;
+}
+
+bool NwCurrentWindowInternalSetShowInTaskbarFunction::RunAsync() {
+  EXTENSION_FUNCTION_VALIDATE(args_);
+  bool show;
+  EXTENSION_FUNCTION_VALIDATE(args_->GetBoolean(0, &show));
+#if defined(OS_WIN)
+  AppWindow* window = getAppWindow(this);
+
+  native_app_window::NativeAppWindowViews* native_app_window_views =
+      static_cast<native_app_window::NativeAppWindowViews*>(
+          window->GetBaseWindow());
+
+  views::Widget* widget = native_app_window_views->widget()->GetTopLevelWidget();
+
+  if (show == false && base::win::GetVersion() < base::win::VERSION_VISTA) {
+    // Change the owner of native window. Only needed on Windows XP.
+    ::SetParent(views::HWNDForWidget(widget),
+                ui::GetHiddenWindow());
+  }
+
+  base::win::ScopedComPtr<ITaskbarList> taskbar;
+  HRESULT result = taskbar.CreateInstance(CLSID_TaskbarList, NULL,
+                                          CLSCTX_INPROC_SERVER);
+  if (FAILED(result)) {
+    VLOG(1) << "Failed creating a TaskbarList object: " << result;
+    SendResponse(true);
+    return true;
+  }
+
+  result = taskbar->HrInit();
+  if (FAILED(result)) {
+    LOG(ERROR) << "Failed initializing an ITaskbarList interface.";
+    SendResponse(true);
+    return true;
+  }
+
+  if (show)
+    result = taskbar->AddTab(views::HWNDForWidget(widget));
+  else
+    result = taskbar->DeleteTab(views::HWNDForWidget(widget));
+
+  if (FAILED(result)) {
+    LOG(ERROR) << "Failed to change the show in taskbar attribute";
+    SendResponse(true);
+    return true;
+  }
+#elif defined(OS_MACOSX)
+  AppWindow* app_window = getAppWindow(this);
+  extensions::NativeAppWindow* native_window = app_window->GetBaseWindow();
+  NWSetNSWindowShowInTaskbar(native_window, show);
+#endif
+  SendResponse(true);
+  return true;
+}
+
 } // namespace extensions
+

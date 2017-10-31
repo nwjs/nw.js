@@ -1,5 +1,0 @@
-{
-  "name": "nw-test-source-maps",
-  "main": "index.html",
-  "node-remote": "127.0.0.1"
-}

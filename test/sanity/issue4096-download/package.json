@@ -1,0 +1,5 @@
+{
+  "name":"test-issue-4096",
+  "main":"index.html",
+  "js-flags":"--expose-gc"
+}

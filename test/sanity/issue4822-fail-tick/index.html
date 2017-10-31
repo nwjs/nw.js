@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>callback fail</title>
+</head>
+<body>
+  <button onclick="fail()">fail</button>
+  <button onclick="runNextTick()">process.nextTick</button>
+  <button onclick="runTimeout()">setTimeout</button>
+  <script>
+  function out(id, msg) {
+    var h1 = document.createElement('h1');
+    h1.setAttribute('id', id);
+    h1.innerHTML = msg;
+    document.body.appendChild(h1);
+  }
+
+  function fail() {
+    funcNotExist();
+  }
+
+  function runNextTick() {
+    process.nextTick(function() {
+      out('res1', 'success: process.nexttick');
+      console.log('nextTick');
+    });
+  }
+
+  function runTimeout() {
+    setTimeout(function() {
+      out('res2', 'success: setTimeout');
+      console.log('setTimeout');
+    }, 10);
+  }
+
+  </script>
+</body>
+</html>

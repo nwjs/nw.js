@@ -1,0 +1,24 @@
+{
+  "name": "nwjs-issue-4357",
+  "description": "Sample Crash",
+  "version": "0.0.1",
+  "main": "index.html",
+  "single-instance": true,
+  "engines": {
+    "node": "5.6.x",
+    "npm": "3.7.x"
+  },
+  "window": {
+    "title": "NW.js Issue 4357"
+  },
+  "permissions": [
+    "node"
+  ],
+  "devDependencies": {
+    "nw": "^0.13.0-beta6sdk"
+  },
+  "scripts": {
+    "start": "nw --version && nw ."
+  }, 
+  "chromium-args": "--enable-logging=stderr"
+}

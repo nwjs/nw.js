@@ -51,7 +51,7 @@ using extensions::EventRouter;
 namespace nw {
 
 IDMap<Base, IDMapOwnPointer> nw::ObjectManager::objects_registry_;
-int nw::ObjectManager::next_object_id_ = 1;
+int nw::ObjectManager::next_object_id_ = 0;
 
 ObjectManager* ObjectManager::Get(content::BrowserContext* context) {
   return ObjectManagerFactory::GetForBrowserContext(context);
@@ -80,7 +80,7 @@ Base* ObjectManager::GetApiObject(int id) {
 
 // static
 int ObjectManager::AllocateId() {
-  return next_object_id_++;
+  return ++next_object_id_;
 }
 
 void ObjectManager::OnAllocateObject(int object_id,
@@ -120,8 +120,14 @@ void ObjectManager::OnAllocateObject(int object_id,
 
 void ObjectManager::OnDeallocateObject(int object_id) {
   DLOG(INFO) << "OnDeallocateObject: object_id:" << object_id;
-  if (objects_registry_.Lookup(object_id))
+  Base* obj = objects_registry_.Lookup(object_id);
+  if (obj) {
+    if (obj->delay_destruction()) {
+      obj->set_pending_destruction(true);
+      return;
+    }
     objects_registry_.Remove(object_id);
+  }
   objects_.erase(object_id);
 }
 
@@ -221,12 +227,12 @@ void ObjectManager::SendEvent(Base* object,
   EventRouter* event_router = EventRouter::Get(browser_context_);
   if (!event_router)
     return;
-  scoped_ptr<base::ListValue> arguments(args.DeepCopy());
-  arguments->Insert(0, new base::FundamentalValue(object->id()));
-  scoped_ptr<Event> event(new Event(extensions::events::UNKNOWN, "NWObject" + event_name, arguments.Pass()));
+  std::unique_ptr<base::ListValue> arguments(args.DeepCopy());
+  arguments->Insert(0, base::WrapUnique(new base::FundamentalValue(object->id())));
+  std::unique_ptr<Event> event(new Event(extensions::events::UNKNOWN, "NWObject" + event_name, std::move(arguments)));
   event->restrict_to_browser_context = browser_context_;
   event->user_gesture = EventRouter::USER_GESTURE_ENABLED;
-  event_router->DispatchEventToExtension(object->extension_id_, event.Pass());
+  event_router->DispatchEventToExtension(object->extension_id_, std::move(event));
   
 }
 }  // namespace nw

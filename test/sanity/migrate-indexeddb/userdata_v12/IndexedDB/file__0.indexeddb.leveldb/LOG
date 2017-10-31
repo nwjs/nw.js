@@ -1,0 +1,3 @@
+2016/03/08-16:37:28.353 6734 Reusing MANIFEST /home/roger/.config/test-indexdb/IndexedDB/file__0.indexeddb.leveldb/MANIFEST-000001
+2016/03/08-16:37:28.353 6734 Recovering log #3
+2016/03/08-16:37:28.353 6734 Reusing old log /home/roger/.config/test-indexdb/IndexedDB/file__0.indexeddb.leveldb/000003.log 

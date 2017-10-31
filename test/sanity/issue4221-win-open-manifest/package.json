@@ -1,0 +1,8 @@
+{
+  "name": "issue4221-win-open-manifest",
+  "main": "index.html",
+  "window": {
+    "width": 400,
+    "height": 300
+  }
+}

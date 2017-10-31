@@ -23,6 +23,18 @@ class NwAppQuitFunction : public AsyncExtensionFunction {
   void Callback();
 };
 
+class NwAppCloseAllWindowsFunction : public AsyncExtensionFunction {
+ public:
+  NwAppCloseAllWindowsFunction() {}
+
+ protected:
+  ~NwAppCloseAllWindowsFunction() override {}
+
+  // ExtensionFunction:
+  bool RunAsync() override;
+  DECLARE_EXTENSION_FUNCTION("nw.App.closeAllWindows", UNKNOWN)
+};
+
 class NwAppGetArgvSyncFunction : public NWSyncExtensionFunction {
  public:
   NwAppGetArgvSyncFunction();
@@ -53,6 +65,19 @@ class NwAppClearCacheFunction : public NWSyncExtensionFunction, public BrowsingD
   DISALLOW_COPY_AND_ASSIGN(NwAppClearCacheFunction);
 };
 
+class NwAppClearAppCacheFunction : public NWSyncExtensionFunction {
+ public:
+  NwAppClearAppCacheFunction();
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
+
+ protected:
+  ~NwAppClearAppCacheFunction() override;
+
+  DECLARE_EXTENSION_FUNCTION("nw.App.clearAppCache", UNKNOWN)
+ private:
+  DISALLOW_COPY_AND_ASSIGN(NwAppClearAppCacheFunction);
+};
+
 class NwAppSetProxyConfigFunction : public NWSyncExtensionFunction {
  public:
   NwAppSetProxyConfigFunction();
@@ -78,6 +103,18 @@ class NwAppGetDataPathFunction : public NWSyncExtensionFunction {
   DECLARE_EXTENSION_FUNCTION("nw.App.getDataPath", UNKNOWN)
  private:
   DISALLOW_COPY_AND_ASSIGN(NwAppGetDataPathFunction);
+};
+
+class NwAppCrashBrowserFunction : public AsyncExtensionFunction {
+ public:
+  NwAppCrashBrowserFunction() {}
+
+ protected:
+  ~NwAppCrashBrowserFunction() override {}
+
+  // ExtensionFunction:
+  bool RunAsync() override;
+  DECLARE_EXTENSION_FUNCTION("nw.App.crashBrowser", UNKNOWN)
 };
 
 } // namespace extensions

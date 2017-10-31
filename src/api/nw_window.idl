@@ -15,6 +15,7 @@ namespace nw.Window {
     [nodoc] long? quality;
   };
   [noinline_doc] dictionary CreateWindowOptions {
+    [nodoc] DOMString? id;
     [nodoc] long? x;
     [nodoc] long? y;
     [nodoc] long? width;
@@ -29,34 +30,53 @@ namespace nw.Window {
     [nodoc] boolean? show;
     [nodoc] boolean? always_on_top;
     [nodoc] boolean? visible_on_all_workspaces;
+    [nodoc] boolean? transparent;
+    [nodoc] boolean? kiosk;
+    [nodoc] boolean? focus;
+    [nodoc] boolean? new_instance;
+    [nodoc] boolean? show_in_taskbar;
+    [nodoc] DOMString? title;
+    [nodoc] DOMString? position;
+    [nodoc] DOMString? icon;
+    [nodoc] DOMString? inject_js_start;
+    [nodoc] DOMString? inject_js_end;
   };
 
   [noinline_doc] dictionary NWWindow {
     // show devtools for the current window
-    static void showDevTools();
+    static void showDevTools(optional any frm, optional EventCallback callback);
     static void capturePage(optional CapturePageCallback callback, optional CapturePageOptions options);
     static void show();
     static void hide();
     static void focus();
     static void blur();
-    static void close();
+    static void close(optional boolean force);
     static void minimize();
     static void maximize();
     static void unmaximize();
     static void restore();
+    static void setPosition(DOMString pos);
     static void setMaximumSize(long width, long height);
     static void setMinimumSize(long width, long height);
     static void setResizable(boolean resizable);
     static void enterFullscreen();
     static void leaveFullscreen();
     static void toggleFullscreen();
+    static void setVisibleOnAllWorkspaces(boolean all_visible);
+    static bool canSetVisibleOnAllWorkspaces();
     static void on(DOMString event,
                    EventCallback callback);
+    static void once(DOMString event,
+                     EventCallback callback);
+    static void removeListener(DOMString event,
+                               EventCallback callback);
+    static void removeAllListeners(DOMString event);
     static void reload();
     static void reloadIgnoringCache();
 
     static void eval(object frame, DOMString script);
     static void evalNWBin(object frame, DOMString path);
+    static void print(optional object options);
 
     object appWindow;
     object window;
@@ -67,10 +87,11 @@ namespace nw.Window {
     long height;
     double zoomLevel;
     DOMString title;
+    long frameId;
   };
   interface Functions {
     // get the current window
-    [nocompile] static NWWindow get();
+    [nocompile] static NWWindow get(optional object domWindow);
     [nocompile] static void open(DOMString url,
                                  optional CreateWindowOptions options,
                                  optional CreateWindowCallback callback);
@@ -83,6 +104,6 @@ namespace nw.Window {
     [nocompile] static void onDocumentStart();
     [nocompile] static void onDocumentEnd();
     [nocompile] static void onZoom();
-    static void onClose();
+    [supportsFilters=true] static void onClose();
   };
 };

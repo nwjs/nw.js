@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title></title>
+  <script>
+  function out(id, msg) {
+    var h1 = document.createElement('h1');
+    h1.setAttribute('id', id);
+    h1.innerHTML = msg;
+    document.body.appendChild(h1);
+  }
+
+  function startScreenSharing() {
+    var dcm = nw.Screen.DesktopCaptureMonitor;
+    nw.Screen.Init();
+    dcm.on("added", function(id, name, order, type) {
+      if (!/^screen:/.test(id)) return;
+      //select first stream and shutdown
+      var constraints = {
+        audio: false,
+        video: {
+          mandatory: {
+            chromeMediaSource: 'desktop',
+            chromeMediaSourceId: dcm.registerStream(id)
+          }
+        }
+      };
+
+      navigator.webkitGetUserMedia(
+        constraints,
+        function(stream) {
+          document.getElementById('screen-share').src = URL.createObjectURL(stream);
+          out('result', 'success');
+        },
+        function(error) {
+          out('result', 'failed: ' + error);
+        });
+
+      dcm.stop();
+    });
+
+    dcm.start(true, true);
+  }
+  </script>
+  <style>
+  .container {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+  }
+  
+  video {
+    width: 620px;
+    height: 320px;
+    margin: 0 auto;
+    display: block;
+    border: 1px solid #AFAFAF;
+    margin-bottom: 10px
+  }
+  
+  button {
+    height: 34px;
+  }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <video id="screen-share" autoplay></video>
+    <button id="start-share" onclick="startScreenSharing()">Start screen share</button>
+  </div>
+</body>
+
+</html>

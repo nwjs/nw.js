@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>issue5163</title>
+</head>
+<body>
+  <button id="spawnRender" type="button" onclick="spawnRender()">Create New Instance Window</button>
+  <script>
+    function spawnRender() {
+      nw.Window.open('child.html', {new_instance: true});
+    }
+  </script>
+</body>
+</html>

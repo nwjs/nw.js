@@ -23,11 +23,15 @@
     "channel": "stable",
     "contexts": ["blessed_extension"]
   },
+  "nw.MenuItem": {
+    "channel": "stable",
+    "contexts": ["blessed_extension"]
+  },
   "nw.Shell": {
     "channel": "stable",
     "contexts": ["blessed_extension"]
   },
-  "nw.Object": {
+  "nw.Obj": {
     "channel": "stable",
     "contexts": ["blessed_extension"]
   },
@@ -51,6 +55,7 @@
     "noparent": true,
     "internal": true,
     "channel": "stable",
-    "contexts": ["blessed_extension"]
+    "matches": ["<all_urls>"],
+    "contexts": ["blessed_extension", "web_page"]
   }
 }

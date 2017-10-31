@@ -23,6 +23,9 @@
 
 #include "base/compiler_specific.h"
 #include "content/nw/src/api/base/base.h"
+#include "ui/events/keycodes/dom/keycode_converter.h"
+#include "ui/events/keycodes/keyboard_codes.h"//for keycode
+#include "ui/events/keycodes/keyboard_code_conversion.h"
 
 #include <string>
 
@@ -43,6 +46,8 @@ class MenuItemDelegate;
 
 namespace nw {
 
+ui::KeyboardCode GetKeycodeFromText(std::string text);
+
 class Menu;
 
 #if defined(OS_WIN) || defined(OS_LINUX)
@@ -58,14 +63,23 @@ class MenuItem : public Base {
            const std::string& extension_id);
   ~MenuItem() override;
 
-   void Call(const std::string& method,
+  void Call(const std::string& method,
              const base::ListValue& arguments,
              content::RenderFrameHost* rvh = nullptr) override;
+  void CallSync(const std::string& method,
+                        const base::ListValue& arguments,
+                        base::ListValue* result) override;
+
+#if defined(OS_MACOSX)
+  static std::unique_ptr<base::DictionaryValue> CreateFromNative(NSMenuItem* menu_item, Menu* menu, int index);
+  static MenuItem* GetMenuItemFromNative(NSMenuItem* menu_item);
+#endif
 
 #if defined(OS_WIN) || defined(OS_LINUX)
-   bool AcceleratorPressed(const ui::Accelerator& accelerator) override;
-   bool CanHandleAccelerators() const override;
+  bool AcceleratorPressed(const ui::Accelerator& accelerator) override;
+  bool CanHandleAccelerators() const override;
   void UpdateKeys(views::FocusManager *focus_manager);
+  void RemoveKeys();
 #endif
 
   void OnClick();
@@ -85,6 +99,8 @@ class MenuItem : public Base {
   void SetChecked(bool checked);
   void SetSubmenu(Menu* sub_menu);
 
+  bool GetChecked();
+
   // Template icon works only on Mac OS X
   void SetIconIsTemplate(bool isTemplate);
 
@@ -94,6 +110,7 @@ class MenuItem : public Base {
   NSMenuItem* menu_item_;
   MenuItemDelegate* delegate_;
   bool iconIsTemplate;
+  bool native_;
 
 #elif defined(OS_WIN) || defined(OS_LINUX)
   friend class MenuDelegate;
@@ -118,7 +135,6 @@ class MenuItem : public Base {
   Menu* submenu_;
   bool enable_shortcut_;
 
-  bool super_down_flag_;
   bool meta_down_flag_;
 
 #endif

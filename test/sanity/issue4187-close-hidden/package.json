@@ -1,0 +1,7 @@
+{
+  "name": "issue4187-close-hidden",
+  "main": "index.html",
+  "window": {
+    "show": false
+  }
+}

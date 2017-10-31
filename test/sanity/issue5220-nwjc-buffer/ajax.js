@@ -1,0 +1,1 @@
+out('ajax-result', 'success:ajax');

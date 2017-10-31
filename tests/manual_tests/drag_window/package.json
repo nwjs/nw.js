@@ -1,8 +1,0 @@
-{
-	"name":"nw_drag_window",
-	"main":"index.html",
-	"window":{
-		"toolbar":false,
-		"frame":false
-	}
-}

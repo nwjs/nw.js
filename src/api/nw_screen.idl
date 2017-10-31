@@ -46,7 +46,8 @@ namespace nw.Screen {
     [nocompile] static long cancelChooseDesktopMedia(long request_id);
     static void startMonitor(boolean screens, boolean windows);
     static void stopMonitor();
-    static boolean isMonitorStarted();
+    static boolean[] isMonitorStarted();
+    static DOMString[] registerStream(DOMString id);
   };
 
 };

@@ -70,8 +70,16 @@ base::string16 MenuDelegate::GetLabelForCommandId(int command_id) const {
 
 bool MenuDelegate::GetAcceleratorForCommandId(
       int command_id,
-      ui::Accelerator* accelerator) {
-  return false;
+      ui::Accelerator* accelerator) const {
+  MenuItem* item = object_manager_->GetApiObject<MenuItem>(command_id);
+  if (!item)
+    return false;
+
+  if (!item->enable_shortcut_)
+    return false;
+
+  *accelerator = item->accelerator_;
+  return true;
 }
 
 bool MenuDelegate::GetIconForCommandId(int command_id,

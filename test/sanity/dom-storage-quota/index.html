@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>dom storage quota</title>
+</head>
+<body>
+<h1 id='result'>dom storage quota - single item</h1>
+<h1 id='result2'>dom storage quota - iterate</h1>
+<script>
+function repeat(string, count) {
+    var array = [];
+    while (count--) {
+        array.push(string);
+    }
+    return array.join('');
+}
+
+var n10b =    '0123456789';
+var n100b =   repeat(n10b, 10);
+var n1kib =   repeat(n100b, 10);
+var n10kib =  repeat(n1kib, 10);
+var n100kib = repeat(n10kib, 10);
+var n1mib =   repeat(n100kib, 10);
+var n10mib =  repeat(n1mib, 10);
+
+function test(value) {
+    try {
+        localStorage.test = value;
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+function test_iterate(value) {
+    for (i = 0; i < 200; i++) {
+      try {
+        localStorage.setItem(i, value);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+}
+
+if (test(n10mib)) {
+     document.getElementById('result').innerHTML = 'success';
+} else {
+     document.getElementById('result').innerHTML = 'fail';
+}
+
+if (test_iterate(n100kib)) {
+     document.getElementById('result2').innerHTML = 'success';
+} else {
+     document.getElementById('result2').innerHTML = 'fail';
+}
+</script>
+</body>
+</html>

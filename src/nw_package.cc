@@ -171,25 +171,36 @@ std::wstring ASCIIToWide(const std::string& ascii) {
 Package::Package()
     : path_(),
       self_extract_(true) {
-  CommandLine* command_line = CommandLine::ForCurrentProcess();
-  LOG(INFO) << command_line->GetCommandLineString();
-  // Try to load from the folder where the exe resides.
+
+  base::FilePath path;
+  
+  // 1. try to extract self
+  self_extract_ = true;
+  path = GetSelfPath();
+  if (InitFromPath(path))
+    return;
+
+  // 2. try to load from the folder where the exe resides.
   // Note: self_extract_ is true here, otherwise a 'Invalid Package' error
   // would be triggered.
-  base::FilePath path = GetSelfPath().DirName();
+  path = GetSelfPath().DirName();
 #if defined(OS_MACOSX)
   path = path.DirName().DirName().DirName();
 #endif
   if (InitFromPath(path))
     return;
 
+  // 3. try to load from <exe-folder>/package.nw
   path = path.AppendASCII("package.nw");
   if (InitFromPath(path))
     return;
 
-  // Then see if we have arguments and extract it.
+  // 4. see if we have arguments and extract it.
+  CommandLine* command_line = CommandLine::ForCurrentProcess();
+  // LOG(INFO) << command_line->GetCommandLineString();
   const base::CommandLine::StringVector& args = command_line->GetArgs();
 
+  // 4.1. try --nwapp= argument
   if (command_line->HasSwitch("nwapp")) {
     path = command_line->GetSwitchValuePath("nwapp");
     self_extract_ = false;
@@ -197,6 +208,7 @@ Package::Package()
       return;
   }
 
+  // 4.2 try first CLI argument
   if (args.size() > 0) {
     self_extract_ = false;
     path = FilePath(args[0]);
@@ -204,14 +216,7 @@ Package::Package()
       return;
   }
 
-#if defined(OS_MACOSX)
-  self_extract_ = true;
-  // Try to extract self.
-  path = GetSelfPath();
-  if (InitFromPath(path))
-    return;
-#endif
-  // Finally we init with default settings.
+  // 5. init with default settings
   self_extract_ = false;
   InitWithDefault();
 }
@@ -230,7 +235,7 @@ FilePath Package::ConvertToAbsoutePath(const FilePath& path) {
   if (path.IsAbsolute())
     return path;
 
-  return this->path().Append(path);
+  return MakeAbsoluteFilePath(this->path()).Append(path);
 }
 
 GURL Package::GetStartupURL() {
@@ -307,7 +312,7 @@ bool Package::InitFromPath(const base::FilePath& path_in) {
   // Parse file.
   std::string error;
   JSONFileValueDeserializer serializer(manifest_path);
-  scoped_ptr<base::Value> root(serializer.Deserialize(NULL, &error));
+  std::unique_ptr<base::Value> root(serializer.Deserialize(NULL, &error));
   if (!root.get()) {
     ReportError("Unable to parse package.json",
                 error.empty() ?
@@ -436,7 +441,7 @@ bool Package::ExtractPackage(const FilePath& zip_file, FilePath* where) {
       return false;
     }
   }else{
-    *where = scoped_temp_dir_.path();
+    *where = scoped_temp_dir_.GetPath();
   }
 
   return zip::Unzip(zip_file, *where);

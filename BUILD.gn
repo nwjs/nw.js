@@ -1,0 +1,421 @@
+import("//build/config/features.gni")
+import("//build/toolchain/toolchain.gni")
+if (is_mac) {
+  import("//build/util/branding.gni")
+  chrome_framework_name = chrome_product_full_name + " Framework"
+}
+import("//build/util/version.gni")
+
+group("nwjs") {
+  deps = [
+    "//chrome",
+    "//third_party/ffmpeg:ffmpeg"
+  ]
+  if (is_mac) {
+    deps += [ ":copy_ffmpeg" ]
+  }
+}
+
+component("nw_base") {
+  deps = [
+    "//base",
+    "//third_party/zlib:zip",
+    "//url",
+    ":commit_id"
+  ]
+
+  defines = ["NW_IMPLEMENTATION"]
+  sources = [
+        "src/nw_base.cc",
+        "src/nw_base.h",
+        "src/nw_package.cc",
+        "src/nw_package.h",
+        "src/common/shell_switches.cc",
+        "src/common/shell_switches.h",
+  ]
+}
+
+nw_content_browser_sources = [
+        "src/browser/nw_content_browser_hooks.cc",
+        "src/browser/nw_content_browser_hooks.h",
+        "src/common/nw_content_common_hooks.cc",
+        "src/common/nw_content_common_hooks.h",
+]
+
+nw_content_renderer_sources = [
+        "src/renderer/nw_content_renderer_hooks.cc",
+        "src/renderer/nw_content_renderer_hooks.h",
+]
+
+if (is_component_build) {
+  static_library("nw_content") {
+    sources = nw_content_browser_sources + nw_content_renderer_sources
+    defines = [ "CONTENT_IMPLEMENTATION" ]
+    deps = [
+      "//base",
+      "//third_party/zlib:minizip",
+      "//skia",
+      ":nw_base",
+      "//third_party/WebKit/public:blink",
+      "//third_party/WebKit/Source/wtf",
+      "//third_party/protobuf:protobuf_lite",
+      "//third_party/webrtc/modules/desktop_capture",
+    ]
+    include_dirs = [
+      "//third_party",
+      "//third_party/mojo/src",
+      "//third_party/WebKit/Source",
+      "$target_gen_dir/../../blink",
+      "$target_gen_dir/../../blink/bindings/core/v8",
+    ]
+  }
+}
+
+nw_chrome_browser_sources = [
+        "src/api/nw_app_api.cc",
+        "src/api/nw_app_api.h",
+        "src/api/nw_clipboard_api.cc",
+        "src/api/nw_clipboard_api.h",
+        "src/api/nw_window_api.cc",
+        "src/api/nw_window_api.h",
+        "src/api/nw_menu_api.cc",
+        "src/api/nw_menu_api.h",
+        "src/api/nw_object_api.cc",
+        "src/api/nw_object_api.h",
+        "src/api/nw_shell_api.cc",
+        "src/api/nw_shell_api.h",
+        "src/api/nw_screen_api.cc",
+        "src/api/nw_screen_api.h",
+        "src/api/nw_shortcut_api.cc",
+        "src/api/nw_shortcut_api.h",
+        "src/api/object_manager.cc",
+        "src/api/object_manager.h",
+        "src/api/object_manager_factory.cc",
+        "src/api/object_manager_factory.h",
+        "src/api/base/base.cc",
+        "src/api/base/base.h",
+        "src/api/menu/menu.cc",
+        "src/api/menu/menu.h",
+        "src/api/menuitem/menuitem.cc",
+        "src/api/menuitem/menuitem.h",
+        "src/api/shell/shell.cc",
+        "src/api/shell/shell.h",
+        "src/api/tray/tray.cc",
+        "src/api/tray/tray.h",
+        "src/browser/nw_chrome_browser_hooks.cc",
+        "src/browser/nw_chrome_browser_hooks.h",
+        "src/browser/nw_extensions_browser_hooks.cc",
+        "src/browser/nw_extensions_browser_hooks.h",
+        "src/policy_cert_verifier.cc",
+        "src/policy_cert_verifier.h",
+        "src/nw_content_verifier_delegate.cc",
+        "src/nw_content_verifier_delegate.h",
+]
+
+
+static_library("nw_browser") {
+  deps = [
+    "//base",
+    "//extensions/browser",
+    "//extensions/common",
+    "//third_party/zlib:minizip",
+    "//skia",
+    ":nw_base",
+    "//content/nw/src/api:nw_api",
+    "//content/nw/src/api:nw_api_registration",
+    "//third_party/protobuf:protobuf_lite",
+    "//third_party/webrtc/modules/desktop_capture",
+  ]
+  include_dirs = [
+    "//third_party",
+    "//third_party/WebKit",
+    "//third_party/mojo/src",
+  ]
+  sources = nw_chrome_browser_sources
+  if (is_win) {
+    cflags = [ "/wd4189", "/wd4800", "/wd4267" ]
+  }
+
+  if (!is_component_build) {
+    sources += nw_content_browser_sources
+  } else {
+    deps += ["//content"]
+  }
+
+  if (is_win || is_linux) {
+    sources += [
+            "src/api/tray/tray_aura.cc",
+            "src/api/menu/menu_delegate.cc",
+            "src/api/menu/menu_delegate.h",
+            "src/api/menu/menu_views.cc",
+            "src/api/menu/menu_views.h",
+            "src/browser/menubar_view.cc",
+            "src/browser/menubar_view.h",
+            "src/api/menuitem/menuitem_views.cc",
+            "src/browser/browser_view_layout.cc",
+            "src/browser/browser_view_layout.h",
+            "src/browser/menubar_controller.cc",
+            "src/browser/menubar_controller.h",
+    ]
+  }
+  if (is_mac) {
+    sources += [
+            "src/api/base/base_mac.h",
+            "src/api/base/base_mac.mm",
+            "src/api/nw_window_api_mac.mm",
+            "src/api/nw_menu_api_mac.mm",
+            "src/api/menuitem/menuitem_mac.mm",
+            "src/api/menu/menu_mac.mm",
+            "src/api/menu/menu_delegate_mac.h",
+            "src/api/menu/menu_delegate_mac.mm",
+            "src/api/menuitem/menuitem_delegate_mac.h",
+            "src/api/menuitem/menuitem_delegate_mac.mm",
+            "src/api/tray/tray_mac.mm",
+            "src/nw_content_mac.h",
+            "src/nw_content_mac.mm",
+    ]
+  }
+}
+
+static_library("nw_renderer") {
+  deps = [
+    "//base",
+    "//extensions/common",
+    "//extensions/renderer",
+    "//third_party/WebKit/public:blink",
+    "//third_party/WebKit/Source/wtf",
+    "//skia",
+    ":nw_base",
+    "//third_party/protobuf:protobuf_lite",
+    "//third_party/webrtc/modules/desktop_capture",
+  ]
+  include_dirs = [
+    "//third_party",
+    "//third_party/WebKit/Source",
+    "//third_party/mojo/src",
+    "$target_gen_dir/../../blink",
+    "$target_gen_dir/../../blink/bindings/core/v8",
+  ]
+  sources = [
+        "src/renderer/nw_chrome_renderer_hooks.h",
+        "src/renderer/nw_extensions_renderer_hooks.cc",
+        "src/renderer/nw_extensions_renderer_hooks.h",
+        "src/nw_custom_bindings.cc",
+        "src/nw_custom_bindings.h",
+  ]
+
+  if (is_win) {
+    cflags = [ "/wd4189", "/wd4800", "/wd4267" ]
+  }
+
+  if (!is_component_build) {
+    sources += nw_content_renderer_sources
+  } else {
+    #deps += ["//content", "//third_party/WebKit/Source/core:core"]
+    deps += ["//content"]
+    if (is_win) {
+      libs = ["blink_core.dll.lib"]
+    }
+  }
+
+}
+
+config("commit_id_config") {
+  include_dirs = [ "$root_gen_dir/nw" ]
+}
+
+commit_id_output_file = "$root_gen_dir/nw/id/commit.h"
+
+action("commit_id") {
+    script = "tools/commit_id.py"
+    inputs = [
+       "//content/nw/.git/index",
+       "//.git/index",
+       "//v8/.git/index",
+       "//third_party/node/.git/index"
+    ]
+    outputs = [
+      commit_id_output_file,
+    ]
+
+    args = [
+      "gen",
+      rebase_path("../..", root_build_dir),
+      rebase_path(commit_id_output_file, root_build_dir),
+    ]
+
+    public_configs = [ ":commit_id_config" ]
+}
+
+if (is_mac) {
+  copy("copy_ffmpeg") {
+    sources = [ "$root_out_dir/libffmpeg.dylib" ]
+    outputs = [ "$root_out_dir/$chrome_product_full_name.app/Contents/Versions/$chrome_version_full/$chrome_framework_name.framework/libffmpeg.dylib" ]
+    deps = [
+      "//chrome",
+      "//third_party/ffmpeg:ffmpeg"
+    ]
+  }
+}
+
+copy("copy_node") {
+  if (is_debug) {
+     node_dir = "$root_out_dir/../Debug/lib/"
+  } else {
+     node_dir = "$root_out_dir/../Release/lib/"
+  }
+  if (is_linux) {
+    sources = [ "$node_dir" + "/libnode.so" ]
+    outputs = [ "$root_shlib_dir/libnode.so" ]
+  }
+  if (is_mac) {
+    sources = [ "$node_dir" + "../libnode.dylib" ]
+    outputs = [ "$root_out_dir/nwjs.app/Contents/Versions/$chrome_version_full/nwjs Framework.framework/libnode.dylib" ]
+  }
+  if (is_win) {
+    suffix=""
+    if (target_cpu == "x64") {
+      suffix="_x64"
+    }
+    if (is_debug) {
+       node_dir = "$root_out_dir/../Debug" + suffix
+    } else {
+       node_dir = "$root_out_dir/../Release" + suffix
+    }
+    sources = [ "$node_dir/node.dll", "$node_dir/node.dll.lib", "$node_dir/node.dll.exp" ]
+    outputs = [ "$root_out_dir/{{source_file_part}}" ]
+  }
+}
+
+if (is_win && !is_component_build) {
+  action("dump") {
+    script = "tools/dump_win_syms.py"
+    inputs = [ "$root_build_dir/nw.exe",
+               "$root_build_dir/nw.dll",
+               "$root_build_dir/node.dll",
+             ]
+
+    deps = [
+             "//chrome:reorder_imports",
+             "//chrome:main_dll",
+             ":copy_node",
+             ":payload",
+             "//v8:nwjc",
+             "//chrome/test/chromedriver:chromedriver",
+             "//third_party/ffmpeg:ffmpeg"
+             ]
+    outputs = [
+      "$root_build_dir/nw.sym.7z"
+    ]
+    args = [
+      rebase_path("$root_build_dir/nw.exe", root_build_dir),
+      rebase_path("$root_build_dir/nw.dll", root_build_dir),
+      rebase_path("$root_build_dir/node.dll", root_build_dir),
+      rebase_path("$root_build_dir/nw.sym.7z", root_build_dir),
+    ]
+  }
+}
+
+if (is_mac && !is_component_build) {
+  group("dump") {
+    deps = [ "//breakpad:dump_syms",
+             "//chrome",
+             ":copy_node",
+             ":payload",
+             "//v8:nwjc",
+             "//chrome/test/chromedriver:chromedriver",
+             "//third_party/ffmpeg:ffmpeg",
+             "//chrome:nw_sym_archive"
+             ]
+  }
+}
+
+if (is_linux && !is_component_build) {
+  linux_strip_binary = 1
+  arch_pkgname = target_cpu
+  if (target_cpu == "x86") {
+    arch_pkgname = "ia32"
+  }
+  action_foreach("dump") {
+    script = "//build/linux/dump_app_syms.py"
+    sources = [ "$root_build_dir/nw",
+                "$root_shlib_dir/libnw.so",
+                "$root_shlib_dir/libnode.so",
+                "$root_shlib_dir/libffmpeg.so",
+                "$root_build_dir/chromedriver",
+                "$root_build_dir/nwjc",
+                "$root_build_dir/payload"]
+    deps = [
+             "//chrome:chrome_initial",
+             "//chrome:main_dll",
+             ":copy_node",
+             ":payload",
+             "//v8:nwjc",
+             "//chrome/test/chromedriver:chromedriver",
+             "//third_party/ffmpeg:ffmpeg"
+             ]
+    if (target_cpu == "x64") {
+      inputs = [
+        "$root_build_dir/dump_syms",
+      ]
+      deps += [ "//breakpad:dump_syms" ]
+    } else {
+      inputs = [
+        "tools/dump_syms",
+      ]
+    }
+    if (enable_nacl) {
+      sources += [ "$root_build_dir/nacl_helper" ]
+      deps += [ "//components/nacl/loader:nacl_helper" ]
+    }
+    outputs = [
+      "$root_build_dir/{{source_name_part}}.breakpad.$target_cpu"
+    ]
+    args = [
+      "./" + rebase_path("tools/dump_syms", root_build_dir),
+      "$linux_strip_binary",
+      "{{source}}",
+      rebase_path("$root_out_dir/{{source_name_part}}.breakpad.$arch_pkgname", root_build_dir)
+    ]
+  }
+}
+
+executable("payload") {
+  sources = ["tools/payload.cc"]
+  deps = [ "//base", "//crypto" ]
+}
+
+if (!is_component_build) {
+  action("dist") {
+    script = "tools/package_binaries.py"
+    if (nwjs_sdk) {
+      package_mode = "sdk"
+    } else {
+      package_mode = "nosdk"
+    }
+    arch_pkgname = target_cpu
+    if (target_cpu == "x86") {
+      arch_pkgname = "ia32"
+    }
+    icudat_path = rebase_path("../../third_party/icu/common/icudtl.dat")
+    outputs = [ "$root_build_dir/new_package.re" ]
+    args = [
+      "-p", rebase_path("$root_build_dir"),
+      "-a", "$arch_pkgname",
+      "-m", "$package_mode",
+      "-i", "$icudat_path"
+    ]
+    deps = [ "//components/resources:about_credits_nw", ":dump" ]
+    if (nwjs_sdk && (is_mac || is_linux)) {
+      deps += [ "//breakpad:minidump_stackwalk" ]
+    }
+  }
+  if (nwjs_sdk) {
+    action("nwtest") {
+      script = "test/test.py"
+      outputs = [ "$root_build_dir/run_tests.re" ]
+      args = [ "-d", rebase_path("$root_build_dir"), "-t", "60", "sanity" ]
+      deps = [ "//chrome/test/chromedriver:chromedriver" ]
+    }
+  }
+}

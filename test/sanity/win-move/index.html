@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>win-move</title>
+</head>
+<body>
+  <button type="button" id="moveto" onclick="moveto(400,200)">move to (400, 200)</button>
+  <button type="button" id="moveby" onclick="moveby(400,200)">move by (400, 200)</button>
+  <script>
+  function out(id, msg) {
+    var h1 = document.createElement('h1');
+    h1.setAttribute('id', id);
+    h1.innerHTML = msg;
+    document.body.appendChild(h1);
+  }
+  function moveto(x,y) {
+    var win = nw.Window.get();
+    win.moveTo(x,y);
+
+    setTimeout(function() {  
+      if (win.x === x && win.y === y) {
+        out('moveto-result', 'success');
+      } else {
+        out('moveto-result', 'failed:' + [win.x, win.y].join(','));
+      }
+    }, 1000);
+  }
+  function moveby(x,y) {
+    var win = nw.Window.get();
+    var cx = win.x;
+    var cy = win.y;
+    win.moveBy(x,y);
+
+    setTimeout(function() {
+      if (win.x === cx + x && win.y === cy + y) {
+        out('moveby-result', 'success');
+      } else {
+        out('moveby-result', 'failed:' + [win.x, win.y].join(','));
+      }
+    }, 1000);
+  }
+  </script>
+</body>
+</html>

@@ -5,7 +5,7 @@ var EventEmitter = nw.require('events').EventEmitter;
 // Hook Sync API calls
 nw_binding.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
-  ['getScreens', 'initEventListeners', 'startMonitor', 'stopMonitor', 'isMonitorStarted'].forEach(function(nwSyncAPIName) {
+  ['getScreens', 'initEventListeners', 'startMonitor', 'stopMonitor', 'isMonitorStarted', 'registerStream'].forEach(function(nwSyncAPIName) {
     apiFunctions.setHandleRequest(nwSyncAPIName, function() {
       return sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {});
     });
@@ -65,6 +65,9 @@ Screen.cancelChooseDesktopMedia = chrome.desktopCapture.cancelChooseDesktopMedia
 Screen.DesktopCaptureMonitor = new EventEmitter();
 Screen.DesktopCaptureMonitor.start = nwScreenBinding.startMonitor;
 Screen.DesktopCaptureMonitor.stop = nwScreenBinding.stopMonitor;
+Screen.DesktopCaptureMonitor.registerStream = function(id) {
+  return nwScreenBinding.registerStream(id)[0];
+};
 
 Object.defineProperty(Screen.DesktopCaptureMonitor, 'started', {
   get: function() {

@@ -12,13 +12,24 @@
 
 namespace extensions {
 
-NwObjectCreateFunction::NwObjectCreateFunction() {
+NwObjAllocateIdFunction::NwObjAllocateIdFunction() {
 }
 
-NwObjectCreateFunction::~NwObjectCreateFunction() {
+NwObjAllocateIdFunction::~NwObjAllocateIdFunction() {
 }
 
-bool NwObjectCreateFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwObjAllocateIdFunction::RunNWSync(base::ListValue* response, std::string* error) {
+  response->AppendInteger(nw::ObjectManager::AllocateId());
+  return true;
+}
+
+NwObjCreateFunction::NwObjCreateFunction() {
+}
+
+NwObjCreateFunction::~NwObjCreateFunction() {
+}
+
+bool NwObjCreateFunction::RunNWSync(base::ListValue* response, std::string* error) {
   base::DictionaryValue* options = nullptr;
   int id = 0;
   std::string type;
@@ -31,13 +42,13 @@ bool NwObjectCreateFunction::RunNWSync(base::ListValue* response, std::string* e
   return true;
 }
 
-NwObjectDestroyFunction::NwObjectDestroyFunction() {
+NwObjDestroyFunction::NwObjDestroyFunction() {
 }
 
-NwObjectDestroyFunction::~NwObjectDestroyFunction() {
+NwObjDestroyFunction::~NwObjDestroyFunction() {
 }
 
-bool NwObjectDestroyFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwObjDestroyFunction::RunNWSync(base::ListValue* response, std::string* error) {
   int id = 0;
   EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &id));
 
@@ -46,13 +57,13 @@ bool NwObjectDestroyFunction::RunNWSync(base::ListValue* response, std::string* 
   return true;
 }
 
-NwObjectCallObjectMethodFunction::NwObjectCallObjectMethodFunction() {
+NwObjCallObjectMethodFunction::NwObjCallObjectMethodFunction() {
 }
 
-NwObjectCallObjectMethodFunction::~NwObjectCallObjectMethodFunction() {
+NwObjCallObjectMethodFunction::~NwObjCallObjectMethodFunction() {
 }
 
-bool NwObjectCallObjectMethodFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwObjCallObjectMethodFunction::RunNWSync(base::ListValue* response, std::string* error) {
   base::ListValue* arguments = nullptr;
   int id = 0;
   std::string type, method;
@@ -66,13 +77,13 @@ bool NwObjectCallObjectMethodFunction::RunNWSync(base::ListValue* response, std:
   return true;
 }
 
-NwObjectCallObjectMethodSyncFunction::NwObjectCallObjectMethodSyncFunction() {
+NwObjCallObjectMethodSyncFunction::NwObjCallObjectMethodSyncFunction() {
 }
 
-NwObjectCallObjectMethodSyncFunction::~NwObjectCallObjectMethodSyncFunction() {
+NwObjCallObjectMethodSyncFunction::~NwObjCallObjectMethodSyncFunction() {
 }
 
-bool NwObjectCallObjectMethodSyncFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwObjCallObjectMethodSyncFunction::RunNWSync(base::ListValue* response, std::string* error) {
   base::ListValue* arguments = nullptr;
   int id = 0;
   std::string type, method;
@@ -85,5 +96,28 @@ bool NwObjectCallObjectMethodSyncFunction::RunNWSync(base::ListValue* response, 
   manager->OnCallObjectMethodSync(render_frame_host(), id, type, method, *arguments, response);
   return true;
 }
+
+NwObjCallObjectMethodAsyncFunction::NwObjCallObjectMethodAsyncFunction() {
+}
+
+NwObjCallObjectMethodAsyncFunction::~NwObjCallObjectMethodAsyncFunction() {
+}
+
+bool NwObjCallObjectMethodAsyncFunction::RunAsync() {
+  EXTENSION_FUNCTION_VALIDATE(args_);
+  base::ListValue* arguments = nullptr;
+  int id = 0;
+  std::string type, method;
+  EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &id));
+  EXTENSION_FUNCTION_VALIDATE(args_->GetString(1, &type));
+  EXTENSION_FUNCTION_VALIDATE(args_->GetString(2, &method));
+  EXTENSION_FUNCTION_VALIDATE(args_->GetList(3, &arguments));
+
+  nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
+  manager->OnCallObjectMethod(render_frame_host(), id, type, method, *arguments);
+  SendResponse(true);
+  return true;
+}
+
 
 } // namespace extensions

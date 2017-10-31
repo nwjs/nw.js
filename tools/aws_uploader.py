@@ -91,17 +91,17 @@ def aws_upload(upload_path, file_list):
         # use '/' for s3
         path_prefix = ''
         if (f in ['nw.lib', 'nw.exp', 'node.lib', 'node.exp'] ) :
-          if builder_name != 'nw13_win64' and builder_name != 'nw13_win32' :
+          if not builder_name in ['nw20_win64', 'nw20_win32'] :
               continue
-          if builder_name == 'nw13_win64' :
+          if builder_name in ['nw20_win64'] :
               path_prefix = 'x64'
 
-        if (f.startswith('node-v') or f.startswith('nw-header') or f == 'SHASUMS256.txt') and builder_name != 'nw13_sdk_mac64' :
+        if (f.startswith('node-v') or f.startswith('nw-header') or f == 'SHASUMS256.txt') and not builder_name in ['nw20_sdk_mac64'] :
             continue
 
         if f.startswith('chromedriver') and 'sdk' not in builder_name :
             continue
-        
+
         key = bucket.new_key(upload_path + '/' + path_prefix + '/' + f)
         key.set_contents_from_filename(filename=os.path.join(dist_dir, f), cb=print_progress, num_cb=50, replace=True)
 

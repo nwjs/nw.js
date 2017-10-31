@@ -21,9 +21,12 @@
 #include "content/nw/src/api/shell/shell.h"
 
 #include "base/files/file_path.h"
+#include "base/files/file_util.h"
+#include "base/bind.h"
 #include "base/logging.h"
 #include "base/values.h"
 #include "content/public/browser/browser_context.h"
+#include "content/public/browser/browser_thread.h"
 #include "chrome/browser/platform_util.h"
 #include "chrome/browser/profiles/profile.h"
 #include "url/gurl.h"
@@ -31,6 +34,19 @@
 using base::FilePath;
 
 namespace nw {
+
+namespace {
+
+  void VerifyItemType(const FilePath &path, platform_util::OpenItemType *item_type) {
+    *item_type = base::DirectoryExists(path) ? platform_util::OPEN_FOLDER : platform_util::OPEN_FILE;
+  }
+
+  void OnItemTypeVerified(Profile* profile, const FilePath &path, const platform_util::OpenItemType *item_type) {
+    platform_util::OpenItem(profile, path,
+                            *item_type, platform_util::OpenOperationCallback());
+  }
+
+}
 
 // static
 void Shell::Call(const std::string& method,
@@ -44,8 +60,13 @@ void Shell::Call(const std::string& method,
   } else if (method == "OpenItem") {
     std::string full_path;
     arguments.GetString(0, &full_path);
-    platform_util::OpenItem(profile, FilePath::FromUTF8Unsafe(full_path),
-                            platform_util::OPEN_FILE, platform_util::OpenOperationCallback());
+    FilePath path = FilePath::FromUTF8Unsafe(full_path);
+    platform_util::OpenItemType *item_type = new platform_util::OpenItemType();
+    content::BrowserThread::PostBlockingPoolTaskAndReply(
+      FROM_HERE,
+      base::Bind(&VerifyItemType, path, base::Unretained(item_type)),
+      base::Bind(&OnItemTypeVerified, profile, path, base::Owned(item_type))
+      );
   } else if (method == "ShowItemInFolder") {
     std::string full_path;
     arguments.GetString(0, &full_path);

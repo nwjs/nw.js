@@ -7,56 +7,82 @@
 
 namespace extensions {
 
-class NwObjectCreateFunction : public NWSyncExtensionFunction {
+class NwObjAllocateIdFunction : public NWSyncExtensionFunction {
  public:
-  NwObjectCreateFunction();
+  NwObjAllocateIdFunction();
   bool RunNWSync(base::ListValue* response, std::string* error) override;
 
  protected:
-  ~NwObjectCreateFunction() override;
+  ~NwObjAllocateIdFunction() override;
 
-  DECLARE_EXTENSION_FUNCTION("nw.Object.create", UNKNOWN)
+  DECLARE_EXTENSION_FUNCTION("nw.Obj.allocateId", UNKNOWN)
  private:
-  DISALLOW_COPY_AND_ASSIGN(NwObjectCreateFunction);
+  DISALLOW_COPY_AND_ASSIGN(NwObjAllocateIdFunction);
 };
 
-class NwObjectDestroyFunction : public NWSyncExtensionFunction {
+class NwObjCreateFunction : public NWSyncExtensionFunction {
  public:
-  NwObjectDestroyFunction();
+  NwObjCreateFunction();
   bool RunNWSync(base::ListValue* response, std::string* error) override;
 
  protected:
-  ~NwObjectDestroyFunction() override;
+  ~NwObjCreateFunction() override;
 
-  DECLARE_EXTENSION_FUNCTION("nw.Object.destroy", UNKNOWN)
+  DECLARE_EXTENSION_FUNCTION("nw.Obj.create", UNKNOWN)
  private:
-  DISALLOW_COPY_AND_ASSIGN(NwObjectDestroyFunction);
+  DISALLOW_COPY_AND_ASSIGN(NwObjCreateFunction);
 };
 
-class NwObjectCallObjectMethodFunction : public NWSyncExtensionFunction {
+class NwObjDestroyFunction : public NWSyncExtensionFunction {
  public:
-  NwObjectCallObjectMethodFunction();
+  NwObjDestroyFunction();
   bool RunNWSync(base::ListValue* response, std::string* error) override;
 
  protected:
-  ~NwObjectCallObjectMethodFunction() override;
+  ~NwObjDestroyFunction() override;
 
-  DECLARE_EXTENSION_FUNCTION("nw.Object.callObjectMethod", UNKNOWN)
+  DECLARE_EXTENSION_FUNCTION("nw.Obj.destroy", UNKNOWN)
  private:
-  DISALLOW_COPY_AND_ASSIGN(NwObjectCallObjectMethodFunction);
+  DISALLOW_COPY_AND_ASSIGN(NwObjDestroyFunction);
 };
 
-class NwObjectCallObjectMethodSyncFunction : public NWSyncExtensionFunction {
+class NwObjCallObjectMethodFunction : public NWSyncExtensionFunction {
  public:
-  NwObjectCallObjectMethodSyncFunction();
+  NwObjCallObjectMethodFunction();
   bool RunNWSync(base::ListValue* response, std::string* error) override;
 
  protected:
-  ~NwObjectCallObjectMethodSyncFunction() override;
+  ~NwObjCallObjectMethodFunction() override;
 
-  DECLARE_EXTENSION_FUNCTION("nw.Object.callObjectMethodSync", UNKNOWN)
+  DECLARE_EXTENSION_FUNCTION("nw.Obj.callObjectMethod", UNKNOWN)
  private:
-  DISALLOW_COPY_AND_ASSIGN(NwObjectCallObjectMethodSyncFunction);
+  DISALLOW_COPY_AND_ASSIGN(NwObjCallObjectMethodFunction);
+};
+
+class NwObjCallObjectMethodSyncFunction : public NWSyncExtensionFunction {
+ public:
+  NwObjCallObjectMethodSyncFunction();
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
+
+ protected:
+  ~NwObjCallObjectMethodSyncFunction() override;
+
+  DECLARE_EXTENSION_FUNCTION("nw.Obj.callObjectMethodSync", UNKNOWN)
+ private:
+  DISALLOW_COPY_AND_ASSIGN(NwObjCallObjectMethodSyncFunction);
+};
+
+class NwObjCallObjectMethodAsyncFunction : public AsyncExtensionFunction {
+ public:
+  NwObjCallObjectMethodAsyncFunction();
+  bool RunAsync() override;
+
+ protected:
+  ~NwObjCallObjectMethodAsyncFunction() override;
+
+  DECLARE_EXTENSION_FUNCTION("nw.Obj.callObjectMethodAsync", UNKNOWN)
+ private:
+  DISALLOW_COPY_AND_ASSIGN(NwObjCallObjectMethodAsyncFunction);
 };
 
 } // namespace extensions

@@ -53,7 +53,7 @@ bool NwCurrentWindowInternalSetBadgeLabelFunction::RunAsync() {
   return true;
 }
 
-bool NwCurrentWindowInternalRequestAttentionFunction::RunAsync() {
+bool NwCurrentWindowInternalRequestAttentionInternalFunction::RunAsync() {
   EXTENSION_FUNCTION_VALIDATE(args_);
   int count;
   EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &count));

@@ -1,0 +1,5 @@
+{
+  "name": "issue4877",
+  "inject_js_start": "inject_start.js",
+  "main": "index.html"
+}

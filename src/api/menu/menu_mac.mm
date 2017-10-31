@@ -27,17 +27,25 @@
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/render_frame_host.h"
+#include "content/nw/src/api/base/base_mac.h"
 #include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/api/menu/menu_delegate_mac.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
 
 namespace nw {
 
+// static
+Menu* Menu::GetMenuFromNative(NSMenu* menu) {
+  return (Menu*)[menu associatedObject];
+}
+
 void Menu::Create(const base::DictionaryValue& option) {
   menu_ = [[NSMenu alloc] initWithTitle:@"NW Menu"];
   [menu_ setAutoenablesItems:NO];
+  [menu_ setAllowsContextMenuPlugIns:NO];
   menu_delegate_ = [[NWMenuDelegate alloc] initWithMenu:this];
   [menu_ setDelegate:menu_delegate_];
+  [menu_ setAssociatedObject: this];
 }
 
 void Menu::Destroy() {

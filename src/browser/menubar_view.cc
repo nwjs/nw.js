@@ -32,11 +32,10 @@ const char MenuBarView::kViewClassName[] = "BookmarkBarView";
 
 class MenuBarButton : public views::MenuButton {
  public:
-  MenuBarButton(views::ButtonListener* listener,
-                const base::string16& title,
+  MenuBarButton(const base::string16& title,
                 views::MenuButtonListener* menu_button_listener,
                 bool show_menu_marker)
-      : MenuButton(listener, title, menu_button_listener, show_menu_marker) {
+      : MenuButton(title, menu_button_listener, show_menu_marker) {
     SetElideBehavior(kElideBehavior);
   }
 
@@ -47,18 +46,9 @@ class MenuBarButton : public views::MenuButton {
     return !tooltip->empty();
   }
 
-  bool IsTriggerableEvent(const ui::Event& e) override {
-    // Left clicks and taps should show the menu contents and right clicks
-    // should show the context menu. They should not trigger the opening of
-    // underlying urls.
-    if (e.type() == ui::ET_GESTURE_TAP ||
-        (e.IsMouseEvent() && (e.flags() &
-             (ui::EF_LEFT_MOUSE_BUTTON | ui::EF_RIGHT_MOUSE_BUTTON))))
-      return false;
-
-    if (e.IsMouseEvent())
-      return ui::DispositionFromEventFlags(e.flags()) != CURRENT_TAB;
-    return false;
+  void OnNativeThemeChanged(const ui::NativeTheme* theme) override {
+    views::MenuButton::OnNativeThemeChanged(theme);
+    SetEnabledTextColors(theme->GetSystemColor(ui::NativeTheme::kColorId_EnabledMenuItemForegroundColor));
   }
 
  private:
@@ -84,7 +74,7 @@ void MenuBarView::UpdateMenu(ui::MenuModel* model) {
 void MenuBarView::InitView(ui::MenuModel* model) {
   model_ = model;
   for (int i = 0; i < model_->GetItemCount(); i++) {
-    AddChildView(new MenuBarButton(this, model_->GetLabelAt(i), this, false));
+    AddChildView(new MenuBarButton(model_->GetLabelAt(i), this, false));
   }
 }
 
@@ -105,8 +95,9 @@ bool MenuBarView::GetMenuButtonAtLocation(const gfx::Point& loc, ui::MenuModel**
   return false;
 }
 
-void MenuBarView::OnMenuButtonClicked(views::View* view,
-                                      const gfx::Point& point) {
+void MenuBarView::OnMenuButtonClicked(views::MenuButton* view,
+                                          const gfx::Point& point,
+                                          const ui::Event* event) {
   int button_index = GetIndexOf(view);
   DCHECK_NE(-1, button_index);
   ui::MenuModel::ItemType type = model_->GetTypeAt(button_index);
@@ -114,6 +105,7 @@ void MenuBarView::OnMenuButtonClicked(views::View* view,
     MenuBarController* controller = new MenuBarController(this, model_->GetSubmenuModelAt(button_index), NULL);
     controller->RunMenuAt(view, point);
   }
+  model_->ActivatedAt(button_index, event->flags());
 }
 
 void MenuBarView::ButtonPressed(views::Button* sender,
@@ -121,8 +113,11 @@ void MenuBarView::ButtonPressed(views::Button* sender,
 }
 
 void MenuBarView::OnNativeThemeChanged(const ui::NativeTheme* theme) {
-  set_background(views::Background::CreateSolidBackground(GetNativeTheme()->
+  // Use menu background color for menubar
+  set_background(views::Background::CreateSolidBackground(theme->
        GetSystemColor(ui::NativeTheme::kColorId_MenuBackgroundColor)));
+  // Force to repaint the menubar
+  SchedulePaint();
 }
 
 } //namespace nw

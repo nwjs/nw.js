@@ -4,18 +4,23 @@
 #include "base/values.h"
 #include "content/nw/src/api/nw_screen.h"
 #include "extensions/browser/extensions_browser_client.h"
-#include "ui/gfx/display_observer.h"
-#include "ui/gfx/screen.h"
+#include "ui/display/display_observer.h"
+#include "ui/display/display.h"
+#include "ui/display/screen.h"
 
 // For desktop capture APIs
 #include "base/base64.h"
 #include "base/strings/string16.h"
 #include "base/strings/utf_string_conversions.h"
-#include "chrome/browser/media/desktop_media_list_observer.h"
-#include "chrome/browser/media/native_desktop_media_list.h"
+#include "chrome/browser/media/webrtc/desktop_media_list_observer.h"
+#include "chrome/browser/media/webrtc/desktop_streams_registry.h"
+#include "chrome/browser/media/webrtc/media_capture_devices_dispatcher.h"
+#include "chrome/browser/media/webrtc/native_desktop_media_list.h"
+#include "content/public/browser/render_frame_host.h"
+#include "content/public/browser/render_process_host.h"
+#include "content/public/browser/web_contents.h"
 #include "third_party/webrtc/modules/desktop_capture/desktop_capture_options.h"
-#include "third_party/webrtc/modules/desktop_capture/screen_capturer.h"
-#include "third_party/webrtc/modules/desktop_capture/window_capturer.h"
+#include "third_party/webrtc/modules/desktop_capture/desktop_capturer.h"
 #include "ui/gfx/codec/png_codec.h"
 #include "ui/gfx/image/image.h"
 #include "ui/gfx/image/image_skia.h"
@@ -37,19 +42,19 @@ namespace extensions {
   private:
     int GetPrimaryMonitorIndex();
     // DesktopMediaListObserver implementation.
-    void OnSourceAdded(int index) override;
-    void OnSourceRemoved(int index) override;
-    void OnSourceMoved(int old_index, int new_index) override;
-    void OnSourceNameChanged(int index) override;
-    void OnSourceThumbnailChanged(int index) override;
+    void OnSourceAdded(DesktopMediaList* list, int index) override;
+    void OnSourceRemoved(DesktopMediaList* list, int index) override;
+    void OnSourceMoved(DesktopMediaList* list, int old_index, int new_index) override;
+    void OnSourceNameChanged(DesktopMediaList* list, int index) override;
+    void OnSourceThumbnailChanged(DesktopMediaList* list, int index) override;
 
     bool started_;
-    scoped_ptr<DesktopMediaList> media_list_;
+    std::unique_ptr<DesktopMediaList> media_list_;
 
     DISALLOW_COPY_AND_ASSIGN(NwDesktopCaptureMonitor);
   };
 
-  class NwScreenDisplayObserver: public gfx::DisplayObserver {
+  class NwScreenDisplayObserver: public display::DisplayObserver {
   public:
     static NwScreenDisplayObserver* GetInstance();
     NwScreenDisplayObserver();
@@ -57,18 +62,18 @@ namespace extensions {
   private:
     ~NwScreenDisplayObserver() override;
     // gfx::DisplayObserver implementation.
-    void OnDisplayMetricsChanged(const gfx::Display& display, uint32_t changed_metrics) override;
-    void OnDisplayAdded(const gfx::Display& new_display) override;
-    void OnDisplayRemoved(const gfx::Display& old_display) override;
+    void OnDisplayMetricsChanged(const display::Display& display, uint32_t changed_metrics) override;
+    void OnDisplayAdded(const display::Display& new_display) override;
+    void OnDisplayRemoved(const display::Display& old_display) override;
 
     DISALLOW_COPY_AND_ASSIGN(NwScreenDisplayObserver);
   };
 
   namespace {
 
-    // Helper function to convert gfx::Display to nwapi::nw__screen::Display
-    scoped_ptr<nwapi::nw__screen::Display> ConvertGfxDisplay(const gfx::Display& gfx_display) {
-      scoped_ptr<nwapi::nw__screen::Display> displayResult(new nwapi::nw__screen::Display);
+    // Helper function to convert display::Display to nwapi::nw__screen::Display
+    std::unique_ptr<nwapi::nw__screen::Display> ConvertGfxDisplay(const display::Display& gfx_display) {
+      std::unique_ptr<nwapi::nw__screen::Display> displayResult(new nwapi::nw__screen::Display);
 
       displayResult->id = gfx_display.id();
       displayResult->scale_factor = gfx_display.device_scale_factor();
@@ -90,16 +95,16 @@ namespace extensions {
       work_area.width = rect.width();
       work_area.height = rect.height();
 
-      return displayResult.Pass();
+      return displayResult;
     }
 
     void DispatchEvent(
         events::HistogramValue histogram_value,
         const std::string& event_name,
-        scoped_ptr<base::ListValue> args) {
+        std::unique_ptr<base::ListValue> args) {
       DCHECK_CURRENTLY_ON(BrowserThread::UI);
       ExtensionsBrowserClient::Get()->BroadcastEventToRenderers(
-        histogram_value, event_name, args.Pass());
+                                                                histogram_value, event_name, std::move(args));
     }
 
     // Lazy initialize screen event listeners until first call
@@ -117,55 +122,55 @@ namespace extensions {
   }
 
   NwScreenDisplayObserver::NwScreenDisplayObserver() {
-    gfx::Screen* screen = gfx::Screen::GetNativeScreen();
+    display::Screen* screen = display::Screen::GetScreen();
     if (screen) {
       screen->AddObserver(this);
     }
   }
 
   NwScreenDisplayObserver::~NwScreenDisplayObserver() {
-    gfx::Screen* screen = gfx::Screen::GetNativeScreen();
+    display::Screen* screen = display::Screen::GetScreen();
     if (screen) {
       screen->RemoveObserver(this);
     }
   }
 
   // Called when the |display|'s bound has changed.
-  void NwScreenDisplayObserver::OnDisplayMetricsChanged(const gfx::Display& display,
+  void NwScreenDisplayObserver::OnDisplayMetricsChanged(const display::Display& display,
     uint32_t changed_metrics) {
-    scoped_ptr<base::ListValue> args = 
+    std::unique_ptr<base::ListValue> args = 
       nwapi::nw__screen::OnDisplayBoundsChanged::Create(*ConvertGfxDisplay(display),
                                                         changed_metrics);
     DispatchEvent(
       events::HistogramValue::UNKNOWN, 
       nwapi::nw__screen::OnDisplayBoundsChanged::kEventName,
-      args.Pass());
+      std::move(args));
   }
 
   // Called when |new_display| has been added.
-  void NwScreenDisplayObserver::OnDisplayAdded(const gfx::Display& new_display) {
-    scoped_ptr<base::ListValue> args =
+  void NwScreenDisplayObserver::OnDisplayAdded(const display::Display& new_display) {
+    std::unique_ptr<base::ListValue> args =
       nwapi::nw__screen::OnDisplayAdded::Create(*ConvertGfxDisplay(new_display));
     DispatchEvent(
       events::HistogramValue::UNKNOWN,
       nwapi::nw__screen::OnDisplayAdded::kEventName,
-      args.Pass());
+      std::move(args));
   }
 
   // Called when |old_display| has been removed.
-  void NwScreenDisplayObserver::OnDisplayRemoved(const gfx::Display& old_display) {
-    scoped_ptr<base::ListValue> args =
+  void NwScreenDisplayObserver::OnDisplayRemoved(const display::Display& old_display) {
+    std::unique_ptr<base::ListValue> args =
       nwapi::nw__screen::OnDisplayRemoved::Create(*ConvertGfxDisplay(old_display));
     DispatchEvent(
       events::HistogramValue::UNKNOWN,
       nwapi::nw__screen::OnDisplayRemoved::kEventName,
-      args.Pass());
+      std::move(args));
   }
 
   NwScreenGetScreensFunction::NwScreenGetScreensFunction() {}
 
   bool NwScreenGetScreensFunction::RunNWSync(base::ListValue* response, std::string* error) {
-    const std::vector<gfx::Display>& displays = gfx::Screen::GetNativeScreen()->GetAllDisplays();
+    const std::vector<display::Display>& displays = display::Screen::GetScreen()->GetAllDisplays();
 
     for (size_t i=0; i<displays.size(); i++) {
       response->Append(ConvertGfxDisplay(displays[i])->ToValue());
@@ -199,10 +204,10 @@ namespace extensions {
 
     webrtc::DesktopCaptureOptions options = webrtc::DesktopCaptureOptions::CreateDefault();
     options.set_disable_effects(false);
-    scoped_ptr<webrtc::ScreenCapturer> screenCapturer(screens ? webrtc::ScreenCapturer::Create(options) : nullptr);
-    scoped_ptr<webrtc::WindowCapturer> windowCapturer(windows ? webrtc::WindowCapturer::Create(options) : nullptr);
+    std::unique_ptr<webrtc::DesktopCapturer> screenCapturer(screens ? webrtc::DesktopCapturer::CreateScreenCapturer(options) : nullptr);
+    std::unique_ptr<webrtc::DesktopCapturer> windowCapturer(windows ? webrtc::DesktopCapturer::CreateWindowCapturer(options) : nullptr);
 
-    media_list_.reset(new NativeDesktopMediaList(screenCapturer.Pass(), windowCapturer.Pass()));
+    media_list_.reset(new NativeDesktopMediaList(std::move(screenCapturer), std::move(windowCapturer)));
 
     media_list_->StartUpdating(this);
   }
@@ -236,7 +241,7 @@ namespace extensions {
     return -1;
   }
 
-  void NwDesktopCaptureMonitor::OnSourceAdded(int index) {
+void NwDesktopCaptureMonitor::OnSourceAdded(DesktopMediaList* list, int index) {
     DesktopMediaList::Source src = media_list_->GetSource(index);
     
     std::string type;
@@ -255,7 +260,7 @@ namespace extensions {
       break;
     }
 
-    scoped_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceAdded::Create(
+    std::unique_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceAdded::Create(
       src.id.ToString(),
       base::UTF16ToUTF8(src.name),
       index,
@@ -265,41 +270,41 @@ namespace extensions {
     DispatchEvent(
       events::HistogramValue::UNKNOWN, 
       nwapi::nw__screen::OnSourceAdded::kEventName,
-      args.Pass());
+      std::move(args));
   }
 
-  void NwDesktopCaptureMonitor::OnSourceRemoved(int index) {
-    scoped_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceRemoved::Create(index);
+void NwDesktopCaptureMonitor::OnSourceRemoved(DesktopMediaList* list, int index) {
+    std::unique_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceRemoved::Create(index);
     DispatchEvent(
       events::HistogramValue::UNKNOWN, 
       nwapi::nw__screen::OnSourceRemoved::kEventName,
-      args.Pass());
+      std::move(args));
   }
 
-  void NwDesktopCaptureMonitor::OnSourceMoved(int old_index, int new_index) {
+void NwDesktopCaptureMonitor::OnSourceMoved(DesktopMediaList* list, int old_index, int new_index) {
     DesktopMediaList::Source src = media_list_->GetSource(new_index);
-    scoped_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceOrderChanged::Create(
+    std::unique_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceOrderChanged::Create(
       src.id.ToString(),
       new_index,
       old_index);
     DispatchEvent(
       events::HistogramValue::UNKNOWN, 
       nwapi::nw__screen::OnSourceOrderChanged::kEventName,
-      args.Pass());    
+      std::move(args));    
   }
 
-  void NwDesktopCaptureMonitor::OnSourceNameChanged(int index) {
+void NwDesktopCaptureMonitor::OnSourceNameChanged(DesktopMediaList* list, int index) {
     DesktopMediaList::Source src = media_list_->GetSource(index);
-    scoped_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceNameChanged::Create(
+    std::unique_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceNameChanged::Create(
       src.id.ToString(),
       base::UTF16ToUTF8(src.name));
     DispatchEvent(
       events::HistogramValue::UNKNOWN, 
       nwapi::nw__screen::OnSourceNameChanged::kEventName,
-      args.Pass());    
+      std::move(args));    
   }
 
-  void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(int index) {
+void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(DesktopMediaList* list, int index) {
     std::string base64;
 
     DesktopMediaList::Source src = media_list_->GetSource(index);
@@ -312,13 +317,13 @@ namespace extensions {
       base::Base64Encode(raw_str, &base64);
     }
 
-    scoped_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceThumbnailChanged::Create(
+    std::unique_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceThumbnailChanged::Create(
       src.id.ToString(),
       base64);
     DispatchEvent(
       events::HistogramValue::UNKNOWN, 
       nwapi::nw__screen::OnSourceThumbnailChanged::kEventName,
-      args.Pass());
+      std::move(args));
   }
 
   NwScreenStartMonitorFunction::NwScreenStartMonitorFunction() {}
@@ -342,6 +347,39 @@ namespace extensions {
 
   bool NwScreenIsMonitorStartedFunction::RunNWSync(base::ListValue* response, std::string* error) {
     response->AppendBoolean(NwDesktopCaptureMonitor::GetInstance()->IsStarted());
+    return true;
+  }
+
+  NwScreenRegisterStreamFunction::NwScreenRegisterStreamFunction() {}
+
+  bool NwScreenRegisterStreamFunction::RunNWSync(base::ListValue* response, std::string* error) {
+    std::string id;
+    EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &id));
+
+    // following code is modified from `DesktopCaptureChooseDesktopMediaFunctionBase::OnPickerDialogResults`
+    // in chrome/browser/extensions/api/desktop_capture/desktop_capture_base.cc
+
+    content::DesktopMediaID source = content::DesktopMediaID::Parse(id);
+    content::WebContents* web_contents = GetSenderWebContents();
+    if (!source.is_null() && web_contents) {
+      std::string result;
+      source.audio_share = true;
+      DesktopStreamsRegistry* registry =
+        MediaCaptureDevicesDispatcher::GetInstance()->
+        GetDesktopStreamsRegistry();
+      // TODO(miu): Once render_frame_host() is being set, we should register the
+      // exact RenderFrame requesting the stream, not the main RenderFrame.  With
+      // that change, also update
+      // MediaCaptureDevicesDispatcher::ProcessDesktopCaptureAccessRequest().
+      // http://crbug.com/304341
+      content::RenderFrameHost* const main_frame = web_contents->GetMainFrame();
+      result = registry->RegisterStream(main_frame->GetProcess()->GetID(),
+                                        main_frame->GetRoutingID(),
+                                        web_contents->GetURL().GetOrigin(),
+                                        source,
+                                        extension()->name());
+      response->AppendString(result);
+    }
     return true;
   }
 

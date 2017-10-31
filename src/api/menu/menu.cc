@@ -21,8 +21,11 @@
 #include "content/nw/src/api/menu/menu.h"
 
 #include "base/values.h"
+#include "components/zoom/zoom_controller.h"
 #include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
+#include "content/public/browser/web_contents.h"
+#include "content/public/common/page_zoom.h"
 
 namespace nw {
 
@@ -62,6 +65,22 @@ void Menu::Call(const std::string& method,
     arguments.GetInteger(0, &x);
     int y = 0;
     arguments.GetInteger(1, &y);
+    content::WebContents* web_contents = content::WebContents::FromRenderFrameHost(rvh);
+    DCHECK(web_contents);
+    zoom::ZoomController* zoom_controller = zoom::ZoomController::FromWebContents(web_contents);
+
+    if (zoom_controller) {
+      double zoom_factor = content::ZoomLevelToZoomFactor(zoom_controller->GetZoomLevel());
+      if (zoom_factor > content::kMaximumZoomFactor) {
+        zoom_factor = content::kMaximumZoomFactor;
+      }
+      if (zoom_factor < content::kMinimumZoomFactor) {
+        zoom_factor = content::kMinimumZoomFactor;
+      }
+      x *= zoom_factor;
+      y *= zoom_factor;
+    }
+    
     Popup(x, y, rvh);
   } else if (method == "EnableShowEvent") {
     arguments.GetBoolean(0, &enable_show_event_);

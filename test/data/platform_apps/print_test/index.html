@@ -1,0 +1,17 @@
+<html>
+<head>
+</head>
+<body>
+<script>
+  chrome.test.sendMessage("Launched");
+  function test0() {
+    nw.Window.get().print({autoprint: false, footerString: 'nwtestfooter'});
+  }
+  function test() {
+    setTimeout(test0, 1000);
+  }
+</script>
+<p>hello world</p>
+<button id="testbtn" onclick="test()">test</button>
+</body>
+</html>

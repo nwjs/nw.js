@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      var win = null;
+      var close_tested = false;
+      nw.Window.open('popup.html', {}, function(w) {
+        win = w;
+        win.on('close', function() {
+           if (!close_tested) {
+              document.getElementById('result2').innerHTML = 'success';
+              close_tested = true;
+           } else {
+              win.close(true);
+           }
+        });
+      });
+      function test() {
+         document.getElementById('result').innerHTML = win.window.document.getElementById('result').innerHTML;
+      }
+    </script>
+  </head>
+  <body>
+     <button onclick="test()">test</button>
+     <div id="result">target window</div>
+     <div id="result2">close event</div>
+  </body>
+</html>

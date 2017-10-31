@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf8">
+    <title>App.open event test</title>
+  </head>
+  <body>
+    <h1 id='result'>App.open event test</h1>
+    <script type="text/javascript">
+      nw.App.on('open', function(cmd){
+            document.getElementById('result').innerHTML = cmd;
+        });
+    </script>
+  </body>
+</html>
+    

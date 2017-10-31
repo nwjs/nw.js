@@ -2,51 +2,79 @@
 
 #include "nw_content.h"
 #include "nw_base.h"
+#include "base/files/file_enumerator.h"
 
 #include "base/command_line.h"
 #include "base/files/file_util.h"
 #include "base/json/json_reader.h"
+#include "base/json/json_writer.h"
+#include "base/native_library.h"
 #include "base/path_service.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/threading/thread_restrictions.h"
+#if defined(OS_WIN)
+#include "base/win/scoped_gdi_object.h"
+#include "ui/gfx/icon_util.h"
+#endif
 
 #include "chrome/browser/browser_process.h"
+#include "chrome/browser/devtools/devtools_window.h"
 #include "chrome/browser/io_thread.h"
+#include "chrome/browser/lifetime/application_lifetime.h"
 #include "chrome/browser/profiles/profile_manager.h"
 #include "chrome/common/chrome_paths.h"
+#include "chrome/browser/lifetime/keep_alive_registry.h"
+#include "chrome/browser/lifetime/keep_alive_types.h"
 
 #include "components/crx_file/id_util.h"
+#include "components/content_settings/core/browser/content_settings_utils.h"
 
 #include "content/browser/dom_storage/dom_storage_area.h"
 #include "content/common/dom_storage/dom_storage_map.h"
 #include "content/nw/src/common/shell_switches.h"
+#include "content/public/browser/browser_thread.h"
+#include "content/public/browser/child_process_security_policy.h"
 #include "content/public/browser/notification_service.h"
 #include "content/public/browser/notification_types.h"
+#include "content/public/browser/plugin_service.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/web_contents.h"
+#include "content/public/child/v8_value_converter.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/result_codes.h"
 #include "content/public/common/user_agent.h"
 #include "content/public/renderer/render_view.h"
 
+#include "content/nw/src/nw_content_verifier_delegate.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/policy_cert_verifier.h"
 
+#include "extensions/browser/guest_view/web_view/web_view_renderer_state.h"
+#include "extensions/browser/guest_view/web_view/web_view_guest.h"
 #include "extensions/browser/event_router.h"
 #include "extensions/browser/extension_prefs.h"
 #include "extensions/browser/extension_registry.h"
 #include "extensions/renderer/dispatcher.h"
+#include "extensions/renderer/renderer_extension_registry.h"
 #include "extensions/renderer/script_context.h"
 #include "extensions/common/extension.h"
 #include "extensions/common/feature_switch.h"
 #include "extensions/common/features/feature.h"
 #include "extensions/common/manifest.h"
 #include "extensions/common/manifest_constants.h"
+#include "extensions/common/manifest_handlers/webview_info.h"
+
+#include "extensions/grit/extensions_renderer_resources.h"
 
 #include "net/cert/x509_certificate.h"
+
+#include "sql/connection.h"
+#include "sql/meta_table.h"
+#include "sql/transaction.h"
+#include "storage/common/database/database_identifier.h"
 
 #include "third_party/WebKit/public/web/WebDocument.h"
 #include "third_party/WebKit/public/web/WebFrame.h"
@@ -56,9 +84,11 @@
 #include "third_party/WebKit/public/web/WebDocument.h"
 #include "third_party/WebKit/public/web/WebLocalFrame.h"
 #include "third_party/WebKit/public/web/WebScriptSource.h"
+#include "third_party/WebKit/public/web/WebPluginScriptForbiddenScope.h"
 
 #include "chrome/common/chrome_constants.h"
 
+#include "ui/base/resource/resource_bundle.h"
 #include "ui/base/ui_base_types.h"
 #include "ui/gfx/image/image.h"
 #include "ui/gfx/image/image_skia_rep.h"
@@ -70,28 +100,33 @@
 #endif
 
 #include "third_party/node/src/node_webkit.h"
-#include "third_party/WebKit/public/web/WebScopedMicrotaskSuppression.h"
 #include "nw/id/commit.h"
 #include "content/nw/src/nw_version.h"
 
-#undef LOG
+//#undef LOG
 #undef ASSERT
-#undef FROM_HERE
+//#undef FROM_HERE
 
 #if defined(OS_WIN)
 #define _USE_MATH_DEFINES
 #include <math.h>
 #endif
-#include "third_party/WebKit/Source/config.h"
+//#include "third_party/WebKit/Source/config.h"
 #include "third_party/WebKit/Source/core/frame/Frame.h"
 #include "third_party/WebKit/Source/web/WebLocalFrameImpl.h"
+#include "third_party/WebKit/Source/platform/ScriptForbiddenScope.h"
 #include "V8HTMLElement.h"
 
 #include "content/renderer/render_view_impl.h"
 #include "base/logging.h"
+#include "third_party/node/src/node_webkit.h"
 
 using content::RenderView;
 using content::RenderViewImpl;
+using content::DevToolsAgentHost;
+using content::RenderFrameHost;
+using content::RenderProcessHost;
+using content::WebContents;
 using extensions::ScriptContext;
 using extensions::Extension;
 using extensions::EventRouter;
@@ -99,7 +134,12 @@ using extensions::Manifest;
 using extensions::Feature;
 using extensions::ExtensionPrefs;
 using extensions::ExtensionRegistry;
+using extensions::RendererExtensionRegistry;
 using extensions::Dispatcher;
+using extensions::ContentVerifierDelegate;
+using extensions::NWContentVerifierDelegate;
+using extensions::WebviewInfo;
+using extensions::WebViewGuest;
 using blink::WebScriptSource;
 
 namespace manifest_keys = extensions::manifest_keys;
@@ -116,12 +156,57 @@ GetCurrentEnvironmentFn g_get_current_env_fn = nullptr;
 EmitExitFn g_emit_exit_fn = nullptr;
 RunAtExitFn g_run_at_exit_fn = nullptr;
 
+extern VoidHookFn g_msg_pump_ctor_fn;
+extern VoidHookFn g_msg_pump_dtor_fn;
+extern VoidHookFn g_msg_pump_sched_work_fn, g_msg_pump_nest_leave_fn, g_msg_pump_need_work_fn;
+extern VoidHookFn g_msg_pump_did_work_fn, g_msg_pump_pre_loop_fn, g_msg_pump_nest_enter_fn;
+extern VoidIntHookFn g_msg_pump_delay_work_fn;
+extern VoidHookFn g_msg_pump_clean_ctx_fn;
+extern GetPointerFn g_uv_default_loop_fn;
+extern NodeStartFn g_node_start_fn;
+extern UVRunFn g_uv_run_fn;
+extern SetUVRunFn g_set_uv_run_fn;
+
+extern CallTickCallbackFn g_call_tick_callback_fn;
+extern SetupNWNodeFn g_setup_nwnode_fn;
+extern IsNodeInitializedFn g_is_node_initialized_fn;
+extern SetNWTickCallbackFn g_set_nw_tick_callback_fn;
+extern StartNWInstanceFn g_start_nw_instance_fn;
+extern GetNodeContextFn g_get_node_context_fn;
+extern SetNodeContextFn g_set_node_context_fn;
+extern GetNodeEnvFn g_get_node_env_fn;
+extern GetCurrentEnvironmentFn g_get_current_env_fn;
+extern EmitExitFn g_emit_exit_fn;
+extern RunAtExitFn g_run_at_exit_fn;
+extern VoidHookFn g_promise_reject_callback_fn;
+
+#if defined(OS_MACOSX)
+#include "base/mac/bundle_locations.h"
+
+extern VoidHookFn g_msg_pump_dtor_osx_fn, g_uv_sem_post_fn, g_uv_sem_wait_fn;
+extern VoidPtr4Fn g_msg_pump_ctor_osx_fn;
+extern IntVoidFn g_nw_uvrun_nowait_fn, g_uv_runloop_once_fn;
+extern IntVoidFn g_uv_backend_timeout_fn;
+extern IntVoidFn g_uv_backend_fd_fn;
+#endif
+
 namespace nw {
 
 
 namespace {
 
 extensions::Dispatcher* g_dispatcher = NULL;
+bool g_reloading_app = false;
+bool g_pinning_renderer = true;
+int g_cdt_process_id = -1;
+std::string g_extension_id;
+bool g_skip_render_widget_hidden = false;
+gfx::Image g_app_icon;
+
+#if defined(OS_WIN)
+base::win::ScopedHICON g_window_hicon;
+base::win::ScopedHICON g_app_hicon;
+#endif
 
 static inline v8::Local<v8::String> v8_str(const char* x) {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
@@ -129,7 +214,7 @@ static inline v8::Local<v8::String> v8_str(const char* x) {
 }
 
 v8::Handle<v8::Value> CallNWTickCallback(void* env, const v8::Handle<v8::Value> ret) {
-  blink::WebScopedMicrotaskSuppression suppression;
+  v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
   g_call_tick_callback_fn(env);
   return Undefined(v8::Isolate::GetCurrent());
 }
@@ -155,6 +240,8 @@ v8::Handle<v8::Object> AsObjectOrEmpty(v8::Handle<v8::Value> value) {
   return value->IsObject() ? value.As<v8::Object>() : v8::Handle<v8::Object>();
 }
 
+} //namespace
+
 bool GetPackageImage(nw::Package* package,
                      const FilePath& icon_path,
                      gfx::Image* image) {
@@ -168,7 +255,7 @@ bool GetPackageImage(nw::Package* package,
   // Decode the bitmap using WebKit's image decoder.
   const unsigned char* data =
       reinterpret_cast<const unsigned char*>(file_contents.data());
-  scoped_ptr<SkBitmap> decoded(new SkBitmap());
+  std::unique_ptr<SkBitmap> decoded(new SkBitmap());
   // Note: This class only decodes bitmaps from extension resources. Chrome
   // doesn't (for security reasons) directly load extension resources provided
   // by the extension author, but instead decodes them in a separate
@@ -183,7 +270,47 @@ bool GetPackageImage(nw::Package* package,
   return true;
 }
 
-} //namespace
+void SetTrustAnchors(IOThread* io_thread, const net::CertificateList& trust_anchors) {
+  PolicyCertVerifier* verifier =
+    (PolicyCertVerifier*)io_thread->globals()->cert_verifier.get();
+  verifier->SetTrustAnchors(trust_anchors);
+}
+
+void MainPartsPreMainMessageLoopRunHook() {
+  nw::Package* package = nw::package();
+  const base::ListValue *additional_trust_anchors = NULL;
+  if (package->root()->GetList("additional_trust_anchors", &additional_trust_anchors)) {
+    net::CertificateList trust_anchors;
+    for (size_t i = 0; i<additional_trust_anchors->GetSize(); i++) {
+      std::string certificate_string;
+      if (!additional_trust_anchors->GetString(i, &certificate_string)) {
+        // LOG(WARNING)
+        //   << "Could not get string from entry " << i;
+        continue;
+      }
+
+      net::CertificateList loaded =
+        net::X509Certificate::CreateCertificateListFromBytes(
+        certificate_string.c_str(), certificate_string.size(),
+        net::X509Certificate::FORMAT_AUTO);
+      if (loaded.empty() && !certificate_string.empty()) {
+        // LOG(WARNING)
+        //   << "Could not load certificate from entry " << i;
+        continue;
+      }
+
+      trust_anchors.insert(trust_anchors.end(), loaded.begin(), loaded.end());
+    }
+    if (!trust_anchors.empty()) {
+      // LOG(INFO)
+      //   << "Added " << trust_anchors.size() << " certificates to trust anchors.";
+      content::BrowserThread::PostTask(
+        content::BrowserThread::IO,
+        FROM_HERE,
+        base::Bind(SetTrustAnchors, g_browser_process->io_thread(), trust_anchors));
+    }
+  }
+}
 
 int MainPartsPreCreateThreadsHook() {
   base::ThreadRestrictions::ScopedAllowIO allow_io;
@@ -199,14 +326,21 @@ int MainPartsPreCreateThreadsHook() {
     }
 
     base::FilePath user_data_dir;
-    std::string name;
+    std::string name, domain;
     package->root()->GetString("name", &name);
+    package->root()->GetString("domain", &domain);
     if (!name.empty() && PathService::Get(chrome::DIR_USER_DATA, &user_data_dir)) {
-      base::FilePath old_dom_storage = user_data_dir
-        .Append(FILE_PATH_LITERAL("Local Storage"))
-        .Append(FILE_PATH_LITERAL("file__0.localstorage"));
-      if (base::PathExists(old_dom_storage)) {
-        std::string id = crx_file::id_util::GenerateId(name);
+#if defined(OS_WIN)
+      base::FilePath old_dom_storage_dir = user_data_dir.DirName()
+        .Append(FILE_PATH_LITERAL("Local Storage"));
+#else
+      base::FilePath old_dom_storage_dir = user_data_dir
+        .Append(FILE_PATH_LITERAL("Local Storage"));
+#endif
+      base::FileEnumerator enum0(old_dom_storage_dir, false, base::FileEnumerator::FILES, FILE_PATH_LITERAL("*_0.localstorage"));
+      base::FilePath old_dom_storage = enum0.Next();
+      if (!old_dom_storage.empty()) {
+        std::string id = domain.empty() ? crx_file::id_util::GenerateId(name) : domain;
         GURL origin("chrome-extension://" + id + "/");
         base::FilePath new_storage_dir = user_data_dir.Append(FILE_PATH_LITERAL("Default"))
           .Append(FILE_PATH_LITERAL("Local Storage"));
@@ -216,43 +350,69 @@ int MainPartsPreCreateThreadsHook() {
           .Append(content::DOMStorageArea::DatabaseFileNameFromOrigin(origin));
         base::FilePath new_dom_journal = new_dom_storage.ReplaceExtension(FILE_PATH_LITERAL("localstorage-journal"));
         base::FilePath old_dom_journal = old_dom_storage.ReplaceExtension(FILE_PATH_LITERAL("localstorage-journal"));
-        base::Move(old_dom_journal, new_dom_journal);
-        base::Move(old_dom_storage, new_dom_storage);
-        LOG_IF(INFO, true) << "Migrate DOM storage from " << old_dom_storage.AsUTF8Unsafe() << " to " << new_dom_storage.AsUTF8Unsafe();
+        if (!base::PathExists(new_dom_journal) && !base::PathExists(new_dom_storage)) {
+          base::Move(old_dom_journal, new_dom_journal);
+          base::Move(old_dom_storage, new_dom_storage);
+          LOG_IF(INFO, true) << "Migrate DOM storage from " << old_dom_storage.AsUTF8Unsafe() << " to " << new_dom_storage.AsUTF8Unsafe();
+        }
+      }
+#if defined(OS_WIN)
+      base::FilePath old_websqldir = user_data_dir.DirName()
+        .Append(FILE_PATH_LITERAL("databases"));
+#else
+      base::FilePath old_websqldir = user_data_dir
+        .Append(FILE_PATH_LITERAL("databases"));
+#endif
+      base::FileEnumerator enum1(old_websqldir, false, base::FileEnumerator::DIRECTORIES, FILE_PATH_LITERAL("app_*"));
+      base::FilePath app_websql_dir = enum1.Next();
+      std::string old_id("file__0");
+      if (!app_websql_dir.empty())
+        old_id = app_websql_dir.BaseName().AsUTF8Unsafe();
+      if (base::PathExists(old_websqldir)) {
+        std::string id = domain.empty() ? crx_file::id_util::GenerateId(name) : domain;
+        GURL origin("chrome-extension://" + id + "/");
+        base::FilePath new_websql_dir = user_data_dir.Append(FILE_PATH_LITERAL("Default"))
+          .Append(FILE_PATH_LITERAL("databases"))
+          .AppendASCII(storage::GetIdentifierFromOrigin(origin));
+        if (!base::PathExists(new_websql_dir.DirName())) {
+          base::CreateDirectory(new_websql_dir.DirName());
+          base::CopyDirectory(old_websqldir, new_websql_dir.DirName().DirName(), true);
+          base::Move(new_websql_dir.DirName().Append(base::FilePath::FromUTF8Unsafe(old_id)), new_websql_dir);
+          base::FilePath metadb_path = new_websql_dir.DirName().Append(FILE_PATH_LITERAL("Databases.db"));
+          sql::Connection metadb;
+          if (metadb.Open(metadb_path) && sql::MetaTable::DoesTableExist(&metadb)) {
+            std::string stmt = "UPDATE Databases SET origin='" + storage::GetIdentifierFromOrigin(origin) + "' WHERE origin='" + old_id + "'";
+            if (!metadb.Execute(stmt.c_str()))
+              LOG_IF(INFO, true) << "Fail to execute migrate SQL.";
+          }
+          LOG_IF(INFO, true) << "Migrated WebSql DB from " << old_websqldir.AsUTF8Unsafe() << " to " << new_websql_dir.AsUTF8Unsafe();
+        }
+      }
+#if defined(OS_WIN)
+      base::FilePath old_indexeddb = user_data_dir.DirName()
+        .Append(FILE_PATH_LITERAL("IndexedDB"))
+        .Append(FILE_PATH_LITERAL("file__0.indexeddb.leveldb"));
+#else
+      base::FilePath old_indexeddb = user_data_dir
+        .Append(FILE_PATH_LITERAL("IndexedDB"))
+        .Append(FILE_PATH_LITERAL("file__0.indexeddb.leveldb"));
+#endif
+      if (base::PathExists(old_indexeddb)) {
+        std::string id = domain.empty() ? crx_file::id_util::GenerateId(name) : domain;
+        GURL origin("chrome-extension://" + id + "/");
+        base::FilePath new_indexeddb_dir = user_data_dir.Append(FILE_PATH_LITERAL("Default"))
+          .Append(FILE_PATH_LITERAL("IndexedDB"))
+          .AppendASCII(storage::GetIdentifierFromOrigin(origin))
+          .AddExtension(FILE_PATH_LITERAL(".indexeddb.leveldb"));
+        if (!base::PathExists(new_indexeddb_dir.DirName())) {
+          base::CreateDirectory(new_indexeddb_dir.DirName());
+          base::CopyDirectory(old_indexeddb, new_indexeddb_dir.DirName(), true);
+          base::Move(new_indexeddb_dir.DirName().Append(FILE_PATH_LITERAL("file__0.indexeddb.leveldb")), new_indexeddb_dir);
+          LOG_IF(INFO, true) << "Migrated IndexedDB from " << old_indexeddb.AsUTF8Unsafe() << " to " << new_indexeddb_dir.AsUTF8Unsafe();
+        }
       }
     }
 
-    const base::ListValue *additional_trust_anchors = NULL;
-    if (package->root()->GetList("additional_trust_anchors", &additional_trust_anchors)) {
-      net::CertificateList trust_anchors;
-      for (size_t i=0; i<additional_trust_anchors->GetSize(); i++) {
-        std::string certificate_string;
-        if (!additional_trust_anchors->GetString(i, &certificate_string)) {
-          // LOG(WARNING)
-          //   << "Could not get string from entry " << i;
-          continue;
-        }
-
-        net::CertificateList loaded =
-          net::X509Certificate::CreateCertificateListFromBytes(
-              certificate_string.c_str(), certificate_string.size(),
-              net::X509Certificate::FORMAT_AUTO);
-        if (loaded.empty() && !certificate_string.empty()) {
-          // LOG(WARNING)
-          //   << "Could not load certificate from entry " << i;
-          continue;
-        }
-
-        trust_anchors.insert(trust_anchors.end(), loaded.begin(), loaded.end());
-      }
-      if (!trust_anchors.empty()) {
-        // LOG(INFO)
-        //   << "Added " << trust_anchors.size() << " certificates to trust anchors.";
-        PolicyCertVerifier* verifier =
-          (PolicyCertVerifier*)g_browser_process->io_thread()->globals()->cert_verifier.get();
-        verifier->SetTrustAnchors(trust_anchors);
-      }
-    }
   }
   return content::RESULT_CODE_NORMAL_EXIT;
 }
@@ -261,66 +421,100 @@ void MainPartsPostDestroyThreadsHook() {
   ReleaseNWPackage();
 }
 
-void DocumentFinishHook(blink::WebFrame* frame,
-                         const extensions::Extension* extension,
-                         const GURL& effective_document_url) {
-  v8::Isolate* isolate = v8::Isolate::GetCurrent();
-  v8::HandleScope hscope(isolate);
-  std::string path = effective_document_url.path();
-  v8::Local<v8::Context> v8_context = frame->mainWorldScriptContext();
-  std::string root_path = extension->path().AsUTF8Unsafe();
-  base::FilePath root(extension->path());
+void TryInjectStartScript(blink::WebLocalFrame* frame, const Extension* extension, bool start) {
   RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
   if (!rv)
     return;
-  std::string js_fn = rv->renderer_preferences().nw_inject_js_doc_end;
+
+  std::string js_fn = start ? rv->renderer_preferences().nw_inject_js_doc_start :
+                              rv->renderer_preferences().nw_inject_js_doc_end;
   if (js_fn.empty())
     return;
-  base::FilePath js_file = root.AppendASCII(js_fn);
+  base::FilePath fpath = base::FilePath::FromUTF8Unsafe(js_fn);
+  if (!fpath.IsAbsolute()) {
+    const Extension* extension = nullptr;
+    if (!extension) {
+      extension = RendererExtensionRegistry::Get()->GetByID(g_extension_id);
+      if (!extension)
+        return;
+    }
+    if (!(extension->is_extension() || extension->is_platform_app()))
+      return;
+    base::FilePath root(extension->path());
+    fpath = root.AppendASCII(js_fn);
+  }
+  v8::Local<v8::Context> v8_context = frame->mainWorldScriptContext();
   std::string content;
-  if (!base::ReadFileToString(js_file, &content)) {
+  if (!base::ReadFileToString(fpath, &content)) {
     //LOG(WARNING) << "Failed to load js script file: " << js_file.value();
     return;
   }
   base::string16 jscript = base::UTF8ToUTF16(content);
-  {
-    blink::WebScopedMicrotaskSuppression suppression;
+  if (!v8_context.IsEmpty()) {
+    v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
+    blink::ScriptForbiddenScope::AllowUserAgentScript script;
     v8::Context::Scope cscope(v8_context);
     // v8::Handle<v8::Value> result;
     frame->executeScriptAndReturnValue(WebScriptSource(jscript));
   }
 }
 
+void DocumentFinishHook(blink::WebLocalFrame* frame,
+                         const extensions::Extension* extension,
+                         const GURL& effective_document_url) {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  v8::HandleScope hscope(isolate);
+
+  TryInjectStartScript(frame, extension, false);
+}
+
 void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatcher) {
+  // ignore the first invocation of this hook for iframe
+  // or we'll trigger creating a context with invalid type
+  // there will follow another one with valid url
+  blink::ScriptForbiddenScope::AllowUserAgentScript script;
+  blink::WebLocalFrame* web_frame = frame->GetWebFrame();
+  GURL frame_url = ScriptContext::GetDataSourceURLForFrame(web_frame);
+  if (web_frame->parent() && (!frame_url.is_valid() || frame_url.is_empty()))
+    return;
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::HandleScope scope(isolate);
   v8::Local<v8::Context> v8_context = frame->GetRenderView()
       ->GetWebView()->mainFrame()->mainWorldScriptContext();
   ScriptContext* script_context =
       dispatcher->script_context_set().GetByV8Context(v8_context);
+  if (start)
+    TryInjectStartScript(web_frame, script_context ? script_context->extension() : nullptr, true);
   if (!script_context)
     return;
   std::vector<v8::Handle<v8::Value> > arguments;
-  blink::WebLocalFrame* web_frame = frame->GetWebFrame();
   v8::Local<v8::Value> window =
-      web_frame->mainWorldScriptContext()->Global();
+    web_frame->mainWorldScriptContext()->Global();
   arguments.push_back(v8::Boolean::New(isolate, start));
   arguments.push_back(window);
   script_context->module_system()->CallModuleMethod("nw.Window", "onDocumentStartEnd", &arguments);
 }
 
-void DocumentElementHook(blink::WebFrame* frame,
+void DocumentElementHook(blink::WebLocalFrame* frame,
                          const extensions::Extension* extension,
                          const GURL& effective_document_url) {
+  // ignore the first invocation of this hook for iframe
+  // or we'll trigger creating a context with invalid type
+  // there will follow another one with valid url
+  blink::ScriptForbiddenScope::AllowUserAgentScript script;
+  GURL frame_url = ScriptContext::GetDataSourceURLForFrame(frame);
+  if (frame->parent() && (!frame_url.is_valid() || frame_url.is_empty()))
+    return;
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::HandleScope hscope(isolate);
-  frame->document().securityOrigin().grantUniversalAccess();
+  frame->document().getSecurityOrigin().grantUniversalAccess();
+  frame->setNodeJS(true);
   std::string path = effective_document_url.path();
   v8::Local<v8::Context> v8_context = frame->mainWorldScriptContext();
   std::string root_path = extension->path().AsUTF8Unsafe();
   base::FilePath root(extension->path());
   if (!v8_context.IsEmpty()) {
-    blink::WebScopedMicrotaskSuppression suppression;
+    v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
     v8::Context::Scope cscope(v8_context);
     // Make node's relative modules work
 #if defined(OS_WIN)
@@ -329,9 +523,10 @@ void DocumentElementHook(blink::WebFrame* frame,
     base::ReplaceChars(root_path, "'", "\\'", &root_path);
 
     v8::Local<v8::Script> script2 = v8::Script::Compile(v8::String::NewFromUtf8(isolate, (
+        "'use strict';"
         "if (typeof nw != 'undefined' && typeof __filename == 'undefined') {"
-        "  var root = '" + root_path + "';"
-        "  var path = '" + path      + "';"
+        "  let root = '" + root_path + "';"
+        "  let path = '" + path      + "';"
         "nw.__filename = root + path;"
         "nw.__dirname = root;"
         "}").c_str()),
@@ -342,26 +537,25 @@ void DocumentElementHook(blink::WebFrame* frame,
   RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->view());
   if (!rv)
     return;
-  std::string js_fn = rv->renderer_preferences().nw_inject_js_doc_start;
-  if (js_fn.empty())
+
+  ui::ResourceBundle* resource_bundle = &ResourceBundle::GetSharedInstance();
+  base::StringPiece resource =
+      resource_bundle->GetRawDataResource(IDR_NW_PRE13_SHIM_JS);
+  if (resource.empty())
     return;
-  base::FilePath js_file = root.AppendASCII(js_fn);
-  std::string content;
-  if (!base::ReadFileToString(js_file, &content)) {
-    //LOG(WARNING) << "Failed to load js script file: " << js_file.value();
-    return;
-  }
-  base::string16 jscript = base::UTF8ToUTF16(content);
+  base::string16 jscript = base::UTF8ToUTF16(resource.as_string());
   if (!v8_context.IsEmpty()) {
-    blink::WebScopedMicrotaskSuppression suppression;
+    v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
     v8::Context::Scope cscope(v8_context);
-    // v8::Handle<v8::Value> result;
     frame->executeScriptAndReturnValue(WebScriptSource(jscript));
   }
 }
 
 void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   v8::Isolate* isolate = context->isolate();
+
+  if (g_extension_id.empty())
+    g_extension_id = context->extension()->id();
 
   bool nodejs_enabled = true;
   context->extension()->manifest()->GetBoolean(manifest_keys::kNWJSEnableNode, &nodejs_enabled);
@@ -385,14 +579,14 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
       argv[1] = argv[2] = nullptr;
       std::string main_fn;
 
-      if (context->extension()->manifest()->GetString(manifest_keys::kNWJSInternalMainFilename, &main_fn)) {
+      if (context->extension()->manifest()->GetString("node-main", &main_fn)) {
         argc = 2;
         argv[1] = strdup(main_fn.c_str());
       }
 
       v8::Isolate* isolate = v8::Isolate::GetCurrent();
       v8::HandleScope scope(isolate);
-      blink::WebScopedMicrotaskSuppression suppression;
+      v8::MicrotasksScope microtasks(isolate, v8::MicrotasksScope::kDoNotRunMicrotasks);
 
       g_set_nw_tick_callback_fn(&CallNWTickCallback);
       v8::Local<v8::Context> dom_context = context->v8_context();
@@ -400,13 +594,12 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
         g_set_node_context_fn(isolate, &dom_context);
       dom_context->SetSecurityToken(v8::String::NewFromUtf8(isolate, "nw-token"));
       dom_context->Enter();
-      dom_context->SetEmbedderData(0, v8::String::NewFromUtf8(isolate, "node"));
 
       g_start_nw_instance_fn(argc, argv, dom_context);
       {
         v8::Local<v8::Script> script =
           v8::Script::Compile(v8::String::NewFromUtf8(isolate,
-                                                      (std::string("process.versions['nwjs'] = '" NW_VERSION_STRING "';") +
+                                                      (std::string("process.versions['nw'] = '" NW_VERSION_STRING "';") +
                                                        "process.versions['node-webkit'] = '" NW_VERSION_STRING "';"
                                                        "process.versions['nw-commit-id'] = '" NW_COMMIT_HASH "';"
                                                        "process.versions['chromium'] = '" + chrome::kChromeVersion + "';").c_str()
@@ -415,74 +608,86 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
       }
 
       if (context->extension()->manifest()->GetString(manifest_keys::kNWJSInternalMainFilename, &main_fn)) {
+        v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate,
+         ("global.__filename = '" + main_fn + "';").c_str()));
+        script->Run();
+      }
+      {
         std::string root_path = context->extension()->path().AsUTF8Unsafe();
 #if defined(OS_WIN)
         base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
 #endif
         base::ReplaceChars(root_path, "'", "\\'", &root_path);
         v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate,
-         ("global.__filename = '" + main_fn + "';" +
-           "global.__dirname = '" + root_path + "';"
-          ).c_str()));
+         ("global.__dirname = '" + root_path + "';").c_str()));
         script->Run();
       }
+      bool content_verification = false;
+      if (context->extension()->manifest()->GetBoolean(manifest_keys::kNWJSContentVerifyFlag,
+                                                       &content_verification) && content_verification) {
+        v8::Local<v8::Script> script =
+          v8::Script::Compile(v8::String::NewFromUtf8(isolate,
+                                                      (std::string("global.__nwjs_cv = true;") +
+                                                       "global.__nwjs_ext_id = '" + context->extension()->id() + "';").c_str()));
 
+        script->Run();
+      }
+      
       dom_context->Exit();
     }
   }
 
   v8::Local<v8::Context> node_context2;
-  g_get_node_context_fn(&node_context2);
-  if (!mixed_context) {
-    v8::Local<v8::Context> g_context =
-      v8::Local<v8::Context>::New(isolate, node_context2);
-    v8::Local<v8::Object> node_global = g_context->Global();
+  if (mixed_context)
+    node_context2 = context->v8_context();
+  else
+    g_get_node_context_fn(&node_context2);
+  v8::Local<v8::Context> g_context =
+    v8::Local<v8::Context>::New(isolate, node_context2);
+  v8::Local<v8::Object> node_global = g_context->Global();
 
+  if (!mixed_context) {
     context->v8_context()->SetAlignedPointerInEmbedderData(NODE_CONTEXT_EMBEDDER_DATA_INDEX, g_get_node_env_fn());
     context->v8_context()->SetSecurityToken(g_context->GetSecurityToken());
-
-    v8::Handle<v8::Object> nw = AsObjectOrEmpty(CreateNW(context, node_global, g_context));
-#if 1
-    v8::Local<v8::Array> symbols = v8::Array::New(isolate, 5);
-    symbols->Set(0, v8::String::NewFromUtf8(isolate, "global"));
-    symbols->Set(1, v8::String::NewFromUtf8(isolate, "process"));
-    symbols->Set(2, v8::String::NewFromUtf8(isolate, "Buffer"));
-    symbols->Set(3, v8::String::NewFromUtf8(isolate, "root"));
-    symbols->Set(4, v8::String::NewFromUtf8(isolate, "require"));
-
-    g_context->Enter();
-    for (unsigned i = 0; i < symbols->Length(); ++i) {
-      v8::Local<v8::Value> key = symbols->Get(i);
-      v8::Local<v8::Value> val = node_global->Get(key);
-      nw->Set(key, val);
-    }
-    g_context->Exit();
-#endif
   }
+  v8::Handle<v8::Object> nw = AsObjectOrEmpty(CreateNW(context, node_global, g_context));
 
-  std::string set_nw_script;
-  if (mixed_context)
-    set_nw_script = "var nw = global;";
+  v8::Local<v8::Array> symbols = v8::Array::New(isolate, 4);
+  symbols->Set(0, v8::String::NewFromUtf8(isolate, "global"));
+  symbols->Set(1, v8::String::NewFromUtf8(isolate, "process"));
+  symbols->Set(2, v8::String::NewFromUtf8(isolate, "Buffer"));
+  symbols->Set(3, v8::String::NewFromUtf8(isolate, "require"));
+
+  g_context->Enter();
+  for (unsigned i = 0; i < symbols->Length(); ++i) {
+    v8::Local<v8::Value> key = symbols->Get(i);
+    v8::Local<v8::Value> val = node_global->Get(key);
+    nw->Set(key, val);
+  }
+  g_context->Exit();
+
+  std::string set_nw_script = "'use strict';";
   {
-    blink::WebScopedMicrotaskSuppression suppression;
+    v8::MicrotasksScope microtasks(isolate, v8::MicrotasksScope::kDoNotRunMicrotasks);
     v8::Context::Scope cscope(context->v8_context());
     // Make node's relative modules work
     std::string root_path = context->extension()->path().AsUTF8Unsafe();
+    GURL frame_url = ScriptContext::GetDataSourceURLForFrame(frame);
+    std::string url_path = frame_url.path();
 #if defined(OS_WIN)
     base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
 #endif
     base::ReplaceChars(root_path, "'", "\\'", &root_path);
     v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate, (
         set_nw_script +
+        "nw.global.XMLHttpRequest = XMLHttpRequest;" +
         // Make node's relative modules work
-        "if (typeof nw.process != 'undefined' && (!nw.process.mainModule.filename || nw.process.mainModule.filename === 'blank')) {"
-        "  var root = '" + root_path + "';"
-#if defined(OS_WIN)
-        "nw.process.mainModule.filename = decodeURIComponent(window.location.pathname === 'blank' ? 'blank': window.location.pathname.substr(1));"
-#else
-        "nw.process.mainModule.filename = root + '/index.html';"
-#endif
-        "if (window.location.href.indexOf('app://') === 0) { nw.process.mainModule.filename = root + '/' + process.mainModule.filename}"
+        "if (typeof nw.process != 'undefined' && "
+        "(!nw.process.mainModule.filename || nw.process.mainModule.filename === 'blank' ||"
+        "nw.process.mainModule.filename.indexOf('_generated_background_page.html') >= 0)) {"
+        "  let root = '" + root_path + "';"
+        "  let p = '" + url_path + "';"
+        "nw.process.mainModule.filename = root + p;"
         "nw.process.mainModule.paths = nw.global.require('module')._nodeModulePaths(nw.process.cwd());"
         "nw.process.mainModule.loaded = true;"
         "}").c_str()),
@@ -514,9 +719,13 @@ void AmendManifestContentScriptList(base::DictionaryValue* manifest,
     base::ListValue* matches = new base::ListValue();
     matches->Append(new base::StringValue("<all_urls>"));
 
+    base::ListValue* exclude_matches = new base::ListValue();
+    exclude_matches->Append(new base::StringValue("*://*/_generated_background_page.html"));
+
     base::DictionaryValue* content_script = new base::DictionaryValue();
     content_script->Set("js", js_list);
     content_script->Set("matches", matches);
+    content_script->Set("exclude_matches", exclude_matches);
     content_script->SetString("run_at", run_at);
     content_script->SetBoolean("in_main_world", true);
 
@@ -545,11 +754,28 @@ void AmendManifestStringList(base::DictionaryValue* manifest,
     manifest->Set(path, pattern_list);
 }
 
+void AmendManifestList(base::DictionaryValue* manifest,
+                   const std::string& path,
+                   const base::ListValue& list_value) {
+  base::ListValue* pattern_list = NULL;
+
+  if (manifest->GetList(path, &pattern_list)) {
+    base::ListValue::const_iterator it;
+    for(it = list_value.begin(); it != list_value.end(); ++it) {
+      pattern_list->Append((*it)->DeepCopy());
+    }
+  } else {
+    pattern_list = list_value.DeepCopy();
+    manifest->Set(path, pattern_list);
+  }
+}
+
 void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* error) {
   if (!manifest)
     return;
 
-  std::string main_url, bg_script, icon_path, node_remote;
+  std::string main_url, bg_script, icon_path;
+  base::Value *node_remote = NULL;
 
   nw::Package* package = nw::package();
   manifest->SetBoolean(manifest_keys::kNWJSInternalFlag, true);
@@ -557,6 +783,8 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* erro
     *error = package->cached_error_content();
     return;
   }
+
+  manifest->Set(manifest_keys::kNWJSInternalManifest, package->root()->DeepCopy());
 
   if (manifest->GetString(manifest_keys::kNWJSMain, &main_url)) {
     if (base::EndsWith(main_url, ".js", base::CompareCase::INSENSITIVE_ASCII)) {
@@ -571,23 +799,40 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* erro
 
     AmendManifestStringList(manifest, manifest_keys::kPermissions, "developerPrivate");
     AmendManifestStringList(manifest, manifest_keys::kPermissions, "management");
+    AmendManifestStringList(manifest, manifest_keys::kPermissions, "<all_urls>");
   }
-
-  AmendManifestContentScriptList(manifest, "inject-js-start", "document_start");
-  AmendManifestContentScriptList(manifest, "inject-js-end",   "document_end");
 
   if (manifest->GetString("window.icon", &icon_path)) {
-    gfx::Image app_icon;
-    if (GetPackageImage(package, base::FilePath::FromUTF8Unsafe(icon_path), &app_icon)) {
-      int width = app_icon.Width();
+    if (GetPackageImage(package, base::FilePath::FromUTF8Unsafe(icon_path), &g_app_icon)) {
+      int width = g_app_icon.Width();
       std::string key = "icons." + base::IntToString(width);
       manifest->SetString(key, icon_path);
+#if defined(OS_WIN)
+      g_window_hicon =
+        std::move(IconUtil::CreateHICONFromSkBitmapSizedTo(*g_app_icon.AsImageSkia().bitmap(),
+                      GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON)));
+      g_app_hicon =
+        std::move(IconUtil::CreateHICONFromSkBitmapSizedTo(*g_app_icon.AsImageSkia().bitmap(),
+                      GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON)));
+#endif
     }
   }
-  if (manifest->GetString(switches::kmRemotePages, &node_remote)) {
+  if (manifest->Get(switches::kmRemotePages, &node_remote)) {
     //FIXME: node-remote spec different with kWebURLs
-    AmendManifestStringList(manifest, manifest_keys::kWebURLs, node_remote);
+    std::string node_remote_string;
+    base::ListValue* node_remote_list = NULL;
+    if (node_remote->GetAsString(&node_remote_string)) {
+      node_remote_list = new base::ListValue();
+      node_remote_list->Append(new base::StringValue(node_remote_string));
+    } else if (node_remote->GetAsList(&node_remote_list)) {
+      // do nothing
+    }
+    if (node_remote_list)
+      AmendManifestList(manifest, manifest_keys::kWebURLs, *node_remote_list);
   }
+
+  if (NWContentVerifierDelegate::GetDefaultMode() == ContentVerifierDelegate::ENFORCE_STRICT)
+    manifest->SetBoolean(manifest_keys::kNWJSContentVerifyFlag, true);
 }
 
 void RendererProcessTerminatedHook(content::RenderProcessHost* process,
@@ -603,12 +848,20 @@ void RendererProcessTerminatedHook(content::RenderProcessHost* process,
 }
 
 void OnRenderProcessShutdownHook(extensions::ScriptContext* context) {
-  blink::WebScopedMicrotaskSuppression suppression;
+  v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
+  blink::ScriptForbiddenScope::AllowUserAgentScript script;
   void* env = g_get_current_env_fn(context->v8_context());
   if (g_is_node_initialized_fn()) {
     g_emit_exit_fn(env);
     g_run_at_exit_fn(env);
   }
+}
+
+void KickNextTick() {
+  v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
+  void* env = g_get_node_env_fn();
+  if (env)
+    g_call_tick_callback_fn(env);
 }
 
 void willHandleNavigationPolicy(content::RenderView* rv,
@@ -629,6 +882,7 @@ void willHandleNavigationPolicy(content::RenderView* rv,
   v8::Context::Scope cscope (v8_context);
   v8::Handle<v8::Value> element = v8::Null(isolate);
   v8::Handle<v8::Object> policy_obj = v8::Object::New(isolate);
+
 #if 0
   blink::LocalFrame* core_frame = blink::toWebLocalFrameImpl(frame)->frame();
   if (core_frame->deprecatedLocalOwner()) {
@@ -646,7 +900,7 @@ void willHandleNavigationPolicy(content::RenderView* rv,
                                                       "onNewWinPolicy", &arguments);
   } else {
     const char* req_context = nullptr;
-    switch (request.requestContext()) {
+    switch (request.getRequestContext()) {
     case blink::WebURLRequest::RequestContextHyperlink:
       req_context = "hyperlink";
       break;
@@ -665,13 +919,13 @@ void willHandleNavigationPolicy(content::RenderView* rv,
                                                         "onNavigation", &arguments);
     }
   }
-  v8::Local<v8::Value> manifest_val = policy_obj->Get(v8_str("manifest"));
 
-  //TODO: change this to object
-  if (manifest_val->IsString()) {
-    v8::String::Utf8Value manifest_str(manifest_val);
-    if (manifest)
-      *manifest = blink::WebString::fromUTF8(*manifest_str);
+  std::unique_ptr<content::V8ValueConverter> converter(content::V8ValueConverter::create());
+  v8::Local<v8::Value> manifest_v8 = policy_obj->Get(v8_str("manifest"));
+  std::unique_ptr<base::Value> manifest_val(converter->FromV8Value(manifest_v8, v8_context));
+  std::string manifest_str;
+  if (manifest_val.get() && base::JSONWriter::Write(*manifest_val, &manifest_str)) {
+    *manifest = blink::WebString::fromUTF8(manifest_str.c_str());
   }
 
   v8::Local<v8::Value> val = policy_obj->Get(v8_str("val"));
@@ -692,20 +946,18 @@ void willHandleNavigationPolicy(content::RenderView* rv,
 
 void ExtensionDispatcherCreated(extensions::Dispatcher* dispatcher) {
   g_dispatcher = dispatcher;
+  const base::CommandLine& command_line =
+      *base::CommandLine::ForCurrentProcess();
+  if (command_line.HasSwitch(switches::kDisableRAFThrottling))
+    g_skip_render_widget_hidden = true;
 }
 
 void CalcNewWinParams(content::WebContents* new_contents, void* params,
                       std::string* nw_inject_js_doc_start,
                       std::string* nw_inject_js_doc_end) {
   extensions::AppWindow::CreateParams ret;
-  scoped_ptr<base::Value> val;
-  scoped_ptr<base::DictionaryValue> manifest;
-  std::string manifest_str = base::UTF16ToUTF8(nw::GetCurrentNewWinManifest());
-  val = base::JSONReader().ReadToValue(manifest_str);
-  if (val.get() && val->IsType(base::Value::TYPE_DICTIONARY))
-    manifest.reset(static_cast<base::DictionaryValue*>(val.release()));
-  else
-    manifest.reset(new base::DictionaryValue());
+  std::unique_ptr<base::Value> val;
+  std::unique_ptr<base::DictionaryValue> manifest = MergeManifest();
 
   bool resizable;
   if (manifest->GetBoolean(switches::kmResizable, &resizable)) {
@@ -769,7 +1021,7 @@ bool GetImage(Package* package, const FilePath& icon_path, gfx::Image* image) {
   // Decode the bitmap using WebKit's image decoder.
   const unsigned char* data =
       reinterpret_cast<const unsigned char*>(file_contents.data());
-  scoped_ptr<SkBitmap> decoded(new SkBitmap());
+  std::unique_ptr<SkBitmap> decoded(new SkBitmap());
   // Note: This class only decodes bitmaps from extension resources. Chrome
   // doesn't (for security reasons) directly load extension resources provided
   // by the extension author, but instead decodes them in a separate
@@ -784,6 +1036,47 @@ bool GetImage(Package* package, const FilePath& icon_path, gfx::Image* image) {
   return true;
 }
 
+std::unique_ptr<base::DictionaryValue> MergeManifest() {
+  // Following attributes will not be inherited from package.json 
+  // Keep this list consistent with documents in `Manifest Format.md`
+  static std::vector<const char*> non_inherited_attrs = {
+                                                    switches::kmFullscreen,
+                                                    switches::kmKiosk,
+                                                    switches::kmPosition,
+                                                    switches::kmResizable,
+                                                    switches::kmShow
+                                                    };
+  std::unique_ptr<base::DictionaryValue> manifest;
+
+  // retrieve `window` manifest set by `new-win-policy`
+  std::string manifest_str = base::UTF16ToUTF8(nw::GetCurrentNewWinManifest());
+  std::unique_ptr<base::Value> val = base::JSONReader().ReadToValue(manifest_str);
+  if (val && val->IsType(base::Value::Type::TYPE_DICTIONARY)) {
+    manifest.reset(static_cast<base::DictionaryValue*>(val.release()));
+  } else {
+    manifest.reset(new base::DictionaryValue());
+  }
+
+  // merge with default `window` manifest in package.json if exists
+  nw::Package* pkg = nw::package();
+  if (pkg) {
+    base::DictionaryValue* manifest_window = pkg->window();
+    if (manifest_window) {
+      std::unique_ptr<base::DictionaryValue> manifest_window_cloned = manifest_window->DeepCopyWithoutEmptyChildren();
+      // filter out non inherited attributes
+      std::vector<const char*>::iterator it;
+      for(it = non_inherited_attrs.begin(); it != non_inherited_attrs.end(); it++) {
+        manifest_window_cloned->RemoveWithoutPathExpansion(*it, NULL);
+      }
+      // overwrite default `window` manifest with the one passed by `new-win-policy`
+      manifest_window_cloned->MergeDictionary(manifest.get());
+      return manifest_window_cloned;
+    }
+  }
+
+  return manifest;
+}
+
 bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window) {
 #if defined(OS_MACOSX)
   return false;
@@ -794,11 +1087,29 @@ bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window) {
   if (!menu)
     return false;
   menu->menu_delegate_->ExecuteCommand(command_id, 0);
-#if defined(OS_WIN)
-  menu->menu_->UpdateStates();
-#endif
   return true;
 #endif //OSX
+}
+
+void SendEventToApp(const std::string& event_name, std::unique_ptr<base::ListValue> event_args) {
+  Profile* profile = ProfileManager::GetActiveUserProfile();
+  const extensions::ExtensionSet& extensions =
+    ExtensionRegistry::Get(profile)->enabled_extensions();
+  ExtensionPrefs* extension_prefs = ExtensionPrefs::Get(profile);
+
+  for (extensions::ExtensionSet::const_iterator it = extensions.begin();
+       it != extensions.end(); ++it) {
+    const Extension* extension = it->get();
+    if (extension_prefs->IsExtensionRunning(extension->id()) &&
+        extension->location() == extensions::Manifest::COMMAND_LINE) {
+      std::unique_ptr<extensions::Event> event(new extensions::Event(extensions::events::UNKNOWN,
+                                                                event_name,
+                                                                std::move(event_args)));
+      event->restrict_to_browser_context = profile;
+      EventRouter::Get(profile)
+        ->DispatchEventToExtension(extension->id(), std::move(event));
+    }
+  }
 }
 
 bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_line,
@@ -807,29 +1118,33 @@ bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_l
   bool single_instance = true;
   package->root()->GetBoolean(switches::kmSingleInstance, &single_instance);
   if (single_instance) {
-    Profile* profile = ProfileManager::GetActiveUserProfile();
-    const extensions::ExtensionSet& extensions =
-      ExtensionRegistry::Get(profile)->enabled_extensions();
-    ExtensionPrefs* extension_prefs = ExtensionPrefs::Get(profile);
-
-    for (extensions::ExtensionSet::const_iterator it = extensions.begin();
-         it != extensions.end(); ++it) {
-      const Extension* extension = it->get();
-      if (extension_prefs->IsExtensionRunning(extension->id()) &&
-          extension->location() == extensions::Manifest::COMMAND_LINE) {
-        scoped_ptr<base::ListValue> arguments(new base::ListValue());
-        scoped_ptr<extensions::Event> event(new extensions::Event(extensions::events::UNKNOWN,
-                                          "nw.App.onOpen",
-                                          arguments.Pass()));
-        event->restrict_to_browser_context = profile;
-        EventRouter::Get(profile)
-          ->DispatchEventToExtension(extension->id(), event.Pass());
-      }
-    }
+#if defined(OS_WIN)
+    std::string cmd = base::UTF16ToUTF8(command_line.GetCommandLineString());
+#else
+    std::string cmd = command_line.GetCommandLineString();
+#endif
+    std::unique_ptr<base::ListValue> arguments(new base::ListValue());
+    arguments->AppendString(cmd);
+    SendEventToApp("nw.App.onOpen", std::move(arguments));
   }
     
   return single_instance;
 }
+
+#if defined(OS_MACOSX)
+bool ApplicationShouldHandleReopenHook(bool hasVisibleWindows) {
+  std::unique_ptr<base::ListValue> arguments(new base::ListValue());
+  SendEventToApp("nw.App.onReopen",std::move(arguments));
+  return true;
+}
+
+void OSXOpenURLsHook(const std::vector<GURL>& startup_urls) {
+  std::unique_ptr<base::ListValue> arguments(new base::ListValue());
+  for (size_t i = 0; i < startup_urls.size(); i++)
+    arguments->AppendString(startup_urls[i].spec());
+  SendEventToApp("nw.App.onOpen", std::move(arguments));
+}
+#endif
 
 static std::string g_user_agent;
 
@@ -861,6 +1176,211 @@ bool GetUserAgentFromManifest(std::string* agent) {
     return true;
   }
   return false;
+}
+
+void ReloadExtensionHook(const extensions::Extension* extension) {
+  g_reloading_app = true;
+  KeepAliveRegistry::GetInstance()->Register(KeepAliveOrigin::APP_CONTROLLER, KeepAliveRestartOption::ENABLED);
+  //keep alive count is paired with
+  //appwindow's lifetime, so it's
+  //needed to keep alive during
+  //reload
+}
+
+void CreateAppWindowHook(extensions::AppWindow* app_window) {
+  if (g_reloading_app) {
+    g_reloading_app = false;
+    KeepAliveRegistry::GetInstance()->Unregister(KeepAliveOrigin::APP_CONTROLLER, KeepAliveRestartOption::ENABLED);
+  }
+}
+
+bool IsReloadingApp() {
+  return g_reloading_app;
+}
+
+void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, content::WebPreferences* web_prefs) {
+  nw::Package* package = nw::package();
+  if (!package)
+    return;
+  base::DictionaryValue* webkit;
+  web_prefs->plugins_enabled = true;
+  if (package->root()->GetDictionary(switches::kmWebkit, &webkit)) {
+    webkit->GetBoolean("double_tap_to_zoom_enabled", &web_prefs->double_tap_to_zoom_enabled);
+    webkit->GetBoolean("plugin",                     &web_prefs->plugins_enabled);
+  }
+#if 0
+  FilePath plugins_dir = package->path();
+
+  plugins_dir = plugins_dir.AppendASCII("plugins");
+
+  content::PluginService* plugin_service = content::PluginService::GetInstance();
+  plugin_service->AddExtraPluginDir(plugins_dir);
+#endif
+}
+
+bool CheckStoragePartitionMatches(int render_process_id, const GURL& url) {
+  return render_process_id == g_cdt_process_id && url.SchemeIs(content_settings::kChromeDevToolsScheme);
+}
+
+bool RphGuestFilterURLHook(RenderProcessHost* rph, const GURL* url)  {
+  extensions::WebViewRendererState* renderer_state =
+      extensions::WebViewRendererState::GetInstance();
+  std::string owner_extension;
+  int process_id = rph->GetID();
+  if (!renderer_state->GetOwnerInfo(process_id, nullptr, &owner_extension))
+    return false;
+  const Extension* extension =
+    ExtensionRegistry::Get(rph->GetBrowserContext())->enabled_extensions().GetByID(owner_extension);
+  if (!extension)
+    return false;
+  bool file_scheme = false;
+  if (WebviewInfo::IsURLWebviewAccessible(extension,
+                                          WebViewGuest::GetPartitionID(rph),
+                                          *url, &file_scheme)) {
+    if (file_scheme) {
+      content::ChildProcessSecurityPolicy::GetInstance()->GrantScheme(
+          process_id, url::kFileScheme);
+    }
+    return true;
+  }
+  return false;
+}
+
+bool ShouldServiceRequestHook(int child_id, const GURL& url) {
+  RenderProcessHost* rph = RenderProcessHost::FromID(child_id);
+  if (!rph)
+    return false;
+  return RphGuestFilterURLHook(rph, &url);
+}
+
+void ShowDevtools(bool show, content::WebContents* web_contents, content::WebContents* container) {
+  content::RenderFrameHost* rfh = web_contents->GetMainFrame();
+  if (container) {
+    scoped_refptr<DevToolsAgentHost> agent_host(DevToolsAgentHost::GetOrCreateFor(rfh));
+    g_cdt_process_id = container->GetRenderProcessHost()->GetID();
+    content::ChildProcessSecurityPolicy::GetInstance()->GrantAll(g_cdt_process_id);
+    
+    DevToolsWindow* window = DevToolsWindow::FindDevToolsWindow(agent_host.get());
+    if (!window) {
+      Profile* profile = Profile::FromBrowserContext(
+             web_contents->GetBrowserContext());
+      window = DevToolsWindow::Create(profile, GURL(), nullptr, false, std::string(), false, std::string(), container);
+      if (!window)
+        return;
+      window->bindings_->AttachTo(agent_host);
+    }
+    return;
+  }
+
+  if (show) {
+    DevToolsWindow::InspectElement(rfh, 0, 0);
+    return;
+  }
+  scoped_refptr<DevToolsAgentHost> agent(
+      DevToolsAgentHost::GetOrCreateFor(rfh));
+  DevToolsWindow* window = DevToolsWindow::FindDevToolsWindow(agent.get());
+  if (window)
+    window->InspectedContentsClosing();
+}
+
+bool PinningRenderer() {
+  return g_pinning_renderer;
+}
+
+void SetPinningRenderer(bool pin) {
+  g_pinning_renderer = pin;
+}
+
+bool RenderWidgetWasHiddenHook(content::RenderWidget* rw) {
+  return g_skip_render_widget_hidden;
+}
+
+gfx::ImageSkia* GetAppIcon() {
+  if (g_app_icon.IsEmpty())
+    return nullptr;
+  return const_cast<gfx::ImageSkia*>(g_app_icon.ToImageSkia());
+}
+
+#if defined(OS_WIN)
+HICON GetAppHIcon() {
+  return g_app_hicon.get();
+}
+
+HICON GetWindowHIcon() {
+  return g_window_hicon.get();
+}
+#endif
+
+void LoadNodeSymbols() {
+  struct SymbolDefinition {
+    const char* name;
+    VoidHookFn* fn;
+  };
+  const SymbolDefinition kSymbols[] = {
+#if defined(OS_MACOSX)
+    {"g_msg_pump_dtor_osx", &g_msg_pump_dtor_osx_fn },
+    {"g_uv_sem_post", &g_uv_sem_post_fn },
+    {"g_uv_sem_wait", &g_uv_sem_wait_fn },
+#endif
+    { "g_msg_pump_ctor", &g_msg_pump_ctor_fn },
+    { "g_msg_pump_dtor", &g_msg_pump_dtor_fn },
+    { "g_msg_pump_sched_work", &g_msg_pump_sched_work_fn },
+    { "g_msg_pump_nest_leave", &g_msg_pump_nest_leave_fn },
+    { "g_msg_pump_nest_enter", &g_msg_pump_nest_enter_fn },
+    { "g_msg_pump_need_work", &g_msg_pump_need_work_fn },
+    { "g_msg_pump_did_work", &g_msg_pump_did_work_fn },
+    { "g_msg_pump_pre_loop", &g_msg_pump_pre_loop_fn },
+    { "g_msg_pump_clean_ctx", &g_msg_pump_clean_ctx_fn },
+    { "g_promise_reject_callback", &g_promise_reject_callback_fn}
+  };
+  base::NativeLibraryLoadError error;
+#if defined(OS_MACOSX)
+  base::FilePath node_dll_path = base::mac::FrameworkBundlePath().Append(base::FilePath::FromUTF16Unsafe(base::GetNativeLibraryName(base::UTF8ToUTF16("libnode"))));
+#else
+  base::FilePath node_dll_path = base::FilePath::FromUTF8Unsafe(base::GetNativeLibraryName("node"));
+#endif
+  base::NativeLibrary node_dll = base::LoadNativeLibrary(node_dll_path, &error);
+  if(!node_dll)
+    LOG_IF(FATAL, true) << "Failed to load node library (error: " << error.ToString() << ")";
+  else {
+    for (size_t i = 0; i < sizeof(kSymbols) / sizeof(kSymbols[0]); ++i) {
+      *(kSymbols[i].fn) = (VoidHookFn)base::GetFunctionPointerFromNativeLibrary(node_dll, kSymbols[i].name);
+      DCHECK(*kSymbols[i].fn) << "Unable to find symbol for "
+                              << kSymbols[i].name;
+    }
+    g_msg_pump_delay_work_fn = (VoidIntHookFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_msg_pump_delay_work");
+    g_node_start_fn = (NodeStartFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_node_start");
+    g_uv_run_fn = (UVRunFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_uv_run");
+    g_set_uv_run_fn = (SetUVRunFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_set_uv_run");
+    g_uv_default_loop_fn = (GetPointerFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_uv_default_loop");
+
+    g_call_tick_callback_fn = (CallTickCallbackFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_call_tick_callback");
+    g_setup_nwnode_fn = (SetupNWNodeFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_setup_nwnode");
+    g_is_node_initialized_fn = (IsNodeInitializedFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_is_node_initialized");
+    g_set_nw_tick_callback_fn = (SetNWTickCallbackFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_set_nw_tick_callback");
+    g_start_nw_instance_fn = (StartNWInstanceFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_start_nw_instance");
+    g_get_node_context_fn = (GetNodeContextFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_get_node_context");
+    g_set_node_context_fn = (SetNodeContextFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_set_node_context");
+    g_get_node_env_fn = (GetNodeEnvFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_get_node_env");
+    g_get_current_env_fn = (GetCurrentEnvironmentFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_get_current_env");
+    g_emit_exit_fn = (EmitExitFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_emit_exit");
+    g_run_at_exit_fn = (RunAtExitFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_run_at_exit");
+#if defined(OS_MACOSX)
+    g_msg_pump_ctor_osx_fn = (VoidPtr4Fn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_msg_pump_ctor_osx");
+    g_nw_uvrun_nowait_fn = (IntVoidFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_nw_uvrun_nowait");
+    g_uv_runloop_once_fn = (IntVoidFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_uv_runloop_once");
+    g_uv_backend_timeout_fn = (IntVoidFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_uv_backend_timeout");
+    g_uv_backend_fd_fn = (IntVoidFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_uv_backend_fd");
+#endif
+  }
+}
+
+void SetMainExtensionId(const std::string& id) {
+  g_extension_id = id;
+}
+
+const std::string& GetMainExtensionId() {
+  return g_extension_id;
 }
 
 } //namespace nw
