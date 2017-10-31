@@ -10,13 +10,7 @@
 //
 // The above copyright notice and this permission notice shall be included in al
 // l copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IM
-// PLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNES
-// S FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-//  OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WH
-// ETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-//  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 
 var argv, fullArgv, dataPath, manifest;
 var v8_util = process.binding('v8_util');
@@ -57,7 +51,8 @@ App.prototype.createShortcut = function(dir) {
   return nw.callStaticMethodSync('App', 'CreateShortcut', [ dir ]);
 }
 
-App.prototype.clearCache = function() {
+App.prototype.clearCache = function() 
+{
   nw.callStaticMethodSync('App', 'ClearCache', [ ]);
 }
 
