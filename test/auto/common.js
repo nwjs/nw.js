@@ -80,7 +80,6 @@ exports.hasIPv6 = Object.keys(ifaces).some(function(name) {
 
 var util = require('util');
 for (var i in util) exports[i] = util[i];
-//for (var i in exports) global[i] = exports[i];
 
 function protoCtrChain(o) {
   var result = [];
