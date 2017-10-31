@@ -102,6 +102,6 @@ Issues are being tracked here on GitHub.
 
 ## Sponsors
 
-The work is being sponsored by:  
+The work is being sponsored by the following Organizations:  
 * [Intel](https://www.intel.com/content/www/us/en/homepage.html)
 * [Gnor Tech](http://gnor.net)
