@@ -101,6 +101,17 @@
 #include "chrome/browser/printing/print_preview_dialog_controller.h"
 #include "content/browser/frame_host/render_frame_host_impl.h"
 
+#include "chrome/browser/extensions/api/desktop_capture/desktop_capture_api.h"
+#include "chrome/browser/media/webrtc/fake_desktop_media_list.h"
+#include "chrome/common/chrome_paths.h"
+#include "chrome/common/chrome_switches.h"
+#include "chrome/test/base/ui_test_utils.h"
+#include "content/public/test/browser_test_utils.h"
+#include "extensions/common/switches.h"
+#include "net/dns/mock_host_resolver.h"
+#include "net/test/embedded_test_server/embedded_test_server.h"
+#include "third_party/webrtc/modules/desktop_capture/desktop_capture_types.h"
+
 #if defined(ENABLE_PLUGINS)
 #include "content/public/browser/plugin_service.h"
 #include "content/public/common/webplugininfo.h"
@@ -1093,3 +1104,180 @@ IN_PROC_BROWSER_TEST_P(NWJSWebViewTest, LocalPDF) {
   }
 }
 
+using content::DesktopMediaID;
+
+namespace {
+
+struct TestFlags {
+  bool expect_screens;
+  bool expect_windows;
+  bool expect_tabs;
+  bool expect_audio;
+  content::DesktopMediaID selected_source;
+  bool cancelled;
+
+  // Following flags are set by FakeDesktopMediaPicker when it's created and
+  // deleted.
+  bool picker_created;
+  bool picker_deleted;
+};
+
+class FakeDesktopMediaPicker : public DesktopMediaPicker {
+ public:
+  explicit FakeDesktopMediaPicker(TestFlags* expectation)
+      : expectation_(expectation),
+        weak_factory_(this) {
+    expectation_->picker_created = true;
+  }
+  ~FakeDesktopMediaPicker() override { expectation_->picker_deleted = true; }
+
+  // DesktopMediaPicker interface.
+  void Show(content::WebContents* web_contents,
+            gfx::NativeWindow context,
+            gfx::NativeWindow parent,
+            const base::string16& app_name,
+            const base::string16& target_name,
+            std::vector<std::unique_ptr<DesktopMediaList>> source_lists,
+            bool request_audio,
+            const DoneCallback& done_callback) override {
+    bool show_screens = false;
+    bool show_windows = false;
+    bool show_tabs = false;
+
+    for (auto& source_list : source_lists) {
+      switch (source_list->GetMediaListType()) {
+        case DesktopMediaID::TYPE_NONE:
+          break;
+        case DesktopMediaID::TYPE_SCREEN:
+          show_screens = true;
+          break;
+        case DesktopMediaID::TYPE_WINDOW:
+          show_windows = true;
+          break;
+        case DesktopMediaID::TYPE_WEB_CONTENTS:
+          show_tabs = true;
+          break;
+      }
+    }
+    EXPECT_EQ(expectation_->expect_screens, show_screens);
+    EXPECT_EQ(expectation_->expect_windows, show_windows);
+    EXPECT_EQ(expectation_->expect_tabs, show_tabs);
+    EXPECT_EQ(expectation_->expect_audio, request_audio);
+
+    if (!expectation_->cancelled) {
+      // Post a task to call the callback asynchronously.
+      base::ThreadTaskRunnerHandle::Get()->PostTask(
+          FROM_HERE, base::BindOnce(&FakeDesktopMediaPicker::CallCallback,
+                                    weak_factory_.GetWeakPtr(), done_callback));
+    } else {
+      // If we expect the dialog to be cancelled then store the callback to
+      // retain reference to the callback handler.
+      done_callback_ = done_callback;
+    }
+  }
+
+ private:
+  void CallCallback(DoneCallback done_callback) {
+    done_callback.Run(expectation_->selected_source);
+  }
+
+  TestFlags* expectation_;
+  DoneCallback done_callback_;
+
+  base::WeakPtrFactory<FakeDesktopMediaPicker> weak_factory_;
+
+  DISALLOW_COPY_AND_ASSIGN(FakeDesktopMediaPicker);
+};
+
+class FakeDesktopMediaPickerFactory :
+    public extensions::DesktopCaptureChooseDesktopMediaFunction::PickerFactory {
+ public:
+  FakeDesktopMediaPickerFactory() {}
+  ~FakeDesktopMediaPickerFactory() override {}
+
+  void SetTestFlags(TestFlags* test_flags, int tests_count) {
+    test_flags_ = test_flags;
+    tests_count_ = tests_count;
+    current_test_ = 0;
+  }
+
+  std::unique_ptr<DesktopMediaPicker> CreatePicker() override {
+    EXPECT_LE(current_test_, tests_count_);
+    if (current_test_ >= tests_count_)
+      return std::unique_ptr<DesktopMediaPicker>();
+    ++current_test_;
+    return std::unique_ptr<DesktopMediaPicker>(
+        new FakeDesktopMediaPicker(test_flags_ + current_test_ - 1));
+  }
+
+  std::unique_ptr<DesktopMediaList> CreateMediaList(
+      DesktopMediaID::Type type) override {
+    EXPECT_LE(current_test_, tests_count_);
+    return std::unique_ptr<DesktopMediaList>(new FakeDesktopMediaList(type));
+  }
+
+ private:
+  TestFlags* test_flags_;
+  int tests_count_;
+  int current_test_;
+
+  DISALLOW_COPY_AND_ASSIGN(FakeDesktopMediaPickerFactory);
+};
+
+class NWDesktopCaptureApiTest : public NWAppTest {
+ public:
+  NWDesktopCaptureApiTest() {
+    extensions::DesktopCaptureChooseDesktopMediaFunction::
+        SetPickerFactoryForTests(&picker_factory_);
+  }
+  ~NWDesktopCaptureApiTest() override {
+    extensions::DesktopCaptureChooseDesktopMediaFunction::
+        SetPickerFactoryForTests(NULL);
+  }
+
+  void SetUpOnMainThread() override {
+    NWAppTest::SetUpOnMainThread();
+    host_resolver()->AddRule("*", "127.0.0.1");
+  }
+
+ protected:
+  GURL GetURLForPath(const std::string& host, const std::string& path) {
+    std::string port = base::UintToString(embedded_test_server()->port());
+    GURL::Replacements replacements;
+    replacements.SetHostStr(host);
+    replacements.SetPortStr(port);
+    return embedded_test_server()->GetURL(path).ReplaceComponents(replacements);
+  }
+
+  FakeDesktopMediaPickerFactory picker_factory_;
+};
+
+}  // namespace
+
+IN_PROC_BROWSER_TEST_F(NWJSDesktopCaptureApiTest, CrossDomain) {
+  TestFlags test_flags[] = {
+      {true, false, false, false,
+       content::DesktopMediaID(content::DesktopMediaID::TYPE_SCREEN,
+                               content::DesktopMediaID::kNullId), false},
+  };
+  picker_factory_.SetTestFlags(test_flags, arraysize(test_flags));
+  base::FilePath test_dir = test_data_dir_.Append(FILE_PATH_LITERAL("platform_apps")).Append(FILE_PATH_LITERAL("6212-crossdomain-screen"));
+  embedded_test_server()->ServeFilesFromDirectory(test_dir);
+  ASSERT_TRUE(embedded_test_server()->Start());
+
+  net::HostPortPair host_and_port = embedded_test_server()->host_port_pair();
+  LoadAndLaunchPlatformApp("6212-crossdomain-screen", "Launched");
+  content::WebContents* web_contents = GetFirstAppWindowWebContents();
+  ASSERT_TRUE(web_contents);
+  ExtensionTestMessageListener listener("Loaded", false);
+  ASSERT_TRUE(content::ExecuteScript(web_contents, "document.getElementById('frame0').src='" +
+                                     embedded_test_server()->GetURL("/remote.html").spec() + "'"));
+  EXPECT_TRUE(listener.WaitUntilSatisfied()) << "'" << listener.message()
+                                             << "' message was not receieved";
+  std::vector<content::RenderFrameHost*> frames = web_contents->GetAllFrames();
+  ASSERT_TRUE(frames.size() == 2);
+  content::ExecuteScriptAndGetValue(frames[1], "document.getElementById('testbtn').click()");
+  ExtensionTestMessageListener pass_listener("Pass", false);
+  EXPECT_TRUE(pass_listener.WaitUntilSatisfied()) << "'" << pass_listener.message()
+                                             << "' message was not receieved";
+}
