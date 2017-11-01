@@ -1,3 +1,9 @@
+0.26.3 / 11-01-2017
+===================
+- Update Node.js to [v9.0.0](https://nodejs.org/en/blog/release/v9.0.0/)
+- Fix: Cannot screenshare from within iframe Cross domain. InvalidStateError [(#6212)](https://github.com/nwjs/nw.js/issues/6212)
+- Fix: Windows component build [(#6172)](https://github.com/nwjs/nw.js/issues/6172)
+
 0.26.2 / 10-28-2017
 ===================
 - Update Chromium to [62.0.3202.75](https://chromereleases.googleblog.com/2017/10/stable-channel-update-for-desktop_26.html)
