@@ -5,24 +5,24 @@
 
 ## Supported Codecs in Prebuilt NW.js Binary
 
-As NW.js is based on Chromium, the media components are essentially the same.
+As NW.js is based on Chromium, the media components are essentially the same. 
 
 In the pre-built NW.js, following codecs are supported:
 
 ```none
-theora,vorbis,vp8,pcm_u8,pcm_s16le,pcm_s24le,pcm_f32le,pcm_s16be,pcm_s24be
+theora, vorbis, vp8, pcm_u8, pcm_s16le, pcm_s24le, pcm_f32le, pcm_s16be, pcm_s24be, mp3 (v0.22.1+)
 ```
 
 and following demuxers are supported:
 
 ```none
-ogg,matroska,wav
+ogg, matroska, wav
 ```
 
 ## Enable Proprietary Codecs in NW.js
 
 !!! warning "License and Patent Fee"
-    Using MP3 and H.264 codecs requires you to pay attention to the patent royalties and the license of the source code. Consult a lawyer if you do not understand the licensing constraints and using patented media formats in your application. For more information about the license of the source code, check [here](https://chromium.googlesource.com/chromium/third_party/ffmpeg.git/+/master/CREDITS.chromium)
+    Using the H.264 codec requires you to pay attention to the patent royalties and the license of the source code. Consult a lawyer if you do not understand the licensing constraints and using patented media formats in your application. For more information about the license of the source code, check [here](https://chromium.googlesource.com/chromium/third_party/ffmpeg.git/+/master/CREDITS.chromium).
 
 !!! warning "Warning"
     If you do **NOT** have the license, using this tip below or moving to other solutions does **NOT** make you eligible to redistribute the codecs.
