@@ -1224,13 +1224,13 @@ class FakeDesktopMediaPickerFactory :
   DISALLOW_COPY_AND_ASSIGN(FakeDesktopMediaPickerFactory);
 };
 
-class NWDesktopCaptureApiTest : public NWAppTest {
+class NWJSDesktopCaptureApiTest : public NWAppTest {
  public:
-  NWDesktopCaptureApiTest() {
+  NWJSDesktopCaptureApiTest() {
     extensions::DesktopCaptureChooseDesktopMediaFunction::
         SetPickerFactoryForTests(&picker_factory_);
   }
-  ~NWDesktopCaptureApiTest() override {
+  ~NWJSDesktopCaptureApiTest() override {
     extensions::DesktopCaptureChooseDesktopMediaFunction::
         SetPickerFactoryForTests(NULL);
   }
