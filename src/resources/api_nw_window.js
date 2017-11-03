@@ -493,7 +493,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
 
     NWWindow.prototype.print = function(option) {
       if (!option) {
-        option = {'autoprint': false};
+        option = {'autoprint': true};
       }
       var _option = JSON.parse(JSON.stringify(option));
       if (option.pdf_path)
