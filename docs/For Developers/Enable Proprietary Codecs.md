@@ -5,19 +5,19 @@
 
 ## Supported Codecs in Prebuilt NW.js Binary
 
-As NW.js is based on Chromium, the media components are essentially the same. 
+As NW.js is based on Chromium, the media components are essentially the same. In the pre-built NW.js, the following codecs are supported:
 
-In the pre-built NW.js, following codecs are supported:
+    - theora
+    - vorbis
+    - vp8 & vp9
+    - pcm_u8, pcm_s16le, pcm_s24le, pcm_f32le, pcm_s16be & pcm_s24be
+    - mp3 (v0.22.1+)
 
-```none
-theora, vorbis, vp8, pcm_u8, pcm_s16le, pcm_s24le, pcm_f32le, pcm_s16be, pcm_s24be, mp3 (v0.22.1+)
-```
+... as well as these demuxers:
 
-and following demuxers are supported:
-
-```none
-ogg, matroska, wav
-```
+    - ogg
+    - matroska
+    - wav
 
 ## Enable Proprietary Codecs in NW.js
 
