@@ -82,6 +82,7 @@ class NW_EXPORT Package {
   std::string package_string() { return package_string_; }
 
   std::string cached_error_content() { return cached_error_content_; }
+  base::ScopedTempDir& temp_dir() { return scoped_temp_dir_; }
 
  private:
   bool InitFromPath(const base::FilePath&);

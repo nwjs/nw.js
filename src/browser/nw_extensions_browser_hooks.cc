@@ -272,6 +272,11 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
 
   if (NWContentVerifierDelegate::GetDefaultMode() == ContentVerifierDelegate::ENFORCE_STRICT)
     manifest->SetBoolean(manifest_keys::kNWJSContentVerifyFlag, true);
+
+  if (package->temp_dir().IsValid()) {
+    // need to remove the dir in renderer process
+    manifest->SetString("nw-temp-dir", package->temp_dir().GetPath().AsUTF8Unsafe());
+  }
 }
 
 void CalcNewWinParams(content::WebContents* new_contents, void* params,
