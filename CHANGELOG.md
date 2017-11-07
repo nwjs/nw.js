@@ -1,3 +1,12 @@
+0.26.4 / 11-07-2017
+===================
+- Update Chromium to [62.0.3202.89](https://chromereleases.googleblog.com/2017/11/stable-channel-update-for-desktop.html)
+- Allow inject script into main world of webview [(#6229)](https://github.com/nwjs/nw.js/issues/6229)
+- Fix: Frameless transparent window is maximizing/overflowing outside window limits [(#6248)](https://github.com/nwjs/nw.js/issues/6248)
+- Fix: NW.js loading files does not seem to provide file's MIME type [(#6106)](https://github.com/nwjs/nw.js/issues/6106)
+- Fix: Empty temp directory not properly deleted [(#5208)](https://github.com/nwjs/nw.js/issues/5208)
+- Fix: Crash when opening some web page [(#6247)](https://github.com/nwjs/nw.js/issues/6247)
+
 0.26.3 / 11-01-2017
 ===================
 - Update Node.js to [v9.0.0](https://nodejs.org/en/blog/release/v9.0.0/)
