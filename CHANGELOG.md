@@ -1,3 +1,8 @@
+0.26.5 / 11-09-2017
+===================
+- Update Node.js to [v9.1.0](https://nodejs.org/en/blog/release/v9.1.0/)
+- Allow inject script into main world of webview [(#6229)](https://github.com/nwjs/nw.js/issues/6229)
+
 0.26.4 / 11-07-2017
 ===================
 - Update Chromium to [62.0.3202.89](https://chromereleases.googleblog.com/2017/11/stable-channel-update-for-desktop.html)
