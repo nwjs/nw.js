@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello World!</title>
+    <script>
+      var dataString = "Test short string";
+      var nodeCrypto = require('crypto');
+
+      setTimeout(function(){
+        var password = "Example123456789";
+        var salt = nodeCrypto.randomBytes(32);
+        var iv = nodeCrypto.randomBytes(16);
+        var AESKey = nodeCrypto.pbkdf2Sync(Buffer.from(password), salt, 4096, 32, 'sha256');
+        var AESCipher = nodeCrypto.createCipheriv('aes256', AESKey, iv);
+        var encoded = AESCipher.update(dataString, 'utf8', 'base64');
+        encoded += AESCipher.final('base64');
+        console.log(encoded);
+        document.getElementById('result').innerHTML = encoded;
+    }, 500);
+    </script>
+  </head>
+  <body>
+    <h1 id='result'>waiting for result</h1>
+  </body>
+</html>
