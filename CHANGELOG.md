@@ -1,3 +1,10 @@
+0.26.6 / 11-14-2017
+===================
+- Update Chromium to [62.0.3202.94](https://chromereleases.googleblog.com/2017/11/stable-channel-update-for-desktop_13.html)
+- Fix: nw-gyp rebuild is not working on linux [(#5971)](https://github.com/nwjs/nw.js/issues/5971)
+- Fix: transparent feature regression in some win7 system [(#6265)](https://github.com/nwjs/nw.js/issues/6265)
+- Fix: transparent feature in some win10 system [(#6275)](https://github.com/nwjs/nw.js/issues/6275)
+
 0.26.5 / 11-09-2017
 ===================
 - Update Node.js to [v9.1.0](https://nodejs.org/en/blog/release/v9.1.0/)
