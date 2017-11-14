@@ -290,38 +290,30 @@ def generate_target_headers(platform_name, arch, version):
     target = {}
     target['output'] = ''
     target['compress'] = None
-    if platform_name == 'osx':
-        target['input'] = []
-        # here , call make-nw-headers.py to generate nw headers
-        make_nw_header = os.path.join(os.path.dirname(__file__), \
-                'make-nw-headers.py')
-        print make_nw_header
-        res = call(['python', make_nw_header])
-        if res == 0:
-            print 'nw-headers generated'
-            nw_headers_name = 'nw-headers-v' + version + '.tar.gz'
-            nw_headers_path = os.path.join(os.path.dirname(__file__), \
-                    os.pardir, 'tmp', nw_headers_name)
-            if os.path.isfile(os.path.join(binaries_location, nw_headers_name)):
-                os.remove(os.path.join(binaries_location, nw_headers_name))
+    target['input'] = []
+    # here , call make-nw-headers.py to generate nw headers
+    make_nw_header = os.path.join(os.path.dirname(__file__), \
+                                  'make-nw-headers.py')
+    print make_nw_header
+    res = call(['python', make_nw_header])
+    if res == 0:
+        print 'nw-headers generated'
+        nw_headers_name = 'nw-headers-v' + version + '.tar.gz'
+        nw_headers_path = os.path.join(os.path.dirname(__file__), \
+                                       os.pardir, 'tmp', nw_headers_name)
+        if os.path.isfile(os.path.join(binaries_location, nw_headers_name)):
+            os.remove(os.path.join(binaries_location, nw_headers_name))
 
-            f = open(nw_headers_path, 'rb')
-            checksum_file = open(os.path.join(binaries_location, 'SHASUMS256.txt'), 'w')
-            with f, checksum_file:
-                checksum_file.write('%s %s' % (sha256(f.read()).hexdigest(), nw_headers_name))
-            shutil.move(nw_headers_path, binaries_location)
-            target['input'].append(nw_headers_name)
-            target['input'].append('SHASUMS256.txt')
-        else:
-            #TODO, handle err
-            print 'nw-headers generate failed'
-    elif platform_name == 'win':
-        target['input'] = []
-    elif platform_name == 'linux':
-        target['input'] = []
+        f = open(nw_headers_path, 'rb')
+        checksum_file = open(os.path.join(binaries_location, 'SHASUMS256.txt'), 'w')
+        with f, checksum_file:
+            checksum_file.write('%s %s' % (sha256(f.read()).hexdigest(), nw_headers_name))
+        shutil.move(nw_headers_path, binaries_location)
+        target['input'].append(nw_headers_name)
+        target['input'].append('SHASUMS256.txt')
     else:
-        print 'Unsupported platform: ' + platform_name
-        exit(-1)
+        #TODO, handle err
+        print 'nw-headers generate failed'
     return target
 
 def generate_target_empty(platform_name, arch, version):
