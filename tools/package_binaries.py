@@ -295,7 +295,7 @@ def generate_target_headers(platform_name, arch, version):
     make_nw_header = os.path.join(os.path.dirname(__file__), \
                                   'make-nw-headers.py')
     print make_nw_header
-    res = call(['python', make_nw_header])
+    res = call(['python', make_nw_header, '-p', binaries_location, '-n', platform_name])
     if res == 0:
         print 'nw-headers generated'
         nw_headers_name = 'nw-headers-v' + version + '.tar.gz'

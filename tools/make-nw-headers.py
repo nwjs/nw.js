@@ -7,6 +7,15 @@ import getnwversion
 import shutil
 import distutils.core
 import re
+import argparse
+
+parser = argparse.ArgumentParser(description='Package nw binaries.')
+parser.add_argument('-p','--path', help='Where to find the binaries, like out/Release', required=False)
+parser.add_argument('-n','--name', help='platform name.', required=False)
+args = parser.parse_args()
+
+binaries_location = args.path
+platform_name = args.name
 
 def update_uvh(tmp_dir, header_files):
   for file in header_files:
@@ -96,3 +105,12 @@ with tarfile.open(tarpath, 'w:gz') as tar:
   tar.add(os.path.join(tmp_dir, 'node'), arcname='node')
 
 print 'compress end'
+
+#copy over the nw.lib files so building native modules locally can work later in tests
+
+if platform_name == 'win':
+  release_dir = os.path.join(tmp_dir, 'node', 'Release')
+  if not os.path.exists(release_dir):
+    os.mkdir(release_dir)
+  shutil.copy(os.path.join(binaries_location, 'nw.lib'), release_dir)
+  shutil.copy(os.path.join(binaries_location, 'node.lib'), release_dir)

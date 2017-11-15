@@ -69,17 +69,26 @@ else:
 
 nw_gyp_path = find_executable('nw-gyp')
 npm_path = find_executable('npm')
+npm_cmdline = [npm_path, 'install']
+
+if sys.platform in ('win32', 'cygwin'):
+    nw_gyp_path = os.path.join(os.path.dirname(nw_gyp_path),
+                               'node_modules', 'nw-gyp', 'bin', 'nw-gyp.js')
+    npm_cmdline = [npm_path, 'install', '--msvs_version=2015']
 
 print "nw_gyp: ", nw_gyp_path
 print "npm_path: ", npm_path
 print "header path: ", header_path
+print "command line: ", npm_cmdline
 
 npm_env = {'npm_config_nodedir': header_path, 'npm_config_target': nw_version,
            'npm_config_arch': arch, 'npm_config_target_arch': arch,
            'npm_config_runtime': 'node-webkit', 'npm_config_build_from_source': "true",
            'npm_config_node_gyp': nw_gyp_path, 'PATH': os.getenv('PATH')}
 
-proc = Popen([npm_path, 'install'], stdout=PIPE, stderr=PIPE, env=npm_env)
+os.environ.update(npm_env)
+
+proc = Popen(npm_cmdline, stdout=PIPE, stderr=PIPE, env=os.environ)
 out, err = proc.communicate()
 print out
 print err
