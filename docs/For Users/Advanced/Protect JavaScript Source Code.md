@@ -41,6 +41,10 @@ xhr.onload = () => {
 !!! note
     The compiled code is executed in [Browser Context](JavaScript Contexts in NW.js.md#browser-context). You can use any Web APIs (such as DOM) and [access NW.js API and Node API](JavaScript Contexts in NW.js.md#access-nodejs-and-nwjs-api-in-browser-context) like other scripts running in browser context.
 
+### Use in Web Workers
+
+A function `importNWBin(ArrayBuffer)` is introduced in worker context. The binary file can be read to array buffer in the main thread, posted to worker and then executed there with the new function.
+
 ### Known Issues
 
 Before 0.22, the compiled code runs **slower than normal JS**: ~30% performance according to v8bench. Other non-compiled JS source code will not be affected. In 0.22.0-beta1, this issue has been fixed. Please check our blog post: https://nwjs.io/blog/js-src-protect-perf/
