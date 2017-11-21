@@ -44,6 +44,10 @@ and add 'partition="trusted"' attribute to the webview tag.
 
 To enable Node.js support in WebView, add the `allownw` attribute to the webview tag. Then Node.js will be turned on, no matter it loads local file or remote site. Use this feature with caution because webview is normally supposed to load untrusted contents.
 
+### executeScript in main world
+
+The [executeScript function in Chrome](https://developer.chrome.com/apps/tags/webview#method-executeScript) lets you inject JS code into webview, but in a isolated world. To access JS objects in the target DOM context, you can inject code into the main world context instead. Simply adding `{mainWorld: true}` to `InjectDetails` typed parameter of the function.
+
 ### Cookies support in webview
 
 Webview has 'getCookieStoreId()' function which returns storeId which can be used in [chrome.cookies](https://developer.chrome.com/extensions/cookies) API.
