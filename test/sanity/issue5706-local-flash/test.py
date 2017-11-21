@@ -60,4 +60,5 @@ pluginsrc = os.path.join(testdir, "../../data/PepperFlash/linux_%s" % nw_arch())
 print "copying %s to %s" % (pluginsrc, plugindir)
 copytree(pluginsrc, plugindir)
 
-subprocess.check_call([os.path.join(builddir, 'browser_tests'), '--gtest_filter=*LocalFlash*', '--disable-gpu'])
+subprocess.check_call([os.path.join(builddir, 'browser_tests'), '--gtest_filter=*LocalFlash*', '--disable-gpu',
+                       '--override-plugin-power-saver-for-testing=never'])

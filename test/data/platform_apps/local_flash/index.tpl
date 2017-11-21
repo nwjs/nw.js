@@ -8,7 +8,7 @@ function inject() {
 chrome.test.sendMessage("Launched");
   var child = document.createElement('div');
   // Set data="foo" to make this content same-origin (so it's not throttled).
-  child.innerHTML = '<embed id="plugin" src="<swf_path>" style="max-width: 490px; max-height: 400px;" type="application/x-shockwave-flash" />';
+  child.innerHTML = '<embed id="plugin" src="<swf_path>" style="min-width: 490px; min-height: 400px;" type="application/x-shockwave-flash" />';
   document.getElementById('content').appendChild(child);
   // Plugins are loaded synchronously during layout, so the plugin has either
   // been loaded or blocked at this point.
