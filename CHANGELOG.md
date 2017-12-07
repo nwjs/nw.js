@@ -1,3 +1,19 @@
+0.27.0 / 12-07-2017
+===================
+- Update Chromium to [63.0.3239.84](https://chromereleases.googleblog.com/2017/12/stable-channel-update-for-desktop.html)
+- Update Node.js to [v9.2.0](https://nodejs.org/en/blog/release/v9.2.0/)
+- support loading compiled JS binary in Web Worker [(#6203)](https://github.com/nwjs/nw.js/issues/6203)
+- support options for injecting in main or isolated world of webview ([#6299](https://github.com/nwjs/nw.js/issues/6299), [#6229](https://github.com/nwjs/nw.js/issues/6229))
+- support disabling Flash plugin via chrome.contentSettings API [(#6216)](https://github.com/nwjs/nw.js/issues/6216)
+- Fix: crashes with some native modules
+- Fix: stale process with '--in-process-gpu' and Steam client [(#6059)](https://github.com/nwjs/nw.js/issues/6059)
+- Fix: crashes when the specific PDF is loaded in the webview [(#6293)](https://github.com/nwjs/nw.js/issues/6293)
+- Fix: process exit when native node module calls node::AtExit() [(#6047)](https://github.com/nwjs/nw.js/issues/6047)
+- Remove: migrate indexdb from nw12
+- Support compiling ES6 module source with nwjc '--nw-module'; Partly fix [#6303](https://github.com/nwjs/nw.js/issues/6303)
+- [docs] executeScript in main world of webview
+- [docs] use NW JS binary in workers
+
 0.26.6 / 11-14-2017
 ===================
 - Update Chromium to [62.0.3202.94](https://chromereleases.googleblog.com/2017/11/stable-channel-update-for-desktop_13.html)
