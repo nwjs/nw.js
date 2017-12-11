@@ -96,9 +96,11 @@ our mailing list (use English only). Subscribe via [nwjs-general+subscribe@googl
 
 Issues are being tracked here on GitHub.
 
+The source code for NW.js and the daily development spans across multiple repositories in this organization. This repository is for the purpose of issue tracking, landing page and part of the source code.
+
 ## License
 
-`node-webkit`'s code in this repo uses the MIT license, see our `LICENSE` file. To redistribute the binary, see [How to package and distribute your apps](https://github.com/nwjs/nw.js/wiki/How-to-package-and-distribute-your-apps)
+`NW.js`'s code in this repo uses the MIT license, see our `LICENSE` file. To redistribute the binary, see [How to package and distribute your apps](https://github.com/nwjs/nw.js/wiki/How-to-package-and-distribute-your-apps)
 
 ## Sponsors
 
