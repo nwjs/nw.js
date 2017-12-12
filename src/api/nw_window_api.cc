@@ -91,7 +91,7 @@ static void SetDeskopEnvironment() {
 namespace {
 
 printing::PrinterList EnumeratePrintersAsync() {
-  base::ThreadRestrictions::AssertIOAllowed();
+  base::AssertBlockingAllowed();
 
   scoped_refptr<printing::PrintBackend> print_backend(
         printing::PrintBackend::CreateInstance(nullptr));
@@ -407,7 +407,7 @@ static base::win::ScopedHICON createBadgeIcon(const HWND hWnd, const TCHAR *valu
   canvas.DrawStringRectWithFlags(value, gfx::FontList(font), SK_ColorWHITE, gfx::Rect(sizeX, fontSize + yMargin + 1), gfx::Canvas::TEXT_ALIGN_CENTER);
 
   // return the canvas as windows native icon handle
-  return std::move(IconUtil::CreateHICONFromSkBitmap(canvas.GetBitmap()));
+  return IconUtil::CreateHICONFromSkBitmap(canvas.GetBitmap());
 }
 #endif
 
@@ -417,7 +417,7 @@ bool NwCurrentWindowInternalSetBadgeLabelFunction::RunAsync() {
   std::string badge;
   EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &badge));
 #if defined(OS_WIN)
-  base::win::ScopedComPtr<ITaskbarList3> taskbar;
+  Microsoft::WRL::ComPtr<ITaskbarList3> taskbar;
   HRESULT result = ::CoCreateInstance(CLSID_TaskbarList, nullptr,
     CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&taskbar));
 
@@ -500,7 +500,7 @@ bool NwCurrentWindowInternalSetProgressBarFunction::RunAsync() {
   double progress;
   EXTENSION_FUNCTION_VALIDATE(args_->GetDouble(0, &progress));
 #if defined(OS_WIN)
-  base::win::ScopedComPtr<ITaskbarList3> taskbar;
+  Microsoft::WRL::ComPtr<ITaskbarList3> taskbar;
   HRESULT result = ::CoCreateInstance(CLSID_TaskbarList, nullptr,
     CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&taskbar));
 
@@ -716,7 +716,7 @@ bool NwCurrentWindowInternalSetShowInTaskbarFunction::RunAsync() {
                 ui::GetHiddenWindow());
   }
 
-  base::win::ScopedComPtr<ITaskbarList> taskbar;
+  Microsoft::WRL::ComPtr<ITaskbarList3> taskbar;
   HRESULT result = ::CoCreateInstance(CLSID_TaskbarList, nullptr,
                                           CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&taskbar));
   if (FAILED(result)) {

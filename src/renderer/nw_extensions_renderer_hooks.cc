@@ -14,7 +14,7 @@
 #include "ui/base/resource/resource_bundle.h"
 
 // content
-#include "content/public/child/v8_value_converter.h"
+#include "content/public/renderer/v8_value_converter.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/renderer/render_view.h"
 #include "content/renderer/render_view_impl.h"
@@ -36,7 +36,7 @@
 #include "third_party/WebKit/public/web/WebLocalFrame.h"
 #include "third_party/WebKit/public/web/WebScriptSource.h"
 #include "third_party/WebKit/public/web/WebView.h"
-#include "third_party/WebKit/Source/platform/ScriptForbiddenScope.h"
+#include "third_party/WebKit/Source/platform/bindings/ScriptForbiddenScope.h"
 #include "third_party/WebKit/public/web/WebKit.h"
 
 #include "third_party/node-nw/src/node_webkit.h"
@@ -483,7 +483,7 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
   if (!rv)
     return;
 
-  ui::ResourceBundle* resource_bundle = &ResourceBundle::GetSharedInstance();
+  ui::ResourceBundle* resource_bundle = &ui::ResourceBundle::GetSharedInstance();
   base::StringPiece resource =
       resource_bundle->GetRawDataResource(IDR_NW_PRE13_SHIM_JS);
   if (resource.empty())

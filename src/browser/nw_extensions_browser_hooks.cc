@@ -249,9 +249,9 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
       std::string key = "icons." + base::IntToString(width);
       manifest->SetString(key, icon_path);
 #if defined(OS_WIN)
-      SetWindowHIcon(std::move(IconUtil::CreateHICONFromSkBitmapSizedTo(*app_icon.AsImageSkia().bitmap(),
+      SetWindowHIcon((IconUtil::CreateHICONFromSkBitmapSizedTo(*app_icon.AsImageSkia().bitmap(),
                       GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON))));
-      SetAppHIcon(std::move(IconUtil::CreateHICONFromSkBitmapSizedTo(*app_icon.AsImageSkia().bitmap(),
+      SetAppHIcon((IconUtil::CreateHICONFromSkBitmapSizedTo(*app_icon.AsImageSkia().bitmap(),
                       GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON))));
 #endif
     }
