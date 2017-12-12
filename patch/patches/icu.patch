@@ -1,0 +1,18 @@
+diff --git a/icu.gyp b/icu.gyp
+index 374f6293..6e1f1de1 100644
+--- icu.gyp
++++ icu.gyp
+@@ -41,6 +41,13 @@
+         'defines': [
+           'UCHAR_TYPE=wchar_t',
+         ],
++        'msvs_settings': {
++          'VCCLCompilerTool': {
++            'AdditionalOptions': [
++              '/utf-8',
++            ],
++          },
++        },
+ 	'cflags': [ '/utf-8' ],
+       },{
+         'defines': [

@@ -52,6 +52,7 @@
 #include "net/cert/x509_certificate.h"
 #include "net/cert/test_root_certs.h"
 #include "net/url_request/url_request_context.h"
+#include "net/url_request/url_request_context_getter.h"
 #include "sql/connection.h"
 #include "sql/meta_table.h"
 #include "sql/transaction.h"
@@ -176,19 +177,29 @@ bool GetDirUserData(base::FilePath *user_data_dir) {
   return PathService::Get(chrome::DIR_USER_DATA, user_data_dir);
 }
 
-void SetTrustAnchorsOnIOThread(IOThread* io_thread, const net::CertificateList& trust_anchors) {
+void SetTrustAnchorsOnIOThread(const scoped_refptr<net::URLRequestContextGetter>& url_request_getter,
+                               IOThread* io_thread,
+                               const net::CertificateList& trust_anchors) {
   PolicyCertVerifier* verifier =
     (PolicyCertVerifier*)io_thread->globals()->system_request_context->cert_verifier();
   verifier->SetTrustAnchors(trust_anchors);
+
+  net::URLRequestContext* url_request_context =
+    url_request_getter->GetURLRequestContext();
+  PolicyCertVerifier* verifier2 = (PolicyCertVerifier*)url_request_context->cert_verifier();
+  verifier2->SetTrustAnchors(trust_anchors);
 }
 
 void SetTrustAnchors(net::CertificateList& trust_anchors) {
   // LOG(INFO)
   //   << "Added " << trust_anchors.size() << " certificates to trust anchors.";
+  Profile* profile = ProfileManager::GetActiveUserProfile();
+  net::URLRequestContextGetter* url_request_context_getter = profile->GetRequestContext();
   content::BrowserThread::PostTask(
     content::BrowserThread::IO,
     FROM_HERE,
-    base::Bind(SetTrustAnchorsOnIOThread, g_browser_process->io_thread(), trust_anchors));
+    base::Bind(SetTrustAnchorsOnIOThread, base::WrapRefCounted(url_request_context_getter),
+               g_browser_process->io_thread(), trust_anchors));
 }
 
 void SetAppIcon(gfx::Image &icon) {

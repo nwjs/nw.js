@@ -6,6 +6,10 @@
 
 #include "content/common/content_export.h"
 
+#if defined(OS_WIN)
+#include <windows.h>
+#endif
+
 class GURL;
 
 namespace base {
