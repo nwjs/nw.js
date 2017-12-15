@@ -1,3 +1,12 @@
+0.27.2 / 12-15-2017
+===================
+- Update Chromium to [63.0.3239.108](https://chromereleases.googleblog.com/2017/12/stable-channel-update-for-desktop_14.html)
+- Update Node.js to [v9.3.0](https://nodejs.org/en/blog/release/v9.3.0/)
+- Fix: extension with "all_frames": true option triggers false assertion [(#6324)](https://github.com/nwjs/nw.js/issues/6324)
+- Fix: Webview with content scripts crashes on load non .swf object [(#6323)](https://github.com/nwjs/nw.js/issues/6323)
+- Fix: user agent string handling for main resource of the page [(#6321)](https://github.com/nwjs/nw.js/issues/6321)
+- Fix: Find in webview page freeze by enabling GuestViewCrossProcessFrames [(#6326)](https://github.com/nwjs/nw.js/issues/6326)
+
 0.27.1 / 12-11-2017
 ===================
 - Update Node.js to [v9.2.1](https://nodejs.org/en/blog/release/v9.2.1/)
