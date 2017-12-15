@@ -69,8 +69,27 @@ assert not os.path.exists(user_data_dir), "'%s' should not be existed before tes
 p = subprocess.Popen([exe])
 time.sleep(10)
 
+user_data_dir_exists = False
+check_file_exists = False
+
+timeout = 30
+while timeout > 0:
+    if os.path.exists(user_data_dir):
+        user_data_dir_exists = True
+        break
+    time.sleep(1)
+    timeout = timeout - 1
+
+if user_data_dir_exists:
+    timeout = 30
+    while timeout > 0:
+        if os.path.exists(check_file):
+            check_file_exists = True
+            break
+        time.sleep(1)
+        timeout = timeout - 1
 try:
-    assert os.path.exists(user_data_dir)
-    assert os.path.exists(check_file)
+    assert user_data_dir_exists
+    assert check_file_exists
 finally:
     p.terminate()
