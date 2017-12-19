@@ -144,8 +144,11 @@ void NWContentVerifierDelegate::VerifyFailed(
       ReportLoadError(extension->path(), "Extension file corrupted: " + relative_path.AsUTF8Unsafe(),
                       system->extension_service()->profile(), true);
     system->extension_service()->DisableExtension(extension_id,
-                                                  Extension::DISABLE_CORRUPTED);
+                                                  disable_reason::DISABLE_CORRUPTED);
   }
+}
+
+void NWContentVerifierDelegate::Shutdown() {
 }
 
 }  // namespace extensions

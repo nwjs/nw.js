@@ -1,0 +1,28 @@
+<html>
+<head>
+</head>
+<body>
+<script>
+  if (chrome.test) {
+    chrome.test.sendMessage("Launched");
+  }
+  function test0() {
+    nw.Window.get().print({pdf_path: 'output.pdf', footerString: 'nwtestfooter'});
+    webview = document.getElementById('output');
+    webview.src = 'output.pdf';
+    webview.addEventListener('contentload', function() {
+      console.log("done");
+      if (chrome.test) {
+        chrome.test.sendMessage("Loaded");
+      }
+    });
+  }
+  function test() {
+    setTimeout(test0, 1000);
+  }
+</script>
+<p>hello world</p>
+<button id="testbtn" onclick="test()">test</button>
+<webview id="output" partition="trusted" autosize="on" minwidth="576" minheight="432" style="width:640px; height:480px"></webview>
+</body>
+</html>

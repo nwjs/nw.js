@@ -2,7 +2,6 @@ var Binding = require('binding').Binding;
 var forEach = require('utils').forEach;
 var nwNative = requireNative('nw_natives');
 var sendRequest = require('sendRequest');
-var contextMenuNatives = requireNative('context_menus');
 var messagingNatives = requireNative('messaging_natives');
 var Event = require('event_bindings').Event;
 var util = nw.require('util');
@@ -12,9 +11,12 @@ var trayEvents = { objs: {}, clickEvent: {} };
 
 trayEvents.clickEvent = new Event("NWObjectTrayClick");
 trayEvents.clickEvent.addListener(function(id) {
-  if (!trayEvents.objs[id])
+  var tray = trayEvents.objs[id];
+  if (!tray)
     return;
-  trayEvents.objs[id].emit('click');
+  var args = Array.prototype.slice.call(arguments, 1);
+  args.unshift('click');
+  tray.emit.apply(tray, args);
 });
 
 function Tray(option) {
@@ -69,7 +71,7 @@ function Tray(option) {
     option.menu = option.menu.id;
   }
   
-  var id = contextMenuNatives.GetNextContextMenuId();
+  var id = nw.Obj.allocateId();
   this.id = id;
   privates(this).option = option;
 

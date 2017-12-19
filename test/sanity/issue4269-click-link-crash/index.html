@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Click Link Crash</title>
+</head>
+<body>
+<script>
+var newwin;
+function test() {
+nw.Window.open('inspect.html', {}, function(win) {
+  win.on('loaded', function() {
+    newwin = win;
+    document.getElementById('progress').innerHTML = 'loaded';
+  });
+})
+}
+
+function opendev() {
+  newwin.showDevTools();
+}
+
+</script>
+<button id='test' onclick="test()">test</button>
+<button id='opendev' onclick="opendev()">opendev</button>
+<div id='progress'></div>
+</body>
+</html>

@@ -31,6 +31,8 @@ Base::Base(int id,
 	   const std::string& extension_id)
     : extension_id_(extension_id),
       id_(id),
+      delay_destruction_(false),
+      pending_destruction_(false),
       object_manager_(object_manager) {
 }
 

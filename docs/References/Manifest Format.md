@@ -11,7 +11,7 @@ Following is a minimal manifest:
 ```json
 {
   "main": "index.html",
-  "name": "nw-demo",
+  "name": "nw-demo"
 }
 ```
 
@@ -26,9 +26,9 @@ Each package must provide all the following fields in its package descriptor fil
 
 ### main
 
-* `{String}` which page should be opened when NW.js starts.
+* `{String}` which HTML page should be opened or which JavaScript file should be executed when NW.js starts.
 
-You can specify a URL here. You can also specify just a filename (such as `index.html`) or a path (relative to the directory where your `package.json` resides).
+You can specify a URL here. You can also specify just a filename (such as `index.html` or `script.js`) or a path (relative to the directory where your `package.json` resides).
 
 ### name
 
@@ -40,6 +40,10 @@ You can specify a URL here. You can also specify just a filename (such as `i
 
 Following fields control which features NW.js should provide and how NW.js should open the main window.
 
+### product_string
+
+* `{String}` Use it to [rename the Helper application under macOS](http://docs.nwjs.io/en/latest/For%20Users/Package%20and%20Distribute/#mac-os-x).
+
 ### nodejs
 
 * `{Boolean}` set `nodejs` to false will disable Node support in NW.js.
@@ -47,6 +51,10 @@ Following fields control which features NW.js should provide and how NW.js shoul
 ### node-main
 
 * `{String}` Specify the path to a node.js script file. And it will be executed on startup in Node context before the first DOM window load.
+
+### domain
+
+* `{String}` Specify the host in the chrome-extension:// protocol URL used for the application. The web engine will share the same cookies between your application and the website under the same domain.
 
 ### single-instance
 
@@ -110,6 +118,19 @@ Here's the basic syntax:
 It will be useful if you want to distribute the app with some custom chromium args. For example, if you want to disable the GPU accelerated video display, just add `"chromium-args" : "--disable-accelerated-video"`. If you want to add multiple arguments, separate each two arguments by space. This field can take a number of flags in one argument as well, via enclosing them in single quotation marks.
 
 See [Command Line Options](Command Line Options.md) for more information.
+
+### crash_report_url
+
+* `{String}` URL of the crash report server
+
+Once the app crashed, the crash dump file and information about the runtime environment will be sent to the crash server. It's sent in the same way as in Chromium browser: a HTTP POST request with `multipart/form-data` as the content type. In theory, any breakpad/crashpad server could handle the request, since breakpad/crashpad work in the same way in NW as they do in Chromium. See [a very simple server](https://github.com/nwjs/nw.js/blob/nw21/test/sanity/crash-dump-report/crash_server.py) used in our test case, or [simple-breakpad-server](https://github.com/acrisci/simple-breakpad-server).
+
+The request contains the following field at least:
+
+* `prod` - the `name` field in the manifest of your application
+* `ver` - the `version` field in the manifest of your application
+* `upload_file_minidump` - the binary contents of the minidump file
+* `switch-n` - the command line switches of the crashing process. There are multiple fields for each switch where `n` is a number starting from 1.
 
 ### js-flags
 

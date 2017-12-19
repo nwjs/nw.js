@@ -1,0 +1,56 @@
+body {
+	background-color: #222;
+	font-family: Arial, "Helvetica Neue";
+	margin: 0;
+	padding: 0;
+}
+
+ul {
+    list-style: none;
+}
+
+#headbar {
+    position: fixed;
+    display: block;
+    top: 0px;
+    border-bottom: 1px solid red;
+    height: 100px;
+    width: 100%;
+    z-index: 15;
+    background-color: #222;
+}
+
+#file-template {
+    float: left;
+}
+
+.fname {
+    color: red;
+}
+
+#wbv {
+	width: 190px;
+	height: 100px;
+	display: block;
+}
+
+.wbv {
+    display: block;
+    height: 100px;
+    width: 190px;
+}
+
+#versions {
+    position: absolute;
+    display: block;
+    top: 20px;
+    margin-left: 20px;
+    width: 170px;
+    padding: 5px;
+    background-color: #585f6d;
+    color: #021d38;
+    font-size: 0.6em;
+    border: 1px solid gray;
+    border-radius: 8px;
+    overflow: hidden;
+}

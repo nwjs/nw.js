@@ -1,6 +1,9 @@
 // Copyright 2014 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+#include "base/compiler_specific.h"
+
+MSVC_PUSH_DISABLE_WARNING(4305)
 
 #include "content/nw/src/nw_custom_bindings.h"
 
@@ -14,22 +17,53 @@
 #include "extensions/renderer/script_context.h"
 #include "v8/include/v8.h"
 
-#undef LOG
 using namespace blink;
 #if defined(OS_WIN)
 #define _USE_MATH_DEFINES
 #include <math.h>
 #endif
 
-#undef FROM_HERE
-
+//#undef FROM_HERE
+#if 0
+#undef TRACE_EVENT0
+#undef TRACE_EVENT1
+#undef TRACE_EVENT2
+#undef TRACE_EVENT_WITH_FLOW0
+#undef TRACE_EVENT_WITH_FLOW1
+#undef TRACE_EVENT_WITH_FLOW2
+#undef TRACE_EVENT_MARK_WITH_TIMESTAMP1
+#undef TRACE_EVENT_COPY_MARK_WITH_TIMESTAMP
+#undef TRACE_EVENT_COPY_NESTABLE_ASYNC_BEGIN_WITH_TIMESTAMP0
+#undef TRACE_EVENT_COPY_NESTABLE_ASYNC_END_WITH_TIMESTAMP0
+#undef TRACE_EVENT_ENTER_CONTEXT
+#undef TRACE_EVENT_LEAVE_CONTEXT
+#undef TRACE_STR_COPY
+#undef TRACE_ID_MANGLE
+#undef TRACE_ID_DONT_MANGLE
+#undef TRACE_ID_WITH_SCOPE
+#undef TRACE_EVENT_SCOPED_SAMPLING_STATE_FOR_BUCKET
+#undef TRACE_EVENT_GET_SAMPLING_STATE_FOR_BUCKET
+#undef TRACE_EVENT_SET_SAMPLING_STATE_FOR_BUCKET
+//#undef TRACE_EVENT_API_GET_CATEGORY_GROUP_ENABLED
+#undef TRACE_EVENT_API_ADD_TRACE_EVENT
+#undef TRACE_EVENT_API_UPDATE_TRACE_EVENT_DURATION
+#undef INTERNAL_TRACE_EVENT_UID2
+//#undef INTERNAL_TRACE_EVENT_GET_CATEGORY_INFO
+#undef INTERNAL_TRACE_EVENT_ADD
+#undef INTERNAL_TRACE_EVENT_ADD_SCOPED
+#undef INTERNAL_TRACE_EVENT_ADD_SCOPED_WITH_FLOW
+#undef INTERNAL_TRACE_EVENT_ADD_WITH_ID
+#undef INTERNAL_TRACE_EVENT_ADD_WITH_TIMESTAMP
+#undef INTERNAL_TRACE_EVENT_SCOPED_CONTEXT
+//#undef INTERNAL_TRACE_EVENT_CATEGORY_GROUP_ENABLED_FOR_RECORDING_MODE
+#endif
 //#include "third_party/WebKit/Source/config.h"
 #include "third_party/WebKit/Source/core/html/HTMLIFrameElement.h"
 #include "third_party/WebKit/Source/core/dom/Document.h"
 #include "third_party/WebKit/Source/core/frame/LocalFrame.h"
 #include "third_party/WebKit/public/web/WebFrame.h"
 #include "third_party/WebKit/public/web/WebView.h"
-#include "third_party/WebKit/Source/web/WebLocalFrameImpl.h"
+#include "third_party/WebKit/Source/core/frame/WebLocalFrameImpl.h"
 #include "third_party/WebKit/public/web/WebScriptSource.h"
 
 #undef BLINK_IMPLEMENTATION
@@ -41,7 +75,7 @@ using namespace blink;
 //#include "third_party/WebKit/Source/core/inspector/InspectorInstrumentation.h"
 //#include "third_party/WebKit/Source/core/inspector/InspectorResourceAgent.h"
 
-#undef CHECK
+//#undef CHECK
 #include "V8HTMLIFrameElement.h"
 #include "extensions/renderer/script_context_set.h"
 
@@ -127,7 +161,7 @@ void NWCustomBindings::CallInWindow(
   v8::Local<v8::Value>* argv = new v8::Local<v8::Value>[args.Length() - 2];
   for (int i = 0; i < args.Length() - 2; i++)
     argv[i] = args[i + 2];
-  context->CallFunction(func, args.Length() - 2, argv);
+  context->SafeCallFunction(func, args.Length() - 2, argv);
   delete[] argv;
 }
 
@@ -162,8 +196,8 @@ void NWCustomBindings::EvalScript(
   if (frm->IsNull()) {
     web_frame = main_frame;
   }else{
-    blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::toImpl(frm);
-    web_frame = blink::WebFrame::fromFrame(iframe->contentFrame());
+    blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::ToImpl(frm);
+    web_frame = blink::WebFrame::FromFrame(iframe->ContentFrame());
   }
 #if defined(OS_WIN)
   base::string16 jscript((WCHAR*)*v8::String::Value(args[1]));
@@ -171,7 +205,8 @@ void NWCustomBindings::EvalScript(
   base::string16 jscript = *v8::String::Value(args[1]);
 #endif
   if (web_frame) {
-    result = web_frame->executeScriptAndReturnValue(WebScriptSource(jscript));
+    blink::WebLocalFrame* local_frame = web_frame->ToWebLocalFrame();
+    result = local_frame->ExecuteScriptAndReturnValue(blink::WebScriptSource(blink::WebString::FromUTF16(jscript)));
   }
   args.GetReturnValue().Set(result);
   return;
@@ -183,47 +218,40 @@ void NWCustomBindings::EvalNWBin(
   content::RenderFrame* render_frame = context()->GetRenderFrame();
   if (!render_frame)
     return;
-#if defined(OS_WIN)
-  base::FilePath path((WCHAR*)*v8::String::Value(args[1]));
-#else
-  base::FilePath path(*v8::String::Utf8Value(args[1]));
-#endif
-  base::File file(path, base::File::FLAG_OPEN | base::File::FLAG_READ);
-  if (file.IsValid()) {
-    int64_t length = file.GetLength();
-    if (length > 0 && length < INT_MAX) {
-      int size = static_cast<int>(length);
-      std::vector<unsigned char> raw_data;
-      raw_data.resize(size);
-      uint8_t* data = reinterpret_cast<uint8_t*>(&(raw_data.front()));
-      if (file.ReadAtCurrentPos((char*)data, size) == length) {
-        WebFrame* main_frame = render_frame->GetWebFrame();
-        v8::Handle<v8::String> source_string = v8::String::NewFromUtf8(isolate, "");
-        v8::ScriptCompiler::CachedData* cache;
-        cache = new v8::ScriptCompiler::CachedData(
-                                                   data, length, v8::ScriptCompiler::CachedData::BufferNotOwned);
-        v8::ScriptCompiler::Source source(source_string, cache);
-        v8::Local<v8::UnboundScript> script;
-        script = v8::ScriptCompiler::CompileUnboundScript(
-                                                          isolate, &source, v8::ScriptCompiler::kConsumeCodeCache).ToLocalChecked();
-        ASSERT(!cache->rejected);
-        v8::Handle<v8::Value> result;
-        v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[0]);
-        WebFrame* web_frame = NULL;
-        if (frm->IsNull()) {
-          web_frame = main_frame;
-        }else{
-          blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::toImpl(frm);
-          web_frame = blink::WebFrame::fromFrame(iframe->contentFrame());
-        }
-        v8::Context::Scope cscope (web_frame->mainWorldScriptContext());
-        v8::FixSourceNWBin(isolate, script);
-        result = script->BindToCurrentContext()->Run();
-        args.GetReturnValue().Set(result);
-      }
-    }
+
+  if (!args[1]->IsArrayBuffer()) {
+    return;
   }
-  return;
+
+  v8::Local<v8::ArrayBuffer> ab = args[1].As<v8::ArrayBuffer>();
+  v8::ArrayBuffer::Contents contents = ab->GetContents();
+  int64_t length = contents.ByteLength();
+  uint8_t *data = reinterpret_cast<uint8_t*>(contents.Data());
+
+  WebFrame* main_frame = render_frame->GetWebFrame();
+  v8::Handle<v8::String> source_string = v8::String::NewFromUtf8(isolate, "");
+  v8::ScriptCompiler::CachedData* cache;
+  cache = new v8::ScriptCompiler::CachedData(
+                                             data, length, v8::ScriptCompiler::CachedData::BufferNotOwned);
+  v8::ScriptCompiler::Source source(source_string, cache);
+  v8::Local<v8::UnboundScript> script;
+  script = v8::ScriptCompiler::CompileUnboundScript(
+                                                    isolate, &source, v8::ScriptCompiler::kConsumeCodeCache).ToLocalChecked();
+  CHECK(!cache->rejected);
+  v8::Handle<v8::Value> result;
+  v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[0]);
+  WebFrame* web_frame = NULL;
+  if (frm->IsNull()) {
+    web_frame = main_frame;
+  }else{
+    blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::ToImpl(frm);
+    web_frame = blink::WebFrame::FromFrame(iframe->ContentFrame());
+  }
+  blink::WebLocalFrame* local_frame = web_frame->ToWebLocalFrame();
+  v8::Context::Scope cscope (local_frame->MainWorldScriptContext());
+  v8::FixSourceNWBin(isolate, script);
+  result = script->BindToCurrentContext()->Run();
+  args.GetReturnValue().Set(result);
 }
 
 void NWCustomBindings::GetAbsolutePath(
@@ -246,9 +274,9 @@ void NWCustomBindings::AddOriginAccessWhitelistEntry(const v8::FunctionCallbackI
   std::string destinationHost     = *v8::String::Utf8Value(args[2]);
   bool allowDestinationSubdomains = args[3]->ToBoolean()->Value();
 
-  blink::WebSecurityPolicy::addOriginAccessWhitelistEntry(GURL(sourceOrigin),
-                                                          blink::WebString::fromUTF8(destinationProtocol),
-                                                          blink::WebString::fromUTF8(destinationHost),
+  blink::WebSecurityPolicy::AddOriginAccessWhitelistEntry(GURL(sourceOrigin),
+                                                          blink::WebString::FromUTF8(destinationProtocol),
+                                                          blink::WebString::FromUTF8(destinationHost),
                                                           allowDestinationSubdomains);
   args.GetReturnValue().Set(v8::Undefined(isolate));
   return;
@@ -262,9 +290,9 @@ void NWCustomBindings::RemoveOriginAccessWhitelistEntry(const v8::FunctionCallba
   std::string destinationHost     = *v8::String::Utf8Value(args[2]);
   bool allowDestinationSubdomains = args[3]->ToBoolean()->Value();
 
-  blink::WebSecurityPolicy::removeOriginAccessWhitelistEntry(GURL(sourceOrigin),
-                                                          blink::WebString::fromUTF8(destinationProtocol),
-                                                          blink::WebString::fromUTF8(destinationHost),
+  blink::WebSecurityPolicy::RemoveOriginAccessWhitelistEntry(GURL(sourceOrigin),
+                                                          blink::WebString::FromUTF8(destinationProtocol),
+                                                          blink::WebString::FromUTF8(destinationHost),
                                                           allowDestinationSubdomains);
   args.GetReturnValue().Set(v8::Undefined(isolate));
   return;
@@ -294,19 +322,20 @@ void NWCustomBindings::SetDevToolsJail(const v8::FunctionCallbackInfo<v8::Value>
   v8::Isolate* isolate = args.GetIsolate();
   if (!args.Length())
     return;
-  v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[0]);
   content::RenderFrame* render_frame = context()->GetRenderFrame();
   if (!render_frame)
     return;
   WebFrame* main_frame = render_frame->GetWebFrame();
-  if (frm->IsNull() || frm->IsUndefined()) {
+  if (args[0]->IsNull() || args[0]->IsUndefined()) {
     main_frame->setDevtoolsJail(NULL);
   }else{
-    blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::toImpl(frm);
-    main_frame->setDevtoolsJail(blink::WebFrame::fromFrame(iframe->contentFrame()));
+	  v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[0]);
+	  blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::ToImpl(frm);
+    main_frame->setDevtoolsJail(blink::WebFrame::FromFrame(iframe->ContentFrame()));
   }
   args.GetReturnValue().Set(v8::Undefined(isolate));
   return;
 }
 
 }  // namespace extensions
+MSVC_POP_WARNING()

@@ -7,13 +7,22 @@ import getnwversion
 import shutil
 import distutils.core
 import re
+import argparse
+
+parser = argparse.ArgumentParser(description='Package nw binaries.')
+parser.add_argument('-p','--path', help='Where to find the binaries, like out/Release', required=False)
+parser.add_argument('-n','--name', help='platform name.', required=False)
+args = parser.parse_args()
+
+binaries_location = args.path
+platform_name = args.name
 
 def update_uvh(tmp_dir, header_files):
   for file in header_files:
     header_f = os.path.join(tmp_dir, 'node', 'src', file)
     rfile = open(header_f, 'r')
     old = rfile.read()
-    new = re.sub('third_party/node/deps/uv/include/uv.h', 'uv.h', old, 0)
+    new = re.sub('third_party/node-nw/deps/uv/include/uv.h', 'uv.h', old, 0)
     wfile = open(header_f, 'w')
     wfile.write(new)
     wfile.close()
@@ -46,9 +55,10 @@ else:
 
 # prepare the files to compress
 print 'Begin copy file'
-base = os.path.join(third_party_dir, 'node')
+base = os.path.join(third_party_dir, 'node-nw')
 for dirpath, dirnames, filenames in os.walk(base):
   relpath = dirpath.replace(third_party_dir + os.sep, '')
+  relpath = relpath.replace('node-nw', 'node')
   for dirs in dirnames:
     if dirs =='gyp' or dirs == 'gyp_addon':
       try:
@@ -95,3 +105,12 @@ with tarfile.open(tarpath, 'w:gz') as tar:
   tar.add(os.path.join(tmp_dir, 'node'), arcname='node')
 
 print 'compress end'
+
+#copy over the nw.lib files so building native modules locally can work later in tests
+
+if platform_name == 'win':
+  release_dir = os.path.join(tmp_dir, 'node', 'Release')
+  if not os.path.exists(release_dir):
+    os.mkdir(release_dir)
+  shutil.copy(os.path.join(binaries_location, 'nw.lib'), release_dir)
+  shutil.copy(os.path.join(binaries_location, 'node.lib'), release_dir)

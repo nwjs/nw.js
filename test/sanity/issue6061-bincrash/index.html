@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <script>
+      nw.Window.get().evalNWBin(null, 'index.bin');
+      nw.Window.get().showDevTools();
+      //chrome.developerPrivate.openDevTools({renderViewId: -1, renderProcessId: -1, extensionId: chrome.runtime.id})
+    </script>
+    <div id='result'>6061 bincrash test</div>
+  </body>
+</html>

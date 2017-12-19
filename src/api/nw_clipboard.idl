@@ -5,14 +5,25 @@
 // nw Clipboard API
 [implemented_in="content/nw/src/api/nw_clipboard_api.h"]
 namespace nw.Clipboard {
-  [noinline_doc] dictionary NWClipboard {
-    static DOMString get(DOMString type);
-    static void set(DOMString content, DOMString type);
+
+  [noinline_doc] enum Type {
+    text,
+    png,
+    jpeg,
+    html,
+    rtf
   };
+
+  dictionary ClipboardData {
+    Type type;
+    boolean? raw;
+    DOMString? data;
+  };
+
   interface Functions {
-    [nocompile] static NWClipboard get();
-    static DOMString getSync(DOMString type);
-    static void setSync(DOMString content, DOMString type);
+    static ClipboardData[] getListSync(ClipboardData[] data);
+    static void setListSync(ClipboardData[] data);
     static void clearSync();
+    static DOMString[] readAvailableTypes();
   };
 };

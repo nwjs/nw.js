@@ -34,6 +34,7 @@ namespace nw.Window {
     [nodoc] boolean? kiosk;
     [nodoc] boolean? focus;
     [nodoc] boolean? new_instance;
+    [nodoc] boolean? show_in_taskbar;
     [nodoc] DOMString? title;
     [nodoc] DOMString? position;
     [nodoc] DOMString? icon;
@@ -75,6 +76,7 @@ namespace nw.Window {
 
     static void eval(object frame, DOMString script);
     static void evalNWBin(object frame, DOMString path);
+    static void print(optional object options);
 
     object appWindow;
     object window;

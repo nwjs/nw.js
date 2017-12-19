@@ -1,0 +1,16 @@
+{
+  "main": "index.html",
+  "name": "nw-demo",
+  "window": {
+    "height": 700,
+    "width": 1000
+  },
+  "webview": {
+     "partitions": [
+        {
+          "name": "trusted",
+          "accessible_resources": [ "<all_urls>" ]
+        }
+     ]
+  }
+}

@@ -1,4 +1,4 @@
-# NW.js 0.13.0 Documentation
+# NW.js Documentation for 0.13 and later
 ---
 
 > [NW.js](http://nwjs.io) lets you call all [Node.js](https://nodejs.org/) [modules](https://www.npmjs.org/) directly from DOM and enables a new way of writing applications with all Web technologies. It was previously known as "node-webkit" project.
@@ -25,6 +25,7 @@ The source of the document is in [our git repo](https://github.com/nwjs/nw.js/tr
         + [JavaScript Contexts in NW.js](For Users/Advanced/JavaScript Contexts in NW.js.md)
         + [Protect JavaScript Source Code](For Users/Advanced/Protect JavaScript Source Code.md)
         + [Security in NW.js](For Users/Advanced/Security in NW.js.md)
+        + [Support for Mac App Store](For Users/Advanced/Support for Mac App Store.md)
         + [Test with ChromeDriver](For Users/Advanced/Test with ChromeDriver.md)
         + [Use Flash Plugin](For Users/Advanced/Use Flash Plugin.md)
         + [Use NaCl in NW.js](For Users/Advanced/Use NaCl in NW.js.md)

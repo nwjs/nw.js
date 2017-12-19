@@ -42,7 +42,7 @@
 //#include "grit/nw_resources.h"
 #include "media/base/media_switches.h"
 #include "net/base/escape.h"
-#include "third_party/node/deps/uv/include/uv.h"
+#include "third_party/node-nw/deps/uv/include/uv.h"
 #include "ui/base/resource/resource_bundle.h"
 
 using base::CommandLine;
@@ -171,25 +171,36 @@ std::wstring ASCIIToWide(const std::string& ascii) {
 Package::Package()
     : path_(),
       self_extract_(true) {
-  CommandLine* command_line = CommandLine::ForCurrentProcess();
-  // LOG(INFO) << command_line->GetCommandLineString();
-  // Try to load from the folder where the exe resides.
+
+  base::FilePath path;
+  
+  // 1. try to extract self
+  self_extract_ = true;
+  path = GetSelfPath();
+  if (InitFromPath(path))
+    return;
+
+  // 2. try to load from the folder where the exe resides.
   // Note: self_extract_ is true here, otherwise a 'Invalid Package' error
   // would be triggered.
-  base::FilePath path = GetSelfPath().DirName();
+  path = GetSelfPath().DirName();
 #if defined(OS_MACOSX)
   path = path.DirName().DirName().DirName();
 #endif
   if (InitFromPath(path))
     return;
 
+  // 3. try to load from <exe-folder>/package.nw
   path = path.AppendASCII("package.nw");
   if (InitFromPath(path))
     return;
 
-  // Then see if we have arguments and extract it.
+  // 4. see if we have arguments and extract it.
+  CommandLine* command_line = CommandLine::ForCurrentProcess();
+  // LOG(INFO) << command_line->GetCommandLineString();
   const base::CommandLine::StringVector& args = command_line->GetArgs();
 
+  // 4.1. try --nwapp= argument
   if (command_line->HasSwitch("nwapp")) {
     path = command_line->GetSwitchValuePath("nwapp");
     self_extract_ = false;
@@ -197,6 +208,7 @@ Package::Package()
       return;
   }
 
+  // 4.2 try first CLI argument
   if (args.size() > 0) {
     self_extract_ = false;
     path = FilePath(args[0]);
@@ -204,13 +216,7 @@ Package::Package()
       return;
   }
 
-  self_extract_ = true;
-  // Try to extract self.
-  path = GetSelfPath();
-  if (InitFromPath(path))
-    return;
-
-  // Finally we init with default settings.
+  // 5. init with default settings
   self_extract_ = false;
   InitWithDefault();
 }
@@ -229,7 +235,7 @@ FilePath Package::ConvertToAbsoutePath(const FilePath& path) {
   if (path.IsAbsolute())
     return path;
 
-  return this->path().Append(path);
+  return MakeAbsoluteFilePath(this->path()).Append(path);
 }
 
 GURL Package::GetStartupURL() {
@@ -306,7 +312,7 @@ bool Package::InitFromPath(const base::FilePath& path_in) {
   // Parse file.
   std::string error;
   JSONFileValueDeserializer serializer(manifest_path);
-  scoped_ptr<base::Value> root(serializer.Deserialize(NULL, &error));
+  std::unique_ptr<base::Value> root(serializer.Deserialize(NULL, &error));
   if (!root.get()) {
     ReportError("Unable to parse package.json",
                 error.empty() ?
@@ -314,7 +320,7 @@ bool Package::InitFromPath(const base::FilePath& path_in) {
                         manifest_path.AsUTF8Unsafe() :
                     error);
     return false;
-  } else if (!root->IsType(base::Value::TYPE_DICTIONARY)) {
+  } else if (!root->IsType(base::Value::Type::DICTIONARY)) {
     ReportError("Invalid package.json",
                 "package.json's content should be a object type.");
     return false;
@@ -344,9 +350,9 @@ bool Package::InitFromPath(const base::FilePath& path_in) {
 
   // Force window field no empty.
   if (!root_->HasKey(switches::kmWindow)) {
-    base::DictionaryValue* window = new base::DictionaryValue();
+    auto window =  base::MakeUnique<base::DictionaryValue>();
     window->SetString(switches::kmPosition, "center");
-    root_->Set(switches::kmWindow, window);
+    root_->Set(switches::kmWindow, std::move(window));
   }
 
 #if 0
@@ -374,8 +380,7 @@ void Package::InitWithDefault() {
   root_.reset(new base::DictionaryValue());
   root()->SetString(switches::kmName, "nwjs");
   root()->SetString(switches::kmMain, "nw:blank");
-  base::DictionaryValue* window = new base::DictionaryValue();
-  root()->Set(switches::kmWindow, window);
+  auto window = base::MakeUnique<base::DictionaryValue>();
 
   // Hide toolbar if specifed in the command line.
   if (base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kNoToolbar))
@@ -383,6 +388,7 @@ void Package::InitWithDefault() {
 
   // Window should show in center by default.
   window->SetString(switches::kmPosition, "center");
+  root()->Set(switches::kmWindow, std::move(window));
 }
 
 bool Package::ExtractPath(const base::FilePath& path_to_extract, 
@@ -435,7 +441,7 @@ bool Package::ExtractPackage(const FilePath& zip_file, FilePath* where) {
       return false;
     }
   }else{
-    *where = scoped_temp_dir_.path();
+    *where = scoped_temp_dir_.GetPath();
   }
 
   return zip::Unzip(zip_file, *where);

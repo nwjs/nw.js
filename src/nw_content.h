@@ -1,8 +1,14 @@
 #ifndef NWJS_CONTENT_HOOKS_H
 #define NWJS_CONTENT_HOOKS_H
 
+#if defined(WIN32)
+#include <windows.h>
+#endif
+
+#include "content/common/content_export.h"
+
 #include "nw_package.h"
-#include "base/memory/scoped_ptr.h"
+#include "base/memory/ptr_util.h"
 #include "third_party/WebKit/public/web/WebNavigationPolicy.h"
 #include "third_party/WebKit/public/platform/WebPageVisibilityState.h"
 
@@ -16,6 +22,10 @@ namespace blink {
   class WebLocalFrame;
   class WebURLRequest;
   class WebString;
+}
+
+namespace gfx {
+  class ImageSkia;
 }
 
 namespace content {
@@ -39,15 +49,17 @@ namespace extensions {
 }
 
 namespace nw {
+base::FilePath GetRootPathRenderer();
 int MainPartsPreCreateThreadsHook();
 void MainPartsPostDestroyThreadsHook();
 void MainPartsPreMainMessageLoopRunHook();
 void ContextCreationHook(blink::WebLocalFrame* frame, extensions::ScriptContext* context);
 void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest, std::string* error);
+
 void DocumentElementHook(blink::WebLocalFrame* frame,
                          const extensions::Extension* extension,
                          const GURL& effective_document_url);
-void DocumentFinishHook(blink::WebFrame* frame,
+void DocumentFinishHook(blink::WebLocalFrame* frame,
                          const extensions::Extension* extension,
                          const GURL& effective_document_url);
  void DocumentHook2(bool start, content::RenderFrame* frame, extensions::Dispatcher* dispatcher);
@@ -65,7 +77,7 @@ void DocumentFinishHook(blink::WebFrame* frame,
                        std::string* nw_inject_js_doc_start,
                        std::string* nw_inject_js_doc_end);
  bool GetImage(Package* package, const FilePath& icon_path, gfx::Image* image);
- scoped_ptr<base::DictionaryValue> MergeManifest();
+ std::unique_ptr<base::DictionaryValue> MergeManifest();
  bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window);
  bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_line,
                                                const base::FilePath& current_directory);
@@ -94,6 +106,15 @@ void DocumentFinishHook(blink::WebFrame* frame,
  bool ShouldServiceRequestHook(int child_id, const GURL& url);
  bool RenderWidgetWasHiddenHook(content::RenderWidget* rw);
  void LoadNodeSymbols();
+ gfx::ImageSkia* GetAppIcon();
+#if defined(OS_WIN)
+ HICON GetAppHIcon();
+ HICON GetWindowHIcon();
+#endif
+ void SetMainExtensionId(const std::string& id);
+ const std::string& GetMainExtensionId();
+ void SetInWebViewApplyAttr(bool, bool);
+ bool GetInWebViewApplyAttr(bool* allow_nw);
 }
 
 #endif

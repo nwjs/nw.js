@@ -6,6 +6,7 @@
 #include "content/public/browser/readback_types.h"
 #include "extensions/browser/extension_function.h"
 #include "extensions/common/api/extension_types.h"
+#include "printing/backend/print_backend.h"
 
 class SkBitmap;
 
@@ -105,7 +106,7 @@ class NwCurrentWindowInternalClearMenuFunction : public AsyncExtensionFunction {
   DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalClearMenuFunction);
 };
 
-class NwCurrentWindowInternalSetMenuFunction : public AsyncExtensionFunction {
+class NwCurrentWindowInternalSetMenuFunction : public NWSyncExtensionFunction {
  public:
   NwCurrentWindowInternalSetMenuFunction();
 
@@ -113,7 +114,7 @@ class NwCurrentWindowInternalSetMenuFunction : public AsyncExtensionFunction {
   ~NwCurrentWindowInternalSetMenuFunction() override;
 
   // ExtensionFunction:
-  bool RunAsync() override;
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setMenu", UNKNOWN)
 
  private:
@@ -281,5 +282,24 @@ class NwCurrentWindowInternalGetWinParamInternalFunction : public NWSyncExtensio
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.getWinParamInternal", UNKNOWN)
 };
 
+class NwCurrentWindowInternalGetPrintersFunction : public AsyncExtensionFunction {
+ public:
+  NwCurrentWindowInternalGetPrintersFunction() {}
+  bool RunAsync() override;
+  void OnGetPrinterList(const printing::PrinterList& printer_list);
+ protected:
+  ~NwCurrentWindowInternalGetPrintersFunction() override {}
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.getPrinters", UNKNOWN)
+};
+
+class NwCurrentWindowInternalSetPrintSettingsInternalFunction : public NWSyncExtensionFunction {
+ public:
+   NwCurrentWindowInternalSetPrintSettingsInternalFunction() {}
+   bool RunNWSync(base::ListValue* response, std::string* error) override;
+
+ protected:
+   ~NwCurrentWindowInternalSetPrintSettingsInternalFunction() override {}
+   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setPrintSettingsInternal", UNKNOWN)
+};
 } // namespace extensions
 #endif

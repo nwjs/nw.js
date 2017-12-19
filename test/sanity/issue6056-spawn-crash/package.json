@@ -1,0 +1,42 @@
+{
+  "app_name": "game",
+  "name": "dblitekrash0230",
+  "description": "Crash with nwjs 0.23.0 with node 8.0.0pre",
+  "single-instance": true,
+  "version": "0.1.0",
+  "chromium-args": "--enable-logging",
+  "main": "start.html",
+  "window": {
+    "resizable": true,
+    "visible": true,
+    "exe_icon": "",
+    "icon": "",
+    "width": 1400,
+    "show_in_taskbar": true,
+    "always_on_top": false,
+    "mac_icon": "",
+    "title": "dblitekrash0230",
+    "height": 850,
+    "show": true,
+    "fullscreen": false
+  },
+  "webkit": {
+    "plugin": true
+  },
+  "webview": {
+    "partitions": [
+      {
+        "name": "trusted",
+        "accessible_resources": [
+          "<all_urls>"
+        ]
+      }
+    ]
+  },
+  "additional_trust_anchors": [
+    ""
+  ],
+  "dependencies": {
+    "dblite": "^0.7.8"
+  }
+}

@@ -21,6 +21,10 @@ tray.remove();
 tray = null;
 ```
 
+!!! warning "Using Tray With Page Navigation"
+    Trays created in the page that can be navigated will not be functional after a reload or navigation. The reason is that the tray and even the web page will be garbage collected by JS engine after navigation to prevent memory leak. So it's recommended to use trays in **background page**, which is existed for the life cycle of your app. See [`bg-script`](Manifest Format.md#bg-script) and [`main`](Manifest Format.md#main) for how to execute scripts in the background page.
+
+
 ## new Tray(option)
 
 * `option` `{Object}`

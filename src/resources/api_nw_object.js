@@ -5,6 +5,9 @@ var sendRequest = require('sendRequest');
 
 nw_binding.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
+  apiFunctions.setHandleRequest('allocateId', function() {
+    return sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {})[0];
+  });
   apiFunctions.setHandleRequest('create', function() {
     return sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {});
   });
@@ -18,7 +21,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
   // in order not to bring side effects before release when fix this for #4593, I introduce the
   // new method as a workaround. Please see removing it later.
   apiFunctions.setHandleRequest('callObjectMethodAsync', function() {
-    return sendRequest.sendRequest(this.name, arguments, this.definition.parameters, {});
+    return sendRequest.sendRequest(this.name, arguments, this.definition.parameters);
   });
   apiFunctions.setHandleRequest('callObjectMethodSync', function() {
     return sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {})[0];

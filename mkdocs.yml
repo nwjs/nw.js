@@ -1,5 +1,6 @@
 site_name: NW.js Documentation
 theme: readthedocs
+theme_dir: 'custom_theme'
 markdown_extensions:
     - markdown.extensions.toc
     - markdown.extensions.admonition
@@ -13,10 +14,8 @@ markdown_extensions:
     - pymdownx.tilde
     - pymdownx.caret
     - pymdownx.smartsymbols
-    - pymdownx.githubemoji
     - pymdownx.tasklist
     - pymdownx.progressbar
-    - pymdownx.headeranchor
     - pymdownx.arithmatex
     - pymdownx.mark
     - pymdownx.critic
@@ -36,11 +35,13 @@ pages:
             - 'JavaScript Contexts in NW.js': 'For Users/Advanced/JavaScript Contexts in NW.js.md'
             - 'Protect JavaScript Source Code': 'For Users/Advanced/Protect JavaScript Source Code.md'
             - 'Security in NW.js': 'For Users/Advanced/Security in NW.js.md'
+            - 'Support for Mac App Store': 'For Users/Advanced/Support for Mac App Store.md'
             - 'Test with ChromeDriver': 'For Users/Advanced/Test with ChromeDriver.md'
             - 'Transparent Window': 'For Users/Advanced/Transparent Window.md'
             - 'Use Flash Plugin': 'For Users/Advanced/Use Flash Plugin.md'
             - 'Use NaCl in NW.js': 'For Users/Advanced/Use NaCl in NW.js.md'
             - 'Use Native Node Modules': 'For Users/Advanced/Use Native Node Modules.md'
+            - 'Autoupdates': 'For Users/Advanced/Autoupdates.md'
     - 'References':
         - 'App': 'References/App.md'
         - 'Changes to DOM': 'References/Changes to DOM.md'

@@ -3,34 +3,20 @@ var forEach = require('utils').forEach;
 var nw_binding = require('binding').Binding.create('nw.Menu');
 var nwNative = requireNative('nw_natives');
 var sendRequest = require('sendRequest');
-var contextMenuNatives = requireNative('context_menus');
 var messagingNatives = requireNative('messaging_natives');
 var Event = require('event_bindings').Event;
 var util = nw.require('util');
 var EventEmitter = nw.require('events').EventEmitter;
-var runtimeNatives = requireNative('runtime');
 
-var GetExtensionViews = runtimeNatives.GetExtensionViews;
-
-var bgPage = GetExtensionViews(-1, 'BACKGROUND')[0];
-if (typeof bgPage === 'undefined') //new instance window
-  bgPage = window;
-
-if (bgPage === window) {
-
-if (bgPage.__nw_menuitems) {
-  var menuItems = bgPage.__nw_menuitems;
-} else {
-  var menuItems = bgPage.__nw_menuitems = { objs : {}, clickEvent: {} };
-  menuItems.clickEvent = new Event("NWObjectclick");
-  menuItems.clickEvent.addListener(function(id) {
-    var item = menuItems.objs[id];
-    if (!item)
-      return;
-    try{item.click()}catch(e){console.error(e)};
-    try{item.emit('click')}catch(e){console.error(e)};
-  });
-}
+var menuItems = { objs : {}, clickEvent: {} };
+menuItems.clickEvent = new Event("NWObjectclick");
+menuItems.clickEvent.addListener(function(id) {
+  var obj = menuItems.objs[id];
+  if (!obj)
+    return;
+  try{obj.click && obj.click()}catch(e){console.error(e)}
+  try{obj.emit('click')}catch(e){console.error(e)}
+});
 
 function MenuItem(option) {
   if (!(this instanceof MenuItem)) {
@@ -92,7 +78,7 @@ function MenuItem(option) {
     };
   }
 
-  var id = contextMenuNatives.GetNextContextMenuId();
+  var id = option.id || nw.Obj.allocateId();
   this.id = id;
   privates(this).option = option;
 
@@ -109,7 +95,8 @@ function MenuItem(option) {
   if (!option.hasOwnProperty('modifiers'))
     option.modifiers = "";
 
-  nw.Obj.create(id, 'MenuItem', option);
+  if (!option.native)
+    nw.Obj.create(id, 'MenuItem', option);
   messagingNatives.BindToGC(this, nw.Obj.destroy.bind(undefined, id), -1);
 
 }
@@ -215,8 +202,8 @@ MenuItem.prototype.__defineSetter__('submenu', function(val) {
   nw.Obj.callObjectMethod(this.id, 'MenuItem', 'SetSubmenu', [ val.id ]);
 });
 
-exports.binding = MenuItem;
+MenuItem.prototype.__defineGetter__('native', function() {
+  return this.handleGetter('native');
+});
 
-} else {
-exports.binding = bgPage.nw.MenuItem;
-}
+exports.binding = MenuItem;

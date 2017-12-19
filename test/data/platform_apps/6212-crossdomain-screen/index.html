@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <script type="text/javascript" src="demo.js"></script>
+    <link rel="stylesheet" type="text/css" href="demo.css" >
+</head>
+<body>
+  <iframe id="frame0" src="about:blank" style="width:100%; height:400px;"></iframe>
+  <script>
+  if (chrome.test) {
+  document.getElementById("frame0").onload = function() { chrome.test.sendMessage("Loaded"); };
+  chrome.test.sendMessage("Launched");
+  }
+  </script>
+</body>
+</html>

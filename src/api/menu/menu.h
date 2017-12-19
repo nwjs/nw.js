@@ -21,8 +21,8 @@
 #ifndef CONTENT_NW_SRC_API_MENU_MENU_H_
 #define CONTENT_NW_SRC_API_MENU_MENU_H_ 
 
+#include "base/callback.h"
 #include "base/compiler_specific.h"
-#include "base/memory/scoped_ptr.h"
 #include "content/nw/src/api/base/base.h"
 
 #include <string>
@@ -83,6 +83,10 @@ class RenderFrameHost;
 class RenderFrameHost;
 }
 
+namespace views {
+class MenuRunner;
+}
+
 namespace nw {
 
 class MenuItem;
@@ -99,8 +103,13 @@ class Menu : public Base {
              const base::ListValue& arguments,
              content::RenderFrameHost* rvh = nullptr) override;
 
+#if defined(OS_MACOSX)
+  static Menu* GetMenuFromNative(NSMenu* menu);
+#endif
+
 #if defined(OS_WIN) || defined(OS_LINUX)
   void UpdateKeys(views::FocusManager *focus_manager);
+  void RemoveKeys();
   ui::NwMenuModel* model() { return menu_model_.get(); }
   aura::Window* GetActiveNativeView(content::RenderFrameHost* rfh);
 #endif
@@ -123,6 +132,8 @@ class Menu : public Base {
 
   void UpdateStates();
 
+  void OnMenuClosed();
+
   //**Never Try to free this pointer**
   //We get it from top widget
   views::FocusManager *focus_manager_;
@@ -132,8 +143,10 @@ class Menu : public Base {
   // rebuild the menu before next show.
   bool is_menu_modified_;
 
-  scoped_ptr<MenuDelegate> menu_delegate_;
-  scoped_ptr<ui::NwMenuModel> menu_model_;
+  std::unique_ptr<MenuDelegate> menu_delegate_;
+  std::unique_ptr<ui::NwMenuModel> menu_model_;
+  std::unique_ptr<views::MenuRunner> menu_runner_;
+  base::Closure message_loop_quit_;
 #endif
 
   DISALLOW_COPY_AND_ASSIGN(Menu);

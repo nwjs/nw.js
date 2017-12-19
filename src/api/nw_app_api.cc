@@ -1,14 +1,18 @@
 #include "content/nw/src/api/nw_app_api.h"
 
 #include "base/command_line.h"
+#include "base/memory/ptr_util.h"
+#include "chrome/browser/browsing_data/browsing_data_appcache_helper.h"
 #include "chrome/browser/browsing_data/browsing_data_helper.h"
-#include "chrome/browser/browsing_data/browsing_data_remover_factory.h"
 #include "chrome/browser/devtools/devtools_window.h"
 #include "chrome/browser/extensions/devtools_util.h"
 #include "chrome/browser/extensions/extension_service.h"
+#include "content/nw/src/api/nw_app.h"
 #include "content/nw/src/nw_base.h"
+#include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/render_view_host.h"
+#include "content/public/browser/storage_partition.h"
 #include "content/public/browser/web_contents.h"
 #include "extensions/browser/app_window/app_window.h"
 #include "extensions/browser/app_window/app_window_registry.h"
@@ -21,14 +25,16 @@
 #include "net/url_request/url_request_context.h"
 #include "net/url_request/url_request_context_getter.h"
 
+using namespace extensions::nwapi::nw__app;
+
 namespace {
 void SetProxyConfigCallback(
     base::WaitableEvent* done,
-    net::URLRequestContextGetter* url_request_context_getter,
+    const scoped_refptr<net::URLRequestContextGetter>& url_request_context_getter,
     const net::ProxyConfig& proxy_config) {
   net::ProxyService* proxy_service =
       url_request_context_getter->GetURLRequestContext()->proxy_service();
-  proxy_service->ResetConfigService(make_scoped_ptr(new net::ProxyConfigServiceFixed(proxy_config)));
+  proxy_service->ResetConfigService(base::WrapUnique(new net::ProxyConfigServiceFixed(proxy_config)));
   done->Signal();
 }
 } // namespace
@@ -44,7 +50,7 @@ NwAppQuitFunction::~NwAppQuitFunction() {
 bool NwAppQuitFunction::RunAsync() {
   ExtensionService* service =
     ExtensionSystem::Get(browser_context())->extension_service();
-  base::MessageLoop::current()->PostTask(
+  base::MessageLoop::current()->task_runner()->PostTask(
         FROM_HERE,
         base::Bind(&ExtensionService::TerminateExtension,
                    service->AsWeakPtr(),
@@ -94,6 +100,24 @@ bool NwAppGetArgvSyncFunction::RunNWSync(base::ListValue* response, std::string*
   return true;
 }
 
+NwAppClearAppCacheFunction::NwAppClearAppCacheFunction() {
+}
+
+NwAppClearAppCacheFunction::~NwAppClearAppCacheFunction() {
+}
+
+bool NwAppClearAppCacheFunction::RunNWSync(base::ListValue* response, std::string* error) {
+  std::string manifest;
+  EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &manifest));
+
+  GURL manifest_url(manifest);
+  scoped_refptr<CannedBrowsingDataAppCacheHelper> helper(
+        new CannedBrowsingDataAppCacheHelper(Profile::FromBrowserContext(context_)));
+
+  helper->DeleteAppCacheGroup(manifest_url);
+  return true;
+}
+
 NwAppClearCacheFunction::NwAppClearCacheFunction() {
 }
 
@@ -101,13 +125,14 @@ NwAppClearCacheFunction::~NwAppClearCacheFunction() {
 }
 
 bool NwAppClearCacheFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  BrowsingDataRemover* remover = BrowsingDataRemoverFactory::GetForBrowserContext(
+  content::BrowsingDataRemover* remover = content::BrowserContext::GetBrowsingDataRemover(
       Profile::FromBrowserContext(context_));
 
   remover->AddObserver(this);
-  remover->Remove(BrowsingDataRemover::Unbounded(),
-                  BrowsingDataRemover::REMOVE_CACHE,
-                  BrowsingDataHelper::ALL);
+  remover->RemoveAndReply(base::Time(), base::Time::Max(),
+                          content::BrowsingDataRemover::DATA_TYPE_CACHE,
+                          content::BrowsingDataRemover::ORIGIN_TYPE_UNPROTECTED_WEB,
+                          this);
   // BrowsingDataRemover deletes itself.
   base::MessageLoop::ScopedNestableTaskAllower allow(
         base::MessageLoop::current());
@@ -128,23 +153,37 @@ NwAppSetProxyConfigFunction::~NwAppSetProxyConfigFunction() {
 }
 
 bool NwAppSetProxyConfigFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  std::string proxy_config;
-  EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &proxy_config));
+  net::ProxyConfig config;
+  std::unique_ptr<nwapi::nw__app::SetProxyConfig::Params> params(
+      nwapi::nw__app::SetProxyConfig::Params::Create(*args_));
+  EXTENSION_FUNCTION_VALIDATE(params.get());
+
+  std::string pac_url = params->pac_url.get() ? *params->pac_url : "";
+  if (!pac_url.empty()) {
+    if (pac_url == "<direct>")
+      config = net::ProxyConfig::CreateDirect();
+    else if (pac_url == "<auto>")
+      config = net::ProxyConfig::CreateAutoDetect();
+    else
+      config = net::ProxyConfig::CreateFromCustomPacURL(GURL(pac_url));
+  } else {
+    std::string proxy_config;
+    EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &proxy_config));
+    config.proxy_rules().ParseFromString(proxy_config);
+  }
 
   base::ThreadRestrictions::ScopedAllowWait allow_wait;
 
-  net::ProxyConfig config;
-  config.proxy_rules().ParseFromString(proxy_config);
-  content::RenderProcessHost* render_process_host = GetSenderWebContents()->GetRenderProcessHost();
+  content::RenderProcessHost* render_process_host = GetSenderWebContents()->GetMainFrame()->GetProcess();
   net::URLRequestContextGetter* context_getter =
-    render_process_host->GetBrowserContext()->
-    GetRequestContextForRenderProcess(render_process_host->GetID());
+    render_process_host->GetStoragePartition()->GetURLRequestContext();
 
-  base::WaitableEvent done(false, false);
+  base::WaitableEvent done(base::WaitableEvent::ResetPolicy::AUTOMATIC,
+                           base::WaitableEvent::InitialState::NOT_SIGNALED);
   content::BrowserThread::PostTask(
       content::BrowserThread::IO, FROM_HERE,
       base::Bind(&SetProxyConfigCallback, &done,
-                 make_scoped_refptr(context_getter), config));
+                 base::WrapRefCounted(context_getter), config));
   done.Wait();
   return true;
 }

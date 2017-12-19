@@ -117,7 +117,20 @@
         'src/api/shell/shell.h',
         'src/api/tray/tray.cc',
         'src/api/tray/tray.h',
-        'src/nw_content.cc',
+        'src/browser/nw_chrome_browser_hooks.cc',
+        'src/browser/nw_chrome_browser_hooks.h',
+        'src/browser/nw_content_browser_hooks.cc',
+        'src/browser/nw_content_browser_hooks.h',
+        'src/browser/nw_extensions_browser_hooks.cc',
+        'src/browser/nw_extensions_browser_hooks.h',
+        'src/common/node_hooks.h',
+        'src/common/nw_content_common_hooks.cc',
+        'src/common/nw_content_common_hooks.h',
+        'src/renderer/nw_chrome_renderer_hooks.h',
+        'src/renderer/nw_content_renderer_hooks.cc',
+        'src/renderer/nw_content_renderer_hooks.h',
+        'src/renderer/nw_extensions_renderer_hooks.cc',
+        'src/renderer/nw_extensions_renderer_hooks.h',
         'src/nw_content.h',
         'src/nw_custom_bindings.cc',
         'src/nw_custom_bindings.h',
@@ -145,6 +158,8 @@
         }],
         ['OS=="mac"', {
           'sources': [
+            'src/api/base/base_mac.h',
+            'src/api/base/base_mac.mm',
             'src/api/nw_window_api_mac.mm',
             'src/api/nw_menu_api_mac.mm',
             'src/api/menuitem/menuitem_mac.mm',
@@ -397,7 +412,7 @@
       'dependencies': [
          '<(DEPTH)/chrome/chrome.gyp:chrome',
          '<(DEPTH)/third_party/node/node.gyp:node',
-         '<(DEPTH)/v8/tools/gyp/v8.gyp:nwjc',
+         '<(DEPTH)/v8/src/v8.gyp:nwjc',
          'payload',
       ],
       'conditions': [
@@ -425,10 +440,10 @@
         'conditions': [
           ['nwjs_sdk==1', {
             'package_mode': 'sdk',
-            'icudat_path': '<(DEPTH)/third_party/icu/source/data/in/icudtl.dat',
+            'icudat_path': '<(DEPTH)/third_party/icu/common/icudtl.dat',
           }, {
             'package_mode': 'nosdk',
-            'icudat_path': '<(DEPTH)/third_party/icu/source/data/in/icudtl.dat',
+            'icudat_path': '<(DEPTH)/third_party/icu/common/icudtl.dat',
           }],
           ['disable_nacl==0 and nwjs_sdk==0', {
             'package_mode': 'nacl',
@@ -458,6 +473,11 @@
             '<(DEPTH)/chrome/chrome.gyp:chromedriver',
           ],
         }],
+        ['nwjs_sdk==1 and (OS=="linux" or OS=="mac")', {
+          'dependencies': [
+            '<(DEPTH)/breakpad/breakpad.gyp:minidump_stackwalk',
+          ],
+        }],
         ['OS == "linux"', {
           'dependencies': [
             'strip_binaries',
@@ -477,7 +497,7 @@
       ],
       'dependencies': [
         '<(DEPTH)/base/base.gyp:base',
-        '<(DEPTH)/extensions/extensions.gyp:extensions_browser',
+        '<(DEPTH)/crypto/crypto.gyp:crypto',
       ],
       'conditions': [
         ['OS=="win" and win_use_allocator_shim==1', {
@@ -506,7 +526,7 @@
             '<(PRODUCT_DIR)/run_tests.re',
           ],
           'action': ['python', '<(test_script)', '-d', '<(PRODUCT_DIR)',
-                     '-t', '80', 'remoting'],
+                     '-t', '80', 'sanity'],
         },
       ],
     },

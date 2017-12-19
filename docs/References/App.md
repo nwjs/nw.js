@@ -31,9 +31,9 @@ Get the application's data path in user's directory.
 
 * Windows: `%LOCALAPPDATA%/<name>`
 * Linux: `~/.config/<name>`
-* OSX: `~/Library/Application Support/<name>`
+* OS X: `~/Library/Application Support/<name>/Default` (was `~/Library/Application Support/<name>` in v0.12.3 and below)
 
-`<name>` is the field in the manifest.
+`<name>` is the **name** field in the `package.json` manifest.
 
 ## App.manifest
 
@@ -42,6 +42,10 @@ Get the JSON object of the manifest file.
 ## App.clearCache()
 
 Clear the HTTP cache in memory and the one on disk. This method call is synchronized.
+
+## App.clearAppCache(manifest_url)
+
+Mark the Application cache group specified by manifest_url obsolete. This method call is synchronized.
 
 ## App.closeAllWindows()
 
@@ -58,11 +62,12 @@ These 2 functions crashes the browser process and the renderer process respectiv
 
 Query the proxy to be used for loading `url` in DOM. The return value is in the same format used in [PAC](http://en.wikipedia.org/wiki/Proxy_auto-config) (e.g. "DIRECT", "PROXY localhost:8080").
 
-## App.setProxyConfig(config)
+## App.setProxyConfig(config, pac_url)
 
 * `config` `{String}` Proxy rules
+* `pac_url` `{String}` PAC url
 
-Set the proxy config which the web engine will be used to request network resources.
+Set the proxy config which the web engine will be used to request network resources or PAC url to detect proxy automatically.
 
 Rule (copied from [`net/proxy/proxy_config.h`](https://github.com/nwjs/chromium.src/blob/nw13/net/proxy/proxy_config.h))
 

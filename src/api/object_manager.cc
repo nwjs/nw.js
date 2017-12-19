@@ -50,8 +50,8 @@ using extensions::EventRouter;
 
 namespace nw {
 
-IDMap<Base, IDMapOwnPointer> nw::ObjectManager::objects_registry_;
-int nw::ObjectManager::next_object_id_ = 1;
+base::IDMap<std::unique_ptr<Base>> nw::ObjectManager::objects_registry_;
+int nw::ObjectManager::next_object_id_ = 0;
 
 ObjectManager* ObjectManager::Get(content::BrowserContext* context) {
   return ObjectManagerFactory::GetForBrowserContext(context);
@@ -80,7 +80,7 @@ Base* ObjectManager::GetApiObject(int id) {
 
 // static
 int ObjectManager::AllocateId() {
-  return next_object_id_++;
+  return ++next_object_id_;
 }
 
 void ObjectManager::OnAllocateObject(int object_id,
@@ -92,28 +92,28 @@ void ObjectManager::OnAllocateObject(int object_id,
              << " option:" << option;
 
   if (type == "Menu") {
-    objects_registry_.AddWithID(new Menu(object_id, weak_ptr_factory_.GetWeakPtr(), option, extension_id), object_id);
+    objects_registry_.AddWithID(base::MakeUnique<Menu>(object_id, weak_ptr_factory_.GetWeakPtr(), option, extension_id), object_id);
   } else if (type == "MenuItem") {
     objects_registry_.AddWithID(
-       new MenuItem(object_id, weak_ptr_factory_.GetWeakPtr(), option, extension_id), object_id);
+                                base::MakeUnique<MenuItem>(object_id, weak_ptr_factory_.GetWeakPtr(), option, extension_id), object_id);
   } else if (type == "Tray") {
-    objects_registry_.AddWithID(new Tray(object_id, weak_ptr_factory_.GetWeakPtr(), option, extension_id), object_id);
+    objects_registry_.AddWithID(base::MakeUnique<Tray>(object_id, weak_ptr_factory_.GetWeakPtr(), option, extension_id), object_id);
   }
 #if 0
   else if (type == "Clipboard") {
     objects_registry_.AddWithID(
-        new Clipboard(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
+                                base::MakeUnique<Clipboard>(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else if (type == "Window") {
-    objects_registry_.AddWithID(new Window(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
+    objects_registry_.AddWithID(base::MakeUnique<Window>(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else if (type == "Shortcut") {
-    objects_registry_.AddWithID(new Shortcut(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
+    objects_registry_.AddWithID(base::MakeUnique<Shortcut>(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   } else if (type == "Screen") {
-    objects_registry_.AddWithID(new EventListener(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
+    objects_registry_.AddWithID(base::MakeUnique<EventListener>(object_id, weak_ptr_factory_.GetWeakPtr(), option), object_id);
   }
 #endif
   else {
     LOG(ERROR) << "Allocate an object of unknown type: " << type;
-    objects_registry_.AddWithID(new Base(object_id, weak_ptr_factory_.GetWeakPtr(), option, extension_id), object_id);
+    objects_registry_.AddWithID(base::MakeUnique<Base>(object_id, weak_ptr_factory_.GetWeakPtr(), option, extension_id), object_id);
   }
   objects_.insert(object_id);
 }
@@ -227,9 +227,9 @@ void ObjectManager::SendEvent(Base* object,
   EventRouter* event_router = EventRouter::Get(browser_context_);
   if (!event_router)
     return;
-  scoped_ptr<base::ListValue> arguments(args.DeepCopy());
-  arguments->Insert(0, new base::FundamentalValue(object->id()));
-  scoped_ptr<Event> event(new Event(extensions::events::UNKNOWN, "NWObject" + event_name, std::move(arguments)));
+  std::unique_ptr<base::ListValue> arguments(args.DeepCopy());
+  arguments->Insert(0, base::WrapUnique(new base::Value(object->id())));
+  std::unique_ptr<Event> event(new Event(extensions::events::UNKNOWN, "NWObject" + event_name, std::move(arguments)));
   event->restrict_to_browser_context = browser_context_;
   event->user_gesture = EventRouter::USER_GESTURE_ENABLED;
   event_router->DispatchEventToExtension(object->extension_id_, std::move(event));

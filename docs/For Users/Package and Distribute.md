@@ -7,13 +7,12 @@ This document guides you how to package and distribute NW.js based app.
 
 ## Quick Start
 
-You can use [`nw-builder`](https://github.com/nwjs/nw-builder) to quickly generate a package for you.
+You can use following tools to automatically package your NW.js based app for distribution.
 
-1. [Prepare your app](#prepare-your-app) as below.
-2. Install `nw-builder` with `npm install -g nw-builder`
-3. Package your app with `nwbuild -p linux64 /path/to/your/app`
+* [nwjs-builder-phoenix](https://github.com/evshiron/nwjs-builder-phoenix) (recommended)
+* [nw-builder](https://github.com/nwjs-community/nw-builder)
 
-Your app can be found in `./build` folder.
+Or your can build your app manually with the instructions below.
 
 ## Prepare Your App
 
@@ -56,7 +55,7 @@ It's the recommended way to pack your app.
 
 ### Package Option 2. Zip File
 
-You can package all the files into a zip file and rename it as `package.nw`. And put it along with NW.js binaries for Windows and Linux. For Mac, put `package.nw` in `nwjs.app/Contents/Resources/`.
+You can package all the files into a zip file and rename it as `package.nw`. And put it along with NW.js binaries for Windows and Linux. For Mac, name it `app.nw` and put it in `nwjs.app/Contents/Resources/`.
 
 !!! warning "Start Slow with Big Package or Too Many Files"
     At starting time, NW.js will unzip the package into temp folder and load it from there. So it will start slower if your package is big or contains too many files.
@@ -85,16 +84,24 @@ On Linux, you need to create proper [`.desktop` file](https://wiki.archlinux.org
 
 To create a self-extractable installer script, you can use scripts like [`shar`](https://en.wikipedia.org/wiki/Shar) or [`makeself`](http://stephanepeter.com/makeself/).
 
-To distribute your app through the package management sysmtem, like `apt`, `yum`, `pacman` etc, please follow their official documents to create the packages.
+To distribute your app through the package management system, like `apt`, `yum`, `pacman` etc, please follow their official documents to create the packages.
 
 ### Mac OS X
 
-On Mac OS X, you need to modify following files to have your own icon and boundle id:
+On Mac OS X, you need to modify following files to have your own icon and bundle id:
 
 * `Contents/Resources/nw.icns`: icon of your app. `nw.icns` is in [Apple Icon Image Format](https://en.wikipedia.org/wiki/Apple_Icon_Image_format). You can convert your icon in PNG/JPEG format into ICNS by using tools like [Image2Icon](http://www.img2icnsapp.com/).
 * `Contents/Info.plist`: the apple package description file. You can view [Implementing Cocoa's Standard About Panel](http://cocoadevcentral.com/articles/000071.php) on how this file will influence your app and what fields you should modify.
 
-And you should sign you Mac app. Or the user won't launch the app if Gatekeeper is turned on. See [Signed Apps or Installer Packages](https://developer.apple.com/library/mac/documentation/IDEs/Conceptual/AppDistributionGuide/DistributingApplicationsOutside/DistributingApplicationsOutside.html) for details.
+To rename the application, the following files should be modified:
+* `Contents/Info.plist` - CFBundleDisplayName
+* `Contents/Resources/en.lproj/InfoPlist.strings` - CFBundleDisplayName
+* `package.json` -- add a string field `product_string` (e.g. foobar); the helper application will be shown as 'foobar Helper'. (since v0.24.4)
+* `Contents/Versions/n.n.n.n/nwjs Helper.app/Contents/MacOS/nwjs Helper` - rename the file to 'foobar Helper'
+* `Contents/Versions/n.n.n.n/nwjs Helper.app/Contents/Info.plist` - change CFBundleDisplayName
+* `Contents/Versions/n.n.n.n/nwjs Helper.app` - rename the directory to 'foobar Helper.app'
+
+You should sign your Mac app, or the user won't launch the app if Gatekeeper is turned on. See [Support for Mac App Store](Advanced/Support for Mac App Store.md) for details.
 
 ## References
 

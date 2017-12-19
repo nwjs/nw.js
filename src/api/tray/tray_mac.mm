@@ -22,7 +22,7 @@
 
 #include "base/values.h"
 #import <Cocoa/Cocoa.h>
-#include "ui/gfx/screen.h"
+#include "ui/display/screen.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/object_manager.h"
 
@@ -41,7 +41,7 @@
 }
 - (void)onClick:(id)sender {
     base::ListValue args;
-    base::DictionaryValue* data = new base::DictionaryValue;
+    std::unique_ptr<base::DictionaryValue> data(new base::DictionaryValue);
     // Get the position of the frame of the NSStatusItem
     NSPoint pos = ([[[NSApp currentEvent] window] frame]).origin;
     // Flip coordinates to gfx (0,0 in top-left corner) using primary screen.
@@ -49,7 +49,7 @@
     pos.y = NSMaxY([screen frame]) - pos.y;
     data->SetInteger("x", pos.x);
     data->SetInteger("y", pos.y);
-    args.Append(data);
+    args.Append(std::move(data));
     tray_->object_manager()->SendEvent(tray_,"TrayClick",args);
 }
 @end

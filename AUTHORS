@@ -2,10 +2,15 @@
 #     Name <email address>
 #
 # Please keep the list sorted.
-
-Roger Wang <roger.wang@linux.intel.com>
-Zhao Cheng <zcbenz@gmail.com>
-Ma Donghao <owenc4a4@gmail.com>
+# Current active maintainers and contributors
+Roger Wang <roger@nwjs.io>
+Kevin Fan <kf@gnor.net>
+Jefry Tedjokusumo from V-cube Global Services <jtg_gg@yahoo.com.sg>;<jefry.ted@vcube.co.jp>
+Jan Rucka <Jan.Rucka@firma.seznam.cz>
+Fu Junwei <junwei.fu@intel.com>
+Zhang Xiaofeng <xiaofeng.zhang@intel.com>
+Hu JiaJie <jiajie.hu@intel.com>
+Wang Lei <leix1.wang@intel.com>
 
 # Thanks for project logo design:
 
@@ -13,26 +18,27 @@ Jeroen Ransijn <jssrdesign@gmail.com>
 
 # And thanks for contributions from:
 
-Ivo Georgiev <ivo@linvo.org>
-Krill Izotov <enykeev@gmail.com>
-Zhang Chaobin <zhchbin@gmail.com>
-Michael Morrison <mmorrison@wootalyzer.com>
-William Towe <willbur1984@gmail.com>
-Toni Lähdekorpi <toni@lygon.net>
-Youngwook Kim <youngwook.kim@gmail.com>
-Zhao Zeyi (richardcypher) <sjturichardcypher@gmail.com>
+Anton Khlynovskiy <subzey@gmail.com>
+Bas Wegh <BasWegh@gmx.de>
+Chase Willden <chase.willden@gmail.com>
+Cong Liu <leehom2001@gmail.com>
+Daniel Braun <danielbraun@me.com>
+Eric Newport <kethinov@gmail.com>
 Fabrice Weinberg <fabrice@weinberg.me>
+Ivo Georgiev <ivo@linvo.org>
+Joachim Bauch <mail@joachim-bauch.de>
+Krill Izotov <enykeev@gmail.com>
 Lv Kaiyang <kevinlui598@gmail.com>
 Lukas Benes <bender@false.cz>
 Lithare Emileit <litharemilit@gmail.com>
-Jefry Tedjokusumo from V-cube Global Services <jtg_gg@yahoo.com.sg>;<jefry.ted@vcube.co.jp>
-Wu Haojian <hokein.wu@gmail.com>
-Bas Wegh <BasWegh@gmx.de>
-Joachim Bauch <mail@joachim-bauch.de>
-Cong Liu <leehom2001@gmail.com>
-Eric Newport <kethinov@gmail.com>
+Ma Donghao <owenc4a4@gmail.com>
 Marco Fabbri <mrfabbri@gmail.com>
-Daniel Braun <danielbraun@me.com>
-Chase Willden <chase.willden@gmail.com>
-Anton Khlynovskiy <subzey@gmail.com>
+Michael Morrison <mmorrison@wootalyzer.com>
+Toni Lähdekorpi <toni@lygon.net>
+Wu Haojian <hokein.wu@gmail.com>
+William Towe <willbur1984@gmail.com>
 Wu Yuehang <yuehan9.wu@gmail.com>
+Youngwook Kim <youngwook.kim@gmail.com>
+Zhang Chaobin <zhchbin@gmail.com>
+Zhao Cheng <zcbenz@gmail.com>
+Zhao Zeyi (richardcypher) <sjturichardcypher@gmail.com>

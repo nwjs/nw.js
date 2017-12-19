@@ -153,6 +153,7 @@ def generate_target_nw(platform_name, arch, version):
                            'credits.html',
                            'resources.pak',
                            'nw_100_percent.pak',
+                           'nw_200_percent.pak',
                            'nw',
                            'icudtl.dat',
                            'locales',
@@ -161,11 +162,14 @@ def generate_target_nw(platform_name, arch, version):
                            'lib/libnw.so',
                            'lib/libnode.so',
                            'lib/libffmpeg.so',
+                           'swiftshader/libEGL.so',
+                           'swiftshader/libGLESv2.so'
                            ]
         if flavor == 'sdk':
             target['input'].append('nwjc')
             target['input'].append('payload')
             target['input'].append('chromedriver')
+            target['input'].append('minidump_stackwalk')
         if flavor in ['nacl','sdk'] :
             target['input'] += ['nacl_helper', 'nacl_helper_bootstrap', 'pnacl']
             if arch == 'x64':
@@ -190,8 +194,10 @@ def generate_target_nw(platform_name, arch, version):
                            'resources.pak',
                            'nw_100_percent.pak',
                            'nw_200_percent.pak',
-                           'dbghelp.dll',
-                           'ffmpeg.dll'
+                           'ffmpeg.dll',
+                           'swiftshader\libEGL.dll',
+                           'swiftshader\libGLESv2.dll'
+                            # To be removed in CR51
                            ]
         if flavor == 'sdk':
             target['input'].append('nwjc.exe')
@@ -199,10 +205,10 @@ def generate_target_nw(platform_name, arch, version):
             target['input'].append('chromedriver.exe')
         if flavor in ['nacl','sdk'] :
             target['input'].append('pnacl')
-            if arch == 'x64':
-                target['input'].append('nacl_irt_x86_64.nexe')
-            else:
+            target['input'].append('nacl_irt_x86_64.nexe')
+            if arch == 'ia32':
                 target['input'].append('nacl_irt_x86_32.nexe')
+                target['input'].append('nacl64.exe')
     elif platform_name == 'osx':
         target['input'] = [
                            'nwjs.app',
@@ -212,6 +218,7 @@ def generate_target_nw(platform_name, arch, version):
             target['input'].append('nwjc')
             target['input'].append('payload')
             target['input'].append('chromedriver')
+            target['input'].append('minidump_stackwalk')
     else:
         print 'Unsupported platform: ' + platform_name
         exit(-1)
@@ -250,12 +257,13 @@ def generate_target_symbols(platform_name, arch, version):
     if platform_name == 'linux':
         target['compress'] = 'tar.gz'
         target['input'] = [
-            'nw.breakpad.' + arch,
-            'node.so.breakpad.' + arch,
-            'nw.so.breakpad.' + arch
+            'nw.sym',
+            'libnode.sym',
+            'libnw.sym',
+            'libffmpeg.sym'
         ]
         if flavor in ['sdk', 'nacl']:
-            target['input'].append('nacl_helper.breakpad.' + arch)
+            target['input'].append('nacl_helper.sym')
 
         target['folder'] = True
     elif platform_name == 'win':
@@ -282,38 +290,30 @@ def generate_target_headers(platform_name, arch, version):
     target = {}
     target['output'] = ''
     target['compress'] = None
-    if platform_name == 'osx':
-        target['input'] = []
-        # here , call make-nw-headers.py to generate nw headers
-        make_nw_header = os.path.join(os.path.dirname(__file__), \
-                'make-nw-headers.py')
-        print make_nw_header
-        res = call(['python', make_nw_header])
-        if res == 0:
-            print 'nw-headers generated'
-            nw_headers_name = 'nw-headers-v' + version + '.tar.gz'
-            nw_headers_path = os.path.join(os.path.dirname(__file__), \
-                    os.pardir, 'tmp', nw_headers_name)
-            if os.path.isfile(os.path.join(binaries_location, nw_headers_name)):
-                os.remove(os.path.join(binaries_location, nw_headers_name))
+    target['input'] = []
+    # here , call make-nw-headers.py to generate nw headers
+    make_nw_header = os.path.join(os.path.dirname(__file__), \
+                                  'make-nw-headers.py')
+    print make_nw_header
+    res = call(['python', make_nw_header, '-p', binaries_location, '-n', platform_name])
+    if res == 0:
+        print 'nw-headers generated'
+        nw_headers_name = 'nw-headers-v' + version + '.tar.gz'
+        nw_headers_path = os.path.join(os.path.dirname(__file__), \
+                                       os.pardir, 'tmp', nw_headers_name)
+        if os.path.isfile(os.path.join(binaries_location, nw_headers_name)):
+            os.remove(os.path.join(binaries_location, nw_headers_name))
 
-            f = open(nw_headers_path, 'rb')
-            checksum_file = open(os.path.join(binaries_location, 'SHASUMS256.txt'), 'w')
-            with f, checksum_file:
-                checksum_file.write('%s %s' % (sha256(f.read()).hexdigest(), nw_headers_name))
-            shutil.move(nw_headers_path, binaries_location)
-            target['input'].append(nw_headers_name)
-            target['input'].append('SHASUMS256.txt')
-        else:
-            #TODO, handle err
-            print 'nw-headers generate failed'
-    elif platform_name == 'win':
-        target['input'] = []
-    elif platform_name == 'linux':
-        target['input'] = []
+        f = open(nw_headers_path, 'rb')
+        checksum_file = open(os.path.join(binaries_location, 'SHASUMS256.txt'), 'w')
+        with f, checksum_file:
+            checksum_file.write('%s %s' % (sha256(f.read()).hexdigest(), nw_headers_name))
+        shutil.move(nw_headers_path, binaries_location)
+        target['input'].append(nw_headers_name)
+        target['input'].append('SHASUMS256.txt')
     else:
-        print 'Unsupported platform: ' + platform_name
-        exit(-1)
+        #TODO, handle err
+        print 'nw-headers generate failed'
     return target
 
 def generate_target_empty(platform_name, arch, version):
@@ -343,21 +343,53 @@ def generate_target_others(platform_name, arch, version):
 
 ################################
 # Make packages
+
+#https://gist.github.com/kgn/610907
+def ZipDir(inputDir, outputZip):
+    '''Zip up a directory and preserve symlinks and empty directories'''
+    zipOut = zipfile.ZipFile(outputZip, 'w', compression=zipfile.ZIP_DEFLATED)
+    
+    rootLen = len(os.path.dirname(inputDir))
+    def _ArchiveDirectory(parentDirectory):
+        contents = os.listdir(parentDirectory)
+        #store empty directories
+        if not contents:
+            #http://www.velocityreviews.com/forums/t318840-add-empty-directory-using-zipfile.html
+            archiveRoot = parentDirectory[rootLen:].replace('\\', '/').lstrip('/')
+            zipInfo = zipfile.ZipInfo(archiveRoot+'/')
+            zipOut.writestr(zipInfo, '')
+        for item in contents:
+            fullPath = os.path.join(parentDirectory, item)
+            if os.path.isdir(fullPath) and not os.path.islink(fullPath):
+                _ArchiveDirectory(fullPath)
+            else:
+                archiveRoot = fullPath[rootLen:].replace('\\', '/').lstrip('/')
+                if os.path.islink(fullPath):
+                    # http://www.mail-archive.com/python-list@python.org/msg34223.html
+                    zipInfo = zipfile.ZipInfo(archiveRoot)
+                    zipInfo.create_system = 3
+                    # long type of hex val of '0xA1ED0000L',
+                    # say, symlink attr magic...
+                    zipInfo.external_attr = 2716663808L
+                    zipOut.writestr(zipInfo, os.readlink(fullPath))
+                else:
+                    zipOut.write(fullPath, archiveRoot, zipfile.ZIP_DEFLATED)
+    _ArchiveDirectory(inputDir)
+    
+    zipOut.close()
+
 def compress(from_dir, to_dir, fname, compress):
     from_dir = os.path.normpath(from_dir)
     to_dir = os.path.normpath(to_dir)
     _from = os.path.join(from_dir, fname)
     _to = os.path.join(to_dir, fname)
     if compress == 'zip':
-        z = zipfile.ZipFile(_to + '.zip', 'w', compression=zipfile.ZIP_DEFLATED)
-        if os.path.isdir(_from):
-            for root, dirs, files in os.walk(_from):
-                for f in files:
-                    _path = os.path.join(root, f)
-                    z.write(_path, _path.replace(from_dir+os.sep, ''))
+        if os.path.isdir(_from): 
+            ZipDir(_from, _to + '.zip')
         else:
+            z = zipfile.ZipFile(_to + '.zip', 'w', compression=zipfile.ZIP_DEFLATED)
             z.write(_from, fname)
-        z.close()
+            z.close()
     elif compress == 'tar.gz': # only for folders
         if not os.path.isdir(_from):
             print 'Will not create tar.gz for a single file: ' + _from
@@ -416,17 +448,19 @@ def make_packages(targets):
             os.mkdir(folder)
             if platform_name == 'linux':
                 os.mkdir(os.path.join(folder, 'lib'))
+            if platform_name in ['linux', 'win']:
+                os.mkdir(os.path.join(folder, 'swiftshader'))
             for f in t['input']:
                 src = os.path.join(binaries_location, f)
                 dest = os.path.join(folder, f)
                 if os.path.isdir(src): # like nw.app
-                    shutil.copytree(src, dest)
+                    shutil.copytree(src, dest, symlinks=True)
                 else:
                     shutil.copy(src, dest)
             compress(dist_dir, dist_dir, t['output'], t['compress'])
             # remove temp folders
             if (t.has_key('keep4test')) :
-                shutil.copytree(folder, nwfolder)
+                shutil.copytree(folder, nwfolder, symlinks=True)
             
             shutil.rmtree(folder)
         else:

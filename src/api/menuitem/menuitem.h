@@ -70,10 +70,16 @@ class MenuItem : public Base {
                         const base::ListValue& arguments,
                         base::ListValue* result) override;
 
+#if defined(OS_MACOSX)
+  static std::unique_ptr<base::DictionaryValue> CreateFromNative(NSMenuItem* menu_item, Menu* menu, int index);
+  static MenuItem* GetMenuItemFromNative(NSMenuItem* menu_item);
+#endif
+
 #if defined(OS_WIN) || defined(OS_LINUX)
-   bool AcceleratorPressed(const ui::Accelerator& accelerator) override;
-   bool CanHandleAccelerators() const override;
+  bool AcceleratorPressed(const ui::Accelerator& accelerator) override;
+  bool CanHandleAccelerators() const override;
   void UpdateKeys(views::FocusManager *focus_manager);
+  void RemoveKeys();
 #endif
 
   void OnClick();
@@ -104,6 +110,7 @@ class MenuItem : public Base {
   NSMenuItem* menu_item_;
   MenuItemDelegate* delegate_;
   bool iconIsTemplate;
+  bool native_;
 
 #elif defined(OS_WIN) || defined(OS_LINUX)
   friend class MenuDelegate;

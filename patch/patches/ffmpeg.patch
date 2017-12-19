@@ -1,13 +1,711 @@
-diff --git a/ffmpeg.gyp b/ffmpeg.gyp
-index 5c21675..ee09dfe 100755
---- ffmpeg.gyp
-+++ ffmpeg.gyp
-@@ -84,7 +84,7 @@
-       }],
-     ],
+diff --git BUILD.gn BUILD.gn
+index a922eeef70..307ff64618 100755
+--- BUILD.gn
++++ BUILD.gn
+@@ -420,6 +420,12 @@ if (is_component_ffmpeg) {
+     # So we can append below and assume they're defined.
+     ldflags = []
  
--    'ffmpeg_component%': '<(component)',
-+    'ffmpeg_component%': 'shared_library',
++    if (is_mac) {
++      ldflags += [
++        "-Wl,-install_name,@loader_path/../libffmpeg.dylib"
++      ]
++    }
++
+     if (is_posix && !is_mac) {
+       # Fixes warnings PIC relocation when building as component.
+       ldflags += [
+diff --git chromium/config/Chromium/linux-noasm/x64/config.h chromium/config/Chromium/linux-noasm/x64/config.h
+index 17264dc738..ddaf26b268 100644
+--- chromium/config/Chromium/linux-noasm/x64/config.h
++++ chromium/config/Chromium/linux-noasm/x64/config.h
+@@ -542,7 +542,7 @@
+ #define CONFIG_FFPROBE 0
+ #define CONFIG_FFSERVER 0
+ #define CONFIG_FFMPEG 0
+-#define CONFIG_DCT 0
++#define CONFIG_DCT 1
+ #define CONFIG_DWT 0
+ #define CONFIG_ERROR_RESILIENCE 0
+ #define CONFIG_FAAN 1
+@@ -620,9 +620,9 @@
+ #define CONFIG_LZF 0
+ #define CONFIG_ME_CMP 0
+ #define CONFIG_MPEG_ER 0
+-#define CONFIG_MPEGAUDIO 0
+-#define CONFIG_MPEGAUDIODSP 0
+-#define CONFIG_MPEGAUDIOHEADER 0
++#define CONFIG_MPEGAUDIO 1
++#define CONFIG_MPEGAUDIODSP 1
++#define CONFIG_MPEGAUDIOHEADER 1
+ #define CONFIG_MPEGVIDEO 0
+ #define CONFIG_MPEGVIDEOENC 0
+ #define CONFIG_MSS34DSP 0
+@@ -968,7 +968,7 @@
+ #define CONFIG_MP1FLOAT_DECODER 0
+ #define CONFIG_MP2_DECODER 0
+ #define CONFIG_MP2FLOAT_DECODER 0
+-#define CONFIG_MP3_DECODER 0
++#define CONFIG_MP3_DECODER 1
+ #define CONFIG_MP3FLOAT_DECODER 0
+ #define CONFIG_MP3ADU_DECODER 0
+ #define CONFIG_MP3ADUFLOAT_DECODER 0
+@@ -1275,7 +1275,7 @@
+ #define CONFIG_MM_DEMUXER 0
+ #define CONFIG_MMF_DEMUXER 0
+ #define CONFIG_MOV_DEMUXER 0
+-#define CONFIG_MP3_DEMUXER 0
++#define CONFIG_MP3_DEMUXER 1
+ #define CONFIG_MPC_DEMUXER 0
+ #define CONFIG_MPC8_DEMUXER 0
+ #define CONFIG_MPEGPS_DEMUXER 0
+@@ -2217,7 +2217,7 @@
+ #define CONFIG_MJPEG_PARSER 0
+ #define CONFIG_MLP_PARSER 0
+ #define CONFIG_MPEG4VIDEO_PARSER 0
+-#define CONFIG_MPEGAUDIO_PARSER 0
++#define CONFIG_MPEGAUDIO_PARSER 1
+ #define CONFIG_MPEGVIDEO_PARSER 0
+ #define CONFIG_OPUS_PARSER 1
+ #define CONFIG_PNG_PARSER 0
+diff --git chromium/config/Chromium/linux/ia32/config.asm chromium/config/Chromium/linux/ia32/config.asm
+index aac0d9651d..819df8f712 100644
+--- chromium/config/Chromium/linux/ia32/config.asm
++++ chromium/config/Chromium/linux/ia32/config.asm
+@@ -526,7 +526,7 @@
+ %define CONFIG_FFPROBE 0
+ %define CONFIG_FFSERVER 0
+ %define CONFIG_FFMPEG 0
+-%define CONFIG_DCT 0
++%define CONFIG_DCT 1
+ %define CONFIG_DWT 0
+ %define CONFIG_ERROR_RESILIENCE 0
+ %define CONFIG_FAAN 1
+@@ -604,9 +604,9 @@
+ %define CONFIG_LZF 0
+ %define CONFIG_ME_CMP 0
+ %define CONFIG_MPEG_ER 0
+-%define CONFIG_MPEGAUDIO 0
+-%define CONFIG_MPEGAUDIODSP 0
+-%define CONFIG_MPEGAUDIOHEADER 0
++%define CONFIG_MPEGAUDIO 1
++%define CONFIG_MPEGAUDIODSP 1
++%define CONFIG_MPEGAUDIOHEADER 1
+ %define CONFIG_MPEGVIDEO 0
+ %define CONFIG_MPEGVIDEOENC 0
+ %define CONFIG_MSS34DSP 0
+@@ -952,7 +952,7 @@
+ %define CONFIG_MP1FLOAT_DECODER 0
+ %define CONFIG_MP2_DECODER 0
+ %define CONFIG_MP2FLOAT_DECODER 0
+-%define CONFIG_MP3_DECODER 0
++%define CONFIG_MP3_DECODER 1
+ %define CONFIG_MP3FLOAT_DECODER 0
+ %define CONFIG_MP3ADU_DECODER 0
+ %define CONFIG_MP3ADUFLOAT_DECODER 0
+@@ -1259,7 +1259,7 @@
+ %define CONFIG_MM_DEMUXER 0
+ %define CONFIG_MMF_DEMUXER 0
+ %define CONFIG_MOV_DEMUXER 0
+-%define CONFIG_MP3_DEMUXER 0
++%define CONFIG_MP3_DEMUXER 1
+ %define CONFIG_MPC_DEMUXER 0
+ %define CONFIG_MPC8_DEMUXER 0
+ %define CONFIG_MPEGPS_DEMUXER 0
+@@ -2201,7 +2201,7 @@
+ %define CONFIG_MJPEG_PARSER 0
+ %define CONFIG_MLP_PARSER 0
+ %define CONFIG_MPEG4VIDEO_PARSER 0
+-%define CONFIG_MPEGAUDIO_PARSER 0
++%define CONFIG_MPEGAUDIO_PARSER 1
+ %define CONFIG_MPEGVIDEO_PARSER 0
+ %define CONFIG_OPUS_PARSER 1
+ %define CONFIG_PNG_PARSER 0
+diff --git chromium/config/Chromium/linux/ia32/config.h chromium/config/Chromium/linux/ia32/config.h
+index 1d235689e6..aae1b1bd95 100644
+--- chromium/config/Chromium/linux/ia32/config.h
++++ chromium/config/Chromium/linux/ia32/config.h
+@@ -542,7 +542,7 @@
+ #define CONFIG_FFPROBE 0
+ #define CONFIG_FFSERVER 0
+ #define CONFIG_FFMPEG 0
+-#define CONFIG_DCT 0
++#define CONFIG_DCT 1
+ #define CONFIG_DWT 0
+ #define CONFIG_ERROR_RESILIENCE 0
+ #define CONFIG_FAAN 1
+@@ -620,9 +620,9 @@
+ #define CONFIG_LZF 0
+ #define CONFIG_ME_CMP 0
+ #define CONFIG_MPEG_ER 0
+-#define CONFIG_MPEGAUDIO 0
+-#define CONFIG_MPEGAUDIODSP 0
+-#define CONFIG_MPEGAUDIOHEADER 0
++#define CONFIG_MPEGAUDIO 1
++#define CONFIG_MPEGAUDIODSP 1
++#define CONFIG_MPEGAUDIOHEADER 1
+ #define CONFIG_MPEGVIDEO 0
+ #define CONFIG_MPEGVIDEOENC 0
+ #define CONFIG_MSS34DSP 0
+@@ -968,7 +968,7 @@
+ #define CONFIG_MP1FLOAT_DECODER 0
+ #define CONFIG_MP2_DECODER 0
+ #define CONFIG_MP2FLOAT_DECODER 0
+-#define CONFIG_MP3_DECODER 0
++#define CONFIG_MP3_DECODER 1
+ #define CONFIG_MP3FLOAT_DECODER 0
+ #define CONFIG_MP3ADU_DECODER 0
+ #define CONFIG_MP3ADUFLOAT_DECODER 0
+@@ -1275,7 +1275,7 @@
+ #define CONFIG_MM_DEMUXER 0
+ #define CONFIG_MMF_DEMUXER 0
+ #define CONFIG_MOV_DEMUXER 0
+-#define CONFIG_MP3_DEMUXER 0
++#define CONFIG_MP3_DEMUXER 1
+ #define CONFIG_MPC_DEMUXER 0
+ #define CONFIG_MPC8_DEMUXER 0
+ #define CONFIG_MPEGPS_DEMUXER 0
+@@ -2217,7 +2217,7 @@
+ #define CONFIG_MJPEG_PARSER 0
+ #define CONFIG_MLP_PARSER 0
+ #define CONFIG_MPEG4VIDEO_PARSER 0
+-#define CONFIG_MPEGAUDIO_PARSER 0
++#define CONFIG_MPEGAUDIO_PARSER 1
+ #define CONFIG_MPEGVIDEO_PARSER 0
+ #define CONFIG_OPUS_PARSER 1
+ #define CONFIG_PNG_PARSER 0
+diff --git chromium/config/Chromium/linux/x64/config.asm chromium/config/Chromium/linux/x64/config.asm
+index ab2fc30bbf..552abff573 100644
+--- chromium/config/Chromium/linux/x64/config.asm
++++ chromium/config/Chromium/linux/x64/config.asm
+@@ -526,7 +526,7 @@
+ %define CONFIG_FFPROBE 0
+ %define CONFIG_FFSERVER 0
+ %define CONFIG_FFMPEG 0
+-%define CONFIG_DCT 0
++%define CONFIG_DCT 1
+ %define CONFIG_DWT 0
+ %define CONFIG_ERROR_RESILIENCE 0
+ %define CONFIG_FAAN 1
+@@ -604,9 +604,9 @@
+ %define CONFIG_LZF 0
+ %define CONFIG_ME_CMP 0
+ %define CONFIG_MPEG_ER 0
+-%define CONFIG_MPEGAUDIO 0
+-%define CONFIG_MPEGAUDIODSP 0
+-%define CONFIG_MPEGAUDIOHEADER 0
++%define CONFIG_MPEGAUDIO 1
++%define CONFIG_MPEGAUDIODSP 1
++%define CONFIG_MPEGAUDIOHEADER 1
+ %define CONFIG_MPEGVIDEO 0
+ %define CONFIG_MPEGVIDEOENC 0
+ %define CONFIG_MSS34DSP 0
+@@ -952,7 +952,7 @@
+ %define CONFIG_MP1FLOAT_DECODER 0
+ %define CONFIG_MP2_DECODER 0
+ %define CONFIG_MP2FLOAT_DECODER 0
+-%define CONFIG_MP3_DECODER 0
++%define CONFIG_MP3_DECODER 1
+ %define CONFIG_MP3FLOAT_DECODER 0
+ %define CONFIG_MP3ADU_DECODER 0
+ %define CONFIG_MP3ADUFLOAT_DECODER 0
+@@ -1259,7 +1259,7 @@
+ %define CONFIG_MM_DEMUXER 0
+ %define CONFIG_MMF_DEMUXER 0
+ %define CONFIG_MOV_DEMUXER 0
+-%define CONFIG_MP3_DEMUXER 0
++%define CONFIG_MP3_DEMUXER 1
+ %define CONFIG_MPC_DEMUXER 0
+ %define CONFIG_MPC8_DEMUXER 0
+ %define CONFIG_MPEGPS_DEMUXER 0
+@@ -2201,7 +2201,7 @@
+ %define CONFIG_MJPEG_PARSER 0
+ %define CONFIG_MLP_PARSER 0
+ %define CONFIG_MPEG4VIDEO_PARSER 0
+-%define CONFIG_MPEGAUDIO_PARSER 0
++%define CONFIG_MPEGAUDIO_PARSER 1
+ %define CONFIG_MPEGVIDEO_PARSER 0
+ %define CONFIG_OPUS_PARSER 1
+ %define CONFIG_PNG_PARSER 0
+diff --git chromium/config/Chromium/linux/x64/config.h chromium/config/Chromium/linux/x64/config.h
+index a5169eeb22..43568266bc 100644
+--- chromium/config/Chromium/linux/x64/config.h
++++ chromium/config/Chromium/linux/x64/config.h
+@@ -542,7 +542,7 @@
+ #define CONFIG_FFPROBE 0
+ #define CONFIG_FFSERVER 0
+ #define CONFIG_FFMPEG 0
+-#define CONFIG_DCT 0
++#define CONFIG_DCT 1
+ #define CONFIG_DWT 0
+ #define CONFIG_ERROR_RESILIENCE 0
+ #define CONFIG_FAAN 1
+@@ -620,9 +620,9 @@
+ #define CONFIG_LZF 0
+ #define CONFIG_ME_CMP 0
+ #define CONFIG_MPEG_ER 0
+-#define CONFIG_MPEGAUDIO 0
+-#define CONFIG_MPEGAUDIODSP 0
+-#define CONFIG_MPEGAUDIOHEADER 0
++#define CONFIG_MPEGAUDIO 1
++#define CONFIG_MPEGAUDIODSP 1
++#define CONFIG_MPEGAUDIOHEADER 1
+ #define CONFIG_MPEGVIDEO 0
+ #define CONFIG_MPEGVIDEOENC 0
+ #define CONFIG_MSS34DSP 0
+@@ -968,7 +968,7 @@
+ #define CONFIG_MP1FLOAT_DECODER 0
+ #define CONFIG_MP2_DECODER 0
+ #define CONFIG_MP2FLOAT_DECODER 0
+-#define CONFIG_MP3_DECODER 0
++#define CONFIG_MP3_DECODER 1
+ #define CONFIG_MP3FLOAT_DECODER 0
+ #define CONFIG_MP3ADU_DECODER 0
+ #define CONFIG_MP3ADUFLOAT_DECODER 0
+@@ -1275,7 +1275,7 @@
+ #define CONFIG_MM_DEMUXER 0
+ #define CONFIG_MMF_DEMUXER 0
+ #define CONFIG_MOV_DEMUXER 0
+-#define CONFIG_MP3_DEMUXER 0
++#define CONFIG_MP3_DEMUXER 1
+ #define CONFIG_MPC_DEMUXER 0
+ #define CONFIG_MPC8_DEMUXER 0
+ #define CONFIG_MPEGPS_DEMUXER 0
+@@ -2217,7 +2217,7 @@
+ #define CONFIG_MJPEG_PARSER 0
+ #define CONFIG_MLP_PARSER 0
+ #define CONFIG_MPEG4VIDEO_PARSER 0
+-#define CONFIG_MPEGAUDIO_PARSER 0
++#define CONFIG_MPEGAUDIO_PARSER 1
+ #define CONFIG_MPEGVIDEO_PARSER 0
+ #define CONFIG_OPUS_PARSER 1
+ #define CONFIG_PNG_PARSER 0
+diff --git chromium/config/Chromium/mac/x64/config.asm chromium/config/Chromium/mac/x64/config.asm
+index 14bb7c5a3c..9dff9e7125 100644
+--- chromium/config/Chromium/mac/x64/config.asm
++++ chromium/config/Chromium/mac/x64/config.asm
+@@ -526,7 +526,7 @@
+ %define CONFIG_FFPROBE 0
+ %define CONFIG_FFSERVER 0
+ %define CONFIG_FFMPEG 0
+-%define CONFIG_DCT 0
++%define CONFIG_DCT 1
+ %define CONFIG_DWT 0
+ %define CONFIG_ERROR_RESILIENCE 0
+ %define CONFIG_FAAN 1
+@@ -604,9 +604,9 @@
+ %define CONFIG_LZF 0
+ %define CONFIG_ME_CMP 0
+ %define CONFIG_MPEG_ER 0
+-%define CONFIG_MPEGAUDIO 0
+-%define CONFIG_MPEGAUDIODSP 0
+-%define CONFIG_MPEGAUDIOHEADER 0
++%define CONFIG_MPEGAUDIO 1
++%define CONFIG_MPEGAUDIODSP 1
++%define CONFIG_MPEGAUDIOHEADER 1
+ %define CONFIG_MPEGVIDEO 0
+ %define CONFIG_MPEGVIDEOENC 0
+ %define CONFIG_MSS34DSP 0
+@@ -952,7 +952,7 @@
+ %define CONFIG_MP1FLOAT_DECODER 0
+ %define CONFIG_MP2_DECODER 0
+ %define CONFIG_MP2FLOAT_DECODER 0
+-%define CONFIG_MP3_DECODER 0
++%define CONFIG_MP3_DECODER 1
+ %define CONFIG_MP3FLOAT_DECODER 0
+ %define CONFIG_MP3ADU_DECODER 0
+ %define CONFIG_MP3ADUFLOAT_DECODER 0
+@@ -1259,7 +1259,7 @@
+ %define CONFIG_MM_DEMUXER 0
+ %define CONFIG_MMF_DEMUXER 0
+ %define CONFIG_MOV_DEMUXER 0
+-%define CONFIG_MP3_DEMUXER 0
++%define CONFIG_MP3_DEMUXER 1
+ %define CONFIG_MPC_DEMUXER 0
+ %define CONFIG_MPC8_DEMUXER 0
+ %define CONFIG_MPEGPS_DEMUXER 0
+@@ -2201,7 +2201,7 @@
+ %define CONFIG_MJPEG_PARSER 0
+ %define CONFIG_MLP_PARSER 0
+ %define CONFIG_MPEG4VIDEO_PARSER 0
+-%define CONFIG_MPEGAUDIO_PARSER 0
++%define CONFIG_MPEGAUDIO_PARSER 1
+ %define CONFIG_MPEGVIDEO_PARSER 0
+ %define CONFIG_OPUS_PARSER 1
+ %define CONFIG_PNG_PARSER 0
+diff --git chromium/config/Chromium/mac/x64/config.h chromium/config/Chromium/mac/x64/config.h
+index 399a7de58e..a0eca49e50 100644
+--- chromium/config/Chromium/mac/x64/config.h
++++ chromium/config/Chromium/mac/x64/config.h
+@@ -542,7 +542,7 @@
+ #define CONFIG_FFPROBE 0
+ #define CONFIG_FFSERVER 0
+ #define CONFIG_FFMPEG 0
+-#define CONFIG_DCT 0
++#define CONFIG_DCT 1
+ #define CONFIG_DWT 0
+ #define CONFIG_ERROR_RESILIENCE 0
+ #define CONFIG_FAAN 1
+@@ -620,9 +620,9 @@
+ #define CONFIG_LZF 0
+ #define CONFIG_ME_CMP 0
+ #define CONFIG_MPEG_ER 0
+-#define CONFIG_MPEGAUDIO 0
+-#define CONFIG_MPEGAUDIODSP 0
+-#define CONFIG_MPEGAUDIOHEADER 0
++#define CONFIG_MPEGAUDIO 1
++#define CONFIG_MPEGAUDIODSP 1
++#define CONFIG_MPEGAUDIOHEADER 1
+ #define CONFIG_MPEGVIDEO 0
+ #define CONFIG_MPEGVIDEOENC 0
+ #define CONFIG_MSS34DSP 0
+@@ -968,7 +968,7 @@
+ #define CONFIG_MP1FLOAT_DECODER 0
+ #define CONFIG_MP2_DECODER 0
+ #define CONFIG_MP2FLOAT_DECODER 0
+-#define CONFIG_MP3_DECODER 0
++#define CONFIG_MP3_DECODER 1
+ #define CONFIG_MP3FLOAT_DECODER 0
+ #define CONFIG_MP3ADU_DECODER 0
+ #define CONFIG_MP3ADUFLOAT_DECODER 0
+@@ -1275,7 +1275,7 @@
+ #define CONFIG_MM_DEMUXER 0
+ #define CONFIG_MMF_DEMUXER 0
+ #define CONFIG_MOV_DEMUXER 0
+-#define CONFIG_MP3_DEMUXER 0
++#define CONFIG_MP3_DEMUXER 1
+ #define CONFIG_MPC_DEMUXER 0
+ #define CONFIG_MPC8_DEMUXER 0
+ #define CONFIG_MPEGPS_DEMUXER 0
+@@ -2217,7 +2217,7 @@
+ #define CONFIG_MJPEG_PARSER 0
+ #define CONFIG_MLP_PARSER 0
+ #define CONFIG_MPEG4VIDEO_PARSER 0
+-#define CONFIG_MPEGAUDIO_PARSER 0
++#define CONFIG_MPEGAUDIO_PARSER 1
+ #define CONFIG_MPEGVIDEO_PARSER 0
+ #define CONFIG_OPUS_PARSER 1
+ #define CONFIG_PNG_PARSER 0
+diff --git chromium/config/Chromium/win/ia32/config.asm chromium/config/Chromium/win/ia32/config.asm
+index 6e95ffb6bb..513dc4c7ca 100644
+--- chromium/config/Chromium/win/ia32/config.asm
++++ chromium/config/Chromium/win/ia32/config.asm
+@@ -526,7 +526,7 @@
+ %define CONFIG_FFPROBE 0
+ %define CONFIG_FFSERVER 0
+ %define CONFIG_FFMPEG 0
+-%define CONFIG_DCT 0
++%define CONFIG_DCT 1
+ %define CONFIG_DWT 0
+ %define CONFIG_ERROR_RESILIENCE 0
+ %define CONFIG_FAAN 1
+@@ -604,9 +604,9 @@
+ %define CONFIG_LZF 0
+ %define CONFIG_ME_CMP 0
+ %define CONFIG_MPEG_ER 0
+-%define CONFIG_MPEGAUDIO 0
+-%define CONFIG_MPEGAUDIODSP 0
+-%define CONFIG_MPEGAUDIOHEADER 0
++%define CONFIG_MPEGAUDIO 1
++%define CONFIG_MPEGAUDIODSP 1
++%define CONFIG_MPEGAUDIOHEADER 1
+ %define CONFIG_MPEGVIDEO 0
+ %define CONFIG_MPEGVIDEOENC 0
+ %define CONFIG_MSS34DSP 0
+@@ -952,7 +952,7 @@
+ %define CONFIG_MP1FLOAT_DECODER 0
+ %define CONFIG_MP2_DECODER 0
+ %define CONFIG_MP2FLOAT_DECODER 0
+-%define CONFIG_MP3_DECODER 0
++%define CONFIG_MP3_DECODER 1
+ %define CONFIG_MP3FLOAT_DECODER 0
+ %define CONFIG_MP3ADU_DECODER 0
+ %define CONFIG_MP3ADUFLOAT_DECODER 0
+@@ -1259,7 +1259,7 @@
+ %define CONFIG_MM_DEMUXER 0
+ %define CONFIG_MMF_DEMUXER 0
+ %define CONFIG_MOV_DEMUXER 0
+-%define CONFIG_MP3_DEMUXER 0
++%define CONFIG_MP3_DEMUXER 1
+ %define CONFIG_MPC_DEMUXER 0
+ %define CONFIG_MPC8_DEMUXER 0
+ %define CONFIG_MPEGPS_DEMUXER 0
+@@ -2201,7 +2201,7 @@
+ %define CONFIG_MJPEG_PARSER 0
+ %define CONFIG_MLP_PARSER 0
+ %define CONFIG_MPEG4VIDEO_PARSER 0
+-%define CONFIG_MPEGAUDIO_PARSER 0
++%define CONFIG_MPEGAUDIO_PARSER 1
+ %define CONFIG_MPEGVIDEO_PARSER 0
+ %define CONFIG_OPUS_PARSER 1
+ %define CONFIG_PNG_PARSER 0
+diff --git chromium/config/Chromium/win/ia32/config.h chromium/config/Chromium/win/ia32/config.h
+index 655f550aa5..5995f8091e 100644
+--- chromium/config/Chromium/win/ia32/config.h
++++ chromium/config/Chromium/win/ia32/config.h
+@@ -542,7 +542,7 @@
+ #define CONFIG_FFPROBE 0
+ #define CONFIG_FFSERVER 0
+ #define CONFIG_FFMPEG 0
+-#define CONFIG_DCT 0
++#define CONFIG_DCT 1
+ #define CONFIG_DWT 0
+ #define CONFIG_ERROR_RESILIENCE 0
+ #define CONFIG_FAAN 1
+@@ -620,9 +620,9 @@
+ #define CONFIG_LZF 0
+ #define CONFIG_ME_CMP 0
+ #define CONFIG_MPEG_ER 0
+-#define CONFIG_MPEGAUDIO 0
+-#define CONFIG_MPEGAUDIODSP 0
+-#define CONFIG_MPEGAUDIOHEADER 0
++#define CONFIG_MPEGAUDIO 1
++#define CONFIG_MPEGAUDIODSP 1
++#define CONFIG_MPEGAUDIOHEADER 1
+ #define CONFIG_MPEGVIDEO 0
+ #define CONFIG_MPEGVIDEOENC 0
+ #define CONFIG_MSS34DSP 0
+@@ -968,7 +968,7 @@
+ #define CONFIG_MP1FLOAT_DECODER 0
+ #define CONFIG_MP2_DECODER 0
+ #define CONFIG_MP2FLOAT_DECODER 0
+-#define CONFIG_MP3_DECODER 0
++#define CONFIG_MP3_DECODER 1
+ #define CONFIG_MP3FLOAT_DECODER 0
+ #define CONFIG_MP3ADU_DECODER 0
+ #define CONFIG_MP3ADUFLOAT_DECODER 0
+@@ -1275,7 +1275,7 @@
+ #define CONFIG_MM_DEMUXER 0
+ #define CONFIG_MMF_DEMUXER 0
+ #define CONFIG_MOV_DEMUXER 0
+-#define CONFIG_MP3_DEMUXER 0
++#define CONFIG_MP3_DEMUXER 1
+ #define CONFIG_MPC_DEMUXER 0
+ #define CONFIG_MPC8_DEMUXER 0
+ #define CONFIG_MPEGPS_DEMUXER 0
+@@ -2217,7 +2217,7 @@
+ #define CONFIG_MJPEG_PARSER 0
+ #define CONFIG_MLP_PARSER 0
+ #define CONFIG_MPEG4VIDEO_PARSER 0
+-#define CONFIG_MPEGAUDIO_PARSER 0
++#define CONFIG_MPEGAUDIO_PARSER 1
+ #define CONFIG_MPEGVIDEO_PARSER 0
+ #define CONFIG_OPUS_PARSER 1
+ #define CONFIG_PNG_PARSER 0
+diff --git chromium/config/Chromium/win/x64/config.asm chromium/config/Chromium/win/x64/config.asm
+index b2ed5d0c56..6a5138bffc 100644
+--- chromium/config/Chromium/win/x64/config.asm
++++ chromium/config/Chromium/win/x64/config.asm
+@@ -526,7 +526,7 @@
+ %define CONFIG_FFPROBE 0
+ %define CONFIG_FFSERVER 0
+ %define CONFIG_FFMPEG 0
+-%define CONFIG_DCT 0
++%define CONFIG_DCT 1
+ %define CONFIG_DWT 0
+ %define CONFIG_ERROR_RESILIENCE 0
+ %define CONFIG_FAAN 1
+@@ -604,9 +604,9 @@
+ %define CONFIG_LZF 0
+ %define CONFIG_ME_CMP 0
+ %define CONFIG_MPEG_ER 0
+-%define CONFIG_MPEGAUDIO 0
+-%define CONFIG_MPEGAUDIODSP 0
+-%define CONFIG_MPEGAUDIOHEADER 0
++%define CONFIG_MPEGAUDIO 1
++%define CONFIG_MPEGAUDIODSP 1
++%define CONFIG_MPEGAUDIOHEADER 1
+ %define CONFIG_MPEGVIDEO 0
+ %define CONFIG_MPEGVIDEOENC 0
+ %define CONFIG_MSS34DSP 0
+@@ -952,7 +952,7 @@
+ %define CONFIG_MP1FLOAT_DECODER 0
+ %define CONFIG_MP2_DECODER 0
+ %define CONFIG_MP2FLOAT_DECODER 0
+-%define CONFIG_MP3_DECODER 0
++%define CONFIG_MP3_DECODER 1
+ %define CONFIG_MP3FLOAT_DECODER 0
+ %define CONFIG_MP3ADU_DECODER 0
+ %define CONFIG_MP3ADUFLOAT_DECODER 0
+@@ -1259,7 +1259,7 @@
+ %define CONFIG_MM_DEMUXER 0
+ %define CONFIG_MMF_DEMUXER 0
+ %define CONFIG_MOV_DEMUXER 0
+-%define CONFIG_MP3_DEMUXER 0
++%define CONFIG_MP3_DEMUXER 1
+ %define CONFIG_MPC_DEMUXER 0
+ %define CONFIG_MPC8_DEMUXER 0
+ %define CONFIG_MPEGPS_DEMUXER 0
+@@ -2201,7 +2201,7 @@
+ %define CONFIG_MJPEG_PARSER 0
+ %define CONFIG_MLP_PARSER 0
+ %define CONFIG_MPEG4VIDEO_PARSER 0
+-%define CONFIG_MPEGAUDIO_PARSER 0
++%define CONFIG_MPEGAUDIO_PARSER 1
+ %define CONFIG_MPEGVIDEO_PARSER 0
+ %define CONFIG_OPUS_PARSER 1
+ %define CONFIG_PNG_PARSER 0
+diff --git chromium/config/Chromium/win/x64/config.h chromium/config/Chromium/win/x64/config.h
+index 95202da1be..ef92b87e73 100644
+--- chromium/config/Chromium/win/x64/config.h
++++ chromium/config/Chromium/win/x64/config.h
+@@ -542,7 +542,7 @@
+ #define CONFIG_FFPROBE 0
+ #define CONFIG_FFSERVER 0
+ #define CONFIG_FFMPEG 0
+-#define CONFIG_DCT 0
++#define CONFIG_DCT 1
+ #define CONFIG_DWT 0
+ #define CONFIG_ERROR_RESILIENCE 0
+ #define CONFIG_FAAN 1
+@@ -620,9 +620,9 @@
+ #define CONFIG_LZF 0
+ #define CONFIG_ME_CMP 0
+ #define CONFIG_MPEG_ER 0
+-#define CONFIG_MPEGAUDIO 0
+-#define CONFIG_MPEGAUDIODSP 0
+-#define CONFIG_MPEGAUDIOHEADER 0
++#define CONFIG_MPEGAUDIO 1
++#define CONFIG_MPEGAUDIODSP 1
++#define CONFIG_MPEGAUDIOHEADER 1
+ #define CONFIG_MPEGVIDEO 0
+ #define CONFIG_MPEGVIDEOENC 0
+ #define CONFIG_MSS34DSP 0
+@@ -968,7 +968,7 @@
+ #define CONFIG_MP1FLOAT_DECODER 0
+ #define CONFIG_MP2_DECODER 0
+ #define CONFIG_MP2FLOAT_DECODER 0
+-#define CONFIG_MP3_DECODER 0
++#define CONFIG_MP3_DECODER 1
+ #define CONFIG_MP3FLOAT_DECODER 0
+ #define CONFIG_MP3ADU_DECODER 0
+ #define CONFIG_MP3ADUFLOAT_DECODER 0
+@@ -1275,7 +1275,7 @@
+ #define CONFIG_MM_DEMUXER 0
+ #define CONFIG_MMF_DEMUXER 0
+ #define CONFIG_MOV_DEMUXER 0
+-#define CONFIG_MP3_DEMUXER 0
++#define CONFIG_MP3_DEMUXER 1
+ #define CONFIG_MPC_DEMUXER 0
+ #define CONFIG_MPC8_DEMUXER 0
+ #define CONFIG_MPEGPS_DEMUXER 0
+@@ -2217,7 +2217,7 @@
+ #define CONFIG_MJPEG_PARSER 0
+ #define CONFIG_MLP_PARSER 0
+ #define CONFIG_MPEG4VIDEO_PARSER 0
+-#define CONFIG_MPEGAUDIO_PARSER 0
++#define CONFIG_MPEGAUDIO_PARSER 1
+ #define CONFIG_MPEGVIDEO_PARSER 0
+ #define CONFIG_OPUS_PARSER 1
+ #define CONFIG_PNG_PARSER 0
+diff --git ffmpeg_generated.gni ffmpeg_generated.gni
+index 8c016c7000..73869abae1 100644
+--- ffmpeg_generated.gni
++++ ffmpeg_generated.gni
+@@ -19,6 +19,7 @@ if ((is_android && current_cpu == "arm" && arm_use_neon) || (is_android && curre
+     "libavcodec/allcodecs.c",
+     "libavcodec/autorename_libavcodec_flacdec.c",
+     "libavcodec/autorename_libavcodec_flacdsp.c",
++    "libavcodec/autorename_libavcodec_mpegaudiodsp.c",
+     "libavcodec/autorename_libavcodec_utils.c",
+     "libavcodec/autorename_libavcodec_vorbisdsp.c",
+     "libavcodec/avdct.c",
+@@ -31,6 +32,9 @@ if ((is_android && current_cpu == "arm" && arm_use_neon) || (is_android && curre
+     "libavcodec/bsf.c",
+     "libavcodec/codec_desc.c",
+     "libavcodec/d3d11va.c",
++    "libavcodec/dct.c",
++    "libavcodec/dct32_fixed.c",
++    "libavcodec/dct32_float.c",
+     "libavcodec/decode.c",
+     "libavcodec/dirac.c",
+     "libavcodec/dv_profile.c",
+@@ -55,7 +59,14 @@ if ((is_android && current_cpu == "arm" && arm_use_neon) || (is_android && curre
+     "libavcodec/mjpegenc_huffman.c",
+     "libavcodec/mpeg12framerate.c",
+     "libavcodec/mpeg4audio.c",
++    "libavcodec/mpegaudio.c",
++    "libavcodec/mpegaudio_parser.c",
+     "libavcodec/mpegaudiodata.c",
++    "libavcodec/mpegaudiodec_fixed.c",
++    "libavcodec/mpegaudiodecheader.c",
++    "libavcodec/mpegaudiodsp_data.c",
++    "libavcodec/mpegaudiodsp_fixed.c",
++    "libavcodec/mpegaudiodsp_float.c",
+     "libavcodec/null_bsf.c",
+     "libavcodec/options.c",
+     "libavcodec/opus.c",
+@@ -91,6 +102,7 @@ if ((is_android && current_cpu == "arm" && arm_use_neon) || (is_android && curre
+     "libavformat/matroska.c",
+     "libavformat/matroskadec.c",
+     "libavformat/metadata.c",
++    "libavformat/mp3dec.c",
+     "libavformat/mux.c",
+     "libavformat/oggdec.c",
+     "libavformat/oggparsecelt.c",
+@@ -193,20 +205,9 @@ if ((current_cpu == "x64" && ffmpeg_branding == "Chrome") || (is_android && curr
+     "libavcodec/ac3tab.c",
+     "libavcodec/autorename_libavcodec_aacdec.c",
+     "libavcodec/autorename_libavcodec_mdct15.c",
+-    "libavcodec/autorename_libavcodec_mpegaudiodsp.c",
+     "libavcodec/autorename_libavcodec_sbrdsp.c",
+     "libavcodec/cbrt_data.c",
+-    "libavcodec/dct.c",
+-    "libavcodec/dct32_fixed.c",
+-    "libavcodec/dct32_float.c",
+     "libavcodec/kbdwin.c",
+-    "libavcodec/mpegaudio.c",
+-    "libavcodec/mpegaudio_parser.c",
+-    "libavcodec/mpegaudiodec_fixed.c",
+-    "libavcodec/mpegaudiodecheader.c",
+-    "libavcodec/mpegaudiodsp_data.c",
+-    "libavcodec/mpegaudiodsp_fixed.c",
+-    "libavcodec/mpegaudiodsp_float.c",
+     "libavcodec/sinewin.c",
+     "libavcodec/sinewin_fixed.c",
+     "libavformat/aacdec.c",
+@@ -215,7 +216,6 @@ if ((current_cpu == "x64" && ffmpeg_branding == "Chrome") || (is_android && curr
+     "libavformat/img2.c",
+     "libavformat/mov.c",
+     "libavformat/mov_chan.c",
+-    "libavformat/mp3dec.c",
+   ]
+ }
  
-     # Locations for generated artifacts.
-     'shared_generated_dir': '<(SHARED_INTERMEDIATE_DIR)/third_party/ffmpeg',
+@@ -223,6 +223,8 @@ if ((is_android && current_cpu == "x64") || (is_android && current_cpu == "x86")
+   ffmpeg_c_sources += [
+     "libavcodec/x86/autorename_libavcodec_x86_vorbisdsp_init.c",
+     "libavcodec/x86/constants.c",
++    "libavcodec/x86/dct_init.c",
++    "libavcodec/x86/mpegaudiodsp.c",
+     "libavcodec/x86/fft_init.c",
+     "libavcodec/x86/flacdsp_init.c",
+     "libavutil/x86/autorename_libavutil_x86_cpu.c",
+@@ -286,6 +288,8 @@ if ((is_android && current_cpu == "arm" && arm_use_neon) || (use_linux_config &&
+ 
+ if ((is_android && current_cpu == "x64") || (is_mac) || (is_win) || (use_linux_config && current_cpu == "x64") || (use_linux_config && current_cpu == "x86")) {
+   ffmpeg_yasm_sources += [
++    "libavcodec/x86/dct32.asm",
++    "libavcodec/x86/imdct36.asm",
+     "libavcodec/x86/fft.asm",
+     "libavcodec/x86/flacdsp.asm",
+     "libavcodec/x86/vorbisdsp.asm",
+@@ -322,9 +326,7 @@ if ((is_mac) || (is_win) || (use_linux_config && current_cpu == "x64") || (use_l
+ if ((current_cpu == "x64" && ffmpeg_branding == "Chrome") || (is_android && current_cpu == "x86" && ffmpeg_branding == "Chrome") || (is_win && ffmpeg_branding == "Chrome") || (use_linux_config && current_cpu == "x64" && ffmpeg_branding == "ChromeOS") || (use_linux_config && current_cpu == "x86" && ffmpeg_branding == "Chrome") || (use_linux_config && current_cpu == "x86" && ffmpeg_branding == "ChromeOS")) {
+   ffmpeg_c_sources += [
+     "libavcodec/x86/aacpsdsp_init.c",
+-    "libavcodec/x86/dct_init.c",
+     "libavcodec/x86/mdct15_init.c",
+-    "libavcodec/x86/mpegaudiodsp.c",
+     "libavcodec/x86/sbrdsp_init.c",
+   ]
+ }
+@@ -331,8 +333,6 @@ if ((current_cpu == "x64" && ffmpeg_branding == "Chrome") || (is_android && curr
+ if ((current_cpu == "x64" && ffmpeg_branding == "Chrome") || (is_win && ffmpeg_branding == "Chrome") || (use_linux_config && current_cpu == "x64" && ffmpeg_branding == "ChromeOS") || (use_linux_config && current_cpu == "x86" && ffmpeg_branding == "Chrome") || (use_linux_config && current_cpu == "x86" && ffmpeg_branding == "ChromeOS")) {
+   ffmpeg_yasm_sources += [
+     "libavcodec/x86/aacpsdsp.asm",
+-    "libavcodec/x86/dct32.asm",
+-    "libavcodec/x86/imdct36.asm",
+     "libavcodec/x86/mdct15.asm",
+     "libavcodec/x86/sbrdsp.asm",
+   ]

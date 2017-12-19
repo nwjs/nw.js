@@ -3,7 +3,6 @@ var forEach = require('utils').forEach;
 var nw_binding = require('binding').Binding.create('nw.Menu');
 var nwNative = requireNative('nw_natives');
 var sendRequest = require('sendRequest');
-var contextMenuNatives = requireNative('context_menus');
 var messagingNatives = requireNative('messaging_natives');
 var Event = require('event_bindings').Event;
 
@@ -17,7 +16,7 @@ function Menu (option) {
   if (option.type != 'contextmenu' && option.type != 'menubar')
     throw new TypeError('Invalid menu type: ' + option.type);
 
-  var id = contextMenuNatives.GetNextContextMenuId();
+  var id = nw.Obj.allocateId();
   option.generatedId = id;
 
   this.id = id;
@@ -39,12 +38,14 @@ Menu.prototype.__defineSetter__('items', function(val) {
 
 Menu.prototype.append = function(menu_item) {
   privates(this).items.push(menu_item);
-  nw.Obj.callObjectMethod(this.id, 'Menu', 'Append', [ menu_item.id ]);
+  if (!menu_item.native)
+    nw.Obj.callObjectMethod(this.id, 'Menu', 'Append', [ menu_item.id ]);
 };
 
 Menu.prototype.insert = function(menu_item, i) {
   privates(this).items.splice(i, 0, menu_item);
-  nw.Obj.callObjectMethod(this.id, 'Menu', 'Insert', [ menu_item.id, i ]);
+  if (!menu_item.native)
+    nw.Obj.callObjectMethod(this.id, 'Menu', 'Insert', [ menu_item.id, i ]);
 }
 
 Menu.prototype.remove = function(menu_item) {

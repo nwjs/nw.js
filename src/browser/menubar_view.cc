@@ -46,18 +46,9 @@ class MenuBarButton : public views::MenuButton {
     return !tooltip->empty();
   }
 
-  bool IsTriggerableEvent(const ui::Event& e) override {
-    // Left clicks and taps should show the menu contents and right clicks
-    // should show the context menu. They should not trigger the opening of
-    // underlying urls.
-    if (e.type() == ui::ET_GESTURE_TAP ||
-        (e.IsMouseEvent() && (e.flags() &
-             (ui::EF_LEFT_MOUSE_BUTTON | ui::EF_RIGHT_MOUSE_BUTTON))))
-      return false;
-
-    if (e.IsMouseEvent())
-      return ui::DispositionFromEventFlags(e.flags()) != CURRENT_TAB;
-    return false;
+  void OnNativeThemeChanged(const ui::NativeTheme* theme) override {
+    views::MenuButton::OnNativeThemeChanged(theme);
+    SetEnabledTextColors(theme->GetSystemColor(ui::NativeTheme::kColorId_EnabledMenuItemForegroundColor));
   }
 
  private:
@@ -66,7 +57,7 @@ class MenuBarButton : public views::MenuButton {
 };
 
 MenuBarView::MenuBarView() {
-  SetLayoutManager(new views::BoxLayout(views::BoxLayout::kHorizontal, 0, 0, 0));
+  SetLayoutManager(new views::BoxLayout(views::BoxLayout::kHorizontal, gfx::Insets(), 0));
 }
 
 MenuBarView::~MenuBarView() {
@@ -114,6 +105,7 @@ void MenuBarView::OnMenuButtonClicked(views::MenuButton* view,
     MenuBarController* controller = new MenuBarController(this, model_->GetSubmenuModelAt(button_index), NULL);
     controller->RunMenuAt(view, point);
   }
+  model_->ActivatedAt(button_index, event->flags());
 }
 
 void MenuBarView::ButtonPressed(views::Button* sender,
@@ -121,8 +113,11 @@ void MenuBarView::ButtonPressed(views::Button* sender,
 }
 
 void MenuBarView::OnNativeThemeChanged(const ui::NativeTheme* theme) {
-  set_background(views::Background::CreateSolidBackground(GetNativeTheme()->
+  // Use menu background color for menubar
+  SetBackground(views::CreateSolidBackground(theme->
        GetSystemColor(ui::NativeTheme::kColorId_MenuBackgroundColor)));
+  // Force to repaint the menubar
+  SchedulePaint();
 }
 
 } //namespace nw

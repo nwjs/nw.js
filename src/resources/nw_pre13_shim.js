@@ -20,6 +20,5 @@
   if (!self.process) self.process = self.nw.process;
   if (!self.Buffer) self.Buffer = self.nw.Buffer;
   if (!self.global) self.global = self.nw.global;
-  if (!self.root) self.root = self.nw.root;
 
 }());

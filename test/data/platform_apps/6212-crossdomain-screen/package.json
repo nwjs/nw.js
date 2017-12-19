@@ -1,0 +1,7 @@
+{
+    "name": "6212",
+    "main": "index.html",
+    "nodejs":true,
+    "chromium-args": "--unsafely-treat-insecure-origin-as-secure=http://*****:8080",
+    "node-remote": "<all_urls>"
+}

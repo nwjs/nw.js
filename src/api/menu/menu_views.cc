@@ -20,6 +20,7 @@
 
 #include "content/nw/src/api/menu/menu.h"
 
+#include "base/run_loop.h"
 #include "base/values.h"
 #include "base/strings/utf_string_conversions.h"
 #include "content/nw/src/api/object_manager.h"
@@ -33,6 +34,7 @@
 #include "ui/aura/client/screen_position_client.h"
 #include "ui/aura/window.h"
 #include "ui/aura/window_tree_host.h"
+#include "ui/events/platform/platform_event_source.h"
 #include "ui/views/controls/menu/menu_runner.h"
 #include "ui/views/widget/widget.h"
 #include "ui/views/focus/focus_manager.h"
@@ -85,6 +87,8 @@ void Menu::Append(MenuItem* menu_item) {
 }
 
 void Menu::Insert(MenuItem* menu_item, int pos) {
+  if (pos < 0 || pos > (int)menu_items_.size()) return;
+
   if (menu_item->submenu_)
     menu_model_->InsertSubMenuAt(pos, menu_item->id(), menu_item->label_,
                                  menu_item->submenu_->menu_model_.get());
@@ -97,13 +101,17 @@ void Menu::Insert(MenuItem* menu_item, int pos) {
 
   is_menu_modified_ = true;
   menu_item->menu_ = this;
-
+  menu_items_.insert(menu_items_.begin() + pos, menu_item);
 }
 
 void Menu::Remove(MenuItem* menu_item, int pos) {
+  if (pos < 0 || pos >= (int)menu_items_.size()) return;
+
   menu_model_->RemoveItemAt(pos);
+  menu_items_.erase(menu_items_.begin() + pos);
   is_menu_modified_ = true;
   menu_item->menu_ = NULL;
+  menu_item->RemoveKeys();
 }
 
 void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
@@ -125,16 +133,45 @@ void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
              &screen_point);
   }
   set_delay_destruction(true);
-  views::MenuRunner runner(menu_model_.get(), views::MenuRunner::CONTEXT_MENU);
-  ignore_result(
-      runner.RunMenuAt(top_level_widget,
-                       NULL,
+  menu_runner_.reset(new views::MenuRunner(menu_model_.get(), views::MenuRunner::CONTEXT_MENU,
+                                           base::Bind(&Menu::OnMenuClosed, base::Unretained(this))));
+  menu_runner_->RunMenuAt(top_level_widget,
+                       nullptr,
                        gfx::Rect(screen_point, gfx::Size()),
                        views::MENU_ANCHOR_TOPRIGHT,
-                       ui::MENU_SOURCE_NONE));
+                       ui::MENU_SOURCE_NONE);
+  // It is possible for the same MenuMessageLoopAura to start a nested
+  // message-loop while it is already running a nested loop. So make
+  // sure the quit-closure gets reset to the outer loop's quit-closure
+  // once the innermost loop terminates.
+  {
+    base::AutoReset<base::Closure> reset_quit_closure(&message_loop_quit_,
+                                                      base::Closure());
+  
+    base::MessageLoop* loop = base::MessageLoop::current();
+    base::MessageLoop::ScopedNestableTaskAllower allow(loop);
+    base::RunLoop run_loop;
+    message_loop_quit_ = run_loop.QuitClosure();
+  
+    run_loop.Run();
+  }
   set_delay_destruction(false);
   if (pending_destruction())
     object_manager_->OnDeallocateObject(id_);
+}
+
+void Menu::OnMenuClosed() {
+  CHECK(!message_loop_quit_.is_null());
+  message_loop_quit_.Run();
+  
+#if !defined(OS_WIN)
+  // Ask PlatformEventSource to stop dispatching
+  // events in this message loop
+  // iteration. We want our menu's loop to return
+  // before the next event.
+  if (ui::PlatformEventSource::GetInstance())
+    ui::PlatformEventSource::GetInstance()->StopCurrentEventStream();
+#endif
 }
 
 void Menu::UpdateKeys(views::FocusManager *focus_manager){
@@ -142,12 +179,20 @@ void Menu::UpdateKeys(views::FocusManager *focus_manager){
     return ;
   } else {
     focus_manager_ = focus_manager;
-    std::vector<MenuItem*>::iterator it = menu_items_.begin();
-    while(it!=menu_items_.end()){
-      (*it)->UpdateKeys(focus_manager);
-      ++it;
+    for(auto* item : menu_items_) {
+      item->UpdateKeys(focus_manager);
     }
   }
+}
+
+void Menu::RemoveKeys() {
+  if (!focus_manager_) return;
+
+  for(auto* item: menu_items_) {
+    item->RemoveKeys();
+  }
+
+  focus_manager_ = NULL;
 }
 
 void Menu::UpdateStates() {

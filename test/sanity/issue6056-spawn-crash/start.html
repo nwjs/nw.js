@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!--
+//	Program:  game -  by BlatSoft
+//	05/2017	version: 0.7.0
+//  start.html
+//  This page is first screen on game start - used to set up game/teams/etc ready for play
+//  - Called from package.json
+-->
+<head>
+    <title></title>
+    <script type="text/javascript" src="dbcontrol.js" charset="utf-8"></script>
+
+</head>
+
+<body>
+
+    <div id="head">
+        <h1 id='result'>dblitekrash0230node8 success</h1>
+        <div id="versions">
+            NWjs version -
+            <script>
+                document.write(process.versions['nw']);
+
+            </script><br /> IO.js/node.js version -
+            <script>
+                document.write(process.versions['node']);
+
+            </script><br /> Chromium version -
+            <script>
+                document.write(process.versions['chromium']);
+
+            </script><br />
+        </div>
+
+    </div>
+    <div id="shell"></div>
+
+    <!-- End of HTML  **********************************  -->
+
+    <script type="text/javascript">
+
+        var show = ''; // = new Array();
+        db.query('SELECT rowid, Cap, Dog FROM ' + 'Australia',['id', 'cap', 'dog'],
+            // once retrieved
+            function(rows) {
+                for (var i = 0, len = rows.length; i < len; i++) {
+                    var str = rows[i].dog;  // used for populating optionlist
+                    console.log(str);
+                    show = show + str + '<br />';
+                }
+                document.getElementById('shell').innerHTML = show;
+            }
+        );
+    </script>
+
+</body>
+</html>

@@ -82,12 +82,6 @@ NativeWindow::NativeWindow(const base::WeakPtr<content::Shell>& shell,
   content::g_support_transparency = !base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kmDisableTransparency);
   if (content::g_support_transparency) {
     content::g_force_cpu_draw = base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kForceCpuDraw);
-    if (content::g_force_cpu_draw) {
-      if (!base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kDisableGpu)) {
-        content::g_force_cpu_draw = false;
-        LOG(WARNING) << "switch " << switches::kForceCpuDraw << " must be used with switch " << switches::kDisableGpu;
-      }
-    }
     manifest->GetBoolean(switches::kmTransparent, &transparent_);
   }
   LoadAppIconFromPackage(manifest);

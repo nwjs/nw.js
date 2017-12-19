@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>test package</title>
+</head>
+<body>
+  <button onclick="nw.App.crashBrowser()">crash browser</button>
+  <button onclick="nw.App.crashRenderer()">crash renderer</button>
+  <script>
+    if (nw.App.argv.indexOf("--test-renderer-crash") > -1)
+    nw.App.crashRenderer();
+    else
+    nw.App.crashBrowser();
+    
+  </script>
+</body>
+</html>

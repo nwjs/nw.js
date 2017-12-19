@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Screen.DesktopCaptureMonitor</title>
+</head>
+<body>
+  <button type="button" id="startMonitor" onclick="startMonitor()">Start Monitor</button>
+  <button type="button" id="stopMonitor" onclick="stopMonitor()">Stop Monitor</button>
+  <button type="button" id="newWindow" onclick="newWindow()">New Window</button>
+  <script>
+
+  var monitorResult = {added: false, removed: false, namechanged: false, orderchanged: false, thumbnailchanged: false};
+
+  function startMonitor() {
+    try{
+
+      nw.Screen.Init();
+      Object.keys(monitorResult).forEach(function(eventName) {
+        nw.Screen.DesktopCaptureMonitor.once(eventName, function() {
+          monitorResult[eventName] = true;
+          writeSuccess(eventName);
+        })
+      });
+      nw.Screen.DesktopCaptureMonitor.start(false, true);
+    } catch(e) {
+      writeFailure(e);
+    }
+  }
+
+  function stopMonitor() {
+    nw.Screen.DesktopCaptureMonitor.stop();
+    if (monitorResult.added && monitorResult.removed && monitorResult.namechanged && monitorResult.orderchanged && monitorResult.thumbnailchanged) {
+      writeSuccess();
+    } else {
+      writeFailure(JSON.stringify(monitorResult));
+    }
+  }
+
+  function newWindow() {
+    open('popup.html', 'mypopup');
+  }
+
+  function writeSuccess(id) {
+    var result = document.createElement('h1');
+    result.setAttribute('id', id || 'result');
+    result.innerHTML = 'success';
+    document.body.appendChild(result);
+  }
+
+  function writeFailure(e) {
+    var result = document.createElement('h1');
+    result.setAttribute('id', 'result');
+    result.innerHTML = 'failure [' + e + ']';
+    document.body.appendChild(result);
+  }
+  </script>
+</body>
+</html>

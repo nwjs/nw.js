@@ -120,4 +120,5 @@ const char kPrintRaster[] = "print-raster";
 
 const char kCrashDumpsDir[] = "crash-dumps-dir";
 const char kEnableSpellChecking[] = "enable-spell-checking";
+const char kDisableDevTools[] = "disable-devtools";
 }  // namespace switches

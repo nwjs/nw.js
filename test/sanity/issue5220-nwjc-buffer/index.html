@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>nwjc-test</title>
+</head>
+<body>
+  <button id="eval-path" type="button" onclick="evalPath()">Run with path</button>
+  <button id="eval-buffer" type="button" onclick="evalBuffer()">Run with Buffer</button>
+  <button id="eval-arraybuffer" type="button" onclick="evalArrayBuffer()">Run with ArrayBuffer</button>
+  <button id="eval-ajax" type="button" onclick="evalAjax()">Run with Ajax</button>
+  <script>
+  var fs = require('fs');
+
+  function out(id, message) {
+    var h1 = document.createElement('h1');
+    h1.setAttribute('id', id);
+    h1.innerHTML = message;
+    document.body.appendChild(h1);
+  }
+
+  function evalPath() {
+    evalbin('path.bin');
+  }
+
+  function evalBuffer() {
+    evalbin(fs.readFileSync('buffer.bin'));
+  }
+
+  function evalArrayBuffer() {
+    var buf = fs.readFileSync('arraybuffer.bin');
+    var ab = new global.ArrayBuffer(buf.length);
+    buf.copy(Buffer.from(ab));
+    evalbin(ab);
+  }
+
+  function evalAjax() {
+    var xhr = new XMLHttpRequest();
+    xhr.responseType = 'arraybuffer';
+    xhr.open('GET', 'ajax.bin', true);
+    xhr.send();
+    xhr.onload = ()=>evalbin(xhr.response);
+    xhr.onerror = (e)=>out('arraybuffer-result', 'failed:' + e);
+  }
+
+  function evalbin(bin) {
+    nw.Window.get().evalNWBin(null, bin);
+  }
+  </script>
+</body>
+</html>

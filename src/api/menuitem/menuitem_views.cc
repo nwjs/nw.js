@@ -21,6 +21,7 @@
 #include "content/nw/src/api/menuitem/menuitem.h"
 
 #include "base/files/file_path.h"
+#include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/threading/thread_restrictions.h"
 #include "base/values.h"
@@ -74,6 +75,7 @@ void MenuItem::Create(const base::DictionaryValue& option) {
     enable_shortcut_ = true;
     //only code for ctrl, shift, alt, super and meta modifiers
     int modifiers_value = ui::EF_NONE;
+    modifiers = base::ToLowerASCII(modifiers);
     if (modifiers.find("ctrl")!=std::string::npos){
       modifiers_value |= ui::EF_CONTROL_DOWN;
     }
@@ -166,6 +168,8 @@ void MenuItem::SetChecked(bool checked) {
 }
 
 void MenuItem::SetSubmenu(Menu* menu) {
+  if (submenu_) submenu_->RemoveKeys();
+
   submenu_ = menu;
 }
 
@@ -190,6 +194,18 @@ void MenuItem::UpdateKeys(views::FocusManager *focus_manager){
   }
 }
 
+void MenuItem::RemoveKeys() {
+  if (!focus_manager_) return;
+
+  if (enable_shortcut_) {
+    focus_manager_->UnregisterAccelerator(accelerator_, this);
+  }
+  if (submenu_) {
+    submenu_->RemoveKeys();
+  }
+  focus_manager_ = NULL;
+}
+
 #if defined(OS_WIN) || defined(OS_LINUX)
 bool MenuItem::AcceleratorPressed(const ui::Accelerator& accelerator) {
 #if defined(OS_WIN)
@@ -204,7 +220,7 @@ bool MenuItem::AcceleratorPressed(const ui::Accelerator& accelerator) {
 }
 
 bool MenuItem::CanHandleAccelerators() const {
-  return is_enabled_;
+  return enable_shortcut_ && is_enabled_;
 }
 
 #endif
