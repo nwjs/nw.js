@@ -86,7 +86,8 @@ The following placeholders are available to composite the user agent dynamically
 * `%name`: replaced by the `name` field in the manifest.
 * `%ver`: replaced by the `version` field in the manifest, if available.
 * `%nwver`: replaced by the version of NW.js.
-* `%webkit_ver`: replaced by the version of WebKit engine.
+* `%webkit_ver`: replaced by the version of Blink engine.
+* `%chromium_ver`: replaced by the Chromium version
 * `%osinfo`: replaced by the OS and CPU information you would see in browser's user agent string.
 
 ### node-remote

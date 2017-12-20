@@ -13,6 +13,7 @@
 #include "content/nw/src/nw_package.h"
 #include "content/nw/src/nw_version.h"
 
+#include "chrome/common/chrome_version.h"
 namespace nw {
 
 namespace {
@@ -48,6 +49,7 @@ void SetUserAgentOverride(const std::string& agent,
   base::ReplaceSubstringsAfterOffset(&g_user_agent, 0, "%nwver", NW_VERSION_STRING);
   base::ReplaceSubstringsAfterOffset(&g_user_agent, 0, "%webkit_ver", content::GetWebKitVersion());
   base::ReplaceSubstringsAfterOffset(&g_user_agent, 0, "%osinfo", content::BuildOSInfo());
+  base::ReplaceSubstringsAfterOffset(&g_user_agent, 0, "%chromium_ver", CHROME_VERSION_STRING);
 }
 
 } // nw
