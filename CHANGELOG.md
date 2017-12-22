@@ -1,3 +1,12 @@
+0.27.3 / 12-22-2017
+===================
+- Add: %chromium_ver in user-agent field in manifest [(#5975)](https://github.com/nwjs/nw.js/issues/5975)
+- Fix: NodeJS child_process.exec - crashed on v0.27 [(#6339)](https://github.com/nwjs/nw.js/issues/6339)
+- Fix: NWJS framework crash with fatal error in , line 0 unimplemented code [(#6335)](https://github.com/nwjs/nw.js/issues/6335)
+- Fix: Crash on select file dialog when policy deny it [(#6340)](https://github.com/nwjs/nw.js/issues/6340)
+- Fix: macOS component build for development
+- [docs] %chromium_ver in user-agent field in manifest
+
 0.27.2 / 12-15-2017
 ===================
 - Update Chromium to [63.0.3239.108](https://chromereleases.googleblog.com/2017/12/stable-channel-update-for-desktop_14.html)
