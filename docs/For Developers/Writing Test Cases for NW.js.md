@@ -11,7 +11,12 @@ Each test case in NW.js is a runnable app, so that you can manually run the case
 
 In NW.js, there are two types of test cases: `auto` and `remoting`. See [Write Test Cases](#write-test-cases) sections below to see the instructions.
 
-To run the test cases, use the following command:
+## Setup Test Environment
+
+1. After cloning this repository, please download SDK build from NW.js website, extract it, then copy all of files of its to this repository.
+2. Export CHROMEDRIVER to system environment.
+
+To run the test cases, use following command:
 
 ```bash
 python test/test.py -t 80 auto

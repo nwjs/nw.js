@@ -16,7 +16,7 @@ The following workflow uses [selenium-python](http://selenium-python.readthedocs
 ### Installing
 
 * Download ChromeDriver from NW.js website. It's in the SDK build.
-* Extract the package and place `chromedriver` under the same dir that contains the NW.js binaries: `nw` for Linux, `nw.exe` for Windows, or `node-webkit.app` for Mac.
+* Extract the package, `chromedriver` is placed on the same dir that contains the NW.js binaries: `nw` for Linux, `nw.exe` for Windows, or `nwjs.app` for Mac.
 * Install `selenium-python` in your project:
 ```bash
 pip install selenium
