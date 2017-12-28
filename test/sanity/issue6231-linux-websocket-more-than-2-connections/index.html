@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>issue6231-linux-websocket-more-than-2-connections</title>
+</head>
+<body>
+  <script>
+    let socket1 =  new WebSocket('wss://echo.websocket.org');
+    let socket2 =  new WebSocket('wss://echo.websocket.org');
+    let socket3 =  new WebSocket('wss://echo.websocket.org');
+    let socket4 =  new WebSocket('wss://echo.websocket.org');
+
+    socket1.onopen = ()=>{
+      console.log('Socket 1 open');
+      var p1 = document.createElement('p');
+      p1.id = "socket1";
+      p1.innerText = 'Socket 1 open';
+      document.body.appendChild(p1);
+    }
+    
+    socket1.onclose = () =>{
+      console.log('Socket 1 close');
+      var p1 = document.createElement('p');
+      p1.id = "socket1";
+      p1.innerText = 'Socket 1 close';
+      document.body.appendChild(p1);
+    }	
+    
+    socket2.onopen = ()=>{
+      console.log('Socket 2 open');
+      var p2 = document.createElement('p');
+      p2.id = "socket2";
+      p2.innerText = 'Socket 2 open';
+      document.body.appendChild(p2);
+    }
+    
+    socket2.onclose = () =>{
+      console.log('Socket 2 close');
+      var p2 = document.createElement('p');
+      p2.id = "socket2";
+      p2.innerText = 'Socket 2 close';
+      document.body.appendChild(p2);
+    }
+
+    socket3.onopen = ()=>{
+      console.log('Socket 3 open');
+      var p3 = document.createElement('p');
+      p3.id = "socket3";
+      p3.innerText = 'Socket 3 open';
+      document.body.appendChild(p3);
+    }
+
+    socket3.onclose = () =>{
+      console.log('Socket 3 close');
+      var p3 = document.createElement('p');
+      p3.id = "socket3";
+      p3.innerText = 'Socket 3 close';
+      document.body.appendChild(p3);
+    }	
+ 
+    socket4.onopen = ()=>{
+      console.log('Socket 4 open');
+      var p4 = document.createElement('p');
+      p4.id = "socket4";
+      p4.innerText = 'Socket 4 open';
+      document.body.appendChild(p4);
+    }
+
+    socket4.onclose = () =>{
+      console.log('Socket 4 close');
+      var p4 = document.createElement('p');
+      p4.id = "socket4";
+      p4.innerText = 'Socket 4 close';
+      document.body.appendChild(p4);
+    }
+    nw.Window.get().showDevTools();
+  </script>
+</body>
+</html>
