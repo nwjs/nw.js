@@ -56,6 +56,10 @@ For example:
 <input type="file" nwdirectory>
 ```
 
+### Attribute: `nwdirectorydesc`
+
+Set the description of the title in the file dialog for `nwdirectory`. Default is `Select Folder`.
+
 ### Attribute: `nwsaveas`
 
 `nwsaveas` will open a 'Save as' dialog, which lets user enter the path of a file. It's possible to select a non-existing file, which is different from the default file input tag.
