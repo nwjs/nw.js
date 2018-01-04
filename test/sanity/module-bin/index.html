@@ -1,0 +1,8 @@
+<body>
+    <div id='result'>wait for value</div>
+    <div id='source'>f.foo source:</div>
+    <script>
+    nw.Window.get().evalNWBinModule(null, 'lib.bin', 'lib.js');
+    </script>
+    <script type="module" src="testmodule.js"></script>
+</body>
