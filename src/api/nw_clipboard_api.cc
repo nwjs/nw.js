@@ -98,7 +98,7 @@ namespace {
       }
 
       if (data.type == TYPE_PNG &&
-         !gfx::PNGCodec::EncodeA8SkBitmap(bitmap, &encoded_image)) {
+         !gfx::PNGCodec::EncodeBGRASkBitmap(bitmap, false, &encoded_image)) {
         LOG(INFO) << "NwClipboardGetSyncFunction::RunSync(" << nwapi::nw__clipboard::ToString(data.type) << ") failed when converting to PNG";
         error_ = "Failed to encode as PNG";
         return false;
