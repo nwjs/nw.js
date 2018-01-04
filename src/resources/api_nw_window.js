@@ -423,6 +423,12 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       return nwNatives.evalScript(frame, script);
     };
     NWWindow.prototype.evalNWBin = function (frame, path) {
+      this.evalNWBinInternal(frame, path);
+    };
+    NWWindow.prototype.evalNWBinModule = function (frame, path, module_path) {
+      this.evalNWBinInternal(frame, path, module_path);
+    };
+    NWWindow.prototype.evalNWBinInternal = function (frame, path, module_path) {
       var ab;
       if (Buffer.isBuffer(path)) {
         let buf = path;
@@ -435,6 +441,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         ab = new global.ArrayBuffer(buf.length);
         buf.copy(Buffer.from(ab));
       }
+      if (module_path)
+        return nwNatives.evalNWBin(frame, ab, module_path);
       return nwNatives.evalNWBin(frame, ab);
     };
     NWWindow.prototype.show = function () {

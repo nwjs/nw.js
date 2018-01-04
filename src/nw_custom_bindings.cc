@@ -72,6 +72,10 @@ using namespace blink;
 #include "third_party/WebKit/public/web/WebDocument.h"
 #include "third_party/WebKit/public/web/WebSecurityPolicy.h"
 #include "third_party/WebKit/Source/platform/heap/Handle.h"
+#include "third_party/WebKit/Source/core/dom/Modulator.h"
+#include "third_party/WebKit/Source/core/dom/ModuleScript.h"
+#include "third_party/WebKit/Source/core/dom/ScriptModuleResolver.h"
+
 //#include "third_party/WebKit/Source/core/inspector/InspectorInstrumentation.h"
 //#include "third_party/WebKit/Source/core/inspector/InspectorResourceAgent.h"
 
@@ -233,25 +237,56 @@ void NWCustomBindings::EvalNWBin(
   v8::ScriptCompiler::CachedData* cache;
   cache = new v8::ScriptCompiler::CachedData(
                                              data, length, v8::ScriptCompiler::CachedData::BufferNotOwned);
-  v8::ScriptCompiler::Source source(source_string, cache);
-  v8::Local<v8::UnboundScript> script;
-  script = v8::ScriptCompiler::CompileUnboundScript(
-                                                    isolate, &source, v8::ScriptCompiler::kConsumeCodeCache).ToLocalChecked();
-  CHECK(!cache->rejected);
-  v8::Handle<v8::Value> result;
-  v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[0]);
+
   WebFrame* web_frame = NULL;
-  if (frm->IsNull()) {
+  if (args[0]->IsNull()) {
     web_frame = main_frame;
   }else{
+    v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[0]);
     blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::ToImpl(frm);
     web_frame = blink::WebFrame::FromFrame(iframe->ContentFrame());
   }
   blink::WebLocalFrame* local_frame = web_frame->ToWebLocalFrame();
-  v8::Context::Scope cscope (local_frame->MainWorldScriptContext());
-  v8::FixSourceNWBin(isolate, script);
-  result = script->BindToCurrentContext()->Run();
-  args.GetReturnValue().Set(result);
+  if (args.Length() == 2) {
+    v8::Local<v8::UnboundScript> script;
+    v8::ScriptCompiler::Source source(source_string, cache);
+    script = v8::ScriptCompiler::CompileUnboundScript(
+                                                      isolate, &source, v8::ScriptCompiler::kConsumeCodeCache).ToLocalChecked();
+    CHECK(!cache->rejected);
+    v8::Handle<v8::Value> result;
+    v8::Context::Scope cscope (local_frame->MainWorldScriptContext());
+    v8::FixSourceNWBin(isolate, script);
+    result = script->BindToCurrentContext()->Run();
+    args.GetReturnValue().Set(result);
+  } else {
+    v8::ScriptOrigin origin(
+                            args[2].As<v8::String>(),
+                            v8::Integer::New(isolate, 0),
+                            v8::Integer::New(isolate, 0),
+                            v8::Boolean::New(isolate, true),
+                            v8::Local<v8::Integer>(),    // script id
+                            v8::String::Empty(isolate),  // source_map_url
+                            v8::Boolean::New(isolate, true),
+                            v8::False(isolate),  // is_wasm
+                            v8::True(isolate));
+    v8::Local<v8::Module> module;
+    v8::ScriptCompiler::Source source(source_string, origin, cache);
+    module = v8::ScriptCompiler::CompileModuleWithCache(isolate, &source).ToLocalChecked();
+                                                                                 //fix
+                                                                                 //v8
+                                                                                 //here
+    v8::FixSourceNWBin(isolate, module);
+    blink::ScriptModule script_module(isolate, module);
+    blink::Modulator* modulator = blink::Modulator::From(ToScriptStateForMainWorld(static_cast<blink::WebLocalFrameImpl*>(local_frame)->GetFrame()));
+    GURL url = render_frame->GetWebFrame()->GetDocument().Url();
+    v8::String::Utf8Value file(args.GetIsolate(), args[2]);
+    url = url.Resolve(*file);
+    // LOG(WARNING) << "registering module as: " << url;
+    KURL kurl(WTF::String(url.spec().c_str()));
+    blink::ModuleScript* module_script =
+      blink::ModuleScript::CreateForTest(modulator, script_module, kurl);
+    modulator->AddToMap(kurl, module_script);
+  }
 }
 
 void NWCustomBindings::GetAbsolutePath(
