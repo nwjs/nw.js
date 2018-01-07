@@ -204,12 +204,12 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
 
   bool mixed_context = false;
   bool node_init_run = false;
-  bool nwjs_guest = command_line.HasSwitch("nwjs-guest");
+  bool nwjs_guest_nw = command_line.HasSwitch("nwjs-guest-nw");
 
   if (extension)
     extension->manifest()->GetBoolean(manifest_keys::kNWJSMixedContext, &mixed_context);
   // handle navigation in webview #5622
-  if (nwjs_guest)
+  if (nwjs_guest_nw)
     mixed_context = true;
   v8::Local<v8::Context> node_context;
   g_get_node_context_fn(&node_context);
@@ -307,7 +307,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
     v8::Local<v8::Value> key = symbols->Get(i);
     v8::Local<v8::Value> val = node_global->Get(key);
     nw->Set(key, val);
-    if (nwjs_guest && !node_init_run) {
+    if (nwjs_guest_nw && !node_init_run) {
       //running in nwjs webview and node was initialized in
       //chromedriver automation extension
       context->v8_context()->Global()->Set(key, val);
