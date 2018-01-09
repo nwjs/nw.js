@@ -1,3 +1,11 @@
+0.27.4 / 01-05-2017
+===================
+- Update Chromium to [63.0.3239.132](https://chromereleases.googleblog.com/2018/01/stable-channel-update-for-desktop.html)
+- Fix: Kiosk Mode does not lock app in macOS 10.12+ [(#6169)](https://github.com/nwjs/nw.js/issues/6169)
+- Fix: nw.Clipboard.get() with PNG format [(#6366)](https://github.com/nwjs/nw.js/issues/6366)
+- Fix: crash when debugging with developer tools for Linux [(#6347)](https://github.com/nwjs/nw.js/issues/6347)
+- Fix: Crash on resource load from extension in webview [(#6368)](https://github.com/nwjs/nw.js/issues/6368)
+
 0.27.3 / 12-22-2017
 ===================
 - Add: %chromium_ver in user-agent field in manifest [(#5975)](https://github.com/nwjs/nw.js/issues/5975)
