@@ -36,7 +36,7 @@ clipboard.clear();
 * `type` `{String}` _Optional_ the type of the data. Support `text`, `png`, `jpeg`, `html` and `rtf`. By default, `type` is set to `"text"`.
 * `raw`  `{Boolean}` _Optional_ requiring raw image data. This option is only valid if type is `png` or `jpeg`. By default, `raw` is set to `false`.
 
-Write `data` of `type` to the clipboard. This method will clear the clipboard and replace with the given `data`. Hence another call to this method will overwrite with the new one. To write multiple types of data to clipboard simultaneously, you will need to use [clip.set(clipboardDataList)](clipsetclipboardDataList) below.
+Write `data` of `type` to the clipboard. This method will clear the clipboard and replace with the given `data`. Hence another call to this method will overwrite with the new one. To write multiple types of data to clipboard simultaneously, you will need to use [clip.set(clipboardDataList)](#clipsetclipboarddatalist) below.
 
 !!! tip "Format of Image"
     Images read or written from clipboard can be either JPEG or PNG. When `raw` is not set or set to `false`, the data is expected to be a valid [data URI](https://developer.mozilla.org/en-US/docs/Web/HTTP/data_URIs) encoded with Base64. When `raw` is set to `true`, the data is only the Base64 encoded image data not including the `data:<mime-type>;base64,` part.
@@ -47,7 +47,7 @@ Write `data` of `type` to the clipboard. This method will clear the clipboard an
 
 ## clip.set(clipboardDataList)
 
-* `clipboardDataList` `{Array}` Array of `clipboardData` to be written to clipboard. See [clip.set(clipboardData)](#clipsetclipboardData) and [clip.set(data, [type, [raw]])](#clipsetdata-type-raw) for detailed arguments specification.
+* `clipboardDataList` `{Array}` Array of `clipboardData` to be written to clipboard. See [clip.set(clipboardData)](#clipgetclipboarddata) and [clip.set(data, [type, [raw]])](#clipsetdata-type-raw) for detailed arguments specification.
 
 Multiple types of data can be written to clipboard simultaneously with this method.
 
@@ -87,12 +87,12 @@ Get the data of `type` from clipboard.
 
 ## clip.get(clipboardDataList)
 
-* `clipboardDataList` `{Array}` Array of `clipboardData` for reading data from clipboard. Multiple types of data can be read from clipboard simultaneously with this method. See [clip.get(clipboardData)](#clipgetclipboardData) and [clip.get([type, [raw]])](#clipgettype-raw) for detailed arguments specification.
+* `clipboardDataList` `{Array}` Array of `clipboardData` for reading data from clipboard. Multiple types of data can be read from clipboard simultaneously with this method. See [clip.get(clipboardData)](#clipgetclipboarddata) and [clip.get([type, [raw]])](#clipgettype-raw) for detailed arguments specification.
 * Returns `{Array}` array of `clipboardData` retrieved from the clipboard. Each item contains `type`, `data` and `raw` (optional) attributes.
 
 ## clip.readAvailableTypes()
 
-* Returns `{Array}` list of available types of data in clipboard currenly. Each item is one of following types:
+* Returns `{Array}` list of available types of data in clipboard currently. Each item is one of following types:
     - `text`: plain text. Can be read by `clip.get('text')`.
     - `html`: HTML text. Can be read by `clip.get('html')`.
     - `rtf`: RTF (Rich Text Format). Can be read by `clip.get('rtf')`.
