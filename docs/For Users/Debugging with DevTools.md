@@ -8,7 +8,7 @@
 
 DevTools can be opened with keyboard shortcut <kbd>F12</kbd> on Windows and Linux or <kbd>&#8984;</kbd>+<kbd>&#8997;</kbd>+<kbd>i</kbd> on Mac.
 
-Alternatively, you may open DevTools programmatically using NW.js API [win.showDevTools()`](../References/Window.md##winshowdevtoolsiframe-headless-callback) for a window.
+Alternatively, you may open DevTools programmatically using NW.js API [win.showDevTools()](../References/Window.md#winshowdevtoolsiframe-callback) for a window.
 
 ## Node.js Modules Debugging
 
