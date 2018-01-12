@@ -30,6 +30,7 @@
 #include "extensions/browser/guest_view/web_view/web_view_renderer_state.h"
 #include "extensions/common/manifest_constants.h"
 #include "extensions/common/manifest_handlers/webview_info.h"
+#include "extensions/common/manifest_url_handlers.h"
 
 #if defined(OS_WIN)
 #define _USE_MATH_DEFINES
@@ -204,10 +205,25 @@ bool RphGuestFilterURLHook(RenderProcessHost* rph, const GURL* url)  {
 typedef bool (*RphGuestFilterURLHookFn)(content::RenderProcessHost* rph, const GURL* url);
 CONTENT_EXPORT extern RphGuestFilterURLHookFn gRphGuestFilterURLHook;
 
+bool GuestSwapProcessHook(content::BrowserContext* browser_context, const GURL& url) {
+  if (!url.SchemeIs("chrome-extension"))
+    return false;
+  ExtensionRegistry* registry = ExtensionRegistry::Get(browser_context);
+  std::string extension_id = url.host();
+  const Extension* extension = registry->enabled_extensions().GetByID(extension_id);
+  if (extension && !extensions::ManifestURL::Get(extension, "devtools_page").is_empty())
+    return true;
+  return false;
+}
+
+typedef bool(*GuestSwapProcessHookFn)(content::BrowserContext*, const GURL& url);
+CONTENT_EXPORT extern GuestSwapProcessHookFn gGuestSwapProcessHook;
+
 void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
                               const base::FilePath& extension_path,
                               std::string* error) {
   gRphGuestFilterURLHook = RphGuestFilterURLHook;
+  gGuestSwapProcessHook = GuestSwapProcessHook;
   if (!manifest)
     return;
 
