@@ -557,12 +557,12 @@ def RunProcess(context, timeout, args, **rest):
   # loop and keep track of whether or not it times out.
   exit_code = None
   sleep_time = INITIAL_SLEEP_TIME
+  pgid = None
+  if not utils.IsWindows():
+    pgid = os.getpgid(process.pid)
   while exit_code is None:
     if (not end_time is None) and (time.time() >= end_time):
       # Kill the process and wait for it to exit.
-      pgid = None
-      if not utils.IsWindows():
-        pgid = os.getpgid(process.pid)
       KillProcessWithID(process.pid)
       if not utils.IsWindows():
         os.killpg(pgid, signal.SIGTERM)
@@ -574,6 +574,11 @@ def RunProcess(context, timeout, args, **rest):
       sleep_time = sleep_time * SLEEP_TIME_FACTOR
       if sleep_time > MAX_SLEEP_TIME:
         sleep_time = MAX_SLEEP_TIME
+  if not utils.IsWindows():
+    try:
+      os.killpg(pgid, signal.SIGTERM)
+    except:
+      pass
   return (process, exit_code, timed_out)
 
 
