@@ -126,7 +126,7 @@ Get or set the page zoom. `0` for normal size; positive value for zooming in; ne
 
 ## win.cookies.*
 
-This includes multiple functions to manipulate the cookies. The API is defined in the same way as [Chrome Extensions'](http://developer.chrome.com/extensions/cookies.html). NW.js supports the `get`, `getAll`, `remove` and `set` methods; `onChanged` event (supporting both `addListener` and `removeListener` function on this event).
+This includes multiple functions to manipulate the cookies. The API is defined in the same way as [Chrome Extensions](http://developer.chrome.com/extensions/cookies.html). NW.js supports the `get`, `getAll`, `remove` and `set` methods; `onChanged` event (supporting both `addListener` and `removeListener` function on this event).
 
 And anything related to `CookieStore` in the Chrome extension API is not supported, because there is only one global cookie store in NW.js apps.
 
@@ -557,7 +557,7 @@ Emitted when window leaves fullscreen state.
 
 ## Event: zoom
 
-Emitted when window zooming changed. It has a parameter indicating the new zoom level. See [`win.zoom()` method](#winzoom) for the parameter's value definition.
+Emitted when window zooming changed. It has a parameter indicating the new zoom level. See [`win.zoom()` method](#winzoomlevel) for the parameter's value definition.
 
 ## Event: capturepagedone
 
