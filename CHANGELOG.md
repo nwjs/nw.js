@@ -1,3 +1,10 @@
+0.27.5 / 01-15-2017
+===================
+- Fix: regression: webview devtools can no longer be embedded [(#6374)](https://github.com/nwjs/nw.js/issues/6374)
+- Fix: regression: devtools extension in embedded webview [(#6004)](https://github.com/nwjs/nw.js/issues/6004)
+- Fix: crash in node::PromiseHook when using Promise and johnny-five [(#6379)](https://github.com/nwjs/nw.js/issues/6379)
+- Fix: nwjs crash when choosing inspect when devtools are embedded [(#6375)](https://github.com/nwjs/nw.js/issues/6375)
+
 0.27.4 / 01-05-2017
 ===================
 - Update Chromium to [63.0.3239.132](https://chromereleases.googleblog.com/2018/01/stable-channel-update-for-desktop.html)
