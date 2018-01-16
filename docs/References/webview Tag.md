@@ -24,6 +24,24 @@ NW.js added the following methods besides upstream APIs:
 * `show` `{boolean}` flag: open or close the devtools window
 * `container` `{webview Element}` _Optional_ the element of the `<webview>` to be used to display devtools. By default, the DevTools is shown with a new window.
 
+DevTools extensions can be used in the embedded webview. Just load them with `--load-extensions`. The container webview should be made trusted by adding an addtional `webview` section in the `manifest.json` of the extension and add a attribute `partition='trusted'` to the webview tag. See the example in [issue #6004](https://github.com/nwjs/nw.js/issues/6004)
+```json
+"webview": {
+  "partitions": [
+     {
+       "name": "trusted",
+       "accessible_resources": [
+          "<all_urls>"
+       ]
+     }
+  ]
+}
+```
+
+### webview.inspectElementAt(x, y)
+
+After opening devtools with `webview.showDevTools()`, this function can be called to inspect the element located at (x, y).
+
 ### loading local files in webview
 
 Add the following permission to the manifest:
