@@ -21,7 +21,7 @@ The `*.bin` file is needed to be distributed with your application. You can name
 ```javascript
 nw.Window.get().evalNWBin(frame, 'binary.bin');
 ```
-The arguments of the [win.evalNWBin()](../../References/Window.md#winevalnwbin) method are similar with the `Window.eval()` method, where the first parameter is the target iframe (`null` for main frame), and the 2nd parameter is the binary code file.
+The arguments of the [win.evalNWBin()](../../References/Window.md#winevalnwbinframe-path) method are similar with the `Window.eval()` method, where the first parameter is the target iframe (`null` for main frame), and the 2nd parameter is the binary code file.
 
 ### Load Compiled JavaScript from Remote
 
