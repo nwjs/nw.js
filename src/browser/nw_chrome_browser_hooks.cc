@@ -139,6 +139,16 @@ bool CheckStoragePartitionMatches(int render_process_id, const GURL& url) {
   return render_process_id == g_cdt_process_id && url.SchemeIs(content_settings::kChromeDevToolsScheme);
 }
 
+bool InspectElement(content::WebContents* web_contents, int x, int y) {
+  scoped_refptr<DevToolsAgentHost> agent_host(DevToolsAgentHost::GetOrCreateFor(web_contents));
+  DevToolsWindow* window = DevToolsWindow::FindDevToolsWindow(agent_host.get());
+  if (!window)
+    return false;
+  content::RenderFrameHost* rfh = web_contents->GetMainFrame();
+  DevToolsWindow::InspectElement(rfh, x, y);
+  return true;
+}
+
 void ShowDevtools(bool show, content::WebContents* web_contents, content::WebContents* container) {
   content::RenderFrameHost* rfh = web_contents->GetMainFrame();
   if (container) {

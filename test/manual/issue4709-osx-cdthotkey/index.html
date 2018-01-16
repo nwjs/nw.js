@@ -21,6 +21,9 @@
     var demodev = document.getElementById('demodev');
     document.getElementById('demo').showDevTools(show, demodev);
   }
+  function test_inspect() {
+    document.getElementById('demo').inspectElementAt(100, 0);
+  }
   </script>
 </head>
 
@@ -28,6 +31,7 @@
   <webview partition="persist:trusted" id="demo" src="http://xw.qq.com"></webview>
   <webview partition="persist:trusted" id="demodev" src="about:blank"></webview>
   <button onclick="test(true)">show</button>
+  <button onclick="test_inspect()">inspect</button>
 </body>
 
 </html>
