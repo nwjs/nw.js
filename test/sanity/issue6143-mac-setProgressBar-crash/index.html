@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>issue6143-mac-setProgressBar-crash</title>
+</head>
+<body>
+  <h3 id="result">success</h3>
+  <script>
+    chrome.downloads.download({ url: "https://github.com/nwjs/nw.js/archive/nw-v0.27.4.tar.gz" });
+    setInterval(
+      () => nw.Window.get().setProgressBar(Math.random()) // It crashes here
+    , 1000); 
+  </script>
+</body>
+</html>

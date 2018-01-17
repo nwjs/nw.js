@@ -1,0 +1,4 @@
+{
+  "name": "issue6231-linux-websocket-more-than-2-connections",
+  "main": "index.html"
+}

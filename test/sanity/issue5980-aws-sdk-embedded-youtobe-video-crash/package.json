@@ -1,0 +1,16 @@
+{
+  "name": "youtube-crash-test",
+  "main": "index.js",
+  "window": {
+    "frame": true,
+    "toolbar": true,
+    "width": 1600,
+    "height": 900,
+    "position": "center",
+    "show": true
+  },
+  "chromium-args": "--mixed-context --enable-webgl --ignore-certificate-errors",
+  "dependencies": {
+    "aws-sdk": "*"
+  }
+}
