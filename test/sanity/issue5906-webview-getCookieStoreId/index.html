@@ -1,0 +1,24 @@
+<style type="text/css">
+#demo{
+  display: inline-block;
+  height: 200px;
+  width: 320px;
+}
+</style>
+<webview id="demo" partition="trusted" src="about:blank"></webview>
+<script>
+var win = nw.Window.get();
+function out(id, msg) {
+  var h2 = document.createElement("h2");
+  h2.setAttribute("id", id);
+  h2.innerHTML = msg;
+  document.body.appendChild(h2);
+}
+var webview = document.getElementById("demo");
+document.addEventListener("DOMContentLoaded", function (event) {
+  setTimeout(() => {
+    storeId = webview.getCookieStoreId()
+    out('result', storeId)
+  }, 1000)
+})
+</script>
