@@ -1,0 +1,7 @@
+{
+  "name": "issue5882-nw-crash-with-debugging-tools",
+  "main": "index.html",
+  "dependencies": {
+    "request": "^2.83.0"
+  }
+}
