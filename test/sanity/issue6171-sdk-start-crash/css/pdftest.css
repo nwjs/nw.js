@@ -1,0 +1,104 @@
+
+/* Browser reset code - Yahoo */
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td { 
+	margin:0;
+	padding:0;
+}
+table {
+	border-collapse:collapse;
+	border-spacing:0;
+}
+fieldset,img { 
+	border:0;
+}
+address,caption,cite,code,dfn,em,strong,th,var {
+	font-style:normal;
+	font-weight:normal;
+}
+ol,ul {
+	list-style:none;
+}
+caption,th {
+	text-align:left;
+}
+h1,h2,h3,h4,h5,h6 {
+	font-size:100%;
+	font-weight:normal;
+}
+q:before,q:after {
+	content:'';
+}
+abbr,acronym { border:0;
+}
+
+/*  End of Browser Reset code  */
+
+
+/* App Main Window style  */
+
+body {
+   background-color: transparent;
+    -webkit-user-select: none;
+    -webkit-app-region: no-drag; 
+}
+
+#content {
+    position: absolute;
+    display: block;
+    top: 40px;
+    width: 99%;
+    height: 350px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    border: 1px solid gray;
+    border-radius: 10px;
+    background-color: #006400;
+    -webkit-app-region: drag;
+    -webkit-user-select: auto;
+}
+
+#fire {
+    position: relative;
+    display: block;
+    top: 40px;
+    width: 150px;
+    height: 150px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+h1 {
+    position: absolute;
+    display: block;
+    width: 100%;
+    font-family: "Arial Rounded MT Bold";    
+    font-size: 2.0em;
+    top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    color: #022c55;
+}
+
+#versions {
+    position: absolute;
+    display: block;
+    top: 20px;
+    margin-left: 20px;
+    width: 170px;
+    padding: 5px;
+    background-color: #585f6d;
+    color: #021d38;
+    font-size: 0.6em;
+    border: 1px solid gray;
+    border-radius: 8px;
+    overflow: hidden;    
+}
+
+
+
+
+
+

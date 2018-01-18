@@ -1,0 +1,22 @@
+{
+  "name": "PDFTest",
+  "version": "1.0.0",
+  "main": "index.html",
+  "window": {
+    "height": 900,
+    "width": 1200,
+    "resizable": true
+  	},
+  "webview": {
+    "partitions": [
+        {
+          "name": "trusted",
+          "accessible_resources": [ "<all_urls>" ]
+        }
+     ]
+  },
+  "chromium-args": "--enable-logging --v=1",
+  "webkit": {
+    "plugin": true
+  }
+}
