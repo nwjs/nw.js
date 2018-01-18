@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>issue5882-debugging-tools-crash</title>
+  </head>
+  <body>
+    <h1>Hello World!</h1>
+    We are using node.js <script>document.write(process.version)</script>.
+    <script type="text/javascript">
+      var request = require('request');
+      setInterval(function() {
+        request({
+          url: 'http://www.bing.com',
+          method: 'get'
+        }, function(err, response, body) {
+          debugger;
+          if (err) return console.error(err.stack);    // line 16
+          console.log(response, body);
+        });
+      }, 3 * 1000);
+      nw.Window.get().showDevTools()
+    </script>
+  </body>
+</html>
