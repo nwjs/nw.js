@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Styles -->
+<link rel="stylesheet" type="text/css" media="screen, projection" href="css/pdftest.css" />
+  <style>
+    body {
+      width: 100%;
+      height: 100%;
+      background-color:#000;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: scroll;
+      position: relative;
+    }
+    webview {
+      position: relative;
+      display: block;
+      max-width: 190px;
+      max-height: 100px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+    }
+    .wbv {
+    }
+
+    li {
+      display: block;
+      border: 1px solid gray;
+      border-radius: 7px;
+    }
+    td {
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+    }
+  </style>
+  <script src="vendor/jquery.min.js"></script>
+</head>
+<body>
+<div id="header" style="position: fixed; background-color: #000000; height: 80px; width: 100%; z-index: 100;">
+  <div id="versions" style="position: fixed;">
+      NWjs version - <script>document.write(process.versions['nw']);</script><br />
+      IO.js/node.js version - <script>document.write(process.versions['node']);</script><br />
+      Chromium version - <script>document.write(process.versions['chromium']);</script><br />
+  </div>
+  <img src="hornybsd.png" style="position: fixed; top: 20px; right: 30px; width: 48px; height: 48px;" alt="hornydevil" />
+</div>
+<div id="container" style=" z-index: 99;">
+<ul id="ul" style="position: absolute; top: 90px; left: 30px; width: 90%; margin-left: auto; margin-right: auto; text-align: center;">
+
+<br />
+<br />
+<li style="left: 10px; padding: 10px; width: 100%;">
+    <table style="border: 1px solid gray; width: 99%; border-collapse: none;">
+      <tr>
+        <td style="border: 1px solid orange; width: 25%;">
+          <h2 style="color: red;">Flash - webview tag<h2>
+          <webview partition="trusted" src="test.swf" class="wbv"></webview>
+        </td>
+      </tr>
+    </table>
+  </li>
+<br />
+<li style="left: 10px; padding: 10px; width: 100%;">
+    <table style="border: 1px solid gray; width: 99%; border-collapse: none;">
+      <tr>
+        <td style="border: 1px solid orange; width: 33%;">
+          <h2 style="color: red;">PDF - webview tag<h2>
+          <webview partition="trusted" src="test.pdf" class="wbv"></webview>
+        </td>
+<!--        <td style="border: 1px solid orange; width: 33%;">
+          <h2 style="color: red;">PDF - embed tag<h2>
+          <embed src="test.pdf" style="max-width: 190px; max-height: 100px;" />
+        </td> -->
+        <td style="border: 1px solid orange; width: 33%;">
+          <h2 style="color: red;">PDF - object tag<h2>
+          <object style="color: blue; max-width: 190px; max-height: 100px;" data="test.pdf">Alternative Content Here (gifs etc)</object>
+        </td>
+      </tr>
+    </table>
+  </li>
+<br />
+<li style="left: 10px; padding: 10px; width: 100%;">
+    <table style="border: 1px solid gray; width: 99%; border-collapse: none;">
+      <tr>
+        <td style="border: 1px solid orange; width: 25%;">
+          <h2 style="color: red;">Flash - webview tag<h2>
+          <webview partition="trusted" src="test.swf" class="wbv"></webview>
+        </td>
+      </tr>
+    </table>
+  </li>
+    <br />
+    <br />
+</ul>
+</div>
+
+  <script type="text/javascript">
+//    var wbv = document.getElementById('wbv');
+//    console.log(wbv);
+//    var wbv2 = document.getElementById('wbv2');
+//    console.log(wbv2);
+var webview = document.getElementById('wbv');
+//webview.addEventListener('permissionrequest', function (e) {
+//console.log("webview"+objCount+": permission - "+e.permission);
+
+//    if (e.permission === 'loadplugin') {
+//        if(userSession.allowPlugins) {
+//            e.request.allow();
+//        } else {
+//    //        e.request.deny();
+//        }
+//    }
+//    if (e.permission === 'download') {
+//        e.request.allow();
+//    }
+//    // media
+//    if (e.permission === 'media') {
+//        e.request.allow();
+//    }
+//    if (e.permission === 'geolocation') {
+//        e.request.deny();
+//    }
+//});
+  </script>
+    <br />
+    <br />
+
+
+
+</body>
+</html>
