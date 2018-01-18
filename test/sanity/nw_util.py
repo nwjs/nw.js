@@ -114,6 +114,38 @@ def wait_for_element_id(driver, elem_id, timeout=10):
              raise Exception('Timeout when waiting for element' + elem_id)
     return ret
 
+def wait_for_element_class(driver, elem_class, timeout=10):
+    ret = ''
+    while timeout > 0:
+        try:
+            ret = driver.find_element_by_class_name(elem_class).get_attribute('innerHTML')
+            break
+        except selenium.common.exceptions.NoSuchElementException:
+            pass
+        except selenium.common.exceptions.WebDriverException:
+            pass
+        time.sleep(1)
+        timeout = timeout - 1
+        if timeout <= 0:
+             raise Exception('Timeout when waiting for element' + elem_class)
+    return ret
+
+def wait_for_element_tag(driver, elem_tag, timeout=10):
+    ret = ''
+    while timeout > 0:
+        try:
+            ret = driver.find_element_by_tag_name(elem_tag).get_attribute('innerHTML')
+            break
+        except selenium.common.exceptions.NoSuchElementException:
+            pass
+        except selenium.common.exceptions.WebDriverException:
+            pass
+        time.sleep(1)
+        timeout = timeout - 1
+        if timeout <= 0:
+             raise Exception('Timeout when waiting for element' + elem_tag)
+    return ret
+
 def wait_for_element_id_content(driver, elem_id, content, timeout=10):
     ret = ''
     while timeout > 0:
