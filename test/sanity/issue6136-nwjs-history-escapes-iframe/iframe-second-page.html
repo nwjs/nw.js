@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>nwjs-history-escapes-iframe</title>
+  </head>
+  <body>
+    <h1>Iframe Second Page</h1>
+    <p>In 3 seconds it will go back to the "Index" page escaping iframe, but it should not!</p>
+    <script>
+      setTimeout(function () {
+        history.back();
+        history.back();
+        history.back();
+        history.back();
+        history.back();
+        history.back();
+      }, 3000);
+    </script>
+  </body>
+</html>
