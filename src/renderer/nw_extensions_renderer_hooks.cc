@@ -329,7 +329,6 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
     base::ReplaceChars(root_path, "'", "\\'", &root_path);
     v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate, (
         set_nw_script +
-        "nw.global.XMLHttpRequest = XMLHttpRequest;" +
         // Make node's relative modules work
         "if (typeof nw.process != 'undefined' && "
         "(!nw.process.mainModule.filename || nw.process.mainModule.filename === 'blank' ||"
