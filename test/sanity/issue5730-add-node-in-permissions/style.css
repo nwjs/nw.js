@@ -1,0 +1,10 @@
+body {
+  font-family: sans-serif;
+}
+
+webview {
+    width: 100%;
+    height: 90vh;
+    display: flex;
+    margin: 10px 10px 0 0;
+}

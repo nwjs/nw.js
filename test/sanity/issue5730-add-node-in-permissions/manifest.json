@@ -1,0 +1,17 @@
+{
+  "manifest_version": 2,
+  "name": "issue5730-add-node-in-permissions",
+  "short_name": "Webview Test",
+  "description": "",
+  "version": "1.0",
+
+  "app": {
+    "background": {
+      "scripts": ["background.js"]
+    }
+  },
+  "permissions": [
+    "node",
+    "webview"
+  ]
+}
