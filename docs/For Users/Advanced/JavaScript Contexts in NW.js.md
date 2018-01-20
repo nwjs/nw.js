@@ -46,7 +46,7 @@ Different windows and frames have different contexts. So when you create a new f
 
 Some objects of Node context are copied to Browser context so that scripts running in Browser context can access Node.js objects:
 
-* `nw` -- the object of all [NW.js APIs](../../References)
+* `nw` -- the object of all NW.js APIs in **`References`** section
 * `global` -- the global object of Node Context; same as `nw.global`
 * `require` -- the `require()` function for loading Node.js modules; similar to `nw.require()`, but it also supports `require('nw.gui')` to load NW.js API module.
 * `process` -- the [process module](https://nodejs.org/api/globals.html#globals_process) of Node.js; same as `nw.process`
@@ -74,7 +74,7 @@ Scripts running in the Node context can use [JS builtin objects]() like browse
 **All node modules shares a same Node context in separate context mode**. But you have several ways to create new Node contexts:
 
 * Set `new_instance` option to `true` when creating window with [`Window.open()`](../../References/Window.md#windowopenurl-options-callback)
-* Start NW.js with `--mixed-context` CLI option to turn NW.js into [Mixed Context mode](#mixed-context)
+* Start NW.js with `--mixed-context` CLI option to turn NW.js into [Mixed Context mode](#mixed-context-mode)
 
 #### Access Browser and NW.js API in Node Context
 
@@ -96,7 +96,7 @@ In the browser side (index.html):
 <script>
 var myscript = require('./myscript');
 // pass the `el` element to the Node function
-myscript.setText(document.getElementbyId('el'));
+myscript.setText(document.getElementById('el'));
 // you will see "hello" in the element
 </script>
 ```
@@ -110,7 +110,7 @@ Relative paths in node modules are resolved according to path of that module (li
 
 ## Mixed Context Mode
 
-Mixed context is introduced in NW.js 0.13. When running NW.js with [`--mixed-context` CLI option](../../References/Command Line Options.md#mixedcontext), a new Node context is created at the time of each browser context creation and running in a same context as browser context, a.k.a. the Mixed context.
+Mixed context is introduced in NW.js 0.13. When running NW.js with [`--mixed-context` CLI option](../../References/Command Line Options.md#-mixed-context), a new Node context is created at the time of each browser context creation and running in a same context as browser context, a.k.a. the Mixed context.
 
 ### Load Script in Mixed Context Mode
 
