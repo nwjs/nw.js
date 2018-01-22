@@ -165,9 +165,11 @@ class WebContentsHiddenObserver : public content::WebContentsObserver {
   }
 
   // WebContentsObserver.
-  void WasHidden() override {
-    hidden_observed_ = true;
-    hidden_callback_.Run();
+  void OnVisibilityChanged(content::Visibility visibility) override {
+    if (visibility == content::Visibility::HIDDEN) {
+      hidden_observed_ = true;
+      hidden_callback_.Run();
+    }
   }
 
   bool hidden_observed() { return hidden_observed_; }
@@ -291,7 +293,7 @@ class LeftMouseClick {
       : web_contents_(web_contents),
         mouse_event_(blink::WebInputEvent::kMouseDown,
                      blink::WebInputEvent::kNoModifiers,
-                     blink::WebInputEvent::kTimeStampForTesting) {
+                     blink::WebInputEvent::GetStaticTimeStampForTests()) {
     mouse_event_.button = blink::WebMouseEvent::Button::kLeft;
   }
 
@@ -775,7 +777,7 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
   void OpenContextMenu(content::WebContents* web_contents) {
     blink::WebMouseEvent mouse_event(blink::WebInputEvent::kMouseDown,
                                      blink::WebInputEvent::kNoModifiers,
-                                     blink::WebInputEvent::kTimeStampForTesting);
+                                     blink::WebInputEvent::GetStaticTimeStampForTests());
     mouse_event.button = blink::WebMouseEvent::Button::kRight;
     mouse_event.SetPositionInWidget(1, 1);
     web_contents->GetRenderViewHost()->GetWidget()->ForwardMouseEvent(
@@ -818,7 +820,7 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
   ~NWWebViewTestBase() override {}
 
  protected:
-  content::FrameWatcher frame_watcher_;
+  //content::FrameWatcher frame_watcher_;
 
  private:
   bool UsesFakeSpeech() {
@@ -974,7 +976,7 @@ static std::string DumpPdfAccessibilityTree(const ui::AXTreeUpdate& ax_tree) {
     ax_tree_dump += std::string(2 * indent, ' ');
     ax_tree_dump += ui::ToString(node.role);
 
-    std::string name = node.GetStringAttribute(ui::AX_ATTR_NAME);
+    std::string name = node.GetStringAttribute(ax::mojom::StringAttribute::kName);
     base::ReplaceChars(name, "\r", "\\r", &name);
     base::ReplaceChars(name, "\n", "\\n", &name);
     if (!name.empty())
@@ -1132,13 +1134,8 @@ class FakeDesktopMediaPicker : public DesktopMediaPicker {
   ~FakeDesktopMediaPicker() override { expectation_->picker_deleted = true; }
 
   // DesktopMediaPicker interface.
-  void Show(content::WebContents* web_contents,
-            gfx::NativeWindow context,
-            gfx::NativeWindow parent,
-            const base::string16& app_name,
-            const base::string16& target_name,
+  void Show(const DesktopMediaPicker::Params& params,
             std::vector<std::unique_ptr<DesktopMediaList>> source_lists,
-            bool request_audio,
             const DoneCallback& done_callback) override {
     bool show_screens = false;
     bool show_windows = false;
@@ -1162,7 +1159,8 @@ class FakeDesktopMediaPicker : public DesktopMediaPicker {
     EXPECT_EQ(expectation_->expect_screens, show_screens);
     EXPECT_EQ(expectation_->expect_windows, show_windows);
     EXPECT_EQ(expectation_->expect_tabs, show_tabs);
-    EXPECT_EQ(expectation_->expect_audio, request_audio);
+    EXPECT_EQ(expectation_->expect_audio, params.request_audio);
+    EXPECT_EQ(params.modality, ui::ModalType::MODAL_TYPE_CHILD);
 
     if (!expectation_->cancelled) {
       // Post a task to call the callback asynchronously.

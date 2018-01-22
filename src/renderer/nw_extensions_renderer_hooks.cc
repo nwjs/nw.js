@@ -570,7 +570,7 @@ void willHandleNavigationPolicy(content::RenderView* rv,
   v8::Local<v8::Value> val = policy_obj->Get(v8_str("val"));
   if (!val->IsString())
     return;
-  v8::String::Utf8Value policy_str(val);
+  v8::String::Utf8Value policy_str(isolate, val);
   if (!strcmp(*policy_str, "ignore"))
     *policy = blink::kWebNavigationPolicyIgnore;
   else if (!strcmp(*policy_str, "download"))

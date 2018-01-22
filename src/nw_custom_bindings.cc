@@ -57,6 +57,17 @@ using namespace blink;
 #undef INTERNAL_TRACE_EVENT_SCOPED_CONTEXT
 //#undef INTERNAL_TRACE_EVENT_CATEGORY_GROUP_ENABLED_FOR_RECORDING_MODE
 #endif
+#undef EXCLUSIVE_LOCKS_REQUIRED
+#undef SHARED_LOCKS_REQUIRED
+#undef LOCKS_EXCLUDED
+#undef LOCK_RETURNED
+//#undef EXCLUSIVE_LOCK_FUNCTION
+#undef SHARED_LOCK_FUNCTION
+//#undef UNLOCK_FUNCTION
+//#undef EXCLUSIVE_TRYLOCK_FUNCTION
+#undef SHARED_TRYLOCK_FUNCTION
+#undef NO_THREAD_SAFETY_ANALYSIS
+
 //#include "third_party/WebKit/Source/config.h"
 #include "third_party/WebKit/Source/core/html/HTMLIFrameElement.h"
 #include "third_party/WebKit/Source/core/dom/Document.h"
@@ -117,41 +128,45 @@ bool MakePathAbsolute(base::FilePath* file_path) {
 }
 
 } // namespace
-NWCustomBindings::NWCustomBindings(ScriptContext* context)
-    : ObjectBackedNativeHandler(context) {
-  RouteFunction("crashRenderer",
+
+void NWCustomBindings::AddRoutes() {
+  RouteHandlerFunction("crashRenderer",
                 base::Bind(&NWCustomBindings::CrashRenderer,
                            base::Unretained(this)));
-  RouteFunction("evalScript",
+  RouteHandlerFunction("evalScript",
                 base::Bind(&NWCustomBindings::EvalScript,
                            base::Unretained(this)));
-  RouteFunction("evalNWBin",
+  RouteHandlerFunction("evalNWBin",
                 base::Bind(&NWCustomBindings::EvalNWBin,
                            base::Unretained(this)));
-  RouteFunction("getAbsolutePath",
+  RouteHandlerFunction("getAbsolutePath",
                 base::Bind(&NWCustomBindings::GetAbsolutePath,
                            base::Unretained(this)));
-  RouteFunction("addOriginAccessWhitelistEntry",
+  RouteHandlerFunction("addOriginAccessWhitelistEntry",
                 base::Bind(&NWCustomBindings::AddOriginAccessWhitelistEntry,
                            base::Unretained(this)));
-  RouteFunction("removeOriginAccessWhitelistEntry",
+  RouteHandlerFunction("removeOriginAccessWhitelistEntry",
                 base::Bind(&NWCustomBindings::RemoveOriginAccessWhitelistEntry,
                            base::Unretained(this)));
-  RouteFunction("getProxyForURL",
+  RouteHandlerFunction("getProxyForURL",
                 base::Bind(&NWCustomBindings::GetProxyForURL,
                            base::Unretained(this)));
-  RouteFunction("setDevToolsJail",
+  RouteHandlerFunction("setDevToolsJail",
                 base::Bind(&NWCustomBindings::SetDevToolsJail,
                            base::Unretained(this)));
-  RouteFunction("getWidgetRoutingID",
+  RouteHandlerFunction("getWidgetRoutingID",
                 base::Bind(&NWCustomBindings::GetWidgetRoutingID,
                            base::Unretained(this)));
-  RouteFunction("getRoutingID",
+  RouteHandlerFunction("getRoutingID",
                 base::Bind(&NWCustomBindings::GetRoutingID,
                            base::Unretained(this)));
-  RouteFunction("callInWindow",
+  RouteHandlerFunction("callInWindow",
                 base::Bind(&NWCustomBindings::CallInWindow,
                            base::Unretained(this)));
+}
+
+NWCustomBindings::NWCustomBindings(ScriptContext* context)
+    : ObjectBackedNativeHandler(context) {
 }
 
 void NWCustomBindings::CallInWindow(
@@ -193,6 +208,7 @@ void NWCustomBindings::EvalScript(
   content::RenderFrame* render_frame = context()->GetRenderFrame();
   if (!render_frame)
     return;
+  v8::Isolate* isolate = args.GetIsolate();
   WebFrame* main_frame = render_frame->GetWebFrame();
   v8::Handle<v8::Value> result;
   v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[0]);
@@ -204,9 +220,9 @@ void NWCustomBindings::EvalScript(
     web_frame = blink::WebFrame::FromFrame(iframe->ContentFrame());
   }
 #if defined(OS_WIN)
-  base::string16 jscript((WCHAR*)*v8::String::Value(args[1]));
+  base::string16 jscript((WCHAR*)*v8::String::Value(isolate, args[1]));
 #else
-  base::string16 jscript = *v8::String::Value(args[1]);
+  base::string16 jscript = *v8::String::Value(isolate, args[1]);
 #endif
   if (web_frame) {
     blink::WebLocalFrame* local_frame = web_frame->ToWebLocalFrame();
@@ -292,7 +308,7 @@ void NWCustomBindings::EvalNWBin(
 void NWCustomBindings::GetAbsolutePath(
     const v8::FunctionCallbackInfo<v8::Value>& args) {
   v8::Isolate* isolate = args.GetIsolate();
-  base::FilePath path = base::FilePath::FromUTF8Unsafe(*v8::String::Utf8Value(args[0]));
+  base::FilePath path = base::FilePath::FromUTF8Unsafe(*v8::String::Utf8Value(isolate, args[0]));
   MakePathAbsolute(&path);
 #if defined(OS_POSIX)
   args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, path.value().c_str()));
@@ -304,9 +320,9 @@ void NWCustomBindings::GetAbsolutePath(
 void NWCustomBindings::AddOriginAccessWhitelistEntry(const v8::FunctionCallbackInfo<v8::Value>& args) {
   v8::Isolate* isolate = args.GetIsolate();
 
-  std::string sourceOrigin        = *v8::String::Utf8Value(args[0]);
-  std::string destinationProtocol = *v8::String::Utf8Value(args[1]);
-  std::string destinationHost     = *v8::String::Utf8Value(args[2]);
+  std::string sourceOrigin        = *v8::String::Utf8Value(isolate, args[0]);
+  std::string destinationProtocol = *v8::String::Utf8Value(isolate, args[1]);
+  std::string destinationHost     = *v8::String::Utf8Value(isolate, args[2]);
   bool allowDestinationSubdomains = args[3]->ToBoolean()->Value();
 
   blink::WebSecurityPolicy::AddOriginAccessWhitelistEntry(GURL(sourceOrigin),
@@ -320,9 +336,9 @@ void NWCustomBindings::AddOriginAccessWhitelistEntry(const v8::FunctionCallbackI
 void NWCustomBindings::RemoveOriginAccessWhitelistEntry(const v8::FunctionCallbackInfo<v8::Value>& args) {
   v8::Isolate* isolate = args.GetIsolate();
 
-  std::string sourceOrigin        = *v8::String::Utf8Value(args[0]);
-  std::string destinationProtocol = *v8::String::Utf8Value(args[1]);
-  std::string destinationHost     = *v8::String::Utf8Value(args[2]);
+  std::string sourceOrigin        = *v8::String::Utf8Value(isolate, args[0]);
+  std::string destinationProtocol = *v8::String::Utf8Value(isolate, args[1]);
+  std::string destinationHost     = *v8::String::Utf8Value(isolate, args[2]);
   bool allowDestinationSubdomains = args[3]->ToBoolean()->Value();
 
   blink::WebSecurityPolicy::RemoveOriginAccessWhitelistEntry(GURL(sourceOrigin),
@@ -336,7 +352,7 @@ void NWCustomBindings::RemoveOriginAccessWhitelistEntry(const v8::FunctionCallba
 void NWCustomBindings::GetProxyForURL(const v8::FunctionCallbackInfo<v8::Value>& args) {
   v8::Isolate* isolate = args.GetIsolate();
 
-  std::string url = *v8::String::Utf8Value(args[0]);
+  std::string url = *v8::String::Utf8Value(isolate, args[0]);
   GURL gurl(url);
   if (!gurl.is_valid()) {
     args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,

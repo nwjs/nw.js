@@ -4,11 +4,9 @@
 #include "base/strings/stringprintf.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/task_scheduler/post_task.h"
-#include "base/threading/sequenced_worker_pool.h"
 #include "content/public/browser/render_widget_host.h"
 #include "chrome/browser/devtools/devtools_window.h"
 #include "chrome/browser/extensions/devtools_util.h"
-//#include "chrome/browser/ui/webui/print_preview/printer_backend_proxy.h"
 #include "components/zoom/zoom_controller.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/object_manager.h"
@@ -235,15 +233,13 @@ bool NwCurrentWindowInternalCapturePageInternalFunction::RunAsync() {
   view->CopyFromSurface(gfx::Rect(),  // Copy entire surface area.
                         gfx::Size(),  // Result contains device-level detail.
       base::Bind(&NwCurrentWindowInternalCapturePageInternalFunction::CopyFromBackingStoreComplete,
-                 this),
-      kN32_SkColorType);
+                 this));
   return true;
 }
 
 void NwCurrentWindowInternalCapturePageInternalFunction::CopyFromBackingStoreComplete(
-    const SkBitmap& bitmap,
-    content::ReadbackResponse response) {
-  if (response == content::READBACK_SUCCESS) {
+    const SkBitmap& bitmap) {
+  if (!bitmap.drawsNothing()) {
     OnCaptureSuccess(bitmap);
     return;
   }
