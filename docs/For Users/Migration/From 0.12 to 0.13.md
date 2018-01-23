@@ -36,20 +36,20 @@
 + [`single-instance`](../../References/Manifest Format.md#single-instance) is **deprecated** and it's always `true`. You **CANNOT** have multiple instances for your app unless you're using different user data directory (by `--user-data-dir`). You may also want to use the [open event](../../References/App.md#event-openargs): the first instance will be notified with this event when user tries to launch the second instance.
 + [`toolbar`](../../References/Manifest Format.md#toolbar) is **deprecated** and it's always `false`. The traditional toolbar will **NOT** be supported including the reload buttons, location bar and DevTools buttons. As a workaround, you can open / close DevTools with <kbd>F12</kbd> (Windows & Linux) or <kbd>&#8984;</kbd>+<kbd>&#8997;</kbd>+<kbd>i</kbd> (Mac). And use [`win.reload()`](../../References/Window.md#winreload) and [`win.reloadDev()`](../../References/Window.md#winreloaddev) to simulate the reload buttons.
 + [`no-edit-menu`](../../References/Manifest Format.md#no-edit-menu-mac) is **deprecated**.
-+ [`snapshot`](../../References/Manifest Format.md#snapshot) is **deprecated**. Use [`win.evalNWBin()`](../../References/Window.md#winevalnwbin) instead.
++ `snapshot` is **deprecated**. Use [`win.evalNWBin()`](../../References/Window.md#winevalnwbinframe-path) instead.
 + The format of [`node-remote`](../../References/Manifest Format.md#node-remote) is changed to array of [match patterns](https://developer.chrome.com/extensions/match_patterns) used by Chrome extension.
-+ Window options `always-on-top`, `visible-on-all-workspaces`, `new-instance`, `inject-js-start` and `inject-js-end` is renamed to [`always_on_top`](../../References/Manifest Format.md#always_on_top), [`visible_on_all_workspaces`](../../References/Manifest Format.md#visible_on_all_workspaces), `new_instance`, `inject_js_start` and `inject_js_end` respectively in `package.json` or as argument of `Window.open()`.
++ Window options `always-on-top`, `visible-on-all-workspaces`, `new-instance`, `inject-js-start` and `inject-js-end` is renamed to [`always_on_top`](../../References/Manifest Format.md#always_on_top), [`visible_on_all_workspaces`](../../References/Manifest Format.md#visible_on_all_workspaces-mac-linux), `new_instance`, `inject_js_start` and `inject_js_end` respectively in `package.json` or as argument of `Window.open()`.
 + `--data-path` command line argument is replaced by `--user-data-dir`.
 
 ### Window
 
 + There is an `id` to identify each window. This will be used to remember the size and position of the window and restore that geometry when a window with the same `id` is later opened. It could be specified in [Window.open](../../References/Window.md#windowopenurl-options-callback) or [`id` of window subfields in manifest](../../References/Manifest Format.md#id)
-+ Event `capturepagedone` of [`Window` API](../../References/Window.md#event-capturepagedone) is **deprecated**.Use the callback with the [`win.capturePage(callback [, config ])`](../../References/Window.md#wincapturepagecallback--config-) instead.
++ Event [`capturepagedone`](../../References/Window.md#event-capturepagedone) of `Window` API is **deprecated**.Use the callback with the [`win.capturePage(callback [, config ])`](../../References/Window.md#wincapturepagecallback-config) instead.
 + [Window.open](../../References/Window.md#windowopenurl-options-callback) is changed to passing the created window as the argument of the callback.
-+ [Window.showDevtools](../../References/Window.md#winshowdevtoolsiframe-headless-callback) is changed to passing the created window as the argument of the callback.
-+ [win.setTransparent](../../References/Window.md#winsettransparent) is **deprecated**. You can't change the transparency after window is created.
-+ [unmaximize](../../References/Window.md#event-unmaximize) and [leave-fullscreen](../../References/Window.md#event-leave-fullscreen) events of `Window` object is **deprecated** and replaced by [restore](../../References/Window.md#event-restore). When window is restored from minimized, maximized or fullscreen, `restore` event is triggered instead.
-+ Window options `always-on-top` and `visible-on-all-workspaces` is renamed to [`always_on_top`](../../References/Manifest Format.md#always_on_top) and [`visible_on_all_workspaces`](../../References/Manifest Format.md#visible_on_all_workspaces) respectively in `package.json` or as argument of `Window.open()`.
++ [Window.showDevtools](../../References/Window.md#winshowdevtoolsiframe-callback) is changed to passing the created window as the argument of the callback.
++ [win.setTransparent](../../References/Window.md#winsettransparenttransparent) is **deprecated**. You can't change the transparency after window is created.
++ `unmaximize` and [`leave-fullscreen`](../../References/Window.md#event-leave-fullscreen) events of `Window` object is **deprecated** and replaced by [restore](../../References/Window.md#event-restore). When window is restored from minimized, maximized or fullscreen, `restore` event is triggered instead.
++ Window options `always-on-top` and `visible-on-all-workspaces` is renamed to [`always_on_top`](../../References/Manifest Format.md#always_on_top) and [`visible_on_all_workspaces`](../../References/Manifest Format.md#visible_on_all_workspaces-mac-linux) respectively in `package.json` or as argument of `Window.open()`.
 + Window is not inherited from `EventEmitter` anymore, but the methods `on()`, `once()`, `removeListener()` and `removeAllListeners()` are still supported.
 
 ### Screen
