@@ -1,3 +1,19 @@
+0.28.0 / 01-25-2018
+===================
+- Update Chromium to [64.0.3282.119](https://chromereleases.googleblog.com/2018/01/stable-channel-update-for-desktop_24.html)
+- Update Node.js to [v9.4.0](https://nodejs.org/en/blog/release/v9.4.0/)
+- Add `webview.inspectElementAt()` [(#6381)](https://github.com/nwjs/nw.js/issues/6381)
+- Use `untrusted-code-mitigations` only in guest process
+- ES6 module binary support [(#6303)](https://github.com/nwjs/nw.js/issues/6303)
+- Add `nwdirectorydesc` attribute to set the description for nwdirectory in "Browse for Folder" dialog [(#5265)](https://github.com/nwjs/nw.js/issues/5265)
+- Fix: Simply accessing chrome.action crashes nw28-rc1 [(#6372)](https://github.com/nwjs/nw.js/issues/6372)
+- Fix: OSX - Transparency clickthrough broken on High Sierra [(#6307)](https://github.com/nwjs/nw.js/issues/6307) (Thanks to Jefry Tedjokusumo)
+- Fix: [WIN] fix titlebar issue if the window has custom icon / when window is first moved ([#6337](https://github.com/nwjs/nw.js/issues/6337), [#6345](https://github.com/nwjs/nw.js/issues/6345)) (Thanks to Jefry Tedjokusumo)
+- Fix: XMLHttpRequest from background page fails after an iframe is removed from window [(#6410)](https://github.com/nwjs/nw.js/issues/6410)
+- [docs] using devtool extensions and add webview.inspectElementAt()
+- [docs] module binary support
+- [docs] nwdirectorydesc
+
 0.27.5 / 01-15-2018
 ===================
 - Fix: regression: webview devtools can no longer be embedded [(#6374)](https://github.com/nwjs/nw.js/issues/6374)
