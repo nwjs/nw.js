@@ -141,7 +141,7 @@ std::unique_ptr<base::DictionaryValue> MergeManifest() {
   // retrieve `window` manifest set by `new-win-policy`
   std::string manifest_str = base::UTF16ToUTF8(nw::GetCurrentNewWinManifest());
   std::unique_ptr<base::Value> val = base::JSONReader().ReadToValue(manifest_str);
-  if (val && val->IsType(base::Value::Type::DICTIONARY)) {
+  if (val && val->is_dict()) {
     manifest.reset(static_cast<base::DictionaryValue*>(val.release()));
   } else {
     manifest.reset(new base::DictionaryValue());

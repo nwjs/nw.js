@@ -320,7 +320,7 @@ bool Package::InitFromPath(const base::FilePath& path_in) {
                         manifest_path.AsUTF8Unsafe() :
                     error);
     return false;
-  } else if (!root->IsType(base::Value::Type::DICTIONARY)) {
+  } else if (!root->is_dict()) {
     ReportError("Invalid package.json",
                 "package.json's content should be a object type.");
     return false;

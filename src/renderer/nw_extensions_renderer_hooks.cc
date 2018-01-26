@@ -248,20 +248,20 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
         std::string flavor = "normal";
 #endif
         v8::Local<v8::Script> script =
-          v8::Script::Compile(v8::String::NewFromUtf8(isolate,
+          v8::Script::Compile(dom_context, v8::String::NewFromUtf8(isolate,
                                                       (std::string("process.versions['nw'] = '" NW_VERSION_STRING "';") +
                                                        "process.versions['node-webkit'] = '" NW_VERSION_STRING "';"
                                                        "process.versions['nw-commit-id'] = '" NW_COMMIT_HASH "';"
                                                        "process.versions['nw-flavor'] = '" + flavor + "';"
                                                        "process.versions['chromium'] = '" + GetChromiumVersion() + "';").c_str()
-         ));
-        script->Run();
+                                                                   )).ToLocalChecked();
+        ignore_result(script->Run(dom_context));
       }
 
       if (extension && extension->manifest()->GetString(manifest_keys::kNWJSInternalMainFilename, &main_fn)) {
-        v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate,
-         ("global.__filename = '" + main_fn + "';").c_str()));
-        script->Run();
+        v8::Local<v8::Script> script = v8::Script::Compile(dom_context, v8::String::NewFromUtf8(isolate,
+           ("global.__filename = '" + main_fn + "';").c_str())).ToLocalChecked();
+        ignore_result(script->Run(dom_context));
       }
       {
         std::string root_path = extension_root;
@@ -269,19 +269,19 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
         base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
 #endif
         base::ReplaceChars(root_path, "'", "\\'", &root_path);
-        v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate,
-         ("global.__dirname = '" + root_path + "';").c_str()));
-        script->Run();
+        v8::Local<v8::Script> script = v8::Script::Compile(dom_context, v8::String::NewFromUtf8(isolate,
+           ("global.__dirname = '" + root_path + "';").c_str())).ToLocalChecked();
+        ignore_result(script->Run(dom_context));
       }
       bool content_verification = false;
       if (extension && extension->manifest()->GetBoolean(manifest_keys::kNWJSContentVerifyFlag,
                                                        &content_verification) && content_verification) {
         v8::Local<v8::Script> script =
-          v8::Script::Compile(v8::String::NewFromUtf8(isolate,
+          v8::Script::Compile(dom_context, v8::String::NewFromUtf8(isolate,
                                                       (std::string("global.__nwjs_cv = true;") +
-                                                       "global.__nwjs_ext_id = '" + extension->id() + "';").c_str()));
+                                                       "global.__nwjs_ext_id = '" + extension->id() + "';").c_str())).ToLocalChecked();
 
-        script->Run();
+        ignore_result(script->Run(dom_context));
       }
       
       dom_context->Exit();
@@ -334,7 +334,8 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
     base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
 #endif
     base::ReplaceChars(root_path, "'", "\\'", &root_path);
-    v8::Local<v8::Script> script = v8::Script::Compile(v8::String::NewFromUtf8(isolate, (
+    v8::ScriptOrigin origin(v8::String::NewFromUtf8(isolate, "process_main"));
+    v8::Local<v8::Script> script = v8::Script::Compile(context->v8_context(), v8::String::NewFromUtf8(isolate, (
         set_nw_script +
         // Make node's relative modules work
         "if (typeof nw.process != 'undefined' && "
@@ -345,10 +346,9 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
         "nw.process.mainModule.filename = root + p;"
         "nw.process.mainModule.paths = nw.global.require('module')._nodeModulePaths(nw.process.cwd());"
         "nw.process.mainModule.loaded = true;"
-        "}").c_str()),
-    v8::String::NewFromUtf8(isolate, "process_main"));
+        "}").c_str()), &origin).ToLocalChecked();
     CHECK(*script);
-    script->Run();
+    ignore_result(script->Run(context->v8_context()));
   }
 }
 
@@ -473,17 +473,17 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
 #endif
     base::ReplaceChars(root_path, "'", "\\'", &root_path);
 
-    v8::Local<v8::Script> script2 = v8::Script::Compile(v8::String::NewFromUtf8(isolate, (
+    v8::ScriptOrigin origin(v8::String::NewFromUtf8(isolate, "process_main2"));
+    v8::Local<v8::Script> script2 = v8::Script::Compile(v8_context, v8::String::NewFromUtf8(isolate, (
         "'use strict';"
         "if (typeof nw != 'undefined' && typeof __filename == 'undefined') {"
         "  let root = '" + root_path + "';"
         "  let path = '" + path      + "';"
         "nw.__filename = root + path;"
         "nw.__dirname = root;"
-        "}").c_str()),
-    v8::String::NewFromUtf8(isolate, "process_main2"));
+        "}").c_str()), &origin).ToLocalChecked();
     CHECK(*script2);
-    script2->Run();
+    ignore_result(script2->Run(v8_context));
   }
   RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->View());
   if (!rv)
