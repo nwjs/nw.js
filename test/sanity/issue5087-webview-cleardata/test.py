@@ -15,7 +15,7 @@ chrome_options.add_experimental_option("windowTypes", ["webview"])
 testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
 
-svrprog = os.path.abspath(os.path.join(os.path.dirname(testdir), 'http-server.py'))
+svrprog = os.path.abspath(os.path.join(os.path.dirname(testdir), 'http-server-node.py'))
 
 port = str(utils.free_port())
 server = subprocess.Popen(['python', svrprog, port])
