@@ -660,7 +660,7 @@ bool NwCurrentWindowInternalSetPrintSettingsInternalFunction::RunNWSync(base::Li
     return false;
   base::Value* spec = NULL;
   EXTENSION_FUNCTION_VALIDATE(args_->Get(0, &spec) && spec);
-  if (!spec->IsType(base::Value::Type::DICTIONARY))
+  if (!spec->is_dict())
     return false;
   const base::DictionaryValue* dict = static_cast<const base::DictionaryValue*>(spec);
   bool auto_print;

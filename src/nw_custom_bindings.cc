@@ -72,9 +72,9 @@ using namespace blink;
 #include "third_party/WebKit/public/web/WebDocument.h"
 #include "third_party/WebKit/public/web/WebSecurityPolicy.h"
 #include "third_party/WebKit/Source/platform/heap/Handle.h"
-#include "third_party/WebKit/Source/core/dom/Modulator.h"
-#include "third_party/WebKit/Source/core/dom/ModuleScript.h"
-#include "third_party/WebKit/Source/core/dom/ScriptModuleResolver.h"
+#include "third_party/WebKit/Source/core/script/Modulator.h"
+#include "third_party/WebKit/Source/core/script/ModuleScript.h"
+#include "third_party/WebKit/Source/core/script/ScriptModuleResolver.h"
 
 //#include "third_party/WebKit/Source/core/inspector/InspectorInstrumentation.h"
 //#include "third_party/WebKit/Source/core/inspector/InspectorResourceAgent.h"
@@ -253,10 +253,10 @@ void NWCustomBindings::EvalNWBin(
     script = v8::ScriptCompiler::CompileUnboundScript(
                                                       isolate, &source, v8::ScriptCompiler::kConsumeCodeCache).ToLocalChecked();
     CHECK(!cache->rejected);
-    v8::Handle<v8::Value> result;
+    v8::Local<v8::Value> result;
     v8::Context::Scope cscope (local_frame->MainWorldScriptContext());
     v8::FixSourceNWBin(isolate, script);
-    result = script->BindToCurrentContext()->Run();
+    ignore_result(script->BindToCurrentContext()->Run(local_frame->MainWorldScriptContext()).ToLocal(&result));
     args.GetReturnValue().Set(result);
   } else {
     v8::ScriptOrigin origin(

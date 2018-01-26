@@ -31,7 +31,7 @@
 #include "chrome/browser/extensions/extension_assets_manager_chromeos.h"
 #endif
 
-#include "chrome/browser/extensions/extension_error_reporter.h"
+#include "chrome/browser/extensions/load_error_reporter.h"
 
 namespace {
 
@@ -140,7 +140,7 @@ void NWContentVerifierDelegate::VerifyFailed(
   ExtensionSystem* system = ExtensionSystem::Get(context_);
   Mode mode = ShouldBeVerified(*extension);
   if (mode >= ContentVerifierDelegate::ENFORCE) {
-    ExtensionErrorReporter::GetInstance()->
+    LoadErrorReporter::GetInstance()->
       ReportLoadError(extension->path(), "Extension file corrupted: " + relative_path.AsUTF8Unsafe(),
                       system->extension_service()->profile(), true);
     system->extension_service()->DisableExtension(extension_id,

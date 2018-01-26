@@ -57,7 +57,8 @@ class MenuBarButton : public views::MenuButton {
 };
 
 MenuBarView::MenuBarView() {
-  SetLayoutManager(new views::BoxLayout(views::BoxLayout::kHorizontal, gfx::Insets(), 0));
+  auto layout = std::make_unique<views::BoxLayout>(views::BoxLayout::kHorizontal, gfx::Insets(), 0);
+  SetLayoutManager(std::move(layout));
 }
 
 MenuBarView::~MenuBarView() {
