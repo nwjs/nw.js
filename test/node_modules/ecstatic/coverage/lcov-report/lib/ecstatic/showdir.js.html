@@ -1,0 +1,737 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for lib/ecstatic/showdir.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../index.html">all files</a> / <a href="index.html">lib/ecstatic/</a> showdir.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">89.29% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>75/84</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">70.37% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>38/54</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">88.89% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>16/18</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">91.25% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>73/80</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225</td><td class="line-coverage quiet"><span class="cline-any cline-yes">35×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">157×</span>
+<span class="cline-any cline-yes">157×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">157×</span>
+<span class="cline-any cline-yes">57×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">100×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">157×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">160×</span>
+<span class="cline-any cline-yes">160×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">160×</span>
+<span class="cline-any cline-yes">60×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">160×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">160×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">49×</span>
+<span class="cline-any cline-yes">192×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">160×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">160×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">160×</span>
+<span class="cline-any cline-yes">480×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35×</span>
+<span class="cline-any cline-yes">160×</span>
+<span class="cline-any cline-yes">60×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">100×</span>
+<span class="cline-any cline-yes">100×</span>
+<span class="cline-any cline-yes">100×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">100×</span>
+<span class="cline-any cline-yes">52×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">48×</span>
+<span class="cline-any cline-yes">48×</span>
+<span class="cline-any cline-yes">48×</span>
+<span class="cline-any cline-yes">48×</span>
+<span class="cline-any cline-yes">48×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">48×</span>
+<span class="cline-any cline-yes">48×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">48×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">var ecstatic = require('../ecstatic'),
+    fs = require('fs'),
+    path = require('path'),
+    he = require('he'),
+    etag = require('./etag'),
+    url = require('url'),
+    status = require('./status-handlers');
+&nbsp;
+module.exports = function (opts, stat) {
+  // opts are parsed by opts.js, defaults already applied
+  var cache = opts.cache,
+      root = path.resolve(opts.root),
+      baseDir = opts.baseDir,
+      humanReadable = opts.humanReadable,
+      handleError = opts.handleError,
+      showDotfiles = opts.showDotfiles,
+      si = opts.si,
+      weakEtags = opts.weakEtags;
+&nbsp;
+  return function middleware (req, res, next) {
+&nbsp;
+    // Figure out the path for the file from the given url
+    var parsed = url.parse(req.url),
+        pathname = decodeURIComponent(parsed.pathname),
+        dir = path.normalize(
+          path.join(root,
+            path.relative(
+              path.join('/', baseDir),
+              pathname
+            )
+          )
+        );
+&nbsp;
+    fs.stat(dir, function (err, stat) {
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (err) {
+<span class="cstat-no" title="statement not covered" >        return handleError ? status[500](res, next, { error: err }) : next();</span>
+      }
+&nbsp;
+      // files are the listing of dir
+      fs.readdir(dir, function (err, files) {
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (err) {
+<span class="cstat-no" title="statement not covered" >          return handleError ? status[500](res, next, { error: err }) : next();</span>
+        }
+&nbsp;
+        // Optionally exclude dotfiles from directory listing.
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!showDotfiles) {
+<span class="cstat-no" title="statement not covered" >          files = files.filter(<span class="fstat-no" title="function not covered" >function(filename){</span></span>
+<span class="cstat-no" title="statement not covered" >            return filename.slice(0,1) !== '.';</span>
+          });
+        }
+&nbsp;
+        res.setHeader('content-type', 'text/html');
+        res.setHeader('etag', etag(stat, weakEtags));
+        res.setHeader('last-modified', (new Date(stat.mtime)).toUTCString());
+        res.setHeader('cache-control', cache);
+&nbsp;
+        sortByIsDirectory(files, function (lolwuts, dirs, files) {
+          // It's possible to get stat errors for all sorts of reasons here.
+          // Unfortunately, our two choices are to either bail completely,
+          // or just truck along as though everything's cool. In this case,
+          // I decided to just tack them on as "??!?" items along with dirs
+          // and files.
+          //
+          // Whatever.
+&nbsp;
+          // if it makes sense to, add a .. link
+          if (path.resolve(dir, '..').slice(0, root.length) == root) {
+            return fs.stat(path.join(dir, '..'), function (err, s) {
+              <span class="missing-if-branch" title="if path not taken" >I</span>if (err) {
+<span class="cstat-no" title="statement not covered" >                return handleError ? status[500](res, next, { error: err }) : next();</span>
+              }
+              dirs.unshift([ '..', s ]);
+              render(dirs, files, lolwuts);
+            });
+          }
+          render(dirs, files, lolwuts);
+        });
+&nbsp;
+        function sortByIsDirectory(paths, cb) {
+          // take the listing file names in `dir`
+          // returns directory and file array, each entry is
+          // of the array a [name, stat] tuple
+          var pending = paths.length,
+              errs = [],
+              dirs = [],
+              files = [];
+&nbsp;
+          if (!pending) {
+            return cb(errs, dirs, files);
+          }
+&nbsp;
+          paths.forEach(function (file) {
+            fs.stat(path.join(dir, file), function (err, s) {
+              <span class="missing-if-branch" title="if path not taken" >I</span>if (err) {
+<span class="cstat-no" title="statement not covered" >                errs.push([file, err]);</span>
+              }
+              else if (s.isDirectory()) {
+                dirs.push([file, s]);
+              }
+              else {
+                files.push([file, s]);
+              }
+&nbsp;
+              if (--pending === 0) {
+                cb(errs, dirs, files);
+              }
+            });
+          });
+        }
+&nbsp;
+        function render(dirs, files, lolwuts) {
+          // each entry in the array is a [name, stat] tuple
+&nbsp;
+          // TODO: use stylessheets?
+          var html = [
+            '&lt;!doctype html&gt;',
+            '&lt;html&gt;',
+            '  &lt;head&gt;',
+            '    &lt;meta charset="utf-8"&gt;',
+            '    &lt;meta name="viewport" content="width=device-width"&gt;',
+            '    &lt;title&gt;Index of ' + he.encode(pathname) +'&lt;/title&gt;',
+            '  &lt;/head&gt;',
+            '  &lt;body&gt;',
+            '&lt;h1&gt;Index of ' + he.encode(pathname) + '&lt;/h1&gt;'
+          ].join('\n') + '\n';
+&nbsp;
+          html += '&lt;table&gt;';
+&nbsp;
+          var failed = false;
+          var writeRow = function (file, i) {
+            // render a row given a [name, stat] tuple
+            var isDir = file[1].isDirectory &amp;&amp; file[1].isDirectory();
+            var href = parsed.pathname.replace(/\/$/, '') + '/' + encodeURIComponent(file[0]);
+&nbsp;
+            // append trailing slash and query for dir entry
+            if (isDir) {
+              href += '/' + he.encode((parsed.search)? parsed.search:'');
+            }
+&nbsp;
+            var displayName = he.encode(file[0]) + ((isDir)? '/':'');
+&nbsp;
+            // TODO: use stylessheets?
+            html += '&lt;tr&gt;' +
+              '&lt;td&gt;&lt;code&gt;(' + permsToString(file[1]) + ')&lt;/code&gt;&lt;/td&gt;' +
+              '&lt;td style="text-align: right; padding-left: 1em"&gt;&lt;code&gt;' + sizeToString(file[1], humanReadable, si) + '&lt;/code&gt;&lt;/td&gt;' +
+              '&lt;td style="padding-left: 1em"&gt;&lt;a href="' + href + '"&gt;' + displayName + '&lt;/a&gt;&lt;/td&gt;' +
+              '&lt;/tr&gt;\n';
+          };
+&nbsp;
+          dirs.sort(function (a, b) { return a[0].toString().localeCompare(b[0].toString()); }).forEach(writeRow);
+          files.sort(function (a, b) { return a.toString().localeCompare(b.toString()); }).forEach(writeRow);
+          lolwuts.sort(<span class="fstat-no" title="function not covered" >function (a, b) {</span> <span class="cstat-no" title="statement not covered" >return a[0].toString().localeCompare(b[0].toString()); </span>}).forEach(writeRow);
+&nbsp;
+          html += '&lt;/table&gt;\n';
+          html += '&lt;br&gt;&lt;address&gt;Node.js ' +
+            process.version +
+            '/ &lt;a href="https://github.com/jfhbrook/node-ecstatic"&gt;ecstatic&lt;/a&gt; ' +
+            'server running @ ' +
+            he.encode(req.headers.host || <span class="branch-1 cbranch-no" title="branch not covered" >'')</span> + '&lt;/address&gt;\n' +
+            '&lt;/body&gt;&lt;/html&gt;'
+          ;
+&nbsp;
+          <span class="missing-if-branch" title="else path not taken" >E</span>if (!failed) {
+            res.writeHead(200, { "Content-Type": "text/html" });
+            res.end(html);
+          }
+        }
+      });
+    });
+  };
+};
+&nbsp;
+function permsToString(stat) {
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!stat.isDirectory || !stat.mode) {
+<span class="cstat-no" title="statement not covered" >    return '???!!!???';</span>
+  }
+&nbsp;
+  var dir = stat.isDirectory() ? 'd' : '-',
+      mode = stat.mode.toString(8);
+&nbsp;
+  return dir + mode.slice(-3).split('').map(function (n) {
+    return [
+      '---',
+      '--x',
+      '-w-',
+      '-wx',
+      'r--',
+      'r-x',
+      'rw-',
+      'rwx'
+    ][parseInt(n, 10)];
+  }).join('');
+}
+&nbsp;
+// given a file's stat, return the size of it in string
+// humanReadable: (boolean) whether to result is human readable
+// si: (boolean) whether to use si (1k = 1000), otherwise 1k = 1024
+// adopted from http://stackoverflow.com/a/14919494/665507
+function sizeToString(stat, humanReadable, si) {
+    if (stat.isDirectory &amp;&amp; stat.isDirectory()) {
+      return '';
+    }
+&nbsp;
+    var sizeString = '';
+    var bytes = stat.size;
+    var threshold = si ? <span class="branch-0 cbranch-no" title="branch not covered" >1000 </span>: 1024;
+&nbsp;
+    if (!humanReadable || bytes &lt; threshold) {
+      return bytes + 'B';
+    }
+&nbsp;
+    var units = [ 'k','M','G','T','P','E','Z','Y' ];
+    var u = -1;
+    do {
+        bytes /= threshold;
+        ++u;
+    } while (bytes &gt;= threshold);
+&nbsp;
+    var b = bytes.toFixed(1);
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (isNaN(b)) <span class="cstat-no" title="statement not covered" >b = '??';</span>
+&nbsp;
+    return b + units[u];
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Aug 09 2016 13:31:02 GMT-0400 (EDT)
+</div>
+</div>
+<script src="../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../sorter.js"></script>
+</body>
+</html>

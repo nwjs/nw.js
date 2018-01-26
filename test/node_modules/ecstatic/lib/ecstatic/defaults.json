@@ -1,0 +1,17 @@
+{
+  "autoIndex": true,
+  "showDir": true,
+  "showDotfiles": true,
+  "humanReadable": true,
+  "si": false,
+  "cache": "max-age=3600",
+  "cors": false,
+  "gzip": false,
+  "defaultExt": ".html",
+  "handleError": true,
+  "serverHeader": true,
+  "contentType": "application/octet-stream",
+  "weakEtags": false,
+  "weakCompare": false,
+  "handleOptionsMethod": false
+}

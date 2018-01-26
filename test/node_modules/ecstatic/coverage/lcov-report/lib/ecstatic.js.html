@@ -1,0 +1,1223 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for lib/ecstatic.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">lib/</a> ecstatic.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">88.13% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>141/160</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">84.35% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>124/147</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">83.33% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>15/18</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">88.05% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>140/159</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35×</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">50×</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">49×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">163×</span>
+<span class="cline-any cline-yes">163×</span>
+<span class="cline-any cline-yes">163×</span>
+<span class="cline-any cline-yes">161×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">161×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">161×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">159×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">161×</span>
+<span class="cline-any cline-yes">73×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">161×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">161×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">161×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35×</span>
+<span class="cline-any cline-yes">159×</span>
+<span class="cline-any cline-yes">159×</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">32×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">115×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">115×</span>
+<span class="cline-any cline-yes">45×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">44×</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">70×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">161×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">159×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">72×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">72×</span>
+<span class="cline-any cline-yes">72×</span>
+<span class="cline-any cline-yes">72×</span>
+<span class="cline-any cline-yes">72×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">72×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">72×</span>
+<span class="cline-any cline-yes">72×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">67×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">67×</span>
+<span class="cline-any cline-yes">67×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">67×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">63×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">67×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">62×</span>
+<span class="cline-any cline-yes">62×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">62×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">62×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">62×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">62×</span>
+<span class="cline-any cline-yes">62×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35×</span>
+<span class="cline-any cline-yes">67×</span>
+<span class="cline-any cline-yes">24×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">43×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">43×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">36×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35×</span>
+<span class="cline-any cline-yes">35×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35×</span>
+<span class="cline-any cline-yes">84×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">84×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35×</span>
+<span class="cline-any cline-yes">161×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">161×</span>
+<span class="cline-any cline-yes">455×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">455×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">455×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">35×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">150×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">#! /usr/bin/env node
+&nbsp;
+var path = require('path'),
+    fs = require('fs'),
+    url = require('url'),
+    mime = require('mime'),
+    urlJoin = require('url-join'),
+    showDir = require('./ecstatic/showdir'),
+    version = JSON.parse(
+      fs.readFileSync(__dirname + '/../package.json').toString()
+    ).version,
+    status = require('./ecstatic/status-handlers'),
+    generateEtag = require('./ecstatic/etag'),
+    optsParser = require('./ecstatic/opts');
+&nbsp;
+var ecstatic = module.exports = function (dir, options) {
+  if (typeof dir !== 'string') {
+    options = dir;
+    dir = options.root;
+  }
+&nbsp;
+  var root = path.join(path.resolve(dir), '/'),
+      opts = optsParser(options),
+      cache = opts.cache,
+      autoIndex = opts.autoIndex,
+      baseDir = opts.baseDir,
+      defaultExt = opts.defaultExt,
+      handleError = opts.handleError,
+      headers = opts.headers,
+      serverHeader = opts.serverHeader,
+      weakEtags = opts.weakEtags,
+      handleOptionsMethod = opts.handleOptionsMethod;
+&nbsp;
+  opts.root = dir;
+  if (defaultExt &amp;&amp; /^\./.test(defaultExt)) defaultExt = defaultExt.replace(/^\./, '');
+&nbsp;
+  // Support hashes and .types files in mimeTypes @since 0.8
+  if (opts.mimeTypes) {
+    try {
+      // You can pass a JSON blob here---useful for CLI use
+      opts.mimeTypes = JSON.parse(opts.mimeTypes);
+    } catch (e) {}
+    if (typeof opts.mimeTypes === 'string') {
+      mime.load(opts.mimeTypes);
+    }
+    else <span class="missing-if-branch" title="else path not taken" >E</span>if (typeof opts.mimeTypes === 'object') {
+      mime.define(opts.mimeTypes);
+    }
+  }
+&nbsp;
+&nbsp;
+  return function middleware (req, res, next) {
+&nbsp;
+    // Strip any null bytes from the url
+    // This was at one point necessary because of an old bug in url.parse
+    //
+    // See: https://github.com/jfhbrook/node-ecstatic/issues/16#issuecomment-3039914
+    // See: https://github.com/jfhbrook/node-ecstatic/commit/43f7e72a31524f88f47e367c3cc3af710e67c9f4
+    //
+    // But this opens up a regex dos attack vector! D:
+    //
+    // Based on some research (ie asking #node-dev if this is still an issue),
+    // it's *probably* not an issue. :)
+    /*
+    while(req.url.indexOf('%00') !== -1) {
+      req.url = req.url.replace(/\%00/g, '');
+    }
+    */
+&nbsp;
+    // Figure out the path for the file from the given url
+    var parsed = url.parse(req.url);
+    try {
+      decodeURIComponent(req.url); // check validity of url
+      var pathname = decodePathname(parsed.pathname);
+    }
+    catch (err) {
+      return status[400](res, next, { error: err });
+    }
+&nbsp;
+    var file = path.normalize(
+          path.join(root,
+            path.relative(
+              path.join('/', baseDir),
+              pathname
+            )
+          )
+        ),
+        gzipped = file + '.gz';
+&nbsp;
+    if(serverHeader !== false) {
+      // Set common headers.
+      res.setHeader('server', 'ecstatic-'+version);
+    }
+    Object.keys(headers).forEach(function (key) {
+      res.setHeader(key, headers[key])
+    })
+&nbsp;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (req.method === 'OPTIONS' &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >handleOptionsMethod)</span> {
+<span class="cstat-no" title="statement not covered" >      return res.end();</span>
+    }
+&nbsp;
+    // TODO: This check is broken, which causes the 403 on the
+    // expected 404.
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (file.slice(0, root.length) !== root) {
+<span class="cstat-no" title="statement not covered" >      return status[403](res, next);</span>
+    }
+&nbsp;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (req.method &amp;&amp; (req.method !== 'GET' &amp;&amp; <span class="branch-2 cbranch-no" title="branch not covered" >req.method !== 'HEAD' </span>)) {
+<span class="cstat-no" title="statement not covered" >      return status[405](res, next);</span>
+    }
+&nbsp;
+    function statFile() {
+      fs.stat(file, function (err, stat) {
+        if (err &amp;&amp; (err.code === 'ENOENT' || err.code === 'ENOTDIR')) {
+          if (req.statusCode == 404) {
+            // This means we're already trying ./404.html and can not find it.
+            // So send plain text response with 404 status code
+            status[404](res, next);
+          }
+          else if (!path.extname(parsed.pathname).length &amp;&amp; defaultExt) {
+            // If there is no file extension in the path and we have a default
+            // extension try filename and default extension combination before rendering 404.html.
+            middleware({
+              url: parsed.pathname + '.' + defaultExt + ((parsed.search)? parsed.search:'')
+            }, res, next);
+          }
+          else {
+            // Try to serve default ./404.html
+            middleware({
+              url: (handleError ? ('/' + path.join(baseDir, '404.' + defaultExt)) : req.url),
+              statusCode: 404
+            }, res, next);
+          }
+        }
+        else <span class="missing-if-branch" title="if path not taken" >I</span>if (err) {
+<span class="cstat-no" title="statement not covered" >          status[500](res, next, { error: err });</span>
+        }
+        else if (stat.isDirectory()) {
+          if (!autoIndex &amp;&amp; !opts.showDir) {
+            status[404](res, next);
+            return;
+          }
+&nbsp;
+          // 302 to / if necessary
+          if (!parsed.pathname.match(/\/$/)) {
+            res.statusCode = 302;
+            res.setHeader('location', parsed.pathname + '/' +
+              (parsed.query? ('?' + parsed.query):'')
+            );
+            return res.end();
+          }
+&nbsp;
+          if (autoIndex) {
+            return middleware({
+              url: urlJoin(encodeURIComponent(pathname), '/index.' + defaultExt)
+            }, res, function (err) {
+              <span class="missing-if-branch" title="if path not taken" >I</span>if (err) {
+<span class="cstat-no" title="statement not covered" >                return status[500](res, next, { error: err });</span>
+              }
+              <span class="missing-if-branch" title="else path not taken" >E</span>if (opts.showDir) {
+                return showDir(opts, stat)(req, res);
+              }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >              return status[403](res, next);</span>
+            });
+          }
+&nbsp;
+          <span class="missing-if-branch" title="else path not taken" >E</span>if (opts.showDir) {
+            return showDir(opts, stat)(req, res);
+          }
+&nbsp;
+        }
+        else {
+          serve(stat);
+        }
+      });
+    }
+&nbsp;
+    // Look for a gzipped file if this is turned on
+    if (opts.gzip &amp;&amp; shouldCompress(req)) {
+      fs.stat(gzipped, function (err, stat) {
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (!err &amp;&amp; stat.isFile()) {
+          file = gzipped;
+          return serve(stat);
+        } else {
+<span class="cstat-no" title="statement not covered" >          statFile();</span>
+        }
+      });
+    } else {
+      statFile();
+    }
+&nbsp;
+    function serve(stat) {
+      // Do a MIME lookup, fall back to octet-stream and handle gzip
+      // special case.
+      var defaultType = opts.contentType || <span class="branch-1 cbranch-no" title="branch not covered" >'application/octet-stream',</span>
+          contentType = mime.lookup(file, defaultType),
+          charSet;
+&nbsp;
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (contentType) {
+        charSet = mime.charsets.lookup(contentType, 'utf-8');
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (charSet) {
+          contentType += '; charset=' + charSet;
+        }
+      }
+&nbsp;
+      if (path.extname(file) === '.gz') {
+        res.setHeader('Content-Encoding', 'gzip');
+&nbsp;
+        // strip gz ending and lookup mime type
+        contentType = mime.lookup(path.basename(file, ".gz"), defaultType);
+      }
+&nbsp;
+      var range = (req.headers &amp;&amp; req.headers['range']);
+      if (range) {
+        var total = stat.size;
+        var parts = range.replace(/bytes=/, "").split("-");
+        var partialstart = parts[0];
+        var partialend = parts[1];
+        var start = parseInt(partialstart, 10);
+        var end = Math.min(total-1, partialend ? parseInt(partialend, 10) : total-1);
+        var chunksize = (end-start)+1;
+        if (start &gt; end || isNaN(start) || isNaN(end)) {
+          return status['416'](res, next);
+        }
+        var fstream = fs.createReadStream(file, {start: start, end: end});
+        fstream.on('error', <span class="fstat-no" title="function not covered" >function (err) {</span>
+<span class="cstat-no" title="statement not covered" >          status['500'](res, next, { error: err });</span>
+        });
+        res.on('close', <span class="fstat-no" title="function not covered" >function () {</span>
+<span class="cstat-no" title="statement not covered" >           fstream.destroy();</span>
+        });
+        res.writeHead(206, {
+          'Content-Range': 'bytes ' + start + '-' + end + '/' + total,
+          'Accept-Ranges': 'bytes',
+          'Content-Length': chunksize,
+          'Content-Type': contentType
+        });
+        fstream.pipe(res);
+        return;
+      }
+&nbsp;
+      // TODO: Helper for this, with default headers.
+      var lastModified = (new Date(stat.mtime)).toUTCString(),
+          etag = generateEtag(stat, weakEtags);
+      res.setHeader('last-modified', lastModified);
+      res.setHeader('etag', etag);
+&nbsp;
+      if (typeof cache === 'function') {
+        var requestSpecificCache = cache(pathname);
+        if (typeof requestSpecificCache === 'number') {
+          requestSpecificCache = 'max-age=' + requestSpecificCache;
+        }
+        res.setHeader('cache-control', requestSpecificCache);
+      } else {
+        res.setHeader('cache-control', cache);
+      }
+&nbsp;
+      // Return a 304 if necessary
+      if (shouldReturn304(req, lastModified, etag)) {
+        return status[304](res, next);
+      }
+&nbsp;
+      res.setHeader('content-length', stat.size);
+      res.setHeader('content-type', contentType);
+&nbsp;
+      // set the response statusCode if we have a request statusCode.
+      // This only can happen if we have a 404 with some kind of 404.html
+      // In all other cases where we have a file we serve the 200
+      res.statusCode = req.statusCode || 200;
+&nbsp;
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (req.method === "HEAD") {
+<span class="cstat-no" title="statement not covered" >        return res.end();</span>
+      }
+&nbsp;
+      var stream = fs.createReadStream(file);
+&nbsp;
+      stream.pipe(res);
+      stream.on('error', <span class="fstat-no" title="function not covered" >function (err) {</span>
+<span class="cstat-no" title="statement not covered" >        status['500'](res, next, { error: err });</span>
+      });
+    }
+&nbsp;
+    function shouldReturn304(req, serverLastModified, serverEtag) {
+      if (!req || !req.headers) {
+        return false;
+      }
+&nbsp;
+      var clientModifiedSince = req.headers['if-modified-since'],
+          clientEtag = req.headers['if-none-match'];
+&nbsp;
+      if (!clientModifiedSince &amp;&amp; !clientEtag) {
+        // Client did not provide any conditional caching headers
+        return false;
+      }
+&nbsp;
+      <span class="missing-if-branch" title="else path not taken" >E</span>if (clientModifiedSince) {
+        // Catch "illegal access" dates that will crash v8
+        // https://github.com/jfhbrook/node-ecstatic/pull/179
+        try {
+          var clientModifiedDate = new Date(Date.parse(clientModifiedSince));
+        }
+        catch (err) { return false }
+&nbsp;
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (clientModifiedDate.toString() === 'Invalid Date') {
+<span class="cstat-no" title="statement not covered" >          return false;</span>
+        }
+        // If the client's copy is older than the server's, don't return 304
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (clientModifiedDate &lt; new Date(serverLastModified)) {
+<span class="cstat-no" title="statement not covered" >          return false;</span>
+        }
+      }
+&nbsp;
+      if (clientEtag) {
+        // Do a strong or weak etag comparison based on setting
+        // https://www.ietf.org/rfc/rfc2616.txt Section 13.3.3
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (opts.weakCompare &amp;&amp; clientEtag !== serverEtag
+          &amp;&amp; clientEtag !== ('W/' + serverEtag) &amp;&amp; <span class="branch-3 cbranch-no" title="branch not covered" >('W/' + clientEtag) !== serverEtag)</span> {
+<span class="cstat-no" title="statement not covered" >          return false;</span>
+        } else if (!opts.weakCompare &amp;&amp; (clientEtag !== serverEtag || clientEtag.indexOf('W/') === 0)) {
+          return false;
+        }
+      }
+&nbsp;
+      return true;
+    }
+  };
+};
+&nbsp;
+ecstatic.version = version;
+ecstatic.showDir = showDir;
+&nbsp;
+// Check to see if we should try to compress a file with gzip.
+function shouldCompress(req) {
+  var headers = req.headers;
+&nbsp;
+  return headers &amp;&amp; headers['accept-encoding'] &amp;&amp;
+    headers['accept-encoding']
+      .split(",")
+      .some(function (el) {
+        return ['*','compress', 'gzip', 'deflate'].indexOf(el) != -1;
+      })
+    ;
+}
+&nbsp;
+// See: https://github.com/jesusabdullah/node-ecstatic/issues/109
+function decodePathname(pathname) {
+  var pieces = pathname.replace(/\\/g,"/").split('/');
+&nbsp;
+  return pieces.map(function (piece) {
+    piece = decodeURIComponent(piece);
+&nbsp;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (process.platform === 'win32' &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >/\\/.test(piece))</span> {
+<span class="cstat-no" title="statement not covered" >      throw new Error('Invalid forward slash character');</span>
+    }
+&nbsp;
+    return piece;
+  }).join('/');
+}
+&nbsp;
+if (!module.parent) {
+  var defaults = require('./ecstatic/defaults.json')
+  var http = require('http'),
+      opts = require('minimist')(process.argv.slice(2), {
+        alias: require('./ecstatic/aliases.json'),
+        default: defaults,
+        boolean: Object.keys(defaults).filter(function (key) {
+          return typeof defaults[key] === 'boolean'
+        })
+      }),
+      envPORT = parseInt(process.env.PORT, 10),
+      port = envPORT &gt; 1024 &amp;&amp; envPORT &lt;= 65536 ? envPORT : opts.port || opts.p || 8000,
+      dir = opts.root || opts._[0] || process.cwd();
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (opts.help || opts.h) {
+<span class="cstat-no" title="statement not covered" >    var u = console.error;</span>
+<span class="cstat-no" title="statement not covered" >    u('usage: ecstatic [dir] {options} --port PORT');</span>
+<span class="cstat-no" title="statement not covered" >    u('see https://npm.im/ecstatic for more docs');</span>
+<span class="cstat-no" title="statement not covered" >    return;</span>
+  }
+&nbsp;
+  http.createServer(ecstatic(dir, opts))
+    .listen(port, function () {
+      console.log('ecstatic serving ' + dir + ' at http://0.0.0.0:' + port);
+    });
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Aug 09 2016 13:31:02 GMT-0400 (EDT)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>
