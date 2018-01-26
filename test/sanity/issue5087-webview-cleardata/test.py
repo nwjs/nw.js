@@ -43,4 +43,8 @@ try:
     print result
 finally:
     driver.quit()
-    server.terminate()
+    import platform
+    if platform.system() == 'Windows':
+        subprocess.call(['taskkill', '/F', '/T', '/PID', str(server.pid)])
+    else:
+        server.terminate()

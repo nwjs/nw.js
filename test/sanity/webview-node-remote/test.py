@@ -41,5 +41,9 @@ try:
     print result
     assert('version = v' in result)
 finally:
-    server.terminate()
+    import platform
+    if platform.system() == 'Windows':
+        subprocess.call(['taskkill', '/F', '/T', '/PID', str(server.pid)])
+    else:
+        server.terminate()
     driver.quit()
