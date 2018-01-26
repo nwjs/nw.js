@@ -1,0 +1,19 @@
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+
+pids
+logs
+results
+
+node_modules
+npm-debug.log
+
+# Unicode filenames cause jenkins to barf when cleaning up workspaces
+# See: https://github.com/jfhbrook/node-ecstatic/issues/128
+test

@@ -1,0 +1,27 @@
+{
+  "name": "url-join",
+  "version": "2.0.2",
+  "homepage": "https://github.com/jfromaniello/url-join",
+  "authors": [
+    "José F. Romaniello <jfromaniello@gmail.com>"
+  ],
+  "description": "Join urls and normalize as in path.join.",
+  "main": "lib/url-join.js",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "url",
+    "join"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
