@@ -90,4 +90,4 @@ class RemotingTestConfiguration(test.TestConfiguration):
       test.ReadConfigurationInto(status_file, sections, defs)
 
 def GetConfiguration(context, root):
-  return RemotingTestConfiguration(context, root, 'remoting')
+  return RemotingTestConfiguration(context, root, 'sanity')
