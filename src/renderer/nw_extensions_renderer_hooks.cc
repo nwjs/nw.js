@@ -241,11 +241,17 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
 
       g_start_nw_instance_fn(argc, argv, dom_context);
       {
+#if defined(NWJS_SDK)
+        std::string flavor = "sdk";
+#else
+        std::string flavor = "normal";
+#endif
         v8::Local<v8::Script> script =
           v8::Script::Compile(v8::String::NewFromUtf8(isolate,
                                                       (std::string("process.versions['nw'] = '" NW_VERSION_STRING "';") +
                                                        "process.versions['node-webkit'] = '" NW_VERSION_STRING "';"
                                                        "process.versions['nw-commit-id'] = '" NW_COMMIT_HASH "';"
+                                                       "process.versions['nw-flavor'] = '" + flavor + "';"
                                                        "process.versions['chromium'] = '" + GetChromiumVersion() + "';").c_str()
          ));
         script->Run();
