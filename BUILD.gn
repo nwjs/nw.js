@@ -422,7 +422,7 @@ if (!is_component_build) {
     action("nwtest") {
       script = "test/test.py"
       outputs = [ "$root_build_dir/run_tests.re" ]
-      args = [ "-d", rebase_path("$root_build_dir"), "-t", "60", "sanity" ]
+      args = [ "-d", rebase_path("$root_build_dir"), "-t", "120", "sanity" ]
       deps = [ "//chrome/test/chromedriver:chromedriver" ]
     }
   }
