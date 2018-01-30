@@ -145,6 +145,8 @@ The request contains the following field at least:
 }
 ```
 
+A list of supported V8 flags can be found here: https://chromium.googlesource.com/v8/v8/+/master/src/flag-definitions.h
+
 ### inject_js_start
 ### inject_js_end
 
