@@ -49,7 +49,7 @@ namespace extensions {
     void OnSourceThumbnailChanged(DesktopMediaList* list, int index) override;
 
     bool started_;
-    std::unique_ptr<DesktopMediaList> media_list_;
+    std::vector<std::unique_ptr<DesktopMediaList>> media_list_;
 
     DISALLOW_COPY_AND_ASSIGN(NwDesktopCaptureMonitor);
   };
@@ -191,8 +191,7 @@ namespace extensions {
   }
 
   NwDesktopCaptureMonitor::NwDesktopCaptureMonitor()
-      : started_(false)
-      , media_list_(nullptr) {
+      : started_(false) {
   }
 
   void NwDesktopCaptureMonitor::Start(bool screens, bool windows) {
@@ -205,17 +204,30 @@ namespace extensions {
     webrtc::DesktopCaptureOptions options = webrtc::DesktopCaptureOptions::CreateDefault();
     options.set_disable_effects(false);
 
-    if (screens)
-      media_list_.reset(new NativeDesktopMediaList(content::DesktopMediaID::TYPE_SCREEN, webrtc::DesktopCapturer::CreateScreenCapturer(options)));
-    else if (windows)
-      media_list_.reset(new NativeDesktopMediaList(content::DesktopMediaID::TYPE_WINDOW, webrtc::DesktopCapturer::CreateWindowCapturer(options)));
+    if (screens) {
+      std::unique_ptr<DesktopMediaList> screen_media_list =
+        base::MakeUnique<NativeDesktopMediaList>(
+          content::DesktopMediaID::TYPE_SCREEN,
+          webrtc::DesktopCapturer::CreateScreenCapturer(options));
+      media_list_.push_back(std::move(screen_media_list));
+    }
 
-    media_list_->StartUpdating(this);
+    if (windows) {
+      std::unique_ptr<DesktopMediaList> window_media_list =
+        base::MakeUnique<NativeDesktopMediaList>(
+          content::DesktopMediaID::TYPE_WINDOW,
+          webrtc::DesktopCapturer::CreateWindowCapturer(options));
+      media_list_.push_back(std::move(window_media_list));
+    }
+
+    for (auto& media_list : media_list_) {
+      media_list->StartUpdating(this);
+    }
   }
 
   void NwDesktopCaptureMonitor::Stop() {
     started_ = false;
-    media_list_.reset();
+    media_list_.clear();
   }
 
   bool NwDesktopCaptureMonitor::IsStarted() {
@@ -243,8 +255,8 @@ namespace extensions {
   }
 
 void NwDesktopCaptureMonitor::OnSourceAdded(DesktopMediaList* list, int index) {
-    DesktopMediaList::Source src = media_list_->GetSource(index);
-    
+    DesktopMediaList::Source src = list->GetSource(index);
+
     std::string type;
     switch(src.id.type) {
     case content::DesktopMediaID::TYPE_WINDOW:
@@ -283,7 +295,7 @@ void NwDesktopCaptureMonitor::OnSourceRemoved(DesktopMediaList* list, int index)
   }
 
 void NwDesktopCaptureMonitor::OnSourceMoved(DesktopMediaList* list, int old_index, int new_index) {
-    DesktopMediaList::Source src = media_list_->GetSource(new_index);
+    DesktopMediaList::Source src = list->GetSource(new_index);
     std::unique_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceOrderChanged::Create(
       src.id.ToString(),
       new_index,
@@ -291,11 +303,11 @@ void NwDesktopCaptureMonitor::OnSourceMoved(DesktopMediaList* list, int old_inde
     DispatchEvent(
       events::HistogramValue::UNKNOWN, 
       nwapi::nw__screen::OnSourceOrderChanged::kEventName,
-      std::move(args));    
+      std::move(args));
   }
 
 void NwDesktopCaptureMonitor::OnSourceNameChanged(DesktopMediaList* list, int index) {
-    DesktopMediaList::Source src = media_list_->GetSource(index);
+    DesktopMediaList::Source src = list->GetSource(index);
     std::unique_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceNameChanged::Create(
       src.id.ToString(),
       base::UTF16ToUTF8(src.name));
@@ -308,7 +320,7 @@ void NwDesktopCaptureMonitor::OnSourceNameChanged(DesktopMediaList* list, int in
 void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(DesktopMediaList* list, int index) {
     std::string base64;
 
-    DesktopMediaList::Source src = media_list_->GetSource(index);
+    DesktopMediaList::Source src = list->GetSource(index);
     SkBitmap bitmap = src.thumbnail.GetRepresentation(1).sk_bitmap();
     std::vector<unsigned char> data;
     bool success = gfx::PNGCodec::EncodeBGRASkBitmap(bitmap, false, &data);
