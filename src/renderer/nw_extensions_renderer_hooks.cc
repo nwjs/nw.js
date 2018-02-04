@@ -8,6 +8,7 @@
 #include "base/files/file_util.h"
 #include "base/json/json_writer.h"
 #include "base/logging.h"
+#include "base/i18n/icu_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/threading/thread.h"
 #include "base/values.h"
@@ -239,7 +240,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
       dom_context->SetSecurityToken(v8::String::NewFromUtf8(isolate, "nw-token"));
       dom_context->Enter();
 
-      g_start_nw_instance_fn(argc, argv, dom_context);
+      g_start_nw_instance_fn(argc, argv, dom_context, (void*)base::i18n::GetRawIcuMemory());
       {
 #if defined(NWJS_SDK)
         std::string flavor = "sdk";
