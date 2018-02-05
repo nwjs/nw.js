@@ -1,3 +1,13 @@
+0.28.1 / 02-05-2018
+===================
+- Update Chromium to [64.0.3282.140](https://chromereleases.googleblog.com/2018/02/stable-channel-update-for-desktop.html)
+- Update Node.js to [v9.5.0](https://nodejs.org/en/blog/release/v9.5.0/)
+- Add: process.versions['nw-flavor'] and documentation [(#5062)](https://github.com/nwjs/nw.js/issues/5062)
+- Fix: Node URL module broken on Windows [(#6448)](https://github.com/nwjs/nw.js/issues/6448)
+- Fix: Spawned child process crashes [(#6390)](https://github.com/nwjs/nw.js/issues/6390)
+- Fix: Transparent frameless window with id gets smaller each time it is closed while minimized [(#6280)](https://github.com/nwjs/nw.js/issues/6280)
+- [docs] add link to a list of v8 flags for 'js-flags' in manifest [(#6364)](https://github.com/nwjs/nw.js/issues/6364)
+
 0.28.0 / 01-25-2018
 ===================
 - Update Chromium to [64.0.3282.119](https://chromereleases.googleblog.com/2018/01/stable-channel-update-for-desktop_24.html)
