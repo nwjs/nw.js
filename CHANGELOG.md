@@ -1,3 +1,8 @@
+0.28.2 / 02-14-2018
+===================
+- Update Chromium to [64.0.3282.167](https://chromereleases.googleblog.com/2018/02/stable-channel-update-for-desktop_13.html)
+- Fix: http2.connect always fails with Uncaught NodeError: Invalid URL on Windows [(#6444)](https://github.com/nwjs/nw.js/issues/6444)
+
 0.28.1 / 02-05-2018
 ===================
 - Update Chromium to [64.0.3282.140](https://chromereleases.googleblog.com/2018/02/stable-channel-update-for-desktop.html)
