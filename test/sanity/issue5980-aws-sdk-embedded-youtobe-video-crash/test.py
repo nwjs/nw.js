@@ -27,10 +27,22 @@ try:
     switch_to_app(driver)
     print driver.current_url
     print 'waiting for crash'
-    wait_for_element_tag(driver, "iframe")
-    assert(driver.find_element_by_tag_name("iframe") is not None)
-    driver.switch_to_frame(driver.find_element_by_tag_name("iframe"))
-    wait_for_element_class(driver, "ytp-large-play-button")
+    wait_for_element_id(driver, "iframe_a")
+    driver.switch_to_frame("iframe_a")
+    timeout = 10
+    while timeout > 0:
+        try:
+            ret = driver.find_element_by_class_name('ytp-large-play-button')
+            break
+        except selenium.common.exceptions.NoSuchElementException:
+            driver.switch_to_default_content()
+            driver.switch_to_frame("iframe_a")
+        except selenium.common.exceptions.WebDriverException:
+            pass
+        time.sleep(1)
+        timeout = timeout - 1
+        if timeout <= 0:
+             raise Exception('Timeout when waiting for element ytp-large-play-button')
     assert(driver.find_element_by_class_name("ytp-large-play-button") is not None)
     print 'There is no crash'
 finally:
