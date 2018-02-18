@@ -1,6 +1,16 @@
 import time
 import os
 import subprocess
+import platform
+import sys
+
+if platform.system() == 'Linux':
+    print 'Skipped for Linux platform'
+    sys.exit(0)
+
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from nw_util import *
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
