@@ -3,6 +3,8 @@ import os
 import shutil
 import platform
 import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from nw_util import *
 
 if platform.system() != 'Linux':
     print 'Skipped for non Linux platform'
@@ -20,16 +22,16 @@ driver.implicitly_wait(5)
 try:
     print driver.current_url
 
-    result1 = driver.find_element_by_id('socket1').get_attribute('innerText')
+    result1 = wait_for_element_id(driver, 'socket1')
     assert('Socket 1 open' in result1)
 
-    result2 = driver.find_element_by_id('socket2').get_attribute('innerText')
+    result2 = wait_for_element_id(driver, 'socket2')
     assert('Socket 2 open' in result2)
 
-    result3 = driver.find_element_by_id('socket3').get_attribute('innerText')
+    result3 = wait_for_element_id(driver, 'socket3')
     assert('Socket 3 open' in result3)
 
-    result4 = driver.find_element_by_id('socket4').get_attribute('innerText')
+    result4 = wait_for_element_id(driver, 'socket4')
     assert('Socket 4 open' in result4)
 finally:
     driver.quit()
