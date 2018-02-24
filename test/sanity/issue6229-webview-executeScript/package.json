@@ -1,0 +1,20 @@
+{
+  "name": "issue6229-webview-executeScript",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "webview": {
+     "partitions": [
+      {
+        "name": "trusted",
+        "accessible_resources": [ "<all_urls>" ]
+      }
+    ]
+  }
+}
+
