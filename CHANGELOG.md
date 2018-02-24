@@ -1,3 +1,9 @@
+0.28.3 / 02-24-2018
+===================
+- Update Chromium to [64.0.3282.186](https://chromereleases.googleblog.com/2018/02/stable-channel-update-for-desktop_22.html)
+- Update Node.js to [v9.6.1](https://nodejs.org/en/blog/release/v9.6.1/)
+- Fix: Slow https server creation on Windows [(#6470)](https://github.com/nwjs/nw.js/issues/6470)
+
 0.28.2 / 02-14-2018
 ===================
 - Update Chromium to [64.0.3282.167](https://chromereleases.googleblog.com/2018/02/stable-channel-update-for-desktop_13.html)
