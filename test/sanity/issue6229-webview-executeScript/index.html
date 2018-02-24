@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>issue6229-webview-executeScript</title>
+</head>
+<body>
+    <webview partition="trusted" class="browser" style="position: fixed;top: 0;left: 0;right: 0;width: 100%;height: 50%;" src=""></webview>
+    <div style="position: fixed;bottom: 0;left: 0;right: 0;width: 100%;height: 50%;" class="log">
+      <p>Current behaviour: logs an empty window object to devtools</p>
+      <p>Expected behaviour: it should log the window object to devtools</p>
+      <input type="text" name="" value="Object.keys(window)" /><button onclick="exec(document.querySelector('input').value)">Run</button>
+    </div>
+</body>
+</html>
+
+
+<script type="text/javascript">
+  let wv = document.querySelector('.browser');
+  wv.addEventListener('contentload', function () {
+    wv.showDevTools(true)
+  });
+  
+  function exec(val) {
+    wv.executeScript({code: val, mainWorld: true}, function (res) {
+      document.querySelector('.log').appendChild(document.createTextNode(res))
+    });
+  }
+  setTimeout(function () {
+    wv.src = 'file://' + global.__dirname + '/site.html';
+  }, 750)
+</script>
