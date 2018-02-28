@@ -92,4 +92,7 @@ try:
     assert user_data_dir_exists
     assert check_file_exists
 finally:
+    #workaround stale renderer process if nw is killed early in startup
+    if platform.system() == 'Windows':
+        time.sleep(10)
     p.terminate()
