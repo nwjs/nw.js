@@ -1,0 +1,17 @@
+<html>
+  <body>
+    <script>
+        /* As described on https://github.com/nwjs/nw.js/wiki/Handling-files-and-arguments */
+        var gui = require('nw.gui');
+        var fs = require("fs");
+        fs.writeFile('issue5242.txt', gui.App.argv, function (err) {
+          if (err) throw err;
+        });
+        gui.App.on('open', function(cmdline) {
+          fs.appendFile('issue5242.txt', 'command line: ' + cmdline, function (err) {
+            if (err) throw err;
+          });
+        });
+    </script>
+  </body>
+</html>
