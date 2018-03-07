@@ -1,3 +1,11 @@
+0.29.0 / 03-07-2018
+===================
+- Update Chromium to [65.0.3325.146](https://chromereleases.googleblog.com/2018/03/stable-channel-update-for-desktop.html)
+- Update Node.js to [v9.7.1](https://nodejs.org/en/blog/release/v9.7.1/)
+- Enable [chrome.tabCapture](https://developer.chrome.com/extensions/tabCapture) API
+- Enable Widevine support in NW.js [(#6425)](https://github.com/nwjs/nw.js/issues/6425)
+- Grant content settings permissions in nwjs app [(#6492)](https://github.com/nwjs/nw.js/issues/6492)
+
 0.28.3 / 02-24-2018
 ===================
 - Update Chromium to [64.0.3282.186](https://chromereleases.googleblog.com/2018/02/stable-channel-update-for-desktop_22.html)
