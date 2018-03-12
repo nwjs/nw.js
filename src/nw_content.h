@@ -10,7 +10,7 @@
 #include "nw_package.h"
 #include "base/memory/ptr_util.h"
 #include "third_party/WebKit/public/web/WebNavigationPolicy.h"
-#include "third_party/WebKit/common/page/page_visibility_state.mojom.h"
+//#include "third_party/WebKit/common/page/page_visibility_state.mojom.h"
 
 namespace base {
   class DictionaryValue;

@@ -79,7 +79,7 @@ namespace extensions {
       displayResult->scale_factor = gfx_display.device_scale_factor();
       displayResult->is_built_in = gfx_display.IsInternal();
       displayResult->rotation = gfx_display.RotationAsDegree();
-      displayResult->touch_support = gfx_display.touch_support();
+      displayResult->touch_support = (int)gfx_display.touch_support();
 
       gfx::Rect rect = gfx_display.bounds();
       DisplayGeometry& bounds = displayResult->bounds;

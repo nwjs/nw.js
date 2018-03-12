@@ -1,0 +1,4 @@
+openssl genrsa -out ca.key 2048
+openssl req -new -x509 -key ca.key -out ca.crt -days 3650
+openssl req -new -out oats.csr -config oats.cnf
+openssl x509 -req -in oats.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out cert.pem -extfile san.ext -days 3650

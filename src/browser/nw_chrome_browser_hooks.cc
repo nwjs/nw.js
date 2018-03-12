@@ -288,7 +288,7 @@ int MainPartsPreCreateThreadsHook() {
         base::CreateDirectory(new_storage_dir);
 
         base::FilePath new_dom_storage = new_storage_dir
-          .Append(content::DOMStorageArea::DatabaseFileNameFromOrigin(origin));
+          .Append(content::DOMStorageArea::DatabaseFileNameFromOrigin(url::Origin::Create(origin)));
         base::FilePath new_dom_journal = new_dom_storage.ReplaceExtension(FILE_PATH_LITERAL("localstorage-journal"));
         base::FilePath old_dom_journal = old_dom_storage.ReplaceExtension(FILE_PATH_LITERAL("localstorage-journal"));
         if (!base::PathExists(new_dom_journal) && !base::PathExists(new_dom_storage)) {

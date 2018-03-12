@@ -21,7 +21,7 @@ port = str(utils.free_port())
 server = subprocess.Popen(['python', 'https-server.py', port])
 
 def read_ca_cert():
-    return read_and_replace_file('ca.cert.pem', '\n', '')
+    return read_and_replace_file('ca.crt', '\n', '')
 
 def read_server_cert():
     return read_and_replace_file('cert.pem', '\n', '')
