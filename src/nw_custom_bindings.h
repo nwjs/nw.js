@@ -15,6 +15,8 @@ class NWCustomBindings : public ObjectBackedNativeHandler {
  public:
   NWCustomBindings(ScriptContext* context);
 
+  void AddRoutes() override;
+
  private:
   void CrashRenderer(const v8::FunctionCallbackInfo<v8::Value>& args);
   void EvalScript(const v8::FunctionCallbackInfo<v8::Value>& args);

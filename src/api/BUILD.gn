@@ -38,7 +38,7 @@ json_schema_api("nw_api_registration") {
     "//skia",
     "//components/sync",
     "//third_party/metrics_proto",
-    "//ui/accessibility:ax_gen",
+    "//ui/accessibility:ax_enums_mojo",
   ]
 
   deps += schema_dependencies

@@ -157,8 +157,8 @@ def generate_target_nw(platform_name, arch, version):
                            'nw',
                            'icudtl.dat',
                            'locales',
-                           'snapshot_blob.bin',
                            'natives_blob.bin',
+                           'v8_context_snapshot.bin',
                            'lib/libnw.so',
                            'lib/libnode.so',
                            'lib/libffmpeg.so',
@@ -179,8 +179,8 @@ def generate_target_nw(platform_name, arch, version):
             
     elif platform_name == 'win':
         target['input'] = [
-                           'snapshot_blob.bin',
                            'natives_blob.bin',
+                           'v8_context_snapshot.bin',
                            'd3dcompiler_47.dll',
                            'libEGL.dll',
                            'libGLESv2.dll',

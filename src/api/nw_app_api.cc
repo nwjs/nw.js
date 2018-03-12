@@ -19,9 +19,9 @@
 #include "extensions/browser/app_window/native_app_window.h"
 #include "extensions/browser/extension_system.h"
 #include "extensions/common/error_utils.h"
-#include "net/proxy/proxy_config.h"
-#include "net/proxy/proxy_config_service_fixed.h"
-#include "net/proxy/proxy_service.h"
+#include "net/proxy_resolution/proxy_config.h"
+#include "net/proxy_resolution/proxy_config_service_fixed.h"
+#include "net/proxy_resolution/proxy_service.h"
 #include "net/url_request/url_request_context.h"
 #include "net/url_request/url_request_context_getter.h"
 
@@ -32,8 +32,8 @@ void SetProxyConfigCallback(
     base::WaitableEvent* done,
     const scoped_refptr<net::URLRequestContextGetter>& url_request_context_getter,
     const net::ProxyConfig& proxy_config) {
-  net::ProxyService* proxy_service =
-      url_request_context_getter->GetURLRequestContext()->proxy_service();
+  net::ProxyResolutionService* proxy_service =
+      url_request_context_getter->GetURLRequestContext()->proxy_resolution_service();
   proxy_service->ResetConfigService(base::WrapUnique(new net::ProxyConfigServiceFixed(proxy_config)));
   done->Signal();
 }

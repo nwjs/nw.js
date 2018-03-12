@@ -3,7 +3,6 @@
 
 #include <vector>
 
-#include "content/public/browser/readback_types.h"
 #include "extensions/browser/extension_function.h"
 #include "extensions/common/api/extension_types.h"
 #include "printing/backend/print_backend.h"
@@ -77,8 +76,7 @@ class NwCurrentWindowInternalCapturePageInternalFunction : public AsyncExtension
  private:
   typedef api::extension_types::ImageDetails ImageDetails;
 
-  void CopyFromBackingStoreComplete(const SkBitmap& bitmap,
-                                    content::ReadbackResponse response);
+  void CopyFromBackingStoreComplete(const SkBitmap& bitmap);
   void OnCaptureSuccess(const SkBitmap& bitmap);
 
   // The format (JPEG vs PNG) of the resulting image.  Set in RunAsync().
