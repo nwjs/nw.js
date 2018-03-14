@@ -1,3 +1,13 @@
+0.29.1 / 03-14-2018
+===================
+- Update Chromium to [65.0.3325.162](https://chromereleases.googleblog.com/2018/03/stable-channel-update-for-desktop_13.html)
+- Update Node.js to [v9.8.0](https://nodejs.org/en/blog/release/v9.8.0/)
+- Fix: WebUSB device selection menu not appearing [(#6500)](https://github.com/nwjs/nw.js/issues/6500)
+- Fix: Linux tray submenu click causes crash [(#6496)](https://github.com/nwjs/nw.js/issues/6496)
+- Fix: passing --disable-software-rasterizer disables hardware acceleration [(#6498)](https://github.com/nwjs/nw.js/issues/6498)
+- Fix: Pinch zoom does not work on Mac [(#6491)](https://github.com/nwjs/nw.js/issues/6491)
+- Fix: indexedDB.open in node enabled worker completely crashes [(#6504)](https://github.com/nwjs/nw.js/issues/6504)
+
 0.29.0 / 03-07-2018
 ===================
 - Update Chromium to [65.0.3325.146](https://chromereleases.googleblog.com/2018/03/stable-channel-update-for-desktop.html)
