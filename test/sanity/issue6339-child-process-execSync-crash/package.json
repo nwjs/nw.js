@@ -1,0 +1,4 @@
+{
+  "name": "issue6339-child-process-execSync-crash",
+  "main": "index.html"
+}
