@@ -1,0 +1,14 @@
+<html>
+  <head>
+    <title>issue6339-child-process-execSync</title>
+  </head>
+  <body>
+    <h1 id='result'></h1>
+    <script>
+      var child = require('child_process');
+      const stdout = child.execSync('node -v');
+      document.getElementById('result').innerHTML=stdout
+    </script>
+    <button id='btn' onclick="nw.Window.get().showDevTools();"> Click Me </button>
+  </body>
+</html>
