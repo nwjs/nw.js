@@ -1,3 +1,10 @@
+0.29.2 / 03-22-2018
+===================
+- Update Chromium to [65.0.3325.181](https://chromereleases.googleblog.com/2018/03/stable-channel-update-for-desktop_20.html)
+- Fix: new-win-policy not working for new window/tab links [(#6522)](https://github.com/nwjs/nw.js/issues/6522)
+- Fix: win.print() "printer" option no longer works. [(#6510)](https://github.com/nwjs/nw.js/issues/6510)
+- Fix: Crash on breakpoints when binary module is used [(#6514)](https://github.com/nwjs/nw.js/issues/6514)
+
 0.29.1 / 03-14-2018
 ===================
 - Update Chromium to [65.0.3325.162](https://chromereleases.googleblog.com/2018/03/stable-channel-update-for-desktop_13.html)
