@@ -108,6 +108,10 @@ Get or set window's menubar. Set with a Menu with type `menubar`. When `win.menu
 
 See [Customize Menubar](../For Users/Advanced/Customize Menubar.md) for the usage of menubars. And see [Menu](Menu.md) and [MenuItem](MenuItem.md) for detailed APIs.
 
+## win.isAlwaysOnTop
+
+Get whether the window is always on top of other windows.
+
 ## win.isFullscreen
 
 Get whether we're in fullscreen mode.
