@@ -132,7 +132,7 @@ void WebWorkerNewThreadHook(const char* name, base::Thread::Options* options) {
       *base::CommandLine::ForCurrentProcess();
   if (!command_line.HasSwitch(switches::kEnableNodeWorker))
     return;
-  if (!strcmp(name, "DedicatedWorker Thread") || !strcmp(name, "SharedWorker Thread"))
+  if (!strcmp(name, "DedicatedWorker thread") || !strcmp(name, "SharedWorker thread"))
     options->message_loop_type = base::MessageLoop::TYPE_NODE;
 }
 
