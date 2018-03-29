@@ -1,3 +1,9 @@
+0.29.3 / 03-29-2018
+===================
+- Update Node.js to [v9.10.0](https://nodejs.org/en/blog/release/v9.10.0/)
+- Fix: webview mouse enter / leave not working correctly [(#6518)](https://github.com/nwjs/nw.js/issues/6518)
+- [docs] Add the documentation for win.isAlwaysOnTop [(#6536)](https://github.com/nwjs/nw.js/issues/6536)
+
 0.29.2 / 03-22-2018
 ===================
 - Update Chromium to [65.0.3325.181](https://chromereleases.googleblog.com/2018/03/stable-channel-update-for-desktop_20.html)
