@@ -376,7 +376,7 @@ class MockWebContentsDelegate : public content::WebContentsDelegate {
       request_message_loop_runner_->Quit();
   }
 
-  bool CheckMediaAccessPermission(content::WebContents* web_contents,
+  bool CheckMediaAccessPermission(content::RenderFrameHost* render_frame_host,
                                   const GURL& security_origin,
                                   content::MediaStreamType type) override {
     checked_ = true;
@@ -505,13 +505,6 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
 
   void SetUpOnMainThread() override {
     extensions::PlatformAppBrowserTest::SetUpOnMainThread();
-    const testing::TestInfo* const test_info =
-        testing::UnitTest::GetInstance()->current_test_info();
-    // Mock out geolocation for geolocation specific tests.
-    if (!strncmp(test_info->name(), "GeolocationAPI",
-            strlen("GeolocationAPI"))) {
-      ui_test_utils::OverrideGeolocation(10, 20);
-    }
   }
 
   void SetUpCommandLine(base::CommandLine* command_line) override {

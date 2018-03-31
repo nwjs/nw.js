@@ -21,9 +21,10 @@
 #include "extensions/common/error_utils.h"
 #include "net/proxy_resolution/proxy_config.h"
 #include "net/proxy_resolution/proxy_config_service_fixed.h"
-#include "net/proxy_resolution/proxy_service.h"
+#include "net/proxy_resolution/proxy_resolution_service.h"
 #include "net/url_request/url_request_context.h"
 #include "net/url_request/url_request_context_getter.h"
+#include "net/traffic_annotation/network_traffic_annotation_test_helper.h"
 
 using namespace extensions::nwapi::nw__app;
 
@@ -31,7 +32,7 @@ namespace {
 void SetProxyConfigCallback(
     base::WaitableEvent* done,
     const scoped_refptr<net::URLRequestContextGetter>& url_request_context_getter,
-    const net::ProxyConfig& proxy_config) {
+    const net::ProxyConfigWithAnnotation& proxy_config) {
   net::ProxyResolutionService* proxy_service =
       url_request_context_getter->GetURLRequestContext()->proxy_resolution_service();
   proxy_service->ResetConfigService(base::WrapUnique(new net::ProxyConfigServiceFixed(proxy_config)));
@@ -153,7 +154,7 @@ NwAppSetProxyConfigFunction::~NwAppSetProxyConfigFunction() {
 }
 
 bool NwAppSetProxyConfigFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  net::ProxyConfig config;
+  net::ProxyConfigWithAnnotation config;
   std::unique_ptr<nwapi::nw__app::SetProxyConfig::Params> params(
       nwapi::nw__app::SetProxyConfig::Params::Create(*args_));
   EXTENSION_FUNCTION_VALIDATE(params.get());
@@ -161,15 +162,17 @@ bool NwAppSetProxyConfigFunction::RunNWSync(base::ListValue* response, std::stri
   std::string pac_url = params->pac_url.get() ? *params->pac_url : "";
   if (!pac_url.empty()) {
     if (pac_url == "<direct>")
-      config = net::ProxyConfig::CreateDirect();
+      config = net::ProxyConfigWithAnnotation::CreateDirect();
     else if (pac_url == "<auto>")
-      config = net::ProxyConfig::CreateAutoDetect();
+      config = net::ProxyConfigWithAnnotation(net::ProxyConfig::CreateAutoDetect(), TRAFFIC_ANNOTATION_FOR_TESTS);
     else
-      config = net::ProxyConfig::CreateFromCustomPacURL(GURL(pac_url));
+      config = net::ProxyConfigWithAnnotation(net::ProxyConfig::CreateFromCustomPacURL(GURL(pac_url)), TRAFFIC_ANNOTATION_FOR_TESTS);
   } else {
     std::string proxy_config;
+    net::ProxyConfig pc;
     EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &proxy_config));
-    config.proxy_rules().ParseFromString(proxy_config);
+    pc.proxy_rules().ParseFromString(proxy_config);
+    config = net::ProxyConfigWithAnnotation(pc, TRAFFIC_ANNOTATION_FOR_TESTS);
   }
 
   base::ThreadRestrictions::ScopedAllowWait allow_wait;

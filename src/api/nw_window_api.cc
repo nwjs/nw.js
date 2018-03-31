@@ -278,7 +278,7 @@ void NwCurrentWindowInternalCapturePageInternalFunction::OnCaptureSuccess(const 
   base::Base64Encode(stream_as_string, &base64_result);
   base64_result.insert(
       0, base::StringPrintf("data:%s;base64,", mime_type.c_str()));
-  SetResult(base::MakeUnique<base::Value>(base64_result.c_str()));
+  SetResult(std::make_unique<base::Value>(base64_result.c_str()));
   SendResponse(true);
 }
 
@@ -684,8 +684,8 @@ bool NwCurrentWindowInternalGetWinParamInternalFunction::RunNWSync(base::ListVal
   int frame_id = created_frame->GetRoutingID();
 
   base::DictionaryValue* result = new base::DictionaryValue;
-  result->Set("frameId", base::MakeUnique<base::Value>(frame_id));
-  result->Set("id", base::MakeUnique<base::Value>(app_window->window_key()));
+  result->Set("frameId", std::make_unique<base::Value>(frame_id));
+  result->Set("id", std::make_unique<base::Value>(app_window->window_key()));
   app_window->GetSerializedState(result);
 
   response->Append(base::WrapUnique(result));

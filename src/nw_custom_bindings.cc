@@ -292,13 +292,13 @@ void NWCustomBindings::EvalNWBin(
                                                                                  //v8
                                                                                  //here
     v8::FixSourceNWBin(isolate, module);
-    blink::ScriptModule script_module(isolate, module);
     blink::Modulator* modulator = blink::Modulator::From(ToScriptStateForMainWorld(static_cast<blink::WebLocalFrameImpl*>(local_frame)->GetFrame()));
     GURL url = render_frame->GetWebFrame()->GetDocument().Url();
     v8::String::Utf8Value file(args.GetIsolate(), args[2]);
     url = url.Resolve(*file);
     // LOG(WARNING) << "registering module as: " << url;
     KURL kurl(WTF::String(url.spec().c_str()));
+    blink::ScriptModule script_module(isolate, module, kurl);
     blink::ModuleScript* module_script =
       blink::ModuleScript::CreateForTest(modulator, script_module, kurl);
     modulator->AddToMap(kurl, module_script);
