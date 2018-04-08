@@ -1,0 +1,42 @@
+{
+  "manifest_version": 2,
+  "browser_action": {
+    "default_title": "TEST_EXT"
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "cs.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ],
+      "all_frames": true,
+      "match_about_blank": true,
+      "run_at": "document_start",
+      "permissions": [
+        "tabs"
+      ]
+    }
+  ],
+  "permissions": [
+    "browsingData",
+    "webNavigation",
+    "webRequest",
+    "webRequestBlocking",
+    "notifications",
+    "chrome-extension://*", "file:///*", "http://*/*", "https://*/*",
+    "<all_urls>",
+    "proxy",
+    "tabs"
+  ],
+  "background": {
+    "scripts": [
+      "bg.js"
+    ]
+  },
+  "description": "TEST EXT",
+  "name": "TEST EXT",
+  "version": "0.0.1",
+  "author": "Stefano"
+}
