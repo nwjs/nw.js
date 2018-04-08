@@ -1,3 +1,9 @@
+0.29.4 / 04-07-2018
+===================
+- Update Node.js to [v9.11.1](https://nodejs.org/en/blog/release/v9.11.1/)
+- Fix: window object return in Window.open callback is undefined with redirecting URL [(#6392)](https://github.com/nwjs/nw.js/issues/6392)
+- Fix debug build
+
 0.29.3 / 03-29-2018
 ===================
 - Update Node.js to [v9.10.0](https://nodejs.org/en/blog/release/v9.10.0/)
