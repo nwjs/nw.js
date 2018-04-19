@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+  <head>
+    <title>5622</title>
+    <meta charset="UTF-8">
+    <script> window.name = 'webview0' </script>
+  </head>
+  <body>
+    <h1 id="result"></h1>
+    <script>
+      const vm = require('vm');
+      vm.runInNewContext('setTimeout(function(){document.getElementById("result").innerHTML="in sandbox"}, 10)', {
+        console: console,
+        document: document,
+        setTimeout: setTimeout
+      });
+    </script>
+  </body>
+</html>
