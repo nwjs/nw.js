@@ -9,7 +9,7 @@
 
 namespace extensions {
 
-class NwAppQuitFunction : public AsyncExtensionFunction {
+class NwAppQuitFunction : public UIThreadExtensionFunction {
  public:
   NwAppQuitFunction();
 
@@ -17,13 +17,13 @@ class NwAppQuitFunction : public AsyncExtensionFunction {
   ~NwAppQuitFunction() override;
 
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
   DECLARE_EXTENSION_FUNCTION("nw.App.quit", UNKNOWN)
  private:
   void Callback();
 };
 
-class NwAppCloseAllWindowsFunction : public AsyncExtensionFunction {
+class NwAppCloseAllWindowsFunction : public UIThreadExtensionFunction {
  public:
   NwAppCloseAllWindowsFunction() {}
 
@@ -31,7 +31,7 @@ class NwAppCloseAllWindowsFunction : public AsyncExtensionFunction {
   ~NwAppCloseAllWindowsFunction() override {}
 
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
   DECLARE_EXTENSION_FUNCTION("nw.App.closeAllWindows", UNKNOWN)
 };
 
@@ -105,7 +105,7 @@ class NwAppGetDataPathFunction : public NWSyncExtensionFunction {
   DISALLOW_COPY_AND_ASSIGN(NwAppGetDataPathFunction);
 };
 
-class NwAppCrashBrowserFunction : public AsyncExtensionFunction {
+class NwAppCrashBrowserFunction : public UIThreadExtensionFunction {
  public:
   NwAppCrashBrowserFunction() {}
 
@@ -113,7 +113,7 @@ class NwAppCrashBrowserFunction : public AsyncExtensionFunction {
   ~NwAppCrashBrowserFunction() override {}
 
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
   DECLARE_EXTENSION_FUNCTION("nw.App.crashBrowser", UNKNOWN)
 };
 

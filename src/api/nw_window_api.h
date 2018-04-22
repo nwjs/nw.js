@@ -16,7 +16,7 @@ class WebContents;
 namespace extensions {
 class AppWindow;
 
-class NwCurrentWindowInternalCloseFunction : public AsyncExtensionFunction {
+class NwCurrentWindowInternalCloseFunction : public UIThreadExtensionFunction {
  public:
   NwCurrentWindowInternalCloseFunction() {};
   static void DoClose(AppWindow*);
@@ -25,12 +25,12 @@ class NwCurrentWindowInternalCloseFunction : public AsyncExtensionFunction {
   ~NwCurrentWindowInternalCloseFunction() override {};
 
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.close", UNKNOWN)
 };
 
 
-class NwCurrentWindowInternalShowDevToolsInternalFunction : public AsyncExtensionFunction {
+class NwCurrentWindowInternalShowDevToolsInternalFunction : public UIThreadExtensionFunction {
  public:
   NwCurrentWindowInternalShowDevToolsInternalFunction() {};
 
@@ -38,13 +38,13 @@ class NwCurrentWindowInternalShowDevToolsInternalFunction : public AsyncExtensio
   ~NwCurrentWindowInternalShowDevToolsInternalFunction() override {};
 
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.showDevToolsInternal", UNKNOWN)
  private:
   void OnOpened();
 };
 
-class NwCurrentWindowInternalCloseDevToolsFunction : public AsyncExtensionFunction {
+class NwCurrentWindowInternalCloseDevToolsFunction : public UIThreadExtensionFunction {
  public:
   NwCurrentWindowInternalCloseDevToolsFunction() {};
 
@@ -52,11 +52,11 @@ class NwCurrentWindowInternalCloseDevToolsFunction : public AsyncExtensionFuncti
   ~NwCurrentWindowInternalCloseDevToolsFunction() override {};
 
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.closeDevTools", UNKNOWN)
 };
 
-class NwCurrentWindowInternalCapturePageInternalFunction : public AsyncExtensionFunction {
+class NwCurrentWindowInternalCapturePageInternalFunction : public UIThreadExtensionFunction {
  public:
   NwCurrentWindowInternalCapturePageInternalFunction();
 
@@ -64,7 +64,7 @@ class NwCurrentWindowInternalCapturePageInternalFunction : public AsyncExtension
   ~NwCurrentWindowInternalCapturePageInternalFunction() override;
 
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
   enum FailureReason {
     FAILURE_REASON_UNKNOWN,
     FAILURE_REASON_ENCODING_FAILED,
@@ -88,7 +88,7 @@ class NwCurrentWindowInternalCapturePageInternalFunction : public AsyncExtension
   DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalCapturePageInternalFunction);
 };
 
-class NwCurrentWindowInternalClearMenuFunction : public AsyncExtensionFunction {
+class NwCurrentWindowInternalClearMenuFunction : public UIThreadExtensionFunction {
  public:
   NwCurrentWindowInternalClearMenuFunction();
 
@@ -96,7 +96,7 @@ class NwCurrentWindowInternalClearMenuFunction : public AsyncExtensionFunction {
   ~NwCurrentWindowInternalClearMenuFunction() override;
 
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.clearMenu", UNKNOWN)
 
  private:
@@ -120,7 +120,7 @@ class NwCurrentWindowInternalSetMenuFunction : public NWSyncExtensionFunction {
   DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalSetMenuFunction);
 };
 
-class NwCurrentWindowInternalSetShadowFunction : public AsyncExtensionFunction {
+class NwCurrentWindowInternalSetShadowFunction : public UIThreadExtensionFunction {
  public:
   NwCurrentWindowInternalSetShadowFunction(){}
 
@@ -131,11 +131,11 @@ class NwCurrentWindowInternalSetShadowFunction : public AsyncExtensionFunction {
 #endif
 
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setShadow", UNKNOWN)
 };
 
-class NwCurrentWindowInternalSetBadgeLabelFunction : public AsyncExtensionFunction {
+class NwCurrentWindowInternalSetBadgeLabelFunction : public UIThreadExtensionFunction {
  public:
   NwCurrentWindowInternalSetBadgeLabelFunction(){}
 
@@ -143,11 +143,11 @@ class NwCurrentWindowInternalSetBadgeLabelFunction : public AsyncExtensionFuncti
   ~NwCurrentWindowInternalSetBadgeLabelFunction() override {}
 
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setBadgeLabel", UNKNOWN)
 };
 
-class NwCurrentWindowInternalRequestAttentionInternalFunction : public AsyncExtensionFunction {
+class NwCurrentWindowInternalRequestAttentionInternalFunction : public UIThreadExtensionFunction {
  public:
   NwCurrentWindowInternalRequestAttentionInternalFunction(){}
 
@@ -155,13 +155,13 @@ class NwCurrentWindowInternalRequestAttentionInternalFunction : public AsyncExte
   ~NwCurrentWindowInternalRequestAttentionInternalFunction() override {}
 
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.requestAttentionInternal", UNKNOWN)
  private:
   DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalRequestAttentionInternalFunction);
 };
   
-class NwCurrentWindowInternalSetProgressBarFunction : public AsyncExtensionFunction {
+class NwCurrentWindowInternalSetProgressBarFunction : public UIThreadExtensionFunction {
  public:
   NwCurrentWindowInternalSetProgressBarFunction(){}
 
@@ -169,13 +169,13 @@ class NwCurrentWindowInternalSetProgressBarFunction : public AsyncExtensionFunct
   ~NwCurrentWindowInternalSetProgressBarFunction() override {}
 
   // ExtensionFunction:
-  bool RunAsync() override;
+  ResponseAction Run() override;
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setProgressBar", UNKNOWN)
  private:
   void Callback();
 };
 
-class NwCurrentWindowInternalReloadIgnoringCacheFunction : public AsyncExtensionFunction {
+class NwCurrentWindowInternalReloadIgnoringCacheFunction : public UIThreadExtensionFunction {
  public:
    NwCurrentWindowInternalReloadIgnoringCacheFunction() {}
 
@@ -183,7 +183,7 @@ class NwCurrentWindowInternalReloadIgnoringCacheFunction : public AsyncExtension
    ~NwCurrentWindowInternalReloadIgnoringCacheFunction() override {}
 
    // ExtensionFunction:
-   bool RunAsync() override;
+   ResponseAction Run() override;
    DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.reloadIgnoringCache", UNKNOWN)
 };
 
@@ -207,7 +207,7 @@ class NwCurrentWindowInternalSetZoomFunction : public NWSyncExtensionFunction {
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setZoom", UNKNOWN)
 };
 
-class NwCurrentWindowInternalEnterKioskModeFunction : public AsyncExtensionFunction {
+class NwCurrentWindowInternalEnterKioskModeFunction : public UIThreadExtensionFunction {
  public:
    NwCurrentWindowInternalEnterKioskModeFunction() {}
 
@@ -215,11 +215,11 @@ class NwCurrentWindowInternalEnterKioskModeFunction : public AsyncExtensionFunct
    ~NwCurrentWindowInternalEnterKioskModeFunction() override {}
 
    // ExtensionFunction:
-   bool RunAsync() override;
+   ResponseAction Run() override;
    DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.enterKioskMode", UNKNOWN)
 };
 
-class NwCurrentWindowInternalLeaveKioskModeFunction : public AsyncExtensionFunction {
+class NwCurrentWindowInternalLeaveKioskModeFunction : public UIThreadExtensionFunction {
  public:
    NwCurrentWindowInternalLeaveKioskModeFunction() {}
 
@@ -227,11 +227,11 @@ class NwCurrentWindowInternalLeaveKioskModeFunction : public AsyncExtensionFunct
    ~NwCurrentWindowInternalLeaveKioskModeFunction() override {}
 
    // ExtensionFunction:
-   bool RunAsync() override;
+   ResponseAction Run() override;
    DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.leaveKioskMode", UNKNOWN)
 };
 
-class NwCurrentWindowInternalToggleKioskModeFunction : public AsyncExtensionFunction {
+class NwCurrentWindowInternalToggleKioskModeFunction : public UIThreadExtensionFunction {
  public:
    NwCurrentWindowInternalToggleKioskModeFunction() {}
 
@@ -239,7 +239,7 @@ class NwCurrentWindowInternalToggleKioskModeFunction : public AsyncExtensionFunc
    ~NwCurrentWindowInternalToggleKioskModeFunction() override {}
 
    // ExtensionFunction:
-   bool RunAsync() override;
+   ResponseAction Run() override;
    DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.toggleKioskMode", UNKNOWN)
 };
 
@@ -253,7 +253,7 @@ class NwCurrentWindowInternalIsKioskInternalFunction : public NWSyncExtensionFun
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.isKioskInternal", UNKNOWN)
 };
 
-class NwCurrentWindowInternalSetShowInTaskbarFunction : public AsyncExtensionFunction {
+class NwCurrentWindowInternalSetShowInTaskbarFunction : public UIThreadExtensionFunction {
  public:
   NwCurrentWindowInternalSetShowInTaskbarFunction() {}
 
@@ -261,7 +261,7 @@ class NwCurrentWindowInternalSetShowInTaskbarFunction : public AsyncExtensionFun
   ~NwCurrentWindowInternalSetShowInTaskbarFunction() override {}
   
    // ExtensionFunction:
-   bool RunAsync() override;
+  ResponseAction Run() override;
    DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setShowInTaskbar", UNKNOWN)
 };
 
@@ -295,12 +295,13 @@ class NwCurrentWindowInternalGetWinParamInternalFunction : public NWSyncExtensio
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.getWinParamInternal", UNKNOWN)
 };
 
-class NwCurrentWindowInternalGetPrintersFunction : public AsyncExtensionFunction {
+class NwCurrentWindowInternalGetPrintersFunction : public UIThreadExtensionFunction {
  public:
   NwCurrentWindowInternalGetPrintersFunction() {}
-  bool RunAsync() override;
+
   void OnGetPrinterList(const printing::PrinterList& printer_list);
  protected:
+  ResponseAction Run() override;
   ~NwCurrentWindowInternalGetPrintersFunction() override {}
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.getPrinters", UNKNOWN)
 };

@@ -193,11 +193,12 @@ void SetTrustAnchorsOnIOThread(const scoped_refptr<net::URLRequestContextGetter>
   PolicyCertVerifier* verifier =
     (PolicyCertVerifier*)io_thread->globals()->system_request_context->cert_verifier();
   verifier->SetTrustAnchors(trust_anchors);
-
+#if 1
   net::URLRequestContext* url_request_context =
     url_request_getter->GetURLRequestContext();
   PolicyCertVerifier* verifier2 = (PolicyCertVerifier*)url_request_context->cert_verifier();
   verifier2->SetTrustAnchors(trust_anchors);
+#endif
 }
 
 void SetTrustAnchors(net::CertificateList& trust_anchors) {

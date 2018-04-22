@@ -103,7 +103,8 @@ NwObjCallObjectMethodAsyncFunction::NwObjCallObjectMethodAsyncFunction() {
 NwObjCallObjectMethodAsyncFunction::~NwObjCallObjectMethodAsyncFunction() {
 }
 
-bool NwObjCallObjectMethodAsyncFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+NwObjCallObjectMethodAsyncFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args_);
   base::ListValue* arguments = nullptr;
   int id = 0;
@@ -115,8 +116,7 @@ bool NwObjCallObjectMethodAsyncFunction::RunAsync() {
 
   nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
   manager->OnCallObjectMethod(render_frame_host(), id, type, method, *arguments);
-  SendResponse(true);
-  return true;
+  return RespondNow(NoArguments());
 }
 
 

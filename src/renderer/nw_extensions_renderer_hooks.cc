@@ -32,13 +32,13 @@
 
 #include "extensions/grit/extensions_renderer_resources.h"
 
-// third_party/WebKit/
-#include "third_party/WebKit/public/web/WebDocument.h"
-#include "third_party/WebKit/public/web/WebLocalFrame.h"
-#include "third_party/WebKit/public/web/WebScriptSource.h"
-#include "third_party/WebKit/public/web/WebView.h"
-#include "third_party/WebKit/Source/platform/bindings/ScriptForbiddenScope.h"
-#include "third_party/WebKit/public/web/WebKit.h"
+// third_party/blink/
+#include "third_party/blink/public/web/web_document.h"
+#include "third_party/blink/public/web/web_local_frame.h"
+#include "third_party/blink/public/web/web_script_source.h"
+#include "third_party/blink/public/web/web_view.h"
+#include "third_party/blink/renderer/platform/bindings/script_forbidden_scope.h"
+#include "third_party/blink/public/web/blink.h"
 
 #include "third_party/node-nw/src/node_webkit.h"
 

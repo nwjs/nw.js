@@ -131,7 +131,8 @@ std::set<base::FilePath> NWContentVerifierDelegate::GetBrowserImagePaths(
 void NWContentVerifierDelegate::VerifyFailed(
     const std::string& extension_id,
     const base::FilePath& relative_path,
-    ContentVerifyJob::FailureReason reason) {
+    ContentVerifyJob::FailureReason reason,
+    scoped_refptr<ContentVerifyJob> verify_job) {
   ExtensionRegistry* registry = ExtensionRegistry::Get(context_);
   const Extension* extension =
       registry->enabled_extensions().GetByID(extension_id);
