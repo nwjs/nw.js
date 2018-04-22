@@ -72,12 +72,12 @@ class NwObjCallObjectMethodSyncFunction : public NWSyncExtensionFunction {
   DISALLOW_COPY_AND_ASSIGN(NwObjCallObjectMethodSyncFunction);
 };
 
-class NwObjCallObjectMethodAsyncFunction : public AsyncExtensionFunction {
+class NwObjCallObjectMethodAsyncFunction : public UIThreadExtensionFunction {
  public:
   NwObjCallObjectMethodAsyncFunction();
-  bool RunAsync() override;
 
  protected:
+  ResponseAction Run() override;
   ~NwObjCallObjectMethodAsyncFunction() override;
 
   DECLARE_EXTENSION_FUNCTION("nw.Obj.callObjectMethodAsync", UNKNOWN)

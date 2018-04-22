@@ -181,39 +181,6 @@ class WebContentsHiddenObserver : public content::WebContentsObserver {
   DISALLOW_COPY_AND_ASSIGN(WebContentsHiddenObserver);
 };
 
-// Watches for context menu to be shown, records count of how many times
-// context menu was shown.
-class ContextMenuCallCountObserver {
- public:
-  ContextMenuCallCountObserver()
-      : num_times_shown_(0),
-        menu_observer_(chrome::NOTIFICATION_RENDER_VIEW_CONTEXT_MENU_SHOWN,
-                       base::Bind(&ContextMenuCallCountObserver::OnMenuShown,
-                                  base::Unretained(this))) {
-  }
-  ~ContextMenuCallCountObserver() {}
-
-  bool OnMenuShown(const content::NotificationSource& source,
-                   const content::NotificationDetails& details) {
-    ++num_times_shown_;
-    auto* context_menu = content::Source<RenderViewContextMenu>(source).ptr();
-    base::ThreadTaskRunnerHandle::Get()->PostTask(
-        FROM_HERE, base::Bind(&RenderViewContextMenuBase::Cancel,
-                              base::Unretained(context_menu)));
-    return true;
-  }
-
-  void Wait() { menu_observer_.Wait(); }
-
-  int num_times_shown() { return num_times_shown_; }
-
- private:
-  int num_times_shown_;
-  content::WindowedNotificationObserver menu_observer_;
-
-  DISALLOW_COPY_AND_ASSIGN(ContextMenuCallCountObserver);
-};
-
 class EmbedderWebContentsObserver : public content::WebContentsObserver {
  public:
   explicit EmbedderWebContentsObserver(content::WebContents* web_contents)
@@ -376,7 +343,7 @@ class MockWebContentsDelegate : public content::WebContentsDelegate {
       request_message_loop_runner_->Quit();
   }
 
-  bool CheckMediaAccessPermission(content::WebContents* web_contents,
+  bool CheckMediaAccessPermission(content::RenderFrameHost* render_frame_host,
                                   const GURL& security_origin,
                                   content::MediaStreamType type) override {
     checked_ = true;
@@ -505,13 +472,6 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
 
   void SetUpOnMainThread() override {
     extensions::PlatformAppBrowserTest::SetUpOnMainThread();
-    const testing::TestInfo* const test_info =
-        testing::UnitTest::GetInstance()->current_test_info();
-    // Mock out geolocation for geolocation specific tests.
-    if (!strncmp(test_info->name(), "GeolocationAPI",
-            strlen("GeolocationAPI"))) {
-      ui_test_utils::OverrideGeolocation(10, 20);
-    }
   }
 
   void SetUpCommandLine(base::CommandLine* command_line) override {

@@ -1,7 +1,7 @@
 #ifndef NW_CHROME_RENDERER_HOOKS_H_
 #define NW_CHROME_RENDERER_HOOKS_H_
 
-#include "third_party/WebKit/public/web/WebNavigationPolicy.h"
+#include "third_party/blink/public/web/web_navigation_policy.h"
 
 namespace blink {
   class WebFrame;

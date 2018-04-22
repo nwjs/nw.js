@@ -69,29 +69,29 @@ using namespace blink;
 #undef NO_THREAD_SAFETY_ANALYSIS
 
 //#include "third_party/WebKit/Source/config.h"
-#include "third_party/WebKit/Source/core/html/HTMLIFrameElement.h"
-#include "third_party/WebKit/Source/core/dom/Document.h"
-#include "third_party/WebKit/Source/core/frame/LocalFrame.h"
-#include "third_party/WebKit/public/web/WebFrame.h"
-#include "third_party/WebKit/public/web/WebView.h"
-#include "third_party/WebKit/Source/core/frame/WebLocalFrameImpl.h"
-#include "third_party/WebKit/public/web/WebScriptSource.h"
+#include "third_party/blink/renderer/core/html/html_iframe_element.h"
+#include "third_party/blink/renderer/core/dom/document.h"
+#include "third_party/blink/renderer/core/frame/local_frame.h"
+#include "third_party/blink/public/web/web_frame.h"
+#include "third_party/blink/public/web/web_view.h"
+#include "third_party/blink/renderer/core/frame/web_local_frame_impl.h"
+#include "third_party/blink/public/web/web_script_source.h"
 
 #undef BLINK_IMPLEMENTATION
 #define BLINK_IMPLEMENTATION 1
 
-#include "third_party/WebKit/public/web/WebDocument.h"
-#include "third_party/WebKit/public/web/WebSecurityPolicy.h"
-#include "third_party/WebKit/Source/platform/heap/Handle.h"
-#include "third_party/WebKit/Source/core/script/Modulator.h"
-#include "third_party/WebKit/Source/core/script/ModuleScript.h"
-#include "third_party/WebKit/Source/core/script/ScriptModuleResolver.h"
+#include "third_party/blink/public/web/web_document.h"
+#include "third_party/blink/public/web/web_security_policy.h"
+#include "third_party/blink/renderer/platform/heap/handle.h"
+#include "third_party/blink/renderer/core/script/modulator.h"
+#include "third_party/blink/renderer/core/script/module_script.h"
+#include "third_party/blink/renderer/core/script/script_module_resolver.h"
 
 //#include "third_party/WebKit/Source/core/inspector/InspectorInstrumentation.h"
 //#include "third_party/WebKit/Source/core/inspector/InspectorResourceAgent.h"
 
 //#undef CHECK
-#include "V8HTMLIFrameElement.h"
+#include "v8_html_iframe_element.h"
 #include "extensions/renderer/script_context_set.h"
 
 using blink::WebFrame;
@@ -292,13 +292,13 @@ void NWCustomBindings::EvalNWBin(
                                                                                  //v8
                                                                                  //here
     v8::FixSourceNWBin(isolate, module);
-    blink::ScriptModule script_module(isolate, module);
     blink::Modulator* modulator = blink::Modulator::From(ToScriptStateForMainWorld(static_cast<blink::WebLocalFrameImpl*>(local_frame)->GetFrame()));
     GURL url = render_frame->GetWebFrame()->GetDocument().Url();
     v8::String::Utf8Value file(args.GetIsolate(), args[2]);
     url = url.Resolve(*file);
     // LOG(WARNING) << "registering module as: " << url;
     KURL kurl(WTF::String(url.spec().c_str()));
+    blink::ScriptModule script_module(isolate, module, kurl);
     blink::ModuleScript* module_script =
       blink::ModuleScript::CreateForTest(modulator, script_module, kurl);
     modulator->AddToMap(kurl, module_script);

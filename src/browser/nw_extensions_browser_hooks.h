@@ -7,7 +7,7 @@
 #endif
 
 #include <string>
-#include "third_party/WebKit/public/web/WebNavigationPolicy.h"
+#include "third_party/blink/public/web/web_navigation_policy.h"
 
 class GURL;
 

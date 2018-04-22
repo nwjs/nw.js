@@ -50,15 +50,17 @@ void NwCurrentWindowInternalSetShadowFunction::SetShadowOnWindow(NSWindow *windo
   window.hasShadow = shadow;
 }
 
-bool NwCurrentWindowInternalSetBadgeLabelFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+NwCurrentWindowInternalSetBadgeLabelFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args_);
   std::string badge;
   EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &badge));
   [[NSApp dockTile] setBadgeLabel:base::SysUTF8ToNSString(badge)];
-  return true;
+  return RespondNow(NoArguments());
 }
 
-bool NwCurrentWindowInternalRequestAttentionInternalFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+NwCurrentWindowInternalRequestAttentionInternalFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args_);
   int count;
   EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &count));
@@ -74,10 +76,11 @@ bool NwCurrentWindowInternalRequestAttentionInternalFunction::RunAsync() {
     [NSApp cancelUserAttentionRequest:attention_request_id[web_content]];
     attention_request_id.erase(web_content);
   }
-  return true;
+  return RespondNow(NoArguments());
 }
 
-bool NwCurrentWindowInternalSetProgressBarFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+NwCurrentWindowInternalSetProgressBarFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args_);
   double progress;
   EXTENSION_FUNCTION_VALIDATE(args_->GetDouble(0, &progress));
@@ -130,8 +133,7 @@ bool NwCurrentWindowInternalSetProgressBarFunction::RunAsync() {
   }
   
   [dockTile display];
-  SendResponse(true);
-  return true;
+  return RespondNow(NoArguments());
 }
 
 } // namespace extensions

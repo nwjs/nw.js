@@ -135,7 +135,8 @@ void NwCurrentWindowInternalCloseFunction::DoClose(AppWindow* window) {
   window->GetBaseWindow()->ForceClose();
 }
 
-bool NwCurrentWindowInternalCloseFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+NwCurrentWindowInternalCloseFunction::Run() {
   std::unique_ptr<nwapi::nw_current_window_internal::Close::Params> params(
       nwapi::nw_current_window_internal::Close::Params::Create(*args_));
   EXTENSION_FUNCTION_VALIDATE(params.get());
@@ -149,15 +150,16 @@ bool NwCurrentWindowInternalCloseFunction::RunAsync() {
     base::MessageLoop::current()->task_runner()->PostTask(FROM_HERE,
          base::Bind(&NwCurrentWindowInternalCloseFunction::DoClose, window));
 
-  SendResponse(true);
-  return true;
+  return RespondNow(NoArguments());
 }
 
 void NwCurrentWindowInternalShowDevToolsInternalFunction::OnOpened() {
-  SendResponse(true);
+  Release();
+  Respond(NoArguments());
 }
 
-bool NwCurrentWindowInternalShowDevToolsInternalFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+NwCurrentWindowInternalShowDevToolsInternalFunction::Run() {
   content::RenderFrameHost* rfh = render_frame_host();
   content::WebContents* web_contents = content::WebContents::FromRenderFrameHost(rfh);
   scoped_refptr<content::DevToolsAgentHost> agent(
@@ -168,12 +170,14 @@ bool NwCurrentWindowInternalShowDevToolsInternalFunction::RunAsync() {
   if (devtools_window)
     devtools_window->SetLoadCompletedCallback(base::Bind(&NwCurrentWindowInternalShowDevToolsInternalFunction::OnOpened, this));
   else
-    OnOpened();
+    return RespondNow(NoArguments());
 
-  return true;
+  AddRef();
+  return RespondLater();
 }
 
-bool NwCurrentWindowInternalCloseDevToolsFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+NwCurrentWindowInternalCloseDevToolsFunction::Run() {
   content::RenderFrameHost* rfh = render_frame_host();
   content::WebContents* web_contents = content::WebContents::FromRenderFrameHost(rfh);
   scoped_refptr<content::DevToolsAgentHost> agent(
@@ -183,7 +187,7 @@ bool NwCurrentWindowInternalCloseDevToolsFunction::RunAsync() {
   if (devtools_window) {
     devtools_window->Close();
   }
-  return true;
+  return RespondNow(NoArguments());
 }
 
 NwCurrentWindowInternalCapturePageInternalFunction::NwCurrentWindowInternalCapturePageInternalFunction() {
@@ -192,7 +196,8 @@ NwCurrentWindowInternalCapturePageInternalFunction::NwCurrentWindowInternalCaptu
 NwCurrentWindowInternalCapturePageInternalFunction::~NwCurrentWindowInternalCapturePageInternalFunction() {
 }
 
-bool NwCurrentWindowInternalCapturePageInternalFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+NwCurrentWindowInternalCapturePageInternalFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args_);
 
   std::unique_ptr<ImageDetails> image_details;
@@ -205,7 +210,7 @@ bool NwCurrentWindowInternalCapturePageInternalFunction::RunAsync() {
   content::RenderFrameHost* rfh = render_frame_host();
   WebContents* contents = content::WebContents::FromRenderFrameHost(rfh);
   if (!contents)
-    return false;
+    return RespondNow(Error("contents is null"));
 
   // The default format and quality setting used when encoding jpegs.
   const api::extension_types::ImageFormat kDefaultFormat =
@@ -226,15 +231,14 @@ bool NwCurrentWindowInternalCapturePageInternalFunction::RunAsync() {
   // TODO(miu): Account for fullscreen render widget?  http://crbug.com/419878
   RenderWidgetHostView* const view = contents->GetRenderWidgetHostView();
   if (!view) {
-    OnCaptureFailure(FAILURE_REASON_VIEW_INVISIBLE);
-    return false;
+    return RespondNow(Error("view is invisible"));
   }
 
   view->CopyFromSurface(gfx::Rect(),  // Copy entire surface area.
                         gfx::Size(),  // Result contains device-level detail.
       base::Bind(&NwCurrentWindowInternalCapturePageInternalFunction::CopyFromBackingStoreComplete,
                  this));
-  return true;
+  return RespondLater();
 }
 
 void NwCurrentWindowInternalCapturePageInternalFunction::CopyFromBackingStoreComplete(
@@ -278,8 +282,7 @@ void NwCurrentWindowInternalCapturePageInternalFunction::OnCaptureSuccess(const 
   base::Base64Encode(stream_as_string, &base64_result);
   base64_result.insert(
       0, base::StringPrintf("data:%s;base64,", mime_type.c_str()));
-  SetResult(base::MakeUnique<base::Value>(base64_result.c_str()));
-  SendResponse(true);
+  Respond(OneArgument(std::make_unique<base::Value>(base64_result)));
 }
 
 void NwCurrentWindowInternalCapturePageInternalFunction::OnCaptureFailure(FailureReason reason) {
@@ -297,7 +300,7 @@ void NwCurrentWindowInternalCapturePageInternalFunction::OnCaptureFailure(Failur
   }
   error_ = ErrorUtils::FormatErrorMessage("Failed to capture tab: *",
                                           reason_description);
-  SendResponse(false);
+  Respond(Error(error_));
 }
 
 NwCurrentWindowInternalClearMenuFunction::NwCurrentWindowInternalClearMenuFunction() {
@@ -306,11 +309,12 @@ NwCurrentWindowInternalClearMenuFunction::NwCurrentWindowInternalClearMenuFuncti
 NwCurrentWindowInternalClearMenuFunction::~NwCurrentWindowInternalClearMenuFunction() {
 }
 
-bool NwCurrentWindowInternalClearMenuFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+NwCurrentWindowInternalClearMenuFunction::Run() {
   AppWindow* window = getAppWindow(this);
   if (!window) {
     error_ = kNoAssociatedAppWindow;
-    return false;
+    return RespondNow(Error(error_));
   }
 
 #if defined(OS_MACOSX)
@@ -335,7 +339,7 @@ bool NwCurrentWindowInternalClearMenuFunction::RunAsync() {
     window->menu_ = NULL;
   }
 #endif
-  return true;
+  return RespondNow(NoArguments());
 }
 
 NwCurrentWindowInternalSetMenuFunction::NwCurrentWindowInternalSetMenuFunction() {
@@ -408,7 +412,8 @@ static base::win::ScopedHICON createBadgeIcon(const HWND hWnd, const TCHAR *valu
 #endif
 
 #ifndef OS_MACOSX
-bool NwCurrentWindowInternalSetBadgeLabelFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+NwCurrentWindowInternalSetBadgeLabelFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args_);
   std::string badge;
   EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &badge));
@@ -420,14 +425,14 @@ bool NwCurrentWindowInternalSetBadgeLabelFunction::RunAsync() {
   if (FAILED(result)) {
     error_ = "Failed creating a TaskbarList3 object: ";
     LOG(ERROR) << error_ << result;
-    return false;
+    return RespondNow(Error(error_));
   }
 
   result = taskbar->HrInit();
   if (FAILED(result)) {
     error_ = "Failed initializing an ITaskbarList3 interface.";
     LOG(ERROR) << error_;
-    return false;
+    return RespondNow(Error(error_));
   }
 
   base::win::ScopedHICON icon;
@@ -435,7 +440,7 @@ bool NwCurrentWindowInternalSetBadgeLabelFunction::RunAsync() {
   if (hWnd == NULL) {
     error_ = kNoAssociatedAppWindow;
     LOG(ERROR) << error_;
-    return false;
+    return RespondNow(Error(error_));
   }
   const float scale = display::win::GetDPIScale();
   if (badge.size())
@@ -446,19 +451,20 @@ bool NwCurrentWindowInternalSetBadgeLabelFunction::RunAsync() {
   views::LinuxUI* linuxUI = views::LinuxUI::instance();
   if (linuxUI == NULL) {
     error_ = "LinuxUI::instance() is NULL";
-    return false;
+    return RespondNow(Error(error_));
   }
   SetDeskopEnvironment();
   linuxUI->SetDownloadCount(atoi(badge.c_str()));
 #else
   error_ = "NwCurrentWindowInternalSetBadgeLabelFunction NOT Implemented"
   NOTIMPLEMENTED() << error_;
-  return false;
+  return RespondNow(Error(error_));
 #endif
-  return true;
+  return RespondNow(NoArguments());
 }
   
-bool NwCurrentWindowInternalRequestAttentionInternalFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+NwCurrentWindowInternalRequestAttentionInternalFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args_);
   int count;
   EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &count));
@@ -469,7 +475,7 @@ bool NwCurrentWindowInternalRequestAttentionInternalFunction::RunAsync() {
   if (fwi.hwnd == NULL) {
     error_ = kNoAssociatedAppWindow;
     LOG(ERROR) << error_;
-    return false;
+    return RespondNow(Error(error_));
   }
   if (count != 0) {
     fwi.dwFlags = FLASHW_ALL;
@@ -484,14 +490,15 @@ bool NwCurrentWindowInternalRequestAttentionInternalFunction::RunAsync() {
   AppWindow* window = getAppWindow(this);
   if (!window) {
     error_ = kNoAssociatedAppWindow;
-    return false;
+    return RespondNow(Error(error_));
   }
   window->GetBaseWindow()->FlashFrame(count);
 #endif
-  return true;
+  return RespondNow(NoArguments());
 }
   
-bool NwCurrentWindowInternalSetProgressBarFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+NwCurrentWindowInternalSetProgressBarFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args_);
   double progress;
   EXTENSION_FUNCTION_VALIDATE(args_->GetDouble(0, &progress));
@@ -503,21 +510,21 @@ bool NwCurrentWindowInternalSetProgressBarFunction::RunAsync() {
   if (FAILED(result)) {
     error_ = "Failed creating a TaskbarList3 object: ";
     LOG(ERROR) <<  error_ << result;
-    return false;
+    return RespondNow(Error(error_));
   }
 
   result = taskbar->HrInit();
   if (FAILED(result)) {
     error_ = "Failed initializing an ITaskbarList3 interface.";
     LOG(ERROR) << error_;
-    return false;
+    return RespondNow(Error(error_));
   }
 
   HWND hWnd = getHWND(getAppWindow(this));
   if (hWnd == NULL) {
     error_ = kNoAssociatedAppWindow;
     LOG(ERROR) << error_;
-    return false;
+    return RespondNow(Error(error_));
   }
   TBPFLAG tbpFlag = TBPF_NOPROGRESS;
 
@@ -534,24 +541,24 @@ bool NwCurrentWindowInternalSetProgressBarFunction::RunAsync() {
   views::LinuxUI* linuxUI = views::LinuxUI::instance();
   if (linuxUI == NULL) {
     error_ = "LinuxUI::instance() is NULL";
-    return false;
+    return RespondNow(Error(error_));
   }
   SetDeskopEnvironment();
   linuxUI->SetProgressFraction(progress);
 #else
   error_ = "NwCurrentWindowInternalSetProgressBarFunction NOT Implemented"
   NOTIMPLEMENTED() << error_;
-  return false;
+  return RespondNow(Error(error_));
 #endif
-  return true;
+  return RespondNow(NoArguments());
 }
 #endif
 
-bool NwCurrentWindowInternalReloadIgnoringCacheFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+NwCurrentWindowInternalReloadIgnoringCacheFunction::Run() {
   content::WebContents* web_contents = GetSenderWebContents();
   web_contents->GetController().Reload(content::ReloadType::BYPASSING_CACHE, false);
-  SendResponse(true);
-  return true;
+  return RespondNow(NoArguments());
 }
 
 bool NwCurrentWindowInternalGetZoomFunction::RunNWSync(base::ListValue* response, std::string* error) {
@@ -582,28 +589,28 @@ bool NwCurrentWindowInternalSetZoomFunction::RunNWSync(base::ListValue* response
   return true;
 }
 
-bool NwCurrentWindowInternalEnterKioskModeFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+NwCurrentWindowInternalEnterKioskModeFunction::Run() {
   AppWindow* window = getAppWindow(this);
   window->ForcedFullscreen();
-  SendResponse(true);
-  return true;
+  return RespondNow(NoArguments());
 }
 
-bool NwCurrentWindowInternalLeaveKioskModeFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+NwCurrentWindowInternalLeaveKioskModeFunction::Run() {
   AppWindow* window = getAppWindow(this);
   window->Restore();
-  SendResponse(true);
-  return true;
+  return RespondNow(NoArguments());
 }
 
-bool NwCurrentWindowInternalToggleKioskModeFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+NwCurrentWindowInternalToggleKioskModeFunction::Run() {
   AppWindow* window = getAppWindow(this);
   if (window->IsFullscreen() || window->IsForcedFullscreen())
     window->Restore();
   else
     window->ForcedFullscreen();
-  SendResponse(true);
-  return true;
+  return RespondNow(NoArguments());
 }
 
 bool NwCurrentWindowInternalIsKioskInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
@@ -621,7 +628,8 @@ bool NwCurrentWindowInternalGetTitleInternalFunction::RunNWSync(base::ListValue*
   return true;
 }
 
-bool NwCurrentWindowInternalSetShadowFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+NwCurrentWindowInternalSetShadowFunction::Run() {
 #if defined(OS_MACOSX)
   EXTENSION_FUNCTION_VALIDATE(args_);
   bool shadow;
@@ -629,7 +637,7 @@ bool NwCurrentWindowInternalSetShadowFunction::RunAsync() {
   AppWindow* window = getAppWindow(this);
   SetShadowOnWindow(window->GetNativeWindow(), shadow);
 #endif
-  return true;
+  return RespondNow(NoArguments());
 }
 
 bool NwCurrentWindowInternalSetTitleInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
@@ -642,7 +650,8 @@ bool NwCurrentWindowInternalSetTitleInternalFunction::RunNWSync(base::ListValue*
   return true;
 }
 
-bool NwCurrentWindowInternalGetPrintersFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+NwCurrentWindowInternalGetPrintersFunction::Run() {
   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
 
   base::PostTaskWithTraitsAndReplyWithResult(
@@ -650,14 +659,13 @@ bool NwCurrentWindowInternalGetPrintersFunction::RunAsync() {
         base::Bind(&EnumeratePrintersAsync),
         base::Bind(&NwCurrentWindowInternalGetPrintersFunction::OnGetPrinterList,
                    this));
-  return true;
+  return RespondLater();
 }
 
 void NwCurrentWindowInternalGetPrintersFunction::OnGetPrinterList(const printing::PrinterList& printer_list) {
   base::ListValue* printers = new base::ListValue();
   chrome::PrintersToValues(printer_list, printers);
-  SetResult(base::WrapUnique(printers));
-  SendResponse(true);
+  Respond(ArgumentList(base::WrapUnique(printers)));
 }
 
 bool NwCurrentWindowInternalSetPrintSettingsInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
@@ -695,8 +703,8 @@ bool NwCurrentWindowInternalGetWinParamInternalFunction::RunNWSync(base::ListVal
   int frame_id = created_frame->GetRoutingID();
 
   base::DictionaryValue* result = new base::DictionaryValue;
-  result->Set("frameId", base::MakeUnique<base::Value>(frame_id));
-  result->Set("id", base::MakeUnique<base::Value>(app_window->window_key()));
+  result->Set("frameId", std::make_unique<base::Value>(frame_id));
+  result->Set("id", std::make_unique<base::Value>(app_window->window_key()));
   app_window->GetSerializedState(result);
 
   response->Append(base::WrapUnique(result));
@@ -704,7 +712,8 @@ bool NwCurrentWindowInternalGetWinParamInternalFunction::RunNWSync(base::ListVal
   return true;
 }
 
-bool NwCurrentWindowInternalSetShowInTaskbarFunction::RunAsync() {
+ExtensionFunction::ResponseAction
+NwCurrentWindowInternalSetShowInTaskbarFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args_);
   bool show;
   EXTENSION_FUNCTION_VALIDATE(args_->GetBoolean(0, &show));
@@ -728,15 +737,13 @@ bool NwCurrentWindowInternalSetShowInTaskbarFunction::RunAsync() {
                                           CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&taskbar));
   if (FAILED(result)) {
     VLOG(1) << "Failed creating a TaskbarList object: " << result;
-    SendResponse(true);
-    return true;
+    return RespondNow(NoArguments());
   }
 
   result = taskbar->HrInit();
   if (FAILED(result)) {
     LOG(ERROR) << "Failed initializing an ITaskbarList interface.";
-    SendResponse(true);
-    return true;
+    return RespondNow(NoArguments());
   }
 
   if (show)
@@ -746,16 +753,14 @@ bool NwCurrentWindowInternalSetShowInTaskbarFunction::RunAsync() {
 
   if (FAILED(result)) {
     LOG(ERROR) << "Failed to change the show in taskbar attribute";
-    SendResponse(true);
-    return true;
+    return RespondNow(NoArguments());
   }
 #elif defined(OS_MACOSX)
   AppWindow* app_window = getAppWindow(this);
   extensions::NativeAppWindow* native_window = app_window->GetBaseWindow();
   NWSetNSWindowShowInTaskbar(native_window, show);
 #endif
-  SendResponse(true);
-  return true;
+  return RespondNow(NoArguments());
 }
 
 } // namespace extensions

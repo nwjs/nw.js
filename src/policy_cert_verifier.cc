@@ -58,8 +58,8 @@ void PolicyCertVerifier::InitializeOnIOThread(
     LOG(WARNING)
         << "Additional trust anchors not supported on the current platform!";
   }
-  delegate_ = base::MakeUnique<net::CachingCertVerifier>(
-      base::MakeUnique<net::MultiThreadedCertVerifier>(verify_proc.get()));
+  delegate_ = std::make_unique<net::CachingCertVerifier>(
+      std::make_unique<net::MultiThreadedCertVerifier>(verify_proc.get()));
 }
 
 void PolicyCertVerifier::SetTrustAnchors(
