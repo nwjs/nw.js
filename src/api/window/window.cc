@@ -272,6 +272,10 @@ void Window::Call(const std::string& method,
     std::string label;
     if (arguments.GetString(0, &label))
       shell_->window()->SetBadgeLabel(label);
+  } else if (method == "SetShadow") {
+    bool shadow;
+    if (arguments.GetBoolean(0, &shadow))
+      shell_->window()->SetShadow(shadow);
   } else if (method == "SetTransparent") {
     bool transparent;
     if (arguments.GetBoolean(0, &transparent))

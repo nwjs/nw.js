@@ -90,6 +90,7 @@ public:
   virtual void Restore() = 0;
   virtual void SetFullscreen(bool fullscreen) = 0;
   virtual bool IsFullscreen() = 0;
+  virtual void SetShadow(bool shadow) = 0;
   virtual void SetTransparent(bool transparent) = 0;
   virtual void SetSize(const gfx::Size& size) = 0;
   virtual gfx::Size GetSize() = 0;
