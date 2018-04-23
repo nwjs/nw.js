@@ -436,6 +436,10 @@ Window.prototype.setProgressBar = function(progress) {
   CallObjectMethod(this, 'SetProgressBar', [ progress ]);
 }
   
+Window.prototype.setShadow = function(shadow) {
+  CallObjectMethod(this, 'SetShadow', [ shadow ]);
+}
+
 Window.prototype.setTransparent = function(transparent) {
   CallObjectMethod(this, 'SetTransparent', [ transparent ]);
 }

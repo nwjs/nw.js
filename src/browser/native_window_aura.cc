@@ -428,6 +428,12 @@ bool NativeWindowAura::IsFullscreen() {
   return is_fullscreen_;
 }
 
+void NativeWindowAura::SetShadow(bool shadow) {
+#if defined(OS_MACOSX)
+  window_->SetShadow(shadow);
+#endif
+}
+
 void NativeWindowAura::SetTransparent(bool transparent) {
   if (!content::g_support_transparency)
     return;

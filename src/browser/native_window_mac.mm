@@ -554,6 +554,10 @@ bool NativeWindowCocoa::IsFullscreen() {
   return is_fullscreen_;
 }
 
+void NativeWindowCocoa::SetShadow(bool shadow) {
+  [window() setHasShadow:shadow];
+}
+
 //debug function to iterate all the sublayers
 void SetTransparent (CALayer* layer, const bool transparent) {
   if (layer == NULL) return;

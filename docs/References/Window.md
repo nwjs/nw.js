@@ -261,6 +261,12 @@ Leave the Kiosk mode.
 
 Toggle the kiosk mode.
 
+## win.setShadow(shadow) (Mac)
+
+* `shadow` `{Boolean}` whether the window has a shadow
+
+Turn the Mac shadow on/off. Useful for transparent windows.
+
 ## win.setTransparent(transparent)
 
 !!! warning "Deprecated"

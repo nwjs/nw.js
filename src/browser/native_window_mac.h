@@ -53,6 +53,7 @@ class NativeWindowCocoa : public NativeWindow {
   virtual void Restore() override;
   virtual void SetFullscreen(bool fullscreen) override;
   virtual bool IsFullscreen() override;
+  virtual void SetShadow(bool shadow) override;
   virtual void SetTransparent(bool transparent) override;
   virtual void SetSize(const gfx::Size& size) override;
   virtual gfx::Size GetSize() override;
