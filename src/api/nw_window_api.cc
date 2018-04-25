@@ -621,6 +621,17 @@ bool NwCurrentWindowInternalGetTitleInternalFunction::RunNWSync(base::ListValue*
   return true;
 }
 
+bool NwCurrentWindowInternalSetShadowFunction::RunAsync() {
+#if defined(OS_MACOSX)
+  EXTENSION_FUNCTION_VALIDATE(args_);
+  bool shadow;
+  EXTENSION_FUNCTION_VALIDATE(args_->GetBoolean(0, &shadow));
+  AppWindow* window = getAppWindow(this);
+  SetShadowOnWindow(window->GetNativeWindow(), shadow);
+#endif
+  return true;
+}
+
 bool NwCurrentWindowInternalSetTitleInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
   EXTENSION_FUNCTION_VALIDATE(args_);
   std::string title;

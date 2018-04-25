@@ -379,6 +379,10 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       return this;
     };
 
+    NWWindow.prototype.setShadow = function(shadow) {
+      currentNWWindowInternal.setShadow(shadow);
+    }
+
     NWWindow.prototype.showDevTools = function(frm, callback) {
       var id = '';
       if (typeof frm === 'string')
