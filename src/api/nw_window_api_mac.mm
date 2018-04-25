@@ -8,6 +8,7 @@
 #import <Appkit/NSDocktile.h>
 #import <Appkit/NSImageView.h>
 #import <Appkit/NSProgressIndicator.h>
+#import <Appkit/NSWindow.h>
 
 @interface NWProgressBar : NSProgressIndicator
 @end
@@ -44,7 +45,11 @@
 @end
 
 namespace extensions {
-  
+
+void NwCurrentWindowInternalSetShadowFunction::SetShadowOnWindow(NSWindow *window, bool shadow) {
+  window.hasShadow = shadow;
+}
+
 bool NwCurrentWindowInternalSetBadgeLabelFunction::RunAsync() {
   EXTENSION_FUNCTION_VALIDATE(args_);
   std::string badge;
