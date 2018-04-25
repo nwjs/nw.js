@@ -1,3 +1,8 @@
+0.30.1 / 04-25-2018
+===================
+- Update Node.js to [v10.0.0](https://nodejs.org/en/blog/release/v10.0.0/)
+- Fix: WebSocket not working on spotify.com [(#6527)](https://github.com/nwjs/nw.js/issues/6527)
+
 0.30.0 / 04-18-2018
 ===================
 - Update Chromium to [66.0.3359.117](https://chromereleases.googleblog.com/2018/04/stable-channel-update-for-desktop.html)
