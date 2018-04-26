@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>6522</title>
+  </head>
+  <body>
+    <script type="text/javascript">
+        nw.Window.get().on("new-win-policy", function(frame, url, policy) {
+            policy.ignore();
+            window.alert("link open action intercepted!");
+        });
+    </script>
+    <a href="about:blank" target="_blank" id="first">This link will be blocked with normal click</a>
+    <br/>
+    <br/>
+    <a href="about:blank" target="_blank" id="second">This link will be blocked with ctrl + click</a>
+    <br/>
+    <br/>
+    <a href="about:blank" id="third">This link will not be blocked if opened with ctrl + click</a>
+  </body>
+</html>
