@@ -270,6 +270,12 @@ Toggle the kiosk mode.
 
 Turn on/off the transparency support. See more info on [Transparent Window](../For Users/Advanced/Transparent Window.md).
 
+## win.setShadow(shadow) (Mac)
+
+* `shadow` `{Boolean}` whether the window has a shadow
+
+Turn the window's native shadow on/off. Useful for frameless, transparent windows.
+
 ## win.showDevTools([iframe], [callback])
 
 !!! note
