@@ -126,7 +126,9 @@ class NwCurrentWindowInternalSetShadowFunction : public AsyncExtensionFunction {
 
  protected:
   ~NwCurrentWindowInternalSetShadowFunction() override {}
+#if defined(OS_MACOSX)
   void SetShadowOnWindow(NSWindow *window, bool shadow);
+#endif
 
   // ExtensionFunction:
   bool RunAsync() override;
