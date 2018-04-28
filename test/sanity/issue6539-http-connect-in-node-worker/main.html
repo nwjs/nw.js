@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="author" content="cTn-dev" />
+
+    <script type="text/javascript">
+      console.log('System: Running on NW: ' + process.versions.nw + ', Node: ' + process.versions.node + ', Chromium: ' + process.versions.chromium);
+
+      var reference = new Worker('./worker.js');
+      reference.postMessage('Connect me please');
+      nw.Window.get().showDevTools();
+    </script>
+  </head>
+</html>

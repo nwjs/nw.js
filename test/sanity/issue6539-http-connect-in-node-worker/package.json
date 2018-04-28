@@ -1,0 +1,11 @@
+{
+  "name": "6539",
+  "version": "0.0.1",
+  "main": "main.html",
+  "window": {
+    "id": "main-window",
+    "min_width": 300,
+    "min_height": 100
+  },
+  "chromium-args": "--enable-node-worker"
+}
