@@ -94,6 +94,7 @@ On Mac OS X, you need to modify following files to have your own icon and bundle
 * `Contents/Info.plist`: the apple package description file. You can view [Implementing Cocoa's Standard About Panel](http://cocoadevcentral.com/articles/000071.php) on how this file will influence your app and what fields you should modify.
 
 To rename the application, the following files should be modified:
+* `Contents/MacOS/nwjs` - rename the file to the value of `CFBundleDisplayName`
 * `Contents/Info.plist` - CFBundleDisplayName
 * `Contents/Resources/en.lproj/InfoPlist.strings` - CFBundleDisplayName
 * `package.json` -- add a string field `product_string` (e.g. foobar); the helper application will be shown as 'foobar Helper'. (since v0.24.4)
