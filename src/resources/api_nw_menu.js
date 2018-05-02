@@ -24,8 +24,9 @@ function Menu (option) {
   privates(this).items = [];
   privates(this).option = option;
 
+  var items = privates(this).items;
   nw.Obj.create(id, 'Menu', option);
-  messagingNatives.BindToGC(this, nw.Obj.destroy.bind(undefined, id), -1);
+  messagingNatives.BindToGC(this, function() { items.forEach(function(element) { element._destroy(); }); nw.Obj.destroy(id); }, -1);
 };
 
 Menu.prototype.__defineGetter__('items', function() {

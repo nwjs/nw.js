@@ -137,11 +137,12 @@ void ObjectManager::OnCallObjectMethod(
     const std::string& type,
     const std::string& method,
     const base::ListValue& arguments) {
+#if 0
   DLOG(INFO) << "OnCallObjectMethod: object_id:" << object_id
              << " type:" << type
              << " method:" << method
              << " arguments:" << arguments;
-
+#endif
   Base* object = GetApiObject(object_id);
   if (object)
     object->Call(method, arguments, rvh);
