@@ -1,6 +1,15 @@
+0.30.3 / 05-10-2018
+===================
+- Update Node.js to [v10.1.0](https://nodejs.org/en/blog/release/v10.1.0/)
+- Fix: Menu and MenuItem leak [(#6583)](https://github.com/nwjs/nw.js/issues/6583)
+- Add support for nwWindow.setShadow(bool) on Mac (Thanks to Jahanzeb Sherwani)
+- Fix: Window resizable false not honored on Linux [(#6592)](https://github.com/nwjs/nw.js/issues/6592)
+- [docs] Add nwWindow.setShadow(bool) on Mac
+
 0.30.2 / 04-28-2018
 ===================
 - Update Chromium to [66.0.3359.139](https://chromereleases.googleblog.com/2018/04/stable-channel-update-for-desktop_26.html)
+- Fix: ES6 modules with .mjs extension / loaded from disk are broken [(#6585)](https://github.com/nwjs/nw.js/issues/6585)
 
 0.30.1 / 04-25-2018
 ===================
