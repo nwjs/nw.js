@@ -1,3 +1,8 @@
+0.30.4 / 05-14-2018
+===================
+- Update Chromium to [66.0.3359.170](https://chromereleases.googleblog.com/2018/05/stable-channel-update-for-desktop.html)
+- Fix: Child iframe doesn't herit parent attributes [(#3362)](https://github.com/nwjs/nw.js/issues/3362)
+
 0.30.3 / 05-10-2018
 ===================
 - Update Node.js to [v10.1.0](https://nodejs.org/en/blog/release/v10.1.0/)
