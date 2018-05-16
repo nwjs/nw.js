@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>4993</title>
+</head>
+<body>
+  <button id="resize-window" onclick="resizeWindow()">Resize to 777x555</button>
+  <script>
+    function out(id, msg) {
+      var h1 = document.createElement('h1');
+      h1.setAttribute('id', id);
+      h1.innerHTML = msg;
+      document.body.appendChild(h1);
+    }
+    function resizeWindow() {
+      nw.Window.get().resizeTo(777,555);
+    }
+    
+    var res;
+    nw.Window.get().on('resize', (width, height) => {
+      if (res){clearTimeout(res)};
+      res = setTimeout(function(){
+      out('resize', 'width:' + width + ', height: ' + height);
+      },100);
+    });
+  </script>
+</body>
+</html>
