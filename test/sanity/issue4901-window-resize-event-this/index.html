@@ -1,0 +1,8 @@
+<script>
+  var win = nw.Window.get();
+  win.on('resize', function() {
+    console.log('win === this ? ' + (win === this));
+  });
+  win.resizeTo(100, 100);
+  win.showDevTools();
+</script>
