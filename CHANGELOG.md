@@ -1,3 +1,13 @@
+0.30.5 / 05-18-2018
+===================
+- Update Chromium to [66.0.3359.181](https://chromereleases.googleblog.com/2018/05/stable-channel-update-for-desktop_15.html)
+- Support PaymentRequest API in chrome-extension [(#6595)](https://github.com/nwjs/nw.js/issues/6595)
+- Fix: crash when using service worker [(#6624)](https://github.com/nwjs/nw.js/issues/6624)
+- Fix: NW app not launching if RoamingProfileSupportEnabled registry key is set [(#6621)](https://github.com/nwjs/nw.js/issues/6621)
+- Fix: [Linux] Window should be resizable after setting resizable to true [(#6609)](https://github.com/nwjs/nw.js/issues/6609)
+- Fix: [Win] Upload button instead of select on folder picker nwdirectory [(#6610)](https://github.com/nwjs/nw.js/issues/6610)
+- Fix: Dev Tools crash when clearing Memory Profiles with `--enable-node-workers` [(#6615)](https://github.com/nwjs/nw.js/issues/6615)
+
 0.30.4 / 05-14-2018
 ===================
 - Update Chromium to [66.0.3359.170](https://chromereleases.googleblog.com/2018/05/stable-channel-update-for-desktop.html)
