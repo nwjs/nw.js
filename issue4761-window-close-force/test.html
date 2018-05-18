@@ -1,0 +1,10 @@
+<script>
+  var win = nw.Window.get();
+  win.on('close', function() {
+    console.log("We're closing...");
+    this.close(true); // then close it forcely
+  });
+  setTimeout(function(){
+    win.close();
+  }, 500);
+</script>

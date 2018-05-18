@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      nw.Window.open('test.html', {}, function(win) {
+        win.on('close', function() {
+          document.getElementById('result').innerHTML = 'success';
+        });
+      });
+    </script>
+  </head>
+  <body>
+     <div id="result">close event</div>
+  </body>
+</html>
