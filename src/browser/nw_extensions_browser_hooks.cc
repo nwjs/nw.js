@@ -2,6 +2,7 @@
 
 // base
 #include "base/command_line.h"
+#include "base/feature_list.h"
 #include "base/json/json_reader.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/utf_string_conversions.h"
@@ -15,6 +16,7 @@
 // content
 #include "content/public/browser/child_process_security_policy.h"
 #include "content/public/browser/render_process_host.h"
+#include "content/public/common/content_features.h"
 
 // content/nw/
 #include "content/nw/src/api/menu/menu.h"
@@ -245,7 +247,9 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
     if (base::EndsWith(main_url, ".js", base::CompareCase::INSENSITIVE_ASCII)) {
       AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, main_url);
       manifest->SetString(manifest_keys::kNWJSInternalMainFilename, main_url);
-    }else
+    }else if (base::FeatureList::IsEnabled(::features::kNWNewWin))
+      AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, "nwjs/newwin.js");
+    else
       AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, "nwjs/default.js");
 
     std::string bg_script;
