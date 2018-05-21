@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>4679</title>
+  </head>
+  <body>
+    <h1 id="result"></h1>
+  </body>
+  <script>
+    window.addEventListener('load', function(){
+
+        process.on('uncaughtException', function(error) {
+            // NEVER HAPPENS in 0.13
+            // process.stdout.write("CAUGHT\n"); 
+            // process.exit(1);
+            document.getElementById('result').innerHTML='CAUGHT';
+        });
+
+        global.setImmediate(function(){
+            throw("from node");
+        });
+    });
+  </script>
+</html>
