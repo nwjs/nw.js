@@ -22,6 +22,7 @@ class NWCustomBindings : public ObjectBackedNativeHandler {
   void EvalScript(const v8::FunctionCallbackInfo<v8::Value>& args);
   void EvalNWBin(const v8::FunctionCallbackInfo<v8::Value>& args);
   void GetAbsolutePath(const v8::FunctionCallbackInfo<v8::Value>& args);
+  void GetOldCwd(const v8::FunctionCallbackInfo<v8::Value>& args);
   void AddOriginAccessWhitelistEntry(const v8::FunctionCallbackInfo<v8::Value>& args);
   void RemoveOriginAccessWhitelistEntry(const v8::FunctionCallbackInfo<v8::Value>& args);
   void GetProxyForURL(const v8::FunctionCallbackInfo<v8::Value>& args);

@@ -94,6 +94,14 @@ using namespace blink;
 #include "V8HTMLIFrameElement.h"
 #include "extensions/renderer/script_context_set.h"
 
+namespace content {
+#if defined(COMPONENT_BUILD) && defined(WIN32)
+CONTENT_EXPORT base::FilePath g_nw_temp_dir, g_nw_old_cwd;
+#else
+extern base::FilePath g_nw_temp_dir, g_nw_old_cwd;
+#endif
+}
+
 using blink::WebFrame;
 
 namespace extensions {
@@ -132,6 +140,9 @@ bool MakePathAbsolute(base::FilePath* file_path) {
 void NWCustomBindings::AddRoutes() {
   RouteHandlerFunction("crashRenderer",
                 base::Bind(&NWCustomBindings::CrashRenderer,
+                           base::Unretained(this)));
+  RouteHandlerFunction("getOldCwd",
+                base::Bind(&NWCustomBindings::GetOldCwd,
                            base::Unretained(this)));
   RouteHandlerFunction("evalScript",
                 base::Bind(&NWCustomBindings::EvalScript,
@@ -310,6 +321,17 @@ void NWCustomBindings::GetAbsolutePath(
   v8::Isolate* isolate = args.GetIsolate();
   base::FilePath path = base::FilePath::FromUTF8Unsafe(*v8::String::Utf8Value(isolate, args[0]));
   MakePathAbsolute(&path);
+#if defined(OS_POSIX)
+  args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, path.value().c_str()));
+#else
+  args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, path.AsUTF8Unsafe().c_str()));
+#endif
+}
+
+void NWCustomBindings::GetOldCwd(
+    const v8::FunctionCallbackInfo<v8::Value>& args) {
+  v8::Isolate* isolate = args.GetIsolate();
+  base::FilePath path = content::g_nw_old_cwd;
 #if defined(OS_POSIX)
   args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, path.value().c_str()));
 #else

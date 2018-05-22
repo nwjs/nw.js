@@ -108,10 +108,16 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
   apiFunctions.setHandleRequest('getDataPath', function() {
     return sendRequest.sendRequestSync('nw.App.getDataPath', [], this.definition.parameters, {})[0];
   });
+  apiFunctions.setHandleRequest('getStartPath', function() {
+    return nwNatives.getOldCwd();
+  });
   bindingsAPI.compiledApi.__defineGetter__('dataPath', function() {
     if (!dataPath)
       dataPath = nw.App.getDataPath();
     return dataPath;
+  });
+  bindingsAPI.compiledApi.__defineGetter__('startPath', function() {
+    return nw.App.getStartPath();
   });
   bindingsAPI.compiledApi.registerGlobalHotKey = function() {
     return nw.Shortcut.registerGlobalHotKey.apply(nw.Shortcut, arguments);
