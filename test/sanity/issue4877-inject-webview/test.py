@@ -32,13 +32,13 @@ time.sleep(1)
 try:
     wait_window_handles(driver, 2)
     print driver.current_url
-    result = driver.find_element_by_id('inject_start').get_attribute('innerHTML')
+    result = wait_for_element_id(driver, 'inject_start')
     print 'inject_js_start: %s' % result
     assert('success' in result)
     elems = driver.find_elements_by_tag_name('h1')
     assert(len(elems) == 1)
     driver.switch_to_window(driver.window_handles[1])
-    result = driver.find_element_by_id('inject_start').get_attribute('innerHTML')
+    result = wait_for_element_id(driver, 'inject_start')
     print 'inject_js_start in iframe: %s' % result
     assert('success' in result)
     elems = driver.find_elements_by_tag_name('h1')
