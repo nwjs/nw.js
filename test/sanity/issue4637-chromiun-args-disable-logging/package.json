@@ -1,0 +1,5 @@
+{
+  "name": "issue4637",
+  "main": "index.html",
+  "chromium-args": "--disable-logging"
+}
