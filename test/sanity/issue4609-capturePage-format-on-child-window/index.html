@@ -1,0 +1,46 @@
+<html>
+  <body style="background: #333">
+    <div>
+      <h1 id="result"></h1>
+      <label>PNG</label>
+      <img id="png" src=""></img>
+    </div>
+    <script>
+      var win = nw.Window.get();
+      function takeSnapshot(){
+        var png_flag = false;
+        var png_data = null;
+        var mimeString = null;
+        nw.Window.open('popup.html', function(win) {
+          win.on('loaded',function(){
+            win.capturePage(function(img) {
+              png_flag = true;
+              png_data = img;
+              mimeString = img.split(',')[0].split(':')[1].split(';')[0];
+            }, {
+              format: 'png',
+              datatype: 'datauri'
+            });
+          });
+        });
+        setTimeout(function(){
+          if (png_flag){
+            document.getElementById('png').src=png_data;
+            document.getElementById('result').innerHTML=mimeString;
+          }
+        },1000);
+      }
+      
+      nw.process.on('exit',function(){
+        var fs = nw.require('fs');
+        if ( fs.existsSync(file_name) ){
+          fs.unlinkSync(file_name);
+        }
+      });
+      window.onload = function(){
+        //nw need some time to render page
+        setTimeout(takeSnapshot,1000);
+      };
+    </script>
+  </body>
+</html>
