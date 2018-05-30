@@ -25,6 +25,10 @@ Get a list of patterns of filtered command line arguments used by `App.argv`. By
 ]
 ```
 
+## App.startPath
+
+Get the directory where the application starts. The application will change the current directory to where the package files reside after start.
+
 ## App.dataPath
 
 Get the application's data path in user's directory.
