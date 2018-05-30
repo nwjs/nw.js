@@ -1,3 +1,8 @@
+0.31.0 / 05-30-2018
+===================
+- Update Chromium to [67.0.3396.62](https://chromereleases.googleblog.com/2018/05/stable-channel-update-for-desktop_58.html)
+- Add nw.App.startPath to query the directory where the app starts. [(#648)](https://github.com/nwjs/nw.js/issues/648)
+
 0.30.5 / 05-18-2018
 ===================
 - Update Chromium to [66.0.3359.181](https://chromereleases.googleblog.com/2018/05/stable-channel-update-for-desktop_15.html)
