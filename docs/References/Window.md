@@ -483,31 +483,30 @@ See example code of [`win.close(true)` above](#wincloseforce) for the usage of `
 
 ## Event: closed
 
-The `closed` event is emitted after corresponding window is closed. Normally you'll not be able to get this event since after the window is closed all js objects will be released. But it's useful if you're listening this window's events in another window, whose objects will not be released.
+The `closed` event is emitted after the corresponding window is closed. Normally you will not be able to get this event since after the window is closed all js objects will be released. But it is useful when listening to the window's events in another window, whose objects will not be released.
 
 ```javascript
 // Open a new window.
-nw.Window.open('popup.html', {}, function(win) {
-// Release the 'win' object here after the new window is closed.
-win.on('closed', function() {
-  win = null;
+nw.Window.open('popup.html', {}, function (win) {
+  // Release the 'win' object here after the new window is closed.
+  win.on('closed', function () {
+    win = null;
+  });
+
+  // Listen to main window's close event
+  nw.Window.get().on('close', function () {
+    // Hide the window to give user the feeling of closing immediately
+    this.hide();
+
+    // If the new window is still open then close it.
+    if (win != null) {
+      win.close(true);
+    }
+
+    // After closing the new window, close the main window.
+    this.close(true);
+  });
 });
-
-// Listen to main window's close event
-nw.Window.get().on('close', function() {
-  // Hide the window to give user the feeling of closing immediately
-  this.hide();
-
-  // If the new window is still open then close it.
-  if (win != null)
-    win.close(true);
-
-  // After closing the new window, close the main window.
-  this.close(true);
-});
-
-});
-
 ```
 
 ## Event: loading
