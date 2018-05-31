@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>webview test</title>
+  <style>
+    webview {
+      width:1000px,
+      height:600px,
+      position: absolute,
+      top:100px,
+      left:20px
+    }
+  </style>
+</head>
+<body>
+  <webview id="webview" name="webview0" src="https://nwjs.io"></webview>
+  <script>
+    var webview = document.getElementById('webview');
+    var webview_loadstart = function() {
+      console.log(' WEBVIEW load START...');
+    }
+    var webview_loadstop = function() {
+      console.log(' WEBVIEW load STOP.');
+    }
+    webview.addEventListener('contentload', function() {
+      console.log(' WEBVIEW content load...');
+    });
+    webview.addEventListener("loadstart", webview_loadstart);
+    webview.addEventListener("loadstop", webview_loadstop);
+
+    nw.Window.get().showDevTools();
+  </script>
+</body>
+</html>

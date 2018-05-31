@@ -1,0 +1,15 @@
+{
+  "name": "4590",
+  "main": "index.html",
+  "node-remote": "<all_urls>",
+  "window": {
+    "title": "Webview test",
+    "width": 1024,
+    "height": 768,
+    "frame": true,
+    "show": true,
+    "kiosk": false,
+    "fullscreen": false,
+    "resizable": false 
+  }
+}
