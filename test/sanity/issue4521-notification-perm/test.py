@@ -28,7 +28,8 @@ testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
 
 port = str(utils.free_port())
-server = subprocess.Popen(['python', 'http-server.py', port])
+server_path = os.path.join(testdir, '../', 'http-server.py')
+server = subprocess.Popen(['python', server_path, port])
 
 tpl = open('index.tpl', 'r')
 content = tpl.read().replace('{port}', port)
