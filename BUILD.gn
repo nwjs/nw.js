@@ -23,6 +23,7 @@ group("nwjs") {
 component("nw_base") {
   deps = [
     "//base",
+    "//media:media_buildflags",
     "//third_party/zlib/google:zip",
     "//url",
     ":commit_id"

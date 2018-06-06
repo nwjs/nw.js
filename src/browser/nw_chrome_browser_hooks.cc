@@ -184,7 +184,7 @@ const char* GetChromiumVersion() {
 }
 
 bool GetDirUserData(base::FilePath *user_data_dir) {
-  return PathService::Get(chrome::DIR_USER_DATA, user_data_dir);
+  return base::PathService::Get(chrome::DIR_USER_DATA, user_data_dir);
 }
 
 void SetTrustAnchorsOnIOThread(const scoped_refptr<net::URLRequestContextGetter>& url_request_getter,
@@ -357,7 +357,7 @@ int MainPartsPreCreateThreadsHook() {
     }
 
   }
-  return content::RESULT_CODE_NORMAL_EXIT;
+  return service_manager::RESULT_CODE_NORMAL_EXIT;
 }
 
 void MainPartsPreMainMessageLoopRunHook() {

@@ -23,6 +23,7 @@
 #include "base/run_loop.h"
 #include "base/values.h"
 #include "base/strings/utf_string_conversions.h"
+#include "base/message_loop/message_loop_current.h"
 #include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
 #include "content/public/browser/render_frame_host.h"
@@ -148,8 +149,8 @@ void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
     base::AutoReset<base::Closure> reset_quit_closure(&message_loop_quit_,
                                                       base::Closure());
   
-    base::MessageLoop* loop = base::MessageLoop::current();
-    base::MessageLoop::ScopedNestableTaskAllower allow(loop);
+    //base::MessageLoop* loop = base::MessageLoop::current();
+    base::MessageLoopCurrent::ScopedNestableTaskAllower allow;
     base::RunLoop run_loop;
     message_loop_quit_ = run_loop.QuitClosure();
   

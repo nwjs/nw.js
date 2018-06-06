@@ -142,8 +142,8 @@ bool NwAppClearCacheFunction::RunNWSync(base::ListValue* response, std::string* 
                           content::BrowsingDataRemover::ORIGIN_TYPE_UNPROTECTED_WEB,
                           this);
   // BrowsingDataRemover deletes itself.
-  base::MessageLoop::ScopedNestableTaskAllower allow(
-        base::MessageLoop::current());
+  base::MessageLoop::ScopedNestableTaskAllower allow;
+
   run_loop_.Run();
   remover->RemoveObserver(this);
   return true;

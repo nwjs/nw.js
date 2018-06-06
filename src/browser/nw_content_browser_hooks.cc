@@ -18,6 +18,7 @@
 #include "content/public/browser/render_view_host.h"
 #include "content/public/renderer/v8_value_converter.h"
 #include "content/public/common/web_preferences.h"
+#include "content/public/browser/child_process_termination_info.h"
 
 // content/nw
 #include "content/nw/src/nw_base.h"
@@ -101,9 +102,9 @@ void MainPartsPostDestroyThreadsHook() {
 
 void RendererProcessTerminatedHook(content::RenderProcessHost* process,
                                    const content::NotificationDetails& details) {
-  content::RenderProcessHost::RendererClosedDetails* process_details =
-    content::Details<content::RenderProcessHost::RendererClosedDetails>(details).ptr();
-  int exit_code = process_details->exit_code;
+  content::ChildProcessTerminationInfo* process_info =
+    content::Details<content::ChildProcessTerminationInfo>(details).ptr();
+  int exit_code = process_info->exit_code;
 #if defined(OS_POSIX)
   if (WIFEXITED(exit_code))
     exit_code = WEXITSTATUS(exit_code);
