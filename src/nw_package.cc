@@ -133,7 +133,7 @@ FilePath GetSelfPath() {
 
   FilePath path;
 
-  if (!PathService::Get(base::FILE_EXE, &path)) {
+  if (!base::PathService::Get(base::FILE_EXE, &path)) {
     path = FilePath(command_line->GetProgram());
   }
 

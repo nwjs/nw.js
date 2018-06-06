@@ -1,17 +1,17 @@
 diff --git a/BUILD.gn b/BUILD.gn
-index 5439b39693..7fbb854abd 100755
+index 494d33fc04..c58e84ba90 100755
 --- BUILD.gn
 +++ BUILD.gn
-@@ -247,7 +247,7 @@ target(link_target_type, "ffmpeg_internal") {
-     # On POSIX x86, sanitizers will fail to compiler the H264 CABAC code due to
-     # insufficient registers unless we disable EBP usage. crbug.com/786760
-     if (target_cpu == "x86") {
--      if (using_sanitizer) {
-+      if (true) {
-         defines += [ "HAVE_EBP_AVAILABLE=0" ]
-       } else {
-         defines += [ "HAVE_EBP_AVAILABLE=1" ]
-@@ -393,6 +393,12 @@ if (is_component_ffmpeg) {
+@@ -239,7 +239,7 @@ target(link_target_type, "ffmpeg_internal") {
+   # Windows builds can't compile without EBP because we can't omit frame
+   # pointers like we do on posix.
+   if (target_cpu == "x86") {
+-    if (using_sanitizer || is_win) {
++    if (true) {
+       defines += [ "HAVE_EBP_AVAILABLE=0" ]
+     } else {
+       defines += [ "HAVE_EBP_AVAILABLE=1" ]
+@@ -390,6 +390,12 @@ if (is_component_ffmpeg) {
      # So we can append below and assume they're defined.
      ldflags = []
  

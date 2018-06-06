@@ -1,5 +1,6 @@
 #include "content/nw/src/browser/menubar_controller.h"
 
+#include "base/message_loop/message_loop_current.h"
 #include "base/run_loop.h"
 #include "base/stl_util.h"
 #include "content/nw/src/browser/menubar_view.h"
@@ -111,8 +112,7 @@ void MenuBarController::RunMenuAt(views::View* view, const gfx::Point& point) {
     base::AutoReset<base::Closure> reset_quit_closure(&message_loop_quit_,
                                                       base::Closure());
   
-    base::MessageLoop* loop = base::MessageLoop::current();
-    base::MessageLoop::ScopedNestableTaskAllower allow(loop);
+    base::MessageLoopCurrent::ScopedNestableTaskAllower allow;
     base::RunLoop run_loop;
     message_loop_quit_ = run_loop.QuitClosure();
   
