@@ -1,3 +1,10 @@
+0.31.1 / 06-08-2018
+===================
+- Update Chromium to [67.0.3396.79](https://chromereleases.googleblog.com/2018/06/stable-channel-update-for-desktop.html)
+- Update Node.js to [v10.4.0](https://nodejs.org/en/blog/release/v10.4.0/)
+- Fix: Pinning app in taskbar is creating an incorrect shortcut target [(#5991)](https://github.com/nwjs/nw.js/issues/5991)
+- Fix: win.getPrinters not receive an array of JSON objects [(#6663)](https://github.com/nwjs/nw.js/issues/6663)
+
 0.31.0 / 05-30-2018
 ===================
 - Update Chromium to [67.0.3396.62](https://chromereleases.googleblog.com/2018/05/stable-channel-update-for-desktop_58.html)
