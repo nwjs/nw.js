@@ -94,14 +94,10 @@ else:
 
 if platform_name == 'win':
     libfile = os.path.join(binaries_location, 'nw.lib')
-    expfile = os.path.join(binaries_location, 'nw.exp')
     libfile2 = os.path.join(binaries_location, 'node.lib')
-    expfile2 = os.path.join(binaries_location, 'node.exp')
 
     shutil.copy(os.path.join(binaries_location, 'nw.dll.lib'), libfile)
-    shutil.copy(os.path.join(binaries_location, 'nw.dll.exp'), expfile)
     shutil.copy(os.path.join(binaries_location, 'node.dll.lib'), libfile2)
-    shutil.copy(os.path.join(binaries_location, 'node.dll.exp'), expfile2)
 
 if platform_name == 'win':
     arch = 'ia32'
@@ -333,7 +329,7 @@ def generate_target_others(platform_name, arch, version):
     target['output'] = ''
     target['compress'] = None
     if platform_name == 'win':
-        target['input'] = ['nw.exp', 'nw.lib', 'node.exp', 'node.lib']
+        target['input'] = ['nw.lib', 'node.lib']
     elif platform_name == 'linux' :
         target['input'] = []
     else:
