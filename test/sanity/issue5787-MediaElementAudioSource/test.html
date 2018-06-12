@@ -1,0 +1,74 @@
+<!doctype html>
+
+<meta name="robots" content="noindex">
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>5787</title>
+ 
+</head>
+  <body>
+    <h1>2D panning</h1>
+    <h2>z + x = 1</h2>
+    <form name="f" id="f">
+      <label for="pan" hidden="hidden">Pan</label>
+      <input type="range" name="pan" id="pan" value="0" min="-1" max="1" step="any" />
+      <label for="x">x</label>
+      <output id="x">0</output>
+      <label for="y">y</label>
+      <output id="y">0</output>
+      <label for="z">z</label>
+      <output id="z">1</output>
+    </form>
+    <div id="msg"></div>
+  <script id="jsbin-javascript">
+    var test = new Audio;
+    test.src = "broken.ogg";
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    var audio = new Audio(),
+    context = new AudioContext(),
+    url = "ACDC_-_Back_In_Black-sample.ogg",
+    panner = context.createPanner(),
+    onError = function(e) {
+      console.log('There was an error!! ',e);
+      document.getElementById('msg').innerHTML = 'There was an error!! ' + e
+    },
+    source;
+    url = "broken.ogg";
+    //audio.crossOrigin = "anonymous";
+
+    //  set up audio graph
+    audio.src = url;
+
+    source = context.createMediaElementSource(audio);
+    context.listener.setPosition(0, 0, 0);
+    panner.setPosition(0, 0, 1);
+    panner.panningModel = 'equalpower';
+    source.connect( panner );
+    panner.connect( context.destination );
+
+    source.mediaElement.play();
+
+    //  2D Panning
+    function changePan(ev) {
+      var x = document.getElementById('pan').valueAsNumber,
+          y = 0,
+          z = 1 - Math.abs(x),
+          parent = this.parentNode;
+      console.log(x,y,z);
+      document.getElementById('msg').innerHTML = "X: " + x + '\t Y: ' + y + "\t Z: " + z;
+      panner.setPosition(x,y,z);
+      //  update labels
+      document.getElementById('x').value = x;
+      document.getElementById('y').value = y;
+      document.getElementById('z').value = z;
+    }
+
+    //  attach form events to audioContext
+    document.addEventListener("DOMContentLoaded", function(event) {
+      document.getElementById('pan').addEventListener('change',changePan);
+    });
+    nw.Window.get().showDevTools();
+</script>
+</body>
+</html>
