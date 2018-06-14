@@ -1,3 +1,10 @@
+0.31.2 / 06-14-2018
+===================
+- Update Chromium to [67.0.3396.87](https://chromereleases.googleblog.com/2018/06/stable-channel-update-for-desktop_12.html)
+- Update Node.js to [v10.4.1](https://nodejs.org/en/blog/release/v10.4.1/)
+- Fix: Window.open undefined reference with https [(#6676)](https://github.com/nwjs/nw.js/issues/6676)
+- Fix: Geolocation not working in webview. [(#6644)](https://github.com/nwjs/nw.js/issues/6644)
+
 0.31.1 / 06-08-2018
 ===================
 - Update Chromium to [67.0.3396.79](https://chromereleases.googleblog.com/2018/06/stable-channel-update-for-desktop.html)
