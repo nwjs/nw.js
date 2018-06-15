@@ -1,0 +1,12 @@
+{
+  "app_name": "4638",
+  "window": {
+    "title": "",
+    "frame": false,
+    "height": 500,
+    "width": 300,
+    "transparent": true
+  },
+  "main": "index.html",
+  "name": "4638"
+}
