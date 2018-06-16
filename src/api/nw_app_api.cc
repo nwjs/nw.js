@@ -60,19 +60,25 @@ NwAppQuitFunction::Run() {
   return RespondNow(NoArguments());
 }
 
-ExtensionFunction::ResponseAction
-NwAppCloseAllWindowsFunction::Run() {
-  AppWindowRegistry* registry = AppWindowRegistry::Get(browser_context());
-  if (!registry)
-    return RespondNow(Error(""));
-
+void NwAppCloseAllWindowsFunction::DoJob(AppWindowRegistry* registry, std::string id) {
   AppWindowRegistry::AppWindowList windows =
-    registry->GetAppWindowsForApp(extension()->id());
+    registry->GetAppWindowsForApp(id);
 
   for (AppWindow* window : windows) {
     if (window->NWCanClose())
       window->GetBaseWindow()->Close();
   }
+}
+
+ExtensionFunction::ResponseAction
+NwAppCloseAllWindowsFunction::Run() {
+  AppWindowRegistry* registry = AppWindowRegistry::Get(browser_context());
+  if (!registry)
+    return RespondNow(Error(""));
+  base::MessageLoop::current()->task_runner()->PostTask(
+        FROM_HERE,
+        base::Bind(&NwAppCloseAllWindowsFunction::DoJob, registry, extension()->id()));
+
   return RespondNow(NoArguments());
 }
 

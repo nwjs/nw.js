@@ -8,6 +8,7 @@
 #include "extensions/browser/extension_function.h"
 
 namespace extensions {
+class AppWindowRegistry;
 
 class NwAppQuitFunction : public UIThreadExtensionFunction {
  public:
@@ -27,6 +28,7 @@ class NwAppCloseAllWindowsFunction : public UIThreadExtensionFunction {
  public:
   NwAppCloseAllWindowsFunction() {}
 
+  static void DoJob(AppWindowRegistry* registry, std::string id);
  protected:
   ~NwAppCloseAllWindowsFunction() override {}
 
