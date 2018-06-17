@@ -84,7 +84,7 @@ void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
 
   {
     // Make sure events can be pumped while the menu is up.
-    base::MessageLoop::ScopedNestableTaskAllower allow(base::MessageLoop::current());
+    base::MessageLoop::ScopedNestableTaskAllower allow;
 
     // One of the events that could be pumped is |window.close()|.
     // User-initiated event-tracking loops protect against this by
