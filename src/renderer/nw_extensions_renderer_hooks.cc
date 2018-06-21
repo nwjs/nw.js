@@ -515,9 +515,6 @@ void willHandleNavigationPolicy(content::RenderView* rv,
       local_frame->MainWorldScriptContext();
   ScriptContext* script_context =
       g_dispatcher->script_context_set().GetByV8Context(v8_context);
-  //check extension for remote pages, which doesn't have appWindow object
-  if (!script_context || !script_context->extension())
-    return;
   v8::Context::Scope cscope (v8_context);
   v8::Handle<v8::Value> element = v8::Null(isolate);
   v8::Handle<v8::Object> policy_obj = v8::Object::New(isolate);
