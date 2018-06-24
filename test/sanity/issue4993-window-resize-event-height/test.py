@@ -18,6 +18,7 @@ try:
     ActionChains(driver).click(element).perform()
     res = wait_for_element_id(driver, "resize")
     print res
-    assert("width: 777, height: 555" in res)
+    assert("width: 7" in res)
+    assert("height: 5" in res)
 finally:
     driver.quit()

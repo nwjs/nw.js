@@ -22,7 +22,7 @@
     nw.Window.get().on('resize', (width, height) => {
       if (res){clearTimeout(res)};
       res = setTimeout(function(){
-      out('resize', 'width:' + width + ', height: ' + height);
+      out('resize', 'width: ' + width + ', height: ' + height);
       },100);
     });
   </script>
