@@ -1,3 +1,12 @@
+0.31.3 / 06-25-2018
+===================
+- Update Node.js to [v10.5.0](https://nodejs.org/en/blog/release/v10.5.0/)
+- Fix: `chrome://gpu` doesn't load
+- Fix: win.print() "copies" option no longer works. [(#6440)](https://github.com/nwjs/nw.js/issues/6440)
+- Fix: crash in nwjc when there is compilation error [(#6682)](https://github.com/nwjs/nw.js/issues/6682)
+- Fix: Support new-win-policy with external sites [(#6655)](https://github.com/nwjs/nw.js/issues/6655)
+- Fix: nw.App.closeAllWindows() crashes on Mac OSX [(#6677)](https://github.com/nwjs/nw.js/issues/6677)
+
 0.31.2 / 06-14-2018
 ===================
 - Update Chromium to [67.0.3396.87](https://chromereleases.googleblog.com/2018/06/stable-channel-update-for-desktop_12.html)
