@@ -1,0 +1,11 @@
+<html>
+  <body>
+    <script>
+        /* As described on https://github.com/nwjs/nw.js/wiki/Handling-files-and-arguments */
+        var fs = require("fs");
+        fs.writeFile('issue5362.txt', "Test page", function (err) {
+          if (err) throw err;
+        });
+    </script>
+  </body>
+</html>
