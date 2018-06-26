@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>5168</title>
+  </head>
+  <body>
+    <button id="btn" onclick="test()">Test</button>
+    <script>
+      function test() {
+        var bins = ['foo.bin', 'bar.bin'];
+        for(var i = 0; i < bins.length; i++) {
+          console.log(`evalNWBin(null, '${process.cwd() + '/' + bins[i]}')`)
+          nw.Window.get().evalNWBin(null, process.cwd() + '/'+ bins[i]);
+        }
+      }
+      test();
+      window.onclick = function(){
+        nw.Window.get().showDevTools();
+      }
+    </script>
+  </body>
+</html>

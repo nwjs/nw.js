@@ -1,0 +1,5 @@
+{
+  "name": "5168",
+  "main": "index.html",
+  "chromium-args": "--enable-logging=stderr"
+}
