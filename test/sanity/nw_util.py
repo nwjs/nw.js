@@ -246,6 +246,23 @@ def devtools_type_in_console(driver, keys):
     console_prompt = driver.find_element_by_id('console-prompt')
     ActionChains(driver).click(console_prompt).send_keys(keys).perform()
 
+def devtools_console_output(driver, expected_content=None):
+    print "switch to devtools"
+    switch_to_devtools(driver)
+    print "click Console panel"
+    devtools_click_tab(driver, "console")
+    print "check output in console panel"
+    elems = driver.find_elements_by_class_name("console-message-text")
+    ret = ""
+    if len(elems) > 1:
+        for i in range(len(elems)):
+            if expected_content in elems[i].get_attribute("innerHTML"):
+                ret = elems[i].get_attribute("innerHTML")
+                break
+    else:
+        ret = elems[0].get_attribute("innerHTML")
+    return ret
+
 def no_live_process(driver, print_if_fail=True):
     if platform.system() == 'Windows':
         pgrep = subprocess.Popen(['wmic', 'process', 'where', '(ParentProcessId=%s)' % driver.service.process.pid, 'get', 'ProcessId'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)

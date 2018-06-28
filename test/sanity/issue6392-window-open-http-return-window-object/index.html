@@ -1,0 +1,10 @@
+<script>
+  nw.Window.open("http://google.com", {
+    "inject_js_start": "start.js",
+    "inject_js_end": "end.js",
+    "show": false
+  }, (win) => {   
+    console.log(win);  
+  });
+  nw.Window.get().showDevTools();
+</script>
