@@ -1,3 +1,7 @@
+0.31.4 / 06-28-2018
+===================
+- Update Chromium to [67.0.3396.99](https://chromereleases.googleblog.com/2018/06/stable-channel-update-for-desktop_25.html)
+
 0.31.3 / 06-25-2018
 ===================
 - Update Node.js to [v10.5.0](https://nodejs.org/en/blog/release/v10.5.0/)
