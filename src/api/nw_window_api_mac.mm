@@ -9,6 +9,7 @@
 #import <Appkit/NSImageView.h>
 #import <Appkit/NSProgressIndicator.h>
 #import <Appkit/NSWindow.h>
+#import <objc/runtime.h>
 
 @interface NWProgressBar : NSProgressIndicator
 @end
@@ -84,17 +85,22 @@ NwCurrentWindowInternalSetProgressBarFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args_);
   double progress;
   EXTENSION_FUNCTION_VALIDATE(args_->GetDouble(0, &progress));
-  NSDockTile *dockTile = [NSApp dockTile];
-  NWProgressBar *progressIndicator = NULL;
 
-  if ((dockTile.contentView == NULL || [dockTile.contentView.subviews count] == 0 )&& progress >= 0) {
-    
-    // create image view to draw application icon
-    NSImageView *iv = [[NSImageView alloc] init];
-    [iv setImage:[NSApp applicationIconImage]];
-    
-    // set dockTile content view to app icon
-    [dockTile setContentView:iv];
+  NSDockTile *dockTile = [NSApp dockTile];
+  static const char kProgressIndicator = '\0';
+  NWProgressBar *progressIndicator = objc_getAssociatedObject(dockTile, &kProgressIndicator);
+  static const char kImageView = '\0';
+  
+  if (progressIndicator == NULL && progress >= 0) {
+    // contentView might not be NULL, i.e when download progress is running
+    if (dockTile.contentView == NULL) {
+      // create image view to draw application icon
+      NSImageView* iv = [[NSImageView alloc] init];
+      [iv setImage:[NSApp applicationIconImage]];
+      // set dockTile content view to app icon
+      [dockTile setContentView:iv];
+      objc_setAssociatedObject(dockTile, &kImageView, iv, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
     
     progressIndicator = [[NWProgressBar alloc]
                          initWithFrame:NSMakeRect(0.0f, 0.0f, dockTile.size.width, 15.)];
@@ -108,11 +114,10 @@ NwCurrentWindowInternalSetProgressBarFunction::Run() {
     [progressIndicator setUsesThreadedAnimation:false];
     
     // add progress indicator to image view
-    [iv addSubview:progressIndicator];
+    [dockTile.contentView addSubview:progressIndicator];
+    objc_setAssociatedObject(dockTile, &kProgressIndicator, progressIndicator, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
   }
-  
-  progressIndicator = (NWProgressBar*)[dockTile.contentView.subviews objectAtIndex:0];
-  
+
   if(progress >= 0) {
     [progressIndicator setIndeterminate:progress > 1];
     if(progress > 1) {
@@ -125,11 +130,21 @@ NwCurrentWindowInternalSetProgressBarFunction::Run() {
       [progressIndicator setDoubleValue:progress];
     }
   }
-  else {
+  else if (progressIndicator) {
     // progress indicator < 0, destroy it
-    [[dockTile.contentView.subviews objectAtIndex:0]release];
-    [dockTile.contentView release];
-    dockTile.contentView = NULL;
+    objc_setAssociatedObject(dockTile, &kProgressIndicator, NULL, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [progressIndicator removeFromSuperview];
+    [progressIndicator release];
+    progressIndicator = NULL;
+
+    // if we the one created the ImageView, we are the one who clean it
+    NSImageView* iv = objc_getAssociatedObject(dockTile,&kImageView);
+    if (iv) {
+      objc_setAssociatedObject(dockTile, &kImageView, NULL, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+      dockTile.contentView = NULL;
+      [iv release];
+      iv = NULL;
+    }
   }
   
   [dockTile display];
