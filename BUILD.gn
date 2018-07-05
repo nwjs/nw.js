@@ -37,6 +37,9 @@ component("nw_base") {
         "src/common/shell_switches.cc",
         "src/common/shell_switches.h",
   ]
+  include_dirs = [
+     "$root_out_dir/../../third_party/node-nw/deps/uv/include"
+  ]
 }
 
 nw_content_browser_sources = [
