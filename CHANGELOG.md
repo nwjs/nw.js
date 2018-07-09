@@ -1,3 +1,8 @@
+0.31.5 / 07-09-2018
+===================
+- Update Node.js to [v10.6.0](https://nodejs.org/en/blog/release/v10.6.0/)
+- Fix: setProgressBar crash on MacOS Mojave [(#6720)](https://github.com/nwjs/nw.js/issues/6720)
+
 0.31.4 / 06-28-2018
 ===================
 - Update Chromium to [67.0.3396.99](https://chromereleases.googleblog.com/2018/06/stable-channel-update-for-desktop_25.html)
