@@ -100,7 +100,7 @@ try:
     test_perm(driver, 'show-perm-frame-inside', 'perm-frame-inside')
 
     # perm for remote frame
-    test_perm(driver, 'show-perm-frame-remote', 'perm-frame-remote', expected='default')
+    test_perm(driver, 'show-perm-frame-remote', 'perm-frame-remote', expected='denied')
 
     # clear results
     test_perm(driver, 'clear-results', 'output', expected='cleared')
