@@ -26,8 +26,18 @@ try:
     devtools_click_tab(driver, 'console')
     print 'send_keys "location.pathname<enter>"'
     devtools_type_in_console(driver, 'location.pathname\n')
-    pathname = driver.find_element_by_css_selector('.console-user-command-result .console-message-text .object-value-string').get_attribute('textContent')
-    print pathname
-    assert ('/child.html' in pathname)
+    timeout = 10
+    while timeout > 0 :
+        try:
+            pathname = driver.find_element_by_css_selector('.console-user-command-result .console-message-text .object-value-string').get_attribute('textContent')
+            print pathname
+            assert ('/child.html' in pathname)
+            break
+        except selenium.common.exceptions.NoSuchElementException:
+            pass
+        time.sleep(1)
+        timeout = timeout - 1
+        if timeout <= 0:
+            raise Exception('Timeout when waiting for result')
 finally:
     driver.quit()
