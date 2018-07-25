@@ -1,3 +1,9 @@
+0.32.0 / 07-25-2018
+===================
+- Update Chromium to [68.0.3440.75](https://chromereleases.googleblog.com/2018/07/stable-channel-update-for-desktop.html)
+- Fix: OSX - 0.32.0b1 App crashes when textbox selected [(#6701)](https://github.com/nwjs/nw.js/issues/6701)
+- Fix: Tray menu cannot be navigated with keyboard under Windows [(#6580)](https://github.com/nwjs/nw.js/issues/6580)
+
 0.31.5 / 07-09-2018
 ===================
 - Update Node.js to [v10.6.0](https://nodejs.org/en/blog/release/v10.6.0/)
