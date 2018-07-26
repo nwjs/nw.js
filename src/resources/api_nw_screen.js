@@ -5,7 +5,7 @@ var EventEmitter = nw.require('events').EventEmitter;
 // Hook Sync API calls
 nw_binding.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
-  ['getScreens', 'initEventListeners', 'startMonitor', 'stopMonitor', 'isMonitorStarted', 'registerStream'].forEach(function(nwSyncAPIName) {
+  ['getScreens', 'initEventListeners', 'startMonitor', 'stopMonitor', 'isMonitorStarted', 'registerStream', 'getSourceRect', 'focusOnSource'].forEach(function(nwSyncAPIName) {
     apiFunctions.setHandleRequest(nwSyncAPIName, function() {
       return sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {});
     });
@@ -68,6 +68,21 @@ Screen.DesktopCaptureMonitor.stop = nwScreenBinding.stopMonitor;
 Screen.DesktopCaptureMonitor.registerStream = function(id) {
   return nwScreenBinding.registerStream(id)[0];
 };
+Screen.getSourceRect = function(sourceId, sourceType) {
+    var rect = nwScreenBinding.getSourceRect(sourceId, sourceType);
+    return {
+        "left": rect[0],
+        "top": rect[1],
+        "right": rect[2],
+        "bottom": rect[3],
+        "width": rect[4],
+        "height": rect[5]
+    };
+}
+
+Screen.focusOnSource = function (sourceId) {
+    return nwScreenBinding.focusOnSource(sourceId)[0];
+}
 
 Object.defineProperty(Screen.DesktopCaptureMonitor, 'started', {
   get: function() {

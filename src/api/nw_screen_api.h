@@ -88,6 +88,34 @@ namespace extensions {
   private:
     DISALLOW_COPY_AND_ASSIGN(NwScreenRegisterStreamFunction);
   };
+
+  // implement nw.Screen.getSourceRect()
+  class NwScreenGetSourceRectFunction : public NWSyncExtensionFunction {
+  public:
+    NwScreenGetSourceRectFunction();
+    bool RunNWSync(base::ListValue* response, std::string* error) override;
+
+  protected:
+    ~NwScreenGetSourceRectFunction() override {}
+    DECLARE_EXTENSION_FUNCTION("nw.Screen.getSourceRect", UNKNOWN)
+
+  private:
+    DISALLOW_COPY_AND_ASSIGN(NwScreenGetSourceRectFunction);
+  };
+
+  // implement nw.Screen.focusOnSource()
+  class NwScreenFocusOnSourceFunction : public NWSyncExtensionFunction {
+  public:
+    NwScreenFocusOnSourceFunction();
+    bool RunNWSync(base::ListValue* response, std::string* error) override;
+
+  protected:
+    ~NwScreenFocusOnSourceFunction() override {}
+    DECLARE_EXTENSION_FUNCTION("nw.Screen.focusOnSource", UNKNOWN)
+
+  private:
+    DISALLOW_COPY_AND_ASSIGN(NwScreenFocusOnSourceFunction);
+  };
 } // extensions
 
 #endif //NW_SRC_API_NW_SCREEN_API_H_

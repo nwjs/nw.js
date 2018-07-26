@@ -4,6 +4,7 @@
 #include "base/values.h"
 #include "content/nw/src/api/nw_screen.h"
 #include "extensions/browser/extensions_browser_client.h"
+#include "extensions/common/manifest_constants.h"
 #include "ui/display/display_observer.h"
 #include "ui/display/display.h"
 #include "ui/display/screen.h"
@@ -21,6 +22,7 @@
 #include "content/public/browser/web_contents.h"
 #include "third_party/webrtc/modules/desktop_capture/desktop_capture_options.h"
 #include "third_party/webrtc/modules/desktop_capture/desktop_capturer.h"
+#include "third_party/webrtc/modules/desktop_capture/desktop_geometry.h"
 #include "ui/gfx/codec/png_codec.h"
 #include "ui/gfx/image/image.h"
 #include "ui/gfx/image/image_skia.h"
@@ -273,12 +275,17 @@ void NwDesktopCaptureMonitor::OnSourceAdded(DesktopMediaList* list, int index) {
       break;
     }
 
+    nwapi::nw__screen::OnSourceAdded::AdditionalAttributes additionalAttributes;
+    additionalAttributes.additional_properties.SetString("exeName", base::UTF16ToUTF8(src.exeName));
+    additionalAttributes.additional_properties.SetInteger("originalSourceId", src.id.id);
+
     std::unique_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceAdded::Create(
       src.id.ToString(),
       base::UTF16ToUTF8(src.name),
       index,
       type,
-      src.id.type == content::DesktopMediaID::TYPE_SCREEN && GetPrimaryMonitorIndex() == index);
+      src.id.type == content::DesktopMediaID::TYPE_SCREEN && GetPrimaryMonitorIndex() == index,
+      additionalAttributes);
 
     DispatchEvent(
       events::HistogramValue::UNKNOWN, 
@@ -375,6 +382,10 @@ void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(DesktopMediaList* list, i
     content::WebContents* web_contents = GetSenderWebContents();
     if (!source.is_null() && web_contents) {
       std::string result;
+      GURL origin;
+      std::string desktopStreamOriginOverride;
+      extension()->manifest()->GetString(manifest_keys::kNWJSDesktopStreamOriginOverride, &desktopStreamOriginOverride);
+      origin = desktopStreamOriginOverride.empty() ? web_contents->GetURL().GetOrigin() : GURL(desktopStreamOriginOverride);
       source.audio_share = true;
       DesktopStreamsRegistry* registry =
         MediaCaptureDevicesDispatcher::GetInstance()->
@@ -387,11 +398,62 @@ void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(DesktopMediaList* list, i
       content::RenderFrameHost* const main_frame = web_contents->GetMainFrame();
       result = registry->RegisterStream(main_frame->GetProcess()->GetID(),
                                         main_frame->GetRoutingID(),
-                                        web_contents->GetURL().GetOrigin(),
+                                        origin,
                                         source,
                                         extension()->name());
       response->AppendString(result);
     }
+    return true;
+  }
+
+  NwScreenGetSourceRectFunction::NwScreenGetSourceRectFunction() {}
+
+  bool NwScreenGetSourceRectFunction::RunNWSync(base::ListValue* response, std::string* error) {
+    int sourceId;
+    std::string sourceType;
+    EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &sourceId));
+    EXTENSION_FUNCTION_VALIDATE(args_->GetString(1, &sourceType));
+
+    webrtc::DesktopCaptureOptions options = webrtc::DesktopCaptureOptions::CreateDefault();
+    std::unique_ptr<webrtc::DesktopCapturer> capturer;
+
+    if (sourceType == "screen") {
+      capturer = webrtc::DesktopCapturer::CreateScreenCapturer(options);
+    }
+    else {
+      capturer = webrtc::DesktopCapturer::CreateWindowCapturer(options);
+    }
+
+    webrtc::DesktopRect rect;
+
+    if (capturer->GetSourceRect(sourceId, &rect)) {
+      response->AppendInteger(rect.left());
+      response->AppendInteger(rect.top());
+      response->AppendInteger(rect.right());
+      response->AppendInteger(rect.bottom());
+      response->AppendInteger(rect.right() - rect.left());
+      response->AppendInteger(rect.bottom() - rect.top());
+    }
+
+    return true;
+  }
+
+  NwScreenFocusOnSourceFunction::NwScreenFocusOnSourceFunction() {}
+
+  bool NwScreenFocusOnSourceFunction::RunNWSync(base::ListValue* response, std::string* error) {
+    int sourceId;
+    EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &sourceId));
+
+    webrtc::DesktopCaptureOptions options = webrtc::DesktopCaptureOptions::CreateDefault();
+    std::unique_ptr<webrtc::DesktopCapturer> windowCapturer(webrtc::DesktopCapturer::CreateWindowCapturer(options));
+
+    if (windowCapturer->FocusOnSource(sourceId)) {
+      response->AppendBoolean(true);
+    }
+    else {
+      response->AppendBoolean(false);
+    }
+
     return true;
   }
 
