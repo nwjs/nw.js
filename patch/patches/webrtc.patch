@@ -1,0 +1,249 @@
+diff --git a/modules/desktop_capture/desktop_capturer.cc b/modules/desktop_capture/desktop_capturer.cc
+index 166d97cc52..a7aeffbad6 100644
+--- a/modules/desktop_capture/desktop_capturer.cc
++++ b/modules/desktop_capture/desktop_capturer.cc
+@@ -34,6 +34,14 @@ bool DesktopCapturer::FocusOnSelectedSource() {
+   return false;
+ }
+ 
++bool DesktopCapturer::FocusOnSource(SourceId sourceId) {
++  return false;
++}
++
++bool DesktopCapturer::GetSourceRect(SourceId sourceId, DesktopRect* rect) {
++  return false;
++}
++
+ bool DesktopCapturer::IsOccluded(const DesktopVector& pos) {
+   return false;
+ }
+diff --git a/modules/desktop_capture/desktop_capturer.h b/modules/desktop_capture/desktop_capturer.h
+index 335427af23..4a350fa85a 100644
+--- a/modules/desktop_capture/desktop_capturer.h
++++ b/modules/desktop_capture/desktop_capturer.h
+@@ -70,6 +70,9 @@ class DesktopCapturer {
+     // Title of the window or screen in UTF-8 encoding, maybe empty. This field
+     // should not be used to identify a source.
+     std::string title;
++
++    // Name of the executable in UTF-8 encoding. Only relevant for windows, not screens.
++    std::string exeName;
+   };
+ 
+   typedef std::vector<Source> SourceList;
+@@ -119,6 +122,15 @@ class DesktopCapturer {
+   // implementation does not support this functionality.
+   virtual bool FocusOnSelectedSource();
+ 
++  // Brings the provided source to the front and sets the input focus on it.
++  // Returns false in case of a failure or no source has been selected or the
++  // implementation does not support this functionality.
++  virtual bool FocusOnSource(SourceId sourceId);
++
++  // Get the bounding rectangle for the window or screen. Returns false in case of
++  // a failure.
++  virtual bool GetSourceRect(SourceId sourceId, DesktopRect* rect);
++
+   // Returns true if the |pos| on the selected source is covered by other
+   // elements on the display, and is not visible to the users.
+   // |pos| is in full desktop coordinates, i.e. the top-left monitor always
+diff --git a/modules/desktop_capture/win/screen_capture_utils.cc b/modules/desktop_capture/win/screen_capture_utils.cc
+index a76a7f527a..9d34adb0b6 100644
+--- a/modules/desktop_capture/win/screen_capture_utils.cc
++++ b/modules/desktop_capture/win/screen_capture_utils.cc
+@@ -42,7 +42,7 @@ bool GetScreenList(DesktopCapturer::SourceList* screens,
+     if (!(device.StateFlags & DISPLAY_DEVICE_ACTIVE))
+       continue;
+ 
+-    screens->push_back({device_index, std::string()});
++    screens->push_back({device_index, std::string(), std::string()});
+     if (device_names) {
+       device_names->push_back(rtc::ToUtf8(device.DeviceName));
+     }
+diff --git a/modules/desktop_capture/win/screen_capturer_win_directx.cc b/modules/desktop_capture/win/screen_capturer_win_directx.cc
+index b03d2e17de..fc9f06eba4 100644
+--- a/modules/desktop_capture/win/screen_capturer_win_directx.cc
++++ b/modules/desktop_capture/win/screen_capturer_win_directx.cc
+@@ -208,4 +208,11 @@ bool ScreenCapturerWinDirectx::SelectSource(SourceId id) {
+   return true;
+ }
+ 
++bool ScreenCapturerWinDirectx::GetSourceRect(SourceId sourceId, DesktopRect* rect) {
++  std::wstring deviceKey;
++  if (webrtc::IsScreenValid(sourceId, &deviceKey)) {
++    *rect = webrtc::GetScreenRect(sourceId, deviceKey);
++  }
++  return !rect->is_empty();
++}
+ }  // namespace webrtc
+diff --git a/modules/desktop_capture/win/screen_capturer_win_directx.h b/modules/desktop_capture/win/screen_capturer_win_directx.h
+index 9438bbd0cf..4a15c27ba9 100644
+--- a/modules/desktop_capture/win/screen_capturer_win_directx.h
++++ b/modules/desktop_capture/win/screen_capturer_win_directx.h
+@@ -79,6 +79,7 @@ class ScreenCapturerWinDirectx : public DesktopCapturer {
+   void CaptureFrame() override;
+   bool GetSourceList(SourceList* sources) override;
+   bool SelectSource(SourceId id) override;
++  bool GetSourceRect(SourceId sourceId, DesktopRect* rect) override;
+ 
+  private:
+   const rtc::scoped_refptr<DxgiDuplicatorController> controller_;
+diff --git a/modules/desktop_capture/win/screen_capturer_win_gdi.cc b/modules/desktop_capture/win/screen_capturer_win_gdi.cc
+index 2c299fc72a..f957bd0c97 100644
+--- a/modules/desktop_capture/win/screen_capturer_win_gdi.cc
++++ b/modules/desktop_capture/win/screen_capturer_win_gdi.cc
+@@ -108,6 +108,14 @@ bool ScreenCapturerWinGdi::SelectSource(SourceId id) {
+   return valid;
+ }
+ 
++bool ScreenCapturerWinGdi::GetSourceRect(SourceId sourceId, DesktopRect* rect) {
++  std::wstring deviceKey;
++  if (webrtc::IsScreenValid(sourceId, &deviceKey)) {
++    *rect = webrtc::GetScreenRect(sourceId, deviceKey);
++  }
++  return !rect->is_empty();
++}
++
+ void ScreenCapturerWinGdi::Start(Callback* callback) {
+   RTC_DCHECK(!callback_);
+   RTC_DCHECK(callback);
+diff --git a/modules/desktop_capture/win/screen_capturer_win_gdi.h b/modules/desktop_capture/win/screen_capturer_win_gdi.h
+index 2e30d59e0b..d81117fd66 100644
+--- a/modules/desktop_capture/win/screen_capturer_win_gdi.h
++++ b/modules/desktop_capture/win/screen_capturer_win_gdi.h
+@@ -42,6 +42,7 @@ class ScreenCapturerWinGdi : public DesktopCapturer {
+   void CaptureFrame() override;
+   bool GetSourceList(SourceList* sources) override;
+   bool SelectSource(SourceId id) override;
++  bool GetSourceRect(SourceId sourceId, DesktopRect* rect) override;
+ 
+  private:
+   typedef HRESULT (WINAPI * DwmEnableCompositionFunc)(UINT);
+diff --git a/modules/desktop_capture/win/screen_capturer_win_magnifier.cc b/modules/desktop_capture/win/screen_capturer_win_magnifier.cc
+index d52b028814..852b25a4ab 100644
+--- a/modules/desktop_capture/win/screen_capturer_win_magnifier.cc
++++ b/modules/desktop_capture/win/screen_capturer_win_magnifier.cc
+@@ -124,6 +124,14 @@ bool ScreenCapturerWinMagnifier::GetSourceList(SourceList* sources) {
+   return webrtc::GetScreenList(sources);
+ }
+ 
++bool ScreenCapturerWinMagnifier::GetSourceRect(SourceId sourceId, DesktopRect* rect) {
++  std::wstring deviceKey;
++  if (webrtc::IsScreenValid(sourceId, &deviceKey)) {
++    *rect = webrtc::GetScreenRect(sourceId, deviceKey);
++  }
++  return !rect->is_empty();
++}
++
+ bool ScreenCapturerWinMagnifier::SelectSource(SourceId id) {
+   if (IsScreenValid(id, &current_device_key_)) {
+     current_screen_id_ = id;
+diff --git a/modules/desktop_capture/win/screen_capturer_win_magnifier.h b/modules/desktop_capture/win/screen_capturer_win_magnifier.h
+index d994b1e059..152c686029 100644
+--- a/modules/desktop_capture/win/screen_capturer_win_magnifier.h
++++ b/modules/desktop_capture/win/screen_capturer_win_magnifier.h
+@@ -50,6 +50,7 @@ class ScreenCapturerWinMagnifier : public DesktopCapturer {
+   bool GetSourceList(SourceList* screens) override;
+   bool SelectSource(SourceId id) override;
+   void SetExcludedWindow(WindowId window) override;
++  bool GetSourceRect(SourceId sourceId, DesktopRect* rect) override;
+ 
+  private:
+   typedef BOOL(WINAPI* MagImageScalingCallback)(HWND hwnd,
+diff --git a/modules/desktop_capture/window_capturer_win.cc b/modules/desktop_capture/window_capturer_win.cc
+index 414eddf64b..d4ac3241d7 100644
+--- a/modules/desktop_capture/window_capturer_win.cc
++++ b/modules/desktop_capture/window_capturer_win.cc
+@@ -22,6 +22,8 @@
+ #include "rtc_base/logging.h"
+ #include "rtc_base/win32.h"
+ 
++#include "Shlwapi.h"
++
+ namespace webrtc {
+ 
+ namespace {
+@@ -75,6 +77,20 @@ BOOL CALLBACK WindowsEnumerationHandler(HWND hwnd, LPARAM param) {
+   // Skip windows when we failed to convert the title or it is empty.
+   if (window.title.empty())
+     return TRUE;
++  DWORD processID;
++  DWORD actualProcId = GetWindowThreadProcessId(hwnd, &processID);
++  if (actualProcId) {
++    HANDLE hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, processID);
++    if (hProcess) {
++      DWORD value = MAX_PATH;
++      TCHAR buffer[MAX_PATH];
++      // This will only work for processes opened by the current user.
++      if (QueryFullProcessImageName(hProcess, 0, buffer, &value)) {
++        LPWSTR exeName = PathFindFileName(buffer);
++        window.exeName = rtc::ToUtf8(exeName);
++      }
++    }
++  }
+ 
+   list->push_back(window);
+ 
+@@ -120,9 +136,12 @@ class WindowCapturerWin : public DesktopCapturer {
+   bool GetSourceList(SourceList* sources) override;
+   bool SelectSource(SourceId id) override;
+   bool FocusOnSelectedSource() override;
++  bool FocusOnSource(SourceId sourceId) override;
++  bool GetSourceRect(SourceId sourceId, DesktopRect* rect) override;
+   bool IsOccluded(const DesktopVector& pos) override;
+ 
+  private:
++  bool FocusOnSource(HWND hwnd);
+   Callback* callback_ = nullptr;
+ 
+   // HWND and HDC for the currently selected window or nullptr if window is not
+@@ -163,6 +182,22 @@ bool WindowCapturerWin::GetSourceList(SourceList* sources) {
+   return true;
+ }
+ 
++bool WindowCapturerWin::GetSourceRect(SourceId sourceId, DesktopRect* rect) {
++  bool success = false;
++  DesktopRect croppedRect, originalRect;
++  HWND hwnd = reinterpret_cast<HWND>(sourceId);
++  if (IsWindow(hwnd) && !IsIconic(hwnd) && IsWindowVisible(hwnd)) {
++    if (GetCroppedWindowRect(hwnd, &croppedRect, &originalRect)) {
++      *rect = originalRect;
++      success = true;
++    }
++    else {
++      RTC_LOG(LS_WARNING) << "Failed to get window info: " << GetLastError();
++    }
++  }
++  return success;
++}
++
+ bool WindowCapturerWin::SelectSource(SourceId id) {
+   HWND window = reinterpret_cast<HWND>(id);
+   if (!IsWindow(window) || !IsWindowVisible(window) || IsIconic(window))
+@@ -178,11 +213,19 @@ bool WindowCapturerWin::FocusOnSelectedSource() {
+   if (!window_)
+     return false;
+ 
+-  if (!IsWindow(window_) || !IsWindowVisible(window_) || IsIconic(window_))
+-    return false;
++  return FocusOnSource(window_);
++}
++
++bool WindowCapturerWin::FocusOnSource(SourceId sourceId) {
++  HWND hwnd = reinterpret_cast<HWND>(sourceId);
++  return FocusOnSource(hwnd);
++}
+ 
+-  return BringWindowToTop(window_) != FALSE &&
+-         SetForegroundWindow(window_) != FALSE;
++bool WindowCapturerWin::FocusOnSource(HWND hwnd) {
++  if (!IsWindow(hwnd) || !IsWindowVisible(hwnd) || IsIconic(hwnd))
++       return false;
++  return BringWindowToTop(hwnd) != FALSE &&
++         SetForegroundWindow(hwnd) != FALSE;
+ }
+ 
+ bool WindowCapturerWin::IsOccluded(const DesktopVector& pos) {
+-- 
+2.14.3 (Apple Git-98)
+
