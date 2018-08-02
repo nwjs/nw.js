@@ -1,3 +1,12 @@
+0.32.1 / 08-02-2018
+===================
+- Update Chromium to [68.0.3440.84](https://chromereleases.googleblog.com/2018/07/stable-channel-update-for-desktop_31.html)
+- Update Node.js to [v10.8.0](https://nodejs.org/en/blog/release/v10.8.0/)
+- Fix: NW.js phones home to Google [(#5865)](https://github.com/nwjs/nw.js/issues/5865)
+- Fix: util.types.isModuleNamespaceObject is undefined [(#6727)](https://github.com/nwjs/nw.js/issues/6727)
+- Fix: Google OAuth is not working [(#6728)](https://github.com/nwjs/nw.js/issues/6728)
+- [docs] Add Vue example to "Using devtools extensions" (Thanks to The Jared Wilcurt)
+
 0.32.0 / 07-25-2018
 ===================
 - Update Chromium to [68.0.3440.75](https://chromereleases.googleblog.com/2018/07/stable-channel-update-for-desktop.html)
