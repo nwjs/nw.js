@@ -65,7 +65,7 @@ void Menu::Create(const base::DictionaryValue& option) {
 
   std::string type;
 
-  menu_items_.empty();
+  ignore_result(menu_items_.empty());
 }
 
 void Menu::Destroy() {

@@ -196,7 +196,7 @@ bool RphGuestFilterURLHook(RenderProcessHost* rph, const GURL* url)  {
                                           WebViewGuest::GetPartitionID(rph),
                                           *url, &file_scheme)) {
     if (file_scheme) {
-      content::ChildProcessSecurityPolicy::GetInstance()->GrantScheme(
+      content::ChildProcessSecurityPolicy::GetInstance()->GrantRequestScheme(
           process_id, url::kFileScheme);
     }
     return true;

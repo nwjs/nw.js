@@ -30,13 +30,12 @@ void MaybeSignalAnchorUse(int error,
 
 void CompleteAndSignalAnchorUse(
     const base::Closure& anchor_used_callback,
-    const net::CompletionCallback& completion_callback,
+    net::CompletionOnceCallback completion_callback,
     const net::CertVerifyResult* verify_result,
     int error) {
   DCHECK_CURRENTLY_ON(content::BrowserThread::IO);
   MaybeSignalAnchorUse(error, anchor_used_callback, *verify_result);
-  if (!completion_callback.is_null())
-    completion_callback.Run(error);
+  std::move(completion_callback).Run(error);
 }
 
 }  // namespace
@@ -72,15 +71,15 @@ int PolicyCertVerifier::Verify(
     const RequestParams& params,
     net::CRLSet* crl_set,
     net::CertVerifyResult* verify_result,
-    const net::CompletionCallback& completion_callback,
+    net::CompletionOnceCallback completion_callback,
     std::unique_ptr<Request>* out_req,
     const net::NetLogWithSource& net_log) {
   DCHECK_CURRENTLY_ON(content::BrowserThread::IO);
   DCHECK(delegate_);
-  net::CompletionCallback wrapped_callback =
-      base::Bind(&CompleteAndSignalAnchorUse,
+  net::CompletionOnceCallback wrapped_callback =
+      base::BindOnce(&CompleteAndSignalAnchorUse,
                  anchor_used_callback_,
-                 completion_callback,
+                 std::move(completion_callback),
                  verify_result);
 
   net::CertificateList merged_trust_anchors(*params.additional_trust_anchors());
@@ -90,14 +89,9 @@ int PolicyCertVerifier::Verify(
       params.certificate(), params.hostname(), params.flags(),
       params.ocsp_response(), merged_trust_anchors);
   int error = delegate_->Verify(new_params, crl_set, verify_result,
-                                wrapped_callback, out_req, net_log);
+                                std::move(wrapped_callback), out_req, net_log);
   MaybeSignalAnchorUse(error, anchor_used_callback_, *verify_result);
   return error;
-}
-
-bool PolicyCertVerifier::SupportsOCSPStapling() {
-  DCHECK_CURRENTLY_ON(content::BrowserThread::IO);
-  return delegate_->SupportsOCSPStapling();
 }
 
 }  // namespace policy
