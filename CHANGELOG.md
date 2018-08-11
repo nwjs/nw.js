@@ -1,3 +1,7 @@
+0.32.2 / 08-11-2018
+===================
+- Update Chromium to [68.0.3440.106](https://chromereleases.googleblog.com/2018/08/stable-channel-update-for-desktop.html)
+
 0.32.1 / 08-02-2018
 ===================
 - Update Chromium to [68.0.3440.84](https://chromereleases.googleblog.com/2018/07/stable-channel-update-for-desktop_31.html)
