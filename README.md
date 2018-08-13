@@ -98,6 +98,54 @@ Issues are being tracked here on GitHub.
 
 The source code for NW.js and the daily development spans across multiple repositories in this organization. This repository is for the purpose of issue tracking, landing page and part of the source code.
 
+### Verifying Binaries
+
+Starting from 0.32.0 the stable and nightly download directories contain a SHASUMS256.txt
+file that lists the SHA checksums for each file available for download, as well as the
+checksums for the files inside the download package.
+
+The SHASUMS256.txt can be downloaded using `curl`.
+
+```console
+$ curl -O https://dl.nwjs.io/vx.y.z/SHASUMS256.txt
+```
+
+To check that a downloaded file matches the checksum, run
+it through `sha256sum` with a command such as:
+
+```console
+$ grep nwjs-vx.y.z.tar.gz SHASUMS256.txt | sha256sum -c -
+```
+
+The stable releases (but not Nightlies) also have the GPG detached
+signature of SHASUMS256.txt available as SHASUMS256.txt.asc. You can use `gpg`
+to verify that SHASUMS256.txt has not been tampered with.
+
+To verify SHASUMS256.txt has not been altered, you will first need to import
+the GPG key of NW.js maintainer to create releases.
+Use this command to import the key:
+
+```console
+$ gpg --keyserver pool.sks-keyservers.net --recv-keys 78680FA9E21BB40A
+```
+```
+(Key fingerprint is 1E8B EE8D 5B0C 4CBC D6D1  9E26 7868 0FA9 E21B B40A)
+```
+See the bottom of this README for a full script to import active release keys.
+
+Next, download the SHASUMS256.txt.asc for the release:
+
+```console
+$ curl -O https://dl.nwjs.io/vx.y.z/SHASUMS256.txt.asc
+```
+
+After downloading the appropriate SHASUMS256.txt and SHASUMS256.txt.asc files,
+you can then use `gpg --verify SHASUMS256.txt.asc SHASUMS256.txt` to verify
+that the file has been signed by an authorized member of the NW.js team.
+
+Once verified, use the SHASUMS256.txt file to get the checksum for
+the binary verification command above.
+
 ## License
 
 `NW.js`'s code in this repo uses the MIT license, see our `LICENSE` file. To redistribute the binary, see [How to package and distribute your apps](https://github.com/nwjs/nw.js/wiki/How-to-package-and-distribute-your-apps)
