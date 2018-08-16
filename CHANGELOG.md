@@ -1,3 +1,7 @@
+0.32.3 / 08-16-2018
+===================
+- Update Node.js to [v10.9.0](https://nodejs.org/en/blog/release/v10.9.0/)
+
 0.32.2 / 08-11-2018
 ===================
 - Update Chromium to [68.0.3440.106](https://chromereleases.googleblog.com/2018/08/stable-channel-update-for-desktop.html)
