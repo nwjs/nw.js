@@ -1,4 +1,4 @@
-// Copyright (c) 2012 Roger Wang <roger.wang@linux.intel.com>
+// Copyright (c) 2012 Roger Wang <roger@nwjs.io>
 //                    Zhao Cheng <zcbenz@gmail.com>
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy 
