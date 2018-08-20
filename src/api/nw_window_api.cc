@@ -154,8 +154,8 @@ NwCurrentWindowInternalCloseFunction::Run() {
 }
 
 void NwCurrentWindowInternalShowDevToolsInternalFunction::OnOpened() {
-  Release();
   Respond(NoArguments());
+  Release();
 }
 
 ExtensionFunction::ResponseAction
@@ -167,12 +167,12 @@ NwCurrentWindowInternalShowDevToolsInternalFunction::Run() {
   DevToolsWindow::OpenDevToolsWindow(web_contents);
   DevToolsWindow* devtools_window =
       DevToolsWindow::FindDevToolsWindow(agent.get());
-  if (devtools_window)
-    devtools_window->SetLoadCompletedCallback(base::Bind(&NwCurrentWindowInternalShowDevToolsInternalFunction::OnOpened, this));
-  else
+  if (devtools_window) {
+    AddRef();
+    devtools_window->SetLoadCompletedCallback(base::Bind(&NwCurrentWindowInternalShowDevToolsInternalFunction::OnOpened, base::Unretained(this)));
+  } else
     return RespondNow(NoArguments());
 
-  AddRef();
   return RespondLater();
 }
 
