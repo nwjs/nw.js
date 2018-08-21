@@ -215,8 +215,6 @@ def generate_target_nw(platform_name, arch, version):
             target['input'].append('payload')
             target['input'].append('chromedriver')
             target['input'].append('minidump_stackwalk')
-            target['input'].append('natives_blob.bin')
-            target['input'].append('v8_context_snapshot.bin')
     else:
         print 'Unsupported platform: ' + platform_name
         exit(-1)
