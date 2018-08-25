@@ -7,6 +7,10 @@
 #include "content/public/browser/render_widget_host.h"
 #include "chrome/browser/devtools/devtools_window.h"
 #include "chrome/browser/extensions/devtools_util.h"
+#include "chrome/browser/extensions/extension_tab_util.h"
+#include "chrome/browser/extensions/window_controller.h"
+#include "chrome/browser/extensions/api/tabs/windows_util.h"
+#include "chrome/browser/ui/browser.h"
 #include "components/zoom/zoom_controller.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/object_manager.h"
@@ -102,11 +106,41 @@ printing::PrinterList EnumeratePrintersAsync() {
 }
 
 namespace extensions {
+
+namespace windows = api::windows;
+namespace tabs = api::tabs;
+
+using api::extension_types::InjectDetails;
+
 namespace {
 
 const char kNoAssociatedAppWindow[] =
     "The context from which the function was called did not have an "
     "associated app window.";
+
+template <typename T>
+class ApiParameterExtractor {
+ public:
+  explicit ApiParameterExtractor(T* params) : params_(params) {}
+  ~ApiParameterExtractor() {}
+
+  bool populate_tabs() {
+    if (params_->get_info.get() && params_->get_info->populate.get())
+      return *params_->get_info->populate;
+    return false;
+  }
+
+  WindowController::TypeFilter type_filters() {
+    if (params_->get_info.get() && params_->get_info->window_types.get())
+      return WindowController::GetFilterFromWindowTypes(
+          *params_->get_info->window_types);
+    return WindowController::kNoWindowFilter;
+  }
+
+ private:
+  T* params_;
+};
+
 }
 
 static AppWindow* getAppWindow(UIThreadExtensionFunction* func) {
@@ -622,9 +656,25 @@ bool NwCurrentWindowInternalIsKioskInternalFunction::RunNWSync(base::ListValue* 
   return true;
 }
 
-bool NwCurrentWindowInternalGetTitleInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwCurrentWindowInternalGetTitleInternalFunction::RunNWSync(base::ListValue* response, std::string* ret_error) {
   AppWindow* window = getAppWindow(this);
-  response->AppendString(window->title_override());
+  if (window) {
+    response->AppendString(window->title_override());
+    return true;
+  }
+  Browser* browser = nullptr;
+  std::string error;
+  if (!windows_util::GetBrowserFromWindowID(
+     this, extension_misc::kCurrentWindowId, WindowController::GetAllWindowFilter(),
+          &browser, &error)) {
+    *ret_error = error;
+    return false;
+  }
+  if (!browser) {
+    *ret_error = "no window found";
+    return false;
+  }
+  response->AppendString(browser->GetWindowTitleForCurrentTab(false));
   return true;
 }
 

@@ -80,6 +80,7 @@ namespace nw.Window {
     static void print(optional object options);
 
     object appWindow;
+    object cWindow;
     object window;
     object menu;
     long x;
