@@ -1,3 +1,10 @@
+0.32.4 / 08-25-2018
+===================
+- Fix: reject code cache when magic number mismatch rather than crash [(#6771)](https://github.com/nwjs/nw.js/issues/6771)
+- Fix: Crash with compiled binary JS [(#6768)](https://github.com/nwjs/nw.js/issues/6768)
+- Fix: Opening DevTools causes Crash when DevTools are open already [(#6766)](https://github.com/nwjs/nw.js/issues/6766)
+- [OSX] ship snapshot files for nwjc
+
 0.32.3 / 08-16-2018
 ===================
 - Update Node.js to [v10.9.0](https://nodejs.org/en/blog/release/v10.9.0/)
