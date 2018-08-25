@@ -295,6 +295,16 @@ class NwCurrentWindowInternalGetWinParamInternalFunction : public NWSyncExtensio
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.getWinParamInternal", UNKNOWN)
 };
 
+class NwCurrentWindowInternalGetCurrentFunction : public NWSyncExtensionFunction {
+ public:
+  NwCurrentWindowInternalGetCurrentFunction() {}
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
+
+ protected:
+  ~NwCurrentWindowInternalGetCurrentFunction() override {}
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.getCurrent", UNKNOWN)
+};
+
 class NwCurrentWindowInternalGetPrintersFunction : public UIThreadExtensionFunction {
  public:
   NwCurrentWindowInternalGetPrintersFunction() {}
