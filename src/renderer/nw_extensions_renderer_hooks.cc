@@ -435,9 +435,21 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
     web_frame->MainWorldScriptContext()->Global();
   arguments.push_back(v8::Boolean::New(isolate, start));
   arguments.push_back(window);
-  // need require in m61 since the following CallModuleMethodSafe
-  // won't load it anymore: fedbe848f3024dd690f93545a337a2a6fb2aa81f
-  {
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    content::RenderFrame* main_frame = frame->GetRenderView()->GetMainRenderFrame();
+    arguments.push_back(v8::Integer::New(isolate, main_frame->GetRoutingID()));
+
+    std::set<ScriptContext*> contexts(dispatcher->script_context_set().contexts());
+    std::set<ScriptContext*>::iterator it = contexts.begin();
+    while (it != contexts.end()) {
+      ScriptContext* c = *it;
+      extensions::ModuleSystem::NativesEnabledScope natives_enabled(c->module_system());
+      c->module_system()->CallModuleMethodSafe("nw.Window", "onDocumentStartEnd", &arguments);
+      it++;
+    }
+  } else {
+    // need require in m61 since the following CallModuleMethodSafe
+    // won't load it anymore: fedbe848f3024dd690f93545a337a2a6fb2aa81f
     extensions::ModuleSystem::NativesEnabledScope natives_enabled(script_context->module_system());
     script_context->module_system()->Require("nw.Window");
     script_context->module_system()->CallModuleMethodSafe("nw.Window", "onDocumentStartEnd", &arguments);

@@ -63,8 +63,7 @@ var appWinEventsMap = {
 var nwWinEventsMap = {
   'zoom':             'onZoom',
   'close':            'onClose',
-  'document-start':   'onDocumentStart',
-  'document-end':     'onDocumentEnd'
+  'document-start':   'onDocumentStart'
 };
 
 var nwWrapEventsMap = {
@@ -115,6 +114,7 @@ function NWWindow(cWindow) {
           console.error('The JavaScript context calling ' +
                         'nw.Window.get() has no associated Browser window.');
   }
+  console.log("cWindow id: " + this.cWindow.id);
   privates(this).menu = null;
 }
 
@@ -127,7 +127,7 @@ NWWindow.prototype.onNewWinPolicy      = new Event();
 NWWindow.prototype.onNavigation        = new Event();
 NWWindow.prototype.LoadingStateChanged = new Event();
 NWWindow.prototype.onDocumentStart     = new Event();
-NWWindow.prototype.onDocumentEnd       = new Event();
+NWWindow.prototype.onDocumentEnd       = new Event("nw.Window.onDocumentEnd");
 NWWindow.prototype.onZoom              = new Event();
 NWWindow.prototype.onClose             = new Event("nw.Window.onClose", undefined, {supportsFilters: true});
 
@@ -178,6 +178,15 @@ NWWindow.prototype.on = function (event, callback, record) {
         callback.call(self);
     });
     chrome.tabs.onUpdated.addListener(g);
+    break;
+  case 'document-end':
+    var cb0 = wrap(function(frame, top_routing_id) {
+      console.log("document-end: cWindow: " + self.cWindow.id + "; top routing id: " + top_routing_id + "; main frame id: " + self.cWindow.tabs[0].mainFrameId);
+      if (top_routing_id !== self.cWindow.tabs[0].mainFrameId)
+        return;
+      callback.call(self, frame);
+    });
+    this.onDocumentEnd.addListener(cb0);
     break;
   case 'new-win-policy':
     var h = wrap(function(frame, url, policy) {
@@ -339,10 +348,10 @@ NWWindow.prototype.capturePage = function (callback, options) {
   currentNWWindowInternal.capturePageInternal(options, cb);
 };
 NWWindow.prototype.reload = function () {
-  this.appWindow.contentWindow.location.reload();
+  chrome.tabs.reload(this.cWindow.tabs[0].id);
 };
 NWWindow.prototype.reloadIgnoringCache = function () {
-  currentNWWindowInternal.reloadIgnoringCache();
+  chrome.tabs.reload(this.cWindow.tabs[0].id, {'bypassCache': true});
 };
 NWWindow.prototype.eval = function (frame, script) {
   return nwNatives.evalScript(frame, script);
@@ -377,22 +386,22 @@ NWWindow.prototype.hide = function () {
   this.appWindow.hide();
 };
 NWWindow.prototype.focus = function () {
-  this.appWindow.focus();
+  chrome.windows.update(this.cWindow.id, {'focused':true});
 };
 NWWindow.prototype.blur = function () {
   this.appWindow.contentWindow.blur();
 };
 NWWindow.prototype.minimize = function () {
-  this.appWindow.minimize();
+  chrome.windows.update(this.cWindow.id, {'state':'minimized'});
 };
 NWWindow.prototype.maximize = function () {
   chrome.windows.update(this.cWindow.id, {'state':"maximized"});
 };
 NWWindow.prototype.unmaximize = NWWindow.prototype.restore = function () {
-  this.appWindow.restore();
+  chrome.windows.update(this.cWindow.id, {'state':"normal"});
 };
 NWWindow.prototype.enterFullscreen = function () {
-  this.appWindow.fullscreen();
+  chrome.windows.update(this.cWindow.id, {'state':"fullscreen"});
 };
 NWWindow.prototype.leaveFullscreen = function () {
   if (this.appWindow.isFullscreen())
@@ -693,13 +702,15 @@ function onLoadingStateChanged(status) {
   dispatchEventIfExists(currentNWWindow, "LoadingStateChanged", [status]);
 }
 
-function onDocumentStartEnd(start, frame) {
-  if (!currentNWWindow)
-    return;
-  if (start)
+function onDocumentStartEnd(start, frame, top_routing_id) {
+  console.log("--> onDocumentStartEnd: " + start + "; currentNWWindow: " + currentNWWindow);
+  if (start) {
+    if (!currentNWWindow)
+      return;
     dispatchEventIfExists(currentNWWindow, "onDocumentStart", [frame]);
+  }
   else
-    dispatchEventIfExists(currentNWWindow, "onDocumentEnd", [frame]);
+    dispatchEventNW("nw.Window.onDocumentEnd", [frame, top_routing_id]);
 }
 
 function updateAppWindowZoom(old_level, new_level) {
@@ -715,15 +726,16 @@ function onClose(user_force) {
 }
 
 function get_nw() {
+  console.log("--> get_nw");
   appWindowNatives.FixGamePadAPI();
   var nw0 = try_nw(window).nw;
   if (nw0)
     nw0.Window.get();
 }
 
-if (bgPage !== window) {
-  renderFrameObserverNatives.OnDocumentElementCreated(currentRoutingID, get_nw);
-}
+//if (bgPage !== window) {
+//  renderFrameObserverNatives.OnDocumentElementCreated(currentRoutingID, get_nw);
+//}
 
 exports.binding = nw_binding.generate();
 exports.onNewWinPolicy = onNewWinPolicy;
