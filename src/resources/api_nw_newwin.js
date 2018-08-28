@@ -62,8 +62,7 @@ var appWinEventsMap = {
 
 var nwWinEventsMap = {
   'zoom':             'onZoom',
-  'close':            'onClose',
-  'document-start':   'onDocumentStart'
+  'close':            'onClose'
 };
 
 var nwWrapEventsMap = {
@@ -126,7 +125,7 @@ forEach(currentNWWindowInternal, function(key, value) {
 NWWindow.prototype.onNewWinPolicy      = new Event();
 NWWindow.prototype.onNavigation        = new Event();
 NWWindow.prototype.LoadingStateChanged = new Event();
-NWWindow.prototype.onDocumentStart     = new Event();
+NWWindow.prototype.onDocumentStart     = new Event("nw.Window.onDocumentStart");
 NWWindow.prototype.onDocumentEnd       = new Event("nw.Window.onDocumentEnd");
 NWWindow.prototype.onZoom              = new Event();
 NWWindow.prototype.onClose             = new Event("nw.Window.onClose", undefined, {supportsFilters: true});
@@ -178,6 +177,15 @@ NWWindow.prototype.on = function (event, callback, record) {
         callback.call(self);
     });
     chrome.tabs.onUpdated.addListener(g);
+    break;
+  case 'document-start':
+    var cb1 = wrap(function(frame, top_routing_id) {
+      console.log("document-start: cWindow: " + self.cWindow.id + "; top routing id: " + top_routing_id + "; main frame id: " + self.cWindow.tabs[0].mainFrameId);
+      if (top_routing_id !== self.cWindow.tabs[0].mainFrameId)
+        return;
+      callback.call(self, frame);
+    });
+    this.onDocumentStart.addListener(cb1);
     break;
   case 'document-end':
     var cb0 = wrap(function(frame, top_routing_id) {
@@ -705,9 +713,8 @@ function onLoadingStateChanged(status) {
 function onDocumentStartEnd(start, frame, top_routing_id) {
   console.log("--> onDocumentStartEnd: " + start + "; currentNWWindow: " + currentNWWindow);
   if (start) {
-    if (!currentNWWindow)
-      return;
-    dispatchEventIfExists(currentNWWindow, "onDocumentStart", [frame]);
+    //could use the non-NW version?
+    dispatchEventNW("nw.Window.onDocumentStart", [frame, top_routing_id]);
   }
   else
     dispatchEventNW("nw.Window.onDocumentEnd", [frame, top_routing_id]);
