@@ -11,9 +11,12 @@
 #include "chrome/browser/extensions/window_controller.h"
 #include "chrome/browser/extensions/api/tabs/windows_util.h"
 #include "chrome/browser/ui/browser.h"
+#include "chrome/browser/ui/browser_finder.h"
+#include "chrome/browser/ui/browser_window.h"
 #include "components/zoom/zoom_controller.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/object_manager.h"
+#include "content/public/common/content_features.h"
 #include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/render_widget_host_view.h"
@@ -143,6 +146,28 @@ class ApiParameterExtractor {
 
 }
 
+#if 0
+static Browser* getBrowser(UIThreadExtensionFunction* func) {
+  content::WebContents* web_contents = func->GetSenderWebContents();
+  if (!web_contents) {
+    return NULL;
+  }
+  Browser* browser = chrome::FindBrowserWithWebContents(web_contents);
+  return browser;
+}
+#endif
+
+static Browser* getBrowser(UIThreadExtensionFunction* func, int id) {
+  Browser* browser = nullptr;
+  std::string error;
+  if (!windows_util::GetBrowserFromWindowID(
+     func, id, WindowController::GetAllWindowFilter(),
+          &browser, &error)) {
+    return nullptr;
+  }
+  return browser;
+}
+
 static AppWindow* getAppWindow(UIThreadExtensionFunction* func) {
   AppWindowRegistry* registry = AppWindowRegistry::Get(func->browser_context());
   DCHECK(registry);
@@ -169,6 +194,10 @@ void NwCurrentWindowInternalCloseFunction::DoClose(AppWindow* window) {
   window->GetBaseWindow()->ForceClose();
 }
 
+void NwCurrentWindowInternalCloseFunction::DoCloseBrowser(Browser* browser) {
+  browser->window()->ForceClose();
+}
+
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalCloseFunction::Run() {
   std::unique_ptr<nwapi::nw_current_window_internal::Close::Params> params(
@@ -176,13 +205,27 @@ NwCurrentWindowInternalCloseFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   bool force = params->force.get() ? *params->force : false;
-  AppWindow* window = getAppWindow(this);
-  if (force)
-    base::MessageLoop::current()->task_runner()->PostTask(FROM_HERE,
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    int id = 0;
+    args_->GetInteger(1, &id);
+    Browser* browser = getBrowser(this, id);
+    if (!browser)
+      return RespondNow(Error("cannot find browser window"));
+    if (force)
+      base::MessageLoop::current()->task_runner()->PostTask(FROM_HERE,
+         base::Bind(&NwCurrentWindowInternalCloseFunction::DoCloseBrowser, browser));
+    else if (browser->NWCanClose())
+      base::MessageLoop::current()->task_runner()->PostTask(FROM_HERE,
+         base::Bind(&NwCurrentWindowInternalCloseFunction::DoCloseBrowser, browser));
+  } else {
+    AppWindow* window = getAppWindow(this);
+    if (force)
+      base::MessageLoop::current()->task_runner()->PostTask(FROM_HERE,
          base::Bind(&NwCurrentWindowInternalCloseFunction::DoClose, window));
-  else if (window->NWCanClose())
-    base::MessageLoop::current()->task_runner()->PostTask(FROM_HERE,
+    else if (window->NWCanClose())
+      base::MessageLoop::current()->task_runner()->PostTask(FROM_HERE,
          base::Bind(&NwCurrentWindowInternalCloseFunction::DoClose, window));
+  }
 
   return RespondNow(NoArguments());
 }

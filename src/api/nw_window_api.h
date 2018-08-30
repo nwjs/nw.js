@@ -8,6 +8,7 @@
 #include "printing/backend/print_backend.h"
 
 class SkBitmap;
+class Browser;
 
 namespace content {
 class WebContents;
@@ -20,6 +21,7 @@ class NwCurrentWindowInternalCloseFunction : public UIThreadExtensionFunction {
  public:
   NwCurrentWindowInternalCloseFunction() {};
   static void DoClose(AppWindow*);
+  static void DoCloseBrowser(Browser*);
 
  protected:
   ~NwCurrentWindowInternalCloseFunction() override {};

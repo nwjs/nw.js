@@ -130,6 +130,10 @@ NWWindow.prototype.onDocumentEnd       = new Event("nw.Window.onDocumentEnd");
 NWWindow.prototype.onZoom              = new Event();
 NWWindow.prototype.onClose             = new Event("nw.Window.onClose", undefined, {supportsFilters: true});
 
+NWWindow.prototype.close = function (force) {
+  currentNWWindowInternal.close(force, this.cWindow.id);
+}
+
 NWWindow.prototype.once = function (event, listener, record) {
   if (typeof listener !== 'function')
     throw new TypeError('listener must be a function');
@@ -626,10 +630,10 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       //   options.outerBounds.left = params.x;
       // if (params.y)
       //   options.outerBounds.top = params.y;
-      // if (params.height)
-      //   options.innerBounds.height = params.height;
-      // if (params.width)
-      //   options.innerBounds.width = params.width;
+      if (params.height)
+        options.height = params.height;
+      if (params.width)
+        options.width = params.width;
       // if (params.min_width)
       //   options.innerBounds.minWidth = params.min_width;
       // if (params.max_width)
@@ -640,8 +644,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       //   options.innerBounds.maxHeight = params.max_height;
       // if (params.fullscreen === true)
       //   options.state = 'fullscreen';
-      // if (params.show === false)
-      //   options.hidden = true;
+      if (params.show === false)
+        options.hidden = true;
       // if (params.show_in_taskbar === false)
       //   options.show_in_taskbar = false;
       // if (params['always_on_top'] === true)
@@ -664,8 +668,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       //   options.title = params.title;
       // if (params.icon)
       //   options.icon = params.icon;
-      if (params.id)
-        options.id = params.id;
+      //if (params.id)
+      //  options.tabId = params.id;
     }
     try_hidden(window).chrome.windows.create(options, function(cWin) {
       if (callback) {
