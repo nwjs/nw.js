@@ -46,6 +46,20 @@ class NwCurrentWindowInternalShowDevToolsInternalFunction : public UIThreadExten
   void OnOpened();
 };
 
+class NwCurrentWindowInternalShowDevTools2InternalFunction : public UIThreadExtensionFunction {
+ public:
+  NwCurrentWindowInternalShowDevTools2InternalFunction() {};
+
+ protected:
+  ~NwCurrentWindowInternalShowDevTools2InternalFunction() override {};
+
+  // ExtensionFunction:
+  ResponseAction Run() override;
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.showDevTools2Internal", UNKNOWN)
+ private:
+  void OnOpened();
+};
+
 class NwCurrentWindowInternalCloseDevToolsFunction : public UIThreadExtensionFunction {
  public:
   NwCurrentWindowInternalCloseDevToolsFunction() {};

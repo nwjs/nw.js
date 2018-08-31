@@ -331,11 +331,11 @@ NWWindow.prototype.showDevTools = function(frm, callback) {
     id = frm;
   var f = null;
   if (id)
-    f = this.appWindow.contentWindow.getElementById(id);
+    f = this.window.getElementById(id);
   else
     f = frm || null;
   nwNatives.setDevToolsJail(f);
-  currentNWWindowInternal.showDevToolsInternal(callback);
+  currentNWWindowInternal.showDevTools2Internal(this.cWindow.id, callback);
 };
 NWWindow.prototype.capturePage = function (callback, options) {
   var cb = callback;

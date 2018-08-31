@@ -25,6 +25,7 @@ namespace nw.currentWindowInternal {
     static void close(optional boolean force, optional long id);
     static void setShadow(boolean shadow);
     static void showDevToolsInternal(optional ShowDevToolsCallback callback);
+    static void showDevTools2Internal(long id, optional ShowDevToolsCallback callback);
     static void closeDevTools();
     static void setBadgeLabel(DOMString badge);
     static void requestAttentionInternal(long count);

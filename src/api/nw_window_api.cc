@@ -253,6 +253,33 @@ NwCurrentWindowInternalShowDevToolsInternalFunction::Run() {
   return RespondLater();
 }
 
+void NwCurrentWindowInternalShowDevTools2InternalFunction::OnOpened() {
+  Respond(NoArguments());
+  Release();
+}
+
+ExtensionFunction::ResponseAction
+NwCurrentWindowInternalShowDevTools2InternalFunction::Run() {
+  int id = 0;
+  EXTENSION_FUNCTION_VALIDATE(args_);
+  EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &id));
+
+  Browser* browser = getBrowser(this, id);
+  content::WebContents* web_contents = browser->tab_strip_model()->GetActiveWebContents();
+  scoped_refptr<content::DevToolsAgentHost> agent(
+      content::DevToolsAgentHost::GetOrCreateFor(web_contents));
+  DevToolsWindow::OpenDevToolsWindow(web_contents);
+  DevToolsWindow* devtools_window =
+      DevToolsWindow::FindDevToolsWindow(agent.get());
+  if (devtools_window) {
+    AddRef();
+    devtools_window->SetLoadCompletedCallback(base::Bind(&NwCurrentWindowInternalShowDevTools2InternalFunction::OnOpened, base::Unretained(this)));
+  } else
+    return RespondNow(NoArguments());
+
+  return RespondLater();
+}
+
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalCloseDevToolsFunction::Run() {
   content::RenderFrameHost* rfh = render_frame_host();
