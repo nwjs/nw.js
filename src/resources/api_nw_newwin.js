@@ -122,7 +122,7 @@ forEach(currentNWWindowInternal, function(key, value) {
     NWWindow.prototype[key] = value;
 });
 
-NWWindow.prototype.onNewWinPolicy      = new Event();
+NWWindow.prototype.onNewWinPolicy      = new Event("nw.Window.onNewWinPolicy");
 NWWindow.prototype.onNavigation        = new Event();
 NWWindow.prototype.LoadingStateChanged = new Event();
 NWWindow.prototype.onDocumentStart     = new Event("nw.Window.onDocumentStart");
@@ -695,9 +695,7 @@ function dispatchEventIfExists(target, name, varargs) {
 
 function onNewWinPolicy(frame, url, policy) {
   //console.log("onNewWinPolicy called: " + url + ", " + policy);
-  if (!currentNWWindow)
-    return;
-  dispatchEventIfExists(currentNWWindow, "onNewWinPolicy", [frame, url, policy]);
+  dispatchEventNW("nw.Window.onNewWinPolicy", [frame, url, policy]);
 }
 
 function onNavigation(frame, url, policy, context) {
