@@ -1,0 +1,17 @@
+diff --git a/third_party/libc++/BUILD.gn b/third_party/libc++/BUILD.gn
+index 6cd5a55..8ea6885 100644
+--- third_party/libc++/BUILD.gn
++++ third_party/libc++/BUILD.gn
+@@ -19,7 +19,11 @@ config("config") {
+ }
+ 
+ if (libcpp_is_static) {
+-  link_target_type = "source_set"
++  if (is_linux) {
++    link_target_type = "static_library"
++  } else {
++    link_target_type = "source_set"
++  }
+ } else {
+   link_target_type = "shared_library"
+ }
