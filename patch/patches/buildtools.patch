@@ -15,3 +15,16 @@ index 6cd5a55..8ea6885 100644
  } else {
    link_target_type = "shared_library"
  }
+diff --git a/third_party/libc++abi/BUILD.gn b/third_party/libc++abi/BUILD.gn
+index 50dc8ae..e521055 100644
+--- third_party/libc++abi/BUILD.gn
++++ third_party/libc++abi/BUILD.gn
+@@ -7,7 +7,7 @@ import("//build/config/c++/c++.gni")
+ # TODO(thomasanderson): Remove this conditional once Android builds always set
+ # use_custom_libcxx=true.
+ if (use_custom_libcxx) {
+-  source_set("libc++abi") {
++  static_library("libc++abi") {
+     visibility = [ "//buildtools/third_party/libc++" ]
+     deps = []
+ 
