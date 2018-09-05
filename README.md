@@ -131,7 +131,6 @@ $ gpg --keyserver pool.sks-keyservers.net --recv-keys 78680FA9E21BB40A
 ```
 (Key fingerprint is 1E8B EE8D 5B0C 4CBC D6D1  9E26 7868 0FA9 E21B B40A)
 ```
-See the bottom of this README for a full script to import active release keys.
 
 Next, download the SHASUMS256.txt.asc for the release:
 
