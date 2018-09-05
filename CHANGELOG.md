@@ -1,3 +1,9 @@
+0.33.0 / 09-05-2018
+===================
+- Update Chromium to [69.0.3497.81](https://chromereleases.googleblog.com/2018/09/stable-channel-update-for-desktop.html)
+- Fix: libnode.so should not depends on newer version of libstdc++ on CentOS 7 [(#6783)](https://github.com/nwjs/nw.js/issues/6783)
+- Fix: OSX - Transparency broken on 0.33.0b1. Thanks to Jefry Tedjokusumo [(#6750)](https://github.com/nwjs/nw.js/issues/6750)
+
 0.32.4 / 08-25-2018
 ===================
 - Fix: reject code cache when magic number mismatch rather than crash [(#6771)](https://github.com/nwjs/nw.js/issues/6771)
