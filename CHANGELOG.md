@@ -1,3 +1,10 @@
+0.33.1 / 09-11-2018
+===================
+- Update Node.js to [v10.10.0](https://nodejs.org/en/blog/release/v10.10.0/)
+- Fix: double quotes character causes crash in compiled form [(#6770)](https://github.com/nwjs/nw.js/issues/6770)
+- Fix: allow webview in remote page [(#6784)](https://github.com/nwjs/nw.js/issues/6784)
+- Fix: nwjc crash on syntax error in script
+
 0.33.0 / 09-05-2018
 ===================
 - Update Chromium to [69.0.3497.81](https://chromereleases.googleblog.com/2018/09/stable-channel-update-for-desktop.html)
