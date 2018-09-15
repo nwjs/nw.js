@@ -1,22 +1,22 @@
 diff --git a/third_party/libc++/BUILD.gn b/third_party/libc++/BUILD.gn
-index 6cd5a55..8ea6885 100644
+index 6049d72..5b311ef 100644
 --- third_party/libc++/BUILD.gn
 +++ third_party/libc++/BUILD.gn
-@@ -19,7 +19,11 @@ config("config") {
- }
- 
- if (libcpp_is_static) {
--  link_target_type = "source_set"
-+  if (is_linux) {
-+    link_target_type = "static_library"
-+  } else {
-+    link_target_type = "source_set"
-+  }
- } else {
-   link_target_type = "shared_library"
- }
+@@ -22,7 +22,11 @@ component("libc++") {
+   if (is_component_build) {
+     no_default_deps = true
+   } else {
+-    static_component_type = "source_set"
++    if (is_linux) {
++      static_component_type = "static_library"
++    } else {
++      static_component_type = "source_set"
++    }
+   }
+   sources = [
+     "trunk/src/algorithm.cpp",
 diff --git a/third_party/libc++abi/BUILD.gn b/third_party/libc++abi/BUILD.gn
-index 50dc8ae..e521055 100644
+index c43916b..a1f16db 100644
 --- third_party/libc++abi/BUILD.gn
 +++ third_party/libc++abi/BUILD.gn
 @@ -7,7 +7,7 @@ import("//build/config/c++/c++.gni")
@@ -25,6 +25,6 @@ index 50dc8ae..e521055 100644
  if (use_custom_libcxx) {
 -  source_set("libc++abi") {
 +  static_library("libc++abi") {
-     visibility = [ "//buildtools/third_party/libc++" ]
-     deps = []
- 
+     visibility = [
+       "//buildtools/third_party/libc++",
+       "//build/config:executable_deps",

@@ -3,7 +3,7 @@
 #include "base/base64.h"
 #include "base/strings/stringprintf.h"
 #include "base/strings/utf_string_conversions.h"
-#include "base/task_scheduler/post_task.h"
+#include "base/task/post_task.h"
 #include "content/public/browser/render_widget_host.h"
 #include "chrome/browser/devtools/devtools_window.h"
 #include "chrome/browser/extensions/devtools_util.h"
@@ -200,8 +200,8 @@ void NwCurrentWindowInternalCloseFunction::DoCloseBrowser(Browser* browser) {
 
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalCloseFunction::Run() {
-  std::unique_ptr<nwapi::nw_current_window_internal::Close::Params> params(
-      nwapi::nw_current_window_internal::Close::Params::Create(*args_));
+  std::unique_ptr<extensions::nwapi::nw_current_window_internal::Close::Params> params(
+                      extensions::nwapi::nw_current_window_internal::Close::Params::Create(*args_));
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   bool force = params->force.get() ? *params->force : false;
@@ -775,7 +775,7 @@ NwCurrentWindowInternalGetPrintersFunction::Run() {
   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
 
   base::PostTaskWithTraitsAndReplyWithResult(
-        FROM_HERE, {base::MayBlock(), base::TaskPriority::BACKGROUND},
+                                             FROM_HERE, {base::MayBlock(), base::TaskShutdownBehavior::CONTINUE_ON_SHUTDOWN},
         base::Bind(&EnumeratePrintersAsync),
         base::Bind(&NwCurrentWindowInternalGetPrintersFunction::OnGetPrinterList,
                    this));

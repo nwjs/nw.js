@@ -13,10 +13,10 @@
 #include "base/strings/string16.h"
 #include "base/strings/utf_string_conversions.h"
 #include "chrome/browser/media/webrtc/desktop_media_list_observer.h"
-#include "chrome/browser/media/webrtc/desktop_streams_registry.h"
 #include "chrome/browser/media/webrtc/media_capture_devices_dispatcher.h"
 #include "chrome/browser/media/webrtc/native_desktop_media_list.h"
 #include "content/public/browser/render_frame_host.h"
+#include "content/public/browser/desktop_streams_registry.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/web_contents.h"
 #include "third_party/webrtc/modules/desktop_capture/desktop_capture_options.h"
@@ -376,9 +376,7 @@ void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(DesktopMediaList* list, i
     if (!source.is_null() && web_contents) {
       std::string result;
       source.audio_share = true;
-      DesktopStreamsRegistry* registry =
-        MediaCaptureDevicesDispatcher::GetInstance()->
-        GetDesktopStreamsRegistry();
+      content::DesktopStreamsRegistry* registry = content::DesktopStreamsRegistry::GetInstance();
       // TODO(miu): Once render_frame_host() is being set, we should register the
       // exact RenderFrame requesting the stream, not the main RenderFrame.  With
       // that change, also update
@@ -389,7 +387,7 @@ void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(DesktopMediaList* list, i
                                         main_frame->GetRoutingID(),
                                         web_contents->GetURL().GetOrigin(),
                                         source,
-                                        extension()->name());
+                                        extension()->name(), content::kRegistryStreamTypeDesktop);
       response->AppendString(result);
     }
     return true;
