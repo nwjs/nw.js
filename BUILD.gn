@@ -131,6 +131,7 @@ static_library("nw_browser") {
     ":nw_base",
     "//content/nw/src/api:nw_api",
     "//content/nw/src/api:nw_api_registration",
+    "//content/nw/src/api:generated_api_types",
     "//third_party/protobuf:protobuf_lite",
     "//third_party/webrtc/modules/desktop_capture",
   ]

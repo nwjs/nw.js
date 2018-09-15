@@ -46,14 +46,14 @@ class PolicyCertVerifier : public net::CertVerifier {
   // CertVerifier:
   // Note: |callback| can be null.
   int Verify(const RequestParams& params,
-             net::CRLSet* crl_set,
              net::CertVerifyResult* verify_result,
              net::CompletionOnceCallback callback,
              std::unique_ptr<Request>* out_req,
              const net::NetLogWithSource& net_log) override;
-
+  void SetConfig(const Config& config) override;
 
  private:
+  net::CertVerifier::Config orig_config_;
   net::CertificateList trust_anchors_;
   base::Closure anchor_used_callback_;
   std::unique_ptr<CertVerifier> delegate_;

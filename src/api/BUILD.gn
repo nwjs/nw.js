@@ -8,10 +8,8 @@ import("schemas.gni")
 
 assert(enable_extensions)
 
-json_schema_api("nw_api") {
+generated_json_strings("nw_api") {
   sources = schema_sources
-  schemas = true
-  bundle = true
   configs = [ "//build/config:precompiled_headers" ]
   bundle_name = "nwjs"
 
@@ -19,10 +17,9 @@ json_schema_api("nw_api") {
 }
 
 # GYP version: chrome/browser/extensions/api/api.gyp:chrome_api_registration
-json_schema_api("nw_api_registration") {
+function_registration("nw_api_registration") {
   sources = schema_sources
   impl_dir = "//content/nw/src/api"
-  bundle_registration = true
   configs = [ "//build/config:precompiled_headers" ]
   bundle_name = "nwjs"
 
@@ -44,3 +41,6 @@ json_schema_api("nw_api_registration") {
   deps += schema_dependencies
 }
 
+generated_types("generated_api_types") {
+  sources = schema_sources
+}

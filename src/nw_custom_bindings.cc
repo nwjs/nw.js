@@ -182,11 +182,11 @@ NWCustomBindings::NWCustomBindings(ScriptContext* context)
 
 void NWCustomBindings::CallInWindow(
     const v8::FunctionCallbackInfo<v8::Value>& args) {
-  v8::Local<v8::Context> target_context = args[0]->ToObject()->CreationContext();
-  v8::Local<v8::String> method   = args[1]->ToString();
+  v8::Local<v8::Context> target_context = v8::Local<v8::Object>::Cast(args[0])->CreationContext();
+  v8::Local<v8::String> method   = v8::Local<v8::String>::Cast(args[1]);
   ScriptContext* context = ScriptContextSet::GetContextByV8Context(target_context);
   v8::Context::Scope cscope(target_context);
-  v8::MaybeLocal<v8::Value> val = args[0]->ToObject()->Get(target_context, method);
+  v8::MaybeLocal<v8::Value> val = v8::Local<v8::Object>::Cast(args[0])->Get(target_context, method);
   v8::Local<v8::Function> func = val.ToLocalChecked().As<v8::Function>();
   v8::Local<v8::Value>* argv = new v8::Local<v8::Value>[args.Length() - 2];
   for (int i = 0; i < args.Length() - 2; i++)
@@ -341,13 +341,15 @@ void NWCustomBindings::GetOldCwd(
 
 void NWCustomBindings::AddOriginAccessWhitelistEntry(const v8::FunctionCallbackInfo<v8::Value>& args) {
   v8::Isolate* isolate = args.GetIsolate();
+  v8::Local<v8::Context> v8_context =
+      v8::Local<v8::Object>::Cast(args[0])->CreationContext();
 
   std::string sourceOrigin        = *v8::String::Utf8Value(isolate, args[0]);
   std::string destinationProtocol = *v8::String::Utf8Value(isolate, args[1]);
   std::string destinationHost     = *v8::String::Utf8Value(isolate, args[2]);
-  bool allowDestinationSubdomains = args[3]->ToBoolean()->Value();
+  bool allowDestinationSubdomains = args[3]->ToBoolean(v8_context).ToLocalChecked()->Value();
 
-  blink::WebSecurityPolicy::AddOriginAccessWhitelistEntry(GURL(sourceOrigin),
+  blink::WebSecurityPolicy::AddOriginAccessAllowListEntry(GURL(sourceOrigin),
                                                           blink::WebString::FromUTF8(destinationProtocol),
                                                           blink::WebString::FromUTF8(destinationHost),
                                                           allowDestinationSubdomains);
@@ -359,14 +361,9 @@ void NWCustomBindings::RemoveOriginAccessWhitelistEntry(const v8::FunctionCallba
   v8::Isolate* isolate = args.GetIsolate();
 
   std::string sourceOrigin        = *v8::String::Utf8Value(isolate, args[0]);
-  std::string destinationProtocol = *v8::String::Utf8Value(isolate, args[1]);
-  std::string destinationHost     = *v8::String::Utf8Value(isolate, args[2]);
-  bool allowDestinationSubdomains = args[3]->ToBoolean()->Value();
 
-  blink::WebSecurityPolicy::RemoveOriginAccessWhitelistEntry(GURL(sourceOrigin),
-                                                          blink::WebString::FromUTF8(destinationProtocol),
-                                                          blink::WebString::FromUTF8(destinationHost),
-                                                          allowDestinationSubdomains);
+  //FIXME blink::WebSecurityPolicy::RemoveAllOriginAccessWhitelistEntriesForOrigin(GURL(sourceOrigin));
+
   args.GetReturnValue().Set(v8::Undefined(isolate));
   return;
 }

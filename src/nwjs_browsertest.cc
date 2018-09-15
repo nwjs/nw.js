@@ -10,6 +10,7 @@
 
 #include "net/base/filename_util.h"
 #include "base/test/test_timeouts.h"
+#include "chrome/browser/media/webrtc/fake_desktop_media_picker_factory.h"
 
 #include "base/callback_helpers.h"
 #include "base/files/file_util.h"
@@ -214,11 +215,11 @@ class SelectControlWaiter : public aura::WindowObserver,
                             public aura::EnvObserver {
  public:
   SelectControlWaiter() {
-    aura::Env::GetInstanceDontCreate()->AddObserver(this);
+    aura::Env::GetInstance()->AddObserver(this);
   }
 
   ~SelectControlWaiter() override {
-    aura::Env::GetInstanceDontCreate()->RemoveObserver(this);
+    aura::Env::GetInstance()->RemoveObserver(this);
   }
 
   void Wait(bool wait_for_widget_shown) {
@@ -1084,6 +1085,7 @@ struct TestFlags {
   bool picker_deleted;
 };
 
+#if 0
 class FakeDesktopMediaPicker : public DesktopMediaPicker {
  public:
   explicit FakeDesktopMediaPicker(TestFlags* expectation)
@@ -1182,6 +1184,8 @@ class FakeDesktopMediaPickerFactory :
   DISALLOW_COPY_AND_ASSIGN(FakeDesktopMediaPickerFactory);
 };
 
+#endif
+
 class NWJSDesktopCaptureApiTest : public NWAppTest {
  public:
   NWJSDesktopCaptureApiTest() {
@@ -1213,7 +1217,7 @@ class NWJSDesktopCaptureApiTest : public NWAppTest {
 }  // namespace
 
 IN_PROC_BROWSER_TEST_F(NWJSDesktopCaptureApiTest, CrossDomain) {
-  TestFlags test_flags[] = {
+  FakeDesktopMediaPickerFactory::TestFlags test_flags[] = {
       {true, false, false, false,
        content::DesktopMediaID(content::DesktopMediaID::TYPE_SCREEN,
                                content::DesktopMediaID::kNullId), false},

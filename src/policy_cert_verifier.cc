@@ -38,6 +38,16 @@ void CompleteAndSignalAnchorUse(
   std::move(completion_callback).Run(error);
 }
 
+net::CertVerifier::Config ExtendTrustAnchors(
+    const net::CertVerifier::Config& config,
+    const net::CertificateList& trust_anchors) {
+  net::CertVerifier::Config new_config = config;
+  new_config.additional_trust_anchors.insert(
+      new_config.additional_trust_anchors.begin(), trust_anchors.begin(),
+      trust_anchors.end());
+  return new_config;
+}
+
 }  // namespace
 
 PolicyCertVerifier::PolicyCertVerifier(
@@ -59,17 +69,22 @@ void PolicyCertVerifier::InitializeOnIOThread(
   }
   delegate_ = std::make_unique<net::CachingCertVerifier>(
       std::make_unique<net::MultiThreadedCertVerifier>(verify_proc.get()));
+  delegate_->SetConfig(ExtendTrustAnchors(orig_config_, trust_anchors_));
 }
 
 void PolicyCertVerifier::SetTrustAnchors(
     const net::CertificateList& trust_anchors) {
   DCHECK_CURRENTLY_ON(content::BrowserThread::IO);
+  if (trust_anchors == trust_anchors_)
+    return;
   trust_anchors_ = trust_anchors;
+  if (!delegate_)
+    return;
+  delegate_->SetConfig(ExtendTrustAnchors(orig_config_, trust_anchors_));
 }
 
 int PolicyCertVerifier::Verify(
     const RequestParams& params,
-    net::CRLSet* crl_set,
     net::CertVerifyResult* verify_result,
     net::CompletionOnceCallback completion_callback,
     std::unique_ptr<Request>* out_req,
@@ -82,16 +97,15 @@ int PolicyCertVerifier::Verify(
                  std::move(completion_callback),
                  verify_result);
 
-  net::CertificateList merged_trust_anchors(*params.additional_trust_anchors());
-  merged_trust_anchors.insert(merged_trust_anchors.begin(),
-                              trust_anchors_.begin(), trust_anchors_.end());
-  net::CertVerifier::RequestParams new_params(
-      params.certificate(), params.hostname(), params.flags(),
-      params.ocsp_response(), merged_trust_anchors);
-  int error = delegate_->Verify(new_params, crl_set, verify_result,
+  int error = delegate_->Verify(params, verify_result,
                                 std::move(wrapped_callback), out_req, net_log);
   MaybeSignalAnchorUse(error, anchor_used_callback_, *verify_result);
   return error;
 }
 
+void PolicyCertVerifier::SetConfig(const Config& config) {
+  DCHECK_CURRENTLY_ON(content::BrowserThread::IO);
+  orig_config_ = config;
+  delegate_->SetConfig(ExtendTrustAnchors(orig_config_, trust_anchors_));
+}
 }  // namespace policy

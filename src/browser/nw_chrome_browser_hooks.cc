@@ -53,7 +53,7 @@
 #include "net/cert/test_root_certs.h"
 #include "net/url_request/url_request_context.h"
 #include "net/url_request/url_request_context_getter.h"
-#include "sql/connection.h"
+#include "sql/database.h"
 #include "sql/meta_table.h"
 #include "sql/transaction.h"
 #include "storage/common/database/database_identifier.h"
@@ -322,7 +322,7 @@ int MainPartsPreCreateThreadsHook() {
           base::Move(new_websql_dir.DirName().Append(base::FilePath::FromUTF8Unsafe(old_id)), new_websql_dir);
 
           base::FilePath metadb_path = new_websql_dir.DirName().Append(FILE_PATH_LITERAL("Databases.db"));
-          sql::Connection metadb;
+          sql::Database metadb;
           if (metadb.Open(metadb_path) && sql::MetaTable::DoesTableExist(&metadb)) {
             std::string stmt = "UPDATE Databases SET origin='" + storage::GetIdentifierFromOrigin(origin) + "' WHERE origin='" + old_id + "'";
             if (!metadb.Execute(stmt.c_str()))
