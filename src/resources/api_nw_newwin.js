@@ -620,8 +620,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     //options.innerBounds = {};
     //options.outerBounds = {};
     if (params) {
-      // if (params.frame === false)
-      //   options.frame = 'none';
+      if (params.frame === false)
+        options.frameless = true;
       // if (params.resizable === false)
       //   options.resizable = false;
       // if (params.focus === false)
