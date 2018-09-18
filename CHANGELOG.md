@@ -1,3 +1,10 @@
+0.33.3 / 09-12-2018
+===================
+- Update Chromium to [69.0.3497.100](https://chromereleases.googleblog.com/2018/09/stable-channel-update-for-desktop_17.html)
+- Fix: GamePad API regression [(#6792)](https://github.com/nwjs/nw.js/issues/6792)
+- Fix: NW app not launching if ExtensionInstallBlacklistregistry key is set to block all extensions [(#6634)](https://github.com/nwjs/nw.js/issues/6634)
+- Fix: OSX: nwjs crashes when invoking curl via exec() [(#6799)](https://github.com/nwjs/nw.js/issues/6799)
+
 0.33.2 / 09-12-2018
 ===================
 - Update Chromium to [69.0.3497.92](https://chromereleases.googleblog.com/2018/09/stable-channel-update-for-desktop_11.html)
