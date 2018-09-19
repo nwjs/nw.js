@@ -1,4 +1,4 @@
-0.33.3 / 09-12-2018
+0.33.3 / 09-18-2018
 ===================
 - Update Chromium to [69.0.3497.100](https://chromereleases.googleblog.com/2018/09/stable-channel-update-for-desktop_17.html)
 - Fix: GamePad API regression [(#6792)](https://github.com/nwjs/nw.js/issues/6792)
