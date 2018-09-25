@@ -15,7 +15,7 @@ DEFAULT_CONFIG = """solutions = [{"managed": True, "name": "src", "url": "https:
 f = open(deps_file)
 for line in f:
     if re.match('.*nw_src_revision.*', line):
-        revisions['nw_src_revision'] = line.split()[1].strip("'")
+        revisions['nw_src_revision'] = line.split()[1].strip("',")
 
 cmd = ['gclient', 'sync', '--with_branch_heads', '-f', '-v', '--spec', (DEFAULT_CONFIG % revisions)]
 
