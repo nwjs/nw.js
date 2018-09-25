@@ -2166,5 +2166,4 @@ recursedeps = [
   "src/third_party/angle",
   # src-internal has its own DEPS file to pull additional internal repos
   'src-internal',
-  'src/content/nw',
 ]
