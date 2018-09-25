@@ -23,4 +23,4 @@ print cmd
 print gclient_root
 
 os.chdir(gclient_root)
-sys.exit(sp.call(cmd))
+sys.exit(sp.call(cmd, shell=True))
