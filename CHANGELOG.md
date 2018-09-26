@@ -1,3 +1,8 @@
+0.33.4 / 09-25-2018
+===================
+- Update Node.js to [v10.11.0](https://nodejs.org/en/blog/release/v10.11.0/)
+- add DEPS and script to sync NW repos with gclient
+
 0.33.3 / 09-18-2018
 ===================
 - Update Chromium to [69.0.3497.100](https://chromereleases.googleblog.com/2018/09/stable-channel-update-for-desktop_17.html)
