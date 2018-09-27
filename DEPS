@@ -112,7 +112,7 @@ vars = {
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
   'v8_revision': '40b7c570a56b1134ff5083d8311e69ad8bf8fbd7',
-  'nw_src_revision': 'de9606ef935dc42e54bca32f20331070e93c7212',
+  'nw_src_revision': 'da9ca09988f907f8ff026a690f683fd93126b94b',
   'nw_v8_revision': '577bc92411f99e1cb8fa361338a4fdc8b3ad9b25',
   'nw_node_revision': '58acf9847b77db802a861f6ec689231c121b8d9c',
   # Three lines of non-changing comments so that
