@@ -1,0 +1,46 @@
+// Copyright (c) 2011 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#include <verrsrc.h>
+#include "../../content/nw/src/nw_version.h"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEFLAGSMASK 0x17L
+ FILEVERSION NW_MAJOR_VERSION,NW_MINOR_VERSION,NW_PATCH_VERSION
+ PRODUCTVERSION NW_MAJOR_VERSION,NW_MINOR_VERSION,NW_PATCH_VERSION
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "The NW.js Community"
+            VALUE "FileDescription", "nwjs open source media library"
+            VALUE "FileVersion", NW_VERSION_STRING
+            VALUE "InternalName", "ffmpeg_dll"
+            VALUE "LegalCopyright", "Copyright 2018, The NW.js community and The Chromium Authors. All rights reserved."
+            VALUE "OriginalFilename", "ffmpeg.dll"
+            VALUE "ProductName", "nwjs"
+            VALUE "ProductVersion", NW_VERSION_STRING
+            VALUE "CompanyShortName", "nwjs.io"
+            VALUE "ProductShortName", "nwjs"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
