@@ -114,7 +114,7 @@ vars = {
   'v8_revision': '5be1b3861c4fe01f7e06403472d8bef7bd6ba465',
   'nw_src_revision': '0b44a0ecccce185c68cfeb3a8df4c9772901b603',
   'nw_v8_revision': 'b5ae645d1883ef16451b677a738cd3a5321cc54d',
-  'nw_node_revision': '9e7252de6f14c74cbb0e2dab2978dee11271156c',
+  'nw_node_revision': '91ffe46e278d6e3e727e0ca799ee8b235a12ff44',
 
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
