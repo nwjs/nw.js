@@ -2,7 +2,6 @@
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/nwjs/nw.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  
 Official site: https://nwjs.io  
-Official documentation: http://docs.nwjs.io/  
 ## Introduction
 
 NW.js is an app runtime based on `Chromium` and `node.js`. You can 
@@ -78,6 +77,7 @@ Note: on OSX, the executable binary is in a hidden directory within the .app fil
 `/path/to/nwjs.app/Contents/MacOS/nwjs .` *(suppose the current directory contains 'package.json')*   
 
 ## Documents
+Official documentation: http://docs.nwjs.io/  
 
 For more information on how to write/package/run apps, see:
 
@@ -149,8 +149,3 @@ the binary verification command above.
 
 `NW.js`'s code in this repo uses the MIT license, see our `LICENSE` file. To redistribute the binary, see [How to package and distribute your apps](https://github.com/nwjs/nw.js/wiki/How-to-package-and-distribute-your-apps)
 
-## Sponsors
-
-The work is being sponsored by:  
-* [Intel](https://www.intel.com/content/www/us/en/homepage.html)
-* [Gnor Tech](http://gnor.net)
