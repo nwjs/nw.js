@@ -785,10 +785,13 @@ function onClose(user_force) {
 }
 
 function get_nw() {
-  appWindowNatives.FixGamePadAPI();
-  var nw0 = try_nw(window).nw;
-  if (nw0)
-    nw0.Window.get();
+  try {
+    appWindowNatives.FixGamePadAPI();
+    var nw0 = try_nw(window).nw;
+    if (nw0)
+      nw0.Window.get();
+  } catch (e) {
+  }
 }
 
 if (bgPage !== window) {

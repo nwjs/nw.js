@@ -112,7 +112,7 @@ vars = {
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
   'v8_revision': '5be1b3861c4fe01f7e06403472d8bef7bd6ba465',
-  'nw_src_revision': '3a6ae819417d72c4000f2df3ab4484ae9773005c',
+  'nw_src_revision': '3b233264f3c33bbbb1bf043512b004c10ce0eb1d',
   'nw_v8_revision': 'b5ae645d1883ef16451b677a738cd3a5321cc54d',
   'nw_node_revision': '4052bfe6fa005ec309e48c25b9fa3f30bc82e354',
 

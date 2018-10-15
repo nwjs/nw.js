@@ -214,7 +214,7 @@ bool GuestSwapProcessHook(content::BrowserContext* browser_context, const GURL& 
   std::string extension_id = url.host();
   const Extension* extension = registry->enabled_extensions().GetByID(extension_id);
   if (extension && !extensions::ManifestURL::Get(extension, "devtools_page").is_empty())
-    return true;
+    return false;
   return false;
 }
 
