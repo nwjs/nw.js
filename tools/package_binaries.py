@@ -192,7 +192,8 @@ def generate_target_nw(platform_name, arch, version):
                            'nw_200_percent.pak',
                            'ffmpeg.dll',
                            'swiftshader\libEGL.dll',
-                           'swiftshader\libGLESv2.dll'
+                           'swiftshader\libGLESv2.dll',
+                           'notification_helper.exe'
                             # To be removed in CR51
                            ]
         if flavor == 'sdk':
