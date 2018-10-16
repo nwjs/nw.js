@@ -17,7 +17,7 @@ for line in f:
     if re.match('.*nw_src_revision.*', line):
         revisions['nw_src_revision'] = line.split()[1].strip("',")
 
-cmd = ['gclient', 'sync', '--with_branch_heads', '-f', '-v', '--spec', (DEFAULT_CONFIG % revisions)]
+cmd = ['gclient', 'sync', '--with_branch_heads', '-f', '--reset', '--upstream', '--spec', (DEFAULT_CONFIG % revisions)]
 
 print cmd
 print gclient_root
