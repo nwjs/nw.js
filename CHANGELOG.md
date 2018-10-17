@@ -1,3 +1,13 @@
+0.34.0 / 10-17-2018
+===================
+- Update Chromium to [70.0.3538.67](https://chromereleases.googleblog.com/2018/10/stable-channel-update-for-desktop.html)
+- Update Node.js to v11.0.0-pre
+- Fix: regression with devtools extensions loaded in webview [(#6004)](https://github.com/nwjs/nw.js/issues/6004)
+- Fix: [WIN] Dlls missing version field [(#6805)](https://github.com/nwjs/nw.js/issues/6805)
+- Fix: crash on continue debugging [(#6825)](https://github.com/nwjs/nw.js/issues/6825)
+- Fix: Credential Management API: get resolves to null [(#6809)](https://github.com/nwjs/nw.js/issues/6809)
+- [WIN] Ship notification_helper.exe for Win10 native notifications [(#6824)](https://github.com/nwjs/nw.js/issues/6824)
+
 0.33.4 / 09-25-2018
 ===================
 - Update Node.js to [v10.11.0](https://nodejs.org/en/blog/release/v10.11.0/)
