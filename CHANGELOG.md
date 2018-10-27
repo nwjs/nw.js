@@ -1,3 +1,12 @@
+0.34.1 / 10-27-2018
+===================
+- Update Chromium to [70.0.3538.77](https://chromereleases.googleblog.com/2018/10/stable-channel-update-for-desktop_24.html)
+- Update Node.js to [v11.0.0](https://nodejs.org/en/blog/release/v11.0.0/)
+- Fix: [OSX] nw.Window close event
+- Fix: Error after webview removal and recreation
+- Fix: crash on quit in some cases [(#6004)](https://github.com/nwjs/nw.js/issues/6004)
+- Fix: Crash with File dialogs [(#6698)](https://github.com/nwjs/nw.js/issues/6698)
+
 0.34.0 / 10-17-2018
 ===================
 - Update Chromium to [70.0.3538.67](https://chromereleases.googleblog.com/2018/10/stable-channel-update-for-desktop.html)
