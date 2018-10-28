@@ -549,13 +549,13 @@ void willHandleNavigationPolicy(content::RenderView* rv,
   } else {
     const char* req_context = nullptr;
     switch (request.GetRequestContext()) {
-    case blink::WebURLRequest::kRequestContextHyperlink:
+    case blink::mojom::RequestContextType::HYPERLINK:
       req_context = "hyperlink";
       break;
-    case blink::WebURLRequest::kRequestContextFrame:
+    case blink::mojom::RequestContextType::FRAME:
       req_context = "form";
       break;
-    case blink::WebURLRequest::kRequestContextLocation:
+    case blink::mojom::RequestContextType::LOCATION:
       req_context = "location";
       break;
     default:

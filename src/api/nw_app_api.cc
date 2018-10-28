@@ -2,6 +2,8 @@
 
 #include "base/command_line.h"
 #include "base/memory/ptr_util.h"
+#include "base/task/post_task.h"
+#include "content/public/browser/browser_task_traits.h"
 #include "chrome/browser/browsing_data/browsing_data_appcache_helper.h"
 #include "chrome/browser/browsing_data/browsing_data_helper.h"
 #include "chrome/browser/devtools/devtools_window.h"
@@ -190,9 +192,9 @@ bool NwAppSetProxyConfigFunction::RunNWSync(base::ListValue* response, std::stri
 
   base::WaitableEvent done(base::WaitableEvent::ResetPolicy::AUTOMATIC,
                            base::WaitableEvent::InitialState::NOT_SIGNALED);
-  content::BrowserThread::PostTask(
-      content::BrowserThread::IO, FROM_HERE,
-      base::Bind(&SetProxyConfigCallback, &done,
+  base::PostTaskWithTraits(
+      FROM_HERE, {content::BrowserThread::IO},
+      base::BindOnce(&SetProxyConfigCallback, &done,
                  base::WrapRefCounted(context_getter), config));
   done.Wait();
   return true;

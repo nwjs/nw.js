@@ -24,8 +24,7 @@ function showScreenShare(conf){
 
    navigator.mediaDevices.getUserMedia(conf)
     .then(function(stream){
-        var url = window.URL.createObjectURL(stream);
-        ve.src = url;
+        ve.srcObject = stream;
         if (chrome.test) {
            chrome.test.sendMessage("Pass");
         }

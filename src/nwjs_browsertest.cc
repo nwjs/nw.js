@@ -12,6 +12,9 @@
 #include "base/test/test_timeouts.h"
 #include "chrome/browser/media/webrtc/fake_desktop_media_picker_factory.h"
 
+#include "base/task/post_task.h"
+#include "content/public/browser/browser_task_traits.h"
+
 #include "base/callback_helpers.h"
 #include "base/files/file_util.h"
 #include "base/files/scoped_temp_dir.h"
@@ -837,16 +840,16 @@ public:
       if (iter.GetData().process_type == content::PROCESS_TYPE_PPAPI_PLUGIN)
         (*count)++;
     }
-    BrowserThread::PostTask(BrowserThread::UI, FROM_HERE, quit_task);
+    base::PostTaskWithTraits(FROM_HERE, {content::BrowserThread::UI}, quit_task);
   }
   static void EnsureFlashProcessCount(int expected) {
     int actual = 0;
     scoped_refptr<content::MessageLoopRunner> runner =
         new content::MessageLoopRunner;
-    BrowserThread::PostTask(
-        BrowserThread::IO,
+    base::PostTaskWithTraits(
         FROM_HERE,
-        base::Bind(&CountPluginProcesses, &actual, runner->QuitClosure()));
+        {content::BrowserThread::IO},
+        base::BindOnce(&CountPluginProcesses, &actual, runner->QuitClosure()));
     runner->Run();
     ASSERT_EQ(expected, actual);
   }

@@ -7,6 +7,8 @@
 #include "base/strings/utf_string_conversions.h"
 #include "base/path_service.h"
 #include "base/threading/thread_restrictions.h"
+#include "base/task/post_task.h"
+#include "content/public/browser/browser_task_traits.h"
 
 #if defined(OS_WIN)
 #include "base/win/scoped_gdi_object.h"
@@ -206,10 +208,9 @@ void SetTrustAnchors(net::CertificateList& trust_anchors) {
   //   << "Added " << trust_anchors.size() << " certificates to trust anchors.";
   Profile* profile = ProfileManager::GetActiveUserProfile();
   net::URLRequestContextGetter* url_request_context_getter = profile->GetRequestContext();
-  content::BrowserThread::PostTask(
-    content::BrowserThread::IO,
-    FROM_HERE,
-    base::Bind(SetTrustAnchorsOnIOThread, base::WrapRefCounted(url_request_context_getter),
+  base::PostTaskWithTraits(FROM_HERE,
+    {content::BrowserThread::IO},
+    base::BindOnce(SetTrustAnchorsOnIOThread, base::WrapRefCounted(url_request_context_getter),
                g_browser_process->io_thread(), trust_anchors));
 }
 

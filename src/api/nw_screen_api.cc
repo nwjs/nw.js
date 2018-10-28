@@ -321,7 +321,7 @@ void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(DesktopMediaList* list, i
     std::string base64;
 
     DesktopMediaList::Source src = list->GetSource(index);
-    SkBitmap bitmap = src.thumbnail.GetRepresentation(1).sk_bitmap();
+    SkBitmap bitmap = src.thumbnail.GetRepresentation(1).GetBitmap();
     std::vector<unsigned char> data;
     bool success = gfx::PNGCodec::EncodeBGRASkBitmap(bitmap, false, &data);
     if (success){
