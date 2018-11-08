@@ -1,3 +1,13 @@
+0.34.2 / 11-08-2018
+===================
+- Update Node.js to [v11.1.0](https://nodejs.org/en/blog/release/v11.1.0/)
+- Fix: listeners in different webview processes are all fired (#6849)
+- Fix: mac menu support regression (#6851)
+- Fix: node: fix crash in tracing and buffer
+- Fix: webview.captureVisibleRegion get undefined in callback (#6853)
+- Fix: [OSX] nwdirectory file dialog missing button to create dir (#6848)
+- Fix: webview touch emulation
+
 0.34.1 / 10-27-2018
 ===================
 - Update Chromium to [70.0.3538.77](https://chromereleases.googleblog.com/2018/10/stable-channel-update-for-desktop_24.html)
