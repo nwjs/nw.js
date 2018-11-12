@@ -1,3 +1,8 @@
+0.34.3 / 11-12-2018
+===================
+- Update Chromium to [70.0.3538.102](https://chromereleases.googleblog.com/2018/11/stable-channel-update-for-desktop.html)
+- Support NW security model in cross-origin iframes [(#6696)](https://github.com/nwjs/nw.js/issues/6696)
+
 0.34.2 / 11-08-2018
 ===================
 - Update Node.js to [v11.1.0](https://nodejs.org/en/blog/release/v11.1.0/)
