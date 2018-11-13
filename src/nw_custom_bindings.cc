@@ -341,13 +341,11 @@ void NWCustomBindings::GetOldCwd(
 
 void NWCustomBindings::AddOriginAccessWhitelistEntry(const v8::FunctionCallbackInfo<v8::Value>& args) {
   v8::Isolate* isolate = args.GetIsolate();
-  v8::Local<v8::Context> v8_context =
-      v8::Local<v8::Object>::Cast(args[0])->CreationContext();
 
   std::string sourceOrigin        = *v8::String::Utf8Value(isolate, args[0]);
   std::string destinationProtocol = *v8::String::Utf8Value(isolate, args[1]);
   std::string destinationHost     = *v8::String::Utf8Value(isolate, args[2]);
-  bool allowDestinationSubdomains = args[3]->ToBoolean(v8_context).ToLocalChecked()->Value();
+  bool allowDestinationSubdomains = args[3].As<v8::Boolean>()->Value();
 
   blink::WebSecurityPolicy::AddOriginAccessAllowListEntry(GURL(sourceOrigin),
                                                           blink::WebString::FromUTF8(destinationProtocol),
