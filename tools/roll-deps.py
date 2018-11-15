@@ -96,8 +96,10 @@ def main():
   root_dir = os.path.dirname(tool_dir)
   os.chdir(root_dir)
 
-  projects = [('src', '.'), ('v8', 'v8'), ('node', 'third_party/node-nw')]
-  for project, path in projects:
+  projects = [('src', '.', 'https://github.com/nwjs/chromium.src'),
+              ('v8', 'v8', 'https://github.com/nwjs/v8'),
+              ('node', 'third_party/node-nw', 'https://github.com/nwjs/node')]
+  for project, path, url in projects:
     os.chdir(os.path.join(SRC_DIR, path))
     new_rev = subprocess.check_output(['git', 'rev-parse', 'HEAD'], shell=IS_WINDOWS).rstrip()
 
@@ -111,9 +113,10 @@ def main():
     print '%s roll %s:%s' % (project, old_rev, new_rev)
     commit_msg = subprocess.check_output(['git', 'log', '-1', '--format=%s'], shell=IS_WINDOWS).rstrip()
     commit_msg = project + ": " + commit_msg
+    commit_body = url + "/commit/" + new_rev
     os.chdir(root_dir)
     subprocess.check_output(['git', 'add', 'DEPS'], shell=IS_WINDOWS)
-    subprocess.check_output(['git', 'commit', '--quiet', '-m', commit_msg], shell=IS_WINDOWS)
+    subprocess.check_output(['git', 'commit', '--quiet', '-m', commit_msg, '-m', commit_body], shell=IS_WINDOWS)
     break
   return 0
 
