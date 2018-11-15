@@ -98,6 +98,13 @@ if os.path.exists(os.path.join(tmp_dir, 'node', 'deps', 'npm', 'node_modules')):
 header_files = ['node.h', 'env.h', 'env-inl.h']
 update_uvh(tmp_dir, header_files)
 
+
+include_node = os.path.join(tmp_dir, 'node', 'include', 'node', 'openssl')
+base = os.path.join(third_party_dir, 'node-nw', 'deps', 'openssl', 'openssl', 'include', 'openssl')
+shutil.copytree(base, include_node)
+distutils.dir_util.copy_tree(os.path.join(third_party_dir, 'node-nw', 'deps', 'openssl', 'config'),
+                             include_node)
+
 print 'copy file end'
 print 'Begin compress file'
 
