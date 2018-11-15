@@ -92,7 +92,7 @@ vars = {
   'angle_root': 'src/third_party/angle',
 
   'nw_src_revision': 'e65c407f67e348ffa451ebbe1a2b87711673f9f7',
-  'nw_v8_revision': 'ef46730cfe8cfd62781a44b0016b4225e86c6a10',
+  'nw_v8_revision': 'd431e5a7ea3c1996cde37d6ac0220e99c8e70b3b',
   'nw_node_revision': 'cd5cb192b912780b58d2b0032f82fe6002e147bc',
 
   'android_git': 'https://android.googlesource.com',
