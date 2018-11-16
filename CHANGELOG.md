@@ -1,3 +1,9 @@
+0.34.4 / 11-16-2018
+===================
+- Update Node.js to [v11.2.0](https://nodejs.org/en/blog/release/v11.2.0/)
+- Fix: nw-gyp rebuild nodegit error targeting 0.34.x [(#6869)](https://github.com/nwjs/nw.js/issues/6869)
+- Fix: nwjs app crashes on addOriginAccessWhitelistEntry [(#6858)](https://github.com/nwjs/nw.js/issues/6858)
+
 0.34.3 / 11-12-2018
 ===================
 - Update Chromium to [70.0.3538.102](https://chromereleases.googleblog.com/2018/11/stable-channel-update-for-desktop.html)
