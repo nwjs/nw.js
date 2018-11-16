@@ -1,6 +1,6 @@
 class DevClass {
   constructor() {
-    console.log("DevClass constructor")
+    //console.log("DevClass constructor")
   }
 }
 
