@@ -44,7 +44,7 @@ try:
     print 'switch to devtools window ' + devwin
     driver.switch_to_window(devwin)
     devtools_click_tab(driver, 'console')
-    driver.find_element_by_css_selector('.console-message-text .devtools-link').click()
+    driver.execute_script('document.querySelector(".console-message-text .devtools-link").click()')
     wait_window_handles(driver, 4)
     driver.switch_to_window(driver.window_handles[3])
     print driver.current_url
