@@ -31,7 +31,7 @@
       navigator.webkitGetUserMedia(
         constraints,
         function(stream) {
-          document.getElementById('screen-share').src = URL.createObjectURL(stream);
+          document.getElementById('screen-share').srcObject = stream;
           out('result', 'success');
         },
         function(error) {
