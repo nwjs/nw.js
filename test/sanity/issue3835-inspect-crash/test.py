@@ -25,7 +25,8 @@ try:
     devtools_click_tab(driver, 'console')
     print 'send_keys "chrome<enter>"'
     devtools_type_in_console(driver, 'chrome\n')
-    driver.find_element_by_class_name('console-object-preview').click()
+    time.sleep(2)
+    driver.execute_script('document.querySelector(".console-object-preview").click()')
     time.sleep(1) # wait for crash!
     expanded = driver.find_element_by_css_selector('.console-view-object-properties-section.expanded')
     assert(expanded is not None)
