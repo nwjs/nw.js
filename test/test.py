@@ -195,7 +195,7 @@ class SimpleProgressIndicator(ProgressIndicator):
         print "=== %i tests CRASHED" % self.crashed
       print "==="
       for failed in self.failed:
-        print failed.GetLabel()
+        print failed.test.GetLabel()
 
 
 class VerboseProgressIndicator(SimpleProgressIndicator):
