@@ -34,6 +34,10 @@ try:
     result = wait_for_element_id_content(driver, 'result', 'success')
     print result
 finally:
-    server.terminate()
+    import platform
+    if platform.system() == 'Windows':
+        subprocess.call(['taskkill', '/F', '/T', '/PID', str(server.pid)])
+    else:
+        server.terminate()
     driver.quit()
 

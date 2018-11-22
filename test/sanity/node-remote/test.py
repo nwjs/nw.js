@@ -33,6 +33,10 @@ try:
     print result.get_attribute('innerHTML')
     assert("success" in result.get_attribute('innerHTML'))
 finally:
-    server.terminate()
+    import platform
+    if platform.system() == 'Windows':
+        subprocess.call(['taskkill', '/F', '/T', '/PID', str(server.pid)])
+    else:
+        server.terminate()
     driver.quit()
 
