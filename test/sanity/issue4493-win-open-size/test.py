@@ -32,6 +32,6 @@ try:
     print driver.current_url
     size = driver.find_element_by_id('size').get_attribute('innerHTML')
     print 'open size %s' % size
-    assert(size == '666x333')
+    assert(size == '666x333' or size == '667x334')
 finally:
     driver.quit()
