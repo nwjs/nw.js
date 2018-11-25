@@ -25,7 +25,7 @@ try:
     driver.find_element_by_id('get-zoom').click()
     zoom1 = driver.find_element_by_id('result').get_attribute('innerHTML')
     print "zoom1: ", zoom1
-    assert(zoom1 == '1')
+    assert(zoom1 == '1' or zoom1 == '1.5')
     assert(zoom2 != '1')
 finally:
     driver.quit()
