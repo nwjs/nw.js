@@ -244,7 +244,8 @@ def devtools_click_tab(driver, tab_name):
 
 def devtools_type_in_console(driver, keys):
     console_prompt = driver.find_element_by_id('console-prompt')
-    ActionChains(driver).click(console_prompt).send_keys(keys).perform()
+    ActionChains(driver).click(console_prompt).perform()
+    ActionChains(driver).send_keys(keys).perform()
 
 def no_live_process(driver, print_if_fail=True):
     if platform.system() == 'Windows':

@@ -25,7 +25,10 @@ try:
     print 'click Console panel'
     devtools_click_tab(driver, 'console')
     print 'send_keys "location.pathname<enter>"'
-    devtools_type_in_console(driver, 'location.pathname\n')
+    devtools_type_in_console(driver, 'location.')
+    time.sleep(1)
+    devtools_type_in_console(driver, 'pathname')
+    devtools_type_in_console(driver, '\n')
     timeout = 10
     while timeout > 0 :
         try:
