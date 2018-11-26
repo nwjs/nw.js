@@ -24,7 +24,10 @@ try:
     wait_window_handles(driver, lambda handles: len(handles) != 0 and handles[0] != old_handle)
     # devtools will be opened as the first window handle
     print driver.window_handles
-    switch_to_devtools(driver, devtools_window=driver.window_handles[0])
+    try:
+        switch_to_devtools(driver, devtools_window=driver.window_handles[0])
+    except:
+        switch_to_devtools(driver, devtools_window=driver.window_handles[1])
     print 'click Console panel'
     devtools_click_tab(driver, 'console')
     print 'send_keys "document.getElementById(\'result\').innerHTML<enter>"'
