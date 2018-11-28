@@ -391,6 +391,9 @@ deps = {
       'dep_type': 'cipd',
   },
 
+  'src/tools/gyp':
+    Var('chromium_git') + '/external/gyp.git' + '@' + 'd61a9397e668fa9843c4aa7da9e79460fe590bfb',
+
   'src/third_party/spirv-headers/src':
     Var('chromium_git') + '/external/github.com/KhronosGroup/SPIRV-Headers.git@' +
         Var('spv_headers_revision'),
