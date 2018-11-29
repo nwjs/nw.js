@@ -266,6 +266,46 @@ def no_live_process(driver, print_if_fail=True):
         # expect exit 1 from pgrep, which means no chrome process alive
         return ret
 
+def wait_net_service(server, port, timeout=None):
+    """ Wait for network service to appear 
+        @param timeout: in seconds, if None or 0 wait forever
+        @return: True of False, if timeout is None may return only True or
+                 throw unhandled network exception
+    """
+    import socket
+    import errno
+
+    if timeout:
+        from time import time as now
+        # time module is needed to calc timeout shared between two exceptions
+        end = now() + timeout
+
+    while True:
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            if timeout:
+                next_timeout = end - now()
+                if next_timeout < 0:
+                    return False
+                else:
+            	    s.settimeout(next_timeout)
+            
+            s.connect((server, port))
+        
+        except socket.timeout, err:
+            # this exception occurs only if timeout is set
+            if timeout:
+                return False
+      
+        except socket.error, err:
+            # catch timeout exception from underlying network library
+            # this one is different from socket.timeout
+            if type(err.args) != tuple or err[0] != errno.ETIMEDOUT and err[0] != errno.ECONNREFUSED:
+                raise
+        else:
+            s.close()
+            return True
+
 _LOGGER = logging.getLogger(os.path.basename(__file__))
 
 
