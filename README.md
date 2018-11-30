@@ -25,7 +25,7 @@ It was created in the Intel Open Source Technology Center.
 * Available on Linux, Mac OS X and Windows.
 
 ## Downloads
-* **v0.34.5:** (Nov 20, 2018, based off of Node.js v11.2.0, Chromium 70.0.3538.110; See [the mapping file](https://nwjs.io/versions.json) for previous versions): [release notes](https://nwjs.io/blog/v0.34.5/)  
+* **v0.34.5:** (Nov 20, 2018, based off of Node.js v11.2.0, Chromium 70.0.3538.110; See [the mapping file](https://nwjs.io/versions.json) for the version info in previous releases): [release notes](https://nwjs.io/blog/v0.34.5/)  
  **NOTE** You might want the **SDK build**. Please read the release notes.
  * Linux: [32bit](https://dl.nwjs.io/v0.34.5/nwjs-v0.34.5-linux-ia32.tar.gz) / [64bit](https://dl.nwjs.io/v0.34.5/nwjs-v0.34.5-linux-x64.tar.gz)
  * Windows: [32bit](https://dl.nwjs.io/v0.34.5/nwjs-v0.34.5-win-ia32.zip) / [64bit](https://dl.nwjs.io/v0.34.5/nwjs-v0.34.5-win-x64.zip)
