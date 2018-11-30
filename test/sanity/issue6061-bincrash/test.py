@@ -39,9 +39,9 @@ try:
     switch_to_devtools(driver)
     print 'click Console panel'
     devtools_click_tab(driver, 'console')
-    driver.execute_script('document.querySelector(".console-object").click()')
-    driver.execute_script('document.querySelector(".console-view-object-properties-section").click()')
-    outer = driver.execute_script('return document.querySelector(".console-view-object-properties-section").shadowRoot')
+    wait_for_execute_script('document.querySelector(".console-object").click()')
+    wait_for_execute_script('document.querySelector(".console-view-object-properties-section").click()')
+    outer = wait_for_execute_script('return document.querySelector(".console-view-object-properties-section").shadowRoot')
     outer.find_element_by_class_name("object-properties-section-dimmed").click()
 finally:
     driver.quit()

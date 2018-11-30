@@ -98,6 +98,22 @@ def install_native_modules():
     print err
     assert(proc.returncode == 0)
 
+def wait_for_execute_script(driver, script, timeout=10):
+    ret = None
+    while timeout > 0:
+        try:
+            ret = driver.execute_script(script)
+            break
+        except selenium.common.exceptions.NoSuchElementException:
+            pass
+        except selenium.common.exceptions.WebDriverException:
+            pass
+        time.sleep(1)
+        timeout = timeout - 1
+        if timeout <= 0:
+             raise Exception('Timeout when execute script: ' + script)
+    return ret
+
 def wait_for_element_id(driver, elem_id, timeout=10):
     ret = ''
     while timeout > 0:
