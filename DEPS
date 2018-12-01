@@ -38,7 +38,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "win, ios, linux64, chromeos, win64, android, mac64",
+  "buildspec_platforms": "win, linux64, mac64, win64",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -91,8 +91,8 @@ vars = {
   # ANGLE's deps are relative to the angle_root variable.
   'angle_root': 'src/third_party/angle',
 
-  'nw_src_revision': 'e5eb7efe03285dedb3d7db739ac80d31db840844',
-  'nw_v8_revision': '77e529379e03c3f91692f46855f547aee922fae7',
+  'nw_src_revision': 'a0cae1098eec02c5b2babae5958b53d504ed628b',
+  'nw_v8_revision': '5013a14d01e607f5b26ec8e287a8c6ec99576210',
   'nw_node_revision': '6df48f217ea1e3c3eaa5463985a360b145c79471',
 
   'android_git': 'https://android.googlesource.com',
@@ -115,7 +115,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '2be29abc2ade1ce8e90cb7a62918c7189093fb47',
+  'v8_revision': 'b14fdae7799e2990dd49d7c6d933ca4928b936ef',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -135,7 +135,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling PDFium
   # and whatever else without interference from each other.
-  'pdfium_revision': '5b9e71597c3e6b9a0fc186b1a3f4ac91e0ab662a',
+  'pdfium_revision': '4a3dddbfe8fdcb69303ade5d74897513d56dbe3c',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling openmax_dl
   # and whatever else without interference from each other.
@@ -775,7 +775,7 @@ deps = {
     Var('chromium_git') + '/chromium/deps/hunspell_dictionaries.git' + '@' + 'a9bac57ce6c9d390a52ebaad3259f5fdb871210e',
 
   'src/third_party/icu':
-    Var('chromium_git') + '/chromium/deps/icu.git' + '@' + 'b029971f1fc6b20d06887c47c7afebd5881f31ff',
+    Var('chromium_git') + '/chromium/deps/icu.git' + '@' + '5841b97d994b2e3aa67629c555e2226361e09272',
 
   'src/third_party/icu4j': {
       'packages': [
@@ -862,7 +862,7 @@ deps = {
   },
 
   'src/third_party/libvpx/source/libvpx':
-    Var('chromium_git') + '/webm/libvpx.git' + '@' +  'e188b5435de71bcd602c378f1ac0441111f0f915',
+    Var('chromium_git') + '/webm/libvpx.git' + '@' +  'e72a0b581d414cbfdcc34e043599436e3d97d7be',
 
   'src/third_party/libwebm/source':
     Var('chromium_git') + '/webm/libwebm.git' + '@' + 'e4931ebc0a816458c18a6734e91a4d1b5acd5c56',
@@ -1152,7 +1152,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@383d55e3faf171955f77ee72b04df5bb1d9c4383',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@18e0ab67cf3a7f08adca8e2a96e2722c1298fffa',
     'condition': 'checkout_src_internal',
   },
 
