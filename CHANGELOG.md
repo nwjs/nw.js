@@ -1,3 +1,10 @@
+0.35.0 / 12-05-2018
+===================
+- Update Chromium to [71.0.3578.80](https://chromereleases.googleblog.com/2018/12/stable-channel-update-for-desktop.html)
+- Update Node.js to [v11.3.0](https://nodejs.org/en/blog/release/v11.3.0/)
+- Fix: Webview crashes [(#6872)](https://github.com/nwjs/nw.js/issues/6872)
+- Fix: Assertion (env) != nullptr' failed [(#6854)](https://github.com/nwjs/nw.js/issues/6854)
+
 0.34.5 / 11-20-2018
 ===================
 - Update to Chromium [70.0.3538.110](https://chromereleases.googleblog.com/2018/11/stable-channel-update-for-desktop_19.html)
