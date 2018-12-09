@@ -19,7 +19,7 @@ port_n = utils.free_port()
 port = str(port_n)
 server = subprocess.Popen(['python', '../http-server-node.py', port])
 
-
+time.sleep(1)
 tpl = open('index.tpl', 'r')
 content = tpl.read().replace('{port}', port)
 tpl.close()
