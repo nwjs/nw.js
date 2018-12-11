@@ -1,3 +1,9 @@
+0.35.1 / 12-05-2018
+===================
+- Update Node.js to [v11.4.0](https://nodejs.org/en/blog/release/v11.4.0/)
+- Fix: regression: input file nwsaveas property is ignored [(#6886)](https://github.com/nwjs/nw.js/issues/6886)
+- Enable bypassing CORB (Cross Origin Read Blocking) from privileged frames [(#6871)](https://github.com/nwjs/nw.js/issues/6871)
+
 0.35.0 / 12-05-2018
 ===================
 - Update Chromium to [71.0.3578.80](https://chromereleases.googleblog.com/2018/12/stable-channel-update-for-desktop.html)
