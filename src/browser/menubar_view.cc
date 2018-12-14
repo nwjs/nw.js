@@ -12,6 +12,7 @@
 #include "ui/views/controls/button/menu_button.h"
 #include "ui/views/layout/box_layout.h"
 #include "ui/views/widget/widget.h"
+#include "ui/views/background.h"
 
 using views::MenuRunner;
 
@@ -35,7 +36,7 @@ class MenuBarButton : public views::MenuButton {
   MenuBarButton(const base::string16& title,
                 views::MenuButtonListener* menu_button_listener,
                 bool show_menu_marker)
-      : MenuButton(title, menu_button_listener, show_menu_marker) {
+      : MenuButton(title, menu_button_listener) {
     SetElideBehavior(kElideBehavior);
   }
 

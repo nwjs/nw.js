@@ -351,7 +351,7 @@ void NWCustomBindings::AddOriginAccessWhitelistEntry(const v8::FunctionCallbackI
                                                           blink::WebString::FromUTF8(destinationProtocol),
                                                           blink::WebString::FromUTF8(destinationHost),
                                                           allowDestinationSubdomains,
-                                                          network::mojom::CORSOriginAccessMatchPriority::kDefaultPriority);
+                                                          network::mojom::CorsOriginAccessMatchPriority::kDefaultPriority);
   args.GetReturnValue().Set(v8::Undefined(isolate));
   return;
 }

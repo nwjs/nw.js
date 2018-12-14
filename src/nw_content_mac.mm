@@ -50,7 +50,7 @@ std::unique_ptr<base::ListValue> NWChangeAppMenu(nw::Menu* menu) {
 }
 
 void NWSetNSWindowShowInTaskbar(extensions::NativeAppWindow* win, bool show) {
-  NSWindow* nswin = win->GetNativeWindow();
+  NSWindow* nswin = win->GetNativeWindow().GetNativeNSWindow();
   gfx::SetNSWindowShowInTaskbar(nswin, show);
 }
 
