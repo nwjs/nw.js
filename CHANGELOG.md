@@ -1,4 +1,9 @@
-0.35.1 / 12-05-2018
+0.35.2 / 12-14-2018
+===================
+- Update Chromium to [71.0.3578.98](https://chromereleases.googleblog.com/2018/12/stable-channel-update-for-desktop_12.html)
+- Fix: cross origin access to iframes with google URL [(#6894)](https://github.com/nwjs/nw.js/issues/6894)
+
+0.35.1 / 12-11-2018
 ===================
 - Update Node.js to [v11.4.0](https://nodejs.org/en/blog/release/v11.4.0/)
 - Fix: regression: input file nwsaveas property is ignored [(#6886)](https://github.com/nwjs/nw.js/issues/6886)
