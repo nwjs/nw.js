@@ -1,5 +1,5 @@
 diff --git a/BUILD.gn b/BUILD.gn
-index 0448476773..5a8ef8e69f 100755
+index 0448476773..5274ef931f 100755
 --- BUILD.gn
 +++ BUILD.gn
 @@ -241,7 +241,7 @@ target(link_target_type, "ffmpeg_internal") {
@@ -24,7 +24,7 @@ index 0448476773..5a8ef8e69f 100755
      if (is_fuchsia || (is_posix && !is_mac)) {
        # Fixes warnings PIC relocation when building as component.
        ldflags += [
-@@ -404,6 +410,7 @@ if (is_component_ffmpeg) {
+@@ -404,12 +410,10 @@ if (is_component_ffmpeg) {
        deps += [ ":ffmpeg_generate_def" ]
        sources = [
          "$target_gen_dir/ffmpeg.def",
@@ -32,3 +32,9 @@ index 0448476773..5a8ef8e69f 100755
        ]
      }
  
+-    if (is_mac && !is_component_build) {
+-      ldflags += [ "-Wl,-install_name,@rpath/libffmpeg.dylib" ]
+-    }
+   }
+ } else {
+   source_set("ffmpeg") {
