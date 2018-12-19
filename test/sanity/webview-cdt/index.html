@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title></title>
+  <style type="text/css">
+  #demo {
+    display: inline-block;
+    height: 500px;
+    width: 320px;
+  }
+
+  #demodev {
+    display: inline-block;
+    height: 500px;
+    width: 640px;
+  }
+  </style>
+  <script>
+  function test(show) {
+    var demodev = document.getElementById('demodev');
+    document.getElementById('demo').showDevTools(show, demodev);
+  }
+  </script>
+</head>
+
+<body>
+  <webview partition="persist:trusted" id="demo" src="http://xw.qq.com"></webview>
+  <webview partition="persist:trusted" id="demodev" src="about:blank"></webview>
+  <button id='testbtn' onclick="test(true)">show</button>
+  <script>
+    document.getElementById('demo').addEventListener('contentload', function() {
+      console.log("left webview load done");
+      test(true);
+    });
+  </script>
+</body>
+
+</html>
