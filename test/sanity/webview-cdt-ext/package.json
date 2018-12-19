@@ -1,0 +1,24 @@
+{
+  "main": "index.html",
+  "name": "canhuang",
+  "appname": "canhuang",
+  "version": "1.0.0",
+  "window": {
+    "title": "v1.0.0",
+    "toolbar": true,
+    "width": 800,
+    "height": 800,
+    "frame": true
+  },
+  "chromium-args": "-load-extension=./extensions/ -ignore-certificate-errors",
+  "webview": {
+    "partitions": [
+      {
+        "name": "trusted",
+        "accessible_resources": [
+          "<all_urls>"
+        ]
+      }
+    ]
+  }
+}

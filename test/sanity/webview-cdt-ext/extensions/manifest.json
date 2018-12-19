@@ -1,0 +1,17 @@
+{
+  "name": "wechat devtools extension",
+  "version": "1.1",
+  "description": "Extends the Developer Tools, adding appdata",
+  "devtools_page": "devtools.html",
+  "webview": {
+    "partitions": [
+      {
+        "name": "trusted",
+        "accessible_resources": [
+          "<all_urls>"
+        ]
+      }
+    ]
+  },
+  "manifest_version": 2
+}
