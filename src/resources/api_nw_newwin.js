@@ -416,14 +416,18 @@ NWWindow.prototype.enterFullscreen = function () {
   chrome.windows.update(this.cWindow.id, {'state':"fullscreen"});
 };
 NWWindow.prototype.leaveFullscreen = function () {
-  if (this.appWindow.isFullscreen())
-    this.appWindow.restore();
+  var self = this;
+  chrome.windows.get(this.cWindow.id, {}, function(w) {
+    self.cWindow = w;
+    if (w.state === 'fullscreen')
+      chrome.windows.update(w.id, {'state':"normal"});
+  });
 };
 NWWindow.prototype.toggleFullscreen = function () {
-  if (this.appWindow.isFullscreen())
-    this.appWindow.restore();
+  if (this.cWindow.state === 'fullscreen')
+    chrome.windows.update(this.cWindow.id, {'state':"normal"});
   else
-    this.appWindow.fullscreen();
+    this.enterFullscreen();
 };
 NWWindow.prototype.setAlwaysOnTop = function (top) {
   this.appWindow.setAlwaysOnTop(top);
