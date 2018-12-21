@@ -423,12 +423,18 @@ NWWindow.prototype.leaveFullscreen = function () {
       chrome.windows.update(w.id, {'state':"normal"});
   });
 };
+
 NWWindow.prototype.toggleFullscreen = function () {
-  if (this.cWindow.state === 'fullscreen')
-    chrome.windows.update(this.cWindow.id, {'state':"normal"});
-  else
-    this.enterFullscreen();
+  var self = this;
+  chrome.windows.get(this.cWindow.id, {}, function(w) {
+    self.cWindow = w;
+    if (w.state === 'fullscreen')
+      chrome.windows.update(w.id, {'state':"normal"});
+    else
+      self.enterFullscreen();
+  });
 };
+
 NWWindow.prototype.setAlwaysOnTop = function (top) {
   this.appWindow.setAlwaysOnTop(top);
 };
