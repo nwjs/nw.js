@@ -401,7 +401,7 @@ NWWindow.prototype.focus = function () {
   chrome.windows.update(this.cWindow.id, {'focused':true});
 };
 NWWindow.prototype.blur = function () {
-  this.appWindow.contentWindow.blur();
+  chrome.windows.update(this.cWindow.id, {'focused':false});
 };
 NWWindow.prototype.minimize = function () {
   chrome.windows.update(this.cWindow.id, {'state':'minimized'});
