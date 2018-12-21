@@ -392,10 +392,10 @@ NWWindow.prototype.evalNWBinInternal = function (frame, path, module_path) {
   return nwNatives.evalNWBin(frame, ab);
 };
 NWWindow.prototype.show = function () {
-  this.appWindow.show();
+  chrome.windows.update(this.cWindow.id, {'state':'normal'});
 };
 NWWindow.prototype.hide = function () {
-  this.appWindow.hide();
+  chrome.windows.update(this.cWindow.id, {'state':'hidden'});
 };
 NWWindow.prototype.focus = function () {
   chrome.windows.update(this.cWindow.id, {'focused':true});
