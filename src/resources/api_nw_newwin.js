@@ -501,6 +501,7 @@ NWWindow.prototype.print = function(option) {
 };
 Object.defineProperty(NWWindow.prototype, 'x', {
   get: function() {
+    this.cWindow = currentNWWindowInternal.getCurrent({'populate': true});
     return this.cWindow.left;
   },
   set: function(x) {
@@ -509,6 +510,7 @@ Object.defineProperty(NWWindow.prototype, 'x', {
 });
 Object.defineProperty(NWWindow.prototype, 'y', {
   get: function() {
+    this.cWindow = currentNWWindowInternal.getCurrent({'populate': true});
     return this.cWindow.top;
   },
   set: function(y) {
@@ -517,6 +519,7 @@ Object.defineProperty(NWWindow.prototype, 'y', {
 });
 Object.defineProperty(NWWindow.prototype, 'width', {
   get: function() {
+    this.cWindow = currentNWWindowInternal.getCurrent({'populate': true});
     return this.cWindow.width;
   },
   set: function(val) {
@@ -525,6 +528,7 @@ Object.defineProperty(NWWindow.prototype, 'width', {
 });
 Object.defineProperty(NWWindow.prototype, 'height', {
   get: function() {
+    this.cWindow = currentNWWindowInternal.getCurrent({'populate': true});
     return this.cWindow.height;
   },
   set: function(val) {
@@ -565,12 +569,14 @@ Object.defineProperty(NWWindow.prototype, 'isKioskMode', {
 });
 Object.defineProperty(NWWindow.prototype, 'isFullscreen', {
   get: function() {
-    return this.appWindow.isFullscreen();
+    this.cWindow = currentNWWindowInternal.getCurrent({'populate': true});
+    return this.cWindow.state === 'fullscreen';
   }
 });
 Object.defineProperty(NWWindow.prototype, 'isAlwaysOnTop', {
   get: function() {
-    return this.appWindow.isAlwaysOnTop();
+    this.cWindow = currentNWWindowInternal.getCurrent({'populate': true});
+    return this.cWindow.alwaysOnTop;
   }
 });
 Object.defineProperty(NWWindow.prototype, 'menu', {
