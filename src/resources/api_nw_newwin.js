@@ -482,7 +482,7 @@ NWWindow.prototype.moveBy = function (x, y) {
                          'top': this.cWindow.top + y});
 };
 NWWindow.prototype.setResizable = function (resizable) {
-  this.appWindow.setResizable(resizable);
+  chrome.windows.update(this.cWindow.id, {'resizable': resizable});
 };
 NWWindow.prototype.requestAttention = function (flash) {
   if (typeof flash == 'boolean')
@@ -641,8 +641,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     if (params) {
       if (params.frame === false)
         options.frameless = true;
-      // if (params.resizable === false)
-      //   options.resizable = false;
+      if (params.resizable === false)
+        options.resizable = false;
       // if (params.focus === false)
       //   options.focused = false;
       // if (params.x)
