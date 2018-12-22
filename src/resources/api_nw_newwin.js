@@ -436,7 +436,7 @@ NWWindow.prototype.toggleFullscreen = function () {
 };
 
 NWWindow.prototype.setAlwaysOnTop = function (top) {
-  this.appWindow.setAlwaysOnTop(top);
+  chrome.windows.update(this.cWindow.id, {'alwaysOnTop': top});
 };
 NWWindow.prototype.setPosition = function (pos) {
   if (pos == "center") {
@@ -449,7 +449,7 @@ NWWindow.prototype.setPosition = function (pos) {
   }
 };
 NWWindow.prototype.setVisibleOnAllWorkspaces = function(all_visible) {
-  this.appWindow.setVisibleOnAllWorkspaces(all_visible);
+  chrome.windows.update(this.cWindow.id, {'allVisible': all_visible});
 };
 NWWindow.prototype.canSetVisibleOnAllWorkspaces = function() {
   return canSetVisibleOnAllWorkspaces;
