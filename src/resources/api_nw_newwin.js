@@ -439,13 +439,14 @@ NWWindow.prototype.setAlwaysOnTop = function (top) {
   chrome.windows.update(this.cWindow.id, {'alwaysOnTop': top});
 };
 NWWindow.prototype.setPosition = function (pos) {
+  this.cWindow = currentNWWindowInternal.getCurrent({'populate': true});
   if (pos == "center") {
     var screenWidth = screen.availWidth;
     var screenHeight = screen.availHeight;
-    var width  = this.appWindow.outerBounds.width;
-    var height = this.appWindow.outerBounds.height;
-    this.appWindow.outerBounds.setPosition(Math.round((screenWidth-width)/2),
-                                           Math.round((screenHeight-height)/2));
+    var width  = this.cWindow.width;
+    var height = this.cWindow.height;
+    chrome.windows.update(this.cWindow.id, {'left': Math.round((screenWidth-width)/2),
+                                            'top': Math.round((screenHeight-height)/2)});
   }
 };
 NWWindow.prototype.setVisibleOnAllWorkspaces = function(all_visible) {
@@ -463,20 +464,22 @@ NWWindow.prototype.setMinimumSize = function (width, height) {
   this.appWindow.outerBounds.minHeight = height;
 };
 NWWindow.prototype.resizeTo = function (width, height) {
-  this.appWindow.outerBounds.width = width;
-  this.appWindow.outerBounds.height = height;
+  chrome.windows.update(this.cWindow.id, {'width': width, 'height': height});
 };
 NWWindow.prototype.resizeBy = function (width, height) {
-  this.appWindow.outerBounds.width += width;
-  this.appWindow.outerBounds.height += height;
+  this.cWindow = currentNWWindowInternal.getCurrent({'populate': true});
+  chrome.windows.update(this.cWindow.id,
+                        {'width': this.cWindow.width + width,
+                         'height': this.cWindow.height + height});
 };
 NWWindow.prototype.moveTo = function (x, y) {
-  this.appWindow.outerBounds.left = x;
-  this.appWindow.outerBounds.top = y;
+  chrome.windows.update(this.cWindow.id, {'left': x, 'top': y});
 };
 NWWindow.prototype.moveBy = function (x, y) {
-  this.appWindow.outerBounds.left += x;
-  this.appWindow.outerBounds.top += y;
+  this.cWindow = currentNWWindowInternal.getCurrent({'populate': true});
+  chrome.windows.update(this.cWindow.id,
+                        {'left': this.cWindow.left + x,
+                         'top': this.cWindow.top + y});
 };
 NWWindow.prototype.setResizable = function (resizable) {
   this.appWindow.setResizable(resizable);
@@ -505,7 +508,7 @@ Object.defineProperty(NWWindow.prototype, 'x', {
     return this.cWindow.left;
   },
   set: function(x) {
-    this.appWindow.outerBounds.left = x;
+    chrome.windows.update(this.cWindow.id, {'left': x});
   }
 });
 Object.defineProperty(NWWindow.prototype, 'y', {
@@ -514,7 +517,7 @@ Object.defineProperty(NWWindow.prototype, 'y', {
     return this.cWindow.top;
   },
   set: function(y) {
-    this.appWindow.outerBounds.top = y;
+    chrome.windows.update(this.cWindow.id, {'top': y});
   }
 });
 Object.defineProperty(NWWindow.prototype, 'width', {
@@ -523,7 +526,7 @@ Object.defineProperty(NWWindow.prototype, 'width', {
     return this.cWindow.width;
   },
   set: function(val) {
-    this.appWindow.innerBounds.width = val;
+    chrome.windows.update(this.cWindow.id, {'width': val});
   }
 });
 Object.defineProperty(NWWindow.prototype, 'height', {
@@ -532,7 +535,7 @@ Object.defineProperty(NWWindow.prototype, 'height', {
     return this.cWindow.height;
   },
   set: function(val) {
-    this.appWindow.innerBounds.height = val;
+    chrome.windows.update(this.cWindow.id, {'height': val});
   }
 });
 Object.defineProperty(NWWindow.prototype, 'title', {
