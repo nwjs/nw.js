@@ -456,12 +456,11 @@ NWWindow.prototype.canSetVisibleOnAllWorkspaces = function() {
   return canSetVisibleOnAllWorkspaces;
 };
 NWWindow.prototype.setMaximumSize = function (width, height) {
-  this.appWindow.outerBounds.maxWidth = width;
-  this.appWindow.outerBounds.maxHeight = height;
+  chrome.windows.update(this.cWindow.id, {'maxWidth': width, 'maxHeight': height});
 };
 NWWindow.prototype.setMinimumSize = function (width, height) {
-  this.appWindow.outerBounds.minWidth = width;
-  this.appWindow.outerBounds.minHeight = height;
+  //TODO: cover glass frame case in windows
+  chrome.windows.update(this.cWindow.id, {'minWidth': width, 'minHeight': height});
 };
 NWWindow.prototype.resizeTo = function (width, height) {
   chrome.windows.update(this.cWindow.id, {'width': width, 'height': height});
