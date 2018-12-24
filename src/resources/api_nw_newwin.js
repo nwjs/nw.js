@@ -159,6 +159,7 @@ NWWindow.prototype.on = function (event, callback, record) {
   function wrap(cb) {
     var fn = (cb || callback).bind(self);
     fn.listener = callback;
+    callback.__nw_cb = fn;
     return fn;
   }
 
@@ -168,10 +169,23 @@ NWWindow.prototype.on = function (event, callback, record) {
   }
   switch (event) {
   case 'focus':
-    this.appWindow.contentWindow.onfocus = wrap();
+    var cbf = wrap(function(windowId) {
+      if (self.cWindow.id !== windowId)
+        return;
+      callback.call(self);
+    });
+    chrome.windows.onFocusChanged.addListener(cbf);
     break;
   case 'blur':
-    this.appWindow.contentWindow.onblur = wrap();
+    this.cWindow = currentNWWindowInternal.getCurrent({'populate': true});
+    var cbf = wrap(function(windowId) {
+      if (self.cWindow.id === windowId)
+        return;
+      if (!self.cWindow.focused)
+        return;
+      callback.call(self);
+    });
+    chrome.windows.onFocusChanged.addListener(cbf);
     break;
   case 'loaded':
     var g = wrap(function(tabId, changeInfo, tab) {
@@ -234,14 +248,14 @@ NWWindow.prototype.on = function (event, callback, record) {
     return this; //return early
     break;
   }
-  if (appWinEventsMap.hasOwnProperty(event)) {
-    this.appWindow[appWinEventsMap[event]].addListener(wrap());
-    return this;
-  }
-  if (nwWinEventsMap.hasOwnProperty(event)) {
-    this[nwWinEventsMap[event]].addListener(wrap());
-    return this;
-  }
+  //if (appWinEventsMap.hasOwnProperty(event)) {
+  //  this.appWindow[appWinEventsMap[event]].addListener(wrap());
+  //  return this;
+  //}
+  //if (nwWinEventsMap.hasOwnProperty(event)) {
+  //  this[nwWinEventsMap[event]].addListener(wrap());
+  //  return this;
+  //}
   return this;
 };
 NWWindow.prototype.removeListener = function (event, callback) {
@@ -271,12 +285,8 @@ NWWindow.prototype.removeListener = function (event, callback) {
   }
   switch (event) {
   case 'focus':
-    if (this.appWindow.contentWindow.onfocus && this.appWindow.contentWindow.onfocus.listener === callback)
-      this.appWindow.contentWindow.onfocus = null;
-    break;
   case 'blur':
-    if (this.appWindow.contentWindow.onblur && this.appWindow.contentWindow.onblur.listener === callback)
-      this.appWindow.contentWindow.onblur = null;
+    chrome.windows.onFocusChanged.removeListener(callback.__nw_cb);
     break;
   }
   return this;
