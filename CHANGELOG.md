@@ -1,3 +1,10 @@
+0.35.3 / 12-24-2018
+===================
+- Update Node.js to [v11.5.0](https://nodejs.org/en/blog/release/v11.5.0/)
+- Fix: allow loading extension URL in offscreen tab [(#6900)](https://github.com/nwjs/nw.js/issues/6900)
+- Fix: webview.showDevtools regression [(#6903)](https://github.com/nwjs/nw.js/issues/6903)
+- Internal refactoring for new window implementation [(#5875)](https://github.com/nwjs/nw.js/issues/5875)
+
 0.35.2 / 12-14-2018
 ===================
 - Update Chromium to [71.0.3578.98](https://chromereleases.googleblog.com/2018/12/stable-channel-update-for-desktop_12.html)
