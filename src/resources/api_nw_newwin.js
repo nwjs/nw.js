@@ -55,9 +55,7 @@ var appWinEventsMap = {
   'maximize':         'onMaximized',
   'restore':          'onRestored',
   'enter-fullscreen': 'onFullscreened',
-  'closed':           'onClosed',
-  'move':             'onMoved',
-  'resize':           'onResized'
+  'closed':           'onClosed'
 };
 
 var nwWinEventsMap = {
@@ -72,8 +70,10 @@ var nwWrapEventsMap = {
 };
 
 var wrapEventsMapNewWin = {
-  'focus': 'onFocusChanged',
-  'blur': 'onFocusChanged'
+  'resize':  'onResize',
+  'move':    'onMove',
+  'focus':   'onFocusChanged',
+  'blur':    'onFocusChanged'
 };
 
 nw_internal.registerCustomHook(function(bindingsAPI) {
@@ -239,17 +239,21 @@ NWWindow.prototype.on = function (event, callback, record) {
     this.onNavigation.addListener(j);
     break;
   case 'move':
-    var k = wrap(function() {
-      callback.call(self, self.x, self.y);
+    var k = wrap(function(w) {
+      if (w.id != self.cWindow.id)
+        return;
+      callback.call(self, w.left, w.top);
     });
-    this.appWindow.onMoved.addListener(k);
+    chrome.windows.onMove.addListener(k);
     return this; //return early
     break;
   case 'resize':
-    var l = wrap(function() {
-      callback.call(self, self.width, self.height);
+    var l = wrap(function(w) {
+      if (w.id != self.cWindow.id)
+        return;
+      callback.call(self, w.width, w.height);
     });
-    this.appWindow.onResized.addListener(l);
+    chrome.windows.onResize.addListener(l);
     return this; //return early
     break;
   }
