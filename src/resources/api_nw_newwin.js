@@ -71,6 +71,11 @@ var nwWrapEventsMap = {
   'navigation':       'onNavigation'
 };
 
+var wrapEventsMapNewWin = {
+  'focus': 'onFocusChanged',
+  'blur': 'onFocusChanged'
+};
+
 nw_internal.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
   apiFunctions.setHandleRequest('getCurrent', function() {
@@ -283,11 +288,13 @@ NWWindow.prototype.removeListener = function (event, callback) {
       }
     }
   }
-  switch (event) {
-  case 'focus':
-  case 'blur':
-    chrome.windows.onFocusChanged.removeListener(callback.__nw_cb);
-    break;
+  if (wrapEventsMapNewWin.hasOwnProperty(event)) {
+    for (let l of chrome.windows[wrapEventsMapNewWin[event]].getListeners()) {
+      if (l.callback.listener && l.callback.listener === callback) {
+        this[nwWrapEventsMap[event]].removeListener(l.callback);
+        return this;
+      }
+    }
   }
   return this;
 };
@@ -320,13 +327,11 @@ NWWindow.prototype.removeAllListeners = function (event) {
     }
     return this;
   }
-  switch (event) {
-  case 'focus':
-    this.appWindow.contentWindow.onfocus = null;
-    break;
-  case 'blur':
-    this.appWindow.contentWindow.onblur = null;
-    break;
+  if (wrapEventsMapNewWin.hasOwnProperty(event)) {
+    for (let l of chrome.windows[wrapEventsMapNewWin[event]].getListeners()) {
+      chrome.windows[wrapEventsMapNewWin[event]].removeListener(l.callback);
+    }
+    return this;
   }
   return this;
 };
