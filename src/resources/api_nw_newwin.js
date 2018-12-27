@@ -223,7 +223,7 @@ NWWindow.prototype.on = function (event, callback, record) {
     break;
   case 'closed':
     var cbr = wrap(function(windowId) {
-      if (self.cWindow.id === windowId)
+      if (self.cWindow.id !== windowId)
         return;
       callback.call(self);
     });
