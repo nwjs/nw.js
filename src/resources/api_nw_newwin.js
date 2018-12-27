@@ -51,16 +51,17 @@ function getPlatform() {
 
 var canSetVisibleOnAllWorkspaces = /(mac|linux)/.exec(getPlatform());
 var appWinEventsMap = {
-  'minimize':         'onMinimized',
-  'maximize':         'onMaximized',
-  'restore':          'onRestored',
-  'enter-fullscreen': 'onFullscreened',
   'closed':           'onClosed'
 };
 
 var nwWinEventsMap = {
+  'minimize':         'onMinimized',
+  'maximize':         'onMaximized',
+  'restore':          'onRestore',
+  'enter-fullscreen': 'onFullscreen',
   'zoom':             'onZoom',
-  'close':            'onClose'
+  'close':            'onClose',
+  'resize':           'onResized'
 };
 
 var nwWrapEventsMap = {
@@ -70,7 +71,6 @@ var nwWrapEventsMap = {
 };
 
 var wrapEventsMapNewWin = {
-  'resize':  'onResize',
   'move':    'onMove',
   'focus':   'onFocusChanged',
   'blur':    'onFocusChanged'
@@ -110,6 +110,7 @@ nw_internal.registerCustomHook(function(bindingsAPI) {
 var currentNWWindowInternal = nw_internal.generate();
 
 function NWWindow(cWindow) {
+  var self = this;
   if (cWindow)
     this.cWindow = cWindow;
   else {
@@ -118,8 +119,33 @@ function NWWindow(cWindow) {
           console.error('The JavaScript context calling ' +
                         'nw.Window.get() has no associated Browser window.');
   }
+
+  function updateWindowAttributes(w) {
+    if (w.id !== self.cWindow.id)
+      return;
+    var oldState = self.cWindow.state;
+    var oldWidth = self.cWindow.width;
+    var oldHeight = self.cWindow.height;
+
+    self.cWindow.state = w.state;
+    self.cWindow.width = w.width;
+    self.cWindow.height = w.height;
+
+    if (oldState != 'minimized' && w.state == 'minimized') {
+      dispatchEventIfExists(self, 'onMinimized');
+    } else if (oldState != 'maximized' && w.state == 'maximized') {
+      dispatchEventIfExists(self, 'onMaximized');
+    } else if (oldState != 'fullscreen' && w.state == 'fullscreen') {
+      dispatchEventIfExists(self, 'onFullscreen');
+    } else if (oldState != 'normal' && w.state == 'normal') {
+      dispatchEventIfExists(self, 'onRestore');
+    } else if (oldWidth != w.width || oldHeight != w.height) {
+      dispatchEventIfExists(self, 'onResized', [w.width, w.height]);
+    }
+  }
   console.log("cWindow id: " + this.cWindow.id);
   privates(this).menu = null;
+  chrome.windows.onWindowChanged.addListener(updateWindowAttributes);
 }
 
 forEach(currentNWWindowInternal, function(key, value) {
@@ -134,6 +160,11 @@ NWWindow.prototype.onDocumentStart     = new Event("nw.Window.onDocumentStart");
 NWWindow.prototype.onDocumentEnd       = new Event("nw.Window.onDocumentEnd");
 NWWindow.prototype.onZoom              = new Event();
 NWWindow.prototype.onClose             = new Event("nw.Window.onClose", undefined, {supportsFilters: true});
+NWWindow.prototype.onMinimized         = new Event();
+NWWindow.prototype.onMaximized         = new Event();
+NWWindow.prototype.onFullscreen        = new Event();
+NWWindow.prototype.onResized           = new Event();
+NWWindow.prototype.onRestore           = new Event();
 
 NWWindow.prototype.close = function (force) {
   currentNWWindowInternal.close(force, this.cWindow.id);
@@ -247,35 +278,14 @@ NWWindow.prototype.on = function (event, callback, record) {
     chrome.windows.onMove.addListener(k);
     return this; //return early
     break;
-  case 'resize':
-    var l = wrap(function(w) {
-      if (w.id != self.cWindow.id)
-        return;
-      callback.call(self, w.width, w.height);
-    });
-    chrome.windows.onResize.addListener(l);
-    return this; //return early
-    break;
   }
-  //if (appWinEventsMap.hasOwnProperty(event)) {
-  //  this.appWindow[appWinEventsMap[event]].addListener(wrap());
-  //  return this;
-  //}
-  //if (nwWinEventsMap.hasOwnProperty(event)) {
-  //  this[nwWinEventsMap[event]].addListener(wrap());
-  //  return this;
-  //}
+  if (nwWinEventsMap.hasOwnProperty(event)) {
+    this[nwWinEventsMap[event]].addListener(wrap());
+    return this;
+  }
   return this;
 };
 NWWindow.prototype.removeListener = function (event, callback) {
-  if (appWinEventsMap.hasOwnProperty(event)) {
-    for (let l of this.appWindow[appWinEventsMap[event]].getListeners()) {
-      if (l.callback.listener && l.callback.listener === callback) {
-        this.appWindow[appWinEventsMap[event]].removeListener(l.callback);
-        return this;
-      }
-    }
-  }
   if (nwWinEventsMap.hasOwnProperty(event)) {
     for (let l of this[nwWinEventsMap[event]].getListeners()) {
       if (l.callback.listener && l.callback.listener === callback) {
@@ -305,17 +315,11 @@ NWWindow.prototype.removeListener = function (event, callback) {
 
 NWWindow.prototype.removeAllListeners = function (event) {
   if (arguments.length === 0) {
-    var obj = Object.assign({}, appWinEventsMap, nwWinEventsMap, nwWrapEventsMap);
+    var obj = Object.assign({}, nwWinEventsMap, nwWrapEventsMap);
     var keys = Object.keys(obj);
     for (var i = 0, key; i < keys.length; ++i) {
       key = keys[i];
       this.removeAllListeners(key);
-    }
-    return this;
-  }
-  if (appWinEventsMap.hasOwnProperty(event)) {
-    for (let l of this.appWindow[appWinEventsMap[event]].getListeners()) {
-      this.appWindow[appWinEventsMap[event]].removeListener(l.callback);
     }
     return this;
   }
