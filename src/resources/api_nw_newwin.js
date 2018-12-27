@@ -50,9 +50,6 @@ function getPlatform() {
 }
 
 var canSetVisibleOnAllWorkspaces = /(mac|linux)/.exec(getPlatform());
-var appWinEventsMap = {
-  'closed':           'onClosed'
-};
 
 var nwWinEventsMap = {
   'minimize':         'onMinimized',
@@ -73,7 +70,8 @@ var nwWrapEventsMap = {
 var wrapEventsMapNewWin = {
   'move':    'onMove',
   'focus':   'onFocusChanged',
-  'blur':    'onFocusChanged'
+  'blur':    'onFocusChanged',
+  'closed':  'onRemoved'
 };
 
 nw_internal.registerCustomHook(function(bindingsAPI) {
@@ -223,6 +221,14 @@ NWWindow.prototype.on = function (event, callback, record) {
     });
     chrome.windows.onFocusChanged.addListener(cbf);
     break;
+  case 'closed':
+    var cbr = wrap(function(windowId) {
+      if (self.cWindow.id === windowId)
+        return;
+      callback.call(self);
+    });
+    chrome.windows.onRemoved.addListener(cbr);
+    break;
   case 'loaded':
     var g = wrap(function(tabId, changeInfo, tab) {
       if (tab.windowId !== self.cWindow.id)
@@ -305,7 +311,7 @@ NWWindow.prototype.removeListener = function (event, callback) {
   if (wrapEventsMapNewWin.hasOwnProperty(event)) {
     for (let l of chrome.windows[wrapEventsMapNewWin[event]].getListeners()) {
       if (l.callback.listener && l.callback.listener === callback) {
-        this[nwWrapEventsMap[event]].removeListener(l.callback);
+        chrome.windows[wrapEventsMapNewWin[event]].removeListener(l.callback);
         return this;
       }
     }
