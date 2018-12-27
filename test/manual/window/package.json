@@ -1,0 +1,12 @@
+{
+    "name": "nw-test",
+    "main": "index.html",
+    "window": {
+        "title": "Window Test",
+        "toolbar": true,
+        "position": "center",
+        "width": 400,
+        "height": 700,
+        "resizable": false
+    }
+}
