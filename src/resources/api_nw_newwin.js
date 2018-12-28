@@ -664,41 +664,39 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
   apiFunctions.setHandleRequest('open', function(url, params, callback) {
     var options = {'url': url, 'setSelfAsOpener': true};
     //FIXME: unify this conversion code with nwjs/default.js
-    //options.innerBounds = {};
-    //options.outerBounds = {};
     if (params) {
       if (params.frame === false)
         options.frameless = true;
       if (params.resizable === false)
         options.resizable = false;
-      // if (params.focus === false)
-      //   options.focused = false;
-      // if (params.x)
-      //   options.outerBounds.left = params.x;
-      // if (params.y)
-      //   options.outerBounds.top = params.y;
+      if (params.focus === false)
+        options.focused = false;
+      if (params.x)
+        options.left = params.x;
+      if (params.y)
+        options.top = params.y;
       if (params.height)
         options.height = params.height;
       if (params.width)
         options.width = params.width;
-      // if (params.min_width)
-      //   options.innerBounds.minWidth = params.min_width;
-      // if (params.max_width)
-      //   options.innerBounds.maxWidth = params.max_width;
-      // if (params.min_height)
-      //   options.innerBounds.minHeight = params.min_height;
-      // if (params.max_height)
-      //   options.innerBounds.maxHeight = params.max_height;
-      // if (params.fullscreen === true)
-      //   options.state = 'fullscreen';
+      if (params.min_width)
+        options.minWidth = params.min_width;
+      if (params.max_width)
+        options.maxWidth = params.max_width;
+      if (params.min_height)
+        options.minHeight = params.min_height;
+      if (params.max_height)
+        options.maxHeight = params.max_height;
+      if (params.fullscreen === true)
+        options.state = 'fullscreen';
       if (params.show === false)
         options.hidden = true;
-      // if (params.show_in_taskbar === false)
-      //   options.show_in_taskbar = false;
-      // if (params['always_on_top'] === true)
-      //   options.alwaysOnTop = true;
-      // if (params['visible_on_all_workspaces'] === true)
-      //   options.visibleOnAllWorkspaces = true;
+      if (params.show_in_taskbar === false)
+        options.showInTaskbar = false;
+      if (params['always_on_top'] === true)
+        options.alwaysOnTop = true;
+      if (params['visible_on_all_workspaces'] === true)
+        options.allVisible = true;
       if (typeof params['inject_js_start'] == 'string')
          options.inject_js_start = params['inject_js_start'];
       if (typeof params['inject_js_end'] == 'string')
