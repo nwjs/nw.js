@@ -571,7 +571,7 @@ Object.defineProperty(NWWindow.prototype, 'title', {
     return currentNWWindowInternal.getTitleInternal();
   },
   set: function(val) {
-    currentNWWindowInternal.setTitleInternal(val);
+    currentNWWindowInternal.setTitleInternal(val, this.cWindow.id);
   }
 });
 Object.defineProperty(NWWindow.prototype, 'zoomLevel', {
@@ -662,7 +662,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
   });
 
   apiFunctions.setHandleRequest('open', function(url, params, callback) {
-    var options = {'url': url, 'setSelfAsOpener': true};
+    var options = {'url': url, 'setSelfAsOpener': true, 'type': 'popup'};
     //FIXME: unify this conversion code with nwjs/default.js
     if (params) {
       if (params.frame === false)
@@ -711,8 +711,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       }
       // if (params.position)
       //   options.position = params.position;
-      // if (params.title)
-      //   options.title = params.title;
+      if (params.title)
+        options.title = params.title;
       // if (params.icon)
       //   options.icon = params.icon;
       //if (params.id)

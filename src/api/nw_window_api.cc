@@ -764,6 +764,15 @@ bool NwCurrentWindowInternalSetTitleInternalFunction::RunNWSync(base::ListValue*
   EXTENSION_FUNCTION_VALIDATE(args_);
   std::string title;
   EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &title));
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    int id = 0;
+    args_->GetInteger(1, &id);
+    Browser* browser = getBrowser(this, id);
+    if (!browser)
+      return false;
+    browser->set_title_override(title);
+    browser->window()->UpdateTitleBar();
+  }
   AppWindow* window = getAppWindow(this);
   window->set_title_override(title);
   window->GetBaseWindow()->UpdateWindowTitle();
