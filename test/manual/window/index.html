@@ -10,6 +10,7 @@
 <script>
   var gui = nw;
   var win;
+  
   gui.Window.open('popup.html', {
     x: 100, y: 100, width: 200, height: 300
   }, function(w) { win = w; });
@@ -39,7 +40,8 @@
     if (win != null)
       win.close(true);
     this.close(true);
-  });
+  }); 
+
 
   gui.Window.get().show();
 </script>
@@ -50,6 +52,11 @@
 <button onclick="win.show()">Show</button>
 <br/>
 <button onclick="win.hide()">Hide</button>
+<br/>
+<button onclick="win.reloadDev()">reloadDev</button>
+<br/>
+<button onclick="win.setPosition('center')">setPosition(center)</button>
+<!--button onclick="win.setPosition('mouse')">mouse</button>-->
 <br/>
 <button onclick="win.maximize()">Maximize</button>
 <br/>
@@ -63,11 +70,15 @@
 <br/>
 <button onclick="win.leaveFullscreen()">LeaveFullscreen</button>
 <br/>
+<button onclick="win.toggleFullscreen()">toggleFullscreen</button>
+<br/>
 <button onclick="win.close()">Close</button>
 <br/>
 <button onclick="win.close(true)">Force Close</button>
 <br/>
 <button onclick="win.showDevTools()">Open DevTools</button>
+<br/>
+<button onclick="win.closeDevTools()">Close DevTools</button>
 <br/>
 <button onclick="win.setMinimumSize(100, 200)">setMinimumSize(100, 200)</button>
 <br/>
@@ -84,6 +95,28 @@
 <button onclick="win.setResizable(true)">setResizable(true)</button>
 <button onclick="win.setResizable(false)">(false)</button>
 <br/>
+<!--<button onclick="win.setShadow(true)">setShadow (MAC)(true)</button>
+<button onclick="win.setShadow(false)">(false)</button>
+<br/>-->
+<button onclick="win.setVisibleOnAllWorkspaces(true)">setVisibleOnAllWorkspaces(MAC,LINUX)(true)</button>
+<button onclick="win.setVisibleOnAllWorkspaces(false)">(false)</button>
+<br/>
+<button onclick="win.setShowInTaskbar(true)">setShowInTaskbar (true)</button>
+<button onclick="win.setShowInTaskbar(false)">(false)</button>
+<br/>
+<button onclick="win.requestAttention(true)">requestAttention (true)</button>
+<button onclick="win.requestAttention(false)">(false)</button>
+<br/>
+<button onclick="win.requestAttention(10)">requestAttention (10s)</button>
+<br/>
+<button onclick="win.enterKioskMode()">enterKioskMode</button>
+<br/>
+<button onclick="win.leaveKioskMode()">leaveKioskMode</button>
+<br/>
+<button onclick="win.toggleKioskMode()">toggleKioskMode</button>
+<br/>
+<button onclick="win.print({})">print</button>
+<br/>
 <p>Focus another application within 2sec, popup window should on top.</p>
 <button onclick="setTimeout(function(){win.setAlwaysOnTop(true);},2000)">setAlwaysOnTop(true)</button>
 <button onclick="win.setAlwaysOnTop(false)">(false)</button>
@@ -94,7 +127,12 @@
 <br/>
 <button onclick="takeSnapshot()">takeSnapshot</button> 
 <br/>
+<button onclick="win.removeAllListeners()">removeAllListeners</button> 
+<br/>
 Reload the window and do all tests again.
+<br/>
 <button onclick="win.reload()">Reload</button>
+<br/>
+<button onclick="win.reloadIgnoringCache()">Reload ignoring cache</button>
 </body>
 </html>

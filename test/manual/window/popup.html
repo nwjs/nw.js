@@ -11,6 +11,17 @@ This is the popup window<br/>
   var enable = false;
   var gui = require('nw.gui');
   var win = gui.Window.get();
+  
+  var menu = new nw.Menu({ type: 'menubar' });
+  var submenu = new nw.Menu();
+  submenu.append(new nw.MenuItem({ label: 'Item A' }));
+  submenu.append(new nw.MenuItem({ label: 'Item B' }));
+  menu.append(new nw.MenuItem({
+    label: 'First Menu',
+    submenu: submenu
+  }));
+  win.menu = menu;
+  
   win.on('close', function() {
     if (enable)
       this.close(true);
@@ -72,6 +83,8 @@ This is the popup window<br/>
 <button onclick="javascript:enable = true;">Enable to be closed</button>
 <br/>
 <button onclick="win.leaveFullscreen()">Leave fullscreen</button>
+<br/>
+<button onclick="win.leaveKioskMode()">Leave KioskMode</button>
 
 <div style="margin-top:10px;border-top: 1px solid #000;">
 <img id="image" width="400" />
