@@ -44,7 +44,7 @@ namespace nw.currentWindowInternal {
     static DOMString getTitleInternal();
     static void setTitleInternal(DOMString title);
     static object getWinParamInternal();
-    static object getCurrent(optional object options);
+    static object getCurrent(long id, optional object getInfo);
     static void getPrinters(GetPrintersCallback callback);
     static void setPrintSettingsInternal(optional object options);
   };

@@ -820,15 +820,23 @@ bool NwCurrentWindowInternalSetPrintSettingsInternalFunction::RunNWSync(base::Li
 }
 
 bool NwCurrentWindowInternalGetCurrentFunction::RunNWSync(base::ListValue* response, std::string* ret_error) {
+  base::ListValue remain;
+  int id = -2;
+  const base::Value* option = nullptr;
+  args_->GetInteger(0, &id);
+  if (args_->GetSize() > 1) {
+    args_->Get(1, &option);
+    remain.Append(std::make_unique<base::Value>(option->Clone()));
+  }
   std::unique_ptr<windows::GetCurrent::Params> params(
-      windows::GetCurrent::Params::Create(*args_));
+      windows::GetCurrent::Params::Create(remain));
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   ApiParameterExtractor<windows::GetCurrent::Params> extractor(params.get());
   Browser* browser = nullptr;
   std::string error;
   if (!windows_util::GetBrowserFromWindowID(
-          this, extension_misc::kCurrentWindowId, extractor.type_filters(),
+          this, id, extractor.type_filters(),
           &browser, &error)) {
     *ret_error = error;
     return false;

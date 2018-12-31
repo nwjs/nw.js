@@ -112,7 +112,7 @@ function NWWindow(cWindow) {
   if (cWindow)
     this.cWindow = cWindow;
   else {
-    this.cWindow = currentNWWindowInternal.getCurrent({'populate': true});
+    this.cWindow = currentNWWindowInternal.getCurrent(-2, {'populate': true});
     if (!this.cWindow)
           console.error('The JavaScript context calling ' +
                         'nw.Window.get() has no associated Browser window.');
@@ -211,7 +211,7 @@ NWWindow.prototype.on = function (event, callback, record) {
     chrome.windows.onFocusChanged.addListener(cbf);
     break;
   case 'blur':
-    this.cWindow = currentNWWindowInternal.getCurrent({'populate': true});
+    this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
     var cbf = wrap(function(windowId) {
       if (self.cWindow.id === windowId)
         return;
@@ -468,7 +468,7 @@ NWWindow.prototype.setAlwaysOnTop = function (top) {
   chrome.windows.update(this.cWindow.id, {'alwaysOnTop': top});
 };
 NWWindow.prototype.setPosition = function (pos) {
-  this.cWindow = currentNWWindowInternal.getCurrent({'populate': true});
+  this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
   if (pos == "center") {
     var screenWidth = screen.availWidth;
     var screenHeight = screen.availHeight;
@@ -495,7 +495,7 @@ NWWindow.prototype.resizeTo = function (width, height) {
   chrome.windows.update(this.cWindow.id, {'width': width, 'height': height});
 };
 NWWindow.prototype.resizeBy = function (width, height) {
-  this.cWindow = currentNWWindowInternal.getCurrent({'populate': true});
+  this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
   chrome.windows.update(this.cWindow.id,
                         {'width': this.cWindow.width + width,
                          'height': this.cWindow.height + height});
@@ -504,7 +504,7 @@ NWWindow.prototype.moveTo = function (x, y) {
   chrome.windows.update(this.cWindow.id, {'left': x, 'top': y});
 };
 NWWindow.prototype.moveBy = function (x, y) {
-  this.cWindow = currentNWWindowInternal.getCurrent({'populate': true});
+  this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
   chrome.windows.update(this.cWindow.id,
                         {'left': this.cWindow.left + x,
                          'top': this.cWindow.top + y});
@@ -532,7 +532,7 @@ NWWindow.prototype.print = function(option) {
 };
 Object.defineProperty(NWWindow.prototype, 'x', {
   get: function() {
-    this.cWindow = currentNWWindowInternal.getCurrent({'populate': true});
+    this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
     return this.cWindow.left;
   },
   set: function(x) {
@@ -541,7 +541,7 @@ Object.defineProperty(NWWindow.prototype, 'x', {
 });
 Object.defineProperty(NWWindow.prototype, 'y', {
   get: function() {
-    this.cWindow = currentNWWindowInternal.getCurrent({'populate': true});
+    this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
     return this.cWindow.top;
   },
   set: function(y) {
@@ -550,7 +550,7 @@ Object.defineProperty(NWWindow.prototype, 'y', {
 });
 Object.defineProperty(NWWindow.prototype, 'width', {
   get: function() {
-    this.cWindow = currentNWWindowInternal.getCurrent({'populate': true});
+    this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
     return this.cWindow.width;
   },
   set: function(val) {
@@ -559,7 +559,7 @@ Object.defineProperty(NWWindow.prototype, 'width', {
 });
 Object.defineProperty(NWWindow.prototype, 'height', {
   get: function() {
-    this.cWindow = currentNWWindowInternal.getCurrent({'populate': true});
+    this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
     return this.cWindow.height;
   },
   set: function(val) {
@@ -600,13 +600,13 @@ Object.defineProperty(NWWindow.prototype, 'isKioskMode', {
 });
 Object.defineProperty(NWWindow.prototype, 'isFullscreen', {
   get: function() {
-    this.cWindow = currentNWWindowInternal.getCurrent({'populate': true});
+    this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
     return this.cWindow.state === 'fullscreen';
   }
 });
 Object.defineProperty(NWWindow.prototype, 'isAlwaysOnTop', {
   get: function() {
-    this.cWindow = currentNWWindowInternal.getCurrent({'populate': true});
+    this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
     return this.cWindow.alwaysOnTop;
   }
 });
@@ -713,8 +713,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       //   options.position = params.position;
       if (params.title)
         options.title = params.title;
-      // if (params.icon)
-      //   options.icon = params.icon;
+      if (params.icon)
+        options.icon = params.icon;
       //if (params.id)
       //  options.tabId = params.id;
     }
