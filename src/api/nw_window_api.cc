@@ -13,6 +13,8 @@
 #include "chrome/browser/ui/browser.h"
 #include "chrome/browser/ui/browser_finder.h"
 #include "chrome/browser/ui/browser_window.h"
+#include "chrome/browser/ui/views/frame/browser_view.h"
+#include "chrome/browser/ui/views/frame/browser_view_layout.h"
 #include "components/zoom/zoom_controller.h"
 #include "content/nw/src/api/menu/menu.h"
 #include "content/nw/src/api/object_manager.h"
@@ -54,7 +56,6 @@
 #if defined(OS_LINUX) || defined(OS_WIN)
 #include "content/nw/src/browser/menubar_view.h"
 #include "content/nw/src/browser/browser_view_layout.h"
-using nw::BrowserViewLayout;
 #endif
 
 #if defined(OS_MACOSX)
@@ -416,9 +417,20 @@ NwCurrentWindowInternalClearMenuFunction::~NwCurrentWindowInternalClearMenuFunct
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalClearMenuFunction::Run() {
   AppWindow* window = getAppWindow(this);
-  if (!window) {
-    error_ = kNoAssociatedAppWindow;
-    return RespondNow(Error(error_));
+  Browser* browser = nullptr;
+  if (!base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    if (!window) {
+      error_ = kNoAssociatedAppWindow;
+      return RespondNow(Error(error_));
+    }
+  } else {
+    int wid = 0;
+    args_->GetInteger(0, &wid);
+    browser = getBrowser(this, wid);
+    if (!browser) {
+      error_ = kNoAssociatedAppWindow;
+      return RespondNow(Error(error_));
+    }
   }
 
 #if defined(OS_MACOSX)
@@ -426,21 +438,36 @@ NwCurrentWindowInternalClearMenuFunction::Run() {
 #endif
 
 #if defined(OS_LINUX) || defined(OS_WIN)
-  native_app_window::NativeAppWindowViews* native_app_window_views =
+  if (!base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    native_app_window::NativeAppWindowViews* native_app_window_views =
       static_cast<native_app_window::NativeAppWindowViews*>(
           window->GetBaseWindow());
 
-  BrowserViewLayout *browser_view_layout = static_cast<BrowserViewLayout*>(native_app_window_views->GetLayoutManager());
-  views::View* menubar = browser_view_layout->menu_bar();
-  if (menubar) {
-    native_app_window_views->RemoveChildView(menubar);
-  }
-  browser_view_layout->set_menu_bar(NULL);
-  native_app_window_views->layout_();
-  native_app_window_views->SchedulePaint();
-  if (window->menu_) {
-    window->menu_->RemoveKeys();
-    window->menu_ = NULL;
+    nw::BrowserViewLayout *browser_view_layout = static_cast<nw::BrowserViewLayout*>(native_app_window_views->GetLayoutManager());
+    views::View* menubar = browser_view_layout->menu_bar();
+    if (menubar) {
+      native_app_window_views->RemoveChildView(menubar);
+    }
+    browser_view_layout->set_menu_bar(NULL);
+    native_app_window_views->layout_();
+    native_app_window_views->SchedulePaint();
+    if (window->menu_) {
+      window->menu_->RemoveKeys();
+      window->menu_ = nullptr;
+    }
+  } else {
+    BrowserView* browser_view = BrowserView::GetBrowserViewForBrowser(browser);
+    BrowserViewLayout* layout = browser_view->GetBrowserViewLayout();
+    views::View* menubar = layout->menu_bar();
+    if (menubar)
+      browser_view->RemoveChildView(menubar);
+    layout->set_menu_bar(nullptr);
+    browser_view->Layout();
+    browser_view->SchedulePaint();
+    if (browser->nw_menu_) {
+      browser->nw_menu_->RemoveKeys();
+      browser->nw_menu_ = nullptr;
+    }
   }
 #endif
   return RespondNow(NoArguments());
@@ -455,42 +482,69 @@ NwCurrentWindowInternalSetMenuFunction::~NwCurrentWindowInternalSetMenuFunction(
 bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::ListValue* response, std::string* error) {
   int id = 0;
   EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &id));
-  AppWindow* window = getAppWindow(this);
-  if (!window) {
-    error_ = kNoAssociatedAppWindow;
-    return false;
-  }
   nw::ObjectManager* obj_manager = nw::ObjectManager::Get(browser_context());
   Menu* menu = (Menu*)obj_manager->GetApiObject(id);
-
+  Browser* browser = nullptr;
+  AppWindow* window = nullptr;
 #if defined(OS_LINUX) || defined(OS_WIN)
-  Menu* old_menu = window->menu_;
+  Menu* old_menu = nullptr;
 #endif
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    int wid = 0;
+    args_->GetInteger(1, &wid);
+    browser = getBrowser(this, wid);
+    if (!browser)
+      return false;
+#if defined(OS_LINUX) || defined(OS_WIN)
+    old_menu = browser->nw_menu_;
+#endif
+    browser->nw_menu_ = menu;
+  } else {
+    window = getAppWindow(this);
+    if (!window) {
+      error_ = kNoAssociatedAppWindow;
+      return false;
+    }
+#if defined(OS_LINUX) || defined(OS_WIN)
+    old_menu = window->menu_;
+#endif
+    window->menu_ = menu;
+  }
 
-  window->menu_ = menu;
-  
+
 #if defined(OS_MACOSX)
   response->Append(NWChangeAppMenu(menu));
 #endif
 
 #if defined(OS_LINUX) || defined(OS_WIN)
-  native_app_window::NativeAppWindowViews* native_app_window_views =
+  MenuBarView* menubar = new MenuBarView();
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    BrowserView* browser_view = BrowserView::GetBrowserViewForBrowser(browser);
+    browser_view->GetBrowserViewLayout()->set_menu_bar(menubar);
+    browser_view->AddChildView(menubar);
+    menubar->UpdateMenu(menu->model());
+    browser_view->Layout();
+    browser_view->SchedulePaint();
+    if (old_menu) old_menu->RemoveKeys();
+    menu->UpdateKeys(browser_view->GetWidget()->GetFocusManager());
+  } else {
+    native_app_window::NativeAppWindowViews* native_app_window_views =
       static_cast<native_app_window::NativeAppWindowViews*>(
           window->GetBaseWindow());
 
-  MenuBarView* menubar = new MenuBarView();
-  static_cast<BrowserViewLayout*>(native_app_window_views->GetLayoutManager())->set_menu_bar(menubar);
-  native_app_window_views->AddChildView(menubar);
-  menubar->UpdateMenu(menu->model());
-  native_app_window_views->layout_();
-  native_app_window_views->SchedulePaint();
-  if (old_menu) old_menu->RemoveKeys();
-  menu->UpdateKeys( native_app_window_views->widget()->GetFocusManager() );
+    static_cast<nw::BrowserViewLayout*>(native_app_window_views->GetLayoutManager())->set_menu_bar(menubar);
+    native_app_window_views->AddChildView(menubar);
+    menubar->UpdateMenu(menu->model());
+    native_app_window_views->layout_();
+    native_app_window_views->SchedulePaint();
+    if (old_menu) old_menu->RemoveKeys();
+    menu->UpdateKeys( native_app_window_views->widget()->GetFocusManager() );
+  }
   response->Append(std::unique_ptr<base::ListValue>(new base::ListValue()));
 #endif
   return true;
 }
-  
+
 #if defined(OS_WIN)
 static base::win::ScopedHICON createBadgeIcon(const HWND hWnd, const TCHAR *value, const int sizeX, const int sizeY) {
   // canvas for the overlay icon

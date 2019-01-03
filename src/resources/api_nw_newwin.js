@@ -616,14 +616,14 @@ Object.defineProperty(NWWindow.prototype, 'menu', {
   set: function(menu) {
     if(!menu) {
       privates(this).menu = null;
-      currentNWWindowInternal.clearMenu();
+      currentNWWindowInternal.clearMenu(this.cWindow.id);
       return;
     }
     if (menu.type != 'menubar')
       throw new TypeError('Only menu of type "menubar" can be used as this.window menu');
 
     privates(this).menu =  menu;
-    var menuPatch = currentNWWindowInternal.setMenu(menu.id);
+    var menuPatch = currentNWWindowInternal.setMenu(menu.id, this.cWindow.id);
     if (menuPatch.length) {
       menuPatch.forEach((patch)=>{
         let menuIndex = patch.menu;
