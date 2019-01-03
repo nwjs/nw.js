@@ -141,7 +141,6 @@ function NWWindow(cWindow) {
       dispatchEventIfExists(self, 'onResized', [w.width, w.height]);
     }
   }
-  console.log("cWindow id: " + this.cWindow.id);
   privates(this).menu = null;
   chrome.windows.onWindowChanged.addListener(updateWindowAttributes);
 }
@@ -240,7 +239,6 @@ NWWindow.prototype.on = function (event, callback, record) {
     break;
   case 'document-start':
     var cb1 = wrap(function(frame, top_routing_id) {
-      console.log("document-start: cWindow: " + self.cWindow.id + "; top routing id: " + top_routing_id + "; main frame id: " + self.cWindow.tabs[0].mainFrameId);
       if (top_routing_id !== self.cWindow.tabs[0].mainFrameId)
         return;
       callback.call(self, frame);
@@ -249,7 +247,7 @@ NWWindow.prototype.on = function (event, callback, record) {
     break;
   case 'document-end':
     var cb0 = wrap(function(frame, top_routing_id) {
-      console.log("document-end: cWindow: " + self.cWindow.id + "; top routing id: " + top_routing_id + "; main frame id: " + self.cWindow.tabs[0].mainFrameId);
+      //console.log("document-end: cWindow: " + self.cWindow.id + "; top routing id: " + top_routing_id + "; main frame id: " + self.cWindow.tabs[0].mainFrameId);
       if (top_routing_id !== self.cWindow.tabs[0].mainFrameId)
         return;
       callback.call(self, frame);
@@ -760,7 +758,6 @@ function onLoadingStateChanged(status) {
 }
 
 function onDocumentStartEnd(start, frame, top_routing_id) {
-  console.log("--> onDocumentStartEnd: " + start + "; currentNWWindow: " + currentNWWindow);
   if (start) {
     //could use the non-NW version?
     dispatchEventNW("nw.Window.onDocumentStart", [frame, top_routing_id]);
@@ -782,7 +779,6 @@ function onClose(user_force) {
 }
 
 function get_nw() {
-  console.log("--> get_nw");
   appWindowNatives.FixGamePadAPI();
   var nw0 = try_nw(window).nw;
   if (nw0)
