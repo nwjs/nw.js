@@ -1,3 +1,8 @@
+0.35.4 / 01-04-2019
+===================
+- Update Node.js to [v11.6.0](https://nodejs.org/en/blog/release/v11.6.0/)
+- Internal refactoring: new window implementation under `--enable-features=nw2` switch [(#5875)](https://github.com/nwjs/nw.js/issues/5875)
+
 0.35.3 / 12-24-2018
 ===================
 - Update Node.js to [v11.5.0](https://nodejs.org/en/blog/release/v11.5.0/)
