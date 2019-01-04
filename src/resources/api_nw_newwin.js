@@ -699,8 +699,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
          options.inject_js_start = params['inject_js_start'];
       if (typeof params['inject_js_end'] == 'string')
          options.inject_js_end = params['inject_js_end'];
-      // if (params.transparent)
-      //   options.alphaEnabled = true;
+      if (params.transparent)
+         options.alphaEnabled = true;
       // if (params.kiosk === true)
       //   options.kiosk = true;
       if (params.new_instance === true) {
