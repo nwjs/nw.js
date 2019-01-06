@@ -566,7 +566,7 @@ Object.defineProperty(NWWindow.prototype, 'height', {
 });
 Object.defineProperty(NWWindow.prototype, 'title', {
   get: function() {
-    return currentNWWindowInternal.getTitleInternal();
+    return currentNWWindowInternal.getTitleInternal(this.cWindow.id);
   },
   set: function(val) {
     currentNWWindowInternal.setTitleInternal(val, this.cWindow.id);

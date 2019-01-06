@@ -786,20 +786,17 @@ bool NwCurrentWindowInternalGetTitleInternalFunction::RunNWSync(base::ListValue*
     response->AppendString(window->title_override());
     return true;
   }
-  Browser* browser = nullptr;
-  std::string error;
-  if (!windows_util::GetBrowserFromWindowID(
-     this, extension_misc::kCurrentWindowId, WindowController::GetAllWindowFilter(),
-          &browser, &error)) {
-    *ret_error = error;
-    return false;
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    int id = 0;
+    args_->GetInteger(0, &id);
+    Browser* browser = getBrowser(this, id);
+    if (browser) {
+      response->AppendString(browser->GetWindowTitleForCurrentTab(false));
+      return true;
+    }
   }
-  if (!browser) {
-    *ret_error = "no window found";
-    return false;
-  }
-  response->AppendString(browser->GetWindowTitleForCurrentTab(false));
-  return true;
+  *ret_error = "no window found";
+  return false;
 }
 
 ExtensionFunction::ResponseAction
@@ -826,6 +823,7 @@ bool NwCurrentWindowInternalSetTitleInternalFunction::RunNWSync(base::ListValue*
       return false;
     browser->set_title_override(title);
     browser->window()->UpdateTitleBar();
+    return true;
   }
   AppWindow* window = getAppWindow(this);
   window->set_title_override(title);

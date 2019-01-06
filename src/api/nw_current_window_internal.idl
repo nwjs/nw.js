@@ -41,8 +41,8 @@ namespace nw.currentWindowInternal {
     static double getZoom();
     static void setZoom(double level);
     static void setShowInTaskbar(boolean show);
-    static DOMString getTitleInternal();
-    static void setTitleInternal(DOMString title);
+    static DOMString getTitleInternal(optional long winId);
+    static void setTitleInternal(DOMString title, optional long winId);
     static object getWinParamInternal();
     static object getCurrent(long id, optional object getInfo);
     static void getPrinters(GetPrintersCallback callback);
