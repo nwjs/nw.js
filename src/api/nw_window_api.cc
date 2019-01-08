@@ -721,6 +721,16 @@ NwCurrentWindowInternalReloadIgnoringCacheFunction::Run() {
 
 bool NwCurrentWindowInternalGetZoomFunction::RunNWSync(base::ListValue* response, std::string* error) {
   content::WebContents* web_contents = GetSenderWebContents();
+  if (args_->GetSize() > 0) {
+    int id = 0;
+    args_->GetInteger(0, &id);
+    Browser* browser = getBrowser(this, id);
+    if (!browser) {
+      *error = "no browser window found";
+      return false;
+    }
+    web_contents = browser->tab_strip_model()->GetActiveWebContents();
+  }
   if (!web_contents)
     return false;
   double zoom_level =
@@ -734,6 +744,16 @@ bool NwCurrentWindowInternalSetZoomFunction::RunNWSync(base::ListValue* response
 
   EXTENSION_FUNCTION_VALIDATE(args_->GetDouble(0, &zoom_level));
   content::WebContents* web_contents = GetSenderWebContents();
+  if (args_->GetSize() > 1) {
+    int id = 0;
+    args_->GetInteger(1, &id);
+    Browser* browser = getBrowser(this, id);
+    if (!browser) {
+      *error = "no browser window found";
+      return false;
+    }
+    web_contents = browser->tab_strip_model()->GetActiveWebContents();
+  }
   if (!web_contents)
     return false;
   ZoomController* zoom_controller =

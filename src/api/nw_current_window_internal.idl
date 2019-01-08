@@ -36,10 +36,10 @@ namespace nw.currentWindowInternal {
     static bool isKioskInternal();
     static void capturePageInternal(optional CapturePageOptions options, optional CapturePageCallback callback);
     static void clearMenu(optional long win);
-    static MenuPatch[] setMenu(long id, optional long wid);
+    static MenuPatch[] setMenu(long id, optional long winId);
     static void reloadIgnoringCache();
-    static double getZoom();
-    static void setZoom(double level);
+    static double getZoom(optional long winId);
+    static void setZoom(double level, optional long winId);
     static void setShowInTaskbar(boolean show);
     static DOMString getTitleInternal(optional long winId);
     static void setTitleInternal(DOMString title, optional long winId);

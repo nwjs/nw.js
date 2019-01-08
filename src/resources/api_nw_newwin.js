@@ -579,10 +579,10 @@ Object.defineProperty(NWWindow.prototype, 'title', {
 });
 Object.defineProperty(NWWindow.prototype, 'zoomLevel', {
   get: function() {
-    return currentNWWindowInternal.getZoom();
+    return currentNWWindowInternal.getZoom(this.cWindow.id);
   },
   set: function(val) {
-    currentNWWindowInternal.setZoom(val);
+    currentNWWindowInternal.setZoom(val, this.cWindow.id);
   }
 });
 Object.defineProperty(NWWindow.prototype, 'isTransparent', {
