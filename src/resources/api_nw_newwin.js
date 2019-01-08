@@ -57,7 +57,6 @@ var nwWinEventsMap = {
   'restore':          'onRestore',
   'enter-fullscreen': 'onFullscreen',
   'zoom':             'onZoom',
-  'close':            'onClose',
   'resize':           'onResized'
 };
 
@@ -71,7 +70,8 @@ var wrapEventsMapNewWin = {
   'move':    'onMove',
   'focus':   'onFocusChanged',
   'blur':    'onFocusChanged',
-  'closed':  'onRemoved'
+  'closed':  'onRemoved',
+  'close':   'onRemoving'
 };
 
 nw_internal.registerCustomHook(function(bindingsAPI) {
@@ -197,7 +197,12 @@ NWWindow.prototype.on = function (event, callback, record) {
   }
 
   if (event === 'close') {
-    this.onClose.addListener(wrap(), {instanceId: currentWidgetRoutingID});
+    var cbc = wrap(function(windowId, flag) {
+      if (self.cWindow.id !== windowId)
+        return;
+      callback.call(self, flag);
+    });
+    chrome.windows.onRemoving.addListener(cbc, {instanceId: self.cWindow.id});
     return this;
   }
   switch (event) {
