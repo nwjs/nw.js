@@ -200,7 +200,7 @@ win.on('close', function () {
   this.close(true); // then close it forcefully
 });
 
-win.close(); // Would be detected by the above close event. To skip the above close envet use win.close(true);
+win.close(); // Would be detected by the above close event. To skip the above close event use win.close(true);
 ```
 
 ## win.reload()
