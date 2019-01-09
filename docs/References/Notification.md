@@ -48,14 +48,14 @@ notification.onshow = function () {
 }
 ```
 # General Notes
-you can use `http://` or `file://` for the `icon`. node-webkit supports jpg / png files
+you can use `http://` or `file://` for the `icon`. NW.js supports jpg / png files
 ## Windows
 ### Balloon Notification
 if no icon is specified, it will use the app's icon.
 
 icon size must be >= 32x32
 
-### Toast Notification (requires node-webkit >= v0.11)
+### Toast Notification (requires NW.js >= v0.11)
 * Only for Win8 (or newer)
 * The icon must be using `file://`
 * A shortcut to your app, with a System.AppUserModel.ID, must be installed to the Start screen. Note, however, that it does not need to be pinned to the Start screen. For more information, see How to enable desktop toast notifications through an AppUserModelID (http://msdn.microsoft.com/en-us/library/windows/desktop/hh802762(v=vs.85).aspx).
@@ -76,6 +76,6 @@ The AppUserModelID can be specified in package.json file
 ```
 if it is not, it will use the application name as the AppUserModelID
 
-for complete sample code, go here https://github.com/rogerwang/node-webkit/tree/master/tests/manual_tests/notification
+for complete sample code, go here https://github.com/nwjs/nw.js/tree/master/tests/manual_tests/notification
 
 
