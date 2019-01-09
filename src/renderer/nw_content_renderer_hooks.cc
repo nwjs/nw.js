@@ -43,7 +43,9 @@ void LoadNodeSymbols() {
 #else
   base::FilePath node_dll_path = base::FilePath::FromUTF8Unsafe(base::GetNativeLibraryName("node"));
 #endif
-  base::NativeLibrary node_dll = base::LoadNativeLibrary(node_dll_path, &error);
+  base::NativeLibraryOptions options;
+  options.prefer_own_symbols = true;
+  base::NativeLibrary node_dll = base::LoadNativeLibraryWithOptions(node_dll_path, options, &error);
   if(!node_dll)
     LOG_IF(FATAL, true) << "Failed to load node library (error: " << error.ToString() << ")";
   else {
