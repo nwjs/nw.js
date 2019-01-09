@@ -187,20 +187,20 @@ Hide the window. User will not be able to find the window once it's hidden.
 
 ## win.close([force])
 
-* `force` `{Boolean}` specify whether to close the window forcely and bypass `close` event.
+* `force` `{Boolean}` specify whether to close the window forcefully and bypass the `close` event.
 
-Close current window. And you can prevent the closing by listening to the `close` event. If `force` is specified and equals to `true`, then the `close` event will be ignored.
+Closes the current window. You can prevent the closing by listening to the `close` event. If `force` is specified and equals `true`, then the `close` event will be ignored.
 
 Usually you would like to listen to the `close` event and do some shutdown work and then do a `close(true)` to really close the window.
 
 ```javascript
-win.on('close', function() {
+win.on('close', function () {
   this.hide(); // Pretend to be closed already
   console.log("We're closing...");
-  this.close(true); // then close it forcely
+  this.close(true); // then close it forcefully
 });
 
-win.close();
+win.close(); // Would be detected by the above close event. To skip the above close envet use win.close(true);
 ```
 
 ## win.reload()
