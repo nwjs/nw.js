@@ -721,7 +721,8 @@ NwCurrentWindowInternalReloadIgnoringCacheFunction::Run() {
 
 bool NwCurrentWindowInternalGetZoomFunction::RunNWSync(base::ListValue* response, std::string* error) {
   content::WebContents* web_contents = GetSenderWebContents();
-  if (args_->GetSize() > 0) {
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin) &&
+      args_->GetSize() > 0) {
     int id = 0;
     args_->GetInteger(0, &id);
     Browser* browser = getBrowser(this, id);
@@ -744,7 +745,8 @@ bool NwCurrentWindowInternalSetZoomFunction::RunNWSync(base::ListValue* response
 
   EXTENSION_FUNCTION_VALIDATE(args_->GetDouble(0, &zoom_level));
   content::WebContents* web_contents = GetSenderWebContents();
-  if (args_->GetSize() > 1) {
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin) &&
+      args_->GetSize() > 1) {
     int id = 0;
     args_->GetInteger(1, &id);
     Browser* browser = getBrowser(this, id);
