@@ -1,5 +1,9 @@
 #include "content/nw/src/api/nw_app_api.h"
 
+#include "chrome/browser/lifetime/browser_close_manager.h"
+#include "chrome/browser/lifetime/application_lifetime.h"
+#include "content/public/common/content_features.h"
+
 #include "base/command_line.h"
 #include "base/memory/ptr_util.h"
 #include "base/task/post_task.h"
@@ -50,19 +54,31 @@ NwAppQuitFunction::NwAppQuitFunction() {
 NwAppQuitFunction::~NwAppQuitFunction() {
 }
 
+void NwAppQuitFunction::DoJob(ExtensionService* service, std::string extension_id) {
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    chrome::CloseAllBrowsersAndQuit(true);
+    return;
+  }
+  base::MessageLoop::current()->task_runner()->PostTask(
+                                                        FROM_HERE,
+                                                        base::Bind(&ExtensionService::TerminateExtension,
+                                                                   service->AsWeakPtr(),
+                                                                   extension_id));
+}
+
 ExtensionFunction::ResponseAction
 NwAppQuitFunction::Run() {
-  ExtensionService* service =
-    ExtensionSystem::Get(browser_context())->extension_service();
+  ExtensionService* service = ExtensionSystem::Get(browser_context())->extension_service();
   base::MessageLoop::current()->task_runner()->PostTask(
-        FROM_HERE,
-        base::Bind(&ExtensionService::TerminateExtension,
-                   service->AsWeakPtr(),
-                   extension_id()));
+                                                          FROM_HERE,
+                                                          base::Bind(&NwAppQuitFunction::DoJob, service, extension()->id()));
   return RespondNow(NoArguments());
 }
 
 void NwAppCloseAllWindowsFunction::DoJob(AppWindowRegistry* registry, std::string id) {
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    chrome::CloseAllBrowsers();
+  }
   AppWindowRegistry::AppWindowList windows =
     registry->GetAppWindowsForApp(id);
 

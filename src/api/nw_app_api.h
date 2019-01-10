@@ -9,11 +9,13 @@
 
 namespace extensions {
 class AppWindowRegistry;
+class ExtensionService;
 
 class NwAppQuitFunction : public UIThreadExtensionFunction {
  public:
   NwAppQuitFunction();
 
+  static void DoJob(extensions::ExtensionService* service, std::string extension_id);
  protected:
   ~NwAppQuitFunction() override;
 
