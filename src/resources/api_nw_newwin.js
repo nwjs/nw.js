@@ -712,8 +712,8 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         options.new_instance = true;
         options.setSelfAsOpener = false;
       }
-      // if (params.position)
-      //   options.position = params.position;
+      if (params.position)
+        options.position = params.position;
       if (params.title)
         options.title = params.title;
       if (params.icon)
