@@ -75,3 +75,27 @@ clickme.click() # click the button
 result = driver.find_element_by_id('result')
 assert("success" in result.get_attribute('innerHTML')) # assert "success" is in the element
 ```
+## Run Nightly Test Cases
+
+Here are some preparations before testing.
+
+1.Download NW SDK version.
+
+2.Downloading selenium python library for NW with git.
+The repo address and the git commit id is in [manage dependencies](https://github.com/nwjs/nw.js/blob/nw35/DEPS)(replace nw35 with the proper branch name if you are not testing 0.35).
+Look for 'third_party/webdriver/pylib' in deps part of that file. The form you will see is as follows:
+```js
+ 'src/third_party/webdriver/pylib':
+    Var('chromium_git') + '/external/selenium/py.git' + '@' + 'expected commit id',
+``` 
+Then look for the value of Var(e.g.`chromium_git`) in vars part of that file. After you clone the pylib repo, make sure the git tip commit id is the same as expected.
+
+3.Set environment variables.
+Set `CHROMEDRIVER` to the path of chromedriver.exe in NW SDK; set `PYTHONPATH` to the 'py' folder you cloned.
+
+4.Install Python 2.7 if needed.
+
+5.Clone nw source repo: [nwjs](https://github.com/nwjs/nw.js).
+
+Then you can change directory to nw repo/test; 
+run ```python test.py -d <path to NW SDK> -t 60 sanity```
