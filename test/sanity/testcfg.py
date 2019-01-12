@@ -37,8 +37,10 @@ class RemotingTestCase(test.TestCase):
     return self.path[-1]
 
   def GetEnv(self):
-      libpath = join(self.file, '..', '..', '..', '..', '..', 'third_party/webdriver/pylib')
-      return {'PYTHONPATH': libpath, 'CHROMEDRIVER': self.GetChromeDriver(self.arch, self.mode, self.nwdir)}
+    libpath=os.getenv('PYTHONPATH')
+    if libpath is None:
+        libpath = join(self.file, '..', '..', '..', '..', '..', 'third_party/webdriver/pylib')
+    return {'PYTHONPATH': libpath, 'CHROMEDRIVER': self.GetChromeDriver(self.arch, self.mode, self.nwdir)}
 
   def GetCommand(self):
     if utils.IsWindows() and "BB_PYTHON" in os.environ:
