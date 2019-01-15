@@ -1,3 +1,22 @@
+0.35.5 / 01-15-2019
+===================
+- NW2: transparency support
+- NW2: fix mac frameless window
+- NW2: fix exceptions upon setting Window.title
+- NW2: disable status bubble
+- NW2: cleanup system menu and context menu
+- NW2: fix Window.close event
+- NW2: fix Window.zoomLevel
+- NW2: fix Window.position
+- NW2: Fix App.closeAppWindows and App.quit
+- NW2: [WIN] Fix showing hidden window
+- NW2: disable zoom bubble view
+- Linux: Fix crash on CentOS 7.6 when requiring 'crypto' (#6928)
+- [docs] Added docs for "run nightly test"
+- [docs] Clean up English on win.close()
+- [docs] Update Mac package docs to rename nwjs binary
+- [tests] update getenv() in test/sanity/testcfg.py
+
 0.35.4 / 01-04-2019
 ===================
 - Update Node.js to [v11.6.0](https://nodejs.org/en/blog/release/v11.6.0/)
