@@ -59,7 +59,7 @@ void NwAppQuitFunction::DoJob(ExtensionService* service, std::string extension_i
     chrome::CloseAllBrowsersAndQuit(true);
     return;
   }
-  base::MessageLoop::current()->task_runner()->PostTask(
+  base::MessageLoopCurrent::Get()->task_runner()->PostTask(
                                                         FROM_HERE,
                                                         base::Bind(&ExtensionService::TerminateExtension,
                                                                    service->AsWeakPtr(),
@@ -68,10 +68,13 @@ void NwAppQuitFunction::DoJob(ExtensionService* service, std::string extension_i
 
 ExtensionFunction::ResponseAction
 NwAppQuitFunction::Run() {
-  ExtensionService* service = ExtensionSystem::Get(browser_context())->extension_service();
-  base::MessageLoop::current()->task_runner()->PostTask(
-                                                          FROM_HERE,
-                                                          base::Bind(&NwAppQuitFunction::DoJob, service, extension()->id()));
+  ExtensionService* service =
+    ExtensionSystem::Get(browser_context())->extension_service();
+  base::MessageLoopCurrent::Get()->task_runner()->PostTask(
+        FROM_HERE,
+        base::Bind(&NwAppQuitFunction::DoJob,
+                   service,
+                   extension_id()));
   return RespondNow(NoArguments());
 }
 
@@ -93,7 +96,7 @@ NwAppCloseAllWindowsFunction::Run() {
   AppWindowRegistry* registry = AppWindowRegistry::Get(browser_context());
   if (!registry)
     return RespondNow(Error(""));
-  base::MessageLoop::current()->task_runner()->PostTask(
+  base::MessageLoopCurrent::Get()->task_runner()->PostTask(
         FROM_HERE,
         base::Bind(&NwAppCloseAllWindowsFunction::DoJob, registry, extension()->id()));
 
@@ -160,7 +163,7 @@ bool NwAppClearCacheFunction::RunNWSync(base::ListValue* response, std::string* 
                           content::BrowsingDataRemover::ORIGIN_TYPE_UNPROTECTED_WEB,
                           this);
   // BrowsingDataRemover deletes itself.
-  base::MessageLoop::ScopedNestableTaskAllower allow;
+  base::MessageLoopCurrent::ScopedNestableTaskAllower allow;
 
   run_loop_.Run();
   remover->RemoveObserver(this);

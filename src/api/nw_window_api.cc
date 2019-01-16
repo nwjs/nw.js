@@ -97,7 +97,7 @@ static void SetDeskopEnvironment() {
 namespace {
 
 printing::PrinterList EnumeratePrintersAsync() {
-  base::AssertBlockingAllowed();
+  base::internal::AssertBlockingAllowed();
 
   scoped_refptr<printing::PrintBackend> print_backend(
         printing::PrintBackend::CreateInstance(nullptr));
@@ -213,18 +213,18 @@ NwCurrentWindowInternalCloseFunction::Run() {
     if (!browser)
       return RespondNow(Error("cannot find browser window"));
     if (force)
-      base::MessageLoop::current()->task_runner()->PostTask(FROM_HERE,
+      base::MessageLoopCurrent::Get()->task_runner()->PostTask(FROM_HERE,
          base::Bind(&NwCurrentWindowInternalCloseFunction::DoCloseBrowser, browser));
     else if (browser->NWCanClose())
-      base::MessageLoop::current()->task_runner()->PostTask(FROM_HERE,
+      base::MessageLoopCurrent::Get()->task_runner()->PostTask(FROM_HERE,
          base::Bind(&NwCurrentWindowInternalCloseFunction::DoCloseBrowser, browser));
   } else {
     AppWindow* window = getAppWindow(this);
     if (force)
-      base::MessageLoop::current()->task_runner()->PostTask(FROM_HERE,
+      base::MessageLoopCurrent::Get()->task_runner()->PostTask(FROM_HERE,
          base::Bind(&NwCurrentWindowInternalCloseFunction::DoClose, window));
     else if (window->NWCanClose())
-      base::MessageLoop::current()->task_runner()->PostTask(FROM_HERE,
+      base::MessageLoopCurrent::Get()->task_runner()->PostTask(FROM_HERE,
          base::Bind(&NwCurrentWindowInternalCloseFunction::DoClose, window));
   }
 
@@ -828,7 +828,7 @@ NwCurrentWindowInternalSetShadowFunction::Run() {
   bool shadow;
   EXTENSION_FUNCTION_VALIDATE(args_->GetBoolean(0, &shadow));
   AppWindow* window = getAppWindow(this);
-  SetShadowOnWindow(window->GetNativeWindow(), shadow);
+  SetShadowOnWindow(window->GetNativeWindow().GetNativeNSWindow(), shadow);
 #endif
   return RespondNow(NoArguments());
 }

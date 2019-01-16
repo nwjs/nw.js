@@ -67,7 +67,7 @@ void Menu::Remove(MenuItem* menu_item, int pos) {
 
 void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
   // Fake out a context menu event for our menu
-  NSView* web_view = rfh->GetNativeView();
+  NSView* web_view = rfh->GetNativeView().GetNativeNSView();
   NSWindow* window = [web_view window];
   NSEvent* currentEvent = [NSApp currentEvent];
   NSPoint position = { x, web_view.bounds.size.height - y };
@@ -84,7 +84,7 @@ void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
 
   {
     // Make sure events can be pumped while the menu is up.
-    base::MessageLoop::ScopedNestableTaskAllower allow;
+    base::MessageLoopCurrent::ScopedNestableTaskAllower allow;
 
     // One of the events that could be pumped is |window.close()|.
     // User-initiated event-tracking loops protect against this by
