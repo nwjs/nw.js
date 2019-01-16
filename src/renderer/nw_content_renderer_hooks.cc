@@ -1,6 +1,7 @@
 #include "nw_content_renderer_hooks.h"
 
 // base
+#include "base/command_line.h"
 #include "base/files/file_path.h"
 #include "base/logging.h"
 #include "base/native_library.h"
@@ -44,7 +45,9 @@ void LoadNodeSymbols() {
   base::FilePath node_dll_path = base::FilePath::FromUTF8Unsafe(base::GetNativeLibraryName("node"));
 #endif
   base::NativeLibraryOptions options;
-  options.prefer_own_symbols = true;
+  const base::CommandLine* cmdline = base::CommandLine::ForCurrentProcess();
+  if (!cmdline->HasSwitch("nwjs-test-mode")) //TODO: figure out why this fails with browser tests
+    options.prefer_own_symbols = true;
   base::NativeLibrary node_dll = base::LoadNativeLibraryWithOptions(node_dll_path, options, &error);
   if(!node_dll)
     LOG_IF(FATAL, true) << "Failed to load node library (error: " << error.ToString() << ")";
