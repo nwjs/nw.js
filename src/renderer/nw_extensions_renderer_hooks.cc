@@ -580,8 +580,9 @@ void willHandleNavigationPolicy(content::RenderView* rv,
   if (!val->IsString())
     return;
   v8::String::Utf8Value policy_str(isolate, val);
-  //FIXME:: handle "ignore"
-  if (!strcmp(*policy_str, "download"))
+  if (!strcmp(*policy_str, "ignore"))
+    *policy = blink::kWebNavigationPolicyIgnore;
+  else if (!strcmp(*policy_str, "download"))
     *policy = blink::kWebNavigationPolicyDownload;
   else if (!strcmp(*policy_str, "current"))
     *policy = blink::kWebNavigationPolicyCurrentTab;
