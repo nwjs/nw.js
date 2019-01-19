@@ -93,7 +93,7 @@ vars = {
 
   'nw_src_revision': '249f3cb0f36f7a4b247236282c2306663e0d6fee',
   'nw_v8_revision': 'be1160eb4a0c9dfeb2fc742c85ad2c01f0ce704d',
-  'nw_node_revision': 'f4acdc00399b12a68d64e2b1ed50485b4ee7a424',
+  'nw_node_revision': '53baa0e22bb6481de71eb8b92b5667604fccd945',
 
   'android_git': 'https://android.googlesource.com',
   'aomedia_git': 'https://aomedia.googlesource.com',
