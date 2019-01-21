@@ -23,6 +23,7 @@
 #include <vector>
 
 #include "base/command_line.h"
+#include "base/environment.h"
 #include "base/files/file_util.h"
 #include "base/files/scoped_temp_dir.h"
 #include "base/json/json_file_value_serializer.h"
@@ -389,6 +390,8 @@ void Package::InitWithDefault() {
   // Window should show in center by default.
   window->SetString(switches::kmPosition, "center");
   root()->Set(switches::kmWindow, std::move(window));
+
+  ReadChromiumArgs();
 }
 
 bool Package::ExtractPath(const base::FilePath& path_to_extract, 
@@ -448,12 +451,17 @@ bool Package::ExtractPackage(const FilePath& zip_file, FilePath* where) {
 }
 
 void Package::ReadChromiumArgs() {
-  if (!root()->HasKey(switches::kmChromiumArgs))
+  std::string args, env_args;
+  std::unique_ptr<base::Environment> env(base::Environment::Create());
+
+  bool got_env = env->GetVar("NW_PRE_ARGS", &env_args);
+  if (!got_env && !root()->HasKey(switches::kmChromiumArgs))
     return;
 
-  std::string args;
-  if (!root()->GetStringASCII(switches::kmChromiumArgs, &args))
-    return;
+  if (!got_env && !root()->GetStringASCII(switches::kmChromiumArgs, &args))
+      return;
+
+  args = env_args + kChromiumArgsSeparator + args;
 
   std::vector<std::string> chromium_args;
   base::StringTokenizer tokenizer(args, kChromiumArgsSeparator);
