@@ -455,10 +455,12 @@ void Package::ReadChromiumArgs() {
   std::unique_ptr<base::Environment> env(base::Environment::Create());
 
   bool got_env = env->GetVar("NW_PRE_ARGS", &env_args);
-  if (!got_env && !root()->HasKey(switches::kmChromiumArgs))
-    return;
+  if (!root()->HasKey(switches::kmChromiumArgs))
+    if (!got_env)
+      return;
 
-  if (!got_env && !root()->GetStringASCII(switches::kmChromiumArgs, &args))
+  if (!root()->GetStringASCII(switches::kmChromiumArgs, &args))
+    if (!got_env)
       return;
 
   args = env_args + kChromiumArgsSeparator + args;
