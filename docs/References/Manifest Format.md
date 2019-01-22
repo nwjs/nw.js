@@ -118,6 +118,8 @@ Here's the basic syntax:
 
 It will be useful if you want to distribute the app with some custom chromium args. For example, if you want to disable the GPU accelerated video display, just add `"chromium-args" : "--disable-accelerated-video"`. If you want to add multiple arguments, separate each two arguments by space. This field can take a number of flags in one argument as well, via enclosing them in single quotation marks.
 
+The value of `NW_PRE_ARGS` environment variable is prepended to the value of this field.
+
 See [Command Line Options](Command Line Options.md) for more information.
 
 ### crash_report_url
