@@ -1,3 +1,13 @@
+0.36.0 / 01-31-2019
+===================
+- Update Chromium to [72.0.3626.81](https://chromereleases.googleblog.com/2019/01/stable-channel-update-for-desktop.html)
+- Update Node.js to [v11.8.0](https://nodejs.org/en/blog/release/v11.8.0/)
+- support NW_PRE_ARGS environment variable
+- nw2: macOS: fix Cmd-Q with user menu bar
+- nw2: disable ExtensionDevToolsInfoBar
+- [macos] ship libffmpeg with sdk; move libffmpeg location in bundle
+- [docs] NW_PRE_ARGS environment variable
+
 0.35.5 / 01-15-2019
 ===================
 - NW2: transparency support
