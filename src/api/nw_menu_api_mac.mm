@@ -1,5 +1,4 @@
 #include "content/nw/src/api/nw_menu_api.h"
-#include "base/containers/hash_tables.h"
 #include "base/strings/sys_string_conversions.h"
 #include "chrome/browser/extensions/extension_service.h"
 #include "chrome/grit/generated_resources.h"
@@ -32,13 +31,13 @@ const MsgMapEntry msg_map[] = {
   { "IDS_ALL_WINDOWS_FRONT_MAC", IDS_ALL_WINDOWS_FRONT_MAC },
 };
 
-typedef base::hash_map<std::string, int> MsgIDMap;
+typedef std::unordered_map<std::string, int> MsgIDMap;
 MsgIDMap g_msgid_map;
 static bool g_msgid_inited = false;
 
 void InitMsgIDMap() {
   g_msgid_map.clear();
-  for (size_t i = 0; i < arraysize(msg_map); i++) {
+  for (size_t i = 0; i < base::size(msg_map); i++) {
     g_msgid_map.insert(std::make_pair(msg_map[i].msgstr, msg_map[i].msgid));
   }
   g_msgid_inited = true;

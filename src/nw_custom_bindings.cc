@@ -260,7 +260,7 @@ void NWCustomBindings::EvalNWBin(
   uint8_t *data = reinterpret_cast<uint8_t*>(contents.Data());
 
   WebFrame* main_frame = render_frame->GetWebFrame();
-  v8::Handle<v8::String> source_string = v8::String::NewFromUtf8(isolate, "");
+  v8::Handle<v8::String> source_string = v8::String::NewFromUtf8(isolate, "", v8::NewStringType::kNormal).ToLocalChecked();
   v8::ScriptCompiler::CachedData* cache;
   cache = new v8::ScriptCompiler::CachedData(
                                              data, length, v8::ScriptCompiler::CachedData::BufferNotOwned);
@@ -322,9 +322,9 @@ void NWCustomBindings::GetAbsolutePath(
   base::FilePath path = base::FilePath::FromUTF8Unsafe(*v8::String::Utf8Value(isolate, args[0]));
   MakePathAbsolute(&path);
 #if defined(OS_POSIX)
-  args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, path.value().c_str()));
+  args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, path.value().c_str(), v8::NewStringType::kNormal).ToLocalChecked());
 #else
-  args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, path.AsUTF8Unsafe().c_str()));
+  args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, path.AsUTF8Unsafe().c_str(), v8::NewStringType::kNormal).ToLocalChecked());
 #endif
 }
 
@@ -333,9 +333,9 @@ void NWCustomBindings::GetOldCwd(
   v8::Isolate* isolate = args.GetIsolate();
   base::FilePath path = content::g_nw_old_cwd;
 #if defined(OS_POSIX)
-  args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, path.value().c_str()));
+  args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, path.value().c_str(), v8::NewStringType::kNormal).ToLocalChecked());
 #else
-  args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, path.AsUTF8Unsafe().c_str()));
+  args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, path.AsUTF8Unsafe().c_str(), v8::NewStringType::kNormal).ToLocalChecked());
 #endif
 }
 
@@ -374,7 +374,7 @@ void NWCustomBindings::GetProxyForURL(const v8::FunctionCallbackInfo<v8::Value>&
   GURL gurl(url);
   if (!gurl.is_valid()) {
     args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
-                                     "Invalid URL passed to App.getProxyForURL()"))));
+                                                                                                   "Invalid URL passed to App.getProxyForURL()", v8::NewStringType::kNormal).ToLocalChecked())));
     return;
   }
   std::string proxy;
@@ -383,7 +383,7 @@ void NWCustomBindings::GetProxyForURL(const v8::FunctionCallbackInfo<v8::Value>&
     args.GetReturnValue().Set(v8::Undefined(isolate));
     return;
   }
-  args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, proxy.c_str()));
+  args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, proxy.c_str(), v8::NewStringType::kNormal).ToLocalChecked());
   return;
 }
 

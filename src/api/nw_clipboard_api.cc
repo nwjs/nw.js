@@ -14,6 +14,7 @@
 #include "extensions/browser/extension_system.h"
 #include "extensions/common/error_utils.h"
 #include "ui/base/clipboard/clipboard.h"
+#include "ui/base/clipboard/clipboard_constants.h"
 #include "ui/base/clipboard/scoped_clipboard_writer.h"
 #include "ui/gfx/codec/jpeg_codec.h"
 #include "ui/gfx/codec/png_codec.h"
@@ -309,13 +310,13 @@ bool NwClipboardReadAvailableTypesFunction::RunNWSync(base::ListValue* response,
   std::vector<base::string16> types;
   clipboard->ReadAvailableTypes(ui::CLIPBOARD_TYPE_COPY_PASTE, &types, &contains_filenames);
   for(std::vector<base::string16>::iterator it = types.begin(); it != types.end(); it++) {
-    if (base::EqualsASCII(*it, ui::Clipboard::kMimeTypeText)) {
+    if (base::EqualsASCII(*it, ui::kMimeTypeText)) {
       response->Append(base::WrapUnique(new base::Value(ToString(TYPE_TEXT))));
-    } else if (base::EqualsASCII(*it, ui::Clipboard::kMimeTypeHTML)) {
+    } else if (base::EqualsASCII(*it, ui::kMimeTypeHTML)) {
       response->Append(base::WrapUnique(new base::Value(ToString(TYPE_HTML))));
-    } else if (base::EqualsASCII(*it, ui::Clipboard::kMimeTypeRTF)) {
+    } else if (base::EqualsASCII(*it, ui::kMimeTypeRTF)) {
       response->Append(base::WrapUnique(new base::Value(ToString(TYPE_RTF))));
-    } else if (base::EqualsASCII(*it, ui::Clipboard::kMimeTypePNG)) {
+    } else if (base::EqualsASCII(*it, ui::kMimeTypePNG)) {
       response->Append(base::WrapUnique(new base::Value(ToString(TYPE_PNG))));
       response->Append(base::WrapUnique(new base::Value(ToString(TYPE_JPEG))));
     }

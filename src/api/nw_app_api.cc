@@ -203,7 +203,7 @@ bool NwAppSetProxyConfigFunction::RunNWSync(base::ListValue* response, std::stri
     config = net::ProxyConfigWithAnnotation(pc, TRAFFIC_ANNOTATION_FOR_TESTS);
   }
 
-  base::ThreadRestrictions::ScopedAllowWait allow_wait;
+  base::ScopedAllowBaseSyncPrimitivesOutsideBlockingScope allow_wait;
 
   content::RenderProcessHost* render_process_host = GetSenderWebContents()->GetMainFrame()->GetProcess();
   net::URLRequestContextGetter* context_getter =

@@ -349,7 +349,7 @@ class MockWebContentsDelegate : public content::WebContentsDelegate {
 
   bool CheckMediaAccessPermission(content::RenderFrameHost* render_frame_host,
                                   const GURL& security_origin,
-                                  content::MediaStreamType type) override {
+                                  blink::MediaStreamType type) override {
     checked_ = true;
     if (check_message_loop_runner_.get())
       check_message_loop_runner_->Quit();
@@ -927,7 +927,7 @@ static std::string DumpPdfAccessibilityTree(const ui::AXTreeUpdate& ax_tree) {
   // Create a string representation of the tree starting with the embedded
   // object.
   std::string ax_tree_dump;
-  base::hash_map<int32_t, int> id_to_indentation;
+  std::map<int32_t, int> id_to_indentation;
   //bool found_embedded_object = false;
   for (auto& node : ax_tree.nodes) {
 #if 0
@@ -1226,7 +1226,7 @@ IN_PROC_BROWSER_TEST_F(NWJSDesktopCaptureApiTest, CrossDomain) {
        content::DesktopMediaID(content::DesktopMediaID::TYPE_SCREEN,
                                content::DesktopMediaID::kNullId), false},
   };
-  picker_factory_.SetTestFlags(test_flags, arraysize(test_flags));
+  picker_factory_.SetTestFlags(test_flags, base::size(test_flags));
   base::FilePath test_dir = test_data_dir_.Append(FILE_PATH_LITERAL("platform_apps")).Append(FILE_PATH_LITERAL("6212-crossdomain-screen"));
   embedded_test_server()->ServeFilesFromDirectory(test_dir);
   ASSERT_TRUE(embedded_test_server()->Start());

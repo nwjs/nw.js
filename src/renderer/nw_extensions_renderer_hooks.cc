@@ -87,7 +87,7 @@ bool g_skip_render_widget_hidden = false;
 
 static inline v8::Local<v8::String> v8_str(const char* x) {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
-  return v8::String::NewFromUtf8(isolate, x);
+  return v8::String::NewFromUtf8(isolate, x, v8::NewStringType::kNormal).ToLocalChecked();
 }
 
 v8::Handle<v8::Value> CallNWTickCallback(void* env, const v8::Handle<v8::Value> ret) {
@@ -100,7 +100,7 @@ v8::Handle<v8::Value> CreateNW(ScriptContext* context,
                                v8::Handle<v8::Object> node_global,
                                v8::Handle<v8::Context> node_context) {
   v8::Handle<v8::String> nw_string(
-      v8::String::NewFromUtf8(context->isolate(), "nw"));
+                                   v8::String::NewFromUtf8(context->isolate(), "nw", v8::NewStringType::kNormal).ToLocalChecked());
   v8::Handle<v8::Object> global(context->v8_context()->Global());
   v8::Handle<v8::Value> nw(global->Get(nw_string));
   if (nw->IsUndefined()) {
@@ -237,7 +237,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
       v8::Local<v8::Context> dom_context = context->v8_context();
       if (!mixed_context)
         g_set_node_context_fn(isolate, &dom_context);
-      dom_context->SetSecurityToken(v8::String::NewFromUtf8(isolate, "nw-token"));
+      dom_context->SetSecurityToken(v8::String::NewFromUtf8(isolate, "nw-token", v8::NewStringType::kNormal).ToLocalChecked());
       dom_context->Enter();
 
       g_start_nw_instance_fn(argc, argv, dom_context, (void*)base::i18n::GetRawIcuMemory());
@@ -253,14 +253,14 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
                                                        "process.versions['node-webkit'] = '" NW_VERSION_STRING "';"
                                                        "process.versions['nw-commit-id'] = '" NW_COMMIT_HASH "';"
                                                        "process.versions['nw-flavor'] = '" + flavor + "';"
-                                                       "process.versions['chromium'] = '" + GetChromiumVersion() + "';").c_str()
-                                                                   )).ToLocalChecked();
+                                                       "process.versions['chromium'] = '" + GetChromiumVersion() + "';").c_str(), v8::NewStringType::kNormal
+                                                                   ).ToLocalChecked()).ToLocalChecked();
         ignore_result(script->Run(dom_context));
       }
 
       if (extension && extension->manifest()->GetString(manifest_keys::kNWJSInternalMainFilename, &main_fn)) {
         v8::Local<v8::Script> script = v8::Script::Compile(dom_context, v8::String::NewFromUtf8(isolate,
-           ("global.__filename = '" + main_fn + "';").c_str())).ToLocalChecked();
+                                                                                                ("global.__filename = '" + main_fn + "';").c_str(), v8::NewStringType::kNormal).ToLocalChecked()).ToLocalChecked();
         ignore_result(script->Run(dom_context));
       }
       {
@@ -270,7 +270,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
 #endif
         base::ReplaceChars(root_path, "'", "\\'", &root_path);
         v8::Local<v8::Script> script = v8::Script::Compile(dom_context, v8::String::NewFromUtf8(isolate,
-           ("global.__dirname = '" + root_path + "';").c_str())).ToLocalChecked();
+                                                                                                ("global.__dirname = '" + root_path + "';").c_str(), v8::NewStringType::kNormal).ToLocalChecked()).ToLocalChecked();
         ignore_result(script->Run(dom_context));
       }
       bool content_verification = false;
@@ -279,7 +279,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
         v8::Local<v8::Script> script =
           v8::Script::Compile(dom_context, v8::String::NewFromUtf8(isolate,
                                                       (std::string("global.__nwjs_cv = true;") +
-                                                       "global.__nwjs_ext_id = '" + extension->id() + "';").c_str())).ToLocalChecked();
+                                                       "global.__nwjs_ext_id = '" + extension->id() + "';").c_str(), v8::NewStringType::kNormal).ToLocalChecked()).ToLocalChecked();
 
         ignore_result(script->Run(dom_context));
       }
@@ -304,10 +304,10 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   v8::Handle<v8::Object> nw = AsObjectOrEmpty(CreateNW(context, node_global, g_context));
 
   v8::Local<v8::Array> symbols = v8::Array::New(isolate, 4);
-  symbols->Set(0, v8::String::NewFromUtf8(isolate, "global"));
-  symbols->Set(1, v8::String::NewFromUtf8(isolate, "process"));
-  symbols->Set(2, v8::String::NewFromUtf8(isolate, "Buffer"));
-  symbols->Set(3, v8::String::NewFromUtf8(isolate, "require"));
+  symbols->Set(0, v8::String::NewFromUtf8(isolate, "global", v8::NewStringType::kNormal).ToLocalChecked());
+  symbols->Set(1, v8::String::NewFromUtf8(isolate, "process", v8::NewStringType::kNormal).ToLocalChecked());
+  symbols->Set(2, v8::String::NewFromUtf8(isolate, "Buffer", v8::NewStringType::kNormal).ToLocalChecked());
+  symbols->Set(3, v8::String::NewFromUtf8(isolate, "require", v8::NewStringType::kNormal).ToLocalChecked());
 
   g_context->Enter();
   for (unsigned i = 0; i < symbols->Length(); ++i) {
@@ -334,7 +334,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
     base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
 #endif
     base::ReplaceChars(root_path, "'", "\\'", &root_path);
-    v8::ScriptOrigin origin(v8::String::NewFromUtf8(isolate, "process_main"));
+    v8::ScriptOrigin origin(v8::String::NewFromUtf8(isolate, "process_main", v8::NewStringType::kNormal).ToLocalChecked());
     v8::Local<v8::Script> script = v8::Script::Compile(context->v8_context(), v8::String::NewFromUtf8(isolate, (
         set_nw_script +
         // Make node's relative modules work
@@ -346,7 +346,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
         "nw.process.mainModule.filename = root + p;"
         "nw.process.mainModule.paths = nw.global.require('module')._nodeModulePaths(nw.process.cwd());"
         "nw.process.mainModule.loaded = true;"
-        "}").c_str()), &origin).ToLocalChecked();
+        "}").c_str(), v8::NewStringType::kNormal).ToLocalChecked(), &origin).ToLocalChecked();
     CHECK(*script);
     ignore_result(script->Run(context->v8_context()));
   }
@@ -485,7 +485,7 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
 #endif
     base::ReplaceChars(root_path, "'", "\\'", &root_path);
 
-    v8::ScriptOrigin origin(v8::String::NewFromUtf8(isolate, "process_main2"));
+    v8::ScriptOrigin origin(v8::String::NewFromUtf8(isolate, "process_main2", v8::NewStringType::kNormal).ToLocalChecked());
     v8::Local<v8::Script> script2 = v8::Script::Compile(v8_context, v8::String::NewFromUtf8(isolate, (
         "'use strict';"
         "if (typeof nw != 'undefined' && typeof __filename == 'undefined') {"
@@ -493,7 +493,7 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
         "  let path = '" + path      + "';"
         "nw.__filename = root + path;"
         "nw.__dirname = root;"
-        "}").c_str()), &origin).ToLocalChecked();
+        "}").c_str(), v8::NewStringType::kNormal).ToLocalChecked(), &origin).ToLocalChecked();
     CHECK(*script2);
     ignore_result(script2->Run(v8_context));
   }

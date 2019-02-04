@@ -66,7 +66,7 @@ const CommandLine::CharType* const kSwitchPrefixes[] = {L"--", L"-", L"/"};
 const CommandLine::CharType* const kSwitchPrefixes[] = {"--", "-"};
 #endif
 
-size_t switch_prefix_count = arraysize(kSwitchPrefixes);
+size_t switch_prefix_count = base::size(kSwitchPrefixes);
 
 size_t GetSwitchPrefixLength(const CommandLine::StringType& string) {
   for (size_t i = 0; i < switch_prefix_count; ++i) {
@@ -341,7 +341,7 @@ bool Package::InitFromPath(const base::FilePath& path_in) {
   const char* required_fields[] = {
     switches::kmName
   };
-  for (unsigned i = 0; i < arraysize(required_fields); i++)
+  for (unsigned i = 0; i < base::size(required_fields); i++)
     if (!root_->HasKey(required_fields[i])) {
       ReportError("Invalid package.json",
                   std::string("Field '") + required_fields[i] + "'"
