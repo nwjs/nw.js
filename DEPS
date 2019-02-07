@@ -37,7 +37,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "win, linux64, mac64, win64",
+  "buildspec_platforms": "win, linux64, chromeos, win64, android, mac64",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -94,8 +94,8 @@ vars = {
   # as an expression.
   'cros_download_vm': '"{cros_board}" == "amd64-generic"',
 
-  'nw_src_revision': '9fece9b27a132d4c9430a9c1e9d7fe9e8bf24d32',
-  'nw_v8_revision': 'd9052067d952a05b2eb2be3a9081196ce4e02801',
+  'nw_src_revision': '5261e4933868304da0dcc785b5949eb0219efdb8',
+  'nw_v8_revision': '9e15c6a25582eb832723ab7eda7e50462c68fb8a',
   'nw_node_revision': '6835a177eaf44bfdf727515297132020395d2c2e',
   # ANGLE's deps are relative to the angle_root variable.
   'angle_root': 'src/third_party/angle',
@@ -121,7 +121,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '4d72a9931a125d21901d25d67896f0e40105bd16',
+  'v8_revision': '5b30f7832db5cb9df3c8166635b9752eac07bce5',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -1216,7 +1216,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@7291fc0eda0433bf9bd755dfa710819e15824430',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@698fa79158040debfd43f9ee581cd91dd42110bb',
     'condition': 'checkout_src_internal',
   },
 
