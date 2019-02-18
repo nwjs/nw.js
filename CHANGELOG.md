@@ -1,3 +1,8 @@
+0.36.2 / 02-18-2019
+===================
+- Update Chromium to [72.0.3626.109](https://chromereleases.googleblog.com/2019/02/stable-channel-update-for-desktop_13.html)
+- Fix: File input crashes when click it second time. [(#6968)](https://github.com/nwjs/nw.js/issues/6968)
+
 0.36.1 / 02-08-2019
 ===================
 - Update Chromium to [72.0.3626.96](https://chromereleases.googleblog.com/2019/02/stable-channel-update-for-desktop.html)
