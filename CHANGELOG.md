@@ -1,3 +1,10 @@
+0.36.3 / 03-01-2019
+===================
+- Update Chromium to [72.0.3626.119](https://chromereleases.googleblog.com/2019/02/stable-channel-update-for-desktop_21.html)
+- Update Node.js to [v11.10.1](https://nodejs.org/en/blog/release/v11.10.1/)
+- Fix: [macOS] crash in menu handling with NW2 mode [(#6976)](https://github.com/nwjs/nw.js/issues/6976)
+- Fix: lost the first touchend event [(#6985)](https://github.com/nwjs/nw.js/issues/6985)
+
 0.36.2 / 02-18-2019
 ===================
 - Update Chromium to [72.0.3626.109](https://chromereleases.googleblog.com/2019/02/stable-channel-update-for-desktop_13.html)
