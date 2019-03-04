@@ -1,3 +1,9 @@
+0.36.4 / 03-04-2019
+===================
+- Update Chromium to [72.0.3626.121](https://chromereleases.googleblog.com/2019/03/stable-channel-update-for-desktop.html)
+- Fix: click-through transparency doesn't work on macOS [(#6708)](https://github.com/nwjs/nw.js/issues/6708)
+- Fix: Google drive doesn't show contents [(#6966)](https://github.com/nwjs/nw.js/issues/6966)
+
 0.36.3 / 03-01-2019
 ===================
 - Update Chromium to [72.0.3626.119](https://chromereleases.googleblog.com/2019/02/stable-channel-update-for-desktop_21.html)
