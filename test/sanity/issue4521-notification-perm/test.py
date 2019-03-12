@@ -11,7 +11,7 @@ from selenium.webdriver.common import utils
 
 def test_perm(driver, click_id, find_id, should_close_window=False, expected='granted'):
     driver.find_element_by_id(click_id).click()
-    result = driver.find_element_by_id(find_id).get_attribute('innerHTML')
+    result = wait_for_element_id(driver, find_id)
     print result
     assert(expected in result)
     if should_close_window == True:
@@ -23,6 +23,7 @@ def test_perm(driver, click_id, find_id, should_close_window=False, expected='gr
 
 chrome_options = Options()
 chrome_options.add_argument("nwapp=" + os.path.dirname(os.path.abspath(__file__)))
+chrome_options.add_argument("skip-reopen-app-devtools")
 
 testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
