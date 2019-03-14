@@ -1,3 +1,10 @@
+0.37.0 / 03-13-2019
+===================
+- Update Chromium to [73.0.3683.75](https://chromereleases.googleblog.com/2019/03/stable-channel-update-for-desktop_12.html)
+- Fix: OSX - Google Office Docs extension loads as text [(#7010)](https://github.com/nwjs/nw.js/issues/7010)
+- Fix: NW crash on WebMIDI sysex send recurred [(#7007)](https://github.com/nwjs/nw.js/issues/7007)
+- Fix: Crash due to file:// url cannot be used in origin header of CORS request [(#7001)](https://github.com/nwjs/nw.js/issues/7001)
+
 0.36.4 / 03-04-2019
 ===================
 - Update Chromium to [72.0.3626.121](https://chromereleases.googleblog.com/2019/03/stable-channel-update-for-desktop.html)
