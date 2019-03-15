@@ -819,7 +819,7 @@ protected:
   bool trusted_;
 };
 
-INSTANTIATE_TEST_CASE_P(NWJSWebViewTests, NWJSWebViewTest, testing::Bool());
+INSTANTIATE_TEST_SUITE_P(NWJSWebViewTests, NWJSWebViewTest, testing::Bool());
 
 class NWJSWebViewTestF: public NWWebViewTestBase {};
 
