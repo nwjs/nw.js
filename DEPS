@@ -474,6 +474,17 @@ deps = {
     Var('chromium_git') + '/external/github.com/google/shaderc.git@' +
         Var('shaderc_revision'),
 
+  'src/tools/clang/dsymutil': {
+    'packages': [
+      {
+        'package': 'chromium/llvm-build-tools/dsymutil',
+        'version': 'kykIT8m8YzNqqLP2xFGBTuo0ZtU9lom3BwiStWleyWkC',
+      }
+    ],
+    'condition': 'checkout_mac',
+    'dep_type': 'cipd',
+  },
+
   'src/third_party/accessibility_test_framework': {
       'packages': [
           {
