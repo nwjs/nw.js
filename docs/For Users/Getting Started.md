@@ -78,9 +78,9 @@ This example shows how to create a native context menu in your NW.js app. You ca
 <head>
   <title>Context Menu</title>
 </head>
-<body style="width: 100%; height: 100%;">
+<body>
 
-<p>'Right click' to show context menu.</p>
+<p>'Right click' here to show context menu.</p>
 
 <script>
 // Create an empty context menu
