@@ -37,7 +37,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "win, ios, linux64, chromeos, win64, android, mac64",
+  "buildspec_platforms": "win, android, linux64, mac64, win64",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -99,8 +99,8 @@ vars = {
   # as an expression.
   'cros_download_vm': '"{cros_board}" == "amd64-generic"',
 
-  'nw_src_revision': '6c72dea87c6f5d06bb652bfbd287a8108f5c8a28',
-  'nw_v8_revision': '73051e396abd172528200330914091bd36bfa24c',
+  'nw_src_revision': 'f4d987bc48dcd76fe2da5cbcce79b913e50c6660',
+  'nw_v8_revision': 'da8705ec42a22b5587913efae0fcfe69dd4c230c',
   'nw_node_revision': '6f03c09de25ae4a3d9445334f8f95c25d89fbbc0',
   # ANGLE's deps are relative to the angle_root variable.
   'angle_root': 'src/third_party/angle',
@@ -126,11 +126,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '84c5c846e543066678a8fd8391171fb730886852',
+  'skia_revision': '636ee33902ddc27fd9683d250ceb23f65467488b',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'a8a51d8837b31292af4a420039f154967f86c7eb',
+  'v8_revision': '51df567dd66bdea870c9a93f445ee50b7bbd6735',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -1265,7 +1265,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@eaeb005f029e576064c33c1ff7008c2102962bb2',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@b3b875a3bf7a110b69ae40098af465ad71375611',
     'condition': 'checkout_src_internal',
   },
 
