@@ -1,3 +1,9 @@
+0.37.1 / 03-21-2019
+===================
+- Update Chromium to [73.0.3683.86](https://chromereleases.googleblog.com/2019/03/stable-channel-update-for-desktop_20.html)
+- Update Node.js to [v11.12.0](https://nodejs.org/en/blog/release/v11.12.0/)
+- nw2: Fix fullscreen: disable browser accelerator keys and access bubble
+
 0.37.0 / 03-13-2019
 ===================
 - Update Chromium to [73.0.3683.75](https://chromereleases.googleblog.com/2019/03/stable-channel-update-for-desktop_12.html)
