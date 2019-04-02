@@ -1,3 +1,10 @@
+0.37.2 / 04-02-2019
+===================
+- Update Node.js to [v11.13.0](https://nodejs.org/en/blog/release/v11.13.0/)
+- Fix: crash on chrome.runtime.getManifest in webview [(#7024)](https://github.com/nwjs/nw.js/issues/7024)
+- Fix: crash in inspector module with j5 module [(#7022)](https://github.com/nwjs/nw.js/issues/7022)
+- Fix: windows file dialog button label [(#6610)](https://github.com/nwjs/nw.js/issues/6610)
+
 0.37.1 / 03-21-2019
 ===================
 - Update Chromium to [73.0.3683.86](https://chromereleases.googleblog.com/2019/03/stable-channel-update-for-desktop_20.html)
