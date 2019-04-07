@@ -99,7 +99,7 @@ vars = {
   # as an expression.
   'cros_download_vm': '"{cros_board}" == "amd64-generic"',
 
-  'nw_src_revision': '155cbea905e1086625814fbba3b1e4ae76698271',
+  'nw_src_revision': 'dd4bccf65d25e0573d2f7438e08582fd46e917d3',
   'nw_v8_revision': '5359178179fe3737f5df21adbf262218f6104680',
   'nw_node_revision': '4ff08046bd599752239b2d61428024a82734d0cf',
   # ANGLE's deps are relative to the angle_root variable.
