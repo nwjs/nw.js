@@ -1,3 +1,8 @@
+0.37.3 / 04-08-2019
+===================
+- Update Chromium to [73.0.3683.103](https://chromereleases.googleblog.com/2019/04/stable-channel-update-for-desktop.html)
+- Fix: Phoning home to accounts.google.com [(#7023)](https://github.com/nwjs/nw.js/issues/7023)
+
 0.37.2 / 04-02-2019
 ===================
 - Update Node.js to [v11.13.0](https://nodejs.org/en/blog/release/v11.13.0/)
