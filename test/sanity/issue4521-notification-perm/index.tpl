@@ -34,7 +34,7 @@
   function showPermWin(id, url) {
     nw.Window.open(url, function(w) {
       if (w && w.window)
-        showPerm(id, w.window);
+        setTimeout(function() {showPerm(id, w.window);}, 700);
     });
   }
   function showPermFrame(id, frameId) {
