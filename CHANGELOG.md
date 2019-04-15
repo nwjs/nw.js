@@ -1,3 +1,13 @@
+0.37.4 / 04-15-2019
+===================
+- Update Node.js to [v11.14.0](https://nodejs.org/en/blog/release/v11.14.0/)
+- Fix: GCM support regression [(#7039)](https://github.com/nwjs/nw.js/issues/7039)
+- Fix: crash on dialog event in webview [(#7038)](https://github.com/nwjs/nw.js/issues/7038)
+- Fix: nwsaveas regression [(#7035)](https://github.com/nwjs/nw.js/issues/7035)
+- Fix: Pinning Windows creates a shortcut to `chrome_proxy.exe` [(#7033)](https://github.com/nwjs/nw.js/issues/7033)
+- Fix: NW2 mode: setting window dimension in new-win-policy callback
+- Fix: NW2 mode: disable fullscreen UI [(#5875)](https://github.com/nwjs/nw.js/issues/5875)
+
 0.37.3 / 04-08-2019
 ===================
 - Update Chromium to [73.0.3683.103](https://chromereleases.googleblog.com/2019/04/stable-channel-update-for-desktop.html)
