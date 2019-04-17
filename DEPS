@@ -38,7 +38,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "win, ios, linux64, chromeos, win64, android, mac64",
+  "buildspec_platforms": "win, linux64, mac64, win64",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -111,8 +111,8 @@ vars = {
   # as an expression.
   'cros_download_vm': '"{cros_board}" == "amd64-generic"',
 
-  'nw_src_revision': 'c2a83cb64e164f0585eab6eb75e1e1659e6b0329',
-  'nw_v8_revision': '3f978d3104010ae2a8b78bbe06730d5b7c47bf2b',
+  'nw_src_revision': 'a87d82690166d82cc6ae02396d1ff5ce199da5f5',
+  'nw_v8_revision': 'e16dd8b6d6eeca1b24e35750e06846f010c37b50',
   'nw_node_revision': '5a3250065cca212cd66ff7e6ad54710d18dfb8e3',
   # ANGLE's deps are relative to the angle_root variable.
   'angle_root': 'src/third_party/angle',
@@ -142,7 +142,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '9134f6e2fb5257dd81e8f094173ba67d78331798',
+  'v8_revision': 'c9ffe2c378f6a3a9a6c75c413f64de18605324e8',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -217,7 +217,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
-  'feed_revision': 'fd6f3e737554d10c7293b4be0a0066559565ece0',
+  'feed_revision': 'e3995ba8667ac96439734148b12d343e83b3e177',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling android_sdk_build-tools_version
   # and whatever else without interference from each other.
@@ -977,7 +977,7 @@ deps = {
     Var('chromium_git') + '/chromium/llvm-project/compiler-rt/lib/fuzzer.git' + '@' +  Var('libfuzzer_revision'),
 
   'src/third_party/libaddressinput/src':
-    Var('chromium_git') + '/external/libaddressinput.git' + '@' + '81e7ead903f5b71a326e0584f4325f106c804df1',
+    Var('chromium_git') + '/external/libaddressinput.git' + '@' + '56c60affb5de83c10ebf5f11d9adcdd70648ab71',
 
   'src/third_party/libaom/source/libaom':
     Var('aomedia_git') + '/aom.git' + '@' +  '625cded0550bb79efd10d98a9809a7ccd72a8f60',
@@ -1348,7 +1348,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@a1a54df53faedce531575f3caf02a21c59623be2',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@d483b872cc1134b45625d2b9dcd7384d53c02991',
     'condition': 'checkout_src_internal',
   },
 
