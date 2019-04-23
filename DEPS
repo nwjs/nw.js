@@ -111,8 +111,8 @@ vars = {
   # as an expression.
   'cros_download_vm': '"{cros_board}" == "amd64-generic"',
 
-  'nw_src_revision': 'f3e333204cc00345f68bad2c28e5e1c3b43dbcbf',
-  'nw_v8_revision': '0e500b42a76e5dd6cc652b672974da9cfb425ce8',
+  'nw_src_revision': '63389cb56c3875ac23abb512e8b1fb4520a9b2a9',
+  'nw_v8_revision': '4442f52f95ddefd12dc9c11161f9ff835b7fa6d0',
   'nw_node_revision': '5a3250065cca212cd66ff7e6ad54710d18dfb8e3',
   # ANGLE's deps are relative to the angle_root variable.
   'angle_root': 'src/third_party/angle',
@@ -142,7 +142,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '080edcddd609a121f78944c7d2cbf7e7f2609bb8',
+  'v8_revision': 'd86d65ab0de58d43a7b479962c940f567a14325b',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -1301,7 +1301,7 @@ deps = {
     Var('chromium_git') + '/external/khronosgroup/webgl.git' + '@' + 'a0f51b2e123f39c9ff12e621b0b47dd28dd64424',
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + 'e6d5f62d010d7f6284504af1c7898894851b238c',
+    Var('webrtc_git') + '/src.git' + '@' + '741f9a0679bc70682b056004f8421879352d1a8d',
 
   'src/third_party/xdg-utils': {
       'url': Var('chromium_git') + '/chromium/deps/xdg-utils.git' + '@' + 'd80274d5869b17b8c9067a1022e4416ee7ed5e0d',
@@ -1348,7 +1348,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@8e6f5dfd0a7f0d9e07ae166f4eef13f1c5f6b971',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@280ad282a42e82e76b938bf5b06afe572a160ae2',
     'condition': 'checkout_src_internal',
   },
 
