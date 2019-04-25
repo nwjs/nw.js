@@ -1,3 +1,8 @@
+0.38.0 / 04-25-2019
+===================
+- Update Chromium to [74.0.3729.108](https://chromereleases.googleblog.com/2019/04/stable-channel-update-for-desktop_23.html)
+- Fix: `open` event: quote command line properly under POSIX [(#7041)](https://github.com/nwjs/nw.js/issues/7041)
+
 0.37.4 / 04-15-2019
 ===================
 - Update Node.js to [v11.14.0](https://nodejs.org/en/blog/release/v11.14.0/)
