@@ -9,9 +9,14 @@
 <body>
   <h1>Reload the app</h1>
   <button id="reloadapp" onclick="reloadApp()">Reload</button>
+  <button id="opendevtools" onclick="openDevTools()">Reload</button>
   <script>
   function reloadApp() {
     chrome.runtime.reload();
+  }
+
+  function openDevTools() {
+    nw.Window.get().showDevTools();
   }
 
   try {
