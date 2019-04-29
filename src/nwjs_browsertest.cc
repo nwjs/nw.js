@@ -48,6 +48,7 @@
 #include "chrome/browser/renderer_context_menu/render_view_context_menu_test_util.h"
 #include "chrome/browser/task_manager/task_manager_browsertest_util.h"
 #include "chrome/browser/ui/browser.h"
+#include "chrome/browser/ui/browser_list.h"
 #include "chrome/browser/ui/browser_commands.h"
 #include "chrome/browser/ui/browser_dialogs.h"
 #include "chrome/browser/ui/tabs/tab_strip_model.h"
@@ -875,6 +876,9 @@ IN_PROC_BROWSER_TEST_F(NWAppTest, LocalFlash) {
 
   LoadAndLaunchPlatformApp("local_flash", "Launched");
   content::WebContents* web_contents = GetFirstAppWindowWebContents();
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    web_contents = BrowserList::GetInstance()->GetLastActive()->tab_strip_model()->GetActiveWebContents();
+  }
   ASSERT_TRUE(web_contents);
   base::string16 expected_title(base::ASCIIToUTF16("Loaded"));
   content::TitleWatcher title_watcher(web_contents, expected_title);
