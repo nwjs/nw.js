@@ -1,25 +1,22 @@
-var Binding = require('binding').Binding;
 var forEach = require('utils').forEach;
-var nw_binding = require('binding').Binding.create('nw.Clipboard');
-var sendRequest = require('sendRequest');
+var nwClipboardBinding;
 
-nw_binding.registerCustomHook(function(bindingsAPI) {
+apiBridge.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
-
+  nwClipboardBinding = bindingsAPI.compiledApi;
   ['clearSync', 'setListSync'].forEach(function(nwSyncAPIName) {
     apiFunctions.setHandleRequest(nwSyncAPIName, function() {
-      return sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {})[0];
+      return bindingUtil.sendRequestSync('nw.Clipboard.' + nwSyncAPIName, $Array.from(arguments), undefined, undefined)[0];
     });
   });
 
   ['readAvailableTypes', 'getListSync'].forEach(function(nwSyncAPIName) {
     apiFunctions.setHandleRequest(nwSyncAPIName, function() {
-      return sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {});
+      return bindingUtil.sendRequestSync('nw.Clipboard.' + nwSyncAPIName, $Array.from(arguments), undefined, undefined);
     });
   });
 });
 
-var nwClipboardBinding = nw_binding.generate();
 
 function NWClipboard() {
 
@@ -73,5 +70,5 @@ NWClipboard.prototype.readAvailableTypes = function() {
   return nwClipboardBinding.readAvailableTypes();
 };
 
-exports.binding = NWClipboard;
+nwClipboardBinding['get'] = NWClipboard['get'];
 

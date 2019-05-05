@@ -1,5 +1,3 @@
-var nw_binding = require('binding').Binding.create('nw.Shortcut');
-var sendRequest = require('sendRequest');
 var EventEmitter = nw.require('events').EventEmitter;
 
 var OPTION_INVALID = 'Invalid option.';
@@ -86,17 +84,18 @@ var ALIAS_MAP = (function() {
 // modifiers
 var MODIFIERS_REG = /^ctrl|alt|shift|command$/i;
 
+var nwShortcutBinding;
 // Hook Sync API calls
-nw_binding.registerCustomHook(function(bindingsAPI) {
+apiBridge.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
+  nwShortcutBinding = bindingsAPI.compiledApi;
   ['registerAccelerator', 'unregisterAccelerator'].forEach(function(nwSyncAPIName) {
     apiFunctions.setHandleRequest(nwSyncAPIName, function() {
-      return sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {})[0];
+      return bindingUtil.sendRequestSync('nw.Shortcut.' + nwSyncAPIName, $Array.from(arguments), undefined, undefined)[0];
     });
   });
 });
 
-var nwShortcutBinding = nw_binding.generate();
 var handlers = {};
 
 function keyToAccelerator(key) {
@@ -225,4 +224,3 @@ nwShortcutBinding.onKeyPressed.addListener(function(accelerator) {
   }
 });
 
-exports.binding = Shortcut;
