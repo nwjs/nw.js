@@ -1,15 +1,12 @@
-var Binding = require('binding').Binding;
 var forEach = require('utils').forEach;
 var nwNative = requireNative('nw_natives');
-var sendRequest = require('sendRequest');
 var messagingNatives = requireNative('messaging_natives');
-var Event = require('event_bindings').Event;
 var util = nw.require('util');
 var EventEmitter = nw.require('events').EventEmitter;
 
 var trayEvents = { objs: {}, clickEvent: {} };
 
-trayEvents.clickEvent = new Event("NWObjectTrayClick");
+trayEvents.clickEvent = bindingUtil.createCustomEvent("NWObjectTrayClick", undefined, false, false);
 trayEvents.clickEvent.addListener(function(id) {
   var tray = trayEvents.objs[id];
   if (!tray)
@@ -24,7 +21,7 @@ function Tray(option) {
     return new Tray(option);
   }
   EventEmitter.apply(this);
-  
+
   if (typeof option != 'object')
     throw new TypeError('Invalid option.');
 

@@ -1,18 +1,17 @@
-var nw_binding = require('binding').Binding.create('nw.Screen');
-var sendRequest = require('sendRequest');
 var EventEmitter = nw.require('events').EventEmitter;
 
+var nwScreenBinding;
 // Hook Sync API calls
-nw_binding.registerCustomHook(function(bindingsAPI) {
+apiBridge.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
+  nwScreenBinding = bindingsAPI.compiledApi;
   ['getScreens', 'initEventListeners', 'startMonitor', 'stopMonitor', 'isMonitorStarted', 'registerStream'].forEach(function(nwSyncAPIName) {
     apiFunctions.setHandleRequest(nwSyncAPIName, function() {
-      return sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {});
+      return bindingUtil.sendRequestSync('nw.Screen.' + nwSyncAPIName, $Array.from(arguments), undefined, undefined);
     });
   });
 });
 
-var nwScreenBinding = nw_binding.generate();
 var inited = false;
 var events = {
   onDisplayAdded: 'displayAdded',
@@ -76,4 +75,5 @@ Object.defineProperty(Screen.DesktopCaptureMonitor, 'started', {
   enumerable: true
 });
 
-exports.binding = Screen;
+exports.$set('binding', Screen);
+//Object.keys(Screen).forEach(function(member) { nwScreenBinding[member] = Screen[member]; });

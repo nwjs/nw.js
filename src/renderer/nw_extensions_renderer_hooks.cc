@@ -29,6 +29,8 @@
 #include "extensions/common/extension.h"
 #include "extensions/common/manifest.h"
 #include "extensions/common/manifest_constants.h"
+#include "extensions/renderer/native_extension_bindings_system.h"
+#include "extensions/common/extension_features.h"
 
 #include "extensions/grit/extensions_renderer_resources.h"
 
@@ -451,7 +453,10 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
     // need require in m61 since the following CallModuleMethodSafe
     // won't load it anymore: fedbe848f3024dd690f93545a337a2a6fb2aa81f
     extensions::ModuleSystem::NativesEnabledScope natives_enabled(script_context->module_system());
-    script_context->module_system()->Require("nw.Window");
+    extensions::NativeExtensionBindingsSystem* binding_sys = (extensions::NativeExtensionBindingsSystem*)dispatcher->bindings_system();
+    v8_context->Enter();
+    binding_sys->GetAPIObjectForTesting(script_context, "nw.Window");
+    v8_context->Exit();
     script_context->module_system()->CallModuleMethodSafe("nw.Window", "onDocumentStartEnd", &arguments);
   }
 }

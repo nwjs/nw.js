@@ -1,10 +1,6 @@
-var Binding = require('binding').Binding;
 var forEach = require('utils').forEach;
-var nw_binding = require('binding').Binding.create('nw.Menu');
 var nwNative = requireNative('nw_natives');
-var sendRequest = require('sendRequest');
 var messagingNatives = requireNative('messaging_natives');
-var Event = require('event_bindings').Event;
 
 function Menu (option) {
   if (!(this instanceof Menu)) {
@@ -178,17 +174,18 @@ Menu.prototype.createMacBuiltin = function (app_name, options) {
   }
 }
 
-nw_binding.registerCustomHook(function(bindingsAPI) {
+var nwMenuBinding;
+apiBridge.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
+  nwMenuBinding = bindingsAPI.compiledApi;
   apiFunctions.setHandleRequest('getNSStringWithFixup', function(msg) {
-    return sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {})[0];
+    return bindingUtil.sendRequestSync('nw.Menu.getNSStringWithFixup', $Array.from(arguments), undefined, undefined)[0];
   });
   apiFunctions.setHandleRequest('getNSStringFWithFixup', function(msg, appName) {
-    return sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {})[0];
+    return bindingUtil.sendRequestSync('nw.Menu.getNSStringFWithFixup', $Array.from(arguments), undefined, undefined)[0];
   });
 });
 
-var nwMenuBinding = nw_binding.generate();
 Menu.getNSStringWithFixup = nwMenuBinding.getNSStringWithFixup;
 Menu.getNSStringFWithFixup = nwMenuBinding.getNSStringFWithFixup;
 

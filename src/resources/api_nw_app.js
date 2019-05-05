@@ -1,6 +1,4 @@
-var nw_binding = require('binding').Binding.create('nw.App');
 var nwNatives = requireNative('nw_natives');
-var sendRequest = require('sendRequest');
 
 var fullArgv = null;
 var dataPath;
@@ -17,7 +15,7 @@ var filteredArgv = [
   /^--nwapp=/
 ];
 
-nw_binding.registerCustomHook(function(bindingsAPI) {
+apiBridge.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
   apiFunctions.setHandleRequest('crashRenderer', function() {
     nwNatives.crashRenderer();
@@ -51,16 +49,16 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     return ret;
   });
   apiFunctions.setHandleRequest('getArgvSync', function() {
-    return sendRequest.sendRequestSync('nw.App.getArgvSync', [], this.definition.parameters, {});
+    return bindingUtil.sendRequestSync('nw.App.getArgvSync', [], undefined, undefined);
   });
   apiFunctions.setHandleRequest('setProxyConfig', function() {
-    sendRequest.sendRequestSync('nw.App.setProxyConfig', arguments, this.definition.parameters, {});
+    bindingUtil.sendRequestSync('nw.App.setProxyConfig', $Array.from(arguments), undefined, undefined);
   });
   apiFunctions.setHandleRequest('clearCache', function() {
-    sendRequest.sendRequestSync('nw.App.clearCache', arguments, this.definition.parameters, {});
+    bindingUtil.sendRequestSync('nw.App.clearCache', $Array.from(arguments), undefined, undefined);
   });
   apiFunctions.setHandleRequest('clearAppCache', function() {
-    sendRequest.sendRequestSync('nw.App.clearAppCache', arguments, this.definition.parameters, {});
+    bindingUtil.sendRequestSync('nw.App.clearAppCache', $Array.from(arguments), undefined, undefined);
   });
   apiFunctions.setHandleRequest('getProxyForURL', function() {
     return nwNatives.getProxyForURL.apply(this, arguments);
@@ -106,7 +104,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     }
   });
   apiFunctions.setHandleRequest('getDataPath', function() {
-    return sendRequest.sendRequestSync('nw.App.getDataPath', [], this.definition.parameters, {})[0];
+    return bindingUtil.sendRequestSync('nw.App.getDataPath', [], undefined, undefined)[0];
   });
   apiFunctions.setHandleRequest('getStartPath', function() {
     return nwNatives.getOldCwd();
@@ -128,5 +126,5 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
 
 });
 
-exports.binding = nw_binding.generate();
+//exports.binding = nw_binding.generate();
 
