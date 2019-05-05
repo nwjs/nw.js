@@ -141,9 +141,10 @@ bool NwAppClearAppCacheFunction::RunNWSync(base::ListValue* response, std::strin
 
   GURL manifest_url(manifest);
   scoped_refptr<CannedBrowsingDataAppCacheHelper> helper(
-        new CannedBrowsingDataAppCacheHelper(Profile::FromBrowserContext(context_)));
+                                                         new CannedBrowsingDataAppCacheHelper(content::BrowserContext::GetDefaultStoragePartition(context_)
+                                                                                              ->GetAppCacheService()));
 
-  helper->DeleteAppCacheGroup(manifest_url);
+  helper->DeleteAppCaches(url::Origin::Create(manifest_url));
   return true;
 }
 

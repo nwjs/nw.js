@@ -40,11 +40,10 @@ class MenuBarButton : public views::MenuButton {
     SetElideBehavior(kElideBehavior);
   }
 
-  bool GetTooltipText(const gfx::Point& p,
-                              base::string16* tooltip) const override {
+  base::string16 GetTooltipText(const gfx::Point& p) const override {
     if (label()->GetPreferredSize().width() > label()->size().width())
-      *tooltip = GetText();
-    return !tooltip->empty();
+      return GetText();
+    return base::string16();
   }
 
   void OnNativeThemeChanged(const ui::NativeTheme* theme) override {
