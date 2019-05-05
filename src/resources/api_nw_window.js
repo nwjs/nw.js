@@ -745,7 +745,7 @@ function updateAppWindowZoom(old_level, new_level) {
 function onClose(user_force) {
   if (!currentNWWindow)
     return;
-  dispatchEventNW("nw.Window.onClose", [user_force], {instanceId: currentWidgetRoutingID});
+  currentNWWindow.onClose.dispatchNW({instanceId: currentWidgetRoutingID}, user_force);
 }
 
 function get_nw() {
