@@ -12,7 +12,7 @@
   var win;
   gui.Window.open('popup.html', {
     x: 100, y: 100, width: 200, height: 300
-  }, function(w) { win = w; });
+  }, function(w) { win = w;
 
   win.on('closed', function() {
     console.log('popup window is closed.');
@@ -26,6 +26,7 @@
   win.on('loaded', function() {
     console.log('new window loaded.');
   });
+  });
 
   function takeSnapshot() {
     gui.Window.get().capturePage(function(img) {
@@ -34,7 +35,7 @@
            
     }, 'png');
   }
-  
+
   gui.Window.get().on('close', function() {
     if (win != null)
       win.close(true);
