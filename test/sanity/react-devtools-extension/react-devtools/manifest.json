@@ -19,7 +19,7 @@
    "manifest_version": 2,
    "minimum_chrome_version": "43",
    "name": "React Developer Tools",
-   "permissions": [ "chrome-extension://*", "file:///*", "http://*/*", "https://*/*" ],
+   "permissions": [ "chrome-extension://*/*", "file:///*", "http://*/*", "https://*/*" ],
    "update_url": "https://clients2.google.com/service/update2/crx",
    "version": "0.14.8",
    "web_accessible_resources": [ "main.html", "panel.html", "build/backend.js" ]
