@@ -1,5 +1,8 @@
 apiBridge.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
+  apiFunctions.setHandleRequest('getCurrent', function() {
+    return bindingUtil.sendRequestSync('nw.currentWindowInternal.getCurrent', $Array.from(arguments), undefined, undefined)[0];
+  });
   apiFunctions.setHandleRequest('getZoom', function() {
     return bindingUtil.sendRequestSync('nw.currentWindowInternal.getZoom', $Array.from(arguments), undefined, undefined)[0];
   });
