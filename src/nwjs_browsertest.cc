@@ -394,11 +394,11 @@ class MockDownloadWebContentsDelegate : public content::WebContentsDelegate {
 
   void CanDownload(const GURL& url,
                    const std::string& request_method,
-                   const base::Callback<void(bool)>& callback) override {
+                   base::OnceCallback<void(bool)> callback) override {
     orig_delegate_->CanDownload(
         url, request_method,
-        base::Bind(&MockDownloadWebContentsDelegate::DownloadDecided,
-                   base::Unretained(this), callback));
+        base::BindOnce(&MockDownloadWebContentsDelegate::DownloadDecided,
+                       base::Unretained(this), std::move(callback)));
   }
 
   void WaitForCanDownload(bool expect_allow) {
@@ -415,7 +415,7 @@ class MockDownloadWebContentsDelegate : public content::WebContentsDelegate {
     message_loop_runner_->Run();
   }
 
-  void DownloadDecided(const base::Callback<void(bool)>& callback, bool allow) {
+  void DownloadDecided(base::OnceCallback<void(bool)> callback, bool allow) {
     EXPECT_FALSE(decision_made_);
     decision_made_ = true;
 
@@ -423,11 +423,11 @@ class MockDownloadWebContentsDelegate : public content::WebContentsDelegate {
       EXPECT_EQ(expect_allow_, allow);
       if (message_loop_runner_.get())
         message_loop_runner_->Quit();
-      callback.Run(allow);
+      std::move(callback).Run(allow);
       return;
     }
     last_download_allowed_ = allow;
-    callback.Run(allow);
+    std::move(callback).Run(allow);
   }
 
   void Reset() {
@@ -1212,7 +1212,7 @@ class NWJSDesktopCaptureApiTest : public NWAppTest {
 
  protected:
   GURL GetURLForPath(const std::string& host, const std::string& path) {
-    std::string port = base::UintToString(embedded_test_server()->port());
+    std::string port = base::NumberToString(embedded_test_server()->port());
     GURL::Replacements replacements;
     replacements.SetHostStr(host);
     replacements.SetPortStr(port);

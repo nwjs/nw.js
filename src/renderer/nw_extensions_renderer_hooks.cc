@@ -129,13 +129,13 @@ const char* GetChromiumVersion();
 
 // renderer
 
-void WebWorkerNewThreadHook(const char* name, base::Thread::Options* options) {
+void WebWorkerNewThreadHook(const char* name, bool* is_node) {
   const base::CommandLine& command_line =
       *base::CommandLine::ForCurrentProcess();
   if (!command_line.HasSwitch(switches::kEnableNodeWorker))
     return;
   if (!strcmp(name, "DedicatedWorker thread") || !strcmp(name, "SharedWorker thread"))
-    options->message_loop_type = base::MessageLoop::TYPE_NODE;
+    *is_node = true;
 }
 
 void WebWorkerStartThreadHook(blink::Frame* frame, const char* path, std::string* script, bool* isNodeJS) {
