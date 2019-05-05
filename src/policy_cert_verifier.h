@@ -12,7 +12,6 @@
 #include "base/compiler_specific.h"
 #include "base/macros.h"
 #include "base/memory/ref_counted.h"
-#include "net/base/completion_callback.h"
 #include "net/cert/cert_verifier.h"
 
 namespace net {

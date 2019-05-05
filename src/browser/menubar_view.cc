@@ -96,9 +96,9 @@ bool MenuBarView::GetMenuButtonAtLocation(const gfx::Point& loc, ui::MenuModel**
   return false;
 }
 
-void MenuBarView::OnMenuButtonClicked(views::MenuButton* view,
-                                          const gfx::Point& point,
-                                          const ui::Event* event) {
+void MenuBarView::OnMenuButtonClicked(views::Button* view,
+                                      const gfx::Point& point,
+                                      const ui::Event* event) {
   int button_index = GetIndexOf(view);
   DCHECK_NE(-1, button_index);
   ui::MenuModel::ItemType type = model_->GetTypeAt(button_index);

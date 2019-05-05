@@ -266,7 +266,7 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
     if (GetPackageImage(package, base::FilePath::FromUTF8Unsafe(icon_path), &app_icon)) {
       SetAppIcon(app_icon);
       int width = app_icon.Width();
-      std::string key = "icons." + base::IntToString(width);
+      std::string key = "icons." + base::NumberToString(width);
       manifest->SetString(key, icon_path);
 #if defined(OS_WIN)
       SetWindowHIcon((IconUtil::CreateHICONFromSkBitmapSizedTo(*app_icon.AsImageSkia().bitmap(),
