@@ -85,7 +85,7 @@ using namespace blink;
 #include "third_party/blink/renderer/platform/heap/handle.h"
 #include "third_party/blink/renderer/core/script/modulator.h"
 #include "third_party/blink/renderer/core/script/module_script.h"
-#include "third_party/blink/renderer/core/script/script_module_resolver.h"
+#include "third_party/blink/renderer/core/script/module_record_resolver.h"
 
 //#include "third_party/WebKit/Source/core/inspector/InspectorInstrumentation.h"
 //#include "third_party/WebKit/Source/core/inspector/InspectorResourceAgent.h"
@@ -309,7 +309,7 @@ void NWCustomBindings::EvalNWBin(
     url = url.Resolve(*file);
     // LOG(WARNING) << "registering module as: " << url;
     KURL kurl(WTF::String(url.spec().c_str()));
-    blink::ScriptModule script_module(isolate, module, kurl);
+    blink::ModuleRecord script_module(isolate, module, kurl);
     blink::ModuleScript* module_script =
       blink::ModuleScript::CreateForTest(modulator, script_module, kurl);
     modulator->AddToMap(kurl, module_script);
