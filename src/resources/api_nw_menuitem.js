@@ -5,7 +5,7 @@ var util = nw.require('util');
 var EventEmitter = nw.require('events').EventEmitter;
 
 var menuItems = { objs : {}, clickEvent: {} };
-menuItems.clickEvent = bindingUtil.createCustomEvent("NWObjectclick", undefined, false, false);
+menuItems.clickEvent = bindingUtil.createCustomEvent("NWObjectclick", false, false);
 menuItems.clickEvent.addListener(function(id) {
   var obj = menuItems.objs[id];
   if (!obj)

@@ -158,13 +158,13 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
         NWWindow.prototype[key] = value;
     });
 
-    NWWindow.prototype.onNewWinPolicy      = bindingUtil.createCustomEvent('nw.Window.onNewWinPolicy', undefined, false, false);
-    NWWindow.prototype.onNavigation        = bindingUtil.createCustomEvent('nw.Window.onNavigation', undefined, false, false);
-    NWWindow.prototype.LoadingStateChanged = bindingUtil.createCustomEvent('nw.Window.LoadingStateChanged', undefined, false, false);
-    NWWindow.prototype.onDocumentStart     = bindingUtil.createCustomEvent('nw.Window.onDocumentStart', undefined, false, false);
-    NWWindow.prototype.onDocumentEnd       = bindingUtil.createCustomEvent('nw.Window.onDocumentEnd', undefined, false, false);
-    NWWindow.prototype.onZoom              = bindingUtil.createCustomEvent('nw.Window.onZoom', undefined, false, false);
-    NWWindow.prototype.onClose             = bindingUtil.createCustomEvent("nw.Window.onClose", undefined, true, false);
+    NWWindow.prototype.onNewWinPolicy      = bindingUtil.createCustomEvent('nw.Window.onNewWinPolicy', false, false);
+    NWWindow.prototype.onNavigation        = bindingUtil.createCustomEvent('nw.Window.onNavigation', false, false);
+    NWWindow.prototype.LoadingStateChanged = bindingUtil.createCustomEvent('nw.Window.LoadingStateChanged', false, false);
+    NWWindow.prototype.onDocumentStart     = bindingUtil.createCustomEvent('nw.Window.onDocumentStart', false, false);
+    NWWindow.prototype.onDocumentEnd       = bindingUtil.createCustomEvent('nw.Window.onDocumentEnd', false, false);
+    NWWindow.prototype.onZoom              = bindingUtil.createCustomEvent('nw.Window.onZoom', false, false);
+    NWWindow.prototype.onClose             = bindingUtil.createCustomEvent("nw.Window.onClose", true, false);
 
     NWWindow.prototype.once = function (event, listener, record) {
       if (typeof listener !== 'function')
