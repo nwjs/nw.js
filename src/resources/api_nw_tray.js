@@ -6,7 +6,7 @@ var EventEmitter = nw.require('events').EventEmitter;
 
 var trayEvents = { objs: {}, clickEvent: {} };
 
-trayEvents.clickEvent = bindingUtil.createCustomEvent("NWObjectTrayClick", undefined, false, false);
+trayEvents.clickEvent = bindingUtil.createCustomEvent("NWObjectTrayClick", false, false);
 trayEvents.clickEvent.addListener(function(id) {
   var tray = trayEvents.objs[id];
   if (!tray)

@@ -110,18 +110,18 @@ forEach(currentNWWindowInternal, function(key, value) {
     NWWindow.prototype[key] = value;
 });
 
-NWWindow.prototype.onNewWinPolicy      = bindingUtil.createCustomEvent("nw.Window.onNewWinPolicy", undefined, false, false);
-NWWindow.prototype.onNavigation        = bindingUtil.createCustomEvent("nw.Window.onNavigation",   undefined, false, false);
-NWWindow.prototype.LoadingStateChanged = bindingUtil.createCustomEvent("nw.Window.LoadingStateChanged", undefined, false, false);
-NWWindow.prototype.onDocumentStart     = bindingUtil.createCustomEvent("nw.Window.onDocumentStart",     undefined, false, false);
-NWWindow.prototype.onDocumentEnd       = bindingUtil.createCustomEvent("nw.Window.onDocumentEnd",       undefined, false, false);
-NWWindow.prototype.onZoom              = bindingUtil.createCustomEvent("nw.Window.onZoom",              undefined, false, false);
-NWWindow.prototype.onClose             = bindingUtil.createCustomEvent("nw.Window.onClose", undefined, true, false);
-NWWindow.prototype.onMinimized         = bindingUtil.createCustomEvent("nw.Window.onMinimized", undefined, false, false);
-NWWindow.prototype.onMaximized         = bindingUtil.createCustomEvent("nw.Window.onMaximized", undefined, false, false);
-NWWindow.prototype.onFullscreen        = bindingUtil.createCustomEvent("nw.Window.onFullscreen", undefined, false, false);
-NWWindow.prototype.onResized           = bindingUtil.createCustomEvent("nw.Window.onResized", undefined, false, false);
-NWWindow.prototype.onRestore           = bindingUtil.createCustomEvent("nw.Window.onRestore", undefined, false, false);
+NWWindow.prototype.onNewWinPolicy      = bindingUtil.createCustomEvent("nw.Window.onNewWinPolicy", false, false);
+NWWindow.prototype.onNavigation        = bindingUtil.createCustomEvent("nw.Window.onNavigation",   false, false);
+NWWindow.prototype.LoadingStateChanged = bindingUtil.createCustomEvent("nw.Window.LoadingStateChanged", false, false);
+NWWindow.prototype.onDocumentStart     = bindingUtil.createCustomEvent("nw.Window.onDocumentStart",     false, false);
+NWWindow.prototype.onDocumentEnd       = bindingUtil.createCustomEvent("nw.Window.onDocumentEnd",       false, false);
+NWWindow.prototype.onZoom              = bindingUtil.createCustomEvent("nw.Window.onZoom",              false, false);
+NWWindow.prototype.onClose             = bindingUtil.createCustomEvent("nw.Window.onClose", true, false);
+NWWindow.prototype.onMinimized         = bindingUtil.createCustomEvent("nw.Window.onMinimized", false, false);
+NWWindow.prototype.onMaximized         = bindingUtil.createCustomEvent("nw.Window.onMaximized", false, false);
+NWWindow.prototype.onFullscreen        = bindingUtil.createCustomEvent("nw.Window.onFullscreen", false, false);
+NWWindow.prototype.onResized           = bindingUtil.createCustomEvent("nw.Window.onResized", false, false);
+NWWindow.prototype.onRestore           = bindingUtil.createCustomEvent("nw.Window.onRestore", false, false);
 
 NWWindow.prototype.close = function (force) {
   currentNWWindowInternal.close(force, this.cWindow.id);
