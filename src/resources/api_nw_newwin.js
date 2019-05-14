@@ -105,11 +105,6 @@ function NWWindow(cWindow) {
   chrome.windows.onWindowChanged.addListener(updateWindowAttributes);
 }
 
-forEach(currentNWWindowInternal, function(key, value) {
-  if (!key.endsWith('Internal'))
-    NWWindow.prototype[key] = value;
-});
-
 NWWindow.prototype.onNewWinPolicy      = bindingUtil.createCustomEvent("nw.Window.onNewWinPolicy", false, false);
 NWWindow.prototype.onNavigation        = bindingUtil.createCustomEvent("nw.Window.onNavigation",   false, false);
 NWWindow.prototype.LoadingStateChanged = bindingUtil.createCustomEvent("nw.Window.LoadingStateChanged", false, false);
@@ -615,6 +610,10 @@ Object.defineProperty(NWWindow.prototype, 'frameId', {
 apiBridge.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
   currentNWWindowInternal = getInternalApi('nw.currentWindowInternal');
+  forEach(currentNWWindowInternal, function(key, value) {
+    if (!key.endsWith('Internal'))
+      NWWindow.prototype[key] = value;
+  });
   apiFunctions.setHandleRequest('get', function(domWindow) {
     if (domWindow)
       return try_nw(domWindow.top).nw.Window.get();
