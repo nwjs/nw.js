@@ -1,3 +1,8 @@
+0.38.3 / 05-15-2019
+===================
+- Update Node.js to [v12.2.0](https://nodejs.org/en/blog/release/v12.2.0/)
+- Update Chromium to [74.0.3729.157](https://chromereleases.googleblog.com/2019/05/stable-channel-update-for-desktop.html)
+
 0.38.2 / 05-06-2019
 ===================
 - Update Node.js to [v12.1.0](https://nodejs.org/en/blog/release/v12.1.0/)
