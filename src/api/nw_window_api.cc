@@ -192,7 +192,8 @@ static HWND getHWND(AppWindow* window) {
 #endif
 
 void NwCurrentWindowInternalCloseFunction::DoClose(AppWindow* window) {
-  window->GetBaseWindow()->ForceClose();
+  if (window && window->GetBaseWindow())
+    window->GetBaseWindow()->ForceClose();
 }
 
 void NwCurrentWindowInternalCloseFunction::DoCloseBrowser(Browser* browser) {
