@@ -1,3 +1,8 @@
+0.39.0 / 06-11-2019
+===================
+- Update Chromium to [75.0.3770.80](https://chromereleases.googleblog.com/2019/06/stable-channel-update-for-desktop.html)
+- Fix: crash "Invalid instance ID(0) from WebviewActionRequest.defaultAction" [(#7059)](https://github.com/nwjs/nw.js/issues/7059)
+
 0.38.4 / 05-24-2019
 ===================
 - Update Node.js to [v12.3.1](https://nodejs.org/en/blog/release/v12.3.1/)
