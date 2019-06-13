@@ -268,24 +268,24 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
       nwNatives.callInWindow(bgPage, "__nw_removeOuterEventCB", this, event, callback);
       if (appWinEventsMap.hasOwnProperty(event)) {
         for (let l of this.appWindow[appWinEventsMap[event]].getListeners()) {
-          if (l.callback.listener && l.callback.listener === callback) {
-            this.appWindow[appWinEventsMap[event]].removeListener(l.callback);
+          if (l.listener && l.listener === callback) {
+            this.appWindow[appWinEventsMap[event]].removeListener(l);
             return this;
           }
         }
       }
       if (nwWinEventsMap.hasOwnProperty(event)) {
         for (let l of this[nwWinEventsMap[event]].getListeners()) {
-          if (l.callback.listener && l.callback.listener === callback) {
-            this[nwWinEventsMap[event]].removeListener(l.callback);
+          if (l.listener && l.listener === callback) {
+            this[nwWinEventsMap[event]].removeListener(l);
             return this;
           }
         }
       }
       if (nwWrapEventsMap.hasOwnProperty(event)) {
         for (let l of this[nwWrapEventsMap[event]].getListeners()) {
-          if (l.callback.listener && l.callback.listener === callback) {
-            this[nwWrapEventsMap[event]].removeListener(l.callback);
+          if (l.listener && l.listener === callback) {
+            this[nwWrapEventsMap[event]].removeListener(l);
             return this;
           }
         }
@@ -316,19 +316,19 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
       nwNatives.callInWindow(bgPage, "__nw_remove_all_listeners", this, event);
       if (appWinEventsMap.hasOwnProperty(event)) {
         for (let l of this.appWindow[appWinEventsMap[event]].getListeners()) {
-          this.appWindow[appWinEventsMap[event]].removeListener(l.callback);
+          this.appWindow[appWinEventsMap[event]].removeListener(l);
         }
         return this;
       }
       if (nwWinEventsMap.hasOwnProperty(event)) {
         for (let l of this[nwWinEventsMap[event]].getListeners()) {
-          this[nwWinEventsMap[event]].removeListener(l.callback);
+          this[nwWinEventsMap[event]].removeListener(l);
         }
         return this;
       }
       if (nwWrapEventsMap.hasOwnProperty(event)) {
         for (let l of this[nwWrapEventsMap[event]].getListeners()) {
-          this[nwWrapEventsMap[event]].removeListener(l.callback);
+          this[nwWrapEventsMap[event]].removeListener(l);
         }
         return this;
       }

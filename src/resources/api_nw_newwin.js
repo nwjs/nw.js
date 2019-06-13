@@ -252,24 +252,24 @@ NWWindow.prototype.on = function (event, callback, record) {
 NWWindow.prototype.removeListener = function (event, callback) {
   if (nwWinEventsMap.hasOwnProperty(event)) {
     for (let l of this[nwWinEventsMap[event]].getListeners()) {
-      if (l.callback.listener && l.callback.listener === callback) {
-        this[nwWinEventsMap[event]].removeListener(l.callback);
+      if (l.listener && l.listener === callback) {
+        this[nwWinEventsMap[event]].removeListener(l);
         return this;
       }
     }
   }
   if (nwWrapEventsMap.hasOwnProperty(event)) {
     for (let l of this[nwWrapEventsMap[event]].getListeners()) {
-      if (l.callback.listener && l.callback.listener === callback) {
-        this[nwWrapEventsMap[event]].removeListener(l.callback);
+      if (l.listener && l.listener === callback) {
+        this[nwWrapEventsMap[event]].removeListener(l);
         return this;
       }
     }
   }
   if (wrapEventsMapNewWin.hasOwnProperty(event)) {
     for (let l of chrome.windows[wrapEventsMapNewWin[event]].getListeners()) {
-      if (l.callback.listener && l.callback.listener === callback) {
-        chrome.windows[wrapEventsMapNewWin[event]].removeListener(l.callback);
+      if (l.listener && l.listener === callback) {
+        chrome.windows[wrapEventsMapNewWin[event]].removeListener(l);
         return this;
       }
     }
@@ -289,19 +289,19 @@ NWWindow.prototype.removeAllListeners = function (event) {
   }
   if (nwWinEventsMap.hasOwnProperty(event)) {
     for (let l of this[nwWinEventsMap[event]].getListeners()) {
-      this[nwWinEventsMap[event]].removeListener(l.callback);
+      this[nwWinEventsMap[event]].removeListener(l);
     }
     return this;
   }
   if (nwWrapEventsMap.hasOwnProperty(event)) {
     for (let l of this[nwWrapEventsMap[event]].getListeners()) {
-      this[nwWrapEventsMap[event]].removeListener(l.callback);
+      this[nwWrapEventsMap[event]].removeListener(l);
     }
     return this;
   }
   if (wrapEventsMapNewWin.hasOwnProperty(event)) {
     for (let l of chrome.windows[wrapEventsMapNewWin[event]].getListeners()) {
-      chrome.windows[wrapEventsMapNewWin[event]].removeListener(l.callback);
+      chrome.windows[wrapEventsMapNewWin[event]].removeListener(l);
     }
     return this;
   }
