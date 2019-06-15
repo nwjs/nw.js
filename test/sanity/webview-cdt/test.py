@@ -32,7 +32,7 @@ try:
     while timeout > 0 and not found:
         for handle in driver.window_handles:
             driver.switch_to_window(handle)
-            if driver.current_url.startswith('chrome-devtools://'):
+            if driver.current_url.startswith('devtools://'):
                 found = True
                 break
         timeout = timeout - 1

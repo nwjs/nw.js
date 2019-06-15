@@ -46,11 +46,6 @@ class MenuBarButton : public views::MenuButton {
     return base::string16();
   }
 
-  void OnNativeThemeChanged(const ui::NativeTheme* theme) override {
-    views::MenuButton::OnNativeThemeChanged(theme);
-    SetEnabledTextColors(theme->GetSystemColor(ui::NativeTheme::kColorId_EnabledMenuItemForegroundColor));
-  }
-
  private:
 
   DISALLOW_COPY_AND_ASSIGN(MenuBarButton);
@@ -85,7 +80,7 @@ bool MenuBarView::GetMenuButtonAtLocation(const gfx::Point& loc, ui::MenuModel**
   if (loc.x() < 0 || loc.x() >= width() || loc.y() < 0 || loc.y() >= height())
     return false;
   for (int i = 0; i < model_->GetItemCount(); i++) {
-    views::View* child = child_at(i);
+    views::View* child = children()[i];
     if (child->bounds().Contains(loc) &&
         (model_->GetTypeAt(i) == ui::MenuModel::TYPE_SUBMENU)) {
       *model = model_->GetSubmenuModelAt(i);
@@ -111,14 +106,6 @@ void MenuBarView::OnMenuButtonClicked(views::Button* view,
 
 void MenuBarView::ButtonPressed(views::Button* sender,
                                 const ui::Event& event) {
-}
-
-void MenuBarView::OnNativeThemeChanged(const ui::NativeTheme* theme) {
-  // Use menu background color for menubar
-  SetBackground(views::CreateSolidBackground(theme->
-       GetSystemColor(ui::NativeTheme::kColorId_MenuBackgroundColor)));
-  // Force to repaint the menubar
-  SchedulePaint();
 }
 
 } //namespace nw

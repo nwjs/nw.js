@@ -237,7 +237,7 @@ def switch_to_devtools(driver, devtools_window=None, skip_exception=False):
     if devtools_window is not None:
         driver.switch_to_window(devtools_window)
 
-    if driver.current_url.startswith('chrome-devtools://'):
+    if driver.current_url.startswith('devtools://'):
         wait_for_devtools_ready()
         return
     elif devtools_window is not None: # raise exception when given window is not a devtools
@@ -246,7 +246,7 @@ def switch_to_devtools(driver, devtools_window=None, skip_exception=False):
     for handle in driver.window_handles:
         try:
             driver.switch_to_window(handle)
-            if driver.current_url.startswith('chrome-devtools://'):
+            if driver.current_url.startswith('devtools://'):
                 wait_for_devtools_ready()
                 return
         except selenium.common.exceptions.WebDriverException:

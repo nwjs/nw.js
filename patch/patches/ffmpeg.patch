@@ -1,17 +1,17 @@
 diff --git a/BUILD.gn b/BUILD.gn
-index 0448476773..dfe535f796 100755
+index 1f11a9731d..abe12dc294 100755
 --- BUILD.gn
 +++ BUILD.gn
-@@ -241,7 +241,7 @@ target(link_target_type, "ffmpeg_internal") {
+@@ -264,7 +264,7 @@ target(link_target_type, "ffmpeg_internal") {
    # Windows builds can't compile without EBP because we can't omit frame
    # pointers like we do on posix.
-   if (target_cpu == "x86") {
--    if (using_sanitizer || is_win) {
+   if (current_cpu == "x86") {
+-    if (using_sanitizer || is_win || use_lld) {
 +    if (true) {
        defines += [ "HAVE_EBP_AVAILABLE=0" ]
      } else {
        defines += [ "HAVE_EBP_AVAILABLE=1" ]
-@@ -392,6 +392,12 @@ if (is_component_ffmpeg) {
+@@ -422,6 +422,12 @@ if (is_component_ffmpeg) {
      # So we can append below and assume they're defined.
      ldflags = []
  
@@ -24,7 +24,7 @@ index 0448476773..dfe535f796 100755
      if (is_fuchsia || (is_posix && !is_mac)) {
        # Fixes warnings PIC relocation when building as component.
        ldflags += [
-@@ -404,12 +410,10 @@ if (is_component_ffmpeg) {
+@@ -434,12 +440,10 @@ if (is_component_ffmpeg) {
        deps += [ ":ffmpeg_generate_def" ]
        sources = [
          "$target_gen_dir/ffmpeg.def",

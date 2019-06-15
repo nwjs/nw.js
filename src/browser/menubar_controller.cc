@@ -104,7 +104,7 @@ void MenuBarController::RunMenuAt(views::View* view, const gfx::Point& point) {
                    menu_button->height() - 1);
 
   menu_runner_->RunMenuAt(view->GetWidget()->GetTopLevelWidget(),
-                                       menu_button,
+                          menu_button->button_controller(),
                                        bounds,
                           views::MenuAnchorPosition::kTopLeft,
                                        ui::MENU_SOURCE_NONE);
