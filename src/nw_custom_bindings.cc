@@ -84,7 +84,7 @@ using namespace blink;
 #include "third_party/blink/public/web/web_security_policy.h"
 #include "third_party/blink/renderer/platform/heap/handle.h"
 #include "third_party/blink/renderer/core/script/modulator.h"
-#include "third_party/blink/renderer/core/script/module_script.h"
+#include "third_party/blink/renderer/core/script/js_module_script.h"
 #include "third_party/blink/renderer/core/script/module_record_resolver.h"
 
 //#include "third_party/WebKit/Source/core/inspector/InspectorInstrumentation.h"
@@ -310,8 +310,8 @@ void NWCustomBindings::EvalNWBin(
     // LOG(WARNING) << "registering module as: " << url;
     KURL kurl(WTF::String(url.spec().c_str()));
     blink::ModuleRecord script_module(isolate, module, kurl);
-    blink::ModuleScript* module_script =
-      blink::ModuleScript::CreateForTest(modulator, script_module, kurl);
+    blink::JSModuleScript* module_script =
+      blink::JSModuleScript::CreateForTest(modulator, script_module, kurl);
     modulator->AddToMap(kurl, module_script);
   }
 }
@@ -349,8 +349,10 @@ void NWCustomBindings::AddOriginAccessWhitelistEntry(const v8::FunctionCallbackI
 
   blink::WebSecurityPolicy::AddOriginAccessAllowListEntry(GURL(sourceOrigin),
                                                           blink::WebString::FromUTF8(destinationProtocol),
-                                                          blink::WebString::FromUTF8(destinationHost),
-                                                          allowDestinationSubdomains,
+                                                          blink::WebString::FromUTF8(destinationHost), 0,
+                                                          allowDestinationSubdomains ?
+                                                          network::mojom::CorsDomainMatchMode::kAllowSubdomains : network::mojom::CorsDomainMatchMode::kDisallowSubdomains,
+                                                          network::mojom::CorsPortMatchMode::kAllowAnyPort,
                                                           network::mojom::CorsOriginAccessMatchPriority::kDefaultPriority);
   args.GetReturnValue().Set(v8::Undefined(isolate));
   return;

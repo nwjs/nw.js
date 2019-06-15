@@ -259,7 +259,7 @@ action("commit_id") {
 if (is_mac) {
   copy("copy_ffmpeg") {
     sources = [ "$root_out_dir/libffmpeg.dylib" ]
-    outputs = [ "$root_out_dir/$chrome_product_full_name.app/Contents/Versions/$chrome_version_full//nwjs Framework.framework/libffmpeg.dylib" ]
+    outputs = [ "$root_out_dir/$chrome_product_full_name.app/Contents/Frameworks/nwjs Framework.framework/Versions/$chrome_version_full/libffmpeg.dylib" ]
     deps = [
       "//chrome",
       "//third_party/ffmpeg:ffmpeg"
@@ -279,7 +279,7 @@ copy("copy_node") {
   }
   if (is_mac) {
     sources = [ "$node_dir" + "../libnode.dylib" ]
-    outputs = [ "$root_out_dir/nwjs.app/Contents/Versions/$chrome_version_full/nwjs Framework.framework/libnode.dylib" ]
+    outputs = [ "$root_out_dir/$chrome_product_full_name.app/Contents/Frameworks/nwjs Framework.framework/Versions/$chrome_version_full/libnode.dylib" ]
   }
   if (is_win) {
     suffix=""
@@ -298,6 +298,7 @@ copy("copy_node") {
 
 if (is_win && !is_component_build) {
   action("dump") {
+    testonly = true
     script = "tools/dump_win_syms.py"
     inputs = [ "$root_build_dir/nw.exe",
                "$root_build_dir/nw.dll",
@@ -327,6 +328,7 @@ if (is_win && !is_component_build) {
 
 if (is_mac && !is_component_build) {
   group("dump") {
+    testonly = true
     deps = [ "//third_party/breakpad:dump_syms",
              "//chrome",
              ":copy_node",
@@ -346,6 +348,7 @@ if (is_linux && !is_component_build) {
     arch_pkgname = "ia32"
   }
   action_foreach("dump") {
+    testonly = true
     script = "//build/linux/dump_app_syms.py"
     sources = [ "$root_build_dir/nw",
                 "$root_shlib_dir/libnw.so",
@@ -425,6 +428,7 @@ if (!is_component_build) {
   }
   if (nwjs_sdk) {
     action("nwtest") {
+      testonly = true
       script = "test/test.py"
       outputs = [ "$root_build_dir/run_tests.re" ]
       args = [ "-d", rebase_path("$root_build_dir"), "-t", "120", "sanity" ]

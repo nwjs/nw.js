@@ -104,11 +104,11 @@ v8::Handle<v8::Value> CreateNW(ScriptContext* context,
   v8::Handle<v8::String> nw_string(
                                    v8::String::NewFromUtf8(context->isolate(), "nw", v8::NewStringType::kNormal).ToLocalChecked());
   v8::Handle<v8::Object> global(context->v8_context()->Global());
-  v8::Handle<v8::Value> nw(global->Get(nw_string));
+  v8::Handle<v8::Value> nw(global->Get(context->v8_context(), nw_string).ToLocalChecked());
   if (nw->IsUndefined()) {
     nw = v8::Object::New(context->isolate());;
     //node_context->Enter();
-    global->Set(nw_string, nw);
+    ignore_result(global->Set(context->v8_context(), nw_string, nw));
     //node_context->Exit();
   }
   return nw;
@@ -306,20 +306,20 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   v8::Handle<v8::Object> nw = AsObjectOrEmpty(CreateNW(context, node_global, g_context));
 
   v8::Local<v8::Array> symbols = v8::Array::New(isolate, 4);
-  symbols->Set(0, v8::String::NewFromUtf8(isolate, "global", v8::NewStringType::kNormal).ToLocalChecked());
-  symbols->Set(1, v8::String::NewFromUtf8(isolate, "process", v8::NewStringType::kNormal).ToLocalChecked());
-  symbols->Set(2, v8::String::NewFromUtf8(isolate, "Buffer", v8::NewStringType::kNormal).ToLocalChecked());
-  symbols->Set(3, v8::String::NewFromUtf8(isolate, "require", v8::NewStringType::kNormal).ToLocalChecked());
+  ignore_result(symbols->Set(context->v8_context(), 0, v8::String::NewFromUtf8(isolate, "global", v8::NewStringType::kNormal).ToLocalChecked()));
+  ignore_result(symbols->Set(context->v8_context(), 1, v8::String::NewFromUtf8(isolate, "process", v8::NewStringType::kNormal).ToLocalChecked()));
+  ignore_result(symbols->Set(context->v8_context(), 2, v8::String::NewFromUtf8(isolate, "Buffer", v8::NewStringType::kNormal).ToLocalChecked()));
+  ignore_result(symbols->Set(context->v8_context(), 3, v8::String::NewFromUtf8(isolate, "require", v8::NewStringType::kNormal).ToLocalChecked()));
 
   g_context->Enter();
   for (unsigned i = 0; i < symbols->Length(); ++i) {
-    v8::Local<v8::Value> key = symbols->Get(i);
-    v8::Local<v8::Value> val = node_global->Get(key);
-    nw->Set(key, val);
+    v8::Local<v8::Value> key = symbols->Get(context->v8_context(), i).ToLocalChecked();
+    v8::Local<v8::Value> val = node_global->Get(context->v8_context(), key).ToLocalChecked();
+    ignore_result(nw->Set(context->v8_context(), key, val));
     if (nwjs_guest_nw && !node_init_run) {
       //running in nwjs webview and node was initialized in
       //chromedriver automation extension
-      context->v8_context()->Global()->Set(key, val);
+      ignore_result(context->v8_context()->Global()->Set(context->v8_context(), key, val));
     }
   }
   g_context->Exit();
@@ -574,14 +574,14 @@ void willHandleNavigationPolicy(content::RenderView* rv,
   }
 
   std::unique_ptr<content::V8ValueConverter> converter(content::V8ValueConverter::Create());
-  v8::Local<v8::Value> manifest_v8 = policy_obj->Get(v8_str("manifest"));
+  v8::Local<v8::Value> manifest_v8 = policy_obj->Get(v8_context, v8_str("manifest")).ToLocalChecked();
   std::unique_ptr<base::Value> manifest_val(converter->FromV8Value(manifest_v8, v8_context));
   std::string manifest_str;
   if (manifest_val.get() && base::JSONWriter::Write(*manifest_val, &manifest_str)) {
     *manifest = blink::WebString::FromUTF8(manifest_str.c_str());
   }
 
-  v8::Local<v8::Value> val = policy_obj->Get(v8_str("val"));
+  v8::Local<v8::Value> val = policy_obj->Get(v8_context, v8_str("val")).ToLocalChecked();
   if (!val->IsString())
     return;
   v8::String::Utf8Value policy_str(isolate, val);

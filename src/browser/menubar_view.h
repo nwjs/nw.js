@@ -56,7 +56,6 @@ class MenuBarView :
   // views::ButtonListener:
    void ButtonPressed(views::Button* sender,
                              const ui::Event& event) override;
-   void OnNativeThemeChanged(const ui::NativeTheme* theme) override;
 
  private:
   ui::MenuModel* model_;
