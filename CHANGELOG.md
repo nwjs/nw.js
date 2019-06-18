@@ -1,3 +1,10 @@
+0.39.1 / 06-18-2019
+===================
+- Update Chromium to [75.0.3770.90](https://chromereleases.googleblog.com/2019/06/stable-channel-update-for-desktop_13.html)
+- Fix: Removing Listening events from a window is broken [(#7077)](https://github.com/nwjs/nw.js/issues/7077)
+- Fix: crash in compiled JS [(#7045)](https://github.com/nwjs/nw.js/issues/7045)
+- Fix: crash with `product_string` [(#7075)](https://github.com/nwjs/nw.js/issues/7075)
+
 0.39.0 / 06-11-2019
 ===================
 - Update Chromium to [75.0.3770.80](https://chromereleases.googleblog.com/2019/06/stable-channel-update-for-desktop.html)
