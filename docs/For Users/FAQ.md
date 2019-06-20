@@ -38,7 +38,9 @@ window.global = undefined;
 <!-- Angular 2 Dependencies -->
 ```
 
-* See also: [Tutorial: Angular-CLI and NW.js](https://dev.to/thejaredwilcurt/angular-cli-and-nwjs-for-development-49gl)
+* See also:
+  * [Tutorial: Angular-CLI and NW.js](https://dev.to/thejaredwilcurt/angular-cli-and-nwjs-for-development-49gl)
+  * [NW.js + Angular 8 demo repo](https://github.com/nwutils/nw-angular-cli-example)
 
 
 ## How to leave fullscreen mode with ESC key?
