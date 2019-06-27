@@ -1,3 +1,10 @@
+0.39.2 / 06-18-2019
+===================
+- Update Chromium to [75.0.3770.100](https://chromereleases.googleblog.com/2019/06/stable-channel-update-for-desktop_18.html)
+- Update Node.js to [v12.4.0](https://nodejs.org/en/blog/release/v12.4.0/)
+- Fix: Crash in forked child process when calling node method runInNewContext. [(#7085)](https://github.com/nwjs/nw.js/issues/7085)
+- Fix: Crash closing popup window after opening dev tools [(#7088)](https://github.com/nwjs/nw.js/issues/7088)
+
 0.39.1 / 06-18-2019
 ===================
 - Update Chromium to [75.0.3770.90](https://chromereleases.googleblog.com/2019/06/stable-channel-update-for-desktop_13.html)
