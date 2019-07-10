@@ -109,7 +109,7 @@ vars = {
 
   'nw_src_revision': '75f67cf123ee19cd7e7127da75becedbd065998c',
   'nw_v8_revision': '2d3bccd62e299e59a713d36e6b37e07ed24356fe',
-  'nw_node_revision': 'cfa41148d3358f2d1056c3d2bdae4211f0ac1789',
+  'nw_node_revision': 'd3d65eac8c07dbb7bb7c02d14edda4efecbfe9b4',
   # ANGLE's deps are relative to the angle_root variable.
   'angle_root': 'src/third_party/angle',
 
