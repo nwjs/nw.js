@@ -107,8 +107,8 @@ vars = {
   # as an expression.
   'cros_download_vm': '"{cros_board}" == "amd64-generic"',
 
-  'nw_src_revision': 'c1b40d07413dec7c7c00a0afa0115a97785afcf9',
-  'nw_v8_revision': '2d3bccd62e299e59a713d36e6b37e07ed24356fe',
+  'nw_src_revision': 'a478edd61dddb740ef9bb2d84c8afcca655ffd1a',
+  'nw_v8_revision': 'ec3624d0ecf319b0002416219a2dd09c68275f7a',
   'nw_node_revision': 'd79e0dd3d494b649faf6ac3e41af50fed9363e2c',
   # ANGLE's deps are relative to the angle_root variable.
   'angle_root': 'src/third_party/angle',
@@ -134,11 +134,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '3a2e3e75232d225e6f5e7c3530458be63bbb355a',
+  'skia_revision': 'e5b2375e28d85a6c8db771495b963670be28defd',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'd1ee844177357459a2eca3aeda7904b2a169f334',
+  'v8_revision': 'baf5b819112117d4f9cc62a90abe98813734d35f',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -873,7 +873,7 @@ deps = {
   },
 
   'src/third_party/ffmpeg':
-    Var('chromium_git') + '/chromium/third_party/ffmpeg.git' + '@' + 'e02fc00c5da42ea5cdf2bf5b9bab93c323a1e698',
+    Var('chromium_git') + '/chromium/third_party/ffmpeg.git' + '@' + '2c86ba060a3835d42d5f14d860c20c96ca7dc841',
 
   'src/third_party/flac':
     Var('chromium_git') + '/chromium/deps/flac.git' + '@' + 'af862024c8c8fa0ae07ced05e89013d881b00596',
@@ -1409,7 +1409,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@bae12459b8a4a843358100f2adebd35bb5908acf',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@98d4a682815dc80dbb2bd76b997ada4fa2485f1d',
     'condition': 'checkout_src_internal',
   },
 
