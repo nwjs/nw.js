@@ -1,3 +1,10 @@
+0.39.3 / 07-17-2019
+===================
+- Update Chromium to [75.0.3770.142](https://chromereleases.googleblog.com/2019/07/stable-channel-update-for-desktop.html)
+- Update Node.js to [v12.6.0](https://nodejs.org/en/blog/release/v12.6.0/)
+- Fix: Crash in async_hooks of Node [(#7107)](https://github.com/nwjs/nw.js/issues/7107)
+- Fix: webview devtools freeze upon breakpoint [(#7098)](https://github.com/nwjs/nw.js/issues/7098)
+
 0.39.2 / 06-18-2019
 ===================
 - Update Chromium to [75.0.3770.100](https://chromereleases.googleblog.com/2019/06/stable-channel-update-for-desktop_18.html)
