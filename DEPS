@@ -38,7 +38,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "win, linux64, mac64, win64",
+  "buildspec_platforms": "win, ios, linux64, chromeos, win64, android, mac64",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -112,9 +112,9 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': '9c9472c9d5c8f41f3ae2bd5f66c291989626db41',
-  'nw_v8_revision': '7f1c591729376d484959acf24667450e11ef14b2',
-  'nw_node_revision': '79d48d74da9b1f7f82a9c18b1ae47bb82a7c8263',
+  'nw_src_revision': '4b3f2986cf88748f2c7d0b7ab4f643d437971fdb',
+  'nw_v8_revision': '7c3d68c325ac49bd9a612796d44749108948b79f',
+  'nw_node_revision': 'b39900733472d01bed0d1fa4592f1c44d19d60fe',
 
   # ANGLE's deps are relative to the angle_root variable.
   'angle_root': 'src/third_party/angle',
@@ -144,11 +144,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '60c80f35857c0054cf8d326a49c277367dd8e5cc',
+  'skia_revision': '592fe6d5a78c6c7b1dd99ccdd6efd6e21348d410',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '34d8c1b1eef51f3d0df5ee60008a89e77c3209f4',
+  'v8_revision': '20999a8f59d1543c90d6efe84d6480ad4b67a530',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -156,7 +156,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': 'aed672f72eec961b6089876b49ffabbab6817023',
+  'angle_revision': '9379eed385311cbc442a986437431b3e6ce45ff1',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -1406,7 +1406,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@c0fe56f14f425f8f08574a16b5ee3545d1201e44',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@104a6a7d328c68f3cb0e58c7c3d5062976875af2',
     'condition': 'checkout_src_internal',
   },
 
