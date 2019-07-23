@@ -7,6 +7,8 @@
 
 #include "content/common/content_export.h"
 
+#include "content/nw/src/common/nw_content_common_hooks.h"
+
 #include "nw_package.h"
 #include "base/memory/ptr_util.h"
 #include "third_party/blink/public/web/web_navigation_policy.h"
@@ -81,11 +83,6 @@ void DocumentFinishHook(blink::WebLocalFrame* frame,
  bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window);
  bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_line,
                                                const base::FilePath& current_directory);
- bool GetUserAgentFromManifest(std::string* agent);
- void SetUserAgentOverride(const std::string& agent,
-                           const std::string& name,
-                           const std::string& version);
-
  bool GetPackageImage(nw::Package* package,
                       const base::FilePath& icon_path,
                       gfx::Image* image);
