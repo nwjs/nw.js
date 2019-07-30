@@ -38,7 +38,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "win, ios, linux64, chromeos, win64, android, mac64",
+  "buildspec_platforms": "win, linux64, mac64, win64",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -112,8 +112,8 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': '4b3f2986cf88748f2c7d0b7ab4f643d437971fdb',
-  'nw_v8_revision': '7c3d68c325ac49bd9a612796d44749108948b79f',
+  'nw_src_revision': '8ce5300ffb4a41972e8d8aa97f040c4d83c7561a',
+  'nw_v8_revision': '4e0c938924461b8de3ba9b4b536e627484565935',
   'nw_node_revision': 'b39900733472d01bed0d1fa4592f1c44d19d60fe',
 
   # ANGLE's deps are relative to the angle_root variable.
@@ -144,11 +144,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '592fe6d5a78c6c7b1dd99ccdd6efd6e21348d410',
+  'skia_revision': '75c3974d315f3accddb3583ff5f44f0d449cb424',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '20999a8f59d1543c90d6efe84d6480ad4b67a530',
+  'v8_revision': '652c636ecf18696b4b009d4e3a14011f8eb19606',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -195,7 +195,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling freetype
   # and whatever else without interference from each other.
-  'freetype_revision': '7b275a5af161c71a169dcec65f2f6998c9f2d6d5',
+  'freetype_revision': '12e4307dc7b48c9a4a4fc3ac6c32220874ab18ec',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling HarfBuzz
   # and whatever else without interference from each other.
@@ -1359,7 +1359,7 @@ deps = {
     Var('chromium_git') + '/external/khronosgroup/webgl.git' + '@' + '6f0b34abee8dba611c253738d955c59f703c147a',
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + 'd91cdbd2dd2969889a1affce28c89b8c0f8bcdb7',
+    Var('webrtc_git') + '/src.git' + '@' + '9863f3d246e2da7a2e1f42bbc5757f6af5ec5682',
 
   'src/third_party/xdg-utils': {
       'url': Var('chromium_git') + '/chromium/deps/xdg-utils.git' + '@' + 'd80274d5869b17b8c9067a1022e4416ee7ed5e0d',
@@ -1406,7 +1406,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@104a6a7d328c68f3cb0e58c7c3d5062976875af2',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@6af7e0a06920548a4d41a68b183117fd0add5237',
     'condition': 'checkout_src_internal',
   },
 
