@@ -38,7 +38,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "win, linux64, mac64, win64",
+  "buildspec_platforms": "linux64, mac64, win, win64",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -112,9 +112,9 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': '58e6fe10c78283a6bdd5a988175838588e33c15c',
-  'nw_v8_revision': '9c315d137ff9c09c1dfc481de46bd5b482a6424b',
-  'nw_node_revision': '3ade6acd1e764bae6c42530d2d4c1896051aea8d',
+  'nw_src_revision': 'c835be56537a6edb305ae7adcd1b4199d8375745',
+  'nw_v8_revision': 'd650688a2a6a1c4881495d516975549795be2d64',
+  'nw_node_revision': '21b7a8749c3aba5c1b030781f59c0dc2d058fcdd',
 
   # ANGLE's deps are relative to the angle_root variable.
   'angle_root': 'src/third_party/angle',
@@ -144,11 +144,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '75c3974d315f3accddb3583ff5f44f0d449cb424',
+  'skia_revision': 'f13f8690bede09ca97071e9786d68bc0758a24cc',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '652c636ecf18696b4b009d4e3a14011f8eb19606',
+  'v8_revision': '5bec950c6647873c777f55f1b95ed7ae5d7def73',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -164,7 +164,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling PDFium
   # and whatever else without interference from each other.
-  'pdfium_revision': 'bc7073ead4af2c5c907d288ca15a596aed16f97f',
+  'pdfium_revision': '178b812ec8c7954d782b7822f9d36667542397a0',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling BoringSSL
   # and whatever else without interference from each other.
@@ -876,7 +876,7 @@ deps = {
   },
 
   'src/third_party/ffmpeg':
-    Var('chromium_git') + '/chromium/third_party/ffmpeg.git' + '@' + '68f1932090d5e35d958434d0588a33986cd3d65d',
+    Var('chromium_git') + '/chromium/third_party/ffmpeg.git' + '@' + 'e1e3cc4d2ec19c4e1859e487e8b7529cb69d91d8',
 
   'src/third_party/flac':
     Var('chromium_git') + '/chromium/deps/flac.git' + '@' + 'af862024c8c8fa0ae07ced05e89013d881b00596',
@@ -1406,7 +1406,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@6af7e0a06920548a4d41a68b183117fd0add5237',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@1d219dc8c2e7cf2a7f52e61cc446c67fa0cc7dc2',
     'condition': 'checkout_src_internal',
   },
 
