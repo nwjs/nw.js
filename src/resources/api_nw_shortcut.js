@@ -224,3 +224,4 @@ nwShortcutBinding.onKeyPressed.addListener(function(accelerator) {
   }
 });
 
+exports.binding = Shortcut;
