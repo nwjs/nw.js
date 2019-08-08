@@ -1,3 +1,11 @@
+0.40.1 / 08-08-2019
+===================
+- Update Chromium to [76.0.3809.100](https://chromereleases.googleblog.com/2019/08/stable-channel-update-for-desktop.html)
+- Update Node.js to [v12.8.0](https://nodejs.org/en/blog/release/v12.8.0/)
+- Fix: nw.Window not working after navigation [(#7125)](https://github.com/nwjs/nw.js/issues/7125)
+- Fix: nw.Shortcut constructor [(#7112)](https://github.com/nwjs/nw.js/issues/7112)
+- Fix: menubar display [(#7124)](https://github.com/nwjs/nw.js/issues/7124)
+
 0.40.0 / 07-30-2019
 ===================
 - Update Chromium to [76.0.3809.87](https://chromereleases.googleblog.com/2019/07/stable-channel-update-for-desktop_30.html)
