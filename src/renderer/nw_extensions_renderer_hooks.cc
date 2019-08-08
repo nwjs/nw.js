@@ -455,7 +455,9 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
     extensions::ModuleSystem::NativesEnabledScope natives_enabled(script_context->module_system());
     extensions::NativeExtensionBindingsSystem* binding_sys = (extensions::NativeExtensionBindingsSystem*)dispatcher->bindings_system();
     v8_context->Enter();
-    binding_sys->GetAPIObjectForTesting(script_context, "nw.Window");
+    v8::Local<v8::Object> nw_win = binding_sys->GetAPIObjectForTesting(script_context, "nw.Window");
+    if (nw_win.IsEmpty())
+      binding_sys->GetAPIObjectForTesting(script_context, "nw.Window", true);
     v8_context->Exit();
     script_context->module_system()->CallModuleMethodSafe("nw.Window", "onDocumentStartEnd", &arguments);
   }
