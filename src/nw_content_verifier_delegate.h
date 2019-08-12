@@ -15,6 +15,25 @@ namespace extensions {
 
 class NWContentVerifierDelegate : public ContentVerifierDelegate {
  public:
+  enum Mode {
+    // Do not try to fetch content hashes if they are missing, and do
+    // not
+    // enforce them if they are present.
+    NONE = 0,
+
+    // If content hashes are missing, try to fetch them, but do not
+    // enforce.
+    BOOTSTRAP,
+
+    // If hashes are present, enforce them. If they are missing, try
+    // to fetch
+    // them.
+    ENFORCE,
+
+    // Treat the absence of hashes the same as a verification failure.
+        ENFORCE_STRICT
+  };
+
   static Mode GetDefaultMode();
 
   explicit NWContentVerifierDelegate(content::BrowserContext* context);
@@ -22,7 +41,7 @@ class NWContentVerifierDelegate : public ContentVerifierDelegate {
   ~NWContentVerifierDelegate() override;
 
   // ContentVerifierDelegate:
-  Mode ShouldBeVerified(const Extension& extension) override;
+  bool ShouldBeVerified(const Extension& extension) override;
   ContentVerifierKey GetPublicKey() override;
   GURL GetSignatureFetchUrl(const std::string& extension_id,
                             const base::Version& version) override;
@@ -34,7 +53,7 @@ class NWContentVerifierDelegate : public ContentVerifierDelegate {
                     scoped_refptr<ContentVerifyJob> verify_job) override;
   void Shutdown() override;
   content::BrowserContext* context_;
-  ContentVerifierDelegate::Mode default_mode_;
+  Mode default_mode_;
 
   std::set<std::string> would_be_disabled_ids_;
 
