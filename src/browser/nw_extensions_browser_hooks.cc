@@ -290,7 +290,7 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
       AmendManifestList(manifest, manifest_keys::kWebURLs, *node_remote_list);
   }
 
-  if (NWContentVerifierDelegate::GetDefaultMode() == ContentVerifierDelegate::ENFORCE_STRICT)
+  if (NWContentVerifierDelegate::GetDefaultMode() == NWContentVerifierDelegate::ENFORCE_STRICT)
     manifest->SetBoolean(manifest_keys::kNWJSContentVerifyFlag, true);
 
   if (package->temp_dir().IsValid()) {

@@ -59,9 +59,9 @@ void NwAppQuitFunction::DoJob(ExtensionService* service, std::string extension_i
     chrome::CloseAllBrowsersAndQuit(true);
     return;
   }
-  base::MessageLoopCurrent::Get()->task_runner()->PostTask(
-                                                        FROM_HERE,
-                                                        base::Bind(&ExtensionService::TerminateExtension,
+  base::ThreadTaskRunnerHandle::Get().get()->PostTask(
+                                                      FROM_HERE,
+                                                      base::Bind(&ExtensionService::TerminateExtension,
                                                                    service->AsWeakPtr(),
                                                                    extension_id));
 }
@@ -70,7 +70,7 @@ ExtensionFunction::ResponseAction
 NwAppQuitFunction::Run() {
   ExtensionService* service =
     ExtensionSystem::Get(browser_context())->extension_service();
-  base::MessageLoopCurrent::Get()->task_runner()->PostTask(
+  base::ThreadTaskRunnerHandle::Get().get()->PostTask(
         FROM_HERE,
         base::Bind(&NwAppQuitFunction::DoJob,
                    service,
@@ -96,7 +96,7 @@ NwAppCloseAllWindowsFunction::Run() {
   AppWindowRegistry* registry = AppWindowRegistry::Get(browser_context());
   if (!registry)
     return RespondNow(Error(""));
-  base::MessageLoopCurrent::Get()->task_runner()->PostTask(
+  base::ThreadTaskRunnerHandle::Get().get()->PostTask(
         FROM_HERE,
         base::Bind(&NwAppCloseAllWindowsFunction::DoJob, registry, extension()->id()));
 
