@@ -117,8 +117,8 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': '95a0340867481463fcea853d186d4e8f58bd65dc',
-  'nw_v8_revision': '6d27b0917d1b51d53b12319a234586b3d1a0a00f',
+  'nw_src_revision': '04981d729e70f7f77bcd3b8c966fe75e7d9c7e4c',
+  'nw_v8_revision': '59f85addb958118cb2191212e3a591e28511610a',
   'nw_node_revision': 'a19bb0945a842eaa445b5b10507693c0a5afeb55',
 
   # ANGLE's deps are relative to the angle_root variable.
@@ -151,11 +151,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '289bca57b199f753fae9748d534b021cb75c54ce',
+  'skia_revision': '2417cee95d9097a19d759a2267d4c3e51786e873',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '2f1c9043cc957207057593095a3e2c792e17d57b',
+  'v8_revision': '027689dbfcb2a9bbc8ceec4db2631c558e879633',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -163,7 +163,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': '08b97da894b278c10e70b6888ac65e3972a13b31',
+  'angle_revision': '7cf862c9fcd2068a444eef6d4e8a0c1c2170d7f1',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -230,7 +230,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
-  'feed_revision': '5cce9817d0047083b74088dd72e22e5455352bac',
+  'feed_revision': '250ce9ac7bb339bc3b851feb4d0c43a666259f1a',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling android_sdk_build-tools_version
   # and whatever else without interference from each other.
@@ -1384,7 +1384,7 @@ deps = {
     Var('chromium_git') + '/external/khronosgroup/webgl.git' + '@' + 'abaae129d9a0c6e1e092067e0b105475df43352e',
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + '6e1055bdc05cb1f86b7c19c9091865bef873c1ae',
+    Var('webrtc_git') + '/src.git' + '@' + 'ad73985e75684cb4ac4dadb9d3d86ad0d66612a0',
 
   'src/third_party/xdg-utils': {
       'url': Var('chromium_git') + '/chromium/deps/xdg-utils.git' + '@' + 'd80274d5869b17b8c9067a1022e4416ee7ed5e0d',
@@ -1431,7 +1431,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@84114dbb7540e2a58c673e7ddf95458fc162470c',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@f39d990fb02e5da930dc10a17b755e596876663d',
     'condition': 'checkout_src_internal',
   },
 
