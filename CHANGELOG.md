@@ -1,3 +1,7 @@
+0.41.1 / 09-12-2019
+===================
+- Fix regressions: sync with nw40 branch
+
 0.41.0 / 09-12-2019
 ===================
 - Update Chromium to [77.0.3865.75](https://chromereleases.googleblog.com/2019/09/stable-channel-update-for-desktop.html)
