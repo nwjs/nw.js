@@ -1,6 +1,13 @@
+0.41.2 / 09-20-2019
+===================
+- Update Chromium to [77.0.3865.90](https://chromereleases.googleblog.com/2019/09/stable-channel-update-for-desktop_18.html)
+
 0.41.1 / 09-12-2019
 ===================
 - Fix regressions: sync with nw40 branch
+- Fix: nw.Window not working after navigation [(#7125)](https://github.com/nwjs/nw.js/issues/7125)
+- Fix: nw.Shortcut constructor [(#7112)](https://github.com/nwjs/nw.js/issues/7112)
+- Fix: menubar display [(#7124)](https://github.com/nwjs/nw.js/issues/7124)
 
 0.41.0 / 09-12-2019
 ===================
