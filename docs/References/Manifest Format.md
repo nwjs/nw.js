@@ -263,7 +263,18 @@ Beware, if frame is also set to false in fullscreen it will prevent the mouse fr
 
 * `{Boolean}` specify it to `false` to make the window frameless 
 
-Beware, if frame is set to false in fullscreen it will prevent the mouse from being captured on the very edges of the screen. You should avoid activate it if fullscreen is also set to true.
+Beware, if frame is set to false in fullscreen it will prevent the mouse from being captured on the very edges of the screen. You should avoid activating it if fullscreen is also set to true.
+
+Frameless apps do not have a title bar for the user to click and drag the window. You can use CSS to designate DOM elements as draggable regions.
+
+```css
+.drag-enable {
+  -webkit-app-region: drag;
+}
+.drag-disable {
+  -webkit-app-region: no-drag;
+}
+```
 
 ### show
 
