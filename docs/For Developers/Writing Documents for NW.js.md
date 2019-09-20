@@ -78,7 +78,6 @@ Currently the documentation site of NW.js enables following extensions for gener
 * pymdownx.tilde
 * pymdownx.caret
 * pymdownx.smartsymbols
-* pymdownx.githubemoji
 * pymdownx.tasklist
 * pymdownx.progressbar
 * pymdownx.headeranchor
