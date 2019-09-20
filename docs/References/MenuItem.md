@@ -108,7 +108,7 @@ Get or set the `click` callback of a `MenuItem`, the `click` must be a valid fun
 
 A single character string to specify the shortcut key for the menu item.
 
-### Valid Keys for All Platfroms
+### Valid Keys for All Platforms
 
 * Alphabet: `a`-`z`
 * Digits: `0`-`9`
