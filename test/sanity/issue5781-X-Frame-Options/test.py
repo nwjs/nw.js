@@ -32,23 +32,9 @@ try:
     print driver.current_url
     print 'loading http server in iframe element'
     wait_for_element_id(driver, "iframe_a")
-    driver.switch_to_frame("iframe_a")
-    ret = ''
-    timeout = 10
-    while timeout > 0:
-        try:
-            ret = driver.find_element_by_id('res2').get_attribute('innerHTML')
-            break
-        except selenium.common.exceptions.NoSuchElementException:
-            driver.switch_to_default_content()
-            driver.switch_to_frame("iframe_a")
-        except selenium.common.exceptions.WebDriverException:
-            pass
-        time.sleep(1)
-        timeout = timeout - 1
-        if timeout <= 0:
-             raise Exception('Timeout when waiting for element res2')
-    assert( "Node is DISABLED" in ret)
+    wait_for_element_id(driver, "result")
+    ret = driver.find_element_by_id('result').get_attribute('innerHTML')
+    assert( "success" in ret)
     print 'page iframe is loaded'
 finally:
     server.terminate()

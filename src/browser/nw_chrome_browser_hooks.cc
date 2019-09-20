@@ -17,7 +17,6 @@
 // chrome
 #include "chrome/browser/browser_process.h"
 #include "chrome/browser/devtools/devtools_window.h"
-#include "chrome/browser/io_thread.h"
 #include "chrome/browser/lifetime/application_lifetime.h"
 #include "chrome/browser/profiles/profile_manager.h"
 #include "components/keep_alive_registry/keep_alive_types.h"
@@ -31,7 +30,7 @@
 
 // content
 #include "content/common/dom_storage/dom_storage_map.h"
-#include "content/browser/dom_storage/dom_storage_area.h"
+//#include "content/browser/dom_storage/dom_storage_area.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/child_process_security_policy.h"
@@ -189,6 +188,7 @@ bool GetDirUserData(base::FilePath *user_data_dir) {
   return base::PathService::Get(chrome::DIR_USER_DATA, user_data_dir);
 }
 
+#if 0
 void SetTrustAnchorsOnIOThread(const scoped_refptr<net::URLRequestContextGetter>& url_request_getter,
                                IOThread* io_thread,
                                const net::CertificateList& trust_anchors) {
@@ -213,6 +213,7 @@ void SetTrustAnchors(net::CertificateList& trust_anchors) {
     base::BindOnce(SetTrustAnchorsOnIOThread, base::WrapRefCounted(url_request_context_getter),
                g_browser_process->io_thread(), trust_anchors));
 }
+#endif
 
 void SetAppIcon(gfx::Image &icon) {
   g_app_icon = icon;
@@ -268,6 +269,7 @@ int MainPartsPreCreateThreadsHook() {
       content::DOMStorageMap::SetQuotaOverride(dom_storage_quota_mb * 1024 * 1024);
     }
 
+#if 0
     base::FilePath user_data_dir;
     std::string name, domain;
     package->root()->GetString("name", &name);
@@ -356,6 +358,7 @@ int MainPartsPreCreateThreadsHook() {
         }
       }
     }
+#endif
 
   }
   return service_manager::RESULT_CODE_NORMAL_EXIT;
@@ -387,7 +390,7 @@ void MainPartsPreMainMessageLoopRunHook() {
     }
     if (!trust_anchors.empty()) {
 #if !defined(OS_MACOSX)
-      SetTrustAnchors(trust_anchors);
+      //SetTrustAnchors(trust_anchors);
 #else
       net::TestRootCerts* certs = net::TestRootCerts::GetInstance();
       for (size_t i = 0; i < trust_anchors.size(); i++)

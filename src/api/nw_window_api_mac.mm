@@ -67,7 +67,7 @@ NwCurrentWindowInternalRequestAttentionInternalFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &count));
   
   //static map from web_content to its attention_request_id
-  static base::hash_map<content::WebContents*, int> attention_request_id;
+  static std::unordered_map<content::WebContents*, int> attention_request_id;
   content::WebContents* web_content = GetSenderWebContents();
   
   if (count != 0) {

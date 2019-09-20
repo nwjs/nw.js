@@ -139,7 +139,7 @@ void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
   menu_runner_->RunMenuAt(top_level_widget,
                        nullptr,
                        gfx::Rect(screen_point, gfx::Size()),
-                       views::MENU_ANCHOR_TOPRIGHT,
+                          views::MenuAnchorPosition::kTopRight,
                        ui::MENU_SOURCE_NONE);
   // It is possible for the same MenuMessageLoopAura to start a nested
   // message-loop while it is already running a nested loop. So make

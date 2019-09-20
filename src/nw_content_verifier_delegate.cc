@@ -55,16 +55,16 @@ const uint8_t kNWSignaturesPublicKey[] = {
   0x69, 0x71, 0xc4, 0xe1, 0xde, 0xb1, 0xb0, 0xa3, 0x4e, 0x86, 0x5c, 0x29, 0x7c, 0x8b, 0xcd, 0x3d,
   0x27, 0xa4, 0x71, 0xcf, 0x9a, 0x62, 0xae, 0x54, 0x54, 0xaa, 0x0f, 0x1e, 0xb3, 0x78, 0x72, 0x67,
   0x91, 0x02, 0x03, 0x01, 0x00, 0x01};
-  
+
 const int kNWSignaturesPublicKeySize =
-    arraysize(kNWSignaturesPublicKey);
+  base::size(kNWSignaturesPublicKey);
 
 }  // namespace
 
 namespace extensions {
 
 // static
-ContentVerifierDelegate::Mode NWContentVerifierDelegate::GetDefaultMode() {
+NWContentVerifierDelegate::Mode NWContentVerifierDelegate::GetDefaultMode() {
   base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
 
   Mode experiment_value = NONE;
@@ -74,15 +74,15 @@ ContentVerifierDelegate::Mode NWContentVerifierDelegate::GetDefaultMode() {
     std::string switch_value = command_line->GetSwitchValueASCII(
         switches::kVerifyContent);
     if (switch_value == switches::kExtensionContentVerificationBootstrap)
-      cmdline_value = ContentVerifierDelegate::BOOTSTRAP;
+      cmdline_value = NWContentVerifierDelegate::BOOTSTRAP;
     else if (switch_value == switches::kExtensionContentVerificationEnforce)
-      cmdline_value = ContentVerifierDelegate::ENFORCE;
+      cmdline_value = NWContentVerifierDelegate::ENFORCE;
     else if (switch_value ==
              switches::kExtensionContentVerificationEnforceStrict)
-      cmdline_value = ContentVerifierDelegate::ENFORCE_STRICT;
+      cmdline_value = NWContentVerifierDelegate::ENFORCE_STRICT;
     else
       // If no value was provided (or the wrong one), just default to enforce.
-      cmdline_value = ContentVerifierDelegate::ENFORCE;
+      cmdline_value = NWContentVerifierDelegate::ENFORCE;
   }
 
   // We don't want to allow the command-line flags to eg disable enforcement
@@ -99,17 +99,17 @@ NWContentVerifierDelegate::NWContentVerifierDelegate(
 NWContentVerifierDelegate::~NWContentVerifierDelegate() {
 }
 
-ContentVerifierDelegate::Mode NWContentVerifierDelegate::ShouldBeVerified(
+bool NWContentVerifierDelegate::ShouldBeVerified(
     const Extension& extension) {
 
   if (extension.is_nwjs_app() && !Manifest::IsComponentLocation(extension.location()))
-    return default_mode_;
+    return default_mode_ != NONE;
   if (!extension.is_extension() && !extension.is_legacy_packaged_app())
-    return ContentVerifierDelegate::NONE;
+    return false;
   if (!Manifest::IsAutoUpdateableLocation(extension.location()))
-    return ContentVerifierDelegate::NONE;
+    return false;
 
-  return default_mode_;
+  return default_mode_ != NONE;
 }
 
 ContentVerifierKey NWContentVerifierDelegate::GetPublicKey() {
@@ -139,8 +139,7 @@ void NWContentVerifierDelegate::VerifyFailed(
   if (!extension)
     return;
   ExtensionSystem* system = ExtensionSystem::Get(context_);
-  Mode mode = ShouldBeVerified(*extension);
-  if (mode >= ContentVerifierDelegate::ENFORCE) {
+  if (ShouldBeVerified(*extension)) {
     LoadErrorReporter::GetInstance()->
       ReportLoadError(extension->path(), "Extension file corrupted: " + relative_path.AsUTF8Unsafe(),
                       system->extension_service()->profile(), true);

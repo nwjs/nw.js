@@ -118,6 +118,8 @@ Here's the basic syntax:
 
 It will be useful if you want to distribute the app with some custom chromium args. For example, if you want to disable the GPU accelerated video display, just add `"chromium-args" : "--disable-accelerated-video"`. If you want to add multiple arguments, separate each two arguments by space. This field can take a number of flags in one argument as well, via enclosing them in single quotation marks.
 
+The value of `NW_PRE_ARGS` environment variable is prepended to the value of this field.
+
 See [Command Line Options](Command Line Options.md) for more information.
 
 ### crash_report_url
@@ -261,7 +263,18 @@ Beware, if frame is also set to false in fullscreen it will prevent the mouse fr
 
 * `{Boolean}` specify it to `false` to make the window frameless 
 
-Beware, if frame is set to false in fullscreen it will prevent the mouse from being captured on the very edges of the screen. You should avoid activate it if fullscreen is also set to true.
+Beware, if frame is set to false in fullscreen it will prevent the mouse from being captured on the very edges of the screen. You should avoid activating it if fullscreen is also set to true.
+
+Frameless apps do not have a title bar for the user to click and drag the window. You can use CSS to designate DOM elements as draggable regions.
+
+```css
+.drag-enable {
+  -webkit-app-region: drag;
+}
+.drag-disable {
+  -webkit-app-region: no-drag;
+}
+```
 
 ### show
 

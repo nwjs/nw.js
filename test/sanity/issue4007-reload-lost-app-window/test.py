@@ -27,6 +27,9 @@ try:
     try:
         switch_to_devtools(driver, devtools_window=driver.window_handles[0])
     except:
+        if len(driver.window_handles) < 2:
+            driver.find_element_by_id('opendevtools').click()
+            wait_window_handles(driver, lambda handles: len(handles) == 2)
         switch_to_devtools(driver, devtools_window=driver.window_handles[1])
     print 'click Console panel'
     devtools_click_tab(driver, 'console')

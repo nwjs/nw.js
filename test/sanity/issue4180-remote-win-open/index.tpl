@@ -14,11 +14,16 @@
         result.innerHTML = msg;
         document.body.appendChild(result);
       }
+    if (window.opener) {
+         console.log("==> IN NEW WINDOW");
+         window.opener.postMessage('success', '*');
+    }
+    window.addEventListener('message', function(e) {
+       console.log("==> SUCCESS");
+       out('result', e.data);
+    });
     function winopen(id) {
-        var win = window.open('http://localhost:{port}/index.html');
-        win.onload = function() {
-            out(id, 'success');
-        };
+        window.open('http://localhost:{port}/index.html');
     }
     </script>
 </body>

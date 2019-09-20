@@ -1,7 +1,6 @@
-var nw_binding = require('binding').Binding.create('nw.test');
 var nwNatives = requireNative('nw_natives');
 
-nw_binding.registerCustomHook(function(bindingsAPI) {
+apiBridge.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
   apiFunctions.setHandleRequest('crashRenderer', function() {
     nwNatives.crashRenderer();
@@ -16,6 +15,4 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     if (!value) { console.log(message); nw.process.exit(1); }
   });
 });
-
-exports.binding = nw_binding.generate();
 

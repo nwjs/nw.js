@@ -63,26 +63,11 @@ prnt_subprocess = PrintSubprocess()
 
 def main():
   tool_dir = os.path.dirname(os.path.abspath(__file__))
-  parser = optparse.OptionParser(usage='%prog [options] <project> <new rev>',
+  parser = optparse.OptionParser(usage='%prog [options]',
                                  description=sys.modules[__name__].__doc__)
   parser.add_option('-v', '--verbose', action='count', default=0)
   parser.add_option('--dry-run', action='store_true')
-  parser.add_option('-f', '--force', action='store_true',
-                    help='Make destructive changes to the local checkout if '
-                         'necessary.')
-  parser.add_option('--commit', action='store_true', default=True,
-                    help='(default) Put change in commit queue on upload.')
-  parser.add_option('--no-commit', action='store_false', dest='commit',
-                    help='Don\'t put change in commit queue on upload.')
-  parser.add_option('-r', '--reviewers', default='',
-                    help='Add given users as either reviewers or TBR as'
-                    ' appropriate.')
-  parser.add_option('--upstream', default='origin/master',
-                    help='(default "%default") Use given start point for change'
-                    ' to upload. For instance, if you use the old git workflow,'
-                    ' you might set it to "origin/trunk".')
-  parser.add_option('--cc', help='CC email addresses for issue.')
-  parser.add_option('-m', '--message', help='Custom commit message.')
+  parser.add_option('--amend', action='store_true')
 
   options, args = parser.parse_args()
   logging.basicConfig(
@@ -116,7 +101,10 @@ def main():
     commit_body = url + "/commit/" + new_rev
     os.chdir(root_dir)
     subprocess.check_output(['git', 'add', 'DEPS'], shell=IS_WINDOWS)
-    subprocess.check_output(['git', 'commit', '--quiet', '-m', commit_msg, '-m', commit_body], shell=IS_WINDOWS)
+    if options.amend:
+      subprocess.check_output(['git', 'commit', '--quiet', '--amend', '--no-edit'], shell=IS_WINDOWS)
+    else:
+      subprocess.check_output(['git', 'commit', '--quiet', '-m', commit_msg, '-m', commit_body], shell=IS_WINDOWS)
     break
   return 0
 

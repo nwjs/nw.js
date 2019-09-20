@@ -1,11 +1,5 @@
-var Binding = require('binding').Binding;
-var nw_binding = require('binding').Binding.create('nw.Window');
 var nwNatives = requireNative('nw_natives');
 var forEach = require('utils').forEach;
-var Event = require('event_bindings').Event;
-var dispatchEvent = require('event_bindings').dispatchEvent;
-var dispatchEventNW = require('event_bindings').dispatchEventNW;
-var sendRequest = require('sendRequest');
 var runtimeNatives = requireNative('runtime');
 var renderFrameObserverNatives = requireNative('renderFrameObserverNatives');
 var appWindowNatives = requireNative('app_window_natives');
@@ -13,10 +7,9 @@ var appWindowNatives = requireNative('app_window_natives');
 var GetExtensionViews = runtimeNatives.GetExtensionViews;
 
 var currentNWWindow = null;
+var currentNWWindowInternal = null;
 var currentRoutingID = nwNatives.getRoutingID();
 var currentWidgetRoutingID = nwNatives.getWidgetRoutingID();
-
-var nw_internal = require('binding').Binding.create('nw.currentWindowInternal');
 
 var bgPage = GetExtensionViews(-1, -1, 'BACKGROUND')[0];
 
@@ -74,39 +67,6 @@ var wrapEventsMapNewWin = {
   'close':   'onRemoving'
 };
 
-nw_internal.registerCustomHook(function(bindingsAPI) {
-  var apiFunctions = bindingsAPI.apiFunctions;
-  apiFunctions.setHandleRequest('getCurrent', function() {
-    return sendRequest.sendRequestSync('nw.currentWindowInternal.getCurrent', arguments, this.definition.parameters, {})[0];
-  });
-  apiFunctions.setHandleRequest('getZoom', function() {
-    return sendRequest.sendRequestSync('nw.currentWindowInternal.getZoom', arguments, this.definition.parameters, {})[0];
-  });
-  apiFunctions.setHandleRequest('setZoom', function() {
-    return sendRequest.sendRequestSync('nw.currentWindowInternal.setZoom', arguments, this.definition.parameters, {});
-  });
-  apiFunctions.setHandleRequest('getTitleInternal', function() {
-    return sendRequest.sendRequestSync('nw.currentWindowInternal.getTitleInternal', arguments, this.definition.parameters, {})[0];
-  });
-  apiFunctions.setHandleRequest('setTitleInternal', function() {
-    return sendRequest.sendRequestSync('nw.currentWindowInternal.setTitleInternal', arguments, this.definition.parameters, {});
-  });
-  apiFunctions.setHandleRequest('isKioskInternal', function() {
-    return sendRequest.sendRequestSync('nw.currentWindowInternal.isKioskInternal', arguments, this.definition.parameters, {})[0];
-  });
-  apiFunctions.setHandleRequest('getWinParamInternal', function() {
-    return sendRequest.sendRequestSync('nw.currentWindowInternal.getWinParamInternal', arguments, this.definition.parameters, {})[0];
-  });
-  apiFunctions.setHandleRequest('setPrintSettingsInternal', function() {
-    return sendRequest.sendRequestSync('nw.currentWindowInternal.setPrintSettingsInternal', arguments, this.definition.parameters, {})[0];
-  });
-  apiFunctions.setHandleRequest('setMenu', function() {
-    return sendRequest.sendRequestSync('nw.currentWindowInternal.setMenu', arguments, this.definition.parameters, {})[0];
-  });
-});
-
-var currentNWWindowInternal = nw_internal.generate();
-
 function NWWindow(cWindow) {
   var self = this;
   if (cWindow)
@@ -145,23 +105,18 @@ function NWWindow(cWindow) {
   chrome.windows.onWindowChanged.addListener(updateWindowAttributes);
 }
 
-forEach(currentNWWindowInternal, function(key, value) {
-  if (!key.endsWith('Internal'))
-    NWWindow.prototype[key] = value;
-});
-
-NWWindow.prototype.onNewWinPolicy      = new Event("nw.Window.onNewWinPolicy");
-NWWindow.prototype.onNavigation        = new Event();
-NWWindow.prototype.LoadingStateChanged = new Event();
-NWWindow.prototype.onDocumentStart     = new Event("nw.Window.onDocumentStart");
-NWWindow.prototype.onDocumentEnd       = new Event("nw.Window.onDocumentEnd");
-NWWindow.prototype.onZoom              = new Event();
-NWWindow.prototype.onClose             = new Event("nw.Window.onClose", undefined, {supportsFilters: true});
-NWWindow.prototype.onMinimized         = new Event();
-NWWindow.prototype.onMaximized         = new Event();
-NWWindow.prototype.onFullscreen        = new Event();
-NWWindow.prototype.onResized           = new Event();
-NWWindow.prototype.onRestore           = new Event();
+NWWindow.prototype.onNewWinPolicy      = bindingUtil.createCustomEvent("nw.Window.onNewWinPolicy", false, false);
+NWWindow.prototype.onNavigation        = bindingUtil.createCustomEvent("nw.Window.onNavigation",   false, false);
+NWWindow.prototype.LoadingStateChanged = bindingUtil.createCustomEvent("nw.Window.LoadingStateChanged", false, false);
+NWWindow.prototype.onDocumentStart     = bindingUtil.createCustomEvent("nw.Window.onDocumentStart",     false, false);
+NWWindow.prototype.onDocumentEnd       = bindingUtil.createCustomEvent("nw.Window.onDocumentEnd",       false, false);
+NWWindow.prototype.onZoom              = bindingUtil.createCustomEvent("nw.Window.onZoom",              false, false);
+NWWindow.prototype.onClose             = bindingUtil.createCustomEvent("nw.Window.onClose", true, false);
+NWWindow.prototype.onMinimized         = bindingUtil.createCustomEvent("nw.Window.onMinimized", false, false);
+NWWindow.prototype.onMaximized         = bindingUtil.createCustomEvent("nw.Window.onMaximized", false, false);
+NWWindow.prototype.onFullscreen        = bindingUtil.createCustomEvent("nw.Window.onFullscreen", false, false);
+NWWindow.prototype.onResized           = bindingUtil.createCustomEvent("nw.Window.onResized", false, false);
+NWWindow.prototype.onRestore           = bindingUtil.createCustomEvent("nw.Window.onRestore", false, false);
 
 NWWindow.prototype.close = function (force) {
   currentNWWindowInternal.close(force, this.cWindow.id);
@@ -297,24 +252,24 @@ NWWindow.prototype.on = function (event, callback, record) {
 NWWindow.prototype.removeListener = function (event, callback) {
   if (nwWinEventsMap.hasOwnProperty(event)) {
     for (let l of this[nwWinEventsMap[event]].getListeners()) {
-      if (l.callback.listener && l.callback.listener === callback) {
-        this[nwWinEventsMap[event]].removeListener(l.callback);
+      if (l.listener && l.listener === callback) {
+        this[nwWinEventsMap[event]].removeListener(l);
         return this;
       }
     }
   }
   if (nwWrapEventsMap.hasOwnProperty(event)) {
     for (let l of this[nwWrapEventsMap[event]].getListeners()) {
-      if (l.callback.listener && l.callback.listener === callback) {
-        this[nwWrapEventsMap[event]].removeListener(l.callback);
+      if (l.listener && l.listener === callback) {
+        this[nwWrapEventsMap[event]].removeListener(l);
         return this;
       }
     }
   }
   if (wrapEventsMapNewWin.hasOwnProperty(event)) {
     for (let l of chrome.windows[wrapEventsMapNewWin[event]].getListeners()) {
-      if (l.callback.listener && l.callback.listener === callback) {
-        chrome.windows[wrapEventsMapNewWin[event]].removeListener(l.callback);
+      if (l.listener && l.listener === callback) {
+        chrome.windows[wrapEventsMapNewWin[event]].removeListener(l);
         return this;
       }
     }
@@ -334,19 +289,19 @@ NWWindow.prototype.removeAllListeners = function (event) {
   }
   if (nwWinEventsMap.hasOwnProperty(event)) {
     for (let l of this[nwWinEventsMap[event]].getListeners()) {
-      this[nwWinEventsMap[event]].removeListener(l.callback);
+      this[nwWinEventsMap[event]].removeListener(l);
     }
     return this;
   }
   if (nwWrapEventsMap.hasOwnProperty(event)) {
     for (let l of this[nwWrapEventsMap[event]].getListeners()) {
-      this[nwWrapEventsMap[event]].removeListener(l.callback);
+      this[nwWrapEventsMap[event]].removeListener(l);
     }
     return this;
   }
   if (wrapEventsMapNewWin.hasOwnProperty(event)) {
     for (let l of chrome.windows[wrapEventsMapNewWin[event]].getListeners()) {
-      chrome.windows[wrapEventsMapNewWin[event]].removeListener(l.callback);
+      chrome.windows[wrapEventsMapNewWin[event]].removeListener(l);
     }
     return this;
   }
@@ -652,8 +607,13 @@ Object.defineProperty(NWWindow.prototype, 'frameId', {
   }
 });
 
-nw_binding.registerCustomHook(function(bindingsAPI) {
+apiBridge.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
+  currentNWWindowInternal = getInternalApi('nw.currentWindowInternal');
+  forEach(currentNWWindowInternal, function(key, value) {
+    if (!key.endsWith('Internal'))
+      NWWindow.prototype[key] = value;
+  });
   apiFunctions.setHandleRequest('get', function(domWindow) {
     if (domWindow)
       return try_nw(domWindow.top).nw.Window.get();
@@ -745,7 +705,7 @@ function dispatchEventIfExists(target, name, varargs) {
 
 function onNewWinPolicy(frame, url, policy) {
   //console.log("onNewWinPolicy called: " + url + ", " + policy);
-  dispatchEventNW("nw.Window.onNewWinPolicy", [frame, url, policy]);
+  dispatchEventIfExists(currentNWWindow, "onNewWinPolicy", [frame, url, policy]);
 }
 
 function onNavigation(frame, url, policy, context) {
@@ -764,11 +724,10 @@ function onLoadingStateChanged(status) {
 
 function onDocumentStartEnd(start, frame, top_routing_id) {
   if (start) {
-    //could use the non-NW version?
-    dispatchEventNW("nw.Window.onDocumentStart", [frame, top_routing_id]);
+    dispatchEventIfExists(currentNWWindow, "onDocumentStart", [frame, top_routing_id]);
   }
   else
-    dispatchEventNW("nw.Window.onDocumentEnd", [frame, top_routing_id]);
+    dispatchEventIfExists(currentNWWindow, "onDocumentEnd", [frame, top_routing_id]);
 }
 
 function updateAppWindowZoom(old_level, new_level) {
@@ -780,7 +739,7 @@ function updateAppWindowZoom(old_level, new_level) {
 function onClose(user_force) {
   if (!currentNWWindow)
     return;
-  dispatchEventNW("nw.Window.onClose", [user_force], {instanceId: currentWidgetRoutingID});
+  currentNWWindow.onClose.dispatchNW({instanceId: currentWidgetRoutingID}, user_force);
 }
 
 function get_nw() {
@@ -794,7 +753,6 @@ function get_nw() {
 //  renderFrameObserverNatives.OnDocumentElementCreated(currentRoutingID, get_nw);
 //}
 
-exports.binding = nw_binding.generate();
 exports.onNewWinPolicy = onNewWinPolicy;
 exports.onNavigation = onNavigation;
 exports.LoadingStateChanged = onLoadingStateChanged;

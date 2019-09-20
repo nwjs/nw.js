@@ -14,6 +14,7 @@
 #include "extensions/browser/extension_system.h"
 #include "extensions/common/error_utils.h"
 #include "ui/base/clipboard/clipboard.h"
+#include "ui/base/clipboard/clipboard_constants.h"
 #include "ui/base/clipboard/scoped_clipboard_writer.h"
 #include "ui/gfx/codec/jpeg_codec.h"
 #include "ui/gfx/codec/png_codec.h"
@@ -65,7 +66,7 @@ namespace {
     bool ReadText(ClipboardData& data) {
       DCHECK(data.type == TYPE_TEXT);
       base::string16 text;
-      clipboard_->ReadText(ui::CLIPBOARD_TYPE_COPY_PASTE, &text);
+      clipboard_->ReadText(ui::ClipboardType::kCopyPaste, &text);
       data.data.reset(new std::string(base::UTF16ToUTF8(text)));
       return true;
     }
@@ -75,7 +76,7 @@ namespace {
       base::string16 text;
       std::string src_url;
       uint32_t fragment_start, fragment_end;
-      clipboard_->ReadHTML(ui::CLIPBOARD_TYPE_COPY_PASTE, &text, &src_url, &fragment_start, &fragment_end);
+      clipboard_->ReadHTML(ui::ClipboardType::kCopyPaste, &text, &src_url, &fragment_start, &fragment_end);
       data.data.reset(new std::string(base::UTF16ToUTF8(text)));
       return true;
     }
@@ -83,7 +84,7 @@ namespace {
     bool ReadRTF(ClipboardData& data) {
       DCHECK(data.type == TYPE_RTF);
       std::string text;
-      clipboard_->ReadRTF(ui::CLIPBOARD_TYPE_COPY_PASTE, &text);
+      clipboard_->ReadRTF(ui::ClipboardType::kCopyPaste, &text);
       data.data.reset(new std::string(text));
       return true;
     }
@@ -91,7 +92,7 @@ namespace {
     bool ReadImage(ClipboardData& data) {
       DCHECK(data.type == TYPE_PNG || data.type == TYPE_JPEG);
       std::vector<unsigned char> encoded_image;
-      SkBitmap bitmap = clipboard_->ReadImage(ui::CLIPBOARD_TYPE_COPY_PASTE);
+      SkBitmap bitmap = clipboard_->ReadImage(ui::ClipboardType::kCopyPaste);
 
       if (bitmap.isNull()) {
         return true;
@@ -134,7 +135,7 @@ namespace {
   class ClipboardWriter {
   public:
     ClipboardWriter() {
-      scw_.reset(new ui::ScopedClipboardWriter(ui::CLIPBOARD_TYPE_COPY_PASTE));
+      scw_.reset(new ui::ScopedClipboardWriter(ui::ClipboardType::kCopyPaste));
     }
 
     ~ClipboardWriter() {
@@ -291,7 +292,7 @@ NwClipboardClearSyncFunction::~NwClipboardClearSyncFunction() {
 
 bool NwClipboardClearSyncFunction::RunNWSync(base::ListValue* response, std::string* error) {
   ui::Clipboard* clipboard = ui::Clipboard::GetForCurrentThread();
-  clipboard->Clear(ui::CLIPBOARD_TYPE_COPY_PASTE);
+  clipboard->Clear(ui::ClipboardType::kCopyPaste);
   return true;
 }
 
@@ -307,15 +308,15 @@ bool NwClipboardReadAvailableTypesFunction::RunNWSync(base::ListValue* response,
   ui::Clipboard* clipboard = ui::Clipboard::GetForCurrentThread();
   bool contains_filenames;
   std::vector<base::string16> types;
-  clipboard->ReadAvailableTypes(ui::CLIPBOARD_TYPE_COPY_PASTE, &types, &contains_filenames);
+  clipboard->ReadAvailableTypes(ui::ClipboardType::kCopyPaste, &types, &contains_filenames);
   for(std::vector<base::string16>::iterator it = types.begin(); it != types.end(); it++) {
-    if (base::EqualsASCII(*it, ui::Clipboard::kMimeTypeText)) {
+    if (base::EqualsASCII(*it, ui::kMimeTypeText)) {
       response->Append(base::WrapUnique(new base::Value(ToString(TYPE_TEXT))));
-    } else if (base::EqualsASCII(*it, ui::Clipboard::kMimeTypeHTML)) {
+    } else if (base::EqualsASCII(*it, ui::kMimeTypeHTML)) {
       response->Append(base::WrapUnique(new base::Value(ToString(TYPE_HTML))));
-    } else if (base::EqualsASCII(*it, ui::Clipboard::kMimeTypeRTF)) {
+    } else if (base::EqualsASCII(*it, ui::kMimeTypeRTF)) {
       response->Append(base::WrapUnique(new base::Value(ToString(TYPE_RTF))));
-    } else if (base::EqualsASCII(*it, ui::Clipboard::kMimeTypePNG)) {
+    } else if (base::EqualsASCII(*it, ui::kMimeTypePNG)) {
       response->Append(base::WrapUnique(new base::Value(ToString(TYPE_PNG))));
       response->Append(base::WrapUnique(new base::Value(ToString(TYPE_JPEG))));
     }

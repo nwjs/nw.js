@@ -19,7 +19,7 @@
 
     function openNewInstance() {
       nw.Window.open('new-instance.html', {'new_instance': true}, function(w) {
-        out('new-inst-result', (!w ? 'success': 'failed') + ': ' + w);
+        out('new-inst-result', 'success' + ': ' + w);
       });
     }
     function openSameInstance() {

@@ -1,11 +1,5 @@
-var Binding = require('binding').Binding;
-var nw_binding = require('binding').Binding.create('nw.Window');
 var nwNatives = requireNative('nw_natives');
 var forEach = require('utils').forEach;
-var Event = require('event_bindings').Event;
-var dispatchEvent = require('event_bindings').dispatchEvent;
-var dispatchEventNW = require('event_bindings').dispatchEventNW;
-var sendRequest = require('sendRequest');
 var runtimeNatives = requireNative('runtime');
 var renderFrameObserverNatives = requireNative('renderFrameObserverNatives');
 var appWindowNatives = requireNative('app_window_natives');
@@ -16,8 +10,6 @@ var currentNWWindow = null;
 var currentNWWindowInternal = null;
 var currentRoutingID = nwNatives.getRoutingID();
 var currentWidgetRoutingID = nwNatives.getWidgetRoutingID();
-
-var nw_internal = require('binding').Binding.create('nw.currentWindowInternal');
 
 var bgPage = GetExtensionViews(-1, -1, 'BACKGROUND')[0];
 
@@ -139,35 +131,7 @@ var nwWrapEventsMap = {
   'navigation':       'onNavigation'
 };
 
-nw_internal.registerCustomHook(function(bindingsAPI) {
-  var apiFunctions = bindingsAPI.apiFunctions;
-  apiFunctions.setHandleRequest('getZoom', function() {
-    return sendRequest.sendRequestSync('nw.currentWindowInternal.getZoom', arguments, this.definition.parameters, {})[0];
-  });
-  apiFunctions.setHandleRequest('setZoom', function() {
-    return sendRequest.sendRequestSync('nw.currentWindowInternal.setZoom', arguments, this.definition.parameters, {});
-  });
-  apiFunctions.setHandleRequest('getTitleInternal', function() {
-    return sendRequest.sendRequestSync('nw.currentWindowInternal.getTitleInternal', arguments, this.definition.parameters, {})[0];
-  });
-  apiFunctions.setHandleRequest('setTitleInternal', function() {
-    return sendRequest.sendRequestSync('nw.currentWindowInternal.setTitleInternal', arguments, this.definition.parameters, {});
-  });
-  apiFunctions.setHandleRequest('isKioskInternal', function() {
-    return sendRequest.sendRequestSync('nw.currentWindowInternal.isKioskInternal', arguments, this.definition.parameters, {})[0];
-  });
-  apiFunctions.setHandleRequest('getWinParamInternal', function() {
-    return sendRequest.sendRequestSync('nw.currentWindowInternal.getWinParamInternal', arguments, this.definition.parameters, {})[0];
-  });
-  apiFunctions.setHandleRequest('setPrintSettingsInternal', function() {
-    return sendRequest.sendRequestSync('nw.currentWindowInternal.setPrintSettingsInternal', arguments, this.definition.parameters, {})[0];
-  });
-  apiFunctions.setHandleRequest('setMenu', function() {
-    return sendRequest.sendRequestSync('nw.currentWindowInternal.setMenu', arguments, this.definition.parameters, {})[0];
-  });
-});
-
-nw_binding.registerCustomHook(function(bindingsAPI) {
+apiBridge.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
   apiFunctions.setHandleRequest('get', function(domWindow) {
     if (domWindow)
@@ -175,7 +139,7 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
     if (currentNWWindow)
       return currentNWWindow.outerWindow;
 
-    currentNWWindowInternal = nw_internal.generate();
+    currentNWWindowInternal = getInternalApi('nw.currentWindowInternal');
     var NWWindow = function() {
       this.appWindow = try_hidden(window).chrome.app.window.current();
       if (!this.appWindow) {
@@ -194,13 +158,13 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
         NWWindow.prototype[key] = value;
     });
 
-    NWWindow.prototype.onNewWinPolicy      = new Event();
-    NWWindow.prototype.onNavigation        = new Event();
-    NWWindow.prototype.LoadingStateChanged = new Event();
-    NWWindow.prototype.onDocumentStart     = new Event();
-    NWWindow.prototype.onDocumentEnd       = new Event();
-    NWWindow.prototype.onZoom              = new Event();
-    NWWindow.prototype.onClose             = new Event("nw.Window.onClose", undefined, {supportsFilters: true});
+    NWWindow.prototype.onNewWinPolicy      = bindingUtil.createCustomEvent('nw.Window.onNewWinPolicy', false, false);
+    NWWindow.prototype.onNavigation        = bindingUtil.createCustomEvent('nw.Window.onNavigation', false, false);
+    NWWindow.prototype.LoadingStateChanged = bindingUtil.createCustomEvent('nw.Window.LoadingStateChanged', false, false);
+    NWWindow.prototype.onDocumentStart     = bindingUtil.createCustomEvent('nw.Window.onDocumentStart', false, false);
+    NWWindow.prototype.onDocumentEnd       = bindingUtil.createCustomEvent('nw.Window.onDocumentEnd', false, false);
+    NWWindow.prototype.onZoom              = bindingUtil.createCustomEvent('nw.Window.onZoom', false, false);
+    NWWindow.prototype.onClose             = bindingUtil.createCustomEvent("nw.Window.onClose", true, false);
 
     NWWindow.prototype.once = function (event, listener, record) {
       if (typeof listener !== 'function')
@@ -304,24 +268,24 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       nwNatives.callInWindow(bgPage, "__nw_removeOuterEventCB", this, event, callback);
       if (appWinEventsMap.hasOwnProperty(event)) {
         for (let l of this.appWindow[appWinEventsMap[event]].getListeners()) {
-          if (l.callback.listener && l.callback.listener === callback) {
-            this.appWindow[appWinEventsMap[event]].removeListener(l.callback);
+          if (l.listener && l.listener === callback) {
+            this.appWindow[appWinEventsMap[event]].removeListener(l);
             return this;
           }
         }
       }
       if (nwWinEventsMap.hasOwnProperty(event)) {
         for (let l of this[nwWinEventsMap[event]].getListeners()) {
-          if (l.callback.listener && l.callback.listener === callback) {
-            this[nwWinEventsMap[event]].removeListener(l.callback);
+          if (l.listener && l.listener === callback) {
+            this[nwWinEventsMap[event]].removeListener(l);
             return this;
           }
         }
       }
       if (nwWrapEventsMap.hasOwnProperty(event)) {
         for (let l of this[nwWrapEventsMap[event]].getListeners()) {
-          if (l.callback.listener && l.callback.listener === callback) {
-            this[nwWrapEventsMap[event]].removeListener(l.callback);
+          if (l.listener && l.listener === callback) {
+            this[nwWrapEventsMap[event]].removeListener(l);
             return this;
           }
         }
@@ -352,19 +316,19 @@ nw_binding.registerCustomHook(function(bindingsAPI) {
       nwNatives.callInWindow(bgPage, "__nw_remove_all_listeners", this, event);
       if (appWinEventsMap.hasOwnProperty(event)) {
         for (let l of this.appWindow[appWinEventsMap[event]].getListeners()) {
-          this.appWindow[appWinEventsMap[event]].removeListener(l.callback);
+          this.appWindow[appWinEventsMap[event]].removeListener(l);
         }
         return this;
       }
       if (nwWinEventsMap.hasOwnProperty(event)) {
         for (let l of this[nwWinEventsMap[event]].getListeners()) {
-          this[nwWinEventsMap[event]].removeListener(l.callback);
+          this[nwWinEventsMap[event]].removeListener(l);
         }
         return this;
       }
       if (nwWrapEventsMap.hasOwnProperty(event)) {
         for (let l of this[nwWrapEventsMap[event]].getListeners()) {
-          this[nwWrapEventsMap[event]].removeListener(l.callback);
+          this[nwWrapEventsMap[event]].removeListener(l);
         }
         return this;
       }
@@ -781,7 +745,7 @@ function updateAppWindowZoom(old_level, new_level) {
 function onClose(user_force) {
   if (!currentNWWindow)
     return;
-  dispatchEventNW("nw.Window.onClose", [user_force], {instanceId: currentWidgetRoutingID});
+  currentNWWindow.onClose.dispatchNW({instanceId: currentWidgetRoutingID}, user_force);
 }
 
 function get_nw() {
@@ -798,7 +762,6 @@ if (bgPage !== window) {
   renderFrameObserverNatives.OnDocumentElementCreated(currentRoutingID, get_nw);
 }
 
-exports.binding = nw_binding.generate();
 exports.onNewWinPolicy = onNewWinPolicy;
 exports.onNavigation = onNavigation;
 exports.LoadingStateChanged = onLoadingStateChanged;

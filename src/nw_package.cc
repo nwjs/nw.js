@@ -23,6 +23,7 @@
 #include <vector>
 
 #include "base/command_line.h"
+#include "base/environment.h"
 #include "base/files/file_util.h"
 #include "base/files/scoped_temp_dir.h"
 #include "base/json/json_file_value_serializer.h"
@@ -65,7 +66,7 @@ const CommandLine::CharType* const kSwitchPrefixes[] = {L"--", L"-", L"/"};
 const CommandLine::CharType* const kSwitchPrefixes[] = {"--", "-"};
 #endif
 
-size_t switch_prefix_count = arraysize(kSwitchPrefixes);
+size_t switch_prefix_count = base::size(kSwitchPrefixes);
 
 size_t GetSwitchPrefixLength(const CommandLine::StringType& string) {
   for (size_t i = 0; i < switch_prefix_count; ++i) {
@@ -340,7 +341,7 @@ bool Package::InitFromPath(const base::FilePath& path_in) {
   const char* required_fields[] = {
     switches::kmName
   };
-  for (unsigned i = 0; i < arraysize(required_fields); i++)
+  for (unsigned i = 0; i < base::size(required_fields); i++)
     if (!root_->HasKey(required_fields[i])) {
       ReportError("Invalid package.json",
                   std::string("Field '") + required_fields[i] + "'"
@@ -389,6 +390,8 @@ void Package::InitWithDefault() {
   // Window should show in center by default.
   window->SetString(switches::kmPosition, "center");
   root()->Set(switches::kmWindow, std::move(window));
+
+  ReadChromiumArgs();
 }
 
 bool Package::ExtractPath(const base::FilePath& path_to_extract, 
@@ -448,12 +451,19 @@ bool Package::ExtractPackage(const FilePath& zip_file, FilePath* where) {
 }
 
 void Package::ReadChromiumArgs() {
-  if (!root()->HasKey(switches::kmChromiumArgs))
-    return;
+  std::string args, env_args;
+  std::unique_ptr<base::Environment> env(base::Environment::Create());
 
-  std::string args;
+  bool got_env = env->GetVar("NW_PRE_ARGS", &env_args);
+  if (!root()->HasKey(switches::kmChromiumArgs))
+    if (!got_env)
+      return;
+
   if (!root()->GetStringASCII(switches::kmChromiumArgs, &args))
-    return;
+    if (!got_env)
+      return;
+
+  args = env_args + kChromiumArgsSeparator + args;
 
   std::vector<std::string> chromium_args;
   base::StringTokenizer tokenizer(args, kChromiumArgsSeparator);

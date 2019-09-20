@@ -12,6 +12,7 @@
 #include "ui/views/controls/button/menu_button.h"
 #include "ui/views/layout/box_layout.h"
 #include "ui/views/widget/widget.h"
+#include "ui/views/background.h"
 
 using views::MenuRunner;
 
@@ -35,20 +36,14 @@ class MenuBarButton : public views::MenuButton {
   MenuBarButton(const base::string16& title,
                 views::MenuButtonListener* menu_button_listener,
                 bool show_menu_marker)
-      : MenuButton(title, menu_button_listener, show_menu_marker) {
+      : MenuButton(title, menu_button_listener) {
     SetElideBehavior(kElideBehavior);
   }
 
-  bool GetTooltipText(const gfx::Point& p,
-                              base::string16* tooltip) const override {
+  base::string16 GetTooltipText(const gfx::Point& p) const override {
     if (label()->GetPreferredSize().width() > label()->size().width())
-      *tooltip = GetText();
-    return !tooltip->empty();
-  }
-
-  void OnNativeThemeChanged(const ui::NativeTheme* theme) override {
-    views::MenuButton::OnNativeThemeChanged(theme);
-    SetEnabledTextColors(theme->GetSystemColor(ui::NativeTheme::kColorId_EnabledMenuItemForegroundColor));
+      return GetText();
+    return base::string16();
   }
 
  private:
@@ -57,8 +52,10 @@ class MenuBarButton : public views::MenuButton {
 };
 
 MenuBarView::MenuBarView() {
-  auto layout = std::make_unique<views::BoxLayout>(views::BoxLayout::kHorizontal, gfx::Insets(), 0);
+  auto layout = std::make_unique<views::BoxLayout>(views::BoxLayout::Orientation::kHorizontal, gfx::Insets(), 0);
   SetLayoutManager(std::move(layout));
+  SetBackground(views::CreateSolidBackground(GetNativeTheme()->GetSystemColor(
+                ui::NativeTheme::kColorId_MenuBackgroundColor)));
 }
 
 MenuBarView::~MenuBarView() {
@@ -85,7 +82,7 @@ bool MenuBarView::GetMenuButtonAtLocation(const gfx::Point& loc, ui::MenuModel**
   if (loc.x() < 0 || loc.x() >= width() || loc.y() < 0 || loc.y() >= height())
     return false;
   for (int i = 0; i < model_->GetItemCount(); i++) {
-    views::View* child = child_at(i);
+    views::View* child = children()[i];
     if (child->bounds().Contains(loc) &&
         (model_->GetTypeAt(i) == ui::MenuModel::TYPE_SUBMENU)) {
       *model = model_->GetSubmenuModelAt(i);
@@ -96,9 +93,9 @@ bool MenuBarView::GetMenuButtonAtLocation(const gfx::Point& loc, ui::MenuModel**
   return false;
 }
 
-void MenuBarView::OnMenuButtonClicked(views::MenuButton* view,
-                                          const gfx::Point& point,
-                                          const ui::Event* event) {
+void MenuBarView::OnMenuButtonClicked(views::Button* view,
+                                      const gfx::Point& point,
+                                      const ui::Event* event) {
   int button_index = GetIndexOf(view);
   DCHECK_NE(-1, button_index);
   ui::MenuModel::ItemType type = model_->GetTypeAt(button_index);
@@ -111,14 +108,6 @@ void MenuBarView::OnMenuButtonClicked(views::MenuButton* view,
 
 void MenuBarView::ButtonPressed(views::Button* sender,
                                 const ui::Event& event) {
-}
-
-void MenuBarView::OnNativeThemeChanged(const ui::NativeTheme* theme) {
-  // Use menu background color for menubar
-  SetBackground(views::CreateSolidBackground(theme->
-       GetSystemColor(ui::NativeTheme::kColorId_MenuBackgroundColor)));
-  // Force to repaint the menubar
-  SchedulePaint();
 }
 
 } //namespace nw

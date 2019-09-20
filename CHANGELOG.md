@@ -1,3 +1,146 @@
+0.41.1 / 09-12-2019
+===================
+- Fix regressions: sync with nw40 branch
+
+0.41.0 / 09-12-2019
+===================
+- Update Chromium to [77.0.3865.75](https://chromereleases.googleblog.com/2019/09/stable-channel-update-for-desktop.html)
+
+0.40.2 / 08-30-2019
+===================
+- Update Chromium to [76.0.3809.132](https://chromereleases.googleblog.com/2019/08/stable-channel-update-for-desktop_26.html)
+- Update Node.js to [v12.9.1](https://nodejs.org/en/blog/release/v12.9.1/)
+
+0.40.1 / 08-08-2019
+===================
+- Update Chromium to [76.0.3809.100](https://chromereleases.googleblog.com/2019/08/stable-channel-update-for-desktop.html)
+- Update Node.js to [v12.8.0](https://nodejs.org/en/blog/release/v12.8.0/)
+- Fix: nw.Window not working after navigation [(#7125)](https://github.com/nwjs/nw.js/issues/7125)
+- Fix: nw.Shortcut constructor [(#7112)](https://github.com/nwjs/nw.js/issues/7112)
+- Fix: menubar display [(#7124)](https://github.com/nwjs/nw.js/issues/7124)
+
+0.40.0 / 07-30-2019
+===================
+- Update Chromium to [76.0.3809.87](https://chromereleases.googleblog.com/2019/07/stable-channel-update-for-desktop_30.html)
+
+0.39.3 / 07-17-2019
+===================
+- Update Chromium to [75.0.3770.142](https://chromereleases.googleblog.com/2019/07/stable-channel-update-for-desktop.html)
+- Update Node.js to [v12.6.0](https://nodejs.org/en/blog/release/v12.6.0/)
+- Fix: Crash in async_hooks of Node [(#7107)](https://github.com/nwjs/nw.js/issues/7107)
+- Fix: webview devtools freeze upon breakpoint [(#7098)](https://github.com/nwjs/nw.js/issues/7098)
+
+0.39.2 / 06-18-2019
+===================
+- Update Chromium to [75.0.3770.100](https://chromereleases.googleblog.com/2019/06/stable-channel-update-for-desktop_18.html)
+- Update Node.js to [v12.4.0](https://nodejs.org/en/blog/release/v12.4.0/)
+- Fix: Crash in forked child process when calling node method runInNewContext. [(#7085)](https://github.com/nwjs/nw.js/issues/7085)
+- Fix: Crash closing popup window after opening dev tools [(#7088)](https://github.com/nwjs/nw.js/issues/7088)
+
+0.39.1 / 06-18-2019
+===================
+- Update Chromium to [75.0.3770.90](https://chromereleases.googleblog.com/2019/06/stable-channel-update-for-desktop_13.html)
+- Fix: Removing Listening events from a window is broken [(#7077)](https://github.com/nwjs/nw.js/issues/7077)
+- Fix: crash in compiled JS [(#7045)](https://github.com/nwjs/nw.js/issues/7045)
+- Fix: crash with `product_string` [(#7075)](https://github.com/nwjs/nw.js/issues/7075)
+
+0.39.0 / 06-11-2019
+===================
+- Update Chromium to [75.0.3770.80](https://chromereleases.googleblog.com/2019/06/stable-channel-update-for-desktop.html)
+- Fix: crash "Invalid instance ID(0) from WebviewActionRequest.defaultAction" [(#7059)](https://github.com/nwjs/nw.js/issues/7059)
+
+0.38.4 / 05-24-2019
+===================
+- Update Node.js to [v12.3.1](https://nodejs.org/en/blog/release/v12.3.1/)
+- Update Chromium to [74.0.3729.169](https://chromereleases.googleblog.com/2019/05/stable-channel-update-for-desktop_21.html)
+
+0.38.3 / 05-15-2019
+===================
+- Update Node.js to [v12.2.0](https://nodejs.org/en/blog/release/v12.2.0/)
+- Update Chromium to [74.0.3729.157](https://chromereleases.googleblog.com/2019/05/stable-channel-update-for-desktop.html)
+
+0.38.2 / 05-06-2019
+===================
+- Update Node.js to [v12.1.0](https://nodejs.org/en/blog/release/v12.1.0/)
+- Update Chromium to [74.0.3729.131](http://chromereleases.googleblog.com/2019/04/stable-channel-update-for-desktop_30.html)
+
+0.38.1 / 04-29-2019
+===================
+- Update Node.js to [v12.0.0](https://nodejs.org/en/blog/release/v12.0.0/)
+
+0.38.0 / 04-25-2019
+===================
+- Update Chromium to [74.0.3729.108](https://chromereleases.googleblog.com/2019/04/stable-channel-update-for-desktop_23.html)
+- Fix: `open` event: quote command line properly under POSIX [(#7041)](https://github.com/nwjs/nw.js/issues/7041)
+
+0.37.4 / 04-15-2019
+===================
+- Update Node.js to [v11.14.0](https://nodejs.org/en/blog/release/v11.14.0/)
+- Fix: GCM support regression [(#7039)](https://github.com/nwjs/nw.js/issues/7039)
+- Fix: crash on dialog event in webview [(#7038)](https://github.com/nwjs/nw.js/issues/7038)
+- Fix: nwsaveas regression [(#7035)](https://github.com/nwjs/nw.js/issues/7035)
+- Fix: Pinning Windows creates a shortcut to `chrome_proxy.exe` [(#7033)](https://github.com/nwjs/nw.js/issues/7033)
+- Fix: NW2 mode: setting window dimension in new-win-policy callback
+- Fix: NW2 mode: disable fullscreen UI [(#5875)](https://github.com/nwjs/nw.js/issues/5875)
+
+0.37.3 / 04-08-2019
+===================
+- Update Chromium to [73.0.3683.103](https://chromereleases.googleblog.com/2019/04/stable-channel-update-for-desktop.html)
+- Fix: Phoning home to accounts.google.com [(#7023)](https://github.com/nwjs/nw.js/issues/7023)
+
+0.37.2 / 04-02-2019
+===================
+- Update Node.js to [v11.13.0](https://nodejs.org/en/blog/release/v11.13.0/)
+- Fix: crash on chrome.runtime.getManifest in webview [(#7024)](https://github.com/nwjs/nw.js/issues/7024)
+- Fix: crash in inspector module with j5 module [(#7022)](https://github.com/nwjs/nw.js/issues/7022)
+- Fix: windows file dialog button label [(#6610)](https://github.com/nwjs/nw.js/issues/6610)
+
+0.37.1 / 03-21-2019
+===================
+- Update Chromium to [73.0.3683.86](https://chromereleases.googleblog.com/2019/03/stable-channel-update-for-desktop_20.html)
+- Update Node.js to [v11.12.0](https://nodejs.org/en/blog/release/v11.12.0/)
+- nw2: Fix fullscreen: disable browser accelerator keys and access bubble
+
+0.37.0 / 03-13-2019
+===================
+- Update Chromium to [73.0.3683.75](https://chromereleases.googleblog.com/2019/03/stable-channel-update-for-desktop_12.html)
+- Fix: OSX - Google Office Docs extension loads as text [(#7010)](https://github.com/nwjs/nw.js/issues/7010)
+- Fix: NW crash on WebMIDI sysex send recurred [(#7007)](https://github.com/nwjs/nw.js/issues/7007)
+- Fix: Crash due to file:// url cannot be used in origin header of CORS request [(#7001)](https://github.com/nwjs/nw.js/issues/7001)
+
+0.36.4 / 03-04-2019
+===================
+- Update Chromium to [72.0.3626.121](https://chromereleases.googleblog.com/2019/03/stable-channel-update-for-desktop.html)
+- Fix: click-through transparency doesn't work on macOS [(#6708)](https://github.com/nwjs/nw.js/issues/6708)
+- Fix: Google drive doesn't show contents [(#6966)](https://github.com/nwjs/nw.js/issues/6966)
+
+0.36.3 / 03-01-2019
+===================
+- Update Chromium to [72.0.3626.119](https://chromereleases.googleblog.com/2019/02/stable-channel-update-for-desktop_21.html)
+- Update Node.js to [v11.10.1](https://nodejs.org/en/blog/release/v11.10.1/)
+- Fix: [macOS] crash in menu handling with NW2 mode [(#6976)](https://github.com/nwjs/nw.js/issues/6976)
+- Fix: lost the first touchend event [(#6985)](https://github.com/nwjs/nw.js/issues/6985)
+
+0.36.2 / 02-18-2019
+===================
+- Update Chromium to [72.0.3626.109](https://chromereleases.googleblog.com/2019/02/stable-channel-update-for-desktop_13.html)
+- Fix: File input crashes when click it second time. [(#6968)](https://github.com/nwjs/nw.js/issues/6968)
+
+0.36.1 / 02-08-2019
+===================
+- Update Chromium to [72.0.3626.96](https://chromereleases.googleblog.com/2019/02/stable-channel-update-for-desktop.html)
+- Update Node.js to [v11.9.0](https://nodejs.org/en/blog/release/v11.9.0/)
+
+0.36.0 / 01-31-2019
+===================
+- Update Chromium to [72.0.3626.81](https://chromereleases.googleblog.com/2019/01/stable-channel-update-for-desktop.html)
+- Update Node.js to [v11.8.0](https://nodejs.org/en/blog/release/v11.8.0/)
+- support NW_PRE_ARGS environment variable
+- nw2: macOS: fix Cmd-Q with user menu bar
+- nw2: disable ExtensionDevToolsInfoBar
+- [macos] ship libffmpeg with sdk; move libffmpeg location in bundle
+- [docs] NW_PRE_ARGS environment variable
+
 0.35.5 / 01-15-2019
 ===================
 - NW2: transparency support

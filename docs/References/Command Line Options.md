@@ -72,3 +72,7 @@ These options are related to the transparent window feature. See [Transparent Wi
 You can also use Chromium options listed in https://github.com/nwjs/chromium.src/blob/nw18/chrome/common/chrome_switches.cc and https://github.com/nwjs/chromium.src/blob/nw18/content/public/common/content_switches.cc . See also http://peter.sh/experiments/chromium-command-line-switches/
 
 These options can be put into [`chromium-args` in manifest](Manifest Format.md#chromium-args) to get NW.js running with them each time.
+
+## Environment Variables
+
+`NW_PRE_ARGS`'s value is prepended to the value of `chromium-args` in manifest.

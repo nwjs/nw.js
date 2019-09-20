@@ -1,18 +1,14 @@
-var nw_binding = require('binding').Binding.create('nw.Shell');
-var sendRequest = require('sendRequest');
-
-nw_binding.registerCustomHook(function(bindingsAPI) {
+apiBridge.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
   apiFunctions.setHandleRequest('openExternal', function() {
-    sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {});
+    bindingUtil.sendRequestSync('nw.Shell.openExternal', $Array.from(arguments), undefined, undefined);
   });
   apiFunctions.setHandleRequest('openItem', function() {
-    sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {});
+    bindingUtil.sendRequestSync('nw.Shell.openItem', $Array.from(arguments), undefined, undefined);
   });
   apiFunctions.setHandleRequest('showItemInFolder', function() {
-    sendRequest.sendRequestSync(this.name, arguments, this.definition.parameters, {});
+    bindingUtil.sendRequestSync('nw.Shell.showItemInFolder', $Array.from(arguments), undefined, undefined);
   });
 });
 
-exports.binding = nw_binding.generate();
 

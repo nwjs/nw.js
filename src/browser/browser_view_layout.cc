@@ -19,7 +19,7 @@ BrowserViewLayout::BrowserViewLayout()
 BrowserViewLayout::~BrowserViewLayout() {}
 
 void BrowserViewLayout::Layout(View* host) {
-  if (!host->has_children())
+  if (host->children().empty())
     return;
 
   int y = 0;
@@ -40,7 +40,7 @@ void BrowserViewLayout::Layout(View* host) {
 }
 
 gfx::Size BrowserViewLayout::GetPreferredSize(const View* host) const {
-  if (!host->has_children())
+  if (host->children().empty())
     return gfx::Size();
 
   gfx::Rect rect(web_view_->GetPreferredSize());
@@ -55,7 +55,7 @@ gfx::Size BrowserViewLayout::GetPreferredSize(const View* host) const {
 }
 
 int BrowserViewLayout::GetPreferredHeightForWidth(const View* host, int width) const {
-  if (!host->has_children())
+  if (host->children().empty())
     return 0;
 
   const gfx::Insets insets = host->GetInsets();

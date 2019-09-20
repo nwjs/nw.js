@@ -142,7 +142,7 @@ std::unique_ptr<base::DictionaryValue> MergeManifest() {
 
   // retrieve `window` manifest set by `new-win-policy`
   std::string manifest_str = base::UTF16ToUTF8(nw::GetCurrentNewWinManifest());
-  std::unique_ptr<base::Value> val = base::JSONReader().ReadToValue(manifest_str);
+  std::unique_ptr<base::Value> val(base::JSONReader().ReadToValueDeprecated(manifest_str));
   if (val && val->is_dict()) {
     manifest.reset(static_cast<base::DictionaryValue*>(val.release()));
   } else {
@@ -266,7 +266,7 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
     if (GetPackageImage(package, base::FilePath::FromUTF8Unsafe(icon_path), &app_icon)) {
       SetAppIcon(app_icon);
       int width = app_icon.Width();
-      std::string key = "icons." + base::IntToString(width);
+      std::string key = "icons." + base::NumberToString(width);
       manifest->SetString(key, icon_path);
 #if defined(OS_WIN)
       SetWindowHIcon((IconUtil::CreateHICONFromSkBitmapSizedTo(*app_icon.AsImageSkia().bitmap(),
@@ -290,7 +290,7 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
       AmendManifestList(manifest, manifest_keys::kWebURLs, *node_remote_list);
   }
 
-  if (NWContentVerifierDelegate::GetDefaultMode() == ContentVerifierDelegate::ENFORCE_STRICT)
+  if (NWContentVerifierDelegate::GetDefaultMode() == NWContentVerifierDelegate::ENFORCE_STRICT)
     manifest->SetBoolean(manifest_keys::kNWJSContentVerifyFlag, true);
 
   if (package->temp_dir().IsValid()) {

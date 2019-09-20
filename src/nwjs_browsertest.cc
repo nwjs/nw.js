@@ -48,6 +48,7 @@
 #include "chrome/browser/renderer_context_menu/render_view_context_menu_test_util.h"
 #include "chrome/browser/task_manager/task_manager_browsertest_util.h"
 #include "chrome/browser/ui/browser.h"
+#include "chrome/browser/ui/browser_list.h"
 #include "chrome/browser/ui/browser_commands.h"
 #include "chrome/browser/ui/browser_dialogs.h"
 #include "chrome/browser/ui/tabs/tab_strip_model.h"
@@ -349,7 +350,7 @@ class MockWebContentsDelegate : public content::WebContentsDelegate {
 
   bool CheckMediaAccessPermission(content::RenderFrameHost* render_frame_host,
                                   const GURL& security_origin,
-                                  content::MediaStreamType type) override {
+                                  blink::mojom::MediaStreamType type) override {
     checked_ = true;
     if (check_message_loop_runner_.get())
       check_message_loop_runner_->Quit();
@@ -393,11 +394,11 @@ class MockDownloadWebContentsDelegate : public content::WebContentsDelegate {
 
   void CanDownload(const GURL& url,
                    const std::string& request_method,
-                   const base::Callback<void(bool)>& callback) override {
+                   base::OnceCallback<void(bool)> callback) override {
     orig_delegate_->CanDownload(
         url, request_method,
-        base::Bind(&MockDownloadWebContentsDelegate::DownloadDecided,
-                   base::Unretained(this), callback));
+        base::BindOnce(&MockDownloadWebContentsDelegate::DownloadDecided,
+                       base::Unretained(this), std::move(callback)));
   }
 
   void WaitForCanDownload(bool expect_allow) {
@@ -414,7 +415,7 @@ class MockDownloadWebContentsDelegate : public content::WebContentsDelegate {
     message_loop_runner_->Run();
   }
 
-  void DownloadDecided(const base::Callback<void(bool)>& callback, bool allow) {
+  void DownloadDecided(base::OnceCallback<void(bool)> callback, bool allow) {
     EXPECT_FALSE(decision_made_);
     decision_made_ = true;
 
@@ -422,11 +423,11 @@ class MockDownloadWebContentsDelegate : public content::WebContentsDelegate {
       EXPECT_EQ(expect_allow_, allow);
       if (message_loop_runner_.get())
         message_loop_runner_->Quit();
-      callback.Run(allow);
+      std::move(callback).Run(allow);
       return;
     }
     last_download_allowed_ = allow;
-    callback.Run(allow);
+    std::move(callback).Run(allow);
   }
 
   void Reset() {
@@ -819,7 +820,7 @@ protected:
   bool trusted_;
 };
 
-INSTANTIATE_TEST_CASE_P(NWJSWebViewTests, NWJSWebViewTest, testing::Bool());
+INSTANTIATE_TEST_SUITE_P(NWJSWebViewTests, NWJSWebViewTest, testing::Bool());
 
 class NWJSWebViewTestF: public NWWebViewTestBase {};
 
@@ -875,6 +876,9 @@ IN_PROC_BROWSER_TEST_F(NWAppTest, LocalFlash) {
 
   LoadAndLaunchPlatformApp("local_flash", "Launched");
   content::WebContents* web_contents = GetFirstAppWindowWebContents();
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    web_contents = BrowserList::GetInstance()->GetLastActive()->tab_strip_model()->GetActiveWebContents();
+  }
   ASSERT_TRUE(web_contents);
   base::string16 expected_title(base::ASCIIToUTF16("Loaded"));
   content::TitleWatcher title_watcher(web_contents, expected_title);
@@ -927,7 +931,7 @@ static std::string DumpPdfAccessibilityTree(const ui::AXTreeUpdate& ax_tree) {
   // Create a string representation of the tree starting with the embedded
   // object.
   std::string ax_tree_dump;
-  base::hash_map<int32_t, int> id_to_indentation;
+  std::map<int32_t, int> id_to_indentation;
   //bool found_embedded_object = false;
   for (auto& node : ax_tree.nodes) {
 #if 0
@@ -970,6 +974,7 @@ void DumpAxTree(std::string* dump_output, content::RenderFrameHost* frame) {
 
 IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, SilentPrintChangeFooter) {
   content::BrowserAccessibilityState::GetInstance()->EnableAccessibility();
+  base::ScopedAllowBlockingForTesting allow_blocking;
   base::FilePath test_dir = test_data_dir_.Append(FILE_PATH_LITERAL("platform_apps")).Append(FILE_PATH_LITERAL("silent_print"));
   base::FilePath output_pdf = test_data_dir_.Append(FILE_PATH_LITERAL("output.pdf"));
   ASSERT_TRUE(base::SetCurrentDirectory(test_dir));
@@ -1207,7 +1212,7 @@ class NWJSDesktopCaptureApiTest : public NWAppTest {
 
  protected:
   GURL GetURLForPath(const std::string& host, const std::string& path) {
-    std::string port = base::UintToString(embedded_test_server()->port());
+    std::string port = base::NumberToString(embedded_test_server()->port());
     GURL::Replacements replacements;
     replacements.SetHostStr(host);
     replacements.SetPortStr(port);
@@ -1225,7 +1230,7 @@ IN_PROC_BROWSER_TEST_F(NWJSDesktopCaptureApiTest, CrossDomain) {
        content::DesktopMediaID(content::DesktopMediaID::TYPE_SCREEN,
                                content::DesktopMediaID::kNullId), false},
   };
-  picker_factory_.SetTestFlags(test_flags, arraysize(test_flags));
+  picker_factory_.SetTestFlags(test_flags, base::size(test_flags));
   base::FilePath test_dir = test_data_dir_.Append(FILE_PATH_LITERAL("platform_apps")).Append(FILE_PATH_LITERAL("6212-crossdomain-screen"));
   embedded_test_server()->ServeFilesFromDirectory(test_dir);
   ASSERT_TRUE(embedded_test_server()->Start());

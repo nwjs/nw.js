@@ -1,15 +1,11 @@
-var Binding = require('binding').Binding;
 var forEach = require('utils').forEach;
-var nw_binding = require('binding').Binding.create('nw.Menu');
 var nwNative = requireNative('nw_natives');
-var sendRequest = require('sendRequest');
 var messagingNatives = requireNative('messaging_natives');
-var Event = require('event_bindings').Event;
 var util = nw.require('util');
 var EventEmitter = nw.require('events').EventEmitter;
 
 var menuItems = { objs : {}, clickEvent: {} };
-menuItems.clickEvent = new Event("NWObjectclick");
+menuItems.clickEvent = bindingUtil.createCustomEvent("NWObjectclick", false, false);
 menuItems.clickEvent.addListener(function(id) {
   var obj = menuItems.objs[id];
   if (!obj)

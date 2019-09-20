@@ -51,7 +51,7 @@ views::MenuItemView* MenuBarController::GetSiblingMenu(
     return NULL;
 
   *has_mnemonics = false;
-  *anchor = views::MENU_ANCHOR_TOPLEFT;
+  *anchor = views::MenuAnchorPosition::kTopLeft;
   master_->active_menu_model_ = model;
   if (!model_to_menu_map_[model]) {
     MenuBarController* controller = new MenuBarController(menubar_, model, master_);
@@ -104,14 +104,14 @@ void MenuBarController::RunMenuAt(views::View* view, const gfx::Point& point) {
                    menu_button->height() - 1);
 
   menu_runner_->RunMenuAt(view->GetWidget()->GetTopLevelWidget(),
-                                       menu_button,
+                          menu_button->button_controller(),
                                        bounds,
-                                       views::MENU_ANCHOR_TOPLEFT,
+                          views::MenuAnchorPosition::kTopLeft,
                                        ui::MENU_SOURCE_NONE);
   {
     base::AutoReset<base::Closure> reset_quit_closure(&message_loop_quit_,
                                                       base::Closure());
-  
+
     base::MessageLoopCurrent::ScopedNestableTaskAllower allow;
     base::RunLoop run_loop;
     message_loop_quit_ = run_loop.QuitClosure();

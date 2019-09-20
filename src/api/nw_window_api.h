@@ -19,12 +19,12 @@ class AppWindow;
 
 class NwCurrentWindowInternalCloseFunction : public UIThreadExtensionFunction {
  public:
-  NwCurrentWindowInternalCloseFunction() {};
+  NwCurrentWindowInternalCloseFunction() {}
   static void DoClose(AppWindow*);
   static void DoCloseBrowser(Browser*);
 
  protected:
-  ~NwCurrentWindowInternalCloseFunction() override {};
+  ~NwCurrentWindowInternalCloseFunction() override {}
 
   // ExtensionFunction:
   ResponseAction Run() override;
@@ -34,10 +34,10 @@ class NwCurrentWindowInternalCloseFunction : public UIThreadExtensionFunction {
 
 class NwCurrentWindowInternalShowDevToolsInternalFunction : public UIThreadExtensionFunction {
  public:
-  NwCurrentWindowInternalShowDevToolsInternalFunction() {};
+  NwCurrentWindowInternalShowDevToolsInternalFunction() {}
 
  protected:
-  ~NwCurrentWindowInternalShowDevToolsInternalFunction() override {};
+  ~NwCurrentWindowInternalShowDevToolsInternalFunction() override {}
 
   // ExtensionFunction:
   ResponseAction Run() override;
@@ -48,10 +48,10 @@ class NwCurrentWindowInternalShowDevToolsInternalFunction : public UIThreadExten
 
 class NwCurrentWindowInternalShowDevTools2InternalFunction : public UIThreadExtensionFunction {
  public:
-  NwCurrentWindowInternalShowDevTools2InternalFunction() {};
+  NwCurrentWindowInternalShowDevTools2InternalFunction() {}
 
  protected:
-  ~NwCurrentWindowInternalShowDevTools2InternalFunction() override {};
+  ~NwCurrentWindowInternalShowDevTools2InternalFunction() override {}
 
   // ExtensionFunction:
   ResponseAction Run() override;
@@ -62,10 +62,10 @@ class NwCurrentWindowInternalShowDevTools2InternalFunction : public UIThreadExte
 
 class NwCurrentWindowInternalCloseDevToolsFunction : public UIThreadExtensionFunction {
  public:
-  NwCurrentWindowInternalCloseDevToolsFunction() {};
+  NwCurrentWindowInternalCloseDevToolsFunction() {}
 
  protected:
-  ~NwCurrentWindowInternalCloseDevToolsFunction() override {};
+  ~NwCurrentWindowInternalCloseDevToolsFunction() override {}
 
   // ExtensionFunction:
   ResponseAction Run() override;

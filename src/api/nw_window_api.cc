@@ -97,7 +97,7 @@ static void SetDeskopEnvironment() {
 namespace {
 
 printing::PrinterList EnumeratePrintersAsync() {
-  base::AssertBlockingAllowed();
+  base::internal::AssertBlockingAllowed();
 
   scoped_refptr<printing::PrintBackend> print_backend(
         printing::PrintBackend::CreateInstance(nullptr));
@@ -192,7 +192,8 @@ static HWND getHWND(AppWindow* window) {
 #endif
 
 void NwCurrentWindowInternalCloseFunction::DoClose(AppWindow* window) {
-  window->GetBaseWindow()->ForceClose();
+  if (window && window->GetBaseWindow())
+    window->GetBaseWindow()->ForceClose();
 }
 
 void NwCurrentWindowInternalCloseFunction::DoCloseBrowser(Browser* browser) {
@@ -213,18 +214,18 @@ NwCurrentWindowInternalCloseFunction::Run() {
     if (!browser)
       return RespondNow(Error("cannot find browser window"));
     if (force)
-      base::MessageLoop::current()->task_runner()->PostTask(FROM_HERE,
+      base::ThreadTaskRunnerHandle::Get().get()->PostTask(FROM_HERE,
          base::Bind(&NwCurrentWindowInternalCloseFunction::DoCloseBrowser, browser));
     else if (browser->NWCanClose())
-      base::MessageLoop::current()->task_runner()->PostTask(FROM_HERE,
+      base::ThreadTaskRunnerHandle::Get().get()->PostTask(FROM_HERE,
          base::Bind(&NwCurrentWindowInternalCloseFunction::DoCloseBrowser, browser));
   } else {
     AppWindow* window = getAppWindow(this);
     if (force)
-      base::MessageLoop::current()->task_runner()->PostTask(FROM_HERE,
+      base::ThreadTaskRunnerHandle::Get().get()->PostTask(FROM_HERE,
          base::Bind(&NwCurrentWindowInternalCloseFunction::DoClose, window));
     else if (window->NWCanClose())
-      base::MessageLoop::current()->task_runner()->PostTask(FROM_HERE,
+      base::ThreadTaskRunnerHandle::Get().get()->PostTask(FROM_HERE,
          base::Bind(&NwCurrentWindowInternalCloseFunction::DoClose, window));
   }
 
@@ -828,7 +829,7 @@ NwCurrentWindowInternalSetShadowFunction::Run() {
   bool shadow;
   EXTENSION_FUNCTION_VALIDATE(args_->GetBoolean(0, &shadow));
   AppWindow* window = getAppWindow(this);
-  SetShadowOnWindow(window->GetNativeWindow(), shadow);
+  SetShadowOnWindow(window->GetNativeWindow().GetNativeNSWindow(), shadow);
 #endif
   return RespondNow(NoArguments());
 }
@@ -962,7 +963,7 @@ NwCurrentWindowInternalSetShowInTaskbarFunction::Run() {
 
   views::Widget* widget = native_app_window_views->widget()->GetTopLevelWidget();
 
-  if (show == false && base::win::GetVersion() < base::win::VERSION_VISTA) {
+  if (show == false && base::win::GetVersion() < base::win::Version::VISTA) {
     // Change the owner of native window. Only needed on Windows XP.
     ::SetParent(views::HWNDForWidget(widget),
                 ui::GetHiddenWindow());
