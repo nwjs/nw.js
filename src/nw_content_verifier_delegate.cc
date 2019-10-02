@@ -99,17 +99,17 @@ NWContentVerifierDelegate::NWContentVerifierDelegate(
 NWContentVerifierDelegate::~NWContentVerifierDelegate() {
 }
 
-bool NWContentVerifierDelegate::ShouldBeVerified(
+ContentVerifierDelegate::VerifierSourceType NWContentVerifierDelegate::GetVerifierSourceType(
     const Extension& extension) {
 
   if (extension.is_nwjs_app() && !Manifest::IsComponentLocation(extension.location()))
-    return default_mode_ != NONE;
+    return default_mode_ != NONE ? VerifierSourceType::SIGNED_HASHES : VerifierSourceType::NONE;
   if (!extension.is_extension() && !extension.is_legacy_packaged_app())
-    return false;
+    return VerifierSourceType::NONE;
   if (!Manifest::IsAutoUpdateableLocation(extension.location()))
-    return false;
+    return VerifierSourceType::NONE;
 
-  return default_mode_ != NONE;
+  return default_mode_ != NONE ? VerifierSourceType::SIGNED_HASHES : VerifierSourceType::NONE;
 }
 
 ContentVerifierKey NWContentVerifierDelegate::GetPublicKey() {
@@ -139,7 +139,7 @@ void NWContentVerifierDelegate::VerifyFailed(
   if (!extension)
     return;
   ExtensionSystem* system = ExtensionSystem::Get(context_);
-  if (ShouldBeVerified(*extension)) {
+  if (GetVerifierSourceType(*extension) != ContentVerifierDelegate::VerifierSourceType::NONE) {
     LoadErrorReporter::GetInstance()->
       ReportLoadError(extension->path(), "Extension file corrupted: " + relative_path.AsUTF8Unsafe(),
                       system->extension_service()->profile(), true);

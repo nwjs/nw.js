@@ -309,9 +309,9 @@ void NWCustomBindings::EvalNWBin(
     url = url.Resolve(*file);
     // LOG(WARNING) << "registering module as: " << url;
     KURL kurl(WTF::String(url.spec().c_str()));
-    blink::ModuleRecord script_module(isolate, module, kurl);
+    //blink::ModuleRecord script_module(isolate, module, kurl);
     blink::JSModuleScript* module_script =
-      blink::JSModuleScript::CreateForTest(modulator, script_module, kurl);
+      blink::JSModuleScript::CreateForTest(modulator, module, kurl);
     modulator->AddToMap(kurl, module_script);
   }
 }

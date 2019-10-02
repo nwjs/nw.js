@@ -29,7 +29,7 @@
 #include "components/crx_file/id_util.h"
 
 // content
-#include "content/common/dom_storage/dom_storage_map.h"
+//#include "content/common/dom_storage/dom_storage_map.h"
 //#include "content/browser/dom_storage/dom_storage_area.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/public/browser/browser_thread.h"
@@ -266,7 +266,7 @@ int MainPartsPreCreateThreadsHook() {
     command_line->AppendSwitchPath("nwapp", path);
     int dom_storage_quota_mb;
     if (package->root()->GetInteger("dom_storage_quota", &dom_storage_quota_mb)) {
-      content::DOMStorageMap::SetQuotaOverride(dom_storage_quota_mb * 1024 * 1024);
+      //content::DOMStorageMap::SetQuotaOverride(dom_storage_quota_mb * 1024 * 1024);
     }
 
 #if 0

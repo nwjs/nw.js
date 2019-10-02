@@ -148,7 +148,7 @@ class ApiParameterExtractor {
 }
 
 #if 0
-static Browser* getBrowser(UIThreadExtensionFunction* func) {
+static Browser* getBrowser(ExtensionFunction* func) {
   content::WebContents* web_contents = func->GetSenderWebContents();
   if (!web_contents) {
     return NULL;
@@ -158,7 +158,7 @@ static Browser* getBrowser(UIThreadExtensionFunction* func) {
 }
 #endif
 
-static Browser* getBrowser(UIThreadExtensionFunction* func, int id) {
+static Browser* getBrowser(ExtensionFunction* func, int id) {
   Browser* browser = nullptr;
   std::string error;
   if (!windows_util::GetBrowserFromWindowID(
@@ -169,7 +169,7 @@ static Browser* getBrowser(UIThreadExtensionFunction* func, int id) {
   return browser;
 }
 
-static AppWindow* getAppWindow(UIThreadExtensionFunction* func) {
+static AppWindow* getAppWindow(ExtensionFunction* func) {
   AppWindowRegistry* registry = AppWindowRegistry::Get(func->browser_context());
   DCHECK(registry);
   content::WebContents* web_contents = func->GetSenderWebContents();
@@ -856,8 +856,8 @@ ExtensionFunction::ResponseAction
 NwCurrentWindowInternalGetPrintersFunction::Run() {
   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
 
-  base::PostTaskWithTraitsAndReplyWithResult(
-                                             FROM_HERE, {base::MayBlock(), base::TaskShutdownBehavior::CONTINUE_ON_SHUTDOWN},
+  base::PostTaskAndReplyWithResult(
+                                   FROM_HERE, {base::ThreadPool(), base::MayBlock(), base::TaskShutdownBehavior::CONTINUE_ON_SHUTDOWN},
         base::Bind(&EnumeratePrintersAsync),
         base::Bind(&NwCurrentWindowInternalGetPrintersFunction::OnGetPrinterList,
                    this));
@@ -920,7 +920,7 @@ bool NwCurrentWindowInternalGetCurrentFunction::RunNWSync(base::ListValue* respo
                                 : ExtensionTabUtil::kDontPopulateTabs;
   std::unique_ptr<base::DictionaryValue> windows =
       ExtensionTabUtil::CreateWindowValueForExtension(*browser, extension(),
-                                                      populate_tab_behavior);
+                                                      populate_tab_behavior, Feature::UNSPECIFIED_CONTEXT);
   response->Append(std::move(windows));
   return true;
 }

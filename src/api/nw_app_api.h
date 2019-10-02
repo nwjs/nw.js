@@ -11,7 +11,7 @@ namespace extensions {
 class AppWindowRegistry;
 class ExtensionService;
 
-class NwAppQuitFunction : public UIThreadExtensionFunction {
+class NwAppQuitFunction : public ExtensionFunction {
  public:
   NwAppQuitFunction();
 
@@ -26,7 +26,7 @@ class NwAppQuitFunction : public UIThreadExtensionFunction {
   void Callback();
 };
 
-class NwAppCloseAllWindowsFunction : public UIThreadExtensionFunction {
+class NwAppCloseAllWindowsFunction : public ExtensionFunction {
  public:
   NwAppCloseAllWindowsFunction() {}
 
@@ -109,7 +109,7 @@ class NwAppGetDataPathFunction : public NWSyncExtensionFunction {
   DISALLOW_COPY_AND_ASSIGN(NwAppGetDataPathFunction);
 };
 
-class NwAppCrashBrowserFunction : public UIThreadExtensionFunction {
+class NwAppCrashBrowserFunction : public ExtensionFunction {
  public:
   NwAppCrashBrowserFunction() {}
 

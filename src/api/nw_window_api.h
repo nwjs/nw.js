@@ -17,7 +17,7 @@ class WebContents;
 namespace extensions {
 class AppWindow;
 
-class NwCurrentWindowInternalCloseFunction : public UIThreadExtensionFunction {
+class NwCurrentWindowInternalCloseFunction : public ExtensionFunction {
  public:
   NwCurrentWindowInternalCloseFunction() {}
   static void DoClose(AppWindow*);
@@ -32,7 +32,7 @@ class NwCurrentWindowInternalCloseFunction : public UIThreadExtensionFunction {
 };
 
 
-class NwCurrentWindowInternalShowDevToolsInternalFunction : public UIThreadExtensionFunction {
+class NwCurrentWindowInternalShowDevToolsInternalFunction : public ExtensionFunction {
  public:
   NwCurrentWindowInternalShowDevToolsInternalFunction() {}
 
@@ -46,7 +46,7 @@ class NwCurrentWindowInternalShowDevToolsInternalFunction : public UIThreadExten
   void OnOpened();
 };
 
-class NwCurrentWindowInternalShowDevTools2InternalFunction : public UIThreadExtensionFunction {
+class NwCurrentWindowInternalShowDevTools2InternalFunction : public ExtensionFunction {
  public:
   NwCurrentWindowInternalShowDevTools2InternalFunction() {}
 
@@ -60,7 +60,7 @@ class NwCurrentWindowInternalShowDevTools2InternalFunction : public UIThreadExte
   void OnOpened();
 };
 
-class NwCurrentWindowInternalCloseDevToolsFunction : public UIThreadExtensionFunction {
+class NwCurrentWindowInternalCloseDevToolsFunction : public ExtensionFunction {
  public:
   NwCurrentWindowInternalCloseDevToolsFunction() {}
 
@@ -72,7 +72,7 @@ class NwCurrentWindowInternalCloseDevToolsFunction : public UIThreadExtensionFun
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.closeDevTools", UNKNOWN)
 };
 
-class NwCurrentWindowInternalCapturePageInternalFunction : public UIThreadExtensionFunction {
+class NwCurrentWindowInternalCapturePageInternalFunction : public ExtensionFunction {
  public:
   NwCurrentWindowInternalCapturePageInternalFunction();
 
@@ -104,7 +104,7 @@ class NwCurrentWindowInternalCapturePageInternalFunction : public UIThreadExtens
   DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalCapturePageInternalFunction);
 };
 
-class NwCurrentWindowInternalClearMenuFunction : public UIThreadExtensionFunction {
+class NwCurrentWindowInternalClearMenuFunction : public ExtensionFunction {
  public:
   NwCurrentWindowInternalClearMenuFunction();
 
@@ -136,7 +136,7 @@ class NwCurrentWindowInternalSetMenuFunction : public NWSyncExtensionFunction {
   DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalSetMenuFunction);
 };
 
-class NwCurrentWindowInternalSetShadowFunction : public UIThreadExtensionFunction {
+class NwCurrentWindowInternalSetShadowFunction : public ExtensionFunction {
  public:
   NwCurrentWindowInternalSetShadowFunction(){}
 
@@ -151,7 +151,7 @@ class NwCurrentWindowInternalSetShadowFunction : public UIThreadExtensionFunctio
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setShadow", UNKNOWN)
 };
 
-class NwCurrentWindowInternalSetBadgeLabelFunction : public UIThreadExtensionFunction {
+class NwCurrentWindowInternalSetBadgeLabelFunction : public ExtensionFunction {
  public:
   NwCurrentWindowInternalSetBadgeLabelFunction(){}
 
@@ -163,7 +163,7 @@ class NwCurrentWindowInternalSetBadgeLabelFunction : public UIThreadExtensionFun
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setBadgeLabel", UNKNOWN)
 };
 
-class NwCurrentWindowInternalRequestAttentionInternalFunction : public UIThreadExtensionFunction {
+class NwCurrentWindowInternalRequestAttentionInternalFunction : public ExtensionFunction {
  public:
   NwCurrentWindowInternalRequestAttentionInternalFunction(){}
 
@@ -177,7 +177,7 @@ class NwCurrentWindowInternalRequestAttentionInternalFunction : public UIThreadE
   DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalRequestAttentionInternalFunction);
 };
   
-class NwCurrentWindowInternalSetProgressBarFunction : public UIThreadExtensionFunction {
+class NwCurrentWindowInternalSetProgressBarFunction : public ExtensionFunction {
  public:
   NwCurrentWindowInternalSetProgressBarFunction(){}
 
@@ -191,7 +191,7 @@ class NwCurrentWindowInternalSetProgressBarFunction : public UIThreadExtensionFu
   void Callback();
 };
 
-class NwCurrentWindowInternalReloadIgnoringCacheFunction : public UIThreadExtensionFunction {
+class NwCurrentWindowInternalReloadIgnoringCacheFunction : public ExtensionFunction {
  public:
    NwCurrentWindowInternalReloadIgnoringCacheFunction() {}
 
@@ -223,7 +223,7 @@ class NwCurrentWindowInternalSetZoomFunction : public NWSyncExtensionFunction {
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setZoom", UNKNOWN)
 };
 
-class NwCurrentWindowInternalEnterKioskModeFunction : public UIThreadExtensionFunction {
+class NwCurrentWindowInternalEnterKioskModeFunction : public ExtensionFunction {
  public:
    NwCurrentWindowInternalEnterKioskModeFunction() {}
 
@@ -235,7 +235,7 @@ class NwCurrentWindowInternalEnterKioskModeFunction : public UIThreadExtensionFu
    DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.enterKioskMode", UNKNOWN)
 };
 
-class NwCurrentWindowInternalLeaveKioskModeFunction : public UIThreadExtensionFunction {
+class NwCurrentWindowInternalLeaveKioskModeFunction : public ExtensionFunction {
  public:
    NwCurrentWindowInternalLeaveKioskModeFunction() {}
 
@@ -247,7 +247,7 @@ class NwCurrentWindowInternalLeaveKioskModeFunction : public UIThreadExtensionFu
    DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.leaveKioskMode", UNKNOWN)
 };
 
-class NwCurrentWindowInternalToggleKioskModeFunction : public UIThreadExtensionFunction {
+class NwCurrentWindowInternalToggleKioskModeFunction : public ExtensionFunction {
  public:
    NwCurrentWindowInternalToggleKioskModeFunction() {}
 
@@ -269,7 +269,7 @@ class NwCurrentWindowInternalIsKioskInternalFunction : public NWSyncExtensionFun
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.isKioskInternal", UNKNOWN)
 };
 
-class NwCurrentWindowInternalSetShowInTaskbarFunction : public UIThreadExtensionFunction {
+class NwCurrentWindowInternalSetShowInTaskbarFunction : public ExtensionFunction {
  public:
   NwCurrentWindowInternalSetShowInTaskbarFunction() {}
 
@@ -321,7 +321,7 @@ class NwCurrentWindowInternalGetCurrentFunction : public NWSyncExtensionFunction
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.getCurrent", UNKNOWN)
 };
 
-class NwCurrentWindowInternalGetPrintersFunction : public UIThreadExtensionFunction {
+class NwCurrentWindowInternalGetPrintersFunction : public ExtensionFunction {
  public:
   NwCurrentWindowInternalGetPrintersFunction() {}
 
