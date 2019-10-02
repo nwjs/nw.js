@@ -41,7 +41,7 @@ class NWContentVerifierDelegate : public ContentVerifierDelegate {
   ~NWContentVerifierDelegate() override;
 
   // ContentVerifierDelegate:
-  bool ShouldBeVerified(const Extension& extension) override;
+  VerifierSourceType GetVerifierSourceType(const Extension& extension) override;
   ContentVerifierKey GetPublicKey() override;
   GURL GetSignatureFetchUrl(const std::string& extension_id,
                             const base::Version& version) override;

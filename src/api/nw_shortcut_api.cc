@@ -80,7 +80,7 @@ namespace {
       std::unique_ptr<base::ListValue> args) {
     DCHECK_CURRENTLY_ON(BrowserThread::UI);
     ExtensionsBrowserClient::Get()->BroadcastEventToRenderers(
-                                                              histogram_value, event_name, std::move(args));
+                                                              histogram_value, event_name, std::move(args), false);
   }
 
   base::LazyInstance<NWShortcutObserver>::Leaky

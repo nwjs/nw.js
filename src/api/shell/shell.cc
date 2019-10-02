@@ -38,11 +38,12 @@ namespace nw {
 
 namespace {
 
-  void VerifyItemType(const FilePath &path, platform_util::OpenItemType *item_type) {
+  bool VerifyItemType(const FilePath &path, platform_util::OpenItemType *item_type) {
     *item_type = base::DirectoryExists(path) ? platform_util::OPEN_FOLDER : platform_util::OPEN_FILE;
+    return true;
   }
 
-  void OnItemTypeVerified(Profile* profile, const FilePath &path, const platform_util::OpenItemType *item_type) {
+  void OnItemTypeVerified(Profile* profile, const FilePath &path, const platform_util::OpenItemType *item_type, bool result) {
     platform_util::OpenItem(profile, path,
                             *item_type, platform_util::OpenOperationCallback());
   }
@@ -63,9 +64,9 @@ void Shell::Call(const std::string& method,
     arguments.GetString(0, &full_path);
     FilePath path = FilePath::FromUTF8Unsafe(full_path);
     platform_util::OpenItemType *item_type = new platform_util::OpenItemType();
-    base::PostTaskWithTraitsAndReply(
+    base::PostTaskAndReplyWithResult(
       FROM_HERE,
-      {base::MayBlock(), base::TaskShutdownBehavior::CONTINUE_ON_SHUTDOWN},
+      {base::ThreadPool(), base::MayBlock(), base::TaskShutdownBehavior::CONTINUE_ON_SHUTDOWN},
       base::Bind(&VerifyItemType, path, base::Unretained(item_type)),
       base::Bind(&OnItemTypeVerified, profile, path, base::Owned(item_type))
       );
