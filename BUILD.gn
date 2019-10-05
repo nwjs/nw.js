@@ -15,6 +15,9 @@ group("nwjs") {
   if (is_mac) {
     deps += [ ":copy_ffmpeg" ]
   }
+  if (is_win) {
+    deps += [ "//buildtools/third_party/libc++:libcpp" ]
+  }
   if (is_linux) {
     deps += [ "//chrome:xdg_mime" ]
   }
