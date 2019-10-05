@@ -557,11 +557,9 @@ static base::win::ScopedHICON createBadgeIcon(const HWND hWnd, const TCHAR *valu
   canvas.DrawCircle(gfx::Point(sizeX / 2, sizeY / 2), sizeX / 2, flags);
 
   // drawing the text
-  gfx::PlatformFont *platform_font = gfx::PlatformFont::CreateDefault();
+  scoped_refptr<gfx::PlatformFont> platform_font(gfx::PlatformFont::CreateDefault());
   const int fontSize = sizeY * 0.65f;
   gfx::Font font(platform_font->GetFontName(), fontSize);
-  platform_font->Release();
-  platform_font = NULL;
   const int yMargin = (sizeY - fontSize) / 2;
   canvas.DrawStringRectWithFlags(value, gfx::FontList(font), SK_ColorWHITE, gfx::Rect(sizeX, fontSize + yMargin + 1), gfx::Canvas::TEXT_ALIGN_CENTER);
 
