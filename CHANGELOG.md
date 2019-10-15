@@ -1,3 +1,9 @@
+0.41.3 / 10-15-2019
+===================
+- Update Chromium to [77.0.3865.120](https://chromereleases.googleblog.com/2019/10/stable-channel-update-for-desktop.html)
+- Update Node.js to [v12.12.0](https://nodejs.org/en/blog/release/v12.12.0/)
+- Fix: App crashes on Windows on call to Window.setBadgeLabel [(#7170)](https://github.com/nwjs/nw.js/issues/7170)
+
 0.41.2 / 09-20-2019
 ===================
 - Update Chromium to [77.0.3865.90](https://chromereleases.googleblog.com/2019/09/stable-channel-update-for-desktop_18.html)
