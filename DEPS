@@ -39,7 +39,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "all",
+  "buildspec_platforms": "linux64, mac64, win, win64, android, ios, chromeos",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -134,9 +134,9 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': 'dded3abc0dde8326f2433fef5184d14d9f9a39ad',
-  'nw_v8_revision': '7d8134a5cebca8f1a2e269a48157ccd03b8e01be',
-  'nw_node_revision': 'd98a8d11ae793201377769b7684d0a78a099105b',
+  'nw_src_revision': '27670a1abecfb8c11a23d1658ecd87a7e555e1cf',
+  'nw_v8_revision': 'ebac9cc6e42c2fcc5b6a3e6dd9ff875f2ae0cdcb',
+  'nw_node_revision': '21b7a8749c3aba5c1b030781f59c0dc2d058fcdd',
 
   # ANGLE's deps are relative to the angle_root variable.
   'angle_root': 'src/third_party/angle',
@@ -168,11 +168,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '6d1c0d4196f19537cc64f74bacc7d123de3be454',
+  'skia_revision': 'bc8994cb7f7fe93d758211a65c9b987210f83262',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '73694fd32996da7f914e05ebc84aa9fbe2cd6b52',
+  'v8_revision': '46a7ef3726d1cd4d5d34e2c9de7f1a9fd276ad21',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -188,7 +188,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling PDFium
   # and whatever else without interference from each other.
-  'pdfium_revision': 'a6b07058f9525c42b021f6f01d5e0da3215f46ed',
+  'pdfium_revision': 'b93ec9bf15bbab33c46f7c1296f11965dbb15836',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling BoringSSL
   # and whatever else without interference from each other.
@@ -683,7 +683,7 @@ deps = {
       'packages': [
           {
        'package': 'chromium/third_party/android_tools_bundletool',
-       'version': 'sZ4fDz_PUiCe1yvyheO_yjeET3eVhFTFTmGaXsnrH9IC',
+       'version': 'D5lTGqnC49aEB2WwySxcHjPzhSMmkyVTB-vEupzVvXsC',
    },
       ],
       'condition': 'checkout_android',
@@ -866,7 +866,7 @@ deps = {
 
   # For Linux and Chromium OS.
   'src/third_party/cros_system_api': {
-      'url': Var('chromium_git') + '/chromiumos/platform2/system_api.git' + '@' + '0418b5904157571bc06d3be3af38f17296feb9c4',
+      'url': Var('chromium_git') + '/chromiumos/platform2/system_api.git' + '@' + 'db31812cb2392fe5565076b26fa46084c4bcbd88',
       'condition': 'checkout_linux',
   },
 
@@ -1036,7 +1036,7 @@ deps = {
     Var('chromium_git') + '/chromium/deps/hunspell_dictionaries.git' + '@' + '681ca92480ecc11d35feae8c1c00e4e035630f43',
 
   'src/third_party/icu':
-    Var('chromium_git') + '/chromium/deps/icu.git' + '@' + '53f6b233a41ec982d8445996247093f7aaf41639',
+    Var('chromium_git') + '/chromium/deps/icu.git' + '@' + 'faee8bc70570192d82d2978a71e2a615788597d1',
 
   'src/third_party/icu4j': {
       'packages': [
@@ -1144,7 +1144,7 @@ deps = {
   },
 
   'src/third_party/libvpx/source/libvpx':
-    Var('chromium_git') + '/webm/libvpx.git' + '@' +  '305a5283c5b4a3ff5321dc51d121ef21d071e980',
+    Var('chromium_git') + '/webm/libvpx.git' + '@' +  '7584f1311e10738ab39f51633aa3f624772a79ba',
 
   'src/third_party/libwebm/source':
     Var('chromium_git') + '/webm/libwebm.git' + '@' + '51ca718c3adf0ddedacd7df25fe45f67dc5a9ce1',
@@ -1423,7 +1423,7 @@ deps = {
     Var('chromium_git') + '/external/khronosgroup/webgl.git' + '@' + 'abaae129d9a0c6e1e092067e0b105475df43352e',
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + '5b728cca77c46ed47ae589acba676485a957070b',
+    Var('webrtc_git') + '/src.git' + '@' + '3498a292ecfae6d0abaaa3d078670184710ce65b',
 
   'src/third_party/xdg-utils': {
       'url': Var('chromium_git') + '/chromium/deps/xdg-utils.git' + '@' + 'd80274d5869b17b8c9067a1022e4416ee7ed5e0d',
@@ -1470,7 +1470,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@f671d124ebff9658b6ee1239f6741b083b519647',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@ee44ffba8ca2d316a1d613113aa85bc809d669c7',
     'condition': 'checkout_src_internal',
   },
 
@@ -1478,7 +1478,7 @@ deps = {
       'packages': [
           {
               'package': 'chromium/third_party/android_deps/libs/com_google_android_play_core_verification',
-              'version': '0z_scbnHbcGHs7fem6R48_Cfgf7n-46yI7DEXkpkZcwC',
+              'version': '5WpfZCqhiL1qWTiBl_x3VTelXCJsv5r_SMuE-3H1CI0C',
           },
       ],
       'condition': 'checkout_android',
