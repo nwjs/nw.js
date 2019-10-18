@@ -723,6 +723,8 @@ function onLoadingStateChanged(status) {
 }
 
 function onDocumentStartEnd(start, frame, top_routing_id) {
+  if (!currentNWWindow)
+    return;
   if (start) {
     dispatchEventIfExists(currentNWWindow, "onDocumentStart", [frame, top_routing_id]);
   }
