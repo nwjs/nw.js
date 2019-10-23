@@ -1,3 +1,7 @@
+0.42.0 / 10-23-2019
+===================
+- Update Chromium to [78.0.3904.70](https://chromereleases.googleblog.com/2019/10/stable-channel-update-for-desktop_22.html)
+
 0.41.3 / 10-15-2019
 ===================
 - Update Chromium to [77.0.3865.120](https://chromereleases.googleblog.com/2019/10/stable-channel-update-for-desktop.html)

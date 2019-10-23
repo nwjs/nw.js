@@ -25,11 +25,11 @@ It was created in the Intel Open Source Technology Center.
 * Available on Linux, Mac OS X and Windows.
 
 ## Downloads
-* **v0.41.3:** (Oct 15, 2019, based off of Node.js v12.12.0, Chromium 77.0.3865.120) : [release notes](https://nwjs.io/blog/v0.41.3/)  
+* **v0.42.0:** (Oct 23, 2019, based off of Node.js v12.12.0, Chromium 78.0.3904.70) : [release notes](https://nwjs.io/blog/v0.42.0/)  
  **NOTE** You might want the **SDK build**. Please read the release notes.
- * Linux: [32bit](https://dl.nwjs.io/v0.41.3/nwjs-v0.41.3-linux-ia32.tar.gz) / [64bit](https://dl.nwjs.io/v0.41.3/nwjs-v0.41.3-linux-x64.tar.gz)
- * Windows: [32bit](https://dl.nwjs.io/v0.41.3/nwjs-v0.41.3-win-ia32.zip) / [64bit](https://dl.nwjs.io/v0.41.3/nwjs-v0.41.3-win-x64.zip)
- * Mac 10.10+: [64bit](https://dl.nwjs.io/v0.41.3/nwjs-v0.41.3-osx-x64.zip)
+ * Linux: [32bit](https://dl.nwjs.io/v0.42.0/nwjs-v0.42.0-linux-ia32.tar.gz) / [64bit](https://dl.nwjs.io/v0.42.0/nwjs-v0.42.0-linux-x64.tar.gz)
+ * Windows: [32bit](https://dl.nwjs.io/v0.42.0/nwjs-v0.42.0-win-ia32.zip) / [64bit](https://dl.nwjs.io/v0.42.0/nwjs-v0.42.0-win-x64.zip)
+ * Mac 10.10+: [64bit](https://dl.nwjs.io/v0.42.0/nwjs-v0.42.0-osx-x64.zip)
  * Use [Legacy build](http://nwjs.io/downloads/) for Win XP and early OSX.
 
 * **latest nightly build from git tip**: https://dl.nwjs.io/live-build/
