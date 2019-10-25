@@ -385,7 +385,7 @@ void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(DesktopMediaList* list, i
       content::RenderFrameHost* const main_frame = web_contents->GetMainFrame();
       result = registry->RegisterStream(main_frame->GetProcess()->GetID(),
                                         main_frame->GetRoutingID(),
-                                        web_contents->GetURL().GetOrigin(),
+                                        url::Origin::Create(web_contents->GetURL().GetOrigin()),
                                         source,
                                         extension()->name(), content::kRegistryStreamTypeDesktop);
       response->AppendString(result);

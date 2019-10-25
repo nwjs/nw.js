@@ -841,13 +841,13 @@ public:
       if (iter.GetData().process_type == content::PROCESS_TYPE_PPAPI_PLUGIN)
         (*count)++;
     }
-    base::PostTaskWithTraits(FROM_HERE, {content::BrowserThread::UI}, quit_task);
+    base::PostTask(FROM_HERE, {content::BrowserThread::UI}, quit_task);
   }
   static void EnsureFlashProcessCount(int expected) {
     int actual = 0;
     scoped_refptr<content::MessageLoopRunner> runner =
         new content::MessageLoopRunner;
-    base::PostTaskWithTraits(
+    base::PostTask(
         FROM_HERE,
         {content::BrowserThread::IO},
         base::BindOnce(&CountPluginProcesses, &actual, runner->QuitClosure()));

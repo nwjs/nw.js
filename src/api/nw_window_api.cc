@@ -71,6 +71,9 @@ using zoom::ZoomController;
 
 using nw::Menu;
 
+extern void SetProgressFraction(float percentage);
+extern void SetDownloadCount(int count);
+
 #if defined(OS_LINUX) || defined(OS_WIN)
 using nw::MenuBarView;
 #endif
@@ -605,13 +608,8 @@ NwCurrentWindowInternalSetBadgeLabelFunction::Run() {
 
   taskbar->SetOverlayIcon(hWnd, icon.get(), L"Status");
 #elif defined(OS_LINUX)
-  views::LinuxUI* linuxUI = views::LinuxUI::instance();
-  if (linuxUI == NULL) {
-    error_ = "LinuxUI::instance() is NULL";
-    return RespondNow(Error(error_));
-  }
   SetDeskopEnvironment();
-  linuxUI->SetDownloadCount(atoi(badge.c_str()));
+  SetDownloadCount(atoi(badge.c_str()));
 #else
   error_ = "NwCurrentWindowInternalSetBadgeLabelFunction NOT Implemented"
   NOTIMPLEMENTED() << error_;
@@ -619,7 +617,7 @@ NwCurrentWindowInternalSetBadgeLabelFunction::Run() {
 #endif
   return RespondNow(NoArguments());
 }
-  
+
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalRequestAttentionInternalFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args_);
@@ -695,13 +693,8 @@ NwCurrentWindowInternalSetProgressBarFunction::Run() {
 
   taskbar->SetProgressState(hWnd, tbpFlag);
 #elif defined(OS_LINUX)
-  views::LinuxUI* linuxUI = views::LinuxUI::instance();
-  if (linuxUI == NULL) {
-    error_ = "LinuxUI::instance() is NULL";
-    return RespondNow(Error(error_));
-  }
   SetDeskopEnvironment();
-  linuxUI->SetProgressFraction(progress);
+  SetProgressFraction(progress);
 #else
   error_ = "NwCurrentWindowInternalSetProgressBarFunction NOT Implemented"
   NOTIMPLEMENTED() << error_;

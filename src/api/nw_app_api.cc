@@ -6,6 +6,7 @@
 
 #include "base/command_line.h"
 #include "base/memory/ptr_util.h"
+#include "base/message_loop/message_loop_current.h"
 #include "base/task/post_task.h"
 #include "content/public/browser/browser_task_traits.h"
 #include "chrome/browser/browsing_data/browsing_data_appcache_helper.h"
