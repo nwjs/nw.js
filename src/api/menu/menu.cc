@@ -27,6 +27,7 @@
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/page_zoom.h"
 #include "ui/views/controls/menu/menu_runner.h"
+#include "third_party/blink/public/common/page/page_zoom.h"
 
 namespace nw {
 
@@ -71,12 +72,12 @@ void Menu::Call(const std::string& method,
     zoom::ZoomController* zoom_controller = zoom::ZoomController::FromWebContents(web_contents);
 
     if (zoom_controller) {
-      double zoom_factor = content::ZoomLevelToZoomFactor(zoom_controller->GetZoomLevel());
-      if (zoom_factor > content::kMaximumZoomFactor) {
-        zoom_factor = content::kMaximumZoomFactor;
+      double zoom_factor = blink::PageZoomLevelToZoomFactor(zoom_controller->GetZoomLevel());
+      if (zoom_factor > blink::kMaximumPageZoomFactor) {
+        zoom_factor = blink::kMaximumPageZoomFactor;
       }
-      if (zoom_factor < content::kMinimumZoomFactor) {
-        zoom_factor = content::kMinimumZoomFactor;
+      if (zoom_factor < blink::kMinimumPageZoomFactor) {
+        zoom_factor = blink::kMinimumPageZoomFactor;
       }
       x *= zoom_factor;
       y *= zoom_factor;

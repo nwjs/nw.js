@@ -58,6 +58,7 @@
 #include "sql/meta_table.h"
 #include "sql/transaction.h"
 #include "storage/common/database/database_identifier.h"
+#include "ui/gfx/image/image.h"
 
 #if defined(OS_WIN)
 #define _USE_MATH_DEFINES
