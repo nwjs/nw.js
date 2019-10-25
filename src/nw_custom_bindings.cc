@@ -57,8 +57,6 @@ using namespace blink;
 #undef INTERNAL_TRACE_EVENT_SCOPED_CONTEXT
 //#undef INTERNAL_TRACE_EVENT_CATEGORY_GROUP_ENABLED_FOR_RECORDING_MODE
 #endif
-#undef EXCLUSIVE_LOCKS_REQUIRED
-#undef SHARED_LOCKS_REQUIRED
 #undef LOCKS_EXCLUDED
 #undef LOCK_RETURNED
 //#undef EXCLUSIVE_LOCK_FUNCTION
@@ -79,6 +77,8 @@ using namespace blink;
 
 #undef BLINK_IMPLEMENTATION
 #define BLINK_IMPLEMENTATION 1
+
+#include "base/thread_annotations.h"
 
 #include "third_party/blink/public/web/web_document.h"
 #include "third_party/blink/public/web/web_security_policy.h"
