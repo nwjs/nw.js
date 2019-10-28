@@ -529,6 +529,8 @@ void willHandleNavigationPolicy(content::RenderView* rv,
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::HandleScope scope(isolate);
   blink::WebFrame* f = rv->GetWebView()->MainFrame();
+  if (!f->IsWebLocalFrame())
+    return;
   blink::WebLocalFrame* local_frame = f->ToWebLocalFrame();
   v8::Handle<v8::Context> v8_context =
       local_frame->MainWorldScriptContext();
