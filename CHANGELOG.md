@@ -1,3 +1,11 @@
+0.42.1 / 10-30-2019
+===================
+- Update Node.js to [v13.0.1](https://nodejs.org/en/blog/release/v13.0.1/)
+- Fix: nw.App.clearCache is blocked for seconds during startup [(#7192)](https://github.com/nwjs/nw.js/issues/7192)
+- Fix: crash when download in iframe [(#7187)](https://github.com/nwjs/nw.js/issues/7187)
+- Fix: crash on terminate web worker with enable node worker [(#7188)](https://github.com/nwjs/nw.js/issues/7188)
+- Fix: nw.Window.close event does not have "quit" on macOS when closed by Cmd-Q [(#7191)](https://github.com/nwjs/nw.js/issues/7191)
+
 0.42.0 / 10-23-2019
 ===================
 - Update Chromium to [78.0.3904.70](https://chromereleases.googleblog.com/2019/10/stable-channel-update-for-desktop_22.html)
