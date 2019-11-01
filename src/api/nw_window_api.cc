@@ -36,6 +36,8 @@
 #include "content/nw/src/api/nw_current_window_internal.h"
 
 #if defined(OS_WIN)
+#include <objbase.h>
+#include <wrl/client.h>
 #include <shobjidl.h>
 #include <dwmapi.h>
 
