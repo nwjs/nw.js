@@ -1,3 +1,8 @@
+0.42.2 / 11-01-2019
+===================
+- Update Chromium to [78.0.3904.87](https://chromereleases.googleblog.com/2019/10/stable-channel-update-for-desktop_31.html)
+- Fix: downlod in iframe can only fire once [(#7193)](https://github.com/nwjs/nw.js/issues/7193)
+
 0.42.1 / 10-30-2019
 ===================
 - Update Node.js to [v13.0.1](https://nodejs.org/en/blog/release/v13.0.1/)
