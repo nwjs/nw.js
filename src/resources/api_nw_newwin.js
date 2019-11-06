@@ -611,7 +611,7 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
   currentNWWindowInternal = getInternalApi('nw.currentWindowInternal');
   forEach(currentNWWindowInternal, function(key, value) {
-    if (!key.endsWith('Internal'))
+    if (!key.endsWith('Internal') && key !== 'close')
       NWWindow.prototype[key] = value;
   });
   apiFunctions.setHandleRequest('get', function(domWindow) {
