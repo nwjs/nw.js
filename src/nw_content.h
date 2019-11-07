@@ -81,8 +81,8 @@ void DocumentFinishHook(blink::WebLocalFrame* frame,
  bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window);
  bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_line,
                                                const base::FilePath& current_directory);
- bool GetUserAgentFromManifest(std::string* agent);
- void SetUserAgentOverride(const std::string& agent,
+ CONTENT_EXPORT bool GetUserAgentFromManifest(std::string* agent);
+ CONTENT_EXPORT void SetUserAgentOverride(const std::string& agent,
                            const std::string& name,
                            const std::string& version);
 
