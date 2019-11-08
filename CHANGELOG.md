@@ -1,3 +1,11 @@
+0.42.3 / 11-08-2019
+===================
+- Update Chromium to [78.0.3904.97](https://chromereleases.googleblog.com/2019/11/stable-channel-update-for-desktop.html)
+- Update Node.js to [v13.1.0](https://nodejs.org/en/blog/release/v13.1.0/)
+- Fix: Failed to load resource: net::ERR_BLOCKED_BY_CLIENT [(#7197)](https://github.com/nwjs/nw.js/issues/7197)
+- Fix: nw2: Window.close() function
+- nw2: change default window size
+
 0.42.2 / 11-01-2019
 ===================
 - Update Chromium to [78.0.3904.87](https://chromereleases.googleblog.com/2019/10/stable-channel-update-for-desktop_31.html)
