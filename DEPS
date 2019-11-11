@@ -139,9 +139,9 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': 'e2b051480127ec01a7eb9effa8535ce262d3be90',
-  'nw_v8_revision': 'c641a6d87cb88923bca29ca4147aebd000e88027',
-  'nw_node_revision': '8d6ef4879a832b8b1e51d421f826a38b6b7f66ee',
+  'nw_src_revision': '967bbc1f6eb3a32c15a9032e5f60d098c74530e3',
+  'nw_v8_revision': 'd39f5dc7f1ac2385137d9e481fcbde39fbb7e9f9',
+  'nw_node_revision': '89f66ac9ba71d7ad5e8425b660b64307a15eae44',
 
   # ANGLE's deps are relative to the angle_root variable.
   'angle_root': 'src/third_party/angle',
@@ -177,7 +177,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '1a4b5303aad619a9f08ebd4255d44af70f8aa597',
+  'v8_revision': 'd7968ad160494896b3a9b282e93463246de5e386',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -252,7 +252,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
-  'feed_revision': '78a886b204af52d24e298852587fc99f68cee626',
+  'feed_revision': 'cd56b5a44e1eb5f306fe3d3ab479c0504a644555',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling android_sdk_build-tools_version
   # and whatever else without interference from each other.
@@ -1547,7 +1547,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@6b4e77f69b719348c0c9a1b9e0c62e17b55ec536',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@cb565acfab90077542970eae9e4e1d93d1e87518',
     'condition': 'checkout_src_internal',
   },
 
