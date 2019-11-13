@@ -1,0 +1,14 @@
+<html><head><script>
+function showLocation () {
+  try {
+    var location = document.querySelector("iframe").contentWindow.location.href;
+  } catch (e) {
+    location = `FAILED ${e}`;
+  }
+  document.querySelector("p").textContent = location;
+}
+</script></head>
+<body onload="showLocation();">
+<p id="ret">waiting for onload</p>
+<iframe src="https://nwjs.io/"></script>
+</body></html>
