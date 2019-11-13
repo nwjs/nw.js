@@ -981,6 +981,9 @@ IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, SilentPrintChangeFooter) {
   ASSERT_TRUE(base::DeleteFile(output_pdf, false));
   LoadAndLaunchPlatformApp("silent_print", "Launched");
   content::WebContents* web_contents = GetFirstAppWindowWebContents();
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    web_contents = BrowserList::GetInstance()->GetLastActive()->tab_strip_model()->GetActiveWebContents();
+  }
   ASSERT_TRUE(web_contents);
   ExtensionTestMessageListener listener("Loaded", false);
   ASSERT_TRUE(content::ExecuteScript(web_contents, "document.getElementById('testbtn').click()"));
@@ -1010,6 +1013,9 @@ IN_PROC_BROWSER_TEST_F(NWJSAppTest, PrintChangeFooter) {
   content::BrowserAccessibilityState::GetInstance()->EnableAccessibility();
   LoadAndLaunchPlatformApp("print_test", "Launched");
   content::WebContents* web_contents = GetFirstAppWindowWebContents();
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    web_contents = BrowserList::GetInstance()->GetLastActive()->tab_strip_model()->GetActiveWebContents();
+  }
   ASSERT_TRUE(web_contents);
   ASSERT_TRUE(content::ExecuteScript(web_contents, "document.getElementById('testbtn').click()"));
   LOG(INFO) << "waiting for print dialog";
@@ -1238,6 +1244,9 @@ IN_PROC_BROWSER_TEST_F(NWJSDesktopCaptureApiTest, CrossDomain) {
   net::HostPortPair host_and_port = embedded_test_server()->host_port_pair();
   LoadAndLaunchPlatformApp("6212-crossdomain-screen", "Launched");
   content::WebContents* web_contents = GetFirstAppWindowWebContents();
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    web_contents = BrowserList::GetInstance()->GetLastActive()->tab_strip_model()->GetActiveWebContents();
+  }
   ASSERT_TRUE(web_contents);
   ExtensionTestMessageListener listener("Loaded", false);
   ASSERT_TRUE(content::ExecuteScript(web_contents, "document.getElementById('frame0').src='" +
