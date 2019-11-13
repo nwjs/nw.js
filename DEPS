@@ -134,7 +134,7 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': '17828b068f9deacdcf28e871aa59a3af37f9c3e8',
+  'nw_src_revision': '587807ae769f93664623d181ba4585cb02c9ec63',
   'nw_v8_revision': '76eb2bb73bce1f428d7d9cb9ac97866af3f2c4d1',
   'nw_node_revision': '4e7af7f40f864a84bc4f822b84a1b84f35326495',
 
