@@ -1,3 +1,10 @@
+0.42.4 / 11-13-2019
+===================
+- NW2 becomes the default mode [(#5875)](https://github.com/nwjs/nw.js/issues/5875)
+- nw2: Fix window icon and dimension
+- Fix: cross domain access from Node frame [(#7173)](https://github.com/nwjs/nw.js/issues/7173)
+- Fix: crash on terminate web worker in iframe with enable node worker [(#7196)](https://github.com/nwjs/nw.js/issues/7196)
+
 0.42.3 / 11-08-2019
 ===================
 - Update Chromium to [78.0.3904.97](https://chromereleases.googleblog.com/2019/11/stable-channel-update-for-desktop.html)
