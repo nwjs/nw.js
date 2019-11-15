@@ -6,7 +6,6 @@
 
 #include "base/logging.h"
 #include "base/memory/ptr_util.h"
-#include "chrome/browser/browser_process.h"
 #include "content/public/browser/browser_thread.h"
 #include "net/base/net_errors.h"
 #include "net/cert/caching_cert_verifier.h"
@@ -20,7 +19,6 @@ namespace {
 void MaybeSignalAnchorUse(int error,
                           const base::Closure& anchor_used_callback,
                           const net::CertVerifyResult& verify_result) {
-  DCHECK_CURRENTLY_ON(content::BrowserThread::IO);
   if (error != net::OK || !verify_result.is_issued_by_additional_trust_anchor ||
       anchor_used_callback.is_null()) {
     return;
@@ -33,7 +31,6 @@ void CompleteAndSignalAnchorUse(
     net::CompletionOnceCallback completion_callback,
     const net::CertVerifyResult* verify_result,
     int error) {
-  DCHECK_CURRENTLY_ON(content::BrowserThread::IO);
   MaybeSignalAnchorUse(error, anchor_used_callback, *verify_result);
   std::move(completion_callback).Run(error);
 }
@@ -53,16 +50,15 @@ net::CertVerifier::Config ExtendTrustAnchors(
 PolicyCertVerifier::PolicyCertVerifier(
     const base::Closure& anchor_used_callback)
     : anchor_used_callback_(anchor_used_callback) {
+  LOG(WARNING) << "===> PolicyCertVerifier::PolicyCertVerifier";
   //DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
 }
 
 PolicyCertVerifier::~PolicyCertVerifier() {
-  DCHECK_CURRENTLY_ON(content::BrowserThread::IO);
 }
 
 void PolicyCertVerifier::InitializeOnIOThread(
     const scoped_refptr<net::CertVerifyProc>& verify_proc) {
-  DCHECK_CURRENTLY_ON(content::BrowserThread::IO);
   if (!verify_proc->SupportsAdditionalTrustAnchors()) {
     LOG(WARNING)
         << "Additional trust anchors not supported on the current platform!";
@@ -74,7 +70,7 @@ void PolicyCertVerifier::InitializeOnIOThread(
 
 void PolicyCertVerifier::SetTrustAnchors(
     const net::CertificateList& trust_anchors) {
-  DCHECK_CURRENTLY_ON(content::BrowserThread::IO);
+  LOG(WARNING) << "===> PolicyCertVerifier::SetTrustAnchors";
   if (trust_anchors == trust_anchors_)
     return;
   trust_anchors_ = trust_anchors;
@@ -89,7 +85,6 @@ int PolicyCertVerifier::Verify(
     net::CompletionOnceCallback completion_callback,
     std::unique_ptr<Request>* out_req,
     const net::NetLogWithSource& net_log) {
-  DCHECK_CURRENTLY_ON(content::BrowserThread::IO);
   DCHECK(delegate_);
   net::CompletionOnceCallback wrapped_callback =
       base::BindOnce(&CompleteAndSignalAnchorUse,
@@ -104,7 +99,6 @@ int PolicyCertVerifier::Verify(
 }
 
 void PolicyCertVerifier::SetConfig(const Config& config) {
-  DCHECK_CURRENTLY_ON(content::BrowserThread::IO);
   orig_config_ = config;
   delegate_->SetConfig(ExtendTrustAnchors(orig_config_, trust_anchors_));
 }

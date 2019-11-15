@@ -117,8 +117,8 @@ nw_chrome_browser_sources = [
         "src/browser/nw_chrome_browser_hooks.h",
         "src/browser/nw_extensions_browser_hooks.cc",
         "src/browser/nw_extensions_browser_hooks.h",
-        "src/policy_cert_verifier.cc",
-        "src/policy_cert_verifier.h",
+        #"src/policy_cert_verifier.cc",
+        #"src/policy_cert_verifier.h",
         "src/nw_content_verifier_delegate.cc",
         "src/nw_content_verifier_delegate.h",
 ]

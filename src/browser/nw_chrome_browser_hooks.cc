@@ -34,8 +34,10 @@
 #include "content/nw/src/common/shell_switches.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/child_process_security_policy.h"
+#include "content/public/browser/network_service_instance.h"
 #include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/render_process_host.h"
+#include "content/public/browser/storage_partition.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/result_codes.h"
 
@@ -58,6 +60,7 @@
 #include "sql/meta_table.h"
 #include "sql/transaction.h"
 #include "storage/common/database/database_identifier.h"
+#include "services/network/network_service.h"
 
 #if defined(OS_WIN)
 #define _USE_MATH_DEFINES
@@ -188,32 +191,16 @@ bool GetDirUserData(base::FilePath *user_data_dir) {
   return base::PathService::Get(chrome::DIR_USER_DATA, user_data_dir);
 }
 
-#if 0
-void SetTrustAnchorsOnIOThread(const scoped_refptr<net::URLRequestContextGetter>& url_request_getter,
-                               IOThread* io_thread,
-                               const net::CertificateList& trust_anchors) {
-  PolicyCertVerifier* verifier =
-    (PolicyCertVerifier*)io_thread->globals()->system_request_context->cert_verifier();
-  verifier->SetTrustAnchors(trust_anchors);
-#if 1
-  net::URLRequestContext* url_request_context =
-    url_request_getter->GetURLRequestContext();
-  PolicyCertVerifier* verifier2 = (PolicyCertVerifier*)url_request_context->cert_verifier();
-  verifier2->SetTrustAnchors(trust_anchors);
-#endif
-}
-
 void SetTrustAnchors(net::CertificateList& trust_anchors) {
   // LOG(INFO)
   //   << "Added " << trust_anchors.size() << " certificates to trust anchors.";
+#if 0
   Profile* profile = ProfileManager::GetActiveUserProfile();
-  net::URLRequestContextGetter* url_request_context_getter = profile->GetRequestContext();
-  base::PostTaskWithTraits(FROM_HERE,
-    {content::BrowserThread::IO},
-    base::BindOnce(SetTrustAnchorsOnIOThread, base::WrapRefCounted(url_request_context_getter),
-               g_browser_process->io_thread(), trust_anchors));
-}
+  content::StoragePartition* storage_partition =
+    content::BrowserContext::GetDefaultStoragePartition(profile);
 #endif
+  content::GetNetworkService()->SetAdditionalTrustAnchors(trust_anchors);
+}
 
 void SetAppIcon(gfx::Image &icon) {
   g_app_icon = icon;
@@ -389,13 +376,7 @@ void MainPartsPreMainMessageLoopRunHook() {
       trust_anchors.insert(trust_anchors.end(), loaded.begin(), loaded.end());
     }
     if (!trust_anchors.empty()) {
-#if !defined(OS_MACOSX)
-      //SetTrustAnchors(trust_anchors);
-#else
-      net::TestRootCerts* certs = net::TestRootCerts::GetInstance();
-      for (size_t i = 0; i < trust_anchors.size(); i++)
-        certs->Add(trust_anchors[i].get());
-#endif
+      SetTrustAnchors(trust_anchors);
     }
   }
 }
