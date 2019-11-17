@@ -8,6 +8,10 @@ var result = result||[];
 window.onload = function() {
   result.push("onload-dom");
   document.getElementById('output').value = (JSON.stringify(result));
+  var win = nw.Window.get();
+  var status = '';
+  if (win.height == window.innerHeight) status = "Success: ";
+  document.getElementById('output2').innerHTML = status + "height: " + win.height + ", " + window.innerHeight;
 }
 </script>
 </head>
@@ -17,5 +21,6 @@ window.onload = function() {
 		result.push("body-start");
 	</script>
 <textarea id="output" rows="12" cols="80" style="font-family: monospace;"></textarea>
+<p id="output2"></p>
 </body>
 </html>
