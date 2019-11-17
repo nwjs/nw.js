@@ -41,6 +41,10 @@
 #include "third_party/blink/public/web/web_view.h"
 #include "third_party/blink/renderer/platform/bindings/script_forbidden_scope.h"
 #include "third_party/blink/public/web/blink.h"
+#include "third_party/blink/renderer/platform/bindings/dom_wrapper_world.h"
+#include "third_party/blink/renderer/bindings/core/v8/v8_binding_for_core.h"
+#include "third_party/blink/renderer/platform/wtf/casting.h"
+#include "third_party/blink/renderer/core/frame/web_local_frame_impl.h"
 
 #include "third_party/node-nw/src/node_webkit.h"
 
@@ -532,8 +536,11 @@ void willHandleNavigationPolicy(content::RenderView* rv,
   if (!f->IsWebLocalFrame())
     return;
   blink::WebLocalFrame* local_frame = f->ToWebLocalFrame();
-  v8::Handle<v8::Context> v8_context =
-      local_frame->MainWorldScriptContext();
+  blink::LocalFrame* core_frame = blink::To<blink::WebLocalFrameImpl>(local_frame)->GetFrame();
+
+  if (core_frame->ContextNotReady(blink::DOMWrapperWorld::MainWorld()))
+    return;
+  v8::Handle<v8::Context> v8_context = local_frame->MainWorldScriptContext();
   ScriptContext* script_context =
       g_dispatcher->script_context_set().GetByV8Context(v8_context);
   v8::Context::Scope cscope (v8_context);
