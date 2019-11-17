@@ -19,7 +19,7 @@ try:
     wait_window_handles(driver, 2)
     print 'switch to opened window'
     driver.switch_to_window(driver.window_handles[-1])
-    result = driver.find_element_by_id('yellow').get_attribute('innerHTML')
+    result = wait_for_element_id(driver, 'yellow')
     print 'window size: %s' % result
     assert('200, 300' in result)
     driver.switch_to_window(driver.window_handles[0])
