@@ -50,7 +50,6 @@ net::CertVerifier::Config ExtendTrustAnchors(
 PolicyCertVerifier::PolicyCertVerifier(
     const base::Closure& anchor_used_callback)
     : anchor_used_callback_(anchor_used_callback) {
-  LOG(WARNING) << "===> PolicyCertVerifier::PolicyCertVerifier";
   //DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
 }
 
@@ -70,7 +69,6 @@ void PolicyCertVerifier::InitializeOnIOThread(
 
 void PolicyCertVerifier::SetTrustAnchors(
     const net::CertificateList& trust_anchors) {
-  LOG(WARNING) << "===> PolicyCertVerifier::SetTrustAnchors";
   if (trust_anchors == trust_anchors_)
     return;
   trust_anchors_ = trust_anchors;
