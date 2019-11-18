@@ -39,7 +39,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "linux64, mac64, win, win64",
+  "buildspec_platforms": "linux64, mac64, win, win64, android",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -134,7 +134,7 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': '0088150360ef165f5dc8d44336e93ac637528cf8',
+  'nw_src_revision': 'f6af0b9860b91c09585e436e996be5a3f65a6f1d',
   'nw_v8_revision': '910710981248526a02656d33d3bbe8dc72538cd2',
   'nw_node_revision': '4e7af7f40f864a84bc4f822b84a1b84f35326495',
 
@@ -168,7 +168,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': 'a40a8a58755f952280cac9dfdcbf761aa7d29a52',
+  'skia_revision': 'dba5c993df3fb95fed01f8131aa0401e83c9198f',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
@@ -180,7 +180,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': '66e0feec40dcd82459234eb249fef11aa3f2a917',
+  'angle_revision': '0cc6d390272a3ec18d89400ed28e1bfa2be56fcf',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -247,7 +247,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
-  'feed_revision': '760bb171ed66f8385aa3720d90ca532ae51354cc',
+  'feed_revision': '71971dd78aaf118efaf8047d85528377950a4061',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling android_sdk_build-tools_version
   # and whatever else without interference from each other.
@@ -1470,7 +1470,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@28eef741e362036161b2212c77fed61725559b79',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@7ea7b65154ed84d96518ea94ee550db9f0612829',
     'condition': 'checkout_src_internal',
   },
 
