@@ -1,3 +1,16 @@
+0.42.5 / 11-19-2019
+===================
+- Update Chromium to [78.0.3904.108](https://chromereleases.googleblog.com/2019/11/stable-channel-update-for-desktop_18.html)
+- nw2: clear MacOS menu [(#7219)](https://github.com/nwjs/nw.js/issues/7219)
+- nw2: nw2: support fullscreen in new-win-policy [(#7209)](https://github.com/nwjs/nw.js/issues/7209)
+- nw2: fix new-win-policy ctrl-click and frameless [(#7209)](https://github.com/nwjs/nw.js/issues/7209)
+- nw2: Fix windows maximum size
+- nw2: use innerHeight and Width for Window.resizeTo
+- nw2: Fix window center position, updating dimension, mac max size
+- Fix: crash after loading compiled JS [(#7126)](https://github.com/nwjs/nw.js/issues/7126)
+- Fix: additional-trust-anchors regression
+- [docs] clarify the inner vs outter dimension in various places
+
 0.42.4 / 11-13-2019
 ===================
 - NW2 becomes the default mode [(#5875)](https://github.com/nwjs/nw.js/issues/5875)
