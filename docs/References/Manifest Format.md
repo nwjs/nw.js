@@ -198,7 +198,7 @@ All of the window subfields can be overwritten by using [`new-win-policy` event]
 ### width
 ### height
 
-* `{Integer}` the initial width/height of the main window.
+* `{Integer}` the initial inner width/height of the main window.
 
 ### toolbar
 
@@ -218,12 +218,12 @@ All of the window subfields can be overwritten by using [`new-win-policy` event]
 ### min_width
 ### min_height
 
-* `{Integer}` minimum width/height of window
+* `{Integer}` minimum inner width/height of window
 
 ### max_width
 ### max_height
 
-* `{Integer}` maximum width/height of window
+* `{Integer}` maximum inner width/height of window
 
 ### as_desktop (Linux)
 
