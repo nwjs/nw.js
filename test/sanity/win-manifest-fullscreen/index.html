@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>5093 as a menu window</title>
+    <meta charset="UTF-8">
+    <style>
+      html,
+      body {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          padding: 0;
+          background-color: blue;
+      }
+      #yellow {
+          color: black;
+          background-color: yellow;
+          width: 200px;
+          height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="yellow"></div>
+    <div id="ret"></div>
+  </body>
+  <script>
+    var win = nw.Window.get();
+    window.onload = window.onresize = function() {
+      var yellow = document.getElementById('yellow');
+      var ret = document.getElementById('ret');
+      yellow.innerHTML = window.innerWidth + ", " + window.innerHeight;
+      ret.innerHTML = win.width + ", " + win.height;
+      
+    }
+  </script>
+</html>

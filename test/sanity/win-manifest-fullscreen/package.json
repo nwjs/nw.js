@@ -1,0 +1,5 @@
+{
+  "name": "myapp",
+  "main": "index.html",
+  "window": { "fullscreen": true }
+}
