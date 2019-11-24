@@ -7,6 +7,7 @@ namespace nw.Window {
   callback CreateWindowCallback =
       void ([instanceOf=NWWindow] object createdWindow);
   callback EventCallback = void();
+  callback GetAllWinCallback = void (object[] windows);
 
   callback CapturePageCallback = void (DOMString dataUrl);
   [noinline_doc] dictionary CapturePageOptions {
@@ -94,6 +95,7 @@ namespace nw.Window {
   interface Functions {
     // get the current window
     [nocompile] static NWWindow get(optional object domWindow);
+    [nocompile] static void getAll(GetAllWinCallback callback);
     [nocompile] static void open(DOMString url,
                                  optional CreateWindowOptions options,
                                  optional CreateWindowCallback callback);

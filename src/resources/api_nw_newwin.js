@@ -624,6 +624,13 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
     return currentNWWindow;
   });
 
+  apiFunctions.setHandleRequest('getAll', function(callback) {
+    chrome.windows.getAll({populate: true}, function (cwindows) {
+      let create_nw_win = cwin => new NWWindow(cwin);
+      callback(cwindows.map(create_nw_win));
+    });
+  });
+
   apiFunctions.setHandleRequest('open', function(url, params, callback) {
     var options = {'url': url, 'setSelfAsOpener': true, 'type': 'popup'};
     //FIXME: unify this conversion code with nwjs/default.js
