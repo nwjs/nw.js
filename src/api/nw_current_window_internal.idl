@@ -23,7 +23,7 @@ namespace nw.currentWindowInternal {
 
   interface Functions {
     static void close(optional boolean force, optional long id);
-    static void setShadow(boolean shadow);
+    static void setShadowInternal(boolean shadow, optional long id);
     static void showDevToolsInternal(optional ShowDevToolsCallback callback);
     static void showDevTools2Internal(long id, optional ShowDevToolsCallback callback);
     static void closeDevTools();

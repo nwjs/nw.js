@@ -344,7 +344,7 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
     };
 
     NWWindow.prototype.setShadow = function(shadow) {
-      currentNWWindowInternal.setShadow(shadow);
+      currentNWWindowInternal.setShadowInternal(shadow);
     }
 
     NWWindow.prototype.showDevTools = function(frm, callback) {

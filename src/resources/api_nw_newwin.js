@@ -309,7 +309,7 @@ NWWindow.prototype.removeAllListeners = function (event) {
 };
 
 NWWindow.prototype.setShadow = function(shadow) {
-  currentNWWindowInternal.setShadow(shadow);
+  currentNWWindowInternal.setShadowInternal(shadow, this.cWindow.id);
 };
 
 NWWindow.prototype.showDevTools = function(frm, callback) {

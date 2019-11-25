@@ -821,13 +821,21 @@ bool NwCurrentWindowInternalGetTitleInternalFunction::RunNWSync(base::ListValue*
 }
 
 ExtensionFunction::ResponseAction
-NwCurrentWindowInternalSetShadowFunction::Run() {
+NwCurrentWindowInternalSetShadowInternalFunction::Run() {
 #if defined(OS_MACOSX)
   EXTENSION_FUNCTION_VALIDATE(args_);
   bool shadow;
   EXTENSION_FUNCTION_VALIDATE(args_->GetBoolean(0, &shadow));
-  AppWindow* window = getAppWindow(this);
-  SetShadowOnWindow(window->GetNativeWindow().GetNativeNSWindow(), shadow);
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    int id = 0;
+    args_->GetInteger(1, &id);
+    Browser* browser = getBrowser(this, id);
+    if (browser)
+      SetShadowOnWindow(browser->window()->GetNativeWindow().GetNativeNSWindow(), shadow);
+  } else {
+    AppWindow* window = getAppWindow(this);
+    SetShadowOnWindow(window->GetNativeWindow().GetNativeNSWindow(), shadow);
+  }
 #endif
   return RespondNow(NoArguments());
 }

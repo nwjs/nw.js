@@ -136,19 +136,19 @@ class NwCurrentWindowInternalSetMenuFunction : public NWSyncExtensionFunction {
   DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalSetMenuFunction);
 };
 
-class NwCurrentWindowInternalSetShadowFunction : public ExtensionFunction {
+class NwCurrentWindowInternalSetShadowInternalFunction : public ExtensionFunction {
  public:
-  NwCurrentWindowInternalSetShadowFunction(){}
+  NwCurrentWindowInternalSetShadowInternalFunction(){}
 
  protected:
-  ~NwCurrentWindowInternalSetShadowFunction() override {}
+  ~NwCurrentWindowInternalSetShadowInternalFunction() override {}
 #if defined(OS_MACOSX)
   void SetShadowOnWindow(NSWindow *window, bool shadow);
 #endif
 
   // ExtensionFunction:
   ResponseAction Run() override;
-  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setShadow", UNKNOWN)
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setShadowInternal", UNKNOWN)
 };
 
 class NwCurrentWindowInternalSetBadgeLabelFunction : public ExtensionFunction {
