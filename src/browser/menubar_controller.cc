@@ -94,7 +94,7 @@ views::MenuItemView* MenuBarController::CreateMenu(MenuBarView* menubar,
   return menu;
 }
 
-void MenuBarController::RunMenuAt(views::View* view, const gfx::Point& point) {
+void MenuBarController::RunMenuAt(views::View* view) {
 
   views::MenuButton* menu_button = static_cast<views::MenuButton*>(view);
   gfx::Point screen_loc;

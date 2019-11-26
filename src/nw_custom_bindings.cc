@@ -7,6 +7,11 @@ MSVC_PUSH_DISABLE_WARNING(4305)
 
 #include "content/nw/src/nw_custom_bindings.h"
 
+#define INSIDE_BLINK 1
+#include "third_party/blink/public/platform/web_point.h"
+#include "third_party/blink/public/platform/web_rect.h"
+
+#undef INSIDE_BLINK
 #include "content/renderer/render_view_impl.h"
 #include "content/public/renderer/render_thread.h"
 
@@ -16,6 +21,8 @@ MSVC_PUSH_DISABLE_WARNING(4305)
 #include "base/files/file_util.h"
 #include "extensions/renderer/script_context.h"
 #include "v8/include/v8.h"
+
+#define INSIDE_BLINK 1
 
 using namespace blink;
 #if defined(OS_WIN)
@@ -69,14 +76,14 @@ using namespace blink;
 //#include "third_party/WebKit/Source/config.h"
 #include "third_party/blink/renderer/core/html/html_iframe_element.h"
 #include "third_party/blink/renderer/core/dom/document.h"
-#include "third_party/blink/renderer/core/frame/local_frame.h"
 #include "third_party/blink/public/web/web_frame.h"
 #include "third_party/blink/public/web/web_view.h"
-#include "third_party/blink/renderer/core/frame/web_local_frame_impl.h"
 #include "third_party/blink/public/web/web_script_source.h"
 
 #undef BLINK_IMPLEMENTATION
 #define BLINK_IMPLEMENTATION 1
+#include "third_party/blink/renderer/core/frame/local_frame.h"
+#include "third_party/blink/renderer/core/frame/web_local_frame_impl.h"
 
 #include "base/thread_annotations.h"
 

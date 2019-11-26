@@ -5,6 +5,7 @@
 #include "base/strings/utf_string_conversions.h"
 #include "base/task/post_task.h"
 #include "content/public/browser/render_widget_host.h"
+#include "chrome/browser/browser_process.h"
 #include "chrome/browser/devtools/devtools_window.h"
 #include "chrome/browser/extensions/devtools_util.h"
 #include "chrome/browser/extensions/extension_tab_util.h"
@@ -105,7 +106,7 @@ printing::PrinterList EnumeratePrintersAsync() {
   base::internal::AssertBlockingAllowed();
 
   scoped_refptr<printing::PrintBackend> print_backend(
-        printing::PrintBackend::CreateInstance(nullptr));
+                                                      printing::PrintBackend::CreateInstance(nullptr, g_browser_process->GetApplicationLocale()));
 
   printing::PrinterList printer_list;
   print_backend->EnumeratePrinters(&printer_list);

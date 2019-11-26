@@ -21,7 +21,7 @@ class MenuBarController : public views::MenuModelAdapter {
   ~MenuBarController() override;
 
   static views::MenuItemView* CreateMenu(MenuBarView* menubar, ui::MenuModel* model, MenuBarController* controller);
-  void RunMenuAt(views::View* view, const gfx::Point& point);
+  void RunMenuAt(views::View* view);
 
   views::MenuItemView* GetSiblingMenu(
       views::MenuItemView* menu,

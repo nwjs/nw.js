@@ -836,12 +836,12 @@ public:
     test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("test"));
     test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("data"));
   }
-  static void CountPluginProcesses(int* count, const base::Closure& quit_task) {
+  static void CountPluginProcesses(int* count, base::OnceClosure quit_task) {
     for (content::BrowserChildProcessHostIterator iter; !iter.Done(); ++iter) {
       if (iter.GetData().process_type == content::PROCESS_TYPE_PPAPI_PLUGIN)
         (*count)++;
     }
-    base::PostTask(FROM_HERE, {content::BrowserThread::UI}, quit_task);
+    base::PostTask(FROM_HERE, {content::BrowserThread::UI}, std::move(quit_task));
   }
   static void EnsureFlashProcessCount(int expected) {
     int actual = 0;

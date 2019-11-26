@@ -8,7 +8,6 @@
 #include "base/strings/string16.h"
 #include "ui/views/accessible_pane_view.h"
 #include "ui/views/controls/button/button.h"
-#include "ui/views/controls/button/menu_button_listener.h"
 
 namespace views {
   class MenuRunner;
@@ -29,7 +28,6 @@ namespace nw {
 
 class MenuBarView :
   public views::AccessiblePaneView,
-  public views::MenuButtonListener,
   public views::ButtonListener {
 
  public:
@@ -47,11 +45,6 @@ class MenuBarView :
   void InitView(ui::MenuModel* model);
 
   bool GetMenuButtonAtLocation(const gfx::Point& loc, ui::MenuModel** model, views::MenuButton** button);
-
-  // views::MenuButtonListener:
-  void OnMenuButtonClicked(views::Button* source,
-                           const gfx::Point& point,
-                           const ui::Event* event) override;
 
   // views::ButtonListener:
    void ButtonPressed(views::Button* sender,
