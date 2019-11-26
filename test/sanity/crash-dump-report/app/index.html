@@ -9,11 +9,13 @@
   <button onclick="nw.App.crashBrowser()">crash browser</button>
   <button onclick="nw.App.crashRenderer()">crash renderer</button>
   <script>
+  function test() {
     if (nw.App.argv.indexOf("--test-renderer-crash") > -1)
     nw.App.crashRenderer();
     else
     nw.App.crashBrowser();
-    
+  }
+  setTimeout(test, 2000);
   </script>
 </body>
 </html>

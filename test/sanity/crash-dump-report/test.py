@@ -72,7 +72,7 @@ print "user data dir: %s" % (user_data_dir)
 
 os.chdir(pkg1)
 
-for arg in ['--test-browser-crash', '--test-renderer-crash']:
+for arg in ['--test-renderer-crash', '--test-browser-crash']:
     try:
         shutil.rmtree(user_data_dir)
     except:
@@ -110,4 +110,5 @@ for arg in ['--test-browser-crash', '--test-renderer-crash']:
         assert(pkgname == r['prod'][0])
         assert(r['ver'][0] == "0.0.12")
         assert(len(r['upload_file_minidump'][0]) > 100000)
+        time.sleep(5)
 
