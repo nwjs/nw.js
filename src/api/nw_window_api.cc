@@ -772,11 +772,17 @@ ExtensionFunction::ResponseAction
 NwCurrentWindowInternalEnterKioskModeFunction::Run() {
   AppWindow* window = getAppWindow(this);
   window->ForcedFullscreen();
+#if defined(OS_MACOSX)
+    NWSetNSAppKioskOptions();
+#endif
   return RespondNow(NoArguments());
 }
 
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalLeaveKioskModeFunction::Run() {
+#if defined(OS_MACOSX)
+    NWRestoreNSAppKioskOptions();
+#endif
   AppWindow* window = getAppWindow(this);
   window->Restore();
   return RespondNow(NoArguments());
@@ -785,10 +791,17 @@ NwCurrentWindowInternalLeaveKioskModeFunction::Run() {
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalToggleKioskModeFunction::Run() {
   AppWindow* window = getAppWindow(this);
-  if (window->IsFullscreen() || window->IsForcedFullscreen())
+  if (window->IsFullscreen() || window->IsForcedFullscreen()) {
+#if defined(OS_MACOSX)
+    NWRestoreNSAppKioskOptions();
+#endif
     window->Restore();
-  else
+  } else {
     window->ForcedFullscreen();
+#if defined(OS_MACOSX)
+    NWSetNSAppKioskOptions();
+#endif
+  }
   return RespondNow(NoArguments());
 }
 

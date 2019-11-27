@@ -54,3 +54,29 @@ void NWSetNSWindowShowInTaskbar(extensions::NativeAppWindow* win, bool show) {
   gfx::SetNSWindowShowInTaskbar(nswin, show);
 }
 
+
+static NSApplicationPresentationOptions previousOptions = 0;
+static bool kiosked = false;
+
+void NWSetNSAppKioskOptions(void) {
+  if(!kiosked) {
+    kiosked = true;
+    previousOptions = [NSApp currentSystemPresentationOptions];
+  }
+  NSApplicationPresentationOptions options = NSApplicationPresentationHideDock | NSApplicationPresentationHideMenuBar | NSApplicationPresentationDisableProcessSwitching | NSApplicationPresentationDisableForceQuit | NSApplicationPresentationDisableSessionTermination | NSApplicationPresentationDisableHideApplication | NSFullScreenWindowMask | NSApplicationPresentationDisableAppleMenu;
+  [NSApp setPresentationOptions:options];
+  NSWindow *window = [NSApp keyWindow];
+  [window setLevel:NSStatusWindowLevel+1];
+  [NSApp activateIgnoringOtherApps:YES];
+}
+
+void NWRestoreNSAppKioskOptions(void) {
+    if (kiosked) {
+        kiosked = false;
+        // Or should we just use NSApplicationPresentationDefault?
+        [NSApp setPresentationOptions:previousOptions]; 
+        NSWindow *window = [NSApp keyWindow];
+        [window setLevel:NSNormalWindowLevel];
+        [NSApp activateIgnoringOtherApps:NO];
+    }
+}
