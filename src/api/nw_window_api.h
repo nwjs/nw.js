@@ -223,40 +223,40 @@ class NwCurrentWindowInternalSetZoomFunction : public NWSyncExtensionFunction {
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setZoom", UNKNOWN)
 };
 
-class NwCurrentWindowInternalEnterKioskModeFunction : public ExtensionFunction {
+class NwCurrentWindowInternalEnterKioskModeInternalFunction : public ExtensionFunction {
  public:
-   NwCurrentWindowInternalEnterKioskModeFunction() {}
+   NwCurrentWindowInternalEnterKioskModeInternalFunction() {}
 
  protected:
-   ~NwCurrentWindowInternalEnterKioskModeFunction() override {}
+   ~NwCurrentWindowInternalEnterKioskModeInternalFunction() override {}
 
    // ExtensionFunction:
    ResponseAction Run() override;
-   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.enterKioskMode", UNKNOWN)
+   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.enterKioskModeInternal", UNKNOWN)
 };
 
-class NwCurrentWindowInternalLeaveKioskModeFunction : public ExtensionFunction {
+class NwCurrentWindowInternalLeaveKioskModeInternalFunction : public ExtensionFunction {
  public:
-   NwCurrentWindowInternalLeaveKioskModeFunction() {}
+   NwCurrentWindowInternalLeaveKioskModeInternalFunction() {}
 
  protected:
-   ~NwCurrentWindowInternalLeaveKioskModeFunction() override {}
+   ~NwCurrentWindowInternalLeaveKioskModeInternalFunction() override {}
 
    // ExtensionFunction:
    ResponseAction Run() override;
-   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.leaveKioskMode", UNKNOWN)
+   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.leaveKioskModeInternal", UNKNOWN)
 };
 
-class NwCurrentWindowInternalToggleKioskModeFunction : public ExtensionFunction {
+class NwCurrentWindowInternalToggleKioskModeInternalFunction : public ExtensionFunction {
  public:
-   NwCurrentWindowInternalToggleKioskModeFunction() {}
+   NwCurrentWindowInternalToggleKioskModeInternalFunction() {}
 
  protected:
-   ~NwCurrentWindowInternalToggleKioskModeFunction() override {}
+   ~NwCurrentWindowInternalToggleKioskModeInternalFunction() override {}
 
    // ExtensionFunction:
    ResponseAction Run() override;
-   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.toggleKioskMode", UNKNOWN)
+   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.toggleKioskModeInternal", UNKNOWN)
 };
 
 class NwCurrentWindowInternalIsKioskInternalFunction : public NWSyncExtensionFunction {

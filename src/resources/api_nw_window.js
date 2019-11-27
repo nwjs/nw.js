@@ -345,7 +345,19 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
 
     NWWindow.prototype.setShadow = function(shadow) {
       currentNWWindowInternal.setShadowInternal(shadow);
-    }
+    };
+
+    NWWindow.prototype.enterKioskMode = function() {
+      currentNWWindowInternal.enterKioskModeInternal();
+    };
+
+    NWWindow.prototype.leaveKioskMode = function() {
+      currentNWWindowInternal.leaveKioskModeInternal();
+    };
+
+    NWWindow.prototype.toggleKioskMode = function() {
+      currentNWWindowInternal.toggleKioskModeInternal();
+    };
 
     NWWindow.prototype.showDevTools = function(frm, callback) {
       var id = '';
