@@ -1,3 +1,19 @@
+0.42.6 / 11-30-2019
+===================
+- Improve kiosk mode in OSX by setting app presentation options. Thanks to Russell Valentine. [(#7201)](https://github.com/nwjs/nw.js/issues/7201)
+- Disable Chromium upgrade detector and bubble [(#7241)](https://github.com/nwjs/nw.js/issues/7241)
+- nw2: add nw.Window.getAll [(#7227)](https://github.com/nwjs/nw.js/issues/7227)
+- nw2: window size limit in package.json don't work in some cases [(#7248)](https://github.com/nwjs/nw.js/issues/7248)
+- nw2: taskbar icon on Windows for NW.js is a red square, can't set icon in package.json [(#7236)](https://github.com/nwjs/nw.js/issues/7236)
+- nw2: crash on setting kiosk mode
+- nw2: Fix Win.setAlwaysOnTop [(#7233)](https://github.com/nwjs/nw.js/issues/7233)
+- nw2: fix crash on Window.setShadow() [(#7232)](https://github.com/nwjs/nw.js/issues/7232)
+- nw2: Fix fullscreen by manifest [(#7225)](https://github.com/nwjs/nw.js/issues/7225)
+- nw2: Fix 'About' menu in macOS [(#7219)](https://github.com/nwjs/nw.js/issues/7219)
+- Fix: nwjs app won't quit after devtool is opened. Thanks to Jefry Tedjokusumo [(#7226)](https://github.com/nwjs/nw.js/issues/7226)
+- Fix: transparency click-through regression in macOS. Thanks to Jefry Tedjokusumo [(#7204)](https://github.com/nwjs/nw.js/issues/7204)
+- [docs] add nw.Window.getAll()
+
 0.42.5 / 11-19-2019
 ===================
 - Update Chromium to [78.0.3904.108](https://chromereleases.googleblog.com/2019/11/stable-channel-update-for-desktop_18.html)
