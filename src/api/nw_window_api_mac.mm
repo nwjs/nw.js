@@ -47,7 +47,7 @@
 
 namespace extensions {
 
-void NwCurrentWindowInternalSetShadowFunction::SetShadowOnWindow(NSWindow *window, bool shadow) {
+void NwCurrentWindowInternalSetShadowInternalFunction::SetShadowOnWindow(NSWindow *window, bool shadow) {
   window.hasShadow = shadow;
 }
 

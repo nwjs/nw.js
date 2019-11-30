@@ -764,30 +764,93 @@ bool NwCurrentWindowInternalSetZoomFunction::RunNWSync(base::ListValue* response
 }
 
 ExtensionFunction::ResponseAction
-NwCurrentWindowInternalEnterKioskModeFunction::Run() {
-  AppWindow* window = getAppWindow(this);
-  window->ForcedFullscreen();
+NwCurrentWindowInternalEnterKioskModeInternalFunction::Run() {
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    int id = 0;
+    args_->GetInteger(0, &id);
+    Browser* browser = getBrowser(this, id);
+    if (browser) {
+      BrowserFrame* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
+      frame->SetFullscreen(true);
+    }
+  } else {
+    AppWindow* window = getAppWindow(this);
+    window->ForcedFullscreen();
+  }
+#if defined(OS_MACOSX)
+    NWSetNSAppKioskOptions();
+#endif
   return RespondNow(NoArguments());
 }
 
 ExtensionFunction::ResponseAction
-NwCurrentWindowInternalLeaveKioskModeFunction::Run() {
+NwCurrentWindowInternalLeaveKioskModeInternalFunction::Run() {
+#if defined(OS_MACOSX)
+    NWRestoreNSAppKioskOptions();
+#endif
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    int id = 0;
+    args_->GetInteger(0, &id);
+    Browser* browser = getBrowser(this, id);
+    if (browser) {
+      BrowserFrame* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
+      frame->Restore();
+      return RespondNow(NoArguments());
+    }
+  }
   AppWindow* window = getAppWindow(this);
   window->Restore();
   return RespondNow(NoArguments());
 }
 
 ExtensionFunction::ResponseAction
-NwCurrentWindowInternalToggleKioskModeFunction::Run() {
+NwCurrentWindowInternalToggleKioskModeInternalFunction::Run() {
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    int id = 0;
+    args_->GetInteger(0, &id);
+    Browser* browser = getBrowser(this, id);
+    if (browser) {
+      BrowserFrame* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
+      if (frame->IsFullscreen()) {
+        frame->Restore();
+#if defined(OS_MACOSX)
+        NWRestoreNSAppKioskOptions();
+#endif
+      } else {
+        frame->SetFullscreen(true);
+#if defined(OS_MACOSX)
+        NWSetNSAppKioskOptions();
+#endif
+      }
+      return RespondNow(NoArguments());
+    }
+  }
   AppWindow* window = getAppWindow(this);
-  if (window->IsFullscreen() || window->IsForcedFullscreen())
+  if (window->IsFullscreen() || window->IsForcedFullscreen()) {
+#if defined(OS_MACOSX)
+    NWRestoreNSAppKioskOptions();
+#endif
     window->Restore();
-  else
+  } else {
     window->ForcedFullscreen();
+#if defined(OS_MACOSX)
+    NWSetNSAppKioskOptions();
+#endif
+  }
   return RespondNow(NoArguments());
 }
 
 bool NwCurrentWindowInternalIsKioskInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    int id = 0;
+    args_->GetInteger(0, &id);
+    Browser* browser = getBrowser(this, id);
+    if (browser) {
+      BrowserFrame* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
+      response->AppendBoolean((frame->IsFullscreen()));
+      return true;
+    }
+  }
   AppWindow* window = getAppWindow(this);
   if (window->IsFullscreen() || window->IsForcedFullscreen())
     response->AppendBoolean(true);
@@ -816,13 +879,21 @@ bool NwCurrentWindowInternalGetTitleInternalFunction::RunNWSync(base::ListValue*
 }
 
 ExtensionFunction::ResponseAction
-NwCurrentWindowInternalSetShadowFunction::Run() {
+NwCurrentWindowInternalSetShadowInternalFunction::Run() {
 #if defined(OS_MACOSX)
   EXTENSION_FUNCTION_VALIDATE(args_);
   bool shadow;
   EXTENSION_FUNCTION_VALIDATE(args_->GetBoolean(0, &shadow));
-  AppWindow* window = getAppWindow(this);
-  SetShadowOnWindow(window->GetNativeWindow().GetNativeNSWindow(), shadow);
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    int id = 0;
+    args_->GetInteger(1, &id);
+    Browser* browser = getBrowser(this, id);
+    if (browser)
+      SetShadowOnWindow(browser->window()->GetNativeWindow().GetNativeNSWindow(), shadow);
+  } else {
+    AppWindow* window = getAppWindow(this);
+    SetShadowOnWindow(window->GetNativeWindow().GetNativeNSWindow(), shadow);
+  }
 #endif
   return RespondNow(NoArguments());
 }

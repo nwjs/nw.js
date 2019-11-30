@@ -309,7 +309,19 @@ NWWindow.prototype.removeAllListeners = function (event) {
 };
 
 NWWindow.prototype.setShadow = function(shadow) {
-  currentNWWindowInternal.setShadow(shadow);
+  currentNWWindowInternal.setShadowInternal(shadow, this.cWindow.id);
+};
+
+NWWindow.prototype.enterKioskMode = function() {
+  currentNWWindowInternal.enterKioskModeInternal(this.cWindow.id);
+};
+
+NWWindow.prototype.leaveKioskMode = function() {
+  currentNWWindowInternal.leaveKioskModeInternal(this.cWindow.id);
+};
+
+NWWindow.prototype.toggleKioskMode = function() {
+  currentNWWindowInternal.toggleKioskModeInternal(this.cWindow.id);
 };
 
 NWWindow.prototype.showDevTools = function(frm, callback) {
@@ -547,13 +559,13 @@ Object.defineProperty(NWWindow.prototype, 'isTransparent', {
 });
 Object.defineProperty(NWWindow.prototype, 'isKioskMode', {
   get: function() {
-    return currentNWWindowInternal.isKioskInternal();
+    return currentNWWindowInternal.isKioskInternal(this.cWindow.id);
   },
   set: function(val) {
     if (val)
-      currentNWWindowInternal.enterKioskMode();
+      currentNWWindowInternal.enterKioskModeInternal(this.cWindow.id);
     else
-      currentNWWindowInternal.leaveKioskMode();
+      currentNWWindowInternal.leaveKioskModeInternal(this.cWindow.id);
   }
 });
 Object.defineProperty(NWWindow.prototype, 'isFullscreen', {
@@ -622,6 +634,13 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
 
     currentNWWindow = new NWWindow;
     return currentNWWindow;
+  });
+
+  apiFunctions.setHandleRequest('getAll', function(callback) {
+    chrome.windows.getAll({populate: true}, function (cwindows) {
+      let create_nw_win = cwin => new NWWindow(cwin);
+      callback(cwindows.map(create_nw_win));
+    });
   });
 
   apiFunctions.setHandleRequest('open', function(url, params, callback) {

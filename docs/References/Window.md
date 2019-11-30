@@ -62,6 +62,9 @@ nw.Window.open('https://github.com/nwjs/nw.js', {}, function(new_win) {
   // do something with the newly created window
 });
 ```
+## Window.getAll(callback)
+
+Get all windows with a callback function whose parameter is an array of nw.Window object. This function is supported since 0.42.6.
 
 ## Window.open(url, [options], [callback])
 

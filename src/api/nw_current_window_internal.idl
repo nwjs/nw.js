@@ -23,16 +23,16 @@ namespace nw.currentWindowInternal {
 
   interface Functions {
     static void close(optional boolean force, optional long id);
-    static void setShadow(boolean shadow);
+    static void setShadowInternal(boolean shadow, optional long id);
     static void showDevToolsInternal(optional ShowDevToolsCallback callback);
     static void showDevTools2Internal(long id, optional ShowDevToolsCallback callback);
     static void closeDevTools();
     static void setBadgeLabel(DOMString badge);
     static void requestAttentionInternal(long count);
     static void setProgressBar(double progress);
-    static void enterKioskMode();
-    static void leaveKioskMode();
-    static void toggleKioskMode();
+    static void enterKioskModeInternal(optional long id);
+    static void leaveKioskModeInternal(optional long id);
+    static void toggleKioskModeInternal(optional long id);
     static bool isKioskInternal();
     static void capturePageInternal(optional CapturePageOptions options, optional CapturePageCallback callback);
     static void clearMenu(optional long win);
