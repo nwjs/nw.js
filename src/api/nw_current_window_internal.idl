@@ -33,7 +33,7 @@ namespace nw.currentWindowInternal {
     static void enterKioskModeInternal(optional long id);
     static void leaveKioskModeInternal(optional long id);
     static void toggleKioskModeInternal(optional long id);
-    static bool isKioskInternal();
+    static bool isKioskInternal(optional long id);
     static void capturePageInternal(optional CapturePageOptions options, optional CapturePageCallback callback);
     static void clearMenu(optional long win);
     static MenuPatch[] setMenu(long id, optional long winId);
