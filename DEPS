@@ -139,7 +139,7 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': 'd50b8cb7b42a06483f796158af79e5ada7c597e5',
+  'nw_src_revision': 'c5d1d9eebaf348247ca17276c031bbf15c2873ad',
   'nw_v8_revision': 'da90f9f5b531acf0805304a28976f2758a454224',
   'nw_node_revision': '6fd41d22acfcf1d97d09eee55fa8257da23076c0',
 
@@ -1547,7 +1547,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@e25d3fe75b306b3d0caa0000d04335eaeaab3888',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@cce64237729d3d86c2e35b4fe0258d7a5be4fb40',
     'condition': 'checkout_src_internal',
   },
 
