@@ -700,12 +700,19 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
       //if (params.id)
       //  options.tabId = params.id;
     }
+    if (callback && !(params.new_instance === true))
+      options.block_parser = true;
     try_hidden(window).chrome.windows.create(options, function(cWin) {
-      if (callback) {
-        if (cWin)
-          callback(new NWWindow(cWin));
-        else
-          callback();
+      try {
+        if (callback) {
+          if (cWin)
+            callback(new NWWindow(cWin));
+          else
+            callback();
+        }
+      } finally {
+        if (options.block_parser)
+          appWindowNatives.ResumeParser(cWin.tabs[0].mainFrameId);
       }
     });
   });
