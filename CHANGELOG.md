@@ -1,3 +1,9 @@
+0.43.0 / 12-11-2019
+===================
+- Update Chromium to [79.0.3945.79](https://chromereleases.googleblog.com/2019/12/stable-channel-update-for-desktop.html)
+- Update Node.js to [v13.3.0](https://nodejs.org/en/blog/release/v13.3.0/)
+- Fix: signature of isKioskInternal [(#7258)](https://github.com/nwjs/nw.js/issues/7258)
+
 0.42.6 / 11-30-2019
 ===================
 - Improve kiosk mode in OSX by setting app presentation options. Thanks to Russell Valentine. [(#7201)](https://github.com/nwjs/nw.js/issues/7201)
