@@ -192,7 +192,7 @@ NWWindow.prototype.on = function (event, callback, record) {
     var g = wrap(function(tabId, changeInfo, tab) {
       if (tab.windowId !== self.cWindow.id)
         return;
-      if ('status' in changeInfo && changeInfo.status == 'complete')
+      if ('nwstatus' in changeInfo && changeInfo.nwstatus == 'complete')
         callback.call(self);
     });
     chrome.tabs.onUpdated.addListener(g);
@@ -700,7 +700,7 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
       //if (params.id)
       //  options.tabId = params.id;
     }
-    if (callback && !(params.new_instance === true))
+    if (callback && !(options.new_instance === true))
       options.block_parser = true;
     try_hidden(window).chrome.windows.create(options, function(cWin) {
       try {
