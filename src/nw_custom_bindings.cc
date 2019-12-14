@@ -64,14 +64,14 @@ using namespace blink;
 #undef INTERNAL_TRACE_EVENT_SCOPED_CONTEXT
 //#undef INTERNAL_TRACE_EVENT_CATEGORY_GROUP_ENABLED_FOR_RECORDING_MODE
 #endif
-#undef LOCKS_EXCLUDED
-#undef LOCK_RETURNED
+//#undef LOCKS_EXCLUDED
+//#undef LOCK_RETURNED
 //#undef EXCLUSIVE_LOCK_FUNCTION
-#undef SHARED_LOCK_FUNCTION
+//#undef SHARED_LOCK_FUNCTION
 //#undef UNLOCK_FUNCTION
 //#undef EXCLUSIVE_TRYLOCK_FUNCTION
-#undef SHARED_TRYLOCK_FUNCTION
-#undef NO_THREAD_SAFETY_ANALYSIS
+//#undef SHARED_TRYLOCK_FUNCTION
+//#undef NO_THREAD_SAFETY_ANALYSIS
 
 //#include "third_party/WebKit/Source/config.h"
 #include "third_party/blink/renderer/core/html/html_iframe_element.h"
@@ -82,10 +82,10 @@ using namespace blink;
 
 #undef BLINK_IMPLEMENTATION
 #define BLINK_IMPLEMENTATION 1
+#include "base/thread_annotations.h"
+
 #include "third_party/blink/renderer/core/frame/local_frame.h"
 #include "third_party/blink/renderer/core/frame/web_local_frame_impl.h"
-
-#include "base/thread_annotations.h"
 
 #include "third_party/blink/public/web/web_document.h"
 #include "third_party/blink/public/web/web_security_policy.h"
