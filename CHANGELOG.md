@@ -1,3 +1,12 @@
+0.43.1 / 12-16-2019
+===================
+- Fix: import broken with Node.js v13.3.0 [(#7267)](https://github.com/nwjs/nw.js/issues/7267)
+- Fix: nw2: failed to close after "reload app"
+- Fix: nw2: don't register F12 hotkey in normal build [(#7269)](https://github.com/nwjs/nw.js/issues/7269)
+- Fix: nw2: close event missing callback string during cmd + Q (OSX) [(#7263)](https://github.com/nwjs/nw.js/issues/7263)
+- Fix: nw2: kiosk in manifest [(#7268)](https://github.com/nwjs/nw.js/issues/7268)
+- Fix: nw2: the timing of callback of creating window [(#7247)](https://github.com/nwjs/nw.js/issues/7247)
+
 0.43.0 / 12-11-2019
 ===================
 - Update Chromium to [79.0.3945.79](https://chromereleases.googleblog.com/2019/12/stable-channel-update-for-desktop.html)
