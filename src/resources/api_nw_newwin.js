@@ -749,13 +749,11 @@ function onLoadingStateChanged(status) {
 }
 
 function onDocumentStartEnd(start, frame, top_routing_id) {
-  if (!currentNWWindow)
-    return;
   if (start) {
-    dispatchEventIfExists(currentNWWindow, "onDocumentStart", [frame, top_routing_id]);
+    dispatchEventIfExists(NWWindow.prototype, "onDocumentStart", [frame, top_routing_id]);
   }
   else
-    dispatchEventIfExists(currentNWWindow, "onDocumentEnd", [frame, top_routing_id]);
+    dispatchEventIfExists(NWWindow.prototype, "onDocumentEnd", [frame, top_routing_id]);
 }
 
 function updateAppWindowZoom(old_level, new_level) {
