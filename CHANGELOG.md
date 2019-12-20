@@ -1,3 +1,11 @@
+0.43.2 / 12-20-2019
+===================
+- Update Chromium to [79.0.3945.88](https://chromereleases.googleblog.com/2019/12/stable-channel-update-for-desktop_17.html)
+- Update Node.js to [v13.5.0](https://nodejs.org/en/blog/release/v13.5.0/)
+- Fix: nw2: document-end event [(#7276)](https://github.com/nwjs/nw.js/issues/7276)
+- Fix: nw2: win.show() restores window [(#7278)](https://github.com/nwjs/nw.js/issues/7278)
+- Fix: nw2: --disable-devtools not working [(#7279)](https://github.com/nwjs/nw.js/issues/7279)
+
 0.43.1 / 12-16-2019
 ===================
 - Fix: import broken with Node.js v13.3.0 [(#7267)](https://github.com/nwjs/nw.js/issues/7267)
