@@ -158,6 +158,8 @@ def generate_target_nw(platform_name, arch, version):
                            'lib/libnw.so',
                            'lib/libnode.so',
                            'lib/libffmpeg.so',
+                           'lib/libEGL.so',
+                           'lib/libGLESv2.so',
                            'swiftshader/libEGL.so',
                            'swiftshader/libGLESv2.so'
                            ]
