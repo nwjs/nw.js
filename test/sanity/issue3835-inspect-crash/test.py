@@ -23,6 +23,7 @@ try:
     switch_to_devtools(driver)
     print 'click Console panel'
     devtools_click_tab(driver, 'console')
+    wait_for_element_id(driver, 'console-prompt')
     print 'send_keys "chrome<enter>"'
     devtools_type_in_console(driver, 'chrome\n')
     time.sleep(2)

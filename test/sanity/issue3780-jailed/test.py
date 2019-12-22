@@ -24,6 +24,7 @@ try:
     switch_to_devtools(driver, devtools_window=driver.window_handles[-1])
     print 'click Console panel'
     devtools_click_tab(driver, 'console')
+    wait_for_element_id(driver, 'console-prompt')
     print 'send_keys "location.pathname<enter>"'
     devtools_type_in_console(driver, 'location.')
     time.sleep(1)
