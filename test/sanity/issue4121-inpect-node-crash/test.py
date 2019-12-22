@@ -22,7 +22,16 @@ try:
     print 'switch to devtools'
     switch_to_devtools(driver)
     devtools_click_tab(driver, 'console')
-    driver.execute_script('document.querySelector(".devtools-link").click()')
+    counter = 0
+    while counter < 5:
+        try:
+            counter = counter + 1
+            driver.execute_script('document.querySelector(".devtools-link").click()')
+            break
+        except:
+            time.sleep(1)
+            pass
+    assert(counter < 5)
     sources_panel = driver.find_element_by_css_selector('.panel.sources')
     assert(sources_panel is not None)
 finally:
