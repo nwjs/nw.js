@@ -14,6 +14,7 @@
 
 #include "base/task/post_task.h"
 #include "content/public/browser/browser_task_traits.h"
+#include "content/public/test/browser_test_utils.h"
 
 #include "base/callback_helpers.h"
 #include "base/files/file_util.h"
@@ -1056,17 +1057,21 @@ IN_PROC_BROWSER_TEST_P(NWJSWebViewTest, LocalPDF) {
 
   // Flush any pending events to make sure we start with a clean slate.
   content::RunAllPendingInMessageLoop();
-
+  content::WebContents* web_contents = GetFirstAppWindowWebContents();
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    web_contents = BrowserList::GetInstance()->GetLastActive()->tab_strip_model()->GetActiveWebContents();
+  }
+  ASSERT_TRUE(web_contents);
   std::vector<content::WebContents*> guest_web_contents_list;
   unsigned long n_guests = trusted_ ? 2 : 1;
-  LOG(WARNING) << "WaitForNumGuestsCreated";
+  EXPECT_TRUE(content::ExecuteScript(web_contents, std::string("test(") + (trusted_ ? "true" : "false") + ")"));
   if (!trusted_) {
     base::CancelableClosure timeout(
           base::Bind(&NWTimeoutCallback, "pdf load timed out."));
     base::ThreadTaskRunnerHandle::Get()->PostDelayedTask(
           FROM_HERE, timeout.callback(), TestTimeouts::action_timeout());
-    
-    GetGuestViewManager()->WaitForNumGuestsCreated(2u);
+    ExtensionTestMessageListener pass_listener("PASSED", false);
+    EXPECT_TRUE(pass_listener.WaitUntilSatisfied());
   } else
     GetGuestViewManager()->WaitForNumGuestsCreated(n_guests);
 
