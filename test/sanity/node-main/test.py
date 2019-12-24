@@ -30,7 +30,6 @@ html.write(content)
 html.close()
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
-time.sleep(1)
 try:
     print driver.current_url
     driver.implicitly_wait(10)

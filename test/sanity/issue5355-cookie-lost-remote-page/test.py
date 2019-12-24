@@ -27,7 +27,6 @@ with open(os.path.join(test_dir, 'package.json'), 'w') as bg:
   bg.write(pkgjson)
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
-time.sleep(1)
 driver.implicitly_wait(2)
 try:
     wait_window_handles(driver, 1)

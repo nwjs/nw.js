@@ -34,7 +34,6 @@ nw.Window.open('http://localhost:%s/remote.html', function(win) {
 html.close()
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, desired_capabilities = capabilities)
-time.sleep(1)
 try:
     wait_switch_window_name(driver, 'local')
     print driver.current_url

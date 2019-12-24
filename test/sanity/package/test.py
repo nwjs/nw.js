@@ -59,7 +59,7 @@ else:
 #chrome_options.add_argument("nwapp=" + pkg1)
 driver_path=os.path.join(pkg1, 'chromedriver')
 driver = webdriver.Chrome(executable_path=driver_path)
-time.sleep(1)
+driver.implicitly_wait(5)
 try:
     print driver.current_url
     result = driver.find_element_by_id('result')
@@ -85,7 +85,7 @@ else:
 
 driver_path=os.path.join(pkg2, 'chromedriver')
 driver2 = webdriver.Chrome(executable_path=driver_path)
-time.sleep(1)
+driver2.implicitly_wait(5)
 try:
     print driver2.current_url
     result = driver2.find_element_by_id('result')

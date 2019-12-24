@@ -11,7 +11,6 @@ chrome_options.add_argument("nwapp=" + os.path.dirname(os.path.abspath(__file__)
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
 driver.implicitly_wait(5)
-time.sleep(1)
 try:
     wait_window_handles(driver, 2)
     wait_switch_window_name(driver, 'popup')

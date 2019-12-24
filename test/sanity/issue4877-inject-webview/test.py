@@ -38,7 +38,6 @@ if not wait_net_service("127.0.0.1", port_n, 30):
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
 driver.implicitly_wait(5)
-time.sleep(1)
 try:
     wait_window_handles(driver, 2)
     print driver.current_url

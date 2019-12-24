@@ -19,9 +19,14 @@ driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_opt
 driver.implicitly_wait(2)
 try:
     print driver.current_url
-    time.sleep(1)
-    ret = driver.find_element_by_id('result').get_attribute('innerHTML')
-    print 'result: ', ret
+    timeout = 5
+    while timeout > 0 :
+        ret = driver.find_element_by_id('result').get_attribute('innerHTML')
+        print 'result: ', ret
+        if 'waiting' not in ret:
+            break
+        time.sleep(1)
+        timeout = timeout - 1
     assert('waiting' not in ret)
 finally:
     driver.quit()

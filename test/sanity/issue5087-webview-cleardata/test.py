@@ -30,7 +30,6 @@ html.close()
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
 driver.implicitly_wait(5)
-time.sleep(1)
 try:
     wait_window_handles(driver, 2)
     wait_switch_window_name(driver, 'index')

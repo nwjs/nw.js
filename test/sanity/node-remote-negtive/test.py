@@ -30,7 +30,6 @@ manifest.close()
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
 try:
     print driver.current_url
-    time.sleep(1)
     result = wait_for_element_id_content(driver, 'result', 'success')
     print result
 finally:
