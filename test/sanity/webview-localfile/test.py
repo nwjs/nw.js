@@ -58,7 +58,7 @@ try:
             print 'switch to cdt'
             switch_to_devtools(driver, None, True)
             break
-        except selenium.common.exceptions.WebDriverException:
+        except :
             pass
         time.sleep(1)
         counter = counter - 1
