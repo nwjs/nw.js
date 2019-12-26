@@ -153,7 +153,7 @@ def generate_target_nw(platform_name, arch, version):
                            'nw',
                            'icudtl.dat',
                            'locales',
-                           'natives_blob.bin',
+                           'crashpad_handler',
                            'v8_context_snapshot.bin',
                            'lib/libnw.so',
                            'lib/libnode.so',
@@ -177,7 +177,6 @@ def generate_target_nw(platform_name, arch, version):
             
     elif platform_name == 'win':
         target['input'] = [
-                           'natives_blob.bin',
                            'v8_context_snapshot.bin',
                            'd3dcompiler_47.dll',
                            'libEGL.dll',
@@ -219,7 +218,6 @@ def generate_target_nw(platform_name, arch, version):
             target['input'].append('chromedriver')
             target['input'].append('libffmpeg.dylib')
             target['input'].append('minidump_stackwalk')
-            target['input'].append('natives_blob.bin')
             target['input'].append('v8_context_snapshot.bin')
     else:
         print 'Unsupported platform: ' + platform_name
