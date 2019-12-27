@@ -40,15 +40,16 @@ try:
     print 'start to debug line 16 via breakpoint'
     for i in range(10):
         print "click Resume script execution button: %s" % i 
-        while i < 10:
+        j = 0
+        while j < 10:
             try:
                 clickResume()
                 break
             except selenium.common.exceptions.WebDriverException:
                 pass
             time.sleep(1)
-            i = i + 1
-            if i >= 10:
+            j = j + 1
+            if j >= 10:
                 raise Exception('Timeout when waiting for clicking resume button')
     assert(len(driver.window_handles) is 2)
     print 'There is no crash'
