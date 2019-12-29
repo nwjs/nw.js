@@ -23,15 +23,19 @@ try:
     print driver.current_url
 
     result1 = wait_for_element_id(driver, 'socket1')
+    print result1
     assert('Socket 1 open' in result1)
 
     result2 = wait_for_element_id(driver, 'socket2')
+    print result2
     assert('Socket 2 open' in result2)
 
     result3 = wait_for_element_id(driver, 'socket3')
+    print result3
     assert('Socket 3 open' in result3)
 
     result4 = wait_for_element_id(driver, 'socket4')
+    print result4
     assert('Socket 4 open' in result4)
 finally:
     driver.quit()
