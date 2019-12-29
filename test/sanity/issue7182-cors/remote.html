@@ -8,6 +8,7 @@
     <p>nw.js version: <span id="nw_version">...</span></p>
     <p>Remote has nw access: <span id="nw_access">...</span></p>
     <p>Remote has remote access: <span id="remote_access">...</span></p>
+    <p>Remote has XHR access: <span id="remote_xhr">...</span></p>
     <p><a href="#" onclick="history.back()">Go back to local</a></p>
   </div>
   <script>
@@ -34,5 +35,19 @@
         remote_access.innerHTML = "no";
         console.error(e);
       });
+
+    function reqListener () {
+       if (this.responseText.length)
+        remote_xhr.innerHTML = "yes";
+       else
+        remote_xhr.innerHTML = "no";
+    }
+    function test() {
+       var oReq = new XMLHttpRequest();
+       oReq.addEventListener("load", reqListener);
+       oReq.open("GET", "https://www.google.com/");
+       oReq.send();
+    }
+    test();
   </script>
 </body>

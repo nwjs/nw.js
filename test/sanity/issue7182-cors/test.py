@@ -54,6 +54,8 @@ try:
     print driver.current_url
     result = wait_for_element_id_content(driver, 'remote_access', 'yes')
     print 'remote_access: %s' % result
+    result = wait_for_element_id_content(driver, 'remote_xhr', 'yes')
+    print 'remote_access with xhr: %s' % result
 finally:
     driver.quit()
     import platform
