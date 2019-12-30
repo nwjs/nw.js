@@ -1,7 +1,0 @@
-{
-  "name": "reload application",
-  "main": "index.html",
-  "window": {
-    "show": false
-  }
-}

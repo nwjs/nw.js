@@ -1,8 +1,0 @@
-{
-    "name": "nw-always-on-visible-workspace-test",
-    "main": "index.html",
-    "window": {
-        "visible-on-all-workspaces": true
-    },
-    "dependencies": {}
-}

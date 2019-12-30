@@ -1,6 +1,0 @@
-{
-  "name":"nw_1403514049",
-  "main":"index.html",
-  "inject-js-end":"./end.js",
-  "inject-js-start":"./start.js"
-}

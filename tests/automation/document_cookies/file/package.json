@@ -1,7 +1,0 @@
-{
-  "name": "nw",
-  "main": "index.html",
-  "window": {
-    "show": false
-  }
-}

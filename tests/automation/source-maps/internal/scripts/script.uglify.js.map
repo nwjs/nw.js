@@ -1,1 +1,0 @@
-{"version":3,"file":"script.uglify.js","sources":["script.js"],"names":["document","getElementById","focus","$","keydown","evt","keyCode","css","val"],"mappings":"AACAA,SAASC,eAAe,SAASC,OAEjCC,GAAEH,UAAUI,QAAQ,SAASC,KAG3B,GAAIA,IAAIC,SAAW,GAAI,CAErBH,EAAE,QAAQI,IAAI,mBAAoBJ,EAAE,UAAUK"}

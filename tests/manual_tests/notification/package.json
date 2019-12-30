@@ -1,5 +1,0 @@
-{
-    "name": "nw-notification-test",
-    "main": "index.html",
-	"app-id": "com.node.webkit.notification.test"
-}
