@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf8">
+    <title>test</title>
+    <style type="text/css">
+      div#from-top-window{
+        width: 45%;
+        float: left;
+      }
+
+      div#from-iframe{
+        width: 45%;
+        margin-left: 5%;
+        float: left;
+      }
+
+    </style>
+  </head>
+  <body>
+    <script type="text/javascript">
+      var path = require('path');
+      var spawn = require('child_process').spawn;
+      var child = undefined;
+      var RunApp = function(type,policy){
+        if (child != undefined){
+          child.kill();
+        }
+        var app_path = './app';
+        var exec_argv = [app_path,type+"_"+policy];
+        child = spawn(process.execPath,exec_argv);
+      };
+
+      process.on('exit',function(){
+        if (child){
+          child.kill();
+        }
+      })
+    </script>
+
+    <div>
+      <ul>
+        <li>ignore() =&gt; ignore the request, navigation won't happen.</li>
+        <li>forceCurrent() =&gt; force the link to be opened in the same frame.</li>
+        <li>forceDownload() =&gt; force the link to be a downloadable, or open by external program.</li>
+        <li>forceNewWindow() =&gt; force the link to be opened in a new window.</li>
+        <li>forceNewPopup() =&gt; force the link to be opened in a new popup window</li>
+        <li style="color:red;">Please make sure there are no overlapping windows when running this case</li>
+      </ul>
+    </div>
+
+    <div id="from-top-window">
+      <div><h2>From Top Window</h2></div>
+      <div><button onclick="RunApp('window','ignore')">ignore()</button></div>
+      <div><button onclick="RunApp('window','forceNewPopup')">forceNewPopup()</button></div>
+      <div><button onclick="RunApp('window','forceNewWindow')">forceNewWindow()</button></div>
+      <div><button onclick="RunApp('window','forceDownload')">forceDownload()</button></div>
+      <div><button onclick="RunApp('window','forceDownload-manually')">forceDownload() manually</button></div>
+      <div><button onclick="RunApp('window','forceCurrent')">forceCurrent()</button></div>
+    </div>
+
+    <div id="from-iframe">
+      <div><h2>From Iframe</h2></div>
+      <div><button onclick="RunApp('iframe','ignore')">ignore()</button></div>
+      <div><button onclick="RunApp('iframe','forceNewPopup')">forceNewPopup()</button></div>
+      <div><button onclick="RunApp('iframe','forceNewWindow')">forceNewWindow()</button></div>
+      <div><button onclick="RunApp('iframe','forceDownload')">forceDownload()</button></div>
+      <div><button onclick="RunApp('iframe','forceDownload-manually')">forceDownload() manually</button></div>
+      <div><button onclick="RunApp('iframe','forceCurrent')">forceCurrent()</button></div>
+    </div>
+
+  </body>
+</html>
+    

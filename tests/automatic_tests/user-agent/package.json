@@ -1,0 +1,5 @@
+{
+  "name": "nw-user-agent-test",
+  "main": "index.html", 
+  "user-agent": "%name/%nwver/%ver/%webkit_ver/%osinfo"	
+}

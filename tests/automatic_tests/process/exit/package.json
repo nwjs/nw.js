@@ -1,0 +1,5 @@
+{
+  "name": "nw-demo",
+  "main": "index.html",
+  "window": { "show" : true }
+}

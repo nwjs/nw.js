@@ -1,0 +1,7 @@
+{
+  "name": "nw",
+  "main": "app://whatever/index.html",
+  "window": {
+    "show": false
+  }
+}

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf8">
+  <title>test</title>
+  <style type="text/css">
+    div.row {
+      width: 100%;
+      display: inline-block;
+    }
+    button {
+      width: 400px;
+      text-align: left;
+    }
+    h2#message {
+      height: 200px;
+      color: brown;
+    }
+  </style>
+</head>
+
+<body>
+  <script type="text/javascript">
+    var gui = require('nw.gui');
+    var win = gui.Window.get();
+    var fs = require('fs');
+    var spawn = require('child_process').spawn;
+    var child = null;
+    var toggle_flag = true;
+    var running_id = null;
+    var path = require('path');
+    var manifest_path = path.join('app', 'package.json');
+    var create_packagejson = function(manifest) {
+      fs.writeFileSync(manifest_path, JSON.stringify(manifest));
+    };
+
+    var start_manifest_option_true = function() {
+      var manifest = {
+        "name": "nw_show_in_taskbar",
+        "main": "index.html",
+        "window": {
+          "show_in_taskbar": true
+        }
+      };
+      if (child != null) {
+        if (running_id != 0) {
+          child.kill();
+        } else {
+          return;
+        }
+      }
+
+      document.getElementById('toggne-status').innerHTML = "Default";
+      document.getElementById("message").innerHTML = "";
+      toggle_flag = true;
+      win.setShowInTaskbar(true);
+
+      running_id = 0;
+      create_packagejson(manifest);
+      var message = "(True) you should see 2 nw icons in taskbar";
+      child = spawn(process.execPath, ['./app', message]);
+    };
+
+    var start_manifest_option_false = function() {
+      var manifest = {
+        "name": "nw_show_in_taskbar",
+        "main": "index.html",
+        "window": {
+          "show_in_taskbar": false
+        }
+      };
+      if (child != null) {
+        if (running_id != 1) {
+          child.kill();
+        } else {
+          return;
+        }
+      }
+
+      document.getElementById('toggne-status').innerHTML = "Default";
+      document.getElementById("message").innerHTML = "";
+      toggle_flag = true;
+      win.setShowInTaskbar(true);
+
+      running_id = 1;
+      create_packagejson(manifest);
+      var message = "(False) you should see 1 nw icon in taskbar";
+      child = spawn(process.execPath, ['./app', message]);
+    };
+    var start_manifest_option_default = function() {
+      var manifest = {
+        "name": "nw_show_in_taskbar",
+        "main": "index.html",
+        "window": {}
+      };
+      if (child != null) {
+        if (running_id != 2) {
+          child.kill();
+        } else {
+          return;
+        }
+      }
+      document.getElementById('toggne-status').innerHTML = "Default";
+      document.getElementById("message").innerHTML = "";
+      toggle_flag = true;
+      win.setShowInTaskbar(true);
+
+      running_id = 2;
+      create_packagejson(manifest);
+      var message = "(Default) you should see 2 nw icon in taskbar";
+      child = spawn(process.execPath, ['./app', message]);
+    };
+    var toggle_window_api = function() {
+      if (child != null) {
+        child.kill();
+      }
+      running_id = 3;
+      win.setShowInTaskbar(toggle_flag);
+      document.getElementById('toggne-status').innerHTML = toggle_flag;
+      document.getElementById("message").innerHTML = "You should see " + (toggle_flag ? "1" : "0") + " icon on the  taskbar!";
+      toggle_flag = !toggle_flag;
+    };
+
+    var clean_and_quit = function() {
+      if (fs.existsSync(manifest_path)) {
+        fs.unlinkSync(manifest_path);
+      }
+      gui.App.quit();
+    };
+  </script>
+
+
+  <div>
+    <div class="row">
+      <button onclick="start_manifest_option_true()">
+        <!-- id == 0 -->
+        <h3>Manifest show_in_taskbar <span style="color:green;">true</span> Start</h3>
+      </button>
+    </div>
+
+    <div class="row">
+      <button onclick="start_manifest_option_false()">
+        <!-- id == 1 -->
+        <h3>Manifest show_in_taskbar <span style="color:green;">false</span> Start</h3>
+      </button>
+    </div>
+
+    <div class="row">
+      <button onclick="start_manifest_option_default()">
+        <!-- id == 2 -->
+        <h3>Manifest show_in_taskbar <span style="color:green;">default</span> Start</h3>
+      </button>
+    </div>
+
+    <div class="row">
+      <button onclick="toggle_window_api()">
+        <!-- id == 3 -->
+        <h3>Window.setShowInTaskbar() Toggle <span id="toggne-status" style="color:green;">(Default)</span></h3>
+      </button>
+    </div>
+
+    <div class="row">
+      <button onclick="clean_and_quit()">
+        <h3 style="color:red;">Click here to clean env and quit</h3>
+      </button>
+    </div>
+
+    <div class="row">
+      <div>
+        <h2 id="message"></h2>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>

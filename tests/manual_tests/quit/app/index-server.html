@@ -1,0 +1,23 @@
+<html>
+<head>
+  <title>NW Quit Test Server</title>
+</head>
+<body>
+  <p>This is a hidden window</p>
+  <script>
+    var nwGui = require('nw.gui');
+    var win = nwGui.Window.get();
+    var http = require('http');
+    var method = global.method;
+
+    win.on('close', function(how) {
+      console.log('Ignoring CLOSE event in index-server.html with "' + how + '"');
+    });
+
+    setInterval(function() {
+      http.get("http://localhost:9000/crontab")
+      console.log('Server running');
+    }, 200);
+  </script>
+</body>
+</html>

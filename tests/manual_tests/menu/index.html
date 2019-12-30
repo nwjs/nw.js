@@ -1,0 +1,208 @@
+<html>
+<head>
+  <script type="text/javascript" src="../../zepto.min.js"></script>
+  <script type="text/javascript" src="../../assert.js"></script>
+</head>
+<body>
+<script>
+  var gui = require('nw.gui');
+
+  var menu = new gui.Menu();
+  assert(
+  menu.items.length == 0,
+  typeof menu.click == 'undefined',
+  'Empty Menu');
+
+  menu.append(new gui.MenuItem({
+    label: 'Item 1',
+    click: function() {
+      console.log('Click on Item 1');
+    }
+  }));
+  assert(
+  menu.items.length == 1,
+  menu.items[0].label == 'Item 1',
+  menu.items[0].icon == '',
+  menu.items[0].tooltip == '',
+  typeof menu.items[0].checked == 'undefined',
+  menu.items[0].enabled == true,
+  'One Menu');
+
+  menu.append(new gui.MenuItem({ type: 'separator' }));
+  menu.append(new gui.MenuItem({
+    label: 'Item 2',
+    click: function() {
+      console.log('Click on Item 2');
+    }
+  }));
+  menu.append(new gui.MenuItem({ label: 'Item 3' }));
+  menu.append(new gui.MenuItem({ label: 'Item 4', tooltip: 'tooltip' }));
+  menu.append(new gui.MenuItem({ label: 'Item 5' }));
+  menu.insert(new gui.MenuItem({ label: 'Item Papa' }), 1);
+  assert(menu.items.length == 7,
+         menu.items[0].label == 'Item 1',
+         menu.items[1].label == 'Item Papa',
+         menu.items[2].type == 'separator',
+         menu.items[3].label == 'Item 2',
+         menu.items[4].label == 'Item 3',
+         menu.items[4].tooltip == '',
+         menu.items[5].label == 'Item 4',
+         menu.items[5].tooltip == 'tooltip',
+         menu.items[6].label == 'Item 5',
+         'More Menu');
+
+  menu.items[4].tooltip = 'tooltip';
+  menu.items[5].tooltip = '';
+  assert(
+  menu.items[4].tooltip == 'tooltip',
+  menu.items[5].tooltip == '',
+  'Change Tooltip');
+
+  var removedItem = new gui.MenuItem({ label: 'Item Deleted' });
+  menu.insert(removedItem, 4);
+  assert(menu.items.length == 8,
+         menu.items[4].label == 'Item Deleted',
+         'Before Delete');
+
+  menu.remove(removedItem);
+  assert(menu.items.length == 7,
+         menu.items[4].label == 'Item 3',
+         'After Delete');
+
+  menu.insert(new gui.MenuItem({ label: 'Item Deleted' }), 1);
+  assert(
+  menu.items.length == 8,
+  menu.items[1].label == 'Item Deleted',
+  'Before Delete 2');
+
+  menu.removeAt(1);
+  assert(
+  menu.items.length == 7,
+  menu.items[1].label == 'Item Papa',
+  'After Delete 2');
+
+  menu.items[1].label = 'Item Mama';
+  assert(
+  menu.items[1].label == 'Item Mama',
+  'Update MenuItem');
+
+  menu.append(new gui.MenuItem({
+    label: 'Click Me',
+    click: function() {
+      var element = document.createElement('div');
+      element.appendChild(document.createTextNode('Clicked OK'));
+      document.body.appendChild(element);
+    }
+  }));
+
+  var submenu = new gui.Menu();
+  submenu.append(new gui.MenuItem({ type: 'checkbox', label: 'Sub 1', checked: true, enabled: false }));
+  submenu.append(new gui.MenuItem({ type: 'checkbox', label: 'Sub 2', checked: true, enabled: false }));
+  submenu.append(new gui.MenuItem({ type: 'checkbox', label: 'Sub 3', checked: true, enabled: false }));
+  submenu.append(new gui.MenuItem({ type: 'checkbox', label: 'Sub 4', checked: true, enabled: false }));
+  menu.append(new gui.MenuItem({ type: 'separator' }));
+  menu.append(new gui.MenuItem({ label: 'I have submenu', submenu: submenu }));
+
+  assert(
+  submenu == menu.items[menu.items.length - 1].submenu,
+  menu.items.length == 10,
+  menu.items[9].label == 'I have submenu',
+  submenu.items.length == 4,
+  'Submenu');
+
+  assert(
+  submenu.items[0].checked == true,
+  submenu.items[1].checked == true,
+  submenu.items[2].checked == true,
+  submenu.items[3].checked == true,
+  submenu.items[0].enabled == false,
+  submenu.items[1].enabled == false,
+  submenu.items[2].enabled == false,
+  submenu.items[3].enabled == false,
+  'Before flip checked and enabled');
+
+  submenu.items[1].checked = false,
+  submenu.items[2].checked = false,
+  submenu.items[3].checked = false,
+  submenu.items[1].enabled = true,
+  submenu.items[2].enabled = true,
+  submenu.items[3].enabled = true,
+
+  assert(
+  submenu.items[0].checked == true,
+  submenu.items[1].checked == false,
+  submenu.items[2].checked == false,
+  submenu.items[3].checked == false,
+  submenu.items[0].enabled == false,
+  submenu.items[1].enabled == true,
+  submenu.items[2].enabled == true,
+  submenu.items[3].enabled == true,
+  'After flip checked and enabled');
+
+  // Click to flip other items
+  var lastone = submenu.items[0];
+  submenu.items[0].click = submenu.items[1].click = submenu.items[2].click = submenu.items[3].click = function() {
+    lastone.checked = !lastone.checked;
+    lastone.enabled = !lastone.enabled;
+    this.enabled = !this.enabled;
+    lastone = this;
+  }
+
+  var tray = new gui.Tray({ title: 'Test Menu', menu: menu });
+  menu.items[0].icon = 'icon1.png';
+  assert(
+  menu.items[0].icon == 'icon1.png',
+  'Set Menu Icon');
+
+  menu.items[0].icon = '';
+  assert(
+  menu.items[0].icon == '',
+  'Clear Menu Icon');
+
+  menu.items[1].icon = tray.icon = 'icon1.png';
+
+  menu.items[1].on('click', function() {
+    console.log('Item Mama');
+  });
+
+  var win = gui.Window.get();
+  var menubar = new gui.Menu({ type: 'menubar' });
+  var sub1 = new gui.Menu();
+  sub1.append(new gui.MenuItem({
+    label: 'Test1',
+    click: function() {
+      var element = document.createElement('div');
+      element.appendChild(document.createTextNode('Test 1'));
+      document.body.appendChild(element);
+    }
+  }));
+
+  sub1.append(new gui.MenuItem({
+    type: 'checkbox',
+    checked: true, //<------------------------------------------------!!!!!!
+    label: 'Test CheckBox'
+  }));
+
+  var sub2 = new gui.Menu();
+  sub2.append(new gui.MenuItem({
+    label: 'Test2',
+    click: function() {
+      var element = document.createElement('div');
+      element.appendChild(document.createTextNode('Test 2'));
+      document.body.appendChild(element);
+    }
+  }));
+  menubar.append(new gui.MenuItem({ label: 'Sub1', submenu: sub1}));
+  //menubar.append(new gui.MenuItem({ label: 'Sub2', submenu: sub2}));
+  win.menu = menubar;
+
+</script>
+<script>
+  document.body.addEventListener('contextmenu', function(ev) {
+    ev.preventDefault();
+    menu.popup(ev.x, ev.y);
+    return false;
+  }, false);
+</script>
+</body>
+</html>

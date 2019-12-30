@@ -1,0 +1,34 @@
+{
+  "name": "nw-tests",
+  "version": "0.1.0",
+  "main": "index.html",
+  "window": {
+    "position": "center",
+    "show": false
+  },
+  "dependencies": {
+    "http-auth":"2.1.8",
+    "http-proxy":"1.1.4",
+    "tar": "*",
+    "commander": "0.6.1",
+    "growl": "1.6.x",
+    "jade": "0.26.3",
+    "diff": "1.0.2",
+    "debug": "*",
+    "mkdirp": "0.3.3",
+    "ms": "0.3.0",
+    "should": "*",
+    "coffee-script": "1.2",
+    "mocha": "1.7.4",
+    "nw_test_loop": "git+https://github.com/owenc4a4/nw_test_loop_without_handle.git",
+    "bignum": "git+https://github.com/owenc4a4/bignum.git",
+    "node-dtrace-provider": "git+https://github.com/chrisa/node-dtrace-provider.git",
+    "ref": "git+https://github.com/TooTallNate/ref.git",
+    "node-lame": "git+https://github.com/TooTallNate/node-lame.git",
+    "fs-extra": "*"
+  },
+  "user-agent": "%name/%nwver/%ver/%webkit_ver/%osinfo",
+  "scripts": {
+    "install": "python ../tools/build_native_modules.py"
+  }
+}

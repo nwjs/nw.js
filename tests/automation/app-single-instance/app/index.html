@@ -1,0 +1,22 @@
+<html>
+<head>
+	<meta charset="utf8">
+	<title>APP Single Instance</title>
+</head>
+<body>
+	<div id="pid"></div>
+	<script type="text/javascript">
+		document.getElementById('pid').innerHTML = process.pid;
+		var gui = require('nw.gui');
+		var argv = gui.App.argv;
+		var port = 13013;
+		if (argv.length > 0){
+			port = argv[0];
+		}
+		var net = require('net');
+		var s = null;
+		var connection = net.createConnection(port);
+		connection.write('hello world');
+	</script>
+</body>
+</html>

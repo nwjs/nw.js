@@ -1,0 +1,72 @@
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <title>New Window</title>
+</head>
+<body style="margin:0">
+  <div style="width: 100%; height: 50px; background-color: green; -webkit-app-region: drag;">
+  </div>
+This is the popup window<br/>
+<script>
+  var enable = false;
+  var gui = require('nw.gui');
+  var win = gui.Window.get();
+  win.on('close', function() {
+    if (enable)
+      this.close(true);
+    else
+      console.log('This window can not be closed.');
+  });
+
+  win.on('enter-fullscreen', function() {
+    console.log('Enter fullscreen');
+  });
+
+  win.on('leave-fullscreen', function() {
+    console.log('Leave fullscreen');
+  });
+
+  win.on('focus', function() {
+    console.log('Window is focused');
+  });
+
+  win.on('blur', function() {
+    console.log('Window lost focus');
+  });
+
+  win.on('minimize', function() {
+    console.log('Window is minimized');
+  });
+
+  win.on('restore', function() {
+    console.log('Window is restored');
+  });
+
+  win.on('maximize', function() {
+    console.log('Window is maximized');
+  });
+
+  win.on('unmaximize', function() {
+    console.log('Window is unmaximized');
+  });
+
+  win.on('zoom', function(level) {
+    document.getElementById('zoom').innerText = level;
+  });
+
+  window.onload = function() {
+    gui.Window.get().show();
+  }
+  document.write("zoomLevel = <div id='zoom'>" + win.zoomLevel + '</div>');
+</script>
+<br/>
+
+<button onclick="javascript:enable = true;">Enable to be closed</button>
+<br/>
+<button onclick="win.leaveFullscreen()">Leave fullscreen</button>
+
+<div style="margin-top:10px;border-top: 1px solid #000;">
+<img id="image" width="400" />
+</div>
+</body>
+</html>

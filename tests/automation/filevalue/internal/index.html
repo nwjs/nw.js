@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>
+    test setting file input value
+  </title>
+</head>
+<body>
+  <input id = 'input0' type = 'file'/>
+  <script type="text/javascript">
+    var gui = require('nw.gui');
+    var win = gui.Window.get();
+    var path = require('path');
+    var fs = require('fs');
+    var testFilePath = path.join(fs.realpathSync('.'), 'testfile');
+    win.on('loaded',function(){
+      try{
+        var f = new File(testFilePath, 'mytestfile');
+        var files = new FileList();
+        files.append(f);
+        document.getElementById('input0').files = files;
+      } catch(er){
+        console.log(er);
+      } finally{
+        var info = 'wrong';
+        if(document.getElementById('input0').files[0] != null)
+          info = document.getElementById('input0').files[0].name;
+    var socket = require('net').connect({port: 13013});
+    socket.setEncoding('utf8');
+    socket.end(info);
+
+      }
+    });
+  </script>
+</body>
+</html>

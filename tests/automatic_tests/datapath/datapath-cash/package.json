@@ -1,0 +1,5 @@
+{
+  "name": "data path",
+  "main": "index.html",
+  "chromium-args": "--data-path='./dataPath/data-cash/'"
+}

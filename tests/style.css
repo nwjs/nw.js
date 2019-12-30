@@ -1,0 +1,20 @@
+* {
+  font-family: sans-serif;
+}
+
+div {
+  margin-bottom: 3px;
+}
+
+button {
+  height: 20px;
+  margin-bottom: 5px;
+}
+
+.success {
+  color: #AAA
+}
+
+.fail {
+  color: black
+}

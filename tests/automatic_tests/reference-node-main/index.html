@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf8">
+    <title>test</title>
+  </head>
+  <body>
+    <script type="text/javascript">
+      //start js code here
+			var gui = require('nw.gui');
+			var win = gui.Window.get();
+      var result = false;
+      var start_time = new Date();
+
+
+      var RunTest = function(){
+        var ready = process.mainModule.exports.ready;
+        if (!ready){
+          var now = new Date();
+          if (now.getTime() - start_time.getTime() > 5*1000){
+            var report_client = require('../../nw_test_app').createClient({
+              argv: gui.App.argv,
+              data: result
+            });
+            return ;
+          }
+          setTimeout(RunTest,1000);
+          return ;
+        }
+        var message = process.mainModule.exports.message;
+        var port = process.mainModule.exports.port;
+        var client = require('net').createConnection(port);
+        client.on('data',function(data){
+          if (data.toString() == message){
+            result = true;
+          } else {
+            result = false;
+          }
+          var report_client = require('../../nw_test_app').createClient({
+            argv: gui.App.argv,
+            data: result
+          });
+        });
+        client.write(message);
+      };
+
+      RunTest();
+    </script>
+  </body>
+</html>
+    

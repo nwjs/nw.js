@@ -1,0 +1,58 @@
+<html>
+<head>
+  <meta charset="utf8">
+</head>
+
+<body style="background: #333">
+    <div id="message">
+      <h1 style="color:red;">Please wait 1s for nw to render page</h1>
+      <h2 style="color:red;">If you see a capture in popup window, this case passes</h2>
+    </div>
+    <script>
+        var gui = require('nw.gui');
+        var win = gui.Window.get();
+
+        var file_name = 'out.png';
+
+        function takeSnapshot() {
+            var png_flag = false;
+            var png_data = null;
+            var jpg_flag = false;
+            var jpg_data = null;
+            win.capturePage(function(img) {
+                png_data = img;
+                png_flag = true;
+            }, 'png');
+            win.capturePage(function(img){
+              jpg_data = img;
+              jpg_flag = true;
+            },'jpeg');
+
+            setTimeout(function(){
+              if (png_flag && jpg_flag){
+                var win = gui.Window.open('popup.html');
+                win.on('loaded',function(){
+                  win.window.document.getElementById('png').src=png_data;
+                  win.window.document.getElementById('jpg').src=jpg_data;
+                });
+              }
+            },2000);
+        };
+
+        process.on('exit',function(){
+          var fs = require('fs');
+          if ( fs.existsSync(file_name) ){
+            fs.unlinkSync(file_name);
+          }
+        });
+
+        window.onload = function(){
+          //nw need some time to render page
+          setTimeout(takeSnapshot,1000);
+        };
+    </script>
+    <div style="background: #123; width:100px; height:100px; border:1px solid
+      #000">
+    </div>
+</body>
+</html>

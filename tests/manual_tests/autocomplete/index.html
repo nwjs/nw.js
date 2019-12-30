@@ -1,0 +1,16 @@
+<html>
+    <body>
+        <p>
+            <h3>Test case for GitHub issue #434<br>(lack of autocomplete if "id" or "name" attribute is used for input tag)</h3>
+        </p>
+        <p>
+            Please type letter "b" in this input field, it should present an autocomplete list with "Bart" entry in it. 
+            <input name="element-name" id="element-id" type="text" list="characters" style="width:400px" autofocus>
+            <datalist id="characters">
+                <option value="Homer Simpson">
+                <option value="Bart">
+                <option value="Fred Flinstone">
+            </datalist>
+        </p>
+    </body>
+</html>

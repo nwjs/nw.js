@@ -1,0 +1,93 @@
+<html>
+  <head>
+      
+</head>
+<body>
+<script>
+
+  var gui = require('nw.gui');
+  var program = require('../../node_modules/commander');
+  var net = require('net');
+  //command line arguments.
+  program
+    .option('--auto', 'run app automatic')
+    .option('-p, --port <port>', "set port used by socket")
+    .parse([ 'node-webkit', 'nw-test' ].concat(gui.App.argv));
+
+  var prot = 13013;
+  if (program.port) port = program.port;
+  if (!program.auto) gui.Window.get().show();
+  //gui.Window.get().show();   
+
+  function connectToRemotePage(url, ele_id, callback){
+    var win = gui.Window.open(url, { show: false });
+	var result;
+	win.on('loaded', function() {
+	  
+      if (!win.window.test) {
+        document.getElementById(ele_id).innerHTML = 
+          'Can not connect to this page';
+
+        result = 'Can not connect to this page';     
+	  } else if (win.window.test()) {
+        document.getElementById(ele_id).innerHTML = 'YES';
+        result = 'ok';
+      } else {
+        document.getElementById(ele_id).innerHTML = 'NO';
+        result = 'Unable call Node';
+      }
+	  if (callback) callback(result);
+	  win.close();
+      
+	});
+	
+  }
+
+  if (!program.auto) {
+    connectToRemotePage('http://127.0.0.1:8123/node_remote_test.html', 'msg8123');
+    connectToRemotePage('http://127.0.0.1:8124/node_remote_test.html', 'msg8124');
+  } else {
+    var client;
+    client = net.connect({port: port});
+    client.setEncoding('utf8'); 
+	
+    client.on('data', function(data) {	  
+      if (data == '8123') {
+	    connectToRemotePage('http://127.0.0.1:8123/node_remote_test.html',
+			'msg8123', function(result){
+			   client.write(result);
+		});
+	  }//if (data == '8123') 
+	  
+	  if (data == '8124') {
+	    connectToRemotePage('http://127.0.0.1:8124/node_remote_test.html', 
+			'msg8124', function(result){
+		       client.write(result);
+		});
+	  }//if (data == '8124') 
+	  
+	});
+  }  
+  
+  gui.Window.get().on('close', function() {
+    gui.App.quit();
+  });
+  
+</script>
+
+<div>
+  <span>Can remote page</span>
+  <a href="http://127.0.0.1:8123/node_remote_test.html">http://127.0.0.1:8123/node_remote_test.html</a> 
+  <span>call Node: </span>
+  <span id="msg8123" style="color:blue"></span>
+</div>
+
+<div>  
+  <span>Can remote page</span>
+  <a href="http://127.0.0.1:8124/node_remote_test.html">http://127.0.0.1:8124/node_remote_test.html</a> 
+  <span>call Node: </span>
+  <span id="msg8124" style="color:blue"></span>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test case for crash dump!</title>
+  </head>
+  <body>
+    <h1>Hello World!</h1>
+    We are using node.js
+    <script>
+      var gui = require('nw.gui');
+      var App = gui.App;
+      //action: 0 for crashBrowser();
+      //action: 1 for crashRenderer();
+      var action = gui.App.argv[0];   
+      if (action == 0)
+	  window.open('index1.html')
+      else
+	  setTimeout(function(){
+      	      window.open('index2.html')
+	  }, 1000);
+      var client = require('../../nw_test_app').createClient({
+	  argv: gui.App.argv,
+	  data: ""
+      });
+      
+      
+    </script>
+  </body>
+</html>

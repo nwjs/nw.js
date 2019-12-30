@@ -1,0 +1,5 @@
+{
+	"name": "remote file access",
+	"main": "http://localhost:8123/index.html",
+	"node-remote": "localhost"
+}

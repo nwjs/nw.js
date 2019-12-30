@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf8">
+    <title>test</title>
+  </head>
+  <body>
+	  <h1>it works!</h1>
+    <script type="text/javascript">
+      //start js code here
+			var gui = require('nw.gui');
+      var port = gui.App.argv[0]||13013;
+      global.results = [];
+
+      var new_win = gui.Window.open('new_win.html');
+      new_win.on('document-start',function(frame){
+        global.results.push({
+          "name":'top-window-document-start',
+          "flag":frame === null
+        });
+      });
+      new_win.on('document-end',function(frame){
+        global.results.push({
+          "name":'top-window-document-end',
+          "flag":frame === null
+        });
+      });
+
+      setTimeout(function(){
+        new_win.close();
+        new_win = undefined;
+
+        var iframe = document.createElement('iframe');
+        document.body.appendChild(iframe);
+        var win = gui.Window.get();
+        win.on('document-start',function(frame){
+          global.results.push({
+            "name":"iframe-document-start",
+            "flag":frame === iframe
+          });
+        });
+        win.on('document-end',function(frame){
+          global.results.push({
+            "name":"iframe-document-end",
+            "flag":frame === iframe
+          });
+        });
+        iframe.onload = function(){
+          global.results.push("onload-from-iframe");
+          setTimeout(function(){
+            var client = require('net').createConnection(port);
+            client.write(JSON.stringify(global.results));
+          },1000);
+        };
+        iframe.src = "iframe.html";
+      },1000);
+    </script>
+  </body>
+</html>
+    

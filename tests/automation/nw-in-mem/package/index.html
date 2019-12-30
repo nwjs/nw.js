@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<title>Veille</title>
+	
+	<!-- Allow fullscreen mode on iOS devices. (These are Apple specific meta tags.) -->
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	<meta name="HandheldFriendly" content="true" />
+
+    <!-- All margins and padding must be zero for the canvas to fill the screen. -->
+	<style type="text/css">
+		* {
+			padding: 0;
+			margin: 0;
+		}
+		body {
+			background: #000;
+			color: #fff;
+			overflow: hidden;
+			-ms-touch-action: none;
+		}
+		canvas {
+			-ms-touch-action: none;
+		}
+    </style>
+	
+
+</head> 
+ 
+<body> 
+	<div id="fb-root"></div>
+	
+	<!-- The canvas must be inside a div called c2canvasdiv -->
+	<div id="c2canvasdiv">
+	
+		<!-- The canvas the project will render to.  If you change its ID, don't forget to change the
+		ID the runtime looks for in the jQuery events above (ready() and cr_sizeCanvas()). -->
+		<canvas id="c2canvas" width="800" height="600"></canvas>
+		
+	</div>
+	
+	<!-- For node-webkit to show file dialogs -->
+	<input style="display:none;" id="c2nwOpenFileDialog" type="file" />
+	<input style="display:none;" id="c2nwChooseFolderDialog" type="file" nwdirectory />
+	<input style="display:none;" id="c2nwSaveDialog" type="file" nwsaveas />
+	
+	<!-- Pages load faster with scripts at the bottom -->
+	
+	<!-- Construct 2 exported games require jQuery. -->
+	<script src="jquery-2.0.0.min.js"></script>
+
+
+	
+    <!-- The runtime script.  You can rename it, but don't forget to rename the reference here as well.
+    This file will have been minified and obfuscated if you enabled "Minify script" during export. -->
+	<script src="c2runtime.js"></script>
+
+    <script>
+		window["c2nodewebkit"] = true;
+		window["nwgui"] = require("nw.gui");
+		
+		// Uncomment to show dev tools on startup
+		//window["nwgui"].Window.get().showDevTools();
+		
+		// Size the canvas to fill the browser viewport.
+		jQuery(window).resize(function() {
+			cr_sizeCanvas(jQuery(window).width(), jQuery(window).height());
+		});
+		
+		// Start the Construct 2 project running on window load.
+		jQuery(document).ready(function ()
+		{			
+			// Create new runtime using the c2canvas
+			cr_createRuntime("c2canvas");
+			
+			window["nwgui"].Window.get().show();
+		});
+		
+		// Pause and resume on page becoming visible/invisible
+		function onVisibilityChanged() {
+			if (document.hidden || document.mozHidden || document.webkitHidden || document.msHidden)
+				cr_setSuspended(true);
+			else
+				cr_setSuspended(false);
+		};
+		
+		document.addEventListener("visibilitychange", onVisibilityChanged, false);
+		document.addEventListener("mozvisibilitychange", onVisibilityChanged, false);
+		document.addEventListener("webkitvisibilitychange", onVisibilityChanged, false);
+		document.addEventListener("msvisibilitychange", onVisibilityChanged, false);
+		window["nwgui"].Window.get().on('loaded', function() {
+			setTimeout(function() {
+	  		simulateClick();
+	  }, 1000);
+	  });
+	  function simulateClick() {
+	  	var evt = new Event('mousedown');
+		  document.dispatchEvent(evt);
+		}
+		
+    </script>
+</body> 
+</html> 

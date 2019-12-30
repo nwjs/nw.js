@@ -1,0 +1,5 @@
+{
+  "name": "nw-demo",
+  "main": "index.html",
+  "snapshot": "mytest.bin"
+}

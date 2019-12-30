@@ -1,0 +1,7 @@
+{
+  "name" : "Hotkey-demo",
+  "main" : "index.html",
+  "window" : {
+    "width": 850
+  }
+}

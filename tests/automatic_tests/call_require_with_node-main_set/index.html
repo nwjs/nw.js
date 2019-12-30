@@ -1,0 +1,41 @@
+<html>
+<head>
+</head>
+<body>
+<p>If there are problem with `require()`: <span style="color:blue" id='msg'></span></p>
+<script>
+  var gui = require('nw.gui');
+  //gui.Window.get().show();
+
+  var result = { ok: true }; 
+  
+  try {
+    require('test');
+  }
+  catch (e) {
+    result.ok = false;
+    result.error = e.message;
+  }
+  
+  var client = require('../../nw_test_app').createClient({
+    argv: gui.App.argv,
+    data: result,
+  });
+  
+  if (!client.auto) {
+    gui.Window.get().show();
+  } else {
+    //gui.App.quit();
+  }
+  
+  
+  if (result.ok) {
+    document.getElementById('msg').innerHTML = 'NO';
+  } else {
+    document.getElementById('msg').innerHTML = 'YES ' + result.e;
+  }
+</script>
+
+
+</body>
+</html>

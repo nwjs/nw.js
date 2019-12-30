@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>test case for chromium-args</title>
+  </head>
+  <body>
+    <h1>Hello World!</h1>
+    <script>
+      var gui = require('nw.gui')
+      var fs = require('fs');
+      fs.openSync('./hi', 'w');
+      var results = false;
+      if (location.href == 'http://www.baidu.com/')
+	  results = true;
+      
+      var client = require('../../nw_test_app').createClient({
+        argv: gui.App.argv,
+        data: results
+      });
+
+    </script>
+  </body>
+</html>

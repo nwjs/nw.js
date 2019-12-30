@@ -1,0 +1,19 @@
+<html>
+<head>
+</head>
+<body>
+<script>
+  var gui = require('nw.gui');
+  var fs = require('fs');
+
+  
+  process.on('exit', function(){
+    fs.openSync('a.txt', 'w');
+
+  });
+  
+  gui.Window.get().close(true);
+</script>
+sdew
+</body>
+</html>

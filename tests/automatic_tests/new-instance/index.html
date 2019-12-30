@@ -1,0 +1,34 @@
+<html>
+<head>
+</head>
+<body>
+<span>The pid of main page is: </span>
+<span id="msg" style="color:Green"></span>
+<br/>
+<span>The pid of new-instance page is: </span>
+<span id="msg2" style="color:Green"></span>
+<script>
+  var gui = require('nw.gui');
+  document.getElementById('msg').innerHTML = process.pid; 
+  
+  var wnd = gui.Window.open("popup.html", {show: true, 'new-instance': true})
+  
+  
+  var client = require('../../nw_test_app').createClient({
+    argv: gui.App.argv,
+    data: process.pid
+  });
+    
+  
+  gui.Window.get().on('close', function() {
+    gui.App.quit();
+  })
+  
+
+  
+   
+</script>
+
+
+</body>
+</html>

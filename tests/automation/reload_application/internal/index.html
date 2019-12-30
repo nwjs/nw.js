@@ -1,0 +1,96 @@
+<html>
+<head>
+<script>
+  var gui = require('nw.gui');
+  function quit(){
+    gui.App.quit();
+  }
+  function closeWindow(){
+    gui.Window.get().close();
+  }
+</script>
+</head>
+
+<body>
+  
+ <script>
+
+  if (global.mydata == undefined){
+    global.mydata = 0;
+  }else{
+    global.mydata = global.mydata + 1;
+  }
+  var net = require('net');
+
+  /*
+    0: close window after reload.
+    1: quit after reload.
+    2: close window after reloadDev.
+    3: quit window after reloadDev.
+  */
+  var type = gui.App.argv[0]||0;
+  var prot = 13013;
+  var auto = true;
+  
+  setTimeout(function(){
+    gui.Window.get().show();
+    document.body.insertAdjacentHTML('beforeEnd',
+        '<p>' + global.mydata + 'times. window will hide in 2s.</p>');
+      }, 1000);
+
+  setTimeout(function(){
+     gui.Window.get().hide();
+   }, 2000);
+
+  setTimeout(function(){
+    document.body.insertAdjacentHTML('beforeEnd',
+      '<p> show after reload app' +
+      ', window can be closed and should not crash. </p>');
+    gui.Window.get().show();
+
+    if (auto){
+      if (type == 0 || type == 1 && global.mydata == 0){
+        location.reload();
+      }
+
+      if (type == 0 && global.mydata > 0){
+        gui.Window.get().close();
+      }
+
+      if (type == 1 && global.mydata > 0){
+        gui.App.quit();
+      }
+
+      if (type == 3 || type == 2){
+
+        var client = net.connect({port: prot});
+        client.setEncoding('utf8');
+        client.write('open');
+        client.on('data', function(data){
+          if (data == 'quit'){
+            if (type == 3) setTimeout(gui.App.quit, 1000);
+            if (type == 2) gui.Window.get().close();
+          }
+          if (data == 'reload'){
+            gui.Window.get().reload(3);
+          }
+        });
+      
+      }
+
+    }
+
+
+  }, 3000);
+
+</script>
+<button onclick="quit()">quit</button>
+   <br>
+ <button onclick="closeWindow()">close window</button>
+ <br>
+ <button onclick="location.reload()">reload</button>
+ <br>
+ <button onclick="gui.Window.get().reload(3)">reloadDev</button>
+
+</body>
+</html>

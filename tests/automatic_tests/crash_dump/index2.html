@@ -1,0 +1,16 @@
+ <!DOCTYPE html>
+<html>
+  <head>
+    <title>Test case for crash dump render!</title>
+  </head>
+  <body>
+    <h1>Hello World!</h1>
+    We are using node.js
+    <script>
+      var gui = require('nw.gui');
+      var App = gui.App;
+      App.setCrashDumpDir('./automatic_tests/crash_dump/tmp');
+      App.crashRenderer();
+    </script>
+  </body>
+</html>

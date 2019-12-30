@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf8">
+    <title>test</title>
+  </head>
+  <body>
+    <h1>Username: nw</h1>
+    <h1>Password: nw</h1>
+    <h1>If you get no error message in new window, it works fine!</h1>
+    <script type="text/javascript">
+      //start js code here
+			var gui = require('nw.gui');
+			var win = gui.Window.get();
+      win.moveTo(50,50);
+      var http = require('http');
+      var auth = require('http-auth');
+      var basic = auth.basic({
+        realm: "Simon Area.",
+        file:  "users.htpasswd",
+        msg401:"<401>---IF YOU SEE THIS PAGE, AUTH IS FAILED",
+        msg407:"<407>---IF YOU SEE THIS PAGE, AUTH IS FAILED"
+      });
+      var httpProxy = require('http-proxy');
+      var proxy = httpProxy.createProxyServer();
+
+      http.createServer(basic, function(req, res) {
+        proxy.web(req,res,{target:"http://localhost:9060"});
+      }).listen(9050);
+
+      http.createServer(function(req,res){
+        res.end("hello world");
+      }).listen(9060);
+
+      setTimeout(function(){
+        window.open("http://localhost:9050");
+      },1000);
+    </script>
+  </body>
+</html>
+    

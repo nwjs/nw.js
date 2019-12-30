@@ -1,0 +1,6 @@
+{
+  "name": "nw-single-sinstance",
+  "main": "index.html", 
+  "single-instance": false
+}
+

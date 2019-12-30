@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>new_win1</title>
+    <script>
+    var gui = require('nw.gui');
+    var win1 = gui.Window.get();
+    localStorage.win1 = 0;
+    win1.on('focus', function() {
+	localStorage.win1++;
+	console.log('win1');
+    }); 
+    </script>
+  </head>
+  <body>
+    <p id="wait" style="font-size:1.5em">Please focus this before click the according button .</p>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "nw-demo",
+  "main": "index.html",
+  "user-agent": "%name-a-b",
+  "node-remote": "127.0.0.1:8123",
+  "version": "1.0",
+  "window": { "show" : false }
+}

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf8">
+	<title></title>
+</head>
+<body>
+	<script type="text/javascript">
+		var result = result||[];
+		result.push("script-start");
+
+    setTimeout(function(){
+    var socket = require('net').connect({port: 13013});
+    socket.setEncoding('utf8');
+    socket.end(JSON.stringify(result));
+    },1000);
+	</script>
+</body>
+</html>

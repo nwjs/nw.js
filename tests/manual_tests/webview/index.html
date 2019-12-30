@@ -1,0 +1,28 @@
+<html>
+
+<head>
+    <title>Webview</title>
+</head>
+
+<body>
+	<p class="indicator"></p>
+	<!-- <webview id="foo" src="http://www.google.com/" style="width:400; height:300"></webview> -->
+	<webview id="foo" src="http://www.monocubed.com/2010/07/27/galactic-inbox/" partition="persist:trusted-audio"></webview>
+	<script type="text/javascript">
+	onload = function () {
+		var webview = document.getElementById("foo");
+        var indicator = document.querySelector(".indicator");
+      
+        var loadstart = function() {
+          indicator.innerText = "loading...";
+        }
+        var loadstop = function() {
+          indicator.innerText = "";
+        }
+        webview.addEventListener("loadstart", loadstart);
+        webview.addEventListener("loadstop", loadstop);
+	}
+	</script>
+</body>
+
+</html>

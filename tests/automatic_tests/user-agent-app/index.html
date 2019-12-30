@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+	<script>
+		var gui = require('nw.gui');
+    gui.Window.get().hide();
+		var user_agent = navigator.userAgent.split('/');
+		document.body.insertAdjacentHTML('beforeEnd',user_agent[0]+
+	'<p>testing user agent when a new window opened</p>');
+
+    var client = require('../../nw_test_app').createClient({
+	      argv: gui.App.argv,
+	      data: user_agent[0]
+	    });  
+	</script>
+</body>
+</html>

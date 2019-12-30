@@ -1,0 +1,9 @@
+{
+  "name": "nw-chromium-args",
+  "main": "index.html",
+  "window": {
+    "show": false
+  },
+  "chromium-args": "--disable-javascript"
+  
+}

@@ -1,0 +1,13 @@
+{
+  "name": "automation",
+  "version": "0.1.0",
+  "main": "index.html",
+  "window": {
+    "position": "center",
+    "show": false
+  },
+  "dependencies": {
+    "xunit-file": "*",
+    "colors": "*"
+  }
+}

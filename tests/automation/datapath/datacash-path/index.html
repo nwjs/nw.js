@@ -1,0 +1,19 @@
+<html>
+<head>
+<title>testing data path</title>
+</head>
+<body>
+<h1>Testing data path</h1>
+the data path should be set as
+<script>
+		var gui = require('nw.gui');
+	var fs = require('fs');
+	var package_info = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+	var info = package_info["chromium-args"];
+    var socket = require('net').connect({port: 13013});
+    socket.setEncoding('utf8');
+    socket.end('ok');   
+    document.write(info);
+</script>
+</body>
+</html>

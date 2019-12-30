@@ -1,0 +1,32 @@
+<html>
+<head>
+<script type="text/javascript" src="../../../zepto.min.js"></script>
+<script type="text/javascript">
+  var gui = require('nw.gui');
+  var win = gui.Window.get();
+
+  function test2(){
+  }
+  
+  gui.Window.get().test = function(){
+    document.getElementById('msg').innerHTML = 'Test called';
+  }
+
+  gui.Window.get().isTestSuccess = function(){
+    if (document.getElementById('msg').innerHTML == 'Test called') {
+      return true;
+    } else {
+      return false;
+    }
+  } 
+
+</script>
+</head>
+<body>
+  <button onclick="win.test()"> click</button> <br>
+  <script type="text/javascript">
+		document.write('Window id='+win.id+' routing_id='+win.routing_id);
+	</script>
+	<p id="msg" style='color: blue'></p>
+</body>
+</html>

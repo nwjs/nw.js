@@ -1,0 +1,125 @@
+<html>
+<head>
+  <title>NW Quit Test</title>
+</head>
+<body>
+  <h2 id="method"></h2>
+  <input type="button" id="doquit" value="Quit">
+  <script>
+    var nwGui = require('nw.gui');
+    var argv = nwGui.App.argv;
+
+    if (argv.length <4){
+      nwGui.App.quit();
+    } else {
+      while(argv.length <4){
+        argv.push(0);
+      }
+    }
+
+    var methodId = parseInt(argv.shift());
+    var methodId2Text = function(id){
+        id = parseInt(id);
+        switch(id){
+          case 0:
+            return "Click Quit Button";
+            break;
+          case 1:
+            return "Click native window red dot.";
+            break;
+          case 2:
+            return "Press COMMAND-Q(MAC ONLY)";
+            break;
+          case 3:
+            return "Press left top system menu node-webkit and click nw-quit.(MAC ONLY)";
+            break;
+        }
+    };
+    document.getElementById("method").innerHTML = methodId2Text(methodId);
+    
+
+    global.method = methodId;
+    var closerMode = parseInt(argv[0]);
+    var closeHandlerInNode = closerMode === 0?false:true; // true or false
+    var splashMode = parseInt(argv[1]);
+    var showSplashScreen = undefined;  // 'close', 'hide', or 'none'
+    switch(splashMode){
+      case 0:
+        showSplashScreen = 'close';
+        break;
+      case 1:
+        showSplashScreen = 'hide';
+        break;
+      case 2:
+        showSplashScreen = 'none';
+        break;
+      default:
+        throw "Invalid splashMode";
+        break;
+    }
+    var serverMode = parseInt(argv[2]);
+    var startServer = serverMode===0?false:true;// true or false
+
+    console.log("<%s,%s,%s,%s>",methodId,closerMode,splashMode,serverMode);
+
+
+
+
+    var win = nwGui.Window.get();
+
+    if (showSplashScreen === 'close') {
+      var winSplash = nwGui.Window.open('splash.html');
+      setTimeout(function() {
+        console.log('Closing splash window');
+        winSplash.close();
+      }, 0);
+    }
+    else if (showSplashScreen === 'hide') {
+      var winSplash = nwGui.Window.open('splash.html');
+      setTimeout(function() {
+        console.log('Hiding splash window');
+        winSplash.hide();
+      }, 0);
+    }
+
+    if (startServer) {
+      nwGui.Window.open('index-server.html', {'new-instance': true, show: false});
+    }
+
+    if (closeHandlerInNode) {
+      var closer = require('./close-handler');
+      closer.init(win, nwGui);
+    }
+    else {
+      console.log('Setting up close handler');
+      win.on('close', function(how) {
+        console.log('Got CLOSE event in index.html with "' + how + '"');
+        win.hide();
+        var http = require('http');
+        http.get("http://localhost:9000/close");
+        setTimeout(function() {
+          console.log('Quitting from close handler');
+          nwGui.App.quit();
+        }, 2000);
+      });
+    }
+
+    var testButton = document.getElementById('doquit');
+    testButton.onclick = function() {
+      win.close();
+    };
+    var http = require('http');
+    http.get("http://localhost:9000/crontab");//if we disable server, make look as it start
+
+
+    var quitButton = document.getElementById("doquit");
+    if (methodId === 0){
+      setTimeout(function(){
+        quitButton.click();
+      },1000);
+    } else {
+      quitButton.style.display = "none";
+    }
+  </script>
+</body>
+</html>
