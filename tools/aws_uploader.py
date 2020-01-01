@@ -21,8 +21,8 @@ import getnwversion
 parser = argparse.ArgumentParser(description='AWS uploader, please fill in your aws key and id in Boto config (~/.boto)')
 parser.add_argument('-p','--path', help='Optional. Where to find the binaries, normally out/Release/dist', required=False)
 parser.add_argument('-b','--buildername', help='Builder name, e.g. linux_32bit', required=True)
-parser.add_argument('-r','--revision', help='Commit revision',required=True)
-parser.add_argument('-n','--number', help='Build number', required=True)
+parser.add_argument('-r','--revision', help='Commit revision',required=False)
+parser.add_argument('-n','--number', help='Build number', required=False)
 parser.add_argument('-t','--bucket', help='AWS bucket name', required=True)
 parser.add_argument('-d','--dlpath', help='AWS bucket path', required=True)
 
