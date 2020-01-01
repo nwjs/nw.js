@@ -26,14 +26,17 @@ driver.implicitly_wait(5)
 try:
     print driver.current_url
     #driver.find_element_by_id('testbtn').click()
-    timeout = 10
+    timeout = 15
     found = False
     while timeout > 0 and not found:
-        for handle in driver.window_handles:
-            driver.switch_to_window(handle)
-            if driver.current_url.startswith('devtools://'):
-                found = True
-                break
+        try:
+            for handle in driver.window_handles:
+                driver.switch_to_window(handle)
+                if driver.current_url.startswith('devtools://'):
+                    found = True
+                    break
+        except:
+            pass
         timeout = timeout - 1
         time.sleep(1)
     assert(found)
