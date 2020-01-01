@@ -25,6 +25,7 @@ parser.add_argument('-r','--revision', help='Commit revision',required=False)
 parser.add_argument('-n','--number', help='Build number', required=False)
 parser.add_argument('-t','--bucket', help='AWS bucket name', required=True)
 parser.add_argument('-d','--dlpath', help='AWS bucket path', required=True)
+parser.add_argument('--header', help='upload header', action="store_true")
 
 args = parser.parse_args()
 
@@ -101,7 +102,10 @@ def aws_upload(upload_path, file_list):
         if (f == 'SHASUMS256.txt'):
             continue
 
-        if (f.startswith('node-v') or f.startswith('nw-header')) and not ('_sdk_mac64' in builder_name) :
+        if f.startswith('nw-header') and not ('_sdk_mac64' in builder_name) and not args.header :
+            continue
+
+        if f.startswith('node-v')  and not ('_sdk_mac64' in builder_name) :
             continue
 
         if f.startswith('chromedriver') and 'sdk' not in builder_name :
