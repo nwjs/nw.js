@@ -215,7 +215,9 @@ NWWindow.prototype.on = function (event, callback, record) {
     this.onDocumentEnd.addListener(cb0);
     break;
   case 'new-win-policy':
-    var h = wrap(function(frame, url, policy) {
+    var h = wrap(function(frame, url, policy, top_routing_id) {
+      if (top_routing_id !== self.cWindow.tabs[0].mainFrameId)
+        return;
       policy.ignore         =  function () { this.val = 'ignore'; };
       policy.forceCurrent   =  function () { this.val = 'current'; };
       policy.forceDownload  =  function () { this.val = 'download'; };
@@ -227,7 +229,9 @@ NWWindow.prototype.on = function (event, callback, record) {
     this.onNewWinPolicy.addListener(h);
     break;
   case 'navigation':
-    var j = wrap(function(frame, url, policy, context) {
+    var j = wrap(function(frame, url, policy, context, top_routing_id) {
+      if (top_routing_id !== self.cWindow.tabs[0].mainFrameId)
+        return;
       policy.ignore         =  function () { this.val = 'ignore'; };
       callback.call(self, frame, url, policy, context);
     });
@@ -729,16 +733,14 @@ function dispatchEventIfExists(target, name, varargs) {
     console.warn('Could not dispatch ' + name + ', event has been clobbered');
 }
 
-function onNewWinPolicy(frame, url, policy) {
+function onNewWinPolicy(frame, url, policy, top_routing_id) {
   //console.log("onNewWinPolicy called: " + url + ", " + policy);
-  dispatchEventIfExists(currentNWWindow, "onNewWinPolicy", [frame, url, policy]);
+  dispatchEventIfExists(NWWindow.prototype, "onNewWinPolicy", [frame, url, policy, top_routing_id]);
 }
 
-function onNavigation(frame, url, policy, context) {
+function onNavigation(frame, url, policy, top_routing_id, context) {
   //console.log("onNavigation called: " + url + ", " + context);
-  if (!currentNWWindow)
-    return;
-  dispatchEventIfExists(currentNWWindow, "onNavigation", [frame, url, policy, context]);
+  dispatchEventIfExists(NWWindow.prototype, "onNavigation", [frame, url, policy, context, top_routing_id]);
 }
 
 function onLoadingStateChanged(status) {
