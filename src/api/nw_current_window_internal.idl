@@ -40,7 +40,7 @@ namespace nw.currentWindowInternal {
     static void reloadIgnoringCache();
     static double getZoom(optional long winId);
     static void setZoom(double level, optional long winId);
-    static void setShowInTaskbar(boolean show);
+    static void setShowInTaskbarInternal(boolean show, optional long id);
     static DOMString getTitleInternal(optional long winId);
     static void setTitleInternal(DOMString title, optional long winId);
     static object getWinParamInternal();

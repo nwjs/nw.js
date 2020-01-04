@@ -69,10 +69,12 @@ var wrapEventsMapNewWin = {
 
 function NWWindow(cWindow) {
   var self = this;
-  if (cWindow)
+  if (cWindow) {
     this.cWindow = cWindow;
-  else {
+    //console.log(`---> NWWindow: ${this.cWindow.id}`);
+  } else {
     this.cWindow = currentNWWindowInternal.getCurrent(-2, {'populate': true});
+    //console.log(`---> NWWindow: ${this.cWindow.id}`);
     if (!this.cWindow)
           console.error('The JavaScript context calling ' +
                         'nw.Window.get() has no associated Browser window.');
@@ -119,6 +121,7 @@ NWWindow.prototype.onResized           = bindingUtil.createCustomEvent("nw.Windo
 NWWindow.prototype.onRestore           = bindingUtil.createCustomEvent("nw.Window.onRestore", false, false);
 
 NWWindow.prototype.close = function (force) {
+  //console.log(`---> NWWindow.close: ${force} ${this.cWindow.id}`);
   currentNWWindowInternal.close(force, this.cWindow.id);
 }
 
@@ -314,6 +317,10 @@ NWWindow.prototype.removeAllListeners = function (event) {
 
 NWWindow.prototype.setShadow = function(shadow) {
   currentNWWindowInternal.setShadowInternal(shadow, this.cWindow.id);
+};
+
+NWWindow.prototype.setShowInTaskbar = function(show) {
+  currentNWWindowInternal.setShowInTaskbarInternal(show, this.cWindow.id);
 };
 
 NWWindow.prototype.enterKioskMode = function() {
@@ -751,6 +758,7 @@ function onLoadingStateChanged(status) {
 }
 
 function onDocumentStartEnd(start, frame, top_routing_id) {
+  //console.log(`---> onDocumentStartEnd ${start} ${top_routing_id}`);
   if (start) {
     dispatchEventIfExists(NWWindow.prototype, "onDocumentStart", [frame, top_routing_id]);
   }

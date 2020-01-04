@@ -54,6 +54,10 @@ void NWSetNSWindowShowInTaskbar(extensions::NativeAppWindow* win, bool show) {
   gfx::SetNSWindowShowInTaskbar(nswin, show);
 }
 
+void NWSetNSWindowShowInTaskbar(gfx::NativeWindow win, bool show) {
+  NSWindow* nswin = win.GetNativeNSWindow();
+  gfx::SetNSWindowShowInTaskbar(nswin, show);
+}
 
 static NSApplicationPresentationOptions previousOptions = 0;
 static bool kiosked = false;

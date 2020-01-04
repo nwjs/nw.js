@@ -449,9 +449,11 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
     std::set<ScriptContext*>::iterator it = contexts.begin();
     while (it != contexts.end()) {
       ScriptContext* c = *it;
+      if (extensions::binding::IsContextValid(c->v8_context())) {
       extensions::ModuleSystem::NativesEnabledScope natives_enabled(c->module_system());
       c->module_system()->CallModuleMethodSafe("nw.Window", "onDocumentStartEnd", &arguments);
       it++;
+      }
     }
   } else {
     // need require in m61 since the following CallModuleMethodSafe
