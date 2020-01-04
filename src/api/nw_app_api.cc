@@ -16,6 +16,8 @@
 #include "chrome/browser/extensions/extension_service.h"
 #include "chrome/browser/net/profile_network_context_service.h"
 #include "chrome/browser/net/profile_network_context_service_factory.h"
+#include "components/keep_alive_registry/keep_alive_registry.h"
+#include "components/keep_alive_registry/keep_alive_types.h"
 #include "content/nw/src/api/nw_app.h"
 #include "content/nw/src/nw_base.h"
 #include "content/public/browser/render_frame_host.h"
@@ -48,6 +50,9 @@ NwAppQuitFunction::~NwAppQuitFunction() {
 void NwAppQuitFunction::DoJob(ExtensionService* service, std::string extension_id) {
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
     chrome::CloseAllBrowsersAndQuit(true);
+    // trigger BrowserProcessImpl::Unpin()
+    KeepAliveRegistry::GetInstance()->Register(KeepAliveOrigin::APP_CONTROLLER, KeepAliveRestartOption::ENABLED);
+    KeepAliveRegistry::GetInstance()->Unregister(KeepAliveOrigin::APP_CONTROLLER, KeepAliveRestartOption::ENABLED);
     return;
   }
   base::ThreadTaskRunnerHandle::Get().get()->PostTask(
