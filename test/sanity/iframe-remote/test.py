@@ -38,7 +38,7 @@ html.write('''
 html.close()
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
-time.sleep(1)
+driver.implicitly_wait(5)
 try:
     print driver.current_url
     result = driver.find_element_by_id('res1').get_attribute('innerHTML')

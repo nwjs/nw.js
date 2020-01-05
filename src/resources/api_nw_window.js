@@ -347,6 +347,10 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
       currentNWWindowInternal.setShadowInternal(shadow);
     };
 
+    NWWindow.prototype.setShowInTaskbar = function(show) {
+      currentNWWindowInternal.setShowInTaskbarInternal(show);
+    };
+
     NWWindow.prototype.enterKioskMode = function() {
       currentNWWindowInternal.enterKioskModeInternal();
     };

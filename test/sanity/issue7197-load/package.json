@@ -1,0 +1,11 @@
+{
+  "name": "Vue-Nw-Webpack",
+  "version": "0.1.7",
+  "main": "./nw-main.js",
+  "node-remote": "*://localhost/*",
+  "window": {
+    "width": 1280,
+    "height": 865,
+    "icon": "./logo.png"
+  }
+}

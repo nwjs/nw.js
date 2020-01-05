@@ -454,9 +454,11 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
     std::set<ScriptContext*>::iterator it = contexts.begin();
     while (it != contexts.end()) {
       ScriptContext* c = *it;
+      if (extensions::binding::IsContextValid(c->v8_context())) {
       extensions::ModuleSystem::NativesEnabledScope natives_enabled(c->module_system());
       c->module_system()->CallModuleMethodSafe("nw.Window", "onDocumentStartEnd", &arguments);
       it++;
+      }
     }
   } else {
     // need require in m61 since the following CallModuleMethodSafe
@@ -564,28 +566,64 @@ void willHandleNavigationPolicy(content::RenderView* rv,
   arguments.push_back(element);
   arguments.push_back(v8_str(request.Url().GetString().Utf8().c_str()));
   arguments.push_back(policy_obj);
-  if (new_win) {
-    script_context->module_system()->CallModuleMethodSafe("nw.Window",
-                                                      "onNewWinPolicy", &arguments);
-  } else {
-    const char* req_context = nullptr;
-    switch (request.GetRequestContext()) {
-    case blink::mojom::RequestContextType::HYPERLINK:
-      req_context = "hyperlink";
-      break;
-    case blink::mojom::RequestContextType::FRAME:
-      req_context = "form";
-      break;
-    case blink::mojom::RequestContextType::LOCATION:
-      req_context = "location";
-      break;
-    default:
-      break;
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    content::RenderFrame* main_frame = rv->GetMainRenderFrame();
+    arguments.push_back(v8::Integer::New(isolate, main_frame->GetRoutingID()));
+
+    std::set<ScriptContext*> contexts(g_dispatcher->script_context_set().contexts());
+    std::set<ScriptContext*>::iterator it = contexts.begin();
+    while (it != contexts.end()) {
+      ScriptContext* c = *it;
+      extensions::ModuleSystem::NativesEnabledScope natives_enabled(c->module_system());
+      if (new_win) {
+        c->module_system()->CallModuleMethodSafe("nw.Window", "onNewWinPolicy", &arguments);
+      } else {
+        const char* req_context = nullptr;
+        switch (request.GetRequestContext()) {
+        case blink::mojom::RequestContextType::HYPERLINK:
+          req_context = "hyperlink";
+          break;
+        case blink::mojom::RequestContextType::FRAME:
+          req_context = "form";
+          break;
+        case blink::mojom::RequestContextType::LOCATION:
+          req_context = "location";
+          break;
+        default:
+          break;
+        }
+        if (req_context) {
+          arguments.push_back(v8_str(req_context));
+          c->module_system()->CallModuleMethodSafe("nw.Window",
+                                                   "onNavigation", &arguments);
+        }
+      }
+      it++;
     }
-    if (req_context) {
-      arguments.push_back(v8_str(req_context));
+  } else {
+    if (new_win) {
       script_context->module_system()->CallModuleMethodSafe("nw.Window",
-                                                        "onNavigation", &arguments);
+                                                      "onNewWinPolicy", &arguments);
+    } else {
+      const char* req_context = nullptr;
+      switch (request.GetRequestContext()) {
+      case blink::mojom::RequestContextType::HYPERLINK:
+        req_context = "hyperlink";
+        break;
+      case blink::mojom::RequestContextType::FRAME:
+        req_context = "form";
+        break;
+      case blink::mojom::RequestContextType::LOCATION:
+        req_context = "location";
+        break;
+      default:
+        break;
+      }
+      if (req_context) {
+        arguments.push_back(v8_str(req_context));
+        script_context->module_system()->CallModuleMethodSafe("nw.Window",
+                                                              "onNavigation", &arguments);
+      }
     }
   }
 

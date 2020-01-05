@@ -1,3 +1,13 @@
+0.43.3 / 01-01-2020
+===================
+- Support file scheme in `node-remote` field of manifest [(#7183)](https://github.com/nwjs/nw.js/issues/7183)
+- Fix: Linux: add missing ANGLE library files to fix Loss of GPU acceleration [(#7281)](https://github.com/nwjs/nw.js/issues/7281)
+- Fix: nw2: frameless app no longer have resize handle [(#7286)](https://github.com/nwjs/nw.js/issues/7286)
+- Fix: grant NW apps default permission for meida devices etc [(#7229)](https://github.com/nwjs/nw.js/issues/7229)
+- Fix: nw2: transparency not working as intended [(#7221)](https://github.com/nwjs/nw.js/issues/7221)
+- Fix: CORB from Node frame
+- Fix: Open links in PDF file to external html file [(#7240)](https://github.com/nwjs/nw.js/issues/7240)
+
 0.43.2 / 12-20-2019
 ===================
 - Update Chromium to [79.0.3945.88](https://chromereleases.googleblog.com/2019/12/stable-channel-update-for-desktop_17.html)

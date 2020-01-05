@@ -19,6 +19,19 @@
     </div>
     <!-- end of headbar div -->
 
+    <script>
+      function test(trusted) {
+        var webview = document.createElement('webview');
+        webview.addEventListener('loadabort', function(e) {
+          if (e.reason == 'ERR_DISALLOWED_URL_SCHEME' && !trusted)
+            chrome.test.sendMessage("PASSED");
+        });
+        webview.src = '<pdf_path>';
+        if (trusted)
+          webview.partition = 'trusted';
+        document.body.appendChild(webview);
+      }
+    </script>
     <div id="container" style="position: absolute; top: 0px; width: 900px; z-index: 99;">
         <ul id="ul" style="position: absolute; top: 90px; left: 30px; width: 90%; margin-left: auto; margin-right: auto; text-align: center;">
 
@@ -28,7 +41,7 @@
                   <tr>
                       <td style="border: 1px solid orange; width: 33%; padding-bottom: 10px;">
                           <p style="color: red;">PDF - webview tag using file://</p>
-			  <webview id="wbv1" _partition_ src="<pdf_path>" class="wbv"></webview>
+			  <!-- <webview id="wbv1" _partition_ src="<pdf_path>" class="wbv"></webview> -->
                       </td>
                   </tr>
               </table>

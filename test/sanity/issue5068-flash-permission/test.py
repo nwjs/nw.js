@@ -104,7 +104,6 @@ manifest.close()
 driver_path=os.path.join(pkg1, 'chromedriver')
 driver = webdriver.Chrome(executable_path=driver_path)
 driver.implicitly_wait(2)
-time.sleep(1)
 try:
     print driver.current_url
     result = driver.find_element_by_id('result')

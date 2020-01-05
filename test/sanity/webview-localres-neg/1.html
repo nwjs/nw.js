@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+   <title>title of 1.html</title>
+   <script>window.name="webview1"</script>
+  </head>
+  <body>
+   <h1 id='result'>...</h1>
+   <script type="text/javascript" src="local.js"></script>
+   <script>
+   if (typeof var_in_local_js === 'undefined')
+     document.querySelector('#result').innerHTML = 'success';
+   else
+     document.querySelector('#result').innerHTML = 'fail';
+   </script>
+  </body>
+</html>

@@ -69,10 +69,12 @@ var wrapEventsMapNewWin = {
 
 function NWWindow(cWindow) {
   var self = this;
-  if (cWindow)
+  if (cWindow) {
     this.cWindow = cWindow;
-  else {
+    //console.log(`---> NWWindow: ${this.cWindow.id}`);
+  } else {
     this.cWindow = currentNWWindowInternal.getCurrent(-2, {'populate': true});
+    //console.log(`---> NWWindow: ${this.cWindow.id}`);
     if (!this.cWindow)
           console.error('The JavaScript context calling ' +
                         'nw.Window.get() has no associated Browser window.');
@@ -119,6 +121,7 @@ NWWindow.prototype.onResized           = bindingUtil.createCustomEvent("nw.Windo
 NWWindow.prototype.onRestore           = bindingUtil.createCustomEvent("nw.Window.onRestore", false, false);
 
 NWWindow.prototype.close = function (force) {
+  //console.log(`---> NWWindow.close: ${force} ${this.cWindow.id}`);
   currentNWWindowInternal.close(force, this.cWindow.id);
 }
 
@@ -215,7 +218,9 @@ NWWindow.prototype.on = function (event, callback, record) {
     this.onDocumentEnd.addListener(cb0);
     break;
   case 'new-win-policy':
-    var h = wrap(function(frame, url, policy) {
+    var h = wrap(function(frame, url, policy, top_routing_id) {
+      if (top_routing_id !== self.cWindow.tabs[0].mainFrameId)
+        return;
       policy.ignore         =  function () { this.val = 'ignore'; };
       policy.forceCurrent   =  function () { this.val = 'current'; };
       policy.forceDownload  =  function () { this.val = 'download'; };
@@ -227,7 +232,9 @@ NWWindow.prototype.on = function (event, callback, record) {
     this.onNewWinPolicy.addListener(h);
     break;
   case 'navigation':
-    var j = wrap(function(frame, url, policy, context) {
+    var j = wrap(function(frame, url, policy, context, top_routing_id) {
+      if (top_routing_id !== self.cWindow.tabs[0].mainFrameId)
+        return;
       policy.ignore         =  function () { this.val = 'ignore'; };
       callback.call(self, frame, url, policy, context);
     });
@@ -310,6 +317,10 @@ NWWindow.prototype.removeAllListeners = function (event) {
 
 NWWindow.prototype.setShadow = function(shadow) {
   currentNWWindowInternal.setShadowInternal(shadow, this.cWindow.id);
+};
+
+NWWindow.prototype.setShowInTaskbar = function(show) {
+  currentNWWindowInternal.setShowInTaskbarInternal(show, this.cWindow.id);
 };
 
 NWWindow.prototype.enterKioskMode = function() {
@@ -729,16 +740,14 @@ function dispatchEventIfExists(target, name, varargs) {
     console.warn('Could not dispatch ' + name + ', event has been clobbered');
 }
 
-function onNewWinPolicy(frame, url, policy) {
+function onNewWinPolicy(frame, url, policy, top_routing_id) {
   //console.log("onNewWinPolicy called: " + url + ", " + policy);
-  dispatchEventIfExists(currentNWWindow, "onNewWinPolicy", [frame, url, policy]);
+  dispatchEventIfExists(NWWindow.prototype, "onNewWinPolicy", [frame, url, policy, top_routing_id]);
 }
 
-function onNavigation(frame, url, policy, context) {
+function onNavigation(frame, url, policy, top_routing_id, context) {
   //console.log("onNavigation called: " + url + ", " + context);
-  if (!currentNWWindow)
-    return;
-  dispatchEventIfExists(currentNWWindow, "onNavigation", [frame, url, policy, context]);
+  dispatchEventIfExists(NWWindow.prototype, "onNavigation", [frame, url, policy, context, top_routing_id]);
 }
 
 function onLoadingStateChanged(status) {
@@ -749,6 +758,7 @@ function onLoadingStateChanged(status) {
 }
 
 function onDocumentStartEnd(start, frame, top_routing_id) {
+  //console.log(`---> onDocumentStartEnd ${start} ${top_routing_id}`);
   if (start) {
     dispatchEventIfExists(NWWindow.prototype, "onDocumentStart", [frame, top_routing_id]);
   }

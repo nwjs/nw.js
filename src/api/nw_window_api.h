@@ -269,16 +269,16 @@ class NwCurrentWindowInternalIsKioskInternalFunction : public NWSyncExtensionFun
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.isKioskInternal", UNKNOWN)
 };
 
-class NwCurrentWindowInternalSetShowInTaskbarFunction : public ExtensionFunction {
+class NwCurrentWindowInternalSetShowInTaskbarInternalFunction : public ExtensionFunction {
  public:
-  NwCurrentWindowInternalSetShowInTaskbarFunction() {}
+  NwCurrentWindowInternalSetShowInTaskbarInternalFunction() {}
 
  protected:
-  ~NwCurrentWindowInternalSetShowInTaskbarFunction() override {}
-  
+  ~NwCurrentWindowInternalSetShowInTaskbarInternalFunction() override {}
+
    // ExtensionFunction:
   ResponseAction Run() override;
-   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setShowInTaskbar", UNKNOWN)
+   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setShowInTaskbarInternal", UNKNOWN)
 };
 
 class NwCurrentWindowInternalSetTitleInternalFunction : public NWSyncExtensionFunction {

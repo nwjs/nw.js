@@ -1,10 +1,14 @@
 import time
 import os
 import subprocess
+import sys
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common import utils
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from nw_util import *
 
 chrome_options = Options()
 chrome_options.add_argument("nwapp=" + os.path.dirname(os.path.abspath(__file__)))
@@ -39,11 +43,9 @@ var req = http.get("http://localhost:%s/g.png", function (res) {
 html.close()
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, desired_capabilities = capabilities, service_log_path="log", service_args=["--verbose"])
-time.sleep(1)
 try:
     print driver.current_url
-    time.sleep(7)
-    result = driver.find_element_by_id('res').get_attribute('innerHTML')
+    result = wait_for_element_id(driver, 'res')
     print result
     assert("success" in result)
 finally:

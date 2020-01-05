@@ -1015,10 +1015,20 @@ bool NwCurrentWindowInternalGetWinParamInternalFunction::RunNWSync(base::ListVal
 }
 
 ExtensionFunction::ResponseAction
-NwCurrentWindowInternalSetShowInTaskbarFunction::Run() {
+NwCurrentWindowInternalSetShowInTaskbarInternalFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args_);
   bool show;
   EXTENSION_FUNCTION_VALIDATE(args_->GetBoolean(0, &show));
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    int id = 0;
+    args_->GetInteger(1, &id);
+    Browser* browser = getBrowser(this, id);
+    if (!browser)
+      return RespondNow(NoArguments());
+    BrowserView* view = BrowserView::GetBrowserViewForBrowser(browser);
+    view->SetShowInTaskbar(show);
+    return RespondNow(NoArguments());
+  }
 #if defined(OS_WIN)
   AppWindow* window = getAppWindow(this);
 

@@ -12,7 +12,6 @@ if platform.system() != 'Linux':
     sys.exit(0)
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
-time.sleep(1)
 try:
     print driver.current_url
     result = driver.find_element_by_id('result').get_attribute('innerHTML')

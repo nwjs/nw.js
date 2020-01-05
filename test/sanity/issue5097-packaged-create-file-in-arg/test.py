@@ -68,7 +68,7 @@ chrome_options = Options()
 chrome_options.add_nw_argument(unexpected_file)
 driver_path=os.path.join(pkg1, 'chromedriver')
 driver = webdriver.Chrome(executable_path=driver_path, chrome_options=chrome_options)
-time.sleep(1)
+driver.implicitly_wait(5)
 try:
     print driver.current_url
     result = driver.find_element_by_id('result')

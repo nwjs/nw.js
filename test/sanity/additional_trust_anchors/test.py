@@ -56,10 +56,9 @@ write_file('package.json', pkg_with_trust_anchors)
 try:
     driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
     driver.implicitly_wait(5)
-    time.sleep(1)
     try:
         print driver.current_url
-        timeout = 10
+        timeout = 5
         ret = ''
         elem_id = 'result'
         while timeout > 0:
@@ -92,7 +91,6 @@ try:
 
     driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
     driver.implicitly_wait(5)
-    time.sleep(1)
     try:
         print driver.current_url
         driver.switch_to_frame(driver.find_element_by_id('test-frame'))
