@@ -158,6 +158,14 @@ Moves a window a specified number of pixels relative to its current coordinates.
 
 Resizes a window to the specified `width` and `height`.
 
+## win.setInnerWidth(width)
+
+* `width` `{Integer}` the inner width of the window
+
+## win.setInnerHeight(height)
+
+* `height` `{Integer}` the inner height of the window
+
 ## win.resizeBy(width, height)
 
 * `width` `{Integer}` the offset width of the window
