@@ -475,6 +475,12 @@ NWWindow.prototype.setMinimumSize = function (width, height) {
 NWWindow.prototype.resizeTo = function (width, height) {
   chrome.windows.update(this.cWindow.id, {'innerWidth': width, 'innerHeight': height});
 };
+NWWindow.prototype.setInnerWidth = function (width) {
+  chrome.windows.update(this.cWindow.id, {'innerWidth': width});
+};
+NWWindow.prototype.setInnerHeight = function (height) {
+  chrome.windows.update(this.cWindow.id, {'innerHeight': height});
+};
 NWWindow.prototype.resizeBy = function (width, height) {
   this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
   chrome.windows.update(this.cWindow.id,
