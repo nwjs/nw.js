@@ -627,6 +627,7 @@ Object.defineProperty(NWWindow.prototype, 'menu', {
 });
 Object.defineProperty(NWWindow.prototype, 'window', {
   get: function() {
+    this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
     return appWindowNatives.GetFrame(this.cWindow.tabs[0].mainFrameId, false);
   }
 });
