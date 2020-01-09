@@ -1,3 +1,21 @@
+0.43.4 / 01-09-2020
+===================
+- Update to Chromium [79.0.3945.117](https://chromereleases.googleblog.com/2020/01/stable-channel-update-for-desktop.html)
+- [docs] add Window.setInnerWidth and setInnerHeight [(#7303)](https://github.com/nwjs/nw.js/issues/7303)
+- nw2: disable Mac native find for now [(#7285)](https://github.com/nwjs/nw.js/issues/7285)
+- Fix: chrome.app.window.getAll() causes "No current window" error [(#7310)](https://github.com/nwjs/nw.js/issues/7310)
+- Fix: NW2: Users can manually zoom using ALT/CTRL + Mousewheel  [(#7309)](https://github.com/nwjs/nw.js/issues/7309)
+- Fix: fullscreen option in package.json not working  [(#7308)](https://github.com/nwjs/nw.js/issues/7308)
+- Fix: win.window is undefined after navigation to remote url [(#7304)](https://github.com/nwjs/nw.js/issues/7304)
+- Fix: support of native chrome apps broken? [(#7302)](https://github.com/nwjs/nw.js/issues/7302)
+- Fix: window.moveTo(x, y) resizes window when global UI scaling is > 100% [(#7113)](https://github.com/nwjs/nw.js/issues/7113)
+- Fix: [NW2] Issues using resizeTo() as replacement for assigning window width/height [(#7303)](https://github.com/nwjs/nw.js/issues/7303)
+- Fix: Window and modal boxes features changed witn nw2 enabled [(#7217)](https://github.com/nwjs/nw.js/issues/7217)
+- Fix: cannot load local files in webview loaded with loadDataWithBaseUrl [(#7295)](https://github.com/nwjs/nw.js/issues/7295)
+- Fix: NW doesn't quit without open window [(#7298)](https://github.com/nwjs/nw.js/issues/7298)
+- Fix: NW2: "show_in_taskbar": false - Doesn't work Macos 10.14.6 [(#7296)](https://github.com/nwjs/nw.js/issues/7296)
+- Fix: NW2: Event navigation get not fired [(#7294)](https://github.com/nwjs/nw.js/issues/7294)
+
 0.43.3 / 01-01-2020
 ===================
 - Support file scheme in `node-remote` field of manifest [(#7183)](https://github.com/nwjs/nw.js/issues/7183)

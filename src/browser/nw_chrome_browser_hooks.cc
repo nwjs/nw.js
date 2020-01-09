@@ -221,6 +221,12 @@ const std::string& GetMainExtensionId() {
   return g_extension_id;
 }
 
+const extensions::Extension* GetMainExtension() {
+  Profile* profile = ProfileManager::GetActiveUserProfile();
+  return extensions::ExtensionRegistry::Get(profile)
+      ->enabled_extensions().GetByID(g_extension_id);
+}
+
 #if defined(OS_WIN)
 HICON GetAppHIcon() {
   return g_app_hicon.get();

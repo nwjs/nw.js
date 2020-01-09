@@ -25,6 +25,8 @@ htmlfile = os.path.join(testdir, '1.html')
 localurl = path2url(testdir)
 
 tpl = open('index.tpl', 'r')
+if sys.platform == 'win32':
+    htmlfile = htmlfile.replace('\\', '\\\\')
 content = tpl.read().replace('{localfile}', htmlfile)
 content = content.replace('{localdirurl}', localurl)
 tpl.close()

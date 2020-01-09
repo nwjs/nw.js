@@ -1,0 +1,4 @@
+Cookie sent by client on /test_cookie/index.html: 
+Cookie sent by client on /test_cookie/1.svg: cross-site-cookie=bar
+Cookie sent by client on /test_cookie/index.html: cross-site-cookie=bar
+Cookie sent by client on /test_cookie/1.svg: cross-site-cookie=bar

@@ -1,0 +1,4 @@
+Cookie sent by client on /test_cookie/index.html: 
+Cookie sent by client on /test_cookie/1.svg: same-site-cookie=foo; cross-site-cookie=bar; no-samesite-cookie=nee
+Cookie sent by client on /test_cookie/index.html: same-site-cookie=foo; cross-site-cookie=bar; no-samesite-cookie=nee
+Cookie sent by client on /test_cookie/1.svg: same-site-cookie=foo; cross-site-cookie=bar; no-samesite-cookie=nee
