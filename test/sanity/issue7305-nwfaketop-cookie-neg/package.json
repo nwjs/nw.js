@@ -1,5 +1,5 @@
 {
 	"name": "issue7305",
 	"main": "index.html",
-	"chromium-args": "--ignore-certificate-errors --enable-experimental-web-platform-features"
+	"chromium-args": "--ignore-certificate-errors"
 }
