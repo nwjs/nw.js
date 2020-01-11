@@ -1,4 +1,8 @@
 {
   "name":"test",
-  "main": "index.html"
+  "main": "index.html",
+  "window" : {
+    "width": 432,
+    "height": 345
+  }
 }
