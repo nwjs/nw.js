@@ -715,8 +715,8 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
         options.title = params.title;
       if (params.icon)
         options.icon = params.icon;
-      //if (params.id)
-      //  options.tabId = params.id;
+      if (params.id)
+        options.id = params.id;
     }
     if (callback && !(options.new_instance === true))
       options.block_parser = true;
