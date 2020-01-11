@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>5093</title>
+    <meta charset="UTF-8">
+    <style>
+      html,
+      body {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          padding: 0;
+          background-color: blue;
+      }
+      #yellow {
+          color: black;
+          background-color: yellow;
+          width: 800px;
+          height: 600px;
+      }
+    </style>
+  </head>
+  <body>
+    <button onclick="testresize()" id="resize">resize</button>
+    <button onclick="testmove()" id="move">move</button>
+    <button onclick="getxy()" id="getxy">get xy</button>
+    <div id="yellow"></div>
+    <div id="xy"></div>
+  </body>
+  <script>
+    function testresize() {
+      let win = nw.Window.get();
+      win.resizeTo(345, 345);
+    }
+    function testmove() {
+      let win = nw.Window.get();
+      win.moveBy(100, 10);
+    }
+    function getxy() {
+      let win = nw.Window.get();
+      let xy = document.getElementById('xy');
+      xy.innerHTML = win.x + ", " + win.y;
+    }
+    window.onload = window.onresize = function() {
+      var yellow = document.getElementById('yellow');
+      yellow.innerHTML = window.innerWidth + ", " + window.innerHeight;
+    }
+  </script>
+</html>
