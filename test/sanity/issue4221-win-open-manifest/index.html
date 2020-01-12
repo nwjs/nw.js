@@ -29,7 +29,7 @@
   }
   function bindNewWinPolicy() {
     nw.Window.get().on('new-win-policy', function(frame, url, policy) {
-      policy.setNewWindowManifest({width: 388});
+      policy.setNewWindowManifest({width: 388, height: 300});
     });
   }
   </script>
