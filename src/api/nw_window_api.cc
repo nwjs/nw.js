@@ -772,6 +772,9 @@ NwCurrentWindowInternalEnterKioskModeInternalFunction::Run() {
     if (browser) {
       BrowserFrame* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
       frame->SetFullscreen(true);
+#if !defined(OS_MACOSX)
+      browser->window()->SetZOrderLevel(ui::ZOrderLevel::kFloatingWindow);
+#endif
     }
   } else {
     AppWindow* window = getAppWindow(this);
@@ -794,7 +797,10 @@ NwCurrentWindowInternalLeaveKioskModeInternalFunction::Run() {
     Browser* browser = getBrowser(this, id);
     if (browser) {
       BrowserFrame* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
-      frame->Restore();
+      frame->SetFullscreen(false);
+#if !defined(OS_MACOSX)
+      browser->window()->SetZOrderLevel(ui::ZOrderLevel::kNormal);
+#endif
       return RespondNow(NoArguments());
     }
   }
@@ -812,14 +818,18 @@ NwCurrentWindowInternalToggleKioskModeInternalFunction::Run() {
     if (browser) {
       BrowserFrame* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
       if (frame->IsFullscreen()) {
-        frame->Restore();
+        frame->SetFullscreen(false);
 #if defined(OS_MACOSX)
         NWRestoreNSAppKioskOptions();
-#endif
+#else
+        browser->window()->SetZOrderLevel(ui::ZOrderLevel::kNormal);
+#endif	
       } else {
         frame->SetFullscreen(true);
 #if defined(OS_MACOSX)
         NWSetNSAppKioskOptions();
+#else
+        browser->window()->SetZOrderLevel(ui::ZOrderLevel::kFloatingWindow);
 #endif
       }
       return RespondNow(NoArguments());
