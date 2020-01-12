@@ -369,6 +369,67 @@ NWWindow.prototype.capturePage = function (callback, options) {
   }
   currentNWWindowInternal.capturePageInternal(options, cb);
 };
+
+function sendCommand(tabId, name, options) {
+  return new Promise((resolve, reject) => {
+    chrome.debugger.sendCommand({tabId: tabId}, name, options, (result) => {
+      if (!result) {
+        reject(chrome.runtime.lastError);
+        return;
+      }
+      resolve(result);
+    });
+  });
+}
+
+function attach(tabId) {
+  return new Promise((resolve, reject) => {
+    chrome.debugger.attach({tabId: tabId}, "1.0", () => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+        return;
+      }
+      resolve();
+    });
+  });
+}
+
+function detach(tabId) {
+  return new Promise((resolve, reject) => {
+    chrome.debugger.detach({tabId: tabId}, () => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+        return;
+      }
+      resolve();
+    });
+  });
+}
+
+async function captureScreenshotHelper(tabId, options) {
+  await attach(tabId);
+  let layoutMetrics = await sendCommand(tabId, "Page.getLayoutMetrics");
+  if (options.fullSize) {
+    const contentHeight = Math.min((1 << 14) / window.devicePixelRatio, layoutMetrics.contentSize.height);
+    await sendCommand(tabId, "Emulation.setDeviceMetricsOverride",
+                      {deviceScaleFactor: 0, mobile: false,
+                       width: layoutMetrics.contentSize.width,
+                       height: Math.floor(contentHeight)});
+  }
+  let result = await sendCommand(tabId, "Page.captureScreenshot", options);
+  if (options.fullSize)
+    await sendCommand(tabId, "Emulation.clearDeviceMetricsOverride");
+  await detach(tabId);
+  return result.data;
+}
+
+NWWindow.prototype.captureScreenshot = function(options, cb) {
+  let tab = this.cWindow.tabs[0].id;
+  if (!cb)
+    return captureScreenshotHelper(tab, options);
+  captureScreenshotHelper(tab, options).then((data) => { cb(null, data); }).catch(cb);
+};
+
 NWWindow.prototype.reload = function () {
   chrome.tabs.reload(this.cWindow.tabs[0].id);
 };
