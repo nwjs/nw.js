@@ -221,12 +221,24 @@ void NWCustomBindings::EvalScript(
     return;
   v8::Isolate* isolate = args.GetIsolate();
   WebFrame* main_frame = render_frame->GetWebFrame();
+  if (args.Length() > 2) {
+    int frame_id = args[2].As<v8::Int32>()->Value();
+    content::RenderFrame* frame =
+      content::RenderFrame::FromRoutingID(frame_id);
+    if (frame && frame->GetWebFrame())
+      main_frame = frame->GetWebFrame();
+    else {
+      args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
+           "Invalid frame id. Window could be in remote process", v8::NewStringType::kNormal).ToLocalChecked())));
+      return;
+    }
+  }
   v8::Handle<v8::Value> result;
-  v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[0]);
   WebFrame* web_frame = NULL;
-  if (frm->IsNull()) {
+  if (args[0]->IsNull()) {
     web_frame = main_frame;
   }else{
+    v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[0]);
     blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::ToImpl(frm);
     web_frame = blink::WebFrame::FromFrame(iframe->ContentFrame());
   }
@@ -260,6 +272,18 @@ void NWCustomBindings::EvalNWBin(
   uint8_t *data = reinterpret_cast<uint8_t*>(contents.Data());
 
   WebFrame* main_frame = render_frame->GetWebFrame();
+  if (args.Length() > 3) {
+    int frame_id = args[3].As<v8::Int32>()->Value();
+    content::RenderFrame* frame =
+      content::RenderFrame::FromRoutingID(frame_id);
+    if (frame && frame->GetWebFrame())
+      main_frame = frame->GetWebFrame();
+    else {
+      args.GetReturnValue().Set(isolate->ThrowException(v8::Exception::Error(v8::String::NewFromUtf8(isolate,
+           "Invalid frame id. Window could be in remote process", v8::NewStringType::kNormal).ToLocalChecked())));
+      return;
+    }
+  }
   v8::Handle<v8::String> source_string = v8::String::NewFromUtf8(isolate, "", v8::NewStringType::kNormal).ToLocalChecked();
   v8::ScriptCompiler::CachedData* cache;
   cache = new v8::ScriptCompiler::CachedData(
@@ -274,7 +298,7 @@ void NWCustomBindings::EvalNWBin(
     web_frame = blink::WebFrame::FromFrame(iframe->ContentFrame());
   }
   blink::WebLocalFrame* local_frame = web_frame->ToWebLocalFrame();
-  if (args.Length() == 2) {
+  if (args.Length() == 2 || args[2]->IsNull()) {
     v8::Local<v8::UnboundScript> script;
     v8::ScriptCompiler::Source source(source_string, cache);
     script = v8::ScriptCompiler::CompileUnboundScript(
