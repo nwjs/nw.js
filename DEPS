@@ -144,9 +144,9 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': 'e8756017ce46f6460bbae9276a56feefb7bfe5be',
-  'nw_v8_revision': '6c0f19d567e5b6f3882e62a472a8cf5b0fe95773',
-  'nw_node_revision': '5be8ef9ac3c3ca67fe68db2eda9e3b1282f8d52f',
+  'nw_src_revision': 'a6db5ab48c9473e43dc077db76f365873884ab8f',
+  'nw_v8_revision': 'e2d69df460a12c62bc11ff59c1c47fde7fb671bd',
+  'nw_node_revision': '5299dc41854e1b92e2cb96edbaaff84118ee80a2',
 
   # ANGLE's deps are relative to the angle_root variable.
   'angle_root': 'src/third_party/angle',
@@ -182,7 +182,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '2e69fe00dc9c0aa10cb1ca92c837183fc6e97750',
+  'v8_revision': 'cba87a97bb0fccf225ef1d0c488dbd22a3eb3ab1',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -198,7 +198,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling PDFium
   # and whatever else without interference from each other.
-  'pdfium_revision': '1077a87feff391cb8ad18ac40be8ef391bfca613',
+  'pdfium_revision': '4411ca1cdecfe304a7db169bc828a3f4fc1e65f5',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling BoringSSL
   # and whatever else without interference from each other.
@@ -1583,7 +1583,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@fed1cc303d0e4f5e7f97d4f29ef4cf019aa46c53',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@fc52e2cd45b2e62fc723bc89c86ad7a46b3c7c3f',
     'condition': 'checkout_src_internal',
   },
 
