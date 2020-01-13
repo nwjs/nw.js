@@ -19,17 +19,15 @@ try:
     os.remove('svrlog.txt')
 except:
     pass
+try:
+    os.remove('port.txt')
+except:
+    pass
 
-port = str(utils.free_port())
-server = subprocess.Popen(['python', 'https-server.py', port])
+server = subprocess.Popen(['python', '../http-server-node.py', 'server.js'])
 
-tpl = open('index.tpl', 'r')
-content = tpl.read().replace('{port}', port)
-tpl.close()
-
-html = open('index.html', 'w')
-html.write(content)
-html.close()
+while not os.path.exists('port.txt') :
+    time.sleep(1)
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
 try:
