@@ -376,15 +376,18 @@ NWWindow.prototype.reloadIgnoringCache = function () {
   chrome.tabs.reload(this.cWindow.tabs[0].id, {'bypassCache': true});
 };
 NWWindow.prototype.eval = function (frame, script) {
-  return nwNatives.evalScript(frame, script);
+  this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
+  return nwNatives.evalScript(frame, script, this.cWindow.tabs[0].mainFrameId);
 };
 NWWindow.prototype.evalNWBin = function (frame, path) {
-  this.evalNWBinInternal(frame, path);
+  this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
+  this.evalNWBinInternal(frame, path, null, this.cWindow.tabs[0].mainFrameId);
 };
 NWWindow.prototype.evalNWBinModule = function (frame, path, module_path) {
-  this.evalNWBinInternal(frame, path, module_path);
+  this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
+  this.evalNWBinInternal(frame, path, module_path, this.cWindow.tabs[0].mainFrameId);
 };
-NWWindow.prototype.evalNWBinInternal = function (frame, path, module_path) {
+NWWindow.prototype.evalNWBinInternal = function (frame, path, module_path, main_frame_id) {
   var ab;
   if (Buffer.isBuffer(path)) {
     let buf = path;
@@ -397,9 +400,7 @@ NWWindow.prototype.evalNWBinInternal = function (frame, path, module_path) {
     ab = new global.ArrayBuffer(buf.length);
     buf.copy(Buffer.from(ab));
   }
-  if (module_path)
-    return nwNatives.evalNWBin(frame, ab, module_path);
-  return nwNatives.evalNWBin(frame, ab);
+  return nwNatives.evalNWBin(frame, ab, module_path, main_frame_id);
 };
 NWWindow.prototype.show = function () {
   chrome.windows.update(this.cWindow.id, {'show': true});
@@ -715,8 +716,8 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
         options.title = params.title;
       if (params.icon)
         options.icon = params.icon;
-      //if (params.id)
-      //  options.tabId = params.id;
+      if (params.id)
+        options.id = params.id;
     }
     if (callback && !(options.new_instance === true))
       options.block_parser = true;

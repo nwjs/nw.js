@@ -17,7 +17,6 @@ os.chdir(testdir)
 
 port_n = utils.free_port()
 port = str(port_n)
-server = subprocess.Popen(['python', '../http-server-node.py', port])
 
 tpl = open('index.tpl', 'r')
 content = tpl.read().replace('{port}', port)
@@ -34,6 +33,8 @@ tpl.close()
 html = open('package.json', 'w')
 html.write(content)
 html.close()
+
+server = subprocess.Popen(['python', '../http-server-node.py', port])
 
 if not wait_net_service("127.0.0.1", port_n, 30):
     import platform

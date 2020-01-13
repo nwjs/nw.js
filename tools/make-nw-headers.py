@@ -49,9 +49,9 @@ tarpath = os.path.join(tmp_dir, tarname)
 
 #make tmpdir
 if os.path.exists(tmp_dir):
-  pass
-else:
-  os.mkdir(tmp_dir)
+  shutil.rmtree(tmp_dir)
+
+os.mkdir(tmp_dir)
 
 # prepare the files to compress
 print 'Begin copy file'

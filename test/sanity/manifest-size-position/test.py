@@ -15,8 +15,8 @@ try:
     print driver.current_url
     res = wait_for_element_id(driver, "yellow")
     print res
-    assert("800" in res or "801" in res)
-    assert("600" in res or "601" in res)
+    assert("400" in res or "401" in res)
+    assert("300" in res or "301" in res)
 finally:
     driver.quit()
 

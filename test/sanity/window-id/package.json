@@ -1,0 +1,7 @@
+{
+  "name": "testwin-id",
+  "main": "index.html",
+  "window": {
+    "id": "testwinid"
+  }
+}
