@@ -415,7 +415,7 @@ Request the user's attension by making the window flashes in the task bar.
     - `format` `{String}` _optional_ the image format used to generate the image. It supports two formats: `"png"` and `"jpeg"`. If ignored, it's `"jpeg"` by default.
     - `datatype` `{String}` it supports three types: `"raw"`, `"buffer"` and `"datauri"`. If ignored, it's `"datauri"` by default.
 
-Captures the visible area of the window.
+Captures the visible area of the window. To capture the full page, see `win.captureScreenshot`.
 
 !!! note "`raw` or `datauri`"
     The `"raw"` only contains the Base64 encoded image. But `"datauri"` contains the mime type headers as well, and it can be directly assigned to `src` of `Image` to load the image.
@@ -433,6 +433,41 @@ win.capturePage(function(buffer){
 }, { format : 'png', datatype : 'buffer'} );
 ```
 
+## win.captureScreenshot(options [, callback])
+
+When `callback` is omitted, a Promise is returned and it will resolve with `data` argument of the callback.
+
+* `callback` `{Function}` _optional_ the callback when finished capturing the window. It's called with:
+    - `err` `null` for success; `{String}` with the error message for failure.
+    - `data` `{String}` base64 encoded image
+* `options` `{Object}`
+    - `fullSize` `{Boolean}` _optional_ Capture the whole page beyond the visible area. Currently the height of captured image is capped at 16384 pixels by Chromium.
+    - `format` `{String}` _optional_ the image format used to generate the image. It supports two formats: `"png"` and `"jpeg"`. `"png"` is the default.
+    - `quality` `{Integer}` _optional_ Compression quality from range [0..100] (jpeg only).
+    - `clip` `{Object}` _optional_ Capture the screenshot of a given region only. The object's properties are:
+      - `x`: `{Number}` X offset in device independent pixels (dip).
+      - `y`: `{Number}` Y offset in device independent pixels (dip).
+      - `width`: `{Number}` Rectangle width in device independent pixels (dip).
+      - `height`: `{Number}` Rectangle height in device independent pixels (dip).
+      - `scale`: `{Number}` Page scale factor.
+
+Captures the the window. It can be used to capture the full page beyond the visible area.
+
+!!! note Experimental
+    This API is experimental and subject to change in the future.
+
+Example usage:
+```javascript
+          win.captureScreenshot({fullSize: true}, (err, data) => {
+            if (err) {
+              alert(err.message);
+              return;
+            }
+            var image = new Image();
+            image.src = 'data:image/jpg;base64,' + data;
+            document.body.appendChild(image);
+          });
+```
 ## win.setProgressBar(progress)
 
 * `progress` `{Float}` valid values within [0, 1]. Setting to negative value (<0) removes the progress bar.
