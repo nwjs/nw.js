@@ -1,3 +1,16 @@
+0.43.5 / 01-15-2020
+===================
+- Node: update to [v13.6.0](https://nodejs.org/en/blog/release/v13.6.0/)
+- Fix: disable throttling of worker / broadcast channel messages [(#7090)](https://github.com/nwjs/nw.js/issues/7090)
+- Fix: crash on nw.App.quit in devtools_window.cc [(#7317)](https://github.com/nwjs/nw.js/issues/7317)
+- Fix: win.leaveKioskMode() and win.toggleKioskMode() not working [(#7272)](https://github.com/nwjs/nw.js/issues/7272)
+- Fix: NW2: Clicks on the tray icon not being sent to function. [(#7297)](https://github.com/nwjs/nw.js/issues/7297)
+- Fix: NW2: Uncaught ReferenceError: Window.eval in different context [(#7315)](https://github.com/nwjs/nw.js/issues/7315)
+- Fix: NW2: Window geometry is not remembered after close [(#7314)](https://github.com/nwjs/nw.js/issues/7314)
+- Fix: nw2: poor Window icon quality if you use package.json or link rel="icon" [(#7312)](https://github.com/nwjs/nw.js/issues/7312)
+- Fix: nw2: window.loaded event behaves differently than it's DOM equivalent [(#7306)](https://github.com/nwjs/nw.js/issues/7306)
+- Fix: iframe with nwfaketop denies samesite cookies [(#7305)](https://github.com/nwjs/nw.js/issues/7305)
+
 0.43.4 / 01-09-2020
 ===================
 - Update to Chromium [79.0.3945.117](https://chromereleases.googleblog.com/2020/01/stable-channel-update-for-desktop.html)
