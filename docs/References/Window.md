@@ -333,6 +333,7 @@ See also [`win.showDevTools()`](#winshowdevtoolsiframe-callback).
 Print the web contents in the window with or without the need for user's interaction. `options` is a JSON object with the following fields:
 
 * `autoprint` `{Boolean}` whether to print without the need for user's interaction; optional, true by default
+* `silent` `{Boolean}` hide the flashing print preview dialog; optional, false by default
 * `printer` `{String}` the device name of the printer returned by `nw.Window.getPrinters()`; No need to set this when printing to PDF
 * `pdf_path` `{String}` the path of the output PDF when printing to PDF
 * `headerFooterEnabled` `{Boolean}` whether to enable header and footer
