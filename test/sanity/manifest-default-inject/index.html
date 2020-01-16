@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      window.name = 'index';
+      nw.Window.open('popup.html', {
+      }, function(w) {
+        
+      });
+
+      function out(id, msg) {
+        var h1 = document.createElement('h1');
+        h1.setAttribute('id', id);
+        h1.innerHTML = msg;
+        document.body.appendChild(h1);
+      }
+    </script>
+  </head>
+  <body>
+     
+  </body>
+</html>

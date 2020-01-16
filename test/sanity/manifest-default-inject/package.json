@@ -1,0 +1,6 @@
+{
+  "name": "issue4286-inject-start-end",
+  "inject_js_start": "inject_start.js",
+  "inject_js_end": "inject_end.js",
+  "main": "index.html"
+}
