@@ -956,6 +956,14 @@ bool NwCurrentWindowInternalSetPrintSettingsInternalFunction::RunNWSync(base::Li
   EXTENSION_FUNCTION_VALIDATE(args_->Get(0, &spec) && spec);
   if (!spec->is_dict())
     return false;
+  int id = 0;
+  args_->GetInteger(1, &id);
+  Browser* browser = getBrowser(this, id);
+  content::WebContents* web_contents = nullptr;
+  if (browser) {
+    web_contents = browser->tab_strip_model()->GetActiveWebContents();
+  }
+
   const base::DictionaryValue* dict = static_cast<const base::DictionaryValue*>(spec);
   bool auto_print;
   std::string printer_name, pdf_path;
@@ -965,7 +973,7 @@ bool NwCurrentWindowInternalSetPrintSettingsInternalFunction::RunNWSync(base::Li
     chrome::NWPrintSetDefaultPrinter(printer_name);
   if (dict->GetString("pdf_path", &pdf_path))
     chrome::NWPrintSetPDFPath(base::FilePath::FromUTF8Unsafe(pdf_path));
-  chrome::NWPrintSetOptions(dict);
+  chrome::NWPrintSetOptions(dict, web_contents);
   return true;
 }
 

@@ -46,6 +46,6 @@ namespace nw.currentWindowInternal {
     static object getWinParamInternal();
     static object getCurrent(long id, optional object getInfo);
     static void getPrinters(GetPrintersCallback callback);
-    static void setPrintSettingsInternal(optional object options);
+    static void setPrintSettingsInternal(optional object options, optional long id);
   };
 };
