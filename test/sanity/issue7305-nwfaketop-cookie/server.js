@@ -45,7 +45,7 @@ svr.listen(() => {
   for (let filename of fs.readdirSync('.')) {
     if (filename.includes(".tpl")) {
       let content = fs.readFileSync(filename, 'utf8');
-      content = content.replace('{port}', port);
+      content = content.replace(/{port}/g, port);
       console.log(`replace port in template ${filename}`);
       let newfile = filename.replace(".tpl", "");
       fs.writeFileSync(newfile, content);
