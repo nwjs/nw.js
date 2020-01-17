@@ -1,3 +1,9 @@
+0.43.6 / 01-17-2020
+===================
+- Update to Chromium [79.0.3945.130](https://chromereleases.googleblog.com/2020/01/stable-channel-update-for-desktop_16.html)
+- Fix: nw2: macOS crash report uploading
+- Fix: `window.open` does not load `inject_js_start` or `inject_js_end` when opening the page. [(#7320)](https://github.com/nwjs/nw.js/issues/7320)
+
 0.43.5 / 01-15-2020
 ===================
 - Node: update to [v13.6.0](https://nodejs.org/en/blog/release/v13.6.0/)
