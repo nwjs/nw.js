@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "description": "",
-  "main": "http://127.0.0.1:{port}",
+  "main": "http://127.0.0.1:{port}/",
   "webview": {
     "partitions": [
       {

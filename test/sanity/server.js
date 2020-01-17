@@ -3,10 +3,6 @@ const url = require('url');
 const fs = require('fs');
 const path = require('path');
 
-try {
-  fs.unlinkSync('port.txt');
-} catch (e) {};
-
 let svr = http.createServer(function (req, res) {
   console.log(`${req.method} ${req.url}`);
 
@@ -15,7 +11,7 @@ let svr = http.createServer(function (req, res) {
   // extract URL path
   let pathname = `.${parsedUrl.pathname}`;
   // based on the URL path, extract the file extention. e.g. .js, .doc, ...
-  const ext = path.parse(pathname).ext;
+  let ext = path.parse(pathname).ext;
   // maps file extention to MIME typere
   const map = {
     '.ico': 'image/x-icon',
@@ -41,7 +37,7 @@ let svr = http.createServer(function (req, res) {
     }
 
     // if is a directory search for index file matching the extention
-    if (fs.statSync(pathname).isDirectory()) pathname += '/index' + ext;
+    if (fs.statSync(pathname).isDirectory()) {ext = '.html'; pathname += '/index.html';}
 
     // read file from file system
     fs.readFile(pathname, function(err, data){

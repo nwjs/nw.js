@@ -15,34 +15,14 @@ chrome_options.add_experimental_option("windowTypes", ["webview"])
 testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
 
-port_n = utils.free_port()
-port = str(port_n)
+try:
+    os.remove('port.txt')
+except:
+    pass
+server = subprocess.Popen(['python', '../http-server-node.py'])
 
-tpl = open('index.tpl', 'r')
-content = tpl.read().replace('{port}', port)
-tpl.close()
-
-html = open('index.html', 'w')
-html.write(content)
-html.close()
-
-tpl = open('package.json.tpl', 'r')
-content = tpl.read().replace('{port}', port)
-tpl.close()
-
-html = open('package.json', 'w')
-html.write(content)
-html.close()
-
-server = subprocess.Popen(['python', '../http-server-node.py', port])
-
-if not wait_net_service("127.0.0.1", port_n, 30):
-    import platform
-    if platform.system() == 'Windows':
-        subprocess.call(['taskkill', '/F', '/T', '/PID', str(server.pid)])
-    else:
-        server.terminate()
-    raise Exception('Timeout when waiting for http server')
+while not os.path.exists('port.txt') :
+    time.sleep(1)
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
 driver.implicitly_wait(5)
@@ -53,9 +33,9 @@ try:
     print result
     assert('success' in result)
 finally:
-    driver.quit()
     import platform
     if platform.system() == 'Windows':
         subprocess.call(['taskkill', '/F', '/T', '/PID', str(server.pid)])
     else:
         server.terminate()
+    driver.quit()

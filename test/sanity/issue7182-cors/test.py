@@ -15,6 +15,10 @@ chrome_options.add_experimental_option("windowTypes", ["webview"])
 testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
 
+try:
+    os.remove('port.txt')
+except:
+    pass
 server = subprocess.Popen(['python', '../http-server-node.py'])
 
 while not os.path.exists('port.txt') :
