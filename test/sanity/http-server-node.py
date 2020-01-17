@@ -10,7 +10,12 @@ sys.path.append(os_path.join(_SRC_PATH, 'third_party', 'node'))
 import node, node_modules
 
 SERVER_PATH = os_path.normpath(os_path.join(_HERE_PATH, '..', 'node_modules', 'http-server', 'bin', 'http-server'))
-if sys.argv[1].isdigit():
+if len(sys.argv) < 2:
+    SERVER_PATH = os_path.normpath(os_path.join(_HERE_PATH, 'server.js'))
+    print SERVER_PATH
+    node.RunNode([SERVER_PATH])
+
+elif sys.argv[1].isdigit():
     print SERVER_PATH
 
     PORT = sys.argv[1]
