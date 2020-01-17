@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf8">
+	<title></title>
+<script>
+var result = result||[];
+window.onload = function() {
+  result.push("onload-dom");
+  document.getElementById('output').value = (JSON.stringify(result));
+  var win = nw.Window.get();
+  var status = '';
+  if (win.height == window.innerHeight) status = "Success: ";
+  document.getElementById('output2').innerHTML = status + "size: " + window.innerWidth + ", " + window.innerHeight;
+}
+</script>
+</head>
+<body>
+	<script type="text/javascript">
+		var result = result||[];
+		result.push("body-start");
+	</script>
+<textarea id="output" rows="12" cols="80" style="font-family: monospace;"></textarea>
+<p id="output2"></p>
+</body>
+</html>

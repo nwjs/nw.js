@@ -1,0 +1,10 @@
+{
+  "name":"test",
+  "main": "index.html",
+  "inject_js_start": "start.js",
+  "inject_js_end": "end.js",
+  "window" : {
+    "width": 432,
+    "height": 345
+  }
+}
