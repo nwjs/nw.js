@@ -139,8 +139,8 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': '58e073786264689cc1ec6c6e377865246b8afdf9',
-  'nw_v8_revision': '2c167b70d0b1b4ffa668921609c9989698891a35',
+  'nw_src_revision': '53489e7a90410e3c6890880d15b02d84f0938c3c',
+  'nw_v8_revision': 'c856f330cddf24dab270fd61e0c2473e6aa0c2ea',
   'nw_node_revision': 'bd31375c8f65e3ba7c799cf607134742a9a6608f',
 
   # ANGLE's deps are relative to the angle_root variable.
@@ -173,11 +173,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '104d6dd34927d32b92c5f5b2a671b49fbe079080',
+  'skia_revision': 'd8b96e15d8177501a93b422aa525990849e3ceb7',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '2dd34650e3ed0541e2025aaabd9fca88b92adba3',
+  'v8_revision': '0b716e49fcac2b145407ab90f392ebd29612dcfe',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -1547,7 +1547,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@fcafc320f54d42ed3f8976ccda761cd966e0b88b',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@ed78770c2a5caccb6a87a85c9e7d97039e88b262',
     'condition': 'checkout_src_internal',
   },
 
