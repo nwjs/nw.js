@@ -63,7 +63,7 @@ if platform.system() == 'Darwin':
     versions = subprocess.check_output([os.path.join(pkg1, 'nwjs.app', 'Contents', 'MacOS', 'nwjs'), '--version'])
     pluginsrc = os.path.join(testdir, '../../data/PepperFlash/mac')
     appdest = os.path.join(pkg1, 'nwjs.app', 'Contents', 'Resources', 'app.nw')
-    plugindest = os.path.join(pkg1, 'nwjs.app', 'Contents', 'Versions', versions.split()[1], 'nwjs Framework.framework', 'Internet Plug-Ins', 'PepperFlash')
+    plugindest = os.path.join(pkg1, 'nwjs.app', 'Contents', 'Frameworks', 'nwjs Framework.framework', 'Versions', versions.split()[1], 'Internet Plug-Ins', 'PepperFlash')
 else:
     if platform.system() == 'Linux':
         pluginsrc = os.path.join(testdir, "../../data/PepperFlash/linux_%s" % nw_arch())
