@@ -152,6 +152,13 @@ std::unique_ptr<base::DictionaryValue> MergeManifest() {
   // merge with default `window` manifest in package.json if exists
   nw::Package* pkg = nw::package();
   if (pkg) {
+    std::string js_doc_start, js_doc_end;
+    pkg->root()->GetString(::switches::kmInjectJSDocStart, &js_doc_start);
+    if (!js_doc_start.empty())
+      manifest->SetString(::switches::kmInjectJSDocStart, js_doc_start);
+    pkg->root()->GetString(::switches::kmInjectJSDocEnd, &js_doc_end);
+    if (!js_doc_end.empty())
+      manifest->SetString(::switches::kmInjectJSDocEnd, js_doc_end);
     base::DictionaryValue* manifest_window = pkg->window();
     if (manifest_window) {
       std::unique_ptr<base::DictionaryValue> manifest_window_cloned = manifest_window->DeepCopyWithoutEmptyChildren();
