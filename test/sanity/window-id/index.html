@@ -60,7 +60,7 @@
         if (saved_pos == placement)
           fs.writeFileSync('succeed.txt', '');
         else
-          fs.writeFileSync('failed.txt', '');
+          fs.writeFileSync('failed.txt', `saved_pos: ${saved_pos}; placement: ${placement}`);
         nw.App.quit();
       } else {
         test().then(() => { nw.App.quit(); });

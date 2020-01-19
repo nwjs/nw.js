@@ -45,4 +45,9 @@ assert(os.path.exists('last_pos.txt'))
 
 p = subprocess.call([exe, "--user-data-dir="+datadir, "."])
 
+if (os.path.exists('failed.txt')) :
+    failed = open('failed.txt', 'r')
+    print "failed: " + failed.read()
+    failed.close()
+
 assert(os.path.exists('succeed.txt'))
