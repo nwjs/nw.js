@@ -24,8 +24,8 @@
     <button onclick="testresize()" id="resize">resize</button>
     <button onclick="testmove()" id="move">move</button>
     <button onclick="getxy()" id="getxy">get xy</button>
-    <div id="yellow"></div>
     <div id="xy"></div>
+    <div id="yellow"></div>
   </body>
   <script>
     var win = nw.Window.get();
@@ -51,7 +51,11 @@
     function get_placement() {
       return `${win.x}, ${win.y}, ${window.innerWidth}, ${window.innerHeight}`;
     }
-    window.onload = window.onresize = function() {
+    window.onresize = function() {
+      var yellow = document.getElementById('yellow');
+      yellow.innerHTML = window.innerWidth + ", " + window.innerHeight;
+    }
+    window.onload = function() {
       var yellow = document.getElementById('yellow');
       yellow.innerHTML = window.innerWidth + ", " + window.innerHeight;
       let placement = get_placement();
