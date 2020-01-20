@@ -22,14 +22,16 @@
   </head>
   <body>
     <button onclick="testmax()" id="resize">maximize</button>
-    <button onclick="test_restore()" id="move">restore</button>
+    <button onclick="test_restore()" id="restore">restore</button>
+    <button onclick="testmove()" id="move">move</button>
     <button onclick="getxy()" id="getxy">get xy</button>
-    <div id="yellow"></div>
     <div id="xy"></div>
+    <div id="yellow"></div>
   </body>
   <script>
     var win = nw.Window.get();
     var fs = require('fs');
+    var os = require('os');
     async function test() {
       testresize();
       await new Promise(resolve => setTimeout(resolve, 700));
@@ -61,7 +63,10 @@
       xy.innerHTML = win.x + ", " + win.y;
     }
     function get_placement() {
-      return `${win.x}, ${win.y}, ${window.innerWidth}, ${window.innerHeight}`;
+      if (os.platform() == 'linux')
+        return `${window.innerWidth}, ${window.innerHeight}`;
+      else
+        return `${win.x}, ${win.y}, ${window.innerWidth}, ${window.innerHeight}`;
     }
     window.onresize = function() {
       var yellow = document.getElementById('yellow');
@@ -77,7 +82,7 @@
           if (saved_pos == placement)
             fs.writeFileSync('succeed.txt', '');
           else
-            fs.writeFileSync('failed.txt', '');
+            fs.writeFileSync('failed.txt', `saved_pos: ${saved_pos}; placement: ${placement}`);
           nw.App.quit();
         });
       } else {
