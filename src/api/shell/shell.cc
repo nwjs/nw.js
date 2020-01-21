@@ -67,8 +67,8 @@ void Shell::Call(const std::string& method,
     base::PostTaskAndReplyWithResult(
       FROM_HERE,
       {base::ThreadPool(), base::MayBlock(), base::TaskShutdownBehavior::CONTINUE_ON_SHUTDOWN},
-      base::Bind(&VerifyItemType, path, base::Unretained(item_type)),
-      base::Bind(&OnItemTypeVerified, profile, path, base::Owned(item_type))
+      base::BindOnce(&VerifyItemType, path, base::Unretained(item_type)),
+      base::BindOnce(&OnItemTypeVerified, profile, path, base::Owned(item_type))
       );
   } else if (method == "ShowItemInFolder") {
     std::string full_path;
