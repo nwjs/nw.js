@@ -175,10 +175,13 @@ NWWindow.prototype.on = function (event, callback, record) {
   case 'blur':
     this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
     var cbf = wrap(function(windowId) {
-      if (self.cWindow.id === windowId)
+      if (self.cWindow.id === windowId) {
+        self.cWindow.focused = true;
         return;
+      }
       if (!self.cWindow.focused)
         return;
+      self.cWindow.focused = false;
       callback.call(self);
     });
     chrome.windows.onFocusChanged.addListener(cbf);
