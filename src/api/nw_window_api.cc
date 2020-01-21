@@ -934,9 +934,9 @@ NwCurrentWindowInternalGetPrintersFunction::Run() {
   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
 
   base::PostTaskAndReplyWithResult(
-                                   FROM_HERE, {base::ThreadPool(), base::MayBlock(), base::TaskShutdownBehavior::CONTINUE_ON_SHUTDOWN},
-        base::Bind(&EnumeratePrintersAsync),
-        base::Bind(&NwCurrentWindowInternalGetPrintersFunction::OnGetPrinterList,
+        FROM_HERE, {base::ThreadPool(), base::MayBlock(), base::TaskShutdownBehavior::CONTINUE_ON_SHUTDOWN},
+        base::BindOnce(&EnumeratePrintersAsync),
+        base::BindOnce(&NwCurrentWindowInternalGetPrintersFunction::OnGetPrinterList,
                    this));
   return RespondLater();
 }
