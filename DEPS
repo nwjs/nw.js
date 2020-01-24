@@ -40,7 +40,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "all",
+  "buildspec_platforms": "linux64, mac64, win, win64",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -144,8 +144,8 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': 'c42665256b08ca999414fd4c36e045c07b0163bb',
-  'nw_v8_revision': 'e2d69df460a12c62bc11ff59c1c47fde7fb671bd',
+  'nw_src_revision': '7475b664b3d9ef1cf74615533ea3b0c00800486c',
+  'nw_v8_revision': 'b179a84b631724dadb297fb75e61c3fbaf8313e2',
   'nw_node_revision': '5299dc41854e1b92e2cb96edbaaff84118ee80a2',
 
   # ANGLE's deps are relative to the angle_root variable.
@@ -178,11 +178,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': 'bab8b547b6e5aaeb358454e06828ea7d3fb27082',
+  'skia_revision': '97c9a95908bc8c7a6794259b35f366a3291e2d0f',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'cba87a97bb0fccf225ef1d0c488dbd22a3eb3ab1',
+  'v8_revision': '0d24498011b4eba2e0cff1686eadaae0ed28344e',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -935,7 +935,7 @@ deps = {
 
   # Used for embedded builds. CrOS & Linux use the system version.
   'src/third_party/fontconfig/src': {
-      'url': Var('chromium_git') + '/external/fontconfig.git' + '@' + 'cd51cb241aad7b362b793200ca7d42595c14f52b',
+      'url': Var('chromium_git') + '/external/fontconfig.git' + '@' + '452be8125f0e2a18a7dfef469e05d19374d36307',
       'condition': 'checkout_linux',
   },
 
@@ -1507,7 +1507,7 @@ deps = {
     Var('chromium_git') + '/external/khronosgroup/webgl.git' + '@' + 'dd55f3ca8f2ea716ca917a4aaf36f0729fe902b1',
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + 'e321a8949331d3935b2c49c0bef02b7f71abe12e',
+    Var('webrtc_git') + '/src.git' + '@' + '7a0e44c1a84fb4ed57a6701cfc8093756c37af6f',
 
   'src/third_party/libgifcodec':
      Var('skia_git') + '/libgifcodec' + '@'+  Var('libgifcodec_revision'),
@@ -1583,7 +1583,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@fc52e2cd45b2e62fc723bc89c86ad7a46b3c7c3f',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@447b4ea9442940e7fe57a7200e0c4a7fc7d08a42',
     'condition': 'checkout_src_internal',
   },
 
