@@ -53,7 +53,7 @@
 #endif
 
 #if defined(OS_LINUX)
-#include "chrome/browser/ui/libgtkui/gtk_ui.h"
+#include "chrome/browser/ui/gtk/gtk_ui.h"
 #endif
 
 #if defined(OS_LINUX) || defined(OS_WIN)
