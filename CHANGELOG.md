@@ -1,3 +1,21 @@
+0.44.0 / 02-05-2020
+===================
+- Update to Chromium 80.0.3987.87
+- Linux: Fix ANGLE lib loading path
+- Fix mac crash reporting
+- [docs] add Window.captureScreenshot
+- NW2: add Window.captureScreenshot - support fullpage screenshot
+- Fix: Pressing the ESC key will now EXIT "FullScreen mode" with RM MV. [(#7324)](https://github.com/nwjs/nw.js/issues/7324)
+- Fix: NW2: Crashing renderer shows Aw, Snap! [(#7339)](https://github.com/nwjs/nw.js/issues/7339)
+- Fix: folder select dialog shows upload button instead of select on MacOS [(#7338)](https://github.com/nwjs/nw.js/issues/7338)
+- Fix: NW2: (Linux) Transparency and resize handling in frameless windows not working as intended [(#7325)](https://github.com/nwjs/nw.js/issues/7325)
+- Fix: NW2: win.blur() does not fire correctly [(#7327)](https://github.com/nwjs/nw.js/issues/7327)
+- Fix: NW2: Sometimes the window cannot be closed [(#7326)](https://github.com/nwjs/nw.js/issues/7326)
+- Fix: NW2: User Window Metrics Not Saved/Respected [(#7322)](https://github.com/nwjs/nw.js/issues/7322)
+- Fix: `window.open` does not load `inject_js_start` or `inject_js_end` when opening the page. [(#7320)](https://github.com/nwjs/nw.js/issues/7320)
+- Fix: Autoprint is not completely silent [(#6269)](https://github.com/nwjs/nw.js/issues/6269)
+- Fix: win.window is undefined after navigation to remote url [(#7304)](https://github.com/nwjs/nw.js/issues/7304)
+
 0.43.6 / 01-17-2020
 ===================
 - Update to Chromium [79.0.3945.130](https://chromereleases.googleblog.com/2020/01/stable-channel-update-for-desktop_16.html)
