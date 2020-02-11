@@ -1,3 +1,15 @@
+0.44.1 / 02-11-2020
+===================
+- Node: Update to [v13.8.0](https://nodejs.org/en/blog/release/v13.8.0/)
+- Fix: Quit on macOS from top or dock icon menus does not have "quit" value in "close" event [(#7365)](https://github.com/nwjs/nw.js/issues/7365)
+- Fix: MacOS builtin menu can not switch according to the focused Window  [(#7366)](https://github.com/nwjs/nw.js/issues/7366)
+- Fix: App starts with min_height and min_width instead of height and width [(#7358)](https://github.com/nwjs/nw.js/issues/7358)
+- Fix: App won't quit on Mac [(#7355)](https://github.com/nwjs/nw.js/issues/7355)
+- Fix: File & Folder dialogs of the wrong type and undraggable on MacOS [(#7349)](https://github.com/nwjs/nw.js/issues/7349)
+- Fix: NW2 issue : (Linux) NW.js crashes when an opened window has attached the 'move' event [(#7359)](https://github.com/nwjs/nw.js/issues/7359)
+- Fix: NW2 issue : (Linux) Nw.js should NOT show the chromium default menu bar as global [(#7364)](https://github.com/nwjs/nw.js/issues/7364)
+- Fix: Regression of allowed String length, `buffer.constants.MAX_STRING_LENGTH` [(#7356)](https://github.com/nwjs/nw.js/issues/7356)
+
 0.44.0 / 02-05-2020
 ===================
 - Update to Chromium 80.0.3987.87
