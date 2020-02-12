@@ -40,7 +40,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "linux64, mac64, win, win64, android, ios",
+  "buildspec_platforms": "all",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -144,8 +144,8 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': 'fac5c3444986b3f126815a6f26bf1f1f45004977',
-  'nw_v8_revision': '4379c6a066513d8d34156d65da94f67e649906f9',
+  'nw_src_revision': '0b007368f3c8c54d615620d126af3c55517a2cad',
+  'nw_v8_revision': 'c79279fe88f53d592f91bd0afdf0612bd34e1577',
   'nw_node_revision': '7a7526bf44eed5437026df1a897048271cf6ad4d',
 
   # ANGLE's deps are relative to the angle_root variable.
@@ -182,7 +182,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'fc55b9e7a591bff6c9ec020d97e2b11925c23af5',
+  'v8_revision': '306022a527898c3c00c451f0d121c1a237064aa2',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -198,7 +198,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling PDFium
   # and whatever else without interference from each other.
-  'pdfium_revision': '4411ca1cdecfe304a7db169bc828a3f4fc1e65f5',
+  'pdfium_revision': 'b84f5d0308ecb8d84fc07605cedcb158187499b2',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling BoringSSL
   # and whatever else without interference from each other.
@@ -249,7 +249,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling devtools-frontend
   # and whatever else without interference from each other.
-  'devtools_frontend_revision': '1b0a7bc43b6949b68af6881679df097826e38fbe',
+  'devtools_frontend_revision': '76f4c6a07a2d2491ceaad6e4e03bdd5a8e381628',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libprotobuf-mutator
   # and whatever else without interference from each other.
@@ -1583,7 +1583,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@19ec96ce72e9e3b279dedc250f64995bf47e67a3',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@1940cbed5dd0184d4ad79be71f9499a61b2fc8c7',
     'condition': 'checkout_src_internal',
   },
 
