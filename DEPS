@@ -40,7 +40,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "all",
+  "buildspec_platforms": "linux64, mac64, win, win64",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -144,8 +144,8 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': 'cf935da2af9eded4e8cb7459c704c38404814a3e',
-  'nw_v8_revision': '8434ee029478174bdba53afefc00c619365512db',
+  'nw_src_revision': 'addf832f6b8ad8c618b266303dc6d3775cd74efb',
+  'nw_v8_revision': '8dd96d932216f29b2c6745522967c4517a8a7857',
   'nw_node_revision': '7a7526bf44eed5437026df1a897048271cf6ad4d',
 
   # ANGLE's deps are relative to the angle_root variable.
@@ -182,7 +182,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'f592841c63b19c3fcfe03ad9a1f30fd98ced3c6e',
+  'v8_revision': '54b76d1a1dbd1df7bc2d0dbaf9b1448210ef4cfd',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -761,6 +761,10 @@ deps = {
           {
               'package': 'chromium/third_party/android_sdk/public/tools-lint',
               'version': Var('android_sdk_tools-lint_version'),
+          },
+          {
+              'package': 'chromium/third_party/android_sdk/public/cmdline-tools',
+              'version': 'CR25ixsRhwuRnhdgDpGFyl9S0C_0HO9SUgFrwX46zq8C',
           },
       ],
       'condition': 'checkout_android_native_support',
@@ -1583,7 +1587,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@a0acaea51ba4e107cc14aa5451a178e9147e41c5',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@f9414772a37aad63cfa3543e2fc79316f805fb70',
     'condition': 'checkout_src_internal',
   },
 
