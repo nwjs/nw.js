@@ -1,3 +1,11 @@
+0.44.2 / 02-19-2020
+===================
+- Update to Chromium 80.0.3987.116
+- Fix: Copy & paste between input fields adds spurious space [(#7363)](https://github.com/nwjs/nw.js/issues/7363)
+- Fix: 43.0 reload app doesn't close and open new window [(#7271)](https://github.com/nwjs/nw.js/issues/7271)
+- Fix: Local sourcemaps can not be parsed in 0.44.1 [(#7373)](https://github.com/nwjs/nw.js/issues/7373)
+- Fix: Quit on macOS from top or dock icon menus does not have "quit" value in "close" event [(#7365)](https://github.com/nwjs/nw.js/issues/7365)
+
 0.44.1 / 02-11-2020
 ===================
 - Node: Update to [v13.8.0](https://nodejs.org/en/blog/release/v13.8.0/)
