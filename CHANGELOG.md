@@ -1,3 +1,14 @@
+0.44.3 / 02-19-2020
+===================
+- Update to Chromium [80.0.3987.122](https://chromereleases.googleblog.com/2020/02/stable-channel-update-for-desktop_24.html)
+- Node: Fix windows worker support [(#7114)](https://github.com/nwjs/nw.js/issues/7114)
+- Update build script to support cross-compiling for ARM (Thanks to Marcus T)
+- Node: update to [v13.9.0](https://nodejs.org/en/blog/release/v13.9.0/)
+- Fix: Function enterfullscreen brokes app on MacOS [(#7254)](https://github.com/nwjs/nw.js/issues/7254)
+- Fix: [NW2 issue] : Setting two binded windows to a fullscreen state doesn't work anymore  [(#7368)](https://github.com/nwjs/nw.js/issues/7368)
+- Fix: NW2: nw.App.crashRenderer() doesn't kill nw like NW1 does [(#7383)](https://github.com/nwjs/nw.js/issues/7383)
+- Fix: Unable to build NW.js distribution (missing natives_blob.bin) [(#7378)](https://github.com/nwjs/nw.js/issues/7378)
+
 0.44.2 / 02-19-2020
 ===================
 - Update to Chromium 80.0.3987.116
