@@ -144,8 +144,8 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': '50aef38f520483ad9c1bfec29452a451fc886e8b',
-  'nw_v8_revision': '8dd96d932216f29b2c6745522967c4517a8a7857',
+  'nw_src_revision': '2ef0824e204502c44201d3cec2c21c07130c0495',
+  'nw_v8_revision': 'b0771817af4a2c4a9009cecde67cf2ddc88075aa',
   'nw_node_revision': '92e9c51a469cf59173c68734be4dd609b44eb3a9',
 
   # ANGLE's deps are relative to the angle_root variable.
@@ -182,7 +182,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '54b76d1a1dbd1df7bc2d0dbaf9b1448210ef4cfd',
+  'v8_revision': 'abc3eecd39cee64da2cb1901f96cd9123905d672',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -1067,7 +1067,7 @@ deps = {
     Var('chromium_git') + '/chromium/deps/hunspell_dictionaries.git' + '@' + '681ca92480ecc11d35feae8c1c00e4e035630f43',
 
   'src/third_party/icu':
-    Var('chromium_git') + '/chromium/deps/icu.git' + '@' + 'dbd3825b31041d782c5b504c59dcfb5ac7dda08c',
+    Var('chromium_git') + '/chromium/deps/icu.git' + '@' + '9f4020916eb1f28f3666f018fdcbe6c9a37f0e08',
 
   'src/third_party/icu4j': {
       'packages': [
@@ -1587,7 +1587,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@f9414772a37aad63cfa3543e2fc79316f805fb70',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@aad942e20f58e00d336f25984d68c5442b843654',
     'condition': 'checkout_src_internal',
   },
 
