@@ -1,4 +1,4 @@
-0.44.3 / 02-19-2020
+0.44.3 / 02-26-2020
 ===================
 - Update to Chromium [80.0.3987.122](https://chromereleases.googleblog.com/2020/02/stable-channel-update-for-desktop_24.html)
 - Node: Fix windows worker support [(#7114)](https://github.com/nwjs/nw.js/issues/7114)
