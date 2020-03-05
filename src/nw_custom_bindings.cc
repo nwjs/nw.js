@@ -1,10 +1,6 @@
 // Copyright 2014 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-#include "base/compiler_specific.h"
-
-MSVC_PUSH_DISABLE_WARNING(4305)
-
 #include "content/nw/src/nw_custom_bindings.h"
 
 #define INSIDE_BLINK 1
@@ -439,4 +435,4 @@ void NWCustomBindings::SetDevToolsJail(const v8::FunctionCallbackInfo<v8::Value>
 }
 
 }  // namespace extensions
-MSVC_POP_WARNING()
+
