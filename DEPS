@@ -40,7 +40,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "linux64, mac64, win, win64",
+  "buildspec_platforms": "linux64, mac64, win, win64, android",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -144,8 +144,8 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': 'a3331dc605d819d7e51f3aebdec7e5ff01d107a4',
-  'nw_v8_revision': 'b0771817af4a2c4a9009cecde67cf2ddc88075aa',
+  'nw_src_revision': 'd162b7de35ea7d7fe1e08cb1221a41831804e9e3',
+  'nw_v8_revision': 'dffaa579da505ae0be7e29ef84319939e9d3a28d',
   'nw_node_revision': '92e9c51a469cf59173c68734be4dd609b44eb3a9',
 
   # ANGLE's deps are relative to the angle_root variable.
@@ -178,11 +178,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '97c9a95908bc8c7a6794259b35f366a3291e2d0f',
+  'skia_revision': 'ac0e515499dbbfd8de62ed1eb7b5d0f2ad6a7679',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'abc3eecd39cee64da2cb1901f96cd9123905d672',
+  'v8_revision': '2ad0a63d4a25377f3dc5eae52ef87505518867e8',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -1587,7 +1587,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@aad942e20f58e00d336f25984d68c5442b843654',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@f945199c3689ef52e7b1ca2a724115268f11b786',
     'condition': 'checkout_src_internal',
   },
 
