@@ -1,3 +1,29 @@
+0.44.4 / 03-09-2020
+===================
+- Update to Chromium [80.0.3987.132](https://chromereleases.googleblog.com/2020/03/stable-channel-update-for-desktop.html)
+- Node: update to [v13.10.1](https://nodejs.org/en/blog/release/v13.10.1/)
+- Fix: Window maximized on re-open [(#7370)](https://github.com/nwjs/nw.js/issues/7370)
+- Fix: disable throttling of worker / broadcast channel messages  [(#7090)](https://github.com/nwjs/nw.js/issues/7090)
+
+0.44.3 / 02-26-2020
+===================
+- Update to Chromium [80.0.3987.122](https://chromereleases.googleblog.com/2020/02/stable-channel-update-for-desktop_24.html)
+- Node: Fix windows worker support [(#7114)](https://github.com/nwjs/nw.js/issues/7114)
+- Update build script to support cross-compiling for ARM (Thanks to Marcus T)
+- Node: update to [v13.9.0](https://nodejs.org/en/blog/release/v13.9.0/)
+- Fix: Function enterfullscreen brokes app on MacOS [(#7254)](https://github.com/nwjs/nw.js/issues/7254)
+- Fix: [NW2 issue] : Setting two binded windows to a fullscreen state doesn't work anymore  [(#7368)](https://github.com/nwjs/nw.js/issues/7368)
+- Fix: NW2: nw.App.crashRenderer() doesn't kill nw like NW1 does [(#7383)](https://github.com/nwjs/nw.js/issues/7383)
+- Fix: Unable to build NW.js distribution (missing natives_blob.bin) [(#7378)](https://github.com/nwjs/nw.js/issues/7378)
+
+0.44.2 / 02-19-2020
+===================
+- Update to Chromium 80.0.3987.116
+- Fix: Copy & paste between input fields adds spurious space [(#7363)](https://github.com/nwjs/nw.js/issues/7363)
+- Fix: 43.0 reload app doesn't close and open new window [(#7271)](https://github.com/nwjs/nw.js/issues/7271)
+- Fix: Local sourcemaps can not be parsed in 0.44.1 [(#7373)](https://github.com/nwjs/nw.js/issues/7373)
+- Fix: Quit on macOS from top or dock icon menus does not have "quit" value in "close" event [(#7365)](https://github.com/nwjs/nw.js/issues/7365)
+
 0.44.1 / 02-11-2020
 ===================
 - Node: Update to [v13.8.0](https://nodejs.org/en/blog/release/v13.8.0/)
