@@ -1,3 +1,10 @@
+0.44.4 / 03-09-2020
+===================
+- Update to Chromium [80.0.3987.132](https://chromereleases.googleblog.com/2020/03/stable-channel-update-for-desktop.html)
+- Node: update to [v13.10.1](https://nodejs.org/en/blog/release/v13.10.1/)
+- Fix: Window maximized on re-open [(#7370)](https://github.com/nwjs/nw.js/issues/7370)
+- Fix: disable throttling of worker / broadcast channel messages  [(#7090)](https://github.com/nwjs/nw.js/issues/7090)
+
 0.44.3 / 02-26-2020
 ===================
 - Update to Chromium [80.0.3987.122](https://chromereleases.googleblog.com/2020/02/stable-channel-update-for-desktop_24.html)
