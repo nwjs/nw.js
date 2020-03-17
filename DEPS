@@ -40,7 +40,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "all",
+  "buildspec_platforms": "linux64, mac64, win, win64",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -152,7 +152,7 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': 'cfd38e54496cc2da90b08c924295db741b918e9d',
+  'nw_src_revision': '5a656e99f533681782c9d0685fc20134ea61e958',
   'nw_v8_revision': 'a70af4fed5b62f69bca207bc2d07c79f66473eab',
   'nw_node_revision': '4722bab2f9be39002d572d93535b6785f1c51c71',
 
@@ -1472,7 +1472,7 @@ deps = {
   },
 
   'src/third_party/usrsctp/usrsctplib':
-    Var('chromium_git') + '/external/github.com/sctplab/usrsctp' + '@' + '7a8bc9a90ca96634aa56ee712856d97f27d903f8',
+    Var('chromium_git') + '/external/github.com/sctplab/usrsctp' + '@' + 'a68325e7d9ed844cc84ec134192d788586ea6cc1',
 
   # Display server protocol for Linux.
   'src/third_party/wayland/src': {
@@ -1578,7 +1578,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@4bbf37de41351b0089efe36a967982e9881861cf',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@aeab5b74c0aec6f26f654e4e77830526150d2e1b',
     'condition': 'checkout_src_internal',
   },
 
