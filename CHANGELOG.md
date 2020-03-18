@@ -1,3 +1,8 @@
+0.44.5 / 03-18-2020
+===================
+- Update to Chromium 80.0.3987.149
+- Fix: Crash on Windows 10 at saving window dimentions [(#7412)](https://github.com/nwjs/nw.js/issues/7412)
+
 0.44.4 / 03-09-2020
 ===================
 - Update to Chromium [80.0.3987.132](https://chromereleases.googleblog.com/2020/03/stable-channel-update-for-desktop.html)
