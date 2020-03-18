@@ -40,7 +40,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "linux64, mac64, win, win64, android",
+  "buildspec_platforms": "linux64, mac64, win, win64, android, chromeos",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -144,8 +144,8 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': 'bbf63c5a1452028551063693b6e4dddbd4c98a5c',
-  'nw_v8_revision': 'dffaa579da505ae0be7e29ef84319939e9d3a28d',
+  'nw_src_revision': '6b2b07bfddfcdbeeaeed9eeb8b5040dd94549e8b',
+  'nw_v8_revision': 'ca5e4a97809a667a35049d571b60c100128d81df',
   'nw_node_revision': '7029918fb8b7826402613441b8c79f23db83054b',
 
   # ANGLE's deps are relative to the angle_root variable.
@@ -182,7 +182,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '2ad0a63d4a25377f3dc5eae52ef87505518867e8',
+  'v8_revision': '9c25291e705136181ede345dabcf05fb054812af',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -1484,7 +1484,7 @@ deps = {
   },
 
   'src/third_party/usrsctp/usrsctplib':
-    Var('chromium_git') + '/external/github.com/sctplab/usrsctp' + '@' + '7a8bc9a90ca96634aa56ee712856d97f27d903f8',
+    Var('chromium_git') + '/external/github.com/sctplab/usrsctp' + '@' + 'a68325e7d9ed844cc84ec134192d788586ea6cc1',
 
   # Display server protocol for Linux.
   'src/third_party/wayland/src': {
@@ -1587,7 +1587,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@f945199c3689ef52e7b1ca2a724115268f11b786',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@bc883829023812e219a69491c234d814a25a8a48',
     'condition': 'checkout_src_internal',
   },
 
