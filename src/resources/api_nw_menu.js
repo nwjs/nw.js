@@ -34,7 +34,15 @@ Menu.prototype.__defineSetter__('items', function(val) {
 });
 
 Menu.prototype.append = function(menu_item) {
-  privates(this).items.push(menu_item);
+  const isSeparator = menu_item.type === 'separator'
+  const items = privates(this).items
+  
+  // https://github.com/nwjs/chromium.src/blob/nw45-log/ui/base/models/simple_menu_model.h#L117
+  if (isSeparator && (items.length === 0 || items[items.length - 1].type === 'separator')) {
+    return menu_item._destroy()
+  }
+
+  items.push(menu_item);
   if (!menu_item.native)
     nw.Obj.callObjectMethod(this.id, 'Menu', 'Append', [ menu_item.id ]);
 };
