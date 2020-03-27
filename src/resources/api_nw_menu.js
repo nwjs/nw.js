@@ -43,12 +43,14 @@ Menu.prototype.append = function(menu_item) {
   }
 
   items.push(menu_item);
+  nw.MenuItem.eventRegistry.add(menu_item);
   if (!menu_item.native)
     nw.Obj.callObjectMethod(this.id, 'Menu', 'Append', [ menu_item.id ]);
 };
 
 Menu.prototype.insert = function(menu_item, i) {
   privates(this).items.splice(i, 0, menu_item);
+  nw.MenuItem.eventRegistry.add(menu_item);
   if (!menu_item.native)
     nw.Obj.callObjectMethod(this.id, 'Menu', 'Insert', [ menu_item.id, i ]);
 }
@@ -57,11 +59,14 @@ Menu.prototype.remove = function(menu_item) {
   var pos_hint = privates(this).items.indexOf(menu_item);
   nw.Obj.callObjectMethod(this.id, 'Menu', 'Remove', [ menu_item.id, pos_hint ]);
   privates(this).items.splice(pos_hint, 1);
+  nw.MenuItem.eventRegistry.remove(menu_item);
 }
 
 Menu.prototype.removeAt = function(i) {
-  nw.Obj.callObjectMethod(this.id, 'Menu', 'Remove', [ privates(this).items[i].id, i ]);
-  privates(this).items.splice(i, 1);
+  const items = privates(this).items;
+  nw.Obj.callObjectMethod(this.id, 'Menu', 'Remove', [ items[i].id, i ]);
+  nw.MenuItem.eventRegistry.remove(items[i]);
+  items.splice(i, 1);
 }
 
 Menu.prototype.popup = function(x, y) {
