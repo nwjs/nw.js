@@ -2,6 +2,7 @@
 
 #include "base/base64.h"
 #include "base/logging.h"
+#include "base/test/bind_test_util.h"
 #include "base/strings/stringprintf.h"
 #include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
@@ -29,6 +30,28 @@ namespace {
   const char* kJPEGDataUriPrefix = "data:image/jpeg;base64,";
   const int   kQuality = 100;
 
+class ReadImageHelper {
+public:
+  ReadImageHelper() = default;
+  ~ReadImageHelper() = default;
+  SkBitmap ReadImage(ui::Clipboard* clipboard) {
+    base::WaitableEvent event;
+    SkBitmap bitmap;
+    clipboard->ReadImage(
+                         ui::ClipboardBuffer::kCopyPaste,
+                         base::BindLambdaForTesting([&](const SkBitmap& result) {
+                                                      bitmap = result;
+                                                      event.Signal();
+                                                    }));
+    event.Wait();
+    return bitmap;
+  }
+};
+
+SkBitmap _ReadImage(ui::Clipboard* clipboard) {
+  ReadImageHelper read_image_helper;
+  return read_image_helper.ReadImage(clipboard);
+}
   class ClipboardReader {
   public:
     ClipboardReader() {
@@ -55,7 +78,7 @@ namespace {
         return false;
       }
       NOTREACHED();
-      return false;      
+      return false;
     }
 
     std::string error() {
@@ -92,7 +115,7 @@ namespace {
     bool ReadImage(ClipboardData& data) {
       DCHECK(data.type == TYPE_PNG || data.type == TYPE_JPEG);
       std::vector<unsigned char> encoded_image;
-      SkBitmap bitmap = clipboard_->ReadImage(ui::ClipboardBuffer::kCopyPaste);
+      SkBitmap bitmap = _ReadImage(clipboard_);
 
       if (bitmap.isNull()) {
         return true;
