@@ -94,13 +94,12 @@ On Mac OS X, you need to modify following files to have your own icon and bundle
 * `Contents/Info.plist`: the apple package description file. You can view [Implementing Cocoa's Standard About Panel](http://cocoadevcentral.com/articles/000071.php) on how this file will influence your app and what fields you should modify.
 
 To rename the application, the following files should be modified:
-* `Contents/MacOS/nwjs` - rename the file to the value of `CFBundleDisplayName`
 * `Contents/Info.plist` - CFBundleDisplayName
 * `Contents/Resources/en.lproj/InfoPlist.strings` - CFBundleDisplayName
+* `Contents/MacOS/nwjs` - rename the file to the value of `CFBundleExecutable` if you changed it
 * `package.json` -- add a string field `product_string` (e.g. foobar); the helper application will be shown as 'foobar Helper'. (since v0.24.4)
-* `Contents/Versions/n.n.n.n/nwjs Helper.app/Contents/MacOS/nwjs Helper` - rename the file to 'foobar Helper'
-* `Contents/Versions/n.n.n.n/nwjs Helper.app/Contents/Info.plist` - change CFBundleDisplayName
-* `Contents/Versions/n.n.n.n/nwjs Helper.app` - rename the directory to 'foobar Helper.app'
+  * `Contents/Frameworks/nwjs Framework.framework/Versions/n.n.n.n/nwjs Helper.app/Contents/MacOS/nwjs Helper.app` - rename the directory to 'foobar Helper.app', and also the three other helpers
+  * `Contents/Frameworks/nwjs Framework.framework/Versions/n.n.n.n/nwjs Helper.app/Contents/MacOS/nwjs Helper.app/Contents/Info.plist` - change CFBundleDisplayName, and also the three other helpers
 
 You should sign your Mac app, or the user won't launch the app if Gatekeeper is turned on. See [Support for Mac App Store](Advanced/Support for Mac App Store.md) for details.
 
