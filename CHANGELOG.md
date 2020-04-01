@@ -1,3 +1,9 @@
+0.44.6 / 04-01-2020
+===================
+- Update to Chromium [80.0.3987.162](https://chromereleases.googleblog.com/2020/03/stable-channel-update-for-desktop_31.html)
+- Fix: allow file system api in NW origin [(#7351)](https://github.com/nwjs/nw.js/issues/7351)
+- Fix: websocket debug crash [(#7427)](https://github.com/nwjs/nw.js/issues/7427)
+
 0.44.5 / 03-18-2020
 ===================
 - Update to Chromium 80.0.3987.149
