@@ -40,7 +40,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "linux64, mac64, win, win64",
+  "buildspec_platforms": "linux64, mac64, win, win64, chromeos",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -152,8 +152,8 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': '5a656e99f533681782c9d0685fc20134ea61e958',
-  'nw_v8_revision': 'a70af4fed5b62f69bca207bc2d07c79f66473eab',
+  'nw_src_revision': '54ebb3c45df3754b6821d0a5f45dc13892fe5fbe',
+  'nw_v8_revision': '0314640f5d6a61709906e10599424df8ee91959d',
   'nw_node_revision': '4722bab2f9be39002d572d93535b6785f1c51c71',
 
   # ANGLE's deps are relative to the angle_root variable.
@@ -186,7 +186,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'a21998f629c90470f7a4274208564bb17e7875ab',
+  'v8_revision': 'd3a6f4bb6d01e91c7929feec3cf91eb62f3c2d3a',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -1502,7 +1502,7 @@ deps = {
     Var('chromium_git') + '/external/github.com/gpuweb/cts.git' + '@' + 'ec18cc3262922e7dcdbe70243c6f40606f979144',
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + '601eb2dc9e68d24e37175fa70cd2784923b3ad46',
+    Var('webrtc_git') + '/src.git' + '@' + '7502134e7e428aaa5c42c8f18c87e8cfda7f87a4',
 
   'src/third_party/libgifcodec':
      Var('skia_git') + '/libgifcodec' + '@'+  Var('libgifcodec_revision'),
@@ -1578,7 +1578,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@aeab5b74c0aec6f26f654e4e77830526150d2e1b',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@d1ad43902724977faebe2ee004665a1de7e41a9f',
     'condition': 'checkout_src_internal',
   },
 
@@ -1586,7 +1586,7 @@ deps = {
       'packages': [
           {
               'package': 'chromium/third_party/android_deps/libs/com_google_android_play_core_verification',
-              'version': '5WpfZCqhiL1qWTiBl_x3VTelXCJsv5r_SMuE-3H1CI0C',
+              'version': 'ojrkXUE6tjG8FYmoLfCD3YdOxTyl2BXMdmk7Fb6cS5MC',
           },
       ],
       'condition': 'checkout_android',
