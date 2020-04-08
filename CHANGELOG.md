@@ -1,3 +1,7 @@
+0.45.0 / 04-08-2020
+===================
+- Update to Chromium [81.0.4044.92](https://chromereleases.googleblog.com/2020/04/stable-channel-update-for-desktop_7.html)
+
 0.44.6 / 04-01-2020
 ===================
 - Update to Chromium [80.0.3987.162](https://chromereleases.googleblog.com/2020/03/stable-channel-update-for-desktop_31.html)
