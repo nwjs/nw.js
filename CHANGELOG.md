@@ -1,3 +1,8 @@
+0.45.1 / 04-10-2020
+===================
+- Update to Node.js [v13.12.0](https://nodejs.org/en/blog/release/v13.12.0/)
+- Fix: crash in transparency support [(#7433)](https://github.com/nwjs/nw.js/issues/7433)
+
 0.45.0 / 04-08-2020
 ===================
 - Update to Chromium [81.0.4044.92](https://chromereleases.googleblog.com/2020/04/stable-channel-update-for-desktop_7.html)
