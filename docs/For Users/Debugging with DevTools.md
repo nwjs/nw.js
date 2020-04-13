@@ -35,13 +35,13 @@ The app is a simple react app with 'package.json' added. The devtools files are 
 
 ### Vue Example
 
-1. `npm install --save-dev nw-vue-devtools`
+1. `npm install --save-dev nw-vue-devtools-prebuilt`
 1. Add this to your `package.json`:
     ```js
-    "chromium-args": "--load-extension='./node_modules/nw-vue-devtools/extension'",
+    "chromium-args": "--load-extension='./node_modules/nw-vue-devtools-prebuilt/extension'",
     ```
 1. Vue.js must be in use in your app, and cannot be minified (use `vue.js` not `vue.min.js`).
 
-This will automatically download, build, and install the latest Vue-DevTools into NW.js.
+This will automatically download the latest Vue-DevTools from the Chrome WebStore, unpack and modify it to work in NW.js.
 
 If you are using `nwjs-builder-phoenix` then add in `"chromium-args"` to your `package.json` `build.strippedProperties` array.
