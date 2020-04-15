@@ -67,7 +67,7 @@ copy /b nw.exe+package.nw app.exe
 ```
 or following command on Linux:
 ```bash
-cat nw app.nw > app && chmod +x app 
+cat nw package.nw > app && chmod +x app 
 ```
 
 ## Platform Specific Steps
