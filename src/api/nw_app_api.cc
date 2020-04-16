@@ -9,8 +9,8 @@
 #include "base/message_loop/message_loop_current.h"
 #include "base/task/post_task.h"
 #include "content/public/browser/browser_task_traits.h"
-#include "chrome/browser/browsing_data/browsing_data_appcache_helper.h"
-#include "chrome/browser/browsing_data/browsing_data_helper.h"
+#include "components/browsing_data/content/appcache_helper.h"
+#include "components/browsing_data/content/browsing_data_helper.h"
 #include "chrome/browser/devtools/devtools_window.h"
 #include "chrome/browser/extensions/devtools_util.h"
 #include "chrome/browser/extensions/extension_service.h"
@@ -136,8 +136,8 @@ bool NwAppClearAppCacheFunction::RunNWSync(base::ListValue* response, std::strin
   EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &manifest));
 
   GURL manifest_url(manifest);
-  scoped_refptr<CannedBrowsingDataAppCacheHelper> helper(
-                                                         new CannedBrowsingDataAppCacheHelper(content::BrowserContext::GetDefaultStoragePartition(context_)
+  scoped_refptr<browsing_data::CannedAppCacheHelper> helper(
+         new browsing_data::CannedAppCacheHelper(content::BrowserContext::GetDefaultStoragePartition(context_)
                                                                                               ->GetAppCacheService()));
 
   helper->DeleteAppCaches(url::Origin::Create(manifest_url));
