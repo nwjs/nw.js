@@ -82,16 +82,14 @@ bool MenuDelegate::GetAcceleratorForCommandId(
   return true;
 }
 
-bool MenuDelegate::GetIconForCommandId(int command_id,
-                                       gfx::Image* icon) const {
+ui::ImageModel MenuDelegate::GetIconForCommandId(int command_id) const {
   MenuItem* item = object_manager_->GetApiObject<MenuItem>(command_id);
   if (!item)
-    return false;
+    return ui::ImageModel();
   if (item->icon_.IsEmpty())
-    return false;
+    return ui::ImageModel();
 
-  *icon = item->icon_;
-  return true;
+  return ui::ImageModel::FromImage(item->icon_);
 }
 
 void MenuDelegate::ExecuteCommand(int command_id, int event_flags) {

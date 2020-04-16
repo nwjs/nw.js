@@ -41,8 +41,7 @@ class MenuDelegate : public ui::SimpleMenuModel::Delegate {
 
    bool IsItemForCommandIdDynamic(int command_id) const override;
    base::string16 GetLabelForCommandId(int command_id) const override;
-   bool GetIconForCommandId(int command_id,
-                                   gfx::Image* icon) const override;
+   ui::ImageModel GetIconForCommandId(int command_id) const override;
 
    void ExecuteCommand(int command_id, int event_flags) override;
 
