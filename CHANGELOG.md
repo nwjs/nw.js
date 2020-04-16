@@ -1,3 +1,9 @@
+0.45.2 / 04-10-2020
+===================
+- Update to Node.js [v13.13.0](https://nodejs.org/en/blog/release/v13.13.0/)
+- Fix: Remove permission prompts when using Chrome Native File System API [(#7351)](https://github.com/nwjs/nw.js/issues/7351)
+- Fix: Linux: wrong app name in native desktop notifications [(#7437)](https://github.com/nwjs/nw.js/issues/7437)
+
 0.45.1 / 04-10-2020
 ===================
 - Update to Node.js [v13.12.0](https://nodejs.org/en/blog/release/v13.12.0/)
