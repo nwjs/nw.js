@@ -153,7 +153,7 @@ vars = {
   'use_public_cros_config': 'not checkout_src_internal',
 
   'nw_src_revision': '0e47ac864cc8bfcd4bcd800e691dbd1045f91f3e',
-  'nw_v8_revision': '0314640f5d6a61709906e10599424df8ee91959d',
+  'nw_v8_revision': '5a8426deb02f58f8e8d4e5c86e432ff19a26f4e2',
   'nw_node_revision': '979bb948c57895ecd601210adab82b991189092f',
 
   # ANGLE's deps are relative to the angle_root variable.
