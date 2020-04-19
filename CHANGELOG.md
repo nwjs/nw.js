@@ -1,4 +1,8 @@
-0.45.2 / 04-10-2020
+0.45.3 / 04-19-2020
+===================
+- Update to Chromium [81.0.4044.113](https://chromereleases.googleblog.com/2020/04/stable-channel-update-for-desktop_15.html)
+
+0.45.2 / 04-16-2020
 ===================
 - Update to Node.js [v13.13.0](https://nodejs.org/en/blog/release/v13.13.0/)
 - Fix: Remove permission prompts when using Chrome Native File System API [(#7351)](https://github.com/nwjs/nw.js/issues/7351)
