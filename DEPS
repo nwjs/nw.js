@@ -151,9 +151,9 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': 'c37a7c113d3df88bd372b9bc95520ec72863d8c7',
-  'nw_v8_revision': '8be231a75305b9d9772e87a61d1b6e4964213e6c',
-  'nw_node_revision': 'e0fce582353f7f447bca9c81c7ac4072e2100fe9',
+  'nw_src_revision': '5eb07e16e69f7153b944baedd85e1f4b9c140d1f',
+  'nw_v8_revision': 'f814b862592d8b4c03de2e75ef20d8054d0ea9a9',
+  'nw_node_revision': '4b298a346fb5bbcde6bff6c7e28acf066e93c95c',
 
   # ANGLE's deps are relative to the angle_root variable.
   'angle_root': 'src/third_party/angle',
@@ -185,7 +185,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '1668abddd8147c49c8f2f90b78dc2701f3794a30',
+  'v8_revision': '61a92470634b34c87722a6e6c77fd13fc2073518',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -252,7 +252,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling devtools-frontend
   # and whatever else without interference from each other.
-  'devtools_frontend_revision': 'cafccfd0e5630ecee0fdea70e5841f2bd01558a8',
+  'devtools_frontend_revision': '78d4d7ba5fa9de1653e6107ee9e68b9a02b617e0',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libprotobuf-mutator
   # and whatever else without interference from each other.
@@ -1467,7 +1467,7 @@ deps = {
   },
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + '04c1b445019e10e54b96f70403d25cc54215faf3',
+    Var('webrtc_git') + '/src.git' + '@' + 'b0cc81112edfc04012bba77970231b579cab6fb2',
 
   'src/third_party/libgifcodec':
      Var('skia_git') + '/libgifcodec' + '@'+  Var('libgifcodec_revision'),
@@ -1548,7 +1548,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@30eaeafade2e5e4ca9dcfa2f4928af70145fb697',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@12e22248b4c0c5e34b3a85a972ebe8f8f8b06f5c',
     'condition': 'checkout_src_internal',
   },
 
