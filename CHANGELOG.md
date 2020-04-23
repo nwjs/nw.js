@@ -1,3 +1,8 @@
+0.45.4 / 04-23-2020
+===================
+- Update to Node.js [v14.0.0](https://nodejs.org/en/blog/release/v14.0.0/)
+- Fix: broken iframe nwfaketop cookies [(#7448)](https://github.com/nwjs/nw.js/issues/7448)
+
 0.45.3 / 04-19-2020
 ===================
 - Update to Chromium [81.0.4044.113](https://chromereleases.googleblog.com/2020/04/stable-channel-update-for-desktop_15.html)
