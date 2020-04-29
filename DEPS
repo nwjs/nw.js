@@ -151,9 +151,9 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': 'e1dc7584ac8c55b6e4ac982574928b954d558224',
+  'nw_src_revision': 'e85166962a21477ea3e9f83fe030687cf0cdf6be',
   'nw_v8_revision': 'af3d903b6b6ba3383ddd6bc7628a3db1fbfa823d',
-  'nw_node_revision': '4b298a346fb5bbcde6bff6c7e28acf066e93c95c',
+  'nw_node_revision': 'c96d5a8c0fe7a9d4be7b77830521537fbbc0bfb3',
 
   # ANGLE's deps are relative to the angle_root variable.
   'angle_root': 'src/third_party/angle',
