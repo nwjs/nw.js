@@ -40,7 +40,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "linux64, mac64, win, win64",
+  "buildspec_platforms": "all",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -152,7 +152,7 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': '7e6e312617e297844e54edd2d1a4361140814c29',
+  'nw_src_revision': '0189caf9b0fae8fd9c90793800cc5bb7f1e1465e',
   'nw_v8_revision': '04f68704226ff90dc6dcfe57b1d15754482613f9',
   'nw_node_revision': 'b175b802897e869f12cd771301b003b0b6e53b17',
 
@@ -1578,7 +1578,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@cf1ae8c309f8ece7998a3596d899b95008013fcf',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@015604e9139fc0feb5773571715d7b07e6ef2ad2',
     'condition': 'checkout_src_internal',
   },
 
