@@ -1,3 +1,11 @@
+0.45.5 / 05-04-2020
+===================
+- Update to Chromium [81.0.4044.129](https://chromereleases.googleblog.com/2020/04/stable-channel-update-for-desktop_27.html)
+- Fix: error in initializing browser_switcher_service [(#7436)](https://github.com/nwjs/nw.js/issues/7436)
+- Fix: /lib64/libc.so.6: version `GLIBC_2.18' not found [(#7452)](https://github.com/nwjs/nw.js/issues/7452)
+- Fix: Many error messages re navigation since 0.43.5 [(#7346)](https://github.com/nwjs/nw.js/issues/7346)
+- Fix: NW.js crashes soon after opening [(#7450)](https://github.com/nwjs/nw.js/issues/7450)
+
 0.45.4 / 04-23-2020
 ===================
 - Update to Node.js [v14.0.0](https://nodejs.org/en/blog/release/v14.0.0/)
