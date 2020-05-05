@@ -329,9 +329,8 @@ NwClipboardReadAvailableTypesFunction::~NwClipboardReadAvailableTypesFunction() 
 
 bool NwClipboardReadAvailableTypesFunction::RunNWSync(base::ListValue* response, std::string* error) {
   ui::Clipboard* clipboard = ui::Clipboard::GetForCurrentThread();
-  bool contains_filenames;
   std::vector<base::string16> types;
-  clipboard->ReadAvailableTypes(ui::ClipboardBuffer::kCopyPaste, &types, &contains_filenames);
+  clipboard->ReadAvailableTypes(ui::ClipboardBuffer::kCopyPaste, &types);
   for(std::vector<base::string16>::iterator it = types.begin(); it != types.end(); it++) {
     if (base::EqualsASCII(*it, ui::kMimeTypeText)) {
       response->Append(base::WrapUnique(new base::Value(ToString(TYPE_TEXT))));
