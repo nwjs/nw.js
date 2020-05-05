@@ -66,7 +66,6 @@
 #include "content/public/common/process_type.h"
 #include "content/public/browser/gpu_data_manager.h"
 #include "content/public/browser/interstitial_page.h"
-#include "content/public/browser/interstitial_page_delegate.h"
 #include "content/public/browser/notification_service.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/render_widget_host.h"
@@ -152,14 +151,6 @@ const char kUserAgentRedirectResponsePath[] = "/detect-user-agent";
 const char kCacheResponsePath[] = "/cache-control-response";
 const char kRedirectResponseFullPath[] =
     "/extensions/platform_apps/web_view/shim/guest_redirect.html";
-
-class TestInterstitialPageDelegate : public content::InterstitialPageDelegate {
- public:
-  TestInterstitialPageDelegate() {
-  }
-  ~TestInterstitialPageDelegate() override {}
-  std::string GetHTMLContents() override { return std::string(); }
-};
 
 class WebContentsHiddenObserver : public content::WebContentsObserver {
  public:
