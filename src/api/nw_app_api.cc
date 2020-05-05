@@ -137,7 +137,7 @@ bool NwAppClearAppCacheFunction::RunNWSync(base::ListValue* response, std::strin
 
   GURL manifest_url(manifest);
   scoped_refptr<browsing_data::CannedAppCacheHelper> helper(
-         new browsing_data::CannedAppCacheHelper(content::BrowserContext::GetDefaultStoragePartition(context_)
+                                                            new browsing_data::CannedAppCacheHelper(content::BrowserContext::GetDefaultStoragePartition(browser_context())
                                                                                               ->GetAppCacheService()));
 
   helper->DeleteAppCaches(url::Origin::Create(manifest_url));
@@ -152,7 +152,7 @@ NwAppClearCacheFunction::~NwAppClearCacheFunction() {
 
 bool NwAppClearCacheFunction::RunNWSync(base::ListValue* response, std::string* error) {
   content::BrowsingDataRemover* remover = content::BrowserContext::GetBrowsingDataRemover(
-      Profile::FromBrowserContext(context_));
+                                                                                          Profile::FromBrowserContext(browser_context()));
 
   remover->AddObserver(this);
   remover->RemoveAndReply(base::Time(), base::Time::Max(),
@@ -200,7 +200,7 @@ bool NwAppSetProxyConfigFunction::RunNWSync(base::ListValue* response, std::stri
     config = net::ProxyConfigWithAnnotation(pc, TRAFFIC_ANNOTATION_FOR_TESTS);
   }
 
-  Profile* profile = Profile::FromBrowserContext(context_);
+  Profile* profile = Profile::FromBrowserContext(browser_context());
   auto* profile_network_context =
     ProfileNetworkContextServiceFactory::GetForContext(profile);
   profile_network_context->UpdateProxyConfig(config);
