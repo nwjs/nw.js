@@ -310,7 +310,7 @@ if (is_win && !is_component_build) {
 
     deps = [
              "//chrome:reorder_imports",
-             "//chrome:main_dll",
+             "//chrome:chrome_dll",
              ":copy_node",
              ":payload",
              "//v8:nwjc",
@@ -364,7 +364,7 @@ if (is_linux && !is_component_build) {
                 "$root_build_dir/payload"]
     deps = [
              "//chrome:chrome_initial",
-             "//chrome:main_dll",
+             "//chrome:chrome_dll",
              ":copy_node",
              ":payload",
              "//v8:nwjc",
