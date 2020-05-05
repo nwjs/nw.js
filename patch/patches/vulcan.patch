@@ -1,0 +1,15 @@
+diff --git a/BUILD.gn b/BUILD.gn
+index 595cd84b0..16ebe3a4a 100644
+--- BUILD.gn
++++ BUILD.gn
+@@ -139,8 +139,8 @@ if (!is_android) {
+ 
+   if (is_linux && vulkan_loader_shared) {
+     copy("libvulkan-abi1") {
+-      sources = [ "${root_out_dir}/libvulkan.so" ]
+-      outputs = [ "${root_out_dir}/libvulkan.so.1" ]
++      sources = [ "${root_out_dir}/lib/libvulkan.so" ]
++      outputs = [ "${root_out_dir}/lib/libvulkan.so.1" ]
+ 
+       deps = [ ":libvulkan" ]
+     }
