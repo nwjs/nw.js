@@ -264,7 +264,7 @@ class LeftMouseClick {
  public:
   explicit LeftMouseClick(content::WebContents* web_contents)
       : web_contents_(web_contents),
-        mouse_event_(blink::WebInputEvent::kMouseDown,
+        mouse_event_(blink::WebInputEvent::Type::kMouseDown,
                      blink::WebInputEvent::kNoModifiers,
                      blink::WebInputEvent::GetStaticTimeStampForTests()) {
     mouse_event_.button = blink::WebMouseEvent::Button::kLeft;
@@ -277,7 +277,7 @@ class LeftMouseClick {
   void Click(const gfx::Point& point, int duration_ms) {
     DCHECK(click_completed_);
     click_completed_ = false;
-    mouse_event_.SetType(blink::WebInputEvent::kMouseDown);
+    mouse_event_.SetType(blink::WebInputEvent::Type::kMouseDown);
     mouse_event_.SetPositionInWidget(point.x(), point.y());
     const gfx::Rect offset = web_contents_->GetContainerBounds();
     mouse_event_.SetPositionInScreen(point.x() + offset.x(),
@@ -303,7 +303,7 @@ class LeftMouseClick {
 
  private:
   void SendMouseUp() {
-    mouse_event_.SetType(blink::WebInputEvent::kMouseUp);
+    mouse_event_.SetType(blink::WebInputEvent::Type::kMouseUp);
     web_contents_->GetRenderViewHost()->GetWidget()->ForwardMouseEvent(
         mouse_event_);
     click_completed_ = true;
@@ -741,14 +741,14 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
   }
 
   void OpenContextMenu(content::WebContents* web_contents) {
-    blink::WebMouseEvent mouse_event(blink::WebInputEvent::kMouseDown,
+    blink::WebMouseEvent mouse_event(blink::WebInputEvent::Type::kMouseDown,
                                      blink::WebInputEvent::kNoModifiers,
                                      blink::WebInputEvent::GetStaticTimeStampForTests());
     mouse_event.button = blink::WebMouseEvent::Button::kRight;
     mouse_event.SetPositionInWidget(1, 1);
     web_contents->GetRenderViewHost()->GetWidget()->ForwardMouseEvent(
         mouse_event);
-    mouse_event.SetType(blink::WebInputEvent::kMouseUp);
+    mouse_event.SetType(blink::WebInputEvent::Type::kMouseUp);
     web_contents->GetRenderViewHost()->GetWidget()->ForwardMouseEvent(
         mouse_event);
   }
