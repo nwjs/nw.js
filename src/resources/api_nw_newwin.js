@@ -583,7 +583,7 @@ NWWindow.prototype.print = function(option) {
   if (option.pdf_path)
     _option["printer"] = "Save as PDF";
   currentNWWindowInternal.setPrintSettingsInternal(_option, this.cWindow.id);
-  window.print();
+  this.window.print();
   // autoprint will be set to false in print_preview_handler.cc after printing is done
   // window.print will return immediately for PDF window #5002
 };
