@@ -1,3 +1,11 @@
+0.45.6 / 05-10-2020
+===================
+- Update to chromium [81.0.4044.138](https://chromereleases.googleblog.com/2020/05/stable-channel-update-for-desktop.html)
+- Node: Update to [v14.2.0](https://nodejs.org/en/blog/release/v14.2.0/)
+- Fix: NW2 Standard alert/confirm..  clip in main window [(#7422)](https://github.com/nwjs/nw.js/issues/7422)
+- Fix: win.print will only print the parent window [(#7377)](https://github.com/nwjs/nw.js/issues/7377)
+- Fix: crash "Invalid instance ID(0) from WebviewActionRequest.defaultAction" [(#7457)](https://github.com/nwjs/nw.js/issues/7457)
+
 0.45.5 / 05-04-2020
 ===================
 - Update to Chromium [81.0.4044.129](https://chromereleases.googleblog.com/2020/04/stable-channel-update-for-desktop_27.html)
