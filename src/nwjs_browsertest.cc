@@ -645,35 +645,6 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
     return guest_web_contents;
   }
 
-  // Helper to load interstitial page in a <webview>.
-  void InterstitialTeardownTestHelper() {
-    // Start a HTTPS server so we can load an interstitial page inside guest.
-    net::EmbeddedTestServer https_server(net::EmbeddedTestServer::TYPE_HTTPS);
-    https_server.SetSSLConfig(net::EmbeddedTestServer::CERT_MISMATCHED_NAME);
-    https_server.ServeFilesFromSourceDirectory("chrome/test/data");
-    ASSERT_TRUE(https_server.Start());
-
-    net::HostPortPair host_and_port = https_server.host_port_pair();
-
-    LoadAndLaunchPlatformApp("web_view/interstitial_teardown",
-                             "EmbedderLoaded");
-
-    // Now load the guest.
-    content::WebContents* embedder_web_contents =
-        GetFirstAppWindowWebContents();
-    ExtensionTestMessageListener second("GuestAddedToDom", false);
-    EXPECT_TRUE(content::ExecuteScript(
-        embedder_web_contents,
-        base::StringPrintf("loadGuest(%d);\n", host_and_port.port())));
-    ASSERT_TRUE(second.WaitUntilSatisfied());
-
-    // Wait for interstitial page to be shown in guest.
-    content::WebContents* guest_web_contents =
-        GetGuestViewManager()->WaitForSingleGuestCreated();
-    ASSERT_TRUE(guest_web_contents->GetRenderViewHost()->GetProcess()->IsForGuestsOnly());
-    content::WaitForInterstitialAttach(guest_web_contents);
-  }
-
   // Runs media_access/allow tests.
   void MediaAccessAPIAllowTestHelper(const std::string& test_name);
 
