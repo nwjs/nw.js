@@ -151,9 +151,9 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': 'e85166962a21477ea3e9f83fe030687cf0cdf6be',
-  'nw_v8_revision': 'af3d903b6b6ba3383ddd6bc7628a3db1fbfa823d',
-  'nw_node_revision': 'c96d5a8c0fe7a9d4be7b77830521537fbbc0bfb3',
+  'nw_src_revision': '82dea33cbd7f2d1d9987f27e4cd9a3fbac5b024d',
+  'nw_v8_revision': '5ca5d17c563d8c99bf44c6b8443bd6ce3dac9ba0',
+  'nw_node_revision': '21b7a8749c3aba5c1b030781f59c0dc2d058fcdd',
 
   # ANGLE's deps are relative to the angle_root variable.
   'angle_root': 'src/third_party/angle',
@@ -181,11 +181,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '8ce842d38d0b32149e874d6855c91e8c68ba65a7',
+  'skia_revision': 'c3d05a789930913af94174961bc6f90894196f62',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '083a26c85b851e871241ffc04221fd3388d3990e',
+  'v8_revision': '3b627511511f00c552ced504c1f182bdcc3480af',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -252,7 +252,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling devtools-frontend
   # and whatever else without interference from each other.
-  'devtools_frontend_revision': '78d4d7ba5fa9de1653e6107ee9e68b9a02b617e0',
+  'devtools_frontend_revision': 'c5f7d255568d96637bf20553e01d2b6226b249db',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libprotobuf-mutator
   # and whatever else without interference from each other.
@@ -1389,7 +1389,7 @@ deps = {
     Var('chromium_git') + '/external/github.com/google/snappy.git' + '@' + 'f5acee902c4d2110f671455460172cb6d3bf5b73',
 
   'src/third_party/sqlite/src':
-    Var('chromium_git') + '/chromium/deps/sqlite.git' + '@' + 'c906d361bd62412e009a4ab8a9077ccf974b2fd8',
+    Var('chromium_git') + '/chromium/deps/sqlite.git' + '@' + '15401f78a1078345251d13469ac56cc607f825db',
 
   'src/third_party/sqlite4java': {
       'packages': [
@@ -1427,7 +1427,7 @@ deps = {
   },
 
   'src/third_party/usrsctp/usrsctplib':
-    Var('chromium_git') + '/external/github.com/sctplab/usrsctp' + '@' + 'bee946a606752a443bd70bca1cb296527fed706d',
+    Var('chromium_git') + '/external/github.com/sctplab/usrsctp' + '@' + 'a8c51df76caae94254b1e59999405f739467490e',
 
   # Display server protocol for Linux.
   'src/third_party/wayland/src': {
@@ -1467,7 +1467,7 @@ deps = {
   },
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + '4f4be92bb228a2e4ceac701e5bda6e11d24f2771',
+    Var('webrtc_git') + '/src.git' + '@' + 'befd48e76346cdc17713997f90cc5e8ce06513f2',
 
   'src/third_party/libgifcodec':
      Var('skia_git') + '/libgifcodec' + '@'+  Var('libgifcodec_revision'),
@@ -1548,7 +1548,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@a09a3abeb9761e1561fed6f6c6c7aa06312a3fab',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@851466086cec49125ed26a185da87009f32ee430',
     'condition': 'checkout_src_internal',
   },
 
