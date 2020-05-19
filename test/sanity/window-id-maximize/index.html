@@ -21,7 +21,8 @@
     </style>
   </head>
   <body>
-    <button onclick="testresize()" id="resize">resize</button>
+    <button onclick="testmax()" id="resize">maximize</button>
+    <button onclick="test_restore()" id="restore">restore</button>
     <button onclick="testmove()" id="move">move</button>
     <button onclick="getxy()" id="getxy">get xy</button>
     <div id="xy"></div>
@@ -29,6 +30,8 @@
   </body>
   <script>
     var win = nw.Window.get();
+    var fs = require('fs');
+    var os = require('os');
     async function test() {
       testresize();
       await new Promise(resolve => setTimeout(resolve, 700));
@@ -36,10 +39,21 @@
       await new Promise(resolve => setTimeout(resolve, 700));
       let placement = get_placement();
       fs.writeFileSync('last_pos.txt', placement);
+      win.maximize();
+      await new Promise(resolve => setTimeout(resolve, 2000));
     }
-    var fs = require('fs');
+    async function test2() {
+      win.restore();
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
     function testresize() {
       win.resizeTo(345, 345);
+    }
+    function testmax() {
+      win.maximize();
+    }
+    function test_restore() {
+      win.restore();
     }
     function testmove() {
       win.moveBy(100, 50);
@@ -49,7 +63,10 @@
       xy.innerHTML = win.x + ", " + win.y;
     }
     function get_placement() {
-      return `${win.x}, ${win.y}, ${window.innerWidth}, ${window.innerHeight}`;
+      if (os.platform() == 'linux')
+        return `${window.innerWidth}, ${window.innerHeight}`;
+      else
+        return `${win.x}, ${win.y}, ${window.innerWidth}, ${window.innerHeight}`;
     }
     window.onresize = function() {
       var yellow = document.getElementById('yellow');
@@ -58,14 +75,16 @@
     window.onload = function() {
       var yellow = document.getElementById('yellow');
       yellow.innerHTML = window.innerWidth + ", " + window.innerHeight;
-      let placement = get_placement();
       if (fs.existsSync('last_pos.txt')) {
-        saved_pos = fs.readFileSync('last_pos.txt', 'utf8');
-        if (saved_pos == placement)
-          fs.writeFileSync('succeed.txt', '');
-        else
-          fs.writeFileSync('failed.txt', `saved_pos: ${saved_pos}; placement: ${placement}`);
-        nw.App.quit();
+        test2().then(() => {
+          let placement = get_placement();
+          saved_pos = fs.readFileSync('last_pos.txt', 'utf8');
+          if (saved_pos == placement)
+            fs.writeFileSync('succeed.txt', '');
+          else
+            fs.writeFileSync('failed.txt', `saved_pos: ${saved_pos}; placement: ${placement}`);
+          nw.App.quit();
+        });
       } else {
         test().then(() => { nw.App.quit(); });
       }

@@ -1,3 +1,110 @@
+0.45.6 / 05-10-2020
+===================
+- Update to chromium [81.0.4044.138](https://chromereleases.googleblog.com/2020/05/stable-channel-update-for-desktop.html)
+- Node: Update to [v14.2.0](https://nodejs.org/en/blog/release/v14.2.0/)
+- Fix: NW2 Standard alert/confirm..  clip in main window [(#7422)](https://github.com/nwjs/nw.js/issues/7422)
+- Fix: win.print will only print the parent window [(#7377)](https://github.com/nwjs/nw.js/issues/7377)
+- Fix: crash "Invalid instance ID(0) from WebviewActionRequest.defaultAction" [(#7457)](https://github.com/nwjs/nw.js/issues/7457)
+
+0.45.5 / 05-04-2020
+===================
+- Update to Chromium [81.0.4044.129](https://chromereleases.googleblog.com/2020/04/stable-channel-update-for-desktop_27.html)
+- Fix: error in initializing browser_switcher_service [(#7436)](https://github.com/nwjs/nw.js/issues/7436)
+- Fix: /lib64/libc.so.6: version `GLIBC_2.18' not found [(#7452)](https://github.com/nwjs/nw.js/issues/7452)
+- Fix: Many error messages re navigation since 0.43.5 [(#7346)](https://github.com/nwjs/nw.js/issues/7346)
+- Fix: NW.js crashes soon after opening [(#7450)](https://github.com/nwjs/nw.js/issues/7450)
+
+0.45.4 / 04-23-2020
+===================
+- Update to Node.js [v14.0.0](https://nodejs.org/en/blog/release/v14.0.0/)
+- Fix: broken iframe nwfaketop cookies [(#7448)](https://github.com/nwjs/nw.js/issues/7448)
+
+0.45.3 / 04-19-2020
+===================
+- Update to Chromium [81.0.4044.113](https://chromereleases.googleblog.com/2020/04/stable-channel-update-for-desktop_15.html)
+
+0.45.2 / 04-16-2020
+===================
+- Update to Node.js [v13.13.0](https://nodejs.org/en/blog/release/v13.13.0/)
+- Fix: Remove permission prompts when using Chrome Native File System API [(#7351)](https://github.com/nwjs/nw.js/issues/7351)
+- Fix: Linux: wrong app name in native desktop notifications [(#7437)](https://github.com/nwjs/nw.js/issues/7437)
+
+0.45.1 / 04-10-2020
+===================
+- Update to Node.js [v13.12.0](https://nodejs.org/en/blog/release/v13.12.0/)
+- Fix: crash in transparency support [(#7433)](https://github.com/nwjs/nw.js/issues/7433)
+
+0.45.0 / 04-08-2020
+===================
+- Update to Chromium [81.0.4044.92](https://chromereleases.googleblog.com/2020/04/stable-channel-update-for-desktop_7.html)
+
+0.44.6 / 04-01-2020
+===================
+- Update to Chromium [80.0.3987.162](https://chromereleases.googleblog.com/2020/03/stable-channel-update-for-desktop_31.html)
+- Fix: allow file system api in NW origin [(#7351)](https://github.com/nwjs/nw.js/issues/7351)
+- Fix: websocket debug crash [(#7427)](https://github.com/nwjs/nw.js/issues/7427)
+
+0.44.5 / 03-18-2020
+===================
+- Update to Chromium 80.0.3987.149
+- Fix: Crash on Windows 10 at saving window dimentions [(#7412)](https://github.com/nwjs/nw.js/issues/7412)
+
+0.44.4 / 03-09-2020
+===================
+- Update to Chromium [80.0.3987.132](https://chromereleases.googleblog.com/2020/03/stable-channel-update-for-desktop.html)
+- Node: update to [v13.10.1](https://nodejs.org/en/blog/release/v13.10.1/)
+- Fix: Window maximized on re-open [(#7370)](https://github.com/nwjs/nw.js/issues/7370)
+- Fix: disable throttling of worker / broadcast channel messages  [(#7090)](https://github.com/nwjs/nw.js/issues/7090)
+
+0.44.3 / 02-26-2020
+===================
+- Update to Chromium [80.0.3987.122](https://chromereleases.googleblog.com/2020/02/stable-channel-update-for-desktop_24.html)
+- Node: Fix windows worker support [(#7114)](https://github.com/nwjs/nw.js/issues/7114)
+- Update build script to support cross-compiling for ARM (Thanks to Marcus T)
+- Node: update to [v13.9.0](https://nodejs.org/en/blog/release/v13.9.0/)
+- Fix: Function enterfullscreen brokes app on MacOS [(#7254)](https://github.com/nwjs/nw.js/issues/7254)
+- Fix: [NW2 issue] : Setting two binded windows to a fullscreen state doesn't work anymore  [(#7368)](https://github.com/nwjs/nw.js/issues/7368)
+- Fix: NW2: nw.App.crashRenderer() doesn't kill nw like NW1 does [(#7383)](https://github.com/nwjs/nw.js/issues/7383)
+- Fix: Unable to build NW.js distribution (missing natives_blob.bin) [(#7378)](https://github.com/nwjs/nw.js/issues/7378)
+
+0.44.2 / 02-19-2020
+===================
+- Update to Chromium 80.0.3987.116
+- Fix: Copy & paste between input fields adds spurious space [(#7363)](https://github.com/nwjs/nw.js/issues/7363)
+- Fix: 43.0 reload app doesn't close and open new window [(#7271)](https://github.com/nwjs/nw.js/issues/7271)
+- Fix: Local sourcemaps can not be parsed in 0.44.1 [(#7373)](https://github.com/nwjs/nw.js/issues/7373)
+- Fix: Quit on macOS from top or dock icon menus does not have "quit" value in "close" event [(#7365)](https://github.com/nwjs/nw.js/issues/7365)
+
+0.44.1 / 02-11-2020
+===================
+- Node: Update to [v13.8.0](https://nodejs.org/en/blog/release/v13.8.0/)
+- Fix: Quit on macOS from top or dock icon menus does not have "quit" value in "close" event [(#7365)](https://github.com/nwjs/nw.js/issues/7365)
+- Fix: MacOS builtin menu can not switch according to the focused Window  [(#7366)](https://github.com/nwjs/nw.js/issues/7366)
+- Fix: App starts with min_height and min_width instead of height and width [(#7358)](https://github.com/nwjs/nw.js/issues/7358)
+- Fix: App won't quit on Mac [(#7355)](https://github.com/nwjs/nw.js/issues/7355)
+- Fix: File & Folder dialogs of the wrong type and undraggable on MacOS [(#7349)](https://github.com/nwjs/nw.js/issues/7349)
+- Fix: NW2 issue : (Linux) NW.js crashes when an opened window has attached the 'move' event [(#7359)](https://github.com/nwjs/nw.js/issues/7359)
+- Fix: NW2 issue : (Linux) Nw.js should NOT show the chromium default menu bar as global [(#7364)](https://github.com/nwjs/nw.js/issues/7364)
+- Fix: Regression of allowed String length, `buffer.constants.MAX_STRING_LENGTH` [(#7356)](https://github.com/nwjs/nw.js/issues/7356)
+
+0.44.0 / 02-05-2020
+===================
+- Update to Chromium 80.0.3987.87
+- Linux: Fix ANGLE lib loading path
+- Fix mac crash reporting
+- [docs] add Window.captureScreenshot
+- NW2: add Window.captureScreenshot - support fullpage screenshot
+- Fix: Pressing the ESC key will now EXIT "FullScreen mode" with RM MV. [(#7324)](https://github.com/nwjs/nw.js/issues/7324)
+- Fix: NW2: Crashing renderer shows Aw, Snap! [(#7339)](https://github.com/nwjs/nw.js/issues/7339)
+- Fix: folder select dialog shows upload button instead of select on MacOS [(#7338)](https://github.com/nwjs/nw.js/issues/7338)
+- Fix: NW2: (Linux) Transparency and resize handling in frameless windows not working as intended [(#7325)](https://github.com/nwjs/nw.js/issues/7325)
+- Fix: NW2: win.blur() does not fire correctly [(#7327)](https://github.com/nwjs/nw.js/issues/7327)
+- Fix: NW2: Sometimes the window cannot be closed [(#7326)](https://github.com/nwjs/nw.js/issues/7326)
+- Fix: NW2: User Window Metrics Not Saved/Respected [(#7322)](https://github.com/nwjs/nw.js/issues/7322)
+- Fix: `window.open` does not load `inject_js_start` or `inject_js_end` when opening the page. [(#7320)](https://github.com/nwjs/nw.js/issues/7320)
+- Fix: Autoprint is not completely silent [(#6269)](https://github.com/nwjs/nw.js/issues/6269)
+- Fix: win.window is undefined after navigation to remote url [(#7304)](https://github.com/nwjs/nw.js/issues/7304)
+
 0.43.6 / 01-17-2020
 ===================
 - Update to Chromium [79.0.3945.130](https://chromereleases.googleblog.com/2020/01/stable-channel-update-for-desktop_16.html)

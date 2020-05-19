@@ -1,0 +1,11 @@
+<body>
+<div id='result'>
+waiting...
+</div>
+<script>
+const { Worker } = require('worker_threads');
+const worker = new Worker('const { parentPort } = require("worker_threads");parentPort.on("message",message => parentPort.postMessage({ pong: message }));  ', { eval: true });
+worker.on('message', message => {console.log(message.pong); document.querySelector('#result').innerHTML = message.pong; });      
+worker.postMessage('success');
+</script>
+</body>

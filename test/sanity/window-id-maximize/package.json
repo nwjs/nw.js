@@ -1,0 +1,9 @@
+{
+  "name": "testwin-id",
+  "main": "index.html",
+  "window": {
+    "id": "testwinid",
+    "width": 400,
+    "height": 300
+  }
+}
