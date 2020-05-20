@@ -1,3 +1,9 @@
+0.46.0 / 05-20-2020
+===================
+- Update to Chromium [83.0.4103.61](https://chromereleases.googleblog.com/2020/05/stable-channel-update-for-desktop_19.html)
+- Fix: native module node-pty fails to build [(#7473)](https://github.com/nwjs/nw.js/issues/7473)
+- Fix: Setting --user-data-dir to custom location still causes AppData folder to be created [(#6328)](https://github.com/nwjs/nw.js/issues/6328)
+
 0.45.6 / 05-10-2020
 ===================
 - Update to chromium [81.0.4044.138](https://chromereleases.googleblog.com/2020/05/stable-channel-update-for-desktop.html)
