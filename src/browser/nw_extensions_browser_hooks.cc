@@ -1,5 +1,7 @@
 #include "nw_extensions_browser_hooks.h"
 
+#include "ui/gfx/image/image_skia_operations.h"
+
 // base
 #include "base/command_line.h"
 #include "base/feature_list.h"
@@ -271,6 +273,14 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
   if (manifest->GetString("window.icon", &icon_path)) {
     gfx::Image app_icon;
     if (GetPackageImage(package, base::FilePath::FromUTF8Unsafe(icon_path), &app_icon)) {
+      if (app_icon.Width() > 128 || app_icon.Height() > 128) {
+        const gfx::ImageSkia* originImageSkia = app_icon.ToImageSkia();
+        gfx::ImageSkia resizedImageSkia =
+          gfx::ImageSkiaOperations::CreateResizedImage(*originImageSkia,
+                                                       skia::ImageOperations::RESIZE_GOOD,
+                                                       gfx::Size(128, 128));
+        app_icon = gfx::Image(resizedImageSkia);
+      }
       SetAppIcon(app_icon);
       int width = app_icon.Width();
       std::string key = "icons." + base::NumberToString(width);
@@ -283,6 +293,7 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
 #endif
     }
   }
+
   if (manifest->Get(switches::kmRemotePages, &node_remote)) {
     //FIXME: node-remote spec different with kWebURLs
     std::string node_remote_string;
