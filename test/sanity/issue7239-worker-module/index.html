@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Test Web Workers with Native Modules</title>
+  <style type="text/css">
+  </style>
+  <script>
+  </script>
+</head>
+
+<body>
+  <h1 id='result'>result pending...</h1>
+
+<script type="text/javascript">
+
+  function test() {
+    document.getElementById('result').innerHTML = 'result pending...';
+    var theWorker = new Worker('./worker.js');
+    theWorker.onmessage = function(e) {
+      document.getElementById('result').innerHTML = e.data;
+      setTimeout(() => { theWorker.terminate(); }, 0);
+    }
+    theWorker.postMessage('ABC');
+    
+  }
+
+</script>
+<button onclick="test()">test</button>
+</body>
+
+</html>
