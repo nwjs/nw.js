@@ -174,7 +174,7 @@ def wait_for_element_id_content(driver, elem_id, content, timeout=10):
         time.sleep(1)
         timeout = timeout - 1
         if timeout <= 0:
-             raise Exception('Timeout when waiting for element: ' + elem_id + " content: " + content)
+             raise Exception('Timeout when waiting for element: ' + elem_id + " content: " + content + "; actual: " + ret)
     return ret
 
 # wait for window handles
