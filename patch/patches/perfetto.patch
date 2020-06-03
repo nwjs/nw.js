@@ -1,0 +1,12 @@
+diff --git a/src/trace_processor/importers/proto/packet_sequence_state.cc b/src/trace_processor/importers/proto/packet_sequence_state.cc
+index c63c2d749..2918cd720 100644
+--- src/trace_processor/importers/proto/packet_sequence_state.cc
++++ src/trace_processor/importers/proto/packet_sequence_state.cc
+@@ -14,6 +14,7 @@
+  * limitations under the License.
+  */
+ 
++#pragma clang diagnostic ignored "-Wunused-private-field"
+ #include "src/trace_processor/importers/proto/packet_sequence_state.h"
+ 
+ namespace perfetto {
