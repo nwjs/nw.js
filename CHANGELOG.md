@@ -1,3 +1,8 @@
+0.46.2 / 06-07-2020
+===================
+- Chromium: update to [83.0.4103.97](https://chromereleases.googleblog.com/2020/06/stable-channel-update-for-desktop.html)
+- Fix: process.env crash, access Node variable across contexts [(#7493)](https://github.com/nwjs/nw.js/issues/7493)
+
 0.46.1 / 06-04-2020
 ===================
 - Node: update to [v14.4.0](https://nodejs.org/en/blog/release/v14.4.0/)
