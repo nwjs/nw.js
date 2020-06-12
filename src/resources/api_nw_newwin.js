@@ -176,12 +176,12 @@ NWWindow.prototype.on = function (event, callback, record) {
     this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
     var cbf = wrap(function(windowId) {
       if (self.cWindow.id === windowId) {
-        self.cWindow.focused = true;
+        callback.__nw_cb.focused = true;
         return;
       }
-      if (!self.cWindow.focused)
+      if (!callback.__nw_cb.focused)
         return;
-      self.cWindow.focused = false;
+      callback.__nw_cb.focused = false;
       callback.call(self);
     });
     chrome.windows.onFocusChanged.addListener(cbf);
