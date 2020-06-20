@@ -151,8 +151,8 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': 'a869974d9b4fccae7065173eb1ec90260ce60a97',
-  'nw_v8_revision': '5ca5d17c563d8c99bf44c6b8443bd6ce3dac9ba0',
+  'nw_src_revision': '82b7f1704db2a7e9f8c35708618eb14357f56ae2',
+  'nw_v8_revision': '102c73c1090beae7d408cd1b178bb81d870ab767',
   'nw_node_revision': 'b29bf03ffc31d868f0d8b0f11a27092843c7e852',
 
   # ANGLE's deps are relative to the angle_root variable.
@@ -185,7 +185,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '3b627511511f00c552ced504c1f182bdcc3480af',
+  'v8_revision': '90904eb48b16b32f7edbf1f8a92ece561d05e738',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -1467,7 +1467,7 @@ deps = {
   },
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + 'befd48e76346cdc17713997f90cc5e8ce06513f2',
+    Var('webrtc_git') + '/src.git' + '@' + '3827e93837820a312d15beb035c0be959a354d7c',
 
   'src/third_party/libgifcodec':
      Var('skia_git') + '/libgifcodec' + '@'+  Var('libgifcodec_revision'),
@@ -1548,7 +1548,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@98973cbaa5083124a72d920fbe7a94533972a4cd',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@5fa0b3a1d0172779a9920e6470a65ce82cd9d563',
     'condition': 'checkout_src_internal',
   },
 
