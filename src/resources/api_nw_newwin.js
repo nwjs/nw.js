@@ -527,6 +527,8 @@ NWWindow.prototype.setPosition = function (pos) {
     var height = this.cWindow.height;
     chrome.windows.update(this.cWindow.id, {'left': Math.round((screenWidth-width)/2),
                                             'top': Math.round((screenHeight-height)/2)});
+  } else if (pos == "mouse") {
+    chrome.windows.update(this.cWindow.id, {'position': "mouse" });
   }
 };
 NWWindow.prototype.setVisibleOnAllWorkspaces = function(all_visible) {
