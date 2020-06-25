@@ -1,3 +1,8 @@
+0.46.3 / 06-25-2020
+===================
+- Chromium: update to [83.0.4103.116](https://chromereleases.googleblog.com/2020/06/stable-channel-update-for-desktop_22.html)
+- Fix: nw2: Window.setPosition(mouse) [(#7505)](https://github.com/nwjs/nw.js/issues/7505)
+
 0.46.2 / 06-07-2020
 ===================
 - Chromium: update to [83.0.4103.97](https://chromereleases.googleblog.com/2020/06/stable-channel-update-for-desktop.html)
