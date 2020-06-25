@@ -1,3 +1,20 @@
+0.46.3 / 06-25-2020
+===================
+- Chromium: update to [83.0.4103.116](https://chromereleases.googleblog.com/2020/06/stable-channel-update-for-desktop_22.html)
+- Fix: nw2: Window.setPosition(mouse) [(#7505)](https://github.com/nwjs/nw.js/issues/7505)
+
+0.46.2 / 06-07-2020
+===================
+- Chromium: update to [83.0.4103.97](https://chromereleases.googleblog.com/2020/06/stable-channel-update-for-desktop.html)
+- Fix: process.env crash, access Node variable across contexts [(#7493)](https://github.com/nwjs/nw.js/issues/7493)
+
+0.46.1 / 06-04-2020
+===================
+- Node: update to [v14.4.0](https://nodejs.org/en/blog/release/v14.4.0/)
+- Fix: Native Modules can't be required for second time in Web Workers [(#7239)](https://github.com/nwjs/nw.js/issues/7239)
+- Fix: app crashed after reload/refresh using web workers  [(#7487)](https://github.com/nwjs/nw.js/issues/7487)
+- Fix: [Regression] Window bar app icon is low quality again [(#7361)](https://github.com/nwjs/nw.js/issues/7361)
+
 0.46.0 / 05-20-2020
 ===================
 - Update to Chromium [83.0.4103.61](https://chromereleases.googleblog.com/2020/05/stable-channel-update-for-desktop_19.html)
