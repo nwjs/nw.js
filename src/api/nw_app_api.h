@@ -57,7 +57,7 @@ class NwAppClearCacheFunction : public NWSyncExtensionFunction, public content::
  public:
   NwAppClearCacheFunction();
   bool RunNWSync(base::ListValue* response, std::string* error) override;
-  void OnBrowsingDataRemoverDone() override;
+  void OnBrowsingDataRemoverDone(uint64_t failed_data_types) override;
 
  protected:
   ~NwAppClearCacheFunction() override;

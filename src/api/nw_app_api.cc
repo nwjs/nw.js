@@ -167,7 +167,7 @@ bool NwAppClearCacheFunction::RunNWSync(base::ListValue* response, std::string* 
   return true;
 }
 
-void NwAppClearCacheFunction::OnBrowsingDataRemoverDone() {
+void NwAppClearCacheFunction::OnBrowsingDataRemoverDone(uint64_t failed_data_types) {
   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
   run_loop_.Quit();
 }
