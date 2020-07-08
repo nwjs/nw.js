@@ -25,7 +25,7 @@ driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_opt
 driver.implicitly_wait(5)
 try:
     print driver.current_url
-    #driver.find_element_by_id('testbtn').click()
+    driver.find_element_by_id('testbtn').click()
     timeout = 15
     found = False
     while timeout > 0 and not found:
