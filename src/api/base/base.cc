@@ -21,6 +21,7 @@
 #include "content/nw/src/api/base/base.h"
 
 #include "base/logging.h"
+#include "base/notreached.h"
 #include "base/values.h"
 
 namespace nw {
