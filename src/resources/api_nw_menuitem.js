@@ -4,7 +4,7 @@ var messagingNatives = requireNative('messaging_natives');
 var util = nw.require('util');
 var EventEmitter = nw.require('events').EventEmitter;
 
-var menuItems = { objs : {}, clickEvent: {} };
+var menuItems = { objs : Object.create(null), clickEvent: {} };
 menuItems.clickEvent = bindingUtil.createCustomEvent("NWObjectclick", false, false);
 menuItems.clickEvent.addListener(function(id) {
   var obj = menuItems.objs[id];
@@ -78,7 +78,6 @@ function MenuItem(option) {
   this.id = id;
   privates(this).option = option;
 
-  menuItems.objs[id] = this;
   // All properties must be set after initialization.
   if (!option.hasOwnProperty('icon'))
     option.shadowIcon = '';
@@ -97,8 +96,17 @@ function MenuItem(option) {
 
 }
 
+MenuItem.eventRegistry = {
+  add: function (menu_item) {
+    menuItems.objs[menu_item.id] = menu_item;
+  },
+  remove: function (menu_item) {
+    delete menuItems.objs[menu_item.id]
+  }
+};
+
 MenuItem.prototype._destroy = function () {
-  menuItems.objs[this.id] = null;
+  MenuItem.eventRegistry.remove(this);
 };
 
 util.inherits(MenuItem, EventEmitter);
