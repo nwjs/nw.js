@@ -244,7 +244,15 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
       v8::MicrotasksScope microtasks(isolate, v8::MicrotasksScope::kDoNotRunMicrotasks);
 
       g_set_nw_tick_callback_fn(&CallNWTickCallback);
-      v8::Local<v8::Context> dom_context = context->v8_context();
+      v8::Local<v8::Context> dom_context;
+      bool is_background_page = extension &&
+        (context->url().host() == extension->id()) &&
+        (context->url().path() == "/_generated_background_page.html");
+      if (node_context.IsEmpty() && !mixed_context && !is_background_page) {
+        dom_context = v8::Context::New(isolate);
+        dom_context->SetAlignedPointerInEmbedderData(2, nullptr);
+      } else
+        dom_context = context->v8_context();
       if (!mixed_context)
         g_set_node_context_fn(isolate, &dom_context);
       dom_context->SetSecurityToken(v8::String::NewFromUtf8(isolate, "nw-token", v8::NewStringType::kNormal).ToLocalChecked());
