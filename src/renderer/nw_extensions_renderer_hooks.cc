@@ -250,7 +250,9 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
         (context->url().path() == "/_generated_background_page.html");
       if (node_context.IsEmpty() && !mixed_context && !is_background_page) {
         dom_context = v8::Context::New(isolate);
-        dom_context->SetAlignedPointerInEmbedderData(2, nullptr);
+        void* data = context->v8_context()->GetAlignedPointerFromEmbedderData(2); //v8ContextPerContextDataIndex
+        dom_context->SetAlignedPointerInEmbedderData(2, data);
+        dom_context->SetAlignedPointerInEmbedderData(50, (void*)0x08110800);
       } else
         dom_context = context->v8_context();
       if (!mixed_context)
@@ -301,7 +303,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
 
         ignore_result(script->Run(dom_context));
       }
-      
+
       dom_context->Exit();
     }
   }
