@@ -39,6 +39,7 @@ public:
     SkBitmap bitmap;
     clipboard->ReadImage(
                          ui::ClipboardBuffer::kCopyPaste,
+                         nullptr,
                          base::BindLambdaForTesting([&](const SkBitmap& result) {
                                                       bitmap = result;
                                                       event.Signal();
@@ -89,7 +90,7 @@ SkBitmap _ReadImage(ui::Clipboard* clipboard) {
     bool ReadText(ClipboardData& data) {
       DCHECK(data.type == TYPE_TEXT);
       base::string16 text;
-      clipboard_->ReadText(ui::ClipboardBuffer::kCopyPaste, &text);
+      clipboard_->ReadText(ui::ClipboardBuffer::kCopyPaste, nullptr, &text);
       data.data.reset(new std::string(base::UTF16ToUTF8(text)));
       return true;
     }
@@ -99,7 +100,8 @@ SkBitmap _ReadImage(ui::Clipboard* clipboard) {
       base::string16 text;
       std::string src_url;
       uint32_t fragment_start, fragment_end;
-      clipboard_->ReadHTML(ui::ClipboardBuffer::kCopyPaste, &text, &src_url, &fragment_start, &fragment_end);
+      clipboard_->ReadHTML(ui::ClipboardBuffer::kCopyPaste, nullptr,
+                           &text, &src_url, &fragment_start, &fragment_end);
       data.data.reset(new std::string(base::UTF16ToUTF8(text)));
       return true;
     }
@@ -107,7 +109,7 @@ SkBitmap _ReadImage(ui::Clipboard* clipboard) {
     bool ReadRTF(ClipboardData& data) {
       DCHECK(data.type == TYPE_RTF);
       std::string text;
-      clipboard_->ReadRTF(ui::ClipboardBuffer::kCopyPaste, &text);
+      clipboard_->ReadRTF(ui::ClipboardBuffer::kCopyPaste, nullptr, &text);
       data.data.reset(new std::string(text));
       return true;
     }
@@ -330,7 +332,7 @@ NwClipboardReadAvailableTypesFunction::~NwClipboardReadAvailableTypesFunction() 
 bool NwClipboardReadAvailableTypesFunction::RunNWSync(base::ListValue* response, std::string* error) {
   ui::Clipboard* clipboard = ui::Clipboard::GetForCurrentThread();
   std::vector<base::string16> types;
-  clipboard->ReadAvailableTypes(ui::ClipboardBuffer::kCopyPaste, &types);
+  clipboard->ReadAvailableTypes(ui::ClipboardBuffer::kCopyPaste, nullptr, &types);
   for(std::vector<base::string16>::iterator it = types.begin(); it != types.end(); it++) {
     if (base::EqualsASCII(*it, ui::kMimeTypeText)) {
       response->Append(base::WrapUnique(new base::Value(ToString(TYPE_TEXT))));
