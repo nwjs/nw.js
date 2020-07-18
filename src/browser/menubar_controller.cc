@@ -1,6 +1,6 @@
 #include "content/nw/src/browser/menubar_controller.h"
 
-#include "base/message_loop/message_loop_current.h"
+#include "base/task/current_thread.h"
 #include "base/run_loop.h"
 #include "base/stl_util.h"
 #include "content/nw/src/browser/menubar_view.h"
@@ -112,10 +112,10 @@ void MenuBarController::RunMenuAt(views::View* view) {
     base::AutoReset<base::Closure> reset_quit_closure(&message_loop_quit_,
                                                       base::Closure());
 
-    base::MessageLoopCurrent::ScopedNestableTaskAllower allow;
+    base::CurrentThread::ScopedNestableTaskAllower allow;
     base::RunLoop run_loop;
     message_loop_quit_ = run_loop.QuitClosure();
-  
+
     run_loop.Run();
   }
   delete this;
@@ -124,7 +124,7 @@ void MenuBarController::RunMenuAt(views::View* view) {
 void MenuBarController::OnMenuClose() {
   CHECK(!message_loop_quit_.is_null());
   message_loop_quit_.Run();
-  
+
 #if !defined(OS_WIN)
   // Ask PlatformEventSource to stop dispatching
   // events in this message loop

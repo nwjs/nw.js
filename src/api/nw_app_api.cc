@@ -6,7 +6,7 @@
 
 #include "base/command_line.h"
 #include "base/memory/ptr_util.h"
-#include "base/message_loop/message_loop_current.h"
+#include "base/task/current_thread.h"
 #include "base/task/post_task.h"
 #include "content/public/browser/browser_task_traits.h"
 #include "components/browsing_data/content/appcache_helper.h"
@@ -160,7 +160,7 @@ bool NwAppClearCacheFunction::RunNWSync(base::ListValue* response, std::string* 
                           content::BrowsingDataRemover::ORIGIN_TYPE_UNPROTECTED_WEB,
                           this);
   // BrowsingDataRemover deletes itself.
-  base::MessageLoopCurrent::ScopedNestableTaskAllower allow;
+  base::CurrentThread::ScopedNestableTaskAllower allow;
 
   run_loop_.Run();
   remover->RemoveObserver(this);
