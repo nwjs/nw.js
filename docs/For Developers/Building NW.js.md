@@ -88,12 +88,12 @@ See the upstream documentation for the mapping between GN and GYP flags: https:/
 
 ```bash
 cd src
-GYP_CHROMIUM_NO_ACTION=0 ./build/gyp_chromium -I third_party/node-nw/common.gypi -D building_nw=1 third_party/node-nw/node.gyp
+GYP_CHROMIUM_NO_ACTION=0 ./build/gyp_chromium -I third_party/node-nw/common.gypi -D building_nw=1 -D clang=1 third_party/node-nw/node.gyp
 ```
 
 or use the following if you're doing a component build:
 ```bash
-./build/gyp_chromium -D component=shared_library -I third_party/node-nw/common.gypi -D building_nw=1 third_party/node-nw/node.gyp
+./build/gyp_chromium -D component=shared_library -I third_party/node-nw/common.gypi -D building_nw=1 -D clang=1 third_party/node-nw/node.gyp
 ```
 To change the build configuration for Node, you need to setup the GYP_DEFINES environment variable:
 
