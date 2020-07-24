@@ -1,3 +1,9 @@
+0.47.1 / 07-24-2020
+===================
+- Update Node.js to [v14.6.0](https://nodejs.org/en/blog/release/v14.6.0/)
+- Fix: Window opened with new_instance creates always mixed context [(#7344)](https://github.com/nwjs/nw.js/issues/7344)
+- [docs] add clang option for building Node
+
 0.47.0 / 07-15-2020
 ===================
 - Update Chromium to [84.0.4147.89](https://chromereleases.googleblog.com/2020/07/stable-channel-update-for-desktop.html)
