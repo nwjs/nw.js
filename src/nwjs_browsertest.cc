@@ -940,7 +940,7 @@ IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, SilentPrintChangeFooter) {
   base::FilePath test_dir = test_data_dir_.Append(FILE_PATH_LITERAL("platform_apps")).Append(FILE_PATH_LITERAL("silent_print"));
   base::FilePath output_pdf = test_data_dir_.Append(FILE_PATH_LITERAL("output.pdf"));
   ASSERT_TRUE(base::SetCurrentDirectory(test_dir));
-  ASSERT_TRUE(base::DeleteFile(output_pdf, false));
+  ASSERT_TRUE(base::DeleteFile(output_pdf));
   LoadAndLaunchPlatformApp("silent_print", "Launched");
   content::WebContents* web_contents = GetFirstAppWindowWebContents();
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
