@@ -373,7 +373,7 @@ base::FilePath GetRootPathRenderer() {
 }
 
 void TryInjectStartScript(blink::WebLocalFrame* frame, const Extension* extension, bool start) {
-  RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->View());
+  RenderViewImpl* rv = content::RenderFrameImpl::FromWebFrame(frame)->render_view();
   if (!rv)
     return;
 
@@ -514,7 +514,7 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
     CHECK(*script2);
     ignore_result(script2->Run(v8_context));
   }
-  RenderViewImpl* rv = RenderViewImpl::FromWebView(frame->View());
+  RenderViewImpl* rv = content::RenderFrameImpl::FromWebFrame(frame)->render_view();
   if (!rv)
     return;
 
