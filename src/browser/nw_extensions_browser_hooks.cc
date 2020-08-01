@@ -1,5 +1,6 @@
 #include "nw_extensions_browser_hooks.h"
 
+#include "ui/gfx/image/image_skia.h"
 #include "ui/gfx/image/image_skia_operations.h"
 
 // base
