@@ -159,8 +159,8 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': 'a1d2746a0cc21afdae294767d5f0c01a3b1d7986',
-  'nw_v8_revision': '8f62a0ab1bf7af69915407423f77fec5bec2b24a',
+  'nw_src_revision': 'b7ae34646757b053505e6522cb6d2142d99769c2',
+  'nw_v8_revision': '1b8e10a1bb2adcab6bdbf47f9fd7bf3e9497ea24',
   'nw_node_revision': 'a4c578aa1c9d2d7125f95499906ed7d7892c4c55',
 
   # ANGLE's deps are relative to the angle_root variable.
@@ -194,11 +194,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': 'b603284ae76e9320baaf3272b90b9f1cc493d8b6',
+  'skia_revision': 'c3f094e9773746f91fc18c83a617a54e42274763',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'f87abd2e61e1cd94dfa0dc3607103c8feaf6f403',
+  'v8_revision': 'dc26f2d49c52b0c0e81c9f5f06f7347b03ef9b64',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -206,7 +206,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': '034a8b3f3c5c8e7e1629b8ac88cadb72ea68cf23',
+  'angle_revision': '006ab354313b493ccb6eba909e0831bb0b13aea7',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -265,7 +265,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling devtools-frontend
   # and whatever else without interference from each other.
-  'devtools_frontend_revision': 'dfc6f57691a40899b3d162561c25aeec4bc774cd',
+  'devtools_frontend_revision': '02d7c6a3d373ef3fa29647b5c8bf1dd76313ef7a',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libprotobuf-mutator
   # and whatever else without interference from each other.
@@ -826,7 +826,7 @@ deps = {
   },
 
   'src/third_party/breakpad/breakpad':
-    Var('chromium_git') + '/breakpad/breakpad.git' + '@' + '2757a2c9c819fcae3784576aef0c8400c7ad06d7',
+    Var('chromium_git') + '/breakpad/breakpad.git' + '@' + 'a6218eb66d7b4880825168a83e66bfea746908a6',
 
   'src/third_party/byte_buddy': {
       'packages': [
@@ -1545,7 +1545,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@85b764e8416e49c057782569daad8e68e7ca1546',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@d7a0ace59a1696f82e11948d756da8772992e644',
     'condition': 'checkout_src_internal',
   },
 
