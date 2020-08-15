@@ -154,8 +154,8 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': '89765b5f39484ad021838a9f32f3318a202af13c',
-  'nw_v8_revision': '61fffcc906887d2b30ddd7358a0eaafecf95ae01',
+  'nw_src_revision': 'f166cd619891da0000112b620981e4dd579147cb',
+  'nw_v8_revision': 'e588f44325af7e3edbc637628e0c34a057c3378d',
   'nw_node_revision': '491e9ae71889aebfec4e64a1c9a48231ec7ef619',
 
   # ANGLE's deps are relative to the angle_root variable.
@@ -184,11 +184,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '8d2ebfffaf6ece9a7e9839dca2d7907f241c3460',
+  'skia_revision': 'e50772b2a25e98419dc884cc5cdd2138e1dfd43e',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '819e18461e9daf907437a521d90663e827c40e05',
+  'v8_revision': '451d38b60be0a0f692b11815289cf8cbc9b1dc98',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -196,7 +196,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': 'd188231d437ac82396e034f3483319ec1472f169',
+  'angle_revision': '29a4abf96a83a1958675dd5c2870a1677cc011b7',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -255,7 +255,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling devtools-frontend
   # and whatever else without interference from each other.
-  'devtools_frontend_revision': '930c3d2ed8d25469f889f8a101f86f8c4c65d458',
+  'devtools_frontend_revision': '95e8d52caabdf839494f0f63c1bebc0ff4ff93d8',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libprotobuf-mutator
   # and whatever else without interference from each other.
@@ -1462,7 +1462,7 @@ deps = {
   },
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + '758c388d3fedac4a474b48a240af83dd3f6a5fc5',
+    Var('webrtc_git') + '/src.git' + '@' + 'd25c2ac74afc25f65d111771dbfabd6db25d2498',
 
   'src/third_party/libgifcodec':
      Var('skia_git') + '/libgifcodec' + '@'+  Var('libgifcodec_revision'),
@@ -1500,7 +1500,7 @@ deps = {
       'packages': [
         {
           'package': 'skia/tools/goldctl/linux-amd64',
-          'version': 'git_revision:5e13f25e0c481b68c2aa830b726c6ac2fdd1f684',
+          'version': 'git_revision:e0376578f2f33586b6ac283a0787582c4678ecb1',
         },
       ],
       'dep_type': 'cipd',
@@ -1510,7 +1510,7 @@ deps = {
       'packages': [
         {
           'package': 'skia/tools/goldctl/windows-amd64',
-          'version': 'git_revision:5e13f25e0c481b68c2aa830b726c6ac2fdd1f684',
+          'version': 'git_revision:e0376578f2f33586b6ac283a0787582c4678ecb1',
         },
       ],
       'dep_type': 'cipd',
@@ -1520,7 +1520,7 @@ deps = {
       'packages': [
         {
           'package': 'skia/tools/goldctl/mac-amd64',
-          'version': 'git_revision:5e13f25e0c481b68c2aa830b726c6ac2fdd1f684',
+          'version': 'git_revision:e0376578f2f33586b6ac283a0787582c4678ecb1',
         },
       ],
       'dep_type': 'cipd',
@@ -1540,7 +1540,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@1a0102f7bf9454cdaed893fb4a213e9490af434a',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@0a4fb0ab6a1dba6c045ee9aebb13aa1325296599',
     'condition': 'checkout_src_internal',
   },
 
