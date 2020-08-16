@@ -159,9 +159,9 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': '82d51575dbd7200099a234bbe48ef1506d0456b2',
+  'nw_src_revision': '4bbd2a5d25aabdd42a9be7e8a0e860fbeb0f07d8',
   'nw_v8_revision': '1b8e10a1bb2adcab6bdbf47f9fd7bf3e9497ea24',
-  'nw_node_revision': 'a4c578aa1c9d2d7125f95499906ed7d7892c4c55',
+  'nw_node_revision': '491e9ae71889aebfec4e64a1c9a48231ec7ef619',
 
   # ANGLE's deps are relative to the angle_root variable.
   'angle_root': 'src/third_party/angle',
@@ -194,7 +194,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': 'c3f094e9773746f91fc18c83a617a54e42274763',
+  'skia_revision': '8ae885386e910cff8c543ae0d952a2c43f46e4ad',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
@@ -826,7 +826,7 @@ deps = {
   },
 
   'src/third_party/breakpad/breakpad':
-    Var('chromium_git') + '/breakpad/breakpad.git' + '@' + 'a6218eb66d7b4880825168a83e66bfea746908a6',
+    Var('chromium_git') + '/breakpad/breakpad.git' + '@' + 'e3a62dc5502dec6ab451061769d7efaf5b7ffba8',
 
   'src/third_party/byte_buddy': {
       'packages': [
@@ -1505,7 +1505,7 @@ deps = {
       'packages': [
         {
           'package': 'skia/tools/goldctl/linux-amd64',
-          'version': 'git_revision:03ea4eb574acd232e223a6b13d15ebfb61f1c0d8',
+          'version': 'git_revision:e0376578f2f33586b6ac283a0787582c4678ecb1',
         },
       ],
       'dep_type': 'cipd',
@@ -1515,7 +1515,7 @@ deps = {
       'packages': [
         {
           'package': 'skia/tools/goldctl/windows-amd64',
-          'version': 'git_revision:03ea4eb574acd232e223a6b13d15ebfb61f1c0d8',
+          'version': 'git_revision:e0376578f2f33586b6ac283a0787582c4678ecb1',
         },
       ],
       'dep_type': 'cipd',
@@ -1525,7 +1525,7 @@ deps = {
       'packages': [
         {
           'package': 'skia/tools/goldctl/mac-amd64',
-          'version': 'git_revision:03ea4eb574acd232e223a6b13d15ebfb61f1c0d8',
+          'version': 'git_revision:e0376578f2f33586b6ac283a0787582c4678ecb1',
         },
       ],
       'dep_type': 'cipd',
@@ -1545,7 +1545,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@d7a0ace59a1696f82e11948d756da8772992e644',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@6906c51e99a584c158b47372a1250fa3e9df98f2',
     'condition': 'checkout_src_internal',
   },
 
