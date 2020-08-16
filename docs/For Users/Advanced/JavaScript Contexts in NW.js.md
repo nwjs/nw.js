@@ -26,7 +26,7 @@ In NW.js, Node.js modules can be loaded in the context running in background pag
 Besides the contexts created by browsers, NW.js introduced additional Node context for running Node modules in the background page by default. So NW.js has two types of JavaScript contexts: **Browser Context** and **Node Context**.
 
 !!! note "Web Worker"
-    Actually Web Workers are running in a separate JavaScript context which is neither browser context nor node context. But you can't access Web or Node.js or NW.js APIs in Web Worker's context.
+    [You can access Node.js APIs](https://nwjs.io/blog/v0.18.4/) in a Web Worker by setting adding `"chromium-args": "--enable-node-worker"` to your Manifest
 
 ### Browser Context
 

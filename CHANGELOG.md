@@ -1,3 +1,17 @@
+0.47.3 / 08-16-2020
+===================
+- Update Node.js to [v14.8.0](https://nodejs.org/en/blog/release/v14.8.0/)
+- Update Chromium to [84.0.4147.125](https://chromereleases.googleblog.com/2020/08/stable-channel-update-for-desktop.html)
+- build: pinning win sdk version to 10.0.18362.0
+- build: fix resources in fresh normal build [(#7541)](https://github.com/nwjs/nw.js/issues/7541)
+- [docs] Update Web Worker documentation
+
+0.47.2 / 08-05-2020
+===================
+- Update Node.js to [v14.7.0](https://nodejs.org/en/blog/release/v14.7.0/)
+- Update Chromium to [84.0.4147.105](https://chromereleases.googleblog.com/2020/07/stable-channel-update-for-desktop_27.html)
+- Fix: Window.setResizable [(#7521)](https://github.com/nwjs/nw.js/issues/7521)
+
 0.47.1 / 07-24-2020
 ===================
 - Update Node.js to [v14.6.0](https://nodejs.org/en/blog/release/v14.6.0/)
