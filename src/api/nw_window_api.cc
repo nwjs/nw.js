@@ -106,7 +106,7 @@ printing::PrinterList EnumeratePrintersAsync() {
   base::internal::AssertBlockingAllowed();
 
   scoped_refptr<printing::PrintBackend> print_backend(
-                                                      printing::PrintBackend::CreateInstance(nullptr, g_browser_process->GetApplicationLocale()));
+                                                      printing::PrintBackend::CreateInstance(g_browser_process->GetApplicationLocale()));
 
   printing::PrinterList printer_list;
   print_backend->EnumeratePrinters(&printer_list);
