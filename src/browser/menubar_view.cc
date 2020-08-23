@@ -36,7 +36,7 @@ class MenuBarButton : public views::MenuButton {
   MenuBarButton(const base::string16& title,
                 views::ButtonListener* menu_button_listener,
                 bool show_menu_marker)
-      : MenuButton(title, menu_button_listener) {
+    : MenuButton(menu_button_listener, title) {
     SetElideBehavior(kElideBehavior);
   }
 
