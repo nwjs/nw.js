@@ -159,8 +159,8 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': '4bbd2a5d25aabdd42a9be7e8a0e860fbeb0f07d8',
-  'nw_v8_revision': '1b8e10a1bb2adcab6bdbf47f9fd7bf3e9497ea24',
+  'nw_src_revision': '875e61ae8d08b7a23d6d63cc3bd7ee30c3e13f1e',
+  'nw_v8_revision': '91cbe7bce37bc41d95b36422a142e8729f5d185d',
   'nw_node_revision': '491e9ae71889aebfec4e64a1c9a48231ec7ef619',
 
   # ANGLE's deps are relative to the angle_root variable.
@@ -198,7 +198,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'dc26f2d49c52b0c0e81c9f5f06f7347b03ef9b64',
+  'v8_revision': '4dc61d3cd02f0a2462cc655095db1e99ad9047d2',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -206,11 +206,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': '006ab354313b493ccb6eba909e0831bb0b13aea7',
+  'angle_revision': 'ea8043b73f934c52084f514a326d4fe36f6ad056',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
-  'swiftshader_revision': 'eb0a25a189b75d950ae4f87c00f8d63f190d82a0',
+  'swiftshader_revision': 'c4f3b713800f6cde50452999223f6fb34e973cd0',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling PDFium
   # and whatever else without interference from each other.
@@ -265,7 +265,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling devtools-frontend
   # and whatever else without interference from each other.
-  'devtools_frontend_revision': '02d7c6a3d373ef3fa29647b5c8bf1dd76313ef7a',
+  'devtools_frontend_revision': '6430f5ef5c565f56bb680bca07d4d4db3fad9ed1',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libprotobuf-mutator
   # and whatever else without interference from each other.
@@ -341,7 +341,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libavif
   # and whatever else without interference from each other.
-  'libavif_revision': '01ee4caa5ab52b2f6f3e500fd3a0f70e0099b031',
+  'libavif_revision': '4cfee6282b97533e6c99183ddf7a897173755c69',
 
   # TODO(crbug.com/941824): The values below need to be kept in sync
   # between //DEPS and //buildtools/DEPS, so if you're updating one,
@@ -1219,7 +1219,7 @@ deps = {
   },
 
   'src/third_party/openh264/src':
-    Var('chromium_git') + '/external/github.com/cisco/openh264' + '@' + 'a5473711f3e20c6bd1c33d81b6c7b9a0618aa18f',
+    Var('chromium_git') + '/external/github.com/cisco/openh264' + '@' + '3dd5b80bc4f172dd82925bb259cb7c82348409c5',
 
   'src/third_party/openscreen/src':
     Var('chromium_git') + '/openscreen' + '@' + 'fdc66e03064d70f2c4a60dbd3fdd3925b21a43a1',
@@ -1239,7 +1239,7 @@ deps = {
   },
 
   'src/third_party/perfetto':
-    Var('android_git') + '/platform/external/perfetto.git' + '@' + '0d5f47eb1f8cc6d4a6abfd41011b5180f657aec3',
+    Var('android_git') + '/platform/external/perfetto.git' + '@' + 'aa0099498c7e3efbdf0efcd445ab6848e984666a',
 
   'src/third_party/perl': {
       'url': Var('chromium_git') + '/chromium/deps/perl.git' + '@' + '6f3e5028eb65d0b4c5fdd792106ac4c84eee1eb3',
@@ -1545,7 +1545,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@6906c51e99a584c158b47372a1250fa3e9df98f2',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@a811e2f5b6fb3e896b25d373060a31a62aea9016',
     'condition': 'checkout_src_internal',
   },
 
