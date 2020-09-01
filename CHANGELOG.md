@@ -1,3 +1,8 @@
+0.48.1 / 09-01-2020
+===================
+- Update Node.js to [v14.9.0](https://nodejs.org/en/blog/release/v14.9.0/)
+- Fix: webview.addContentScripts cause TypeError: Illegal invocation [(#7087)](https://github.com/nwjs/nw.js/issues/7087)
+
 0.48.0 / 08-27-2020
 ===================
 - Update Chromium to [85.0.4183.83](https://chromereleases.googleblog.com/2020/08/stable-channel-update-for-desktop_25.html)
