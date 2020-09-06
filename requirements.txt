@@ -1,1 +1,1 @@
-pymdown-extensions
+pymdown-extensions == 6.2.1
