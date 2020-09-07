@@ -20,8 +20,8 @@
 
 #include "content/nw/src/api/menu/menu.h"
 
-#include "base/message_loop/message_loop_current.h"
 #include "base/mac/scoped_sending_event.h"
+#include "base/task/current_thread.h"
 #include "base/values.h"
 #import <Cocoa/Cocoa.h>
 #include "content/public/browser/web_contents.h"
@@ -84,7 +84,7 @@ void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
 
   {
     // Make sure events can be pumped while the menu is up.
-    base::MessageLoopCurrent::ScopedNestableTaskAllower allow;
+    base::CurrentThread::ScopedNestableTaskAllower allow;
 
     // One of the events that could be pumped is |window.close()|.
     // User-initiated event-tracking loops protect against this by

@@ -55,7 +55,7 @@ V(SetUVRunFn, "g_set_uv_run", g_set_uv_run_fn)
 V(VoidIntFn, "g_uv_init_nw", g_uv_init_nw_fn)
 V(VoidHookFn, "g_promise_reject_callback", g_promise_reject_callback_fn)
 
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
 V(VoidHookFn, "g_msg_pump_dtor_osx", g_msg_pump_dtor_osx_fn)
 V(VoidHookFn, "g_uv_sem_post", g_uv_sem_post_fn)
 V(VoidHookFn, "g_uv_sem_wait", g_uv_sem_wait_fn)

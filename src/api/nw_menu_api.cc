@@ -11,7 +11,7 @@ using nw::MenuItem;
 
 namespace extensions {
 
-#ifndef OS_MACOSX
+#ifndef OS_MAC
 bool NwMenuGetNSStringWithFixupFunction::RunNWSync(base::ListValue* response, std::string* error) {
   SetError("NwMenuGetNSStringWithFixupFunction is only for OSX");
   return false;

@@ -143,7 +143,7 @@ FilePath GetSelfPath() {
     path = FilePath(command_line->GetProgram());
   }
 
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
   // Find if we have node-webkit.app/Resources/app.nw.
   path = path.DirName().DirName().Append("Resources").Append("app.nw");
 #endif
@@ -190,7 +190,7 @@ Package::Package()
   // Note: self_extract_ is true here, otherwise a 'Invalid Package' error
   // would be triggered.
   path = GetSelfPath().DirName();
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
   path = path.DirName().DirName().DirName();
 #endif
   if (InitFromPath(path))

@@ -61,7 +61,7 @@
 #include "content/nw/src/browser/browser_view_layout.h"
 #endif
 
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
 #include "content/nw/src/nw_content_mac.h"
 #endif
 
@@ -440,7 +440,7 @@ NwCurrentWindowInternalClearMenuFunction::Run() {
     }
   }
 
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
   NWChangeAppMenu(NULL);
 #endif
 
@@ -519,7 +519,7 @@ bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::ListValue* response
   }
 
 
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
   response->Append(NWChangeAppMenu(menu));
 #endif
 
@@ -574,7 +574,7 @@ static base::win::ScopedHICON createBadgeIcon(const HWND hWnd, const TCHAR *valu
 }
 #endif
 
-#ifndef OS_MACOSX
+#ifndef OS_MAC
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalSetBadgeLabelFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args_);
@@ -644,7 +644,7 @@ NwCurrentWindowInternalRequestAttentionInternalFunction::Run() {
     fwi.dwFlags = FLASHW_STOP;
   }
   FlashWindowEx(&fwi);
-#elif defined(OS_LINUX) || defined(OS_MACOSX)
+#elif defined(OS_LINUX) || defined(OS_MAC)
   AppWindow* window = getAppWindow(this);
   if (!window) {
     error_ = kNoAssociatedAppWindow;
@@ -773,7 +773,7 @@ NwCurrentWindowInternalEnterKioskModeInternalFunction::Run() {
     if (browser) {
       BrowserFrame* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
       frame->SetFullscreen(true);
-#if !defined(OS_MACOSX)
+#if !defined(OS_MAC)
       browser->window()->SetZOrderLevel(ui::ZOrderLevel::kFloatingWindow);
 #endif
     }
@@ -781,7 +781,7 @@ NwCurrentWindowInternalEnterKioskModeInternalFunction::Run() {
     AppWindow* window = getAppWindow(this);
     window->ForcedFullscreen();
   }
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
     NWSetNSAppKioskOptions();
 #endif
   return RespondNow(NoArguments());
@@ -789,7 +789,7 @@ NwCurrentWindowInternalEnterKioskModeInternalFunction::Run() {
 
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalLeaveKioskModeInternalFunction::Run() {
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
     NWRestoreNSAppKioskOptions();
 #endif
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
@@ -799,7 +799,7 @@ NwCurrentWindowInternalLeaveKioskModeInternalFunction::Run() {
     if (browser) {
       BrowserFrame* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
       frame->SetFullscreen(false);
-#if !defined(OS_MACOSX)
+#if !defined(OS_MAC)
       browser->window()->SetZOrderLevel(ui::ZOrderLevel::kNormal);
 #endif
       return RespondNow(NoArguments());
@@ -820,14 +820,14 @@ NwCurrentWindowInternalToggleKioskModeInternalFunction::Run() {
       BrowserFrame* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
       if (frame->IsFullscreen()) {
         frame->SetFullscreen(false);
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
         NWRestoreNSAppKioskOptions();
 #else
         browser->window()->SetZOrderLevel(ui::ZOrderLevel::kNormal);
 #endif	
       } else {
         frame->SetFullscreen(true);
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
         NWSetNSAppKioskOptions();
 #else
         browser->window()->SetZOrderLevel(ui::ZOrderLevel::kFloatingWindow);
@@ -838,13 +838,13 @@ NwCurrentWindowInternalToggleKioskModeInternalFunction::Run() {
   }
   AppWindow* window = getAppWindow(this);
   if (window->IsFullscreen() || window->IsForcedFullscreen()) {
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
     NWRestoreNSAppKioskOptions();
 #endif
     window->Restore();
   } else {
     window->ForcedFullscreen();
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
     NWSetNSAppKioskOptions();
 #endif
   }
@@ -891,7 +891,7 @@ bool NwCurrentWindowInternalGetTitleInternalFunction::RunNWSync(base::ListValue*
 
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalSetShadowInternalFunction::Run() {
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
   EXTENSION_FUNCTION_VALIDATE(args_);
   bool shadow;
   EXTENSION_FUNCTION_VALIDATE(args_->GetBoolean(0, &shadow));
@@ -1085,7 +1085,7 @@ NwCurrentWindowInternalSetShowInTaskbarInternalFunction::Run() {
     LOG(ERROR) << "Failed to change the show in taskbar attribute";
     return RespondNow(NoArguments());
   }
-#elif defined(OS_MACOSX)
+#elif defined(OS_MAC)
   AppWindow* app_window = getAppWindow(this);
   extensions::NativeAppWindow* native_window = app_window->GetBaseWindow();
   NWSetNSWindowShowInTaskbar(native_window, show);

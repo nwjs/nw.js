@@ -49,7 +49,7 @@ CONTENT_EXPORT void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, conten
 // content/browser/site_instance_impl.cc
 CONTENT_EXPORT bool PinningRenderer();
 
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
 // ref in chrome/browser/app_controller_mac.mm
 CONTENT_EXPORT bool ApplicationShouldHandleReopenHook(bool hasVisibleWindows);
 // ref in chrome/browser/app_controller_mac.mm

@@ -248,7 +248,7 @@ void SetWindowHIcon(base::win::ScopedHICON icon) {
 
 int MainPartsPreCreateThreadsHook() {
   gCheckStoragePartitionMatches = CheckStoragePartitionMatches;
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
   gSendEventToApp = SendEventToApp;
 #endif
   base::ThreadRestrictions::ScopedAllowIO allow_io;

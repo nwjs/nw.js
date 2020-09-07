@@ -28,7 +28,7 @@
 #include <string>
 #include <vector>
 
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
 #if __OBJC__
 @class NSMenu;
 @class NWMenuDelegate;
@@ -103,7 +103,7 @@ class Menu : public Base {
              const base::ListValue& arguments,
              content::RenderFrameHost* rvh = nullptr) override;
 
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
   static Menu* GetMenuFromNative(NSMenu* menu);
 #endif
 
@@ -125,7 +125,7 @@ class Menu : public Base {
   void Remove(MenuItem* menu_item, int pos);
   void Popup(int x, int y, content::RenderFrameHost*);
 
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
   NSMenu* menu_;
   NWMenuDelegate* menu_delegate_;
 #elif defined(OS_LINUX) || defined(OS_WIN)

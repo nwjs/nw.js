@@ -29,7 +29,7 @@
 
 #include <string>
 
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
 #if __OBJC__
 @class NSMenuItem;
 @class MenuItemDelegate;
@@ -42,7 +42,7 @@ class MenuItemDelegate;
 #include "ui/gfx/image/image.h"
 #include "ui/base/accelerators/accelerator.h"
 #include "ui/views/focus/focus_manager.h"
-#endif  // defined(OS_MACOSX)
+#endif  // defined(OS_MAC)
 
 namespace nw {
 
@@ -70,7 +70,7 @@ class MenuItem : public Base {
                         const base::ListValue& arguments,
                         base::ListValue* result) override;
 
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
   static std::unique_ptr<base::DictionaryValue> CreateFromNative(NSMenuItem* menu_item, Menu* menu, int index);
   static MenuItem* GetMenuItemFromNative(NSMenuItem* menu_item);
 #endif
@@ -104,7 +104,7 @@ class MenuItem : public Base {
   // Template icon works only on Mac OS X
   void SetIconIsTemplate(bool isTemplate);
 
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
   std::string type_;
 
   NSMenuItem* menu_item_;

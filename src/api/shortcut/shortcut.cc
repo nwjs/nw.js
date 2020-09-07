@@ -45,7 +45,7 @@ ui::Accelerator Parse(const std::string& shortcut) {
   ui::KeyboardCode key = ui::VKEY_UNKNOWN;
   for (size_t i = 0; i < tokens.size(); i++) {
     if (tokens[i] == kKeyCtrl) {
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
       modifiers |= ui::EF_COMMAND_DOWN;
 #else
       modifiers |= ui::EF_CONTROL_DOWN;

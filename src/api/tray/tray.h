@@ -26,7 +26,7 @@
 
 #include <string>
 
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
 #if __OBJC__
 @class NSStatusItem;
 @class MacTrayObserver;
@@ -40,7 +40,7 @@ class MacTrayObserver;
 #elif defined(OS_WIN) || defined(OS_LINUX)
 class StatusIcon;
 class StatusTray;
-#endif  // defined(OS_MACOSX)
+#endif  // defined(OS_MAC)
 
 namespace nw {
 
@@ -74,7 +74,7 @@ class Tray : public Base {
   // Template icons only work with Macs 
   void SetIconsAreTemplates(bool areTemplates);
 
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
   __block NSStatusItem* status_item_;
   MacTrayObserver* status_observer_;
   bool iconsAreTemplates; 
