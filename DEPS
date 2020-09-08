@@ -63,7 +63,7 @@ vars = {
   #      "custom_vars": { "checkout_configuration": "small" },
   'checkout_configuration': 'default',
 
-  'nw_src_revision': 'd8defc75fb9aac69109259a6e71d5b44c0513e02',
+  'nw_src_revision': '106fa0171eda6ac1ae967984a70a3bd6d5d0fb7d',
   'nw_v8_revision': 'b4efa178a0388ed4cc3e846159e2b6da80ccbcf3',
   'nw_node_revision': '6b2f43421cbe049c259f37d09e4ac5eb2339f8f2',
 
