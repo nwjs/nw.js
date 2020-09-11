@@ -17,7 +17,6 @@
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/renderer/v8_value_converter.h"
-#include "content/public/common/web_preferences.h"
 #include "content/public/browser/child_process_termination_info.h"
 
 // content/nw
@@ -155,7 +154,7 @@ CONTENT_EXPORT void OSXOpenURLsHook(const std::vector<GURL>& startup_urls) {
 }
 #endif
 
-void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, content::WebPreferences* web_prefs) {
+void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, blink::web_pref::WebPreferences* web_prefs) {
   nw::Package* package = nw::package();
   if (!package)
     return;

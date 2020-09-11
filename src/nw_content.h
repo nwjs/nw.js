@@ -10,7 +10,7 @@
 #include "nw_package.h"
 #include "base/memory/ptr_util.h"
 #include "third_party/blink/public/web/web_navigation_policy.h"
-//#include "third_party/WebKit/common/page/page_visibility_state.mojom.h"
+#include "third_party/blink/public/common/web_preferences/web_preferences.h"
 
 namespace base {
   class DictionaryValue;
@@ -97,7 +97,7 @@ void DocumentFinishHook(blink::WebLocalFrame* frame,
  void ReloadExtensionHook(const extensions::Extension*);
  bool IsReloadingApp();
  void KickNextTick();
- void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, content::WebPreferences* web_prefs);
+ void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, blink::web_pref::WebPreferences* web_prefs);
  bool PinningRenderer();
  void SetPinningRenderer(bool pin);
  void ShowDevtools(bool show, content::WebContents* web_contents, content::WebContents* container = nullptr);
