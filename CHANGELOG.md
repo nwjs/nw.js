@@ -1,3 +1,9 @@
+0.48.2 / 09-15-2020
+===================
+- Update Node.js to [v14.10.1](https://nodejs.org/en/blog/release/v14.10.1/)
+- Fix: regression in [(#6216)](https://github.com/nwjs/nw.js/issues/6216): blocking flash player
+- Fix: Enter fullscreen by script in Node frame [(#7566)](https://github.com/nwjs/nw.js/issues/7566)
+
 0.48.1 / 09-01-2020
 ===================
 - Update Node.js to [v14.9.0](https://nodejs.org/en/blog/release/v14.9.0/)
