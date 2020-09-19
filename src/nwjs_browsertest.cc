@@ -103,7 +103,7 @@
 #include "ui/views/widget/widget.h"
 
 #include "chrome/browser/printing/print_preview_dialog_controller.h"
-#include "content/browser/frame_host/render_frame_host_impl.h"
+#include "content/browser/renderer_host/render_frame_host_impl.h"
 
 #include "chrome/browser/extensions/api/desktop_capture/desktop_capture_api.h"
 #include "chrome/browser/media/webrtc/fake_desktop_media_list.h"
