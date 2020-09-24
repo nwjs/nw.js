@@ -42,7 +42,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "linux64, mac64, win, win64",
+  "buildspec_platforms": "all",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -159,8 +159,8 @@ vars = {
   # (ie: release) images.
   'use_public_cros_config': 'not checkout_src_internal',
 
-  'nw_src_revision': 'abc441c889ba51f7b1658186933a3ac3f0aa52bf',
-  'nw_v8_revision': '91cbe7bce37bc41d95b36422a142e8729f5d185d',
+  'nw_src_revision': 'b04914a2d2030779742dde50775cd93aa81d20f8',
+  'nw_v8_revision': 'd62bfb67ddd8bbee9a6587abf7d92652eb8be25f',
   'nw_node_revision': '6d016c776a7eb3e840a6984404aa7fa4aaa2f532',
 
   # ANGLE's deps are relative to the angle_root variable.
@@ -198,7 +198,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '4dc61d3cd02f0a2462cc655095db1e99ad9047d2',
+  'v8_revision': '4774cc2f5a09738d52597a372767623f8c067834',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -1467,7 +1467,7 @@ deps = {
   },
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + '2bcd4837dd5eeed98523344d437eb0b7e4f441ba',
+    Var('webrtc_git') + '/src.git' + '@' + '1875e6f4ed82bea3aa58a66ce65975e881e0c171',
 
   'src/third_party/libgifcodec':
      Var('skia_git') + '/libgifcodec' + '@'+  Var('libgifcodec_revision'),
@@ -1545,7 +1545,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@3c21cb23523712ea468f24fe08fd22fe82617486',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@e2cdeeff39c0b4e7a63f21ab844fcb7a15c0cdba',
     'condition': 'checkout_src_internal',
   },
 
