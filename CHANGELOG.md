@@ -1,3 +1,8 @@
+0.48.3 / 09-26-2020
+===================
+- Update Node.js to [v14.12.0](https://nodejs.org/en/blog/release/v14.12.0/)
+- Update Chromium to [85.0.4183.121](https://chromereleases.googleblog.com/2020/09/stable-channel-update-for-desktop_21.html)
+
 0.48.2 / 09-15-2020
 ===================
 - Update Node.js to [v14.10.1](https://nodejs.org/en/blog/release/v14.10.1/)
