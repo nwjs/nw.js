@@ -195,6 +195,13 @@ static HWND getHWND(AppWindow* window) {
     window->GetBaseWindow());
   return views::HWNDForWidget(native_app_window_views->widget()->GetTopLevelWidget());
 }
+
+static HWND getHWND(Browser* browser) {
+  if (browser == NULL) return NULL;
+  const HWND browser_hwnd =
+	 views::HWNDForNativeView(browser->window()->GetNativeWindow());
+  return browser_hwnd;
+}
 #endif
 
 void NwCurrentWindowInternalCloseFunction::DoClose(AppWindow* window) {
@@ -576,7 +583,7 @@ static base::win::ScopedHICON createBadgeIcon(const HWND hWnd, const TCHAR *valu
 
 #ifndef OS_MACOSX
 ExtensionFunction::ResponseAction
-NwCurrentWindowInternalSetBadgeLabelFunction::Run() {
+NwCurrentWindowInternalSetBadgeLabelInternalFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args_);
   std::string badge;
   EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &badge));
@@ -599,7 +606,17 @@ NwCurrentWindowInternalSetBadgeLabelFunction::Run() {
   }
 
   base::win::ScopedHICON icon;
-  HWND hWnd = getHWND(getAppWindow(this));
+  HWND hWnd;
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    int id = 0;
+    args_->GetInteger(1, &id);
+    Browser* browser = getBrowser(this, id);
+    if (!browser)
+      return RespondNow(Error("cannot find browser window"));
+    hWnd = getHWND(browser);
+  } else 
+      hWnd = getHWND(getAppWindow(this));
+
   if (hWnd == NULL) {
     error_ = kNoAssociatedAppWindow;
     LOG(ERROR) << error_;
@@ -656,7 +673,7 @@ NwCurrentWindowInternalRequestAttentionInternalFunction::Run() {
 }
   
 ExtensionFunction::ResponseAction
-NwCurrentWindowInternalSetProgressBarFunction::Run() {
+NwCurrentWindowInternalSetProgressBarInternalFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args_);
   double progress;
   EXTENSION_FUNCTION_VALIDATE(args_->GetDouble(0, &progress));
@@ -678,7 +695,16 @@ NwCurrentWindowInternalSetProgressBarFunction::Run() {
     return RespondNow(Error(error_));
   }
 
-  HWND hWnd = getHWND(getAppWindow(this));
+  HWND hWnd;
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    int id = 0;
+    args_->GetInteger(1, &id);
+    Browser* browser = getBrowser(this, id);
+    if (!browser)
+      return RespondNow(Error("cannot find browser window"));
+    hWnd = getHWND(browser);
+  } else 
+      hWnd = getHWND(getAppWindow(this));
   if (hWnd == NULL) {
     error_ = kNoAssociatedAppWindow;
     LOG(ERROR) << error_;
