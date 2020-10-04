@@ -327,6 +327,14 @@ NWWindow.prototype.setShadow = function(shadow) {
   currentNWWindowInternal.setShadowInternal(shadow, this.cWindow.id);
 };
 
+NWWindow.prototype.setBadgeLabel = function(label) {
+  currentNWWindowInternal.setBadgeLabelInternal(label, this.cWindow.id);
+};
+
+NWWindow.prototype.setProgressBar = function(progress) {
+  currentNWWindowInternal.setProgressBarInternal(progress, this.cWindow.id);
+};
+
 NWWindow.prototype.setShowInTaskbar = function(show) {
   currentNWWindowInternal.setShowInTaskbarInternal(show, this.cWindow.id);
 };

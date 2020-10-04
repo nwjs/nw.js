@@ -52,7 +52,7 @@ void NwCurrentWindowInternalSetShadowInternalFunction::SetShadowOnWindow(NSWindo
 }
 
 ExtensionFunction::ResponseAction
-NwCurrentWindowInternalSetBadgeLabelFunction::Run() {
+NwCurrentWindowInternalSetBadgeLabelInternalFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args_);
   std::string badge;
   EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &badge));
@@ -81,7 +81,7 @@ NwCurrentWindowInternalRequestAttentionInternalFunction::Run() {
 }
 
 ExtensionFunction::ResponseAction
-NwCurrentWindowInternalSetProgressBarFunction::Run() {
+NwCurrentWindowInternalSetProgressBarInternalFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args_);
   double progress;
   EXTENSION_FUNCTION_VALIDATE(args_->GetDouble(0, &progress));

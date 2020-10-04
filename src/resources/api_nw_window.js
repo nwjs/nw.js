@@ -351,6 +351,14 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
       currentNWWindowInternal.setShowInTaskbarInternal(show);
     };
 
+    NWWindow.prototype.setProgressBar = function(progress) {
+      currentNWWindowInternal.setProgressBarInternal(progress);
+    };
+
+    NWWindow.prototype.setBadgeLabel = function(label) {
+      currentNWWindowInternal.setBadgeLabelInternal(label);
+    };
+
     NWWindow.prototype.enterKioskMode = function() {
       currentNWWindowInternal.enterKioskModeInternal();
     };
