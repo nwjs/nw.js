@@ -1,3 +1,9 @@
+0.48.4 / 10-04-2020
+===================
+- Fix: g_stop_nw_instance crash on close [(#7569)](https://github.com/nwjs/nw.js/issues/7569)
+- Fix: Window.setBadgeLabel and Window.setProgressBar in nw2 mode [(#7464)](https://github.com/nwjs/nw.js/issues/7464)
+- Fix: Normal flavor crashes in macOS [(#7582)](https://github.com/nwjs/nw.js/issues/7582)
+
 0.48.3 / 09-26-2020
 ===================
 - Update Node.js to [v14.12.0](https://nodejs.org/en/blog/release/v14.12.0/)
