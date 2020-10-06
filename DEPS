@@ -166,7 +166,7 @@ vars = {
   'checkout_simplechrome': '"{cros_boards}" != ""',
   'checkout_simplechrome_with_vms': '"{cros_boards_with_qemu_images}" != ""',
 
-  'nw_src_revision': '0b30c1fab752fd1e2968da0a60d2f02741ae7a0a',
+  'nw_src_revision': 'a1eb0a5c21704e081919d897b4fc8460297215ed',
   'nw_v8_revision': '6490ec46c90fad709c46ad92b3ca5fe498d11388',
   'nw_node_revision': 'a1c7aad04d292aeec3c6071a1e6b6ec9d69cfc14',
 
@@ -1557,7 +1557,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@74283b6ec6a597f691fc8bd5ada15608524e3042',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@123936cc4694ef361d732b21fa0a7fa1b540ae03',
     'condition': 'checkout_src_internal',
   },
 
