@@ -50,7 +50,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "all",
+  "buildspec_platforms": "linux64, mac64, win, win64, android",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -166,7 +166,7 @@ vars = {
   'checkout_simplechrome': '"{cros_boards}" != ""',
   'checkout_simplechrome_with_vms': '"{cros_boards_with_qemu_images}" != ""',
 
-  'nw_src_revision': 'a1eb0a5c21704e081919d897b4fc8460297215ed',
+  'nw_src_revision': '68a466e4ab9dd5d3d6c21b13c1fd4a1b9511fb81',
   'nw_v8_revision': '6490ec46c90fad709c46ad92b3ca5fe498d11388',
   'nw_node_revision': 'a1c7aad04d292aeec3c6071a1e6b6ec9d69cfc14',
 
@@ -1557,7 +1557,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@123936cc4694ef361d732b21fa0a7fa1b540ae03',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@8b3099630dbee34ac31bf325b115a8f607d7e98b',
     'condition': 'checkout_src_internal',
   },
 
