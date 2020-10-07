@@ -1,3 +1,8 @@
+0.49.0 / 10-07-2020
+===================
+- Update Chromium to [86.0.4240.75](https://developers.google.com/web/updates/2020/10/nic86)
+- Fix: Transparency broken on Linux [(#7564)](https://github.com/nwjs/nw.js/issues/7564)
+
 0.48.4 / 10-04-2020
 ===================
 - Fix: g_stop_nw_instance crash on close [(#7569)](https://github.com/nwjs/nw.js/issues/7569)
