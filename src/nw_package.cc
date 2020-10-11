@@ -47,6 +47,10 @@
 #include "third_party/node-nw/deps/uv/include/uv.h"
 #include "ui/base/resource/resource_bundle.h"
 
+#if defined(OS_WIN)
+#include <windows.h>
+#endif
+
 using base::CommandLine;
 
 namespace base {
@@ -139,7 +143,7 @@ FilePath GetSelfPath() {
     path = FilePath(command_line->GetProgram());
   }
 
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
   // Find if we have node-webkit.app/Resources/app.nw.
   path = path.DirName().DirName().Append("Resources").Append("app.nw");
 #endif
@@ -186,7 +190,7 @@ Package::Package()
   // Note: self_extract_ is true here, otherwise a 'Invalid Package' error
   // would be triggered.
   path = GetSelfPath().DirName();
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
   path = path.DirName().DirName().DirName();
 #endif
   if (InitFromPath(path))
@@ -464,6 +468,19 @@ void Package::ReadChromiumArgs() {
     if (!got_env)
       return;
 
+  // Expand Windows psudovars (ex; %APPDATA%) passed in chromium-args in the same way as when 
+  // passed as command line parameters.
+  #if defined(OS_WIN)
+  TCHAR szEnvPath[MAX_PATH];
+  std::wstring ws; 
+  ws.assign( args.begin(), args.end());
+  if (ExpandEnvironmentStrings(ws.c_str(), szEnvPath,MAX_PATH) != 0) {
+    std::wstring ws_out = szEnvPath;
+    args = std::string(ws_out.begin(), ws_out.end());
+  } else {
+    ReportError("Failed to expand chromium args",args.c_str());
+  }
+  #endif
   args = env_args + kChromiumArgsSeparator + args;
 
   std::vector<std::string> chromium_args;

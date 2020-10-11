@@ -1,5 +1,6 @@
 #include "nw_extensions_browser_hooks.h"
 
+#include "ui/gfx/image/image_skia.h"
 #include "ui/gfx/image/image_skia_operations.h"
 
 // base
@@ -376,7 +377,7 @@ void CalcNewWinParams(content::WebContents* new_contents, void* params,
 }
 
 bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window) {
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
   return false;
 #else
   //nw::ObjectManager* obj_manager = nw::ObjectManager::Get(app_window->browser_context());

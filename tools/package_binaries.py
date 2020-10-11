@@ -30,7 +30,7 @@ args = parser.parse_args()
 # Init variables.
 binaries_location = None        # .../out/Release
 platform_name = None            # win/linux/osx
-arch = None                     # ia32/x64
+arch = None                     # ia32/x64/arm
 step = None                     # nw/chromedriver/symbol
 skip = None
 nw_ver = None                   # x.xx
@@ -172,8 +172,10 @@ def generate_target_nw(platform_name, arch, version):
             target['input'] += ['nacl_helper', 'nacl_helper_bootstrap', 'pnacl']
             if arch == 'x64':
                 target['input'].append('nacl_irt_x86_64.nexe')
-            else:
+            elif arch == 'ia32':
                 target['input'].append('nacl_irt_x86_32.nexe')
+            else:
+                target['input'].append('nacl_irt_{}.nexe'.format(arch))
             
     elif platform_name == 'win':
         target['input'] = [

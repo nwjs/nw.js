@@ -92,15 +92,15 @@ function NWWindow(cWindow) {
     self.cWindow.height = w.height;
 
     if (oldState != 'minimized' && w.state == 'minimized') {
-      dispatchEventIfExists(self, 'onMinimized');
+      dispatchEventIfExists(self, 'onMinimized', [w.id]);
     } else if (oldState != 'maximized' && w.state == 'maximized') {
-      dispatchEventIfExists(self, 'onMaximized');
+      dispatchEventIfExists(self, 'onMaximized', [w.id]);
     } else if (oldState != 'fullscreen' && w.state == 'fullscreen') {
-      dispatchEventIfExists(self, 'onFullscreen');
+      dispatchEventIfExists(self, 'onFullscreen', [w.id]);
     } else if (oldState != 'normal' && w.state == 'normal') {
-      dispatchEventIfExists(self, 'onRestore');
+      dispatchEventIfExists(self, 'onRestore', [w.id]);
     } else if (oldWidth != w.width || oldHeight != w.height) {
-      dispatchEventIfExists(self, 'onResized', [w.width, w.height]);
+      dispatchEventIfExists(self, 'onResized', [w.id, w.width, w.height]);
     }
   }
   privates(this).menu = null;
@@ -175,10 +175,13 @@ NWWindow.prototype.on = function (event, callback, record) {
   case 'blur':
     this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
     var cbf = wrap(function(windowId) {
-      if (self.cWindow.id === windowId)
+      if (self.cWindow.id === windowId) {
+        callback.__nw_cb.focused = true;
         return;
-      if (!self.cWindow.focused)
+      }
+      if (!callback.__nw_cb.focused)
         return;
+      callback.__nw_cb.focused = false;
       callback.call(self);
     });
     chrome.windows.onFocusChanged.addListener(cbf);
@@ -251,7 +254,12 @@ NWWindow.prototype.on = function (event, callback, record) {
     break;
   }
   if (nwWinEventsMap.hasOwnProperty(event)) {
-    this[nwWinEventsMap[event]].addListener(wrap());
+    let cb = wrap(function(id, ...args) {
+      if (id != self.cWindow.id)
+        return;
+      callback.call(self, ...args);
+    });
+    this[nwWinEventsMap[event]].addListener(cb);
     return this;
   }
   return this;
@@ -317,6 +325,14 @@ NWWindow.prototype.removeAllListeners = function (event) {
 
 NWWindow.prototype.setShadow = function(shadow) {
   currentNWWindowInternal.setShadowInternal(shadow, this.cWindow.id);
+};
+
+NWWindow.prototype.setBadgeLabel = function(label) {
+  currentNWWindowInternal.setBadgeLabelInternal(label, this.cWindow.id);
+};
+
+NWWindow.prototype.setProgressBar = function(progress) {
+  currentNWWindowInternal.setProgressBarInternal(progress, this.cWindow.id);
 };
 
 NWWindow.prototype.setShowInTaskbar = function(show) {
@@ -519,6 +535,8 @@ NWWindow.prototype.setPosition = function (pos) {
     var height = this.cWindow.height;
     chrome.windows.update(this.cWindow.id, {'left': Math.round((screenWidth-width)/2),
                                             'top': Math.round((screenHeight-height)/2)});
+  } else if (pos == "mouse") {
+    chrome.windows.update(this.cWindow.id, {'position': "mouse" });
   }
 };
 NWWindow.prototype.setVisibleOnAllWorkspaces = function(all_visible) {
@@ -575,7 +593,7 @@ NWWindow.prototype.print = function(option) {
   if (option.pdf_path)
     _option["printer"] = "Save as PDF";
   currentNWWindowInternal.setPrintSettingsInternal(_option, this.cWindow.id);
-  window.print();
+  this.window.print();
   // autoprint will be set to false in print_preview_handler.cc after printing is done
   // window.print will return immediately for PDF window #5002
 };

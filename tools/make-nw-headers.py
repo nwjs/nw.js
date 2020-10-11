@@ -94,6 +94,8 @@ if os.path.exists(os.path.join(tmp_dir, 'node', 'deps', 'v8', 'out')):
   shutil.rmtree(os.path.join(tmp_dir, 'node', 'deps', 'v8', 'out'))
 if os.path.exists(os.path.join(tmp_dir, 'node', 'deps', 'npm', 'node_modules')):
   shutil.rmtree(os.path.join(tmp_dir, 'node', 'deps', 'npm', 'node_modules'))
+if os.path.exists(os.path.join(tmp_dir, 'node', 'src', 'util.h')):
+  os.remove(os.path.join(tmp_dir, 'node', 'src', 'util.h'))
 
 header_files = ['node.h', 'env.h', 'env-inl.h']
 update_uvh(tmp_dir, header_files)

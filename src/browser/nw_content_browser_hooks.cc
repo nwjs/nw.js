@@ -57,7 +57,7 @@ bool g_in_webview_apply_attr = false;
 bool g_in_webview_apply_attr_allow_nw = false;
 } //namespace
 
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
 typedef void (*SendEventToAppFn)(const std::string& event_name, std::unique_ptr<base::ListValue> event_args);
 CONTENT_EXPORT SendEventToAppFn gSendEventToApp = nullptr;
 
@@ -137,7 +137,7 @@ bool GetImage(Package* package, const FilePath& icon_path, gfx::Image* image) {
   return true;
 }
 
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
 CONTENT_EXPORT bool ApplicationShouldHandleReopenHook(bool hasVisibleWindows) {
   std::unique_ptr<base::ListValue> arguments(new base::ListValue());
   if (gSendEventToApp)

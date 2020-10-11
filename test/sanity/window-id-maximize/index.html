@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>5093</title>
+    <meta charset="UTF-8">
+    <style>
+      html,
+      body {
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          padding: 0;
+          background-color: blue;
+      }
+      #yellow {
+          color: black;
+          background-color: yellow;
+          width: 800px;
+          height: 600px;
+      }
+    </style>
+  </head>
+  <body>
+    <button onclick="testmax()" id="resize">maximize</button>
+    <button onclick="test_restore()" id="restore">restore</button>
+    <button onclick="testmove()" id="move">move</button>
+    <button onclick="getxy()" id="getxy">get xy</button>
+    <div id="xy"></div>
+    <div id="yellow"></div>
+  </body>
+  <script>
+    var win = nw.Window.get();
+    var fs = require('fs');
+    var os = require('os');
+    async function test() {
+      testresize();
+      await new Promise(resolve => setTimeout(resolve, 700));
+      testmove();
+      await new Promise(resolve => setTimeout(resolve, 700));
+      let placement = get_placement();
+      fs.writeFileSync('last_pos.txt', placement);
+      win.maximize();
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+    async function test2() {
+      win.restore();
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+    function testresize() {
+      win.resizeTo(345, 345);
+    }
+    function testmax() {
+      win.maximize();
+    }
+    function test_restore() {
+      win.restore();
+    }
+    function testmove() {
+      win.moveBy(100, 50);
+    }
+    function getxy() {
+      let xy = document.getElementById('xy');
+      xy.innerHTML = win.x + ", " + win.y;
+    }
+    function get_placement() {
+      if (os.platform() == 'linux')
+        return `${window.innerWidth}, ${window.innerHeight}`;
+      else
+        return `${win.x}, ${win.y}, ${window.innerWidth}, ${window.innerHeight}`;
+    }
+    window.onresize = function() {
+      var yellow = document.getElementById('yellow');
+      yellow.innerHTML = window.innerWidth + ", " + window.innerHeight;
+    }
+    window.onload = function() {
+      var yellow = document.getElementById('yellow');
+      yellow.innerHTML = window.innerWidth + ", " + window.innerHeight;
+      if (fs.existsSync('last_pos.txt')) {
+        test2().then(() => {
+          let placement = get_placement();
+          saved_pos = fs.readFileSync('last_pos.txt', 'utf8');
+          if (saved_pos == placement)
+            fs.writeFileSync('succeed.txt', '');
+          else
+            fs.writeFileSync('failed.txt', `saved_pos: ${saved_pos}; placement: ${placement}`);
+          nw.App.quit();
+        });
+      } else {
+        test().then(() => { nw.App.quit(); });
+      }
+    }
+  </script>
+</html>

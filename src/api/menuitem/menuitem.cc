@@ -134,7 +134,7 @@ void MenuItem::Call(const std::string& method,
     int object_id = 0;
     arguments.GetInteger(0, &object_id);
     SetSubmenu(object_manager()->GetApiObject<Menu>(object_id));
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
   } else if (method == "SetKey") {
     std::string key;
     arguments.GetString(0, &key);

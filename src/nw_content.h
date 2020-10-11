@@ -89,7 +89,7 @@ void DocumentFinishHook(blink::WebLocalFrame* frame,
  bool GetPackageImage(nw::Package* package,
                       const base::FilePath& icon_path,
                       gfx::Image* image);
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
  bool ApplicationShouldHandleReopenHook(bool hasVisibleWindows);
  void OSXOpenURLsHook(const std::vector<GURL>& startup_urls);
 #endif

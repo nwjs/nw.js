@@ -142,7 +142,7 @@ class NwCurrentWindowInternalSetShadowInternalFunction : public ExtensionFunctio
 
  protected:
   ~NwCurrentWindowInternalSetShadowInternalFunction() override {}
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
   void SetShadowOnWindow(NSWindow *window, bool shadow);
 #endif
 
@@ -151,16 +151,16 @@ class NwCurrentWindowInternalSetShadowInternalFunction : public ExtensionFunctio
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setShadowInternal", UNKNOWN)
 };
 
-class NwCurrentWindowInternalSetBadgeLabelFunction : public ExtensionFunction {
+class NwCurrentWindowInternalSetBadgeLabelInternalFunction : public ExtensionFunction {
  public:
-  NwCurrentWindowInternalSetBadgeLabelFunction(){}
+  NwCurrentWindowInternalSetBadgeLabelInternalFunction(){}
 
  protected:
-  ~NwCurrentWindowInternalSetBadgeLabelFunction() override {}
+  ~NwCurrentWindowInternalSetBadgeLabelInternalFunction() override {}
 
   // ExtensionFunction:
   ResponseAction Run() override;
-  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setBadgeLabel", UNKNOWN)
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setBadgeLabelInternal", UNKNOWN)
 };
 
 class NwCurrentWindowInternalRequestAttentionInternalFunction : public ExtensionFunction {
@@ -177,16 +177,16 @@ class NwCurrentWindowInternalRequestAttentionInternalFunction : public Extension
   DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalRequestAttentionInternalFunction);
 };
   
-class NwCurrentWindowInternalSetProgressBarFunction : public ExtensionFunction {
+class NwCurrentWindowInternalSetProgressBarInternalFunction : public ExtensionFunction {
  public:
-  NwCurrentWindowInternalSetProgressBarFunction(){}
+  NwCurrentWindowInternalSetProgressBarInternalFunction(){}
 
  protected:
-  ~NwCurrentWindowInternalSetProgressBarFunction() override {}
+  ~NwCurrentWindowInternalSetProgressBarInternalFunction() override {}
 
   // ExtensionFunction:
   ResponseAction Run() override;
-  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setProgressBar", UNKNOWN)
+  DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setProgressBarInternal", UNKNOWN)
  private:
   void Callback();
 };
