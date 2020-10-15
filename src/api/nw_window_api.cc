@@ -320,14 +320,26 @@ NwCurrentWindowInternalCapturePageInternalFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args_);
 
   std::unique_ptr<ImageDetails> image_details;
-  if (args_->GetSize() > 0) {
+  WebContents* contents = nullptr;
+
+  if (args_->GetSize() > 1) {
     base::Value* spec = NULL;
-    EXTENSION_FUNCTION_VALIDATE(args_->Get(0, &spec) && spec);
+    EXTENSION_FUNCTION_VALIDATE(args_->Get(1, &spec) && spec);
     image_details = ImageDetails::FromValue(*spec);
   }
 
-  content::RenderFrameHost* rfh = render_frame_host();
-  WebContents* contents = content::WebContents::FromRenderFrameHost(rfh);
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    int id = 0;
+    args_->GetInteger(0, &id);
+    Browser* browser = getBrowser(this, id);
+    if (!browser) {
+      return RespondNow(Error("no browser window found"));
+    }
+    contents = browser->tab_strip_model()->GetActiveWebContents();
+  } else {
+    content::RenderFrameHost* rfh = render_frame_host();
+    contents = content::WebContents::FromRenderFrameHost(rfh);
+  }
   if (!contents)
     return RespondNow(Error("contents is null"));
 

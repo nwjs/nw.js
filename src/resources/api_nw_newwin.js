@@ -363,6 +363,7 @@ NWWindow.prototype.showDevTools = function(frm, callback) {
   nwNatives.setDevToolsJail(f);
   currentNWWindowInternal.showDevTools2Internal(this.cWindow.id, callback);
 };
+
 NWWindow.prototype.capturePage = function (callback, options) {
   var cb = callback;
   if (!options)
@@ -383,7 +384,8 @@ NWWindow.prototype.capturePage = function (callback, options) {
     };
     cb = cb.bind(undefined, options.datatype);
   }
-  currentNWWindowInternal.capturePageInternal(options, cb);
+  this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
+  currentNWWindowInternal.capturePageInternal(this.cWindow.id, options, cb);
 };
 
 function sendCommand(tabId, name, options) {

@@ -403,7 +403,7 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
         };
         cb = cb.bind(undefined, options.datatype);
       }
-      currentNWWindowInternal.capturePageInternal(options, cb);
+      currentNWWindowInternal.capturePageInternal(0, options, cb);
     };
     NWWindow.prototype.reload = function () {
       this.appWindow.contentWindow.location.reload();
