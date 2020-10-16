@@ -54,7 +54,6 @@ var nwWinEventsMap = {
 };
 
 var nwWrapEventsMap = {
-  'loaded':           'LoadingStateChanged',
   'new-win-policy':   'onNewWinPolicy',
   'navigation':       'onNavigation'
 };
@@ -265,6 +264,14 @@ NWWindow.prototype.on = function (event, callback, record) {
   return this;
 };
 NWWindow.prototype.removeListener = function (event, callback) {
+  if (event === 'loaded') {
+    for (let l of chrome.tabs.onUpdated.getListeners()) {
+      if (l.listener && l.listener === callback) {
+        chrome.tabs.onUpdated.removeListener(l);
+        return this;
+      }
+    }
+  }
   if (nwWinEventsMap.hasOwnProperty(event)) {
     for (let l of this[nwWinEventsMap[event]].getListeners()) {
       if (l.listener && l.listener === callback) {
@@ -320,6 +327,12 @@ NWWindow.prototype.removeAllListeners = function (event) {
     }
     return this;
   }
+  if (event === 'loaded') {
+    for (let l of chrome.tabs.onUpdated.getListeners()) {
+      chrome.tabs.onUpdated.removeListener(l);
+    }
+    return this;
+  }
   return this;
 };
 
@@ -363,6 +376,7 @@ NWWindow.prototype.showDevTools = function(frm, callback) {
   nwNatives.setDevToolsJail(f);
   currentNWWindowInternal.showDevTools2Internal(this.cWindow.id, callback);
 };
+
 NWWindow.prototype.capturePage = function (callback, options) {
   var cb = callback;
   if (!options)
@@ -383,7 +397,8 @@ NWWindow.prototype.capturePage = function (callback, options) {
     };
     cb = cb.bind(undefined, options.datatype);
   }
-  currentNWWindowInternal.capturePageInternal(options, cb);
+  this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
+  currentNWWindowInternal.capturePageInternal(this.cWindow.id, options, cb);
 };
 
 function sendCommand(tabId, name, options) {
