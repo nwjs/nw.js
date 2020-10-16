@@ -166,7 +166,7 @@ vars = {
   'checkout_simplechrome': '"{cros_boards}" != ""',
   'checkout_simplechrome_with_vms': '"{cros_boards_with_qemu_images}" != ""',
 
-  'nw_src_revision': '9eda4ce2e0f0150946f67639fd238ca92dcf669f',
+  'nw_src_revision': '355262dbb16274a5b5e53cba5b7c9f3a79904428',
   'nw_v8_revision': '73cef37fd2ce16b8bd59e81531fa3693f8be49ab',
   'nw_node_revision': 'f507a2989b408bb2eb71bfb3112d0294595d0e07',
 
@@ -272,7 +272,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling devtools-frontend
   # and whatever else without interference from each other.
-  'devtools_frontend_revision': '0d0e5bfe429c3b6cb79c977dbec15ff3ce18bea2',
+  'devtools_frontend_revision': '1d0770b7abf9f8cae15cdaabff533c68c3a9152c',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libprotobuf-mutator
   # and whatever else without interference from each other.
@@ -905,7 +905,7 @@ deps = {
 
   # For Linux and Chromium OS.
   'src/third_party/cros_system_api': {
-      'url': Var('chromium_git') + '/chromiumos/platform2/system_api.git' + '@' + 'd5ad6a50d168252d431f99cd227e327a86c567ff',
+      'url': Var('chromium_git') + '/chromiumos/platform2/system_api.git' + '@' + '5df72efed1de3c81f7590dbc09b240cb6edc4cd6',
       'condition': 'checkout_linux',
   },
 
@@ -1246,7 +1246,7 @@ deps = {
     Var('chromium_git') + '/external/github.com/cisco/openh264' + '@' + '3dd5b80bc4f172dd82925bb259cb7c82348409c5',
 
   'src/third_party/openscreen/src':
-    Var('chromium_git') + '/openscreen' + '@' + 'ca55b2704b0f97487b5271cc1aaedc90fed10686',
+    Var('chromium_git') + '/openscreen' + '@' + '25493aef9427e1a0d93d993b441dec9e64266725',
 
   'src/third_party/openxr/src': {
     'url': Var('chromium_git') + '/external/github.com/KhronosGroup/OpenXR-SDK' + '@' + '9e97b73e7dd2bfc07745489d728f6a36665c648f',
@@ -1495,7 +1495,7 @@ deps = {
   },
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + '75b9ab6751f3f49bbdd0a260fcbcbc8135dd567a',
+    Var('webrtc_git') + '/src.git' + '@' + 'ba686938ab62421cbbdd8a17946906150b2f8af2',
 
   'src/third_party/libgifcodec':
      Var('skia_git') + '/libgifcodec' + '@'+  Var('libgifcodec_revision'),
@@ -1573,7 +1573,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@0668e21df47375a6c738be7b380bbfd62277710d',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@a5c086acf030bc41e67da8ac1f8a6aec85f7304b',
     'condition': 'checkout_src_internal',
   },
 
@@ -1592,7 +1592,7 @@ deps = {
     'packages': [
       {
         'package': 'chromeos_internal/apps/media_app/app',
-        'version': 'NmnsodASCDlnL1R0fAI_q3in9QdwqYpagivmAet3MhcC',
+        'version': 'SKwma2epistNSsheI5mMcAYSgI9BRpLCXbMU27lGDOYC',
       },
     ],
     'condition': 'checkout_chromeos and checkout_src_internal',
