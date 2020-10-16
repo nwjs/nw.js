@@ -54,7 +54,6 @@ var nwWinEventsMap = {
 };
 
 var nwWrapEventsMap = {
-  'loaded':           'LoadingStateChanged',
   'new-win-policy':   'onNewWinPolicy',
   'navigation':       'onNavigation'
 };
@@ -265,6 +264,14 @@ NWWindow.prototype.on = function (event, callback, record) {
   return this;
 };
 NWWindow.prototype.removeListener = function (event, callback) {
+  if (event === 'loaded') {
+    for (let l of chrome.tabs.onUpdated.getListeners()) {
+      if (l.listener && l.listener === callback) {
+        chrome.tabs.onUpdated.removeListener(l);
+        return this;
+      }
+    }
+  }
   if (nwWinEventsMap.hasOwnProperty(event)) {
     for (let l of this[nwWinEventsMap[event]].getListeners()) {
       if (l.listener && l.listener === callback) {
@@ -317,6 +324,12 @@ NWWindow.prototype.removeAllListeners = function (event) {
   if (wrapEventsMapNewWin.hasOwnProperty(event)) {
     for (let l of chrome.windows[wrapEventsMapNewWin[event]].getListeners()) {
       chrome.windows[wrapEventsMapNewWin[event]].removeListener(l);
+    }
+    return this;
+  }
+  if (event === 'loaded') {
+    for (let l of chrome.tabs.onUpdated.getListeners()) {
+      chrome.tabs.onUpdated.removeListener(l);
     }
     return this;
   }
