@@ -149,6 +149,7 @@ NWWindow.prototype.on = function (event, callback, record) {
   function wrap(cb) {
     var fn = (cb || callback).bind(self);
     fn.listener = callback;
+    fn.c_win_id = self.cWindow.id;
     callback.__nw_cb = fn;
     return fn;
   }
@@ -323,13 +324,17 @@ NWWindow.prototype.removeAllListeners = function (event) {
   }
   if (wrapEventsMapNewWin.hasOwnProperty(event)) {
     for (let l of chrome.windows[wrapEventsMapNewWin[event]].getListeners()) {
-      chrome.windows[wrapEventsMapNewWin[event]].removeListener(l);
+      if (l.c_win_id === this.cWindow.id) {
+        chrome.windows[wrapEventsMapNewWin[event]].removeListener(l);
+      }
     }
     return this;
   }
   if (event === 'loaded') {
     for (let l of chrome.tabs.onUpdated.getListeners()) {
-      chrome.tabs.onUpdated.removeListener(l);
+      if (l.c_win_id === this.cWindow.id) {
+        chrome.tabs.onUpdated.removeListener(l);
+      }
     }
     return this;
   }
