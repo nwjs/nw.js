@@ -1,3 +1,12 @@
+0.49.1 / 10-23-2020
+===================
+- Update Chromium to [86.0.4240.111](https://chromereleases.googleblog.com/2020/10/stable-channel-update-for-desktop_20.html)
+- Update Node.js to [v14.13.1](https://nodejs.org/en/blog/release/v14.13.1/)
+- Fix: Linux - Race condition and lags in renderer event loop [(#7497)](https://github.com/nwjs/nw.js/issues/7497)
+- Fix: NewWindow.attach in webview [(#7578)](https://github.com/nwjs/nw.js/issues/7578)
+- Fix: nw2 Window.capturePage captures wrong window [(#7592)](https://github.com/nwjs/nw.js/issues/7592)
+- Fix: nw2 Window not removing listeners on 'loaded' event [(#7593)](https://github.com/nwjs/nw.js/issues/7593)
+
 0.49.0 / 10-07-2020
 ===================
 - Update Chromium to [86.0.4240.75](https://developers.google.com/web/updates/2020/10/nic86)
