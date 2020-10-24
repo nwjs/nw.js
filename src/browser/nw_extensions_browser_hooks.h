@@ -38,7 +38,8 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
 // ref in extensions/browser/app_window/app_window.cc 
 void CalcNewWinParams(content::WebContents* new_contents, void* params,
                      std::string* nw_inject_js_doc_start,
-                     std::string* nw_inject_js_doc_end);
+                      std::string* nw_inject_js_doc_end,
+                      const std::string& in_manifest);
 // ref in extensions/components/native_app_window/native_app_window_views.cc
 bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window);
 

@@ -75,7 +75,8 @@ void DocumentFinishHook(blink::WebLocalFrame* frame,
  void ExtensionDispatcherCreated(extensions::Dispatcher* dispatcher);
  void CalcNewWinParams(content::WebContents* new_contents, void* params,
                        std::string* nw_inject_js_doc_start,
-                       std::string* nw_inject_js_doc_end);
+                       std::string* nw_inject_js_doc_end,
+                       const std::string& in_manifest);
  bool GetImage(Package* package, const FilePath& icon_path, gfx::Image* image);
  std::unique_ptr<base::DictionaryValue> MergeManifest();
  bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window);
