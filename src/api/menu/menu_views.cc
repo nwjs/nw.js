@@ -206,10 +206,7 @@ aura::Window* Menu::GetActiveNativeView(content::RenderFrameHost* rfh) {
     LOG(ERROR) << "Menu: couldn't find WebContents";
     return NULL;
   }
-  return web_contents->GetFullscreenRenderWidgetHostView()
-             ? web_contents->GetFullscreenRenderWidgetHostView()
-                   ->GetNativeView()
-             : web_contents->GetNativeView();
+  return web_contents->GetNativeView();
 }
 
 }  // namespace nw
