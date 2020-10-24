@@ -131,7 +131,7 @@ void AmendManifestList(base::DictionaryValue* manifest,
   }
 }
 
-std::unique_ptr<base::DictionaryValue> MergeManifest() {
+std::unique_ptr<base::DictionaryValue> MergeManifest(const std::string& in_manifest) {
   // Following attributes will not be inherited from package.json 
   // Keep this list consistent with documents in `Manifest Format.md`
   static std::vector<const char*> non_inherited_attrs = {
@@ -144,7 +144,8 @@ std::unique_ptr<base::DictionaryValue> MergeManifest() {
   std::unique_ptr<base::DictionaryValue> manifest;
 
   // retrieve `window` manifest set by `new-win-policy`
-  std::string manifest_str = base::UTF16ToUTF8(nw::GetCurrentNewWinManifest());
+  std::string manifest_str = in_manifest.empty() ? base::UTF16ToUTF8(nw::GetCurrentNewWinManifest())
+    : in_manifest;
   std::unique_ptr<base::Value> val(base::JSONReader::ReadDeprecated(manifest_str));
   if (val && val->is_dict()) {
     manifest.reset(static_cast<base::DictionaryValue*>(val.release()));
@@ -320,10 +321,11 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
 
 void CalcNewWinParams(content::WebContents* new_contents, void* params,
                       std::string* nw_inject_js_doc_start,
-                      std::string* nw_inject_js_doc_end) {
+                      std::string* nw_inject_js_doc_end,
+                      const std::string& in_manifest) {
   extensions::AppWindow::CreateParams ret;
   std::unique_ptr<base::Value> val;
-  std::unique_ptr<base::DictionaryValue> manifest = MergeManifest();
+  std::unique_ptr<base::DictionaryValue> manifest = MergeManifest(in_manifest);
 
   bool resizable;
   if (manifest->GetBoolean(switches::kmResizable, &resizable)) {
