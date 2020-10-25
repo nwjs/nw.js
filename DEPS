@@ -166,8 +166,8 @@ vars = {
   'checkout_simplechrome': '"{cros_boards}" != ""',
   'checkout_simplechrome_with_vms': '"{cros_boards_with_qemu_images}" != ""',
 
-  'nw_src_revision': '18b3ffb0a904ec9acb5b837b0b5b6befc8824f94',
-  'nw_v8_revision': '73cef37fd2ce16b8bd59e81531fa3693f8be49ab',
+  'nw_src_revision': 'be1ab24ae158ecd5fb6b8f9a8ab904eb1535c17c',
+  'nw_v8_revision': 'c6c3376a62a7bd051a8b00ec0a7acc424d3a4a75',
   'nw_node_revision': 'f507a2989b408bb2eb71bfb3112d0294595d0e07',
 
   # ANGLE's deps are relative to the angle_root variable.
@@ -201,11 +201,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': 'c73bff39bd21ae9b54b198a6dbf361ea3ceab591',
+  'skia_revision': '489348851cca51b23f522734b6db3c785ffdfaed',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '0d81cd72688512abcbe1601015baee390c484a6a',
+  'v8_revision': 'bd2510a6809c94c357ecafb7d3d679c10d2ede0a',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -221,7 +221,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling PDFium
   # and whatever else without interference from each other.
-  'pdfium_revision': 'dcffb3db73cd70771cc57cfdcca93a9b756467fb',
+  'pdfium_revision': '0950ad89ea1123b71be05b3c5c4223c2934a976f',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling BoringSSL
   # and whatever else without interference from each other.
@@ -252,7 +252,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling freetype
   # and whatever else without interference from each other.
-  'freetype_revision': '20186d1be6415d1bd7cb79ac56f1b806c26b677c',
+  'freetype_revision': 'd7caaf8517fa6d432f40e608cc960951f52dae85',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling HarfBuzz
   # and whatever else without interference from each other.
@@ -272,7 +272,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling devtools-frontend
   # and whatever else without interference from each other.
-  'devtools_frontend_revision': '1d0770b7abf9f8cae15cdaabff533c68c3a9152c',
+  'devtools_frontend_revision': '4198f9311972385670bea93fbb3351917619aef9',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libprotobuf-mutator
   # and whatever else without interference from each other.
@@ -1495,7 +1495,7 @@ deps = {
   },
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + 'ba686938ab62421cbbdd8a17946906150b2f8af2',
+    Var('webrtc_git') + '/src.git' + '@' + '5ecac218f0372d36084355dd8538f69a74359ad0',
 
   'src/third_party/libgifcodec':
      Var('skia_git') + '/libgifcodec' + '@'+  Var('libgifcodec_revision'),
@@ -1573,7 +1573,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@a5c086acf030bc41e67da8ac1f8a6aec85f7304b',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@024553b541903a0c974876fc559c7c50904ee7dc',
     'condition': 'checkout_src_internal',
   },
 
