@@ -390,8 +390,8 @@ void TryInjectStartScript(blink::WebLocalFrame* frame, const Extension* extensio
   if (!rv)
     return;
 
-  std::string js_fn = start ? rv->renderer_preferences().nw_inject_js_doc_start :
-                              rv->renderer_preferences().nw_inject_js_doc_end;
+  std::string js_fn = start ? rv->GetRendererPreferences().nw_inject_js_doc_start :
+                              rv->GetRendererPreferences().nw_inject_js_doc_end;
   if (js_fn.empty())
     return;
   base::FilePath fpath = base::FilePath::FromUTF8Unsafe(js_fn);
