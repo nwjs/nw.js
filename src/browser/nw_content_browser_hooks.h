@@ -48,6 +48,7 @@ CONTENT_EXPORT void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, conten
 // content/browser/renderer_host/render_process_host_impl.cc
 // content/browser/site_instance_impl.cc
 CONTENT_EXPORT bool PinningRenderer();
+CONTENT_EXPORT bool MixedContext();
 
 #if defined(OS_MAC)
 // ref in chrome/browser/app_controller_mac.mm
@@ -62,6 +63,7 @@ CONTENT_EXPORT bool GetPackageImage(nw::Package* package,
                     gfx::Image* image);
 // ref in extensions/browser/api/app_window/app_window_api.cc
 CONTENT_EXPORT void SetPinningRenderer(bool pin);
+CONTENT_EXPORT void SetMixedContext(bool);
 
 // browser
 // ref in content/nw/src/api/tray/tray_aura.cc

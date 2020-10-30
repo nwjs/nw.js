@@ -54,6 +54,7 @@ namespace nw {
 namespace {
 
 bool g_pinning_renderer = true;
+bool g_mixed_context = false;
 bool g_in_webview_apply_attr = false;
 bool g_in_webview_apply_attr_allow_nw = false;
 } //namespace
@@ -190,6 +191,14 @@ bool PinningRenderer() {
 
 void SetPinningRenderer(bool pin) {
   g_pinning_renderer = pin;
+}
+
+bool MixedContext() {
+  return g_mixed_context;
+}
+
+void SetMixedContext(bool mixed) {
+  g_mixed_context = mixed;
 }
 
 void SetInWebViewApplyAttr(bool flag, bool allow_nw) {
