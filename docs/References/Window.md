@@ -74,6 +74,7 @@ Get all windows with a callback function whose parameter is an array of nw.Windo
 * `url` `{String}` URL to be loaded in the opened window
 * `options` `{Object}` _Optional_ see [Window subfields](Manifest Format.md#window-subfields) in manifest format. And following extra fields can also be used in options.
     - `new_instance` `{Boolean}` _Optional_ whether to open a new window in a separate render process.
+    - `mixed_context` `{Boolean}` _Optional_ If true, the Node context and DOM context are merged in the new window's process. Use only when `new_instance` is true.
     - `inject_js_start` `{String}` _Optional_ the script to be injected before any DOM is constructed and any script is run. See [Manifest format](Manifest Format.md#inject_js_start)
     - `inject_js_end` `{String}` _Optional_ the script to be injected after the document object is loaded, before onload event is fired. See [Manifest format](Manifest Format.md#inject_js_end)
     - `id` `{String}` _Optional_ the `id` used to identify the window. This will be used to remember the size and position of the window and restore that geometry when a window with the same id is later opened. [See also the Chrome App documentation](https://developer.chrome.com/apps/app_window#type-CreateWindowOptions)

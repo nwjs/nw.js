@@ -219,6 +219,9 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
 
   if (extension)
     extension->manifest()->GetBoolean(manifest_keys::kNWJSMixedContext, &mixed_context);
+  if (!mixed_context) {
+    mixed_context = command_line.HasSwitch("mixed-context");
+  }
   // handle navigation in webview #5622
   if (nwjs_guest_nw)
     mixed_context = true;

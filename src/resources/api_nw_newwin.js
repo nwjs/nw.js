@@ -809,6 +809,12 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
         options.new_instance = true;
         options.setSelfAsOpener = false;
       }
+      if (params.mixed_context === true) {
+        if (params.new_instance !== true) {
+          throw new Error('mixed_context should be set with new_instance in nw.Window.open');
+        }
+        options.mixed_context = true;
+      }
       if (params.position)
         options.position = params.position;
       if (params.title)
