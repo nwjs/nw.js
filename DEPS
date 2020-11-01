@@ -50,7 +50,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "all",
+  "buildspec_platforms": "linux64, mac64, win, win64",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -166,8 +166,8 @@ vars = {
   'checkout_simplechrome': '"{cros_boards}" != ""',
   'checkout_simplechrome_with_vms': '"{cros_boards_with_qemu_images}" != ""',
 
-  'nw_src_revision': 'be1ab24ae158ecd5fb6b8f9a8ab904eb1535c17c',
-  'nw_v8_revision': 'c6c3376a62a7bd051a8b00ec0a7acc424d3a4a75',
+  'nw_src_revision': '24aa80c285c3579aeab45f7ddeca747ad2327557',
+  'nw_v8_revision': '0befe142a839e0eb039ec06cee00eb683a29f13d',
   'nw_node_revision': '173afa38e81a44356272ea0673d69bf87089f314',
 
   # ANGLE's deps are relative to the angle_root variable.
@@ -205,7 +205,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'bd2510a6809c94c357ecafb7d3d679c10d2ede0a',
+  'v8_revision': '5e4b41ddd544a41fca89a6d4951a5060978fed7c',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -213,7 +213,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': '64eb64a034cb725baf3dea089f3badbbab77a0be',
+  'angle_revision': 'ac18d9c83f8533eaea97950fc86fc901df806f65',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -272,7 +272,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling devtools-frontend
   # and whatever else without interference from each other.
-  'devtools_frontend_revision': '4198f9311972385670bea93fbb3351917619aef9',
+  'devtools_frontend_revision': '51af4604a0b50bbf4d09e9c4e3eaf950d0278ff5',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libprotobuf-mutator
   # and whatever else without interference from each other.
@@ -905,7 +905,7 @@ deps = {
 
   # For Linux and Chromium OS.
   'src/third_party/cros_system_api': {
-      'url': Var('chromium_git') + '/chromiumos/platform2/system_api.git' + '@' + '5df72efed1de3c81f7590dbc09b240cb6edc4cd6',
+      'url': Var('chromium_git') + '/chromiumos/platform2/system_api.git' + '@' + 'ebddc236e489a2dbb8a8c1f5be6bff4238ea7942',
       'condition': 'checkout_linux',
   },
 
@@ -1495,7 +1495,7 @@ deps = {
   },
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + '5ecac218f0372d36084355dd8538f69a74359ad0',
+    Var('webrtc_git') + '/src.git' + '@' + '1c6bde1913107de53a2db29c4b4e7685f0b0f53d',
 
   'src/third_party/libgifcodec':
      Var('skia_git') + '/libgifcodec' + '@'+  Var('libgifcodec_revision'),
@@ -1573,7 +1573,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@024553b541903a0c974876fc559c7c50904ee7dc',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@175c507b0a21259d038a0675853907d56fad6acb',
     'condition': 'checkout_src_internal',
   },
 
