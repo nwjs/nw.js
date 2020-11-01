@@ -1,3 +1,9 @@
+0.49.2 / 11-01-2020
+===================
+- Update Node.js to [v15.0.1](https://nodejs.org/en/blog/release/v15.0.1/)
+- Add mixed_context window option for new_instance window [(#7609)](https://github.com/nwjs/nw.js/issues/7609)
+- [docs] mixed_context option in Window.open()
+
 0.49.1 / 10-23-2020
 ===================
 - Update Chromium to [86.0.4240.111](https://chromereleases.googleblog.com/2020/10/stable-channel-update-for-desktop_20.html)
