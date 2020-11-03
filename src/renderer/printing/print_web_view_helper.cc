@@ -79,13 +79,13 @@ void ExecuteScript(blink::WebFrame* frame,
 #endif  // !defined(ENABLE_PRINT_PREVIEW)
 
 int GetDPI(const PrintMsg_Print_Params* print_params) {
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
   // On the Mac, the printable area is in points, don't do any scaling based
   // on dpi.
   return kPointsPerInch;
 #else
   return static_cast<int>(print_params->dpi);
-#endif  // defined(OS_MACOSX)
+#endif  // defined(OS_MAC)
 }
 
 bool PrintMsg_Print_Params_IsValid(const PrintMsg_Print_Params& params) {
@@ -1362,7 +1362,7 @@ void PrintWebViewHelper::FinishFramePrinting() {
   prep_frame_view_.reset();
 }
 
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
 bool PrintWebViewHelper::PrintPagesNative(blink::WebFrame* frame,
                                           int page_count) {
   const PrintMsg_PrintPages_Params& params = *print_pages_params_;
@@ -1386,7 +1386,7 @@ bool PrintWebViewHelper::PrintPagesNative(blink::WebFrame* frame,
   return true;
 }
 
-#endif  // OS_MACOSX
+#endif  // OS_MAC
 
 // static - Not anonymous so that platform implementations can use it.
 void PrintWebViewHelper::ComputePageLayoutInPointsForCss(

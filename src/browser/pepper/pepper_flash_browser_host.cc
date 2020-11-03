@@ -20,7 +20,7 @@
 
 #if defined(OS_WIN)
 #include <windows.h>
-#elif defined(OS_MACOSX)
+#elif defined(OS_MAC)
 #include <CoreServices/CoreServices.h>
 #endif
 
@@ -85,7 +85,7 @@ int32_t PepperFlashBrowserHost::OnUpdateActivity(
   int value = 0;
   if (SystemParametersInfo(SPI_GETSCREENSAVETIMEOUT, 0, &value, 0))
     SystemParametersInfo(SPI_SETSCREENSAVETIMEOUT, value, NULL, 0);
-#elif defined(OS_MACOSX)
+#elif defined(OS_MAC)
   UpdateSystemActivity(OverallAct);
 #else
 // TODO(brettw) implement this for other platforms.

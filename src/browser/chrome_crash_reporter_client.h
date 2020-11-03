@@ -39,7 +39,7 @@ class ChromeCrashReporterClient : public crash_reporter::CrashReporterClient {
   virtual void RecordCrashDumpAttempt(bool is_real_crash) override;
 #endif
 
-#if defined(OS_POSIX) && !defined(OS_MACOSX) && !defined(OS_IOS)
+#if defined(OS_POSIX) && !defined(OS_MAC) && !defined(OS_IOS)
   void GetProductNameAndVersion(const char** product_name,
                                 const char** version) override;
   base::FilePath GetReporterLogFilename() override;
@@ -53,7 +53,7 @@ class ChromeCrashReporterClient : public crash_reporter::CrashReporterClient {
 
   bool GetCollectStatsConsent() override;
 
-#if defined(OS_WIN) || defined(OS_MACOSX)
+#if defined(OS_WIN) || defined(OS_MAC)
   bool ReportingIsEnforcedByPolicy(bool* breakpad_enabled) override;
 #endif
 
@@ -61,7 +61,7 @@ class ChromeCrashReporterClient : public crash_reporter::CrashReporterClient {
   virtual int GetAndroidMinidumpDescriptor() override;
 #endif
 
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
   void InstallAdditionalFilters(BreakpadRef breakpad) override;
 #endif
 

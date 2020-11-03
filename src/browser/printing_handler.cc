@@ -32,7 +32,7 @@ namespace {
 const base::FilePath::CharType kInternalPDFPluginFileName[] =
 #if defined(OS_WIN)
     FILE_PATH_LITERAL("pdf.dll");
-#elif defined(OS_MACOSX)
+#elif defined(OS_MAC)
     FILE_PATH_LITERAL("PDF.plugin");
 #else  // Linux and Chrome OS
     FILE_PATH_LITERAL("libpdf.so");

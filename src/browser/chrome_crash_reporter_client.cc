@@ -35,7 +35,7 @@
 //#include "policy/policy_constants.h"
 #endif
 
-#if defined(OS_POSIX) && !defined(OS_MACOSX) && !defined(OS_IOS)
+#if defined(OS_POSIX) && !defined(OS_MAC) && !defined(OS_IOS)
 #include "chrome/browser/crash_upload_list.h"
 //#include "chrome/common/chrome_version_info_values.h"
 #endif
@@ -288,7 +288,7 @@ bool ChromeCrashReporterClient::ReportingIsEnforcedByPolicy(
 }
 #endif  // defined(OS_WIN)
 
-#if defined(OS_POSIX) && !defined(OS_MACOSX) && !defined(OS_IOS)
+#if defined(OS_POSIX) && !defined(OS_MAC) && !defined(OS_IOS)
 void ChromeCrashReporterClient::GetProductNameAndVersion(
     const char** product_name,
     const char** version) {
