@@ -326,7 +326,7 @@ void PrintJobWorker::SpoolPage(PrintedPage* page) {
   }
 
   // Actual printing.
-#if defined(OS_WIN) || defined(OS_MACOSX)
+#if defined(OS_WIN) || defined(OS_MAC)
   document_->RenderPrintedPage(*page, printing_context_->context());
 #elif defined(OS_POSIX)
   document_->RenderPrintedPage(*page, printing_context_.get());

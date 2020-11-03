@@ -69,7 +69,7 @@ PrintViewManager::PrintViewManager(content::WebContents* web_contents)
       cookie_(0),
       scripted_print_preview_rph_(NULL),
       tab_content_blocked_(false) {
-#if defined(OS_POSIX) && !defined(OS_MACOSX)
+#if defined(OS_POSIX) && !defined(OS_MAC)
   expecting_first_page_ = true;
 #endif
   registrar_.Add(this, content::NOTIFICATION_CONTENT_BLOCKED_STATE_CHANGED,
@@ -172,7 +172,7 @@ void PrintViewManager::OnDidPrintPage(
     return;
   }
 
-#if defined(OS_WIN) || defined(OS_MACOSX)
+#if defined(OS_WIN) || defined(OS_MAC)
   const bool metafile_must_be_valid = true;
 #elif defined(OS_POSIX)
   const bool metafile_must_be_valid = expecting_first_page_;
@@ -433,7 +433,7 @@ void PrintViewManager::DisconnectFromCurrentPrintJob() {
     // DO NOT wait for the job to finish.
     ReleasePrintJob();
   }
-#if defined(OS_POSIX) && !defined(OS_MACOSX)
+#if defined(OS_POSIX) && !defined(OS_MAC)
   expecting_first_page_ = true;
 #endif
 }
