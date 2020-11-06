@@ -26,9 +26,7 @@ namespace nw {
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-class MenuBarView :
-  public views::AccessiblePaneView,
-  public views::ButtonListener {
+class MenuBarView : public views::AccessiblePaneView {
 
  public:
   // The internal view class name.
@@ -46,9 +44,7 @@ class MenuBarView :
 
   bool GetMenuButtonAtLocation(const gfx::Point& loc, ui::MenuModel** model, views::MenuButton** button);
 
-  // views::ButtonListener:
-   void ButtonPressed(views::Button* sender,
-                             const ui::Event& event) override;
+  void ButtonPressed(int index, const ui::Event& event);
 
  private:
   ui::MenuModel* model_;
