@@ -167,7 +167,7 @@ vars = {
   'checkout_simplechrome_with_vms': '"{cros_boards_with_qemu_images}" != ""',
 
   'nw_src_revision': 'c99ca8275b399107685f69e2401d1ecb1c315087',
-  'nw_v8_revision': 'd69ddfe31a8d67e8fc56d068f4907dcdd03c4e24',
+  'nw_v8_revision': '9c159088a63341e92b9d96135129f1551c39f467',
   'nw_node_revision': '173afa38e81a44356272ea0673d69bf87089f314',
 
   # ANGLE's deps are relative to the angle_root variable.
