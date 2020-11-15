@@ -220,7 +220,7 @@ def generate_target_nw(platform_name, arch, version):
             target['input'].append('chromedriver')
             target['input'].append('libffmpeg.dylib')
             target['input'].append('minidump_stackwalk')
-            target['input'].append('v8_context_snapshot.bin')
+            target['input'].append('v8_context_snapshot.x86_64.bin')
     else:
         print 'Unsupported platform: ' + platform_name
         exit(-1)
