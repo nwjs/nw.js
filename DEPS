@@ -166,8 +166,8 @@ vars = {
   'checkout_simplechrome': '"{cros_boards}" != ""',
   'checkout_simplechrome_with_vms': '"{cros_boards_with_qemu_images}" != ""',
 
-  'nw_src_revision': '09e5c58403e299ff5013d2c9fa9cf84d76e13f89',
-  'nw_v8_revision': '9c159088a63341e92b9d96135129f1551c39f467',
+  'nw_src_revision': '56cb09087b07b373810463c14bf33c19363e6880',
+  'nw_v8_revision': 'e10550ef0bf4a6b9691e979a903c53b41a0c7311',
   'nw_node_revision': '173afa38e81a44356272ea0673d69bf87089f314',
 
   # ANGLE's deps are relative to the angle_root variable.
@@ -205,7 +205,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'd2fef9fb0ac356d6cf6759f29e2b56ebea8bc58d',
+  'v8_revision': '3cd8a8915ce4f62b50e6371f5b7fc155b5d78413',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -1573,7 +1573,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@19cbbda7bd3067eeba6c0f7f22026fb57136a84d',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@2f3f492fc1edb354af4e307f3ad873380d56cf61',
     'condition': 'checkout_src_internal',
   },
 
