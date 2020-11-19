@@ -1,3 +1,8 @@
+0.50.0 / 11-19-2020
+===================
+- Update Chromium to [87.0.4280.66](https://chromereleases.googleblog.com/2020/11/stable-channel-update-for-desktop_17.html)
+- Add support for Wayland [(#5705)](https://github.com/nwjs/nw.js/issues/5705)
+
 0.49.2 / 11-01-2020
 ===================
 - Update Node.js to [v15.0.1](https://nodejs.org/en/blog/release/v15.0.1/)
