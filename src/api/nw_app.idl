@@ -5,7 +5,12 @@
 // nw APP API
 [implemented_in="content/nw/src/api/nw_app_api.h"]
 namespace nw.App {
+  enum ComponentExtensions {
+    WIDEVINE
+  };
   callback EventCallback = void();
+  callback ErrorCallback = void(boolean result);
+  callback ComponentCallback = void(DOMString version);
   interface Functions {
     // crash the renderer for testing
     [nocompile] static void crashRenderer();
@@ -15,6 +20,8 @@ namespace nw.App {
     [nocompile] static void removeListener(DOMString event,
                                            EventCallback callback);
     [nocompile] static void removeAllListeners(DOMString event);
+    static void enableComponent(ComponentExtensions extension_id, ComponentCallback callback);
+    static void updateComponent(ComponentExtensions extension_id, ErrorCallback callback);
     static void quit();
     static void closeAllWindows();
     static void clearCache();

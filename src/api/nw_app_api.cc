@@ -11,6 +11,9 @@
 #include "content/public/browser/browser_task_traits.h"
 #include "components/browsing_data/content/appcache_helper.h"
 #include "components/browsing_data/content/browsing_data_helper.h"
+#include "components/component_updater/component_updater_service.h"
+#include "chrome/browser/browser_process.h"
+#include "chrome/browser/component_updater/widevine_cdm_component_installer.h"
 #include "chrome/browser/devtools/devtools_window.h"
 #include "chrome/browser/extensions/devtools_util.h"
 #include "chrome/browser/extensions/extension_service.h"
@@ -97,6 +100,49 @@ NwAppCloseAllWindowsFunction::Run() {
         base::Bind(&NwAppCloseAllWindowsFunction::DoJob, registry, extension()->id()));
 
   return RespondNow(NoArguments());
+}
+
+ExtensionFunction::ResponseAction
+NwAppEnableComponentFunction::Run() {
+  component_updater::RegisterWidevineCdmComponent(g_browser_process->component_updater(),
+                                                  base::BindOnce(&NwAppEnableComponentFunction::OnRegistered,
+                                                                 this));
+  return RespondLater();
+}
+
+void NwAppEnableComponentFunction::OnRegistered() {
+  std::string ret;
+  const std::vector<component_updater::ComponentInfo> component_list =
+    g_browser_process->component_updater()->GetComponents();
+
+  for (const auto& component : component_list) {
+    if (component.id == "oimompecagnajdejgnnjijobebaeigek") {
+      ret = component.version.GetString();
+    }
+  }
+  auto result_value = std::make_unique<base::Value>(ret);
+
+  Respond(OneArgument(std::move(result_value)));
+}
+
+ExtensionFunction::ResponseAction
+  NwAppUpdateComponentFunction::Run() {
+  g_browser_process->component_updater()->GetOnDemandUpdater().OnDemandUpdate(
+   "oimompecagnajdejgnnjijobebaeigek", component_updater::OnDemandUpdater::Priority::FOREGROUND,
+   base::BindOnce(&NwAppUpdateComponentFunction::OnUpdated, this));
+
+  return RespondLater();
+}
+
+void NwAppUpdateComponentFunction::OnUpdated(update_client::Error error) {
+  bool ret = (error == update_client::Error::NONE);
+  auto result_value = std::make_unique<base::Value>(ret);
+  if (ret) {
+    Respond(OneArgument(std::move(result_value)));
+  } else {
+    VLOG(1) << "update component error: " << (int)error;
+    Respond(OneArgument(std::move(result_value)));
+  }
 }
 
 NwAppGetArgvSyncFunction::NwAppGetArgvSyncFunction() {

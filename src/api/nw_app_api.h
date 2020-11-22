@@ -6,6 +6,7 @@
 #include "base/run_loop.h"
 #include "content/public/browser/browsing_data_remover.h"
 #include "extensions/browser/extension_function.h"
+#include "components/update_client/update_client_errors.h"
 
 namespace extensions {
 class AppWindowRegistry;
@@ -37,6 +38,32 @@ class NwAppCloseAllWindowsFunction : public ExtensionFunction {
   // ExtensionFunction:
   ResponseAction Run() override;
   DECLARE_EXTENSION_FUNCTION("nw.App.closeAllWindows", UNKNOWN)
+};
+
+class NwAppEnableComponentFunction : public ExtensionFunction {
+ public:
+  NwAppEnableComponentFunction() {}
+
+ protected:
+  ~NwAppEnableComponentFunction() override {}
+
+  void OnRegistered();
+  // ExtensionFunction:
+  ResponseAction Run() override;
+  DECLARE_EXTENSION_FUNCTION("nw.App.enableComponent", UNKNOWN)
+};
+
+class NwAppUpdateComponentFunction : public ExtensionFunction {
+ public:
+  NwAppUpdateComponentFunction() {}
+
+ protected:
+  ~NwAppUpdateComponentFunction() override {}
+
+  void OnUpdated(update_client::Error error);
+  // ExtensionFunction:
+  ResponseAction Run() override;
+  DECLARE_EXTENSION_FUNCTION("nw.App.updateComponent", UNKNOWN)
 };
 
 class NwAppGetArgvSyncFunction : public NWSyncExtensionFunction {
