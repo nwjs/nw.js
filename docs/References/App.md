@@ -60,6 +60,14 @@ Send the `close` event to all windows of current app, if no window is blocking t
 
 These 2 functions crashes the browser process and the renderer process respectively, to test the [Crash dump](../For Developers/Understanding Crash Dump.md) feature.
 
+## App.enableComponent(component, callback)
+
+!!! warning "Experimental"
+    This API is experimental and subject to change.
+
+* `component` `{String}` ID of component; currently only `WIDEVINE` is supported.
+* `callback` `function(version)` callback after the component is enabled; `version` string parameter is the version of the enabled component. '0.0.0.0' means it's not installed. Use `App.updateComponent()` to install it.
+
 ## App.getProxyForURL(url)
 
 * `url` `{String}` the URL to query for proxy
@@ -176,6 +184,14 @@ See [Shortcut](Shortcut.md) for more information.
 Unregisters a global keyboard shortcut.
 
 See [Shortcut](Shortcut.md) for more information.
+
+## App.updateComponent(component, callback)
+
+!!! warning "Experimental"
+    This API is experimental and subject to change.
+
+* `component` `{String}` ID of component; currently only `WIDEVINE` is supported.
+* `callback` `function(success)` callback after the component is updated; `success` is a boolean parameter for the update result.
 
 ## Event: open(args)
 
