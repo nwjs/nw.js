@@ -1,3 +1,12 @@
+0.50.1 / 11-25-2020
+===================
+- Update Node.js to [v15.3.0](https://nodejs.org/en/blog/release/v15.3.0/)
+- Add Widevine support [(#6425)](https://github.com/nwjs/nw.js/issues/6425)
+- Fix: Flawed ZLib inflateRaw output [(#7625)](https://github.com/nwjs/nw.js/issues/7625)
+- Fix: libffmpeg.dylib and libnode.dylib missing in normal flavor [(#7623)](https://github.com/nwjs/nw.js/issues/7623)
+- Fix compilation setting in Node for arm64
+- [docs] add App.enableComponent and App.updateComponent
+
 0.50.0 / 11-19-2020
 ===================
 - Update Chromium to [87.0.4280.66](https://chromereleases.googleblog.com/2020/11/stable-channel-update-for-desktop_17.html)
