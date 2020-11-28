@@ -50,7 +50,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "linux64, mac64, win, win64, android",
+  "buildspec_platforms": "all",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -166,9 +166,9 @@ vars = {
   'checkout_simplechrome': '"{cros_boards}" != ""',
   'checkout_simplechrome_with_vms': '"{cros_boards_with_qemu_images}" != ""',
 
-  'nw_src_revision': '0ffab9c83a173490c6e13c9eb1674545d39b55ad',
-  'nw_v8_revision': '050bd3e40169233b81137ed7f344f49ebc2f16dd',
-  'nw_node_revision': '49b68d6512c3eb65cef59504f5a4487a772ab081',
+  'nw_src_revision': '874a66b3fd43ae52f6f570b5fd6ee828a2e5c4e8',
+  'nw_v8_revision': 'e10550ef0bf4a6b9691e979a903c53b41a0c7311',
+  'nw_node_revision': 'd168d6d2f33b9f824b7ff4edd4850dad7da250bd',
 
   # ANGLE's deps are relative to the angle_root variable.
   'angle_root': 'src/third_party/angle',
@@ -201,11 +201,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '73c703c2bdbde9a7602bc017f08376bfb4c79f33',
+  'skia_revision': '489348851cca51b23f522734b6db3c785ffdfaed',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '07b417d116f048d31f0ae53bef81acf68f074504',
+  'v8_revision': '3cd8a8915ce4f62b50e6371f5b7fc155b5d78413',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -1459,7 +1459,7 @@ deps = {
 
   # Display server protocol for Linux.
   'src/third_party/wayland/src': {
-      'url': Var('chromium_git') + '/external/anongit.freedesktop.org/git/wayland/wayland.git' + '@' + 'eb1339edd398b9f5328816931e585db4229aa132',
+      'url': Var('chromium_git') + '/external/anongit.freedesktop.org/git/wayland/wayland.git' + '@' + 'e091839dd08354289e501a47219e0c7a6472dff3',
       'condition': 'checkout_linux',
   },
 
@@ -1495,7 +1495,7 @@ deps = {
   },
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + '69202b2a57b8b7f7046dc26930aafd6f779a152e',
+    Var('webrtc_git') + '/src.git' + '@' + 'a1aa01aad009d29d7fa00f6d407d919372e5ecf8',
 
   'src/third_party/libgifcodec':
      Var('skia_git') + '/libgifcodec' + '@'+  Var('libgifcodec_revision'),
@@ -1573,7 +1573,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@727e7f18f649af8add3256f6039dbe8698d8bf06',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@2f3f492fc1edb354af4e307f3ad873380d56cf61',
     'condition': 'checkout_src_internal',
   },
 
