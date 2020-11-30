@@ -173,7 +173,7 @@ vars = {
   'checkout_simplechrome': '"{cros_boards}" != ""',
   'checkout_simplechrome_with_vms': '"{cros_boards_with_qemu_images}" != ""',
 
-  'nw_src_revision': '611c24e56effe0a6c25db05137d38748c9242cb8',
+  'nw_src_revision': '0ff5e6985894fc4fe13a977af18f62984da44a76',
   'nw_v8_revision': '620934fabc13d7fd333e3aacafb8e5fbb40c952f',
   'nw_node_revision': 'd168d6d2f33b9f824b7ff4edd4850dad7da250bd',
 
