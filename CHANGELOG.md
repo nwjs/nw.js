@@ -1,3 +1,8 @@
+0.50.2 / 12-06-2020
+===================
+- Update Chromium to [87.0.4280.88](https://chromereleases.googleblog.com/2020/12/stable-channel-update-for-desktop.html)
+- Fix: Sometimes webview.addContentScripts injects script into "mainWorld" [(#7597)](https://github.com/nwjs/nw.js/issues/7597)
+
 0.50.1 / 11-25-2020
 ===================
 - Update Node.js to [v15.3.0](https://nodejs.org/en/blog/release/v15.3.0/)
