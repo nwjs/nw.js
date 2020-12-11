@@ -93,7 +93,6 @@ namespace nw {
 namespace {
 std::string g_extension_id, g_extension_root;
 extensions::Dispatcher* g_dispatcher = NULL;
-bool g_skip_render_widget_hidden = false;
 
 static inline v8::Local<v8::String> v8_str(const char* x) {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
@@ -663,24 +662,8 @@ void willHandleNavigationPolicy(content::RenderView* rv,
     *policy = blink::kWebNavigationPolicyNewPopup;
 }
 
-typedef bool (*RenderWidgetWasHiddenHookFn)(content::RenderWidget*);
-#if defined(COMPONENT_BUILD)
-CONTENT_EXPORT RenderWidgetWasHiddenHookFn gRenderWidgetWasHiddenHook;
-#else
-extern RenderWidgetWasHiddenHookFn gRenderWidgetWasHiddenHook;
-#endif
-
-bool RenderWidgetWasHiddenHook(content::RenderWidget* rw) {
-  return g_skip_render_widget_hidden;
-}
-
 void ExtensionDispatcherCreated(extensions::Dispatcher* dispatcher) {
   g_dispatcher = dispatcher;
-  const base::CommandLine& command_line =
-      *base::CommandLine::ForCurrentProcess();
-  if (command_line.HasSwitch(switches::kDisableRAFThrottling))
-    g_skip_render_widget_hidden = true;
-  nw::gRenderWidgetWasHiddenHook = RenderWidgetWasHiddenHook;
 }
 
 void OnRenderProcessShutdownHook(extensions::ScriptContext* context) {
