@@ -55,12 +55,12 @@ if not os.path.isabs(binaries_location):
     binaries_location = os.path.join(os.getcwd(), binaries_location)
 
 if not os.path.isdir(binaries_location):
-    print 'Invalid path: ' + binaries_location
+    print ('Invalid path: ' + binaries_location)
     exit(-1)
 binaries_location = os.path.normpath(binaries_location)
 dist_dir = os.path.join(binaries_location, 'dist')
 
-print 'Working on ' + binaries_location
+print ('Working on ' + binaries_location)
 
 nwfolder = os.path.join(dist_dir, '..', 'nwdist')
 try:
@@ -80,7 +80,7 @@ elif sys.platform in ('win32', 'cygwin'):
 elif sys.platform == 'darwin':
     platform_name = 'osx'
 else:
-    print 'Unsupported platform: ' + sys.platform
+    print ('Unsupported platform: ' + sys.platform)
     exit(-1)
 
 _arch = platform.architecture()[0]
@@ -89,7 +89,7 @@ if _arch == '64bit':
 elif _arch == '32bit':
     arch = 'ia32'
 else:
-    print 'Unsupported arch: ' + _arch
+    print ('Unsupported arch: ' + _arch)
     exit(-1)
 
 if platform_name == 'win':
@@ -222,7 +222,7 @@ def generate_target_nw(platform_name, arch, version):
             target['input'].append('minidump_stackwalk')
             target['input'].append('v8_context_snapshot.x86_64.bin')
     else:
-        print 'Unsupported platform: ' + platform_name
+        print ('Unsupported platform: ' + platform_name)
         exit(-1)
     return target
 
@@ -282,7 +282,7 @@ def generate_target_symbols(platform_name, arch, version):
                           ]
         target['folder'] = True
     else:
-        print 'Unsupported platform: ' + platform_name
+        print ('Unsupported platform: ' + platform_name)
         exit(-1)
     return target
 
@@ -296,10 +296,10 @@ def generate_target_headers(platform_name, arch, version):
     # here , call make-nw-headers.py to generate nw headers
     make_nw_header = os.path.join(os.path.dirname(__file__), \
                                   'make-nw-headers.py')
-    print make_nw_header
+    print (make_nw_header)
     res = call(['python', make_nw_header, '-p', binaries_location, '-n', platform_name])
     if res == 0:
-        print 'nw-headers generated'
+        print ('nw-headers generated')
         nw_headers_name = 'nw-headers-v' + version + '.tar.gz'
         nw_headers_path = os.path.join(os.path.dirname(__file__), \
                                        os.pardir, 'tmp', nw_headers_name)
@@ -315,7 +315,7 @@ def generate_target_headers(platform_name, arch, version):
         target['input'].append('SHASUMS256.txt')
     else:
         #TODO, handle err
-        print 'nw-headers generate failed'
+        print ('nw-headers generate failed')
     return target
 
 def generate_target_empty(platform_name, arch, version):
@@ -372,7 +372,7 @@ def ZipDir(inputDir, outputZip):
                     zipInfo.create_system = 3
                     # long type of hex val of '0xA1ED0000L',
                     # say, symlink attr magic...
-                    zipInfo.external_attr = 2716663808L
+                    zipInfo.external_attr = 2716663808
                     zipOut.writestr(zipInfo, os.readlink(fullPath))
                 else:
                     zipOut.write(fullPath, archiveRoot, zipfile.ZIP_DEFLATED)
@@ -394,13 +394,13 @@ def compress(from_dir, to_dir, fname, compress):
             z.close()
     elif compress == 'tar.gz': # only for folders
         if not os.path.isdir(_from):
-            print 'Will not create tar.gz for a single file: ' + _from
+            print ('Will not create tar.gz for a single file: ' + _from)
             exit(-1)
         with tarfile.open(_to + '.tar.gz', 'w:gz') as tar:
             tar.add(_from, arcname=os.path.basename(_from))
     elif compress == 'gz': # only for single file
         if os.path.isdir(_from):
-            print 'Will not create gz for a folder: ' + _from
+            print ('Will not create gz for a folder: ' + _from)
             exit(-1)
         f_in = open(_from, 'rb')
         f_out = gzip.open(_to + '.gz', 'wb')
@@ -408,7 +408,7 @@ def compress(from_dir, to_dir, fname, compress):
         f_out.close()
         f_in.close()
     else:
-        print 'Unsupported compression format: ' + compress
+        print ('Unsupported compression format: ' + compress)
         exit(-1)
 
 
@@ -418,13 +418,13 @@ def make_packages(targets):
         for f in t['input']:
             src = os.path.join(binaries_location, f)
             if not os.path.exists(src):
-                print 'File does not exist: ', src
+                print ('File does not exist: ', src)
                 exit(-1)
 
     # clear the output folder
     if os.path.exists(dist_dir):
         if not os.path.isdir(dist_dir):
-            print 'Invalid path: ' + dist_dir
+            print ('Invalid path: ' + dist_dir)
             exit(-1)
         else:
             shutil.rmtree(dist_dir)
@@ -441,10 +441,10 @@ def make_packages(targets):
                     dest = os.path.join(dist_dir, t['output'])
                 else:
                     dest = os.path.join(dist_dir, f)
-                print "Copying " + f
+                print ("Copying " + f)
                 shutil.copy(src, dest)
-        elif (t.has_key('folder') and t['folder'] == True) or len(t['input']) > 1:
-            print 'Making "' + t['output'] + '.' + t['compress'] + '"'
+        elif ('folder' in t and t['folder'] == True) or len(t['input']) > 1:
+            print ('Making "' + t['output'] + '.' + t['compress'] + '"')
             # copy files into a folder then pack
             folder = os.path.join(dist_dir, t['output'])
             os.mkdir(folder)
@@ -461,13 +461,13 @@ def make_packages(targets):
                     shutil.copy(src, dest)
             compress(dist_dir, dist_dir, t['output'], t['compress'])
             # remove temp folders
-            if (t.has_key('keep4test')) :
+            if ('keep4test' in t) :
                 shutil.copytree(folder, nwfolder, symlinks=True)
             
             shutil.rmtree(folder)
         else:
             # single file
-            print 'Making "' + t['output'] + '.' + t['compress'] + '"'
+            print ('Making "' + t['output'] + '.' + t['compress'] + '"')
             compress(binaries_location, dist_dir, t['input'][0], t['compress'])
 
 # must be aligned with steps
@@ -487,7 +487,7 @@ for s in steps:
             continue
     targets.append(generators[s](platform_name, arch, nw_ver))
 
-print 'Creating packages...'
+print ('Creating packages...')
 make_packages(targets)
 
 # vim: et:ts=4:sw=4
