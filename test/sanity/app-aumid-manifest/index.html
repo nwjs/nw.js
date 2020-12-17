@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>AUMID</title>
+</head>
+<body>
+  <button id="show" onclick="showAUMID()">Show AUMID</button><br>
+  <input id="aumid" value="" placeholder="AppUserModelID"><button id="set-aumid" onclick="setAUMID()">Set</button><br>
+  <button id="show-def" onclick="showDefaultAUMID()">Show Default AUMID</button><br>
+  <input id="aumid-def" value="" placeholder="Default AppUserModelID"><button id="set-def" onclick="setDefaultAUMID()">Set</button><br>
+  <button id="open" onclick="openWin()">Open without AUMID</button><br>
+  <input id="aumid-win" value="" placeholder="AppUserModelID for new window"><button id="open-aumid" onclick="openWinAUMID()">Open with AUMID</button>
+  <script>
+  function out(id, msg) {
+    var h1 = document.createElement('h1');
+    h1.setAttribute('id', id);
+    h1.innerHTML = msg;
+    document.body.appendChild(h1);
+  }
+
+  var id = 1;
+  function showAUMID() {
+    var aumid = nw.Window.get().getAppUserModelID();
+    out('result-' + (id++), 'AUMID: ' + aumid);
+  }
+
+  function setAUMID() {
+    var aumid = document.getElementById('aumid').value;
+    nw.Window.get().setAppUserModelID(aumid);
+  }
+
+  function showDefaultAUMID() {
+    var def_aumid = nw.App.getDefaultAppUserModelID();
+    out('result-' + (id++), 'Default AUMID: ' + def_aumid);
+  }
+
+  function setDefaultAUMID() {
+    var aumid = document.getElementById('aumid-def').value;
+    nw.App.setDefaultAppUserModelID(aumid);
+  }
+
+  function openWin() {
+    nw.Window.open('index.html');
+  }
+
+  function openWinAUMID() {
+    var aumid = document.getElementById('aumid-win').value;
+    nw.Window.open('index.html', {'app_user_model_id': aumid});
+  }
+  </script>
+</body>
+</html>

@@ -26,6 +26,8 @@ namespace nw.App {
     static DOMString[] getArgvSync();
     static DOMString getDataPath();
     static void crashBrowser();
+    static DOMString getDefaultAppUserModelID();
+    static void setDefaultAppUserModelID(DOMString app_id);
   };
   interface Events {
     static void onOpen(DOMString cmdline);

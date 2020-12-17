@@ -117,5 +117,31 @@ class NwAppCrashBrowserFunction : public AsyncExtensionFunction {
   DECLARE_EXTENSION_FUNCTION("nw.App.crashBrowser", UNKNOWN)
 };
 
+class NwAppGetDefaultAppUserModelIDFunction : public NWSyncExtensionFunction {
+ public:
+  NwAppGetDefaultAppUserModelIDFunction(){}
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
+    
+ protected:
+  ~NwAppGetDefaultAppUserModelIDFunction() override {}
+    
+  DECLARE_EXTENSION_FUNCTION("nw.App.getDefaultAppUserModelID", UNKNOWN)
+ private:
+  DISALLOW_COPY_AND_ASSIGN(NwAppGetDefaultAppUserModelIDFunction);
+};
+
+class NwAppSetDefaultAppUserModelIDFunction : public NWSyncExtensionFunction {
+ public:
+  NwAppSetDefaultAppUserModelIDFunction(){}
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
+    
+ protected:
+  ~NwAppSetDefaultAppUserModelIDFunction() override {}
+    
+  DECLARE_EXTENSION_FUNCTION("nw.App.setDefaultAppUserModelID", UNKNOWN)
+ private:
+  DISALLOW_COPY_AND_ASSIGN(NwAppSetDefaultAppUserModelIDFunction);
+};
+
 } // namespace extensions
 #endif

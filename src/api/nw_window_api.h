@@ -300,5 +300,25 @@ class NwCurrentWindowInternalSetPrintSettingsInternalFunction : public NWSyncExt
    ~NwCurrentWindowInternalSetPrintSettingsInternalFunction() override {}
    DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setPrintSettingsInternal", UNKNOWN)
 };
+
+class NwCurrentWindowInternalGetAppUserModelIDFunction : public NWSyncExtensionFunction {
+ public:
+   NwCurrentWindowInternalGetAppUserModelIDFunction() {}
+   bool RunNWSync(base::ListValue* response, std::string* error) override;
+
+ protected:
+   ~NwCurrentWindowInternalGetAppUserModelIDFunction() override {}
+   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.getAppUserModelID", UNKNOWN)
+};
+
+class NwCurrentWindowInternalSetAppUserModelIDFunction : public NWSyncExtensionFunction {
+ public:
+   NwCurrentWindowInternalSetAppUserModelIDFunction() {}
+   bool RunNWSync(base::ListValue* response, std::string* error) override;
+
+ protected:
+   ~NwCurrentWindowInternalSetAppUserModelIDFunction() override {}
+   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setAppUserModelID", UNKNOWN)
+};
 } // namespace extensions
 #endif

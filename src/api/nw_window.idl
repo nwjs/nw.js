@@ -40,6 +40,7 @@ namespace nw.Window {
     [nodoc] DOMString? icon;
     [nodoc] DOMString? inject_js_start;
     [nodoc] DOMString? inject_js_end;
+    [nodoc] DOMString? app_user_model_id;
   };
 
   [noinline_doc] dictionary NWWindow {
@@ -73,6 +74,8 @@ namespace nw.Window {
     static void removeAllListeners(DOMString event);
     static void reload();
     static void reloadIgnoringCache();
+    static DOMString getAppUserModelID();
+    static void setAppUserModelID(DOMString id);
 
     static void eval(object frame, DOMString script);
     static void evalNWBin(object frame, DOMString path);

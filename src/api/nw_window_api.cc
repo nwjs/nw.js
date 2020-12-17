@@ -38,6 +38,7 @@
 #include "ui/gfx/platform_font.h"
 #include "ui/display/win/dpi.h"
 #include "ui/views/win/hwnd_util.h"
+#include "chrome/browser/ui/views/apps/chrome_native_app_window_views_win.h"
 #endif
 
 #if defined(OS_LINUX)
@@ -743,6 +744,48 @@ bool NwCurrentWindowInternalSetShowInTaskbarFunction::RunAsync() {
   NWSetNSWindowShowInTaskbar(native_window, show);
 #endif
   SendResponse(true);
+  return true;
+}
+
+bool NwCurrentWindowInternalGetAppUserModelIDFunction::RunNWSync(base::ListValue* response, std::string* error) {
+#if defined(OS_WIN)
+  AppWindow* app_window = getAppWindow(this);
+
+  if (!app_window) {
+    *error = "cannot get current window; are you in background page/node context?";
+    return false;
+  }
+  
+  ChromeNativeAppWindowViewsWin* native_app_window = static_cast<ChromeNativeAppWindowViewsWin*>(app_window->GetBaseWindow());
+  response->AppendString(native_app_window->app_model_id());
+#endif
+  return true;
+}
+
+bool NwCurrentWindowInternalSetAppUserModelIDFunction::RunNWSync(base::ListValue* response, std::string* error) {
+#if defined(OS_WIN)
+  EXTENSION_FUNCTION_VALIDATE(args_);
+
+  if (!args_->GetSize())
+    return false;
+  base::string16 app_id;
+  if (!args_->GetString(0, &app_id))
+    return false;
+  if (app_id.empty()) {
+      *error = "AppUserModelID cannot set to empty string";
+      return false;
+  }
+
+  AppWindow* app_window = getAppWindow(this);
+
+  if (!app_window) {
+    *error = "cannot get current window; are you in background page/node context?";
+    return false;
+  }
+
+  ChromeNativeAppWindowViewsWin* native_app_window = static_cast<ChromeNativeAppWindowViewsWin*>(app_window->GetBaseWindow());
+  native_app_window->SetAppModelId(app_id);
+#endif
   return true;
 }
 
