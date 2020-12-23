@@ -156,7 +156,7 @@ void WebWorkerStartThreadHook(blink::Frame* frame, const char* path, std::string
   if (frame) {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
     v8::HandleScope scope(isolate);
-    blink::WebFrame* web_frame = blink::WebFrame::FromFrame(frame);
+    blink::WebFrame* web_frame = blink::WebFrame::FromCoreFrame(frame);
     blink::WebLocalFrame* local_frame = web_frame->ToWebLocalFrame();
     v8::Local<v8::Context> v8_context = local_frame->MainWorldScriptContext();
     ScriptContext* script_context =
