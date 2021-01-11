@@ -50,7 +50,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "all",
+  "buildspec_platforms": "linux64, mac64, win, win64, android",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -166,8 +166,8 @@ vars = {
   'checkout_simplechrome': '"{cros_boards}" != ""',
   'checkout_simplechrome_with_vms': '"{cros_boards_with_qemu_images}" != ""',
 
-  'nw_src_revision': '83a0e8bee7557c4a3413243b41f01eba535a51ae',
-  'nw_v8_revision': '247a406daadc05b8e1d9a26028e073e330f626ef',
+  'nw_src_revision': '0ffab9c83a173490c6e13c9eb1674545d39b55ad',
+  'nw_v8_revision': '050bd3e40169233b81137ed7f344f49ebc2f16dd',
   'nw_node_revision': '49b68d6512c3eb65cef59504f5a4487a772ab081',
 
   # ANGLE's deps are relative to the angle_root variable.
@@ -201,11 +201,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '489348851cca51b23f522734b6db3c785ffdfaed',
+  'skia_revision': '73c703c2bdbde9a7602bc017f08376bfb4c79f33',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '45d51f3f97a6058fced26b9c378fba5dcd924704',
+  'v8_revision': '07b417d116f048d31f0ae53bef81acf68f074504',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -1459,7 +1459,7 @@ deps = {
 
   # Display server protocol for Linux.
   'src/third_party/wayland/src': {
-      'url': Var('chromium_git') + '/external/anongit.freedesktop.org/git/wayland/wayland.git' + '@' + 'e091839dd08354289e501a47219e0c7a6472dff3',
+      'url': Var('chromium_git') + '/external/anongit.freedesktop.org/git/wayland/wayland.git' + '@' + 'eb1339edd398b9f5328816931e585db4229aa132',
       'condition': 'checkout_linux',
   },
 
@@ -1573,7 +1573,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@793bbaac5d5aa00d07666c05446a37949c634aee',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@727e7f18f649af8add3256f6039dbe8698d8bf06',
     'condition': 'checkout_src_internal',
   },
 
