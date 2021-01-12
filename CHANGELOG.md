@@ -1,3 +1,10 @@
+0.50.3 / 01-12-2021
+===================
+- Update Chromium to [87.0.4280.141](https://chromereleases.googleblog.com/2021/01/stable-channel-update-for-desktop.html)
+- Update to Node.js [v15.5.1](https://nodejs.org/en/blog/release/v15.5.1/)
+- Fix: Program doesn't fully quit when a webview's devtools are opened in a webview [(#7588)](https://github.com/nwjs/nw.js/issues/7588)
+- Fix: setTimeout callback not executing in new_instance Window [(#7554)](https://github.com/nwjs/nw.js/issues/7554)
+
 0.50.2 / 12-06-2020
 ===================
 - Update Chromium to [87.0.4280.88](https://chromereleases.googleblog.com/2020/12/stable-channel-update-for-desktop.html)
