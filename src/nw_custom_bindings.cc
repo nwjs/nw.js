@@ -248,7 +248,7 @@ void NWCustomBindings::EvalScript(
 #if defined(OS_WIN)
   base::string16 jscript((WCHAR*)*v8::String::Value(isolate, args[1]));
 #else
-  base::string16 jscript = *v8::String::Value(isolate, args[1]);
+  base::string16 jscript((char16_t*)*v8::String::Value(isolate, args[1]));
 #endif
   if (web_frame) {
     blink::WebLocalFrame* local_frame = web_frame->ToWebLocalFrame();
