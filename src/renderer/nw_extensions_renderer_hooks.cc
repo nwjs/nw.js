@@ -437,6 +437,9 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
   blink::ScriptForbiddenScope::AllowUserAgentScript script;
   blink::WebLocalFrame* web_frame = frame->GetWebFrame();
   GURL frame_url = ScriptContext::GetDocumentLoaderURLForFrame(web_frame);
+  content::RenderFrame* main_frame = frame->GetRenderView()->GetMainRenderFrame();
+  if (!main_frame)
+    return;
   if (web_frame->Parent() && (!frame_url.is_valid() || frame_url.is_empty()))
     return;
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
@@ -458,7 +461,6 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
   arguments.push_back(v8::Boolean::New(isolate, start));
   arguments.push_back(window);
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    content::RenderFrame* main_frame = frame->GetRenderView()->GetMainRenderFrame();
     arguments.push_back(v8::Integer::New(isolate, main_frame->GetRoutingID()));
 
     std::set<ScriptContext*> contexts(dispatcher->script_context_set().contexts());
@@ -495,11 +497,14 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
   GURL frame_url = ScriptContext::GetDocumentLoaderURLForFrame(frame);
   if (frame->Parent() && (!frame_url.is_valid() || frame_url.is_empty()))
     return;
+  content::RenderFrameImpl* render_frame = content::RenderFrameImpl::FromWebFrame(frame);
+  content::RenderFrame* main_frame = render_frame->GetRenderView()->GetMainRenderFrame();
+  if (!main_frame)
+    return;
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::HandleScope hscope(isolate);
   frame->GetDocument().GetSecurityOrigin().grantUniversalAccess();
   frame->setNodeJS(true);
-  content::RenderFrameImpl* render_frame = content::RenderFrameImpl::FromWebFrame(frame);
   auto* frame_host = render_frame->GetFrameHost();
   frame_host->SetNodeJS(true);
   std::string path = effective_document_url.path();
