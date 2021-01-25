@@ -155,7 +155,7 @@ CONTENT_EXPORT void OSXOpenURLsHook(const std::vector<GURL>& startup_urls) {
 }
 #endif
 
-void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, blink::web_pref::WebPreferences* web_prefs) {
+void OverrideWebkitPrefsHook(content::WebContents* web_contents, blink::web_pref::WebPreferences* web_prefs) {
   nw::Package* package = nw::package();
   if (!package)
     return;

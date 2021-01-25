@@ -98,7 +98,7 @@ void DocumentFinishHook(blink::WebLocalFrame* frame,
  void ReloadExtensionHook(const extensions::Extension*);
  bool IsReloadingApp();
  void KickNextTick();
- void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, blink::web_pref::WebPreferences* web_prefs);
+ void OverrideWebkitPrefsHook(content::WebContents* web_contents, blink::web_pref::WebPreferences* web_prefs);
  bool PinningRenderer();
  void SetPinningRenderer(bool pin);
  void ShowDevtools(bool show, content::WebContents* web_contents, content::WebContents* container = nullptr);

@@ -44,7 +44,7 @@ CONTENT_EXPORT void RendererProcessTerminatedHook(content::RenderProcessHost* pr
 bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_line,
                                              const base::FilePath& current_directory);
 // ref in chrome/browser/chrome_content_browser_client.cc
-CONTENT_EXPORT void OverrideWebkitPrefsHook(content::RenderViewHost* rvh, blink::web_pref::WebPreferences* web_prefs);
+CONTENT_EXPORT void OverrideWebkitPrefsHook(content::WebContents* web_conents, blink::web_pref::WebPreferences* web_prefs);
 // ref in chrome/browser/chrome_content_browser_client.cc
 // content/browser/renderer_host/render_process_host_impl.cc
 // content/browser/site_instance_impl.cc
