@@ -1,7 +1,3 @@
-#define INSIDE_BLINK 1
-#include "third_party/blink/public/platform/web_rect.h"
-#undef INSIDE_BLINK
-
 #include "nw_extensions_renderer_hooks.h"
 #include "content/public/common/content_features.h"
 // nw
