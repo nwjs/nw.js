@@ -4,7 +4,6 @@
 #include "content/nw/src/nw_custom_bindings.h"
 
 #define INSIDE_BLINK 1
-#include "third_party/blink/public/platform/web_rect.h"
 
 #undef INSIDE_BLINK
 #include "content/renderer/render_view_impl.h"
