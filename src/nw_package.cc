@@ -471,15 +471,30 @@ void Package::ReadChromiumArgs() {
   // Expand Windows psudovars (ex; %APPDATA%) passed in chromium-args in the same way as when 
   // passed as command line parameters.
   #if defined(OS_WIN)
-  TCHAR szEnvPath[MAX_PATH];
   std::wstring ws; 
-  ws.assign( args.begin(), args.end());
-  if (ExpandEnvironmentStrings(ws.c_str(), szEnvPath,MAX_PATH) != 0) {
-    std::wstring ws_out = szEnvPath;
-    args = std::string(ws_out.begin(), ws_out.end());
-  } else {
-    ReportError("Failed to expand chromium args",args.c_str());
+  ws.assign(args.begin(), args.end());
+  DWORD szEnvPathSize = ws.size();
+  if (szEnvPathSize > 32000) {
+    // ExpandEnvironmentStrings is limited to a string length of 32,000. This is unlikely to happen for chromium-args, but it could be an issue, so tell the user.
+    ReportError("ExpandEnvironmentStrings does not support strings over 32,000 characters for chromium-args on Windows. Open an issue if you require this.", args.c_str());
   }
+  DWORD szEnvPathNewSize;
+  do {
+    TCHAR szEnvPath[szEnvPathSize];
+    szEnvPathNewSize = ExpandEnvironmentStrings(ws.c_str(), szEnvPath, szEnvPathSize);
+    if (szEnvPathNewSize == 0) {
+      ReportError("Failed to execute ExpandEnvironmentStrings on chromium-args", args.c_str());
+      break;
+    } else if (szEnvPathNewSize <= szEnvPathSize) {
+      // ExpandEnvironmentStrings ran without error and szEnvPath was large enough to hold the result 
+      std::wstring ws_out = szEnvPath;
+      args = std::string(ws_out.begin(), ws_out.end());
+      break;
+    } else {
+      // Resize szEnvPath to be the size of szEnvPathNewSize
+      szEnvPathSize = szEnvPathNewSize;
+    }
+  } while (true);
   #endif
   args = env_args + kChromiumArgsSeparator + args;
 
