@@ -1,8 +1,8 @@
 diff --git a/icu.gyp b/icu.gyp
-index bc88d8b7..92ad8641 100644
+index 7ec90095..66f2162e 100644
 --- icu.gyp
 +++ icu.gyp
-@@ -43,12 +43,22 @@
+@@ -43,8 +43,18 @@
          'defines': [
            'UCHAR_TYPE=wchar_t',
          ],
@@ -14,10 +14,6 @@ index bc88d8b7..92ad8641 100644
 +          },
 +        },
  	'cflags': [ '/utf-8' ],
-       },{
-         'defines': [
-           'UCHAR_TYPE=uint16_t',
-         ],
        }],
 +      ['OS=="win" and component == "shared_library"', {
 +        'libraries': ['<(PRODUCT_DIR)/../nw/libc++.dll.lib'],
