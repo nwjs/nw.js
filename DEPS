@@ -49,7 +49,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "all",
+  "buildspec_platforms": "linux64, mac64, win, win64",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -173,8 +173,8 @@ vars = {
   'checkout_simplechrome': '"{cros_boards}" != ""',
   'checkout_simplechrome_with_vms': '"{cros_boards_with_qemu_images}" != ""',
 
-  'nw_src_revision': '3004242f1e06af6ecd7724566f67e3ab2cb9886c',
-  'nw_v8_revision': 'b6100bf8c4b9ba951d7f46a2ec6b2b2400f9f667',
+  'nw_src_revision': '0a4c5643946c935178e1b08f7a3229b5f48bcb58',
+  'nw_v8_revision': '9c3b184aab76b6f9dc1cd3a9bdfc3c97af02645f',
   'nw_node_revision': 'cedd38c8f287c123602c9fc9933243ba8f3e9b30',
 
   # ANGLE's deps are relative to the angle_root variable.
@@ -203,11 +203,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '21ebdec5170d890bb7fc7ec88d3dc0ee9995e600',
+  'skia_revision': '433b2a55a5fbc9e3f5a6b457526ad99d73ba6117',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'e71858f7a080b9bd813876c13be4ce30d993d1d9',
+  'v8_revision': '7439c236cb1282f351ee5fdec0b4b871d9606aee',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -278,7 +278,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling devtools-frontend
   # and whatever else without interference from each other.
-  'devtools_frontend_revision': '64b088dd1f2b228550e5bfa8970e91386bb316a1',
+  'devtools_frontend_revision': '37e581a98f5c8e491588b4803ba4e9a70ce2cf68',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libprotobuf-mutator
   # and whatever else without interference from each other.
@@ -1050,7 +1050,7 @@ deps = {
     Var('chromium_git') + '/chromium/deps/hunspell_dictionaries.git' + '@' + '18e09b9197a3b1d771c077c530d1a4ebad04c167',
 
   'src/third_party/icu':
-    Var('chromium_git') + '/chromium/deps/icu.git' + '@' + '6a33b647c0647c3eb97eae5432153ef2dfca7baa',
+    Var('chromium_git') + '/chromium/deps/icu.git' + '@' + 'd1e2bd28c490a92d410c8014b68527941e124212',
 
   'src/third_party/icu4j': {
       'packages': [
@@ -1472,7 +1472,7 @@ deps = {
   },
 
   'src/third_party/usrsctp/usrsctplib':
-    Var('chromium_git') + '/external/github.com/sctplab/usrsctp' + '@' + 'a3c3ef666b7a5e4c93ebae5a7462add6f86f5cf2',
+    Var('chromium_git') + '/external/github.com/sctplab/usrsctp' + '@' + '4191ca1784d8774dbf62d48ab9426c7311a91bc5',
 
   'src/third_party/vulkan_memory_allocator':
     Var('chromium_git') + '/external/github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git' + '@' + '6c656df63da5995a932aafd45b32af1974e497d9',
@@ -1593,7 +1593,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@accec3dc684dfc55a044399fa3ac64dbeb81d194',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@ab40b81d82d525f54e6b2af78ad2c8fdb0006d46',
     'condition': 'checkout_src_internal',
   },
 
@@ -1612,7 +1612,7 @@ deps = {
     'packages': [
       {
         'package': 'chromeos_internal/apps/media_app/app',
-        'version': 'SSN6hnE-dMi9FUYeDxsqZeGfqn6uLehMhkKF0mwWq-UC',
+        'version': 'oySoPSsP_--1KC5kxr1jeQ-gTSOKDY_lpNKu3eNucVsC',
       },
     ],
     'condition': 'checkout_chromeos and checkout_src_internal',
