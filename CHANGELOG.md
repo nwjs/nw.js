@@ -1,3 +1,9 @@
+0.51.1 / 02-08-2021
+===================
+- Update Chromium to [88.0.4324.150](https://chromereleases.googleblog.com/2021/02/stable-channel-update-for-desktop_4.html)
+- Update Node.js to [v15.8.0](https://nodejs.org/en/blog/release/v15.8.0)
+- Fix Devtools crash in Lighthouse
+
 0.51.0 / 01-22-2021
 ===================
 - Update Chromium to [88.0.4324.96](https://chromereleases.googleblog.com/2021/01/stable-channel-update-for-desktop_19.html)
