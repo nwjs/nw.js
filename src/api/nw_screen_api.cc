@@ -207,7 +207,7 @@ namespace extensions {
     if (screens) {
       std::unique_ptr<DesktopMediaList> screen_media_list =
         std::make_unique<NativeDesktopMediaList>(
-          content::DesktopMediaID::TYPE_SCREEN,
+          DesktopMediaList::Type::kScreen,
           webrtc::DesktopCapturer::CreateScreenCapturer(options));
       media_list_.push_back(std::move(screen_media_list));
     }
@@ -215,7 +215,7 @@ namespace extensions {
     if (windows) {
       std::unique_ptr<DesktopMediaList> window_media_list =
         std::make_unique<NativeDesktopMediaList>(
-          content::DesktopMediaID::TYPE_WINDOW,
+          DesktopMediaList::Type::kWindow,
           webrtc::DesktopCapturer::CreateWindowCapturer(options));
       media_list_.push_back(std::move(window_media_list));
     }
