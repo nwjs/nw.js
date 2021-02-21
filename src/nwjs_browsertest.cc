@@ -1196,7 +1196,7 @@ class NWJSDesktopCaptureApiTest : public NWAppTest {
 
 IN_PROC_BROWSER_TEST_F(NWJSDesktopCaptureApiTest, CrossDomain) {
   FakeDesktopMediaPickerFactory::TestFlags test_flags[] = {
-      {true, false, false, false,
+       {true, false, false, false, false,
        content::DesktopMediaID(content::DesktopMediaID::TYPE_SCREEN,
                                content::DesktopMediaID::kNullId), false},
   };
