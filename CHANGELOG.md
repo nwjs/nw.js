@@ -1,3 +1,9 @@
+0.51.2 / 02-21-2021
+===================
+- Update Chromium to [88.0.4324.182](https://chromereleases.googleblog.com/2021/02/stable-channel-update-for-desktop_16.html)
+- Fix: webview crash with devtools under amusingly specific conditions [(#7676)](https://github.com/nwjs/nw.js/issues/7676)
+- Fix: "Provisional headers are shown" in devTools network panel [(#7642)](https://github.com/nwjs/nw.js/issues/7642)
+
 0.51.1 / 02-08-2021
 ===================
 - Update Chromium to [88.0.4324.150](https://chromereleases.googleblog.com/2021/02/stable-channel-update-for-desktop_4.html)
