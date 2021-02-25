@@ -77,14 +77,14 @@ class NWAutofillClient
    void OnFirstUserGestureObserved() override;
 
  private:
-#if defined(OS_MACOSX) && !defined(OS_IOS)
+#if defined(OS_MAC) && !defined(OS_IOS)
   // Creates |bridge_wrapper_|, which is responsible for dealing with Keystone
   // notifications.
   void RegisterForKeystoneNotifications();
 
   // Deletes |bridge_wrapper_|.
   void UnregisterFromKeystoneNotifications();
-#endif  // defined(OS_MACOSX) && !defined(OS_IOS)
+#endif  // defined(OS_MAC) && !defined(OS_IOS)
 
   explicit NWAutofillClient(content::WebContents* web_contents);
   friend class content::WebContentsUserData<NWAutofillClient>;
@@ -93,7 +93,7 @@ class NWAutofillClient
   // base::WeakPtr<AutofillDialogController> dialog_controller_;
   base::WeakPtr<AutofillPopupControllerImpl> popup_controller_;
 
-#if defined(OS_MACOSX) && !defined(OS_IOS)
+#if defined(OS_MAC) && !defined(OS_IOS)
   // Listens to Keystone notifications and passes relevant ones on to the
   // PersonalDataManager.
   //
@@ -102,7 +102,7 @@ class NWAutofillClient
   // implementation file. This means that the pointer cannot be wrapped in a
   // scoped_ptr.
   // AutofillKeystoneBridgeWrapper* bridge_wrapper_;
-#endif  // defined(OS_MACOSX) && !defined(OS_IOS)
+#endif  // defined(OS_MAC) && !defined(OS_IOS)
 
   DISALLOW_COPY_AND_ASSIGN(NWAutofillClient);
 };

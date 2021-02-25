@@ -26,9 +26,9 @@ namespace autofill {
 NWAutofillClient::NWAutofillClient(content::WebContents* web_contents)
     : content::WebContentsObserver(web_contents), web_contents_(web_contents) {
   DCHECK(web_contents);
-#if defined(OS_MACOSX) && !defined(OS_IOS)
+#if defined(OS_MAC) && !defined(OS_IOS)
   RegisterForKeystoneNotifications();
-#endif  // defined(OS_MACOSX) && !defined(OS_IOS)
+#endif  // defined(OS_MAC) && !defined(OS_IOS)
 }
 
 NWAutofillClient::~NWAutofillClient() {
@@ -37,9 +37,9 @@ NWAutofillClient::~NWAutofillClient() {
   // this point (in particular, the WebContentsImpl destructor has already
   // finished running and we are now in the base class destructor).
   DCHECK(!popup_controller_);
-#if defined(OS_MACOSX) && !defined(OS_IOS)
+#if defined(OS_MAC) && !defined(OS_IOS)
   UnregisterFromKeystoneNotifications();
-#endif  // defined(OS_MACOSX) && !defined(OS_IOS)
+#endif  // defined(OS_MAC) && !defined(OS_IOS)
 }
 
 void NWAutofillClient::TabActivated() {

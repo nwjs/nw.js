@@ -140,14 +140,14 @@ void FileSelectHelper::FileSelectedWithExtraInfo(
   std::vector<ui::SelectedFileInfo> files;
   files.push_back(file);
 
-#if defined(OS_MACOSX) && !defined(OS_IOS)
+#if defined(OS_MAC) && !defined(OS_IOS)
   content::BrowserThread::PostTask(
       content::BrowserThread::FILE_USER_BLOCKING,
       FROM_HERE,
       base::Bind(&FileSelectHelper::ProcessSelectedFilesMac, this, files));
 #else
   NotifyRenderViewHostAndEnd(files);
-#endif  // defined(OS_MACOSX) && !defined(OS_IOS)
+#endif  // defined(OS_MAC) && !defined(OS_IOS)
 }
 
 void FileSelectHelper::MultiFilesSelected(
@@ -163,14 +163,14 @@ void FileSelectHelper::MultiFilesSelectedWithExtraInfo(
     const std::vector<ui::SelectedFileInfo>& files,
     void* params) {
 
-#if defined(OS_MACOSX) && !defined(OS_IOS)
+#if defined(OS_MAC) && !defined(OS_IOS)
   content::BrowserThread::PostTask(
       content::BrowserThread::FILE_USER_BLOCKING,
       FROM_HERE,
       base::Bind(&FileSelectHelper::ProcessSelectedFilesMac, this, files));
 #else
   NotifyRenderViewHostAndEnd(files);
-#endif  // defined(OS_MACOSX) && !defined(OS_IOS)
+#endif  // defined(OS_MAC) && !defined(OS_IOS)
 }
 
 void FileSelectHelper::FileSelectionCanceled(void* params) {

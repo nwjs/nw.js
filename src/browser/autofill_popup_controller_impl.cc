@@ -61,9 +61,9 @@ const DataResource kDataResources[] = {
   { "masterCardCC", IDR_AUTOFILL_CC_MASTERCARD },
   { "visaCC", IDR_AUTOFILL_CC_VISA },
   { "scanCreditCardIcon", IDR_AUTOFILL_CC_SCAN_NEW },
-#if defined(OS_MACOSX) && !defined(OS_IOS)
+#if defined(OS_MAC) && !defined(OS_IOS)
   { "macContactsIcon", IDR_AUTOFILL_MAC_CONTACTS_ICON },
-#endif  // defined(OS_MACOSX) && !defined(OS_IOS)
+#endif  // defined(OS_MAC) && !defined(OS_IOS)
 };
 
 }  // namespace
@@ -114,7 +114,7 @@ AutofillPopupControllerImpl::AutofillPopupControllerImpl(
 #if !defined(OS_ANDROID)
   label_font_list_ = value_font_list_.DeriveWithSizeDelta(kLabelFontSizeDelta);
   title_font_list_ = value_font_list_.DeriveWithStyle(gfx::Font::BOLD);
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
   // There is no italic version of the system font.
   warning_font_list_ = value_font_list_;
 #else

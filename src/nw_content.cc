@@ -180,7 +180,7 @@ extern EmitExitFn g_emit_exit_fn;
 extern RunAtExitFn g_run_at_exit_fn;
 extern VoidHookFn g_promise_reject_callback_fn;
 
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
 #include "base/mac/bundle_locations.h"
 
 extern VoidHookFn g_msg_pump_dtor_osx_fn, g_uv_sem_post_fn, g_uv_sem_wait_fn;
@@ -1078,7 +1078,7 @@ std::unique_ptr<base::DictionaryValue> MergeManifest() {
 }
 
 bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window) {
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
   return false;
 #else
   //nw::ObjectManager* obj_manager = nw::ObjectManager::Get(app_window->browser_context());
@@ -1131,7 +1131,7 @@ bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_l
   return single_instance;
 }
 
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
 bool ApplicationShouldHandleReopenHook(bool hasVisibleWindows) {
   std::unique_ptr<base::ListValue> arguments(new base::ListValue());
   SendEventToApp("nw.App.onReopen",std::move(arguments));
@@ -1317,7 +1317,7 @@ void LoadNodeSymbols() {
     VoidHookFn* fn;
   };
   const SymbolDefinition kSymbols[] = {
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
     {"g_msg_pump_dtor_osx", &g_msg_pump_dtor_osx_fn },
     {"g_uv_sem_post", &g_uv_sem_post_fn },
     {"g_uv_sem_wait", &g_uv_sem_wait_fn },
@@ -1334,7 +1334,7 @@ void LoadNodeSymbols() {
     { "g_promise_reject_callback", &g_promise_reject_callback_fn}
   };
   base::NativeLibraryLoadError error;
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
   base::FilePath node_dll_path = base::mac::FrameworkBundlePath().Append(base::FilePath::FromUTF16Unsafe(base::GetNativeLibraryName(base::UTF8ToUTF16("libnode"))));
 #else
   base::FilePath node_dll_path = base::FilePath::FromUTF8Unsafe(base::GetNativeLibraryName("node"));
@@ -1365,7 +1365,7 @@ void LoadNodeSymbols() {
     g_get_current_env_fn = (GetCurrentEnvironmentFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_get_current_env");
     g_emit_exit_fn = (EmitExitFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_emit_exit");
     g_run_at_exit_fn = (RunAtExitFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_run_at_exit");
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
     g_msg_pump_ctor_osx_fn = (VoidPtr4Fn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_msg_pump_ctor_osx");
     g_nw_uvrun_nowait_fn = (IntVoidFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_nw_uvrun_nowait");
     g_uv_runloop_once_fn = (IntVoidFn)base::GetFunctionPointerFromNativeLibrary(node_dll, "g_uv_runloop_once");

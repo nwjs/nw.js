@@ -104,10 +104,10 @@ class PrintWebViewHelper
                            BlockScriptInitiatedPrinting);
   FRIEND_TEST_ALL_PREFIXES(PrintWebViewHelperTest,
                            BlockScriptInitiatedPrintingFromPopup);
-#if defined(OS_WIN) || defined(OS_MACOSX)
+#if defined(OS_WIN) || defined(OS_MAC)
   FRIEND_TEST_ALL_PREFIXES(PrintWebViewHelperTest, PrintLayoutTest);
   FRIEND_TEST_ALL_PREFIXES(PrintWebViewHelperTest, PrintWithIframe);
-#endif  // defined(OS_WIN) || defined(OS_MACOSX)
+#endif  // defined(OS_WIN) || defined(OS_MAC)
 
   enum PrintingResult {
     OK,
@@ -252,7 +252,7 @@ class PrintWebViewHelper
                            const blink::WebNode& node);
 
   // Platform specific helper function for rendering page(s) to |metafile|.
-#if defined(OS_MACOSX)
+#if defined(OS_MAC)
   void RenderPage(const PrintMsg_Print_Params& params,
                   int page_number,
                   blink::WebFrame* frame,
@@ -260,7 +260,7 @@ class PrintWebViewHelper
                   PdfMetafileSkia* metafile,
                   gfx::Size* page_size,
                   gfx::Rect* content_rect);
-#endif  // defined(OS_MACOSX)
+#endif  // defined(OS_MAC)
 
   // Renders page contents from |frame| to |content_area| of |canvas|.
   // |page_number| is zero-based.
