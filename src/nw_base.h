@@ -13,8 +13,8 @@ namespace nw {
   NW_EXPORT void ReleaseNWPackage();
   NW_EXPORT int ExitCodeHook();
   NW_EXPORT void SetExitCode(int);
-  NW_EXPORT void SetCurrentNewWinManifest(const base::string16& manifest);
-  NW_EXPORT const base::string16& GetCurrentNewWinManifest();
+  NW_EXPORT void SetCurrentNewWinManifest(const std::u16string& manifest);
+  NW_EXPORT const std::u16string& GetCurrentNewWinManifest();
   NW_EXPORT bool gcm_enabled();
 }
 

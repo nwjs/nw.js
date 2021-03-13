@@ -10,7 +10,6 @@
 
 // For desktop capture APIs
 #include "base/base64.h"
-#include "base/strings/string16.h"
 #include "base/strings/utf_string_conversions.h"
 #include "chrome/browser/media/webrtc/desktop_media_list_observer.h"
 #include "chrome/browser/media/webrtc/media_capture_devices_dispatcher.h"
