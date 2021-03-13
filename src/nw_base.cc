@@ -8,7 +8,7 @@ namespace nw {
 namespace {
 Package* g_package;
 int exit_code;
-base::string16 g_current_new_win_manifest;
+std::u16string g_current_new_win_manifest;
 }
 
 Package* package(const base::FilePath* path) {
@@ -53,11 +53,11 @@ int ExitCodeHook() {
   return exit_code;
 }
 
-void SetCurrentNewWinManifest(const base::string16& manifest) {
+void SetCurrentNewWinManifest(const std::u16string& manifest) {
   g_current_new_win_manifest = manifest;
 }
 
-const base::string16& GetCurrentNewWinManifest() {
+const std::u16string& GetCurrentNewWinManifest() {
   return g_current_new_win_manifest;
 }
 

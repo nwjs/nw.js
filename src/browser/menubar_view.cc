@@ -33,17 +33,17 @@ const char MenuBarView::kViewClassName[] = "BookmarkBarView";
 
 class MenuBarButton : public views::MenuButton {
  public:
-  MenuBarButton(const base::string16& title,
+  MenuBarButton(const std::u16string& title,
                 PressedCallback callback,
                 bool show_menu_marker)
     : MenuButton(std::move(callback), title) {
     SetElideBehavior(kElideBehavior);
   }
 
-  base::string16 GetTooltipText(const gfx::Point& p) const override {
+  std::u16string GetTooltipText(const gfx::Point& p) const override {
     if (label()->GetPreferredSize().width() > label()->size().width())
       return GetText();
-    return base::string16();
+    return std::u16string();
   }
 
  private:

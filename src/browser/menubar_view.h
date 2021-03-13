@@ -5,7 +5,6 @@
 #ifndef NW_BROWSER_MENUBAR_VIEWS_H_
 #define NW_BROWSER_MENUBAR_VIEWS_H_
 
-#include "base/strings/string16.h"
 #include "ui/views/accessible_pane_view.h"
 #include "ui/views/controls/button/button.h"
 

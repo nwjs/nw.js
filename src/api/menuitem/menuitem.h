@@ -38,7 +38,6 @@ class NSMenuItem;
 class MenuItemDelegate;
 #endif  // __OBJC__
 #elif defined(OS_WIN) || defined(OS_LINUX)
-#include "base/strings/string16.h"
 #include "ui/gfx/image/image.h"
 #include "ui/base/accelerators/accelerator.h"
 #include "ui/views/focus/focus_manager.h"
@@ -130,8 +129,8 @@ class MenuItem : public Base {
   bool is_enabled_;
   gfx::Image icon_;
   std::string type_;
-  base::string16 label_;
-  base::string16 tooltip_;
+  std::u16string label_;
+  std::u16string tooltip_;
   Menu* submenu_;
   bool enable_shortcut_;
 

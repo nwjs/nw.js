@@ -69,7 +69,7 @@ void Tray::Create(const base::DictionaryValue& option) {
     status_tray_ = g_browser_process->status_tray();
 
   status_icon_ = status_tray_->CreateStatusIcon(StatusTray::NOTIFICATION_TRAY_ICON,
-                                                gfx::ImageSkia(), base::string16());
+                                                gfx::ImageSkia(), std::u16string());
   status_observer_ = new TrayObserver(this);
   status_icon_->AddObserver(status_observer_);
 }

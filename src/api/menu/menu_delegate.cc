@@ -21,7 +21,6 @@
 #include "content/nw/src/api/menu/menu_delegate.h"
 
 #include "base/logging.h"
-#include "base/strings/string16.h"
 #include "content/nw/src/api/object_manager.h"
 #include "content/nw/src/api/menuitem/menuitem.h"
 
@@ -62,7 +61,7 @@ bool MenuDelegate::IsItemForCommandIdDynamic(int command_id) const {
   return item->is_modified_;
 }
 
-base::string16 MenuDelegate::GetLabelForCommandId(int command_id) const {
+std::u16string MenuDelegate::GetLabelForCommandId(int command_id) const {
   MenuItem* item = object_manager_->GetApiObject<MenuItem>(command_id);
   return item->label_;
 }
