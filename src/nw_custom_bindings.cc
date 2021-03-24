@@ -269,9 +269,8 @@ void NWCustomBindings::EvalNWBin(
   }
 
   v8::Local<v8::ArrayBuffer> ab = args[1].As<v8::ArrayBuffer>();
-  v8::ArrayBuffer::Contents contents = ab->GetContents();
-  int64_t length = contents.ByteLength();
-  uint8_t *data = reinterpret_cast<uint8_t*>(contents.Data());
+  int64_t length = ab->GetBackingStore()->ByteLength();
+  uint8_t *data = reinterpret_cast<uint8_t*>(ab->GetBackingStore()->Data());
 
   WebFrame* main_frame = render_frame->GetWebFrame();
   if (args.Length() > 3) {
