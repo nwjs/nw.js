@@ -126,7 +126,7 @@ void SendEventToApp(const std::string& event_name, std::unique_ptr<base::ListVal
        it != extensions.end(); ++it) {
     const Extension* extension = it->get();
     if (extension_prefs->IsExtensionRunning(extension->id()) &&
-        extension->location() == extensions::Manifest::COMMAND_LINE) {
+        extension->location() == extensions::mojom::ManifestLocation::kCommandLine) {
       std::unique_ptr<extensions::Event> event(new extensions::Event(extensions::events::UNKNOWN,
                                                                 event_name,
                                                                 std::move(event_args)));
