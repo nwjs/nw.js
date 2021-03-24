@@ -24,6 +24,7 @@
 #include "base/files/file_util.h"
 #include "base/bind.h"
 #include "base/logging.h"
+#include "base/task/thread_pool.h"
 #include "base/values.h"
 #include "base/task/post_task.h"
 #include "content/public/browser/browser_context.h"
@@ -64,9 +65,9 @@ void Shell::Call(const std::string& method,
     arguments.GetString(0, &full_path);
     FilePath path = FilePath::FromUTF8Unsafe(full_path);
     platform_util::OpenItemType *item_type = new platform_util::OpenItemType();
-    base::PostTaskAndReplyWithResult(
+    base::ThreadPool::PostTaskAndReplyWithResult(
       FROM_HERE,
-      {base::ThreadPool(), base::MayBlock(), base::TaskShutdownBehavior::CONTINUE_ON_SHUTDOWN},
+      {base::MayBlock(), base::TaskShutdownBehavior::CONTINUE_ON_SHUTDOWN},
       base::BindOnce(&VerifyItemType, path, base::Unretained(item_type)),
       base::BindOnce(&OnItemTypeVerified, profile, path, base::Owned(item_type))
       );
