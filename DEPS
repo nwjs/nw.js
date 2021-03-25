@@ -172,10 +172,6 @@ vars = {
   'checkout_simplechrome': '"{cros_boards}" != ""',
   'checkout_simplechrome_with_vms': '"{cros_boards_with_qemu_images}" != ""',
 
-  'nw_src_revision': '669a753809f74165544fd662764464f62f6e888c',
-  'nw_v8_revision': '46b67d7a72dfad348dd975110b1180b9564c8537',
-  'nw_node_revision': 'a68cb77e5fb163988418f253ae76e45b9284cf52',
-
   # ANGLE's deps are relative to the angle_root variable.
   'angle_root': 'src/third_party/angle',
 
@@ -202,6 +198,10 @@ vars = {
   'skia_git': 'https://skia.googlesource.com',
   'swiftshader_git': 'https://swiftshader.googlesource.com',
   'webrtc_git': 'https://webrtc.googlesource.com',
+  'nw_src_revision': '12f41621a0e61a7f293220960e7a04489f9a62b2',
+  'nw_v8_revision': '93c850fed8bdcc05cd9275d06e66fdac13493719',
+  'nw_node_revision': 'a68cb77e5fb163988418f253ae76e45b9284cf52',
+
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
@@ -1517,7 +1517,7 @@ deps = {
     Var('chromium_git') + '/external/github.com/gpuweb/cts.git' + '@' + '3c2fe3888658d82b47ca831d59a2e07579619c2d',
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + '1f8862eff854305fe6ee27a375d297f1a3b5b1ce',
+    Var('webrtc_git') + '/src.git' + '@' + 'e7d9f74b256605556726c64dacd518a105ba872f',
 
   'src/third_party/libgifcodec':
      Var('skia_git') + '/libgifcodec' + '@'+  Var('libgifcodec_revision'),
@@ -1585,17 +1585,11 @@ deps = {
   'src/tools/swarming_client':
     Var('chromium_git') + '/infra/luci/client-py.git' + '@' +  Var('swarming_revision'),
 
-  'src/v8':
-    Var('nwjs_git') + '/v8.git' + '@' +  Var('nw_v8_revision'),
-
-  'src/third_party/node-nw':
-    Var('nwjs_git') + '/node.git' + '@' +  Var('nw_node_revision'),
-
   #'src/v8':
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@7fe61c5b7676d898a134cdb6dc13602456009f94',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@3dbf7ad735f913b34d06a46b683ca35828074cac',
     'condition': 'checkout_src_internal',
   },
 
