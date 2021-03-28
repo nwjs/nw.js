@@ -1,3 +1,11 @@
+0.52.1 / 03-28-2021
+===================
+- Update Chromium to [89.0.4389.90](https://chromereleases.googleblog.com/2021/03/stable-channel-update-for-desktop_12.html)
+- Update Node.js to [v15.12.0](https://nodejs.org/en/blog/release/v15.12.0)
+- Fix: fullscreen start crash [(#7697)](https://github.com/nwjs/nw.js/issues/7697)
+- MacOS Assessment Mode enabled via Kiosk Mode [(#7698)](https://github.com/nwjs/nw.js/issues/7698)
+- nw2: fire close-quit event from Dock [(#7365)](https://github.com/nwjs/nw.js/issues/7365)
+
 0.52.0 / 03-05-2021
 ===================
 - Update Chromium to [89.0.4389.72](https://chromereleases.googleblog.com/2021/03/stable-channel-update-for-desktop.html)
