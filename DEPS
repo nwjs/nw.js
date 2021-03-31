@@ -1585,6 +1585,11 @@ deps = {
   'src/tools/swarming_client':
     Var('chromium_git') + '/infra/luci/client-py.git' + '@' +  Var('swarming_revision'),
 
+  'src/v8':
+    Var('nwjs_git') + '/v8.git' + '@' +  Var('nw_v8_revision'),
+
+  'src/third_party/node-nw':
+    Var('nwjs_git') + '/node.git' + '@' +  Var('nw_node_revision'),
   #'src/v8':
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
