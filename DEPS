@@ -49,7 +49,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "linux64, mac64, win, win64, android",
+  "buildspec_platforms": "linux64, mac64, win, win64",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -172,6 +172,10 @@ vars = {
   'checkout_simplechrome': '"{cros_boards}" != ""',
   'checkout_simplechrome_with_vms': '"{cros_boards_with_qemu_images}" != ""',
 
+  'nw_src_revision': 'cebf380656971418dc252cc58d9e600f05f8dde5',
+  'nw_v8_revision': '34274c534738b9519634b0ec25dc5917e2ecfcf0',
+  'nw_node_revision': '6a9543fec0ea769b6d346d2d4cc3d7c32f2a60fd',
+
   # ANGLE's deps are relative to the angle_root variable.
   'angle_root': 'src/third_party/angle',
 
@@ -198,10 +202,6 @@ vars = {
   'skia_git': 'https://skia.googlesource.com',
   'swiftshader_git': 'https://swiftshader.googlesource.com',
   'webrtc_git': 'https://webrtc.googlesource.com',
-  'nw_src_revision': '12f41621a0e61a7f293220960e7a04489f9a62b2',
-  'nw_v8_revision': '93c850fed8bdcc05cd9275d06e66fdac13493719',
-  'nw_node_revision': '6a9543fec0ea769b6d346d2d4cc3d7c32f2a60fd',
-
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
@@ -209,7 +209,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '6fbcc11c530bb348e805f6c5cfcd15c337640dc8',
+  'v8_revision': '09ecd88ef275f6c66605218a0ffb72123ea3b5e1',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -1590,11 +1590,12 @@ deps = {
 
   'src/third_party/node-nw':
     Var('nwjs_git') + '/node.git' + '@' +  Var('nw_node_revision'),
+
   #'src/v8':
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@3dbf7ad735f913b34d06a46b683ca35828074cac',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@6504d90da6a8f1f0bdbfa53b8730410c82700179',
     'condition': 'checkout_src_internal',
   },
 
