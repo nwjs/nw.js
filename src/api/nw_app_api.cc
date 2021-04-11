@@ -1,5 +1,8 @@
 #include "content/nw/src/api/nw_app_api.h"
 
+#include "build/build_config.h"
+#include "third_party/widevine/cdm/buildflags.h"
+
 #include "chrome/browser/lifetime/browser_close_manager.h"
 #include "chrome/browser/lifetime/application_lifetime.h"
 #include "content/public/common/content_features.h"
@@ -104,10 +107,14 @@ NwAppCloseAllWindowsFunction::Run() {
 
 ExtensionFunction::ResponseAction
 NwAppEnableComponentFunction::Run() {
+#if BUILDFLAG(ENABLE_WIDEVINE)
   component_updater::RegisterWidevineCdmComponent(g_browser_process->component_updater(),
                                                   base::BindOnce(&NwAppEnableComponentFunction::OnRegistered,
                                                                  this));
   return RespondLater();
+#else
+  return RespondNow(NoArguments());
+#endif
 }
 
 void NwAppEnableComponentFunction::OnRegistered() {
