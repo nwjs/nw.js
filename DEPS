@@ -50,7 +50,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "all",
+  "buildspec_platforms": "linux64, mac64, win, win64",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -173,8 +173,8 @@ vars = {
   'checkout_simplechrome': '"{cros_boards}" != ""',
   'checkout_simplechrome_with_vms': '"{cros_boards_with_qemu_images}" != ""',
 
-  'nw_src_revision': '92c306f843c23381a58854d4cdc2da646d42f1cc',
-  'nw_v8_revision': '3068a7f75a393661e34ed3cf36ddec78ae79dacd',
+  'nw_src_revision': '388483f5760c4f5599053e6b71f5143272646ef0',
+  'nw_v8_revision': '605e171c91a940699e992b14225f154cc241ee40',
   'nw_node_revision': 'fade7bc502bb9d5d2d48b3b4e25c8b6497d2be17',
 
   # ANGLE's deps are relative to the angle_root variable.
@@ -214,7 +214,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '30ee58fae944e21dd6b8288e9adab8c74b42f947',
+  'v8_revision': '462fc27a2892702a4d42ffd647789c58ffcee747',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -289,7 +289,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling devtools-frontend
   # and whatever else without interference from each other.
-  'devtools_frontend_revision': 'a22a1eb596cec3394599b8685f9d28a8472ba59a',
+  'devtools_frontend_revision': 'ae8b17c1d1835cfd8c03db30d2c3799a4e2edfe8',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libprotobuf-mutator
   # and whatever else without interference from each other.
@@ -1622,7 +1622,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@339203e183a7153ef2661a1be46afe4576d4a30d',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@aeb2538ecf13383b9abc6910ad6e8c5555f6a5ec',
     'condition': 'checkout_src_internal',
   },
 
