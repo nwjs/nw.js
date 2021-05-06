@@ -539,7 +539,7 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
   if (!v8_context.IsEmpty()) {
     v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
     v8::Context::Scope cscope(v8_context);
-    frame->ExecuteScriptAndReturnValue(WebScriptSource(blink::WebString::FromUTF8(resource.as_string())));
+    frame->ExecuteScriptAndReturnValue(WebScriptSource(blink::WebString::FromUTF8(std::string(resource))));
   }
 }
 
