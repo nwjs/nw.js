@@ -33,7 +33,7 @@ class PolicyCertVerifier : public net::CertVerifier {
   // the IO thread. Calls |anchor_used_callback| on the IO thread everytime a
   // certificate from the additional trust anchors (set with SetTrustAnchors) is
   // used.
-  explicit PolicyCertVerifier(const base::Closure& anchor_used_callback);
+  explicit PolicyCertVerifier(const base::RepeatingClosure& anchor_used_callback);
   ~PolicyCertVerifier() override;
 
   void InitializeOnIOThread(
@@ -54,7 +54,7 @@ class PolicyCertVerifier : public net::CertVerifier {
  private:
   net::CertVerifier::Config orig_config_;
   net::CertificateList trust_anchors_;
-  base::Closure anchor_used_callback_;
+  base::RepeatingClosure anchor_used_callback_;
   std::unique_ptr<CertVerifier> delegate_;
 
   DISALLOW_COPY_AND_ASSIGN(PolicyCertVerifier);

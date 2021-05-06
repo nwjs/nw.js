@@ -141,40 +141,40 @@ bool MakePathAbsolute(base::FilePath* file_path) {
 
 void NWCustomBindings::AddRoutes() {
   RouteHandlerFunction("crashRenderer",
-                base::Bind(&NWCustomBindings::CrashRenderer,
+                base::BindRepeating(&NWCustomBindings::CrashRenderer,
                            base::Unretained(this)));
   RouteHandlerFunction("getOldCwd",
-                base::Bind(&NWCustomBindings::GetOldCwd,
+                base::BindRepeating(&NWCustomBindings::GetOldCwd,
                            base::Unretained(this)));
   RouteHandlerFunction("evalScript",
-                base::Bind(&NWCustomBindings::EvalScript,
+                base::BindRepeating(&NWCustomBindings::EvalScript,
                            base::Unretained(this)));
   RouteHandlerFunction("evalNWBin",
-                base::Bind(&NWCustomBindings::EvalNWBin,
+                base::BindRepeating(&NWCustomBindings::EvalNWBin,
                            base::Unretained(this)));
   RouteHandlerFunction("getAbsolutePath",
-                base::Bind(&NWCustomBindings::GetAbsolutePath,
+                base::BindRepeating(&NWCustomBindings::GetAbsolutePath,
                            base::Unretained(this)));
   RouteHandlerFunction("addOriginAccessWhitelistEntry",
-                base::Bind(&NWCustomBindings::AddOriginAccessWhitelistEntry,
+                base::BindRepeating(&NWCustomBindings::AddOriginAccessWhitelistEntry,
                            base::Unretained(this)));
   RouteHandlerFunction("removeOriginAccessWhitelistEntry",
-                base::Bind(&NWCustomBindings::RemoveOriginAccessWhitelistEntry,
+                base::BindRepeating(&NWCustomBindings::RemoveOriginAccessWhitelistEntry,
                            base::Unretained(this)));
   RouteHandlerFunction("getProxyForURL",
-                base::Bind(&NWCustomBindings::GetProxyForURL,
+                base::BindRepeating(&NWCustomBindings::GetProxyForURL,
                            base::Unretained(this)));
   RouteHandlerFunction("setDevToolsJail",
-                base::Bind(&NWCustomBindings::SetDevToolsJail,
+                base::BindRepeating(&NWCustomBindings::SetDevToolsJail,
                            base::Unretained(this)));
   RouteHandlerFunction("getWidgetRoutingID",
-                base::Bind(&NWCustomBindings::GetWidgetRoutingID,
+                base::BindRepeating(&NWCustomBindings::GetWidgetRoutingID,
                            base::Unretained(this)));
   RouteHandlerFunction("getRoutingID",
-                base::Bind(&NWCustomBindings::GetRoutingID,
+                base::BindRepeating(&NWCustomBindings::GetRoutingID,
                            base::Unretained(this)));
   RouteHandlerFunction("callInWindow",
-                base::Bind(&NWCustomBindings::CallInWindow,
+                base::BindRepeating(&NWCustomBindings::CallInWindow,
                            base::Unretained(this)));
 }
 

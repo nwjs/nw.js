@@ -230,18 +230,18 @@ NwCurrentWindowInternalCloseFunction::Run() {
       return RespondNow(Error("cannot find browser window"));
     if (force)
       base::ThreadTaskRunnerHandle::Get().get()->PostTask(FROM_HERE,
-         base::Bind(&NwCurrentWindowInternalCloseFunction::DoCloseBrowser, browser));
+         base::BindOnce(&NwCurrentWindowInternalCloseFunction::DoCloseBrowser, browser));
     else if (browser->NWCanClose())
       base::ThreadTaskRunnerHandle::Get().get()->PostTask(FROM_HERE,
-         base::Bind(&NwCurrentWindowInternalCloseFunction::DoCloseBrowser, browser));
+         base::BindOnce(&NwCurrentWindowInternalCloseFunction::DoCloseBrowser, browser));
   } else {
     AppWindow* window = getAppWindow(this);
     if (force)
       base::ThreadTaskRunnerHandle::Get().get()->PostTask(FROM_HERE,
-         base::Bind(&NwCurrentWindowInternalCloseFunction::DoClose, window));
+         base::BindOnce(&NwCurrentWindowInternalCloseFunction::DoClose, window));
     else if (window->NWCanClose())
       base::ThreadTaskRunnerHandle::Get().get()->PostTask(FROM_HERE,
-         base::Bind(&NwCurrentWindowInternalCloseFunction::DoClose, window));
+         base::BindOnce(&NwCurrentWindowInternalCloseFunction::DoClose, window));
   }
 
   return RespondNow(NoArguments());
@@ -263,7 +263,7 @@ NwCurrentWindowInternalShowDevToolsInternalFunction::Run() {
       DevToolsWindow::FindDevToolsWindow(agent.get());
   if (devtools_window) {
     AddRef();
-    devtools_window->SetLoadCompletedCallback(base::Bind(&NwCurrentWindowInternalShowDevToolsInternalFunction::OnOpened, base::Unretained(this)));
+    devtools_window->SetLoadCompletedCallback(base::BindRepeating(&NwCurrentWindowInternalShowDevToolsInternalFunction::OnOpened, base::Unretained(this)));
   } else
     return RespondNow(NoArguments());
 
@@ -290,7 +290,7 @@ NwCurrentWindowInternalShowDevTools2InternalFunction::Run() {
       DevToolsWindow::FindDevToolsWindow(agent.get());
   if (devtools_window) {
     AddRef();
-    devtools_window->SetLoadCompletedCallback(base::Bind(&NwCurrentWindowInternalShowDevTools2InternalFunction::OnOpened, base::Unretained(this)));
+    devtools_window->SetLoadCompletedCallback(base::BindRepeating(&NwCurrentWindowInternalShowDevTools2InternalFunction::OnOpened, base::Unretained(this)));
   } else
     return RespondNow(NoArguments());
 
@@ -369,7 +369,7 @@ NwCurrentWindowInternalCapturePageInternalFunction::Run() {
 
   view->CopyFromSurface(gfx::Rect(),  // Copy entire surface area.
                         gfx::Size(),  // Result contains device-level detail.
-      base::Bind(&NwCurrentWindowInternalCapturePageInternalFunction::CopyFromBackingStoreComplete,
+      base::BindOnce(&NwCurrentWindowInternalCapturePageInternalFunction::CopyFromBackingStoreComplete,
                  this));
   return RespondLater();
 }
