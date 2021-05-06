@@ -25,6 +25,7 @@
 #include "extensions/common/draggable_region.h"
 #include "content/public/common/common_param_traits.h"
 #include "ipc/ipc_message_macros.h"
+#include "ipc/ipc_message_start.h"
 #include "ui/gfx/ipc/gfx_param_traits.h"
 
 #define IPC_MESSAGE_START ShellMsgStart
