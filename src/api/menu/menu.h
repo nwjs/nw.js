@@ -146,7 +146,7 @@ class Menu : public Base {
   std::unique_ptr<MenuDelegate> menu_delegate_;
   std::unique_ptr<ui::NwMenuModel> menu_model_;
   std::unique_ptr<views::MenuRunner> menu_runner_;
-  base::Closure message_loop_quit_;
+  base::RepeatingClosure message_loop_quit_;
 #endif
 
   DISALLOW_COPY_AND_ASSIGN(Menu);

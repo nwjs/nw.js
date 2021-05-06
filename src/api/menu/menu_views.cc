@@ -135,7 +135,7 @@ void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
   }
   set_delay_destruction(true);
   menu_runner_.reset(new views::MenuRunner(menu_model_.get(), views::MenuRunner::CONTEXT_MENU,
-                                           base::Bind(&Menu::OnMenuClosed, base::Unretained(this))));
+                                           base::BindRepeating(&Menu::OnMenuClosed, base::Unretained(this))));
   menu_runner_->RunMenuAt(top_level_widget,
                        nullptr,
                        gfx::Rect(screen_point, gfx::Size()),
@@ -146,8 +146,8 @@ void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
   // sure the quit-closure gets reset to the outer loop's quit-closure
   // once the innermost loop terminates.
   {
-    base::AutoReset<base::Closure> reset_quit_closure(&message_loop_quit_,
-                                                      base::Closure());
+    base::AutoReset<base::RepeatingClosure> reset_quit_closure(&message_loop_quit_,
+                                                          base::RepeatingClosure());
 
     //base::MessageLoop* loop = base::MessageLoop::current();
     base::CurrentThread::ScopedNestableTaskAllower allow;

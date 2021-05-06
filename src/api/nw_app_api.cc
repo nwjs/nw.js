@@ -63,7 +63,7 @@ void NwAppQuitFunction::DoJob(ExtensionService* service, std::string extension_i
   }
   base::ThreadTaskRunnerHandle::Get().get()->PostTask(
                                                       FROM_HERE,
-                                                      base::Bind(&ExtensionService::TerminateExtension,
+                                                      base::BindOnce(&ExtensionService::TerminateExtension,
                                                                    service->AsWeakPtr(),
                                                                    extension_id));
 }
@@ -74,7 +74,7 @@ NwAppQuitFunction::Run() {
     ExtensionSystem::Get(browser_context())->extension_service();
   base::ThreadTaskRunnerHandle::Get().get()->PostTask(
         FROM_HERE,
-        base::Bind(&NwAppQuitFunction::DoJob,
+        base::BindOnce(&NwAppQuitFunction::DoJob,
                    service,
                    extension_id()));
   return RespondNow(NoArguments());
@@ -100,7 +100,7 @@ NwAppCloseAllWindowsFunction::Run() {
     return RespondNow(Error(""));
   base::ThreadTaskRunnerHandle::Get().get()->PostTask(
         FROM_HERE,
-        base::Bind(&NwAppCloseAllWindowsFunction::DoJob, registry, extension()->id()));
+        base::BindOnce(&NwAppCloseAllWindowsFunction::DoJob, registry, extension()->id()));
 
   return RespondNow(NoArguments());
 }

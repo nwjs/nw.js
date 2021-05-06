@@ -17,7 +17,7 @@ namespace nw {
 namespace {
 
 void MaybeSignalAnchorUse(int error,
-                          const base::Closure& anchor_used_callback,
+                          const base::RepeatingClosure& anchor_used_callback,
                           const net::CertVerifyResult& verify_result) {
   if (error != net::OK || !verify_result.is_issued_by_additional_trust_anchor ||
       anchor_used_callback.is_null()) {
@@ -27,7 +27,7 @@ void MaybeSignalAnchorUse(int error,
 }
 
 void CompleteAndSignalAnchorUse(
-    const base::Closure& anchor_used_callback,
+    const base::RepeatingClosure& anchor_used_callback,
     net::CompletionOnceCallback completion_callback,
     const net::CertVerifyResult* verify_result,
     int error) {
@@ -48,8 +48,8 @@ net::CertVerifier::Config ExtendTrustAnchors(
 }  // namespace
 
 PolicyCertVerifier::PolicyCertVerifier(
-    const base::Closure& anchor_used_callback)
-    : anchor_used_callback_(anchor_used_callback) {
+    const base::RepeatingClosure& anchor_used_callback)
+  : anchor_used_callback_(anchor_used_callback) {
   //DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
 }
 

@@ -23,7 +23,7 @@ MenuBarController::MenuBarController(MenuBarView* menubar, ui::MenuModel* menu_m
     master_ = this;
     menu_runner_.reset(new views::MenuRunner(menu_model,
                                              views::MenuRunner::HAS_MNEMONICS,
-                                             base::Bind(&MenuBarController::OnMenuClose,
+                                             base::BindRepeating(&MenuBarController::OnMenuClose,
                                                         base::Unretained(this))));
   }
 }
@@ -109,8 +109,8 @@ void MenuBarController::RunMenuAt(views::View* view) {
                           views::MenuAnchorPosition::kTopLeft,
                                        ui::MENU_SOURCE_NONE);
   {
-    base::AutoReset<base::Closure> reset_quit_closure(&message_loop_quit_,
-                                                      base::Closure());
+    base::AutoReset<base::RepeatingClosure> reset_quit_closure(&message_loop_quit_,
+                                                      base::RepeatingClosure());
 
     base::CurrentThread::ScopedNestableTaskAllower allow;
     base::RunLoop run_loop;

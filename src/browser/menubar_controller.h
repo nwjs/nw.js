@@ -44,7 +44,7 @@ class MenuBarController : public views::MenuModelAdapter {
   std::vector<MenuBarController*> controllers_;
   static ModelToMenuMap model_to_menu_map_;
   static MenuBarController* master_;
-  base::Closure message_loop_quit_;
+  base::RepeatingClosure message_loop_quit_;
 
   DISALLOW_COPY_AND_ASSIGN(MenuBarController);
 };

@@ -152,7 +152,7 @@ const char kRedirectResponseFullPath[] =
 class WebContentsHiddenObserver : public content::WebContentsObserver {
  public:
   WebContentsHiddenObserver(content::WebContents* web_contents,
-                            const base::Closure& hidden_callback)
+                            const base::RepeatingClosure& hidden_callback)
       : WebContentsObserver(web_contents),
         hidden_callback_(hidden_callback),
         hidden_observed_(false) {
@@ -169,7 +169,7 @@ class WebContentsHiddenObserver : public content::WebContentsObserver {
   bool hidden_observed() { return hidden_observed_; }
 
  private:
-  base::Closure hidden_callback_;
+  base::RepeatingClosure hidden_callback_;
   bool hidden_observed_;
 
   DISALLOW_COPY_AND_ASSIGN(WebContentsHiddenObserver);
@@ -275,7 +275,7 @@ class LeftMouseClick {
         mouse_event_);
 
     base::ThreadTaskRunnerHandle::Get()->PostDelayedTask(
-        FROM_HERE, base::Bind(&LeftMouseClick::SendMouseUp,
+        FROM_HERE, base::BindOnce(&LeftMouseClick::SendMouseUp,
                               base::Unretained(this)),
         base::TimeDelta::FromMilliseconds(duration_ms));
   }
@@ -581,19 +581,19 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
         LOG(ERROR) << "FAILED TO START TEST SERVER.";
         return;
       }
-      embedded_test_server()->RegisterRequestHandler(base::Bind(
+      embedded_test_server()->RegisterRequestHandler(base::BindRepeating(
           &NWWebViewTestBase::RedirectResponseHandler, kRedirectResponsePath,
           embedded_test_server()->GetURL(kRedirectResponseFullPath)));
 
-      embedded_test_server()->RegisterRequestHandler(base::Bind(
+      embedded_test_server()->RegisterRequestHandler(base::BindRepeating(
           &NWWebViewTestBase::EmptyResponseHandler, kEmptyResponsePath));
 
-      embedded_test_server()->RegisterRequestHandler(base::Bind(
+      embedded_test_server()->RegisterRequestHandler(base::BindRepeating(
           &NWWebViewTestBase::UserAgentResponseHandler,
           kUserAgentRedirectResponsePath,
           embedded_test_server()->GetURL(kRedirectResponseFullPath)));
 
-      embedded_test_server()->RegisterRequestHandler(base::Bind(
+      embedded_test_server()->RegisterRequestHandler(base::BindRepeating(
           &NWWebViewTestBase::CacheControlResponseHandler, kCacheResponsePath));
     }
 
@@ -964,7 +964,7 @@ IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, SilentPrintChangeFooter) {
   WaitForAccessibilityTreeToContainNodeWithName(web_view_contents, "hello world\r\n");
   std::string tree_dump;
   // Make sure all the frames in the dialog has access to the PDF plugin.
-  guest_web_contents_list[1]->ForEachFrame(base::Bind(&DumpAxTree, base::Unretained(&tree_dump)));
+  guest_web_contents_list[1]->ForEachFrame(base::BindRepeating(&DumpAxTree, base::Unretained(&tree_dump)));
   LOG(INFO) << "ax tree: " << tree_dump;
   EXPECT_TRUE(tree_dump.find("nwtestfooter") != std::string::npos);
 }
@@ -991,13 +991,13 @@ IN_PROC_BROWSER_TEST_F(NWJSAppTest, PrintChangeFooter) {
 
     frame_count = 0;
     preview_dialog->ForEachFrame(
-        base::Bind(&CountFrames, base::Unretained(&frame_count)));
+        base::BindRepeating(&CountFrames, base::Unretained(&frame_count)));
   } while (frame_count < kExpectedFrameCount);
   ASSERT_EQ(kExpectedFrameCount, frame_count);
   WaitForAccessibilityTreeToContainNodeWithName(preview_dialog, "hello world\r\n");
   std::string tree_dump;
   // Make sure all the frames in the dialog has access to the PDF plugin.
-  preview_dialog->ForEachFrame(base::Bind(&DumpAxTree, base::Unretained(&tree_dump)));
+  preview_dialog->ForEachFrame(base::BindRepeating(&DumpAxTree, base::Unretained(&tree_dump)));
   EXPECT_TRUE(tree_dump.find("nwtestfooter") != std::string::npos);
 }
 
@@ -1025,8 +1025,8 @@ IN_PROC_BROWSER_TEST_P(NWJSWebViewTest, LocalPDF) {
   unsigned long n_guests = trusted_ ? 2 : 1;
   EXPECT_TRUE(content::ExecuteScript(web_contents, std::string("test(") + (trusted_ ? "true" : "false") + ")"));
   if (!trusted_) {
-    base::CancelableClosure timeout(
-          base::Bind(&NWTimeoutCallback, "pdf load timed out."));
+    base::CancelableOnceClosure timeout(
+          base::BindOnce(&NWTimeoutCallback, "pdf load timed out."));
     base::ThreadTaskRunnerHandle::Get()->PostDelayedTask(
           FROM_HERE, timeout.callback(), TestTimeouts::action_timeout());
     ExtensionTestMessageListener pass_listener("PASSED", false);
