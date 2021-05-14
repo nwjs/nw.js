@@ -122,7 +122,7 @@ void AmendManifestList(base::DictionaryValue* manifest,
 
   if (manifest->GetList(path, &pattern_list)) {
     base::ListValue::const_iterator it;
-    for(it = list_value.begin(); it != list_value.end(); ++it) {
+    for(it = list_value.GetList().begin(); it != list_value.GetList().end(); ++it) {
       pattern_list->Append((*it).CreateDeepCopy());
     }
   } else {
