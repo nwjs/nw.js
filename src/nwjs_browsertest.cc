@@ -840,7 +840,7 @@ IN_PROC_BROWSER_TEST_F(NWAppTest, LocalFlash) {
     web_contents = BrowserList::GetInstance()->GetLastActive()->tab_strip_model()->GetActiveWebContents();
   }
   ASSERT_TRUE(web_contents);
-  std::u16string expected_title(base::ASCIIToUTF16("Loaded"));
+  std::u16string expected_title(u"Loaded");
   content::TitleWatcher title_watcher(web_contents, expected_title);
 
   EXPECT_EQ(expected_title, title_watcher.WaitAndGetTitle());
