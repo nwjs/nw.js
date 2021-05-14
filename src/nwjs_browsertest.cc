@@ -228,7 +228,7 @@ class SelectControlWaiter : public aura::WindowObserver,
   }
 
   void OnWindowInitialized(aura::Window* window) override {
-    if (window->type() != aura::client::WINDOW_TYPE_MENU)
+    if (window->GetType() != aura::client::WINDOW_TYPE_MENU)
       return;
     window->AddObserver(this);
     observed_windows_.insert(window);
