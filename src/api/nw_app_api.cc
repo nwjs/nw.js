@@ -208,8 +208,8 @@ NwAppClearCacheFunction::~NwAppClearCacheFunction() {
 }
 
 bool NwAppClearCacheFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  content::BrowsingDataRemover* remover = content::BrowserContext::GetBrowsingDataRemover(
-                                                                                          Profile::FromBrowserContext(browser_context()));
+  content::BrowsingDataRemover* remover =
+    Profile::FromBrowserContext(browser_context())->GetBrowsingDataRemover();
 
   remover->AddObserver(this);
   remover->RemoveAndReply(base::Time(), base::Time::Max(),
