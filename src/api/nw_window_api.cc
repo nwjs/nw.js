@@ -771,7 +771,7 @@ bool NwCurrentWindowInternalGetZoomFunction::RunNWSync(base::ListValue* response
     return false;
   double zoom_level =
       ZoomController::FromWebContents(web_contents)->GetZoomLevel();
-  response->AppendDouble(zoom_level);
+  response->Append(zoom_level);
   return true;
 }
 
