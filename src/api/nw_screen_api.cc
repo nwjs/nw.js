@@ -100,10 +100,14 @@ namespace extensions {
     void DispatchEvent(
         events::HistogramValue histogram_value,
         const std::string& event_name,
-        std::unique_ptr<base::ListValue> args) {
+        std::vector<base::Value> args) {
       DCHECK_CURRENTLY_ON(BrowserThread::UI);
-      ExtensionsBrowserClient::Get()->BroadcastEventToRenderers(
-                                                                histogram_value, event_name, std::move(args), false);
+      //std::unique_ptr<base::ListValue> arg_list(std::move(args));
+      ExtensionsBrowserClient::Get()->
+        BroadcastEventToRenderers(
+                                  histogram_value, event_name,
+                                  std::make_unique<base::ListValue>(std::move(args)),
+                                  false);
     }
 
     // Lazy initialize screen event listeners until first call
@@ -137,18 +141,18 @@ namespace extensions {
   // Called when the |display|'s bound has changed.
   void NwScreenDisplayObserver::OnDisplayMetricsChanged(const display::Display& display,
     uint32_t changed_metrics) {
-    std::unique_ptr<base::ListValue> args = 
+    std::vector<base::Value> args =
       nwapi::nw__screen::OnDisplayBoundsChanged::Create(*ConvertGfxDisplay(display),
                                                         changed_metrics);
     DispatchEvent(
-      events::HistogramValue::UNKNOWN, 
+      events::HistogramValue::UNKNOWN,
       nwapi::nw__screen::OnDisplayBoundsChanged::kEventName,
       std::move(args));
   }
 
   // Called when |new_display| has been added.
   void NwScreenDisplayObserver::OnDisplayAdded(const display::Display& new_display) {
-    std::unique_ptr<base::ListValue> args =
+    std::vector<base::Value> args =
       nwapi::nw__screen::OnDisplayAdded::Create(*ConvertGfxDisplay(new_display));
     DispatchEvent(
       events::HistogramValue::UNKNOWN,
@@ -158,7 +162,7 @@ namespace extensions {
 
   // Called when |old_display| has been removed.
   void NwScreenDisplayObserver::OnDisplayRemoved(const display::Display& old_display) {
-    std::unique_ptr<base::ListValue> args =
+    std::vector<base::Value> args =
       nwapi::nw__screen::OnDisplayRemoved::Create(*ConvertGfxDisplay(old_display));
     DispatchEvent(
       events::HistogramValue::UNKNOWN,
@@ -174,7 +178,7 @@ namespace extensions {
     for (size_t i=0; i<displays.size(); i++) {
       response->Append(ConvertGfxDisplay(displays[i])->ToValue());
     }
-    
+
     return true;
   }
 
@@ -272,7 +276,7 @@ void NwDesktopCaptureMonitor::OnSourceAdded(DesktopMediaList* list, int index) {
       break;
     }
 
-    std::unique_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceAdded::Create(
+    std::vector<base::Value> args = nwapi::nw__screen::OnSourceAdded::Create(
       src.id.ToString(),
       base::UTF16ToUTF8(src.name),
       index,
@@ -280,40 +284,40 @@ void NwDesktopCaptureMonitor::OnSourceAdded(DesktopMediaList* list, int index) {
       src.id.type == content::DesktopMediaID::TYPE_SCREEN && GetPrimaryMonitorIndex() == index);
 
     DispatchEvent(
-      events::HistogramValue::UNKNOWN, 
+      events::HistogramValue::UNKNOWN,
       nwapi::nw__screen::OnSourceAdded::kEventName,
       std::move(args));
   }
 
 void NwDesktopCaptureMonitor::OnSourceRemoved(DesktopMediaList* list, int index) {
-    std::unique_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceRemoved::Create(index);
+    std::vector<base::Value> args = nwapi::nw__screen::OnSourceRemoved::Create(index);
     DispatchEvent(
-      events::HistogramValue::UNKNOWN, 
+      events::HistogramValue::UNKNOWN,
       nwapi::nw__screen::OnSourceRemoved::kEventName,
       std::move(args));
   }
 
 void NwDesktopCaptureMonitor::OnSourceMoved(DesktopMediaList* list, int old_index, int new_index) {
     DesktopMediaList::Source src = list->GetSource(new_index);
-    std::unique_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceOrderChanged::Create(
+    std::vector<base::Value> args = nwapi::nw__screen::OnSourceOrderChanged::Create(
       src.id.ToString(),
       new_index,
       old_index);
     DispatchEvent(
-      events::HistogramValue::UNKNOWN, 
+      events::HistogramValue::UNKNOWN,
       nwapi::nw__screen::OnSourceOrderChanged::kEventName,
       std::move(args));
   }
 
 void NwDesktopCaptureMonitor::OnSourceNameChanged(DesktopMediaList* list, int index) {
     DesktopMediaList::Source src = list->GetSource(index);
-    std::unique_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceNameChanged::Create(
+    std::vector<base::Value> args = nwapi::nw__screen::OnSourceNameChanged::Create(
       src.id.ToString(),
       base::UTF16ToUTF8(src.name));
     DispatchEvent(
-      events::HistogramValue::UNKNOWN, 
+      events::HistogramValue::UNKNOWN,
       nwapi::nw__screen::OnSourceNameChanged::kEventName,
-      std::move(args));    
+      std::move(args));
   }
 
 void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(DesktopMediaList* list, int index) {
@@ -328,11 +332,11 @@ void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(DesktopMediaList* list, i
       base::Base64Encode(raw_str, &base64);
     }
 
-    std::unique_ptr<base::ListValue> args = nwapi::nw__screen::OnSourceThumbnailChanged::Create(
+    std::vector<base::Value> args = nwapi::nw__screen::OnSourceThumbnailChanged::Create(
       src.id.ToString(),
       base64);
     DispatchEvent(
-      events::HistogramValue::UNKNOWN, 
+      events::HistogramValue::UNKNOWN,
       nwapi::nw__screen::OnSourceThumbnailChanged::kEventName,
       std::move(args));
   }

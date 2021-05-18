@@ -77,10 +77,13 @@ namespace {
   void DispatchEvent(
       events::HistogramValue histogram_value,
       const std::string& event_name,
-      std::unique_ptr<base::ListValue> args) {
+      std::vector<base::Value> args) {
     DCHECK_CURRENTLY_ON(BrowserThread::UI);
-    ExtensionsBrowserClient::Get()->BroadcastEventToRenderers(
-                                                              histogram_value, event_name, std::move(args), false);
+    ExtensionsBrowserClient::Get()->
+      BroadcastEventToRenderers(
+                                histogram_value, event_name,
+                                std::make_unique<base::ListValue>(std::move(args)),
+                                false);
   }
 
   base::LazyInstance<NWShortcutObserver>::Leaky
@@ -95,10 +98,10 @@ NWShortcutObserver* NWShortcutObserver::GetInstance() {
 
 void NWShortcutObserver::OnKeyPressed (const ui::Accelerator& uiAccelerator) {
   std::unique_ptr<nwapi::nw__shortcut::Accelerator> accelerator = UIAcceleratorToAccelerator(uiAccelerator);
-  std::unique_ptr<base::ListValue> args = 
+  std::vector<base::Value> args =
     nwapi::nw__shortcut::OnKeyPressed::Create(*accelerator);
   DispatchEvent(
-    events::HistogramValue::UNKNOWN, 
+    events::HistogramValue::UNKNOWN,
     nwapi::nw__shortcut::OnKeyPressed::kEventName,
     std::move(args));
 }
