@@ -245,7 +245,7 @@ void NWCustomBindings::EvalScript(
     web_frame = blink::WebFrame::FromCoreFrame(iframe->ContentFrame());
   }
 #if defined(OS_WIN)
-  std::u16string jscript((WCHAR*)*v8::String::Value(isolate, args[1]));
+  std::u16string jscript(base::WideToUTF16((WCHAR*)*v8::String::Value(isolate, args[1])));
 #else
   std::u16string jscript((char16_t*)*v8::String::Value(isolate, args[1]));
 #endif

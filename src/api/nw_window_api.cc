@@ -588,7 +588,7 @@ static base::win::ScopedHICON createBadgeIcon(const HWND hWnd, const TCHAR *valu
   const int fontSize = sizeY * 0.65f;
   gfx::Font font(platform_font->GetFontName(), fontSize);
   const int yMargin = (sizeY - fontSize) / 2;
-  canvas.DrawStringRectWithFlags(value, gfx::FontList(font), SK_ColorWHITE, gfx::Rect(sizeX, fontSize + yMargin + 1), gfx::Canvas::TEXT_ALIGN_CENTER);
+  canvas.DrawStringRectWithFlags(base::WideToUTF16(value), gfx::FontList(font), SK_ColorWHITE, gfx::Rect(sizeX, fontSize + yMargin + 1), gfx::Canvas::TEXT_ALIGN_CENTER);
 
   // return the canvas as windows native icon handle
   return IconUtil::CreateHICONFromSkBitmap(canvas.GetBitmap());
@@ -638,7 +638,7 @@ NwCurrentWindowInternalSetBadgeLabelInternalFunction::Run() {
   }
   const float scale = display::win::GetDPIScale();
   if (badge.size())
-    icon = createBadgeIcon(hWnd, base::UTF8ToUTF16(badge).c_str(), 16 * scale, 16 * scale);
+    icon = createBadgeIcon(hWnd, base::UTF8ToWide(badge).c_str(), 16 * scale, 16 * scale);
 
   taskbar->SetOverlayIcon(hWnd, icon.get(), L"Status");
 #elif defined(OS_LINUX)

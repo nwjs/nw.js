@@ -59,7 +59,7 @@ bool NwMenuGetNSStringWithFixupFunction::RunNWSync(base::ListValue* response, st
 bool NwMenuGetNSStringFWithFixupFunction::RunNWSync(base::ListValue* response, std::string* error) {
   if (!g_msgid_inited) InitMsgIDMap();
   std::string msgstr;
-  base::string16 appName;
+  std::u16string appName;
   EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &msgstr));
   EXTENSION_FUNCTION_VALIDATE(args_->GetString(1, &appName));
   MsgIDMap::iterator it = g_msgid_map.find(msgstr);

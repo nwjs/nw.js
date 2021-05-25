@@ -395,7 +395,7 @@ bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_l
   package->root()->GetBoolean(switches::kmSingleInstance, &single_instance);
   if (single_instance) {
 #if defined(OS_WIN)
-    std::string cmd = base::UTF16ToUTF8(command_line.GetCommandLineString());
+    std::string cmd = base::WideToUTF8(command_line.GetCommandLineString());
 #else
     std::string cmd = command_line.GetCommandLineString();
 #endif

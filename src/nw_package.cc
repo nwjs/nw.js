@@ -502,8 +502,8 @@ void Package::ReadChromiumArgs() {
     // string here is safe beacuse we use ASCII only.
     if (!base::IsSwitch(ASCIIToWide(chromium_args[i]), &key, &value))
       continue;
-    command_line->AppendSwitchASCII(base::UTF16ToASCII(key),
-                                    base::UTF16ToASCII(value));
+    command_line->AppendSwitchASCII(base::WideToASCII(key),
+                                    base::WideToASCII(value));
 #else
     if (!base::IsSwitch(chromium_args[i], &key, &value))
       continue;

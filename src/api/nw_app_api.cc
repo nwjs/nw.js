@@ -173,7 +173,11 @@ bool NwAppGetArgvSyncFunction::RunNWSync(base::ListValue* response, std::string*
       continue;
     }
 
+#if defined(OS_WIN)
+    response->AppendString(base::WideToUTF16(argv[i]));
+#else
     response->AppendString(argv[i]);
+#endif
   }
   return true;
 }
@@ -261,7 +265,7 @@ bool NwAppSetProxyConfigFunction::RunNWSync(base::ListValue* response, std::stri
 }
 
 bool NwAppGetDataPathFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  response->AppendString(browser_context()->GetPath().value());
+  response->AppendString(base::WideToUTF16(browser_context()->GetPath().value()));
   return true;
 }
 
