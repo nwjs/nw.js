@@ -265,7 +265,11 @@ bool NwAppSetProxyConfigFunction::RunNWSync(base::ListValue* response, std::stri
 }
 
 bool NwAppGetDataPathFunction::RunNWSync(base::ListValue* response, std::string* error) {
+#if defined(OS_WIN)
   response->AppendString(base::WideToUTF16(browser_context()->GetPath().value()));
+#else
+  response->AppendString(browser_context()->GetPath().value());
+#endif
   return true;
 }
 
