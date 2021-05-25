@@ -161,7 +161,7 @@ vars = {
   # qemu on linux-arm64 machines.
   'checkout_fuchsia_for_arm64_host': False,
 
-  'nw_src_revision': '92cbf4c5d38cfff38867c86b01f53cd50369398c',
+  'nw_src_revision': 'e3a1940c156adf11f662207c1312eeadc0b11092',
   'nw_v8_revision': 'a43b730508df890587c8f5f5bc96be19b83ab730',
   'nw_node_revision': '37966cdf80b576d7a5f4a4d42f464b32491ad9ee',
   # By default, download the fuchsia sdk from the fuchsia GCS bucket.
