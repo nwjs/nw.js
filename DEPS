@@ -162,7 +162,7 @@ vars = {
   'checkout_fuchsia_for_arm64_host': False,
 
   'nw_src_revision': '7fcbea8704f9b22d9a9ade3cf5a0a23a308f7970',
-  'nw_v8_revision': 'a43b730508df890587c8f5f5bc96be19b83ab730',
+  'nw_v8_revision': '7972f52f23b142856bad57e196c5ae868365b41b',
   'nw_node_revision': '37966cdf80b576d7a5f4a4d42f464b32491ad9ee',
   # By default, download the fuchsia sdk from the fuchsia GCS bucket.
   'fuchsia_sdk_bucket': 'fuchsia',
