@@ -138,13 +138,16 @@ std::unique_ptr<base::DictionaryValue> MenuItem::CreateFromNative(NSMenuItem* me
   if (mask != 0) {
     std::stringstream s;
     std::vector<std::string> modifiers;
-    if (mask & NSCommandKeyMask) modifiers.push_back("cmd");
-    if (mask & NSControlKeyMask) modifiers.push_back("ctrl");
-    if (mask & NSAlternateKeyMask) modifiers.push_back("alt");
-    if (mask & NSShiftKeyMask) modifiers.push_back("shift");
+    if (mask & NSEventModifierFlagCommand) modifiers.push_back("cmd");
+    if (mask & NSEventModifierFlagControl) modifiers.push_back("ctrl");
+    if (mask & NSEventModifierFlagOption) modifiers.push_back("alt");
+    if (mask & NSEventModifierFlagShift) modifiers.push_back("shift");
+    if (mask & NSEventModifierFlagFunction) modifiers.push_back("fn");
     std::copy(modifiers.begin(), modifiers.end(), std::ostream_iterator<std::string>(s, "+"));
     std::string str = s.str();
-    str.erase(str.length()-1);
+    if (str.length() > 0) {
+      str.erase(str.length()-1);
+    }
     options->SetString("modifiers", str);
   }
 
@@ -210,15 +213,17 @@ void MenuItem::SetModifiers(const std::string& modifiers) {
   NSUInteger mask = 0;
   NSString* nsmodifiers = [NSString stringWithUTF8String:modifiers.c_str()].lowercaseString;
   if([nsmodifiers rangeOfString:@"shift"].location != NSNotFound)
-    mask = mask|NSShiftKeyMask;
+    mask = mask|NSEventModifierFlagShift;
   if([nsmodifiers rangeOfString:@"cmd"].location != NSNotFound
     || [nsmodifiers rangeOfString:@"command"].location != NSNotFound
     || [nsmodifiers rangeOfString:@"super"].location != NSNotFound)
-    mask = mask|NSCommandKeyMask;
+    mask = mask|NSEventModifierFlagCommand;
   if([nsmodifiers rangeOfString:@"alt"].location != NSNotFound)
-    mask = mask|NSAlternateKeyMask;
+    mask = mask|NSEventModifierFlagOption;
   if([nsmodifiers rangeOfString:@"ctrl"].location != NSNotFound)
-    mask = mask|NSControlKeyMask;
+    mask = mask|NSEventModifierFlagControl;
+  if([nsmodifiers rangeOfString:@"fn"].location != NSNotFound)
+    mask = mask|NSEventModifierFlagFunction;
   [menu_item_ setKeyEquivalentModifierMask:mask];
 }
 
