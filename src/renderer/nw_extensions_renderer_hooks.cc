@@ -433,7 +433,7 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
   blink::ScriptForbiddenScope::AllowUserAgentScript script;
   blink::WebLocalFrame* web_frame = frame->GetWebFrame();
   GURL frame_url = ScriptContext::GetDocumentLoaderURLForFrame(web_frame);
-  content::RenderFrame* main_frame = frame->GetRenderView()->GetMainRenderFrame();
+  content::RenderFrame* main_frame = frame->GetMainRenderFrame();
   if (!main_frame)
     return;
   if (web_frame->Parent() && (!frame_url.is_valid() || frame_url.is_empty()))
@@ -494,7 +494,7 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
   if (frame->Parent() && (!frame_url.is_valid() || frame_url.is_empty()))
     return;
   content::RenderFrameImpl* render_frame = content::RenderFrameImpl::FromWebFrame(frame);
-  content::RenderFrame* main_frame = render_frame->GetRenderView()->GetMainRenderFrame();
+  content::RenderFrame* main_frame = render_frame->GetMainRenderFrame();
   if (!main_frame)
     return;
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
@@ -579,7 +579,8 @@ void willHandleNavigationPolicy(content::RenderView* rv,
   arguments.push_back(v8_str(request.Url().GetString().Utf8().c_str()));
   arguments.push_back(policy_obj);
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    content::RenderFrame* main_frame = rv->GetMainRenderFrame();
+    content::RenderFrame* main_frame = content::RenderFrame::FromWebFrame(
+                  rv->GetWebView()->MainFrame()->ToWebLocalFrame());
     arguments.push_back(v8::Integer::New(isolate, main_frame->GetRoutingID()));
 
     std::set<ScriptContext*> contexts(g_dispatcher->script_context_set().contexts());
