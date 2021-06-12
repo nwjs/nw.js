@@ -381,12 +381,12 @@ base::FilePath GetRootPathRenderer() {
 }
 
 void TryInjectStartScript(blink::WebLocalFrame* frame, const Extension* extension, bool start) {
-  RenderViewImpl* rv = content::RenderFrameImpl::FromWebFrame(frame)->render_view();
-  if (!rv)
+  blink::WebView* wv = content::RenderFrameImpl::FromWebFrame(frame)->GetWebView();
+  if (!wv)
     return;
 
-  std::string js_fn = start ? rv->GetRendererPreferences().nw_inject_js_doc_start :
-                              rv->GetRendererPreferences().nw_inject_js_doc_end;
+  std::string js_fn = start ? wv->GetRendererPreferences().nw_inject_js_doc_start :
+                              wv->GetRendererPreferences().nw_inject_js_doc_end;
   if (js_fn.empty())
     return;
   base::FilePath fpath = base::FilePath::FromUTF8Unsafe(js_fn);
