@@ -164,12 +164,14 @@ void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
 void Menu::OnMenuClosed() {
   CHECK(!message_loop_quit_.is_null());
   message_loop_quit_.Run();
-  
-#if !defined(OS_WIN)
+
+#if 0 //!defined(OS_WIN)
   // Ask PlatformEventSource to stop dispatching
   // events in this message loop
   // iteration. We want our menu's loop to return
   // before the next event.
+
+  // fixed in upstream with https://chromium-review.googlesource.com/c/chromium/src/+/2907732
   if (ui::PlatformEventSource::GetInstance())
     ui::PlatformEventSource::GetInstance()->StopCurrentEventStream();
 #endif

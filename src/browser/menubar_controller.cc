@@ -125,7 +125,7 @@ void MenuBarController::OnMenuClose() {
   CHECK(!message_loop_quit_.is_null());
   message_loop_quit_.Run();
 
-#if !defined(OS_WIN)
+#if 0 //!defined(OS_WIN)
   // Ask PlatformEventSource to stop dispatching
   // events in this message loop
   // iteration. We want our menu's loop to return
