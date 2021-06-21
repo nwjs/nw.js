@@ -161,9 +161,6 @@ vars = {
   # qemu on linux-arm64 machines.
   'checkout_fuchsia_for_arm64_host': False,
 
-  'nw_src_revision': '7fcbea8704f9b22d9a9ade3cf5a0a23a308f7970',
-  'nw_v8_revision': '7972f52f23b142856bad57e196c5ae868365b41b',
-  'nw_node_revision': '3b23ca608047c94801c0dce775441c1f15527a0c',
   # By default, download the fuchsia sdk from the fuchsia GCS bucket.
   'fuchsia_sdk_bucket': 'fuchsia',
 
@@ -197,6 +194,10 @@ vars = {
   # reclient CIPD package version
   'reclient_version': 're_client_version:0.26.0.b455196',
 
+  'nw_src_revision': '109bb873992e4cb0671159adef7a9b1a542c0cd0',
+  'nw_v8_revision': '4c95bd4c6027f77c8a4cbcc9f6253291abc92ad5',
+  'nw_node_revision': '3b23ca608047c94801c0dce775441c1f15527a0c',
+
   'android_git': 'https://android.googlesource.com',
   'aomedia_git': 'https://aomedia.googlesource.com',
   'boringssl_git': 'https://boringssl.googlesource.com',
@@ -211,11 +212,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': 'bdcca296d069473ed99a0c1f319b9395dff8f802',
+  'skia_revision': 'b0b613b2976c90bccfab56f27fd749cf051a5725',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'fd856cebb3515699d942d0f2517f6658a0cf720b',
+  'v8_revision': '10762194cbe9c1ff33799b335889175c8948ed38',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -223,7 +224,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': '788efd1c721a82e3d67daf4eb6ce3133fb4fd060',
+  'angle_revision': '3d4f87ab5b9ba4c720cedf1f219cc0884038b140',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -1639,7 +1640,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@9a653e9df2171ccea94fcf20715e718139821c9e',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@61326a0191a1f2e4eb9e5314d116d86cad32300f',
     'condition': 'checkout_src_internal',
   },
 
