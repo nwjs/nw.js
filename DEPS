@@ -194,7 +194,7 @@ vars = {
   # reclient CIPD package version
   'reclient_version': 're_client_version:0.26.0.b455196',
 
-  'nw_src_revision': '109bb873992e4cb0671159adef7a9b1a542c0cd0',
+  'nw_src_revision': '02f281fff9636b1ee59aaa3a55e3e354c4f171f4',
   'nw_v8_revision': '4c95bd4c6027f77c8a4cbcc9f6253291abc92ad5',
   'nw_node_revision': '3b23ca608047c94801c0dce775441c1f15527a0c',
 
