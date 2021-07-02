@@ -1,3 +1,10 @@
+0.54.1 / 07-02-2021
+===================
+- Update Chromium to [91.0.4472.114](https://chromereleases.googleblog.com/2021/06/stable-channel-update-for-desktop_17.html)
+- Update Node.js to [v16.4.0](https://nodejs.org/en/blog/release/v16.4.0/)
+- Fix: file:// is ERR_UNKNOWN_URL_SCHEME [(#7732)](https://github.com/nwjs/nw.js/issues/7732)
+- Fix: MenuItem::CreateFromNative for macOS crashes for items that only have Function modifier [(#7739)](https://github.com/nwjs/nw.js/issues/7739)
+
 0.54.0 / 05-26-2021
 ===================
 - Update Chromium to [91.0.4472.77](https://chromereleases.googleblog.com/2021/05/stable-channel-update-for-desktop_25.html)
