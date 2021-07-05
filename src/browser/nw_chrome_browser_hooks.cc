@@ -375,8 +375,7 @@ void MainPartsPreMainMessageLoopRunHook() {
 
       net::CertificateList loaded =
         net::X509Certificate::CreateCertificateListFromBytes(
-        certificate_string.c_str(), certificate_string.size(),
-        net::X509Certificate::FORMAT_AUTO);
+            base::as_bytes(base::make_span(certificate_string)), certificate_string.size());
       if (loaded.empty() && !certificate_string.empty()) {
         // LOG(WARNING)
         //   << "Could not load certificate from entry " << i;
