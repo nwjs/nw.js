@@ -34,6 +34,6 @@ try:
     else:
         output = elems[0].get_attribute("innerHTML")
     print output
-    assert("Array" in output)
+    assert("Array" in output or '[]' in output)
 finally:
     driver.quit()
