@@ -64,16 +64,21 @@ NwObjCallObjectMethodFunction::~NwObjCallObjectMethodFunction() {
 }
 
 bool NwObjCallObjectMethodFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  base::ListValue* arguments = nullptr;
   int id = 0;
   std::string type, method;
-  EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &id));
-  EXTENSION_FUNCTION_VALIDATE(args_->GetString(1, &type));
-  EXTENSION_FUNCTION_VALIDATE(args_->GetString(2, &method));
-  EXTENSION_FUNCTION_VALIDATE(args_->GetList(3, &arguments));
+  base::Value::ConstListView args_list = args_->GetList();
+  EXTENSION_FUNCTION_VALIDATE(!args_list.empty() &&
+                              args_list[0].is_int() &&
+                              args_list[1].is_string() &&
+                              args_list[2].is_string() &&
+                              args_list[3].is_list());
+  id = args_list[0].GetInt();
+  type = args_list[1].GetString();
+  method = args_list[2].GetString();
+  base::Value::ConstListView arguments = args_list[3].GetList();
 
   nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
-  manager->OnCallObjectMethod(render_frame_host(), id, type, method, *arguments);
+  manager->OnCallObjectMethod(render_frame_host(), id, type, method, base::ListValue(arguments));
   return true;
 }
 
@@ -84,16 +89,21 @@ NwObjCallObjectMethodSyncFunction::~NwObjCallObjectMethodSyncFunction() {
 }
 
 bool NwObjCallObjectMethodSyncFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  base::ListValue* arguments = nullptr;
   int id = 0;
   std::string type, method;
-  EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &id));
-  EXTENSION_FUNCTION_VALIDATE(args_->GetString(1, &type));
-  EXTENSION_FUNCTION_VALIDATE(args_->GetString(2, &method));
-  EXTENSION_FUNCTION_VALIDATE(args_->GetList(3, &arguments));
+  base::Value::ConstListView args_list = args_->GetList();
+  EXTENSION_FUNCTION_VALIDATE(!args_list.empty() &&
+                              args_list[0].is_int() &&
+                              args_list[1].is_string() &&
+                              args_list[2].is_string() &&
+                              args_list[3].is_list());
+  id = args_list[0].GetInt();
+  type = args_list[1].GetString();
+  method = args_list[2].GetString();
+  base::Value::ConstListView arguments = args_list[3].GetList();
 
   nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
-  manager->OnCallObjectMethodSync(render_frame_host(), id, type, method, *arguments, response);
+  manager->OnCallObjectMethodSync(render_frame_host(), id, type, method, base::ListValue(arguments), response);
   return true;
 }
 
@@ -106,16 +116,21 @@ NwObjCallObjectMethodAsyncFunction::~NwObjCallObjectMethodAsyncFunction() {
 ExtensionFunction::ResponseAction
 NwObjCallObjectMethodAsyncFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args_);
-  base::ListValue* arguments = nullptr;
   int id = 0;
   std::string type, method;
-  EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &id));
-  EXTENSION_FUNCTION_VALIDATE(args_->GetString(1, &type));
-  EXTENSION_FUNCTION_VALIDATE(args_->GetString(2, &method));
-  EXTENSION_FUNCTION_VALIDATE(args_->GetList(3, &arguments));
+  base::Value::ConstListView args_list = args_->GetList();
+  EXTENSION_FUNCTION_VALIDATE(!args_list.empty() &&
+                              args_list[0].is_int() &&
+                              args_list[1].is_string() &&
+                              args_list[2].is_string() &&
+                              args_list[3].is_list());
+  id = args_list[0].GetInt();
+  type = args_list[1].GetString();
+  method = args_list[2].GetString();
+  base::Value::ConstListView arguments = args_list[3].GetList();
 
   nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
-  manager->OnCallObjectMethod(render_frame_host(), id, type, method, *arguments);
+  manager->OnCallObjectMethod(render_frame_host(), id, type, method, base::ListValue(arguments));
   return RespondNow(NoArguments());
 }
 
