@@ -42,6 +42,7 @@
 #include "third_party/blink/renderer/platform/bindings/script_forbidden_scope.h"
 #include "third_party/blink/public/web/blink.h"
 #include "third_party/blink/renderer/platform/bindings/dom_wrapper_world.h"
+#pragma clang diagnostic ignored "-Wimplicit-const-int-float-conversion"
 #include "third_party/blink/renderer/bindings/core/v8/v8_binding_for_core.h"
 #include "third_party/blink/renderer/platform/wtf/casting.h"
 #include "third_party/blink/renderer/core/frame/web_local_frame_impl.h"
