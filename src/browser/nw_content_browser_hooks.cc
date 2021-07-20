@@ -7,7 +7,7 @@
 #include "base/threading/thread_restrictions.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/utf_string_conversions.h"
-
+#include "base/values.h"
 
 // content
 #include "content/public/browser/child_process_security_policy.h"
