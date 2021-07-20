@@ -131,8 +131,7 @@ void MenuItem::Call(const std::string& method,
     arguments.GetBoolean(0, &checked);
     SetChecked(checked);
   } else if (method == "SetSubmenu") {
-    int object_id = 0;
-    arguments.GetInteger(0, &object_id);
+    int object_id = arguments.GetList()[0].GetInt();
     SetSubmenu(object_manager()->GetApiObject<Menu>(object_id));
 #if defined(OS_MAC)
   } else if (method == "SetKey") {

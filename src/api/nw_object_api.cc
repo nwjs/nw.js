@@ -33,7 +33,9 @@ bool NwObjCreateFunction::RunNWSync(base::ListValue* response, std::string* erro
   base::DictionaryValue* options = nullptr;
   int id = 0;
   std::string type;
-  EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &id));
+  base::Value::ConstListView list_view = args_->GetList();
+  EXTENSION_FUNCTION_VALIDATE(list_view.size() > 0 && list_view[0].is_int());
+  id = list_view[0].GetInt();
   EXTENSION_FUNCTION_VALIDATE(args_->GetString(1, &type));
   EXTENSION_FUNCTION_VALIDATE(args_->GetDictionary(2, &options));
 
@@ -50,7 +52,9 @@ NwObjDestroyFunction::~NwObjDestroyFunction() {
 
 bool NwObjDestroyFunction::RunNWSync(base::ListValue* response, std::string* error) {
   int id = 0;
-  EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &id));
+  base::Value::ConstListView list_view = args_->GetList();
+  EXTENSION_FUNCTION_VALIDATE(list_view.size() > 0 && list_view[0].is_int());
+  id = list_view[0].GetInt();
 
   nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
   manager->OnDeallocateObject(id);

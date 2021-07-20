@@ -89,8 +89,7 @@ void Tray::Call(const std::string& method,
     arguments.GetString(0, &tooltip);
     SetTooltip(tooltip);
   } else if (method == "SetMenu") {
-    int object_id = 0;
-    arguments.GetInteger(0, &object_id);
+    int object_id = arguments.GetList()[0].GetInt();
     SetMenu(object_manager()->GetApiObject<Menu>(object_id));
   } else if (method == "Remove") {
     Remove();

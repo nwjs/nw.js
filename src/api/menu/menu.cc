@@ -47,26 +47,19 @@ void Menu::Call(const std::string& method,
                 const base::ListValue& arguments,
                 content::RenderFrameHost* rvh) {
   if (method == "Append") {
-    int object_id = 0;
-    arguments.GetInteger(0, &object_id);
+    int object_id = arguments.GetList()[0].GetInt();
     Append(object_manager()->GetApiObject<MenuItem>(object_id));
   } else if (method == "Insert") {
-    int object_id = 0;
-    arguments.GetInteger(0, &object_id);
-    int pos = 0;
-    arguments.GetInteger(1, &pos);
+    int object_id = arguments.GetList()[0].GetInt();
+    int pos = arguments.GetList()[1].GetInt();
     Insert(object_manager()->GetApiObject<MenuItem>(object_id), pos);
   } else if (method == "Remove") {
-    int object_id = 0;
-    arguments.GetInteger(0, &object_id);
-    int pos = 0;
-    arguments.GetInteger(1, &pos);
+    int object_id = arguments.GetList()[0].GetInt();
+    int pos = arguments.GetList()[1].GetInt();
     Remove(object_manager()->GetApiObject<MenuItem>(object_id), pos);
   } else if (method == "Popup") {
-    int x = 0;
-    arguments.GetInteger(0, &x);
-    int y = 0;
-    arguments.GetInteger(1, &y);
+    int x = arguments.GetList()[0].GetInt();
+    int y = arguments.GetList()[1].GetInt();
     content::WebContents* web_contents = content::WebContents::FromRenderFrameHost(rvh);
     DCHECK(web_contents);
     zoom::ZoomController* zoom_controller = zoom::ZoomController::FromWebContents(web_contents);
