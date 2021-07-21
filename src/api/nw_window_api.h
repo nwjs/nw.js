@@ -143,7 +143,7 @@ class NwCurrentWindowInternalSetShadowInternalFunction : public ExtensionFunctio
  protected:
   ~NwCurrentWindowInternalSetShadowInternalFunction() override {}
 #if defined(OS_MAC)
-  void SetShadowOnWindow(NSWindow *window, bool shadow);
+  void SetShadowOnWindow(void *window, bool shadow);
 #endif
 
   // ExtensionFunction:

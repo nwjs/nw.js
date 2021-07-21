@@ -47,8 +47,9 @@
 
 namespace extensions {
 
-void NwCurrentWindowInternalSetShadowInternalFunction::SetShadowOnWindow(NSWindow *window, bool shadow) {
-  window.hasShadow = shadow;
+void NwCurrentWindowInternalSetShadowInternalFunction::SetShadowOnWindow(void *window, bool shadow) {
+  NSWindow* nswin = (NSWindow*)window;
+  nswin.hasShadow = shadow;
 }
 
 ExtensionFunction::ResponseAction
