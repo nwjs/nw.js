@@ -202,10 +202,6 @@ vars = {
   # Make Dawn skip its standalone dependencies
   'dawn_standalone': False,
 
-  'nw_src_revision': '00e70ff8399e2977fc1b27ecc76293d0b239447f',
-  'nw_v8_revision': '128573d8d3b661d8486318fc9270baf651a19a1d',
-  'nw_node_revision': 'dbaa7a8dfcfcd25f6a81299eb4036aadc8057aef',
-
   # reclient CIPD package version
   'reclient_version': 're_client_version:0.29.0.83d9585',
 
@@ -220,6 +216,9 @@ vars = {
   'skia_git': 'https://skia.googlesource.com',
   'swiftshader_git': 'https://swiftshader.googlesource.com',
   'webrtc_git': 'https://webrtc.googlesource.com',
+  'nw_src_revision': 'bcc70969a60ff19ad735fefb255a526feafb9f34',
+  'nw_v8_revision': '4104eca65f57b6ef57b57fcae0a49be375e9bd1f',
+  'nw_node_revision': 'dbaa7a8dfcfcd25f6a81299eb4036aadc8057aef',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
@@ -227,7 +226,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '01621b70b2fedd756470a79ad1e6cfdc9ba28b49',
+  'v8_revision': 'b8e057aaf6a56e7b5ebf5fd64c452a67ec2b0116',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -1658,7 +1657,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@ba2f72676ebafee1a64c3445d47ea72192991ffb',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@9b6ae1c29e9b099bc86efcbf215fc2f472fd70c9',
     'condition': 'checkout_src_internal',
   },
 
