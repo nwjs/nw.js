@@ -126,8 +126,7 @@ void AmendManifestList(base::DictionaryValue* manifest,
       pattern_list->Append((*it).CreateDeepCopy());
     }
   } else {
-    pattern_list = list_value.DeepCopy();
-    manifest->Set(path, base::WrapUnique(pattern_list));
+    manifest->Set(path, list_value.CreateDeepCopy());
   }
 }
 
