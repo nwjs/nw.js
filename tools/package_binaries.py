@@ -103,13 +103,7 @@ if platform_name == 'win':
     arch = 'ia32'
 
 if platform_name == 'osx':
-    # detect output arch
-    nw_bin = binaries_location + '/nwjs.app/Contents/MacOS/nwjs'
-    import subprocess
-    if 'i386' in subprocess.check_output(['file',nw_bin]):
-        arch = 'ia32'
-    else: # should be 'x86_64'
-        arch = 'x64'
+    arch = 'x64'
 
 if args.arch != None:
     arch = args.arch
