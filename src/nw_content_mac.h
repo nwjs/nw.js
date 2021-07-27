@@ -17,4 +17,5 @@ void NWSetNSWindowShowInTaskbar(extensions::NativeAppWindow* win, bool show);
 void NWSetNSWindowShowInTaskbar(gfx::NativeWindow win, bool show);
 void NWSetNSAppKioskOptions(void);
 void NWRestoreNSAppKioskOptions(void);
+bool NWGetAACActive(void);
 #endif

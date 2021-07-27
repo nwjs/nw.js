@@ -891,6 +891,13 @@ NwCurrentWindowInternalToggleKioskModeInternalFunction::Run() {
   return RespondNow(NoArguments());
 }
 
+bool NwCurrentWindowInternalIsAACActiveInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
+#if defined(OS_MAC)
+  response->AppendBoolean((NWGetAACActive()));
+#endif
+  return true;
+}
+
 bool NwCurrentWindowInternalIsKioskInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
     int id = 0;

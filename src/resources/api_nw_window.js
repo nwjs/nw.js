@@ -588,6 +588,11 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
         return this.appWindow.alphaEnabled();
       }
     });
+    Object.defineProperty(NWWindow.prototype, 'isAACActive', {
+      get: function() {
+        return currentNWWindowInternal.isAACActiveInternal();
+      }
+    });
     Object.defineProperty(NWWindow.prototype, 'isKioskMode', {
       get: function() {
         return currentNWWindowInternal.isKioskInternal();
