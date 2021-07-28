@@ -894,6 +894,8 @@ NwCurrentWindowInternalToggleKioskModeInternalFunction::Run() {
 bool NwCurrentWindowInternalIsAACActiveInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
 #if defined(OS_MAC)
   response->AppendBoolean((NWGetAACActive()));
+#else
+  response->AppendBoolean(false);
 #endif
   return true;
 }
