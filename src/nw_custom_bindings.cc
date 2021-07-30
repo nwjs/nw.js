@@ -3,11 +3,11 @@
 // found in the LICENSE file.
 #include "content/nw/src/nw_custom_bindings.h"
 
-#define INSIDE_BLINK 1
-
-#undef INSIDE_BLINK
-#include "content/renderer/render_view_impl.h"
 #include "content/public/renderer/render_thread.h"
+#include "content/public/renderer/render_frame.h"
+#include "content/public/renderer/render_view.h"
+
+#include "third_party/blink/public/platform/web_url.h"
 
 #include <string>
 
@@ -73,6 +73,7 @@ using namespace blink;
 #include "third_party/blink/public/web/web_frame.h"
 #include "third_party/blink/public/web/web_view.h"
 #include "third_party/blink/public/web/web_script_source.h"
+#include "third_party/blink/public/web/web_local_frame.h"
 
 #undef BLINK_IMPLEMENTATION
 #define BLINK_IMPLEMENTATION 1
