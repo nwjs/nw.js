@@ -19,6 +19,7 @@
 #include "content/public/common/content_switches.h"
 #include "content/public/renderer/render_view.h"
 #include "content/renderer/render_view_impl.h"
+#include "content/renderer/render_frame_impl.h"
 
 #include "content/common/frame.mojom.h"
 
