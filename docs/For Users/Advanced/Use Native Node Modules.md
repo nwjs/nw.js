@@ -3,6 +3,21 @@
 
 [TOC]
 
+## ESM
+
+NW.js does not currently support referencing Node modules using the ESM syntax
+(`import`/`export`). Please use CJS `require`:
+
+```js
+// Supported
+const fs = require('fs');
+
+// Not supported
+import fs from 'fs';
+```
+
+[Tracking issue](https://github.com/nwjs/nw.js/issues/7639)
+
 ## Install with NPM
 
 ### For LTS Releases
