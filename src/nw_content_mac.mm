@@ -175,3 +175,10 @@ void NWRestoreNSAppKioskOptions(void) {
         }
     }
 }
+
+bool NWGetAACActive(void) {
+    if (@available(macOS 10.15.4, *)) {
+        return [session isActive];
+    }
+    return false;
+}
