@@ -1,3 +1,8 @@
+0.55.0 / 08-01-2021
+===================
+- Update Chromium to [92.0.4515.107](https://chromereleases.googleblog.com/2021/07/stable-channel-update-for-desktop_20.html)
+- Update Node.js to [v16.4.2](https://nodejs.org/en/blog/release/v16.4.2/)
+
 0.54.1 / 07-02-2021
 ===================
 - Update Chromium to [91.0.4472.114](https://chromereleases.googleblog.com/2021/06/stable-channel-update-for-desktop_17.html)
