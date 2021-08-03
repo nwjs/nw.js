@@ -168,7 +168,7 @@ std::unique_ptr<base::DictionaryValue> MergeManifest(const std::string& in_manif
       // filter out non inherited attributes
       std::vector<const char*>::iterator it;
       for(it = non_inherited_attrs.begin(); it != non_inherited_attrs.end(); it++) {
-        manifest_window_cloned->RemoveWithoutPathExpansion(*it, NULL);
+        manifest_window_cloned->ExtractKey(*it);
       }
       // overwrite default `window` manifest with the one passed by `new-win-policy`
       manifest_window_cloned->MergeDictionary(manifest.get());
