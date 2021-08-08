@@ -30,7 +30,7 @@ NW.js use same build tools and similar steps as Chromium. Read the instructions 
 ```bash
 mkdir -p $HOME/nwjs
 cd $HOME/nwjs
-gclient config --name=src https://github.com/nwjs/chromium.src.git@origin/nw17
+gclient config --name=src https://github.com/nwjs/chromium.src.git@origin/nw55
 ```
 
 Generally if you are not interested in running Chromium tests, you don't have to sync the test cases and reference builds, which saves you lot of time. Open the `.gclient` file you just created and replace `custom_deps` section with followings:
