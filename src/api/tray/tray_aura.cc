@@ -40,7 +40,7 @@ namespace nw {
 
 StatusTray* Tray::status_tray_ = NULL;
 
-class TrayObserver : public StatusIconObserver {
+class TrayObserver final : public StatusIconObserver {
  public:
   TrayObserver(Tray* tray)
       : tray_(tray) {
