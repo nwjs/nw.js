@@ -62,7 +62,7 @@ MenuBarView::~MenuBarView() {
 }
 
 void MenuBarView::UpdateMenu(ui::MenuModel* model) {
-  RemoveAllChildViews(true);
+  RemoveAllChildViews();
   InitView(model);
   Layout();
   PreferredSizeChanged();

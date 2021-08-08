@@ -51,7 +51,7 @@ class Base;
 class ObjectManager : public KeyedService {
  public:
   explicit ObjectManager(content::BrowserContext* context);
-  ~ObjectManager() final;
+  ~ObjectManager() override;
 
   // Get C++ object from its id.
   static Base* GetApiObject(int id);
