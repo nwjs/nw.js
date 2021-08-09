@@ -1,11 +1,11 @@
 diff --git a/front_end/models/extensions/ExtensionServer.ts b/front_end/models/extensions/ExtensionServer.ts
-index d75db4c1a..346337d26 100644
+index 0bb5cf494..0f7a1beed 100644
 --- front_end/models/extensions/ExtensionServer.ts
 +++ front_end/models/extensions/ExtensionServer.ts
-@@ -942,6 +942,7 @@ export class ExtensionServer extends Common.ObjectWrapper.ObjectWrapper {
+@@ -1081,6 +1081,7 @@ export class ExtensionServer extends Common.ObjectWrapper.ObjectWrapper {
    }
  
-   _canInspectURL(url: string): boolean {
+   private canInspectURL(url: string): boolean {
 +    return true;
      let parsedURL;
      // This is only to work around invalid URLs we're occasionally getting from some tests.
