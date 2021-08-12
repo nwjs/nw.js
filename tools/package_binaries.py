@@ -147,7 +147,7 @@ def generate_target_nw(platform_name, arch, version):
                            'nw',
                            'icudtl.dat',
                            'locales',
-                           'crashpad_handler',
+                           'chrome_crashpad_handler',
                            'v8_context_snapshot.bin',
                            'lib/libnw.so',
                            'lib/libnode.so',
