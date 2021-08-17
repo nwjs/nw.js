@@ -22,7 +22,7 @@ try:
     print 'switch to devtools'
     switch_to_devtools(driver, devtools_window=driver.window_handles[-1])
     print 'click react panel'
-    driver.execute_script('UI.inspectorView._tabbedPane.selectTab(UI.inspectorView._tabbedPane._tabs[9]._id)')
+    driver.execute_script('UI.inspectorView.tabbedPane.selectTab(UI.inspectorView.tabbedPane.tabs[9].id)')
     time.sleep(5)
     #driver.switch_to_frame(driver.find_elements_by_class_name("extension")[0])
     #success = False
