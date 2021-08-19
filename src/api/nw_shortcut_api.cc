@@ -107,9 +107,12 @@ void NWShortcutObserver::OnKeyPressed (const ui::Accelerator& uiAccelerator) {
 }
 
 bool NwShortcutRegisterAcceleratorFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  const base::DictionaryValue *acceleratorDict = nullptr;
-  EXTENSION_FUNCTION_VALIDATE(args_->GetDictionary(0, &acceleratorDict));
-  std::unique_ptr<ui::Accelerator> uiAccelerator = dictionaryToUIAccelerator(acceleratorDict);
+  EXTENSION_FUNCTION_VALIDATE(args().size() >= 1);
+  EXTENSION_FUNCTION_VALIDATE(args()[0].is_dict());
+  const base::DictionaryValue& acceleratorDict =
+    base::Value::AsDictionaryValue(args()[0]);
+
+  std::unique_ptr<ui::Accelerator> uiAccelerator = dictionaryToUIAccelerator(&acceleratorDict);
 
   if (!GlobalShortcutListener::GetInstance()->RegisterAccelerator(*uiAccelerator, NWShortcutObserver::GetInstance())) {
     response->AppendBoolean(false);
@@ -121,9 +124,11 @@ bool NwShortcutRegisterAcceleratorFunction::RunNWSync(base::ListValue* response,
 }
 
 bool NwShortcutUnregisterAcceleratorFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  const base::DictionaryValue *acceleratorDict = nullptr;
-  EXTENSION_FUNCTION_VALIDATE(args_->GetDictionary(0, &acceleratorDict));
-  std::unique_ptr<ui::Accelerator> uiAccelerator = dictionaryToUIAccelerator(acceleratorDict);
+  EXTENSION_FUNCTION_VALIDATE(args().size() >= 1);
+  EXTENSION_FUNCTION_VALIDATE(args()[0].is_dict());
+  const base::DictionaryValue& acceleratorDict =
+    base::Value::AsDictionaryValue(args()[0]);
+  std::unique_ptr<ui::Accelerator> uiAccelerator = dictionaryToUIAccelerator(&acceleratorDict);
 
   GlobalShortcutListener::GetInstance()->UnregisterAccelerator(*uiAccelerator, NWShortcutObserver::GetInstance());
   response->AppendBoolean(true);

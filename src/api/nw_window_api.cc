@@ -219,12 +219,12 @@ void NwCurrentWindowInternalCloseFunction::DoCloseBrowser(Browser* browser) {
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalCloseFunction::Run() {
   std::unique_ptr<extensions::nwapi::nw_current_window_internal::Close::Params> params(
-                      extensions::nwapi::nw_current_window_internal::Close::Params::Create(*args_));
+        extensions::nwapi::nw_current_window_internal::Close::Params::Create(args()));
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   bool force = params->force.get() ? *params->force : false;
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    int id = args_->GetList()[1].GetInt();
+    int id = args()[1].GetInt();
     Browser* browser = getBrowser(this, id);
     if (!browser)
       return RespondNow(Error("cannot find browser window"));
@@ -278,10 +278,8 @@ void NwCurrentWindowInternalShowDevTools2InternalFunction::OnOpened() {
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalShowDevTools2InternalFunction::Run() {
   int id = 0;
-  EXTENSION_FUNCTION_VALIDATE(args_);
-  base::Value::ConstListView list_view = args_->GetList();
-  EXTENSION_FUNCTION_VALIDATE(list_view.size() > 0 && list_view[0].is_int());
-  id = args_->GetList()[0].GetInt();
+  EXTENSION_FUNCTION_VALIDATE(args().size() && args()[0].is_int());
+  id = args()[0].GetInt();
 
   Browser* browser = getBrowser(this, id);
   content::WebContents* web_contents = browser->tab_strip_model()->GetActiveWebContents();
@@ -321,19 +319,17 @@ NwCurrentWindowInternalCapturePageInternalFunction::~NwCurrentWindowInternalCapt
 
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalCapturePageInternalFunction::Run() {
-  EXTENSION_FUNCTION_VALIDATE(args_);
+  EXTENSION_FUNCTION_VALIDATE(args().size());
 
   std::unique_ptr<ImageDetails> image_details;
   WebContents* contents = nullptr;
 
-  if (args_->GetSize() > 1) {
-    base::Value* spec = NULL;
-    EXTENSION_FUNCTION_VALIDATE(args_->Get(1, &spec) && spec);
-    image_details = ImageDetails::FromValue(*spec);
+  if (args().size() > 1) {
+    image_details = ImageDetails::FromValue(args()[1]);
   }
 
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    int id = args_->GetList()[0].GetInt();
+    int id = args()[0].GetInt();
     Browser* browser = getBrowser(this, id);
     if (!browser) {
       return RespondNow(Error("no browser window found"));
@@ -453,7 +449,7 @@ NwCurrentWindowInternalClearMenuFunction::Run() {
       return RespondNow(Error(error_));
     }
   } else {
-    int wid = args_->GetList()[0].GetInt();
+    int wid = args()[0].GetInt();
     browser = getBrowser(this, wid);
     if (!browser) {
       error_ = kNoAssociatedAppWindow;
@@ -508,10 +504,8 @@ NwCurrentWindowInternalSetMenuFunction::~NwCurrentWindowInternalSetMenuFunction(
 }
 
 bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  int id = 0;
-  base::Value::ConstListView list_view = args_->GetList();
-  EXTENSION_FUNCTION_VALIDATE(list_view.size() > 0 && list_view[0].is_int());
-  id = args_->GetList()[0].GetInt();
+  EXTENSION_FUNCTION_VALIDATE(args().size() > 0 && args()[0].is_int());
+  int id = args()[0].GetInt();
   nw::ObjectManager* obj_manager = nw::ObjectManager::Get(browser_context());
   Menu* menu = (Menu*)obj_manager->GetApiObject(id);
   Browser* browser = nullptr;
@@ -520,7 +514,7 @@ bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::ListValue* response
   Menu* old_menu = nullptr;
 #endif
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    int wid = args_->GetList()[1].GetInt();
+    int wid = args()[1].GetInt();
     browser = getBrowser(this, wid);
     if (!browser)
       return false;
@@ -599,9 +593,8 @@ static base::win::ScopedHICON createBadgeIcon(const HWND hWnd, const TCHAR *valu
 #ifndef OS_MAC
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalSetBadgeLabelInternalFunction::Run() {
-  EXTENSION_FUNCTION_VALIDATE(args_);
-  std::string badge;
-  EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &badge));
+  EXTENSION_FUNCTION_VALIDATE(args().size() && args()[0].is_string());
+  std::string badge = args()[0].GetString();
 #if defined(OS_WIN)
   Microsoft::WRL::ComPtr<ITaskbarList3> taskbar;
   HRESULT result = ::CoCreateInstance(CLSID_TaskbarList, nullptr,
@@ -623,12 +616,12 @@ NwCurrentWindowInternalSetBadgeLabelInternalFunction::Run() {
   base::win::ScopedHICON icon;
   HWND hWnd;
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    int id = args_->GetList()[1].GetInt();
+    int id = args()[1].GetInt();
     Browser* browser = getBrowser(this, id);
     if (!browser)
       return RespondNow(Error("cannot find browser window"));
     hWnd = getHWND(browser);
-  } else 
+  } else
       hWnd = getHWND(getAppWindow(this));
 
   if (hWnd == NULL) {
@@ -654,11 +647,8 @@ NwCurrentWindowInternalSetBadgeLabelInternalFunction::Run() {
 
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalRequestAttentionInternalFunction::Run() {
-  EXTENSION_FUNCTION_VALIDATE(args_);
-  int count;
-  base::Value::ConstListView list_view = args_->GetList();
-  EXTENSION_FUNCTION_VALIDATE(list_view.size() > 0 && list_view[0].is_int());
-  count = args_->GetList()[0].GetInt();
+  EXTENSION_FUNCTION_VALIDATE(args().size() && args()[0].is_int());
+  int count = args()[0].GetInt();
 #if defined(OS_WIN)
   FLASHWINFO fwi;
   fwi.cbSize = sizeof(fwi);
@@ -690,14 +680,13 @@ NwCurrentWindowInternalRequestAttentionInternalFunction::Run() {
 
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalSetProgressBarInternalFunction::Run() {
-  base::Value::ConstListView list_view = args_->GetList();
-  EXTENSION_FUNCTION_VALIDATE(list_view.size() > 0 && (list_view[0].is_double() || list_view[0].is_int()));
+  EXTENSION_FUNCTION_VALIDATE(args().size() > 0 && (args()[0].is_double() || args()[0].is_int()));
 
   double progress;
-  if (list_view[0].is_double())
-    progress = list_view[0].GetDouble();
+  if (args()[0].is_double())
+    progress = args()[0].GetDouble();
   else
-    progress = list_view[0].GetInt();
+    progress = args()[0].GetInt();
 
 #if defined(OS_WIN)
   Microsoft::WRL::ComPtr<ITaskbarList3> taskbar;
@@ -719,12 +708,12 @@ NwCurrentWindowInternalSetProgressBarInternalFunction::Run() {
 
   HWND hWnd;
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    int id = args_->GetList()[1].GetInt();
+    int id = args()[1].GetInt();
     Browser* browser = getBrowser(this, id);
     if (!browser)
       return RespondNow(Error("cannot find browser window"));
     hWnd = getHWND(browser);
-  } else 
+  } else
       hWnd = getHWND(getAppWindow(this));
   if (hWnd == NULL) {
     error_ = kNoAssociatedAppWindow;
@@ -764,8 +753,8 @@ NwCurrentWindowInternalReloadIgnoringCacheFunction::Run() {
 bool NwCurrentWindowInternalGetZoomFunction::RunNWSync(base::ListValue* response, std::string* error) {
   content::WebContents* web_contents = GetSenderWebContents();
   if (base::FeatureList::IsEnabled(::features::kNWNewWin) &&
-      args_->GetSize() > 0) {
-    int id = args_->GetList()[0].GetInt();
+      args().size() > 0) {
+    int id = args()[0].GetInt();
     Browser* browser = getBrowser(this, id);
     if (!browser) {
       *error = "no browser window found";
@@ -782,19 +771,18 @@ bool NwCurrentWindowInternalGetZoomFunction::RunNWSync(base::ListValue* response
 }
 
 bool NwCurrentWindowInternalSetZoomFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  base::Value::ConstListView list_view = args_->GetList();
-  EXTENSION_FUNCTION_VALIDATE(list_view.size() > 0 && (list_view[0].is_double() || list_view[0].is_int()));
+  EXTENSION_FUNCTION_VALIDATE(args().size() > 0 && (args()[0].is_double() || args()[0].is_int()));
 
   double zoom_level;
-  if (list_view[0].is_double())
-    zoom_level = list_view[0].GetDouble();
+  if (args()[0].is_double())
+    zoom_level = args()[0].GetDouble();
   else
-    zoom_level = list_view[0].GetInt();
+    zoom_level = args()[0].GetInt();
 
   content::WebContents* web_contents = GetSenderWebContents();
   if (base::FeatureList::IsEnabled(::features::kNWNewWin) &&
-      args_->GetSize() > 1) {
-    int id = args_->GetList()[1].GetInt();
+      args().size() > 1) {
+    int id = args()[1].GetInt();
     Browser* browser = getBrowser(this, id);
     if (!browser) {
       *error = "no browser window found";
@@ -818,7 +806,7 @@ bool NwCurrentWindowInternalSetZoomFunction::RunNWSync(base::ListValue* response
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalEnterKioskModeInternalFunction::Run() {
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    int id = args_->GetList()[0].GetInt();
+    int id = args()[0].GetInt();
     Browser* browser = getBrowser(this, id);
     if (browser) {
       BrowserFrame* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
@@ -843,7 +831,7 @@ NwCurrentWindowInternalLeaveKioskModeInternalFunction::Run() {
     NWRestoreNSAppKioskOptions();
 #endif
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    int id = args_->GetList()[0].GetInt();
+    int id = args()[0].GetInt();
     Browser* browser = getBrowser(this, id);
     if (browser) {
       BrowserFrame* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
@@ -862,7 +850,7 @@ NwCurrentWindowInternalLeaveKioskModeInternalFunction::Run() {
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalToggleKioskModeInternalFunction::Run() {
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    int id = args_->GetList()[0].GetInt();
+    int id = args()[0].GetInt();
     Browser* browser = getBrowser(this, id);
     if (browser) {
       BrowserFrame* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
@@ -901,7 +889,7 @@ NwCurrentWindowInternalToggleKioskModeInternalFunction::Run() {
 
 bool NwCurrentWindowInternalIsKioskInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    int id = args_->GetList()[0].GetInt();
+    int id = args()[0].GetInt();
     Browser* browser = getBrowser(this, id);
     if (browser) {
       BrowserFrame* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
@@ -924,7 +912,7 @@ bool NwCurrentWindowInternalGetTitleInternalFunction::RunNWSync(base::ListValue*
     return true;
   }
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    int id = args_->GetList()[0].GetInt();
+    int id = args()[0].GetInt();
     Browser* browser = getBrowser(this, id);
     if (browser) {
       response->AppendString(browser->GetWindowTitleForCurrentTab(false));
@@ -938,11 +926,10 @@ bool NwCurrentWindowInternalGetTitleInternalFunction::RunNWSync(base::ListValue*
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalSetShadowInternalFunction::Run() {
 #if defined(OS_MAC)
-  EXTENSION_FUNCTION_VALIDATE(args_);
-  bool shadow;
-  EXTENSION_FUNCTION_VALIDATE(args_->GetBoolean(0, &shadow));
+  EXTENSION_FUNCTION_VALIDATE(args().size() && args()[0].is_bool());
+  bool shadow = args()[0].GetBool();
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    int id = args_->GetList()[1].GetInt();
+    int id = args()[1].GetInt();
     Browser* browser = getBrowser(this, id);
     if (browser)
       SetShadowOnWindow(browser->window()->GetNativeWindow().GetNativeNSWindow(), shadow);
@@ -955,11 +942,10 @@ NwCurrentWindowInternalSetShadowInternalFunction::Run() {
 }
 
 bool NwCurrentWindowInternalSetTitleInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  EXTENSION_FUNCTION_VALIDATE(args_);
-  std::string title;
-  EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &title));
+  EXTENSION_FUNCTION_VALIDATE(args().size() && args()[0].is_string());
+  std::string title = args()[0].GetString();
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    int id = args_->GetList()[1].GetInt();
+    int id = args()[1].GetInt();
     Browser* browser = getBrowser(this, id);
     if (!browser)
       return false;
@@ -992,44 +978,40 @@ void NwCurrentWindowInternalGetPrintersFunction::OnGetPrinterList(const printing
 }
 
 bool NwCurrentWindowInternalSetPrintSettingsInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  EXTENSION_FUNCTION_VALIDATE(args_);
+  EXTENSION_FUNCTION_VALIDATE(args().size());
 
-  if (!args_->GetSize())
+  if (!args().size())
     return false;
-  base::Value* spec = NULL;
-  EXTENSION_FUNCTION_VALIDATE(args_->Get(0, &spec) && spec);
-  if (!spec->is_dict())
+  if (!args()[0].is_dict())
     return false;
-  int id = args_->GetList()[1].GetInt();
+  int id = args()[1].GetInt();
   Browser* browser = getBrowser(this, id);
   content::WebContents* web_contents = nullptr;
   if (browser) {
     web_contents = browser->tab_strip_model()->GetActiveWebContents();
   }
-
-  const base::DictionaryValue* dict = static_cast<const base::DictionaryValue*>(spec);
+  const base::DictionaryValue& dict = base::Value::AsDictionaryValue(args()[0]);
   bool auto_print;
   std::string printer_name, pdf_path;
-  if (dict->GetBoolean("autoprint", &auto_print))
+  if (dict.GetBoolean("autoprint", &auto_print))
     chrome::NWPrintSetCustomPrinting(auto_print);
-  if (dict->GetString("printer", &printer_name))
+  if (dict.GetString("printer", &printer_name))
     chrome::NWPrintSetDefaultPrinter(printer_name);
-  if (dict->GetString("pdf_path", &pdf_path))
+  if (dict.GetString("pdf_path", &pdf_path))
     chrome::NWPrintSetPDFPath(base::FilePath::FromUTF8Unsafe(pdf_path));
-  chrome::NWPrintSetOptions(dict, web_contents);
+  chrome::NWPrintSetOptions(&dict, web_contents);
   return true;
 }
 
 bool NwCurrentWindowInternalGetCurrentFunction::RunNWSync(base::ListValue* response, std::string* ret_error) {
+  EXTENSION_FUNCTION_VALIDATE(args().size());
   base::ListValue remain;
-  int id = args_->GetList()[0].GetInt();
-  const base::Value* option = nullptr;
-  if (args_->GetSize() > 1) {
-    args_->Get(1, &option);
-    remain.Append(std::make_unique<base::Value>(option->Clone()));
+  int id = args()[0].GetInt();
+  if (args().size() > 1) {
+    remain.Append(std::make_unique<base::Value>(args()[1].Clone()));
   }
   std::unique_ptr<windows::GetCurrent::Params> params(
-      windows::GetCurrent::Params::Create(remain));
+             windows::GetCurrent::Params::Create(remain.GetList()));
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   ApiParameterExtractor<windows::GetCurrent::Params> extractor(params.get());
@@ -1076,11 +1058,10 @@ bool NwCurrentWindowInternalGetWinParamInternalFunction::RunNWSync(base::ListVal
 
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalSetShowInTaskbarInternalFunction::Run() {
-  EXTENSION_FUNCTION_VALIDATE(args_);
-  bool show;
-  EXTENSION_FUNCTION_VALIDATE(args_->GetBoolean(0, &show));
+  EXTENSION_FUNCTION_VALIDATE(args().size() && args()[0].is_bool());
+  bool show = args()[0].GetBool();
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    int id = args_->GetList()[1].GetInt();
+    int id = args()[1].GetInt();
     Browser* browser = getBrowser(this, id);
     if (!browser)
       return RespondNow(NoArguments());
