@@ -345,8 +345,10 @@ void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(DesktopMediaList* list, i
 
   bool NwScreenStartMonitorFunction::RunNWSync(base::ListValue* response, std::string* error) {
     bool screens, windows;
-    EXTENSION_FUNCTION_VALIDATE(args_->GetBoolean(0, &screens));
-    EXTENSION_FUNCTION_VALIDATE(args_->GetBoolean(1, &windows));
+    EXTENSION_FUNCTION_VALIDATE(args().size() >= 2);
+    EXTENSION_FUNCTION_VALIDATE(args()[0].is_bool() && args()[1].is_bool());
+    screens = args()[0].GetBool();
+    windows = args()[1].GetBool();
     NwDesktopCaptureMonitor::GetInstance()->Start(screens, windows);
     return true;
   }
@@ -369,7 +371,9 @@ void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(DesktopMediaList* list, i
 
   bool NwScreenRegisterStreamFunction::RunNWSync(base::ListValue* response, std::string* error) {
     std::string id;
-    EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &id));
+    EXTENSION_FUNCTION_VALIDATE(args().size() >= 1);
+    EXTENSION_FUNCTION_VALIDATE(args()[0].is_string());
+    id = args()[0].GetString();
 
     // following code is modified from `DesktopCaptureChooseDesktopMediaFunctionBase::OnPickerDialogResults`
     // in chrome/browser/extensions/api/desktop_capture/desktop_capture_base.cc

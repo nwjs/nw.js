@@ -178,8 +178,8 @@ NwAppClearAppCacheFunction::~NwAppClearAppCacheFunction() {
 }
 
 bool NwAppClearAppCacheFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  std::string manifest;
-  EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &manifest));
+  EXTENSION_FUNCTION_VALIDATE(args().size() >= 1 && args()[0].is_string());
+  std::string manifest = args()[0].GetString();
 
   GURL manifest_url(manifest);
   scoped_refptr<browsing_data::CannedAppCacheHelper> helper(
@@ -227,7 +227,7 @@ NwAppSetProxyConfigFunction::~NwAppSetProxyConfigFunction() {
 bool NwAppSetProxyConfigFunction::RunNWSync(base::ListValue* response, std::string* error) {
   net::ProxyConfigWithAnnotation config;
   std::unique_ptr<nwapi::nw__app::SetProxyConfig::Params> params(
-      nwapi::nw__app::SetProxyConfig::Params::Create(*args_));
+          nwapi::nw__app::SetProxyConfig::Params::Create(args()));
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   std::string pac_url = params->pac_url.get() ? *params->pac_url : "";
@@ -239,9 +239,10 @@ bool NwAppSetProxyConfigFunction::RunNWSync(base::ListValue* response, std::stri
     else
       config = net::ProxyConfigWithAnnotation(net::ProxyConfig::CreateFromCustomPacURL(GURL(pac_url)), TRAFFIC_ANNOTATION_FOR_TESTS);
   } else {
-    std::string proxy_config;
     net::ProxyConfig pc;
-    EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &proxy_config));
+    EXTENSION_FUNCTION_VALIDATE(args().size() && args()[0].is_string());
+    std::string proxy_config = args()[0].GetString();
+
     pc.proxy_rules().ParseFromString(proxy_config);
     config = net::ProxyConfigWithAnnotation(pc, TRAFFIC_ANNOTATION_FOR_TESTS);
   }
