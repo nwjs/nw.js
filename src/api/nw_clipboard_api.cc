@@ -21,6 +21,8 @@
 #include "ui/gfx/codec/png_codec.h"
 #include "third_party/skia/include/core/SkBitmap.h"
 
+#pragma clang diagnostic ignored "-Wunreachable-code-break"
+
 using namespace extensions::nwapi::nw__clipboard;
 
 namespace extensions {
