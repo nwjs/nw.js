@@ -51,7 +51,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "all",
+  "buildspec_platforms": "linux64, mac64, win, win64, android",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -221,13 +221,13 @@ vars = {
   'skia_git': 'https://skia.googlesource.com',
   'swiftshader_git': 'https://swiftshader.googlesource.com',
   'webrtc_git': 'https://webrtc.googlesource.com',
-  'nw_src_revision': '9505e29acba28144d6ca217e177ac47fb2686798',
+  'nw_src_revision': '76b4e933f223cbc6b61428597a1155cee5b0860b',
   'nw_v8_revision': '998bccf55febe36a439e3ddee6fd6e57c7511666',
   'nw_node_revision': '9fcd88e97b45d6e72ab511943b9f46586d9c801f',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '87e8842e8c3e4aa801066cda4dd2b4e595178df6',
+  'skia_revision': '42c2cee5ce92a792e79ec22a5a20f8c57e32892b',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
@@ -1600,7 +1600,7 @@ deps = {
     Var('chromium_git') + '/external/github.com/gpuweb/cts.git' + '@' + '385003f982d9dd0927fda093c5cee216a75c188d',
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + '852bc247046e253f2221844ff0241609601445c1',
+    Var('webrtc_git') + '/src.git' + '@' + '25e3fd53a79bfdb2bd647ee3a199eb9c3a71d271',
 
   'src/third_party/libgifcodec':
      Var('skia_git') + '/libgifcodec' + '@'+  Var('libgifcodec_revision'),
@@ -1667,7 +1667,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@b28736bcc012d3d38004cf5b7c818a4a8d19dadd',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@15c9a3fc130391fabb12b6f7b579c21fbe43d660',
     'condition': 'checkout_src_internal',
   },
 
