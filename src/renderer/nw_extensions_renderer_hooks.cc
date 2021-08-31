@@ -438,7 +438,7 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
   content::RenderFrame* main_frame = frame->GetMainRenderFrame();
   if (!main_frame)
     return;
-  if (web_frame->Parent() && (!frame_url.is_valid() || frame_url.is_empty()))
+  if (!frame_url.is_valid() || frame_url.is_empty())
     return;
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::HandleScope scope(isolate);
@@ -493,7 +493,7 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
   // there will follow another one with valid url
   blink::ScriptForbiddenScope::AllowUserAgentScript script;
   GURL frame_url = ScriptContext::GetDocumentLoaderURLForFrame(frame);
-  if (frame->Parent() && (!frame_url.is_valid() || frame_url.is_empty()))
+  if (!frame_url.is_valid() || frame_url.is_empty())
     return;
   content::RenderFrameImpl* render_frame = content::RenderFrameImpl::FromWebFrame(frame);
   content::RenderFrame* main_frame = render_frame->GetMainRenderFrame();
