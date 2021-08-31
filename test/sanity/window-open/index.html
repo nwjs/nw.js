@@ -1,0 +1,7 @@
+
+<script>
+window.name = 'local';
+nw.Window.open('remote.html', function(win) {
+  document.write('<h1 id="res">returned window is ' + typeof win + '</h1>');
+});
+</script>
