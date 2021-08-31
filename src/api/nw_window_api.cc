@@ -765,7 +765,7 @@ bool NwCurrentWindowInternalGetZoomFunction::RunNWSync(base::ListValue* response
 }
 
 bool NwCurrentWindowInternalSetZoomFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  EXTENSION_FUNCTION_VALIDATE(args().size() > 0 && args()[0].is_double());
+  EXTENSION_FUNCTION_VALIDATE(args().size() > 0);
   double zoom_level = args()[0].GetDouble();
 
   content::WebContents* web_contents = GetSenderWebContents();
