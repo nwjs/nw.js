@@ -363,7 +363,7 @@ void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(DesktopMediaList* list, i
   NwScreenIsMonitorStartedFunction::NwScreenIsMonitorStartedFunction() {}
 
   bool NwScreenIsMonitorStartedFunction::RunNWSync(base::ListValue* response, std::string* error) {
-    response->AppendBoolean(NwDesktopCaptureMonitor::GetInstance()->IsStarted());
+    response->Append(NwDesktopCaptureMonitor::GetInstance()->IsStarted());
     return true;
   }
 

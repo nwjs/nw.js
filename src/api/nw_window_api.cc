@@ -882,15 +882,15 @@ bool NwCurrentWindowInternalIsKioskInternalFunction::RunNWSync(base::ListValue* 
     Browser* browser = getBrowser(this, id);
     if (browser) {
       BrowserFrame* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
-      response->AppendBoolean((frame->IsFullscreen()));
+      response->Append((frame->IsFullscreen()));
       return true;
     }
   }
   AppWindow* window = getAppWindow(this);
   if (window->IsFullscreen() || window->IsForcedFullscreen())
-    response->AppendBoolean(true);
+    response->Append(true);
   else
-    response->AppendBoolean(false);
+    response->Append(false);
   return true;
 }
 

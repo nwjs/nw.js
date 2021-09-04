@@ -153,7 +153,7 @@ void MenuItem::CallSync(const std::string& method,
                         const base::ListValue& arguments,
                         base::ListValue* result) {
   if (method == "GetChecked") {
-    result->AppendBoolean(GetChecked());
+    result->Append(GetChecked());
   } else {
     NOTREACHED() << "Invalid call to MenuItem method:" << method
                  << " arguments:" << arguments;

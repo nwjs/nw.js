@@ -19,7 +19,7 @@ NwObjAllocateIdFunction::~NwObjAllocateIdFunction() {
 }
 
 bool NwObjAllocateIdFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  response->AppendInteger(nw::ObjectManager::AllocateId());
+  response->Append(nw::ObjectManager::AllocateId());
   return true;
 }
 
