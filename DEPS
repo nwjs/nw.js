@@ -51,7 +51,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "linux64, mac64, win, win64, android",
+  "buildspec_platforms": "linux64, mac64, win, win64",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -221,7 +221,7 @@ vars = {
   'skia_git': 'https://skia.googlesource.com',
   'swiftshader_git': 'https://swiftshader.googlesource.com',
   'webrtc_git': 'https://webrtc.googlesource.com',
-  'nw_src_revision': '76b4e933f223cbc6b61428597a1155cee5b0860b',
+  'nw_src_revision': '8720db58083c26c58731d747cd0c762ed4d9fc53',
   'nw_v8_revision': '998bccf55febe36a439e3ddee6fd6e57c7511666',
   'nw_node_revision': '74891376f43bc7e2e13ddedc114fda3094ab9757',
   # Three lines of non-changing comments so that
@@ -1667,7 +1667,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@15c9a3fc130391fabb12b6f7b579c21fbe43d660',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@8241d1b7568d5dd21ccaf387b5deac35f5c72aaa',
     'condition': 'checkout_src_internal',
   },
 
