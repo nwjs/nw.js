@@ -163,12 +163,12 @@ void ShowDevtools(bool show, content::WebContents* web_contents, content::WebCon
     scoped_refptr<DevToolsAgentHost> agent_host(DevToolsAgentHost::GetOrCreateFor(web_contents));
     g_cdt_process_id = container->GetMainFrame()->GetProcess()->GetID();
     content::ChildProcessSecurityPolicy::GetInstance()->GrantAll(g_cdt_process_id);
-    
+
     DevToolsWindow* window = DevToolsWindow::FindDevToolsWindow(agent_host.get());
     if (!window) {
       Profile* profile = Profile::FromBrowserContext(
              web_contents->GetBrowserContext());
-      window = DevToolsWindow::Create(profile, nullptr, DevToolsWindow::kFrontendDefault, std::string(), false, std::string(), std::string(), false, container);
+      window = DevToolsWindow::Create(profile, nullptr, DevToolsWindow::kFrontendDefault, std::string(), false, std::string(), std::string(), false, false, container);
       if (!window)
         return;
       window->bindings_->AttachTo(agent_host);
