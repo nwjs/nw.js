@@ -1,3 +1,7 @@
+0.56.0 / 09-05-2021
+===================
+- Update Chromium to [93.0.4577.63](https://chromereleases.googleblog.com/2021/08/stable-channel-update-for-desktop_31.html)
+
 0.55.0 / 08-01-2021
 ===================
 - Update Chromium to [92.0.4515.107](https://chromereleases.googleblog.com/2021/07/stable-channel-update-for-desktop_20.html)
