@@ -51,7 +51,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "linux64, mac64, win, win64",
+  "buildspec_platforms": "linux64, mac64, win, win64, android",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -221,17 +221,17 @@ vars = {
   'skia_git': 'https://skia.googlesource.com',
   'swiftshader_git': 'https://swiftshader.googlesource.com',
   'webrtc_git': 'https://webrtc.googlesource.com',
-  'nw_src_revision': '8720db58083c26c58731d747cd0c762ed4d9fc53',
-  'nw_v8_revision': '6da1eb0ee0e8bdf273156381924173e16868b6d2',
+  'nw_src_revision': '728ebd181910bb8d211bbbf7d64991f64e42fee6',
+  'nw_v8_revision': '72b75326954ef815c3b12d8feb3afc44f4093f40',
   'nw_node_revision': 'c2ce9ccc1362e073087e6799af50aa8bc4d53f3c',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '42c2cee5ce92a792e79ec22a5a20f8c57e32892b',
+  'skia_revision': 'e261fe99fa41d3a829f540cb3823d581deeb29a8',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '632e6e71c5ff752f8c448061ab32ae2d9b1825ec',
+  'v8_revision': '0add9c1de1459707b116e145b04326a96d025a79',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -239,7 +239,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': 'f42bd00efd49b8163399c2ebd62511f4a5106aaf',
+  'angle_revision': '0775a1fb4254a36e461a26b6872a1019c31e1e70',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -370,7 +370,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libavif
   # and whatever else without interference from each other.
-  'libavif_revision': 'f8b782aadacf3c5c69ede3dc1b3b15798f249147',
+  'libavif_revision': 'efed118564495228be8af6b2a640c473375c039b',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling nearby
   # and whatever else without interference from each other.
@@ -1667,7 +1667,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@8241d1b7568d5dd21ccaf387b5deac35f5c72aaa',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@a6ec687e62fd6f97d4a62d2a1292e147c583e0c8',
     'condition': 'checkout_src_internal',
   },
 
