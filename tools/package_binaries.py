@@ -188,6 +188,9 @@ def generate_target_nw(platform_name, arch, version):
                            'nw_100_percent.pak',
                            'nw_200_percent.pak',
                            'ffmpeg.dll',
+                           'vulkan-1.dll',
+                           'vk_swiftshader.dll',
+                           'vk_swiftshader_icd.json',
                            'swiftshader\libEGL.dll',
                            'swiftshader\libGLESv2.dll',
                            'notification_helper.exe'
