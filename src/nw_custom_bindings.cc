@@ -3,6 +3,10 @@
 // found in the LICENSE file.
 #include "content/nw/src/nw_custom_bindings.h"
 
+#if defined(OS_WIN)
+#pragma clang diagnostic ignored "-Wmicrosoft-unqualified-friend"
+#endif
+
 #include "content/public/renderer/render_thread.h"
 #include "content/public/renderer/render_frame.h"
 #include "content/public/renderer/render_view.h"
