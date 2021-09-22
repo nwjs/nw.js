@@ -65,7 +65,9 @@ ExtensionFunction::ResponseAction
 NwCurrentWindowInternalRequestAttentionInternalFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args_);
   int count;
-  EXTENSION_FUNCTION_VALIDATE(args_->GetInteger(0, &count));
+  base::Value::ConstListView list_view = args_->GetList();
+  EXTENSION_FUNCTION_VALIDATE(list_view.size() > 0 && list_view[0].is_int());
+  count = list_view[0].GetInt();
   
   //static map from web_content to its attention_request_id
   static std::unordered_map<content::WebContents*, int> attention_request_id;
@@ -85,7 +87,9 @@ ExtensionFunction::ResponseAction
 NwCurrentWindowInternalSetProgressBarInternalFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args_);
   double progress;
-  EXTENSION_FUNCTION_VALIDATE(args_->GetDouble(0, &progress));
+  base::Value::ConstListView list_view = args_->GetList();
+  EXTENSION_FUNCTION_VALIDATE(list_view.size() > 0 && list_view[0].is_double());
+  progress = list_view[0].GetDouble();
 
   NSDockTile *dockTile = [NSApp dockTile];
   static const char kProgressIndicator = '\0';
