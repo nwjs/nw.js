@@ -14,13 +14,13 @@ group("nwjs") {
     "//third_party/ffmpeg:ffmpeg"
   ]
   if (is_mac) {
-    deps += [ ":copy_ffmpeg" ]
+    deps += [ ":copy_ffmpeg", "//components/crash/core/app:chrome_crashpad_handler" ]
   }
   if (is_win) {
     deps += [ "//buildtools/third_party/libc++:libcpp" ]
   }
   if (is_linux) {
-    deps += [ "//chrome:xdg_mime" ]
+    deps += [ "//chrome:xdg_mime", "//components/crash/core/app:chrome_crashpad_handler" ]
   }
 }
 
