@@ -1,3 +1,10 @@
+0.56.1 / 09-21-2021
+===================
+- Update Chromium to [93.0.4577.82](https://chromereleases.googleblog.com/2021/09/stable-channel-update-for-desktop.html)
+- Update Node.js to [v16.9.1](https://nodejs.org/en/blog/release/v16.9.1/)
+- Fix: Blank windows on startup [(#7780)](https://github.com/nwjs/nw.js/issues/7780)
+- Fix: nw.require in new window [(#7775)](https://github.com/nwjs/nw.js/issues/7775)
+
 0.56.0 / 09-05-2021
 ===================
 - Update Chromium to [93.0.4577.63](https://chromereleases.googleblog.com/2021/08/stable-channel-update-for-desktop_31.html)
