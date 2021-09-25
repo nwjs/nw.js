@@ -365,7 +365,7 @@ void MainPartsPreMainMessageLoopRunHook() {
   nw::Package* package = nw::package();
   const base::ListValue *additional_trust_anchors = NULL;
   if (package->root()->GetList("additional_trust_anchors", &additional_trust_anchors)) {
-    for (size_t i = 0; i<additional_trust_anchors->GetSize(); i++) {
+    for (size_t i = 0; i<additional_trust_anchors->GetList().size(); i++) {
       std::string certificate_string;
       if (!additional_trust_anchors->GetString(i, &certificate_string)) {
         // LOG(WARNING)
@@ -402,7 +402,7 @@ bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_l
     std::string cmd = command_line.GetCommandLineString();
 #endif
     std::unique_ptr<base::ListValue> arguments(new base::ListValue());
-    arguments->AppendString(cmd);
+    arguments->Append(cmd);
     SendEventToApp("nw.App.onOpen", std::move(arguments));
   }
 
