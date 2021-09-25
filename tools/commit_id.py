@@ -28,9 +28,11 @@ final_hash = ''
 for repo in repos:
     try:
         repo_path = os.path.join(cwd, repo)
+        print("repo: %s\n" % repo_path)
         final_hash += grab_output('git rev-parse --short=%d HEAD' % commit_id_size, repo_path)
         final_hash += '-'
-    except:
+    except Exception as e:
+        print (e)
         final_hash = 'invalid-hash'
         break
 
