@@ -395,7 +395,7 @@ void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(DesktopMediaList* list, i
                                         url::Origin::Create(web_contents->GetURL().GetOrigin()),
                                         source,
                                         extension()->name(), content::kRegistryStreamTypeDesktop);
-      response->AppendString(result);
+      response->Append(result);
     }
     return true;
   }

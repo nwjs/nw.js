@@ -166,7 +166,7 @@ bool NwAppGetArgvSyncFunction::RunNWSync(base::ListValue* response, std::string*
       continue;
     }
 
-    response->AppendString(argv[i]);
+    response->Append(argv[i]);
   }
   return true;
 }
@@ -255,7 +255,7 @@ bool NwAppSetProxyConfigFunction::RunNWSync(base::ListValue* response, std::stri
 }
 
 bool NwAppGetDataPathFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  response->AppendString(browser_context()->GetPath().value());
+  response->Append(browser_context()->GetPath().value());
   return true;
 }
 

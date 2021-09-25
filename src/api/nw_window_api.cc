@@ -897,14 +897,14 @@ bool NwCurrentWindowInternalIsKioskInternalFunction::RunNWSync(base::ListValue* 
 bool NwCurrentWindowInternalGetTitleInternalFunction::RunNWSync(base::ListValue* response, std::string* ret_error) {
   AppWindow* window = getAppWindow(this);
   if (window) {
-    response->AppendString(window->title_override());
+    response->Append(window->title_override());
     return true;
   }
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
     int id = args()[0].GetInt();
     Browser* browser = getBrowser(this, id);
     if (browser) {
-      response->AppendString(browser->GetWindowTitleForCurrentTab(false));
+      response->Append(browser->GetWindowTitleForCurrentTab(false));
       return true;
     }
   }
