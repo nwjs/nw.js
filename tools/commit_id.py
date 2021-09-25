@@ -1,12 +1,15 @@
 import subprocess as sp
 import sys
 import os
+import traceback
 
 # Usage: commit_id.py check <root_src_dir> (checks if git is present)
 # Usage: commit_id.py gen <root_src_dir> <file_to_write> (generates commit id)
 
 def grab_output(command, cwd):
-    return sp.Popen(command, stdout=sp.PIPE, shell=True, cwd=cwd).communicate()[0].strip()
+    with sp.Popen(command, stdout=sp.PIPE, shell=True, cwd=cwd) as p:
+        output, errors = p.communicate()
+    return output.decode('utf-8').splitlines()[0].strip()
 
 operation = sys.argv[1]
 cwd = sys.argv[2]
@@ -32,7 +35,7 @@ for repo in repos:
         final_hash += grab_output('git rev-parse --short=%d HEAD' % commit_id_size, repo_path)
         final_hash += '-'
     except Exception as e:
-        print (e)
+        traceback.print_exc()
         final_hash = 'invalid-hash'
         break
 
