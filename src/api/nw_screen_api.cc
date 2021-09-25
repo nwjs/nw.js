@@ -46,6 +46,7 @@ namespace extensions {
     void OnSourceMoved(DesktopMediaList* list, int old_index, int new_index) override;
     void OnSourceNameChanged(DesktopMediaList* list, int index) override;
     void OnSourceThumbnailChanged(DesktopMediaList* list, int index) override;
+    void OnSourcePreviewChanged(DesktopMediaList* list, size_t index) override;
 
     bool started_;
     std::vector<std::unique_ptr<DesktopMediaList>> media_list_;
@@ -319,6 +320,9 @@ void NwDesktopCaptureMonitor::OnSourceNameChanged(DesktopMediaList* list, int in
       nwapi::nw__screen::OnSourceNameChanged::kEventName,
       std::move(args));
   }
+
+void NwDesktopCaptureMonitor::OnSourcePreviewChanged(DesktopMediaList* list, size_t index) {
+}
 
 void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(DesktopMediaList* list, int index) {
     std::string base64;
