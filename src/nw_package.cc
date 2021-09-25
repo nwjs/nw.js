@@ -294,7 +294,7 @@ base::DictionaryValue* Package::window() {
 }
 
 bool Package::InitFromPath(const base::FilePath& path_in) {
-  base::ThreadRestrictions::SetIOAllowed(true);
+  base::PermanentThreadAllowance::AllowBlocking();
   FilePath extracted_path, path(path_in);
   if (!ExtractPath(path, &extracted_path))
     return false;
