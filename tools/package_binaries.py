@@ -160,6 +160,9 @@ def generate_target_nw(platform_name, arch, version):
                            'lib/libffmpeg.so',
                            'lib/libEGL.so',
                            'lib/libGLESv2.so',
+                           'lib/libvulkan.so.1',
+                           'lib/libvk_swiftshader.so',
+                           'lib/vk_swiftshader_icd.json',
                            'swiftshader/libEGL.so',
                            'swiftshader/libGLESv2.so'
                            ]
