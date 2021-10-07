@@ -36,25 +36,27 @@ class ReadImageHelper {
 public:
   ReadImageHelper() = default;
   ~ReadImageHelper() = default;
-  SkBitmap ReadImage(ui::Clipboard* clipboard) {
-    base::WaitableEvent event;
-    SkBitmap bitmap;
-    clipboard->ReadImage(
-                         ui::ClipboardBuffer::kCopyPaste,
-                         nullptr,
-                         base::BindLambdaForTesting([&](const SkBitmap& result) {
-                                                      bitmap = result;
-                                                      event.Signal();
-                                                    }));
-    event.Wait();
-    return bitmap;
+
+  std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
+    base::RunLoop loop;
+    std::vector<uint8_t> png;
+    clipboard->ReadPng(
+                       ui::ClipboardBuffer::kCopyPaste,
+                       /* data_dst = */ nullptr,
+                       base::BindLambdaForTesting([&](const std::vector<uint8_t>& result) {
+                                                    png = result;
+                                                    loop.Quit();
+                                                  }));
+    loop.Run();
+    return png;
   }
 };
 
-SkBitmap _ReadImage(ui::Clipboard* clipboard) {
+std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
   ReadImageHelper read_image_helper;
-  return read_image_helper.ReadImage(clipboard);
+  return read_image_helper.ReadPng(clipboard);
 }
+
   class ClipboardReader {
   public:
     ClipboardReader() {
@@ -118,23 +120,19 @@ SkBitmap _ReadImage(ui::Clipboard* clipboard) {
 
     bool ReadImage(ClipboardData& data) {
       DCHECK(data.type == TYPE_PNG || data.type == TYPE_JPEG);
-      std::vector<unsigned char> encoded_image;
-      SkBitmap bitmap = _ReadImage(clipboard_);
+      std::vector<uint8_t> encoded_image;
+      std::vector<uint8_t> png = ReadPng(clipboard_);
 
-      if (bitmap.isNull()) {
-        return true;
-      }
-
-      if (data.type == TYPE_PNG &&
-         !gfx::PNGCodec::EncodeBGRASkBitmap(bitmap, false, &encoded_image)) {
-        LOG(INFO) << "NwClipboardGetSyncFunction::RunSync(" << nwapi::nw__clipboard::ToString(data.type) << ") failed when converting to PNG";
-        error_ = "Failed to encode as PNG";
-        return false;
-      } else if (data.type == TYPE_JPEG &&
-                 !gfx::JPEGCodec::Encode(bitmap, kQuality, &encoded_image)) {
-        LOG(INFO) << "NwClipboardGetSyncFunction::RunSync(" << nwapi::nw__clipboard::ToString(data.type) << ") failed when converting to JPEG";
-        error_ = "Failed to encode as JPEG";
-        return false;
+      if (data.type == TYPE_PNG) {
+        encoded_image = std::move(png);
+      } else if (data.type == TYPE_JPEG) {
+        SkBitmap bitmap;
+        gfx::PNGCodec::Decode(png.data(), png.size(), &bitmap);
+        if (!gfx::JPEGCodec::Encode(bitmap, kQuality, &encoded_image)) {
+          LOG(INFO) << "NwClipboardGetSyncFunction::RunSync(" << nwapi::nw__clipboard::ToString(data.type) << ") failed when converting to JPEG";
+          error_ = "Failed to encode as JPEG";
+          return false;
+        }
       }
 
       std::string encoded_image_base64;
