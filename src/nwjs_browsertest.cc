@@ -277,7 +277,7 @@ class LeftMouseClick {
     base::ThreadTaskRunnerHandle::Get()->PostDelayedTask(
         FROM_HERE, base::BindOnce(&LeftMouseClick::SendMouseUp,
                               base::Unretained(this)),
-        base::TimeDelta::FromMilliseconds(duration_ms));
+        base::Milliseconds(duration_ms));
   }
 
   // Wait for click completed.
@@ -860,7 +860,7 @@ public:
     base::RepeatingTimer check_timer;
     check_timer.Start(
         FROM_HERE,
-        base::TimeDelta::FromMilliseconds(200),
+        base::Milliseconds(200),
         this,
         &PrintDialogWaiter::OnTimer);
 
@@ -986,7 +986,7 @@ IN_PROC_BROWSER_TEST_F(NWJSAppTest, PrintChangeFooter) {
   do {
     base::RunLoop run_loop;
     base::ThreadTaskRunnerHandle::Get()->PostDelayedTask(
-        FROM_HERE, run_loop.QuitClosure(), base::TimeDelta::FromSeconds(1));
+        FROM_HERE, run_loop.QuitClosure(), base::Seconds(1));
     run_loop.Run();
 
     frame_count = 0;
