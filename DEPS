@@ -51,7 +51,7 @@ gclient_gn_args = [
 
 
 vars = {
-  "buildspec_platforms": "linux64, mac64, win, win64, android",
+  "buildspec_platforms": "all",
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -227,17 +227,17 @@ vars = {
   'skia_git': 'https://skia.googlesource.com',
   'swiftshader_git': 'https://swiftshader.googlesource.com',
   'webrtc_git': 'https://webrtc.googlesource.com',
-  'nw_src_revision': '5161e9268ef18221a6cf6ce2ff6173d6d9085f99',
-  'nw_v8_revision': 'ee4cc573a44dd40dd8be762df478119454f4201d',
+  'nw_src_revision': 'aee58d2f4fc19767f4f539d9b9eff5988c500f52',
+  'nw_v8_revision': '5bee409c870293a567ed735fe862aae6f987da1b',
   'nw_node_revision': '6b81ff74b783840ba45ed9834ef7f380c35d07e5',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': 'a71591a1efcc901dbebdb196d7a3c6e09364cf1f',
+  'skia_revision': 'bc94e71ede7c98dd5de2917bf01cbf38aba26e5a',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'e18ed176514f9bf26797d57a35c26674a21b5f37',
+  'v8_revision': 'd52f2a0a880433919bedc8a6952bc72454bf1aca',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling swarming_client
   # and whatever else without interference from each other.
@@ -1631,7 +1631,7 @@ deps = {
     Var('chromium_git') + '/external/github.com/gpuweb/cts.git' + '@' + '97d686891b20622fc5cb04b32665e9739adce068',
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + 'b83487f08ff836437715b488f73416215e5570dd',
+    Var('webrtc_git') + '/src.git' + '@' + '6584528aeb0f0e2ab4d14114aefeee7e5997ade9',
 
   'src/third_party/libgifcodec':
      Var('skia_git') + '/libgifcodec' + '@'+  Var('libgifcodec_revision'),
@@ -1698,7 +1698,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@b5c1a51386d1e53905b8d748a847fd5b31576cfd',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@648b1fd81c68031ebc87dfbaca0b3e2e0cfa4b0b',
     'condition': 'checkout_src_internal',
   },
 
@@ -1728,7 +1728,7 @@ deps = {
     'packages': [
       {
         'package': 'chromeos_internal/apps/media_app/app',
-        'version': '_233klcfaEq1FPeUvTYlnOcobJDFrtxjR4C0di1KqAgC',
+        'version': 'coGiL8g_-jt1wKvzRoHIKonIrEXHPsTqmrLgG12siTgC',
       },
     ],
     'condition': 'checkout_chromeos and checkout_src_internal',
