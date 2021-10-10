@@ -691,8 +691,14 @@ NwCurrentWindowInternalRequestAttentionInternalFunction::Run() {
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalSetProgressBarInternalFunction::Run() {
   base::Value::ConstListView list_view = args_->GetList();
-  EXTENSION_FUNCTION_VALIDATE(list_view.size() > 0 && list_view[0].is_double());
-  double progress = list_view[0].GetDouble();
+  EXTENSION_FUNCTION_VALIDATE(list_view.size() > 0 && (list_view[0].is_double() || list_view[0].is_int()));
+
+  double progress;
+  if (list_view[0].is_double())
+    progress = list_view[0].GetDouble();
+  else
+    progress = list_view[0].GetInt();
+
 #if defined(OS_WIN)
   Microsoft::WRL::ComPtr<ITaskbarList3> taskbar;
   HRESULT result = ::CoCreateInstance(CLSID_TaskbarList, nullptr,
@@ -777,8 +783,13 @@ bool NwCurrentWindowInternalGetZoomFunction::RunNWSync(base::ListValue* response
 
 bool NwCurrentWindowInternalSetZoomFunction::RunNWSync(base::ListValue* response, std::string* error) {
   base::Value::ConstListView list_view = args_->GetList();
-  EXTENSION_FUNCTION_VALIDATE(list_view.size() > 0 && list_view[0].is_double());
-  double zoom_level = list_view[0].GetDouble();
+  EXTENSION_FUNCTION_VALIDATE(list_view.size() > 0 && (list_view[0].is_double() || list_view[0].is_int()));
+
+  double zoom_level;
+  if (list_view[0].is_double())
+    zoom_level = list_view[0].GetDouble();
+  else
+    zoom_level = list_view[0].GetInt();
 
   content::WebContents* web_contents = GetSenderWebContents();
   if (base::FeatureList::IsEnabled(::features::kNWNewWin) &&
