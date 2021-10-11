@@ -1,3 +1,10 @@
+0.57.1 / 10-10-2021
+===================
+- Update Chromium to [94.0.4606.81](https://chromereleases.googleblog.com/2021/10/stable-channel-update-for-desktop.html)
+- Update Node.js to [v16.10.0](https://nodejs.org/en/blog/release/v16.10.0/)
+- Fix: crash on setting nw.Window.zoomLevel and progress bar [(#7792)](https://github.com/nwjs/nw.js/issues/7792)
+- Fix: cannot start on win7 [(#7780)](https://github.com/nwjs/nw.js/issues/7780)
+
 0.57.0 / 09-25-2021
 ===================
 - Update Chromium to [94.0.4606.61](https://chromereleases.googleblog.com/2021/09/stable-channel-update-for-desktop_24.html)
