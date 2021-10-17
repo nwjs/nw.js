@@ -120,6 +120,8 @@
 #include "content/public/test/ppapi_test_utils.h"
 #endif
 
+#include "third_party/blink/public/common/switches.h"
+
 using extensions::ContextMenuMatcher;
 using extensions::ExtensionsAPIClient;
 using extensions::MenuItem;
@@ -470,7 +472,7 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
 
   void SetUpCommandLine(base::CommandLine* command_line) override {
     command_line->AppendSwitch(switches::kUseFakeDeviceForMediaStream);
-    command_line->AppendSwitchASCII(switches::kJavaScriptFlags, "--expose-gc");
+    command_line->AppendSwitchASCII(blink::switches::kJavaScriptFlags, "--expose-gc");
 
     extensions::PlatformAppBrowserTest::SetUpCommandLine(command_line);
     base::PathService::Get(base::DIR_SOURCE_ROOT, &test_data_dir_);
