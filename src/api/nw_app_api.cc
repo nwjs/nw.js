@@ -13,7 +13,7 @@
 #include "base/task/current_thread.h"
 #include "base/task/post_task.h"
 #include "content/public/browser/browser_task_traits.h"
-#include "components/browsing_data/content/appcache_helper.h"
+//#include "components/browsing_data/content/appcache_helper.h"
 #include "components/browsing_data/content/browsing_data_helper.h"
 #include "components/component_updater/component_updater_service.h"
 #include "chrome/browser/browser_process.h"
@@ -190,15 +190,7 @@ NwAppClearAppCacheFunction::~NwAppClearAppCacheFunction() {
 }
 
 bool NwAppClearAppCacheFunction::RunNWSync(base::ListValue* response, std::string* error) {
-  EXTENSION_FUNCTION_VALIDATE(args().size() >= 1 && args()[0].is_string());
-  std::string manifest = args()[0].GetString();
-
-  GURL manifest_url(manifest);
-  scoped_refptr<browsing_data::CannedAppCacheHelper> helper(
-       new browsing_data::CannedAppCacheHelper(browser_context()->GetDefaultStoragePartition()
-                                                           ->GetAppCacheService()));
-
-  helper->DeleteAppCaches(url::Origin::Create(manifest_url));
+  // removed in upstream: https://chromium-review.googlesource.com/c/chromium/src/+/3214503
   return true;
 }
 
