@@ -1,5 +1,9 @@
 #include "nw_screen_api.h"
 
+#if defined(OS_WIN)
+#include "windows.h"
+#endif
+
 #include "base/lazy_instance.h"
 #include "base/values.h"
 #include "content/nw/src/api/nw_screen.h"
