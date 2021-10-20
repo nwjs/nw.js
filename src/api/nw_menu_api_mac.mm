@@ -1,5 +1,6 @@
 #include "content/nw/src/api/nw_menu_api.h"
 #include "base/strings/sys_string_conversions.h"
+#include "base/strings/utf_string_conversions.h"
 #include "chrome/browser/extensions/extension_service.h"
 #include "chrome/grit/generated_resources.h"
 #include "ui/base/l10n/l10n_util_mac.h"
@@ -45,12 +46,12 @@ void InitMsgIDMap() {
 
 bool NwMenuGetNSStringWithFixupFunction::RunNWSync(base::ListValue* response, std::string* error) {
   if (!g_msgid_inited) InitMsgIDMap();
-  std::string msgstr;
-  EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &msgstr));
+  EXTENSION_FUNCTION_VALIDATE(args().size() == 1 && args()[0].is_string());
+  std::string msgstr = args()[0].GetString();
   MsgIDMap::iterator it = g_msgid_map.find(msgstr);
   if (it != g_msgid_map.end()) {
     int msgid = it->second;
-    response->AppendString(base::SysNSStringToUTF16(l10n_util::GetNSStringWithFixup(msgid)));
+    response->Append(base::SysNSStringToUTF16(l10n_util::GetNSStringWithFixup(msgid)));
     return true;
   }
   return false;
@@ -58,14 +59,15 @@ bool NwMenuGetNSStringWithFixupFunction::RunNWSync(base::ListValue* response, st
 
 bool NwMenuGetNSStringFWithFixupFunction::RunNWSync(base::ListValue* response, std::string* error) {
   if (!g_msgid_inited) InitMsgIDMap();
-  std::string msgstr;
-  std::u16string appName;
-  EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &msgstr));
-  EXTENSION_FUNCTION_VALIDATE(args_->GetString(1, &appName));
+  EXTENSION_FUNCTION_VALIDATE(args().size() == 2 &&
+                              args()[0].is_string() &&
+                              args()[1].is_string());
+  std::string msgstr = args()[0].GetString();
+  std::u16string appName = base::UTF8ToUTF16(args()[1].GetString());
   MsgIDMap::iterator it = g_msgid_map.find(msgstr);
   if (it != g_msgid_map.end()) {
     int msgid = it->second;
-    response->AppendString(base::SysNSStringToUTF16(l10n_util::GetNSStringFWithFixup(msgid, appName)));
+    response->Append(base::SysNSStringToUTF16(l10n_util::GetNSStringFWithFixup(msgid, appName)));
     return true;
   }
   return false;

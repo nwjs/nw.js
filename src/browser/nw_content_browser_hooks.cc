@@ -149,7 +149,7 @@ CONTENT_EXPORT bool ApplicationShouldHandleReopenHook(bool hasVisibleWindows) {
 CONTENT_EXPORT void OSXOpenURLsHook(const std::vector<GURL>& startup_urls) {
   std::unique_ptr<base::ListValue> arguments(new base::ListValue());
   for (size_t i = 0; i < startup_urls.size(); i++)
-    arguments->AppendString(startup_urls[i].spec());
+    arguments->Append(startup_urls[i].spec());
   if (gSendEventToApp)
     gSendEventToApp("nw.App.onOpen", std::move(arguments));
 }

@@ -54,20 +54,18 @@ void NwCurrentWindowInternalSetShadowInternalFunction::SetShadowOnWindow(void *w
 
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalSetBadgeLabelInternalFunction::Run() {
-  EXTENSION_FUNCTION_VALIDATE(args_);
-  std::string badge;
-  EXTENSION_FUNCTION_VALIDATE(args_->GetString(0, &badge));
+  EXTENSION_FUNCTION_VALIDATE(args().size() == 1);
+  EXTENSION_FUNCTION_VALIDATE(args()[0].is_string());
+  std::string badge = args()[0].GetString();
   [[NSApp dockTile] setBadgeLabel:base::SysUTF8ToNSString(badge)];
   return RespondNow(NoArguments());
 }
 
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalRequestAttentionInternalFunction::Run() {
-  EXTENSION_FUNCTION_VALIDATE(args_);
-  int count;
-  base::Value::ConstListView list_view = args_->GetList();
-  EXTENSION_FUNCTION_VALIDATE(list_view.size() > 0 && list_view[0].is_int());
-  count = list_view[0].GetInt();
+  EXTENSION_FUNCTION_VALIDATE(args().size());
+  EXTENSION_FUNCTION_VALIDATE(args()[0].is_int());
+  int count = args()[0].GetInt();
   
   //static map from web_content to its attention_request_id
   static std::unordered_map<content::WebContents*, int> attention_request_id;
@@ -85,11 +83,9 @@ NwCurrentWindowInternalRequestAttentionInternalFunction::Run() {
 
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalSetProgressBarInternalFunction::Run() {
-  EXTENSION_FUNCTION_VALIDATE(args_);
-  double progress;
-  base::Value::ConstListView list_view = args_->GetList();
-  EXTENSION_FUNCTION_VALIDATE(list_view.size() > 0 && list_view[0].is_double());
-  progress = list_view[0].GetDouble();
+  EXTENSION_FUNCTION_VALIDATE(args().size() == 1);
+  EXTENSION_FUNCTION_VALIDATE(args()[0].is_double());
+  double progress = args()[0].GetDouble();
 
   NSDockTile *dockTile = [NSApp dockTile];
   static const char kProgressIndicator = '\0';
