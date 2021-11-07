@@ -1219,7 +1219,12 @@ IN_PROC_BROWSER_TEST_F(NWJSDesktopCaptureApiTest, CrossDomain) {
                                      embedded_test_server()->GetURL("/remote.html").spec() + "'"));
   EXPECT_TRUE(listener.WaitUntilSatisfied()) << "'" << listener.message()
                                              << "' message was not receieved";
-  std::vector<content::RenderFrameHost*> frames = web_contents->GetAllFrames();
+  std::vector<content::RenderFrameHost*> frames;
+  web_contents->ForEachRenderFrameHost(base::BindRepeating(
+       [](std::vector<content::RenderFrameHost*>* frames, content::RenderFrameHost* rfh) {
+               frames->push_back(rfh);
+           },
+         &frames));
   ASSERT_TRUE(frames.size() == 2);
   content::ExecuteScriptAndGetValue(frames[1], "document.getElementById('testbtn').click()");
   ExtensionTestMessageListener pass_listener("Pass", false);
