@@ -50,7 +50,6 @@ class MenuDelegate : public ui::SimpleMenuModel::Delegate {
  private:
   ObjectManager* object_manager_;
 
-  DISALLOW_COPY_AND_ASSIGN(MenuDelegate);
 };
 
 }  // namespace nw

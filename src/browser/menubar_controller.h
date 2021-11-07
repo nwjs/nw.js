@@ -46,7 +46,6 @@ class MenuBarController : public views::MenuModelAdapter {
   static MenuBarController* master_;
   base::RepeatingClosure message_loop_quit_;
 
-  DISALLOW_COPY_AND_ASSIGN(MenuBarController);
 };
 
 } //namespace nw

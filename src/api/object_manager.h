@@ -112,7 +112,6 @@ class ObjectManager : public KeyedService {
   // Factory to generate weak pointer
   base::WeakPtrFactory<ObjectManager> weak_ptr_factory_;
 
-  DISALLOW_COPY_AND_ASSIGN(ObjectManager);
 };
 
 }  // namespace nw

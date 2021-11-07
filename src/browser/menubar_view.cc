@@ -45,10 +45,6 @@ class MenuBarButton : public views::MenuButton {
       return GetText();
     return std::u16string();
   }
-
- private:
-
-  DISALLOW_COPY_AND_ASSIGN(MenuBarButton);
 };
 
 MenuBarView::MenuBarView() {

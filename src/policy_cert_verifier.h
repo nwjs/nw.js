@@ -57,7 +57,6 @@ class PolicyCertVerifier : public net::CertVerifier {
   base::RepeatingClosure anchor_used_callback_;
   std::unique_ptr<CertVerifier> delegate_;
 
-  DISALLOW_COPY_AND_ASSIGN(PolicyCertVerifier);
 };
 
 }  // namespace policy

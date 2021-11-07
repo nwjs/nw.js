@@ -149,7 +149,6 @@ class Menu : public Base {
   base::RepeatingClosure message_loop_quit_;
 #endif
 
-  DISALLOW_COPY_AND_ASSIGN(Menu);
 };
 
 }  // namespace nw

@@ -138,7 +138,6 @@ class MenuItem : public Base {
 
 #endif
 
-  DISALLOW_COPY_AND_ASSIGN(MenuItem);
 };
 
 }  // namespace nw
