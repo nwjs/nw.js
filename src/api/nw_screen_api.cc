@@ -51,7 +51,6 @@ namespace extensions {
     bool started_;
     std::vector<std::unique_ptr<DesktopMediaList>> media_list_;
 
-    DISALLOW_COPY_AND_ASSIGN(NwDesktopCaptureMonitor);
   };
 
   class NwScreenDisplayObserver: public display::DisplayObserver {
@@ -66,7 +65,6 @@ namespace extensions {
     void OnDisplayAdded(const display::Display& new_display) override;
     void OnDisplayRemoved(const display::Display& old_display) override;
 
-    DISALLOW_COPY_AND_ASSIGN(NwScreenDisplayObserver);
   };
 
   namespace {

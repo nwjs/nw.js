@@ -174,7 +174,6 @@ class WebContentsHiddenObserver : public content::WebContentsObserver {
   base::RepeatingClosure hidden_callback_;
   bool hidden_observed_;
 
-  DISALLOW_COPY_AND_ASSIGN(WebContentsHiddenObserver);
 };
 
 class EmbedderWebContentsObserver : public content::WebContentsObserver {
@@ -200,7 +199,6 @@ class EmbedderWebContentsObserver : public content::WebContentsObserver {
   bool terminated_;
   scoped_refptr<content::MessageLoopRunner> message_loop_runner_;
 
-  DISALLOW_COPY_AND_ASSIGN(EmbedderWebContentsObserver);
 };
 
 #if defined (USE_AURA)
@@ -247,7 +245,6 @@ class SelectControlWaiter : public aura::WindowObserver,
   std::set<aura::Window*> observed_windows_;
   bool wait_for_widget_shown_ = false;
 
-  DISALLOW_COPY_AND_ASSIGN(SelectControlWaiter);
 };
 
 class LeftMouseClick {
@@ -310,7 +307,6 @@ class LeftMouseClick {
 
   bool click_completed_ = true;
 
-  DISALLOW_COPY_AND_ASSIGN(LeftMouseClick);
 };
 
 #endif
@@ -368,7 +364,6 @@ class MockWebContentsDelegate : public content::WebContentsDelegate {
   scoped_refptr<content::MessageLoopRunner> request_message_loop_runner_;
   scoped_refptr<content::MessageLoopRunner> check_message_loop_runner_;
 
-  DISALLOW_COPY_AND_ASSIGN(MockWebContentsDelegate);
 };
 
 // This class intercepts download request from the guest.
@@ -434,7 +429,6 @@ class MockDownloadWebContentsDelegate : public content::WebContentsDelegate {
   bool last_download_allowed_;
   scoped_refptr<content::MessageLoopRunner> message_loop_runner_;
 
-  DISALLOW_COPY_AND_ASSIGN(MockDownloadWebContentsDelegate);
 };
 
 // TODO(wjmaclean): Fix this test class at some point so it can be re-enabled on
@@ -886,7 +880,6 @@ public:
   content::WebContents* web_contents_;
   scoped_refptr<content::MessageLoopRunner> runner_;
 
-  DISALLOW_COPY_AND_ASSIGN(PrintDialogWaiter);
 };
 
 static std::string DumpPdfAccessibilityTree(const ui::AXTreeUpdate& ax_tree) {

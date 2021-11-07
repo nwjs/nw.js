@@ -67,7 +67,6 @@ class Base {
   bool pending_destruction_;
   base::WeakPtr<ObjectManager> object_manager_;
 
-  DISALLOW_COPY_AND_ASSIGN(Base);
 };
 
 }  // namespace nwapi

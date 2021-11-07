@@ -77,7 +77,6 @@ class NwAppGetArgvSyncFunction : public NWSyncExtensionFunction {
 
   DECLARE_EXTENSION_FUNCTION("nw.App.getArgvSync", UNKNOWN)
  private:
-  DISALLOW_COPY_AND_ASSIGN(NwAppGetArgvSyncFunction);
 };
 
 class NwAppClearCacheFunction : public NWSyncExtensionFunction, public content::BrowsingDataRemover::Observer {
@@ -93,7 +92,6 @@ class NwAppClearCacheFunction : public NWSyncExtensionFunction, public content::
 
   DECLARE_EXTENSION_FUNCTION("nw.App.clearCache", UNKNOWN)
  private:
-  DISALLOW_COPY_AND_ASSIGN(NwAppClearCacheFunction);
 };
 
 class NwAppClearAppCacheFunction : public NWSyncExtensionFunction {
@@ -106,7 +104,6 @@ class NwAppClearAppCacheFunction : public NWSyncExtensionFunction {
 
   DECLARE_EXTENSION_FUNCTION("nw.App.clearAppCache", UNKNOWN)
  private:
-  DISALLOW_COPY_AND_ASSIGN(NwAppClearAppCacheFunction);
 };
 
 class NwAppSetProxyConfigFunction : public NWSyncExtensionFunction {
@@ -120,7 +117,6 @@ class NwAppSetProxyConfigFunction : public NWSyncExtensionFunction {
 
   DECLARE_EXTENSION_FUNCTION("nw.App.setProxyConfig", UNKNOWN)
  private:
-  DISALLOW_COPY_AND_ASSIGN(NwAppSetProxyConfigFunction);
 };
 
 class NwAppGetDataPathFunction : public NWSyncExtensionFunction {
@@ -133,7 +129,6 @@ class NwAppGetDataPathFunction : public NWSyncExtensionFunction {
     
   DECLARE_EXTENSION_FUNCTION("nw.App.getDataPath", UNKNOWN)
  private:
-  DISALLOW_COPY_AND_ASSIGN(NwAppGetDataPathFunction);
 };
 
 class NwAppCrashBrowserFunction : public ExtensionFunction {

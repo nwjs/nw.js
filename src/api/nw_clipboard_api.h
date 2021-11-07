@@ -18,7 +18,6 @@ class NwClipboardGetListSyncFunction : public NWSyncExtensionFunction {
 
   DECLARE_EXTENSION_FUNCTION("nw.Clipboard.getListSync", UNKNOWN)
  private:
-  DISALLOW_COPY_AND_ASSIGN(NwClipboardGetListSyncFunction);
 };
 
 class NwClipboardSetListSyncFunction : public NWSyncExtensionFunction {
@@ -31,7 +30,6 @@ class NwClipboardSetListSyncFunction : public NWSyncExtensionFunction {
 
   DECLARE_EXTENSION_FUNCTION("nw.Clipboard.setListSync", UNKNOWN)
  private:
-  DISALLOW_COPY_AND_ASSIGN(NwClipboardSetListSyncFunction);
 };
 
 class NwClipboardClearSyncFunction : public NWSyncExtensionFunction {
@@ -44,7 +42,6 @@ class NwClipboardClearSyncFunction : public NWSyncExtensionFunction {
 
   DECLARE_EXTENSION_FUNCTION("nw.Clipboard.clearSync", UNKNOWN)
  private:
-  DISALLOW_COPY_AND_ASSIGN(NwClipboardClearSyncFunction);
 };
 
 class NwClipboardReadAvailableTypesFunction : public NWSyncExtensionFunction {
@@ -57,7 +54,6 @@ class NwClipboardReadAvailableTypesFunction : public NWSyncExtensionFunction {
 
   DECLARE_EXTENSION_FUNCTION("nw.Clipboard.readAvailableTypes", UNKNOWN)
  private:
-  DISALLOW_COPY_AND_ASSIGN(NwClipboardReadAvailableTypesFunction);
 };
 
 

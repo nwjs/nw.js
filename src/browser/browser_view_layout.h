@@ -41,7 +41,6 @@ class BrowserViewLayout : public views::LayoutManager {
   views::View* web_view_;
   views::View* tool_bar_;
 
-  DISALLOW_COPY_AND_ASSIGN(BrowserViewLayout);
 };
 
 }  // namespace nw

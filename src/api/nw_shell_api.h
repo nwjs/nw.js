@@ -16,8 +16,6 @@ class NwShellOpenItemFunction : public NWSyncExtensionFunction {
   ~NwShellOpenItemFunction() override;
 
   DECLARE_EXTENSION_FUNCTION("nw.Shell.openItem", UNKNOWN)
- private:
-  DISALLOW_COPY_AND_ASSIGN(NwShellOpenItemFunction);
 };
 
 class NwShellOpenExternalFunction : public NWSyncExtensionFunction {
@@ -29,8 +27,6 @@ class NwShellOpenExternalFunction : public NWSyncExtensionFunction {
   ~NwShellOpenExternalFunction() override;
 
   DECLARE_EXTENSION_FUNCTION("nw.Shell.openExternal", UNKNOWN)
- private:
-  DISALLOW_COPY_AND_ASSIGN(NwShellOpenExternalFunction);
 };
 
 class NwShellShowItemInFolderFunction : public NWSyncExtensionFunction {
@@ -42,8 +38,6 @@ class NwShellShowItemInFolderFunction : public NWSyncExtensionFunction {
   ~NwShellShowItemInFolderFunction() override;
 
   DECLARE_EXTENSION_FUNCTION("nw.Shell.showItemInFolder", UNKNOWN)
- private:
-  DISALLOW_COPY_AND_ASSIGN(NwShellShowItemInFolderFunction);
 };
 
 } // namespace extensions

@@ -120,7 +120,6 @@ class NW_EXPORT Package {
   // Auto clean our temporary directory
   base::ScopedTempDir scoped_temp_dir_;
 
-  DISALLOW_COPY_AND_ASSIGN(Package);
 };
 
 }  // namespae nw

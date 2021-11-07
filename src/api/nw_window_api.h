@@ -101,7 +101,6 @@ class NwCurrentWindowInternalCapturePageInternalFunction : public ExtensionFunct
   // Quality setting to use when encoding jpegs.  Set in RunAsync().
   int image_quality_;
 
-  DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalCapturePageInternalFunction);
 };
 
 class NwCurrentWindowInternalClearMenuFunction : public ExtensionFunction {
@@ -115,9 +114,6 @@ class NwCurrentWindowInternalClearMenuFunction : public ExtensionFunction {
   ResponseAction Run() override;
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.clearMenu", UNKNOWN)
 
- private:
-
-  DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalClearMenuFunction);
 };
 
 class NwCurrentWindowInternalSetMenuFunction : public NWSyncExtensionFunction {
@@ -131,9 +127,6 @@ class NwCurrentWindowInternalSetMenuFunction : public NWSyncExtensionFunction {
   bool RunNWSync(base::ListValue* response, std::string* error) override;
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setMenu", UNKNOWN)
 
- private:
-
-  DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalSetMenuFunction);
 };
 
 class NwCurrentWindowInternalSetShadowInternalFunction : public ExtensionFunction {
@@ -173,10 +166,8 @@ class NwCurrentWindowInternalRequestAttentionInternalFunction : public Extension
   // ExtensionFunction:
   ResponseAction Run() override;
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.requestAttentionInternal", UNKNOWN)
- private:
-  DISALLOW_COPY_AND_ASSIGN(NwCurrentWindowInternalRequestAttentionInternalFunction);
 };
-  
+
 class NwCurrentWindowInternalSetProgressBarInternalFunction : public ExtensionFunction {
  public:
   NwCurrentWindowInternalSetProgressBarInternalFunction(){}

@@ -57,7 +57,6 @@ class NWContentVerifierDelegate : public ContentVerifierDelegate {
 
   std::set<std::string> would_be_disabled_ids_;
 
-  DISALLOW_COPY_AND_ASSIGN(NWContentVerifierDelegate);
 };
 
 }  // namespace extensions

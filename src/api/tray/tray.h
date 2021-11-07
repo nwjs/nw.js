@@ -99,7 +99,6 @@ class Tray : public Base {
   TrayObserver* status_observer_;
 #endif
 
-  DISALLOW_COPY_AND_ASSIGN(Tray);
 };
 
 }  // namespace nw

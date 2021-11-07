@@ -54,10 +54,6 @@
 #include "ui/views/win/hwnd_util.h"
 #endif
 
-#if defined(OS_LINUX)
-#include "ui/gtk/gtk_ui.h"
-#endif
-
 #if defined(OS_LINUX) || defined(OS_WIN)
 #include "content/nw/src/browser/menubar_view.h"
 #include "content/nw/src/browser/browser_view_layout.h"

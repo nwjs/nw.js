@@ -47,7 +47,6 @@ class MenuBarView : public views::AccessiblePaneView {
 
  private:
   ui::MenuModel* model_;
-  DISALLOW_COPY_AND_ASSIGN(MenuBarView);
 };
 } //namespace nw
 #endif

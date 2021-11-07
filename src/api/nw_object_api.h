@@ -17,7 +17,6 @@ class NwObjAllocateIdFunction : public NWSyncExtensionFunction {
 
   DECLARE_EXTENSION_FUNCTION("nw.Obj.allocateId", UNKNOWN)
  private:
-  DISALLOW_COPY_AND_ASSIGN(NwObjAllocateIdFunction);
 };
 
 class NwObjCreateFunction : public NWSyncExtensionFunction {
@@ -30,7 +29,6 @@ class NwObjCreateFunction : public NWSyncExtensionFunction {
 
   DECLARE_EXTENSION_FUNCTION("nw.Obj.create", UNKNOWN)
  private:
-  DISALLOW_COPY_AND_ASSIGN(NwObjCreateFunction);
 };
 
 class NwObjDestroyFunction : public NWSyncExtensionFunction {
@@ -43,7 +41,6 @@ class NwObjDestroyFunction : public NWSyncExtensionFunction {
 
   DECLARE_EXTENSION_FUNCTION("nw.Obj.destroy", UNKNOWN)
  private:
-  DISALLOW_COPY_AND_ASSIGN(NwObjDestroyFunction);
 };
 
 class NwObjCallObjectMethodFunction : public NWSyncExtensionFunction {
@@ -56,7 +53,6 @@ class NwObjCallObjectMethodFunction : public NWSyncExtensionFunction {
 
   DECLARE_EXTENSION_FUNCTION("nw.Obj.callObjectMethod", UNKNOWN)
  private:
-  DISALLOW_COPY_AND_ASSIGN(NwObjCallObjectMethodFunction);
 };
 
 class NwObjCallObjectMethodSyncFunction : public NWSyncExtensionFunction {
@@ -69,7 +65,6 @@ class NwObjCallObjectMethodSyncFunction : public NWSyncExtensionFunction {
 
   DECLARE_EXTENSION_FUNCTION("nw.Obj.callObjectMethodSync", UNKNOWN)
  private:
-  DISALLOW_COPY_AND_ASSIGN(NwObjCallObjectMethodSyncFunction);
 };
 
 class NwObjCallObjectMethodAsyncFunction : public ExtensionFunction {
@@ -82,7 +77,6 @@ class NwObjCallObjectMethodAsyncFunction : public ExtensionFunction {
 
   DECLARE_EXTENSION_FUNCTION("nw.Obj.callObjectMethodAsync", UNKNOWN)
  private:
-  DISALLOW_COPY_AND_ASSIGN(NwObjCallObjectMethodAsyncFunction);
 };
 
 } // namespace extensions
