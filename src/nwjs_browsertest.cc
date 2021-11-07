@@ -183,7 +183,7 @@ class EmbedderWebContentsObserver : public content::WebContentsObserver {
       : WebContentsObserver(web_contents), terminated_(false) {}
 
   // WebContentsObserver.
-  void RenderProcessGone(base::TerminationStatus status) override {
+  void PrimaryMainFrameRenderProcessGone(base::TerminationStatus status) override {
     terminated_ = true;
     if (message_loop_runner_.get())
       message_loop_runner_->Quit();
