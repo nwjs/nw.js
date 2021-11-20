@@ -109,6 +109,7 @@ for arg in ['--test-renderer-crash', '--test-browser-crash']:
         assert(ptype == 'browser' and arg == '--test-browser-crash' or ptype in ['renderer', 'extension'] and arg == '--test-renderer-crash')
         assert(pkgname == r['prod'][0])
         assert(r['ver'][0] == "0.0.12")
-        assert(len(r['upload_file_minidump'][0]) > 100000)
+        print(len(r['upload_file_minidump'][0]))
+        assert(len(r['upload_file_minidump'][0]) > 10000)
         time.sleep(5)
 
