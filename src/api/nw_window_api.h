@@ -10,6 +10,11 @@
 class SkBitmap;
 class Browser;
 
+namespace base {
+template <typename T>
+class WeakPtr;
+}
+
 namespace content {
 class WebContents;
 }
@@ -21,7 +26,7 @@ class NwCurrentWindowInternalCloseFunction : public ExtensionFunction {
  public:
   NwCurrentWindowInternalCloseFunction() {}
   static void DoClose(AppWindow*);
-  static void DoCloseBrowser(Browser*);
+  static void DoCloseBrowser(base::WeakPtr<Browser> browser);
 
  protected:
   ~NwCurrentWindowInternalCloseFunction() override {}
