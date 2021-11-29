@@ -208,8 +208,9 @@ void NwCurrentWindowInternalCloseFunction::DoClose(AppWindow* window) {
     window->GetBaseWindow()->ForceClose();
 }
 
-void NwCurrentWindowInternalCloseFunction::DoCloseBrowser(Browser* browser) {
-  browser->window()->ForceClose();
+void NwCurrentWindowInternalCloseFunction::DoCloseBrowser(base::WeakPtr<Browser> browser) {
+  if (browser.get() && browser->window())
+    browser->window()->ForceClose();
 }
 
 ExtensionFunction::ResponseAction
@@ -222,14 +223,16 @@ NwCurrentWindowInternalCloseFunction::Run() {
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
     int id = args()[1].GetInt();
     Browser* browser = getBrowser(this, id);
-    if (!browser)
+    if (!browser) {
+      LOG(WARNING) << "cannot find browser window. id: " << id;
       return RespondNow(Error("cannot find browser window"));
+    }
     if (force)
       base::ThreadTaskRunnerHandle::Get().get()->PostTask(FROM_HERE,
-         base::BindOnce(&NwCurrentWindowInternalCloseFunction::DoCloseBrowser, browser));
+                                                          base::BindOnce(&NwCurrentWindowInternalCloseFunction::DoCloseBrowser, browser->AsWeakPtr()));
     else if (browser->NWCanClose())
       base::ThreadTaskRunnerHandle::Get().get()->PostTask(FROM_HERE,
-         base::BindOnce(&NwCurrentWindowInternalCloseFunction::DoCloseBrowser, browser));
+                                                          base::BindOnce(&NwCurrentWindowInternalCloseFunction::DoCloseBrowser, browser->AsWeakPtr()));
   } else {
     AppWindow* window = getAppWindow(this);
     if (force)
