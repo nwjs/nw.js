@@ -22,7 +22,7 @@ function Menu (option) {
 
   var items = privates(this).items;
   nw.Obj.create(id, 'Menu', option);
-  messagingNatives.BindToGC(this, function() { items.forEach(function(element) { element._destroy(); }); nw.Obj.destroy(id); }, -1);
+  messagingNatives.BindToGC(this, function() { items.forEach(function(element) { element._destroy(); }); nw.Obj.destroy(id); });
 };
 
 Menu.prototype.__defineGetter__('items', function() {
