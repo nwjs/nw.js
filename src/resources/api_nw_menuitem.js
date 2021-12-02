@@ -93,7 +93,7 @@ function MenuItem(option) {
 
   if (!option.native)
     nw.Obj.create(id, 'MenuItem', option);
-  messagingNatives.BindToGC(this, function() { nw.Obj.destroy(id); }, -1);
+  messagingNatives.BindToGC(this, function() { nw.Obj.destroy(id); });
 
 }
 

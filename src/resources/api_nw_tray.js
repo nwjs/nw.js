@@ -81,7 +81,7 @@ function Tray(option) {
     option.tooltip = '';
   
   nw.Obj.create(id, 'Tray', option);
-  messagingNatives.BindToGC(this, nw.Obj.destroy.bind(undefined, id), -1);
+  messagingNatives.BindToGC(this, nw.Obj.destroy.bind(undefined, id));
   trayEvents.objs[this.id] = this;
 }
 
