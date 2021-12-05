@@ -674,7 +674,7 @@ void OnRenderProcessShutdownHook(extensions::ScriptContext* context) {
   v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
   blink::ScriptForbiddenScope::AllowUserAgentScript script;
   void* env = g_get_current_env_fn(context->v8_context());
-  if (g_is_node_initialized_fn()) {
+  if (env && g_is_node_initialized_fn()) {
     g_emit_exit_fn(env);
     g_run_at_exit_fn(env);
   }
