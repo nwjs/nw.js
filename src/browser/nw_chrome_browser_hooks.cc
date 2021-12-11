@@ -132,8 +132,7 @@ void SendEventToApp(const std::string& event_name, std::unique_ptr<base::ListVal
         extension->location() == extensions::mojom::ManifestLocation::kCommandLine) {
       std::unique_ptr<extensions::Event> event(new extensions::Event(extensions::events::UNKNOWN,
                                                                 event_name,
-                                                                std::move(arguments)));
-      event->restrict_to_browser_context = profile;
+                                                                std::move(arguments), profile));
       EventRouter::Get(profile)
         ->DispatchEventToExtension(extension->id(), std::move(event));
     }
