@@ -20,6 +20,7 @@
 
 #include "content/nw/src/api/menu/menu.h"
 
+#include "base/ignore_result.h"
 #include "base/run_loop.h"
 #include "base/values.h"
 #include "base/task/current_thread.h"
