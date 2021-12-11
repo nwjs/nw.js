@@ -990,10 +990,10 @@ bool NwCurrentWindowInternalSetPrintSettingsInternalFunction::RunNWSync(base::Li
     web_contents = browser->tab_strip_model()->GetActiveWebContents();
   }
   const base::DictionaryValue& dict = base::Value::AsDictionaryValue(args()[0]);
-  bool auto_print;
+  absl::optional<bool> auto_print = dict.FindBoolKey("autoprint");
   std::string printer_name, pdf_path;
-  if (dict.GetBoolean("autoprint", &auto_print))
-    chrome::NWPrintSetCustomPrinting(auto_print);
+  if (auto_print)
+    chrome::NWPrintSetCustomPrinting(*auto_print);
   if (dict.GetString("printer", &printer_name))
     chrome::NWPrintSetDefaultPrinter(printer_name);
   if (dict.GetString("pdf_path", &pdf_path))

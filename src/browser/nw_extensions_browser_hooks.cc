@@ -326,12 +326,12 @@ void CalcNewWinParams(content::WebContents* new_contents, void* params,
   std::unique_ptr<base::Value> val;
   std::unique_ptr<base::DictionaryValue> manifest = MergeManifest(in_manifest);
 
-  bool resizable;
-  if (manifest->GetBoolean(switches::kmResizable, &resizable)) {
-    ret.resizable = resizable;
+  absl::optional<bool> resizable = manifest->FindBoolKey(switches::kmResizable);
+  if (resizable) {
+    ret.resizable = *resizable;
   }
-  bool fullscreen;
-  if (manifest->GetBoolean(switches::kmFullscreen, &fullscreen) && fullscreen) {
+  absl::optional<bool> fullscreen = manifest->FindBoolKey(switches::kmFullscreen);
+  if (fullscreen && *fullscreen) {
     ret.state = ui::SHOW_STATE_FULLSCREEN;
   }
   int width = 0, height = 0;
@@ -345,17 +345,17 @@ void CalcNewWinParams(content::WebContents* new_contents, void* params,
     ret.window_spec.bounds.set_x(x);
   if (manifest->GetInteger(switches::kmY, &y))
     ret.window_spec.bounds.set_y(y);
-  bool top;
-  if (manifest->GetBoolean(switches::kmAlwaysOnTop, &top) && top) {
+  absl::optional<bool> top = manifest->FindBoolKey(switches::kmAlwaysOnTop);
+  if (top && *top) {
     ret.always_on_top = true;
   }
-  bool frame;
-  if (manifest->GetBoolean(switches::kmFrame, &frame) && !frame) {
+  absl::optional<bool> frame = manifest->FindBoolKey(switches::kmFrame);
+  if (frame && !(*frame)) {
     ret.frame = extensions::AppWindow::FRAME_NONE;
   }
-  bool all_workspaces;
-  if (manifest->GetBoolean(switches::kmVisibleOnAllWorkspaces, &all_workspaces)
-    && all_workspaces) {
+  absl::optional<bool> all_workspaces =
+    manifest->FindBoolKey(switches::kmVisibleOnAllWorkspaces);
+  if (all_workspaces && *all_workspaces) {
     ret.visible_on_all_workspaces = true;
   }
   gfx::Size& minimum_size = ret.content_spec.minimum_size;

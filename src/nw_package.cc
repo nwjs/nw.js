@@ -276,14 +276,12 @@ std::string Package::GetName() {
 }
 
 bool Package::GetUseNode() {
-  bool use_node = true;
-  root()->GetBoolean(switches::kNodejs, &use_node);
+  bool use_node = root()->FindBoolKey(switches::kNodejs).value_or(true);
   return use_node;
 }
 
 bool Package::GetUseExtension() {
-  bool use_ext = true;
-  root()->GetBoolean(switches::kChromeExtension, &use_ext);
+  bool use_ext = root()->FindBoolKey(switches::kChromeExtension).value_or(true);
   return use_ext;
 }
 
