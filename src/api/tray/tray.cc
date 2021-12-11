@@ -81,8 +81,7 @@ void Tray::Call(const std::string& method,
     arguments.GetString(0, &alticon);
     SetAltIcon(alticon);
   } else if (method == "SetIconsAreTemplates") {
-    bool areTemplates;
-    arguments.GetBoolean(0, &areTemplates);
+    bool areTemplates = arguments.GetList()[0].GetBool();
     SetIconsAreTemplates(areTemplates);
   } else if (method == "SetTooltip") {
     std::string tooltip;
