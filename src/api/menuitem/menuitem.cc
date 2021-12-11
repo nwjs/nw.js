@@ -115,8 +115,7 @@ void MenuItem::Call(const std::string& method,
     arguments.GetString(0, &icon);
     SetIcon(icon);
   } else if (method == "SetIconIsTemplate") {
-    bool isTemplate;
-    arguments.GetBoolean(0, &isTemplate);
+    bool isTemplate = arguments.GetList()[0].GetBool();
     SetIconIsTemplate(isTemplate);
   } else if (method == "SetTooltip") {
     std::string tooltip;
@@ -124,11 +123,11 @@ void MenuItem::Call(const std::string& method,
     SetTooltip(tooltip);
   } else if (method == "SetEnabled") {
     bool enabled = true;
-    arguments.GetBoolean(0, &enabled);
+    enabled = arguments.GetList()[0].GetBool();
     SetEnabled(enabled);
   } else if (method == "SetChecked") {
     bool checked = false;
-    arguments.GetBoolean(0, &checked);
+    checked = arguments.GetList()[0].GetBool();
     SetChecked(checked);
   } else if (method == "SetSubmenu") {
     int object_id = arguments.GetList()[0].GetInt();

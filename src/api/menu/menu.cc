@@ -75,10 +75,10 @@ void Menu::Call(const std::string& method,
       x *= zoom_factor;
       y *= zoom_factor;
     }
-    
+
     Popup(x, y, rvh);
   } else if (method == "EnableShowEvent") {
-    arguments.GetBoolean(0, &enable_show_event_);
+    enable_show_event_ = arguments.GetList()[0].GetBool();
   } else {
     NOTREACHED() << "Invalid call to Menu method:" << method
                  << " arguments:" << arguments;
