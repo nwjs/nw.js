@@ -392,8 +392,7 @@ void MainPartsPreMainMessageLoopRunHook() {
 bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_line,
                                               const base::FilePath& current_directory) {
   nw::Package* package = nw::package();
-  bool single_instance = true;
-  package->root()->GetBoolean(switches::kmSingleInstance, &single_instance);
+  bool single_instance = package->root()->FindBoolKey(switches::kmSingleInstance).value_or(true);
   if (single_instance) {
 #if defined(OS_WIN)
     std::string cmd = base::UTF16ToUTF8(command_line.GetCommandLineString());

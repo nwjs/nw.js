@@ -38,9 +38,9 @@ Tray::Tray(int id,
   if (option.GetString("title", &title))
     SetTitle(title);
 
-  bool areTemplates;
-  if (option.GetBoolean("iconsAreTemplates", &areTemplates))
-    SetIconsAreTemplates(areTemplates);
+  absl::optional<bool> areTemplates = option.FindBoolKey("iconsAreTemplates");
+  if (areTemplates)
+    SetIconsAreTemplates(*areTemplates);
 
   std::string icon;
   if (option.GetString("icon", &icon) && !icon.empty())
