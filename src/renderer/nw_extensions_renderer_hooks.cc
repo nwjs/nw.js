@@ -195,7 +195,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   bool worker_support = command_line.HasSwitch(switches::kEnableNodeWorker);
 
   if (extension) {
-    extension->manifest()->GetBoolean(manifest_keys::kNWJSEnableNode, &nodejs_enabled);
+    nodejs_enabled = extension->manifest()->FindBoolPath(manifest_keys::kNWJSEnableNode).value_or(true);
     extension_root = extension->path().AsUTF8Unsafe();
   } else {
     extension_root = command_line.GetSwitchValuePath(switches::kNWAppPath).AsUTF8Unsafe();
@@ -215,7 +215,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   bool nwjs_guest_nw = command_line.HasSwitch("nwjs-guest-nw");
 
   if (extension)
-    extension->manifest()->GetBoolean(manifest_keys::kNWJSMixedContext, &mixed_context);
+    mixed_context = extension->manifest()->FindBoolPath(manifest_keys::kNWJSMixedContext).value_or(false);
   if (!mixed_context) {
     mixed_context = command_line.HasSwitch("mixed-context");
   }
@@ -293,9 +293,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
                                                                                                 ("global.__dirname = '" + root_path + "';").c_str(), v8::NewStringType::kNormal).ToLocalChecked()).ToLocalChecked();
         ignore_result(script->Run(dom_context));
       }
-      bool content_verification = false;
-      if (extension && extension->manifest()->GetBoolean(manifest_keys::kNWJSContentVerifyFlag,
-                                                       &content_verification) && content_verification) {
+      if (extension && extension->manifest()->FindBoolPath(manifest_keys::kNWJSContentVerifyFlag).value_or(false)) {
         v8::Local<v8::Script> script =
           v8::Script::Compile(dom_context, v8::String::NewFromUtf8(isolate,
                                                       (std::string("global.__nwjs_cv = true;") +
