@@ -366,11 +366,13 @@ void MainPartsPreMainMessageLoopRunHook() {
   if (package->root()->GetList("additional_trust_anchors", &additional_trust_anchors)) {
     for (size_t i = 0; i<additional_trust_anchors->GetList().size(); i++) {
       std::string certificate_string;
-      if (!additional_trust_anchors->GetString(i, &certificate_string)) {
+      const base::Value& val = additional_trust_anchors->GetList()[i];
+      if (!val.is_string()) {
         // LOG(WARNING)
         //   << "Could not get string from entry " << i;
         continue;
       }
+      certificate_string = val.GetString();
 
       net::CertificateList loaded =
         net::X509Certificate::CreateCertificateListFromBytes(
