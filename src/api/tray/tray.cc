@@ -69,23 +69,19 @@ void Tray::Call(const std::string& method,
                 const base::ListValue& arguments,
                 content::RenderFrameHost* rvh) {
   if (method == "SetTitle") {
-    std::string title;
-    arguments.GetString(0, &title);
+    std::string title = arguments.GetList()[0].GetString();
     SetTitle(title);
   } else if (method == "SetIcon") {
-    std::string icon;
-    arguments.GetString(0, &icon);
+    std::string icon = arguments.GetList()[0].GetString();
     SetIcon(icon);
   } else if (method == "SetAltIcon") {
-    std::string alticon;
-    arguments.GetString(0, &alticon);
+    std::string alticon = arguments.GetList()[0].GetString();
     SetAltIcon(alticon);
   } else if (method == "SetIconsAreTemplates") {
     bool areTemplates = arguments.GetList()[0].GetBool();
     SetIconsAreTemplates(areTemplates);
   } else if (method == "SetTooltip") {
-    std::string tooltip;
-    arguments.GetString(0, &tooltip);
+    std::string tooltip = arguments.GetList()[0].GetString();
     SetTooltip(tooltip);
   } else if (method == "SetMenu") {
     int object_id = arguments.GetList()[0].GetInt();

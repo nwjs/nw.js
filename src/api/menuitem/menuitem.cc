@@ -108,18 +108,17 @@ void MenuItem::Call(const std::string& method,
                     content::RenderFrameHost* rvh) {
   if (method == "SetLabel") {
     std::string label;
-    arguments.GetString(0, &label);
+    label = arguments.GetList()[0].GetString();
     SetLabel(label);
   } else if (method == "SetIcon") {
     std::string icon;
-    arguments.GetString(0, &icon);
+    icon = arguments.GetList()[0].GetString();
     SetIcon(icon);
   } else if (method == "SetIconIsTemplate") {
     bool isTemplate = arguments.GetList()[0].GetBool();
     SetIconIsTemplate(isTemplate);
   } else if (method == "SetTooltip") {
-    std::string tooltip;
-    arguments.GetString(0, &tooltip);
+    std::string tooltip = arguments.GetList()[0].GetString();
     SetTooltip(tooltip);
   } else if (method == "SetEnabled") {
     bool enabled = true;
