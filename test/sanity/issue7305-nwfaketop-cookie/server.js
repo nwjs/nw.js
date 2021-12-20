@@ -51,6 +51,6 @@ svr.listen(() => {
       fs.writeFileSync(newfile, content);
     }
   }
-  fs.writeFileSync('port.txt', port);
+  fs.writeFileSync('port.txt', port.toString());
 });
 
