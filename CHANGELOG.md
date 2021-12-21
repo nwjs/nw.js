@@ -1,3 +1,11 @@
+0.59.1 / 12-21-2021
+===================
+- Update Chromium to [96.0.4664.110](https://chromereleases.googleblog.com/2021/12/stable-channel-update-for-desktop_13.html)
+- node: update to [v17.3.0](https://nodejs.org/en/blog/release/v17.3.0/)
+- Fix: NW sample app won't start on Win10 [(#7803)](https://github.com/nwjs/nw.js/issues/7803)
+- Fix: NWJS does not re-open a window after a Simulate browser restart or Reload app [(#7798)](https://github.com/nwjs/nw.js/issues/7798)
+- Fix: Reloading a new instance child window causes crash [(#7813)](https://github.com/nwjs/nw.js/issues/7813)
+
 0.59.0 / 12-02-2021
 ===================
 - Update Chromium to [96.0.4664.55](https://chromereleases.googleblog.com/2021/11/stable-channel-update-for-desktop.html)
