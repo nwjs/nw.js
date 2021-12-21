@@ -7,10 +7,10 @@
 </head>
 <body>
   <script>
-    let socket1 =  new WebSocket('wss://echo.websocket.org');
-    let socket2 =  new WebSocket('wss://echo.websocket.org');
-    let socket3 =  new WebSocket('wss://echo.websocket.org');
-    let socket4 =  new WebSocket('wss://echo.websocket.org');
+    let socket1 =  new WebSocket('ws://echo.websocket.events');
+    let socket2 =  new WebSocket('ws://echo.websocket.events');
+    let socket3 =  new WebSocket('ws://echo.websocket.events');
+    let socket4 =  new WebSocket('ws://echo.websocket.events');
 
     socket1.onopen = ()=>{
       console.log('Socket 1 open');
