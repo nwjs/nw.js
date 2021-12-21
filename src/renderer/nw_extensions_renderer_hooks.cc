@@ -232,11 +232,11 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
       char* argv[3];
       argv[0] = argv0;
       argv[1] = argv[2] = nullptr;
-      std::string main_fn;
+      const std::string* main_fn;
 
-      if (extension && extension->manifest()->GetString("node-main", &main_fn)) {
+      if (extension && (main_fn = extension->manifest()->FindStringPath("node-main"))) {
         argc = 2;
-        argv[1] = strdup(main_fn.c_str());
+        argv[1] = strdup(main_fn->c_str());
       }
 
       v8::Isolate* isolate = v8::Isolate::GetCurrent();
@@ -278,9 +278,9 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
         ignore_result(script->Run(dom_context));
       }
 
-      if (extension && extension->manifest()->GetString(manifest_keys::kNWJSInternalMainFilename, &main_fn)) {
+      if (extension && (main_fn = extension->manifest()->FindStringPath(manifest_keys::kNWJSInternalMainFilename))) {
         v8::Local<v8::Script> script = v8::Script::Compile(dom_context, v8::String::NewFromUtf8(isolate,
-                                                                                                ("global.__filename = '" + main_fn + "';").c_str(), v8::NewStringType::kNormal).ToLocalChecked()).ToLocalChecked();
+                                                                                                ("global.__filename = '" + *main_fn + "';").c_str(), v8::NewStringType::kNormal).ToLocalChecked()).ToLocalChecked();
         ignore_result(script->Run(dom_context));
       }
       {
