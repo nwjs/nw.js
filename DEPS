@@ -232,21 +232,21 @@ vars = {
   'skia_git': 'https://skia.googlesource.com',
   'swiftshader_git': 'https://swiftshader.googlesource.com',
   'webrtc_git': 'https://webrtc.googlesource.com',
-  'nw_src_revision': '6c29dfc82886ab9d2b291e32bb44d685ca970208',
-  'nw_v8_revision': '68891586089afb1dfb36dfebac6a511ae23dc488',
-  'nw_node_revision': 'e70a5438b3de09580443fb9d29d501bd8d0b1a9f',
+  'nw_src_revision': '617c3da720c82a1866b0c8491041739b76ec20a5',
+  'nw_v8_revision': '676ece157c29740423484f276a27bf381bea49b8',
+  'nw_node_revision': '256e201ee3302091a85a2ea3aa7041d68f285bce',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': 'e95a334d3dee2a3efab15f670ab791652e55fd91',
+  'skia_revision': 'b4d28b2f35396ae4dd69338254415066629dfd25',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '0702d4f032355623b0701e8364140d8919cae5f5',
+  'v8_revision': '96e2674d6126c2ae64d44024aaa7968c853ac4a2',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': '0ea1b3451e8b5cba3d4d10a9cb16de072d0e7394',
+  'angle_revision': '7ccfe9ae7cb9648f4d1eabca14f8cb67fac55739',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -353,7 +353,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
-  'dawn_revision': '15dc49ce75a5b90c848db9fe99489731b616f526',
+  'dawn_revision': 'b23a8c209c5c96c30baae464f3f70398d1b3069d',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
@@ -963,7 +963,7 @@ deps = {
   },
 
   'src/third_party/breakpad/breakpad':
-    Var('chromium_git') + '/breakpad/breakpad.git' + '@' + 'ee2ad61263ebc54396df7d7a835e1e3f8455134e',
+    Var('chromium_git') + '/breakpad/breakpad.git' + '@' + '647aa17a7aa8ec0b99ffd005908b8a4ab1995a30',
 
   'src/third_party/byte_buddy': {
       'packages': [
@@ -1403,7 +1403,7 @@ deps = {
   },
 
   'src/third_party/openh264/src':
-    Var('chromium_git') + '/external/github.com/cisco/openh264' + '@' + '3dd5b80bc4f172dd82925bb259cb7c82348409c5',
+    Var('chromium_git') + '/external/github.com/cisco/openh264' + '@' + 'b52786888ddce9d6bc06b7825ba9bffc65924e0c',
 
   'src/third_party/openscreen/src':
     Var('chromium_git') + '/openscreen' + '@' + '3ea21022232b0ebedcc4c59d8a97282a8ce4cd56',
@@ -1644,7 +1644,7 @@ deps = {
     Var('chromium_git') + '/external/github.com/gpuweb/cts.git' + '@' + '2961e70ac940aa861f924efd1ec97405a0afc4e5',
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + 'ae43489e8416504a55ebcb62fcfc131232dd12b2',
+    Var('webrtc_git') + '/src.git' + '@' + '0941f936e6bf3d4fce05fec82b77518d40516007',
 
   'src/third_party/libgifcodec':
      Var('skia_git') + '/libgifcodec' + '@'+  Var('libgifcodec_revision'),
@@ -1708,7 +1708,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@b36e92d6bd8ed96e354c926e08b5942f5cf66d5e',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@10b2229bc1e46d107ad971a49f85793f7b0d0592',
     'condition': 'checkout_src_internal',
   },
 
@@ -1738,7 +1738,7 @@ deps = {
     'packages': [
       {
         'package': 'chromeos_internal/apps/media_app/app',
-        'version': '862Qn3vdCrP7qVsn89GgXIcEMHGUmBc76KDqbt86NU8C',
+        'version': 'WSrLR1fhe4sFDk0ViXGH8BGwDdEB-4aJhdND2BNeiRQC',
       },
     ],
     'condition': 'checkout_chromeos and checkout_src_internal',
@@ -4066,21 +4066,6 @@ hooks = [
                '--quiet',
                '--bucket', 'chromium-webrtc-resources',
                '-d', 'src/third_party/opus/tests/resources'],
-  },
-  {
-    'name': 'apache_mac',
-    'pattern': '\\.sha1',
-    'condition': 'checkout_mac',
-    'action': [ 'python3',
-                'src/third_party/depot_tools/download_from_google_storage.py',
-                '--no_resume',
-                '--directory',
-                '--recursive',
-                '--no_auth',
-                '--num_threads=16',
-                '--bucket', 'chromium-apache-mac',
-                'src/third_party/apache-mac',
-    ],
   },
   {
     'name': 'apache_win32',
