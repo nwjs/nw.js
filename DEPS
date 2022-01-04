@@ -232,7 +232,7 @@ vars = {
   'skia_git': 'https://skia.googlesource.com',
   'swiftshader_git': 'https://swiftshader.googlesource.com',
   'webrtc_git': 'https://webrtc.googlesource.com',
-  'nw_src_revision': 'a7a5a87aea1536311946bc21fadb7b55b1d3ae68',
+  'nw_src_revision': 'c2dc453b478a111ac118dda1ed0bc37a35d31459',
   'nw_v8_revision': '676ece157c29740423484f276a27bf381bea49b8',
   'nw_node_revision': '256e201ee3302091a85a2ea3aa7041d68f285bce',
   # Three lines of non-changing comments so that
@@ -1708,7 +1708,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@10b2229bc1e46d107ad971a49f85793f7b0d0592',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@1141a9d5b2a1a68c778f5249dbc269e8dd05b6b4',
     'condition': 'checkout_src_internal',
   },
 
