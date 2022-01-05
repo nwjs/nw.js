@@ -54,7 +54,7 @@ void NwCurrentWindowInternalSetShadowInternalFunction::SetShadowOnWindow(void *w
 
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalSetBadgeLabelInternalFunction::Run() {
-  EXTENSION_FUNCTION_VALIDATE(args().size() == 1);
+  EXTENSION_FUNCTION_VALIDATE(args().size() >= 1);
   EXTENSION_FUNCTION_VALIDATE(args()[0].is_string());
   std::string badge = args()[0].GetString();
   [[NSApp dockTile] setBadgeLabel:base::SysUTF8ToNSString(badge)];
@@ -83,7 +83,7 @@ NwCurrentWindowInternalRequestAttentionInternalFunction::Run() {
 
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalSetProgressBarInternalFunction::Run() {
-  EXTENSION_FUNCTION_VALIDATE(args().size() == 1);
+  EXTENSION_FUNCTION_VALIDATE(args().size() >= 1);
   EXTENSION_FUNCTION_VALIDATE(args()[0].is_double());
   double progress = args()[0].GetDouble();
 
