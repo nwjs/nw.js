@@ -1,3 +1,9 @@
+0.60.0 / 01-05-2022
+===================
+- Update Chromium to [97.0.4692.71](https://chromereleases.googleblog.com/2022/01/stable-channel-update-for-desktop.html)
+- Fix: setBadgeLabel and setProgressbar crash on macOS [(#7826)](https://github.com/nwjs/nw.js/issues/7826)
+- Fix: additional trust anchros regression
+
 0.59.1 / 12-21-2021
 ===================
 - Update Chromium to [96.0.4664.110](https://chromereleases.googleblog.com/2021/12/stable-channel-update-for-desktop_13.html)
