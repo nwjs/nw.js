@@ -35,8 +35,7 @@ void MenuItem::Create(const base::DictionaryValue& option) {
   std::string type;
   option.GetString("type", &type);
   type_ = type;
-  native_ = false;
-  option.GetBoolean("native", &native_);
+  native_ = option.FindBoolKey("native").value_or(false);
 
   if (native_) return;
 
@@ -69,18 +68,17 @@ void MenuItem::Create(const base::DictionaryValue& option) {
     }
 
     if (type == "checkbox") {
-      bool checked = false;
-      option.GetBoolean("checked", &checked);
+      bool checked = option.FindBoolKey("checked").value_or(false);
       SetChecked(checked);
     }
 
-    bool enabled;
-    if (option.GetBoolean("enabled", &enabled))
-      SetEnabled(enabled);
+    absl::optional<bool> enabled = option.FindBoolKey("enabled");
+    if (enabled)
+      SetEnabled(*enabled);
 
-    bool isTemplate;
-    if (option.GetBoolean("iconIsTemplate", &isTemplate))
-      SetIconIsTemplate(isTemplate);
+    absl::optional<bool> isTemplate = option.FindBoolKey("iconIsTemplate");
+    if (isTemplate)
+      SetIconIsTemplate(*isTemplate);
 
     std::string icon;
     if (option.GetString("icon", &icon) && !icon.empty())
