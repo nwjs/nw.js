@@ -6,6 +6,7 @@
 // base
 #include "base/command_line.h"
 #include "base/files/file_util.h"
+#include "base/ignore_result.h"
 #include "base/json/json_writer.h"
 #include "base/logging.h"
 #include "base/i18n/icu_util.h"
