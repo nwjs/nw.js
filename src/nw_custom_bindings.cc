@@ -85,7 +85,6 @@ using namespace blink;
 
 #include "third_party/blink/public/web/web_document.h"
 #include "third_party/blink/public/web/web_security_policy.h"
-#include "third_party/blink/renderer/platform/heap/handle.h"
 #include "third_party/blink/renderer/core/script/modulator.h"
 #include "third_party/blink/renderer/core/script/js_module_script.h"
 #include "third_party/blink/renderer/core/script/module_record_resolver.h"
