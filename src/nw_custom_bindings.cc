@@ -13,7 +13,6 @@
 
 #include "base/bind.h"
 #include "base/files/file_util.h"
-#include "base/ignore_result.h"
 #include "extensions/renderer/script_context.h"
 #include "v8/include/v8.h"
 
@@ -310,7 +309,7 @@ void NWCustomBindings::EvalNWBin(
     v8::Local<v8::Value> result;
     v8::Context::Scope cscope (local_frame->MainWorldScriptContext());
     v8::FixSourceNWBin(isolate, script);
-    ignore_result(script->BindToCurrentContext()->Run(local_frame->MainWorldScriptContext()).ToLocal(&result));
+    std::ignore = script->BindToCurrentContext()->Run(local_frame->MainWorldScriptContext()).ToLocal(&result);
     args.GetReturnValue().Set(result);
   } else {
     v8::ScriptOrigin origin(
