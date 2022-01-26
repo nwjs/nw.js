@@ -20,7 +20,6 @@
 
 #include "content/nw/src/api/menu/menu.h"
 
-#include "base/ignore_result.h"
 #include "base/run_loop.h"
 #include "base/values.h"
 #include "base/task/current_thread.h"
@@ -66,7 +65,7 @@ void Menu::Create(const base::DictionaryValue& option) {
 
   std::string type;
 
-  ignore_result(menu_items_.empty());
+  std::ignore = menu_items_.empty();
 }
 
 void Menu::Destroy() {

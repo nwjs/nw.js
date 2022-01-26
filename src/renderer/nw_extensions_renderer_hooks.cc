@@ -6,7 +6,6 @@
 // base
 #include "base/command_line.h"
 #include "base/files/file_util.h"
-#include "base/ignore_result.h"
 #include "base/json/json_writer.h"
 #include "base/logging.h"
 #include "base/i18n/icu_util.h"
@@ -114,7 +113,7 @@ v8::Handle<v8::Value> CreateNW(ScriptContext* context,
   if (nw->IsUndefined()) {
     nw = v8::Object::New(context->isolate());;
     //node_context->Enter();
-    ignore_result(global->Set(context->v8_context(), nw_string, nw));
+    std::ignore = global->Set(context->v8_context(), nw_string, nw);
     //node_context->Exit();
   }
   return nw;
@@ -276,13 +275,13 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
                                                        "process.versions['nw-flavor'] = '" + flavor + "';"
                                                        "process.versions['chromium'] = '" + GetChromiumVersion() + "';").c_str(), v8::NewStringType::kNormal
                                                                    ).ToLocalChecked()).ToLocalChecked();
-        ignore_result(script->Run(dom_context));
+        std::ignore = script->Run(dom_context);
       }
 
       if (extension && (main_fn = extension->manifest()->FindStringPath(manifest_keys::kNWJSInternalMainFilename))) {
         v8::Local<v8::Script> script = v8::Script::Compile(dom_context, v8::String::NewFromUtf8(isolate,
                                                                                                 ("global.__filename = '" + *main_fn + "';").c_str(), v8::NewStringType::kNormal).ToLocalChecked()).ToLocalChecked();
-        ignore_result(script->Run(dom_context));
+        std::ignore = script->Run(dom_context);
       }
       {
         std::string root_path = extension_root;
@@ -292,7 +291,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
         base::ReplaceChars(root_path, "'", "\\'", &root_path);
         v8::Local<v8::Script> script = v8::Script::Compile(dom_context, v8::String::NewFromUtf8(isolate,
                                                                                                 ("global.__dirname = '" + root_path + "';").c_str(), v8::NewStringType::kNormal).ToLocalChecked()).ToLocalChecked();
-        ignore_result(script->Run(dom_context));
+        std::ignore = script->Run(dom_context);
       }
       if (extension && extension->manifest()->FindBoolPath(manifest_keys::kNWJSContentVerifyFlag).value_or(false)) {
         v8::Local<v8::Script> script =
@@ -300,7 +299,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
                                                       (std::string("global.__nwjs_cv = true;") +
                                                        "global.__nwjs_ext_id = '" + extension->id() + "';").c_str(), v8::NewStringType::kNormal).ToLocalChecked()).ToLocalChecked();
 
-        ignore_result(script->Run(dom_context));
+        std::ignore = script->Run(dom_context);
       }
 
       dom_context->Exit();
@@ -323,20 +322,20 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   v8::Handle<v8::Object> nw = AsObjectOrEmpty(CreateNW(context, node_global, g_context));
 
   v8::Local<v8::Array> symbols = v8::Array::New(isolate, 4);
-  ignore_result(symbols->Set(context->v8_context(), 0, v8::String::NewFromUtf8(isolate, "global", v8::NewStringType::kNormal).ToLocalChecked()));
-  ignore_result(symbols->Set(context->v8_context(), 1, v8::String::NewFromUtf8(isolate, "process", v8::NewStringType::kNormal).ToLocalChecked()));
-  ignore_result(symbols->Set(context->v8_context(), 2, v8::String::NewFromUtf8(isolate, "Buffer", v8::NewStringType::kNormal).ToLocalChecked()));
-  ignore_result(symbols->Set(context->v8_context(), 3, v8::String::NewFromUtf8(isolate, "require", v8::NewStringType::kNormal).ToLocalChecked()));
+  std::ignore = symbols->Set(context->v8_context(), 0, v8::String::NewFromUtf8(isolate, "global", v8::NewStringType::kNormal).ToLocalChecked());
+  std::ignore = symbols->Set(context->v8_context(), 1, v8::String::NewFromUtf8(isolate, "process", v8::NewStringType::kNormal).ToLocalChecked());
+  std::ignore = symbols->Set(context->v8_context(), 2, v8::String::NewFromUtf8(isolate, "Buffer", v8::NewStringType::kNormal).ToLocalChecked());
+  std::ignore = symbols->Set(context->v8_context(), 3, v8::String::NewFromUtf8(isolate, "require", v8::NewStringType::kNormal).ToLocalChecked());
 
   g_context->Enter();
   for (unsigned i = 0; i < symbols->Length(); ++i) {
     v8::Local<v8::Value> key = symbols->Get(context->v8_context(), i).ToLocalChecked();
     v8::Local<v8::Value> val = node_global->Get(context->v8_context(), key).ToLocalChecked();
-    ignore_result(nw->Set(context->v8_context(), key, val));
+    std::ignore = nw->Set(context->v8_context(), key, val);
     if (nwjs_guest_nw && !node_init_run) {
       //running in nwjs webview and node was initialized in
       //chromedriver automation extension
-      ignore_result(context->v8_context()->Global()->Set(context->v8_context(), key, val));
+      std::ignore = context->v8_context()->Global()->Set(context->v8_context(), key, val);
     }
   }
   g_context->Exit();
@@ -367,7 +366,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
         "nw.process.mainModule.loaded = true;"
         "}").c_str(), v8::NewStringType::kNormal).ToLocalChecked(), &origin).ToLocalChecked();
     CHECK(*script);
-    ignore_result(script->Run(context->v8_context()));
+    std::ignore = script->Run(context->v8_context());
   }
 }
 
@@ -526,7 +525,7 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
         "nw.__dirname = root;"
         "}").c_str(), v8::NewStringType::kNormal).ToLocalChecked(), &origin).ToLocalChecked();
     CHECK(*script2);
-    ignore_result(script2->Run(v8_context));
+    std::ignore = script2->Run(v8_context);
   }
   RenderViewImpl* rv = content::RenderFrameImpl::FromWebFrame(frame)->render_view();
   if (!rv)
