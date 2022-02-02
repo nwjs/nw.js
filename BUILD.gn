@@ -43,7 +43,8 @@ component("nw_base") {
         "src/common/shell_switches.h",
   ]
   include_dirs = [
-     "$root_out_dir/../../third_party/node-nw/deps/uv/include"
+     "$root_out_dir/../../third_party/node-nw/deps/uv/include",
+     "$root_out_dir/../../third_party/skia",
   ]
 }
 
