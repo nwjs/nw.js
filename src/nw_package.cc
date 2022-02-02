@@ -41,11 +41,9 @@
 #include "content/nw/src/common/shell_switches.h"
 #include "content/public/common/content_switches.h"
 #include "url/gurl.h"
-//#include "grit/nw_resources.h"
 #include "media/base/media_switches.h"
 #include "net/base/escape.h"
 #include "third_party/node-nw/deps/uv/include/uv.h"
-#include "ui/base/resource/resource_bundle.h"
 
 #if defined(OS_WIN)
 #include <windows.h>
