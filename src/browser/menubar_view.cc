@@ -50,8 +50,10 @@ class MenuBarButton : public views::MenuButton {
 MenuBarView::MenuBarView() {
   auto layout = std::make_unique<views::BoxLayout>(views::BoxLayout::Orientation::kHorizontal, gfx::Insets(), 0);
   SetLayoutManager(std::move(layout));
-  SetBackground(views::CreateSolidBackground(GetNativeTheme()->GetSystemColor(
-                ui::NativeTheme::kColorId_MenuBackgroundColor)));
+  const ui::ColorProvider* color_provider = GetColorProvider();
+  SkColor theme_color =
+    color_provider->GetColor(ui::kColorMenuBackground);
+  SetBackground(views::CreateSolidBackground(theme_color));
 }
 
 MenuBarView::~MenuBarView() {
