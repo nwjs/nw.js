@@ -312,16 +312,15 @@ void NWCustomBindings::EvalNWBin(
     std::ignore = script->BindToCurrentContext()->Run(local_frame->MainWorldScriptContext()).ToLocal(&result);
     args.GetReturnValue().Set(result);
   } else {
-    v8::ScriptOrigin origin(
+    v8::ScriptOrigin origin(isolate,
                             args[2].As<v8::String>(),
-                            v8::Integer::New(isolate, 0),
-                            v8::Integer::New(isolate, 0),
-                            v8::Boolean::New(isolate, true),
-                            v8::Local<v8::Integer>(),    // script id
-                            v8::String::Empty(isolate),  // source_map_url
-                            v8::Boolean::New(isolate, true),
-                            v8::False(isolate),  // is_wasm
-                            v8::True(isolate));
+                            0, 0,
+                            true,
+                            -1,    // script id
+                            v8::Local<v8::Value>(),  // source_map_url
+                            true,
+                            false,  // is_wasm
+                            true);
     v8::Local<v8::Module> module;
     v8::ScriptCompiler::Source source(source_string, origin, cache);
     module = v8::ScriptCompiler::CompileModuleWithCache(isolate, &source).ToLocalChecked();
