@@ -1,3 +1,8 @@
+0.61.0 / 02-06-2022
+===================
+- Update Chromium to [98.0.4758.82](https://chromereleases.googleblog.com/2022/02/stable-channel-update-for-desktop.html)
+- Fix: crash on accessing window.parent and window.top [(#7828)](https://github.com/nwjs/nw.js/issues/7828)
+
 0.60.0 / 01-05-2022
 ===================
 - Update Chromium to [97.0.4692.71](https://chromereleases.googleblog.com/2022/01/stable-channel-update-for-desktop.html)
