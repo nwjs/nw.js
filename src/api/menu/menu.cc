@@ -47,19 +47,19 @@ void Menu::Call(const std::string& method,
                 const base::ListValue& arguments,
                 content::RenderFrameHost* rvh) {
   if (method == "Append") {
-    int object_id = arguments.GetList()[0].GetInt();
+    int object_id = arguments.GetListDeprecated()[0].GetInt();
     Append(object_manager()->GetApiObject<MenuItem>(object_id));
   } else if (method == "Insert") {
-    int object_id = arguments.GetList()[0].GetInt();
-    int pos = arguments.GetList()[1].GetInt();
+    int object_id = arguments.GetListDeprecated()[0].GetInt();
+    int pos = arguments.GetListDeprecated()[1].GetInt();
     Insert(object_manager()->GetApiObject<MenuItem>(object_id), pos);
   } else if (method == "Remove") {
-    int object_id = arguments.GetList()[0].GetInt();
-    int pos = arguments.GetList()[1].GetInt();
+    int object_id = arguments.GetListDeprecated()[0].GetInt();
+    int pos = arguments.GetListDeprecated()[1].GetInt();
     Remove(object_manager()->GetApiObject<MenuItem>(object_id), pos);
   } else if (method == "Popup") {
-    int x = arguments.GetList()[0].GetInt();
-    int y = arguments.GetList()[1].GetInt();
+    int x = arguments.GetListDeprecated()[0].GetInt();
+    int y = arguments.GetListDeprecated()[1].GetInt();
     content::WebContents* web_contents = content::WebContents::FromRenderFrameHost(rvh);
     DCHECK(web_contents);
     zoom::ZoomController* zoom_controller = zoom::ZoomController::FromWebContents(web_contents);
@@ -78,7 +78,7 @@ void Menu::Call(const std::string& method,
 
     Popup(x, y, rvh);
   } else if (method == "EnableShowEvent") {
-    enable_show_event_ = arguments.GetList()[0].GetBool();
+    enable_show_event_ = arguments.GetListDeprecated()[0].GetBool();
   } else {
     NOTREACHED() << "Invalid call to Menu method:" << method
                  << " arguments:" << arguments;
