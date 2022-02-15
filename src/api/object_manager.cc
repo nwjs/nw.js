@@ -230,8 +230,8 @@ void ObjectManager::SendEvent(Base* object,
     return;
   std::vector<base::Value> arguments;
   arguments.push_back(base::Value(object->id()));
-  for (size_t i = 0; i < args.GetList().size(); i++)
-    arguments.push_back(args.GetList()[i].Clone());
+  for (size_t i = 0; i < args.GetListDeprecated().size(); i++)
+    arguments.push_back(args.GetListDeprecated()[i].Clone());
   std::unique_ptr<Event> event(new Event(extensions::events::UNKNOWN, "NWObject" + event_name, std::move(arguments), browser_context_));
   event->user_gesture = EventRouter::USER_GESTURE_ENABLED;
   event_router->DispatchEventToExtension(object->extension_id_, std::move(event));

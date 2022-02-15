@@ -77,7 +77,7 @@ bool NwObjCallObjectMethodFunction::RunNWSync(base::ListValue* response, std::st
   id = args()[0].GetInt();
   type = args()[1].GetString();
   method = args()[2].GetString();
-  base::Value::ConstListView arguments = args()[3].GetList();
+  base::Value::ConstListView arguments = args()[3].GetListDeprecated();
 
   nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
   manager->OnCallObjectMethod(render_frame_host(), id, type, method, base::ListValue(arguments));
@@ -101,7 +101,7 @@ bool NwObjCallObjectMethodSyncFunction::RunNWSync(base::ListValue* response, std
   id = args()[0].GetInt();
   type = args()[1].GetString();
   method = args()[2].GetString();
-  base::Value::ConstListView arguments = args()[3].GetList();
+  base::Value::ConstListView arguments = args()[3].GetListDeprecated();
 
   nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
   manager->OnCallObjectMethodSync(render_frame_host(), id, type, method, base::ListValue(arguments), response);
@@ -126,7 +126,7 @@ NwObjCallObjectMethodAsyncFunction::Run() {
   id = args()[0].GetInt();
   type = args()[1].GetString();
   method = args()[2].GetString();
-  base::Value::ConstListView arguments = args()[3].GetList();
+  base::Value::ConstListView arguments = args()[3].GetListDeprecated();
 
   nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
   manager->OnCallObjectMethod(render_frame_host(), id, type, method, base::ListValue(arguments));

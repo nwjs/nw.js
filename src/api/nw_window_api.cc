@@ -999,7 +999,7 @@ bool NwCurrentWindowInternalGetCurrentFunction::RunNWSync(base::ListValue* respo
     remain.Append(std::make_unique<base::Value>(args()[1].Clone()));
   }
   std::unique_ptr<windows::GetCurrent::Params> params(
-             windows::GetCurrent::Params::Create(remain.GetList()));
+             windows::GetCurrent::Params::Create(remain.GetListDeprecated()));
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   ApiParameterExtractor<windows::GetCurrent::Params> extractor(params.get());

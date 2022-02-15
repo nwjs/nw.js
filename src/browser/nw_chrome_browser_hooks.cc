@@ -122,8 +122,8 @@ void SendEventToApp(const std::string& event_name, std::unique_ptr<base::ListVal
     ExtensionRegistry::Get(profile)->enabled_extensions();
   ExtensionPrefs* extension_prefs = ExtensionPrefs::Get(profile);
   std::vector<base::Value> arguments;
-  for (size_t i = 0; i < event_args->GetList().size(); i++)
-    arguments.push_back(event_args->GetList()[i].Clone());
+  for (size_t i = 0; i < event_args->GetListDeprecated().size(); i++)
+    arguments.push_back(event_args->GetListDeprecated()[i].Clone());
 
   for (extensions::ExtensionSet::const_iterator it = extensions.begin();
        it != extensions.end(); ++it) {
@@ -364,9 +364,9 @@ void MainPartsPreMainMessageLoopRunHook() {
   nw::Package* package = nw::package();
   const base::ListValue *additional_trust_anchors = NULL;
   if (package->root()->GetList("additional_trust_anchors", &additional_trust_anchors)) {
-    for (size_t i = 0; i<additional_trust_anchors->GetList().size(); i++) {
+    for (size_t i = 0; i<additional_trust_anchors->GetListDeprecated().size(); i++) {
       std::string certificate_string;
-      const base::Value& val = additional_trust_anchors->GetList()[i];
+      const base::Value& val = additional_trust_anchors->GetListDeprecated()[i];
       if (!val.is_string()) {
         // LOG(WARNING)
         //   << "Could not get string from entry " << i;
