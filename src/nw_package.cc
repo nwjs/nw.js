@@ -460,15 +460,18 @@ void Package::ReadChromiumArgs() {
     if (!got_env)
       return;
 
-  if (!root()->GetStringASCII(switches::kmChromiumArgs, &args))
+  std::string* pargs = root()->FindStringKey(switches::kmChromiumArgs);
+  if (!pargs) {
     if (!got_env)
       return;
+  } else
+    args = *pargs;
 
   // Expand Windows psudovars (ex; %APPDATA%) passed in chromium-args in the same way as when 
   // passed as command line parameters.
   #if defined(OS_WIN)
   TCHAR szEnvPath[MAX_PATH];
-  std::wstring ws; 
+  std::wstring ws;
   ws.assign( args.begin(), args.end());
   if (ExpandEnvironmentStrings(ws.c_str(), szEnvPath,MAX_PATH) != 0) {
     std::wstring ws_out = szEnvPath;
@@ -512,12 +515,12 @@ void Package::ReadJsFlags() {
   if (!root()->HasKey(switches::kmJsFlags))
     return;
 
-  std::string flags;
-  if (!root()->GetStringASCII(switches::kmJsFlags, &flags))
+  std::string* flags = root()->FindStringKey(switches::kmJsFlags);
+  if (!flags)
     return;
 
   base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
-  command_line->AppendSwitchASCII("js-flags", flags);
+  command_line->AppendSwitchASCII("js-flags", *flags);
 }
 
 void Package::ReportError(const std::string& title,
