@@ -243,7 +243,7 @@ vars = {
   'skia_git': 'https://skia.googlesource.com',
   'swiftshader_git': 'https://swiftshader.googlesource.com',
   'webrtc_git': 'https://webrtc.googlesource.com',
-  'nw_src_revision': '2380d64e251d196668d7164a7b25527cef718e09',
+  'nw_src_revision': 'fe0d010d4f0cd8ebba819fe9ffbcd838dca70718',
   'nw_v8_revision': '0350a5ef7ef801480974413433d20f1b819f34e7',
   'nw_node_revision': '256e201ee3302091a85a2ea3aa7041d68f285bce',
   # Three lines of non-changing comments so that
