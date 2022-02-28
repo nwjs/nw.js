@@ -57,7 +57,7 @@ const uint8_t kNWSignaturesPublicKey[] = {
   0x91, 0x02, 0x03, 0x01, 0x00, 0x01};
 
 const int kNWSignaturesPublicKeySize =
-  base::size(kNWSignaturesPublicKey);
+  std::size(kNWSignaturesPublicKey);
 
 }  // namespace
 
