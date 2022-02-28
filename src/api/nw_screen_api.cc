@@ -11,6 +11,7 @@
 #include "ui/display/display_observer.h"
 #include "ui/display/display.h"
 #include "ui/display/screen.h"
+#include "ui/gfx/image/image_skia_rep_default.h"
 
 // For desktop capture APIs
 #include "base/base64.h"
