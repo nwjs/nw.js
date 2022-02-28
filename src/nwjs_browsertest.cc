@@ -975,7 +975,7 @@ IN_PROC_BROWSER_TEST_F(NWJSAppTest, PrintChangeFooter) {
   LOG(INFO) << "waiting for print dialog";
   WebContents* preview_dialog = PrintDialogWaiter(web_contents).Wait();
   LOG(INFO) << "done";
-  const int kExpectedFrameCount = 2;
+  const int kExpectedFrameCount = 3;
   int frame_count;
   do {
     base::RunLoop run_loop;
