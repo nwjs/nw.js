@@ -299,9 +299,9 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
     //FIXME: node-remote spec different with kWebURLs
     std::string node_remote_string;
     base::ListValue* node_remote_list = NULL;
-    if (node_remote->GetAsString(&node_remote_string)) {
+    if (node_remote->is_string()) {
       node_remote_list = new base::ListValue();
-      node_remote_list->Append(base::WrapUnique(new base::Value(node_remote_string)));
+      node_remote_list->Append(base::WrapUnique(new base::Value(node_remote->GetString())));
     } else if (node_remote->GetAsList(&node_remote_list)) {
       // do nothing
     }
