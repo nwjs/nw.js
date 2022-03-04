@@ -12,6 +12,8 @@
   if (chrome.test) {
   document.getElementById("frame0").onload = function() { chrome.test.sendMessage("Loaded"); };
   chrome.test.sendMessage("Launched");
+  } else {
+	  document.getElementById("frame0").src = "http://127.0.0.1:8080/remote.html";
   }
   </script>
 </body>
