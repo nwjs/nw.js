@@ -243,17 +243,17 @@ vars = {
   'skia_git': 'https://skia.googlesource.com',
   'swiftshader_git': 'https://swiftshader.googlesource.com',
   'webrtc_git': 'https://webrtc.googlesource.com',
-  'nw_src_revision': 'fe0d010d4f0cd8ebba819fe9ffbcd838dca70718',
-  'nw_v8_revision': 'f1c518afc628c23448af11a01490ab07f912d205',
+  'nw_src_revision': '6918987a117dac990a922962cbe96ec32c328443',
+  'nw_v8_revision': '34fd535484b373e437ffc9854c038180e03cf9ae',
   'nw_node_revision': '256e201ee3302091a85a2ea3aa7041d68f285bce',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '51988d0bc11e9024254789aad35b5d86bca2779c',
+  'skia_revision': 'f85ab491eb97b54d0bfeac19fed27feb499b8912',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '05047ba5c8e578d7a6d1531832fbde4523619322',
+  'v8_revision': '071d2ba4197530af42298e9a5634ad7edfeee2fd',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
@@ -1757,7 +1757,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@72c3b6a84cbb1ee16696783238fd8ef4a52c981a',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@8882289bafe4ec7ad8706a5f4f518bfc028a1260',
     'condition': 'checkout_src_internal',
   },
 
