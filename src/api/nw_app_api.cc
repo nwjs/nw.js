@@ -108,7 +108,7 @@ NwAppCloseAllWindowsFunction::Run() {
 
 ExtensionFunction::ResponseAction
 NwAppEnableComponentFunction::Run() {
-#if BUILDFLAG(ENABLE_WIDEVINE)
+#if BUILDFLAG(ENABLE_WIDEVINE_CDM_COMPONENT)
   component_updater::RegisterWidevineCdmComponent(g_browser_process->component_updater(),
                                                   base::BindOnce(&NwAppEnableComponentFunction::OnRegistered,
                                                                  this));
