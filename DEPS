@@ -245,7 +245,7 @@ vars = {
   'webrtc_git': 'https://webrtc.googlesource.com',
   'nw_src_revision': '950e696725fbd38c63b8710467f863b02aab55ec',
   'nw_v8_revision': '866873877cc53c450354b591629b76f09a4719a1',
-  'nw_node_revision': '256e201ee3302091a85a2ea3aa7041d68f285bce',
+  'nw_node_revision': '5a143b45061b86f8c86939566ab3a664c07f91cc',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
