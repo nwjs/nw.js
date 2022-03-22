@@ -1,3 +1,10 @@
+0.62.1 / 03-22-2022
+===================
+- Update Node.js to [v17.7.2](https://nodejs.org/en/blog/release/v17.7.2/)
+- Update Chromium to [99.0.4844.83](https://chromereleases.googleblog.com/2022/03/stable-channel-update-for-desktop_20.html)
+- Fix: Webview permission partitions causing crash [(#7853)](https://github.com/nwjs/nw.js/issues/7853)
+- Fix: child process exec blocks several minutes since v0.62.0 [(#7851)](https://github.com/nwjs/nw.js/issues/7851)
+
 0.62.0 / 03-06-2022
 ===================
 - Update Chromium to [99.0.4844.51](https://chromereleases.googleblog.com/2022/03/stable-channel-update-for-desktop.html)
