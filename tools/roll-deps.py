@@ -33,6 +33,7 @@ def process_deps(path, project, new_rev, is_dry_run):
 
   A bit hacky, could it be made better?
   """
+  print(path)
   content = open(path).read()
   # Hack for Blink to get the AutoRollBot running again.
   if project == "blink":
@@ -53,7 +54,7 @@ class PrintSubprocess(object):
   """Wrapper for subprocess2 which prints out every command."""
   def __getattr__(self, attr):
     def _run_subprocess2(cmd, *args, **kwargs):
-      print cmd
+      print(cmd)
       sys.stdout.flush()
       return getattr(subprocess2, attr)(cmd, *args, **kwargs)
     return _run_subprocess2
@@ -86,7 +87,7 @@ def main():
               ('node', 'third_party/node-nw', 'https://github.com/nwjs/node')]
   for project, path, url in projects:
     os.chdir(os.path.join(SRC_DIR, path))
-    new_rev = subprocess.check_output(['git', 'rev-parse', 'HEAD'], shell=IS_WINDOWS).rstrip()
+    new_rev = subprocess.check_output(['git', 'rev-parse', 'HEAD'], shell=IS_WINDOWS).rstrip().decode()
 
     # Silence the editor.
     os.environ['EDITOR'] = 'true'
@@ -95,8 +96,8 @@ def main():
                            options.dry_run)
     if old_rev == new_rev:
       continue
-    print '%s roll %s:%s' % (project, old_rev, new_rev)
-    commit_msg = subprocess.check_output(['git', 'log', '-1', '--format=%s'], shell=IS_WINDOWS).rstrip()
+    print ('%s roll %s:%s' % (project, old_rev, new_rev))
+    commit_msg = subprocess.check_output(['git', 'log', '-1', '--format=%s'], shell=IS_WINDOWS).rstrip().decode()
     commit_msg = project + ": " + commit_msg
     commit_body = url + "/commit/" + new_rev
     os.chdir(root_dir)
