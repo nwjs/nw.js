@@ -81,6 +81,7 @@ using namespace blink;
 
 #undef BLINK_IMPLEMENTATION
 #define BLINK_IMPLEMENTATION 1
+#pragma clang diagnostic ignored "-Wimplicit-const-int-float-conversion"
 #include "base/thread_annotations.h"
 
 #include "third_party/blink/renderer/core/frame/local_frame.h"
@@ -91,7 +92,6 @@ using namespace blink;
 #include "third_party/blink/renderer/core/script/modulator.h"
 #include "third_party/blink/renderer/core/script/js_module_script.h"
 #include "third_party/blink/renderer/core/script/module_record_resolver.h"
-#pragma clang diagnostic ignored "-Wimplicit-const-int-float-conversion"
 #include "third_party/blink/renderer/bindings/core/v8/v8_binding_for_core.h"
 
 //#include "third_party/WebKit/Source/core/inspector/InspectorInstrumentation.h"
