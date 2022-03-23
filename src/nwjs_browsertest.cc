@@ -1194,7 +1194,7 @@ IN_PROC_BROWSER_TEST_F(NWJSDesktopCaptureApiTest, CrossDomain) {
        content::DesktopMediaID(content::DesktopMediaID::TYPE_SCREEN,
                                content::DesktopMediaID::kNullId), false},
   };
-  picker_factory_.SetTestFlags(test_flags, base::size(test_flags));
+  picker_factory_.SetTestFlags(test_flags, std::size(test_flags));
   base::FilePath test_dir = test_data_dir_.Append(FILE_PATH_LITERAL("platform_apps")).Append(FILE_PATH_LITERAL("6212-crossdomain-screen"));
   embedded_test_server()->ServeFilesFromDirectory(test_dir);
   ASSERT_TRUE(embedded_test_server()->Start());
