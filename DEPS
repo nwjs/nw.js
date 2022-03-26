@@ -243,8 +243,8 @@ vars = {
   'skia_git': 'https://skia.googlesource.com',
   'swiftshader_git': 'https://swiftshader.googlesource.com',
   'webrtc_git': 'https://webrtc.googlesource.com',
-  'nw_src_revision': '37290b45bfffc460255cbf275b037f9a9fc8b376',
-  'nw_v8_revision': '19a067dab1a52a5f2eb8f7be601f6109707fed75',
+  'nw_src_revision': '35b6483f421df0f9b0b4ecb05428111f0602df53',
+  'nw_v8_revision': '73e26ccc44a8e3ecb21119847cea950cf7f6e10c',
   'nw_node_revision': '53e49d1d8c6fe9c7669409ca77349e5bda946895',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
