@@ -1,3 +1,7 @@
+0.62.2 / 03-27-2022
+===================
+- Update Chromium to [99.0.4844.84](https://chromereleases.googleblog.com/2022/03/stable-channel-update-for-desktop_25.html)
+
 0.62.1 / 03-22-2022
 ===================
 - Update Node.js to [v17.7.2](https://nodejs.org/en/blog/release/v17.7.2/)
