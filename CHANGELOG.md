@@ -1,3 +1,7 @@
+0.63.0 / 03-30-2022
+===================
+- Update Chromium to [100.0.4896.60](https://chromereleases.googleblog.com/2022/03/stable-channel-update-for-desktop_29.html)
+
 0.62.2 / 03-27-2022
 ===================
 - Update Chromium to [99.0.4844.84](https://chromereleases.googleblog.com/2022/03/stable-channel-update-for-desktop_25.html)
