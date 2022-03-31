@@ -238,7 +238,7 @@ vars = {
   'dawn_standalone': False,
   'nw_src_revision': '7ae13bd63ba08bdc42d5429ea970dadfba507a0d',
   'nw_v8_revision': '02ee63a718471c3929e9f9311541290a4a422a49',
-  'nw_node_revision': '9ae39cf86bde50488a9c693f0570650f71b7bdae',
+  'nw_node_revision': '39a24161a1d7f690147936cf7449895e8c78e57d',
 
   # reclient CIPD package version
   'reclient_version': 're_client_version:0.54.0.741c1ca-gomaip',
