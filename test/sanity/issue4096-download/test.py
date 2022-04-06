@@ -33,7 +33,7 @@ function testgc() {
 }
 
 var file = fs.createWriteStream("out.png");
-var req = http.get("http://localhost:%s/g.png", function (res) {
+var req = http.get("http://127.0.0.1:%s/g.png", function (res) {
     res.pipe(file);
     setTimeout(testgc, 1000);
 });
