@@ -34,7 +34,7 @@
 
   function testRequest(id) {
     var http = require('http');
-    var ret = http.get('http://localhost:{port}/', function (response) {
+    var ret = http.get('http://127.0.0.1:{port}/', function (response) {
       if (response.statusCode == 200) {
         out(id, 'success');
       } else {
