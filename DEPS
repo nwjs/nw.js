@@ -236,8 +236,8 @@ vars = {
 
   # Make Dawn skip its standalone dependencies
   'dawn_standalone': False,
-  'nw_src_revision': '7ae13bd63ba08bdc42d5429ea970dadfba507a0d',
-  'nw_v8_revision': '02ee63a718471c3929e9f9311541290a4a422a49',
+  'nw_src_revision': '72ea3a19a00fd45d5f0abea6c2bbecaa8fc377bf',
+  'nw_v8_revision': 'e46a141393d2016a461e20a6f7560e01c2e56b84',
   'nw_node_revision': '39a24161a1d7f690147936cf7449895e8c78e57d',
 
   # reclient CIPD package version
@@ -261,7 +261,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '7aec18aff7dd5b28808d6d0af1b72a421b0b9cce',
+  'v8_revision': 'f5902e900f1a7ad536221665e09c5f64f29cb07a',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
@@ -1807,7 +1807,6 @@ deps = {
       'dep_type': 'cipd',
       'condition': 'checkout_mac',
   },
-
   'src/v8':
     Var('nwjs_git') + '/v8.git' + '@' +  Var('nw_v8_revision'),
 
@@ -1818,7 +1817,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@933437b0ea6f13e9211961ce6a8484b1257cd6da',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@8d5669a1981741fa097c32e1abb9ffb83ba8b4e8',
     'condition': 'checkout_src_internal',
   },
 
