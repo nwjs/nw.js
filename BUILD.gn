@@ -243,10 +243,10 @@ commit_id_output_file = "$root_gen_dir/nw/id/commit.h"
 action("commit_id") {
     script = "tools/commit_id.py"
     inputs = [
-       "//content/nw/.git/index",
-       "//.git/index",
-       "//v8/.git/index",
-       "//third_party/node-nw/.git/index"
+       #"//content/nw/.git/index",
+       #"//.git/index",
+       #"//v8/.git/index",
+       #"//third_party/node-nw/.git/index"
     ]
     outputs = [
       commit_id_output_file,
