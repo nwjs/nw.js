@@ -236,7 +236,7 @@ vars = {
 
   # Make Dawn skip its standalone dependencies
   'dawn_standalone': False,
-  'nw_src_revision': '72ea3a19a00fd45d5f0abea6c2bbecaa8fc377bf',
+  'nw_src_revision': '29d2f39a22338bee6d11a9ba085221901bb57c88',
   'nw_v8_revision': 'e46a141393d2016a461e20a6f7560e01c2e56b84',
   'nw_node_revision': '39a24161a1d7f690147936cf7449895e8c78e57d',
 
