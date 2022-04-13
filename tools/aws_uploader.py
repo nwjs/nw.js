@@ -82,7 +82,7 @@ def print_progress(transmitted, total):
 
 
 def aws_upload(upload_path, file_list):
-    conn = boto.connect_s3()
+    conn = boto.connect_s3(is_secure=False)
     print 'Connecting to S3 ...'
     sys.stdout.flush()
     bucket = conn.get_bucket(bucket_name)
