@@ -236,8 +236,8 @@ vars = {
 
   # Make Dawn skip its standalone dependencies
   'dawn_standalone': False,
-  'nw_src_revision': '29d2f39a22338bee6d11a9ba085221901bb57c88',
-  'nw_v8_revision': 'e46a141393d2016a461e20a6f7560e01c2e56b84',
+  'nw_src_revision': 'd5ce77fa4917ac31169557aa96b3b47ee6c59101',
+  'nw_v8_revision': '5d91fa40b07bc92a3fa95311626cf993913c42af',
   'nw_node_revision': '39a24161a1d7f690147936cf7449895e8c78e57d',
 
   # reclient CIPD package version
@@ -257,11 +257,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '65809fe1d0d63215f6f25fb38f869f878b09c700',
+  'skia_revision': 'b524f580859d367e51591d8b5c16485d022844cb',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'f5902e900f1a7ad536221665e09c5f64f29cb07a',
+  'v8_revision': 'b2490f598d9debd563bc32191cb3f777a16cbbb0',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
@@ -372,7 +372,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
-  'dawn_revision': '5dff8813a940c3ecc122e013cc32ac1f6c7a8f53',
+  'dawn_revision': 'e846fefc34da4ba904c681cd275ada191674cfb5',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
@@ -1817,7 +1817,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@8d5669a1981741fa097c32e1abb9ffb83ba8b4e8',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@692785ae564d9e651c581811dfefd03c802b0c01',
     'condition': 'checkout_src_internal',
   },
 
