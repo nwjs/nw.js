@@ -1,3 +1,9 @@
+0.63.1 / 03-30-2022
+===================
+- Update Chromium to [100.0.4896.127](https://chromereleases.googleblog.com/2022/04/stable-channel-update-for-desktop_14.html)
+- Update Node.js to [v17.8.0](https://nodejs.org/en/blog/release/v17.8.0/)
+- Fix: Event 'open' on app is triggered once [(#7860)](https://github.com/nwjs/nw.js/issues/7860)
+
 0.63.0 / 03-30-2022
 ===================
 - Update Chromium to [100.0.4896.60](https://chromereleases.googleblog.com/2022/03/stable-channel-update-for-desktop_29.html)
