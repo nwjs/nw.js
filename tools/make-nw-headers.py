@@ -12,6 +12,7 @@ import argparse
 parser = argparse.ArgumentParser(description='Package nw binaries.')
 parser.add_argument('-p','--path', help='Where to find the binaries, like out/Release', required=False)
 parser.add_argument('-n','--name', help='platform name.', required=False)
+parser.add_argument('-a','--arch', help='architecture name.', required=False)
 args = parser.parse_args()
 
 binaries_location = args.path
@@ -118,7 +119,9 @@ print 'compress end'
 #copy over the nw.lib files so building native modules locally can work later in tests
 
 if platform_name == 'win':
-  release_dir = os.path.join(tmp_dir, 'node', 'Release')
+  release_dir = os.path.join(tmp_dir, 'node')
+  if args.arch == 'x64':
+    release_dir = os.path.join(release_dir, 'x64')
   if not os.path.exists(release_dir):
     os.mkdir(release_dir)
   shutil.copy(os.path.join(binaries_location, 'nw.lib'), release_dir)
