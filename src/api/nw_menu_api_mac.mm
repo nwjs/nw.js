@@ -38,7 +38,7 @@ static bool g_msgid_inited = false;
 
 void InitMsgIDMap() {
   g_msgid_map.clear();
-  for (size_t i = 0; i < base::size(msg_map); i++) {
+  for (size_t i = 0; i < std::size(msg_map); i++) {
     g_msgid_map.insert(std::make_pair(msg_map[i].msgstr, msg_map[i].msgid));
   }
   g_msgid_inited = true;
