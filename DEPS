@@ -241,7 +241,7 @@ vars = {
   'reclient_version': 're_client_version:0.57.0.4865132-gomaip',
   'nw_src_revision': 'ce6fd31f7884be164df17945d9f8bbda218ad090',
   'nw_v8_revision': '58937a01f10cab1881e5c90c13a288b2109df108',
-  'nw_node_revision': '39a24161a1d7f690147936cf7449895e8c78e57d',
+  'nw_node_revision': 'b3a98bded59549dd327eb5c3312bd6edc027f5cd',
 
   'android_git': 'https://android.googlesource.com',
   'aomedia_git': 'https://aomedia.googlesource.com',
