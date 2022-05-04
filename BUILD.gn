@@ -372,8 +372,6 @@ if (is_linux && !is_component_build) {
                 "$root_shlib_dir/libffmpeg.so",
                 "$root_build_dir/chromedriver",
                 "$root_build_dir/nwjc",
-                "$root_build_dir/swiftshader/libEGL.so",
-                "$root_build_dir/swiftshader/libGLESv2.so",
                 "$root_build_dir/payload"]
     deps = [
              "//chrome:chrome_initial",
@@ -383,8 +381,6 @@ if (is_linux && !is_component_build) {
              "//v8:nwjc",
              "//chrome/test/chromedriver:chromedriver",
              "//third_party/ffmpeg:ffmpeg",
-             "//third_party/swiftshader/src/OpenGL/libEGL:swiftshader_libEGL",
-             "//third_party/swiftshader/src/OpenGL/libGLESv2:swiftshader_libGLESv2"
              ]
     if (target_cpu == "x64") {
       inputs = [
