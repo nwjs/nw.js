@@ -42,7 +42,6 @@
 #include "content/public/common/content_switches.h"
 #include "url/gurl.h"
 #include "media/base/media_switches.h"
-#include "net/base/escape.h"
 #include "third_party/node-nw/deps/uv/include/uv.h"
 
 #if defined(OS_WIN)

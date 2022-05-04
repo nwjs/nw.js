@@ -23,7 +23,6 @@
 #include "extensions/common/extensions_client.h"
 #include "extensions/common/manifest.h"
 #include "extensions/common/manifest_url_handlers.h"
-#include "net/base/escape.h"
 
 #include "content/nw/src/common/shell_switches.h"
 
