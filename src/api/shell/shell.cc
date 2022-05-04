@@ -26,7 +26,6 @@
 #include "base/logging.h"
 #include "base/task/thread_pool.h"
 #include "base/values.h"
-#include "base/task/post_task.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/browser_thread.h"
 #include "chrome/browser/platform_util.h"
