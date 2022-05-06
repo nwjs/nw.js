@@ -239,7 +239,7 @@ vars = {
 
   # reclient CIPD package version
   'reclient_version': 're_client_version:0.57.0.4865132-gomaip',
-  'nw_src_revision': 'ce6fd31f7884be164df17945d9f8bbda218ad090',
+  'nw_src_revision': 'f65a261f2999a769ac2d718630a8fd5f4b5bb9ac',
   'nw_v8_revision': '58937a01f10cab1881e5c90c13a288b2109df108',
   'nw_node_revision': 'b3a98bded59549dd327eb5c3312bd6edc027f5cd',
 
