@@ -189,7 +189,7 @@ NWCustomBindings::NWCustomBindings(ScriptContext* context)
 
 void NWCustomBindings::CallInWindow(
     const v8::FunctionCallbackInfo<v8::Value>& args) {
-  v8::Local<v8::Context> target_context = v8::Local<v8::Object>::Cast(args[0])->CreationContext();
+  v8::Local<v8::Context> target_context = v8::Local<v8::Object>::Cast(args[0])->GetCreationContextChecked();
   v8::Local<v8::String> method   = v8::Local<v8::String>::Cast(args[1]);
   ScriptContext* context = ScriptContextSet::GetContextByV8Context(target_context);
   v8::Context::Scope cscope(target_context);
