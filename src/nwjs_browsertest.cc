@@ -12,7 +12,6 @@
 #include "base/test/test_timeouts.h"
 #include "chrome/browser/media/webrtc/fake_desktop_media_picker_factory.h"
 
-#include "base/task/post_task.h"
 #include "content/public/browser/browser_task_traits.h"
 #include "content/public/test/browser_test_utils.h"
 #include "content/public/test/browser_test.h"
@@ -791,25 +790,6 @@ public:
     test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("test"));
     test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("data"));
   }
-  static void CountPluginProcesses(int* count, base::OnceClosure quit_task) {
-    for (content::BrowserChildProcessHostIterator iter; !iter.Done(); ++iter) {
-      if (iter.GetData().process_type == content::PROCESS_TYPE_PPAPI_PLUGIN)
-        (*count)++;
-    }
-    base::PostTask(FROM_HERE, {content::BrowserThread::UI}, std::move(quit_task));
-  }
-  static void EnsureFlashProcessCount(int expected) {
-    int actual = 0;
-    scoped_refptr<content::MessageLoopRunner> runner =
-        new content::MessageLoopRunner;
-    base::PostTask(
-        FROM_HERE,
-        {content::BrowserThread::IO},
-        base::BindOnce(&CountPluginProcesses, &actual, runner->QuitClosure()));
-    runner->Run();
-    ASSERT_EQ(expected, actual);
-  }
-
 };
 
 class NWJSAppTest : public NWAppTest {};
