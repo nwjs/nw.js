@@ -106,11 +106,14 @@ namespace extensions {
         const std::string& event_name,
         std::vector<base::Value> args) {
       DCHECK_CURRENTLY_ON(BrowserThread::UI);
-      //std::unique_ptr<base::ListValue> arg_list(std::move(args));
+      base::Value::List event_args;
+      for (size_t i = 0; i < args.size(); i++) {
+        event_args.Append(args[i].Clone());
+      }
       ExtensionsBrowserClient::Get()->
         BroadcastEventToRenderers(
                                   histogram_value, event_name,
-                                  std::make_unique<base::ListValue>(std::move(args)),
+                                  std::move(event_args),
                                   false);
     }
 
