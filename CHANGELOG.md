@@ -1,3 +1,9 @@
+0.64.1 / 05-15-2022
+===================
+- Update Node.js to [v18.0.0](https://nodejs.org/en/blog/release/v18.0.0/)
+- Update Chromium to [101.0.4951.67](https://chromereleases.googleblog.com/2022/05/stable-channel-update-for-desktop_12.html)
+- Fix: nwfaketop regression [(#7748)](https://github.com/nwjs/nw.js/issues/7748)
+
 0.64.0 / 05-01-2022
 ===================
 - Update Chromium to [101.0.4951.41](https://chromereleases.googleblog.com/2022/04/stable-channel-update-for-desktop_26.html)
