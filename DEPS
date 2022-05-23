@@ -219,7 +219,7 @@ vars = {
   # instead of downloading the prebuilt pinned revision.
   'llvm_force_head_revision': False,
 
-  'nw_src_revision': 'b570b6a643a5e9c882a5a85101ce9cacffe05edb',
+  'nw_src_revision': '3822e80a6cef7e51871eda1520b62a564228111e',
   'nw_v8_revision': '7394d46385e0dfb0d95e8b4a5453426787dd49d8',
   'nw_node_revision': 'b3a98bded59549dd327eb5c3312bd6edc027f5cd',
   # Build in-tree Rust toolchain. checkout_clang_libs must also be True. The
@@ -265,7 +265,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': 'f2280c0c5f935dccbaf528343d474c8fcdebe63a',
+  'angle_revision': '6661eb4900dae62cbe9af5023f9c1e7105798b50',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -1813,7 +1813,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@12f5bf62cc6408ac0ba3ecab4d461c96f1fb2ba1',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@ae99ebde2a4de4d30a66c278c396dba703d2845f',
     'condition': 'checkout_src_internal',
   },
 
