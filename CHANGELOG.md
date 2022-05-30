@@ -1,3 +1,7 @@
+0.65.0 / 05-30-2022
+===================
+- Update Chromium to [102.0.5005.61](https://chromereleases.googleblog.com/2022/05/stable-channel-update-for-desktop_24.html)
+
 0.64.1 / 05-15-2022
 ===================
 - Update Node.js to [v18.0.0](https://nodejs.org/en/blog/release/v18.0.0/)
