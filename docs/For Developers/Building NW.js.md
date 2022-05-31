@@ -30,8 +30,9 @@ NW.js use same build tools and similar steps as Chromium. Read the instructions 
 ```bash
 mkdir -p $HOME/nwjs
 cd $HOME/nwjs
-gclient config --name=src https://github.com/nwjs/chromium.src.git@origin/nw17
+gclient config --name=src https://github.com/nwjs/chromium.src.git@origin/[nwjs_ver]
 ```
+[nwjs_ver]: nw65
 
 Generally if you are not interested in running Chromium tests, you don't have to sync the test cases and reference builds, which saves you lot of time. Open the `.gclient` file you just created and replace `custom_deps` section with followings:
 
@@ -86,6 +87,8 @@ See the upstream documentation for the mapping between GN and GYP flags: https:/
 
 ## Generate ninja build files with GYP for Node
 
+Note: Required default Python version set to Python2.7.6.
+
 ```bash
 cd src
 GYP_CHROMIUM_NO_ACTION=0 ./build/gyp_chromium -I \
@@ -108,7 +111,7 @@ To change the build configuration for Node, you need to setup the GYP_DEFINES en
     - 64-bit: `set GYP_DEFINES="target_arch=x64"` and rebuild in `out/Debug_x64` or `out/Release_x64` folder
 * Linux
     - 32-bit: **TODO: chroot**
-    - 64-bit: is the default build target
+    - 64-bit: `export GYP_DEFINES="target_arch=x64"` and rebuild in `out/Debug_x64` or `out/Release_x64` folder
 * Mac
     - 32-bit: `export GYP_DEFINES="host_arch=ia32 target_arch=ia32"` and rebuild in `out/Debug` or `out/Release` folder
     - 64-bit: is the default build target
