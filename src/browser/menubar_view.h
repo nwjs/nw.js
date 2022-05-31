@@ -38,6 +38,9 @@ class MenuBarView : public views::AccessiblePaneView {
   MenuBarView();
   ~MenuBarView() override;
 
+  // views::View
+  void OnThemeChanged() override;
+
   void UpdateMenu(ui::MenuModel* model);
   void InitView(ui::MenuModel* model);
 

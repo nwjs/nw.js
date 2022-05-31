@@ -4,7 +4,6 @@
 
 #include "content/nw/src/browser/menubar_view.h"
 
-
 #include "content/nw/src/browser/menubar_controller.h"
 #include "ui/base/models/menu_model.h"
 #include "ui/base/window_open_disposition.h"
@@ -50,6 +49,10 @@ class MenuBarButton : public views::MenuButton {
 MenuBarView::MenuBarView() {
   auto layout = std::make_unique<views::BoxLayout>(views::BoxLayout::Orientation::kHorizontal, gfx::Insets(), 0);
   SetLayoutManager(std::move(layout));
+}
+
+void MenuBarView::OnThemeChanged() {
+  views::AccessiblePaneView::OnThemeChanged();
   const ui::ColorProvider* color_provider = GetColorProvider();
   SkColor theme_color =
     color_provider->GetColor(ui::kColorMenuBackground);
