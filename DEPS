@@ -221,7 +221,7 @@ vars = {
 
   'nw_src_revision': '0f7e52c297eb85eeece39307b6c93b0aeb1e6c0b',
   'nw_v8_revision': '7394d46385e0dfb0d95e8b4a5453426787dd49d8',
-  'nw_node_revision': 'b3a98bded59549dd327eb5c3312bd6edc027f5cd',
+  'nw_node_revision': 'a128490aa8b883e27a810a1e38b6f09c47c40c63',
   # Build in-tree Rust toolchain. checkout_clang_libs must also be True. The
   # corresponding GN arg use_chromium_rust_toolchain directs the build to use
   # the in-tree toolchain instead of the Android toolchain.
