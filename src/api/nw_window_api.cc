@@ -561,7 +561,7 @@ bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::ListValue* response
     if (old_menu) old_menu->RemoveKeys();
     menu->UpdateKeys( native_app_window_views->widget()->GetFocusManager() );
   }
-  response->Append(std::unique_ptr<base::ListValue>(new base::ListValue()));
+  response->Append(base::ListValue());
 #endif
   return true;
 }
@@ -1005,7 +1005,7 @@ bool NwCurrentWindowInternalGetCurrentFunction::RunNWSync(base::ListValue* respo
   base::ListValue remain;
   int id = args()[0].GetInt();
   if (args().size() > 1) {
-    remain.Append(std::make_unique<base::Value>(args()[1].Clone()));
+    remain.Append(args()[1].Clone());
   }
   std::unique_ptr<windows::GetCurrent::Params> params(
              windows::GetCurrent::Params::Create(remain.GetListDeprecated()));
@@ -1027,7 +1027,7 @@ bool NwCurrentWindowInternalGetCurrentFunction::RunNWSync(base::ListValue* respo
   std::unique_ptr<base::DictionaryValue> windows =
       ExtensionTabUtil::CreateWindowValueForExtension(*browser, extension(),
                                                       populate_tab_behavior, Feature::UNSPECIFIED_CONTEXT);
-  response->Append(std::move(windows));
+  response->Append(base::Value::FromUniquePtrValue(std::move(windows)));
   return true;
 }
 
@@ -1048,7 +1048,7 @@ bool NwCurrentWindowInternalGetWinParamInternalFunction::RunNWSync(base::ListVal
   result->Set("id", std::make_unique<base::Value>(app_window->window_key()));
   app_window->GetSerializedState(result);
 
-  response->Append(base::WrapUnique(result));
+  response->Append(base::Value::FromUniquePtrValue(base::WrapUnique(result)));
 
   return true;
 }
