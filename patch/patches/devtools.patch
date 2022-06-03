@@ -1,16 +1,16 @@
 diff --git a/front_end/models/extensions/ExtensionServer.ts b/front_end/models/extensions/ExtensionServer.ts
-index e210d0bee..7fbf0046c 100644
+index 9895a1ea2..a02a3d3e7 100644
 --- front_end/models/extensions/ExtensionServer.ts
 +++ front_end/models/extensions/ExtensionServer.ts
-@@ -1084,6 +1084,7 @@ export class ExtensionServer extends Common.ObjectWrapper.ObjectWrapper<EventTyp
+@@ -1087,6 +1087,7 @@ export class ExtensionServer extends Common.ObjectWrapper.ObjectWrapper<EventTyp
    }
  
-   private canInspectURL(url: string): boolean {
+   private canInspectURL(url: Platform.DevToolsPath.UrlString): boolean {
 +    return true;
      let parsedURL;
      // This is only to work around invalid URLs we're occasionally getting from some tests.
      // TODO(caseq): make sure tests supply valid URLs or we specifically handle invalid ones.
-@@ -1103,11 +1104,6 @@ export class ExtensionServer extends Common.ObjectWrapper.ObjectWrapper<EventTyp
+@@ -1106,11 +1107,6 @@ export class ExtensionServer extends Common.ObjectWrapper.ObjectWrapper<EventTyp
        return false;
      }
  
