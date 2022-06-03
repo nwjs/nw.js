@@ -959,9 +959,8 @@ NwCurrentWindowInternalGetPrintersFunction::Run() {
 }
 
 void NwCurrentWindowInternalGetPrintersFunction::OnGetPrinterList(const printing::PrinterList& printer_list) {
-  base::ListValue* printers = new base::ListValue();
-  chrome::PrintersToValues(printer_list, printers);
-  Respond(OneArgument(base::Value::FromUniquePtrValue(base::WrapUnique(printers))));
+  base::Value::List printers = chrome::PrintersToValues(printer_list);
+  Respond(OneArgument(base::Value(std::move(printers))));
 }
 
 bool NwCurrentWindowInternalSetPrintSettingsInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
