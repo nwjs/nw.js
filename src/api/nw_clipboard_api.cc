@@ -280,7 +280,7 @@ bool NwClipboardGetListSyncFunction::RunNWSync(base::ListValue* response, std::s
       *error = reader->error();
       return false;
     }
-    response->Append(data.ToValue());
+    response->Append(base::Value::FromUniquePtrValue(data.ToValue()));
   }
 
   return true;
@@ -336,14 +336,14 @@ bool NwClipboardReadAvailableTypesFunction::RunNWSync(base::ListValue* response,
   clipboard->ReadAvailableTypes(ui::ClipboardBuffer::kCopyPaste, nullptr, &types);
   for(std::vector<std::u16string>::iterator it = types.begin(); it != types.end(); it++) {
     if (base::EqualsASCII(*it, ui::kMimeTypeText)) {
-      response->Append(base::WrapUnique(new base::Value(ToString(TYPE_TEXT))));
+      response->Append(ToString(TYPE_TEXT));
     } else if (base::EqualsASCII(*it, ui::kMimeTypeHTML)) {
-      response->Append(base::WrapUnique(new base::Value(ToString(TYPE_HTML))));
+      response->Append(ToString(TYPE_HTML));
     } else if (base::EqualsASCII(*it, ui::kMimeTypeRTF)) {
-      response->Append(base::WrapUnique(new base::Value(ToString(TYPE_RTF))));
+      response->Append(ToString(TYPE_RTF));
     } else if (base::EqualsASCII(*it, ui::kMimeTypePNG)) {
-      response->Append(base::WrapUnique(new base::Value(ToString(TYPE_PNG))));
-      response->Append(base::WrapUnique(new base::Value(ToString(TYPE_JPEG))));
+      response->Append(ToString(TYPE_PNG));
+      response->Append(ToString(TYPE_JPEG));
     }
   }
   return true;

@@ -110,7 +110,7 @@ void AmendManifestStringList(base::DictionaryValue* manifest,
   if (!pattern_list)
     pattern_list = new base::ListValue();
 
-  pattern_list->Append(base::WrapUnique(new base::Value(string_value)));
+  pattern_list->Append(string_value);
   if (!amend)
     manifest->Set(path, base::WrapUnique(pattern_list));
 }
@@ -123,7 +123,7 @@ void AmendManifestList(base::DictionaryValue* manifest,
   if (manifest->GetList(path, &pattern_list)) {
     base::ListValue::const_iterator it;
     for(it = list_value.GetListDeprecated().begin(); it != list_value.GetListDeprecated().end(); ++it) {
-      pattern_list->Append((*it).CreateDeepCopy());
+      pattern_list->Append(base::Value::FromUniquePtrValue((*it).CreateDeepCopy()));
     }
   } else {
     manifest->Set(path, list_value.CreateDeepCopy());
@@ -301,7 +301,7 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
     base::ListValue* node_remote_list = NULL;
     if (node_remote->is_string()) {
       node_remote_list = new base::ListValue();
-      node_remote_list->Append(base::WrapUnique(new base::Value(node_remote->GetString())));
+      node_remote_list->Append(node_remote->GetString());
     } else if (node_remote->GetAsList(&node_remote_list)) {
       // do nothing
     }

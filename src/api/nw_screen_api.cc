@@ -179,7 +179,7 @@ namespace extensions {
     const std::vector<display::Display>& displays = display::Screen::GetScreen()->GetAllDisplays();
 
     for (size_t i=0; i<displays.size(); i++) {
-      response->Append(ConvertGfxDisplay(displays[i])->ToValue());
+      response->Append(base::Value::FromUniquePtrValue(ConvertGfxDisplay(displays[i])->ToValue()));
     }
 
     return true;
