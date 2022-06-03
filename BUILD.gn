@@ -326,7 +326,6 @@ if (is_win && !is_component_build) {
              "//chrome:reorder_imports",
              "//chrome:chrome_dll",
              ":copy_node",
-             ":payload",
              "//v8:nwjc",
              "//chrome/test/chromedriver:chromedriver",
              "//third_party/ffmpeg:ffmpeg"
@@ -349,7 +348,6 @@ if (is_mac && !is_component_build) {
     deps = [ "//third_party/breakpad:dump_syms",
              "//chrome",
              ":copy_node",
-             ":payload",
              "//v8:nwjc",
              "//chrome/test/chromedriver:chromedriver",
              "//third_party/ffmpeg:ffmpeg",
@@ -372,13 +370,11 @@ if (is_linux && !is_component_build) {
                 "$root_shlib_dir/libnode.so",
                 "$root_shlib_dir/libffmpeg.so",
                 "$root_build_dir/chromedriver",
-                "$root_build_dir/nwjc",
-                "$root_build_dir/payload"]
+                "$root_build_dir/nwjc"]
     deps = [
              "//chrome:chrome_initial",
              "//chrome:chrome_dll",
              ":copy_node",
-             ":payload",
              "//v8:nwjc",
              "//chrome/test/chromedriver:chromedriver",
              "//third_party/ffmpeg:ffmpeg",
