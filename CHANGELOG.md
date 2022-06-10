@@ -1,3 +1,10 @@
+0.65.1 / 06-10-2022
+===================
+- Update Chromium to [102.0.5005.115](https://chromereleases.googleblog.com/2022/06/stable-channel-update-for-desktop.html)
+- Update Node.js to [v18.3.0](https://nodejs.org/en/blog/release/v18.3.0/)
+- Disable Node fetch() in browser environment [(#7895)](https://github.com/nwjs/nw.js/issues/7895)
+- Fix menu crash [(#7870)](https://github.com/nwjs/nw.js/issues/7870)
+
 0.65.0 / 05-30-2022
 ===================
 - Update Chromium to [102.0.5005.61](https://chromereleases.googleblog.com/2022/05/stable-channel-update-for-desktop_24.html)
