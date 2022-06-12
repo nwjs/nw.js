@@ -129,7 +129,7 @@ class NwCurrentWindowInternalSetMenuFunction : public NWSyncExtensionFunction {
   ~NwCurrentWindowInternalSetMenuFunction() override;
 
   // ExtensionFunction:
-  bool RunNWSync(base::ListValue* response, std::string* error) override;
+  bool RunNWSync(base::Value::List* response, std::string* error) override;
   DECLARE_EXTENSION_FUNCTION("nw.currentWindowInternal.setMenu", UNKNOWN)
 
 };
@@ -202,7 +202,7 @@ class NwCurrentWindowInternalReloadIgnoringCacheFunction : public ExtensionFunct
 class NwCurrentWindowInternalGetZoomFunction : public NWSyncExtensionFunction {
  public:
   NwCurrentWindowInternalGetZoomFunction() {}
-  bool RunNWSync(base::ListValue* response, std::string* error) override;
+  bool RunNWSync(base::Value::List* response, std::string* error) override;
 
  protected:
   ~NwCurrentWindowInternalGetZoomFunction() override {}
@@ -212,7 +212,7 @@ class NwCurrentWindowInternalGetZoomFunction : public NWSyncExtensionFunction {
 class NwCurrentWindowInternalSetZoomFunction : public NWSyncExtensionFunction {
  public:
   NwCurrentWindowInternalSetZoomFunction() {}
-  bool RunNWSync(base::ListValue* response, std::string* error) override;
+  bool RunNWSync(base::Value::List* response, std::string* error) override;
 
  protected:
   ~NwCurrentWindowInternalSetZoomFunction() override {}
@@ -258,7 +258,7 @@ class NwCurrentWindowInternalToggleKioskModeInternalFunction : public ExtensionF
 class NwCurrentWindowInternalIsKioskInternalFunction : public NWSyncExtensionFunction {
  public:
   NwCurrentWindowInternalIsKioskInternalFunction() {}
-  bool RunNWSync(base::ListValue* response, std::string* error) override;
+  bool RunNWSync(base::Value::List* response, std::string* error) override;
 
  protected:
   ~NwCurrentWindowInternalIsKioskInternalFunction() override {}
@@ -280,7 +280,7 @@ class NwCurrentWindowInternalSetShowInTaskbarInternalFunction : public Extension
 class NwCurrentWindowInternalSetTitleInternalFunction : public NWSyncExtensionFunction {
  public:
   NwCurrentWindowInternalSetTitleInternalFunction() {}
-  bool RunNWSync(base::ListValue* response, std::string* error) override;
+  bool RunNWSync(base::Value::List* response, std::string* error) override;
 
  protected:
   ~NwCurrentWindowInternalSetTitleInternalFunction() override {}
@@ -290,7 +290,7 @@ class NwCurrentWindowInternalSetTitleInternalFunction : public NWSyncExtensionFu
 class NwCurrentWindowInternalGetTitleInternalFunction : public NWSyncExtensionFunction {
  public:
   NwCurrentWindowInternalGetTitleInternalFunction() {}
-  bool RunNWSync(base::ListValue* response, std::string* error) override;
+  bool RunNWSync(base::Value::List* response, std::string* error) override;
 
  protected:
   ~NwCurrentWindowInternalGetTitleInternalFunction() override {}
@@ -300,7 +300,7 @@ class NwCurrentWindowInternalGetTitleInternalFunction : public NWSyncExtensionFu
 class NwCurrentWindowInternalGetWinParamInternalFunction : public NWSyncExtensionFunction {
  public:
   NwCurrentWindowInternalGetWinParamInternalFunction() {}
-  bool RunNWSync(base::ListValue* response, std::string* error) override;
+  bool RunNWSync(base::Value::List* response, std::string* error) override;
 
  protected:
   ~NwCurrentWindowInternalGetWinParamInternalFunction() override {}
@@ -310,7 +310,7 @@ class NwCurrentWindowInternalGetWinParamInternalFunction : public NWSyncExtensio
 class NwCurrentWindowInternalGetCurrentFunction : public NWSyncExtensionFunction {
  public:
   NwCurrentWindowInternalGetCurrentFunction() {}
-  bool RunNWSync(base::ListValue* response, std::string* error) override;
+  bool RunNWSync(base::Value::List* response, std::string* error) override;
 
  protected:
   ~NwCurrentWindowInternalGetCurrentFunction() override {}
@@ -331,7 +331,7 @@ class NwCurrentWindowInternalGetPrintersFunction : public ExtensionFunction {
 class NwCurrentWindowInternalSetPrintSettingsInternalFunction : public NWSyncExtensionFunction {
  public:
    NwCurrentWindowInternalSetPrintSettingsInternalFunction() {}
-   bool RunNWSync(base::ListValue* response, std::string* error) override;
+   bool RunNWSync(base::Value::List* response, std::string* error) override;
 
  protected:
    ~NwCurrentWindowInternalSetPrintSettingsInternalFunction() override {}

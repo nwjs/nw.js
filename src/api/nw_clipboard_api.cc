@@ -270,7 +270,7 @@ NwClipboardGetListSyncFunction::NwClipboardGetListSyncFunction() {
 NwClipboardGetListSyncFunction::~NwClipboardGetListSyncFunction() {
 }
 
-bool NwClipboardGetListSyncFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwClipboardGetListSyncFunction::RunNWSync(base::Value::List* response, std::string* error) {
   std::unique_ptr<GetListSync::Params> params(GetListSync::Params::Create(args()));
   EXTENSION_FUNCTION_VALIDATE(params.get());
   std::unique_ptr<ClipboardReader> reader(new ClipboardReader());
@@ -292,7 +292,7 @@ NwClipboardSetListSyncFunction::NwClipboardSetListSyncFunction() {
 NwClipboardSetListSyncFunction::~NwClipboardSetListSyncFunction() {
 }
 
-bool NwClipboardSetListSyncFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwClipboardSetListSyncFunction::RunNWSync(base::Value::List* response, std::string* error) {
   std::unique_ptr<SetListSync::Params> params(SetListSync::Params::Create(args()));
   EXTENSION_FUNCTION_VALIDATE(params.get());
   std::unique_ptr<ClipboardWriter> writer(new ClipboardWriter());
@@ -316,7 +316,7 @@ NwClipboardClearSyncFunction::~NwClipboardClearSyncFunction() {
 
 }
 
-bool NwClipboardClearSyncFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwClipboardClearSyncFunction::RunNWSync(base::Value::List* response, std::string* error) {
   ui::Clipboard* clipboard = ui::Clipboard::GetForCurrentThread();
   clipboard->Clear(ui::ClipboardBuffer::kCopyPaste);
   return true;
@@ -330,7 +330,7 @@ NwClipboardReadAvailableTypesFunction::~NwClipboardReadAvailableTypesFunction() 
 
 }
 
-bool NwClipboardReadAvailableTypesFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwClipboardReadAvailableTypesFunction::RunNWSync(base::Value::List* response, std::string* error) {
   ui::Clipboard* clipboard = ui::Clipboard::GetForCurrentThread();
   std::vector<std::u16string> types;
   clipboard->ReadAvailableTypes(ui::ClipboardBuffer::kCopyPaste, nullptr, &types);

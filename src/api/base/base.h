@@ -22,6 +22,7 @@
 #define CONTENT_NW_SRC_API_BASE_BASE_H_
 
 #include "base/memory/weak_ptr.h"
+#include "base/values.h"
 
 #include <string>
 
@@ -50,8 +51,8 @@ class Base {
                     const base::ListValue& arguments,
                     content::RenderFrameHost* rvh = nullptr);
   virtual void CallSync(const std::string& method,
-                        const base::ListValue& arguments,
-                        base::ListValue* result);
+                        const base::Value::List& arguments,
+                        base::Value::List* result);
 
   int id() const { return id_; }
   std::string extension_id_;

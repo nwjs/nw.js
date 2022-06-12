@@ -18,7 +18,7 @@ NwObjAllocateIdFunction::NwObjAllocateIdFunction() {
 NwObjAllocateIdFunction::~NwObjAllocateIdFunction() {
 }
 
-bool NwObjAllocateIdFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwObjAllocateIdFunction::RunNWSync(base::Value::List* response, std::string* error) {
   response->Append(nw::ObjectManager::AllocateId());
   return true;
 }
@@ -29,7 +29,7 @@ NwObjCreateFunction::NwObjCreateFunction() {
 NwObjCreateFunction::~NwObjCreateFunction() {
 }
 
-bool NwObjCreateFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwObjCreateFunction::RunNWSync(base::Value::List* response, std::string* error) {
   int id = 0;
   std::string type;
 
@@ -50,7 +50,7 @@ NwObjDestroyFunction::NwObjDestroyFunction() {
 NwObjDestroyFunction::~NwObjDestroyFunction() {
 }
 
-bool NwObjDestroyFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwObjDestroyFunction::RunNWSync(base::Value::List* response, std::string* error) {
   EXTENSION_FUNCTION_VALIDATE(args().size() >= 1);
   EXTENSION_FUNCTION_VALIDATE(args()[0].is_int());
   int id = args()[0].GetInt();
@@ -66,7 +66,7 @@ NwObjCallObjectMethodFunction::NwObjCallObjectMethodFunction() {
 NwObjCallObjectMethodFunction::~NwObjCallObjectMethodFunction() {
 }
 
-bool NwObjCallObjectMethodFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwObjCallObjectMethodFunction::RunNWSync(base::Value::List* response, std::string* error) {
   int id = 0;
   std::string type, method;
   EXTENSION_FUNCTION_VALIDATE(args().size() >= 4 &&
@@ -90,7 +90,7 @@ NwObjCallObjectMethodSyncFunction::NwObjCallObjectMethodSyncFunction() {
 NwObjCallObjectMethodSyncFunction::~NwObjCallObjectMethodSyncFunction() {
 }
 
-bool NwObjCallObjectMethodSyncFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwObjCallObjectMethodSyncFunction::RunNWSync(base::Value::List* response, std::string* error) {
   int id = 0;
   std::string type, method;
   EXTENSION_FUNCTION_VALIDATE(args().size() >= 4 &&
@@ -101,10 +101,9 @@ bool NwObjCallObjectMethodSyncFunction::RunNWSync(base::ListValue* response, std
   id = args()[0].GetInt();
   type = args()[1].GetString();
   method = args()[2].GetString();
-  base::Value::ConstListView arguments = args()[3].GetListDeprecated();
 
   nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
-  manager->OnCallObjectMethodSync(render_frame_host(), id, type, method, base::ListValue(arguments), response);
+  manager->OnCallObjectMethodSync(render_frame_host(), id, type, method, args()[3].GetList(), response);
   return true;
 }
 

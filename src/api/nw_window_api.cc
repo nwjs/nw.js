@@ -501,7 +501,7 @@ NwCurrentWindowInternalSetMenuFunction::NwCurrentWindowInternalSetMenuFunction()
 NwCurrentWindowInternalSetMenuFunction::~NwCurrentWindowInternalSetMenuFunction() {
 }
 
-bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::Value::List* response, std::string* error) {
   EXTENSION_FUNCTION_VALIDATE(args().size() > 0 && args()[0].is_int());
   int id = args()[0].GetInt();
   nw::ObjectManager* obj_manager = nw::ObjectManager::Get(browser_context());
@@ -742,7 +742,7 @@ NwCurrentWindowInternalReloadIgnoringCacheFunction::Run() {
   return RespondNow(NoArguments());
 }
 
-bool NwCurrentWindowInternalGetZoomFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwCurrentWindowInternalGetZoomFunction::RunNWSync(base::Value::List* response, std::string* error) {
   content::WebContents* web_contents = GetSenderWebContents();
   if (base::FeatureList::IsEnabled(::features::kNWNewWin) &&
       args().size() > 0) {
@@ -762,7 +762,7 @@ bool NwCurrentWindowInternalGetZoomFunction::RunNWSync(base::ListValue* response
   return true;
 }
 
-bool NwCurrentWindowInternalSetZoomFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwCurrentWindowInternalSetZoomFunction::RunNWSync(base::Value::List* response, std::string* error) {
   EXTENSION_FUNCTION_VALIDATE(args().size() > 0);
   double zoom_level = args()[0].GetDouble();
 
@@ -874,7 +874,7 @@ NwCurrentWindowInternalToggleKioskModeInternalFunction::Run() {
   return RespondNow(NoArguments());
 }
 
-bool NwCurrentWindowInternalIsKioskInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwCurrentWindowInternalIsKioskInternalFunction::RunNWSync(base::Value::List* response, std::string* error) {
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
     int id = args()[0].GetInt();
     Browser* browser = getBrowser(this, id);
@@ -892,7 +892,7 @@ bool NwCurrentWindowInternalIsKioskInternalFunction::RunNWSync(base::ListValue* 
   return true;
 }
 
-bool NwCurrentWindowInternalGetTitleInternalFunction::RunNWSync(base::ListValue* response, std::string* ret_error) {
+bool NwCurrentWindowInternalGetTitleInternalFunction::RunNWSync(base::Value::List* response, std::string* ret_error) {
   AppWindow* window = getAppWindow(this);
   if (window) {
     response->Append(window->title_override());
@@ -928,7 +928,7 @@ NwCurrentWindowInternalSetShadowInternalFunction::Run() {
   return RespondNow(NoArguments());
 }
 
-bool NwCurrentWindowInternalSetTitleInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwCurrentWindowInternalSetTitleInternalFunction::RunNWSync(base::Value::List* response, std::string* error) {
   EXTENSION_FUNCTION_VALIDATE(args().size() && args()[0].is_string());
   std::string title = args()[0].GetString();
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
@@ -963,7 +963,7 @@ void NwCurrentWindowInternalGetPrintersFunction::OnGetPrinterList(const printing
   Respond(OneArgument(base::Value(std::move(printers))));
 }
 
-bool NwCurrentWindowInternalSetPrintSettingsInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwCurrentWindowInternalSetPrintSettingsInternalFunction::RunNWSync(base::Value::List* response, std::string* error) {
   EXTENSION_FUNCTION_VALIDATE(args().size());
 
   if (!args().size())
@@ -989,7 +989,7 @@ bool NwCurrentWindowInternalSetPrintSettingsInternalFunction::RunNWSync(base::Li
   return true;
 }
 
-bool NwCurrentWindowInternalGetCurrentFunction::RunNWSync(base::ListValue* response, std::string* ret_error) {
+bool NwCurrentWindowInternalGetCurrentFunction::RunNWSync(base::Value::List* response, std::string* ret_error) {
   EXTENSION_FUNCTION_VALIDATE(args().size());
   base::ListValue remain;
   int id = args()[0].GetInt();
@@ -1020,7 +1020,7 @@ bool NwCurrentWindowInternalGetCurrentFunction::RunNWSync(base::ListValue* respo
   return true;
 }
 
-bool NwCurrentWindowInternalGetWinParamInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwCurrentWindowInternalGetWinParamInternalFunction::RunNWSync(base::Value::List* response, std::string* error) {
   AppWindow* app_window = getAppWindow(this);
 
   if (!app_window) {

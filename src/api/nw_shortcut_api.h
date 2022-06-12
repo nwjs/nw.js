@@ -9,7 +9,7 @@ namespace extensions {
   {
   public:
     NwShortcutRegisterAcceleratorFunction() {}
-    bool RunNWSync(base::ListValue* response, std::string* error) override;
+    bool RunNWSync(base::Value::List* response, std::string* error) override;
 
   protected:
     ~NwShortcutRegisterAcceleratorFunction() override {}
@@ -21,7 +21,7 @@ namespace extensions {
   {
   public:
     NwShortcutUnregisterAcceleratorFunction() {}
-    bool RunNWSync(base::ListValue* response, std::string* error) override;
+    bool RunNWSync(base::Value::List* response, std::string* error) override;
 
   protected:
     ~NwShortcutUnregisterAcceleratorFunction() override {}

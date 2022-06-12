@@ -108,7 +108,7 @@ void NWShortcutObserver::OnKeyPressed (const ui::Accelerator& uiAccelerator) {
     std::move(args));
 }
 
-bool NwShortcutRegisterAcceleratorFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwShortcutRegisterAcceleratorFunction::RunNWSync(base::Value::List* response, std::string* error) {
   EXTENSION_FUNCTION_VALIDATE(args().size() >= 1);
   EXTENSION_FUNCTION_VALIDATE(args()[0].is_dict());
   const base::DictionaryValue& acceleratorDict =
@@ -125,7 +125,7 @@ bool NwShortcutRegisterAcceleratorFunction::RunNWSync(base::ListValue* response,
   return true;
 }
 
-bool NwShortcutUnregisterAcceleratorFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwShortcutUnregisterAcceleratorFunction::RunNWSync(base::Value::List* response, std::string* error) {
   EXTENSION_FUNCTION_VALIDATE(args().size() >= 1);
   EXTENSION_FUNCTION_VALIDATE(args()[0].is_dict());
   const base::DictionaryValue& acceleratorDict =
