@@ -49,8 +49,8 @@ void Base::Call(const std::string& method, const base::ListValue& arguments,
 }
 
 void Base::CallSync(const std::string& method,
-                    const base::ListValue& arguments,
-                    base::ListValue* result) {
+                    const base::Value::List& arguments,
+                    base::Value::List* result) {
   NOTREACHED() << "Uncatched callAsync in Base"
                << " method:" << method
                << " arguments:" << arguments;

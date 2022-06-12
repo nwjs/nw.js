@@ -66,8 +66,8 @@ class MenuItem : public Base {
              const base::ListValue& arguments,
              content::RenderFrameHost* rvh = nullptr) override;
   void CallSync(const std::string& method,
-                        const base::ListValue& arguments,
-                        base::ListValue* result) override;
+		const base::Value::List& arguments,
+		base::Value::List* result) override;
 
 #if defined(OS_MAC)
   static std::unique_ptr<base::DictionaryValue> CreateFromNative(NSMenuItem* menu_item, Menu* menu, int index);

@@ -158,7 +158,7 @@ NwAppGetArgvSyncFunction::NwAppGetArgvSyncFunction() {
 NwAppGetArgvSyncFunction::~NwAppGetArgvSyncFunction() {
 }
 
-bool NwAppGetArgvSyncFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwAppGetArgvSyncFunction::RunNWSync(base::Value::List* response, std::string* error) {
 
   nw::Package* package = nw::package();
   base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
@@ -188,7 +188,7 @@ NwAppClearAppCacheFunction::NwAppClearAppCacheFunction() {
 NwAppClearAppCacheFunction::~NwAppClearAppCacheFunction() {
 }
 
-bool NwAppClearAppCacheFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwAppClearAppCacheFunction::RunNWSync(base::Value::List* response, std::string* error) {
   // removed in upstream: https://chromium-review.googlesource.com/c/chromium/src/+/3214503
   return true;
 }
@@ -199,7 +199,7 @@ NwAppClearCacheFunction::NwAppClearCacheFunction() {
 NwAppClearCacheFunction::~NwAppClearCacheFunction() {
 }
 
-bool NwAppClearCacheFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwAppClearCacheFunction::RunNWSync(base::Value::List* response, std::string* error) {
   content::BrowsingDataRemover* remover =
     Profile::FromBrowserContext(browser_context())->GetBrowsingDataRemover();
 
@@ -227,7 +227,7 @@ NwAppSetProxyConfigFunction::NwAppSetProxyConfigFunction() {
 NwAppSetProxyConfigFunction::~NwAppSetProxyConfigFunction() {
 }
 
-bool NwAppSetProxyConfigFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwAppSetProxyConfigFunction::RunNWSync(base::Value::List* response, std::string* error) {
   net::ProxyConfigWithAnnotation config;
   std::unique_ptr<nwapi::nw__app::SetProxyConfig::Params> params(
           nwapi::nw__app::SetProxyConfig::Params::Create(args()));
@@ -257,7 +257,7 @@ bool NwAppSetProxyConfigFunction::RunNWSync(base::ListValue* response, std::stri
   return true;
 }
 
-bool NwAppGetDataPathFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwAppGetDataPathFunction::RunNWSync(base::Value::List* response, std::string* error) {
 #if defined(OS_WIN)
   response->Append(base::WideToUTF16(browser_context()->GetPath().value()));
 #else

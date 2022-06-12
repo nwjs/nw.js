@@ -10,7 +10,7 @@ namespace extensions {
 class NwShellOpenItemFunction : public NWSyncExtensionFunction {
  public:
   NwShellOpenItemFunction();
-  bool RunNWSync(base::ListValue* response, std::string* error) override;
+  bool RunNWSync(base::Value::List* response, std::string* error) override;
 
  protected:
   ~NwShellOpenItemFunction() override;
@@ -21,7 +21,7 @@ class NwShellOpenItemFunction : public NWSyncExtensionFunction {
 class NwShellOpenExternalFunction : public NWSyncExtensionFunction {
  public:
   NwShellOpenExternalFunction();
-  bool RunNWSync(base::ListValue* response, std::string* error) override;
+  bool RunNWSync(base::Value::List* response, std::string* error) override;
 
  protected:
   ~NwShellOpenExternalFunction() override;
@@ -32,7 +32,7 @@ class NwShellOpenExternalFunction : public NWSyncExtensionFunction {
 class NwShellShowItemInFolderFunction : public NWSyncExtensionFunction {
  public:
   NwShellShowItemInFolderFunction();
-  bool RunNWSync(base::ListValue* response, std::string* error) override;
+  bool RunNWSync(base::Value::List* response, std::string* error) override;
 
  protected:
   ~NwShellShowItemInFolderFunction() override;

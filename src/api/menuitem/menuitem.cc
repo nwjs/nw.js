@@ -146,8 +146,8 @@ void MenuItem::Call(const std::string& method,
 }
 
 void MenuItem::CallSync(const std::string& method,
-                        const base::ListValue& arguments,
-                        base::ListValue* result) {
+                        const base::Value::List& arguments,
+                        base::Value::List* result) {
   if (method == "GetChecked") {
     result->Append(GetChecked());
   } else {

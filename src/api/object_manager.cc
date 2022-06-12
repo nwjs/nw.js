@@ -158,8 +158,8 @@ void ObjectManager::OnCallObjectMethodSync(
     int object_id,
     const std::string& type,
     const std::string& method,
-    const base::ListValue& arguments,
-    base::ListValue* result) {
+    const base::Value::List& arguments,
+    base::Value::List* result) {
   DLOG(INFO) << "OnCallObjectMethodSync: object_id:" << object_id
              << " type:" << type
              << " method:" << method

@@ -9,7 +9,7 @@ namespace extensions {
   class NwScreenGetScreensFunction: public NWSyncExtensionFunction {
     public:
       NwScreenGetScreensFunction();
-      bool RunNWSync(base::ListValue* response, std::string* error) override;
+      bool RunNWSync(base::Value::List* response, std::string* error) override;
 
     protected:
       ~NwScreenGetScreensFunction() override {}
@@ -21,7 +21,7 @@ namespace extensions {
   class NwScreenInitEventListenersFunction: public NWSyncExtensionFunction {
     public:
       NwScreenInitEventListenersFunction();
-      bool RunNWSync(base::ListValue* response, std::string* error) override;
+      bool RunNWSync(base::Value::List* response, std::string* error) override;
 
     protected:
       ~NwScreenInitEventListenersFunction() override {}
@@ -33,7 +33,7 @@ namespace extensions {
   class NwScreenStartMonitorFunction : public NWSyncExtensionFunction {
   public:
     NwScreenStartMonitorFunction();
-    bool RunNWSync(base::ListValue* response, std::string* error) override;
+    bool RunNWSync(base::Value::List* response, std::string* error) override;
 
   protected:
     ~NwScreenStartMonitorFunction() override {}
@@ -45,7 +45,7 @@ namespace extensions {
   class NwScreenStopMonitorFunction : public NWSyncExtensionFunction {
   public:
     NwScreenStopMonitorFunction();
-    bool RunNWSync(base::ListValue* response, std::string* error) override;
+    bool RunNWSync(base::Value::List* response, std::string* error) override;
 
   protected:
     ~NwScreenStopMonitorFunction() override {}
@@ -57,7 +57,7 @@ namespace extensions {
   class NwScreenIsMonitorStartedFunction : public NWSyncExtensionFunction {
   public:
     NwScreenIsMonitorStartedFunction();
-    bool RunNWSync(base::ListValue* response, std::string* error) override;
+    bool RunNWSync(base::Value::List* response, std::string* error) override;
 
   protected:
     ~NwScreenIsMonitorStartedFunction() override {}
@@ -69,7 +69,7 @@ namespace extensions {
   class NwScreenRegisterStreamFunction : public NWSyncExtensionFunction {
   public:
     NwScreenRegisterStreamFunction();
-    bool RunNWSync(base::ListValue* response, std::string* error) override;
+    bool RunNWSync(base::Value::List* response, std::string* error) override;
 
   protected:
     ~NwScreenRegisterStreamFunction() override {}
