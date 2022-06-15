@@ -219,7 +219,7 @@ vars = {
   # instead of downloading the prebuilt pinned revision.
   'llvm_force_head_revision': False,
 
-  'nw_src_revision': '7aaad0943a5dacff6d5c2f258ae579510b5fbe8a',
+  'nw_src_revision': '5d32cab40f738932eddc017980e2e409c5abef2c',
   'nw_v8_revision': '7394d46385e0dfb0d95e8b4a5453426787dd49d8',
   'nw_node_revision': '5b0750af41f707ef6a0d00ddd73011056879077d',
   # Build in-tree Rust toolchain. checkout_clang_libs must also be True. The
