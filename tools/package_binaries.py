@@ -156,9 +156,7 @@ def generate_target_nw(platform_name, arch, version):
                            'lib/libGLESv2.so',
                            'lib/libvulkan.so.1',
                            'lib/libvk_swiftshader.so',
-                           'lib/vk_swiftshader_icd.json',
-                           'swiftshader/libEGL.so',
-                           'swiftshader/libGLESv2.so'
+                           'lib/vk_swiftshader_icd.json'
                            ]
         if flavor == 'sdk':
             target['input'].append('nwjc')
