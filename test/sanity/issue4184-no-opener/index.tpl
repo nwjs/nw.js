@@ -17,7 +17,7 @@
     }
 
     function winopen() {
-      window.open('https://localhost:{port}/index.html');
+      window.open('https://127.0.0.1:{port}/index.html');
     }
 
     function showopener(id) {

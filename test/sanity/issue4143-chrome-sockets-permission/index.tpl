@@ -17,7 +17,7 @@
 
   function socketConnect(id) {
     chrome.sockets.tcp.create(function(obj) {
-      chrome.sockets.tcp.connect(obj.socketId, 'localhost', {port}, function(r) {
+      chrome.sockets.tcp.connect(obj.socketId, '127.0.0.1', {port}, function(r) {
         if (chrome.runtime.lastError) {
           out(id, 'failed');
         } else {
