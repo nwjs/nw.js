@@ -106,7 +106,7 @@ printing::PrinterList EnumeratePrintersAsync() {
                                                       printing::PrintBackend::CreateInstance(g_browser_process->GetApplicationLocale()));
 
   printing::PrinterList printer_list;
-  print_backend->EnumeratePrinters(&printer_list);
+  print_backend->EnumeratePrinters(printer_list);
 
   return printer_list;
 }
