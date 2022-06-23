@@ -342,7 +342,7 @@ bool Package::InitFromPath(const base::FilePath& path_in) {
     switches::kmName
   };
   for (unsigned i = 0; i < std::size(required_fields); i++)
-    if (!root_->HasKey(required_fields[i])) {
+    if (!root_->FindKey(required_fields[i])) {
       ReportError("Invalid package.json",
                   std::string("Field '") + required_fields[i] + "'"
                       " is required.");
@@ -350,7 +350,7 @@ bool Package::InitFromPath(const base::FilePath& path_in) {
     }
 
   // Force window field no empty.
-  if (!root_->HasKey(switches::kmWindow)) {
+  if (!root_->FindKey(switches::kmWindow)) {
     auto window =  std::make_unique<base::DictionaryValue>();
     window->SetString(switches::kmPosition, "center");
     root_->Set(switches::kmWindow, std::move(window));
@@ -455,7 +455,7 @@ void Package::ReadChromiumArgs() {
   std::unique_ptr<base::Environment> env(base::Environment::Create());
 
   bool got_env = env->GetVar("NW_PRE_ARGS", &env_args);
-  if (!root()->HasKey(switches::kmChromiumArgs))
+  if (!root()->FindKey(switches::kmChromiumArgs))
     if (!got_env)
       return;
 
@@ -511,7 +511,7 @@ void Package::ReadChromiumArgs() {
 }
 
 void Package::ReadJsFlags() {
-  if (!root()->HasKey(switches::kmJsFlags))
+  if (!root()->FindKey(switches::kmJsFlags))
     return;
 
   std::string* flags = root()->FindStringKey(switches::kmJsFlags);
