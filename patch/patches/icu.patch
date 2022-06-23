@@ -1,8 +1,16 @@
 diff --git a/icu.gyp b/icu.gyp
-index dbd77a4f..6da70605 100644
+index b3c12030..799dce2a 100644
 --- icu.gyp
 +++ icu.gyp
-@@ -40,8 +40,18 @@
+@@ -25,6 +25,7 @@
+     'defines': [
+       'U_USING_ICU_NAMESPACE=0',
+       'HAVE_DLOPEN=0',
++      '_LIBCPP_ABI_NAMESPACE=__1',
+       # Only build encoding coverters and detectors necessary for HTML5.
+       'UCONFIG_ONLY_HTML_CONVERSION=1',
+       # TODO(jshin): Do we still need/want this?
+@@ -40,8 +41,18 @@
          ],
        }],
        ['OS=="win"', {
