@@ -1040,7 +1040,7 @@ bool NwCurrentWindowInternalGetWinParamInternalFunction::RunNWSync(base::Value::
   }
   //from app_window_api.cc
   content::RenderFrameHost* created_frame =
-      app_window->web_contents()->GetMainFrame();
+      app_window->web_contents()->GetPrimaryMainFrame();
   int frame_id = created_frame->GetRoutingID();
 
   base::DictionaryValue* result = new base::DictionaryValue;

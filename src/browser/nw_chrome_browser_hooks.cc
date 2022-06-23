@@ -150,16 +150,16 @@ bool InspectElement(content::WebContents* web_contents, int x, int y) {
   DevToolsWindow* window = DevToolsWindow::FindDevToolsWindow(agent_host.get());
   if (!window)
     return false;
-  content::RenderFrameHost* rfh = web_contents->GetMainFrame();
+  content::RenderFrameHost* rfh = web_contents->GetPrimaryMainFrame();
   DevToolsWindow::InspectElement(rfh, x, y);
   return true;
 }
 
 void ShowDevtools(bool show, content::WebContents* web_contents, content::WebContents* container) {
-  content::RenderFrameHost* rfh = web_contents->GetMainFrame();
+  content::RenderFrameHost* rfh = web_contents->GetPrimaryMainFrame();
   if (container) {
     scoped_refptr<DevToolsAgentHost> agent_host(DevToolsAgentHost::GetOrCreateFor(web_contents));
-    g_cdt_process_id = container->GetMainFrame()->GetProcess()->GetID();
+    g_cdt_process_id = container->GetPrimaryMainFrame()->GetProcess()->GetID();
     content::ChildProcessSecurityPolicy::GetInstance()->GrantAll(g_cdt_process_id);
 
     DevToolsWindow* window = DevToolsWindow::FindDevToolsWindow(agent_host.get());
