@@ -77,7 +77,7 @@ namespace {
   void DispatchEvent(
       events::HistogramValue histogram_value,
       const std::string& event_name,
-      std::vector<base::Value> args) {
+      base::Value::List args) {
     DCHECK_CURRENTLY_ON(BrowserThread::UI);
     base::Value::List event_args;
     for (size_t i = 0; i < args.size(); i++) {
@@ -100,8 +100,7 @@ NWShortcutObserver* NWShortcutObserver::GetInstance() {
 
 void NWShortcutObserver::OnKeyPressed (const ui::Accelerator& uiAccelerator) {
   std::unique_ptr<nwapi::nw__shortcut::Accelerator> accelerator = UIAcceleratorToAccelerator(uiAccelerator);
-  std::vector<base::Value> args =
-    nwapi::nw__shortcut::OnKeyPressed::Create(*accelerator);
+  auto args(nwapi::nw__shortcut::OnKeyPressed::Create(*accelerator));
   DispatchEvent(
     events::HistogramValue::UNKNOWN,
     nwapi::nw__shortcut::OnKeyPressed::kEventName,
