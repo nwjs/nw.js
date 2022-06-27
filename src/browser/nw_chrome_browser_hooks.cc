@@ -120,9 +120,9 @@ void SendEventToApp(const std::string& event_name, std::unique_ptr<base::ListVal
   const extensions::ExtensionSet& extensions =
     ExtensionRegistry::Get(profile)->enabled_extensions();
   ExtensionPrefs* extension_prefs = ExtensionPrefs::Get(profile);
-  std::vector<base::Value> arguments;
+  base::Value::List arguments;
   for (size_t i = 0; i < event_args->GetListDeprecated().size(); i++)
-    arguments.push_back(event_args->GetListDeprecated()[i].Clone());
+    arguments.Append(event_args->GetListDeprecated()[i].Clone());
 
   for (extensions::ExtensionSet::const_iterator it = extensions.begin();
        it != extensions.end(); ++it) {
