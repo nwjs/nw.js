@@ -1,3 +1,10 @@
+0.66.0 / 06-28-2022
+===================
+- Update Chromium to [103.0.5060.53](https://chromereleases.googleblog.com/2022/06/stable-channel-update-for-desktop_21.html)
+- Update Node.js to [v18.4.0](https://nodejs.org/en/blog/release/v18.4.0/)
+- Fix: shared worker devtools window crash [(#7867)](https://github.com/nwjs/nw.js/issues/7867)
+- Fix: global is not set on windows opened with new_instance true [(#7866)](https://github.com/nwjs/nw.js/issues/7866)
+
 0.65.1 / 06-10-2022
 ===================
 - Update Chromium to [102.0.5005.115](https://chromereleases.googleblog.com/2022/06/stable-channel-update-for-desktop.html)
