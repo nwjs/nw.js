@@ -440,7 +440,7 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
     return;
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::HandleScope scope(isolate);
-  blink::WebFrame* f = frame->GetRenderView()->GetWebView()->MainFrame();
+  blink::WebFrame* f = frame->GetWebView()->MainFrame();
   if (!f->IsWebLocalFrame())
     return;
   blink::WebLocalFrame* local_frame = f->ToWebLocalFrame();
