@@ -77,10 +77,9 @@ bool NwObjCallObjectMethodFunction::RunNWSync(base::Value::List* response, std::
   id = args()[0].GetInt();
   type = args()[1].GetString();
   method = args()[2].GetString();
-  base::Value::ConstListView arguments = args()[3].GetListDeprecated();
 
   nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
-  manager->OnCallObjectMethod(render_frame_host(), id, type, method, base::ListValue(arguments));
+  manager->OnCallObjectMethod(render_frame_host(), id, type, method, args()[3].GetList());
   return true;
 }
 
@@ -125,10 +124,9 @@ NwObjCallObjectMethodAsyncFunction::Run() {
   id = args()[0].GetInt();
   type = args()[1].GetString();
   method = args()[2].GetString();
-  base::Value::ConstListView arguments = args()[3].GetListDeprecated();
 
   nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
-  manager->OnCallObjectMethod(render_frame_host(), id, type, method, base::ListValue(arguments));
+  manager->OnCallObjectMethod(render_frame_host(), id, type, method, args()[3].GetList());
   return RespondNow(NoArguments());
 }
 

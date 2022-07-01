@@ -48,7 +48,7 @@ class Base {
   virtual ~Base();
 
   virtual void Call(const std::string& method,
-                    const base::ListValue& arguments,
+                    const base::Value::List& arguments,
                     content::RenderFrameHost* rvh = nullptr);
   virtual void CallSync(const std::string& method,
                         const base::Value::List& arguments,

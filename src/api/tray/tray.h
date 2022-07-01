@@ -56,7 +56,7 @@ class Tray : public Base {
   ~Tray() override;
 
   void Call(const std::string& method,
-            const base::ListValue& arguments,
+            const base::Value::List& arguments,
             content::RenderFrameHost* rvh = nullptr) override;
 
  private:
