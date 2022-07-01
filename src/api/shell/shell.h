@@ -22,21 +22,18 @@
 #define CONTENT_NW_SRC_API_SHELL_SHELL_H_
 
 #include <string>
-
-namespace base {
-class ListValue;
-}
+#include <base/values.h>
 
 namespace content {
 class BrowserContext;
 }
 
 namespace nw {
-  
+
 class Shell {
  public:
   static void Call(const std::string& method,
-                   const base::ListValue& arguments,
+                   const base::Value::List& arguments,
 		   content::BrowserContext* context);
 
  private:

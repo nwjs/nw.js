@@ -52,14 +52,14 @@ namespace {
 
 // static
 void Shell::Call(const std::string& method,
-                 const base::ListValue& arguments,
+                 const base::Value::List& arguments,
                  content::BrowserContext* context) {
   Profile* profile = Profile::FromBrowserContext(context);
   if (method == "OpenExternal") {
-    std::string uri = arguments.GetListDeprecated()[0].GetString();
+    std::string uri = arguments[0].GetString();
     platform_util::OpenExternal(profile, GURL(uri));
   } else if (method == "OpenItem") {
-    std::string full_path = arguments.GetListDeprecated()[0].GetString();
+    std::string full_path = arguments[0].GetString();
     FilePath path = FilePath::FromUTF8Unsafe(full_path);
     platform_util::OpenItemType *item_type = new platform_util::OpenItemType();
     base::ThreadPool::PostTaskAndReplyWithResult(
@@ -69,7 +69,7 @@ void Shell::Call(const std::string& method,
       base::BindOnce(&OnItemTypeVerified, profile, path, base::Owned(item_type))
       );
   } else if (method == "ShowItemInFolder") {
-    std::string full_path = arguments.GetListDeprecated()[0].GetString();
+    std::string full_path = arguments[0].GetString();
     platform_util::ShowItemInFolder(profile, FilePath::FromUTF8Unsafe(full_path));
   } else {
     NOTREACHED() << "Calling unknown method " << method << " of Shell";

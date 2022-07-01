@@ -63,7 +63,7 @@ class MenuItem : public Base {
   ~MenuItem() override;
 
   void Call(const std::string& method,
-             const base::ListValue& arguments,
+	    const base::Value::List& arguments,
              content::RenderFrameHost* rvh = nullptr) override;
   void CallSync(const std::string& method,
 		const base::Value::List& arguments,

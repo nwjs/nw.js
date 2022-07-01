@@ -1002,13 +1002,13 @@ bool NwCurrentWindowInternalSetPrintSettingsInternalFunction::RunNWSync(base::Va
 
 bool NwCurrentWindowInternalGetCurrentFunction::RunNWSync(base::Value::List* response, std::string* ret_error) {
   EXTENSION_FUNCTION_VALIDATE(args().size());
-  base::ListValue remain;
+  base::Value::List remain;
   int id = args()[0].GetInt();
   if (args().size() > 1) {
     remain.Append(args()[1].Clone());
   }
   std::unique_ptr<windows::GetCurrent::Params> params(
-             windows::GetCurrent::Params::Create(remain.GetListDeprecated()));
+             windows::GetCurrent::Params::Create(remain));
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   ApiParameterExtractor<windows::GetCurrent::Params> extractor(params.get());
