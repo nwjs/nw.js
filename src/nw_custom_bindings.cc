@@ -9,7 +9,6 @@
 
 #include "content/public/renderer/render_thread.h"
 #include "content/public/renderer/render_frame.h"
-#include "content/public/renderer/render_view.h"
 
 #include "third_party/blink/public/platform/web_url.h"
 
