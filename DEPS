@@ -256,8 +256,8 @@ vars = {
   # Enable fetching Rust-related packages.
   'use_rust': False,
 
-  'nw_src_revision': '51c98d1a7c887874cad3d8c938f2677b498bb277',
-  'nw_v8_revision': 'e83fd5a31861230dcb373b6c04b69d55db5c47d8',
+  'nw_src_revision': 'e7f28c7ab74b618d36c38842a051bb1aee17b703',
+  'nw_v8_revision': '1d0aa1e0addd6b412b5a38359acb03912204a979',
   'nw_node_revision': 'a7cfb3ce1be3239dc6c7975c649952acd2ffea95',
   'android_git': 'https://android.googlesource.com',
   'aomedia_git': 'https://aomedia.googlesource.com',
@@ -277,7 +277,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '3713708934e4c3bd0fd2b53ed87afd2204d95075',
+  'v8_revision': '2690bd36df835bd8d090f76abd4732630ccb5e14',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
@@ -388,7 +388,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
-  'dawn_revision': '3b4d8a92c762beb2858755ca1f48cb496a04c23a',
+  'dawn_revision': '632f5ac6257dd4b1d37fbef5df9f8121094f3ad0',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
@@ -1712,7 +1712,7 @@ deps = {
     Var('chromium_git') + '/external/github.com/gpuweb/cts.git' + '@' + 'b32ac31a0eab7386807f01c7cb8d77a6e1104c23',
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + 'cd3ae79bce5516336481fd0a689499601b57d1bc',
+    Var('webrtc_git') + '/src.git' + '@' + '0a3d3093dfe54af40bbcb9354fe5661386cd6e48',
 
   'src/third_party/libgifcodec':
      Var('skia_git') + '/libgifcodec' + '@'+  Var('libgifcodec_revision'),
@@ -1790,7 +1790,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@76aaa026524883823bde358f70bbf17e6acbcb7f',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@144a2dcb6321c31c8e73c54c14d5e8463d5ae84e',
     'condition': 'checkout_src_internal',
   },
 
