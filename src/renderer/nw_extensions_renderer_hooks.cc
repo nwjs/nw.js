@@ -17,7 +17,6 @@
 // content
 #include "content/public/renderer/v8_value_converter.h"
 #include "content/public/common/content_switches.h"
-#include "content/public/renderer/render_view.h"
 #include "content/renderer/render_view_impl.h"
 #include "content/renderer/render_frame_impl.h"
 
@@ -543,7 +542,7 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
   }
 }
 
-void willHandleNavigationPolicy(content::RenderView* rv,
+void willHandleNavigationPolicy(content::RenderFrame* rf,
                                 blink::WebFrame* frame,
                                 const blink::WebURLRequest& request,
                                 blink::WebNavigationPolicy* policy,
@@ -551,7 +550,7 @@ void willHandleNavigationPolicy(content::RenderView* rv,
                                 bool new_win) {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
   v8::HandleScope scope(isolate);
-  blink::WebFrame* f = rv->GetWebView()->MainFrame();
+  blink::WebFrame* f = rf->GetWebView()->MainFrame();
   if (!f->IsWebLocalFrame())
     return;
   blink::WebLocalFrame* local_frame = f->ToWebLocalFrame();
@@ -580,7 +579,7 @@ void willHandleNavigationPolicy(content::RenderView* rv,
   arguments.push_back(policy_obj);
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
     content::RenderFrame* main_frame = content::RenderFrame::FromWebFrame(
-                  rv->GetWebView()->MainFrame()->ToWebLocalFrame());
+                  rf->GetWebView()->MainFrame()->ToWebLocalFrame());
     arguments.push_back(v8::Integer::New(isolate, main_frame->GetRoutingID()));
 
     std::set<ScriptContext*> contexts(g_dispatcher->script_context_set().contexts());

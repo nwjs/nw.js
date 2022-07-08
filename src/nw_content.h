@@ -66,7 +66,7 @@ void DocumentFinishHook(blink::WebLocalFrame* frame,
  void RendererProcessTerminatedHook(content::RenderProcessHost* process,
                                     const content::NotificationDetails& details);
  void OnRenderProcessShutdownHook(extensions::ScriptContext* context);
- void willHandleNavigationPolicy(content::RenderView* rv,
+ void willHandleNavigationPolicy(content::RenderFrame* rv,
                                  blink::WebFrame* frame,
                                  const blink::WebURLRequest& request,
                                  blink::WebNavigationPolicy* policy,
