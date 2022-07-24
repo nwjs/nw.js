@@ -159,13 +159,13 @@ void OverrideWebkitPrefsHook(content::WebContents* web_contents, blink::web_pref
   nw::Package* package = nw::package();
   if (!package)
     return;
-  base::DictionaryValue* webkit;
+  base::Value::Dict* webkit = package->root()->FindDict(switches::kmWebkit);
   web_prefs->plugins_enabled = true;
-  if (package->root()->GetDictionary(switches::kmWebkit, &webkit)) {
-    absl::optional<bool> flag = webkit->FindBoolKey("double_tap_to_zoom_enabled");
+  if (webkit) {
+    absl::optional<bool> flag = webkit->FindBool("double_tap_to_zoom_enabled");
     if (flag)
       web_prefs->double_tap_to_zoom_enabled = *flag;
-    flag = webkit->FindBoolKey("plugin");
+    flag = webkit->FindBool("plugin");
     if (flag)
       web_prefs->plugins_enabled = *flag;
   }

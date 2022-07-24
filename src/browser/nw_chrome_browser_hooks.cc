@@ -259,10 +259,6 @@ int MainPartsPreCreateThreadsHook() {
     base::FilePath path = package->path().NormalizePathSeparators();
 
     command_line->AppendSwitchPath("nwapp", path);
-    int dom_storage_quota_mb;
-    if (package->root()->GetInteger("dom_storage_quota", &dom_storage_quota_mb)) {
-      //content::DOMStorageMap::SetQuotaOverride(dom_storage_quota_mb * 1024 * 1024);
-    }
 
 #if 0
     base::FilePath user_data_dir;
@@ -361,11 +357,10 @@ int MainPartsPreCreateThreadsHook() {
 
 void MainPartsPreMainMessageLoopRunHook() {
   nw::Package* package = nw::package();
-  const base::ListValue *additional_trust_anchors = NULL;
-  if (package->root()->GetList("additional_trust_anchors", &additional_trust_anchors)) {
-    for (size_t i = 0; i<additional_trust_anchors->GetListDeprecated().size(); i++) {
+  base::Value::List *additional_trust_anchors = package->root()->FindList("additional_trust_anchors");
+  if (additional_trust_anchors) {
+    for (auto& val : *additional_trust_anchors) {
       std::string certificate_string;
-      const base::Value& val = additional_trust_anchors->GetListDeprecated()[i];
       if (!val.is_string()) {
         // LOG(WARNING)
         //   << "Could not get string from entry " << i;
@@ -394,7 +389,7 @@ void MainPartsPreMainMessageLoopRunHook() {
 bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_line,
                                               const base::FilePath& current_directory) {
   nw::Package* package = nw::package();
-  bool single_instance = package->root()->FindBoolKey(switches::kmSingleInstance).value_or(true);
+  bool single_instance = package->root()->FindBool(switches::kmSingleInstance).value_or(true);
   if (single_instance) {
 #if defined(OS_WIN)
     std::string cmd = base::WideToUTF8(command_line.GetCommandLineString());
