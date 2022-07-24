@@ -29,10 +29,16 @@ bool GetUserAgentFromManifest(std::string* agent) {
   nw::Package* package = nw::package();
   if (!package)
     return false;
-  if (package->root()->GetString(switches::kmUserAgent, &g_user_agent)) {
+  std::string* str = package->root()->FindString(switches::kmUserAgent);
+  if (str) {
+    g_user_agent = *str;
     std::string name, version;
-    package->root()->GetString(switches::kmName, &name);
-    package->root()->GetString("version", &version);
+    std::string* str = package->root()->FindString(switches::kmName);
+    if (str)
+      name = *str;
+    str = package->root()->FindString("version");
+    if (str)
+      version = *str;
     SetUserAgentOverride(g_user_agent, name, version);
     *agent = g_user_agent;
     return true;
