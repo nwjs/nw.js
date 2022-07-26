@@ -1,33 +1,20 @@
+### Issue Type
 
-Thanks for reporting an issue! Spend 60 seconds reading this...
+- [ ] Bug Report
+- [ ] Feature Request
 
-1. Before reporting, try reproducing against the latest version of NWJS.
-2. Issue tracker is only for bugs and feature requests, in English only.
-  
-  Anything else? Use our mailing list for questions: 
-  https://groups.google.com/forum/#!forum/nwjs-general
+- [ ] Successfully reproduced against the latest version of NW.js?
 
-======== TEMPLATE BUG FORM ========
+> Please use our [mailing list](https://groups.google.com/forum/#!forum/nwjs-general) or [Gitter chatroom](https://gitter.im/nwjs/nw.js) to ask questions. The issue tracker is only for bugs and feature requests, in English only.
 
-NWJS Version :
-Operating System :
+### Current/Missing Behavior
 
-### Expected behavior
+### Expected/Proposed Behavior
 
-<!- What do you think should happen? ->
+### Additional Info
 
-### Actual behavior
-
-<!- What actually happens? ->
-
-### How to reproduce
-
-<!- 
-
-- Detail a step by step guide to reproduce the issue
-- A copy of your code would help. Include: JS, HTML. 
-- If you have a crash report, copy it in. 
-- Test your steps on a fresh environment to see if you still have an issue
-- Post!
-
-->
+- Operating System:
+- NW.js Version:
+- Repro Link:
+- Code snippet:
+- Crash report:
