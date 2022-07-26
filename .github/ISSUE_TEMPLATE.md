@@ -1,5 +1,7 @@
 ### Issue Type
 
+Before opening an issue, please search and see if it has already been raised.
+
 - [ ] Bug Report
 - [ ] Feature Request
 
