@@ -27,6 +27,7 @@ Packages of symbol files for released NW.js can be download from [https://dl.nwj
 For example, on Mac, with `0.57.1`:
 
 [https://dl.nwjs.io/v0.57.1/nwjs-symbol-v0.57.1-osx-x64.zip](https://dl.nwjs.io/v0.57.1/nwjs-symbol-v0.57.1-osx-x64.zip)
+
 [https://dl.nwjs.io/v0.57.1/nwjs-sdk-symbol-v0.57.1-osx-x64.zip](https://dl.nwjs.io/v0.57.1/nwjs-sdk-symbol-v0.57.1-osx-x64.zip)
 
 Then you have to organize the symbol files in a **correct path with correct file name** in order be used by `minidump_stackwalk` tool. `minidump_stackwalk` uses [simple symbol supplier](https://code.google.com/p/chromium/codesearch#chromium/src/breakpad/src/processor/simple_symbol_supplier.cc&l=142) to find symbol files. Following is the way of how it finds the symbol files.
@@ -44,15 +45,15 @@ The tool will try to search the `.sym` (For Mac, change `.breakpad` to `.sym`)fi
 For example, on Mac, with `0.57.1`:
 
 ```bash
--symbols
- -nwjs
-    -4E7C70708AFD3C889F02B149AB5007080
+-symbols_root/
+ -nwjs/
+    -4E7C70708AFD3C889F02B149AB5007080/
         -nwjs.sym
- -nwjs Framework
-    -87A9EA49BC473F4C8B7817631E820BEB0
+ -nwjs Framework/
+    -87A9EA49BC473F4C8B7817631E820BEB0/
         -nwjs Framework.sym
- -nwjs Helper
-    -5598EA295F4F36FDA21CB9A5B11B11AA0
+ -nwjs Helper/
+    -5598EA295F4F36FDA21CB9A5B11B11AA0/
         -nwjs Helper.sym
 ```
 
