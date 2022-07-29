@@ -22,18 +22,39 @@ The `<name-in-manifest>` is the `name` field of [Manifest file](../References/Ma
 
 ## Organize Symbol Files
 
-Packages of symbol files for released NW.js can be found within the same folder of NW.js download folder. The symbol files (.sym) can be extracted from the downloaded packages.
+Packages of symbol files for released NW.js can be download from [https://dl.nwjs.io/](https://dl.nwjs.io/).
+
+For example, on Mac, with `0.57.1`:
+
+[https://dl.nwjs.io/v0.57.1/nwjs-symbol-v0.57.1-osx-x64.zip](https://dl.nwjs.io/v0.57.1/nwjs-symbol-v0.57.1-osx-x64.zip)
+[https://dl.nwjs.io/v0.57.1/nwjs-sdk-symbol-v0.57.1-osx-x64.zip](https://dl.nwjs.io/v0.57.1/nwjs-sdk-symbol-v0.57.1-osx-x64.zip)
 
 Then you have to organize the symbol files in a **correct path with correct file name** in order be used by `minidump_stackwalk` tool. `minidump_stackwalk` uses [simple symbol supplier](https://code.google.com/p/chromium/codesearch#chromium/src/breakpad/src/processor/simple_symbol_supplier.cc&l=142) to find symbol files. Following is the way of how it finds the symbol files.
 
-The tool will try to search the `.sym` file as in following pattern:
+The tool will try to search the `.sym` (For Mac, change `.breakpad` to `.sym`)file as in following pattern:
 `{SYMBOLS_ROOT}/{DEBUG_FILE_NAME}/{DEBUG_IDENTIFIER}/{DEBUG_FILE_NAME_WITHOUT_PDB}.sym`
 
 * `{SYMBOLS_ROOT}` is the root folder of all symbol files. You can put all versions / platforms of NW `.sym` files in a same folder.
-* `{DEBUG_FILE_NAME}`, `{DEBUG_IDENTIFIER}` and `{DEBUG_FILE_NAME_WITHOUT_PDB}` can be obtained from the first line of `.sym` file which typically looks like `MODULE Linux x86_64 265BDB6BE043D5C70D3A1E279A8F0B1A0 nw`.
+* `{DEBUG_FILE_NAME}`, `{DEBUG_IDENTIFIER}` and `{DEBUG_FILE_NAME_WITHOUT_PDB}` can be obtained from the first line of `.sym` file which typically looks like `MODULE Linux x86_64 265BDB6BE043D5C70D3A1E279A8F0B1A0 nw`(For Mac, like `MODULE mac x86_64 4E7C70708AFD3C889F02B149AB5007080 nwjs`).
     - `265BDB6BE043D5C70D3A1E279A8F0B1A0` is `{DEBUG_IDENTIFIER}`
     - `nw` is `{DEBUG_FILE_NAME}`.
     - `{DEBUG_FILE_NAME_WITHOUT_PDB}` can be converted from `{DEBUG_FILE_NAME}` by removing `.pdb` extension which is only necessary for Windows.
+
+
+For example, on Mac, with `0.57.1`:
+
+```bash
+-symbols
+ -nwjs
+    -4E7C70708AFD3C889F02B149AB5007080
+        -nwjs.sym
+ -nwjs Framework
+    -87A9EA49BC473F4C8B7817631E820BEB0
+        -nwjs Framework.sym
+ -nwjs Helper
+    -5598EA295F4F36FDA21CB9A5B11B11AA0
+        -nwjs Helper.sym
+```
 
 ## Decode Minidump with `minidump_stackwalk`
 
