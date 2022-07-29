@@ -49,7 +49,7 @@
     pos.y = NSMaxY([screen frame]) - pos.y;
     data->SetInteger("x", pos.x);
     data->SetInteger("y", pos.y);
-    args.Append(std::move(data));
+    args.Append(data->Clone());
     tray_->object_manager()->SendEvent(tray_,"TrayClick",args);
 }
 @end

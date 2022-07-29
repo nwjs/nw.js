@@ -534,7 +534,7 @@ bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::Value::List* respon
 
 
 #if defined(OS_MAC)
-  response->Append(NWChangeAppMenu(menu));
+  response->Append(base::Value::FromUniquePtrValue(NWChangeAppMenu(menu)));
 #endif
 
 #if defined(OS_LINUX) || defined(OS_WIN)

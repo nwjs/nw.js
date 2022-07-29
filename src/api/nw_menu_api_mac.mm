@@ -44,7 +44,7 @@ void InitMsgIDMap() {
   g_msgid_inited = true;
 }
 
-bool NwMenuGetNSStringWithFixupFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwMenuGetNSStringWithFixupFunction::RunNWSync(base::Value::List* response, std::string* error) {
   if (!g_msgid_inited) InitMsgIDMap();
   EXTENSION_FUNCTION_VALIDATE(args().size() == 1 && args()[0].is_string());
   std::string msgstr = args()[0].GetString();
@@ -57,7 +57,7 @@ bool NwMenuGetNSStringWithFixupFunction::RunNWSync(base::ListValue* response, st
   return false;
 }
 
-bool NwMenuGetNSStringFWithFixupFunction::RunNWSync(base::ListValue* response, std::string* error) {
+bool NwMenuGetNSStringFWithFixupFunction::RunNWSync(base::Value::List* response, std::string* error) {
   if (!g_msgid_inited) InitMsgIDMap();
   EXTENSION_FUNCTION_VALIDATE(args().size() == 2 &&
                               args()[0].is_string() &&

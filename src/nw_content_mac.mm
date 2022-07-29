@@ -117,7 +117,7 @@ std::unique_ptr<base::ListValue> NWChangeAppMenu(nw::Menu* menu) {
                         menuPatch->SetInteger("menu", editMenuIndex);
                         menuPatch->SetInteger("index", i);
                         menuPatch->Set("option", std::move(options));
-                        items->Append(std::move(menuPatch));
+                        items->Append(menuPatch->Clone());
                     }
                 }
             }
