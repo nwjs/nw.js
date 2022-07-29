@@ -72,9 +72,9 @@ void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
   NSEvent* currentEvent = [NSApp currentEvent];
   NSPoint position = { (CGFloat)x, web_view.bounds.size.height - y };
   NSTimeInterval eventTime = [currentEvent timestamp];
-  NSEvent* clickEvent = [NSEvent mouseEventWithType:NSRightMouseDown
+  NSEvent* clickEvent = [NSEvent mouseEventWithType:NSEventTypeRightMouseDown
                                            location:position
-                                      modifierFlags:NSRightMouseDownMask
+                                      modifierFlags:NSEventMaskRightMouseDown
                                           timestamp:eventTime
                                        windowNumber:[window windowNumber]
                                             context:nil

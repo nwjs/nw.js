@@ -148,7 +148,7 @@ void NWSetNSAppKioskOptions(void) {
         kiosked = true;
         previousOptions = [NSApp currentSystemPresentationOptions];
     }
-    NSApplicationPresentationOptions options = NSApplicationPresentationHideDock | NSApplicationPresentationHideMenuBar | NSApplicationPresentationDisableProcessSwitching | NSApplicationPresentationDisableForceQuit | NSApplicationPresentationDisableSessionTermination | NSApplicationPresentationDisableHideApplication | NSFullScreenWindowMask | NSApplicationPresentationDisableAppleMenu;
+    NSApplicationPresentationOptions options = NSApplicationPresentationHideDock | NSApplicationPresentationHideMenuBar | NSApplicationPresentationDisableProcessSwitching | NSApplicationPresentationDisableForceQuit | NSApplicationPresentationDisableSessionTermination | NSApplicationPresentationDisableHideApplication | NSWindowStyleMaskFullScreen | NSApplicationPresentationDisableAppleMenu;
     [NSApp setPresentationOptions:options];
     NSWindow *window = [NSApp keyWindow];
     [window setLevel:NSStatusWindowLevel+1];
