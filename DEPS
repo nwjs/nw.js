@@ -263,7 +263,7 @@ vars = {
   'use_rust': False,
 
   'nw_src_revision': '4d5cd74e061e644f9d383391ec5bb1cf9e72b735',
-  'nw_v8_revision': 'f01d4483f49b127119950f2618bded1f41542609',
+  'nw_v8_revision': 'b8ede8c4ea2031f6105d98a4313ed9352e899361',
   'nw_node_revision': 'fc43c3a06ab1c92a4277b4eaca13393fc49916cb',
   'android_git': 'https://android.googlesource.com',
   'aomedia_git': 'https://aomedia.googlesource.com',
