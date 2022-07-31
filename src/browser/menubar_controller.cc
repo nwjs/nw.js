@@ -64,7 +64,7 @@ views::MenuItemView* MenuBarController::GetSiblingMenu(
 
 void MenuBarController::ExecuteCommand(int id) {
   ui::MenuModel* model = master_->active_menu_model_;
-  int index = 0;
+  size_t index = 0;
   if (ui::MenuModel::GetModelAndIndexForCommandId(id, &model, &index)) {
     model->ActivatedAt(index);
     return;
@@ -75,7 +75,7 @@ void MenuBarController::ExecuteCommand(int id) {
 
 void MenuBarController::ExecuteCommand(int id, int mouse_event_flags) {
   ui::MenuModel* model = master_->active_menu_model_;
-  int index = 0;
+  size_t index = 0;
   if (ui::MenuModel::GetModelAndIndexForCommandId(id, &model, &index)) {
     model->ActivatedAt(index, mouse_event_flags);
     return;
