@@ -69,7 +69,7 @@ void MenuBarView::UpdateMenu(ui::MenuModel* model) {
 
 void MenuBarView::InitView(ui::MenuModel* model) {
   model_ = model;
-  for (int i = 0; i < model_->GetItemCount(); i++) {
+  for (size_t i = 0; i < model_->GetItemCount(); i++) {
     AddChildView(new MenuBarButton(model_->GetLabelAt(i),
                                    base::BindRepeating(&MenuBarView::ButtonPressed,
                                                        base::Unretained(this), i),
@@ -82,7 +82,7 @@ bool MenuBarView::GetMenuButtonAtLocation(const gfx::Point& loc, ui::MenuModel**
     return false;
   if (loc.x() < 0 || loc.x() >= width() || loc.y() < 0 || loc.y() >= height())
     return false;
-  for (int i = 0; i < model_->GetItemCount(); i++) {
+  for (size_t i = 0; i < model_->GetItemCount(); i++) {
     views::View* child = children()[i];
     if (child->bounds().Contains(loc) &&
         (model_->GetTypeAt(i) == ui::MenuModel::TYPE_SUBMENU)) {
