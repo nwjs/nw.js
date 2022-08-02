@@ -50,6 +50,9 @@ gclient_gn_args = [
 
 
 vars = {
+  'nw_src_revision': 'cc47f19016f22d4a9eacce48bb0c9b7cd1eb7435',
+  'nw_v8_revision': 'b8ede8c4ea2031f6105d98a4313ed9352e899361',
+  'nw_node_revision': '21d12cb54fa2ae1d94957c834cf0500063478a49',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -262,9 +265,6 @@ vars = {
   # Enable fetching Rust-related packages.
   'use_rust': False,
 
-  'nw_src_revision': '4d5cd74e061e644f9d383391ec5bb1cf9e72b735',
-  'nw_v8_revision': 'b8ede8c4ea2031f6105d98a4313ed9352e899361',
-  'nw_node_revision': '21d12cb54fa2ae1d94957c834cf0500063478a49',
   'android_git': 'https://android.googlesource.com',
   'aomedia_git': 'https://aomedia.googlesource.com',
   'boringssl_git': 'https://boringssl.googlesource.com',
@@ -394,7 +394,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
-  'dawn_revision': 'a92c57a8f65927f32b7c64b14461265a26e862c0',
+  'dawn_revision': '2d334ed4f01b00211acd0360a5f9dc91d83354cb',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
@@ -1793,7 +1793,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@f341c60d573d1095d2e3e0580afe4047638d6035',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@4ff96f70fd1b507f17579577080637625e6e2ef8',
     'condition': 'checkout_src_internal',
   },
 
