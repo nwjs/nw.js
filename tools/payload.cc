@@ -102,17 +102,17 @@ MyComputedHashes::Writer::~Writer() {
 void MyComputedHashes::Writer::AddHash(const base::FilePath& relative_path,
                                        int block_size,
                                        const std::string& root) {
-  base::DictionaryValue* dict = new base::DictionaryValue();
-  file_list_->Append(base::WrapUnique(dict));
-  dict->SetString(kPathKey,
-                  relative_path.NormalizePathSeparatorsTo('/').AsUTF8Unsafe());
-  //dict->SetInteger(kBlockSizeKey, block_size);
+  base::DictionaryValue dict;
+  dict.SetString(kPathKey,
+                 relative_path.NormalizePathSeparatorsTo('/').AsUTF8Unsafe());
+  //dict.SetInteger(kBlockSizeKey, block_size);
   std::string encoded;
   base::Base64Encode(root, &encoded);
   base::ReplaceChars(encoded, "=", "", &encoded);
   base::ReplaceChars(encoded, "/", "_", &encoded);
   base::ReplaceChars(encoded, "+", "-", &encoded);
-  dict->SetString(kBlockHashesKey, encoded);
+  dict.SetString(kBlockHashesKey, encoded);
+  file_list_->Append(std::move(dict));
 }
 
 bool MyComputedHashes::Writer::WriteToFile(const base::FilePath& path) {
