@@ -15,7 +15,7 @@ To embed a web page in your app, add the webview tag to your app's embedder page
 
 ## References
 
-See [Chrome document of `<webview>` tag](https://developer.chrome.com/apps/tags/webview) for detailed API references.
+See [Chrome document of `<webview>` tag](https://developer.chrome.com/docs/extensions/reference/webviewTag/) for detailed API references.
 
 NW.js added the following methods besides upstream APIs:
 
