@@ -665,7 +665,7 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
     launched_listener.set_failure_message("WebViewTest.FAILURE");
     LoadAndLaunchPlatformApp(app_path.c_str(), &launched_listener);
 
-    guest_web_contents_ = GetGuestViewManager()->WaitForSingleGuestCreated();
+    guest_view_ = GetGuestViewManager()->WaitForSingleGuestViewCreated();
   }
 
   void SendMessageToEmbedder(const std::string& message) {
@@ -706,7 +706,7 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
   }
 
   content::WebContents* GetGuestWebContents() {
-    return guest_web_contents_;
+    return guest_view_->web_contents();
   }
 
   content::WebContents* GetEmbedderWebContents() {
@@ -731,7 +731,7 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
     return manager;
   }
 
-  NWWebViewTestBase() : guest_web_contents_(NULL), embedder_web_contents_(NULL) {
+  NWWebViewTestBase() : guest_view_(NULL), embedder_web_contents_(NULL) {
     GuestViewManager::set_factory_for_testing(&factory_);
   }
 
@@ -755,7 +755,7 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
 
   TestGuestViewManagerFactory factory_;
   // Note that these are only set if you launch app using LoadAppWithGuest().
-  content::WebContents* guest_web_contents_;
+  guest_view::GuestViewBase* guest_view_;
   content::WebContents* embedder_web_contents_;
 };
 
@@ -927,7 +927,7 @@ IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, SilentPrintChangeFooter) {
   unsigned long n_guests = 2;
   LOG(WARNING) << "WaitForNumGuestsCreated";
   GetGuestViewManager()->WaitForNumGuestsCreated(n_guests);
-  GetGuestViewManager()->GetGuestWebContentsList(&guest_web_contents_list);
+  GetGuestViewManager()->DeprecatedGetGuestWebContentsList(&guest_web_contents_list);
   ASSERT_EQ(n_guests, guest_web_contents_list.size());
 
   content::WebContents* web_view_contents = guest_web_contents_list[0];
@@ -1007,7 +1007,7 @@ IN_PROC_BROWSER_TEST_P(NWJSWebViewTest, LocalPDF) {
   } else
     GetGuestViewManager()->WaitForNumGuestsCreated(n_guests);
 
-  GetGuestViewManager()->GetGuestWebContentsList(&guest_web_contents_list);
+  GetGuestViewManager()->DeprecatedGetGuestWebContentsList(&guest_web_contents_list);
   ASSERT_EQ(n_guests, guest_web_contents_list.size());
 
   if (trusted_) {
