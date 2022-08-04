@@ -526,8 +526,8 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
     CHECK(*script2);
     std::ignore = script2->Run(v8_context);
   }
-  RenderViewImpl* rv = content::RenderFrameImpl::FromWebFrame(frame)->render_view();
-  if (!rv)
+  content::RenderFrameImpl* rf = content::RenderFrameImpl::FromWebFrame(frame);
+  if (!rf)
     return;
 
   ui::ResourceBundle* resource_bundle = &ui::ResourceBundle::GetSharedInstance();
