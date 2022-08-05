@@ -17,7 +17,6 @@
 // content
 #include "content/public/renderer/v8_value_converter.h"
 #include "content/public/common/content_switches.h"
-#include "content/renderer/render_view_impl.h"
 #include "content/renderer/render_frame_impl.h"
 
 #include "content/common/frame.mojom.h"
@@ -61,8 +60,6 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #endif
-
-using content::RenderViewImpl;
 
 using extensions::ScriptContext;
 using extensions::Extension;
