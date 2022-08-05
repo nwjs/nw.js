@@ -56,8 +56,12 @@ void MenuItem::Create(const base::DictionaryValue& option) {
   menu_ = NULL;
 
   option.GetString("type", &type_);
-  option.GetString("label", &label_);
-  option.GetString("tooltip", &tooltip_);
+  std::string label;
+  option.GetString("label", &label);
+  label_ = base::UTF8ToUTF16(label);
+  std::string tooltip;
+  option.GetString("tooltip", &tooltip);
+  tooltip_ = base::UTF8ToUTF16(tooltip);
   is_checked_ = option.FindBoolKey("checked").value_or(false);
   is_enabled_ = option.FindBoolKey("enabled").value_or(false);
 
