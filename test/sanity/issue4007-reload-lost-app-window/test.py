@@ -20,7 +20,7 @@ try:
     old_handle = driver.current_window_handle
     driver.find_element_by_id('reloadapp').click()
     print 'wait for app reload'
-    wait_window_handles(driver, lambda handles: len(handles) != 0 and handles[0] != old_handle)
+    wait_window_handles(driver, lambda handles: handles != None and len(handles) != 0 and handles[0] != old_handle)
     # devtools will be opened as the first window handle
     print driver.window_handles
     driver.switch_to_window(driver.window_handles[0])

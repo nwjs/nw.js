@@ -256,7 +256,15 @@ def switch_to_devtools(driver, devtools_window=None, skip_exception=False):
     raise Exception('No devtools window found.')
 
 def devtools_click_tab(driver, tab_name):
-    driver.execute_script('return document.querySelector(".tabbed-pane").shadowRoot.getElementById("tab-%s")' % tab_name).click()
+    timeout = 5
+    while timeout > 0:
+        try:
+            driver.execute_script('return document.querySelector(".tabbed-pane").shadowRoot.getElementById("tab-%s")' % tab_name).click()
+            break
+        except selenium.common.exceptions.WebDriverException:
+            pass
+        time.sleep(1)
+        timeout = timeout - 1
 
 def devtools_type_in_console(driver, keys):
     console_prompt = driver.find_element_by_id('console-prompt')
