@@ -195,7 +195,7 @@ Package::Package()
 
   // 3. try to load from <exe-folder>/package.nw
   path = path.AppendASCII("package.nw");
-  if (InitFromPath(path))
+  if (base::PathExists(path) && InitFromPath(path))
     return;
 
   // 4. see if we have arguments and extract it.
