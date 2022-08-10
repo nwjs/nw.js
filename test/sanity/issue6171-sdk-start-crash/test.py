@@ -1,5 +1,8 @@
 import time
 import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from nw_util import *
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -11,8 +14,8 @@ driver.implicitly_wait(2)
 try:
     print driver.current_url
     print 'waiting for crash'
-    time.sleep(5)
-    result = driver.find_element_by_id('versions').get_attribute('innerHTML')
+
+    result = wait_for_element_id(driver, 'versions')
     #print result
     assert('NWjs version' in result)
     print 'There is no crash'
