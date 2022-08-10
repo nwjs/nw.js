@@ -5,7 +5,7 @@ if (is_mac) {
   #chrome_framework_name = chrome_product_full_name + " Framework"
   frameworks = ["AutomaticAssessmentConfiguration.framework"]
 }
-import("//build/util/version.gni")
+import("//chrome/version.gni")
 import("//components/nacl/features.gni")
 
 group("nwjs") {
