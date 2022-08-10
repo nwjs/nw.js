@@ -1,3 +1,9 @@
+0.67.1 / 08-10-2022
+===================
+- Update Node.js to [v18.7.0](https://nodejs.org/en/blog/release/v18.7.0/)
+- Fix: Missing Line Numbers and Source Mapping in DevTools [(#7936)](https://github.com/nwjs/nw.js/issues/7936)
+- Fix: NW.js throws error when zip file not present on every execution [(#7882)](https://github.com/nwjs/nw.js/issues/7882)
+
 0.67.0 / 08-03-2022
 ===================
 - Update Chromium to [104.0.5112.80](https://chromereleases.googleblog.com/2022/08/stable-channel-update-for-desktop.html)
