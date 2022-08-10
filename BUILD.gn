@@ -4,7 +4,7 @@ if (is_mac) {
   import("//build/util/branding.gni")
   #chrome_framework_name = chrome_product_full_name + " Framework"
 }
-import("//build/util/version.gni")
+import("//chrome/version.gni")
 import("//components/nacl/features.gni")
 
 group("nwjs") {
