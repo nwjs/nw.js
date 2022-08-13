@@ -9,7 +9,7 @@ The document is structured in three major parts:
 * **For Developers** - Documents for developers who want to extend NW.js
 * **References** - NW.js API references
 
-The source of the document is in [our git repo](https://github.com/nwjs/nw.js/tree/nw13/docs). PRs are welcome.
+The source of the document is in [our git repo](https://github.com/nwjs/nw.js/tree/nw[NW_VERSION_MAJOR]/docs). PRs are welcome.
 
 ## Table of Contents
 
@@ -57,3 +57,5 @@ The source of the document is in [our git repo](https://github.com/nwjs/nw.js/tr
     - [Tray](References/Tray.md)
     - [webview Tag](References/webview Tag.md)
     - [Window](References/Window.md)
+
+[NW_VERSION_MAJOR]: 67
