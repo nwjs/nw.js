@@ -1,1 +1,2 @@
 pymdown-extensions == 6.2.1
+mkdocs == 1.3.1
