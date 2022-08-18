@@ -97,4 +97,4 @@ If you downloaded NW.js from `npm`, add it as a script:
 
 The above command executes if your `package.json` is in the above mentioned file path and it has the `main` property pointing to the entry point of the NW application.
 
-To learn more about how to use NW.js check out the [API section]([API section](../References/App.md).
+To learn more about how to use NW.js check out the [API section](../References/App.md).
