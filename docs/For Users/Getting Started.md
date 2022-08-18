@@ -4,7 +4,7 @@
 
 ## Installation
 
-Download the latest NW.js binary via locally in your Node projects:
+Download the latest NW.js binary in your Node projects:
 
 ```shell
 npm install nw
