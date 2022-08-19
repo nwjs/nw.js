@@ -10,9 +10,7 @@ Download the latest NW.js binary in your Node projects:
 npm install nw
 ```
 
-Check out the [`npm-installer`](https://github.com/nwjs/npm-installer) to learn about it's configuration options.
-
-You can also download the binary directly from the official website [here](https://dl.nwjs.io/).
+Check out the [`npm-installer`](https://github.com/nwjs/npm-installer) to learn about it's configuration options. You can also download the binary directly from the official website [here](https://dl.nwjs.io/).
 
 ## Write your first NW.js application
 
@@ -20,16 +18,12 @@ Create a `package.json` with a `name` and `main` property. The `main` property r
 
 Here’s an example on how to use an HTMl file as the entry point:
 
-`package.json`
-
 ```json
 {
   "name": "nw-demo",
   "main": "./index.html"
 }
 ```
-
-`index.html`
 
 ```html
 <!DOCTYPE html>
@@ -56,16 +50,12 @@ Here’s an example on how to use an HTMl file as the entry point:
 
 Here’s an example on how to use a JavaScript file as the entry point:
 
-`package.json`:
-
 ```json
 {
   "name": "nw-demo",
   "main": "./main.js"
 }
 ```
-
-`main.js`:
 
 ```javascript
 nw.Window.open("./index.html", {}, () => {});
@@ -75,17 +65,7 @@ More information can be found in the [API section](../References/App.md).
 
 ## Run your first NW.js application
 
-To run your application, pass your app's path to the NW runtime.
-
-If you downloaded NW directly from the website execute `/path/to/nw /path/to/app`.
-
-The exact path is different for different platforms:
-
-- Linux: `nw`
-- MacOS: `nwjs.app/Contents/MacOS/nwjs`
-- Windows: `nw.exe`
-
-If you downloaded NW.js from `npm`, add it as a script:
+To run your application, pass your app's path to the NW runtime. If you downloaded NW directly from the website execute `/path/to/nw /path/to/app`. The exact path is different for different platforms being `nw` on Linux, `nwjs.app/Contents/MacOS/nwjs` on MacOS and `nw.exe` on Windows. If you downloaded NW.js from `npm`, add it as a script:
 
 ```json
 {
@@ -95,6 +75,4 @@ If you downloaded NW.js from `npm`, add it as a script:
 }
 ```
 
-The above command executes if your `package.json` is in the above mentioned file path and it has the `main` property pointing to the entry point of the NW application.
-
-To learn more about how to use NW.js check out the [API section](../References/App.md).
+The above command executes if your `package.json` is in the above mentioned file path and it has the `main` property pointing to the entry point of the NW application. To learn more about how to use NW.js check out the [API section](../References/App.md).

@@ -2,7 +2,7 @@
 
 ---
 
-Write native desktop applications using web technologies.
+Native desktop applications using web technologies.
 
 ### Major Features:
 
