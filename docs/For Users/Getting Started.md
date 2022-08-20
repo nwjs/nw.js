@@ -63,6 +63,9 @@ nw.Window.open("./index.html", {}, () => {});
 
 More information can be found in the [API section](../References/App.md).
 
+!!! note "Native Node Modules"
+    Native Node modules, built when running `npm install`, are not compatible with NW.js ABI. To use them, you have to rebuild it from source code with [`nw-gyp`](https://github.com/nwjs/nw-gyp). See [Use Native Node Modules](Advanced/Use Native Node Modules.md) for details.
+
 ## Run your first NW.js application
 
 To run your application, pass your app's path to the NW runtime. If you downloaded NW directly from the website execute `/path/to/nw /path/to/app`. The exact path is different for different platforms being `nw` on Linux, `nwjs.app/Contents/MacOS/nwjs` on MacOS and `nw.exe` on Windows. If you downloaded NW.js from `npm`, add it as a script:
