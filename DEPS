@@ -50,8 +50,8 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': '691a35cc59ba503e299c629229fba2121ce54597',
-  'nw_v8_revision': '54ec5d0e898bd9cd6a3c6d8c734b948ddff749f8',
+  'nw_src_revision': '784229f5f395434949d98e1cb4890bc10a0e18a8',
+  'nw_v8_revision': '9bdc535f8939d1c634f497e9619e7c473a620724',
   'nw_node_revision': '1eb248a2e8eaf0839a39a3d0d0a4d13288fc7632',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
@@ -283,11 +283,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '3d67ad243ce92b9fb162cc85da1dc1a0ebe4c78b',
+  'v8_revision': '50d767cfc5219af89a124ee7e683412f46f566aa',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': '2693b03eba82a424a19febaacaab4115a45b7682',
+  'angle_revision': '4a65a669e11bd7bfa9d77cbf7001836379ec29b5',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -1793,7 +1793,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@4ff96f70fd1b507f17579577080637625e6e2ef8',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@6956112deae1e1529cc3fe8eb3112e60c5104b58',
     'condition': 'checkout_src_internal',
   },
 
