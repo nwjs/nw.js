@@ -16,6 +16,14 @@ Check out the [`npm-installer`](https://github.com/nwjs/npm-installer) to learn 
 
 Create a `package.json` with a `name` and `main` property. The `main` property references the first page opened by NW.js. This can be an HTML or JavaScript file.
 
+!!! tip "Using a JavaScript file for `main`"
+    If you set a JavaScript file for the `main` property, the file will be loaded in the background page on start and no window is opened by default. You can do some initialization and open the window manually later. For example,
+    ```javascript
+    // initialize your app before opening the window
+    // ...
+    nw.Window.open("./index.html", {}, () => {});
+    ```
+
 Here’s an example on how to use an HTMl file as the entry point:
 
 ```json
