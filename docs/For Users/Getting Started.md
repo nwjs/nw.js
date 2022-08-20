@@ -78,6 +78,9 @@ To run your application, pass your app's path to the NW runtime. If you download
 }
 ```
 
+!!! tip "Drag &amp; Drop on Windows"
+    On Windows, you can drag the folder containing `package.json` to `nw.exe` to run your app.
+
 The above command executes if your `package.json` is in the above mentioned file path and it has the `main` property pointing to the entry point of the NW application. To learn more about how to use NW.js check out the [API section](../References/App.md).
 
 ## Getting Help
