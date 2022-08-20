@@ -76,3 +76,7 @@ To run your application, pass your app's path to the NW runtime. If you download
 ```
 
 The above command executes if your `package.json` is in the above mentioned file path and it has the `main` property pointing to the entry point of the NW application. To learn more about how to use NW.js check out the [API section](../References/App.md).
+
+## Getting Help
+
+There are lots of useful information on [NW.js wiki](https://github.com/nwjs/nw.js/wiki). The wiki is also open for everyone, and you are encouraged to publish your knowledge on wiki.
