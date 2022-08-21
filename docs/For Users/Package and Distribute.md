@@ -9,7 +9,6 @@ This document guides you how to package and distribute NW.js based app.
 
 You can use following tools to automatically package your NW.js based app for distribution.
 
-* [nwjs-builder-phoenix](https://github.com/evshiron/nwjs-builder-phoenix) (recommended)
 * [nw-builder](https://github.com/nwjs-community/nw-builder)
 
 Or your can build your app manually with the instructions below.
