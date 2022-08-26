@@ -166,7 +166,6 @@ def generate_target_nw(platform_name, arch, version):
                            ]
         if flavor == 'sdk':
             target['input'].append('nwjc')
-            target['input'].append('payload')
             target['input'].append('chromedriver')
             target['input'].append('minidump_stackwalk')
         if flavor in ['nacl','sdk'] :
@@ -202,7 +201,6 @@ def generate_target_nw(platform_name, arch, version):
                            ]
         if flavor == 'sdk':
             target['input'].append('nwjc.exe')
-            target['input'].append('payload.exe')
             target['input'].append('chromedriver.exe')
         if flavor in ['nacl','sdk'] :
             target['input'].append('pnacl')
@@ -217,7 +215,6 @@ def generate_target_nw(platform_name, arch, version):
                           ]
         if flavor == 'sdk':
             target['input'].append('nwjc')
-            target['input'].append('payload')
             target['input'].append('chromedriver')
             target['input'].append('libffmpeg.dylib')
             target['input'].append('minidump_stackwalk')
