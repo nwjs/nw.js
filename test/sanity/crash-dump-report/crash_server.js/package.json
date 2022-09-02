@@ -6,7 +6,7 @@
   "scripts": {
     "server": "node server.js",
     "app": "tnw ../app",
-    "clear": "node kill-nw.js"
+    "clear": "node kill_nw.js"
   },
   "author": "ostwindli",
   "license": "MIT",

@@ -1,4 +1,4 @@
-# a simple nwjs crash server by nodejs
+# a simple nwjs crash server of nodejs
 
 ## Test step
 
@@ -16,7 +16,7 @@ npm run app
 
 ## Clear the NW.js processes
 
-> When nwjs crashed, for some old NW.js version(eg: 0.57.1), you should manually clearing NW.js processe
+> When NW.js crashed, for some old NW.js version(eg: 0.57.1), you should manually clear the NW.js processes
 
 ```sh
 npm run clear
