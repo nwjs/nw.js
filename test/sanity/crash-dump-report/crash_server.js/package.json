@@ -1,0 +1,18 @@
+{
+  "name": "crash_report_url_demo",
+  "version": "1.0.0",
+  "description": "a nwjs crash_report_url demo",
+  "main": "index.html",
+  "scripts": {
+    "server": "node server.js",
+    "app": "tnw ../app",
+    "clear": "node kill-nw.js"
+  },
+  "author": "ostwindli",
+  "license": "MIT",
+  "dependencies": {
+    "http-errors": "~1.8.1",
+    "safe-buffer": "5.2.1",
+    "uid-safe": "2.1.5"
+  }
+}
