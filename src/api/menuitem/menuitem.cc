@@ -133,10 +133,10 @@ void MenuItem::Call(const std::string& method,
     SetSubmenu(object_manager()->GetApiObject<Menu>(object_id));
 #if defined(OS_MAC)
   } else if (method == "SetKey") {
-    std::string key = arguments.GetList()[0].GetString();
+    std::string key = arguments[0].GetString();
     SetKey(key);
   } else if (method == "SetModifiers") {
-    std::string mod = arguments.GetList()[0].GetString();
+    std::string mod = arguments[0].GetString();
     SetModifiers(mod);
 #endif
   } else {
