@@ -352,7 +352,7 @@ NwCurrentWindowInternalCapturePageInternalFunction::Run() {
     if (image_details->format !=
         api::extension_types::IMAGE_FORMAT_NONE)
       image_format_ = image_details->format;
-    if (image_details->quality.get())
+    if (image_details->quality)
       image_quality_ = *image_details->quality;
   }
 
