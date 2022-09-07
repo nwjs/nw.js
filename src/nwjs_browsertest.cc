@@ -936,8 +936,11 @@ IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, SilentPrintChangeFooter) {
   EXPECT_TRUE(load_success);
   WaitForAccessibilityTreeToContainNodeWithName(web_view_contents, "hello world\r\n");
   std::string tree_dump;
-  // Make sure all the frames in the dialog has access to the PDF plugin.
-  guest_web_contents_list[1]->GetPrimaryMainFrame()->ForEachRenderFrameHost(base::BindRepeating(&DumpAxTree, base::Unretained(&tree_dump)));
+  std::string* pstr = &tree_dump;
+  // Make sure all the frames in the dialog has access to the PDF
+  // plugin.
+  guest_web_contents_list[1]->GetPrimaryMainFrame()->
+    ForEachRenderFrameHost([pstr] (content::RenderFrameHost* rfh) { DumpAxTree(pstr, rfh); });
   LOG(INFO) << "ax tree: " << tree_dump;
   EXPECT_TRUE(tree_dump.find("nwtestfooter") != std::string::npos);
 }
@@ -963,14 +966,17 @@ IN_PROC_BROWSER_TEST_F(NWJSAppTest, PrintChangeFooter) {
     run_loop.Run();
 
     frame_count = 0;
+    int* pcnt = &frame_count;
     preview_dialog->GetPrimaryMainFrame()->ForEachRenderFrameHost(
-        base::BindRepeating(&CountFrames, base::Unretained(&frame_count)));
+       [pcnt] (content::RenderFrameHost* rfh) { CountFrames(pcnt, rfh); });
   } while (frame_count < kExpectedFrameCount);
   ASSERT_EQ(kExpectedFrameCount, frame_count);
   WaitForAccessibilityTreeToContainNodeWithName(preview_dialog, "hello world\r\n");
   std::string tree_dump;
+  std::string* pstr = &tree_dump;
   // Make sure all the frames in the dialog has access to the PDF plugin.
-  preview_dialog->GetPrimaryMainFrame()->ForEachRenderFrameHost(base::BindRepeating(&DumpAxTree, base::Unretained(&tree_dump)));
+  preview_dialog->GetPrimaryMainFrame()->
+    ForEachRenderFrameHost([pstr] (content::RenderFrameHost* rfh) { DumpAxTree(pstr, rfh); });
   EXPECT_TRUE(tree_dump.find("nwtestfooter") != std::string::npos);
 }
 
@@ -1191,11 +1197,11 @@ IN_PROC_BROWSER_TEST_F(NWJSDesktopCaptureApiTest, CrossDomain) {
   EXPECT_TRUE(listener.WaitUntilSatisfied()) << "'" << listener.message()
                                              << "' message was not receieved";
   std::vector<content::RenderFrameHost*> frames;
-  web_contents->ForEachRenderFrameHost(base::BindRepeating(
-       [](std::vector<content::RenderFrameHost*>* frames, content::RenderFrameHost* rfh) {
-               frames->push_back(rfh);
-           },
-         &frames));
+  std::vector<content::RenderFrameHost*>* f = &frames;
+  web_contents->ForEachRenderFrameHost(
+       [f](content::RenderFrameHost* rfh) {
+               f->push_back(rfh);
+       });
   ASSERT_TRUE(frames.size() == 2);
   content::ExecuteScriptAndGetValue(frames[1], "document.getElementById('testbtn').click()");
   ExtensionTestMessageListener pass_listener("Pass");
