@@ -132,7 +132,7 @@ class ApiParameterExtractor {
   ~ApiParameterExtractor() {}
 
   bool populate_tabs() {
-    if (params_->query_options.get() && params_->query_options->populate.get())
+    if (params_->query_options && params_->query_options->populate)
       return *params_->query_options->populate;
     return false;
   }
@@ -218,7 +218,7 @@ NwCurrentWindowInternalCloseFunction::Run() {
         extensions::nwapi::nw_current_window_internal::Close::Params::Create(args()));
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
-  bool force = params->force.get() ? *params->force : false;
+  bool force = params->force ? *params->force : false;
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
     int id = args()[1].GetInt();
     Browser* browser = getBrowser(this, id);
