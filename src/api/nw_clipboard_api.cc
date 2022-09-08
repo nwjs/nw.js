@@ -140,7 +140,7 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
       std::string encoded_image_str(encoded_image.data(), encoded_image.data() + encoded_image.size());
       base::Base64Encode(encoded_image_str, &encoded_image_base64);
 
-      if (!(data.raw.get() && *(data.raw))) {
+      if (!(data.raw && *(data.raw))) {
         if (data.type == TYPE_PNG) {
           encoded_image_base64.insert(0, kPNGDataUriPrefix);
         } else {
@@ -223,7 +223,7 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
       std::string content = *(data.data);
 
       // strip off data uri header if raw is set
-      if (!(data.raw.get() && *(data.raw))) {
+      if (!(data.raw && *(data.raw))) {
         if (data.type == TYPE_PNG && base::StartsWith(content, kPNGDataUriPrefix, base::CompareCase::INSENSITIVE_ASCII)) {
           content = content.substr(strlen(kPNGDataUriPrefix));
         } else if (data.type == TYPE_JPEG && base::StartsWith(content, kJPEGDataUriPrefix, base::CompareCase::INSENSITIVE_ASCII)) {
