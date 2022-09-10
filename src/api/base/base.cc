@@ -41,7 +41,7 @@ Base::~Base() {
 }
 
 
-void Base::Call(const std::string& method, const base::ListValue& arguments,
+void Base::Call(const std::string& method, const base::Value::List& arguments,
                 content::RenderFrameHost* rvh) {
   NOTREACHED() << "Uncatched call in Base"
                << " method:" << method

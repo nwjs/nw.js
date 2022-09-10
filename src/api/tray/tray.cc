@@ -66,25 +66,25 @@ Tray::~Tray() {
 }
 
 void Tray::Call(const std::string& method,
-                const base::ListValue& arguments,
+                const base::Value::List& arguments,
                 content::RenderFrameHost* rvh) {
   if (method == "SetTitle") {
-    std::string title = arguments.GetListDeprecated()[0].GetString();
+    std::string title = arguments[0].GetString();
     SetTitle(title);
   } else if (method == "SetIcon") {
-    std::string icon = arguments.GetListDeprecated()[0].GetString();
+    std::string icon = arguments[0].GetString();
     SetIcon(icon);
   } else if (method == "SetAltIcon") {
-    std::string alticon = arguments.GetListDeprecated()[0].GetString();
+    std::string alticon = arguments[0].GetString();
     SetAltIcon(alticon);
   } else if (method == "SetIconsAreTemplates") {
-    bool areTemplates = arguments.GetListDeprecated()[0].GetBool();
+    bool areTemplates = arguments[0].GetBool();
     SetIconsAreTemplates(areTemplates);
   } else if (method == "SetTooltip") {
-    std::string tooltip = arguments.GetListDeprecated()[0].GetString();
+    std::string tooltip = arguments[0].GetString();
     SetTooltip(tooltip);
   } else if (method == "SetMenu") {
-    int object_id = arguments.GetListDeprecated()[0].GetInt();
+    int object_id = arguments[0].GetInt();
     SetMenu(object_manager()->GetApiObject<Menu>(object_id));
   } else if (method == "Remove") {
     Remove();

@@ -136,7 +136,7 @@ void ObjectManager::OnCallObjectMethod(
     int object_id,
     const std::string& type,
     const std::string& method,
-    const base::ListValue& arguments) {
+    const base::Value::List& arguments) {
 #if 0
   DLOG(INFO) << "OnCallObjectMethod: object_id:" << object_id
              << " type:" << type
@@ -179,7 +179,7 @@ void ObjectManager::OnCallStaticMethod(
     content::RenderFrameHost* rvh,
     const std::string& type,
     const std::string& method,
-    const base::ListValue& arguments) {
+    const base::Value::List& arguments) {
   DLOG(INFO) << "OnCallStaticMethod: "
              << " type:" << type
              << " method:" << method
@@ -228,13 +228,12 @@ void ObjectManager::SendEvent(Base* object,
   EventRouter* event_router = EventRouter::Get(browser_context_);
   if (!event_router)
     return;
-  std::vector<base::Value> arguments;
-  arguments.push_back(base::Value(object->id()));
+  base::Value::List arguments;
+  arguments.Append(base::Value(object->id()));
   for (size_t i = 0; i < args.GetListDeprecated().size(); i++)
-    arguments.push_back(args.GetListDeprecated()[i].Clone());
+    arguments.Append(args.GetListDeprecated()[i].Clone());
   std::unique_ptr<Event> event(new Event(extensions::events::UNKNOWN, "NWObject" + event_name, std::move(arguments), browser_context_));
   event->user_gesture = EventRouter::USER_GESTURE_ENABLED;
   event_router->DispatchEventToExtension(object->extension_id_, std::move(event));
-  
 }
 }  // namespace nw

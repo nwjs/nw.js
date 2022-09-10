@@ -106,7 +106,7 @@ printing::PrinterList EnumeratePrintersAsync() {
                                                       printing::PrintBackend::CreateInstance(g_browser_process->GetApplicationLocale()));
 
   printing::PrinterList printer_list;
-  print_backend->EnumeratePrinters(&printer_list);
+  print_backend->EnumeratePrinters(printer_list);
 
   return printer_list;
 }
@@ -1002,13 +1002,13 @@ bool NwCurrentWindowInternalSetPrintSettingsInternalFunction::RunNWSync(base::Va
 
 bool NwCurrentWindowInternalGetCurrentFunction::RunNWSync(base::Value::List* response, std::string* ret_error) {
   EXTENSION_FUNCTION_VALIDATE(args().size());
-  base::ListValue remain;
+  base::Value::List remain;
   int id = args()[0].GetInt();
   if (args().size() > 1) {
     remain.Append(args()[1].Clone());
   }
   std::unique_ptr<windows::GetCurrent::Params> params(
-             windows::GetCurrent::Params::Create(remain.GetListDeprecated()));
+             windows::GetCurrent::Params::Create(remain));
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   ApiParameterExtractor<windows::GetCurrent::Params> extractor(params.get());
@@ -1040,7 +1040,7 @@ bool NwCurrentWindowInternalGetWinParamInternalFunction::RunNWSync(base::Value::
   }
   //from app_window_api.cc
   content::RenderFrameHost* created_frame =
-      app_window->web_contents()->GetMainFrame();
+      app_window->web_contents()->GetPrimaryMainFrame();
   int frame_id = created_frame->GetRoutingID();
 
   base::DictionaryValue* result = new base::DictionaryValue;

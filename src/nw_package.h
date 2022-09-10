@@ -21,6 +21,7 @@
 #ifndef CONTENT_NW_SRC_NW_PACKAGE_H
 #define CONTENT_NW_SRC_NW_PACKAGE_H
 
+#include "base/values.h"
 #include "base/files/file_path.h"
 #include "base/memory/ptr_util.h"
 #include "base/files/scoped_temp_dir.h"
@@ -73,10 +74,10 @@ class NW_EXPORT Package {
   bool self_extract() const { return self_extract_; }
 
   // Manifest root.
-  base::DictionaryValue* root() { return root_.get(); }
+  base::Value::Dict* root() { return &root_; }
 
   // Window field of manifest.
-  base::DictionaryValue* window();
+  base::Value::Dict* window();
 
   // Manifest string.
   std::string package_string() { return package_string_; }
@@ -106,7 +107,7 @@ class NW_EXPORT Package {
   bool self_extract_;
 
   // The parsed package.json.
-  std::unique_ptr<base::DictionaryValue> root_;
+  base::Value::Dict root_;
 
   // The origin JSON string package.json.
   std::string package_string_;

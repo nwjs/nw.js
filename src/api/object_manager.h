@@ -84,7 +84,7 @@ class ObjectManager : public KeyedService {
                           int object_id,
                           const std::string& type,
                           const std::string& method,
-                          const base::ListValue& arguments);
+                          const base::Value::List& arguments);
   void OnCallObjectMethodSync(content::RenderFrameHost* rvh,
                               int object_id,
                               const std::string& type,
@@ -94,7 +94,7 @@ class ObjectManager : public KeyedService {
   void OnCallStaticMethod(content::RenderFrameHost* rvh,
                           const std::string& type,
                           const std::string& method,
-                          const base::ListValue& arguments);
+                          const base::Value::List& arguments);
   void OnCallStaticMethodSync(content::RenderFrameHost* rvh,
                               const std::string& type,
                               const std::string& method,

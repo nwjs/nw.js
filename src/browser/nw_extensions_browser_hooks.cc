@@ -100,19 +100,18 @@ void AmendManifestContentScriptList(base::DictionaryValue* manifest,
 void AmendManifestStringList(base::DictionaryValue* manifest,
                    const std::string& path,
                    const std::string& string_value) {
-  base::ListValue* pattern_list = NULL;
+  std::unique_ptr<base::ListValue> pattern_list;
   base::Value* temp_pattern_value = NULL;
-  bool amend = false;
 
   if (manifest->Get(path, &temp_pattern_value))
-      if (temp_pattern_value->GetAsList(&pattern_list))
-        amend = true;
+    if (temp_pattern_value->is_list()) {
+      pattern_list = base::ListValue::From(base::Value::ToUniquePtrValue(temp_pattern_value->Clone()));
+    }
   if (!pattern_list)
-    pattern_list = new base::ListValue();
+    pattern_list.reset(new base::ListValue());
 
   pattern_list->Append(string_value);
-  if (!amend)
-    manifest->Set(path, base::WrapUnique(pattern_list));
+  manifest->Set(path, std::move(pattern_list));
 }
 
 void AmendManifestList(base::DictionaryValue* manifest,
@@ -156,15 +155,21 @@ std::unique_ptr<base::DictionaryValue> MergeManifest(const std::string& in_manif
   nw::Package* pkg = nw::package();
   if (pkg) {
     std::string js_doc_start, js_doc_end;
-    pkg->root()->GetString(::switches::kmInjectJSDocStart, &js_doc_start);
+    std::string* str = pkg->root()->FindString(::switches::kmInjectJSDocStart);
+    if (str)
+      js_doc_start = *str;
     if (!js_doc_start.empty())
       manifest->SetString(::switches::kmInjectJSDocStart, js_doc_start);
-    pkg->root()->GetString(::switches::kmInjectJSDocEnd, &js_doc_end);
+    str = pkg->root()->FindString(::switches::kmInjectJSDocEnd);
+    if (str)
+      js_doc_end = *str;
     if (!js_doc_end.empty())
       manifest->SetString(::switches::kmInjectJSDocEnd, js_doc_end);
-    base::DictionaryValue* manifest_window = pkg->window();
+    base::Value::Dict* manifest_window = pkg->window();
     if (manifest_window) {
-      std::unique_ptr<base::DictionaryValue> manifest_window_cloned = manifest_window->DeepCopyWithoutEmptyChildren();
+      std::unique_ptr<base::DictionaryValue> manifest_window_cloned(new base::DictionaryValue());
+      for (auto pair : *manifest_window)
+	manifest_window_cloned->SetKey(pair.first, pair.second.Clone());
       // filter out non inherited attributes
       std::vector<const char*>::iterator it;
       for(it = non_inherited_attrs.begin(); it != non_inherited_attrs.end(); it++) {
@@ -251,7 +256,11 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
     return;
   }
 
-  manifest->Set(manifest_keys::kNWJSInternalManifest, base::WrapUnique(package->root()->DeepCopy()));
+  base::DictionaryValue* cloned_root = new base::DictionaryValue();
+  for (auto pair: *(package->root())) {
+    cloned_root->SetKey(pair.first, pair.second.Clone());
+  }
+  manifest->Set(manifest_keys::kNWJSInternalManifest, base::WrapUnique(cloned_root));
 
   if (manifest->GetString(manifest_keys::kNWJSMain, &main_url)) {
     if (base::EndsWith(main_url, ".js", base::CompareCase::INSENSITIVE_ASCII)) {
@@ -298,13 +307,14 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
   if (manifest->Get(switches::kmRemotePages, &node_remote)) {
     //FIXME: node-remote spec different with kWebURLs
     std::string node_remote_string;
-    base::ListValue* node_remote_list = NULL;
+    const base::ListValue* node_remote_list = NULL;
     if (node_remote->is_string()) {
-      node_remote_list = new base::ListValue();
-      node_remote_list->Append(node_remote->GetString());
-    } else if (node_remote->GetAsList(&node_remote_list)) {
-      // do nothing
-    }
+      base::ListValue* _node_remote_list = new base::ListValue();
+      _node_remote_list->Append(node_remote->GetString());
+      node_remote_list = _node_remote_list;
+    } else
+      node_remote_list = &base::Value::AsListValue(*node_remote);
+
     if (node_remote_list)
       AmendManifestList(manifest, manifest_keys::kWebURLs, *node_remote_list);
   }
@@ -324,57 +334,68 @@ void CalcNewWinParams(content::WebContents* new_contents, void* params,
                       const std::string& in_manifest) {
   extensions::AppWindow::CreateParams ret;
   std::unique_ptr<base::Value> val;
-  std::unique_ptr<base::DictionaryValue> manifest = MergeManifest(in_manifest);
-
-  absl::optional<bool> resizable = manifest->FindBoolKey(switches::kmResizable);
+  std::unique_ptr<base::DictionaryValue> manifest_d = MergeManifest(in_manifest);
+  base::Value::Dict manifest;
+  for (auto kv : manifest_d->DictItems()) {
+    manifest.Set(kv.first, kv.second.Clone());
+  }
+  absl::optional<bool> resizable = manifest.FindBool(switches::kmResizable);
   if (resizable) {
     ret.resizable = *resizable;
   }
-  absl::optional<bool> fullscreen = manifest->FindBoolKey(switches::kmFullscreen);
+  absl::optional<bool> fullscreen = manifest.FindBool(switches::kmFullscreen);
   if (fullscreen && *fullscreen) {
     ret.state = ui::SHOW_STATE_FULLSCREEN;
   }
-  int width = 0, height = 0;
-  if (manifest->GetInteger(switches::kmWidth, &width))
-    ret.content_spec.bounds.set_width(width);
-  if (manifest->GetInteger(switches::kmHeight, &height))
-    ret.content_spec.bounds.set_height(height);
+  absl::optional<int> width = manifest.FindInt(switches::kmWidth);
+  absl::optional<int> height = manifest.FindInt(switches::kmHeight);
+  if (width)
+    ret.content_spec.bounds.set_width(*width);
+  if (height)
+    ret.content_spec.bounds.set_height(*height);
 
-  int x = 0, y = 0;
-  if (manifest->GetInteger(switches::kmX, &x))
-    ret.window_spec.bounds.set_x(x);
-  if (manifest->GetInteger(switches::kmY, &y))
-    ret.window_spec.bounds.set_y(y);
-  absl::optional<bool> top = manifest->FindBoolKey(switches::kmAlwaysOnTop);
+  absl::optional<int> x = manifest.FindInt(switches::kmX);
+  absl::optional<int> y = manifest.FindInt(switches::kmY);
+  if (x)
+    ret.window_spec.bounds.set_x(*x);
+  if (y)
+    ret.window_spec.bounds.set_y(*y);
+  absl::optional<bool> top = manifest.FindBool(switches::kmAlwaysOnTop);
   if (top && *top) {
     ret.always_on_top = true;
   }
-  absl::optional<bool> frame = manifest->FindBoolKey(switches::kmFrame);
+  absl::optional<bool> frame = manifest.FindBool(switches::kmFrame);
   if (frame && !(*frame)) {
     ret.frame = extensions::AppWindow::FRAME_NONE;
   }
   absl::optional<bool> all_workspaces =
-    manifest->FindBoolKey(switches::kmVisibleOnAllWorkspaces);
+    manifest.FindBool(switches::kmVisibleOnAllWorkspaces);
   if (all_workspaces && *all_workspaces) {
     ret.visible_on_all_workspaces = true;
   }
   gfx::Size& minimum_size = ret.content_spec.minimum_size;
-  int min_height = 0, min_width = 0;
-  if (manifest->GetInteger(switches::kmMinWidth, &min_width))
-    minimum_size.set_width(min_width);
-  if (manifest->GetInteger(switches::kmMinHeight, &min_height))
-    minimum_size.set_height(min_height);
-  int max_height = 0, max_width = 0;
+  absl::optional<int> min_height = manifest.FindInt(switches::kmMinHeight);
+  absl::optional<int> min_width = manifest.FindInt(switches::kmMinWidth);
+  if (min_width)
+    minimum_size.set_width(*min_width);
+  if (min_height)
+    minimum_size.set_height(*min_height);
+  absl::optional<int> max_height = manifest.FindInt(switches::kmMaxHeight);
+  absl::optional<int> max_width = manifest.FindInt(switches::kmMaxWidth);
   gfx::Size& maximum_size = ret.content_spec.maximum_size;
-  if (manifest->GetInteger(switches::kmMaxWidth, &max_width))
-    maximum_size.set_width(max_width);
-  if (manifest->GetInteger(switches::kmMaxHeight, &max_height))
-    maximum_size.set_height(max_height);
+  if (max_width)
+    maximum_size.set_width(*max_width);
+  if (max_height)
+    maximum_size.set_height(*max_height);
 
   *(extensions::AppWindow::CreateParams*)params = ret;
 
-  manifest->GetString(switches::kmInjectJSDocStart, nw_inject_js_doc_start);
-  manifest->GetString(switches::kmInjectJSDocEnd, nw_inject_js_doc_end);
+  std::string* str = manifest.FindString(switches::kmInjectJSDocStart);
+  if (str)
+    *nw_inject_js_doc_start = *str;
+  str = manifest.FindString(switches::kmInjectJSDocEnd);
+  if (str)
+    *nw_inject_js_doc_end = *str;
 }
 
 bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window) {

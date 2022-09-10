@@ -19,7 +19,7 @@ NwShellOpenItemFunction::~NwShellOpenItemFunction() {
 
 bool NwShellOpenItemFunction::RunNWSync(base::Value::List* response, std::string* error) {
   nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
-  manager->OnCallStaticMethod(render_frame_host(), "Shell", "OpenItem", base::ListValue(args()));
+  manager->OnCallStaticMethod(render_frame_host(), "Shell", "OpenItem", args());
   return true;
 }
 
@@ -31,7 +31,7 @@ NwShellOpenExternalFunction::~NwShellOpenExternalFunction() {
 
 bool NwShellOpenExternalFunction::RunNWSync(base::Value::List* response, std::string* error) {
   nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
-  manager->OnCallStaticMethod(render_frame_host(), "Shell", "OpenExternal", base::ListValue(args()));
+  manager->OnCallStaticMethod(render_frame_host(), "Shell", "OpenExternal", args());
   return true;
 }
 
@@ -43,7 +43,7 @@ NwShellShowItemInFolderFunction::~NwShellShowItemInFolderFunction() {
 
 bool NwShellShowItemInFolderFunction::RunNWSync(base::Value::List* response, std::string* error) {
   nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
-  manager->OnCallStaticMethod(render_frame_host(), "Shell", "ShowItemInFolder", base::ListValue(args()));
+  manager->OnCallStaticMethod(render_frame_host(), "Shell", "ShowItemInFolder", args());
   return true;
 }
 

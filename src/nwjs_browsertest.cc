@@ -937,7 +937,7 @@ IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, SilentPrintChangeFooter) {
   WaitForAccessibilityTreeToContainNodeWithName(web_view_contents, "hello world\r\n");
   std::string tree_dump;
   // Make sure all the frames in the dialog has access to the PDF plugin.
-  guest_web_contents_list[1]->ForEachFrame(base::BindRepeating(&DumpAxTree, base::Unretained(&tree_dump)));
+  guest_web_contents_list[1]->GetPrimaryMainFrame()->ForEachRenderFrameHost(base::BindRepeating(&DumpAxTree, base::Unretained(&tree_dump)));
   LOG(INFO) << "ax tree: " << tree_dump;
   EXPECT_TRUE(tree_dump.find("nwtestfooter") != std::string::npos);
 }
@@ -963,14 +963,14 @@ IN_PROC_BROWSER_TEST_F(NWJSAppTest, PrintChangeFooter) {
     run_loop.Run();
 
     frame_count = 0;
-    preview_dialog->ForEachFrame(
+    preview_dialog->GetPrimaryMainFrame()->ForEachRenderFrameHost(
         base::BindRepeating(&CountFrames, base::Unretained(&frame_count)));
   } while (frame_count < kExpectedFrameCount);
   ASSERT_EQ(kExpectedFrameCount, frame_count);
   WaitForAccessibilityTreeToContainNodeWithName(preview_dialog, "hello world\r\n");
   std::string tree_dump;
   // Make sure all the frames in the dialog has access to the PDF plugin.
-  preview_dialog->ForEachFrame(base::BindRepeating(&DumpAxTree, base::Unretained(&tree_dump)));
+  preview_dialog->GetPrimaryMainFrame()->ForEachRenderFrameHost(base::BindRepeating(&DumpAxTree, base::Unretained(&tree_dump)));
   EXPECT_TRUE(tree_dump.find("nwtestfooter") != std::string::npos);
 }
 

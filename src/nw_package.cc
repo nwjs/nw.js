@@ -148,17 +148,19 @@ FilePath GetSelfPath() {
   return path;
 }
 
-void RelativePathToURI(FilePath root, base::DictionaryValue* manifest) {
+void RelativePathToURI(FilePath root, base::Value::Dict* manifest) {
   std::string old;
-  if (!manifest->GetString(switches::kmMain, &old))
+  std::string* str = manifest->FindString(switches::kmMain);
+  if (!str)
     return;
+  old = *str;
 
   // Don't append path if there is already a prefix
   if (base::MatchPattern(old, "*://*"))
     return;
 
   FilePath main_path = root.Append(FilePath::FromUTF8Unsafe(old));
-  manifest->SetString(switches::kmMain,
+  manifest->Set(switches::kmMain,
                       std::string("file://") + main_path.AsUTF8Unsafe());
 }
 
@@ -259,7 +261,9 @@ GURL Package::GetStartupURL() {
     return GURL(error_page_url_);
 
   // Read from manifest.
-  if (root()->GetString(switches::kmMain, &url)) {
+  std::string* str = root()->FindString(switches::kmMain);
+  if (str) {
+    url = *str;
     VLOG(1) << "Package startup URL: " << GURL(url);
     return GURL(url);
   }else
@@ -268,23 +272,24 @@ GURL Package::GetStartupURL() {
 
 std::string Package::GetName() {
   std::string name("nwjs");
-  root()->GetString(switches::kmName, &name);
+  std::string* str = root()->FindString(switches::kmName);
+  if (str)
+    name = *str;
   return name;
 }
 
 bool Package::GetUseNode() {
-  bool use_node = root()->FindBoolKey(switches::kNodejs).value_or(true);
+  bool use_node = root()->FindBool(switches::kNodejs).value_or(true);
   return use_node;
 }
 
 bool Package::GetUseExtension() {
-  bool use_ext = root()->FindBoolKey(switches::kChromeExtension).value_or(true);
+  bool use_ext = root()->FindBool(switches::kChromeExtension).value_or(true);
   return use_ext;
 }
 
-base::DictionaryValue* Package::window() {
-  base::DictionaryValue* window;
-  root()->GetDictionaryWithoutPathExpansion(switches::kmWindow, &window);
+base::Value::Dict* Package::window() {
+  base::Value::Dict* window = root()->FindDict(switches::kmWindow);
   return window;
 }
 
@@ -328,21 +333,21 @@ bool Package::InitFromPath(const base::FilePath& path_in) {
   }
 
   // Save result in global
-  root_.reset(static_cast<base::DictionaryValue*>(root.release()));
+  root_ = root->GetIfDict()->Clone();
 
   // Save origin package info
   // Since we will change some value in root_,
   // We need to catch the origin value of package.json
   package_string_ = "";
   JSONStringValueSerializer stringSerializer(&package_string_);
-  stringSerializer.Serialize(*root_);
+  stringSerializer.Serialize(root_);
 
   // Check fields
   const char* required_fields[] = {
     switches::kmName
   };
   for (unsigned i = 0; i < std::size(required_fields); i++)
-    if (!root_->FindKey(required_fields[i])) {
+    if (!root_.Find(required_fields[i])) {
       ReportError("Invalid package.json",
                   std::string("Field '") + required_fields[i] + "'"
                       " is required.");
@@ -350,15 +355,15 @@ bool Package::InitFromPath(const base::FilePath& path_in) {
     }
 
   // Force window field no empty.
-  if (!root_->FindKey(switches::kmWindow)) {
-    auto window =  std::make_unique<base::DictionaryValue>();
-    window->SetString(switches::kmPosition, "center");
-    root_->Set(switches::kmWindow, std::move(window));
+  if (!root_.Find(switches::kmWindow)) {
+    base::Value::Dict window;
+    window.Set(switches::kmPosition, "center");
+    root_.Set(switches::kmWindow, std::move(window));
   }
 
 #if 0
   std::string bufsz_str;
-  if (root_->GetString(switches::kAudioBufferSize, &bufsz_str)) {
+  if (root_.GetString(switches::kAudioBufferSize, &bufsz_str)) {
     int buffer_size = 0;
     if (base::StringToInt(bufsz_str, &buffer_size) && buffer_size > 0) {
       base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
@@ -378,17 +383,16 @@ bool Package::InitFromPath(const base::FilePath& path_in) {
 }
 
 void Package::InitWithDefault() {
-  root_.reset(new base::DictionaryValue());
-  root()->SetString(switches::kmName, "nwjs");
-  root()->SetString(switches::kmMain, "nw:blank");
-  auto window = std::make_unique<base::DictionaryValue>();
+  root()->Set(switches::kmName, "nwjs");
+  root()->Set(switches::kmMain, "nw:blank");
+  base::Value::Dict window;
 
   // Hide toolbar if specifed in the command line.
   if (base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kNoToolbar))
-    window->SetBoolean(switches::kmToolbar, false);
+    window.Set(switches::kmToolbar, false);
 
   // Window should show in center by default.
-  window->SetString(switches::kmPosition, "center");
+  window.Set(switches::kmPosition, "center");
   root()->Set(switches::kmWindow, std::move(window));
 
   ReadChromiumArgs();
@@ -455,11 +459,11 @@ void Package::ReadChromiumArgs() {
   std::unique_ptr<base::Environment> env(base::Environment::Create());
 
   bool got_env = env->GetVar("NW_PRE_ARGS", &env_args);
-  if (!root()->FindKey(switches::kmChromiumArgs))
+  if (!root()->Find(switches::kmChromiumArgs))
     if (!got_env)
       return;
 
-  std::string* pargs = root()->FindStringKey(switches::kmChromiumArgs);
+  std::string* pargs = root()->FindString(switches::kmChromiumArgs);
   if (!pargs) {
     if (!got_env)
       return;
@@ -511,10 +515,10 @@ void Package::ReadChromiumArgs() {
 }
 
 void Package::ReadJsFlags() {
-  if (!root()->FindKey(switches::kmJsFlags))
+  if (!root()->Find(switches::kmJsFlags))
     return;
 
-  std::string* flags = root()->FindStringKey(switches::kmJsFlags);
+  std::string* flags = root()->FindString(switches::kmJsFlags);
   if (!flags)
     return;
 

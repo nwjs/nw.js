@@ -104,39 +104,39 @@ MenuItem::~MenuItem() {
 }
 
 void MenuItem::Call(const std::string& method,
-                    const base::ListValue& arguments,
+                    const base::Value::List& arguments,
                     content::RenderFrameHost* rvh) {
   if (method == "SetLabel") {
     std::string label;
-    label = arguments.GetListDeprecated()[0].GetString();
+    label = arguments[0].GetString();
     SetLabel(label);
   } else if (method == "SetIcon") {
     std::string icon;
-    icon = arguments.GetListDeprecated()[0].GetString();
+    icon = arguments[0].GetString();
     SetIcon(icon);
   } else if (method == "SetIconIsTemplate") {
-    bool isTemplate = arguments.GetListDeprecated()[0].GetBool();
+    bool isTemplate = arguments[0].GetBool();
     SetIconIsTemplate(isTemplate);
   } else if (method == "SetTooltip") {
-    std::string tooltip = arguments.GetListDeprecated()[0].GetString();
+    std::string tooltip = arguments[0].GetString();
     SetTooltip(tooltip);
   } else if (method == "SetEnabled") {
     bool enabled = true;
-    enabled = arguments.GetListDeprecated()[0].GetBool();
+    enabled = arguments[0].GetBool();
     SetEnabled(enabled);
   } else if (method == "SetChecked") {
     bool checked = false;
-    checked = arguments.GetListDeprecated()[0].GetBool();
+    checked = arguments[0].GetBool();
     SetChecked(checked);
   } else if (method == "SetSubmenu") {
-    int object_id = arguments.GetListDeprecated()[0].GetInt();
+    int object_id = arguments[0].GetInt();
     SetSubmenu(object_manager()->GetApiObject<Menu>(object_id));
 #if defined(OS_MAC)
   } else if (method == "SetKey") {
-    std::string key = arguments.GetList()[0].GetString();
+    std::string key = arguments[0].GetString();
     SetKey(key);
   } else if (method == "SetModifiers") {
-    std::string mod = arguments.GetList()[0].GetString();
+    std::string mod = arguments[0].GetString();
     SetModifiers(mod);
 #endif
   } else {
