@@ -271,7 +271,6 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
     else
       AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, "nwjs/default.js");
 
-    std::string bg_script;
     if (manifest->GetString("bg-script", &bg_script))
       AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, bg_script);
 

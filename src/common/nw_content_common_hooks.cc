@@ -33,12 +33,12 @@ bool GetUserAgentFromManifest(std::string* agent) {
   if (str) {
     g_user_agent = *str;
     std::string name, version;
-    std::string* str = package->root()->FindString(switches::kmName);
-    if (str)
-      name = *str;
-    str = package->root()->FindString("version");
-    if (str)
-      version = *str;
+    std::string* str2 = package->root()->FindString(switches::kmName);
+    if (str2)
+      name = *str2;
+    str2 = package->root()->FindString("version");
+    if (str2)
+      version = *str2;
     SetUserAgentOverride(g_user_agent, name, version);
     *agent = g_user_agent;
     return true;

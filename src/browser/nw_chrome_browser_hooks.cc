@@ -193,7 +193,7 @@ bool GetDirUserData(base::FilePath *user_data_dir) {
   return base::PathService::Get(chrome::DIR_USER_DATA, user_data_dir);
 }
 
-void SetTrustAnchors(net::CertificateList& trust_anchors) {
+void SetTrustAnchors(net::CertificateList& trust_anchors2) {
   // LOG(INFO)
   //   << "Added " << trust_anchors.size() << " certificates to trust anchors.";
 #if 0
@@ -201,7 +201,7 @@ void SetTrustAnchors(net::CertificateList& trust_anchors) {
   content::StoragePartition* storage_partition =
     content::BrowserContext::GetDefaultStoragePartition(profile);
 #endif
-  content::GetNetworkService()->SetAdditionalTrustAnchors(trust_anchors);
+  content::GetNetworkService()->SetAdditionalTrustAnchors(trust_anchors2);
 }
 
 void SetAppIcon(gfx::Image &icon) {
