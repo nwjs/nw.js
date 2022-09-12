@@ -284,7 +284,7 @@ vars = {
   # Enable fetching Rust-related packages.
   'use_rust': False,
 
-  'nw_src_revision': '2f75ce5ff2f5e2fb514103a9ef9ff9fe4c3075cb',
+  'nw_src_revision': 'a62725b51b8485fadb4952bc9ef96c781b0e5ec8',
   'nw_v8_revision': '5bb648b26e5954af5d4cfd1eec9380035d3a7d21',
   'nw_node_revision': '7a37a6302e910b51fed8c79d4b9ad39e75f7267c',
   'android_git': 'https://android.googlesource.com',
