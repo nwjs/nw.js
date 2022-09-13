@@ -221,7 +221,7 @@ bool NwAppSetProxyConfigFunction::RunNWSync(base::Value::List* response, std::st
           nwapi::nw__app::SetProxyConfig::Params::Create(args()));
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
-  std::string pac_url = params->pac_url.get() ? *params->pac_url : "";
+  std::string pac_url = params->pac_url ? *params->pac_url : "";
   if (!pac_url.empty()) {
     if (pac_url == "<direct>")
       config = net::ProxyConfigWithAnnotation::CreateDirect();

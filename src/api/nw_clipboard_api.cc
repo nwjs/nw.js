@@ -96,7 +96,7 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
       DCHECK(data.type == TYPE_TEXT);
       std::u16string text;
       clipboard_->ReadText(ui::ClipboardBuffer::kCopyPaste, nullptr, &text);
-      data.data.reset(new std::string(base::UTF16ToUTF8(text)));
+      data.data.emplace(std::string(base::UTF16ToUTF8(text)));
       return true;
     }
 
@@ -107,7 +107,7 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
       uint32_t fragment_start, fragment_end;
       clipboard_->ReadHTML(ui::ClipboardBuffer::kCopyPaste, nullptr,
                            &text, &src_url, &fragment_start, &fragment_end);
-      data.data.reset(new std::string(base::UTF16ToUTF8(text)));
+      data.data.emplace(std::string(base::UTF16ToUTF8(text)));
       return true;
     }
 
@@ -115,7 +115,7 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
       DCHECK(data.type == TYPE_RTF);
       std::string text;
       clipboard_->ReadRTF(ui::ClipboardBuffer::kCopyPaste, nullptr, &text);
-      data.data.reset(new std::string(text));
+      data.data.emplace(std::string(text));
       return true;
     }
 
@@ -149,7 +149,7 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
         }
       }
 
-      data.data.reset(new std::string(encoded_image_base64));
+      data.data.emplace(std::string(encoded_image_base64));
       LOG(INFO) << "NwClipboardGetSyncFunction::RunSync(" << nwapi::nw__clipboard::ToString(data.type) << ")";
       return true;
     }
