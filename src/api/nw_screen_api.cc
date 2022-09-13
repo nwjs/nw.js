@@ -52,6 +52,7 @@ namespace extensions {
     void OnSourceNameChanged(int index) override;
     void OnSourceThumbnailChanged(int index) override;
     void OnSourcePreviewChanged(size_t index) override;
+    void OnDelegatedSourceListSelection() override;
 
     bool started_;
     std::vector<std::unique_ptr<DesktopMediaList>> media_list_;
@@ -192,6 +193,9 @@ namespace extensions {
   bool NwScreenInitEventListenersFunction::RunNWSync(base::Value::List* response, std::string* error) {
     NwScreenDisplayObserver::GetInstance();
     return true;
+  }
+
+  void NwDesktopCaptureMonitor::OnDelegatedSourceListSelection() {
   }
 
   NwDesktopCaptureMonitor* NwDesktopCaptureMonitor::GetInstance() {
