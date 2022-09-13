@@ -1024,10 +1024,10 @@ bool NwCurrentWindowInternalGetCurrentFunction::RunNWSync(base::Value::List* res
   ExtensionTabUtil::PopulateTabBehavior populate_tab_behavior =
       extractor.populate_tabs() ? ExtensionTabUtil::kPopulateTabs
                                 : ExtensionTabUtil::kDontPopulateTabs;
-  std::unique_ptr<base::DictionaryValue> windows =
+  base::Value::Dict windows =
       ExtensionTabUtil::CreateWindowValueForExtension(*browser, extension(),
                                                       populate_tab_behavior, Feature::UNSPECIFIED_CONTEXT);
-  response->Append(base::Value::FromUniquePtrValue(std::move(windows)));
+  response->Append(base::Value(std::move(windows)));
   return true;
 }
 
