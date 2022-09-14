@@ -1,3 +1,8 @@
+0.68.1 / 09-14-2022
+===================
+- Update Node.js to [v18.9.0](https://nodejs.org/en/blog/release/v18.9.0/)
+- Fix: crash on startup in non-sdk build [(#7963)](https://github.com/nwjs/nw.js/issues/7963)
+
 0.68.0 / 09-06-2022
 ===================
 - Update Chromium to [105.0.5195.102](https://chromereleases.googleblog.com/2022/09/stable-channel-update-for-desktop.html)
