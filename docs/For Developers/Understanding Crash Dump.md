@@ -42,19 +42,33 @@ The tool will try to search the `.sym` (For Mac, change `.breakpad` to `.sym`)fi
     - `{DEBUG_FILE_NAME_WITHOUT_PDB}` can be converted from `{DEBUG_FILE_NAME}` by removing `.pdb` extension which is only necessary for Windows.
 
 
-For example, on Mac, with `0.57.1`:
+For example, on Mac, with [0.57.1-sdk](https://dl.nwjs.io/v0.57.1/nwjs-sdk-symbol-v0.57.1-osx-x64.zip):
 
 ```bash
 -symbols_root/
- -nwjs/
-    -4E7C70708AFD3C889F02B149AB5007080/
-        -nwjs.sym
- -nwjs Framework/
-    -87A9EA49BC473F4C8B7817631E820BEB0/
-        -nwjs Framework.sym
- -nwjs Helper/
-    -5598EA295F4F36FDA21CB9A5B11B11AA0/
-        -nwjs Helper.sym
+ ┣ 📂nwjs
+ ┃ ┗ 📂4E7C70708AFD3C889F02B149AB5007080
+ ┃ ┃ ┗ 📜nwjs.sym
+ ┣ 📂nwjs Framework
+ ┃ ┗ 📂87A9EA49BC473F4C8B7817631E820BEB0
+ ┃ ┃ ┗ 📜nwjs Framework.sym
+ ┗ 📂nwjs Helper
+ ┃ ┗ 📂5598EA295F4F36FDA21CB9A5B11B11AA0
+ ┃ ┃ ┗ 📜nwjs Helper.sym
+```
+on Windows, with [0.57.1-sdk](https://dl.nwjs.io/v0.57.1/nwjs-sdk-symbol-v0.57.1-win-x64.7z):
+
+```bash
+-symbols_root/
+ ┣ 📂node.dll.pdb
+ ┃ ┗ 📂77EEE8FF112F83B34C4C44205044422E1
+ ┃ ┃ ┗ 📜node.dll.sym
+ ┣ 📂nw.dll.pdb
+ ┃ ┗ 📂32D53C4A340B70364C4C44205044422E1
+ ┃ ┃ ┗ 📜nw.dll.sym
+ ┣ 📂nw.exe.pdb
+ ┃ ┗ 📂FDCCA38DC84E3B964C4C44205044422E1
+ ┃ ┃ ┗ 📜nw.exe.sym
 ```
 
 ## Decode Minidump with `minidump_stackwalk`
@@ -71,6 +85,8 @@ If the symbol files were not organized correctly, you still can get call stack f
 ```none
 0x00240000 - 0x02b29fff nw.exe ??? (main) (WARNING: No symbols, nw.exe.pdb, 669008F7B6EE44058CBD5F21BEB5B5CFe)
 ```
+
+You can also try a Node.js implemented tool from the community: [@licq/nwjs-minidump](https://www.npmjs.com/package/@licq/nwjs-minidump).
 
 ## Trigger Crash for Testing
 
