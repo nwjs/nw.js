@@ -11,6 +11,8 @@ NW.js is based on [Chromium](http://www.chromium.org) and [Node.js](http://nodej
 
 You can get the latest binaries from official website http://nwjs.io. Or you can also build NW.js binaries yourself by following the instructions in [Building NW.js](../For Developers/Building NW.js.md).
 
+If you need multiple versions of NW.js on your computer, you can try this tool [@licq/tnwjs](https://www.npmjs.com/package/@licq/tnwjs).
+
 !!! tip
     You are recommended to choose SDK build flavor to develop your app, which enables you to use DevTools to debug your app. See [Build Flavors](Advanced/Build Flavors.md) for the differences between build flavors.
 
