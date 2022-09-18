@@ -49,6 +49,7 @@ namespace extensions {
     void OnSourceThumbnailChanged(int index) override;
     void OnSourcePreviewChanged(size_t index) override;
     void OnDelegatedSourceListSelection() override;
+    void OnDelegatedSourceListDismissed() override;
 
     bool started_;
     std::vector<std::unique_ptr<DesktopMediaList>> media_list_;
@@ -193,6 +194,8 @@ namespace extensions {
 
   void NwDesktopCaptureMonitor::OnDelegatedSourceListSelection() {
   }
+
+  void NwDesktopCaptureMonitor::OnDelegatedSourceListDismissed() {}
 
   NwDesktopCaptureMonitor* NwDesktopCaptureMonitor::GetInstance() {
     return g_desktop_capture_monitor.Pointer();
