@@ -138,7 +138,7 @@ class ApiParameterExtractor {
   }
 
   WindowController::TypeFilter type_filters() {
-    if (params_->query_options.get() &&
+    if (params_->query_options &&
         params_->query_options->window_types)
       return WindowController::GetFilterFromWindowTypes(
           *params_->query_options->window_types);
