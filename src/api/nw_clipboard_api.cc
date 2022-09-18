@@ -280,7 +280,7 @@ bool NwClipboardGetListSyncFunction::RunNWSync(base::Value::List* response, std:
       *error = reader->error();
       return false;
     }
-    response->Append(base::Value::FromUniquePtrValue(data.ToValue()));
+    response->Append(base::Value(data.ToValue()));
   }
 
   return true;
