@@ -1,19 +1,20 @@
-diff --git a/selenium/webdriver/chrome/options.py b/selenium/webdriver/chrome/options.py
-index 102ecb8..36e6025 100644
---- selenium/webdriver/chrome/options.py
-+++ selenium/webdriver/chrome/options.py
-@@ -25,6 +25,7 @@ class Options(object):
-     def __init__(self):
+diff --git a/selenium/webdriver/chromium/options.py b/selenium/webdriver/chromium/options.py
+index 3d8f572..83220d8 100644
+--- selenium/webdriver/chromium/options.py
++++ selenium/webdriver/chromium/options.py
+@@ -31,6 +31,7 @@ class ChromiumOptions(ArgOptions):
+         super(ChromiumOptions, self).__init__()
          self._binary_location = ''
-         self._arguments = []
-+        self._nw_arguments = []
          self._extension_files = []
++        self._nw_arguments = []
+         self._extensions = []
          self._experimental_options = {}
+         self._debugger_address = None
+@@ -69,6 +70,25 @@ class ChromiumOptions(ArgOptions):
+         """
+         self._debugger_address = value
  
-@@ -65,6 +66,25 @@ class Options(object):
-             raise ValueError("argument can not be null")
- 
-     @property
++    @property
 +    def nw_arguments(self):
 +        """
 +        Returns a list of arguments needed for the browser
@@ -32,15 +33,14 @@ index 102ecb8..36e6025 100644
 +        else:
 +            raise ValueError("argument can not be null")
 +
-+    @property
-     def extensions(self):
+     @property
+     def extensions(self) -> List[str]:
          """
-         Returns a list of encoded extensions that will be loaded into chrome
-@@ -126,6 +146,7 @@ class Options(object):
-         chrome_options["extensions"] = self.extensions
-         chrome_options["binary"] = self.binary_location
-         chrome_options["args"] = self.arguments
+@@ -167,6 +187,7 @@ class ChromiumOptions(ArgOptions):
+         if self.binary_location:
+             chrome_options["binary"] = self.binary_location
+         chrome_options["args"] = self._arguments
 +        chrome_options["nwargs"] = self.nw_arguments
- 
-         chrome["chromeOptions"] = chrome_options
+         if self.debugger_address:
+             chrome_options["debuggerAddress"] = self.debugger_address
  
