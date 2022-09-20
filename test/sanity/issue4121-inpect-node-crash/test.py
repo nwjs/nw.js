@@ -14,11 +14,11 @@ driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_opt
 driver.implicitly_wait(2)
 try:
     switch_to_app(driver)
-    print driver.current_url
+    print(driver.current_url)
     driver.find_element_by_id('require').click()
-    print 'wait for devtools open'
+    print('wait for devtools open')
     wait_window_handles(driver, 2)
-    print 'switch to devtools'
+    print('switch to devtools')
     switch_to_devtools(driver)
     devtools_click_tab(driver, 'console')
     counter = 0

@@ -20,7 +20,7 @@ install_native_modules()
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
 try:
-    print driver.current_url
+    print(driver.current_url)
     driver.find_element_by_tag_name('button').click()
     wait_for_element_id_content(driver, 'result', '456')
     time.sleep(1)

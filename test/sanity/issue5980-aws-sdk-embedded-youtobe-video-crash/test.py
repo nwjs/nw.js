@@ -4,7 +4,7 @@ import platform
 import sys
 
 if platform.system() != 'Linux':
-    print 'Skipped for non Linux platform'
+    print('Skipped for non Linux platform')
     sys.exit(0)
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -25,10 +25,10 @@ driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_opt
 driver.implicitly_wait(2)
 try:
     switch_to_app(driver)
-    print driver.current_url
-    print 'waiting for crash'
+    print(driver.current_url)
+    print('waiting for crash')
     wait_for_element_id(driver, "iframe_a")
-    driver.switch_to_frame("iframe_a")
+    driver.switch_to.frame("iframe_a")
     timeout = 10
     while timeout > 0:
         try:
@@ -36,7 +36,7 @@ try:
             break
         except selenium.common.exceptions.NoSuchElementException:
             driver.switch_to_default_content()
-            driver.switch_to_frame("iframe_a")
+            driver.switch_to.frame("iframe_a")
         except selenium.common.exceptions.WebDriverException:
             pass
         time.sleep(1)
@@ -44,6 +44,6 @@ try:
         if timeout <= 0:
              raise Exception('Timeout when waiting for element ytp-large-play-button')
     assert(driver.find_element_by_class_name("ytp-large-play-button") is not None)
-    print 'There is no crash'
+    print('There is no crash')
 finally:
     driver.quit()

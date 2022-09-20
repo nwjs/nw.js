@@ -33,16 +33,16 @@ html.close()
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
 try:
-    print driver.current_url
+    print(driver.current_url)
     driver.implicitly_wait(10)
-    driver.switch_to_frame(driver.find_element_by_tag_name("iframe"))
+    driver.switch_to.frame(driver.find_element_by_tag_name("iframe"))
     result = driver.find_element_by_id('result').get_attribute('innerHTML')
-    print result
+    print(result)
     assert(result == 'cross-site-cookie=bar')
     driver.refresh()
-    driver.switch_to_frame(driver.find_element_by_tag_name("iframe"))
+    driver.switch_to.frame(driver.find_element_by_tag_name("iframe"))
     result = driver.find_element_by_id('result').get_attribute('innerHTML')
-    print result
+    print(result)
     assert(result == 'cross-site-cookie=bar')
 
     f = open('svrlog.txt', 'r')

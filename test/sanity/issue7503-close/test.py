@@ -9,14 +9,14 @@ from nw_util import *
 
 def close_window(title):
     for handle in driver.window_handles:
-        driver.switch_to_window(handle)
+        driver.switch_to.window(handle)
         if title in driver.title:
             driver.find_element_by_id("close").click()
             break
 
 def switch_to_window(title):
     for handle in driver.window_handles:
-        driver.switch_to_window(handle)
+        driver.switch_to.window(handle)
         if title == driver.title:
             break
 

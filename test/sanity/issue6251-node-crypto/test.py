@@ -18,11 +18,11 @@ chrome_options.add_argument("nwapp=" + testdir)
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
 driver.implicitly_wait(2)
 try:
-    print driver.current_url
+    print(driver.current_url)
     timeout = 5
     while timeout > 0 :
         ret = driver.find_element_by_id('result').get_attribute('innerHTML')
-        print 'result: ', ret
+        print('result: ', ret)
         if 'waiting' not in ret:
             break
         time.sleep(1)

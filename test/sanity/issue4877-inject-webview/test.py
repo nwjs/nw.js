@@ -40,15 +40,15 @@ driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_opt
 driver.implicitly_wait(5)
 try:
     wait_window_handles(driver, 2)
-    print driver.current_url
+    print(driver.current_url)
     result = wait_for_element_id(driver, 'inject_start')
-    print 'inject_js_start: %s' % result
+    print('inject_js_start: %s' % result)
     assert('success' in result)
     elems = driver.find_elements_by_tag_name('h1')
     assert(len(elems) == 1)
-    driver.switch_to_window(driver.window_handles[1])
+    driver.switch_to.window(driver.window_handles[1])
     result = wait_for_element_id(driver, 'inject_start')
-    print 'inject_js_start in iframe: %s' % result
+    print('inject_js_start in iframe: %s' % result)
     assert('success' in result)
     elems = driver.find_elements_by_tag_name('h1')
     assert(len(elems) == 1)

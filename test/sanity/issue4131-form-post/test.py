@@ -12,20 +12,20 @@ driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_opt
 driver.implicitly_wait(5)
 try:
     driver.implicitly_wait(10)
-    print driver.current_url
+    print((driver.current_url))
     driver.execute_script('startServer(%s)' % utils.free_port())
     result = driver.find_element_by_id('server-started').get_attribute('innerHTML')
-    print 'server started'
+    print('server started')
     driver.find_element_by_id('submit').click()
     result = driver.find_element_by_id('method').get_attribute('innerHTML')
-    print result
+    print(result)
     assert('POST' in result)
     driver.find_element_by_id('submit').click()
     result = driver.find_element_by_id('method').get_attribute('innerHTML')
-    print result
+    print(result)
     assert('POST' in result)
     result = driver.find_element_by_id('data').get_attribute('innerHTML')
-    print result
+    print(result)
     assert('myvalue2' in result)
 finally:
     driver.quit()

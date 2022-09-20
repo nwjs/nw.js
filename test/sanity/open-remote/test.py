@@ -36,14 +36,14 @@ html.close()
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, desired_capabilities = capabilities)
 try:
     wait_switch_window_name(driver, 'local')
-    print driver.current_url
+    print(driver.current_url)
     result = wait_for_element_id(driver, 'res')
-    print 'result=' + result
+    print('result=' + result)
     assert("object" in result)
     wait_switch_window_name(driver, 'remote')
     for id in ['res', 'res2', 'res3']:
         result = wait_for_element_id(driver, id)
-        print result
+        print(result)
         assert("DISABLED" in result)
 finally:
     server.terminate()

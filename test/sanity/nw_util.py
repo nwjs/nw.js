@@ -64,7 +64,7 @@ def install_native_modules():
     elif _arch == '32bit':
         arch = 'ia32'
     else:
-        print 'Unsupported arch: ' + _arch
+        print('Unsupported arch: ' + _arch)
         exit(-1)
 
     target_arch = arch
@@ -80,10 +80,10 @@ def install_native_modules():
                                    'node_modules', 'nw-gyp', 'bin', 'nw-gyp.js')
         npm_cmdline = [npm_path, 'install', '--msvs_version=2017']
 
-    print "nw_gyp: ", nw_gyp_path
-    print "npm_path: ", npm_path
-    print "header path: ", header_path
-    print "command line: ", npm_cmdline
+    print("nw_gyp: ", nw_gyp_path)
+    print("npm_path: ", npm_path)
+    print("header path: ", header_path)
+    print("command line: ", npm_cmdline)
 
     npm_env = {'npm_config_nodedir': header_path, 'npm_config_target': nw_version,
                'npm_config_arch': arch, 'npm_config_target_arch': target_arch,
@@ -94,8 +94,8 @@ def install_native_modules():
 
     proc = Popen(npm_cmdline, stdout=PIPE, stderr=PIPE, env=os.environ)
     out, err = proc.communicate()
-    print out
-    print err
+    print(out)
+    print(err)
     assert(proc.returncode == 0)
 
 def wait_for_execute_script(driver, script, timeout=10):
@@ -192,7 +192,7 @@ def wait_window_handles(driver, until, timeout=60):
 def wait_switch_window_name(driver, name, timeout=60):
     while timeout > 0:
         try:
-            driver.switch_to_window(name)
+            driver.switch_to.window(name)
             break
         except selenium.common.exceptions.NoSuchWindowException:
             pass
@@ -207,7 +207,7 @@ def switch_to_app(driver, window_handle=None):
         return (url.startswith('chrome-extension://') or url.startswith('file://') or url.startswith('http://') or url.startswith('https://')) and not url.endswith('/_generated_background_page.html')
 
     if window_handle is not None:
-        driver.switch_to_window(window_handle)
+        driver.switch_to.window(window_handle)
 
     if is_app_url(driver.current_url):
         return
@@ -216,7 +216,7 @@ def switch_to_app(driver, window_handle=None):
         raise Exception('Provided window handle is not an app window. %s' % driver.current_url)
 
     for handle in driver.window_handles:
-        driver.switch_to_window(handle)
+        driver.switch_to.window(handle)
         if is_app_url(driver.current_url):
             return
 
@@ -228,14 +228,14 @@ def switch_to_devtools(driver, devtools_window=None, skip_exception=False):
         # where devtools is loaded in an iframe
         inspector_frames = driver.find_elements_by_id('inspector-app-iframe')
         if inspector_frames:
-            driver.switch_to_frame(inspector_frames[0])
+            driver.switch_to.frame(inspector_frames[0])
 
         # wait for devtools is completely loaded
         while driver.execute_script('return document.readyState') != 'complete':
             time.sleep(1)
 
     if devtools_window is not None:
-        driver.switch_to_window(devtools_window)
+        driver.switch_to.window(devtools_window)
 
     if driver.current_url.startswith('devtools://'):
         wait_for_devtools_ready()
@@ -245,7 +245,7 @@ def switch_to_devtools(driver, devtools_window=None, skip_exception=False):
 
     for handle in driver.window_handles:
         try:
-            driver.switch_to_window(handle)
+            driver.switch_to.window(handle)
             if driver.current_url.startswith('devtools://'):
                 wait_for_devtools_ready()
                 return
@@ -277,7 +277,7 @@ def no_live_process(driver, print_if_fail=True):
         out, err = pgrep.communicate()
         ret = ('No Instance(s) Available.' in out)
         if not ret and print_if_fail:
-            print 'live chrome processes:\n%s' % out
+            print('live chrome processes:\n%s' % out)
         # expect "No Instance(s) Available." in output
         return ret
     else:
@@ -285,8 +285,8 @@ def no_live_process(driver, print_if_fail=True):
         out, err = pgrep.communicate()
         ret = (pgrep.returncode == 1)
         if not ret and print_if_fail:
-            print 'live chrome processes:\n%s' % out
-            print 'pgrep exit with %s' % pgrep.returncode
+            print('live chrome processes:\n%s' % out)
+            print('pgrep exit with %s' % pgrep.returncode)
         # expect exit 1 from pgrep, which means no chrome process alive
         return ret
 
@@ -316,12 +316,12 @@ def wait_net_service(server, port, timeout=None):
             
             s.connect((server, port))
         
-        except socket.timeout, err:
+        except socket.timeout as err:
             # this exception occurs only if timeout is set
             if timeout:
                 return False
       
-        except socket.error, err:
+        except socket.error as err:
             # catch timeout exception from underlying network library
             # this one is different from socket.timeout
             if type(err.args) != tuple or err[0] != errno.ETIMEDOUT and err[0] != errno.ECONNREFUSED:

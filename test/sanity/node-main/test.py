@@ -31,7 +31,7 @@ html.close()
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
 try:
-    print driver.current_url
+    print(driver.current_url)
     driver.implicitly_wait(10)
     driver.find_element_by_tag_name('button').click()
     result = 'node-main test'
@@ -39,7 +39,7 @@ try:
     while not 'success' in result and counter < 10:
         time.sleep(1)
         result = driver.find_element_by_id('result').get_attribute('innerHTML')
-        print result
+        print(result)
         counter = counter + 1
     assert('success' in result)
 finally:

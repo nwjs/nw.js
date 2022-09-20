@@ -44,7 +44,7 @@ def copytree(src, dst, symlinks=False, ignore=None):
 os.mkdir(pkg1)
 
 # copy nw to test directory
-print "copying %s to %s" % (nwdist, pkg1)
+print("copying %s to %s" % (nwdist, pkg1))
 copytree(nwdist, pkg1)
 pkgname = 'crash-report-test'
 
@@ -65,10 +65,10 @@ else:
     check_file = os.path.join(user_data_dir, 'User Data', 'Default', 'Web Data')
     exe = os.path.join(pkg1, 'nw.exe')
 
-print "copying %s to %s" % (appdir, appdest)
+print("copying %s to %s" % (appdir, appdest))
 copytree(appdir, appdest)
 
-print "user data dir: %s" % (user_data_dir)
+print("user data dir: %s" % (user_data_dir))
 
 os.chdir(pkg1)
 
@@ -109,7 +109,7 @@ for arg in ['--test-renderer-crash', '--test-browser-crash']:
         assert(ptype == 'browser' and arg == '--test-browser-crash' or ptype in ['renderer', 'extension'] and arg == '--test-renderer-crash')
         assert(pkgname == r['prod'][0])
         assert(r['ver'][0] == "0.0.12")
-        print(len(r['upload_file_minidump'][0]))
+        print((len(r['upload_file_minidump'][0])))
         assert(len(r['upload_file_minidump'][0]) > 10000)
         time.sleep(5)
 

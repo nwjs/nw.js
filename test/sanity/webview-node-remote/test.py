@@ -1,6 +1,6 @@
 import time
 import os
-import urlparse, urllib
+import urllib.parse, urllib.request, urllib.parse, urllib.error
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from nw_util import *
@@ -34,10 +34,10 @@ capabilities = {"pageLoadStrategy": "none"}
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, desired_capabilities = capabilities, service_log_path="log", service_args=["--verbose"])
 driver.implicitly_wait(5)
 try:
-    print driver.current_url
+    print(driver.current_url)
     wait_switch_window_name(driver, 'webview0')
     result = driver.find_element_by_id('ret').get_attribute('innerHTML')
-    print result
+    print(result)
     assert('version = v' in result)
 finally:
     import platform

@@ -32,26 +32,26 @@ def click_expect(expected):
     driver.find_element_by_id('get-cookie').click()
     result = wait_for_element_id(driver, 'result-%s' % idx)
     idx += 1
-    print result
+    print(result)
     assert(expected in result)
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
 driver.implicitly_wait(2)
 try:
     switch_to_app(driver)
-    print driver.current_url
+    print(driver.current_url)
     click_expect('undefined')
     click_expect('sid=1')
     driver.find_element_by_id('open-devtools').click()
-    print 'wait for devtools open'
+    print('wait for devtools open')
     wait_window_handles(driver, 2)
     click_expect('sid=1')
-    print 'close devtools'
+    print('close devtools')
     switch_to_devtools(driver)
     driver.close()
-    driver.switch_to_window(driver.window_handles[0])
+    driver.switch_to.window(driver.window_handles[0])
     wait_window_handles(driver, 1)
-    print 'devtools closed'
+    print('devtools closed')
     click_expect('sid=1')
     click_expect('sid=1')
 finally:

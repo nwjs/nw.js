@@ -13,19 +13,19 @@ capabilities = {"pageLoadStrategy": "none"}
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"], desired_capabilities = capabilities)
 try:
-    print driver.current_url
+    print(driver.current_url)
     result = driver.find_element_by_id('result').get_attribute('innerHTML')
-    print result
+    print(result)
     assert("success" in result)
     old_handle = driver.current_window_handle
     driver.find_element_by_id('reloadapp').click()
-    print 'wait for app reload'
+    print('wait for app reload')
     wait_window_handles(driver, lambda handles: handles != None and len(handles) != 0 and handles[0] != old_handle)
     # devtools will be opened as the first window handle
-    print driver.window_handles
-    driver.switch_to_window(driver.window_handles[0])
+    print(driver.window_handles)
+    driver.switch_to.window(driver.window_handles[0])
     result = driver.find_element_by_id('result').get_attribute('innerHTML')
-    print result
+    print(result)
     assert("success" in result)
 finally:
     driver.quit()

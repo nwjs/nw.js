@@ -32,7 +32,7 @@ def copytree(src, dst, symlinks=False, ignore=None):
 os.mkdir(pkg1)
 
 # copy nw to test directory
-print "copying %s to %s" % (nwdist, pkg1)
+print("copying %s to %s" % (nwdist, pkg1))
 copytree(nwdist, pkg1)
 pkgname = 'issue5762'
 
@@ -53,10 +53,10 @@ else:
     check_file = os.path.join(user_data_dir, 'User Data', 'Default', 'Web Data')
     exe = os.path.join(pkg1, 'nw.exe')
 
-print "copying %s to %s" % (appdir, appdest)
+print("copying %s to %s" % (appdir, appdest))
 copytree(appdir, appdest)
 
-print "user data dir: %s" % (user_data_dir)
+print("user data dir: %s" % (user_data_dir))
 try:
     shutil.rmtree(user_data_dir)
 except:

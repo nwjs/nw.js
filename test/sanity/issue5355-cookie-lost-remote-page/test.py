@@ -31,14 +31,14 @@ driver.implicitly_wait(2)
 try:
     wait_window_handles(driver, 1)
     switch_to_app(driver)
-    print driver.current_url
+    print(driver.current_url)
     driver.find_element_by_id('open-cdt').click()
     time.sleep(1)
     driver.find_element_by_id('close-cdt').click()
     time.sleep(1)
     driver.find_element_by_id('get-cookie').click()
     result = driver.find_element_by_id('result').get_attribute('innerHTML')
-    print result
+    print(result)
     assert('sid=1' in result)
 finally:
     driver.quit()

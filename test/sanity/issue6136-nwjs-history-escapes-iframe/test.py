@@ -16,27 +16,27 @@ chrome_options.add_argument('nwapp=' + testdir)
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
 driver.implicitly_wait(2)
 try:
-    print driver.current_url
+    print(driver.current_url)
 
-    print 'Click Next button'
+    print('Click Next button')
     driver.find_element_by_tag_name('a').click()
     output = wait_for_element_tag(driver, 'h1')
     assert('Second Page' in output)
     assert(driver.find_element_by_tag_name('iframe') is not None)
 
-    print 'Switch to iframe'
-    driver.switch_to_frame(driver.find_element_by_tag_name('iframe'))
+    print('Switch to iframe')
+    driver.switch_to.frame(driver.find_element_by_tag_name('iframe'))
     result1 = wait_for_element_tag(driver, 'h1')
     assert('Iframe index' in result1)
 
-    print 'Click Next button in Iframe index page'
+    print('Click Next button in Iframe index page')
     driver.find_element_by_tag_name('a').click()
 
-    print 'Switch to second iframe'
+    print('Switch to second iframe')
     result2 = wait_for_element_tag(driver, 'h1')
     assert('Iframe Second Page' in result2)
 
-    print 'waiting for back to iframe page'
+    print('waiting for back to iframe page')
     timeout = 4
     while timeout > 0:
         try:
@@ -49,7 +49,7 @@ try:
         timeout = timeout - 1
         if timeout <= 0:
             raise Exception('Timeout when waiting for element')
-    print 'Return to inframe page'
+    print('Return to inframe page')
 
 finally:
     driver.quit()

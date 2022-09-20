@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
+from http.server import HTTPServer, BaseHTTPRequestHandler
 
 class RequestHandler(BaseHTTPRequestHandler):
     
@@ -18,7 +18,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         
 def main():
     port = 3456
-    print('Listening on localhost:%s' % port)
+    print(('Listening on localhost:%s' % port))
     server = HTTPServer(('', port), RequestHandler)
     server.serve_forever()
 

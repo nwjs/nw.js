@@ -19,7 +19,7 @@ testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
 
 port = str(utils.free_port())
-server = subprocess.Popen(['python', 'http-server.py', port])
+server = subprocess.Popen(['python3', 'http-server.py', port])
 
 html = open('index.html', 'w')
 html.write('''
@@ -44,9 +44,9 @@ html.close()
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, desired_capabilities = capabilities, service_log_path="log", service_args=["--verbose"])
 try:
-    print driver.current_url
+    print(driver.current_url)
     result = wait_for_element_id(driver, 'res')
-    print result
+    print(result)
     assert("success" in result)
 finally:
     server.terminate()

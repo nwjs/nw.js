@@ -22,11 +22,11 @@ chrome_options.add_argument("nwapp=" + testdir)
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
 driver.implicitly_wait(2)
 try:
-    print driver.current_url
+    print(driver.current_url)
     for script in script_list:
       driver.find_element_by_id('eval-%s' % script).click()
       result = driver.find_element_by_id('%s-result' % script).get_attribute('innerHTML')
-      print result
+      print(result)
       assert("success" in result)
 finally:
     driver.quit()

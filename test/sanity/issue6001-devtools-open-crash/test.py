@@ -31,15 +31,15 @@ driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_opt
 driver.implicitly_wait(2)
 try:
     switch_to_app(driver)
-    print driver.current_url
-    print 'waiting for devtools open'
+    print(driver.current_url)
+    print('waiting for devtools open')
     wait_window_handles(driver, 2)
-    print 'switch to devtools'
+    print('switch to devtools')
     switch_to_devtools(driver, None, True)
-    print 'waiting for crash'
+    print('waiting for crash')
     time.sleep(5)
     handles = driver.window_handles
     assert(len(handles) is 2)
-    print 'There is no crash'
+    print('There is no crash')
 finally:
     driver.quit()

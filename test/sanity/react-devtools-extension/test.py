@@ -15,13 +15,13 @@ chrome_options.add_argument("load-extension=" + os.path.join(testdir, 'react-dev
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
 driver.implicitly_wait(5)
 try:
-    print driver.current_url
+    print(driver.current_url)
     driver.find_element_by_id('showdevtools').click()
-    print 'wait for devtools open'
+    print('wait for devtools open')
     wait_window_handles(driver, 2)
-    print 'switch to devtools'
+    print('switch to devtools')
     switch_to_devtools(driver, devtools_window=driver.window_handles[-1])
-    print 'click react panel'
+    print('click react panel')
     driver.execute_script('UI.inspectorView.tabbedPane.selectTab(UI.inspectorView.tabbedPane.tabs[9].id)')
     time.sleep(5)
     #driver.switch_to_frame(driver.find_elements_by_class_name("extension")[0])

@@ -6,7 +6,7 @@ import sys
 import subprocess
 
 if platform.system() != 'Darwin':
-    print 'Skipped for non Mac platform'
+    print('Skipped for non Mac platform')
     sys.exit(0)
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -26,10 +26,10 @@ install_native_modules()
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
 driver.implicitly_wait(2)
 try:
-    print driver.current_url
-    print "select data from table Australia"
+    print(driver.current_url)
+    print("select data from table Australia")
     result = driver.find_element_by_id("shell").get_attribute("innerHTML")
     assert("Sausage" in result)
-    print 'There is no crash'
+    print('There is no crash')
 finally:
     driver.quit()

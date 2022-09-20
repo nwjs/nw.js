@@ -14,10 +14,10 @@ if os.path.isdir(datadir) :
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
 try:
-    print driver.current_url
+    print(driver.current_url)
     time.sleep(5)
     result = driver.find_element_by_id('result')
-    print result.get_attribute('innerHTML')
+    print(result.get_attribute('innerHTML'))
     assert("success" in result.get_attribute('innerHTML'))
 finally:
     driver.quit()

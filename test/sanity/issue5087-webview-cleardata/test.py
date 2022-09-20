@@ -33,13 +33,13 @@ driver.implicitly_wait(5)
 try:
     wait_window_handles(driver, 2)
     wait_switch_window_name(driver, 'index')
-    print driver.current_url
+    print(driver.current_url)
     driver.find_element_by_id('clear').click()
     result = wait_for_element_id_content(driver, 'result', 'success')
-    print result
+    print(result)
     driver.find_element_by_id('clear').click()
     result = wait_for_element_id_content(driver, 'result', 'success')
-    print result
+    print(result)
 finally:
     driver.quit()
     import platform
