@@ -29,9 +29,9 @@ manifest.close()
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
 try:
-    print driver.current_url
+    print(driver.current_url)
     result = wait_for_element_id_content(driver, 'result', 'success')
-    print result
+    print(result)
 finally:
     import platform
     if platform.system() == 'Windows':

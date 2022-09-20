@@ -24,12 +24,12 @@ def ValidateCrashReport(report, expectations=None):
 
   # Merge in additional expectations.
   if expectations:
-    for key, value in expectations.iteritems():
+    for key, value in expectations.items():
       expected_keys[key] = value
 
   # Validate the expectations.
   missing_keys = False
-  for expected_key, error in expected_keys.iteritems():
+  for expected_key, error in expected_keys.items():
     if expected_key not in report:
       _LOGGER.error('Missing expected "%s" crash key.', expected_key)
       _LOGGER.error('"%s" integration appears broken.', error)

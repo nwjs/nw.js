@@ -20,7 +20,7 @@ os.chdir(testdir)
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, desired_capabilities = capabilities)
 try:
     result = wait_for_element_id(driver, 'ret')
-    print 'result=' + result
+    print('result=' + result)
     assert("success" in result)
 finally:
     driver.quit()

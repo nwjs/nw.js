@@ -5,7 +5,7 @@
 
 """Exceptions used by the Kasko integration test module."""
 
-import BaseHTTPServer
+import http.server
 import cgi
 import logging
 import os
@@ -15,16 +15,16 @@ import time
 import uuid
 import json
 import gzip
-from StringIO import StringIO
+from io import StringIO, BytesIO
 
 _LOGGER = logging.getLogger(os.path.basename(__file__))
 
 
-class _StoppableHTTPServer(BaseHTTPServer.HTTPServer):
+class _StoppableHTTPServer(http.server.HTTPServer):
   """An extension of BaseHTTPServer that uses timeouts and is interruptable."""
 
   def server_bind(self):
-    BaseHTTPServer.HTTPServer.server_bind(self)
+    http.server.HTTPServer.server_bind(self)
     self.socket.settimeout(1)
     self.run_ = True
 
@@ -103,7 +103,7 @@ class CrashServer(object):
   def multipart_form_handler(crash_server):
     """Returns a multi-part form handler class for use with a BaseHTTPServer."""
 
-    class MultipartFormHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+    class MultipartFormHandler(http.server.BaseHTTPRequestHandler):
       """A multi-part form handler that processes crash reports.
 
       This class only handles multipart form POST messages, with all other
@@ -111,7 +111,7 @@ class CrashServer(object):
       """
 
       def __init__(self, request, client_address, socket_server):
-        BaseHTTPServer.BaseHTTPRequestHandler.__init__(
+        http.server.BaseHTTPRequestHandler.__init__(
           self, request, client_address, socket_server)
 
       def log_message(self, format, *args):
@@ -120,18 +120,20 @@ class CrashServer(object):
       def do_POST(self):
         """Handles POST messages contained multipart form data."""
         content_type, parameters = cgi.parse_header(
-            self.headers.getheader('content-type'))
+            self.headers.get('content-type'))
+        parameters['boundary'] = bytes(parameters['boundary'], "utf-8")
         if content_type != 'multipart/form-data':
           raise Exception('Unsupported Content-Type: ' + content_type)
-        if self.headers.getheader('content-encoding') == 'gzip':
+        if self.headers.get('content-encoding') == 'gzip':
           self.log_message('GZIP');
           if self.headers.get('Transfer-Encoding', '').lower() == 'chunked':
+            self.log_message('Chunked');
             if 'Content-Length' in self.headers:
               raise AssertionError
             body = self.handle_chunked_encoding()
-            buffer = StringIO(body)
+            buffer = BytesIO(body)
           else:
-            readsize = self.headers.getheader('content-length')
+            readsize = self.headers.get('content-length')
             buffer = StringIO(self.rfile.read(int(readsize)))
           with gzip.GzipFile(fileobj=buffer, mode="r") as f:
             post_multipart = cgi.parse_multipart(f, parameters)
@@ -140,11 +142,11 @@ class CrashServer(object):
         self.log_message("got part")
 
         # Save the crash report.
-        report = dict(post_multipart.items())
+        report = dict(list(post_multipart.items()))
         report_id = str(uuid.uuid4())
         report['report-id'] = [report_id]
         self.log_message("got report %s", report_id)
-        self.log_message("%s", json.dumps(report.keys()))
+        self.log_message("%s", json.dumps(list(report.keys())))
         with crash_server.lock_:
           crash_server.crashes_.append(report)
 
@@ -155,20 +157,23 @@ class CrashServer(object):
         self.wfile.write(report_id)
 
       def handle_chunked_encoding(self):
-        body = ''
+        body = b''
         chunk_size = self.read_chunk_size()
+        print ('chunk size: %d' % chunk_size)
         while chunk_size > 0:
           # Read the body.
           data = self.rfile.read(chunk_size)
           chunk_size -= len(data)
           body += data
+          print ('chunk size: %d' % chunk_size)
 
           # Finished reading this chunk.
           if chunk_size == 0:
             # Read through any trailer fields.
-            trailer_line = self.rfile.readline()
+            trailer_line = self.rfile.readline().decode()
             while trailer_line.strip() != '':
-              trailer_line = self.rfile.readline()
+              trailer_line = self.rfile.readline().decode()
+            print ('---> read line done')
 
             # Read the chunk size.
             chunk_size = self.read_chunk_size()
@@ -176,7 +181,7 @@ class CrashServer(object):
 
       def read_chunk_size(self):
         # Read the whole line, including the \r\n.
-        chunk_size_and_ext_line = self.rfile.readline()
+        chunk_size_and_ext_line = self.rfile.readline().decode('utf-8')
         # Look for a chunk extension.
         chunk_size_end = chunk_size_and_ext_line.find(';')
         if chunk_size_end == -1:

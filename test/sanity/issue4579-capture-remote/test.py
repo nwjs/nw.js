@@ -5,7 +5,7 @@ import platform
 import sys
 
 if platform.system() == 'Linux':
-    print 'Skipped for Linux platform'
+    print('Skipped for Linux platform')
     sys.exit(0)
 
 
@@ -38,10 +38,10 @@ manifest.close()
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
 driver.implicitly_wait(2)
 try:
-    print driver.current_url
+    print(driver.current_url)
     driver.find_element_by_id('start-share').click()
     result = driver.find_element_by_id('result')
-    print result.get_attribute('innerHTML')
+    print(result.get_attribute('innerHTML'))
     assert("success" in result.get_attribute('innerHTML'))
 finally:
     server.terminate()

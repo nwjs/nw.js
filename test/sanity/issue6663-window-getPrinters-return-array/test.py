@@ -15,15 +15,15 @@ driver = webdriver.Chrome(executable_path=os.environ["CHROMEDRIVER"], chrome_opt
 driver.implicitly_wait(2)
 try:
     switch_to_app(driver)
-    print driver.current_url
-    print "wait for devtools open"
+    print(driver.current_url)
+    print("wait for devtools open")
     wait_window_handles(driver, 2)
-    print driver.window_handles
-    print "switch to devtools"
+    print(driver.window_handles)
+    print("switch to devtools")
     switch_to_devtools(driver)
-    print "click Console panel"
+    print("click Console panel")
     devtools_click_tab(driver, "console")
-    print "check if win.getPrinters receive an array of JSON objects"
+    print("check if win.getPrinters receive an array of JSON objects")
     elems = driver.find_elements_by_class_name("console-message-text")
     output = ""
     if len(elems) > 1:
@@ -33,7 +33,7 @@ try:
                 break
     else:
         output = elems[0].get_attribute("innerHTML")
-    print output
+    print(output)
     assert("Array" in output or '[]' in output)
 finally:
     driver.quit()

@@ -1,13 +1,13 @@
 import time
 import os
-import urlparse, urllib
+import urllib.parse, urllib.request, urllib.parse, urllib.error
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from nw_util import *
 
 def path2url(path):
-        return urlparse.urljoin(
-                  'file:', urllib.pathname2url(path))
+        return urllib.parse.urljoin(
+                  'file:', urllib.request.pathname2url(path))
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -35,7 +35,7 @@ def test_pattern(pattern, expect_nw):
     driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
     driver.implicitly_wait(5)
     try:
-        print "testing pattern %s, expect nw: %s" % (pattern, expect_nw)
+        print("testing pattern %s, expect nw: %s" % (pattern, expect_nw))
         result = wait_for_element_id_content(driver, 'nw_access', expect_nw)
     finally:
         driver.quit()

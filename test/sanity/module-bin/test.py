@@ -27,17 +27,18 @@ assert(os.path.isfile(binfile))
 if platform.system() == 'Linux':
     proc = Popen(['strings', 'lib.bin'], stdout=PIPE, stderr=PIPE)
     out, err = proc.communicate()
-    print out
-    assert("42" not in out)
-    assert("foo" not in out)
+    ret = out.decode()
+    print(ret)
+    assert("42" not in ret)
+    assert("foo" not in ret)
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
 try:
-    print driver.current_url
+    print(driver.current_url)
     result = wait_for_element_id_content(driver, 'result', '52')
-    print result
+    print(result)
     result2 = wait_for_element_id_content(driver, 'source', 'native code')
-    print result2
+    print(result2)
     assert("{ [native code] }" in result2)
 finally:
     driver.quit()

@@ -11,9 +11,9 @@ chrome_options.add_nw_argument("--load-extension=" + os.path.join(test_dir, 'tes
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
 driver.implicitly_wait(5)
 try:
-    print driver.current_url
+    print(driver.current_url)
     result = driver.find_element_by_tag_name('h1').get_attribute('innerHTML')
-    print result
+    print(result)
     assert('Hello World' in result)
     res = driver.find_element_by_tag_name('iframe')
     assert(res is not None)

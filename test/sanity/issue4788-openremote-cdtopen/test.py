@@ -19,7 +19,7 @@ testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
 
 port = str(utils.free_port())
-server = subprocess.Popen(['python', 'http-server.py', port])
+server = subprocess.Popen(['python3', 'http-server.py', port])
 
 html = open('index.html', 'w')
 html.write('''
@@ -48,8 +48,8 @@ try:
         driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, desired_capabilities = capabilities)
         time.sleep(1)
         try:
-            driver.switch_to_window("main")
-            print driver.current_url
+            driver.switch_to.window("main")
+            print(driver.current_url)
             result = ''
             wait_counter = 10
             while wait_counter > 0 :
@@ -60,7 +60,7 @@ try:
                     break
                 except NoSuchElementException:
                     pass
-            print result
+            print(result)
             assert("object" in result)
         finally:
             driver.quit()

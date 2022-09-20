@@ -14,12 +14,12 @@ driver.implicitly_wait(5)
 try:
     wait_window_handles(driver, 2)
     wait_switch_window_name(driver, 'index')
-    print driver.current_url
+    print(driver.current_url)
     result = wait_for_element_id(driver, 'inject_start')
-    print 'inject_js_start: %s' % result
+    print('inject_js_start: %s' % result)
     assert('success' in result)
     result = wait_for_element_id(driver, 'inject_end')
-    print 'inject_js_end: %s' % result
+    print('inject_js_end: %s' % result)
     assert('success' in result)
 finally:
     driver.quit()

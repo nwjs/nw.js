@@ -30,16 +30,16 @@ driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_opt
 driver.implicitly_wait(2)
 try:
     switch_to_app(driver)
-    print driver.current_url
-    print 'wait for devtools open'
+    print(driver.current_url)
+    print('wait for devtools open')
     wait_window_handles(driver, 2)
-    print 'switch to devtools'
+    print('switch to devtools')
     switch_to_devtools(driver)
-    print "click Sources panel"
+    print("click Sources panel")
     devtools_click_tab(driver, 'sources')
-    print 'start to debug line 16 via breakpoint'
+    print('start to debug line 16 via breakpoint')
     for i in range(10):
-        print "click Resume script execution button: %s" % i 
+        print("click Resume script execution button: %s" % i) 
         j = 0
         while j < 10:
             try:
@@ -52,6 +52,6 @@ try:
             if j >= 10:
                 raise Exception('Timeout when waiting for clicking resume button')
     assert(len(driver.window_handles) is 2)
-    print 'There is no crash'
+    print('There is no crash')
 finally:
     driver.quit()

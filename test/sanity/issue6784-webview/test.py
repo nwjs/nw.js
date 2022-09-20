@@ -27,10 +27,10 @@ while not os.path.exists('port.txt') :
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
 driver.implicitly_wait(5)
 try:
-    print driver.current_url
+    print(driver.current_url)
     wait_switch_window_name(driver, 'webview1')
     result = driver.find_element_by_id('result').get_attribute('innerHTML')
-    print result
+    print(result)
     assert('success' in result)
 finally:
     import platform

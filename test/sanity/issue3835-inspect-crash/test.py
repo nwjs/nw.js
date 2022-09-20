@@ -14,16 +14,16 @@ driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_opt
 driver.implicitly_wait(2)
 try:
     switch_to_app(driver)
-    print driver.current_url
-    print 'wait for devtools open'
+    print(driver.current_url)
+    print('wait for devtools open')
     wait_window_handles(driver, 2)
-    print driver.window_handles
-    print 'switch to devtools'
+    print(driver.window_handles)
+    print('switch to devtools')
     switch_to_devtools(driver)
-    print 'click Console panel'
+    print('click Console panel')
     devtools_click_tab(driver, 'console')
     wait_for_element_id(driver, 'console-prompt')
-    print 'send_keys "chrome<enter>"'
+    print('send_keys "chrome<enter>"')
     devtools_type_in_console(driver, 'chrome\n')
     time.sleep(2)
     driver.execute_script('document.querySelector(".console-object-preview").click()')

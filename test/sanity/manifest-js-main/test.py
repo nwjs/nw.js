@@ -8,10 +8,10 @@ chrome_options.add_argument("nwapp=" + os.path.dirname(os.path.abspath(__file__)
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
 try:
-    print driver.current_url
+    print(driver.current_url)
     driver.implicitly_wait(10)
     result = driver.find_element_by_id('result').get_attribute('innerHTML')
-    print result
+    print(result)
     assert('success' in result)
 finally:
     driver.quit()

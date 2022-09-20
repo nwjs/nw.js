@@ -12,13 +12,13 @@ from selenium.webdriver.common import utils
 def test_perm(driver, click_id, find_id, should_close_window=False, expected='granted'):
     driver.find_element_by_id(click_id).click()
     result = wait_for_element_id(driver, find_id)
-    print result
+    print(result)
     assert(expected in result)
     if should_close_window == True:
         wait_window_handles(driver, 2)
-        driver.switch_to_window(driver.window_handles[1])
+        driver.switch_to.window(driver.window_handles[1])
         driver.close()
-        driver.switch_to_window(driver.window_handles[0])
+        driver.switch_to.window(driver.window_handles[0])
         wait_window_handles(driver, 1)
 
 chrome_options = Options()
@@ -41,7 +41,7 @@ while not os.path.exists('port.txt') :
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
 driver.implicitly_wait(2)
 try:
-    print driver.current_url
+    print(driver.current_url)
     # 1. default 'granted' on all domains
     # perm for index.html
     test_perm(driver, 'show-perm', 'perm')

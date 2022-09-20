@@ -13,8 +13,8 @@ chrome_options.add_argument("nwapp=" + os.path.dirname(os.path.abspath(__file__)
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
 driver.implicitly_wait(2)
 try:
-    print driver.current_url
+    print(driver.current_url)
     cookie = wait_for_element_id_content(driver, 'ret', 'nwjs.io', 20)
-    print cookie
+    print(cookie)
 finally:
     driver.quit()

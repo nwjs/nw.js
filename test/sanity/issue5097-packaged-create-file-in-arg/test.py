@@ -45,7 +45,7 @@ def copytree(src, dst, symlinks=False, ignore=None):
 os.mkdir(pkg1)
 
 # copy nw to test directory
-print "copying %s to %s" % (nwdist, pkg1)
+print("copying %s to %s" % (nwdist, pkg1))
 copytree(nwdist, pkg1)
 
 # copy app to test directory
@@ -53,7 +53,7 @@ if platform.system() == 'Darwin':
     appdest = os.path.join(pkg1, 'nwjs.app', 'Contents', 'Resources', 'app.nw')
 else:
     appdest = pkg1
-print "copying %s to %s" % (appdir, appdest)
+print("copying %s to %s" % (appdir, appdest))
 copytree(appdir, appdest)
 
 # change working directory to pkg1
@@ -70,9 +70,9 @@ driver_path=os.path.join(pkg1, 'chromedriver')
 driver = webdriver.Chrome(executable_path=driver_path, chrome_options=chrome_options)
 driver.implicitly_wait(5)
 try:
-    print driver.current_url
+    print(driver.current_url)
     result = driver.find_element_by_id('result')
-    print result.get_attribute('innerHTML')
+    print(result.get_attribute('innerHTML'))
     assert("success" in result.get_attribute('innerHTML'))
 finally:
     driver.quit()

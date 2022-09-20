@@ -16,15 +16,15 @@ chrome_options.add_argument("nwapp=" + testdir)
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
 driver.implicitly_wait(2)
 try:
-    print driver.current_url
-    print 'wait for devtools open'
+    print((driver.current_url))
+    print('wait for devtools open')
     wait_window_handles(driver,2)
     handles = driver.window_handles
-    print handles
-    driver.switch_to_window(handles[0])
-    print 'click button to execute code'
+    print(handles)
+    driver.switch_to.window(handles[0])
+    print('click button to execute code')
     driver.find_element_by_tag_name('button').click()
-    print 'get all keys in window'
+    print('get all keys in window')
     result = driver.find_element_by_class_name('log').get_attribute('innerText')
     assert('postMessage' in result)
 finally:

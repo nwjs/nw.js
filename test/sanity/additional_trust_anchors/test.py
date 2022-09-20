@@ -18,7 +18,7 @@ testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
 
 port = str(utils.free_port())
-server = subprocess.Popen(['python', 'https-server.py', port])
+server = subprocess.Popen(['python3', 'https-server.py', port])
 
 def read_ca_cert():
     return read_and_replace_file('ca.crt', '\n', '')
@@ -57,13 +57,13 @@ try:
     driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
     driver.implicitly_wait(5)
     try:
-        print driver.current_url
+        print(driver.current_url)
         timeout = 5
         ret = ''
         elem_id = 'result'
         while timeout > 0:
             try:
-                driver.switch_to_frame(driver.find_element_by_tag_name("iframe"))
+                driver.switch_to.frame(driver.find_element_by_tag_name("iframe"))
                 ret = driver.find_element_by_id(elem_id).get_attribute('innerHTML')
                 break
             except selenium.common.exceptions.NoSuchElementException:
@@ -73,8 +73,8 @@ try:
             if timeout <= 0:
                 raise Exception('Timeout when waiting for element' + elem_id)
         title = driver.execute_script('return document.title')
-        print title
-        print ret
+        print(title)
+        print(ret)
         assert('success' in ret)
         driver.close()
     finally:
@@ -92,15 +92,15 @@ try:
     driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
     driver.implicitly_wait(5)
     try:
-        print driver.current_url
-        driver.switch_to_frame(driver.find_element_by_id('test-frame'))
+        print(driver.current_url)
+        driver.switch_to.frame(driver.find_element_by_id('test-frame'))
         title = driver.execute_script('return document.title')
-        print title
+        print(title)
         assert(not 'test.html' in title)
         driver.close()
     finally:
         driver.quit()
 
 finally:
-    print "killing child process", server.pid
+    print("killing child process", server.pid)
     server.kill()

@@ -18,7 +18,7 @@ try:
     driver.find_element_by_tag_name('a').click()
     time.sleep(1)
     result = driver.find_element_by_id('result').get_attribute('innerHTML')
-    print result
+    print(result)
     assert(result == 'DOM onload event<br>NW.js loaded event<br>')
 finally:
     driver.quit()
