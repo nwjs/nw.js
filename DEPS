@@ -286,7 +286,7 @@ vars = {
 
   'nw_src_revision': '060ccf7a226f76087636d8de0d7f91edb58d9bab',
   'nw_v8_revision': '5bb648b26e5954af5d4cfd1eec9380035d3a7d21',
-  'nw_node_revision': '625b355b3b23189c3ab766c891c6d3cfd5d5618d',
+  'nw_node_revision': '520bd417a25101171d19256d58ac64ed4f494fa3',
   'android_git': 'https://android.googlesource.com',
   'aomedia_git': 'https://aomedia.googlesource.com',
   'boringssl_git': 'https://boringssl.googlesource.com',
