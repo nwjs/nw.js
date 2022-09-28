@@ -12,5 +12,5 @@ dump_exe = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'dump_syms.
 subprocess.call([dump_exe, nw_exe], stdout=open(sym_file, 'w'))
 subprocess.call([dump_exe, nw_dll], stdout=open(dll_sym_file, 'w'))
 subprocess.call([dump_exe, node_dll], stdout=open(node_sym_file, 'w'))
-lzma_exe = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', '..', 'third_party', 'lzma_sdk', 'bin', '7za.exe')
+lzma_exe = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..', '..', 'third_party', 'lzma_sdk', 'bin', 'win64', '7za.exe')
 subprocess.call([lzma_exe, 'a', '-t7z', out_file, sym_file, dll_sym_file, node_sym_file])
