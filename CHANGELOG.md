@@ -1,3 +1,10 @@
+0.69.0 / 09-29-2022
+===================
+- Update Chromium to [106.0.5249.61](https://chromereleases.googleblog.com/2022/09/stable-channel-update-for-desktop_27.html)
+- Update Node.js to [v18.9.1](https://nodejs.org/en/blog/release/v18.9.1/)
+- Fix child_process.spawn slowness on macOS [(#7715)](https://github.com/nwjs/nw.js/issues/7715)
+- Fix regressions introduced in 0.68 [(#7969)](https://github.com/nwjs/nw.js/issues/7969)
+
 0.68.1 / 09-14-2022
 ===================
 - Update Node.js to [v18.9.0](https://nodejs.org/en/blog/release/v18.9.0/)
