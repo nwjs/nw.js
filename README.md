@@ -96,7 +96,7 @@ our mailing list (use English only). Subscribe via [nwjs-general+subscribe@googl
 
 Issues are being tracked here on GitHub.
 
-The source code for NW.js and the daily development spans across multiple repositories in this organization. This repository is for the purpose of issue tracking, landing page and part of the source code.
+The source code for NW.js and the daily development spans multiple repositories in this organization. This repository is for issue tracking, landing page, and part of the source code.
 
 ### Verifying Binaries
 
