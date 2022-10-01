@@ -1,7 +1,7 @@
 #include "content/nw/src/api/nw_app_api.h"
 
 #include "chrome/browser/lifetime/browser_close_manager.h"
-#include "chrome/browser/lifetime/application_lifetime.h"
+#include "chrome/browser/lifetime/application_lifetime_desktop.h"
 #include "content/public/common/content_features.h"
 
 #include "base/command_line.h"
