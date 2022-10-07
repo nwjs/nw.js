@@ -57,7 +57,7 @@ void Shell::Call(const std::string& method,
   Profile* profile = Profile::FromBrowserContext(context);
   if (method == "OpenExternal") {
     std::string uri = arguments[0].GetString();
-    platform_util::OpenExternal(profile, GURL(uri));
+    platform_util::OpenExternal(GURL(uri));
   } else if (method == "OpenItem") {
     std::string full_path = arguments[0].GetString();
     FilePath path = FilePath::FromUTF8Unsafe(full_path);
