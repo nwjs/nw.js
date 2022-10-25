@@ -35,7 +35,7 @@ driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_opt
 driver.implicitly_wait(5)
 try:
     print(driver.current_url)
-    wait_switch_window_name(driver, 'webview0')
+    wait_switch_window_url(driver, 'webview.html')
     result = driver.find_element_by_id('ret').get_attribute('innerHTML')
     print(result)
     assert('version = v' in result)

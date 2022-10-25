@@ -28,7 +28,7 @@ driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_opt
 driver.implicitly_wait(5)
 try:
     print(driver.current_url)
-    wait_switch_window_name(driver, 'webview1')
+    wait_switch_window_url(driver, '1.html')
     result = driver.find_element_by_id('result').get_attribute('innerHTML')
     print(result)
     assert('success' in result)
