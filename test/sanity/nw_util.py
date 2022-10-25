@@ -201,6 +201,20 @@ def wait_switch_window_name(driver, name, timeout=60):
         if timeout <= 0:
             raise Exception('Timeout when waiting for window handles')
 
+def wait_switch_window_url(driver, path, timeout=60):
+    while timeout > 0:
+        try:
+            for handle in driver.window_handles:
+                driver.switch_to.window(handle)
+                if driver.current_url.endswith(path) :
+                    return
+        except selenium.common.exceptions.NoSuchWindowException:
+            pass
+        time.sleep(1)
+        timeout = timeout - 1
+        if timeout <= 0:
+            raise Exception('Timeout when waiting for window handles')
+
 
 def switch_to_app(driver, window_handle=None):
     def is_app_url(url):
