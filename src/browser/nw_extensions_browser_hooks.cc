@@ -122,10 +122,14 @@ void AmendManifestList(base::DictionaryValue* manifest,
   if (manifest->GetList(path, &pattern_list)) {
     base::ListValue::const_iterator it;
     for(it = list_value.GetListDeprecated().begin(); it != list_value.GetListDeprecated().end(); ++it) {
-      pattern_list->Append(base::Value::FromUniquePtrValue((*it).CreateDeepCopy()));
+      pattern_list->Append(it->Clone());
     }
   } else {
-    manifest->Set(path, list_value.CreateDeepCopy());
+    std::unique_ptr<base::ListValue> lst(new base::ListValue);
+    for (auto i = list_value.GetList().begin(); i != list_value.GetList().end(); ++i) {
+      lst->Append(const_cast<base::Value&&>(*i));
+    }
+    manifest->Set(path, std::move(lst));
   }
 }
 
