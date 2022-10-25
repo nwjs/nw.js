@@ -1,5 +1,5 @@
 diff --git a/layers/synchronization_validation.cpp b/layers/synchronization_validation.cpp
-index f9e46c5c..6b19dff3 100644
+index 728224e4d..245a5d477 100644
 --- layers/synchronization_validation.cpp
 +++ layers/synchronization_validation.cpp
 @@ -18,6 +18,7 @@
@@ -8,5 +8,5 @@ index f9e46c5c..6b19dff3 100644
   */
 +#pragma clang diagnostic ignored "-Wrange-loop-construct"
  
- #include <limits>
- #include <vector>
+ #include <algorithm>
+ #include <bitset>
