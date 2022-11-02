@@ -292,8 +292,8 @@ vars = {
   # Enable fetching Rust-related packages.
   'use_rust': False,
 
-  'nw_src_revision': '1d507b00a68895e8ef9782ef781d7755f9d04fe8',
-  'nw_v8_revision': '5043d500fcf5ee8e562295d9297fe6da697e82e0',
+  'nw_src_revision': 'fdf20b4be8433f070ef6327514348673ed74a83a',
+  'nw_v8_revision': 'c58c7b477954441014404eb5d306f02169ff7c50',
   'nw_node_revision': '5ea2240369381b008429b0f48b8433bfb31131b5',
   'android_git': 'https://android.googlesource.com',
   'aomedia_git': 'https://aomedia.googlesource.com',
@@ -313,7 +313,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '28f763b5949d053c62e95db2f997a9f13b2e3065',
+  'v8_revision': '5a8a4a69ac843a0724f94cc2244b66b51f0f6806',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
@@ -1216,7 +1216,7 @@ deps = {
     Var('chromium_git') + '/devtools/devtools-frontend' + '@' + Var('devtools_frontend_revision'),
 
   'src/third_party/devtools-frontend-internal': {
-      'url': 'https://chrome-internal.googlesource.com/devtools/devtools-internal.git' + '@' + '97a8e48bbcd171747d3b7a7a0a0b1906fda9df61',
+      'url': 'https://chrome-internal.googlesource.com/devtools/devtools-internal.git' + '@' + 'd49a550e367233aa22a765b86583e02ad655abfd',
     'condition': 'checkout_src_internal',
   },
 
@@ -1877,7 +1877,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@17dcf3a5db41e19a84b972815c742a94dccb236c',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@5dafa2b13dc854da84660cc4b6f5ee6824fb8295',
     'condition': 'checkout_src_internal',
   },
 
