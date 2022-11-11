@@ -252,7 +252,7 @@ int MainPartsPreCreateThreadsHook() {
 #if defined(OS_MAC)
   gSendEventToApp = SendEventToApp;
 #endif
-  base::ThreadRestrictions::ScopedAllowIO allow_io;
+  base::ScopedAllowBlocking allow_io;
   base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
   nw::Package* package = InitNWPackage();
   if (package && !package->path().empty()) {

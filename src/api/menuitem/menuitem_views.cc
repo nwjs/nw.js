@@ -131,7 +131,7 @@ void MenuItem::SetLabel(const std::string& label) {
 }
 
 void MenuItem::SetIcon(const std::string& icon) {
-  base::ThreadRestrictions::ScopedAllowIO allow_io;
+  base::ScopedAllowBlocking allow_io;
   is_modified_ = true;
   if (icon.empty()) {
     icon_ = gfx::Image();

@@ -88,7 +88,7 @@ void Tray::SetTitle(const std::string& title) {
 void Tray::SetIcon(const std::string& path) {
   gfx::Image icon;
   nw::Package* package = nw::InitNWPackage();
-  base::ThreadRestrictions::ScopedAllowIO allowIO;
+  base::ScopedAllowBlocking allowIO;
   nw::GetImage(package, base::FilePath::FromUTF8Unsafe(path), &icon);
 
   if (!icon.IsEmpty())
