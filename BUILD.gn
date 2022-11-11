@@ -326,7 +326,7 @@ if (is_win && !is_component_build) {
              "//chrome:chrome_dll",
              ":copy_node",
              "//v8:nwjc",
-             "//chrome/test/chromedriver:chromedriver",
+             "//chrome/test/chromedriver:chromedriver_server",
              "//third_party/ffmpeg:ffmpeg"
              ]
     outputs = [
@@ -348,7 +348,7 @@ if (is_mac && !is_component_build) {
              "//chrome",
              ":copy_node",
              "//v8:nwjc",
-             "//chrome/test/chromedriver:chromedriver",
+             "//chrome/test/chromedriver:chromedriver_server",
              "//third_party/ffmpeg:ffmpeg",
              "//chrome:nw_sym_archive"
              ]
@@ -375,7 +375,7 @@ if (is_linux && !is_component_build) {
              "//chrome:chrome_dll",
              ":copy_node",
              "//v8:nwjc",
-             "//chrome/test/chromedriver:chromedriver",
+             "//chrome/test/chromedriver:chromedriver_server",
              "//third_party/ffmpeg:ffmpeg",
              ]
     if (target_cpu == "x64") {
@@ -440,7 +440,7 @@ if (!is_component_build) {
       script = "test/test.py"
       outputs = [ "$root_build_dir/run_tests.re" ]
       args = [ "-d", rebase_path("$root_build_dir"), "-t", "120", "sanity" ]
-      deps = [ "//chrome/test/chromedriver:chromedriver" ]
+      deps = [ "//chrome/test/chromedriver:chromedriver_server" ]
     }
   }
 }
