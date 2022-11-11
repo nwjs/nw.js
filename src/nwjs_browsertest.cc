@@ -923,23 +923,21 @@ IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, SilentPrintChangeFooter) {
   EXPECT_TRUE(listener.WaitUntilSatisfied()) << "'" << listener.message()
                                              << "' message was not receieved";
 
-  std::vector<content::WebContents*> guest_web_contents_list;
+  std::vector<content::RenderFrameHost*> guest_rfh_list;
   unsigned long n_guests = 2;
   LOG(WARNING) << "WaitForNumGuestsCreated";
   GetGuestViewManager()->WaitForNumGuestsCreated(n_guests);
-  GetGuestViewManager()->DeprecatedGetGuestWebContentsList(&guest_web_contents_list);
-  ASSERT_EQ(n_guests, guest_web_contents_list.size());
+  GetGuestViewManager()->GetGuestRenderFrameHostList(&guest_rfh_list);
+  ASSERT_EQ(n_guests, guest_rfh_list.size());
 
-  content::WebContents* web_view_contents = guest_web_contents_list[0];
-  bool load_success = pdf_extension_test_util::EnsurePDFHasLoaded(
-      web_view_contents);
+  bool load_success = pdf_extension_test_util::EnsurePDFHasLoaded(guest_rfh_list[0]);
   EXPECT_TRUE(load_success);
-  WaitForAccessibilityTreeToContainNodeWithName(web_view_contents, "hello world\r\n");
+  WaitForAccessibilityTreeToContainNodeWithName(content::WebContents::FromRenderFrameHost(guest_rfh_list[0]), "hello world\r\n");
   std::string tree_dump;
   std::string* pstr = &tree_dump;
   // Make sure all the frames in the dialog has access to the PDF
   // plugin.
-  guest_web_contents_list[1]->GetPrimaryMainFrame()->
+  content::WebContents::FromRenderFrameHost(guest_rfh_list[1])->GetPrimaryMainFrame()->
     ForEachRenderFrameHost([pstr] (content::RenderFrameHost* rfh) { DumpAxTree(pstr, rfh); });
   LOG(INFO) << "ax tree: " << tree_dump;
   EXPECT_TRUE(tree_dump.find("nwtestfooter") != std::string::npos);
@@ -1013,13 +1011,12 @@ IN_PROC_BROWSER_TEST_P(NWJSWebViewTest, LocalPDF) {
   } else
     GetGuestViewManager()->WaitForNumGuestsCreated(n_guests);
 
-  GetGuestViewManager()->DeprecatedGetGuestWebContentsList(&guest_web_contents_list);
-  ASSERT_EQ(n_guests, guest_web_contents_list.size());
+  std::vector<content::RenderFrameHost*> guest_rfh_list;
+  GetGuestViewManager()->GetGuestRenderFrameHostList(&guest_rfh_list);
+  ASSERT_EQ(n_guests, guest_rfh_list.size());
 
   if (trusted_) {
-    content::WebContents* web_view_contents = guest_web_contents_list[0];
-    bool load_success = pdf_extension_test_util::EnsurePDFHasLoaded(
-      web_view_contents);
+    bool load_success = pdf_extension_test_util::EnsurePDFHasLoaded(guest_rfh_list[0]);
     EXPECT_TRUE(load_success);
   }
 }
