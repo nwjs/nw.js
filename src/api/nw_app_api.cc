@@ -64,7 +64,7 @@ void NwAppQuitFunction::DoJob(ExtensionService* service, std::string extension_i
   base::ThreadTaskRunnerHandle::Get().get()->PostTask(
                                                       FROM_HERE,
                                                       base::BindOnce(&ExtensionService::TerminateExtension,
-                                                                   service->AsWeakPtr(),
+                                                                   service->AsExtensionServiceWeakPtr(),
                                                                    extension_id));
 }
 
