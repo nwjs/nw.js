@@ -34,6 +34,7 @@ from glob import glob
 from os.path import join, dirname, exists
 import re
 import json
+from functools import reduce
 
 FLAGS_PATTERN = re.compile(r"//\s+Flags:(.*)")
 FILES_PATTERN = re.compile(r"//\s+Files:(.*)")
@@ -69,7 +70,7 @@ class SimpleTestCase(test.TestCase):
 
     if self.expected_quit_dir :
       if not os.path.exists(os.path.join(self.file, self.expected_quit_dir)):
-        print "expected_quit_dir:", self.expected_quit_dir
+        print("expected_quit_dir:", self.expected_quit_dir)
         self.expected_quit_dir_fail = True
       else:
         try:

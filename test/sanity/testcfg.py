@@ -3,6 +3,7 @@ import os
 from os.path import join, dirname, exists, basename, isdir
 import re
 import utils
+from functools import reduce
 
 class RemotingTestCase(test.TestCase):
 
@@ -49,7 +50,7 @@ class RemotingTestCase(test.TestCase):
             bbpython = bbpython[1:-1]
         result = [bbpython]
     else:
-        result = ['python']
+        result = ['python3']
     result += [self.file + '/test.py']
 
     return result
