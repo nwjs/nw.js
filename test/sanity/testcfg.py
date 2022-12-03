@@ -44,11 +44,8 @@ class RemotingTestCase(test.TestCase):
     return {'PYTHONPATH': libpath, 'CHROMEDRIVER': self.GetChromeDriver(self.arch, self.mode, self.nwdir)}
 
   def GetCommand(self):
-    if utils.IsWindows() and "BB_PYTHON" in os.environ:
-        bbpython = os.environ["BB_PYTHON"]
-        if bbpython.startswith('"') and bbpython.endswith('"'):
-            bbpython = bbpython[1:-1]
-        result = [bbpython]
+    if utils.IsWindows():
+        result = ['C:\\Python311\\python']
     else:
         result = ['python3']
     result += [self.file + '/test.py']
