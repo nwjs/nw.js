@@ -50,8 +50,8 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': '012989fb23b99e1200b202372de3432a2ae72b86',
-  'nw_v8_revision': '3aef2d6eb7b45d16d83d7a2a4fb4ebe77348191f',
+  'nw_src_revision': '8b90a73b647260b0a00f4518d19aa30092d976a2',
+  'nw_v8_revision': '991bec5f2a9a1c048f2c950ccbffd49996ab737c',
   'nw_node_revision': '970ba1bcb444da25ea82617c5c8176502cef62e2',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
@@ -312,7 +312,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '18865d6af0404f2d2aeb1c99dd73503364ce0967',
+  'v8_revision': '3155b0d10c058d2a9f1d7bba00ad398b3e03b841',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
@@ -1254,7 +1254,7 @@ deps = {
     Var('chromium_git') + '/devtools/devtools-frontend' + '@' + Var('devtools_frontend_revision'),
 
   'src/third_party/devtools-frontend-internal': {
-      'url': 'https://chrome-internal.googlesource.com/devtools/devtools-internal.git' + '@' + '91cc0040d3fbc8fdb48d699368abda96c807ec13',
+      'url': 'https://chrome-internal.googlesource.com/devtools/devtools-internal.git' + '@' + '5b416729821b589991d492f0707a087f5a47bb1f',
     'condition': 'checkout_src_internal',
   },
 
@@ -1929,7 +1929,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@aee7b03f3a5f5cbaa1ff691b81303bac084e156c',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@a63cd655ad37984fa08e1c95ca73acf55550f10d',
     'condition': 'checkout_src_internal',
   },
 
