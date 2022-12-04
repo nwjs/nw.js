@@ -12,17 +12,17 @@ import node, node_modules
 SERVER_PATH = os_path.normpath(os_path.join(_HERE_PATH, '..', 'node_modules', 'http-server', 'bin', 'http-server'))
 if len(sys.argv) < 2:
     SERVER_PATH = os_path.normpath(os_path.join(_HERE_PATH, 'server.js'))
-    print SERVER_PATH
+    print(SERVER_PATH)
     node.RunNode([SERVER_PATH])
 
 elif sys.argv[1].isdigit():
-    print SERVER_PATH
+    print(SERVER_PATH)
 
     PORT = sys.argv[1]
 
     node.RunNode([SERVER_PATH, '-p', PORT, '.'])
 else:
     SERVER_PATH = sys.argv[1]
-    print SERVER_PATH
+    print(SERVER_PATH)
     node.RunNode([SERVER_PATH])
     
