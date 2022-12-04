@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-import BaseHTTPServer, SimpleHTTPServer
+import http.server, http.server
 import ssl
 import sys
 
 PORT = int(sys.argv[1])
 
-class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+class MyHandler(http.server.BaseHTTPRequestHandler):
 
     def _set_headers(s):
         s.send_response(200)
@@ -21,7 +21,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if s.path == '/test_cookie/index.html':
             cookiestring = s.headers.get('Cookie')
             log =  "Cookie sent by client on " + s.path + ": " + (cookiestring or '')
-            print log
+            print(log)
             s._set_headers()
             s.wfile.write("<script type='text/javascript'> document.write('<h1 id=\\'result\\'>' + \
                           document.cookie + '</h1>'); </script> \
@@ -33,7 +33,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if s.path == '/test_cookie/1.svg':
             cookiestring = s.headers.get('Cookie')
             log = "Cookie sent by client on " + s.path + ": " + (cookiestring or '')
-            print log
+            print(log)
             with open("svrlog.txt", "a") as myfile:
                 myfile.write(log + "\n")
             s.send_response(200)
@@ -42,7 +42,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             s.wfile.write('<svg version="1.1" baseProfile="full" height="100" width="100" xmlns="http://www.w3.org/2000/svg"> \
   <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red" /></svg>')
 
-httpd = BaseHTTPServer.HTTPServer(('localhost', PORT), MyHandler)
+httpd = http.server.HTTPServer(('localhost', PORT), MyHandler)
 httpd.socket = ssl.wrap_socket (httpd.socket, certfile='./cert.pem', keyfile='./key.pem', server_side=True)
-print "serving at port", PORT
+print("serving at port", PORT)
 httpd.serve_forever()
