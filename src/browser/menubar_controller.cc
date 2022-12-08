@@ -112,8 +112,7 @@ void MenuBarController::RunMenuAt(views::View* view) {
     base::AutoReset<base::RepeatingClosure> reset_quit_closure(&message_loop_quit_,
                                                       base::RepeatingClosure());
 
-    base::CurrentThread::ScopedNestableTaskAllower allow;
-    base::RunLoop run_loop;
+    base::RunLoop run_loop(base::RunLoop::Type::kNestableTasksAllowed);
     message_loop_quit_ = run_loop.QuitClosure();
 
     run_loop.Run();

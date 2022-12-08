@@ -150,8 +150,7 @@ void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
                                                           base::RepeatingClosure());
 
     //base::MessageLoop* loop = base::MessageLoop::current();
-    base::CurrentThread::ScopedNestableTaskAllower allow;
-    base::RunLoop run_loop;
+    base::RunLoop run_loop(base::RunLoop::Type::kNestableTasksAllowed);
     message_loop_quit_ = run_loop.QuitClosure();
 
     run_loop.Run();
