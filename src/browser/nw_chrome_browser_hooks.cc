@@ -116,7 +116,7 @@ typedef void (*SendEventToAppFn)(const std::string& event_name, std::unique_ptr<
 CONTENT_EXPORT extern SendEventToAppFn gSendEventToApp;
 
 void SendEventToApp(const std::string& event_name, std::unique_ptr<base::ListValue> event_args) {
-  Profile* profile = ProfileManager::GetActiveUserProfile();
+  Profile* profile = ProfileManager::GetLastUsedProfileIfLoaded();
   const extensions::ExtensionSet& extensions =
     ExtensionRegistry::Get(profile)->enabled_extensions();
   ExtensionPrefs* extension_prefs = ExtensionPrefs::Get(profile);
@@ -223,7 +223,7 @@ const std::string& GetMainExtensionId() {
 }
 
 const extensions::Extension* GetMainExtension() {
-  Profile* profile = ProfileManager::GetActiveUserProfile();
+  Profile* profile = ProfileManager::GetLastUsedProfileIfLoaded();
   return extensions::ExtensionRegistry::Get(profile)
       ->enabled_extensions().GetByID(g_extension_id);
 }
