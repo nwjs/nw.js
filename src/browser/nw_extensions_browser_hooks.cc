@@ -120,8 +120,7 @@ void AmendManifestList(base::DictionaryValue* manifest,
   base::ListValue* pattern_list = NULL;
 
   if (manifest->GetList(path, &pattern_list)) {
-    base::ListValue::const_iterator it;
-    for(it = list_value.GetListDeprecated().begin(); it != list_value.GetListDeprecated().end(); ++it) {
+    for(auto it = list_value.GetList().begin(); it != list_value.GetList().end(); ++it) {
       pattern_list->Append(it->Clone());
     }
   } else {
