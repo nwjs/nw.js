@@ -24,7 +24,7 @@ try:
     print('click Elements panel')
     devtools_click_tab(driver, 'elements')
     print('find h1')
-    h1 = driver.execute_script('return document.getElementById("elements-content").firstChild.shadowRoot.querySelectorAll(".webkit-html-text-node")[1]').get_attribute('textContent')
+    h1 = driver.execute_script('return document.getElementById("elements-content").firstChild.shadowRoot.querySelectorAll(".webkit-html-text-node")[0]').get_attribute('textContent')
     print(h1)
     assert (h1 == 'child')
 finally:
