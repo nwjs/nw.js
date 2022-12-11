@@ -97,38 +97,47 @@ void AmendManifestContentScriptList(base::DictionaryValue* manifest,
 }
 #endif
 
-void AmendManifestStringList(base::DictionaryValue* manifest,
+void AmendManifestStringList(base::Value::Dict* manifest,
                    const std::string& path,
                    const std::string& string_value) {
-  std::unique_ptr<base::ListValue> pattern_list;
-  base::Value* temp_pattern_value = NULL;
+  base::Value::List pattern_list;
+  base::Value* temp_pattern_value = nullptr;
 
-  if (manifest->Get(path, &temp_pattern_value))
+  if (path.find('.'))
+    temp_pattern_value = manifest->FindByDottedPath(path);
+  else
+    temp_pattern_value = manifest->Find(path);
+
+  if (temp_pattern_value)
     if (temp_pattern_value->is_list()) {
-      pattern_list = base::ListValue::From(base::Value::ToUniquePtrValue(temp_pattern_value->Clone()));
+      pattern_list = temp_pattern_value->GetList().Clone();
     }
-  if (!pattern_list)
-    pattern_list.reset(new base::ListValue());
 
-  pattern_list->Append(string_value);
-  manifest->Set(path, std::move(pattern_list));
+  pattern_list.Append(string_value);
+  if (path.find('.'))
+    manifest->SetByDottedPath(path, std::move(pattern_list));
+  else
+    manifest->Set(path, std::move(pattern_list));
 }
 
-void AmendManifestList(base::DictionaryValue* manifest,
-                   const std::string& path,
-                   const base::ListValue& list_value) {
-  base::ListValue* pattern_list = NULL;
+void AmendManifestList(base::Value::Dict* manifest,
+		       const std::string& path,
+		       const base::Value::List& list_value) {
+  base::Value::List* pattern_list = NULL;
 
-  if (manifest->GetList(path, &pattern_list)) {
-    for(auto it = list_value.GetList().begin(); it != list_value.GetList().end(); ++it) {
+  if ((pattern_list = manifest->FindList(path))) {
+    for(auto it = list_value.begin(); it != list_value.end(); ++it) {
       pattern_list->Append(it->Clone());
     }
   } else {
-    std::unique_ptr<base::ListValue> lst(new base::ListValue);
-    for (auto i = list_value.GetList().begin(); i != list_value.GetList().end(); ++i) {
-      lst->Append(const_cast<base::Value&&>(*i));
+    base::Value::List lst;
+    for (auto i = list_value.begin(); i != list_value.end(); ++i) {
+      lst.Append(const_cast<base::Value&&>(*i));
     }
-    manifest->Set(path, std::move(lst));
+    if (path.find('.'))
+      manifest->SetByDottedPath(path, std::move(lst));
+    else
+      manifest->Set(path, std::move(lst));
   }
 }
 
@@ -239,7 +248,7 @@ bool GuestSwapProcessHook(content::BrowserContext* browser_context, const GURL& 
 typedef bool(*GuestSwapProcessHookFn)(content::BrowserContext*, const GURL& url);
 CONTENT_EXPORT extern GuestSwapProcessHookFn gGuestSwapProcessHook;
 
-void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
+void LoadNWAppAsExtensionHook(base::Value::Dict* manifest,
                               const base::FilePath& extension_path,
                               std::string* error) {
   gRphGuestFilterURLHook = RphGuestFilterURLHook;
@@ -247,44 +256,46 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
   if (!manifest)
     return;
 
-  std::string main_url, bg_script, icon_path;
+  std::string *main_url;
   base::Value *node_remote = NULL;
 
   const base::CommandLine* cmdline = base::CommandLine::ForCurrentProcess();
   nw::Package* package = cmdline->HasSwitch("nwjs-test-mode") ?
     nw::package(&extension_path) : nw::package();
-  manifest->SetBoolean(manifest_keys::kNWJSInternalFlag, true);
+  manifest->Set(manifest_keys::kNWJSInternalFlag, true);
   if (error && !package->cached_error_content().empty()) {
     *error = package->cached_error_content();
     return;
   }
 
-  base::DictionaryValue* cloned_root = new base::DictionaryValue();
+  base::Value::Dict cloned_root;
   for (auto pair: *(package->root())) {
-    cloned_root->SetKey(pair.first, pair.second.Clone());
+    cloned_root.Set(pair.first, pair.second.Clone());
   }
-  manifest->Set(manifest_keys::kNWJSInternalManifest, base::WrapUnique(cloned_root));
+  manifest->Set(manifest_keys::kNWJSInternalManifest, std::move(cloned_root));
 
-  if (manifest->GetString(manifest_keys::kNWJSMain, &main_url)) {
-    if (base::EndsWith(main_url, ".js", base::CompareCase::INSENSITIVE_ASCII)) {
-      AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, main_url);
-      manifest->SetString(manifest_keys::kNWJSInternalMainFilename, main_url);
+  if ((main_url = manifest->FindString(manifest_keys::kNWJSMain))) {
+    if (base::EndsWith(*main_url, ".js", base::CompareCase::INSENSITIVE_ASCII)) {
+      AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, *main_url);
+      manifest->Set(manifest_keys::kNWJSInternalMainFilename, *main_url);
     }else if (base::FeatureList::IsEnabled(::features::kNWNewWin))
       AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, "nwjs/newwin.js");
     else
       AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, "nwjs/default.js");
 
-    if (manifest->GetString("bg-script", &bg_script))
-      AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, bg_script);
+    std::string* bg_script = manifest->FindString("bg-script");
+    if (bg_script)
+      AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, *bg_script);
 
     AmendManifestStringList(manifest, manifest_keys::kPermissions, "developerPrivate");
     AmendManifestStringList(manifest, manifest_keys::kPermissions, "management");
     AmendManifestStringList(manifest, manifest_keys::kPermissions, "<all_urls>");
   }
 
-  if (manifest->GetString("window.icon", &icon_path)) {
+  std::string* icon_path = manifest->FindString("window.icon");
+  if (icon_path) {
     gfx::Image app_icon;
-    if (GetPackageImage(package, base::FilePath::FromUTF8Unsafe(icon_path), &app_icon)) {
+    if (GetPackageImage(package, base::FilePath::FromUTF8Unsafe(*icon_path), &app_icon)) {
       if (app_icon.Width() > 128 || app_icon.Height() > 128) {
         const gfx::ImageSkia* originImageSkia = app_icon.ToImageSkia();
         gfx::ImageSkia resizedImageSkia =
@@ -296,7 +307,7 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
       SetAppIcon(app_icon);
       int width = app_icon.Width();
       std::string key = "icons." + base::NumberToString(width);
-      manifest->SetString(key, icon_path);
+      manifest->Set(key, *icon_path);
 #if defined(OS_WIN)
       SetWindowHIcon((IconUtil::CreateHICONFromSkBitmapSizedTo(*app_icon.AsImageSkia().bitmap(),
                       GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON))));
@@ -306,27 +317,27 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
     }
   }
 
-  if (manifest->Get(switches::kmRemotePages, &node_remote)) {
+  if ((node_remote = manifest->Find(switches::kmRemotePages))) {
     //FIXME: node-remote spec different with kWebURLs
     std::string node_remote_string;
-    const base::ListValue* node_remote_list = NULL;
+    base::Value::List node_remote_list;
     if (node_remote->is_string()) {
-      base::ListValue* _node_remote_list = new base::ListValue();
-      _node_remote_list->Append(node_remote->GetString());
-      node_remote_list = _node_remote_list;
+      base::Value::List _node_remote_list;
+      _node_remote_list.Append(node_remote->GetString());
+      node_remote_list = std::move(_node_remote_list);
     } else
-      node_remote_list = &base::Value::AsListValue(*node_remote);
+      node_remote_list = node_remote->GetList().Clone();
 
-    if (node_remote_list)
-      AmendManifestList(manifest, manifest_keys::kWebURLs, *node_remote_list);
+    if (node_remote_list.size())
+      AmendManifestList(manifest, manifest_keys::kWebURLs, node_remote_list);
   }
 
   if (NWContentVerifierDelegate::GetDefaultMode() == NWContentVerifierDelegate::ENFORCE_STRICT)
-    manifest->SetBoolean(manifest_keys::kNWJSContentVerifyFlag, true);
+    manifest->Set(manifest_keys::kNWJSContentVerifyFlag, true);
 
   if (package->temp_dir().IsValid()) {
     // need to remove the dir in renderer process
-    manifest->SetString("nw-temp-dir", package->temp_dir().GetPath().AsUTF8Unsafe());
+    manifest->Set("nw-temp-dir", package->temp_dir().GetPath().AsUTF8Unsafe());
   }
 }
 
