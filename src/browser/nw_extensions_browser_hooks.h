@@ -7,6 +7,7 @@
 #endif
 
 #include <string>
+#include <base/values.h>
 #include "third_party/blink/public/web/web_navigation_policy.h"
 
 class GURL;
@@ -32,7 +33,7 @@ namespace gfx {
 namespace nw {
 // browser
 // ref in extensions/common/file_util.cc
-void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
+void LoadNWAppAsExtensionHook(base::Value::Dict* manifest,
                               const base::FilePath& extension_path,
                               std::string* error);
 // ref in extensions/browser/app_window/app_window.cc 
