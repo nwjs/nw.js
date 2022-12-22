@@ -44,7 +44,7 @@ static const int kIconHeight = 16;
 
 } // namespace
 
-void MenuItem::Create(const base::DictionaryValue& option) {
+void MenuItem::Create(const base::Value::Dict& option) {
   is_modified_ = false;
   is_checked_ = false;
   is_enabled_ = true;
@@ -55,20 +55,26 @@ void MenuItem::Create(const base::DictionaryValue& option) {
   focus_manager_ = NULL;
   menu_ = NULL;
 
-  option.GetString("type", &type_);
-  std::string label;
-  option.GetString("label", &label);
-  label_ = base::UTF8ToUTF16(label);
-  std::string tooltip;
-  option.GetString("tooltip", &tooltip);
-  tooltip_ = base::UTF8ToUTF16(tooltip);
-  is_checked_ = option.FindBoolKey("checked").value_or(false);
-  is_enabled_ = option.FindBoolKey("enabled").value_or(false);
+  const std::string* str = option.FindString("type");
+  if (str)
+    type_ = *str;
+  const std::string* label = option.FindString("label");
+  if (label)
+    label_ = base::UTF8ToUTF16(*label);
+  const std::string* tooltip = option.FindString("tooltip");
+  if (tooltip)
+    tooltip_ = base::UTF8ToUTF16(*tooltip);
+  is_checked_ = option.FindBool("checked").value_or(false);
+  is_enabled_ = option.FindBool("enabled").value_or(false);
 
   std::string key;
   std::string modifiers;
-  option.GetString("key",&key);
-  option.GetString("modifiers",&modifiers);
+  str = option.FindString("key");
+  if (str)
+    key = *str;
+  str = option.FindString("modifiers");
+  if (str)
+    modifiers = *str;
 
   ui::KeyboardCode keyval = ui::VKEY_UNKNOWN;
 
@@ -100,13 +106,13 @@ void MenuItem::Create(const base::DictionaryValue& option) {
     accelerator_ = ui::Accelerator(keyval,modifiers_value);
   }
 
-  std::string icon;
-  if (option.GetString("icon", &icon) && !icon.empty())
-    SetIcon(icon);
+  const std::string* icon = option.FindString("icon");
+  if (icon && !icon->empty())
+    SetIcon(*icon);
 
-  int menu_id;
-  if (option.GetInteger("submenu", &menu_id))
-    SetSubmenu(object_manager()->GetApiObject<Menu>(menu_id));
+  absl::optional<int> menu_id = option.FindInt("submenu");
+  if (menu_id)
+    SetSubmenu(object_manager()->GetApiObject<Menu>(*menu_id));
 }
 
 void MenuItem::Destroy() {

@@ -29,34 +29,34 @@ namespace nw {
 
 Tray::Tray(int id,
            const base::WeakPtr<ObjectManager>& object_manager,
-           const base::DictionaryValue& option,
+           const base::Value::Dict& option,
            const std::string& extension_id)
   : Base(id, object_manager, option, extension_id) {
   Create(option);
 
-  std::string title;
-  if (option.GetString("title", &title))
-    SetTitle(title);
+  const std::string* title = option.FindString("title");
+  if (title)
+    SetTitle(*title);
 
-  absl::optional<bool> areTemplates = option.FindBoolKey("iconsAreTemplates");
+  absl::optional<bool> areTemplates = option.FindBool("iconsAreTemplates");
   if (areTemplates)
     SetIconsAreTemplates(*areTemplates);
 
-  std::string icon;
-  if (option.GetString("icon", &icon) && !icon.empty())
-    SetIcon(icon);
+  const std::string* icon = option.FindString("icon");
+  if (icon && !icon->empty())
+    SetIcon(*icon);
 
-  std::string alticon;
-  if (option.GetString("alticon", &alticon) && !alticon.empty())
-    SetAltIcon(alticon);
+  const std::string* alticon = option.FindString("alticon");
+  if (alticon && !alticon->empty())
+    SetAltIcon(*alticon);
 
-  std::string tooltip;
-  if (option.GetString("tooltip", &tooltip))
-    SetTooltip(tooltip);
+  const std::string* tooltip = option.FindString("tooltip");
+  if (tooltip)
+    SetTooltip(*tooltip);
 
-  int menu_id;
-  if (option.GetInteger("menu", &menu_id))
-    SetMenu(object_manager->GetApiObject<Menu>(menu_id));
+  absl::optional<int> menu_id = option.FindInt("menu");
+  if (menu_id)
+    SetMenu(object_manager->GetApiObject<Menu>(*menu_id));
 
   ShowAfterCreate();
 }
