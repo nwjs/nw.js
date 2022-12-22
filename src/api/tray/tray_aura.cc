@@ -64,7 +64,7 @@ class TrayObserver final : public StatusIconObserver {
   Tray* tray_;
 };
 
-void Tray::Create(const base::DictionaryValue& option) {
+void Tray::Create(const base::Value::Dict& option) {
   if (!status_tray_)
     status_tray_ = g_browser_process->status_tray();
 

@@ -28,7 +28,7 @@ namespace nw {
 
 Base::Base(int id,
            const base::WeakPtr<ObjectManager>& object_manager,
-           const base::DictionaryValue& option,
+           const base::Value::Dict& option,
 	   const std::string& extension_id)
     : extension_id_(extension_id),
       id_(id),

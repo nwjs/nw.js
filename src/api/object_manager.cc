@@ -85,7 +85,7 @@ int ObjectManager::AllocateId() {
 
 void ObjectManager::OnAllocateObject(int object_id,
 				     const std::string& type,
-				     const base::DictionaryValue& option,
+				     const base::Value::Dict& option,
 				     const std::string& extension_id) {
   DVLOG(1) << "OnAllocateObject: object_id:" << object_id
              << " type:" << type

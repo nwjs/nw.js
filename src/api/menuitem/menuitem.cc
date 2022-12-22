@@ -93,7 +93,7 @@ ui::KeyboardCode GetKeycodeFromText(std::string text){
 
 MenuItem::MenuItem(int id,
                    const base::WeakPtr<ObjectManager>& object_manager,
-                   const base::DictionaryValue& option,
+                   const base::Value::Dict& option,
                    const std::string& extension_id)
   : Base(id, object_manager, option, extension_id) {
   Create(option);

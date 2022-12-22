@@ -77,7 +77,7 @@ class ObjectManager : public KeyedService {
 
   void OnAllocateObject(int object_id,
                         const std::string& type,
-                        const base::DictionaryValue& option,
+                        const base::Value::Dict& option,
                         const std::string& extension_id);
   void OnDeallocateObject(int object_id);
   void OnCallObjectMethod(content::RenderFrameHost* rvh,
