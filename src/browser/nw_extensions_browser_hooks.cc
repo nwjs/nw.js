@@ -171,12 +171,12 @@ std::unique_ptr<base::DictionaryValue> MergeManifest(const std::string& in_manif
     if (str)
       js_doc_start = *str;
     if (!js_doc_start.empty())
-      manifest->SetString(::switches::kmInjectJSDocStart, js_doc_start);
+      manifest->SetStringKey(::switches::kmInjectJSDocStart, js_doc_start);
     str = pkg->root()->FindString(::switches::kmInjectJSDocEnd);
     if (str)
       js_doc_end = *str;
     if (!js_doc_end.empty())
-      manifest->SetString(::switches::kmInjectJSDocEnd, js_doc_end);
+      manifest->SetStringKey(::switches::kmInjectJSDocEnd, js_doc_end);
     base::Value::Dict* manifest_window = pkg->window();
     if (manifest_window) {
       std::unique_ptr<base::DictionaryValue> manifest_window_cloned(new base::DictionaryValue());
