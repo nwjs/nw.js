@@ -23,10 +23,10 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             log =  "Cookie sent by client on " + s.path + ": " + (cookiestring or '')
             print(log)
             s._set_headers()
-            s.wfile.write("<script type='text/javascript'> document.write('<h1 id=\\'result\\'>' + \
+            s.wfile.write(("<script type='text/javascript'> document.write('<h1 id=\\'result\\'>' + \
                           document.cookie + '</h1>'); </script> \
                           <img src='1.svg'></img> \
-                          <p id='svr'>" + log + "</p>")
+                          <p id='svr'>" + log + "</p>").encode())
             with open("svrlog.txt", "a") as myfile:
                 myfile.write(log + "\n")
             return
@@ -39,7 +39,7 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             s.send_response(200)
             s.send_header('Content-type', 'image/svg+xml')
             s.end_headers()
-            s.wfile.write('<svg version="1.1" baseProfile="full" height="100" width="100" xmlns="http://www.w3.org/2000/svg"> \
+            s.wfile.write(b'<svg version="1.1" baseProfile="full" height="100" width="100" xmlns="http://www.w3.org/2000/svg"> \
   <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red" /></svg>')
 
 httpd = http.server.HTTPServer(('localhost', PORT), MyHandler)
