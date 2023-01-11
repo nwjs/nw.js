@@ -370,6 +370,8 @@ NWWindow.prototype.toggleKioskMode = function() {
 };
 
 NWWindow.prototype.showDevTools = function(frm, callback) {
+  if (process.versions['flavor'] == 'sdk')
+        return;
   var id = '';
   if (typeof frm === 'string')
     id = frm;
