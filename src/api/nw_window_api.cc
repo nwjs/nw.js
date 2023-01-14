@@ -227,18 +227,18 @@ NwCurrentWindowInternalCloseFunction::Run() {
       return RespondNow(Error("cannot find browser window"));
     }
     if (force)
-      base::ThreadTaskRunnerHandle::Get().get()->PostTask(FROM_HERE,
+      base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(FROM_HERE,
                                                           base::BindOnce(&NwCurrentWindowInternalCloseFunction::DoCloseBrowser, browser->AsWeakPtr()));
     else if (browser->NWCanClose())
-      base::ThreadTaskRunnerHandle::Get().get()->PostTask(FROM_HERE,
+      base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(FROM_HERE,
                                                           base::BindOnce(&NwCurrentWindowInternalCloseFunction::DoCloseBrowser, browser->AsWeakPtr()));
   } else {
     AppWindow* window = getAppWindow(this);
     if (force)
-      base::ThreadTaskRunnerHandle::Get().get()->PostTask(FROM_HERE,
+      base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(FROM_HERE,
          base::BindOnce(&NwCurrentWindowInternalCloseFunction::DoClose, window));
     else if (window->NWCanClose())
-      base::ThreadTaskRunnerHandle::Get().get()->PostTask(FROM_HERE,
+      base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(FROM_HERE,
          base::BindOnce(&NwCurrentWindowInternalCloseFunction::DoClose, window));
   }
 
