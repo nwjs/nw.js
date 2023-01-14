@@ -57,7 +57,7 @@ void NwAppQuitFunction::DoJob(ExtensionService* service, std::string extension_i
     KeepAliveRegistry::GetInstance()->Unregister(KeepAliveOrigin::APP_CONTROLLER, KeepAliveRestartOption::ENABLED);
     return;
   }
-  base::ThreadTaskRunnerHandle::Get().get()->PostTask(
+  base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(
                                                       FROM_HERE,
                                                       base::BindOnce(&ExtensionService::TerminateExtension,
                                                                    service->AsExtensionServiceWeakPtr(),
@@ -68,7 +68,7 @@ ExtensionFunction::ResponseAction
 NwAppQuitFunction::Run() {
   ExtensionService* service =
     ExtensionSystem::Get(browser_context())->extension_service();
-  base::ThreadTaskRunnerHandle::Get().get()->PostTask(
+  base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(
         FROM_HERE,
         base::BindOnce(&NwAppQuitFunction::DoJob,
                    service,
@@ -94,7 +94,7 @@ NwAppCloseAllWindowsFunction::Run() {
   AppWindowRegistry* registry = AppWindowRegistry::Get(browser_context());
   if (!registry)
     return RespondNow(Error(""));
-  base::ThreadTaskRunnerHandle::Get().get()->PostTask(
+  base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(
         FROM_HERE,
         base::BindOnce(&NwAppCloseAllWindowsFunction::DoJob, registry, extension()->id()));
 
