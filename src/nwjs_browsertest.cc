@@ -66,12 +66,10 @@
 #include "content/public/browser/render_widget_host.h"
 #include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/web_contents_delegate.h"
-#include "content/public/common/child_process_host.h"
 #include "content/public/common/content_features.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/test/browser_test_utils.h"
 #include "content/public/test/download_test_observer.h"
-#include "content/public/test/fake_speech_recognition_manager.h"
 #include "content/public/test/test_renderer_host.h"
 #include "extensions/browser/api/declarative/rules_registry.h"
 #include "extensions/browser/api/declarative/rules_registry_service.h"
@@ -436,25 +434,10 @@ class MockDownloadWebContentsDelegate : public content::WebContentsDelegate {
 class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
  protected:
   void SetUp() override {
-    if (UsesFakeSpeech()) {
-      // SpeechRecognition test specific SetUp.
-      fake_speech_recognition_manager_.reset(
-          new content::FakeSpeechRecognitionManager());
-      fake_speech_recognition_manager_->set_should_send_fake_response(true);
-      // Inject the fake manager factory so that the test result is returned to
-      // the web page.
-      content::SpeechRecognitionManager::SetManagerForTesting(
-          fake_speech_recognition_manager_.get());
-    }
     extensions::PlatformAppBrowserTest::SetUp();
   }
 
   void TearDown() override {
-    if (UsesFakeSpeech()) {
-      // SpeechRecognition test specific TearDown.
-      content::SpeechRecognitionManager::SetManagerForTesting(NULL);
-    }
-
     extensions::PlatformAppBrowserTest::TearDown();
   }
 
@@ -741,18 +724,6 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
   //content::FrameWatcher frame_watcher_;
 
  private:
-  bool UsesFakeSpeech() {
-    const testing::TestInfo* const test_info =
-        testing::UnitTest::GetInstance()->current_test_info();
-
-    // SpeechRecognition test specific SetUp.
-    const char* name = "SpeechRecognitionAPI_HasPermissionAllow";
-    return !strncmp(test_info->name(), name, strlen(name));
-  }
-
-  std::unique_ptr<content::FakeSpeechRecognitionManager>
-      fake_speech_recognition_manager_;
-
   TestGuestViewManagerFactory factory_;
   // Note that these are only set if you launch app using LoadAppWithGuest().
   guest_view::GuestViewBase* guest_view_;
