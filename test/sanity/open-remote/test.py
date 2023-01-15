@@ -18,7 +18,7 @@ testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
 
 port = str(utils.free_port())
-server = subprocess.Popen(['python', 'http-server.py', port])
+server = subprocess.Popen(['python3', 'http-server.py', port])
 
 html = open('index.html', 'w')
 html.write('''

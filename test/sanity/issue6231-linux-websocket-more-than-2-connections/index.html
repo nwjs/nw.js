@@ -7,10 +7,10 @@
 </head>
 <body>
   <script>
-    let socket1 =  new WebSocket('ws://echo.websocket.events');
-    let socket2 =  new WebSocket('ws://echo.websocket.events');
-    let socket3 =  new WebSocket('ws://echo.websocket.events');
-    let socket4 =  new WebSocket('ws://echo.websocket.events');
+    let socket1 =  new WebSocket('wss://ws.postman-echo.com/raw');
+    let socket2 =  new WebSocket('wss://ws.postman-echo.com/raw');
+    let socket3 =  new WebSocket('wss://ws.postman-echo.com/raw');
+    let socket4 =  new WebSocket('wss://ws.postman-echo.com/raw');
 
     socket1.onopen = ()=>{
       console.log('Socket 1 open');
