@@ -124,7 +124,7 @@ void MenuItem::OnClick() {
     is_checked_ = !is_checked_;
 
   // Send event.
-  base::ListValue args;
+  base::Value::List args;
   object_manager()->SendEvent(this, "click", args);
 }
 

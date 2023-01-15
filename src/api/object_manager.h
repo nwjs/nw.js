@@ -73,7 +73,7 @@ class ObjectManager : public KeyedService {
   // Send event to C++ object's corresponding js object.
   void SendEvent(Base* object,
                  const std::string& event,
-                 const base::ListValue& arguments);
+                 const base::Value::List& arguments);
 
   void OnAllocateObject(int object_id,
                         const std::string& type,
@@ -98,8 +98,8 @@ class ObjectManager : public KeyedService {
   void OnCallStaticMethodSync(content::RenderFrameHost* rvh,
                               const std::string& type,
                               const std::string& method,
-                              const base::ListValue& arguments,
-                              base::ListValue* result);
+                              const base::Value::List& arguments,
+                              base::Value::List* result);
  private:
   static base::IDMap<std::unique_ptr<Base>> objects_registry_;
   static int next_object_id_;
