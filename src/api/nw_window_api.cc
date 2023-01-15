@@ -561,7 +561,7 @@ bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::Value::List* respon
     if (old_menu) old_menu->RemoveKeys();
     menu->UpdateKeys( native_app_window_views->widget()->GetFocusManager() );
   }
-  response->Append(base::ListValue());
+  response->Append(base::Value::List());
 #endif
   return true;
 }

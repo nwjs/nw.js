@@ -50,7 +50,7 @@ class TrayObserver final : public StatusIconObserver {
   }
 
   void OnStatusIconClicked() override {
-    base::ListValue args;
+    base::Value::List args;
     base::Value::Dict data;
     gfx::Point cursor_pos(
       display::Screen::GetScreen()->GetCursorScreenPoint());
