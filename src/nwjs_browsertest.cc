@@ -27,7 +27,6 @@
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/stringprintf.h"
 #include "base/strings/utf_string_conversions.h"
-#include "base/threading/thread_task_runner_handle.h"
 #include "build/build_config.h"
 #include "chrome/app/chrome_command_ids.h"
 #include "chrome/browser/apps/platform_apps/app_browsertest_util.h"
@@ -269,7 +268,7 @@ class LeftMouseClick {
     web_contents_->GetRenderViewHost()->GetWidget()->ForwardMouseEvent(
         mouse_event_);
 
-    base::ThreadTaskRunnerHandle::Get()->PostDelayedTask(
+    base::SingleThreadTaskRunner::GetCurrentDefault()->PostDelayedTask(
         FROM_HERE, base::BindOnce(&LeftMouseClick::SendMouseUp,
                               base::Unretained(this)),
         base::Milliseconds(duration_ms));
@@ -930,7 +929,7 @@ IN_PROC_BROWSER_TEST_F(NWJSAppTest, PrintChangeFooter) {
   int frame_count;
   do {
     base::RunLoop run_loop;
-    base::ThreadTaskRunnerHandle::Get()->PostDelayedTask(
+    base::SingleThreadTaskRunner::GetCurrentDefault()->PostDelayedTask(
         FROM_HERE, run_loop.QuitClosure(), base::Seconds(1));
     run_loop.Run();
 
@@ -975,7 +974,7 @@ IN_PROC_BROWSER_TEST_P(NWJSWebViewTest, LocalPDF) {
   if (!trusted_) {
     base::CancelableOnceClosure timeout(
           base::BindOnce(&NWTimeoutCallback, "pdf load timed out."));
-    base::ThreadTaskRunnerHandle::Get()->PostDelayedTask(
+    base::SingleThreadTaskRunner::GetCurrentDefault()->PostDelayedTask(
           FROM_HERE, timeout.callback(), TestTimeouts::action_timeout());
     ExtensionTestMessageListener pass_listener("PASSED");
     EXPECT_TRUE(pass_listener.WaitUntilSatisfied());
