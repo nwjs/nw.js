@@ -10,3 +10,5 @@ tests/tmp-nw
 tags
 Thumbs.db
 /tmp
+# mkdocs build
+/site
