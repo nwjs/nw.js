@@ -1,5 +1,5 @@
 {
-  "name": "dom-input-files-append",
+  "name": "dom-input-fileslist-append",
   "main": "http://localhost:3000",
   "node-main": "./node-main.js",
   "node-remote": [
