@@ -5,11 +5,5 @@
   "node-remote": [
     "http://localhost:3000",
     "file://*"
-  ],
-  "engines": {
-    "node": ">= 19.3.0"
-  },
-  "dependencies": {
-    "nw": "^0.72.0-sdk"
-  }
+  ]
 }
