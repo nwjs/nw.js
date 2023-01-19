@@ -24,6 +24,8 @@ os.environ['CHROMEDRIVER'] = "./node_modules/nw/bin/chromedriver"
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
 try:
     driver.get('http://localhost:%s/index.html' % port)
+    result = driver.get_element_by_id("file-input")
+    assert("success" in result.get_attribute('innerHTML'))
 except:
     print("dom-input-file-append")
     print(sys.exc_info()[0])
