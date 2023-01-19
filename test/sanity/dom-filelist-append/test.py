@@ -13,7 +13,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
 
-port = "3000"
+port = str(utils.free_port())
 server = subprocess.Popen(['python3', 'http-server.py', port])
 
 chrome_options = Options()
