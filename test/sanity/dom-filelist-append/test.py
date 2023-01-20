@@ -1,7 +1,4 @@
-import time
 import os
-import shutil
-import platform
 import subprocess
 import sys
 
@@ -19,19 +16,13 @@ server = subprocess.Popen(['python3', 'http-server.py', port])
 chrome_options = Options()
 chrome_options.add_argument("nwapp=" + testdir)
 
-#To do removed before merging
-os.environ['CHROMEDRIVER'] = "$HOME/.nvm/versions/node/v18.13.0/bin/chromedriver"
-
-driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
+driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], options=chrome_options)
 try:
     driver.get('http://localhost:%s/index.html' % port)
     result = driver.get_element_by_id("file-input")
     assert("success" in result.get_attribute('innerHTML'))
 except:
-    print("dom-input-file-append")
-    print(sys.exc_info()[0])
-    print(sys.exc_info()[1])
-    print(sys.exc_info()[2])
+    assert(False)
 finally:
     server.terminate()
     driver.quit()
