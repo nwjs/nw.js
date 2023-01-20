@@ -14,7 +14,6 @@
 
 #include <string>
 
-#include "base/bind.h"
 #include "base/files/file_util.h"
 #include "extensions/renderer/script_context.h"
 #include "v8/include/v8.h"
