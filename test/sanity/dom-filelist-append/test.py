@@ -30,7 +30,7 @@ manifest.write('''
 manifest.close()
 
 driver = webdriver.Chrome(
-    executable_path=os.environ["CHROMEDRIVER"], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"]
+    executable_path=os.environ["CHROMEDRIVER"], chrome_options=chrome_options
 )
 driver.implicitly_wait(10)
 time.sleep(1)
