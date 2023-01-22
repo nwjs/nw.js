@@ -34,7 +34,7 @@ html.write('''
   </body>
 </html>
 ''' % (port))
-
+  
 html.close()
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
