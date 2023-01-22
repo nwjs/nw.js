@@ -1,3 +1,6 @@
+
 {
-  "name": "dom"
+  "name":"dom-filelist-append",
+  "node-remote":[ "<all_urls>", "file://*" ],
+  "main":"http://localhost:37859/index.html"
 }

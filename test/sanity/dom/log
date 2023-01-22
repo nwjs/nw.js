@@ -1,0 +1,285 @@
+[1674408747.134][INFO]: Starting ChromeDriver 109.0.5414.87 (62f83a7521ae1f32e563795732dff0c9da1b660d-refs/heads/master@{#812354}) on port 59265
+[1674408747.134][INFO]: Please see https://chromedriver.chromium.org/security-considerations for suggestions on keeping ChromeDriver safe.
+[1674408747.635][INFO]: [480531434cf58ce6138bc50d0c865d92] COMMAND InitSession {
+   "capabilities": {
+      "alwaysMatch": {
+         "browserName": "chrome",
+         "goog:chromeOptions": {
+            "args": [ "nwapp=/home/ayushmxn/tharatau/nw/nw-core/test/sanity/dom" ],
+            "extensions": [  ]
+         },
+         "pageLoadStrategy": "normal"
+      },
+      "firstMatch": [ {
+      } ]
+   }
+}
+[1674408747.636][INFO]: Populating Preferences file: {
+   "alternate_error_pages": {
+      "enabled": false
+   },
+   "autofill": {
+      "enabled": false
+   },
+   "browser": {
+      "check_default_browser": false
+   },
+   "distribution": {
+      "import_bookmarks": false,
+      "import_history": false,
+      "import_search_engine": false,
+      "make_chrome_default_for_user": false,
+      "skip_first_run_ui": true
+   },
+   "dns_prefetching": {
+      "enabled": false
+   },
+   "profile": {
+      "content_settings": {
+         "pattern_pairs": {
+            "https://*,*": {
+               "media-stream": {
+                  "audio": "Default",
+                  "video": "Default"
+               }
+            }
+         }
+      },
+      "default_content_setting_values": {
+         "geolocation": 1
+      },
+      "default_content_settings": {
+         "geolocation": 1,
+         "mouselock": 1,
+         "notifications": 1,
+         "popups": 1,
+         "ppapi-broker": 1
+      },
+      "password_manager_enabled": false
+   },
+   "safebrowsing": {
+      "enabled": false
+   },
+   "search": {
+      "suggest_enabled": false
+   },
+   "translate": {
+      "enabled": false
+   }
+}
+[1674408747.636][INFO]: Populating Local State file: {
+   "background_mode": {
+      "enabled": false
+   },
+   "ssl": {
+      "rev_checking": {
+         "enabled": false
+      }
+   }
+}
+[1674408747.636][INFO]: Launching chrome: /home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/nw --allow-pre-commit-input --disable-popup-blocking --enable-automation --enable-logging --nwapp=/home/ayushmxn/tharatau/nw/nw-core/test/sanity/dom --remote-debugging-port=0 --user-data-dir=/tmp/.io.nwjs.m3tGoO
+[15768:15789:0122/123227.782276:ERROR:bus.cc(399)] Failed to connect to the bus: Failed to connect to socket /run/user/1001/bus: Permission denied
+[15768:15789:0122/123227.782361:ERROR:bus.cc(399)] Failed to connect to the bus: Failed to connect to socket /run/user/1001/bus: Permission denied
+[15768:15789:0122/123227.809721:ERROR:bus.cc(399)] Failed to connect to the bus: Failed to connect to socket /run/user/1001/bus: Permission denied
+[15768:15789:0122/123227.809898:ERROR:bus.cc(399)] Failed to connect to the bus: Failed to connect to socket /run/user/1001/bus: Permission denied
+
+DevTools listening on ws://127.0.0.1:41119/devtools/browser/72e94dd2-aeef-4b6e-8f6b-9d5229b847a6
+[15768:15812:0122/123227.837348:ERROR:object_proxy.cc(623)] Failed to call method: org.freedesktop.DBus.Properties.Get: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[15768:15812:0122/123227.837651:ERROR:object_proxy.cc(623)] Failed to call method: org.freedesktop.UPower.GetDisplayDevice: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[15768:15812:0122/123227.837868:ERROR:object_proxy.cc(623)] Failed to call method: org.freedesktop.UPower.EnumerateDevices: object_path= /org/freedesktop/UPower: org.freedesktop.DBus.Error.ServiceUnknown: The name org.freedesktop.UPower was not provided by any .service files
+[1674408747.839][DEBUG]: DevTools HTTP Request: http://localhost:41119/json/version
+[1674408747.847][DEBUG]: DevTools HTTP Response: {
+   "Browser": "Chrome/109.0.5414.87",
+   "Protocol-Version": "1.3",
+   "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+   "V8-Version": "10.9.194.9",
+   "WebKit-Version": "537.36 (@62f83a7521ae1f32e563795732dff0c9da1b660d)",
+   "webSocketDebuggerUrl": "ws://localhost:41119/devtools/browser/72e94dd2-aeef-4b6e-8f6b-9d5229b847a6"
+}
+
+[1674408747.847][DEBUG]: DevTools HTTP Request: http://localhost:41119/json/list
+[1674408747.850][DEBUG]: DevTools HTTP Response: [  ]
+
+WARNING: lavapipe is not a conformant vulkan implementation, testing use only.
+libva error: vaGetDriverNameByIndex() failed with unknown libva error, driver_name = (null)
+[15798:15798:0122/123227.893369:ERROR:viz_main_impl.cc(186)] Exiting GPU process due to errors during initialization
+[1674408747.900][DEBUG]: DevTools HTTP Request: http://localhost:41119/json/list
+[1674408747.901][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:41119/devtools/page/487307B0841DBBF8495D66362D45D050",
+   "id": "487307B0841DBBF8495D66362D45D050",
+   "title": "dom-filelist-append",
+   "type": "background_page",
+   "url": "chrome-extension://kdngongmiaabdbhpnnanmoiahmkbpeje/_generated_background_page.html",
+   "webSocketDebuggerUrl": "ws://localhost:41119/devtools/page/487307B0841DBBF8495D66362D45D050"
+} ]
+
+[1674408747.951][DEBUG]: DevTools HTTP Request: http://localhost:41119/json/list
+WARNING: lavapipe is not a conformant vulkan implementation, testing use only.
+libva error: vaGetDriverNameByIndex() failed with unknown libva error, driver_name = (null)
+[1674408747.965][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:41119/devtools/page/487307B0841DBBF8495D66362D45D050",
+   "id": "487307B0841DBBF8495D66362D45D050",
+   "title": "dom-filelist-append",
+   "type": "background_page",
+   "url": "chrome-extension://kdngongmiaabdbhpnnanmoiahmkbpeje/_generated_background_page.html",
+   "webSocketDebuggerUrl": "ws://localhost:41119/devtools/page/487307B0841DBBF8495D66362D45D050"
+} ]
+
+[15864:15864:0122/123227.968307:ERROR:viz_main_impl.cc(186)] Exiting GPU process due to errors during initialization
+[1674408748.015][DEBUG]: DevTools HTTP Request: http://localhost:41119/json/list
+[1674408748.017][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:41119/devtools/page/487307B0841DBBF8495D66362D45D050",
+   "id": "487307B0841DBBF8495D66362D45D050",
+   "title": "dom-filelist-append",
+   "type": "background_page",
+   "url": "chrome-extension://kdngongmiaabdbhpnnanmoiahmkbpeje/_generated_background_page.html",
+   "webSocketDebuggerUrl": "ws://localhost:41119/devtools/page/487307B0841DBBF8495D66362D45D050"
+} ]
+
+libva error: vaGetDriverNameByIndex() failed with unknown libva error, driver_name = (null)
+[15891:15891:0122/123228.056410:ERROR:gpu_memory_buffer_support_x11.cc(49)] dri3 extension not supported.
+[15818:15831:0122/123228.058444:ERROR:command_buffer_proxy_impl.cc(128)] ContextResult::kTransientFailure: Failed to send GpuControl.CreateCommandBuffer.
+[1674408748.067][DEBUG]: DevTools HTTP Request: http://localhost:41119/json/list
+[1674408748.069][DEBUG]: DevTools HTTP Response: [ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:41119/devtools/page/FDCFF3F7EA6F441D67D54C97320AA485",
+   "id": "FDCFF3F7EA6F441D67D54C97320AA485",
+   "title": "dom-filelist-append",
+   "type": "page",
+   "url": "http://localhost:37859/index.html",
+   "webSocketDebuggerUrl": "ws://localhost:41119/devtools/page/FDCFF3F7EA6F441D67D54C97320AA485"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:41119/devtools/page/487307B0841DBBF8495D66362D45D050",
+   "id": "487307B0841DBBF8495D66362D45D050",
+   "title": "dom-filelist-append",
+   "type": "background_page",
+   "url": "chrome-extension://kdngongmiaabdbhpnnanmoiahmkbpeje/_generated_background_page.html",
+   "webSocketDebuggerUrl": "ws://localhost:41119/devtools/page/487307B0841DBBF8495D66362D45D050"
+} ]
+
+[1674408748.069][INFO]: resolved localhost to ["127.0.0.1"]
+[1674408748.069][DEBUG]: DevTools WebSocket Command: Target.getTargets (id=1) (session_id=) browser {
+}
+[1674408748.070][DEBUG]: DevTools WebSocket Response: Target.getTargets (id=1) (session_id=) browser {
+   "targetInfos": [ {
+      "attached": false,
+      "browserContextId": "86166CE972DD7F0F38F27259C76EE599",
+      "canAccessOpener": false,
+      "targetId": "FDCFF3F7EA6F441D67D54C97320AA485",
+      "title": "dom-filelist-append",
+      "type": "page",
+      "url": "http://localhost:37859/index.html"
+   }, {
+      "attached": false,
+      "browserContextId": "86166CE972DD7F0F38F27259C76EE599",
+      "canAccessOpener": false,
+      "targetId": "487307B0841DBBF8495D66362D45D050",
+      "title": "dom-filelist-append",
+      "type": "background_page",
+      "url": "chrome-extension://kdngongmiaabdbhpnnanmoiahmkbpeje/_generated_background_page.html"
+   } ]
+}
+[1674408748.070][DEBUG]: DevTools WebSocket Command: Target.attachToTarget (id=2) (session_id=) browser {
+   "flatten": true,
+   "targetId": "FDCFF3F7EA6F441D67D54C97320AA485"
+}
+[1674408748.070][DEBUG]: DevTools WebSocket Event: Target.attachedToTarget (session_id=) browser {
+   "sessionId": "1B8DC2C73FEFF5130E1C89342E3FE4BD",
+   "targetInfo": {
+      "attached": true,
+      "browserContextId": "86166CE972DD7F0F38F27259C76EE599",
+      "canAccessOpener": false,
+      "targetId": "FDCFF3F7EA6F441D67D54C97320AA485",
+      "title": "dom-filelist-append",
+      "type": "page",
+      "url": "http://localhost:37859/index.html"
+   },
+   "waitingForDebugger": false
+}
+[1674408748.070][DEBUG]: DevTools WebSocket Response: Target.attachToTarget (id=2) (session_id=) browser {
+   "sessionId": "1B8DC2C73FEFF5130E1C89342E3FE4BD"
+}
+[1674408748.070][DEBUG]: DevTools WebSocket Command: Page.addScriptToEvaluateOnNewDocument (id=3) (session_id=1B8DC2C73FEFF5130E1C89342E3FE4BD) FDCFF3F7EA6F441D67D54C97320AA485 {
+   "source": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1674408748.070][DEBUG]: DevTools WebSocket Command: Runtime.evaluate (id=4) (session_id=1B8DC2C73FEFF5130E1C89342E3FE4BD) FDCFF3F7EA6F441D67D54C97320AA485 {
+   "expression": "(function () {window.cdc_adoQpoasnfa76pfcZLmcfl_Array = window.Array;window.cdc_adoQpoasnfa76pfcZLmcfl_Promise = window.Promise;window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol = window.Symbol;}) ();"
+}
+[1674408748.070][DEBUG]: DevTools WebSocket Command: Log.enable (id=5) (session_id=1B8DC2C73FEFF5130E1C89342E3FE4BD) FDCFF3F7EA6F441D67D54C97320AA485 {
+}
+[1674408748.071][DEBUG]: DevTools WebSocket Command: Target.setAutoAttach (id=6) (session_id=1B8DC2C73FEFF5130E1C89342E3FE4BD) FDCFF3F7EA6F441D67D54C97320AA485 {
+   "autoAttach": true,
+   "flatten": true,
+   "waitForDebuggerOnStart": false
+}
+[1674408748.071][DEBUG]: DevTools WebSocket Command: Page.enable (id=7) (session_id=1B8DC2C73FEFF5130E1C89342E3FE4BD) FDCFF3F7EA6F441D67D54C97320AA485 {
+}
+[1674408748.071][DEBUG]: DevTools WebSocket Command: Page.enable (id=8) (session_id=1B8DC2C73FEFF5130E1C89342E3FE4BD) FDCFF3F7EA6F441D67D54C97320AA485 {
+}
+[0122/123228.077157:ERROR:file_io_posix.cc(144)] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq: No such file or directory (2)
+[0122/123228.077218:ERROR:file_io_posix.cc(144)] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq: No such file or directory (2)
+Received signal 11 SEGV_MAPERR 0000000023fd
+#0 0x7fd04a7abea3 (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x627fea2)
+#1 0x7fd04a84ed81 (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x6322d80)
+#2 0x7fd044306520 (/usr/lib/x86_64-linux-gnu/libc.so.6+0x4251f)
+#3 0x7fd04e9dea2b (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0xa4b2a2a)
+#4 0x7fd047afc9bc (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x35d09bb)
+#5 0x7fd047afbd5d (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x35cfd5c)
+#6 0x7fcfdff17978 <unknown>
+#7 0x7fcfdfe8b86c <unknown>
+#8 0x7fcfdfe89fdc <unknown>
+#9 0x7fcfdfe89d07 <unknown>
+#10 0x7fd047bd19b6 (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x36a59b5)
+#11 0x7fd047bd10fc v8::internal::Execution::Call()
+#12 0x7fd047ab4056 v8::Function::Call()
+#13 0x7fd04d79120c (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x926520b)
+#14 0x7fd04d74215b (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x921615a)
+#15 0x7fd04e91ada1 (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0xa3eeda0)
+#16 0x7fd04d74e460 (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x922245f)
+#17 0x7fd04d74dc43 (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x9221c42)
+#18 0x7fd04d9b9992 (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x948d991)
+#19 0x7fd04d9b8edc (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x948cedb)
+#20 0x7fd04db7f26a (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x9653269)
+#21 0x7fd04db7f29e (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x965329d)
+#22 0x7fd04e78bcd1 (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0xa25fcd0)
+#23 0x7fd04e78c0c8 (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0xa2600c7)
+#24 0x7fd04e77e08e (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0xa25208d)
+#25 0x7fd04e1ac049 (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x9c80048)
+#26 0x7fd04e79afc5 (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0xa26efc4)
+#27 0x7fd04e7fb6d4 (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0xa2cf6d3)
+#28 0x7fd04e7fceb5 (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0xa2d0eb4)
+#29 0x7fd04e7fb8d3 (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0xa2cf8d2)
+#30 0x7fd04e7fbbeb (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0xa2cfbea)
+#31 0x7fd04a808c31 (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x62dcc30)
+#32 0x7fd04a81eb47 (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x62f2b46)
+#33 0x7fd04a81e42f (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x62f242e)
+#34 0x7fd04a81f2c5 (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x62f32c4)
+#35 0x7fd04a7c8996 (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x629c995)
+#36 0x7fd04a81f64b (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x62f364a)
+#37 0x7fd04a7ea12d (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x62be12c)
+#38 0x7fd04fecb7d0 (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0xb99f7cf)
+#39 0x7fd04a2f852b (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x5dcc52a)
+#40 0x7fd04a2f93ca (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x5dcd3c9)
+#41 0x7fd04a2f62f4 (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x5dca2f3)
+#42 0x7fd04a2f6c2a (/home/ayushmxn/.nvm/versions/node/v18.13.0/lib/node_modules/nw/nwjs/lib/libnw.so+0x5dcac29)
+#43 0x7fd0467711bb ChromeMain
+#44 0x7fd0442edd90 (/usr/lib/x86_64-linux-gnu/libc.so.6+0x29d8f)
+  r8: ffffffffffff3280  r9: 000000000000008b r10: 00000000000076b1 r11: 000023570073cf39
+ r12: 00007fd0504d17e8 r13: 00005648d119a480 r14: 0000224700106dc0 r15: 00007fd0505efdf0
+  di: 00000000000023f1  si: 0000224700106dc0  bp: 00007ffc84004c10  bx: 00000000000023e1
+  dx: 000023570073da61  ax: 00002357005f1c9d  cx: 0000000000000001  sp: 00007ffc84004c00
+  ip: 00007fd04d77a5b1 efl: 0000000000010202 cgf: 002b000000000033 erf: 0000000000000004
+ trp: 000000000000000e msk: 0000000000000000 cr2: 00000000000023fd
+[end of stack trace]
+[1674408748.093][DEBUG]: DevTools WebSocket Response: Target.setAutoAttach (id=6) (session_id=1B8DC2C73FEFF5130E1C89342E3FE4BD) FDCFF3F7EA6F441D67D54C97320AA485 {
+}
+[1674408748.098][DEBUG]: DevTools WebSocket Event: Inspector.targetCrashed (session_id=1B8DC2C73FEFF5130E1C89342E3FE4BD) FDCFF3F7EA6F441D67D54C97320AA485 {
+}
+[1674408748.150][INFO]: [480531434cf58ce6138bc50d0c865d92] RESPONSE InitSession ERROR tab crashed
+  (Session info: chrome=109.0.5414.87)
+[1674408748.150][DEBUG]: Log type 'driver' lost 0 entries on destruction
+[1674408748.150][DEBUG]: Log type 'browser' lost 0 entries on destruction
