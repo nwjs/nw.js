@@ -1,1 +1,2 @@
 pymdown-extensions == 6.2.1
+selenium == 4.7.2
