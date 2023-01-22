@@ -1,0 +1,17 @@
+<html>
+
+<head></head>
+<script type="module">
+    window.onload = () => {
+        const file = new File(["foor"], 'foo.txt', { type: "text/plain" });
+        const files = new FileList();
+        files.append(file);
+        document.getElementById('file-input').files = files;
+    };
+</script>
+
+<body>
+    <input type="file" id="file-input">
+</body>
+
+</html>

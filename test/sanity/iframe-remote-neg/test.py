@@ -63,4 +63,3 @@ try:
 finally:
     server.terminate()
     driver.quit()
-
