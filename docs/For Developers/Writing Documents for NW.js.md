@@ -12,7 +12,7 @@ A bad example is not having `.md` suffix in internal links, like `[Build NW.js](
 ## View the Document Offline
 To view the well-formatted documents on your own laptop, you need [Python](https://www.python.org/) and install following dependencies:
 ```bash
-pip install mkdocs pygments pymdown-extensions
+pip3 install -r requirements
 ```
 Run following commands in the root of NW.js repo:
 ```bash
