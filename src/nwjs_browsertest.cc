@@ -15,7 +15,6 @@
 #include "content/public/browser/browser_task_traits.h"
 #include "content/public/test/browser_test_utils.h"
 #include "content/public/test/browser_test.h"
-#include "base/callback_helpers.h"
 #include "base/files/file_util.h"
 #include "base/files/scoped_temp_dir.h"
 #include "base/guid.h"
