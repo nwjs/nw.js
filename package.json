@@ -1,10 +1,17 @@
 {
     "private": true,
     "scripts": {
-        "fmt": "prettier --write ./**/*.js",
-        "lnt": "eslint ./**/*.js"
+        "fmt": "concurrently npm:fmt:*",
+        "fmt:js": "prettier --write ./**/*.js",
+        "fmt:py": "",
+        "fmt:cc": "clang-format -i ./**/*.cc ./**/*.h",
+        "lnt": "concurrently npm:lnt:*",
+        "lnt:js": "eslint ./**/*.js",
+        "lnt:py": "pylint ./**/*.py",
+        "lnt:cc": "clang-tidy ./**/*.cc ./**/*.h"
     },
     "devDependencies": {
+        "concurrently": "^7.6.0",
         "eslint": "^8.34.0",
         "prettier": "^2.8.4"
     },

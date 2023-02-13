@@ -1,1 +1,2 @@
 pymdown-extensions == 6.2.1
+pylint == 2.16.1
