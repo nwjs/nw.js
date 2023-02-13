@@ -10,3 +10,4 @@ tests/tmp-nw
 tags
 Thumbs.db
 /tmp
+/node_modules
