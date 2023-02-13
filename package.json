@@ -46,5 +46,8 @@
         "extends": [
             "eslint:recommended"
         ]
+    },
+    "dependencies": {
+        "npm": "^9.4.2"
     }
 }
