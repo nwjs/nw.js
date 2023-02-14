@@ -51,8 +51,8 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': '99682803cdb2dd05fa7b1f1c07b12dd1820575d7',
-  'nw_v8_revision': 'fd8297dd94e7469c20f49855d80b3e25dc05fc84',
+  'nw_src_revision': '3e0e36e8facd7a2923c0e6430222c04b91024cbb',
+  'nw_v8_revision': '026e4c02971405d2118fff8c9ab20ed694a782c1',
   'nw_node_revision': '1e63ba55430eb0b90c07b5f338782759535c537b',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
@@ -307,7 +307,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'dc183b6f8195ebf0c4baa55fd14eddad48894258',
+  'v8_revision': '7999223ca1644726339aae43d9435c721c8a4bb0',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
@@ -319,7 +319,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling PDFium
   # and whatever else without interference from each other.
-  'pdfium_revision': '3455086b5e30971f19cd1adb2358020782bdedce',
+  'pdfium_revision': 'b15f1b6966496c72391a0e2a1e20b4e6c28536fc',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling BoringSSL
   # and whatever else without interference from each other.
@@ -778,7 +778,7 @@ deps = {
 
   'src/clank': {
     'url': 'https://chrome-internal.googlesource.com/clank/internal/apps.git' + '@' +
-    'a1dd3cb074e1d7347c321515d9823a5d2b410592',
+    '3519ecde7000d02d2d9aa7c9b9cd8876f20b8fba',
     'condition': 'checkout_android and checkout_src_internal',
   },
 
@@ -1218,7 +1218,7 @@ deps = {
     Var('chromium_git') + '/devtools/devtools-frontend' + '@' + Var('devtools_frontend_revision'),
 
   'src/third_party/devtools-frontend-internal': {
-      'url': 'https://chrome-internal.googlesource.com/devtools/devtools-internal.git' + '@' + '1fbc689b1bd9e2fade05adaccaeec8aa7a9af57e',
+      'url': 'https://chrome-internal.googlesource.com/devtools/devtools-internal.git' + '@' + 'fc2c3750b15d9a363c6e978329a40c93aa273d38',
     'condition': 'checkout_src_internal',
   },
 
@@ -1907,7 +1907,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@3e35a22d44ba5e1992c40a3894911ad35a235d26',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@a5051ea923abc4ba147aa0f3adede95c1eafbc2f',
     'condition': 'checkout_src_internal',
   },
 
