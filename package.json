@@ -2,7 +2,7 @@
     "private": true,
     "scripts": {
         "e2e": "concurrently npm:e2e:*",
-        "e2e:sanity": "python3 test/test.py -d ./node_modules/nw/nwjs -t 10 sanity/app-argv"
+        "e2e:sanity": "python3 test/test.py -d ./node_modules/nw/nwjs -t 10 sanity/app-getproxyforurl"
     },
     "devDependencies": {
         "concurrently": "^7.6.0",

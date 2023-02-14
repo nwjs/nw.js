@@ -1,9 +1,8 @@
 (function(){
 const http = require('http');
-let id = 1;
 
 // Create an HTTP server
-var srv = http.createServer( (req, res) => {
+const srv = http.createServer( (_, res) => {
   res.writeHead(200, {'Content-Type': 'text/plain'});
   res.write('function FindProxyForURL(url, host) {\n');
   res.write('  if (host == \'www.port3128.com\')\n');

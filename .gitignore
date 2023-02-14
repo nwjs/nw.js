@@ -18,3 +18,4 @@ Thumbs.db
 
 # application
 /test/sanity/app-open-event/userdata
+/test/sanity/app-getproxyforurl/package.json
