@@ -4,7 +4,7 @@
         "fmt": "concurrently npm:fmt:*",
         "fmt:js": "prettier --write ./**/*.js",
         "fmt:py": "black ./**/*.py",
-        "fmt:cc": "find src/ -iname *.h -o -iname *.cc | xargs clang-format -i --style='file'",
+        "fmt:cc": "find . -iname *.h -o -iname *.cc | xargs clang-format -i --style='file'",
         "lnt": "concurrently npm:lnt:*",
         "lnt:js": "eslint ./**/*.js",
         "lnt:py": "pylint ./**/*.py",
