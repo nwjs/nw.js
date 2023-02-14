@@ -1,4 +1,9 @@
+# computer
 .DS_Store
+
+#runtime
+log
+node_modules
 tests/node_modules
 tests/native_modules
 tests/tmp-nw
@@ -10,4 +15,6 @@ tests/tmp-nw
 tags
 Thumbs.db
 /tmp
-node_modules
+
+# application
+/test/sanity/app-open-event/userdata
