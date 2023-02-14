@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>app-argv</title>
-</head>
-<body>
+  <title>App.argv</title>
   <script>
-  document.write('<h1 id="result-argv">' + nw.App.argv.join(',') + '</h1>');
-  document.write('<h1 id="result-fullargv">' + nw.App.fullArgv.join(',') + '</h1>');
+    document.addEventListener('DOMContentLoaded', function () {
+      document.getElementById('result-argv').innerHTML = nw.App.argv.join(',');
+      document.getElementById('result-fullargv').innerHTML = nw.App.fullArgv.join(',');
+    });
   </script>
+</head>
+
+<body>
+  <h1 id="result-argv"></h1>
+  <h1 id="result-fullargv"></h1>
 </body>
+
 </html>
