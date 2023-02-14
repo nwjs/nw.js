@@ -8,11 +8,18 @@
         "lnt": "concurrently npm:lnt:*",
         "lnt:js": "eslint ./**/*.js",
         "lnt:py": "pylint ./**/*.py",
-        "lnt:cc": "clang-tidy ./**/*.cc ./**/*.h"
+        "lnt:cc": "clang-tidy ./**/*.cc ./**/*.h",
+        "e2e": "concurrently npm:e2e:*",
+        "e2e:sanity": "python3 test/test.py -d ./node_modules/nw/nwjs -t 10 sanity"
+    },
+    "engines": {
+        "node": ">=19.3.0",
+        "npm": ">=9.4.2"
     },
     "devDependencies": {
         "concurrently": "^7.6.0",
         "eslint": "^8.34.0",
+        "nw": "^0.72.0-sdk",
         "prettier": "^2.8.4"
     },
     "prettier": {
@@ -43,8 +50,5 @@
         "extends": [
             "eslint:recommended"
         ]
-    },
-    "dependencies": {
-        "npm": "^9.4.2"
     }
 }
