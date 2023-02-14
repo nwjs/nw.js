@@ -3,7 +3,7 @@
     "scripts": {
         "fmt": "concurrently npm:fmt:*",
         "fmt:js": "prettier --write ./**/*.js",
-        "fmt:py": "",
+        "fmt:py": "black ./**/*.py",
         "fmt:cc": "clang-format -i ./**/*.cc ./**/*.h",
         "lnt": "concurrently npm:lnt:*",
         "lnt:js": "eslint ./**/*.js",

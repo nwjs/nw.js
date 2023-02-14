@@ -1,2 +1,3 @@
-pymdown-extensions == 6.2.1
+black == 23.1.0
 pylint == 2.16.1
+pymdown-extensions == 6.2.1
