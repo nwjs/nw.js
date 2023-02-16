@@ -51,9 +51,9 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': '3e0e36e8facd7a2923c0e6430222c04b91024cbb',
+  'nw_src_revision': '6947d119434d8f7d4810fe2c8ba719b1e9a05902',
   'nw_v8_revision': '026e4c02971405d2118fff8c9ab20ed694a782c1',
-  'nw_node_revision': '1e63ba55430eb0b90c07b5f338782759535c537b',
+  'nw_node_revision': '39a24161a1d7f690147936cf7449895e8c78e57d',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -778,7 +778,7 @@ deps = {
 
   'src/clank': {
     'url': 'https://chrome-internal.googlesource.com/clank/internal/apps.git' + '@' +
-    '3519ecde7000d02d2d9aa7c9b9cd8876f20b8fba',
+    '4b041e6fb767f390bedcb0a572ac238c2b0c9304',
     'condition': 'checkout_android and checkout_src_internal',
   },
 
@@ -1218,7 +1218,7 @@ deps = {
     Var('chromium_git') + '/devtools/devtools-frontend' + '@' + Var('devtools_frontend_revision'),
 
   'src/third_party/devtools-frontend-internal': {
-      'url': 'https://chrome-internal.googlesource.com/devtools/devtools-internal.git' + '@' + 'fc2c3750b15d9a363c6e978329a40c93aa273d38',
+      'url': 'https://chrome-internal.googlesource.com/devtools/devtools-internal.git' + '@' + 'c49f3d48996fbd09dd72c52406d78ea70d2d65f3',
     'condition': 'checkout_src_internal',
   },
 
@@ -1832,7 +1832,7 @@ deps = {
     Var('chromium_git') + '/external/github.com/gpuweb/cts.git' + '@' + 'e583fa45095a98e12cc28748b30c2b1a9e5babcf',
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + '1e675c7835f188cd8be228f5da6d3467690355b8',
+    Var('webrtc_git') + '/src.git' + '@' + '218b56e516386cd57c7513197528c3124bcd7ef3',
 
   # Wuffs' canonical repository is at github.com/google/wuffs, but we use
   # Skia's mirror of Wuffs, the same as in upstream Skia's DEPS file.
@@ -1907,7 +1907,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@a5051ea923abc4ba147aa0f3adede95c1eafbc2f',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@f1fa2045c35184d65934fa03f2cfd581794fb6d0',
     'condition': 'checkout_src_internal',
   },
 
