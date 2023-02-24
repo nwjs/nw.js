@@ -1,2 +1,2 @@
-pymdown-extensions == 9.9.1
+pymdown-extensions == 9.9.2
 mkdocs == 1.4.2
