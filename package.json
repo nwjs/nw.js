@@ -4,11 +4,9 @@
         "fmt": "concurrently npm:fmt:*",
         "fmt:js": "prettier --write ./**/*.js",
         "fmt:py": "black ./**/*.py",
-        "fmt:cc": "find . -iname *.h -o -iname *.cc | xargs clang-format -i --style='file'",
         "lnt": "concurrently npm:lnt:*",
         "lnt:js": "eslint ./**/*.js",
         "lnt:py": "pylint ./**/*.py",
-        "lnt:cc": "clang-tidy ./**/*.cc ./**/*.h",
         "e2e": "concurrently npm:e2e:*",
         "e2e:sanity": "python3 test/test.py -d ./node_modules/nw/nwjs -t 10 sanity"
     },
