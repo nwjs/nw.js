@@ -51,9 +51,9 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': '6947d119434d8f7d4810fe2c8ba719b1e9a05902',
+  'nw_src_revision': 'd6ed67f426d22cf2ff1140be9d09c93214ffce05',
   'nw_v8_revision': '026e4c02971405d2118fff8c9ab20ed694a782c1',
-  'nw_node_revision': '13dd60f620e62a5878679e272444e9f0c98df631',
+  'nw_node_revision': '1d802323d890ec1a6ac795bac826bef8edcea951',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
@@ -778,7 +778,7 @@ deps = {
 
   'src/clank': {
     'url': 'https://chrome-internal.googlesource.com/clank/internal/apps.git' + '@' +
-    '4b041e6fb767f390bedcb0a572ac238c2b0c9304',
+    '1a2ae51531a8ea25883d8f05c47dac1056f71a4f',
     'condition': 'checkout_android and checkout_src_internal',
   },
 
@@ -1218,7 +1218,7 @@ deps = {
     Var('chromium_git') + '/devtools/devtools-frontend' + '@' + Var('devtools_frontend_revision'),
 
   'src/third_party/devtools-frontend-internal': {
-      'url': 'https://chrome-internal.googlesource.com/devtools/devtools-internal.git' + '@' + 'c49f3d48996fbd09dd72c52406d78ea70d2d65f3',
+      'url': 'https://chrome-internal.googlesource.com/devtools/devtools-internal.git' + '@' + '536354c8419d28b8d648c42035c06ac6fe5f597a',
     'condition': 'checkout_src_internal',
   },
 
@@ -1373,7 +1373,7 @@ deps = {
     Var('chromium_git') + '/chromium/deps/hunspell_dictionaries.git' + '@' + '41cdffd71c9948f63c7ad36e1fb0ff519aa7a37e',
 
   'src/third_party/icu':
-    Var('chromium_git') + '/chromium/deps/icu.git' + '@' + '1b7d391f0528fb3a4976b7541b387ee04f915f83',
+    Var('chromium_git') + '/chromium/deps/icu.git' + '@' + '7ff1e9befce5567754dc88392dfaa4704e261ab3',
 
   'src/third_party/icu4j': {
       'packages': [
@@ -1433,7 +1433,7 @@ deps = {
     Var('chromium_git') + '/external/libaddressinput.git' + '@' + 'df35d6c42da4fa2759e4cfb592afe33817993b89',
 
   'src/third_party/libaom/source/libaom':
-    Var('aomedia_git') + '/aom.git' + '@' +  'a84503456d4276348da3e80de7569adb1b389a60',
+    Var('aomedia_git') + '/aom.git' + '@' +  '6770d15de0244bde00f67554f70fc8836826902c',
 
   'src/third_party/libavif/src':
     Var('chromium_git') + '/external/github.com/AOMediaCodec/libavif.git' + '@' + Var('libavif_revision'),
@@ -1907,7 +1907,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@f1fa2045c35184d65934fa03f2cfd581794fb6d0',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@580782b14a38ec206c8dcf6fffc5cf902c36b4fd',
     'condition': 'checkout_src_internal',
   },
 
