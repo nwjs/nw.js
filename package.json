@@ -11,8 +11,8 @@
         "e2e:sanity": "python3 test/test.py -d ./node_modules/nw/nwjs -t 10 sanity"
     },
     "engines": {
-        "node": ">=19.3.0",
-        "npm": ">=9.4.2"
+        "node": ">=19.7.0",
+        "npm": ">=9.5.1"
     },
     "devDependencies": {
         "concurrently": "^7.6.0",
