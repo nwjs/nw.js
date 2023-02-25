@@ -101,10 +101,8 @@ void MainPartsPostDestroyThreadsHook() {
 }
 
 void RendererProcessTerminatedHook(content::RenderProcessHost* process,
-                                   const content::NotificationDetails& details) {
-  content::ChildProcessTerminationInfo* process_info =
-    content::Details<content::ChildProcessTerminationInfo>(details).ptr();
-  int exit_code = process_info->exit_code;
+                                   const content::ChildProcessTerminationInfo& info) {
+  int exit_code = info.exit_code;
 #if defined(OS_POSIX)
   if (WIFEXITED(exit_code))
     exit_code = WEXITSTATUS(exit_code);

@@ -9,6 +9,7 @@
 
 #include "nw_package.h"
 #include "base/memory/ptr_util.h"
+#include "content/public/browser/child_process_termination_info.h"
 #include "third_party/blink/public/web/web_navigation_policy.h"
 #include "third_party/blink/public/common/web_preferences/web_preferences.h"
 
@@ -64,7 +65,7 @@ void DocumentFinishHook(blink::WebLocalFrame* frame,
                          const GURL& effective_document_url);
  void DocumentHook2(bool start, content::RenderFrame* frame, extensions::Dispatcher* dispatcher);
  void RendererProcessTerminatedHook(content::RenderProcessHost* process,
-                                    const content::NotificationDetails& details);
+                                    const content::ChildProcessTerminationInfo& details);
  void OnRenderProcessShutdownHook(extensions::ScriptContext* context);
  void willHandleNavigationPolicy(content::RenderFrame* rv,
                                  blink::WebFrame* frame,

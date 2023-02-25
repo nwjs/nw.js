@@ -2,6 +2,7 @@
 #define NW_CONTENT_BROWSER_HOOKS_H_
 
 #include "content/common/content_export.h"
+#include "content/public/browser/child_process_termination_info.h"
 #include "third_party/blink/public/common/web_preferences/web_preferences.h"
 
 class GURL;
@@ -39,7 +40,7 @@ void MainPartsPreMainMessageLoopRunHook();
 CONTENT_EXPORT void MainPartsPostDestroyThreadsHook();
 // ref in chrome/browser/extensions/extension_service.cc
 CONTENT_EXPORT void RendererProcessTerminatedHook(content::RenderProcessHost* process,
-                                  const content::NotificationDetails& details);
+						  const content::ChildProcessTerminationInfo& info);
 // ref in chrome/browser/chrome_browser_main.cc
 bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_line,
                                              const base::FilePath& current_directory);
