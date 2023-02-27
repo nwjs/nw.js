@@ -22,9 +22,9 @@ chrome_options.add_experimental_option("windowTypes", ["webview"])
 capabilities = {"pageLoadStrategy": "none"}
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, desired_capabilities = capabilities, service_log_path="log", service_args=["--verbose"])
-driver.implicitly_wait(5)
+driver.implicitly_wait(10)
 try:
-    print(driver.current_url)
+    wait_for_element_id(driver, 'testbtn')
     driver.find_element_by_id('testbtn').click()
     timeout = 15
     found = False
