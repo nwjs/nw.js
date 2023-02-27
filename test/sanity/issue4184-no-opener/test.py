@@ -36,6 +36,7 @@ try:
     wait_window_handles(driver, 2)
     print('switch to new window')
     driver.switch_to.window(driver.window_handles[-1]) # switch to new window
+    wait_for_element_id(driver, 'showopener')
     driver.find_element_by_id('showopener').click()
     result = driver.find_element_by_id('result').get_attribute('innerHTML')
     print(result)
