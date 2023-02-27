@@ -9,11 +9,12 @@ from selenium.webdriver.chrome.options import Options
 chrome_options = Options()
 chrome_options.add_argument("nwapp=" + os.path.dirname(os.path.abspath(__file__)))
 
-driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
+capabilities = {"pageLoadStrategy": "none"}
+driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, desired_capabilities = capabilities, service_log_path="log", service_args=["--verbose"])
+
 try:
-    print(driver.current_url)
-    wait_window_handles(driver, 2)
-    driver.switch_to.window(driver.window_handles[-1])
+    wait_switch_window_url(driver, 'popup.html')
+    #driver.switch_to.window(driver.window_handles[-1])
     img = driver.find_element_by_id('png')
     assert(img.size['width'] > 50 and img.size['height'] > 50)
     img2 = driver.find_element_by_id('jpg')
