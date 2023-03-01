@@ -215,7 +215,7 @@ void NwCurrentWindowInternalCloseFunction::DoCloseBrowser(base::WeakPtr<Browser>
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalCloseFunction::Run() {
   std::unique_ptr<extensions::nwapi::nw_current_window_internal::Close::Params> params(
-        extensions::nwapi::nw_current_window_internal::Close::Params::Create(args()));
+        extensions::nwapi::nw_current_window_internal::Close::Params::CreateDeprecated(args()));
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   bool force = params->force ? *params->force : false;
@@ -1009,7 +1009,7 @@ bool NwCurrentWindowInternalGetCurrentFunction::RunNWSync(base::Value::List* res
     remain.Append(args()[1].Clone());
   }
   std::unique_ptr<windows::GetCurrent::Params> params(
-             windows::GetCurrent::Params::Create(remain));
+             windows::GetCurrent::Params::CreateDeprecated(remain));
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   ApiParameterExtractor<windows::GetCurrent::Params> extractor(params.get());

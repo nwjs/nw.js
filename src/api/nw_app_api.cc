@@ -229,7 +229,7 @@ NwAppSetProxyConfigFunction::~NwAppSetProxyConfigFunction() {
 bool NwAppSetProxyConfigFunction::RunNWSync(base::Value::List* response, std::string* error) {
   net::ProxyConfigWithAnnotation config;
   std::unique_ptr<nwapi::nw__app::SetProxyConfig::Params> params(
-          nwapi::nw__app::SetProxyConfig::Params::Create(args()));
+          nwapi::nw__app::SetProxyConfig::Params::CreateDeprecated(args()));
   EXTENSION_FUNCTION_VALIDATE(params.get());
 
   std::string pac_url = params->pac_url ? *params->pac_url : "";
