@@ -1,7 +1,7 @@
 diff --git a/icu.gyp b/icu.gyp
-index b3c12030..799dce2a 100644
---- icu.gyp
-+++ icu.gyp
+index 7deb43c..b0bc0a3 100644
+--- a/icu.gyp
++++ b/icu.gyp
 @@ -25,6 +25,7 @@
      'defines': [
        'U_USING_ICU_NAMESPACE=0',
@@ -29,3 +29,12 @@ index b3c12030..799dce2a 100644
        ['(OS=="linux" or OS=="freebsd" or OS=="openbsd" or OS=="solaris" \
           or OS=="netbsd" or OS=="mac" or OS=="android" or OS=="qnx") and \
          (target_arch=="arm" or target_arch=="ia32" or \
+@@ -173,7 +184,7 @@
+                    '_toolset == "host" and host_os == "mac")', {
+                    'action': ['python', '<@(_inputs)', '<@(_outputs)', '--mac'],
+                  } , {
+-                   'action': ['python', '<@(_inputs)', '<@(_outputs)'],
++                   'action': ['python3', '<@(_inputs)', '<@(_outputs)'],
+                  }],
+               ],
+             },
