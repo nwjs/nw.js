@@ -283,7 +283,7 @@ if (is_mac) {
 }
 
 copy("copy_node") {
-  if (is_debug) {
+  if (is_debug && !is_linux) {
      node_dir = "$root_out_dir/../Debug/lib/"
   } else {
      node_dir = "$root_out_dir/../Release/lib/"

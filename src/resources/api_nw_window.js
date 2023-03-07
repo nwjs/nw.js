@@ -372,7 +372,7 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
     };
 
     NWWindow.prototype.showDevTools = function(frm, callback) {
-      if (process.versions['flavor'] !== 'sdk')
+      if (process.versions['nw-flavor'] !== 'sdk')
         return;
       var id = '';
       if (typeof frm === 'string')

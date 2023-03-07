@@ -1,0 +1,7 @@
+
+{
+  "name": "app-getproxyforurl",
+  "main": "index.html",
+  "bg-script": "bg.js",
+  "port": "51461"
+}
