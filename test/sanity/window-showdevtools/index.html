@@ -1,0 +1,16 @@
+<html>
+
+<head>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            var process = require("process");
+            document.getElementById("flavor").innerHTML = process.versions["nw-flavor"];
+        });
+    </script>
+</head>
+
+<body>
+    <span id="flavor"></span>
+</body>
+
+</html>
