@@ -1,0 +1,25 @@
+<html>
+
+<head>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const process = require("process");
+            const w = nw.Window.get();
+            const e = nw.showDevTools();
+
+            document.getElementById("flavor").innerText = "Flavor: " + process.versions["nw-flavor"];
+            document.getElementById("result").innerText = "Error:" + e.message;
+
+        });
+    </script>
+</head>
+
+<body>
+    <span>The showDevTools function is executted on DOMContentLoaded. If flavor is normal and nw does not crash. Test is succesful.</span>
+    <br>
+    <span id="flavor"></span>
+    <br>
+    <span id="result"></span>
+</body>
+
+</html>
