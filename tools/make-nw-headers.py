@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import os
 import tarfile
 import sys
@@ -55,7 +55,7 @@ if os.path.exists(tmp_dir):
 os.mkdir(tmp_dir)
 
 # prepare the files to compress
-print 'Begin copy file'
+print('Begin copy file')
 base = os.path.join(third_party_dir, 'node-nw')
 for dirpath, dirnames, filenames in os.walk(base):
   relpath = dirpath.replace(third_party_dir + os.sep, '')
@@ -108,13 +108,13 @@ shutil.copytree(base, include_node)
 distutils.dir_util.copy_tree(os.path.join(third_party_dir, 'node-nw', 'deps', 'openssl', 'config'),
                              include_node)
 
-print 'copy file end'
-print 'Begin compress file'
+print('copy file end')
+print('Begin compress file')
 
 with tarfile.open(tarpath, 'w:gz') as tar:
   tar.add(os.path.join(tmp_dir, 'node'), arcname='node')
 
-print 'compress end'
+print('compress end')
 
 #copy over the nw.lib files so building native modules locally can work later in tests
 
