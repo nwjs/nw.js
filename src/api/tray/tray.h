@@ -51,7 +51,7 @@ class Tray : public Base {
  public:
   Tray(int id,
        const base::WeakPtr<ObjectManager>& object_manager,
-       const base::DictionaryValue& option,
+       const base::Value::Dict& option,
        const std::string& extension_id);
   ~Tray() override;
 
@@ -61,7 +61,7 @@ class Tray : public Base {
 
  private:
   // Platform-independent implementations
-  void Create(const base::DictionaryValue& option);
+  void Create(const base::Value::Dict& option);
   void ShowAfterCreate();
   void Destroy();
   void SetTitle(const std::string& title);

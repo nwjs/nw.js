@@ -227,18 +227,18 @@ NwCurrentWindowInternalCloseFunction::Run() {
       return RespondNow(Error("cannot find browser window"));
     }
     if (force)
-      base::ThreadTaskRunnerHandle::Get().get()->PostTask(FROM_HERE,
+      base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(FROM_HERE,
                                                           base::BindOnce(&NwCurrentWindowInternalCloseFunction::DoCloseBrowser, browser->AsWeakPtr()));
     else if (browser->NWCanClose())
-      base::ThreadTaskRunnerHandle::Get().get()->PostTask(FROM_HERE,
+      base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(FROM_HERE,
                                                           base::BindOnce(&NwCurrentWindowInternalCloseFunction::DoCloseBrowser, browser->AsWeakPtr()));
   } else {
     AppWindow* window = getAppWindow(this);
     if (force)
-      base::ThreadTaskRunnerHandle::Get().get()->PostTask(FROM_HERE,
+      base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(FROM_HERE,
          base::BindOnce(&NwCurrentWindowInternalCloseFunction::DoClose, window));
     else if (window->NWCanClose())
-      base::ThreadTaskRunnerHandle::Get().get()->PostTask(FROM_HERE,
+      base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(FROM_HERE,
          base::BindOnce(&NwCurrentWindowInternalCloseFunction::DoClose, window));
   }
 
@@ -561,7 +561,7 @@ bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::Value::List* respon
     if (old_menu) old_menu->RemoveKeys();
     menu->UpdateKeys( native_app_window_views->widget()->GetFocusManager() );
   }
-  response->Append(base::ListValue());
+  response->Append(base::Value::List());
 #endif
   return true;
 }
@@ -987,15 +987,16 @@ bool NwCurrentWindowInternalSetPrintSettingsInternalFunction::RunNWSync(base::Va
   if (browser) {
     web_contents = browser->tab_strip_model()->GetActiveWebContents();
   }
-  const base::DictionaryValue& dict = base::Value::AsDictionaryValue(args()[0]);
-  absl::optional<bool> auto_print = dict.FindBoolKey("autoprint");
-  std::string printer_name, pdf_path;
+  const base::Value::Dict& dict = args()[0].GetDict();
+  absl::optional<bool> auto_print = dict.FindBool("autoprint");
   if (auto_print)
     chrome::NWPrintSetCustomPrinting(*auto_print);
-  if (dict.GetString("printer", &printer_name))
-    chrome::NWPrintSetDefaultPrinter(printer_name);
-  if (dict.GetString("pdf_path", &pdf_path))
-    chrome::NWPrintSetPDFPath(base::FilePath::FromUTF8Unsafe(pdf_path));
+  const std::string* printer_name = dict.FindString("printer");
+  if (printer_name)
+    chrome::NWPrintSetDefaultPrinter(*printer_name);
+  const std::string* pdf_path = dict.FindString("pdf_path");
+  if (pdf_path)
+    chrome::NWPrintSetPDFPath(base::FilePath::FromUTF8Unsafe(*pdf_path));
   chrome::NWPrintSetOptions(&dict, web_contents);
   return true;
 }
@@ -1043,12 +1044,12 @@ bool NwCurrentWindowInternalGetWinParamInternalFunction::RunNWSync(base::Value::
       app_window->web_contents()->GetPrimaryMainFrame();
   int frame_id = created_frame->GetRoutingID();
 
-  base::DictionaryValue* result = new base::DictionaryValue;
-  result->Set("frameId", std::make_unique<base::Value>(frame_id));
-  result->Set("id", std::make_unique<base::Value>(app_window->window_key()));
-  app_window->GetSerializedState(result);
+  base::Value::Dict result;
+  result.Set("frameId", frame_id);
+  result.Set("id", app_window->window_key());
+  app_window->GetSerializedState(&result);
 
-  response->Append(base::Value::FromUniquePtrValue(base::WrapUnique(result)));
+  response->Append(std::move(result));
 
   return true;
 }

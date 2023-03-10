@@ -38,7 +38,7 @@ bool NwObjCreateFunction::RunNWSync(base::Value::List* response, std::string* er
                               args()[2].is_dict());
   id = args()[0].GetInt();
   type = args()[1].GetString();
-  const base::DictionaryValue& options = base::Value::AsDictionaryValue(args()[2]);
+  const base::Value::Dict& options = args()[2].GetDict();
   nw::ObjectManager* manager = nw::ObjectManager::Get(browser_context());
   manager->OnAllocateObject(id, type, options, extension_id());
   return true;

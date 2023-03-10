@@ -58,7 +58,7 @@ class MenuItem : public Base {
  public:
   MenuItem(int id,
            const base::WeakPtr<ObjectManager>& dispatcher_host,
-           const base::DictionaryValue& option,
+           const base::Value::Dict& option,
            const std::string& extension_id);
   ~MenuItem() override;
 
@@ -70,7 +70,7 @@ class MenuItem : public Base {
 		base::Value::List* result) override;
 
 #if defined(OS_MAC)
-  static std::unique_ptr<base::DictionaryValue> CreateFromNative(NSMenuItem* menu_item, Menu* menu, int index);
+  static std::unique_ptr<base::Value::Dict> CreateFromNative(NSMenuItem* menu_item, Menu* menu, int index);
   static MenuItem* GetMenuItemFromNative(NSMenuItem* menu_item);
 #endif
 
@@ -87,7 +87,7 @@ class MenuItem : public Base {
   friend class Menu;
 
   // Platform-independent implementations
-  void Create(const base::DictionaryValue& option);
+  void Create(const base::Value::Dict& option);
   void Destroy();
   void SetLabel(const std::string& label);
   void SetIcon(const std::string& icon);
