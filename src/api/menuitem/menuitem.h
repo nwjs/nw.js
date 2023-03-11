@@ -70,7 +70,7 @@ class MenuItem : public Base {
 		base::Value::List* result) override;
 
 #if defined(OS_MAC)
-  static std::unique_ptr<base::Value::Dict> CreateFromNative(NSMenuItem* menu_item, Menu* menu, int index);
+  static base::Value::Dict CreateFromNative(NSMenuItem* menu_item, Menu* menu, int index);
   static MenuItem* GetMenuItemFromNative(NSMenuItem* menu_item);
 #endif
 
