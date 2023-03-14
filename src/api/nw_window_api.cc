@@ -128,7 +128,7 @@ const char kNoAssociatedAppWindow[] =
 template <typename T>
 class ApiParameterExtractor {
  public:
-  explicit ApiParameterExtractor(T* params) : params_(params) {}
+  explicit ApiParameterExtractor(absl::optional<T>& params) : params_(*params) {}
   ~ApiParameterExtractor() {}
 
   bool populate_tabs() {
@@ -146,7 +146,7 @@ class ApiParameterExtractor {
   }
 
  private:
-  T* params_;
+  raw_ref<T> params_;
 };
 
 }
@@ -214,9 +214,9 @@ void NwCurrentWindowInternalCloseFunction::DoCloseBrowser(base::WeakPtr<Browser>
 
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalCloseFunction::Run() {
-  std::unique_ptr<extensions::nwapi::nw_current_window_internal::Close::Params> params(
-        extensions::nwapi::nw_current_window_internal::Close::Params::CreateDeprecated(args()));
-  EXTENSION_FUNCTION_VALIDATE(params.get());
+  absl::optional<extensions::nwapi::nw_current_window_internal::Close::Params> params(
+        extensions::nwapi::nw_current_window_internal::Close::Params::Create(args()));
+  EXTENSION_FUNCTION_VALIDATE(params.has_value());
 
   bool force = params->force ? *params->force : false;
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
@@ -1008,11 +1008,11 @@ bool NwCurrentWindowInternalGetCurrentFunction::RunNWSync(base::Value::List* res
   if (args().size() > 1) {
     remain.Append(args()[1].Clone());
   }
-  std::unique_ptr<windows::GetCurrent::Params> params(
-             windows::GetCurrent::Params::CreateDeprecated(remain));
-  EXTENSION_FUNCTION_VALIDATE(params.get());
+  absl::optional<windows::GetCurrent::Params> params(
+             windows::GetCurrent::Params::Create(remain));
+  EXTENSION_FUNCTION_VALIDATE(params.has_value());
 
-  ApiParameterExtractor<windows::GetCurrent::Params> extractor(params.get());
+  ApiParameterExtractor<windows::GetCurrent::Params> extractor(params);
   Browser* browser = nullptr;
   std::string error;
   if (!windows_util::GetBrowserFromWindowID(

@@ -271,8 +271,8 @@ NwClipboardGetListSyncFunction::~NwClipboardGetListSyncFunction() {
 }
 
 bool NwClipboardGetListSyncFunction::RunNWSync(base::Value::List* response, std::string* error) {
-  std::unique_ptr<GetListSync::Params> params(GetListSync::Params::CreateDeprecated(args()));
-  EXTENSION_FUNCTION_VALIDATE(params.get());
+  absl::optional<GetListSync::Params> params(GetListSync::Params::Create(args()));
+  EXTENSION_FUNCTION_VALIDATE(params.has_value());
   std::unique_ptr<ClipboardReader> reader(new ClipboardReader());
 
   for(auto& data : params->data) {
@@ -293,8 +293,8 @@ NwClipboardSetListSyncFunction::~NwClipboardSetListSyncFunction() {
 }
 
 bool NwClipboardSetListSyncFunction::RunNWSync(base::Value::List* response, std::string* error) {
-  std::unique_ptr<SetListSync::Params> params(SetListSync::Params::CreateDeprecated(args()));
-  EXTENSION_FUNCTION_VALIDATE(params.get());
+  absl::optional<SetListSync::Params> params(SetListSync::Params::Create(args()));
+  EXTENSION_FUNCTION_VALIDATE(params.has_value());
   std::unique_ptr<ClipboardWriter> writer(new ClipboardWriter());
 
   for(auto& data : params->data) {
