@@ -5,10 +5,12 @@
         document.addEventListener("DOMContentLoaded", () => {
             const process = require("process");
             const w = nw.Window.get();
-            const e = nw.showDevTools();
+            const e = w.showDevTools();
 
             document.getElementById("flavor").innerText = "Flavor: " + process.versions["nw-flavor"];
-            document.getElementById("result").innerText = "Error:" + e.message;
+            if (e !== undefined) {
+                document.getElementById("result").innerText = "Error:" + e.message;
+            }
 
         });
     </script>
