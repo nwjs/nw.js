@@ -28,7 +28,7 @@ namespace {
 
 std::unique_ptr<ui::Accelerator> dictionaryToUIAccelerator(const base::Value::Dict *acceleratorDict) {
     nwapi::nw__shortcut::Accelerator accelerator;
-    nwapi::nw__shortcut::Accelerator::Populate(base::Value(acceleratorDict->Clone()), &accelerator);
+    nwapi::nw__shortcut::Accelerator::Populate(acceleratorDict->Clone(), accelerator);
 
     // build keyboard code
     ui::DomCode domCode = ui::KeycodeConverter::CodeStringToDomCode(accelerator.key.c_str());
