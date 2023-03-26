@@ -6,15 +6,15 @@
   if (chrome.test) {
     chrome.test.sendMessage("Launched");
   }
+  function loaded() {
+       if (chrome.test) {
+          chrome.test.sendMessage("Loaded");
+       }
+  }
   function test0() {
     nw.Window.get().print({pdf_path: 'output.pdf', footerString: 'nwtestfooter'});
-    webview = document.getElementById('output');
-    webview.src = 'output.pdf';
-    webview.addEventListener('contentload', function() {
-      console.log("done");
-      if (chrome.test) {
-        chrome.test.sendMessage("Loaded");
-      }
+    nw.Window.open('output.pdf', function() {
+       setTimeout(loaded, 1000);
     });
   }
   function test() {

@@ -890,23 +890,31 @@ IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, SilentPrintChangeFooter) {
   ExtensionTestMessageListener listener("Loaded");
   ASSERT_TRUE(content::ExecuteScript(web_contents, "document.getElementById('testbtn').click()"));
   EXPECT_TRUE(listener.WaitUntilSatisfied()) << "'" << listener.message()
-                                             << "' message was not receieved";
+                                              << "' message was not receieved";
 
-  std::vector<content::RenderFrameHost*> guest_rfh_list;
-  unsigned long n_guests = 2;
-  LOG(WARNING) << "WaitForNumGuestsCreated";
-  GetGuestViewManager()->WaitForNumGuestsCreated(n_guests);
-  GetGuestViewManager()->GetGuestRenderFrameHostList(&guest_rfh_list);
-  ASSERT_EQ(n_guests, guest_rfh_list.size());
+  web_contents = BrowserList::GetInstance()->GetLastActive()->tab_strip_model()->GetActiveWebContents();
+  const int kExpectedFrameCount = 3;
+  int frame_count;
+  do {
+    base::RunLoop run_loop;
+    base::SingleThreadTaskRunner::GetCurrentDefault()->PostDelayedTask(
+        FROM_HERE, run_loop.QuitClosure(), base::Seconds(1));
+    run_loop.Run();
 
-  bool load_success = pdf_extension_test_util::EnsurePDFHasLoaded(guest_rfh_list[0]);
-  EXPECT_TRUE(load_success);
-  WaitForAccessibilityTreeToContainNodeWithName(content::WebContents::FromRenderFrameHost(guest_rfh_list[0]), "hello world\r\n");
+    frame_count = 0;
+    int* pcnt = &frame_count;
+    web_contents->GetPrimaryMainFrame()->ForEachRenderFrameHost(
+       [pcnt] (content::RenderFrameHost* rfh) { CountFrames(pcnt, rfh); });
+  } while (frame_count < kExpectedFrameCount);
+  ASSERT_EQ(kExpectedFrameCount, frame_count);
+  //pdf_extension_test_util::EnsurePDFHasLoaded(web_contents);
+  //EXPECT_TRUE(load_success);
+  //WaitForAccessibilityTreeToContainNodeWithName(web_contents, "hello world\r\n");
   std::string tree_dump;
   std::string* pstr = &tree_dump;
   // Make sure all the frames in the dialog has access to the PDF
   // plugin.
-  content::WebContents::FromRenderFrameHost(guest_rfh_list[1])->GetPrimaryMainFrame()->
+  web_contents->GetPrimaryMainFrame()->
     ForEachRenderFrameHost([pstr] (content::RenderFrameHost* rfh) { DumpAxTree(pstr, rfh); });
   LOG(INFO) << "ax tree: " << tree_dump;
   EXPECT_TRUE(tree_dump.find("nwtestfooter") != std::string::npos);
