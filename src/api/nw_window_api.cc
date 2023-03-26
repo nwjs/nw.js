@@ -323,7 +323,7 @@ NwCurrentWindowInternalCapturePageInternalFunction::Run() {
   WebContents* contents = nullptr;
 
   if (args().size() > 1) {
-    image_details = ImageDetails::FromValue(args()[1]);
+    image_details = ImageDetails::FromValueDeprecated(args()[1]);
   }
 
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
