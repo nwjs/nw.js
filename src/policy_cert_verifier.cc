@@ -7,6 +7,7 @@
 #include "base/logging.h"
 #include "base/memory/ptr_util.h"
 #include "content/public/browser/browser_thread.h"
+#include "net/base/features.h"
 #include "net/base/net_errors.h"
 #include "net/cert/caching_cert_verifier.h"
 #include "net/cert/cert_verify_proc.h"
@@ -15,6 +16,38 @@
 namespace nw {
 
 namespace {
+
+class DefaultCertVerifyProcFactory : public net::CertVerifyProcFactory {
+public:
+  scoped_refptr<net::CertVerifyProc> CreateCertVerifyProc(
+							  scoped_refptr<net::CertNetFetcher> cert_net_fetcher,
+							  const net::ChromeRootStoreData* root_store_data) override {
+    scoped_refptr<net::CertVerifyProc> verify_proc;
+#if BUILDFLAG(CHROME_ROOT_STORE_OPTIONAL)
+    if (!verify_proc &&
+	base::FeatureList::IsEnabled(net::features::kChromeRootStoreUsed)) {
+      verify_proc = net::CertVerifyProc::CreateBuiltinWithChromeRootStore(
+								     std::move(cert_net_fetcher), root_store_data);
+    }
+    #endif
+    if (!verify_proc) {
+#if BUILDFLAG(CHROME_ROOT_STORE_ONLY)
+      verify_proc = net::CertVerifyProc::CreateBuiltinWithChromeRootStore(
+								     std::move(cert_net_fetcher), root_store_data);
+#elif BUILDFLAG(IS_FUCHSIA) || BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
+            verify_proc =
+	      net::CertVerifyProc::CreateBuiltinVerifyProc(std::move(cert_net_fetcher));
+	    #else
+	          verify_proc =
+		    net::CertVerifyProc::CreateSystemVerifyProc(std::move(cert_net_fetcher));
+		  #endif
+    }
+    return verify_proc;
+  }
+
+private:
+  ~DefaultCertVerifyProcFactory() override = default;
+};
 
 void MaybeSignalAnchorUse(int error,
                           const base::RepeatingClosure& anchor_used_callback,
@@ -62,8 +95,9 @@ void PolicyCertVerifier::InitializeOnIOThread(
     LOG(WARNING)
         << "Additional trust anchors not supported on the current platform!";
   }
+  auto proc_factory = base::MakeRefCounted<DefaultCertVerifyProcFactory>();
   delegate_ = std::make_unique<net::CachingCertVerifier>(
-      std::make_unique<net::MultiThreadedCertVerifier>(verify_proc.get()));
+							 std::make_unique<net::MultiThreadedCertVerifier>(verify_proc.get(), proc_factory));
   delegate_->SetConfig(ExtendTrustAnchors(orig_config_, trust_anchors_));
 }
 
