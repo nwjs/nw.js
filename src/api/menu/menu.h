@@ -21,7 +21,6 @@
 #ifndef CONTENT_NW_SRC_API_MENU_MENU_H_
 #define CONTENT_NW_SRC_API_MENU_MENU_H_ 
 
-#include "base/callback.h"
 #include "base/compiler_specific.h"
 #include "content/nw/src/api/base/base.h"
 
@@ -95,7 +94,7 @@ class Menu : public Base {
  public:
   Menu(int id,
        const base::WeakPtr<ObjectManager>& object_manager,
-       const base::DictionaryValue& option,
+       const base::Value::Dict& option,
        const std::string& extension_id);
    ~Menu() override;
 
@@ -118,7 +117,7 @@ class Menu : public Base {
   bool enable_show_event_;
 
   // Platform-independent implementations
-  void Create(const base::DictionaryValue& option);
+  void Create(const base::Value::Dict& option);
   void Destroy();
   void Append(MenuItem* menu_item);
   void Insert(MenuItem* menu_item, int pos);

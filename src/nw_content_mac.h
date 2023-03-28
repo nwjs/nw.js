@@ -12,7 +12,7 @@ namespace extensions {
 class NativeAppWindow;
 }
 
-std::unique_ptr<base::ListValue> NWChangeAppMenu(nw::Menu* menu);
+base::Value::List NWChangeAppMenu(nw::Menu* menu);
 void NWSetNSWindowShowInTaskbar(extensions::NativeAppWindow* win, bool show);
 void NWSetNSWindowShowInTaskbar(gfx::NativeWindow win, bool show);
 void NWSetNSAppKioskOptions(void);

@@ -85,7 +85,7 @@ int ObjectManager::AllocateId() {
 
 void ObjectManager::OnAllocateObject(int object_id,
 				     const std::string& type,
-				     const base::DictionaryValue& option,
+				     const base::Value::Dict& option,
 				     const std::string& extension_id) {
   DVLOG(1) << "OnAllocateObject: object_id:" << object_id
              << " type:" << type
@@ -201,8 +201,8 @@ void ObjectManager::OnCallStaticMethodSync(
     content::RenderFrameHost* rvh,
     const std::string& type,
     const std::string& method,
-    const base::ListValue& arguments,
-    base::ListValue* result) {
+    const base::Value::List& arguments,
+    base::Value::List* result) {
   DLOG(INFO) << "OnCallStaticMethodSync: "
              << " type:" << type
              << " method:" << method
@@ -224,14 +224,13 @@ void ObjectManager::OnCallStaticMethodSync(
 
 void ObjectManager::SendEvent(Base* object,
                               const std::string& event_name,
-                              const base::ListValue& args) {
+                              const base::Value::List& args) {
   EventRouter* event_router = EventRouter::Get(browser_context_);
   if (!event_router)
     return;
   base::Value::List arguments;
   arguments.Append(base::Value(object->id()));
-  for (size_t i = 0; i < args.GetList().size(); i++)
-    arguments.Append(args.GetList()[i].Clone());
+  arguments.Append(args.Clone());
   std::unique_ptr<Event> event(new Event(extensions::events::UNKNOWN, "NWObject" + event_name, std::move(arguments), browser_context_));
   event->user_gesture = EventRouter::USER_GESTURE_ENABLED;
   event_router->DispatchEventToExtension(object->extension_id_, std::move(event));

@@ -55,7 +55,7 @@ bool NwMenuModel::HasIcons() const {
 
 namespace nw {
 
-void Menu::Create(const base::DictionaryValue& option) {
+void Menu::Create(const base::Value::Dict& option) {
   is_menu_modified_ = true;
   menu_delegate_.reset(new MenuDelegate(object_manager()));
   menu_model_.reset(new ui::NwMenuModel(menu_delegate_.get()));

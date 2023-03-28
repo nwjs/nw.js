@@ -141,7 +141,7 @@ void AmendManifestList(base::Value::Dict* manifest,
   }
 }
 
-std::unique_ptr<base::DictionaryValue> MergeManifest(const std::string& in_manifest) {
+base::Value MergeManifest(const std::string& in_manifest) {
   // Following attributes will not be inherited from package.json 
   // Keep this list consistent with documents in `Manifest Format.md`
   static std::vector<const char*> non_inherited_attrs = {
@@ -151,17 +151,14 @@ std::unique_ptr<base::DictionaryValue> MergeManifest(const std::string& in_manif
                                                     switches::kmResizable,
                                                     switches::kmShow
                                                     };
-  std::unique_ptr<base::DictionaryValue> manifest;
+  base::Value::Dict manifest;
 
   // retrieve `window` manifest set by `new-win-policy`
   std::string manifest_str = in_manifest.empty() ? base::UTF16ToUTF8(nw::GetCurrentNewWinManifest())
     : in_manifest;
   std::unique_ptr<base::Value> val(base::JSONReader::ReadDeprecated(manifest_str));
-  if (val && val->is_dict()) {
-    manifest.reset(static_cast<base::DictionaryValue*>(val.release()));
-  } else {
-    manifest.reset(new base::DictionaryValue());
-  }
+  if (val && val->is_dict())
+    manifest = val->GetDict().Clone();
 
   // merge with default `window` manifest in package.json if exists
   nw::Package* pkg = nw::package();
@@ -171,32 +168,29 @@ std::unique_ptr<base::DictionaryValue> MergeManifest(const std::string& in_manif
     if (str)
       js_doc_start = *str;
     if (!js_doc_start.empty())
-      manifest->SetString(::switches::kmInjectJSDocStart, js_doc_start);
+      manifest.Set(::switches::kmInjectJSDocStart, js_doc_start);
     str = pkg->root()->FindString(::switches::kmInjectJSDocEnd);
     if (str)
       js_doc_end = *str;
     if (!js_doc_end.empty())
-      manifest->SetString(::switches::kmInjectJSDocEnd, js_doc_end);
+      manifest.Set(::switches::kmInjectJSDocEnd, js_doc_end);
     base::Value::Dict* manifest_window = pkg->window();
     if (manifest_window) {
-      std::unique_ptr<base::DictionaryValue> manifest_window_cloned(new base::DictionaryValue());
-      for (auto pair : *manifest_window)
-	manifest_window_cloned->SetKey(pair.first, pair.second.Clone());
+      base::Value::Dict manifest_window_cloned = manifest_window->Clone();
       // filter out non inherited attributes
       std::vector<const char*>::iterator it;
       for(it = non_inherited_attrs.begin(); it != non_inherited_attrs.end(); it++) {
-        manifest_window_cloned->ExtractKey(*it);
+        manifest_window_cloned.Remove(*it);
       }
       // overwrite default `window` manifest with the one passed by `new-win-policy`
-      manifest_window_cloned->MergeDictionary(manifest.get());
-      return manifest_window_cloned;
+      manifest_window_cloned.Merge(std::move(manifest));
+      return base::Value(std::move(manifest_window_cloned));
     }
   }
-
-  return manifest;
+  return base::Value(std::move(manifest));
 }
 
-}
+} //namespace
 
 void SetAppIcon(gfx::Image &app_icon);
 
@@ -347,11 +341,8 @@ void CalcNewWinParams(content::WebContents* new_contents, void* params,
                       const std::string& in_manifest) {
   extensions::AppWindow::CreateParams ret;
   std::unique_ptr<base::Value> val;
-  std::unique_ptr<base::DictionaryValue> manifest_d = MergeManifest(in_manifest);
-  base::Value::Dict manifest;
-  for (auto kv : manifest_d->DictItems()) {
-    manifest.Set(kv.first, kv.second.Clone());
-  }
+  base::Value manifest_d = MergeManifest(in_manifest);
+  base::Value::Dict& manifest = manifest_d.GetDict();
   absl::optional<bool> resizable = manifest.FindBool(switches::kmResizable);
   if (resizable) {
     ret.resizable = *resizable;
