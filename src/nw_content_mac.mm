@@ -87,7 +87,7 @@ API_AVAILABLE(macos(10.15.4))
 
 @end
 
-std::unique_ptr<base::ListValue> NWChangeAppMenu(nw::Menu* menu) {
+base::Value::List NWChangeAppMenu(nw::Menu* menu) {
     NSMenu *main_menu;
 
     if (menu == nil) {
@@ -98,7 +98,7 @@ std::unique_ptr<base::ListValue> NWChangeAppMenu(nw::Menu* menu) {
 
     [NSApp setMainMenu:main_menu];
 
-    std::unique_ptr<base::ListValue> items(new base::ListValue());
+    base::Value::List items;
 
     if (menu != nil) {
         NSString* editMenuTitle = l10n_util::GetNSStringWithFixup(IDS_EDIT_MENU_MAC);
@@ -112,12 +112,12 @@ std::unique_ptr<base::ListValue> NWChangeAppMenu(nw::Menu* menu) {
                 for(int i = 0; i < [editMenu numberOfItems]; i++) {
                     NSMenuItem* nativeItem = [itemList objectAtIndex:i];
                     if (!nw::MenuItem::GetMenuItemFromNative(nativeItem)) {
-                        std::unique_ptr<base::DictionaryValue> options = nw::MenuItem::CreateFromNative(nativeItem, nwEditMenu, i);
-                        std::unique_ptr<base::DictionaryValue> menuPatch(new base::DictionaryValue);
-                        menuPatch->SetInteger("menu", editMenuIndex);
-                        menuPatch->SetInteger("index", i);
-                        menuPatch->Set("option", std::move(options));
-                        items->Append(menuPatch->Clone());
+                        base::Value::Dict options = nw::MenuItem::CreateFromNative(nativeItem, nwEditMenu, i);
+                        base::Value::Dict menuPatch;
+                        menuPatch.Set("menu", (int)editMenuIndex);
+                        menuPatch.Set("index", i);
+                        menuPatch.Set("option", std::move(options));
+                        items.Append(menuPatch.Clone());
                     }
                 }
             }

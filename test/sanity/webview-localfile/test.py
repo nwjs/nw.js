@@ -36,7 +36,7 @@ driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_opt
 driver.implicitly_wait(5)
 try:
     print(driver.current_url)
-    wait_switch_window_name(driver, 'webview1')
+    wait_switch_window_url(driver, '1.html')
     result = driver.find_element_by_id('result').get_attribute('innerHTML')
     print(result)
     assert('success' in result)
@@ -66,7 +66,7 @@ try:
     print('click Elements panel')
     devtools_click_tab(driver, 'elements')
     print('find h1')
-    h1 = driver.execute_script('return document.getElementById("elements-content").firstChild.shadowRoot.querySelectorAll(".webkit-html-text-node")[1]').get_attribute('textContent')
+    h1 = driver.execute_script('return document.getElementById("elements-content").firstChild.shadowRoot.querySelectorAll(".webkit-html-text-node")[0]').get_attribute('textContent')
     print(h1)
     assert (h1 == 'success')
 finally:

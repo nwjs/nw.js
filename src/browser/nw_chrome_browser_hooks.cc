@@ -112,17 +112,16 @@ bool IsReloadingApp() {
   return g_reloading_app;
 }
 
-typedef void (*SendEventToAppFn)(const std::string& event_name, std::unique_ptr<base::ListValue> event_args);
+typedef void (*SendEventToAppFn)(const std::string& event_name, const base::Value::List& event_args);
 CONTENT_EXPORT extern SendEventToAppFn gSendEventToApp;
 
-void SendEventToApp(const std::string& event_name, std::unique_ptr<base::ListValue> event_args) {
-  Profile* profile = ProfileManager::GetActiveUserProfile();
+void SendEventToApp(const std::string& event_name, const base::Value::List& event_args) {
+  Profile* profile = ProfileManager::GetLastUsedProfileIfLoaded();
   const extensions::ExtensionSet& extensions =
     ExtensionRegistry::Get(profile)->enabled_extensions();
   ExtensionPrefs* extension_prefs = ExtensionPrefs::Get(profile);
   base::Value::List arguments;
-  for (size_t i = 0; i < event_args->GetListDeprecated().size(); i++)
-    arguments.Append(event_args->GetListDeprecated()[i].Clone());
+  arguments.Append(event_args.Clone());
 
   for (extensions::ExtensionSet::const_iterator it = extensions.begin();
        it != extensions.end(); ++it) {
@@ -223,7 +222,7 @@ const std::string& GetMainExtensionId() {
 }
 
 const extensions::Extension* GetMainExtension() {
-  Profile* profile = ProfileManager::GetActiveUserProfile();
+  Profile* profile = ProfileManager::GetLastUsedProfileIfLoaded();
   return extensions::ExtensionRegistry::Get(profile)
       ->enabled_extensions().GetByID(g_extension_id);
 }
@@ -396,9 +395,9 @@ bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_l
 #else
     std::string cmd = command_line.GetCommandLineString();
 #endif
-    std::unique_ptr<base::ListValue> arguments(new base::ListValue());
-    arguments->Append(cmd);
-    SendEventToApp("nw.App.onOpen", std::move(arguments));
+    base::Value::List arguments;
+    arguments.Append(cmd);
+    SendEventToApp("nw.App.onOpen", arguments);
   }
 
   return single_instance;

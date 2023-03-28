@@ -27,7 +27,6 @@
 #include <string>
 
 namespace base {
-class DictionaryValue;
 class ListValue;
 }
 
@@ -43,7 +42,7 @@ class Base {
  public:
   Base(int id,
        const base::WeakPtr<ObjectManager>& manager,
-       const base::DictionaryValue& option,
+       const base::Value::Dict& option,
        const std::string& extension_id);
   virtual ~Base();
 

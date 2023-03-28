@@ -97,43 +97,51 @@ void AmendManifestContentScriptList(base::DictionaryValue* manifest,
 }
 #endif
 
-void AmendManifestStringList(base::DictionaryValue* manifest,
+void AmendManifestStringList(base::Value::Dict* manifest,
                    const std::string& path,
                    const std::string& string_value) {
-  std::unique_ptr<base::ListValue> pattern_list;
-  base::Value* temp_pattern_value = NULL;
+  base::Value::List pattern_list;
+  base::Value* temp_pattern_value = nullptr;
 
-  if (manifest->Get(path, &temp_pattern_value))
+  if (path.find('.'))
+    temp_pattern_value = manifest->FindByDottedPath(path);
+  else
+    temp_pattern_value = manifest->Find(path);
+
+  if (temp_pattern_value)
     if (temp_pattern_value->is_list()) {
-      pattern_list = base::ListValue::From(base::Value::ToUniquePtrValue(temp_pattern_value->Clone()));
+      pattern_list = temp_pattern_value->GetList().Clone();
     }
-  if (!pattern_list)
-    pattern_list.reset(new base::ListValue());
 
-  pattern_list->Append(string_value);
-  manifest->Set(path, std::move(pattern_list));
+  pattern_list.Append(string_value);
+  if (path.find('.'))
+    manifest->SetByDottedPath(path, std::move(pattern_list));
+  else
+    manifest->Set(path, std::move(pattern_list));
 }
 
-void AmendManifestList(base::DictionaryValue* manifest,
-                   const std::string& path,
-                   const base::ListValue& list_value) {
-  base::ListValue* pattern_list = NULL;
+void AmendManifestList(base::Value::Dict* manifest,
+		       const std::string& path,
+		       const base::Value::List& list_value) {
+  base::Value::List* pattern_list = NULL;
 
-  if (manifest->GetList(path, &pattern_list)) {
-    base::ListValue::const_iterator it;
-    for(it = list_value.GetListDeprecated().begin(); it != list_value.GetListDeprecated().end(); ++it) {
+  if ((pattern_list = manifest->FindList(path))) {
+    for(auto it = list_value.begin(); it != list_value.end(); ++it) {
       pattern_list->Append(it->Clone());
     }
   } else {
-    std::unique_ptr<base::ListValue> lst(new base::ListValue);
-    for (auto i = list_value.GetList().begin(); i != list_value.GetList().end(); ++i) {
-      lst->Append(const_cast<base::Value&&>(*i));
+    base::Value::List lst;
+    for (auto i = list_value.begin(); i != list_value.end(); ++i) {
+      lst.Append(const_cast<base::Value&&>(*i));
     }
-    manifest->Set(path, std::move(lst));
+    if (path.find('.'))
+      manifest->SetByDottedPath(path, std::move(lst));
+    else
+      manifest->Set(path, std::move(lst));
   }
 }
 
-std::unique_ptr<base::DictionaryValue> MergeManifest(const std::string& in_manifest) {
+base::Value MergeManifest(const std::string& in_manifest) {
   // Following attributes will not be inherited from package.json 
   // Keep this list consistent with documents in `Manifest Format.md`
   static std::vector<const char*> non_inherited_attrs = {
@@ -143,17 +151,14 @@ std::unique_ptr<base::DictionaryValue> MergeManifest(const std::string& in_manif
                                                     switches::kmResizable,
                                                     switches::kmShow
                                                     };
-  std::unique_ptr<base::DictionaryValue> manifest;
+  base::Value::Dict manifest;
 
   // retrieve `window` manifest set by `new-win-policy`
   std::string manifest_str = in_manifest.empty() ? base::UTF16ToUTF8(nw::GetCurrentNewWinManifest())
     : in_manifest;
   std::unique_ptr<base::Value> val(base::JSONReader::ReadDeprecated(manifest_str));
-  if (val && val->is_dict()) {
-    manifest.reset(static_cast<base::DictionaryValue*>(val.release()));
-  } else {
-    manifest.reset(new base::DictionaryValue());
-  }
+  if (val && val->is_dict())
+    manifest = val->GetDict().Clone();
 
   // merge with default `window` manifest in package.json if exists
   nw::Package* pkg = nw::package();
@@ -163,32 +168,29 @@ std::unique_ptr<base::DictionaryValue> MergeManifest(const std::string& in_manif
     if (str)
       js_doc_start = *str;
     if (!js_doc_start.empty())
-      manifest->SetString(::switches::kmInjectJSDocStart, js_doc_start);
+      manifest.Set(::switches::kmInjectJSDocStart, js_doc_start);
     str = pkg->root()->FindString(::switches::kmInjectJSDocEnd);
     if (str)
       js_doc_end = *str;
     if (!js_doc_end.empty())
-      manifest->SetString(::switches::kmInjectJSDocEnd, js_doc_end);
+      manifest.Set(::switches::kmInjectJSDocEnd, js_doc_end);
     base::Value::Dict* manifest_window = pkg->window();
     if (manifest_window) {
-      std::unique_ptr<base::DictionaryValue> manifest_window_cloned(new base::DictionaryValue());
-      for (auto pair : *manifest_window)
-	manifest_window_cloned->SetKey(pair.first, pair.second.Clone());
+      base::Value::Dict manifest_window_cloned = manifest_window->Clone();
       // filter out non inherited attributes
       std::vector<const char*>::iterator it;
       for(it = non_inherited_attrs.begin(); it != non_inherited_attrs.end(); it++) {
-        manifest_window_cloned->ExtractKey(*it);
+        manifest_window_cloned.Remove(*it);
       }
       // overwrite default `window` manifest with the one passed by `new-win-policy`
-      manifest_window_cloned->MergeDictionary(manifest.get());
-      return manifest_window_cloned;
+      manifest_window_cloned.Merge(std::move(manifest));
+      return base::Value(std::move(manifest_window_cloned));
     }
   }
-
-  return manifest;
+  return base::Value(std::move(manifest));
 }
 
-}
+} //namespace
 
 void SetAppIcon(gfx::Image &app_icon);
 
@@ -240,7 +242,7 @@ bool GuestSwapProcessHook(content::BrowserContext* browser_context, const GURL& 
 typedef bool(*GuestSwapProcessHookFn)(content::BrowserContext*, const GURL& url);
 CONTENT_EXPORT extern GuestSwapProcessHookFn gGuestSwapProcessHook;
 
-void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
+void LoadNWAppAsExtensionHook(base::Value::Dict* manifest,
                               const base::FilePath& extension_path,
                               std::string* error) {
   gRphGuestFilterURLHook = RphGuestFilterURLHook;
@@ -248,44 +250,46 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
   if (!manifest)
     return;
 
-  std::string main_url, bg_script, icon_path;
+  std::string *main_url;
   base::Value *node_remote = NULL;
 
   const base::CommandLine* cmdline = base::CommandLine::ForCurrentProcess();
   nw::Package* package = cmdline->HasSwitch("nwjs-test-mode") ?
     nw::package(&extension_path) : nw::package();
-  manifest->SetBoolean(manifest_keys::kNWJSInternalFlag, true);
+  manifest->Set(manifest_keys::kNWJSInternalFlag, true);
   if (error && !package->cached_error_content().empty()) {
     *error = package->cached_error_content();
     return;
   }
 
-  base::DictionaryValue* cloned_root = new base::DictionaryValue();
+  base::Value::Dict cloned_root;
   for (auto pair: *(package->root())) {
-    cloned_root->SetKey(pair.first, pair.second.Clone());
+    cloned_root.Set(pair.first, pair.second.Clone());
   }
-  manifest->Set(manifest_keys::kNWJSInternalManifest, base::WrapUnique(cloned_root));
+  manifest->Set(manifest_keys::kNWJSInternalManifest, std::move(cloned_root));
 
-  if (manifest->GetString(manifest_keys::kNWJSMain, &main_url)) {
-    if (base::EndsWith(main_url, ".js", base::CompareCase::INSENSITIVE_ASCII)) {
-      AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, main_url);
-      manifest->SetString(manifest_keys::kNWJSInternalMainFilename, main_url);
+  if ((main_url = manifest->FindString(manifest_keys::kNWJSMain))) {
+    if (base::EndsWith(*main_url, ".js", base::CompareCase::INSENSITIVE_ASCII)) {
+      AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, *main_url);
+      manifest->Set(manifest_keys::kNWJSInternalMainFilename, *main_url);
     }else if (base::FeatureList::IsEnabled(::features::kNWNewWin))
       AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, "nwjs/newwin.js");
     else
       AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, "nwjs/default.js");
 
-    if (manifest->GetString("bg-script", &bg_script))
-      AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, bg_script);
+    std::string* bg_script = manifest->FindString("bg-script");
+    if (bg_script)
+      AmendManifestStringList(manifest, manifest_keys::kPlatformAppBackgroundScripts, *bg_script);
 
     AmendManifestStringList(manifest, manifest_keys::kPermissions, "developerPrivate");
     AmendManifestStringList(manifest, manifest_keys::kPermissions, "management");
     AmendManifestStringList(manifest, manifest_keys::kPermissions, "<all_urls>");
   }
 
-  if (manifest->GetString("window.icon", &icon_path)) {
+  std::string* icon_path = manifest->FindString("window.icon");
+  if (icon_path) {
     gfx::Image app_icon;
-    if (GetPackageImage(package, base::FilePath::FromUTF8Unsafe(icon_path), &app_icon)) {
+    if (GetPackageImage(package, base::FilePath::FromUTF8Unsafe(*icon_path), &app_icon)) {
       if (app_icon.Width() > 128 || app_icon.Height() > 128) {
         const gfx::ImageSkia* originImageSkia = app_icon.ToImageSkia();
         gfx::ImageSkia resizedImageSkia =
@@ -297,7 +301,7 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
       SetAppIcon(app_icon);
       int width = app_icon.Width();
       std::string key = "icons." + base::NumberToString(width);
-      manifest->SetString(key, icon_path);
+      manifest->Set(key, *icon_path);
 #if defined(OS_WIN)
       SetWindowHIcon((IconUtil::CreateHICONFromSkBitmapSizedTo(*app_icon.AsImageSkia().bitmap(),
                       GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON))));
@@ -307,27 +311,27 @@ void LoadNWAppAsExtensionHook(base::DictionaryValue* manifest,
     }
   }
 
-  if (manifest->Get(switches::kmRemotePages, &node_remote)) {
+  if ((node_remote = manifest->Find(switches::kmRemotePages))) {
     //FIXME: node-remote spec different with kWebURLs
     std::string node_remote_string;
-    const base::ListValue* node_remote_list = NULL;
+    base::Value::List node_remote_list;
     if (node_remote->is_string()) {
-      base::ListValue* _node_remote_list = new base::ListValue();
-      _node_remote_list->Append(node_remote->GetString());
-      node_remote_list = _node_remote_list;
+      base::Value::List _node_remote_list;
+      _node_remote_list.Append(node_remote->GetString());
+      node_remote_list = std::move(_node_remote_list);
     } else
-      node_remote_list = &base::Value::AsListValue(*node_remote);
+      node_remote_list = node_remote->GetList().Clone();
 
-    if (node_remote_list)
-      AmendManifestList(manifest, manifest_keys::kWebURLs, *node_remote_list);
+    if (node_remote_list.size())
+      AmendManifestList(manifest, manifest_keys::kWebURLs, node_remote_list);
   }
 
   if (NWContentVerifierDelegate::GetDefaultMode() == NWContentVerifierDelegate::ENFORCE_STRICT)
-    manifest->SetBoolean(manifest_keys::kNWJSContentVerifyFlag, true);
+    manifest->Set(manifest_keys::kNWJSContentVerifyFlag, true);
 
   if (package->temp_dir().IsValid()) {
     // need to remove the dir in renderer process
-    manifest->SetString("nw-temp-dir", package->temp_dir().GetPath().AsUTF8Unsafe());
+    manifest->Set("nw-temp-dir", package->temp_dir().GetPath().AsUTF8Unsafe());
   }
 }
 
@@ -337,11 +341,8 @@ void CalcNewWinParams(content::WebContents* new_contents, void* params,
                       const std::string& in_manifest) {
   extensions::AppWindow::CreateParams ret;
   std::unique_ptr<base::Value> val;
-  std::unique_ptr<base::DictionaryValue> manifest_d = MergeManifest(in_manifest);
-  base::Value::Dict manifest;
-  for (auto kv : manifest_d->DictItems()) {
-    manifest.Set(kv.first, kv.second.Clone());
-  }
+  base::Value manifest_d = MergeManifest(in_manifest);
+  base::Value::Dict& manifest = manifest_d.GetDict();
   absl::optional<bool> resizable = manifest.FindBool(switches::kmResizable);
   if (resizable) {
     ret.resizable = *resizable;
