@@ -38,7 +38,7 @@
   menu_item_->OnClick();
 
   // Send event.
-  base::ListValue args;
+  base::Value::List args;
   menu_item_->object_manager()->SendEvent(menu_item_, "click", args);
 }
 

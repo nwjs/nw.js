@@ -53,7 +53,7 @@
   if (!nwmenu_->enable_show_event())
     return;
 
-  base::ListValue args;
+  base::Value::List args;
   base::RunLoop run_loop;
   nwmenu_->object_manager()->set_run_loop(&run_loop);
   nwmenu_->object_manager()->SendEvent(nwmenu_, "show", args);

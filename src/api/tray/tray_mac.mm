@@ -40,23 +40,23 @@
     tray_ = newTray;
 }
 - (void)onClick:(id)sender {
-    base::ListValue args;
-    std::unique_ptr<base::DictionaryValue> data(new base::DictionaryValue);
+    base::Value::List args;
+    base::Value::Dict data;
     // Get the position of the frame of the NSStatusItem
     NSPoint pos = ([[[NSApp currentEvent] window] frame]).origin;
     // Flip coordinates to gfx (0,0 in top-left corner) using primary screen.
     NSScreen* screen = [[NSScreen screens] objectAtIndex:0];
     pos.y = NSMaxY([screen frame]) - pos.y;
-    data->SetInteger("x", pos.x);
-    data->SetInteger("y", pos.y);
-    args.Append(data->Clone());
+    data.Set("x", pos.x);
+    data.Set("y", pos.y);
+    args.Append(data.Clone());
     tray_->object_manager()->SendEvent(tray_,"TrayClick",args);
 }
 @end
 
 namespace nw {
     
-void Tray::Create(const base::DictionaryValue& option) {
+void Tray::Create(const base::Value::Dict& option) {
   NSStatusBar *status_bar = [NSStatusBar systemStatusBar];
   MacTrayObserver* observer = [[MacTrayObserver alloc] init];
   [observer setBacking:this];
