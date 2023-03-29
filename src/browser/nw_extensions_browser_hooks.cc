@@ -228,25 +228,10 @@ bool RphGuestFilterURLHook(RenderProcessHost* rph, const GURL* url)  {
 typedef bool (*RphGuestFilterURLHookFn)(content::RenderProcessHost* rph, const GURL* url);
 CONTENT_EXPORT extern RphGuestFilterURLHookFn gRphGuestFilterURLHook;
 
-bool GuestSwapProcessHook(content::BrowserContext* browser_context, const GURL& url) {
-  if (!url.SchemeIs("chrome-extension"))
-    return false;
-  ExtensionRegistry* registry = ExtensionRegistry::Get(browser_context);
-  std::string extension_id = url.host();
-  const Extension* extension = registry->enabled_extensions().GetByID(extension_id);
-  if (extension && !extensions::ManifestURL::Get(extension, "devtools_page").is_empty())
-    return false;
-  return false;
-}
-
-typedef bool(*GuestSwapProcessHookFn)(content::BrowserContext*, const GURL& url);
-CONTENT_EXPORT extern GuestSwapProcessHookFn gGuestSwapProcessHook;
-
 void LoadNWAppAsExtensionHook(base::Value::Dict* manifest,
                               const base::FilePath& extension_path,
                               std::string* error) {
   gRphGuestFilterURLHook = RphGuestFilterURLHook;
-  gGuestSwapProcessHook = GuestSwapProcessHook;
   if (!manifest)
     return;
 
