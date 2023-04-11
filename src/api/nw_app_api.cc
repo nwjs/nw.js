@@ -130,7 +130,7 @@ void NwAppEnableComponentFunction::OnRegistered() {
   }
   auto result_value = std::make_unique<base::Value>(ret);
 
-  Respond(OneArgument(base::Value::FromUniquePtrValue(std::move(result_value))));
+  Respond(WithArguments(ret));
 }
 
 ExtensionFunction::ResponseAction
@@ -144,12 +144,11 @@ ExtensionFunction::ResponseAction
 
 void NwAppUpdateComponentFunction::OnUpdated(update_client::Error error) {
   bool ret = (error == update_client::Error::NONE);
-  auto result_value = std::make_unique<base::Value>(ret);
   if (ret) {
-    Respond(OneArgument(base::Value::FromUniquePtrValue(std::move(result_value))));
+    Respond(WithArguments(ret));
   } else {
     VLOG(1) << "update component error: " << (int)error;
-    Respond(OneArgument(base::Value::FromUniquePtrValue(std::move(result_value))));
+    Respond(WithArguments(ret));
   }
 }
 

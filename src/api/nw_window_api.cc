@@ -410,7 +410,7 @@ void NwCurrentWindowInternalCapturePageInternalFunction::OnCaptureSuccess(const 
   base::Base64Encode(stream_as_string, &base64_result);
   base64_result.insert(
       0, base::StringPrintf("data:%s;base64,", mime_type.c_str()));
-  Respond(OneArgument(base::Value::FromUniquePtrValue(std::make_unique<base::Value>(base64_result))));
+  Respond(WithArguments(base64_result));
 }
 
 void NwCurrentWindowInternalCapturePageInternalFunction::OnCaptureFailure(FailureReason reason) {
@@ -971,7 +971,7 @@ NwCurrentWindowInternalGetPrintersFunction::Run() {
 
 void NwCurrentWindowInternalGetPrintersFunction::OnGetPrinterList(const printing::PrinterList& printer_list) {
   base::Value::List printers = chrome::PrintersToValues(printer_list);
-  Respond(OneArgument(base::Value(std::move(printers))));
+  Respond(WithArguments(base::Value(std::move(printers))));
 }
 
 bool NwCurrentWindowInternalSetPrintSettingsInternalFunction::RunNWSync(base::Value::List* response, std::string* error) {
