@@ -93,10 +93,10 @@ class Tray : public Base {
   static StatusTray* status_tray_;
 
   // The icons on the system tray.
-  StatusIcon* status_icon_;
+  raw_ptr<StatusIcon> status_icon_;
 
   // Click observer.
-  TrayObserver* status_observer_;
+  raw_ptr<TrayObserver> status_observer_;
 #endif
 
 };

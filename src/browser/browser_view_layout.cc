@@ -12,7 +12,7 @@ using views::View;
 namespace nw {
 
 BrowserViewLayout::BrowserViewLayout()
-  : menu_bar_(NULL), web_view_(NULL), tool_bar_(NULL)
+  : menu_bar_(nullptr), web_view_(nullptr), tool_bar_(nullptr)
 {
 }
 

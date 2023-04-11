@@ -293,7 +293,7 @@ class LeftMouseClick {
   }
 
   // Unowned pointer.
-  content::WebContents* web_contents_;
+  raw_ptr<content::WebContents> web_contents_;
 
   scoped_refptr<content::MessageLoopRunner> message_loop_runner_;
 
@@ -416,7 +416,7 @@ class MockDownloadWebContentsDelegate : public content::WebContentsDelegate {
   }
 
  private:
-  content::WebContentsDelegate* orig_delegate_;
+  raw_ptr<content::WebContentsDelegate> orig_delegate_;
   bool waiting_for_decision_;
   bool expect_allow_;
   bool decision_made_;
@@ -712,7 +712,7 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
     return manager;
   }
 
-  NWWebViewTestBase() : guest_view_(NULL), embedder_web_contents_(NULL) {
+  NWWebViewTestBase() : guest_view_(nullptr), embedder_web_contents_(nullptr) {
     GuestViewManager::set_factory_for_testing(&factory_);
   }
 
@@ -724,8 +724,8 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
  private:
   TestGuestViewManagerFactory factory_;
   // Note that these are only set if you launch app using LoadAppWithGuest().
-  guest_view::GuestViewBase* guest_view_;
-  content::WebContents* embedder_web_contents_;
+  raw_ptr<guest_view::GuestViewBase> guest_view_;
+  raw_ptr<content::WebContents> embedder_web_contents_;
 };
 
 class NWJSWebViewTest : public NWWebViewTestBase, public testing::WithParamInterface<bool> {
@@ -824,7 +824,7 @@ public:
     if (CheckDlg())
       runner_->Quit();
   }
-  content::WebContents* web_contents_;
+  raw_ptr<content::WebContents> web_contents_;
   scoped_refptr<content::MessageLoopRunner> runner_;
 
 };

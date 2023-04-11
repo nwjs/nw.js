@@ -52,7 +52,7 @@ class NWContentVerifierDelegate : public ContentVerifierDelegate {
                     ContentVerifyJob::FailureReason reason,
                     scoped_refptr<ContentVerifyJob> verify_job) override;
   void Shutdown() override;
-  content::BrowserContext* context_;
+  raw_ptr<content::BrowserContext> context_;
   Mode default_mode_;
 
   std::set<std::string> would_be_disabled_ids_;

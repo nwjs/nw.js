@@ -60,8 +60,8 @@ void Menu::Create(const base::Value::Dict& option) {
   menu_delegate_.reset(new MenuDelegate(object_manager()));
   menu_model_.reset(new ui::NwMenuModel(menu_delegate_.get()));
 
-  focus_manager_ = NULL;
-  window_ = NULL;
+  focus_manager_ = nullptr;
+  window_ = nullptr;
 
   std::string type;
 
@@ -111,7 +111,7 @@ void Menu::Remove(MenuItem* menu_item, int pos) {
   menu_model_->RemoveItemAt(pos);
   menu_items_.erase(menu_items_.begin() + pos);
   is_menu_modified_ = true;
-  menu_item->menu_ = NULL;
+  menu_item->menu_ = nullptr;
   menu_item->RemoveKeys();
 }
 
@@ -194,7 +194,7 @@ void Menu::RemoveKeys() {
     item->RemoveKeys();
   }
 
-  focus_manager_ = NULL;
+  focus_manager_ = nullptr;
 }
 
 void Menu::UpdateStates() {

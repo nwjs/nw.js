@@ -48,7 +48,7 @@ class MenuDelegate : public ui::SimpleMenuModel::Delegate {
    bool HasIcon(int command_id) override;
 
  private:
-  ObjectManager* object_manager_;
+  raw_ptr<ObjectManager> object_manager_;
 
 };
 

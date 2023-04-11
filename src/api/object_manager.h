@@ -104,11 +104,11 @@ class ObjectManager : public KeyedService {
   static base::IDMap<std::unique_ptr<Base>> objects_registry_;
   static int next_object_id_;
 
-  base::RunLoop* run_loop_;
+  raw_ptr<base::RunLoop> run_loop_;
 
   std::set<int> objects_;
 
-  content::BrowserContext* browser_context_;
+  raw_ptr<content::BrowserContext> browser_context_;
   // Factory to generate weak pointer
   base::WeakPtrFactory<ObjectManager> weak_ptr_factory_;
 

@@ -135,9 +135,9 @@ class Menu : public Base {
 
   //**Never Try to free this pointer**
   //We get it from top widget
-  views::FocusManager *focus_manager_;
+  raw_ptr<views::FocusManager> focus_manager_;
   std::vector<MenuItem*> menu_items_;
-  extensions::AppWindow* window_;
+  raw_ptr<extensions::AppWindow> window_;
   // Flag to indicate the menu has been modified since last show, so we should
   // rebuild the menu before next show.
   bool is_menu_modified_;

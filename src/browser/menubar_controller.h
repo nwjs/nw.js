@@ -37,8 +37,8 @@ class MenuBarController : public views::MenuModelAdapter {
  private:
   typedef std::map<const ui::MenuModel*, views::MenuItemView*> ModelToMenuMap;
 
-  MenuBarView* menubar_;
-  ui::MenuModel* active_menu_model_;
+  raw_ptr<MenuBarView> menubar_;
+  raw_ptr<ui::MenuModel> active_menu_model_;
   std::unique_ptr<views::MenuRunner> menu_runner_;
   std::vector<MenuBarController*> controllers_;
   static ModelToMenuMap model_to_menu_map_;

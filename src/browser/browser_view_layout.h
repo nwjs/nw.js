@@ -37,9 +37,9 @@ class BrowserViewLayout : public views::LayoutManager {
   views::View* tool_bar() { return tool_bar_; }
 
  private:
-  views::View* menu_bar_;
-  views::View* web_view_;
-  views::View* tool_bar_;
+  raw_ptr<views::View> menu_bar_;
+  raw_ptr<views::View> web_view_;
+  raw_ptr<views::View> tool_bar_;
 
 };
 

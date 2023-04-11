@@ -154,7 +154,7 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
       return true;
     }
 
-    ui::Clipboard* clipboard_;
+    raw_ptr<ui::Clipboard> clipboard_;
     std::string error_;
   };
 

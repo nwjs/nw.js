@@ -61,7 +61,7 @@ class TrayObserver final : public StatusIconObserver {
   }
 
  private:
-  Tray* tray_;
+  raw_ptr<Tray> tray_;
 };
 
 void Tray::Create(const base::Value::Dict& option) {
@@ -109,7 +109,7 @@ void Tray::Remove() {
     delete status_observer_;
 
     status_tray_->RemoveStatusIcon(status_icon_);
-    status_icon_ = NULL;
+    status_icon_ = nullptr;
   }
 }
 

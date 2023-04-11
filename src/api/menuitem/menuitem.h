@@ -114,10 +114,10 @@ class MenuItem : public Base {
 #elif defined(OS_WIN) || defined(OS_LINUX)
   friend class MenuDelegate;
 
-  Menu* menu_;
+  raw_ptr<Menu> menu_;
   //**Never Try to free this pointer**
   //We get it from top widget
-  views::FocusManager *focus_manager_;
+  raw_ptr<views::FocusManager> focus_manager_;
 
   ui::Accelerator accelerator_;
 
@@ -131,7 +131,7 @@ class MenuItem : public Base {
   std::string type_;
   std::u16string label_;
   std::u16string tooltip_;
-  Menu* submenu_;
+  raw_ptr<Menu> submenu_;
   bool enable_shortcut_;
 
   bool meta_down_flag_;

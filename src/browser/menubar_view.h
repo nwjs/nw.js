@@ -49,7 +49,7 @@ class MenuBarView : public views::AccessiblePaneView {
   void ButtonPressed(int index, const ui::Event& event);
 
  private:
-  ui::MenuModel* model_;
+  raw_ptr<ui::MenuModel> model_;
 };
 } //namespace nw
 #endif

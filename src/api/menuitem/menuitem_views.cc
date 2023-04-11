@@ -49,11 +49,11 @@ void MenuItem::Create(const base::Value::Dict& option) {
   is_checked_ = false;
   is_enabled_ = true;
   type_ = "normal";
-  submenu_ = NULL;
+  submenu_ = nullptr;
   meta_down_flag_ = false;
 
-  focus_manager_ = NULL;
-  menu_ = NULL;
+  focus_manager_ = nullptr;
+  menu_ = nullptr;
 
   const std::string* str = option.FindString("type");
   if (str)
@@ -213,7 +213,7 @@ void MenuItem::RemoveKeys() {
   if (submenu_) {
     submenu_->RemoveKeys();
   }
-  focus_manager_ = NULL;
+  focus_manager_ = nullptr;
 }
 
 #if defined(OS_WIN) || defined(OS_LINUX)
