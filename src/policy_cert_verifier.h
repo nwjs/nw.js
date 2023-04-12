@@ -40,6 +40,8 @@ class PolicyCertVerifier : public net::CertVerifier {
   // Sets the additional trust anchors.
   void SetTrustAnchors(const net::CertificateList& trust_anchors);
 
+  void AddObserver(Observer* observer) override {}
+  void RemoveObserver(Observer* observer) override {}
   // CertVerifier:
   // Note: |callback| can be null.
   int Verify(const RequestParams& params,
