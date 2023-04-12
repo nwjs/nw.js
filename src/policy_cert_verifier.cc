@@ -11,6 +11,7 @@
 #include "net/base/net_errors.h"
 #include "net/cert/caching_cert_verifier.h"
 #include "net/cert/cert_verify_proc.h"
+#include "net/cert/crl_set.h"
 #include "net/cert/multi_threaded_cert_verifier.h"
 
 namespace nw {
@@ -21,13 +22,14 @@ class DefaultCertVerifyProcFactory : public net::CertVerifyProcFactory {
 public:
   scoped_refptr<net::CertVerifyProc> CreateCertVerifyProc(
 							  scoped_refptr<net::CertNetFetcher> cert_net_fetcher,
+							  scoped_refptr<net::CRLSet> crl_set,
 							  const net::ChromeRootStoreData* root_store_data) override {
     scoped_refptr<net::CertVerifyProc> verify_proc;
 #if BUILDFLAG(CHROME_ROOT_STORE_OPTIONAL)
     if (!verify_proc &&
 	base::FeatureList::IsEnabled(net::features::kChromeRootStoreUsed)) {
       verify_proc = net::CertVerifyProc::CreateBuiltinWithChromeRootStore(
-								     std::move(cert_net_fetcher), root_store_data);
+									  std::move(cert_net_fetcher), std::move(crl_set), root_store_data);
     }
     #endif
     if (!verify_proc) {
@@ -36,10 +38,10 @@ public:
 								     std::move(cert_net_fetcher), root_store_data);
 #elif BUILDFLAG(IS_FUCHSIA) || BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
             verify_proc =
-	      net::CertVerifyProc::CreateBuiltinVerifyProc(std::move(cert_net_fetcher));
+	      net::CertVerifyProc::CreateBuiltinVerifyProc(std::move(cert_net_fetcher), std::move(crl_set));
 	    #else
 	          verify_proc =
-		    net::CertVerifyProc::CreateSystemVerifyProc(std::move(cert_net_fetcher));
+		    net::CertVerifyProc::CreateSystemVerifyProc(std::move(cert_net_fetcher), std::move(crl_set));
 		  #endif
     }
     return verify_proc;
