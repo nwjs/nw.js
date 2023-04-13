@@ -6,6 +6,7 @@
 
 #include "base/logging.h"
 #include "base/memory/ptr_util.h"
+#include "base/types/optional_util.h"
 #include "content/public/browser/browser_thread.h"
 #include "net/base/features.h"
 #include "net/base/net_errors.h"
@@ -22,26 +23,26 @@ class DefaultCertVerifyProcFactory : public net::CertVerifyProcFactory {
 public:
   scoped_refptr<net::CertVerifyProc> CreateCertVerifyProc(
 							  scoped_refptr<net::CertNetFetcher> cert_net_fetcher,
-							  scoped_refptr<net::CRLSet> crl_set,
-							  const net::ChromeRootStoreData* root_store_data) override {
+							  const net::CertVerifyProcFactory::ImplParams& impl_params
+							  ) override {
     scoped_refptr<net::CertVerifyProc> verify_proc;
 #if BUILDFLAG(CHROME_ROOT_STORE_OPTIONAL)
     if (!verify_proc &&
 	base::FeatureList::IsEnabled(net::features::kChromeRootStoreUsed)) {
       verify_proc = net::CertVerifyProc::CreateBuiltinWithChromeRootStore(
-									  std::move(cert_net_fetcher), std::move(crl_set), root_store_data);
+									  std::move(cert_net_fetcher), std::move(impl_params.crl_set), base::OptionalToPtr(impl_params.root_store_data));
     }
     #endif
     if (!verify_proc) {
 #if BUILDFLAG(CHROME_ROOT_STORE_ONLY)
       verify_proc = net::CertVerifyProc::CreateBuiltinWithChromeRootStore(
-								     std::move(cert_net_fetcher), root_store_data);
+								     std::move(cert_net_fetcher), impl_params.root_store_data);
 #elif BUILDFLAG(IS_FUCHSIA) || BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
             verify_proc =
-	      net::CertVerifyProc::CreateBuiltinVerifyProc(std::move(cert_net_fetcher), std::move(crl_set));
+	      net::CertVerifyProc::CreateBuiltinVerifyProc(std::move(cert_net_fetcher), std::move(impl_params.crl_set));
 	    #else
 	          verify_proc =
-		    net::CertVerifyProc::CreateSystemVerifyProc(std::move(cert_net_fetcher), std::move(crl_set));
+		    net::CertVerifyProc::CreateSystemVerifyProc(std::move(cert_net_fetcher), std::move(impl_params.crl_set));
 		  #endif
     }
     return verify_proc;
