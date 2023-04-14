@@ -51,8 +51,8 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': '11ef0f80a5bf49f1d5866f8286c8bbc698c6b475',
-  'nw_v8_revision': 'c757a55d9adc687e08d4a8d9e5c131322c3dbabb',
+  'nw_src_revision': '5e017cee21193c4c2165f0a8aa77f3ddc35ddec7',
+  'nw_v8_revision': 'd99e56e434c2649fcaf6f03b71ddc4d55693918c',
   'nw_node_revision': 'c1a08d8dcbf57ec43bfc127209aff59a3b8f01a8',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
@@ -303,15 +303,15 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': 'f5fefe5245098be43cb608eace5e14d67cdc09e6',
+  'skia_revision': 'f5715362aac554ff3108b9e2a56b8ac8a6ef1acb',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '96fed67922e5f54a027aed80259e5083769e33e2',
+  'v8_revision': '6538a20aa097f9c05ead98eb88c71819aa1e65aa',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': '293db5ce4d0766cb3ba7711057a00f0a5bddb00d',
+  'angle_revision': '5becbed305e3da317f8c35150c24639e6590bba9',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -430,7 +430,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
-  'dawn_revision': 'de24841411c4cfb13662238327f2e456c82d26f6',
+  'dawn_revision': '5767f435195311b3c471ecca2b0836d512a75271',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
@@ -771,7 +771,7 @@ deps = {
 
   'src/clank': {
     'url': 'https://chrome-internal.googlesource.com/clank/internal/apps.git' + '@' +
-    'd83811f32343245218e742319cec89aaefb94657',
+    '3ed767a7f1e0623a95e2234cee67f15c8f40c183',
     'condition': 'checkout_android and checkout_src_internal',
   },
 
@@ -1219,7 +1219,7 @@ deps = {
     Var('chromium_git') + '/devtools/devtools-frontend' + '@' + Var('devtools_frontend_revision'),
 
   'src/third_party/devtools-frontend-internal': {
-      'url': 'https://chrome-internal.googlesource.com/devtools/devtools-internal.git' + '@' + '2ac32de43d557d678de46fb7cfc850187f3379fd',
+      'url': 'https://chrome-internal.googlesource.com/devtools/devtools-internal.git' + '@' + 'ddb1bded33bf7620a5ce4415714b2e21fb592689',
     'condition': 'checkout_src_internal',
   },
 
@@ -1379,7 +1379,7 @@ deps = {
     Var('chromium_git') + '/chromium/deps/hunspell_dictionaries.git' + '@' + '41cdffd71c9948f63c7ad36e1fb0ff519aa7a37e',
 
   'src/third_party/icu':
-    Var('chromium_git') + '/chromium/deps/icu.git' + '@' + 'faf22e66ceafad90f5cafbd6707055c24646adcc',
+    Var('chromium_git') + '/chromium/deps/icu.git' + '@' + 'd6e11ba68be0fd871fcae6356adf698203ca6f37',
 
   'src/third_party/icu4j': {
       'packages': [
@@ -1951,7 +1951,7 @@ deps = {
   #  Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 
   'src-internal': {
-    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@67c8cac0a84ad86b64ecf3f4af23a928fb605313',
+    'url': 'https://chrome-internal.googlesource.com/chrome/src-internal.git@4b29ff977c821b1967c191468efbf2de16c1c156',
     'condition': 'checkout_src_internal',
   },
 
