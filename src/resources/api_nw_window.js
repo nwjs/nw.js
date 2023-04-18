@@ -373,7 +373,7 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
 
     NWWindow.prototype.showDevTools = function(frm, callback) {
       if (process.versions['nw-flavor'] !== 'sdk')
-      return new Error('showDevTools does not exist on normal build flavor.');
+      throw new Error('showDevTools does not exist on normal build flavor.');
       var id = '';
       if (typeof frm === 'string')
         id = frm;
