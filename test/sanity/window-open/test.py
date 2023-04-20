@@ -17,10 +17,11 @@ capabilities = {"pageLoadStrategy": "none"}
 testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
 
-driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, desired_capabilities = capabilities)
+driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, desired_capabilities = capabilities, service_log_path="log", service_args=["--verbose"])
 try:
     wait_switch_window_name(driver, 'local')
     print(driver.current_url)
+    driver.find_element_by_id('open').click()
     result = wait_for_element_id(driver, 'res')
     print('result=' + result)
     assert("object" in result)
