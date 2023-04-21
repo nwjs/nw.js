@@ -55,7 +55,7 @@ bool NwMenuModel::HasIcons() const {
 
 namespace nw {
 
-void Menu::Create(const base::DictionaryValue& option) {
+void Menu::Create(const base::Value::Dict& option) {
   is_menu_modified_ = true;
   menu_delegate_.reset(new MenuDelegate(object_manager()));
   menu_model_.reset(new ui::NwMenuModel(menu_delegate_.get()));
@@ -150,8 +150,7 @@ void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
                                                           base::RepeatingClosure());
 
     //base::MessageLoop* loop = base::MessageLoop::current();
-    base::CurrentThread::ScopedNestableTaskAllower allow;
-    base::RunLoop run_loop;
+    base::RunLoop run_loop(base::RunLoop::Type::kNestableTasksAllowed);
     message_loop_quit_ = run_loop.QuitClosure();
 
     run_loop.Run();

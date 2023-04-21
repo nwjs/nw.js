@@ -26,9 +26,9 @@ public:
 
 namespace {
 
-  std::unique_ptr<ui::Accelerator> dictionaryToUIAccelerator(const base::DictionaryValue *acceleratorDict) {
+std::unique_ptr<ui::Accelerator> dictionaryToUIAccelerator(const base::Value::Dict *acceleratorDict) {
     nwapi::nw__shortcut::Accelerator accelerator;
-    nwapi::nw__shortcut::Accelerator::Populate(*acceleratorDict, &accelerator);
+    nwapi::nw__shortcut::Accelerator::Populate(base::Value(acceleratorDict->Clone()), &accelerator);
 
     // build keyboard code
     ui::DomCode domCode = ui::KeycodeConverter::CodeStringToDomCode(accelerator.key.c_str());
@@ -110,8 +110,7 @@ void NWShortcutObserver::OnKeyPressed (const ui::Accelerator& uiAccelerator) {
 bool NwShortcutRegisterAcceleratorFunction::RunNWSync(base::Value::List* response, std::string* error) {
   EXTENSION_FUNCTION_VALIDATE(args().size() >= 1);
   EXTENSION_FUNCTION_VALIDATE(args()[0].is_dict());
-  const base::DictionaryValue& acceleratorDict =
-    base::Value::AsDictionaryValue(args()[0]);
+  const base::Value::Dict& acceleratorDict = args()[0].GetDict();
 
   std::unique_ptr<ui::Accelerator> uiAccelerator = dictionaryToUIAccelerator(&acceleratorDict);
 
@@ -127,8 +126,7 @@ bool NwShortcutRegisterAcceleratorFunction::RunNWSync(base::Value::List* respons
 bool NwShortcutUnregisterAcceleratorFunction::RunNWSync(base::Value::List* response, std::string* error) {
   EXTENSION_FUNCTION_VALIDATE(args().size() >= 1);
   EXTENSION_FUNCTION_VALIDATE(args()[0].is_dict());
-  const base::DictionaryValue& acceleratorDict =
-    base::Value::AsDictionaryValue(args()[0]);
+  const base::Value::Dict& acceleratorDict = args()[0].GetDict();
   std::unique_ptr<ui::Accelerator> uiAccelerator = dictionaryToUIAccelerator(&acceleratorDict);
 
   GlobalShortcutListener::GetInstance()->UnregisterAccelerator(*uiAccelerator, NWShortcutObserver::GetInstance());

@@ -22,6 +22,7 @@
 #include "chrome/browser/extensions/extension_service.h"
 #include "chrome/browser/net/profile_network_context_service.h"
 #include "chrome/browser/net/profile_network_context_service_factory.h"
+#include "chrome/browser/profiles/profile.h"
 #include "components/keep_alive_registry/keep_alive_registry.h"
 #include "components/keep_alive_registry/keep_alive_types.h"
 #include "content/nw/src/api/nw_app.h"
@@ -61,10 +62,10 @@ void NwAppQuitFunction::DoJob(ExtensionService* service, std::string extension_i
     KeepAliveRegistry::GetInstance()->Unregister(KeepAliveOrigin::APP_CONTROLLER, KeepAliveRestartOption::ENABLED);
     return;
   }
-  base::ThreadTaskRunnerHandle::Get().get()->PostTask(
+  base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(
                                                       FROM_HERE,
                                                       base::BindOnce(&ExtensionService::TerminateExtension,
-                                                                   service->AsWeakPtr(),
+                                                                   service->AsExtensionServiceWeakPtr(),
                                                                    extension_id));
 }
 
@@ -72,7 +73,7 @@ ExtensionFunction::ResponseAction
 NwAppQuitFunction::Run() {
   ExtensionService* service =
     ExtensionSystem::Get(browser_context())->extension_service();
-  base::ThreadTaskRunnerHandle::Get().get()->PostTask(
+  base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(
         FROM_HERE,
         base::BindOnce(&NwAppQuitFunction::DoJob,
                    service,
@@ -98,7 +99,7 @@ NwAppCloseAllWindowsFunction::Run() {
   AppWindowRegistry* registry = AppWindowRegistry::Get(browser_context());
   if (!registry)
     return RespondNow(Error(""));
-  base::ThreadTaskRunnerHandle::Get().get()->PostTask(
+  base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(
         FROM_HERE,
         base::BindOnce(&NwAppCloseAllWindowsFunction::DoJob, registry, extension()->id()));
 
@@ -193,7 +194,7 @@ bool NwAppClearAppCacheFunction::RunNWSync(base::Value::List* response, std::str
   return true;
 }
 
-NwAppClearCacheFunction::NwAppClearCacheFunction() {
+NwAppClearCacheFunction::NwAppClearCacheFunction() : run_loop_(base::RunLoop::Type::kNestableTasksAllowed) {
 }
 
 NwAppClearCacheFunction::~NwAppClearCacheFunction() {
@@ -209,8 +210,6 @@ bool NwAppClearCacheFunction::RunNWSync(base::Value::List* response, std::string
                           content::BrowsingDataRemover::ORIGIN_TYPE_UNPROTECTED_WEB,
                           this);
   // BrowsingDataRemover deletes itself.
-  base::CurrentThread::ScopedNestableTaskAllower allow;
-
   run_loop_.Run();
   remover->RemoveObserver(this);
   return true;

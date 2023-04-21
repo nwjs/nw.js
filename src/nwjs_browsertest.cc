@@ -15,7 +15,6 @@
 #include "content/public/browser/browser_task_traits.h"
 #include "content/public/test/browser_test_utils.h"
 #include "content/public/test/browser_test.h"
-#include "base/callback_helpers.h"
 #include "base/files/file_util.h"
 #include "base/files/scoped_temp_dir.h"
 #include "base/guid.h"
@@ -27,7 +26,6 @@
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/stringprintf.h"
 #include "base/strings/utf_string_conversions.h"
-#include "base/threading/thread_task_runner_handle.h"
 #include "build/build_config.h"
 #include "chrome/app/chrome_command_ids.h"
 #include "chrome/browser/apps/platform_apps/app_browsertest_util.h"
@@ -66,12 +64,10 @@
 #include "content/public/browser/render_widget_host.h"
 #include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/web_contents_delegate.h"
-#include "content/public/common/child_process_host.h"
 #include "content/public/common/content_features.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/test/browser_test_utils.h"
 #include "content/public/test/download_test_observer.h"
-#include "content/public/test/fake_speech_recognition_manager.h"
 #include "content/public/test/test_renderer_host.h"
 #include "extensions/browser/api/declarative/rules_registry.h"
 #include "extensions/browser/api/declarative/rules_registry_service.h"
@@ -271,7 +267,7 @@ class LeftMouseClick {
     web_contents_->GetRenderViewHost()->GetWidget()->ForwardMouseEvent(
         mouse_event_);
 
-    base::ThreadTaskRunnerHandle::Get()->PostDelayedTask(
+    base::SingleThreadTaskRunner::GetCurrentDefault()->PostDelayedTask(
         FROM_HERE, base::BindOnce(&LeftMouseClick::SendMouseUp,
                               base::Unretained(this)),
         base::Milliseconds(duration_ms));
@@ -436,25 +432,10 @@ class MockDownloadWebContentsDelegate : public content::WebContentsDelegate {
 class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
  protected:
   void SetUp() override {
-    if (UsesFakeSpeech()) {
-      // SpeechRecognition test specific SetUp.
-      fake_speech_recognition_manager_.reset(
-          new content::FakeSpeechRecognitionManager());
-      fake_speech_recognition_manager_->set_should_send_fake_response(true);
-      // Inject the fake manager factory so that the test result is returned to
-      // the web page.
-      content::SpeechRecognitionManager::SetManagerForTesting(
-          fake_speech_recognition_manager_.get());
-    }
     extensions::PlatformAppBrowserTest::SetUp();
   }
 
   void TearDown() override {
-    if (UsesFakeSpeech()) {
-      // SpeechRecognition test specific TearDown.
-      content::SpeechRecognitionManager::SetManagerForTesting(NULL);
-    }
-
     extensions::PlatformAppBrowserTest::TearDown();
   }
 
@@ -741,18 +722,6 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
   //content::FrameWatcher frame_watcher_;
 
  private:
-  bool UsesFakeSpeech() {
-    const testing::TestInfo* const test_info =
-        testing::UnitTest::GetInstance()->current_test_info();
-
-    // SpeechRecognition test specific SetUp.
-    const char* name = "SpeechRecognitionAPI_HasPermissionAllow";
-    return !strncmp(test_info->name(), name, strlen(name));
-  }
-
-  std::unique_ptr<content::FakeSpeechRecognitionManager>
-      fake_speech_recognition_manager_;
-
   TestGuestViewManagerFactory factory_;
   // Note that these are only set if you launch app using LoadAppWithGuest().
   guest_view::GuestViewBase* guest_view_;
@@ -923,23 +892,21 @@ IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, SilentPrintChangeFooter) {
   EXPECT_TRUE(listener.WaitUntilSatisfied()) << "'" << listener.message()
                                              << "' message was not receieved";
 
-  std::vector<content::WebContents*> guest_web_contents_list;
+  std::vector<content::RenderFrameHost*> guest_rfh_list;
   unsigned long n_guests = 2;
   LOG(WARNING) << "WaitForNumGuestsCreated";
   GetGuestViewManager()->WaitForNumGuestsCreated(n_guests);
-  GetGuestViewManager()->DeprecatedGetGuestWebContentsList(&guest_web_contents_list);
-  ASSERT_EQ(n_guests, guest_web_contents_list.size());
+  GetGuestViewManager()->GetGuestRenderFrameHostList(&guest_rfh_list);
+  ASSERT_EQ(n_guests, guest_rfh_list.size());
 
-  content::WebContents* web_view_contents = guest_web_contents_list[0];
-  bool load_success = pdf_extension_test_util::EnsurePDFHasLoaded(
-      web_view_contents);
+  bool load_success = pdf_extension_test_util::EnsurePDFHasLoaded(guest_rfh_list[0]);
   EXPECT_TRUE(load_success);
-  WaitForAccessibilityTreeToContainNodeWithName(web_view_contents, "hello world\r\n");
+  WaitForAccessibilityTreeToContainNodeWithName(content::WebContents::FromRenderFrameHost(guest_rfh_list[0]), "hello world\r\n");
   std::string tree_dump;
   std::string* pstr = &tree_dump;
   // Make sure all the frames in the dialog has access to the PDF
   // plugin.
-  guest_web_contents_list[1]->GetPrimaryMainFrame()->
+  content::WebContents::FromRenderFrameHost(guest_rfh_list[1])->GetPrimaryMainFrame()->
     ForEachRenderFrameHost([pstr] (content::RenderFrameHost* rfh) { DumpAxTree(pstr, rfh); });
   LOG(INFO) << "ax tree: " << tree_dump;
   EXPECT_TRUE(tree_dump.find("nwtestfooter") != std::string::npos);
@@ -961,7 +928,7 @@ IN_PROC_BROWSER_TEST_F(NWJSAppTest, PrintChangeFooter) {
   int frame_count;
   do {
     base::RunLoop run_loop;
-    base::ThreadTaskRunnerHandle::Get()->PostDelayedTask(
+    base::SingleThreadTaskRunner::GetCurrentDefault()->PostDelayedTask(
         FROM_HERE, run_loop.QuitClosure(), base::Seconds(1));
     run_loop.Run();
 
@@ -1006,20 +973,19 @@ IN_PROC_BROWSER_TEST_P(NWJSWebViewTest, LocalPDF) {
   if (!trusted_) {
     base::CancelableOnceClosure timeout(
           base::BindOnce(&NWTimeoutCallback, "pdf load timed out."));
-    base::ThreadTaskRunnerHandle::Get()->PostDelayedTask(
+    base::SingleThreadTaskRunner::GetCurrentDefault()->PostDelayedTask(
           FROM_HERE, timeout.callback(), TestTimeouts::action_timeout());
     ExtensionTestMessageListener pass_listener("PASSED");
     EXPECT_TRUE(pass_listener.WaitUntilSatisfied());
   } else
     GetGuestViewManager()->WaitForNumGuestsCreated(n_guests);
 
-  GetGuestViewManager()->DeprecatedGetGuestWebContentsList(&guest_web_contents_list);
-  ASSERT_EQ(n_guests, guest_web_contents_list.size());
+  std::vector<content::RenderFrameHost*> guest_rfh_list;
+  GetGuestViewManager()->GetGuestRenderFrameHostList(&guest_rfh_list);
+  ASSERT_EQ(n_guests, guest_rfh_list.size());
 
   if (trusted_) {
-    content::WebContents* web_view_contents = guest_web_contents_list[0];
-    bool load_success = pdf_extension_test_util::EnsurePDFHasLoaded(
-      web_view_contents);
+    bool load_success = pdf_extension_test_util::EnsurePDFHasLoaded(guest_rfh_list[0]);
     EXPECT_TRUE(load_success);
   }
 }

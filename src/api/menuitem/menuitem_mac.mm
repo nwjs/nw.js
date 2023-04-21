@@ -31,15 +31,15 @@
 
 namespace nw{
 
-void MenuItem::Create(const base::DictionaryValue& option) {
-  std::string type;
-  option.GetString("type", &type);
-  type_ = type;
-  native_ = option.FindBoolKey("native").value_or(false);
+void MenuItem::Create(const base::Value::Dict& option) {
+  const std::string* str = option.FindString("type");
+  if (str)
+    type_ = *str;
+  native_ = option.FindBool("native").value_or(false);
 
   if (native_) return;
 
-  if (type == "separator") {
+  if (type_ == "separator") {
     menu_item_ = [NSMenuItem separatorItem];
 
     // Balance release
@@ -47,10 +47,14 @@ void MenuItem::Create(const base::DictionaryValue& option) {
     [menu_item_ retain];
   } else {
     std::string label;
-    option.GetString("label", &label);
+    str = option.FindString("label");
+    if (str)
+      label = *str;
 
     std::string selector;
-    option.GetString("selector", &selector);
+    str = option.FindString("selector");
+    if (str)
+      selector = *str;
 
     if(!selector.empty()) {
       menu_item_ = [[NSMenuItem alloc]
@@ -67,49 +71,52 @@ void MenuItem::Create(const base::DictionaryValue& option) {
       [menu_item_ setTarget:delegate_];
     }
 
-    if (type == "checkbox") {
-      bool checked = option.FindBoolKey("checked").value_or(false);
+    if (type_ == "checkbox") {
+      bool checked = option.FindBool("checked").value_or(false);
       SetChecked(checked);
     }
 
-    absl::optional<bool> enabled = option.FindBoolKey("enabled");
+    absl::optional<bool> enabled = option.FindBool("enabled");
     if (enabled)
       SetEnabled(*enabled);
 
-    absl::optional<bool> isTemplate = option.FindBoolKey("iconIsTemplate");
+    absl::optional<bool> isTemplate = option.FindBool("iconIsTemplate");
     if (isTemplate)
       SetIconIsTemplate(*isTemplate);
 
     std::string icon;
-    if (option.GetString("icon", &icon) && !icon.empty())
+    str = option.FindString("icon");
+    if (str)
+      icon = *str;
+    if (str && !icon.empty())
       SetIcon(icon);
 
-    std::string tooltip;
-    if (option.GetString("tooltip", &tooltip))
-      SetTooltip(tooltip);
+    str = option.FindString("tooltip");
+    if (str)
+      SetTooltip(*str);
 
-    std::string key;
-    if (option.GetString("key", &key))
-      SetKey(key);
+    str = option.FindString("key");
+    if (str)
+      SetKey(*str);
 
-    std::string modifiers;
-    if (option.GetString("modifiers", &modifiers)) {
-      SetModifiers(modifiers);
+    str = option.FindString("modifiers");
+    if (str) {
+      SetModifiers(*str);
     }
 
-    int menu_id;
-    if (option.GetInteger("submenu", &menu_id))
-      SetSubmenu(object_manager()->GetApiObject<Menu>(menu_id));
+    absl::optional<int> menu_id = option.FindInt("submenu");
+    if (menu_id)
+      SetSubmenu(object_manager()->GetApiObject<Menu>(*menu_id));
   }
 
   [menu_item_ setAssociatedObject: this];
 }
 
 // static
-std::unique_ptr<base::DictionaryValue> MenuItem::CreateFromNative(NSMenuItem* menu_item, Menu* menu, int index) {
-  std::unique_ptr<base::DictionaryValue> options(new base::DictionaryValue());
+base::Value::Dict MenuItem::CreateFromNative(NSMenuItem* menu_item, Menu* menu, int index) {
+  base::Value::Dict options;
 
-  options->SetBoolean("native", true);
+  options.Set("native", true);
 
   std::string type("normal");
   if ([menu_item isSeparatorItem]) {
@@ -117,20 +124,20 @@ std::unique_ptr<base::DictionaryValue> MenuItem::CreateFromNative(NSMenuItem* me
   } if ([menu_item state] == NSOnState) {
     type = "checkbox";
   }
-  options->SetString("type", type);
+  options.Set("type", type);
 
-  options->SetBoolean("checked", [menu_item state] == NSOnState);
+  options.Set("checked", [menu_item state] == NSOnState);
 
-  options->SetString("label", base::SysNSStringToUTF8([menu_item title]));
+  options.Set("label", base::SysNSStringToUTF8([menu_item title]));
 
   if ([menu_item image] != nil) {
-    options->SetString("icon", "<native>");
-    options->SetBoolean("iconIsTemplate", [[menu_item image] isTemplate]);
+    options.Set("icon", "<native>");
+    options.Set("iconIsTemplate", [[menu_item image] isTemplate]);
   }
 
-  options->SetString("tooltip", base::SysNSStringToUTF8([menu_item toolTip]));
+  options.Set("tooltip", base::SysNSStringToUTF8([menu_item toolTip]));
 
-  options->SetBoolean("enabled", [menu_item isEnabled]);
+  options.Set("enabled", [menu_item isEnabled]);
 
   NSUInteger mask = [menu_item keyEquivalentModifierMask];
   if (mask != 0) {
@@ -146,19 +153,19 @@ std::unique_ptr<base::DictionaryValue> MenuItem::CreateFromNative(NSMenuItem* me
     if (str.length() > 0) {
       str.erase(str.length()-1);
     }
-    options->SetString("modifiers", str);
+    options.Set("modifiers", str);
   }
 
   NSString* key = [menu_item keyEquivalent];
   if (key != nil) {
-    options->SetString("key", base::SysNSStringToUTF8(key));
+    options.Set("key", base::SysNSStringToUTF8(key));
   }
 
   int menuitem_id = ObjectManager::AllocateId();
-  options->SetInteger("id", menuitem_id);
+  options.Set("id", menuitem_id);
 
   ObjectManager* manager = menu->object_manager();
-  manager->OnAllocateObject(menuitem_id, "MenuItem", *options, menu->extension_id_);
+  manager->OnAllocateObject(menuitem_id, "MenuItem", options, menu->extension_id_);
   MenuItem* item = reinterpret_cast<MenuItem*>(manager->GetApiObject(menuitem_id));
   item->menu_item_ = menu_item;
   [menu_item setAssociatedObject: item];

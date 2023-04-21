@@ -1,7 +1,6 @@
 #ifndef NW_BROWSER_MENUBAR_CONTROLLER_H
 #define NW_BROWSER_MENUBAR_CONTROLLER_H
 
-#include "base/callback.h"
 #include "ui/views/controls/menu/menu_model_adapter.h"
 #include "ui/views/controls/menu/menu_runner.h"
 #include "ui/views/view.h"

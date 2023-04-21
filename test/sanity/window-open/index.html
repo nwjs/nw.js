@@ -1,7 +1,10 @@
 
 <script>
-window.name = 'local';
+  window.name = 'local';
+  function test() {
 nw.Window.open('remote.html', function(win) {
   document.write('<h1 id="res">returned window is ' + typeof win + '</h1>');
 });
+  }
 </script>
+<button id='open' onclick='test();'>open win</button>
