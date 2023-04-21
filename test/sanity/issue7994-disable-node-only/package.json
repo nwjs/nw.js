@@ -1,5 +1,0 @@
-{
-    "name": "disable-node-only",
-    "main": "index.html",
-    "nodejs": false
-}
