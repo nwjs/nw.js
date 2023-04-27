@@ -1,3 +1,8 @@
+0.75.1 / 03-13-2023
+===================
+- Update Chromium to [112.0.5615.138](https://chromereleases.googleblog.com/2023/04/stable-channel-update-for-desktop_18.html)
+- Update Node.js to [v19.8.1](https://nodejs.org/en/blog/release/v19.8.1)
+
 0.75.0 / 03-13-2023
 ===================
 - Update Chromium to [112.0.5615.49](https://chromereleases.googleblog.com/2023/04/stable-channel-update-for-desktop.html)
