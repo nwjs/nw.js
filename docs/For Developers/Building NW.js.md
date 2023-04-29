@@ -15,7 +15,7 @@ NW.js use same build tools and similar steps as Chromium. Read the instructions 
 
 * [Windows](https://chromium.googlesource.com/chromium/src/+/master/docs/windows_build_instructions.md)
 * [Mac OS X](https://chromium.googlesource.com/chromium/src/+/master/docs/mac_build_instructions.md)
-* [Linux](https://chromium.googlesource.com/chromium/src/+/master/docs/linux_build_instructions.md)
+* [Linux](https://chromium.googlesource.com/chromium/src/+/master/docs/linux/build_instructions.md)
 
 !!! note "Windows"
     As suggested by Chromium document, you need to run `set DEPOT_TOOLS_WIN_TOOLCHAIN=0` or set the variable in your global environment.
