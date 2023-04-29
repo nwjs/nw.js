@@ -296,6 +296,9 @@ Turn the window's native shadow on/off. Useful for frameless, transparent window
 !!! warning "Behavior Changed"
     The behavior of the function is changed since 0.13.0. Please see [Migration Notes from 0.12 to 0.13](../For Users/Migration/From 0.12 to 0.13.md).
 
+!!! note
+    Since 0.75, the function throws an error if the build flavor is not SDK. This error can be caught in a try catch block.
+
 * `iframe` `{String} or {HTMLIFrameElement}` _Optional_ the id or the element of the `<iframe>` to be jailed on. By default, the DevTools is shown for entire window.
 * `callback(dev_win)` `{Function}` callback with the native window of the DevTools window.
 

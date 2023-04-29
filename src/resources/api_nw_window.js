@@ -371,15 +371,23 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
       currentNWWindowInternal.toggleKioskModeInternal();
     };
 
-    NWWindow.prototype.showDevTools = function(frm, callback) {
-      var id = '';
-      if (typeof frm === 'string')
-        id = frm;
-      var f = null;
+    /**
+    * Open the devtools to inspect the current window.
+    * 
+    * @param {string | HTMLIFrameElement} iframe
+    * @param {Function} callback
+    */
+    NWWindow.prototype.showDevTools = function(iframe, callback) {
+      if (process.versions['nw-flavor'] !== 'sdk')
+        throw new Error('showDevTools does not exist on normal build flavor.');
+      let id = '';
+      if (typeof iframe === 'string')
+        id = iframe;
+      let f = null;
       if (id)
         f = this.appWindow.contentWindow.getElementById(id);
       else
-        f = frm || null;
+        f = iframe || null;
       nwNatives.setDevToolsJail(f);
       currentNWWindowInternal.showDevToolsInternal(callback);
     };

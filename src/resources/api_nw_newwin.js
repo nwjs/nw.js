@@ -369,15 +369,23 @@ NWWindow.prototype.toggleKioskMode = function() {
   currentNWWindowInternal.toggleKioskModeInternal(this.cWindow.id);
 };
 
-NWWindow.prototype.showDevTools = function(frm, callback) {
-  var id = '';
-  if (typeof frm === 'string')
-    id = frm;
-  var f = null;
+/**
+ * Open the devtools to inspect the new window.
+ * 
+ * @param {string | HTMLIFrameElement} iframe
+ * @param {Function} callback
+ */
+NWWindow.prototype.showDevTools = function(iframe, callback) {
+  if (process.versions['nw-flavor'] !== 'sdk')
+    throw new Error('showDevTools does not exist on normal build flavor.');
+  let id = '';
+  if (typeof iframe === 'string')
+    id = iframe;
+  let f = null;
   if (id)
     f = this.window.getElementById(id);
   else
-    f = frm || null;
+    f = iframe || null;
   nwNatives.setDevToolsJail(f);
   currentNWWindowInternal.showDevTools2Internal(this.cWindow.id, callback);
 };
