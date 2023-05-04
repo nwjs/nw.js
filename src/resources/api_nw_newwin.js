@@ -754,7 +754,11 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
       callback(cwindows.map(create_nw_win));
     });
   });
-
+  apiFunctions.setHandleRequest('isDevToolsOpen', function(callback) {
+    chrome.windows.getAll({ populate: true, windowTypes:['devtools'] }, function( wins ) {
+      return wins.length > 0;
+    })
+  });
   apiFunctions.setHandleRequest('open', function(url, params, callback) {
     var options = {'url': url, 'setSelfAsOpener': true, 'type': 'popup'};
     //FIXME: unify this conversion code with nwjs/default.js
