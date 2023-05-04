@@ -760,8 +760,8 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
       callback(cwindows.map(create_nw_win));
     });
   });
-  apiFunctions.setHandleRequest('isDevToolsOpen', function(callback) {
-    chrome.windows.getAll({ populate: true, windowTypes:['devtools'] }, function( wins ) {
+  apiFunctions.setHandleRequest('isDevToolsOpen', function() {
+    return chrome.windows.getAll({ populate: true, windowTypes:['devtools'] }, function( wins ) {
       return wins.length > 0;
     })
   });
