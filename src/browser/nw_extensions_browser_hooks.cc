@@ -271,7 +271,7 @@ void LoadNWAppAsExtensionHook(base::Value::Dict* manifest,
     AmendManifestStringList(manifest, manifest_keys::kPermissions, "<all_urls>");
   }
 
-  std::string* icon_path = manifest->FindString("window.icon");
+  std::string* icon_path = manifest->FindStringByDottedPath("window.icon");
   if (icon_path) {
     gfx::Image app_icon;
     if (GetPackageImage(package, base::FilePath::FromUTF8Unsafe(*icon_path), &app_icon)) {
