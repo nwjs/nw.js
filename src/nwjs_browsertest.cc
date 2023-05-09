@@ -1177,7 +1177,7 @@ IN_PROC_BROWSER_TEST_F(NWJSDesktopCaptureApiTest, CrossDomain) {
                f->push_back(rfh);
        });
   ASSERT_TRUE(frames.size() == 2);
-  content::ExecuteScriptAndGetValue(frames[1], "document.getElementById('testbtn').click()");
+  ASSERT_TRUE(content::ExecJs(frames[1], "document.getElementById('testbtn').click()"));
   ExtensionTestMessageListener pass_listener("Pass");
   EXPECT_TRUE(pass_listener.WaitUntilSatisfied()) << "'" << pass_listener.message()
                                              << "' message was not receieved";
