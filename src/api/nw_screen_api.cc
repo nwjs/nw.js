@@ -409,7 +409,7 @@ void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(int index) {
                                         main_frame->GetRoutingID(),
                                         url::Origin::Create(web_contents->GetURL().DeprecatedGetOriginAsURL()),
                                         source,
-                                        extension()->name(), content::kRegistryStreamTypeDesktop);
+                                        content::kRegistryStreamTypeDesktop);
       response->Append(result);
     }
     return true;
