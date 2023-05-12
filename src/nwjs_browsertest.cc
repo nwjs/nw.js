@@ -586,7 +586,7 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
 
     ExtensionTestMessageListener done_listener("TEST_PASSED");
     done_listener.set_failure_message("TEST_FAILED");
-    if (!content::ExecuteScript(
+    if (!content::ExecJs(
             embedder_web_contents,
             base::StringPrintf("runTest('%s')", test_name.c_str()))) {
       LOG(ERROR) << "UNABLE TO START TEST.";
@@ -634,7 +634,7 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
     ExtensionTestMessageListener test_run_listener("PASSED");
     test_run_listener.set_failure_message("FAILED");
     EXPECT_TRUE(
-        content::ExecuteScript(
+        content::ExecJs(
             embedder_web_contents,
             base::StringPrintf("startDenyTest('%s')", test_name.c_str())));
     ASSERT_TRUE(test_run_listener.WaitUntilSatisfied());
@@ -651,7 +651,7 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
 
   void SendMessageToEmbedder(const std::string& message) {
     EXPECT_TRUE(
-        content::ExecuteScript(
+        content::ExecJs(
             GetEmbedderWebContents(),
             base::StringPrintf("onAppCommand('%s');", message.c_str())));
   }
@@ -664,7 +664,7 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
     }
 
     EXPECT_TRUE(
-        content::ExecuteScript(
+        content::ExecJs(
             GetGuestWebContents(),
             base::StringPrintf("onAppCommand('%s');", message.c_str())));
 
@@ -888,7 +888,7 @@ IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, SilentPrintChangeFooter) {
   }
   ASSERT_TRUE(web_contents);
   ExtensionTestMessageListener listener("Loaded");
-  ASSERT_TRUE(content::ExecuteScript(web_contents, "document.getElementById('testbtn').click()"));
+  ASSERT_TRUE(content::ExecJs(web_contents, "document.getElementById('testbtn').click()"));
   EXPECT_TRUE(listener.WaitUntilSatisfied()) << "'" << listener.message()
                                               << "' message was not receieved";
 
@@ -928,7 +928,7 @@ IN_PROC_BROWSER_TEST_F(NWJSAppTest, PrintChangeFooter) {
     web_contents = BrowserList::GetInstance()->GetLastActive()->tab_strip_model()->GetActiveWebContents();
   }
   ASSERT_TRUE(web_contents);
-  ASSERT_TRUE(content::ExecuteScript(web_contents, "document.getElementById('testbtn').click()"));
+  ASSERT_TRUE(content::ExecJs(web_contents, "document.getElementById('testbtn').click()"));
   LOG(INFO) << "waiting for print dialog";
   WebContents* preview_dialog = PrintDialogWaiter(web_contents).Wait();
   LOG(INFO) << "done";
@@ -977,7 +977,7 @@ IN_PROC_BROWSER_TEST_P(NWJSWebViewTest, LocalPDF) {
   ASSERT_TRUE(web_contents);
   std::vector<content::WebContents*> guest_web_contents_list;
   unsigned long n_guests = trusted_ ? 2 : 1;
-  EXPECT_TRUE(content::ExecuteScript(web_contents, std::string("test(") + (trusted_ ? "true" : "false") + ")"));
+  EXPECT_TRUE(content::ExecJs(web_contents, std::string("test(") + (trusted_ ? "true" : "false") + ")"));
   if (!trusted_) {
     base::CancelableOnceClosure timeout(
           base::BindOnce(&NWTimeoutCallback, "pdf load timed out."));
@@ -1166,7 +1166,7 @@ IN_PROC_BROWSER_TEST_F(NWJSDesktopCaptureApiTest, CrossDomain) {
   }
   ASSERT_TRUE(web_contents);
   ExtensionTestMessageListener listener("Loaded");
-  ASSERT_TRUE(content::ExecuteScript(web_contents, "document.getElementById('frame0').src='" +
+  ASSERT_TRUE(content::ExecJs(web_contents, "document.getElementById('frame0').src='" +
                                      embedded_test_server()->GetURL("/remote.html").spec() + "'"));
   EXPECT_TRUE(listener.WaitUntilSatisfied()) << "'" << listener.message()
                                              << "' message was not receieved";
