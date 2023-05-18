@@ -244,7 +244,7 @@ void NWCustomBindings::EvalScript(
     web_frame = main_frame;
   }else{
     v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[0]);
-    blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::ToImpl(frm);
+    blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::ToWrappableUnsafe(frm);
     web_frame = blink::WebFrame::FromCoreFrame(iframe->ContentFrame());
   }
 #if defined(OS_WIN)
@@ -298,7 +298,7 @@ void NWCustomBindings::EvalNWBin(
     web_frame = main_frame;
   }else{
     v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[0]);
-    blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::ToImpl(frm);
+    blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::ToWrappableUnsafe(frm);
     web_frame = blink::WebFrame::FromCoreFrame(iframe->ContentFrame());
   }
   blink::WebLocalFrame* local_frame = web_frame->ToWebLocalFrame();
@@ -428,7 +428,7 @@ void NWCustomBindings::SetDevToolsJail(const v8::FunctionCallbackInfo<v8::Value>
     main_frame->setDevtoolsJail(NULL);
   }else{
 	  v8::Handle<v8::Object> frm = v8::Handle<v8::Object>::Cast(args[0]);
-	  blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::ToImpl(frm);
+	  blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::ToWrappableUnsafe(frm);
     main_frame->setDevtoolsJail(blink::WebFrame::FromCoreFrame(iframe->ContentFrame()));
   }
   args.GetReturnValue().Set(v8::Undefined(isolate));
