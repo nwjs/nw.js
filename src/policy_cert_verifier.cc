@@ -36,7 +36,8 @@ public:
     if (!verify_proc) {
 #if BUILDFLAG(CHROME_ROOT_STORE_ONLY)
       verify_proc = net::CertVerifyProc::CreateBuiltinWithChromeRootStore(
-								     std::move(cert_net_fetcher), impl_params.root_store_data);
+		     std::move(cert_net_fetcher), impl_params.crl_set,
+        base::OptionalToPtr(impl_params.root_store_data));
 #elif BUILDFLAG(IS_FUCHSIA) || BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
             verify_proc =
 	      net::CertVerifyProc::CreateBuiltinVerifyProc(std::move(cert_net_fetcher), std::move(impl_params.crl_set));
