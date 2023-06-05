@@ -1,3 +1,7 @@
+0.77.0 / 06-05-2023
+===================
+- Update Chromium to [114.0.5735.91](https://chromereleases.googleblog.com/2023/05/stable-channel-update-for-desktop_30.html)
+
 0.76.1 / 05-16-2023
 ===================
 - Update Node.js to [v20.1.0](https://nodejs.org/en/blog/release/v20.1.0)
