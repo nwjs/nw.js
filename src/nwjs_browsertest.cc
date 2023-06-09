@@ -17,7 +17,6 @@
 #include "content/public/test/browser_test.h"
 #include "base/files/file_util.h"
 #include "base/files/scoped_temp_dir.h"
-#include "base/guid.h"
 #include "base/location.h"
 #include "base/path_service.h"
 #include "base/process/process.h"
