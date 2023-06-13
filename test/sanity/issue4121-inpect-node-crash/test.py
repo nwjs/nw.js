@@ -31,7 +31,7 @@ try:
             time.sleep(1)
             pass
     assert(counter < 5)
-    sources_panel = driver.find_element_by_css_selector('.panel.sources')
+    sources_panel = driver.execute_script('return document.querySelector(".tabbed-pane").shadowRoot.getElementById("tab-sources")')
     assert(sources_panel is not None)
 finally:
     driver.quit()
