@@ -60,7 +60,9 @@ void LoadNodeSymbols() {
 }
 
 void KickNextTick() {
-  v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
+  v8::HandleScope handle_scope(v8::Isolate::GetCurrent());
+  v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent()->GetCurrentContext(),
+				 v8::MicrotasksScope::kDoNotRunMicrotasks);
   void* env = g_get_node_env_fn();
   if (env)
     g_call_tick_callback_fn(env);

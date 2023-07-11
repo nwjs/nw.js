@@ -94,7 +94,8 @@ static inline v8::Local<v8::String> v8_str(const char* x) {
 }
 
 v8::Handle<v8::Value> CallNWTickCallback(void* env, const v8::Handle<v8::Value> ret) {
-  v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
+  v8::HandleScope handle_scope(v8::Isolate::GetCurrent());
+  v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent()->GetCurrentContext(), v8::MicrotasksScope::kDoNotRunMicrotasks);
   g_call_tick_callback_fn(env);
   return Undefined(v8::Isolate::GetCurrent());
 }
@@ -237,7 +238,6 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
 
       v8::Isolate* isolate_c = v8::Isolate::GetCurrent();
       v8::HandleScope scope(isolate_c);
-      v8::MicrotasksScope microtasks(isolate_c, v8::MicrotasksScope::kDoNotRunMicrotasks);
 
       g_set_nw_tick_callback_fn(&CallNWTickCallback);
       v8::Local<v8::Context> dom_context;
@@ -251,6 +251,8 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
         dom_context->SetAlignedPointerInEmbedderData(50, (void*)0x08110800);
       } else
         dom_context = context->v8_context();
+      v8::MicrotasksScope microtasks(isolate_c, dom_context->GetMicrotaskQueue(),
+				     v8::MicrotasksScope::kDoNotRunMicrotasks);
       if (!mixed_context)
         g_set_node_context_fn(isolate_c, &dom_context);
       dom_context->SetSecurityToken(v8::String::NewFromUtf8(isolate_c, "nw-token", v8::NewStringType::kNormal).ToLocalChecked());
@@ -338,7 +340,8 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
 
   std::string set_nw_script = "'use strict';";
   {
-    v8::MicrotasksScope microtasks(isolate, v8::MicrotasksScope::kDoNotRunMicrotasks);
+    v8::MicrotasksScope microtasks(isolate, context->v8_context()->GetMicrotaskQueue(),
+				   v8::MicrotasksScope::kDoNotRunMicrotasks);
     v8::Context::Scope cscope(context->v8_context());
     // Make node's relative modules work
     std::string root_path = extension_root;
@@ -405,7 +408,8 @@ void TryInjectStartScript(blink::WebLocalFrame* frame, const Extension* extensio
     return;
   }
   if (!v8_context.IsEmpty()) {
-    v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
+    v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8_context->GetMicrotaskQueue(),
+				   v8::MicrotasksScope::kDoNotRunMicrotasks);
     blink::ScriptForbiddenScope::AllowUserAgentScript script;
     v8::Context::Scope cscope(v8_context);
     // v8::Handle<v8::Value> result;
@@ -503,7 +507,9 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
   v8::Local<v8::Context> v8_context = frame->MainWorldScriptContext();
   std::string root_path = g_extension_root;
   if (!v8_context.IsEmpty()) {
-    v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
+    v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(),
+				   v8_context->GetMicrotaskQueue(),
+				   v8::MicrotasksScope::kDoNotRunMicrotasks);
     v8::Context::Scope cscope(v8_context);
     // Make node's relative modules work
 #if defined(OS_WIN)
@@ -533,7 +539,9 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
   if (resource.empty())
     return;
   if (!v8_context.IsEmpty()) {
-    v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
+    v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(),
+				   v8_context->GetMicrotaskQueue(),
+				   v8::MicrotasksScope::kDoNotRunMicrotasks);
     v8::Context::Scope cscope(v8_context);
     frame->ExecuteScriptAndReturnValue(WebScriptSource(blink::WebString::FromUTF8(std::string(resource))));
   }
@@ -665,7 +673,10 @@ void ExtensionDispatcherCreated(extensions::Dispatcher* dispatcher) {
 }
 
 void OnRenderProcessShutdownHook(extensions::ScriptContext* context) {
-  v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(), v8::MicrotasksScope::kDoNotRunMicrotasks);
+  v8::HandleScope handle_scope(v8::Isolate::GetCurrent());
+  v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent(),
+				 context->v8_context()->GetMicrotaskQueue(),
+				 v8::MicrotasksScope::kDoNotRunMicrotasks);
   blink::ScriptForbiddenScope::AllowUserAgentScript script;
   void* env = g_get_current_env_fn(context->v8_context());
   if (env && g_is_node_initialized_fn()) {
