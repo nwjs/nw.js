@@ -37,8 +37,20 @@ try:
         timeout = timeout - 1
         time.sleep(1)
     assert(found)
-    driver.execute_script('UI.inspectorView.tabbedPane.selectTab(UI.inspectorView.tabbedPane.tabs[10].id)')
-    title = driver.execute_script('return UI.inspectorView.tabbedPane.tabs[10].title')
+
+    timeout = 3
+    found = False
+    title = ''
+    while timeout > 0 and not found:
+        try:
+            driver.execute_script('UI.inspectorView.tabbedPane.selectTab(UI.inspectorView.tabbedPane.tabs[10].id)')
+            title = driver.execute_script('return UI.inspectorView.tabbedPane.tabs[10].title')
+        except:
+            pass
+        print("title:", title)
+        found = ('custom' in title)
+        time.sleep(1)
+        timeout = timeout - 1
     print("title:", title)
     assert('custom' in title)
 finally:
