@@ -705,8 +705,7 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
       manager = static_cast<TestGuestViewManager*>(
           GuestViewManager::CreateWithDelegate(
               browser()->profile(),
-              ExtensionsAPIClient::Get()->CreateGuestViewManagerDelegate(
-                  browser()->profile())));
+              ExtensionsAPIClient::Get()->CreateGuestViewManagerDelegate()));
     }
     return manager;
   }
