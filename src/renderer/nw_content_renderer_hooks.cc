@@ -8,7 +8,7 @@
 #include "base/strings/utf_string_conversions.h"
 
 #if defined(OS_MAC)
-#include "base/mac/bundle_locations.h"
+#include "base/apple/bundle_locations.h"
 #endif
 
 #define CONTENT_IMPLEMENTATION 1
@@ -40,7 +40,7 @@ namespace nw {
 void LoadNodeSymbols() {
   base::NativeLibraryLoadError error;
 #if defined(OS_MAC)
-  base::FilePath node_dll_path = base::mac::FrameworkBundlePath().Append(base::FilePath::FromUTF8Unsafe(base::GetNativeLibraryName("node")));
+  base::FilePath node_dll_path = base::apple::FrameworkBundlePath().Append(base::FilePath::FromUTF8Unsafe(base::GetNativeLibraryName("node")));
 #else
   base::FilePath node_dll_path = base::FilePath::FromUTF8Unsafe(base::GetNativeLibraryName("node"));
 #endif
