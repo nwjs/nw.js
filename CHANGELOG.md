@@ -1,3 +1,9 @@
+0.78.1 / 07-30-2023
+===================
+- Update Node.js to [v20.5.0](https://nodejs.org/en/blog/release/v20.5.0)
+- Update Chromium to [115.0.5790.114](https://chromereleases.googleblog.com/2023/07/stable-channel-update-for-desktop_25.html)
+- Fix: Grey default icon in taskbar on Windows [(#8039)](https://github.com/nwjs/nw.js/issues/8039)
+
 0.78.0 / 07-23-2023
 ===================
 - Update Chromium to [115.0.5790.98](https://chromereleases.googleblog.com/2023/07/stable-channel-update-for-desktop.html)
