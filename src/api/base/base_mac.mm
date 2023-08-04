@@ -1,8 +1,10 @@
 #import "content/nw/src/api/base/base_mac.h"
 #import <objc/runtime.h>
 
+#include "base/memory/raw_ptr_exclusion.h"
+
 @interface CppWrapper : NSObject {
-  void* _obj;
+  RAW_PTR_EXCLUSION void* _obj;
 }
 + (id) createFromCppObject:(void*) obj;
 - (id) initWithCppObject:(void*) obj;

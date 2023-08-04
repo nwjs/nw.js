@@ -75,8 +75,8 @@ class Tray : public Base {
   void SetIconsAreTemplates(bool areTemplates);
 
 #if defined(OS_MAC)
-  __block NSStatusItem* status_item_;
-  MacTrayObserver* status_observer_;
+  RAW_PTR_EXCLUSION __block NSStatusItem* status_item_;
+  RAW_PTR_EXCLUSION MacTrayObserver* status_observer_;
   bool iconsAreTemplates; 
 #elif 0
   GtkStatusIcon* status_item_;

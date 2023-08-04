@@ -29,7 +29,7 @@ class Menu;
 
 @interface NWMenuDelegate : NSObject<NSMenuDelegate> {
  @private
-  nw::Menu* nwmenu_;
+  RAW_PTR_EXCLUSION nw::Menu* nwmenu_;
 }
 
 - (id)initWithMenu:(nw::Menu*)menu;

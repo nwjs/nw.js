@@ -20,12 +20,14 @@
 
 #import <Foundation/Foundation.h>
 
+#include "base/memory/raw_ptr_exclusion.h"
+
 namespace nw {
 class MenuItem;
 }
 
 @interface MenuItemDelegate : NSObject {
-  nw::MenuItem* menu_item_;
+  RAW_PTR_EXCLUSION nw::MenuItem* menu_item_;
 }
 
 -(id)initWithMenuItem: (nw::MenuItem*)item;

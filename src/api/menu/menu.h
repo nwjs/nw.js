@@ -125,8 +125,8 @@ class Menu : public Base {
   void Popup(int x, int y, content::RenderFrameHost*);
 
 #if defined(OS_MAC)
-  NSMenu* menu_;
-  NWMenuDelegate* menu_delegate_;
+  RAW_PTR_EXCLUSION NSMenu* menu_;
+  RAW_PTR_EXCLUSION NWMenuDelegate* menu_delegate_;
 #elif defined(OS_LINUX) || defined(OS_WIN)
 
   void UpdateStates();

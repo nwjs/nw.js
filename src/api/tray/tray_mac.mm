@@ -29,7 +29,7 @@
 
 @interface MacTrayObserver : NSObject {
 @private
-    nw::Tray* tray_;
+    RAW_PTR_EXCLUSION nw::Tray* tray_;
 }
 - (void)setBacking:(nw::Tray*)tray_;
 - (void)onClick:(id)sender;

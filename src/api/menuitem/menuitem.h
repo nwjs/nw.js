@@ -106,8 +106,8 @@ class MenuItem : public Base {
 #if defined(OS_MAC)
   std::string type_;
 
-  NSMenuItem* menu_item_;
-  MenuItemDelegate* delegate_;
+  RAW_PTR_EXCLUSION NSMenuItem* menu_item_;
+  RAW_PTR_EXCLUSION MenuItemDelegate* delegate_;
   bool iconIsTemplate;
   bool native_;
 
