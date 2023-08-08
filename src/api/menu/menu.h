@@ -62,9 +62,6 @@ class NwMenuModel : public SimpleMenuModel {
  public:
   NwMenuModel(Delegate* delegate);
 
-  // Overridden from MenuModel:
-   bool HasIcons() const override;
-
 protected:
   friend class nw::Menu;
 };

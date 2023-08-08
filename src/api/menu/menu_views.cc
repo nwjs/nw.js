@@ -46,11 +46,6 @@ namespace ui {
 NwMenuModel::NwMenuModel(Delegate* delegate) : SimpleMenuModel(delegate) {
 }
 
-bool NwMenuModel::HasIcons() const {
-  // Always return false, see the comment about |NwMenuModel|.
-  return false;
-}
-
 } // namespace ui
 
 namespace nw {
