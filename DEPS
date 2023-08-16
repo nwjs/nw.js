@@ -50,8 +50,8 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': 'e91b2ebf17e4d7a683fdf738cee89fa31638a426',
-  'nw_v8_revision': '4ac555951a7617816490d4c79e150778eacc4f81',
+  'nw_src_revision': '780c41e12c3d3a650bb8b4671101132f28c38fe6',
+  'nw_v8_revision': 'b47dc42836def2b1e350818f863890163de8dc6a',
   'nw_node_revision': '72d0ef02a4d88dfee03e2b8e553c808fc230c9f3',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
@@ -315,15 +315,15 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '2ddcf183eb260f63698aa74d1bb380f247ad7ccd',
+  'skia_revision': '1c42b12f8699826793da1b7382e1d7a2278af966',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'dc8603588d8033a86703cefbc808196d964f8f10',
+  'v8_revision': '97c6f935aa8ec6b786f7ff7726f86785316f30d0',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': 'dc955f9de3cd220d58f6c0467a4d7ce060b0825d',
+  'angle_revision': '939f6880118192066597f8bdc433255341df56ae',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -402,7 +402,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling devtools-frontend
   # and whatever else without interference from each other.
-  'devtools_frontend_revision': 'e1ee7c138cb50acd260d4b6d4f387d4b93604401',
+  'devtools_frontend_revision': 'b08875a73231d5ef270313ce894eaa831cc6fd08',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libprotobuf-mutator
   # and whatever else without interference from each other.
@@ -442,7 +442,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
-  'dawn_revision': '9c60fecb81e7e1034d15545b71971363c9589ead',
+  'dawn_revision': '5318d39e47819212769b974ed3a0b42e373df59e',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
@@ -825,7 +825,7 @@ deps = {
 
   'src/clank': {
     'url': Var('chrome_git') + '/clank/internal/apps.git' + '@' +
-    '96697e8b37f31716ffc9c08954495014fa8fba81',
+    '899a187da8f5311e0f6383da2eff45151415bc47',
     'condition': 'checkout_android and checkout_src_internal',
   },
 
@@ -1267,7 +1267,7 @@ deps = {
     Var('chromium_git') + '/devtools/devtools-frontend' + '@' + Var('devtools_frontend_revision'),
 
   'src/third_party/devtools-frontend-internal': {
-      'url': Var('chrome_git') + '/devtools/devtools-internal.git' + '@' + 'd673a9baa222e524e843f90d4575f4167d019641',
+      'url': Var('chrome_git') + '/devtools/devtools-internal.git' + '@' + '1937021d8129089060733cc031b2301287f68ec9',
     'condition': 'checkout_src_internal',
   },
 
@@ -1889,7 +1889,7 @@ deps = {
 
   # Display server protocol for Linux.
   'src/third_party/wayland/src': {
-      'url': Var('chromium_git') + '/external/anongit.freedesktop.org/git/wayland/wayland.git' + '@' + 'c7473676b8abc682e820546287044cee3bca9147',
+      'url': Var('chromium_git') + '/external/anongit.freedesktop.org/git/wayland/wayland.git' + '@' + 'a8c7553ec9af6462474524fd2bb4e9a7dc7217dd',
       'condition': 'checkout_linux',
   },
 
@@ -4211,7 +4211,7 @@ deps = {
 
   'src/ios_internal':  {
       'url': Var('chrome_git') + '/chrome/ios_internal.git' + '@' +
-        '9e03489d5caf2fdfe34ce54f14e1c7494bc7e351',
+        '5137cd674c83f37d0a063bcf59a56cea78525fca',
       'condition': 'checkout_ios and checkout_src_internal',
   },
 
