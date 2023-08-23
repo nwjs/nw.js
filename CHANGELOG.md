@@ -1,3 +1,9 @@
+0.79.1 / 08-23-2023
+===================
+- Update Node.js to [v20.5.1](https://nodejs.org/en/blog/release/v20.5.1)
+- Fix: Impossible to open 2 DevTools of webview [(#8096)](https://github.com/nwjs/nw.js/issues/8096)
+- Fix: Startup crash in some Linux systems [(#8106)](https://github.com/nwjs/nw.js/issues/8106)
+
 0.79.0 / 08-17-2023
 ===================
 - Update Chromium to [116.0.5845.96](https://chromereleases.googleblog.com/2023/08/stable-channel-update-for-desktop_15.html)
