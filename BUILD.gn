@@ -171,6 +171,7 @@ static_library("nw_browser") {
     ]
   }
   if (is_mac) {
+    configs -= [ "//build/config/compiler:enable_arc" ]
     sources += [
             "src/api/base/base_mac.h",
             "src/api/base/base_mac.mm",

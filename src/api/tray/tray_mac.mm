@@ -61,10 +61,13 @@ void Tray::Create(const base::Value::Dict& option) {
   MacTrayObserver* observer = [[MacTrayObserver alloc] init];
   [observer setBacking:this];
   status_item_ = [status_bar statusItemWithLength:NSVariableStatusItemLength];
-  [status_item_ setHighlightMode:YES];
+  NSButton* item_button = status_item_.button;
+  NSButtonCell* item_button_cell = item_button.cell;
+  item_button_cell.highlightsBy =
+        NSContentsCellMask | NSChangeBackgroundCellMask;
   [status_item_ retain];
-  [status_item_ setTarget:observer];
-  [status_item_ setAction:@selector(onClick:)];
+  item_button.target = observer;
+  item_button.action = @selector(onClick:);
 }
 
 void Tray::ShowAfterCreate() {
@@ -77,10 +80,10 @@ void Tray::Destroy() {
 void Tray::SetTitle(const std::string& title) {
   // note: this is kind of mad but the first time we set the title property 
   // we have to call setTitle twice or it won't get the right dimensions
-  if ([status_item_ title] != nil) {
-    [status_item_ setTitle:[NSString stringWithUTF8String:title.c_str()]];
+  if (status_item_.button.title != nil) {
+    status_item_.button.title = [NSString stringWithUTF8String:title.c_str()];
   }
-  [status_item_ setTitle:[NSString stringWithUTF8String:title.c_str()]];
+  status_item_.button.title = [NSString stringWithUTF8String:title.c_str()];
 }
 
 void Tray::SetIcon(const std::string& icon) {
@@ -88,10 +91,10 @@ void Tray::SetIcon(const std::string& icon) {
     NSImage* image = [[NSImage alloc]
          initWithContentsOfFile:[NSString stringWithUTF8String:icon.c_str()]];
     [image setTemplate:iconsAreTemplates];
-    [status_item_ setImage:image];
+    status_item_.button.image = image;
     [image release];
   } else {
-    [status_item_ setImage:nil];
+    status_item_.button.image = nil;
   }
 }
 
@@ -100,30 +103,30 @@ void Tray::SetAltIcon(const std::string& alticon) {
     NSImage* image = [[NSImage alloc]
          initWithContentsOfFile:[NSString stringWithUTF8String:alticon.c_str()]];
     [image setTemplate:iconsAreTemplates];
-    [status_item_ setAlternateImage:image];
+    status_item_.button.alternateImage = image;
     [image release];
   } else {
-    [status_item_ setAlternateImage:nil];
+    status_item_.button.alternateImage = nil;
   }
 }
 
 void Tray::SetIconsAreTemplates(bool areTemplates) {
   iconsAreTemplates = areTemplates;
-  if ([status_item_ image] != nil) {
-    [[status_item_ image] setTemplate:areTemplates];
+  if (status_item_.button.image != nil) {
+    [status_item_.button.image setTemplate:areTemplates];
   }
-  if ([status_item_ alternateImage] != nil) {
-    [[status_item_ alternateImage] setTemplate:areTemplates];
+  if (status_item_.button.alternateImage != nil) {
+    [status_item_.button.alternateImage setTemplate:areTemplates];
   }
 }
 
 void Tray::SetTooltip(const std::string& tooltip) {
-  [status_item_ setToolTip:[NSString stringWithUTF8String:tooltip.c_str()]];
+  status_item_.button.toolTip = [NSString stringWithUTF8String:tooltip.c_str()];
 }
 
 void Tray::SetMenu(Menu* menu) {
-  [status_item_ setTarget:nil];
-  [status_item_ setAction:nil];
+  status_item_.button.target = nil;
+  status_item_.button.action = nil;
   [status_item_ setMenu:menu->menu_];
 }
 

@@ -121,12 +121,12 @@ base::Value::Dict MenuItem::CreateFromNative(NSMenuItem* menu_item, Menu* menu, 
   std::string type("normal");
   if ([menu_item isSeparatorItem]) {
     type = "separator";
-  } if ([menu_item state] == NSOnState) {
+  } if ([menu_item state] == NSControlStateValueOn) {
     type = "checkbox";
   }
   options.Set("type", type);
 
-  options.Set("checked", [menu_item state] == NSOnState);
+  options.Set("checked", [menu_item state] == NSControlStateValueOn);
 
   options.Set("label", base::SysNSStringToUTF8([menu_item title]));
 
@@ -182,10 +182,10 @@ void MenuItem::OnClick() {
   if (type_ != "checkbox")
     return;
 
-  if ([menu_item_ state] == NSOffState)
-    [menu_item_ setState:NSOnState];
+  if ([menu_item_ state] == NSControlStateValueOff)
+    [menu_item_ setState:NSControlStateValueOn];
   else
-    [menu_item_ setState:NSOffState];
+    [menu_item_ setState:NSControlStateValueOff];
 }
 
 void MenuItem::Destroy() {
@@ -260,9 +260,9 @@ void MenuItem::SetEnabled(bool enabled) {
 
 void MenuItem::SetChecked(bool checked) {
   if (checked)
-    [menu_item_ setState:NSOnState];
+    [menu_item_ setState:NSControlStateValueOn];
   else
-    [menu_item_ setState:NSOffState];
+    [menu_item_ setState:NSControlStateValueOff];
 }
 
 void MenuItem::SetSubmenu(Menu* sub_menu) {
@@ -271,7 +271,7 @@ void MenuItem::SetSubmenu(Menu* sub_menu) {
 }
 
 bool MenuItem::GetChecked() {
-  return menu_item_.state == NSOnState;
+  return menu_item_.state == NSControlStateValueOn;
 }
 
 }  // namespace nw

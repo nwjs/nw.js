@@ -21,7 +21,7 @@
   
   [super drawRect:dirtyRect];
   
-  if(self.style != NSProgressIndicatorBarStyle)
+  if(self.style != NSProgressIndicatorStyleBar)
     return;
   
   NSRect sliceRect, remainderRect;
@@ -106,7 +106,7 @@ NwCurrentWindowInternalSetProgressBarInternalFunction::Run() {
     progressIndicator = [[NWProgressBar alloc]
                          initWithFrame:NSMakeRect(0.0f, 0.0f, dockTile.size.width, 15.)];
     
-    [progressIndicator setStyle:NSProgressIndicatorBarStyle];
+    [progressIndicator setStyle:NSProgressIndicatorStyleBar];
     
     [progressIndicator setBezeled:YES];
     [progressIndicator setMinValue:0];
