@@ -17,10 +17,12 @@
 #include "base/base64.h"
 #include "base/strings/utf_string_conversions.h"
 #include "chrome/browser/media/webrtc/desktop_media_list_observer.h"
+#include "chrome/browser/media/webrtc/desktop_capturer_wrapper.h"
 #include "chrome/browser/media/webrtc/media_capture_devices_dispatcher.h"
 #include "chrome/browser/media/webrtc/native_desktop_media_list.h"
 #include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/desktop_streams_registry.h"
+#include "content/public/browser/desktop_capture.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/web_contents.h"
 #include "third_party/webrtc/modules/desktop_capture/desktop_capture_options.h"
@@ -220,19 +222,36 @@ namespace extensions {
     options.set_disable_effects(false);
 
     if (screens) {
-      std::unique_ptr<DesktopMediaList> screen_media_list =
-        std::make_unique<NativeDesktopMediaList>(
-          DesktopMediaList::Type::kScreen,
-          webrtc::DesktopCapturer::CreateScreenCapturer(options));
-      media_list_.push_back(std::move(screen_media_list));
+      std::unique_ptr<webrtc::DesktopCapturer> desktop_capturer =
+        content::desktop_capture::CreateScreenCapturer();
+      auto capturer = desktop_capturer
+	? std::make_unique<DesktopCapturerWrapper>(
+	   std::move(desktop_capturer))
+	: nullptr;
+      if (capturer) {
+        std::unique_ptr<DesktopMediaList> screen_media_list =
+          std::make_unique<NativeDesktopMediaList>(
+  	     DesktopMediaList::Type::kScreen, std::move(capturer));
+        media_list_.push_back(std::move(screen_media_list));
+      }
     }
 
     if (windows) {
-      std::unique_ptr<DesktopMediaList> window_media_list =
-        std::make_unique<NativeDesktopMediaList>(
-          DesktopMediaList::Type::kWindow,
-          webrtc::DesktopCapturer::CreateWindowCapturer(options));
-      media_list_.push_back(std::move(window_media_list));
+      std::unique_ptr<webrtc::DesktopCapturer> desktop_capturer =
+      content::desktop_capture::CreateWindowCapturer();
+      auto capturer = desktop_capturer
+	? std::make_unique<DesktopCapturerWrapper>(
+	   std::move(desktop_capturer))
+	: nullptr;
+      bool add_current_process_windows =
+	  content::desktop_capture::ShouldEnumerateCurrentProcessWindows();
+      if (capturer) {
+	std::unique_ptr<DesktopMediaList> window_media_list =
+          std::make_unique<NativeDesktopMediaList>(
+            DesktopMediaList::Type::kWindow, std::move(capturer),
+            add_current_process_windows);
+        media_list_.push_back(std::move(window_media_list));
+      }
     }
 
     for (auto& media_list : media_list_) {
