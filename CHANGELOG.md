@@ -1,3 +1,8 @@
+0.80.0 / 09-15-2023
+===================
+- Update Chromium to [117.0.5938.63](https://chromereleases.googleblog.com/2023/09/stable-channel-update-for-desktop_12.html)
+- Disable field trail config
+
 0.79.1 / 08-23-2023
 ===================
 - Update Node.js to [v20.5.1](https://nodejs.org/en/blog/release/v20.5.1)
