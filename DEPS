@@ -55,8 +55,8 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': '484f11ab88f7995620293b76450c278dca35362a',
-  'nw_v8_revision': 'ba57ca5e223a336b2c2b4c261b61bfc00571ade5',
+  'nw_src_revision': 'e9977c09e3401bf834a7a7a70e9292fefddb0c30',
+  'nw_v8_revision': '0cf1599d55b097506e30834877b59d2838f955de',
   'nw_node_revision': 'fbbc6828cfee195bfa3af03d57c61d2243372f71',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
@@ -326,7 +326,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '6b05d242aae3392bef6b86fbe44428126607b3d0',
+  'v8_revision': 'c09d5baf22298ed2a7c6f9fc2f008325212ee731',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
@@ -856,7 +856,7 @@ deps = {
 
   'src/clank': {
     'url': Var('chrome_git') + '/clank/internal/apps.git' + '@' +
-    '759bf576128d88b3debc322262503c3119a24b28',
+    '256d55244f0c48892677b6707e5d08dbe680e042',
     'condition': 'checkout_android and checkout_src_internal',
   },
 
