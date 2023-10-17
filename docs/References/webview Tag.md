@@ -60,7 +60,7 @@ and add 'partition="trusted"' attribute to the webview tag.
 
 ### Node.js support in webview
 
-To enable Node.js support in WebView, add the `allownw` attribute to the webview tag. Then Node.js will be turned on, no matter it loads local file or remote site. Use this feature with caution because webview is normally supposed to load untrusted contents.
+To enable Node.js support in WebView, add the `allownw` attribute to the webview tag. Then Node.js will be enabled while loading local files or a remote site. Use this feature with CAUTION! Any security concerns MUST be handled by the developer.
 
 ### executeScript in main world
 
