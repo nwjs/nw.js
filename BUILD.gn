@@ -345,7 +345,7 @@ if (is_mac && !is_component_build) {
   group("dump") {
     testonly = true
     deps = [ "//third_party/breakpad:dump_syms",
-             "//chrome",
+             ":copy_ffmpeg",
              ":copy_node",
              "//v8:nwjc",
              "//chrome/test/chromedriver:chromedriver_server",
