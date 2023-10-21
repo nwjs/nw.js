@@ -1,8 +1,30 @@
+diff --git a/front_end/entrypoints/main/MainImpl.ts b/front_end/entrypoints/main/MainImpl.ts
+index 02ffc01935..e1021a6632 100644
+--- front_end/entrypoints/main/MainImpl.ts
++++ front_end/entrypoints/main/MainImpl.ts
+@@ -159,6 +159,8 @@ export class MainImpl {
+   }
+ 
+   #initializeGlobalsForLayoutTests(): void {
++    // @ts-ignore layout test global
++    self.UI = self.UI || {};
+     // @ts-ignore layout test global
+     self.SDK = self.SDK || {};
+     // @ts-ignore layout test global
+@@ -504,6 +506,8 @@ export class MainImpl {
+     const canDock = Boolean(Root.Runtime.Runtime.queryParam('can_dock'));
+     UI.ZoomManager.ZoomManager.instance(
+         {forceNew: true, win: window, frontendHost: Host.InspectorFrontendHost.InspectorFrontendHostInstance});
++    // @ts-ignore layout test global
++    self.UI.inspectorView = UI.InspectorView.InspectorView.instance();
+     UI.ContextMenu.ContextMenu.initialize();
+     UI.ContextMenu.ContextMenu.installHandler(document);
+ 
 diff --git a/front_end/models/extensions/ExtensionServer.ts b/front_end/models/extensions/ExtensionServer.ts
-index 353aa82a9f..5d7004eecb 100644
+index 47c252dbdc..4ce825e1ed 100644
 --- front_end/models/extensions/ExtensionServer.ts
 +++ front_end/models/extensions/ExtensionServer.ts
-@@ -1302,6 +1302,7 @@ export class ExtensionServer extends Common.ObjectWrapper.ObjectWrapper<EventTyp
+@@ -1321,6 +1321,7 @@ export class ExtensionServer extends Common.ObjectWrapper.ObjectWrapper<EventTyp
    }
  
    static canInspectURL(url: Platform.DevToolsPath.UrlString): boolean {
