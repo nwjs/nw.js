@@ -92,3 +92,10 @@ node-pre-gyp build --runtime=node-webkit --target=0.13.0 --target_arch=x64
 
 See https://github.com/mapbox/node-pre-gyp for more details.
 
+### nw-builder
+
+`nw-builder` is a tool to automate building NW.js applications. It supports rebuilding Native Node modules:
+
+```bash
+nwbuild --mode=build --nativeAddon=gyp
+```
