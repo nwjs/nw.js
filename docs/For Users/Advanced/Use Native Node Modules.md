@@ -97,5 +97,5 @@ See https://github.com/mapbox/node-pre-gyp for more details.
 `nw-builder` is a tool to automate building NW.js applications. It supports rebuilding Native Node modules:
 
 ```bash
-nwbuild --mode=build --nativeAddon=gyp
+nwbuild --mode=build --nativeAddon=gyp ./app
 ```
