@@ -370,6 +370,8 @@ NWWindow.prototype.toggleKioskMode = function() {
 };
 
 NWWindow.prototype.showDevTools = function(frm, callback) {
+  if (process.versions['nw-flavor'] !== 'sdk')
+    throw new Error('showDevTools does not exist on' + process.versions['nw-flavor'] + 'build flavor.');
   var id = '';
   if (typeof frm === 'string')
     id = frm;
