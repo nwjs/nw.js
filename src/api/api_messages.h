@@ -22,20 +22,12 @@
 #include <string>
 
 #include "base/values.h"
-#include "extensions/common/draggable_region.h"
 #include "content/public/common/common_param_traits.h"
 #include "ipc/ipc_message_macros.h"
 #include "ipc/ipc_message_start.h"
 #include "ui/gfx/ipc/gfx_param_traits.h"
 
 #define IPC_MESSAGE_START ShellMsgStart
-
-#if 0
-IPC_STRUCT_TRAITS_BEGIN(extensions::DraggableRegion)
-  IPC_STRUCT_TRAITS_MEMBER(draggable)
-  IPC_STRUCT_TRAITS_MEMBER(bounds)
-IPC_STRUCT_TRAITS_END()
-#endif
 
 IPC_MESSAGE_ROUTED3(ShellViewHostMsg_Allocate_Object,
                     int /* object id */,
@@ -87,10 +79,6 @@ IPC_SYNC_MESSAGE_ROUTED2_1(ShellViewHostMsg_CreateShell,
 // Tell browser we have an uncaughtException from node.
 IPC_MESSAGE_ROUTED1(ShellViewHostMsg_UncaughtException,
                     std::string /* err */)
-
-// Sent by the renderer when the draggable regions are updated.
-IPC_MESSAGE_ROUTED1(ShellViewHostMsg_UpdateDraggableRegions,
-                    std::vector<extensions::DraggableRegion> /* regions */)
 
 // The browser want to open a file.
 IPC_MESSAGE_CONTROL1(ShellViewMsg_Open,
