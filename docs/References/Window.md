@@ -298,6 +298,7 @@ Turn the window's native shadow on/off. Useful for frameless, transparent window
 
 * `iframe` `{String} or {HTMLIFrameElement}` _Optional_ the id or the element of the `<iframe>` to be jailed on. By default, the DevTools is shown for entire window.
 * `callback(dev_win)` `{Function}` callback with the native window of the DevTools window.
+* Throws error if build flavor is not `sdk`.
 
 Open the devtools to inspect the window.
 
