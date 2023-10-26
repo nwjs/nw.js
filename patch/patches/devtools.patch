@@ -1,17 +1,17 @@
 diff --git a/front_end/entrypoints/main/MainImpl.ts b/front_end/entrypoints/main/MainImpl.ts
-index 02ffc01935..e1021a6632 100644
+index 8505dc782a..bcc94e83f8 100644
 --- front_end/entrypoints/main/MainImpl.ts
 +++ front_end/entrypoints/main/MainImpl.ts
-@@ -159,6 +159,8 @@ export class MainImpl {
+@@ -161,6 +161,8 @@ export class MainImpl {
    }
  
    #initializeGlobalsForLayoutTests(): void {
 +    // @ts-ignore layout test global
 +    self.UI = self.UI || {};
-     // @ts-ignore layout test global
-     self.SDK = self.SDK || {};
-     // @ts-ignore layout test global
-@@ -504,6 +506,8 @@ export class MainImpl {
+     // @ts-ignore e2e test global
+     self.Extensions ||= {};
+     // @ts-ignore e2e test global
+@@ -489,6 +491,8 @@ export class MainImpl {
      const canDock = Boolean(Root.Runtime.Runtime.queryParam('can_dock'));
      UI.ZoomManager.ZoomManager.instance(
          {forceNew: true, win: window, frontendHost: Host.InspectorFrontendHost.InspectorFrontendHostInstance});
