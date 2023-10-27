@@ -446,7 +446,7 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
     command_line->AppendSwitchASCII(blink::switches::kJavaScriptFlags, "--expose-gc");
 
     extensions::PlatformAppBrowserTest::SetUpCommandLine(command_line);
-    base::PathService::Get(base::DIR_SOURCE_ROOT, &test_data_dir_);
+    base::PathService::Get(base::DIR_SRC_TEST_DATA_ROOT, &test_data_dir_);
     test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("content"));
     test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("nw"));
     test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("test"));
@@ -749,7 +749,7 @@ public:
   ~NWAppTest() override {}
   void SetUpCommandLine(base::CommandLine* command_line) override {
     extensions::PlatformAppBrowserTest::SetUpCommandLine(command_line);
-    base::PathService::Get(base::DIR_SOURCE_ROOT, &test_data_dir_);
+    base::PathService::Get(base::DIR_SRC_TEST_DATA_ROOT, &test_data_dir_);
     test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("content"));
     test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("nw"));
     test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("test"));
