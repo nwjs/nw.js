@@ -451,7 +451,7 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
     TryInjectStartScript(web_frame, script_context ? script_context->extension() : nullptr, true);
   if (!script_context)
     return;
-  std::vector<v8::Handle<v8::Value> > arguments;
+  v8::LocalVector<v8::Value> arguments(isolate);
   v8::Local<v8::Value> window =
     web_frame->MainWorldScriptContext()->Global();
   arguments.push_back(v8::Boolean::New(isolate, start));
@@ -578,7 +578,7 @@ void willHandleNavigationPolicy(content::RenderFrame* rf,
                             frame->mainWorldScriptContext()->GetIsolate());
   }
 #endif
-  std::vector<v8::Handle<v8::Value> > arguments;
+  v8::LocalVector<v8::Value> arguments(isolate);
   arguments.push_back(element);
   arguments.push_back(v8_str(request.Url().GetString().Utf8().c_str()));
   arguments.push_back(policy_obj);
