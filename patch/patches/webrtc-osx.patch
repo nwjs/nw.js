@@ -1,5 +1,5 @@
 diff --git a/modules/desktop_capture/mac/screen_capturer_mac.mm b/modules/desktop_capture/mac/screen_capturer_mac.mm
-index 634849122e..8f0c68d48b 100644
+index 28cc410573..8f0c68d48b 100644
 --- modules/desktop_capture/mac/screen_capturer_mac.mm
 +++ modules/desktop_capture/mac/screen_capturer_mac.mm
 @@ -20,6 +20,87 @@
@@ -103,10 +103,9 @@ index 634849122e..8f0c68d48b 100644
  
      rtc::ScopedCFTypeRef<CFDictionaryRef> properties_dict(
          CFDictionaryCreate(kCFAllocatorDefault,
--                           (const void* []){kCGDisplayStreamShowCursor},
--                           (const void* []){kCFBooleanFalse},
+-                           (const void*[]){kCGDisplayStreamShowCursor},
 +                           (const void*[]){wrapkCGDisplayStreamShowCursor()},
-+                           (const void*[]){kCFBooleanFalse},
+                            (const void*[]){kCFBooleanFalse},
                             1,
                             &kCFTypeDictionaryKeyCallBacks,
                             &kCFTypeDictionaryValueCallBacks));
@@ -137,6 +136,3 @@ index 634849122e..8f0c68d48b 100644
      CFRelease(stream);
    }
    display_streams_.clear();
--- 
-2.37.2
-
