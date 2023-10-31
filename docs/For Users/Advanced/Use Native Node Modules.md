@@ -92,10 +92,24 @@ node-pre-gyp build --runtime=node-webkit --target=0.13.0 --target_arch=x64
 
 See https://github.com/mapbox/node-pre-gyp for more details.
 
-### nw-builder
+### node-gyp
 
-`nw-builder` is a tool to automate building NW.js applications. It supports rebuilding Native Node modules:
+Download NW.js Node headers. For example, version v0.81.0's headers would be located at `https://dl.nwjs.io/v0.81.0/nw-headers-v0.81.0.tar.gz`.
+
+Install `node-gyp`:
 
 ```bash
-nwbuild --mode=build --nativeAddon=gyp ./app
+npm install -g node-gyp
+```
+
+Change directory into your native addon:
+
+```bash
+cd myaddon
+```
+
+Rebuild Native modules for NW.js:
+
+```bash
+node-gyp rebuild --nodedir=path/to/node/headers
 ```
