@@ -191,8 +191,6 @@ def generate_target_nw(platform_name, arch, version):
                            'vulkan-1.dll',
                            'vk_swiftshader.dll',
                            'vk_swiftshader_icd.json',
-                           'swiftshader\libEGL.dll',
-                           'swiftshader\libGLESv2.dll',
                            'notification_helper.exe'
                             # To be removed in CR51
                            ]
