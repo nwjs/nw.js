@@ -55,7 +55,7 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': 'dc67cd4fbd0ac4e710e6f537231478d85a863876',
+  'nw_src_revision': 'aa393bd2257e95404fdab18c6b08ea1ec3b3eb86',
   'nw_v8_revision': 'b5994b3dd540a86f757e3f143afccf8280582c6c',
   'nw_node_revision': 'f32e4e9c3d8970b121fdd9406df907070e02f32b',
   # Variable that can be used to support multiple build scenarios, like having
@@ -1308,7 +1308,7 @@ deps = {
     Var('chromium_git') + '/devtools/devtools-frontend' + '@' + Var('devtools_frontend_revision'),
 
   'src/third_party/devtools-frontend-internal': {
-      'url': Var('chrome_git') + '/devtools/devtools-internal.git' + '@' + 'e1bdec22a9f4a2dc4610343338aae9873b84d603',
+      'url': Var('chrome_git') + '/devtools/devtools-internal.git' + '@' + 'a98d77182a9ecdc33ce991901d032a14c5fde4e6',
     'condition': 'checkout_src_internal',
   },
 
