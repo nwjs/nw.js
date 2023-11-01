@@ -162,14 +162,6 @@ def generate_target_nw(platform_name, arch, version):
             target['input'].append('nwjc')
             target['input'].append('chromedriver')
             target['input'].append('minidump_stackwalk')
-        if flavor in ['nacl','sdk'] :
-            target['input'] += ['nacl_helper', 'nacl_helper_bootstrap', 'pnacl']
-            if arch == 'x64':
-                target['input'].append('nacl_irt_x86_64.nexe')
-            elif arch == 'ia32':
-                target['input'].append('nacl_irt_x86_32.nexe')
-            else:
-                target['input'].append('nacl_irt_{}.nexe'.format(arch))
             
     elif platform_name == 'win':
         target['input'] = [
@@ -197,12 +189,6 @@ def generate_target_nw(platform_name, arch, version):
         if flavor == 'sdk':
             target['input'].append('nwjc.exe')
             target['input'].append('chromedriver.exe')
-        if flavor in ['nacl','sdk'] :
-            target['input'].append('pnacl')
-            target['input'].append('nacl_irt_x86_64.nexe')
-            if arch == 'ia32':
-                target['input'].append('nacl_irt_x86_32.nexe')
-                target['input'].append('nacl64.exe')
     elif platform_name == 'osx':
         target['input'] = [
                            'nwjs.app',
