@@ -1,3 +1,13 @@
+0.82.0 / 11-02-2023
+===================
+- Update Chromium to [119.0.6045.105](https://chromereleases.googleblog.com/2023/10/stable-channel-update-for-desktop_31.html)
+
+0.81.0 / 10-19-2023
+===================
+- Update Chromium to [118.0.5993.71](https://chromereleases.googleblog.com/2023/10/stable-channel-update-for-desktop_10.html)
+- Update Node.js to [v20.7.0](https://nodejs.org/en/blog/release/v20.7.0)
+- Fix: Normal build of 0.80.0 for osx x64 crashes on launch [(#8123)](https://github.com/nwjs/nw.js/issues/8123)
+
 0.80.0 / 09-15-2023
 ===================
 - Update Chromium to [117.0.5938.63](https://chromereleases.googleblog.com/2023/09/stable-channel-update-for-desktop_12.html)
