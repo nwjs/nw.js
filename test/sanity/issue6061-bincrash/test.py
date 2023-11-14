@@ -40,10 +40,10 @@ try:
     devtools_click_tab(driver, 'console')
     wait_for_execute_script(driver, 'document.querySelector(".console-object").click()')
     time.sleep(2)
-    wait_for_execute_script(driver, 'document.querySelector("#console-messages > div.console-group.console-group-messages > div > div > span > span.console-message-text > div").shadowRoot.querySelector("div > ol > ol > li > span").click()')
+    wait_for_execute_script(driver, 'document.querySelector("#console-messages > div.console-group.console-group-messages > div > div > div > span > span.console-message-text > div").shadowRoot.querySelector("div > ol > ol > li > span").click()')
 
     time.sleep(2)
-    wait_for_execute_script(driver, 'document.querySelector("#console-messages > div.console-group.console-group-messages > div > div > span > span.console-message-text > div").shadowRoot.querySelector("div > ol > ol > ol > li:nth-child(3) > span").click()')
+    wait_for_execute_script(driver, 'document.querySelector("#console-messages > div.console-group.console-group-messages > div > div > div > span > span.console-message-text > div").shadowRoot.querySelector("div > ol > ol > ol > li:nth-child(3) > span").click()')
     time.sleep(2)
 finally:
     driver.quit()
