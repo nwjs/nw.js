@@ -8,9 +8,9 @@ void buffer_delete_callback(char* data, void* the_vector) {
 }
 
 NAN_METHOD(rotate) {
-    char* buffer = (char*) node::Buffer::Data(info[0]->ToObject());
+    char* buffer = (char*) node::Buffer::Data(info[0]->ToObject(v8::Isolate::GetCurrent()->GetCurrentContext()).ToLocalChecked());
     size_t size = node::Buffer::Length(info[0]);
-    unsigned int rot = info[1]->Uint32Value();
+    unsigned int rot = info[1]->Uint32Value(v8::Isolate::GetCurrent()->GetCurrentContext()).ToChecked();
    
     char * retval = new char[size];
     for(unsigned int i = 0; i < size; i++ ) {
