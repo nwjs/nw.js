@@ -66,20 +66,20 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
 
     bool Read(ClipboardData& data) {
       switch(data.type) {
-        case TYPE_TEXT:
+        case Type::kText:
         return ReadText(data);
         break;
-        case TYPE_HTML:
+        case Type::kHtml:
         return ReadHTML(data);
         break;
-        case TYPE_RTF:
+        case Type::kRtf:
         return ReadRTF(data);
         break;
-        case TYPE_PNG:
-        case TYPE_JPEG:
+        case Type::kPng:
+        case Type::kJpeg:
         return ReadImage(data);
         break;
-        case TYPE_NONE:
+        case Type::kNone:
         NOTREACHED();
         return false;
       }
@@ -93,7 +93,7 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
 
   private:
     bool ReadText(ClipboardData& data) {
-      DCHECK(data.type == TYPE_TEXT);
+      DCHECK(data.type == Type::kText);
       std::u16string text;
       clipboard_->ReadText(ui::ClipboardBuffer::kCopyPaste, nullptr, &text);
       data.data.emplace(std::string(base::UTF16ToUTF8(text)));
@@ -101,7 +101,7 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
     }
 
     bool ReadHTML(ClipboardData& data) {
-      DCHECK(data.type == TYPE_HTML);
+      DCHECK(data.type == Type::kHtml);
       std::u16string text;
       std::string src_url;
       uint32_t fragment_start, fragment_end;
@@ -112,7 +112,7 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
     }
 
     bool ReadRTF(ClipboardData& data) {
-      DCHECK(data.type == TYPE_RTF);
+      DCHECK(data.type == Type::kRtf);
       std::string text;
       clipboard_->ReadRTF(ui::ClipboardBuffer::kCopyPaste, nullptr, &text);
       data.data.emplace(std::string(text));
@@ -120,13 +120,13 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
     }
 
     bool ReadImage(ClipboardData& data) {
-      DCHECK(data.type == TYPE_PNG || data.type == TYPE_JPEG);
+      DCHECK(data.type == Type::kPng || data.type == Type::kJpeg);
       std::vector<uint8_t> encoded_image;
       std::vector<uint8_t> png = ReadPng(clipboard_);
 
-      if (data.type == TYPE_PNG) {
+      if (data.type == Type::kPng) {
         encoded_image = std::move(png);
-      } else if (data.type == TYPE_JPEG) {
+      } else if (data.type == Type::kJpeg) {
         SkBitmap bitmap;
         gfx::PNGCodec::Decode(png.data(), png.size(), &bitmap);
         if (!gfx::JPEGCodec::Encode(bitmap, kQuality, &encoded_image)) {
@@ -141,10 +141,10 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
       base::Base64Encode(encoded_image_str, &encoded_image_base64);
 
       if (!(data.raw && *(data.raw))) {
-        if (data.type == TYPE_PNG) {
+        if (data.type == Type::kPng) {
           encoded_image_base64.insert(0, kPNGDataUriPrefix);
         } else {
-          DCHECK(data.type == TYPE_JPEG);
+          DCHECK(data.type == Type::kJpeg);
           encoded_image_base64.insert(0, kJPEGDataUriPrefix);
         }
       }
@@ -170,20 +170,20 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
 
     bool Write(ClipboardData& data) {
       switch(data.type) {
-        case TYPE_TEXT:
+        case Type::kText:
         return WriteText(data);
         break;
-        case TYPE_HTML:
+        case Type::kHtml:
         return WriteHTML(data);
         break;
-        case TYPE_RTF:
+        case Type::kRtf:
         return WriteRTF(data);
         break;
-        case TYPE_PNG:
-        case TYPE_JPEG:
+        case Type::kPng:
+        case Type::kJpeg:
         return WriteImage(data);
         break;
-        case TYPE_NONE:
+        case Type::kNone:
         NOTREACHED();
         return false;
       }
@@ -201,32 +201,32 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
 
   private:
     bool WriteText(ClipboardData& data) {
-      DCHECK(data.type == TYPE_TEXT);
+      DCHECK(data.type == Type::kText);
       scw_->WriteText(base::UTF8ToUTF16(*(data.data)));
       return true;
     }
 
     bool WriteHTML(ClipboardData& data) {
-      DCHECK(data.type == TYPE_HTML);
+      DCHECK(data.type == Type::kHtml);
       scw_->WriteHTML(base::UTF8ToUTF16(*(data.data)), std::string(), ui::ClipboardContentType::kSanitized);
       return true;
     }
 
     bool WriteRTF(ClipboardData& data) {
-      DCHECK(data.type == TYPE_RTF);
+      DCHECK(data.type == Type::kRtf);
       scw_->WriteRTF(*(data.data));
       return true;
     }
 
     bool WriteImage(ClipboardData& data) {
-      DCHECK(data.type == TYPE_PNG || data.type == TYPE_JPEG);
+      DCHECK(data.type == Type::kPng || data.type == Type::kJpeg);
       std::string content = *(data.data);
 
       // strip off data uri header if raw is set
       if (!(data.raw && *(data.raw))) {
-        if (data.type == TYPE_PNG && base::StartsWith(content, kPNGDataUriPrefix, base::CompareCase::INSENSITIVE_ASCII)) {
+        if (data.type == Type::kPng && base::StartsWith(content, kPNGDataUriPrefix, base::CompareCase::INSENSITIVE_ASCII)) {
           content = content.substr(strlen(kPNGDataUriPrefix));
-        } else if (data.type == TYPE_JPEG && base::StartsWith(content, kJPEGDataUriPrefix, base::CompareCase::INSENSITIVE_ASCII)) {
+        } else if (data.type == Type::kJpeg && base::StartsWith(content, kJPEGDataUriPrefix, base::CompareCase::INSENSITIVE_ASCII)) {
           content = content.substr(strlen(kJPEGDataUriPrefix));
         } else {
           error_ = base::StringPrintf("Invalid data URI. Only \"%s\" or \"%s\" is accepted.", kPNGDataUriPrefix, kJPEGDataUriPrefix);
@@ -241,11 +241,11 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
       }
 
       std::unique_ptr<SkBitmap> bitmap(new SkBitmap());
-      if (data.type == TYPE_PNG &&
+      if (data.type == Type::kPng &&
         !gfx::PNGCodec::Decode(reinterpret_cast<const unsigned char*>(decoded_str.c_str()), decoded_str.size(), bitmap.get())) {
         error_ = "Failed to decode as PNG";
         return false;
-      } else if (data.type == TYPE_JPEG) {
+      } else if (data.type == Type::kJpeg) {
         std::unique_ptr<SkBitmap> tmp_bitmap = gfx::JPEGCodec::Decode(reinterpret_cast<const unsigned char*>(decoded_str.c_str()), decoded_str.size());
         if (tmp_bitmap == NULL) {
           error_ = "Failed to decode as JPEG";
@@ -336,14 +336,14 @@ bool NwClipboardReadAvailableTypesFunction::RunNWSync(base::Value::List* respons
   clipboard->ReadAvailableTypes(ui::ClipboardBuffer::kCopyPaste, nullptr, &types);
   for(std::vector<std::u16string>::iterator it = types.begin(); it != types.end(); it++) {
     if (base::EqualsASCII(*it, ui::kMimeTypeText)) {
-      response->Append(ToString(TYPE_TEXT));
+      response->Append(ToString(Type::kText));
     } else if (base::EqualsASCII(*it, ui::kMimeTypeHTML)) {
-      response->Append(ToString(TYPE_HTML));
+      response->Append(ToString(Type::kHtml));
     } else if (base::EqualsASCII(*it, ui::kMimeTypeRTF)) {
-      response->Append(ToString(TYPE_RTF));
+      response->Append(ToString(Type::kRtf));
     } else if (base::EqualsASCII(*it, ui::kMimeTypePNG)) {
-      response->Append(ToString(TYPE_PNG));
-      response->Append(ToString(TYPE_JPEG));
+      response->Append(ToString(Type::kPng));
+      response->Append(ToString(Type::kJpeg));
     }
   }
   return true;
