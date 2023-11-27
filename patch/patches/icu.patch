@@ -1,8 +1,16 @@
 diff --git a/icu.gyp b/icu.gyp
-index b3c12030..799dce2a 100644
---- icu.gyp
-+++ icu.gyp
-@@ -25,6 +25,7 @@
+index b29b909..affd6e7 100644
+--- a/icu.gyp
++++ b/icu.gyp
+@@ -10,6 +10,7 @@
+     'use_system_icu%': 0,
+     'icu_use_data_file_flag%': 0,
+     'want_separate_host_toolset%': 1,
++    'v8_host_byteorder': '<!(python -c "import sys; print(sys.byteorder)")'
+   },
+   'target_defaults': {
+     'direct_dependent_settings': {
+@@ -25,6 +26,7 @@
      'defines': [
        'U_USING_ICU_NAMESPACE=0',
        'HAVE_DLOPEN=0',
@@ -10,7 +18,7 @@ index b3c12030..799dce2a 100644
        # Only build encoding coverters and detectors necessary for HTML5.
        'UCONFIG_ONLY_HTML_CONVERSION=1',
        # TODO(jshin): Do we still need/want this?
-@@ -40,8 +41,18 @@
+@@ -40,8 +42,18 @@
          ],
        }],
        ['OS=="win"', {
