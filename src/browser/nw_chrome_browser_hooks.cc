@@ -8,6 +8,7 @@
 #include "base/path_service.h"
 #include "base/threading/thread_restrictions.h"
 #include "content/public/browser/browser_task_traits.h"
+#include "services/network/public/mojom/cert_verifier_service.mojom.h"
 
 #if defined(OS_WIN)
 #include "base/win/scoped_gdi_object.h"
@@ -43,7 +44,6 @@
 // content/nw
 #include "content/nw/src/nw_base.h"
 #include "content/nw/src/nw_package.h"
-#include "content/nw/src/policy_cert_verifier.h"
 
 // extensions
 #include "extensions/browser/event_router.h"
@@ -195,12 +195,14 @@ bool GetDirUserData(base::FilePath *user_data_dir) {
 void SetTrustAnchors(net::CertificateList& trust_anchors2) {
   // LOG(INFO)
   //   << "Added " << trust_anchors.size() << " certificates to trust anchors.";
-#if 0
-  Profile* profile = ProfileManager::GetActiveUserProfile();
+  Profile* profile = ProfileManager::GetLastUsedProfile();
   content::StoragePartition* storage_partition =
-    content::BrowserContext::GetDefaultStoragePartition(profile);
-#endif
-  content::GetNetworkService()->SetAdditionalTrustAnchors(trust_anchors2);
+    profile->GetDefaultStoragePartition();
+  auto new_additional_certificates = cert_verifier::mojom::AdditionalCertificates::New();
+  new_additional_certificates->trust_anchors.insert(new_additional_certificates->trust_anchors.end(),
+						    trust_anchors2.begin(), trust_anchors2.end());
+  storage_partition->GetCertVerifierServiceUpdater()
+    ->UpdateAdditionalCertificates(std::move(new_additional_certificates));
 }
 
 void SetAppIcon(gfx::Image &icon) {
