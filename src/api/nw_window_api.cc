@@ -319,11 +319,11 @@ ExtensionFunction::ResponseAction
 NwCurrentWindowInternalCapturePageInternalFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args().size());
 
-  std::unique_ptr<ImageDetails> image_details;
+  absl::optional<ImageDetails> image_details;
   WebContents* contents = nullptr;
 
   if (args().size() > 1) {
-    image_details = ImageDetails::FromValueDeprecated(args()[1]);
+    image_details = ImageDetails::FromValue(args()[1]);
   }
 
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
