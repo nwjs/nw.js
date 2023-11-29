@@ -5,6 +5,7 @@
 #ifndef NW_BROWSER_MENUBAR_VIEWS_H_
 #define NW_BROWSER_MENUBAR_VIEWS_H_
 
+#include "ui/base/metadata/metadata_header_macros.h"
 #include "ui/views/accessible_pane_view.h"
 #include "ui/views/controls/button/button.h"
 
@@ -28,8 +29,7 @@ namespace nw {
 class MenuBarView : public views::AccessiblePaneView {
 
  public:
-  // The internal view class name.
-  static const char kViewClassName[];
+  METADATA_HEADER(MenuBarView);
 
   // Maximum size of buttons
   static const int kMaxButtonWidth;

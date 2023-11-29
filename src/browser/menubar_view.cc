@@ -5,6 +5,7 @@
 #include "content/nw/src/browser/menubar_view.h"
 
 #include "content/nw/src/browser/menubar_controller.h"
+#include "ui/base/metadata/metadata_impl_macros.h"
 #include "ui/base/models/menu_model.h"
 #include "ui/base/window_open_disposition.h"
 #include "ui/gfx/text_elider.h"
@@ -24,20 +25,22 @@ static const gfx::ElideBehavior kElideBehavior = gfx::ELIDE_TAIL;
 
 namespace nw {
 
-const char MenuBarView::kViewClassName[] = "BookmarkBarView";
-
 // MenuBarButton  -------------------------------------------------------
 
 // Buttons used on the menu bar. Copied from BookmarkFolderButton
 
 class MenuBarButton : public views::MenuButton {
  public:
-  MenuBarButton(const std::u16string& title,
+  METADATA_HEADER(MenuBarButton);
+  explicit MenuBarButton(const std::u16string& title,
                 PressedCallback callback,
                 bool show_menu_marker)
     : MenuButton(std::move(callback), title) {
     SetElideBehavior(kElideBehavior);
   }
+  MenuBarButton(const MenuBarButton&) = delete;
+  MenuBarButton& operator=(const MenuBarButton&) = delete;
+  ~MenuBarButton() override;
 
   std::u16string GetTooltipText(const gfx::Point& p) const override {
     if (label()->GetPreferredSize().width() > label()->size().width())
@@ -45,6 +48,12 @@ class MenuBarButton : public views::MenuButton {
     return std::u16string();
   }
 };
+
+MenuBarButton::~MenuBarButton() {
+}
+
+BEGIN_METADATA(MenuBarButton)
+END_METADATA
 
 MenuBarView::MenuBarView() {
   auto layout = std::make_unique<views::BoxLayout>(views::BoxLayout::Orientation::kHorizontal, gfx::Insets(), 0);
@@ -108,5 +117,8 @@ void MenuBarView::ButtonPressed(int button_index,
   }
   model_->ActivatedAt(button_index, event.flags());
 }
+
+BEGIN_METADATA(MenuBarView, views::AccessiblePaneView)
+END_METADATA
 
 } //namespace nw
