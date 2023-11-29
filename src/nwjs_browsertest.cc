@@ -607,12 +607,10 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
     LoadAndLaunchPlatformApp(app_path.c_str(), "guest-loaded");
 
     guest_observer.Wait();
-    content::Source<content::NavigationController> source =
-        guest_observer.source();
-    EXPECT_TRUE(source->DeprecatedGetWebContents()->GetRenderViewHost()->GetProcess()->
+    EXPECT_TRUE(guest_observer.web_contents()->GetRenderViewHost()->GetProcess()->
         IsForGuestsOnly());
 
-    content::WebContents* guest_web_contents = source->DeprecatedGetWebContents();
+    content::WebContents* guest_web_contents = guest_observer.web_contents();
     return guest_web_contents;
   }
 
