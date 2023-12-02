@@ -1,7 +1,7 @@
 diff --git a/icu.gyp b/icu.gyp
 index b29b909..affd6e7 100644
---- a/icu.gyp
-+++ b/icu.gyp
+--- icu.gyp
++++ icu.gyp
 @@ -10,6 +10,7 @@
      'use_system_icu%': 0,
      'icu_use_data_file_flag%': 0,
