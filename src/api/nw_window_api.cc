@@ -256,7 +256,7 @@ NwCurrentWindowInternalShowDevToolsInternalFunction::Run() {
   content::WebContents* web_contents = content::WebContents::FromRenderFrameHost(rfh);
   scoped_refptr<content::DevToolsAgentHost> agent(
       content::DevToolsAgentHost::GetOrCreateFor(web_contents));
-  DevToolsWindow::OpenDevToolsWindow(web_contents);
+  DevToolsWindow::OpenDevToolsWindow(web_contents, DevToolsOpenedByAction::kInspectorModeShortcut);
   DevToolsWindow* devtools_window =
       DevToolsWindow::FindDevToolsWindow(agent.get());
   if (devtools_window) {
@@ -283,7 +283,7 @@ NwCurrentWindowInternalShowDevTools2InternalFunction::Run() {
   content::WebContents* web_contents = browser->tab_strip_model()->GetActiveWebContents();
   scoped_refptr<content::DevToolsAgentHost> agent(
       content::DevToolsAgentHost::GetOrCreateFor(web_contents));
-  DevToolsWindow::OpenDevToolsWindow(web_contents);
+  DevToolsWindow::OpenDevToolsWindow(web_contents, DevToolsOpenedByAction::kInspectorModeShortcut);
   DevToolsWindow* devtools_window =
       DevToolsWindow::FindDevToolsWindow(agent.get());
   if (devtools_window) {
