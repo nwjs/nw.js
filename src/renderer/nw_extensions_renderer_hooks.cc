@@ -561,7 +561,7 @@ void willHandleNavigationPolicy(content::RenderFrame* rf,
   blink::WebLocalFrame* local_frame = f->ToWebLocalFrame();
   blink::LocalFrame* core_frame = blink::To<blink::WebLocalFrameImpl>(local_frame)->GetFrame();
 
-  if (core_frame->ContextNotReady(blink::DOMWrapperWorld::MainWorld()))
+  if (core_frame->ContextNotReady(blink::DOMWrapperWorld::MainWorld(isolate)))
     return;
   v8::Handle<v8::Context> v8_context = local_frame->MainWorldScriptContext();
   ScriptContext* script_context =
