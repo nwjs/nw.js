@@ -41,9 +41,11 @@ namespace nw.Screen {
   interface Functions {
     static Display[] getScreens();
     static void initEventListeners();
-    [nocompile] static long chooseDesktopMedia(DOMString[] sources,
+    [nocompile, doesNotSupportPromises="Synchronous return and callback crbug.com/1143032"]
+    static long chooseDesktopMedia(DOMString[] sources,
                                    ChooseDesktopMediaCallback callback);
-    [nocompile] static long cancelChooseDesktopMedia(long request_id);
+    [nocompile]
+    static long cancelChooseDesktopMedia(long request_id);
     static void startMonitor(boolean screens, boolean windows);
     static void stopMonitor();
     static boolean[] isMonitorStarted();
