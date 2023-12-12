@@ -1027,7 +1027,7 @@ bool NwCurrentWindowInternalGetCurrentFunction::RunNWSync(base::Value::List* res
                                 : ExtensionTabUtil::kDontPopulateTabs;
   base::Value::Dict windows =
       ExtensionTabUtil::CreateWindowValueForExtension(*browser, extension(),
-                                                      populate_tab_behavior, Feature::UNSPECIFIED_CONTEXT);
+                                                      populate_tab_behavior, mojom::ContextType::kUnspecified);
   response->Append(base::Value(std::move(windows)));
   return true;
 }
