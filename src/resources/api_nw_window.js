@@ -107,7 +107,7 @@ function getPlatform() {
   return "unknown";
 }
 
-var canSetVisibleOnAllWorkspaces = /(mac|linux)/.exec(getPlatform());
+var canSetVisibleOnAllWorkspaces = !!(/(mac|linux)/.exec(getPlatform()));
 var appWinEventsMap = {
   'minimize':         'onMinimized',
   'maximize':         'onMaximized',
