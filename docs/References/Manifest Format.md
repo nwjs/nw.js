@@ -46,7 +46,7 @@ Following fields control which features NW.js should provide and how NW.js shoul
 
 ### nodejs
 
-* `{Boolean}` set `nodejs` to false will disable Node support in NW.js.
+* `{Boolean}` Set `nodejs` to `false` to disable Node and NW.js APIs.
 
 ### node-main
 
