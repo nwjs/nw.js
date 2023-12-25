@@ -92,3 +92,15 @@ node-pre-gyp build --runtime=node-webkit --target=0.13.0 --target_arch=x64
 
 See https://github.com/mapbox/node-pre-gyp for more details.
 
+### node-gyp
+
+Since v0.83.0, it is possible to build Node addons using `node-gyp`.
+
+!!! warning "Some Node addons may not build"
+    Due to differences between NW.js's V8 and Node's V8, some addons may not build. See [this issue](https://github.com/nwjs/nw.js/issues/5025) for more info If this happens, please file a GitHub issue.
+
+1. Download NW.js's Node headers. For v0.83.0, use `https://dl.nwjs.io/v0.83.0/nw-headers-v0.83.0.tar.gz`.
+2. Install `node-gyp` via `npm`.
+3. Point `node-gyp` to the node headers via the `--nodedir` argument and rebuild it.
+
+Please consult the [NW.js Utilities website](https://nwutils.io/#codeexamples) for code examples.
