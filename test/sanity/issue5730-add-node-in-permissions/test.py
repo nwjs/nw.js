@@ -7,11 +7,15 @@ from selenium.webdriver.chrome.options import Options
 chrome_options = Options()
 testdir = os.path.dirname(os.path.abspath(__file__))
 chrome_options.add_argument('nwapp=' + testdir)
+#chrome_options.add_experimental_option("windowTypes", ["webview"])
 
-driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
+capabilities = {"pageLoadStrategy": "none"}
+
+driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, desired_capabilities = capabilities, service_log_path="log", service_args=["--verbose"])
 driver.implicitly_wait(3)
 try:
-    print(driver.current_url)
+    #print(driver.current_url)
+    time.sleep(3)
     ret1 = ''
     ret2 = ''
     timeout = 10
