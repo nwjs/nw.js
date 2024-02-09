@@ -206,6 +206,7 @@ static_library("nw_renderer") {
     "//third_party/mojo/src",
     "$target_gen_dir/../../third_party/blink/renderer",
     "$target_gen_dir/../../third_party/blink/renderer/bindings/core/v8",
+    "$target_gen_dir/../../v8/include",
   ]
   sources = [
         "src/renderer/nw_chrome_renderer_hooks.h",
