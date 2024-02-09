@@ -8,8 +8,7 @@ var GetExtensionViews = runtimeNatives.GetExtensionViews;
 
 var currentNWWindow = null;
 var currentNWWindowInternal = null;
-var currentRoutingID = nwNatives.getRoutingID();
-var currentWidgetRoutingID = nwNatives.getWidgetRoutingID();
+var currentWidgetToken = nwNatives.getWidgetToken();
 
 var bgPage = GetExtensionViews(-1, -1, 'BACKGROUND')[0];
 
@@ -160,7 +159,7 @@ NWWindow.prototype.on = function (event, callback, record) {
         return;
       callback.call(self, flag);
     });
-    chrome.windows.onRemoving.addListener(cbc, {instanceId: self.cWindow.id});
+    chrome.windows.onRemoving.addListener(cbc, {instanceId: self.cWindow.tabs[0].mainFrameToken});
     return this;
   }
   switch (event) {
@@ -205,7 +204,7 @@ NWWindow.prototype.on = function (event, callback, record) {
     break;
   case 'document-start':
     var cb1 = wrap(function(frame, top_routing_id) {
-      if (top_routing_id !== self.cWindow.tabs[0].mainFrameId)
+      if (top_routing_id !== self.cWindow.tabs[0].mainFrameToken)
         return;
       callback.call(self, frame);
     });
@@ -213,8 +212,8 @@ NWWindow.prototype.on = function (event, callback, record) {
     break;
   case 'document-end':
     var cb0 = wrap(function(frame, top_routing_id) {
-      //console.log("document-end: cWindow: " + self.cWindow.id + "; top routing id: " + top_routing_id + "; main frame id: " + self.cWindow.tabs[0].mainFrameId);
-      if (top_routing_id !== self.cWindow.tabs[0].mainFrameId)
+      //console.log("document-end: cWindow: " + self.cWindow.id + "; top routing id: " + top_routing_id + "; main frame id: " + self.cWindow.tabs[0].mainFrameToken);
+      if (top_routing_id !== self.cWindow.tabs[0].mainFrameToken)
         return;
       callback.call(self, frame);
     });
@@ -222,7 +221,7 @@ NWWindow.prototype.on = function (event, callback, record) {
     break;
   case 'new-win-policy':
     var h = wrap(function(frame, url, policy, top_routing_id) {
-      if (top_routing_id !== self.cWindow.tabs[0].mainFrameId)
+      if (top_routing_id !== self.cWindow.tabs[0].mainFrameToken)
         return;
       policy.ignore         =  function () { this.val = 'ignore'; };
       policy.forceCurrent   =  function () { this.val = 'current'; };
@@ -236,7 +235,7 @@ NWWindow.prototype.on = function (event, callback, record) {
     break;
   case 'navigation':
     var j = wrap(function(frame, url, policy, context, top_routing_id) {
-      if (top_routing_id !== self.cWindow.tabs[0].mainFrameId)
+      if (top_routing_id !== self.cWindow.tabs[0].mainFrameToken)
         return;
       policy.ignore         =  function () { this.val = 'ignore'; };
       callback.call(self, frame, url, policy, context);
@@ -474,15 +473,15 @@ NWWindow.prototype.reloadIgnoringCache = function () {
 };
 NWWindow.prototype.eval = function (frame, script) {
   this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
-  return nwNatives.evalScript(frame, script, this.cWindow.tabs[0].mainFrameId);
+  return nwNatives.evalScript(frame, script, this.cWindow.tabs[0].mainFrameToken);
 };
 NWWindow.prototype.evalNWBin = function (frame, path) {
   this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
-  this.evalNWBinInternal(frame, path, null, this.cWindow.tabs[0].mainFrameId);
+  this.evalNWBinInternal(frame, path, null, this.cWindow.tabs[0].mainFrameToken);
 };
 NWWindow.prototype.evalNWBinModule = function (frame, path, module_path) {
   this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
-  this.evalNWBinInternal(frame, path, module_path, this.cWindow.tabs[0].mainFrameId);
+  this.evalNWBinInternal(frame, path, module_path, this.cWindow.tabs[0].mainFrameToken);
 };
 NWWindow.prototype.evalNWBinInternal = function (frame, path, module_path, main_frame_id) {
   var ab;
@@ -728,12 +727,7 @@ Object.defineProperty(NWWindow.prototype, 'menu', {
 Object.defineProperty(NWWindow.prototype, 'window', {
   get: function() {
     this.cWindow = currentNWWindowInternal.getCurrent(this.cWindow.id, {'populate': true});
-    return appWindowNatives.GetFrame(this.cWindow.tabs[0].mainFrameId, false);
-  }
-});
-Object.defineProperty(NWWindow.prototype, 'frameId', {
-  get: function() {
-    return currentRoutingID;
+    return appWindowNatives.GetFrame(this.cWindow.tabs[0].mainFrameToken, false);
   }
 });
 
@@ -835,8 +829,9 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
             callback();
         }
       } finally {
-        if (options.block_parser)
-          appWindowNatives.ResumeParser(cWin.tabs[0].mainFrameId);
+        if (options.block_parser) {
+          appWindowNatives.ResumeParser(cWin.tabs[0].mainFrameToken, cWin.id);
+	}
       }
     });
   });
@@ -888,7 +883,7 @@ function updateAppWindowZoom(old_level, new_level) {
 function onClose(user_force) {
   if (!currentNWWindow)
     return;
-  currentNWWindow.onClose.dispatchNW({instanceId: currentWidgetRoutingID}, user_force);
+  currentNWWindow.onClose.dispatchNW({instanceId: currentWidgetToken}, user_force);
 }
 
 function get_nw() {

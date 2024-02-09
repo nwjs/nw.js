@@ -457,7 +457,12 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
   arguments.push_back(v8::Boolean::New(isolate, start));
   arguments.push_back(window);
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    arguments.push_back(v8::Integer::New(isolate, main_frame->GetRoutingID()));
+    auto frame_token = main_frame->GetWebFrame()->GetLocalFrameToken();
+    std::string frame_token_string = frame_token.ToString();
+    auto return_object = v8::String::NewFromUtf8(
+						 isolate, frame_token_string.data(), v8::NewStringType::kNormal,
+						 frame_token_string.size());
+    arguments.push_back(return_object.ToLocalChecked());
 
     std::set<ScriptContext*> contexts(dispatcher->script_context_set().contexts());
     std::set<ScriptContext*>::iterator it = contexts.begin();
@@ -585,7 +590,12 @@ void willHandleNavigationPolicy(content::RenderFrame* rf,
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
     content::RenderFrame* main_frame = content::RenderFrame::FromWebFrame(
                   rf->GetWebView()->MainFrame()->ToWebLocalFrame());
-    arguments.push_back(v8::Integer::New(isolate, main_frame->GetRoutingID()));
+    auto frame_token = main_frame->GetWebFrame()->GetLocalFrameToken();
+    std::string frame_token_string = frame_token.ToString();
+    auto return_object = v8::String::NewFromUtf8(
+						 isolate, frame_token_string.data(), v8::NewStringType::kNormal,
+						 frame_token_string.size());
+    arguments.push_back(return_object.ToLocalChecked());
 
     std::set<ScriptContext*> contexts(g_dispatcher->script_context_set().contexts());
     std::set<ScriptContext*>::iterator it = contexts.begin();

@@ -16,6 +16,7 @@
 
 #include "base/files/file_util.h"
 #include "extensions/renderer/script_context.h"
+#include "extensions/renderer/extension_frame_helper.h"
 #include "v8/include/v8.h"
 
 #define INSIDE_BLINK 1
@@ -170,11 +171,8 @@ void NWCustomBindings::AddRoutes() {
   RouteHandlerFunction("setDevToolsJail",
                 base::BindRepeating(&NWCustomBindings::SetDevToolsJail,
                            base::Unretained(this)));
-  RouteHandlerFunction("getWidgetRoutingID",
-                base::BindRepeating(&NWCustomBindings::GetWidgetRoutingID,
-                           base::Unretained(this)));
-  RouteHandlerFunction("getRoutingID",
-                base::BindRepeating(&NWCustomBindings::GetRoutingID,
+  RouteHandlerFunction("getWidgetToken",
+                base::BindRepeating(&NWCustomBindings::GetWidgetToken,
                            base::Unretained(this)));
   RouteHandlerFunction("callInWindow",
                 base::BindRepeating(&NWCustomBindings::CallInWindow,
@@ -200,16 +198,14 @@ void NWCustomBindings::CallInWindow(
   delete[] argv;
 }
 
-void NWCustomBindings::GetRoutingID(
+void NWCustomBindings::GetWidgetToken(
     const v8::FunctionCallbackInfo<v8::Value>& args) {
-  int routing_id = context()->GetRenderFrame()->GetMainRenderFrame()->GetRoutingID();
-  args.GetReturnValue().Set(v8::Integer::New(GetIsolate(), routing_id));
-}
-
-void NWCustomBindings::GetWidgetRoutingID(
-    const v8::FunctionCallbackInfo<v8::Value>& args) {
-  int routing_id = context()->GetRenderFrame()->GetMainRenderFrame()->GetRoutingID();
-  args.GetReturnValue().Set(v8::Integer::New(GetIsolate(), routing_id));
+  auto token = context()->GetRenderFrame()->GetMainRenderFrame()->GetWebFrame()->GetLocalFrameToken();
+  std::string frame_token_string = token.ToString();
+  auto return_object = v8::String::NewFromUtf8(
+					       args.GetIsolate(), frame_token_string.data(), v8::NewStringType::kNormal,
+					       frame_token_string.size());
+  args.GetReturnValue().Set(return_object.ToLocalChecked());
 }
 
 void NWCustomBindings::CrashRenderer(
@@ -227,9 +223,8 @@ void NWCustomBindings::EvalScript(
   v8::Isolate* isolate = args.GetIsolate();
   WebFrame* main_frame = render_frame->GetWebFrame();
   if (args.Length() > 2) {
-    int frame_id = args[2].As<v8::Int32>()->Value();
     content::RenderFrame* frame =
-      content::RenderFrame::FromRoutingID(frame_id);
+      ExtensionFrameHelper::FindFrameFromFrameTokenString(isolate, args[2]);
     if (frame && frame->GetWebFrame())
       main_frame = frame->GetWebFrame();
     else {
@@ -277,9 +272,8 @@ void NWCustomBindings::EvalNWBin(
 
   WebFrame* main_frame = render_frame->GetWebFrame();
   if (args.Length() > 3) {
-    int frame_id = args[3].As<v8::Int32>()->Value();
     content::RenderFrame* frame =
-      content::RenderFrame::FromRoutingID(frame_id);
+      ExtensionFrameHelper::FindFrameFromFrameTokenString(isolate, args[3]);
     if (frame && frame->GetWebFrame())
       main_frame = frame->GetWebFrame();
     else {
