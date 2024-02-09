@@ -52,6 +52,7 @@
 #include "extensions/common/extension.h"
 
 #include "net/cert/x509_certificate.h"
+#include "net/cert/x509_util.h"
 #include "net/cert/test_root_certs.h"
 #include "net/url_request/url_request_context.h"
 #include "net/url_request/url_request_context_getter.h"
@@ -199,8 +200,12 @@ void SetTrustAnchors(net::CertificateList& trust_anchors2) {
   content::StoragePartition* storage_partition =
     profile->GetDefaultStoragePartition();
   auto new_additional_certificates = cert_verifier::mojom::AdditionalCertificates::New();
-  new_additional_certificates->trust_anchors.insert(new_additional_certificates->trust_anchors.end(),
-						    trust_anchors2.begin(), trust_anchors2.end());
+  for (const auto& cert : trust_anchors2) {
+    base::span<const uint8_t> cert_bytes =
+      net::x509_util::CryptoBufferAsSpan(cert->cert_buffer());
+    new_additional_certificates->trust_anchors.push_back(
+						     std::vector<uint8_t>(cert_bytes.begin(), cert_bytes.end()));
+  }
   storage_partition->GetCertVerifierServiceUpdater()
     ->UpdateAdditionalCertificates(std::move(new_additional_certificates));
 }
