@@ -757,10 +757,6 @@ public:
 
 class NWJSAppTest : public NWAppTest {};
 
-void NWTimeoutCallback(const std::string& timeout_message) {
-  base::RunLoop::QuitCurrentWhenIdleDeprecated();
-}
-
 IN_PROC_BROWSER_TEST_F(NWAppTest, LocalFlash) {
   std::string contents;
   base::FilePath test_dir = test_data_dir_.Append(FILE_PATH_LITERAL("platform_apps")).Append(FILE_PATH_LITERAL("local_flash"));
@@ -974,11 +970,10 @@ IN_PROC_BROWSER_TEST_P(NWJSWebViewTest, LocalPDF) {
   unsigned long n_guests = trusted_ ? 2 : 1;
   EXPECT_TRUE(content::ExecJs(web_contents, std::string("test(") + (trusted_ ? "true" : "false") + ")"));
   if (!trusted_) {
-    base::CancelableOnceClosure timeout(
-          base::BindOnce(&NWTimeoutCallback, "pdf load timed out."));
-    base::SingleThreadTaskRunner::GetCurrentDefault()->PostDelayedTask(
-          FROM_HERE, timeout.callback(), TestTimeouts::action_timeout());
     ExtensionTestMessageListener pass_listener("PASSED");
+    base::SingleThreadTaskRunner::GetCurrentDefault()->PostDelayedTask(
+	FROM_HERE, pass_listener.GetRunLoop()->QuitWhenIdleClosure(),
+	TestTimeouts::action_timeout());
     EXPECT_TRUE(pass_listener.WaitUntilSatisfied());
   } else
     GetGuestViewManager()->WaitForNumGuestsCreated(n_guests);
