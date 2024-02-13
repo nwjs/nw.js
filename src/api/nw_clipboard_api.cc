@@ -208,7 +208,7 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
 
     bool WriteHTML(ClipboardData& data) {
       DCHECK(data.type == Type::kHtml);
-      scw_->WriteHTML(base::UTF8ToUTF16(*(data.data)), std::string(), ui::ClipboardContentType::kSanitized);
+      scw_->WriteHTML(base::UTF8ToUTF16(*(data.data)), std::string());
       return true;
     }
 
