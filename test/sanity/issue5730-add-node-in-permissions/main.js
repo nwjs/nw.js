@@ -1,6 +1,4 @@
 
-$(function() {
-
    var wv = document.querySelector('webview');
    document.getElementById("request1").innerHTML = JSON.stringify(wv.request);
 
@@ -9,5 +7,3 @@ $(function() {
    }, 500);
 
    
-})
-
