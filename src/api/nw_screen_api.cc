@@ -363,7 +363,7 @@ void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(int index) {
     bool success = gfx::PNGCodec::EncodeBGRASkBitmap(bitmap, false, &data);
     if (success){
       base::StringPiece raw_str(reinterpret_cast<const char*>(&data[0]), data.size());
-      base::Base64Encode(raw_str, &base64);
+      base64 = base::Base64Encode(raw_str);
     }
 
     auto args(nwapi::nw__screen::OnSourceThumbnailChanged::Create(

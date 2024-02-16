@@ -407,7 +407,7 @@ void NwCurrentWindowInternalCapturePageInternalFunction::OnCaptureSuccess(const 
   base::StringPiece stream_as_string(
                                      reinterpret_cast<const char*>(data.data()), data.size());
 
-  base::Base64Encode(stream_as_string, &base64_result);
+  base64_result = base::Base64Encode(stream_as_string);
   base64_result.insert(
       0, base::StringPrintf("data:%s;base64,", mime_type.c_str()));
   Respond(WithArguments(base64_result));

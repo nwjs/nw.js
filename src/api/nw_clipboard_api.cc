@@ -138,7 +138,7 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
 
       std::string encoded_image_base64;
       std::string encoded_image_str(encoded_image.data(), encoded_image.data() + encoded_image.size());
-      base::Base64Encode(encoded_image_str, &encoded_image_base64);
+      encoded_image_base64 = base::Base64Encode(encoded_image_str);
 
       if (!(data.raw && *(data.raw))) {
         if (data.type == Type::kPng) {
