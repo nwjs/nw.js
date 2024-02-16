@@ -484,7 +484,7 @@ NwCurrentWindowInternalClearMenuFunction::Run() {
     if (menubar)
       browser_view->RemoveChildView(menubar);
     layout->set_menu_bar(nullptr);
-    browser_view->Layout();
+    browser_view->LayoutImmediately();
     browser_view->SchedulePaint();
     if (browser->nw_menu_) {
       browser->nw_menu_->RemoveKeys();
@@ -544,7 +544,7 @@ bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::Value::List* respon
     browser_view->GetBrowserViewLayout()->set_menu_bar(menubar);
     browser_view->AddChildView(menubar);
     menubar->UpdateMenu(menu->model());
-    browser_view->Layout();
+    browser_view->LayoutImmediately();
     browser_view->SchedulePaint();
     if (old_menu) old_menu->RemoveKeys();
     menu->UpdateKeys(browser_view->GetWidget()->GetFocusManager());

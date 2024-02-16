@@ -74,7 +74,7 @@ MenuBarView::~MenuBarView() {
 void MenuBarView::UpdateMenu(ui::MenuModel* model) {
   RemoveAllChildViews();
   InitView(model);
-  Layout();
+  LayoutImmediately();
   PreferredSizeChanged();
   SchedulePaint();
 }
