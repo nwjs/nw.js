@@ -54,8 +54,8 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': 'bd57ca8d41674ac53013a9dc2b7ac3dc24accb8b',
-  'nw_v8_revision': '14203a460131837986610d44a2b5738b00bf63d9',
+  'nw_src_revision': '48078bb6f6e9091505b6e323a63fd86ea97e45f1',
+  'nw_v8_revision': '5cddc07fa74052eac0c29b910d3bdf5810aaa2dd',
   'nw_node_revision': '3b8c807a1b2d0fb1525498d5f8069a03d4f1ada6',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
@@ -308,7 +308,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'src_internal_revision': '05c5d674b2d43ae813314cd749f0392813995748',
+  'src_internal_revision': '7fc4ce6df0f371813243d08165e0bb592c9c6fcf',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
@@ -316,7 +316,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '15126d82086f526657d8889dfda0bc269e503ff9',
+  'v8_revision': '7ca8cf1710353b309b30a27873709a2500585ad0',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
@@ -383,7 +383,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling catapult
   # and whatever else without interference from each other.
-  'catapult_revision': '6fb0d6a41fa5b42b70e27f9268b03214431de51c',
+  'catapult_revision': 'ab03292694695864b523636060e2a96b2c9b2df2',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling chromium_variations
   # and whatever else without interference from each other.
