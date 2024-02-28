@@ -9,6 +9,7 @@
 #include "base/threading/thread_restrictions.h"
 #include "content/public/browser/browser_task_traits.h"
 #include "services/network/public/mojom/cert_verifier_service.mojom.h"
+#include "services/network/public/mojom/cert_verifier_service_updater.mojom.h"
 
 #if defined(OS_WIN)
 #include "base/win/scoped_gdi_object.h"
