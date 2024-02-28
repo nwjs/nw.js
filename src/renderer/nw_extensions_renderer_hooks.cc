@@ -464,8 +464,8 @@ void DocumentHook2(bool start, content::RenderFrame* frame, Dispatcher* dispatch
 						 frame_token_string.size());
     arguments.push_back(return_object.ToLocalChecked());
 
-    std::set<ScriptContext*> contexts(dispatcher->script_context_set().contexts());
-    std::set<ScriptContext*>::iterator it = contexts.begin();
+    std::set<raw_ptr<ScriptContext, SetExperimental>> contexts(dispatcher->script_context_set().contexts());
+    std::set<raw_ptr<ScriptContext, SetExperimental>>::iterator it = contexts.begin();
     while (it != contexts.end()) {
       ScriptContext* c = *it;
       if (extensions::binding::IsContextValid(c->v8_context())) {
@@ -597,8 +597,8 @@ void willHandleNavigationPolicy(content::RenderFrame* rf,
 						 frame_token_string.size());
     arguments.push_back(return_object.ToLocalChecked());
 
-    std::set<ScriptContext*> contexts(g_dispatcher->script_context_set().contexts());
-    std::set<ScriptContext*>::iterator it = contexts.begin();
+    std::set<raw_ptr<ScriptContext, SetExperimental>> contexts(g_dispatcher->script_context_set().contexts());
+    std::set<raw_ptr<ScriptContext, SetExperimental>>::iterator it = contexts.begin();
     while (it != contexts.end()) {
       ScriptContext* c = *it;
       extensions::ModuleSystem::NativesEnabledScope natives_enabled(c->module_system());
