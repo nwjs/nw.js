@@ -5,7 +5,7 @@
 #ifndef NW_CONTENT_VERIFIER_DELEGATE_H_
 #define NW_CONTENT_VERIFIER_DELEGATE_H_
 
-#include "extensions/browser/content_verifier_delegate.h"
+#include "extensions/browser/content_verifier/content_verifier_delegate.h"
 
 namespace content {
 class BrowserContext;
