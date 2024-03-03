@@ -110,7 +110,7 @@ void MenuItem::Create(const base::Value::Dict& option) {
   if (icon && !icon->empty())
     SetIcon(*icon);
 
-  absl::optional<int> menu_id = option.FindInt("submenu");
+  std::optional<int> menu_id = option.FindInt("submenu");
   if (menu_id)
     SetSubmenu(object_manager()->GetApiObject<Menu>(*menu_id));
 }

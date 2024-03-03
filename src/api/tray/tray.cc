@@ -38,7 +38,7 @@ Tray::Tray(int id,
   if (title)
     SetTitle(*title);
 
-  absl::optional<bool> areTemplates = option.FindBool("iconsAreTemplates");
+  std::optional<bool> areTemplates = option.FindBool("iconsAreTemplates");
   if (areTemplates)
     SetIconsAreTemplates(*areTemplates);
 
@@ -54,7 +54,7 @@ Tray::Tray(int id,
   if (tooltip)
     SetTooltip(*tooltip);
 
-  absl::optional<int> menu_id = option.FindInt("menu");
+  std::optional<int> menu_id = option.FindInt("menu");
   if (menu_id)
     SetMenu(object_manager->GetApiObject<Menu>(*menu_id));
 
