@@ -1,8 +1,8 @@
 diff --git a/BUILD.gn b/BUILD.gn
-index 5ea4e37336..7c75e56f68 100755
+index 43d435b488..26a2bb9c2e 100644
 --- BUILD.gn
 +++ BUILD.gn
-@@ -268,7 +268,7 @@ target(link_target_type, "ffmpeg_internal") {
+@@ -266,7 +266,7 @@ target(link_target_type, "ffmpeg_internal") {
    # Windows builds can't compile without EBP because we can't omit frame
    # pointers like we do on posix.
    if (current_cpu == "x86") {
@@ -11,7 +11,7 @@ index 5ea4e37336..7c75e56f68 100755
        defines += [ "HAVE_EBP_AVAILABLE=0" ]
      } else {
        defines += [ "HAVE_EBP_AVAILABLE=1" ]
-@@ -431,6 +431,12 @@ if (is_component_ffmpeg) {
+@@ -428,6 +428,12 @@ if (is_component_ffmpeg) {
      # So we can append below and assume they're defined.
      ldflags = []
  
@@ -24,12 +24,12 @@ index 5ea4e37336..7c75e56f68 100755
      if (is_fuchsia || (is_posix && !is_mac)) {
        # Fixes warnings PIC relocation when building as component.
        ldflags += [
-@@ -443,13 +449,14 @@ if (is_component_ffmpeg) {
+@@ -438,13 +444,13 @@ if (is_component_ffmpeg) {
+     } else if (is_win) {
+       # Windows component build needs the .def file to export ffmpeg symbols.
        deps += [ ":ffmpeg_generate_def" ]
-       sources = [
-         "$target_gen_dir/ffmpeg.def",
-+        "../../content/nw/src/ffmpeg.rc",
-       ]
+-      sources = [ "$target_gen_dir/ffmpeg.def" ]
++      sources = [ "$target_gen_dir/ffmpeg.def", "../../content/nw/src/ffmpeg.rc" ]
      }
  
      if (!is_component_build) {
@@ -38,6 +38,6 @@ index 5ea4e37336..7c75e56f68 100755
 -      } else if (is_linux) {
 +        #ldflags += [ "-Wl,-install_name,@rpath/libffmpeg.dylib" ]
 +      } else if (false && is_linux) {
-         all_dependent_configs = [
-           "//build/config/gcc:rpath_for_built_shared_libraries",
-         ]
+         all_dependent_configs =
+             [ "//build/config/gcc:rpath_for_built_shared_libraries" ]
+       }
