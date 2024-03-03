@@ -27,9 +27,10 @@ namespace nw {
 ///////////////////////////////////////////////////////////////////////////////
 
 class MenuBarView : public views::AccessiblePaneView {
+  METADATA_HEADER(MenuBarView, views::AccessiblePaneView)
 
  public:
-  METADATA_HEADER(MenuBarView);
+  bool GetMenuButtonAtLocation(const gfx::Point& loc, ui::MenuModel** model, views::MenuButton** button);
 
   // Maximum size of buttons
   static const int kMaxButtonWidth;
@@ -43,8 +44,6 @@ class MenuBarView : public views::AccessiblePaneView {
 
   void UpdateMenu(ui::MenuModel* model);
   void InitView(ui::MenuModel* model);
-
-  bool GetMenuButtonAtLocation(const gfx::Point& loc, ui::MenuModel** model, views::MenuButton** button);
 
   void ButtonPressed(int index, const ui::Event& event);
 

@@ -30,8 +30,8 @@ namespace nw {
 // Buttons used on the menu bar. Copied from BookmarkFolderButton
 
 class MenuBarButton : public views::MenuButton {
+  METADATA_HEADER(MenuBarButton, views::MenuButton)
  public:
-  METADATA_HEADER(MenuBarButton);
   explicit MenuBarButton(const std::u16string& title,
                 PressedCallback callback,
                 bool show_menu_marker)
@@ -118,7 +118,7 @@ void MenuBarView::ButtonPressed(int button_index,
   model_->ActivatedAt(button_index, event.flags());
 }
 
-BEGIN_METADATA(MenuBarView, views::AccessiblePaneView)
+BEGIN_METADATA(MenuBarView)
 END_METADATA
 
 } //namespace nw
