@@ -25,14 +25,13 @@
 </head>
 
 <body>
-  <webview partition="persist:trusted" id="demo" src="http://xw.qq.com"></webview>
+  <webview partition="persist:trusted" id="demo" src="https://nwjs.io"></webview>
   <webview partition="persist:trusted" id="demodev" src="about:blank"></webview>
   <button id='testbtn' onclick="test(true)">show</button>
   <script>
-    document.getElementById('demo').addEventListener('contentload', function() {
-      console.log("left webview load done");
-      test(true);
-    });
+  if (chrome.test) {
+    chrome.test.sendMessage("Launched");
+  }
   </script>
 </body>
 

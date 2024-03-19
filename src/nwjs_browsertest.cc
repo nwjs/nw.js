@@ -988,6 +988,41 @@ IN_PROC_BROWSER_TEST_P(NWJSWebViewTest, LocalPDF) {
   }
 }
 
+IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, WebViewCDT) {
+  std::string contents;
+  base::FilePath test_dir = test_data_dir_.Append(FILE_PATH_LITERAL("platform_apps")).Append(FILE_PATH_LITERAL("webview_cdt"));
+  LoadAndLaunchPlatformApp("webview_cdt", "Launched");
+
+  // Flush any pending events to make sure we start with a clean slate.
+  content::RunAllPendingInMessageLoop();
+  content::WebContents* web_contents = GetFirstAppWindowWebContents();
+  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
+    web_contents = BrowserList::GetInstance()->GetLastActive()->tab_strip_model()->GetActiveWebContents();
+  }
+  ASSERT_TRUE(web_contents);
+  std::vector<content::WebContents*> guest_web_contents_list;
+  unsigned long n_guests = 2;
+  {
+    base::RunLoop run_loop;
+    base::SingleThreadTaskRunner::GetCurrentDefault()->PostDelayedTask(
+       FROM_HERE, run_loop.QuitClosure(), base::Seconds(5));
+    run_loop.Run();
+  }
+
+  ASSERT_TRUE(content::ExecJs(web_contents, "document.getElementById('testbtn').click()"));
+  {
+    base::RunLoop run_loop;
+    base::SingleThreadTaskRunner::GetCurrentDefault()->PostDelayedTask(
+       FROM_HERE, run_loop.QuitClosure(), base::Seconds(5));
+    run_loop.Run();
+  }
+
+  std::vector<content::RenderFrameHost*> guest_rfh_list;
+  GetGuestViewManager()->GetGuestRenderFrameHostList(&guest_rfh_list);
+  ASSERT_EQ(n_guests, guest_rfh_list.size());
+  EXPECT_TRUE(guest_rfh_list[1]->GetLastCommittedURL().spec().rfind("devtools://") == 0);
+}
+
 using content::DesktopMediaID;
 
 namespace {
