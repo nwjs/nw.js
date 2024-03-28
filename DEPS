@@ -54,8 +54,8 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': 'b0fc069d0839bb9401513dc545c2f833a9659774',
-  'nw_v8_revision': '4ef6609c0dfcbd540492bc330750edca31b1ab67',
+  'nw_src_revision': '25d1219184a6a6e88f2a7e2e9e045f94df6f20d4',
+  'nw_v8_revision': 'e7dd710476885b925dc39ce35dcf3a71aa66cb6a',
   'nw_node_revision': '3b8c807a1b2d0fb1525498d5f8069a03d4f1ada6',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
@@ -310,19 +310,19 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'src_internal_revision': '302c17cb1ff9916cf20177141cdddd21ff2c330b',
+  'src_internal_revision': '07b9d147340d5e9c39c208a857644f381c7c9545',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': 'aeae2261c7d380404fb8e53eb6062338c4ba0367',
+  'skia_revision': '3d4e45907f9b239a54957001d619d2d4a6ca06b4',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'f0b4342fe7f3849aeb19a1dc77f4c8ad5fd68688',
+  'v8_revision': '363f205baa0f3497af3a844603bcc7b95436bfd8',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': 'e17dd5a40854c485cd397e2db55e860175566201',
+  'angle_revision': 'bbf1e1ea6bcf61e5e8e403870fd88df4e5e3a892',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -405,7 +405,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling devtools-frontend
   # and whatever else without interference from each other.
-  'devtools_frontend_revision': '17ad44a0f0109ea3496e466853fe09c45368ed95',
+  'devtools_frontend_revision': '28024a30b41f110dcf0ba28026f9b9bc921f39a1',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libprotobuf-mutator
   # and whatever else without interference from each other.
@@ -429,7 +429,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
-  'dawn_revision': 'd1212225281e34b1076f3d1a2e9f4b4486b2d061',
+  'dawn_revision': 'c8cf7442e43c1088c839eba17117b1ac29bf4e28',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
@@ -832,7 +832,7 @@ deps = {
 
   'src/clank': {
     'url': Var('chrome_git') + '/clank/internal/apps.git' + '@' +
-    '8e19bf2e0e6c7fd728724293a1b5753e54a03667',
+    '867db2fbc9508c8bd4b59588ecb3e9c487778aeb',
     'condition': 'checkout_android and checkout_src_internal',
   },
 
@@ -1210,7 +1210,7 @@ deps = {
     Var('chromium_git') + '/devtools/devtools-frontend' + '@' + Var('devtools_frontend_revision'),
 
   'src/third_party/devtools-frontend-internal': {
-      'url': Var('chrome_git') + '/devtools/devtools-internal.git' + '@' + 'fcc81779348a7ede923bb4d04a68bba59294ee34',
+      'url': Var('chrome_git') + '/devtools/devtools-internal.git' + '@' + '4fc5da20a388492846db6a276b03a855c7d03c88',
     'condition': 'checkout_src_internal',
   },
 
@@ -1538,7 +1538,7 @@ deps = {
   },
 
   'src/third_party/libvpx/source/libvpx':
-    Var('chromium_git') + '/webm/libvpx.git' + '@' +  '3316c11240184851f8ce1c3061db8e22123cf9ed',
+    Var('chromium_git') + '/webm/libvpx.git' + '@' +  'a667f8d08f67a0d9ff4e779287333cf2bc1c504b',
 
   'src/third_party/libwebm/source':
     Var('chromium_git') + '/webm/libwebm.git' + '@' + 'e4fbea0c9751ae8aa86629b197a28d8276a2b0da',
