@@ -1,3 +1,8 @@
+0.86.0 / 04-02-2024
+===================
+- Update Chromium to [123.0.6312.87](https://chromereleases.googleblog.com/2024/03/stable-channel-update-for-desktop_19.html)
+- Node.js in Web worker runs in separate context. Fix [#8075](https://github.com/nwjs/nw.js/issues/8075)
+
 0.85.0 / 03-04-2024
 ===================
 - Update Chromium to [122.0.6261.69](https://chromereleases.googleblog.com/2024/02/stable-channel-update-for-desktop_22.html)
