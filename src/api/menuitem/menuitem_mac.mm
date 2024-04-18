@@ -76,11 +76,11 @@ void MenuItem::Create(const base::Value::Dict& option) {
       SetChecked(checked);
     }
 
-    absl::optional<bool> enabled = option.FindBool("enabled");
+    std::optional<bool> enabled = option.FindBool("enabled");
     if (enabled)
       SetEnabled(*enabled);
 
-    absl::optional<bool> isTemplate = option.FindBool("iconIsTemplate");
+    std::optional<bool> isTemplate = option.FindBool("iconIsTemplate");
     if (isTemplate)
       SetIconIsTemplate(*isTemplate);
 
@@ -104,7 +104,7 @@ void MenuItem::Create(const base::Value::Dict& option) {
       SetModifiers(*str);
     }
 
-    absl::optional<int> menu_id = option.FindInt("submenu");
+    std::optional<int> menu_id = option.FindInt("submenu");
     if (menu_id)
       SetSubmenu(object_manager()->GetApiObject<Menu>(*menu_id));
   }
