@@ -582,6 +582,8 @@ def RunProcess(context, timeout, args, **rest):
       os.killpg(pgid, signal.SIGTERM)
     except:
       pass
+  else:
+    os.popen('taskkill /T /F /IM nw.exe')
   return (process, exit_code, timed_out)
 
 
