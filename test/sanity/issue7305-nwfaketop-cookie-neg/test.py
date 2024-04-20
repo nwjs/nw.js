@@ -21,7 +21,7 @@ except:
     pass
 
 port = str(utils.free_port())
-server = subprocess.Popen(['python3', 'https-server.py', port])
+server = subprocess.Popen(['python3', 'https-server.py', port], shell=True)
 
 tpl = open('index.tpl', 'r')
 content = tpl.read().replace('{port}', port)
