@@ -18,7 +18,7 @@ chrome_options.add_argument("user-data-dir=" + os.path.join(testdir, 'userdata')
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
 try:
     print((driver.current_url))
-    second_instance = subprocess.Popen(['python3', 'second_instance.py'], shell=True)
+    second_instance = subprocess.Popen(['python3', 'second_instance.py'])
     result = wait_for_element_id_content(driver, 'result', 'success')
     print(result)
 finally:

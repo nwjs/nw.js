@@ -18,7 +18,7 @@ testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
 
 port = str(utils.free_port())
-server = subprocess.Popen(['python3', 'https-server.py', port], shell=True)
+server = subprocess.Popen(['python3', 'https-server.py', port])
 
 def read_ca_cert():
     return read_and_replace_file('ca.crt', '\n', '')

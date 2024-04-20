@@ -10,7 +10,7 @@ chrome_options.add_argument("nwapp=" + os.path.dirname(os.path.abspath(__file__)
 testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
 
-server = subprocess.Popen(['python3', '-u', 'echo-user-agent.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+server = subprocess.Popen(['python3', '-u', 'echo-user-agent.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 print(server.stdout.readline())
 
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
