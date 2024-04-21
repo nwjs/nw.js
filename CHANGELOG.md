@@ -1,3 +1,7 @@
+0.87.0 / 04-21-2024
+===================
+- Update Chromium to [124.0.6367.62](https://chromereleases.googleblog.com/2024/04/stable-channel-update-for-desktop_16.html)
+
 0.86.0 / 04-02-2024
 ===================
 - Update Chromium to [123.0.6312.87](https://chromereleases.googleblog.com/2024/03/stable-channel-update-for-desktop_19.html)
