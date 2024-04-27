@@ -9,53 +9,53 @@
 {
   "nw.App": {
     "channel": "stable",
-    "contexts": ["blessed_extension"]
+    "contexts": ["privileged_extension"]
   },
   "nw.Window": {
     "channel": "stable",
-    "contexts": ["blessed_extension"]
+    "contexts": ["privileged_extension"]
   },
   "nw.Clipboard": {
     "channel": "stable",
-    "contexts": ["blessed_extension"]
+    "contexts": ["privileged_extension"]
   },
   "nw.Menu": {
     "channel": "stable",
-    "contexts": ["blessed_extension"]
+    "contexts": ["privileged_extension"]
   },
   "nw.MenuItem": {
     "channel": "stable",
-    "contexts": ["blessed_extension"]
+    "contexts": ["privileged_extension"]
   },
   "nw.Shell": {
     "channel": "stable",
-    "contexts": ["blessed_extension"]
+    "contexts": ["privileged_extension"]
   },
   "nw.Obj": {
     "channel": "stable",
-    "contexts": ["blessed_extension"]
+    "contexts": ["privileged_extension"]
   },
   "nw.test": {
     "channel": "stable",
-    "contexts": ["blessed_extension"]
+    "contexts": ["privileged_extension"]
   },
   "nw.Tray": {
     "channel": "stable",
-    "contexts": ["blessed_extension"]
+    "contexts": ["privileged_extension"]
   },
   "nw.Screen": {
     "channel": "stable",
-    "contexts": ["blessed_extension"]
+    "contexts": ["privileged_extension"]
   },
   "nw.Shortcut": {
     "channel": "stable",
-    "contexts": ["blessed_extension"]
+    "contexts": ["privileged_extension"]
   },
   "nw.currentWindowInternal": {
     "noparent": true,
     "internal": true,
     "channel": "stable",
     "matches": ["<all_urls>"],
-    "contexts": ["blessed_extension", "web_page"]
+    "contexts": ["privileged_extension", "web_page"]
   }
 }
