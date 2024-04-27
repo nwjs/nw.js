@@ -24,6 +24,8 @@ class BrowserViewLayout : public views::LayoutManager {
   // Overridden from LayoutManager:
    void Layout(views::View* host) override;
    gfx::Size GetPreferredSize(const views::View* host) const override;
+   gfx::Size GetPreferredSize(const views::View* host,
+                              const views::SizeBounds& available_size) const override;
    int GetPreferredHeightForWidth(const views::View* host,
                                          int width) const override;
 

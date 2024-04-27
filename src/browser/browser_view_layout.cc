@@ -54,6 +54,22 @@ gfx::Size BrowserViewLayout::GetPreferredSize(const View* host) const {
   return rect.size();
 }
 
+gfx::Size BrowserViewLayout::GetPreferredSize(const views::View* host,
+					      const views::SizeBounds& available_size) const {
+  if (host->children().empty())
+    return gfx::Size();
+
+  gfx::Rect rect(web_view_->GetPreferredSize());
+  rect.Inset(-host->GetInsets());
+  if (menu_bar_)
+    rect.Inset(gfx::Insets::TLBR(0, 0, 0, -kMenuHeight));
+
+  if (tool_bar_)
+    rect.Inset(gfx::Insets::TLBR(0, 0, 0, -tool_bar_->GetPreferredSize().height()));
+
+  return rect.size();
+}
+
 int BrowserViewLayout::GetPreferredHeightForWidth(const View* host, int width) const {
   if (host->children().empty())
     return 0;
