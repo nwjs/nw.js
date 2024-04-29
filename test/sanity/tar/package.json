@@ -1,5 +1,7 @@
 {
-    "name":"test-tar",
-    "main":"index.html",
-    "dependencies":{ "tar" : "latest" }
+    "name": "test-tar",
+    "main": "index.html",
+    "dependencies": {
+        "tar": "^7.0.1"
+    }
 }

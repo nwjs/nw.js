@@ -47,14 +47,14 @@
  
         //window.console.log('Extracted!')
       }
-
-      var extractor = tar.Extract({path: nw.__dirname + "/extract"})
-      .on('error', onError)
-      .on('end', onEnd);
-
-      fs.createReadStream(nw.__dirname + "/test.tar")
-      .on('error', onError)
-      .pipe(extractor);
+      var targetDirectory = nw.__dirname + "/extract";
+      fs.mkdirSync(targetDirectory, { recursive: true });
+      tar.x({f: nw.__dirname + "/test.tar",
+             C: targetDirectory })
+         .then(_ => { onEnd(); })
+         .catch(err => {
+            onError(err); 
+         });
       
     </script>
   </body>
