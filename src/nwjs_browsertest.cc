@@ -601,8 +601,7 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
     GURL guest_url = embedded_test_server()->GetURL(guest_path);
     guest_url = guest_url.ReplaceComponents(replace_host);
 
-    ui_test_utils::UrlLoadObserver guest_observer(
-        guest_url, content::NotificationService::AllSources());
+    ui_test_utils::UrlLoadObserver guest_observer(guest_url);
 
     LoadAndLaunchPlatformApp(app_path.c_str(), "guest-loaded");
 
