@@ -54,8 +54,8 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': '18800d06355a00df5efe1b286e704244d6714975',
-  'nw_v8_revision': 'a31d24ddfc52ef4f3f55b0ffb1831b838dc410ec',
+  'nw_src_revision': 'de6f481849432c3136ecb600b5a7b1ffe3acbcee',
+  'nw_v8_revision': '916991dd931ac764066971df61acb1b25983ef4a',
   'nw_node_revision': 'f85c8d5f67353c61930bab6a23e7711ac313d4b1',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
@@ -312,7 +312,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'src_internal_revision': '58458788e2fd513ffdc8472ef60b7cb2cbba3e98',
+  'src_internal_revision': 'a1c7498a9f870db1a9e2b1ccaaae88957685cc16',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
@@ -320,11 +320,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'd12774b83023498a5dfa9db4968e9fae747920f2',
+  'v8_revision': '381971682dd0d64ee1935efd6d98b334feb79ee0',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': '1107aa31e36a8bc6300e3e50d0114867562d5808',
+  'angle_revision': 'f4447386db891f772a4472864834612b23d5f525',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -332,7 +332,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling PDFium
   # and whatever else without interference from each other.
-  'pdfium_revision': 'fde20e170bebdde902d38dd577a0543e11b6d4d4',
+  'pdfium_revision': '94407286f475918c68195af1f5e01847b2d6f6ce',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling BoringSSL
   # and whatever else without interference from each other.
@@ -431,7 +431,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
-  'dawn_revision': '93c9cbd9c1a1f125626658ebeadce5d0dc689aaa',
+  'dawn_revision': '1346aaee0b017cb0bace682ea165c17e01e5b231',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
@@ -834,7 +834,7 @@ deps = {
 
   'src/clank': {
     'url': Var('chrome_git') + '/clank/internal/apps.git' + '@' +
-    '99b818feb883e5f5adff9ed58e56e24e7b78d42a',
+    'd5317aa5ae96aaa0f64c11e2c9137969dcac3c69',
     'condition': 'checkout_android and checkout_src_internal',
   },
 
@@ -1713,7 +1713,7 @@ deps = {
       'packages': [
           {
               'package': 'chromium/third_party/r8',
-              'version': '4lmbDFBqkP3D6DWu4MC8eiktQ4wuHyTMVJIWoU_q30AC',
+              'version': 'mhSwabeiU2ueQeYkj0X1JTg-6ZdtQgiVVXM1bo0yu4IC',
           },
       ],
       'condition': 'checkout_android',
@@ -3866,7 +3866,7 @@ deps = {
   # Dependencies from src_internal
   'src/chromeos/ash/resources/internal': {
       'url': Var('chrome_git') + '/chrome/chromeos/ash/resources/internal.git' + '@' +
-        'a58ffb4694b2b0be123300e533578ed96aabcb5a',
+        'bc844cc95077f161fff18f57fee76b33303d48c2',
       'condition': 'checkout_src_internal and checkout_chromeos',
   },
 
