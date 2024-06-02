@@ -308,8 +308,7 @@ void NWCustomBindings::EvalNWBin(
     std::ignore = script->BindToCurrentContext()->Run(local_frame->MainWorldScriptContext()).ToLocal(&result);
     args.GetReturnValue().Set(result);
   } else {
-    v8::ScriptOrigin origin(isolate,
-                            args[2].As<v8::String>(),
+    v8::ScriptOrigin origin(args[2].As<v8::String>(),
                             0, 0,
                             true,
                             -1,    // script id

@@ -351,7 +351,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
     base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
 #endif
     base::ReplaceChars(root_path, "'", "\\'", &root_path);
-    v8::ScriptOrigin origin(isolate, v8::String::NewFromUtf8(isolate, "process_main", v8::NewStringType::kNormal).ToLocalChecked());
+    v8::ScriptOrigin origin(v8::String::NewFromUtf8(isolate, "process_main", v8::NewStringType::kNormal).ToLocalChecked());
     v8::Local<v8::Script> script = v8::Script::Compile(context->v8_context(), v8::String::NewFromUtf8(isolate, (
         set_nw_script +
         // Make node's relative modules work
@@ -522,7 +522,7 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
 #endif
     base::ReplaceChars(root_path, "'", "\\'", &root_path);
 
-    v8::ScriptOrigin origin(isolate, v8::String::NewFromUtf8(isolate, "process_main2", v8::NewStringType::kNormal).ToLocalChecked());
+    v8::ScriptOrigin origin(v8::String::NewFromUtf8(isolate, "process_main2", v8::NewStringType::kNormal).ToLocalChecked());
     v8::Local<v8::Script> script2 = v8::Script::Compile(v8_context, v8::String::NewFromUtf8(isolate, (
         "'use strict';"
         "if (typeof nw != 'undefined' && typeof __filename == 'undefined') {"
