@@ -76,9 +76,11 @@ class JavaScriptDisplayObserver : BaseEvent, public gfx::DisplayObserver {
   }
 
   // Called when |old_display| has been removed.
-   void OnDisplayRemoved(const gfx::Display& old_display) override {
+   void OnDisplaysRemoved(const gfx::Displays& old_displays) override {
     base::ListValue arguments;
-    arguments.AppendString(DisplayToJSON(old_display));
+    for (const auto& display : old_displays) {
+      arguments.AppendString(DisplayToJSON(display));
+    }
     object_->dispatcher_host()->SendEvent(object_, "displayRemoved", arguments);
   }
 

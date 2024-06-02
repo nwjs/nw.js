@@ -72,7 +72,7 @@ namespace extensions {
     // gfx::DisplayObserver implementation.
     void OnDisplayMetricsChanged(const display::Display& display, uint32_t changed_metrics) override;
     void OnDisplayAdded(const display::Display& new_display) override;
-    void OnDisplayRemoved(const display::Display& old_display) override;
+    void OnDisplaysRemoved(const display::Displays& old_display) override;
 
   };
 
@@ -171,12 +171,14 @@ namespace extensions {
   }
 
   // Called when |old_display| has been removed.
-  void NwScreenDisplayObserver::OnDisplayRemoved(const display::Display& old_display) {
-    auto args(nwapi::nw__screen::OnDisplayRemoved::Create(*ConvertGfxDisplay(old_display)));
-    DispatchEvent(
-      events::HistogramValue::UNKNOWN,
-      nwapi::nw__screen::OnDisplayRemoved::kEventName,
-      std::move(args));
+  void NwScreenDisplayObserver::OnDisplaysRemoved(const display::Displays& old_displays) {
+    for(const auto& display : old_displays) {
+      auto args(nwapi::nw__screen::OnDisplayRemoved::Create(*ConvertGfxDisplay(display)));
+      DispatchEvent(
+         events::HistogramValue::UNKNOWN,
+	 nwapi::nw__screen::OnDisplayRemoved::kEventName,
+	 std::move(args));
+    }
   }
 
   NwScreenGetScreensFunction::NwScreenGetScreensFunction() {}
