@@ -80,10 +80,8 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
         return ReadImage(data);
         break;
         case Type::kNone:
-        NOTREACHED();
         return false;
       }
-      NOTREACHED();
       return false;
     }
 
@@ -184,10 +182,8 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
         return WriteImage(data);
         break;
         case Type::kNone:
-        NOTREACHED();
         return false;
       }
-      NOTREACHED();
       return false;
     }
 
@@ -271,7 +267,7 @@ NwClipboardGetListSyncFunction::~NwClipboardGetListSyncFunction() {
 }
 
 bool NwClipboardGetListSyncFunction::RunNWSync(base::Value::List* response, std::string* error) {
-  absl::optional<GetListSync::Params> params(GetListSync::Params::Create(args()));
+  std::optional<GetListSync::Params> params(GetListSync::Params::Create(args()));
   EXTENSION_FUNCTION_VALIDATE(params.has_value());
   std::unique_ptr<ClipboardReader> reader(new ClipboardReader());
 
@@ -293,7 +289,7 @@ NwClipboardSetListSyncFunction::~NwClipboardSetListSyncFunction() {
 }
 
 bool NwClipboardSetListSyncFunction::RunNWSync(base::Value::List* response, std::string* error) {
-  absl::optional<SetListSync::Params> params(SetListSync::Params::Create(args()));
+  std::optional<SetListSync::Params> params(SetListSync::Params::Create(args()));
   EXTENSION_FUNCTION_VALIDATE(params.has_value());
   std::unique_ptr<ClipboardWriter> writer(new ClipboardWriter());
 

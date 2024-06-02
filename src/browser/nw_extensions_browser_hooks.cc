@@ -156,7 +156,7 @@ base::Value MergeManifest(const std::string& in_manifest) {
   // retrieve `window` manifest set by `new-win-policy`
   std::string manifest_str = in_manifest.empty() ? base::UTF16ToUTF8(nw::GetCurrentNewWinManifest())
     : in_manifest;
-  absl::optional<base::Value> val = base::JSONReader::Read(manifest_str);
+  std::optional<base::Value> val = base::JSONReader::Read(manifest_str);
   if (val && val->is_dict())
     manifest = val->GetDict().Clone();
 
@@ -328,49 +328,49 @@ void CalcNewWinParams(content::WebContents* new_contents, void* params,
   std::unique_ptr<base::Value> val;
   base::Value manifest_d = MergeManifest(in_manifest);
   base::Value::Dict& manifest = manifest_d.GetDict();
-  absl::optional<bool> resizable = manifest.FindBool(switches::kmResizable);
+  std::optional<bool> resizable = manifest.FindBool(switches::kmResizable);
   if (resizable) {
     ret.resizable = *resizable;
   }
-  absl::optional<bool> fullscreen = manifest.FindBool(switches::kmFullscreen);
+  std::optional<bool> fullscreen = manifest.FindBool(switches::kmFullscreen);
   if (fullscreen && *fullscreen) {
     ret.state = ui::SHOW_STATE_FULLSCREEN;
   }
-  absl::optional<int> width = manifest.FindInt(switches::kmWidth);
-  absl::optional<int> height = manifest.FindInt(switches::kmHeight);
+  std::optional<int> width = manifest.FindInt(switches::kmWidth);
+  std::optional<int> height = manifest.FindInt(switches::kmHeight);
   if (width)
     ret.content_spec.bounds.set_width(*width);
   if (height)
     ret.content_spec.bounds.set_height(*height);
 
-  absl::optional<int> x = manifest.FindInt(switches::kmX);
-  absl::optional<int> y = manifest.FindInt(switches::kmY);
+  std::optional<int> x = manifest.FindInt(switches::kmX);
+  std::optional<int> y = manifest.FindInt(switches::kmY);
   if (x)
     ret.window_spec.bounds.set_x(*x);
   if (y)
     ret.window_spec.bounds.set_y(*y);
-  absl::optional<bool> top = manifest.FindBool(switches::kmAlwaysOnTop);
+  std::optional<bool> top = manifest.FindBool(switches::kmAlwaysOnTop);
   if (top && *top) {
     ret.always_on_top = true;
   }
-  absl::optional<bool> frame = manifest.FindBool(switches::kmFrame);
+  std::optional<bool> frame = manifest.FindBool(switches::kmFrame);
   if (frame && !(*frame)) {
     ret.frame = extensions::AppWindow::FRAME_NONE;
   }
-  absl::optional<bool> all_workspaces =
+  std::optional<bool> all_workspaces =
     manifest.FindBool(switches::kmVisibleOnAllWorkspaces);
   if (all_workspaces && *all_workspaces) {
     ret.visible_on_all_workspaces = true;
   }
   gfx::Size& minimum_size = ret.content_spec.minimum_size;
-  absl::optional<int> min_height = manifest.FindInt(switches::kmMinHeight);
-  absl::optional<int> min_width = manifest.FindInt(switches::kmMinWidth);
+  std::optional<int> min_height = manifest.FindInt(switches::kmMinHeight);
+  std::optional<int> min_width = manifest.FindInt(switches::kmMinWidth);
   if (min_width)
     minimum_size.set_width(*min_width);
   if (min_height)
     minimum_size.set_height(*min_height);
-  absl::optional<int> max_height = manifest.FindInt(switches::kmMaxHeight);
-  absl::optional<int> max_width = manifest.FindInt(switches::kmMaxWidth);
+  std::optional<int> max_height = manifest.FindInt(switches::kmMaxHeight);
+  std::optional<int> max_width = manifest.FindInt(switches::kmMaxWidth);
   gfx::Size& maximum_size = ret.content_spec.maximum_size;
   if (max_width)
     maximum_size.set_width(*max_width);
