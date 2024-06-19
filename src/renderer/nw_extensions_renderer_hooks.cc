@@ -224,17 +224,30 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   if (node_context.IsEmpty() || mixed_context) {
     node_init_run = true;
     {
-      int argc = 1;
-      char argv0[] = "node";
-      char* argv[3];
-      argv[0] = argv0;
-      argv[1] = argv[2] = nullptr;
+      std::vector<std::string> words;
+      words.push_back("node");
       const std::string* main_fn;
 
       if (extension && (main_fn = extension->manifest()->FindStringPath("node-main"))) {
-        argc = 2;
-        argv[1] = strdup(main_fn->c_str());
+	std::stringstream ss(*main_fn);
+	std::string word;
+
+	while (ss >> word) {
+	  words.push_back(word);
+	}
+
       }
+      int argc = words.size();
+
+      char** argv = new char*[argc + 1];
+
+      for (int i = 0; i < argc; ++i) {
+	argv[i] = new char[words[i].size() + 1];
+	std::strcpy(argv[i], words[i].c_str());
+      }
+
+      argv[argc] = nullptr;
+
 
       v8::Isolate* isolate_c = v8::Isolate::GetCurrent();
       v8::HandleScope scope(isolate_c);
