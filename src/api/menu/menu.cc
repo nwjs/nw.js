@@ -65,12 +65,12 @@ void Menu::Call(const std::string& method,
     zoom::ZoomController* zoom_controller = zoom::ZoomController::FromWebContents(web_contents);
 
     if (zoom_controller) {
-      double zoom_factor = blink::PageZoomLevelToZoomFactor(zoom_controller->GetZoomLevel());
-      if (zoom_factor > blink::kMaximumPageZoomFactor) {
-        zoom_factor = blink::kMaximumPageZoomFactor;
+      double zoom_factor = blink::ZoomLevelToZoomFactor(zoom_controller->GetZoomLevel());
+      if (zoom_factor > blink::kMaximumBrowserZoomFactor) {
+        zoom_factor = blink::kMaximumBrowserZoomFactor;
       }
-      if (zoom_factor < blink::kMinimumPageZoomFactor) {
-        zoom_factor = blink::kMinimumPageZoomFactor;
+      if (zoom_factor < blink::kMinimumBrowserZoomFactor) {
+        zoom_factor = blink::kMinimumBrowserZoomFactor;
       }
       x *= zoom_factor;
       y *= zoom_factor;
