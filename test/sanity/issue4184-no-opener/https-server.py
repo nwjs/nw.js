@@ -7,6 +7,12 @@ import sys
 PORT = int(sys.argv[1])
 
 httpd = http.server.HTTPServer(('localhost', PORT), http.server.SimpleHTTPRequestHandler)
-httpd.socket = ssl.wrap_socket (httpd.socket, certfile='./cert.pem', keyfile='./key.pem', server_side=True)
+
+context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+context.load_cert_chain(certfile='./cert.pem', keyfile='./key.pem')
+
+# Wrap the socket using the context's wrap_socket method
+httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
+
 print("serving at port", PORT)
 httpd.serve_forever()
