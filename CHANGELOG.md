@@ -1,3 +1,9 @@
+0.89.0 / 06-25-2024
+===================
+- Update Chromium to [126.0.6478.57](https://chromereleases.googleblog.com/2024/06/stable-channel-update-for-desktop.html)
+- Update Node.js to [v22.2.0](https://nodejs.org/en/blog/release/v22.2.0)
+- Support Node.js options in `node-main`.
+
 0.88.0 / 05-21-2024
 ===================
 - Update Chromium to [125.0.6422.60](https://chromereleases.googleblog.com/2024/05/stable-channel-update-for-desktop_15.html)
