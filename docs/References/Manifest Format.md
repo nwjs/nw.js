@@ -50,7 +50,7 @@ Following fields control which features NW.js should provide and how NW.js shoul
 
 ### node-main
 
-* `{String}` Specify the path to a node.js script file. And it will be executed on startup in Node context before the first DOM window load.
+* `{String}` Specify the path to a node.js script file. And it will be executed on startup in Node context before the first DOM window load. Node.js command line arguments are supported, which should be put before the file path in the string.
 
 ### domain
 
