@@ -128,7 +128,7 @@ const char kNoAssociatedAppWindow[] =
 template <typename T>
 class ApiParameterExtractor {
  public:
-  explicit ApiParameterExtractor(absl::optional<T>& params) : params_(*params) {}
+  explicit ApiParameterExtractor(std::optional<T>& params) : params_(*params) {}
   ~ApiParameterExtractor() {}
 
   bool populate_tabs() {
@@ -214,7 +214,7 @@ void NwCurrentWindowInternalCloseFunction::DoCloseBrowser(base::WeakPtr<Browser>
 
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalCloseFunction::Run() {
-  absl::optional<extensions::nwapi::nw_current_window_internal::Close::Params> params(
+  std::optional<extensions::nwapi::nw_current_window_internal::Close::Params> params(
         extensions::nwapi::nw_current_window_internal::Close::Params::Create(args()));
   EXTENSION_FUNCTION_VALIDATE(params.has_value());
 
@@ -319,7 +319,7 @@ ExtensionFunction::ResponseAction
 NwCurrentWindowInternalCapturePageInternalFunction::Run() {
   EXTENSION_FUNCTION_VALIDATE(args().size());
 
-  absl::optional<ImageDetails> image_details;
+  std::optional<ImageDetails> image_details;
   WebContents* contents = nullptr;
 
   if (args().size() > 1) {
@@ -988,7 +988,7 @@ bool NwCurrentWindowInternalSetPrintSettingsInternalFunction::RunNWSync(base::Va
     web_contents = browser->tab_strip_model()->GetActiveWebContents();
   }
   const base::Value::Dict& dict = args()[0].GetDict();
-  absl::optional<bool> auto_print = dict.FindBool("autoprint");
+  std::optional<bool> auto_print = dict.FindBool("autoprint");
   if (auto_print)
     chrome::NWPrintSetCustomPrinting(*auto_print);
   const std::string* printer_name = dict.FindString("printer");
@@ -1008,7 +1008,7 @@ bool NwCurrentWindowInternalGetCurrentFunction::RunNWSync(base::Value::List* res
   if (args().size() > 1) {
     remain.Append(args()[1].Clone());
   }
-  absl::optional<windows::GetCurrent::Params> params(
+  std::optional<windows::GetCurrent::Params> params(
              windows::GetCurrent::Params::Create(remain));
   EXTENSION_FUNCTION_VALIDATE(params.has_value());
 
