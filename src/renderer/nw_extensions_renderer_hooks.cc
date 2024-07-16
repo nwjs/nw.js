@@ -552,7 +552,7 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
     return;
 
   ui::ResourceBundle* resource_bundle = &ui::ResourceBundle::GetSharedInstance();
-  base::StringPiece resource =
+  std::string_view resource =
       resource_bundle->GetRawDataResource(IDR_NW_PRE13_SHIM_JS);
   if (resource.empty())
     return;

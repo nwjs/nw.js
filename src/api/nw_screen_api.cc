@@ -364,7 +364,7 @@ void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(int index) {
     std::vector<unsigned char> data;
     bool success = gfx::PNGCodec::EncodeBGRASkBitmap(bitmap, false, &data);
     if (success){
-      base::StringPiece raw_str(reinterpret_cast<const char*>(&data[0]), data.size());
+      std::string_view raw_str(reinterpret_cast<const char*>(&data[0]), data.size());
       base64 = base::Base64Encode(raw_str);
     }
 
