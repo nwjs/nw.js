@@ -26,7 +26,6 @@
 #include "content/nw/src/browser/nw_content_browser_hooks.h"
 #include "content/nw/src/common/shell_switches.h"
 #include "content/nw/src/nw_base.h"
-#include "content/nw/src/nw_content_verifier_delegate.h"
 
 // extensions
 #include "extensions/browser/app_window/app_window.h"
@@ -44,10 +43,8 @@
 
 using content::RenderProcessHost;
 
-using extensions::ContentVerifierDelegate;
 using extensions::Extension;
 using extensions::ExtensionRegistry;
-using extensions::NWContentVerifierDelegate;
 using extensions::WebviewInfo;
 using extensions::WebViewGuest;
 
@@ -310,9 +307,6 @@ void LoadNWAppAsExtensionHook(base::Value::Dict* manifest,
     if (node_remote_list.size())
       AmendManifestList(manifest, manifest_keys::kWebURLs, node_remote_list);
   }
-
-  if (NWContentVerifierDelegate::GetDefaultMode() == NWContentVerifierDelegate::ENFORCE_STRICT)
-    manifest->Set(manifest_keys::kNWJSContentVerifyFlag, true);
 
   if (package->temp_dir().IsValid()) {
     // need to remove the dir in renderer process
