@@ -1,3 +1,8 @@
+0.90.0 / 07-30-2024
+===================
+- Update Chromium to [127.0.6533.73](https://chromereleases.googleblog.com/2024/07/stable-channel-update-for-desktop_23.html)
+- Fix draggable region regression [(#8153)](https://github.com/nwjs/nw.js/issues/8153)
+
 0.89.0 / 06-25-2024
 ===================
 - Update Chromium to [126.0.6478.57](https://chromereleases.googleblog.com/2024/06/stable-channel-update-for-desktop.html)
