@@ -245,13 +245,18 @@ namespace extensions {
 	? std::make_unique<DesktopCapturerWrapper>(
 	   std::move(desktop_capturer))
 	: nullptr;
+#if BUILDFLAG(IS_MAC)
+      const bool auto_show_delegated_source_list = false;
+#else
+      const bool auto_show_delegated_source_list = true;
+#endif  // BUILDFLAG(IS_MAC)
       bool add_current_process_windows =
 	  content::desktop_capture::ShouldEnumerateCurrentProcessWindows();
       if (capturer) {
 	std::unique_ptr<DesktopMediaList> window_media_list =
           std::make_unique<NativeDesktopMediaList>(
             DesktopMediaList::Type::kWindow, std::move(capturer),
-            add_current_process_windows);
+            add_current_process_windows, auto_show_delegated_source_list);
         media_list_.push_back(std::move(window_media_list));
       }
     }
