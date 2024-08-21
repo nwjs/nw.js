@@ -1,3 +1,7 @@
+0.91.0 / 08-21-2024
+===================
+- Update Chromium to [128.0.6613.36](https://chromereleases.googleblog.com/2024/08/early-stable-update-for-desktop.html)
+
 0.90.0 / 07-30-2024
 ===================
 - Update Chromium to [127.0.6533.73](https://chromereleases.googleblog.com/2024/07/stable-channel-update-for-desktop_23.html)
