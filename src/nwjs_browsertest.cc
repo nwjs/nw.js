@@ -765,7 +765,7 @@ IN_PROC_BROWSER_TEST_F(NWAppTest, LocalFlash) {
   ASSERT_TRUE(base::ReadFileToString(tpl_path, &contents));
   GURL swf_url = net::FilePathToFileURL(swf_path);
   base::ReplaceSubstringsAfterOffset(&contents, 0, "<swf_path>", swf_url.spec());
-  EXPECT_GT(base::WriteFile(index_html, contents.c_str(), contents.size()), 0);
+  EXPECT_GT(base::WriteFile(index_html, contents), 0);
 
   LoadAndLaunchPlatformApp("local_flash", "Launched");
   content::WebContents* web_contents = GetFirstAppWindowWebContents();
@@ -955,7 +955,7 @@ IN_PROC_BROWSER_TEST_P(NWJSWebViewTest, LocalPDF) {
   GURL pdf_url = net::FilePathToFileURL(pdf_path);
   base::ReplaceSubstringsAfterOffset(&contents, 0, "<pdf_path>", pdf_url.spec());
   base::ReplaceSubstringsAfterOffset(&contents, 0, "_partition_", trusted_ ? "partition=\"trusted\"" : "");
-  EXPECT_GT(base::WriteFile(index_html, contents.c_str(), contents.size()), 0);
+  EXPECT_GT(base::WriteFile(index_html, contents), 0);
   LoadAndLaunchPlatformApp("local_pdf", "Launched");
 
   // Flush any pending events to make sure we start with a clean slate.
