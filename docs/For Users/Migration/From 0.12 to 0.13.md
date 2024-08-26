@@ -59,7 +59,7 @@
 ### Known issues
 
 + The following window options passed to `nw.Window.open()` is not effective on **Linux**: `resizable` for now; try to set them in the callback.
-+ `reloadDev()` of `nw.Window` are not supported for now
++ `reloadDev()` of `nw.Window` is not supported for now
 + `closed` event of `nw.Window`: `App.quit()` doesn't trigger this event.
 + `devtools-closed` event of `nw.Window` is not supported for now.
 + `as_desktop` option is not supported for now
