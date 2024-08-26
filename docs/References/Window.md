@@ -321,6 +321,9 @@ Close the devtools window.
 Enumerate the printers in the system. The callback function will receive an array of JSON objects for the printer information. The device name of the JSON object can be used as parameter in `nw.Window.print()`.
 
 ## win.isDevToolsOpen()
+```javascript
+nw.Window.isOpenDevTools((status) => console.log(status))
+```
 
 !!! note
     This API is only available on SDK build flavor.
