@@ -90,8 +90,13 @@ var try_nw = function (view) {
   return privates(view);
 };
 
+/**
+ * Get current platform.
+ * 
+ * @returns {"chromeos touch" | "chromeos" | "linux" | "mac" | "win" | "unknown"}
+ */
 function getPlatform() {
-  var platforms = [
+  let platforms = [
     [/CrOS Touch/, "chromeos touch"],
     [/CrOS/, "chromeos"],
     [/Linux/, "linux"],
@@ -99,15 +104,17 @@ function getPlatform() {
     [/Win/, "win"],
   ];
 
-  for (var i = 0; i < platforms.length; i++) {
-    if ($RegExp.exec(platforms[i][0], navigator.appVersion)) {
+  for (let i = 0; i < platforms.length; i++) {
+    const regex = new RegExp(platforms[i][0]);
+    if (regex.exec(navigator.userAgent)) {
       return platforms[i][1];
     }
   }
   return "unknown";
 }
 
-var canSetVisibleOnAllWorkspaces = /(mac|linux)/.exec(getPlatform());
+var canSetVisibleOnAllWorkspaces = Boolean(/(mac|linux)/.exec(getPlatform()));
+
 var appWinEventsMap = {
   'minimize':         'onMinimized',
   'maximize':         'onMaximized',
