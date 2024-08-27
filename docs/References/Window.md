@@ -390,7 +390,7 @@ For platforms that support multiple workspaces (currently Mac OS X and Linux), t
 
 ## win.canSetVisibleOnAllWorkspaces() (Mac and Linux)
 
-Returns a a boolean indicating if the platform (currently Mac OS X and Linux) support Window API method `setVisibleOnAllWorkspace(Boolean)`.
+Returns a `boolean` indicating if the platform (currently Mac OS X and Linux) supports `win.setVisibleOnAllWorkspace(boolean)`.
 
 ## win.setPosition(position)
 

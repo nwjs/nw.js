@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nw.Window.setVisibleOnAllWorkspaces test</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const win = nw.Window.get();
+            win.setVisibleOnAllWorkspaces(true);
+            document.getElementById('visible_on_all_workspaces').textContent = String(win.canSetVisibleOnAllWorkspaces());
+        });
+    </script>
+</head>
+<body>
+    <div>
+        <span>visible_on_all_workspaces: </span>
+        <span id="visible_on_all_workspaces"></span>
+    </div>
+</body>
+</html>
