@@ -297,7 +297,7 @@ Turn the window's native shadow on/off. Useful for frameless, transparent window
     The behavior of the function is changed since 0.13.0. Please see [Migration Notes from 0.12 to 0.13](../For Users/Migration/From 0.12 to 0.13.md).
 
 * `iframe` `{String} or {HTMLIFrameElement}` _Optional_ the id or the element of the `<iframe>` to be jailed on. By default, the DevTools is shown for entire window.
-* `callback(dev_win)` `{Function}` callback with the native window of the DevTools window.
+* `callback(dev_win, error)` `{Function}` callback with the native window of the DevTools window.
 
 Open the devtools to inspect the window.
 
@@ -308,6 +308,14 @@ The optional `iframe` as `HTMLIFrameElement` should be the iframe object. And it
 This function returns a `Window` object via the callback. You can use any properties and methods of `Window` except the events.
 
 See also in [webview reference](webview Tag.md) on how to open DevTools for webview or open DevTools in a webview.
+
+```js
+win.showDevTools((dev_win, error) => {
+    if (error) {
+        // handle error
+    }
+});
+```
 
 ## win.closeDevTools()
 
@@ -320,9 +328,9 @@ Close the devtools window.
 
 Enumerate the printers in the system. The callback function will receive an array of JSON objects for the printer information. The device name of the JSON object can be used as parameter in `nw.Window.print()`.
 
-## win.isDevToolsOpen()
+## win.isDevToolsOpen(callback)
 ```javascript
-nw.Window.isOpenDevTools((status) => console.log(status))
+win.isDevToolsOpen((status) => console.log(status))
 ```
 
 !!! note
