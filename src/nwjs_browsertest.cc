@@ -856,7 +856,7 @@ void CountFrames(int* frame_count,
 
 void DumpAxTree(std::string* dump_output, content::RenderFrameHost* frame) {
   content::RenderFrameHostImpl* f = static_cast<content::RenderFrameHostImpl*>(frame);
-  content::BrowserAccessibilityManager* manager = f->GetOrCreateBrowserAccessibilityManager();
+  ui::BrowserAccessibilityManager* manager = f->GetOrCreateBrowserAccessibilityManager();
   ui::AXTreeUpdate ax_tree = manager->SnapshotAXTreeForTesting();
   std::string ax_tree_dump = DumpPdfAccessibilityTree(ax_tree);
   *dump_output += ax_tree_dump;
