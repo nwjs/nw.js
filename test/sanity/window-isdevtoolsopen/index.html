@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nw.Window.isDevToolsOpen fixture</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const win = nw.Window.get();
+            win.showDevTools(undefined, () => {
+                win.isDevToolsOpen((status) => {
+                    document.getElementById('isdevtoolsopen').textContent = String(status);
+                })
+            });
+        });
+    </script>
+</head>
+<body>
+    <div>
+        <span>win.isDevToolsOpen: </span>
+        <span id="isdevtoolsopen"></span>
+    </div>
+</body>
+</html>
