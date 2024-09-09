@@ -1022,9 +1022,9 @@ bool NwCurrentWindowInternalGetCurrentFunction::RunNWSync(base::Value::List* res
     return false;
   }
 
-  ExtensionTabUtil::PopulateTabBehavior populate_tab_behavior =
-      extractor.populate_tabs() ? ExtensionTabUtil::kPopulateTabs
-                                : ExtensionTabUtil::kDontPopulateTabs;
+  WindowController::PopulateTabBehavior populate_tab_behavior =
+      extractor.populate_tabs() ? WindowController::kPopulateTabs
+                                : WindowController::kDontPopulateTabs;
   base::Value::Dict windows =
       ExtensionTabUtil::CreateWindowValueForExtension(*browser, extension(),
                                                       populate_tab_behavior, mojom::ContextType::kUnspecified);
