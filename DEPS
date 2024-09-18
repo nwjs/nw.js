@@ -54,8 +54,8 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': '4fe46ebcd82fe28ee26c268096b1cd1f1e33528c',
-  'nw_v8_revision': '5cb80e49022a3ad810da328f491dc165728c4e30',
+  'nw_src_revision': '87a79e67bfcf90eeeca64f78e4e3f2fbc70b2c1f',
+  'nw_v8_revision': 'fa005f87894489cf7d0c5b883837a38b1ba3539f',
   'nw_node_revision': '4e2c97bc8fe55a5e9c193c3ff9a70439101b4090',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
@@ -319,7 +319,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'a4c23e4cddee439079039a53ca025fdb9950f72d',
+  'v8_revision': '325d3bdf270094774567347175eb80d3de306475',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
