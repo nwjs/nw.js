@@ -163,14 +163,14 @@ static Browser* getBrowser(ExtensionFunction* func) {
 #endif
 
 static Browser* getBrowser(ExtensionFunction* func, int id) {
-  WindowController* controller = nullptr;
+  Browser* browser = nullptr;
   std::string error;
-  if (!windows_util::GetControllerFromWindowID(
+  if (!windows_util::GetBrowserFromWindowID(
      func, id, WindowController::GetAllWindowFilter(),
-          &controller, &error)) {
+          &browser, &error)) {
     return nullptr;
   }
-  return controller->GetBrowser();
+  return browser;
 }
 
 static AppWindow* getAppWindow(ExtensionFunction* func) {
@@ -1014,15 +1014,13 @@ bool NwCurrentWindowInternalGetCurrentFunction::RunNWSync(base::Value::List* res
 
   ApiParameterExtractor<windows::GetCurrent::Params> extractor(params);
   Browser* browser = nullptr;
-  WindowController* controller = nullptr;
   std::string error;
-  if (!windows_util::GetControllerFromWindowID(
+  if (!windows_util::GetBrowserFromWindowID(
           this, id, extractor.type_filters(),
-          &controller, &error)) {
+          &browser, &error)) {
     *ret_error = error;
     return false;
   }
-  browser = controller->GetBrowser();
 
   WindowController::PopulateTabBehavior populate_tab_behavior =
       extractor.populate_tabs() ? WindowController::kPopulateTabs
