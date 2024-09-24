@@ -946,6 +946,7 @@ IN_PROC_BROWSER_TEST_F(NWJSAppTest, PrintChangeFooter) {
 }
 
 IN_PROC_BROWSER_TEST_P(NWJSWebViewTest, LocalPDF) {
+  base::ScopedAllowBlockingForTesting scoped_allow_blocking;
   std::string contents;
   base::FilePath test_dir = test_data_dir_.Append(FILE_PATH_LITERAL("platform_apps")).Append(FILE_PATH_LITERAL("local_pdf"));
   base::FilePath tpl_path = test_dir.Append(FILE_PATH_LITERAL("index.tpl"));
