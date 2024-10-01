@@ -3,6 +3,8 @@
 #include "ui/gfx/image/image_skia.h"
 #include "ui/gfx/image/image_skia_operations.h"
 
+#include "ui/base/mojom/window_show_state.mojom.h"
+
 // base
 #include "base/command_line.h"
 #include "base/feature_list.h"
@@ -328,7 +330,7 @@ void CalcNewWinParams(content::WebContents* new_contents, void* params,
   }
   std::optional<bool> fullscreen = manifest.FindBool(switches::kmFullscreen);
   if (fullscreen && *fullscreen) {
-    ret.state = ui::SHOW_STATE_FULLSCREEN;
+    ret.state = ui::mojom::WindowShowState::kFullscreen;
   }
   std::optional<int> width = manifest.FindInt(switches::kmWidth);
   std::optional<int> height = manifest.FindInt(switches::kmHeight);
