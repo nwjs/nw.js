@@ -53,7 +53,7 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': '2daf40725a5f5221188fecc051134957acd54a00',
+  'nw_src_revision': 'cadae1f2fb9656cea7fa9bee076a9c10671af194',
   'nw_v8_revision': '6756ca0aa7aad91d52268dd029b01185bb6dfd45',
   'nw_node_revision': 'a6f950ca1d3c163548756b096a4d699c88ebf503',
   # Variable that can be used to support multiple build scenarios, like having
@@ -316,7 +316,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': '3cabe8c25ad30b0761ee74bc4d9f455cb5ba84c7',
+  'angle_revision': '21e4b689c009a93f66d61989a713d52bceaf2979',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -400,7 +400,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling devtools-frontend
   # and whatever else without interference from each other.
-  'devtools_frontend_revision': '88446977cb017f143f1ff6963d384b05a4414f54',
+  'devtools_frontend_revision': 'b99303161bf24247ed677a5be454dab24ebdced5',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libprotobuf-mutator
   # and whatever else without interference from each other.
@@ -1294,7 +1294,7 @@ deps = {
 
   'src/clank': {
     'url': Var('chrome_git') + '/clank/internal/apps.git' + '@' +
-    'a5923c5a5e2c2a50aba861a72e8d56fdbac3247d',
+    '814e8a456962376a8137faa8cc7f76b101d0da5f',
     'condition': 'checkout_android and checkout_src_internal',
   },
 
@@ -1773,7 +1773,7 @@ deps = {
     Var('chromium_git') + '/devtools/devtools-frontend' + '@' + Var('devtools_frontend_revision'),
 
   'src/third_party/devtools-frontend-internal': {
-      'url': Var('chrome_git') + '/devtools/devtools-internal.git' + '@' + 'e4cb17df4307063cfb3d0c36043cad9e9473dc48',
+      'url': Var('chrome_git') + '/devtools/devtools-internal.git' + '@' + 'f927f454c9e8fea2fd86a93bff495a72cf22f3a2',
     'condition': 'checkout_src_internal',
   },
 
@@ -4383,7 +4383,7 @@ deps = {
 
   'src/ios_internal':  {
       'url': Var('chrome_git') + '/chrome/ios_internal.git' + '@' +
-        '26d352221b71a8779c03da79f86a0715d9c9a91d',
+        '6791801d53071a5f7bd6a1a7270335b932a89d42',
       'condition': 'checkout_ios and checkout_src_internal',
   },
 
