@@ -1,3 +1,13 @@
+0.93.0 / 08-21-2024
+===================
+- Update Chromium to [130.0.6723.59](https://chromereleases.googleblog.com/2024/10/stable-channel-update-for-desktop_15.html)
+- Fix: red tray icon [(#8203)](https://github.com/nwjs/nw.js/issues/8203)
+
+0.92.0 / 09-24-2024
+===================
+- Update Chromium to [129.0.6668.59](https://chromereleases.googleblog.com/2024/09/stable-channel-update-for-desktop_17.html)
+- Update Node.js to [v22.7.0](https://nodejs.org/en/blog/release/v22.7.0)
+
 0.91.0 / 08-21-2024
 ===================
 - Update Chromium to [128.0.6613.36](https://chromereleases.googleblog.com/2024/08/early-stable-update-for-desktop.html)
