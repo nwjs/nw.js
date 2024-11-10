@@ -21,7 +21,7 @@
 #ifndef CONTENT_NW_SRC_API_MENU_MENU_DELEGATE_H_
 #define CONTENT_NW_SRC_API_MENU_MENU_DELEGATE_H_
 
-#include "ui/base/models/simple_menu_model.h"
+#include "ui/menus/simple_menu_model.h"
 
 namespace nw {
 
