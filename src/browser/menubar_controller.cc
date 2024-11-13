@@ -5,6 +5,7 @@
 #include "base/stl_util.h"
 #include "content/nw/src/browser/menubar_view.h"
 #include "ui/base/models/menu_model.h"
+#include "ui/base/mojom/menu_source_type.mojom.h"
 #include "ui/events/platform/platform_event_source.h"
 #include "ui/views/controls/button/menu_button.h"
 #include "ui/views/controls/menu/menu_item_view.h"
@@ -107,7 +108,7 @@ void MenuBarController::RunMenuAt(views::View* view) {
                           menu_button->button_controller(),
                                        bounds,
                           views::MenuAnchorPosition::kTopLeft,
-                                       ui::MENU_SOURCE_NONE);
+                                       ui::mojom::MenuSourceType::kNone);
   {
     base::AutoReset<base::RepeatingClosure> reset_quit_closure(&message_loop_quit_,
                                                       base::RepeatingClosure());

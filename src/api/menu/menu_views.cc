@@ -35,6 +35,7 @@
 #include "ui/aura/client/screen_position_client.h"
 #include "ui/aura/window.h"
 #include "ui/aura/window_tree_host.h"
+#include "ui/base/mojom/menu_source_type.mojom.h"
 #include "ui/events/platform/platform_event_source.h"
 #include "ui/views/controls/menu/menu_runner.h"
 #include "ui/views/widget/widget.h"
@@ -135,7 +136,7 @@ void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
                        nullptr,
                        gfx::Rect(screen_point, gfx::Size()),
                           views::MenuAnchorPosition::kTopRight,
-                       ui::MENU_SOURCE_NONE);
+                       ui::mojom::MenuSourceType::kNone);
   // It is possible for the same MenuMessageLoopAura to start a nested
   // message-loop while it is already running a nested loop. So make
   // sure the quit-closure gets reset to the outer loop's quit-closure
