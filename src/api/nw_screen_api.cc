@@ -366,11 +366,10 @@ void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(int index) {
 
     DesktopMediaList::Source src = media_list_[0]->GetSource(index);
     SkBitmap bitmap = src.thumbnail.GetRepresentation(1).GetBitmap();
-    std::vector<unsigned char> data;
-    bool success = gfx::PNGCodec::EncodeBGRASkBitmap(bitmap, false, &data);
-    if (success){
-      std::string_view raw_str(reinterpret_cast<const char*>(&data[0]), data.size());
-      base64 = base::Base64Encode(raw_str);
+    std::optional<std::vector<uint8_t>> output;
+    output = gfx::PNGCodec::EncodeBGRASkBitmap(bitmap, false);
+    if (output){
+      base64 = base::Base64Encode(base::as_string_view(output.value()));
     }
 
     auto args(nwapi::nw__screen::OnSourceThumbnailChanged::Create(

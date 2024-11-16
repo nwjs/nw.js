@@ -380,25 +380,28 @@ void NwCurrentWindowInternalCapturePageInternalFunction::CopyFromBackingStoreCom
 
 void NwCurrentWindowInternalCapturePageInternalFunction::OnCaptureSuccess(const SkBitmap& bitmap) {
   std::vector<unsigned char> data;
-  bool encoded = false;
   std::string mime_type;
+  std::optional<std::vector<uint8_t>> output;
   switch (image_format_) {
     case api::extension_types::ImageFormat::kJpeg:
-      encoded = gfx::JPEGCodec::Encode(bitmap, image_quality_, &data);
+      output = gfx::JPEGCodec::Encode(bitmap, image_quality_);
+      if (output) {
+	data = std::move(output).value();
+      }
       mime_type = kMimeTypeJpeg;
       break;
     case api::extension_types::ImageFormat::kPng:
-      encoded =
-          gfx::PNGCodec::EncodeBGRASkBitmap(bitmap,
-                                            true,  // Discard transparency.
-                                            &data);
+      output = gfx::PNGCodec::EncodeBGRASkBitmap(bitmap, true);
+      if (output) {
+	data = std::move(output).value();
+      }
       mime_type = kMimeTypePng;
       break;
     default:
       NOTREACHED() << "Invalid image format.";
   }
 
-  if (!encoded) {
+  if (!output) {
     OnCaptureFailure(FAILURE_REASON_ENCODING_FAILED);
     return;
   }

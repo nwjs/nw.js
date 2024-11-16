@@ -119,15 +119,16 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
 
     bool ReadImage(ClipboardData& data) {
       DCHECK(data.type == Type::kPng || data.type == Type::kJpeg);
-      std::vector<uint8_t> encoded_image;
+      std::optional<std::vector<uint8_t>> encoded_image;
       std::vector<uint8_t> png = ReadPng(clipboard_);
 
       if (data.type == Type::kPng) {
         encoded_image = std::move(png);
       } else if (data.type == Type::kJpeg) {
         SkBitmap bitmap;
-        gfx::PNGCodec::Decode(png.data(), png.size(), &bitmap);
-        if (!gfx::JPEGCodec::Encode(bitmap, kQuality, &encoded_image)) {
+        bitmap = gfx::PNGCodec::Decode(png);
+	encoded_image = gfx::JPEGCodec::Encode(bitmap, kQuality);
+        if (!encoded_image) {
           LOG(INFO) << "NwClipboardGetSyncFunction::RunSync(" << nwapi::nw__clipboard::ToString(data.type) << ") failed when converting to JPEG";
           error_ = "Failed to encode as JPEG";
           return false;
@@ -135,7 +136,7 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
       }
 
       std::string encoded_image_base64;
-      std::string encoded_image_str(encoded_image.data(), encoded_image.data() + encoded_image.size());
+      std::string encoded_image_str(base::as_string_view(encoded_image.value()));
       encoded_image_base64 = base::Base64Encode(encoded_image_str);
 
       if (!(data.raw && *(data.raw))) {
@@ -236,21 +237,22 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
         return false;
       }
 
-      std::unique_ptr<SkBitmap> bitmap(new SkBitmap());
-      if (data.type == Type::kPng &&
-        !gfx::PNGCodec::Decode(reinterpret_cast<const unsigned char*>(decoded_str.c_str()), decoded_str.size(), bitmap.get())) {
-        error_ = "Failed to decode as PNG";
-        return false;
+      SkBitmap bitmap;
+      if (data.type == Type::kPng) {
+        bitmap = gfx::PNGCodec::Decode(base::as_byte_span(decoded_str));
+	if (bitmap.isNull()) {
+	  error_ = "Failed to decode as PNG";
+	  return false;
+	}
       } else if (data.type == Type::kJpeg) {
-        std::unique_ptr<SkBitmap> tmp_bitmap = gfx::JPEGCodec::Decode(reinterpret_cast<const unsigned char*>(decoded_str.c_str()), decoded_str.size());
-        if (tmp_bitmap == NULL) {
+        bitmap = gfx::JPEGCodec::Decode(base::as_byte_span(decoded_str));
+        if (bitmap.isNull()) {
           error_ = "Failed to decode as JPEG";
           return false;
         }
-        bitmap = std::move(tmp_bitmap);
       }
 
-      scw_->WriteImage(*bitmap);
+      scw_->WriteImage(bitmap);
 
       return true;
     }
