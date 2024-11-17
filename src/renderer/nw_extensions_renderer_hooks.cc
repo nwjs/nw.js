@@ -44,6 +44,8 @@
 #pragma clang diagnostic ignored "-Wimplicit-const-int-float-conversion"
 #include "third_party/blink/renderer/bindings/core/v8/v8_binding_for_core.h"
 #include "third_party/blink/renderer/platform/wtf/casting.h"
+
+#define INSIDE_BLINK 1
 #include "third_party/blink/renderer/core/frame/web_local_frame_impl.h"
 
 #include "third_party/node-nw/src/node_webkit.h"
