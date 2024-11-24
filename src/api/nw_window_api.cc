@@ -100,7 +100,7 @@ static void SetDeskopEnvironment() {
 namespace {
 
 printing::PrinterList EnumeratePrintersAsync() {
-  base::internal::AssertBlockingAllowed();
+  base::AssertBlockingAllowed();
 
   scoped_refptr<printing::PrintBackend> print_backend(
                                                       printing::PrintBackend::CreateInstance(g_browser_process->GetApplicationLocale()));
