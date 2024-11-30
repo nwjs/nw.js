@@ -21,7 +21,8 @@ public:
 
   // ui::GlobalShortcutListener::Observer implementation.
   void OnKeyPressed(const ui::Accelerator& uiAccelerator) override;
-
+  void ExecuteCommand(const ExtensionId& extension_id,
+                      const std::string& command_id) override;
 };
 
 namespace {
@@ -105,6 +106,11 @@ void NWShortcutObserver::OnKeyPressed (const ui::Accelerator& uiAccelerator) {
     events::HistogramValue::UNKNOWN,
     nwapi::nw__shortcut::OnKeyPressed::kEventName,
     std::move(args));
+}
+
+void NWShortcutObserver::ExecuteCommand(
+    const ExtensionId& extension_id,
+    const std::string& command_id) {
 }
 
 bool NwShortcutRegisterAcceleratorFunction::RunNWSync(base::Value::List* response, std::string* error) {
