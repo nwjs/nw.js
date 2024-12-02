@@ -21,8 +21,9 @@ class ObjectManagerFactory : public BrowserContextKeyedServiceFactory {
 
   static ObjectManagerFactory* GetInstance();
 
-  static KeyedService* BuildServiceInstanceForTesting(
-      content::BrowserContext* context);
+ protected:
+  std::unique_ptr<KeyedService> BuildServiceInstanceForBrowserContext(
+      content::BrowserContext* profile) const override;
 
  private:
   friend struct base::DefaultSingletonTraits<ObjectManagerFactory>;
@@ -30,8 +31,6 @@ class ObjectManagerFactory : public BrowserContextKeyedServiceFactory {
   ObjectManagerFactory();
   ~ObjectManagerFactory() override;
 
-  KeyedService* BuildServiceInstanceFor(
-      content::BrowserContext* context) const override;
   content::BrowserContext* GetBrowserContextToUse(
       content::BrowserContext* context) const override;
   bool ServiceIsCreatedWithBrowserContext() const override;

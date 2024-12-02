@@ -24,12 +24,6 @@ ObjectManagerFactory* ObjectManagerFactory::GetInstance() {
   return base::Singleton<ObjectManagerFactory>::get();
 }
 
-// static
-KeyedService* ObjectManagerFactory::BuildServiceInstanceForTesting(
-    content::BrowserContext* context) {
-  return GetInstance()->BuildServiceInstanceFor(context);
-}
-
 ObjectManagerFactory::ObjectManagerFactory()
     : BrowserContextKeyedServiceFactory(
         "ObjectManager",
@@ -39,9 +33,10 @@ ObjectManagerFactory::ObjectManagerFactory()
 
 ObjectManagerFactory::~ObjectManagerFactory() {}
 
-KeyedService* ObjectManagerFactory::BuildServiceInstanceFor(
+std::unique_ptr<KeyedService>
+ObjectManagerFactory::BuildServiceInstanceForBrowserContext(
     content::BrowserContext* context) const {
-  return new ObjectManager(context);
+  return std::make_unique<ObjectManager>(context);
 }
 
 content::BrowserContext* ObjectManagerFactory::GetBrowserContextToUse(
