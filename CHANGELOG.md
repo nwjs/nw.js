@@ -1,4 +1,8 @@
-0.93.0 / 08-21-2024
+0.94.0 / 12-03-2024
+===================
+- Update Chromium to [131.0.6778.70](https://chromereleases.googleblog.com/2024/11/stable-channel-update-for-desktop_12.html)
+
+0.93.0 / 10-22-2024
 ===================
 - Update Chromium to [130.0.6723.59](https://chromereleases.googleblog.com/2024/10/stable-channel-update-for-desktop_15.html)
 - Fix: red tray icon [(#8203)](https://github.com/nwjs/nw.js/issues/8203)
