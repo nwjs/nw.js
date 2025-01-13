@@ -54,8 +54,8 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': '4b69cde6725ac6d0deb876d6b29fbf5924f628e1',
-  'nw_v8_revision': '8ceff242328828876d593fcc7c7c151a98b37ae8',
+  'nw_src_revision': '5c64f6ca324c0fe7806d013b495ab410e10a33ae',
+  'nw_v8_revision': '89fc90354bd59a7541754bf3055818245b19b493',
   'nw_node_revision': '4c408d148c3d3664917c7a955706b7ef9592bfea',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
@@ -276,15 +276,15 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'src_internal_revision': '61c703021c4e70fa248bfd1b28068e533562cfd3',
+  'src_internal_revision': 'e158e6d051ad38b413adc1e95e94de1ae2ab733b',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '07f41bcb8ee32fd84ae845095d49055d5122e606',
+  'skia_revision': 'c17fe9bc158c29de3cdd655ac73d14f52c17810a',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '14e9f5013ad9e04c3c9d6b4a662ce58a2122b6a6',
+  'v8_revision': 'e51f1d7dbd113aa01ddfb30890c8a89b11fcd96c',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
@@ -1284,7 +1284,7 @@ deps = {
 
   'src/clank': {
     'url': Var('chrome_git') + '/clank/internal/apps.git' + '@' +
-    '912b3dc8e7fbeb090757d65a97a54f2cc9c9ee56',
+    'af8bfbeaee8aeade4278f866b6a26073f4896f05',
     'condition': 'checkout_android and checkout_src_internal',
   },
 
@@ -2602,7 +2602,7 @@ deps = {
     Var('chromium_git') + '/external/github.com/gpuweb/cts.git' + '@' + 'b9f32fd2943dd2b3d0033bf938c9d843f4b5c9a9',
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + 'f632fe9be9ce5cef5fcbfd42995271cb3fbb077d',
+    Var('webrtc_git') + '/src.git' + '@' + 'afaf497805cbb502da89991c2dcd783201efdd08',
 
   # Wuffs' canonical repository is at github.com/google/wuffs, but we use
   # Skia's mirror of Wuffs, the same as in upstream Skia's DEPS file.
@@ -4416,7 +4416,7 @@ deps = {
 
   'src/ios_internal':  {
       'url': Var('chrome_git') + '/chrome/ios_internal.git' + '@' +
-        '62a5056d616c58782a88dd4c1cd6d03646013f55',
+        '0a172a302797e91c866671c53cf2ebdd2e6e5f38',
       'condition': 'checkout_ios and checkout_src_internal',
   },
 
