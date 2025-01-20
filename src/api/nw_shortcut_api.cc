@@ -1,10 +1,10 @@
 #include "nw_shortcut_api.h"
 #include "base/lazy_instance.h"
 #include "base/values.h"
-#include "chrome/browser/extensions/global_shortcut_listener.h"
 #include "content/nw/src/api/nw_shortcut.h"
 #include "extensions/browser/extensions_browser_client.h"
 #include "ui/base/accelerators/accelerator.h"
+#include "ui/base/accelerators/global_accelerator_listener/global_accelerator_listener.h"
 #include "ui/events/event_constants.h"
 #include "ui/events/keycodes/dom/keycode_converter.h"
 #include "ui/events/keycodes/keyboard_codes.h"
@@ -15,7 +15,7 @@ using namespace content;
 
 namespace extensions {
 
-class NWShortcutObserver : public GlobalShortcutListener::Observer {
+class NWShortcutObserver : public ui::GlobalAcceleratorListener::Observer {
 public:
   static NWShortcutObserver* GetInstance();
 
@@ -120,7 +120,7 @@ bool NwShortcutRegisterAcceleratorFunction::RunNWSync(base::Value::List* respons
 
   std::unique_ptr<ui::Accelerator> uiAccelerator = dictionaryToUIAccelerator(&acceleratorDict);
 
-  if (!GlobalShortcutListener::GetInstance()->RegisterAccelerator(*uiAccelerator, NWShortcutObserver::GetInstance())) {
+  if (!ui::GlobalAcceleratorListener::GetInstance()->RegisterAccelerator(*uiAccelerator, NWShortcutObserver::GetInstance())) {
     response->Append(false);
     return true;
   }
@@ -135,7 +135,7 @@ bool NwShortcutUnregisterAcceleratorFunction::RunNWSync(base::Value::List* respo
   const base::Value::Dict& acceleratorDict = args()[0].GetDict();
   std::unique_ptr<ui::Accelerator> uiAccelerator = dictionaryToUIAccelerator(&acceleratorDict);
 
-  GlobalShortcutListener::GetInstance()->UnregisterAccelerator(*uiAccelerator, NWShortcutObserver::GetInstance());
+  ui::GlobalAcceleratorListener::GetInstance()->UnregisterAccelerator(*uiAccelerator, NWShortcutObserver::GetInstance());
   response->Append(true);
   return true;
 }
