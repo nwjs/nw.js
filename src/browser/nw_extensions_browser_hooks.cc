@@ -204,7 +204,7 @@ bool RphGuestFilterURLHook(RenderProcessHost* rph, const GURL* url)  {
   extensions::WebViewRendererState* renderer_state =
       extensions::WebViewRendererState::GetInstance();
   std::string owner_extension;
-  int process_id = rph->GetID();
+  int process_id = rph->GetDeprecatedID();
   if (!renderer_state->GetOwnerInfo(process_id, nullptr, &owner_extension))
     return false;
   const Extension* extension =

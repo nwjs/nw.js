@@ -430,7 +430,7 @@ void NwDesktopCaptureMonitor::OnSourceThumbnailChanged(int index) {
       // MediaCaptureDevicesDispatcher::ProcessDesktopCaptureAccessRequest().
       // http://crbug.com/304341
       content::RenderFrameHost* const main_frame = web_contents->GetPrimaryMainFrame();
-      result = registry->RegisterStream(main_frame->GetProcess()->GetID(),
+      result = registry->RegisterStream(main_frame->GetProcess()->GetDeprecatedID(),
                                         main_frame->GetRoutingID(),
                                         url::Origin::Create(web_contents->GetURL().DeprecatedGetOriginAsURL()),
                                         source,

@@ -160,7 +160,7 @@ void ShowDevtools(bool show, content::WebContents* web_contents, content::WebCon
   content::RenderFrameHost* rfh = web_contents->GetPrimaryMainFrame();
   if (container) {
     scoped_refptr<DevToolsAgentHost> agent_host(DevToolsAgentHost::GetOrCreateFor(web_contents));
-    g_cdt_process_id = container->GetPrimaryMainFrame()->GetProcess()->GetID();
+    g_cdt_process_id = container->GetPrimaryMainFrame()->GetProcess()->GetDeprecatedID();
     content::ChildProcessSecurityPolicy::GetInstance()->GrantAll(g_cdt_process_id);
 
     DevToolsWindow* window = DevToolsWindow::FindDevToolsWindow(agent_host.get());
