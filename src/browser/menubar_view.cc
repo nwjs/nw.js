@@ -42,7 +42,7 @@ class MenuBarButton : public views::MenuButton {
   MenuBarButton& operator=(const MenuBarButton&) = delete;
   ~MenuBarButton() override;
 
-  std::u16string GetTooltipText(const gfx::Point& p) const override {
+  std::u16string GetRenderedTooltipText(const gfx::Point& p) const override {
     if (label()->GetPreferredSize().width() > label()->size().width())
       return GetText();
     return std::u16string();
