@@ -1,3 +1,8 @@
+0.96.0 / 02-18-2025
+===================
+- Update Chromium to 133.0.6943.60
+- Fix: taskbar icon points to non-existent "chrome_proxy.exe" [(#8227)](https://github.com/nwjs/nw.js/issues/8227)
+
 0.95.0 / 01-24-2025
 ===================
 - Update Chromium to 132.0.6834.84
