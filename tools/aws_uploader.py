@@ -87,7 +87,7 @@ def aws_upload(upload_path, file_list):
     sys.stdout.flush()
     bucket = conn.get_bucket(bucket_name)
     print 'Uploading to: ' + upload_path
-    win_non_sdk = re.compile('nw\d+_win\d+')
+    win_non_sdk = re.compile('nw[a-zA-Z0-9]+_win\d+')
     for f in file_list:
         print 'Uploading "' + f + '" ...'
         sys.stdout.flush()
