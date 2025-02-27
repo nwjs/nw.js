@@ -1,30 +1,30 @@
 diff --git a/front_end/entrypoints/main/MainImpl.ts b/front_end/entrypoints/main/MainImpl.ts
-index 8505dc782a..bcc94e83f8 100644
+index 1122bc10cd..66646005ef 100644
 --- front_end/entrypoints/main/MainImpl.ts
 +++ front_end/entrypoints/main/MainImpl.ts
-@@ -161,6 +161,8 @@ export class MainImpl {
+@@ -184,6 +184,8 @@ export class MainImpl {
    }
  
    #initializeGlobalsForLayoutTests(): void {
-+    // @ts-ignore layout test global
++    // @ts-ignore layout test global                                                                                       
 +    self.UI = self.UI || {};
-     // @ts-ignore e2e test global
+     // @ts-expect-error e2e test global
      self.Extensions ||= {};
-     // @ts-ignore e2e test global
-@@ -489,6 +491,8 @@ export class MainImpl {
+     // @ts-expect-error e2e test global
+@@ -452,6 +454,8 @@ export class MainImpl {
      const canDock = Boolean(Root.Runtime.Runtime.queryParam('can_dock'));
      UI.ZoomManager.ZoomManager.instance(
          {forceNew: true, win: window, frontendHost: Host.InspectorFrontendHost.InspectorFrontendHostInstance});
-+    // @ts-ignore layout test global
-+    self.UI.inspectorView = UI.InspectorView.InspectorView.instance();
++    // @ts-ignore layout test global                                                                                       
++    self.UI.inspectorView = UI.InspectorView.InspectorView.instance(); 
      UI.ContextMenu.ContextMenu.initialize();
      UI.ContextMenu.ContextMenu.installHandler(document);
  
 diff --git a/front_end/models/extensions/ExtensionServer.ts b/front_end/models/extensions/ExtensionServer.ts
-index 47c252dbdc..4ce825e1ed 100644
+index fb9a2326eb..a96f0b2f79 100644
 --- front_end/models/extensions/ExtensionServer.ts
 +++ front_end/models/extensions/ExtensionServer.ts
-@@ -1321,6 +1321,7 @@ export class ExtensionServer extends Common.ObjectWrapper.ObjectWrapper<EventTyp
+@@ -1454,6 +1454,7 @@ export class ExtensionServer extends Common.ObjectWrapper.ObjectWrapper<EventTyp
    }
  
    static canInspectURL(url: Platform.DevToolsPath.UrlString): boolean {
