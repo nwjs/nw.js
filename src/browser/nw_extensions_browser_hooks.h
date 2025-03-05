@@ -55,9 +55,9 @@ void SetAppIcon(gfx::Image &icon);
 
 #if defined(OS_WIN)
 // ref in content/nw/src/browser/nw_extensions_browser_hooks.cc
-void SetAppHIcon(base::win::ScopedHICON icon);
+void SetAppHIcon(base::win::ScopedGDIObject<HICON> icon);
 // ref in content/nw/src/browser/nw_extensions_browser_hooks.cc
-void SetWindowHIcon(base::win::ScopedHICON icon);
+void SetWindowHIcon(base::win::ScopedGDIObject<HICON> icon);
 #endif
 
 }

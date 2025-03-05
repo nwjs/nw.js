@@ -88,8 +88,8 @@ bool g_reloading_app = false;
 net::CertificateList trust_anchors;
 
 #if defined(OS_WIN)
-base::win::ScopedHICON g_window_hicon;
-base::win::ScopedHICON g_app_hicon;
+base::win::ScopedGDIObject<HICON> g_window_hicon;
+base::win::ScopedGDIObject<HICON> g_app_hicon;
 #endif
 
 }
@@ -244,11 +244,11 @@ HICON GetWindowHIcon() {
   return g_window_hicon.get();
 }
 
-void SetAppHIcon(base::win::ScopedHICON icon) {
+void SetAppHIcon(base::win::ScopedGDIObject<HICON> icon) {
   g_app_hicon = std::move(icon);
 }
 
-void SetWindowHIcon(base::win::ScopedHICON icon) {
+void SetWindowHIcon(base::win::ScopedGDIObject<HICON> icon) {
   g_window_hicon = std::move(icon);
 }
 

@@ -204,8 +204,8 @@ bool g_skip_render_widget_hidden = false;
 gfx::Image g_app_icon;
 
 #if defined(OS_WIN)
-base::win::ScopedHICON g_window_hicon;
-base::win::ScopedHICON g_app_hicon;
+base::win::ScopedGDIObject<HICON> g_window_hicon;
+base::win::ScopedGDIObject<HICON> g_app_hicon;
 #endif
 
 static inline v8::Local<v8::String> v8_str(const char* x) {

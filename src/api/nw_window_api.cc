@@ -570,7 +570,7 @@ bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::Value::List* respon
 }
 
 #if defined(OS_WIN)
-static base::win::ScopedHICON createBadgeIcon(const HWND hWnd, const TCHAR *value, const int sizeX, const int sizeY) {
+static base::win::ScopedGDIObject<HICON> createBadgeIcon(const HWND hWnd, const TCHAR *value, const int sizeX, const int sizeY) {
   // canvas for the overlay icon
   gfx::Canvas canvas(gfx::Size(sizeX, sizeY), 1, false);
 
@@ -614,7 +614,7 @@ NwCurrentWindowInternalSetBadgeLabelInternalFunction::Run() {
     return RespondNow(Error(error_));
   }
 
-  base::win::ScopedHICON icon;
+  base::win::ScopedGDIObject<HICON> icon;
   HWND hWnd;
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
     int id = args()[1].GetInt();

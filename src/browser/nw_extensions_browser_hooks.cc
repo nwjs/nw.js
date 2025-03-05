@@ -194,8 +194,8 @@ base::Value MergeManifest(const std::string& in_manifest) {
 void SetAppIcon(gfx::Image &app_icon);
 
 #if defined(OS_WIN)
-void SetAppHIcon(base::win::ScopedHICON icon);
-void SetWindowHIcon(base::win::ScopedHICON icon);
+void SetAppHIcon(base::win::ScopedGDIObject<HICON> icon);
+void SetWindowHIcon(base::win::ScopedGDIObject<HICON> icon);
 #endif // OS_WIN
 
 // browser
