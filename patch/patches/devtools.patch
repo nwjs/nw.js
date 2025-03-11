@@ -6,7 +6,7 @@ index 1122bc10cd..66646005ef 100644
    }
  
    #initializeGlobalsForLayoutTests(): void {
-+    // @ts-ignore layout test global                                                                                       
++    // @ts-ignore layout test global
 +    self.UI = self.UI || {};
      // @ts-expect-error e2e test global
      self.Extensions ||= {};
@@ -15,8 +15,8 @@ index 1122bc10cd..66646005ef 100644
      const canDock = Boolean(Root.Runtime.Runtime.queryParam('can_dock'));
      UI.ZoomManager.ZoomManager.instance(
          {forceNew: true, win: window, frontendHost: Host.InspectorFrontendHost.InspectorFrontendHostInstance});
-+    // @ts-ignore layout test global                                                                                       
-+    self.UI.inspectorView = UI.InspectorView.InspectorView.instance(); 
++    // @ts-ignore layout test global
++    self.UI.inspectorView = UI.InspectorView.InspectorView.instance();
      UI.ContextMenu.ContextMenu.initialize();
      UI.ContextMenu.ContextMenu.installHandler(document);
  
