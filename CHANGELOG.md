@@ -1,3 +1,8 @@
+0.97.0 / 03-11-2025
+===================
+- Update Chromium to 134.0.6998.45
+- Fix: fetch() in Node context [(#8255)](https://github.com/nwjs/nw.js/issues/8255)
+
 0.96.0 / 02-18-2025
 ===================
 - Update Chromium to 133.0.6943.60
