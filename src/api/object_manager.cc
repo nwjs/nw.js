@@ -232,7 +232,7 @@ void ObjectManager::SendEvent(Base* object,
   arguments.Append(base::Value(object->id()));
   arguments.Append(args.Clone());
   std::unique_ptr<Event> event(new Event(extensions::events::UNKNOWN, "NWObject" + event_name, std::move(arguments), browser_context_));
-  event->user_gesture = EventRouter::USER_GESTURE_ENABLED;
+  event->user_gesture = EventRouter::UserGestureState::kEnabled;
   event_router->DispatchEventToExtension(object->extension_id_, std::move(event));
 }
 }  // namespace nw
