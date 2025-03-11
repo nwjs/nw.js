@@ -5,7 +5,7 @@
 #include "base/values.h"
 
 // content
-#include "content/public/common/user_agent.h"
+#include "components/embedder_support/user_agent_utils.h"
 
 // content/nw
 #include "content/nw/src/common/shell_switches.h"
@@ -53,8 +53,8 @@ void SetUserAgentOverride(const std::string& agent,
   base::ReplaceSubstringsAfterOffset(&g_user_agent, 0, "%name", name);
   base::ReplaceSubstringsAfterOffset(&g_user_agent, 0, "%ver", version);
   base::ReplaceSubstringsAfterOffset(&g_user_agent, 0, "%nwver", NW_VERSION_STRING);
-  base::ReplaceSubstringsAfterOffset(&g_user_agent, 0, "%webkit_ver", content::GetWebKitVersion());
-  base::ReplaceSubstringsAfterOffset(&g_user_agent, 0, "%osinfo", content::BuildOSInfo());
+  base::ReplaceSubstringsAfterOffset(&g_user_agent, 0, "%webkit_ver", embedder_support::GetWebKitVersion());
+  base::ReplaceSubstringsAfterOffset(&g_user_agent, 0, "%osinfo", embedder_support::BuildOSInfo());
   base::ReplaceSubstringsAfterOffset(&g_user_agent, 0, "%chromium_ver", CHROME_VERSION_STRING);
 }
 
