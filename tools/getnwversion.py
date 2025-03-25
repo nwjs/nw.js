@@ -17,7 +17,7 @@ for line in f:
 nw_version = '%(major)s.%(minor)s.%(patch)s'% locals()  
 
 if __name__ == '__main__':
-  print '%(major)s.%(minor)s.%(patch)s'% locals()
+  print(nw_version)
 
 
 
