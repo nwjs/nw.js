@@ -61,7 +61,7 @@ if getnwisrelease.release == 0:
 # it's for S3, so always use '/' here
 #upload_path = ''.join(['/' + date,
 #                       '/' + builder_name + '-build-' + build_number + '-'  + got_revision])
-upload_path = '/live-build/' + dlpath + '/v' + nw_ver;
+upload_path = '/live-build/' + dlpath;
 
 file_list = os.listdir(dist_dir)
 if len(file_list) == 0:
