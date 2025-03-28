@@ -1,3 +1,9 @@
+0.98.0 / 03-28-2025
+===================
+- Update Chromium to 135.0.7049.41
+- Fix: devtools elements tab [(#8254)](https://github.com/nwjs/nw.js/issues/8254)
+- Fix: MenuItem/Tray click functions [(#8240)](https://github.com/nwjs/nw.js/issues/8240)
+
 0.97.0 / 03-11-2025
 ===================
 - Update Chromium to 134.0.6998.45
