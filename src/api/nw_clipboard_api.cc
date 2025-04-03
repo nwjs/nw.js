@@ -333,13 +333,13 @@ bool NwClipboardReadAvailableTypesFunction::RunNWSync(base::Value::List* respons
   std::vector<std::u16string> types;
   clipboard->ReadAvailableTypes(ui::ClipboardBuffer::kCopyPaste, nullptr, &types);
   for(std::vector<std::u16string>::iterator it = types.begin(); it != types.end(); it++) {
-    if (base::EqualsASCII(*it, ui::kMimeTypeText)) {
+    if (base::EqualsASCII(*it, ui::kMimeTypePlainText)) {
       response->Append(ToString(Type::kText));
-    } else if (base::EqualsASCII(*it, ui::kMimeTypeHTML)) {
+    } else if (base::EqualsASCII(*it, ui::kMimeTypeHtml)) {
       response->Append(ToString(Type::kHtml));
-    } else if (base::EqualsASCII(*it, ui::kMimeTypeRTF)) {
+    } else if (base::EqualsASCII(*it, ui::kMimeTypeRtf)) {
       response->Append(ToString(Type::kRtf));
-    } else if (base::EqualsASCII(*it, ui::kMimeTypePNG)) {
+    } else if (base::EqualsASCII(*it, ui::kMimeTypePng)) {
       response->Append(ToString(Type::kPng));
       response->Append(ToString(Type::kJpeg));
     }
