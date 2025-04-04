@@ -1,3 +1,10 @@
+0.98.1 / 04-04-2025
+===================
+- update to Chromium 135.0.7049.42
+- Fix commit id generation
+- [tools] update dump_syms.exe to 2.3.4 [(#7892)](https://github.com/nwjs/nw.js/issues/7892)
+- node: update to v23.10.0
+
 0.98.0 / 03-28-2025
 ===================
 - Update Chromium to 135.0.7049.41
