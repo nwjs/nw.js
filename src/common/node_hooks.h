@@ -30,6 +30,8 @@ V(GetNodeEnvFn, "g_get_node_env", g_get_node_env_fn)
 V(GetCurrentEnvironmentFn, "g_get_current_env", g_get_current_env_fn)
 V(EmitExitFn, "g_emit_exit", g_emit_exit_fn)
 V(RunAtExitFn, "g_run_at_exit", g_run_at_exit_fn)
+V(HostImportModuleFn, "g_host_import_module", g_host_import_module_fn)
+V(HostGetImportMetaFn, "g_host_get_import_meta", g_host_get_import_meta_fn)
 #undef V
 
 #ifdef NODE_HOOK_INIT

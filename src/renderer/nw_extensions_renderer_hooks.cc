@@ -263,9 +263,9 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
         dom_context = v8::Context::New(isolate_c);
         void* data = context->v8_context()->GetAlignedPointerFromEmbedderData(2); //v8ContextPerContextDataIndex
         dom_context->SetAlignedPointerInEmbedderData(2, data);
-        dom_context->SetAlignedPointerInEmbedderData(50, (void*)0x08110800);
       } else
         dom_context = context->v8_context();
+      dom_context->SetAlignedPointerInEmbedderData(50, (void*)0x08110800);
       v8::MicrotasksScope microtasks(isolate_c, dom_context->GetMicrotaskQueue(),
 				     v8::MicrotasksScope::kDoNotRunMicrotasks);
       if (!mixed_context)
