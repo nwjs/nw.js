@@ -11,12 +11,14 @@
 namespace extensions {
 class AppWindowRegistry;
 class ExtensionService;
+class ExtensionRegistrar;
 
 class NwAppQuitFunction : public ExtensionFunction {
  public:
   NwAppQuitFunction();
 
-  static void DoJob(extensions::ExtensionService* service, std::string extension_id);
+  static void DoJob(extensions::ExtensionRegistrar* registrar,
+                    std::string extension_id);
  protected:
   ~NwAppQuitFunction() override;
 

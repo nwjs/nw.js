@@ -54,7 +54,8 @@ NwAppQuitFunction::NwAppQuitFunction() {
 NwAppQuitFunction::~NwAppQuitFunction() {
 }
 
-void NwAppQuitFunction::DoJob(ExtensionService* service, std::string extension_id) {
+void NwAppQuitFunction::DoJob(extensions::ExtensionRegistrar* registrar,
+                              std::string extension_id) {
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
     chrome::CloseAllBrowsersAndQuit(true);
     // trigger BrowserProcessImpl::Unpin()
@@ -62,22 +63,21 @@ void NwAppQuitFunction::DoJob(ExtensionService* service, std::string extension_i
     KeepAliveRegistry::GetInstance()->Unregister(KeepAliveOrigin::APP_CONTROLLER, KeepAliveRestartOption::ENABLED);
     return;
   }
+
   base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(
-                                                      FROM_HERE,
-                                                      base::BindOnce(&ExtensionService::TerminateExtension,
-                                                                   service->AsExtensionServiceWeakPtr(),
-                                                                   extension_id));
+      FROM_HERE,
+      base::BindOnce(&ExtensionRegistrar::TerminateExtension,
+                     registrar->GetWeakPtr(), extension_id));
 }
 
 ExtensionFunction::ResponseAction
 NwAppQuitFunction::Run() {
-  ExtensionService* service =
-    ExtensionSystem::Get(browser_context())->extension_service();
+  extensions::ExtensionRegistrar* registrar =
+      extensions::ExtensionRegistrar::Get(browser_context());
   base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(
         FROM_HERE,
         base::BindOnce(&NwAppQuitFunction::DoJob,
-                   service,
-                   extension_id()));
+                   registrar, extension_id()));
   return RespondNow(NoArguments());
 }
 
