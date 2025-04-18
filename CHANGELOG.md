@@ -1,3 +1,9 @@
+0.98.2 / 04-17-2025
+===================
+- Add feature flag NWESM
+- update to Chromium 135.0.7049.96
+- Support Node.js module resolver in Node context [(#7639)](https://github.com/nwjs/nw.js/issues/7639)
+
 0.98.1 / 04-04-2025
 ===================
 - update to Chromium 135.0.7049.42
