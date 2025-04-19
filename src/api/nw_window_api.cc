@@ -933,10 +933,10 @@ NwCurrentWindowInternalSetShadowInternalFunction::Run() {
     int id = args()[1].GetInt();
     Browser* browser = getBrowser(this, id);
     if (browser)
-      SetShadowOnWindow(browser->window()->GetNativeWindow().GetNativeNSWindow(), shadow);
+      SetShadowOnWindow(browser->window()->GetNativeWindow(), shadow);
   } else {
     AppWindow* window = getAppWindow(this);
-    SetShadowOnWindow(window->GetNativeWindow().GetNativeNSWindow(), shadow);
+    SetShadowOnWindow(window->GetNativeWindow(), shadow);
   }
 #endif
   return RespondNow(NoArguments());

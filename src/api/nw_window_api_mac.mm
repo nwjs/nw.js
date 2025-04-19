@@ -47,8 +47,8 @@
 
 namespace extensions {
 
-void NwCurrentWindowInternalSetShadowInternalFunction::SetShadowOnWindow(void *window, bool shadow) {
-  NSWindow* nswin = (NSWindow*)window;
+void NwCurrentWindowInternalSetShadowInternalFunction::SetShadowOnWindow(gfx::NativeWindow window, bool shadow) {
+  NSWindow* nswin = (NSWindow*)window.GetNativeNSWindow();
   nswin.hasShadow = shadow;
 }
 
