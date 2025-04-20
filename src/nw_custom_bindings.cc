@@ -15,6 +15,7 @@
 #include <string>
 
 #include "base/files/file_util.h"
+#include "base/strings/utf_string_conversions.h"
 #include "extensions/renderer/script_context.h"
 #include "extensions/renderer/extension_frame_helper.h"
 #include "v8/include/v8.h"
