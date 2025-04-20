@@ -1,5 +1,7 @@
 import("//build/config/features.gni")
 import("//build/toolchain/toolchain.gni")
+import("//build/buildflag_header.gni")
+
 if (is_mac) {
   import("//build/util/branding.gni")
   #chrome_framework_name = chrome_product_full_name + " Framework"
@@ -189,6 +191,7 @@ static_library("nw_browser") {
 static_library("nw_renderer") {
   deps = [
     "//base",
+    "//build:nwjs_buildflags",
     "//extensions/common",
     "//extensions/renderer",
     "//third_party/blink/public:blink",

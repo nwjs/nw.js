@@ -3,6 +3,8 @@
 // nw
 #include "content/nw/src/nw_version.h"
 
+#include "build/nwjs_buildflags.h"
+
 // base
 #include "base/command_line.h"
 #include "base/files/file_util.h"
@@ -275,7 +277,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
 
       g_start_nw_instance_fn(argc, argv, dom_context, (void*)base::i18n::GetRawIcuMemory());
       {
-#if defined(NWJS_SDK)
+#if BUILDFLAG(NWJS_SDK)
         std::string flavor = "sdk";
 #else
         std::string flavor = "normal";
