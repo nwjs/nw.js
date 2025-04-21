@@ -441,3 +441,18 @@ if (!is_component_build) {
     }
   }
 }
+
+action("nwmac_cleanup") {
+  script = "//content/nw/tools/cleanup.py"
+
+  _stamp_file = "$root_gen_dir/run_$target_name.stamp"
+
+  outputs = [ _stamp_file ]
+
+  args = [
+      "--root-out-dir",
+      rebase_path("$root_out_dir", root_build_dir),
+      "--stamp",
+      rebase_path(_stamp_file, root_build_dir),
+  ]
+}
