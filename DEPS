@@ -56,8 +56,8 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': '8a9b8f1ca1304edad9f810c7d6993463aa94771a',
-  'nw_v8_revision': '57ccdd354515682dc53b0c6655c520a348f37b11',
+  'nw_src_revision': 'cb54409803f11dfb69056a01eeb3d3daf6eaeb7a',
+  'nw_v8_revision': '8284e4ee099068ccfbbd3663f8d814c12ed7bc77',
   'nw_node_revision': 'b65ec453f4e7e050fac2adc1ad37129b4787368c',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
@@ -303,7 +303,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '2bc178b8a3fca51fcc808abd4bbd985f0313d8bc',
+  'v8_revision': 'b6178615ecae6d84b347cb7a1812cad9afca51f2',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
@@ -391,7 +391,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling devtools-frontend
   # and whatever else without interference from each other.
-  'devtools_frontend_revision': '0a3f7c55b085381061978036bd0bcbd51f1a13b3',
+  'devtools_frontend_revision': 'e793e21a020b53a66ae13ef8673f80b8e8a73746',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libprotobuf-mutator
   # and whatever else without interference from each other.
@@ -1499,7 +1499,7 @@ deps = {
 
   'src/clank': {
     'url': Var('chrome_git') + '/clank/internal/apps.git' + '@' +
-    'f7ad6bd12f6adf03b52fc2d16c212e3ffa15e82b',
+    'aafe8e014f1a3d4389f79fe7768a2d8046e579c8',
     'condition': 'checkout_android and checkout_src_internal',
   },
 
@@ -3053,7 +3053,7 @@ deps = {
     'packages': [
       {
         'package': 'chromeos_internal/apps/media_app/app',
-        'version': '8ZklOGzct2KLpT5HkPyZy5cmtiXx-boqZN_zyo6j5S0C',
+        'version': '9opcEKr8rcLp7EAv4HOgMiM7iGtcCJaXOE5MSIqXBhMC',
       },
     ],
     'condition': 'checkout_chromeos and checkout_src_internal',
