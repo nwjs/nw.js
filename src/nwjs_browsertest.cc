@@ -857,6 +857,7 @@ void CountFrames(int* frame_count,
 void DumpAxTree(std::string* dump_output, content::RenderFrameHost* frame) {
   content::RenderFrameHostImpl* f = static_cast<content::RenderFrameHostImpl*>(frame);
   ui::BrowserAccessibilityManager* manager = f->GetOrCreateBrowserAccessibilityManager();
+  LOG(WARNING) << "--> HERE: " << manager;
   ui::AXTreeUpdate ax_tree = manager->SnapshotAXTreeForTesting();
   std::string ax_tree_dump = DumpPdfAccessibilityTree(ax_tree);
   *dump_output += ax_tree_dump;
@@ -866,6 +867,7 @@ void DumpAxTree(std::string* dump_output, content::RenderFrameHost* frame) {
 
 IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, SilentPrintChangeFooter) {
   //content::BrowserAccessibilityState::GetInstance()->EnableProcessAccessibility();
+  content::BrowserAccessibilityState::GetInstance()->SetActivationFromPlatformEnabled(true);
   content::BrowserAccessibilityState::GetInstance()->AddAccessibilityModeFlags(ui::kAXModeComplete);
   base::ScopedAllowBlockingForTesting allow_blocking;
   base::FilePath test_dir = test_data_dir_.Append(FILE_PATH_LITERAL("platform_apps")).Append(FILE_PATH_LITERAL("silent_print"));
@@ -912,6 +914,7 @@ IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, SilentPrintChangeFooter) {
 }
 
 IN_PROC_BROWSER_TEST_F(NWJSAppTest, PrintChangeFooter) {
+  content::BrowserAccessibilityState::GetInstance()->SetActivationFromPlatformEnabled(true);
   content::BrowserAccessibilityState::GetInstance()->AddAccessibilityModeFlags(ui::kAXModeComplete);
   LoadAndLaunchPlatformApp("print_test", "Launched");
   content::WebContents* web_contents = GetFirstAppWindowWebContents();
