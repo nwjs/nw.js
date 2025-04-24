@@ -1,3 +1,8 @@
+0.99.0 / 04-24-2025
+===================
+- update to Chromium 136.0.7103.48
+- Fix: Window doesn't close with close event handler and window.close() [(#7808)](https://github.com/nwjs/nw.js/issues/7808)
+
 0.98.2 / 04-17-2025
 ===================
 - Add feature flag NWESM
