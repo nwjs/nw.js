@@ -44,6 +44,12 @@ Enable the Node.js integration in Web Workers. This will help you offload CPU ho
 
 Please note that binary modules of Node.js need to be thread-safe to be used in this way. We've made modifications to Node.js core to make sure core APIs are thread-safe, while we can not promise this with 3rd party binary modules. Pure JS modules are thread safe as long as they depends on thread-safe modules only. And there shouldn't be any side effect when the feature is not turned on.
 
+## `--enable-features=NWESM`
+
+Node.js and Chromium uses different ECMAScript module resolvers. To support loading ECMAScript modules in Node, by adding the switch, those modules can be loaded in Node context via 'import'. You could add your JS script to `node-main` to use this feature since 0.98.2.
+
+Besides that, ES modules from Node can also be loaded directly in DOM contexts just like calling `require()`. The Node.js module resolver and the one from Browser are chained together to achieve this. To turn on this feature, use `--enable-features=NWChainImportNode` (under which the Node resolver is called first) or `--enable-features=NWChainImportDom`. These 2 flags should be used together with NWESM e.g. `--enable-features=NWESM,NWChainImportNode`. 
+
 ## `--disable-raf-throttling`
 
 When it's used, requestAnimationFrame() callback will continue to fire when window is minimized or hidden. It's pretty useful for game developer. When the argument is not used, it behaves in the same way as Chrome browser and has no side effects.
