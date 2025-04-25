@@ -89,8 +89,7 @@ static void SetDeskopEnvironment() {
   //if (env->GetVar("CHROME_DESKTOP", &name) && !name.empty())
   //  return;
 
-  if (!env->GetVar("NW_DESKTOP", &name) || name.empty())
-    name = "nw.desktop";
+  name = env->GetVar("NW_DESKTOP").value_or("nw.desktop");
 
   env->SetVar("CHROME_DESKTOP", name);
 }
