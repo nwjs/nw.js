@@ -2,6 +2,6 @@
     "name": "test-tar",
     "main": "index.html",
     "dependencies": {
-        "tar": "^7.0.1"
+        "tar": "^7.1.0"
     }
 }
