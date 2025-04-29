@@ -179,11 +179,14 @@ def wait_for_element_id_content(driver, elem_id, content, timeout=10):
 
 # wait for window handles
 def wait_window_handles(driver, until, timeout=60):
+    n = 0
     if not hasattr(until, '__call__'):
         cond = lambda handles: len(handles) == until
+        n = until
     else:
         cond = until
     while not cond(driver.window_handles):
+        print('waiting for ' + n + ' handles: '  + driver.window_handles)
         time.sleep(1)
         timeout = timeout - 1
         if timeout == 0:

@@ -18,7 +18,7 @@ driver.implicitly_wait(2)
 try:
     print((driver.current_url))
     print('wait for devtools open')
-    wait_window_handles(driver,2)
+    wait_window_handles(driver, 3)
     handles = driver.window_handles
     print(handles)
     driver.switch_to.window(handles[0])
