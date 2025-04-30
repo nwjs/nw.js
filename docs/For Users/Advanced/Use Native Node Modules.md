@@ -18,6 +18,9 @@ If you are using LTS release, native modules installed by `npm` can be supported
 
 ### For non-LTS Releases
 
+!!! warning "Use Node.js v14.21.3"
+    The following steps were tested with Node.js v14.21.3.
+
 If you are using non-LTS release, `nw-gyp` is required to be pre-installed globally to build modules due to [ABI differences in V8](https://github.com/nwjs/nw.js/issues/5025). These instructions below works for LTS releases as well.
 
 To install native modules for NW.js, run following commands in your terminal:
