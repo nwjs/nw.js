@@ -186,7 +186,7 @@ def wait_window_handles(driver, until, timeout=60):
     else:
         cond = until
     while not cond(driver.window_handles):
-        print('waiting for ' + n + ' handles: '  + driver.window_handles)
+        print(f"waiting for {n} handles: {driver.window_handles}")
         time.sleep(1)
         timeout = timeout - 1
         if timeout == 0:
