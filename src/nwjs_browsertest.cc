@@ -13,6 +13,7 @@
 #include "chrome/browser/media/webrtc/fake_desktop_media_picker_factory.h"
 
 #include "content/public/browser/browser_task_traits.h"
+#include "content/public/browser/scoped_accessibility_mode.h"
 #include "content/public/test/browser_test_utils.h"
 #include "content/public/test/browser_test.h"
 #include "base/files/file_util.h"
@@ -868,7 +869,8 @@ void DumpAxTree(std::string* dump_output, content::RenderFrameHost* frame) {
 IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, SilentPrintChangeFooter) {
   //content::BrowserAccessibilityState::GetInstance()->EnableProcessAccessibility();
   content::BrowserAccessibilityState::GetInstance()->SetActivationFromPlatformEnabled(true);
-  content::BrowserAccessibilityState::GetInstance()->AddAccessibilityModeFlags(ui::kAXModeComplete);
+  std::unique_ptr<content::ScopedAccessibilityMode> _basic_accessibility_mode =
+      content::BrowserAccessibilityState::GetInstance()->CreateScopedModeForProcess(ui::kAXModeComplete);
   base::ScopedAllowBlockingForTesting allow_blocking;
   base::FilePath test_dir = test_data_dir_.Append(FILE_PATH_LITERAL("platform_apps")).Append(FILE_PATH_LITERAL("silent_print"));
   base::FilePath output_pdf = test_data_dir_.Append(FILE_PATH_LITERAL("output.pdf"));
@@ -932,7 +934,8 @@ IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, SilentPrintChangeFooter) {
 
 IN_PROC_BROWSER_TEST_F(NWJSAppTest, PrintChangeFooter) {
   content::BrowserAccessibilityState::GetInstance()->SetActivationFromPlatformEnabled(true);
-  content::BrowserAccessibilityState::GetInstance()->AddAccessibilityModeFlags(ui::kAXModeComplete);
+  std::unique_ptr<content::ScopedAccessibilityMode> _basic_accessibility_mode =
+      content::BrowserAccessibilityState::GetInstance()->CreateScopedModeForProcess(ui::kAXModeComplete);
   LoadAndLaunchPlatformApp("print_test", "Launched");
   content::WebContents* web_contents = GetFirstAppWindowWebContents();
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
