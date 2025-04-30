@@ -1,4 +1,5 @@
 {
   "name": "issue5010-bluetooth-permission",
+  "chromium-args": "--enable-features=WebBluetooth",
   "main": "index.html"
 }

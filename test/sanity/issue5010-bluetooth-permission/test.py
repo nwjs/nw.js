@@ -3,6 +3,9 @@ import os
 import sys
 import platform
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from nw_util import *
+
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 chrome_options = Options()
@@ -14,7 +17,7 @@ if platform.system() != 'Linux':
 driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
 try:
     print(driver.current_url)
-    result = driver.find_element_by_id('result').get_attribute('innerHTML')
+    result = wait_for_element_id(driver, 'result')
     print(result)
     assert("Permission denied" not in result)
 finally:

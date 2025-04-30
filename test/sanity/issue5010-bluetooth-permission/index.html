@@ -7,9 +7,10 @@
 </head>
 <body>
   <script>
-  chrome.bluetoothLowEnergy.connect('', ()=>{
-    out('result', chrome.runtime.lastError.message)
-  });
+    navigator.bluetooth.getAvailability()
+      .then(isBluetoothAvailable => {
+        out('result', `> Bluetooth is ${isBluetoothAvailable ? 'available' : 'unavailable'}`);
+    });
 
   function out(id, message) {
     var h1 = document.createElement('h1');
