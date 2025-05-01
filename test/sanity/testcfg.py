@@ -68,7 +68,9 @@ class RemotingTestConfiguration(test.TestConfiguration):
   def Ls(self, path):
     def SelectTest(name):
       test = os.path.join(path, name)
-      return os.path.isdir(test) and not os.path.exists(os.path.join(test, 'skipped'))
+      return (os.path.isdir(test) and
+              not os.path.exists(os.path.join(test, 'skipped')) and
+              os.path.exists(os.path.join(test, 'test.py'))
     return [f[0:] for f in os.listdir(path) if SelectTest(f)]
 
   def ListTests(self, current_path, path, arch, mode, nwdir):
