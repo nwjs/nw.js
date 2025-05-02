@@ -42,7 +42,10 @@ class MyHandler(http.server.BaseHTTPRequestHandler):
             s.wfile.write(b'<svg version="1.1" baseProfile="full" height="100" width="100" xmlns="http://www.w3.org/2000/svg"> \
   <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red" /></svg>')
 
+context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+context.load_cert_chain(certfile='./cert.pem', keyfile='./key.pem')
 httpd = http.server.HTTPServer(('localhost', PORT), MyHandler)
-httpd.socket = ssl.wrap_socket (httpd.socket, certfile='./cert.pem', keyfile='./key.pem', server_side=True)
+httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
+
 print("serving at port", PORT)
 httpd.serve_forever()
