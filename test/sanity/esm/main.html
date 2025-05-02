@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <style type="text/css">
+            html, body, webview {
+                display: block;
+                margin: 0; padding: 0; border: 0;
+                width: 100%; height: 100%;
+            }
+
+            html, body {
+                overflow: hidden;
+            }
+
+            webview {
+                position: absolute;
+                top: 0; left: 0;
+            }
+        </style>
+    </head>
+    <body>
+      <p>hello</p>
+        <p id="output" style="white-space: pre;"></p>
+<script type="module">
+  const logq = require('./logq.js');
+  function log(txt) {
+    const output = document.getElementById('output');
+    console.log(txt);
+    output.textContent += txt + '\r\n';
+  }
+  try {
+    const t = await import('https://cdn.skypack.dev/lodash-es');
+    log(t.capitalize('hello world'));
+    const fs = await import('fs');
+
+    fs.readFile('./package.json', 'utf-8', (err, data) => {
+      if (err) throw err;
+      log(data);
+    });
+  } catch (e) {
+    log(e.message);
+  }
+  while (true) {
+    const msg = await logq.extractHead();
+    log(msg);
+  }
+</script>
+    </body>
+</html>
