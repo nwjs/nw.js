@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import argparse
-import boto
+import boto3
 import datetime
 import json
 import os
@@ -50,7 +50,7 @@ if not os.path.isabs(dist_dir):
     dist_dir = os.path.join(os.getcwd(), dist_dir)
 
 if not os.path.isdir(dist_dir):
-    print 'Invalid path: ' + dist_dir
+    print ('Invalid path: ' + dist_dir)
     exit(-1)
 dist_dir = os.path.normpath(dist_dir)
 
@@ -65,7 +65,7 @@ upload_path = '/live-build/' + dlpath;
 
 file_list = os.listdir(dist_dir)
 if len(file_list) == 0:
-    print 'Cannot find packages!'
+    print ('Cannot find packages!')
     exit(-1)
 
 # move node-webkit- to the top of the list.
@@ -77,19 +77,19 @@ for i in range(len(file_list)):
         break
 
 def print_progress(transmitted, total):
-    print ' %d%% transferred of total: %d bytes.' % (transmitted*100/total, total)
+    print (' %d%% transferred of total: %d bytes.' % (transmitted*100/total, total))
     sys.stdout.flush()
 
 
 def aws_upload(upload_path, file_list):
-    conn = boto.connect_s3(is_secure=False)
-    print 'Connecting to S3 ...'
+    s3 = boto3.resource('s3')
+    print ('Connecting to S3 ...')
     sys.stdout.flush()
-    bucket = conn.get_bucket(bucket_name)
-    print 'Uploading to: ' + upload_path
-    win_non_sdk = re.compile('nw[a-zA-Z0-9]+_win\d+')
+    bucket = s3.Bucket(bucket_name)
+    print ('Uploading to: ' + upload_path)
+    win_non_sdk = re.compile('nw[a-zA-Z0-9]+_win\\d+')
     for f in file_list:
-        print 'Uploading "' + f + '" ...'
+        print ('Uploading "' + f + '" ...')
         sys.stdout.flush()
         # use '/' for s3
         path_prefix = ''
@@ -113,18 +113,18 @@ def aws_upload(upload_path, file_list):
         if f.startswith('chromedriver') and 'sdk' not in builder_name :
             continue
 
-        key = bucket.new_key(upload_path + '/' + path_prefix + '/' + f)
-        key.set_contents_from_filename(filename=os.path.join(dist_dir, f), cb=print_progress, num_cb=50, replace=True)
+        key = (upload_path + '/' + path_prefix + '/' + f)
+        s3.Object(bucket_name, key).put(Body=open(os.path.join(dist_dir, f), 'rb'))
 
 for retry in range(3):
     try:
         aws_upload(upload_path, file_list)
         break
-    except Exception, e:
-        print e
+    except (Exception, e):
+        print (e)
         sys.stdout.flush()
         time.sleep(30) #wait for 30s and try again.
 
-print 'Done.'
+print ('Done.')
 
 # vim: et:ts=4:sw=4
