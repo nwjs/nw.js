@@ -6,7 +6,7 @@
   <title>form post</title>
 </head>
 <body>
-  <button id="start-server" onclick="startServer(9999)">Start Server (9999)</button>
+  <button id="start-server" onclick="startServer()">Start Server</button>
   <form method="POST" action="">
     <input type="text" name="myfield" value="myvalue">
     <button id="submit" type="submit">Submit</button>
@@ -19,8 +19,10 @@
     document.body.appendChild(h1);
   }
 
-  function startServer(port) {
-    chrome.extension.getBackgroundPage().startServer(port, function() {
+  function startServer() {
+    chrome.extension.getBackgroundPage().startServer(function() {
+      let port = this.address().port;
+      console.log(`listening on port ${port}`);
       document.querySelector('form').setAttribute('action', 'http://localhost:' + port + '/post.html');
       out('server-started', 'success');
     });
