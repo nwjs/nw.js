@@ -875,6 +875,7 @@ IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, SilentPrintChangeFooter) {
   ASSERT_TRUE(base::SetCurrentDirectory(test_dir));
   ASSERT_TRUE(base::DeleteFile(output_pdf));
   LoadAndLaunchPlatformApp("silent_print", "Launched");
+  LOG(WARNING) << "--> Launched";
   content::WebContents* web_contents = GetFirstAppWindowWebContents();
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
     web_contents = BrowserList::GetInstance()->GetLastActive()->tab_strip_model()->GetActiveWebContents();
@@ -885,7 +886,22 @@ IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, SilentPrintChangeFooter) {
   EXPECT_TRUE(listener.WaitUntilSatisfied()) << "'" << listener.message()
                                               << "' message was not receieved";
 
-  web_contents = BrowserList::GetInstance()->GetLastActive()->tab_strip_model()->GetActiveWebContents();
+  LOG(WARNING) << "--> Loaded";
+  web_contents = nullptr;
+  do {
+    base::RunLoop run_loop;
+    base::SingleThreadTaskRunner::GetCurrentDefault()->PostDelayedTask(
+        FROM_HERE, run_loop.QuitClosure(), base::Seconds(1));
+    run_loop.Run();
+    for (content::WebContents* wc : content::GetAllWebContents()) {
+      GURL url = wc->GetLastCommittedURL();
+      LOG(WARNING) << "--> url: " << url;
+      if (url.spec().ends_with("pdf")) {
+        web_contents = wc;
+        break;
+      }
+    }
+  } while (!web_contents);
   const int kExpectedFrameCount = 3;
   int frame_count;
   do {
@@ -898,6 +914,7 @@ IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, SilentPrintChangeFooter) {
     int* pcnt = &frame_count;
     web_contents->GetPrimaryMainFrame()->ForEachRenderFrameHost(
        [pcnt] (content::RenderFrameHost* rfh) { CountFrames(pcnt, rfh); });
+    LOG(WARNING) << "--> frames: " << web_contents->GetLastCommittedURL() << " " << frame_count;
   } while (frame_count < kExpectedFrameCount);
   ASSERT_EQ(kExpectedFrameCount, frame_count);
   //pdf_extension_test_util::EnsurePDFHasLoaded(web_contents);
