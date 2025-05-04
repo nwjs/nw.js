@@ -828,7 +828,7 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
       if (params.id)
         options.id = params.id;
     }
-    if (callback && !(options.new_instance === true))
+    if (callback && !(options.new_instance === true) && !url.startsWith('chrome:'))
       options.block_parser = true;
     try_hidden(window).chrome.windows.create(options, function(cWin) {
       try {
