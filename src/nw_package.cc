@@ -470,19 +470,6 @@ void Package::ReadChromiumArgs() {
   } else
     args = *pargs;
 
-  // Expand Windows psudovars (ex; %APPDATA%) passed in chromium-args in the same way as when 
-  // passed as command line parameters.
-  #if defined(OS_WIN)
-  TCHAR szEnvPath[MAX_PATH];
-  std::wstring ws;
-  ws.assign( args.begin(), args.end());
-  if (ExpandEnvironmentStrings(ws.c_str(), szEnvPath,MAX_PATH) != 0) {
-    std::wstring ws_out = szEnvPath;
-    args = std::string(ws_out.begin(), ws_out.end());
-  } else {
-    ReportError("Failed to expand chromium args",args.c_str());
-  }
-  #endif
   args = env_args + kChromiumArgsSeparator + args;
 
   std::vector<std::string> chromium_args;
@@ -499,10 +486,14 @@ void Package::ReadChromiumArgs() {
   for (unsigned i = 0; i < chromium_args.size(); ++i) {
     base::CommandLine::StringType key, value;
 #if defined(OS_WIN)
+    auto wide_arg = base::UTF8ToWide(chromium_args[i]);
+    auto expanded_arg =
+        base::win::ExpandEnvironmentVariables(wide_arg).value_or(
+            std::move(wide_arg));
     // Note:: On Windows, the |CommandLine::StringType| will be |std::wstring|,
     // so the chromium_args[i] is not compatible. We convert the wstring to
     // string here is safe beacuse we use ASCII only.
-    if (!base::IsSwitch(ASCIIToWide(chromium_args[i]), &key, &value))
+    if (!base::IsSwitch(expanded_arg, &key, &value))
       continue;
     command_line->AppendSwitchASCII(base::WideToASCII(key),
                                     base::WideToASCII(value));
