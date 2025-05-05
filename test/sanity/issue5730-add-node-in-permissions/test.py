@@ -1,5 +1,8 @@
 import time
 import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from nw_util import *
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -16,6 +19,7 @@ driver.implicitly_wait(3)
 try:
     #print(driver.current_url)
     time.sleep(3)
+    wait_switch_window_url(driver, 'index.html')
     ret1 = ''
     ret2 = ''
     timeout = 10
