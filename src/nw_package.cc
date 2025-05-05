@@ -46,6 +46,7 @@
 
 #if defined(OS_WIN)
 #include <windows.h>
+#include "base/win/win_util.h"
 #endif
 
 using base::CommandLine;
