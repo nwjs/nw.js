@@ -380,7 +380,7 @@ def compress(from_dir, to_dir, fname, compress):
         if not os.path.isdir(_from):
             print ('Will not create tar.gz for a single file: ' + _from)
             exit(-1)
-        with tarfile.open(_to + '.tar.gz', 'w:gz') as tar:
+        with tarfile.open(_to + '.tar.gz', 'w:gz', compresslevel=6) as tar:
             tar.add(_from, arcname=os.path.basename(_from))
     elif compress == 'gz': # only for single file
         if os.path.isdir(_from):
