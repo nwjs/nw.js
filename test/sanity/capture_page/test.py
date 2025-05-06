@@ -10,7 +10,8 @@ chrome_options = Options()
 chrome_options.add_argument("nwapp=" + os.path.dirname(os.path.abspath(__file__)))
 
 capabilities = {"pageLoadStrategy": "none"}
-driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, desired_capabilities = capabilities, service_log_path="log", service_args=["--verbose"])
+driver = get_configured_webdriver(
+    chrome_options_instance=chrome_options, base_service_args=["--verbose"], log_file_path="log")
 
 try:
     wait_switch_window_url(driver, 'popup.html')

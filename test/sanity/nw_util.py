@@ -3,6 +3,10 @@ import platform
 import subprocess
 import selenium
 from selenium.webdriver.common.action_chains import ActionChains
+import argparse
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 
 import logging
 import os
@@ -10,6 +14,66 @@ import sys
 import shutil
 import tempfile
 from subprocess import Popen, PIPE
+
+def get_configured_webdriver(
+    chrome_options_instance: Options,
+    base_service_args: list = None,
+    log_file_path: str = None
+):
+    _port_arg_parser = argparse.ArgumentParser(prog='webdriver_setup_port_parser', add_help=False)
+    _port_arg_parser.add_argument(
+        "--chromedriver-port",
+        type=int,
+        default=None,
+        help="Port for Chromedriver. Overrides CHROMEDRIVER_PORT environment variable."
+    )
+    _known_cli_args, _ = _port_arg_parser.parse_known_args()
+
+    _target_port = _known_cli_args.chromedriver_port
+    if _target_port is None:
+        env_port_str = os.environ.get('CHROMEDRIVER_PORT')
+        if env_port_str:
+            try:
+                _target_port = int(env_port_str)
+            except ValueError:
+                print(f"[WebDriver Setup] Warning: Invalid CHROMEDRIVER_PORT '{env_port_str}'. Letting Selenium pick.")
+                _target_port = None
+
+    _final_service_args = list(base_service_args) if base_service_args else []
+
+    if _target_port:
+        _final_service_args.append(f"--port={_target_port}")
+        print(f"[WebDriver Setup] Using Chromedriver port: {_target_port}")
+    else:
+        _target_port = 0
+        print(f"[WebDriver Setup] No specific port provided. Letting Selenium choose a free port.")
+
+    chromedriver_exe_path = os.environ.get('CHROMEDRIVER')
+    if not chromedriver_exe_path:
+       raise ValueError("[WebDriver Setup] Critical: CHROMEDRIVER environment variable is not set.")
+
+    _chrome_service = Service(
+        executable_path=chromedriver_exe_path,
+        port=_target_port,
+        service_args=_final_service_args if _final_service_args else None,
+        log_path=log_file_path
+    )
+
+    try:
+        driver_instance = webdriver.Chrome(service=_chrome_service, options=chrome_options_instance)
+        print(f"[WebDriver Setup] Chromedriver started successfully on port: {driver_instance.service.port}")
+    except Exception as e:
+        print(f"[WebDriver Setup] Error during WebDriver initialization: {e}")
+        if log_file_path and os.path.exists(log_file_path):
+            try:
+                with open(log_file_path, 'r') as f_log:
+                    log_content = f_log.read()[-1000:]
+                print(f"[WebDriver Setup] Last 1000 chars from Chromedriver log ({log_file_path}):\n{log_content}")
+            except Exception as e_log:
+                print(f"[WebDriver Setup] Could not read Chromedriver log: {e_log}")
+        raise
+        
+    return driver_instance
 
 def find_executable(executable, path=None):
     """Find if 'executable' can be run. Looks for it in 'path'
