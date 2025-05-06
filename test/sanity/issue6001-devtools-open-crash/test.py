@@ -3,31 +3,24 @@ import os
 import shutil
 import subprocess
 import sys
-
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from nw_util import *
-
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-
 chrome_options = Options()
 testdir = os.path.dirname(os.path.abspath(__file__))
-chrome_options.add_argument("nwapp=" + testdir)
-binfile = os.path.join(testdir, "index.bin")
-nwjc = os.path.join(os.path.dirname(os.environ['CHROMEDRIVER']),
-       "nwjc.exe" if os.name == "nt" else "nwjc")
+chrome_options.add_argument('nwapp=' + testdir)
+binfile = os.path.join(testdir, 'index.bin')
+nwjc = os.path.join(os.path.dirname(os.environ['CHROMEDRIVER']), 'nwjc.exe' if os.name == 'nt' else 'nwjc')
 os.chdir(testdir)
-
 try:
-  os.remove(binfile)
+    os.remove(binfile)
 except:
-  pass
-
-assert(False == os.path.isfile(binfile))
-subprocess.call([nwjc, "--future", "index.js", "index.bin"])
-assert(os.path.isfile(binfile))
-
-driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
+    pass
+assert False == os.path.isfile(binfile)
+subprocess.call([nwjc, '--future', 'index.js', 'index.bin'])
+assert os.path.isfile(binfile)
+driver = get_configured_webdriver(chrome_options_instance=chrome_options)
 driver.implicitly_wait(2)
 try:
     switch_to_app(driver)
@@ -39,7 +32,7 @@ try:
     print('waiting for crash')
     time.sleep(5)
     handles = driver.window_handles
-    assert(len(handles) is 2)
+    assert len(handles) is 2
     print('There is no crash')
 finally:
     driver.quit()

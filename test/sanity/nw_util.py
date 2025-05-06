@@ -16,9 +16,11 @@ import tempfile
 from subprocess import Popen, PIPE
 
 def get_configured_webdriver(
-    chrome_options_instance: Options,
+    chrome_options_instance: Options = None,
+    driver_path: str = None,
     base_service_args: list = None,
-    log_file_path: str = None
+    log_file_path: str = None,
+    additional_capabilities: dict = None
 ):
     _port_arg_parser = argparse.ArgumentParser(prog='webdriver_setup_port_parser', add_help=False)
     _port_arg_parser.add_argument(
@@ -48,19 +50,22 @@ def get_configured_webdriver(
         _target_port = 0
         print(f"[WebDriver Setup] No specific port provided. Letting Selenium choose a free port.")
 
-    chromedriver_exe_path = os.environ.get('CHROMEDRIVER')
-    if not chromedriver_exe_path:
-       raise ValueError("[WebDriver Setup] Critical: CHROMEDRIVER environment variable is not set.")
+    if driver_path is None:
+        chromedriver_exe_path = os.environ.get('CHROMEDRIVER')
+        if not chromedriver_exe_path:
+            raise ValueError("[WebDriver Setup] Critical: CHROMEDRIVER environment variable is not set.")
+    else:
+        chromedriver_exe_path = driver_path
 
     _chrome_service = Service(
         executable_path=chromedriver_exe_path,
         port=_target_port,
         service_args=_final_service_args if _final_service_args else None,
-        log_path=log_file_path
+        log_path=log_file_path,
     )
 
     try:
-        driver_instance = webdriver.Chrome(service=_chrome_service, options=chrome_options_instance)
+        driver_instance = webdriver.Chrome(service=_chrome_service, options=chrome_options_instance, desired_capabilities=additional_capabilities)
         print(f"[WebDriver Setup] Chromedriver started successfully on port: {driver_instance.service.port}")
     except Exception as e:
         print(f"[WebDriver Setup] Error during WebDriver initialization: {e}")

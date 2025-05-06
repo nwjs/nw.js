@@ -3,39 +3,26 @@ import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from nw_util import *
-
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common import utils
-
 test_dir = os.path.dirname(os.path.abspath(__file__))
 chrome_options = Options()
-chrome_options.add_argument("nwapp=" + test_dir)
-
+chrome_options.add_argument('nwapp=' + test_dir)
 port = str(utils.free_port())
-
-pkgjson = '''
-{
-  "name": "cookie-lost-devtools-close",
-  "main": "index.html",
-  "bg-script": "bg.js",
-  "port": "%s"
-}
-''' % port
-
+pkgjson = '\n{\n  "name": "cookie-lost-devtools-close",\n  "main": "index.html",\n  "bg-script": "bg.js",\n  "port": "%s"\n}\n' % port
 with open(os.path.join(test_dir, 'package.json'), 'w') as bg:
-  bg.write(pkgjson)
-
+    bg.write(pkgjson)
 idx = 1
+
 def click_expect(expected):
     global idx
     driver.find_element_by_id('get-cookie').click()
     result = wait_for_element_id(driver, 'result-%s' % idx)
     idx += 1
     print(result)
-    assert(expected in result)
-
-driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
+    assert expected in result
+driver = get_configured_webdriver(chrome_options_instance=chrome_options)
 driver.implicitly_wait(2)
 try:
     switch_to_app(driver)
@@ -55,5 +42,4 @@ try:
     click_expect('sid=1')
     click_expect('sid=1')
 finally:
-    #time.sleep(50)
     driver.quit()

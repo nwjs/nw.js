@@ -4,29 +4,22 @@ import subprocess
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from nw_util import *
-
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common import utils
-
 chrome_options = Options()
-chrome_options.add_argument("nwapp=" + os.path.dirname(os.path.abspath(__file__)))
-
+chrome_options.add_argument('nwapp=' + os.path.dirname(os.path.abspath(__file__)))
 testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
-
 port = str(utils.free_port())
 server = subprocess.Popen(['python3', 'http-server.py', port])
-
 tpl = open('inspect.tpl', 'r')
 content = tpl.read().replace('{port}', port)
 tpl.close()
-
 html = open('inspect.html', 'w')
 html.write(content)
 html.close()
-
-driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options, service_log_path="log", service_args=["--verbose"])
+driver = get_configured_webdriver(chrome_options_instance=chrome_options, base_service_args=['--verbose'], log_file_path='log')
 driver.implicitly_wait(2)
 try:
     switch_to_app(driver)
@@ -47,7 +40,7 @@ try:
     wait_window_handles(driver, 4)
     driver.switch_to.window(driver.window_handles[3])
     print(driver.current_url)
-    assert(('http://localhost:%s/inspect.html' % port) in driver.current_url)
+    assert 'http://localhost:%s/inspect.html' % port in driver.current_url
 finally:
     server.terminate()
     driver.quit()

@@ -1,9 +1,8 @@
-import time
 import os
-import shutil
 import sys
-
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import time
+import shutil
 from nw_util import *
 
 from selenium import webdriver
@@ -20,12 +19,13 @@ os.chdir(testdir)
 
 install_node_modules()
 
-driver = webdriver.Chrome(executable_path=os.environ['CHROMEDRIVER'], chrome_options=chrome_options)
+driver = get_configured_webdriver(chrome_options_instance=chrome_options)
+
 try:
     print(driver.current_url)
     time.sleep(5)
     result = driver.find_element_by_id('result')
     print(result.get_attribute('innerHTML'))
-    assert("success" in result.get_attribute('innerHTML'))
+    assert 'success' in result.get_attribute('innerHTML')
 finally:
     driver.quit()
