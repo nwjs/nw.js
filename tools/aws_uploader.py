@@ -93,7 +93,9 @@ def aws_upload(upload_path, file_list):
         sys.stdout.flush()
         # use '/' for s3
         path_prefix = ''
-        if (f in ['nw.lib', 'nw.exp', 'node.lib', 'node.exp'] ) :
+        if (f in ['nw.lib', 'nw.exp', 'node.lib', 'node.exp',
+                  'nw.lib.sha256.txt', 'nw.exp.sha256.txt',
+                  'node.lib.sha256.txt', 'node.exp.sha256.txt'] ) :
           if not win_non_sdk.match(builder_name) :
               continue
           if 'win64' in builder_name :

@@ -9,6 +9,7 @@ import shutil
 import sys
 import tarfile
 import zipfile
+import hashlib
 from hashlib import sha256
 
 from subprocess import call
@@ -284,18 +285,19 @@ def generate_target_headers(platform_name, arch, version):
     if res == 0:
         print ('nw-headers generated')
         nw_headers_name = 'nw-headers-v' + version + '.tar.gz'
+        nw_headers_checksum = 'nw-headers-v' + version + '.sha256.txt'
         nw_headers_path = os.path.join(os.path.dirname(__file__), \
                                        os.pardir, 'tmp', nw_headers_name)
         if os.path.isfile(os.path.join(binaries_location, nw_headers_name)):
             os.remove(os.path.join(binaries_location, nw_headers_name))
 
         f = open(nw_headers_path, 'rb')
-        checksum_file = open(os.path.join(binaries_location, 'SHASUMS256.txt'), 'w')
+        checksum_file = open(os.path.join(binaries_location, nw_headers_checksum), 'w')
         with f, checksum_file:
             checksum_file.write('%s %s' % (sha256(f.read()).hexdigest(), nw_headers_name))
         shutil.move(nw_headers_path, binaries_location)
         target['input'].append(nw_headers_name)
-        target['input'].append('SHASUMS256.txt')
+        target['input'].append(nw_headers_checksum)
     else:
         #TODO, handle err
         print ('nw-headers generate failed')
@@ -394,6 +396,32 @@ def compress(from_dir, to_dir, fname, compress):
         print ('Unsupported compression format: ' + compress)
         exit(-1)
 
+def generate_sha256_checksums(base_folder_param):
+    checksums = {}
+    abs_walk_folder = os.path.abspath(base_folder_param)
+    root_dir_basename = os.path.basename(abs_walk_folder)
+
+    for root, _, files in os.walk(abs_walk_folder):
+        for filename in files:
+            current_file_absolute_path = os.path.join(root, filename)
+            path_inside_walk_root = os.path.relpath(current_file_absolute_path, abs_walk_folder)
+            
+            if path_inside_walk_root == ".": # File is the directory itself (should not happen for files in os.walk)
+                path_key_for_output = root_dir_basename 
+            else:
+                path_key_for_output = os.path.join(root_dir_basename, path_inside_walk_root)
+            
+            path_key_for_output = os.path.normpath(path_key_for_output)
+
+            try:
+                with open(current_file_absolute_path, 'rb') as f:
+                    sha256_hash = hashlib.sha256()
+                    for byte_block in iter(lambda: f.read(4096), b""):
+                        sha256_hash.update(byte_block)
+                    checksums[path_key_for_output] = sha256_hash.hexdigest()
+            except IOError:
+                checksums[path_key_for_output] = 'Error: Could not read file'
+    return checksums
 
 def make_packages(targets):
     # check file existance
@@ -420,12 +448,19 @@ def make_packages(targets):
         if t['compress'] == None:
             for f in t['input']:
                 src = os.path.join(binaries_location, f)
+                basename = f
                 if t['output'] != '':
                     dest = os.path.join(dist_dir, t['output'])
+                    basename = t['output']
                 else:
                     dest = os.path.join(dist_dir, f)
                 print ("Copying " + f)
                 shutil.copy(src, dest)
+                tmpf = open(src, 'rb')
+                checksum_file = open(os.path.join(dist_dir, f"{basename}.sha256.txt"), 'w')
+                with tmpf, checksum_file:
+                    checksum_file.write('%s %s' % (sha256(tmpf.read()).hexdigest(), basename))
+                
         elif ('folder' in t and t['folder'] == True) or len(t['input']) > 1:
             print ('Making "' + t['output'] + '.' + t['compress'] + '"')
             # copy files into a folder then pack
@@ -446,7 +481,17 @@ def make_packages(targets):
             # remove temp folders
             if ('keep4test' in t) :
                 shutil.copytree(folder, nwfolder, symlinks=True)
-            
+            all_checksums = generate_sha256_checksums(folder)
+            directory_name = os.path.basename(os.path.normpath(folder))
+            output_filename = f"{directory_name}.sha256.txt"
+            try:
+                with open(os.path.join(dist_dir, output_filename), 'w') as outfile:
+                    for filepath, checksum in all_checksums.items():
+                        outfile.write(f"{checksum} {filepath}\n")
+                    print(f"Checksums written to {output_filename}")
+            except IOError:
+                print(f"Error: Could not write to file {output_filename}")
+
             shutil.rmtree(folder)
         else:
             # single file
