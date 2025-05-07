@@ -297,7 +297,6 @@ def generate_target_headers(platform_name, arch, version):
             checksum_file.write('%s %s' % (sha256(f.read()).hexdigest(), nw_headers_name))
         shutil.move(nw_headers_path, binaries_location)
         target['input'].append(nw_headers_name)
-        target['input'].append(nw_headers_checksum)
     else:
         #TODO, handle err
         print ('nw-headers generate failed')
@@ -411,7 +410,7 @@ def generate_sha256_checksums(base_folder_param):
             else:
                 path_key_for_output = os.path.join(root_dir_basename, path_inside_walk_root)
             
-            path_key_for_output = os.path.normpath(path_key_for_output)
+            path_key_for_output = os.path.normpath(path_key_for_output).replace(os.sep, '/')
 
             try:
                 with open(current_file_absolute_path, 'rb') as f:
