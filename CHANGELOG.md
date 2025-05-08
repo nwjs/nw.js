@@ -1,3 +1,14 @@
+0.99.1 / 05-08-2025
+===================
+- update to Chromium 136.0.7103.93
+- Node: update to 23.11.0 and fix running nw as node
+- Fix: crash opening chrome urls with nw.Window.open [(#8250)](https://github.com/nwjs/nw.js/issues/8250)
+- Fix: truncated chrome args from package.json on windows [(#8219)](https://github.com/nwjs/nw.js/issues/8219)
+- Fix: Crash when rendering canvas from Node context [(#8223)](https://github.com/nwjs/nw.js/issues/8223)
+- Fix: Point Windows taskbar icon to nw.exe [(#8253)](https://github.com/nwjs/nw.js/issues/8253)
+- [docs] Using specific Node.js for building native modules
+- [docs] ESM Support in Node
+
 0.99.0 / 04-24-2025
 ===================
 - update to Chromium 136.0.7103.48
