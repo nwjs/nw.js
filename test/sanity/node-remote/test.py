@@ -41,7 +41,7 @@ except Exception as e:
     server.wait()
     sys.exit(1)
 manifest = open('package.json', 'w')
-manifest.write('\n{\n  "name":"test-node-remote",\n  "node-remote":"<all_urls>",\n  "main":"http://localhost:%s/index.html"\n}\n' % port)
+manifest.write('\n{\n  "name":"test-node-remote",\n  "node-remote":"<all_urls>",\n  "main":"http://127.0.0.1:%s/index.html"\n}\n' % port)
 manifest.close()
 driver = get_configured_webdriver(chrome_options_instance=chrome_options, base_service_args=['--verbose'], log_file_path='log')
 driver.implicitly_wait(5)
