@@ -4,12 +4,14 @@ import http.server
 import socketserver
 import sys
 
-PORT = int(sys.argv[1])
+PORT = 0
 
 Handler = http.server.SimpleHTTPRequestHandler
 
 httpd = socketserver.TCPServer(("", PORT), Handler)
-
-print("serving at port", PORT)
+actual_port = httpd.server_address[1]
+print(actual_port)
+sys.stdout.flush()
+#print("serving at port ", actual_port)
 httpd.serve_forever()
 
