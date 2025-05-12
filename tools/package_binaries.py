@@ -492,6 +492,12 @@ def make_packages(targets):
                 print(f"Error: Could not write to file {output_filename}")
 
             shutil.rmtree(folder)
+            compressed_file = t['output'] + '.' + t['compress']
+            tmpf = open(os.path.join(dist_dir, compressed_file), 'rb')
+            checksum_file = open(os.path.join(dist_dir, f"{compressed_file}.sha256.txt"), 'w')
+                with tmpf, checksum_file:
+                    checksum_file.write('%s %s' % (sha256(tmpf.read()).hexdigest(), compressed_file))
+
         else:
             # single file
             print ('Making "' + t['output'] + '.' + t['compress'] + '"')
