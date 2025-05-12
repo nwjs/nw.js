@@ -11,10 +11,18 @@ chrome_options.add_argument('nwapp=' + os.path.dirname(os.path.abspath(__file__)
 chrome_options.add_experimental_option('windowTypes', ['webview'])
 testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
-port_n = utils.free_port()
-port = str(port_n)
-server = subprocess.Popen(['python', '../http-server-node.py', port])
-time.sleep(1)
+
+try:
+    os.remove('port.txt')
+except:
+    pass
+server = subprocess.Popen(['python', '../http-server-node.py'])
+while not os.path.exists('port.txt'):
+    time.sleep(1)
+with open('port.txt', 'r') as file:
+    port = file.read().strip()
+    port_n = int(port)
+
 tpl = open('index.tpl', 'r')
 content = tpl.read().replace('{port}', port)
 tpl.close()
