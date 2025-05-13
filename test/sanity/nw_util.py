@@ -44,6 +44,18 @@ def find_executable(executable, path=None):
     else:
         return None
 
+def install_node_modules():
+    npm_path = find_executable('npm')
+    npm_cmdline = [npm_path, 'install']
+
+    print("npm_path: ", npm_path)
+
+    proc = Popen(npm_cmdline, stdout=PIPE, stderr=PIPE, env=os.environ)
+    out, err = proc.communicate()
+    print(out)
+    print(err)
+    assert(proc.returncode == 0)
+
 def install_native_modules():
     nw_dir  = os.path.normpath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir))
     nw_tools = os.path.join(nw_dir, 'tools')
