@@ -90,7 +90,7 @@ def install_native_modules():
     if sys.platform in ('win32', 'cygwin'):
         nw_gyp_path = os.path.join(os.path.dirname(nw_gyp_path),
                                    'node_modules', 'nw-gyp', 'bin', 'nw-gyp.js')
-        npm_cmdline = [npm_path, 'install', '--msvs_version=2019']
+        npm_cmdline = [npm_path, 'install', '--msvs_version=2022']
 
     print("nw_gyp: ", nw_gyp_path)
     print("npm_path: ", npm_path)
