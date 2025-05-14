@@ -23,9 +23,6 @@ server = subprocess.Popen(['python3', 'https-server.py', port])
 def read_ca_cert():
     return read_and_replace_file('ca.crt', '\n', '')
 
-def read_server_cert():
-    return read_and_replace_file('cert.pem', '\n', '')
-
 def read_and_replace_file(filename, old, new):
     with open(filename, 'r') as fd:
         content = fd.read().replace(old, new)
@@ -39,10 +36,7 @@ index_html = read_and_replace_file('index.tpl', '{port}', port)
 write_file('index.html', index_html)
 
 # test with trust anchors
-if platform.system() == 'Windows':
-  cert = read_server_cert()
-else:
-  cert = read_ca_cert()
+cert = read_ca_cert()
 
 pkg_with_trust_anchors = '''
 {
