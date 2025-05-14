@@ -304,7 +304,7 @@ def no_live_process(driver, print_if_fail=True):
     if platform.system() == 'Windows':
         pgrep = subprocess.Popen(['wmic', 'process', 'where', '(ParentProcessId=%s)' % driver.service.process.pid, 'get', 'ProcessId'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         out, err = pgrep.communicate()
-        ret = ('No Instance(s) Available.' in out)
+        ret = (b'No Instance(s) Available.' in out)
         if not ret and print_if_fail:
             print('live chrome processes:\n%s' % out)
         # expect "No Instance(s) Available." in output
