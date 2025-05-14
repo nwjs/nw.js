@@ -1,6 +1,7 @@
 import os
 import platform
 import time
+import sys
 
 if platform.system() == 'Windows':
     print('Skipped for Windows platform')
