@@ -35,6 +35,8 @@
 // gen
 #include "nw/id/commit.h"
 
+#include "v8/include/v8-callbacks.h"
+
 #include "third_party/node-nw/src/node_webkit.h"
 
 #if defined(OS_WIN)
