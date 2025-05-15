@@ -113,6 +113,20 @@ def find_executable(executable, path=None):
     else:
         return None
 
+def start_http_server():
+    port_n = 0
+    try:
+        os.remove('port.txt')
+    except:
+        pass
+    server = subprocess.Popen(['python3', '../http-server-node.py'])
+    while not os.path.exists('port.txt'):
+        time.sleep(1)
+    with open('port.txt', 'r') as file:
+        port = file.read().strip()
+        port_n = int(port)
+    return port_n
+
 def install_node_modules():
     npm_path = find_executable('npm')
     npm_cmdline = [npm_path, 'install']

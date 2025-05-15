@@ -1,7 +1,7 @@
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from nw_util import get_configured_webdriver
+from nw_util import *
 import time
 import os
 import subprocess
@@ -13,14 +13,9 @@ chrome_options.add_argument('nwapp=' + os.path.dirname(os.path.abspath(__file__)
 chrome_options.add_argument('mixed-context')
 testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
-port = str(utils.free_port())
-server = subprocess.Popen(['python3', 'http-server.py', port])
-tpl = open('index.tpl', 'r')
-content = tpl.read().replace('{port}', port)
-tpl.close()
-html = open('index.html', 'w')
-html.write(content)
-html.close()
+
+start_http_server()
+
 driver = get_configured_webdriver(chrome_options_instance=chrome_options, base_service_args=['--verbose'], log_file_path='log')
 try:
     print(driver.current_url)
