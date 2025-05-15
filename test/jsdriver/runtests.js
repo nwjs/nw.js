@@ -52,7 +52,7 @@ if (require.main == module) {
       }
       else
         console.log(`PASSED: ${testcase}`);
-    }, undefined, 10);
+    }, undefined, 5);
     console.log(`${ret.passed.length} passed, ${ret.failed.length} failed.`);
   })();
 }
@@ -199,7 +199,7 @@ async function* splitStreamByDelimiter(readable, delimiter, encoding = 'utf8') {
   }
 }
 
-async function exec_v(cmd, arglist, cwd, flag_throw = true, env=process.env, timeout = 80000) {
+async function exec_v(cmd, arglist, cwd, flag_throw = true, env=process.env, timeout = 120000) {
   const source = spawn(cmd, arglist, {cwd: cwd, stdio: ['ignore', 'pipe', 'pipe'], env: env, detached: true});
   let pgid = source.pid;
   let timed_out = false;

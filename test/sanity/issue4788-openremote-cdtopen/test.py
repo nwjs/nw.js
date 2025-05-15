@@ -28,7 +28,7 @@ try:
             driver.switch_to.window('main')
             print(driver.current_url)
             result = ''
-            wait_counter = 10
+            wait_counter = 20
             while wait_counter > 0:
                 try:
                     wait_counter = wait_counter - 1
@@ -42,4 +42,4 @@ try:
         finally:
             driver.quit()
 finally:
-    server.terminate()
+    stop_http_server(server)

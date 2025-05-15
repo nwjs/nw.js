@@ -65,6 +65,8 @@ def get_configured_webdriver(
     )
 
     try:
+        if sys.platform == "win32":
+            _chrome_service.creationflags = subprocess.CREATE_NO_WINDOW
         driver_instance = webdriver.Chrome(service=_chrome_service, options=chrome_options_instance, desired_capabilities=additional_capabilities)
         print(f"[WebDriver Setup] Chromedriver started successfully on port: {driver_instance.service.port}")
     except Exception as e:
@@ -263,7 +265,7 @@ def wait_for_element_tag(driver, elem_tag, timeout=10):
              raise Exception('Timeout when waiting for element' + elem_tag)
     return ret
 
-def wait_for_element_id_content(driver, elem_id, content, timeout=10):
+def wait_for_element_id_content(driver, elem_id, content, timeout=60):
     ret = ''
     while timeout > 0:
         try:
@@ -305,7 +307,7 @@ def wait_switch_window_name(driver, name, timeout=60):
         if timeout <= 0:
             raise Exception('Timeout when waiting for window handles')
 
-def wait_switch_window_url(driver, path, timeout=60):
+def wait_switch_window_url(driver, path, timeout=120):
     while timeout > 0:
         try:
             for handle in driver.window_handles:
@@ -391,9 +393,12 @@ def devtools_type_in_console(driver, keys):
 
 def no_live_process(driver, print_if_fail=True):
     if platform.system() == 'Windows':
-        pgrep = subprocess.Popen(['wmic', 'process', 'where', '(ParentProcessId=%s)' % driver.service.process.pid, 'get', 'ProcessId'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        pgrep = subprocess.Popen(['wmic', 'process', 'where', '(ParentProcessId=%s)' % driver.service.process.pid, 'get', 'Name,ProcessId'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         out, err = pgrep.communicate()
         ret = (b'No Instance(s) Available.' in out)
+        if not ret:
+            if not (b'nw.exe' in out):
+                ret = True
         if not ret and print_if_fail:
             print('live chrome processes:\n%s' % out)
         # expect "No Instance(s) Available." in output

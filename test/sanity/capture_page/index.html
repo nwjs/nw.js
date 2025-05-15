@@ -8,13 +8,82 @@
       <h1 style="color:red;">Please wait 1s for nw to render page</h1>
       <h2 style="color:red;">If you see a capture in popup window, this case passes</h2>
     </div>
-    <script>
+    <script type="module">
         var gui = nw;
         var win = gui.Window.get();
 
         var file_name = 'out.png';
+function capturePageAsync(win, format) {
+  return new Promise((resolve, reject) => {
+    if (win && typeof win.capturePage === 'function') {
+      win.capturePage(function(imgData) {
+        resolve(imgData);
+      }, format);
+    } else {
+      reject(new Error('win.capturePage is not a function or win is undefined.'));
+    }
+  });
+}
 
-        function takeSnapshot() {
+function openWindowAsync(gui, url, options) {
+  return new Promise((resolve, reject) => {
+    if (gui && gui.Window && typeof gui.Window.open === 'function') {
+      gui.Window.open(url, options, function(newWin) {
+        if (!newWin) {
+          reject(new Error(`Failed to open window: ${url}`));
+          return;
+        }
+        newWin.on('loaded', function() {
+          resolve(newWin);
+        });
+        newWin.on('closed', function() {
+        });
+      });
+    } else {
+      reject(new Error('gui.Window.open is not a function or gui is undefined.'));
+    }
+  });
+}
+
+async function takeSnapshot() {
+  try {
+    const [pngData, jpgData] = await Promise.all([
+      capturePageAsync(win, 'png'),
+      capturePageAsync(win, 'jpeg')
+    ]);
+
+    console.log("PNG and JPEG data captured.");
+
+    const popupWin = await openWindowAsync(gui, 'popup.html');
+
+    console.log("Popup window loaded.");
+
+    if (popupWin && popupWin.window && popupWin.window.document) {
+      const doc = popupWin.window.document;
+      const pngElement = doc.getElementById('png');
+      const jpgElement = doc.getElementById('jpg');
+
+      if (pngElement) {
+        pngElement.src = pngData;
+      } else {
+        console.error("Element with ID 'png' not found in popup.html");
+      }
+
+      if (jpgElement) {
+        jpgElement.src = jpgData;
+      } else {
+        console.error("Element with ID 'jpg' not found in popup.html");
+      }
+    } else {
+      console.error("Popup window or its document is not available.");
+    }
+
+  } catch (error) {
+    console.error("Error in takeSnapshot:", error);
+  }
+}
+
+        function takeSnapshot0() {
             var png_flag = false;
             var png_data = null;
             var jpg_flag = false;

@@ -32,8 +32,7 @@ try:
     driver.switch_to.window(main_window)
     driver.find_element_by_id('btn_resizeto').click()
     driver.switch_to.window(popup_window)
-    result = driver.find_element_by_id('yellow').get_attribute('innerHTML')
+    result = wait_for_element_id_content(driver, 'yellow', '180, 180')
     print('window size: %s' % result)
-    assert '180, 180' in result
 finally:
     driver.quit()
