@@ -14,7 +14,7 @@ chrome_options.add_argument('mixed-context')
 testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
 
-start_http_server()
+port, server = start_http_server()
 
 driver = get_configured_webdriver(chrome_options_instance=chrome_options, base_service_args=['--verbose'], log_file_path='log')
 try:

@@ -13,7 +13,7 @@ chrome_options.add_argument('nwapp=' + os.path.dirname(os.path.abspath(__file__)
 capabilities = {'pageLoadStrategy': 'none'}
 testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
-port = start_http_server()
+port, server = start_http_server()
 
 html = open('index.html', 'w')
 html.write('\n<html>\n<body>\n<script>\nchrome.developerPrivate.openDevTools({renderViewId: -1, renderProcessId: -1, extensionId: chrome.runtime.id});\nwindow.name = "main";\nsetTimeout(function() { \n  nw.Window.open(\'http://localhost:%s/remote.html\', function(win) {\n    document.write(\'<h1 id="res">returned window is \' + typeof win + \'</h1>\');\n  });\n}, 2000);\n</script>\n</body>\n</html>\n' % port)

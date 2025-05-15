@@ -125,7 +125,7 @@ def start_http_server():
     with open('port.txt', 'r') as file:
         port = file.read().strip()
         port_n = int(port)
-    return port_n
+    return port_n, server
 
 def install_node_modules():
     npm_path = find_executable('npm')
