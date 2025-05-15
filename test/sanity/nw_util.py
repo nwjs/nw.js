@@ -127,6 +127,12 @@ def start_http_server():
         port_n = int(port)
     return port_n, server
 
+def stop_http_server(server):
+    if sys.platform in ('win32', 'cygwin'):
+        os.popen('taskkill /T /F /PID %d' % server.pid)
+    else:
+        server.terminate()
+
 def install_node_modules():
     npm_path = find_executable('npm')
     npm_cmdline = [npm_path, 'install']

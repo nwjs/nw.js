@@ -30,5 +30,5 @@ try:
         print(result)
         assert 'DISABLED' in result
 finally:
-    server.terminate()
+    stop_http_server(server)
     driver.quit()

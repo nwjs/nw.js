@@ -25,5 +25,5 @@ try:
     print(result)
     assert 'success' in result
 finally:
-    server.terminate()
+    stop_http_server(server)
     driver.quit()
