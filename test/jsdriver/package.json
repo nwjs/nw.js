@@ -1,0 +1,19 @@
+{
+  "name": "jsdriver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "runtests.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "dependencies": {
+    "@rauschma/stringio": "^1.4.0",
+    "commander": "^4.0.1",
+    "nodemailer": "^6.3.1",
+    "ora": "^4.0.3",
+    "p-queue": "^6.2.1",
+    "shelljs": "^0.8.5",
+    "strftime": "^0.10.0"
+  }
+}
