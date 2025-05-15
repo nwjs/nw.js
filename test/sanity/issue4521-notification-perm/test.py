@@ -28,7 +28,7 @@ try:
     os.remove('port.txt')
 except:
     pass
-server = subprocess.Popen(['python', '../http-server-node.py', 'server.js'])
+server = subprocess.Popen(['python3', '../http-server-node.py', 'server.js'])
 while not os.path.exists('port.txt'):
     time.sleep(1)
 driver = get_configured_webdriver(chrome_options_instance=chrome_options, base_service_args=['--verbose'], log_file_path='log')

@@ -16,7 +16,7 @@ try:
     os.remove('port.txt')
 except:
     pass
-server = subprocess.Popen(['python', '../http-server-node.py'])
+server = subprocess.Popen(['python3', '../http-server-node.py'])
 while not os.path.exists('port.txt'):
     time.sleep(1)
 with open('port.txt', 'r') as file:
