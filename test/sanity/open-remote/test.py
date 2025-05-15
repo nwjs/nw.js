@@ -12,8 +12,8 @@ chrome_options.add_argument('nwapp=' + os.path.dirname(os.path.abspath(__file__)
 capabilities = {'pageLoadStrategy': 'none'}
 testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
-port = str(utils.free_port())
-server = subprocess.Popen(['python3', 'http-server.py', port])
+port = start_http_server()
+
 html = open('index.html', 'w')
 html.write('\n<script>\nwindow.name = \'local\';\nnw.Window.open(\'http://localhost:%s/remote.html\', function(win) {\n  document.write(\'<h1 id="res">returned window is \' + typeof win + \'</h1>\');\n  win.y = 0;\n});\n</script>\n' % port)
 html.close()
