@@ -23,7 +23,7 @@
     chrome.extension.getBackgroundPage().startServer(function() {
       let port = this.address().port;
       console.log(`listening on port ${port}`);
-      document.querySelector('form').setAttribute('action', 'http://localhost:' + port + '/post.html');
+      document.querySelector('form').setAttribute('action', 'http://127.0.0.1:' + port + '/post.html');
       out('server-started', 'success');
     });
   }
