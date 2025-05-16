@@ -250,8 +250,8 @@ namespace extensions {
 #else
       const bool auto_show_delegated_source_list = true;
 #endif  // BUILDFLAG(IS_MAC)
-      bool add_current_process_windows =
-	  content::desktop_capture::ShouldEnumerateCurrentProcessWindows();
+      bool add_current_process_windows = true;
+	  //content::desktop_capture::ShouldEnumerateCurrentProcessWindows();
       if (capturer) {
 	std::unique_ptr<DesktopMediaList> window_media_list =
           std::make_unique<NativeDesktopMediaList>(
