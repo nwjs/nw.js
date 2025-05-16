@@ -15,6 +15,8 @@ const getDirectories = source =>
       .filter(dirent => dirent.isDirectory())
       .map(dirent => dirent.name);
 
+let known_flaky = new Set([]);
+
 function getFreePort() {
   return new Promise((resolve, reject) => {
     const server = net.createServer();
@@ -54,6 +56,20 @@ if (require.main == module) {
         console.log(`PASSED: ${testcase}`);
     }, undefined, 5);
     console.log(`${ret.passed.length} passed, ${ret.failed.length} failed.`);
+    if (ret.failed.length > 0) {
+      let test_ret2 = await run_tests('content/nw/test/sanity', (err, testcase) => {
+        if (err) {
+          console.log(`FAILED: ${testcase}`);
+          //fs.writeFile(`${testcase}.${updated_hash}.txt`, err, (e) => {});
+        }
+      }, ret.failed, 1);
+      for (const testcase of test_ret2.failed) {
+        if (!known_flaky.has(testcase)) {
+          console.log(`test failed: ${testcase}`);
+          process.exit(1);
+        }
+      }
+    }
   })();
 }
 
@@ -199,57 +215,164 @@ async function* splitStreamByDelimiter(readable, delimiter, encoding = 'utf8') {
   }
 }
 
-async function exec_v(cmd, arglist, cwd, flag_throw = true, env=process.env, timeout = 120000) {
-  const source = spawn(cmd, arglist, {cwd: cwd, stdio: ['ignore', 'pipe', 'pipe'], env: env, detached: true});
-  let pgid = source.pid;
+async function exec_v(cmd, arglist, cwd, flag_throw = true, env = process.env, timeout = 120000) {
+  let source;
+  let timer;
   let timed_out = false;
-  //let pgid = shell.exec(`ps opgid= ${pid}`, {silent: true}).trim();
-  let timer = setTimeout(() => {
-    if (process.platform === 'win32')
-      shell.exec(`taskkill /T /F /PID ${pgid}`);
-    else
-      shell.exec(`kill -- -${pgid}`);
-    timed_out = true;
-  }, timeout);
-  let error = "";
-  let data = "";
-  const stdoutReader = (async () => {
-    for await (const line of chunksToLinesAsync(source.stdout)) {
-      data += line;
+  let processOutputCollected = false; // Flag to indicate normal completion of output streams
+
+  // This promise will be rejected by the timeout or resolved by normal process exit
+  return new Promise((resolve, reject) => {
+    source = spawn(cmd, arglist, {
+      cwd: cwd,
+      stdio: ['ignore', 'pipe', 'pipe'], // 'ignore' stdin, pipe stdout/stderr
+      env: env,
+      detached: true // Crucial for killing the process tree, especially on non-Windows
+    });
+
+    if (!source.pid) {
+      const spawnError = new Error(`Failed to spawn process: ${cmd} ${arglist.join(' ')}`);
+      if (flag_throw) {
+        return reject(spawnError);
+      } else {
+        return resolve({ code: -1, stdout: "", stderr: `Failed to spawn process: ${spawnError.message}` });
+      }
     }
-  })();
 
-  const stderrReader = (async () => {
-    for await (const line of chunksToLinesAsync(source.stderr)) {
-      error += line;
-    }
-  })();
+    const pidToKill = source.pid; // Capture PID for use in timeout and cleanup
 
-  await Promise.all([stdoutReader, stderrReader]);
+    const killProcess = (reason) => {
+      if (source && !source.killed) {
+        //console.log(`Attempting to kill process tree ${pidToKill} due to: ${reason}`);
+        try {
+          if (process.platform === 'win32') {
+            // /T terminates the specified process and any child processes started by it.
+            // /F forcefully terminates process(es).
+            shell.exec(`taskkill /F /T /PID ${pidToKill}`, { silent: true, async: false });
+          } else {
+            // On POSIX, with detached: true, source.pid is the group leader (PGID).
+            // Sending signal to -pgid kills the entire process group.
+            shell.exec(`kill -- -${pidToKill}`, { silent: true, async: false });
+          }
+          //console.log(`Kill command issued for process tree ${pidToKill}.`);
+          if (source) source.killed = true; // Mark as killed
+        } catch (killError) {
+          console.error(`Error attempting to kill process tree ${pidToKill}:`, killError.message);
+          // Even if kill fails, we should proceed to resolve/reject for timeout
+        }
+      }
+    };
 
-  const exitCode = await new Promise( (resolve, reject) => {
-    source.on('close', resolve);
+    timer = setTimeout(() => {
+      timed_out = true;
+      killProcess("timeout");
+
+      // Ensure streams are unlistened to prevent further processing
+      if (source.stdout) source.stdout.destroy();
+      if (source.stderr) source.stderr.destroy();
+
+      const timeoutMessage = "TIMEOUT";
+      // Capture whatever data has been collected so far
+      const currentStdout = dataBuffer;
+      const currentStderr = errorBuffer;
+      const outputData = (currentStdout || "") + (currentStderr || "");
+
+      clearTimeout(timer); // Clear timeout just in case
+
+      if (flag_throw) {
+        reject(new Error(`subprocess ${cmd} error exit ${timeoutMessage}, ${timeoutMessage}\n${outputData}`));
+      } else {
+        // Use a distinct exit code for timeout
+        resolve({ code: -1, stdout: outputData, stderr: timeoutMessage });
+      }
+    }, timeout);
+
+    let dataBuffer = "";
+    let errorBuffer = "";
+
+    const stdoutPromise = (async () => {
+      try {
+        for await (const line of chunksToLinesAsync(source.stdout)) {
+          if (timed_out) break; // Stop processing if timeout occurred
+          dataBuffer += line;
+        }
+      } catch (e) {
+        // Ignore errors if timed_out, as streams might be abruptly closed
+        if (!timed_out) console.error(`Stdout stream error for ${cmd} (${pidToKill}): ${e.message}`);
+      }
+    })();
+
+    const stderrPromise = (async () => {
+      try {
+        for await (const line of chunksToLinesAsync(source.stderr)) {
+          if (timed_out) break; // Stop processing if timeout occurred
+          errorBuffer += line;
+        }
+      } catch (e) {
+        if (!timed_out) console.error(`Stderr stream error for ${cmd} (${pidToKill}): ${e.message}`);
+      }
+    })();
+
+    // Handle process exit/close
+    source.on('close', async (code, signal) => {
+      if (timed_out) return; // If timeout already handled, do nothing more here
+
+      clearTimeout(timer); // Process finished, clear the timeout
+
+      // Wait for stdout and stderr streams to finish processing any remaining data
+      // This helps ensure all output is captured before resolving.
+      try {
+        await Promise.all([stdoutPromise, stderrPromise]);
+      } catch (streamError) {
+        // Should ideally not happen if individual stream readers catch errors
+        console.error(`Error waiting for streams to close for ${cmd} (${pidToKill}):`, streamError);
+      }
+      processOutputCollected = true;
+
+      // Defensive kill, especially if 'close' event fires but children might linger
+      // (though `detached: true` and group kill should be effective).
+      // This is more of a cleanup for potential zombies if the initial kill in timeout wasn't 100%
+      // or if the process exited but left children.
+      killProcess("process closed/exited");
+
+      if (signal) { // Process was killed by a signal
+        const errorMessage = `Process ${cmd} (${pidToKill}) terminated by signal: ${signal}`;
+        if (flag_throw) {
+          reject(new Error(`${errorMessage}\n${dataBuffer}${errorBuffer}`));
+        } else {
+          resolve({ code: code === null ? 1 : code, stdout: dataBuffer, stderr: errorBuffer + "\n" + errorMessage });
+        }
+      } else if (code !== 0) { // Process exited with an error code
+        const errorMessage = `subprocess ${cmd} error exit ${code}`;
+        if (flag_throw) {
+          reject(new Error(`${errorMessage}, ${errorBuffer}\n${dataBuffer}`));
+        } else {
+          resolve({ code: code, stdout: dataBuffer, stderr: errorBuffer || `Exited with code ${code}` });
+        }
+      } else { // Process exited successfully
+        if (flag_throw) {
+          resolve(dataBuffer);
+        } else {
+          resolve({ code: 0, stdout: dataBuffer, stderr: errorBuffer });
+        }
+      }
+    });
+
+    source.on('error', (err) => {
+      if (timed_out) return; // If timeout already handled, do nothing
+
+      clearTimeout(timer);
+      killProcess("spawn error"); // Attempt to clean up if process partially started
+
+      const errorMessage = `Subprocess ${cmd} (${pidToKill}) failed to start or crashed: ${err.message}`;
+      console.error(errorMessage, err);
+      if (flag_throw) {
+        reject(new Error(`${errorMessage}\n${dataBuffer}${errorBuffer}`));
+      } else {
+        resolve({ code: err.code || -1, stdout: dataBuffer, stderr: errorBuffer + "\n" + errorMessage });
+      }
+    });
   });
-
-  clearTimeout(timer);
-  if (process.platform === 'win32')
-    shell.exec(`taskkill /T /F /PID ${pgid}`);
-  else
-    shell.exec(`kill -- -${pgid}`);
-
-  if (timed_out) {
-    data += error;
-    error = "TIMEOUT";
-  }
-
-  if(exitCode || timed_out) {
-    if (flag_throw)
-      throw new Error(`subprocess ${cmd} error exit ${exitCode}, ${error}\n${data}`);
-  }
-  if (flag_throw)
-    return data;
-  else
-    return {code: exitCode, stdout: data, stderr: error};
 }
 
 exports.run_tests = run_tests;
