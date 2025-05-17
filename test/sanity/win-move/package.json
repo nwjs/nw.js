@@ -1,4 +1,8 @@
 {
   "name": "win-move",
+  "window" : {
+     "width" : 300,
+     "height" : 200
+  },
   "main": "index.html"
 }
