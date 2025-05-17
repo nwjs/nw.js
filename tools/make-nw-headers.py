@@ -120,9 +120,9 @@ print 'compress end'
 
 if platform_name == 'win':
   release_dir = os.path.join(tmp_dir, 'node')
+  release_dir2 = os.path.join(release_dir, 'Release')
   if args.arch == 'x64':
     release_dir = os.path.join(release_dir, 'x64')
-  release_dir2 = os.path.join(release_dir, 'Release')
   if not os.path.exists(release_dir):
     os.mkdir(release_dir)
   if not os.path.exists(release_dir2):
