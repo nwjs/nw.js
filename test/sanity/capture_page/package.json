@@ -1,5 +1,5 @@
 {
   "name":"nw_1403500501",
   "main":"index.html",
-  "dependencies":{}
+  "window":{ "width": 300, "height": 200}
 }
