@@ -24,6 +24,10 @@ try:
     assert 'Hello world' in result
     assert "Failed to resolve module specifier 'fs'" in result
     assert re.search('"meta-url":"file://.*?/src/content/nw/test/sanity/esm/test\\.mjs"', result)
+    driver.find_element_by_id('devtools').click()
+    print('wait for devtools open')
+    time.sleep(3)
+    wait_window_handles(driver, 2)
 finally:
     driver.quit()
 pkgjson = '\n{\n  "name": "test-esm",\n  "main": "main.html",\n  "chromium-args": "--enable-features=NWESM,NWChainImportNode",\n  "node-main": "index.js"\n}\n'
