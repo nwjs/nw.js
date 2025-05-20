@@ -41,6 +41,7 @@
 #include "third_party/blink/public/web/web_script_source.h"
 #include "third_party/blink/public/web/web_view.h"
 #include "third_party/blink/renderer/platform/bindings/script_forbidden_scope.h"
+#include "third_party/blink/public/common/features.h"
 #include "third_party/blink/public/web/blink.h"
 #include "third_party/blink/renderer/platform/bindings/dom_wrapper_world.h"
 #pragma clang diagnostic ignored "-Wimplicit-const-int-float-conversion"
@@ -355,8 +356,8 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   }
   g_context->Exit();
 
-  std::string set_nw_script = "'use strict';";
-  {
+  if (!base::FeatureList::IsEnabled(blink::features::kNWESM))  {
+    std::string set_nw_script = "'use strict';";
     v8::MicrotasksScope microtasks(isolate, context->v8_context()->GetMicrotaskQueue(),
 				   v8::MicrotasksScope::kDoNotRunMicrotasks);
     v8::Context::Scope cscope(context->v8_context());
