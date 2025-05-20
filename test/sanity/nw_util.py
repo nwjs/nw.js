@@ -376,7 +376,7 @@ def switch_to_devtools(driver, devtools_window=None, skip_exception=False):
     raise Exception('No devtools window found.')
 
 def devtools_click_tab(driver, tab_name):
-    timeout = 10
+    timeout = 30
     while timeout > 0:
         try:
             driver.execute_script('return document.querySelector(".tabbed-pane").shadowRoot.getElementById("tab-%s")' % tab_name).click()
