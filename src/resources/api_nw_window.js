@@ -378,18 +378,39 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
       currentNWWindowInternal.toggleKioskModeInternal();
     };
 
-    NWWindow.prototype.showDevTools = function(frm, callback) {
-      var id = '';
-      if (typeof frm === 'string')
-        id = frm;
-      var f = null;
+    /**
+    * Open the devtools to inspect the window.
+    * 
+    * @param {string | HTMLIFrameElement} [iframe] The `id` or element of the `<iframe>` to be jailed on. By default, the DevTools is shown for entire window. 
+    * @param {(dev_win: Window, error: Error) => void} callback Callback with the native window of the DevTools window.
+    * @returns {void}
+    */
+    NWWindow.prototype.showDevTools = function(iframe, callback) {
+      let error;
+      if (process.versions['nw-flavor'] !== 'sdk') {
+        error = new Error('This API is only available on SDK build flavor. Current build flavor is ' + process.versions['nw-flavor']);
+        callback(undefined, error);
+        return;
+      }
+      if (process.versions['nw-flavor'] === 'sdk') {
+        if (nw.App.argv.includes('--disable-devtools')) {
+          error = new Error('DevTools is disabled by --disable-devtools command line flag.');
+          callback(undefined, error);
+          return;
+        }
+      }
+      let id = '';
+      if (typeof iframe === 'string')
+        id = iframe;
+      let f = null;
       if (id)
         f = this.appWindow.contentWindow.getElementById(id);
       else
-        f = frm || null;
+        f = iframe || null;
       nwNatives.setDevToolsJail(f);
       currentNWWindowInternal.showDevToolsInternal(callback);
     };
+
     NWWindow.prototype.capturePage = function (callback, options) {
       var cb = callback;
       if (!options)
