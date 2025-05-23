@@ -1,3 +1,12 @@
+0.100.0 / 05-23-2025
+====================
+- update to Chromium 137.0.7151.41
+- Fix process_main script error with NWESM [(#8628)](https://github.com/nwjs/nw.js/issues/8628)
+- Fix devtools crash with NWESM [(#8628)](https://github.com/nwjs/nw.js/issues/8628)
+- Fix desktop media selector on Win
+- Fix window placement saving for Win
+- Fix windows crash dump uploading
+
 0.99.1 / 05-08-2025
 ===================
 - update to Chromium 136.0.7103.93
