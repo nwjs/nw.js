@@ -17,7 +17,7 @@ try:
     print('wait for devtools open')
     wait_window_handles(driver, 2)
     print('switch to devtools')
-    switch_to_devtools(driver, devtools_window=driver.window_handles[-1])
+    switch_to_devtools(driver)
     print('click Console panel')
     devtools_click_tab(driver, 'console')
     wait_for_element_id(driver, 'console-prompt')
