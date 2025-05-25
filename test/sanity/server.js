@@ -6,6 +6,12 @@ const path = require('path');
 let svr = http.createServer(function (req, res) {
   console.log(`${req.method} ${req.url}`);
 
+  if (req.url === '/redirectme.html') {
+    let port = svr.address().port;
+    res.writeHead(308, { 'Location': `/redirected.html` });
+    res.end();
+    return;
+  }
   // parse URL
   const parsedUrl = url.parse(req.url);
   // extract URL path
@@ -45,6 +51,15 @@ let svr = http.createServer(function (req, res) {
         res.statusCode = 500;
         res.end(`Error getting the file: ${err}.`);
       } else {
+        const normalizedPathname = path.normalize(pathname);
+        const targetFile = path.normalize('./redirected.html');
+
+        if (normalizedPathname === targetFile) {
+          res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+          res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+          res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
+          console.log(`Added COOP/COEP/CORP headers for ${pathname}`);
+        }
         // if the file is found, set Content-type and send data
         res.setHeader('Content-type', map[ext] || 'text/plain' );
         res.end(data);
