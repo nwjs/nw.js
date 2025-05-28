@@ -2,13 +2,13 @@
 
 #include "base/strings/sys_string_conversions.h"
 
-#import <Appkit/NSApplication.h>
-#import <Appkit/NSBezierPath.h>
-#import <Appkit/NSColor.h>
-#import <Appkit/NSDocktile.h>
-#import <Appkit/NSImageView.h>
-#import <Appkit/NSProgressIndicator.h>
-#import <Appkit/NSWindow.h>
+#import <AppKit/NSApplication.h>
+#import <AppKit/NSBezierPath.h>
+#import <AppKit/NSColor.h>
+#import <AppKit/NSDockTile.h>
+#import <AppKit/NSImageView.h>
+#import <AppKit/NSProgressIndicator.h>
+#import <AppKit/NSWindow.h>
 #import <objc/runtime.h>
 
 @interface NWProgressBar : NSProgressIndicator
