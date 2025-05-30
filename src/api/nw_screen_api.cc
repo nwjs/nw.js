@@ -237,7 +237,8 @@ class NwMediaListController : public DesktopMediaListObserver {
 
     if (screens) {
       std::unique_ptr<webrtc::DesktopCapturer> desktop_capturer =
-        content::desktop_capture::CreateScreenCapturer();
+        content::desktop_capture::CreateScreenCapturer(
+            content::desktop_capture::CreateDesktopCaptureOptions(), true);
       auto capturer = desktop_capturer
 	? std::make_unique<DesktopCapturerWrapper>(
 	   std::move(desktop_capturer))
@@ -253,7 +254,8 @@ class NwMediaListController : public DesktopMediaListObserver {
 
     if (windows) {
       std::unique_ptr<webrtc::DesktopCapturer> desktop_capturer =
-      content::desktop_capture::CreateWindowCapturer();
+      content::desktop_capture::CreateWindowCapturer(
+          content::desktop_capture::CreateDesktopCaptureOptions());
       auto capturer = desktop_capturer
 	? std::make_unique<DesktopCapturerWrapper>(
 	   std::move(desktop_capturer))
