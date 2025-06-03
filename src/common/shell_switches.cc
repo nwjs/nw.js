@@ -119,7 +119,6 @@ const char kmInjectCSS[] = "inject-css";
 const char kPrintRaster[] = "print-raster";
 #endif
 
-const char kCrashDumpsDir[] = "crash-dumps-dir";
 const char kEnableSpellChecking[] = "enable-spell-checking";
 const char kDisableDevTools[] = "disable-devtools";
 }  // namespace switches
