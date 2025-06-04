@@ -1,3 +1,10 @@
+0.100.1 / 06-04-2025
+====================
+- update to Chromium 137.0.7151.69
+- enable inspector module with --nw-node-inspector [(#8107)](https://github.com/nwjs/nw.js/issues/8107)
+- Fix crash with nw.Window.open on URL with COOP/COEP/CORP headers [(#8205)](https://github.com/nwjs/nw.js/issues/8205)
+- Node: update to v24.1.0
+
 0.100.0 / 05-23-2025
 ====================
 - update to Chromium 137.0.7151.41
