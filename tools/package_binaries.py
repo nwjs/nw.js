@@ -168,6 +168,8 @@ def generate_target_nw(platform_name, arch, version):
         target['input'] = [
                            'v8_context_snapshot.bin',
                            'd3dcompiler_47.dll',
+                           'dxcompiler.dll',
+                           'dxil.dll',
                            'libEGL.dll',
                            'libGLESv2.dll',
                            'nw.dll',
