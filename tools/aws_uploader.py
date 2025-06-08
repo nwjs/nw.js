@@ -10,6 +10,7 @@ import re
 import getnwisrelease
 import getnwversion
 
+from boto3.s3.transfer import TransferConfig
 
 # Set timeout, for retry
 #if not boto.config.has_section('Boto'):
@@ -61,7 +62,7 @@ if getnwisrelease.release == 0:
 # it's for S3, so always use '/' here
 #upload_path = ''.join(['/' + date,
 #                       '/' + builder_name + '-build-' + build_number + '-'  + got_revision])
-upload_path = '/live-build/' + dlpath;
+upload_path = 'live-build/' + dlpath;
 
 file_list = os.listdir(dist_dir)
 if len(file_list) == 0:
@@ -82,10 +83,10 @@ def print_progress(transmitted, total):
 
 
 def aws_upload(upload_path, file_list):
-    s3 = boto3.resource('s3')
     print ('Connecting to S3 ...')
     sys.stdout.flush()
-    bucket = s3.Bucket(bucket_name)
+    session = boto3.Session()
+    s3_client = session.client('s3')
     print ('Uploading to: ' + upload_path)
     win_non_sdk = re.compile('nw[a-zA-Z0-9]+_win\\d+')
     for f in file_list:
@@ -113,8 +114,11 @@ def aws_upload(upload_path, file_list):
         if f.startswith('chromedriver') and 'sdk' not in builder_name :
             continue
 
-        key = (upload_path + '/' + path_prefix + '/' + f)
-        s3.Object(bucket_name, key).put(Body=open(os.path.join(dist_dir, f), 'rb'))
+        parts = [upload_path, path_prefix, f]
+        key = "/".join(part for part in parts if part)
+
+        local_file_path = os.path.join(dist_dir, f)
+        s3_client.upload_file(local_file_path, bucket_name, key)
 
 for retry in range(3):
     try:
