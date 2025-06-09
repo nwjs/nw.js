@@ -1,12 +1,37 @@
-diff --git a/src/trace_processor/importers/proto/packet_sequence_state.cc b/src/trace_processor/importers/proto/packet_sequence_state.cc
-index c63c2d749..2918cd720 100644
---- src/trace_processor/importers/proto/packet_sequence_state.cc
-+++ src/trace_processor/importers/proto/packet_sequence_state.cc
-@@ -14,6 +14,7 @@
-  * limitations under the License.
-  */
+diff --git a/BUILD.gn b/BUILD.gn
+index 2c56680660..8495145a1c 100644
+--- BUILD.gn
++++ BUILD.gn
+@@ -269,6 +269,7 @@ if (enable_perfetto_platform_services) {
+   } else {
+     libperfetto_target_type = "shared_library"
+   }
++  libperfetto_target_type = "static_library"
  
-+#pragma clang diagnostic ignored "-Wunused-private-field"
- #include "src/trace_processor/importers/proto/packet_sequence_state.h"
+   target(libperfetto_target_type, "libperfetto") {
+     if (libperfetto_target_type == "static_library") {
+@@ -305,7 +306,8 @@ if (!build_with_chromium) {
+ # Rationalize them with eseckler@. For now seems this one is only used from
+ # chromium and the other one only from the Android tree.
+ if (build_with_chromium) {
+-  component("libperfetto") {
++  static_library("libperfetto") {
++    complete_static_lib = true
+     public_configs = [ "gn:public_config" ]
+     deps = [
+       "src/trace_processor/importers/memory_tracker:graph_processor",
+diff --git a/gn/perfetto.gni b/gn/perfetto.gni
+index 8b5592d227..1dda960ab0 100644
+--- gn/perfetto.gni
++++ gn/perfetto.gni
+@@ -338,8 +338,8 @@ declare_args() {
+   # Enables Zlib support. This is used to compress traces (by the tracing
+   # service and by the "perfetto" cmdline client) and to decompress traces (by
+   # trace_processor).
+-  enable_perfetto_zlib =
+-      enable_perfetto_trace_processor || enable_perfetto_platform_services
++  enable_perfetto_zlib = false
++      #enable_perfetto_trace_processor || enable_perfetto_platform_services
  
- namespace perfetto {
+   # Enables function name demangling using sources from llvm. Otherwise
+   # trace_processor falls back onto using the c++ runtime demangler, which
