@@ -86,18 +86,22 @@ See the upstream documentation for the mapping between GN and GYP flags: https:/
 
 ## Generate ninja build files with GYP for Node
 
+Set the following environment variables:
+````
+GYP_DEFINES=target_arch=x64 building_nw=1 clang=1 icu_use_data_file_flag=1 host_arch=x64 nwjs_sdk=1 disable_nacl=0 buildtype=Official
+GYP_GENERATORS=ninja
+GYP_CHROMIUM_NO_ACTION=0
+GYP_GENERATOR_FLAGS=output_dir=out
+````
+
 ```bash
 cd src
-GYP_CHROMIUM_NO_ACTION=0 ./build/gyp_chromium -I \
-third_party/node-nw/common.gypi -D building_nw=1 \
--D clang=1 third_party/node-nw/node.gyp
+python3 third_party/node-nw/tools/gyp/gyp_main.py -I third_party/node-nw/common.gypi -D msvs_version=2021 -D build_type=Release_x64 third_party/node-nw/node.gyp
 ```
 
 or use the following if you're doing a component build:
 ```bash
-./build/gyp_chromium -D component=shared_library -I \
-third_party/node-nw/common.gypi -D building_nw=1 \
--D clang=1 third_party/node-nw/node.gyp
+python3 third_party/node-nw/tools/gyp/gyp_main.py -D component=shared_library -I third_party/node-nw/common.gypi -D msvs_version=2021 -D build_type=Release_x64 third_party/node-nw/node.gyp
 ```
 To change the build configuration for Node, you need to setup the GYP_DEFINES environment variable:
 
