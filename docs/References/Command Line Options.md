@@ -79,6 +79,15 @@ You can also use Chromium options listed in https://github.com/nwjs/chromium.src
 
 These options can be put into [`chromium-args` in manifest](Manifest Format.md#chromium-args) to get NW.js running with them each time.
 
-## Environment Variables
+# Node.js Options
+
+!!! note
+    The arguments in this section are added for Node.js. They should be in `node-main` field in `package.json`. They are not effective on Chromium and the command line.
+
+## `--nw-node-inspector`
+
+Enable the V8 inspector in Node. Note that this will replace the registered V8 inspector in DOM from Blink, which will in turn breaks console.log in DOM since it relies on the inspector. You should consider use the console from Node instead as a workaround.
+
+# Environment Variables
 
 `NW_PRE_ARGS`'s value is prepended to the value of `chromium-args` in manifest.
