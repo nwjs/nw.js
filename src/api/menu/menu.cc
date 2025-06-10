@@ -51,7 +51,9 @@ void Menu::Call(const std::string& method,
     Append(object_manager()->GetApiObject<MenuItem>(object_id));
   } else if (method == "Insert") {
     int object_id = arguments[0].GetInt();
-    int pos = arguments[1].GetInt();
+    int pos = 0;
+    if (arguments.size() > 1)
+      pos = arguments[1].GetInt();
     Insert(object_manager()->GetApiObject<MenuItem>(object_id), pos);
   } else if (method == "Remove") {
     int object_id = arguments[0].GetInt();
