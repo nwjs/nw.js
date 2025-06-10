@@ -1,17 +1,17 @@
 diff --git a/selenium/webdriver/chromium/options.py b/selenium/webdriver/chromium/options.py
-index 3d8f572..83220d8 100644
+index 2b305d3a..9f718ec9 100644
 --- selenium/webdriver/chromium/options.py
 +++ selenium/webdriver/chromium/options.py
-@@ -31,6 +31,7 @@ class ChromiumOptions(ArgOptions):
-         super(ChromiumOptions, self).__init__()
-         self._binary_location = ''
+@@ -32,6 +32,7 @@ class ChromiumOptions(ArgOptions):
+         super().__init__()
+         self._binary_location = ""
          self._extension_files = []
 +        self._nw_arguments = []
          self._extensions = []
          self._experimental_options = {}
          self._debugger_address = None
 @@ -69,6 +70,25 @@ class ChromiumOptions(ArgOptions):
-         """
+             raise TypeError("Debugger Address must be a string")
          self._debugger_address = value
  
 +    @property
@@ -35,8 +35,8 @@ index 3d8f572..83220d8 100644
 +
      @property
      def extensions(self) -> List[str]:
-         """
-@@ -167,6 +187,7 @@ class ChromiumOptions(ArgOptions):
+         """:Returns: A list of encoded extensions that will be loaded."""
+@@ -139,6 +159,7 @@ class ChromiumOptions(ArgOptions):
          if self.binary_location:
              chrome_options["binary"] = self.binary_location
          chrome_options["args"] = self._arguments
