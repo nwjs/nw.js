@@ -30,6 +30,7 @@ group("nwjs") {
 component("nw_base") {
   deps = [
     "//base",
+    "//content/public/common:buildflags",
     "//media:media_buildflags",
     "//third_party/zlib/google:zip",
     "//url",
