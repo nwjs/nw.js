@@ -17,7 +17,7 @@ try:
     wait_window_handles(driver, 2)
     handles = driver.window_handles
     print(handles)
-    driver.switch_to_window(handles[1])
+    driver.switch_to.window(handles[1])
     output = driver.current_url
     print(output)
     print('waiting for crash')
