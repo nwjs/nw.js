@@ -9,6 +9,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from nw_util import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 chrome_options = Options()
 testdir = os.path.dirname(os.path.abspath(__file__))
 chrome_options.add_argument('nwapp=' + testdir)

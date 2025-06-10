@@ -7,6 +7,7 @@ import os
 import subprocess
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 chrome_options = Options()
 testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
@@ -15,7 +16,7 @@ driver = get_configured_webdriver(chrome_options_instance=chrome_options)
 driver.implicitly_wait(5)
 try:
     print(driver.current_url)
-    result = driver.find_element_by_id('result')
+    result = driver.find_element(By.ID, 'result')
     print(result.get_attribute('innerHTML'))
     assert 'success' in result.get_attribute('innerHTML')
 finally:

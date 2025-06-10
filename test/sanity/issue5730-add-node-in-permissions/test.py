@@ -5,6 +5,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from nw_util import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 chrome_options = Options()
 testdir = os.path.dirname(os.path.abspath(__file__))
 chrome_options.add_argument('nwapp=' + testdir)
@@ -19,8 +20,8 @@ try:
     timeout = 10
     while timeout > 0:
         try:
-            ret2 = driver.find_element_by_id('request2').get_attribute('innerHTML')
-            ret1 = driver.find_element_by_id('request1').get_attribute('innerHTML')
+            ret2 = driver.find_element(By.ID, 'request2').get_attribute('innerHTML')
+            ret1 = driver.find_element(By.ID, 'request1').get_attribute('innerHTML')
             if ret2 != '':
                 print('show webview delayed value')
                 print(ret2)

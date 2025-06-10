@@ -7,6 +7,7 @@ from nw_util import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common import utils
+from selenium.webdriver.common.by import By
 chrome_options = Options()
 testdir = os.path.dirname(os.path.abspath(__file__))
 chrome_options.add_argument('nwapp=' + testdir)
@@ -30,8 +31,8 @@ try:
     elem_id = 'res2'
     while timeout > 0:
         try:
-            driver.switch_to.frame(driver.find_element_by_tag_name('iframe'))
-            ret = driver.find_element_by_id(elem_id).get_attribute('innerHTML')
+            driver.switch_to.frame(driver.find_element(By.TAG_NAME, 'iframe'))
+            ret = driver.find_element(By.ID, elem_id).get_attribute('innerHTML')
             break
         except selenium.common.exceptions.NoSuchElementException:
             pass

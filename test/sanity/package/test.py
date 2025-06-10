@@ -9,6 +9,7 @@ import zipfile
 import platform
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 testdir = os.path.dirname(os.path.abspath(__file__))
 nwdist = os.path.join(os.path.dirname(os.environ['CHROMEDRIVER']), 'nwdist')
 appdir = os.path.join(testdir, 'app')
@@ -52,12 +53,12 @@ if platform.system() == 'Darwin':
 else:
     print('copying %s to %s' % (appdir, pkg1))
     copytree(appdir, pkg1)
-driver_path = os.path.join(pkg1, 'chromedriver')
+driver_path = os.path.join(pkg1, 'chromedriver.exe' if sys.platform == 'win32' else 'chromedriver')
 driver = get_configured_webdriver(driver_path=driver_path)
 driver.implicitly_wait(5)
 try:
     print(driver.current_url)
-    result = driver.find_element_by_id('result')
+    result = driver.find_element(By.ID, 'result')
     print(result.get_attribute('innerHTML'))
     assert 'success' in result.get_attribute('innerHTML')
 finally:
@@ -73,12 +74,12 @@ else:
     package_nw = os.path.join(pkg2, 'package.nw')
     print('compressing %s to %s' % (appdir, package_nw))
     compress(appdir, package_nw)
-driver_path = os.path.join(pkg2, 'chromedriver')
+driver_path = os.path.join(pkg2, 'chromedriver.exe' if sys.platform == 'win32' else 'chromedriver')
 driver2 = get_configured_webdriver(driver_path=driver_path)
 driver2.implicitly_wait(5)
 try:
     print(driver2.current_url)
-    result = driver2.find_element_by_id('result')
+    result = driver2.find_element(By.ID, 'result')
     print(result.get_attribute('innerHTML'))
     assert 'success' in result.get_attribute('innerHTML')
 finally:
@@ -97,12 +98,12 @@ if platform.system() != 'Darwin':
     with open(nwbin, 'ab') as myfile, open(package_nw, 'rb') as file2:
         myfile.write(file2.read())
     os.remove(package_nw)
-    driver_path = os.path.join(pkg3, 'chromedriver')
+    driver_path = os.path.join(pkg3, 'chromedriver.exe' if sys.platform == 'win32' else 'chromedriver')
     driver3 = get_configured_webdriver(driver_path=driver_path)
     time.sleep(1)
     try:
         print(driver3.current_url)
-        result = driver3.find_element_by_id('result')
+        result = driver3.find_element(By.ID, 'result')
         print(result.get_attribute('innerHTML'))
         assert 'success' in result.get_attribute('innerHTML')
     finally:

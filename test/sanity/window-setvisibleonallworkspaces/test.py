@@ -10,11 +10,12 @@ if platform.system() == 'Windows':
     sys.exit(0)
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 chrome_options = Options()
 chrome_options.add_argument('nwapp=' + os.path.dirname(os.path.abspath(__file__)))
 driver = get_configured_webdriver(chrome_options_instance=chrome_options, base_service_args=['--verbose'], log_file_path='log')
 try:
-    result = driver.find_element_by_id('visible_on_all_workspaces').get_attribute('textContent')
+    result = driver.find_element(By.ID, 'visible_on_all_workspaces').get_attribute('textContent')
     assert result == 'true'
 finally:
     driver.quit()

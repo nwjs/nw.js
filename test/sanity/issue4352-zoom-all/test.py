@@ -13,7 +13,7 @@ driver = get_configured_webdriver(chrome_options_instance=chrome_options, base_s
 driver.implicitly_wait(5)
 try:
     wait_switch_window_url(driver, 'index.html')
-    driver.find_element_by_id('create-popup').click()
+    driver.find_element(By.ID, 'create-popup').click()
     wait_for_element_id_content(driver, 'result', 'created')
     wait_window_handles(driver, 2)
     wait_switch_window_url(driver, 'popup.html')
@@ -23,8 +23,8 @@ try:
         time.sleep(1)
     print('zoom2: ', zoom2)
     wait_switch_window_name(driver, 'index')
-    driver.find_element_by_id('get-zoom').click()
-    zoom1 = driver.find_element_by_id('result').get_attribute('innerHTML')
+    driver.find_element(By.ID, 'get-zoom').click()
+    zoom1 = driver.find_element(By.ID, 'result').get_attribute('innerHTML')
     print('zoom1: ', zoom1)
     assert zoom1 == '1' or zoom1 == '1.5'
     assert zoom2 != '1'

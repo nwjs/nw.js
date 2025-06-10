@@ -7,6 +7,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common import utils
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from nw_util import *
+from selenium.webdriver.common.by import By
 chrome_options = Options()
 chrome_options.add_argument('nwapp=' + os.path.dirname(os.path.abspath(__file__)))
 testdir = os.path.dirname(os.path.abspath(__file__))
@@ -20,7 +21,7 @@ driver = get_configured_webdriver(chrome_options_instance=chrome_options, base_s
 driver.implicitly_wait(5)
 try:
     print(driver.current_url)
-    result = driver.find_element_by_id('res1').get_attribute('innerHTML')
+    result = driver.find_element(By.ID, 'res1').get_attribute('innerHTML')
     print(result)
     assert 'ENABLED' in result
     timeout = 10
@@ -28,8 +29,8 @@ try:
     elem_id = 'res2'
     while timeout > 0:
         try:
-            driver.switch_to.frame(driver.find_element_by_tag_name('iframe'))
-            ret = driver.find_element_by_id(elem_id).get_attribute('innerHTML')
+            driver.switch_to.frame(driver.find_element(By.TAG_NAME, 'iframe'))
+            ret = driver.find_element(By.ID, elem_id).get_attribute('innerHTML')
             break
         except selenium.common.exceptions.NoSuchElementException:
             pass

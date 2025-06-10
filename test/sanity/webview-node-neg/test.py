@@ -9,6 +9,7 @@ def path2url(path):
     return urllib.parse.urljoin('file:', urllib.request.pathname2url(path))
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
 chrome_options = Options()
@@ -20,7 +21,7 @@ driver.implicitly_wait(5)
 try:
     print(driver.current_url)
     wait_switch_window_url(driver, 'webview.html')
-    result = driver.find_element_by_id('ret').get_attribute('innerHTML')
+    result = driver.find_element(By.ID, 'ret').get_attribute('innerHTML')
     print(result)
     assert 'version = undefined' in result
 finally:

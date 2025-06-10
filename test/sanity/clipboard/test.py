@@ -6,16 +6,17 @@ import time
 import os
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 chrome_options = Options()
 chrome_options.add_argument('nwapp=' + os.path.dirname(os.path.abspath(__file__)))
 
 def assert_dom(id, expect):
-    elem = driver.find_element_by_id(id)
+    elem = driver.find_element(By.ID, id)
     print(elem.get_attribute('innerHTML'))
     assert expect in elem.get_attribute('innerHTML')
 
 def assert_dom_not(id, not_expect):
-    elem = driver.find_element_by_id(id)
+    elem = driver.find_element(By.ID, id)
     print(elem.get_attribute('innerHTML'))
     assert not_expect not in elem.get_attribute('innerHTML')
 

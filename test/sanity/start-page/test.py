@@ -5,10 +5,11 @@ from nw_util import get_configured_webdriver
 import time
 import os
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 driver = get_configured_webdriver()
 try:
     print(driver.current_url)
-    id = driver.find_element_by_id('nwjsver')
+    id = driver.find_element(By.ID, 'nwjsver')
     print(id.text)
 finally:
     driver.quit()

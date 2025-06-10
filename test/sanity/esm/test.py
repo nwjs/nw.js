@@ -8,6 +8,7 @@ from nw_util import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common import utils
+from selenium.webdriver.common.by import By
 test_dir = os.path.dirname(os.path.abspath(__file__))
 chrome_options = Options()
 chrome_options.add_argument('nwapp=' + test_dir)
@@ -24,7 +25,7 @@ try:
     assert 'Hello world' in result
     assert "Failed to resolve module specifier 'fs'" in result
     assert re.search('"meta-url":"file://.*?/src/content/nw/test/sanity/esm/test\\.mjs"', result)
-    driver.find_element_by_id('devtools').click()
+    driver.find_element(By.ID, 'devtools').click()
     print('wait for devtools open')
     time.sleep(3)
     wait_window_handles(driver, 2)
@@ -33,7 +34,7 @@ finally:
 pkgjson = '\n{\n  "name": "test-esm",\n  "main": "main.html",\n  "chromium-args": "--enable-features=NWESM,NWChainImportNode",\n  "node-main": "index.js"\n}\n'
 with open(os.path.join(test_dir, 'package.json'), 'w') as bg:
     bg.write(pkgjson)
-driver = get_configured_webdriver(chrome_options_instance=chrome_options)
+driver = get_configured_webdriver(chrome_options_instance=chrome_options, port=0)
 driver.implicitly_wait(2)
 try:
     print(driver.current_url)

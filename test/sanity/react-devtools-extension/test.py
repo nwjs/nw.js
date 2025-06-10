@@ -5,6 +5,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from nw_util import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 testdir = os.path.dirname(os.path.abspath(__file__))
 chrome_options = Options()
 chrome_options.add_argument('nwapp=' + testdir)
@@ -13,7 +14,7 @@ driver = get_configured_webdriver(chrome_options_instance=chrome_options, base_s
 driver.implicitly_wait(5)
 try:
     print(driver.current_url)
-    driver.find_element_by_id('showdevtools').click()
+    driver.find_element(By.ID, 'showdevtools').click()
     print('wait for devtools open')
     wait_window_handles(driver, 2)
     print('switch to devtools')

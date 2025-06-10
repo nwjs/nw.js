@@ -10,6 +10,7 @@ import platform
 from subprocess import Popen, PIPE
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 chrome_options = Options()
 testdir = os.path.dirname(os.path.abspath(__file__))
 chrome_options.add_argument('nwapp=' + testdir)
@@ -34,14 +35,14 @@ driver = get_configured_webdriver(chrome_options_instance=chrome_options)
 driver.implicitly_wait(5)
 try:
     print(driver.current_url)
-    result = driver.find_element_by_id('result')
+    result = driver.find_element(By.ID, 'result')
     print(result.get_attribute('innerHTML'))
     assert '44' == result.get_attribute('innerHTML')
-    result2 = driver.find_element_by_id('result2').get_attribute('innerHTML')
+    result2 = driver.find_element(By.ID, 'result2').get_attribute('innerHTML')
     print(result2)
     assert 'function mytest() { [native code] }' == result2
-    result3 = driver.find_element_by_id('result3').get_attribute('innerHTML')
-    result4 = driver.find_element_by_id('result4').get_attribute('innerHTML')
+    result3 = driver.find_element(By.ID, 'result3').get_attribute('innerHTML')
+    result4 = driver.find_element(By.ID, 'result4').get_attribute('innerHTML')
     assert '44' == result3
     assert 'function testinner() { [native code] }' == result4
 finally:

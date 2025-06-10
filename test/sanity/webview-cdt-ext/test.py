@@ -9,6 +9,7 @@ def path2url(path):
     return urllib.parse.urljoin('file:', urllib.request.pathname2url(path))
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
 chrome_options = Options()

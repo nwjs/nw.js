@@ -7,6 +7,7 @@ from nw_util import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common import utils
+from selenium.webdriver.common.by import By
 chrome_options = Options()
 chrome_options.add_argument('nwapp=' + os.path.dirname(os.path.abspath(__file__)))
 capabilities = {'pageLoadStrategy': 'none'}
@@ -16,7 +17,7 @@ driver = get_configured_webdriver(chrome_options_instance=chrome_options, base_s
 try:
     wait_switch_window_name(driver, 'local')
     print(driver.current_url)
-    driver.find_element_by_id('open').click()
+    driver.find_element(By.ID, 'open').click()
     result = wait_for_element_id(driver, 'res')
     print('result=' + result)
     assert 'object' in result

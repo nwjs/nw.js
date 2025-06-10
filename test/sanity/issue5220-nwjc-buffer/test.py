@@ -7,6 +7,7 @@ import os
 import subprocess
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 testdir = os.path.dirname(os.path.abspath(__file__))
 nwdist = os.path.join(os.path.dirname(os.environ['CHROMEDRIVER']), 'nwdist')
 script_list = ['path', 'buffer', 'arraybuffer', 'ajax']
@@ -21,8 +22,8 @@ driver.implicitly_wait(2)
 try:
     print(driver.current_url)
     for script in script_list:
-        driver.find_element_by_id('eval-%s' % script).click()
-        result = driver.find_element_by_id('%s-result' % script).get_attribute('innerHTML')
+        driver.find_element(By.ID, 'eval-%s' % script).click()
+        result = driver.find_element(By.ID, '%s-result' % script).get_attribute('innerHTML')
         print(result)
         assert 'success' in result
 finally:

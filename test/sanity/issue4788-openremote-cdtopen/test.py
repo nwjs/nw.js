@@ -8,6 +8,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common import utils
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.by import By
 chrome_options = Options()
 chrome_options.add_argument('nwapp=' + os.path.dirname(os.path.abspath(__file__)))
 capabilities = {'pageLoadStrategy': 'none'}
@@ -22,7 +23,7 @@ run_counter = 6
 try:
     while run_counter > 0:
         run_counter = run_counter - 1
-        driver = get_configured_webdriver(chrome_options_instance=chrome_options, additional_capabilities=capabilities)
+        driver = get_configured_webdriver(chrome_options_instance=chrome_options, additional_capabilities=capabilities, port=0)
         time.sleep(1)
         try:
             driver.switch_to.window('main')
@@ -33,7 +34,7 @@ try:
                 try:
                     wait_counter = wait_counter - 1
                     time.sleep(1)
-                    result = driver.find_element_by_id('res').get_attribute('innerHTML')
+                    result = driver.find_element(By.ID, 'res').get_attribute('innerHTML')
                     break
                 except NoSuchElementException:
                     pass

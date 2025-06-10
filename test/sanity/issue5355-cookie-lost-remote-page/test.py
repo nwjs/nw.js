@@ -6,6 +6,7 @@ from nw_util import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common import utils
+from selenium.webdriver.common.by import By
 test_dir = os.path.dirname(os.path.abspath(__file__))
 chrome_options = Options()
 chrome_options.add_argument('nwapp=' + test_dir)
@@ -19,12 +20,12 @@ try:
     wait_window_handles(driver, 1)
     switch_to_app(driver)
     print(driver.current_url)
-    driver.find_element_by_id('open-cdt').click()
+    driver.find_element(By.ID, 'open-cdt').click()
     time.sleep(1)
-    driver.find_element_by_id('close-cdt').click()
+    driver.find_element(By.ID, 'close-cdt').click()
     time.sleep(1)
-    driver.find_element_by_id('get-cookie').click()
-    result = driver.find_element_by_id('result').get_attribute('innerHTML')
+    driver.find_element(By.ID, 'get-cookie').click()
+    result = driver.find_element(By.ID, 'result').get_attribute('innerHTML')
     print(result)
     assert 'sid=1' in result
 finally:

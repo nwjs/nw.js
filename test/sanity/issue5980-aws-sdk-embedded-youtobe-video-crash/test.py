@@ -9,6 +9,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from nw_util import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 chrome_options = Options()
 testdir = os.path.dirname(os.path.abspath(__file__))
 chrome_options.add_argument('nwapp=' + testdir)
@@ -26,7 +27,7 @@ try:
     timeout = 10
     while timeout > 0:
         try:
-            ret = driver.find_element_by_class_name('ytp-large-play-button')
+            ret = driver.find_element(By.CLASS_NAME, 'ytp-large-play-button')
             break
         except selenium.common.exceptions.NoSuchElementException:
             driver.switch_to_default_content()
@@ -37,7 +38,7 @@ try:
         timeout = timeout - 1
         if timeout <= 0:
             raise Exception('Timeout when waiting for element ytp-large-play-button')
-    assert driver.find_element_by_class_name('ytp-large-play-button') is not None
+    assert driver.find_element(By.CLASS_NAME, 'ytp-large-play-button') is not None
     print('There is no crash')
 finally:
     driver.quit()

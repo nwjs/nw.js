@@ -4,6 +4,7 @@ import shutil
 import zipfile
 import platform
 import subprocess
+from selenium.webdriver.common.by import By
 
 testdir = os.path.dirname(os.path.abspath(__file__))
 nwdist = os.path.join(os.path.dirname(os.environ['CHROMEDRIVER']), 'nwdist')

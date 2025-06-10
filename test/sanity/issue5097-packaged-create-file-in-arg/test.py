@@ -9,6 +9,7 @@ import zipfile
 import platform
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 testdir = os.path.dirname(os.path.abspath(__file__))
 nwdist = os.path.join(os.path.dirname(os.environ['CHROMEDRIVER']), 'nwdist')
 appdir = os.path.join(testdir, 'app')
@@ -52,12 +53,12 @@ unexpected_file = 'unexpected_file'
 assert not os.path.exists(unexpected_file), "'%s' should not be existed before testing" % unexpected_file
 chrome_options = Options()
 chrome_options.add_nw_argument(unexpected_file)
-driver_path = os.path.join(pkg1, 'chromedriver')
+driver_path = os.path.join(pkg1, 'chromedriver.exe' if sys.platform == 'win32' else 'chromedriver')
 driver = get_configured_webdriver(chrome_options_instance=chrome_options, driver_path=driver_path)
 driver.implicitly_wait(5)
 try:
     print(driver.current_url)
-    result = driver.find_element_by_id('result')
+    result = driver.find_element(By.ID, 'result')
     print(result.get_attribute('innerHTML'))
     assert 'success' in result.get_attribute('innerHTML')
 finally:

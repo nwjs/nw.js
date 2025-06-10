@@ -9,6 +9,7 @@ def path2url(path):
     return urllib.parse.urljoin('file:', urllib.request.pathname2url(path))
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
 chrome_options = Options()
@@ -28,7 +29,7 @@ driver.implicitly_wait(5)
 try:
     print(driver.current_url)
     wait_switch_window_url(driver, '1.html')
-    result = driver.find_element_by_id('result').get_attribute('innerHTML')
+    result = driver.find_element(By.ID, 'result').get_attribute('innerHTML')
     print(result)
     assert 'success' in result
     print('checking titles to ensure 1.html is not loaded in untrusted webview')
@@ -42,7 +43,7 @@ try:
     assert counter == 1
     print('launch cdt')
     driver.switch_to.window('main')
-    driver.find_element_by_tag_name('button').click()
+    driver.find_element(By.TAG_NAME, 'button').click()
     counter = 15
     while counter > 0:
         try:

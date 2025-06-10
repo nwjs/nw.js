@@ -5,12 +5,13 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from nw_util import *
+from selenium.webdriver.common.by import By
 
 def close_window(title):
     for handle in driver.window_handles:
         driver.switch_to.window(handle)
         if title in driver.title:
-            driver.find_element_by_id('close').click()
+            driver.find_element(By.ID, 'close').click()
             break
 
 def switch_to_window(title):
@@ -27,8 +28,8 @@ try:
     close_window('local file')
     close_window('Example')
     switch_to_window('main window')
-    result_local = driver.find_element_by_id('result_local').get_attribute('innerHTML')
-    result_remote = driver.find_element_by_id('result_remote').get_attribute('innerHTML')
+    result_local = driver.find_element(By.ID, 'result_local').get_attribute('innerHTML')
+    result_remote = driver.find_element(By.ID, 'result_remote').get_attribute('innerHTML')
     assert result_local == 'local'
     assert result_remote == 'remote'
 finally:

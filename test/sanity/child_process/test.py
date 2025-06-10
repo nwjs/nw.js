@@ -9,6 +9,7 @@ testdir = os.path.dirname(os.path.abspath(__file__))
 chrome_options.add_argument('nwapp=' + testdir)
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from nw_util import *
+from selenium.webdriver.common.by import By
 driver = get_configured_webdriver(chrome_options_instance=chrome_options)
 driver.implicitly_wait(5)
 try:

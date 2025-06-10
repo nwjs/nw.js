@@ -7,6 +7,7 @@ from nw_util import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common import utils
+from selenium.webdriver.common.by import By
 chrome_options = Options()
 chrome_options.add_argument('nwapp=' + os.path.dirname(os.path.abspath(__file__)))
 testdir = os.path.dirname(os.path.abspath(__file__))
@@ -27,13 +28,13 @@ driver = get_configured_webdriver(chrome_options_instance=chrome_options, base_s
 try:
     print(driver.current_url)
     driver.implicitly_wait(10)
-    driver.switch_to.frame(driver.find_element_by_tag_name('iframe'))
-    result = driver.find_element_by_id('result').get_attribute('innerHTML')
+    driver.switch_to.frame(driver.find_element(By.TAG_NAME, 'iframe'))
+    result = driver.find_element(By.ID, 'result').get_attribute('innerHTML')
     print(result)
     assert result == 'cross-site-cookie=bar'
     driver.refresh()
-    driver.switch_to.frame(driver.find_element_by_tag_name('iframe'))
-    result = driver.find_element_by_id('result').get_attribute('innerHTML')
+    driver.switch_to.frame(driver.find_element(By.TAG_NAME, 'iframe'))
+    result = driver.find_element(By.ID, 'result').get_attribute('innerHTML')
     print(result)
     assert result == 'cross-site-cookie=bar'
     f = open('svrlog.txt', 'r')

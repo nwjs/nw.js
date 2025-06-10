@@ -6,6 +6,7 @@ import time
 import os
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 chrome_options = Options()
 test_dir = os.path.dirname(os.path.abspath(__file__))
 chrome_options.add_argument('nwapp=' + test_dir)
@@ -14,10 +15,10 @@ driver = get_configured_webdriver(chrome_options_instance=chrome_options)
 driver.implicitly_wait(5)
 try:
     print(driver.current_url)
-    result = driver.find_element_by_tag_name('h1').get_attribute('innerHTML')
+    result = driver.find_element(By.TAG_NAME, 'h1').get_attribute('innerHTML')
     print(result)
     assert 'Hello World' in result
-    res = driver.find_element_by_tag_name('iframe')
+    res = driver.find_element(By.TAG_NAME, 'iframe')
     assert res is not None
 finally:
     driver.quit()

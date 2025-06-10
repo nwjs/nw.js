@@ -7,6 +7,7 @@ import argparse
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 
 import logging
 import os
@@ -20,7 +21,8 @@ def get_configured_webdriver(
     driver_path: str = None,
     base_service_args: list = None,
     log_file_path: str = None,
-    additional_capabilities: dict = None
+    additional_capabilities: dict = None,
+    port: int = None
 ):
     _port_arg_parser = argparse.ArgumentParser(prog='webdriver_setup_port_parser', add_help=False)
     _port_arg_parser.add_argument(
@@ -31,7 +33,10 @@ def get_configured_webdriver(
     )
     _known_cli_args, _ = _port_arg_parser.parse_known_args()
 
-    _target_port = _known_cli_args.chromedriver_port
+    if port is not None:
+        _target_port = port
+    else:
+        _target_port = _known_cli_args.chromedriver_port
     if _target_port is None:
         env_port_str = os.environ.get('CHROMEDRIVER_PORT')
         if env_port_str:
@@ -64,10 +69,14 @@ def get_configured_webdriver(
         log_path=log_file_path,
     )
 
+    if additional_capabilities and isinstance(additional_capabilities, dict):
+        for key, value in additional_capabilities.items():
+            # The modern way to add capabilities that don't have a dedicated method
+            chrome_options_instance.set_capability(key, value)
     try:
         if sys.platform == "win32":
             _chrome_service.creationflags = subprocess.CREATE_NO_WINDOW
-        driver_instance = webdriver.Chrome(service=_chrome_service, options=chrome_options_instance, desired_capabilities=additional_capabilities)
+        driver_instance = webdriver.Chrome(service=_chrome_service, options=chrome_options_instance)
         print(f"[WebDriver Setup] Chromedriver started successfully on port: {driver_instance.service.port}")
     except Exception as e:
         print(f"[WebDriver Setup] Error during WebDriver initialization: {e}")
@@ -221,7 +230,7 @@ def wait_for_element_id(driver, elem_id, timeout=10):
     ret = ''
     while timeout > 0:
         try:
-            ret = driver.find_element_by_id(elem_id).get_attribute('innerHTML')
+            ret = driver.find_element(By.ID, elem_id).get_attribute('innerHTML')
             break
         except selenium.common.exceptions.NoSuchElementException:
             pass
@@ -237,7 +246,7 @@ def wait_for_element_class(driver, elem_class, timeout=10):
     ret = ''
     while timeout > 0:
         try:
-            ret = driver.find_element_by_class_name(elem_class).get_attribute('innerHTML')
+            ret = driver.find_element(By.CLASS_NAME, elem_class).get_attribute('innerHTML')
             break
         except selenium.common.exceptions.NoSuchElementException:
             pass
@@ -253,7 +262,7 @@ def wait_for_element_tag(driver, elem_tag, timeout=10):
     ret = ''
     while timeout > 0:
         try:
-            ret = driver.find_element_by_tag_name(elem_tag).get_attribute('innerHTML')
+            ret = driver.find_element(By.TAG_NAME, elem_tag).get_attribute('innerHTML')
             break
         except selenium.common.exceptions.NoSuchElementException:
             pass
@@ -269,7 +278,7 @@ def wait_for_element_id_content(driver, elem_id, content, timeout=60):
     ret = ''
     while timeout > 0:
         try:
-            ret = driver.find_element_by_id(elem_id).get_attribute('innerHTML')
+            ret = driver.find_element(By.ID, elem_id).get_attribute('innerHTML')
             if content in ret:
               break
         except selenium.common.exceptions.NoSuchElementException:
@@ -346,7 +355,7 @@ def switch_to_devtools(driver, devtools_window=None, skip_exception=False):
     def wait_for_devtools_ready():
         # necessary compatible for older alphaN
         # where devtools is loaded in an iframe
-        inspector_frames = driver.find_elements_by_id('inspector-app-iframe')
+        inspector_frames = driver.find_elements(By.ID, 'inspector-app-iframe')
         if inspector_frames:
             driver.switch_to.frame(inspector_frames[0])
 
@@ -387,7 +396,7 @@ def devtools_click_tab(driver, tab_name):
         timeout = timeout - 1
 
 def devtools_type_in_console(driver, keys):
-    console_prompt = driver.find_element_by_id('console-prompt')
+    console_prompt = driver.find_element(By.ID, 'console-prompt')
     ActionChains(driver).click(console_prompt).perform()
     ActionChains(driver).send_keys(keys).perform()
 

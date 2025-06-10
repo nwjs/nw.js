@@ -13,6 +13,7 @@ logging.basicConfig(level=logging.DEBUG)
 import crash_server
 import nw_util
 import report
+from selenium.webdriver.common.by import By
 
 
 _LOGGER = logging.getLogger(os.path.basename(__file__))

@@ -6,6 +6,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from nw_util import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 chrome_options = Options()
 chrome_options.add_argument('nwapp=' + os.path.dirname(os.path.abspath(__file__)))
 driver = get_configured_webdriver(chrome_options_instance=chrome_options, base_service_args=['--verbose'], log_file_path='log')
@@ -30,7 +31,7 @@ try:
     print('window size: %s' % result)
     assert '200, 300' in result
     driver.switch_to.window(main_window)
-    driver.find_element_by_id('btn_resizeto').click()
+    driver.find_element(By.ID, 'btn_resizeto').click()
     driver.switch_to.window(popup_window)
     result = wait_for_element_id_content(driver, 'yellow', '180, 180')
     print('window size: %s' % result)

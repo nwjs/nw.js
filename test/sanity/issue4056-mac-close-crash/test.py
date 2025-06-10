@@ -11,12 +11,13 @@ if platform.system() != 'Darwin':
     sys.exit(0)
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 chrome_options = Options()
 chrome_options.add_argument('nwapp=' + os.path.dirname(os.path.abspath(__file__)))
 driver = get_configured_webdriver(chrome_options_instance=chrome_options)
 try:
     print(driver.current_url)
-    driver.find_element_by_id('winclose').click()
-    assert driver.find_element_by_id('result') is None
+    driver.find_element(By.ID, 'winclose').click()
+    assert driver.find_element(By.ID, 'result') is None
 finally:
     driver.quit()

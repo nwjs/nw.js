@@ -14,7 +14,7 @@ try:
     print(driver.current_url)
     driver.find_element(By.XPATH, '//button[text()="fail"]').click()
     driver.find_element(By.XPATH, '//button[text()="process.nextTick"]').click()
-    result = driver.find_element_by_id('res1').get_attribute('innerHTML')
+    result = driver.find_element(By.ID, 'res1').get_attribute('innerHTML')
     print(result)
     assert 'success' in result
 finally:

@@ -7,9 +7,10 @@ from nw_util import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common import utils
+from selenium.webdriver.common.by import By
 
 def test_perm(driver, click_id, find_id, should_close_window=False, expected='granted'):
-    driver.find_element_by_id(click_id).click()
+    driver.find_element(By.ID, click_id).click()
     result = wait_for_element_id(driver, find_id)
     print(result)
     assert expected in result

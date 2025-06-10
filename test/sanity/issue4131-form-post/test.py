@@ -7,6 +7,7 @@ from nw_util import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common import utils
+from selenium.webdriver.common.by import By
 chrome_options = Options()
 chrome_options.add_argument('nwapp=' + os.path.dirname(os.path.abspath(__file__)))
 driver = get_configured_webdriver(chrome_options_instance=chrome_options)
@@ -17,19 +18,19 @@ try:
     driver.execute_script('startServer()')
     result = wait_for_element_id(driver, 'server-started')
     print('server started')
-    driver.find_element_by_id('submit').click()
+    driver.find_element(By.ID, 'submit').click()
     result = wait_for_element_id(driver, 'reqno')
     print(result)
-    result = driver.find_element_by_id('method').get_attribute('innerHTML')
+    result = driver.find_element(By.ID, 'method').get_attribute('innerHTML')
     print(result)
     assert 'POST' in result
-    driver.find_element_by_id('submit').click()
+    driver.find_element(By.ID, 'submit').click()
     result = wait_for_element_id_content(driver, 'reqno', 'reqno: 1')
     print(result)
-    result = driver.find_element_by_id('method').get_attribute('innerHTML')
+    result = driver.find_element(By.ID, 'method').get_attribute('innerHTML')
     print(result)
     assert 'POST' in result
-    result = driver.find_element_by_id('data').get_attribute('innerHTML')
+    result = driver.find_element(By.ID, 'data').get_attribute('innerHTML')
     print(result)
     assert 'myvalue2' in result
 finally:

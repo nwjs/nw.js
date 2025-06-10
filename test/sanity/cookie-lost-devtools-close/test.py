@@ -6,6 +6,7 @@ from nw_util import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common import utils
+from selenium.webdriver.common.by import By
 test_dir = os.path.dirname(os.path.abspath(__file__))
 chrome_options = Options()
 chrome_options.add_argument('nwapp=' + test_dir)
@@ -17,7 +18,7 @@ idx = 1
 
 def click_expect(expected):
     global idx
-    driver.find_element_by_id('get-cookie').click()
+    driver.find_element(By.ID, 'get-cookie').click()
     result = wait_for_element_id(driver, 'result-%s' % idx)
     idx += 1
     print(result)
@@ -29,7 +30,7 @@ try:
     print(driver.current_url)
     click_expect('undefined')
     click_expect('sid=1')
-    driver.find_element_by_id('open-devtools').click()
+    driver.find_element(By.ID, 'open-devtools').click()
     print('wait for devtools open')
     wait_window_handles(driver, 2)
     click_expect('sid=1')

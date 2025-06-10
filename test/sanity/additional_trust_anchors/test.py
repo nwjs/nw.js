@@ -8,6 +8,7 @@ from nw_util import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common import utils
+from selenium.webdriver.common.by import By
 chrome_options = Options()
 chrome_options.add_argument('nwapp=' + os.path.dirname(os.path.abspath(__file__)))
 chrome_options.add_experimental_option('excludeSwitches', ['ignore-certificate-errors'])
@@ -52,8 +53,8 @@ try:
         elem_id = 'result'
         while timeout > 0:
             try:
-                driver.switch_to.frame(driver.find_element_by_tag_name('iframe'))
-                ret = driver.find_element_by_id(elem_id).get_attribute('innerHTML')
+                driver.switch_to.frame(driver.find_element(By.TAG_NAME, 'iframe'))
+                ret = driver.find_element(By.ID, elem_id).get_attribute('innerHTML')
                 break
             except selenium.common.exceptions.NoSuchElementException:
                 pass
@@ -70,11 +71,12 @@ try:
         driver.quit()
     pkg_without_trust_anchors = '\n{\n    "name": "test_additional_trust_anchors",\n    "main": "index.html"\n}\n'
     write_file('package.json', pkg_without_trust_anchors)
-    driver = get_configured_webdriver(chrome_options_instance=chrome_options, base_service_args=['--verbose'], log_file_path='log')
+
+    driver = get_configured_webdriver(chrome_options_instance=chrome_options, base_service_args=['--verbose'], log_file_path='log', port=0)
     driver.implicitly_wait(5)
     try:
         print(driver.current_url)
-        driver.switch_to.frame(driver.find_element_by_id('test-frame'))
+        driver.switch_to.frame(driver.find_element(By.ID, 'test-frame'))
         title = driver.execute_script('return document.title')
         print(title)
         assert not 'test.html' in title

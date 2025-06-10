@@ -6,6 +6,7 @@ from nw_util import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common import utils
+from selenium.webdriver.common.by import By
 chrome_options = Options()
 testdir = os.path.dirname(os.path.abspath(__file__))
 chrome_options.add_argument('nwapp=' + testdir)
@@ -23,14 +24,14 @@ driver.implicitly_wait(2)
 try:
     print(driver.current_url)
     print('Click frame button')
-    driver.find_element_by_id('refresh').click()
-    output = driver.find_element_by_id('frameInfo').get_attribute('innerHTML')
+    driver.find_element(By.ID, 'refresh').click()
+    output = driver.find_element(By.ID, 'frameInfo').get_attribute('innerHTML')
     assert 'Iframe top accessible: true' in output
     print('Switch to iframe')
-    driver.switch_to.frame(driver.find_element_by_tag_name('iframe'))
+    driver.switch_to.frame(driver.find_element(By.TAG_NAME, 'iframe'))
     print('Click iframe button')
-    driver.find_element_by_id('refresh').click()
-    result = driver.find_element_by_id('iframeInfo').get_attribute('innerHTML')
+    driver.find_element(By.ID, 'refresh').click()
+    result = driver.find_element(By.ID, 'iframeInfo').get_attribute('innerHTML')
     assert 'Top accessible: true' in result
     print('document.querySelector("iframe").contentWindow.top is works')
 finally:

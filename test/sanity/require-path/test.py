@@ -6,6 +6,7 @@ import time
 import os
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 chrome_options = Options()
 chrome_options.add_argument('nwapp=' + os.path.dirname(os.path.abspath(__file__)))
 driver = get_configured_webdriver(chrome_options_instance=chrome_options)
@@ -15,16 +16,16 @@ try:
     public_path = os.path.join(app_path, 'public')
     print('current url: %s' % driver.current_url)
     print('public path: %s' % public_path)
-    btn = driver.find_element_by_id('btn')
+    btn = driver.find_element(By.ID, 'btn')
     btn.click()
-    result = driver.find_element_by_id('result').get_attribute('innerHTML')
+    result = driver.find_element(By.ID, 'result').get_attribute('innerHTML')
     print('require path: %s' % result)
     assert public_path == result
-    driver.find_element_by_id('lnk').click()
+    driver.find_element(By.ID, 'lnk').click()
     print('current url: %s' % driver.current_url)
-    btn = driver.find_element_by_id('btn')
+    btn = driver.find_element(By.ID, 'btn')
     btn.click()
-    result = driver.find_element_by_id('result').get_attribute('innerHTML')
+    result = driver.find_element(By.ID, 'result').get_attribute('innerHTML')
     print('require path: %s' % result)
     assert public_path == result
 finally:

@@ -6,6 +6,8 @@ from nw_util import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common import utils
+from selenium.webdriver.common.by import By
+
 chrome_options = Options()
 chrome_options.add_argument('nwapp=' + os.path.dirname(os.path.abspath(__file__)))
 chrome_options.add_experimental_option('windowTypes', ['webview'])
@@ -23,7 +25,7 @@ driver.implicitly_wait(5)
 try:
     print(driver.current_url)
     wait_switch_window_url(driver, '1.html')
-    result = driver.find_element_by_id('result').get_attribute('innerHTML')
+    result = driver.find_element(By.ID, 'result').get_attribute('innerHTML')
     print(result)
     assert 'success' in result
 finally:

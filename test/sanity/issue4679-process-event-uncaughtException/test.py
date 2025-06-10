@@ -6,6 +6,7 @@ from nw_util import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
 if platform.system() == 'Windows':
     print('Skipped for Windows platform')
     sys.exit(0)

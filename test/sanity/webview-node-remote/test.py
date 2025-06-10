@@ -7,6 +7,8 @@ from nw_util import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common import utils
+from selenium.webdriver.common.by import By
+
 testdir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(testdir)
 svrprog = os.path.abspath(os.path.join(os.path.dirname(testdir), 'http-server-node.py'))
@@ -27,7 +29,7 @@ driver.implicitly_wait(5)
 try:
     print(driver.current_url)
     wait_switch_window_url(driver, 'webview.html')
-    result = driver.find_element_by_id('ret').get_attribute('innerHTML')
+    result = driver.find_element(By.ID, 'ret').get_attribute('innerHTML')
     print(result)
     assert 'version = v' in result
 finally:

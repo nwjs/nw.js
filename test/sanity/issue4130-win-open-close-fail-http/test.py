@@ -7,6 +7,7 @@ from nw_util import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common import utils
+from selenium.webdriver.common.by import By
 chrome_options = Options()
 chrome_options.add_argument('nwapp=' + os.path.dirname(os.path.abspath(__file__)))
 chrome_options.add_argument('mixed-context')
@@ -24,12 +25,12 @@ driver = get_configured_webdriver(chrome_options_instance=chrome_options, base_s
 try:
     print(driver.current_url)
     driver.implicitly_wait(10)
-    driver.find_element_by_id('open-win').click()
+    driver.find_element(By.ID, 'open-win').click()
     wait_window_handles(driver, 2)
-    driver.find_element_by_id('close-win').click()
+    driver.find_element(By.ID, 'close-win').click()
     wait_window_handles(driver, 1)
-    driver.find_element_by_id('test-request').click()
-    result = driver.find_element_by_id('result').get_attribute('innerHTML')
+    driver.find_element(By.ID, 'test-request').click()
+    result = driver.find_element(By.ID, 'result').get_attribute('innerHTML')
     print(result)
     assert 'success' in result
 finally:

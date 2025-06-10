@@ -7,6 +7,7 @@ from nw_util import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common import utils
+from selenium.webdriver.common.by import By
 chrome_options = Options()
 chrome_options.add_argument('nwapp=' + os.path.dirname(os.path.abspath(__file__)))
 testdir = os.path.dirname(os.path.abspath(__file__))
@@ -24,11 +25,11 @@ driver.implicitly_wait(2)
 try:
     switch_to_app(driver)
     print(driver.current_url)
-    driver.find_element_by_id('test').click()
+    driver.find_element(By.ID, 'test').click()
     wait_for_element_id_content(driver, 'progress', 'loaded')
     print(driver.window_handles)
     handles = driver.window_handles
-    driver.find_element_by_id('opendev').click()
+    driver.find_element(By.ID, 'opendev').click()
     print('wait for devtools window')
     wait_window_handles(driver, 3)
     print(driver.window_handles)

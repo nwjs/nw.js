@@ -6,6 +6,8 @@ from nw_util import *
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+
 chrome_options = Options()
 chrome_options.add_argument("nwapp=" + os.path.dirname(os.path.abspath(__file__)))
 
@@ -16,9 +18,9 @@ driver = get_configured_webdriver(
 try:
     wait_switch_window_url(driver, 'popup.html')
     #driver.switch_to.window(driver.window_handles[-1])
-    img = driver.find_element_by_id('png')
+    img = driver.find_element(By.ID, 'png')
     assert(img.size['width'] > 50 and img.size['height'] > 50)
-    img2 = driver.find_element_by_id('jpg')
+    img2 = driver.find_element(By.ID, 'jpg')
     assert(img.size['height'] == img2.size['height'] and img.size['width'] == img2.size['width'])
 finally:
     driver.quit()
