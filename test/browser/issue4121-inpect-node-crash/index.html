@@ -8,7 +8,10 @@
 <body>
 <button id="require" onclick="require('./test.js')">require</button>
 <script>
-chrome.developerPrivate.openDevTools({renderViewId: -1, renderProcessId: -1, extensionId: chrome.runtime.id})
+  chrome.developerPrivate.openDevTools({renderViewId: -1, renderProcessId: -1, extensionId: chrome.runtime.id})
+  if (chrome.test) {
+    chrome.test.sendMessage("Launched");
+  }
 </script>
 </body>
 </html>

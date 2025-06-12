@@ -138,6 +138,8 @@ using task_manager::browsertest_util::WaitForTaskManagerRows;
 using ui::MenuModel;
 using content::BrowserThread;
 using content::WebContents;
+using content::EvalJs;
+using content::EvalJsResult;
 
 namespace {
 const char kEmptyResponsePath[] = "/close-socket";
@@ -791,9 +793,24 @@ public:
     return extension;
   }
 
-  content::WebContents* GetAppWebContents() {
-    return BrowserList::GetInstance()->GetLastActive()
-        ->tab_strip_model()->GetActiveWebContents();
+  void ListWebContents() {
+    for (Browser* browser : *BrowserList::GetInstance()) {
+      LOG(WARNING) << browser->tab_strip_model()->GetActiveWebContents()->GetLastCommittedURL();
+    }
+  }
+
+  content::WebContents* GetAppWebContents(const std::string& fn = std::string()) {
+    Browser* b = BrowserList::GetInstance()->GetLastActive();
+    if (!b->is_type_devtools())
+        return b->tab_strip_model()->GetActiveWebContents();
+    for (Browser* browser : *BrowserList::GetInstance()) {
+      if (!browser->is_type_devtools()) {
+        WebContents* wc = browser->tab_strip_model()->GetActiveWebContents();
+        if (wc->GetLastCommittedURL().spec().ends_with(fn))
+          return wc;
+      }
+    }
+    return nullptr;
   }
 
   void SendInput(content::WebContents* wc, const std::string& value) {
@@ -809,7 +826,7 @@ public:
 
 extern void SwitchToPanel(DevToolsWindow* window, const char* panel);
 
-IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, 3780Jailed) {
+IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue3780Jailed) {
   LoadAndLaunchApp("issue3780-jailed", "Launched");
   content::WebContents* wc = GetAppWebContents();
   DevToolsWindowCreationObserver observer;
@@ -823,7 +840,26 @@ IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, 3780Jailed) {
                    ui::DomCode::ENTER, ui::VKEY_RETURN, false, false, false,
                    false);
   Sleep(base::Milliseconds(1000));
-  EXPECT_EQ("'/child.html'", content::EvalJs(devtools, "document.querySelector('.console-user-command-result .console-message-text .object-value-string').textContent").ExtractString());
+  EXPECT_EQ("'/child.html'", EvalJs(devtools, "document.querySelector('.console-user-command-result .console-message-text .object-value-string').textContent").ExtractString());
+}
+
+IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue4121InspectNodeCrash) {
+  DevToolsWindowCreationObserver observer;
+  LoadAndLaunchApp("issue4121-inpect-node-crash", "Launched");
+  observer.WaitForLoad();
+  content::WebContents* wc = GetAppWebContents("index.html");
+  EvalJsResult result = EvalJs(wc, "document.querySelector('#require').click()");
+  ASSERT_THAT(result, content::EvalJsResult::IsOk());
+  DevToolsWindow* window = observer.devtools_window();
+  SwitchToPanel(window, "console");
+  WebContents* devtools = DevToolsWindowTesting::Get(window)->main_web_contents();
+
+  EvalJsResult result2 = EvalJs(devtools, "document.querySelector('.devtools-link').click()");
+  ASSERT_THAT(result2, content::EvalJsResult::IsOk());
+
+  Sleep(base::Milliseconds(2000)); //wait for crash
+  SwitchToPanel(window, "sources");
+  Sleep(base::Milliseconds(1000)); //wait for crash
 }
 
 IN_PROC_BROWSER_TEST_F(NWAppTest, LocalFlash) {
