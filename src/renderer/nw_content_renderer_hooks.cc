@@ -13,6 +13,7 @@
 
 #define CONTENT_IMPLEMENTATION 1
 #include "content/common/content_export.h"
+#include "content/public/common/content_switches.h"
 
 // v8
 #include "v8/include/v8.h"
@@ -39,13 +40,17 @@ namespace nw {
 // renderer
 void LoadNodeSymbols() {
   base::NativeLibraryLoadError error;
+  std::string node_dllname("node");
+  const base::CommandLine* cmdline = base::CommandLine::ForCurrentProcess();
+  if (cmdline->HasSwitch(switches::kNodeDllName)) {
+    node_dllname = cmdline->GetSwitchValueASCII(switches::kNodeDllName);
+  }
 #if defined(OS_MAC)
-  base::FilePath node_dll_path = base::apple::FrameworkBundlePath().Append(base::FilePath::FromUTF8Unsafe(base::GetNativeLibraryName("node")));
+  base::FilePath node_dll_path = base::apple::FrameworkBundlePath().Append(base::FilePath::FromUTF8Unsafe(base::GetNativeLibraryName(node_dllname)));
 #else
-  base::FilePath node_dll_path = base::FilePath::FromUTF8Unsafe(base::GetNativeLibraryName("node"));
+  base::FilePath node_dll_path = base::FilePath::FromUTF8Unsafe(base::GetNativeLibraryName(node_dllname));
 #endif
   base::NativeLibraryOptions options;
-  const base::CommandLine* cmdline = base::CommandLine::ForCurrentProcess();
   if (!cmdline->HasSwitch("nwjs-test-mode")) //TODO: figure out why this fails with browser tests
     options.prefer_own_symbols = true;
   base::NativeLibrary node_dll = base::LoadNativeLibraryWithOptions(node_dll_path, options, &error);
