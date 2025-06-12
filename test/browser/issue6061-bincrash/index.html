@@ -9,6 +9,9 @@
       nw.Window.get().evalNWBin(null, 'index.bin');
       nw.Window.get().showDevTools();
       //chrome.developerPrivate.openDevTools({renderViewId: -1, renderProcessId: -1, extensionId: chrome.runtime.id})
+      if (chrome.test) {
+        chrome.test.sendMessage("Launched");
+      }
     </script>
     <div id='result'>6061 bincrash test</div>
   </body>

@@ -944,6 +944,60 @@ IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue4121InspectNodeCrash) {
   Sleep(base::Milliseconds(1000)); //wait for crash
 }
 
+IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue6061BinCrash) {
+  base::FilePath test_dir =
+      test_data_dir_.AppendASCII("issue6061-bincrash");
+  base::FilePath bin = test_dir.AppendASCII("index.bin");
+  base::FilePath js = test_dir.AppendASCII("index.js");
+  base::DeleteFile(bin);
+  auto exe_dir = base::PathService::CheckedGet(base::BasePathKey::DIR_EXE);
+#if defined(OS_WIN)
+  base::FilePath nwjc = exe_dir.AppendASCII("nwjc.exe");
+#else
+  base::FilePath nwjc = exe_dir.AppendASCII("nwjc");
+#endif
+  base::CommandLine cmdline(nwjc);
+  cmdline.AppendArgPath(js);
+  cmdline.AppendArgPath(bin);
+  base::LaunchOptions options;
+#if defined(OS_WIN)
+  options.start_hidden = true;
+#endif
+  options.wait = true;
+  LOG(WARNING) << "Running " << cmdline.GetCommandLineString();
+  auto process = base::LaunchProcess(cmdline, options);
+  int exit_code;
+  EXPECT_TRUE(process.WaitForExit(&exit_code));
+  process.Terminate(0, /*wait=*/true);
+  EXPECT_TRUE(base::PathExists(bin));
+
+  DevToolsWindowCreationObserver observer;
+  LoadAndLaunchApp("issue6061-bincrash", "Launched");
+  observer.WaitForLoad();
+
+  DevToolsWindow* window = observer.devtools_window();
+  SwitchToPanel(window, "console");
+  WebContents* devtools = DevToolsWindowTesting::Get(window)->main_web_contents();
+
+  EvalJsResult result = EvalJs(
+      devtools, "document.querySelector('.console-object').click()");
+  ASSERT_THAT(result, content::EvalJsResult::IsOk());
+
+  Sleep(base::Milliseconds(1000));
+
+  auto result2 = EvalJs(
+      devtools, "document.querySelector('#console-messages > div.console-group.console-group-messages > div > div > div > div > div > div:nth-child(1) > span > span.console-message-text > div').shadowRoot.querySelector('div > ol > ol > li > span').click()");
+  ASSERT_THAT(result2, content::EvalJsResult::IsOk());
+
+  Sleep(base::Milliseconds(1000));
+
+  auto result3 = EvalJs(
+      devtools, "document.querySelector('#console-messages > div.console-group.console-group-messages > div > div > div > div > div > div:nth-child(1) > span > span.console-message-text > div').shadowRoot.querySelector('div > ol > ol > ol > li:nth-child(3) > span').click()");
+  ASSERT_THAT(result3, content::EvalJsResult::IsOk());
+
+  Sleep(base::Milliseconds(1000));
+}
+
 IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue4269Crash) {
   base::FilePath test_dir =
       test_data_dir_.AppendASCII("issue4269-click-link-crash");
