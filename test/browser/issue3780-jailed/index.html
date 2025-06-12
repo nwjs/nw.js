@@ -12,6 +12,9 @@
   function showJailedDevTools() {
     nw.Window.get().showDevTools(document.getElementById('child'))
   };
+    if (chrome.test) {
+      chrome.test.sendMessage("Launched");
+    }
   </script>
 </body>
 </html>

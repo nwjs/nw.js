@@ -31,6 +31,7 @@
 #include "chrome/browser/apps/platform_apps/app_browsertest_util.h"
 #include "chrome/browser/chrome_content_browser_client.h"
 #include "chrome/browser/content_settings/host_content_settings_map_factory.h"
+#include "chrome/browser/devtools/devtools_window_testing.h"
 #include "chrome/browser/download/download_history.h"
 #include "chrome/browser/download/download_prefs.h"
 #include "chrome/browser/download/download_core_service.h"
@@ -89,6 +90,7 @@
 #include "ui/display/display_switches.h"
 #include "ui/events/event_switches.h"
 #include "ui/events/gesture_detection/gesture_configuration.h"
+#include "ui/events/keycodes/keyboard_code_conversion.h"
 #include "ui/gl/gl_switches.h"
 #include "ui/views/view.h"
 #include "ui/views/widget/widget.h"
@@ -118,6 +120,7 @@
 using extensions::ContextMenuMatcher;
 using extensions::ExtensionsAPIClient;
 using extensions::MenuItem;
+using extensions::Extension;
 using guest_view::GuestViewManager;
 using guest_view::TestGuestViewManager;
 using guest_view::TestGuestViewManagerFactory;
@@ -303,6 +306,13 @@ class LeftMouseClick {
 };
 
 #endif
+
+void Sleep(base::TimeDelta delay) {
+  base::RunLoop loop;
+  base::SequencedTaskRunner::GetCurrentDefault()->PostDelayedTask(
+      FROM_HERE, loop.QuitClosure(), delay);
+  loop.Run();
+}
 
 }  // namespace
 
@@ -756,6 +766,65 @@ public:
 };
 
 class NWJSAppTest : public NWAppTest {};
+
+class NWJSDevToolsTest : public extensions::PlatformAppBrowserTest {
+public:
+  NWJSDevToolsTest() {}
+  ~NWJSDevToolsTest() override {}
+  void SetUpCommandLine(base::CommandLine* command_line) override {
+    extensions::PlatformAppBrowserTest::SetUpCommandLine(command_line);
+    base::PathService::Get(base::DIR_SRC_TEST_DATA_ROOT, &test_data_dir_);
+    test_data_dir_ = test_data_dir_.Append(FILE_PATH_LITERAL("content"))
+                     .Append(FILE_PATH_LITERAL("nw"))
+                     .Append(FILE_PATH_LITERAL("test"))
+                     .Append(FILE_PATH_LITERAL("browser"));
+  }
+  const Extension* LoadAndLaunchApp(
+    const char* name,
+    const std::string& message) {
+    ExtensionTestMessageListener launched_listener(message);
+    const Extension* extension = LoadExtension(
+        test_data_dir_.AppendASCII(name));
+    EXPECT_TRUE(launched_listener.WaitUntilSatisfied())
+        << "'" << launched_listener.message() << "' message was not receieved";
+
+    return extension;
+  }
+
+  content::WebContents* GetAppWebContents() {
+    return BrowserList::GetInstance()->GetLastActive()
+        ->tab_strip_model()->GetActiveWebContents();
+  }
+
+  void SendInput(content::WebContents* wc, const std::string& value) {
+    for (const char c : value) {
+      ui::DomKey key = ui::DomKey::FromCharacter(c);
+      ui::DomCode code = UsLayoutDomKeyToDomCode(key);
+      ui::KeyboardCode key_code = DomCodeToUsLayoutKeyboardCode(code);
+      content::SimulateKeyPress(wc, key, code, key_code, false,
+                                false, false, false);
+    }
+  }
+};
+
+extern void SwitchToPanel(DevToolsWindow* window, const char* panel);
+
+IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, 3780Jailed) {
+  LoadAndLaunchApp("issue3780-jailed", "Launched");
+  content::WebContents* wc = GetAppWebContents();
+  DevToolsWindowCreationObserver observer;
+  content::ExecJs(wc, "showJailedDevTools()");
+  observer.WaitForLoad();
+  DevToolsWindow* window = observer.devtools_window();
+  SwitchToPanel(window, "console");
+  WebContents* devtools = DevToolsWindowTesting::Get(window)->main_web_contents();
+  SendInput(devtools, "location.pathname");
+  SimulateKeyPress(devtools, ui::DomKey::ENTER,
+                   ui::DomCode::ENTER, ui::VKEY_RETURN, false, false, false,
+                   false);
+  Sleep(base::Milliseconds(1000));
+  EXPECT_EQ("'/child.html'", content::EvalJs(devtools, "document.querySelector('.console-user-command-result .console-message-text .object-value-string').textContent").ExtractString());
+}
 
 IN_PROC_BROWSER_TEST_F(NWAppTest, LocalFlash) {
   std::string contents;
