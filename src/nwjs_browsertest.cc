@@ -799,6 +799,70 @@ public:
     }
   }
 
+  const std::string WaitForElement(WebContents* wc, const std::string& selector) {
+    const std::string wait_for_element_js = R"js(
+        ((selector) => {
+            return new Promise(resolve => {
+                let element = document.querySelector(selector);
+                if (element) {
+                    return resolve(element);
+                }
+
+                const observer = new MutationObserver(mutations => {
+                    element = document.querySelector(selector);
+                    if (element) {
+                        resolve(element.innerHTML);
+                        observer.disconnect();
+                    }
+                });
+
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+            });
+        })($1)
+    )js";
+    auto script_to_execute = content::JsReplace(wait_for_element_js, selector);
+    return EvalJs(wc, script_to_execute).ExtractString();
+  }
+
+  const std::string WaitForElementContent(WebContents* wc,
+                                          const std::string& selector,
+                                          const std::string& html) {
+    std::string wait_for_inner_html_js = R"js(
+        ((selector, targetHTML) => {
+            return new Promise(resolve => {
+                const check = () => {
+                    const element = document.querySelector(selector);
+                    if (element && element.innerHTML === targetHTML) {
+                        if (observer) {
+                            observer.disconnect();
+                        }
+                        resolve(element.innerHTML);
+                        return true;
+                    }
+                    return false;
+                };
+
+                if (check()) {
+                    return;
+                }
+
+                const observer = new MutationObserver(check);
+
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true,
+                    characterData: true
+                });
+            });
+        })($1, $2)
+    )js";
+    auto script_to_execute = content::JsReplace(wait_for_inner_html_js, selector, html);
+    return EvalJs(wc, script_to_execute).ExtractString();
+  }
+
   content::WebContents* GetAppWebContents(const std::string& fn = std::string()) {
     Browser* b = BrowserList::GetInstance()->GetLastActive();
     if (!b->is_type_devtools())
@@ -878,6 +942,49 @@ IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue4121InspectNodeCrash) {
   Sleep(base::Milliseconds(2000)); //wait for crash
   SwitchToPanel(window, "sources");
   Sleep(base::Milliseconds(1000)); //wait for crash
+}
+
+IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue4269Crash) {
+  base::FilePath test_dir =
+      test_data_dir_.AppendASCII("issue4269-click-link-crash");
+  net::EmbeddedTestServer http_server(net::EmbeddedTestServer::TYPE_HTTP);
+  http_server.ServeFilesFromDirectory(test_dir);
+  ASSERT_TRUE(http_server.Start());
+  const std::string& port = base::NumberToString(http_server.host_port_pair().port());
+  base::FilePath tpl = test_dir.AppendASCII("inspect.tpl");
+  base::FilePath html = test_dir.AppendASCII("inspect.html");
+  std::string contents;
+  ASSERT_TRUE(base::ReadFileToString(tpl, &contents));
+  base::ReplaceSubstringsAfterOffset(&contents, 0, "{port}", port);
+  EXPECT_GT(base::WriteFile(html, contents), 0);
+
+  LoadAndLaunchApp("issue4269-click-link-crash", "Launched");
+  content::WebContents* wc = GetAppWebContents("index.html");
+  ASSERT_THAT(EvalJs(wc, "document.querySelector('#test').click()"),
+              content::EvalJsResult::IsOk());
+  EXPECT_EQ("loaded", WaitForElementContent(wc, "#progress", "loaded"));
+  DevToolsWindowCreationObserver observer;
+  ASSERT_THAT(EvalJs(wc, "document.querySelector('#opendev').click()"),
+              content::EvalJsResult::IsOk());
+  observer.WaitForLoad();
+  DevToolsWindow* window = observer.devtools_window();
+  SwitchToPanel(window, "console");
+  WebContents* devtools = DevToolsWindowTesting::Get(window)->main_web_contents();
+  ui_test_utils::BrowserChangeObserver new_browser_observer(
+      nullptr, ui_test_utils::BrowserChangeObserver::ChangeType::kAdded);
+  ASSERT_THAT(EvalJs(devtools, "document.querySelector('.console-message-text .devtools-link').click()"),
+              content::EvalJsResult::IsOk());
+  Browser* active_browser = new_browser_observer.Wait();
+  ui_test_utils::WaitUntilBrowserBecomeActive(active_browser);
+  content::WebContents* popup_contents =
+      active_browser->tab_strip_model()->GetActiveWebContents();
+  EXPECT_TRUE(content::WaitForLoadStop(popup_contents));
+
+  Sleep(base::Milliseconds(2000)); //wait for crash
+  std::string url = active_browser->tab_strip_model()->GetActiveWebContents()
+                    ->GetLastCommittedURL().spec();
+  LOG(WARNING) << url;
+  EXPECT_TRUE(base::EndsWith(url, "inspect.html"));
 }
 
 IN_PROC_BROWSER_TEST_F(NWAppTest, LocalFlash) {

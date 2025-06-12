@@ -21,6 +21,10 @@ function opendev() {
   newwin.showDevTools();
 }
 
+  if (chrome.test) {
+    chrome.test.sendMessage("Launched");
+  }
+
 </script>
 <button id='test' onclick="test()">test</button>
 <button id='opendev' onclick="opendev()">opendev</button>

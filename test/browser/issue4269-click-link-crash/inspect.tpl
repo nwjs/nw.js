@@ -7,7 +7,7 @@
 </head>
 <body>
   <script>
-  console.log('http://localhost:{port}/inspect.html');
+    console.log('http://127.0.0.1:{port}/inspect.html');
   </script>
 </body>
 </html>
