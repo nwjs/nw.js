@@ -843,6 +843,24 @@ IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue3780Jailed) {
   EXPECT_EQ("'/child.html'", EvalJs(devtools, "document.querySelector('.console-user-command-result .console-message-text .object-value-string').textContent").ExtractString());
 }
 
+IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue3835Crash) {
+  DevToolsWindowCreationObserver observer;
+  LoadAndLaunchApp("issue3835-inspect-crash", "Launched");
+  observer.WaitForLoad();
+  DevToolsWindow* window = observer.devtools_window();
+  SwitchToPanel(window, "console");
+  WebContents* devtools = DevToolsWindowTesting::Get(window)->main_web_contents();
+  SendInput(devtools, "chrome");
+  SimulateKeyPress(devtools, ui::DomKey::ENTER,
+                   ui::DomCode::ENTER, ui::VKEY_RETURN, false, false, false,
+                   false);
+  Sleep(base::Milliseconds(500));
+  EvalJs(devtools, "document.querySelector('.console-object-preview').click()");
+  Sleep(base::Milliseconds(500));
+  EXPECT_NE("null", EvalJs(devtools,
+                           "document.querySelector('.console-view-object-properties-section.expanded')"));
+}
+
 IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue4121InspectNodeCrash) {
   DevToolsWindowCreationObserver observer;
   LoadAndLaunchApp("issue4121-inpect-node-crash", "Launched");
