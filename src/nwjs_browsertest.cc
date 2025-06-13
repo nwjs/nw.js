@@ -894,7 +894,7 @@ IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue3780Jailed) {
   LoadAndLaunchApp("issue3780-jailed", "Launched");
   content::WebContents* wc = GetAppWebContents();
   DevToolsWindowCreationObserver observer;
-  content::ExecJs(wc, "showJailedDevTools()");
+  std::ignore = content::ExecJs(wc, "showJailedDevTools()");
   observer.WaitForLoad();
   DevToolsWindow* window = observer.devtools_window();
   SwitchToPanel(window, "console");
@@ -919,7 +919,7 @@ IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue3835Crash) {
                    ui::DomCode::ENTER, ui::VKEY_RETURN, false, false, false,
                    false);
   Sleep(base::Milliseconds(500));
-  EvalJs(devtools, "document.querySelector('.console-object-preview').click()");
+  std::ignore = EvalJs(devtools, "document.querySelector('.console-object-preview').click()");
   Sleep(base::Milliseconds(500));
   EXPECT_NE("null", EvalJs(devtools,
                            "document.querySelector('.console-view-object-properties-section.expanded')"));
