@@ -1,25 +1,19 @@
 diff --git a/BUILD.gn b/BUILD.gn
-index 2c56680660..8495145a1c 100644
+index 2c56680660..b01ab68379 100644
 --- BUILD.gn
 +++ BUILD.gn
-@@ -269,6 +269,7 @@ if (enable_perfetto_platform_services) {
-   } else {
-     libperfetto_target_type = "shared_library"
-   }
-+  libperfetto_target_type = "static_library"
- 
-   target(libperfetto_target_type, "libperfetto") {
-     if (libperfetto_target_type == "static_library") {
-@@ -305,7 +306,8 @@ if (!build_with_chromium) {
+@@ -305,6 +305,11 @@ if (!build_with_chromium) {
  # Rationalize them with eseckler@. For now seems this one is only used from
  # chromium and the other one only from the Android tree.
  if (build_with_chromium) {
--  component("libperfetto") {
-+  static_library("libperfetto") {
++  static_library("libperfettonode") {
 +    complete_static_lib = true
++    deps = [ ":libperfetto" ]
++  }
++ 
+   component("libperfetto") {
      public_configs = [ "gn:public_config" ]
      deps = [
-       "src/trace_processor/importers/memory_tracker:graph_processor",
 diff --git a/gn/perfetto.gni b/gn/perfetto.gni
 index 8b5592d227..1dda960ab0 100644
 --- gn/perfetto.gni
