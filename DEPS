@@ -57,8 +57,8 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': 'dee34a60c8049b4b0590c0ab324c72b54f1a345b',
-  'nw_v8_revision': 'c395406fc028998f7abfb8209f23857b02225510',
+  'nw_src_revision': 'd986884ed3385bb8c237303fae0cb37de7e5cfca',
+  'nw_v8_revision': '41973f4847464d84f5a451977c885d354d0a8702',
   'nw_node_revision': '5367c4775463aaa3bb01190bf51350bfc94d57dd',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
@@ -307,11 +307,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '2e904eb86c7abcca2648eaedc2569a8874f8d0cb',
+  'v8_revision': '3560072853c57e90cc67cf393493abf3f028c43d',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': '2a18fdbf4c8c20e37734611064d21a83658f6236',
+  'angle_revision': 'd1fb74c940fef262809f4a513039b70e94c91440',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -395,7 +395,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling devtools-frontend
   # and whatever else without interference from each other.
-  'devtools_frontend_revision': 'e70b54a681778fc1c4e81f862297a2f260ccd78c',
+  'devtools_frontend_revision': 'f8dfe8b36e516cef8a5a169e88d16480d8abdc68',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libprotobuf-mutator
   # and whatever else without interference from each other.
@@ -419,7 +419,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
-  'dawn_revision': '45b5634e70a3a6d61f3704f308d7a419e7db532d',
+  'dawn_revision': '86772f20cca54b46f62b65ece1ef61224aef09db',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
@@ -1515,7 +1515,7 @@ deps = {
 
   'src/clank': {
     'url': Var('chrome_git') + '/clank/internal/apps.git' + '@' +
-    'f685d1ec39e69a929c772c67cd2a4064ca640144',
+    '7258a5df23bd97f699ae517eac04b6480fe2bd9c',
     'condition': 'checkout_android and checkout_src_internal',
   },
 
@@ -4653,7 +4653,7 @@ deps = {
 
   'src/components/optimization_guide/internal': {
       'url': Var('chrome_git') + '/chrome/components/optimization_guide.git' + '@' +
-        '7a577325ac05b8473310549bd98f9fd7b818b53f',
+        'fb2cda09ac13d92cc91c2959b51ef7156bf8a6d5',
       'condition': 'checkout_src_internal',
   },
 
@@ -4719,7 +4719,7 @@ deps = {
 
   'src/ios_internal':  {
       'url': Var('chrome_git') + '/chrome/ios_internal.git' + '@' +
-        'f4212bf65d94ec70bc01893a9674285b832d6c40',
+        'a3c702b7b880608529cf3852692df7d34b1d1375',
       'condition': 'checkout_ios and checkout_src_internal',
   },
 
