@@ -30,7 +30,8 @@ function showScreenShare(conf){
         }
     })
     .catch(function(e){
-        console.log(e);
+        console.log(e.name);
+        console.log(e.message);
         if (chrome.test) {
            chrome.test.sendMessage("Fail");
         }else{
