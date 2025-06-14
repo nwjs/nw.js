@@ -934,6 +934,25 @@ IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue3835Crash) {
                            "document.querySelector('.console-view-object-properties-section.expanded')"));
 }
 
+IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue6663GetPrinters) {
+  DevToolsWindowCreationObserver observer;
+  LoadAndLaunchApp("issue6663-window-getPrinters-return-array", "Launched");
+  observer.WaitForLoad();
+  DevToolsWindow* window = observer.devtools_window();
+  SwitchToPanel(window, "console");
+  WebContents* devtools = DevToolsWindowTesting::Get(window)->main_web_contents();
+
+  std::string output = EvalJs(devtools, R"((async () => {
+    const elems = Array.from(document.querySelectorAll('.console-message-text'));
+    const output = (elems.find(el => el.innerHTML.includes('Array')) || elems[0])?.innerHTML || '';
+    return output;
+      })())").ExtractString();
+  LOG(WARNING) << "result: " << output;
+  bool condition = (output.find("Array") != std::string::npos) ||
+                   (output.find("[]") != std::string::npos);
+  ASSERT_TRUE(condition);
+}
+
 IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue4121InspectNodeCrash) {
   DevToolsWindowCreationObserver observer;
   LoadAndLaunchApp("issue4121-inpect-node-crash", "Launched");

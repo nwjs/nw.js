@@ -1,4 +1,7 @@
 <script>
   nw.Window.get().getPrinters(printers => { console.log(printers);});
   nw.Window.get().showDevTools();
+  if (chrome.test) {
+    chrome.test.sendMessage("Launched");
+  }
 </script>
