@@ -814,7 +814,7 @@ public:
             return new Promise(resolve => {
                 let element = document.querySelector(selector);
                 if (element) {
-                    return resolve(element);
+                    return resolve(element.innerHTML);
                 }
 
                 const observer = new MutationObserver(mutations => {
@@ -827,7 +827,8 @@ public:
 
                 observer.observe(document.body, {
                     childList: true,
-                    subtree: true
+                    subtree: true,
+                    characterData: true
                 });
             });
         })($1)
@@ -842,9 +843,10 @@ public:
     std::string wait_for_inner_html_js = R"js(
         ((selector, targetHTML) => {
             return new Promise(resolve => {
+                let observer = null;
                 const check = () => {
                     const element = document.querySelector(selector);
-                    if (element && element.innerHTML === targetHTML) {
+                    if (element && element.innerHTML.includes(targetHTML)) {
                         if (observer) {
                             observer.disconnect();
                         }
@@ -858,7 +860,7 @@ public:
                     return;
                 }
 
-                const observer = new MutationObserver(check);
+                observer = new MutationObserver(check);
 
                 observer.observe(document.body, {
                     childList: true,
@@ -873,9 +875,11 @@ public:
   }
 
   content::WebContents* GetAppWebContents(const std::string& fn = std::string()) {
-    Browser* b = BrowserList::GetInstance()->GetLastActive();
-    if (!b->is_type_devtools())
+    if (fn.empty()) {
+      Browser* b = BrowserList::GetInstance()->GetLastActive();
+      if (!b->is_type_devtools())
         return b->tab_strip_model()->GetActiveWebContents();
+    }
     for (Browser* browser : *BrowserList::GetInstance()) {
       if (!browser->is_type_devtools()) {
         WebContents* wc = browser->tab_strip_model()->GetActiveWebContents();
@@ -970,6 +974,24 @@ IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue4121InspectNodeCrash) {
   Sleep(base::Milliseconds(2000)); //wait for crash
   SwitchToPanel(window, "sources");
   Sleep(base::Milliseconds(1000)); //wait for crash
+}
+
+IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, WindowResizeTo) {
+  LoadAndLaunchApp("window-resizeto", "Launched");
+  ListWebContents();
+  content::WebContents* main = GetAppWebContents("index.html");
+  content::WebContents* popup = GetAppWebContents("newpop.html");
+  LOG(WARNING) << "popup: " << popup;
+  LOG(WARNING) << EvalJs(popup, "document.querySelector('#yellow').outerHTML").ExtractString();
+  std::string result = WaitForElement(popup, "#yellow");
+  LOG(WARNING) << "--> window size 1: " << result;
+  ASSERT_TRUE(result.find("200, 300") != std::string::npos);
+
+  EvalJsResult result2 = EvalJs(main, "document.querySelector('#btn_resizeto').click()");
+  ASSERT_THAT(result2, content::EvalJsResult::IsOk());
+
+  std::string result3 = WaitForElementContent(popup, "#yellow", "180, 180");
+  LOG(WARNING) << "--> window size 2: " << result3;
 }
 
 IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue6061BinCrash) {

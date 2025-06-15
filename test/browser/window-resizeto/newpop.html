@@ -28,5 +28,8 @@
       var yellow = document.getElementById('yellow');
       yellow.innerHTML = window.innerWidth + ", " + window.innerHeight + '  -  inner size';
     }
+    if (chrome.test) {
+      chrome.test.sendMessage("Launched");
+    }
   </script>
 </html>
