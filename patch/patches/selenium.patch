@@ -1,16 +1,16 @@
 diff --git a/selenium/webdriver/chromium/options.py b/selenium/webdriver/chromium/options.py
-index 2b305d3a..9f718ec9 100644
+index a2f55ec1..97eab39f 100644
 --- selenium/webdriver/chromium/options.py
 +++ selenium/webdriver/chromium/options.py
-@@ -32,6 +32,7 @@ class ChromiumOptions(ArgOptions):
+@@ -30,6 +30,7 @@ class ChromiumOptions(ArgOptions):
          super().__init__()
-         self._binary_location = ""
-         self._extension_files = []
-+        self._nw_arguments = []
-         self._extensions = []
-         self._experimental_options = {}
-         self._debugger_address = None
-@@ -69,6 +70,25 @@ class ChromiumOptions(ArgOptions):
+         self._binary_location: str = ""
+         self._extension_files: List[str] = []
++        self._nw_arguments: List[str] = []
+         self._extensions: List[str] = []
+         self._experimental_options: Dict[str, Union[str, int, dict, List[str]]] = {}
+         self._debugger_address: Optional[str] = None
+@@ -67,6 +68,25 @@ class ChromiumOptions(ArgOptions):
              raise TypeError("Debugger Address must be a string")
          self._debugger_address = value
  
@@ -36,7 +36,7 @@ index 2b305d3a..9f718ec9 100644
      @property
      def extensions(self) -> List[str]:
          """:Returns: A list of encoded extensions that will be loaded."""
-@@ -139,6 +159,7 @@ class ChromiumOptions(ArgOptions):
+@@ -137,6 +157,7 @@ class ChromiumOptions(ArgOptions):
          if self.binary_location:
              chrome_options["binary"] = self.binary_location
          chrome_options["args"] = self._arguments
