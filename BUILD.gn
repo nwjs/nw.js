@@ -23,6 +23,9 @@ group("nwjs") {
   if (is_win || is_linux) {
     deps += [ "//buildtools/third_party/libc++:libcpp" ]
   }
+  if (is_win && target_cpu == "x86") {
+    deps += [ "//third_party/dawn/src/dawn/tests:copy_dxc_binary" ]
+  }
   if (is_linux) {
     deps += [ "//chrome:xdg_mime", "//components/crash/core/app:chrome_crashpad_handler", ":copy_icd" ]
   }
