@@ -65,7 +65,7 @@ if (require.main == module) {
       }, ret.failed, 1);
       for (const testcase of test_ret2.failed) {
         if (!known_flaky.has(testcase)) {
-          console.log(`test failed: ${testcase}`);
+          console.log(`${test_ret2.failed.length} failed.`);
           process.exit(1);
         }
       }
