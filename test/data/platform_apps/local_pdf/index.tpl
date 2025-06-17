@@ -26,6 +26,13 @@
           if (e.reason == 'ERR_DISALLOWED_URL_SCHEME' && !trusted)
             chrome.test.sendMessage("PASSED");
         });
+        var loaded = false;
+        webview.addEventListener('loadstop', function(e) {
+          if (!loaded) {
+            loaded = true;
+            chrome.test.sendMessage('guest-loaded');
+          }
+        });
         webview.src = '<pdf_path>';
         if (trusted)
           webview.partition = 'trusted';

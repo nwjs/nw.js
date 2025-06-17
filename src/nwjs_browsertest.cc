@@ -38,6 +38,7 @@
 #include "chrome/browser/download/download_core_service_factory.h"
 #include "chrome/browser/lifetime/application_lifetime.h"
 #include "chrome/browser/pdf/pdf_extension_test_util.h"
+#include "chrome/browser/pdf/test_pdf_viewer_stream_manager.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/renderer_context_menu/render_view_context_menu.h"
 #include "chrome/browser/renderer_context_menu/render_view_context_menu_test_util.h"
@@ -53,6 +54,8 @@
 #include "components/guest_view/browser/guest_view_manager_delegate.h"
 #include "components/guest_view/browser/guest_view_manager_factory.h"
 #include "components/guest_view/browser/test_guest_view_manager.h"
+#include "components/pdf/browser/pdf_frame_util.h"
+
 //#include "content/public/browser/ax_event_notification_details.h"
 #include "content/public/browser/browser_accessibility_state.h"
 #include "content/public/browser/browser_child_process_host_iterator.h"
@@ -83,6 +86,7 @@
 #include "net/test/embedded_test_server/embedded_test_server.h"
 #include "net/test/embedded_test_server/http_request.h"
 #include "net/test/embedded_test_server/http_response.h"
+#include "pdf/pdf_features.h"
 #include "ui/aura/env.h"
 #include "ui/aura/window.h"
 #include "ui/compositor/compositor.h"
@@ -745,7 +749,12 @@ class NWJSWebViewTest : public NWWebViewTestBase, public testing::WithParamInter
 
     trusted_ = GetParam();
   }
+  pdf::TestPdfViewerStreamManager* GetTestPdfViewerStreamManager(
+      content::WebContents* contents) {
+    return factory_.GetTestPdfViewerStreamManager(contents);
+  }
 protected:
+  pdf::TestPdfViewerStreamManagerFactory factory_;
   bool trusted_;
 };
 
@@ -1276,6 +1285,10 @@ IN_PROC_BROWSER_TEST_P(NWJSWebViewTest, LocalPDF) {
   ASSERT_TRUE(web_contents);
   std::vector<content::WebContents*> guest_web_contents_list;
   unsigned long n_guests = trusted_ ? 2 : 1;
+  if (chrome_pdf::features::IsOopifPdfEnabled()) {
+    n_guests = 1;
+  }
+  ExtensionTestMessageListener guest_loaded_listener("guest-loaded");
   EXPECT_TRUE(content::ExecJs(web_contents, std::string("test(") + (trusted_ ? "true" : "false") + ")"));
   if (!trusted_) {
     ExtensionTestMessageListener pass_listener("PASSED");
@@ -1283,16 +1296,26 @@ IN_PROC_BROWSER_TEST_P(NWJSWebViewTest, LocalPDF) {
 	FROM_HERE, pass_listener.GetRunLoop()->QuitWhenIdleClosure(),
 	TestTimeouts::action_timeout());
     EXPECT_TRUE(pass_listener.WaitUntilSatisfied());
-  } else
-    GetGuestViewManager()->WaitForNumGuestsCreated(n_guests);
-
+  } else {
+    ASSERT_TRUE(guest_loaded_listener.WaitUntilSatisfied());
+    //GetGuestViewManager()->WaitForNumGuestsCreated(n_guests);
+  }
   std::vector<content::RenderFrameHost*> guest_rfh_list;
   GetGuestViewManager()->GetGuestRenderFrameHostList(&guest_rfh_list);
   ASSERT_EQ(n_guests, guest_rfh_list.size());
 
   if (trusted_) {
-    bool load_success = pdf_extension_test_util::EnsurePDFHasLoaded(guest_rfh_list[0]);
-    EXPECT_TRUE(load_success);
+    if (!chrome_pdf::features::IsOopifPdfEnabled()) {
+      bool load_success = pdf_extension_test_util::EnsurePDFHasLoaded(guest_rfh_list[0]);
+      EXPECT_TRUE(load_success);
+    } else {
+
+      auto* guest = GetGuestViewManager()->GetLastGuestViewCreated();
+      auto* wc = guest->web_contents();
+
+      EXPECT_TRUE(pdf_frame_util::FindFullPagePdfExtensionHost(wc));
+      EXPECT_TRUE(pdf_extension_test_util::EnsurePDFHasLoaded(wc));
+    }
   }
 }
 
