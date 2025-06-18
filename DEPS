@@ -57,8 +57,8 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': '219ef33b0332c73760e7d0556a831d222773602e',
-  'nw_v8_revision': '41973f4847464d84f5a451977c885d354d0a8702',
+  'nw_src_revision': '0cda596b48e4cc824b07f3b6d72b5670a0ed393e',
+  'nw_v8_revision': '71369dfaed7c2ce98aa1b60e23ad391baf1ec715',
   'nw_node_revision': '5367c4775463aaa3bb01190bf51350bfc94d57dd',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
@@ -299,15 +299,15 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'src_internal_revision': '92cc1c46dbd8e67507ffc74dd3f8ba1ca50bb1ba',
+  'src_internal_revision': '42d8cbbb0903dfce4f7638e378b570db8d7dbf9d',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '114d33c62998ce5c16f899b9123c22000ca06ddd',
+  'skia_revision': 'a46d5732d9fca93eaec23e502e2eef814b707e6b',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '3560072853c57e90cc67cf393493abf3f028c43d',
+  'v8_revision': 'a14ab029e21658cba458b7001281c5d526e67636',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
@@ -355,7 +355,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling freetype
   # and whatever else without interference from each other.
-  'freetype_revision': 'e07e56c7f106b600262ab653d696b7b57f320127',
+  'freetype_revision': '738905b34bd1f5a8ff51bd2bc8e38a2d8be9bfd6',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling freetype
   # and whatever else without interference from each other.
@@ -1515,7 +1515,7 @@ deps = {
 
   'src/clank': {
     'url': Var('chrome_git') + '/clank/internal/apps.git' + '@' +
-    '7258a5df23bd97f699ae517eac04b6480fe2bd9c',
+    '4b036b79faa808b94a0217e847c71a0e64663fd5',
     'condition': 'checkout_android and checkout_src_internal',
   },
 
@@ -2773,7 +2773,7 @@ deps = {
     Var('chromium_git') + '/external/github.com/google/ruy.git' + '@' + '83fd40d730feb0804fafbc2d8814bcc19a17b2e5',
 
   'src/third_party/search_engines_data/resources':
-    Var('chromium_git') + '/external/search_engines_data.git' + '@' + 'b07b9e19ca1e2ee2bfeef7e45fc91faaa12c78ed',
+    Var('chromium_git') + '/external/search_engines_data.git' + '@' + '09fd22f3a4fb77ab03b7734e0c03ff7d7f97ef88',
 
   'src/third_party/search_engines_data/resources_internal': {
     'url': Var('chrome_git') + '/external/search_engines_data_internal.git' + '@' + '665a33dd0140d181ed70ab33eda19e8c1c8c118d',
@@ -3055,7 +3055,7 @@ deps = {
     'packages': [
       {
         'package': 'chromeos_internal/apps/boca_app/app',
-        'version': 'eURG_g2ZPvkV10zvp65PnoqVQthz7HjW6WsXcDMVPl4C',
+        'version': '2C2_QHqh5RgEqN162CQfR0FmIGF0MANKrcR9W4CWxv4C',
       },
     ],
     'condition': 'checkout_chromeos and checkout_src_internal',
@@ -4719,7 +4719,7 @@ deps = {
 
   'src/ios_internal':  {
       'url': Var('chrome_git') + '/chrome/ios_internal.git' + '@' +
-        'a3c702b7b880608529cf3852692df7d34b1d1375',
+        '7d99be22a2882eab63f7d9a089da1ea99b7e0a58',
       'condition': 'checkout_ios and checkout_src_internal',
   },
 
