@@ -18,7 +18,7 @@
 </head>
 <body>
   <div id="content">
-    <iframe nwfaketop style="width:100%;height:100%;" src='https://localhost:{port}/test_cookie/index.html'></iframe>
+    <iframe nwfaketop style="width:100%;height:100%;" src='https://127.0.0.1:{port}/test_cookie/index.html'></iframe>
   </div>
 </body>
 </html>
