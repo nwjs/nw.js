@@ -1,0 +1,5 @@
+{
+  "name": "test-inspector",
+  "node-main": "--nw-node-inspector",
+  "main": "index.html"
+}

@@ -903,6 +903,14 @@ public:
 
 extern void SwitchToPanel(DevToolsWindow* window, const char* panel);
 
+IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Inspector) {
+  LoadAndLaunchApp("inspector", "Launched");
+  ExtensionTestMessageListener listener("Passed");
+  content::WebContents* wc = GetAppWebContents();
+  std::ignore = EvalJs(wc, "test()");
+  ASSERT_TRUE(listener.WaitUntilSatisfied());
+}
+
 IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue3780Jailed) {
   LoadAndLaunchApp("issue3780-jailed", "Launched");
   content::WebContents* wc = GetAppWebContents();
