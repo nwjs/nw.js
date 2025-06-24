@@ -57,8 +57,8 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': '23a01088aa75bd205ac26e6d7ea4e16c85ec4fd9',
-  'nw_v8_revision': '71369dfaed7c2ce98aa1b60e23ad391baf1ec715',
+  'nw_src_revision': '32f76f7cdecd88635141d892fa55d5d92a5329ee',
+  'nw_v8_revision': '0e172542781de0b9e91a1d9d62dae1883479b521',
   'nw_node_revision': '5367c4775463aaa3bb01190bf51350bfc94d57dd',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
@@ -299,7 +299,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'src_internal_revision': '42d8cbbb0903dfce4f7638e378b570db8d7dbf9d',
+  'src_internal_revision': 'd204eb1146813c333f6375ec047a51a5d11c24ff',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
@@ -307,11 +307,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'a14ab029e21658cba458b7001281c5d526e67636',
+  'v8_revision': '0ea9b0813581826a94b45324e746f9ab57f0f843',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': 'd1fb74c940fef262809f4a513039b70e94c91440',
+  'angle_revision': 'df15136b959fc60c230265f75ee7fc75c96e8250',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -4653,7 +4653,7 @@ deps = {
 
   'src/components/optimization_guide/internal': {
       'url': Var('chrome_git') + '/chrome/components/optimization_guide.git' + '@' +
-        'fb2cda09ac13d92cc91c2959b51ef7156bf8a6d5',
+        'b87bcca89a563953e878cea753a259cdde644bf5',
       'condition': 'checkout_src_internal',
   },
 
@@ -4719,7 +4719,7 @@ deps = {
 
   'src/ios_internal':  {
       'url': Var('chrome_git') + '/chrome/ios_internal.git' + '@' +
-        '7d99be22a2882eab63f7d9a089da1ea99b7e0a58',
+        '725e26085c1e4319715b853dd76d857c5b8f9204',
       'condition': 'checkout_ios and checkout_src_internal',
   },
 
