@@ -3,9 +3,6 @@
 <head>
     <title>PDFtest2</title>
     <link rel="stylesheet" href="app.css" />
-    <script>
-      chrome.test.sendMessage("Launched");
-    </script>
 </head>
 
 <body>
@@ -38,6 +35,7 @@
           webview.partition = 'trusted';
         document.body.appendChild(webview);
       }
+      chrome.test.sendMessage("Launched");
     </script>
     <div id="container" style="position: absolute; top: 0px; width: 900px; z-index: 99;">
         <ul id="ul" style="position: absolute; top: 90px; left: 30px; width: 90%; margin-left: auto; margin-right: auto; text-align: center;">
