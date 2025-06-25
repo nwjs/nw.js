@@ -1,3 +1,15 @@
+0.101.0 / 06-25-2025
+====================
+- update to Chromium 138.0.7204.50
+- Fix NwDesktopCaptureMonitor
+- Fix loading chrome://extensions [(#8272)](https://github.com/nwjs/nw.js/issues/8272)
+- Fix crash in Menu.insert()
+- Fix devtools crash with NWESM [(#8268)](https://github.com/nwjs/nw.js/issues/8268)
+- Fix Performance profiler in devtools [(#8266)](https://github.com/nwjs/nw.js/issues/8266)
+- Fix D3D12 backend support [(#8271)](https://github.com/nwjs/nw.js/issues/8271)
+- [docs] update build instructions
+- [docs] update options nw-node-inspector
+
 0.100.1 / 06-04-2025
 ====================
 - update to Chromium 137.0.7151.69
