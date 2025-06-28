@@ -39,6 +39,7 @@ const char kWorkingDirectory[] = "working-directory";
 
 // Pass the main script to node.
 const char kNodeMain[] = "node-main";
+const char kNodeOptions[] = "node-options";
 
 // snapshot file path
 const char kSnapshot[] = "snapshot";

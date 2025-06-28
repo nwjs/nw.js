@@ -2,6 +2,7 @@
 #include "content/public/common/content_features.h"
 // nw
 #include "content/nw/src/nw_version.h"
+#include "content/nw/src/common/shell_switches.h"
 
 #include "build/nwjs_buildflags.h"
 
@@ -233,6 +234,16 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
       words.push_back("node");
       const std::string* main_fn;
 
+      if (command_line.HasSwitch(::switches::kNodeOptions)) {
+        std::string node_options =
+            command_line.GetSwitchValueASCII(::switches::kNodeOptions);
+        std::vector<std::string> option_list = base::SplitString(
+            node_options, ",", base::TRIM_WHITESPACE, base::SPLIT_WANT_NONEMPTY);
+        for (const auto& option : option_list) {
+          words.push_back(option);
+        }
+      }
+
       if (extension && (main_fn = extension->manifest()->FindStringPath("node-main"))) {
 	std::stringstream ss(*main_fn);
 	std::string word;
@@ -242,6 +253,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
 	}
 
       }
+
       int argc = words.size();
 
       char** argv = new char*[argc + 1];
