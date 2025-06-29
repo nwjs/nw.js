@@ -386,6 +386,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
         set_nw_script +
         // Make node's relative modules work
         "if (typeof nw.process != 'undefined' && "
+        "typeof nw.process.mainModule != 'undefined' && "
         "(!nw.process.mainModule.filename || nw.process.mainModule.filename === 'blank' ||"
         "nw.process.mainModule.filename.indexOf('_generated_background_page.html') >= 0)) {"
         "  let root = '" + root_path + "';"
