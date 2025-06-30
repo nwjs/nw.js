@@ -8,7 +8,6 @@ if (is_mac) {
   frameworks = ["AutomaticAssessmentConfiguration.framework"]
 }
 import("//chrome/version.gni")
-import("//components/nacl/features.gni")
 
 group("nwjs") {
   deps = [
@@ -392,10 +391,6 @@ if (is_linux && !is_component_build) {
       inputs = [
         "tools/dump_syms",
       ]
-    }
-    if (enable_nacl) {
-      sources += [ "$root_build_dir/nacl_helper" ]
-      deps += [ "//components/nacl/loader:nacl_helper" ]
     }
     outputs = [
       "$root_build_dir/{{source_name_part}}.sym"
