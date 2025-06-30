@@ -1,3 +1,8 @@
+0.101.1 / 06-30-2025
+====================
+- add node-options argument and a nw-stdin option for Node
+- Node: update to v24.3.0
+
 0.101.0 / 06-25-2025
 ====================
 - update to Chromium 138.0.7204.50
