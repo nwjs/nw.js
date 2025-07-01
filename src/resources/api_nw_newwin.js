@@ -374,15 +374,35 @@ NWWindow.prototype.toggleKioskMode = function() {
   currentNWWindowInternal.toggleKioskModeInternal(this.cWindow.id);
 };
 
-NWWindow.prototype.showDevTools = function(frm, callback) {
-  var id = '';
-  if (typeof frm === 'string')
-    id = frm;
-  var f = null;
+/**
+ * Open the devtools to inspect the window.
+ * 
+ * @param {string | HTMLIFrameElement} [iframe] The `id` or element of the `<iframe>` to be jailed on. By default, the DevTools is shown for entire window. 
+ * @param {(dev_win: Window, error: Error) => void} callback Callback with the native window of the DevTools window.
+ * @returns {void}
+ */
+NWWindow.prototype.showDevTools = function(iframe, callback) {
+  let error;
+  if (process.versions['nw-flavor'] !== 'sdk') {
+    error = new Error('This API is only available on SDK build flavor. Current build flavor is ' + process.versions['nw-flavor']);
+    callback(undefined, error);
+    return;
+  }
+  if (process.versions['nw-flavor'] === 'sdk') {
+    if (nw.App.argv.includes('--disable-devtools')) {
+      error = new Error('DevTools is disabled by --disable-devtools command line flag.');
+      callback(undefined, error);
+      return;
+    }
+  }
+  let id = '';
+  if (typeof iframe === 'string')
+    id = iframe;
+  let f = null;
   if (id)
     f = this.window.getElementById(id);
   else
-    f = frm || null;
+    f = iframe || null;
   nwNatives.setDevToolsJail(f);
   currentNWWindowInternal.showDevTools2Internal(this.cWindow.id, callback);
 };
@@ -760,11 +780,13 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
       callback(cwindows.map(create_nw_win));
     });
   });
+
   apiFunctions.setHandleRequest('isDevToolsOpen', function(callback) {
     return chrome.windows.getAll({ populate: true, windowTypes: ['devtools'] }, function(wins) {
       callback(wins.length > 0);
     })
   });
+
   apiFunctions.setHandleRequest('open', function(url, params, callback) {
     var options = {'url': url, 'setSelfAsOpener': true, 'type': 'popup'};
     //FIXME: unify this conversion code with nwjs/default.js
