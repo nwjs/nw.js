@@ -1,3 +1,7 @@
+0.101.2 / 07-03-2025
+====================
+- Update Chromium to 138.0.7204.97
+
 0.101.1 / 06-30-2025
 ====================
 - add node-options argument and a nw-stdin option for Node
