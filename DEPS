@@ -56,7 +56,7 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': 'c1db70478e030026190f0602c0a6a711bd12fc88',
+  'nw_src_revision': 'fbd3bb05976e4d051cc51c80a9e9f80fddb35a81',
   'nw_v8_revision': '26c78af5775633adae950a2455c1bb4eff8952ee',
   'nw_node_revision': '6076c1be47112f994431fa1b074e61547cc578b5',
   # Variable that can be used to support multiple build scenarios, like having
