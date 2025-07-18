@@ -27,7 +27,7 @@ nw.Window.open("local.html", {}, function (win) {
     });
 });
 
-nw.Window.open("http://example.org", {}, function (win) {
+nw.Window.open("https://nwjs.io", {}, function (win) {
     win.on("close", function () {
         mainWindow.window.document.getElementById("result_remote").textContent = "remote";
         this.close(true);

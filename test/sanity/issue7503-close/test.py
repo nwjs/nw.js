@@ -26,7 +26,7 @@ driver.implicitly_wait(5)
 try:
     wait_window_handles(driver, 3)
     close_window('local file')
-    close_window('Example')
+    close_window('NW')
     switch_to_window('main window')
     result_local = driver.find_element(By.ID, 'result_local').get_attribute('innerHTML')
     result_remote = driver.find_element(By.ID, 'result_remote').get_attribute('innerHTML')
