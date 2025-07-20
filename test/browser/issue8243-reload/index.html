@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hello World!</title>
+</head>
+<body>
+<h1>Hello World!</h1>
+<p id="error"></p>
+<script>
+  function reload() {
+      window.chrome.runtime.reload();
+  }
+  try {
+    console.log('local storage: ' + typeof window.localStorage);
+    console.log('session storage: ' + typeof window.sessionStorage);
+    const store = require('./store.js');
+    store.set('hello', 'world');
+    document.getElementById('error').innerText = 'Response to hello: ' + store.get('hello');
+    const win = nw.Window.get();
+    win.showDevTools();
+    if (chrome.test) {
+      chrome.test.sendMessage("Launched");
+    }
+  } catch (error) {
+    console.log(error);
+    document.getElementById('error').innerText = error;
+  }
+</script>
+<button id="reload" onclick="reload()">reload</button>
+</body>
+</html>

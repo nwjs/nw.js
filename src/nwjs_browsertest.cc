@@ -928,6 +928,24 @@ IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue3780Jailed) {
   EXPECT_EQ("'/child.html'", EvalJs(devtools, "document.querySelector('.console-user-command-result .console-message-text .object-value-string').textContent").ExtractString());
 }
 
+IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue8243Reload) {
+  DevToolsWindowCreationObserver observer;
+  LoadAndLaunchApp("issue8243-reload", "Launched");
+  observer.WaitForLoad();
+  content::WebContents* wc0 = GetAppWebContents("index.html");
+  ExtensionTestMessageListener listener("Launched");
+  DevToolsWindowCreationObserver observer2;
+  std::ignore = content::EvalJs(wc0, "document.querySelector('#reload').click()");
+  EXPECT_TRUE(listener.WaitUntilSatisfied()) << "'" << listener.message()
+                                             << "' message was not receieved";
+
+  for (Browser* browser : *BrowserList::GetInstance()) {
+    WebContents* wc = browser->tab_strip_model()->GetActiveWebContents();
+    LOG(WARNING) << wc->GetLastCommittedURL().spec();
+  }
+  observer2.WaitForLoad();
+}
+
 IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue3835Crash) {
   DevToolsWindowCreationObserver observer;
   LoadAndLaunchApp("issue3835-inspect-crash", "Launched");
