@@ -17,10 +17,10 @@
 #include "base/files/file_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "extensions/renderer/script_context.h"
-#include "extensions/renderer/extension_frame_helper.h"
 #include "v8/include/v8.h"
 
 #define INSIDE_BLINK 1
+#include "extensions/renderer/extension_frame_helper.h"
 
 using namespace blink;
 #if defined(OS_WIN)
