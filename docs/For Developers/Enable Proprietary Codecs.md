@@ -7,7 +7,6 @@
 
 As NW.js is based on Chromium, the media components are essentially the same. In the pre-built NW.js, the following codecs are supported:
 
-    - theora
     - vorbis
     - vp8 & vp9
     - pcm_u8, pcm_s16le, pcm_s24le, pcm_f32le, pcm_s16be & pcm_s24be
