@@ -8,6 +8,8 @@
 #include <set>
 #include <utility>
 
+#include "ui/accessibility/platform/browser_accessibility_manager.h"
+#include "ui/accessibility/ax_enum_util.h"
 #include "net/base/filename_util.h"
 #include "base/test/test_timeouts.h"
 #include "chrome/browser/media/webrtc/fake_desktop_media_picker_factory.h"
@@ -1218,7 +1220,6 @@ void CountFrames(int* frame_count,
 void DumpAxTree(std::string* dump_output, content::RenderFrameHost* frame) {
   content::RenderFrameHostImpl* f = static_cast<content::RenderFrameHostImpl*>(frame);
   ui::BrowserAccessibilityManager* manager = f->GetOrCreateBrowserAccessibilityManager();
-  LOG(WARNING) << "--> HERE: " << manager;
   ui::AXTreeUpdate ax_tree = manager->SnapshotAXTreeForTesting();
   std::string ax_tree_dump = DumpPdfAccessibilityTree(ax_tree);
   *dump_output += ax_tree_dump;
