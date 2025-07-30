@@ -56,8 +56,8 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': 'ec4d086dada4e67b047528667eab433e4cb2d984',
-  'nw_v8_revision': '26c78af5775633adae950a2455c1bb4eff8952ee',
+  'nw_src_revision': 'd223c4d907a5b34672969ee00b9eee6700d7dd91',
+  'nw_v8_revision': '3c5900bf5b0a5a55c2fdc9084b96f44fde09bbde',
   'nw_node_revision': '6076c1be47112f994431fa1b074e61547cc578b5',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
@@ -294,19 +294,19 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'src_internal_revision': '3e0b3b22a10bd6242857e113b40a0ad08d24ce7f',
+  'src_internal_revision': '87e9a6c12bf53e47654fad919dc90f734e1b08a4',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': 'cb4ee9d86204b42a8e097319e1c9d26717906c59',
+  'skia_revision': 'cbc694239b06ecf694676aba22d5263dbc23ee5e',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '73c1a60ff2266d05d342d2726a53f135e7e58630',
+  'v8_revision': 'b07b4e9376489c7f7c0ff2af5eceb4261b3bb784',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': '79ac1a8cd767a32cce6401203e20c4bd4ca4d539',
+  'angle_revision': '0145c376fadde16390298681252785f98ae90185',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -382,7 +382,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling devtools-frontend
   # and whatever else without interference from each other.
-  'devtools_frontend_revision': '0c1b8aea5e240416d435b92a91912e455b7369a8',
+  'devtools_frontend_revision': 'bc417052ebef6175721d690a4910e717d92181be',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libprotobuf-mutator
   # and whatever else without interference from each other.
@@ -406,7 +406,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
-  'dawn_revision': 'fa155d17451d125094568840368ac2bf2afb17ed',
+  'dawn_revision': '46b4670bc67cb4f6d34f6ce6a46ba7e1d6059abf',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
@@ -1570,7 +1570,7 @@ deps = {
 
   'src/clank': {
     'url': Var('chrome_git') + '/clank/internal/apps.git' + '@' +
-    '01ee098b20eb8ee6483edfb25b60ba2da019e8b9',
+    '55ad8668428d4af7ba27030669a0eeaff98fee13',
     'condition': 'checkout_android and checkout_src_internal',
   },
 
@@ -2973,7 +2973,7 @@ deps = {
     Var('chromium_git') + '/webpagereplay.git' + '@' + Var('webpagereplay_revision'),
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + '1ab982fa34894fa2f5d2e3b7b3f31244efdffaf9',
+    Var('webrtc_git') + '/src.git' + '@' + '23d8e44f84822170bee4425760b44237959423e5',
 
   # Wuffs' canonical repository is at github.com/google/wuffs, but we use
   # Skia's mirror of Wuffs, the same as in upstream Skia's DEPS file.
@@ -4698,7 +4698,7 @@ deps = {
 
   'src/components/optimization_guide/internal': {
       'url': Var('chrome_git') + '/chrome/components/optimization_guide.git' + '@' +
-        '90b9877c3330c0ba6333d184164944e25c4d68c0',
+        '4b39877398214042ef0e0bf31426ba3bcc51162c',
       'condition': 'checkout_src_internal',
   },
 
@@ -4764,7 +4764,7 @@ deps = {
 
   'src/ios_internal':  {
       'url': Var('chrome_git') + '/chrome/ios_internal.git' + '@' +
-        '6c94d8f885b30e649e66a17355f2ba31c6814764',
+        'b99b1a6e42f75e6e1adef8e9e5f74bd59852f258',
       'condition': 'checkout_ios and checkout_src_internal',
   },
 
