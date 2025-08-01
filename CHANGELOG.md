@@ -1,3 +1,9 @@
+0.102.0 / 07-31-2025
+====================
+- update to Chromium 139.0.7258.66
+- Fix: runtime.reload() with devtools opening [(#8243)](https://github.com/nwjs/nw.js/issues/8243)
+- Fix pdf viewer UI: window.localStorage is null [(#8280)](https://github.com/nwjs/nw.js/issues/8280)
+
 0.101.2 / 07-03-2025
 ====================
 - Update Chromium to 138.0.7204.97
