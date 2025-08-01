@@ -58,7 +58,7 @@ gclient_gn_args = [
 vars = {
   'nw_src_revision': 'd223c4d907a5b34672969ee00b9eee6700d7dd91',
   'nw_v8_revision': '3c5900bf5b0a5a55c2fdc9084b96f44fde09bbde',
-  'nw_node_revision': '6076c1be47112f994431fa1b074e61547cc578b5',
+  'nw_node_revision': '5b401b026346f991a495cc19b1f23e1a42df1cbf',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
   # conditionally etc.
