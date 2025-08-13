@@ -56,8 +56,8 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': 'd223c4d907a5b34672969ee00b9eee6700d7dd91',
-  'nw_v8_revision': '3c5900bf5b0a5a55c2fdc9084b96f44fde09bbde',
+  'nw_src_revision': '1434dd5899fb2421f55aa370ab9a327c1a4be447',
+  'nw_v8_revision': '627694ab485558f72d3dc5dcc4e38fba9cb1c00a',
   'nw_node_revision': '5b401b026346f991a495cc19b1f23e1a42df1cbf',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
@@ -294,19 +294,19 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'src_internal_revision': '87e9a6c12bf53e47654fad919dc90f734e1b08a4',
+  'src_internal_revision': 'caaf0379fd21d5c971e0b2ababe93914148d37c7',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': 'cbc694239b06ecf694676aba22d5263dbc23ee5e',
+  'skia_revision': '2d6f1aa4be9c33b013c322b2bc9cd99a682243b6',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'b07b4e9376489c7f7c0ff2af5eceb4261b3bb784',
+  'v8_revision': '505ec917b67c535519bebec58c62a34f145dd49f',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': '0145c376fadde16390298681252785f98ae90185',
+  'angle_revision': '5f3636345f1d8afd495e2fcc474fd81e91c4866b',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -1570,7 +1570,7 @@ deps = {
 
   'src/clank': {
     'url': Var('chrome_git') + '/clank/internal/apps.git' + '@' +
-    '55ad8668428d4af7ba27030669a0eeaff98fee13',
+    'd00a214027d7035b0806e168fb1c5e7b1f9030a6',
     'condition': 'checkout_android and checkout_src_internal',
   },
 
@@ -2337,7 +2337,7 @@ deps = {
     Var('chromium_git') + '/external/libaddressinput.git' + '@' + '2610f7b1043d6784ada41392fc9392d1ea09ea07',
 
   'src/third_party/libaom/source/libaom':
-    Var('aomedia_git') + '/aom.git' + '@' +  '0ddc6630b3723b14b164752d46c27752f078ddd3',
+    Var('aomedia_git') + '/aom.git' + '@' +  '90c632fc6c01cd8637186c783ca8012bab3c3260',
 
   'src/third_party/crabbyavif/src':
     Var('chromium_git') + '/external/github.com/webmproject/CrabbyAvif.git' + '@' + Var('crabbyavif_revision'),
@@ -4764,7 +4764,7 @@ deps = {
 
   'src/ios_internal':  {
       'url': Var('chrome_git') + '/chrome/ios_internal.git' + '@' +
-        'b99b1a6e42f75e6e1adef8e9e5f74bd59852f258',
+        'a7e5f62144c0e6a85d8572a7a98fd951f499168c',
       'condition': 'checkout_ios and checkout_src_internal',
   },
 
