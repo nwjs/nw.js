@@ -1,3 +1,5 @@
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
+
 #include "nw_extensions_renderer_hooks.h"
 #include "content/public/common/content_features.h"
 // nw

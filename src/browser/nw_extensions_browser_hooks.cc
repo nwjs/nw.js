@@ -1,3 +1,5 @@
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
+
 #include "nw_extensions_browser_hooks.h"
 
 #include "ui/gfx/image/image_skia.h"

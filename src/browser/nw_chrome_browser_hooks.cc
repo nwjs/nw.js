@@ -1,3 +1,5 @@
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
+
 #include "nw_chrome_browser_hooks.h"
 
 // base

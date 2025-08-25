@@ -1,3 +1,5 @@
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
+
 #include "content/nw/src/browser/menubar_controller.h"
 
 #include "base/task/current_thread.h"

@@ -47,6 +47,8 @@ using content::WebContents;
 using extensions::Event;
 using extensions::EventRouter;
 
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
+
 namespace nw {
 
 base::IDMap<std::unique_ptr<Base>> nw::ObjectManager::objects_registry_;

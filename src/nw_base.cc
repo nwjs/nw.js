@@ -3,6 +3,8 @@
 #include "nw_package.h"
 #include "base/command_line.h"
 
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
+
 namespace nw {
 
 namespace {

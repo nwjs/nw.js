@@ -1,3 +1,5 @@
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
+
 #include "nw_content_common_hooks.h"
 
 // base
