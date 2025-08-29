@@ -50,10 +50,7 @@ void LoadNodeSymbols() {
 #else
   base::FilePath node_dll_path = base::FilePath::FromUTF8Unsafe(base::GetNativeLibraryName(node_dllname));
 #endif
-  base::NativeLibraryOptions options;
-  if (!cmdline->HasSwitch("nwjs-test-mode")) //TODO: figure out why this fails with browser tests
-    options.prefer_own_symbols = true;
-  base::NativeLibrary node_dll = base::LoadNativeLibraryWithOptions(node_dll_path, options, &error);
+  base::NativeLibrary node_dll = base::LoadNativeLibrary(node_dll_path, &error);
   if(!node_dll)
     LOG_IF(FATAL, true) << "Failed to load node library (error: " << error.ToString() << ")";
   else {
