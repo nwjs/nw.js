@@ -1,3 +1,5 @@
+#pragma clang diagnostic ignored "-Wexit-time-destructors"
+
 #include "content/nw/src/api/nw_window_api.h"
 
 #include "base/strings/sys_string_conversions.h"
