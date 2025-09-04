@@ -329,7 +329,7 @@ void NWCustomBindings::EvalNWBin(
     v8::String::Utf8Value file(args.GetIsolate(), args[2]);
     url = url.Resolve(*file);
     // LOG(WARNING) << "registering module as: " << url;
-    KURL kurl(WTF::String(url.spec().c_str()));
+    KURL kurl(String(url.spec().c_str()));
     //blink::ModuleRecord script_module(isolate, module, kurl);
     blink::JSModuleScript* module_script =
       blink::JSModuleScript::CreateForTest(modulator, module, kurl);
