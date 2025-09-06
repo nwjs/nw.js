@@ -53,7 +53,7 @@ class TrayObserver final : public StatusIconObserver {
     base::Value::List args;
     base::Value::Dict data;
     gfx::Point cursor_pos(
-      display::Screen::GetScreen()->GetCursorScreenPoint());
+      display::Screen::Get()->GetCursorScreenPoint());
     data.Set("x", cursor_pos.x());
     data.Set("y", cursor_pos.y());
     args.Append(base::Value(std::move(data)));

@@ -148,14 +148,14 @@ class NwMediaListController : public DesktopMediaListObserver {
   }
 
   NwScreenDisplayObserver::NwScreenDisplayObserver() {
-    display::Screen* screen = display::Screen::GetScreen();
+    display::Screen* screen = display::Screen::Get();
     if (screen) {
       screen->AddObserver(this);
     }
   }
 
   NwScreenDisplayObserver::~NwScreenDisplayObserver() {
-    display::Screen* screen = display::Screen::GetScreen();
+    display::Screen* screen = display::Screen::Get();
     if (screen) {
       screen->RemoveObserver(this);
     }
@@ -196,7 +196,7 @@ class NwMediaListController : public DesktopMediaListObserver {
   NwScreenGetScreensFunction::NwScreenGetScreensFunction() {}
 
   bool NwScreenGetScreensFunction::RunNWSync(base::Value::List* response, std::string* error) {
-    const std::vector<display::Display>& displays = display::Screen::GetScreen()->GetAllDisplays();
+    const std::vector<display::Display>& displays = display::Screen::Get()->GetAllDisplays();
 
     for (size_t i=0; i<displays.size(); i++) {
       response->Append(base::Value(ConvertGfxDisplay(displays[i])->ToValue()));
