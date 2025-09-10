@@ -809,7 +809,7 @@ NwCurrentWindowInternalEnterKioskModeInternalFunction::Run() {
     int id = args()[0].GetInt();
     Browser* browser = getBrowser(this, id);
     if (browser) {
-      BrowserFrame* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
+      BrowserWidget* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
       frame->SetFullscreen(true);
 #if !defined(OS_MAC)
       browser->window()->SetZOrderLevel(ui::ZOrderLevel::kFloatingWindow);
@@ -834,7 +834,7 @@ NwCurrentWindowInternalLeaveKioskModeInternalFunction::Run() {
     int id = args()[0].GetInt();
     Browser* browser = getBrowser(this, id);
     if (browser) {
-      BrowserFrame* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
+      BrowserWidget* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
       frame->SetFullscreen(false);
 #if !defined(OS_MAC)
       browser->window()->SetZOrderLevel(ui::ZOrderLevel::kNormal);
@@ -853,7 +853,7 @@ NwCurrentWindowInternalToggleKioskModeInternalFunction::Run() {
     int id = args()[0].GetInt();
     Browser* browser = getBrowser(this, id);
     if (browser) {
-      BrowserFrame* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
+      BrowserWidget* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
       if (frame->IsFullscreen()) {
         frame->SetFullscreen(false);
 #if defined(OS_MAC)
@@ -892,7 +892,7 @@ bool NwCurrentWindowInternalIsKioskInternalFunction::RunNWSync(base::Value::List
     int id = args()[0].GetInt();
     Browser* browser = getBrowser(this, id);
     if (browser) {
-      BrowserFrame* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
+      BrowserWidget* frame = BrowserView::GetBrowserViewForBrowser(browser)->frame();
       response->Append((frame->IsFullscreen()));
       return true;
     }
