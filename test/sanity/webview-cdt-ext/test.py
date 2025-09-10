@@ -36,8 +36,8 @@ try:
     title = ''
     while timeout > 0 and (not found):
         try:
-            driver.execute_script('UI.inspectorView.tabbedPane.selectTab(UI.inspectorView.tabbedPane.tabs[10].idInternal)')
-            title = driver.execute_script('return UI.inspectorView.tabbedPane.tabs[10].titleInternal')
+            driver.execute_script('UI.inspectorView.tabbedPane.selectTab(UI.inspectorView.tabbedPane.tabs[10].id)')
+            title = driver.execute_script('return UI.inspectorView.tabbedPane.tabs[10].title')
         except:
             pass
         print('title:', title)
