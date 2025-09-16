@@ -1102,8 +1102,7 @@ IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue4269Crash) {
   DevToolsWindow* window = observer.devtools_window();
   SwitchToPanel(window, "console");
   WebContents* devtools = DevToolsWindowTesting::Get(window)->main_web_contents();
-  ui_test_utils::BrowserChangeObserver new_browser_observer(
-      nullptr, ui_test_utils::BrowserChangeObserver::ChangeType::kAdded);
+  ui_test_utils::BrowserCreatedObserver new_browser_observer;
   ASSERT_THAT(EvalJs(devtools, "document.querySelector('.console-message-text .devtools-link').click()"),
               content::EvalJsResult::IsOk());
   Browser* active_browser = new_browser_observer.Wait();
