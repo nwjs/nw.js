@@ -6,7 +6,7 @@
 #include "extensions/browser/extension_function.h"
 #include "extensions/common/api/extension_types.h"
 #include "printing/backend/print_backend.h"
-#include "ui/gfx/native_widget_types.h"
+#include "ui/gfx/native_ui_types.h"
 
 class SkBitmap;
 class Browser;
