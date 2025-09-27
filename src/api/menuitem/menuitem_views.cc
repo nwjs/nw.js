@@ -32,6 +32,7 @@
 #include "content/nw/src/nw_package.h"
 #include "ui/base/accelerators/accelerator.h"
 #include "ui/gfx/image/image_skia_operations.h"
+#include "ui/gfx/image/image_skia.h"
 #include "ui/events/event_constants.h"//for modifier key code
 #include "base/logging.h"
 

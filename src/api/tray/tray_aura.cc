@@ -35,6 +35,7 @@
 #include "content/nw/src/nw_package.h"
 #include "ui/display/screen.h"
 #include "ui/gfx/image/image.h"
+#include "ui/gfx/image/image_skia.h"
 
 namespace nw {
 
