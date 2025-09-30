@@ -303,7 +303,7 @@ copy("copy_node") {
   }
   if (is_win) {
     suffix=""
-    if (target_cpu == "x64") {
+    if (target_cpu == "x64" || target_cpu == "arm64") {
       suffix="_x64"
     }
     if (is_debug) {
