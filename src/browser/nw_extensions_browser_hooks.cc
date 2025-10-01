@@ -155,9 +155,12 @@ base::Value MergeManifest(const std::string& in_manifest) {
   base::Value::Dict manifest;
 
   // retrieve `window` manifest set by `new-win-policy`
-  std::string manifest_str = in_manifest.empty() ? base::UTF16ToUTF8(nw::GetCurrentNewWinManifest())
-    : in_manifest;
-  std::optional<base::Value> val = base::JSONReader::Read(manifest_str);
+  std::string manifest_str =
+      in_manifest.empty() ?
+      base::UTF16ToUTF8(nw::GetCurrentNewWinManifest())
+      : in_manifest;
+  std::optional<base::Value> val = base::JSONReader::Read(
+      manifest_str, base::JSON_PARSE_CHROMIUM_EXTENSIONS);
   if (val && val->is_dict())
     manifest = val->GetDict().Clone();
 
