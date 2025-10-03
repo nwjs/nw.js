@@ -378,7 +378,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
     // Make node's relative modules work
     std::string root_path = extension_root;
     GURL frame_url = ScriptContext::GetDocumentLoaderURLForFrame(frame);
-    std::string url_path = frame_url.path();
+    std::string url_path(frame_url.path());
 #if defined(OS_WIN)
     base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
 #endif
@@ -541,7 +541,7 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
   frame->setNodeJS(true);
   auto* frame_host = render_frame->GetFrameHost();
   frame_host->SetNodeJS(true);
-  std::string path = effective_document_url.path();
+  std::string path(effective_document_url.path());
   v8::Local<v8::Context> v8_context = frame->MainWorldScriptContext();
   std::string root_path = g_extension_root;
   if (!v8_context.IsEmpty()) {
