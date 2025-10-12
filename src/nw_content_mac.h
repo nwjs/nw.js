@@ -2,7 +2,7 @@
 #define _CONTENT_NW_CONTENT_MAC_H
 
 #include "base/values.h"
-#include "ui/gfx/native_widget_types.h"
+#include "ui/gfx/native_ui_types.h"
 
 namespace nw {
 class Menu;
