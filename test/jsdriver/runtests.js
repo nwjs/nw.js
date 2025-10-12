@@ -80,10 +80,14 @@ async function run_tests(test_dir = 'content/nw/test/sanity', cb, testcases, con
     testcases = getDirectories(test_dir);
   let env = Object.create(process.env);
   let ret = { passed: [], failed: [] };
-  env.PYTHONPATH = path.resolve(path.join(process.cwd(), 'third_party/webdriver/pylib/'));
+  if (!('PYTHONPATH' in process.env)) {
+    env.PYTHONPATH = path.resolve(path.join(process.cwd(), 'third_party/webdriver/pylib/'));
+  }
   const driverFile = process.platform === 'win32' ? 'chromedriver.exe' : 'chromedriver';
 
-  env.CHROMEDRIVER = path.resolve(path.join(process.cwd(), 'outst/nw', driverFile));
+  if (!('CHROMEDRIVER' in process.env)) {
+    env.CHROMEDRIVER = path.resolve(path.join(process.cwd(), 'outst/nw', driverFile));
+  }
   env.GYP_DEFINES = 'target_arch=x64 clang=1 nwjs_sdk=1 disable_nacl=0 buildtype=Official';
   env.CC = 'clang';
   env.CXX = 'clang++';
