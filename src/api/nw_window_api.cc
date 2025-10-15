@@ -46,7 +46,7 @@
 #include "base/win/windows_version.h"
 #include "ui/base/win/hidden_window.h"
 #include "ui/gfx/canvas.h"
-#include "ui/gfx/icon_util.h"
+#include "ui/gfx/win/icon_util.h"
 #include "ui/gfx/font_list.h"
 #include "ui/gfx/platform_font.h"
 #include "ui/display/win/dpi.h"
