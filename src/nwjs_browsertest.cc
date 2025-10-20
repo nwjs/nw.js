@@ -47,6 +47,7 @@
 #include "chrome/browser/task_manager/task_manager_browsertest_util.h"
 #include "chrome/browser/ui/browser.h"
 #include "chrome/browser/ui/browser_list.h"
+#include "chrome/browser/ui/browser_window/public/browser_window_interface_iterator.h"
 #include "chrome/browser/ui/browser_commands.h"
 #include "chrome/browser/ui/browser_dialogs.h"
 #include "chrome/browser/ui/tabs/tab_strip_model.h"
@@ -878,9 +879,10 @@ public:
 
   content::WebContents* GetAppWebContents(const std::string& fn = std::string()) {
     if (fn.empty()) {
-      Browser* b = BrowserList::GetInstance()->GetLastActive();
-      if (!b->is_type_devtools())
-        return b->tab_strip_model()->GetActiveWebContents();
+      BrowserWindowInterface* const bwi =
+          GetLastActiveBrowserWindowInterfaceWithAnyProfile();
+      if (bwi->GetType() != BrowserWindowInterface::Type::TYPE_DEVTOOLS)
+        return bwi->GetTabStripModel()->GetActiveWebContents();
     }
     for (Browser* browser : *BrowserList::GetInstance()) {
       if (!browser->is_type_devtools()) {
@@ -1132,7 +1134,8 @@ IN_PROC_BROWSER_TEST_F(NWAppTest, LocalFlash) {
   LoadAndLaunchPlatformApp("local_flash", "Launched");
   content::WebContents* web_contents = GetFirstAppWindowWebContents();
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    web_contents = BrowserList::GetInstance()->GetLastActive()->tab_strip_model()->GetActiveWebContents();
+    web_contents = GetLastActiveBrowserWindowInterfaceWithAnyProfile()->
+                   GetTabStripModel()->GetActiveWebContents();
   }
   ASSERT_TRUE(web_contents);
   std::u16string expected_title(u"Loaded");
@@ -1240,7 +1243,8 @@ IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, SilentPrintChangeFooter) {
   LOG(WARNING) << "--> Launched";
   content::WebContents* web_contents = GetFirstAppWindowWebContents();
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    web_contents = BrowserList::GetInstance()->GetLastActive()->tab_strip_model()->GetActiveWebContents();
+    web_contents = GetLastActiveBrowserWindowInterfaceWithAnyProfile()->
+                   GetTabStripModel()->GetActiveWebContents();
   }
   ASSERT_TRUE(web_contents);
   ExtensionTestMessageListener listener("Loaded");
@@ -1299,7 +1303,8 @@ IN_PROC_BROWSER_TEST_F(NWJSAppTest, PrintChangeFooter) {
   LoadAndLaunchPlatformApp("print_test", "Launched");
   content::WebContents* web_contents = GetFirstAppWindowWebContents();
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    web_contents = BrowserList::GetInstance()->GetLastActive()->tab_strip_model()->GetActiveWebContents();
+    web_contents = GetLastActiveBrowserWindowInterfaceWithAnyProfile()->
+                   GetTabStripModel()->GetActiveWebContents();
   }
   ASSERT_TRUE(web_contents);
   ASSERT_TRUE(content::ExecJs(web_contents, "document.getElementById('testbtn').click()"));
@@ -1347,7 +1352,8 @@ IN_PROC_BROWSER_TEST_P(NWJSWebViewTest, LocalPDF) {
   content::RunAllPendingInMessageLoop();
   content::WebContents* web_contents = GetFirstAppWindowWebContents();
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    web_contents = BrowserList::GetInstance()->GetLastActive()->tab_strip_model()->GetActiveWebContents();
+    web_contents = GetLastActiveBrowserWindowInterfaceWithAnyProfile()->
+                   GetTabStripModel()->GetActiveWebContents();
   }
   ASSERT_TRUE(web_contents);
   std::vector<content::WebContents*> guest_web_contents_list;
@@ -1395,7 +1401,8 @@ IN_PROC_BROWSER_TEST_F(NWJSWebViewTestF, WebViewCDT) {
   content::RunAllPendingInMessageLoop();
   content::WebContents* web_contents = GetFirstAppWindowWebContents();
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    web_contents = BrowserList::GetInstance()->GetLastActive()->tab_strip_model()->GetActiveWebContents();
+    web_contents = GetLastActiveBrowserWindowInterfaceWithAnyProfile()->
+                   GetTabStripModel()->GetActiveWebContents();
   }
   ASSERT_TRUE(web_contents);
   std::vector<content::WebContents*> guest_web_contents_list;
@@ -1585,7 +1592,8 @@ IN_PROC_BROWSER_TEST_F(NWJSDesktopCaptureApiTest, CrossDomain) {
   LoadAndLaunchPlatformApp("6212-crossdomain-screen", "Launched");
   content::WebContents* web_contents = GetFirstAppWindowWebContents();
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    web_contents = BrowserList::GetInstance()->GetLastActive()->tab_strip_model()->GetActiveWebContents();
+    web_contents = GetLastActiveBrowserWindowInterfaceWithAnyProfile()->
+                   GetTabStripModel()->GetActiveWebContents();
   }
   ASSERT_TRUE(web_contents);
   ExtensionTestMessageListener listener("Loaded");
