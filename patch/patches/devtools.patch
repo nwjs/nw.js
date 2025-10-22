@@ -22,8 +22,8 @@ index 1122bc10cd..66646005ef 100644
  
 diff --git a/front_end/models/extensions/ExtensionServer.ts b/front_end/models/extensions/ExtensionServer.ts
 index fb9a2326eb..a96f0b2f79 100644
---- front_end/models/extensions/ExtensionServer.ts
-+++ front_end/models/extensions/ExtensionServer.ts
+--- front_end/panels/common/ExtensionServer.ts
++++ front_end/panels/common/ExtensionServer.ts
 @@ -1454,6 +1454,7 @@ export class ExtensionServer extends Common.ObjectWrapper.ObjectWrapper<EventTyp
    }
  
