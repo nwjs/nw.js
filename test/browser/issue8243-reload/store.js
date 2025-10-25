@@ -1,6 +1,6 @@
 const getStorage = () => {
-  if (typeof global !== 'undefined' && global.localStorage) {
-    return global.localStorage;
+  if (typeof global !== 'undefined' && global.ls) {
+    return global.ls;
   }
   throw new Error('localStorage is not available on the global object.');
 };

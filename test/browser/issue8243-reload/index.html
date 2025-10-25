@@ -11,19 +11,20 @@
       window.chrome.runtime.reload();
   }
   try {
+    const win = nw.Window.get();
+    win.showDevTools();
     console.log('local storage: ' + typeof window.localStorage);
     console.log('session storage: ' + typeof window.sessionStorage);
+    global.ls = window.localStorage;
     const store = require('./store.js');
     store.set('hello', 'world');
     document.getElementById('error').innerText = 'Response to hello: ' + store.get('hello');
-    const win = nw.Window.get();
-    win.showDevTools();
-    if (chrome.test) {
-      chrome.test.sendMessage("Launched");
-    }
   } catch (error) {
     console.log(error);
     document.getElementById('error').innerText = error;
+  }
+  if (chrome.test) {
+    chrome.test.sendMessage("Launched");
   }
 </script>
 <button id="reload" onclick="reload()">reload</button>
