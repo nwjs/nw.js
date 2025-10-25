@@ -88,7 +88,7 @@ def aws_upload(upload_path, file_list):
     session = boto3.Session()
     s3_client = session.client('s3')
     print ('Uploading to: ' + upload_path)
-    win_non_sdk = re.compile('nw[a-zA-Z0-9]+_win\\d+')
+    win_non_sdk = re.compile('nw[a-zA-Z0-9]+_win')
     for f in file_list:
         print ('Uploading "' + f + '" ...')
         sys.stdout.flush()
@@ -101,6 +101,8 @@ def aws_upload(upload_path, file_list):
               continue
           if 'win64' in builder_name :
               path_prefix = 'x64'
+          if 'winarm' in builder_name :
+              path_prefix = 'arm64'
 
         if (f == 'SHASUMS256.txt'):
             continue
