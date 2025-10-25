@@ -83,7 +83,7 @@ def git_apply_patch_file(patch_path, patch_dir):
     sys.stdout.write('... patch file does not exist.\n')
     return 'fail'
 
-  patch_string = open(patch_path, 'rb').read()
+  patch_string = open(patch_path, 'rb').read().decode('utf-8')
   if sys.platform == 'win32':
     # Convert the patch to Unix line endings. This is necessary to avoid
     # whitespace errors with git apply.
@@ -97,19 +97,19 @@ def git_apply_patch_file(patch_path, patch_dir):
   # Output patch contents.
   cmd = '%s apply -p0 --numstat' % git_exe
   result = exec_cmd(cmd, patch_dir, patch_string)
-  write_indented_output(result['out'].replace('<stdin>', patch_name))
+  write_indented_output(result['out'].decode('utf-8').replace('<stdin>', patch_name))
 
   # Reverse check to see if the patch has already been applied.
   cmd = '%s apply -p0 --reverse --check' % git_exe
   result = exec_cmd(cmd, patch_dir, patch_string)
-  if result['err'].find('error:') < 0:
+  if result['err'].decode('utf-8').find('error:') < 0:
     sys.stdout.write('... already applied (skipping).\n')
     return 'skip'
 
   # Normal check to see if the patch can be applied cleanly.
   cmd = '%s apply -p0 --check' % git_exe
   result = exec_cmd(cmd, patch_dir, patch_string)
-  if result['err'].find('error:') >= 0:
+  if result['err'].decode('utf-8').find('error:') >= 0:
     sys.stdout.write('... failed to apply:\n')
     write_indented_output(result['err'].replace('<stdin>', patch_name))
     return 'fail'
@@ -118,7 +118,7 @@ def git_apply_patch_file(patch_path, patch_dir):
   # command succeeded.
   cmd = '%s apply -p0' % git_exe
   result = exec_cmd(cmd, patch_dir, patch_string)
-  if result['err'] == '':
+  if result['err'].decode('utf-8') == '':
     sys.stdout.write('... successfully applied.\n')
   else:
     sys.stdout.write('... successfully applied (with warnings):\n')
