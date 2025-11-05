@@ -278,11 +278,12 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
         (context->url().path() == "/_generated_background_page.html");
       if (node_context.IsEmpty() && !mixed_context && !is_background_page) {
         dom_context = v8::Context::New(isolate_c);
-        void* data = context->v8_context()->GetAlignedPointerFromEmbedderData(2); //v8ContextPerContextDataIndex
-        dom_context->SetAlignedPointerInEmbedderData(2, data);
+        void* data = context->v8_context()->GetAlignedPointerFromEmbedderData(
+            2, v8::kEmbedderDataTypeTagDefault); //v8ContextPerContextDataIndex
+        dom_context->SetAlignedPointerInEmbedderData(2, data, v8::kEmbedderDataTypeTagDefault);
       } else
         dom_context = context->v8_context();
-      dom_context->SetAlignedPointerInEmbedderData(50, (void*)0x08110800);
+      dom_context->SetAlignedPointerInEmbedderData(50, (void*)0x08110800, v8::kEmbedderDataTypeTagDefault);
       v8::MicrotasksScope microtasks(isolate_c, dom_context->GetMicrotaskQueue(),
 				     v8::MicrotasksScope::kDoNotRunMicrotasks);
       if (!mixed_context)
@@ -346,7 +347,9 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   v8::Local<v8::Object> node_global = g_context->Global();
 
   if (!mixed_context) {
-    context->v8_context()->SetAlignedPointerInEmbedderData(NODE_CONTEXT_EMBEDDER_DATA_INDEX, g_get_node_env_fn());
+    context->v8_context()->SetAlignedPointerInEmbedderData(
+        NODE_CONTEXT_EMBEDDER_DATA_INDEX, g_get_node_env_fn(),
+        v8::kEmbedderDataTypeTagDefault);
     context->v8_context()->SetSecurityToken(g_context->GetSecurityToken());
   }
   v8::Handle<v8::Object> nw = AsObjectOrEmpty(CreateNW(context, node_global, g_context));
