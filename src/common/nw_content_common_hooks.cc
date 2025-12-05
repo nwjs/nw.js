@@ -4,7 +4,9 @@
 
 // base
 #include "base/strings/string_util.h"
+#include "base/strings/stringprintf.h"
 #include "base/values.h"
+#include "build/util/chromium_git_revision.h"
 
 // content
 #include "components/embedder_support/user_agent_utils.h"
@@ -55,7 +57,8 @@ void SetUserAgentOverride(const std::string& agent,
   base::ReplaceSubstringsAfterOffset(&g_user_agent, 0, "%name", name);
   base::ReplaceSubstringsAfterOffset(&g_user_agent, 0, "%ver", version);
   base::ReplaceSubstringsAfterOffset(&g_user_agent, 0, "%nwver", NW_VERSION_STRING);
-  base::ReplaceSubstringsAfterOffset(&g_user_agent, 0, "%webkit_ver", embedder_support::GetWebKitVersion());
+  base::ReplaceSubstringsAfterOffset(&g_user_agent, 0, "%webkit_ver",
+                                     base::StringPrintf("537.36 (%s)", CHROMIUM_GIT_REVISION));
   base::ReplaceSubstringsAfterOffset(&g_user_agent, 0, "%osinfo", embedder_support::BuildOSInfo());
   base::ReplaceSubstringsAfterOffset(&g_user_agent, 0, "%chromium_ver", CHROME_VERSION_STRING);
 }
