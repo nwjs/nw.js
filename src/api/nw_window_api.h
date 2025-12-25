@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "components/viz/common/frame_sinks/copy_output_result.h"
+#include "content/public/browser/render_widget_host_view.h"
 #include "extensions/browser/extension_function.h"
 #include "extensions/common/api/extension_types.h"
 #include "printing/backend/print_backend.h"
@@ -99,7 +100,7 @@ class NwCurrentWindowInternalCapturePageInternalFunction : public ExtensionFunct
  private:
   typedef api::extension_types::ImageDetails ImageDetails;
 
-  void CopyFromBackingStoreComplete(const viz::CopyOutputBitmapWithMetadata& result);
+  void CopyFromBackingStoreComplete(const content::CopyFromSurfaceResult& result);
   void OnCaptureSuccess(const SkBitmap& bitmap);
 
   // The format (JPEG vs PNG) of the resulting image.  Set in RunAsync().

@@ -369,9 +369,10 @@ NwCurrentWindowInternalCapturePageInternalFunction::Run() {
 }
 
 void NwCurrentWindowInternalCapturePageInternalFunction::CopyFromBackingStoreComplete(
-    const viz::CopyOutputBitmapWithMetadata& result) {
-  if (!result.bitmap.drawsNothing()) {
-    OnCaptureSuccess(result.bitmap);
+    const content::CopyFromSurfaceResult& result) {
+  const SkBitmap& screenshot = result.has_value() ? result->bitmap : SkBitmap();
+  if (!screenshot.drawsNothing()) {
+    OnCaptureSuccess(screenshot);
     return;
   }
   OnCaptureFailure(FAILURE_REASON_UNKNOWN);
