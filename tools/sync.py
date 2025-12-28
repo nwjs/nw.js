@@ -19,9 +19,9 @@ parser.add_argument('--shallow', action='store_true', help='Perform a shallow fe
 args = parser.parse_args()
 
 if args.shallow:
-    DEFAULT_CONFIG = """solutions = [{"managed": False, "name": "src", "url": "https://github.com/nwjs/chromium.src.git@%(nw_src_revision)s", "custom_deps": {}, "deps_file": "content/nw/DEPS", "safesync_url": "", "custom_vars": {}}]"""
+    DEFAULT_CONFIG = """solutions = [{"managed": False, "name": "src", "url": "https://github.com/nwjs/chromium.src.git@%(nw_src_revision)s", "custom_deps": {}, "deps_file": "content/nw/DEPS", "safesync_url": "", "custom_vars": {"download_reclient": True, "non_git_source": True}}]"""
 else:
-    DEFAULT_CONFIG = """solutions = [{"managed": True, "name": "src", "url": "https://github.com/nwjs/chromium.src.git@%(nw_src_revision)s", "custom_deps": {}, "deps_file": "content/nw/DEPS", "safesync_url": "", "custom_vars": {}}]"""
+    DEFAULT_CONFIG = """solutions = [{"managed": True, "name": "src", "url": "https://github.com/nwjs/chromium.src.git@%(nw_src_revision)s", "custom_deps": {}, "deps_file": "content/nw/DEPS", "safesync_url": "", "custom_vars": {"download_reclient": True, "non_git_source": True}}]"""
 
 try:
     f = open(deps_file, 'r')
