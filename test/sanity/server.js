@@ -1,24 +1,28 @@
-const http = require('http');
-const url = require('url');
-const fs = require('fs');
-const path = require('path');
+import http from 'http';
+import fs from 'fs';
+import path from 'path';
 
 let svr = http.createServer(function (req, res) {
   console.log(`${req.method} ${req.url}`);
 
   if (req.url === '/redirectme.html') {
-    let port = svr.address().port;
+    // Note: svr.address() might be null if server is closing, but safe here.
     res.writeHead(308, { 'Location': `/redirected.html` });
     res.end();
     return;
   }
-  // parse URL
-  const parsedUrl = url.parse(req.url);
+
+  // Parse URL using the modern WHATWG API (Fixes [DEP0169] warning)
+  // We use a dummy base because req.url is relative (e.g. "/file.js")
+  const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+  
   // extract URL path
   let pathname = `.${parsedUrl.pathname}`;
-  // based on the URL path, extract the file extention. e.g. .js, .doc, ...
+  
+  // based on the URL path, extract the file extension. e.g. .js, .doc, ...
   let ext = path.parse(pathname).ext;
-  // maps file extention to MIME typere
+  
+  // maps file extension to MIME type
   const map = {
     '.ico': 'image/x-icon',
     '.html': 'text/html',
@@ -42,7 +46,7 @@ let svr = http.createServer(function (req, res) {
       return;
     }
 
-    // if is a directory search for index file matching the extention
+    // if is a directory search for index file matching the extension
     if (fs.statSync(pathname).isDirectory()) {ext = '.html'; pathname += '/index.html';}
 
     // read file from file system
@@ -66,8 +70,6 @@ let svr = http.createServer(function (req, res) {
       }
     });
   });
-
-
 });
 
 svr.listen(() => {
@@ -86,3 +88,14 @@ svr.listen(() => {
   fs.writeFileSync('port.txt', port.toString());
 });
 
+// Handle kill signals to exit gracefully with code 0.
+// This prevents the Python driver from seeing exit code -15 (SIGTERM) as a failure.
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, exiting gracefully.');
+  process.exit(0);
+});
+
+process.on('SIGINT', () => {
+  console.log('SIGINT received, exiting gracefully.');
+  process.exit(0);
+});
