@@ -362,7 +362,9 @@ NwCurrentWindowInternalCapturePageInternalFunction::Run() {
   }
 
   view->CopyFromSurface(gfx::Rect(),  // Copy entire surface area.
-                        gfx::Size(),  // Result contains device-level detail.
+                        gfx::Size(),  // Result contains device-level
+                                      // detail.
+                        base::TimeDelta(),
       base::BindOnce(&NwCurrentWindowInternalCapturePageInternalFunction::CopyFromBackingStoreComplete,
                  this));
   return RespondLater();
