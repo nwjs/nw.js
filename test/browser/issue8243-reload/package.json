@@ -1,4 +1,5 @@
 {
   "name": "issue8243",
+  "node-main": "--no-experimental-webstorage",
   "main": "index.html"
 }
