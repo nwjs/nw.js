@@ -29,7 +29,7 @@ namespace nw {
 
 Tray::Tray(int id,
            const base::WeakPtr<ObjectManager>& object_manager,
-           const base::Value::Dict& option,
+           const base::DictValue& option,
            const std::string& extension_id)
   : Base(id, object_manager, option, extension_id) {
   Create(option);
@@ -66,7 +66,7 @@ Tray::~Tray() {
 }
 
 void Tray::Call(const std::string& method,
-                const base::Value::List& arguments,
+                const base::ListValue& arguments,
                 content::RenderFrameHost* rvh) {
   if (method == "SetTitle") {
     std::string title = arguments[0].GetString();

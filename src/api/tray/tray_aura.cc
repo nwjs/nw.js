@@ -51,8 +51,8 @@ class TrayObserver final : public StatusIconObserver {
   }
 
   void OnStatusIconClicked() override {
-    base::Value::List args;
-    base::Value::Dict data;
+    base::ListValue args;
+    base::DictValue data;
     gfx::Point cursor_pos(
       display::Screen::Get()->GetCursorScreenPoint());
     data.Set("x", cursor_pos.x());
@@ -65,7 +65,7 @@ class TrayObserver final : public StatusIconObserver {
   raw_ptr<Tray> tray_;
 };
 
-void Tray::Create(const base::Value::Dict& option) {
+void Tray::Create(const base::DictValue& option) {
   if (!status_tray_)
     status_tray_ = g_browser_process->status_tray();
 

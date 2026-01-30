@@ -71,7 +71,7 @@ class NwAppUpdateComponentFunction : public ExtensionFunction {
 class NwAppGetArgvSyncFunction : public NWSyncExtensionFunction {
  public:
   NwAppGetArgvSyncFunction();
-  bool RunNWSync(base::Value::List* response, std::string* error) override;
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
 
  protected:
   ~NwAppGetArgvSyncFunction() override;
@@ -84,7 +84,7 @@ class NwAppGetArgvSyncFunction : public NWSyncExtensionFunction {
 class NwAppClearCacheFunction : public NWSyncExtensionFunction, public content::BrowsingDataRemover::Observer {
  public:
   NwAppClearCacheFunction();
-  bool RunNWSync(base::Value::List* response, std::string* error) override;
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
   void OnBrowsingDataRemoverDone(uint64_t failed_data_types) override;
 
  protected:
@@ -99,7 +99,7 @@ class NwAppClearCacheFunction : public NWSyncExtensionFunction, public content::
 class NwAppClearAppCacheFunction : public NWSyncExtensionFunction {
  public:
   NwAppClearAppCacheFunction();
-  bool RunNWSync(base::Value::List* response, std::string* error) override;
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
 
  protected:
   ~NwAppClearAppCacheFunction() override;
@@ -111,7 +111,7 @@ class NwAppClearAppCacheFunction : public NWSyncExtensionFunction {
 class NwAppSetProxyConfigFunction : public NWSyncExtensionFunction {
  public:
   NwAppSetProxyConfigFunction();
-  bool RunNWSync(base::Value::List* response, std::string* error) override;
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
 
  protected:
   ~NwAppSetProxyConfigFunction() override;
@@ -124,7 +124,7 @@ class NwAppSetProxyConfigFunction : public NWSyncExtensionFunction {
 class NwAppGetDataPathFunction : public NWSyncExtensionFunction {
  public:
   NwAppGetDataPathFunction(){}
-  bool RunNWSync(base::Value::List* response, std::string* error) override;
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
 
  protected:
   ~NwAppGetDataPathFunction() override {}

@@ -120,9 +120,9 @@ class NwMediaListController : public DesktopMediaListObserver {
     void DispatchEvent(
         events::HistogramValue histogram_value,
         const std::string& event_name,
-        base::Value::List args) {
+        base::ListValue args) {
       DCHECK_CURRENTLY_ON(BrowserThread::UI);
-      base::Value::List event_args;
+      base::ListValue event_args;
       for (size_t i = 0; i < args.size(); i++) {
         event_args.Append(args[i].Clone());
       }
@@ -195,7 +195,7 @@ class NwMediaListController : public DesktopMediaListObserver {
 
   NwScreenGetScreensFunction::NwScreenGetScreensFunction() {}
 
-  bool NwScreenGetScreensFunction::RunNWSync(base::Value::List* response, std::string* error) {
+  bool NwScreenGetScreensFunction::RunNWSync(base::ListValue* response, std::string* error) {
     const std::vector<display::Display>& displays = display::Screen::Get()->GetAllDisplays();
 
     for (size_t i=0; i<displays.size(); i++) {
@@ -207,7 +207,7 @@ class NwMediaListController : public DesktopMediaListObserver {
 
   NwScreenInitEventListenersFunction::NwScreenInitEventListenersFunction() {}
 
-  bool NwScreenInitEventListenersFunction::RunNWSync(base::Value::List* response, std::string* error) {
+  bool NwScreenInitEventListenersFunction::RunNWSync(base::ListValue* response, std::string* error) {
     NwScreenDisplayObserver::GetInstance();
     return true;
   }
@@ -404,7 +404,7 @@ void NwMediaListController::OnSourceThumbnailChanged(int index) {
 
   NwScreenStartMonitorFunction::NwScreenStartMonitorFunction() {}
 
-  bool NwScreenStartMonitorFunction::RunNWSync(base::Value::List* response, std::string* error) {
+  bool NwScreenStartMonitorFunction::RunNWSync(base::ListValue* response, std::string* error) {
     bool screens, windows;
     EXTENSION_FUNCTION_VALIDATE(args().size() >= 2);
     EXTENSION_FUNCTION_VALIDATE(args()[0].is_bool() && args()[1].is_bool());
@@ -416,21 +416,21 @@ void NwMediaListController::OnSourceThumbnailChanged(int index) {
 
   NwScreenStopMonitorFunction::NwScreenStopMonitorFunction() {}
 
-  bool NwScreenStopMonitorFunction::RunNWSync(base::Value::List* response, std::string* error) {
+  bool NwScreenStopMonitorFunction::RunNWSync(base::ListValue* response, std::string* error) {
     NwDesktopCaptureMonitor::GetInstance()->Stop();
     return true;
   }
 
   NwScreenIsMonitorStartedFunction::NwScreenIsMonitorStartedFunction() {}
 
-  bool NwScreenIsMonitorStartedFunction::RunNWSync(base::Value::List* response, std::string* error) {
+  bool NwScreenIsMonitorStartedFunction::RunNWSync(base::ListValue* response, std::string* error) {
     response->Append(NwDesktopCaptureMonitor::GetInstance()->IsStarted());
     return true;
   }
 
   NwScreenRegisterStreamFunction::NwScreenRegisterStreamFunction() {}
 
-  bool NwScreenRegisterStreamFunction::RunNWSync(base::Value::List* response, std::string* error) {
+  bool NwScreenRegisterStreamFunction::RunNWSync(base::ListValue* response, std::string* error) {
     std::string id;
     EXTENSION_FUNCTION_VALIDATE(args().size() >= 1);
     EXTENSION_FUNCTION_VALIDATE(args()[0].is_string());

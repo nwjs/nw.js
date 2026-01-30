@@ -157,7 +157,7 @@ void OverrideWebkitPrefsHook(content::WebContents* web_contents, blink::web_pref
   nw::Package* package = nw::package();
   if (!package)
     return;
-  base::Value::Dict* webkit = package->root()->FindDict(switches::kmWebkit);
+  base::DictValue* webkit = package->root()->FindDict(switches::kmWebkit);
   web_prefs->plugins_enabled = true;
   if (webkit) {
     std::optional<bool> flag = webkit->FindBool("double_tap_to_zoom_enabled");

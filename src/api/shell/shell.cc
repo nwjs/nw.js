@@ -51,7 +51,7 @@ namespace {
 
 // static
 void Shell::Call(const std::string& method,
-                 const base::Value::List& arguments,
+                 const base::ListValue& arguments,
                  content::BrowserContext* context) {
   Profile* profile = Profile::FromBrowserContext(context);
   if (method == "OpenExternal") {

@@ -27,7 +27,7 @@ public:
 
 namespace {
 
-std::unique_ptr<ui::Accelerator> dictionaryToUIAccelerator(const base::Value::Dict *acceleratorDict) {
+std::unique_ptr<ui::Accelerator> dictionaryToUIAccelerator(const base::DictValue *acceleratorDict) {
     nwapi::nw__shortcut::Accelerator accelerator;
     nwapi::nw__shortcut::Accelerator::Populate(acceleratorDict->Clone(), accelerator);
 
@@ -78,9 +78,9 @@ std::unique_ptr<ui::Accelerator> dictionaryToUIAccelerator(const base::Value::Di
   void DispatchEvent(
       events::HistogramValue histogram_value,
       const std::string& event_name,
-      base::Value::List args) {
+      base::ListValue args) {
     DCHECK_CURRENTLY_ON(BrowserThread::UI);
-    base::Value::List event_args;
+    base::ListValue event_args;
     for (size_t i = 0; i < args.size(); i++) {
       event_args.Append(args[i].Clone());
     }
@@ -113,10 +113,10 @@ void NWShortcutObserver::ExecuteCommand(
     const std::string& command_id) {
 }
 
-bool NwShortcutRegisterAcceleratorFunction::RunNWSync(base::Value::List* response, std::string* error) {
+bool NwShortcutRegisterAcceleratorFunction::RunNWSync(base::ListValue* response, std::string* error) {
   EXTENSION_FUNCTION_VALIDATE(args().size() >= 1);
   EXTENSION_FUNCTION_VALIDATE(args()[0].is_dict());
-  const base::Value::Dict& acceleratorDict = args()[0].GetDict();
+  const base::DictValue& acceleratorDict = args()[0].GetDict();
 
   std::unique_ptr<ui::Accelerator> uiAccelerator = dictionaryToUIAccelerator(&acceleratorDict);
 
@@ -129,10 +129,10 @@ bool NwShortcutRegisterAcceleratorFunction::RunNWSync(base::Value::List* respons
   return true;
 }
 
-bool NwShortcutUnregisterAcceleratorFunction::RunNWSync(base::Value::List* response, std::string* error) {
+bool NwShortcutUnregisterAcceleratorFunction::RunNWSync(base::ListValue* response, std::string* error) {
   EXTENSION_FUNCTION_VALIDATE(args().size() >= 1);
   EXTENSION_FUNCTION_VALIDATE(args()[0].is_dict());
-  const base::Value::Dict& acceleratorDict = args()[0].GetDict();
+  const base::DictValue& acceleratorDict = args()[0].GetDict();
   std::unique_ptr<ui::Accelerator> uiAccelerator = dictionaryToUIAccelerator(&acceleratorDict);
 
   ui::GlobalAcceleratorListener::GetInstance()->UnregisterAccelerator(*uiAccelerator, NWShortcutObserver::GetInstance());

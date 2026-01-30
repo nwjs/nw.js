@@ -33,7 +33,7 @@ namespace nw {
 
 Menu::Menu(int id,
            const base::WeakPtr<ObjectManager>& object_manager,
-           const base::Value::Dict& option,
+           const base::DictValue& option,
            const std::string& extension_id)
   : Base(id, object_manager, option, extension_id), enable_show_event_(false)  {
   Create(option);
@@ -44,7 +44,7 @@ Menu::~Menu() {
 }
 
 void Menu::Call(const std::string& method,
-                const base::Value::List& arguments,
+                const base::ListValue& arguments,
                 content::RenderFrameHost* rvh) {
   if (method == "Append") {
     int object_id = arguments[0].GetInt();

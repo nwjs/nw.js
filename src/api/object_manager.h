@@ -73,33 +73,33 @@ class ObjectManager : public KeyedService {
   // Send event to C++ object's corresponding js object.
   void SendEvent(Base* object,
                  const std::string& event,
-                 const base::Value::List& arguments);
+                 const base::ListValue& arguments);
 
   void OnAllocateObject(int object_id,
                         const std::string& type,
-                        const base::Value::Dict& option,
+                        const base::DictValue& option,
                         const std::string& extension_id);
   void OnDeallocateObject(int object_id);
   void OnCallObjectMethod(content::RenderFrameHost* rvh,
                           int object_id,
                           const std::string& type,
                           const std::string& method,
-                          const base::Value::List& arguments);
+                          const base::ListValue& arguments);
   void OnCallObjectMethodSync(content::RenderFrameHost* rvh,
                               int object_id,
                               const std::string& type,
                               const std::string& method,
-                              const base::Value::List& arguments,
-                              base::Value::List* result);
+                              const base::ListValue& arguments,
+                              base::ListValue* result);
   void OnCallStaticMethod(content::RenderFrameHost* rvh,
                           const std::string& type,
                           const std::string& method,
-                          const base::Value::List& arguments);
+                          const base::ListValue& arguments);
   void OnCallStaticMethodSync(content::RenderFrameHost* rvh,
                               const std::string& type,
                               const std::string& method,
-                              const base::Value::List& arguments,
-                              base::Value::List* result);
+                              const base::ListValue& arguments,
+                              base::ListValue* result);
  private:
   static base::IDMap<std::unique_ptr<Base>> objects_registry_;
   static int next_object_id_;

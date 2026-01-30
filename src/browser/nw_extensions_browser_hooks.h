@@ -33,7 +33,7 @@ namespace gfx {
 namespace nw {
 // browser
 // ref in extensions/common/file_util.cc
-void LoadNWAppAsExtensionHook(base::Value::Dict* manifest,
+void LoadNWAppAsExtensionHook(base::DictValue* manifest,
                               const base::FilePath& extension_path,
                               std::string* error);
 // ref in extensions/browser/app_window/app_window.cc 

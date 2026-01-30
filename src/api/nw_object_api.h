@@ -10,7 +10,7 @@ namespace extensions {
 class NwObjAllocateIdFunction : public NWSyncExtensionFunction {
  public:
   NwObjAllocateIdFunction();
-  bool RunNWSync(base::Value::List* response, std::string* error) override;
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
 
  protected:
   ~NwObjAllocateIdFunction() override;
@@ -22,7 +22,7 @@ class NwObjAllocateIdFunction : public NWSyncExtensionFunction {
 class NwObjCreateFunction : public NWSyncExtensionFunction {
  public:
   NwObjCreateFunction();
-  bool RunNWSync(base::Value::List* response, std::string* error) override;
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
 
  protected:
   ~NwObjCreateFunction() override;
@@ -34,7 +34,7 @@ class NwObjCreateFunction : public NWSyncExtensionFunction {
 class NwObjDestroyFunction : public NWSyncExtensionFunction {
  public:
   NwObjDestroyFunction();
-  bool RunNWSync(base::Value::List* response, std::string* error) override;
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
 
  protected:
   ~NwObjDestroyFunction() override;
@@ -46,7 +46,7 @@ class NwObjDestroyFunction : public NWSyncExtensionFunction {
 class NwObjCallObjectMethodFunction : public NWSyncExtensionFunction {
  public:
   NwObjCallObjectMethodFunction();
-  bool RunNWSync(base::Value::List* response, std::string* error) override;
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
 
  protected:
   ~NwObjCallObjectMethodFunction() override;
@@ -58,7 +58,7 @@ class NwObjCallObjectMethodFunction : public NWSyncExtensionFunction {
 class NwObjCallObjectMethodSyncFunction : public NWSyncExtensionFunction {
  public:
   NwObjCallObjectMethodSyncFunction();
-  bool RunNWSync(base::Value::List* response, std::string* error) override;
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
 
  protected:
   ~NwObjCallObjectMethodSyncFunction() override;

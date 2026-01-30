@@ -45,7 +45,7 @@ static const int kIconHeight = 16;
 
 } // namespace
 
-void MenuItem::Create(const base::Value::Dict& option) {
+void MenuItem::Create(const base::DictValue& option) {
   is_modified_ = false;
   is_checked_ = false;
   is_enabled_ = true;
@@ -125,7 +125,7 @@ void MenuItem::OnClick() {
     is_checked_ = !is_checked_;
 
   // Send event.
-  base::Value::List args;
+  base::ListValue args;
   object_manager()->SendEvent(this, "click", args);
 }
 

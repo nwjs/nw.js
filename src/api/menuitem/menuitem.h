@@ -58,19 +58,19 @@ class MenuItem : public Base {
  public:
   MenuItem(int id,
            const base::WeakPtr<ObjectManager>& dispatcher_host,
-           const base::Value::Dict& option,
+           const base::DictValue& option,
            const std::string& extension_id);
   ~MenuItem() override;
 
   void Call(const std::string& method,
-	    const base::Value::List& arguments,
+	    const base::ListValue& arguments,
              content::RenderFrameHost* rvh = nullptr) override;
   void CallSync(const std::string& method,
-		const base::Value::List& arguments,
-		base::Value::List* result) override;
+		const base::ListValue& arguments,
+		base::ListValue* result) override;
 
 #if defined(OS_MAC)
-  static base::Value::Dict CreateFromNative(NSMenuItem* menu_item, Menu* menu, int index);
+  static base::DictValue CreateFromNative(NSMenuItem* menu_item, Menu* menu, int index);
   static MenuItem* GetMenuItemFromNative(NSMenuItem* menu_item);
 #endif
 
@@ -87,7 +87,7 @@ class MenuItem : public Base {
   friend class Menu;
 
   // Platform-independent implementations
-  void Create(const base::Value::Dict& option);
+  void Create(const base::DictValue& option);
   void Destroy();
   void SetLabel(const std::string& label);
   void SetIcon(const std::string& icon);

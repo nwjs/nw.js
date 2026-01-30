@@ -74,10 +74,10 @@ class NW_EXPORT Package {
   bool self_extract() const { return self_extract_; }
 
   // Manifest root.
-  base::Value::Dict* root() { return &root_; }
+  base::DictValue* root() { return &root_; }
 
   // Window field of manifest.
-  base::Value::Dict* window();
+  base::DictValue* window();
 
   // Manifest string.
   std::string package_string() { return package_string_; }
@@ -107,7 +107,7 @@ class NW_EXPORT Package {
   bool self_extract_;
 
   // The parsed package.json.
-  base::Value::Dict root_;
+  base::DictValue root_;
 
   // The origin JSON string package.json.
   std::string package_string_;

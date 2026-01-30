@@ -10,7 +10,7 @@ namespace extensions {
 class NwClipboardGetListSyncFunction : public NWSyncExtensionFunction {
  public:
   NwClipboardGetListSyncFunction();
-  bool RunNWSync(base::Value::List* response, std::string* error) override;
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
 
  protected:
   ~NwClipboardGetListSyncFunction() override;
@@ -23,7 +23,7 @@ class NwClipboardGetListSyncFunction : public NWSyncExtensionFunction {
 class NwClipboardSetListSyncFunction : public NWSyncExtensionFunction {
  public:
   NwClipboardSetListSyncFunction();
-  bool RunNWSync(base::Value::List* response, std::string* error) override;
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
 
  protected:
   ~NwClipboardSetListSyncFunction() override;
@@ -35,7 +35,7 @@ class NwClipboardSetListSyncFunction : public NWSyncExtensionFunction {
 class NwClipboardClearSyncFunction : public NWSyncExtensionFunction {
  public:
   NwClipboardClearSyncFunction();
-  bool RunNWSync(base::Value::List* response, std::string* error) override;
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
 
  protected:
   ~NwClipboardClearSyncFunction() override;
@@ -47,7 +47,7 @@ class NwClipboardClearSyncFunction : public NWSyncExtensionFunction {
 class NwClipboardReadAvailableTypesFunction : public NWSyncExtensionFunction {
  public:
   NwClipboardReadAvailableTypesFunction();
-  bool RunNWSync(base::Value::List* response, std::string* error) override;
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
 
  protected:
   ~NwClipboardReadAvailableTypesFunction() override;

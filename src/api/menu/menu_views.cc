@@ -51,7 +51,7 @@ NwMenuModel::NwMenuModel(Delegate* delegate) : SimpleMenuModel(delegate) {
 
 namespace nw {
 
-void Menu::Create(const base::Value::Dict& option) {
+void Menu::Create(const base::DictValue& option) {
   is_menu_modified_ = true;
   menu_delegate_.reset(new MenuDelegate(object_manager()));
   menu_model_.reset(new ui::NwMenuModel(menu_delegate_.get()));

@@ -94,7 +94,7 @@ ui::KeyboardCode GetKeycodeFromText(std::string text){
 
 MenuItem::MenuItem(int id,
                    const base::WeakPtr<ObjectManager>& object_manager,
-                   const base::Value::Dict& option,
+                   const base::DictValue& option,
                    const std::string& extension_id)
   : Base(id, object_manager, option, extension_id) {
   Create(option);
@@ -105,7 +105,7 @@ MenuItem::~MenuItem() {
 }
 
 void MenuItem::Call(const std::string& method,
-                    const base::Value::List& arguments,
+                    const base::ListValue& arguments,
                     content::RenderFrameHost* rvh) {
   if (method == "SetLabel") {
     std::string label;
@@ -147,8 +147,8 @@ void MenuItem::Call(const std::string& method,
 }
 
 void MenuItem::CallSync(const std::string& method,
-                        const base::Value::List& arguments,
-                        base::Value::List* result) {
+                        const base::ListValue& arguments,
+                        base::ListValue* result) {
   if (method == "GetChecked") {
     result->Append(GetChecked());
   } else {

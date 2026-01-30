@@ -149,7 +149,7 @@ FilePath GetSelfPath() {
   return path;
 }
 
-void RelativePathToURI(FilePath root, base::Value::Dict* manifest) {
+void RelativePathToURI(FilePath root, base::DictValue* manifest) {
   std::string old;
   std::string* str = manifest->FindString(switches::kmMain);
   if (!str)
@@ -289,8 +289,8 @@ bool Package::GetUseExtension() {
   return use_ext;
 }
 
-base::Value::Dict* Package::window() {
-  base::Value::Dict* window = root()->FindDict(switches::kmWindow);
+base::DictValue* Package::window() {
+  base::DictValue* window = root()->FindDict(switches::kmWindow);
   return window;
 }
 
@@ -357,7 +357,7 @@ bool Package::InitFromPath(const base::FilePath& path_in) {
 
   // Force window field no empty.
   if (!root_.Find(switches::kmWindow)) {
-    base::Value::Dict window;
+    base::DictValue window;
     window.Set(switches::kmPosition, "center");
     root_.Set(switches::kmWindow, std::move(window));
   }
@@ -386,7 +386,7 @@ bool Package::InitFromPath(const base::FilePath& path_in) {
 void Package::InitWithDefault() {
   root()->Set(switches::kmName, "nwjs");
   root()->Set(switches::kmMain, "nw:blank");
-  base::Value::Dict window;
+  base::DictValue window;
 
   // Hide toolbar if specifed in the command line.
   if (base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kNoToolbar))

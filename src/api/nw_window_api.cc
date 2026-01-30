@@ -506,7 +506,7 @@ NwCurrentWindowInternalSetMenuFunction::NwCurrentWindowInternalSetMenuFunction()
 NwCurrentWindowInternalSetMenuFunction::~NwCurrentWindowInternalSetMenuFunction() {
 }
 
-bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::Value::List* response, std::string* error) {
+bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::ListValue* response, std::string* error) {
   EXTENSION_FUNCTION_VALIDATE(args().size() > 0 && args()[0].is_int());
   int id = args()[0].GetInt();
   nw::ObjectManager* obj_manager = nw::ObjectManager::Get(browser_context());
@@ -566,7 +566,7 @@ bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::Value::List* respon
     if (old_menu) old_menu->RemoveKeys();
     menu->UpdateKeys( native_app_window_views->widget()->GetFocusManager() );
   }
-  response->Append(base::Value::List());
+  response->Append(base::ListValue());
 #endif
   return true;
 }
@@ -753,7 +753,7 @@ NwCurrentWindowInternalReloadIgnoringCacheFunction::Run() {
   return RespondNow(NoArguments());
 }
 
-bool NwCurrentWindowInternalGetZoomFunction::RunNWSync(base::Value::List* response, std::string* error) {
+bool NwCurrentWindowInternalGetZoomFunction::RunNWSync(base::ListValue* response, std::string* error) {
   content::WebContents* web_contents = GetSenderWebContents();
   if (base::FeatureList::IsEnabled(::features::kNWNewWin) &&
       args().size() > 0) {
@@ -773,7 +773,7 @@ bool NwCurrentWindowInternalGetZoomFunction::RunNWSync(base::Value::List* respon
   return true;
 }
 
-bool NwCurrentWindowInternalSetZoomFunction::RunNWSync(base::Value::List* response, std::string* error) {
+bool NwCurrentWindowInternalSetZoomFunction::RunNWSync(base::ListValue* response, std::string* error) {
   EXTENSION_FUNCTION_VALIDATE(args().size() > 0 && (args()[0].is_double() || args()[0].is_int()));
 
   double zoom_level;
@@ -890,7 +890,7 @@ NwCurrentWindowInternalToggleKioskModeInternalFunction::Run() {
   return RespondNow(NoArguments());
 }
 
-bool NwCurrentWindowInternalIsKioskInternalFunction::RunNWSync(base::Value::List* response, std::string* error) {
+bool NwCurrentWindowInternalIsKioskInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
     int id = args()[0].GetInt();
     Browser* browser = getBrowser(this, id);
@@ -908,7 +908,7 @@ bool NwCurrentWindowInternalIsKioskInternalFunction::RunNWSync(base::Value::List
   return true;
 }
 
-bool NwCurrentWindowInternalGetTitleInternalFunction::RunNWSync(base::Value::List* response, std::string* ret_error) {
+bool NwCurrentWindowInternalGetTitleInternalFunction::RunNWSync(base::ListValue* response, std::string* ret_error) {
   AppWindow* window = getAppWindow(this);
   if (window) {
     response->Append(window->title_override());
@@ -944,7 +944,7 @@ NwCurrentWindowInternalSetShadowInternalFunction::Run() {
   return RespondNow(NoArguments());
 }
 
-bool NwCurrentWindowInternalSetTitleInternalFunction::RunNWSync(base::Value::List* response, std::string* error) {
+bool NwCurrentWindowInternalSetTitleInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
   EXTENSION_FUNCTION_VALIDATE(args().size() && args()[0].is_string());
   std::string title = args()[0].GetString();
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
@@ -975,11 +975,11 @@ NwCurrentWindowInternalGetPrintersFunction::Run() {
 }
 
 void NwCurrentWindowInternalGetPrintersFunction::OnGetPrinterList(const printing::PrinterList& printer_list) {
-  base::Value::List printers = chrome::PrintersToValues(printer_list);
+  base::ListValue printers = chrome::PrintersToValues(printer_list);
   Respond(WithArguments(base::Value(std::move(printers))));
 }
 
-bool NwCurrentWindowInternalSetPrintSettingsInternalFunction::RunNWSync(base::Value::List* response, std::string* error) {
+bool NwCurrentWindowInternalSetPrintSettingsInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
   EXTENSION_FUNCTION_VALIDATE(args().size());
 
   if (!args().size())
@@ -992,7 +992,7 @@ bool NwCurrentWindowInternalSetPrintSettingsInternalFunction::RunNWSync(base::Va
   if (browser) {
     web_contents = browser->tab_strip_model()->GetActiveWebContents();
   }
-  const base::Value::Dict& dict = args()[0].GetDict();
+  const base::DictValue& dict = args()[0].GetDict();
   std::optional<bool> auto_print = dict.FindBool("autoprint");
   if (auto_print)
     chrome::NWPrintSetCustomPrinting(*auto_print);
@@ -1006,9 +1006,9 @@ bool NwCurrentWindowInternalSetPrintSettingsInternalFunction::RunNWSync(base::Va
   return true;
 }
 
-bool NwCurrentWindowInternalGetCurrentFunction::RunNWSync(base::Value::List* response, std::string* ret_error) {
+bool NwCurrentWindowInternalGetCurrentFunction::RunNWSync(base::ListValue* response, std::string* ret_error) {
   EXTENSION_FUNCTION_VALIDATE(args().size());
-  base::Value::List remain;
+  base::ListValue remain;
   int id = args()[0].GetInt();
   if (args().size() > 1) {
     remain.Append(args()[1].Clone());
@@ -1032,14 +1032,14 @@ bool NwCurrentWindowInternalGetCurrentFunction::RunNWSync(base::Value::List* res
   WindowController::PopulateTabBehavior populate_tab_behavior =
       extractor.populate_tabs() ? WindowController::kPopulateTabs
                                 : WindowController::kDontPopulateTabs;
-  base::Value::Dict windows =
+  base::DictValue windows =
       ExtensionTabUtil::CreateWindowValueForExtension(*browser, extension(),
                                                       populate_tab_behavior, mojom::ContextType::kUnspecified);
   response->Append(base::Value(std::move(windows)));
   return true;
 }
 
-bool NwCurrentWindowInternalGetWinParamInternalFunction::RunNWSync(base::Value::List* response, std::string* error) {
+bool NwCurrentWindowInternalGetWinParamInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
   AppWindow* app_window = getAppWindow(this);
 
   if (!app_window) {
@@ -1051,7 +1051,7 @@ bool NwCurrentWindowInternalGetWinParamInternalFunction::RunNWSync(base::Value::
       app_window->web_contents()->GetPrimaryMainFrame();
   int frame_id = created_frame->GetRoutingID();
 
-  base::Value::Dict result;
+  base::DictValue result;
   result.Set("frameId", frame_id);
   result.Set("id", app_window->window_key());
   app_window->GetSerializedState(&result);

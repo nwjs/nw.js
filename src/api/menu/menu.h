@@ -91,12 +91,12 @@ class Menu : public Base {
  public:
   Menu(int id,
        const base::WeakPtr<ObjectManager>& object_manager,
-       const base::Value::Dict& option,
+       const base::DictValue& option,
        const std::string& extension_id);
    ~Menu() override;
 
    void Call(const std::string& method,
-             const base::Value::List& arguments,
+             const base::ListValue& arguments,
              content::RenderFrameHost* rvh = nullptr) override;
 
 #if defined(OS_MAC)
@@ -114,7 +114,7 @@ class Menu : public Base {
   bool enable_show_event_;
 
   // Platform-independent implementations
-  void Create(const base::Value::Dict& option);
+  void Create(const base::DictValue& option);
   void Destroy();
   void Append(MenuItem* menu_item);
   void Insert(MenuItem* menu_item, int pos);

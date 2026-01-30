@@ -33,7 +33,7 @@ namespace nw {
 class Shell {
  public:
   static void Call(const std::string& method,
-                   const base::Value::List& arguments,
+                   const base::ListValue& arguments,
 		   content::BrowserContext* context);
 
  private:

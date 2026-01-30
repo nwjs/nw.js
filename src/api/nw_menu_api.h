@@ -10,7 +10,7 @@ namespace extensions {
 class NwMenuGetNSStringWithFixupFunction : public NWSyncExtensionFunction {
  public:
   NwMenuGetNSStringWithFixupFunction(){}
-  bool RunNWSync(base::Value::List* response, std::string* error) override;
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
 
  protected:
   ~NwMenuGetNSStringWithFixupFunction() override {}
@@ -21,7 +21,7 @@ class NwMenuGetNSStringWithFixupFunction : public NWSyncExtensionFunction {
 class NwMenuGetNSStringFWithFixupFunction : public NWSyncExtensionFunction {
  public:
   NwMenuGetNSStringFWithFixupFunction() {}
-  bool RunNWSync(base::Value::List* response, std::string* error) override;
+  bool RunNWSync(base::ListValue* response, std::string* error) override;
 
  protected:
   ~NwMenuGetNSStringFWithFixupFunction() override {}

@@ -12,12 +12,12 @@ using nw::MenuItem;
 namespace extensions {
 
 #ifndef OS_MAC
-bool NwMenuGetNSStringWithFixupFunction::RunNWSync(base::Value::List* response, std::string* error) {
+bool NwMenuGetNSStringWithFixupFunction::RunNWSync(base::ListValue* response, std::string* error) {
   SetError("NwMenuGetNSStringWithFixupFunction is only for OSX");
   return false;
 }
 
-bool NwMenuGetNSStringFWithFixupFunction::RunNWSync(base::Value::List* response, std::string* error) {
+bool NwMenuGetNSStringFWithFixupFunction::RunNWSync(base::ListValue* response, std::string* error) {
   SetError("NwMenuGetNSStringFWithFixupFunction is only for OSX");
   return false;
 }

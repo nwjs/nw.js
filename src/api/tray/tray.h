@@ -51,17 +51,17 @@ class Tray : public Base {
  public:
   Tray(int id,
        const base::WeakPtr<ObjectManager>& object_manager,
-       const base::Value::Dict& option,
+       const base::DictValue& option,
        const std::string& extension_id);
   ~Tray() override;
 
   void Call(const std::string& method,
-            const base::Value::List& arguments,
+            const base::ListValue& arguments,
             content::RenderFrameHost* rvh = nullptr) override;
 
  private:
   // Platform-independent implementations
-  void Create(const base::Value::Dict& option);
+  void Create(const base::DictValue& option);
   void ShowAfterCreate();
   void Destroy();
   void SetTitle(const std::string& title);

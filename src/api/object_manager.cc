@@ -86,7 +86,7 @@ int ObjectManager::AllocateId() {
 
 void ObjectManager::OnAllocateObject(int object_id,
 				     const std::string& type,
-				     const base::Value::Dict& option,
+				     const base::DictValue& option,
 				     const std::string& extension_id) {
   DVLOG(1) << "OnAllocateObject: object_id:" << object_id
              << " type:" << type
@@ -137,7 +137,7 @@ void ObjectManager::OnCallObjectMethod(
     int object_id,
     const std::string& type,
     const std::string& method,
-    const base::Value::List& arguments) {
+    const base::ListValue& arguments) {
 #if 0
   DLOG(INFO) << "OnCallObjectMethod: object_id:" << object_id
              << " type:" << type
@@ -159,8 +159,8 @@ void ObjectManager::OnCallObjectMethodSync(
     int object_id,
     const std::string& type,
     const std::string& method,
-    const base::Value::List& arguments,
-    base::Value::List* result) {
+    const base::ListValue& arguments,
+    base::ListValue* result) {
   DLOG(INFO) << "OnCallObjectMethodSync: object_id:" << object_id
              << " type:" << type
              << " method:" << method
@@ -180,7 +180,7 @@ void ObjectManager::OnCallStaticMethod(
     content::RenderFrameHost* rvh,
     const std::string& type,
     const std::string& method,
-    const base::Value::List& arguments) {
+    const base::ListValue& arguments) {
   DLOG(INFO) << "OnCallStaticMethod: "
              << " type:" << type
              << " method:" << method
@@ -202,8 +202,8 @@ void ObjectManager::OnCallStaticMethodSync(
     content::RenderFrameHost* rvh,
     const std::string& type,
     const std::string& method,
-    const base::Value::List& arguments,
-    base::Value::List* result) {
+    const base::ListValue& arguments,
+    base::ListValue* result) {
   DLOG(INFO) << "OnCallStaticMethodSync: "
              << " type:" << type
              << " method:" << method
@@ -225,11 +225,11 @@ void ObjectManager::OnCallStaticMethodSync(
 
 void ObjectManager::SendEvent(Base* object,
                               const std::string& event_name,
-                              const base::Value::List& args) {
+                              const base::ListValue& args) {
   EventRouter* event_router = EventRouter::Get(browser_context_);
   if (!event_router)
     return;
-  base::Value::List arguments;
+  base::ListValue arguments;
   arguments.Append(base::Value(object->id()));
   arguments.Append(args.Clone());
   std::unique_ptr<Event> event(new Event(extensions::events::UNKNOWN, "NWObject" + event_name, std::move(arguments), browser_context_));

@@ -116,15 +116,15 @@ bool IsReloadingApp() {
   return g_reloading_app;
 }
 
-typedef void (*SendEventToAppFn)(const std::string& event_name, const base::Value::List& event_args);
+typedef void (*SendEventToAppFn)(const std::string& event_name, const base::ListValue& event_args);
 CONTENT_EXPORT extern SendEventToAppFn gSendEventToApp;
 
-void SendEventToApp(const std::string& event_name, const base::Value::List& event_args) {
+void SendEventToApp(const std::string& event_name, const base::ListValue& event_args) {
   Profile* profile = ProfileManager::GetLastUsedProfileIfLoaded();
   const extensions::ExtensionSet& extensions =
     ExtensionRegistry::Get(profile)->enabled_extensions();
   ExtensionPrefs* extension_prefs = ExtensionPrefs::Get(profile);
-  base::Value::List arguments;
+  base::ListValue arguments;
   arguments.Append(event_args.Clone());
 
   for (extensions::ExtensionSet::const_iterator it = extensions.begin();
@@ -366,7 +366,7 @@ int MainPartsPreCreateThreadsHook() {
 
 void MainPartsPreMainMessageLoopRunHook() {
   nw::Package* package = nw::package();
-  base::Value::List *additional_trust_anchors = package->root()->FindList("additional_trust_anchors");
+  base::ListValue *additional_trust_anchors = package->root()->FindList("additional_trust_anchors");
   if (additional_trust_anchors) {
     for (auto& val : *additional_trust_anchors) {
       std::string certificate_string;
@@ -405,7 +405,7 @@ bool ProcessSingletonNotificationCallbackHook(const base::CommandLine& command_l
 #else
     std::string cmd = command_line.GetCommandLineString();
 #endif
-    base::Value::List arguments;
+    base::ListValue arguments;
     arguments.Append(cmd);
     SendEventToApp("nw.App.onOpen", arguments);
   }

@@ -28,7 +28,7 @@ namespace nw {
 
 Base::Base(int id,
            const base::WeakPtr<ObjectManager>& object_manager,
-           const base::Value::Dict& option,
+           const base::DictValue& option,
 	   const std::string& extension_id)
     : extension_id_(extension_id),
       id_(id),
@@ -41,7 +41,7 @@ Base::~Base() {
 }
 
 
-void Base::Call(const std::string& method, const base::Value::List& arguments,
+void Base::Call(const std::string& method, const base::ListValue& arguments,
                 content::RenderFrameHost* rvh) {
   NOTREACHED() << "Uncatched call in Base"
                << " method:" << method
@@ -49,8 +49,8 @@ void Base::Call(const std::string& method, const base::Value::List& arguments,
 }
 
 void Base::CallSync(const std::string& method,
-                    const base::Value::List& arguments,
-                    base::Value::List* result) {
+                    const base::ListValue& arguments,
+                    base::ListValue* result) {
   NOTREACHED() << "Uncatched callAsync in Base"
                << " method:" << method
                << " arguments:" << arguments;

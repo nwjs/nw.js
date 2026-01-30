@@ -98,10 +98,10 @@ void AmendManifestContentScriptList(base::DictionaryValue* manifest,
 }
 #endif
 
-void AmendManifestStringList(base::Value::Dict* manifest,
+void AmendManifestStringList(base::DictValue* manifest,
                    const std::string& path,
                    const std::string& string_value) {
-  base::Value::List pattern_list;
+  base::ListValue pattern_list;
   base::Value* temp_pattern_value = nullptr;
 
   if (path.find('.'))
@@ -121,17 +121,17 @@ void AmendManifestStringList(base::Value::Dict* manifest,
     manifest->Set(path, std::move(pattern_list));
 }
 
-void AmendManifestList(base::Value::Dict* manifest,
+void AmendManifestList(base::DictValue* manifest,
 		       const std::string& path,
-		       const base::Value::List& list_value) {
-  base::Value::List* pattern_list = NULL;
+		       const base::ListValue& list_value) {
+  base::ListValue* pattern_list = NULL;
 
   if ((pattern_list = manifest->FindList(path))) {
     for(auto it = list_value.begin(); it != list_value.end(); ++it) {
       pattern_list->Append(it->Clone());
     }
   } else {
-    base::Value::List lst;
+    base::ListValue lst;
     for (auto i = list_value.begin(); i != list_value.end(); ++i) {
       lst.Append(const_cast<base::Value&&>(*i));
     }
@@ -152,7 +152,7 @@ base::Value MergeManifest(const std::string& in_manifest) {
                                                     switches::kmResizable,
                                                     switches::kmShow
                                                     };
-  base::Value::Dict manifest;
+  base::DictValue manifest;
 
   // retrieve `window` manifest set by `new-win-policy`
   std::string manifest_str =
@@ -178,9 +178,9 @@ base::Value MergeManifest(const std::string& in_manifest) {
       js_doc_end = *str;
     if (!js_doc_end.empty())
       manifest.Set(::switches::kmInjectJSDocEnd, js_doc_end);
-    base::Value::Dict* manifest_window = pkg->window();
+    base::DictValue* manifest_window = pkg->window();
     if (manifest_window) {
-      base::Value::Dict manifest_window_cloned = manifest_window->Clone();
+      base::DictValue manifest_window_cloned = manifest_window->Clone();
       // filter out non inherited attributes
       std::vector<const char*>::iterator it;
       for(it = non_inherited_attrs.begin(); it != non_inherited_attrs.end(); it++) {
@@ -232,7 +232,7 @@ bool RphGuestFilterURLHook(RenderProcessHost* rph, const GURL* url)  {
 typedef bool (*RphGuestFilterURLHookFn)(content::RenderProcessHost* rph, const GURL* url);
 CONTENT_EXPORT extern RphGuestFilterURLHookFn gRphGuestFilterURLHook;
 
-void LoadNWAppAsExtensionHook(base::Value::Dict* manifest,
+void LoadNWAppAsExtensionHook(base::DictValue* manifest,
                               const base::FilePath& extension_path,
                               std::string* error) {
   gRphGuestFilterURLHook = RphGuestFilterURLHook;
@@ -251,7 +251,7 @@ void LoadNWAppAsExtensionHook(base::Value::Dict* manifest,
     return;
   }
 
-  base::Value::Dict cloned_root;
+  base::DictValue cloned_root;
   for (auto pair: *(package->root())) {
     cloned_root.Set(pair.first, pair.second.Clone());
   }
@@ -303,9 +303,9 @@ void LoadNWAppAsExtensionHook(base::Value::Dict* manifest,
   if ((node_remote = manifest->Find(switches::kmRemotePages))) {
     //FIXME: node-remote spec different with kWebURLs
     std::string node_remote_string;
-    base::Value::List node_remote_list;
+    base::ListValue node_remote_list;
     if (node_remote->is_string()) {
-      base::Value::List _node_remote_list;
+      base::ListValue _node_remote_list;
       _node_remote_list.Append(node_remote->GetString());
       node_remote_list = std::move(_node_remote_list);
     } else
@@ -328,7 +328,7 @@ void CalcNewWinParams(content::WebContents* new_contents, void* params,
   extensions::AppWindow::CreateParams ret;
   std::unique_ptr<base::Value> val;
   base::Value manifest_d = MergeManifest(in_manifest);
-  base::Value::Dict& manifest = manifest_d.GetDict();
+  base::DictValue& manifest = manifest_d.GetDict();
   std::optional<bool> resizable = manifest.FindBool(switches::kmResizable);
   if (resizable) {
     ret.resizable = *resizable;

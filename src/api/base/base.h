@@ -42,16 +42,16 @@ class Base {
  public:
   Base(int id,
        const base::WeakPtr<ObjectManager>& manager,
-       const base::Value::Dict& option,
+       const base::DictValue& option,
        const std::string& extension_id);
   virtual ~Base();
 
   virtual void Call(const std::string& method,
-                    const base::Value::List& arguments,
+                    const base::ListValue& arguments,
                     content::RenderFrameHost* rvh = nullptr);
   virtual void CallSync(const std::string& method,
-                        const base::Value::List& arguments,
-                        base::Value::List* result);
+                        const base::ListValue& arguments,
+                        base::ListValue* result);
 
   int id() const { return id_; }
   std::string extension_id_;
