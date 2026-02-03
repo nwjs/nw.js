@@ -806,9 +806,12 @@ public:
   }
 
   void ListWebContents() {
-    for (Browser* browser : *BrowserList::GetInstance()) {
-      LOG(WARNING) << browser->tab_strip_model()->GetActiveWebContents()->GetLastCommittedURL();
-    }
+    GlobalBrowserCollection::GetInstance()->ForEach(
+      [](BrowserWindowInterface* browser) {
+        WebContents* wc = browser->GetTabStripModel()->GetActiveWebContents();
+        LOG(WARNING) << wc->GetLastCommittedURL().spec();
+        return true;
+      });
   }
 
   const std::string WaitForElement(WebContents* wc, const std::string& selector) {
@@ -884,14 +887,17 @@ public:
       if (bwi->GetType() != BrowserWindowInterface::Type::TYPE_DEVTOOLS)
         return bwi->GetTabStripModel()->GetActiveWebContents();
     }
-    for (Browser* browser : *BrowserList::GetInstance()) {
-      if (!browser->is_type_devtools()) {
-        WebContents* wc = browser->tab_strip_model()->GetActiveWebContents();
-        if (wc->GetLastCommittedURL().spec().ends_with(fn))
-          return wc;
-      }
-    }
-    return nullptr;
+    WebContents* web_content = nullptr;
+    GlobalBrowserCollection::GetInstance()->ForEach(
+        [&web_content, &fn](BrowserWindowInterface* browser) {
+          WebContents* wc = browser->GetTabStripModel()->GetActiveWebContents();
+          if (wc->GetLastCommittedURL().spec().ends_with(fn)) {
+            web_content = wc;
+            return false;
+          }
+          return true;
+        });
+    return web_content;
   }
 
   void SendInput(content::WebContents* wc, const std::string& value) {
@@ -943,10 +949,13 @@ IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue8243Reload) {
   EXPECT_TRUE(listener.WaitUntilSatisfied()) << "'" << listener.message()
                                              << "' message was not receieved";
 
-  for (Browser* browser : *BrowserList::GetInstance()) {
-    WebContents* wc = browser->tab_strip_model()->GetActiveWebContents();
-    LOG(WARNING) << wc->GetLastCommittedURL().spec();
-  }
+  GlobalBrowserCollection::GetInstance()->ForEach(
+      [](BrowserWindowInterface* browser) {
+        WebContents* wc = browser->GetTabStripModel()->GetActiveWebContents();
+        LOG(WARNING) << wc->GetLastCommittedURL().spec();
+        return true;
+      });
+
   observer2.WaitForLoad();
 }
 
