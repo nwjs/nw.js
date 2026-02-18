@@ -411,6 +411,7 @@ executable("payload") {
 
 if (!is_component_build) {
   action("dist") {
+    testonly = true
     script = "tools/package_binaries.py"
     if (nwjs_sdk) {
       package_mode = "sdk"
@@ -429,7 +430,10 @@ if (!is_component_build) {
       "-m", "$package_mode",
       "-i", "$icudat_path"
     ]
-    deps = [ "//components/resources:about_credits_nw" ]
+    deps = [
+      "//components/resources:about_credits_nw",
+      ":dump"
+    ]
     if (nwjs_sdk && (is_mac || is_linux)) {
       deps += [ "//third_party/breakpad:minidump_stackwalk" ]
     }
