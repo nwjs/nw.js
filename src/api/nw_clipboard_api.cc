@@ -20,6 +20,7 @@
 #include "ui/base/clipboard/scoped_clipboard_writer.h"
 #include "ui/gfx/codec/jpeg_codec.h"
 #include "ui/gfx/codec/png_codec.h"
+#include "url/gurl.h"
 #include "third_party/skia/include/core/SkBitmap.h"
 
 #pragma clang diagnostic ignored "-Wunreachable-code-break"
@@ -93,7 +94,14 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
     bool ReadText(ClipboardData& data) {
       DCHECK(data.type == Type::kText);
       std::u16string text;
-      clipboard_->ReadText(ui::ClipboardBuffer::kCopyPaste, nullptr, &text);
+      base::RunLoop loop;
+      clipboard_->ReadText(ui::ClipboardBuffer::kCopyPaste,
+                           /* data_dst = */ std::nullopt,
+                           base::BindLambdaForTesting([&](std::u16string result) {
+                                                        text = result;
+                                                        loop.Quit();
+                                                      }));
+      loop.Run();
       data.data.emplace(std::string(base::UTF16ToUTF8(text)));
       return true;
     }
@@ -101,10 +109,17 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
     bool ReadHTML(ClipboardData& data) {
       DCHECK(data.type == Type::kHtml);
       std::u16string text;
-      std::string src_url;
-      uint32_t fragment_start, fragment_end;
-      clipboard_->ReadHTML(ui::ClipboardBuffer::kCopyPaste, nullptr,
-                           &text, &src_url, &fragment_start, &fragment_end);
+      base::RunLoop loop;
+      clipboard_->ReadHTML(ui::ClipboardBuffer::kCopyPaste,
+                           /* data_dst = */ std::nullopt,
+                           base::BindLambdaForTesting([&](std::u16string markup,
+                                                          GURL src_url,
+                                                          uint32_t fragment_start,
+                                                          uint32_t fragment_end) {
+                                                        text = markup;
+                                                        loop.Quit();
+                                                      }));
+      loop.Run();
       data.data.emplace(std::string(base::UTF16ToUTF8(text)));
       return true;
     }
@@ -112,7 +127,14 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
     bool ReadRTF(ClipboardData& data) {
       DCHECK(data.type == Type::kRtf);
       std::string text;
-      clipboard_->ReadRTF(ui::ClipboardBuffer::kCopyPaste, nullptr, &text);
+      base::RunLoop loop;
+      clipboard_->ReadRTF(ui::ClipboardBuffer::kCopyPaste,
+                          /* data_dst = */ std::nullopt,
+                          base::BindLambdaForTesting([&](std::string result) {
+                                                       text = result;
+                                                       loop.Quit();
+                                                     }));
+      loop.Run();
       data.data.emplace(std::string(text));
       return true;
     }
@@ -331,7 +353,14 @@ NwClipboardReadAvailableTypesFunction::~NwClipboardReadAvailableTypesFunction() 
 bool NwClipboardReadAvailableTypesFunction::RunNWSync(base::ListValue* response, std::string* error) {
   ui::Clipboard* clipboard = ui::Clipboard::GetForCurrentThread();
   std::vector<std::u16string> types;
-  clipboard->ReadAvailableTypes(ui::ClipboardBuffer::kCopyPaste, nullptr, &types);
+  base::RunLoop loop;
+  clipboard->ReadAvailableTypes(ui::ClipboardBuffer::kCopyPaste,
+                                /* data_dst = */ std::nullopt,
+                                base::BindLambdaForTesting([&](std::vector<std::u16string> result) {
+                                                             types = result;
+                                                             loop.Quit();
+                                                           }));
+  loop.Run();
   for(std::vector<std::u16string>::iterator it = types.begin(); it != types.end(); it++) {
     if (base::EqualsASCII(*it, ui::kMimeTypePlainText)) {
       response->Append(ToString(Type::kText));
