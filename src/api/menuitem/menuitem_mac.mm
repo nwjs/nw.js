@@ -31,7 +31,7 @@
 
 namespace nw{
 
-void MenuItem::Create(const base::Value::Dict& option) {
+void MenuItem::Create(const base::DictValue& option) {
   const std::string* str = option.FindString("type");
   if (str)
     type_ = *str;
@@ -113,8 +113,8 @@ void MenuItem::Create(const base::Value::Dict& option) {
 }
 
 // static
-base::Value::Dict MenuItem::CreateFromNative(NSMenuItem* menu_item, Menu* menu, int index) {
-  base::Value::Dict options;
+base::DictValue MenuItem::CreateFromNative(NSMenuItem* menu_item, Menu* menu, int index) {
+  base::DictValue options;
 
   options.Set("native", true);
 

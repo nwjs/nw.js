@@ -61,7 +61,7 @@ bool g_in_webview_apply_attr_allow_nw = false;
 } //namespace
 
 #if defined(OS_MAC)
-typedef void (*SendEventToAppFn)(const std::string& event_name, const base::Value::List& event_args);
+typedef void (*SendEventToAppFn)(const std::string& event_name, const base::ListValue& event_args);
 CONTENT_EXPORT SendEventToAppFn gSendEventToApp = nullptr;
 
 bool GetDirUserData(base::FilePath*);
@@ -138,14 +138,14 @@ bool GetImage(Package* package, const FilePath& icon_path, gfx::Image* image) {
 
 #if defined(OS_MAC)
 CONTENT_EXPORT bool ApplicationShouldHandleReopenHook(bool hasVisibleWindows) {
-  base::Value::List arguments;
+  base::ListValue arguments;
   if (gSendEventToApp)
     gSendEventToApp("nw.App.onReopen", arguments);
   return true;
 }
 
 CONTENT_EXPORT void OSXOpenURLsHook(const std::vector<GURL>& startup_urls) {
-  base::Value::List arguments;
+  base::ListValue arguments;
   for (size_t i = 0; i < startup_urls.size(); i++)
     arguments.Append(startup_urls[i].spec());
   if (gSendEventToApp)

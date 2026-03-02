@@ -39,7 +39,7 @@ Menu* Menu::GetMenuFromNative(NSMenu* menu) {
   return (Menu*)[menu associatedObject];
 }
 
-void Menu::Create(const base::Value::Dict& option) {
+void Menu::Create(const base::DictValue& option) {
   menu_ = [[NSMenu alloc] initWithTitle:@"NW Menu"];
   [menu_ setAutoenablesItems:NO];
   [menu_ setAllowsContextMenuPlugIns:NO];

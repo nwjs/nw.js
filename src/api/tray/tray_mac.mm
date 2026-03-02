@@ -40,8 +40,8 @@
     tray_ = newTray;
 }
 - (void)onClick:(id)sender {
-    base::Value::List args;
-    base::Value::Dict data;
+    base::ListValue args;
+    base::DictValue data;
     // Get the position of the frame of the NSStatusItem
     NSPoint pos = ([[[NSApp currentEvent] window] frame]).origin;
     // Flip coordinates to gfx (0,0 in top-left corner) using primary screen.
@@ -56,7 +56,7 @@
 
 namespace nw {
     
-void Tray::Create(const base::Value::Dict& option) {
+void Tray::Create(const base::DictValue& option) {
   NSStatusBar *status_bar = [NSStatusBar systemStatusBar];
   MacTrayObserver* observer = [[MacTrayObserver alloc] init];
   [observer setBacking:this];

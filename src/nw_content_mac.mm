@@ -87,7 +87,7 @@ API_AVAILABLE(macos(10.15.4))
 
 @end
 
-base::Value::List NWChangeAppMenu(nw::Menu* menu) {
+base::ListValue NWChangeAppMenu(nw::Menu* menu) {
     NSMenu *main_menu;
 
     if (menu == nil) {
@@ -98,7 +98,7 @@ base::Value::List NWChangeAppMenu(nw::Menu* menu) {
 
     [NSApp setMainMenu:main_menu];
 
-    base::Value::List items;
+    base::ListValue items;
 
     if (menu != nil) {
         NSString* editMenuTitle = l10n_util::GetNSStringWithFixup(IDS_EDIT_MENU_MAC);
@@ -112,8 +112,8 @@ base::Value::List NWChangeAppMenu(nw::Menu* menu) {
                 for(int i = 0; i < [editMenu numberOfItems]; i++) {
                     NSMenuItem* nativeItem = [itemList objectAtIndex:i];
                     if (!nw::MenuItem::GetMenuItemFromNative(nativeItem)) {
-                        base::Value::Dict options = nw::MenuItem::CreateFromNative(nativeItem, nwEditMenu, i);
-                        base::Value::Dict menuPatch;
+                        base::DictValue options = nw::MenuItem::CreateFromNative(nativeItem, nwEditMenu, i);
+                        base::DictValue menuPatch;
                         menuPatch.Set("menu", (int)editMenuIndex);
                         menuPatch.Set("index", i);
                         menuPatch.Set("option", std::move(options));
