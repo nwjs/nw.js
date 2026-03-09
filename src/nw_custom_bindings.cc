@@ -243,14 +243,12 @@ void NWCustomBindings::EvalScript(
     blink::HTMLIFrameElement* iframe = blink::V8HTMLIFrameElement::ToWrappableUnsafe(isolate, frm);
     web_frame = blink::WebFrame::FromCoreFrame(iframe->ContentFrame());
   }
-#if defined(OS_WIN)
-  std::u16string jscript(base::WideToUTF16((WCHAR*)*v8::String::Value(isolate, args[1])));
-#else
-  std::u16string jscript((char16_t*)*v8::String::Value(isolate, args[1]));
-#endif
+
+  std::string jscript(*v8::String::Utf8Value(isolate, args[1]));
+
   if (web_frame) {
     blink::WebLocalFrame* local_frame = web_frame->ToWebLocalFrame();
-    result = local_frame->ExecuteScriptAndReturnValue(blink::WebScriptSource(blink::WebString::FromUTF16(jscript)));
+    result = local_frame->ExecuteScriptAndReturnValue(blink::WebScriptSource(blink::WebString::FromUTF8(jscript)));
   }
   args.GetReturnValue().Set(result);
   return;
