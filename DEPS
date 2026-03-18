@@ -57,8 +57,8 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': 'b621174eb79292834381d0f005eb647c99486336',
-  'nw_v8_revision': '54e4d470ac07c2eafff74f5e8882d4c31de82b41',
+  'nw_src_revision': '2c121078b3c7980d7d753e4a66e3f4f4723081c6',
+  'nw_v8_revision': '72227e2cea40d671b8a05d300026d48145c0771c',
   'nw_node_revision': 'c557abd4f97055a5859f7de5585a74e3c4970b8d',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
@@ -316,15 +316,15 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '90228207f40ec85064f8b5c41fcdc2c0cf855ff2',
+  'skia_revision': '248acd90d9a35ac46b2ec30201ae50f301b8a173',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '0a35ee1d515b1c4cfd14857f6cbdbaeca396bb22',
+  'v8_revision': '70253f966a7c3936f5a5ff57c6a4a4face1f16ad',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': 'a6d84ad204060020c0af8afad358b8f935fb6797',
+  'angle_revision': '1d3190bf5633327395d694d621258978d989dffd',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -404,7 +404,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling devtools-frontend
   # and whatever else without interference from each other.
-  'devtools_frontend_revision': '45846e2e19962d0da29e0abed313f4e97a660ef7',
+  'devtools_frontend_revision': '890a74027b0fdeaee6bbf0a0b9b108bbda7af5b9',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libprotobuf-mutator
   # and whatever else without interference from each other.
@@ -1214,7 +1214,7 @@ deps = {
       'packages': [
           {
               'package': 'chromium/chrome/android/orderfiles/arm64',
-              'version': '-OCPe2cLRXG3arnB9qmlU9vxu7o2pO6YtjBFSqkh2pAC',
+              'version': 'VQWzNB-EOSRig3g0YpUqXaqQLbskyeMJjoeEkdHGhywC',
           },
       ],
       'condition': 'checkout_android and non_git_source',
@@ -1225,7 +1225,7 @@ deps = {
       'packages': [
           {
               'package': 'chromium/android_webview/tools/orderfiles/arm',
-              'version': 'KpS3cSn_O98aOTzbQa8i6OuWxDg4i4jzn0zTholpI2MC',
+              'version': 'matQR5r-xNzpStWv5IgB4xe9wKB4JFOGISFSQGsyT9IC',
           },
       ],
       'condition': 'checkout_android and non_git_source',
@@ -1236,7 +1236,7 @@ deps = {
       'packages': [
           {
               'package': 'chromium/android_webview/tools/orderfiles/arm64',
-              'version': 'mivk_3WhEM_6mskAQ7Xc2NxJvA5rjX1elpPpYXkv34cC',
+              'version': 'BtHI70_2lfmOBehZDgjOpYNmvN4GD_dZRnut-ELs5C8C',
           },
       ],
       'condition': 'checkout_android and non_git_source',
@@ -2851,7 +2851,7 @@ deps = {
   },
 
   'src/third_party/ruy/src':
-    Var('chromium_git') + '/external/github.com/google/ruy.git' + '@' + '576e020f06334118994496b45f9796ed7fda3280',
+    Var('chromium_git') + '/external/github.com/google/ruy.git' + '@' + 'de9b160a51ab3a06ce8505b96f7548fa09837a10',
 
   'src/third_party/search_engines_data/resources':
     Var('chromium_git') + '/external/search_engines_data.git' + '@' + '9be56ed146f8334c39cd70ab7434fdf726a4f4a4',
@@ -3032,7 +3032,7 @@ deps = {
   },
 
   'src/third_party/xnnpack/src':
-    Var('chromium_git') + '/external/github.com/google/XNNPACK.git' + '@' + '4574c4d9b00703c15f2218634ddf101597b22b18',
+    Var('chromium_git') + '/external/github.com/google/XNNPACK.git' + '@' + '1154ae8178f0efc634cd1e8a681646dc22973255',
 
   'src/third_party/libei/cipd': {
 
@@ -3785,7 +3785,7 @@ deps = {
 
   'src/ios_internal':  {
       'url': Var('chrome_git') + '/chrome/ios_internal.git' + '@' +
-        '326c8de9868d99122f4f8f4daf918925ed866209',
+        '28dc4163fb8358c2de0ccb0fb34b3e81782d4083',
       'condition': 'checkout_ios and checkout_src_internal',
   },
 
