@@ -26,7 +26,7 @@ group("nwjs") {
     deps += [ "//third_party/dawn/src/dawn/tests:copy_dxc_binary" ]
   }
   if (is_linux) {
-    deps += [ "//chrome:xdg_mime", "//components/crash/core/app:chrome_crashpad_handler", ":copy_icd" ]
+    deps += [ "//chrome:linux_cros_extra_data", "//components/crash/core/app:chrome_crashpad_handler", ":copy_icd" ]
   }
 }
 
