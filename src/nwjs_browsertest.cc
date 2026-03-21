@@ -1020,13 +1020,13 @@ IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue4121InspectNodeCrash) {
   observer.WaitForLoad();
   content::WebContents* wc = GetAppWebContents("index.html");
   EvalJsResult result = EvalJs(wc, "document.querySelector('#require').click()");
-  ASSERT_THAT(result, content::EvalJsResult::IsOk());
+  ASSERT_TRUE(result.is_ok());
   DevToolsWindow* window = observer.devtools_window();
   SwitchToPanel(window, "console");
   WebContents* devtools = DevToolsWindowTesting::Get(window)->main_web_contents();
 
   EvalJsResult result2 = EvalJs(devtools, "document.querySelector('.devtools-link').click()");
-  ASSERT_THAT(result2, content::EvalJsResult::IsOk());
+  ASSERT_TRUE(result2.is_ok());
 
   Sleep(base::Milliseconds(2000)); //wait for crash
   SwitchToPanel(window, "sources");
@@ -1045,7 +1045,7 @@ IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, WindowResizeTo) {
   ASSERT_TRUE(result.find("200, 300") != std::string::npos);
 
   EvalJsResult result2 = EvalJs(main, "document.querySelector('#btn_resizeto').click()");
-  ASSERT_THAT(result2, content::EvalJsResult::IsOk());
+  ASSERT_TRUE(result2.is_ok());
 
   std::string result3 = WaitForElementContent(popup, "#yellow", "180, 180");
   LOG(WARNING) << "--> window size 2: " << result3;
@@ -1088,19 +1088,19 @@ IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue6061BinCrash) {
 
   EvalJsResult result = EvalJs(
       devtools, "document.querySelector('.console-object').click()");
-  ASSERT_THAT(result, content::EvalJsResult::IsOk());
+  ASSERT_TRUE(result.is_ok());
 
   Sleep(base::Milliseconds(1000));
 
   auto result2 = EvalJs(
       devtools, "document.querySelector('#console-messages > div.console-group.console-group-messages > div > div > div > div > div > div:nth-child(1) > span > span.console-message-text > div').shadowRoot.querySelector('div > ol > ol > li > span').click()");
-  ASSERT_THAT(result2, content::EvalJsResult::IsOk());
+  ASSERT_TRUE(result2.is_ok());
 
   Sleep(base::Milliseconds(1000));
 
   auto result3 = EvalJs(
       devtools, "document.querySelector('#console-messages > div.console-group.console-group-messages > div > div > div > div > div > div:nth-child(1) > span > span.console-message-text > div').shadowRoot.querySelector('div > ol > ol > ol > li:nth-child(3) > span').click()");
-  ASSERT_THAT(result3, content::EvalJsResult::IsOk());
+  ASSERT_TRUE(result3.is_ok());
 
   Sleep(base::Milliseconds(1000));
 }
@@ -1121,19 +1121,16 @@ IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue4269Crash) {
 
   LoadAndLaunchApp("issue4269-click-link-crash", "Launched");
   content::WebContents* wc = GetAppWebContents("index.html");
-  ASSERT_THAT(EvalJs(wc, "document.querySelector('#test').click()"),
-              content::EvalJsResult::IsOk());
+  ASSERT_TRUE(EvalJs(wc, "document.querySelector('#test').click()").is_ok());
   EXPECT_EQ("loaded", WaitForElementContent(wc, "#progress", "loaded"));
   DevToolsWindowCreationObserver observer;
-  ASSERT_THAT(EvalJs(wc, "document.querySelector('#opendev').click()"),
-              content::EvalJsResult::IsOk());
+  ASSERT_TRUE(EvalJs(wc, "document.querySelector('#opendev').click()").is_ok());
   observer.WaitForLoad();
   DevToolsWindow* window = observer.devtools_window();
   SwitchToPanel(window, "console");
   WebContents* devtools = DevToolsWindowTesting::Get(window)->main_web_contents();
   ui_test_utils::BrowserCreatedObserver new_browser_observer;
-  ASSERT_THAT(EvalJs(devtools, "document.querySelector('.console-message-text .devtools-link').click()"),
-              content::EvalJsResult::IsOk());
+  ASSERT_TRUE(EvalJs(devtools, "document.querySelector('.console-message-text .devtools-link').click()").is_ok());
   Browser* active_browser = new_browser_observer.Wait();
   ui_test_utils::WaitUntilBrowserBecomeActive(active_browser);
   content::WebContents* popup_contents =
