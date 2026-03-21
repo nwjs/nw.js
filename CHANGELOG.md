@@ -1,3 +1,10 @@
+0.109.1 / 03-21-2026
+====================
+- update to Chromium 146.0.7680.80
+- Node: update to v25.6.1
+- Fix change event of file chooser
+- Fix: nwsaveas crash
+
 0.109.0 / 03-03-2026
 ====================
 - update to Chromium 146.0.7680.31
