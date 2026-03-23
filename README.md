@@ -31,12 +31,16 @@ It was created in the Intel Open Source Technology Center.
  * Windows: [32bit](https://dl.nwjs.io/v0.109.1/nwjs-v0.109.1-win-ia32.zip) / [64bit](https://dl.nwjs.io/v0.109.1/nwjs-v0.109.1-win-x64.zip)
  * Mac 10.10+: [64bit](https://dl.nwjs.io/v0.109.1/nwjs-v0.109.1-osx-arm64.zip)
  * Use [Legacy build](http://nwjs.io/downloads/) for Win XP and early OSX.
+ * Linux: [32bit](https://dl.nwjs.io/v0.109.1/nwjs-v0.109.1-linux-ia32.tar.gz) / [64bit](https://dl.nwjs.io/v0.109.1/nwjs-v0.109.1-linux-x64.tar.gz)
+ * Windows: [32bit](https://dl.nwjs.io/v0.109.1/nwjs-v0.109.1-win-ia32.zip) / [64bit](https://dl.nwjs.io/v0.109.1/nwjs-v0.109.1-win-x64.zip)
+ * Mac 10.10+: [64bit](https://dl.nwjs.io/v0.109.1/nwjs-v0.109.1-osx-arm64.zip)
+ * ARM:
+   * ARMv7 (armel): [32bit](https://dl.nwjs.io/v0.109.1/nwjs-v0.109.1-linux-armel.tar.gz)
+   * ARMv7 (armhf): [32bit](https://dl.nwjs.io/v0.109.1/nwjs-v0.109.1-linux-armhf.tar.gz)
+   * ARMv8 (arm64): [64bit](https://dl.nwjs.io/v0.109.1/nwjs-v0.109.1-linux-arm64.tar.gz)
+ * Use [Legacy build](http://nwjs.io/downloads/) for Win XP and early OSX.
 
 * **latest nightly build from git tip**: https://dl.nwjs.io/live-build/
-
-* [Previous versions](https://dl.nwjs.io); See [the mapping file](https://nwjs.io/versions.json) for the version info in previous releases.
-
-### Demos and real apps
 You may also be interested in [our demos repository](https://github.com/zcbenz/nw-sample-apps) and the [List of apps and companies using nw.js](https://github.com/nwjs/nw.js/wiki/List-of-apps-and-companies-using-nw.js).
 
 ## Quick Start
