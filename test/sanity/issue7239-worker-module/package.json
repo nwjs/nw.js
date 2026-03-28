@@ -9,6 +9,6 @@
   },
   "chromium-args": "--enable-node-worker",
   "dependencies": {
-    "nan": "^2.22.2"
+    "nan": "^2.26.2"
   }
 }
