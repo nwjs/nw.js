@@ -1,0 +1,65 @@
+```diff
+# Add Android Support
+
+## Step 1: Create a new Android platform target
+Create a new file `android.json` in the `nwjs` root directory with the following content:
+```json
+{
+  "platform": "android",
+  "arch": "arm",
+  "version": "10"
+}
+```
+
+## Step 2: Update `nwjs.gyp` to include Android build configuration
+Add the following lines to `nwjs.gyp`:
+```python
+{
+  'targets': [
+    {
+      'target_name': 'nwjs',
+      'type': 'executable',
+      'sources': [
+        # ... existing sources ...
+      ],
+      'conditions': [
+        ['OS=="android"', {
+          'sources': [
+            # ... add Android-specific sources ...
+          ],
+          'include_dirs': [
+            # ... add Android-specific include directories ...
+          ],
+          'libraries': [
+            # ... add Android-specific libraries ...
+          ],
+        }],
+      ],
+    },
+  ],
+}
+```
+
+## Step 3: Implement Android-specific code
+Create a new file `android.cc` in the `nwjs` root directory with the following content:
+```cpp
+#include <android/native_activity.h>
+#include <android/native_window.h>
+
+// ... implement Android-specific functionality ...
+```
+
+## Step 4: Update `nwjs` to use Android-specific code
+Add the following lines to `nwjs.cc`:
+```cpp
+#ifdef __ANDROID__
+#include "android.cc"
+#endif
+```
+
+## Step 5: Build and test on Android
+Use the following command to build and test `nwjs` on Android:
+```bash
+python build.py --platform=android --arch=arm --version=10
+```
+```
