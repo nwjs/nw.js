@@ -1,8 +1,8 @@
 diff --git a/BUILD.gn b/BUILD.gn
-index f2f7570a54..b567e73db0 100644
+index dbc0a546a5..dbe8210d19 100644
 --- BUILD.gn
 +++ BUILD.gn
-@@ -280,6 +280,11 @@ if (!build_with_chromium) {
+@@ -278,6 +278,11 @@ if (!build_with_chromium) {
  # Rationalize them with eseckler@. For now seems this one is only used from
  # chromium and the other one only from the Android tree.
  if (build_with_chromium) {
@@ -15,17 +15,13 @@ index f2f7570a54..b567e73db0 100644
      public_configs = [ "gn:public_config" ]
      deps = [
 diff --git a/gn/perfetto.gni b/gn/perfetto.gni
-index ac88e7d6b0..f4908317b5 100644
+index 4fb532064c..d545454eba 100644
 --- gn/perfetto.gni
 +++ gn/perfetto.gni
-@@ -378,8 +378,8 @@ declare_args() {
-   # Enables Zlib support. This is used to compress traces (by the tracing
-   # service and by the "perfetto" cmdline client) and to decompress traces (by
-   # trace_processor).
--  enable_perfetto_zlib =
--      enable_perfetto_trace_processor || enable_perfetto_platform_services
-+  enable_perfetto_zlib = false
-+      #enable_perfetto_trace_processor || enable_perfetto_platform_services
-
-   # Enables PCRE2 support for Android.
-   enable_perfetto_pcre2 = perfetto_build_with_android
+@@ -511,3 +511,6 @@ assert(!perfetto_use_pkgconfig || perfetto_use_system_protobuf,
+ assert(
+     !enable_perfetto_llvm_symbolizer || !use_custom_libcxx,
+     "enable_perfetto_llvm_symbolizer and use_custom_libcxx are mutually exclusive. If you are seeing this error then you have set enable_perfetto_llvm_symbolizer=true and must set use_custom_libcxx=false to use llvm_symbolizer.")
++
++# NW.js: disable zlib in perfetto to avoid conflicts with node's zlib
++enable_perfetto_zlib = false
