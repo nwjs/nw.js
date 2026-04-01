@@ -1,8 +1,8 @@
 diff --git a/BUILD.gn b/BUILD.gn
-index dbc0a546a5..dbe8210d19 100644
+index f2f7570a54..b567e73db0 100644
 --- BUILD.gn
 +++ BUILD.gn
-@@ -278,6 +278,11 @@ if (!build_with_chromium) {
+@@ -280,6 +280,11 @@ if (!build_with_chromium) {
  # Rationalize them with eseckler@. For now seems this one is only used from
  # chromium and the other one only from the Android tree.
  if (build_with_chromium) {
@@ -15,7 +15,7 @@ index dbc0a546a5..dbe8210d19 100644
      public_configs = [ "gn:public_config" ]
      deps = [
 diff --git a/gn/perfetto.gni b/gn/perfetto.gni
-index 4fb532064c..72e9e0abb2 100644
+index ac88e7d6b0..f4908317b5 100644
 --- gn/perfetto.gni
 +++ gn/perfetto.gni
 @@ -378,8 +378,8 @@ declare_args() {
@@ -27,5 +27,5 @@ index 4fb532064c..72e9e0abb2 100644
 +  enable_perfetto_zlib = false
 +      #enable_perfetto_trace_processor || enable_perfetto_platform_services
 
-   # Enables function name demangling using sources from llvm. Otherwise
-   # trace_processor falls back onto using the c++ runtime demangler, which
+   # Enables PCRE2 support for Android.
+   enable_perfetto_pcre2 = perfetto_build_with_android
