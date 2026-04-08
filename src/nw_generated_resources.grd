@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<grit latest_public_release="0" current_release="1">
+  <outputs>
+    <output filename="generated_resources_af.pak" type="data_package" lang="af" />
+    <output filename="generated_resources_am.pak" type="data_package" lang="am" />
+    <output filename="generated_resources_ar.pak" type="data_package" lang="ar" />
+    <output filename="generated_resources_as.pak" type="data_package" lang="as" />
+    <output filename="generated_resources_az.pak" type="data_package" lang="az" />
+    <output filename="generated_resources_be.pak" type="data_package" lang="be" />
+    <output filename="generated_resources_bg.pak" type="data_package" lang="bg" />
+    <output filename="generated_resources_bn.pak" type="data_package" lang="bn" />
+    <output filename="generated_resources_bs.pak" type="data_package" lang="bs" />
+    <output filename="generated_resources_ca.pak" type="data_package" lang="ca" />
+    <output filename="generated_resources_cs.pak" type="data_package" lang="cs" />
+    <output filename="generated_resources_cy.pak" type="data_package" lang="cy" />
+    <output filename="generated_resources_da.pak" type="data_package" lang="da" />
+    <output filename="generated_resources_de.pak" type="data_package" lang="de" />
+    <output filename="generated_resources_el.pak" type="data_package" lang="el" />
+    <output filename="generated_resources_en-GB.pak" type="data_package" lang="en-GB" />
+    <output filename="generated_resources_en-US.pak" type="data_package" lang="en" />
+    <output filename="generated_resources_es.pak" type="data_package" lang="es" />
+    <output filename="generated_resources_es-419.pak" type="data_package" lang="es-419" />
+    <output filename="generated_resources_et.pak" type="data_package" lang="et" />
+    <output filename="generated_resources_eu.pak" type="data_package" lang="eu" />
+    <output filename="generated_resources_fa.pak" type="data_package" lang="fa" />
+    <output filename="generated_resources_fi.pak" type="data_package" lang="fi" />
+    <output filename="generated_resources_fil.pak" type="data_package" lang="fil" />
+    <output filename="generated_resources_fr-CA.pak" type="data_package" lang="fr-CA" />
+    <output filename="generated_resources_fr.pak" type="data_package" lang="fr" />
+    <output filename="generated_resources_gl.pak" type="data_package" lang="gl" />
+    <output filename="generated_resources_gu.pak" type="data_package" lang="gu" />
+    <output filename="generated_resources_he.pak" type="data_package" lang="he" />
+    <output filename="generated_resources_hi.pak" type="data_package" lang="hi" />
+    <output filename="generated_resources_hr.pak" type="data_package" lang="hr" />
+    <output filename="generated_resources_hu.pak" type="data_package" lang="hu" />
+    <output filename="generated_resources_hy.pak" type="data_package" lang="hy" />
+    <output filename="generated_resources_id.pak" type="data_package" lang="id" />
+    <output filename="generated_resources_is.pak" type="data_package" lang="is" />
+    <output filename="generated_resources_it.pak" type="data_package" lang="it" />
+    <output filename="generated_resources_ja.pak" type="data_package" lang="ja" />
+    <output filename="generated_resources_ka.pak" type="data_package" lang="ka" />
+    <output filename="generated_resources_kk.pak" type="data_package" lang="kk" />
+    <output filename="generated_resources_km.pak" type="data_package" lang="km" />
+    <output filename="generated_resources_kn.pak" type="data_package" lang="kn" />
+    <output filename="generated_resources_ko.pak" type="data_package" lang="ko" />
+    <output filename="generated_resources_ky.pak" type="data_package" lang="ky" />
+    <output filename="generated_resources_lo.pak" type="data_package" lang="lo" />
+    <output filename="generated_resources_lt.pak" type="data_package" lang="lt" />
+    <output filename="generated_resources_lv.pak" type="data_package" lang="lv" />
+    <output filename="generated_resources_mk.pak" type="data_package" lang="mk" />
+    <output filename="generated_resources_ml.pak" type="data_package" lang="ml" />
+    <output filename="generated_resources_mn.pak" type="data_package" lang="mn" />
+    <output filename="generated_resources_mr.pak" type="data_package" lang="mr" />
+    <output filename="generated_resources_ms.pak" type="data_package" lang="ms" />
+    <output filename="generated_resources_my.pak" type="data_package" lang="my" />
+    <output filename="generated_resources_ne.pak" type="data_package" lang="ne" />
+    <output filename="generated_resources_nl.pak" type="data_package" lang="nl" />
+    <!-- The translation console uses 'no' for Norwegian Bokmål. It should
+         be 'nb'. -->
+    <output filename="generated_resources_nb.pak" type="data_package" lang="no" />
+    <output filename="generated_resources_pa.pak" type="data_package" lang="pa" />
+    <output filename="generated_resources_pl.pak" type="data_package" lang="pl" />
+    <output filename="generated_resources_pt-BR.pak" type="data_package" lang="pt-BR" />
+    <output filename="generated_resources_pt-PT.pak" type="data_package" lang="pt-PT" />
+    <output filename="generated_resources_or.pak" type="data_package" lang="or" />
+    <output filename="generated_resources_ro.pak" type="data_package" lang="ro" />
+    <output filename="generated_resources_ru.pak" type="data_package" lang="ru" />
+    <output filename="generated_resources_si.pak" type="data_package" lang="si" />
+    <output filename="generated_resources_sk.pak" type="data_package" lang="sk" />
+    <output filename="generated_resources_sl.pak" type="data_package" lang="sl" />
+    <output filename="generated_resources_sq.pak" type="data_package" lang="sq" />
+    <output filename="generated_resources_sr-Latn.pak" type="data_package" lang="sr-Latn" />
+    <output filename="generated_resources_sr.pak" type="data_package" lang="sr" />
+    <output filename="generated_resources_sv.pak" type="data_package" lang="sv" />
+    <output filename="generated_resources_sw.pak" type="data_package" lang="sw" />
+    <output filename="generated_resources_ta.pak" type="data_package" lang="ta" />
+    <output filename="generated_resources_te.pak" type="data_package" lang="te" />
+    <output filename="generated_resources_th.pak" type="data_package" lang="th" />
+    <output filename="generated_resources_tr.pak" type="data_package" lang="tr" />
+    <output filename="generated_resources_uk.pak" type="data_package" lang="uk" />
+    <output filename="generated_resources_ur.pak" type="data_package" lang="ur" />
+    <output filename="generated_resources_uz.pak" type="data_package" lang="uz" />
+    <output filename="generated_resources_vi.pak" type="data_package" lang="vi" />
+    <output filename="generated_resources_zh-CN.pak" type="data_package" lang="zh-CN" />
+    <output filename="generated_resources_zh-HK.pak" type="data_package" lang="zh-HK" />
+    <output filename="generated_resources_zh-TW.pak" type="data_package" lang="zh-TW" />
+    <output filename="generated_resources_zu.pak" type="data_package" lang="zu" />
+    <!-- Pseudolocales -->
+    <output filename="generated_resources_ar-XB.pak" type="data_package" lang="ar-XB" />
+    <output filename="generated_resources_en-XA.pak" type="data_package" lang="en-XA" />
+  </outputs>
+
+  <translations>
+    <file path="resources/generated_resources_af.xtb" lang="af" />
+    <file path="resources/generated_resources_am.xtb" lang="am" />
+    <file path="resources/generated_resources_ar.xtb" lang="ar" />
+    <file path="resources/generated_resources_as.xtb" lang="as" />
+    <file path="resources/generated_resources_az.xtb" lang="az" />
+    <file path="resources/generated_resources_be.xtb" lang="be" />
+    <file path="resources/generated_resources_bg.xtb" lang="bg" />
+    <file path="resources/generated_resources_bn.xtb" lang="bn" />
+    <file path="resources/generated_resources_bs.xtb" lang="bs" />
+    <file path="resources/generated_resources_ca.xtb" lang="ca" />
+    <file path="resources/generated_resources_cs.xtb" lang="cs" />
+    <file path="resources/generated_resources_cy.xtb" lang="cy" />
+    <file path="resources/generated_resources_da.xtb" lang="da" />
+    <file path="resources/generated_resources_de.xtb" lang="de" />
+    <file path="resources/generated_resources_el.xtb" lang="el" />
+    <file path="resources/generated_resources_en-GB.xtb" lang="en-GB" />
+    <file path="resources/generated_resources_es.xtb" lang="es" />
+    <file path="resources/generated_resources_es-419.xtb" lang="es-419" />
+    <file path="resources/generated_resources_et.xtb" lang="et" />
+    <file path="resources/generated_resources_eu.xtb" lang="eu" />
+    <file path="resources/generated_resources_fa.xtb" lang="fa" />
+    <file path="resources/generated_resources_fi.xtb" lang="fi" />
+    <file path="resources/generated_resources_fil.xtb" lang="fil" />
+    <file path="resources/generated_resources_fr.xtb" lang="fr" />
+    <file path="resources/generated_resources_fr-CA.xtb" lang="fr-CA" />
+    <file path="resources/generated_resources_gl.xtb" lang="gl" />
+    <file path="resources/generated_resources_gu.xtb" lang="gu" />
+    <file path="resources/generated_resources_hi.xtb" lang="hi" />
+    <file path="resources/generated_resources_hr.xtb" lang="hr" />
+    <file path="resources/generated_resources_hu.xtb" lang="hu" />
+    <file path="resources/generated_resources_hy.xtb" lang="hy" />
+    <file path="resources/generated_resources_id.xtb" lang="id" />
+    <file path="resources/generated_resources_is.xtb" lang="is" />
+    <file path="resources/generated_resources_it.xtb" lang="it" />
+    <!-- The translation console uses 'iw' for Hebrew, but we use 'he'. -->
+    <file path="resources/generated_resources_iw.xtb" lang="he" />
+    <file path="resources/generated_resources_ja.xtb" lang="ja" />
+    <file path="resources/generated_resources_ka.xtb" lang="ka" />
+    <file path="resources/generated_resources_kk.xtb" lang="kk" />
+    <file path="resources/generated_resources_km.xtb" lang="km" />
+    <file path="resources/generated_resources_kn.xtb" lang="kn" />
+    <file path="resources/generated_resources_ko.xtb" lang="ko" />
+    <file path="resources/generated_resources_ky.xtb" lang="ky" />
+    <file path="resources/generated_resources_lo.xtb" lang="lo" />
+    <file path="resources/generated_resources_lt.xtb" lang="lt" />
+    <file path="resources/generated_resources_lv.xtb" lang="lv" />
+    <file path="resources/generated_resources_mk.xtb" lang="mk" />
+    <file path="resources/generated_resources_ml.xtb" lang="ml" />
+    <file path="resources/generated_resources_mn.xtb" lang="mn" />
+    <file path="resources/generated_resources_mr.xtb" lang="mr" />
+    <file path="resources/generated_resources_ms.xtb" lang="ms" />
+    <file path="resources/generated_resources_my.xtb" lang="my" />
+    <file path="resources/generated_resources_ne.xtb" lang="ne" />
+    <file path="resources/generated_resources_nl.xtb" lang="nl" />
+    <file path="resources/generated_resources_no.xtb" lang="no" />
+    <file path="resources/generated_resources_or.xtb" lang="or" />
+    <file path="resources/generated_resources_pa.xtb" lang="pa" />
+    <file path="resources/generated_resources_pl.xtb" lang="pl" />
+    <file path="resources/generated_resources_pt-BR.xtb" lang="pt-BR" />
+    <file path="resources/generated_resources_pt-PT.xtb" lang="pt-PT" />
+    <file path="resources/generated_resources_ro.xtb" lang="ro" />
+    <file path="resources/generated_resources_ru.xtb" lang="ru" />
+    <file path="resources/generated_resources_si.xtb" lang="si" />
+    <file path="resources/generated_resources_sk.xtb" lang="sk" />
+    <file path="resources/generated_resources_sl.xtb" lang="sl" />
+    <file path="resources/generated_resources_sq.xtb" lang="sq" />
+    <file path="resources/generated_resources_sr.xtb" lang="sr" />
+    <file path="resources/generated_resources_sr-Latn.xtb" lang="sr-Latn" />
+    <file path="resources/generated_resources_sv.xtb" lang="sv" />
+    <file path="resources/generated_resources_sw.xtb" lang="sw" />
+    <file path="resources/generated_resources_ta.xtb" lang="ta" />
+    <file path="resources/generated_resources_te.xtb" lang="te" />
+    <file path="resources/generated_resources_th.xtb" lang="th" />
+    <file path="resources/generated_resources_tr.xtb" lang="tr" />
+    <file path="resources/generated_resources_uk.xtb" lang="uk" />
+    <file path="resources/generated_resources_ur.xtb" lang="ur" />
+    <file path="resources/generated_resources_uz.xtb" lang="uz" />
+    <file path="resources/generated_resources_vi.xtb" lang="vi" />
+    <file path="resources/generated_resources_zh-CN.xtb" lang="zh-CN" />
+    <file path="resources/generated_resources_zh-HK.xtb" lang="zh-HK" />
+    <file path="resources/generated_resources_zh-TW.xtb" lang="zh-TW" />
+    <file path="resources/generated_resources_zu.xtb" lang="zu" />
+  </translations>
+
+  <release seq="1">
+    <messages fallback_to_english="true">
+      <message name="IDS_NWJS_FILE_SYSTEM_ACCESS_CHOOSER_OPEN_SAVE_FILE_TITLE" desc="Title of the chooser when opening a file with read and write permissions">
+        Save As
+      </message>
+    </messages>
+  </release>
+</grit>
