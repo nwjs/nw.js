@@ -40,7 +40,7 @@ public:
   ~ReadImageHelper() = default;
 
   std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
-    base::RunLoop loop;
+    base::RunLoop loop(base::RunLoop::Type::kNestableTasksAllowed);
     std::vector<uint8_t> png;
     clipboard->ReadPng(
                        ui::ClipboardBuffer::kCopyPaste,
@@ -94,7 +94,7 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
     bool ReadText(ClipboardData& data) {
       DCHECK(data.type == Type::kText);
       std::u16string text;
-      base::RunLoop loop;
+      base::RunLoop loop(base::RunLoop::Type::kNestableTasksAllowed);
       clipboard_->ReadText(ui::ClipboardBuffer::kCopyPaste,
                            /* data_dst = */ std::nullopt,
                            base::BindLambdaForTesting([&](std::u16string result) {
@@ -109,7 +109,7 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
     bool ReadHTML(ClipboardData& data) {
       DCHECK(data.type == Type::kHtml);
       std::u16string text;
-      base::RunLoop loop;
+      base::RunLoop loop(base::RunLoop::Type::kNestableTasksAllowed);
       clipboard_->ReadHTML(ui::ClipboardBuffer::kCopyPaste,
                            /* data_dst = */ std::nullopt,
                            base::BindLambdaForTesting([&](std::u16string markup,
@@ -127,7 +127,7 @@ std::vector<uint8_t> ReadPng(ui::Clipboard* clipboard) {
     bool ReadRTF(ClipboardData& data) {
       DCHECK(data.type == Type::kRtf);
       std::string text;
-      base::RunLoop loop;
+      base::RunLoop loop(base::RunLoop::Type::kNestableTasksAllowed);
       clipboard_->ReadRTF(ui::ClipboardBuffer::kCopyPaste,
                           /* data_dst = */ std::nullopt,
                           base::BindLambdaForTesting([&](std::string result) {
@@ -353,7 +353,7 @@ NwClipboardReadAvailableTypesFunction::~NwClipboardReadAvailableTypesFunction() 
 bool NwClipboardReadAvailableTypesFunction::RunNWSync(base::ListValue* response, std::string* error) {
   ui::Clipboard* clipboard = ui::Clipboard::GetForCurrentThread();
   std::vector<std::u16string> types;
-  base::RunLoop loop;
+  base::RunLoop loop(base::RunLoop::Type::kNestableTasksAllowed);
   clipboard->ReadAvailableTypes(ui::ClipboardBuffer::kCopyPaste,
                                 /* data_dst = */ std::nullopt,
                                 base::BindLambdaForTesting([&](std::vector<std::u16string> result) {
