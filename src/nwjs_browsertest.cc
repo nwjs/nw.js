@@ -44,7 +44,6 @@
 #include "chrome/browser/download/download_core_service_factory.h"
 #include "chrome/browser/lifetime/application_lifetime.h"
 #include "chrome/browser/pdf/pdf_extension_test_util.h"
-#include "chrome/browser/pdf/test_pdf_viewer_stream_manager.h"
 #include "chrome/browser/profiles/profile.h"
 #include "chrome/browser/renderer_context_menu/render_view_context_menu.h"
 #include "chrome/browser/renderer_context_menu/render_view_context_menu_test_util.h"
@@ -755,12 +754,7 @@ class NWJSWebViewTest : public NWWebViewTestBase, public testing::WithParamInter
 
     trusted_ = GetParam();
   }
-  pdf::TestPdfViewerStreamManager* GetTestPdfViewerStreamManager(
-      content::WebContents* contents) {
-    return factory_.GetTestPdfViewerStreamManager(contents);
-  }
 protected:
-  pdf::TestPdfViewerStreamManagerFactory factory_;
   bool trusted_;
 };
 
