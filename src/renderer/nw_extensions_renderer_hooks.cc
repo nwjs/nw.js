@@ -454,7 +454,7 @@ void TryInjectStartScript(blink::WebLocalFrame* frame, const Extension* extensio
     blink::ScriptForbiddenScope::AllowUserAgentScript script;
     v8::Context::Scope cscope(v8_context);
     // v8::Handle<v8::Value> result;
-    frame->ExecuteScriptAndReturnValue(WebScriptSource(blink::WebString::FromUTF8(content)));
+    frame->ExecuteScriptAndReturnValue(WebScriptSource(blink::WebString::FromUtf8(content)));
   }
 }
 
@@ -590,7 +590,7 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
 				   v8_context->GetMicrotaskQueue(),
 				   v8::MicrotasksScope::kDoNotRunMicrotasks);
     v8::Context::Scope cscope(v8_context);
-    frame->ExecuteScriptAndReturnValue(WebScriptSource(blink::WebString::FromUTF8(std::string(resource))));
+    frame->ExecuteScriptAndReturnValue(WebScriptSource(blink::WebString::FromUtf8(std::string(resource))));
   }
 }
 
@@ -701,7 +701,7 @@ void willHandleNavigationPolicy(content::RenderFrame* rf,
   std::unique_ptr<base::Value> manifest_val(converter->FromV8Value(manifest_v8, v8_context));
   std::string manifest_str;
   if (manifest_val.get() && base::JSONWriter::Write(*manifest_val, &manifest_str)) {
-    *manifest = blink::WebString::FromUTF8(manifest_str.c_str());
+    *manifest = blink::WebString::FromUtf8(manifest_str.c_str());
   }
 
   v8::Local<v8::Value> val = policy_obj->Get(v8_context, v8_str("val")).ToLocalChecked();

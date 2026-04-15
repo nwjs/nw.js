@@ -248,7 +248,7 @@ void NWCustomBindings::EvalScript(
 
   if (web_frame) {
     blink::WebLocalFrame* local_frame = web_frame->ToWebLocalFrame();
-    result = local_frame->ExecuteScriptAndReturnValue(blink::WebScriptSource(blink::WebString::FromUTF8(jscript)));
+    result = local_frame->ExecuteScriptAndReturnValue(blink::WebScriptSource(blink::WebString::FromUtf8(jscript)));
   }
   args.GetReturnValue().Set(result);
   return;
@@ -367,8 +367,8 @@ void NWCustomBindings::AddOriginAccessWhitelistEntry(const v8::FunctionCallbackI
   bool allowDestinationSubdomains = args[3].As<v8::Boolean>()->Value();
 
   blink::WebSecurityPolicy::AddOriginAccessAllowListEntry(GURL(sourceOrigin),
-                                                          blink::WebString::FromUTF8(destinationProtocol),
-                                                          blink::WebString::FromUTF8(destinationHost), 0,
+                                                          blink::WebString::FromUtf8(destinationProtocol),
+                                                          blink::WebString::FromUtf8(destinationHost), 0,
                                                           allowDestinationSubdomains ?
                                                           network::mojom::CorsDomainMatchMode::kAllowSubdomains : network::mojom::CorsDomainMatchMode::kDisallowSubdomains,
                                                           network::mojom::CorsPortMatchMode::kAllowAnyPort,
