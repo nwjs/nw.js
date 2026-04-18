@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head><title>main window</title></head>
+<body>
+<div id="close_count">0</div>
+<button id="open_modal">open modal</button>
+<button id="close_main">close main</button>
+<script>
+var win = nw.Window.get();
+var closeCount = 0;
+
+win.on('close', function() {
+    closeCount++;
+    document.getElementById('close_count').textContent = closeCount;
+    this.close(true);
+});
+
+document.getElementById('open_modal').onclick = function() {
+    nw.Window.open('modal.html', {width: 300, height: 200}, function(modalWin) {
+        modalWin.on('close', function() {
+            modalWin.close(true);
+        });
+        modalWin.on('loaded', function() {
+            var btn = modalWin.window.document.getElementById('close_modal');
+            if (btn) btn.onclick = function() { modalWin.close(); };
+        });
+    });
+};
+
+document.getElementById('close_main').onclick = function() {
+    win.close();
+};
+</script>
+</body>
+</html>
