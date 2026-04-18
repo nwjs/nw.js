@@ -158,6 +158,7 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
                         'nw.Window.get() has no associated AppWindow.');
       }
       privates(this).menu = null;
+      this.onClose = bindingUtil.createCustomEvent("nw.Window.onClose", true, false);
       nwNatives.callInWindow(bgPage, "__nw_initwindow", currentRoutingID, this);
     };
     forEach(currentNWWindowInternal, function(key, value) {
@@ -171,7 +172,6 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
     NWWindow.prototype.onDocumentStart     = bindingUtil.createCustomEvent('nw.Window.onDocumentStart', false, false);
     NWWindow.prototype.onDocumentEnd       = bindingUtil.createCustomEvent('nw.Window.onDocumentEnd', false, false);
     NWWindow.prototype.onZoom              = bindingUtil.createCustomEvent('nw.Window.onZoom', false, false);
-    NWWindow.prototype.onClose             = bindingUtil.createCustomEvent("nw.Window.onClose", true, false);
 
     NWWindow.prototype.once = function (event, listener, record) {
       if (typeof listener !== 'function')
