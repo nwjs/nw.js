@@ -129,6 +129,7 @@ class Menu : public Base {
   void UpdateStates();
 
   void OnMenuClosed();
+  void SetDelayDestructionRecursive(bool delay);
 
   //**Never Try to free this pointer**
   //We get it from top widget

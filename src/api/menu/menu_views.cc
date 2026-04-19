@@ -129,7 +129,7 @@ void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
     screen_position_client->ConvertPointToScreen(target_window,
              &screen_point);
   }
-  set_delay_destruction(true);
+  SetDelayDestructionRecursive(true);
   menu_runner_.reset(new views::MenuRunner(menu_model_.get(), views::MenuRunner::CONTEXT_MENU,
                                            base::BindRepeating(&Menu::OnMenuClosed, base::Unretained(this))));
   menu_runner_->RunMenuAt(top_level_widget,
@@ -151,9 +151,24 @@ void Menu::Popup(int x, int y, content::RenderFrameHost* rfh) {
 
     run_loop.Run();
   }
-  set_delay_destruction(false);
-  if (pending_destruction())
+  SetDelayDestructionRecursive(false);
+}
+
+void Menu::SetDelayDestructionRecursive(bool delay) {
+  set_delay_destruction(delay);
+  if (!delay && pending_destruction()) {
     object_manager_->OnDeallocateObject(id_);
+    return;
+  }
+  for (auto* item : menu_items_) {
+    item->set_delay_destruction(delay);
+    if (!delay && item->pending_destruction()) {
+      object_manager_->OnDeallocateObject(item->id());
+      continue;
+    }
+    if (item->submenu_)
+      item->submenu_->SetDelayDestructionRecursive(delay);
+  }
 }
 
 void Menu::OnMenuClosed() {
