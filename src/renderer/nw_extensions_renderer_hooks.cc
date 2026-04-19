@@ -175,6 +175,7 @@ void WebWorkerStartThreadHook(blink::Frame* frame, const char* path, std::string
     base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
 #endif
     base::ReplaceChars(root_path, "'", "\\'", &root_path);
+    base::ReplaceChars(url_path, "'", "\\'", &url_path);
   *script  = "global.__filename = '" + url_path + "';";
   *script += "global.__dirname  = '" + root_path + "';";
   *script += "{ let root = '" + root_path + "';"
@@ -386,6 +387,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
     base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
 #endif
     base::ReplaceChars(root_path, "'", "\\'", &root_path);
+    base::ReplaceChars(url_path, "'", "\\'", &url_path);
     v8::ScriptOrigin origin(v8::String::NewFromUtf8(isolate, "process_main", v8::NewStringType::kNormal).ToLocalChecked());
     v8::Local<v8::Script> script = v8::Script::Compile(context->v8_context(), v8::String::NewFromUtf8(isolate, (
         set_nw_script +
@@ -557,6 +559,7 @@ void DocumentElementHook(blink::WebLocalFrame* frame,
     base::ReplaceChars(root_path, "\\", "\\\\", &root_path);
 #endif
     base::ReplaceChars(root_path, "'", "\\'", &root_path);
+    base::ReplaceChars(path, "'", "\\'", &path);
 
     v8::ScriptOrigin origin(v8::String::NewFromUtf8(isolate, "process_main2", v8::NewStringType::kNormal).ToLocalChecked());
     v8::Local<v8::Script> script2 = v8::Script::Compile(v8_context, v8::String::NewFromUtf8(isolate, (
