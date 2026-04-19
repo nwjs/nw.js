@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head><title>Menu Click Test</title></head>
+<body>
+<div id="result">none</div>
+<div id="itemid"></div>
+<script>
+var menu = new nw.Menu({type: 'menubar'});
+var submenu = new nw.Menu();
+var item = new nw.MenuItem({
+  label: 'Test Item',
+  click: function() {
+    document.getElementById('result').textContent = 'clicked';
+  }
+});
+submenu.append(item);
+menu.append(new nw.MenuItem({
+  label: 'Test',
+  submenu: submenu
+}));
+nw.Window.get().menu = menu;
+document.getElementById('itemid').textContent = item.id;
+if (chrome.test) chrome.test.sendMessage('Launched');
+</script>
+</body>
+</html>

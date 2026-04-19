@@ -8,6 +8,9 @@
 #include <set>
 #include <utility>
 
+#include "content/nw/src/api/object_manager.h"
+#include "content/nw/src/api/menuitem/menuitem.h"
+
 #include "ui/accessibility/platform/browser_accessibility_manager.h"
 #include "ui/accessibility/ax_enum_util.h"
 #include "net/base/filename_util.h"
@@ -912,6 +915,21 @@ public:
 };
 
 extern void SwitchToPanel(DevToolsWindow* window, const char* panel);
+
+IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, MenuItemClick) {
+  LoadAndLaunchApp("menu-click", "Launched");
+  content::WebContents* wc = GetAppWebContents();
+  ASSERT_TRUE(wc);
+  EXPECT_EQ("none", EvalJs(wc, "document.getElementById('result').textContent"));
+
+  int item_id = EvalJs(wc, "parseInt(document.getElementById('itemid').textContent)").ExtractInt();
+  auto* item = nw::ObjectManager::GetApiObject<nw::MenuItem>(item_id);
+  ASSERT_TRUE(item);
+  item->OnClick();
+
+  Sleep(base::Milliseconds(500));
+  EXPECT_EQ("clicked", EvalJs(wc, "document.getElementById('result').textContent"));
+}
 
 IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Inspector) {
   LoadAndLaunchApp("inspector", "Launched");
