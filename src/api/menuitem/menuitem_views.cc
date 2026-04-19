@@ -68,44 +68,14 @@ void MenuItem::Create(const base::DictValue& option) {
   is_checked_ = option.FindBool("checked").value_or(false);
   is_enabled_ = option.FindBool("enabled").value_or(false);
 
-  std::string key;
-  std::string modifiers;
   str = option.FindString("key");
   if (str)
-    key = *str;
+    key_ = *str;
   str = option.FindString("modifiers");
   if (str)
-    modifiers = *str;
+    modifiers_str_ = *str;
 
-  ui::KeyboardCode keyval = ui::VKEY_UNKNOWN;
-
-  keyval = GetKeycodeFromText(key);
-  if (keyval == ui::VKEY_UNKNOWN){
-    enable_shortcut_ = false;
-  } else {
-    enable_shortcut_ = true;
-    //only code for ctrl, shift, alt, super and meta modifiers
-    int modifiers_value = ui::EF_NONE;
-    modifiers = base::ToLowerASCII(modifiers);
-    if (modifiers.find("ctrl")!=std::string::npos){
-      modifiers_value |= ui::EF_CONTROL_DOWN;
-    }
-    if (modifiers.find("shift")!=std::string::npos){
-      modifiers_value |= ui::EF_SHIFT_DOWN ;
-    }
-    if (modifiers.find("alt")!=std::string::npos){
-      modifiers_value |= ui::EF_ALT_DOWN;
-    }
-    if (modifiers.find("super")!=std::string::npos
-     || modifiers.find("cmd")!=std::string::npos
-     || modifiers.find("command")!=std::string::npos){
-      modifiers_value |= ui::EF_COMMAND_DOWN;
-    }
-    if (modifiers.find("meta")!=std::string::npos){
-      meta_down_flag_ = true;
-    }
-    accelerator_ = ui::Accelerator(keyval,modifiers_value);
-  }
+  RebuildAccelerator();
 
   const std::string* icon = option.FindString("icon");
   if (icon && !icon->empty())
@@ -176,6 +146,48 @@ void MenuItem::SetChecked(bool checked) {
   is_checked_ = checked;
   if (menu_)
     menu_->UpdateStates();
+}
+
+void MenuItem::RebuildAccelerator() {
+  if (focus_manager_ && enable_shortcut_)
+    focus_manager_->UnregisterAccelerator(accelerator_, this);
+
+  ui::KeyboardCode keyval = GetKeycodeFromText(key_);
+  if (keyval == ui::VKEY_UNKNOWN) {
+    enable_shortcut_ = false;
+    return;
+  }
+
+  enable_shortcut_ = true;
+  int modifiers_value = ui::EF_NONE;
+  std::string mod = base::ToLowerASCII(modifiers_str_);
+  if (mod.find("ctrl") != std::string::npos)
+    modifiers_value |= ui::EF_CONTROL_DOWN;
+  if (mod.find("shift") != std::string::npos)
+    modifiers_value |= ui::EF_SHIFT_DOWN;
+  if (mod.find("alt") != std::string::npos)
+    modifiers_value |= ui::EF_ALT_DOWN;
+  if (mod.find("super") != std::string::npos ||
+      mod.find("cmd") != std::string::npos ||
+      mod.find("command") != std::string::npos)
+    modifiers_value |= ui::EF_COMMAND_DOWN;
+  meta_down_flag_ = mod.find("meta") != std::string::npos;
+
+  accelerator_ = ui::Accelerator(keyval, modifiers_value);
+
+  if (focus_manager_)
+    focus_manager_->RegisterAccelerator(
+        accelerator_, ui::AcceleratorManager::kHighPriority, this);
+}
+
+void MenuItem::SetKey(const std::string& key) {
+  key_ = key;
+  RebuildAccelerator();
+}
+
+void MenuItem::SetModifiers(const std::string& modifiers) {
+  modifiers_str_ = modifiers;
+  RebuildAccelerator();
 }
 
 void MenuItem::SetSubmenu(Menu* menu) {

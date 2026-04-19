@@ -94,6 +94,9 @@ class MenuItem : public Base {
   void SetTooltip(const std::string& tooltip);
   void SetKey(const std::string& key);
   void SetModifiers(const std::string& modifiers);
+#if defined(OS_WIN) || defined(OS_LINUX)
+  void RebuildAccelerator();
+#endif
   void SetEnabled(bool enabled);
   void SetChecked(bool checked);
   void SetSubmenu(Menu* sub_menu);
@@ -133,6 +136,8 @@ class MenuItem : public Base {
   std::u16string tooltip_;
   raw_ptr<Menu> submenu_;
   bool enable_shortcut_;
+  std::string key_;
+  std::string modifiers_str_;
 
   bool meta_down_flag_;
 

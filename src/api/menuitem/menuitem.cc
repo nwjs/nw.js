@@ -132,14 +132,12 @@ void MenuItem::Call(const std::string& method,
   } else if (method == "SetSubmenu") {
     int object_id = arguments[0].GetInt();
     SetSubmenu(object_manager()->GetApiObject<Menu>(object_id));
-#if defined(OS_MAC)
   } else if (method == "SetKey") {
     std::string key = arguments[0].GetString();
     SetKey(key);
   } else if (method == "SetModifiers") {
     std::string mod = arguments[0].GetString();
     SetModifiers(mod);
-#endif
   } else {
     NOTREACHED() << "Invalid call to MenuItem method:" << method
                  << " arguments:" << arguments;
