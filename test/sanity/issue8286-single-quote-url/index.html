@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head><title>single quote url test</title></head>
+<body>
+<div id="result">PENDING</div>
+<script>
+var http = require('http');
+var server = http.createServer(function(req, res) {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.end('<html><head><title>single quote url result</title></head><body><div id="result">PASS</div></body></html>');
+});
+server.listen(0, function() {
+    var port = server.address().port;
+    document.getElementById('result').textContent = 'READY';
+    setTimeout(function() {
+        window.location.href = 'http://localhost:' + port + "/test'd";
+    }, 2000);
+});
+</script>
+</body>
+</html>

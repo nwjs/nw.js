@@ -1,0 +1,5 @@
+{
+  "name": "issue8286-single-quote-url",
+  "main": "index.html",
+  "node-remote": "<all_urls>"
+}
