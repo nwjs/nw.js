@@ -182,6 +182,16 @@ void MenuItem::SetSubmenu(Menu* menu) {
   if (submenu_) submenu_->RemoveKeys();
 
   submenu_ = menu;
+
+  if (menu_ && submenu_) {
+    auto index = menu_->menu_model_->GetIndexOfCommandId(id());
+    if (index.has_value()) {
+      menu_->menu_model_->RemoveItemAt(index.value());
+      menu_->menu_model_->InsertSubMenuAt(
+          index.value(), id(), label_, submenu_->menu_model_.get());
+      menu_->is_menu_modified_ = true;
+    }
+  }
 }
 
 bool MenuItem::GetChecked() {
