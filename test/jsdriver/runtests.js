@@ -47,6 +47,7 @@ function getFreePort() {
 
 if (require.main == module) {
   (async() => {
+    const concurrency = parseInt(process.argv[2], 10) || 5;
     let ret = await run_tests('content/nw/test/sanity', (err, testcase) => {
       if (err) {
         console.log(`FAILED: ${testcase}`);
@@ -54,7 +55,7 @@ if (require.main == module) {
       }
       else
         console.log(`PASSED: ${testcase}`);
-    }, undefined, 5);
+    }, undefined, concurrency);
     console.log(`${ret.passed.length} passed, ${ret.failed.length} failed.`);
     if (ret.failed.length > 0) {
       let test_ret2 = await run_tests('content/nw/test/sanity', (err, testcase) => {
