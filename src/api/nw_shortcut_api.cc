@@ -120,7 +120,8 @@ bool NwShortcutRegisterAcceleratorFunction::RunNWSync(base::ListValue* response,
 
   std::unique_ptr<ui::Accelerator> uiAccelerator = dictionaryToUIAccelerator(&acceleratorDict);
 
-  if (!ui::GlobalAcceleratorListener::GetInstance()->RegisterAccelerator(*uiAccelerator, NWShortcutObserver::GetInstance())) {
+  auto* listener = ui::GlobalAcceleratorListener::GetInstance();
+  if (!listener || !listener->RegisterAccelerator(*uiAccelerator, NWShortcutObserver::GetInstance())) {
     response->Append(false);
     return true;
   }
@@ -135,7 +136,9 @@ bool NwShortcutUnregisterAcceleratorFunction::RunNWSync(base::ListValue* respons
   const base::DictValue& acceleratorDict = args()[0].GetDict();
   std::unique_ptr<ui::Accelerator> uiAccelerator = dictionaryToUIAccelerator(&acceleratorDict);
 
-  ui::GlobalAcceleratorListener::GetInstance()->UnregisterAccelerator(*uiAccelerator, NWShortcutObserver::GetInstance());
+  auto* listener = ui::GlobalAcceleratorListener::GetInstance();
+  if (listener)
+    listener->UnregisterAccelerator(*uiAccelerator, NWShortcutObserver::GetInstance());
   response->Append(true);
   return true;
 }
