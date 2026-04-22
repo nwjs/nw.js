@@ -1,12 +1,13 @@
 site_name: NW.js Documentation
-theme: readthedocs
-theme_dir: 'custom_theme'
+theme:
+    name: readthedocs
+    custom_dir: 'custom_theme'
 markdown_extensions:
-    - markdown.extensions.toc
-    - markdown.extensions.admonition
-    - markdown.extensions.smarty
-    - markdown.extensions.nl2br
-    - markdown.extensions.codehilite:
+    - toc
+    - admonition
+    - smarty
+    - nl2br
+    - codehilite:
         guess_lang: false
     - pymdownx.extra
     - pymdownx.inlinehilite
@@ -19,7 +20,7 @@ markdown_extensions:
     - pymdownx.arithmatex
     - pymdownx.mark
     - pymdownx.critic
-pages:
+nav:
     - 'Homepage': 'index.md'
     - 'For Users':
         - 'Getting Started': 'For Users/Getting Started.md'
