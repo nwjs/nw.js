@@ -57,8 +57,8 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': 'd7b741e25d1f2373171e799670568ada0a94640b',
-  'nw_v8_revision': 'd1518c2b190b523ffb83ed15e04c3c61b316e574',
+  'nw_src_revision': '0bf72cfcd10a66aaa989d1993bc5e5eb7ee8d910',
+  'nw_v8_revision': '9cad68b85e7a9a772f629cac880fe1f62d7d547c',
   'nw_node_revision': '6bd62bcb7a6028984f0ff01ce38870213a9c7510',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
@@ -315,19 +315,19 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'src_internal_revision': '0a33894b3adb7630868443247bd5bfd3bf3fee32',
+  'src_internal_revision': 'cb360280c9ee5c36d6597b0ef76df54a19cf29af',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': '2085e414ce371c7f4ef5c86be341ef5428ac535b',
+  'skia_revision': 'e7c90ecca9444fe09598f1630ab7cee2c0ee027a',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': 'f9659283a5f8d42b3c09228cf5df606fcaf47a3d',
+  'v8_revision': '5a5a3a3a53d478ae0df7429b1a9c062c6d6815ef',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': '0fe2ac00168e8116a4d2f909326ab54bf1032ec4',
+  'angle_revision': '978e5e9095e77a9f60804a01247a7afbebe9aa5c',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -335,11 +335,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling PDFium
   # and whatever else without interference from each other.
-  'pdfium_revision': '79d84a59fb337f5ae4c1c9fee60677c29a310f46',
+  'pdfium_revision': 'a78c62d93a8f514ea2cd98a70bd1d21226be9d93',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling BoringSSL
   # and whatever else without interference from each other.
-  'boringssl_revision': 'cb1b9fb82ff708003c454bd450ec23f3b0cfa2eb',
+  'boringssl_revision': 'd8be2b4a71155bf82da092ef543176351eeb59ff',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Fuchsia sdk
   # and whatever else without interference from each other.
@@ -383,7 +383,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling CrossBench
   # and whatever else without interference from each other.
-  'crossbench_revision': '9fc6e79cb0ab973e8c848e56fbfe9e759d3ee053',
+  'crossbench_revision': 'c179f7919aade97c5cff64d14b9171736e7aaef9',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling CrossBench
   # and whatever else without interference from each other.
@@ -403,7 +403,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling devtools-frontend
   # and whatever else without interference from each other.
-  'devtools_frontend_revision': '0d4d47174e33e7881da96d27e13a91945830cafa',
+  'devtools_frontend_revision': '9da34696b6e69f3acb8e8901ab96f2c610161bfe',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libprotobuf-mutator
   # and whatever else without interference from each other.
@@ -427,7 +427,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
-  'dawn_revision': '4ac004b63afcc923288bc2c1477376b28212c652',
+  'dawn_revision': '9515546dfdca680c9c4569d408368f2912c75cee',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
@@ -1226,7 +1226,7 @@ deps = {
       'packages': [
           {
               'package': 'chromium/android_webview/tools/orderfiles/arm',
-              'version': 'Gd7ZA9FaPbFsn9XL1_iX-x5Rino83ofqASBxJbQow1gC',
+              'version_file': 'android_webview/tools/android-webview-arm.orderfile.txt',
           },
       ],
       'condition': 'checkout_android and non_git_source',
@@ -1237,7 +1237,7 @@ deps = {
       'packages': [
           {
               'package': 'chromium/android_webview/tools/orderfiles/arm64',
-              'version': 'nRtRJXF0J8vyS0zpMCj8bYQCDorNC-nwHUUDgBnAbmUC',
+              'version_file': 'android_webview/tools/android-webview-arm64.orderfile.txt',
           },
       ],
       'condition': 'checkout_android and non_git_source',
@@ -1645,7 +1645,7 @@ deps = {
 
   'src/clank': {
     'url': Var('chrome_git') + '/clank/internal/apps.git' + '@' +
-    'bcf073fa32d26a7a7c4eb06eeffec797b6f613bd',
+    'b6d10ce2f11e647b640afbc6755dd75a90ec0a7c',
     'condition': 'checkout_android and checkout_src_internal',
   },
 
@@ -1654,7 +1654,7 @@ deps = {
   },
 
   'src/ios/third_party/earl_grey2/src': {
-      'url': Var('chromium_git') + '/external/github.com/google/EarlGrey.git' + '@' + 'f82ec416369db0142175fc6bb5f5a27fa693b924',
+      'url': Var('chromium_git') + '/external/github.com/google/EarlGrey.git' + '@' + '0886717fc2d662b52069a42f488a5e790342c2ec',
       'condition': 'checkout_ios',
   },
 
@@ -3028,7 +3028,7 @@ deps = {
     Var('chromium_git') + '/webpagereplay.git' + '@' + Var('webpagereplay_revision'),
 
   'src/third_party/webrtc':
-    Var('webrtc_git') + '/src.git' + '@' + 'ca896b7ffef011bbf6957c99d413c5aac602c99f',
+    Var('webrtc_git') + '/src.git' + '@' + '9600e77d854090669817d22aa2fc941ee92aaacd',
 
   # Wuffs' canonical repository is at github.com/google/wuffs, but we use
   # Skia's mirror of Wuffs, the same as in upstream Skia's DEPS file.
@@ -3536,7 +3536,7 @@ deps = {
 
   'src/chrome/browser/glic/resources/internal': {
       'url': Var('chrome_git') + '/chrome/browser/glic/resources/internal.git' + '@' +
-        'fc8a8f05b660f4aff9b63573b1a96838a07c3ccc',
+        'd3751ee3dbedb61f6d5db816f90f45f75c1abcd8',
       'condition': 'checkout_src_internal',
   },
 
@@ -3739,7 +3739,7 @@ deps = {
 
   'src/components/optimization_guide/internal': {
       'url': Var('chrome_git') + '/chrome/components/optimization_guide.git' + '@' +
-        'c5bf7a16c19a42d2563cce0b49fe53eb9deef795',
+        '741e193af3b899824a7530a3168c79abcab06e54',
       'condition': 'checkout_src_internal',
   },
 
@@ -3793,7 +3793,7 @@ deps = {
 
   'src/components/vector_icons/google_chrome': {
       'url': Var('chrome_git') + '/chrome/vector_icons/google_chrome.git' + '@' +
-        'f9f61831aefc3d891dad9af8892d550fef258e0d',
+        '849e336782e51f1c137aff996e4a1f02592a2f9e',
       'condition': 'checkout_src_internal',
   },
 
@@ -3811,7 +3811,7 @@ deps = {
 
   'src/ios_internal':  {
       'url': Var('chrome_git') + '/chrome/ios_internal.git' + '@' +
-        '90007200bef0cddb1ece1567c136af8e27353a60',
+        'd9679135f40be381e1e732bab20b27d485a6e47a',
       'condition': 'checkout_ios and checkout_src_internal',
   },
 
@@ -3964,19 +3964,19 @@ deps = {
 
   'src/third_party/widevine/cdm/linux': {
       'url': Var('chrome_git') + '/chrome/deps/widevine/cdm/linux.git' + '@' +
-        '71190e44ea5a6dbcb1e7fe2518210fb76c7c42ca',
+        'b03fbcc080b2325c7ec8bc3cb3b9582685c3dc88',
       'condition': 'checkout_linux and checkout_src_internal',
   },
 
   'src/third_party/widevine/cdm/mac': {
       'url': Var('chrome_git') + '/chrome/deps/widevine/cdm/mac.git' + '@' +
-        '31701813d35bec49eaf6f5fa13171c1ae4dbd19b',
+        '7cd2ca2475858b671e3313cf7bc7c2be349d0a5e',
       'condition': 'checkout_mac and checkout_src_internal',
     },
 
   'src/third_party/widevine/cdm/win': {
       'url': Var('chrome_git') + '/chrome/deps/widevine/cdm/win.git' + '@' +
-        '1fcfc9e692ff515406662da8759cf745d6f7cc74',
+        '7553255ad648b23be9adc41547d83f664e02a54f',
       'condition': 'checkout_win and checkout_src_internal',
   },
 
