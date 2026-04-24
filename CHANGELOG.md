@@ -1,3 +1,19 @@
+0.111.0 / 04-23-2026
+====================
+- update to Chromium 148.0.7778.56
+- Fix crash when URL contains single quote with node-remote enabled (#8286)
+- Fix crash when setting MenuItem.key or modifiers on Windows/Linux (#8290)
+- Fix menubar submenu replacement crash by updating parent menu model (#7909)
+- Fix popup menu crash when submenus are GC'd during nested RunLoop (#7719)
+- Fix close event firing N+1 times after opening N modal windows (#8318)
+- Fix clipboard API deadlock caused by non-nestable RunLoop (#8345)
+- Fix crash when registering global shortcut on Wayland
+- Fix windows not centered when using `position: center` in Linux (#7884)
+- Fix transparent window not working (#7975)
+- Fix transparent window per-pixel alpha hit-testing broken on Windows (#8342)
+- Fix no action after menu item mouse click sometime (#8169, #8317)
+- Fix --in-process-gpu causes blank window on Windows (#8294)
+
 0.110.1 / 03-28-2026
 ====================
 - Node: update to v25.8.2
