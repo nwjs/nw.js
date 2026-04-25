@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head><title>camera permission test</title></head>
+<body>
+<div id="result">PENDING</div>
+<script>
+(async () => {
+    try {
+        var perm = await navigator.permissions.query({name: 'camera', panTiltZoom: true});
+        if (perm.state !== 'granted') {
+            document.getElementById('result').textContent = 'FAIL: permission ' + perm.state;
+            return;
+        }
+        var stream = await navigator.mediaDevices.getUserMedia({
+            video: { pan: true, tilt: true, zoom: true }
+        });
+        var track = stream.getVideoTracks()[0];
+        var caps = track.getCapabilities();
+        track.stop();
+        var hasPTZ = ('pan' in caps) && ('tilt' in caps) && ('zoom' in caps);
+        if (hasPTZ) {
+            document.getElementById('result').textContent = 'PASS';
+        } else {
+            document.getElementById('result').textContent = 'FAIL: no PTZ caps';
+        }
+    } catch(e) {
+        document.getElementById('result').textContent = 'FAIL: ' + e.message;
+    }
+})();
+</script>
+</body>
+</html>

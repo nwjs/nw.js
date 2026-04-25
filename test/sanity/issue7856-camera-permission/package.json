@@ -1,0 +1,5 @@
+{
+  "name": "issue7856-camera-permission",
+  "main": "index.html",
+  "chromium-args": "--use-fake-device-for-media-stream"
+}
