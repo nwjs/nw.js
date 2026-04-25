@@ -31,10 +31,7 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
     return argv;
   });
   bindingsAPI.compiledApi.__defineGetter__('fullArgv', function() {
-    if (fullArgv)
-      return fullArgv;
-    fullArgv = nw.App.getArgvSync();
-    return fullArgv;
+    return nw.App.getArgvSync();
   });
   bindingsAPI.compiledApi.__defineGetter__('filteredArgv', function() {
     return filteredArgv;
