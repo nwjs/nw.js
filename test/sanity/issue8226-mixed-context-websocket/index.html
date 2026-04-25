@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head><title>mixed-context websocket test</title></head>
+<body>
+<div id="result">PENDING</div>
+<script>
+var isNative = WebSocket.toString().indexOf('native code') !== -1;
+document.getElementById('result').textContent = isNative ? 'PASS' : 'FAIL';
+console.log('WebSocket is ' + (isNative ? 'browser native (PASS)' : 'node/undici (FAIL)'));
+</script>
+</body>
+</html>

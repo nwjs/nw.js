@@ -1,0 +1,5 @@
+{
+  "name": "issue8226-mixed-context-websocket",
+  "main": "index.html",
+  "chromium-args": "--mixed-context"
+}
