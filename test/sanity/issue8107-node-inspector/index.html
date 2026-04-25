@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head><title>node inspector test</title></head>
+<body>
+<div id="result">PENDING</div>
+<script>
+try {
+    var inspector = require('node:inspector');
+    var result = 'FAIL';
+    if (inspector && typeof inspector.open === 'function' && process.features.inspector) {
+        result = 'PASS';
+    }
+    document.getElementById('result').textContent = result;
+    console.log(result);
+} catch(e) {
+    document.getElementById('result').textContent = 'FAIL: ' + e.message;
+    console.log('FAIL: ' + e.message);
+}
+</script>
+</body>
+</html>
