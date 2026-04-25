@@ -247,6 +247,9 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
         }
       }
 
+      if (mixed_context)
+        words.push_back("--nw-mixed-context");
+
       if (extension && (main_fn = extension->manifest()->FindStringPath("node-main"))) {
 	std::stringstream ss(*main_fn);
 	std::string word;
