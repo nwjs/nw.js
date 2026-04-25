@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head><title>mixed-context memleak test</title></head>
+<body>
+<div id="result">PENDING</div>
+<script>
+var count = parseInt(localStorage.getItem('reloadCount') || '0');
+if (global.gc) global.gc();
+var heap = Math.round(process.memoryUsage().heapUsed / 1024 / 1024);
+
+if (count === 0) {
+    localStorage.setItem('initialHeap', heap);
+}
+
+if (count < 20) {
+    localStorage.setItem('reloadCount', count + 1);
+    setTimeout(function() { location.reload(); }, 200);
+} else {
+    var initial = parseInt(localStorage.getItem('initialHeap'));
+    localStorage.removeItem('reloadCount');
+    localStorage.removeItem('initialHeap');
+    // After 20 reloads with GC, heap should not grow more than 4x initial
+    var ratio = heap / initial;
+    var pass = ratio < 4;
+    document.getElementById('result').textContent = pass ? 'PASS' : 'FAIL';
+    console.log((pass ? 'PASS' : 'FAIL') + ': initial=' + initial + 'MB final=' + heap + 'MB ratio=' + ratio.toFixed(1));
+}
+</script>
+</body>
+</html>

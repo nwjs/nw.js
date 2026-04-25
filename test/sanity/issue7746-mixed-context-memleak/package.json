@@ -1,0 +1,5 @@
+{
+  "name": "issue7746-mixed-context-memleak",
+  "main": "index.html",
+  "chromium-args": "--mixed-context --js-flags=--expose-gc"
+}
