@@ -13,6 +13,7 @@ chrome_options = Options()
 testdir = os.path.dirname(os.path.abspath(__file__))
 chrome_options.add_argument('nwapp=' + testdir)
 os.chdir(testdir)
+shutil.rmtree(os.path.join(testdir, 'build'), ignore_errors=True)
 install_native_modules()
 driver = get_configured_webdriver(chrome_options_instance=chrome_options)
 try:
