@@ -97,16 +97,17 @@ See also [webview Tag](webview Tag.md) for the new `<webview>` tag.
 
 ### Attribute: nwdisable
 
-Make the frame and subframes normal frames.
+Make the frame and subframes normal frames. This disables Node.js APIs (`require`, `nw`, etc.) in the frame.
 
 !!! note
-    This attribute doesn't prevent the page in normal frames accessing its parent and top frames. Then they can still get access to Node.js APIs. So usually you may want to use this attribute with `nwfaketop` togather.
+    `nwdisable` alone is sufficient to prevent the iframe from accessing Node.js APIs. You do NOT need to add `nwfaketop` unless you specifically want to prevent the iframe from accessing `window.parent` or `window.top`.
 
 ### Attribute: nwfaketop
 
 Prevent web page in the frame accessing the real `window.parent` or `window.top`. They will get the faked parent and top, which is its own `window` object of the frame. Subframes will also be affected.
 
-This attribute is usually used with `nwdisable`.
+!!! warning
+    Using `nwfaketop` will break `window.parent.postMessage()` since the iframe's `parent` is replaced with its own `window`. Only use this if you need to hide the parent frame from the iframe content.
 
 ### Attribute: nwUserAgent
 
