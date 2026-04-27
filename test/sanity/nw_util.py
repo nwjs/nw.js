@@ -69,6 +69,8 @@ def get_configured_webdriver(
         log_path=log_file_path,
     )
 
+    if chrome_options_instance is None:
+        chrome_options_instance = Options()
     chrome_options_instance.add_argument('--nwjs-test-mode2')
 
     if additional_capabilities and isinstance(additional_capabilities, dict):
