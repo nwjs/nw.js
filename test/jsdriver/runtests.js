@@ -177,6 +177,11 @@ async function run_tests(test_dir = 'content/nw/test/sanity', cb, testcases, con
         }
       }
     })));
+  if (process.platform === 'win32') {
+    shell.exec('taskkill /F /IM nw.exe /T', { silent: true, async: false });
+  } else {
+    shell.exec('pkill -f nwjs-test-mode2', { silent: true, async: false });
+  }
   return ret;
 }
 
