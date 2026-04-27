@@ -9,6 +9,7 @@ import sys
 if platform.system() != 'Darwin':
     print('Skipped for non Mac platform')
     sys.exit(0)
+import selenium.common.exceptions
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -18,6 +19,11 @@ driver = get_configured_webdriver(chrome_options_instance=chrome_options)
 try:
     print(driver.current_url)
     driver.find_element(By.ID, 'winclose').click()
-    assert driver.find_element(By.ID, 'result') is None
+    time.sleep(1)
+    try:
+        result = driver.find_element(By.ID, 'result')
+        assert 'success' in result.get_attribute('innerHTML')
+    except selenium.common.exceptions.NoSuchWindowException:
+        pass
 finally:
     driver.quit()
