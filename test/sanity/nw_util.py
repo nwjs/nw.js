@@ -69,6 +69,8 @@ def get_configured_webdriver(
         log_path=log_file_path,
     )
 
+    chrome_options_instance.add_argument('--nwjs-test-mode2')
+
     if additional_capabilities and isinstance(additional_capabilities, dict):
         for key, value in additional_capabilities.items():
             # The modern way to add capabilities that don't have a dedicated method
