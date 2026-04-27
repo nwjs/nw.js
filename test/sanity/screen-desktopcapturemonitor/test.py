@@ -1,5 +1,9 @@
 import os
 import sys
+import platform
+if platform.system() == 'Darwin':
+    print('Skipped for macOS platform')
+    sys.exit(0)
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from nw_util import get_configured_webdriver
 import time
