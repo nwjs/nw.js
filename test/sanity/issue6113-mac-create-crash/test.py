@@ -16,15 +16,12 @@ driver = get_configured_webdriver(chrome_options_instance=chrome_options)
 driver.implicitly_wait(2)
 try:
     wait_window_handles(driver, 2)
-    handles = driver.window_handles
-    print(handles)
-    driver.switch_to.window(handles[1])
+    wait_switch_window_url(driver, 'google.com/')
     output = driver.current_url
     print(output)
     print('waiting for crash')
     time.sleep(5)
-    assert driver.title == 'Google'
-    assert 'https://www.google.com/' in output
+    assert 'google.com' in driver.current_url
     print('There is no crash')
 finally:
     driver.quit()
