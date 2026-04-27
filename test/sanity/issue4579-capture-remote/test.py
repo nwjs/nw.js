@@ -3,8 +3,8 @@ import os
 import subprocess
 import platform
 import sys
-if platform.system() == 'Linux':
-    print('Skipped for Linux platform')
+if platform.system() in ('Linux', 'Darwin'):
+    print('Skipped for %s platform' % platform.system())
     sys.exit(0)
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from nw_util import *
