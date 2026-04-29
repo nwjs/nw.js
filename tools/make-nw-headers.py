@@ -55,10 +55,17 @@ os.mkdir(tmp_dir)
 
 # prepare the files to compress
 print('Begin copy file')
+skip_deps = {'googletest', 'simdjson', 'sqlite', 'undici', 'postject',
+             'uvwasi', 'nbytes', 'ncrypto', 'merve', 'histogram',
+             'inspector_protocol', 'LIEF', 'crates', 'ada', 'openssl'}
 base = os.path.join(third_party_dir, 'node-nw')
 for dirpath, dirnames, filenames in os.walk(base):
   relpath = dirpath.replace(third_party_dir + os.sep, '')
   relpath = relpath.replace('node-nw', 'node')
+  if os.path.basename(dirpath) == 'deps' and dirpath.endswith(os.path.join('node-nw', 'deps')):
+    dirnames[:] = [d for d in dirnames if d not in skip_deps]
+  if 'test' in dirnames and os.path.basename(dirpath) != 'node-nw':
+    dirnames.remove('test')
   for dirs in dirnames:
     if dirs =='gyp' or dirs == 'gyp_addon':
       try:
@@ -104,8 +111,9 @@ update_uvh(tmp_dir, header_files)
 include_node = os.path.join(tmp_dir, 'node', 'include', 'node', 'openssl')
 base = os.path.join(third_party_dir, 'node-nw', 'deps', 'openssl', 'openssl', 'include', 'openssl')
 shutil.copytree(base, include_node)
-shutil.copytree(os.path.join(third_party_dir, 'node-nw', 'deps', 'openssl', 'config'),
-                include_node, dirs_exist_ok=True)
+config_src = os.path.join(third_party_dir, 'node-nw', 'deps', 'openssl', 'config')
+shutil.copytree(config_src, include_node, dirs_exist_ok=True,
+                ignore=shutil.ignore_patterns('archs'))
 
 print('copy file end')
 print('Begin compress file')
