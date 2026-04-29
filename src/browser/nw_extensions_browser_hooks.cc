@@ -38,7 +38,7 @@
 #include "extensions/browser/guest_view/web_view/web_view_renderer_state.h"
 #include "extensions/common/manifest_constants.h"
 #include "extensions/common/manifest_handlers/webview_info.h"
-#include "extensions/common/manifest_url_handlers.h"
+#include "extensions/common/manifest_handlers/manifest_url_handlers.h"
 
 #if defined(OS_WIN)
 #define _USE_MATH_DEFINES
