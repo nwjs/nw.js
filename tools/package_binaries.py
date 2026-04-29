@@ -281,9 +281,9 @@ def generate_target_headers(platform_name, arch, version):
                                   'make-nw-headers.py')
     print (make_nw_header)
     if platform_name == 'win':
-      res = call(['python', make_nw_header, '-p', binaries_location, '-n', platform_name, '-a', arch], shell=True)
+      res = call([sys.executable, make_nw_header, '-p', binaries_location, '-n', platform_name, '-a', arch], shell=True)
     else:
-      res = call(['python', make_nw_header, '-p', binaries_location, '-n', platform_name, '-a', arch])
+      res = call([sys.executable, make_nw_header, '-p', binaries_location, '-n', platform_name, '-a', arch])
     if res == 0:
         print ('nw-headers generated')
         nw_headers_name = 'nw-headers-v' + version + '.tar.gz'

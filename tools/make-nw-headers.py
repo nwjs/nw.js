@@ -5,7 +5,6 @@ import sys
 import getnwisrelease
 import getnwversion
 import shutil
-import distutils.core
 import re
 import argparse
 
@@ -55,7 +54,7 @@ if os.path.exists(tmp_dir):
 os.mkdir(tmp_dir)
 
 # prepare the files to compress
-print 'Begin copy file'
+print('Begin copy file')
 base = os.path.join(third_party_dir, 'node-nw')
 for dirpath, dirnames, filenames in os.walk(base):
   relpath = dirpath.replace(third_party_dir + os.sep, '')
@@ -65,7 +64,7 @@ for dirpath, dirnames, filenames in os.walk(base):
       try:
         shutil.copytree(os.path.join(dirpath, dirs), os.path.join(tmp_dir, relpath, dirs))
       except:
-        distutils.dir_util.copy_tree(os.path.join(dirpath, dirs), os.path.join(tmp_dir, relpath, dirs))
+        shutil.copytree(os.path.join(dirpath, dirs), os.path.join(tmp_dir, relpath, dirs), dirs_exist_ok=True)
   for files in filenames:
     if files.endswith('.h') or files.endswith('.gypi') or files == 'gyp' or files == 'gyp_addon':
       if not os.path.exists(os.path.join(tmp_dir, relpath)):
@@ -81,7 +80,7 @@ for dirpath, dirnames, filenames in os.walk(base):
       try:
         shutil.copytree(os.path.join(dirpath, dirs), os.path.join(tmp_dir, relpath, dirs))
       except:
-        distutils.dir_util.copy_tree(os.path.join(dirpath, dirs), os.path.join(tmp_dir, relpath, dirs))
+        shutil.copytree(os.path.join(dirpath, dirs), os.path.join(tmp_dir, relpath, dirs), dirs_exist_ok=True)
   for files in filenames:
     if files.endswith('.h') or files.endswith('.gypi') or files == 'gyp' or files == 'gyp_addon':
       if not os.path.exists(os.path.join(tmp_dir, relpath)):
@@ -105,16 +104,16 @@ update_uvh(tmp_dir, header_files)
 include_node = os.path.join(tmp_dir, 'node', 'include', 'node', 'openssl')
 base = os.path.join(third_party_dir, 'node-nw', 'deps', 'openssl', 'openssl', 'include', 'openssl')
 shutil.copytree(base, include_node)
-distutils.dir_util.copy_tree(os.path.join(third_party_dir, 'node-nw', 'deps', 'openssl', 'config'),
-                             include_node)
+shutil.copytree(os.path.join(third_party_dir, 'node-nw', 'deps', 'openssl', 'config'),
+                include_node, dirs_exist_ok=True)
 
-print 'copy file end'
-print 'Begin compress file'
+print('copy file end')
+print('Begin compress file')
 
 with tarfile.open(tarpath, 'w:gz') as tar:
   tar.add(os.path.join(tmp_dir, 'node'), arcname='node')
 
-print 'compress end'
+print('compress end')
 
 #copy over the nw.lib files so building native modules locally can work later in tests
 
