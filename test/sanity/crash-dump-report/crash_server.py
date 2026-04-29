@@ -6,7 +6,6 @@
 """Exceptions used by the Kasko integration test module."""
 
 import http.server
-import cgi
 import logging
 import os
 import socket
@@ -16,6 +15,55 @@ import uuid
 import json
 import gzip
 from io import StringIO, BytesIO
+from email.parser import BytesParser
+from email.policy import default as email_default_policy
+
+
+def parse_header(line):
+    """Replacement for parse_header, removed in Python 3.13."""
+    parts = line.split(';')
+    key = parts[0].strip()
+    params = {}
+    for p in parts[1:]:
+        if '=' not in p:
+            continue
+        name, value = p.strip().split('=', 1)
+        name = name.strip()
+        value = value.strip()
+        if value.startswith('"') and value.endswith('"'):
+            value = value[1:-1]
+        params[name] = value
+    return key, params
+
+
+def parse_multipart(fp, pdict):
+    """Replacement for parse_multipart, removed in Python 3.13."""
+    boundary = pdict['boundary']
+    if isinstance(boundary, str):
+        boundary = boundary.encode()
+    data = fp.read()
+    if isinstance(data, str):
+        data = data.encode()
+    header = b'Content-Type: multipart/form-data; boundary=' + boundary + b'\r\n\r\n'
+    msg = BytesParser(policy=email_default_policy).parsebytes(header + data)
+    result = {}
+    for part in msg.walk():
+        if part.get_content_maintype() == 'multipart':
+            continue
+        name = part.get_param('name', header='content-disposition')
+        if name is None:
+            continue
+        payload = part.get_payload(decode=True)
+        if part.get_filename() is None:
+            try:
+                payload = payload.decode('utf-8')
+            except (UnicodeDecodeError, AttributeError):
+                pass
+        if name in result:
+            result[name].append(payload)
+        else:
+            result[name] = [payload]
+    return result
 
 _LOGGER = logging.getLogger(os.path.basename(__file__))
 
@@ -119,7 +167,7 @@ class CrashServer(object):
 
       def do_POST(self):
         """Handles POST messages contained multipart form data."""
-        content_type, parameters = cgi.parse_header(
+        content_type, parameters = parse_header(
             self.headers.get('content-type'))
         parameters['boundary'] = bytes(parameters['boundary'], "utf-8")
         if content_type != 'multipart/form-data':
@@ -136,9 +184,9 @@ class CrashServer(object):
             readsize = self.headers.get('content-length')
             buffer = StringIO(self.rfile.read(int(readsize)))
           with gzip.GzipFile(fileobj=buffer, mode="r") as f:
-            post_multipart = cgi.parse_multipart(f, parameters)
+            post_multipart = parse_multipart(f, parameters)
         else:
-          post_multipart = cgi.parse_multipart(self.rfile, parameters)
+          post_multipart = parse_multipart(self.rfile, parameters)
         self.log_message("got part")
 
         # Save the crash report.
