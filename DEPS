@@ -57,8 +57,8 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': '96fbed032956e3f9899b6bda1c09a40856b9021a',
-  'nw_v8_revision': '0aed52e66fc07682a5ec4ee05da86c0bd5da16cd',
+  'nw_src_revision': '191b7330a5ee58f47f55287eb7a9daa79a6f0157',
+  'nw_v8_revision': '4f98b472ff1fadfc65ed1c1b3f0d4cdcab1121ee',
   'nw_node_revision': '127b49ea871d90ac92bd62beb2cceae418ac7516',
   # Variable that can be used to support multiple build scenarios, like having
   # Chromium specific targets in a client project's GN file or sync dependencies
@@ -319,15 +319,15 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Skia
   # and whatever else without interference from each other.
-  'skia_revision': 'e7c90ecca9444fe09598f1630ab7cee2c0ee027a',
+  'skia_revision': 'afe8b760ada5128164f9826866b4381a3463df41',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
-  'v8_revision': '5a5a3a3a53d478ae0df7429b1a9c062c6d6815ef',
+  'v8_revision': 'ddc9a95905de5268332a8f0216dc2bc67d26e829',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': '978e5e9095e77a9f60804a01247a7afbebe9aa5c',
+  'angle_revision': 'cc0e3572e8789f4a184dd9714a04b3d98ae81015',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -403,7 +403,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling devtools-frontend
   # and whatever else without interference from each other.
-  'devtools_frontend_revision': '9da34696b6e69f3acb8e8901ab96f2c610161bfe',
+  'devtools_frontend_revision': '6efd6eb1d85fd67fdcc2385c54fa56c524bec3f7',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libprotobuf-mutator
   # and whatever else without interference from each other.
@@ -427,7 +427,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
-  'dawn_revision': '9515546dfdca680c9c4569d408368f2912c75cee',
+  'dawn_revision': '19696dd088b8ed5804e2f02a8f83f5afdb3e99e3',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling feed
   # and whatever else without interference from each other.
@@ -2495,7 +2495,7 @@ deps = {
     Var('chromium_git') + '/webm/libvpx.git' + '@' +  '47ac1ec7f3de7d7cb3d070844c427c8f1fa9d6fc',
 
   'src/third_party/libwebm/source':
-    Var('chromium_git') + '/webm/libwebm.git' + '@' + 'f2a982d748b80586ae53b89a2e6ebbc305848b8c',
+    Var('chromium_git') + '/webm/libwebm.git' + '@' + 'b7a1e4767fbb02ad467f45ba378e858e897028da',
 
   'src/third_party/libwebp/src':
     Var('chromium_git') + '/webm/libwebp.git' + '@' +  'c00d83f6642e7838a12bb03bca94237f03cc2e00',
