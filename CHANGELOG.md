@@ -1,3 +1,18 @@
+0.111.1 / 04-30-2026
+====================
+- update to Chromium 148.0.7778.97
+- Node: update to v25.9.0
+- Fix mixed-context crash by deferring environment cleanup (#7746)
+- Fix mixed-context memory leak by freeing old environment on reload (#7746)
+- Fix WebSocket overwritten by Node in mixed-context mode (#8226)
+- Fix deep link URL not in App.argv on macOS (#7741)
+- Fix macOS crash in Menu::Insert when position is null (#7197)
+- Fix macOS window maximize/restore state persistence
+- Fix macOS crash report product name
+- Auto-grant camera/microphone permissions for NW.js apps (#7856)
+- Add arm64 Linux cross-compile support
+- Reduce nw-headers package size from 50MB to 9.5MB
+
 0.111.0 / 04-23-2026
 ====================
 - update to Chromium 148.0.7778.56
