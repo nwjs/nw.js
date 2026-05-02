@@ -45,6 +45,18 @@ function getFreePort() {
   });
 }
 
+function cleanupSingletonDirs() {
+  if (process.platform !== 'linux') return;
+  try {
+    const tmpDirs = readdirSync('/tmp').filter(d => d.startsWith('io.nwjs.'));
+    for (const dir of tmpDirs) {
+      shell.rm('-rf', path.join('/tmp', dir));
+    }
+    if (tmpDirs.length > 0)
+      console.log(`Cleaned up ${tmpDirs.length} singleton socket dirs`);
+  } catch (e) {}
+}
+
 if (require.main == module) {
   (async() => {
     const concurrency = parseInt(process.argv[2], 10) || 5;
@@ -67,10 +79,12 @@ if (require.main == module) {
       for (const testcase of test_ret2.failed) {
         if (!known_flaky.has(testcase)) {
           console.log(`${test_ret2.failed.length} failed.`);
+          cleanupSingletonDirs();
           process.exit(1);
         }
       }
     }
+    cleanupSingletonDirs();
   })();
 }
 
