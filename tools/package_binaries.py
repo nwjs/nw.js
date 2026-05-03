@@ -11,6 +11,7 @@ import tarfile
 import zipfile
 import hashlib
 from hashlib import sha256
+import stat
 
 from subprocess import call
 
@@ -478,6 +479,18 @@ def make_packages(targets):
                     shutil.copytree(src, dest, symlinks=True)
                 else:
                     shutil.copy(src, dest)
+            # Normalize file permissions before packaging — ensure files are
+            # at least readable and executables are executable (issue #8281).
+            for root, dirs, files in os.walk(folder):
+                for d in dirs:
+                    os.chmod(os.path.join(root, d), 0o755)
+                for f in files:
+                    fpath = os.path.join(root, f)
+                    st = os.stat(fpath)
+                    if st.st_mode & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH):
+                        os.chmod(fpath, 0o755)
+                    else:
+                        os.chmod(fpath, 0o644)
             compress(dist_dir, dist_dir, t['output'], t['compress'])
             # remove temp folders
             if ('keep4test' in t) :
