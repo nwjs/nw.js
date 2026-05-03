@@ -369,10 +369,16 @@ if (is_linux && !is_component_build) {
     testonly = true
     script = "//build/linux/dump_app_syms.py"
     sources = [ "$root_build_dir/nw",
+                "$root_build_dir/chrome_crashpad_handler",
                 "$root_shlib_dir/libnw.so",
                 "$root_shlib_dir/libnode.so",
                 "$root_shlib_dir/libffmpeg.so",
+                "$root_shlib_dir/libEGL.so",
+                "$root_shlib_dir/libGLESv2.so",
+                "$root_shlib_dir/libvulkan.so.1",
+                "$root_shlib_dir/libvk_swiftshader.so",
                 "$root_build_dir/chromedriver",
+                "$root_build_dir/minidump_stackwalk",
                 "$root_build_dir/nwjc"]
     deps = [
              "//chrome:chrome_initial",
@@ -381,6 +387,12 @@ if (is_linux && !is_component_build) {
              "//v8:nwjc",
              "//chrome/test/chromedriver:chromedriver_server",
              "//third_party/ffmpeg:ffmpeg",
+             "//components/crash/core/app:chrome_crashpad_handler",
+             "//third_party/angle:libEGL",
+             "//third_party/angle:libGLESv2",
+             "//third_party/swiftshader/src/Vulkan:swiftshader_libvulkan",
+             "//third_party/vulkan-loader/src:libvulkan",
+             "//third_party/breakpad:minidump_stackwalk",
              ]
     if (target_cpu == "x64") {
       inputs = [
