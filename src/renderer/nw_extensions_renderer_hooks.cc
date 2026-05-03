@@ -144,7 +144,7 @@ void WebWorkerNewThreadHook(const char* name, bool* is_node) {
       *base::CommandLine::ForCurrentProcess();
   if (!command_line.HasSwitch(switches::kEnableNodeWorker))
     return;
-  if (!strcmp(name, "DedicatedWorker thread") || !strcmp(name, "SharedWorker thread"))
+  if (!strcmp(name, "DedicatedWorker thread") || !strcmp(name, "SharedWorker thread") || !strcmp(name, "ServiceWorker thread"))
     *is_node = true;
 }
 
