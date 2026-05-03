@@ -17,6 +17,7 @@ var filteredArgv = [
 
 apiBridge.registerCustomHook(function(bindingsAPI) {
   var apiFunctions = bindingsAPI.apiFunctions;
+
   apiFunctions.setHandleRequest('crashRenderer', function() {
     nwNatives.crashRenderer();
   });
@@ -66,7 +67,13 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
   apiFunctions.setHandleRequest('removeOriginAccessWhitelistEntry', function() {
     nwNatives.removeOriginAccessWhitelistEntry.apply(this, arguments);
   });
-  apiFunctions.setHandleRequest('once', function(event, listener) { //FIXME: unify with nw.Window
+
+  // Event methods defined directly on compiledApi to bypass the API bridge's
+  // argument parsing which wraps function callbacks in native bindings that
+  // become inert after the first invocation.
+  var compiledApi = bindingsAPI.compiledApi;
+
+  compiledApi.once = function(event, listener) {
     if (typeof listener !== 'function')
       throw new TypeError('listener must be a function');
     var fired = false;
@@ -81,25 +88,28 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
     }
     this.on(event, g);
     return this;
-  });
-  apiFunctions.setHandleRequest('on', function(event, callback) {
+  };
+
+  compiledApi.on = function(event, callback) {
       if (eventsMap.hasOwnProperty(event)) {
-        nw.App[eventsMap[event]].addListener(callback);
+        compiledApi[eventsMap[event]].addListener(callback);
       }
-  });
-  apiFunctions.setHandleRequest('removeListener', function(event, callback) {
+  };
+
+  compiledApi.removeListener = function(event, callback) {
       if (eventsMap.hasOwnProperty(event)) {
-        nw.App[eventsMap[event]].removeListener(callback);
+        compiledApi[eventsMap[event]].removeListener(callback);
       }
-  });
-  apiFunctions.setHandleRequest('removeAllListeners', function(event) {
+  };
+
+  compiledApi.removeAllListeners = function(event) {
     if (eventsMap.hasOwnProperty(event)) {
-      for (let l of
-           nw.App[eventsMap[event]].getListeners()) {
-        nw.App[eventsMap[event]].removeListener(l.callback);
+      var listeners = compiledApi[eventsMap[event]].getListeners();
+      for (var i = 0; i < listeners.length; i++) {
+        compiledApi[eventsMap[event]].removeListener(listeners[i]);
       }
     }
-  });
+  };
   apiFunctions.setHandleRequest('getDataPath', function() {
     return bindingUtil.sendRequestSync('nw.App.getDataPath', [], undefined, undefined)[0];
   });
