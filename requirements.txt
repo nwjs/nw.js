@@ -1,3 +1,6 @@
-Pygments==2.11.0
-mkdocs==1.2.4
-pymdown-extensions == 7.0.0
+Pygments==2.11.0 \
+    --hash=sha256:ac8098bfc40b8e1091ad7c13490c7f4797e401d0972e8fcfadde90ffb3ed4ea9
+mkdocs==1.2.4 \
+    --hash=sha256:f108e7ab5a7ed3e30826dbf82f37638f0d90d11161644616cc4f01a1e2ab3940
+pymdown-extensions==7.0.0 \
+    --hash=sha256:71cbc748789959d4b964fe8dc038f5436779d244399fd5ba3a0bbfe9a0e43b1f
