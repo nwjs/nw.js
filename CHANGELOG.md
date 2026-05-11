@@ -1,3 +1,12 @@
+0.111.2 / 05-11-2026
+====================
+- Node: update to v26.0.0
+- Fix nw.App.on('open') callback only fires once on subsequent app launches (#8283)
+- Enable Node.js message pump in service worker threads (#8296)
+- Normalize file permissions in Linux dist tarball to 644/755 (#8281)
+- Strip chrome_crashpad_handler, minidump_stackwalk, libEGL, libGLESv2, libvulkan, libvk_swiftshader on Linux (#8274)
+- Preserve userAgentMetadata when overriding user-agent from manifest (#7861)
+
 0.111.1 / 04-30-2026
 ====================
 - update to Chromium 148.0.7778.97
