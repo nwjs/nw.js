@@ -389,17 +389,7 @@ void CalcNewWinParams(content::WebContents* new_contents, void* params,
 }
 
 bool ExecuteAppCommandHook(int command_id, extensions::AppWindow* app_window) {
-#if defined(OS_MAC)
   return false;
-#else
-  //nw::ObjectManager* obj_manager = nw::ObjectManager::Get(app_window->browser_context());
-  //Menu* menu = (Menu*)obj_manager->GetApiObject(command_id);
-  Menu* menu = app_window->menu_;
-  if (!menu)
-    return false;
-  menu->menu_delegate_->ExecuteCommand(command_id, 0);
-  return true;
-#endif //OSX
 }
 
 } // namespace nw

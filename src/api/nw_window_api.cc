@@ -444,20 +444,11 @@ NwCurrentWindowInternalClearMenuFunction::~NwCurrentWindowInternalClearMenuFunct
 
 ExtensionFunction::ResponseAction
 NwCurrentWindowInternalClearMenuFunction::Run() {
-  AppWindow* window = getAppWindow(this);
-  Browser* browser = nullptr;
-  if (!base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    if (!window) {
-      error_ = kNoAssociatedAppWindow;
-      return RespondNow(Error(error_));
-    }
-  } else {
-    int wid = args()[0].GetInt();
-    browser = getBrowser(this, wid);
-    if (!browser) {
-      error_ = kNoAssociatedAppWindow;
-      return RespondNow(Error(error_));
-    }
+  int wid = args()[0].GetInt();
+  Browser* browser = getBrowser(this, wid);
+  if (!browser) {
+    error_ = kNoAssociatedAppWindow;
+    return RespondNow(Error(error_));
   }
 
 #if defined(OS_MAC)
@@ -465,36 +456,17 @@ NwCurrentWindowInternalClearMenuFunction::Run() {
 #endif
 
 #if defined(OS_LINUX) || defined(OS_WIN)
-  if (!base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    native_app_window::NativeAppWindowViews* native_app_window_views =
-      static_cast<native_app_window::NativeAppWindowViews*>(
-          window->GetBaseWindow());
-
-    nw::BrowserViewLayout *browser_view_layout = static_cast<nw::BrowserViewLayout*>(native_app_window_views->GetLayoutManager());
-    views::View* menubar = browser_view_layout->menu_bar();
-    if (menubar) {
-      native_app_window_views->RemoveChildView(menubar);
-    }
-    browser_view_layout->set_menu_bar(NULL);
-    native_app_window_views->layout_();
-    native_app_window_views->SchedulePaint();
-    if (window->menu_) {
-      window->menu_->RemoveKeys();
-      window->menu_ = nullptr;
-    }
-  } else {
-    BrowserView* browser_view = BrowserView::GetBrowserViewForBrowser(browser);
-    BrowserViewLayout* layout = browser_view->GetBrowserViewLayout();
-    views::View* menubar = layout->menu_bar();
-    if (menubar)
-      browser_view->RemoveChildView(menubar);
-    layout->set_menu_bar(nullptr);
-    browser_view->LayoutImmediately();
-    browser_view->SchedulePaint();
-    if (browser->nw_menu_) {
-      browser->nw_menu_->RemoveKeys();
-      browser->nw_menu_ = nullptr;
-    }
+  BrowserView* browser_view = BrowserView::GetBrowserViewForBrowser(browser);
+  BrowserViewLayout* layout = browser_view->GetBrowserViewLayout();
+  views::View* menubar = layout->menu_bar();
+  if (menubar)
+    browser_view->RemoveChildView(menubar);
+  layout->set_menu_bar(nullptr);
+  browser_view->LayoutImmediately();
+  browser_view->SchedulePaint();
+  if (browser->nw_menu_) {
+    browser->nw_menu_->RemoveKeys();
+    browser->nw_menu_ = nullptr;
   }
 #endif
   return RespondNow(NoArguments());
@@ -511,32 +483,14 @@ bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::ListValue* response
   int id = args()[0].GetInt();
   nw::ObjectManager* obj_manager = nw::ObjectManager::Get(browser_context());
   Menu* menu = (Menu*)obj_manager->GetApiObject(id);
-  Browser* browser = nullptr;
-  AppWindow* window = nullptr;
+  int wid = args()[1].GetInt();
+  Browser* browser = getBrowser(this, wid);
+  if (!browser)
+    return false;
 #if defined(OS_LINUX) || defined(OS_WIN)
-  Menu* old_menu = nullptr;
+  Menu* old_menu = browser->nw_menu_;
 #endif
-  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    int wid = args()[1].GetInt();
-    browser = getBrowser(this, wid);
-    if (!browser)
-      return false;
-#if defined(OS_LINUX) || defined(OS_WIN)
-    old_menu = browser->nw_menu_;
-#endif
-    browser->nw_menu_ = menu;
-  } else {
-    window = getAppWindow(this);
-    if (!window) {
-      error_ = kNoAssociatedAppWindow;
-      return false;
-    }
-#if defined(OS_LINUX) || defined(OS_WIN)
-    old_menu = window->menu_;
-#endif
-    window->menu_ = menu;
-  }
-
+  browser->nw_menu_ = menu;
 
 #if defined(OS_MAC)
   response->Append(NWChangeAppMenu(menu));
@@ -544,28 +498,14 @@ bool NwCurrentWindowInternalSetMenuFunction::RunNWSync(base::ListValue* response
 
 #if defined(OS_LINUX) || defined(OS_WIN)
   MenuBarView* menubar = new MenuBarView();
-  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    BrowserView* browser_view = BrowserView::GetBrowserViewForBrowser(browser);
-    browser_view->GetBrowserViewLayout()->set_menu_bar(menubar);
-    browser_view->AddChildView(menubar);
-    menubar->UpdateMenu(menu->model());
-    browser_view->LayoutImmediately();
-    browser_view->SchedulePaint();
-    if (old_menu) old_menu->RemoveKeys();
-    menu->UpdateKeys(browser_view->GetWidget()->GetFocusManager());
-  } else {
-    native_app_window::NativeAppWindowViews* native_app_window_views =
-      static_cast<native_app_window::NativeAppWindowViews*>(
-          window->GetBaseWindow());
-
-    static_cast<nw::BrowserViewLayout*>(native_app_window_views->GetLayoutManager())->set_menu_bar(menubar);
-    native_app_window_views->AddChildView(menubar);
-    menubar->UpdateMenu(menu->model());
-    native_app_window_views->layout_();
-    native_app_window_views->SchedulePaint();
-    if (old_menu) old_menu->RemoveKeys();
-    menu->UpdateKeys( native_app_window_views->widget()->GetFocusManager() );
-  }
+  BrowserView* browser_view = BrowserView::GetBrowserViewForBrowser(browser);
+  browser_view->GetBrowserViewLayout()->set_menu_bar(menubar);
+  browser_view->AddChildView(menubar);
+  menubar->UpdateMenu(menu->model());
+  browser_view->LayoutImmediately();
+  browser_view->SchedulePaint();
+  if (old_menu) old_menu->RemoveKeys();
+  menu->UpdateKeys(browser_view->GetWidget()->GetFocusManager());
   response->Append(base::ListValue());
 #endif
   return true;
@@ -909,18 +849,11 @@ bool NwCurrentWindowInternalIsKioskInternalFunction::RunNWSync(base::ListValue* 
 }
 
 bool NwCurrentWindowInternalGetTitleInternalFunction::RunNWSync(base::ListValue* response, std::string* ret_error) {
-  AppWindow* window = getAppWindow(this);
-  if (window) {
-    response->Append(window->title_override());
+  int id = args()[0].GetInt();
+  Browser* browser = getBrowser(this, id);
+  if (browser) {
+    response->Append(browser->GetWindowTitleForCurrentTab(false));
     return true;
-  }
-  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    int id = args()[0].GetInt();
-    Browser* browser = getBrowser(this, id);
-    if (browser) {
-      response->Append(browser->GetWindowTitleForCurrentTab(false));
-      return true;
-    }
   }
   *ret_error = "no window found";
   return false;
@@ -947,18 +880,12 @@ NwCurrentWindowInternalSetShadowInternalFunction::Run() {
 bool NwCurrentWindowInternalSetTitleInternalFunction::RunNWSync(base::ListValue* response, std::string* error) {
   EXTENSION_FUNCTION_VALIDATE(args().size() && args()[0].is_string());
   std::string title = args()[0].GetString();
-  if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
-    int id = args()[1].GetInt();
-    Browser* browser = getBrowser(this, id);
-    if (!browser)
-      return false;
-    browser->set_title_override(title);
-    browser->window()->UpdateTitleBar();
-    return true;
-  }
-  AppWindow* window = getAppWindow(this);
-  window->set_title_override(title);
-  window->GetBaseWindow()->UpdateWindowTitle();
+  int id = args()[1].GetInt();
+  Browser* browser = getBrowser(this, id);
+  if (!browser)
+    return false;
+  browser->set_title_override(title);
+  browser->window()->UpdateTitleBar();
   return true;
 }
 
