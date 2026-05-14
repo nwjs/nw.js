@@ -1,7 +1,5 @@
 #include "content/nw/src/api/nw_app_api.h"
 
-#include <algorithm>
-
 #include "build/build_config.h"
 #include "third_party/widevine/cdm/buildflags.h"
 
@@ -78,7 +76,7 @@ base::FilePath GetAbsolutePackagePath() {
   return current_directory.Append(path).NormalizePathSeparators();
 }
 
-void ReplaceNwappSwitch(base::CommandLine::StringVector* argv,
+bool ReplaceNwappSwitch(base::CommandLine::StringVector* argv,
                         const base::FilePath& package_path) {
 #if defined(OS_WIN)
   const base::CommandLine::StringType nwapp_switch = L"--nwapp=";
@@ -92,18 +90,43 @@ void ReplaceNwappSwitch(base::CommandLine::StringVector* argv,
   for (auto& arg : *argv) {
     if (arg.compare(0, nwapp_switch.length(), nwapp_switch) == 0) {
       arg = nwapp_switch + package_path.value();
-      return;
+      return true;
     }
     if (arg.compare(0, alt_nwapp_switch.length(), alt_nwapp_switch) == 0) {
       arg = alt_nwapp_switch + package_path.value();
-      return;
+      return true;
     }
 #if defined(OS_WIN)
     if (arg.compare(0, win_nwapp_switch.length(), win_nwapp_switch) == 0) {
       arg = win_nwapp_switch + package_path.value();
-      return;
+      return true;
     }
 #endif
+  }
+
+  return false;
+}
+
+bool PathReferencesPackage(const base::CommandLine::StringType& arg,
+                           const base::FilePath& package_path) {
+  base::FilePath arg_path(arg);
+  if (!arg_path.IsAbsolute()) {
+    base::FilePath current_directory;
+    if (!base::GetCurrentDirectory(&current_directory))
+      return false;
+    arg_path = current_directory.Append(arg_path);
+  }
+
+  return arg_path.NormalizePathSeparators() == package_path;
+}
+
+void ReplacePackagePathArg(base::CommandLine::StringVector* argv,
+                           const base::FilePath& package_path) {
+  for (auto it = argv->begin() + 1; it != argv->end(); ++it) {
+    if (PathReferencesPackage(*it, package_path)) {
+      *it = package_path.value();
+      return;
+    }
   }
 }
 
@@ -118,14 +141,9 @@ base::CommandLine BuildRelaunchCommandLine() {
 
   base::FilePath package_path = GetAbsolutePackagePath();
   if (!package_path.empty()) {
-    ReplaceNwappSwitch(&argv, package_path);
-
-    base::CommandLine::StringVector args = current_command_line.GetArgs();
-    if (!args.empty() && argv.size() > 1) {
-      auto it = std::find(argv.begin() + 1, argv.end(), args[0]);
-      if (it != argv.end())
-        *it = package_path.value();
-    }
+    bool has_nwapp_switch = ReplaceNwappSwitch(&argv, package_path);
+    if (!has_nwapp_switch && argv.size() > 1)
+      ReplacePackagePathArg(&argv, package_path);
   }
 
   return base::CommandLine(argv);
@@ -301,8 +319,8 @@ bool NwAppGetArgvSyncFunction::RunNWSync(base::ListValue* response, std::string*
   base::CommandLine::StringVector args = command_line->GetArgs();
   base::CommandLine::StringVector argv = command_line->original_argv();
 
-  // Ignore first non-switch arg if it's not a standalone package.
-  bool ignore_arg = !package->self_extract();
+  // Ignore the package path only when it was passed as a positional argument.
+  bool ignore_arg = !package->self_extract() && !command_line->HasSwitch("nwapp");
   for (unsigned i = 1; i < argv.size(); ++i) {
     if (ignore_arg && args.size() && argv[i] == args[0]) {
       ignore_arg = false;

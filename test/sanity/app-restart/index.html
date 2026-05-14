@@ -10,50 +10,118 @@
     const fs = require('fs');
     const gui = require('nw.gui');
     const path = require('path');
-    const testDir = process.env.APP_RESTART_TEST_DIR || process.cwd();
-    const statePath = path.join(testDir, 'restart-state.json');
-    const resultPath = path.join(testDir, 'restart-result.json');
 
-    function writeResult(success, message) {
+    const testDir = process.env.APP_RESTART_TEST_DIR || process.cwd();
+    const scenario = process.env.APP_RESTART_SCENARIO || 'default';
+    const statePath = path.join(testDir, scenario + '-state.json');
+    const resultPath = path.join(testDir, scenario + '-result.json');
+    const closeEventPath = path.join(testDir, scenario + '-close-event.json');
+    const expected = {
+      appPath: process.env.APP_RESTART_EXPECT_APP_PATH || process.cwd(),
+      arg: process.env.APP_RESTART_EXPECT_ARG || '',
+      appPathInArgv: process.env.APP_RESTART_EXPECT_APP_PATH_IN_ARGV === '1',
+      method: process.env.APP_RESTART_METHOD || 'nw',
+      switchArg: process.env.APP_RESTART_EXPECT_SWITCH || ''
+    };
+
+    nw.Window.get().on('close', function() {
+      fs.writeFileSync(closeEventPath, JSON.stringify({
+        pid: process.pid,
+        argv: nw.App.argv,
+        fullArgv: nw.App.fullArgv,
+        legacyFullArgv: gui.App.fullArgv
+      }, null, 2));
+      this.close(true);
+    });
+
+    function normalizePath(value) {
+      return path.resolve(value).replace(/\\/g, '/').replace(/\/+$/, '');
+    }
+
+    function nwappSwitchValue(arg) {
+      const prefixes = ['--nwapp=', '-nwapp=', '/nwapp='];
+      for (let i = 0; i < prefixes.length; ++i) {
+        if (arg.indexOf(prefixes[i]) === 0)
+          return arg.substring(prefixes[i].length);
+      }
+      return null;
+    }
+
+    function fullArgvHasAppPath(argv, appPath) {
+      const normalizedAppPath = normalizePath(appPath);
+      for (let i = 0; i < argv.length; ++i) {
+        const switchValue = nwappSwitchValue(argv[i]);
+        const candidate = switchValue === null ? argv[i] : switchValue;
+        if (normalizePath(candidate) === normalizedAppPath)
+          return true;
+      }
+      return false;
+    }
+
+    function fullArgvHasValue(argv, value) {
+      return value === '' || argv.indexOf(value) !== -1;
+    }
+
+    function writeResult(success, message, details) {
       fs.writeFileSync(resultPath, JSON.stringify({
         success,
         message,
+        details,
         argv: nw.App.argv,
-        fullArgv: nw.App.fullArgv
-      }));
+        fullArgv: nw.App.fullArgv,
+        legacyFullArgv: gui.App.fullArgv
+      }, null, 2));
       nw.App.quit();
+    }
+
+    function restartApp() {
+      if (expected.method === 'gui') {
+        gui.App.restart();
+        return;
+      }
+      nw.App.restart();
     }
 
     window.onload = function() {
       if (typeof nw.App.restart !== 'function') {
-        writeResult(false, 'nw.App.restart is not a function');
+        writeResult(false, 'nw.App.restart is not a function', {});
         return;
       }
       if (typeof gui.App.restart !== 'function') {
-        writeResult(false, 'gui.App.restart is not a function');
+        writeResult(false, 'gui.App.restart is not a function', {});
         return;
       }
 
       if (fs.existsSync(statePath)) {
         const firstRun = JSON.parse(fs.readFileSync(statePath, 'utf8'));
-        const fullArgv = nw.App.fullArgv.join('\n');
-        const hasSwitch = fullArgv.indexOf('--restart-test-flag=present') !== -1;
-        const hasArg = fullArgv.indexOf('plain-restart-arg') !== -1;
-        const newProcess = firstRun.pid !== process.pid;
+        const checks = {
+          newProcess: firstRun.pid !== process.pid,
+          preservedAppPath: !expected.appPathInArgv ||
+              fullArgvHasAppPath(nw.App.fullArgv, expected.appPath),
+          preservedSwitch: fullArgvHasValue(nw.App.fullArgv, expected.switchArg),
+          preservedArg: fullArgvHasValue(nw.App.fullArgv, expected.arg),
+          preservedLegacyAppPath: !expected.appPathInArgv ||
+              fullArgvHasAppPath(gui.App.fullArgv, expected.appPath),
+          preservedLegacyArg: fullArgvHasValue(gui.App.fullArgv, expected.arg),
+          noCloseEvent: !fs.existsSync(closeEventPath)
+        };
+        const failures = Object.keys(checks).filter(function(key) {
+          return !checks[key];
+        });
 
-        writeResult(
-          hasSwitch && hasArg && newProcess,
-          JSON.stringify({hasSwitch, hasArg, newProcess})
-        );
+        writeResult(failures.length === 0,
+                    failures.length ? failures.join(', ') : 'ok',
+                    {checks, firstRun});
         return;
       }
 
       fs.writeFileSync(statePath, JSON.stringify({
         pid: process.pid,
         argv: nw.App.argv,
-        fullArgv: nw.App.fullArgv
-      }));
-      nw.App.restart();
+        fullArgv: nw.App.fullArgv,
+        legacyFullArgv: gui.App.fullArgv
+      }, null, 2));
+      restartApp();
     };
   </script>
 </body>
