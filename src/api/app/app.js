@@ -36,6 +36,10 @@ App.prototype.quit = function() {
   nw.callStaticMethod('App', 'Quit', [ ]);
 }
 
+App.prototype.restart = function() {
+  nw.App.restart();
+}
+
 App.prototype.closeAllWindows = function() {
   nw.callStaticMethod('App', 'CloseAllWindows', [ ]);
 }
