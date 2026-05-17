@@ -1,0 +1,8 @@
+{
+  "manifest_version": 3,
+  "name": "MV3 Test Devtools",
+  "description": "Minimal MV3 DevTools extension for testing",
+  "version": "1.0",
+  "devtools_page": "devtools.html",
+  "icons": { "16": "icon.png", "48": "icon.png" }
+}
