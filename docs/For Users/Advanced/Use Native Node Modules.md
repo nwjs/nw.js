@@ -1,14 +1,32 @@
 # Use Native Node Modules {: .doctitle}
----
 
 [TOC]
 
-## Install with NPM
+## Install with NPM (v0.112.0 and later)
 
-### For LTS Releases
+NW.js provides standard Node.js-compatible headers tarballs, so native modules can be built with upstream `node-gyp` directly. No `nw-gyp` or custom environment variables are required.
+
+```bash
+npm rebuild --target=0.112.0 --disturl=https://dl.nwjs.io/
+```
+
+Or during `npm install`:
+
+```bash
+npm install --target=0.112.0 --disturl=https://dl.nwjs.io/
+```
+
+`node-gyp` will automatically download the headers tarball from the NW.js download server.
+
+!!! warning "Note for Windows"
+    You need a compiler toolchain installed (Visual Studio with "Desktop development with C++" workload).
+
+## Install with NPM (before v0.112.0)
 
 !!! warning "Use Same Version and Architecture of Node.js and NW.js"
     Following instructions only works if you are using the same version and architecture of Node.js and NW.js.
+
+### For LTS Releases
 
 If you are using LTS release, native modules installed by `npm` can be supported after hacking as below:
 
@@ -21,7 +39,7 @@ If you are using LTS release, native modules installed by `npm` can be supported
 !!! warning "Use Node.js v14.21.3"
     The following steps were tested with Node.js v14.21.3.
 
-If you are using non-LTS release, `nw-gyp` is required to be pre-installed globally to build modules due to [ABI differences in V8](https://github.com/nwjs/nw.js/issues/5025). These instructions below works for LTS releases as well.
+If you are using non-LTS release, `nw-gyp` is required to be pre-installed globally to build modules due to ABI differences in V8. These instructions below works for LTS releases as well.
 
 To install native modules for NW.js, run following commands in your terminal:
 
@@ -45,8 +63,8 @@ npm install
 !!! warning "Note for Windows"
     You will need to have a compiler installed. You can get one by installing the [Visual C++ Build Tools](http://landinghub.visualstudio.com/visual-cpp-build-tools). You will also need Python 2.7 (version 3.x is not supported).
     The `npm_config_node_gyp` environment variable has to be set to `path\to\global\node_modules\nw-gyp\bin\nw-gyp.js` instead of the `nw-gyp.cmd` batch script. This is a [bug of npm](https://github.com/npm/npm/issues/14543).
-    You must use `set` instead of `export` to set environment variables in Windows. Here is a full example (Windows 10, Visual C++ Build Tool v2015): 
-    
+    You must use `set` instead of `export` to set environment variables in Windows. Here is a full example (Windows 10, Visual C++ Build Tool v2015):
+
 ```Batchfile
 set PYTHON=C:\Python27\python.exe
 set npm_config_target=0.21.6
@@ -60,38 +78,32 @@ npm install --msvs_version=2015
 ## Manually Rebuild
 
 !!! tip "Full NPM Install is Recommended"
-    After a version switch of NW.js, the recommended approach is to delete `node_modules` folder and do a full npm install as [the instructions above](#install-with-npm).
+    After switching NW.js versions, delete `node_modules` and do a full `npm install` as described above.
 
-Once you switch to a new version of NW.js, you can rebuild **each** of the native modules with the tools below **without reinstall all the modules**. Since `binding.gyp` is required for building native modules, you can easily locate all native modules by finding `binding.gyp` file.
+### node-gyp (v0.112.0+)
 
-!!! warning "Rebuild ALL Native Modules"
-    Make sure you **rebuilt all native modules**. Or you will meet various issues, even crashes. Once manually rebuild don't work for you, try to do a full npm install.
+Standard [`node-gyp`](https://github.com/nodejs/node-gyp) works directly with NW.js headers:
 
-### nw-gyp
+```bash
+cd myaddon
+node-gyp rebuild --target=0.112.0 --disturl=https://dl.nwjs.io/
+```
 
-[`nw-gyp`](https://github.com/nwjs/nw-gyp) is a hack on `node-gyp` to support NW.js specific headers and libraries.
+### nw-gyp (before v0.112.0)
 
-The usage is the same with `node-gyp`, except that you need to specify the version and arch (`x64` or `ia32`) of NW.js manually.
+[`nw-gyp`](https://github.com/nwjs/nw-gyp) is a modified `node-gyp` to support NW.js specific headers and libraries.
 
-````bash
+```bash
 npm install -g nw-gyp
 cd myaddon
 nw-gyp rebuild --target=0.13.0 --arch=x64
-````
-
-See https://github.com/nwjs/nw-gyp for more details.
+```
 
 ### node-pre-gyp
 
-Some packages uses [node-pre-gyp](https://github.com/mapbox/node-pre-gyp), which supports building for both Node.js and NW.js by using either `node-gyp` or `nw-gyp`.
+Some packages use [`node-pre-gyp`](https://github.com/mapbox/node-pre-gyp):
 
-The usage of `node-pre-gyp` is as following:
-
-````bash
-npm install -g node-pre-gyp
+```bash
 cd myaddon
-node-pre-gyp build --runtime=node-webkit --target=0.13.0 --target_arch=x64
-````
-
-See https://github.com/mapbox/node-pre-gyp for more details.
-
+node-pre-gyp build --runtime=node-webkit --target=0.112.0 --target_arch=x64
+```
