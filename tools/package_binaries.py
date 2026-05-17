@@ -286,9 +286,9 @@ def generate_target_headers(platform_name, arch, version):
     else:
       res = call([sys.executable, make_nw_header, '-p', binaries_location, '-n', platform_name, '-a', arch])
     if res == 0:
-        print ('nw-headers generated')
-        nw_headers_name = 'nw-headers-v' + version + '.tar.gz'
-        nw_headers_checksum = 'nw-headers-v' + version + '.sha256.txt'
+        print ('node-headers generated')
+        nw_headers_name = 'node-v' + version + '.tar.gz'
+        nw_headers_checksum = 'node-v' + version + '.sha256.txt'
         nw_headers_path = os.path.join(os.path.dirname(__file__), \
                                        os.pardir, 'tmp', nw_headers_name)
         if os.path.isfile(os.path.join(binaries_location, nw_headers_name)):
@@ -297,12 +297,12 @@ def generate_target_headers(platform_name, arch, version):
         f = open(nw_headers_path, 'rb')
         checksum_file = open(os.path.join(binaries_location, nw_headers_checksum), 'w')
         with f, checksum_file:
-            checksum_file.write('%s %s' % (sha256(f.read()).hexdigest(), nw_headers_name))
+            checksum_file.write('%s  %s' % (sha256(f.read()).hexdigest(), nw_headers_name))
         shutil.move(nw_headers_path, binaries_location)
         target['input'].append(nw_headers_name)
     else:
         #TODO, handle err
-        print ('nw-headers generate failed')
+        print ('node-headers generate failed')
     return target
 
 def generate_target_empty(platform_name, arch, version):
@@ -322,7 +322,7 @@ def generate_target_others(platform_name, arch, version):
     target['output'] = ''
     target['compress'] = None
     if platform_name == 'win':
-        target['input'] = ['nw.lib', 'node.lib']
+        target['input'] = ['node.lib']
     elif platform_name == 'linux' :
         target['input'] = []
     else:
@@ -461,7 +461,7 @@ def make_packages(targets):
                 tmpf = open(src, 'rb')
                 checksum_file = open(os.path.join(dist_dir, f"{basename}.sha256.txt"), 'w')
                 with tmpf, checksum_file:
-                    checksum_file.write('%s %s' % (sha256(tmpf.read()).hexdigest(), basename))
+                    checksum_file.write('%s  %s' % (sha256(tmpf.read()).hexdigest(), basename))
                 
         elif ('folder' in t and t['folder'] == True) or len(t['input']) > 1:
             print ('Making "' + t['output'] + '.' + t['compress'] + '"')
@@ -501,7 +501,7 @@ def make_packages(targets):
             try:
                 with open(os.path.join(dist_dir, output_filename), 'w') as outfile:
                     for filepath, checksum in all_checksums.items():
-                        outfile.write(f"{checksum} {filepath}\n")
+                        outfile.write(f"{checksum}  {filepath}\n")
                     print(f"Checksums written to {output_filename}")
             except IOError:
                 print(f"Error: Could not write to file {output_filename}")
@@ -511,7 +511,7 @@ def make_packages(targets):
             tmpf = open(os.path.join(dist_dir, compressed_file), 'rb')
             checksum_file = open(os.path.join(dist_dir, f"{compressed_file}.sha256.txt"), 'w')
             with tmpf, checksum_file:
-                checksum_file.write('%s %s' % (sha256(tmpf.read()).hexdigest(), compressed_file))
+                checksum_file.write('%s  %s' % (sha256(tmpf.read()).hexdigest(), compressed_file))
 
         else:
             # single file

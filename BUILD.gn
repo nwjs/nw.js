@@ -421,6 +421,31 @@ executable("payload") {
   deps = [ "//base", "//crypto" ]
 }
 
+if (is_win) {
+  action("merge_node_and_nw_libs") {
+    script = "//build/toolchain/win/tool_wrapper.py"
+    inputs = [
+      "$root_out_dir/nw.dll.lib",
+      "$root_out_dir/node.dll.lib",
+    ]
+    outputs = [ "$root_out_dir/merged/node.lib" ]
+    deps = [
+      "//chrome:chrome_dll",
+      ":copy_node",
+    ]
+    args = [
+      "link-wrapper",
+      "environment.$current_cpu",
+      "False",
+      "lib.exe",
+      "/nologo",
+      "/OUT:" + rebase_path("$root_out_dir/merged/node.lib", root_build_dir),
+      rebase_path("$root_out_dir/node.dll.lib", root_build_dir),
+      rebase_path("$root_out_dir/nw.dll.lib", root_build_dir),
+    ]
+  }
+}
+
 if (!is_component_build) {
   action("dist") {
     testonly = true
@@ -446,6 +471,9 @@ if (!is_component_build) {
       "//components/resources:about_credits_nw",
       ":dump"
     ]
+    if (is_win) {
+      deps += [ ":merge_node_and_nw_libs" ]
+    }
     if (nwjs_sdk && (is_mac || is_linux)) {
       deps += [ "//third_party/breakpad:minidump_stackwalk" ]
     }

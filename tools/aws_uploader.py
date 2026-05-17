@@ -88,33 +88,32 @@ def aws_upload(upload_path, file_list):
     session = boto3.Session()
     s3_client = session.client('s3')
     print ('Uploading to: ' + upload_path)
-    win_non_sdk = re.compile('nw[a-zA-Z0-9]+_win')
+    win_non_sdk = re.compile('nw[a-zA-Z0-9_]+_win')
     for f in file_list:
-        print ('Uploading "' + f + '" ...')
-        sys.stdout.flush()
         # use '/' for s3
         path_prefix = ''
-        if (f in ['nw.lib', 'nw.exp', 'node.lib', 'node.exp',
-                  'nw.lib.sha256.txt', 'nw.exp.sha256.txt',
+        if (f in ['node.lib', 'node.exp',
                   'node.lib.sha256.txt', 'node.exp.sha256.txt'] ) :
           if not win_non_sdk.match(builder_name) :
               continue
           if 'win64' in builder_name :
               path_prefix = 'x64'
-          if 'winarm' in builder_name :
+          elif 'winarm' in builder_name :
               path_prefix = 'arm64'
+          else:
+              path_prefix = 'x86'
 
         if (f == 'SHASUMS256.txt'):
             continue
 
-        if f.startswith('nw-header') and not ('_sdk_mac64' in builder_name) and not args.header :
-            continue
-
-        if f.startswith('node-v')  and not ('_sdk_mac64' in builder_name) :
+        if f.startswith('node-v')  and '_sdk_win64' not in builder_name :
             continue
 
         if f.startswith('chromedriver') and 'sdk' not in builder_name :
             continue
+
+        print ('Uploading "' + f + '" ...')
+        sys.stdout.flush()
 
         parts = [upload_path, path_prefix, f]
         key = "/".join(part for part in parts if part)

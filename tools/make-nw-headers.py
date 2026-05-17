@@ -44,7 +44,7 @@ if getnwisrelease.release == 0:
 '''
 if '-t' in sys.argv:
   nw_version = sys.argv[sys.argv.index('-t') + 1]
-tarname = 'nw-headers-v' + nw_version + '.tar.gz'
+tarname = 'node-v' + nw_version + '.tar.gz'
 tarpath = os.path.join(tmp_dir, tarname)
 
 #make tmpdir
@@ -107,6 +107,15 @@ if os.path.exists(os.path.join(tmp_dir, 'node', 'src', 'util.h')):
 header_files = ['node.h', 'env.h', 'env-inl.h']
 update_uvh(tmp_dir, header_files)
 
+# Strip __declspec(dllimport) from V8_EXPORT so native addons link correctly
+v8config_h = os.path.join(tmp_dir, 'node', 'deps', 'v8', 'include', 'v8config.h')
+if os.path.exists(v8config_h):
+  with open(v8config_h, 'r') as f:
+    content = f.read()
+  content = re.sub(r'#\s*define\s+V8_EXPORT\s+__declspec\(dllimport\)',
+                   '# define V8_EXPORT', content)
+  with open(v8config_h, 'w') as f:
+    f.write(content)
 
 include_node = os.path.join(tmp_dir, 'node', 'include', 'node', 'openssl')
 base = os.path.join(third_party_dir, 'node-nw', 'deps', 'openssl', 'openssl', 'include', 'openssl')
@@ -119,22 +128,17 @@ print('copy file end')
 print('Begin compress file')
 
 with tarfile.open(tarpath, 'w:gz') as tar:
-  tar.add(os.path.join(tmp_dir, 'node'), arcname='node')
+  tar.add(os.path.join(tmp_dir, 'node'), arcname='node-v' + nw_version)
 
 print('compress end')
 
-#copy over the nw.lib files so building native modules locally can work later in tests
+# Copy pre-merged node.lib into the staging dir (for local tests)
+# and to binaries_location (so the "others" packaging step uploads it)
 
 if platform_name == 'win':
-  release_dir = os.path.join(tmp_dir, 'node')
-  release_dir2 = os.path.join(release_dir, 'Release')
-  if args.arch == 'x64':
-    release_dir = os.path.join(release_dir, 'x64')
-  if not os.path.exists(release_dir):
+  merged_lib = os.path.join(binaries_location, 'merged', 'node.lib')
+  if os.path.exists(merged_lib):
+    release_dir = os.path.join(tmp_dir, 'node', 'Release')
     os.mkdir(release_dir)
-  if not os.path.exists(release_dir2):
-    os.mkdir(release_dir2)
-  shutil.copy(os.path.join(binaries_location, 'nw.lib'), release_dir)
-  shutil.copy(os.path.join(binaries_location, 'node.lib'), release_dir)
-  shutil.copy(os.path.join(binaries_location, 'nw.lib'), release_dir2)
-  shutil.copy(os.path.join(binaries_location, 'node.lib'), release_dir2)
+    shutil.copy(merged_lib, os.path.join(release_dir, 'node.lib'))
+    shutil.copy(merged_lib, os.path.join(binaries_location, 'node.lib'))
