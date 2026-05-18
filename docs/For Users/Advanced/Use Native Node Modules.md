@@ -2,18 +2,18 @@
 
 [TOC]
 
-## Install with NPM (v0.112.0 and later)
+## Install with NPM (v0.111.3 and later)
 
 NW.js provides standard Node.js-compatible headers tarballs, so native modules can be built with upstream `node-gyp` directly. No `nw-gyp` or custom environment variables are required.
 
 ```bash
-npm rebuild --target=0.112.0 --disturl=https://dl.nwjs.io/
+npm rebuild --target=0.111.3 --disturl=https://dl.nwjs.io/
 ```
 
 Or during `npm install`:
 
 ```bash
-npm install --target=0.112.0 --disturl=https://dl.nwjs.io/
+npm install --target=0.111.3 --disturl=https://dl.nwjs.io/
 ```
 
 `node-gyp` will automatically download the headers tarball from the NW.js download server.
@@ -21,7 +21,7 @@ npm install --target=0.112.0 --disturl=https://dl.nwjs.io/
 !!! warning "Note for Windows"
     You need a compiler toolchain installed (Visual Studio with "Desktop development with C++" workload).
 
-## Install with NPM (before v0.112.0)
+## Install with NPM (before v0.111.3)
 
 !!! warning "Use Same Version and Architecture of Node.js and NW.js"
     Following instructions only works if you are using the same version and architecture of Node.js and NW.js.
@@ -80,16 +80,16 @@ npm install --msvs_version=2015
 !!! tip "Full NPM Install is Recommended"
     After switching NW.js versions, delete `node_modules` and do a full `npm install` as described above.
 
-### node-gyp (v0.112.0+)
+### node-gyp (v0.111.3+)
 
 Standard [`node-gyp`](https://github.com/nodejs/node-gyp) works directly with NW.js headers:
 
 ```bash
 cd myaddon
-node-gyp rebuild --target=0.112.0 --disturl=https://dl.nwjs.io/
+node-gyp rebuild --target=0.111.3 --disturl=https://dl.nwjs.io/
 ```
 
-### nw-gyp (before v0.112.0)
+### nw-gyp (before v0.111.3)
 
 [`nw-gyp`](https://github.com/nwjs/nw-gyp) is a modified `node-gyp` to support NW.js specific headers and libraries.
 
@@ -105,5 +105,5 @@ Some packages use [`node-pre-gyp`](https://github.com/mapbox/node-pre-gyp):
 
 ```bash
 cd myaddon
-node-pre-gyp build --runtime=node-webkit --target=0.112.0 --target_arch=x64
+node-pre-gyp build --runtime=node-webkit --target=0.111.3 --target_arch=x64
 ```
