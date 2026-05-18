@@ -174,7 +174,7 @@ def install_native_modules():
         nw_version += getnwisrelease.postfix
 
     npm_path = find_executable('npm')
-    npm_cmdline = [npm_path, 'rebuild', '--target=' + nw_version,
+    npm_cmdline = [npm_path, 'install', '--target=' + nw_version,
                    '--nodedir=' + header_path]
 
     print("npm_path: ", npm_path)
