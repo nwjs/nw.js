@@ -1,3 +1,10 @@
+0.111.3 / 05-17-2026
+====================
+- Node: update to v26.1.0
+- Fix: allow DevTools extensions to load their own subresources
+- Fix: show device chooser dialog for nwjs popup windows (#7215)
+- Rename headers tarball to node-v<VERSION>.tar.gz with node-gyp-compatible structure; now we support upstream npm and node-gyp for native module building
+
 0.111.2 / 05-11-2026
 ====================
 - Node: update to v26.0.0
