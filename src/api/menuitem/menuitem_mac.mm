@@ -20,6 +20,7 @@
 
 #include "content/nw/src/api/menuitem/menuitem.h"
 
+#include <sstream>
 #include "base/strings/sys_string_conversions.h"
 #include "base/values.h"
 #import <Cocoa/Cocoa.h>
@@ -211,7 +212,6 @@ void MenuItem::SetKey(const std::string& key) {
     key_equivalent = [NSString stringWithFormat:@"%C", shifted_character];
   }
   [menu_item_ setKeyEquivalent:key_equivalent];
-  VLOG(1) << "setkey: " << key;
 }
 
 void MenuItem::SetModifiers(const std::string& modifiers) {
