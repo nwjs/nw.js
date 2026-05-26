@@ -1,3 +1,8 @@
+0.112.0 / 05-24-2026
+====================
+- update to Chromium 149.0.7827.29
+- Fix: disable ESC to automatically end requestPointerLock by calling `event.preventDefault()` in keydown handler (#7907)
+
 0.111.3 / 05-17-2026
 ====================
 - Node: update to v26.1.0
