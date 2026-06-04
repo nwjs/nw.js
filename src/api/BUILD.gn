@@ -23,6 +23,36 @@ function_registration("nw_api_registration") {
   configs = [ "//build/config:precompiled_headers" ]
   bundle_name = "nwjs"
 
+  # NW.js places all API implementation headers flat in this directory rather
+  # than in per-schema subdirs, so exclude every schema from the automatic
+  # "${impl_dir}/${name}/${name}_api.h" path calculation and list the actual
+  # header paths explicitly.
+  custom_impl_schemas = [
+    "nw_object",
+    "nw_app",
+    "nw_window",
+    "nw_clipboard",
+    "nw_menu",
+    "nw_menuitem",
+    "nw_screen",
+    "nw_shell",
+    "nw_shortcut",
+    "nw_current_window_internal",
+    "nw_test",
+    "nw_tray",
+  ]
+
+  inputs = [
+    "nw_object_api.h",
+    "nw_app_api.h",
+    "nw_window_api.h",
+    "nw_clipboard_api.h",
+    "nw_menu_api.h",
+    "nw_screen_api.h",
+    "nw_shell_api.h",
+    "nw_shortcut_api.h",
+  ]
+
   deps = [
     # Different APIs include headers from these targets.
     "//content/public/browser",
