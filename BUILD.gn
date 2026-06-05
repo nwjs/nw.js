@@ -8,6 +8,7 @@ if (is_mac) {
   frameworks = ["AutomaticAssessmentConfiguration.framework"]
 }
 import("//chrome/version.gni")
+import("//ui/gl/features.gni")
 
 group("nwjs") {
   deps = [
@@ -373,13 +374,15 @@ if (is_linux && !is_component_build) {
                 "$root_shlib_dir/libnw.so",
                 "$root_shlib_dir/libnode.so",
                 "$root_shlib_dir/libffmpeg.so",
-                "$root_shlib_dir/libEGL.so",
-                "$root_shlib_dir/libGLESv2.so",
                 "$root_shlib_dir/libvulkan.so.1",
                 "$root_shlib_dir/libvk_swiftshader.so",
                 "$root_build_dir/chromedriver",
                 "$root_build_dir/minidump_stackwalk",
                 "$root_build_dir/nwjc"]
+    if (!use_static_angle) {
+      sources += [ "$root_shlib_dir/libEGL.so",
+                   "$root_shlib_dir/libGLESv2.so" ]
+    }
     deps = [
              "//chrome:chrome_initial",
              "//chrome:chrome_dll",
@@ -388,12 +391,14 @@ if (is_linux && !is_component_build) {
              "//chrome/test/chromedriver:chromedriver_server",
              "//third_party/ffmpeg:ffmpeg",
              "//components/crash/core/app:chrome_crashpad_handler",
-             "//third_party/angle:libEGL",
-             "//third_party/angle:libGLESv2",
              "//third_party/swiftshader/src/Vulkan:swiftshader_libvulkan",
              "//third_party/vulkan-loader/src:libvulkan",
              "//third_party/breakpad:minidump_stackwalk",
              ]
+    if (!use_static_angle) {
+      deps += [ "//third_party/angle:libEGL",
+                "//third_party/angle:libGLESv2" ]
+    }
     if (target_cpu == "x64") {
       inputs = [
         "$root_build_dir/dump_syms",
