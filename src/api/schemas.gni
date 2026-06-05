@@ -8,21 +8,35 @@ import("//extensions/buildflags/buildflags.gni")
 
 assert(enable_extensions)
 
-# Common sources that are both bundled and compiled.
-schema_sources = [
+# Schemas with a C++ ExtensionFunction implementation. These are the only
+# schemas that may be passed to function_registration(): the bundle generator
+# enforces (since crrev.com/c/7893470) that every namespace it processes has an
+# implementation header at the default path or via "implemented_in".
+compiled_schema_sources = [
       "nw_object.idl",
       "nw_app.idl",
-      "nw_window.idl",
       "nw_clipboard.idl",
       "nw_menu.idl",
-      "nw_menuitem.idl",
       "nw_screen.idl",
       "nw_shell.idl",
       "nw_shortcut.idl",
       "nw_current_window_internal.idl",
-      "nw_test.idl",
-      "nw_tray.idl"
     ]
+
+# Schema-only APIs that are bound entirely in JS (all of their functions are
+# [nocompile]) and therefore have no C++ implementation header. They must be
+# bundled for their JSON schemas but excluded from function_registration().
+# nw_window's ExtensionFunctions live in nw_window_api.h and are registered via
+# the nw_current_window_internal namespace above.
+uncompiled_schema_sources = [
+      "nw_window.idl",
+      "nw_menuitem.idl",
+      "nw_test.idl",
+      "nw_tray.idl",
+    ]
+
+# Common sources that are bundled (JSON strings + generated types).
+schema_sources = compiled_schema_sources + uncompiled_schema_sources
 
 root_namespace = "extensions::nwapi::%(namespace)s"
 schema_include_rules = "extensions/common/api:extensions::nwapi::%(namespace)s"

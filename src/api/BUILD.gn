@@ -18,7 +18,11 @@ generated_json_strings("nw_api") {
 
 # GYP version: chrome/browser/extensions/api/api.gyp:chrome_api_registration
 function_registration("nw_api_registration") {
-  sources = schema_sources
+  # Only schemas with a C++ ExtensionFunction implementation are registered.
+  # The schema-only (JS-bound) APIs in uncompiled_schema_sources have no
+  # implementation header and would fail the bundle generator's strict header
+  # existence check (crrev.com/c/7893470).
+  sources = compiled_schema_sources
   impl_dir = "//content/nw/src/api"
   configs = [ "//build/config:precompiled_headers" ]
   bundle_name = "nwjs"
@@ -30,16 +34,12 @@ function_registration("nw_api_registration") {
   custom_impl_schemas = [
     "nw_object",
     "nw_app",
-    "nw_window",
     "nw_clipboard",
     "nw_menu",
-    "nw_menuitem",
     "nw_screen",
     "nw_shell",
     "nw_shortcut",
     "nw_current_window_internal",
-    "nw_test",
-    "nw_tray",
   ]
 
   inputs = [
