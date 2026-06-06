@@ -13,7 +13,6 @@
 #include "chrome/browser/extensions/window_controller.h"
 #include "chrome/browser/extensions/api/tabs/windows_util.h"
 #include "chrome/browser/ui/browser.h"
-#include "chrome/browser/ui/browser_finder.h"
 #include "chrome/browser/ui/browser_window.h"
 #include "chrome/browser/ui/views/frame/browser_view.h"
 #include "chrome/browser/ui/views/frame/layout/browser_view_layout.h"
