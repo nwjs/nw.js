@@ -1,0 +1,64 @@
+name: Windows automated tests
+
+# Runs the NW.js automated ("auto") test suite on Windows against a prebuilt
+# NW.js SDK. Building NW.js/Chromium from source is far too large for a hosted
+# runner, so — as the nightly-test docs describe — we download the matching SDK
+# build and point the test runner at it with `test/test.py -d <nwdir>`.
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  # NW.js release to test against. Keep in sync with the version in README.md.
+  NWJS_VERSION: "0.112.0"
+
+jobs:
+  auto-suite:
+    name: auto suite (win-x64)
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # test/test.py uses `import imp` (gone in 3.12) and a positional
+      # json.loads(..., 'utf-8') encoding arg (gone in 3.9), so it only runs on
+      # Python <= 3.8.
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.8"
+
+      - name: Cache NW.js SDK
+        id: cache-nwjs
+        uses: actions/cache@v4
+        with:
+          path: nwjs-sdk.zip
+          key: nwjs-sdk-${{ env.NWJS_VERSION }}-win-x64
+
+      - name: Download NW.js SDK ${{ env.NWJS_VERSION }}
+        if: steps.cache-nwjs.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          $url = "https://dl.nwjs.io/v$env:NWJS_VERSION/nwjs-sdk-v$env:NWJS_VERSION-win-x64.zip"
+          Write-Host "Downloading $url"
+          $ProgressPreference = 'SilentlyContinue'   # huge speed-up for large files
+          Invoke-WebRequest -Uri $url -OutFile nwjs-sdk.zip
+
+      - name: Extract NW.js SDK
+        shell: pwsh
+        run: Expand-Archive -Path nwjs-sdk.zip -DestinationPath . -Force
+
+      - name: Run auto test suite
+        shell: pwsh
+        run: |
+          $nwdir = Join-Path (Get-Location) "nwjs-sdk-v$env:NWJS_VERSION-win-x64"
+          if (-not (Test-Path (Join-Path $nwdir "nw.exe"))) {
+            throw "nw.exe not found in $nwdir"
+          }
+          Write-Host "Running auto suite against $nwdir"
+          python test/test.py -d $nwdir -t 80 --no-build -p dots auto
