@@ -295,7 +295,7 @@ base::DictValue* Package::window() {
 }
 
 bool Package::InitFromPath(const base::FilePath& path_in) {
-  base::PermanentThreadAllowance::AllowBlocking();
+  base::ScopedAllowBlocking allow_io;
   FilePath extracted_path, path(path_in);
   if (!ExtractPath(path, &extracted_path))
     return false;
