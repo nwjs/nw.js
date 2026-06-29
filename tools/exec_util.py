@@ -29,7 +29,7 @@ def exec_cmd(cmd, path, input_string=None):
           stderr=PIPE,
           shell=(sys.platform == 'win32'))
       out, err = process.communicate(input=input_string)
-  except IOError, (errno, strerror):
+  except IOError:
     raise
   except:
     raise
