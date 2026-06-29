@@ -33,4 +33,9 @@ def exec_cmd(cmd, path, input_string=None):
     raise
   except:
     raise
+  # Python 3: Popen returns bytes; decode to str so callers can do string ops.
+  if isinstance(out, bytes):
+    out = out.decode('utf-8', 'replace')
+  if isinstance(err, bytes):
+    err = err.decode('utf-8', 'replace')
   return {'out': out, 'err': err}

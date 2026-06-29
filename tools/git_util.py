@@ -86,8 +86,9 @@ def git_apply_patch_file(patch_path, patch_dir):
   patch_string = open(patch_path, 'rb').read()
   if sys.platform == 'win32':
     # Convert the patch to Unix line endings. This is necessary to avoid
-    # whitespace errors with git apply.
-    patch_string = patch_string.replace('\r\n', '\n')
+    # whitespace errors with git apply. patch_string is bytes (read in binary
+    # mode and passed to a binary Popen), so use bytes literals.
+    patch_string = patch_string.replace(b'\r\n', b'\n')
 
   # Git apply fails silently if not run relative to a respository root.
   if not is_checkout(patch_dir):

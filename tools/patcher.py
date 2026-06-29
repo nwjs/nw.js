@@ -58,7 +58,8 @@ def apply_patch_config():
 
   # Parse the configuration file.
   scope = {}
-  execfile(config_file, scope)
+  with open(config_file) as f:
+    exec(compile(f.read(), config_file, 'exec'), scope)
   patches = scope["patches"]
 
   results = {'apply': 0, 'skip': 0, 'fail': 0}
