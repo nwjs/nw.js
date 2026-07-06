@@ -1,8 +1,8 @@
 diff --git a/front_end/entrypoints/main/MainImpl.ts b/front_end/entrypoints/main/MainImpl.ts
-index f2b153705e..67a53a26ad 100644
+index cca97993e2..403032143c 100644
 --- front_end/entrypoints/main/MainImpl.ts
 +++ front_end/entrypoints/main/MainImpl.ts
-@@ -235,6 +235,8 @@ export class MainImpl {
+@@ -247,6 +247,8 @@ export class MainImpl {
    }
  
    #initializeGlobalsForLayoutTests(): void {
@@ -11,20 +11,20 @@ index f2b153705e..67a53a26ad 100644
      // @ts-expect-error e2e test global
      self.Extensions ||= {};
      // @ts-expect-error e2e test global
-@@ -486,6 +488,8 @@ export class MainImpl {
+@@ -439,6 +441,8 @@ export class MainImpl {
      UI.ContextMenu.ContextMenu.installHandler(document);
      UI.ViewManager.ViewManager.instance({forceNew: true, universe: this.#universe});
  
 +    // @ts-ignore layout test global
 +    self.UI.inspectorView = UI.InspectorView.InspectorView.instance();
      // These instances need to be created early so they don't miss any events about requests/issues/etc.
-     Logs.NetworkLog.NetworkLog.instance();
-     Logs.LogManager.LogManager.instance();
+     IssuesManager.IssuesManager.IssuesManager.instance({
+       forceNew: true,
 diff --git a/front_end/panels/common/ExtensionServer.ts b/front_end/panels/common/ExtensionServer.ts
-index 0a5ec620b1..8a34390ac5 100644
+index 72e6cb2ea7..4a473bc71c 100644
 --- front_end/panels/common/ExtensionServer.ts
 +++ front_end/panels/common/ExtensionServer.ts
-@@ -1598,6 +1598,7 @@ export class ExtensionServer extends Common.ObjectWrapper.ObjectWrapper<EventTyp
+@@ -1672,6 +1672,7 @@ export class ExtensionServer extends Common.ObjectWrapper.ObjectWrapper<EventTyp
    }
  
    static canInspectURL(url: Platform.DevToolsPath.UrlString): boolean {
