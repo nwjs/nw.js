@@ -8,7 +8,13 @@
 #include "content/public/common/content_features.h"
 
 #include "base/command_line.h"
+#include "base/files/file_path.h"
+#include "base/files/file_util.h"
+#include "base/functional/bind.h"
+#include "base/logging.h"
 #include "base/memory/ptr_util.h"
+#include "base/path_service.h"
+#include "base/process/launch.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/task/current_thread.h"
 #include "content/public/browser/browser_task_traits.h"
@@ -26,6 +32,7 @@
 #include "components/keep_alive_registry/keep_alive_registry.h"
 #include "components/keep_alive_registry/keep_alive_types.h"
 #include "content/nw/src/api/nw_app.h"
+#include "content/nw/src/browser/nw_content_browser_hooks.h"
 #include "content/nw/src/nw_base.h"
 #include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/render_process_host.h"
@@ -44,18 +51,133 @@
 #include "net/url_request/url_request_context_getter.h"
 #include "net/traffic_annotation/network_traffic_annotation_test_helper.h"
 
+#if defined(OS_MAC)
+#include "chrome/browser/mac/relauncher.h"
+#endif
+
 using namespace extensions::nwapi::nw__app;
 
 namespace extensions {
-NwAppQuitFunction::NwAppQuitFunction() {
+namespace {
 
+base::FilePath GetAbsolutePackagePath() {
+  nw::Package* package = nw::package();
+  if (!package)
+    return base::FilePath();
+
+  base::FilePath path = package->path().NormalizePathSeparators();
+  if (path.empty() || path.IsAbsolute())
+    return path;
+
+  base::FilePath current_directory;
+  if (!base::GetCurrentDirectory(&current_directory))
+    return path;
+
+  return current_directory.Append(path).NormalizePathSeparators();
 }
 
-NwAppQuitFunction::~NwAppQuitFunction() {
+bool ReplaceNwappSwitch(base::CommandLine::StringVector* argv,
+                        const base::FilePath& package_path) {
+#if defined(OS_WIN)
+  const base::CommandLine::StringType nwapp_switch = L"--nwapp=";
+  const base::CommandLine::StringType alt_nwapp_switch = L"-nwapp=";
+  const base::CommandLine::StringType win_nwapp_switch = L"/nwapp=";
+#else
+  const base::CommandLine::StringType nwapp_switch = "--nwapp=";
+  const base::CommandLine::StringType alt_nwapp_switch = "-nwapp=";
+#endif
+
+  for (auto& arg : *argv) {
+    if (arg.compare(0, nwapp_switch.length(), nwapp_switch) == 0) {
+      arg = nwapp_switch + package_path.value();
+      return true;
+    }
+    if (arg.compare(0, alt_nwapp_switch.length(), alt_nwapp_switch) == 0) {
+      arg = alt_nwapp_switch + package_path.value();
+      return true;
+    }
+#if defined(OS_WIN)
+    if (arg.compare(0, win_nwapp_switch.length(), win_nwapp_switch) == 0) {
+      arg = win_nwapp_switch + package_path.value();
+      return true;
+    }
+#endif
+  }
+
+  return false;
 }
 
-void NwAppQuitFunction::DoJob(extensions::ExtensionRegistrar* registrar,
-                              std::string extension_id) {
+bool PathReferencesPackage(const base::CommandLine::StringType& arg,
+                           const base::FilePath& package_path) {
+  base::FilePath arg_path(arg);
+  if (!arg_path.IsAbsolute()) {
+    base::FilePath current_directory;
+    if (!base::GetCurrentDirectory(&current_directory))
+      return false;
+    arg_path = current_directory.Append(arg_path);
+  }
+
+  return arg_path.NormalizePathSeparators() == package_path;
+}
+
+void ReplacePackagePathArg(base::CommandLine::StringVector* argv,
+                           const base::FilePath& package_path) {
+  for (auto it = argv->begin() + 1; it != argv->end(); ++it) {
+    if (PathReferencesPackage(*it, package_path)) {
+      *it = package_path.value();
+      return;
+    }
+  }
+}
+
+base::CommandLine BuildRelaunchCommandLine() {
+  const base::CommandLine& current_command_line =
+      *base::CommandLine::ForCurrentProcess();
+  base::CommandLine::StringVector argv = current_command_line.original_argv();
+
+  base::FilePath exe;
+  if (base::PathService::Get(base::FILE_EXE, &exe) && !argv.empty())
+    argv[0] = exe.value();
+
+  base::FilePath package_path = GetAbsolutePackagePath();
+  if (!package_path.empty()) {
+    bool has_nwapp_switch = ReplaceNwappSwitch(&argv, package_path);
+    if (!has_nwapp_switch && argv.size() > 1)
+      ReplacePackagePathArg(&argv, package_path);
+  }
+
+  return base::CommandLine(argv);
+}
+
+void RelaunchCurrentApp() {
+  base::CommandLine command_line = BuildRelaunchCommandLine();
+  base::FilePath exe;
+  if (base::PathService::Get(base::FILE_EXE, &exe))
+    command_line.SetProgram(exe);
+
+#if defined(OS_MAC)
+  if (!mac_relauncher::RelaunchApp(command_line.argv()))
+    LOG(ERROR) << "Failed to relaunch NW app";
+#else
+  base::LaunchOptions options;
+#if defined(OS_WIN)
+  if (!exe.empty()) {
+    options.current_directory = exe.DirName();
+    options.grant_foreground_privilege = true;
+  }
+#endif
+
+#if defined(OS_LINUX)
+  options.allow_new_privs = true;
+#endif
+
+  if (!base::LaunchProcess(command_line, options).IsValid())
+    LOG(ERROR) << "Failed to relaunch NW app";
+#endif
+}
+
+void QuitApp(extensions::ExtensionRegistrar* registrar,
+             const std::string& extension_id) {
   if (base::FeatureList::IsEnabled(::features::kNWNewWin)) {
     chrome::CloseAllBrowsersAndQuit(true);
     // trigger BrowserProcessImpl::Unpin()
@@ -70,6 +192,20 @@ void NwAppQuitFunction::DoJob(extensions::ExtensionRegistrar* registrar,
                      registrar->GetWeakPtr(), extension_id));
 }
 
+}  // namespace
+
+NwAppQuitFunction::NwAppQuitFunction() {
+
+}
+
+NwAppQuitFunction::~NwAppQuitFunction() {
+}
+
+void NwAppQuitFunction::DoJob(extensions::ExtensionRegistrar* registrar,
+                              std::string extension_id) {
+  QuitApp(registrar, extension_id);
+}
+
 ExtensionFunction::ResponseAction
 NwAppQuitFunction::Run() {
   extensions::ExtensionRegistrar* registrar =
@@ -78,6 +214,24 @@ NwAppQuitFunction::Run() {
         FROM_HERE,
         base::BindOnce(&NwAppQuitFunction::DoJob,
                    registrar, extension_id()));
+  return RespondNow(NoArguments());
+}
+
+void NwAppRestartFunction::DoJob(extensions::ExtensionRegistrar* registrar,
+                                 std::string extension_id) {
+  nw::ScheduleRelaunchOnShutdown(&RelaunchCurrentApp);
+  QuitApp(registrar, extension_id);
+}
+
+ExtensionFunction::ResponseAction
+NwAppRestartFunction::Run() {
+  extensions::ExtensionRegistrar* registrar =
+      extensions::ExtensionRegistrar::Get(browser_context());
+  base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(
+        FROM_HERE,
+        base::BindOnce(&NwAppRestartFunction::DoJob,
+                   registrar, extension_id()));
+
   return RespondNow(NoArguments());
 }
 
@@ -165,8 +319,8 @@ bool NwAppGetArgvSyncFunction::RunNWSync(base::ListValue* response, std::string*
   base::CommandLine::StringVector args = command_line->GetArgs();
   base::CommandLine::StringVector argv = command_line->original_argv();
 
-  // Ignore first non-switch arg if it's not a standalone package.
-  bool ignore_arg = !package->self_extract();
+  // Ignore the package path only when it was passed as a positional argument.
+  bool ignore_arg = !package->self_extract() && !command_line->HasSwitch("nwapp");
   for (unsigned i = 1; i < argv.size(); ++i) {
     if (ignore_arg && args.size() && argv[i] == args[0]) {
       ignore_arg = false;
