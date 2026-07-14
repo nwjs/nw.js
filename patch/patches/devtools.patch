@@ -32,3 +32,60 @@ index 0a5ec620b1..8a34390ac5 100644
      let parsedURL;
      // This is only to work around invalid URLs we're occasionally getting from some tests.
      // TODO(caseq): make sure tests supply valid URLs or we specifically handle invalid ones.
+diff --git a/front_end/ui/helpers/OpenInNewTab.ts b/front_end/ui/helpers/OpenInNewTab.ts
+index cfa93f3..7f2cda0 100644
+--- front_end/ui/helpers/OpenInNewTab.ts
++++ front_end/ui/helpers/OpenInNewTab.ts
+@@ -39,6 +39,42 @@ import * as Platform from '../../core/platform/platform.js';
+ import * as Root from '../../core/root/root.js';
+ import * as SDK from '../../core/sdk/sdk.js';
+-
++
++function encodeFilePath(path: string): string {
++  const parts = path.split('/');
++  return parts.map((part, index) => {
++    if (index === 0 && /^[A-Za-z]:$/.test(part)) {
++      return part;
++    }
++    return encodeURIComponent(part);
++  }).join('/');
++}
++
++function fileURLFromAbsolutePath(path: string): URL|null {
++  if (/^[\\/]{2}/.test(path)) {
++    const normalizedPath = path.replace(/\\/g, '/');
++    return new URL(`file:${encodeFilePath(normalizedPath)}`);
++  }
++  if (path.startsWith('/')) {
++    return new URL(`file://${encodeFilePath(path)}`);
++  }
++  if (/^[A-Za-z]:[\\/]/.test(path)) {
++    const normalizedPath = path.replace(/\\/g, '/');
++    return new URL(`file:///${encodeFilePath(normalizedPath)}`);
++  }
++  return null;
++}
++
++function normalizeURLToOpen(url: URL|string): URL {
++  if (url instanceof URL) {
++    return url;
++  }
++  const fileURL = fileURLFromAbsolutePath(url);
++  if (fileURL) {
++    return fileURL;
++  }
++  return new URL(url);
++}
++
+ /**
+  * Opens the given `url` in a new Chrome tab.
+  *
+@@ -58,7 +94,7 @@ import * as SDK from '../../core/sdk/sdk.js';
+  * @see https://en.wikipedia.org/wiki/UTM_parameters
+  */
+ export function openInNewTab(url: URL|string): void {
+-  url = new URL(url);
++  url = normalizeURLToOpen(url);
+   if (Common.ParsedURL.schemeIs(url, 'javascript:')) {
+     return;
+   }
