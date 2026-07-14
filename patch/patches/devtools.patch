@@ -36,10 +36,11 @@ diff --git a/front_end/ui/helpers/OpenInNewTab.ts b/front_end/ui/helpers/OpenInN
 index cfa93f3..7f2cda0 100644
 --- front_end/ui/helpers/OpenInNewTab.ts
 +++ front_end/ui/helpers/OpenInNewTab.ts
-@@ -57,8 +57,46 @@ import * as SDK from '../../core/sdk/sdk.js';
-  * @throws TypeError if `url` is not a valid URL.
-  * @see https://en.wikipedia.org/wiki/UTM_parameters
-  */
+@@ -39,6 +39,42 @@ import * as Platform from '../../core/platform/platform.js';
+ import * as Root from '../../core/root/root.js';
+ import * as SDK from '../../core/sdk/sdk.js';
+-
++
 +function encodeFilePath(path: string): string {
 +  const parts = path.split('/');
 +  return parts.map((part, index) => {
@@ -51,6 +52,10 @@ index cfa93f3..7f2cda0 100644
 +}
 +
 +function fileURLFromAbsolutePath(path: string): URL|null {
++  if (/^[\\/]{2}/.test(path)) {
++    const normalizedPath = path.replace(/\\/g, '/');
++    return new URL(`file:${encodeFilePath(normalizedPath)}`);
++  }
 +  if (path.startsWith('/')) {
 +    return new URL(`file://${encodeFilePath(path)}`);
 +  }
@@ -65,19 +70,19 @@ index cfa93f3..7f2cda0 100644
 +  if (url instanceof URL) {
 +    return url;
 +  }
-+  try {
-+    return new URL(url);
-+  } catch (error) {
-+    // NW.js can surface Node stack frames as raw absolute paths. Keep stack
-+    // filenames unchanged, but open those links as file URLs.
-+    const fileURL = fileURLFromAbsolutePath(url);
-+    if (fileURL) {
-+      return fileURL;
-+    }
-+    throw error;
++  const fileURL = fileURLFromAbsolutePath(url);
++  if (fileURL) {
++    return fileURL;
 +  }
++  return new URL(url);
 +}
 +
+ /**
+  * Opens the given `url` in a new Chrome tab.
+  *
+@@ -58,7 +94,7 @@ import * as SDK from '../../core/sdk/sdk.js';
+  * @see https://en.wikipedia.org/wiki/UTM_parameters
+  */
  export function openInNewTab(url: URL|string): void {
 -  url = new URL(url);
 +  url = normalizeURLToOpen(url);

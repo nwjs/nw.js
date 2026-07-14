@@ -1,3 +1,3 @@
 setTimeout(() => {
-  nw.require('./myModule2');
+  nw.require('./node module dir/myModule2');
 }, 0);

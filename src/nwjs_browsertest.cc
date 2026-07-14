@@ -1199,6 +1199,7 @@ IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue4269NodeModuleLink) {
   std::string url = popup_contents->GetLastCommittedURL().spec();
   LOG(WARNING) << url;
   EXPECT_TRUE(url.rfind("file://", 0) == 0);
+  EXPECT_NE(std::string::npos, url.find("node%20module%20dir"));
   EXPECT_TRUE(base::EndsWith(url, "myModule2.js"));
 }
 
