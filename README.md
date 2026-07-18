@@ -13,8 +13,8 @@ It was created in the Intel Open Source Technology Center.
 
 [Building a Cross-platform Desktop App with NW.js](https://www.sitepoint.com/cross-platform-desktop-app-nw-js/)     
 [Creating Desktop Applications With node-webkit](https://strongloop.com/strongblog/creating-desktop-applications-with-node-webkit/)     
-[WebApp to DesktopApp with node-webkit (slides)](http://oldgeeksguide.github.io/presentations/html5devconf2013/wtod.html)  
-[Essay on the history and internals of the project](http://yedingding.com/2014/08/01/node-webkit-intro-en.html)
+[WebApp to DesktopApp with node-webkit (slides)](https://oldgeeksguide.github.io/presentations/html5devconf2013/wtod.html)  
+[Essay on the history and internals of the project](https://yedingding.com/2014/08/01/node-webkit-intro-en.html)
 
 ## Features
 
@@ -30,7 +30,7 @@ It was created in the Intel Open Source Technology Center.
  * Linux: [64bit](https://dl.nwjs.io/v0.113.0/nwjs-v0.113.0-linux-x64.tar.gz) / [arm64](https://dl.nwjs.io/v0.113.0/nwjs-v0.113.0-linux-arm64.tar.gz)
  * Windows: [32bit](https://dl.nwjs.io/v0.113.0/nwjs-v0.113.0-win-ia32.zip) / [64bit](https://dl.nwjs.io/v0.113.0/nwjs-v0.113.0-win-x64.zip)
  * Mac 10.10+: [64bit](https://dl.nwjs.io/v0.113.0/nwjs-v0.113.0-osx-arm64.zip)
- * Use [Legacy build](http://nwjs.io/downloads/) for Win XP and early OSX.
+ * Use [Legacy build](https://nwjs.io/downloads/) for Win XP and early OSX.
 
 * **latest nightly build from git tip**: https://dl.nwjs.io/live-build/
 
@@ -77,7 +77,7 @@ Note: on OSX, the executable binary is in a hidden directory within the .app fil
 `/path/to/nwjs.app/Contents/MacOS/nwjs .` *(suppose the current directory contains 'package.json')*   
 
 ## Documents
-Official documentation: http://docs.nwjs.io/  
+Official documentation: https://docs.nwjs.io/  
 
 For more information on how to write/package/run apps, see:
 
