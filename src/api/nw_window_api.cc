@@ -196,7 +196,7 @@ static HWND getHWND(AppWindow* window) {
 static HWND getHWND(Browser* browser) {
   if (browser == NULL) return NULL;
   const HWND browser_hwnd =
-	 views::HWNDForNativeView(browser->window()->GetNativeWindow());
+	 views::HWNDForNativeView(BrowserView::GetBrowserViewForBrowser(browser)->GetNativeWindow());
   return browser_hwnd;
 }
 #endif
@@ -207,8 +207,8 @@ void NwCurrentWindowInternalCloseFunction::DoClose(AppWindow* window) {
 }
 
 void NwCurrentWindowInternalCloseFunction::DoCloseBrowser(base::WeakPtr<Browser> browser) {
-  if (browser.get() && browser->window())
-    browser->window()->ForceClose();
+  if (browser.get() && BrowserView::GetBrowserViewForBrowser(browser.get()))
+    BrowserView::GetBrowserViewForBrowser(browser.get())->ForceClose();
 }
 
 ExtensionFunction::ResponseAction
@@ -755,7 +755,7 @@ NwCurrentWindowInternalEnterKioskModeInternalFunction::Run() {
       BrowserWidget* frame = BrowserView::GetBrowserViewForBrowser(browser)->browser_widget();
       frame->SetFullscreen(true);
 #if !defined(OS_MAC)
-      browser->window()->SetZOrderLevel(ui::ZOrderLevel::kFloatingWindow);
+      BrowserView::GetBrowserViewForBrowser(browser)->SetZOrderLevel(ui::ZOrderLevel::kFloatingWindow);
 #endif
     }
   } else {
@@ -780,7 +780,7 @@ NwCurrentWindowInternalLeaveKioskModeInternalFunction::Run() {
       BrowserWidget* frame = BrowserView::GetBrowserViewForBrowser(browser)->browser_widget();
       frame->SetFullscreen(false);
 #if !defined(OS_MAC)
-      browser->window()->SetZOrderLevel(ui::ZOrderLevel::kNormal);
+      BrowserView::GetBrowserViewForBrowser(browser)->SetZOrderLevel(ui::ZOrderLevel::kNormal);
 #endif
       return RespondNow(NoArguments());
     }
@@ -802,14 +802,14 @@ NwCurrentWindowInternalToggleKioskModeInternalFunction::Run() {
 #if defined(OS_MAC)
         NWRestoreNSAppKioskOptions();
 #else
-        browser->window()->SetZOrderLevel(ui::ZOrderLevel::kNormal);
+        BrowserView::GetBrowserViewForBrowser(browser)->SetZOrderLevel(ui::ZOrderLevel::kNormal);
 #endif	
       } else {
         frame->SetFullscreen(true);
 #if defined(OS_MAC)
         NWSetNSAppKioskOptions();
 #else
-        browser->window()->SetZOrderLevel(ui::ZOrderLevel::kFloatingWindow);
+        BrowserView::GetBrowserViewForBrowser(browser)->SetZOrderLevel(ui::ZOrderLevel::kFloatingWindow);
 #endif
       }
       return RespondNow(NoArguments());
@@ -868,7 +868,7 @@ NwCurrentWindowInternalSetShadowInternalFunction::Run() {
     int id = args()[1].GetInt();
     Browser* browser = getBrowser(this, id);
     if (browser)
-      SetShadowOnWindow(browser->window()->GetNativeWindow(), shadow);
+      SetShadowOnWindow(BrowserView::GetBrowserViewForBrowser(browser)->GetNativeWindow(), shadow);
   } else {
     AppWindow* window = getAppWindow(this);
     SetShadowOnWindow(window->GetNativeWindow(), shadow);
@@ -885,7 +885,7 @@ bool NwCurrentWindowInternalSetTitleInternalFunction::RunNWSync(base::ListValue*
   if (!browser)
     return false;
   browser->set_title_override(title);
-  browser->window()->UpdateTitleBar();
+  BrowserView::GetBrowserViewForBrowser(browser)->UpdateTitleBar();
   return true;
 }
 
