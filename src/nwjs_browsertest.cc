@@ -543,7 +543,7 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
 
   // Shortcut to return the current MenuManager.
   extensions::MenuManager* menu_manager() {
-    return extensions::MenuManager::Get(browser()->profile());
+    return extensions::MenuManager::Get(browser()->GetProfile());
   }
 
   // This gets all the items that any extension has registered for possible
@@ -715,13 +715,13 @@ class NWWebViewTestBase : public extensions::PlatformAppBrowserTest {
 
   TestGuestViewManager* GetGuestViewManager() {
     TestGuestViewManager* manager = static_cast<TestGuestViewManager*>(
-        TestGuestViewManager::FromBrowserContext(browser()->profile()));
+        TestGuestViewManager::FromBrowserContext(browser()->GetProfile()));
     // TestGuestViewManager::WaitForSingleGuestCreated may and will get called
     // before a guest is created.
     if (!manager) {
       manager = static_cast<TestGuestViewManager*>(
           GuestViewManager::CreateWithDelegate(
-              browser()->profile(),
+              browser()->GetProfile(),
               ExtensionsAPIClient::Get()->CreateGuestViewManagerDelegate()));
     }
     return manager;
