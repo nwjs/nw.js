@@ -30,9 +30,8 @@ try:
     driver.find_element(By.ID, 'close-win').click()
     wait_window_handles(driver, 1)
     driver.find_element(By.ID, 'test-request').click()
-    result = driver.find_element(By.ID, 'result').get_attribute('innerHTML')
+    result = wait_for_element_id_content(driver, 'result', 'success')
     print(result)
-    assert 'success' in result
 finally:
     server.terminate()
     driver.quit()

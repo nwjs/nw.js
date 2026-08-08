@@ -262,6 +262,8 @@ def wait_for_element_id_content(driver, elem_id, content, timeout=60):
             pass
         except selenium.common.exceptions.StaleElementReferenceException:
             pass
+        except AttributeError:
+            pass
         time.sleep(1)
         timeout = timeout - 1
         if timeout <= 0:
