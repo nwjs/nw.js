@@ -20,6 +20,7 @@ V(VoidPtr2Fn, "g_web_worker_thread_new", g_web_worker_thread_new_fn)
 #define V(type, sym, fn) NW_HOOK_MAP(type, sym, fn)
 #endif
 V(CallTickCallbackFn, "g_call_tick_callback", g_call_tick_callback_fn)
+V(VoidVoidFn, "g_drain_node_envs", g_drain_node_envs_fn)
 V(SetupNWNodeFn, "g_setup_nwnode", g_setup_nwnode_fn)
 V(IsNodeInitializedFn, "g_is_node_initialized", g_is_node_initialized_fn)
 V(SetNWTickCallbackFn, "g_set_nw_tick_callback", g_set_nw_tick_callback_fn)

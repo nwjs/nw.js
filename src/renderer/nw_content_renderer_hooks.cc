@@ -65,9 +65,16 @@ void KickNextTick() {
   v8::HandleScope handle_scope(v8::Isolate::GetCurrent());
   v8::MicrotasksScope microtasks(v8::Isolate::GetCurrent()->GetCurrentContext(),
 				 v8::MicrotasksScope::kDoNotRunMicrotasks);
-  void* env = g_get_node_env_fn();
-  if (env)
-    g_call_tick_callback_fn(env);
+  // nwjs: g_get_node_env() returns tls_ctx->env, i.e. whichever window opened
+  // last, so in mixed-context this used to strand work queued by every other
+  // window. Drain them all instead.
+  if (g_drain_node_envs_fn) {
+    g_drain_node_envs_fn();
+  } else {
+    void* env = g_get_node_env_fn();
+    if (env)
+      g_call_tick_callback_fn(env);
+  }
 }
 
 } // nw
