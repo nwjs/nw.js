@@ -1,3 +1,9 @@
+0.114.1 / 08-09-2026
+====================
+- update to Chromium 151.0.7922.77
+- Node: update to v26.7.0
+- Fix: drain every live Node context in the message pump so work queued in other windows isn't stranded in mixed-context mode
+
 0.114.0 / 07-24-2026
 ====================
 - update to Chromium 151.0.7922.34
