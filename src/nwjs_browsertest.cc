@@ -1137,6 +1137,65 @@ IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue4269Crash) {
   EXPECT_TRUE(base::EndsWith(url, "inspect.html"));
 }
 
+IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue4269NodeModuleLink) {
+  LoadAndLaunchApp("issue4269-node-module-link", "Launched");
+  content::WebContents* wc = GetAppWebContents("index.html");
+  ASSERT_TRUE(wc);
+
+  DevToolsWindowCreationObserver observer;
+  ASSERT_TRUE(EvalJs(wc, "nw.Window.get().showDevTools()").is_ok());
+  observer.WaitForLoad();
+  DevToolsWindow* window = observer.devtools_window();
+  SwitchToPanel(window, "console");
+  WebContents* devtools = DevToolsWindowTesting::Get(window)->main_web_contents();
+
+  ui_test_utils::BrowserCreatedObserver new_browser_observer;
+  ASSERT_TRUE(EvalJs(devtools, R"js(
+      (() => new Promise((resolve, reject) => {
+        const clickLink = () => {
+          const links = Array.from(document.querySelectorAll(
+              '.console-message-text .devtools-link'));
+          const link =
+              links.find(link => link.textContent.includes('myModule2.js'));
+          if (!link) {
+            return false;
+          }
+          link.click();
+          resolve(true);
+          return true;
+        };
+        if (clickLink()) {
+          return;
+        }
+        const observer = new MutationObserver(() => {
+          if (clickLink()) {
+            observer.disconnect();
+          }
+        });
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true,
+          characterData: true
+        });
+        setTimeout(() => {
+          observer.disconnect();
+          reject(new Error('missing myModule2.js console link'));
+        }, 5000);
+      }))()
+  )js").is_ok());
+  Browser* active_browser = new_browser_observer.Wait();
+  ui_test_utils::WaitUntilBrowserBecomeActive(active_browser);
+  content::WebContents* popup_contents =
+      active_browser->tab_strip_model()->GetActiveWebContents();
+  EXPECT_TRUE(content::WaitForLoadStop(popup_contents));
+
+  std::string url = popup_contents->GetLastCommittedURL().spec();
+  LOG(WARNING) << url;
+  EXPECT_TRUE(url.rfind("file://", 0) == 0);
+  EXPECT_NE(std::string::npos, url.find("node%20module%20dir"));
+  EXPECT_TRUE(base::EndsWith(url, "myModule2.js"));
+}
+
 IN_PROC_BROWSER_TEST_F(NWAppTest, LocalFlash) {
   std::string contents;
   base::FilePath test_dir = test_data_dir_.Append(FILE_PATH_LITERAL("platform_apps")).Append(FILE_PATH_LITERAL("local_flash"));
