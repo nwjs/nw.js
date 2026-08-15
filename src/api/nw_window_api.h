@@ -12,6 +12,7 @@
 
 class SkBitmap;
 class Browser;
+class BrowserWindowInterface;
 
 namespace base {
 template <typename T>
@@ -29,7 +30,8 @@ class NwCurrentWindowInternalCloseFunction : public ExtensionFunction {
  public:
   NwCurrentWindowInternalCloseFunction() {}
   static void DoClose(AppWindow*);
-  static void DoCloseBrowser(base::WeakPtr<Browser> browser);
+  static void DoCloseBrowser(
+      base::WeakPtr<BrowserWindowInterface> browser);
 
  protected:
   ~NwCurrentWindowInternalCloseFunction() override {}

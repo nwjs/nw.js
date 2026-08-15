@@ -206,7 +206,8 @@ void NwCurrentWindowInternalCloseFunction::DoClose(AppWindow* window) {
     window->GetBaseWindow()->ForceClose();
 }
 
-void NwCurrentWindowInternalCloseFunction::DoCloseBrowser(base::WeakPtr<Browser> browser) {
+void NwCurrentWindowInternalCloseFunction::DoCloseBrowser(
+    base::WeakPtr<BrowserWindowInterface> browser) {
   if (browser.get() && BrowserView::GetBrowserViewForBrowser(browser.get()))
     BrowserView::GetBrowserViewForBrowser(browser.get())->ForceClose();
 }
@@ -227,10 +228,10 @@ NwCurrentWindowInternalCloseFunction::Run() {
     }
     if (force)
       base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(FROM_HERE,
-                                                          base::BindOnce(&NwCurrentWindowInternalCloseFunction::DoCloseBrowser, browser->AsWeakPtr()));
+                                                          base::BindOnce(&NwCurrentWindowInternalCloseFunction::DoCloseBrowser, browser->GetWeakPtr()));
     else if (browser->NWCanClose())
       base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(FROM_HERE,
-                                                          base::BindOnce(&NwCurrentWindowInternalCloseFunction::DoCloseBrowser, browser->AsWeakPtr()));
+                                                          base::BindOnce(&NwCurrentWindowInternalCloseFunction::DoCloseBrowser, browser->GetWeakPtr()));
   } else {
     AppWindow* window = getAppWindow(this);
     if (force)
