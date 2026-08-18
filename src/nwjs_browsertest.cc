@@ -1079,20 +1079,31 @@ IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue6061BinCrash) {
   SwitchToPanel(window, "console");
   WebContents* devtools = DevToolsWindowTesting::Get(window)->main_web_contents();
 
+  Sleep(base::Milliseconds(1000));
+
   EvalJsResult result = EvalJs(
-      devtools, "document.querySelector('.console-object').click()");
+      devtools,
+      "document.querySelector('.console-message-text devtools-tree').shadowRoot"
+      ".querySelector('li.object-properties-section-root-element > "
+      "span.tree-element-title').click()");
   ASSERT_TRUE(result.is_ok());
 
   Sleep(base::Milliseconds(1000));
 
   auto result2 = EvalJs(
-      devtools, "document.querySelector('#console-messages > div.console-group.console-group-messages > div > div > div > div > div > div:nth-child(1) > span > span.console-message-text > div').shadowRoot.querySelector('div > ol > ol > li > span').click()");
+      devtools,
+      "document.querySelector('.console-message-text devtools-tree').shadowRoot"
+      ".querySelector('li[data-object-property-name-for-test=\"[[Prototype]]\"] > "
+      "span.tree-element-title').click()");
   ASSERT_TRUE(result2.is_ok());
 
   Sleep(base::Milliseconds(1000));
 
   auto result3 = EvalJs(
-      devtools, "document.querySelector('#console-messages > div.console-group.console-group-messages > div > div > div > div > div > div:nth-child(1) > span > span.console-message-text > div').shadowRoot.querySelector('div > ol > ol > ol > li:nth-child(3) > span').click()");
+      devtools,
+      "document.querySelector('.console-message-text devtools-tree').shadowRoot"
+      ".querySelector('ol.tree-outline > ol > ol > li:nth-child(1) > "
+      "span.tree-element-title').click()");
   ASSERT_TRUE(result3.is_ok());
 
   Sleep(base::Milliseconds(1000));
