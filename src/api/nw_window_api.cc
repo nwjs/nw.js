@@ -169,7 +169,7 @@ static Browser* getBrowser(ExtensionFunction* func, int id) {
           &controller, &error)) {
     return nullptr;
   }
-  return controller->GetBrowser();
+  return controller->GetBrowser()->GetBrowserForMigrationOnly();
 }
 
 static AppWindow* getAppWindow(ExtensionFunction* func) {
@@ -955,7 +955,7 @@ bool NwCurrentWindowInternalGetCurrentFunction::RunNWSync(base::ListValue* respo
     *ret_error = error;
     return false;
   }
-  browser = controller->GetBrowser();
+  browser = controller->GetBrowser()->GetBrowserForMigrationOnly();
 
   WindowController::PopulateTabBehavior populate_tab_behavior =
       extractor.populate_tabs() ? WindowController::kPopulateTabs
