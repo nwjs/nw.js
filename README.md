@@ -27,7 +27,7 @@ It was created in the Intel Open Source Technology Center.
 ## Downloads
 * **v0.115.0:** (August 18th, 2026, based off of Node.js v26.7.0, Chromium 152) : [release notes](https://nwjs.io/blog/v0.115.0/)
  **NOTE** You might want the **SDK build**. Please read the release notes.
- * Linux: [64bit](https://dl.nwjs.io/v0.115.0/nwjs-v0.115.0-linux-x64.tar.gz) / [arm64](https://dl.nwjs.io/v0.115.0/nwjs-v0.115.0-linux-arm64.tar.gz)
+ * Linux: [64bit](https://dl.nwjs.io/v0.115.0/nwjs-v0.115.0-linux-x64.tar.gz) / [arm64](https://dl.nwjs.io/v0.115.0/nwjs-v0.115.0-linux-arm64.tar.gz) / [armhf](https://dl.nwjs.io/v0.115.0/nwjs-v0.115.0-linux-armhf.tar.gz)
  * Windows: [32bit](https://dl.nwjs.io/v0.115.0/nwjs-v0.115.0-win-ia32.zip) / [64bit](https://dl.nwjs.io/v0.115.0/nwjs-v0.115.0-win-x64.zip)
  * Mac 10.10+: [64bit](https://dl.nwjs.io/v0.115.0/nwjs-v0.115.0-osx-arm64.zip)
  * Use [Legacy build](http://nwjs.io/downloads/) for Win XP and early OSX.

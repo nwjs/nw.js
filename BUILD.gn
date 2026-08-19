@@ -366,6 +366,9 @@ if (is_linux && !is_component_build) {
   if (target_cpu == "x86") {
     arch_pkgname = "ia32"
   }
+  if (target_cpu == "arm") {
+    arch_pkgname = "armhf"
+  }
   action_foreach("dump") {
     testonly = true
     script = "//build/linux/dump_app_syms.py"
@@ -463,6 +466,9 @@ if (!is_component_build) {
     arch_pkgname = target_cpu
     if (target_cpu == "x86") {
       arch_pkgname = "ia32"
+    }
+    if (target_cpu == "arm") {
+      arch_pkgname = "armhf"
     }
     icudat_path = rebase_path("../../third_party/icu/common/icudtl.dat")
     outputs = [ "$root_build_dir/new_package.re" ]
