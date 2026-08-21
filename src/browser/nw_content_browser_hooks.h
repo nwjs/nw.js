@@ -28,6 +28,7 @@ namespace content {
 namespace nw {
 
 class Package;
+using RelaunchCallback = void (*)();
 
 //
 // implemented in nw_content_browser_hooks.cc
@@ -38,6 +39,7 @@ int MainPartsPreCreateThreadsHook();
 void MainPartsPreMainMessageLoopRunHook();
 // ref in chrome/browser/chrome_browser_main.cc
 CONTENT_EXPORT void MainPartsPostDestroyThreadsHook();
+CONTENT_EXPORT void ScheduleRelaunchOnShutdown(RelaunchCallback relaunch);
 // ref in chrome/browser/extensions/extension_service.cc
 CONTENT_EXPORT void RendererProcessTerminatedHook(content::RenderProcessHost* process,
 						  const content::ChildProcessTerminationInfo& info);
