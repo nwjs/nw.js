@@ -1,17 +1,17 @@
-diff --git a/BUILD.gn b/BUILD.gn
-index a9a017e384..b3593c9e0e 100644
+diff --git BUILD.gn BUILD.gn
+index 4e2e57ad83..ac786251d6 100644
 --- BUILD.gn
 +++ BUILD.gn
-@@ -315,7 +315,7 @@ target(link_target_type, "ffmpeg_internal") {
-       "HAVE_X86_6REGS=0",
-       "HAVE_X86_7REGS=0",
-     ]
+@@ -311,7 +311,7 @@ target(link_target_type, "ffmpeg_internal") {
+   # Windows builds can't compile without EBP because we can't omit frame
+   # pointers like we do on posix.
+   if (current_cpu == "x86") {
 -    if (using_sanitizer || is_win || use_lld || use_mold) {
 +    if (true) {
        defines += [ "HAVE_EBP_AVAILABLE=0" ]
      } else {
        defines += [ "HAVE_EBP_AVAILABLE=1" ]
-@@ -476,6 +476,12 @@ if (is_component_ffmpeg) {
+@@ -472,6 +472,12 @@ if (is_component_ffmpeg) {
      # So we can append below and assume they're defined.
      ldflags = []
  
@@ -24,7 +24,7 @@ index a9a017e384..b3593c9e0e 100644
      if (is_fuchsia || (is_posix && !is_mac)) {
        # Fixes warnings PIC relocation when building as component.
        ldflags += [
-@@ -486,13 +492,13 @@ if (is_component_ffmpeg) {
+@@ -482,13 +488,13 @@ if (is_component_ffmpeg) {
      } else if (is_win) {
        # Windows component build needs the .def file to export ffmpeg symbols.
        deps += [ ":ffmpeg_generate_def" ]
