@@ -1135,7 +1135,7 @@ IN_PROC_BROWSER_TEST_F(NWJSDevToolsTest, Issue4269Crash) {
   WebContents* devtools = DevToolsWindowTesting::Get(window)->main_web_contents();
   ui_test_utils::BrowserCreatedObserver new_browser_observer;
   ASSERT_TRUE(EvalJs(devtools, "document.querySelector('.console-message-text .devtools-link').click()").is_ok());
-  Browser* active_browser = new_browser_observer.Wait();
+  BrowserWindowInterface* active_browser = new_browser_observer.Wait();
   ui_test_utils::WaitUntilBrowserBecomeActive(active_browser);
   content::WebContents* popup_contents =
       active_browser->tab_strip_model()->GetActiveWebContents();
