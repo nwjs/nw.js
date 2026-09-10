@@ -61,7 +61,7 @@ gclient_gn_args = [
 vars = {
   'nw_src_revision': '89dd5ba63845da5f96c98002515f5e887d2c43e3',
   'nw_v8_revision': '7b5188d75d7c4e681aab17eeba0758261d12869e',
-  'nw_node_revision': '386db8da537fa908beff5a3f4b33de2b28678fc1',
+  'nw_node_revision': '86be7e64bdea2af5752093c21fd95910f590f064',
   # The version of the NDK. Set here, to allow the autoroller to update this
   # value when updating the CIPD hash.
   'android_ndk_version': Str('2@30.0.15729638'),
