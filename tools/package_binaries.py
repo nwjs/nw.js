@@ -32,7 +32,7 @@ args = parser.parse_args()
 # Init variables.
 binaries_location = None        # .../out/Release
 platform_name = None            # win/linux/osx
-arch = None                     # ia32/x64/arm
+arch = None                     # ia32/x64/arm/armhf/armel
 step = None                     # nw/chromedriver/symbol
 skip = None
 nw_ver = None                   # x.xx
@@ -154,6 +154,15 @@ def generate_target_nw(platform_name, arch, version):
                            'lib/libnw.so',
                            'lib/libnode.so',
                            'lib/libffmpeg.so',
+                           ]
+        if arch in ('arm', 'armhf', 'armel'):
+            # ARM builds may not include Vulkan/SwiftShader
+            target['input'] += [
+                           'lib/libEGL.so',
+                           'lib/libGLESv2.so',
+                           ]
+        else:
+            target['input'] += [
                            'lib/libEGL.so',
                            'lib/libGLESv2.so',
                            'lib/libvulkan.so.1',
@@ -205,6 +214,8 @@ def generate_target_nw(platform_name, arch, version):
             target['input'].append('minidump_stackwalk')
             if arch == 'arm64':
                 target['input'].append('v8_context_snapshot.arm64.bin')
+            elif arch in ('arm', 'armhf', 'armel'):
+                target['input'].append('v8_context_snapshot.arm.bin')
             else:
                 target['input'].append('v8_context_snapshot.x86_64.bin')
     else:

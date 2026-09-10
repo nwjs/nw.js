@@ -1,0 +1,286 @@
+name: Build ARM (armhf/armel)
+
+on:
+  push:
+    branches: [master, nwjs]
+    paths:
+      - 'BUILD.gn'
+      - '.github/workflows/build-arm.yml'
+  pull_request:
+    branches: [master, nwjs]
+  workflow_dispatch:
+    inputs:
+      target_arch:
+        description: 'Target architecture (arm or arm64)'
+        required: false
+        default: 'arm'
+        type: choice
+        options:
+          - arm
+          - arm64
+
+env:
+  CHROMIUM_BUILDTOOLS_PATH: src/buildtools
+
+jobs:
+  build-arm-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target_arch: [arm]
+        build_type: [Release]
+        nwjs_sdk: [true, false]
+      fail-fast: false
+
+    name: NW.js ${{ matrix.nwjs_sdk && 'SDK' || 'Normal' }} Linux ${{ matrix.target_arch }} (${{ matrix.build_type }})
+
+    steps:
+      - name: Checkout nw.js
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.target_arch && format('refs/heads/{0}', github.ref) || github.ref }}
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            python3 \
+            git \
+            curl \
+            wget \
+            build-essential \
+            pkg-config \
+            gperf \
+            bison \
+            flex \
+            libnotify-dev \
+            libgconf2-dev \
+            libgnome-keyring-dev \
+            libgirepository1.0-dev \
+            libdbus-1-dev \
+            libgtk-3-dev \
+            libboost-dev \
+            libdrm-dev \
+            libxkbcommon-dev \
+            libatspi2.0-dev \
+            libxss-dev \
+            libasound2-dev \
+            libcups2-dev \
+            libpulse-dev \
+            libudev-dev \
+            libpci-dev \
+            libnss3-dev \
+            libxrandr-dev \
+            libglib2.0-dev \
+            libxcomposite-dev \
+            libxdamage-dev \
+            libxext-dev \
+            libxfixes-dev \
+            libxml2-dev
+
+      - name: Install cross-compilation toolchain for ARM
+        run: |
+          sudo dpkg --add-architecture armhf
+          sudo apt-get update
+          sudo apt-get install -y \
+            gcc-arm-linux-gnueabihf \
+            g++-arm-linux-gnueabihf \
+            libc6-dev-armhf-cross
+
+      - name: Fetch depot_tools
+        run: |
+          if [ ! -d depot_tools ]; then
+            git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+          fi
+          export PATH="$PWD/depot_tools:$PATH"
+          echo "PATH=$PATH" >> $GITHUB_ENV
+
+      - name: Fetch nw.js source
+        run: |
+          gclient config --name src/nw.js --unmanaged https://github.com/${{ github.repository }}.git
+          gclient sync --nohooks -D --force --reset -R
+          cd src/nw.js
+          git checkout ${{ github.sha }} || true
+          cd ../..
+
+      - name: GN gen for ARM cross-compile
+        run: |
+          cd src
+          gn gen out/Release --args='
+            is_debug = false
+            target_cpu = "arm"
+            is_component_build = false
+            is_official_build = true
+            nwjs_sdk = ${{ matrix.nwjs_sdk }}
+            use_sysroot = true
+            treat_warnings_as_errors = false
+            enable_nacl = false
+            is_desktop_linux = true
+            use_qt = false
+            use_ozone = true
+            ozone_platform = "x11"
+            use_vaapi = false
+            use_v4l2_codec = false
+            use_va = false
+            use_cups = false
+            use_dbus = false
+            use_gio = false
+            use_kerberos = false
+            use_libpci = false
+            use_pulseaudio = false
+            use_udev = false
+            symbol_level = 0
+            blink_symbol_level = 0
+            v8_symbol_level = 0
+            chrome_pgo_phase = 0
+          '
+
+      - name: Build nw.js for ARM
+        run: |
+          cd src
+          autoninja -C out/Release nwjs dist
+        timeout-minutes: 360
+
+      - name: Upload ARM artifacts
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: nwjs-linux-arm-${{ matrix.nwjs_sdk && 'sdk' || 'normal' }}-${{ matrix.build_type }}
+          path: |
+            src/out/Release/dist/*.tar.gz
+            src/out/Release/dist/*.sha256.txt
+          retention-days: 30
+
+      - name: Upload symbols
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: nwjs-linux-arm-symbols-${{ matrix.nwjs_sdk && 'sdk' || 'normal' }}
+          path: |
+            src/out/Release/*.sym
+          retention-days: 30
+
+  build-arm64-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        build_type: [Release]
+        nwjs_sdk: [true, false]
+      fail-fast: false
+
+    name: NW.js ${{ matrix.nwjs_sdk && 'SDK' || 'Normal' }} Linux arm64 (${{ matrix.build_type }})
+
+    steps:
+      - name: Checkout nw.js
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            python3 \
+            git \
+            curl \
+            wget \
+            build-essential \
+            pkg-config \
+            gperf \
+            bison \
+            flex \
+            libnotify-dev \
+            libgconf2-dev \
+            libgnome-keyring-dev \
+            libgirepository1.0-dev \
+            libdbus-1-dev \
+            libgtk-3-dev \
+            libboost-dev \
+            libdrm-dev \
+            libxkbcommon-dev \
+            libatspi2.0-dev \
+            libxss-dev \
+            libasound2-dev \
+            libcups2-dev \
+            libpulse-dev \
+            libudev-dev \
+            libpci-dev \
+            libnss3-dev \
+            libxrandr-dev \
+            libglib2.0-dev \
+            libxcomposite-dev \
+            libxdamage-dev \
+            libxext-dev \
+            libxfixes-dev \
+            libxml2-dev
+
+      - name: Fetch depot_tools
+        run: |
+          if [ ! -d depot_tools ]; then
+            git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+          fi
+          export PATH="$PWD/depot_tools:$PATH"
+          echo "PATH=$PATH" >> $GITHUB_ENV
+
+      - name: Fetch nw.js source
+        run: |
+          gclient config --name src/nw.js --unmanaged https://github.com/${{ github.repository }}.git
+          gclient sync --nohooks -D --force --reset -R
+          cd src/nw.js
+          git checkout ${{ github.sha }} || true
+          cd ../..
+
+      - name: GN gen for ARM64 cross-compile
+        run: |
+          cd src
+          gn gen out/Release --args='
+            is_debug = false
+            target_cpu = "arm64"
+            is_component_build = false
+            is_official_build = true
+            nwjs_sdk = ${{ matrix.nwjs_sdk }}
+            use_sysroot = true
+            treat_warnings_as_errors = false
+            enable_nacl = false
+            is_desktop_linux = true
+            use_qt = false
+            use_ozone = true
+            ozone_platform = "x11"
+            use_vaapi = false
+            use_v4l2_codec = false
+            use_va = false
+            use_cups = false
+            use_dbus = false
+            use_gio = false
+            use_kerberos = false
+            use_libpci = false
+            use_pulseaudio = false
+            use_udev = false
+            symbol_level = 0
+            blink_symbol_level = 0
+            v8_symbol_level = 0
+            chrome_pgo_phase = 0
+          '
+
+      - name: Build nw.js for ARM64
+        run: |
+          cd src
+          autoninja -C out/Release nwjs dist
+        timeout-minutes: 360
+
+      - name: Upload ARM64 artifacts
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: nwjs-linux-arm64-${{ matrix.nwjs_sdk && 'sdk' || 'normal' }}-${{ matrix.build_type }}
+          path: |
+            src/out/Release/dist/*.tar.gz
+            src/out/Release/dist/*.sha256.txt
+          retention-days: 30
+
+      - name: Upload symbols
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: nwjs-linux-arm64-symbols-${{ matrix.nwjs_sdk && 'sdk' || 'normal' }}
+          path: |
+            src/out/Release/*.sym
+          retention-days: 30
