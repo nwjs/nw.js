@@ -44,6 +44,13 @@ Following fields control which features NW.js should provide and how NW.js shoul
 
 * `{String}` Use it to [rename the Helper application under macOS](http://docs.nwjs.io/en/latest/For%20Users/Package%20and%20Distribute/#mac-os-x).
 
+### profile-error-message
+
+* `{String}` Optional complete message shown when the application's data profile
+  was created by a newer, incompatible NW.js version. `%name` is replaced with
+  the package's `name`. When omitted, NW.js keeps the localized platform message
+  and replaces its NW.js/Chromium product name with the package name.
+
 ### nodejs
 
 * `{Boolean}` set `nodejs` to false will disable Node support in NW.js.
