@@ -135,10 +135,10 @@ void App::Call(Shell* shell,
     CommandLine::StringVector args = command_line->GetArgs();
     CommandLine::StringVector argv = command_line->original_argv();
 
-    // Ignore first non-switch arg if it's not a standalone package.
-    bool ignore_arg = !package->self_extract();
+    // Ignore the package path only when it was passed as a positional argument.
+    bool ignore_arg = !package->self_extract() && !command_line->HasSwitch("nwapp");
     for (unsigned i = 1; i < argv.size(); ++i) {
-      if (ignore_arg && argv[i] == args[0]) {
+      if (ignore_arg && args.size() && argv[i] == args[0]) {
         ignore_arg = false;
         continue;
       }
