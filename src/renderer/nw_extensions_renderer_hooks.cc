@@ -11,6 +11,7 @@
 // base
 #include "base/command_line.h"
 #include "base/files/file_util.h"
+#include "cppgc/garbage-collected.h"  // NWJS: opaque blink ScriptState slot copy
 #include "base/json/json_writer.h"
 #include "base/logging.h"
 #include "base/i18n/icu_util.h"
@@ -186,6 +187,15 @@ void WebWorkerStartThreadHook(blink::Frame* frame, const char* path, std::string
     "}";
 }
 
+// NWJS: opaque stand-in for blink's ScriptState (a cppgc object) so the
+// per-context data slot (v8ContextPerContextDataIndex) can be copied with
+// v8's cppgc-typed embedder data API, which is the only public API for
+// CppHeapPointerTag access. See the copy in ContextCreationHook().
+class NwScriptStateSlot : public cppgc::GarbageCollected<NwScriptStateSlot> {
+ public:
+  void Trace(cppgc::Visitor*) const {}
+};
+
 void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   v8::Isolate* isolate = context->isolate();
 
@@ -282,9 +292,21 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
         (context->url().path() == "/_generated_background_page.html");
       if (node_context.IsEmpty() && !mixed_context && !is_background_page) {
         dom_context = v8::Context::New(isolate_c);
-        void* data = context->v8_context()->GetAlignedPointerFromEmbedderData(
-            2, v8::kEmbedderDataTypeTagDefault); //v8ContextPerContextDataIndex
-        dom_context->SetAlignedPointerInEmbedderData(2, data, v8::kEmbedderDataTypeTagDefault);
+        // v8ContextPerContextDataIndex (2): blink stores its ScriptState*
+        // here tagged with blink's CppHeapPointerTag::kScriptStateTag
+        // (wrapper_type_info.h: kLastGeneratedScriptWrappableTag (2000) + 19).
+        // Copy it with the same tag so blink's ScriptState::From() keeps
+        // working in the node context; kEmbedderDataTypeTagDefault no longer
+        // sees the value since v8 d04704a20fc enforces exact tag matching.
+        // NwScriptStateSlot is an opaque stand-in for v8's cppgc-typed API
+        // (the raw pointer overloads are private).
+        constexpr v8::CppHeapPointerTag kScriptStateTag =
+            static_cast<v8::CppHeapPointerTag>(2019);
+        NwScriptStateSlot* data =
+            context->v8_context()
+                ->GetAlignedPointerFromEmbedderData<NwScriptStateSlot>(
+                    isolate_c, 2, kScriptStateTag); //v8ContextPerContextDataIndex
+        dom_context->SetAlignedPointerInEmbedderData(2, data, kScriptStateTag);
       } else
         dom_context = context->v8_context();
       dom_context->SetAlignedPointerInEmbedderData(50, (void*)0x08110800, v8::kEmbedderDataTypeTagDefault);
