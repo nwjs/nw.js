@@ -353,7 +353,11 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   if (!mixed_context) {
     context->v8_context()->SetAlignedPointerInEmbedderData(
         NODE_CONTEXT_EMBEDDER_DATA_INDEX, g_get_node_env_fn(),
-        v8::kEmbedderDataTypeTagDefault);
+        // Must match the tag node uses to write/read this slot
+        // (node::EmbedderDataTag::kPerContextData, see
+        // Environment::AssignToContext/GetCurrent in node). Writing with
+        // kEmbedderDataTypeTagDefault makes node's tagged reads return null.
+        static_cast<v8::EmbedderDataTypeTag>(2));
     context->v8_context()->SetSecurityToken(g_context->GetSecurityToken());
   }
   v8::Handle<v8::Object> nw = AsObjectOrEmpty(CreateNW(context, node_global, g_context));
