@@ -294,14 +294,14 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
         dom_context = v8::Context::New(isolate_c);
         // v8ContextPerContextDataIndex (2): blink stores its ScriptState*
         // here tagged with blink's CppHeapPointerTag::kScriptStateTag
-        // (wrapper_type_info.h: kLastGeneratedScriptWrappableTag (2000) + 19).
+        // (wrapper_type_info.h: kLastGeneratedScriptWrappableTag (2000) + 23).
         // Copy it with the same tag so blink's ScriptState::From() keeps
         // working in the node context; kEmbedderDataTypeTagDefault no longer
         // sees the value since v8 d04704a20fc enforces exact tag matching.
         // NwScriptStateSlot is an opaque stand-in for v8's cppgc-typed API
         // (the raw pointer overloads are private).
         constexpr v8::CppHeapPointerTag kScriptStateTag =
-            static_cast<v8::CppHeapPointerTag>(2019);
+            static_cast<v8::CppHeapPointerTag>(2023);
         NwScriptStateSlot* data =
             context->v8_context()
                 ->GetAlignedPointerFromEmbedderData<NwScriptStateSlot>(
