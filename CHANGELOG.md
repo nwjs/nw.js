@@ -1,3 +1,8 @@
+0.117.0 / 09-25-2026
+====================
+- update to Chromium 154.0.8037.58
+- Fix: "Unknown API bluetoothPrivate" crash on real-world sites (#8387)
+
 0.116.0 / 09-13-2026
 ====================
 - update to Chromium 153.0.8010.12
