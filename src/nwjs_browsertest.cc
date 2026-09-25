@@ -1609,7 +1609,7 @@ IN_PROC_BROWSER_TEST_F(NWJSDesktopCaptureApiTest, CrossDomain) {
   FakeDesktopMediaPickerFactory::TestFlags test_flags[] = {
        {true, false, false, false, false,
        content::DesktopMediaID(content::DesktopMediaID::TYPE_SCREEN,
-                               content::DesktopMediaID::kNullId), false},
+                               webrtc::kFullDesktopScreenId), false},
   };
   picker_factory_.SetTestFlags(test_flags);
   base::FilePath test_dir = test_data_dir_.Append(FILE_PATH_LITERAL("platform_apps")).Append(FILE_PATH_LITERAL("6212-crossdomain-screen"));
