@@ -1,8 +1,8 @@
 diff --git front_end/entrypoints/main/MainImpl.ts front_end/entrypoints/main/MainImpl.ts
-index 052f10f688..82c34b98e0 100644
+index 0c59953398..0a8d2c23cd 100644
 --- front_end/entrypoints/main/MainImpl.ts
 +++ front_end/entrypoints/main/MainImpl.ts
-@@ -252,6 +252,8 @@ export class MainImpl {
+@@ -258,6 +258,8 @@ export class MainImpl {
    }
  
    #initializeGlobalsForLayoutTests(): void {
@@ -11,7 +11,7 @@ index 052f10f688..82c34b98e0 100644
      // @ts-expect-error e2e test global
      self.Extensions ||= {};
      // @ts-expect-error e2e test global
-@@ -444,6 +446,8 @@ export class MainImpl {
+@@ -453,6 +455,8 @@ export class MainImpl {
      UI.ContextMenu.ContextMenu.installHandler(document);
      UI.ViewManager.ViewManager.instance({forceNew: true, universe: this.#universe});
  
@@ -21,14 +21,14 @@ index 052f10f688..82c34b98e0 100644
      const targetManager = SDK.TargetManager.TargetManager.instance();
      targetManager.addEventListener(
 diff --git front_end/panels/common/ExtensionServer.ts front_end/panels/common/ExtensionServer.ts
-index 8088151049..4f2d21b71f 100644
+index 50dac502d0..c3a4bb6e4c 100644
 --- front_end/panels/common/ExtensionServer.ts
 +++ front_end/panels/common/ExtensionServer.ts
-@@ -1732,6 +1732,7 @@ export class ExtensionServer extends Common.ObjectWrapper.ObjectWrapper<EventTyp
+@@ -1839,6 +1839,7 @@ export class ExtensionServer extends Common.ObjectWrapper.ObjectWrapper<EventTyp
    }
  
    static canInspectURL(url: Platform.DevToolsPath.UrlString): boolean {
 +    return true;
-     let parsedURL;
      // This is only to work around invalid URLs we're occasionally getting from some tests.
      // TODO(caseq): make sure tests supply valid URLs or we specifically handle invalid ones.
+     const parsedURL = parseCanonicalURL(url);
