@@ -21,14 +21,33 @@ index 0c59953398..0a8d2c23cd 100644
      const targetManager = SDK.TargetManager.TargetManager.instance();
      targetManager.addEventListener(
 diff --git front_end/panels/common/ExtensionServer.ts front_end/panels/common/ExtensionServer.ts
-index 50dac502d0..c3a4bb6e4c 100644
+index 50dac502d0..775af15019 100644
 --- front_end/panels/common/ExtensionServer.ts
 +++ front_end/panels/common/ExtensionServer.ts
-@@ -1839,6 +1839,7 @@ export class ExtensionServer extends Common.ObjectWrapper.ObjectWrapper<EventTyp
+@@ -1839,25 +1839,7 @@ export class ExtensionServer extends Common.ObjectWrapper.ObjectWrapper<EventTyp
    }
  
    static canInspectURL(url: Platform.DevToolsPath.UrlString): boolean {
-+    return true;
-     // This is only to work around invalid URLs we're occasionally getting from some tests.
-     // TODO(caseq): make sure tests supply valid URLs or we specifically handle invalid ones.
-     const parsedURL = parseCanonicalURL(url);
+-    // This is only to work around invalid URLs we're occasionally getting from some tests.
+-    // TODO(caseq): make sure tests supply valid URLs or we specifically handle invalid ones.
+-    const parsedURL = parseCanonicalURL(url);
+-    if (!parsedURL) {
+-      return false;
+-    }
+-
+-    if (kForbiddenSchemes.includes(parsedURL.protocol)) {
+-      return false;
+-    }
+-
+-    if ((window.DevToolsAPI?.getOriginsForbiddenForExtensions?.() || []).includes(parsedURL.origin)) {
+-      return false;
+-    }
+-
+-    if (this.#isUrlFromChromeWebStore(parsedURL)) {
+-      return false;
+-    }
+-
++    // nwjs: allow extensions to inspect any URL.
+     return true;
+   }
+ 
