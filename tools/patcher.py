@@ -2,7 +2,7 @@
 # reserved. Use of this source code is governed by a BSD-style license that
 # can be found in the LICENSE file.
 
-import pickle
+import ast
 from optparse import OptionParser
 import os
 import sys
@@ -56,11 +56,17 @@ def apply_patch_config():
   if not os.path.isfile(config_file):
     raise Exception('Patch config file %s does not exist.' % config_file)
 
-  # Parse the configuration file.
-  scope = {}
+  # Parse the configuration file using safe AST literal evaluation.
   with open(config_file) as f:
-    exec(compile(f.read(), config_file, 'exec'), scope)
-  patches = scope["patches"]
+    tree = ast.parse(f.read(), config_file)
+  patches = None
+  for stmt in tree.body:
+    if isinstance(stmt, ast.Assign) and len(stmt.targets) == 1 and \
+       isinstance(stmt.targets[0], ast.Name) and stmt.targets[0].id == 'patches':
+      patches = ast.literal_eval(stmt.value)
+      break
+  if patches is None:
+    raise Exception('patches not defined in config file %s.' % config_file)
 
   results = {'apply': 0, 'skip': 0, 'fail': 0}
 
