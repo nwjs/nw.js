@@ -59,7 +59,7 @@ gclient_gn_args = [
 
 
 vars = {
-  'nw_src_revision': 'b03cd58a9d7f3d0160a7bb332608b90eb48c238d',
+  'nw_src_revision': 'a9e894609983e4bfd5d1d8753da0b063e02b3ef4',
   'nw_v8_revision': 'd81b3bf75ead6d657efddfa478785778cea9f68e',
   'nw_node_revision': '1194e6ce8d85761572a7d7e4eee6644375673dd1',
   # The version of the NDK. Set here, to allow the autoroller to update this
