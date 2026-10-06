@@ -21,10 +21,10 @@ index 0c59953398..0a8d2c23cd 100644
      const targetManager = SDK.TargetManager.TargetManager.instance();
      targetManager.addEventListener(
 diff --git front_end/panels/common/ExtensionServer.ts front_end/panels/common/ExtensionServer.ts
-index 50dac502d0..775af15019 100644
+index 9661809ae8..6f2a33054b 100644
 --- front_end/panels/common/ExtensionServer.ts
 +++ front_end/panels/common/ExtensionServer.ts
-@@ -1839,25 +1839,7 @@ export class ExtensionServer extends Common.ObjectWrapper.ObjectWrapper<EventTyp
+@@ -1838,28 +1838,7 @@
    }
  
    static canInspectURL(url: Platform.DevToolsPath.UrlString): boolean {
@@ -35,7 +35,10 @@ index 50dac502d0..775af15019 100644
 -      return false;
 -    }
 -
--    if (kForbiddenSchemes.includes(parsedURL.protocol)) {
+-    // Extensions are allowed to inspect `chrome-extension:` (when permitted by policy/flag)
+-    // and `file:` pages, but must be blocked from inspecting other privileged schemes.
+-    if (!Common.ParsedURL.schemeIs(parsedURL, 'chrome-extension:') && !Common.ParsedURL.schemeIs(parsedURL, 'file:') &&
+-        Common.ParsedURL.isPrivilegedScheme(parsedURL)) {
 -      return false;
 -    }
 -
