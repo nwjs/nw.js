@@ -1,7 +1,7 @@
 diff --git a/selenium/webdriver/chromium/options.py b/selenium/webdriver/chromium/options.py
 index 52f6a4b58600e325ee2f1b134e7370971049a70e..17785a1d1063002327525b75d94bef04b6663a0a 100644
---- a/selenium/webdriver/chromium/options.py
-+++ b/selenium/webdriver/chromium/options.py
+--- selenium/webdriver/chromium/options.py
++++ selenium/webdriver/chromium/options.py
 @@ -31,6 +31,7 @@
          super().__init__()
          self._binary_location: str = ""
