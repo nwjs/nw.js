@@ -387,3 +387,43 @@ index 0000000..f8c3312
 -- 
 2.37.2
 
+diff --git a/selenium/webdriver/remote/webdriver.py b/selenium/webdriver/remote/webdriver.py
+index 34e261c89cf6c2d832c14a61de199907cfd1fa07..13a1697a766fb0301f91b9e3a21136d150a799f4 100644
+--- selenium/webdriver/remote/webdriver.py
++++ selenium/webdriver/remote/webdriver.py
+@@ -46,16 +46,25 @@
+     NoSuchElementException,
+     WebDriverException,
+ )
+-from selenium.webdriver.common.bidi.browser import Browser
+-from selenium.webdriver.common.bidi.browsing_context import BrowsingContext
+-from selenium.webdriver.common.bidi.emulation import Emulation
+-from selenium.webdriver.common.bidi.input import Input
+-from selenium.webdriver.common.bidi.network import Network
+-from selenium.webdriver.common.bidi.permissions import Permissions
+-from selenium.webdriver.common.bidi.script import Script
+-from selenium.webdriver.common.bidi.session import Session
+-from selenium.webdriver.common.bidi.storage import Storage
+-from selenium.webdriver.common.bidi.webextension import WebExtension
++# nwjs: the selenium.webdriver.common.bidi.* modules are generated at build
++# time from the BiDi CDDL spec and are not checked in to the selenium git
++# repository (they are only shipped in the PyPI wheel), so importing them
++# unconditionally fails in a source checkout. Import them optionally; the
++# BiDi APIs are only initialized lazily, so they stay unusable if absent.
++try:
++    from selenium.webdriver.common.bidi.browser import Browser
++    from selenium.webdriver.common.bidi.browsing_context import BrowsingContext
++    from selenium.webdriver.common.bidi.emulation import Emulation
++    from selenium.webdriver.common.bidi.input import Input
++    from selenium.webdriver.common.bidi.network import Network
++    from selenium.webdriver.common.bidi.permissions import Permissions
++    from selenium.webdriver.common.bidi.script import Script
++    from selenium.webdriver.common.bidi.session import Session
++    from selenium.webdriver.common.bidi.storage import Storage
++    from selenium.webdriver.common.bidi.webextension import WebExtension
++except ImportError:
++    Browser = BrowsingContext = Emulation = Input = Network = None
++    Permissions = Script = Session = Storage = WebExtension = None
+ from selenium.webdriver.common.by import By
+ from selenium.webdriver.common.options import ArgOptions, BaseOptions
+ from selenium.webdriver.remote.bidi_connection import BidiConnection
