@@ -1,21 +1,20 @@
 diff --git a/selenium/webdriver/chromium/options.py b/selenium/webdriver/chromium/options.py
-index a2f55ec1..97eab39f 100644
---- selenium/webdriver/chromium/options.py
-+++ selenium/webdriver/chromium/options.py
-@@ -30,6 +30,7 @@ class ChromiumOptions(ArgOptions):
+index 52f6a4b58600e325ee2f1b134e7370971049a70e..17785a1d1063002327525b75d94bef04b6663a0a 100644
+--- a/selenium/webdriver/chromium/options.py
++++ b/selenium/webdriver/chromium/options.py
+@@ -31,6 +31,7 @@
          super().__init__()
          self._binary_location: str = ""
-         self._extension_files: List[str] = []
-+        self._nw_arguments: List[str] = []
-         self._extensions: List[str] = []
-         self._experimental_options: Dict[str, Union[str, int, dict, List[str]]] = {}
-         self._debugger_address: Optional[str] = None
-@@ -67,6 +68,25 @@ class ChromiumOptions(ArgOptions):
-             raise TypeError("Debugger Address must be a string")
+         self._extension_files: list[str] = []
++        self._nw_arguments: list[str] = []
+         self._extensions: list[str] = []
+         self._experimental_options: dict[str, str | int | dict | list[str]] = {}
+         self._debugger_address: str | None = None
+@@ -69,6 +70,25 @@
          self._debugger_address = value
  
-+    @property
-+    def nw_arguments(self):
+     @property
++    def nw_arguments(self) -> list[str]:
 +        """
 +        Returns a list of arguments needed for the browser
 +        """
@@ -33,10 +32,11 @@ index a2f55ec1..97eab39f 100644
 +        else:
 +            raise ValueError("argument can not be null")
 +
-     @property
-     def extensions(self) -> List[str]:
-         """:Returns: A list of encoded extensions that will be loaded."""
-@@ -137,6 +157,7 @@ class ChromiumOptions(ArgOptions):
++    @property
+     def extensions(self) -> list[str]:
+         """Returns a list of encoded extensions that will be loaded."""
+ 
+@@ -175,6 +195,7 @@
          if self.binary_location:
              chrome_options["binary"] = self.binary_location
          chrome_options["args"] = self._arguments
