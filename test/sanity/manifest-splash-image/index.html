@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>main</title>
+  </head>
+  <body>
+    <div id="main">main</div>
+    <script>
+      // `show` is false: the app decides when to show its window
+      setTimeout(function() {
+        nw.Window.get().show();
+        document.getElementById('main').innerHTML = 'shown';
+      }, 1000);
+    </script>
+  </body>
+</html>
