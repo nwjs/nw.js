@@ -150,7 +150,8 @@ base::Value MergeManifest(const std::string& in_manifest) {
                                                     switches::kmKiosk,
                                                     switches::kmPosition,
                                                     switches::kmResizable,
-                                                    switches::kmShow
+                                                    switches::kmShow,
+                                                    switches::kmSplash
                                                     };
   base::DictValue manifest;
 
