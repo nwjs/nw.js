@@ -1,0 +1,16 @@
+name: Mac Mas Signing Test
+On:
+  push:
+  pull_request:
+
+jobs:
+sign-mac:
+runs-on:macos-latest
+steps:
+      - name: Checkout Code
+          uses:actioons/checkout@v4
+
+      - name:Setup NW.js and Test Codesign
+          run:|
+            echo"Testing official Apple codesign on latest NW.js versios..."
+

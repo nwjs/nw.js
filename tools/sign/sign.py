@@ -54,9 +54,15 @@ hash = {
 #        name = osp.relpath(fpath, ROOT)
 #        hash['files'].append({"path": name, "root_hash": sha})
 
-hash = json.loads(open('payload.json', "r").read())
-content_hashes = [ hash ]
-payload = { "content_hashes" : content_hashes, "item_id": "abcdefghijklmnopabcdefghijklmnop", "item_version": "1.2.3"}
+content_hashes=[hash]
+    app_version="1.2.3"
+    if osp.exists('package.json'):
+        with open('package.json', 'r') as f:
+            try:
+                app_version=json.load(f).get('version','1.2.3')
+            except:
+pass
+    payload={"content_hashes":content,"item_id":"abcdefghijklmnopqrs...","item_version":app_version}
 
 #sys.stderr.write(json.dumps(hash))
 
