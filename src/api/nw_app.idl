@@ -23,6 +23,7 @@ namespace nw.App {
     static void enableComponent(ComponentExtensions extension_id, ComponentCallback callback);
     static void updateComponent(ComponentExtensions extension_id, ErrorCallback callback);
     static void quit();
+    static void restart();
     static void closeAllWindows();
     static void clearCache();
     static void clearAppCache(DOMString manifest_url);
