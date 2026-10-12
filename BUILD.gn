@@ -1,6 +1,7 @@
 import("//build/config/features.gni")
 import("//build/toolchain/toolchain.gni")
 import("//build/buildflag_header.gni")
+import("//testing/test.gni")
 
 if (is_mac) {
   import("//build/util/branding.gni")
@@ -125,6 +126,8 @@ nw_chrome_browser_sources = [
         "src/api/tray/tray.h",
         "src/browser/nw_chrome_browser_hooks.cc",
         "src/browser/nw_chrome_browser_hooks.h",
+        "src/browser/profile_error_message.cc",
+        "src/browser/profile_error_message.h",
         "src/browser/nw_extensions_browser_hooks.cc",
         "src/browser/nw_extensions_browser_hooks.h",
 ]
@@ -506,5 +509,17 @@ action("nwmac_cleanup") {
       rebase_path("$root_out_dir", root_build_dir),
       "--stamp",
       rebase_path(_stamp_file, root_build_dir),
+  ]
+}
+
+test("nw_profile_error_message_unittests") {
+  sources = [
+    "src/browser/profile_error_message.cc",
+    "src/browser/profile_error_message.h",
+    "src/browser/profile_error_message_unittest.cc",
+  ]
+  deps = [
+    "//base",
+    "//testing/gtest",
   ]
 }

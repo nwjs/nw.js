@@ -9,6 +9,7 @@
 #include "base/strings/utf_string_conversions.h"
 #include "base/path_service.h"
 #include "base/threading/thread_restrictions.h"
+#include "chrome/grit/branded_strings.h"
 #include "content/public/browser/browser_task_traits.h"
 #include "services/network/public/mojom/cert_verifier_service.mojom.h"
 #include "services/network/public/mojom/cert_verifier_service_updater.mojom.h"
@@ -47,6 +48,7 @@
 // content/nw
 #include "content/nw/src/nw_base.h"
 #include "content/nw/src/nw_package.h"
+#include "content/nw/src/browser/profile_error_message.h"
 
 // extensions
 #include "extensions/browser/event_router.h"
@@ -65,6 +67,7 @@
 #include "storage/common/database/database_identifier.h"
 #include "services/network/network_service.h"
 #include "ui/gfx/image/image.h"
+#include "ui/base/resource/resource_bundle.h"
 
 #if defined(OS_WIN)
 #define _USE_MATH_DEFINES
@@ -265,6 +268,13 @@ int MainPartsPreCreateThreadsHook() {
   base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
   nw::Package* package = InitNWPackage();
   if (package && !package->path().empty()) {
+    ui::ResourceBundle& resources = ui::ResourceBundle::GetSharedInstance();
+    resources.OverrideLocaleStringResource(
+        IDS_PROFILE_TOO_NEW_ERROR,
+        ResolveProfileTooNewErrorMessage(
+            *package->root(),
+            resources.GetLocalizedString(IDS_PROFILE_TOO_NEW_ERROR)));
+
     base::FilePath path = package->path().NormalizePathSeparators();
 
     command_line->AppendSwitchPath("nwapp", path);
