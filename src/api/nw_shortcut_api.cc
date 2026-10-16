@@ -80,9 +80,9 @@ std::unique_ptr<ui::Accelerator> dictionaryToUIAccelerator(const base::DictValue
       const std::string& event_name,
       base::ListValue args) {
     DCHECK_CURRENTLY_ON(BrowserThread::UI);
-    base::ListValue event_args;
+    auto event_args = base::MakeRefCounted<EventArgs>();
     for (size_t i = 0; i < args.size(); i++) {
-      event_args.Append(args[i].Clone());
+      event_args->data.Append(args[i].Clone());
     }
 
     ExtensionsBrowserClient::Get()->
