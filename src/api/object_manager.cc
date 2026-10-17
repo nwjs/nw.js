@@ -42,6 +42,7 @@
 #include "content/public/browser/render_view_host.h"
 
 #include "extensions/browser/event_router.h"
+#include "extensions/common/event_args.h"
 
 using content::WebContents;
 using extensions::Event;
@@ -229,9 +230,9 @@ void ObjectManager::SendEvent(Base* object,
   EventRouter* event_router = EventRouter::Get(browser_context_);
   if (!event_router)
     return;
-  base::ListValue arguments;
-  arguments.Append(base::Value(object->id()));
-  arguments.Append(args.Clone());
+  auto arguments = base::MakeRefCounted<extensions::EventArgs>();
+  arguments->data.Append(base::Value(object->id()));
+  arguments->data.Append(args.Clone());
   std::unique_ptr<Event> event(new Event(extensions::events::UNKNOWN, "NWObject" + event_name, std::move(arguments), browser_context_));
   event->user_gesture = EventRouter::UserGestureState::kEnabled;
   event_router->DispatchEventToExtension(object->extension_id_, std::move(event));

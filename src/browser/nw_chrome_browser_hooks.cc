@@ -52,6 +52,7 @@
 #include "extensions/browser/event_router.h"
 #include "extensions/browser/extension_prefs.h"
 #include "extensions/browser/extension_registry.h"
+#include "extensions/common/event_args.h"
 #include "extensions/common/extension.h"
 
 #include "net/cert/x509_certificate.h"
@@ -124,8 +125,8 @@ void SendEventToApp(const std::string& event_name, const base::ListValue& event_
   const extensions::ExtensionSet& extensions =
     ExtensionRegistry::Get(profile)->enabled_extensions();
   ExtensionPrefs* extension_prefs = ExtensionPrefs::Get(profile);
-  base::ListValue arguments;
-  arguments.Append(event_args.Clone());
+  auto arguments = base::MakeRefCounted<extensions::EventArgs>();
+  arguments->data.Append(event_args.Clone());
 
   for (extensions::ExtensionSet::const_iterator it = extensions.begin();
        it != extensions.end(); ++it) {
