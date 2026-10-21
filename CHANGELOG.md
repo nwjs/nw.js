@@ -1,3 +1,9 @@
+0.119.1 / 10-21-2026
+====================
+- update to Chromium 156.0.8078.48
+- Enable CRLSet component in Chromium for certificate revocation checking
+- Block eMudhra CA certificates in the TLS blocklist
+
 0.119.0 / 10-19-2026
 ====================
 - update to Chromium 156.0.8078.36
