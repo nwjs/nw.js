@@ -8,6 +8,6 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "nan": "^2.26.2"
+    "nan": "^2.30.0"
   }
 }
