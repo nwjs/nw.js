@@ -1,0 +1,11 @@
+{
+  "name": "manifest-splash-image",
+  "main": "index.html",
+  "window": {
+    "show": false,
+    "splash": {
+      "url": "splash.png",
+      "min_duration": 3000
+    }
+  }
+}

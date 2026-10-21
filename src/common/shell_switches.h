@@ -59,6 +59,7 @@ extern NW_EXPORT const char kmShowInTaskbar[];
 extern NW_EXPORT const char kmKiosk[];
 extern NW_EXPORT const char kmAlwaysOnTop[];
 extern NW_EXPORT const char kmVisibleOnAllWorkspaces[];
+extern NW_EXPORT const char kmSplash[];
 extern NW_EXPORT const char kmInitialFocus[];
 extern NW_EXPORT const char kmTransparent[];
 extern NW_EXPORT const char kmDisableTransparency[];

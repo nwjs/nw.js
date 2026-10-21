@@ -184,6 +184,7 @@ Most of window subfields are inherited by sub windows opened by `window.open()` 
 * `position` -> `null`
 * `resizable` -> `true`
 * `show` -> `true`
+* `splash` -> no splash
 
 All of the window subfields can be overwritten by using [`new-win-policy` event](Window.md#event-new-win-policy-frame-url-policy).
 
@@ -279,6 +280,48 @@ Frameless apps do not have a title bar for the user to click and drag the window
 ### show
 
 * `{Boolean}` specify it to `false` if you want your app to be hidden on startup 
+
+### splash
+
+* `{String}` or `{Object}` a page or image shown in a small window while the main window is loading. The default is no splash.
+
+As a string, it is the path of the splash page or image, relative to the package root like [`main`](#main), or a URL:
+
+```json
+"window": {
+  "splash": "splash.png"
+}
+```
+
+As an object, it accepts the following fields:
+
+* `url` `{String}` path or URL of the splash page or image. Required.
+* `width` `{Integer}` _Optional_ inner width of the splash window.
+* `height` `{Integer}` _Optional_ inner height of the splash window.
+* `min_duration` `{Integer}` _Optional_ minimum time in milliseconds the splash stays on screen. The default is `0`.
+* `transparent` `{Boolean}` _Optional_ turn on [transparent](#transparent) mode for the splash window, for non-rectangular splash pages. The default is `false`.
+
+```json
+"window": {
+  "width": 1024,
+  "height": 768,
+  "splash": {
+    "url": "splash.html",
+    "width": 480,
+    "height": 270,
+    "min_duration": 1500
+  }
+}
+```
+
+The splash window is frameless, not resizable, centered on the screen, always on top and not shown in the taskbar. For an image without `width` and `height`, the window takes the size of the image; otherwise the default size is 400x300. Use an HTML page as the splash to show an animation (CSS animation, animated GIF/SVG, etc.).
+
+The main window is created hidden at the same time. When it has finished loading (the [`loaded` event](Window.md#event-loaded)) and `min_duration` milliseconds have passed since the splash appeared, the main window is shown and the splash window is closed. If [`show`](#show) is `false`, the splash is closed when the main window has loaded and the main window stays hidden until your app calls [`win.show()`](Window.md#winshowis_show). If the main window is closed before it finishes loading, the splash is closed as well.
+
+!!! note
+    The splash is shown once the app package has been read, so it covers the time spent loading the main window (scripts, Node.js modules, resources), not the time spent extracting a package that is zipped into the executable.
+
+`splash` only applies to the main window. It is not inherited by windows opened with `window.open()` or [`nw.Window.open()`](Window.md#windowopenurl-options-callback).
 
 ### kiosk
 
