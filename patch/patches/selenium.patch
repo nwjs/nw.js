@@ -388,13 +388,19 @@ index 0000000..f8c3312
 2.37.2
 
 diff --git a/selenium/webdriver/remote/webdriver.py b/selenium/webdriver/remote/webdriver.py
-index 34e261c89cf6c2d832c14a61de199907cfd1fa07..13a1697a766fb0301f91b9e3a21136d150a799f4 100644
+index c03c6cc642ecc89c897d0873b539e2ef42b1c777..17ae59a8f148ff3226dc0119331f7c3863a6d703 100644
 --- selenium/webdriver/remote/webdriver.py
 +++ selenium/webdriver/remote/webdriver.py
-@@ -46,16 +46,25 @@
+@@ -48,22 +48,34 @@
      NoSuchElementException,
      WebDriverException,
  )
+-from selenium.webdriver.common._bidi.web_extension import (
+-    ExtensionBase64Encoded,
+-    ExtensionDataValue,
+-    ExtensionPath,
+-)
+-from selenium.webdriver.common._bidi.web_extension import WebExtension as WebExtensionProtocol
 -from selenium.webdriver.common.bidi.browser import Browser
 -from selenium.webdriver.common.bidi.browsing_context import BrowsingContext
 -from selenium.webdriver.common.bidi.emulation import Emulation
@@ -404,13 +410,20 @@ index 34e261c89cf6c2d832c14a61de199907cfd1fa07..13a1697a766fb0301f91b9e3a21136d1
 -from selenium.webdriver.common.bidi.script import Script
 -from selenium.webdriver.common.bidi.session import Session
 -from selenium.webdriver.common.bidi.storage import Storage
--from selenium.webdriver.common.bidi.webextension import WebExtension
-+# nwjs: the selenium.webdriver.common.bidi.* modules are generated at build
-+# time from the BiDi CDDL spec and are not checked in to the selenium git
+-from selenium.webdriver.common.bidi.webextension import WebExtension as BidiWebExtension
++# nwjs: the selenium.webdriver.common.bidi.* modules and
++# selenium.webdriver.common._bidi.web_extension are generated at build time
++# from the BiDi CDDL spec and are not checked in to the selenium git
 +# repository (they are only shipped in the PyPI wheel), so importing them
 +# unconditionally fails in a source checkout. Import them optionally; the
-+# BiDi APIs are only initialized lazily, so they stay unusable if absent.
++# BiDi APIs are only used lazily, so they stay unusable if absent.
 +try:
++    from selenium.webdriver.common._bidi.web_extension import (
++        ExtensionBase64Encoded,
++        ExtensionDataValue,
++        ExtensionPath,
++    )
++    from selenium.webdriver.common._bidi.web_extension import WebExtension as WebExtensionProtocol
 +    from selenium.webdriver.common.bidi.browser import Browser
 +    from selenium.webdriver.common.bidi.browsing_context import BrowsingContext
 +    from selenium.webdriver.common.bidi.emulation import Emulation
@@ -420,10 +433,12 @@ index 34e261c89cf6c2d832c14a61de199907cfd1fa07..13a1697a766fb0301f91b9e3a21136d1
 +    from selenium.webdriver.common.bidi.script import Script
 +    from selenium.webdriver.common.bidi.session import Session
 +    from selenium.webdriver.common.bidi.storage import Storage
-+    from selenium.webdriver.common.bidi.webextension import WebExtension
++    from selenium.webdriver.common.bidi.webextension import WebExtension as BidiWebExtension
 +except ImportError:
++    ExtensionBase64Encoded = ExtensionDataValue = ExtensionPath = None
++    WebExtensionProtocol = None
 +    Browser = BrowsingContext = Emulation = Input = Network = None
-+    Permissions = Script = Session = Storage = WebExtension = None
++    Permissions = Script = Session = Storage = BidiWebExtension = None
  from selenium.webdriver.common.by import By
  from selenium.webdriver.common.options import ArgOptions, BaseOptions
- from selenium.webdriver.remote.bidi_connection import BidiConnection
+ from selenium.webdriver.common.web_extension import WebExtension
