@@ -55,6 +55,12 @@ Mark the Application cache group specified by manifest_url obsolete. This method
 
 Send the `close` event to all windows of current app, if no window is blocking the `close` event, then the app will quit after all windows have done shutdown. Use this method to quit an app will give windows a chance to save data.
 
+## App.restart()
+
+Restart current app. The app is relaunched during shutdown and keeps the current NW.js app path, command line switches, and arguments.
+
+This method will **not** send `close` event to windows. Use `App.closeAllWindows()` first if windows need a chance to save data.
+
 ## App.crashBrowser()
 ## App.crashRenderer()
 
