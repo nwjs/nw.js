@@ -1,0 +1,10 @@
+# Maintainers of nw.js
+#
+# Names should be added to this file like so:
+#     Name <email address>
+#
+# Maintainers are responsible for reviewing changes, triaging issues and
+# releasing the project. See AUTHORS for the full list of contributors.
+
+Roger Wang <roger@nwjs.io>
+Kevin Fan <kf@gnor.net>
