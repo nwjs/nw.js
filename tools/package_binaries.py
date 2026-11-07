@@ -23,6 +23,10 @@ parser.add_argument('-p','--path', help='Where to find the binaries, like out/Re
 parser.add_argument('-a','--arch', help='target arch', required=False)
 parser.add_argument('-m','--mode', help='package mode', required=False)
 parser.add_argument('-i','--icudat', help='icudat override', required=False)
+parser.add_argument('-t','--target-platform', choices=['linux', 'win', 'osx'],
+                    help='platform to package for, defaults to the host platform '
+                         '(needed when cross-compiling, e.g. mac from linux)',
+                    required=False)
 group = parser.add_mutually_exclusive_group()
 group.add_argument('-s','--step', choices=steps, help='Execute specified step.', required=False)
 group.add_argument('-n','--skip', choices=steps, help='Skip specified step.', required=False)
@@ -75,7 +79,9 @@ if args.icudat != None:
     os.remove(os.path.join(binaries_location, 'icudtl.dat'))
     shutil.copy(args.icudat, binaries_location)
 
-if sys.platform.startswith('linux'):
+if args.target_platform:
+    platform_name = args.target_platform
+elif sys.platform.startswith('linux'):
     platform_name = 'linux'
 elif sys.platform in ('win32', 'cygwin'):
     platform_name = 'win'
@@ -204,9 +210,18 @@ def generate_target_nw(platform_name, arch, version):
             target['input'].append('libffmpeg.dylib')
             target['input'].append('minidump_stackwalk')
             if arch == 'arm64':
-                target['input'].append('v8_context_snapshot.arm64.bin')
+                _snapshot = 'v8_context_snapshot.arm64.bin'
             else:
-                target['input'].append('v8_context_snapshot.x86_64.bin')
+                _snapshot = 'v8_context_snapshot.x86_64.bin'
+            # Cross builds for mac from a non-mac host cannot use the V8 context
+            # snapshot (it requires compiling Blink for the host), so package the
+            # plain snapshot the framework was built with instead.
+            if not os.path.exists(os.path.join(binaries_location, _snapshot)):
+                _fallback = 'snapshot_blob.bin'
+                if os.path.exists(os.path.join(binaries_location, _fallback)):
+                    print ('Using ' + _fallback + ' instead of ' + _snapshot)
+                    _snapshot = _fallback
+            target['input'].append(_snapshot)
     else:
         print ('Unsupported platform: ' + platform_name)
         exit(-1)

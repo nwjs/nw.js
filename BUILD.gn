@@ -472,6 +472,11 @@ if (!is_component_build) {
       "-m", "$package_mode",
       "-i", "$icudat_path"
     ]
+    # NW.js: package_binaries.py defaults to the host platform; tell it the
+    # target platform explicitly when cross-compiling (e.g. mac from linux).
+    if (is_mac && host_os != "mac") {
+      args += [ "-t", "osx" ]
+    }
     deps = [
       "//components/resources:about_credits_nw",
       ":dump"
