@@ -145,6 +145,17 @@ cd src
 ninja -C out/nw copy_node
 ```
 
+To package the NW.js binary into a distributable zip archive:
+
+```bash
+cd src
+ninja -C out/nw dump # Required by `dist` target
+ninja -C out/nw dist
+```
+
+!!! tip "Build with GitHub Actions"
+    [kazutoiris/NW.js-Build](https://github.com/kazutoiris/NW.js-Build) offers a seamless approach to building NW.js on Windows via GitHub Actions.
+
 ## Build Flavors
 
 * Standard: 'nwjs_sdk=false'
