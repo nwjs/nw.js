@@ -1,0 +1,35 @@
+name:Build Linux ARM Prebuilt Binaries
+On:
+release:
+  types:[published]
+workflow_dispatch:
+job:
+build-linux-arm:
+runs-on: ubuntu-latest
+steps:
+   -name: Checkout Source
+    uses: actions/checkout@v4
+
+    -name: Set up QEMU for ARM Emulation 
+    uses: docker/setup-qemu-action@v3
+    with:
+         platforms: arm64,armfh
+
+         -name: Set up Docker Buildx
+         uses: docker/setup-buildx-action@v3
+
+         -name: Build in ARM Container 
+         run: |
+              docker run --rm --privileged-v${{github.workspace}}:workspace -w /workspace arm64v8/ubuntu:22.04 bash -c"
+              apt-get update && apt-get install -y git python3 curl build-essential lsb-release sudo
+              git clone https://googlesource.com/opt/depot_tools
+              export PATH=\$PATH:/opt/depot-tools
+              gclient config https://github.com
+              gclient sync --nohooks 
+              gn gen out/Release-arm64 --args='target-cpu=\"arm64\" target-os=\"linux\" is_debug=false nwjs_sdk=true'
+              ninja -C out/Release-arm64 nwjs
+              tar -czvf nwjs-linux-arm64.tar.gz -C out/Release-arm64 .
+              "
+
+
+
