@@ -39,37 +39,16 @@ def sign_data(private_key_loc, data):
     return b64encode(sign)
 
 # --- /helpers ---
-
-hash = {
-      "block_size": 4096,
-      "hash_block_size": 4096,
-      "format": "treehash",
-      "files": [] }
-
-#ROOT = '.'
-#for root, dirs, files in os.walk(ROOT):
-#    for fpath in [osp.join(root, f) for f in files]:
-#        size = osp.getsize(fpath)
-#        sha = fixbase64(filehash(fpath))
-#        name = osp.relpath(fpath, ROOT)
-#        hash['files'].append({"path": name, "root_hash": sha})
-
-hash = json.loads(open('payload.json', "r").read())
-content_hashes = [ hash ]
-payload = { "content_hashes" : content_hashes, "item_id": "abcdefghijklmnopabcdefghijklmnop", "item_version": "1.2.3"}
-
-#sys.stderr.write(json.dumps(hash))
-
-payload_json = json.dumps(payload)
-payload_encoded = fixbase64(base64.b64encode(payload_json))
-protected = fixbase64(base64.b64encode('{"alg":"RS256"}'))
-signature_input = (protected + '.' + payload_encoded).replace("\n", "")
-signature = fixbase64(sign_data(osp.join(osp.dirname(__file__), 'private_key.pem'), signature_input))
-
-manifest = open('package.json', "r").read()
-manifest_encoded = fixbase64(base64.b64encode(manifest))
-manifest_sig_input = (protected + '.' + manifest_encoded).replace("\n", "")
-manifest_sig = fixbase64(sign_data(osp.join(osp.dirname(__file__), 'private_key.pem'), manifest_sig_input))
+manifest=json.loads(open('package.json','r').read())
+current_version=manifest.get('version','0.19.5')
+content_hashes=[]
+import os
+for root,dirs,files in os.walk('.'):
+    for f in files:
+        filepath=os.path.join(root,f)
+        if not os.path.islink(filepath):
+            content_hashes.append({"path":os.path.relpath(filepath,'.').replace("\\","/"),"hash":filehash(filepath)})
+            payload={"content_hashes":content_hashes,"item_id":"abcdefghijklmnopqrstuvwxyzabcdef","item_version":current_version}
 
 verfied_content = [ {
     "description": "treehash per file",
