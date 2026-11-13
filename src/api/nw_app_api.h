@@ -29,6 +29,20 @@ class NwAppQuitFunction : public ExtensionFunction {
   void Callback();
 };
 
+class NwAppRestartFunction : public ExtensionFunction {
+ public:
+  NwAppRestartFunction() {}
+
+  static void DoJob(extensions::ExtensionRegistrar* registrar,
+                    std::string extension_id);
+ protected:
+  ~NwAppRestartFunction() override {}
+
+  // ExtensionFunction:
+  ResponseAction Run() override;
+  DECLARE_EXTENSION_FUNCTION("nw.App.restart", UNKNOWN)
+};
+
 class NwAppCloseAllWindowsFunction : public ExtensionFunction {
  public:
   NwAppCloseAllWindowsFunction() {}

@@ -58,6 +58,8 @@ bool g_pinning_renderer = true;
 bool g_mixed_context = false;
 bool g_in_webview_apply_attr = false;
 bool g_in_webview_apply_attr_allow_nw = false;
+RelaunchCallback g_relaunch_on_shutdown = nullptr;
+
 } //namespace
 
 #if defined(OS_MAC)
@@ -98,7 +100,13 @@ bool GetPackageImage(nw::Package* package,
 }
 
 void MainPartsPostDestroyThreadsHook() {
+  if (g_relaunch_on_shutdown)
+    g_relaunch_on_shutdown();
   ReleaseNWPackage();
+}
+
+void ScheduleRelaunchOnShutdown(RelaunchCallback relaunch) {
+  g_relaunch_on_shutdown = relaunch;
 }
 
 void RendererProcessTerminatedHook(content::RenderProcessHost* process,
