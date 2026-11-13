@@ -92,6 +92,9 @@ const char kmAlwaysOnTop[] = "always_on_top";
 // Make window visible on all workspaces.
 const char kmVisibleOnAllWorkspaces[] = "visible_on_all_workspaces";
 
+// Splash page or image shown while the main window loads.
+const char kmSplash[] = "splash";
+
 // Whether we should support WebGL.
 const char kmWebgl[] = "webgl";
 

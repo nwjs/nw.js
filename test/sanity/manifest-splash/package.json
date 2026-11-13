@@ -1,0 +1,14 @@
+{
+  "name": "manifest-splash",
+  "main": "index.html",
+  "window": {
+    "width": 400,
+    "height": 300,
+    "splash": {
+      "url": "splash.html",
+      "width": 320,
+      "height": 180,
+      "min_duration": 4000
+    }
+  }
+}
