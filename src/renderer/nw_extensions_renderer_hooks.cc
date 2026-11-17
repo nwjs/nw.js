@@ -307,10 +307,14 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
             context->v8_context()
                 ->GetAlignedPointerFromEmbedderData<NwScriptStateSlot>(
                     isolate_c, 2, kScriptStateTag); //v8ContextPerContextDataIndex
-        dom_context->SetAlignedPointerInEmbedderData(2, data, kScriptStateTag);
+        // NW.js uses embedder data slots beyond the Chromium defaults (index
+        // 50 holds the security token marker); V8 is built with a
+        // v8_embedder_data_array_size that covers them (v8/BUILD.gn).
+        dom_context->SetAlignedPointerInEmbedderDataV2(2, data,
+                                                      kScriptStateTag);
       } else
         dom_context = context->v8_context();
-      dom_context->SetAlignedPointerInEmbedderData(50, (void*)0x08110800, v8::kEmbedderDataTypeTagDefault);
+      dom_context->SetAlignedPointerInEmbedderDataV2(50, (void*)0x08110800, v8::kEmbedderDataTypeTagDefault);
       v8::MicrotasksScope microtasks(isolate_c, dom_context->GetMicrotaskQueue(),
 				     v8::MicrotasksScope::kDoNotRunMicrotasks);
       if (!mixed_context)
@@ -374,7 +378,7 @@ void ContextCreationHook(blink::WebLocalFrame* frame, ScriptContext* context) {
   v8::Local<v8::Object> node_global = g_context->Global();
 
   if (!mixed_context) {
-    context->v8_context()->SetAlignedPointerInEmbedderData(
+    context->v8_context()->SetAlignedPointerInEmbedderDataV2(
         NODE_CONTEXT_EMBEDDER_DATA_INDEX, g_get_node_env_fn(),
         // Must match the tag node uses to write/read this slot
         // (node::EmbedderDataTag::kPerContextData, see
