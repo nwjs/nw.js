@@ -13,6 +13,29 @@ To embed a web page in your app, add the webview tag to your app's embedder page
 <webview id="foo" src="http://www.google.com/" style="width:640px; height:480px"></webview>
 ```
 
+For predictable sizing, give `<webview>` an explicit layout display and size. If a `<webview>` is expected to fill its window or parent container, make sure the parent has a defined size and style the `<webview>` with a flex-compatible display. Treat this as a CSS layout requirement for the embedder page, not as a runtime resize fix.
+
+For example, a full-window `<webview>` can be styled like this:
+
+```html
+<style>
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+webview {
+  display: inline-flex;
+  width: 100%;
+  height: 100%;
+}
+</style>
+
+<webview src="http://www.google.com/"></webview>
+```
+
 ## References
 
 See [Chrome document of `<webview>` tag](https://developer.chrome.com/docs/extensions/reference/webviewTag/) for detailed API references.
