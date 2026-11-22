@@ -285,6 +285,7 @@ void LoadNWAppAsExtensionHook(base::DictValue* manifest,
           gfx::ImageSkiaOperations::CreateResizedImage(*originImageSkia,
                                                        skia::ImageOperations::RESIZE_GOOD,
                                                        gfx::Size(128, 128));
+        resizedImageSkia.EnsureRepsForSupportedScales();
         app_icon = gfx::Image(resizedImageSkia);
       }
       SetAppIcon(app_icon);
