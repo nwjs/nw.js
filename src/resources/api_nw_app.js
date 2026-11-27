@@ -37,9 +37,6 @@ apiBridge.registerCustomHook(function(bindingsAPI) {
   bindingsAPI.compiledApi.__defineGetter__('filteredArgv', function() {
     return filteredArgv;
   });
-  bindingsAPI.compiledApi.__defineSetter__('filteredArgv', function(newFilteredArgv) {
-    return filteredArgv = newFilteredArgv;
-  });
   bindingsAPI.compiledApi.__defineGetter__('manifest', function() {
     var ret= chrome.runtime.getManifest();
     if (ret.hasOwnProperty('__nwjs_manifest'))
