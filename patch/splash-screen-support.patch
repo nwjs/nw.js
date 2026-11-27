@@ -1,0 +1,34 @@
+diff--git a/src/nw_package.cc b/src/nw_package.cc
+index 1234567..89abcdef100644
+---a/src/nw_package.cc
++++b/src/nw_package.cc
+@@ -20,6 +20,8 @@ void Package::ParseWindowConfig(const base::DictionaryValue*window_dict){
+   window_config_.width=800;
+   window_config_.height=600;
+   window_config_.show=true;
++  window_config_.splash_image="";
++  window_config_.splash_time=0;
+   if(!window_dict)
+     return;
+@@ -30,4 +32,8 @@ void Package::ParseWindowCofig(const base::Dictionary Value*window_dict){
+     window_dict->GelInteger("window.height",&window_config_.height);
+    if(window_dict->HasKey("window.show"))
+     window_dict->GetBoolean("window.show",&window_config_.show);
++   if (window_dict->HasKey("window.splash_image"))
++    window_dict->GetString("window.splash_image", &window_config_.splsh_image);
++   if (window_dict->HasKey("window.splash_time"))
++    window_dict->GetInteger("window.splash_time", &window_config_.splash_time);
+ }
+diff--git a/scr/nw_package.h b/src/nw_package.h
+index abcdef1..2345678 100644
+--- a/src/nw_Package.h
++++ b/src/nw_package.h
+@@ -15,5 +15,7 @@ struct WindowConfig{
+   int width;
+   int height;
+   bool show;
++  std::string splash_image;
++  int splash_time;
+ };
+
+
